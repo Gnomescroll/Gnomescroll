@@ -57,11 +57,6 @@ class Agent_status {
         bool set_name(char* n); // return true if the new name is different
         void check_missing_name();
 
-        #if DC_SERVER
-        void load_inventories();
-        void send_inventories_to_client();
-        #endif
-        
         void set_spawner(int pt);
         void set_spawner();
 

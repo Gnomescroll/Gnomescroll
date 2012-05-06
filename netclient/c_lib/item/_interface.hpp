@@ -77,6 +77,8 @@ void assign_container_to_agent(int agent_id, int client_id);
 
 class Item* create_item(int item_type);
 
+void agent_died(int agent_id);
+
 }
 #endif
 

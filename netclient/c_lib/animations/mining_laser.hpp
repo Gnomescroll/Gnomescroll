@@ -109,7 +109,6 @@ class MiningLaser
 
         verlet.velocity = vec3_scalar_mult(verlet.velocity, speed);
         this->ttl = (length / speed) * 30;
-
     }
 
     void tick()

@@ -51,52 +51,11 @@ inventory(NULL),
 toolbelt(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
-    #if DC_SERVER
-    this->load_inventories();
-    #endif
 }
 
 Agent_status::~Agent_status()
 {
-    #if DC_SERVER
-    /*
-    assert(this->inventory != NULL);
-    Items::destroy_inventory(this->inventory);
-    assert(this->toolbelt != NULL);
-    Items::destroy_inventory(this->toolbelt);
-    */
-    #endif
 }
-
-#if DC_SERVER
-void Agent_status::load_inventories()
-{   // get inventories from inventory repo
-    
-/*
-    this->inventory = Items::create_inventory(OBJECT_AGENT_INVENTORY);
-    assert(this->inventory != NULL);
-    this->inventory->owner = this->a->id;
-
-    // TODO
-    this->inventory->add_action(0, OBJECT_GEMSTONE_AMETHYST, 1, 0);
-    
-    this->toolbelt = Items::create_inventory(OBJECT_AGENT_TOOLBELT);
-    assert(this->toolbelt != NULL);
-    this->toolbelt->owner = this->a->id;
-    this->toolbelt->add_action(1, OBJECT_GEMSTONE_AMETHYST, 1, 5);
-*/  
-}
-
-void Agent_status::send_inventories_to_client()
-{
-/*
-    assert(this->inventory != NULL);
-    this->inventory->sendToClientCreate(this->a->id);
-    assert(this->toolbelt != NULL);
-    this->toolbelt->sendToClientCreate(this->a->id);
-*/
-}
-#endif
 
 void Agent_status::set_spawner(int pt)
 {
@@ -279,9 +238,7 @@ int Agent_status::die()
     dead_msg.broadcast();
 
     Toolbelt::agent_died(this->a->id);
-
-    //this->inventory->remove_all_action();
-    //this->toolbelt->remove_all_action();
+    Item::agent_died(this->a->id);
     #endif
 
     return 1;

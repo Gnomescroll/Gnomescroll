@@ -303,7 +303,7 @@ ItemID split_item_stack_in_half(ItemID src)
 }
 bool agent_owns_container(int agent_id, int container_id)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     if (container_id == NULL_CONTAINER) return false;
     if (agent_container_list[agent_id] == container_id) return true;
     if (agent_toolbelt_list[agent_id] == container_id) return true;
@@ -313,7 +313,7 @@ bool agent_owns_container(int agent_id, int container_id)
 
 ItemID get_agent_toolbelt_item(int agent_id, int slot)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     int toolbelt_id = get_agent_toolbelt(agent_id);
     if (toolbelt_id == NULL_CONTAINER) return NULL_ITEM;
     ItemContainer* toolbelt = item_container_list->get(toolbelt_id);
@@ -323,21 +323,21 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot)
 
 ItemID get_agent_hand(int agent_id)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     assert(agent_hand_list != NULL);
     return agent_hand_list[agent_id];
 }
     
 int get_agent_container(int agent_id)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     assert(agent_container_list != NULL);
     return agent_container_list[agent_id];
 }
 
 int get_agent_toolbelt(int agent_id)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     assert(agent_toolbelt_list != NULL);
     return agent_toolbelt_list[agent_id];
 }
@@ -355,7 +355,7 @@ static void assign_container_to_agent(ItemContainer* container, ItemContainerTyp
 
 void assign_containers_to_agent(int agent_id, int client_id)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     
     ItemContainer* agent_container = item_container_list->create();
     assign_container_to_agent(agent_container, AGENT_CONTAINER, agent_container_list, agent_id, client_id);
@@ -379,11 +379,31 @@ void assign_containers_to_agent(int agent_id, int client_id)
     assign_container_to_agent(agent_nanite, AGENT_NANITE, agent_nanite_list, agent_id, client_id);
 }
 
-
 Item* create_item(int item_type)
 {
     return item_list->create_type(item_type);
 }
+
+void agent_died(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    assert(a->status.dead);
+
+    // remove items from agent inventory
+    assert(agent_container_list != NULL);
+    ItemContainer* container = get_container(agent_container_list[agent_id]);
+    if (container == NULL) return;
+    for (int i=0; i<container->slot_max; i++)
+    {
+        ItemID item_id = container->slot[i];
+        if (item_id == NULL_ITEM) continue;
+        container->remove_item(i);
+        ItemParticle::throw_item(agent_id, item_id);
+    }
+}
+
 
 }
 
