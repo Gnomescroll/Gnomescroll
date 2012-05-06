@@ -66,7 +66,7 @@ int AgentNaniteUI::get_slot_at(int px, int py)
     int xslot = px / slot_size;
     int yslot = py / slot_size;
 
-    printf("nanite slot: %i %i \n", xslot, yslot);
+    //printf("nanite slot: %i %i \n", xslot, yslot);
 
     //int slot = yslot * this->xdim + xslot;
     
@@ -165,7 +165,7 @@ void AgentNaniteUI::draw()
     glVertex2f(x+w, y);
 
     glEnd();
-
+/*
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
@@ -214,7 +214,7 @@ void AgentNaniteUI::draw()
 
     glEnd();
 
-
+*/
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
