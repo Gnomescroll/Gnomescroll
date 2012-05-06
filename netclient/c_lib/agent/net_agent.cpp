@@ -503,7 +503,7 @@ inline void version_StoC::handle()
         NetClient::Server.version_match = false;
 
         #if DC_CLIENT
-        VersionMismatchBox();
+        VersionMismatchBox(DC_VERSION, version);
         #endif
     }
     else

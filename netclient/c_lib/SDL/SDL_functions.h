@@ -2,7 +2,7 @@
 
 int _set_resolution(int xres, int yres, int fullscreen);
 
-int VersionMismatchBox();
+int VersionMismatchBox(int local_version, int server_version);
 
 int init_video();
 void _del_video();

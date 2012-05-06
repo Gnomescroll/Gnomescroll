@@ -68,11 +68,13 @@ int DisplayBox()
     return 0;
 }
 
-int VersionMismatchBox()
+int VersionMismatchBox(int local_version, int server_version)
 {
     printf("VersionMismatchBox() \n");
     #ifdef _WIN32
-    char message[] = "Version out of date!\nInstall latest version from website\nhttp://gnomescroll.com";
+    char message_fmt[] = "Version out of date!\nYour version: %d\nServer version: %d\nInstall latest version from website\nhttp://gnomescroll.com";
+    char* message = (char*)malloc((sizeof(message_fmt) + 1 + 20 - 4) * sizeof(char));
+    sprintf(message, message_fmt, local_version, server_version);
     char title[] = "Version out of date!";
     int msgboxID = MessageBox(
         NULL,
@@ -89,6 +91,8 @@ int VersionMismatchBox()
             // TODO: add code
             break;
     }
+
+    free(message);
 
     return msgboxID;
     #endif
