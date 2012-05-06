@@ -37,7 +37,7 @@ class AgentNaniteUI : public UIElement
     static const int xdim = 6;    // slot dimensions
     static const int ydim = 4;
 
-    const int level = 0;    //nanite level
+    static const int level = 0;    //nanite level
 
     void init() {}
     void draw();
@@ -186,7 +186,7 @@ void AgentNaniteUI::draw()
 
         Item::get_nanite_store_item(level,xslot,yslot, &item_id, &cost);
         if(item_id == -1 ) continue;
-        
+
         int tex_id = Item::get_sprite_index_for_type(item_id);
 
         const float x = xoff+ 37*xslot;
@@ -217,7 +217,7 @@ void AgentNaniteUI::draw()
 
     glEnd();
 
-        //draw text for item cost cost
+    //draw text for item cost in upper right
     for (int xslot=4; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
@@ -230,6 +230,8 @@ void AgentNaniteUI::draw()
         const float y = yoff- 37*yslot;
 
         //draw text for cost
+
+        //cost
     }
 
 
