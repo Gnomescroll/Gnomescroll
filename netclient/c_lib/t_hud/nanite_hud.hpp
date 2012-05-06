@@ -27,20 +27,35 @@ class AgentNaniteUI : public UIElement
 {
     public:
 
-    static const float inc1 = 8; // spacing between slot icons
+    static const float inc1 = 6; // spacing between slot icons
     static const float inc2 = 2;  // border around a slot icon
 
     static const float slot_size = 37;    // pixel dimension
 
     //slots are 37 px in size
 
-    static const int xdim = 6;    // slot dimensions
+    static const int xdim = 2;    // slot dimensions
     static const int ydim = 4;
 
+    static const float nanite_texture_width = 221.0f;
+    static const float nanite_texture_height = 147.0f;
+    static const float nanite_render_width = 222.0f;
+    static const float nanite_render_height = 148.0f;
     static const int level = 0;    //nanite level
 
     void init() {}
     void draw();
+
+    int width()
+    {
+        return xdim*slot_size + xdim*inc1 + inc2*2 + nanite_render_width;
+    }
+
+    int height()
+    {
+        return nanite_render_height + inc2*2;
+        //return ydim*slot_size + ydim*inc1 + inc2*2 + nanite_render_height;
+    }
 
     int get_slot_at(int px, int py);
     void handle_ui_event(int px, int py);
@@ -127,8 +142,6 @@ void AgentNaniteUI::handle_ui_event(int px, int py)
 //221x147
 void AgentNaniteUI::draw()
 {
-
-
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -139,16 +152,18 @@ void AgentNaniteUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    const float w = xdim*slot_size; //221
-    const float h = ydim*slot_size; //147
+    //const float w = xdim*slot_size; //221
+    //const float h = ydim*slot_size; //147
+    const float w = nanite_render_width;
+    const float h = nanite_render_height;
 
     const float x = xoff;
     const float y = yoff;
 
     const float tx_min = 0.0;
     const float ty_min = 0.0;
-    const float tx_max = 221.0/512.0;
-    const float ty_max = 147.0/512.0;
+    const float tx_max = nanite_texture_width/512.0;
+    const float ty_max = nanite_texture_height/512.0;
 
     //draw background
     glBegin(GL_QUADS);
@@ -166,8 +181,6 @@ void AgentNaniteUI::draw()
     glVertex2f(x+w, y);
 
     glEnd();
-
-
 
     int item_id, cost;
 
@@ -226,8 +239,8 @@ void AgentNaniteUI::draw()
         Item::get_nanite_store_item(level,xslot,yslot, &item_id, &cost);
         if(item_id == -1 ) continue;
 
-        const float x = xoff+ 37*xslot;
-        const float y = yoff- 37*yslot;
+        //const float x = xoff+ 37*xslot;
+        //const float y = yoff- 37*yslot;
 
         //draw text for cost
 
