@@ -163,7 +163,8 @@ void die_mob_robot_box(Object* object)
 
 #if DC_SERVER
 void server_tick_mob_robot_box(Object* object)
-{    
+{
+    return;
     // must stay on ground -- apply terrain collision
     // wander randomly (TODO: network model with destinations)
     // TODO -- aggro component
@@ -301,6 +302,7 @@ void server_tick_mob_robot_box(Object* object)
 #if DC_CLIENT
 void client_tick_mob_robot_box(Object* object)
 {
+    return;
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
 
