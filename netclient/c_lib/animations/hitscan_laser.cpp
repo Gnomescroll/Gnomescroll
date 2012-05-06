@@ -252,5 +252,5 @@ void HitscanLaserEffect_list::tick()
     //printf("count= %i \n", count);
 }
 
-}
+}   // Animations
 

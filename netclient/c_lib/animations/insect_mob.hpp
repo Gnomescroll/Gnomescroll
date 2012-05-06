@@ -326,6 +326,4 @@ void Insect_mob_list::tick()
     }
 }
 
-
-
-}
+}   // Animations

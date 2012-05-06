@@ -275,7 +275,7 @@ void Agent_event::coins_changed(unsigned int coins)
 
 void Agent_event::tick_mining_laser()
 {
-    Animations::mining_laser_beam(this->a->arm_center(), this->a->s.forward_vector());
+    Animations::mining_laser_beam(this->a->arm_center(), this->a->s.forward_vector(), MINING_LASER_HITSCAN_RANGE);
 }
 
 void Agent_event::fired_mining_laser()

@@ -15,7 +15,8 @@
 #include <particle/blood.hpp>
 
 
-namespace Animations {
+namespace Animations
+{
 
 void block_crumble(float x, float y, float z, int n, int cube_id, float momentum)
 {
@@ -401,4 +402,4 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     }
 }
 
-}
+}   // Animations

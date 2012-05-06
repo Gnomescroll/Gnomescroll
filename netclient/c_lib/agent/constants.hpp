@@ -72,3 +72,5 @@ const float AGENT_INTERPOLATION_DECAY  = 0.8f;
 const int JETPACK_TICKS_MAX = 30 * 10 * 2;
 const int JETPACK_DECAY_TICKS = 30 * 10;
 #endif
+
+const float MINING_LASER_HITSCAN_RANGE = 4.0f;

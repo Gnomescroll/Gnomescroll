@@ -14,9 +14,6 @@
 
 //#include <t_map/net/t_CtoS.hpp>
 
-const float BLOCK_PICK_MAX_DISTANCE = 4.0f;
-const float MELEE_PICK_MAX_DISTANCE = 2.7f;
-
 //void PlayerAgent_action::fire()
 //{
     //if (p->you == NULL) return;
@@ -197,7 +194,7 @@ void PlayerAgent_action::hitscan_laser()
 void PlayerAgent_action::tick_mining_laser()
 {
     if (this->p->you == NULL) return;
-    Animations::mining_laser_beam(this->p->you->get_center(), this->target_direction);
+    Animations::mining_laser_beam(this->p->you->get_center(), this->target_direction, MINING_LASER_HITSCAN_RANGE);
 }
 
 
@@ -237,7 +234,7 @@ void PlayerAgent_action::fire_mining_laser()
     switch (target_type)
     {
         case Hitscan::HITSCAN_TARGET_VOXEL:
-            if (vox_distance > MELEE_PICK_MAX_DISTANCE)
+            if (vox_distance > MINING_LASER_HITSCAN_RANGE)
             {
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
@@ -282,7 +279,7 @@ void PlayerAgent_action::fire_mining_laser()
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:
-            if (block_distance > BLOCK_PICK_MAX_DISTANCE)
+            if (block_distance > MINING_LASER_HITSCAN_RANGE)
             {
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
@@ -434,7 +431,7 @@ void PlayerAgent_action::fire_mining_laser()
         //);
 
     //if (target_type != Hitscan::HITSCAN_TARGET_VOXEL) return;
-    //if (vox_distance > MELEE_PICK_MAX_DISTANCE) return;
+    //if (vox_distance > MINING_LASER_HITSCAN_RANGE) return;
     //this->add_item_to_inventory(target.entity_id, (ObjectType)target.entity_type);
 //}
 

@@ -4,7 +4,8 @@
 #include <common/common.hpp>
 #include <physics/vec3.hpp>
 
-namespace Animations {
+namespace Animations
+{
 
 using t_map::TerrainModificationAction;
 
@@ -32,6 +33,4 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, floa
 void voxel_explode_team(Vec3 position, int count, float size, float force, int team);
 void voxel_explode_team(Vec3 position, int count_min, int count_max, float size, float force, int team);
 
-
-//void animations_draw();
-}
+}   // Animations

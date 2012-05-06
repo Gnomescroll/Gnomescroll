@@ -230,5 +230,5 @@ void HitscanEffect_list::tick()
     }
 }
 
-}
+}   // Animations
 

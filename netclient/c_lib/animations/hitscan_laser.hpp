@@ -44,4 +44,4 @@ class HitscanLaserEffect_list: public Object_list<HitscanLaserEffect>
         HitscanLaserEffect_list() { print_list((char*)this->name(), this); }
 };
 
-}
+}   // Animations

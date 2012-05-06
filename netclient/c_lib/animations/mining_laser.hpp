@@ -99,16 +99,17 @@ class MiningLaser
 
         float damp;
 
-    void init(float x, float y, float z, float mx, float my, float mz)
+    void init(float x, float y, float z, float mx, float my, float mz, const float speed, const float length)
     {
-
-        ttl = MINING_LASER_TTL;
-
         type = 0+rand()%4;
         verlet.dampening = MINING_LASER_DAMPENING;
 
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
+
+        verlet.velocity = vec3_scalar_mult(verlet.velocity, speed);
+        this->ttl = (length / speed) * 30;
+
     }
 
     void tick()
@@ -165,6 +166,8 @@ class MiningLaser
         mining_laser_vlist->push_vertex(p, tx_min,ty_min);
 
     }
+
+    MiningLaser() : ttl(MINING_LASER_TTL) {}
 
 };
 
@@ -270,4 +273,4 @@ void MiningLaserEffect_list::tick()
     }
 }
 
-}
+}   // Animations

@@ -114,7 +114,7 @@ void spawn_insect_mob(float x, float y, float z)
 }
 
 
-void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float speed)
+void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float speed, const float length)
 {
     MiningLaser* effect = mining_laser_effect_list->create();
     if (effect == NULL) return;
@@ -130,9 +130,7 @@ void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float s
 
     //Vec3 mysterious_orientation_thing = vec3_init(hv*randf() - hv/2, hv*randf() - hv/2, vv*ratio*randf() + vv*(1.0-ratio));
     //orientation = vec3_mult(orientation, mysterious_orientation_thing);
-    orientation = vec3_scalar_mult(orientation, speed);
-    
-    effect->init(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z);
+    effect->init(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, speed, length);
 }
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)
@@ -141,7 +139,7 @@ void create_hitscan_effect(float x, float y, float z, float vx, float vy, float 
     he->set_state(x,y,z,vx,vy,vz);
 }
 
-void mining_laser_beam(Vec3 position, Vec3 orientation)
+void mining_laser_beam(Vec3 position, Vec3 orientation, float length)
 {
     const float speed = 6.0f;
     const int n = 6; //6
@@ -149,11 +147,11 @@ void mining_laser_beam(Vec3 position, Vec3 orientation)
     Vec3 step = vec3_scalar_mult(orientation, spread);
     for (int i=0; i<n; i++)
     {
-        Animations::create_mining_laser_particle(position, orientation, speed);
+        Animations::create_mining_laser_particle(position, orientation, speed, length);
         // move the particle a little bit ahead of the last
         // to get an even distribution
         position = vec3_add(position, step);
     }
 }
 
-}
+}   // Animations
