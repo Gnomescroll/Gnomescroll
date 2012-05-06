@@ -8,11 +8,12 @@
 dont_include_this_file_in_client
 #endif
 
-#include <common/defines.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <common/version.h>
+#include <common/defines.h>
 
 #include <common/compression/miniz.c>
 

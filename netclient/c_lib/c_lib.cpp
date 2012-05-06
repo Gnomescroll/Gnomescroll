@@ -21,6 +21,7 @@ dont_include_this_file_in_server
 #endif
 
 /* Common headers */
+#include <common/version.h>
 #include <common/defines.h>
 #include <common/compat_gl.h>
 #include <common/compat_al.h>
