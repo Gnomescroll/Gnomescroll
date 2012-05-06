@@ -10,6 +10,8 @@ extern int type_array[MAX_ITEMS];
 extern int group_array[MAX_ITEMS];
 extern class ItemAttribute* item_attribute_array;
 
+extern class NaniteStoreItem* nanite_store_item_array;
+
 void init_properties();
 
 class ItemAttribute* get_item_attributes(int item_type);

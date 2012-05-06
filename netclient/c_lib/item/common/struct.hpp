@@ -14,3 +14,17 @@ typedef enum
 */
 
 
+
+class NaniteStoreItem
+{
+	public:
+
+	int item_id;
+	int nanite_cost;
+
+	NaniteStoreItem()
+	{
+		item_id = 0;
+		nanite_cost = 0;
+	}
+};

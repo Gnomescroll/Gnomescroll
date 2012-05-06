@@ -11,6 +11,7 @@ namespace Item
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 int group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
+extern class NaniteStoreItem* nanite_store_item_array = NULL;
 
 void init_properties()
 {
@@ -19,11 +20,13 @@ void init_properties()
 
     assert(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
+    nanite_store_item_array = new NaniteStoreItem[32];
 }
 
 void tear_down_properties()
 {
     if (item_attribute_array != NULL) delete[] item_attribute_array;
+    delete[] nanite_store_item_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)
