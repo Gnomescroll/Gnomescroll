@@ -13,7 +13,7 @@ class AgentContainerUI : public UIElement
 
     //static const float border = 16;       // border around entire panel
     static const float border = 0;       // border around entire panel
-    static const float inc1 = 5; // spacing between slot icons
+    static const float inc1 = 6; // spacing between slot icons
     static const float inc2 = 2;  // border around a slot icon
 
     static const float slot_size = 32;    // pixel dimension
@@ -25,7 +25,7 @@ class AgentContainerUI : public UIElement
 
     int width()
     {
-        return xdim*slot_size + xdim*inc1 + inc2*2;
+        return xdim*slot_size + (xdim-1)*inc1 + inc2*2;
     }
 
     int height()

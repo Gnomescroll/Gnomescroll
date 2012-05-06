@@ -298,7 +298,7 @@ void draw_hud()
     if (!hud_enabled) return;
 
     agent_container->draw();
-    nanite_container->draw();
+    //nanite_container->draw();
     //craft_bench_container->draw();
 
     draw_grabbed_icon();
@@ -315,7 +315,8 @@ void init()
 {
     agent_container = new AgentContainerUI;
     agent_container->xoff = (_xresf - agent_container->width()) / 2;
-    agent_container->yoff = -150.0 + _yresf/2 - (agent_container->height()) / 2;
+    //agent_container->yoff = -150.0 + _yresf/2 - (agent_container->height()) / 2;
+    agent_container->yoff = _yresf/2 - (agent_container->height()) / 2;
     agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
