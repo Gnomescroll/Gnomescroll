@@ -194,7 +194,8 @@ void PlayerAgent_action::hitscan_laser()
 void PlayerAgent_action::tick_mining_laser()
 {
     if (this->p->you == NULL) return;
-    Animations::mining_laser_beam(this->p->you->get_center(), this->target_direction, MINING_LASER_HITSCAN_RANGE);
+    Vec3 origin = this->p->get_weapon_fire_animation_origin();
+    Animations::mining_laser_beam(origin, this->target_direction, MINING_LASER_HITSCAN_RANGE);
 }
 
 
@@ -301,7 +302,7 @@ void PlayerAgent_action::fire_mining_laser()
             collision_point[2] = look.z;
             
             // subtract translated animation origin from collision point (look) to get new vector
-            look = vec3_sub(vec3_init(collision_point[0], collision_point[1], collision_point[2]), this->p->you->get_center());
+            look = vec3_sub(vec3_init(collision_point[0], collision_point[1], collision_point[2]), this->p->get_weapon_fire_animation_origin());
             normalize_vector(&look);
 
             Animations::block_damage(

@@ -84,6 +84,13 @@ class PlayerAgent_state {
         float camera_height();
         Vec3 camera_position();
 
+        Vec3 get_weapon_fire_animation_origin()
+        {
+            Vec3 origin = this->you->get_center();
+            origin.z += 0.4f;
+            return origin;
+        }
+
         void update_model();
 
         PlayerAgent_action action;
