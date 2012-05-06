@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config_util.hpp"
+#include <item/config/_util.hpp>
 
 #include <t_map/t_properties.hpp>
 

@@ -3,6 +3,17 @@
 namespace t_hud
 {
 
+/*
+enum NaniteUIregions
+{
+    ItemPickup,
+    ItemDropoff,
+    NannitePickup,
+    NaniteDropoff,
+    NaniteCollection
+}
+*/
+
 //221x147
 
 class AgentNaniteUI : public UIElement
@@ -78,6 +89,7 @@ void AgentNaniteUI::handle_ui_event(int px, int py)
         if(xslot == 3 && yslot == 3)
         {
             //pickup item being eaten (if it exists)
+            //inventory slot 0
         }
         else
         {
@@ -93,7 +105,7 @@ void AgentNaniteUI::handle_ui_event(int px, int py)
             //pickup nannites from hand
             //dropoff nannites from hand
 
-            //the only "inventory slot"
+            //inventory slot 1
         }
         else
         {
