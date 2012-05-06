@@ -67,7 +67,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Darwin':
         cxxflags += ['-s']
 
-    version = get_version()
+    #version = get_version()
 
     extra_options = [
         '-Wall',
@@ -78,7 +78,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
          '-Wno-switch',
          '-DGNOMESCROLL_DSO_EXPORTS=1',
          '-DGNOMESCROLL_DSO=1',
-         '-DDC_VERSION=%d' % (version,),
+         #'-DDC_VERSION=%d' % (version,),
     ]
 
     cxxflags += extra_options

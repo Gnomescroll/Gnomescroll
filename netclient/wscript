@@ -97,7 +97,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
     
-    version = get_version()
+    #version = get_version()
 
     extra_options = [
         '-Wall',
@@ -108,7 +108,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
-        '-DDC_VERSION=%d' % (version,),
+        #'-DDC_VERSION=%d' % (version,),
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]

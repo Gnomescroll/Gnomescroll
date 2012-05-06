@@ -48,7 +48,7 @@ void setupwindow(SDL_WindowID *window, SDL_GLContext *context)
 
 int DisplayBox()
 {
-#ifdef _WIN32
+    #ifdef _WIN32
     int msgboxID = MessageBox(
         NULL,
         (LPCSTR)L"Error: check console log",
@@ -64,13 +64,12 @@ int DisplayBox()
     }
 
     return msgboxID;
-#endif
+    #endif
     return 0;
 }
 
 int VersionMismatchBox(int local_version, int server_version)
 {
-    printf("VersionMismatchBox() \n");
     #ifdef _WIN32
     char message_fmt[] = "Version out of date!\nYour version: %d\nServer version: %d\nInstall latest version from website\nhttp://gnomescroll.com";
     char* message = (char*)malloc((sizeof(message_fmt) + 1 + 20 - 4) * sizeof(char));
@@ -396,8 +395,8 @@ int _swap_buffers() {
 
 void save_screenshot()
 {
-#if 0
-#ifdef linux
+    #if 0
+    #ifdef linux
     //int window_width = _xres;
     //int window_height = _yres;
 
@@ -442,8 +441,8 @@ void save_screenshot()
 
     //SDL_SaveBMP(surface, FileName);
     SDL_FreeSurface(surface);
-#endif
-#endif
+    #endif
+    #endif
 
 // Compresses an image to a compressed PNG file in memory.
 // On entry:

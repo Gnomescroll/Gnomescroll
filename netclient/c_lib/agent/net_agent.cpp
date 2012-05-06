@@ -4,9 +4,6 @@
 #include <state/server_state.hpp>
 #include <state/client_state.hpp>
 #include <common/defines.h>
-//#include <weapons/weapons.hpp>
-//#include <monsters/monsters.hpp>
-//#include <inventory/inventory.hpp>
 
 #if DC_CLIENT
 #include <common/time/physics_timer.hpp>
