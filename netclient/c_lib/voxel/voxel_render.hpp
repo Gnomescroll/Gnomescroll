@@ -39,6 +39,7 @@ void init_voxel_render_list_shader1();
 class Voxel_render_list
 {
     public:
+        bool needs_update;
         void update_vertex_buffer_object(); //gets called after draw
         class Voxel_volume** render_list;
         struct VBOmeta vbo_wrapper[2];

@@ -152,7 +152,7 @@ void die_mob_bomb(Object* object)
 
 void tick_mob_bomb(Object* object)
 {
-    return;
+    //return;
     #if DC_SERVER
      //die if near agent
     using Components::ExplosionComponent;

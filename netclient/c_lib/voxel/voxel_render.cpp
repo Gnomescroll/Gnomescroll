@@ -83,6 +83,7 @@ void init_voxel_render_list_shader1()
 
 Voxel_render_list::Voxel_render_list()
 :
+needs_update(false),
 id(-1),
 num_elements(0)
 {
@@ -130,6 +131,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
             vv->id = i;
             vv->voxel_render_list = this;
             vv->voxel_render_list_id = this->id;
+            this->needs_update = true;
             break;
         }
     }
@@ -146,6 +148,8 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 
     vv->id = -1;
     vv->voxel_render_list = NULL;
+
+    this->needs_update = true;
 }
 
 //void Voxel_render_list::update()
@@ -155,7 +159,9 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 
 void Voxel_render_list::update_vertex_buffer_object()
 {
-
+    if (!this->needs_update) return;
+    this->needs_update = false;
+    
     Voxel_volume* vv;
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
