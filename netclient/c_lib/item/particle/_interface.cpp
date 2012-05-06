@@ -25,6 +25,17 @@ void tick()
 {
     assert(item_particle_list != NULL);
     item_particle_list->tick();
+
+    #if DC_SERVER
+    static int tick = 0;
+    for (int i=0; i<item_particle_list->n_max; i++)
+    {
+        if (item_particle_list->a[i] == NULL) continue;
+        if ((tick + item_particle_list->a[i]->broadcast_tick) % ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE == 0)
+            broadcast_particle_item_state(item_particle_list->a[i]->id);
+    }
+    tick++;
+    #endif
 }
 
 void destroy(int particle_id)
@@ -118,6 +129,21 @@ void send_particle_items_to_client(int client_id)
     for (int i=0; i<item_particle_list->n_max; i++)
         if (item_particle_list->a[i] != NULL)
             send_particle_item_create_to_client(item_particle_list->a[i]->id, client_id);
+}
+
+void broadcast_particle_item_state(int particle_id)
+{
+    ItemParticle* particle = item_particle_list->get(particle_id);
+    if (particle == NULL) return;
+    item_particle_state_StoC msg;
+    msg.id = particle->id;
+    msg.x = particle->verlet.position.x;
+    msg.y = particle->verlet.position.y;
+    msg.z = particle->verlet.position.z;
+    msg.mx = particle->verlet.velocity.x;
+    msg.my = particle->verlet.velocity.y;
+    msg.mz = particle->verlet.velocity.z;
+    msg.broadcast();
 }
 
 void check_item_pickups()

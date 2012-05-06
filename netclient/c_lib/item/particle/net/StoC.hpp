@@ -5,9 +5,6 @@
 namespace ItemParticle
 {
 
-/*
-    Free Item
-*/
 class item_particle_create_StoC: public FixedSizeReliableNetPacketToClient<item_particle_create_StoC>
 {
     public:
@@ -38,6 +35,26 @@ class item_particle_destroy_StoC: public FixedSizeReliableNetPacketToClient<item
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class item_particle_state_StoC: public FixedSizeReliableNetPacketToClient<item_particle_state_StoC>
+{
+    public:
+        uint16_t id;
+        float x,y,z;
+        float mx,my,mz;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&id, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&mx, buff, buff_n, pack);
+            pack_float(&my, buff, buff_n, pack);
+            pack_float(&mz, buff, buff_n, pack);
         }
         inline void handle();
 };

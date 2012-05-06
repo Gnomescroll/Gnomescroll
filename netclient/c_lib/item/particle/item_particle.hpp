@@ -23,6 +23,8 @@ const float ITEM_PARTICLE_RADIUS = 0.35;
 
 const int PICKUP_PREVENTION_DELAY = 30 * 4; // 4 seconds
 
+const int ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE = 30 * 10;    // 10 seconds
+
 class ItemParticle //: public VerletComponent
 {
     public:
@@ -32,6 +34,7 @@ class ItemParticle //: public VerletComponent
         int item_type;
         #if DC_SERVER
         ItemID item_id;
+        int broadcast_tick;
         #endif
         
         // render stuff
@@ -64,6 +67,12 @@ class ItemParticle //: public VerletComponent
             #if DC_SERVER
             this->pickup_prevention--;
             #endif
+        }
+
+        void set_state(float x, float y, float z, float mx, float my, float mz)
+        {
+            this->verlet.position = vec3_init(x,y,z);
+            this->verlet.velocity = vec3_init(mx,my,mz);
         }
 
         void die();

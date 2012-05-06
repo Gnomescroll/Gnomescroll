@@ -141,6 +141,9 @@ ItemParticle::ItemParticle(int id)
     ttl(ITEM_PARTICLE_TTL)
 {
     verlet.dampening = ITEM_PARTICLE_DAMPENING;
+    #if DC_SERVER
+    this->broadcast_tick = randrange(0, ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE-1);
+    #endif
 }
 
 
