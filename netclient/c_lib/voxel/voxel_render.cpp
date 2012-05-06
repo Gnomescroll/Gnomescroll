@@ -182,7 +182,8 @@ void Voxel_render_list::update_vertex_buffer_object()
     }
 
     _vbo->vnum = v_num;
-
+    printf("v_num = %i \n");
+    
     if(v_num == 0) return;
     if(volumes_updated == 0) return; //return if nothing to update
 
