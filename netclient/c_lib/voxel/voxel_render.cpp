@@ -172,7 +172,7 @@ void Voxel_render_list::update_vertex_buffer_object()
         if(this->render_list[i] == NULL ) continue;
 
         vv = this->render_list[i];
-        if (!vv->draw) continue;
+        //if (!vv->draw) continue;
         if( vv->needs_vbo_update == true )
         {
             vv->needs_vbo_update = false;
@@ -361,7 +361,7 @@ void Voxel_render_list_manager::draw()
                 printf("Voxel_render_list_manager::draw error!! would draw past VBO memory\n");
                 printf("vbo vnum= %i vv vnum= %i vv voff= %i \n", _vbo->vnum, vv->vvl.vnum, vv->vvl.voff);
                 printf("would read %i vertices past vbo \n", vv->vvl.vnum+vv->vvl.voff - _vbo->vnum);
-                GS_ABORT();
+                //GS_ABORT();
             }
             //printf("vnum= %i, vbo_id= %i voff=%i vnum_local %i \n", _vbo->vnum, _vbo->id, vv->vvl.voff,vv->vvl.vnum);
             glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );

@@ -706,13 +706,13 @@ static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
     Voxel_volume* vv;
     switch (type)
     {
-        case OBJECT_AGENT:
-            agent = STATE::agent_list->get(id);
-            if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
-            vv = ((Agent_state*)agent)->vox->get_part(part);
-            if (vv == NULL) return;
-            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            break;
+        //case OBJECT_AGENT:
+            //agent = STATE::agent_list->get(id);
+            //if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
+            //vv = ((Agent_state*)agent)->vox->get_part(part);
+            //if (vv == NULL) return;
+            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            //break;
         //case OBJECT_MONSTER_BOMB:
             //slime = (Slime*)STATE::object_list->get(OBJECT_MONSTER_BOMB, id);
             //if (slime == NULL || slime->voxel_properties.vox == NULL) return;
