@@ -163,37 +163,22 @@ void Voxel_render_list::update_vertex_buffer_object()
     int volumes_updated = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
+        if(this->render_list[i] == NULL ) continue;
 
         vv = this->render_list[i];
-        if( vv->needs_vbo_update == true )
+        if( vv->needs_vbo_update == true || !this->render_list[i]->draw )
         {
             vv->needs_vbo_update = false;
             volumes_updated++;
             vv->update_vertex_list();
-            if (VOXEL_RENDER_DEBUG)
-                if(vv->vvl.vnum == 0)
-                    printf("Voxel_render_list::update_vertex_buffer_object, FATAL ERROR, voxel volume has no voxel!\n");
         }
         v_num += vv->vvl.vnum;
     }
 
     _vbo->vnum = v_num;
 
-    //if(volumes_updated == 0)
-    //{
-    
-        //return;         //no voxel volumes were updated
-    //}
-
-    if(v_num == 0)
-    {
-        if (VOXEL_RENDER_DEBUG)
-            printf("Voxel_render_list::update_vertex_buffer_object, zero vertices \n");
-        return;
-    }
-
-    //printf("Voxel_render_list::update_vertex_buffer_object: total vnum= %i \n", _vbo->vnum);
+    if(v_num == 0) return;
+    if(volumes_updated == 0) return; //return if nothing to update
 
     if( v_num >= _vbo->max_size ) 
     {
@@ -210,11 +195,9 @@ void Voxel_render_list::update_vertex_buffer_object()
         if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
         vv = this->render_list[i];
 
-        if (VOXEL_RENDER_DEBUG)
-        {
-            if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
-            if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
-        }
+        if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
+        if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
+
 
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         vv->vvl.voff = index;
@@ -348,6 +331,7 @@ void Voxel_render_list_manager::draw()
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
             if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
+            if(_vbo->vnum ==0 ) continue;
             Voxel_volume* vv = vrl->render_list[i];
 
             if (!sphere_fulstrum_test(
@@ -359,25 +343,7 @@ void Voxel_render_list_manager::draw()
 
             //vrl->update_vertex_buffer_object(); 
             if (vv->vvl.vnum == 0) continue;
-        /*
-            if (VOXEL_RENDER_DEBUG)
-            { 
-                printf("=== \n");
 
-                
-                printf("entity= %d, entity_type= %d, part_id= %d \n", 
-                    vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
-
-                printf("parent_world_matrix= \n");
-                print_affine( *vv->parent_world_matrix );
-
-                printf("local_matrix= \n");
-                print_affine( vv->local_matrix );
-
-                printf("result= \n");
-                print_affine( vv->world_matrix );
-            }
-        */
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
             glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
 
@@ -410,10 +376,9 @@ void Voxel_render_list_manager::draw()
 
     glColor3ub(255,255,255);
 
-    //glShadeModel(shade_model);
-
-/*
-    Apply changes
-*/
-    //this->update_vertex_buffer_object(); 
+    for(int k=0; k < this->max; k++)
+    {
+        Voxel_render_list* vrl = &this->lists[k];
+        vrl->update_vertex_buffer_object(); 
+    }
 }
