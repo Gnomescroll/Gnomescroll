@@ -43,7 +43,7 @@ void def_drop(const char* block_name)
 
 void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 {
-    int item_type = Item::dat_get_item_id(item_name);
+    int item_type = Item::dat_get_item_type(item_name);
     int block_id = _current_drop_block_id;
 
     cube_list[block_id].item_drop = true;

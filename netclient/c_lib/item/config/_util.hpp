@@ -130,7 +130,7 @@ void nanite_item_set(int level, int xslot, int yslot);
 
 void nanite_item_def(const char* item_name, int cost)
 {
-    _current_nanite_item_id = dat_get_item_id(item_name);
+    _current_nanite_item_id = dat_get_item_type(item_name);
     _current_nanite_item_cost = cost;
 }
 

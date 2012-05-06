@@ -22,13 +22,14 @@ void init_properties()
 
     assert(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
+    assert(nanite_store_item_array == NULL);
     nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
 }
 
 void tear_down_properties()
 {
-    if (item_attribute_array != NULL) delete[] item_attribute_array;
-    delete[] nanite_store_item_array;
+    if (item_attribute_array    != NULL) delete[] item_attribute_array;
+    if (nanite_store_item_array != NULL) delete[] nanite_store_item_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)
@@ -114,18 +115,18 @@ void set_item_name(int id, char* name)
 }
 
 
-char* get_item_name(int id)
+char* get_item_name(int type)
 {
-    assert(id >= 0 || id < MAX_ITEMS);
-    return (item_names + item_name_index[id]);
+    assert(type >= 0 || type < MAX_ITEMS);
+    return (item_names + item_name_index[type]);
 }
 
-int get_item_id(char* name)
+int get_item_type(char* name)
 {
     for (int i=0; i<MAX_ITEMS; i++)
         if (strcmp(name, get_item_name(i)) == 0)
             return i;
-    return NULL_ITEM;
+    return NULL_ITEM_TYPE;
 }
 
 int get_item_group_for_type(int item_type)
@@ -133,15 +134,15 @@ int get_item_group_for_type(int item_type)
     return group_array[item_type];
 }
 
-int dat_get_item_id(const char* name)
+int dat_get_item_type(const char* name)
 {
-    int id = get_item_id((char*) name);
-    if(id == NULL_ITEM)
+    int type = get_item_type((char*) name);
+    if (type == NULL_ITEM_TYPE)
     {
-        printf("Dat Loading Failure:item_id, dat failure, item '%s' does not exist! \n", name);
+        printf("Dat Loading Failure:item_type, dat failure, item '%s' does not exist! \n", name);
         GS_ABORT();
-    }   
-    return id;
+    }
+    return type;
 }
 
 int get_max_stack_size(int item_type)
