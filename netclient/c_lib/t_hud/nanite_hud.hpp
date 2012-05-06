@@ -19,6 +19,8 @@ enum NaniteUIregions
 
 //221x147
 
+void u_dot(float x, float y);
+
 class AgentNaniteUI : public UIElement
 {
     public:
@@ -180,28 +182,28 @@ void AgentNaniteUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
+    u_dot(x,y);
+    glColor4ub(255, 255, 255, 255);
+}
 
+
+void u_dot(float x, float y)
+{
+    /*
+        Draw dot in upper left corner
+    */
+    glDisable(GL_TEXTURE_2D);
     glColor4ub(255, 0, 0, 255);
 
     float p = 1.0;
     glBegin(GL_QUADS);
 
-    glTexCoord2f( tx_min, ty_min );
     glVertex2f(x-p,y+p);
-
-    glTexCoord2f( tx_max, ty_min );
     glVertex2f(x+p, y+p );
-        
-    glTexCoord2f( tx_max, ty_max );
     glVertex2f(x+p, y-p);
-
-    glTexCoord2f( tx_min, ty_max );
     glVertex2f(x-p, y-p);
 
     glEnd();
-
-
-    glColor4ub(255, 255, 255, 255);
 }
 
 }
