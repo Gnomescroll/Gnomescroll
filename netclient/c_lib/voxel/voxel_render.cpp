@@ -200,7 +200,8 @@ void Voxel_render_list::update_vertex_buffer_object()
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
+        //if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
+        if(this->render_list[i] == NULL) continue;
         vv = this->render_list[i];
 
         if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
