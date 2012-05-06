@@ -37,11 +37,22 @@ class AgentNaniteUI : public UIElement
     static const int xdim = 2;    // slot dimensions
     static const int ydim = 4;
 
-    static const float nanite_width = 222.0f;
-    static const float nanite_height = 148.0f;
     static const int level = 0;    //nanite level
 
-    static const int slot_offset_x = 149;
+    // size of texture/render area
+    static const float render_width = 222.0f;
+    static const float render_height = 148.0f;
+
+    // nanite region data
+    static const int nanite_offset_x = 1;
+    static const int nanite_offset_y = 1;
+    static const int nanite_border = 2;
+    static const int nanite_width = 143;
+    static const int nanite_height = 143;
+    
+
+    // slot region data
+    static const int slot_offset_x = 149;   // offset to beginning of slot area border
     static const int slot_offset_y = 1;
     static const int slot_border = 2;
     static const int slot_border_gap = 1;
@@ -51,12 +62,12 @@ class AgentNaniteUI : public UIElement
 
     int width()
     {
-        return nanite_width;
+        return render_width;
     }
 
     int height()
     {
-        return nanite_height;
+        return render_height;
     }
 
     int get_slot_at(int px, int py);
@@ -65,36 +76,39 @@ class AgentNaniteUI : public UIElement
 
 int AgentNaniteUI::get_slot_at(int px, int py)
 {
+    // check nanite region
+    int nx = px - (xoff + nanite_offset_x + nanite_border);
+    int ny = py - (_yresf - yoff + nanite_offset_y + nanite_border);
+
+    if (nx >= 0 && nx < nanite_width && ny >= 0 && ny < nanite_height)
+    {
+        //printf("In nanite region\n");
+        return NULL_SLOT;
+    }
+    
     //pixels from upper left
-    px -= xoff + nanite_width;
-    py = yoff - (_yresf - py);
+    px -= xoff + slot_offset_x;
+    py -= _yresf - yoff + slot_offset_y;
 
-    //py -= yoff;
-
-    float width  = xdim*slot_size; //221
-    float height = ydim*slot_size; //147
-
-    //printf("nanite click: %i %i \n", px, py);
+    float width  = xdim*slot_size + xdim*slot_border*2 + (xdim-1)*slot_border_gap;
+    float height = ydim*slot_size + ydim*slot_border*2 + (ydim-1)*slot_border_gap;
 
     if (px < 0 || px > width)  return NULL_SLOT;
     if (py < 0 || py > height) return NULL_SLOT;
 
-    //printf("nanite click: %i %i \n", px, py);
+    int xslot = px / (slot_size + slot_border*2 + slot_border_gap);
+    int yslot = py / (slot_size + slot_border*2 + slot_border_gap);
+    int slot = xslot + yslot * xdim;
 
-    int xslot = px / slot_size;
-    int yslot = py / slot_size;
-
-    printf("nanite slot: %i %i \n", xslot, yslot);
-
-    //int slot = yslot * this->xdim + xslot;
-    
-    //return slot;
-    return NULL_SLOT;
+    return slot;
 }
 
 void AgentNaniteUI::handle_ui_event(int px, int py)
 {
-    px -= xoff + nanite_width;
+    // check if in nanite region
+    // check if in slot region
+
+    px -= xoff + render_width;
     py = yoff - (_yresf - py);
 
     float width  = xdim*slot_size; //fix
@@ -152,16 +166,16 @@ void AgentNaniteUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    const float w = nanite_width;
-    const float h = nanite_height;
+    const float w = render_width;
+    const float h = render_height;
 
     const float x = xoff;
     const float y = yoff;
 
     const float tx_min = 0.0;
     const float ty_min = 0.0;
-    const float tx_max = nanite_width/512.0;
-    const float ty_max = nanite_height/512.0;
+    const float tx_max = render_width/512.0;
+    const float ty_max = render_height/512.0;
 
     //draw background
     glBegin(GL_QUADS);
@@ -195,10 +209,9 @@ void AgentNaniteUI::draw()
 
         int item_id, cost;
         Item::get_nanite_store_item(level, xslot, yslot, &item_id, &cost);
-        //if (item_id == NULL_ITEM) continue;
-
-        //int tex_id = Item::get_sprite_index_for_type(item_id);
-        int tex_id = ERROR_SPRITE;
+        if (item_id == NULL_ITEM) continue;
+        int tex_id = Item::get_sprite_index_for_type(item_id);
+        tex_id = ERROR_SPRITE;
 
         const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
         const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
@@ -253,7 +266,7 @@ void AgentNaniteUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    u_dot(x,y);
+    u_dot(xoff,yoff);
     glColor4ub(255, 255, 255, 255);
 }
 

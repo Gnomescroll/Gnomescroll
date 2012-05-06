@@ -314,7 +314,7 @@ void draw_hud()
 void init()
 {
     agent_container = new AgentContainerUI;
-    agent_container->xoff = (_xresf - agent_container->width())/2;
+    agent_container->xoff = (_xresf - agent_container->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
     agent_container->yoff = -150.0 + _yresf/2 - (agent_container->height())/2;
     agent_container->init();
 

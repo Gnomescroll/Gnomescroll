@@ -125,7 +125,7 @@ int get_item_id(char* name)
     for (int i=0; i<MAX_ITEMS; i++)
         if (strcmp(name, get_item_name(i)) == 0)
             return i;
-    return -1;
+    return NULL_ITEM;
 }
 
 int get_item_group_for_type(int item_type)
@@ -136,14 +136,13 @@ int get_item_group_for_type(int item_type)
 int dat_get_item_id(const char* name)
 {
     int id = get_item_id((char*) name);
-    if(id == -1)
+    if(id == NULL_ITEM)
     {
         printf("Dat Loading Failure:item_id, dat failure, item '%s' does not exist! \n", name);
         GS_ABORT();
     }   
     return id;
 }
-
 
 int get_max_stack_size(int item_type)
 {
@@ -178,12 +177,8 @@ void get_nanite_store_item(int level, int xslot, int yslot, int* item_id, int* c
             return;
         }
     }
-
-    //printf("get_nanite_store_item error: level, xslot, yslot = %i %i %i does not exist\n",
-    // level, xslot, yslot);
     *item_id = NULL_ITEM;
     *cost = 0;
-
 }
 
 
