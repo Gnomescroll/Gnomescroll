@@ -30,30 +30,33 @@ class AgentNaniteUI : public UIElement
     static const float inc1 = 6; // spacing between slot icons
     static const float inc2 = 2;  // border around a slot icon
 
-    static const float slot_size = 37;    // pixel dimension
+    static const float slot_size = 32;    // pixel dimension
 
     //slots are 37 px in size
 
     static const int xdim = 2;    // slot dimensions
     static const int ydim = 4;
 
-    static const float nanite_texture_width = 221.0f;
-    static const float nanite_texture_height = 147.0f;
-    static const float nanite_render_width = 222.0f;
-    static const float nanite_render_height = 148.0f;
+    static const float nanite_width = 222.0f;
+    static const float nanite_height = 148.0f;
     static const int level = 0;    //nanite level
+
+    static const int slot_offset_x = 149;
+    static const int slot_offset_y = 1;
+    static const int slot_border = 2;
+    static const int slot_border_gap = 1;
 
     void init() {}
     void draw();
 
     int width()
     {
-        return nanite_render_width;
+        return nanite_width;
     }
 
     int height()
     {
-        return nanite_render_height;
+        return nanite_height;
     }
 
     int get_slot_at(int px, int py);
@@ -63,7 +66,7 @@ class AgentNaniteUI : public UIElement
 int AgentNaniteUI::get_slot_at(int px, int py)
 {
     //pixels from upper left
-    px -= xoff + nanite_render_width;
+    px -= xoff + nanite_width;
     py = yoff - (_yresf - py);
 
     //py -= yoff;
@@ -91,7 +94,7 @@ int AgentNaniteUI::get_slot_at(int px, int py)
 
 void AgentNaniteUI::handle_ui_event(int px, int py)
 {
-    px -= xoff + nanite_render_width;
+    px -= xoff + nanite_width;
     py = yoff - (_yresf - py);
 
     float width  = xdim*slot_size; //fix
@@ -149,16 +152,16 @@ void AgentNaniteUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    const float w = nanite_render_width;
-    const float h = nanite_render_height;
+    const float w = nanite_width;
+    const float h = nanite_height;
 
     const float x = xoff;
     const float y = yoff;
 
     const float tx_min = 0.0;
     const float ty_min = 0.0;
-    const float tx_max = nanite_texture_width/512.0;
-    const float ty_max = nanite_texture_height/512.0;
+    const float tx_max = nanite_width/512.0;
+    const float ty_max = nanite_height/512.0;
 
     //draw background
     glBegin(GL_QUADS);
@@ -177,9 +180,6 @@ void AgentNaniteUI::draw()
 
     glEnd();
 
-    int item_id, cost;
-
-    //draw store items
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -187,23 +187,26 @@ void AgentNaniteUI::draw()
 
     glBegin(GL_QUADS);
 
+    //draw store items
     for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
         if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
 
+        int item_id, cost;
         Item::get_nanite_store_item(level, xslot, yslot, &item_id, &cost);
-        if (item_id == NULL_ITEM) continue;
+        //if (item_id == NULL_ITEM) continue;
 
-        int tex_id = Item::get_sprite_index_for_type(item_id);
+        //int tex_id = Item::get_sprite_index_for_type(item_id);
+        int tex_id = ERROR_SPRITE;
 
-        const float x = xoff + slot_size*xslot + nanite_render_width;
-        const float y = yoff - slot_size*yslot;
+        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
+        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
 
-        const float w = 32.0;
+        const float w = 32.0f;
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
-        
+
         const float tx_min = (1.0/iw)*(tex_id % iiw);
         const float ty_min = (1.0/iw)*(tex_id / iiw);
         const float tx_max = tx_min + 1.0/iw;
@@ -230,6 +233,7 @@ void AgentNaniteUI::draw()
     {
         if (xslot == xdim-1 && yslot == ydim-1) continue;
 
+        int item_id, cost;
         Item::get_nanite_store_item(level,xslot,yslot, &item_id, &cost);
         if (item_id == NULL_ITEM) continue;
 
