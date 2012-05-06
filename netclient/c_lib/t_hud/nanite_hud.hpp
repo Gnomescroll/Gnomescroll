@@ -48,13 +48,12 @@ class AgentNaniteUI : public UIElement
 
     int width()
     {
-        return xdim*slot_size + xdim*inc1 + inc2*2 + nanite_render_width;
+        return nanite_render_width;
     }
 
     int height()
     {
-        return nanite_render_height + inc2*2;
-        //return ydim*slot_size + ydim*inc1 + inc2*2 + nanite_render_height;
+        return nanite_render_height;
     }
 
     int get_slot_at(int px, int py);
@@ -64,7 +63,7 @@ class AgentNaniteUI : public UIElement
 int AgentNaniteUI::get_slot_at(int px, int py)
 {
     //pixels from upper left
-    px -= xoff;
+    px -= xoff + nanite_render_width;
     py = yoff - (_yresf - py);
 
     //py -= yoff;
@@ -92,7 +91,7 @@ int AgentNaniteUI::get_slot_at(int px, int py)
 
 void AgentNaniteUI::handle_ui_event(int px, int py)
 {
-    px -= xoff;
+    px -= xoff + nanite_render_width;
     py = yoff - (_yresf - py);
 
     float width  = xdim*slot_size; //fix
@@ -109,9 +108,9 @@ void AgentNaniteUI::handle_ui_event(int px, int py)
     //nanite region
     assert(xslot >= 0 && xslot < xdim && yslot >= 0 && yslot < ydim);
 
-    if(xslot <= 3)
+    if (xslot <= 3)
     {
-        if(xslot == 3 && yslot == 3)
+        if (xslot == 3 && yslot == 3)
         {
             //pickup item being eaten (if it exists)
             //inventory slot 0
@@ -124,7 +123,7 @@ void AgentNaniteUI::handle_ui_event(int px, int py)
 
 
 
-    if(xslot == 5 && yslot == 3)
+    if (xslot == 5 && yslot == 3)
     {
         //pickup nannites from hand
         //dropoff nannites from hand
@@ -135,8 +134,6 @@ void AgentNaniteUI::handle_ui_event(int px, int py)
     {
         //item purchase
     }
-
-
 }
 
 //221x147
@@ -152,8 +149,6 @@ void AgentNaniteUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    //const float w = xdim*slot_size; //221
-    //const float h = ydim*slot_size; //147
     const float w = nanite_render_width;
     const float h = nanite_render_height;
 
@@ -192,21 +187,20 @@ void AgentNaniteUI::draw()
 
     glBegin(GL_QUADS);
 
-    for (int xslot=4; xslot<xdim; xslot++)
+    for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
-        if(xslot == xdim-1 && yslot == ydim-1) continue;
+        if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
 
-        Item::get_nanite_store_item(level,xslot,yslot, &item_id, &cost);
-        if(item_id == -1 ) continue;
+        Item::get_nanite_store_item(level, xslot, yslot, &item_id, &cost);
+        if (item_id == NULL_ITEM) continue;
 
         int tex_id = Item::get_sprite_index_for_type(item_id);
 
-        const float x = xoff+ 37*xslot;
-        const float y = yoff- 37*yslot;
+        const float x = xoff + slot_size*xslot + nanite_render_width;
+        const float y = yoff - slot_size*yslot;
 
         const float w = 32.0;
-
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
         
@@ -231,13 +225,13 @@ void AgentNaniteUI::draw()
     glEnd();
 
     //draw text for item cost in upper right
-    for (int xslot=4; xslot<xdim; xslot++)
+    for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
-        if(xslot == xdim-1 && yslot == ydim-1) continue;
+        if (xslot == xdim-1 && yslot == ydim-1) continue;
 
         Item::get_nanite_store_item(level,xslot,yslot, &item_id, &cost);
-        if(item_id == -1 ) continue;
+        if (item_id == NULL_ITEM) continue;
 
         //const float x = xoff+ 37*xslot;
         //const float y = yoff- 37*yslot;

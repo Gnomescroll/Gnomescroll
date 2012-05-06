@@ -20,24 +20,24 @@ namespace Item
 
 class NaniteStoreItem
 {
-	public:
+    public:
 
-	int item_id;
-	int nanite_cost;
+    int item_id;
+    int nanite_cost;
 
-	int level;
-	int xslot;
-	int yslot;
+    int level;
+    int xslot;
+    int yslot;
 
-	NaniteStoreItem()
-	{
-		item_id = 0;
-		nanite_cost = 0;
-		
-		level =-1;
-		xslot =-1;
-		yslot =-1;
-	}
+    NaniteStoreItem()
+    {
+        item_id = NULL_ITEM;
+        nanite_cost = NULL_COST;
+        
+        level = NULL_ITEM_LEVEL;
+        xslot = NULL_SLOT;
+        yslot = NULL_SLOT;
+    }
 };
 
 }

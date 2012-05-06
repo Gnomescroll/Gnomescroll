@@ -25,7 +25,7 @@ class AgentContainerUI : public UIElement
 
     int width()
     {
-        return xdim*slot_size + (xdim-1)*inc1 + inc2*2;
+        return xdim*slot_size + (xdim-1)*inc1;
     }
 
     int height()

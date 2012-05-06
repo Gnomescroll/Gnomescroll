@@ -22,7 +22,7 @@ void init_properties()
 
     assert(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
-    nanite_store_item_array = new NaniteStoreItem[256];
+    nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
 }
 
 void tear_down_properties()
@@ -168,7 +168,7 @@ int get_max_durability(int item_type)
 
 void get_nanite_store_item(int level, int xslot, int yslot, int* item_id, int* cost)
 {
-    for(int i=0; i<256; i++)
+    for(int i=0; i<MAX_ITEMS; i++)
     {
         class NaniteStoreItem* n = &nanite_store_item_array[i];
         if(n->level == level && n->xslot == xslot && n->yslot == yslot)
@@ -181,7 +181,7 @@ void get_nanite_store_item(int level, int xslot, int yslot, int* item_id, int* c
 
     //printf("get_nanite_store_item error: level, xslot, yslot = %i %i %i does not exist\n",
     // level, xslot, yslot);
-    *item_id = -1;
+    *item_id = NULL_ITEM;
     *cost = 0;
 
 }

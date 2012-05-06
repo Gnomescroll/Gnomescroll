@@ -7,6 +7,8 @@ const int NULL_DURABILITY = 0xffff;
 const int NULL_ENERGY = 0xffff;
 const int NULL_CONTAINER = 0xffff;
 const int NULL_PARTICLE = -1;
+const int NULL_ITEM_LEVEL = -1;
+const int NULL_COST = 0;
 const int ERROR_SPRITE = 48;
 
 const int AGENT_CONTAINER_X = 6;

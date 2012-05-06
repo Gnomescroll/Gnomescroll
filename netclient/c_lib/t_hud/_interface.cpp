@@ -314,20 +314,18 @@ void draw_hud()
 void init()
 {
     agent_container = new AgentContainerUI;
-    agent_container->xoff = (_xresf - agent_container->width()) / 2;
-    agent_container->yoff = -150.0 + _yresf/2 - (agent_container->height()) / 2;
+    agent_container->xoff = (_xresf - agent_container->width())/2;
+    agent_container->yoff = -150.0 + _yresf/2 - (agent_container->height())/2;
     agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
-    agent_toolbelt->xoff = (_xresf - agent_toolbelt->width()) / 2;
-    //agent_toolbelt->yoff = _yresf - (agent_toolbelt->border + agent_toolbelt->inc2);
+    agent_toolbelt->xoff = (_xresf - agent_toolbelt->width())/2;
     agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
-    //printf("toolbelt height = %d\n", agent_toolbelt->height());
     agent_toolbelt->init();
 
     nanite_container = new AgentNaniteUI;
-    nanite_container->xoff = (_xresf - nanite_container->width()) / 2;
-    nanite_container->yoff = 150.0 + _yresf/2 - (nanite_container->height()) / 2;
+    nanite_container->xoff = (_xresf - nanite_container->width())/2;
+    nanite_container->yoff = (_yresf + nanite_container->height())/2;
     nanite_container->init();
 
     grabbed_icon_stack_text = new HudText::Text;
