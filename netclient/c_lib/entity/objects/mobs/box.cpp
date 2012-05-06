@@ -373,15 +373,14 @@ void tick_mob_robot_box(Object* object)
 
 void update_mob_robot_box(Object* object)
 {
-    //return;
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
     
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
-    //Vec3 angles = physics->get_angles();
-    //vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
+    Vec3 angles = physics->get_angles();
+    vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
     physics->changed = false;    // reset changed state
 }
 
