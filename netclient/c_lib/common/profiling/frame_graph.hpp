@@ -1,6 +1,6 @@
 #pragma once
 
-int FRAME_RATE_THOTTLE_ENABLED = 1;
+int FRAME_RATE_THOTTLE_ENABLED = 0;
 int FRAME_RATE_THOTTLE_TARGET = 15; //ms for 60, 33 for 30
 
 #include <common/time/physics_timer.hpp>

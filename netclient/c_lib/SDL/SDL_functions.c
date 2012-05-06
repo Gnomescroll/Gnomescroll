@@ -71,7 +71,7 @@ int DisplayBox()
 int VersionMismatchBox(int local_version, int server_version)
 {
     #ifdef _WIN32
-    char message_fmt[] = "Version out of date!\nYour version: %d\nServer version: %d\nInstall latest version from website\nhttp://gnomescroll.com";
+    char message_fmt[] = "Version out of date!\nYour version: %d\nServer version: %d\nInstall new version from \nhttp://gnomescroll.com";
     char* message = (char*)malloc((sizeof(message_fmt) + 1 + 20 - 4) * sizeof(char));
     sprintf(message, message_fmt, local_version, server_version);
     char title[] = "Version out of date!";
