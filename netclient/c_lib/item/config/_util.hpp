@@ -1,6 +1,7 @@
 #pragma once
 
 #include <item/common/enum.hpp>
+#include <item/common/struct.hpp>
 
 #if DC_CLIENT
 #include <SDL/texture_sheet_loader.hpp>
@@ -105,5 +106,47 @@ void sprite_def(int spritesheet, int xpos, int ypos) {}
 void sprite_def(int alias) {}
 int sprite_alias(int spritesheet, int xpos, int ypos) { return 0; }
 #endif
+
+}
+
+namespace Item
+{
+
+/*
+    int item_id;
+    int nanite_cost;
+
+    int level;
+    int slotx;
+    int sloty;
+*/
+
+int _current_nanite_item_id = 0;
+int _current_nanite_item_cost = 0;
+
+void nanite_item_def(const char* item_name, int cost);
+void nanite_set(int cost, int slotx, int sloty);
+
+
+void nanite_item_def(const char* item_name, int cost)
+{
+    _current_nanite_item_id = dat_get_item_id(item_name);
+    _current_nanite_item_cost = cost;
+}
+
+void nanite_set(int level, int slotx, int sloty)
+{
+    class NaniteStoreItem* n = &nanite_store_item_array[_current_nanite_item_id];
+
+    n->item_id = _current_nanite_item_id;
+    n->nanite_cost = _current_nanite_item_cost;
+    n->level = level;
+    n->slotx = slotx;
+    n->sloty = sloty;
+
+    _current_nanite_item_id++;
+
+}
+
 
 }

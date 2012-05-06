@@ -2,6 +2,8 @@
 
 #include <item/_interface.hpp>
 #include <item/common/constant.hpp>
+#include <item/common/struct.hpp>
+
 #include <item/config/item_attribute.hpp>
 
 namespace Item
@@ -11,7 +13,7 @@ namespace Item
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 int group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
-extern class NaniteStoreItem* nanite_store_item_array = NULL;
+class NaniteStoreItem* nanite_store_item_array = NULL;
 
 void init_properties()
 {
@@ -20,7 +22,7 @@ void init_properties()
 
     assert(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
-    nanite_store_item_array = new NaniteStoreItem[32];
+    nanite_store_item_array = new NaniteStoreItem[256];
 }
 
 void tear_down_properties()
@@ -136,7 +138,7 @@ int dat_get_item_id(const char* name)
     int id = get_item_id((char*) name);
     if(id == -1)
     {
-        printf("Dat Loading Failure:item_id, dat failure, item %s does not exist! \n", name);
+        printf("Dat Loading Failure:item_id, dat failure, item '%s' does not exist! \n", name);
         GS_ABORT();
     }   
     return id;

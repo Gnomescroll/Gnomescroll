@@ -5,10 +5,10 @@
 namespace Item
 {
 
-void init_nanite_store()
+void load_nanite_store()
 {
 
-	
+
 
 }
 
