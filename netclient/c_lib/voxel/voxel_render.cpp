@@ -159,8 +159,8 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 
 void Voxel_render_list::update_vertex_buffer_object()
 {
-    if (!this->needs_update) return;
-    this->needs_update = false;
+    //if (!this->needs_update) return;
+    //this->needs_update = false;
     
     Voxel_volume* vv;
 
