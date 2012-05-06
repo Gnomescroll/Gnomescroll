@@ -21,11 +21,11 @@ void print_list(char* name, void* ptr)
 template <class Object_state, int max_n=1024>
 class Object_list {
     private:
-        #if PRODUCTION
-        const char* name() { return "Object"; }
-        #else
+        //#if PRODUCTION
+        //const char* name() { return "Object"; }
+        //#else
         virtual const char* name() = 0;
-        #endif
+        //#endif
 
     protected:
         int id_c;
