@@ -166,7 +166,8 @@ void Voxel_render_list::update_vertex_buffer_object()
         if(this->render_list[i] == NULL ) continue;
 
         vv = this->render_list[i];
-        if( vv->needs_vbo_update == true || !this->render_list[i]->draw )
+        //if( vv->needs_vbo_update == true || !this->render_list[i]->draw )
+        if( vv->needs_vbo_update == true)
         {
             vv->needs_vbo_update = false;
             volumes_updated++;
@@ -176,8 +177,8 @@ void Voxel_render_list::update_vertex_buffer_object()
     }
 
     _vbo->vnum = v_num;
-    printf("v_num = %i \n");
-    
+    //printf("v_num = %i \n", v_num);
+
     if(v_num == 0) return;
     if(volumes_updated == 0) return; //return if nothing to update
 
@@ -193,7 +194,8 @@ void Voxel_render_list::update_vertex_buffer_object()
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
+        //if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
+        if(this->render_list[i] == NULL) continue;
         vv = this->render_list[i];
 
         if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
