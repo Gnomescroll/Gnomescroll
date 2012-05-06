@@ -309,19 +309,16 @@ void set_map_size(int x, int y, int z)
 int get_height_at(int x, int y)
 {
     for (int i=map_dim.z-1; i>=0; i--)
-    {
         if (isSolid(_get(x,y,i)))
             return i;
-    }
     return 0;
 }
 
 #if DC_CLIENT
 unsigned char get_cached_height(int x, int y)
 {
-    if (t_map::main_map != NULL)
-        return t_map::main_map->get_cached_height(x,y);
-    return 0;
+    assert(t_map::main_map != NULL);
+    return t_map::main_map->get_cached_height(x,y);
 }
 #endif
 

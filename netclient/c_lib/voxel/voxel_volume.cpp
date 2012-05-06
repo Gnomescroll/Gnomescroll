@@ -3,6 +3,9 @@
 #include <state/client_state.hpp>
 #include <state/server_state.hpp>
 #include <voxel/constants.hpp>
+#include <entity/object/object.hpp>
+#include <entity/objects.hpp>
+#include <entity/components/voxel_model.hpp>
 
 #if DC_CLIENT
 #include <voxel/voxel_render.hpp>
@@ -700,26 +703,32 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, u
 
 static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
 {
-    //using Monsters::Slime;
+    using Components::VoxelModelComponent;
     Agent_state* agent;
-    //Slime* slime;
+    Objects::Object* object;
+    VoxelModelComponent* vox_component;
     Voxel_volume* vv;
     switch (type)
     {
-        //case OBJECT_AGENT:
-            //agent = STATE::agent_list->get(id);
-            //if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
-            //vv = ((Agent_state*)agent)->vox->get_part(part);
-            //if (vv == NULL) return;
-            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            //break;
-        //case OBJECT_MONSTER_BOMB:
-            //slime = (Slime*)STATE::object_list->get(OBJECT_MONSTER_BOMB, id);
-            //if (slime == NULL || slime->voxel_properties.vox == NULL) return;
-            //vv = slime->voxel_properties.vox->get_part(part);
-            //if (vv == NULL) return;
-            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            //break;
+        case OBJECT_AGENT:
+            agent = STATE::agent_list->get(id);
+            if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
+            vv = ((Agent_state*)agent)->vox->get_part(part);
+            if (vv == NULL) return;
+            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            break;
+            
+        case OBJECT_MONSTER_BOMB:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_SPAWNER:
+            object = Objects::get(OBJECT_MONSTER_BOMB, id);
+            if (object == NULL) return;
+            vox_component = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            if (vox_component == NULL || vox_component->vox == NULL) return;
+            vv = vox_component->vox->get_part(part);
+            if (vv == NULL) return;
+            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            break;
         default: break;
     }
 }
