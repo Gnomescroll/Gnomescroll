@@ -169,7 +169,6 @@ void Voxel_render_list::update_vertex_buffer_object()
         if (this->render_list[i] == NULL ) continue;
 
         vv = this->render_list[i];
-        //if (!vv->draw) continue;
         if (vv->needs_vbo_update == true )
         {
             vv->needs_vbo_update = false;
@@ -204,7 +203,6 @@ void Voxel_render_list::update_vertex_buffer_object()
 
         if (vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
         if (vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
-
 
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         vv->vvl.voff = index;
@@ -340,15 +338,16 @@ void Voxel_render_list_manager::draw()
         {
             //if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
             if (vrl->render_list[i] == NULL) continue;
-            if (_vbo->vnum ==0 ) continue;
             Voxel_volume* vv = vrl->render_list[i];
+            if (!vv->draw) continue;
 
-            if (!sphere_fulstrum_test(
-                vv->world_matrix.v[3].x,
-                vv->world_matrix.v[3].y,
-                vv->world_matrix.v[3].z,
-                vv->radius
-            )) continue;
+            // sphere test was done in the model update pass
+            //if (!sphere_fulstrum_test(
+                //vv->world_matrix.v[3].x,
+                //vv->world_matrix.v[3].y,
+                //vv->world_matrix.v[3].z,
+                //vv->radius
+            //)) continue;
 
             //vrl->update_vertex_buffer_object(); 
             if (vv->vvl.vnum == 0) continue;
