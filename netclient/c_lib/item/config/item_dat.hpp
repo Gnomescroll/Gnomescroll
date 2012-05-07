@@ -111,6 +111,10 @@ void load_item_dat()
     sprite_def(i0, 1,4);
     s.max_stack_size = 8;
 
+    item_def(11, IG_NANITE_COIN, "nanite_coin");
+    sprite_def(i1, 2, 7);
+    s.max_stack_size = 99;
+
     end_item_dat();
 }
 
