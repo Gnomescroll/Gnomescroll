@@ -34,6 +34,9 @@ typedef enum
 
     // both
     FULL_HAND_SWAP_WITH_SLOT,       // swap hand with slot
+
+    // nanite shopping
+    PURCHASE_ITEM_FROM_NANITE,
 } ContainerActionType;
 
 typedef enum

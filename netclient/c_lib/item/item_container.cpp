@@ -255,8 +255,8 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             else
             {   // shopping
                 if (hand_empty)
-                {
-                    // send purchase packet
+                {   // send purchase packet
+                    action = PURCHASE_ITEM_FROM_NANITE;
                 }
             }
                 
