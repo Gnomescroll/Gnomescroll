@@ -79,6 +79,7 @@ void tick()
 
     //ServerState::spawn_items(2);
 
+    Item::digest_nanite_food();
     Toolbelt::update_toolbelt_items();
 }
  

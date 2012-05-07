@@ -82,6 +82,8 @@ class Item* create_item(int item_type);
 
 void agent_died(int agent_id);
 
+void digest_nanite_food();
+
 }
 #endif
 
