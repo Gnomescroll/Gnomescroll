@@ -22,9 +22,9 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
 
 //network
 //  tell client to assign container to an agent
-void send_container_assign(class ItemContainer* container, int client_id);
-void send_container_create(class ItemContainer* container, int client_id);
-void send_container_delete(class ItemContainer* container, int client_id);
+void send_container_assign(class ItemContainerInterface* container, int client_id);
+void send_container_create(class ItemContainerInterface* container, int client_id);
+void send_container_delete(class ItemContainerInterface* container, int client_id);
 #endif
 
 class ItemContainerInterface

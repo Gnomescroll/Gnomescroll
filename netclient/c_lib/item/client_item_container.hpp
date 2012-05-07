@@ -11,7 +11,7 @@ namespace Item
  * Simulate an ItemContainer for rendering/predictive purpose
  */
 
-class ItemContainerUI
+class ItemContainerUIInterface
 {
     public:
         int id;
@@ -36,26 +36,6 @@ class ItemContainerUI
         bool is_valid_slot(int slot)
         {
             return (slot >= 0 && slot < this->slot_max);
-        }
-
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-            for (int i=0; i<this->slot_max; i++)
-            {
-                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
-                if (this->slot_type[i] == item_type   // stacks
-                && (get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
-                    return i;
-            }
-            return NULL_SLOT;
-        }
-
-        int get_empty_slot()
-        {
-            for (int i=0; i<this->slot_max; i++)
-                if (this->slot_type[i] == NULL_ITEM_TYPE)
-                    return i;
-            return NULL_SLOT;
         }
 
         int get_slot_durability(int slot)
@@ -117,6 +97,56 @@ class ItemContainerUI
             }
         }
 
+        virtual bool can_insert_item(int slot, int item_type) = 0;
+        virtual int get_stackable_slot(int item_type, int stack_size) = 0;
+        virtual int get_empty_slot() = 0;
+
+        virtual void init(ItemContainerType type, int xdim, int ydim) = 0;
+
+        virtual ~ItemContainerUIInterface()
+        {
+           if (this->slot_type != NULL) delete[] this->slot_type;
+           if (this->slot_stack != NULL) delete[] this->slot_stack;
+           if (this->slot_durability != NULL) delete[] this->slot_durability;
+        }
+
+        explicit ItemContainerUIInterface(int id)
+        : id(id), type(CONTAINER_TYPE_NONE),
+        xdim(0), ydim(0),
+        slot_max(0), slot_count(0),
+        slot_type(NULL), slot_stack(NULL), slot_durability(NULL)
+        {}
+};
+
+class ItemContainerUI: public ItemContainerUIInterface
+{
+    public:
+
+        bool can_insert_item(int slot, int item_type)
+        {
+            return true;
+        }
+
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+            for (int i=0; i<this->slot_max; i++)
+            {
+                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
+                if (this->slot_type[i] == item_type   // stacks
+                && (get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
+                    return i;
+            }
+            return NULL_SLOT;
+        }
+
+        int get_empty_slot()
+        {
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot_type[i] == NULL_ITEM_TYPE)
+                    return i;
+            return NULL_SLOT;
+        }
+
         void init(ItemContainerType type, int xdim, int ydim)
         {
             this->type = type;
@@ -132,18 +162,67 @@ class ItemContainerUI
             for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
         }
 
-        ~ItemContainerUI()
+        explicit ItemContainerUI(int id)
+        : ItemContainerUIInterface(id)
+        {}
+};
+
+class ItemContainerNaniteUI: public ItemContainerUIInterface
+{
+    public:
+
+        bool can_insert_item(int slot, int item_type)
         {
-           if (this->slot_type != NULL) delete[] this->slot_type;
-           if (this->slot_stack != NULL) delete[] this->slot_stack;
-           if (this->slot_durability != NULL) delete[] this->slot_durability;
+            assert(this->is_valid_slot(slot));
+            if (slot == 0)
+            {   // check against nanite's food list
+                return true;
+            }
+            else if (slot == this->slot_max-1)
+            {   // nanite coins only
+                if (item_type == get_item_type((char*)"nanite_coin")) return true;
+                return false;
+            }
+            return false;   // no other slots accept insertions
         }
 
-        explicit ItemContainerUI(int id)
-        : id(id), type(CONTAINER_TYPE_NONE),
-        xdim(0), ydim(0),
-        slot_max(0), slot_count(0),
-        slot_type(NULL), slot_stack(NULL), slot_durability(NULL)
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+            // check food slot
+            if (this->slot_type[0] == item_type
+            && (get_max_stack_size(this->slot_type[0]) - this->slot_stack[0]) >= stack_size)
+                return 0;
+            // check coin slot
+            if (this->slot_type[this->slot_max-1] == item_type
+            && (get_max_stack_size(this->slot_type[this->slot_max-1]) - this->slot_stack[this->slot_max-1]) >= stack_size)
+                return this->slot_max-1;
+            return NULL_SLOT;
+        }
+
+        int get_empty_slot()
+        {
+            // only food slot can be empty slot
+            if (this->slot_type[0] == NULL_ITEM_TYPE) return 0;
+            return NULL_SLOT;
+        }
+
+        void init(ItemContainerType type, int xdim, int ydim)
+        {
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + 1; // +1 for the food slot
+            assert(this->slot_max < NULL_SLOT);
+            this->slot_type = new int[this->slot_max];
+            this->slot_stack = new int[this->slot_max];
+            this->slot_durability = new int[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
+            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
+            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
+        }
+
+        explicit ItemContainerNaniteUI(int id)
+        : ItemContainerUIInterface(id)
         {}
 };
 

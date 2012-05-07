@@ -52,7 +52,7 @@ void ItemContainerInterface::remove_item(int slot)
 
 /* Initializer */
 
-void init_container(ItemContainer* container, ItemContainerType type)
+void init_container(ItemContainerInterface* container, ItemContainerType type)
 {
     switch (type)
     {
@@ -127,7 +127,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
 
         // get container
         #if DC_CLIENT
-        ItemContainerUI* container = get_container_ui(id);
+        ItemContainerUIInterface* container = get_container_ui(id);
         #endif
         #if DC_SERVER
         ItemContainerInterface* container = get_container(id);
@@ -222,18 +222,27 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     if (slot_empty)
                     {   // place food
                         #if DC_CLIENT
-                        container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                        hand_item_type = NULL_ITEM_TYPE;
-                        hand_item_stack = 1;
-                        hand_item_durability = NULL_DURABILITY;
+                        bool can_insert = container->can_insert_item(slot, hand_item_type);
                         #endif
                         #if DC_SERVER
-                        container->insert_item(slot, hand_item);
-                        send_container_insert(client_id, hand_item, container->id, slot);
-                        hand_item = NULL_ITEM;
-                        send_hand_remove(client_id);
+                        bool can_insert = container->can_insert_item(slot, hand_item);
                         #endif
-                        action = FULL_HAND_TO_EMPTY_SLOT;
+                        if (can_insert)
+                        {
+                            #if DC_CLIENT
+                            container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
+                            hand_item_type = NULL_ITEM_TYPE;
+                            hand_item_stack = 1;
+                            hand_item_durability = NULL_DURABILITY;
+                            #endif
+                            #if DC_SERVER
+                            container->insert_item(slot, hand_item);
+                            send_container_insert(client_id, hand_item, container->id, slot);
+                            hand_item = NULL_ITEM;
+                            send_hand_remove(client_id);
+                            #endif
+                            action = FULL_HAND_TO_EMPTY_SLOT;
+                        }
                     }
                     // dont swap
                 }
@@ -416,7 +425,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
 
     if (slot == NULL_SLOT || id < 0) return action;
     #if DC_CLIENT
-    ItemContainerUI* container = get_container_ui(id);
+    ItemContainerUIInterface* container = get_container_ui(id);
     #endif
     #if DC_SERVER
     ItemContainerInterface* container = get_container(id);
@@ -608,7 +617,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
 #include <item/net/StoC.hpp>
 
 //  tell client to assign container to an agent
-void send_container_assign(class ItemContainer* container, int client_id)
+void send_container_assign(class ItemContainerInterface* container, int client_id)
 {
     class assign_item_container_StoC msg;
     msg.container_id = container->id;
@@ -617,7 +626,7 @@ void send_container_assign(class ItemContainer* container, int client_id)
     msg.sendToClient(client_id);
 }
 
-void send_container_create(class ItemContainer* container, int client_id)
+void send_container_create(class ItemContainerInterface* container, int client_id)
 {
     class create_item_container_StoC msg;
     msg.container_id = container->id;
@@ -626,7 +635,7 @@ void send_container_create(class ItemContainer* container, int client_id)
     msg.sendToClient(client_id);
 }
 
-void send_container_delete(class ItemContainer* container, int client_id)
+void send_container_delete(class ItemContainerInterface* container, int client_id)
 {
     class delete_item_container_StoC msg;
     msg.container_id = container->id;

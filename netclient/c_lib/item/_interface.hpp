@@ -7,8 +7,10 @@ namespace Item
 
 void init();
 void teardown();
+
 class ItemContainerInterface* get_container(int id);
 ItemContainerType get_container_type(int container_id);
+void destroy_container(int container_id);
 
 class Item* get_item(ItemID id);
 class Item* get_item_object(ItemID id); // alias for get_item
@@ -32,6 +34,9 @@ CLIENT
 #if DC_CLIENT
 namespace Item
 {
+
+class ItemContainerInterface* create_container(ItemContainerType type, int id);
+
 void update_container_ui_from_state();
 
 void open_container();
@@ -40,7 +45,7 @@ void close_container();
 void nanite_region_click_event(int container_id);
 
 int get_event_container_id(int event_id);
-class ItemContainerUI* get_container_ui(int container_id);
+class ItemContainerUIInterface* get_container_ui(int container_id);
 ItemID get_toolbelt_item(int slot);
 
 class Item* create_item(int item_type, ItemID item_id);
@@ -81,6 +86,7 @@ void assign_container_to_agent(int agent_id, int client_id);
 class Item* create_item(int item_type);
 
 void agent_died(int agent_id);
+void agent_quit(int agent_id);
 
 void digest_nanite_food();
 

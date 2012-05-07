@@ -70,6 +70,14 @@ ItemContainerInterface* get_container(int id)
     return container;
 }
 
+void destroy_container(int id)
+{
+    ItemContainerInterface* container = get_container(id);
+    if (container == NULL) return;
+    if (container->type == AGENT_NANITE) item_container_nanite_list->destroy(id);
+    else destroy_container(id);
+}
+
 ItemContainerType get_container_type(int container_id)
 {
     ItemContainerInterface* container = get_container(container_id);
@@ -187,6 +195,12 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
 namespace Item
 {
 
+ItemContainerInterface* create_container(ItemContainerType type, int id)
+{
+    if (type == AGENT_NANITE) return item_container_nanite_list->create(id);
+    else return item_container_list->create(id);
+}
+
 void update_container_ui_from_state()
 {
     if (player_container_ui != NULL) player_container_ui->load_data(player_container->slot);
@@ -220,7 +234,7 @@ int get_event_container_id(int event_id)
     return container_event[event_id];
 }
 
-ItemContainerUI* get_container_ui(int container_id)
+ItemContainerUIInterface* get_container_ui(int container_id)
 {
     assert(container_id != NULL_CONTAINER);
     if (player_container_ui != NULL && player_container_ui->id == container_id) return player_container_ui;
@@ -250,21 +264,21 @@ ItemID* get_container_contents(int container_id)
 
 int* get_container_ui_types(int container_id)
 {
-    ItemContainerUI* container = get_container_ui(container_id);
+    ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return NULL;
     return container->slot_type;
 }
 
 int* get_container_ui_stacks(int container_id)
 {
-    ItemContainerUI* container = get_container_ui(container_id);
+    ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return NULL;
     return container->slot_stack;
 }
 
 int* get_container_ui_durabilities(int container_id)
 {
-    ItemContainerUI* container = get_container_ui(container_id);
+    ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return NULL;
     return container->slot_durability;
 }
@@ -272,7 +286,7 @@ int* get_container_ui_durabilities(int container_id)
 void set_ui_slot_durability(int container_id, int slot, int durability)
 {
     if (slot == NULL_SLOT) return;
-    ItemContainerUI* container = get_container_ui(container_id);
+    ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return;
     int item_type = container->get_slot_type(slot);
     int item_stack = container->get_slot_stack(slot);
@@ -358,7 +372,7 @@ int get_agent_toolbelt(int agent_id)
     return agent_toolbelt_list[agent_id];
 }
 
-static void assign_container_to_agent(ItemContainer* container, ItemContainerType type, int* container_list, int agent_id, int client_id)
+static void assign_container_to_agent(ItemContainerInterface* container, ItemContainerType type, int* container_list, int agent_id, int client_id)
 {
     assert(container != NULL);
     assert(container_list[agent_id] == NULL_ITEM);
@@ -391,7 +405,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     Item* mining_laser = create_item(7);
     auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
     
-    ItemContainer* agent_nanite = item_container_list->create();
+    ItemContainerNanite* agent_nanite = item_container_nanite_list->create();
     assign_container_to_agent(agent_nanite, AGENT_NANITE, agent_nanite_list, agent_id, client_id);
 }
 
@@ -418,6 +432,16 @@ void agent_died(int agent_id)
         container->remove_item(i);
         ItemParticle::throw_item(agent_id, item_id);
     }
+}
+
+void agent_quit(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    // destroy containers
+    agent_died(agent_id);
+    destroy_container(agent_container_list[agent_id]);
+    destroy_container(agent_toolbelt_list[agent_id]);
+    destroy_container(agent_nanite_list[agent_id]);
 }
 
 void digest_nanite_food()

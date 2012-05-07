@@ -35,7 +35,7 @@ static void send_container_alpha_action(ContainerActionType action, int containe
     }
     else
     {
-        ItemContainerUI* container = get_container_ui(container_id);
+        ItemContainerUIInterface* container = get_container_ui(container_id);
         assert(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
@@ -71,7 +71,7 @@ static void send_container_beta_action(ContainerActionType action, int container
     }
     else
     {
-        ItemContainerUI* container = get_container_ui(container_id);
+        ItemContainerUIInterface* container = get_container_ui(container_id);
         assert(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
