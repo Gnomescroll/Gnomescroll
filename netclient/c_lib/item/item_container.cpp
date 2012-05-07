@@ -202,7 +202,19 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                 {
                     if (!slot_empty)
                     {   // pick up food
-                        
+                        #if DC_CLIENT
+                        container->remove_item(slot);
+                        hand_item_type = slot_item_type;
+                        hand_item_stack = slot_item_stack;
+                        hand_item_durability = slot_item_durability;
+                        #endif
+                        #if DC_SERVER
+                        container->remove_item(slot);
+                        send_container_remove(client_id, container->id, slot);
+                        hand_item = slot_item;
+                        send_hand_insert(client_id, hand_item);
+                        #endif
+                        action = FULL_SLOT_TO_EMPTY_HAND;                        
                     }
                 }
                 else
