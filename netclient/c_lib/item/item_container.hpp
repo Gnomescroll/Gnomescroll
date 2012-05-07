@@ -64,8 +64,8 @@ class ItemContainerInterface
             this->owner = owner;
         }
 
-        void insert_item(int slot, ItemID item_id);
-        void remove_item(int slot);
+        virtual void insert_item(int slot, ItemID item_id) = 0;
+        virtual void remove_item(int slot) = 0;
 
         virtual bool can_insert_item(int slot, ItemID item_id) = 0;
 
@@ -115,6 +115,9 @@ class ItemContainer: public ItemContainerInterface
                     return i;
             return NULL_SLOT;
         }
+
+        void insert_item(int slot, ItemID item_id);
+        void remove_item(int slot);
 
         /* initializers */
 
@@ -179,6 +182,9 @@ class ItemContainerNanite: public ItemContainerInterface
             if (this->slot[0] == NULL_ITEM) return 0;
             return NULL_SLOT;
         }
+
+        void insert_item(int slot, ItemID item_id);
+        void remove_item(int slot);
 
         /* initializers */
 

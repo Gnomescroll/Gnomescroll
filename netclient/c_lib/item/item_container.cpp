@@ -18,7 +18,7 @@ namespace Item
 
 /* ItemContainer methods */
 
-void ItemContainerInterface::insert_item(int slot, ItemID item_id)
+void ItemContainer::insert_item(int slot, ItemID item_id)
 {
     assert(item_id != NULL_ITEM);
     assert(this->is_valid_slot(slot));
@@ -31,7 +31,7 @@ void ItemContainerInterface::insert_item(int slot, ItemID item_id)
     item->container_slot = slot;
 }
 
-void ItemContainerInterface::remove_item(int slot)
+void ItemContainer::remove_item(int slot)
 {
     assert(this->is_valid_slot(slot));
 
@@ -49,6 +49,40 @@ void ItemContainerInterface::remove_item(int slot)
 }
 
 /* Nanite */
+
+void ItemContainerNanite::insert_item(int slot, ItemID item_id)
+{
+    assert(item_id != NULL_ITEM);
+    assert(this->is_valid_slot(slot));
+    this->slot[slot] = item_id;
+    this->slot_count++;
+
+    Item* item = get_item_object(item_id);
+    assert(item != NULL);
+    item->container_id = this->id;
+    item->container_slot = slot;
+
+    #if DC_SERVER
+    if (slot == 0) this->digestion_tick = 0;
+    #endif
+}
+
+void ItemContainerNanite::remove_item(int slot)
+{
+    assert(this->is_valid_slot(slot));
+
+    ItemID item_id = this->slot[slot];
+    if (item_id != NULL_ITEM)
+    {
+        Item* item = get_item_object(this->slot[slot]);
+        assert(item != NULL);
+        item->container_id = this->id;
+        item->container_slot = slot;
+    }
+
+    this->slot[slot] = NULL_ITEM;
+    this->slot_count--;
+}
 
 #if DC_SERVER
 void ItemContainerNanite::digest()
