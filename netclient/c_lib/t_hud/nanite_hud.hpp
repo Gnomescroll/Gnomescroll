@@ -300,7 +300,7 @@ void AgentNaniteUI::draw()
 
 
     // draw food
-    Item::ItemContainer* container = Item::get_container(this->container_id);
+    Item::ItemContainerNanite* container = (Item::ItemContainerNanite*)Item::get_container(this->container_id);
     if (container == NULL) return;
 
     const int food_slot = 0;

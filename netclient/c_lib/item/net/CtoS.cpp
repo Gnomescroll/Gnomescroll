@@ -51,7 +51,7 @@ inline void container_action_alpha_CtoS::handle()
 
     if (action != FULL_HAND_TO_WORLD)
     {
-        ItemContainer* container = item_container_list->get(container_id);
+        ItemContainerInterface* container = get_container(container_id);
         if (container == NULL) return;
         ItemID slot_item = container->get_item(slot);
         if (slot_type != get_item_type(slot_item) || slot_stack != get_stack_size(slot_item))
@@ -89,7 +89,7 @@ inline void container_action_beta_CtoS::handle()
 
     if (action != FULL_HAND_TO_WORLD)
     {
-        ItemContainer* container = item_container_list->get(container_id);
+        ItemContainerInterface* container = get_container(container_id);
         if (container == NULL) return;
         ItemID slot_item = container->get_item(slot);
 

@@ -129,7 +129,7 @@ void update_selected_item_type()
     int agent_id = ClientState::playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return;
     int item_type = NULL_ITEM_TYPE;
-    Item::ItemContainer* toolbelt = Item::get_container(toolbelt_id);
+    Item::ItemContainer* toolbelt = (Item::ItemContainer*)Item::get_container(toolbelt_id);
     if (toolbelt != NULL) item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
     agent_selected_type[agent_id] = item_type;
 }
@@ -158,7 +158,7 @@ void tick_local_agent_selected_item_type(int item_type)
 {
     ClientState::playerAgent_state.action.tick_mining_laser();
     // modify predicted durability
-    Item::ItemContainer* container = Item::get_container(toolbelt_id);
+    Item::ItemContainer* container = (Item::ItemContainer*)Item::get_container(toolbelt_id);
     if (container == NULL) return;
     ItemID item_id = container->get_item(selected_slot);
     Item::Item* item = Item::get_item(item_id);

@@ -7,7 +7,7 @@ namespace Item
 
 void init();
 void teardown();
-class ItemContainer* get_container(int id);
+class ItemContainerInterface* get_container(int id);
 ItemContainerType get_container_type(int container_id);
 
 class Item* get_item(ItemID id);

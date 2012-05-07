@@ -18,7 +18,7 @@ namespace Item
 
 /* ItemContainer methods */
 
-void ItemContainer::insert_item(int slot, ItemID item_id)
+void ItemContainerInterface::insert_item(int slot, ItemID item_id)
 {
     assert(item_id != NULL_ITEM);
     assert(this->is_valid_slot(slot));
@@ -31,7 +31,7 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
     item->container_slot = slot;
 }
 
-void ItemContainer::remove_item(int slot)
+void ItemContainerInterface::remove_item(int slot)
 {
     assert(this->is_valid_slot(slot));
 
@@ -63,7 +63,7 @@ void init_container(ItemContainer* container, ItemContainerType type)
             container->init(AGENT_TOOLBELT, AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
             break;
         case AGENT_NANITE:
-            container->init(AGENT_NANITE, AGENT_NANITE_X, AGENT_NANITE_Y, AGENT_NANITE_EXTRA);
+            container->init(AGENT_NANITE, AGENT_NANITE_X, AGENT_NANITE_Y);
             break;
         default:
             printf("init_container() - Unhandled container type %d\n", type);
@@ -130,7 +130,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
         ItemContainerUI* container = get_container_ui(id);
         #endif
         #if DC_SERVER
-        ItemContainer* container = get_container(id);
+        ItemContainerInterface* container = get_container(id);
         #endif
         assert(container != NULL);
 
@@ -419,7 +419,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     ItemContainerUI* container = get_container_ui(id);
     #endif
     #if DC_SERVER
-    ItemContainer* container = get_container(id);
+    ItemContainerInterface* container = get_container(id);
     #endif
     if (container == NULL) return action;
 

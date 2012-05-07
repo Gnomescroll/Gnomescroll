@@ -87,7 +87,7 @@ int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
     Item* item = get_item(item_id);
     assert(item != NULL);
 
-    ItemContainer* container = get_container(container_id);
+    ItemContainerInterface* container = get_container(container_id);
     assert(container != NULL);
 
     int slot = container->get_stackable_slot(item->type, item->stack_size);

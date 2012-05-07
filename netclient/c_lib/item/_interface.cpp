@@ -20,6 +20,7 @@ namespace Item
 void init()
 {
     item_container_list = new ItemContainerList;
+    item_container_nanite_list = new ItemContainerNaniteList;
     item_list           = new ItemList;
 
     //set_sprite_ids();
@@ -41,6 +42,7 @@ void init()
 void teardown()
 {
     if (item_container_list != NULL) delete item_container_list;
+    if (item_container_nanite_list != NULL) delete item_container_nanite_list;
     if (item_list           != NULL) delete item_list;
 
     #if DC_CLIENT
@@ -60,15 +62,17 @@ void teardown()
 }
 
 
-ItemContainer* get_container(int id)
+ItemContainerInterface* get_container(int id)
 {
     assert(item_container_list != NULL);
-    return item_container_list->get(id);
+    ItemContainerInterface* container = item_container_list->get(id);
+    if (container == NULL) container = item_container_nanite_list->get(id);
+    return container;
 }
 
 ItemContainerType get_container_type(int container_id)
 {
-    ItemContainer* container = get_container(container_id);
+    ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return CONTAINER_TYPE_NONE;
     return container->type;
 }
@@ -129,7 +133,7 @@ void destroy_item(ItemID id)
     if (item == NULL) return;
     int container_id = item->container_id;
     int slot = item->container_slot;
-    ItemContainer* container = get_container(container_id);
+    ItemContainerInterface* container = get_container(container_id);
     if (container != NULL && slot != NULL_SLOT)
     {
         container->remove_item(slot);
@@ -239,7 +243,7 @@ Item* create_item(int item_type, ItemID item_id)
 
 ItemID* get_container_contents(int container_id)
 {
-    ItemContainer* container = item_container_list->get(container_id);
+    ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return NULL;
     return container->slot;
 }
@@ -328,7 +332,7 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot)
     ASSERT_VALID_AGENT_ID(agent_id);
     int toolbelt_id = get_agent_toolbelt(agent_id);
     if (toolbelt_id == NULL_CONTAINER) return NULL_ITEM;
-    ItemContainer* toolbelt = item_container_list->get(toolbelt_id);
+    ItemContainer* toolbelt = (ItemContainer*)get_container(toolbelt_id);
     if (toolbelt == NULL) return NULL_ITEM;
     return toolbelt->get_item(slot);
 }
@@ -405,7 +409,7 @@ void agent_died(int agent_id)
 
     // remove items from agent inventory
     assert(agent_container_list != NULL);
-    ItemContainer* container = get_container(agent_container_list[agent_id]);
+    ItemContainer* container = (ItemContainer*)get_container(agent_container_list[agent_id]);
     if (container == NULL) return;
     for (int i=0; i<container->slot_max; i++)
     {
@@ -418,7 +422,7 @@ void agent_died(int agent_id)
 
 void digest_nanite_food()
 {
-    
+    // nanites need a digestion tick -- need own class
 }
 
 }
