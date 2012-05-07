@@ -116,7 +116,7 @@ class ItemContainer
            if (this->slot != NULL) delete[] this->slot;
         }
 
-        ItemContainer(int id)
+        explicit ItemContainer(int id)
         : id(id), type(CONTAINER_TYPE_NONE),
         xdim(0), ydim(0),
         slot_max(0), slot_count(0), slot(NULL),

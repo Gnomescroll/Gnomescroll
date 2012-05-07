@@ -139,7 +139,7 @@ class ItemContainerUI
            if (this->slot_durability != NULL) delete[] this->slot_durability;
         }
 
-        ItemContainerUI(int id)
+        explicit ItemContainerUI(int id)
         : id(id), type(CONTAINER_TYPE_NONE),
         xdim(0), ydim(0),
         slot_max(0), slot_count(0),
