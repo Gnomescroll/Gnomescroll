@@ -1519,7 +1519,8 @@ void draw_rooms(Room* rooms, int n_rooms, Room* highest, int *highest_room_z, Ro
     *lowest_room_z = lowest_z;
 }
 
-void generate_dungeon(int z, int tile) {
+void generate_dungeon(int z, int tile)
+{
     rect_solver(z);
     resolve_rooms(z, tile);
     build_adjacency_graph();

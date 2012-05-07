@@ -63,7 +63,7 @@ void init_container(ItemContainer* container, ItemContainerType type)
             container->init(AGENT_TOOLBELT, AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
             break;
         case AGENT_NANITE:
-            container->init(AGENT_NANITE, AGENT_NANITE_X, AGENT_NANITE_Y);
+            container->init(AGENT_NANITE, AGENT_NANITE_X, AGENT_NANITE_Y, AGENT_NANITE_EXTRA);
             break;
         default:
             printf("init_container() - Unhandled container type %d\n", type);

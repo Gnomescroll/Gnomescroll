@@ -15,12 +15,14 @@ void init()
 
     // generate floor map
     //_floor(512,512,0,32,1);
-
-    srand(time(NULL));
     
     MapGen::init();
     MapRecipes::simple_map();
     MapGen::teardown();
+
+    Dragon::caves();
+
+    srand(time(NULL));
     
     //t_gen::gen_map();
 

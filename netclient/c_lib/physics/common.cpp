@@ -29,6 +29,11 @@ bool point_in_rect(float px, float py, float rx, float ry, float w, float h)
     return false;
 }
 
+float distancef(float x, float y, float a, float b)
+{
+    return sqrt((a-x)*(a-x) + (b-y)*(b-y));
+}
+
 float distancef(float x, float y, float z, float a, float b, float c)
 {
     return sqrt((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));

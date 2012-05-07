@@ -1,10 +1,10 @@
 #pragma once
 
-#include <template/object_list.hpp>
-
+#include <common/template/object_list.hpp>
 #include <common/random.h>
 
-namespace Dragon {
+namespace Dragon
+{
 
 class Building {
     public:
@@ -143,6 +143,5 @@ class Road_list: public Object_list<Road,ROAD_MAX>
 void l_system();
 void generate(int z=13);
 
-//cython
-void generate_dragon();
-}
+void caves();
+}   // Dragon

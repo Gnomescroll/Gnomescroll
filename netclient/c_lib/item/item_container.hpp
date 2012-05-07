@@ -89,8 +89,19 @@ class ItemContainer
             this->type = type;
             this->xdim = xdim;
             this->ydim = ydim;
-            assert(this->slot_max < NULL_SLOT);
             this->slot_max = xdim*ydim;
+            assert(this->slot_max < NULL_SLOT);
+            this->slot = new ItemID[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+        }
+        
+        void init(ItemContainerType type, int xdim, int ydim, int extra)
+        {
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + extra;
+            assert(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }

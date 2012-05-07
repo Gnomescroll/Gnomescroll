@@ -19,6 +19,7 @@ const int AGENT_TOOLBELT_Y = 1;
 
 const int AGENT_NANITE_X = 4;
 const int AGENT_NANITE_Y = 3;
+const int AGENT_NANITE_EXTRA = 1;
 
 const int CRAFTING_BENCH_X = 5;
 const int CRAFTING_BENCH_Y = 4;

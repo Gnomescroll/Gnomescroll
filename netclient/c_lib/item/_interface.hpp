@@ -30,11 +30,12 @@ CLIENT
 #if DC_CLIENT
 namespace Item
 {
-
 void update_container_ui_from_state();
 
 void open_container();
 void close_container();
+
+void nanite_region_click_event(int container_id);
 
 int get_event_container_id(int event_id);
 class ItemContainerUI* get_container_ui(int container_id);

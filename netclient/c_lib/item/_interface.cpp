@@ -197,6 +197,11 @@ void close_container()
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT);
 }
 
+void nanite_region_click_event(int container_id)
+{
+    if (container_id == NULL_CONTAINER) return;
+    // nanite region click handling
+}
 
 int get_event_container_id(int event_id)
 {

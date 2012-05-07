@@ -9,9 +9,6 @@
 
 namespace Dragon {
 
-const int width = 128;
-const int height = 128;
-
 static Building_list buildings;
 
 class L_System {
@@ -31,6 +28,8 @@ class L_System {
         }
 
     public:
+        char* visited_tiles;
+    
         int z_min;
         int z_max;
         int tile;
@@ -139,22 +138,39 @@ class L_System {
             mx -= wxstep*((wsteps+1)/2);
             my -= wystep*((wsteps+1)/2);
 
+            const int initial_h = 8;
+
             int i,j,k;
             int ix,iy;
             double mmx,mmy;
             mmx=mx;mmy=my;
-            for (j=0; j<wsteps; j++) {
+            for (j=0; j<wsteps; j++)
+            {
                 mmx = mx;
                 mmy = my;
-                for (i=0; i<steps; i++) {
+                for (i=0; i<steps; i++)
+                {
                     mmx += xstep;
                     mmy += ystep;
                     ix = (int)mmx;
                     iy = (int)mmy;
                     if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
-                    for (k=this->z_min; k<this->z_max+1;k++) {
-                        _set(ix, iy, k, this->tile);
-                    }
+                    if (visited_tiles[ix + map_dim.x * iy]) continue;
+                    visited_tiles[ix + map_dim.x*iy] = 1;
+                    //for (k=this->z_min; k<this->z_max+1;k++) {
+                        //t_map::set(ix, iy, k, this->tile);
+                    //}
+                    int dh = distancef(x,y,ogx,ogy) / 6;
+                    dh = initial_h - dh;
+                    int start_h = t_map::get_highest_solid_block(ix,iy);
+                    //if (dh < 0)
+                        //for (k=dh; k<=0; k++)
+                            //t_map::set(ix,iy,start_h+k, 0);
+                    //else
+                    if (dh > 0)
+                        for (k=1; k<=dh; k++)
+                            t_map::set(ix,iy,start_h+k,this->tile);
+                    //printf("%d\n", dh);
                 }
                 mx += wxstep;
                 my += wystep;
@@ -386,7 +402,8 @@ class L_System {
             next[next_index] = '\0';
         }
 
-        void run() {
+        void run()
+        {
             // apply start
             //printf("%s\n", start);
             char* curr = start;
@@ -397,7 +414,8 @@ class L_System {
             get_next_rule(curr, next);
             curr = next;
             int i;
-            for (i=1; i<iterations-1; i++) {
+            for (i=1; i<iterations-1; i++)
+            {
                 next_len = apply_rule(curr);
                 next = (char*)malloc((next_len+1) * sizeof(char));
                 get_next_rule(curr, next);
@@ -411,22 +429,21 @@ class L_System {
 
     L_System() :
     n_rules(0), iterations(0), p(1.0), draw_width(0.1)
-    {}
+    {
+        visited_tiles = (char*)calloc(map_dim.x*map_dim.y, sizeof(char));
+    }
     
     ~L_System() {
-        if (start != NULL) {
-            free(start);
-        }
-        int i;
-        if (rules != NULL) {
-            for (i=0; i<n_rules; i++) {
-                if (rules[i] != NULL) free(rules[i]);
-            }
+        if (start != NULL) free(start);
+        if (rules != NULL)
+        {
+            for (int i=0; i<n_rules; i++)
+                if (rules[i] != NULL)
+                    free(rules[i]);
             free(rules);
         }
-        if (tokens != NULL) {
-            free(tokens);
-        }
+        if (tokens != NULL) free(tokens);
+        if (visited_tiles != NULL) free(visited_tiles);
     }
 };
 
@@ -491,53 +508,64 @@ void init(int z) {
     delete L;
 }
 
-void caves() {
+void caves()
+{
+    int n = 20;
+    for (int i=0; i<n; i++)
+    {
+        L_System* L = new L_System;
 
-    L_System* L = new L_System();
+        int tile = 50;
+        int z_min = 10;
+        int z_max = 64;
+        char tokens[]= "XYF+-B[]f";
+        //int iterations = 20;
+        int iterations = 9;
+        double degrees = 90;
+        double step = 4;
+        double xstep = randrange(1,2);
+        double ystep = randrange(1,2);
+        L->set_tokens(tokens);
+        L->set_iterations(iterations);
+        L->set_degrees(degrees);
+        L->set_step_size(step);
+        L->set_step_size(xstep, ystep);
+        L->set_starting_degrees(0);
+        float start_x = randf() * map_dim.x;
+        float start_y = randf() * map_dim.y;
+        L->set_starting_position(start_x, start_y);
+        L->set_map_tile(tile);
+        L->set_map_z_level(z_min, z_max);
+        L->set_dimensions(map_dim.x,map_dim.y);
+        L->set_draw_width(.1);
+        L->tile = tile;
+        float p = randf();
+        p /= 5.0f;
+        p += 0.5f;
+        L->set_probability(p);
 
-    int tile = 0;
-    int z_min = 32-10;
-    int z_max = 32+5;
-    char tokens[]= "XYF+-B[]f";
-    int iterations = 20;
-    double degrees = 90;
-    double step = 4;
-    double xstep = 1;
-    double ystep = 1;
-    L->set_tokens(tokens);
-    L->set_iterations(iterations);
-    L->set_degrees(degrees);
-    L->set_step_size(step);
-    L->set_step_size(xstep, ystep);
-    L->set_starting_degrees(0);
-    L->set_starting_position(width/2+0.5,height/2+0.5);
-    L->set_map_tile(tile);
-    L->set_map_z_level(z_min, z_max);
-    L->set_dimensions(width,height);
-    L->set_draw_width(.1);
-    L->set_probability(0.7);
+        // rules
+        L->add_rule((char*) "B > B");
+        L->add_rule((char*) "X > X]YF");
+        L->add_rule((char*) "Y > FX[Y");
+        L->add_rule((char*) "F > F");
+        //L->add_rule((char*) "+ > ]");
+        //L->add_rule((char*) "- > [");
+        //L->add_rule((char*) "] > +");
+        //L->add_rule((char*) "[ > -");
+        L->add_rule((char*) "+ > +");
+        L->add_rule((char*) "- > -");
+        L->add_rule((char*) "] > ]");
+        L->add_rule((char*) "[ > [");
+        L->add_rule((char*) "f > f");
 
-    // rules
-    L->add_rule((char*) "B > B");
-    L->add_rule((char*) "X > X]YF");
-    L->add_rule((char*) "Y > FX[Y");
-    L->add_rule((char*) "F > F");
-    //L->add_rule((char*) "+ > ]");
-    //L->add_rule((char*) "- > [");
-    //L->add_rule((char*) "] > +");
-    //L->add_rule((char*) "[ > -");
-    L->add_rule((char*) "+ > +");
-    L->add_rule((char*) "- > -");
-    L->add_rule((char*) "] > ]");
-    L->add_rule((char*) "[ > [");
-    L->add_rule((char*) "f > f");
+        // start condition
+        L->set_init_condition((char*) "FX");
 
-    // start condition
-    L->set_init_condition((char*) "FX");
+        L->run();
 
-    L->run();
-
-    delete L;
+        delete L;
+    }
 }
 
 bool pattern_match(int x, int y, int z, int pattern_w, int pattern_h) {
@@ -834,7 +862,8 @@ void segment_caves_2(int z, int tile) {
 }
 
 
-void generate(int z) {
+void generate(int z)
+{
     int x = width;
     int y = height;
     //int z = 0;
@@ -895,9 +924,4 @@ void generate(int z) {
     //}
 }
 
-//cython
-void generate_dragon() {
-    generate();
-}
-
-}
+}   // Dragon

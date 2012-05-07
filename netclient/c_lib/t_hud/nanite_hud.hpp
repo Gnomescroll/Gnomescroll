@@ -79,7 +79,6 @@ class AgentNaniteUI : public UIElement
         return (this->get_slot_at(px,py) != NULL_SLOT || this->in_nanite_region(px,py));
     }
 
-
     void handle_ui_event(int px, int py);   // remove this
 
     bool in_nanite_region(int px, int py);
@@ -120,9 +119,10 @@ bool AgentNaniteUI::in_nanite_region(int px, int py)
     return false;
 }
 
-
 int AgentNaniteUI::get_slot_at(int px, int py)
 {
+    if (in_nanite_region(px,py)) return 0;  // food slot
+    
     //pixels from upper left
     px -= xoff + slot_offset_x;
     py -= _yresf - yoff + slot_offset_y;
@@ -137,7 +137,7 @@ int AgentNaniteUI::get_slot_at(int px, int py)
     int yslot = py / (slot_size + slot_border*2 + slot_border_gap);
     int slot = xslot + yslot * xdim;
 
-    return slot;
+    return slot+1;  // offset all by 1, because slot 0 is the food slot
 }
 
 void AgentNaniteUI::handle_ui_event(int px, int py)
@@ -297,6 +297,10 @@ void AgentNaniteUI::draw()
     }
     glEnd();
 
+
+    // draw food
+    // draw nanite poop
+
     glDisable(GL_TEXTURE_2D);
 
     //draw text for item cost in upper right
@@ -310,6 +314,7 @@ void AgentNaniteUI::draw()
     for (int yslot=0; yslot<ydim; yslot++)
     {
         const int slot = yslot*xdim + xslot;
+        if (slot == 0) continue;    // reserved for food
         if (slot == xdim*ydim-1) continue;  // skip last slot, reserved
 
         int item_id, cost;
