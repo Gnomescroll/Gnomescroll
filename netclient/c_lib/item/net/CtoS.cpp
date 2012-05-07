@@ -31,11 +31,17 @@ inline void container_action_alpha_CtoS::handle()
     ContainerActionType action = alpha_action_decision_tree(a->id, client_id, container_id, slot);
 
     ItemID hand_item = get_agent_hand(a->id);
-    if (
-        this->action != action
-     || hand_type != get_item_type(hand_item)
-     || hand_stack != get_stack_size(hand_item)
-    ) send_container_failed_action(client_id, event_id);
+    if (this->action != action)
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+    
+    if (hand_type != get_item_type(hand_item) || hand_stack != get_stack_size(hand_item))
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
 
     if (action != FULL_HAND_TO_WORLD)
     {

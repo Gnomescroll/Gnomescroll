@@ -237,8 +237,9 @@ void AgentNaniteUI::draw()
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
     int hover_slot = this->get_slot_at(mouse_x, mouse_y);
-    if (hover_slot != NULL_SLOT)
+    if (hover_slot != 0 && hover_slot != NULL_SLOT)
     {
+        hover_slot -= 1;
         int w = slot_size;
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;
@@ -266,15 +267,15 @@ void AgentNaniteUI::draw()
     {
         if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
 
-        int item_id, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_id, &cost);
-        if (item_id == NULL_ITEM) continue;
-        int tex_id = Item::get_sprite_index_for_type(item_id);
+        int item_type, cost;
+        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        if (item_type == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(item_type);
 
         const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
         const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
 
-        const float w = 32.0f;
+        const float w = slot_size;
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
 
@@ -299,6 +300,41 @@ void AgentNaniteUI::draw()
 
 
     // draw food
+    Item::ItemContainer* container = Item::get_container(this->container_id);
+    if (container == NULL) return;
+
+    const int food_slot = 0;
+    ItemID food_item_id = container->get_item(food_slot);
+    if (food_item_id != NULL_ITEM)
+    {
+        int food_sprite_id = Item::get_sprite_index_for_id(food_item_id);
+        float x = xoff + nanite_offset_x + nanite_width - slot_size;
+        float y = yoff - (nanite_offset_y + nanite_height - slot_size);
+
+        const float w = slot_size;
+        const float iw = 16.0f; // icon_width
+        const int iiw = 16; // integer icon width
+
+        const float tx_min = (1.0/iw)*(food_sprite_id % iiw);
+        const float ty_min = (1.0/iw)*(food_sprite_id / iiw);
+        const float tx_max = tx_min + 1.0/iw;
+        const float ty_max = ty_min + 1.0/iw;
+
+        glBegin(GL_QUADS);
+        glTexCoord2f( tx_min, ty_min );
+        glVertex2f(x, y);
+
+        glTexCoord2f( tx_min, ty_max );
+        glVertex2f(x,y-w);
+
+        glTexCoord2f( tx_max, ty_max );
+        glVertex2f(x+w, y-w );
+
+        glTexCoord2f( tx_max, ty_min );
+        glVertex2f(x+w, y);
+        glEnd();
+    }
+    
     // draw nanite poop
 
     glDisable(GL_TEXTURE_2D);
@@ -317,9 +353,9 @@ void AgentNaniteUI::draw()
         if (slot == 0) continue;    // reserved for food
         if (slot == xdim*ydim-1) continue;  // skip last slot, reserved
 
-        int item_id, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_id, &cost);
-        if (item_id == NULL_ITEM) continue;
+        int item_type, cost;
+        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        if (item_type == NULL_ITEM_TYPE) continue;
 
         assert(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
 

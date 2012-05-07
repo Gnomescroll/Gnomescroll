@@ -66,6 +66,13 @@ ItemContainer* get_container(int id)
     return item_container_list->get(id);
 }
 
+ItemContainerType get_container_type(int container_id)
+{
+    ItemContainer* container = get_container(container_id);
+    if (container == NULL) return CONTAINER_TYPE_NONE;
+    return container->type;
+}
+
 Item* get_item(ItemID id)
 {
     return item_list->get(id);

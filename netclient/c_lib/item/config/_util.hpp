@@ -121,7 +121,7 @@ namespace Item
     int yslot;
 */
 
-int _current_nanite_item_id = 0;
+int _current_nanite_item_type = 0;
 int _current_nanite_item_cost = 0;
 
 void nanite_item_def(const char* item_name, int cost);
@@ -130,21 +130,21 @@ void nanite_item_set(int level, int xslot, int yslot);
 
 void nanite_item_def(const char* item_name, int cost)
 {
-    _current_nanite_item_id = dat_get_item_type(item_name);
+    _current_nanite_item_type = dat_get_item_type(item_name);
     _current_nanite_item_cost = cost;
 }
 
 void nanite_item_set(int level, int xslot, int yslot)
 {
-    class NaniteStoreItem* n = &nanite_store_item_array[_current_nanite_item_id];
+    class NaniteStoreItem* n = &nanite_store_item_array[_current_nanite_item_type];
 
-    n->item_id = _current_nanite_item_id;
+    n->item_type = _current_nanite_item_type;
     n->nanite_cost = _current_nanite_item_cost;
     n->level = level;
     n->xslot = xslot;
     n->yslot = yslot;
 
-    _current_nanite_item_id++;
+    _current_nanite_item_type++;
 }
 
 

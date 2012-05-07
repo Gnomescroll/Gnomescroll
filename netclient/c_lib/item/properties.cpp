@@ -166,19 +166,19 @@ int get_max_durability(int item_type)
     return attr->max_durability;
 }
 
-void get_nanite_store_item(int level, int xslot, int yslot, int* item_id, int* cost)
+void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost)
 {
     for(int i=0; i<MAX_ITEMS; i++)
     {
         class NaniteStoreItem* n = &nanite_store_item_array[i];
         if(n->level == level && n->xslot == xslot && n->yslot == yslot)
         {
-            *item_id = n->item_id;
+            *item_type = n->item_type;
             *cost = n->nanite_cost;
             return;
         }
     }
-    *item_id = NULL_ITEM;
+    *item_type = NULL_ITEM_TYPE;
     *cost = 0;
 }
 

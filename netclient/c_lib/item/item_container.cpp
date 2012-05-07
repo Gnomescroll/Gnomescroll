@@ -83,6 +83,8 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
 
+    ItemContainerType container_type = get_container_type(id);
+
     #if DC_CLIENT
     bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
     int hand_item_type = player_hand_type_ui;
@@ -118,6 +120,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     else
     // click inside container
     {
+
         // client was inside container, but not a slot
         // do nothing
         if (slot < 0 || slot == NULL_SLOT) return action;
@@ -147,6 +150,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
         int slot_item_space = get_stack_space(slot_item);
         #endif
 
+        // NORMAL
         // if hand empty
             // pick up
         // else
@@ -162,130 +166,216 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                         // else
                             // move avail stack amt from hand stack
 
-        if (hand_empty)
-        // hand is empty
+        // NANITE
+        // if slot == 0
+            // if hand empty
+                // if slot occupied
+                    // pick up food
+            // else
+                // if slot empty
+                    // place food
+                // NO SWAPS
+        // slot == max-1
+            // if hand empty
+                // attempt to pickup poop
+            // else
+                // attempt to place poop
+                    // --only accepts poop
+                    // --behaviour is the same as otherwise
+        /// else
+            // --here we are shopping
+            // if hand empty
+                // attempt to pickup item
+                    // no ui predction?
+                    // server needs to do shopping
+            // else
+                // do nothing
+
+
+        if (container_type == AGENT_NANITE)
         {
-            if (!slot_empty)
-            // slot is occupied
-            {   // SLOT -> HAND
-                // remove slot item
-                #if DC_CLIENT
-                container->remove_item(slot);
-                hand_item_type = slot_item_type;
-                hand_item_stack = slot_item_stack;
-                hand_item_durability = slot_item_durability;
-                #endif
-                #if DC_SERVER
-                container->remove_item(slot);
-                send_container_remove(client_id, container->id, slot);
-                hand_item = slot_item;
-                send_hand_insert(client_id, hand_item);
-                #endif
-                action = FULL_SLOT_TO_EMPTY_HAND;
-            }
-        }
-        // hand holding item
-        else
-        {
-            if (slot_empty)
-            // slot is empty
-            {   // HAND -> SLOT
-                // put hand item in slot
-                #if DC_CLIENT
-                container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                hand_item_type = NULL_ITEM_TYPE;
-                hand_item_stack = 1;
-                hand_item_durability = NULL_DURABILITY;
-                #endif
-                #if DC_SERVER
-                container->insert_item(slot, hand_item);
-                send_container_insert(client_id, hand_item, container->id, slot);
-                hand_item = NULL_ITEM;
-                send_hand_remove(client_id);
-                #endif
-                action = FULL_HAND_TO_EMPTY_SLOT;
-            }
-            else
-            // slot is occupied
-            {
-                if (slot_item_type == hand_item_type)
-                // types are the same
+            printf("nanite container\n");
+            printf("slot %d\n", slot);
+            if (slot == 0)
+            {   // food slot
+                if (hand_empty)
                 {
-                    // hand stack will fit entirely in slot
-                    if (hand_item_stack <= slot_item_space)
-                    {   // FULL STACK MERGE
-                        // add stacks
+                    if (!slot_empty)
+                    {   // pick up food
+                        
+                    }
+                }
+                else
+                {
+                    if (slot_empty)
+                    {   // place food
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + hand_item_stack, slot_item_durability);
+                        container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
                         hand_item_type = NULL_ITEM_TYPE;
                         hand_item_stack = 1;
                         hand_item_durability = NULL_DURABILITY;
                         #endif
                         #if DC_SERVER
-                        merge_item_stack(hand_item, slot_item); // merge_item_stack(src, dest)
-                        broadcast_item_state(slot_item);
-                        destroy_item(hand_item);
+                        container->insert_item(slot, hand_item);
+                        send_container_insert(client_id, hand_item, container->id, slot);
                         hand_item = NULL_ITEM;
                         send_hand_remove(client_id);
                         #endif
-                        action = FULL_HAND_TO_OCCUPIED_SLOT;
+                        action = FULL_HAND_TO_EMPTY_SLOT;
                     }
-                    else
-                    // stacks will not completely merge
-                    {
-                        if (slot_item_space == 0)
-                        // the stack is full
-                        {  // SWAP
-                            #if DC_CLIENT
-                            container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                            hand_item_type = slot_item_type;
-                            hand_item_stack = slot_item_stack;
-                            hand_item_durability = slot_item_durability;
-                            #endif
-                            #if DC_SERVER
-                            container->insert_item(slot, hand_item);
-                            send_container_insert(client_id, hand_item, container->id, slot);
-                            hand_item = slot_item;
-                            send_hand_insert(client_id, hand_item);
-                            #endif
-                            action = FULL_HAND_SWAP_WITH_SLOT;
-                        }
-                        else
-                        // some of the hand stack will fit in the slot
-                        {   // PARTIAL STACK MERGE
-                            #if DC_CLIENT
-                            container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
-                            //hand_item_type unchanged
-                            hand_item_stack -= slot_item_space;
-                            assert(hand_item_stack > 0);
-                            #endif
-                            #if DC_SERVER
-                            merge_item_stack(hand_item, slot_item, slot_item_space);
-                            // update items
-                            broadcast_item_state(slot_item);
-                            broadcast_item_state(hand_item);
-                            // hand item unchanged
-                            #endif
-                            action = PARTIAL_HAND_TO_OCCUPIED_SLOT;
-                        }
+                    // dont swap
+                }
+            }
+            else if (slot == container->slot_max - 1)
+            {   // coin slot
+                if (hand_empty)
+                {
+                    if (!slot_empty)
+                    {   // pickup coins
+
                     }
                 }
                 else
-                // types are different
-                {   // SWAP
+                {
+                    // swap/merge, if type matches
+                }
+            }
+            else
+            {   // shopping
+                if (hand_empty)
+                {
+                    // send purchase packet
+                }
+            }
+                
+        }
+        else
+        {   // all other container
+            if (hand_empty)
+            // hand is empty
+            {
+                if (!slot_empty)
+                // slot is occupied
+                {   // SLOT -> HAND
+                    // remove slot item
                     #if DC_CLIENT
-                    container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
+                    container->remove_item(slot);
                     hand_item_type = slot_item_type;
                     hand_item_stack = slot_item_stack;
                     hand_item_durability = slot_item_durability;
                     #endif
                     #if DC_SERVER
-                    container->insert_item(slot, hand_item);
-                    send_container_insert(client_id, hand_item, container->id, slot);
+                    container->remove_item(slot);
+                    send_container_remove(client_id, container->id, slot);
                     hand_item = slot_item;
                     send_hand_insert(client_id, hand_item);
                     #endif
-                    action = FULL_HAND_SWAP_WITH_SLOT;
+                    action = FULL_SLOT_TO_EMPTY_HAND;
+                }
+            }
+            // hand holding item
+            else
+            {
+                if (slot_empty)
+                // slot is empty
+                {   // HAND -> SLOT
+                    // put hand item in slot
+                    #if DC_CLIENT
+                    container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
+                    hand_item_type = NULL_ITEM_TYPE;
+                    hand_item_stack = 1;
+                    hand_item_durability = NULL_DURABILITY;
+                    #endif
+                    #if DC_SERVER
+                    container->insert_item(slot, hand_item);
+                    send_container_insert(client_id, hand_item, container->id, slot);
+                    hand_item = NULL_ITEM;
+                    send_hand_remove(client_id);
+                    #endif
+                    action = FULL_HAND_TO_EMPTY_SLOT;
+                }
+                else
+                // slot is occupied
+                {
+                    if (slot_item_type == hand_item_type)
+                    // types are the same
+                    {
+                        // hand stack will fit entirely in slot
+                        if (hand_item_stack <= slot_item_space)
+                        {   // FULL STACK MERGE
+                            // add stacks
+                            #if DC_CLIENT
+                            container->insert_item(slot, slot_item_type, slot_item_stack + hand_item_stack, slot_item_durability);
+                            hand_item_type = NULL_ITEM_TYPE;
+                            hand_item_stack = 1;
+                            hand_item_durability = NULL_DURABILITY;
+                            #endif
+                            #if DC_SERVER
+                            merge_item_stack(hand_item, slot_item); // merge_item_stack(src, dest)
+                            broadcast_item_state(slot_item);
+                            destroy_item(hand_item);
+                            hand_item = NULL_ITEM;
+                            send_hand_remove(client_id);
+                            #endif
+                            action = FULL_HAND_TO_OCCUPIED_SLOT;
+                        }
+                        else
+                        // stacks will not completely merge
+                        {
+                            if (slot_item_space == 0)
+                            // the stack is full
+                            {  // SWAP
+                                #if DC_CLIENT
+                                container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
+                                hand_item_type = slot_item_type;
+                                hand_item_stack = slot_item_stack;
+                                hand_item_durability = slot_item_durability;
+                                #endif
+                                #if DC_SERVER
+                                container->insert_item(slot, hand_item);
+                                send_container_insert(client_id, hand_item, container->id, slot);
+                                hand_item = slot_item;
+                                send_hand_insert(client_id, hand_item);
+                                #endif
+                                action = FULL_HAND_SWAP_WITH_SLOT;
+                            }
+                            else
+                            // some of the hand stack will fit in the slot
+                            {   // PARTIAL STACK MERGE
+                                #if DC_CLIENT
+                                container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
+                                //hand_item_type unchanged
+                                hand_item_stack -= slot_item_space;
+                                assert(hand_item_stack > 0);
+                                #endif
+                                #if DC_SERVER
+                                merge_item_stack(hand_item, slot_item, slot_item_space);
+                                // update items
+                                broadcast_item_state(slot_item);
+                                broadcast_item_state(hand_item);
+                                // hand item unchanged
+                                #endif
+                                action = PARTIAL_HAND_TO_OCCUPIED_SLOT;
+                            }
+                        }
+                    }
+                    else
+                    // types are different
+                    {   // SWAP
+                        #if DC_CLIENT
+                        container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
+                        hand_item_type = slot_item_type;
+                        hand_item_stack = slot_item_stack;
+                        hand_item_durability = slot_item_durability;
+                        #endif
+                        #if DC_SERVER
+                        container->insert_item(slot, hand_item);
+                        send_container_insert(client_id, hand_item, container->id, slot);
+                        hand_item = slot_item;
+                        send_hand_insert(client_id, hand_item);
+                        #endif
+                        action = FULL_HAND_SWAP_WITH_SLOT;
+                    }
                 }
             }
         }

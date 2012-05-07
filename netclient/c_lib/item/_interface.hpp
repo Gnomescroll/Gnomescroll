@@ -8,6 +8,8 @@ namespace Item
 void init();
 void teardown();
 class ItemContainer* get_container(int id);
+ItemContainerType get_container_type(int container_id);
+
 class Item* get_item(ItemID id);
 class Item* get_item_object(ItemID id); // alias for get_item
 //class Item* get_or_create_item(int item_type, ItemID item_id);
@@ -43,8 +45,8 @@ ItemID get_toolbelt_item(int slot);
 
 class Item* create_item(int item_type, ItemID item_id);
 
-void mouse_right_click_handler(int id, int slot);
-void mouse_left_click_handler(int id, int slot);
+void mouse_right_click_handler(int container_id, int slot);
+void mouse_left_click_handler(int container_id, int slot);
 
 ItemID* get_container_contents(int container_id);
 int get_sprite_index_for_id(ItemID item_id);

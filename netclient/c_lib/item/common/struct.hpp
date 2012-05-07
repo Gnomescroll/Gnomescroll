@@ -22,7 +22,7 @@ class NaniteStoreItem
 {
     public:
 
-    int item_id;
+    int item_type;
     int nanite_cost;
 
     int level;
@@ -31,7 +31,7 @@ class NaniteStoreItem
 
     NaniteStoreItem()
     {
-        item_id = NULL_ITEM;
+        item_type = NULL_ITEM_TYPE;
         nanite_cost = NULL_COST;
         
         level = NULL_ITEM_LEVEL;
