@@ -447,6 +447,11 @@ void agent_quit(int agent_id)
 void digest_nanite_food()
 {
     // nanites need a digestion tick -- need own class
+    for (int i=0; i<item_container_nanite_list->n_max; i++)
+    {
+        if (item_container_nanite_list->a[i] == NULL) continue;
+        item_container_nanite_list->a[i]->digest();
+    }
 }
 
 }

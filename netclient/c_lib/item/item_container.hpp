@@ -134,9 +134,15 @@ class ItemContainer: public ItemContainerInterface
         {}
 };
 
+const int NANITE_DIGESTION_RATE = 30 * 5;
 class ItemContainerNanite: public ItemContainerInterface
 {
     public:
+
+        #if DC_SERVER
+        int digestion_tick;
+        void digest();
+        #endif
 
         bool can_insert_item(int slot, ItemID item_id)
         {
@@ -189,6 +195,9 @@ class ItemContainerNanite: public ItemContainerInterface
         
         explicit ItemContainerNanite(int id)
         : ItemContainerInterface(id)
+        #if DC_SERVER
+        , digestion_tick(0)
+        #endif
         {}
 };
 

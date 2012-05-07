@@ -48,7 +48,28 @@ void ItemContainerInterface::remove_item(int slot)
     this->slot_count--;
 }
 
+/* Nanite */
 
+#if DC_SERVER
+void ItemContainerNanite::digest()
+{
+    this->digestion_tick++;
+    if (this->digestion_tick % NANITE_DIGESTION_RATE != 0) return;
+    ItemID item_id = this->slot[0];
+    if (item_id == NULL_ITEM) return;
+
+    Item* item = get_item_object(item_id);
+    assert(item != NULL);
+    item->stack_size -= 1;
+    if (item->stack_size <= 0)
+    {
+        this->remove_item(0);
+        Agent_state* a = STATE::agent_list->get(this->owner);
+        if (a != NULL) send_container_remove(a->client_id, this->id, 0);
+        destroy_item(item_id);
+    }
+}
+#endif
 
 /* Initializer */
 
