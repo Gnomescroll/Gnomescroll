@@ -73,6 +73,13 @@ void broadcast_item_state(ItemID item_id)
     msg.broadcast();
 }
 
+void send_item_destroy(int client_id, ItemID item_id)
+{
+    item_destroy_StoC msg;
+    msg.id = item_id;
+    msg.sendToClient(client_id);
+}
+
 void broadcast_item_destroy(ItemID item_id)
 {
     item_destroy_StoC msg;
