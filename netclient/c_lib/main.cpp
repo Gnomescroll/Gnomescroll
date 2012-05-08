@@ -182,6 +182,7 @@ int run()
         t_map::draw_map();
         poll_mouse();
 
+
         /*
             Non-transparent
         */
@@ -211,6 +212,8 @@ int run()
         Components::textured_voxel_component_list->call();
 
         glEnd();
+
+        obj_load::draw_model(0.0,0.0,0.0); //draw test model
         //glDisable(GL_TEXTURE_2D);
 
         GL_ASSERT(GL_BLEND, false);

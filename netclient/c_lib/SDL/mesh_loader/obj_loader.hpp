@@ -70,8 +70,9 @@ void load_model()
    printf("Object Model: nTexCoord= %d \n", model->nTexCoord);
    printf("Object Model: nNormal= %d \n", model->nNormal);
  
- 	v_array = new Vertex[model->nTriangle];
- 	v_num = model->nTriangle;
+  	v_num = model->nTriangle*3;
+ 	v_array = new Vertex[v_num];
+	memset(v_array, 0, v_num*sizeof(Vertex));
 
  	for(int i=0; i<model->nTriangle; i++)
  	{
@@ -80,20 +81,31 @@ void load_model()
  		{
 	 		struct Vertex v;
 
-	 		int iv = model->TriangleArray[i].Vertex[j];
-	 		int itx = model->TriangleArray[i].TexCoord[j];
+	 		int iv = model->TriangleArray[i].Vertex[j] -1;
+	 		int itx = model->TriangleArray[i].TexCoord[j] -1;
 
-	 		printf("triangle: %i,  iv= %i itx= %i \n", i, iv, itx);
+	 		if(iv >= model->nVertex)
+	 		{
+	 			printf("ERROR: iv= %i  nVertex= %i \n", iv, model->nVertex);
+	 		}
+	 		if(itx >= model->nTexCoord)
+	 		{
+	 			printf("ERROR: itx= %i  nTexCoord= %i \n", itx, model->nTexCoord);
+	 		}
+	 		//printf("triangle: %i,  iv= %i itx= %i \n", i, iv, itx);
 	 		v.x = model->VertexArray[iv].x;
-	 		v.y = model->VertexArray[iv].y;
-	 		v.z = model->VertexArray[iv].z;
+	 		//v.y = model->VertexArray[iv].y;
+	 		//v.z = model->VertexArray[iv].z;
+	 		v.z = model->VertexArray[iv].y;
+	 		v.y = model->VertexArray[iv].z;
+
 	 		v.u = model->TexCoordArray[itx].u;
 	 		v.v = model->TexCoordArray[itx].v;
 	 		////v.n[0] = 
 	 		//v.n[1] = 
 	 		//v.n[2] =
 
-	 		v_array[i] = v;
+	 		v_array[3*i+j] = v;
  		}
  	}
 }
@@ -108,9 +120,9 @@ unsigned int monster_vbo;
 
 void init_shader()
 {
-    monster_shader.set_debug(false);
+    monster_shader.set_debug(true);
 
-    monster_shader.load_shader( "insect mob shader",
+    monster_shader.load_shader( "monster mob shader",
         "./media/shaders/mob/monster_mob.vsh",
         "./media/shaders/mob/monster_mob.fsh" );
    
@@ -121,11 +133,11 @@ void init_shader()
 
 void init_texture()
 {
-    SDL_Surface* s = create_surface_from_file((char*) "./media/mesh/mob1_dm.png");
+    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/mob1_dm.png");
 
     if(s == NULL)
     {
-        printf("init_insect_mob: texture load error\n");
+        printf("init_monster_mob: texture load error\n");
         GS_ABORT();
     }
  
@@ -146,6 +158,7 @@ void init_texture()
 
 void init_draw_model()
 {
+	load_model();
 	init_shader();
 	init_texture();
 
@@ -159,6 +172,9 @@ void init_draw_model()
 
 void draw_model(float x, float y, float z)
 {
+	x = current_camera->x+5.0;
+	y = current_camera->y;
+	z = current_camera->z;
 
     const static unsigned int stride = sizeof(struct Vertex);
 
@@ -172,12 +188,12 @@ void draw_model(float x, float y, float z)
     glUseProgramObjectARB(monster_shader.shader);
 
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableVertexAttribArray(insect_mob_TexCoord);
+    glEnableVertexAttribArray(monster_TexCoord);
 
     glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
     glVertexAttribPointer(monster_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
 
-    glUniform3f(monster_InPosition, x,y,z);
+    glUniform4f(monster_InPosition, x,y,z,0.0);
 
     glDrawArrays(GL_TRIANGLES,0, v_num);
 

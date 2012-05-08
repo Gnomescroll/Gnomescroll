@@ -72,17 +72,18 @@ ObjModel* ObjLoadModel(char* memory, size_t size)
                                                    &ret->TriangleArray[nF].TexCoord[2],
                                                    &ret->TriangleArray[nF].Normal[2]);
     	*/
-         sscanf(p, "f %d/%d %d/%d %d/%d", &ret->TriangleArray[nF].Vertex[0],
-                                                   &ret->TriangleArray[nF].TexCoord[0],
-                                                   //&ret->TriangleArray[nF].Normal[0],
-                                                   &ret->TriangleArray[nF].Vertex[1],
-                                                   &ret->TriangleArray[nF].TexCoord[1],
-                                                   //&ret->TriangleArray[nF].Normal[1],
-                                                   &ret->TriangleArray[nF].Vertex[2],
-                                                   &ret->TriangleArray[nF].TexCoord[2]
-                                                   //&ret->TriangleArray[nF].Normal[2]
+
+        sscanf(p, "f %d/%d %d/%d %d/%d", 
+         	&ret->TriangleArray[nF].Vertex[0],
+			&ret->TriangleArray[nF].TexCoord[0],
+ 
+			&ret->TriangleArray[nF].Vertex[1],
+			&ret->TriangleArray[nF].TexCoord[1],
+
+			&ret->TriangleArray[nF].Vertex[2],
+			&ret->TriangleArray[nF].TexCoord[2]
  		);
-         nF++;
+        	nF++;
       }
 
       while (*p++ != (char) 0x0A);
