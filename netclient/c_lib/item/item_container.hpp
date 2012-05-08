@@ -140,10 +140,19 @@ class ItemContainerNanite: public ItemContainerInterface
 {
     public:
 
+        int level;
+
         #if DC_SERVER
         int digestion_tick;
         void digest();
         #endif
+
+        // transforms plain slot to a 0-indexed shopping slot, that the dat uses
+        int get_shopping_slot(int slot)
+        {
+            if (slot <= 0 || slot >= this->slot_max-1) return NULL_SLOT;
+            return slot-1;
+        }
 
         ItemID get_coins()
         {
@@ -208,7 +217,8 @@ class ItemContainerNanite: public ItemContainerInterface
         }
         
         ItemContainerNanite(ItemContainerType type, int id)
-        : ItemContainerInterface(type, id)
+        : ItemContainerInterface(type, id),
+        level(0)
         #if DC_SERVER
         , digestion_tick(0)
         #endif

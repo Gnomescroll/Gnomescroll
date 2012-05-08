@@ -40,8 +40,8 @@ void ItemContainer::remove_item(int slot)
     {
         Item* item = get_item_object(this->slot[slot]);
         assert(item != NULL);
-        item->container_id = this->id;
-        item->container_slot = slot;
+        item->container_id = NULL_CONTAINER;
+        item->container_slot = NULL_SLOT;
     }
 
     this->slot[slot] = NULL_ITEM;
@@ -76,8 +76,8 @@ void ItemContainerNanite::remove_item(int slot)
     {
         Item* item = get_item_object(this->slot[slot]);
         assert(item != NULL);
-        item->container_id = this->id;
-        item->container_slot = slot;
+        item->container_id = NULL_CONTAINER;
+        item->container_slot = NULL_SLOT;
     }
 
     this->slot[slot] = NULL_ITEM;
@@ -780,8 +780,9 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                             #if DC_SERVER
                             container->insert_item(slot, hand_item);
                             send_container_insert(client_id, hand_item, container->id, slot);
-                            hand_item = NULL_ITEM;
                             send_hand_remove(client_id);
+                            destroy_item(hand_item);
+                            hand_item = NULL_ITEM;
                             #endif
                             action = FULL_HAND_TO_EMPTY_SLOT;
                         }
@@ -838,9 +839,9 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                                 // update dest
                                 broadcast_item_state(slot_item);
                                 // destroy src
+                                send_hand_remove(client_id);
                                 destroy_item(hand_item);
                                 hand_item = NULL_ITEM;
-                                send_hand_remove(client_id);
                                 #endif
                                 action = FULL_HAND_TO_OCCUPIED_SLOT;
                             }
@@ -934,9 +935,9 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                             // update dest
                             broadcast_item_state(slot_item);
                             // destroy src
-                            destroy_item(hand_item);
-                            hand_item = NULL_ITEM;
                             send_hand_remove(client_id);
+                            destroy_item(hand_item);    // sends packet
+                            hand_item = NULL_ITEM;
                             #endif
                             action = FULL_HAND_TO_OCCUPIED_SLOT;
                         }

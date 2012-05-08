@@ -39,6 +39,7 @@ inline void container_action_alpha_CtoS::handle()
     if (action == PURCHASE_ITEM_FROM_NANITE)
     {
         // do purchase action
+        purchase_item_from_nanite(a->id, slot);
         return;
     }
 

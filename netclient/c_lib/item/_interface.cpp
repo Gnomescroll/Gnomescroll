@@ -456,6 +456,70 @@ void digest_nanite_food()
     }
 }
 
+void purchase_item_from_nanite(int agent_id, int slot)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    assert(agent_nanite_list != NULL);
+    assert(agent_hand_list != NULL);
+
+    // if hand is not empty there will be item leaks
+    if (agent_hand_list[agent_id] != NULL_ITEM) return;
+
+    // get container
+    if (agent_nanite_list[agent_id] == NULL_CONTAINER) return;
+    ItemContainerNanite* nanite = (ItemContainerNanite*)get_container(agent_nanite_list[agent_id]);
+    if (nanite == NULL) return;
+
+    // transform plain slot to a shopping slot (as used by dat)
+    slot = nanite->get_shopping_slot(slot);
+    if (slot == NULL_SLOT) return;
+    
+    // get the store item
+    int xslot = slot % nanite->xdim;
+    int yslot = slot / nanite->xdim;
+    int item_type, cost;
+    get_nanite_store_item(nanite->level, xslot, yslot, &item_type, &cost);
+    assert(cost >= 0);
+    if (item_type == NULL_ITEM_TYPE) return;
+    
+    // get the coins
+    ItemID coins = nanite->get_coins();
+    int coin_stack = 0; // coin stack will return 1 for NULL_ITEM, but we want to treat that as 0
+    if (coins != NULL_ITEM) coin_stack = get_stack_size(coins);
+    if (coin_stack < cost) return;
+
+    // get agent, for sending state to
+    Agent_state* a = ServerState::agent_list->get(nanite->owner);
+
+    // create shopped item
+    Item* purchase = create_item(item_type);
+    if (purchase == NULL) return;
+
+    if (a != NULL) send_item_create(a->client_id, purchase->id);
+    // add to hand
+    agent_hand_list[agent_id] = purchase->id;
+    if (a != NULL) send_hand_insert(a->client_id, purchase->id);
+
+    // update coins
+    if (cost)
+    {
+        if (coin_stack == cost)
+        {   // delete coins
+            nanite->remove_item(nanite->slot_max-1);
+            if (a != NULL) send_container_remove(a->client_id, nanite->id, nanite->slot_max-1);
+            destroy_item(coins);
+        }
+        else
+        {   // decrement coin stack
+            Item* coin_item = get_item_object(coins);
+            assert(coin_item != NULL);
+            coin_item->stack_size -= cost;
+            if (a != NULL) send_item_state(a->client_id, coins);
+        }
+    }
+}
+
 }
 
 #endif 

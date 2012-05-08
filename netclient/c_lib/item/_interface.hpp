@@ -92,7 +92,7 @@ void agent_died(int agent_id);
 void agent_quit(int agent_id);
 
 void digest_nanite_food();
-
+void purchase_item_from_nanite(int agent_id, int slot);
 }
 #endif
 

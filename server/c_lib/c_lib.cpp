@@ -175,7 +175,8 @@ int init_c_lib()
 
     lua_load_block_dat(); /* Load Block Dat */
     Item::load_item_dat();
-
+    Item::load_nanite_store();
+    
     t_map::load_map_drop_dat(); //load drop dat after items
 
     Toolbelt::init();
