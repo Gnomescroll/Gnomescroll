@@ -148,13 +148,19 @@ void init_draw_model()
 {
 	init_shader();
 	init_texture();
+
+    const static unsigned int stride = sizeof(struct Vertex);
+	glGenBuffers(1, &monster_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, monster_vbo);
+    glBufferData(GL_ARRAY_BUFFER, v_num*stride, v_array, GL_STATIC_DRAW);
+
 }
 
 
 void draw_model(float x, float y, float z)
 {
 
-    const static unsigned int stride = sizeof(struct vertexElement2);
+    const static unsigned int stride = sizeof(struct Vertex);
 
     glColor3ub(255,255,255);
 
