@@ -16,6 +16,7 @@ void send_container_item_create(int client_id, ItemID item_id, int container_id,
 void send_item_state(int client_id, ItemID item_id);
 void broadcast_item_state(ItemID item_id);
 
+void send_item_destroy(int client_id, ItemID item_id);
 void broadcast_item_destroy(ItemID item_id);
 
 void send_container_insert(int client_id, ItemID item_id, int container_id, int slot)
