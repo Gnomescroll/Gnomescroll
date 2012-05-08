@@ -36,9 +36,6 @@ class Object_list {
 
         Object_state** a;
 
-        Object_list(); //default constructor
-        ~Object_list(); //default deconstructor
-
         Object_state* get(int id);
         Object_state* create();         //object auto id
         Object_state* create(int id);   //create object with id
@@ -55,6 +52,8 @@ class Object_list {
         void where();
         void print_members();
 
+        Object_list(); //default constructor
+        virtual ~Object_list(); //default deconstructor
 };
 
 template <class Object_state, int max_n> 

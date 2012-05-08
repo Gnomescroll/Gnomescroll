@@ -107,21 +107,22 @@ void ItemContainerNanite::digest()
 
 /* Initializer */
 
-void init_container(ItemContainerInterface* container, ItemContainerType type)
+void init_container(ItemContainerInterface* container)
 {
-    switch (type)
+    assert(container != NULL);
+    switch (container->type)
     {
         case AGENT_CONTAINER:
-            container->init(AGENT_CONTAINER, AGENT_CONTAINER_X, AGENT_CONTAINER_Y);
+            container->init(AGENT_CONTAINER_X, AGENT_CONTAINER_Y);
             break;
         case AGENT_TOOLBELT:
-            container->init(AGENT_TOOLBELT, AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
+            container->init(AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
             break;
         case AGENT_NANITE:
-            container->init(AGENT_NANITE, AGENT_NANITE_X, AGENT_NANITE_Y);
+            container->init(AGENT_NANITE_X, AGENT_NANITE_Y);
             break;
         default:
-            printf("init_container() - Unhandled container type %d\n", type);
+            printf("init_container() - Unhandled container type %d\n", container->type);
             assert(false);
             break;
     }

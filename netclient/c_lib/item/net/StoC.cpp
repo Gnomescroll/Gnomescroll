@@ -45,7 +45,7 @@ inline void item_state_StoC::handle()
 inline void create_item_container_StoC::handle()
 {
     ItemContainerInterface* ic = create_container((ItemContainerType)container_type,  container_id);
-    init_container(ic, (ItemContainerType)container_type);
+    init_container(ic);
 }
 
 inline void delete_item_container_StoC::handle()

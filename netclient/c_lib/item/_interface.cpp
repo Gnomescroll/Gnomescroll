@@ -20,7 +20,6 @@ namespace Item
 void init()
 {
     item_container_list = new ItemContainerList;
-    item_container_nanite_list = new ItemContainerNaniteList;
     item_list           = new ItemList;
 
     //set_sprite_ids();
@@ -42,7 +41,6 @@ void init()
 void teardown()
 {
     if (item_container_list != NULL) delete item_container_list;
-    if (item_container_nanite_list != NULL) delete item_container_nanite_list;
     if (item_list           != NULL) delete item_list;
 
     #if DC_CLIENT
@@ -65,17 +63,12 @@ void teardown()
 ItemContainerInterface* get_container(int id)
 {
     assert(item_container_list != NULL);
-    ItemContainerInterface* container = item_container_list->get(id);
-    if (container == NULL) container = item_container_nanite_list->get(id);
-    return container;
+    return item_container_list->get(id);
 }
 
 void destroy_container(int id)
 {
-    ItemContainerInterface* container = get_container(id);
-    if (container == NULL) return;
-    if (container->type == AGENT_NANITE) item_container_nanite_list->destroy(id);
-    else destroy_container(id);
+    item_container_list->destroy(id);
 }
 
 ItemContainerType get_container_type(int container_id)
@@ -197,8 +190,7 @@ namespace Item
 
 ItemContainerInterface* create_container(ItemContainerType type, int id)
 {
-    if (type == AGENT_NANITE) return item_container_nanite_list->create(id);
-    else return item_container_list->create(id);
+    return item_container_list->create(type, id);
 }
 
 void update_container_ui_from_state()
@@ -372,13 +364,13 @@ int get_agent_toolbelt(int agent_id)
     return agent_toolbelt_list[agent_id];
 }
 
-static void assign_container_to_agent(ItemContainerInterface* container, ItemContainerType type, int* container_list, int agent_id, int client_id)
+void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
 {
     assert(container != NULL);
     assert(container_list[agent_id] == NULL_ITEM);
     container_list[agent_id] = container->id;
     container->assign_owner(agent_id);
-    init_container(container, type);
+    init_container(container);
     send_container_create(container, client_id);
     send_container_assign(container, client_id);
 }
@@ -387,11 +379,11 @@ void assign_containers_to_agent(int agent_id, int client_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     
-    ItemContainer* agent_container = item_container_list->create();
-    assign_container_to_agent(agent_container, AGENT_CONTAINER, agent_container_list, agent_id, client_id);
+    ItemContainer* agent_container = (ItemContainer*)item_container_list->create(AGENT_CONTAINER);
+    assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
     
-    ItemContainer* agent_toolbelt = item_container_list->create();
-    assign_container_to_agent(agent_toolbelt, AGENT_TOOLBELT, agent_toolbelt_list, agent_id, client_id);
+    ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
+    assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
 
     // put a grenade launcher in the toolbelt to selt
     Item* grenade_launcher = create_item(8);
@@ -405,8 +397,8 @@ void assign_containers_to_agent(int agent_id, int client_id)
     Item* mining_laser = create_item(7);
     auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
     
-    ItemContainerNanite* agent_nanite = item_container_nanite_list->create();
-    assign_container_to_agent(agent_nanite, AGENT_NANITE, agent_nanite_list, agent_id, client_id);
+    ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
+    assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
 }
 
 Item* create_item(int item_type)
@@ -447,10 +439,11 @@ void agent_quit(int agent_id)
 void digest_nanite_food()
 {
     // nanites need a digestion tick -- need own class
-    for (int i=0; i<item_container_nanite_list->n_max; i++)
+    for (int i=0; i<item_container_list->n_max; i++)
     {
-        if (item_container_nanite_list->a[i] == NULL) continue;
-        item_container_nanite_list->a[i]->digest();
+        if (item_container_list->a[i] == NULL) continue;
+        if (item_container_list->a[i]->type != AGENT_NANITE) continue;
+        ((ItemContainerNanite*)(item_container_list->a[i]))->digest();
     }
 }
 

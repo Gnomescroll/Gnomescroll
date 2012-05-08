@@ -7,7 +7,7 @@ namespace Item
 {
 
 // init
-void init_container(class ItemContainer* container, ItemContainerType type);
+void init_container(class ItemContainer* container);
 
 #if DC_CLIENT
 // transactions
@@ -72,15 +72,15 @@ class ItemContainerInterface
         virtual int get_stackable_slot(int item_type, int stack_size) = 0;
         virtual int get_empty_slot() = 0;
 
-        virtual void init(ItemContainerType type, int xdim, int ydim) = 0;
+        virtual void init(int xdim, int ydim) = 0;
 
         virtual ~ItemContainerInterface()
         {
            if (this->slot != NULL) delete[] this->slot;
         }
 
-        explicit ItemContainerInterface(int id)
-        : id(id), type(CONTAINER_TYPE_NONE),
+        ItemContainerInterface(ItemContainerType type, int id)
+        : id(id), type(type),
         xdim(0), ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
         owner(NO_AGENT)
@@ -121,9 +121,8 @@ class ItemContainer: public ItemContainerInterface
 
         /* initializers */
 
-        void init(ItemContainerType type, int xdim, int ydim)
+        void init(int xdim, int ydim)
         {
-            this->type = type;
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
@@ -132,8 +131,8 @@ class ItemContainer: public ItemContainerInterface
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
         
-        explicit ItemContainer(int id)
-        : ItemContainerInterface(id)
+        ItemContainer(ItemContainerType type, int id)
+        : ItemContainerInterface(type, id)
         {}
 };
 
@@ -188,9 +187,8 @@ class ItemContainerNanite: public ItemContainerInterface
 
         /* initializers */
 
-        void init(ItemContainerType type, int xdim, int ydim)
+        void init(int xdim, int ydim)
         {
-            this->type = type;
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim + 1; // +1 for the extra food slot
@@ -199,8 +197,8 @@ class ItemContainerNanite: public ItemContainerInterface
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
         
-        explicit ItemContainerNanite(int id)
-        : ItemContainerInterface(id)
+        ItemContainerNanite(ItemContainerType type, int id)
+        : ItemContainerInterface(type, id)
         #if DC_SERVER
         , digestion_tick(0)
         #endif
@@ -209,56 +207,75 @@ class ItemContainerNanite: public ItemContainerInterface
 
 }
 
-#include <common/template/object_list.hpp>
+#include <common/template/multi_object_list.hpp>
 
 namespace Item
 {
 
+ItemContainerInterface* create_item_container_interface(int type, int id)
+{
+    switch (type)
+    {
+        case AGENT_TOOLBELT:
+        case AGENT_CONTAINER:
+            return new ItemContainer((ItemContainerType)type, id);
+        case AGENT_NANITE:
+            return new ItemContainerNanite((ItemContainerType)type, id);
+    }
+    printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
+    assert(false);
+}
+
 const int ITEM_CONTAINER_MAX = 1024;
 
-class ItemContainerList: public Object_list<ItemContainer, ITEM_CONTAINER_MAX>
+class ItemContainerList: public MultiObject_list<ItemContainerInterface, ITEM_CONTAINER_MAX>
 {
     private:
         const char* name() { return "ItemContainer"; }
     public:
-        ItemContainerList() { print_list((char*)this->name(), this); }
 
         #if DC_CLIENT
-        ItemContainer* create()
+        ItemContainerInterface* create(int type)
         {
             printf("must create item container with id\n");
             assert(false);
             return NULL;
         }
 
-        ItemContainer* create(int id)
+        ItemContainerInterface* create(int type, int id)
         {
-            return Object_list<ItemContainer, ITEM_CONTAINER_MAX>::create(id);
+            return MultiObject_list<ItemContainerInterface, ITEM_CONTAINER_MAX>::create(type, id);
         }
         #endif
+
+        ItemContainerList()
+        : MultiObject_list<ItemContainerInterface, ITEM_CONTAINER_MAX>(create_item_container_interface)
+        {
+            print_list((char*)this->name(), this);
+        }
 };
 
-const int ITEM_CONTAINER_NANITE_MAX = AGENT_MAX;
-class ItemContainerNaniteList: public Object_list<ItemContainerNanite, ITEM_CONTAINER_NANITE_MAX>
-{
-    private:
-        const char* name() { return "ItemContainerNanite"; }
-    public:
-        ItemContainerNaniteList() { print_list((char*)this->name(), this); }
+//const int ITEM_CONTAINER_NANITE_MAX = AGENT_MAX;
+//class ItemContainerNaniteList: public Object_list<ItemContainerNanite, ITEM_CONTAINER_NANITE_MAX>
+//{
+    //private:
+        //const char* name() { return "ItemContainerNanite"; }
+    //public:
+        //ItemContainerNaniteList() { print_list((char*)this->name(), this); }
 
-        #if DC_CLIENT
-        ItemContainerNanite* create()
-        {
-            printf("must create item container with id\n");
-            assert(false);
-            return NULL;
-        }
+        //#if DC_CLIENT
+        //ItemContainerNanite* create()
+        //{
+            //printf("must create item container with id\n");
+            //assert(false);
+            //return NULL;
+        //}
 
-        ItemContainerNanite* create(int id)
-        {
-            return Object_list<ItemContainerNanite, ITEM_CONTAINER_NANITE_MAX>::create(id);
-        }
-        #endif
-};
+        //ItemContainerNanite* create(int id)
+        //{
+            //return Object_list<ItemContainerNanite, ITEM_CONTAINER_NANITE_MAX>::create(id);
+        //}
+        //#endif
+//};
 
 }

@@ -35,9 +35,6 @@ class MultiObject_list
 
         Object_interface** a;
 
-        MultiObject_list(); //default constructor
-        ~MultiObject_list(); //default deconstructor
-
         Object_interface* get(int id);
         Object_interface* create(int type);         //object auto id
         Object_interface* create(int type, int id);   //create object with id
@@ -54,13 +51,17 @@ class MultiObject_list
         void where();
         void print_members();
 
+        // initialize with pointer to creator
+        MultiObject_list(Object_interface* (*create_interface)(int, int)); //default constructor
+        virtual ~MultiObject_list(); //default deconstructor
 };
 
 template <class Object_interface, int max_n> 
-MultiObject_list<Object_interface, max_n>::MultiObject_list()
+MultiObject_list<Object_interface, max_n>::MultiObject_list(Object_interface* (*create_interface)(int, int))
 :
 id_c(0),
-num(0)
+num(0),
+create_interface(create_interface)
 {
     this->a = (Object_interface**)calloc(max_n, sizeof(Object_interface*));
     //where();

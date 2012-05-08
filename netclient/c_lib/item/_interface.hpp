@@ -81,7 +81,9 @@ ItemID get_agent_hand(int agent_id);
 int get_agent_container(int agent_id);
 int get_agent_toolbelt(int agent_id);
 ItemID get_agent_toolbelt_item(int agent_id, int slot);
-void assign_container_to_agent(int agent_id, int client_id);
+
+void assign_container_to_agent(class ItemContainerInterface* container, int* container_list, int agent_id, int client_id);
+void assign_containers_to_agent(int agent_id, int client_id);
 
 class Item* create_item(int item_type);
 

@@ -5,7 +5,6 @@ namespace Item
 
 //Common
 ItemContainerList* item_container_list = NULL;
-ItemContainerNaniteList* item_container_nanite_list = NULL;
 ItemList* item_list = NULL;
 
 
