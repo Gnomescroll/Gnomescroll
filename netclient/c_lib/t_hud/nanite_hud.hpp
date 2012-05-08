@@ -59,6 +59,7 @@ class AgentNaniteUI : public UIElement
     static const int slot_border_gap = 1;
 
     HudText::Text* prices;
+    HudText::Text* stacks;
 
     void draw();
 
@@ -79,15 +80,13 @@ class AgentNaniteUI : public UIElement
         return (this->get_slot_at(px,py) != NULL_SLOT || this->in_nanite_region(px,py));
     }
 
-    void handle_ui_event(int px, int py);   // remove this
-
     bool in_nanite_region(int px, int py);
 
     void init()
     {
-        assert(this->prices == NULL);
-        
         int max = (xdim * ydim) - 1;    // last slot is reserved
+
+        assert(this->prices == NULL);
         this->prices = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
@@ -97,9 +96,21 @@ class AgentNaniteUI : public UIElement
             t->set_color(255,255,255,255);    // some kind of red
             t->set_depth(-0.1f);
         }
+
+        // stacks only for food/coins
+        assert(this->stacks == NULL);
+        this->stacks = new HudText::Text[max];
+        for (int i=0; i<2; i++)
+        {
+            HudText::Text* t = &this->stacks[i];
+            t->set_format((char*) "%d");
+            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+            t->set_color(255,255,255,255);    // some kind of red
+            t->set_depth(-0.1f);
+        }
     }
 
-    AgentNaniteUI() : prices(NULL)
+    AgentNaniteUI() : prices(NULL), stacks(NULL)
     {}
 
     ~AgentNaniteUI()
@@ -140,56 +151,6 @@ int AgentNaniteUI::get_slot_at(int px, int py)
     return slot+1;  // offset all by 1, because slot 0 is the food slot
 }
 
-void AgentNaniteUI::handle_ui_event(int px, int py)
-{
-    // check if in nanite region
-    // check if in slot region
-
-    px -= xoff + render_width;
-    py = yoff - (_yresf - py);
-
-    float width  = xdim*slot_size; //fix
-    float height = ydim*slot_size; //fix
-
-    if (px < 0 || px > width)  return;
-    if (py < 0 || py > height) return;
-
-    int xslot = px / slot_size;
-    int yslot = py / slot_size;
-
-    //int slot = yslot * this->xdim + xslot;
-
-    //nanite region
-    assert(xslot >= 0 && xslot < xdim && yslot >= 0 && yslot < ydim);
-
-    if (xslot <= 3)
-    {
-        if (xslot == 3 && yslot == 3)
-        {
-            //pickup item being eaten (if it exists)
-            //inventory slot 0
-        }
-        else
-        {
-            //collect nannite if ready
-        }
-    }
-
-
-
-    if (xslot == 5 && yslot == 3)
-    {
-        //pickup nannites from hand
-        //dropoff nannites from hand
-
-        //inventory slot 1
-    }
-    else
-    {
-        //item purchase
-    }
-}
-
 //221x147
 void AgentNaniteUI::draw()
 {
@@ -206,8 +167,8 @@ void AgentNaniteUI::draw()
     const float w = render_width;
     const float h = render_height;
 
-    const float x = xoff;
-    const float y = yoff;
+    float x = xoff;
+    float y = yoff;
 
     const float tx_min = 0.0;
     const float ty_min = 0.0;
@@ -300,14 +261,13 @@ void AgentNaniteUI::draw()
 
 
     // draw food
-    Item::ItemContainerNanite* container = (Item::ItemContainerNanite*)Item::get_container(this->container_id);
+    Item::ItemContainerNaniteUI* container = (Item::ItemContainerNaniteUI*)Item::get_container_ui(this->container_id);
     if (container == NULL) return;
 
-    const int food_slot = 0;
-    ItemID food_item_id = container->get_item(food_slot);
-    if (food_item_id != NULL_ITEM)
+    int food_item_type = container->get_food_type();
+    if (food_item_type != NULL_ITEM_TYPE)
     {
-        int food_sprite_id = Item::get_sprite_index_for_id(food_item_id);
+        int food_sprite_id = Item::get_sprite_index_for_type(food_item_type);
         float x = xoff + nanite_offset_x + nanite_width - slot_size;
         float y = yoff - (nanite_offset_y + nanite_height - slot_size);
 
@@ -369,6 +329,23 @@ void AgentNaniteUI::draw()
         text->set_position(x,y);
         text->draw();
     }
+
+    // draw food stack
+    HudText::Text* food_stack = &this->stacks[0];
+
+    int food_stack_size = container->get_food_stack();
+    assert(count_digits(food_stack_size) < STACK_COUNT_MAX_LENGTH);
+    if (food_stack_size > 1)
+    {
+        food_stack->update_formatted_string(1, food_stack_size);
+        x = xoff + nanite_offset_x + nanite_width - food_stack->get_width();
+        y = yoff - (nanite_offset_y + nanite_height - food_stack->get_height());
+        food_stack->set_position(x,y);
+        food_stack->draw();
+    }
+    
+    // draw coin stack
+
     HudFont::reset_default();
     HudFont::end_font_draw();
 

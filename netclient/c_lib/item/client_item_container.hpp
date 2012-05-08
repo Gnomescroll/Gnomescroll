@@ -171,6 +171,26 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
 {
     public:
 
+        int get_food_type()
+        {
+            return this->get_slot_type(0);
+        }
+        
+        int get_food_stack()
+        {
+            return this->get_slot_stack(0);
+        }
+
+        int get_coin_type()
+        {
+            return this->get_slot_type(this->slot_max-1);
+        }
+        
+        int get_coin_stack()
+        {
+            return this->get_slot_stack(this->slot_max-1);
+        }
+
         bool can_insert_item(int slot, int item_type)
         {
             assert(this->is_valid_slot(slot));
