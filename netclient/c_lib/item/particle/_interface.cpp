@@ -78,6 +78,8 @@ ItemParticle* create_item_particle(
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
+    Item::Item* item = Item::get_item(item_id);
+    if (item == NULL) return NULL;
     ItemParticle* ip = item_particle_list->create();
     if (ip == NULL) return NULL; 
     ip->init(item_id, item_type, x,y,z,vx,vy,vz);
@@ -178,11 +180,6 @@ void throw_item(int agent_id, ItemID item_id)
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
 
-    Item::Item* item = Item::get_item(item_id);
-    if (item == NULL) return;
-
-    Item::broadcast_item_destroy(item->id);
-
     Vec3 position = a->get_center();
     float x = position.x;
     float y = position.y;
@@ -197,6 +194,10 @@ void throw_item(int agent_id, ItemID item_id)
     float vx = force.x;
     float vy = force.y;
     float vz = force.z;
+
+    Item::Item* item = Item::get_item(item_id);
+    if (item == NULL) return;
+    //Item::broadcast_item_destroy(item->id);
 
     // create particle
     ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);

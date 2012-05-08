@@ -49,6 +49,7 @@ typedef enum
     IG_MINING_LASER,
     IG_GRENADE_LAUNCHER,
     IG_NANITE_COIN,
+    IG_DEBUG,
 } ItemGroup;
 
 /* No typedef for ItemType, use string names */

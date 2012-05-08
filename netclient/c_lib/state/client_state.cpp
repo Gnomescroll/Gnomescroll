@@ -29,6 +29,9 @@ namespace ClientState {
     int tick_id = 0;
     int frame_id = 0;
 
+    Vec3 location_pointer;
+    bool location_pointer_set = false;
+
     Agent_list* agent_list = NULL;
 
     Voxel_render_list_manager* voxel_render_list;
@@ -223,6 +226,16 @@ namespace ClientState {
     {
         chat_client->send_system_message((char*)"Disconnected from server");
     }
+
+    void set_location_pointer()
+    {
+        Vec3 loc = playerAgent_state.action.get_aiming_point();
+        if (vec3_equal(loc, vec3_init(0,0,0))) return;
+        printf("pointing at target "); vec3_print(loc);
+        location_pointer = loc;
+        location_pointer_set = true;
+    }
+
 }
 
 #endif

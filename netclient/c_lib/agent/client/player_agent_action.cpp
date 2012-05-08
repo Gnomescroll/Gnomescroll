@@ -527,6 +527,34 @@ void PlayerAgent_action::place_turret()
     msg.send();
 }
 
+Vec3 PlayerAgent_action::get_aiming_point()
+{
+    if (p->you == NULL) return vec3_init(0,0,0);
+    if (p->you->status.dead) return vec3_init(0,0,0);
+    if (p->you->status.team == 0) return vec3_init(0,0,0);
+
+    Vec3 pos = this->p->camera_position();
+    Vec3 look = agent_camera->forward_vector();
+
+    struct Voxel_hitscan_target target;
+    float vox_distance;
+    float collision_point[3];
+    int block_pos[3];
+    int side[3];
+    int tile;
+    float block_distance;
+
+    Hitscan::HitscanTargetTypes target_type =
+        Hitscan::hitscan_against_world(
+            pos, look, this->p->agent_id, OBJECT_AGENT,
+            &target, &vox_distance, collision_point,
+            block_pos, side, &tile, &block_distance
+        );
+    if (target_type == Hitscan::HITSCAN_TARGET_VOXEL) return vec3_init(collision_point[0], collision_point[1], collision_point[2]);
+    else if (target_type == Hitscan::HITSCAN_TARGET_BLOCK) return vec3_add(pos, vec3_scalar_mult(look, block_distance));
+    else return vec3_init(0,0,0);
+}
+
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
 :
 p(player_agent)

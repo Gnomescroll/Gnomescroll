@@ -14,6 +14,9 @@ namespace ClientState {
     extern int tick_id;
     extern int frame_id;
 
+    extern Vec3 location_pointer;
+    extern bool location_pointer_set;
+
     extern PlayerAgent_state playerAgent_state;
 
     extern class Agent_list* agent_list;
@@ -49,6 +52,7 @@ namespace ClientState {
     void update_camera();
     void send_camera_state();
 
+    void set_location_pointer();
 }
 #endif
 

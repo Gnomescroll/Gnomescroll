@@ -39,6 +39,9 @@ bool toolbelt_item_begin_alpha_action()
         case IG_GRENADE_LAUNCHER:
             ClientState::playerAgent_state.action.throw_grenade();
             break;
+        case IG_DEBUG:
+            ClientState::set_location_pointer();
+            break;
         default:
             return true;
     }
