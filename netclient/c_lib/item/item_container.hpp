@@ -136,7 +136,6 @@ class ItemContainer: public ItemContainerInterface
         {}
 };
 
-const int NANITE_DIGESTION_RATE = 30 * 5;
 class ItemContainerNanite: public ItemContainerInterface
 {
     public:
