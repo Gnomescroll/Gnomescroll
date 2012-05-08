@@ -285,6 +285,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
         {
             printf("nanite container\n");
             printf("slot %d\n", slot);
+            printf("slot max %d\n", container->slot_max);
             if (slot == 0)
             {   // food slot
                 if (hand_empty)
@@ -336,18 +337,118 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     // dont swap
                 }
             }
-            else if (slot == container->slot_max - 1)
+            else if (slot == container->slot_max-1)
             {   // coin slot
                 if (hand_empty)
                 {
                     if (!slot_empty)
                     {   // pickup coins
-
+                        #if DC_CLIENT
+                        container->remove_item(slot);
+                        hand_item_type = slot_item_type;
+                        hand_item_stack = slot_item_stack;
+                        hand_item_durability = slot_item_durability;
+                        #endif
+                        #if DC_SERVER
+                        container->remove_item(slot);
+                        send_container_remove(client_id, container->id, slot);
+                        hand_item = slot_item;
+                        send_hand_insert(client_id, hand_item);
+                        #endif
+                        action = FULL_SLOT_TO_EMPTY_HAND;
                     }
                 }
                 else
                 {
-                    // swap/merge, if type matches
+                    if (slot_empty)
+                    {
+                        #if DC_CLIENT
+                        bool can_insert = container->can_insert_item(slot, hand_item_type);
+                        #endif
+                        #if DC_SERVER
+                        bool can_insert = container->can_insert_item(slot, hand_item);
+                        #endif
+                        if (can_insert)
+                        {
+                            #if DC_CLIENT
+                            container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
+                            hand_item_type = NULL_ITEM_TYPE;
+                            hand_item_stack = 1;
+                            hand_item_durability = NULL_DURABILITY;
+                            #endif
+                            #if DC_SERVER
+                            container->insert_item(slot, hand_item);
+                            send_container_insert(client_id, hand_item, container->id, slot);
+                            hand_item = NULL_ITEM;
+                            send_hand_remove(client_id);
+                            #endif
+                            action = FULL_HAND_TO_EMPTY_SLOT;
+                        }
+                    }
+                    else
+                    {
+                        if (hand_item_type == slot_item_type)
+                        {
+                            // hand stack will fit entirely in slot
+                            if (hand_item_stack <= slot_item_space)
+                            {   // FULL STACK MERGE
+                                // add stacks
+                                #if DC_CLIENT
+                                container->insert_item(slot, slot_item_type, slot_item_stack + hand_item_stack, slot_item_durability);
+                                hand_item_type = NULL_ITEM_TYPE;
+                                hand_item_stack = 1;
+                                hand_item_durability = NULL_DURABILITY;
+                                #endif
+                                #if DC_SERVER
+                                merge_item_stack(hand_item, slot_item); // merge_item_stack(src, dest)
+                                broadcast_item_state(slot_item);
+                                destroy_item(hand_item);
+                                hand_item = NULL_ITEM;
+                                send_hand_remove(client_id);
+                                #endif
+                                action = FULL_HAND_TO_OCCUPIED_SLOT;
+                            }
+                            else
+                            // stacks will not completely merge
+                            {
+                                if (slot_item_space == 0)
+                                // the stack is full
+                                {  // SWAP
+                                    #if DC_CLIENT
+                                    container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
+                                    hand_item_type = slot_item_type;
+                                    hand_item_stack = slot_item_stack;
+                                    hand_item_durability = slot_item_durability;
+                                    #endif
+                                    #if DC_SERVER
+                                    container->insert_item(slot, hand_item);
+                                    send_container_insert(client_id, hand_item, container->id, slot);
+                                    hand_item = slot_item;
+                                    send_hand_insert(client_id, hand_item);
+                                    #endif
+                                    action = FULL_HAND_SWAP_WITH_SLOT;
+                                }
+                                else
+                                // some of the hand stack will fit in the slot
+                                {   // PARTIAL STACK MERGE
+                                    #if DC_CLIENT
+                                    container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
+                                    //hand_item_type unchanged
+                                    hand_item_stack -= slot_item_space;
+                                    assert(hand_item_stack > 0);
+                                    #endif
+                                    #if DC_SERVER
+                                    merge_item_stack(hand_item, slot_item, slot_item_space);
+                                    // update items
+                                    broadcast_item_state(slot_item);
+                                    broadcast_item_state(hand_item);
+                                    // hand item unchanged
+                                    #endif
+                                    action = PARTIAL_HAND_TO_OCCUPIED_SLOT;
+                                }
+                            }
+                        }
+                    }
                 }
             }
             else
