@@ -248,7 +248,6 @@ class L_System {
         }
 
         void set_starting_position(double x, double y) {
-            printf("Set starting position to %0.2f %0.2f\n", x,y);
             this->x = x;
             this->y = y;
             this->ogx = x;
