@@ -287,6 +287,8 @@ int init_c_lib()
     
     Animations::init();
 
+    obj_load::load_model();
+    obj_load::init_draw_model();
     return 0;
 }
 
