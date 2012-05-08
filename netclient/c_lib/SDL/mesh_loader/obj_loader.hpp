@@ -5,6 +5,8 @@
 //#include <stdio.h>
 //#include "obj.h"
 
+#include <SDL/shader_loader.hpp>
+
 namespace obj_load
 {
 
@@ -69,6 +71,7 @@ void load_model()
    printf("Object Model: nNormal= %d \n", model->nNormal);
  
  	v_array = new Vertex[model->nTriangle];
+ 	v_num = model->nTriangle;
 
  	for(int i=0; i<model->nTriangle; i++)
  	{
@@ -95,15 +98,50 @@ void load_model()
  	}
 }
 
+class SHADER monster_shader;
+unsigned int monster_texture;
+
+unsigned int monster_TexCoord;
+unsigned int monster_InPosition;
+
+unsigned int monster_vbo;
+
 void init_shader()
 {
+    monster_shader.set_debug(false);
 
+    monster_shader.load_shader( "insect mob shader",
+        "./media/shaders/mob/monster_mob.vsh",
+        "./media/shaders/mob/monster_mob.fsh" );
+   
+    monster_TexCoord = monster_shader.get_attribute("InTexCoord");
 
+    monster_InPosition = monster_shader.get_uniform("InPosition");
 }
 
 void init_texture()
 {
+    SDL_Surface* s = create_surface_from_file((char*) "./media/mesh/mob1_dm.png");
 
+    if(s == NULL)
+    {
+        printf("init_insect_mob: texture load error\n");
+        GS_ABORT();
+    }
+ 
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures( 1, &monster_texture );
+    glBindTexture( GL_TEXTURE_2D, monster_texture );
+
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+    GLuint internalFormat = GL_RGBA; //GL_RGBA;
+    GLuint format = GL_RGBA;
+ 
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
+    glDisable(GL_TEXTURE_2D);
 }
 
 void init_draw_model()
@@ -116,8 +154,30 @@ void init_draw_model()
 void draw_model(float x, float y, float z)
 {
 
+    const static unsigned int stride = sizeof(struct vertexElement2);
 
+    glColor3ub(255,255,255);
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, monster_texture );
+
+    glBindBuffer(GL_ARRAY_BUFFER, monster_vbo);
+    
+    glUseProgramObjectARB(monster_shader.shader);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableVertexAttribArray(insect_mob_TexCoord);
+
+    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
+    glVertexAttribPointer(monster_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
+
+    glUniform3f(monster_InPosition, x,y,z);
+
+    glDrawArrays(GL_TRIANGLES,0, v_num);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(monster_TexCoord);
+    glUseProgramObjectARB(0);
 }
 
 void free_model(struct ObjModel* model)

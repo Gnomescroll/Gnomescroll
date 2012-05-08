@@ -85,7 +85,7 @@ void init_insect_mob_texture()
 
 void init_insect_mob_shader()
 {
-    insect_mob_shader.set_debug(true);
+    insect_mob_shader.set_debug(false);
 
     insect_mob_shader.load_shader( "insect mob shader",
         "./media/shaders/mob/insect_mob.vsh",
