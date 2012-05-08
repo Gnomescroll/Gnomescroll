@@ -1,3 +1,9 @@
+Glowing Outlines:
+http://gamedev.stackexchange.com/questions/16391/how-can-i-reduce-aliasing-in-my-outline-glow-effect
+
+Creating Bloom
+    the best method for bloom is create a bloom texture by rendering all the objects that u wanna glow into it + perform the blur on this. much better results than what most/all games do just using the framebuffer even with hdr it looks crap. the downside though is its generally more expensive 
+
 Specular Highlights at Silhouettes:
 http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
 
