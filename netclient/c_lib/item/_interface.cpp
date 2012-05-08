@@ -244,6 +244,7 @@ ItemID get_toolbelt_item(int slot)
 
 Item* create_item(int item_type, ItemID item_id)
 {
+    assert(item_type != NULL_ITEM_TYPE);
     return item_list->create_type(item_type, item_id);
 }
 
@@ -403,7 +404,15 @@ void assign_containers_to_agent(int agent_id, int client_id)
 
 Item* create_item(int item_type)
 {
+    assert(item_type != NULL_ITEM_TYPE);
     return item_list->create_type(item_type);
+}
+
+Item* create_item(char* item_name)
+{
+    int item_type = get_item_type(item_name);
+    assert(item_type != NULL_ITEM_TYPE);
+    return create_item(item_type);
 }
 
 void agent_died(int agent_id)

@@ -86,6 +86,7 @@ void assign_container_to_agent(class ItemContainerInterface* container, int* con
 void assign_containers_to_agent(int agent_id, int client_id);
 
 class Item* create_item(int item_type);
+class Item* create_item(char* item_name);
 
 void agent_died(int agent_id);
 void agent_quit(int agent_id);

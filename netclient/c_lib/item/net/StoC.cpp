@@ -34,8 +34,6 @@ inline void item_state_StoC::handle()
     item->durability = durability;
     item->energy = energy;
 
-    printf("item state stack_size %d\n", stack_size);
-
     // update UI
     update_container_ui_from_state();
     

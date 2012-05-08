@@ -295,7 +295,40 @@ void AgentNaniteUI::draw()
         glEnd();
     }
     
-    // draw nanite poop
+    // draw coins
+    int coin_item_type = container->get_coin_type();
+    if (coin_item_type != NULL_ITEM_TYPE)
+    {
+        int xslot = xdim-1;
+        int yslot = ydim-1;
+        
+        int coin_sprite_id = Item::get_sprite_index_for_type(coin_item_type);
+        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
+        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+
+        const float w = slot_size;
+        const float iw = 16.0f; // icon_width
+        const int iiw = 16; // integer icon width
+
+        const float tx_min = (1.0/iw)*(coin_sprite_id % iiw);
+        const float ty_min = (1.0/iw)*(coin_sprite_id / iiw);
+        const float tx_max = tx_min + 1.0/iw;
+        const float ty_max = ty_min + 1.0/iw;
+
+        glBegin(GL_QUADS);
+        glTexCoord2f( tx_min, ty_min );
+        glVertex2f(x, y);
+
+        glTexCoord2f( tx_min, ty_max );
+        glVertex2f(x,y-w);
+
+        glTexCoord2f( tx_max, ty_max );
+        glVertex2f(x+w, y-w );
+
+        glTexCoord2f( tx_max, ty_min );
+        glVertex2f(x+w, y);
+        glEnd();
+    }
 
     glDisable(GL_TEXTURE_2D);
 
@@ -338,13 +371,27 @@ void AgentNaniteUI::draw()
     if (food_stack_size > 1)
     {
         food_stack->update_formatted_string(1, food_stack_size);
-        x = xoff + nanite_offset_x + nanite_width - food_stack->get_width();
-        y = yoff - (nanite_offset_y + nanite_height - food_stack->get_height());
+        const float x = xoff + nanite_offset_x + nanite_width - food_stack->get_width();
+        const float y = yoff - (nanite_offset_y + nanite_height - food_stack->get_height());
         food_stack->set_position(x,y);
         food_stack->draw();
     }
     
     // draw coin stack
+    HudText::Text* coin_stack = &this->stacks[0];
+
+    int coin_stack_size = container->get_coin_stack();
+    assert(count_digits(coin_stack_size) < STACK_COUNT_MAX_LENGTH);
+    if (coin_stack_size > 1)
+    {
+        int xslot = xdim-1;
+        int yslot = ydim-1;
+        coin_stack->update_formatted_string(1, coin_stack_size);
+        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot + slot_size - coin_stack->get_width();
+        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot + slot_size - coin_stack->get_height());
+        coin_stack->set_position(x,y);
+        coin_stack->draw();
+    }
 
     HudFont::reset_default();
     HudFont::end_font_draw();

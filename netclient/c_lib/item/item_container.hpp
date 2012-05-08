@@ -145,6 +145,16 @@ class ItemContainerNanite: public ItemContainerInterface
         void digest();
         #endif
 
+        ItemID get_coins()
+        {
+            return this->get_item(this->slot_max-1);
+        }
+
+        ItemID get_food()
+        {
+            return this->get_item(0);
+        }
+
         bool can_insert_item(int slot, ItemID item_id)
         {
             assert(this->is_valid_slot(slot));

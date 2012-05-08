@@ -87,15 +87,28 @@ void ItemContainerNanite::remove_item(int slot)
 #if DC_SERVER
 void ItemContainerNanite::digest()
 {
+    // dont eat if coins are full
+    ItemID coins_id = this->get_coins();
+    if (coins_id != NULL_ITEM)
+    {
+        int coins_type = get_item_type(coins_id);
+        if (get_stack_size(coins_id) >= get_max_stack_size(coins_type)) return;
+    }
+
+    // tick digestion
     this->digestion_tick++;
     if (this->digestion_tick % NANITE_DIGESTION_RATE != 0) return;
     ItemID item_id = this->slot[0];
     if (item_id == NULL_ITEM) return;
 
+    // decrement stack
     Item* item = get_item_object(item_id);
     assert(item != NULL);
     item->stack_size -= 1;
+    
     Agent_state* a = STATE::agent_list->get(this->owner);
+
+    // send new food state
     if (item->stack_size <= 0)
     {
         this->remove_item(0);
@@ -105,6 +118,22 @@ void ItemContainerNanite::digest()
     else
     {
         if (a != NULL) send_item_state(a->client_id, item->id);
+    }
+
+    // update coins
+    if (coins_id == NULL_ITEM)
+    {   // no coins were in coin slot, create new stack
+        Item* coin = create_item((char*)"nanite_coin");
+        assert(coin != NULL);
+        if (a != NULL) send_item_create(a->client_id, coin->id);
+        this->insert_item(this->slot_max-1, coin->id);
+        if (a != NULL) send_container_insert(a->client_id, coin->id, this->id, this->slot_max-1);
+    }
+    else
+    {   // add to existing coin stack
+        Item* coins = get_item_object(coins_id);
+        coins->stack_size += 1;
+        if (a != NULL) send_item_state(a->client_id, coins_id);
     }
 }
 #endif
