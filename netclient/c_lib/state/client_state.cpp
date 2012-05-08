@@ -229,6 +229,7 @@ namespace ClientState {
 
     void set_location_pointer()
     {
+        location_pointer_set = false;
         Vec3 loc = playerAgent_state.action.get_aiming_point();
         if (vec3_equal(loc, vec3_init(0,0,0))) return;
         printf("pointing at target "); vec3_print(loc);
