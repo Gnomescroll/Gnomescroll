@@ -76,7 +76,7 @@ void load_item_dat()
     s.hitscan_damage = 5;
     s.hitscan_max_ammo = 30;
     s.hitscan_bullet_effect_enum = 0;
-    s.max_durability = 200;
+    s.max_durability = 400;
     s.max_energy = 50;
     s.max_stack_size = 1;
 
@@ -84,7 +84,7 @@ void load_item_dat()
     sprite_def(i1, 1,1);
     s.melee_fire_cooldown = 250;
     s.melee_damage = 2;
-    s.max_durability = 100;
+    s.max_durability = 400;
     s.max_stack_size = 1;
 
     item_def(7, IG_MINING_LASER , "mining_laser");
@@ -92,7 +92,7 @@ void load_item_dat()
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
     s.mining_block_damage = 3;
-    s.max_durability = 200;
+    s.max_durability = 1200;
     s.max_energy = 50;
     s.max_stack_size = 1;
     s.click_and_hold = true;
