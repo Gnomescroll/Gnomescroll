@@ -35,5 +35,7 @@ class PlayerAgent_action {
         void place_spawner();
         void place_turret();
 
+        Vec3 get_aiming_point();
+
         explicit PlayerAgent_action(PlayerAgent_state* player_agent);
 };

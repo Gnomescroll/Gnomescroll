@@ -115,6 +115,12 @@ void load_item_dat()
     sprite_def(i1, 2, 7);
     s.max_stack_size = 99;
 
+    item_def(12, IG_DEBUG, "location_pointer");
+    sprite_def(i0, 4,2);
+    s.max_stack_size = 99;
+    s.max_durability = NULL_DURABILITY - 1;
+    s.max_energy = NULL_ENERGY - 1;
+
     end_item_dat();
 }
 

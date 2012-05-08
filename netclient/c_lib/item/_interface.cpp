@@ -397,6 +397,12 @@ void assign_containers_to_agent(int agent_id, int client_id)
 
     Item* mining_laser = create_item(7);
     auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
+
+    #if !PRODUCTION
+    Item* location_pointer = create_item(12);
+    agent_toolbelt->insert_item(agent_toolbelt->slot_max-1, location_pointer->id);
+    send_container_item_create(client_id, location_pointer->id, agent_toolbelt->id, agent_toolbelt->slot_max-1);
+    #endif
     
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
@@ -431,6 +437,7 @@ void agent_died(int agent_id)
         ItemID item_id = container->slot[i];
         if (item_id == NULL_ITEM) continue;
         container->remove_item(i);
+        send_container_remove(a->client_id, container->id, i);
         ItemParticle::throw_item(agent_id, item_id);
     }
 }
