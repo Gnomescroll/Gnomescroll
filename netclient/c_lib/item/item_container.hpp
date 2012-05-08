@@ -254,27 +254,4 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface, ITEM_CO
         }
 };
 
-//const int ITEM_CONTAINER_NANITE_MAX = AGENT_MAX;
-//class ItemContainerNaniteList: public Object_list<ItemContainerNanite, ITEM_CONTAINER_NANITE_MAX>
-//{
-    //private:
-        //const char* name() { return "ItemContainerNanite"; }
-    //public:
-        //ItemContainerNaniteList() { print_list((char*)this->name(), this); }
-
-        //#if DC_CLIENT
-        //ItemContainerNanite* create()
-        //{
-            //printf("must create item container with id\n");
-            //assert(false);
-            //return NULL;
-        //}
-
-        //ItemContainerNanite* create(int id)
-        //{
-            //return Object_list<ItemContainerNanite, ITEM_CONTAINER_NANITE_MAX>::create(id);
-        //}
-        //#endif
-//};
-
 }

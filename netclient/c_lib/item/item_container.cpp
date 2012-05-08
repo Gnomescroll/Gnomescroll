@@ -95,12 +95,16 @@ void ItemContainerNanite::digest()
     Item* item = get_item_object(item_id);
     assert(item != NULL);
     item->stack_size -= 1;
+    Agent_state* a = STATE::agent_list->get(this->owner);
     if (item->stack_size <= 0)
     {
         this->remove_item(0);
-        Agent_state* a = STATE::agent_list->get(this->owner);
         if (a != NULL) send_container_remove(a->client_id, this->id, 0);
         destroy_item(item_id);
+    }
+    else
+    {
+        if (a != NULL) send_item_state(a->client_id, item->id);
     }
 }
 #endif
