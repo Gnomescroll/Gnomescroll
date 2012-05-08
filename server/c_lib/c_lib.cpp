@@ -29,6 +29,7 @@ dont_include_this_file_in_client
 #include <common/common.cpp>
 #include <common/files.cpp>
 #include <common/template/object_list.hpp>
+#include <common/template/multi_object_list.hpp>
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
  

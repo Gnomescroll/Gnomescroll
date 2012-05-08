@@ -33,6 +33,7 @@ dont_include_this_file_in_server
 /* Templates */
  
 #include <common/template/object_list.hpp>
+#include <common/template/multi_object_list.hpp>
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
 
