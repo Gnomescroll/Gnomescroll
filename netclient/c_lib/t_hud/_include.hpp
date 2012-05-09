@@ -7,6 +7,7 @@
 
 #include <t_hud/container_hud.cpp>
 #include <t_hud/nanite_hud.cpp>
+#include <t_hud/crafting_hud.cpp>
 #include <t_hud/toolbelt_hud.cpp>
 
 #include <t_hud/_interface.cpp>

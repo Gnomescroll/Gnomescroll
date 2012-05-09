@@ -11,6 +11,8 @@ extern unsigned int ItemGridSlotTexture;
 
 extern unsigned int NaniteTexture;
 
+extern unsigned int CraftingTexture;
+
 void init_texture();
 void teardown_texture();
 

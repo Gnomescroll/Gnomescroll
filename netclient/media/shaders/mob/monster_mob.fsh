@@ -23,7 +23,8 @@ void main()
 
     float diffuse1 =  abs(dot(gl_NormalMatrix*normal1, light_dir ));
     color = ((diffuse_p*diffuse1)*color) + ambient_p*color;
-
+    
+    gl_FragColor = color;
     //gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 
 }

@@ -4,14 +4,14 @@ package.path = "lua/?.lua;lua/block/?.lua;?.lua"
 
 require("lua_library");
 
-print("LuaJit: run_lua_test finished");
+--print("LuaJit: run_lua_test finished");
 
 if( options_table == nil) then
     print "WTF"
 end
 
 
-print(table.val_to_str(options_table))
+--sprint(table.val_to_str(options_table))
 
 
 
