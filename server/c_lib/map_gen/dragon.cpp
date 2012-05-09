@@ -9,7 +9,20 @@
 
 namespace Dragon {
 
-static Building_list buildings;
+struct Point
+{
+    double x,y;
+};
+
+struct iPoint
+{
+    int x,y;
+};
+
+struct Location
+{
+    int x,y,z;
+};
 
 class L_System {
     private:
@@ -55,6 +68,9 @@ class L_System {
         double dx,dy;
         double xstep,ystep;
 
+        struct Point* points;
+        int n_points;
+
         double p;
         void set_probability(double p) {
             this->p = p;
@@ -90,92 +106,100 @@ class L_System {
             double _y = y;
             _x += dx*xstep;
             _y += dy*ystep;
-            trace_set_map(x, y, _x, _y);
+            //trace_set_map(x, y, _x, _y);
             x = _x;
             y = _y;
+
+            this->add_node(x,y);
         }
         void forward_p() {
             if (randf() < this->p) forward();
         }
 
-        void building() {
-            if (randrange(0,7)!=0) {
-            //int xmi = min(4,(_x-x-2));
-            int xmi = (4 > ((dx*xstep)-2)) ? 4 : ((dx*xstep)-2);
-            int xma = (8 < ((dx*xstep)+2)) ? 8 : ((dx*xstep)+2);
-            int ymi = (4 > ((dy*ystep)-2)) ? 4 : ((dy*ystep)-2);
-            int yma = (8 < ((dy*ystep)+2)) ? 8 : ((dy*ystep)+2);
-            int xo = randrange(-1,1);
-            int yo = randrange(-1,1);
-            buildings.add(x+xo, y+yo, 0, randrange(xmi,xma), randrange(ymi,yma), randrange(12,20), randrange(101,102));
+        void add_node(double x, double y)
+        {
+            static int points_size = 1024;
+            if (this->points == NULL)
+            {
+                this->points = (struct Point*)malloc(points_size * sizeof(struct Point));
             }
+            if (this->n_points >= points_size)
+            {
+                points_size += 1024;
+                this->points = (struct Point*)realloc(this->points, points_size * sizeof(struct Point));
+            }
+
+            this->points[this->n_points].x = x;
+            this->points[this->n_points].y = y;
+            this->n_points++;
         }
-        
+
         inline void rotate90(double* x, double* y) {
             double _x = *x;
             *x = -*y;
             *y = _x;
         }
 
-        void trace_set_map(double x, double y, double x1, double y1) {
-            // step along path to set map
-            double step = 0.1;
-            double len = sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y));
-            int steps = ceil(len/step);
-            step = len/steps;   // resize
-            double xstep = step * ((x1-x)/len);
-            double ystep = step * ((y1-y)/len);
-            double mx=x,my=y;
+        //void trace_set_map(double x, double y, double x1, double y1) {
+            //// step along path to set map
+            //double step = 0.1;
+            //double len = sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y));
+            //int steps = ceil(len/step);
+            //step = len/steps;   // resize
+            //double xstep = step * ((x1-x)/len);
+            //double ystep = step * ((y1-y)/len);
+            //double mx=x,my=y;
 
-            double wstep = 0.1;
-            int wsteps = ceil(draw_width/wstep);
-            wstep = draw_width / wsteps; // resize
-            double wx=x,wy=y,wx1=x1,wy1=y1;
-            rotate90(&wx, &wy);
-            rotate90(&wx1, &wy1);
-            double wxstep = wstep * ((wx1-wx)/len);
-            double wystep = wstep * ((wy1-wy)/len);
-            mx -= wxstep*((wsteps+1)/2);
-            my -= wystep*((wsteps+1)/2);
+            //double wstep = 0.1;
+            //int wsteps = ceil(draw_width/wstep);
+            //wstep = draw_width / wsteps; // resize
+            //double wx=x,wy=y,wx1=x1,wy1=y1;
+            //rotate90(&wx, &wy);
+            //rotate90(&wx1, &wy1);
+            //double wxstep = wstep * ((wx1-wx)/len);
+            //double wystep = wstep * ((wy1-wy)/len);
+            //mx -= wxstep*((wsteps+1)/2);
+            //my -= wystep*((wsteps+1)/2);
 
-            const int initial_h = 8;
+            //const int initial_h = 8;
 
-            int i,j,k;
-            int ix,iy;
-            double mmx,mmy;
-            mmx=mx;mmy=my;
-            for (j=0; j<wsteps; j++)
-            {
-                mmx = mx;
-                mmy = my;
-                for (i=0; i<steps; i++)
-                {
-                    mmx += xstep;
-                    mmy += ystep;
-                    ix = (int)mmx;
-                    iy = (int)mmy;
-                    if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
-                    if (visited_tiles[ix + map_dim.x * iy]) continue;
-                    visited_tiles[ix + map_dim.x*iy] = 1;
-                    //for (k=this->z_min; k<this->z_max+1;k++) {
-                        //t_map::set(ix, iy, k, this->tile);
-                    //}
-                    int dh = distancef(x,y,ogx,ogy) / 6;
-                    dh = initial_h - dh;
-                    int start_h = t_map::get_highest_solid_block(ix,iy);
-                    //if (dh < 0)
-                        //for (k=dh; k<=0; k++)
-                            //t_map::set(ix,iy,start_h+k, 0);
-                    //else
-                    if (dh > 0)
-                        for (k=1; k<=dh; k++)
-                            t_map::set(ix,iy,start_h+k,this->tile);
-                    //printf("%d\n", dh);
-                }
-                mx += wxstep;
-                my += wystep;
-            }
-        }
+            //int i,j,k;
+            //int ix,iy;
+            //double mmx,mmy;
+            //mmx=mx;mmy=my;
+            //for (j=0; j<wsteps; j++)
+            //{
+                //mmx = mx;
+                //mmy = my;
+                //for (i=0; i<steps; i++)
+                //{
+                    //mmx += xstep;
+                    //mmy += ystep;
+                    //ix = (int)mmx;
+                    //iy = (int)mmy;
+                    //if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
+                    //if (visited_tiles[ix + map_dim.x * iy]) continue;
+                    //visited_tiles[ix + map_dim.x*iy] = 1;
+                    ////for (k=this->z_min; k<this->z_max+1;k++) {
+                        ////t_map::set(ix, iy, k, this->tile);
+                    ////}
+                    //int dh = distancef(x,y,ogx,ogy) / 6;
+                    //dh = initial_h - dh;
+                    //int start_h = t_map::get_highest_solid_block(ix,iy);
+                    ////if (dh < 0)
+                        ////for (k=dh; k<=0; k++)
+                            ////t_map::set(ix,iy,start_h+k, 0);
+                    ////else
+                    //if (dh > 0)
+                        //for (k=1; k<=dh; k++)
+                            //t_map::set(ix,iy,start_h+k,this->tile);
+                    ////printf("%d\n", dh);
+                //}
+                //mx += wxstep;
+                //my += wystep;
+            //}
+        //}
+        
         //void trace_set_map(double x, double y, double x1, double y1) {
             //// step along path to set map
             //double step = 0.1;
@@ -366,9 +390,6 @@ class L_System {
                     case 'f':
                         forward_p();
                         break;
-                    case 'B':
-                        building();
-                        break;
                     default:
                         break;
                 }
@@ -427,7 +448,9 @@ class L_System {
         }
 
     L_System() :
-    n_rules(0), iterations(0), p(1.0), draw_width(0.1)
+    n_rules(0), iterations(0), 
+    points(NULL), n_points(0),
+    p(1.0),draw_width(0.1)
     {
         visited_tiles = (char*)calloc(map_dim.x*map_dim.y, sizeof(char));
     }
@@ -443,6 +466,7 @@ class L_System {
         }
         if (tokens != NULL) free(tokens);
         if (visited_tiles != NULL) free(visited_tiles);
+        if (points != NULL) free(points);
     }
 };
 
@@ -507,194 +531,69 @@ void init(int z) {
     delete L;
 }
 
-void caves()
+L_System* _caves()
 {
-    int n = 20;
-    for (int i=0; i<n; i++)
-    {
-        L_System* L = new L_System;
+    L_System* L = new L_System;
 
-        int tile = 50;
-        int z_min = 10;
-        int z_max = 64;
-        char tokens[]= "XYF+-B[]f";
-        //int iterations = 20;
-        int iterations = 9;
-        double degrees = 90;
-        double step = 4;
-        double xstep = randrange(1,2);
-        double ystep = randrange(1,2);
-        L->set_tokens(tokens);
-        L->set_iterations(iterations);
-        L->set_degrees(degrees);
-        L->set_step_size(step);
-        L->set_step_size(xstep, ystep);
-        L->set_starting_degrees(0);
-        float start_x = randf() * map_dim.x;
-        float start_y = randf() * map_dim.y;
-        L->set_starting_position(start_x, start_y);
-        L->set_map_tile(tile);
-        L->set_map_z_level(z_min, z_max);
-        L->set_dimensions(map_dim.x,map_dim.y);
-        L->set_draw_width(.1);
-        L->tile = tile;
-        float p = randf();
-        p /= 5.0f;
-        p += 0.5f;
-        L->set_probability(p);
-
-        // rules
-        L->add_rule((char*) "B > B");
-        L->add_rule((char*) "X > X]YF");
-        L->add_rule((char*) "Y > FX[Y");
-        L->add_rule((char*) "F > F");
-        //L->add_rule((char*) "+ > ]");
-        //L->add_rule((char*) "- > [");
-        //L->add_rule((char*) "] > +");
-        //L->add_rule((char*) "[ > -");
-        L->add_rule((char*) "+ > +");
-        L->add_rule((char*) "- > -");
-        L->add_rule((char*) "] > ]");
-        L->add_rule((char*) "[ > [");
-        L->add_rule((char*) "f > f");
-
-        // start condition
-        L->set_init_condition((char*) "FX");
-
-        L->run();
-
-        delete L;
-    }
-}
-
-bool pattern_match(int x, int y, int z, int pattern_w, int pattern_h) {
-    int edge_tile = 101;
-    //int inside_tile = 11;
-    //int width = 4;
-    //int height = 5;
-    int width = pattern_w;
-    int height = pattern_h;
-    int i,j;
-    bool match = true;
-
-    // check sides
-    for (j=y; j<y+height; j++) {
-        if (_get(x,j,z) != edge_tile) {
-            match = false;
-            return match;
-        }
-        if (_get(x+width,j,z) != edge_tile) {
-            match = false;
-            return match;
-        }
-    }
-
-    for (i=x; i<x+width; i++) {
-        if (_get(i,y,z) != edge_tile) {
-            match = false;
-            return match;
-        }
-        if (_get(i,y+height,z) != edge_tile) {
-            match = false;
-            return match;
-        }
-    }
-    return match;
-}
-
-inline void create_building(int x, int y, int z, int w, int h, int l, int tile) {
-    buildings.add(x,y,z,w,h,l,tile);
-}
-
-void raster(int pattern_w, int pattern_h) {
-    int z = 0;
-    bool matched;
-    int i,j;
-    for (i=0; i<width; i++) {
-        for (j=0; j<height; j++) {
-            matched = pattern_match(i,j,z,pattern_w, pattern_h);
-            if (matched) {
-                if (randrange(0,1) == 0) {
-                    create_building(i+1,j+1,z,
-                        randrange((int)(((float)pattern_w)*0.8),(int)(((float)pattern_w)*1.2)),
-                        randrange((int)(((float)pattern_h)*0.8),(int)(((float)pattern_h)*1.2)),
-                        randrange(15,45),
-                        randrange(100,101)
-                    );
-                }
-            }
-        }
-    }
-}
-
-static Road_list roads;
-
-void make_roads() {
-    L_System* L = new L_System();
-
-    int tile = 2;
-    int z = 0;
-    char tokens[]= "XYF+-";
+    int tile = 50;
+    int z_min = 10;
+    int z_max = 64;
+    char tokens[]= "XYF+-B[]f";
+    //int iterations = 20;
     int iterations = 9;
     double degrees = 90;
-    //double step = 2.5;
-    //double xstep = 60;
-    //double ystep = 20;
-    double xstep = 5;
-    double ystep = 5;
-    //double draw_width = 8;
-    double draw_width = 0.1;
-    L->set_draw_width(draw_width);
+    double step = 1;
+    //double xstep = randrange(1,2);
+    //double ystep = randrange(1,2);
+    double xstep = 1;
+    double ystep = 1;
     L->set_tokens(tokens);
     L->set_iterations(iterations);
     L->set_degrees(degrees);
-    //L->set_step_size(step);
+    L->set_step_size(step);
     L->set_step_size(xstep, ystep);
-    L->set_starting_degrees(randrange(0,3)*90);
-    //L->set_starting_degrees(0);
-    L->set_starting_position(randrange(width/4, (3*width)/4)+0.5, randrange(height/4, (3*height)/4)+0.5);
-    //L->set_starting_position(width/2+0.5, height/2+0.5);
+    L->set_starting_degrees(0);
+    float start_x = randf() * map_dim.x;
+    float start_y = randf() * map_dim.y;
+    L->set_starting_position(start_x, start_y);
     L->set_map_tile(tile);
-    L->set_map_z_level(z);
-    L->set_dimensions(width,height);
+    L->set_map_z_level(z_min, z_max);
+    L->set_dimensions(map_dim.x,map_dim.y);
+    L->set_draw_width(.1);
+    L->tile = tile;
+    float p = randf();
+    p /= 5.0f;
+    p += 0.5f;
+    L->set_probability(p);
 
     // rules
-    L->add_rule((char*) "X > X+YF");
-    L->add_rule((char*) "Y > FX-Y");
+    L->add_rule((char*) "B > B");
+    L->add_rule((char*) "X > X]YF");
+    L->add_rule((char*) "Y > FX[Y");
     L->add_rule((char*) "F > F");
+    //L->add_rule((char*) "+ > ]");
+    //L->add_rule((char*) "- > [");
+    //L->add_rule((char*) "] > +");
+    //L->add_rule((char*) "[ > -");
     L->add_rule((char*) "+ > +");
     L->add_rule((char*) "- > -");
+    L->add_rule((char*) "] > ]");
+    L->add_rule((char*) "[ > [");
+    L->add_rule((char*) "f > f");
 
     // start condition
     L->set_init_condition((char*) "FX");
 
     L->run();
 
-    // sidewalks
-    //xstep = 50;
-    //ystep = 30;
-    //int qw1 = randrange(1,3),qw2;
-    //while ((qw2=randrange(1,3)) == qw1);
-    //int qh1 = randrange(1,3),qh2;
-    //while ((qh2=randrange(1,3)) == qh1);
-    
-    //double sidewalk_draw_width = 4;
-    //L->reset_state();
-    //L->set_iterations(5);
-    //L->set_draw_width(sidewalk_draw_width);
-    //L->set_step_size(xstep, ystep);
-    //L->set_starting_position((qw1*width)/4+0.5, (qh1*height)/4+0.5);
-    //L->set_starting_degrees(randrange(0,3)*90);
-    //L->run();
+    return L;
+}
 
-    //L->reset_state();
-    //L->set_step_size(ystep, xstep); // flip
-    //L->set_starting_position((qw2*width)/4+0.5, (qh2*height)/4+0.5);
-    //L->set_starting_degrees(randrange(0,3)*90);
-    //L->run();
-
-    delete L;
-
+void caves()
+{
+    int n = 20;
+    for (int i=0; i<n; i++)
+        delete _caves();
 }
 
 void generate_caves() {
@@ -733,39 +632,6 @@ bool block_is_edge(int i, int j, int k, int limit) {
     return false;
 }
 
-bool block_is_edge_4(int i, int j, int k, int limit) {
-    int tile = _get(i,j,k);
-    int ct = 0;
-
-    if (_get(i+1, j, k) != tile) ct++;
-    if (ct == limit) return true;
-    if (_get(i-1, j, k) != tile) ct++;
-    if (ct == limit) return true;
-    if (_get(i, j+1, k) != tile) ct++;
-    if (ct == limit) return true;
-    if (_get(i, j-1, k) != tile) ct++;
-    if (ct == limit) return true;
-
-    return false;
-}
-
-bool block_is_edge_2(int i, int j, int k) {
-    int tile = _get(i,j,k);
-
-    if (_get(i+1, j, k) != tile
-     && _get(i-1, j, k) != tile)
-     return true;
-
-    if (_get(i, j+1, k) != tile
-     && _get(i, j-1, k) != tile)
-     return true;
-
-    return false;
-}
-
-struct Location {
-    unsigned char x,y,z;
-};
 void segment_caves(int z, int tile, int limit) {
     int i,j;
     Location* blocks = (Location*)malloc(sizeof(Location)*width*height);
@@ -797,93 +663,18 @@ void segment_caves(int z, int tile, int limit) {
 
     free(blocks);
 }
-void segment_caves_4(int z, int tile, int limit) {
-    int i,j;
-    Location* blocks = (Location*)malloc(sizeof(Location)*width*height);
-    int index = 0;
-    // check for a cave block
-    // look at all 8 surrounding blocks
-    // if >1 is non cave, convert to orange (blocked)
-
-    Location* loc = NULL;
-    int new_tile = 7; // lava
-    
-    for (i=0; i<width; i++) {
-        for (j=0; j<height; j++) {
-            if (_get(i,j,z) != tile) continue;
-            if (block_is_edge_4(i,j,z, limit)) {
-                loc = &blocks[index];
-                loc->x = i;
-                loc->y = j;
-                loc->z = z;
-                index++;
-            }
-        }
-    }
-
-    for (i=0; i<index; i++) {
-        loc = &blocks[i];
-        _set(loc->x, loc->y, loc->z, new_tile);
-    }
-
-    free(blocks);
-}
-void segment_caves_2(int z, int tile) {
-    int i,j;
-    Location* blocks = (Location*)malloc(sizeof(Location)*width*height);
-    int index = 0;
-    // check for a cave block
-    // look at all 8 surrounding blocks
-    // if >1 is non cave, convert to orange (blocked)
-
-    Location* loc = NULL;
-    int new_tile = 7; // lava
-    
-    for (i=0; i<width; i++) {
-        for (j=0; j<height; j++) {
-            if (_get(i,j,z) != tile) continue;
-            if (block_is_edge_2(i,j,z)) {
-                loc = &blocks[index];
-                loc->x = i;
-                loc->y = j;
-                loc->z = z;
-                index++;
-            }
-        }
-    }
-
-    for (i=0; i<index; i++) {
-        loc = &blocks[i];
-        _set(loc->x, loc->y, loc->z, new_tile);
-    }
-
-    free(blocks);
-}
-
 
 void generate(int z)
 {
     int x = width;
     int y = height;
-    //int z = 0;
-    //int h = 64;
-    //int h = z+1;
     int tile = 3;
     _floor(x,y, z, 1, tile);
     init(z);
-    //caves();
-    //_walls(x,y,z+1,h,tile);
-    //_walls(x,y,z+1,h-1,tile);
 
     segment_caves(z, 101, 2);
     segment_caves(z, 101, 7);
     segment_caves(z, 101, 8);
-    //segment_caves_4(z, 101, 2);
-    //segment_caves_4(z, 101, 2);
-    //segment_caves_4(z, 101, 2);
-    //segment_caves_4(z, 101, 2);
-    //segment_caves_2(z,101);
-    //segment_caves_2(z,101);
 
     // post processing for good visual of cave isolation
     int i,j;
@@ -900,27 +691,63 @@ void generate(int z)
             if (_get(i,j,z) == 7) _set(i,j,z, 3);
         }
     }
+}
 
-    /* ROADS */
-    //int pattern_w = 7;
-    //int pattern_h = 15;
-    //raster(pattern_w, pattern_h);
-    //pattern_w = 15;
-    //pattern_h = 7;
-    //raster(pattern_w, pattern_h);
-    //buildings.set();
-    //_floor(x,y, z, h, tile);
-    //make_roads();
-    //roads.set();
 
-    // test box
-    //int i,j;
-    //for (i=10;i<20;i++) {
-        //for (j=10;j<30;j++) {
-            //if (i != 10 && i != 19 && j!=10 && j!=29) continue;
-            //_set(i,j,0,101);
-        //}
-    //}
+/* Data filters */
+
+struct iPoint* convert_to_int_points(struct Point* points, int n_points)
+{
+    struct iPoint* ipoints = (struct iPoint*)malloc(n_points * sizeof(struct iPoint));
+    for (int i=0; i<n_points; i++)
+    {
+        ipoints[i].x = (int)points[i].x;
+        ipoints[i].y = (int)points[i].y;
+    }
+    return ipoints;
+}
+
+template <typename ThePoints>
+int remove_duplicate_points(ThePoints* points, int n_points)
+{
+    ThePoints* current;
+    ThePoints* end = points + n_points - 1;
+    for (current = points + 1; points < end; points++, current = points + 1)
+        while (current < end)
+        {
+            if ((*current).x == (*points).x && (*current).y == (*points).y)
+            {
+                *current = *end--;
+                n_points--;
+            }
+            else
+                current++;
+        }
+    return n_points;
+}
+
+void test_filters()
+{
+    const int n = 40;
+    for (int i=0; i<n; i++)
+    {
+        L_System* cave = _caves();
+
+        struct iPoint* points = convert_to_int_points(cave->points, cave->n_points);
+        int n_points = remove_duplicate_points(points, cave->n_points);
+
+        const int tile = 50;
+        for (int i=0; i<n_points; i++)
+        {
+            int x = points[i].x;
+            int y = points[i].y;
+            //int z = t_map::get_highest_open_block(x,y);
+            int z = t_map::get_highest_solid_block(x,y);
+            t_map::set(x,y,z, tile);
+        }
+
+        delete cave;
+    }
 }
 
 }   // Dragon

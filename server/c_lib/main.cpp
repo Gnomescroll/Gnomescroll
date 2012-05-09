@@ -21,6 +21,7 @@ void init()
     MapGen::teardown();
 
     Dragon::caves();
+    Dragon::test_filters();
 
     srand(time(NULL));
     
