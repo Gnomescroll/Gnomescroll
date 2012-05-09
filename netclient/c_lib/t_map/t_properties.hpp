@@ -11,7 +11,7 @@ struct cubeProperties
     bool occludes;
     bool transparent;
     bool item_drop; //does block drop items
-    bool reserved6;
+    bool agent_action;  //inventory and crafting bench blocks
     bool reserved7;
     bool reserved8;
 
