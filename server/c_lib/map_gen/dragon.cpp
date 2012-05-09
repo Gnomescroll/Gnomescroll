@@ -708,8 +708,9 @@ struct iPoint* convert_to_int_points(struct Point* points, int n_points)
 }
 
 template <typename ThePoints>
-int remove_duplicate_points(ThePoints* points, int n_points)
+ThePoints* remove_duplicate_points(ThePoints* points, int n_points, int* n_new_points)
 {
+    ThePoints* start_points = points;
     ThePoints* current;
     ThePoints* end = points + n_points - 1;
     for (current = points + 1; points < end; points++, current = points + 1)
@@ -723,7 +724,82 @@ int remove_duplicate_points(ThePoints* points, int n_points)
             else
                 current++;
         }
-    return n_points;
+    points = (ThePoints*)realloc(start_points, n_points*sizeof(ThePoints));
+    *n_new_points = n_points;
+    return points;
+}
+
+// removes points with <2 adjacent points
+// assumes no duplicate points in inputs
+int remove_stranded_points(struct iPoint* &points, int n_points, int adj_dist)
+{
+    int n_new_points = 0;
+    struct iPoint* new_points = (struct iPoint*)malloc(n_points*sizeof(struct iPoint));
+    for (int i=0; i<n_points; i++)
+    {
+        // look in +/- x,y for another point in the array
+        // if >=2 found, copy to new points
+        int n_adj = 0;
+        bool xpos = false;
+        bool xneg = false;
+        bool ypos = false;
+        bool yneg = false;
+        for (int j=0; j<n_points; j++)
+        {
+            if (i == j) continue;
+            for (int k=1; k<=adj_dist; k++)
+            {
+                // +x
+                if (!xpos && points[i].x+k == points[j].x && points[i].y == points[j].y)
+                {
+                    xpos = true;
+                    n_adj += 1;
+                }
+                // -x
+                else if (!xneg && points[i].x-k == points[j].x && points[i].y == points[j].y)
+                {
+                    xneg = true;
+                    n_adj += 1;
+                }
+                // +y
+                else if (!ypos && points[i].x == points[j].x && points[i].y+k == points[j].y)
+                {
+                    ypos = true;
+                    n_adj += 1;
+                }
+                // -y
+                else if (!yneg && points[i].x == points[j].x && points[i].y-k == points[j].y)
+                {
+                    yneg = true;
+                    n_adj += 1;
+                }
+            }
+            if (n_adj >= 2) break;
+        }
+        if (n_adj >= 2) new_points[n_new_points++] = points[i];
+    }
+
+    // copy new points to old points
+    for (int i=0; i<n_new_points; i++) points[i] = new_points[i];
+
+    // release tmp array
+    free(new_points);
+
+    // resize
+    points = (struct iPoint*)realloc(points, n_new_points*sizeof(struct iPoint));
+    
+    return n_new_points;
+}
+
+struct iPoint*  remove_all_stranded_points(struct iPoint* points, int n_points, int* n_new_points, int adj_dist)
+{
+    int initial_p = n_points;
+    int last_n_points = n_points;
+    while (last_n_points != (n_points = remove_stranded_points(points, n_points, adj_dist)))
+        last_n_points = n_points;
+    points = (struct iPoint*)realloc(points, n_points*sizeof(struct iPoint));
+    *n_new_points = n_points;
+    return points;
 }
 
 void test_filters()
@@ -734,7 +810,11 @@ void test_filters()
         L_System* cave = _caves();
 
         struct iPoint* points = convert_to_int_points(cave->points, cave->n_points);
-        int n_points = remove_duplicate_points(points, cave->n_points);
+        int n_points;
+        points = remove_duplicate_points(points, cave->n_points, &n_points);
+
+        const int adjacency_distance = 10;
+        points = remove_all_stranded_points(points, n_points, &n_points, adjacency_distance);
 
         int h_max = 10;
         int h_min = 1;
@@ -755,6 +835,7 @@ void test_filters()
         }
 
         delete cave;
+        free(points);
     }
 }
 
