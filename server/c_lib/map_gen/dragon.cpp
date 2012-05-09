@@ -793,7 +793,6 @@ int remove_stranded_points(struct iPoint* &points, int n_points, int adj_dist)
 
 struct iPoint*  remove_all_stranded_points(struct iPoint* points, int n_points, int* n_new_points, int adj_dist)
 {
-    int initial_p = n_points;
     int last_n_points = n_points;
     while (last_n_points != (n_points = remove_stranded_points(points, n_points, adj_dist)))
         last_n_points = n_points;
