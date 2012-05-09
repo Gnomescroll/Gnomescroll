@@ -217,62 +217,95 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
     draw_bound_texture_sprite(x,y,w,h,z, sx,sy,sw,sh);
 }
 
-void draw_iso_cube(float x, float y)
+void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 {
-/*
-    const float a[8*3] =
+    const float scale = 64.0;
+    const float aa = sqrt(3.0)/2.0;
+
+    const float b[8*3] =
     {
+        0.0,0.0, -aa,0.5, 0.0,1.0, aa,0.5,
+        -aa,0.5, 0.0,0.0, 0.0,-1.0, -aa,-0.5,
+        0.0,0.0, aa,0.5, aa,0.5, 0.0,-1.0
+    };
+
+    float a[8*3];
+
+    for(int i=0; i<24; i++)  a[i] = b[i]*scale;
 
 
-    }
-    int tex_id;
+    int tex_id, i;
+    float tx0,tx1;
+    float ty0,ty1;
 
     const float h = 1.0/16.0;
-    float tx0 = (tex_id%16)*h;
-    float tx1 = (tex_id%16)*h + h;
+
+    tex_id = side0;
+
+    tx0 = (tex_id%16)*h;
+    tx1 = (tex_id%16)*h + h;
+
+    ty0 = (tex_id/16)*h;
+    ty1 = (tex_id/16)*h + h;
 
     i = 0;
 
     glTexCoord2f(tx0,ty0); // top left
-    glVertex2f(a[i+0],a[i+1]);  // bottom left
+    glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
     glTexCoord2f(tx0,ty1);    // top right
-    glVertex2f(a[i+2],a[i+3]);   // bottom right
+    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
         
     glTexCoord2f(tx1,ty1);  // top
-    glVertex2f(a[i+4],a[i+5]);
+    glVertex2f(x+a[i+4],y+a[i+5]);
 
     glTexCoord2f(tx1,ty0);
-    glVertex2f(a[i+6],a[i+7]);
+    glVertex2f(x+a[i+6],y+a[i+7]);
 
     i = 8;
 
+    tex_id = side1;
+
+    tx0 = (tex_id%16)*h;
+    tx1 = (tex_id%16)*h + h;
+    
+    ty0 = (tex_id/16)*h;
+    ty1 = (tex_id/16)*h + h;
+
     glTexCoord2f(tx0,ty0); // top left
-    glVertex2f(a[i+0],a[i+1]);  // bottom left
+    glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
     glTexCoord2f(tx0,ty1);    // top right
-    glVertex2f(a[i+2],a[i+3]);   // bottom right
+    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
         
     glTexCoord2f(tx1,ty1);  // top
-    glVertex2f(a[i+4],a[i+5]);
+    glVertex2f(x+a[i+4],y+a[i+5]);
 
     glTexCoord2f(tx1,ty0);
-    glVertex2f(a[i+6],a[i+7]);
+    glVertex2f(x+a[i+6],y+a[i+7]);
 
     i = 16;
+
+    tex_id = side2;
+
+    tx0 = (tex_id%16)*h;
+    tx1 = (tex_id%16)*h + h;
     
+    ty0 = (tex_id/16)*h;
+    ty1 = (tex_id/16)*h + h;
+
     glTexCoord2f(tx0,ty0); // top left
-    glVertex2f(a[i+0],a[i+1]);  // bottom left
+    glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
     glTexCoord2f(tx0,ty1);    // top right
-    glVertex2f(a[i+2],a[i+3]);   // bottom right
+    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
         
     glTexCoord2f(tx1,ty1);  // top
-    glVertex2f(a[i+4],a[i+5]);
+    glVertex2f(x+a[i+4],y+a[i+5]);
 
     glTexCoord2f(tx1,ty0);
-    glVertex2f(a[i+6],a[i+7]);
-*/
+    glVertex2f(x+a[i+6],y+a[i+7]);
+
 /*
     quad_cache[cube_id*6*4 +4*side + 0].tx = _0;
     quad_cache[cube_id*6*4 +4*side + 0].ty = _0;
