@@ -812,11 +812,11 @@ void test_filters()
         int n_points;
         points = remove_duplicate_points(points, cave->n_points, &n_points);
 
-        const int adjacency_distance = 10;
+        const int adjacency_distance = 3;
         points = remove_all_stranded_points(points, n_points, &n_points, adjacency_distance);
 
         int h_max = 10;
-        int h_min = 1;
+        int h_min = 5;
 
         int h_step = (int)(((float)n_points)/((float)(h_max-h_min)));
 
@@ -824,10 +824,12 @@ void test_filters()
         for (int i=0; i<n_points; i++)
         {
             int h = h_max - (i/h_step);
+            h=1;
             int x = points[i].x;
             int y = points[i].y;
             //int z = t_map::get_highest_open_block(x,y);
             int z = t_map::get_highest_solid_block(x,y);
+            if (t_map::get(x,y,z) == tile) continue;
             for (int i=z; i<z+h; i++)
                 t_map::set(x,y,i, tile);
             //printf("h %d\n", h);
