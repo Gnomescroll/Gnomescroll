@@ -260,7 +260,7 @@ int init_c_lib()
     HudText::init();
     HudFont::init();
     HudMap::init();
-
+ 
     HudEquipment::init();
     HudReticle::init();
     Compass::init();

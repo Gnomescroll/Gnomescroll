@@ -71,7 +71,7 @@ void init_mining_laser_texture()
 
 void init_mining_laser_shader()
 {
-    mining_laser_shader.set_debug(true);
+    mining_laser_shader.set_debug(false);
 
     mining_laser_shader.load_shader( "mining shader",
         "./media/shaders/weapon/mining_laser.vsh",

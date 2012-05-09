@@ -59,7 +59,7 @@ int v_num = 0;
 void load_model()
 {
    char* memory = NULL;
-   size_t bytes = ObjLoadFile((char*) "media/mesh/mob1.obj", &memory);
+   size_t bytes = ObjLoadFile((char*) "media/mesh/mob4.obj", &memory);
 
    ObjModel* model = ObjLoadModel(memory, bytes);
 
@@ -83,6 +83,7 @@ void load_model()
 
 	 		int iv = model->TriangleArray[i].Vertex[j] -1;
 	 		int itx = model->TriangleArray[i].TexCoord[j] -1;
+	 		int in = model->TriangleArray[i].Normal[j] -1;
 
 	 		if(iv >= model->nVertex)
 	 		{
@@ -92,18 +93,25 @@ void load_model()
 	 		{
 	 			printf("ERROR: itx= %i  nTexCoord= %i \n", itx, model->nTexCoord);
 	 		}
+	 		if(in >= model->nNormal)
+	 		{
+	 			printf("ERROR: in= %i  nNormal= %i \n", in, model->nNormal);
+	 		}
 	 		//printf("triangle: %i,  iv= %i itx= %i \n", i, iv, itx);
 	 		v.x = model->VertexArray[iv].x;
-	 		//v.y = model->VertexArray[iv].y;
-	 		//v.z = model->VertexArray[iv].z;
 	 		v.z = model->VertexArray[iv].y;
 	 		v.y = model->VertexArray[iv].z;
 
 	 		v.u = model->TexCoordArray[itx].u;
-	 		v.v = model->TexCoordArray[itx].v;
-	 		////v.n[0] = 
-	 		//v.n[1] = 
-	 		//v.n[2] =
+	 		v.v = 1.0 - model->TexCoordArray[itx].v;
+	 		
+	 		v.n[0] = model->NormalArray[in].x;
+	 		v.n[1] = model->NormalArray[in].y;
+	 		v.n[2] = model->NormalArray[in].z;
+
+	 		//printf("len= %f \n", v.n[0]*v.n[0] + v.n[1]*v.n[1] + v.n[2]*v.n[2]);
+	 		
+	 		//printf("normal= %f %f %f \n",  v.n[0],v.n[1],v.n[2]);
 
 	 		v_array[3*i+j] = v;
  		}
@@ -172,15 +180,21 @@ void init_draw_model()
 
 void draw_model(float x, float y, float z)
 {
-	x = current_camera->x+5.0;
-	y = current_camera->y;
-	z = current_camera->z;
+	//x = current_camera->x+5.0;
+	//y = current_camera->y;
+	//z = current_camera->z;
+	x = ClientState::location_pointer.x;
+	y = ClientState::location_pointer.y;
+	z = ClientState::location_pointer.z;
 
     const static unsigned int stride = sizeof(struct Vertex);
 
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+
     glBindTexture( GL_TEXTURE_2D, monster_texture );
 
     glBindBuffer(GL_ARRAY_BUFFER, monster_vbo);
@@ -189,16 +203,22 @@ void draw_model(float x, float y, float z)
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(monster_TexCoord);
+    glEnableClientState(GL_NORMAL_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
     glVertexAttribPointer(monster_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
-
+    glNormalPointer(GL_FLOAT, stride, (GLvoid*)20);
+    
     glUniform4f(monster_InPosition, x,y,z,0.0);
 
     glDrawArrays(GL_TRIANGLES,0, v_num);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(monster_TexCoord);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
     glUseProgramObjectARB(0);
 }
 
