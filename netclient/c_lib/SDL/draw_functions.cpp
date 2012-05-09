@@ -216,3 +216,76 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
     sh /= ssh;
     draw_bound_texture_sprite(x,y,w,h,z, sx,sy,sw,sh);
 }
+
+void draw_iso_cube(float x, float y)
+{
+
+    const float a[8*3] =
+    {
+
+
+    }
+    int tex_id;
+
+    const float h = 1.0/16.0;
+    float tx0 = (tex_id%16)*h;
+    float tx1 = (tex_id%16)*h + h;
+
+    i = 0;
+
+    glTexCoord2f(tx0,ty0); // top left
+    glVertex2f(a[i+0],a[i+1]);  // bottom left
+
+    glTexCoord2f(tx0,ty1);    // top right
+    glVertex2f(a[i+2],a[i+3]);   // bottom right
+        
+    glTexCoord2f(tx1,ty1);  // top
+    glVertex2f(a[i+4],a[i+5]);
+
+    glTexCoord2f(tx1,ty0);
+    glVertex2f(a[i+6],a[i+7]);
+
+    i = 8;
+
+    glTexCoord2f(tx0,ty0); // top left
+    glVertex2f(a[i+0],a[i+1]);  // bottom left
+
+    glTexCoord2f(tx0,ty1);    // top right
+    glVertex2f(a[i+2],a[i+3]);   // bottom right
+        
+    glTexCoord2f(tx1,ty1);  // top
+    glVertex2f(a[i+4],a[i+5]);
+
+    glTexCoord2f(tx1,ty0);
+    glVertex2f(a[i+6],a[i+7]);
+
+    i = 16;
+    
+    glTexCoord2f(tx0,ty0); // top left
+    glVertex2f(a[i+0],a[i+1]);  // bottom left
+
+    glTexCoord2f(tx0,ty1);    // top right
+    glVertex2f(a[i+2],a[i+3]);   // bottom right
+        
+    glTexCoord2f(tx1,ty1);  // top
+    glVertex2f(a[i+4],a[i+5]);
+
+    glTexCoord2f(tx1,ty0);
+    glVertex2f(a[i+6],a[i+7]);
+
+/*
+    quad_cache[cube_id*6*4 +4*side + 0].tx = _0;
+    quad_cache[cube_id*6*4 +4*side + 0].ty = _0;
+
+    quad_cache[cube_id*6*4 +4*side + 1].tx = _0;
+    quad_cache[cube_id*6*4 +4*side + 1].ty = _1;
+
+    quad_cache[cube_id*6*4 +4*side + 2].tx = _1;
+    quad_cache[cube_id*6*4 +4*side + 2].ty = _1;
+
+    quad_cache[cube_id*6*4 +4*side + 3].tx = _1;
+    quad_cache[cube_id*6*4 +4*side + 3].ty = _0;
+*/
+
+
+}
