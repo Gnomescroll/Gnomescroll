@@ -219,7 +219,7 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 
 void draw_iso_cube(float x, float y)
 {
-
+/*
     const float a[8*3] =
     {
 
@@ -272,7 +272,7 @@ void draw_iso_cube(float x, float y)
 
     glTexCoord2f(tx1,ty0);
     glVertex2f(a[i+6],a[i+7]);
-
+*/
 /*
     quad_cache[cube_id*6*4 +4*side + 0].tx = _0;
     quad_cache[cube_id*6*4 +4*side + 0].ty = _0;
