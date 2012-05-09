@@ -736,14 +736,22 @@ void test_filters()
         struct iPoint* points = convert_to_int_points(cave->points, cave->n_points);
         int n_points = remove_duplicate_points(points, cave->n_points);
 
+        int h_max = 10;
+        int h_min = 1;
+
+        int h_step = (int)(((float)n_points)/((float)(h_max-h_min)));
+
         const int tile = 50;
         for (int i=0; i<n_points; i++)
         {
+            int h = h_max - (i/h_step);
             int x = points[i].x;
             int y = points[i].y;
             //int z = t_map::get_highest_open_block(x,y);
             int z = t_map::get_highest_solid_block(x,y);
-            t_map::set(x,y,z, tile);
+            for (int i=z; i<z+h; i++)
+                t_map::set(x,y,i, tile);
+            //printf("h %d\n", h);
         }
 
         delete cave;
