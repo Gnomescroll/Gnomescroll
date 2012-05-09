@@ -43,23 +43,20 @@ void def_drop(const char* block_name)
 
 void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 {
+    assert(max_drops > 0);
+    
     int item_type = Item::dat_get_item_type(item_name);
     int block_id = _current_drop_block_id;
 
     cube_list[block_id].item_drop = true;
 
-    if( meta_drop_table[block_id].num_drop == 0)
-    {
-        meta_drop_table[block_id].num_drop = 1;
+    if ( meta_drop_table[block_id].num_drop == 0)
         meta_drop_table[block_id].index = item_drop_table_index;
-    }
-    else
-    {
-        meta_drop_table[block_id].num_drop++;
-    }
+        
+    meta_drop_table[block_id].num_drop++;
 
     struct CubeItemDropTable* cide;
-    cide = &item_drop_table[item_drop_table_index++];
+    cide = &item_drop_table[item_drop_table_index];
     item_drop_table_index++;
 
     cide->item_type = item_type;
@@ -67,43 +64,33 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
     cide->drop_probabilities = &probability_table[probability_table_index];
     probability_table_index += max_drops;
 
-
     //procedure, calculate mean, adjust probabilites down to mean, and normalize 0 drop
 
     double p[max_drops];
 
-    double tmp = 1.0;
-    for(int i=0; i<max_drops; i++)
-    {
-        p[i] = tmp;
-        tmp *= falloff;
-    }
+    p[0] = 1.0f;
+    for (int i=1; i<max_drops; i++) p[i] = p[i-1] * falloff;
     
     //normalize distribution
     double sum = 0.0;
-    for(int i=0; i<max_drops; i++) sum += p[i];
-    for(int i=0; i<max_drops; i++) p[i] = p[i] / sum;
+    for (int i=0; i<max_drops; i++) sum += p[i];
+    for (int i=0; i<max_drops; i++) p[i] = p[i] / sum;
     
     //sum = 0.0;
-    //for(int i=0; i<max_drops; i++) sum += p[i];
+    //for (int i=0; i<max_drops; i++) sum += p[i];
     //printf("Droptable: normalized sum= %f \n", (float)sum);
 
     double _mean_drop = 0.0;
-    for(int i=0; i<max_drops; i++)
-    {
-        _mean_drop += i*p[i];
-    }
+    for (int i=0; i<max_drops; i++) _mean_drop += i*p[i];
+    
     printf("Droptable: mean_drop= %f \n", ((float) _mean_drop) );
 
-    for(int i=0; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
+    for (int i=0; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
 
-    for(int i=0; i<max_drops; i++)
+    for (int i=0; i<max_drops; i++)
     {
         double sum = 0.0;
-        for(int j=0; j <= i; j++) 
-        {
-            sum += p[j];
-        }
+        for (int j=0; j <= i; j++) sum += p[j];
         cide->drop_probabilities[i] = (float) sum;
     }
 }
@@ -111,21 +98,21 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 #if DC_SERVER
 void handle_block_drop(int x, int y, int z, int block_type)
 {
-    for(int i=0; i < meta_drop_table[block_type].num_drop; i++)
+    for (int i=0; i < meta_drop_table[block_type].num_drop; i++)
     {
 
         CubeItemDropTable* cidt = &item_drop_table[i+meta_drop_table[block_type].index];
 
         float p = randf();
 
-        for(int j=0; j < cidt->max_drops; j++)
+        for (int j=0; j < cidt->max_drops; j++)
         {
             //printf("drop roll %i: p=%f prob=%f \n", j, p, cidt->drop_probabilities[j]);
-            if(p <= cidt->drop_probabilities[j])
+            if (p <= cidt->drop_probabilities[j])
             {
-                if(j==0) return;
+                if (j==0) return;
 
-                for(int k=0; k<j; k++)
+                for (int k=0; k<j; k++)
                 {
                     const float mom = 2.0f;
                     x = (float)x + 0.5f + randf()*0.33;

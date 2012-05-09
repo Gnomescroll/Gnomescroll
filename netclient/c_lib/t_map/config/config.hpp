@@ -31,9 +31,8 @@ void load_map_drop_dat()
 {
 
     def_drop("regolith");
-    add_drop("rock_0", 2.0, 0.5, 8);
-
-
+    add_drop("regolith", 1.0, 0.2, 2);
+    add_drop("food_rock-0", 2.0, 0.5, 8);
 
     end_drop_dat();
 }
