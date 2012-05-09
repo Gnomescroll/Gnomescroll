@@ -148,6 +148,7 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
 // will play animations/sounds
 void trigger_agent_selected_item_type(int agent_id, int item_type)
 {
+    if (Item::get_item_group_for_type(item_type) != IG_MINING_LASER) return;
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
 
@@ -173,16 +174,14 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
 // tick for the local agent
 void tick_local_agent_selected_item_type(int item_type)
 {
+    if (Item::get_item_group_for_type(item_type) != IG_MINING_LASER) return;
     ClientState::playerAgent_state.action.tick_mining_laser();
     // modify predicted durability
-    Item::ItemContainer* container = (Item::ItemContainer*)Item::get_container(toolbelt_id);
+    Item::ItemContainerUIInterface* container = Item::get_container_ui(toolbelt_id);
     if (container == NULL) return;
-    ItemID item_id = container->get_item(selected_slot);
-    Item::Item* item = Item::get_item(item_id);
-    if (item == NULL) return;
 
     // consume durability
-    int durability = item->durability - 1;
+    int durability = container->get_slot_durability(selected_slot) - 1;
     if (durability < 0) durability = 0;
     Item::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
 }
@@ -191,6 +190,7 @@ void tick_local_agent_selected_item_type(int item_type)
 // will send hitscan packets
 void trigger_local_agent_selected_item_type(int item_type)
 {
+    if (Item::get_item_group_for_type(item_type) != IG_MINING_LASER) return;
     ClientState::playerAgent_state.action.fire_mining_laser();
 }
 
@@ -269,6 +269,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     item->durability -= 1;
     if (item->durability < 0) item->durability = 0;
     if (item->durability <= 0) Item::destroy_item(item_id);
+    // dont send state here
 }
 
 // use for fire_rate trigger events
@@ -314,7 +315,12 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     {
         item->durability -= 1;
         if (item->durability < 0) item->durability = 0;
-        if (item->durability <= 0) Item::destroy_item(item->id);
+        if (item->durability <= 0)
+        {
+            Item::destroy_item(item->id);
+            agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+            agent_selected_item[agent_id] = NULL_ITEM;
+        }
         else if (a != NULL) Item::send_item_state(a->client_id, item->id);
     }
 

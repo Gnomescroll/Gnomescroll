@@ -74,7 +74,8 @@ void load_item_dat()
     s.hitscan_damage = 5;
     s.hitscan_max_ammo = 30;
     s.hitscan_bullet_effect_enum = 0;
-    s.max_durability = 400;
+    //s.max_durability = 400;
+    s.max_durability = 20;
     s.max_energy = 50;
     s.max_stack_size = 1;
 
@@ -90,7 +91,8 @@ void load_item_dat()
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
     s.mining_block_damage = 3;
-    s.max_durability = 1200;
+    //s.max_durability = 1200;
+    s.max_durability = 100;
     s.max_energy = 50;
     s.max_stack_size = 1;
     s.click_and_hold = true;
