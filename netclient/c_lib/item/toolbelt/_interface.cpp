@@ -150,7 +150,24 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
 {
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
-    a->event.fired_mining_laser();
+
+    //int item_group = Item::get_item_group_for_type(item_type);
+    //if (item_group == IG_PLACER)
+    //{
+        //Item::ItemContainer* container = (Item::ItemContainer*)Item::get_container(toolbelt_id);
+        //if (container == NULL) return;
+        //ItemID item_id = container->get_item(selected_slot);
+        //assert(item_id == NULL_ITEM);
+        //// consume stack
+        //printf("consume stack\n");
+        //int stack_size = Item::get_stack_size(item_id) - 1;
+        //if (stack_size < 1) stack_size = 1; // cap at 1, because we do not handle <=0 stack sizes even in UI
+        //Item::set_ui_slot_stack_size(toolbelt_id, selected_slot, stack_size);
+    //}
+    //else if (item_group == IG_MINING_LASER)
+    //{
+        a->event.fired_mining_laser();
+    //}
 }
 
 // tick for the local agent
@@ -163,9 +180,11 @@ void tick_local_agent_selected_item_type(int item_type)
     ItemID item_id = container->get_item(selected_slot);
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return;
-    item->durability -= 1;
-    if (item->durability < 0) item->durability = 0;
-    Item::set_ui_slot_durability(toolbelt_id, selected_slot, item->durability);
+
+    // consume durability
+    int durability = item->durability - 1;
+    if (durability < 0) durability = 0;
+    Item::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
 }
 
 // trigger for the local agent
@@ -245,6 +264,8 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     Item::Item* item = Item::get_item(item_id);
     assert(item != NULL);
 
+    if (item->group != IG_MINING_LASER) return;
+
     item->durability -= 1;
     if (item->durability < 0) item->durability = 0;
     if (item->durability <= 0) Item::destroy_item(item_id);
@@ -270,18 +291,36 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     Item::ItemAttribute* attr = Item::get_item_attributes(item->type);
     assert(attr != NULL);
 
-    if (!attr->click_and_hold)
-    {
-        Agent_state* a = ServerState::agent_list->get(agent_id);
-        if (a != NULL) Item::send_item_state(a->client_id, item_id);
-        agent_fire_on[agent_id] = false;
-        agent_fire_tick[agent_id] = 0;
-        item->durability -= 1;
-    }
-    if (item->durability < 0) item->durability = 0;
-    if (item->durability <= 0) Item::destroy_item(item_id);
-}
+    // the tick function will handle the state maintenance for click and hold
+    if (attr->click_and_hold) return;
 
+    // will need to notify agent of state changes
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    
+    if (item->group == IG_PLACER)
+    {
+        int stack_size = item->stack_size;
+         // this will automatically destroy item if last stack is used. which also removes it from inventory
+        int remaining_stack_size = Item::consume_stack_item(item->id);
+        if (remaining_stack_size == 0)
+        {
+            agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+            agent_selected_item[agent_id] = NULL_ITEM;
+        }
+        else if (stack_size != remaining_stack_size) 
+            if (a != NULL) Item::send_item_state(a->client_id, item->id);        
+    }
+    else if (item->durability != NULL_DURABILITY)   // dont decrement durability for nulls
+    {
+        item->durability -= 1;
+        if (item->durability < 0) item->durability = 0;
+        if (item->durability <= 0) Item::destroy_item(item->id);
+        else if (a != NULL) Item::send_item_state(a->client_id, item->id);
+    }
+
+    agent_fire_on[agent_id] = false;
+    agent_fire_tick[agent_id] = 0;
+}
 
 void update_toolbelt_items()
 {

@@ -60,6 +60,7 @@ int* get_container_ui_types(int container_id);
 int* get_container_ui_stacks(int container_id);
 
 void set_ui_slot_durability(int container_id, int slot, int durability);
+void set_ui_slot_stack_size(int container_id, int slot, int stack_size);
 }
 #endif 
 
@@ -93,6 +94,9 @@ void agent_quit(int agent_id);
 
 void digest_nanite_food();
 void purchase_item_from_nanite(int agent_id, int slot);
+
+// returns stack size
+int consume_stack_item(ItemID item_id);
 }
 #endif
 

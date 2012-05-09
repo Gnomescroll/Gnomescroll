@@ -53,10 +53,9 @@ void load_item_dat()
     sprite_def(i0, 4,1);
 
     item_def(1, IG_PLACER, "regolith");
-    sprite_def(i0, 4,1);
+    sprite_def(i0, 1,3);
     s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
     s.max_stack_size = 50;
-    s.max_durability = 1;
 
     item_def(2, IG_RESOURCE, "copper_ore");
     sprite_def(i1, 1,3);
@@ -117,8 +116,6 @@ void load_item_dat()
     item_def(12, IG_DEBUG, "location_pointer");
     sprite_def(i0, 4,2);
     s.max_stack_size = 99;
-    s.max_durability = NULL_DURABILITY - 1;
-    s.max_energy = NULL_ENERGY - 1;
 
     end_item_dat();
 }

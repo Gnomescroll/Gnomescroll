@@ -1,5 +1,6 @@
 #include "_interface.hpp"
 
+#include <common/crash_report/stack_trace.hpp>
 
 #include <item/item_container.hpp>
 #include <item/item.hpp>
@@ -286,6 +287,16 @@ void set_ui_slot_durability(int container_id, int slot, int durability)
     container->insert_item(slot, item_type, item_stack, durability);
 }
 
+void set_ui_slot_stack_size(int container_id, int slot, int stack_size)
+{
+    if (slot == NULL_SLOT) return;
+    ItemContainerUIInterface* container = get_container_ui(container_id);
+    if (container == NULL) return;
+    int item_type = container->get_slot_type(slot);
+    int item_durability = container->get_slot_durability(slot);
+    container->insert_item(slot, item_type, stack_size, item_durability);
+}
+
 }
 #endif 
 
@@ -525,6 +536,23 @@ void purchase_item_from_nanite(int agent_id, int slot)
             if (a != NULL) send_item_state(a->client_id, coins);
         }
     }
+}
+
+// returns stack size
+int consume_stack_item(ItemID item_id)
+{
+    assert(item_id != NULL_ITEM);
+    int stack_size = get_stack_size(item_id);
+    assert(stack_size > 0);
+    if (stack_size == 1)
+    {
+        destroy_item(item_id);
+        return 0;
+    }
+    Item* item = get_item(item_id);
+    assert(item != NULL);
+    item->stack_size -= 1;
+    return item->stack_size;
 }
 
 }

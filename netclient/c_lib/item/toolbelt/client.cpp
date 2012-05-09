@@ -27,7 +27,10 @@ bool toolbelt_item_begin_alpha_action()
 
     bool repeats = false;
 
+    int item_type = Item::get_item_type(item_id);
     int item_group = Item::get_item_group(item_id);
+    Item::ItemAttribute* attr = Item::get_item_attributes(item_type);
+    assert(attr != NULL);
     switch (item_group)
     {
         case IG_HITSCAN_WEAPON:
@@ -42,8 +45,14 @@ bool toolbelt_item_begin_alpha_action()
         case IG_DEBUG:
             ClientState::set_location_pointer();
             break;
+        case IG_PLACER:
+            ClientState::playerAgent_state.action.set_block(attr->placer_block_type_id);
+            break;
+        case IG_ERROR:
+            repeats = true;
+            break;
         default:
-            return true;
+            break;
     }
 
     if (repeats)

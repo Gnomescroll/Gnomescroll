@@ -329,33 +329,33 @@ void PlayerAgent_action::fire_mining_laser()
     //Sound::fire_mining_laser();
 }
 
-//void PlayerAgent_action::set_block()
-//{
-    //if (p->you == NULL) return;
-    //if (p->you->status.dead) return;
-    //if (p->you->status.team == 0) return;
+void PlayerAgent_action::set_block(int block_type)
+{
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+    if (p->you->status.team == 0) return;
 
-    //// get nearest empty block
-    //const float max_dist = 4.0f;
-    //const int z_low = 4;
-    //const int z_high = 3;
+    // get nearest empty block
+    const float max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
 
-    //Vec3 f = agent_camera->forward_vector();
-    //int* b = _farthest_empty_block(
-        //p->camera_state.x, p->camera_state.y, p->camera_z(),
-        //f.x, f.y, f.z,
-        //max_dist, z_low, z_high
-    //);
-    //if (b==NULL) return;
+    Vec3 f = agent_camera->forward_vector();
+    int* b = _farthest_empty_block(
+        p->camera_state.x, p->camera_state.y, p->camera_z(),
+        f.x, f.y, f.z,
+        max_dist, z_low, z_high
+    );
+    if (b==NULL) return;
 
-    //agent_set_block_CtoS msg;
-    //msg.x = b[0];
-    //msg.y = b[1];
-    //msg.z = b[2];
-    //msg.val = p->you->weapons.blocks.block;
-    //msg.send();
-    //return;
-//}
+    agent_set_block_CtoS msg;
+    msg.x = b[0];
+    msg.y = b[1];
+    msg.z = b[2];
+    msg.val = block_type;
+    msg.send();
+    return;
+}
 
 
 //void PlayerAgent_action::reload() {
