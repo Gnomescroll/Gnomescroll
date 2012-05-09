@@ -18,8 +18,8 @@ const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));
 void main() 
 {
 	//float gamma = 2.2f;
-	vec4 color = texture2D(base_texture, texCoord.xy);
-    //vec4 color = vec4(1.0,1.0,1.0,1.0);
+	//vec4 color = texture2D(base_texture, texCoord.xy);
+    vec4 color = vec4(1.0,1.0,1.0,1.0);
 
     float diffuse1 =  abs(dot(gl_NormalMatrix*normal1, light_dir ));
     color = ((diffuse_p*diffuse1)*color) + ambient_p*color;
