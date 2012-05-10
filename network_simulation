@@ -1,7 +1,7 @@
 http://www.linuxfoundation.org/collaborate/workgroups/networking/netem
 
 Install:
-sudo apt-get install netemul
+nothing; the program name is tc and is part of the core linux utilities
 
 Setup:
 add:
