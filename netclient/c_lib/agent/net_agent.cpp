@@ -561,6 +561,9 @@ inline void ThrowGrenade_CtoS::handle(){}
 //inline void AgentActiveWeapon_CtoS::handle() {}
 //inline void AgentReloadWeapon_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
+#if !PRODUCTION
+inline void admin_set_block_CtoS::handle() {}
+#endif
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
@@ -1058,6 +1061,47 @@ inline void agent_set_block_CtoS::handle()
         msg.broadcast();
     }
 }
+
+#if !PRODUCTION
+inline void admin_set_block_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+    
+    // do block place checks here later
+    // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
+
+    // check this player first, most likely to be colliding
+    _set(x,y,z, val); // set temporarily to test against
+    bool collides = agent_collides_terrain(a);
+    if (!collides)
+    {   // check the rest of the players
+        for (int i=0; i<ServerState::agent_list->n_max; i++)
+        {
+            Agent_state* agent = ServerState::agent_list->a[i];
+            if (agent == NULL || agent == a) continue;
+            if (agent_collides_terrain(agent))
+            {
+                collides = true;
+                break;
+            }
+        }
+    }
+    _set(x,y,z,0);  // unset
+
+    if (!collides)
+    {
+        _set_broadcast(x,y,z, val);
+        agent_placed_block_StoC msg;
+        msg.id = a->id;
+        msg.broadcast();
+    }
+}
+#endif
 
 #define ITEM_PLACEMENT_Z_DIFF_LIMIT 3
 

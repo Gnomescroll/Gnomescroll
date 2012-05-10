@@ -22,6 +22,7 @@ bool toolbelt_item_begin_alpha_action()
     // single click actions like laser rifle will trigger as always
 
     ItemID item_id = Item::get_toolbelt_item(selected_slot);
+    int item_type = Item::get_item_type(item_id);
     int item_group = Item::get_item_group(item_id);
 
     bool repeats = false;
@@ -37,7 +38,12 @@ bool toolbelt_item_begin_alpha_action()
             ClientState::playerAgent_state.action.throw_grenade();
             break;
         case IG_DEBUG:
-            ClientState::set_location_pointer();
+            if (item_type == Item::get_item_type((char*)"location_pointer"))
+                ClientState::set_location_pointer();
+            else
+            if (item_type == Item::get_item_type((char*)"block_placer"))
+                ClientState::playerAgent_state.action.admin_set_block();
+            else assert(false);
             break;
         case IG_PLACER:
             ClientState::playerAgent_state.action.set_block(item_id);

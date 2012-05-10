@@ -20,6 +20,8 @@ void agent_died(int agent_id);
 namespace Toolbelt
 {
 
+int get_selected_item_type();
+
 void update_selected_item_type();
 void tick_agent_selected_item_type(int agent_id, int item_type);
 void trigger_agent_selected_item_type(int agent_id, int item_type);

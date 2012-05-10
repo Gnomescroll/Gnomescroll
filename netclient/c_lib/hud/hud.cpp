@@ -8,6 +8,9 @@
 #include <common/profiling/frame_graph.hpp>
 //#include <draw/transparent.hpp>
 
+#include <item/_interface.hpp>
+#include <item/toolbelt/_interface.hpp>
+
 /* Configuration */
 namespace Hud
 {
@@ -99,7 +102,7 @@ void update_hud_draw_settings()
     
     hud_draw_settings.draw = Options::hud;
     hud_draw_settings.zoom = current_camera->zoomed;
-    hud_draw_settings.cube_selector = false;
+    hud_draw_settings.cube_selector = (Toolbelt::get_selected_item_type() == Item::get_item_type((char*)"block_placer"));
         //(ClientState::playerAgent_state.you != NULL
       //&& ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
 

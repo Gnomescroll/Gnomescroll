@@ -28,6 +28,10 @@ class PlayerAgent_action {
         void fire_mining_laser();
 
         void set_block(ItemID placer_id);
+
+        #if !PRODUCTION
+        void admin_set_block();
+        #endif
         
         //bool switch_weapon(int i);
         //void reload();

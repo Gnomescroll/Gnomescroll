@@ -398,21 +398,26 @@ void assign_containers_to_agent(int agent_id, int client_id)
     assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
 
     // put a grenade launcher in the toolbelt to selt
-    Item* grenade_launcher = create_item(8);
+    Item* grenade_launcher = create_item(get_item_type((char*)"grenade_launcher"));
     grenade_launcher->energy = get_max_energy(grenade_launcher->type);
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
 
-    Item* laser_rifle = create_item(5);
+    Item* laser_rifle = create_item(get_item_type((char*)"laser_rifle"));
     laser_rifle->energy = get_max_energy(laser_rifle->type);
     auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);    // this will send the item create
 
-    Item* mining_laser = create_item(7);
+    Item* mining_laser = create_item(get_item_type((char*)"mining_laser"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
 
     #if !PRODUCTION
-    Item* location_pointer = create_item(12);
+    // debug items
+    Item* location_pointer = create_item(get_item_type((char*)"location_pointer"));
     agent_toolbelt->insert_item(agent_toolbelt->slot_max-1, location_pointer->id);
     send_container_item_create(client_id, location_pointer->id, agent_toolbelt->id, agent_toolbelt->slot_max-1);
+
+    Item* block_placer = create_item(get_item_type((char*)"block_placer"));
+    agent_toolbelt->insert_item(agent_toolbelt->slot_max-2, block_placer->id);
+    send_container_item_create(client_id, block_placer->id, agent_toolbelt->id, agent_toolbelt->slot_max-2);
     #endif
     
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);

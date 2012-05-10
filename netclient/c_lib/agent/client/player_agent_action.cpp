@@ -10,6 +10,8 @@
 
 #include <animations/_interface.hpp>
 
+#include <hud/cube_selector.hpp>
+
 //stuff
 
 //#include <t_map/net/t_CtoS.hpp>
@@ -356,6 +358,37 @@ void PlayerAgent_action::set_block(ItemID placer_id)
     msg.send();
     return;
 }
+
+#if !PRODUCTION
+void PlayerAgent_action::admin_set_block()
+{
+    if (p->you == NULL) return;
+
+    // get nearest empty block
+    const float max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+
+    Vec3 f = agent_camera->forward_vector();
+    int* b = _farthest_empty_block(
+        p->camera_state.x, p->camera_state.y, p->camera_z(),
+        f.x, f.y, f.z,
+        max_dist, z_low, z_high
+    );
+    if (b==NULL) return;
+
+    // get block value from somewhere
+    int val = HudCubeSelector::cube_selector.get_active_id();
+    
+    admin_set_block_CtoS msg;
+    msg.x = b[0];
+    msg.y = b[1];
+    msg.z = b[2];
+    msg.val = val;
+    msg.send();
+    return;
+}
+#endif
 
 
 //void PlayerAgent_action::reload() {

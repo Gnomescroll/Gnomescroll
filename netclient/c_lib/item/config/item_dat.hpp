@@ -115,7 +115,9 @@ void load_item_dat()
 
     item_def(12, IG_DEBUG, "location_pointer");
     sprite_def(i0, 4,2);
-    s.max_stack_size = 99;
+
+    item_def(13, IG_DEBUG, "block_placer");
+    sprite_def(i0, 4,5);
 
     end_item_dat();
 }

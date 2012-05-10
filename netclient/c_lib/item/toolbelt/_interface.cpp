@@ -122,6 +122,14 @@ void agent_died(int agent_id)
 namespace Toolbelt
 {
 
+int get_selected_item_type()
+{
+    assert(agent_selected_type != NULL);
+    int agent_id = ClientState::playerAgent_state.agent_id;
+    if (agent_id < 0 || agent_id >= AGENT_MAX) return NULL_ITEM_TYPE;
+    return agent_selected_type[agent_id];
+}
+
 // there are edge cases where the server sets the item without client consent
 // in the selected slot
 // the item type needs to be periodically updated to ensure it is correct

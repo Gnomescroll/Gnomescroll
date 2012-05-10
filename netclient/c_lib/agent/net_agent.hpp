@@ -660,6 +660,24 @@ class agent_set_block_CtoS: public FixedSizeNetPacketToServer<agent_set_block_Ct
         inline void handle();
 };
 
+#if !PRODUCTION
+class admin_set_block_CtoS: public FixedSizeNetPacketToServer<admin_set_block_CtoS>
+{
+    public:
+        uint16_t x,y,z;
+        uint16_t val;
+        
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&val, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+#endif
+
 /****************/
 
 class place_turret_CtoS: public FixedSizeReliableNetPacketToServer<place_turret_CtoS>
