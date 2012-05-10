@@ -29,10 +29,10 @@ typedef enum TerrainModificationAction
     TMA_MONSTER_BOX
 } TerrainModificationAction;
  
-void init_t_map() GNOMESCROLL_API;
+void init_t_map();
 
 #if DC_CLIENT
-void init_for_draw() GNOMESCROLL_API;
+void init_for_draw();
 #endif
 
 class Terrain_map* get_map();

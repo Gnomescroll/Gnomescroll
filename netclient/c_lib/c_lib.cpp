@@ -227,11 +227,15 @@ int init_c_lib()
 
     init_image_loader();
     TextureSheetLoader::init();
+    printf("Checkpoint 1 \n");
     t_map::init_t_map();
+    printf("Checkpoint 2 \n");
     HudCubeSelector::init();
+    printf("Checkpoint 3 \n");
     lua_load_block_dat();  /* Load Block Dat */
+    printf("Checkpoint 4 \n");
     t_map::init_for_draw();
-
+    printf("Checkpoint 5 \n");
 
     Item::init();
 
