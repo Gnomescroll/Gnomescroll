@@ -288,6 +288,9 @@ int init_c_lib()
     Animations::init();
 
     obj_load::init_draw_model();
+
+    t_map::init_block_item_sheet();
+
     return 0;
 }
 

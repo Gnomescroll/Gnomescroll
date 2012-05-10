@@ -392,4 +392,43 @@ namespace t_map
     }
 
 
+    void init_block_item_sheet()
+    {
+        SDL_Surface* s = create_surface_from_nothing(512,512);
+        unsigned int tex;
+        glGenTextures( 1, &tex );
+        glBindTexture( GL_TEXTURE_2D, tex);
+
+        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+        GLuint internalFormat = GL_RGBA; //GL_RGBA;
+        GLuint format = GL_RGBA;
+
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
+        
+
+        unsigned int fbo;
+        glGenFramebuffers(1, &fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                       GL_TEXTURE_2D, tex, 0);
+
+
+        glBindTexture( GL_TEXTURE_2D, tex);
+
+        glColor4ub(255, 255, 255, 255);
+
+        glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+
+        glBegin(GL_QUADS);
+        draw_iso_cube(35.0,35.0, 0,0,0);
+        glEnd();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //set render target back
+
+    }
 }

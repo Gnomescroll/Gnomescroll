@@ -13,7 +13,8 @@ namespace t_map
     void set_map_shader_0_comptability();
     void init_map_3d_texture_comptability();
     void init_block_texture_normal();
-    
+    void init_block_item_sheet();
+
     const int num_map_shaders = 1;
 
     GLenum map_vert_shader[num_map_shaders] = {0};
