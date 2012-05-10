@@ -17,13 +17,13 @@ namespace HudCubeSelector
 
 void CubeSelector::init()
 {
-    if (this->inited) return;
-    for(int i=0;i<256;i++)
+    assert(this->cubes == NULL);
+    this->cubes = (struct cube_select_element*)malloc(N_CUBES * sizeof(struct cube_select_element));
+    for(int i=0;i<N_CUBES;i++)
     {
         cubes[i].cube_id = 255;
         cubes[i].tex_id = 1;
     }
-    this->inited = 1;
 }
 
 void CubeSelector::set_block_selector(int pos, int cube_id, int tex_id)
@@ -83,12 +83,7 @@ void CubeSelector::update_block_applier()
 
 void CubeSelector::draw()
 {
-    if (!this->inited) 
-    {
-        printf("CubeSelector::draw() error, not inited\n");
-        return;
-    }
-
+    assert(this->cubes != NULL);
     int i,j;
     float x0,y0,x1,y1;
 
@@ -226,13 +221,13 @@ void CubeSelector::vertical(bool up)
 
 CubeSelector::CubeSelector()
 :
-inited(false),
 x(0),y(0),
 size(0),
 mode(0),
 n_x(8), n_y(8),
 pos(0),
-pos_x(0), pos_y(0)
+pos_x(0), pos_y(0),
+cubes(NULL)
 {}
 
 CubeSelector cube_selector;
@@ -240,8 +235,9 @@ CubeSelector cube_selector;
 void init()
 {
     cube_selector.init();
-    cube_selector.set_position(150,150);
+    cube_selector.set_position(150,250);
 }
+
 }
 
 void set_cube_hud(int pos, int cube_id, int tex_id)
