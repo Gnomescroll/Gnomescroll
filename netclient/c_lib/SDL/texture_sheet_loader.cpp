@@ -31,7 +31,7 @@ TextureSheetLoader::~TextureSheetLoader()
     {
         if (this->textures[i] != NULL) SDL_FreeSurface(textures[i]);
     }
-    delete meta;
+    delete[] meta;
 }
 
 int TextureSheetLoader::load_texture(char* filename)
