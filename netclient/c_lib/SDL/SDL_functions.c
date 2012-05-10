@@ -553,3 +553,12 @@ void save_screenshot()
 
 
 }
+
+void check_gl_error()
+{
+    int error = glGetError();
+    if(error)
+    {
+        printf("GL_ERROR: %s \n", gluErrorString(error) );
+    }
+}
