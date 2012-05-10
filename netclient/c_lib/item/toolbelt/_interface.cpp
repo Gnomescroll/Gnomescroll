@@ -32,6 +32,9 @@ void teardown()
     if (agent_selected_type != NULL) free(agent_selected_type);
     if (agent_fire_tick != NULL)     free(agent_fire_tick);
     if (agent_fire_on   != NULL)     free(agent_fire_on);
+    agent_selected_type = NULL;
+    agent_fire_tick = NULL;
+    agent_fire_on = NULL;
 
     #if DC_CLIENT
     #endif
@@ -39,6 +42,8 @@ void teardown()
     #if DC_SERVER
     if (agent_selected_slot != NULL) free(agent_selected_slot);
     if (agent_selected_item != NULL) free(agent_selected_item);
+    agent_selected_slot = NULL;
+    agent_selected_item = NULL;
     #endif
 }
 
