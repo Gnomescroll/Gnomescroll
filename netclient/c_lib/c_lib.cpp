@@ -291,6 +291,7 @@ int init_c_lib()
 
     t_map::init_block_item_sheet();
 
+    //check_gl_error();
     return 0;
 }
 

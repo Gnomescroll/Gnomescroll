@@ -217,9 +217,24 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
     draw_bound_texture_sprite(x,y,w,h,z, sx,sy,sw,sh);
 }
 
+/*
+RGB scales:
+
+239
+160
+106
+
+255
+171
+113
+*/
+
 void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 {
     const float scale = 16.0;
+    x -= scale;
+    y -= scale;
+
     const float aa = sqrt(3.0)/2.0;
 
     const float b[8*3] =
@@ -251,6 +266,8 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 
     i = 0;
 
+    glColor3ub(255, 255,255);
+
     glTexCoord2f(tx0,ty0); // top left
     glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
@@ -258,7 +275,7 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
     glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
         
     glTexCoord2f(tx1,ty1);  // top
-    glVertex2f(x+a[i+4],y+a[i+5]);
+    glVertex2f(x+a[i+4],y+a[i+5]-1.0);
 
     glTexCoord2f(tx1,ty0);
     glVertex2f(x+a[i+6],y+a[i+7]);
@@ -273,6 +290,8 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
     ty0 = (tex_id/16)*h+hh;
     ty1 = (tex_id/16)*h+h-hh;
 
+    glColor3ub(171, 171, 171);
+
     glTexCoord2f(tx0,ty0); // top left
     glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
@@ -280,7 +299,7 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
     glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
         
     glTexCoord2f(tx1,ty1);  // top
-    glVertex2f(x+a[i+4],y+a[i+5]);
+    glVertex2f(x+a[i+4],y+a[i+5]+1.0);
 
     glTexCoord2f(tx1,ty0);
     glVertex2f(x+a[i+6],y+a[i+7]);
@@ -295,6 +314,8 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
     ty0 = (tex_id/16)*h+hh;
     ty1 = (tex_id/16)*h+h-hh;
 
+    glColor3ub(113, 113, 113);
+
     glTexCoord2f(tx0,ty0); // top left
     glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
@@ -305,7 +326,10 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
     glVertex2f(x+a[i+4],y+a[i+5]);
 
     glTexCoord2f(tx1,ty0);
-    glVertex2f(x+a[i+6],y+a[i+7]);
+    glVertex2f(x+a[i+6],y+a[i+7]+1.0);
+
+
+    glColor3ub(255, 255,255);
 
 /*
     quad_cache[cube_id*6*4 +4*side + 0].tx = _0;

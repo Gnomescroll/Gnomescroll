@@ -29,7 +29,7 @@ namespace t_map
         //determine support for anisotropic filtering
 
 
-        //if( true || !GLEW_EXT_texture_array)
+        //if( true || !GLEW_texture_array)
         if(!GLEW_EXT_texture_array)
         {
             printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
@@ -331,8 +331,8 @@ namespace t_map
 
         // Set the texture's stretching properties
 
-        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
@@ -380,7 +380,9 @@ namespace t_map
 
         //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
         GLuint internalFormat = GL_RGBA; //GL_RGBA;
         GLuint format = GL_RGBA;
@@ -394,41 +396,225 @@ namespace t_map
 
     void init_block_item_sheet()
     {
-        SDL_Surface* s = create_surface_from_nothing(512,512);
-        unsigned int tex;
-        glGenTextures( 1, &tex );
-        glBindTexture( GL_TEXTURE_2D, tex);
+        unsigned int color_tex, fb, depth_rb;
+        int xres = 512;
+        int yres = 512;
 
-        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        //RGBA8 2D texture, 24 bit depth texture, 256x256
+        glGenTextures(1, &color_tex);
+        glBindTexture(GL_TEXTURE_2D, color_tex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //NULL means reserve texture memory, but texels are undefined
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        //-------------------------
+        glGenFramebuffersEXT(1, &fb);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+        //Attach 2D texture to this FBO
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, color_tex, 0);
+        //-------------------------
+        glGenRenderbuffersEXT(1, &depth_rb);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_rb);
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, xres,yres);
+        //-------------------------
+        //Attach depth buffer to FBO
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_rb);
+        //-------------------------
+        //Does the GPU support current FBO configuration?
+        GLenum status;
+        status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        switch(status)
+        {
+            case GL_FRAMEBUFFER_COMPLETE_EXT:
+            printf("FBO works\n");
+            break;
 
-        GLuint internalFormat = GL_RGBA; //GL_RGBA;
-        GLuint format = GL_RGBA;
+            default:
+            printf("FBO error\n");
+        }
+        //-------------------------
+        //and now you can render to GL_TEXTURE_2D
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
-        
+        //-------------------------
+        glViewport(0, 0, xres, yres);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
-        unsigned int fbo;
-        glGenFramebuffers(1, &fbo);
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                       GL_TEXTURE_2D, tex, 0);
-
-
-        glBindTexture( GL_TEXTURE_2D, tex);
-
-        glColor4ub(255, 255, 255, 255);
+        //-------------------------
+        //glDisable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
 
         glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+
+        glBegin(GL_QUADS);
+        draw_iso_cube(32.0,32.0, 48,48,48);
+        glEnd();
+
+        char* PBUFFER = (char*) malloc(4*xres*yres);
+        glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
+
+        //-------------------------
+        //**************************
+        //RenderATriangle, {0.0, 0.0}, {256.0, 0.0}, {256.0, 256.0}
+        //Read http://www.opengl.org/wiki/VBO_-_just_examples
+        //RenderATriangle();
+        //-------------------------
+        //GLubyte pixels[4*4*4];
+        //glReadPixels(0, 0, 4, 4, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+        //pixels 0, 1, 2 should be white
+        //pixel 4 should be black
+        //----------------
+        //Bind 0, which means render to back buffer
+        glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+
+
+
+        glBindTexture( GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+        glViewport (0, 0, _xres, _yres);
+
+
+        char FileName[128];
+
+        sprintf(FileName,"./screenshot/%s.png",  (char*) "fbo_test");
+
+        for(int i=0; i < xres; i++)
+        for(int j=0; j < yres; j++)
+        {
+            PBUFFER[4*(xres*j + i) + 3] = 255;
+        }
+
+        {
+            int index;
+            void* temp_row;
+            int height_div_2;
+
+            temp_row = (void *)malloc(4*xres);
+            if(NULL == temp_row)
+            {
+                SDL_SetError("save_screenshot: not enough memory for surface inversion");
+            }
+            int pitch = xres * 4;
+            //int w = xres;
+            int h = yres;
+
+            height_div_2 = (int) (yres * .5);
+            for(index = 0; index < height_div_2; index++)    
+            {
+                memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+                memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+                memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            }
+            free(temp_row); 
+        }
+
+        size_t png_size;
+        char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+            (const char*) PBUFFER, xres, yres, 4, &png_size);
+        FILE * pFile;
+        pFile = fopen ( FileName , "wb" );
+        fwrite (PNG_IMAGE , 1 , png_size, pFile );
+        fclose (pFile);
+
+        free(PNG_IMAGE);
+        free(PBUFFER);
+
+#if 0
+
+        glColor4ub(255, 255, 255, 255);
+        glColor3ub(255, 0,0);
+
+        //glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+
+        glDisable(GL_TEXTURE_2D);
 
         glBegin(GL_QUADS);
         draw_iso_cube(35.0,35.0, 0,0,0);
         glEnd();
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //set render target back
+    /*
+        Start Shader
+    */
 
+    int xres = 512;
+    int yres = 512;
+
+    char FileName[128];
+
+    sprintf(FileName,"./screenshot/%s.png",  (char*) "fbo_test");
+
+    //printf("Screenshot: %s \n", FileName);
+
+    //SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, xres, yres,
+    //                                               32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
+
+    char* PBUFFER = (char*) malloc(4*xres*yres);
+
+    glReadPixels(0, 0, _xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
+
+    for(int i=0; i < xres; i++)
+    for(int j=0; j < yres; j++)
+    {
+        PBUFFER[4*(xres*j + i) + 3] = 255;
+    }
+
+    {
+        int index;
+        void* temp_row;
+        int height_div_2;
+
+        temp_row = (void *)malloc(4*xres);
+        if(NULL == temp_row)
+        {
+            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+        }
+        int pitch = xres * 4;
+        //int w = xres;
+        int h = yres;
+
+        height_div_2 = (int) (yres * .5);
+        for(index = 0; index < height_div_2; index++)    
+        {
+            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+        }
+        free(temp_row); 
+    }
+
+    size_t png_size;
+    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        (const char*) PBUFFER, xres, yres, 4, &png_size);
+    FILE * pFile;
+    pFile = fopen ( FileName , "wb" );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fclose (pFile);
+
+    free(PNG_IMAGE);
+    free(PBUFFER);
+
+    //#endif
+    glViewport (0, 0, _xres, _yres);
+
+    //glBindTexture( GL_TEXTURE_2D, 0);
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0); //set render target back
+
+/*
+        int error = glGetError();
+        printf("Error Status: %i \n", error);
+        printf("error: %s \n", gluErrorString(error) );
+        abort();
+*/
+#endif
     }
 }
