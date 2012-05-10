@@ -219,14 +219,14 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 
 void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 {
-    const float scale = 64.0;
+    const float scale = 16.0;
     const float aa = sqrt(3.0)/2.0;
 
     const float b[8*3] =
     {
         0.0,0.0, -aa,0.5, 0.0,1.0, aa,0.5,
         -aa,0.5, 0.0,0.0, 0.0,-1.0, -aa,-0.5,
-        0.0,0.0, aa,0.5, aa,0.5, 0.0,-1.0
+        0.0,0.0, aa,0.5, aa,-0.5, 0.0,-1.0
     };
 
     float a[8*3];
@@ -239,14 +239,15 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
     float ty0,ty1;
 
     const float h = 1.0/16.0;
+    const float hh = 1.0/512.0;
 
     tex_id = side0;
 
-    tx0 = (tex_id%16)*h;
-    tx1 = (tex_id%16)*h + h;
+    tx0 = (tex_id%16)*h+hh;
+    tx1 = (tex_id%16)*h+h-hh;
 
-    ty0 = (tex_id/16)*h;
-    ty1 = (tex_id/16)*h + h;
+    ty0 = (tex_id/16)*h+hh;
+    ty1 = (tex_id/16)*h+h-hh;
 
     i = 0;
 
@@ -266,11 +267,11 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 
     tex_id = side1;
 
-    tx0 = (tex_id%16)*h;
-    tx1 = (tex_id%16)*h + h;
-    
-    ty0 = (tex_id/16)*h;
-    ty1 = (tex_id/16)*h + h;
+    tx0 = (tex_id%16)*h+hh;
+    tx1 = (tex_id%16)*h+h-hh;
+
+    ty0 = (tex_id/16)*h+hh;
+    ty1 = (tex_id/16)*h+h-hh;
 
     glTexCoord2f(tx0,ty0); // top left
     glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
@@ -288,11 +289,11 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 
     tex_id = side2;
 
-    tx0 = (tex_id%16)*h;
-    tx1 = (tex_id%16)*h + h;
-    
-    ty0 = (tex_id/16)*h;
-    ty1 = (tex_id/16)*h + h;
+    tx0 = (tex_id%16)*h+hh;
+    tx1 = (tex_id%16)*h+h-hh;
+
+    ty0 = (tex_id/16)*h+hh;
+    ty1 = (tex_id/16)*h+h-hh;
 
     glTexCoord2f(tx0,ty0); // top left
     glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
