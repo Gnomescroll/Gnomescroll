@@ -172,11 +172,21 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
 
+    // get container state for ui prediction
+    Item::ItemContainerUIInterface* container = Item::get_container_ui(toolbelt_id);
+    int durability = container->get_slot_durability(selected_slot);
+
     int group = Item::get_item_group_for_type(item_type);
     switch (group)
     {
         case IG_MINING_LASER:
             a->event.fired_mining_laser();
+            if (container != NULL)
+            {   // consume durability
+                durability -= Item::get_item_fire_rate(item_type);
+                if (durability < 0) durability = 0;
+                Item::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
+            }
             break;
 
         case IG_ERROR:
@@ -198,20 +208,11 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
 // tick for the local agent
 void tick_local_agent_selected_item_type(int item_type)
 {
-    // get container state for ui prediction
-    Item::ItemContainerUIInterface* container = Item::get_container_ui(toolbelt_id);
-    int durability = container->get_slot_durability(selected_slot) - 1;
-
     int group = Item::get_item_group_for_type(item_type);
     switch (group)
     {
         case IG_MINING_LASER:
             ClientState::playerAgent_state.action.tick_mining_laser();
-            if (container != NULL)
-            {   // consume durability
-                if (durability < 0) durability = 0;
-                Item::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
-            }
             break;
 
         case IG_ERROR:
@@ -331,9 +332,6 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     switch (group)
     {
         case IG_MINING_LASER:
-            //item->durability -= 1;
-            //if (item->durability < 0) item->durability = 0;
-            //if (item->durability <= 0) Item::destroy_item(item_id);
             break;
 
         case IG_ERROR:
@@ -376,22 +374,11 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     // will need to notify agent of state changes
     Agent_state* a = ServerState::agent_list->get(agent_id);
 
-    int stack_size = item->stack_size;
-    int remaining_stack_size;
-
     int group = Item::get_item_group_for_type(item->type);
     switch (group)
     {
         case IG_PLACER:
-            remaining_stack_size = Item::consume_stack_item(item->id);
-            if (remaining_stack_size == 0)
-            {
-                item = NULL;
-                agent_selected_type[agent_id] = NULL_ITEM_TYPE;
-                agent_selected_item[agent_id] = NULL_ITEM;
-            }
-            else if (stack_size != remaining_stack_size) 
-                if (a != NULL) Item::send_item_state(a->client_id, item->id);        
+            // the ammo decrement is deferred until packet receipt
             break;
 
         case IG_ERROR:
@@ -470,6 +457,25 @@ bool set_agent_toolbelt_slot(int agent_id, int slot)
     if (item_id == agent_selected_item[agent_id]) return false;
     agent_selected_item[agent_id] = item_id;
     return true;
+}
+
+void use_block_placer(int agent_id, ItemID placer_id)
+{
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    
+    Item::Item* placer = Item::get_item(placer_id);
+    if (placer == NULL) return;
+
+    int stack_size = placer->stack_size;
+    int remaining_stack_size = Item::consume_stack_item(placer->id);
+    if (remaining_stack_size == 0)
+    {
+        agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+        agent_selected_item[agent_id] = NULL_ITEM;
+    }
+    else if (stack_size != remaining_stack_size) 
+        if (a != NULL) Item::send_item_state(a->client_id, placer->id);        
 }
 
 } // Toolbelt

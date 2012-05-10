@@ -21,16 +21,10 @@ bool toolbelt_item_begin_alpha_action()
     // ^^ applies only for click-and-hold actions, like picking
     // single click actions like laser rifle will trigger as always
 
-    
-
     ItemID item_id = Item::get_toolbelt_item(selected_slot);
+    int item_group = Item::get_item_group(item_id);
 
     bool repeats = false;
-
-    int item_type = Item::get_item_type(item_id);
-    int item_group = Item::get_item_group(item_id);
-    Item::ItemAttribute* attr = Item::get_item_attributes(item_type);
-    assert(attr != NULL);
     switch (item_group)
     {
         case IG_HITSCAN_WEAPON:
@@ -46,7 +40,7 @@ bool toolbelt_item_begin_alpha_action()
             ClientState::set_location_pointer();
             break;
         case IG_PLACER:
-            ClientState::playerAgent_state.action.set_block(attr->placer_block_type_id);
+            ClientState::playerAgent_state.action.set_block(item_id);
             break;
         case IG_ERROR:
             repeats = true;

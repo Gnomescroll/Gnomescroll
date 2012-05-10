@@ -329,7 +329,7 @@ void PlayerAgent_action::fire_mining_laser()
     //Sound::fire_mining_laser();
 }
 
-void PlayerAgent_action::set_block(int block_type)
+void PlayerAgent_action::set_block(ItemID placer_id)
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
@@ -352,7 +352,7 @@ void PlayerAgent_action::set_block(int block_type)
     msg.x = b[0];
     msg.y = b[1];
     msg.z = b[2];
-    msg.val = block_type;
+    msg.placer_id = placer_id;
     msg.send();
     return;
 }

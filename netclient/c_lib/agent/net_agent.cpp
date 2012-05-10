@@ -1016,7 +1016,11 @@ inline void agent_set_block_CtoS::handle()
     }
     // fire block applier
     if (a->status.team == 0) return;
-    //if (!a->weapons.blocks.can_fire()) return;
+
+    Item::Item* placer = Item::get_item((ItemID)placer_id);
+    if (placer == NULL) return;
+    Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
+    int val = attr->placer_block_type_id;
     
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
@@ -1046,6 +1050,7 @@ inline void agent_set_block_CtoS::handle()
 
     if (!collides)
     {
+        Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
         _set_broadcast(x,y,z, val);
         //a->weapons.blocks.fire();
         agent_placed_block_StoC msg;

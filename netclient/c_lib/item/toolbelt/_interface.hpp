@@ -52,5 +52,7 @@ void update_toolbelt_items();
 ItemID get_agent_selected_item(int agent_id);
 bool set_agent_toolbelt_slot(int agent_id, int slot);
 
+void use_block_placer(int agent_id, ItemID placer_id);
+
 } // Toolbelt
 #endif

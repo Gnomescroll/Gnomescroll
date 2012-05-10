@@ -1,5 +1,7 @@
 #pragma once
 
+#include <item/_interface.hpp>
+
 /*
  * All client agent input triggers should be implemented here
  */
@@ -25,7 +27,7 @@ class PlayerAgent_action {
         void tick_mining_laser();
         void fire_mining_laser();
 
-        void set_block(int block_type);
+        void set_block(ItemID placer_id);
         
         //bool switch_weapon(int i);
         //void reload();
