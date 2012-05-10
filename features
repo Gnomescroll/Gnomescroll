@@ -1,3 +1,14 @@
+!!! Environment
+
+Solid, transparent blocks (liquid methane).  Like water but solid.  Lakes cover surface.
+    -attenuates light by 3 per block   
+    -may flow like liquid (but extremely slowly)
+    -drops frozen crystals (which decay over time)
+    -item decay is constant probability to decrement stack every n ticks (large stacks last longer)
+    -item decay can be stopped by storing item in cryo-freezer
+
+
+
 -mining robots (dig mine shafts, collect minerals, build robots to attack player, territorial)
 
 !!! Personal Spawner

@@ -396,6 +396,15 @@ void AgentNaniteUI::draw()
     HudFont::reset_default();
     HudFont::end_font_draw();
 
+    glColor4ub(255, 255, 255, 255);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+
+    glBegin(GL_QUADS);
+    draw_iso_cube(350.0,350.0, 0,0,0);
+    glEnd();
+
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
 

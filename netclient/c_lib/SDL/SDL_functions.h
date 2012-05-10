@@ -14,6 +14,8 @@ void close_SDL();
 
 void save_screenshot();
 
+void check_gl_error();
+
 extern int _xres;
 extern int _yres;
 extern float _xresf;

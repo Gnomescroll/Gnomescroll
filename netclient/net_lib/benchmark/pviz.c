@@ -51,7 +51,6 @@ void pviz_draw_grid(float z) {
     float xstep = 10;
     float ystep = 50;
     int i,j;
-    //glEnable(GL_POINT_SMOOTH);
     //glPointSize(1.00);
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)255);
     glBegin(GL_POINTS);
@@ -63,7 +62,6 @@ void pviz_draw_grid(float z) {
     }
     }
     glEnd();
-    glDisable(GL_POINT_SMOOTH);
 }
 
 #define INC_C 0.5
