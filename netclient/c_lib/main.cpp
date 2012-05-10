@@ -128,8 +128,6 @@ int run()
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
-        //Toolbelt::update_selected_item_type();
-
         //-- TESTING --//
         //if (ClientState::playerAgent_state.you != NULL)
             //Animations::create_mining_laser_particle(ClientState::playerAgent_state.you->get_center(), ClientState::playerAgent_state.you->s.forward_vector());

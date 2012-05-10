@@ -48,11 +48,11 @@ inline void toolbelt_end_alpha_action_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    // send item state now, for click-and-hold
-    ItemID item_id = agent_selected_item[a->id];
-    int item_type = Item::get_item_type(item_id);
-    Item::ItemAttribute* attr = Item::get_item_attributes(item_type);
-    if (attr != NULL && attr->click_and_hold) Item::send_item_state(client_id, item_id);
+    //// send item state now, for click-and-hold
+    //ItemID item_id = agent_selected_item[a->id];
+    //int item_type = Item::get_item_type(item_id);
+    //Item::ItemAttribute* attr = Item::get_item_attributes(item_type);
+    //if (attr != NULL && attr->click_and_hold) Item::send_item_state(client_id, item_id);
 
     agent_fire_on[a->id] = false;
     agent_fire_tick[a->id] = 0;

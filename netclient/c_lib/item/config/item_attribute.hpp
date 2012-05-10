@@ -34,9 +34,6 @@ class ItemAttribute
     int max_durability;
     int max_stack_size;
 
-    // behaviour
-    bool click_and_hold;    // does the item have click and hold behavior (e.g. mining laser)
-
     // particle rendering
     bool particle_voxel;
 
@@ -54,7 +51,6 @@ class ItemAttribute
         max_energy = NULL_ENERGY;
         max_durability = NULL_DURABILITY;
         max_stack_size = 1;
-        click_and_hold = false;
         particle_voxel = false;
     }
 };
