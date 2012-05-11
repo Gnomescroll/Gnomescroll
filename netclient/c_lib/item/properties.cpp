@@ -60,15 +60,6 @@ int get_sprite_index_for_type(int type)
 }
 
 /*
-void set_sprite_ids()
-{
-    for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
-    for (int i=0; i<8; i++) sprite_array[i] = i;
-    for (int i=16; i<24; i++) sprite_array[i] = i;
-    for (int i=32; i<40; i++) sprite_array[i] = i;
-}
-*/
-/*
 Names
 */
 
@@ -76,16 +67,6 @@ Names
 const int ITEM_NAME_MAX_LENGTH = 64;
 char item_names[MAX_ITEMS*ITEM_NAME_MAX_LENGTH];
 int item_name_index[MAX_ITEMS];
-
-
-/*
-struct cubeProperties* get_cube(int id)
-{
-    if (id < 0) printf("get_cube: error id less than zero \n");
-    if (id >= MAX_ITEMS ) printf("get_cube: error id exceeds MAX_ITEMS \n");
-    return &cube_list[id];
-}
-*/
 
 void set_item_name(int id, char* name, int length)
 {
