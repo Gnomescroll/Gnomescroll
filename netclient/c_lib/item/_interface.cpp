@@ -26,10 +26,6 @@ void init()
     //set_sprite_ids();
 
     #if DC_SERVER
-    //agent_container_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    //agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
-    //agent_nanite_list    = (int*)malloc(AGENT_MAX * sizeof(int));
-    //agent_hand_list      = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
     for (int i=0; i<AGENT_MAX; i++) agent_container_list[i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_ITEM;
@@ -48,13 +44,6 @@ void teardown()
     if (player_container_ui != NULL) delete player_container_ui;
     if (player_toolbelt_ui  != NULL) delete player_toolbelt_ui;
     if (player_nanite_ui    != NULL) delete player_nanite_ui;
-    #endif
-    
-    #if DC_SERVER
-    //if (agent_container_list != NULL) free(agent_container_list);
-    //if (agent_toolbelt_list  != NULL) free(agent_toolbelt_list);
-    //if (agent_nanite_list    != NULL) free(agent_nanite_list);
-    //if (agent_hand_list      != NULL) free(agent_hand_list);
     #endif
 
     tear_down_properties();
