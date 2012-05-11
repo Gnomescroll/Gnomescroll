@@ -31,10 +31,10 @@ extern int player_hand_durability_ui;
 // Server
 #if DC_SERVER
 
-extern int* agent_container_list;
-extern int* agent_toolbelt_list;
-extern int* agent_nanite_list;
-extern ItemID* agent_hand_list;
+extern int agent_container_list[256];
+extern int agent_toolbelt_list[256];
+extern int agent_nanite_list[256];
+extern ItemID agent_hand_list[256];
 
 #endif
 

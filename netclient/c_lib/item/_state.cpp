@@ -32,10 +32,10 @@ int player_hand_durability_ui = NULL_DURABILITY;
 //Server
 #if DC_SERVER
 
-int* agent_container_list = NULL;
-int* agent_toolbelt_list = NULL;
-int* agent_nanite_list = NULL;
-ItemID* agent_hand_list = NULL;
+int agent_container_list[256];
+int agent_toolbelt_list[256];
+int agent_nanite_list[256];
+ItemID agent_hand_list[256];
 
 #endif
 
