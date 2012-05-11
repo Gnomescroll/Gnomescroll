@@ -21,7 +21,7 @@ void init_texture()
 {
     init_item_sheet();
     init_nanite_texture();
-
+    init_crafting_texture();
 }
 
 void init_item_sheet()
