@@ -8,7 +8,7 @@ extern class AgentContainerUI* agent_container;
 extern class AgentToolbeltUI* agent_toolbelt;
 // TODO -- TMP -- replace witha ctual types
 extern class AgentNaniteUI* nanite_container;
-extern class AgentContainerUI* craft_bench_container;
+extern class CraftingUI* crafting_container;
 
 void set_container_id(ItemContainerType container_type, int container_id);
 

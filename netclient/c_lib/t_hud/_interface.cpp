@@ -13,7 +13,7 @@ class AgentContainerUI* agent_container;
 class AgentToolbeltUI* agent_toolbelt;
 // TODO -- TMP -- replace witha ctual types
 class AgentNaniteUI* nanite_container;
-class AgentContainerUI* craft_bench_container;
+class CraftingUI* crafting_container;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -68,7 +68,7 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
         agent_container,
         agent_toolbelt,
         nanite_container,
-        craft_bench_container,
+        crafting_container,
     };
 
     // get topmost container click
@@ -307,7 +307,7 @@ void draw_hud()
 
     agent_container->draw();
     nanite_container->draw();
-    //craft_bench_container->draw();
+    crafting_container->draw();
 
     draw_grabbed_icon();
 }
@@ -339,6 +339,12 @@ void init()
     nanite_container->yoff = 150.0 + (_yresf + nanite_container->height())/2;
     nanite_container->init();
 
+    crafting_container = new CraftingUI;
+    crafting_container->type = UI_ELEMENT_CRAFTING_CONTAINER;
+    crafting_container->xoff = (_xresf - crafting_container->width())/2;
+    crafting_container->yoff = -150.0 + (_yresf + crafting_container->height())/2;
+    crafting_container->init();
+
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format((char*) "%d");
     grabbed_icon_stack_text->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
@@ -351,7 +357,7 @@ void teardown()
     if (agent_container != NULL) delete agent_container;
     if (agent_toolbelt != NULL) delete agent_toolbelt;
     if (nanite_container != NULL) delete nanite_container;
-    if (craft_bench_container != NULL) delete craft_bench_container;
+    if (crafting_container != NULL) delete crafting_container;
 
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
 }
