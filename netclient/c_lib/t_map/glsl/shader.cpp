@@ -25,16 +25,12 @@ namespace t_map
 
     void init_shaders()
     {
-
         //determine support for anisotropic filtering
-
-
         //if( true || !GLEW_texture_array)
         if(!GLEW_EXT_texture_array)
         {
             printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
             T_MAP_BACKUP_SHADER = 1;
-
         }
 
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
@@ -62,7 +58,6 @@ namespace t_map
             set_map_shader_0();
             init_map_3d_texture();
         }
-
         init_block_texture_normal();
     }
 
@@ -157,18 +152,23 @@ namespace t_map
         init_map_3d_texture();
     }
 
-
+    //warning: random segfault on start in graphics driver
     void init_map_3d_texture()
     {
+        printf("init_map_3d_texture: 0 \n");
         /*
             Cleanup
         */
         if(terrain_map_surface != NULL) 
         SDL_FreeSurface(terrain_map_surface);
         if(terrain_map_glsl != 0)
-        glDeleteTextures(1,&terrain_map_glsl);
+        {
+            printf("init_map_3d_texture: attempting to delete, may cause segfault \n");
+            glDeleteTextures(1,&terrain_map_glsl);
+        }
 
 
+        printf("init_map_3d_texture: 1 \n");
         glEnable(GL_TEXTURE_2D);
 
         glGenTextures( 1, &terrain_map_glsl );
@@ -183,6 +183,8 @@ namespace t_map
         {
             glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
+
+        printf("init_map_3d_texture: 2 \n");
 
         if( T_MAP_TEXTURE_2D_ARRAY_MIPMAPS == 0)
         {
@@ -230,6 +232,7 @@ namespace t_map
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
 
+        printf("init_map_3d_texture: 3 \n");
 
         GLuint format = GL_RGBA;
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
@@ -241,14 +244,10 @@ namespace t_map
         if(TextureSheetLoader::CubeTextureStack == NULL) printf("!!! ERRROR !!! \n");
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTextureStack);
 
-        
-
-        //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
-        //glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-
         glDisable(GL_TEXTURE_2D);
 
-        //delete[] Pixels;
+
+        printf("init_map_3d_texture: 4 \n");
     }
 
     void teardown_shader()
