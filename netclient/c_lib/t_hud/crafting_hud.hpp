@@ -16,8 +16,8 @@ class CraftingUI : public UIElement
 //    static const float item_size = 32;    // pixel dimension
 
     static const float cell_size = 37;
-    static const int xdim = 8;    // grid cell size
-    static const int ydim = 3;
+    static const int xdim = 6;    // grid cell size
+    static const int ydim = 1;
 
     // size of texture/render area
     static const float render_width = 37*xdim;
