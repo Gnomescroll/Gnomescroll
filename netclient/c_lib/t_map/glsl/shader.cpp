@@ -155,6 +155,7 @@ namespace t_map
     //warning: random segfault on start in graphics driver
     void init_map_3d_texture()
     {
+        printf("init_map_3d_texture: 0 \n");
         /*
             Cleanup
         */
@@ -167,7 +168,7 @@ namespace t_map
         }
 
 
-
+        printf("init_map_3d_texture: 1 \n");
         glEnable(GL_TEXTURE_2D);
 
         glGenTextures( 1, &terrain_map_glsl );
@@ -182,6 +183,8 @@ namespace t_map
         {
             glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
+
+        printf("init_map_3d_texture: 2 \n");
 
         if( T_MAP_TEXTURE_2D_ARRAY_MIPMAPS == 0)
         {
@@ -229,6 +232,7 @@ namespace t_map
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
 
+        printf("init_map_3d_texture: 3 \n");
 
         GLuint format = GL_RGBA;
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
@@ -240,14 +244,10 @@ namespace t_map
         if(TextureSheetLoader::CubeTextureStack == NULL) printf("!!! ERRROR !!! \n");
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTextureStack);
 
-        
-
-        //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
-        //glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-
         glDisable(GL_TEXTURE_2D);
 
-        //delete[] Pixels;
+
+        printf("init_map_3d_texture: 4 \n");
     }
 
     void teardown_shader()
