@@ -25,16 +25,12 @@ namespace t_map
 
     void init_shaders()
     {
-
         //determine support for anisotropic filtering
-
-
         //if( true || !GLEW_texture_array)
         if(!GLEW_EXT_texture_array)
         {
             printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
             T_MAP_BACKUP_SHADER = 1;
-
         }
 
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
@@ -62,7 +58,6 @@ namespace t_map
             set_map_shader_0();
             init_map_3d_texture();
         }
-
         init_block_texture_normal();
     }
 
@@ -157,7 +152,7 @@ namespace t_map
         init_map_3d_texture();
     }
 
-
+    //warning: random segfault on start in graphics driver
     void init_map_3d_texture()
     {
         /*
@@ -166,7 +161,11 @@ namespace t_map
         if(terrain_map_surface != NULL) 
         SDL_FreeSurface(terrain_map_surface);
         if(terrain_map_glsl != 0)
-        glDeleteTextures(1,&terrain_map_glsl);
+        {
+            printf("init_map_3d_texture: attempting to delete, may cause segfault \n");
+            glDeleteTextures(1,&terrain_map_glsl);
+        }
+
 
 
         glEnable(GL_TEXTURE_2D);

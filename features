@@ -5,9 +5,17 @@ Solid, transparent blocks (liquid methane).  Like water but solid.  Lakes cover 
     -may flow like liquid (but extremely slowly)
     -drops frozen crystals (which decay over time)
     -item decay is constant probability to decrement stack every n ticks (large stacks last longer)
-    -item decay can be stopped by storing item in cryo-freezer
+    -item decay can be stopped (correction: slowed) by storing item in cryo-freezer
+    - methane + gas canister + energy -> hydrogen gas canister + carbon (resource value)
+    - 
 
+Blueprints !!!
+Crafting Blue Prints have Parts
+User must collect n parts to make crafting blueprint
+!!! Collection/Trade
 
+!!! Survival Games Are Popular
+ArmA 2 - DayZ <-- pushed Arma 2 back to top of steam
 
 -mining robots (dig mine shafts, collect minerals, build robots to attack player, territorial)
 

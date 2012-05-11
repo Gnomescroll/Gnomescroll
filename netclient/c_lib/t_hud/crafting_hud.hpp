@@ -110,7 +110,7 @@ void CraftingUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glBindTexture( GL_TEXTURE_2D, NaniteTexture );
+    glBindTexture( GL_TEXTURE_2D, CraftingTexture );
 
     glColor4ub(255, 255, 255, 255);
 
