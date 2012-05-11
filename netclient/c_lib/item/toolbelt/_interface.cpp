@@ -32,6 +32,9 @@ void teardown()
     if (agent_selected_type != NULL) free(agent_selected_type);
     if (agent_fire_tick != NULL)     free(agent_fire_tick);
     if (agent_fire_on   != NULL)     free(agent_fire_on);
+    agent_selected_type = NULL;
+    agent_fire_tick = NULL;
+    agent_fire_on = NULL;
 
     #if DC_CLIENT
     #endif
@@ -39,6 +42,8 @@ void teardown()
     #if DC_SERVER
     if (agent_selected_slot != NULL) free(agent_selected_slot);
     if (agent_selected_item != NULL) free(agent_selected_item);
+    agent_selected_slot = NULL;
+    agent_selected_item = NULL;
     #endif
 }
 
@@ -191,7 +196,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
             a->event.fired_mining_laser();
             if (container != NULL)
             {   // consume durability
-                durability -= Item::get_item_fire_rate(item_type);
+                durability -= 1;
                 if (durability < 0) durability = 0;
                 Item::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
             }
@@ -405,7 +410,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             break;
             
         case IG_MINING_LASER:
-            item->durability -= Item::get_item_fire_rate(item->type);
+            item->durability -= 1;
             break;
 
         default:

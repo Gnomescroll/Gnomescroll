@@ -42,9 +42,9 @@ struct ObjModel
 
 struct Vertex
 {
-	float x,y,z;
-	float u,v;
-	float n[3];
+    float x,y,z;
+    float u,v;
+    float n[3];
 };
 
 ObjModel* ObjLoadModel(char*, size_t);
@@ -58,8 +58,15 @@ int v_num = 0;
 
 void load_model()
 {
-   char* memory = NULL;
-   size_t bytes = ObjLoadFile((char*) "media/mesh/mob4.obj", &memory);
+    char* memory = NULL;
+    char* model_file = (char*) "media/mesh/mob4.obj";
+    size_t bytes = ObjLoadFile(model_file, &memory);
+
+    if (memory == NULL)
+    {
+        printf("ERROR: %s -- failed to load file %s\n", __FUNCTION__, model_file);
+        return;
+    }
 
    ObjModel* model = ObjLoadModel(memory, bytes);
 
@@ -70,52 +77,52 @@ void load_model()
    printf("Object Model: nTexCoord= %d \n", model->nTexCoord);
    printf("Object Model: nNormal= %d \n", model->nNormal);
  
-  	v_num = model->nTriangle*3;
- 	v_array = new Vertex[v_num];
-	memset(v_array, 0, v_num*sizeof(Vertex));
+    v_num = model->nTriangle*3;
+    v_array = new Vertex[v_num];
+    memset(v_array, 0, v_num*sizeof(Vertex));
 
- 	for(int i=0; i<model->nTriangle; i++)
- 	{
+    for(int i=0; i<model->nTriangle; i++)
+    {
 
- 		for(int j=0; j<3; j++)
- 		{
-	 		struct Vertex v;
+        for(int j=0; j<3; j++)
+        {
+            struct Vertex v;
 
-	 		int iv = model->TriangleArray[i].Vertex[j] -1;
-	 		int itx = model->TriangleArray[i].TexCoord[j] -1;
-	 		int in = model->TriangleArray[i].Normal[j] -1;
+            int iv = model->TriangleArray[i].Vertex[j] -1;
+            int itx = model->TriangleArray[i].TexCoord[j] -1;
+            int in = model->TriangleArray[i].Normal[j] -1;
 
-	 		if(iv >= model->nVertex)
-	 		{
-	 			printf("ERROR: iv= %i  nVertex= %i \n", iv, model->nVertex);
-	 		}
-	 		if(itx >= model->nTexCoord)
-	 		{
-	 			printf("ERROR: itx= %i  nTexCoord= %i \n", itx, model->nTexCoord);
-	 		}
-	 		if(in >= model->nNormal)
-	 		{
-	 			printf("ERROR: in= %i  nNormal= %i \n", in, model->nNormal);
-	 		}
-	 		//printf("triangle: %i,  iv= %i itx= %i \n", i, iv, itx);
-	 		v.x = model->VertexArray[iv].x;
-	 		v.z = model->VertexArray[iv].y;
-	 		v.y = model->VertexArray[iv].z;
+            if(iv >= model->nVertex)
+            {
+                printf("ERROR: iv= %i  nVertex= %i \n", iv, model->nVertex);
+            }
+            if(itx >= model->nTexCoord)
+            {
+                printf("ERROR: itx= %i  nTexCoord= %i \n", itx, model->nTexCoord);
+            }
+            if(in >= model->nNormal)
+            {
+                printf("ERROR: in= %i  nNormal= %i \n", in, model->nNormal);
+            }
+            //printf("triangle: %i,  iv= %i itx= %i \n", i, iv, itx);
+            v.x = model->VertexArray[iv].x;
+            v.z = model->VertexArray[iv].y;
+            v.y = model->VertexArray[iv].z;
 
-	 		v.u = model->TexCoordArray[itx].u;
-	 		v.v = 1.0 - model->TexCoordArray[itx].v;
-	 		
-	 		v.n[0] = model->NormalArray[in].x;
-	 		v.n[1] = model->NormalArray[in].y;
-	 		v.n[2] = model->NormalArray[in].z;
+            v.u = model->TexCoordArray[itx].u;
+            v.v = 1.0 - model->TexCoordArray[itx].v;
+            
+            v.n[0] = model->NormalArray[in].x;
+            v.n[1] = model->NormalArray[in].y;
+            v.n[2] = model->NormalArray[in].z;
 
-	 		//printf("len= %f \n", v.n[0]*v.n[0] + v.n[1]*v.n[1] + v.n[2]*v.n[2]);
-	 		
-	 		//printf("normal= %f %f %f \n",  v.n[0],v.n[1],v.n[2]);
+            //printf("len= %f \n", v.n[0]*v.n[0] + v.n[1]*v.n[1] + v.n[2]*v.n[2]);
+            
+            //printf("normal= %f %f %f \n",  v.n[0],v.n[1],v.n[2]);
 
-	 		v_array[3*i+j] = v;
- 		}
- 	}
+            v_array[3*i+j] = v;
+        }
+    }
 }
 
 class SHADER monster_shader;
@@ -166,12 +173,12 @@ void init_texture()
 
 void init_draw_model()
 {
-	load_model();
-	init_shader();
-	init_texture();
+    load_model();
+    init_shader();
+    init_texture();
 
     const static unsigned int stride = sizeof(struct Vertex);
-	glGenBuffers(1, &monster_vbo);
+    glGenBuffers(1, &monster_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, monster_vbo);
     glBufferData(GL_ARRAY_BUFFER, v_num*stride, v_array, GL_STATIC_DRAW);
 
@@ -180,12 +187,12 @@ void init_draw_model()
 
 void draw_model(float x, float y, float z)
 {
-	//x = current_camera->x+5.0;
-	//y = current_camera->y;
-	//z = current_camera->z;
-	x = ClientState::location_pointer.x;
-	y = ClientState::location_pointer.y;
-	z = ClientState::location_pointer.z;
+    //x = current_camera->x+5.0;
+    //y = current_camera->y;
+    //z = current_camera->z;
+    x = ClientState::location_pointer.x;
+    y = ClientState::location_pointer.y;
+    z = ClientState::location_pointer.z;
 
     const static unsigned int stride = sizeof(struct Vertex);
 

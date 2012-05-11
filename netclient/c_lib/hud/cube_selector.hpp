@@ -3,6 +3,8 @@
 namespace HudCubeSelector
 {
 
+const int N_CUBES = 256;
+
 struct cube_select_element
 {
     int cube_id;
@@ -27,7 +29,7 @@ class CubeSelector
 
         //int texture;
 
-        struct cube_select_element cubes[256];
+        struct cube_select_element* cubes;
 
         void init();
         void set_position(float x, float y);

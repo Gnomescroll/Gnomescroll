@@ -305,11 +305,6 @@ void close_c_lib() {
     printf("t_map end t map\n");
     t_map::end_t_map();
 
-    printf("item teardown\n");
-    Item::teardown();
-    printf("toolbelt teardown\n");
-    Toolbelt::teardown();
-
     printf("t_hud draw teardown\n");
     t_hud::draw_teardown();
     printf("t_hud teardown\n");
@@ -345,6 +340,11 @@ void close_c_lib() {
 
     printf("client state teardown\n");
     ClientState::teardown();
+
+    printf("item teardown\n");
+    Item::teardown();
+    printf("toolbelt teardown\n");
+    Toolbelt::teardown();
 
     printf("objects teardown\n");
     Objects::teardown();    // Entity system
