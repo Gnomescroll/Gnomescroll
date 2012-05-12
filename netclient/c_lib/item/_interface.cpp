@@ -29,10 +29,12 @@ void init()
     agent_container_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list    = (int*)malloc(AGENT_MAX * sizeof(int));
+    agent_craft_bench_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_hand_list      = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
     for (int i=0; i<AGENT_MAX; i++) agent_container_list[i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_craft_bench_list [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_hand_list     [i] = NULL_ITEM;
     #endif
 
@@ -48,12 +50,14 @@ void teardown()
     if (player_container_ui != NULL) delete player_container_ui;
     if (player_toolbelt_ui  != NULL) delete player_toolbelt_ui;
     if (player_nanite_ui    != NULL) delete player_nanite_ui;
+    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     #endif
     
     #if DC_SERVER
     if (agent_container_list != NULL) free(agent_container_list);
     if (agent_toolbelt_list  != NULL) free(agent_toolbelt_list);
     if (agent_nanite_list    != NULL) free(agent_nanite_list);
+    if (agent_craft_bench_list    != NULL) free(agent_craft_bench_list);
     if (agent_hand_list      != NULL) free(agent_hand_list);
     #endif
 
@@ -199,6 +203,7 @@ void update_container_ui_from_state()
     if (player_container_ui != NULL) player_container_ui->load_data(player_container->slot);
     if (player_toolbelt_ui  != NULL) player_toolbelt_ui->load_data(player_toolbelt->slot);
     if (player_nanite_ui    != NULL) player_nanite_ui->load_data(player_nanite->slot);
+    if (player_craft_bench_ui != NULL) player_craft_bench_ui->load_data(player_craft_bench->slot);
 }
 
 void open_container()
@@ -233,6 +238,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_container_ui != NULL && player_container_ui->id == container_id) return player_container_ui;
     if (player_toolbelt_ui  != NULL && player_toolbelt_ui->id  == container_id) return player_toolbelt_ui;
     if (player_nanite_ui    != NULL && player_nanite_ui->id    == container_id) return player_nanite_ui;
+    if (player_craft_bench_ui != NULL && player_craft_bench_ui->id == container_id) return player_craft_bench_ui;
     return NULL;
 }
 
@@ -342,6 +348,7 @@ bool agent_owns_container(int agent_id, int container_id)
     if (agent_container_list[agent_id] == container_id) return true;
     if (agent_toolbelt_list[agent_id] == container_id) return true;
     if (agent_nanite_list[agent_id] == container_id) return true;
+    if (agent_craft_bench_list[agent_id] == container_id) return true;
     return false;
 }
 
@@ -422,6 +429,9 @@ void assign_containers_to_agent(int agent_id, int client_id)
     
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
+    
+    ItemContainerCraftingBench* crafting_bench = (ItemContainerCraftingBench*)item_container_list->create(CRAFTING_BENCH);
+    assign_container_to_agent(crafting_bench, agent_craft_bench_list, agent_id, client_id);
 }
 
 Item* create_item(int item_type)
@@ -466,6 +476,7 @@ void agent_quit(int agent_id)
     destroy_container(agent_container_list[agent_id]);
     destroy_container(agent_toolbelt_list[agent_id]);
     destroy_container(agent_nanite_list[agent_id]);
+    destroy_container(agent_craft_bench_list[agent_id]);
 }
 
 void digest_nanite_food()

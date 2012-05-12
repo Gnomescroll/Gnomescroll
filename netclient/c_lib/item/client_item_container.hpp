@@ -247,5 +247,4 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
         {}
 };
 
-
 } // Item

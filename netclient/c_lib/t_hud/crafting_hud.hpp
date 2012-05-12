@@ -8,23 +8,19 @@ namespace t_hud
 class CraftingUI : public UIElement
 {
     public:
-
-
           
-//    static const float inc1 = 6; // spacing between slot icons
-//    static const float inc2 = 2;  // border around a slot icon
-//    static const float item_size = 32;    // pixel dimension
-
     static const float cell_size = 37;
-    static const int xdim = 8;    // grid cell size
+    static const int xdim = 8;
     static const int ydim = 3;
+
+    static const int input_slots = 2;
+    static const int output_slots = 1;
 
     // size of texture/render area
     static const float render_width = 37*xdim;
     static const float render_height = 37*ydim;
 
-    //HudText::Text* prices;
-    //HudText::Text* stacks;
+    HudText::Text* stacks;
 
     void draw();
 
@@ -45,28 +41,15 @@ class CraftingUI : public UIElement
         return (this->get_slot_at(px,py) != NULL_SLOT);
     }
 
-    bool in_nanite_region(int px, int py);
+    bool in_craft_output_region(int px, int py);
 
     void init()
     {
-/*
-        int max = (xdim * ydim) - 1;    // last slot is reserved
-
-        assert(this->prices == NULL);
-        this->prices = new HudText::Text[max];
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->prices[i];
-            t->set_format((char*) "%d");
-            t->set_format_extra_length(ITEM_PRICE_MAX_LENGTH + 1 - 2);
-            t->set_color(255,255,255,255);    // some kind of red
-            t->set_depth(-0.1f);
-        }
-
-        // stacks only for food/coins
         assert(this->stacks == NULL);
+
+        int max = input_slots;
         this->stacks = new HudText::Text[max];
-        for (int i=0; i<2; i++)
+        for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stacks[i];
             t->set_format((char*) "%d");
@@ -74,17 +57,22 @@ class CraftingUI : public UIElement
             t->set_color(255,255,255,255);    // some kind of red
             t->set_depth(-0.1f);
         }
-*/
     }
 
     CraftingUI()
+    : stacks(NULL)
     {}
 
     ~CraftingUI()
     {
+        if (this->stacks != NULL) delete[] this->stacks;
     }
 };
 
+bool CraftingUI::in_craft_output_region(int px, int py)
+{
+    return false;
+}
 
 int CraftingUI::get_slot_at(int px, int py)
 {  
