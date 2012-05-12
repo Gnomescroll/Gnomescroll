@@ -225,6 +225,48 @@ class ItemContainerNanite: public ItemContainerInterface
         {}
 };
 
+class ItemContainerCraftingBench: public ItemContainerInterface
+{
+    public:
+
+        int level;
+
+        bool can_insert_item(int slot, ItemID item_id)
+        {
+            return true;
+        }
+
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+            return true;
+        }
+
+        int get_empty_slot()
+        {
+            return NULL_SLOT;
+        }
+
+        void insert_item(int slot, ItemID item_id);
+        void remove_item(int slot);
+
+        /* initializers */
+
+        void init(int xdim, int ydim)
+        {
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim; // +1 for the extra food slot
+            assert(this->slot_max < NULL_SLOT);
+            this->slot = new ItemID[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+        }
+        
+        ItemContainerCraftingBench(ItemContainerType type, int id)
+        : ItemContainerInterface(type, id),
+        level(0)
+        {}
+};
+
 }
 
 #include <common/template/multi_object_list.hpp>
@@ -241,6 +283,8 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
             return new ItemContainer((ItemContainerType)type, id);
         case AGENT_NANITE:
             return new ItemContainerNanite((ItemContainerType)type, id);
+        case CRAFTING_BENCH:
+            return new ItemContainerCraftingBench((ItemContainerType)type, id);
     }
     printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
     assert(false);

@@ -138,6 +138,38 @@ void ItemContainerNanite::digest()
 }
 #endif
 
+/* Crafting Bench */
+
+void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
+{
+    assert(item_id != NULL_ITEM);
+    assert(this->is_valid_slot(slot));
+    this->slot[slot] = item_id;
+    this->slot_count++;
+
+    Item* item = get_item_object(item_id);
+    assert(item != NULL);
+    item->container_id = this->id;
+    item->container_slot = slot;
+}
+
+void ItemContainerCraftingBench::remove_item(int slot)
+{
+    assert(this->is_valid_slot(slot));
+
+    ItemID item_id = this->slot[slot];
+    if (item_id != NULL_ITEM)
+    {
+        Item* item = get_item_object(this->slot[slot]);
+        assert(item != NULL);
+        item->container_id = NULL_CONTAINER;
+        item->container_slot = NULL_SLOT;
+    }
+
+    this->slot[slot] = NULL_ITEM;
+    this->slot_count--;
+}
+
 /* Initializer */
 
 void init_container(ItemContainerInterface* container)
@@ -153,6 +185,9 @@ void init_container(ItemContainerInterface* container)
             break;
         case AGENT_NANITE:
             container->init(AGENT_NANITE_X, AGENT_NANITE_Y);
+            break;
+        case CRAFTING_BENCH:
+            container->init(CRAFTING_BENCH_X, CRAFTING_BENCH_Y);
             break;
         default:
             printf("init_container() - Unhandled container type %d\n", container->type);

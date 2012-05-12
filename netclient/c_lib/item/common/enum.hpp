@@ -6,8 +6,7 @@ typedef enum
     AGENT_CONTAINER,
     AGENT_TOOLBELT,
     AGENT_NANITE,
-//    AGENT_BAG,
-//    CRAFTING_BENCH
+    CRAFTING_BENCH,
 } ItemContainerType;
 
 typedef enum

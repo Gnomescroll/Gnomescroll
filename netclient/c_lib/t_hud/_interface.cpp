@@ -28,6 +28,9 @@ void set_container_id(ItemContainerType container_type, int container_id)
         case AGENT_NANITE:
             nanite_container->container_id = container_id;
             break;
+        case CRAFTING_BENCH:
+            crafting_container->container_id = container_id;
+            break;
         default:
             assert(false);
             return;
@@ -104,6 +107,9 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     event.nanite = (container != NULL
                  && container->type == UI_ELEMENT_NANITE_CONTAINER
                  && ((AgentNaniteUI*)container)->in_nanite_region(x,y));
+    event.craft_output = (container != NULL
+                        && container->type == UI_ELEMENT_CRAFTING_CONTAINER
+                        && ((CraftingUI*)container)->in_craft_output_region(x,y));
 
     return event;
 }
@@ -112,6 +118,7 @@ static const ContainerInputEvent NULL_EVENT = {
     NULL_CONTAINER,         // null container id
     NULL_SLOT,   // null slot
     false,  // nanite click
+    false,  // craft output
 };
 
 ContainerInputEvent left_mouse_down(int x, int y)

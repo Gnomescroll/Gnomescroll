@@ -21,6 +21,7 @@ typedef struct
     int container_id;
     int slot;
     bool nanite;
+    bool craft_output;
 } ContainerInputEvent;
 
 void enable_container_hud();
