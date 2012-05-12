@@ -36,6 +36,9 @@ typedef enum
 
     // nanite shopping
     PURCHASE_ITEM_FROM_NANITE,
+
+    // crafting
+    CRAFT_ITEM_FROM_BENCH,
 } ContainerActionType;
 
 typedef enum

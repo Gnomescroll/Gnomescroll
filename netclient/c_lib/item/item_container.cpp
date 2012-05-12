@@ -242,7 +242,6 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     else
     // click inside container
     {
-
         // client was inside container, but not a slot
         // do nothing
         if (slot < 0 || slot == NULL_SLOT) return action;
@@ -723,7 +722,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
 
-    if (slot == NULL_SLOT || id < 0) return action;
+    if (slot == NULL_SLOT || id == NULL_CONTAINER) return action;
     #if DC_CLIENT
     ItemContainerUIInterface* container = get_container_ui(id);
     #endif
@@ -922,7 +921,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
 
-    if (slot == NULL_SLOT || id < 0) return action;
+    if (slot == NULL_SLOT || id == NULL_CONTAINER) return action;
     #if DC_CLIENT
     ItemContainerUIInterface* container = get_container_ui(id);
     #endif
@@ -1141,6 +1140,69 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     return action;
 }
 
+#if DC_CLIENT
+ContainerActionType craft_input_alpha_action_decision_tree(int container_id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType craft_input_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+#endif
+{
+    // treat input slots exactly like normal container
+    #if DC_CLIENT
+    return alpha_action_decision_tree(container_id, slot);
+    #endif
+    #if DC_SERVER
+    return alpha_action_decision_tree(agent_id, client_id, container_id, slot);
+    #endif
+}
+
+#if DC_CLIENT
+ContainerActionType craft_input_beta_action_decision_tree(int container_id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType craft_input_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+#endif
+{
+    // treat input slots exactly like normal container
+    #if DC_CLIENT
+    return beta_action_decision_tree(container_id, slot);
+    #endif
+    #if DC_SERVER
+    return beta_action_decision_tree(agent_id, client_id, container_id, slot);
+    #endif
+}
+
+#if DC_CLIENT
+ContainerActionType craft_output_alpha_action_decision_tree(int container_id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+#endif
+{
+    if (slot == NULL_SLOT || container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;
+
+    #if DC_CLIENT
+    bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
+    #endif
+    #if DC_SERVER
+    bool hand_empty = (get_agent_hand(agent_id) == NULL_ITEM);
+    #endif
+
+    if (hand_empty) return CRAFT_ITEM_FROM_BENCH;
+    return CONTAINER_ACTION_NONE;
+}
+
+#if DC_CLIENT
+ContainerActionType craft_output_beta_action_decision_tree(int container_id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+#endif
+{
+    return CONTAINER_ACTION_NONE;
+}
+
+
 /* Network */
 #if DC_SERVER
 
@@ -1175,7 +1237,4 @@ void send_container_delete(class ItemContainerInterface* container, int client_i
 }
 
 #endif
-
-
-
 }

@@ -566,6 +566,12 @@ int consume_stack_item(ItemID item_id)
     return item->stack_size;
 }
 
+void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    assert(agent_craft_bench_list != NULL);
+}
+
 }
 
 #endif 

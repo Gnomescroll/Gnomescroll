@@ -86,6 +86,8 @@ void purchase_item_from_nanite(int agent_id, int slot);
 
 // returns stack size
 int consume_stack_item(ItemID item_id);
+
+void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
 }
 #endif
 
