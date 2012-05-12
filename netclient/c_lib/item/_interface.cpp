@@ -36,7 +36,7 @@ void init()
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_craft_bench_list[i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_hand_list     [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_hand_list [i] = NULL_ITEM;
     #endif
 
     init_properties();

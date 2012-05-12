@@ -7,14 +7,18 @@ namespace t_hud
 
 class CraftingUI : public UIElement
 {
+    private:
+        int get_grid_at(int px, int py);
+
     public:
           
     static const float cell_size = 37;
     static const int xdim = 6;    // grid cell size
     static const int ydim = 1;
 
-    static const int input_slots = 2;
+    static const int input_slots = 4;
     static const int output_slots = 1;
+    static const int input_output_gap = 1;
 
     // size of texture/render area
     static const float render_width = 37*xdim;
@@ -69,12 +73,7 @@ class CraftingUI : public UIElement
     }
 };
 
-bool CraftingUI::in_craft_output_region(int px, int py)
-{
-    return false;
-}
-
-int CraftingUI::get_slot_at(int px, int py)
+int CraftingUI::get_grid_at(int px, int py)
 {  
     //pixels from upper left
     px -= xoff;
@@ -88,6 +87,21 @@ int CraftingUI::get_slot_at(int px, int py)
     int slot = xslot + yslot * xdim;
 
     return slot;
+}
+
+int CraftingUI::get_slot_at(int px, int py)
+{  
+    int slot = this->get_grid_at(px,py);
+    // filter out non-slots
+    if (slot >= input_slots && slot < input_slots + input_output_gap) return NULL_SLOT;
+    // transform to output region slot
+    if (slot >= input_slots + input_output_gap) slot -= input_slots + input_output_gap;
+    return slot;
+}
+
+bool CraftingUI::in_craft_output_region(int px, int py)
+{
+    return (this->get_slot_at(px,py) >= input_slots + input_output_gap);
 }
 
 void CraftingUI::draw()
