@@ -93,6 +93,7 @@ int CraftingUI::get_slot_at(int px, int py)
 {  
     int slot = this->get_grid_at(px,py);
     // filter out non-slots
+    if (slot >= input_slots + input_output_gap + output_slots) return NULL_SLOT;
     if (slot >= input_slots && slot < input_slots + input_output_gap) return NULL_SLOT;
     // transform to output region slot
     if (slot >= input_slots + input_output_gap) slot -= input_slots + input_output_gap;

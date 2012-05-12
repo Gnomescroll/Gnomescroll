@@ -81,15 +81,19 @@ static void send_container_beta_action(ContainerActionType action, int container
     msg.send();
 }
 
-void mouse_left_click_handler(int container_id, int slot)
+void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craft_output)
 {
     ContainerActionType action = alpha_action_decision_tree(container_id, slot);
+    if (nanite) action = nanite_alpha_action_decision_tree(container_id, slot);
+    else action = alpha_action_decision_tree(container_id, slot);
     if (action != CONTAINER_ACTION_NONE) send_container_alpha_action(action, container_id, slot);
 }
 
-void mouse_right_click_handler(int container_id, int slot)
+void mouse_right_click_handler(int container_id, int slot, bool nanite, bool craft_output)
 {
-    ContainerActionType action = beta_action_decision_tree(container_id, slot);
+    ContainerActionType action;
+    if (nanite) action = nanite_beta_action_decision_tree(container_id, slot);
+    else action = beta_action_decision_tree(container_id, slot);
     if (action != CONTAINER_ACTION_NONE) send_container_beta_action(action, container_id, slot);
 }
 

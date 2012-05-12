@@ -28,7 +28,23 @@ inline void container_action_alpha_CtoS::handle()
     if (a == NULL) return;
     if (container_id != NULL_CONTAINER && !agent_owns_container(a->id, container_id)) return;
 
-    ContainerActionType action = alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action;
+    switch (container->type)
+    {
+        case AGENT_CONTAINER:
+        case AGENT_TOOLBELT:
+        case CRAFTING_BENCH:
+            action = alpha_action_decision_tree(a->id, client_id, container_id, slot);
+            break;
+        case AGENT_NANITE:
+            action = nanite_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+            break;
+        default:
+            return;
+    }
 
     if (this->action != action)
     {
@@ -66,7 +82,23 @@ inline void container_action_beta_CtoS::handle()
     if (a == NULL) return;
     if (container_id != NULL_CONTAINER && !agent_owns_container(a->id, container_id)) return;
 
-    ContainerActionType action = beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action;
+    switch (container->type)
+    {
+        case AGENT_CONTAINER:
+        case AGENT_TOOLBELT:
+        case CRAFTING_BENCH:
+            action = beta_action_decision_tree(a->id, client_id, container_id, slot);
+            break;
+        case AGENT_NANITE:
+            action = nanite_beta_action_decision_tree(a->id, client_id, container_id, slot);
+            break;
+        default:
+            return;
+    }
 
     if (this->action != action)
     {
