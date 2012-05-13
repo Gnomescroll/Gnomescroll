@@ -118,7 +118,7 @@ int CraftingUI::get_slot_at(int px, int py)
 
 bool CraftingUI::in_craft_output_region(int px, int py)
 {
-    return (this->get_slot_at(px,py) >= input_slots + input_output_gap);
+    return (this->get_grid_at(px,py) >= input_slots + input_output_gap);
 }
 
 void CraftingUI::draw()
@@ -166,9 +166,12 @@ void CraftingUI::draw()
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
-    int hover_slot = this->get_grid_at(mouse_x, mouse_y);
+    int hover_slot = this->get_slot_at(mouse_x, mouse_y);
+    
     if (hover_slot != NULL_SLOT)
     {
+        // shift to output region
+        if (this->in_craft_output_region(mouse_x, mouse_y)) hover_slot += input_slots + input_output_gap;
         int w = slot_size;
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;
