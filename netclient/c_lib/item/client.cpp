@@ -234,16 +234,45 @@ static void send_craft_item_action(int container_id, int slot)
     msg.send();
 }
 
+static void send_no_container_alpha_action(ContainerActionType action)
+{
+    record_container_event(NULL_CONTAINER);
+
+    no_container_action_alpha_CtoS msg;
+    msg.event_id = container_event_id;
+    msg.action = action;
+    msg.hand_type = player_hand_type_ui;
+    msg.hand_stack = player_hand_stack_ui;
+    msg.send();
+}
+
+static void send_no_container_beta_action(ContainerActionType action)
+{
+    record_container_event(NULL_CONTAINER);
+
+    no_container_action_beta_CtoS msg;
+    msg.event_id = container_event_id;
+    msg.action = action;
+    msg.hand_type = player_hand_type_ui;
+    msg.hand_stack = player_hand_stack_ui;
+    msg.send();
+}
+
 // Handlers
 
 void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craft_output)
 {
     ContainerActionType action;
 
-    ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return;
+    int container_type = CONTAINER_TYPE_NONE;
+    if (container_id != NULL_CONTAINER)
+    {
+        ItemContainerInterface* container = get_container(container_id);
+        if (container == NULL) return;
+        container_type = container->type;
+    }
 
-    switch (container->type)
+    switch (container_type)
     {
         case AGENT_CONTAINER:
         case AGENT_TOOLBELT:
@@ -256,13 +285,16 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             if (craft_output) action = craft_output_alpha_action_decision_tree(container_id, slot);
             else action = craft_input_alpha_action_decision_tree(container_id, slot);
             break;
+        case CONTAINER_TYPE_NONE:
+            action = no_container_alpha_action_decision_tree();
+            break;
         default:
             assert(false);
             return;
     }
 
     if (action == CONTAINER_ACTION_NONE) return;
-    switch (container->type)
+    switch (container_type)
     {
         case AGENT_CONTAINER:
         case AGENT_TOOLBELT:
@@ -275,6 +307,10 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
             else send_craft_alpha_action(action, container_id, slot);
             break;
+        case CONTAINER_TYPE_NONE:
+            // TODO -- use a specific method/packet for this
+            send_no_container_alpha_action(action);
+            break;
         default:
             assert(false);
             return;
@@ -285,10 +321,15 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
 {
     ContainerActionType action;
 
-    ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return;
+    int container_type = CONTAINER_TYPE_NONE;
+    if (container_id != NULL_CONTAINER)
+    {
+        ItemContainerInterface* container = get_container(container_id);
+        if (container == NULL) return;
+        container_type = container->type;
+    }
 
-    switch (container->type)
+    switch (container_type)
     {
         case AGENT_CONTAINER:
         case AGENT_TOOLBELT:
@@ -301,6 +342,9 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
             if (craft_output) action = craft_output_beta_action_decision_tree(container_id, slot);
             else action = craft_input_beta_action_decision_tree(container_id, slot);
             break;
+        case CONTAINER_TYPE_NONE:
+            action = no_container_beta_action_decision_tree();
+            break;
         default:
             assert(false);
             return;
@@ -308,7 +352,7 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
 
     if (action == CONTAINER_ACTION_NONE) return;
 
-    switch (container->type)
+    switch (container_type)
     {
         case AGENT_CONTAINER:
         case AGENT_TOOLBELT:
@@ -320,6 +364,10 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
         case CRAFTING_BENCH:
             if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
             else send_craft_beta_action(action, container_id, slot);
+            break;
+        case CONTAINER_TYPE_NONE:
+            // do nothing
+            send_no_container_beta_action(action);
             break;
         default:
             assert(false);

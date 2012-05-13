@@ -166,6 +166,7 @@ inline void container_action_failed_StoC::handle()
     }
 
     int container_id = get_event_container_id(event_id);
+    if (container_id == NULL_CONTAINER) return;
     ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return;
     container->load_data(get_container_contents(container_id));

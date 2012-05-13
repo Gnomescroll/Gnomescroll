@@ -213,6 +213,9 @@ void RegisterMessages() {
     Item::craft_container_action_beta_CtoS::register_server_packet();
     Item::craft_item_from_bench_action_CtoS::register_server_packet();
 
+    Item::no_container_action_alpha_CtoS::register_server_packet();
+    Item::no_container_action_beta_CtoS::register_server_packet();
+
     // container actions (to client)
     Item::container_action_failed_StoC::register_client_packet();
     Item::insert_item_in_container_StoC::register_client_packet();

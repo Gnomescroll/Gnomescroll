@@ -21,6 +21,9 @@ ContainerActionType craft_input_alpha_action_decision_tree(int id, int slot);
 ContainerActionType craft_input_beta_action_decision_tree(int id, int slot);
 ContainerActionType craft_output_alpha_action_decision_tree(int id, int slot);
 ContainerActionType craft_output_beta_action_decision_tree(int id, int slot);
+
+ContainerActionType no_container_alpha_action_decision_tree();
+ContainerActionType no_container_beta_action_decision_tree();
 #endif
 
 #if DC_SERVER
@@ -35,6 +38,9 @@ ContainerActionType craft_input_alpha_action_decision_tree(int agent_id, int cli
 ContainerActionType craft_input_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
 ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
 ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+
+ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int client_id);
+ContainerActionType no_container_beta_action_decision_tree(int agent_id, int client_id);
 
 //network
 //  tell client to assign container to an agent

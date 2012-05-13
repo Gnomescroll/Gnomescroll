@@ -234,6 +234,46 @@ class craft_item_from_bench_action_CtoS: public FixedSizeReliableNetPacketToServ
         inline void handle();
 };
 
+class no_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<no_container_action_alpha_CtoS>
+{
+    public:
+        uint16_t event_id;
+        uint8_t action;
 
+        // expected hand values
+        uint8_t hand_stack;
+        uint8_t hand_type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&event_id, buff, buff_n, pack);
+            pack_u8(&action, buff, buff_n, pack);
+
+            pack_u8(&hand_type, buff, buff_n, pack);
+            pack_u8(&hand_stack, buff, buff_n, pack);            
+        }
+        inline void handle();
+};
+
+class no_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<no_container_action_beta_CtoS>
+{
+    public:
+        uint16_t event_id;
+        uint8_t action;
+
+        // expected hand values
+        uint8_t hand_stack;
+        uint8_t hand_type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&event_id, buff, buff_n, pack);
+            pack_u8(&action, buff, buff_n, pack);
+            
+            pack_u8(&hand_type, buff, buff_n, pack);
+            pack_u8(&hand_stack, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
 }
