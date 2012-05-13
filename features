@@ -1,3 +1,7 @@
+!!! Health Must Regen if conditions are met (hunger)
+    - prolong combat
+    - allow players to remove self from danger
+
 !!! Environment
 
 Solid, transparent blocks (liquid methane).  Like water but solid.  Lakes cover surface.
