@@ -133,7 +133,7 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
     return INDEX;
 }
 
-void generate_grey_scale()
+void TextureSheetLoader::generate_grey_scale()
 {
 
     float gamma_correction[256];
@@ -152,18 +152,18 @@ void generate_grey_scale()
     if(c_lock) SDL_LockSurface( texture_sheet);
     if(s_lock) SDL_LockSurface( grey_scale_texture_sheet);
 
-    unsigned char s = (unsigned char*)texture_sheet->pixels;
-    unsigned char d = (unsigned char*)texture_sheet->pixels;
+    unsigned char* s = (unsigned char*)texture_sheet->pixels;
+    unsigned char* d = (unsigned char*)grey_scale_texture_sheet->pixels;
 
     unsigned char r,g,b,a;
 
     for(int x=0; x<16*TILE_SIZE; x++)
     for(int y=0; y<16*TILE_SIZE; y++)
     {
-        r = s[4*(y*16*TILE_SIZE+x) + 0]
-        g = s[4*(y*16*TILE_SIZE+x) + 1]
-        b = s[4*(y*16*TILE_SIZE+x) + 2]
-        a = s[4*(y*16*TILE_SIZE+x) + 3]
+        r = s[4*(y*16*TILE_SIZE+x) + 0];
+        g = s[4*(y*16*TILE_SIZE+x) + 1];
+        b = s[4*(y*16*TILE_SIZE+x) + 2];
+        a = s[4*(y*16*TILE_SIZE+x) + 3];
 
         float avg = (gamma_correction[r] + gamma_correction[g] + gamma_correction[b]) / 3.0;
         avg = pow(avg, 2.2);
