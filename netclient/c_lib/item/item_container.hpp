@@ -13,12 +13,28 @@ void init_container(class ItemContainer* container);
 // transactions
 ContainerActionType alpha_action_decision_tree(int id, int slot);
 ContainerActionType beta_action_decision_tree(int id, int slot);
+
+ContainerActionType nanite_alpha_action_decision_tree(int id, int slot);
+ContainerActionType nanite_beta_action_decision_tree(int id, int slot);
+
+ContainerActionType craft_input_alpha_action_decision_tree(int id, int slot);
+ContainerActionType craft_input_beta_action_decision_tree(int id, int slot);
+ContainerActionType craft_output_alpha_action_decision_tree(int id, int slot);
+ContainerActionType craft_output_beta_action_decision_tree(int id, int slot);
 #endif
 
 #if DC_SERVER
 // transactions
 ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
 ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+
+ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+
+ContainerActionType craft_input_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType craft_input_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
 
 //network
 //  tell client to assign container to an agent
@@ -62,6 +78,12 @@ class ItemContainerInterface
         void assign_owner(int owner)
         {
             this->owner = owner;
+        }
+
+        void print()
+        {
+            for (int i=0; i<this->slot_max; printf("%d ", this->slot[i++]));
+            printf("\n");
         }
 
         virtual void insert_item(int slot, ItemID item_id) = 0;

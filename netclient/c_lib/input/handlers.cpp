@@ -376,14 +376,12 @@ void container_mouse_up_handler(SDL_Event* event)
     {
         case SDL_BUTTON_LEFT:
             container_event = t_hud::left_mouse_up(x,y);
-            if (container_event.nanite) Item::nanite_region_click_event(container_event.container_id);
-            Item::mouse_left_click_handler(container_event.container_id, container_event.slot);
+            Item::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
             break;
 
         case SDL_BUTTON_RIGHT:
             container_event = t_hud::right_mouse_up(x,y);
-            if (container_event.nanite) Item::nanite_region_click_event(container_event.container_id);
-            Item::mouse_right_click_handler(container_event.container_id, container_event.slot);
+            Item::mouse_right_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
             break;
 
         default:

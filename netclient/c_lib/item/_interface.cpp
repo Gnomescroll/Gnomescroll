@@ -218,13 +218,7 @@ void open_container()
 void close_container()
 {
     // attempt throw
-    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT);
-}
-
-void nanite_region_click_event(int container_id)
-{
-    if (container_id == NULL_CONTAINER) return;
-    // nanite region click handling
+    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 }
 
 int get_event_container_id(int event_id)
@@ -236,10 +230,10 @@ int get_event_container_id(int event_id)
 ItemContainerUIInterface* get_container_ui(int container_id)
 {
     assert(container_id != NULL_CONTAINER);
-    if (player_container_ui != NULL && player_container_ui->id == container_id) return player_container_ui;
-    if (player_toolbelt_ui  != NULL && player_toolbelt_ui->id  == container_id) return player_toolbelt_ui;
-    if (player_nanite_ui    != NULL && player_nanite_ui->id    == container_id) return player_nanite_ui;
     if (player_craft_bench_ui != NULL && player_craft_bench_ui->id == container_id) return player_craft_bench_ui;
+    if (player_container_ui   != NULL && player_container_ui->id   == container_id) return player_container_ui;
+    if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
+    if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
     return NULL;
 }
 
@@ -570,6 +564,12 @@ int consume_stack_item(ItemID item_id)
     assert(item != NULL);
     item->stack_size -= 1;
     return item->stack_size;
+}
+
+void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    assert(agent_craft_bench_list != NULL);
 }
 
 }
