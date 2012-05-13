@@ -17,7 +17,6 @@ typedef enum
 namespace Item
 {
 
-
 class NaniteStoreItem
 {
     public:
@@ -38,6 +37,33 @@ class NaniteStoreItem
         xslot = NULL_SLOT;
         yslot = NULL_SLOT;
     }
+};
+
+class CraftingRecipe
+{
+    public:
+
+    int output; //item type
+    int reagant_num;
+    int reagant[6];
+    int reagant_count[6];
+
+    CraftingRecipe()
+    {
+        init();
+    }
+
+    void init()
+    {
+        output = 0;
+        reagant_num = 0;
+        for(int i=0; i<6; i++)
+        {
+            reagant[i] = 0;
+            reagant_count[i] = 1;
+        } 
+    }
+
 };
 
 }

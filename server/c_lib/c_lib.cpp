@@ -185,6 +185,8 @@ int init_c_lib()
     Particle::init_particles();
     ItemParticle::init();
 
+    Item::load_crafting_dat();
+
     return 0;
 } 
  

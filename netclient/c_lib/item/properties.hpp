@@ -12,6 +12,9 @@ extern class ItemAttribute* item_attribute_array;
 
 extern class NaniteStoreItem* nanite_store_item_array;
 
+extern class NaniteStoreItem* nanite_store_item_array;
+extern class CraftingRecipe* crafting_recipe_array;
+
 void init_properties();
 
 class ItemAttribute* get_item_attributes(int item_type);

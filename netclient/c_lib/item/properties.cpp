@@ -14,6 +14,7 @@ int sprite_array[MAX_ITEMS]; //maps item id to sprite
 int group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
 class NaniteStoreItem* nanite_store_item_array = NULL;
+class CraftingRecipe* crafting_recipe_array = NULL;
 
 void init_properties()
 {
@@ -24,12 +25,15 @@ void init_properties()
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
     assert(nanite_store_item_array == NULL);
     nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
+
+    crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
 }
 
 void tear_down_properties()
 {
     if (item_attribute_array    != NULL) delete[] item_attribute_array;
     if (nanite_store_item_array != NULL) delete[] nanite_store_item_array;
+    if (nanite_store_item_array != NULL) delete[] crafting_recipe_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)

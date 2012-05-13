@@ -24,5 +24,6 @@ const int CRAFTING_BENCH_X = 4;
 const int CRAFTING_BENCH_Y = 1;
 
 const int MAX_ITEMS = 256;
+const int MAX_CRAFTING_RECIPE = 256;
 
 const int NANITE_DIGESTION_RATE = 30 * 5;

@@ -44,7 +44,6 @@ void item_def(int type, int group, const char* name)
     group_array[type] = group; //check
     
     set_item_name(type, (char*) name);
-
 }
 
 void _set_attribute()
