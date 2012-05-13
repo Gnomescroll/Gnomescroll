@@ -87,7 +87,6 @@ namespace ServerState
         // dont check null here, its not required.
         // agent could have disconnected, we'll let his grenades stay effective
         int i;                
-        int coins = 0;
 
         // agents
         agent_list->objects_within_sphere(x,y,z,radius);
@@ -105,10 +104,6 @@ namespace ServerState
         }
 
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
-
-        // add all the coins
-        if (agent != NULL)
-            agent->status.add_coins(coins);
 
         Vec3 position = vec3_init(x,y,z);
 

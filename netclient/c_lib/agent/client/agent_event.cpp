@@ -258,21 +258,6 @@ void Agent_event::scored_flag()
     this->a->status.flag_captures++;
 }
 
-void Agent_event::coins_changed(unsigned int coins)
-{
-    if (coins == this->a->status.coins) return;
-    if (this->first_time_receiving_coins)
-    {
-        this->first_time_receiving_coins = false;
-        const char msg_fmt[] = "You have $%d. Use these to build spawners (weapon 5)";
-        char* msg = (char*)malloc(sizeof(char) * (strlen(msg_fmt) + 10 - 2 + 1));
-        sprintf(msg, msg_fmt, coins);
-        chat_client->send_system_message(msg);
-        free(msg);
-    }
-    this->a->status.coins = coins;
-}
-
 void Agent_event::tick_mining_laser()
 {
     Animations::mining_laser_beam(this->a->arm_center(), this->a->s.forward_vector(), MINING_LASER_HITSCAN_RANGE);
@@ -486,7 +471,6 @@ Agent_event::Agent_event(Agent_state* owner)
 :
 a(owner),
 r(0),g(0),b(0),
-first_time_receiving_coins(true),
 model_was_changed(true),
 bb(NULL)
 {}

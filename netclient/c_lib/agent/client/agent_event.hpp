@@ -15,7 +15,6 @@ class Agent_event {
     private:
         Agent_state* a;
         unsigned char r,g,b;  // team colors
-        bool first_time_receiving_coins;
         AgentVoxStatus vox_status;
         bool model_was_changed;
     public:
@@ -65,7 +64,6 @@ class Agent_event {
         void threw_grenade();
 
         void set_spawner(int pt);
-        void coins_changed(unsigned int coins);
 
         explicit Agent_event(Agent_state* owner);
         ~Agent_event();

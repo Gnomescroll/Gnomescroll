@@ -731,17 +731,6 @@ class spawn_location_StoC: public FixedSizeReliableNetPacketToClient<spawn_locat
     inline void handle();
 };
 
-class agent_coins_StoC: public FixedSizeReliableNetPacketToClient<agent_coins_StoC>
-{
-    public:
-        uint16_t coins;
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u16(&coins, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
 /* Identification */
 
 class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>

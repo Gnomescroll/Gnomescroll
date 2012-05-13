@@ -56,14 +56,8 @@ const int AGENT_HEALTH = 100;
 const int RESPAWN_TICKS = 30 * 4; // 4 seconds
 const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
-//const int SLIME_KILLS_PER_COIN = 10;
-const int SLIME_KILLS_PER_COIN = 1;
-const int COINS_PER_AGENT_KILL = 5;
-//const int AGENT_MAX_TURRETS = (TURRET_MAX / AGENT_MAX) * 2;    // (256/64)*2 == 8
-//const int AGENT_MAX_SPAWNERS = SPAWNERS_PER_TEAM / 3;
 const int AGENT_MAX_TURRETS = 10;    // (256/64)*2 == 8
 const int AGENT_MAX_SPAWNERS = 3;
-//const int AGENT_TURRET_PROTECTION_DURATION = 30*5; // immune to turrets for 5 seconds after spawn
 
 /* Player */
 #if DC_CLIENT

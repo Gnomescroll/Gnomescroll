@@ -48,14 +48,7 @@ static const char fps_format[] = "%3.2f";
 static const char ping_format[] = "%dms";
 
 static const char no_agent_text[] = "No Agent Assigned";
-//static const char agent_viewer_text[] = "Viewer Mode";
-static const char coins_format[] = "$%d";
 static const char health_format[] = "HP %d";
-//static const char weapon_format[] = "%s";
-
-//static const char compass_format[] = "Target:\n%s";
-//static const char compass_enemy_flag[] = "Enemy Flag";
-//static const char compass_friendy_base[] = "Friendly Base";
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
@@ -77,8 +70,6 @@ static struct HudDrawSettings
     bool chat_input;    // draw chat input area
     bool full_chat;     // draw chat messages (ignoring timeouts)
     bool scoreboard;
-    //bool equipment;
-    //int equipment_slot;
     bool compass;
     bool map;
     bool graphs;
@@ -320,40 +311,18 @@ void draw_hud_text()
         if (a != NULL)
         {
             if (a->status.team == 0)
-            {
-                hud->coins->set_text((char*)"");
                 hud->health->set_text((char*)"");
-                //hud->weapon->set_text((char*)agent_viewer_text);
-            }
             else
             {
-                int coins = a->status.coins;
-                coins = (coins > 100000) ? 99999 : coins;
-                coins = (coins < 0) ? 0 : coins;
-                hud->coins->update_formatted_string(1, coins);
-
                 int health = a->status.health;
                 health = (health >= 1000) ? 999 : health;
                 health = (health < 0) ? 0 : health;
-                //int max_health = AGENT_HEALTH;
-                //max_health = (max_health >= 1000) ? 999 : max_health;
-                //max_health = (max_health < 0) ? 0 : max_health;
-                //hud->health->update_formatted_string(2, health, max_health);
                 hud->health->update_formatted_string(2, health);
-
-                //char* weapon_string = a->weapons.hud_display();
-                //hud->weapon->update_formatted_string(1, weapon_string);
             }
         }
         else
-        {
-            hud->coins->set_text((char*)"");
             hud->health->set_text((char*)no_agent_text);
-            //hud->weapon->set_text((char*)"");
-        }
-        hud->coins->draw();
         hud->health->draw();
-        //hud->weapon->draw();
     }
     end_font_draw();
 }
@@ -426,34 +395,12 @@ void HUD::init()
     reliable_ping->set_color(255,10,10,255);
     reliable_ping->set_position(3, (line_height*3)+3);
 
-    coins = HudText::text_list->create();
-    coins->set_text((char*) "");
-    coins->set_format((char*) coins_format);
-    coins->set_format_extra_length(5 - 2);
-    coins->set_color(255,10,10,255);
-    coins->set_position(HudEquipment::rendered_width + 2, _yresf - line_height + 2);
-    
     health = HudText::text_list->create();
     health->set_text((char*) "");
     health->set_format((char*) health_format);
-    //health->set_format_extra_length((3 - 2) + (3 - 2));
     health->set_format_extra_length((3 - 2));
     health->set_color(255,10,10,255);
     health->set_position(HudEquipment::rendered_width + 2, _yresf + 2);
-
-    //weapon = HudText::text_list->create();
-    //weapon->set_text((char*)"");
-    //weapon->set_format((char*) weapon_format);
-    //weapon->set_format_extra_length(Weapons::WEAPON_HUD_STRING_MAX - 2);
-    //weapon->set_color(255,10,10,255);
-    //weapon->set_position(2, _yresf - (line_height + 16));
-    
-    //compass = HudText::text_list->create();
-    //compass->set_text((char*)"");
-    //compass->set_format((char*) compass_format);
-    //compass->set_format_extra_length(30);   // arbitrarily big enough
-    //compass->set_color(255,10,10,255);
-    //compass->set_position(_xresf, _yresf);
 
     confirm_quit = HudText::text_list->create();
     confirm_quit->set_text((char*)confirm_quit_text);
@@ -478,10 +425,7 @@ dead(NULL),
 fps(NULL),
 ping(NULL),
 reliable_ping(NULL),
-coins(NULL),
 health(NULL),
-//weapon(NULL),
-//compass(NULL),
 confirm_quit(NULL),
 scoreboard(NULL),
 chat(NULL)
@@ -501,14 +445,8 @@ HUD::~HUD()
         HudText::text_list->destroy(ping->id);
     if (reliable_ping != NULL)
         HudText::text_list->destroy(reliable_ping->id);
-    if (coins != NULL)
-        HudText::text_list->destroy(coins->id);
     if (health != NULL)
         HudText::text_list->destroy(health->id);
-    //if (weapon != NULL)
-        //HudText::text_list->destroy(weapon->id);
-    //if (compass != NULL)
-        //HudText::text_list->destroy(compass->id);
     if (confirm_quit != NULL)
         HudText::text_list->destroy(confirm_quit->id);
     if (scoreboard != NULL)

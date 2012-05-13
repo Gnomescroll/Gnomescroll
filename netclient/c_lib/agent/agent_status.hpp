@@ -41,8 +41,6 @@ class Agent_status {
         bool has_flag;
         unsigned int flag_captures;
 
-        unsigned int coins;
-
         bool vox_crouched;
 
         int base_restore_rate_limiter;
@@ -84,14 +82,6 @@ class Agent_status {
 
         float get_spawn_angle();
         void check_if_at_base();
-
-        // coin stuff
-        bool can_purchase(ObjectType obj);
-        bool can_purchase(unsigned int coins);
-        void add_coins(unsigned int coins);
-        void spend_coins(unsigned int coins, ObjectType item);
-        void send_coin_packet();
-        bool purchase(ObjectType obj);
 
         // item stuff
         const bool can_gain_item(ObjectType item);

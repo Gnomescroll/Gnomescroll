@@ -87,10 +87,7 @@ class HUD
     Text* fps;
     Text* ping;
     Text* reliable_ping;
-    Text* coins;
     Text* health;
-    //Text* weapon;
-    Text* compass;
     Text* confirm_quit;
 
     // scoreboard needs rewritten logic

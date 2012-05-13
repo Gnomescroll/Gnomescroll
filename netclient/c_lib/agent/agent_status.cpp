@@ -43,7 +43,6 @@ identified(false),
 team(0),
 has_flag(false),
 flag_captures(0),
-coins(0),
 vox_crouched(false),
 base_restore_rate_limiter(0),
 lifetime(0),
@@ -141,15 +140,13 @@ int Agent_status::apply_damage(int dmg)
 {
     if (this->dead) return this->health;
     
-    // forward dmg indicator packet
+    if (!dmg) return this->health;
+    if (this->health <= 0) return this->health;
+
     agent_damage_StoC dmg_msg;
-    
     dmg_msg.id = a->id;
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();
-
-    if (!dmg) return this->health;
-    if (this->health <= 0) return this->health;
     
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
@@ -334,15 +331,12 @@ void Agent_status::kill(int victim_id)
         ak.id = this->a->id;
         ak.kills = kills;
         ak.broadcast();
-        this->add_coins(COINS_PER_AGENT_KILL);
     }
 }
 
 void Agent_status::kill_slime()
 {
     this->slime_kills++;
-    if (this->slime_kills % SLIME_KILLS_PER_COIN == 0)
-        this->add_coins(1);
 }
 
 int Agent_status::score() {
@@ -467,8 +461,6 @@ void Agent_status::score_flag() {
 
         this->flag_captures++;
     }
-    const unsigned int coins = get_object_cost(OBJECT_AGENT_SPAWNER) * 3;
-    this->add_coins(coins);
     this->has_flag = false;
 }
 
@@ -499,25 +491,6 @@ void Agent_status::set_team(int team)
     #endif
 }
 
-void Agent_status::add_coins(unsigned int coins)
-{
-    if (coins==0) return;
-    this->coins += coins;
-    #if DC_SERVER
-    this->send_coin_packet();
-    #endif
-}
-
-void Agent_status::spend_coins(unsigned int coins, ObjectType item)
-{
-    #if DC_SERVER
-    if (coins==0) return;
-    if (item >= 0 && !can_gain_item(item)) return;
-    this->coins -= coins;
-    this->send_coin_packet();
-    #endif
-}
-
 const bool Agent_status::can_gain_item(ObjectType item)
 {
     if (this->dead) return false;
@@ -533,12 +506,6 @@ const bool Agent_status::can_gain_item(ObjectType item)
             if (owned_spawners >= AGENT_MAX_SPAWNERS)
                 return false;
             break;
-
-        //case OBJECT_MEAT:
-        //case OBJECT_BLOCK_DROP:
-        //case OBJECT_GEMSTONE:
-            //can = this->inventory->can_add(item);
-            //return can;
 
         default:
             return true;
@@ -605,34 +572,6 @@ bool Agent_status::lose_item(ObjectType item)
             
         default: break;
     }
-    return true;
-}
-
-void Agent_status::send_coin_packet()
-{
-    #if DC_SERVER
-    agent_coins_StoC msg;
-    msg.coins = this->coins;
-    msg.sendToClient(this->a->id);
-    #endif
-}
-
-bool Agent_status::can_purchase(ObjectType obj)
-{
-    unsigned int cost = get_object_cost(obj);
-    return can_gain_item(obj) && can_purchase(cost);
-}
-
-bool Agent_status::can_purchase(unsigned int coins)
-{
-    return (coins <= this->coins);
-}
-
-bool Agent_status::purchase(ObjectType obj)
-{
-    if (!this->can_purchase(obj)) return false;
-    unsigned int cost = get_object_cost(obj);
-    this->spend_coins(cost, obj);
     return true;
 }
 

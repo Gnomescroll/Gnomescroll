@@ -326,42 +326,6 @@ inline void AgentSuicides_StoC::handle()
     a->status.suicides = suicides;
 }
 
-//inline void AgentActiveWeapon_StoC::handle()
-//{
-    //Agent_state* a =  ClientState::agent_list->get(id);
-    //if (a == NULL)
-    //{
-        //printf("Agent %d not found. message_id=%d\n", id, message_id);
-        //return;
-    //}
-    ////a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
-    ////a->weapons.active = slot;
-//}
-
-//inline void AgentReloadWeapon_StoC::handle()
-//{
-    //Agent_state* a = ClientState::agent_list->get(id);
-    //if (a == NULL)
-    //{
-        //printf("Agent %d not found. message_id=%d\n", id, message_id);
-        //return;
-    //}
-
-    //if (a == NULL)
-    //{
-        //printf("Agent %d not found. message_id=%d\n", id, message_id);
-        //return;
-    //}
-    //a->event.reload_weapon(type);
-//}
-
-inline void agent_coins_StoC::handle()
-{
-    Agent_state* a = ClientState::playerAgent_state.you;
-    if (a == NULL) return;
-    a->event.coins_changed(coins);
-}
-
 inline void identified_StoC::handle()
 {
     Agent_state* a = ClientState::playerAgent_state.you;
@@ -604,7 +568,6 @@ inline void PlayerAgent_id_StoC::handle() {}
 //inline void AgentActiveWeapon_StoC::handle() {}
 //inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
-inline void agent_coins_StoC::handle() {}
 inline void identified_StoC::handle(){}
 inline void ping_StoC::handle(){}
 inline void ping_reliable_StoC::handle(){}
@@ -751,9 +714,6 @@ inline void hitscan_object_CtoS::handle()
 
             if (died)
             {
-                // coins are deprecated, so just give them 50
-                a->status.add_coins(50);
-
                 if (obj->type == OBJECT_MONSTER_BOMB)
                     a->status.kill_slime(); // TODO, de-type this
             }
@@ -783,10 +743,6 @@ inline void hitscan_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
-    #if !PRODUCTION
-    a->status.add_coins(100);
-    #endif
 
     if (a->status.team == 0) return;
     //if (!a->weapons.laser.fire()) return;
@@ -916,9 +872,6 @@ inline void melee_object_CtoS::handle()
 
             if (died)
             {
-                // coins are deprecated, so just give them 50
-                a->status.add_coins(50);
-
                 if (obj->type == OBJECT_MONSTER_BOMB)
                     a->status.kill_slime(); // TODO, de-type this
             }
@@ -1145,15 +1098,12 @@ inline void place_spawner_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->status.can_purchase(type)) return;
     if (!Components::agent_spawner_component_list->team_spawner_available(a->status.team)) return;
 
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id, a->status.team);
     if (obj == NULL) return;
     Components::agent_spawner_component_list->assign_team_index(obj);
     Objects::ready(obj);
-
-    a->status.purchase(obj->type);
 }
 
 inline void place_turret_CtoS::handle()
@@ -1166,13 +1116,10 @@ inline void place_turret_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->status.can_purchase(type)) return;
     
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id, a->status.team);
     if (obj == NULL) return;
     Objects::ready(obj);
-
-    a->status.purchase(obj->type);
 }
 
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT

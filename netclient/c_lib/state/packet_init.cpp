@@ -125,9 +125,6 @@ void RegisterMessages() {
     AgentDropFlag_StoC::register_client_packet();
     AgentScoreFlag_StoC::register_client_packet();
 
-    // coins
-    agent_coins_StoC::register_client_packet();
-    
     PlayerAgent_id_StoC::register_client_packet();
 
     ThrowGrenade_CtoS::register_server_packet();
