@@ -244,6 +244,7 @@ int init_c_lib()
     //t_map::load_map_dat();
     Item::load_item_dat();
     Item::load_nanite_store();
+    TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
 
     t_map::load_map_drop_dat(); //load drop dat after items
 

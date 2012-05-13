@@ -1,3 +1,8 @@
+Procedural Texture Generation:
+Genetica
+http://www.spiralgraphics.biz/gallery.htm
+determine if it has wang tile support
+
 Perlin Noise From Scratch
 http://www.pixeleuphoria.com/node/57
 http://en.wikipedia.org/wiki/Perlin_noise 
@@ -337,4 +342,10 @@ high frequency geometric and texture detail found in photorealis-
 tic games can often overpower the ability of designers to compose
 game environments and emphasize gameplay features visually us-
 ing intentional design choices such as changes in color value.
+
+Mega Project:
+Sponsor LeoEditor development environment C++
+Dev and design notes
+Project Management
+As web application
 

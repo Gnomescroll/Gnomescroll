@@ -209,6 +209,13 @@ void init()
 
 }
 
+void init_greyscale()
+{    
+    ItemTextureSheetLoader->generate_grey_scale();
+    save_surface_to_png(GreyScaleItemTexture, (char*)"./screenshot/grey_scale_items.png");
+    save_surface_to_png(ItemTexture , (char*)"./screenshot/items.png");
+}
+
 void teardown()
 {
     delete CubeTextureSheetLoader;
@@ -252,10 +259,5 @@ extern "C"
     void LUA_save_item_texture()
     {
         save_surface_to_png(TextureSheetLoader::ItemTexture, (char*) "./screenshot/item_texture.png");
-        
-        TextureSheetLoader::ItemTextureSheetLoader->generate_grey_scale();
-        save_surface_to_png(TextureSheetLoader::GreyScaleItemTexture, (char*)"./screenshot/grey_scale_items.png");
-        save_surface_to_png(TextureSheetLoader::ItemTexture , (char*)"./screenshot/items.png");
-
     }
 }

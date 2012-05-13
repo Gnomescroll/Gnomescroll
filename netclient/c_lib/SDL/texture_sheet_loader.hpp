@@ -45,6 +45,8 @@ extern unsigned int* ItemTextureStack;
 extern struct SDL_Surface* GreyScaleItemTexture;
 
 void init();
+void init_greyscale();
+
 void teardown();
 
 }

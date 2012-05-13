@@ -163,11 +163,7 @@ namespace t_map
     void init_map_3d_texture()
     {
         printf("init_map_3d_texture: 0 \n");
-        /*
-            Cleanup
-        */
-        //if(terrain_map_surface != NULL) 
-        //SDL_FreeSurface(terrain_map_surface);
+
         if(terrain_map_glsl != 0)
         {
             printf("init_map_3d_texture: attempting to delete, may cause segfault \n");
@@ -246,7 +242,6 @@ namespace t_map
                     printf("Error: T_MAP_MAG_FILTER value %i invalid for mipmapped GL_TEXTURE_2D_ARRAY \n", T_MAP_MAG_FILTER);
                     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR); break;
             }
-
 
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 8);
