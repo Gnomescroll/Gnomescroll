@@ -43,10 +43,14 @@ class CraftingRecipe
 {
     public:
 
+    int id;
     int output; //item type
     int reagent_num;
     int reagent[CRAFT_BENCH_INPUTS_MAX];
     int reagent_count[CRAFT_BENCH_INPUTS_MAX];
+
+    // temporary state information
+    bool available;
 
     CraftingRecipe()
     {
@@ -55,13 +59,15 @@ class CraftingRecipe
 
     void init()
     {
+        id = NULL_CRAFTING_RECIPE;
         output = NULL_ITEM_TYPE;
         reagent_num = 0;
         for(int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
         {
             reagent[i] = NULL_ITEM_TYPE;
             reagent_count[i] = 1;
-        } 
+        }
+        available = true;
     }
 };
 

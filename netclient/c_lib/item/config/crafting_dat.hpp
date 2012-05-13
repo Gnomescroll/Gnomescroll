@@ -1,3 +1,5 @@
+#pragma once
+
 #include <item/config/_util.hpp>
 
 #include <item/common/struct.hpp>
@@ -6,7 +8,7 @@
 namespace Item
 {
 
-int _current_crafting_id = 0;
+int crafting_recipe_count = 0;
 int _current_reagent_id = 0;
 
 class CraftingRecipe _cr;
@@ -63,9 +65,10 @@ void set_reagent(const char* item_name, int quantity)
 void end_recipe()
 {
     _cr.reagent_num = _current_reagent_id;
-    crafting_recipe_array[_current_crafting_id] = _cr;
+    _cr.id = crafting_recipe_count;
+    crafting_recipe_array[crafting_recipe_count] = _cr;
     _cr.init();
-    _current_crafting_id++;
+    crafting_recipe_count++;
     _current_reagent_id = 0;
 }
 

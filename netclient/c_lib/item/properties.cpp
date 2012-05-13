@@ -5,6 +5,7 @@
 #include <item/common/struct.hpp>
 
 #include <item/config/item_attribute.hpp>
+#include <item/config/crafting_dat.hpp>
 #include <item/item_container.hpp>
 
 namespace Item
@@ -22,8 +23,8 @@ int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
 int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
 
 // buffers for recipe outputs available
-int craft_outputs_possible[CRAFT_BENCH_OUTPUTS_MAX];
-int craft_outputs_count = 0;
+class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
+int craft_recipes_possible_count = 0;
 
 void init_properties()
 {
@@ -176,12 +177,18 @@ void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int*
     *cost = 0;
 }
 
-int get_craft_recipe_type(int container_id, int slot)
+class CraftingRecipe* get_craft_recipe(int recipe_id)
+{
+    assert(recipe_id >= 0 && recipe_id < crafting_recipe_count);
+    return &crafting_recipe_array[recipe_id];
+}
+
+class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
 {
     // get container
     assert(container_id != NULL_CONTAINER);
     ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return NULL_ITEM_TYPE;
+    if (container == NULL) return NULL;
 
     // clear input buffers
     for (int i=0; i<CRAFT_BENCH_INPUTS_MAX; craft_input_types[i++] = NULL_ITEM_TYPE);
@@ -251,11 +258,11 @@ int get_craft_recipe_type(int container_id, int slot)
     }
 
     // no inputs
-    if (unique_inputs == 0) return NULL_ITEM_TYPE;
+    if (unique_inputs == 0) return NULL;
 
     // reset outputs buffer
-    for (int i=0; i<CRAFT_BENCH_OUTPUTS_MAX; craft_outputs_possible[i++] = NULL_ITEM_TYPE);
-    craft_outputs_count = 0;
+    for (int i=0; i<CRAFT_BENCH_OUTPUTS_MAX; craft_recipes_possible[i++] = NULL);
+    craft_recipes_possible_count = 0;
     
     // iterate available recipes
     // if types match exactly, add recipe to available recipes
@@ -264,6 +271,8 @@ int get_craft_recipe_type(int container_id, int slot)
     {
         if (crafting_recipe_array[i].output == NULL_ITEM_TYPE) continue;
         CraftingRecipe* recipe = &crafting_recipe_array[i];
+        // make sure to set availability state to default
+        recipe->available = true;
 
         // check if reagents match inputs
         bool match = true;
@@ -282,15 +291,23 @@ int get_craft_recipe_type(int container_id, int slot)
         }
         if (!match) continue;
 
-        if (!can_craft) craft_outputs_possible[craft_outputs_count] = dat_get_item_type((char*)"unknown");
-        else craft_outputs_possible[craft_outputs_count] = recipe->output;
-        craft_outputs_count++;
+        if (!can_craft) recipe->available = false;
+        else craft_recipes_possible[craft_recipes_possible_count] = recipe;
+        craft_recipes_possible_count++;
     }
 
     // slot is out of recipe range
-    if (craft_outputs_count < slot) return NULL_ITEM_TYPE;
+    if (craft_recipes_possible_count < slot) return NULL;
     
-    return craft_outputs_possible[slot];
+    return craft_recipes_possible[slot];
+}
+
+int get_selected_craft_recipe_type(int container_id, int slot)
+{
+    CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
+    if (recipe == NULL) return NULL_ITEM_TYPE;
+    if (!recipe->available) return dat_get_item_type((char*)"unknown");
+    return recipe->output;
 }
 
 }

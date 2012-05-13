@@ -20,8 +20,8 @@ extern int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
 extern int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
 
 // buffers for recipe outputs available
-extern int craft_outputs_possible[CRAFT_BENCH_OUTPUTS_MAX];
-extern int craft_outputs_count;
+extern class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
+extern int craft_recipes_possible_count;
 
 void init_properties();
 
@@ -47,5 +47,8 @@ int get_max_durability(int item_type);
 
 void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost);
 
-int get_craft_recipe_type(int container_id, int slot);
+class CraftingRecipe* get_craft_recipe(int recipe_id);
+
+class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot);
+int get_selected_craft_recipe_type(int container_id, int slot);
 }

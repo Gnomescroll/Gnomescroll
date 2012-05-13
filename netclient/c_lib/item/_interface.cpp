@@ -567,8 +567,94 @@ int consume_stack_item(ItemID item_id)
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    assert(agent_hand_list != NULL);
     assert(agent_craft_bench_list != NULL);
+
+    // hand is holding something, abort
+    if (agent_hand_list[agent_id] != NULL_ITEM) return;
+
+    Agent_state* agent = ServerState::agent_list->get(agent_id);
+    if (agent == NULL) return;
+
+    // agent does not own container, abort
+    if (container_id != NULL_CONTAINER && !agent_owns_container(agent->id, container_id)) return;
+
+    CraftingRecipe* recipe = get_selected_craft_recipe(container_id, craft_slot);
+    if (recipe == NULL) return;
+
+    // remove reagents from container
+    // deleting items as needed, modifying others
+    consume_crafting_reagents(agent_id, container_id, recipe->id);
+
+    // create new item of type
+    Item* item = create_item(recipe->output);
+    send_item_create(agent->client_id, item->id);
+        
+    // place in hand
+    agent_hand_list[agent_id] = item->id;
+    send_hand_insert(agent->client_id, item->id);
 }
+
+void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    assert(recipe_id != NULL_CRAFTING_RECIPE);
+
+    ASSERT_VALID_AGENT_ID(agent_id);
+    assert(agent_hand_list != NULL);
+    assert(agent_craft_bench_list != NULL);
+
+    Agent_state* agent = ServerState::agent_list->get(agent_id);
+    if (agent == NULL) return;
+
+    // agent does not own container, abort
+    if (container_id != NULL_CONTAINER && !agent_owns_container(agent->id, container_id)) return;
+
+    ItemContainerCraftingBench* bench = (ItemContainerCraftingBench*)get_container(container_id);
+    assert(bench != NULL);
+
+    CraftingRecipe* recipe = get_craft_recipe(recipe_id);
+    assert(recipe != NULL);
+
+    for (int i=0; i<recipe->reagent_num; i++)
+    {   // remove reagents from inputs
+
+        // gather recipe data
+        int type = recipe->reagent[i];
+        int count = recipe->reagent_count[i];
+        assert(type != NULL_ITEM_TYPE);
+        assert(count > 0);
+
+        // iterate bench inputs
+        for (int j=0; j<bench->slot_max; j++)
+        {
+            // inspect slot
+            ItemID item_id = bench->get_item(j);
+            if (item_id == NULL_ITEM) continue;
+            Item* item = get_item(item_id);
+            assert(item != NULL);
+            if (item->type != type) continue;
+
+            // determine whether to decrement or fully remove item
+            if (item->stack_size <= count)
+            {   // remove this item
+                count -= item->stack_size;
+                destroy_item(item->id);
+            }
+            else
+            {   // decrement this item
+                item->stack_size -= count;
+                send_item_state(agent->client_id, item->id);
+                count = 0;
+            }
+
+            // we've consumed all the reagents of this type
+            if (count <= 0) break;
+        }
+        assert(count <= 0); // there is a problem if this function is called with bad inputs
+    }
+}
+
 
 }
 

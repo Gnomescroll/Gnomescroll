@@ -9,8 +9,10 @@ const int NULL_CONTAINER = 0xffff;
 const int NULL_PARTICLE = -1;
 const int NULL_ITEM_LEVEL = -1;
 const int NULL_COST = 0;
-const int ERROR_SPRITE = 0;
-const int UNKNOWN_SPRITE = 0;
+const int NULL_CRAFTING_RECIPE = 0xffff;
+
+const int ERROR_SPRITE = 0; // id of item that renders as error
+const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
 
 const int AGENT_CONTAINER_X = 6;
 const int AGENT_CONTAINER_Y = 3;

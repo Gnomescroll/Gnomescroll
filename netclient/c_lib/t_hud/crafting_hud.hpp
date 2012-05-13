@@ -241,7 +241,7 @@ void CraftingUI::draw()
     for (int yslot=0; yslot<output_ydim; yslot++)
     {
         int slot = output_xdim*yslot + xslot;
-        int item_type = Item::get_craft_recipe_type(this->container_id, slot);
+        int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot);
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 

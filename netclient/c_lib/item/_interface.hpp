@@ -88,6 +88,7 @@ void purchase_item_from_nanite(int agent_id, int slot);
 int consume_stack_item(ItemID item_id);
 
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
+void consume_crafting_reagents(int agent_id, int container_id, int recipe_id);
 }
 #endif
 
