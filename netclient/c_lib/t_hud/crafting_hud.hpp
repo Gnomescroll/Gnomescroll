@@ -12,17 +12,33 @@ class CraftingUI : public UIElement
 
     public:
           
-    static const float cell_size = 37;
+    static const int cell_size = 37;
     static const int xdim = 6;    // grid cell size
     static const int ydim = 1;
+
+    static const int input_xdim = 4;
+    static const int input_ydim = 1;
+
+    static const int output_xdim = 1;
+    static const int output_ydim = 1;
 
     static const int input_slots = 4;
     static const int output_slots = 1;
     static const int input_output_gap = 1;
 
     // size of texture/render area
-    static const float render_width = 37*xdim;
-    static const float render_height = 37*ydim;
+    static const float render_width = cell_size * 6;
+    static const float render_height = cell_size * 1;
+
+    static const float slot_size = 32;
+    static const float cell_offset_x = 3;
+    static const float cell_offset_y = 3;
+    static const float cell_offset_x_right = 2;
+    static const float cell_offset_y_bottom = 2;
+    static const float input_offset_x = 0;
+    static const float input_offset_y = 0;
+    static const float output_offset_x = cell_size * (input_xdim + input_output_gap);
+    static const float output_offset_y = 0;
 
     HudText::Text* stacks;
 
@@ -145,28 +161,21 @@ void CraftingUI::draw()
 
     glEnd();
 
-
-    glEnable(GL_DEPTH_TEST); // move render somewhere
-    glDisable(GL_BLEND);
-
     glDisable(GL_TEXTURE_2D);
-}
-/*
-    glDisable(GL_TEXTURE_2D);
+
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
-    int hover_slot = this->get_slot_at(mouse_x, mouse_y);
-    if (hover_slot != 0 && hover_slot != NULL_SLOT)
+    int hover_slot = this->get_grid_at(mouse_x, mouse_y);
+    if (hover_slot != NULL_SLOT)
     {
-        hover_slot -= 1;
         int w = slot_size;
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;
-        
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
 
+        const float x = xoff + cell_size*xslot + cell_offset_x;
+        const float y = yoff - (cell_size*yslot + cell_offset_y);
+        
         glVertex2f(x,y);
         glVertex2f(x, y-w);
         glVertex2f(x+w, y-w);
@@ -174,26 +183,29 @@ void CraftingUI::draw()
     }
     glEnd();
 
+    // get data for rendering items
+    int* slot_types = Item::get_container_ui_types(this->container_id);
+    int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
+    if (slot_types == NULL) return;
+    assert(slot_stacks != NULL);
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture);
 
     glBegin(GL_QUADS);
 
-    //draw store items
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    //draw input items
+    for (int xslot=0; xslot<input_xdim; xslot++)
+    for (int yslot=0; yslot<input_ydim; yslot++)
     {
-        if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
-
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        int slot = input_xdim*yslot + xslot;
+        int item_type = slot_types[slot];
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+        const float x = xoff + input_offset_x + cell_offset_x + cell_size*xslot;
+        const float y = yoff - (input_offset_y + cell_offset_y + cell_size*yslot);
 
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -218,150 +230,87 @@ void CraftingUI::draw()
     }
     glEnd();
 
+    //// draw output items
+    //glBegin(GL_QUADS);
 
-    // draw food
-    Item::ItemContainerNaniteUI* container = (Item::ItemContainerNaniteUI*)Item::get_container_ui(this->container_id);
-    if (container == NULL) return;
+    ////draw input items
+    //for (int xslot=0; xslot<output_xdim; xslot++)
+    //for (int yslot=0; yslot<output_ydim; yslot++)
+    //{
+        //int slot = output_xdim*yslot + xslot;
+        //int item_type = Item::get_craft_recipe_type(this->container_id, slot);
+        //if (item_type == NULL_ITEM_TYPE) continue;
+        //int tex_id = Item::get_sprite_index_for_type(item_type);
 
-    int food_item_type = container->get_food_type();
-    if (food_item_type != NULL_ITEM_TYPE)
-    {
-        int food_sprite_id = Item::get_sprite_index_for_type(food_item_type);
-        float x = xoff + nanite_offset_x + nanite_width - slot_size;
-        float y = yoff - (nanite_offset_y + nanite_height - slot_size);
+        //const float x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
+        //const float y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);
 
-        const float w = slot_size;
-        const float iw = 16.0f; // icon_width
-        const int iiw = 16; // integer icon width
+        //const float w = slot_size;
+        //const float iw = 16.0f; // icon_width
+        //const int iiw = 16; // integer icon width
 
-        const float tx_min = (1.0/iw)*(food_sprite_id % iiw);
-        const float ty_min = (1.0/iw)*(food_sprite_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
+        //const float tx_min = (1.0/iw)*(tex_id % iiw);
+        //const float ty_min = (1.0/iw)*(tex_id / iiw);
+        //const float tx_max = tx_min + 1.0/iw;
+        //const float ty_max = ty_min + 1.0/iw;
 
-        glBegin(GL_QUADS);
-        glTexCoord2f( tx_min, ty_min );
-        glVertex2f(x, y);
+        //glTexCoord2f( tx_min, ty_min );
+        //glVertex2f(x, y);
 
-        glTexCoord2f( tx_min, ty_max );
-        glVertex2f(x,y-w);
+        //glTexCoord2f( tx_min, ty_max );
+        //glVertex2f(x,y-w);
 
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y-w );
+        //glTexCoord2f( tx_max, ty_max );
+        //glVertex2f(x+w, y-w );
 
-        glTexCoord2f( tx_max, ty_min );
-        glVertex2f(x+w, y);
-        glEnd();
-    }
-    
-    // draw coins
-    int coin_item_type = container->get_coin_type();
-    if (coin_item_type != NULL_ITEM_TYPE)
-    {
-        int xslot = xdim-1;
-        int yslot = ydim-1;
-        
-        int coin_sprite_id = Item::get_sprite_index_for_type(coin_item_type);
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+        //glTexCoord2f( tx_max, ty_min );
+        //glVertex2f(x+w, y);
+    //}
+    //glEnd();
 
-        const float w = slot_size;
-        const float iw = 16.0f; // icon_width
-        const int iiw = 16; // integer icon width
-
-        const float tx_min = (1.0/iw)*(coin_sprite_id % iiw);
-        const float ty_min = (1.0/iw)*(coin_sprite_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
-
-        glBegin(GL_QUADS);
-        glTexCoord2f( tx_min, ty_min );
-        glVertex2f(x, y);
-
-        glTexCoord2f( tx_min, ty_max );
-        glVertex2f(x,y-w);
-
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y-w );
-
-        glTexCoord2f( tx_max, ty_min );
-        glVertex2f(x+w, y);
-        glEnd();
-    }
 
     glDisable(GL_TEXTURE_2D);
 
-    //draw text for item cost in upper right
+    // draw stacks
     HudFont::start_font_draw();
     const int font_size = 12;
     HudFont::set_properties(font_size);
     HudFont::set_texture();
 
     HudText::Text* text;
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    for (int xslot=0; xslot<input_xdim; xslot++)
+    for (int yslot=0; yslot<input_ydim; yslot++)
     {
         // the nanite store slots in dat are indexed from 0
         // it is not aware of the implementation detail we have for food
-        const int slot = yslot*xdim + xslot;
-        if (slot == xdim*ydim-1) continue;  // skip last slot, reserved
+        const int slot = input_xdim*yslot + xslot;
 
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
-        if (item_type == NULL_ITEM_TYPE) continue;
+        int stack = slot_stacks[slot];
+        if (stack <= 1) continue;
 
-        assert(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
+        assert(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
 
-        text = &this->prices[slot];
-        text->update_formatted_string(1, cost);
+        text = &this->stacks[slot];
+        text->update_formatted_string(1, stack);
 
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot + slot_size - text->get_width();
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
-        
+        const float x = xoff + input_offset_x + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
+        const float y = yoff - (input_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
+
         text->set_position(x,y);
         text->draw();
-    }
-
-    // draw food stack
-    HudText::Text* food_stack = &this->stacks[0];
-
-    int food_stack_size = container->get_food_stack();
-    assert(count_digits(food_stack_size) < STACK_COUNT_MAX_LENGTH);
-    if (food_stack_size > 1)
-    {
-        food_stack->update_formatted_string(1, food_stack_size);
-        const float x = xoff + nanite_offset_x + nanite_width - food_stack->get_width();
-        const float y = yoff - (nanite_offset_y + nanite_height - food_stack->get_height());
-        food_stack->set_position(x,y);
-        food_stack->draw();
-    }
-    
-    // draw coin stack
-    HudText::Text* coin_stack = &this->stacks[0];
-
-    int coin_stack_size = container->get_coin_stack();
-    assert(count_digits(coin_stack_size) < STACK_COUNT_MAX_LENGTH);
-    if (coin_stack_size > 1)
-    {
-        int xslot = xdim-1;
-        int yslot = ydim-1;
-        coin_stack->update_formatted_string(1, coin_stack_size);
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot + slot_size - coin_stack->get_width();
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot + slot_size - coin_stack->get_height());
-        coin_stack->set_position(x,y);
-        coin_stack->draw();
     }
 
     HudFont::reset_default();
     HudFont::end_font_draw();
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
     glDisable(GL_TEXTURE_2D);
 
     //u_dot(xoff,yoff);
     glColor4ub(255, 255, 255, 255);
-    */
 
 }
+
+}   // t_hud

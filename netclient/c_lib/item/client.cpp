@@ -27,7 +27,6 @@ static void send_container_alpha_action(ContainerActionType action, int containe
     container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
-    printf("action = %d\n", action);
 
     msg.container_id = container_id;
     msg.slot = slot;

@@ -230,10 +230,10 @@ int get_event_container_id(int event_id)
 ItemContainerUIInterface* get_container_ui(int container_id)
 {
     assert(container_id != NULL_CONTAINER);
-    if (player_container_ui != NULL && player_container_ui->id == container_id) return player_container_ui;
-    if (player_toolbelt_ui  != NULL && player_toolbelt_ui->id  == container_id) return player_toolbelt_ui;
-    if (player_nanite_ui    != NULL && player_nanite_ui->id    == container_id) return player_nanite_ui;
     if (player_craft_bench_ui != NULL && player_craft_bench_ui->id == container_id) return player_craft_bench_ui;
+    if (player_container_ui   != NULL && player_container_ui->id   == container_id) return player_container_ui;
+    if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
+    if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
     return NULL;
 }
 
