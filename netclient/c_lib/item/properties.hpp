@@ -15,6 +15,17 @@ extern class NaniteStoreItem* nanite_store_item_array;
 extern class NaniteStoreItem* nanite_store_item_array;
 extern class CraftingRecipe* crafting_recipe_array;
 
+// buffers for condensing craft bench inputs to unique type,count pairs
+extern int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
+extern int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
+
+// buffers for recipe outputs available
+// items to craft
+extern int craft_outputs_possible[CRAFT_BENCH_OUTPUTS_MAX];
+// whether item can actually be crafted (i.e. input types match, but the counts are insufficient)
+extern bool craft_outputs_available[CRAFT_BENCH_OUTPUTS_MAX];
+extern int craft_outputs_count;
+
 void init_properties();
 
 class ItemAttribute* get_item_attributes(int item_type);

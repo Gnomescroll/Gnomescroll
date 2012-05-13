@@ -128,16 +128,4 @@ void handle_block_drop(int x, int y, int z, int block_type)
 }
 #endif
 
-/*
-    const float mom = 2.0f;
-    float p = randf();
-    if (p < 0.3)
-    {
-        x = (float)x + 0.5f + randf()*0.33;
-        y = (float)y + 0.5f + randf()*0.33;
-        z = (float)z + 0.05f;
-        int type = randrange(0,7);
-        Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-*/
-
 }   // t_map

@@ -210,9 +210,7 @@ void update_container_ui_from_state()
 void open_container()
 {
     // copy state to ui
-    if (player_container == NULL) return;
-    if (player_container_ui == NULL) return;
-    player_container_ui->load_data(player_container->slot);
+    update_container_ui_from_state();
 }
 
 void close_container()

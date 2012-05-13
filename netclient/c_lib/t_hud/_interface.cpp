@@ -348,7 +348,7 @@ void init()
 
     crafting_container = new CraftingUI;
     crafting_container->type = UI_ELEMENT_CRAFTING_CONTAINER;
-    crafting_container->xoff = (_xresf - crafting_container->width())/2;
+    crafting_container->xoff = (_xresf - crafting_container->width())/2 + 1;
     crafting_container->yoff = -150.0 + (_yresf + crafting_container->height())/2;
     crafting_container->init();
 

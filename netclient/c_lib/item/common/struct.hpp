@@ -44,9 +44,9 @@ class CraftingRecipe
     public:
 
     int output; //item type
-    int reagant_num;
-    int reagant[CRAFT_BENCH_INPUTS_MAX];
-    int reagant_count[CRAFT_BENCH_INPUTS_MAX];
+    int reagent_num;
+    int reagent[CRAFT_BENCH_INPUTS_MAX];
+    int reagent_count[CRAFT_BENCH_INPUTS_MAX];
 
     CraftingRecipe()
     {
@@ -56,11 +56,11 @@ class CraftingRecipe
     void init()
     {
         output = NULL_ITEM_TYPE;
-        reagant_num = 0;
+        reagent_num = 0;
         for(int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
         {
-            reagant[i] = NULL_ITEM_TYPE;
-            reagant_count[i] = 1;
+            reagent[i] = NULL_ITEM_TYPE;
+            reagent_count[i] = 1;
         } 
     }
 };
