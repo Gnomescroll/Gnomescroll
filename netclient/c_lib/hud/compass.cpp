@@ -138,8 +138,8 @@ void update()
 
 void draw()
 {
-    static const float z = -0.5f;    
     update();
+    static const float z = -0.5f;    
     if (texture[current_texture_index] == 0) return;
 
     glColor4ub(255,255,255,255);
