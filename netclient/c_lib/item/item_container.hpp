@@ -197,9 +197,8 @@ class ItemContainerNanite: public ItemContainerInterface
             assert(this->is_valid_slot(slot));
             int item_type = get_item_type(item_id);
             if (slot == 0)
-            {   // check against nanite's food list
-                if (item_type == get_item_type((char*)"nanite_coin")) return false;
-                return true;
+            {   // check against nanite's food
+                return get_nanite_edibility(item_type);
             }
             else if (slot == this->slot_max-1)
             {   // nanite coins only

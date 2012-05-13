@@ -45,6 +45,8 @@ int get_max_stack_size(int item_type);
 int get_max_energy(int item_type);
 int get_max_durability(int item_type);
 
+bool get_nanite_edibility(int item_type);
+
 void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost);
 
 class CraftingRecipe* get_craft_recipe(int recipe_id);

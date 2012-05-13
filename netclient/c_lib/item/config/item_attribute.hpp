@@ -37,6 +37,9 @@ class ItemAttribute
     // particle rendering
     bool particle_voxel;
 
+    // nanite
+    bool nanite_food;
+
     ItemAttribute()
     // DONT PUT ANYTHING HERE OR BREAKS
     {
@@ -52,6 +55,7 @@ class ItemAttribute
         max_durability = NULL_DURABILITY;
         max_stack_size = 1;
         particle_voxel = false;
+        nanite_food = false;
     }
 };
 

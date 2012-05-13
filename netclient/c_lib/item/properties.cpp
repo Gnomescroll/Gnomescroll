@@ -161,6 +161,13 @@ int get_max_durability(int item_type)
     return attr->max_durability;
 }
 
+bool get_nanite_edibility(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    assert(attr != NULL);
+    return attr->nanite_food;
+}
+
 void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost)
 {
     for(int i=0; i<MAX_ITEMS; i++)

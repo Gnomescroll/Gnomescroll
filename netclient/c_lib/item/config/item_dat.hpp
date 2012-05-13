@@ -103,6 +103,7 @@ void load_item_dat()
     item_def(9, IG_RESOURCE, "food_rock-0");
     sprite_def(i1, 1,4);
     s.max_stack_size = 8;
+    s.nanite_food = true;
 
     item_def(10, IG_RESOURCE, "blue_cystal");
     sprite_def(i0, 1,4);
