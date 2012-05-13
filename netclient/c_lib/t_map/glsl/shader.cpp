@@ -27,10 +27,16 @@ namespace t_map
     {
         //determine support for anisotropic filtering
         //if( true || !GLEW_texture_array)
+
         if(!GLEW_EXT_texture_array)
         {
             printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
             T_MAP_BACKUP_SHADER = 1;
+        }
+
+        if(!GLEW_EXT_texture_sRGB)
+        {
+            printf("!!! Warning: EXT_texture_sRGB not supported. \n");
         }
 
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
@@ -43,6 +49,7 @@ namespace t_map
             printf("anisotropic filtering not supported ! \n");
             ANISOTROPIC_FILTERING = 0;
         }
+
 
         //T_MAP_BACKUP_SHADER = 1;
 
@@ -159,8 +166,8 @@ namespace t_map
         /*
             Cleanup
         */
-        if(terrain_map_surface != NULL) 
-        SDL_FreeSurface(terrain_map_surface);
+        //if(terrain_map_surface != NULL) 
+        //SDL_FreeSurface(terrain_map_surface);
         if(terrain_map_glsl != 0)
         {
             printf("init_map_3d_texture: attempting to delete, may cause segfault \n");
@@ -169,13 +176,22 @@ namespace t_map
 
 
         printf("init_map_3d_texture: 1 \n");
-        glEnable(GL_TEXTURE_2D);
+        //glEnable(GL_TEXTURE_2D);
+        glDisable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         glGenTextures( 1, &terrain_map_glsl );
         glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl);
 
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        //GL_MIRRORED_REPEAT
+        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
 
@@ -207,7 +223,12 @@ namespace t_map
         {
             //GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, and GL_NEAREST_MIPMAP_NEAREST
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR );
+            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+            
+            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
+
+            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR );
             
             //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
@@ -226,6 +247,7 @@ namespace t_map
                     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR); break;
             }
 
+
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 8);
 
@@ -243,6 +265,8 @@ namespace t_map
 
         if(TextureSheetLoader::CubeTextureStack == NULL) printf("!!! ERRROR !!! \n");
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTextureStack);
+
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         glDisable(GL_TEXTURE_2D);
 
