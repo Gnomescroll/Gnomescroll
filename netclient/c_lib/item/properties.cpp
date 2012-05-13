@@ -267,12 +267,16 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
     // iterate available recipes
     // if types match exactly, add recipe to available recipes
 
-    for (int i=0; i<MAX_CRAFTING_RECIPE; i++)
+    for (int i=0; i<crafting_recipe_count; i++)
     {
-        if (crafting_recipe_array[i].output == NULL_ITEM_TYPE) continue;
         CraftingRecipe* recipe = &crafting_recipe_array[i];
+        assert(recipe->output != NULL_ITEM_TYPE);
+        assert(recipe->reagent_num > 0);
         // make sure to set availability state to default
         recipe->available = true;
+
+        // only match exactly
+        if (recipe->reagent_num != unique_inputs) continue;
 
         // check if reagents match inputs
         bool match = true;
@@ -292,7 +296,7 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
         if (!match) continue;
 
         if (!can_craft) recipe->available = false;
-        else craft_recipes_possible[craft_recipes_possible_count] = recipe;
+        craft_recipes_possible[craft_recipes_possible_count] = recipe;
         craft_recipes_possible_count++;
     }
 

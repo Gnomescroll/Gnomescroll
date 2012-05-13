@@ -655,7 +655,6 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     }
 }
 
-
 }
 
 #endif 
