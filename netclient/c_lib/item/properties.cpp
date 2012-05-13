@@ -22,10 +22,7 @@ int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
 int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
 
 // buffers for recipe outputs available
-// items to craft
 int craft_outputs_possible[CRAFT_BENCH_OUTPUTS_MAX];
-// whether item can actually be crafted (i.e. input types match, but the counts are insufficient)
-bool craft_outputs_available[CRAFT_BENCH_OUTPUTS_MAX];
 int craft_outputs_count = 0;
 
 void init_properties()
@@ -179,12 +176,12 @@ void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int*
     *cost = 0;
 }
 
-struct CraftingRecipeOutput get_craft_recipe_type(int container_id, int slot)
+int get_craft_recipe_type(int container_id, int slot)
 {
     // get container
     assert(container_id != NULL_CONTAINER);
     ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return NULL_CRAFTING_RECIPE_OUTPUT;
+    if (container == NULL) return NULL_ITEM_TYPE;
 
     // clear input buffers
     for (int i=0; i<CRAFT_BENCH_INPUTS_MAX; craft_input_types[i++] = NULL_ITEM_TYPE);
@@ -253,9 +250,11 @@ struct CraftingRecipeOutput get_craft_recipe_type(int container_id, int slot)
         unique_inputs++;
     }
 
+    // no inputs
+    if (unique_inputs == 0) return NULL_ITEM_TYPE;
+
     // reset outputs buffer
     for (int i=0; i<CRAFT_BENCH_OUTPUTS_MAX; craft_outputs_possible[i++] = NULL_ITEM_TYPE);
-    for (int i=0; i<CRAFT_BENCH_OUTPUTS_MAX; craft_outputs_available[i++] = true);
     craft_outputs_count = 0;
     
     // iterate available recipes
@@ -285,17 +284,13 @@ struct CraftingRecipeOutput get_craft_recipe_type(int container_id, int slot)
 
         if (!can_craft) craft_outputs_possible[craft_outputs_count] = dat_get_item_type((char*)"unknown");
         else craft_outputs_possible[craft_outputs_count] = recipe->output;
-        craft_outputs_available[craft_outputs_count] = can_craft;
         craft_outputs_count++;
     }
 
     // slot is out of recipe range
-    if (craft_outputs_count < slot) return NULL_CRAFTING_RECIPE_OUTPUT;
+    if (craft_outputs_count < slot) return NULL_ITEM_TYPE;
     
-    struct CraftingRecipeOutput output;
-    output.type = craft_outputs_possible[slot];
-    output.available = craft_outputs_available[slot];
-    return output;
+    return craft_outputs_possible[slot];
 }
 
 }

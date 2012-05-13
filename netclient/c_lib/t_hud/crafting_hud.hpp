@@ -241,9 +241,9 @@ void CraftingUI::draw()
     for (int yslot=0; yslot<output_ydim; yslot++)
     {
         int slot = output_xdim*yslot + xslot;
-        struct Item::CraftingRecipeOutput craft_output = Item::get_craft_recipe_type(this->container_id, slot);
-        if (craft_output.type == NULL_ITEM_TYPE) continue;
-        int tex_id = Item::get_sprite_index_for_type(craft_output.type);
+        int item_type = Item::get_craft_recipe_type(this->container_id, slot);
+        if (item_type == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(item_type);
 
         const float x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
         const float y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);

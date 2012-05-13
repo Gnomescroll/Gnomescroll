@@ -65,10 +65,4 @@ class CraftingRecipe
     }
 };
 
-struct CraftingRecipeOutput
-{
-    int type;
-    bool available;
-};
-
 }
