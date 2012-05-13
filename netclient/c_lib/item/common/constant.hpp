@@ -10,6 +10,7 @@ const int NULL_PARTICLE = -1;
 const int NULL_ITEM_LEVEL = -1;
 const int NULL_COST = 0;
 const int ERROR_SPRITE = 0;
+const int UNKNOWN_SPRITE = 0;
 
 const int AGENT_CONTAINER_X = 6;
 const int AGENT_CONTAINER_Y = 3;

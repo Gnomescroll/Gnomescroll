@@ -52,6 +52,7 @@ typedef enum
     IG_GRENADE_LAUNCHER,
     IG_NANITE_COIN,
     IG_DEBUG,
+    IG_UNKNOWN,
 } ItemGroup;
 
 /* No typedef for ItemType, use string names */

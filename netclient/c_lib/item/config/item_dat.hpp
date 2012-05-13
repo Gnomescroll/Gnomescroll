@@ -118,6 +118,9 @@ void load_item_dat()
     item_def(13, IG_DEBUG, "block_placer");
     sprite_def(i0, 4,5);
 
+    item_def(14, IG_UNKNOWN, "unknown");
+    sprite_def(i0, 5,1);
+
     end_item_dat();
 }
 

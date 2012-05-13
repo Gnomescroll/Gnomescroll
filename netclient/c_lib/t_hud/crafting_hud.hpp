@@ -233,43 +233,44 @@ void CraftingUI::draw()
     }
     glEnd();
 
-    //// draw output items
-    //glBegin(GL_QUADS);
+    // draw output items
+    glBegin(GL_QUADS);
 
-    ////draw input items
-    //for (int xslot=0; xslot<output_xdim; xslot++)
-    //for (int yslot=0; yslot<output_ydim; yslot++)
-    //{
-        //int slot = output_xdim*yslot + xslot;
-        //int item_type = Item::get_craft_recipe_type(this->container_id, slot);
-        //if (item_type == NULL_ITEM_TYPE) continue;
-        //int tex_id = Item::get_sprite_index_for_type(item_type);
+    //draw input items
+    for (int xslot=0; xslot<output_xdim; xslot++)
+    for (int yslot=0; yslot<output_ydim; yslot++)
+    {
+        int slot = output_xdim*yslot + xslot;
+        struct Item::CraftingRecipeOutput craft_output = Item::get_craft_recipe_type(this->container_id, slot);
+        if (craft_output.type == NULL_ITEM_TYPE) continue;
+        int tex_id = UNKNOWN_SPRITE;
+        if (craft_output.available) tex_id = Item::get_sprite_index_for_type(craft_output.type);
 
-        //const float x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
-        //const float y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);
+        const float x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
+        const float y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);
 
-        //const float w = slot_size;
-        //const float iw = 16.0f; // icon_width
-        //const int iiw = 16; // integer icon width
+        const float w = slot_size;
+        const float iw = 16.0f; // icon_width
+        const int iiw = 16; // integer icon width
 
-        //const float tx_min = (1.0/iw)*(tex_id % iiw);
-        //const float ty_min = (1.0/iw)*(tex_id / iiw);
-        //const float tx_max = tx_min + 1.0/iw;
-        //const float ty_max = ty_min + 1.0/iw;
+        const float tx_min = (1.0/iw)*(tex_id % iiw);
+        const float ty_min = (1.0/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0/iw;
+        const float ty_max = ty_min + 1.0/iw;
 
-        //glTexCoord2f( tx_min, ty_min );
-        //glVertex2f(x, y);
+        glTexCoord2f( tx_min, ty_min );
+        glVertex2f(x, y);
 
-        //glTexCoord2f( tx_min, ty_max );
-        //glVertex2f(x,y-w);
+        glTexCoord2f( tx_min, ty_max );
+        glVertex2f(x,y-w);
 
-        //glTexCoord2f( tx_max, ty_max );
-        //glVertex2f(x+w, y-w );
+        glTexCoord2f( tx_max, ty_max );
+        glVertex2f(x+w, y-w );
 
-        //glTexCoord2f( tx_max, ty_min );
-        //glVertex2f(x+w, y);
-    //}
-    //glEnd();
+        glTexCoord2f( tx_max, ty_min );
+        glVertex2f(x+w, y);
+    }
+    glEnd();
 
     glDisable(GL_TEXTURE_2D);
 
