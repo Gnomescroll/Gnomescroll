@@ -198,9 +198,6 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
     int unique_inputs = 0;
     for (int i=0; i<container->slot_max; i++)
     {
-        // will be used to check if unique type was already counted
-        //bool matched = false;
-        
         // get slot content data
         ItemID item_id = container->get_item(i);
         if (item_id == NULL_ITEM) continue;
@@ -208,22 +205,6 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
         assert(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
         int stack_size = get_stack_size(item_id);
         assert(stack_size >= 1);
-
-        //// check if type was already recorded
-        //for (int i=0; i<unique_inputs; i++)
-        //{
-            //if (craft_input_types[i] == item_type)
-            //{
-                //// add stack to type total, break
-                //craft_input_totals[i] += stack_size;
-                //matched = true;
-                //break;
-            //}
-        //}
-
-        //if (matched) continue;
-
-        // record unique type/stack
 
         // insert into type buffer
         if (unique_inputs == 0)
@@ -236,7 +217,6 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
             int i=0;
             for (; i<unique_inputs; i++)
             {
-                //assert(craft_input_types[i] != item_type); // should have been added to total
                 if (craft_input_types[i] < item_type) continue;
 
                 // shift forward
