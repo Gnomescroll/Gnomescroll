@@ -38,4 +38,6 @@ int get_max_energy(int item_type);
 int get_max_durability(int item_type);
 
 void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost);
+
+struct CraftingRecipeOutput get_craft_recipe_type(int container_id, int slot);
 }

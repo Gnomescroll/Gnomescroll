@@ -45,8 +45,8 @@ class CraftingRecipe
 
     int output; //item type
     int reagant_num;
-    int reagant[6];
-    int reagant_count[6];
+    int reagant[CRAFT_BENCH_INPUTS_MAX];
+    int reagant_count[CRAFT_BENCH_INPUTS_MAX];
 
     CraftingRecipe()
     {
@@ -55,15 +55,20 @@ class CraftingRecipe
 
     void init()
     {
-        output = 0;
+        output = NULL_ITEM_TYPE;
         reagant_num = 0;
-        for(int i=0; i<6; i++)
+        for(int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
         {
-            reagant[i] = 0;
+            reagant[i] = NULL_ITEM_TYPE;
             reagant_count[i] = 1;
         } 
     }
+};
 
+struct CraftingRecipeOutput
+{
+    int type;
+    bool available;
 };
 
 }

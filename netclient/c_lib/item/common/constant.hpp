@@ -27,3 +27,9 @@ const int MAX_ITEMS = 256;
 const int MAX_CRAFTING_RECIPE = 256;
 
 const int NANITE_DIGESTION_RATE = 30 * 5;
+
+const int CRAFT_BENCH_INPUTS_MAX = 9;
+const int CRAFT_BENCH_OUTPUTS_MAX = 6;
+
+#include <item/common/struct.hpp>
+struct Item::CraftingRecipeOutput NULL_CRAFTING_RECIPE_OUTPUT = { NULL_ITEM_TYPE, false };
