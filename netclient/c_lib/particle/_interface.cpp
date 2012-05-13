@@ -129,12 +129,15 @@ void draw_shrapnel()
     shrapnel_list->draw();
 }
 
+// TODO -- RESTORE SHRAPNEL ONCE RENDERING IS FIXED
 Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz)
 {
-    Shrapnel* s = shrapnel_list->create();
-    if(s == NULL) return NULL;
-    s->init(x,y,z, vx,vy,vz);
-    return s;
+    return NULL;
+    
+    //Shrapnel* s = shrapnel_list->create();
+    //if(s == NULL) return NULL;
+    //s->init(x,y,z, vx,vy,vz);
+    //return s;
 }
 #endif
 

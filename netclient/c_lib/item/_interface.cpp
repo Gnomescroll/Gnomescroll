@@ -397,10 +397,12 @@ void assign_containers_to_agent(int agent_id, int client_id)
     ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
     assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
 
+    #if !PRODUCTION
     // put a grenade launcher in the toolbelt to selt
     Item* grenade_launcher = create_item(get_item_type((char*)"grenade_launcher"));
     grenade_launcher->energy = get_max_energy(grenade_launcher->type);
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
+    #endif
 
     Item* laser_rifle = create_item(get_item_type((char*)"laser_rifle"));
     laser_rifle->energy = get_max_energy(laser_rifle->type);
