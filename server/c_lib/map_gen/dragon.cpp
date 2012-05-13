@@ -803,6 +803,14 @@ struct iPoint*  remove_all_stranded_points(struct iPoint* points, int n_points, 
 
 void test_filters()
 {
+    int n_tiles = 5;
+    int tiles[n_tiles];
+    tiles[0] = t_map::get_cube_id((char*)"methane_1");
+    tiles[1] = t_map::get_cube_id((char*)"methane_2");
+    tiles[2] = t_map::get_cube_id((char*)"methane_3");
+    tiles[3] = t_map::get_cube_id((char*)"methane_4");
+    tiles[4] = t_map::get_cube_id((char*)"methane_5");
+    
     const int n = 40;
     for (int i=0; i<n; i++)
     {
@@ -820,7 +828,7 @@ void test_filters()
 
         int h_step = (int)(((float)n_points)/((float)(h_max-h_min)));
 
-        const int tile = 50;
+        int tile = tiles[randrange(0,n_tiles-1)];
         for (int i=0; i<n_points; i++)
         {
             int h = h_max - (i/h_step);
