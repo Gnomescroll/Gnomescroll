@@ -1,5 +1,23 @@
 #include "texture.hpp"
 
+namespace t_map
+{
+
+unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
+
+GLuint terrain_map_glsl = 0 ; //for shader
+GLuint block_textures_normal = 0; //linear scale
+
+int must_lock_block_surface = 0;
+SDL_Surface *block_surface = NULL;
+SDL_PixelFormat *block_surface_pixel_format = NULL;
+int block_surface_width, block_surface_height;
+
+
+}   // t_map
+
+#if DC_CLIENT
+
 #include <SDL/texture_sheet_loader.hpp>
 
 namespace t_map
@@ -8,6 +26,7 @@ namespace t_map
 const int N_PIXEL_SAMPLES = 10;
 const static int TEXTURE_WIDTH = 32;
 static unsigned char* pixel_data[MAX_TEXTURES];
+GLuint block_texture = 0;
 
 void init_textures()
 {
@@ -114,3 +133,5 @@ void set_cube_side_texture(int id, int side, int tex_id)
 {
     t_map::set_cube_side_texture(id, side, tex_id);
 }
+
+#endif

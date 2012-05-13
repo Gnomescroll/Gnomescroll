@@ -159,12 +159,13 @@ namespace t_map
         /*
             Cleanup
         */
-        if(terrain_map_surface != NULL) 
-        SDL_FreeSurface(terrain_map_surface);
+        if(terrain_map_surface != NULL) SDL_FreeSurface(terrain_map_surface);
+        
         if(terrain_map_glsl != 0)
         {
             printf("init_map_3d_texture: attempting to delete, may cause segfault \n");
             glDeleteTextures(1,&terrain_map_glsl);
+            terrain_map_glsl = 0;
         }
 
 
@@ -234,8 +235,11 @@ namespace t_map
 
         printf("init_map_3d_texture: 3 \n");
 
+        // crash happens here
+
         GLuint format = GL_RGBA;
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
+        //GLuint internalFormat = GL_SRGB8_ALPHA8; //GL_RGBA;
 
         const int w = 32;
         const int h = 32;

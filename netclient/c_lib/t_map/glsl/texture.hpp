@@ -8,22 +8,22 @@
 struct SDL_Surface;
 struct SDL_PixelFormat;
 
-GLuint block_texture = 0;
+extern GLuint block_texture;
 //GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
 
 namespace t_map
 {
     const int MAX_TEXTURES = MAX_CUBES*6;
 
-    unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
+    extern unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
 
-    GLuint terrain_map_glsl = 0 ; //for shader
-    GLuint block_textures_normal = 0; //linear scale
+    extern GLuint terrain_map_glsl ; //for shader
+    extern GLuint block_textures_normal; //linear scale
 
-    int must_lock_block_surface;
-    SDL_Surface *block_surface;
-    SDL_PixelFormat *block_surface_pixel_format;
-    int block_surface_width, block_surface_height;
+    extern int must_lock_block_surface;
+    extern SDL_Surface *block_surface;
+    extern SDL_PixelFormat *block_surface_pixel_format;
+    extern int block_surface_width, block_surface_height;
 
     void init_textures();
 
@@ -43,7 +43,8 @@ namespace t_map
     
     void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
     void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
-}
+    
+}   // t_map
 
 extern "C"
 {

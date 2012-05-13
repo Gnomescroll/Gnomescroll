@@ -22,7 +22,7 @@ TextureSheetLoader::TextureSheetLoader(int tile_size)
     tile_num=0;
 
     texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
-    texture_stack = (unsigned int*) malloc(256*TILE_SIZE*TILE_SIZE);
+    texture_stack = (Uint32*) malloc(256*TILE_SIZE*TILE_SIZE);
 }
 
 TextureSheetLoader::~TextureSheetLoader()
@@ -91,7 +91,8 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
     SDL_Surface* s = this->textures[sheet_id];
     
     //SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
-    Uint32* CubeTextureStack = (Uint32*) this->texture_stack;
+    //Uint32* CubeTextureStack = (Uint32*) this->texture_stack;
+    CubeTextureStack = (Uint32*) this->texture_stack;
 
     if( source_x* TILE_SIZE >= s->w || source_y* TILE_SIZE >= s->h )
     {
@@ -134,11 +135,11 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
 
 class TextureSheetLoader* CubeTextureSheetLoader = NULL;
 struct SDL_Surface* CubeTexture = NULL;
-unsigned int* CubeTextureStack = NULL;
+Uint32* CubeTextureStack = NULL;
 
 class TextureSheetLoader* ItemTextureSheetLoader = NULL;
 struct SDL_Surface* ItemTexture = NULL;
-unsigned int* ItemTextureStack = NULL;
+Uint32* ItemTextureStack = NULL;
 
 void init()
 {

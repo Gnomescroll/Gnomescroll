@@ -18,7 +18,7 @@ class TextureSheetLoader
     struct TileMeta* meta;
 
     struct SDL_Surface* texture_sheet;  //for 2d array
-    unsigned int* texture_stack; //for 3d arrays
+    Uint32* texture_stack; //for 3d arrays
 
     TextureSheetLoader(int tile_size);
     ~TextureSheetLoader();
@@ -32,11 +32,11 @@ class TextureSheetLoader
 
 extern class TextureSheetLoader* CubeTextureSheetLoader;
 extern struct SDL_Surface* CubeTexture;
-extern unsigned int* CubeTextureStack;
+extern Uint32* CubeTextureStack;
 
 extern class TextureSheetLoader* ItemTextureSheetLoader;
 extern struct SDL_Surface* ItemTexture;
-extern unsigned int* ItemTextureStack;
+extern Uint32* ItemTextureStack;
 
 void init();
 void teardown();
