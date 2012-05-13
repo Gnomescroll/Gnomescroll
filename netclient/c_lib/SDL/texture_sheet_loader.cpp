@@ -22,6 +22,7 @@ TextureSheetLoader::TextureSheetLoader(int tile_size)
     tile_num=0;
 
     texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
+    grey_scale_texture_sheet = NULL;
     texture_stack = (unsigned int*) malloc(256*TILE_SIZE*TILE_SIZE);
 }
 
@@ -132,6 +133,57 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
     return INDEX;
 }
 
+void generate_grey_scale()
+{
+
+    float gamma_correction[256];
+
+    for(int i=0; i< 256; i++)
+    {
+        float intensity = ((float) i) / 255;
+        gamma_correction[i] = pow(intensity, 1.0/2.2);
+    }
+
+    grey_scale_texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
+
+    int c_lock = SDL_MUSTLOCK( texture_sheet);
+    int s_lock = SDL_MUSTLOCK( grey_scale_texture_sheet);
+
+    if(c_lock) SDL_LockSurface( texture_sheet);
+    if(s_lock) SDL_LockSurface( grey_scale_texture_sheet);
+
+    unsigned char s = (unsigned char*)texture_sheet->pixels;
+    unsigned char d = (unsigned char*)texture_sheet->pixels;
+
+    unsigned char r,g,b,a;
+
+    for(int x=0; x<16*TILE_SIZE; x++)
+    for(int y=0; y<16*TILE_SIZE; y++)
+    {
+        r = s[4*(y*16*TILE_SIZE+x) + 0]
+        g = s[4*(y*16*TILE_SIZE+x) + 1]
+        b = s[4*(y*16*TILE_SIZE+x) + 2]
+        a = s[4*(y*16*TILE_SIZE+x) + 3]
+
+        float avg = (gamma_correction[r] + gamma_correction[g] + gamma_correction[b]) / 3.0;
+        avg = pow(avg, 2.2);
+
+        if(avg > 1.0 || avg < 0.0) GS_ABORT();
+        unsigned char g = (int)(255.0*avg);
+
+        d[4*(y*16*TILE_SIZE+x) + 0] = g;
+        d[4*(y*16*TILE_SIZE+x) + 1] = g;
+        d[4*(y*16*TILE_SIZE+x) + 2] = g;
+        d[4*(y*16*TILE_SIZE+x) + 3] = a;
+
+    }
+
+    if(c_lock) SDL_UnlockSurface( texture_sheet);
+    if(s_lock) SDL_UnlockSurface( grey_scale_texture_sheet);
+
+}
+
+
 class TextureSheetLoader* CubeTextureSheetLoader = NULL;
 struct SDL_Surface* CubeTexture = NULL;
 unsigned int* CubeTextureStack = NULL;
@@ -139,6 +191,8 @@ unsigned int* CubeTextureStack = NULL;
 class TextureSheetLoader* ItemTextureSheetLoader = NULL;
 struct SDL_Surface* ItemTexture = NULL;
 unsigned int* ItemTextureStack = NULL;
+
+struct SDL_Surface* GreyScaleItemTexture = NULL;
 
 void init()
 {

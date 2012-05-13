@@ -24,10 +24,6 @@ void set_reagent(const char* item_name, int quantity)
     assert(_current_reagent_id < CRAFT_BENCH_INPUTS_MAX);
 
     int type = dat_get_item_type(item_name);
-
-    // require specifying item,quantity at once
-    for (int i=0; i<_current_reagent_id; i++)
-        assert(_cr.reagent[i] != type);
     
     // insert reagents sorted by type
     if (_current_reagent_id == 0)
@@ -81,15 +77,20 @@ void load_crafting_dat()
 {
 
     def_recipe("copper_bar");
-    set_reagent("copper_ore", 2);
+    set_reagent("copper_ore", 1);
+    set_reagent("copper_ore", 1);
     end_recipe();
 
     def_recipe("copper_shovel");
-    set_reagent("copper_bar", 2);
+    set_reagent("copper_bar", 1);
+    set_reagent("copper_bar", 1);
     end_recipe();
 
     def_recipe("food_rock-0");
-    set_reagent("regolith", 4);
+    set_reagent("regolith", 1);
+    set_reagent("regolith", 1);
+    set_reagent("regolith", 1);
+    set_reagent("regolith", 1);
     end_recipe();
 
     def_recipe("mining_laser");
