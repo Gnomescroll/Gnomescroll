@@ -22,7 +22,7 @@ TextureSheetLoader::TextureSheetLoader(int tile_size)
     tile_num=0;
 
     texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
-    grey_scale_texture_sheet = NULL;
+    grey_scale_texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
     texture_stack = (unsigned int*) malloc(256*TILE_SIZE*TILE_SIZE);
 }
 
@@ -135,7 +135,6 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
 
 void TextureSheetLoader::generate_grey_scale()
 {
-
     float gamma_correction[256];
 
     for(int i=0; i< 256; i++)
@@ -143,8 +142,6 @@ void TextureSheetLoader::generate_grey_scale()
         float intensity = ((float) i) / 255;
         gamma_correction[i] = pow(intensity, 1.0/2.2);
     }
-
-    grey_scale_texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
 
     int c_lock = SDL_MUSTLOCK( texture_sheet);
     int s_lock = SDL_MUSTLOCK( grey_scale_texture_sheet);
@@ -168,7 +165,11 @@ void TextureSheetLoader::generate_grey_scale()
         float avg = (gamma_correction[r] + gamma_correction[g] + gamma_correction[b]) / 3.0;
         avg = pow(avg, 2.2);
 
-        if(avg > 1.0 || avg < 0.0) GS_ABORT();
+        if(avg > 1.0 || avg < 0.0)
+        {
+            printf("ERROR TextureSheetLoader::generate_grey_scale: %f \n", avg);
+        }
+
         unsigned char g = (int)(255.0*avg);
 
         d[4*(y*16*TILE_SIZE+x) + 0] = g;
@@ -204,6 +205,8 @@ void init()
     ItemTextureSheetLoader = new TextureSheetLoader(16);
     ItemTextureStack = ItemTextureSheetLoader->texture_stack;
     ItemTexture = ItemTextureSheetLoader->texture_sheet;
+    GreyScaleItemTexture = ItemTextureSheetLoader->grey_scale_texture_sheet;
+
 }
 
 void teardown()
@@ -249,5 +252,10 @@ extern "C"
     void LUA_save_item_texture()
     {
         save_surface_to_png(TextureSheetLoader::ItemTexture, (char*) "./screenshot/item_texture.png");
+        
+        TextureSheetLoader::ItemTextureSheetLoader->generate_grey_scale();
+        save_surface_to_png(TextureSheetLoader::GreyScaleItemTexture, (char*)"./screenshot/grey_scale_items.png");
+        save_surface_to_png(TextureSheetLoader::ItemTexture , (char*)"./screenshot/items.png");
+
     }
 }
