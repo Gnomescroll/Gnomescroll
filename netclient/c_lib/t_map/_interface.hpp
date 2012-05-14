@@ -22,6 +22,8 @@ namespace t_map
 
 void create_item_container_block(int x, int y, int z, int container_type, int container_id);
 
+void get_block_item_container(int x, int y, int z, int* container_type, int* container_id);
+
 #endif
 
 }

@@ -1,10 +1,12 @@
 #include "_interface.hpp"
 
 #if DC_CLIENT
-#include "t_vbo_class.hpp"
-#include "t_vbo_update.hpp"
-#include "t_vbo_draw.hpp"
+#include <t_map/t_vbo_class.hpp>
+#include <t_map/t_vbo_update.hpp>
+#include <t_map/t_vbo_draw.hpp>
 #endif
+
+#include <t_map/common/constants.hpp>
 
 namespace t_map
 {
@@ -43,10 +45,34 @@ namespace t_map
 #if DC_SERVER
 void create_item_container_block(int x, int y, int z, int container_type, int container_id)
 {
-    main_map->create_item_container_block(x,y,z,container_type, container_id);
+
+    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+        | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+    ) GS_ABORT();
+
+    struct MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+
+    if(c == NULL) GS_ABORT();
+
+    c->chunk_item_container.add(x,y,z, container_type, container_id);
+
+}
+#endif
+
+
+void get_block_item_container(int x, int y, int z, int* container_type, int* container_id)
+{
+    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+        | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+    ) GS_ABORT();
+
+    struct MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+
+    if(c == NULL) GS_ABORT();
+
+    //c->chunk_item_container.add(x,y,z, container_type, container_id); 
 }
 
-#endif
 
 }
 
