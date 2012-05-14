@@ -68,6 +68,26 @@ class CHUNK_ITEM_CONTAINER
 		_remove(i);
 	}
 
+	void remove (int container_id)
+	{
+		int i;
+		for(i=0; i<iban; i++)
+		{
+			if(container_id == iba[i].container_id)
+			{
+				break;
+			}
+		}
+		if(i == iban) GS_ABORT();
+
+		#if DC_SERVER
+		map_history->container_block_delete(chunk_index, iba[i].container_id);
+		#endif
+		_remove(i);
+		printf("inventory_block removed: handle items and inventory destruction \n");
+	}
+
+
 	void add(int x, int y, int z, int container_type, int container_id)
 	{
 		if(iban == ibam)

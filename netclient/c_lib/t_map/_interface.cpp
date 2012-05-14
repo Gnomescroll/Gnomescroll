@@ -63,7 +63,6 @@ int get_block_item_container(int x, int y, int z)
 #if DC_SERVER
 void create_item_container_block(int x, int y, int z, int container_type, int container_id)
 {
-
     if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
         | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
     ) GS_ABORT();
@@ -73,7 +72,6 @@ void create_item_container_block(int x, int y, int z, int container_type, int co
     if(c == NULL) GS_ABORT();
 
     c->chunk_item_container.add(x,y,z, container_type, container_id);
-
 }
 #endif
 
