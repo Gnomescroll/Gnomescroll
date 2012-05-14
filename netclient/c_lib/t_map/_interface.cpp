@@ -19,11 +19,8 @@ int get_block_item_container(int x, int y, int z)
 
     struct MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
 
-    if(c == NULL) GS_ABORT();
-
-    //c->chunk_item_container.add(x,y,z, container_type, container_id);
-
-    return NULL_CONTAINER;
+    if(c == NULL) return NULL_CONTAINER;
+    return c->chunk_item_container.get(x,y,z); 
 }
 
 #if DC_CLIENT
@@ -73,25 +70,6 @@ void create_item_container_block(int x, int y, int z, int container_type, int co
 
 }
 #endif
-
-
-void get_block_item_container(int x, int y, int z, int* container_type, int* container_id)
-{
-    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
-        | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-    ) GS_ABORT();
-
-    struct MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
-
-    if(c == NULL)
-    {
-        *container_type  = -1;
-        *container_id = -1;
-        return;
-    }
-
-    c->chunk_item_container.get(x,y,z, container_type, container_id); 
-}
 
 
 }
