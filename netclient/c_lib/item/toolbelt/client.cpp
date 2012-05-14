@@ -91,8 +91,15 @@ bool toolbelt_item_end_alpha_action()
 
 bool toolbelt_item_beta_action()
 {
-    // beta actions are not click and hold
-    // 
+    // open any inventories in range
+
+    using ClientState::playerAgent_state;
+    int container_type, container_id;
+    playerAgent_state.facing_container(&container_type, &container_id);
+    if (container_id == NULL_CONTAINER) return false;
+
+    Item::open_container(container_id, container_type);
+    
     return true;
 }
 

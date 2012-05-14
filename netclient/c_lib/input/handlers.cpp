@@ -29,14 +29,14 @@ void toggle_container()
     if (input_state.container)
     {
         t_hud::enable_container_hud();
-        Item::open_container();
+        Item::open_inventory();
         SDL_ShowCursor(1);
     }
     else
     {
         input_state.ignore_mouse_motion = true;
         t_hud::disable_container_hud();
-        Item::close_container();
+        Item::close_inventory();
     }
 }
 

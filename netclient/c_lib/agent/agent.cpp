@@ -19,6 +19,7 @@
 #include <common/random.h>
 
 #include <item/toolbelt/_interface.hpp>
+#include <item/common/constant.hpp>
 
 AgentState::AgentState()
 :
