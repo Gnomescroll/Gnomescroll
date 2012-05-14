@@ -1,17 +1,18 @@
 #include "t_map_class.hpp"
 
-#include "t_map.hpp"
-
-#include "t_properties.hpp"
-
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.hpp>
+#include <t_map/constants.hpp>
 
 namespace t_map
 {
 
 
     static const MAP_ELEMENT NO_MAP_ELEMENT = {{{0}}};
-    const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
-    const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
+    
+    //moved to constants
+    //const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
+    //const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
 
     /*
         Constructors

@@ -1,5 +1,9 @@
 #pragma once
 
+namespace t_map
+{
+
+
 struct MAP_ELEMENT
 {
     union
@@ -14,3 +18,5 @@ struct MAP_ELEMENT
         unsigned int n;
     };
 };
+
+}

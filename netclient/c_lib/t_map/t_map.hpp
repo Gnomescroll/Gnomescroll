@@ -2,8 +2,11 @@
 
 #include <common/defines.h>
 #include <t_map/constants.hpp>
+#include <t_map/common/map_element.hpp>
 
-#include <t_map/t_map_class.hpp>
+#include "t_properties.hpp"
+
+//#include <t_map/t_map_class.hpp>
 
 struct MapDimension
 {
@@ -12,12 +15,12 @@ struct MapDimension
 
 extern struct MapDimension map_dim;
 
-#include <t_map/common/map_element.hpp>
+
 
 namespace t_map
 {
 
-extern Terrain_map* main_map;
+extern class Terrain_map* main_map;
 
 typedef enum TerrainModificationAction
 {
@@ -37,15 +40,8 @@ void init_for_draw();
 
 class Terrain_map* get_map();
 
-inline int get(int x, int y, int z)
-{
-    return main_map->get_block(x,y,z);
-}
-
-inline void set(int x, int y, int z, int value)
-{
-    main_map->set_block(x,y,z,value);
-}
+int get(int x, int y, int z);
+void set(int x, int y, int z, int value);
 
 int apply_damage(int x, int y, int z, int dmg);
 #if DC_SERVER
@@ -77,7 +73,6 @@ void send_map_metadata(int client_id);  //Deprecate
 //void send_map_metadata();   //Deprecate
 void set_map_size(int x, int y, int z); //Deprecate
 
-#include "t_properties.hpp"
 
 
 /*

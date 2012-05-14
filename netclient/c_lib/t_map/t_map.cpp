@@ -16,7 +16,7 @@
 
 #if DC_SERVER
     #include <t_map/server/manager.hpp>
-    #include <t_map/server/map_chunk_history.hpp>
+    #include <t_map/server/map_subscription_list.hpp>
     //#include <t_map/net/t_StoC.hpp>
 
     #include <common/random.h>
@@ -34,7 +34,22 @@ struct MapDimension map_dim = { 512,512,128 };
 namespace t_map
 {
 
-Terrain_map* main_map;
+class Terrain_map* main_map;
+
+int get(int x, int y, int z)
+{
+    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+        | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+    ) return 0;
+    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    if(c == NULL) return 0;
+    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+}
+
+void set(int x, int y, int z, int value)
+{
+    main_map->set_block(x,y,z,value);
+}
 
 class Terrain_map* get_map()
 {
@@ -54,7 +69,7 @@ void init_t_map()
     #endif
 
     #if DC_SERVER
-    map_history = new Terrain_map_history(MAP_WIDTH, MAP_HEIGHT);
+    map_history = new Terrain_map_subscription(MAP_WIDTH, MAP_HEIGHT);
     #endif
 }
 
@@ -230,7 +245,13 @@ inline int get_lowest_solid_block(int x, int y)
 
 int _get(int x, int y, int z)
 {
-    return t_map::main_map->get_block(x,y,z);
+    //return t_map::main_map->get_block(x,y,z);
+    if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)
+        | (y & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+    ) return 0;
+    struct t_map::MAP_CHUNK* c = t_map::main_map->chunk[ t_map::MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    if(c == NULL) return 0;
+    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
 
 void _set(int x, int y, int z, int value)

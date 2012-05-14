@@ -41,7 +41,7 @@ struct CHUNK_HISTORY_ELEMENT
 const int SMC_MAX_SUBSCRIBERS = 64;
 const int SMC_HISTORY_ARRAY_SIZE = 256;
 
-class MAP_CHUNK_HISTORY
+class MAP_CHUNK_SUBSCRIPTION
 {
     public:
 
@@ -55,7 +55,7 @@ class MAP_CHUNK_HISTORY
     struct CHUNK_HISTORY_ELEMENT history_array[ SMC_HISTORY_ARRAY_SIZE ];
     int last_history;
 
-    MAP_CHUNK_HISTORY()
+    MAP_CHUNK_SUBSCRIPTION()
     {
         version = 1;    //chunk version number
 
@@ -63,7 +63,7 @@ class MAP_CHUNK_HISTORY
         memset( &history_array, 0, SMC_HISTORY_ARRAY_SIZE*sizeof(struct CHUNK_HISTORY_ELEMENT));
     }
 
-    ~MAP_CHUNK_HISTORY()
+    ~MAP_CHUNK_SUBSCRIPTION()
     {
                 
     }
@@ -124,28 +124,8 @@ class MAP_CHUNK_HISTORY
     }
 };
 
-/*
-    //uint32_t chunk_index
-    main_map->reset_chunk_container_blocks(chunk_index)
-};
 
-
-void container_block_create_StoC::handle()
-{
-//    uint16_t x,y,z;
-//    uint8_t container_type;
-//    uint16_t container_id;
-
-
-}
-
-void container_block_delete_StoC::handle()
-{
-//    uint32_t chunk_index;
-//    uint16_t container_id;
-*/
-
-class Terrain_map_history
+class Terrain_map_subscription
 {
     public:
     
@@ -155,9 +135,9 @@ class Terrain_map_history
     int xchunk_dim;
     int ychunk_dim;
     
-    struct MAP_CHUNK_HISTORY* chunk;
+    struct MAP_CHUNK_SUBSCRIPTION* chunk;
 
-    Terrain_map_history(int _xdim, int _ydim)
+    Terrain_map_subscription(int _xdim, int _ydim)
     {
         xdim = (_xdim/16)*16; 
         ydim = (_ydim/16)*16;
@@ -166,10 +146,10 @@ class Terrain_map_history
         xchunk_dim = _xdim/16; 
         ychunk_dim = _ydim/16;
 
-        chunk = new MAP_CHUNK_HISTORY[xchunk_dim*ychunk_dim];
+        chunk = new MAP_CHUNK_SUBSCRIPTION[xchunk_dim*ychunk_dim];
     }
 
-    ~Terrain_map_history()
+    ~Terrain_map_subscription()
     {
         delete[] chunk;
     }

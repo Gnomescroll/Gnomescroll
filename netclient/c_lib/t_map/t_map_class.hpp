@@ -1,14 +1,14 @@
 #pragma once
 
 #include <t_map/constants.hpp>
-
 #include <t_map/chunk_special.hpp>
+#include <t_map/common/map_element.hpp>
 
 namespace t_map
 {
 
 
-#include <t_map/common/map_element.hpp>
+
 
 /*
     Optimization parameters
@@ -30,7 +30,7 @@ class MAP_CHUNK
     public:
 
     int chunk_index;
-    
+
     int xpos;
     int ypos;
 

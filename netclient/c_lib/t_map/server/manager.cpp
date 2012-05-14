@@ -5,14 +5,14 @@
 #include <t_map/t_map.hpp>
 
 #include <t_map/server/map_manager_class.hpp>
-#include <t_map/server/map_chunk_history.hpp>
+#include <t_map/server/map_subscription_list.hpp>
 
 namespace t_map
 {
 
 static class Map_manager* map_manager_list[NetServer::HARD_MAX_CONNECTIONS];
 
-class Terrain_map_history* map_history = NULL;
+class Terrain_map_subscription* map_history = NULL;
 
 void t_map_manager_setup(int client_id)
 {
