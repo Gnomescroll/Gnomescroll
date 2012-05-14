@@ -79,7 +79,7 @@ void RegisterMessages() {
     t_map::container_block_chunk_reset_StoC::register_client_packet();
     t_map::container_block_create_StoC::register_client_packet();
     t_map::container_block_delete_StoC::register_client_packet();
-
+ 
     // agent hit block action
     hit_block_CtoS::register_server_packet();
 

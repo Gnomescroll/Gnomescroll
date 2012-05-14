@@ -4,8 +4,8 @@
 
 #include <t_map/t_map.hpp>
 
-#include <t_map/server/map_manager_class.hpp>
-#include <t_map/server/map_subscription_list.hpp>
+#include <t_map/server/manager_class.hpp>
+#include <t_map/server/subscription_list.hpp>
 
 namespace t_map
 {

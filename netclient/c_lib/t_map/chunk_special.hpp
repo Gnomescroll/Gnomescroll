@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef DC_SERVER
-#include <t_map/server/map_subscription_list.hpp>
+#include <t_map/server/subscription_list.hpp>
 #include <t_map/server/manager.hpp>
 #endif
 

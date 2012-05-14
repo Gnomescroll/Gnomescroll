@@ -16,7 +16,7 @@
 
 #if DC_SERVER
     #include <t_map/server/manager.hpp>
-    #include <t_map/server/map_subscription_list.hpp>
+    #include <t_map/server/subscription_list.hpp>
     //#include <t_map/net/t_StoC.hpp>
 
     #include <common/random.h>
@@ -114,39 +114,13 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     int block_type;
     int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
     if (res != 0) return;
-/*
-    NOTE!!!
 
-    should only send to clients who are subscribed to map chunk
-*/
-
+    //NOTE: should only send to clients who are subscribed to map chunk
 
     map_history->send_block_action(x,y,z,res,action);
-/*
-    block_action_StoC msg;
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
-    msg.val = res;
-    msg.action = action;
-    msg.broadcast();
-*/
 
     if(cube_list[block_type].item_drop == true) 
         handle_block_drop(x,y,z, block_type);
-
-/*
-    const float mom = 2.0f;
-    float p = randf();
-    if (p < 0.3)
-    {
-        x = (float)x + 0.5f + randf()/3;
-        y = (float)y + 0.5f + randf()/3;
-        z = (float)z + 0.05f;
-        int type = randrange(0,7);
-        Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-    }
-*/
 }
 #endif
 
