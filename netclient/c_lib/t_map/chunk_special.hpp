@@ -3,10 +3,12 @@
 #ifdef DC_SERVER
 #include <t_map/server/subscription_list.hpp>
 #include <t_map/server/manager.hpp>
+#include <t_map/net/t_StoC.hpp>
 #endif
 
 namespace t_map
 {
+
 
 struct inventory_block
 {
@@ -85,7 +87,38 @@ class CHUNK_ITEM_CONTAINER
 
 	}
 
+#if DC_SERVER
+	void send_chunk_item_containers(int client_id)
+	{
+	    class container_block_chunk_reset_StoC msgr;
+	    msgr.chunk_index = chunk_index;
+	    msgr.sendToClient(client_id);
+
+	    class container_block_create_StoC msg;
+
+	    for(int i=0; i < iban; i++)
+	    {
+	    	msg.x = iba[i].x;
+	    	msg.y = iba[i].y;
+	    	msg.z = iba[i].z;
+	    	msg.container_type = iba[i].container_type;
+	    	msg.container_type = iba[i].container_id;
+	    	sendToClient(client_id);
+	    }
+	}
+
+
+	void send_reset_chunk_item_containers(int client_id)
+	{
+	    class container_block_chunk_reset_StoC msg;
+	    msg.chunk_index = chunk_index;
+	    msg.sendToClient(client_id);
+	}
+#endif
 };
+
+
+
 
 
 }
