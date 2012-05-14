@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef DC_SERVER
+#include <t_map/server/map_chunk_history.hpp>
+#include <t_map/server/manager.hpp>
+#endif
 
 namespace t_map
 {
@@ -44,15 +48,20 @@ class CHUNK_ITEM_CONTAINER
 
 	void remove (int x, int y, int z)
 	{
-		for(int i=0; i<iban; i++)
+		int i;
+		for(i=0; i<iban; i++)
 		{
 			if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
 			{
-				_remove(i);
-				return;
+				break;
 			}
 		}
-		GS_ABORT();
+		if(i == iban) GS_ABORT();
+
+		#if DC_SERVER
+		map_history->container_block_delete(chunk_index, iba[i].container_id);
+		#endif
+		_remove(i);
 	}
 
 	void add(int x, int y, int z, int container_type, int container_id)
@@ -70,12 +79,13 @@ class CHUNK_ITEM_CONTAINER
 		iba[iban].container_type = container_type;
 		iba[iban].container_id = container_id;
 		iban++;
+
+		#ifdef DC_SERVER
+		map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
+		#endif
+
 	}
 
-	#ifdef DC_SERVER
-
-
-	#endif
 };
 
 

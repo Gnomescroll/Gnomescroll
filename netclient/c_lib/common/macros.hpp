@@ -16,6 +16,6 @@
   #define GS_ASSERT(conditition) ;
 #else
   #define GS_ASSERT(conditition) \
-  if(!( conditition )) \
+  if(conditition ) \
   fprintf (stderr, "GS_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
 #endif

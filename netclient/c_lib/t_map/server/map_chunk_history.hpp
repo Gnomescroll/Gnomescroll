@@ -72,8 +72,7 @@ class MAP_CHUNK_HISTORY
     void remove_subscriber(int client_id);
 
     void block_change(int x, int y, int z, struct MAP_ELEMENT e)
-    {
-        
+    {   
         for(int i=0; i < subscriber_num; i++)
         {
             //send element
@@ -177,13 +176,24 @@ class Terrain_map_history
 
     void send_block_action(int x, int y, int z, int value, int action)
     {
-        assert(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
+        GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;
         int _y = y/16;
 
         chunk[xchunk_dim*_y + _x].send_block_action(x,y,z,value,action);
     }
+
+    void container_block_create(int chunk_index, int x, int y, int z, int container_type, int container_id)
+    {
+        chunk[chunk_index].container_block_create(x,y,z,container_type,container_id);
+    }
+
+    void container_block_delete(int chunk_index, int container_id)
+    {
+        chunk[chunk_index].container_block_delete(chunk_index, container_id);
+    }
+
 };
 
 }   // t_map
