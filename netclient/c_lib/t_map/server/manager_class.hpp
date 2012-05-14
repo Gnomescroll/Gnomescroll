@@ -381,7 +381,7 @@ void Map_manager::sub(int chunk_index, int version)
     //int index = y*xchunk_dim + x;
 
     printf("sub chunk %i \n", chunk_index);
-    
+
     if( subed_chunks == MAP_MANAGER_ALIAS_LIST_SIZE)
     {
         printf("FIX THIS!!! Map_manager::sub, alias list maxed out \n");
@@ -396,10 +396,9 @@ void Map_manager::sub(int chunk_index, int version)
     alias_list[alias] = chunk_index;
 
     //send subscription message
-    send_compressed_chunk(alias, chunk_index);
+
     map_history->chunk[chunk_index].add_subscriber(client_id, alias, current_version);
-
-
+    send_compressed_chunk(alias, chunk_index);
     send_chunk_item_containers(chunk_index);
 
 }

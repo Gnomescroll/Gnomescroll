@@ -94,7 +94,7 @@ class CHUNK_ITEM_CONTAINER
 	    	class container_block_chunk_reset_StoC msgr;
 	    	msgr.chunk_index = chunk_index;
 	    	msgr.sendToClient(client_id);
-			printf("chunk index scic = %i \n", chunk_index);
+			//printf("chunk index scic = %i \n", chunk_index);
 		}
 
 	    class container_block_create_StoC msg;
