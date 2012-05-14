@@ -35,8 +35,11 @@ class ItemContainerInterface* create_container(ItemContainerType type, int id);
 
 void update_container_ui_from_state();
 
-void open_container();
-void close_container();
+void open_container(int container_type, int container_id);
+void close_container(int container_type, int container_id);
+
+void open_inventory();
+void close_inventory();
 
 int get_event_container_id(int event_id);
 class ItemContainerUIInterface* get_container_ui(int container_id);

@@ -207,17 +207,28 @@ void update_container_ui_from_state()
     if (player_craft_bench_ui != NULL) player_craft_bench_ui->load_data(player_craft_bench->slot);
 }
 
-void open_container()
+void open_inventory()
 {
     // copy state to ui
     update_container_ui_from_state();
 }
 
-void close_container()
+void close_inventory()
 {
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 }
+
+void open_container(int container_type, int container_id)
+{
+    // send packet
+}
+
+void close_container(int container_type, int container_id)
+{
+    // send packet
+}
+
 
 int get_event_container_id(int event_id)
 {
