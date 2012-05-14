@@ -19,6 +19,7 @@ namespace t_map
     */
     MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
     {
+        //GS_ASSERT( (_xpos % 16) == 0 && (_ypos % 16) == 0 );
         #ifdef DC_CLIENT
             needs_update = false;
         #endif
@@ -28,7 +29,8 @@ namespace t_map
         memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
         for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;i++) top_block[i] = 0;
 
-        chunk_index = (_ypos/16)*TERRAIN_CHUNK_WIDTH + (_xpos/16);
+        chunk_index = (ypos / 16)*(MAP_WIDTH/16) + (xpos / 16);
+        //printf("xpos,ypos = %i, %i  chunk_index= %i \n", xpos, ypos, chunk_index);
         chunk_item_container.chunk_index = chunk_index;
 
     }
@@ -36,10 +38,10 @@ namespace t_map
 
     Terrain_map::Terrain_map(int _xdim, int _ydim)
     {
-        xdim = (_xdim/TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH; 
-        ydim = (_ydim/TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
-        xchunk_dim = _xdim/TERRAIN_CHUNK_WIDTH; 
-        ychunk_dim = _ydim/TERRAIN_CHUNK_WIDTH;
+        xdim = _xdim; 
+        ydim = _xdim;
+        xchunk_dim = xdim/TERRAIN_CHUNK_WIDTH; 
+        ychunk_dim = ydim/TERRAIN_CHUNK_WIDTH;
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;

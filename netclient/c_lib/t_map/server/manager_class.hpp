@@ -379,6 +379,9 @@ void Map_manager::sub(int chunk_index, int version)
 {
     //printf("sub: %i %i \n", x, y);
     //int index = y*xchunk_dim + x;
+
+    printf("sub chunk %i \n", chunk_index);
+    
     if( subed_chunks == MAP_MANAGER_ALIAS_LIST_SIZE)
     {
         printf("FIX THIS!!! Map_manager::sub, alias list maxed out \n");

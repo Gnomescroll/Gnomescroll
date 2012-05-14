@@ -76,6 +76,8 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
+    //printf("received chunk: index = %i compressed \n", chunk_index);
+
     int x = chunk_index % MAP_CHUNK_WIDTH;
     int y = chunk_index / MAP_CHUNK_WIDTH;
     
@@ -167,10 +169,10 @@ void map_metadata_StoC::handle()
 }
 
 
+
 void container_block_chunk_reset_StoC::handle()
 {
     //uint32_t chunk_index
-    return;
     if( main_map->chunk[chunk_index] == NULL) 
     {
         printf("chunk_index= %i \n", chunk_index);
