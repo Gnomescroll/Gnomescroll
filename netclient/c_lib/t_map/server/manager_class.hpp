@@ -365,8 +365,6 @@ void Map_manager::send_chunk_item_container_reset(int chunk_index)
     t->chunk[chunk_index]->chunk_item_container.send_reset_chunk_item_containers(client_id);
 }
 
-
-
 //this is chunk position!
 void Map_manager::set_position(int x, int y)
 {
