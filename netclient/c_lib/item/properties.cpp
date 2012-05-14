@@ -224,7 +224,7 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
             int i=0;
             for (; i<unique_inputs; i++)
             {
-                if (craft_input_types[i] < item_type) continue;
+                if (craft_input_types[i] <= item_type) continue;
 
                 // shift forward
                 for (int j=unique_inputs; j>i; j--) craft_input_types[j] = craft_input_types[j-1];
