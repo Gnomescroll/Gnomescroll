@@ -187,7 +187,7 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
     assert(src_item->stack_size >= 1);
 }
 
-}
+}   // Item
  
 // Client
 #if DC_CLIENT
@@ -224,7 +224,14 @@ void open_container(int container_id)
     assert(container_id != NULL_CONTAINER);
 
     printf("open container %d\n", container_id);
-    // send packet
+
+    // show ui
+    
+    // send open packet
+
+    open_container_CtoS msg;
+    msg.container_id = container_id;
+    msg.send();
 }
 
 void close_container(int container_id)
@@ -233,6 +240,10 @@ void close_container(int container_id)
 
     printf("close container %d\n", container_id);
     // send packet
+
+    close_container_CtoS msg;
+    msg.container_id = container_id;
+    msg.send();
 }
 
 

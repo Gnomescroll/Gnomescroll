@@ -16,6 +16,9 @@ inline void craft_item_from_bench_action_CtoS::handle() {}
 inline void no_container_action_alpha_CtoS::handle(){}
 inline void no_container_action_beta_CtoS::handle(){}
 
+inline void open_container_CtoS::handle() {}
+inline void close_container_CtoS::handle() {}
+
 } // Item
 #endif
 
@@ -268,6 +271,18 @@ inline void no_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
         return;
     }
+}
+
+inline void open_container_CtoS::handle()
+{
+    // send container contents to player
+
+    // place player lock on container if we want
+}
+
+inline void close_container_CtoS::handle()
+{
+    // remove player lock on container
 }
 
 } // Item
