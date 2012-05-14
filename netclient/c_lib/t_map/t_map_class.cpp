@@ -2,7 +2,7 @@
 
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
-#include <t_map/constants.hpp>
+#include <t_map/common/constants.hpp>
 
 namespace t_map
 {

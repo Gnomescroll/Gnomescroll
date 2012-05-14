@@ -26,7 +26,6 @@ dont_include_this_file_in_server
 #include <common/compat_gl.h>
 #include <common/compat_al.h>
 
-  
 /* Compression */
 #include <common/compression/miniz.c>
 

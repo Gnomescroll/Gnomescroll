@@ -1,7 +1,7 @@
 #pragma once
 
 #include <common/defines.h>
-#include <t_map/constants.hpp>
+#include <t_map/common/constants.hpp>
 #include <t_map/common/map_element.hpp>
 
 #include "t_properties.hpp"
