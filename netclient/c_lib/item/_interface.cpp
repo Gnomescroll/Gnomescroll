@@ -662,7 +662,7 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
             for (; j<input_count; j++)
             {
                 // comparison is on types
-                if (input_types[j] < item_type) continue;
+                if (input_types[j] <= item_type) continue;
                 // shift forward
                 for (int k=input_count; k>j; k--) inputs[k] = inputs[k-1];
                 for (int k=input_count; k>j; k--) input_types[k] = input_types[k-1];

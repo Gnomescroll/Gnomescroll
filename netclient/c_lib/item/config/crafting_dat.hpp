@@ -41,7 +41,7 @@ void set_reagent(const char* item_name, int quantity)
         int i=0;
         for (; i<_current_reagent_id; i++)
         {
-            if (_cr.reagent[i] < type) continue;
+            if (_cr.reagent[i] <= type) continue;
 
             // shift forward
             for (int j=_current_reagent_id; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
