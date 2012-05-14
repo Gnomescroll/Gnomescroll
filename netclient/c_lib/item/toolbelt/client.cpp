@@ -98,7 +98,6 @@ bool toolbelt_item_beta_action()
     if (container_id == NULL_CONTAINER) return false;
 
     Item::open_container(container_id);
-    
     return true;
 }
 

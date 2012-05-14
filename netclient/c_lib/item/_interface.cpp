@@ -221,11 +221,17 @@ void close_inventory()
 
 void open_container(int container_id)
 {
+    assert(container_id != NULL_CONTAINER);
+
+    printf("open container %d\n", container_id);
     // send packet
 }
 
 void close_container(int container_id)
 {
+    assert(container_id != NULL_CONTAINER);
+
+    printf("close container %d\n", container_id);
     // send packet
 }
 
