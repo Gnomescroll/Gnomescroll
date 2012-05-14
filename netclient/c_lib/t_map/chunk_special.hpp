@@ -8,7 +8,6 @@
 namespace t_map
 {
 
-
 struct inventory_block
 {
 	int x,y,z;
