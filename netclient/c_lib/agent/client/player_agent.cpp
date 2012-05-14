@@ -1,5 +1,3 @@
-#pragma once
-
 #include "player_agent.hpp"
 
 #ifdef DC_CLIENT
@@ -12,8 +10,8 @@
 #include <state/client_state.hpp>
 #include <input/handlers.hpp>
 
-//#include <chat/client.hpp>
 #include <chat/interface.hpp>
+#include <t_map/_interface.hpp>
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->you = ClientState::agent_list->get(id);
@@ -488,9 +486,7 @@ int PlayerAgent_state::facing_container()
     int* pos = _nearest_block(position, direction, max_distance, z_low, z_high);
     if (pos == NULL) return NULL_CONTAINER;
     
-    int container_id = NULL_CONTAINER;
-    t_map::get_block_item_container(pos[0], pos[1], pos[2], &container_id);
-    return container_id;
+    return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
 
 #endif
