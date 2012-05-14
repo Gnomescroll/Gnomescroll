@@ -36,17 +36,13 @@ namespace t_map
 
 Terrain_map* main_map;
 
-void init_t_map()
+class Terrain_map* get_map()
 {
-    //printf("init_t_map() \n");
-    static int init = 0;
-    if(init != 0) 
-    {
-        printf("error: init_t_map called twice \n");
-        return;
-    }
-    init = 1;
-    
+    return main_map;
+}
+
+void init_t_map()
+{   
     init_t_properties();
 
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
@@ -60,13 +56,11 @@ void init_t_map()
     #if DC_SERVER
     map_history = new Terrain_map_history(MAP_WIDTH, MAP_HEIGHT);
     #endif
-
 }
 
 #if DC_CLIENT
 void init_for_draw()
 {
-    //printf("init for draw \n");
     init_cache();
     init_shaders();
 }
@@ -74,8 +68,6 @@ void init_for_draw()
     
 void end_t_map()
 {
-    //mz_inflateEnd()
-
     end_t_properties();
     delete main_map;
 
@@ -87,12 +79,8 @@ void end_t_map()
     #if DC_SERVER
     delete map_history;
     #endif
+}
 
-}
-class Terrain_map* get_map()
-{
-    return main_map;
-}
 
 int apply_damage(int x, int y, int z, int dmg)
 {

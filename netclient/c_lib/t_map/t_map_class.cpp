@@ -8,6 +8,7 @@
 namespace t_map
 {
 
+
     static const MAP_ELEMENT NO_MAP_ELEMENT = {{{0}}};
     const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
     const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
@@ -520,4 +521,19 @@ namespace t_map
         update_heights(x,y,z,value);
         #endif
     }
+
+
+    void Terrain_map::set_item_container_block(int x, int y, int z, int container_type, int container_id)
+    {
+        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+            | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+        ) GS_ASSERT(FALSE);
+
+        struct MAP_CHUNK* c=chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+
+        if(c == NULL) GS_ASSERT(FALSE);
+
+        c->chunk_item_container.add(x,y,z, container_type, container_id);
+    }
+
 }
