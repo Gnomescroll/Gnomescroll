@@ -10,6 +10,8 @@
 namespace t_map
 {
 
+char* COMPRESSION_BUFFER = NULL;
+
 const int COMPRESSION_BUFFER_SIZE = 1024*512;
 extern char* COMPRESSION_BUFFER;
 

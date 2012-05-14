@@ -167,6 +167,29 @@ void map_metadata_StoC::handle()
 }
 
 
+void container_block_chunk_reset_StoC::handle()
+{
+    //uint32_t chunk_index
+    main_map->reset_chunk_container_blocks(chunk_index);
+};
+
+
+void container_block_create_StoC::handle()
+{
+//    uint16_t x,y,z;
+//    uint8_t container_type;
+//    uint16_t container_id;
+
+
+}
+
+void container_block_delete_StoC::handle()
+{
+//    uint32_t chunk_index;
+//    uint16_t container_id;
+
+}
+
 #endif
 
 
@@ -182,6 +205,9 @@ void block_StoC::handle() {}
 void block_action_StoC::handle() {}
 void map_metadata_StoC::handle() {}
 
+void container_block_chunk_reset_StoC::handle() {}
+void container_block_create_StoC::handle() {}
+void container_block_delete_StoC::handle() {}
 #endif
 
 }   // t_map

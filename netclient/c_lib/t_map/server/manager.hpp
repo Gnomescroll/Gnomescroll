@@ -3,7 +3,7 @@
 namespace t_map
 {
 
-extern class Terrain_map_history* map_history;
+extern class Terrain_map_subscription* map_history;
 
 void t_map_manager_setup(int client_id);
 void t_map_manager_teardown(int client_id);

@@ -11,7 +11,7 @@ struct cubeProperties
     bool occludes;
     bool transparent;
     bool item_drop; //does block drop items
-    bool agent_action;  //inventory and crafting bench blocks
+    bool item_container;  //inventory and crafting bench blocks
     bool reserved7;
     bool reserved8;
 
@@ -64,7 +64,6 @@ extern "C"
     void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent) GNOMESCROLL_API;
     void LUA_set_block_max_damage(int id, int max_damage) GNOMESCROLL_API;
     void LUA_set_block_color_type(int id, int color_type) GNOMESCROLL_API;
-
 }
 
 /*

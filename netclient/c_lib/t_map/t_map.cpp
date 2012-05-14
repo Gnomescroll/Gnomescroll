@@ -16,7 +16,7 @@
 
 #if DC_SERVER
     #include <t_map/server/manager.hpp>
-    #include <t_map/server/map_chunk_history.hpp>
+    #include <t_map/server/map_subscription_list.hpp>
     //#include <t_map/net/t_StoC.hpp>
 
     #include <common/random.h>
@@ -34,19 +34,30 @@ struct MapDimension map_dim = { 512,512,128 };
 namespace t_map
 {
 
-Terrain_map* main_map;
+class Terrain_map* main_map;
+
+int get(int x, int y, int z)
+{
+    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+        | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+    ) return 0;
+    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    if(c == NULL) return 0;
+    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+}
+
+void set(int x, int y, int z, int value)
+{
+    main_map->set_block(x,y,z,value);
+}
+
+class Terrain_map* get_map()
+{
+    return main_map;
+}
 
 void init_t_map()
-{
-    //printf("init_t_map() \n");
-    static int init = 0;
-    if(init != 0) 
-    {
-        printf("error: init_t_map called twice \n");
-        return;
-    }
-    init = 1;
-    
+{   
     init_t_properties();
 
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
@@ -58,15 +69,13 @@ void init_t_map()
     #endif
 
     #if DC_SERVER
-    map_history = new Terrain_map_history(MAP_WIDTH, MAP_HEIGHT);
+    map_history = new Terrain_map_subscription(MAP_WIDTH, MAP_HEIGHT);
     #endif
-
 }
 
 #if DC_CLIENT
 void init_for_draw()
 {
-    //printf("init for draw \n");
     init_cache();
     init_shaders();
 }
@@ -74,8 +83,6 @@ void init_for_draw()
     
 void end_t_map()
 {
-    //mz_inflateEnd()
-
     end_t_properties();
     delete main_map;
 
@@ -87,12 +94,8 @@ void end_t_map()
     #if DC_SERVER
     delete map_history;
     #endif
+}
 
-}
-class Terrain_map* get_map()
-{
-    return main_map;
-}
 
 int apply_damage(int x, int y, int z, int dmg)
 {
@@ -242,7 +245,13 @@ inline int get_lowest_solid_block(int x, int y)
 
 int _get(int x, int y, int z)
 {
-    return t_map::main_map->get_block(x,y,z);
+    //return t_map::main_map->get_block(x,y,z);
+    if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)
+        | (y & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+    ) return 0;
+    struct t_map::MAP_CHUNK* c = t_map::main_map->chunk[ t_map::MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    if(c == NULL) return 0;
+    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
 
 void _set(int x, int y, int z, int value)

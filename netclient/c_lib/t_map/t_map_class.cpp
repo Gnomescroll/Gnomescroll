@@ -1,16 +1,18 @@
 #include "t_map_class.hpp"
 
-#include "t_map.hpp"
-
-#include "t_properties.hpp"
-
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.hpp>
+#include <t_map/constants.hpp>
 
 namespace t_map
 {
 
+
     static const MAP_ELEMENT NO_MAP_ELEMENT = {{{0}}};
-    const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
-    const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
+    
+    //moved to constants
+    //const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
+    //const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
 
     /*
         Constructors
@@ -25,6 +27,10 @@ namespace t_map
         //for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
         memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
         for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;i++) top_block[i] = 0;
+
+        chunk_index = (_ypos/16)*TERRAIN_CHUNK_WIDTH + (_xpos/16);
+        chunk_item_container.chunk_index = chunk_index;
+
     }
 
 
@@ -520,4 +526,27 @@ namespace t_map
         update_heights(x,y,z,value);
         #endif
     }
+
+
+    void Terrain_map::set_item_container_block(int x, int y, int z, int container_type, int container_id)
+    {
+        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+            | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+        ) GS_ABORT();
+
+        struct MAP_CHUNK* c=chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+
+        if(c == NULL) GS_ABORT();
+
+        c->chunk_item_container.add(x,y,z, container_type, container_id);
+    }
+
+
+    void Terrain_map::reset_chunk_container_blocks(int chunk_index)
+    {
+        struct MAP_CHUNK* c=chunk[chunk_index];
+        if(c == NULL) GS_ABORT();
+        c->chunk_item_container._reset();
+    }
+
 }

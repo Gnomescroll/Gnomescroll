@@ -1,11 +1,14 @@
 #pragma once
 
 #include <t_map/constants.hpp>
+#include <t_map/chunk_special.hpp>
+#include <t_map/common/map_element.hpp>
 
 namespace t_map
 {
 
-#include <t_map/common/map_element.hpp>
+
+
 
 /*
     Optimization parameters
@@ -26,8 +29,12 @@ class MAP_CHUNK
 {
     public:
 
+    int chunk_index;
+
     int xpos;
     int ypos;
+
+    class CHUNK_ITEM_CONTAINER chunk_item_container;
 
     #ifdef DC_CLIENT
     bool needs_update;
@@ -52,7 +59,7 @@ class Terrain_map
     int xchunk_dim;
     int ychunk_dim;
     
-    struct MAP_CHUNK** chunk;
+    class MAP_CHUNK** chunk;
 
     #if DC_CLIENT
     bool height_changed;
@@ -82,13 +89,16 @@ class Terrain_map
     void set_element(int x, int y, int z, struct MAP_ELEMENT element);
     int get_block(int x, int y, int z);
     void set_block(int x, int y, int z, int value);
+
 #endif
 
 
     int apply_damage(int x, int y, int z, int dmg);
     int apply_damage(int x, int y, int z, int dmg, int* block_type);
 
-
+    //item container stuff
+    void set_item_container_block(int x, int y, int z, int container_type, int container_id);
+    void reset_chunk_container_blocks(int chunk_index);
 };
 
 } //
