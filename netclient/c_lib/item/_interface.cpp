@@ -219,12 +219,12 @@ void close_inventory()
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 }
 
-void open_container(int container_type, int container_id)
+void open_container(int container_id)
 {
     // send packet
 }
 
-void close_container(int container_type, int container_id)
+void close_container(int container_id)
 {
     // send packet
 }

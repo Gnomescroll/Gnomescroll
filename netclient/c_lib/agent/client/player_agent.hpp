@@ -99,7 +99,7 @@ class PlayerAgent_state {
 
         void was_identified();
 
-        void facing_container(int* container_type, int* container_id);
+        int facing_container();
 
         PlayerAgent_state();
         ~PlayerAgent_state();

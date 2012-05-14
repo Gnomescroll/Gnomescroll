@@ -94,11 +94,10 @@ bool toolbelt_item_beta_action()
     // open any inventories in range
 
     using ClientState::playerAgent_state;
-    int container_type, container_id;
-    playerAgent_state.facing_container(&container_type, &container_id);
+    int container_id = playerAgent_state.facing_container();
     if (container_id == NULL_CONTAINER) return false;
 
-    Item::open_container(container_id, container_type);
+    Item::open_container(container_id);
     
     return true;
 }

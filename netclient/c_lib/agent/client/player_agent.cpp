@@ -475,24 +475,22 @@ void PlayerAgent_state::update_model()
     }
 }
 
-void PlayerAgent_state::facing_container(int* container_type, int* container_id)
+int PlayerAgent_state::facing_container()
 {
-    *container_type = 0;
-    *container_id = NULL_CONTAINER;
-
-    if (this->you == NULL) return;
+    if (this->you == NULL) return NULL_CONTAINER;
 
     const float max_distance = 4.0f;
     const int z_low = 4;
     const int z_high = 3;
 
     Vec3 position = this->camera_position();
-    
     Vec3 direction = this->camera_state.forward_vector();
-
     int* pos = _nearest_block(position, direction, max_distance, z_low, z_high);
-    if (pos == NULL) return;
-    t_map::get_block_item_container(pos[0], pos[1], pos[2], container_type, container_id);
+    if (pos == NULL) return NULL_CONTAINER;
+    
+    int container_id = NULL_CONTAINER;
+    t_map::get_block_item_container(pos[0], pos[1], pos[2], &container_id);
+    return container_id;
 }
 
 #endif
