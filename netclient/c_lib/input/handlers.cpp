@@ -26,17 +26,20 @@ void toggle_help_menu()
 void toggle_container()
 {
     input_state.container = (!input_state.container);
+    static bool rebind_mouse = input_state.mouse_bound;
     if (input_state.container)
     {
         t_hud::enable_container_hud();
         Item::open_inventory();
-        SDL_ShowCursor(1);
+        rebind_mouse = input_state.mouse_bound;
+        input_state.mouse_bound = false;
     }
     else
     {
         input_state.ignore_mouse_motion = true;
         t_hud::disable_container_hud();
         Item::close_inventory();
+        input_state.mouse_bound = rebind_mouse;
     }
 }
 
