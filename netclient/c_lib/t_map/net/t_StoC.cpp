@@ -133,7 +133,7 @@ void clear_alias_StoC::handle()
 void set_map_alias_StoC::handle()
 {
     client_chunk_alias_list[chunk_alias] = chunk_index;
-    printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH);
+    //printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH);
 }
 
 

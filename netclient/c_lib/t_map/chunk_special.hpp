@@ -87,6 +87,31 @@ class CHUNK_ITEM_CONTAINER
 
 	}
 
+	void get(int x, int y, int z, int* container_type, int* container_id)
+	{
+		int i;
+		for(i=0; i<iban; i++)
+		{
+			if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
+			{
+				break;
+			}
+		}
+		if(i==iban)
+		{
+			printf("CHUNK_ITEM_CONTAINER::get error, no container for %i %i %i \n", x,y,z);
+			*container_type = -1;
+			*container_id = -1;
+			return;
+		}
+		else
+		{
+			*container_type = iba[i].container_type;
+			*container_id = iba[i].container_id;
+			return;
+		}
+	}
+
 #if DC_SERVER
 	void send_chunk_item_containers(int client_id)
 	{

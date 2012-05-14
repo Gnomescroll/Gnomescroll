@@ -68,9 +68,14 @@ void get_block_item_container(int x, int y, int z, int* container_type, int* con
 
     struct MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
 
-    if(c == NULL) GS_ABORT();
+    if(c == NULL)
+    {
+        *container_type  = -1;
+        *container_id = -1;
+        return;
+    }
 
-    //c->chunk_item_container.add(x,y,z, container_type, container_id); 
+    c->chunk_item_container.get(x,y,z, container_type, container_id); 
 }
 
 
