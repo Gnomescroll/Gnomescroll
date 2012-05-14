@@ -146,6 +146,7 @@ class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
     }
     
     inline void handle() __attribute((always_inline));
+};
 
 /*
     Special Blocks
@@ -159,7 +160,7 @@ class container_block_chunk_reset_StoC: public MapMessagePacketToClient<containe
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
-        pack_u32(&chunk_index;, buff, buff_n, pack);
+        pack_u32(&chunk_index, buff, buff_n, pack);
     }
     
     inline void handle() __attribute((always_inline));

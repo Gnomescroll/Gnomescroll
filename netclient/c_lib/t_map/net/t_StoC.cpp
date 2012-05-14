@@ -170,7 +170,7 @@ void map_metadata_StoC::handle()
 void container_block_chunk_reset_StoC::handle()
 {
     //uint32_t chunk_index
-    main_map->reset_chunk_container_blocks(chunk_index)
+    main_map->reset_chunk_container_blocks(chunk_index);
 };
 
 

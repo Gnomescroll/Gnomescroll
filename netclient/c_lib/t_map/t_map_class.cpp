@@ -545,7 +545,7 @@ namespace t_map
     {
         struct MAP_CHUNK* c=chunk[chunk_index];
         if(c == NULL) GS_ABORT();
-        c->_reset();
+        c->chunk_item_container._reset();
     }
 
 }
