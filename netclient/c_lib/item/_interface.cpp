@@ -572,9 +572,6 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     assert(agent_hand_list != NULL);
     assert(agent_craft_bench_list != NULL);
 
-    // hand is holding something, abort
-    if (agent_hand_list[agent_id] != NULL_ITEM) return;
-
     Agent_state* agent = ServerState::agent_list->get(agent_id);
     if (agent == NULL) return;
 
@@ -584,17 +581,33 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, craft_slot);
     if (recipe == NULL) return;
 
+    // hand is not empty and cannot stack the output
+    ItemID hand_item = agent_hand_list[agent_id];
+    bool hand_empty = (hand_item == NULL_ITEM);
+    bool hand_can_stack_recipe = (hand_item == recipe->output && get_stack_space(hand_item) >= 1);
+    if (!hand_empty && !hand_can_stack_recipe) return;
+
     // remove reagents from container
     // deleting items as needed, modifying others
     consume_crafting_reagents(agent_id, container_id, recipe->id);
-
-    // create new item of type
-    Item* item = create_item(recipe->output);
-    send_item_create(agent->client_id, item->id);
         
     // place in hand
-    agent_hand_list[agent_id] = item->id;
-    send_hand_insert(agent->client_id, item->id);
+    if (hand_empty)
+    {
+        // create new item of type
+        Item* item = create_item(recipe->output);
+        send_item_create(agent->client_id, item->id);
+        agent_hand_list[agent_id] = item->id;
+        send_hand_insert(agent->client_id, item->id);
+    }
+    else
+    {
+        // update item stack
+        Item* item = get_item(hand_item);
+        assert(item != NULL);
+        item->stack_size += 1;
+        send_item_state(agent->client_id, item->id);
+    }
 }
 
 void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)

@@ -28,6 +28,17 @@ void simple_map()
     generator->set_noise_parameters(octaves, persistence, amplitude, frequency, lacunarity);
 
     generator->start();
+
+    //// caves
+    //generator->p3();
+    //generator->tile(0);
+    //generator->rmf();
+    //generator->density(0.98f);
+    //generator->gradient(-1,1,-1,1,0.5,0);
+    //frequency = 2.0f;
+    //persistence = 0.92f;
+    //generator->set_noise_parameters(octaves, persistence, amplitude, frequency, lacunarity);
+    //generator->start();
     
     MapGen::reset();
 }

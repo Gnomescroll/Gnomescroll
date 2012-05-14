@@ -1138,13 +1138,25 @@ ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int cl
     if (slot == NULL_SLOT || container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;
 
     #if DC_CLIENT
-    bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
+    int hand_item_type = player_hand_type_ui;
+    bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
+    int stack_space = get_max_stack_size(hand_item_type) - player_hand_stack_ui;
     #endif
     #if DC_SERVER
-    bool hand_empty = (get_agent_hand(agent_id) == NULL_ITEM);
+    ItemID hand_item = get_agent_hand(agent_id);
+    int hand_item_type = get_item_type(hand_item);
+    bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
+    int stack_space = get_stack_space(hand_item);
     #endif
+ 
+    assert(stack_space >= 0);
 
     if (hand_empty) return CRAFT_ITEM_FROM_BENCH;
+    if (stack_space > 0)
+    {
+        int craft_item_type = get_selected_craft_recipe_type(container_id, slot);
+        if (hand_item_type == craft_item_type) return CRAFT_ITEM_FROM_BENCH;
+    }
     return CONTAINER_ACTION_NONE;
 }
 
