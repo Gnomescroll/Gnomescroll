@@ -6,6 +6,9 @@
 #include <t_map/net/t_StoC.hpp>
 #endif
 
+#include <item/common/constant.hpp>
+#include <item/common/enum.hpp>
+
 namespace t_map
 {
 
@@ -100,8 +103,8 @@ class CHUNK_ITEM_CONTAINER
 		if(i==iban)
 		{
 			printf("CHUNK_ITEM_CONTAINER::get error, no container for %i %i %i \n", x,y,z);
-			*container_type = -1;
-			*container_id = -1;
+			*container_type = CONTAINER_TYPE_NONE;
+			*container_id = NULL_CONTAINER;
 			return;
 		}
 		else

@@ -8,6 +8,9 @@
 
 #include <t_map/common/constants.hpp>
 
+#include <item/common/constant.hpp>
+#include <item/common/enum.hpp>
+
 namespace t_map
 {
     
@@ -85,8 +88,9 @@ void get_block_item_container(int x, int y, int z, int* container_type, int* con
 
     if(c == NULL)
     {
-        *container_type  = -1;
-        *container_id = -1;
+        printf("ERROR: get_block_item_container on null chunk! \n");
+        *container_type  = CONTAINER_TYPE_NONE;
+        *container_id = NULL_CONTAINER;
         return;
     }
 
