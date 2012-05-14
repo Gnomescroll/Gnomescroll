@@ -527,13 +527,21 @@ namespace t_map
     {
         if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
             | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-        ) GS_ASSERT(FALSE);
+        ) GS_ABORT();
 
         struct MAP_CHUNK* c=chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
 
-        if(c == NULL) GS_ASSERT(FALSE);
+        if(c == NULL) GS_ABORT();
 
         c->chunk_item_container.add(x,y,z, container_type, container_id);
+    }
+
+
+    void Terrain_map::reset_chunk_container_blocks(int chunk_index)
+    {
+        struct MAP_CHUNK* c=chunk[chunk_index];
+        if(c == NULL) GS_ABORT();
+        c->_reset();
     }
 
 }
