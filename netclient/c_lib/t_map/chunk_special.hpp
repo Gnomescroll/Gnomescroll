@@ -90,9 +90,11 @@ class CHUNK_ITEM_CONTAINER
 #if DC_SERVER
 	void send_chunk_item_containers(int client_id)
 	{
-	    class container_block_chunk_reset_StoC msgr;
-	    msgr.chunk_index = chunk_index;
-	    msgr.sendToClient(client_id);
+		{
+	    	class container_block_chunk_reset_StoC msgr;
+	    	msgr.chunk_index = chunk_index;
+	    	msgr.sendToClient(client_id);
+		}
 
 	    class container_block_create_StoC msg;
 
@@ -103,7 +105,7 @@ class CHUNK_ITEM_CONTAINER
 	    	msg.z = iba[i].z;
 	    	msg.container_type = iba[i].container_type;
 	    	msg.container_type = iba[i].container_id;
-	    	sendToClient(client_id);
+	    	msg.sendToClient(client_id);
 	    }
 	}
 

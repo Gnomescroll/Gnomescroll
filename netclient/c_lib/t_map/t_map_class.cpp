@@ -541,12 +541,12 @@ namespace t_map
         c->chunk_item_container.add(x,y,z, container_type, container_id);
     }
 
-
+/*
     void Terrain_map::reset_chunk_container_blocks(int chunk_index)
     {
         struct MAP_CHUNK* c=chunk[chunk_index];
         if(c == NULL) GS_ABORT();
         c->chunk_item_container._reset();
     }
-
+*/
 }

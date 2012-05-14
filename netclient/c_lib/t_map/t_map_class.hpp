@@ -98,7 +98,7 @@ class Terrain_map
 
     //item container stuff
     void set_item_container_block(int x, int y, int z, int container_type, int container_id);
-    void reset_chunk_container_blocks(int chunk_index);
+    //void reset_chunk_container_blocks(int chunk_index);
 };
 
 } //
