@@ -586,16 +586,13 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     bool hand_empty = (hand_item == NULL_ITEM);
     bool hand_can_stack_recipe = (get_item_type(hand_item) == recipe->output && get_stack_space(hand_item) >= 1);
     if (!hand_empty && !hand_can_stack_recipe) return;
-
-    // remove reagents from container
-    // deleting items as needed, modifying others
-    consume_crafting_reagents(agent_id, container_id, recipe->id);
         
     // place in hand
     if (hand_empty)
     {
         // create new item of type
         Item* item = create_item(recipe->output);
+        if (item == NULL) return;
         send_item_create(agent->client_id, item->id);
         agent_hand_list[agent_id] = item->id;
         send_hand_insert(agent->client_id, item->id);
@@ -608,6 +605,10 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         item->stack_size += 1;
         send_item_state(agent->client_id, item->id);
     }
+
+    // remove reagents from container
+    // deleting items as needed, modifying others
+    consume_crafting_reagents(agent_id, container_id, recipe->id);
 }
 
 void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
@@ -631,6 +632,56 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     CraftingRecipe* recipe = get_craft_recipe(recipe_id);
     assert(recipe != NULL);
 
+    // assemble sorted bench inputs
+    // we need them sorted so we can correctly decrement from each item
+    int input_count = 0;
+    ItemID inputs[bench->slot_max];
+    int input_types[bench->slot_max];
+
+    // clear initial state
+    for (int i=0; i<bench->slot_max; inputs[i++] = NULL_ITEM);
+    for (int i=0; i<bench->slot_max; input_types[i++] = NULL_ITEM_TYPE);
+
+    // sort
+    for (int i=0; i<bench->slot_max; i++)
+    {
+        ItemID item_id = bench->get_item(i);
+        if (item_id == NULL_ITEM) continue;
+        int item_type = get_item_type(item_id);
+        assert(item_type != NULL_ITEM_TYPE);
+
+        // insert sorted
+        if (input_count == 0)
+        {   // degenerate case
+            inputs[input_count] = item_id;
+            input_types[input_count] = item_type;
+        }
+        else
+        {   // find insertion point
+            int j=0;
+            for (; j<input_count; j++)
+            {
+                // comparison is on types
+                if (input_types[j] < item_type) continue;
+                // shift forward
+                for (int k=input_count; k>j; k--) inputs[k] = inputs[k-1];
+                for (int k=input_count; k>j; k--) input_types[k] = input_types[k-1];
+                // insert
+                inputs[j] = item_id;
+                input_types[j] = item_type;
+                break;
+            }
+            
+            // insert failed, append to end
+            if (j == input_count)
+            {
+                inputs[j] = item_id;
+                input_types[j] = item_type;
+            }
+        }
+        input_count++;
+    }
+
     for (int i=0; i<recipe->reagent_num; i++)
     {   // remove reagents from inputs
 
@@ -640,33 +691,22 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
         assert(type != NULL_ITEM_TYPE);
         assert(count > 0);
 
-        // iterate bench inputs
-        for (int j=0; j<bench->slot_max; j++)
-        {
-            // inspect slot
-            ItemID item_id = bench->get_item(j);
-            if (item_id == NULL_ITEM) continue;
-            Item* item = get_item(item_id);
-            assert(item != NULL);
-            if (item->type != type) continue;
+        ItemID item_id = inputs[i];
+        assert(item_id != NULL_ITEM);
+        Item* item = get_item(item_id);
+        assert(item != NULL);
+        assert(item->stack_size >= count);
 
-            // determine whether to decrement or fully remove item
-            if (item->stack_size <= count)
-            {   // remove this item
-                count -= item->stack_size;
-                destroy_item(item->id);
-            }
-            else
-            {   // decrement this item
-                item->stack_size -= count;
-                send_item_state(agent->client_id, item->id);
-                count = 0;
-            }
-
-            // we've consumed all the reagents of this type
-            if (count <= 0) break;
+        // determine whether to decrement or fully remove item
+        if (item->stack_size <= count)
+        {   // remove this item
+            destroy_item(item->id);
         }
-        assert(count <= 0); // there is a problem if this function is called with bad inputs
+        else
+        {   // decrement this item
+            item->stack_size -= count;
+            send_item_state(agent->client_id, item->id);
+        }
     }
 }
 
