@@ -4,7 +4,6 @@
 #include <t_map/server/subscription_list.hpp>
 #include <t_map/server/manager.hpp>
 #include <t_map/net/t_StoC.hpp>
-#include <item/common/constant.hpp>
 #endif
 
 #include <item/common/constant.hpp>
@@ -69,24 +68,24 @@ class CHUNK_ITEM_CONTAINER
         _remove(i);
     }
 
-	void remove (int container_id)
-	{
-		int i;
-		for(i=0; i<iban; i++)
-		{
-			if(container_id == iba[i].container_id)
-			{
-				break;
-			}
-		}
-		if(i == iban) GS_ABORT();
+    void remove (int container_id)
+    {
+        int i;
+        for(i=0; i<iban; i++)
+        {
+            if(container_id == iba[i].container_id)
+            {
+                break;
+            }
+        }
+        if(i == iban) GS_ABORT();
 
-		#if DC_SERVER
-		map_history->container_block_delete(chunk_index, iba[i].container_id);
-		#endif
-		_remove(i);
-		printf("inventory_block removed: handle items and inventory destruction \n");
-	}
+        #if DC_SERVER
+        map_history->container_block_delete(chunk_index, iba[i].container_id);
+        #endif
+        _remove(i);
+        printf("inventory_block removed: handle items and inventory destruction \n");
+    }
 
 
     void add(int x, int y, int z, int container_type, int container_id)
@@ -115,18 +114,14 @@ class CHUNK_ITEM_CONTAINER
     {
         int i;
         for(i=0; i<iban; i++)
-        {
             if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
-            {
                 break;
-            }
-        }
-        if(i==iban)
+        if (i==iban)
         {
             printf("CHUNK_ITEM_CONTAINER::get error, no container for %i %i %i \n", x,y,z);
             return NULL_CONTAINER;
         }
-        else return iba[i].container_id;
+        return iba[i].container_id;
     }
 
 #if DC_SERVER
