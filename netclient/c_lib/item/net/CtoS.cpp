@@ -275,14 +275,32 @@ inline void no_container_action_beta_CtoS::handle()
 
 inline void open_container_CtoS::handle()
 {
-    // send container contents to player
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+
+    if (!container->can_be_opened_by(a->id)) return;
 
     // place player lock on container if we want
+    container->lock(a->id);
+    
+    // send container contents to player
+    send_container_contents(a->id, client_id, container_id);
 }
 
 inline void close_container_CtoS::handle()
 {
     // remove player lock on container
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+
+    container->unlock(a->id);
 }
 
 } // Item

@@ -14,7 +14,8 @@ namespace Item
 
 inline void item_create_StoC::handle()
 {
-    Item* item = item_list->create_type(type, (ItemID)id);
+    //Item* item = item_list->create_type(type, (ItemID)id);
+    Item* item = item_list->get_or_create_type(type, (ItemID)id);
     if (item == NULL) return;
     item->group = group;
     item->durability = durability;

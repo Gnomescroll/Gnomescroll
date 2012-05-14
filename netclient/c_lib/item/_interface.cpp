@@ -362,6 +362,7 @@ ItemID split_item_stack_in_half(ItemID src)
     new_item->stack_size = split_amount;
     return new_item->id;
 }
+
 bool agent_owns_container(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -371,6 +372,16 @@ bool agent_owns_container(int agent_id, int container_id)
     if (agent_nanite_list[agent_id] == container_id) return true;
     if (agent_craft_bench_list[agent_id] == container_id) return true;
     return false;
+}
+
+bool agent_can_access_container(int agent_id, int container_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return false;
+    // owned by other player
+    if (container->owner != NO_AGENT && container->owner != agent_id) return false;
+    return true;
 }
 
 ItemID get_agent_toolbelt_item(int agent_id, int slot)
@@ -735,6 +746,20 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
             item->stack_size -= count;
             send_item_state(agent->client_id, item->id);
         }
+    }
+}
+
+void send_container_contents(int agent_id, int client_id, int container_id)
+{
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    if (!agent_can_access_container(agent_id, container_id)) return;
+    
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        send_item_create(client_id, container->slot[i]);
     }
 }
 

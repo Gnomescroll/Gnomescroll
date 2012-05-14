@@ -69,6 +69,7 @@ namespace Item
 ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);
 bool agent_owns_container(int agent_id, int container_id);
+bool agent_can_access_container(int agent_id, int container_id);
 
 ItemID get_agent_hand(int agent_id);
 int get_agent_container(int agent_id);
@@ -92,6 +93,8 @@ int consume_stack_item(ItemID item_id);
 
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
 void consume_crafting_reagents(int agent_id, int container_id, int recipe_id);
+
+void send_container_contents(int agent_id, int client_id, int container_id);
 }
 #endif
 
