@@ -185,10 +185,8 @@ void container_block_create_StoC::handle()
 
 void container_block_delete_StoC::handle()
 {
-//    uint16_t x,y,z;
-//    uint8_t container_type;
+//    uint32_t chunk_index;
 //    uint16_t container_id;
-
 
 }
 

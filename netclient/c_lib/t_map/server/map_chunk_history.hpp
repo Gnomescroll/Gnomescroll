@@ -96,7 +96,55 @@ class MAP_CHUNK_HISTORY
             msg.sendToClient(subscribers[i]);
         }
     }
+
+    void container_block_create(int x, int y, int z, int container_type, int container_id)
+    {
+        class container_block_create_StoC msg;
+        msg.x = x;
+        msg.y = y;
+        msg.z = z;
+        msg.container_type = container_type;
+        msg.container_id = container_id;
+
+        for(int i=0; i < subscriber_num; i++)
+        {
+            msg.sendToClient(subscribers[i]);
+        }
+    }
+
+    void container_block_delete(int chunk_index, int container_id)
+    {
+        class container_block_delete_StoC msg;
+        msg.chunk_index = chunk_index;
+        msg.container_id = container_id;
+
+        for(int i=0; i < subscriber_num; i++)
+        {
+            msg.sendToClient(subscribers[i]);
+        }
+    }
 };
+
+/*
+    //uint32_t chunk_index
+    main_map->reset_chunk_container_blocks(chunk_index)
+};
+
+
+void container_block_create_StoC::handle()
+{
+//    uint16_t x,y,z;
+//    uint8_t container_type;
+//    uint16_t container_id;
+
+
+}
+
+void container_block_delete_StoC::handle()
+{
+//    uint32_t chunk_index;
+//    uint16_t container_id;
+*/
 
 class Terrain_map_history
 {

@@ -29,6 +29,8 @@ class MAP_CHUNK
 {
     public:
 
+    int chunk_index;
+    
     int xpos;
     int ypos;
 

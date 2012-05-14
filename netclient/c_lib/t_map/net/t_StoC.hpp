@@ -187,16 +187,12 @@ class container_block_create_StoC: public MapMessagePacketToClient<container_blo
 class container_block_delete_StoC: public MapMessagePacketToClient<container_block_delete_StoC>
 {
     public:
-    uint16_t x,y,z;
-    uint8_t container_type;
+    uint32_t chunk_index;
     uint16_t container_id;
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
-        pack_u8(&container_type, buff, buff_n, pack);
+        pack_u32(&chunk_index, buff, buff_n, pack);
         pack_u16(&container_id, buff, buff_n, pack);
     }
     

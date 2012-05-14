@@ -16,6 +16,8 @@ class CHUNK_ITEM_CONTAINER
 {
 	public:
 
+	int chunk_index;
+
 	int iban; //inventory_block_array_num
 	int ibam; //inventory_block_array_max
 	struct inventory_block* iba; //inventory_block_array
@@ -23,7 +25,7 @@ class CHUNK_ITEM_CONTAINER
 	CHUNK_ITEM_CONTAINER()
 	{
 		iban = 0;
-		ibam = 32;
+		ibam = 2;
 		iba = (struct inventory_block*) malloc(ibam*sizeof(struct inventory_block));
 	}
 
@@ -76,18 +78,5 @@ class CHUNK_ITEM_CONTAINER
 	#endif
 };
 
-
-class container_block_chunk_reset_StoC
-        pack_u32(&chunk_index;, buff, buff_n, pack);
-
-class container_block_create_StoC: public MapMessagePacketToClient<container_block_create_StoC>
-    uint16_t x,y,z;
-    uint8_t container_type;
-    uint16_t container_id;
-
-e void handle() __attribute((always_inline));
-};
-
-class container_block_delete_StoC: public MapMessagePacketToClient<container_block_delete_StoC>
 
 }
