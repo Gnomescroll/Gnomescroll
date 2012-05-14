@@ -584,8 +584,12 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     // hand is not empty and cannot stack the output
     ItemID hand_item = agent_hand_list[agent_id];
     bool hand_empty = (hand_item == NULL_ITEM);
-    bool hand_can_stack_recipe = (hand_item == recipe->output && get_stack_space(hand_item) >= 1);
+    bool hand_can_stack_recipe = (get_item_type(hand_item) == recipe->output && get_stack_space(hand_item) >= 1);
+    printf("hand empty %d\n", hand_empty);
+    printf("hand_can_stack_recipe %d\n", hand_can_stack_recipe);
     if (!hand_empty && !hand_can_stack_recipe) return;
+
+    printf("can pick up\n");
 
     // remove reagents from container
     // deleting items as needed, modifying others
