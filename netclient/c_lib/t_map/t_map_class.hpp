@@ -97,7 +97,7 @@ class Terrain_map
     int apply_damage(int x, int y, int z, int dmg, int* block_type);
 
     //item container stuff
-    void set_item_container_block(int x, int y, int z, int container_type, int container_id);
+    void create_item_container_block(int x, int y, int z, int container_type, int container_id);
     //void reset_chunk_container_blocks(int chunk_index);
 };
 

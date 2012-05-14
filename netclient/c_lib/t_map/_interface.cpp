@@ -39,5 +39,14 @@ namespace t_map
         vbo_map->update_map();
     }
 #endif
+
+#if DC_SERVER
+void create_item_container_block(int x, int y, int z, int container_type, int container_id)
+{
+    main_map->create_item_container_block(x,y,z,container_type, container_id);
+}
+
+#endif
+
 }
 
