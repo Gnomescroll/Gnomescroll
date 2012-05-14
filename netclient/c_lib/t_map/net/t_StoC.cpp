@@ -188,20 +188,26 @@ void container_block_create_StoC::handle()
 //    uint8_t container_type;
 //    uint16_t container_id;
 
-
+    int chunk_index = (y/16)*(MAP_WIDTH/16) + (x/16);
+    if( main_map->chunk[chunk_index] == NULL) 
+    {
+        printf("chunk_index= %i \n", chunk_index);
+        GS_ABORT();
+    }
+    main_map->chunk[chunk_index]->chunk_item_container.add(x,y,z, container_type, container_id);
+    printf("create container %i of type %i at %i %i %i \n", container_id, container_type, x,y,z);
 }
 
 void container_block_delete_StoC::handle()
 {
 //    uint32_t chunk_index;
 //    uint16_t container_id;
-    //uint32_t chunk_index
     if( main_map->chunk[chunk_index] == NULL) 
     {
         printf("chunk_index= %i \n", chunk_index);
         GS_ABORT();
     }
-    main_map->chunk[chunk_index]->chunk_item_container._reset();
+    main_map->chunk[chunk_index]->chunk_item_container.remove(container_id);
 }
 
 #endif
