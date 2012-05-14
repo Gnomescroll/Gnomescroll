@@ -530,7 +530,7 @@ namespace t_map
     }
 
 
-    void Terrain_map::set_item_container_block(int x, int y, int z, int container_type, int container_id)
+    void Terrain_map::create_item_container_block(int x, int y, int z, int container_type, int container_id)
     {
         if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
             | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
