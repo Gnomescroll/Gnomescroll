@@ -24,6 +24,7 @@ void set_reagent(const char* item_name, int quantity)
     assert(_current_reagent_id < CRAFT_BENCH_INPUTS_MAX);
 
     int type = dat_get_item_type(item_name);
+    
 
     // require specifying item,quantity at once
     //for (int i=0; i<_current_reagent_id; i++)
@@ -86,7 +87,8 @@ void load_crafting_dat()
     end_recipe();
 
     def_recipe("copper_shovel");
-    set_reagent("copper_bar", 2);
+    set_reagent("copper_bar", 1);
+    set_reagent("copper_bar", 1);
     end_recipe();
 
     def_recipe("food_rock-0");

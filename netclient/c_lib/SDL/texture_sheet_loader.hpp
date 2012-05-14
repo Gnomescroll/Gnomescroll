@@ -18,7 +18,9 @@ class TextureSheetLoader
     struct TileMeta* meta;
 
     struct SDL_Surface* texture_sheet;  //for 2d array
+    struct SDL_Surface* grey_scale_texture_sheet;  //for 2d array
     Uint32* texture_stack; //for 3d arrays
+
 
     TextureSheetLoader(int tile_size);
     ~TextureSheetLoader();
@@ -28,6 +30,8 @@ class TextureSheetLoader
 
     //blit to sheet or return texture id
     int blit(int sheet_id, int source_x, int source_y);
+
+    void generate_grey_scale();
 };
 
 extern class TextureSheetLoader* CubeTextureSheetLoader;
@@ -38,7 +42,11 @@ extern class TextureSheetLoader* ItemTextureSheetLoader;
 extern struct SDL_Surface* ItemTexture;
 extern Uint32* ItemTextureStack;
 
+extern struct SDL_Surface* GreyScaleItemTexture;
+
 void init();
+void init_greyscale();
+
 void teardown();
 
 }
