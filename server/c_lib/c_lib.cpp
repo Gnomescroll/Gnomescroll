@@ -18,7 +18,7 @@ dont_include_this_file_in_client
 #include <common/compression/miniz.c>
 
 #include <common/list_assert.hpp>
-#include <common/asserts.hpp>
+#include <common/macros.hpp>
 
 //options
 #include <common/option_macros.hpp>
