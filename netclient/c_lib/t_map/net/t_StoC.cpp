@@ -170,6 +170,7 @@ void map_metadata_StoC::handle()
 void container_block_chunk_reset_StoC::handle()
 {
     //uint32_t chunk_index
+    return;
     if( main_map->chunk[chunk_index] == NULL) 
     {
         printf("chunk_index= %i \n", chunk_index);
