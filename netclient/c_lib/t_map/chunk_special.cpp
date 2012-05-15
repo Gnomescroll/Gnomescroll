@@ -48,6 +48,32 @@ void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
     this->remove_index(i);
 }
 
+void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int container_id)
+{
+    if(iban == ibam)
+    {
+        ibam *= 2;
+        iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
+        if(iba == NULL) GS_ABORT();
+    }
+
+    iba[iban].x = x;
+    iba[iban].y = y;
+    iba[iban].z = z;
+    iba[iban].container_type = container_type;
+    iba[iban].container_id = container_id;
+    iban++;
+
+    #if DC_SERVER
+    map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
+
+    assert(container_id != NULL_CONTAINER);
+    Item::ItemContainerInterface* container = Item::get_container(container_id);
+    assert(container != NULL);
+    container->chunk = this->chunk_index;
+    #endif    
+}
+
 
 #if DC_SERVER
 void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(int client_id)

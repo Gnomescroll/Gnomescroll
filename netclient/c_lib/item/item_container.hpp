@@ -121,7 +121,7 @@ class ItemContainerInterface
         : id(id), type(type),
         xdim(0), ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
-        owner(NO_AGENT), chunk(-1)
+        owner(NO_AGENT), chunk(0xffff)
         {}
 };
 

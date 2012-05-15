@@ -68,11 +68,13 @@ class create_item_container_StoC: public FixedSizeReliableNetPacketToClient<crea
     public:
         uint16_t container_id;
         uint8_t container_type;
+        uint16_t chunk;   // TODO -- unique packet for these. also make sure chunk index is <0xffff
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&container_type, buff, buff_n, pack);
+            pack_u16(&chunk, buff, buff_n, pack);
         }
         inline void handle();
 };

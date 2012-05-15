@@ -1261,6 +1261,7 @@ static bool pack_container_create(int container_id, create_item_container_StoC* 
     if (container == NULL) return false;
     msg->container_id = container->id;
     msg->container_type = container->type;
+    msg->chunk = container->chunk;
     return true;
 }
 

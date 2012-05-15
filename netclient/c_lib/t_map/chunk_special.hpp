@@ -71,26 +71,7 @@ class CHUNK_ITEM_CONTAINER
         assert(false);
     }
     
-    void add(int x, int y, int z, int container_type, int container_id)
-    {
-        if(iban == ibam)
-        {
-            ibam *= 2;
-            iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
-            if(iba == NULL) GS_ABORT();
-        }
-
-        iba[iban].x = x;
-        iba[iban].y = y;
-        iba[iban].z = z;
-        iba[iban].container_type = container_type;
-        iba[iban].container_id = container_id;
-        iban++;
-
-        #if DC_SERVER
-        map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
-        #endif
-    }
+    void add(int x, int y, int z, int container_type, int container_id);
 
     int get(int x, int y, int z)
     {

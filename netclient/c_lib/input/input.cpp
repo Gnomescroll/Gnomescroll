@@ -59,6 +59,8 @@ int process_events()
     else
         unbind_mouse();
 
+    if (Item::opened_container != NULL_CONTAINER) enable_container();
+
     while(SDL_PollEvent(&Event))
     { //returns 0 if no event
         Event.user.code = SDL_EVENT_USER_NONE;

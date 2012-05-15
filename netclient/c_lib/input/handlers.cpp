@@ -23,17 +23,11 @@ void toggle_help_menu()
     input_state.help_menu = (!input_state.help_menu);
 }
 
+static bool rebind_mouse = false;
 void toggle_container()
 {
     input_state.container = (!input_state.container);
-    static bool rebind_mouse = input_state.mouse_bound;
-    if (input_state.container)
-    {
-        t_hud::enable_container_hud();
-        Item::open_inventory();
-        rebind_mouse = input_state.mouse_bound;
-        input_state.mouse_bound = false;
-    }
+    if (input_state.container) enable_container();
     else
     {
         input_state.ignore_mouse_motion = true;
@@ -41,6 +35,17 @@ void toggle_container()
         Item::close_inventory();
         input_state.mouse_bound = rebind_mouse;
     }
+}
+
+void enable_container()
+{
+    if (input_state.container) return;
+    printf("enable container\n");
+    input_state.container = true;
+    t_hud::enable_container_hud();
+    Item::open_inventory();
+    rebind_mouse = input_state.mouse_bound;
+    input_state.mouse_bound = false;
 }
 
 void toggle_scoreboard()

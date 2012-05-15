@@ -68,6 +68,8 @@ void enable_quit();
 void toggle_input_mode();
 void toggle_camera_mode();
 
+void enable_container();
+
 // options
 void set_input_options(
     bool invert_mouse,
