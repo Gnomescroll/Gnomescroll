@@ -89,14 +89,6 @@ inline void assign_item_container_StoC::handle()
             player_nanite_ui->init(ic->type, ic->xdim, ic->ydim);
             player_nanite_ui->load_data(ic->slot);
             break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            player_craft_bench_id = container_id;
-            player_craft_bench = (ItemContainerCraftingBench*)ic;
-            if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
-            player_craft_bench_ui = new ItemContainerUI(ic->id);
-            player_craft_bench_ui->init(ic->type, ic->xdim, ic->ydim);
-            player_craft_bench_ui->load_data(ic->slot);
-            break;
         default:
             assert(false);
             return;

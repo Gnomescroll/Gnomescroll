@@ -71,6 +71,7 @@ void create_container_block_CtoS::handle()
     Item::ItemContainerInterface* container = Item::create_container(container_type);
     if (container == NULL) return;
     create_item_container_block(x,y,z, container->type, container->id);
+    Item::send_container_create(client_id, container->id);
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
     _set_broadcast(x,y,z, val);

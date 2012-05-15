@@ -235,8 +235,17 @@ void open_container(int container_id)
 {
     assert(container_id != NULL_CONTAINER);
 
-    printf("open container %d\n", container_id);
-
+    // setup UI widget
+    // TODO -- handle multiple UI types 
+    player_craft_bench = (ItemContainerCraftingBench*)get_container(container_id);
+    if (player_craft_bench == NULL) return;
+    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
+    player_craft_bench_ui = new ItemContainerUI(container_id);
+    player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
+    player_craft_bench_ui->load_data(player_craft_bench->slot);
+    t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
+    
+    // assigned "opened_container" id
     opened_container = container_id;
 
     // send open packet
@@ -251,7 +260,11 @@ void close_container()
 {
     if (opened_container == NULL_CONTAINER) return;
 
-    printf("close container %d\n", opened_container);
+    // teardown UI widget
+    // TODO -- handle multiple UI types
+    player_craft_bench = NULL;
+    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
+    player_craft_bench_ui = NULL;
 
     opened_container = NULL_CONTAINER;
     
@@ -468,9 +481,13 @@ void assign_containers_to_agent(int agent_id, int client_id)
 
     // add a few container blocks
     Item* crate;
-    crate = create_item(get_item_type((char*)"crate_1"));
+    //crate = create_item(get_item_type((char*)"crate_1"));
+    //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    //crate = create_item(get_item_type((char*)"crate_2"));
+    //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    crate = create_item(get_item_type((char*)"crate_3"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = create_item(get_item_type((char*)"crate_2"));
+    crate = create_item(get_item_type((char*)"crate_3"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     crate = create_item(get_item_type((char*)"crate_3"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);

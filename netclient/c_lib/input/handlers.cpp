@@ -402,6 +402,12 @@ void container_mouse_up_handler(SDL_Event* event)
     {
         case SDL_BUTTON_LEFT:
             container_event = t_hud::left_mouse_up(x,y);
+            printf("container event: ");
+            printf("id %d ", container_event.container_id);
+            printf("slot %d ", container_event.slot);
+            printf("nanite %d ", container_event.nanite);
+            printf("craft output %d ", container_event.craft_output);
+            printf("\n");
             Item::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
             break;
 
