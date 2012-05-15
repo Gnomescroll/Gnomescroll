@@ -301,4 +301,19 @@ int get_selected_craft_recipe_type(int container_id, int slot)
     return recipe->output;
 }
 
+bool container_type_is_block(ItemContainerType type)
+{
+    switch (type)
+    {
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            return true;
+        default:
+            return false;
+    }
+    return false;
+}
+
 }

@@ -280,14 +280,11 @@ inline void open_container_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
 
+    bool in_reach = agent_in_container_range(a->id, container_id);
+    if (!in_reach) send_open_container_failed(a->client_id, container_id, event_id);
+
     bool opened = agent_open_container(a->id, container_id);
-    if (!opened)
-    {
-        open_container_failed_StoC msg;
-        msg.container_id = container_id;
-        msg.event_id = event_id;
-        msg.sendToClient(client_id);
-    }
+    if (!opened) send_open_container_failed(a->client_id, container_id, event_id);
 }
 
 inline void close_container_CtoS::handle()

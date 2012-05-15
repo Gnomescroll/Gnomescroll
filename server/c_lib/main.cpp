@@ -65,6 +65,11 @@ void tick()
         ItemParticle::check_item_pickups();
     }
 
+    if (counter % 6 == 0)
+    {
+        Item::check_agents_in_container_range();
+    }
+
     //const int monster_spawners = 10;
     //const int monsters = 100;
     //const int slimes = 50;

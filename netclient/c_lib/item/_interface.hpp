@@ -100,6 +100,8 @@ void send_container_contents(int agent_id, int client_id, int container_id);
 
 void container_block_destroyed(int container_id, int x, int y, int z);
 
+bool agent_in_container_range(int agent_id, int container_id);
+void check_agents_in_container_range(); // checks that any agent accessing a container is still in range
 }
 #endif
 

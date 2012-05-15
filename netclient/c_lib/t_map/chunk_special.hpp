@@ -55,6 +55,21 @@ class CHUNK_ITEM_CONTAINER
 
     void remove (int x, int y, int z);
     void remove(int container_id);
+
+    void get_container_location(int container_id, int position[3])
+    {
+        for (int i=0; i<iban; i++)
+            if (iba[i].container_id == container_id)
+            {
+                position[0] = iba[i].x;
+                position[1] = iba[i].y;
+                position[2] = iba[i].z;
+                return;
+            }
+
+        printf("ERROR - container %d not found in chunk %d\n", container_id, chunk_index);
+        assert(false);
+    }
     
     void add(int x, int y, int z, int container_type, int container_id)
     {

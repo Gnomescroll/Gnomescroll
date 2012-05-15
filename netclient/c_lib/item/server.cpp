@@ -173,4 +173,12 @@ void send_container_close(int agent_id, int container_id)
     msg.sendToClient(a->client_id);
 }
 
+void send_open_container_failed(int client_id, int container_id, int event_id)
+{
+    open_container_failed_StoC msg;
+    msg.container_id = container_id;
+    msg.event_id = event_id;
+    msg.sendToClient(client_id);
+}
+
 }   // Item

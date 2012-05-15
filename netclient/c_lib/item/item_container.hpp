@@ -68,6 +68,7 @@ class ItemContainerInterface
         ItemID* slot;
 
         int owner;
+        int chunk;  // TODO -- move to subclass
 
         bool is_full()
         {
@@ -120,7 +121,7 @@ class ItemContainerInterface
         : id(id), type(type),
         xdim(0), ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
-        owner(NO_AGENT)
+        owner(NO_AGENT), chunk(-1)
         {}
 };
 

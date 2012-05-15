@@ -833,6 +833,43 @@ void container_block_destroyed(int container_id, int x, int y, int z)
     destroy_container(container_id);
 }
 
+bool agent_in_container_range(int agent_id, int container_id)
+{
+    // get agent position
+    ASSERT_VALID_AGENT_ID(agent_id);
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    if (a == NULL) return false;
+
+    Vec3 agent_position = a->get_center();
+
+    // get container position, if applicable
+    ItemContainerInterface* container = get_container(container_id);
+    if (!container_type_is_block(container->type)) return false;
+
+    int position[3];
+    t_map::get_container_location(container->id, position);
+    Vec3 container_position = vec3_init(position[0], position[1], position[2]);
+    container_position = vec3_add(container_position, vec3_init(0.5f, 0.5f, 0.5f));
+    
+    // do radius check
+    if (vec3_distance_squared(agent_position, container_position)
+        <= AGENT_CONTAINER_REACH*AGENT_CONTAINER_REACH) return true;
+    return false;
+}
+
+// check that agents are still in range of containers they are accessing
+void check_agents_in_container_range()
+{
+    using ServerState::agent_list;
+    for (int i=0; i<agent_list->n_max; i++)
+    {
+        if (agent_list->a[i] == NULL) continue;
+        Agent_state* a = agent_list->a[i];
+        if (opened_containers[a->id] == NULL_CONTAINER) continue;
+        if (agent_in_container_range(a->id, opened_containers[a->id])) continue;
+        send_container_close(a->id, opened_containers[a->id]);
+    }
+}
 
 }   // Item
 
