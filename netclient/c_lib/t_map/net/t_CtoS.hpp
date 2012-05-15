@@ -33,10 +33,10 @@ class create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<cre
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
-        pack_u16(&placer_id, buff, buff_n, pack);
         pack_u16(&x, buff, buff_n, pack);
         pack_u16(&y, buff, buff_n, pack);
         pack_u16(&z, buff, buff_n, pack);
+        pack_u16(&placer_id, buff, buff_n, pack);
     }
     inline void handle();
 };

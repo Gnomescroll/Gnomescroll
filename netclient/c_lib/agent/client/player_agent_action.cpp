@@ -296,6 +296,7 @@ void PlayerAgent_action::fire_mining_laser()
 
 void PlayerAgent_action::set_block(ItemID placer_id)
 {
+    assert(placer_id != NULL_ITEM);
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
@@ -314,15 +315,17 @@ void PlayerAgent_action::set_block(ItemID placer_id)
     if (b==NULL) return;
 
     int placer_type = Item::get_item_type(placer_id);
+    assert(placer_type != NULL_ITEM_TYPE);
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
+    assert(attr != NULL);
     int val = attr->placer_block_type_id;
-    if (t_map::get_container_type_for_block(val) != NULL_CONTAINER)
+    if (t_map::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
         t_map::create_container_block_CtoS msg;
         msg.x = b[0];
         msg.y = b[1];
         msg.z = b[2];
-        msg.placer_id = NULL_ITEM;
+        msg.placer_id = placer_id;
         msg.send();
     }
     else
@@ -334,7 +337,6 @@ void PlayerAgent_action::set_block(ItemID placer_id)
         msg.placer_id = placer_id;
         msg.send();
     }
-    return;
 }
 
 #if !PRODUCTION

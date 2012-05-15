@@ -35,6 +35,7 @@ void create_container_block_CtoS::handle()
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
+    if (attr == NULL) return;
     int val = attr->placer_block_type_id;
 
     ItemContainerType container_type = get_container_type_for_block(val);
