@@ -342,7 +342,7 @@ void draw_hud()
 
     agent_container->draw();
     nanite_container->draw();
-    crafting_container->draw();
+    if (block_container_enabled) crafting_container->draw();
 
     draw_grabbed_icon();
 }

@@ -39,7 +39,6 @@ extern int player_hand_durability_ui;
 extern int* agent_container_list;
 extern int* agent_toolbelt_list;
 extern int* agent_nanite_list;
-extern int* agent_craft_bench_list;
 extern ItemID* agent_hand_list;
 extern int* opened_containers;
 

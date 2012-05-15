@@ -29,14 +29,12 @@ void init()
     agent_container_list   = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list    = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list      = (int*)   malloc(AGENT_MAX * sizeof(int));
-    agent_craft_bench_list = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_hand_list        = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
     opened_containers      = (int*)   malloc(AGENT_MAX * sizeof(int));
     
     for (int i=0; i<AGENT_MAX; i++) agent_container_list  [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list   [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list     [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_craft_bench_list[i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_hand_list       [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) opened_containers     [i] = NULL_CONTAINER;
     #endif
@@ -60,7 +58,6 @@ void teardown()
     if (agent_container_list   != NULL) free(agent_container_list);
     if (agent_toolbelt_list    != NULL) free(agent_toolbelt_list);
     if (agent_nanite_list      != NULL) free(agent_nanite_list);
-    if (agent_craft_bench_list != NULL) free(agent_craft_bench_list);
     if (agent_hand_list        != NULL) free(agent_hand_list);
     if (opened_containers      != NULL) free(opened_containers);
     #endif
@@ -388,7 +385,6 @@ bool agent_owns_container(int agent_id, int container_id)
     if (agent_container_list[agent_id] == container_id) return true;
     if (agent_toolbelt_list[agent_id] == container_id) return true;
     if (agent_nanite_list[agent_id] == container_id) return true;
-    if (agent_craft_bench_list[agent_id] == container_id) return true;
     return false;
 }
 
@@ -474,9 +470,9 @@ void assign_containers_to_agent(int agent_id, int client_id)
     Item* crate;
     crate = create_item(get_item_type((char*)"crate_1"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = create_item(get_item_type((char*)"crate_1"));
-    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     crate = create_item(get_item_type((char*)"crate_2"));
+    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    crate = create_item(get_item_type((char*)"crate_3"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     crate = create_item(get_item_type((char*)"crate_3"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
@@ -496,9 +492,6 @@ void assign_containers_to_agent(int agent_id, int client_id)
     
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
-    
-    ItemContainerCraftingBench* crafting_bench = (ItemContainerCraftingBench*)item_container_list->create(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
-    assign_container_to_agent(crafting_bench, agent_craft_bench_list, agent_id, client_id);
 }
 
 Item* create_item(int item_type)
@@ -551,7 +544,6 @@ void agent_quit(int agent_id)
     destroy_container(agent_container_list[agent_id]);
     destroy_container(agent_toolbelt_list[agent_id]);
     destroy_container(agent_nanite_list[agent_id]);
-    destroy_container(agent_craft_bench_list[agent_id]);
 }
 
 void digest_nanite_food()
@@ -650,7 +642,6 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     assert(agent_hand_list != NULL);
-    assert(agent_craft_bench_list != NULL);
 
     Agent_state* agent = ServerState::agent_list->get(agent_id);
     if (agent == NULL) return;
@@ -698,7 +689,6 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
 
     ASSERT_VALID_AGENT_ID(agent_id);
     assert(agent_hand_list != NULL);
-    assert(agent_craft_bench_list != NULL);
 
     Agent_state* agent = ServerState::agent_list->get(agent_id);
     if (agent == NULL) return;
