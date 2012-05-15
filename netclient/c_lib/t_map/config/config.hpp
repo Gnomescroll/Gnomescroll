@@ -8,7 +8,7 @@ namespace t_map
 
 void load_block_dat()
 {
-
+/*
     int test = 10;
     printf("test= %i \n", test);
 
@@ -22,7 +22,7 @@ void load_block_dat()
 
     cube_def(2, 0 , "TEST_RESOURCE3");
     sprite_def(t00, 0,2);
-
+*/
 }
 
     //add_drop(const char* item_name, float mean, float falloff, int max_drops)

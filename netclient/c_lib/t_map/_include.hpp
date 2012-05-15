@@ -30,6 +30,6 @@
 #include <t_map/config/config.hpp>
 #include <t_map/config/config_util.hpp>
 #include <t_map/config/drop_table.hpp>
-#include <t_map/config/block_dat.hpp>
+//#include <t_map/config/block_dat.hpp>
 
 #include <t_map/_interface.cpp>
