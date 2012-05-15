@@ -5,91 +5,139 @@ namespace t_map
 {
 
 
-void texture_alias(cost char* texture_sheet)
+int texture_alias(const char* spritesheet);
+void cube_def(int id, int type, const char* name);
+int sprite_def(int spritesheet, int xpos, int ypos);
+
+
+enum CubeType
+{
+	ErrorBlock,
+	SolidBlock,
+	ItemContainerBlock
+};
+
+
+/*
+struct cubeProperties 
+{
+    bool active;
+    bool solid;
+    bool occludes;
+    bool transparent;
+    bool item_drop; //does block drop items
+    bool item_container;  //inventory and crafting bench blocks
+    bool reserved7;
+    bool reserved8;
+
+    unsigned char max_damage;
+    unsigned char color_type; //flat, discrete and perlin
+    //bool solid;
+    //bool gravity;
+};
+*/
+void cube_def(int id, int type, const char* name)
+{ 
+    _current_cube_id = id;
+    set_cube_name(id, (char*) name);
+
+
+    struct cubeProperties p;
+    p.active = true;
+    p.solid = true;
+    p.occludes = true;
+    p.transparent = false;
+    p.item_drop = false;
+    p.item_container = false;
+
+    p.max_damage = 32;
+    p.color_type = 0;
+
+    switch(type)
+    {
+    	case ErrorBlock:
+    	break;
+
+    	case SolidBlock:
+    	break;
+
+    	case ItemContainerBlock:
+    	p.item_container = true;
+    	break;
+
+    	default:
+    	GS_ABORT();
+    }
+
+
+    //extern struct cubeProperties* cube_list;
+    cube_list[id] = p;
+}
+
+/*
+    void LUA_set_block_name(int id, char* name, int length) GNOMESCROLL_API;
+    
+    void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent) GNOMESCROLL_API;
+    void LUA_set_block_max_damage(int id, int max_damage) GNOMESCROLL_API;
+    void LUA_set_block_color_type(int id, int color_type) GNOMESCROLL_API;
+*/
+
+int iso_texture(int tex_id)
 {
 
+	//LUA_blit_item_texture(int sheet_id, int source_x, int source_y)
 }
-	
+
+
+int iso_texture(int sheet_id, int xpos, int ypos)
+{
+	int tex = LUA_blit_item_texture(sheet_id, xpos, ypos);
+	//set cube side textures
+
+}
+
+#if DC_CLIENT
+int _current_cube_id = 0;
+int texture_alias(const char* spritesheet) 
+{ 
+    return LUA_load_cube_texture_sheet((char*) spritesheet); 
+}
+
+int sprite_def(int spritesheet, int xpos, int ypos)
+{
+    return LUA_blit_cube_texture(spritesheet, xpos, ypos); 
+}
+#endif
+
+#if DC_SERVER
+int texture_alias(const char* spritesheet) {  return 0; }
+int sprite_def(int spritesheet, int xpos, int ypos) {return 0;}
+#endif
+
+void end_block_dat()
+{
+    #if DC_CLIENT
+    LUA_save_cube_texture();
+    #endif
+}
+
+}
+
 void load_block_dat()
 {
 
-    int i0 = texture_alias("media/sprites/i00.png");
-    int i1 = texture_alias("media/sprites/i01.png");
+    int t0 = texture_alias("media/sprites/t00.png");
+    int t1 = texture_alias("media/sprites/t01.png");
 
-    item_def(0, IG_ERROR, "error_item");
-    sprite_def(i0, 4,1);
+    int error_block = texture_alias(t0,1,1);
 
-    item_def(1, IG_PLACER, "regolith");
-    sprite_def(i0, 1,3);
-    s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
-    s.max_stack_size = 50;
 
-    item_def(2, IG_RESOURCE, "copper_ore");
-    sprite_def(i1, 1,3);
-    s.max_stack_size = 50;
+    cube_def(255, ErrorBlock, "error_block");
+    iso_texture(error_block);
 
-    item_def(3, IG_RESOURCE, "copper_bar");
-    sprite_def(i1, 1,2);
-    s.max_stack_size = 50;
+	end_block_dat();
 
-    item_def(4, IG_RESOURCE, "quartz_crystal");
-    sprite_def(i0, 1,5);
-
-    item_def(5, IG_HITSCAN_WEAPON, "laser_rifle");
-    sprite_def(i0, 3,7);
-    s.hitscan_fire_cooldown = 30;
-    s.hitscan_damage = 5;
-    s.hitscan_max_ammo = 30;
-    s.hitscan_bullet_effect_enum = 0;
-    s.max_durability = 400;
-    s.max_energy = 50;
-    s.max_stack_size = 1;
-
-    item_def(6, IG_MELEE_WEAPON, "copper_shovel");
-    sprite_def(i1, 1,1);
-    s.melee_fire_cooldown = 250;
-    s.melee_damage = 2;
-    s.max_durability = 400;
-    s.max_stack_size = 1;
-
-    item_def(7, IG_MINING_LASER, "mining_laser");
-    sprite_def(i0, 3,5);
-    s.mining_fire_cooldown = 200;
-    s.mining_damage = 1;
-    s.mining_block_damage = 3;
-    s.max_durability = 200;
-    s.max_energy = 50;
-    s.max_stack_size = 1;
-
-    item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
-    sprite_def(i0, 1,7);
-    s.max_durability = 200;
-    s.max_energy = 100;
-    s.max_stack_size = 1;
-
-    item_def(9, IG_RESOURCE, "food_rock-0");
-    sprite_def(i1, 1,4);
-    s.max_stack_size = 8;
-    s.nanite_food = true;
-
-    item_def(10, IG_RESOURCE, "blue_cystal");
-    sprite_def(i0, 1,4);
-    s.max_stack_size = 8;
-
-    item_def(11, IG_NANITE_COIN, "nanite_coin");
-    sprite_def(i1, 2, 7);
-    s.max_stack_size = 99;
-
-    item_def(12, IG_DEBUG, "location_pointer");
-    sprite_def(i0, 4,2);
-
-    item_def(13, IG_DEBUG, "block_placer");
-    sprite_def(i0, 4,5);
-
-    item_def(14, IG_UNKNOWN, "unknown");
-    sprite_def(i0, 5,1);
-
-    end_item_dat();
+}
 
 /*
 t00 = register_spritesheet("t00.png")
@@ -189,7 +237,6 @@ b = NewSolidBlock(55, "carbon");
 b.texture = iso_texture(t01,6,10);
 b.hud = hud(24+8+0, b.texture.n);
 */
-}
 
 
 }

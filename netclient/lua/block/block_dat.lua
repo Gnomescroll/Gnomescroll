@@ -90,14 +90,6 @@ b.max_damage = 32;
 
 -- cell blocks --
 
-b = NewSolidBlock(5, "crate_1");
-b.texture = iso_texture(t01,4,1);
-b.texture.t = register_texture(t01,5,1);
-b.texture.b = register_texture(t01,5,1);
-b.texture.n = register_texture(t01,3,1);
-b.hud = hud(24+0, b.texture.n);
-b.max_damage = 32;
-
 b = NewSolidBlock(6, "crate_2");
 b.texture = iso_texture(t01,6,2);
 b.texture.t = register_texture(t01,7,1);
