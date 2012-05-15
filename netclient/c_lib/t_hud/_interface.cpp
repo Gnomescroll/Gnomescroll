@@ -54,21 +54,37 @@ void set_container_id(ItemContainerType container_type, int container_id)
     Input Handling
 */
 
-static bool hud_enabled = false;
+static bool agent_container_enabled = false;
+static bool block_container_enabled = false;
 float mouse_x = -1;
 float mouse_y = -1;
 
-void enable_container_hud()
+void enable_agent_container_hud()
 {
-    hud_enabled = true;
+    assert(!block_container_enabled);
+    agent_container_enabled = true;
 }
 
-void disable_container_hud()
+void disable_agent_container_hud()
 {
     // reset mouse state
     mouse_x = -1;
     mouse_y = -1;
-    hud_enabled = false;
+    agent_container_enabled = false;
+}
+
+void enable_block_container_hud()
+{
+    assert(!agent_container_enabled);
+    block_container_enabled = true;
+}
+
+void disable_block_container_hud()
+{
+    // reset mouse state
+    mouse_x = -1;
+    mouse_y = -1;
+    block_container_enabled = false;
 }
 
 static UIElement* get_container_and_slot(int x, int y, int* slot)
@@ -322,7 +338,7 @@ void draw_hud()
 {
     agent_toolbelt->draw();
 
-    if (!hud_enabled) return;
+    if (!agent_container_enabled && !block_container_enabled) return;
 
     agent_container->draw();
     nanite_container->draw();

@@ -240,9 +240,8 @@ void open_container(int container_id)
 
     printf("open container %d\n", container_id);
 
-    // show ui
-    // TODO
-    
+    opened_container = container_id;
+
     // send open packet
     opened_container_event_id = record_container_event(container_id);
     open_container_CtoS msg;
@@ -256,6 +255,8 @@ void close_container()
     if (opened_container == NULL_CONTAINER) return;
 
     printf("close container %d\n", opened_container);
+
+    opened_container = NULL_CONTAINER;
     
     // send packet
     close_container_CtoS msg;

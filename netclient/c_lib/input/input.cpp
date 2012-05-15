@@ -39,7 +39,7 @@ int get_key_state() {
 
 void bind_mouse()
 {
-    if (!input_state.container)
+    if (!input_state.block_container && !input_state.agent_container)
         SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 }
@@ -59,7 +59,8 @@ int process_events()
     else
         unbind_mouse();
 
-    if (Item::opened_container != NULL_CONTAINER) enable_container();
+    if (Item::opened_container != NULL_CONTAINER) enable_block_container();
+    else disable_block_container();
 
     while(SDL_PollEvent(&Event))
     { //returns 0 if no event
@@ -335,7 +336,7 @@ void apply_camera_physics()
 
 void poll_mouse()
 {
-    if (input_state.container) return;
+    if (input_state.agent_container || input_state.block_container) return;
     if (input_state.ignore_mouse_motion)
     {
         // flush mouse buffer

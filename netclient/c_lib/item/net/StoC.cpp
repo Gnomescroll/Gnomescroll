@@ -186,7 +186,7 @@ inline void open_container_failed_StoC::handle()
 inline void close_container_StoC::handle()
 {
     printf("server closed container\n");
-    if (opened_container == container_id) opened_container = NULL_CONTAINER;
+    opened_container = NULL_CONTAINER;
 }
 
 } // Item
