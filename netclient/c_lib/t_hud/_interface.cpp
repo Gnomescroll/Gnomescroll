@@ -163,8 +163,9 @@ ContainerInputEvent mouse_motion(int x, int y)
 ContainerInputEvent scroll_up()
 {
     if (agent_toolbelt == NULL) return NULL_EVENT;
-    agent_toolbelt->selected_slot += 1;
+    agent_toolbelt->selected_slot -= 1;
     agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
+    if (agent_toolbelt->selected_slot < 0) agent_toolbelt->selected_slot += agent_toolbelt->xdim;
     
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
@@ -176,9 +177,8 @@ ContainerInputEvent scroll_up()
 ContainerInputEvent scroll_down()
 {
     if (agent_toolbelt == NULL) return NULL_EVENT;
-    agent_toolbelt->selected_slot -= 1;
+    agent_toolbelt->selected_slot += 1;
     agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
-    if (agent_toolbelt->selected_slot < 0) agent_toolbelt->selected_slot += agent_toolbelt->xdim;
     
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
