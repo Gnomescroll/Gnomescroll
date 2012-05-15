@@ -86,7 +86,7 @@ inline void assign_item_container_StoC::handle()
             player_nanite_ui->init(ic->type, ic->xdim, ic->ydim);
             player_nanite_ui->load_data(ic->slot);
             break;
-        case CRAFTING_BENCH:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             player_craft_bench_id = container_id;
             player_craft_bench = (ItemContainerCraftingBench*)ic;
             if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;

@@ -28,9 +28,21 @@ void set_container_id(ItemContainerType container_type, int container_id)
         case AGENT_NANITE:
             nanite_container->container_id = container_id;
             break;
-        case CRAFTING_BENCH:
+            
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             crafting_container->container_id = container_id;
             break;
+
+        // TODO -- cryofreezer UI widget
+        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            //cryofreezer->container_id = container_id;
+            //break;
+
+        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            //storage_block->container_id = container_id;
+            //break;
+            
         default:
             assert(false);
             return;

@@ -11,7 +11,7 @@
 // server is used the cube side texture array
 #include <t_map/glsl/texture.cpp>
 
-#include <t_map/chunk_special.hpp>
+#include <t_map/chunk_special.cpp>
 
 #if DC_CLIENT
 #include <t_map/t_vbo_draw.cpp>

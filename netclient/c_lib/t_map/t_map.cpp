@@ -239,6 +239,8 @@ void _set(int x, int y, int z, int value)
 #if DC_SERVER
 void _set_broadcast(int x, int y, int z, int value) 
 {
+    if (value == 0) t_map::destroy_item_container_block(x,y,z);
+    
     t_map::block_StoC msg;
     int i = _get(x,y,z);
     if (i != value) 
@@ -250,7 +252,6 @@ void _set_broadcast(int x, int y, int z, int value)
         msg.val = value;
         msg.broadcast();
     }
-
 }
 
 void send_map_metadata(int client_id)

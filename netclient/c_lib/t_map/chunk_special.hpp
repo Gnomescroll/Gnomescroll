@@ -22,6 +22,9 @@ struct inventory_block
 
 class CHUNK_ITEM_CONTAINER
 {
+    private:
+        void remove_index(int index);
+        
     public:
 
     int chunk_index;
@@ -50,44 +53,9 @@ class CHUNK_ITEM_CONTAINER
         iba[index] = iba[iban];
     }
 
-    void remove (int x, int y, int z)
-    {
-        int i;
-        for(i=0; i<iban; i++)
-        {
-            if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
-            {
-                break;
-            }
-        }
-        if(i == iban) GS_ABORT();
-
-        #if DC_SERVER
-        map_history->container_block_delete(chunk_index, iba[i].container_id);
-        #endif
-        _remove(i);
-    }
-
-    void remove (int container_id)
-    {
-        int i;
-        for(i=0; i<iban; i++)
-        {
-            if(container_id == iba[i].container_id)
-            {
-                break;
-            }
-        }
-        if(i == iban) GS_ABORT();
-
-        #if DC_SERVER
-        map_history->container_block_delete(chunk_index, iba[i].container_id);
-        #endif
-        _remove(i);
-        printf("inventory_block removed: handle items and inventory destruction \n");
-    }
-
-
+    void remove (int x, int y, int z);
+    void remove(int container_id);
+    
     void add(int x, int y, int z, int container_type, int container_id)
     {
         if(iban == ibam)
@@ -104,57 +72,23 @@ class CHUNK_ITEM_CONTAINER
         iba[iban].container_id = container_id;
         iban++;
 
-        #ifdef DC_SERVER
+        #if DC_SERVER
         map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
         #endif
-
     }
 
     int get(int x, int y, int z)
     {
-        int i;
-        for(i=0; i<iban; i++)
+        for(int i=0; i<iban; i++)
             if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
-                break;
-        if (i==iban)
-        {
-            printf("CHUNK_ITEM_CONTAINER::get error, no container for %i %i %i \n", x,y,z);
-            return NULL_CONTAINER;
-        }
-        return iba[i].container_id;
+                return iba[i].container_id;
+        return NULL_CONTAINER;
     }
 
-#if DC_SERVER
-    void send_chunk_item_containers(int client_id)
-    {
-        {
-            class container_block_chunk_reset_StoC msgr;
-            msgr.chunk_index = chunk_index;
-            msgr.sendToClient(client_id);
-            //printf("chunk index scic = %i \n", chunk_index);
-        }
-
-        class container_block_create_StoC msg;
-
-        for(int i=0; i < iban; i++)
-        {
-            msg.x = iba[i].x;
-            msg.y = iba[i].y;
-            msg.z = iba[i].z;
-            msg.container_type = iba[i].container_type;
-            msg.container_type = iba[i].container_id;
-            msg.sendToClient(client_id);
-        }
-    }
-
-
-    void send_reset_chunk_item_containers(int client_id)
-    {
-        class container_block_chunk_reset_StoC msg;
-        msg.chunk_index = chunk_index;
-        msg.sendToClient(client_id);
-    }
-#endif
+    #if DC_SERVER
+    void send_chunk_item_containers(int client_id);
+    void send_reset_chunk_item_containers(int client_id);
+    #endif
 };
 
 

@@ -74,6 +74,18 @@ ItemContainerInterface* get_container(int id)
 
 void destroy_container(int id)
 {
+    ItemContainerInterface* container = get_container(id);
+    if (container == NULL) return;
+    
+    #if DC_CLIENT
+    // destroy contents
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        destroy_item(container->slot[i]);
+    }
+    #endif
+
     item_container_list->destroy(id);
 }
 
@@ -415,6 +427,11 @@ int get_agent_toolbelt(int agent_id)
     return agent_toolbelt_list[agent_id];
 }
 
+ItemContainerInterface* create_container(ItemContainerType type)
+{
+    return item_container_list->create(type);
+}
+
 void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
 {
     assert(container != NULL);
@@ -422,8 +439,8 @@ void assign_container_to_agent(ItemContainerInterface* container, int* container
     container_list[agent_id] = container->id;
     container->assign_owner(agent_id);
     init_container(container);
-    send_container_create(container, client_id);
-    send_container_assign(container, client_id);
+    send_container_create(client_id, container->id);
+    send_container_assign(client_id, container->id);
 }
 
 void assign_containers_to_agent(int agent_id, int client_id)
@@ -464,7 +481,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
     
-    ItemContainerCraftingBench* crafting_bench = (ItemContainerCraftingBench*)item_container_list->create(CRAFTING_BENCH);
+    ItemContainerCraftingBench* crafting_bench = (ItemContainerCraftingBench*)item_container_list->create(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
     assign_container_to_agent(crafting_bench, agent_craft_bench_list, agent_id, client_id);
 }
 
@@ -498,7 +515,7 @@ void agent_died(int agent_id)
         if (item_id == NULL_ITEM) continue;
         container->remove_item(i);
         send_container_remove(a->client_id, container->id, i);
-        ItemParticle::throw_item(agent_id, item_id);
+        ItemParticle::throw_agent_item(agent_id, item_id);
     }
 }
 
@@ -763,6 +780,31 @@ void send_container_contents(int agent_id, int client_id, int container_id)
     }
 }
 
+void container_block_destroyed(int container_id, int x, int y, int z)
+{
+    assert(container_id != NULL_CONTAINER);
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    // queue the container delete packet first
+    // the handler will destroy the contents -- then the item_particle create will recreate
+    broadcast_container_delete(container_id);
+
+    // dump contents
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        container->remove_item(i);
+        ItemParticle::dump_container_item(container->slot[i], x,y,z);
+        // no need to send container removal packet
+    }
+
+    // destroy container
+    destroy_container(container_id);
 }
+
+
+}   // Item
 
 #endif 

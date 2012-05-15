@@ -11,6 +11,7 @@
 #include <animations/_interface.hpp>
 
 #include <hud/cube_selector.hpp>
+#include <t_map/net/t_CtoS.hpp>
 
 //stuff
 
@@ -379,14 +380,25 @@ void PlayerAgent_action::admin_set_block()
 
     // get block value from somewhere
     int val = HudCubeSelector::cube_selector.get_active_id();
-    
-    admin_set_block_CtoS msg;
-    msg.x = b[0];
-    msg.y = b[1];
-    msg.z = b[2];
-    msg.val = val;
-    msg.send();
-    return;
+
+    if (t_map::get_container_type_for_block(val) != NULL_CONTAINER)
+    {
+        t_map::create_container_block_CtoS msg;
+        msg.x = b[0];
+        msg.y = b[1];
+        msg.z = b[2];
+        msg.val = val;
+        msg.send();
+    }
+    else
+    {   // set block as normal
+        admin_set_block_CtoS msg;
+        msg.x = b[0];
+        msg.y = b[1];
+        msg.z = b[2];
+        msg.val = val;
+        msg.send();
+    }
 }
 #endif
 

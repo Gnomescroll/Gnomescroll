@@ -159,6 +159,12 @@ class Terrain_map_subscription
         chunk[chunk_index].container_block_delete(chunk_index, container_id);
     }
 
+    unsigned short* get_subscribers(int chunk_index, int* subscriber_count)
+    {
+        *subscriber_count = chunk[chunk_index].subscriber_num;
+        return chunk[chunk_index].subscribers;
+    }
+
 };
 
 

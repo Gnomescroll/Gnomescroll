@@ -186,8 +186,17 @@ void init_container(ItemContainerInterface* container)
         case AGENT_NANITE:
             container->init(AGENT_NANITE_X, AGENT_NANITE_Y);
             break;
-        case CRAFTING_BENCH:
-            container->init(CRAFTING_BENCH_X, CRAFTING_BENCH_Y);
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+            container->init(CRAFTING_BENCH_UTILITY_X, CRAFTING_BENCH_UTILITY_Y);
+            break;
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+            container->init(CRAFTING_BENCH_REFINERY_X, CRAFTING_BENCH_REFINERY_Y);
+            break;
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            container->init(CRYOFREEZER_SMALL_X, CRYOFREEZER_SMALL_Y);
+            break;
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            container->init(STORAGE_BLOCK_SMALL_X, STORAGE_BLOCK_SMALL_Y);
             break;
         default:
             printf("init_container() - Unhandled container type %d\n", container->type);
@@ -1199,7 +1208,7 @@ ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int cl
         hand_item_durability = NULL_DURABILITY;
         #endif
         #if DC_SERVER
-        ItemParticle::throw_item(agent_id, hand_item);
+        ItemParticle::throw_agent_item(agent_id, hand_item);
         hand_item = NULL_ITEM;
         send_hand_remove(client_id);
         #endif
@@ -1234,8 +1243,11 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
 #include <item/net/StoC.hpp>
 
 //  tell client to assign container to an agent
-void send_container_assign(class ItemContainerInterface* container, int client_id)
+void send_container_assign(int client_id, int container_id)
 {
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
     class assign_item_container_StoC msg;
     msg.container_id = container->id;
     msg.container_type = container->type;
@@ -1243,22 +1255,45 @@ void send_container_assign(class ItemContainerInterface* container, int client_i
     msg.sendToClient(client_id);
 }
 
-void send_container_create(class ItemContainerInterface* container, int client_id)
+static bool pack_container_create(int container_id, create_item_container_StoC* msg)
 {
-    class create_item_container_StoC msg;
-    msg.container_id = container->id;
-    msg.container_type = container->type;
-    msg.agent_id = client_id;
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return false;
+    msg->container_id = container->id;
+    msg->container_type = container->type;
+    return true;
+}
+
+void send_container_create(int client_id, int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    create_item_container_StoC msg;
+    if (!pack_container_create(container_id, &msg)) return;
     msg.sendToClient(client_id);
 }
 
-void send_container_delete(class ItemContainerInterface* container, int client_id)
+void broadcast_container_create(int container_id)
 {
-    class delete_item_container_StoC msg;
-    msg.container_id = container->id;
-    msg.container_type = container->type;
-    msg.agent_id = client_id;
+    assert(container_id != NULL_CONTAINER);
+    create_item_container_StoC msg;
+    if (!pack_container_create(container_id, &msg)) return;
+    msg.broadcast();
+}
+
+void send_container_delete(int client_id, int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    delete_item_container_StoC msg;
+    msg.container_id = container_id;
     msg.sendToClient(client_id);
+}
+
+void broadcast_container_delete(int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    delete_item_container_StoC msg;
+    msg.container_id = container_id;
+    msg.broadcast();
 }
 
 #endif

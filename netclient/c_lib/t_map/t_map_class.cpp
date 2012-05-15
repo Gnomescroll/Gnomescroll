@@ -530,9 +530,6 @@ namespace t_map
     }
 
 
-    //void Terrain_map::create_item_container_block(int x, int y, int z, int container_type, int container_id)
-    //{}
-
 /*
     void Terrain_map::reset_chunk_container_blocks(int chunk_index)
     {

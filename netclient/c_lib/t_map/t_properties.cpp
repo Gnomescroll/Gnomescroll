@@ -116,6 +116,23 @@ int dat_get_cube_id(const char* name)
     return id; 
 }
 
+ItemContainerType get_container_type_for_block(int block_value)
+{
+    // TODO -- return actual type from dat
+    switch (block_value)
+    {
+        case 5: // crate_1
+            return CONTAINER_TYPE_STORAGE_BLOCK_SMALL;
+        case 6:  // crate_2
+            return CONTAINER_TYPE_CRAFTING_BENCH_REFINERY;
+        case 7: // crate_3
+            return CONTAINER_TYPE_CRAFTING_BENCH_UTILITY;
+        default:
+            return CONTAINER_TYPE_NONE;
+    }
+    return CONTAINER_TYPE_NONE;
+}
+
 }   // t_map
 
 /*
