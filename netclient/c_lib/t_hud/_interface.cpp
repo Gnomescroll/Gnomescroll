@@ -28,9 +28,21 @@ void set_container_id(ItemContainerType container_type, int container_id)
         case AGENT_NANITE:
             nanite_container->container_id = container_id;
             break;
-        case CRAFTING_BENCH:
+            
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             crafting_container->container_id = container_id;
             break;
+
+        // TODO -- cryofreezer UI widget
+        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            //cryofreezer->container_id = container_id;
+            //break;
+
+        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            //storage_block->container_id = container_id;
+            //break;
+            
         default:
             assert(false);
             return;
@@ -42,21 +54,37 @@ void set_container_id(ItemContainerType container_type, int container_id)
     Input Handling
 */
 
-static bool hud_enabled = false;
+static bool agent_container_enabled = false;
+static bool block_container_enabled = false;
 float mouse_x = -1;
 float mouse_y = -1;
 
-void enable_container_hud()
+void enable_agent_container_hud()
 {
-    hud_enabled = true;
+    assert(!block_container_enabled);
+    agent_container_enabled = true;
 }
 
-void disable_container_hud()
+void disable_agent_container_hud()
 {
     // reset mouse state
     mouse_x = -1;
     mouse_y = -1;
-    hud_enabled = false;
+    agent_container_enabled = false;
+}
+
+void enable_block_container_hud()
+{
+    assert(!agent_container_enabled);
+    block_container_enabled = true;
+}
+
+void disable_block_container_hud()
+{
+    // reset mouse state
+    mouse_x = -1;
+    mouse_y = -1;
+    block_container_enabled = false;
 }
 
 static UIElement* get_container_and_slot(int x, int y, int* slot)
@@ -151,8 +179,9 @@ ContainerInputEvent mouse_motion(int x, int y)
 ContainerInputEvent scroll_up()
 {
     if (agent_toolbelt == NULL) return NULL_EVENT;
-    agent_toolbelt->selected_slot += 1;
+    agent_toolbelt->selected_slot -= 1;
     agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
+    if (agent_toolbelt->selected_slot < 0) agent_toolbelt->selected_slot += agent_toolbelt->xdim;
     
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
@@ -164,9 +193,8 @@ ContainerInputEvent scroll_up()
 ContainerInputEvent scroll_down()
 {
     if (agent_toolbelt == NULL) return NULL_EVENT;
-    agent_toolbelt->selected_slot -= 1;
+    agent_toolbelt->selected_slot += 1;
     agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
-    if (agent_toolbelt->selected_slot < 0) agent_toolbelt->selected_slot += agent_toolbelt->xdim;
     
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
@@ -310,11 +338,11 @@ void draw_hud()
 {
     agent_toolbelt->draw();
 
-    if (!hud_enabled) return;
+    if (!agent_container_enabled && !block_container_enabled) return;
 
     agent_container->draw();
     nanite_container->draw();
-    crafting_container->draw();
+    if (block_container_enabled) crafting_container->draw();
 
     draw_grabbed_icon();
 }

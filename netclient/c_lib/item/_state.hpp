@@ -14,7 +14,8 @@ extern class ItemList* item_list;
 extern int player_container_id;
 extern int player_toolbelt_id;
 extern int player_nanite_id;
-extern int player_craft_bench_id;
+extern int opened_container;
+extern int opened_container_event_id;
 
 extern class ItemContainer* player_container;
 extern class ItemContainer* player_toolbelt;
@@ -37,8 +38,8 @@ extern int player_hand_durability_ui;
 extern int* agent_container_list;
 extern int* agent_toolbelt_list;
 extern int* agent_nanite_list;
-extern int* agent_craft_bench_list;
 extern ItemID* agent_hand_list;
+extern int* opened_containers;
 
 #endif
 

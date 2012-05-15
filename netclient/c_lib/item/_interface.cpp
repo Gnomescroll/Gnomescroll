@@ -26,17 +26,17 @@ void init()
     //set_sprite_ids();
 
     #if DC_SERVER
-    agent_container_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_toolbelt_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_nanite_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_craft_bench_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
-
-    for (int i=0; i<AGENT_MAX; i++) agent_container_list[i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_craft_bench_list[i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_hand_list [i] = NULL_ITEM;
+    agent_container_list   = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_toolbelt_list    = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_nanite_list      = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_hand_list        = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
+    opened_containers      = (int*)   malloc(AGENT_MAX * sizeof(int));
+    
+    for (int i=0; i<AGENT_MAX; i++) agent_container_list  [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list   [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list     [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_hand_list       [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) opened_containers     [i] = NULL_CONTAINER;
     #endif
 
     init_properties();
@@ -48,9 +48,9 @@ void teardown()
     if (item_list           != NULL) delete item_list;
 
     #if DC_CLIENT
-    if (player_container_ui != NULL) delete player_container_ui;
-    if (player_toolbelt_ui  != NULL) delete player_toolbelt_ui;
-    if (player_nanite_ui    != NULL) delete player_nanite_ui;
+    if (player_container_ui   != NULL) delete player_container_ui;
+    if (player_toolbelt_ui    != NULL) delete player_toolbelt_ui;
+    if (player_nanite_ui      != NULL) delete player_nanite_ui;
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     #endif
 
@@ -58,8 +58,8 @@ void teardown()
     if (agent_container_list   != NULL) free(agent_container_list);
     if (agent_toolbelt_list    != NULL) free(agent_toolbelt_list);
     if (agent_nanite_list      != NULL) free(agent_nanite_list);
-    if (agent_craft_bench_list != NULL) free(agent_craft_bench_list);
-    if (agent_hand_list != NULL) free(agent_hand_list);
+    if (agent_hand_list        != NULL) free(agent_hand_list);
+    if (opened_containers      != NULL) free(opened_containers);
     #endif
 
     tear_down_properties();
@@ -74,6 +74,18 @@ ItemContainerInterface* get_container(int id)
 
 void destroy_container(int id)
 {
+    ItemContainerInterface* container = get_container(id);
+    if (container == NULL) return;
+    
+    #if DC_CLIENT
+    // destroy contents
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        destroy_item(container->slot[i]);
+    }
+    #endif
+
     item_container_list->destroy(id);
 }
 
@@ -187,7 +199,7 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
     assert(src_item->stack_size >= 1);
 }
 
-}
+}   // Item
  
 // Client
 #if DC_CLIENT
@@ -223,16 +235,43 @@ void open_container(int container_id)
 {
     assert(container_id != NULL_CONTAINER);
 
-    printf("open container %d\n", container_id);
-    // send packet
+    // setup UI widget
+    // TODO -- handle multiple UI types 
+    player_craft_bench = (ItemContainerCraftingBench*)get_container(container_id);
+    if (player_craft_bench == NULL) return;
+    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
+    player_craft_bench_ui = new ItemContainerUI(container_id);
+    player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
+    player_craft_bench_ui->load_data(player_craft_bench->slot);
+    t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
+    
+    // assigned "opened_container" id
+    opened_container = container_id;
+
+    // send open packet
+    opened_container_event_id = record_container_event(container_id);
+    open_container_CtoS msg;
+    msg.container_id = container_id;
+    msg.event_id = opened_container_event_id;
+    msg.send();
 }
 
-void close_container(int container_id)
+void close_container()
 {
-    assert(container_id != NULL_CONTAINER);
+    if (opened_container == NULL_CONTAINER) return;
 
-    printf("close container %d\n", container_id);
+    // teardown UI widget
+    // TODO -- handle multiple UI types
+    player_craft_bench = NULL;
+    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
+    player_craft_bench_ui = NULL;
+
+    opened_container = NULL_CONTAINER;
+    
     // send packet
+    close_container_CtoS msg;
+    msg.container_id = opened_container;
+    msg.send();
 }
 
 
@@ -351,6 +390,7 @@ ItemID split_item_stack_in_half(ItemID src)
     new_item->stack_size = split_amount;
     return new_item->id;
 }
+
 bool agent_owns_container(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -358,8 +398,17 @@ bool agent_owns_container(int agent_id, int container_id)
     if (agent_container_list[agent_id] == container_id) return true;
     if (agent_toolbelt_list[agent_id] == container_id) return true;
     if (agent_nanite_list[agent_id] == container_id) return true;
-    if (agent_craft_bench_list[agent_id] == container_id) return true;
     return false;
+}
+
+bool agent_can_access_container(int agent_id, int container_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return false;
+    // owned by other player
+    if (container->owner != NO_AGENT && container->owner != agent_id) return false;
+    return true;
 }
 
 ItemID get_agent_toolbelt_item(int agent_id, int slot)
@@ -393,6 +442,11 @@ int get_agent_toolbelt(int agent_id)
     return agent_toolbelt_list[agent_id];
 }
 
+ItemContainerInterface* create_container(ItemContainerType type)
+{
+    return item_container_list->create(type);
+}
+
 void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
 {
     assert(container != NULL);
@@ -400,8 +454,8 @@ void assign_container_to_agent(ItemContainerInterface* container, int* container
     container_list[agent_id] = container->id;
     container->assign_owner(agent_id);
     init_container(container);
-    send_container_create(container, client_id);
-    send_container_assign(container, client_id);
+    send_container_create(client_id, container->id);
+    send_container_assign(client_id, container->id);
 }
 
 void assign_containers_to_agent(int agent_id, int client_id)
@@ -414,19 +468,33 @@ void assign_containers_to_agent(int agent_id, int client_id)
     ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
     assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
 
-    #if !PRODUCTION
-    // put a grenade launcher in the toolbelt to selt
-    Item* grenade_launcher = create_item(get_item_type((char*)"grenade_launcher"));
-    grenade_launcher->energy = get_max_energy(grenade_launcher->type);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
-    #endif
-
     Item* laser_rifle = create_item(get_item_type((char*)"laser_rifle"));
-    laser_rifle->energy = get_max_energy(laser_rifle->type);
     auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);    // this will send the item create
 
     Item* mining_laser = create_item(get_item_type((char*)"mining_laser"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
+
+    #if !PRODUCTION
+    // put a grenade launcher in the toolbelt to selt
+    Item* grenade_launcher = create_item(get_item_type((char*)"grenade_launcher"));
+    auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
+
+    // add a few container blocks
+    Item* crate;
+    //crate = create_item(get_item_type((char*)"crate_1"));
+    //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    //crate = create_item(get_item_type((char*)"crate_2"));
+    //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    crate = create_item(get_item_type((char*)"crate_3"));
+    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    crate = create_item(get_item_type((char*)"crate_3"));
+    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    crate = create_item(get_item_type((char*)"crate_3"));
+    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    crate = create_item(get_item_type((char*)"crate_3"));
+    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    #endif
+
 
     #if !PRODUCTION
     // debug items
@@ -441,9 +509,6 @@ void assign_containers_to_agent(int agent_id, int client_id)
     
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
-    
-    ItemContainerCraftingBench* crafting_bench = (ItemContainerCraftingBench*)item_container_list->create(CRAFTING_BENCH);
-    assign_container_to_agent(crafting_bench, agent_craft_bench_list, agent_id, client_id);
 }
 
 Item* create_item(int item_type)
@@ -476,7 +541,15 @@ void agent_died(int agent_id)
         if (item_id == NULL_ITEM) continue;
         container->remove_item(i);
         send_container_remove(a->client_id, container->id, i);
-        ItemParticle::throw_item(agent_id, item_id);
+        ItemParticle::throw_agent_item(agent_id, item_id);
+    }
+
+    // close container
+    assert(opened_containers != NULL);
+    if (opened_containers[agent_id] != NULL_CONTAINER)
+    {
+        send_container_close(agent_id, opened_containers[agent_id]);
+        agent_close_container(agent_id, opened_containers[agent_id]);
     }
 }
 
@@ -488,7 +561,6 @@ void agent_quit(int agent_id)
     destroy_container(agent_container_list[agent_id]);
     destroy_container(agent_toolbelt_list[agent_id]);
     destroy_container(agent_nanite_list[agent_id]);
-    destroy_container(agent_craft_bench_list[agent_id]);
 }
 
 void digest_nanite_food()
@@ -587,7 +659,6 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     assert(agent_hand_list != NULL);
-    assert(agent_craft_bench_list != NULL);
 
     Agent_state* agent = ServerState::agent_list->get(agent_id);
     if (agent == NULL) return;
@@ -635,7 +706,6 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
 
     ASSERT_VALID_AGENT_ID(agent_id);
     assert(agent_hand_list != NULL);
-    assert(agent_craft_bench_list != NULL);
 
     Agent_state* agent = ServerState::agent_list->get(agent_id);
     if (agent == NULL) return;
@@ -727,6 +797,90 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     }
 }
 
+void send_container_contents(int agent_id, int client_id, int container_id)
+{
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    if (!agent_can_access_container(agent_id, container_id)) return;
+    
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        send_item_create(client_id, container->slot[i]);
+    }
 }
+
+void container_block_destroyed(int container_id, int x, int y, int z)
+{
+    assert(container_id != NULL_CONTAINER);
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    // close all opened containers
+    assert(opened_containers != NULL);
+    for (int i=0; i<AGENT_MAX; i++)
+        if (opened_containers[i] == container_id)
+            opened_containers[i] = NULL_CONTAINER;
+
+    // queue the container delete packet first
+    // the handler will destroy the contents -- then the item_particle create will recreate
+    broadcast_container_delete(container_id);
+
+    // dump contents
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        container->remove_item(i);
+        ItemParticle::dump_container_item(container->slot[i], x,y,z);
+        // no need to send container removal packet
+    }
+
+    // destroy container
+    destroy_container(container_id);
+}
+
+bool agent_in_container_range(int agent_id, int container_id)
+{
+    // get agent position
+    ASSERT_VALID_AGENT_ID(agent_id);
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    if (a == NULL) return false;
+
+    Vec3 agent_position = a->get_center();
+
+    // get container position, if applicable
+    ItemContainerInterface* container = get_container(container_id);
+    assert(container != NULL);
+    if (!container_type_is_block(container->type)) return false;
+
+    int position[3];
+    t_map::get_container_location(container->id, position);
+    Vec3 container_position = vec3_init(position[0], position[1], position[2]);
+    container_position = vec3_add(container_position, vec3_init(0.5f, 0.5f, 0.5f));
+    
+    // do radius check
+    if (vec3_distance_squared(agent_position, container_position)
+        <= AGENT_CONTAINER_REACH*AGENT_CONTAINER_REACH) return true;
+    return false;
+}
+
+// check that agents are still in range of containers they are accessing
+void check_agents_in_container_range()
+{
+    using ServerState::agent_list;
+    for (int i=0; i<agent_list->n_max; i++)
+    {
+        if (agent_list->a[i] == NULL) continue;
+        Agent_state* a = agent_list->a[i];
+        if (opened_containers[a->id] == NULL_CONTAINER) continue;
+        if (agent_in_container_range(a->id, opened_containers[a->id])) continue;
+        agent_close_container(a->id, opened_containers[a->id]);
+        send_container_close(a->id, opened_containers[a->id]);
+    }
+}
+
+}   // Item
 
 #endif 

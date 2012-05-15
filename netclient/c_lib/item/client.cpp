@@ -10,7 +10,7 @@ namespace Item
 static uint16_t container_event_id = 0;
 int container_event[CONTAINER_EVENT_MAX];
 
-static int record_container_event(int container_id)
+int record_container_event(int container_id)
 {
     container_event_id += 1;
     container_event_id %= CONTAINER_EVENT_MAX;
@@ -275,13 +275,16 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
     switch (container_type)
     {
         case AGENT_CONTAINER:
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
             action = alpha_action_decision_tree(container_id, slot);
             break;
         case AGENT_NANITE:
             action = nanite_alpha_action_decision_tree(container_id, slot);
             break;
-        case CRAFTING_BENCH:
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (craft_output) action = craft_output_alpha_action_decision_tree(container_id, slot);
             else action = craft_input_alpha_action_decision_tree(container_id, slot);
             break;
@@ -297,13 +300,16 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
     switch (container_type)
     {
         case AGENT_CONTAINER:
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
             send_container_alpha_action(action, container_id, slot);
             break;
         case AGENT_NANITE:
             send_nanite_alpha_action(action, container_id, slot);
             break;
-        case CRAFTING_BENCH:
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
             else send_craft_alpha_action(action, container_id, slot);
             break;
@@ -332,13 +338,16 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
     switch (container_type)
     {
         case AGENT_CONTAINER:
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
             action = beta_action_decision_tree(container_id, slot);
             break;
         case AGENT_NANITE:
             action = nanite_beta_action_decision_tree(container_id, slot);
             break;
-        case CRAFTING_BENCH:
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (craft_output) action = craft_output_beta_action_decision_tree(container_id, slot);
             else action = craft_input_beta_action_decision_tree(container_id, slot);
             break;
@@ -355,13 +364,16 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
     switch (container_type)
     {
         case AGENT_CONTAINER:
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
             send_container_beta_action(action, container_id, slot);
             break;
         case AGENT_NANITE:
             send_nanite_beta_action(action, container_id, slot);
             break;
-        case CRAFTING_BENCH:
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
             else send_craft_beta_action(action, container_id, slot);
             break;

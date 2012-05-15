@@ -14,7 +14,8 @@ ItemList* item_list = NULL;
 int player_container_id = NULL_CONTAINER;   //store id of player container
 int player_toolbelt_id = NULL_CONTAINER;   //store id of player container
 int player_nanite_id = NULL_CONTAINER;   //store id of player container
-int player_craft_bench_id = NULL_CONTAINER;
+int opened_container = NULL_CONTAINER;
+int opened_container_event_id = 0;
 
 class ItemContainer* player_container = NULL;
 class ItemContainer* player_toolbelt = NULL;
@@ -38,9 +39,8 @@ int player_hand_durability_ui = NULL_DURABILITY;
 int* agent_container_list = NULL;
 int* agent_toolbelt_list = NULL;
 int* agent_nanite_list = NULL;
-int* agent_craft_bench_list = NULL;
 ItemID* agent_hand_list = NULL;
-
+int* opened_containers = NULL;
 #endif
 
 }

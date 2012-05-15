@@ -14,7 +14,8 @@ namespace Item
 
 inline void item_create_StoC::handle()
 {
-    Item* item = item_list->create_type(type, (ItemID)id);
+    //Item* item = item_list->create_type(type, (ItemID)id);
+    Item* item = item_list->get_or_create_type(type, (ItemID)id);
     if (item == NULL) return;
     item->group = group;
     item->durability = durability;
@@ -46,10 +47,13 @@ inline void create_item_container_StoC::handle()
 {
     ItemContainerInterface* ic = create_container((ItemContainerType)container_type,  container_id);
     init_container(ic);
+    ic->chunk = chunk;  // TODO
 }
 
 inline void delete_item_container_StoC::handle()
 {
+    // close container
+    if (opened_container == container_id) opened_container = NULL_CONTAINER;
     destroy_container(container_id);
 }
 
@@ -84,14 +88,6 @@ inline void assign_item_container_StoC::handle()
             player_nanite_ui = new ItemContainerNaniteUI(ic->id);
             player_nanite_ui->init(ic->type, ic->xdim, ic->ydim);
             player_nanite_ui->load_data(ic->slot);
-            break;
-        case CRAFTING_BENCH:
-            player_craft_bench_id = container_id;
-            player_craft_bench = (ItemContainerCraftingBench*)ic;
-            if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
-            player_craft_bench_ui = new ItemContainerUI(ic->id);
-            player_craft_bench_ui->init(ic->type, ic->xdim, ic->ydim);
-            player_craft_bench_ui->load_data(ic->slot);
             break;
         default:
             assert(false);
@@ -172,6 +168,19 @@ inline void container_action_failed_StoC::handle()
     container->load_data(get_container_contents(container_id));
 }
 
+inline void open_container_failed_StoC::handle()
+{
+    printf("open container failed\n");
+    if (opened_container_event_id == event_id && opened_container == container_id)
+        opened_container = NULL_CONTAINER;
+}
+
+inline void close_container_StoC::handle()
+{
+    printf("server closed container\n");
+    opened_container = NULL_CONTAINER;
+}
+
 } // Item
 #endif
 
@@ -196,6 +205,9 @@ inline void insert_item_in_hand_StoC::handle() {}
 inline void remove_item_from_hand_StoC::handle() {}
 
 inline void container_action_failed_StoC::handle() {}
+
+inline void open_container_failed_StoC::handle() {}
+inline void close_container_StoC::handle() {}
 
 } // Item
 

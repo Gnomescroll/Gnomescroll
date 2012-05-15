@@ -71,11 +71,12 @@ void RegisterMessages() {
     t_map::clear_alias_StoC::register_client_packet();
 
     // block value change
+    t_map::block_CtoS::register_server_packet();
     t_map::block_StoC::register_client_packet();
     t_map::block_action_StoC::register_client_packet();
-    t_map::block_CtoS::register_server_packet();
     t_map::map_metadata_StoC::register_client_packet();
     
+    t_map::create_container_block_CtoS::register_server_packet();
     t_map::container_block_chunk_reset_StoC::register_client_packet();
     t_map::container_block_create_StoC::register_client_packet();
     t_map::container_block_delete_StoC::register_client_packet();
@@ -216,6 +217,12 @@ void RegisterMessages() {
 
     Item::no_container_action_alpha_CtoS::register_server_packet();
     Item::no_container_action_beta_CtoS::register_server_packet();
+
+    Item::open_container_CtoS::register_server_packet();
+    Item::close_container_CtoS::register_server_packet();
+
+    Item::open_container_failed_StoC::register_client_packet();
+    Item::close_container_StoC::register_client_packet();
 
     // container actions (to client)
     Item::container_action_failed_StoC::register_client_packet();

@@ -40,7 +40,8 @@ void broadcast_particle_item_state(int particle_id);
 
 
 void check_item_pickups();
-void throw_item(int agent_id, ItemID item_id);
+void throw_agent_item(int agent_id, ItemID item_id);
+void dump_container_item(ItemID item_id, float x, float y, float z);
 
 #endif
 

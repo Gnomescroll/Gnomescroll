@@ -276,4 +276,30 @@ class no_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<n
         inline void handle();
 };
 
+class open_container_CtoS: public FixedSizeReliableNetPacketToServer<open_container_CtoS>
+{
+    public:
+        uint16_t event_id;
+        uint16_t container_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&event_id, buff, buff_n, pack);
+            pack_u16(&container_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class close_container_CtoS: public FixedSizeReliableNetPacketToServer<close_container_CtoS>
+{
+    public:
+        uint16_t container_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&container_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 }

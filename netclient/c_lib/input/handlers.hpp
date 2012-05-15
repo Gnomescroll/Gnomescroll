@@ -13,7 +13,6 @@ struct InputState
 {
     bool mouse_bound;
     bool help_menu;
-    bool container;
     bool scoreboard;
     bool map;
     bool chat;
@@ -37,6 +36,9 @@ struct InputState
     // options
     bool invert_mouse;
     float sensitivity;
+
+    bool agent_container;
+    bool block_container;
 };
 
 extern InputState input_state;
@@ -56,7 +58,6 @@ void key_state_handler(Uint8 *keystate, int numkeys);
 // triggers
 void toggle_mouse_bind();
 void toggle_help_menu();
-void toggle_container();
 void toggle_scoreboard();
 void toggle_map();
 void toggle_chat();
@@ -67,6 +68,10 @@ void enable_quit();
 
 void toggle_input_mode();
 void toggle_camera_mode();
+
+void toggle_agent_container();
+void enable_block_container();
+void disable_block_container();
 
 // options
 void set_input_options(

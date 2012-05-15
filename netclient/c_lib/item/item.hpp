@@ -82,6 +82,22 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
             item->init(item_type);
             return item;
         }
+        
+        Item* get_or_create_type(int item_type, ItemID item_id)
+        {
+            Item* item = this->get(item_id);
+            if (item != NULL)
+            {
+                if (item_type != item->type)
+                    printf("WARNING: %s -- %s, item_type %d does not match item->type %d\n", this->name(), __FUNCTION__, item_type, item->type);
+                return item;
+            }
+            
+            item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
+            if (item == NULL) return NULL;
+            item->init(item_type);
+            return item;
+        }
         #endif
 
         #if DC_SERVER

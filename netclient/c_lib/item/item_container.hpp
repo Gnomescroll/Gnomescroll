@@ -1,7 +1,10 @@
 #pragma once
 
+#include <agent/constants.hpp>
+
 #include <item/common/enum.hpp>
 #include <item/common/constant.hpp>
+#include <item/properties.hpp>
 
 namespace Item
 {
@@ -44,9 +47,11 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
 
 //network
 //  tell client to assign container to an agent
-void send_container_assign(class ItemContainerInterface* container, int client_id);
-void send_container_create(class ItemContainerInterface* container, int client_id);
-void send_container_delete(class ItemContainerInterface* container, int client_id);
+void send_container_assign(int client_id, int container_id);
+void send_container_create(int client_id, int container_id);
+void send_container_delete(int client_id, int container_id);
+void broadcast_container_create(int container_id);
+void broadcast_container_delete(int container_id);
 #endif
 
 class ItemContainerInterface
@@ -63,6 +68,7 @@ class ItemContainerInterface
         ItemID* slot;
 
         int owner;
+        int chunk;  // TODO -- move to subclass
 
         bool is_full()
         {
@@ -102,6 +108,10 @@ class ItemContainerInterface
 
         virtual void init(int xdim, int ydim) = 0;
 
+        virtual bool can_be_opened_by(int agent_id) { return true; }
+        virtual void lock(int agent_id) {}
+        virtual void unlock(int agent_id) {}
+
         virtual ~ItemContainerInterface()
         {
            if (this->slot != NULL) delete[] this->slot;
@@ -111,7 +121,7 @@ class ItemContainerInterface
         : id(id), type(type),
         xdim(0), ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
-        owner(NO_AGENT)
+        owner(NO_AGENT), chunk(0xffff)
         {}
 };
 
@@ -305,16 +315,25 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
 {
     switch (type)
     {
-        case AGENT_TOOLBELT:
         case AGENT_CONTAINER:
+        case AGENT_TOOLBELT:
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             return new ItemContainer((ItemContainerType)type, id);
+
         case AGENT_NANITE:
             return new ItemContainerNanite((ItemContainerType)type, id);
-        case CRAFTING_BENCH:
+
+        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             return new ItemContainerCraftingBench((ItemContainerType)type, id);
+
+        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            //return new ItemContainerCryofreezer((ItemContainerType)type, id);
+
+        default:
+            printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
+            assert(false);
     }
-    printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
-    assert(false);
 }
 
 const int ITEM_CONTAINER_MAX = 1024;

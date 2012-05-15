@@ -36,7 +36,7 @@ class ItemContainerInterface* create_container(ItemContainerType type, int id);
 void update_container_ui_from_state();
 
 void open_container(int container_id);
-void close_container(int container_id);
+void close_container();
 
 void open_inventory();
 void close_inventory();
@@ -69,11 +69,14 @@ namespace Item
 ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);
 bool agent_owns_container(int agent_id, int container_id);
+bool agent_can_access_container(int agent_id, int container_id);
 
 ItemID get_agent_hand(int agent_id);
 int get_agent_container(int agent_id);
 int get_agent_toolbelt(int agent_id);
 ItemID get_agent_toolbelt_item(int agent_id, int slot);
+
+ItemContainerInterface* create_container(ItemContainerType type);
 
 void assign_container_to_agent(class ItemContainerInterface* container, int* container_list, int agent_id, int client_id);
 void assign_containers_to_agent(int agent_id, int client_id);
@@ -92,6 +95,13 @@ int consume_stack_item(ItemID item_id);
 
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
 void consume_crafting_reagents(int agent_id, int container_id, int recipe_id);
+
+void send_container_contents(int agent_id, int client_id, int container_id);
+
+void container_block_destroyed(int container_id, int x, int y, int z);
+
+bool agent_in_container_range(int agent_id, int container_id);
+void check_agents_in_container_range(); // checks that any agent accessing a container is still in range
 }
 #endif
 

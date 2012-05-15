@@ -65,7 +65,6 @@ b = NewSolidBlock(255, "error_block"); -- id, name
 b.texture = iso_texture(error_block);
 --b.hud = hud(0, error_block);
 
-
 --- Classic Blocks ---
 
 b = NewSolidBlock(1, "terminal_blue");

@@ -24,8 +24,10 @@ typedef struct
     bool craft_output;
 } ContainerInputEvent;
 
-void enable_container_hud();
-void disable_container_hud();
+void enable_agent_container_hud();
+void disable_agent_container_hud();
+void enable_block_container_hud();
+void disable_block_container_hud();
 
 ContainerInputEvent left_mouse_down(int x, int y);
 ContainerInputEvent left_mouse_up(int x, int y);

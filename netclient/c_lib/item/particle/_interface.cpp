@@ -174,16 +174,29 @@ void check_item_pickups()
     }
 }
 
-void throw_item(int agent_id, ItemID item_id)
+static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
+{
+    Item::Item* item = Item::get_item(item_id);
+    if (item == NULL) return;
+
+    // create particle
+    ItemParticle* particle = create_item_particle(
+        item->id, item->type,
+        position.x, position.y, position.z,
+        velocity.x, velocity.y, velocity.z
+    );
+    if (particle == NULL) return;
+    broadcast_particle_item_create(particle->id);
+    particle->lock_pickup();
+}
+
+void throw_agent_item(int agent_id, ItemID item_id)
 {
     assert(item_id != NULL_ITEM);
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
 
     Vec3 position = a->get_center();
-    float x = position.x;
-    float y = position.y;
-    float z = position.z;
 
     const float mom = 2.0f;
     Vec3 force = a->s.forward_vector();
@@ -191,19 +204,23 @@ void throw_item(int agent_id, ItemID item_id)
     normalize_vector(&force);
     force = vec3_scalar_mult(force, mom);
     force = vec3_bias(force, (randf()-0.5f) * 30);
-    float vx = force.x;
-    float vy = force.y;
-    float vz = force.z;
 
-    Item::Item* item = Item::get_item(item_id);
-    if (item == NULL) return;
-    //Item::broadcast_item_destroy(item->id);
+    throw_item(item_id, position, force);
+}
 
-    // create particle
-    ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
-    if (particle == NULL) return;
-    broadcast_particle_item_create(particle->id);
-    particle->lock_pickup();
+void dump_container_item(ItemID item_id, float x, float y, float z)
+{
+    assert(item_id != NULL_ITEM);
+    
+    Vec3 position = vec3_init(x,y,z);
+    position = vec3_add(position, vec3_init(randf(), randf(), randf())); // random point inside box
+
+    const float mom = 2.0f;
+    Vec3 force = vec3_init(randf()-0.5f, randf()-0.5f, randf()-0.5f);
+    normalize_vector(&force);
+    force = vec3_scalar_mult(force, mom);
+
+    throw_item(item_id, position, force);
 }
 
 #endif

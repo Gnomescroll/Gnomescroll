@@ -23,21 +23,45 @@ void toggle_help_menu()
     input_state.help_menu = (!input_state.help_menu);
 }
 
-void toggle_container()
+static bool rebind_mouse = false;
+void toggle_agent_container()
 {
-    input_state.container = (!input_state.container);
-    if (input_state.container)
+    input_state.agent_container = (!input_state.agent_container);
+    if (input_state.agent_container)
     {
-        t_hud::enable_container_hud();
+        t_hud::enable_agent_container_hud();
         Item::open_inventory();
-        SDL_ShowCursor(1);
+        rebind_mouse = input_state.mouse_bound;
+        input_state.mouse_bound = false;
     }
     else
     {
-        input_state.ignore_mouse_motion = true;
-        t_hud::disable_container_hud();
+        t_hud::disable_agent_container_hud();
         Item::close_inventory();
+        input_state.mouse_bound = rebind_mouse;
+        input_state.ignore_mouse_motion = true;
     }
+}
+
+void enable_block_container()
+{
+    if (input_state.block_container) return;
+    printf("enable block container\n");
+    input_state.block_container = true;
+    t_hud::enable_block_container_hud();
+    rebind_mouse = input_state.mouse_bound;
+    input_state.mouse_bound = false;
+}
+
+void disable_block_container()
+{
+    if (!input_state.block_container) return;
+    printf("disable block container\n");
+    input_state.block_container = false;
+    t_hud::disable_block_container_hud();
+    Item::close_container();
+    input_state.mouse_bound = rebind_mouse;
+    input_state.ignore_mouse_motion = true;
 }
 
 void toggle_scoreboard()
@@ -158,7 +182,8 @@ void init_handlers()
     #endif
 
     input_state.help_menu = false;
-    input_state.container = false;
+    input_state.agent_container = false;
+    input_state.block_container = false;
     input_state.scoreboard = false;
     input_state.map = false;
     input_state.chat = false;
@@ -308,7 +333,8 @@ void container_key_down_handler(SDL_Event* event)
     {
         case SDLK_e:
         case SDLK_ESCAPE:
-            toggle_container();
+            if (input_state.block_container) disable_block_container();
+            else toggle_agent_container();
             break;
 
         default: break;
@@ -376,6 +402,12 @@ void container_mouse_up_handler(SDL_Event* event)
     {
         case SDL_BUTTON_LEFT:
             container_event = t_hud::left_mouse_up(x,y);
+            printf("container event: ");
+            printf("id %d ", container_event.container_id);
+            printf("slot %d ", container_event.slot);
+            printf("nanite %d ", container_event.nanite);
+            printf("craft output %d ", container_event.craft_output);
+            printf("\n");
             Item::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
             break;
 
@@ -646,7 +678,7 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.container)
+    if (input_state.agent_container || input_state.block_container)
         container_key_down_handler(event);
     else if (input_state.chat)
         chat_key_down_handler(event);
@@ -740,7 +772,7 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_e:
-                toggle_container();
+                toggle_agent_container();
                 break;
 
             case SDLK_ESCAPE:
@@ -823,7 +855,7 @@ void key_up_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.container)
+    if (input_state.agent_container || input_state.block_container)
         container_key_up_handler(event);
     else if (input_state.chat)
         chat_key_up_handler(event);
@@ -880,7 +912,7 @@ void mouse_button_down_handler(SDL_Event* event)
     }
 
     // chat doesnt affect mouse
-    if (input_state.container)
+    if (input_state.agent_container || input_state.block_container)
         container_mouse_down_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
@@ -907,7 +939,7 @@ void mouse_button_up_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
 
-    if (input_state.container)
+    if (input_state.agent_container || input_state.block_container)
         container_mouse_up_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
@@ -931,7 +963,7 @@ void mouse_motion_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.container)
+    if (input_state.agent_container || input_state.block_container)
     {
         SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         container_mouse_motion_handler(event);
