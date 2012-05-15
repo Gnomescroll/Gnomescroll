@@ -101,7 +101,8 @@ class Agent_state {
         void spawn_state();
 
         Vec3 get_position() { return vec3_init(this->s.x, this->s.y, this->s.z); }
-        Vec3 get_center() {
+        Vec3 get_center()
+        {
             if (this->vox == NULL) return this->get_position();
             return this->vox->get_part(AGENT_PART_TORSO)->get_center();
         }

@@ -13,47 +13,9 @@
 #include <hud/cube_selector.hpp>
 #include <t_map/net/t_CtoS.hpp>
 
-//stuff
-
-//#include <t_map/net/t_CtoS.hpp>
-
-//void PlayerAgent_action::fire()
-//{
-    //if (p->you == NULL) return;
-    //if (p->you->status.dead) return;
-    //if (p->you->status.team == 0) return;
-
-    //int type = p->you->weapons.active_type();
-    //if (!p->you->weapons.fire())
-    //{
-        //Sound::out_of_ammo();   // move this to individual weapon fire methods later
-        //return;
-    //}
-    //switch (type)
-    //{
-        //case Weapons::TYPE_block_applier:
-            //set_block();
-            //break;
-        //case Weapons::TYPE_hitscan_laser:
-            //hitscan_laser();
-            //break;
-        //case Weapons::TYPE_block_pick:
-            //hitscan_pick();
-            //break;
-        //case Weapons::TYPE_grenade_thrower:
-            //throw_grenade();
-            //break;
-        //case Weapons::TYPE_spawner_placer:
-            //place_spawner();
-            //break;
-        //case Weapons::TYPE_turret_placer:
-            //place_turret();
-            //break;
-        //default:
-            //printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
-            //break;
-    //}
-//}
+#include <item/_interface.hpp>
+#include <item/properties.hpp>
+#include <item/config/item_attribute.hpp>
 
 void PlayerAgent_action::hitscan_laser()
 {
@@ -351,12 +313,27 @@ void PlayerAgent_action::set_block(ItemID placer_id)
     );
     if (b==NULL) return;
 
-    agent_set_block_CtoS msg;
-    msg.x = b[0];
-    msg.y = b[1];
-    msg.z = b[2];
-    msg.placer_id = placer_id;
-    msg.send();
+    int placer_type = Item::get_item_type(placer_id);
+    Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
+    int val = attr->placer_block_type_id;
+    if (t_map::get_container_type_for_block(val) != NULL_CONTAINER)
+    {
+        t_map::create_container_block_CtoS msg;
+        msg.x = b[0];
+        msg.y = b[1];
+        msg.z = b[2];
+        msg.placer_id = NULL_ITEM;
+        msg.send();
+    }
+    else
+    {
+        agent_set_block_CtoS msg;
+        msg.x = b[0];
+        msg.y = b[1];
+        msg.z = b[2];
+        msg.placer_id = placer_id;
+        msg.send();
+    }
     return;
 }
 
@@ -381,24 +358,12 @@ void PlayerAgent_action::admin_set_block()
     // get block value from somewhere
     int val = HudCubeSelector::cube_selector.get_active_id();
 
-    if (t_map::get_container_type_for_block(val) != NULL_CONTAINER)
-    {
-        t_map::create_container_block_CtoS msg;
-        msg.x = b[0];
-        msg.y = b[1];
-        msg.z = b[2];
-        msg.val = val;
-        msg.send();
-    }
-    else
-    {   // set block as normal
-        admin_set_block_CtoS msg;
-        msg.x = b[0];
-        msg.y = b[1];
-        msg.z = b[2];
-        msg.val = val;
-        msg.send();
-    }
+    admin_set_block_CtoS msg;
+    msg.x = b[0];
+    msg.y = b[1];
+    msg.z = b[2];
+    msg.val = val;
+    msg.send();
 }
 #endif
 

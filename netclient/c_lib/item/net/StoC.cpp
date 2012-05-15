@@ -51,6 +51,8 @@ inline void create_item_container_StoC::handle()
 
 inline void delete_item_container_StoC::handle()
 {
+    // close container
+    if (opened_container == container_id) opened_container = NULL_CONTAINER;
     destroy_container(container_id);
 }
 
@@ -173,6 +175,17 @@ inline void container_action_failed_StoC::handle()
     container->load_data(get_container_contents(container_id));
 }
 
+inline void open_container_failed_StoC::handle()
+{
+    if (opened_container_event_id == event_id && opened_container == container_id)
+        opened_container = NULL_CONTAINER;
+}
+
+inline void close_container_StoC::handle()
+{
+    if (opened_container == container_id) opened_container = NULL_CONTAINER;
+}
+
 } // Item
 #endif
 
@@ -197,6 +210,9 @@ inline void insert_item_in_hand_StoC::handle() {}
 inline void remove_item_from_hand_StoC::handle() {}
 
 inline void container_action_failed_StoC::handle() {}
+
+inline void open_container_failed_StoC::handle() {}
+inline void close_container_StoC::handle() {}
 
 } // Item
 

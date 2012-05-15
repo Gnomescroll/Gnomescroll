@@ -26,17 +26,19 @@ void init()
     //set_sprite_ids();
 
     #if DC_SERVER
-    agent_container_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_toolbelt_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_nanite_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_craft_bench_list = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
-
-    for (int i=0; i<AGENT_MAX; i++) agent_container_list[i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_CONTAINER;
+    agent_container_list   = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_toolbelt_list    = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_nanite_list      = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_craft_bench_list = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_hand_list        = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
+    opened_containers      = (int*)   malloc(AGENT_MAX * sizeof(int));
+    
+    for (int i=0; i<AGENT_MAX; i++) agent_container_list  [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list   [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list     [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_craft_bench_list[i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_hand_list [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_hand_list       [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) opened_containers     [i] = NULL_CONTAINER;
     #endif
 
     init_properties();
@@ -48,9 +50,9 @@ void teardown()
     if (item_list           != NULL) delete item_list;
 
     #if DC_CLIENT
-    if (player_container_ui != NULL) delete player_container_ui;
-    if (player_toolbelt_ui  != NULL) delete player_toolbelt_ui;
-    if (player_nanite_ui    != NULL) delete player_nanite_ui;
+    if (player_container_ui   != NULL) delete player_container_ui;
+    if (player_toolbelt_ui    != NULL) delete player_toolbelt_ui;
+    if (player_nanite_ui      != NULL) delete player_nanite_ui;
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     #endif
 
@@ -59,7 +61,8 @@ void teardown()
     if (agent_toolbelt_list    != NULL) free(agent_toolbelt_list);
     if (agent_nanite_list      != NULL) free(agent_nanite_list);
     if (agent_craft_bench_list != NULL) free(agent_craft_bench_list);
-    if (agent_hand_list != NULL) free(agent_hand_list);
+    if (agent_hand_list        != NULL) free(agent_hand_list);
+    if (opened_containers      != NULL) free(opened_containers);
     #endif
 
     tear_down_properties();
@@ -238,23 +241,25 @@ void open_container(int container_id)
     printf("open container %d\n", container_id);
 
     // show ui
+    // TODO
     
     // send open packet
-
+    opened_container_event_id = record_container_event(container_id);
     open_container_CtoS msg;
     msg.container_id = container_id;
+    msg.event_id = opened_container_event_id;
     msg.send();
 }
 
-void close_container(int container_id)
+void close_container()
 {
-    assert(container_id != NULL_CONTAINER);
+    if (opened_container == NULL_CONTAINER) return;
 
-    printf("close container %d\n", container_id);
+    printf("close container %d\n", opened_container);
+    
     // send packet
-
     close_container_CtoS msg;
-    msg.container_id = container_id;
+    msg.container_id = opened_container;
     msg.send();
 }
 
@@ -516,6 +521,14 @@ void agent_died(int agent_id)
         container->remove_item(i);
         send_container_remove(a->client_id, container->id, i);
         ItemParticle::throw_agent_item(agent_id, item_id);
+    }
+
+    // close container
+    assert(opened_containers != NULL);
+    if (opened_containers[agent_id] != NULL_CONTAINER)
+    {
+        send_container_close(agent_id, opened_containers[agent_id]);
+        agent_close_container(agent_id, opened_containers[agent_id]);
     }
 }
 
@@ -786,6 +799,12 @@ void container_block_destroyed(int container_id, int x, int y, int z)
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
+
+    // close all opened containers
+    assert(opened_containers != NULL);
+    for (int i=0; i<AGENT_MAX; i++)
+        if (opened_containers[i] == container_id)
+            opened_containers[i] = NULL_CONTAINER;
 
     // queue the container delete packet first
     // the handler will destroy the contents -- then the item_particle create will recreate

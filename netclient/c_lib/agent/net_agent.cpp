@@ -981,6 +981,9 @@ inline void agent_set_block_CtoS::handle()
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 
+    // dont set on existing block
+    if (t_map::get(x,y,z) != 0) return;
+
     // check this player first, most likely to be colliding
     bool collides = false;
     _set(x,y,z, val); // set temporarily to test against

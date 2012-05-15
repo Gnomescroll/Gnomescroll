@@ -10,7 +10,7 @@ namespace Item
 static uint16_t container_event_id = 0;
 int container_event[CONTAINER_EVENT_MAX];
 
-static int record_container_event(int container_id)
+int record_container_event(int container_id)
 {
     container_event_id += 1;
     container_event_id %= CONTAINER_EVENT_MAX;

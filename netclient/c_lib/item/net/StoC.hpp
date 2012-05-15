@@ -175,5 +175,32 @@ class container_action_failed_StoC: public FixedSizeReliableNetPacketToClient<co
         inline void handle();
 };
 
+class open_container_failed_StoC: public FixedSizeReliableNetPacketToClient<open_container_failed_StoC>
+{
+    public:
+        uint16_t event_id;
+        uint16_t container_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&event_id, buff, buff_n, pack);
+            pack_u16(&container_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class close_container_StoC: public FixedSizeReliableNetPacketToClient<close_container_StoC>
+{
+    public:
+        uint16_t container_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&container_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
 
 }
