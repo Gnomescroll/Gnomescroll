@@ -38,6 +38,11 @@ class CHUNK_ITEM_CONTAINER
         iban = 0;
         ibam = 2;
         iba = (struct inventory_block*) malloc(ibam*sizeof(struct inventory_block));
+        for (int i=0; i<ibam; i++)
+        {
+            iba[i].container_id = NULL_CONTAINER;
+            iba[i].container_type = CONTAINER_TYPE_NONE;
+        }
     }
 
     //deletes all

@@ -835,6 +835,7 @@ bool agent_in_container_range(int agent_id, int container_id)
 
     // get container position, if applicable
     ItemContainerInterface* container = get_container(container_id);
+    assert(container != NULL);
     if (!container_type_is_block(container->type)) return false;
 
     int position[3];

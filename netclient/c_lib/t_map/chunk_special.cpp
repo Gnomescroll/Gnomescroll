@@ -93,7 +93,7 @@ void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(int client_id)
         msg.y = iba[i].y;
         msg.z = iba[i].z;
         msg.container_type = iba[i].container_type;
-        msg.container_type = iba[i].container_id;
+        msg.container_id = iba[i].container_id;
         msg.sendToClient(client_id);
 
         Item::send_container_create(client_id, iba[i].container_id);
