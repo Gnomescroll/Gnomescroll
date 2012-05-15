@@ -867,6 +867,7 @@ void check_agents_in_container_range()
         Agent_state* a = agent_list->a[i];
         if (opened_containers[a->id] == NULL_CONTAINER) continue;
         if (agent_in_container_range(a->id, opened_containers[a->id])) continue;
+        agent_close_container(a->id, opened_containers[a->id]);
         send_container_close(a->id, opened_containers[a->id]);
     }
 }

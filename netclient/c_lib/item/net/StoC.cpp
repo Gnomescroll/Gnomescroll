@@ -178,12 +178,14 @@ inline void container_action_failed_StoC::handle()
 
 inline void open_container_failed_StoC::handle()
 {
+    printf("open container failed\n");
     if (opened_container_event_id == event_id && opened_container == container_id)
         opened_container = NULL_CONTAINER;
 }
 
 inline void close_container_StoC::handle()
 {
+    printf("server closed container\n");
     if (opened_container == container_id) opened_container = NULL_CONTAINER;
 }
 
