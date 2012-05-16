@@ -14,6 +14,7 @@ int sprite_def(int spritesheet, int xpos, int ypos);
 enum CubeType
 {
 	ErrorBlock,
+    EmptyBlock,
 	SolidBlock,
 	ItemContainerBlock
 };
@@ -59,6 +60,11 @@ void cube_def(int id, int type, const char* name)
     	case ErrorBlock:
     	break;
 
+        case EmptyBlock:
+        p.active = false;
+        p.solid = false;
+        p.occludes = false;
+        break;
     	case SolidBlock:
     	break;
 
@@ -100,6 +106,13 @@ void iso_texture(int tex_id)
 void iso_texture(int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
+    if(xpos <= 0 || ypos <= 0)
+    {
+        printf("Error: iso_texture index on block %i is less than zero! \n", _current_cube_id);
+        abort();
+    }
+    xpos--;
+    ypos--;
 	int tex_id = LUA_blit_item_texture(sheet_id, xpos, ypos);
 	//set cube side textures
 	set_cube_side_texture(_current_cube_id, 0, tex_id);
@@ -121,6 +134,13 @@ void side_texture(int side, int tex_id)
 void side_texture(int side, int sheet_id, int xpos, int ypos)
 {
 #ifdef DC_CLIENT
+    if(xpos <= 0 || ypos <= 0)
+    {
+        printf("Error: side_texture index on block %i is less than zero! \n", _current_cube_id);
+        abort();
+    }
+    xpos--;
+    ypos--;
     int tex_id = LUA_blit_item_texture(sheet_id, xpos, ypos);
     set_cube_side_texture(_current_cube_id, side, tex_id);
 #endif
@@ -129,15 +149,38 @@ void side_texture(int side, int sheet_id, int xpos, int ypos)
 void hud_def(int hudy, int hudx, int tex_id)
 {
 #ifdef DC_CLIENT
-    set_cube_hud(8*hudy+ hudx, _current_cube_id, int tex_id);
+    hudy--;hudx--;
+
+    if(hudx <= 0 || hudy <= 0)
+    {
+        printf("Error: hud_def index on block %i is less than zero! \n", _current_cube_id);
+        abort();
+    }
+
+    set_cube_hud(8*hudy+ hudx, _current_cube_id, tex_id);
 #endif
 }
 
-void hud_def(int hudy,int hudx, int tex_id, int sheet_id, int xpos, int ypos)
+void hud_def(int hudy,int hudx, int sheet_id, int xpos, int ypos)
 {
 #ifdef DC_CLIENT
+    hudy--;hudx--;
+    if(hudx <= 0 || hudy <= 0)
+    {
+        printf("Error: hud_def index on block %i is less than zero! \n", _current_cube_id);
+        abort();
+    }
+
+    if(xpos <= 0 || ypos <= 0)
+    {
+        printf("Error: hud_def index on block %i is less than zero! \n", _current_cube_id);
+        abort();
+    }
+    xpos--;
+    ypos--;
+
     int tex_id = LUA_blit_item_texture(sheet_id, xpos, ypos);
-    set_cube_hud(8*hudy+ hudx, _current_cube_id, int tex_id);
+    set_cube_hud(8*hudy+ hudx, _current_cube_id, tex_id);
 #endif
 }
 
@@ -178,6 +221,13 @@ e east
 ]]
 */
 
+/*
+    ErrorBlock,
+    EmptyBlock,
+    SolidBlock,
+    ItemContainerBlock
+*/
+
 void load_block_dat()
 {
 
@@ -202,11 +252,109 @@ void load_block_dat()
     side_texture(S, error_block);
     side_texture(W, error_block);
     side_texture(E, error_block);
+
+    hud_def(0,0, error_block);
 /*
     side_texture(T, error_block);
     side_texture(T, t0, 0,0);
 */
 
+    cube_def(0, EmptyBlock, "empty_block");
+    iso_texture(error_block);
+
+
+    cube_def(1, SolidBlock, "terminal_blue");
+    iso_texture(t0,1,3);
+    hud_def(t0,1,1);
+
+    cube_def(2, SolidBlock, "terminal_green");
+    iso_texture(t0,1,4);
+    hud_def(t0,1,2);
+
+
+    cube_def(3, SolidBlock, "battery");
+    iso_texture(t0,2,3);
+    side_texture(T, t0, 2,2);
+    side_texture(B, t0, 2,4);
+    hud_def(t0,1,3);
+/*
+b = NewSolidBlock(1, "terminal_blue");
+b.texture = iso_texture(t00,3,1);
+b.hud = hud(8+0, b.texture.n);
+
+b = NewSolidBlock(2, "terminal_green");
+b.texture = iso_texture(t00,4,1);
+b.hud = hud(8+1, b.texture.n);
+
+b = NewSolidBlock(3, "solar_panel");
+b.texture = iso_texture(t00,1,2);
+b.hud = hud(8+2, b.texture.n);
+
+b = NewSolidBlock(4, "battery");
+b.texture = iso_texture(t00,3,2);
+b.texture.t = register_texture(t00,2,2);
+b.texture.b = register_texture(t00,4,2);
+b.hud = hud(8+3, b.texture.n);
+b.max_damage = 32;
+*/
+
+/*
+
+-- cell blocks --
+
+b = NewSolidBlock(6, "crate_2");
+b.texture = iso_texture(t01,6,2);
+b.texture.t = register_texture(t01,7,1);
+b.texture.b = register_texture(t01,7,1);
+b.texture.n = register_texture(t01,7,2);
+b.hud = hud(24+1, b.texture.n);
+b.max_damage = 32;
+
+b = NewSolidBlock(7, "crate_3");
+b.texture = iso_texture(t01,4,3);
+b.texture.t = register_texture(t01,5,2);
+b.texture.b = register_texture(t01,6,3);
+b.texture.n = register_texture(t01,5,3);
+b.hud = hud(24+2, b.texture.n);
+b.max_damage = 32;
+
+--dust
+b = NewSolidBlock(16, "methane_1");
+b.texture = iso_texture(t01,2,2);
+b.hud = hud(16+0, b.texture.n);
+b.max_damage = 1;
+
+b = NewSolidBlock(17, "methane_2");
+b.texture = iso_texture(t01,2,3);
+b.hud = hud(16+1, b.texture.n);
+b.max_damage = 2;
+
+b = NewSolidBlock(18, "methane_3");
+b.texture = iso_texture(t01,2,4);
+b.hud = hud(16+2, b.texture.n);
+b.max_damage = 6;
+
+b = NewSolidBlock(19, "methane_4");
+b.texture = iso_texture(t01,2,5);
+b.hud = hud(16+3, b.texture.n);
+b.max_damage = 12;
+
+b = NewSolidBlock(20, "methane_5");
+b.texture = iso_texture(t01,1,4);
+b.hud = hud(16+4, b.texture.n);
+b.max_damage = 10;
+
+b = NewSolidBlock(54, "regolith");
+b.texture = iso_texture(t01,4,10);
+b.texture.t = register_texture(t01,3,10);
+b.texture.b = register_texture(t01,5,10);
+b.hud = hud(56-16+7, b.texture.n);
+
+b = NewSolidBlock(55, "carbon");
+b.texture = iso_texture(t01,6,10);
+b.hud = hud(24+8+0, b.texture.n);
+
+*/
 	end_block_dat();
 
 }
