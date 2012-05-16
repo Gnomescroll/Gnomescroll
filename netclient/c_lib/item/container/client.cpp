@@ -183,7 +183,6 @@ static void send_craft_alpha_action(ContainerActionType action, int container_id
     }
 
     msg.send();
-    printf("sent craft alpha action\n");
 }
 
 static void send_craft_beta_action(ContainerActionType action, int container_id, int slot)
@@ -286,7 +285,6 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            printf("crafting bench\n");
             if (craft_output) action = craft_output_alpha_action_decision_tree(container_id, slot);
             else action = craft_input_alpha_action_decision_tree(container_id, slot);
             break;
@@ -299,7 +297,6 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
     }
 
     if (action == CONTAINER_ACTION_NONE) return;
-    printf("container action is not none\n");
     switch (container_type)
     {
         case AGENT_CONTAINER:
@@ -313,7 +310,6 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            printf("send craft acton\n");
             if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
             else send_craft_alpha_action(action, container_id, slot);
             break;

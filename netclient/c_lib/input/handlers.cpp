@@ -46,7 +46,6 @@ void toggle_agent_container()
 void enable_block_container()
 {
     if (input_state.block_container) return;
-    printf("enable block container\n");
     input_state.block_container = true;
     t_hud::enable_block_container_hud();
     rebind_mouse = input_state.mouse_bound;
@@ -56,7 +55,6 @@ void enable_block_container()
 void disable_block_container()
 {
     if (!input_state.block_container) return;
-    printf("disable block container\n");
     input_state.block_container = false;
     t_hud::disable_block_container_hud();
     ItemContainer::close_container();
@@ -402,12 +400,12 @@ void container_mouse_up_handler(SDL_Event* event)
     {
         case SDL_BUTTON_LEFT:
             container_event = t_hud::left_mouse_up(x,y);
-            printf("container event: ");
-            printf("id %d ", container_event.container_id);
-            printf("slot %d ", container_event.slot);
-            printf("nanite %d ", container_event.nanite);
-            printf("craft output %d ", container_event.craft_output);
-            printf("\n");
+            //printf("container event: ");
+            //printf("id %d ", container_event.container_id);
+            //printf("slot %d ", container_event.slot);
+            //printf("nanite %d ", container_event.nanite);
+            //printf("craft output %d ", container_event.craft_output);
+            //printf("\n");
             ItemContainer::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
             break;
 
