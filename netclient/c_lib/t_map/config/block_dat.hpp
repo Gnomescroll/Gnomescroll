@@ -4,6 +4,7 @@
 namespace t_map 
 {
 
+int _current_cube_id = 0;
 
 int texture_alias(const char* spritesheet);
 void cube_def(int id, int type, const char* name);
@@ -82,22 +83,22 @@ void cube_def(int id, int type, const char* name)
     void LUA_set_block_color_type(int id, int color_type) GNOMESCROLL_API;
 */
 
-int iso_texture(int tex_id)
+void iso_texture(int tex_id)
 {
 
 	//LUA_blit_item_texture(int sheet_id, int source_x, int source_y)
 }
 
 
-int iso_texture(int sheet_id, int xpos, int ypos)
+void iso_texture(int sheet_id, int xpos, int ypos)
 {
 	int tex = LUA_blit_item_texture(sheet_id, xpos, ypos);
 	//set cube side textures
-
+	iso_texture(tex);
 }
 
 #if DC_CLIENT
-int _current_cube_id = 0;
+//int _current_cube_id = 0;
 int texture_alias(const char* spritesheet) 
 { 
     return LUA_load_cube_texture_sheet((char*) spritesheet); 
@@ -119,8 +120,6 @@ void end_block_dat()
     #if DC_CLIENT
     LUA_save_cube_texture();
     #endif
-}
-
 }
 
 void load_block_dat()

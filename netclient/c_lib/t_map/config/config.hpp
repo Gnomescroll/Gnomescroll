@@ -6,7 +6,7 @@
 namespace t_map
 {
 
-void load_block_dat()
+void load_block_dat2()
 {
 /*
     int test = 10;
