@@ -287,10 +287,20 @@ inline void open_container_CtoS::handle()
     if (a == NULL) return;
 
     bool in_reach = agent_in_container_range(a->id, container_id);
-    if (!in_reach) send_open_container_failed(a->client_id, container_id, event_id);
+    if (!in_reach)
+    {
+        send_open_container_failed(a->client_id, container_id, event_id);
+        return;
+    }
 
     bool opened = agent_open_container(a->id, container_id);
-    if (!opened) send_open_container_failed(a->client_id, container_id, event_id);
+    if (!opened)
+    {
+        send_open_container_failed(a->client_id, container_id, event_id);
+        return;
+    }
+
+    send_container_open(a->id, container_id);
 }
 
 inline void close_container_CtoS::handle()

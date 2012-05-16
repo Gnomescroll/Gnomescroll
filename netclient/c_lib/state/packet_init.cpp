@@ -223,6 +223,7 @@ void RegisterMessages() {
 
     Item::open_container_failed_StoC::register_client_packet();
     Item::close_container_StoC::register_client_packet();
+    Item::open_container_StoC::register_client_packet();
 
     // container actions (to client)
     Item::container_action_failed_StoC::register_client_packet();

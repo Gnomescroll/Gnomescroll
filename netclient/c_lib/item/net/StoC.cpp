@@ -175,6 +175,13 @@ inline void open_container_failed_StoC::handle()
         opened_container = NULL_CONTAINER;
 }
 
+inline void open_container_StoC::handle()
+{
+    printf("server says: open container\n");
+    if (opened_container != container_id) return;
+    update_container_ui_from_state();
+}
+
 inline void close_container_StoC::handle()
 {
     printf("server closed container\n");
@@ -207,6 +214,7 @@ inline void remove_item_from_hand_StoC::handle() {}
 inline void container_action_failed_StoC::handle() {}
 
 inline void open_container_failed_StoC::handle() {}
+inline void open_container_StoC::handle() {}
 inline void close_container_StoC::handle() {}
 
 } // Item

@@ -173,6 +173,18 @@ void send_container_close(int agent_id, int container_id)
     msg.sendToClient(a->client_id);
 }
 
+void send_container_open(int agent_id, int container_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    
+    open_container_StoC msg;
+    msg.container_id = container_id;
+    msg.sendToClient(a->client_id);
+}
+
 void send_open_container_failed(int client_id, int container_id, int event_id)
 {
     open_container_failed_StoC msg;
