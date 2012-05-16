@@ -10,7 +10,7 @@ namespace Item
 {
 
 // init
-void init_container(class ItemContainer* container);
+void init_container(class ItemContainerInterface* container);
 
 #if DC_CLIENT
 // transactions
@@ -78,6 +78,7 @@ class ItemContainerInterface
 
         bool is_valid_slot(int slot)
         {
+            assert(this->slot_max > 0);
             return (slot >= 0 && slot < this->slot_max);
         }
 
@@ -164,6 +165,7 @@ class ItemContainer: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
+            assert(this->slot_max > 0);
             assert(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
@@ -248,6 +250,7 @@ class ItemContainerNanite: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim + 1; // +1 for the extra food slot
+            assert(this->slot_max > 0);
             assert(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
@@ -293,6 +296,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim; // +1 for the extra food slot
+            assert(this->slot_max > 0);
             assert(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);

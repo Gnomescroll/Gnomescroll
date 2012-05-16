@@ -70,6 +70,7 @@ void create_container_block_CtoS::handle()
 
     Item::ItemContainerInterface* container = Item::create_container(container_type);
     if (container == NULL) return;
+    init_container(container);
     create_item_container_block(x,y,z, container->type, container->id);
     Item::send_container_create(client_id, container->id);
 
