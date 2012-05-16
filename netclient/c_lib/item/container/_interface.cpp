@@ -453,7 +453,7 @@ void purchase_item_from_nanite(int agent_id, int slot)
     Item::Item* purchase = Item::create_item(item_type);
     if (purchase == NULL) return;
 
-    if (a != NULL) Item::send_item_state(a->client_id, purchase->id);
+    if (a != NULL) Item::send_item_create(a->client_id, purchase->id);
     // add to hand
     agent_hand_list[agent_id] = purchase->id;
     if (a != NULL) send_hand_insert(a->client_id, purchase->id);
@@ -503,7 +503,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         // create new item of type
         Item::Item* item = Item::create_item(recipe->output);
         if (item == NULL) return;
-        Item::send_item_state(agent->client_id, item->id);
+        Item::send_item_create(agent->client_id, item->id);
         agent_hand_list[agent_id] = item->id;
         send_hand_insert(agent->client_id, item->id);
     }
