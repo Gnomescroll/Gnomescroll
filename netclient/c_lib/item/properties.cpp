@@ -8,6 +8,7 @@
 #include <item/config/crafting_dat.hpp>
 
 #include <item/container/_interface.hpp>
+#include <item/container/container.hpp>
 
 namespace Item
 {

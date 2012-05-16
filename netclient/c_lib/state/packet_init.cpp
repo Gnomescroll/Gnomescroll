@@ -78,7 +78,6 @@ void RegisterMessages() {
     t_map::block_action_StoC::register_client_packet();
     t_map::map_metadata_StoC::register_client_packet();
     
-    t_map::create_container_block_CtoS::register_server_packet();
     t_map::container_block_chunk_reset_StoC::register_client_packet();
     t_map::container_block_create_StoC::register_client_packet();
     t_map::container_block_delete_StoC::register_client_packet();
@@ -235,6 +234,9 @@ void RegisterMessages() {
     ItemContainer::remove_item_from_container_StoC::register_client_packet();
     ItemContainer::insert_item_in_hand_StoC::register_client_packet();
     ItemContainer::remove_item_from_hand_StoC::register_client_packet();
+
+    // container blocks
+    ItemContainer::create_container_block_CtoS::register_server_packet();
 
     // toolbelt actions (to server)
     Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();
