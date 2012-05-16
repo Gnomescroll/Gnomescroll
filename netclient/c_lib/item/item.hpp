@@ -114,4 +114,4 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
         void tick() {}
 };
 
-}
+}   // Item

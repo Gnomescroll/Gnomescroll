@@ -143,7 +143,7 @@ void update_selected_item_type()
     int agent_id = ClientState::playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return;
     int item_type = NULL_ITEM_TYPE;
-    Item::ItemContainer* toolbelt = (Item::ItemContainer*)Item::get_container(toolbelt_id);
+    ItemContainer::ItemContainer* toolbelt = (ItemContainer::ItemContainer*)ItemContainer::get_container(toolbelt_id);
     if (toolbelt != NULL) item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
     agent_selected_type[agent_id] = item_type;
 }
@@ -186,7 +186,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
     if (a == NULL) return;
 
     // get container state for ui prediction
-    Item::ItemContainerUIInterface* container = Item::get_container_ui(toolbelt_id);
+    ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(toolbelt_id);
     int durability = container->get_slot_durability(selected_slot);
 
     int group = Item::get_item_group_for_type(item_type);
@@ -198,7 +198,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
             {   // consume durability
                 durability -= 1;
                 if (durability < 0) durability = 0;
-                Item::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
+                ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
             }
             break;
 
@@ -441,7 +441,7 @@ void update_toolbelt_items()
     for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
     {
         int slot = agent_selected_slot[agent_id];
-        ItemID item_id = Item::get_agent_toolbelt_item(agent_id, slot);
+        ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
         agent_selected_item[agent_id] = item_id;
         int item_type = Item::get_item_type(item_id);
         if (item_type != agent_selected_type[agent_id])
@@ -466,7 +466,7 @@ bool set_agent_toolbelt_slot(int agent_id, int slot)
     ASSERT_VALID_AGENT_ID(agent_id);
     assert(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
     agent_selected_slot[agent_id] = slot;
-    ItemID item_id = Item::get_agent_toolbelt_item(agent_id, slot);
+    ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
     if (item_id == agent_selected_item[agent_id]) return false;
     agent_selected_item[agent_id] = item_id;
     return true;

@@ -6,11 +6,11 @@
 
 #include <item/config/item_attribute.hpp>
 #include <item/config/crafting_dat.hpp>
-#include <item/item_container.hpp>
+
+#include <item/container/_interface.hpp>
 
 namespace Item
 {
-
 
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 int group_array[MAX_ITEMS];
@@ -194,7 +194,7 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
 {
     // get container
     assert(container_id != NULL_CONTAINER);
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     if (container == NULL) return NULL;
 
     // clear input buffers
@@ -316,4 +316,4 @@ bool container_type_is_block(ItemContainerType type)
     return false;
 }
 
-}
+}   // Item

@@ -30,14 +30,14 @@ void toggle_agent_container()
     if (input_state.agent_container)
     {
         t_hud::enable_agent_container_hud();
-        Item::open_inventory();
+        ItemContainer::open_inventory();
         rebind_mouse = input_state.mouse_bound;
         input_state.mouse_bound = false;
     }
     else
     {
         t_hud::disable_agent_container_hud();
-        Item::close_inventory();
+        ItemContainer::close_inventory();
         input_state.mouse_bound = rebind_mouse;
         input_state.ignore_mouse_motion = true;
     }
@@ -59,7 +59,7 @@ void disable_block_container()
     printf("disable block container\n");
     input_state.block_container = false;
     t_hud::disable_block_container_hud();
-    Item::close_container();
+    ItemContainer::close_container();
     input_state.mouse_bound = rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
@@ -367,12 +367,12 @@ void container_mouse_down_handler(SDL_Event* event)
     //{
         //case SDL_BUTTON_LEFT:
             //container_event = t_hud::left_mouse_down(x,y);
-            //Item::mouse_left_click_handler(container_event.container_id, container_event.slot);
+            //ItemContainer::mouse_left_click_handler(container_event.container_id, container_event.slot);
             //break;
 
         //case SDL_BUTTON_RIGHT:
             //container_event = t_hud::right_mouse_down(x,y);
-            //Item::mouse_right_click_handler(container_event.container_id, container_event.slot);
+            //ItemContainer::mouse_right_click_handler(container_event.container_id, container_event.slot);
             //break;
 
         //default:
@@ -408,12 +408,12 @@ void container_mouse_up_handler(SDL_Event* event)
             printf("nanite %d ", container_event.nanite);
             printf("craft output %d ", container_event.craft_output);
             printf("\n");
-            Item::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
+            ItemContainer::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
             break;
 
         case SDL_BUTTON_RIGHT:
             container_event = t_hud::right_mouse_up(x,y);
-            Item::mouse_right_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
+            ItemContainer::mouse_right_click_handler(container_event.container_id, container_event.slot, container_event.nanite, container_event.craft_output);
             break;
 
         default:

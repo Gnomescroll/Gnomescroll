@@ -32,7 +32,7 @@ void init_item_sheet()
 
     if(s == NULL)
     {
-        printf("Item::init_item_sheet, error \n");
+        printf("ItemContainer::init_item_sheet, error \n");
     }
 
     glEnable(GL_TEXTURE_2D);
@@ -53,7 +53,7 @@ void init_item_sheet()
 
     if(s == NULL)
     {
-        printf("Item::init_item_sheet, error \n");
+        printf("ItemContainer::init_item_sheet, error \n");
     }
 
     glEnable(GL_TEXTURE_2D);

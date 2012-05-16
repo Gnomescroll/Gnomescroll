@@ -5,7 +5,6 @@
 #include <item/common/struct.hpp>
 
 #include <item/properties.cpp>
-#include <item/item_container.cpp>
 #include <item/item.cpp>
 
 #include <item/net/CtoS.cpp>
@@ -23,7 +22,6 @@
 // Client
 #if DC_CLIENT
 #include <item/client.cpp>
-#include <item/client_item_container.cpp>
 #endif
 
 // Server

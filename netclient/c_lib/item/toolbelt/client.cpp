@@ -21,7 +21,7 @@ bool toolbelt_item_begin_alpha_action()
     // ^^ applies only for click-and-hold actions, like picking
     // single click actions like laser rifle will trigger as always
 
-    ItemID item_id = Item::get_toolbelt_item(selected_slot);
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     int item_type = Item::get_item_type(item_id);
     int item_group = Item::get_item_group(item_id);
 
@@ -75,7 +75,7 @@ bool toolbelt_item_end_alpha_action()
     agent_fire_on[agent_id] = false;
     agent_fire_tick[agent_id] = 0;
 
-    ItemID item_id = Item::get_toolbelt_item(selected_slot);
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     int item_group = Item::get_item_group(item_id);
     switch (item_group)
     {
@@ -97,7 +97,7 @@ bool toolbelt_item_beta_action()
     int container_id = playerAgent_state.facing_container();
     if (container_id == NULL_CONTAINER) return false;
 
-    Item::open_container(container_id);
+    ItemContainer::open_container(container_id);
     return true;
 }
 

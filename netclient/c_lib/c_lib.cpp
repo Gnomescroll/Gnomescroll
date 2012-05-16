@@ -144,6 +144,7 @@ dont_include_this_file_in_server
 
 /* items */
 #include <item/_include.hpp>
+#include <item/container/_include.hpp>
 #include <item/toolbelt/_include.hpp>
 #include <item/particle/_include.hpp>
 
@@ -237,6 +238,7 @@ int init_c_lib()
     //printf("Checkpoint 5 \n");
 
     Item::init();
+    ItemContainer::init();
 
 // Load Dats
 
@@ -346,6 +348,8 @@ void close_c_lib() {
     Item::teardown();
     printf("toolbelt teardown\n");
     Toolbelt::teardown();
+    printf("container teardown\n");
+    ItemContainer::teardown();
 
     printf("objects teardown\n");
     Objects::teardown();    // Entity system

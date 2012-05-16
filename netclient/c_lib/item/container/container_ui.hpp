@@ -4,7 +4,7 @@
 dont_include_this_file_in_server
 #endif
 
-namespace Item
+namespace ItemContainer
 {
 
 /*
@@ -90,9 +90,9 @@ class ItemContainerUIInterface
                 }
                 else
                 {
-                    this->slot_type[i] = get_item_type(slots[i]);
-                    this->slot_stack[i] = get_stack_size(slots[i]);
-                    this->slot_durability[i] = get_item_durability(slots[i]);
+                    this->slot_type[i] = Item::get_item_type(slots[i]);
+                    this->slot_stack[i] = Item::get_stack_size(slots[i]);
+                    this->slot_durability[i] = Item::get_item_durability(slots[i]);
                 }
             }
         }
@@ -133,7 +133,7 @@ class ItemContainerUI: public ItemContainerUIInterface
             {
                 if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
                 if (this->slot_type[i] == item_type   // stacks
-                && (get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
+                && (Item::get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
                     return i;
             }
             return NULL_SLOT;
@@ -196,11 +196,11 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
             assert(this->is_valid_slot(slot));
             if (slot == 0)
             {   // check against nanite's food
-                return get_nanite_edibility(item_type);
+                return Item::get_nanite_edibility(item_type);
             }
             else if (slot == this->slot_max-1)
             {   // nanite coins only
-                if (item_type == get_item_type((char*)"nanite_coin")) return true;
+                if (item_type == Item::get_item_type((char*)"nanite_coin")) return true;
                 return false;
             }
             return false;   // no other slots accept insertions
@@ -210,11 +210,11 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
         {
             // check food slot
             if (this->slot_type[0] == item_type
-            && (get_max_stack_size(this->slot_type[0]) - this->slot_stack[0]) >= stack_size)
+            && (Item::get_max_stack_size(this->slot_type[0]) - this->slot_stack[0]) >= stack_size)
                 return 0;
             // check coin slot
             if (this->slot_type[this->slot_max-1] == item_type
-            && (get_max_stack_size(this->slot_type[this->slot_max-1]) - this->slot_stack[this->slot_max-1]) >= stack_size)
+            && (Item::get_max_stack_size(this->slot_type[this->slot_max-1]) - this->slot_stack[this->slot_max-1]) >= stack_size)
                 return this->slot_max-1;
             return NULL_SLOT;
         }

@@ -24,4 +24,4 @@ Item::~Item()
 }
 #endif
 
-}
+}   // Item

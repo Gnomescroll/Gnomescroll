@@ -84,7 +84,7 @@ void destroy_item_container_block(int x, int y, int z)
 void get_container_location(int container_id, int position[3])
 {
     assert(container_id != NULL_CONTAINER);
-    Item::ItemContainerInterface* container = Item::get_container(container_id);
+    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     assert(container != NULL);
     assert(container->chunk >= 0);
     

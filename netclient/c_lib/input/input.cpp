@@ -59,7 +59,7 @@ int process_events()
     else
         unbind_mouse();
 
-    if (Item::opened_container != NULL_CONTAINER) enable_block_container();
+    if (ItemContainer::opened_container != NULL_CONTAINER) enable_block_container();
     else disable_block_container();
 
     while(SDL_PollEvent(&Event))

@@ -67,7 +67,7 @@ void tick()
 
     if (counter % 6 == 0)
     {
-        Item::check_agents_in_container_range();
+        ItemContainer::check_agents_in_container_range();
     }
 
     //const int monster_spawners = 10;
@@ -83,7 +83,7 @@ void tick()
 
     //ServerState::spawn_items(2);
 
-    Item::digest_nanite_food();
+    ItemContainer::digest_nanite_food();
     Toolbelt::update_toolbelt_items();
 }
  

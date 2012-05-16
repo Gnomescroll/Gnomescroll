@@ -235,7 +235,7 @@ int Agent_status::die()
     dead_msg.broadcast();
 
     Toolbelt::agent_died(this->a->id);
-    Item::agent_died(this->a->id);
+    ItemContainer::agent_died(this->a->id);
     #endif
 
     return 1;
