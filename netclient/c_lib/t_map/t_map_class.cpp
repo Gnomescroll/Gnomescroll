@@ -2,6 +2,7 @@
 
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
+#include <t_map/_interface.hpp>
 #include <t_map/common/constants.hpp>
 
 namespace t_map
@@ -238,6 +239,9 @@ namespace t_map
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
+            #if DC_SERVER
+            destroy_item_container_block(x,y,z);
+            #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
             
@@ -288,6 +292,9 @@ namespace t_map
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
+            #if DC_SERVER
+            destroy_item_container_block(x,y,z);
+            #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
 
@@ -337,6 +344,9 @@ namespace t_map
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
+            #if DC_SERVER
+            destroy_item_container_block(x,y,z);
+            #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
             
@@ -390,6 +400,9 @@ namespace t_map
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
+            #if DC_SERVER
+            destroy_item_container_block(x,y,z);
+            #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
 

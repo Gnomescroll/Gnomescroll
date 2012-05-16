@@ -832,8 +832,8 @@ void container_block_destroyed(int container_id, int x, int y, int z)
     for (int i=0; i<container->slot_max; i++)
     {
         if (container->slot[i] == NULL_ITEM) continue;
-        container->remove_item(i);
         ItemParticle::dump_container_item(container->slot[i], x,y,z);
+        container->remove_item(i);
         // no need to send container removal packet
     }
 
