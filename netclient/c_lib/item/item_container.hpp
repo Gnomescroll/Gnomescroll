@@ -110,8 +110,8 @@ class ItemContainerInterface
         virtual void init(int xdim, int ydim) = 0;
 
         virtual bool can_be_opened_by(int agent_id) { return true; }
-        virtual void lock(int agent_id) {}
-        virtual void unlock(int agent_id) {}
+        virtual void lock(int agent_id) { this->owner = agent_id; }
+        virtual void unlock(int agent_id) { this->owner = NO_AGENT; }
 
         virtual ~ItemContainerInterface()
         {

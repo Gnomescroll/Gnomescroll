@@ -157,6 +157,7 @@ void destroy_item(ItemID id)
     {
         container->remove_item(slot);
         #if DC_SERVER
+        // TODO -- check against all players accessing this container
         Agent_state* a = STATE::agent_list->get(container->owner);
         if (a != NULL) send_container_remove(container->owner, container_id, slot);
         #endif
@@ -664,7 +665,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     if (agent == NULL) return;
 
     // agent does not own container, abort
-    if (container_id != NULL_CONTAINER && !agent_owns_container(agent->id, container_id)) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(agent->id, container_id)) return;
 
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, craft_slot);
     if (recipe == NULL) return;
@@ -711,7 +712,7 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     if (agent == NULL) return;
 
     // agent does not own container, abort
-    if (container_id != NULL_CONTAINER && !agent_owns_container(agent->id, container_id)) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(agent->id, container_id)) return;
 
     ItemContainerCraftingBench* bench = (ItemContainerCraftingBench*)get_container(container_id);
     assert(bench != NULL);
