@@ -198,7 +198,7 @@ void init_container(ItemContainerInterface* container)
             container->init(STORAGE_BLOCK_SMALL_X, STORAGE_BLOCK_SMALL_Y);
             break;
         default:
-            printf("init_container() - Unhandled container type %d\n", container->type);
+            printf("%s - Unhandled container type %d\n", __FUNCTION__, container->type);
             assert(false);
             break;
     }
@@ -538,7 +538,6 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     // some of the hand stack will fit in the slot
                     {   // PARTIAL STACK MERGE
                         #if DC_CLIENT
-                        printf("partial\n");
                         action = partial_hand_to_occupied_slot(
                             container, slot,
                             &hand_item_stack,
