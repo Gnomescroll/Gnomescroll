@@ -27,7 +27,7 @@
 #include <t_map/server/subscription_list.hpp>
 #endif
 
-#include <t_map/config/config.hpp>
+#include <t_map/config/block_drop_dat.hpp>
 #include <t_map/config/config_util.hpp>
 #include <t_map/config/drop_table.hpp>
 #include <t_map/config/block_dat.hpp>

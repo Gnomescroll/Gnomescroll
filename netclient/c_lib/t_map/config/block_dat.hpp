@@ -76,69 +76,144 @@ void cube_def(int id, int type, const char* name)
 }
 
 /*
-    void LUA_set_block_name(int id, char* name, int length) GNOMESCROLL_API;
-    
-    void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent) GNOMESCROLL_API;
-    void LUA_set_block_max_damage(int id, int max_damage) GNOMESCROLL_API;
-    void LUA_set_block_color_type(int id, int color_type) GNOMESCROLL_API;
+void set_cube_side_texture(int id, int side, int tex_id);
+void set_cube_hud(int pos, int cube_id, int tex_id);
+
+void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
+void LUA_set_block_max_damage(int id, int max_damage);
+void LUA_set_block_name(int id, char* name, int length);
 */
 
 void iso_texture(int tex_id)
 {
-
-	//LUA_blit_item_texture(int sheet_id, int source_x, int source_y)
+#ifdef DC_CLIENT
+	set_cube_side_texture(_current_cube_id, 0, tex_id);
+	set_cube_side_texture(_current_cube_id, 1, tex_id);
+	set_cube_side_texture(_current_cube_id, 2, tex_id);
+	set_cube_side_texture(_current_cube_id, 3, tex_id);
+	set_cube_side_texture(_current_cube_id, 4, tex_id);
+	set_cube_side_texture(_current_cube_id, 5, tex_id);
+#endif
 }
 
 
-void iso_texture(int sheet_id, int xpos, int ypos)
+void iso_texture(int sheet_id, int ypos, int xpos)
 {
-	int tex = LUA_blit_item_texture(sheet_id, xpos, ypos);
+#ifdef DC_CLIENT
+	int tex_id = LUA_blit_item_texture(sheet_id, xpos, ypos);
 	//set cube side textures
-	iso_texture(tex);
+	set_cube_side_texture(_current_cube_id, 0, tex_id);
+	set_cube_side_texture(_current_cube_id, 1, tex_id);
+	set_cube_side_texture(_current_cube_id, 2, tex_id);
+	set_cube_side_texture(_current_cube_id, 3, tex_id);
+	set_cube_side_texture(_current_cube_id, 4, tex_id);
+	set_cube_side_texture(_current_cube_id, 5, tex_id);
+#endif
 }
 
-#if DC_CLIENT
-//int _current_cube_id = 0;
+void side_texture(int side, int tex_id)
+{
+#ifdef DC_CLIENT 
+    set_cube_side_texture(_current_cube_id, side, tex_id);
+#endif
+}
+
+void side_texture(int side, int sheet_id, int xpos, int ypos)
+{
+#ifdef DC_CLIENT
+    int tex_id = LUA_blit_item_texture(sheet_id, xpos, ypos);
+    set_cube_side_texture(_current_cube_id, side, tex_id);
+#endif
+}
+
+void hud_def(int hudy, int hudx, int tex_id)
+{
+#ifdef DC_CLIENT
+    set_cube_hud(8*hudy+ hudx, _current_cube_id, int tex_id);
+#endif
+}
+
+void hud_def(int hudy,int hudx, int tex_id, int sheet_id, int xpos, int ypos)
+{
+#ifdef DC_CLIENT
+    int tex_id = LUA_blit_item_texture(sheet_id, xpos, ypos);
+    set_cube_hud(8*hudy+ hudx, _current_cube_id, int tex_id);
+#endif
+}
+
+
 int texture_alias(const char* spritesheet) 
 { 
+#if DC_CLIENT
     return LUA_load_cube_texture_sheet((char*) spritesheet); 
+#else
+    return 0;
+#endif
 }
 
-int sprite_def(int spritesheet, int xpos, int ypos)
+int sprite_alias(int spritesheet, int ypos, int xpos)
 {
+#if DC_CLIENT
     return LUA_blit_cube_texture(spritesheet, xpos, ypos); 
+#else
+    return 0;
+#endif
 }
-#endif
-
-#if DC_SERVER
-int texture_alias(const char* spritesheet) {  return 0; }
-int sprite_def(int spritesheet, int xpos, int ypos) {return 0;}
-#endif
 
 void end_block_dat()
 {
-    #if DC_CLIENT
+#if DC_CLIENT
     LUA_save_cube_texture();
-    #endif
+#endif
 }
+
+/*
+--[[
+t top
+b bottom
+n north
+s south
+w west
+e east
+]]
+*/
 
 void load_block_dat()
 {
 
+
     int t0 = texture_alias("media/sprites/t00.png");
     int t1 = texture_alias("media/sprites/t01.png");
 
-    int error_block = texture_alias(t0,1,1);
+    const int T = 0;
+    const int B = 1;
+    const int N = 2;
+    const int S = 3;
+    const int W = 4;
+    const int E = 5;
 
+    int error_block =  sprite_alias(t0,1,1);
 
     cube_def(255, ErrorBlock, "error_block");
-    iso_texture(error_block);
+    //iso_texture(error_block);
+    side_texture(T, error_block);
+    side_texture(B, error_block);
+    side_texture(N, error_block);
+    side_texture(S, error_block);
+    side_texture(W, error_block);
+    side_texture(E, error_block);
+/*
+    side_texture(T, error_block);
+    side_texture(T, t0, 0,0);
+*/
 
 	end_block_dat();
 
 }
 
 /*
+
+--register texture sheets
 t00 = register_spritesheet("t00.png")
 t01 = register_spritesheet("t01.png")
 
@@ -150,7 +225,6 @@ error_block = texture_alias(t00,1,1)
 b = NewSolidBlock(255, "error_block"); -- id, name
 b.texture = iso_texture(error_block);
 --b.hud = hud(0, error_block);
-
 
 --- Classic Blocks ---
 
@@ -175,14 +249,6 @@ b.max_damage = 32;
 
 
 -- cell blocks --
-
-b = NewSolidBlock(5, "crate_1");
-b.texture = iso_texture(t01,4,1);
-b.texture.t = register_texture(t01,5,1);
-b.texture.b = register_texture(t01,5,1);
-b.texture.n = register_texture(t01,3,1);
-b.hud = hud(24+0, b.texture.n);
-b.max_damage = 32;
 
 b = NewSolidBlock(6, "crate_2");
 b.texture = iso_texture(t01,6,2);
@@ -235,6 +301,7 @@ b.hud = hud(56-16+7, b.texture.n);
 b = NewSolidBlock(55, "carbon");
 b.texture = iso_texture(t01,6,10);
 b.hud = hud(24+8+0, b.texture.n);
+
 */
 
 
