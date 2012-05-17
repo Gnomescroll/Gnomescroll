@@ -138,9 +138,7 @@ class L_System
         {
             static int points_size = 1024;
             if (this->points == NULL)
-            {
                 this->points = (struct Point*)malloc(points_size * sizeof(struct Point));
-            }
             if (this->n_points >= points_size)
             {
                 points_size += 1024;
@@ -386,9 +384,7 @@ class L_System
             char* parsed = (char*)malloc((rule_length+1) * sizeof(char));
             assert(parsed != NULL);
             for (int i=0; i<rule_length; i++)
-            {
                 parsed[i] = rule[start_index+i];
-            }
             parsed[rule_length] = '\0';
             return parsed;
         }
@@ -479,8 +475,6 @@ class L_System
 
         void run()
         {
-            // apply start
-            //printf("%s\n", start);
             char* curr = start;
             char* next;
             int next_len;
@@ -496,7 +490,6 @@ class L_System
                 get_next_rule(curr, next);
                 free(curr);
                 curr = next;
-                //printf("%s\n", curr);
             }
             next_len = apply_rule(curr);
             free(curr);
@@ -511,7 +504,8 @@ class L_System
         visited_tiles = (char*)calloc(map_dim.x*map_dim.y, sizeof(char));
     }
     
-    ~L_System() {
+    ~L_System()
+    {
         if (start != NULL) free(start);
         if (rules != NULL)
         {
@@ -527,7 +521,8 @@ class L_System
     }
 };
 
-void init(int z) {
+void init(int z)
+{
 
     L_System* L = new L_System();
 
