@@ -342,16 +342,6 @@ void close_c_lib() {
     printf("chat client teardown\n");
     teardown_chat_client();
 
-    printf("client state teardown\n");
-    ClientState::teardown();
-
-    printf("item teardown\n");
-    Item::teardown();
-    printf("toolbelt teardown\n");
-    Toolbelt::teardown();
-    printf("container teardown\n");
-    ItemContainer::teardown();
-
     printf("objects teardown\n");
     Objects::teardown();    // Entity system
     printf("components teardown\n");
@@ -369,7 +359,17 @@ void close_c_lib() {
     t_map::teardown_shader();
     printf("hud map teardown\n");
     HudMap::teardown();
-    //vn::teardown();
+
+    printf("client state teardown\n");
+    ClientState::teardown();
+
+    printf("item teardown\n");
+    Item::teardown();
+    printf("toolbelt teardown\n");
+    Toolbelt::teardown();
+    printf("container teardown\n");
+    ItemContainer::teardown();
+
     printf("sound close\n");
     Sound::close();
     printf("SDL close\n");
