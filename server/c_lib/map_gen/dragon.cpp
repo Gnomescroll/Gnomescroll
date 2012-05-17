@@ -1,7 +1,7 @@
 #include "dragon.hpp"
 
 #include <t_map/t_map.hpp>
-#include <map_gen/features.h>
+#include <map_gen/features.hpp>
 #include <math.h>
 //#include <common/random.h>
 
@@ -654,9 +654,9 @@ void generate_caves() {
     int z = 0;
     int h = 64;
     int tile = 3;
-    _floor(x,y, z, h, tile);
+    map_gen::floor(x,y, z, h, tile);
     caves();
-    _box(x,y,z,h,tile);
+    map_gen::box(x,y,z,h,tile);
 }
 
 bool block_is_edge(int i, int j, int k, int limit) {
@@ -721,7 +721,7 @@ void generate(int z)
     int x = width;
     int y = height;
     int tile = 3;
-    _floor(x,y, z, 1, tile);
+    map_gen::floor(x,y, z, 1, tile);
     init(z);
 
     segment_caves(z, 101, 2);

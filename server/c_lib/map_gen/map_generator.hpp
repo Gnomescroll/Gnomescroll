@@ -9,7 +9,7 @@
 #include <map_gen/interpolator.h>
 #include <map_gen/perturb.h>
 #include <map_gen/gradient.h>
-#include <map_gen/features.h>
+#include <map_gen/features.hpp>
 
 namespace MapGen
 {
@@ -435,7 +435,7 @@ class Generator
             reverse_heightmap(x,y,z, this->reverse_baseline, this->reverse_maxheight, this->reverse_minheight, this->base_tile);
 
         if (this->add_grass)
-            _grass(x,y, this->base_tile, this->dirt_tile, this->grass_tile);
+            map_gen::grass(x,y, this->base_tile, this->dirt_tile, this->grass_tile);
 
         next_seed();
 

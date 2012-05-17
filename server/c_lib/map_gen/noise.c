@@ -389,15 +389,15 @@ void noise_destroy()
     noisemap = NULL;
 }
 
-#include "perlin.c"
-#include "simplex.c"
-#include "ridged_mf.c"
-#include "interpolator.c"
-#include "gradient.c"
-#include "perturb.c"
-#include "features.c"
+#include <map_gen/perlin.c>
+#include <map_gen/simplex.c>
+#include <map_gen/ridged_mf.c>
+#include <map_gen/interpolator.c>
+#include <map_gen/gradient.c>
+#include <map_gen/perturb.c>
+#include <map_gen/features.cpp>
 
 #ifdef DUNGEON
-#include "dragon.cpp"
-#include "dungeon.cpp"
+#include <map_gen/dragon.cpp>
+#include <map_gen/dungeon.cpp>
 #endif
