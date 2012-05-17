@@ -16,6 +16,8 @@
 #include <item/toolbelt/net/StoC.hpp>
 #include <item/particle/net/CtoS.hpp>
 #include <item/particle/net/StoC.hpp>
+#include <item/container/net/StoC.hpp>
+#include <item/container/net/StoC.hpp>
 
 #include <particle/grenade.hpp> // move into net folder in particles
 namespace PacketInit {
@@ -76,7 +78,6 @@ void RegisterMessages() {
     t_map::block_action_StoC::register_client_packet();
     t_map::map_metadata_StoC::register_client_packet();
     
-    t_map::create_container_block_CtoS::register_server_packet();
     t_map::container_block_chunk_reset_StoC::register_client_packet();
     t_map::container_block_create_StoC::register_client_packet();
     t_map::container_block_delete_StoC::register_client_packet();
@@ -200,36 +201,42 @@ void RegisterMessages() {
     Item::item_destroy_StoC::register_client_packet();
 
     // container state
-    Item::create_item_container_StoC::register_client_packet();
-    Item::delete_item_container_StoC::register_client_packet();
-    Item::assign_item_container_StoC::register_client_packet();
+    ItemContainer::create_item_container_StoC::register_client_packet();
+    ItemContainer::delete_item_container_StoC::register_client_packet();
+    ItemContainer::assign_item_container_StoC::register_client_packet();
 
-    // container actions (to server)
-    Item::container_action_alpha_CtoS::register_server_packet();
-    Item::container_action_beta_CtoS::register_server_packet();
+    // container actions to server
+    ItemContainer::open_container_CtoS::register_server_packet();
+    ItemContainer::close_container_CtoS::register_server_packet();
 
-    Item::nanite_container_action_alpha_CtoS::register_server_packet();
-    Item::nanite_container_action_beta_CtoS::register_server_packet();
+    // container actions to client
+    ItemContainer::open_container_failed_StoC::register_client_packet();
+    ItemContainer::close_container_StoC::register_client_packet();
+    ItemContainer::open_container_StoC::register_client_packet();
+
+    // container transactions to server
+    ItemContainer::container_action_alpha_CtoS::register_server_packet();
+    ItemContainer::container_action_beta_CtoS::register_server_packet();
+
+    ItemContainer::nanite_container_action_alpha_CtoS::register_server_packet();
+    ItemContainer::nanite_container_action_beta_CtoS::register_server_packet();
     
-    Item::craft_container_action_alpha_CtoS::register_server_packet();
-    Item::craft_container_action_beta_CtoS::register_server_packet();
-    Item::craft_item_from_bench_action_CtoS::register_server_packet();
+    ItemContainer::craft_container_action_alpha_CtoS::register_server_packet();
+    ItemContainer::craft_container_action_beta_CtoS::register_server_packet();
+    ItemContainer::craft_item_from_bench_action_CtoS::register_server_packet();
 
-    Item::no_container_action_alpha_CtoS::register_server_packet();
-    Item::no_container_action_beta_CtoS::register_server_packet();
+    ItemContainer::no_container_action_alpha_CtoS::register_server_packet();
+    ItemContainer::no_container_action_beta_CtoS::register_server_packet();
 
-    Item::open_container_CtoS::register_server_packet();
-    Item::close_container_CtoS::register_server_packet();
+    // container transactions to client
+    ItemContainer::container_action_failed_StoC::register_client_packet();
+    ItemContainer::insert_item_in_container_StoC::register_client_packet();
+    ItemContainer::remove_item_from_container_StoC::register_client_packet();
+    ItemContainer::insert_item_in_hand_StoC::register_client_packet();
+    ItemContainer::remove_item_from_hand_StoC::register_client_packet();
 
-    Item::open_container_failed_StoC::register_client_packet();
-    Item::close_container_StoC::register_client_packet();
-
-    // container actions (to client)
-    Item::container_action_failed_StoC::register_client_packet();
-    Item::insert_item_in_container_StoC::register_client_packet();
-    Item::remove_item_from_container_StoC::register_client_packet();
-    Item::insert_item_in_hand_StoC::register_client_packet();
-    Item::remove_item_from_hand_StoC::register_client_packet();
+    // container blocks
+    ItemContainer::create_container_block_CtoS::register_server_packet();
 
     // toolbelt actions (to server)
     Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();

@@ -162,11 +162,11 @@ void check_item_pickups()
         Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
         if (agent == NULL) continue;
 
-        int container_id = Item::get_agent_container(agent->id);
+        int container_id = ItemContainer::get_agent_container(agent->id);
         if (container_id == NULL_CONTAINER) return;
 
         // get slot for placing in container
-        int slot = Item::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
+        int slot = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
         if (slot == NULL_SLOT) return;
 
         // update particle
@@ -210,6 +210,7 @@ void throw_agent_item(int agent_id, ItemID item_id)
 
 void dump_container_item(ItemID item_id, float x, float y, float z)
 {
+    printf("dump container item\n");
     assert(item_id != NULL_ITEM);
     
     Vec3 position = vec3_init(x,y,z);

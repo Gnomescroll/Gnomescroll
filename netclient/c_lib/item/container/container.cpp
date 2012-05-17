@@ -1,19 +1,18 @@
-#include "item_container.hpp"
+#include "container.hpp"
 
-#include <item/net/StoC.hpp>
-#include <item/item.hpp>
-#include <item/_interface.hpp>
-#include <item/_state.hpp>
+#include <item/container/_interface.hpp>
+#include <item/container/_state.hpp>
 
 #if DC_CLIENT
-#include <item/client_item_container.hpp>
+#include <item/container/container_ui.hpp>
 #endif
 
 #if DC_SERVER
-#include <item/server.hpp>
+#include <item/container/server.hpp>
+#include <item/container/net/StoC.hpp>
 #endif
 
-namespace Item
+namespace ItemContainer
 {
 
 /* ItemContainer methods */
@@ -25,7 +24,7 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
     this->slot[slot] = item_id;
     this->slot_count++;
 
-    Item* item = get_item_object(item_id);
+    Item::Item* item = Item::get_item_object(item_id);
     assert(item != NULL);
     item->container_id = this->id;
     item->container_slot = slot;
@@ -38,7 +37,7 @@ void ItemContainer::remove_item(int slot)
     ItemID item_id = this->slot[slot];
     if (item_id != NULL_ITEM)
     {
-        Item* item = get_item_object(this->slot[slot]);
+        Item::Item* item = Item::get_item_object(this->slot[slot]);
         assert(item != NULL);
         item->container_id = NULL_CONTAINER;
         item->container_slot = NULL_SLOT;
@@ -57,7 +56,7 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
     this->slot[slot] = item_id;
     this->slot_count++;
 
-    Item* item = get_item_object(item_id);
+    Item::Item* item = Item::get_item_object(item_id);
     assert(item != NULL);
     item->container_id = this->id;
     item->container_slot = slot;
@@ -74,7 +73,7 @@ void ItemContainerNanite::remove_item(int slot)
     ItemID item_id = this->slot[slot];
     if (item_id != NULL_ITEM)
     {
-        Item* item = get_item_object(this->slot[slot]);
+        Item::Item* item = Item::get_item_object(this->slot[slot]);
         assert(item != NULL);
         item->container_id = NULL_CONTAINER;
         item->container_slot = NULL_SLOT;
@@ -91,8 +90,8 @@ void ItemContainerNanite::digest()
     ItemID coins_id = this->get_coins();
     if (coins_id != NULL_ITEM)
     {
-        int coins_type = get_item_type(coins_id);
-        if (get_stack_size(coins_id) >= get_max_stack_size(coins_type)) return;
+        int coins_type = Item::get_item_type(coins_id);
+        if (Item::get_stack_size(coins_id) >= Item::get_max_stack_size(coins_type)) return;
     }
 
     // tick digestion
@@ -102,7 +101,7 @@ void ItemContainerNanite::digest()
     if (item_id == NULL_ITEM) return;
 
     // decrement stack
-    Item* item = get_item_object(item_id);
+    Item::Item* item = Item::get_item_object(item_id);
     assert(item != NULL);
     item->stack_size -= 1;
     
@@ -113,27 +112,27 @@ void ItemContainerNanite::digest()
     {
         this->remove_item(0);
         if (a != NULL) send_container_remove(a->client_id, this->id, 0);
-        destroy_item(item_id);
+        Item::destroy_item(item_id);
     }
     else
     {
-        if (a != NULL) send_item_state(a->client_id, item->id);
+        if (a != NULL) Item::send_item_state(a->client_id, item->id);
     }
 
     // update coins
     if (coins_id == NULL_ITEM)
     {   // no coins were in coin slot, create new stack
-        Item* coin = create_item((char*)"nanite_coin");
+        Item::Item* coin = Item::create_item((char*)"nanite_coin");
         assert(coin != NULL);
-        if (a != NULL) send_item_create(a->client_id, coin->id);
+        if (a != NULL) Item::send_item_create(a->client_id, coin->id);
         this->insert_item(this->slot_max-1, coin->id);
         if (a != NULL) send_container_insert(a->client_id, coin->id, this->id, this->slot_max-1);
     }
     else
     {   // add to existing coin stack
-        Item* coins = get_item_object(coins_id);
+        Item::Item* coins = Item::get_item_object(coins_id);
         coins->stack_size += 1;
-        if (a != NULL) send_item_state(a->client_id, coins_id);
+        if (a != NULL) Item::send_item_state(a->client_id, coins_id);
     }
 }
 #endif
@@ -147,7 +146,7 @@ void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
     this->slot[slot] = item_id;
     this->slot_count++;
 
-    Item* item = get_item_object(item_id);
+    Item::Item* item = Item::get_item_object(item_id);
     assert(item != NULL);
     item->container_id = this->id;
     item->container_slot = slot;
@@ -160,7 +159,7 @@ void ItemContainerCraftingBench::remove_item(int slot)
     ItemID item_id = this->slot[slot];
     if (item_id != NULL_ITEM)
     {
-        Item* item = get_item_object(this->slot[slot]);
+        Item::Item* item = Item::get_item_object(this->slot[slot]);
         assert(item != NULL);
         item->container_id = NULL_CONTAINER;
         item->container_slot = NULL_SLOT;
@@ -199,13 +198,201 @@ void init_container(ItemContainerInterface* container)
             container->init(STORAGE_BLOCK_SMALL_X, STORAGE_BLOCK_SMALL_Y);
             break;
         default:
-            printf("init_container() - Unhandled container type %d\n", container->type);
+            printf("%s - Unhandled container type %d\n", __FUNCTION__, container->type);
             assert(false);
             break;
     }
 }
 
 /* Transaction Logic */
+
+// transactions
+
+#if DC_CLIENT
+
+ContainerActionType full_hand_to_world(
+    int* hand_item_type, int* hand_item_stack, int* hand_item_durability
+)
+{
+    *hand_item_type = NULL_ITEM_TYPE;
+    *hand_item_stack = 1;
+    *hand_item_durability = NULL_DURABILITY;
+    return FULL_HAND_TO_WORLD;
+}
+
+ContainerActionType full_hand_to_empty_slot(
+    ItemContainerUIInterface* container, int slot,
+    int* hand_item_type, int* hand_item_stack, int* hand_item_durability
+)
+{   // put hand item in slot
+    container->insert_item(slot, *hand_item_type, *hand_item_stack, *hand_item_durability);
+    *hand_item_type = NULL_ITEM_TYPE;
+    *hand_item_stack = 1;
+    *hand_item_durability = NULL_DURABILITY;
+    return FULL_HAND_TO_EMPTY_SLOT;
+}
+
+ContainerActionType full_hand_to_occupied_slot(
+    ItemContainerUIInterface* container, int slot,
+    int* hand_item_type, int* hand_item_stack, int* hand_item_durability,
+    int slot_item_type, int slot_item_stack, int slot_item_durability
+)
+{ // add stacks
+    container->insert_item(slot, slot_item_type, slot_item_stack + *hand_item_stack, slot_item_durability);
+    *hand_item_type = NULL_ITEM_TYPE;
+    *hand_item_stack = 1;
+    *hand_item_durability = NULL_DURABILITY;
+    return FULL_HAND_TO_OCCUPIED_SLOT;
+}
+
+ContainerActionType partial_hand_to_empty_slot(
+    ItemContainerUIInterface* container, int slot,
+    int hand_item_type, int* hand_item_stack, int hand_item_durability
+)
+{
+    container->insert_item(slot, hand_item_type, 1, hand_item_durability);
+    // hand item type unchanged
+    *hand_item_stack -= 1;
+    assert(*hand_item_stack > 0);
+    return PARTIAL_HAND_TO_EMPTY_SLOT;
+}
+
+ContainerActionType partial_hand_to_occupied_slot(
+    ItemContainerUIInterface* container, int slot,
+    int* hand_item_stack,
+    int slot_item_type, int slot_item_stack, int slot_item_space, int slot_item_durability
+)
+{
+    container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
+    //hand_item_type unchanged
+    *hand_item_stack -= slot_item_space;
+    assert(*hand_item_stack > 0);
+    return PARTIAL_HAND_TO_OCCUPIED_SLOT;
+}
+
+ContainerActionType partial_slot_to_empty_hand(
+    ItemContainerUIInterface* container, int slot,
+    int* hand_item_type, int* hand_item_stack, int* hand_item_durability,
+    int slot_item_type, int slot_item_stack, int slot_item_durability
+)
+{   // split stack, rounded down
+    *hand_item_type = slot_item_type;
+    *hand_item_stack = slot_item_stack / 2;
+    *hand_item_durability = slot_item_durability;
+    container->insert_item(slot, slot_item_type, slot_item_stack - *hand_item_stack, slot_item_durability);
+    // slot item type unchanged
+    return PARTIAL_SLOT_TO_EMPTY_HAND;
+}
+
+ContainerActionType full_slot_to_empty_hand(
+    ItemContainerUIInterface* container, int slot,
+    int* hand_item_type, int* hand_item_stack, int* hand_item_durability,
+    int slot_item_type, int slot_item_stack, int slot_item_durability
+)
+{
+    container->remove_item(slot);
+    *hand_item_type = slot_item_type;
+    *hand_item_stack = slot_item_stack;
+    *hand_item_durability = slot_item_durability;
+    return FULL_SLOT_TO_EMPTY_HAND;
+}
+
+ContainerActionType full_hand_swap_with_slot(
+    ItemContainerUIInterface* container, int slot,
+    int* hand_item_type, int* hand_item_stack, int* hand_item_durability,
+    int slot_item_type, int slot_item_stack, int slot_item_durability
+)    
+{
+    container->insert_item(slot, *hand_item_type, *hand_item_stack, *hand_item_durability);
+    *hand_item_type = slot_item_type;
+    *hand_item_stack = slot_item_stack;
+    *hand_item_durability = slot_item_durability;
+    return FULL_HAND_SWAP_WITH_SLOT;
+}
+
+#endif
+
+#if DC_SERVER
+
+ContainerActionType full_hand_to_world(int client_id, int agent_id, ItemID* hand_item)
+{
+    ItemParticle::throw_agent_item(agent_id, *hand_item);
+    *hand_item = NULL_ITEM;
+    send_hand_remove(client_id);
+    return FULL_HAND_TO_WORLD;
+}
+
+ContainerActionType full_hand_to_empty_slot(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item)
+{   // put hand item in slot
+    container->insert_item(slot, *hand_item);
+    send_container_insert(client_id, *hand_item, container->id, slot);
+    *hand_item = NULL_ITEM;
+    send_hand_remove(client_id);
+    return FULL_HAND_TO_EMPTY_SLOT;
+}
+
+ContainerActionType full_hand_to_occupied_slot(int client_id, int slot, ItemID* hand_item, ItemID slot_item)
+{ // add stacks
+    Item::merge_item_stack(*hand_item, slot_item); // Item::merge_item_stack(src, dest)
+    Item::broadcast_item_state(slot_item);
+    Item::destroy_item(*hand_item);
+    *hand_item = NULL_ITEM;
+    send_hand_remove(client_id);
+    return FULL_HAND_TO_OCCUPIED_SLOT;
+}
+
+ContainerActionType partial_hand_to_empty_slot(int client_id, ItemContainerInterface* container, int slot, ItemID hand_item)
+{
+    ItemID new_item = Item::split_item_stack(hand_item, 1);   // WARNING: CREATES ITEM
+    container->insert_item(slot, new_item);
+    Item::broadcast_item_state(hand_item);
+    Item::broadcast_item_create(new_item);
+    send_container_insert(client_id, new_item, container->id, slot);
+    // hand item id is unchanged
+    return PARTIAL_HAND_TO_EMPTY_SLOT;
+}
+
+ContainerActionType partial_hand_to_occupied_slot(int client_id, int slot, ItemID hand_item, ItemID slot_item, int slot_item_space)
+{
+    Item::merge_item_stack(hand_item, slot_item, slot_item_space);
+    // update items
+    Item::broadcast_item_state(slot_item);
+    Item::broadcast_item_state(hand_item);
+    // hand item unchanged
+    return PARTIAL_HAND_TO_OCCUPIED_SLOT;
+}
+
+ContainerActionType partial_slot_to_empty_hand(int client_id, int slot, ItemID* hand_item, ItemID slot_item)
+{   // split stack, rounded down
+    ItemID new_item = Item::split_item_stack_in_half(slot_item);
+    *hand_item = new_item;
+    // slot id is unchanged
+    Item::broadcast_item_state(slot_item);
+    Item::broadcast_item_create(new_item);
+    send_hand_insert(client_id, new_item);
+    return PARTIAL_SLOT_TO_EMPTY_HAND;
+}
+
+ContainerActionType full_slot_to_empty_hand(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item, ItemID slot_item)
+{
+    assert(container != NULL);
+    container->remove_item(slot);
+    send_container_remove(client_id, container->id, slot);
+    *hand_item = slot_item;
+    send_hand_insert(client_id, *hand_item);
+    return FULL_SLOT_TO_EMPTY_HAND;
+}
+
+ContainerActionType full_hand_swap_with_slot(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item, ItemID slot_item)
+{
+    container->insert_item(slot, *hand_item);
+    send_container_insert(client_id, *hand_item, container->id, slot);
+    *hand_item = slot_item;
+    send_hand_insert(client_id, *hand_item);
+    return FULL_HAND_SWAP_WITH_SLOT;
+}
+
+#endif
 
 #if DC_CLIENT
 ContainerActionType alpha_action_decision_tree(int id, int slot)
@@ -226,8 +413,8 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     #if DC_SERVER
     ItemID hand_item = get_agent_hand(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    int hand_item_type = get_item_type(hand_item);
-    int hand_item_stack = get_stack_size(hand_item);
+    int hand_item_type = Item::get_item_type(hand_item);
+    int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
     // client was inside container, but not a slot
@@ -247,16 +434,16 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     int slot_item_type = container->get_slot_type(slot);
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
     int slot_item_stack = container->get_slot_stack(slot);
-    int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
+    int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
     int slot_item_durability = container->get_slot_durability(slot);
     #endif
 
     #if DC_SERVER
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    int slot_item_type = get_item_type(slot_item);
-    //int slot_item_stack = get_stack_size(slot_item);
-    int slot_item_space = get_stack_space(slot_item);
+    int slot_item_type = Item::get_item_type(slot_item);
+    //int slot_item_stack = Item::get_stack_size(slot_item);
+    int slot_item_space = Item::get_stack_space(slot_item);
     #endif
 
     // NORMAL
@@ -283,18 +470,15 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
         {   // SLOT -> HAND
             // remove slot item
             #if DC_CLIENT
-            container->remove_item(slot);
-            hand_item_type = slot_item_type;
-            hand_item_stack = slot_item_stack;
-            hand_item_durability = slot_item_durability;
+            action = full_slot_to_empty_hand(
+                container, slot,
+                &hand_item_type, &hand_item_stack, &hand_item_durability,
+                slot_item_type, slot_item_stack, slot_item_durability
+            );
             #endif
             #if DC_SERVER
-            container->remove_item(slot);
-            send_container_remove(client_id, container->id, slot);
-            hand_item = slot_item;
-            send_hand_insert(client_id, hand_item);
+            action = full_slot_to_empty_hand(client_id, container, slot, &hand_item, slot_item);
             #endif
-            action = FULL_SLOT_TO_EMPTY_HAND;
         }
     }
     // hand holding item
@@ -303,20 +487,15 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
         if (slot_empty)
         // slot is empty
         {   // HAND -> SLOT
-            // put hand item in slot
             #if DC_CLIENT
-            container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-            hand_item_type = NULL_ITEM_TYPE;
-            hand_item_stack = 1;
-            hand_item_durability = NULL_DURABILITY;
+            action = full_hand_to_empty_slot(
+                container, slot,
+                &hand_item_type, &hand_item_stack, &hand_item_durability
+            );
             #endif
             #if DC_SERVER
-            container->insert_item(slot, hand_item);
-            send_container_insert(client_id, hand_item, container->id, slot);
-            hand_item = NULL_ITEM;
-            send_hand_remove(client_id);
+            action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
             #endif
-            action = FULL_HAND_TO_EMPTY_SLOT;
         }
         else
         // slot is occupied
@@ -327,21 +506,16 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                 // hand stack will fit entirely in slot
                 if (hand_item_stack <= slot_item_space)
                 {   // FULL STACK MERGE
-                    // add stacks
                     #if DC_CLIENT
-                    container->insert_item(slot, slot_item_type, slot_item_stack + hand_item_stack, slot_item_durability);
-                    hand_item_type = NULL_ITEM_TYPE;
-                    hand_item_stack = 1;
-                    hand_item_durability = NULL_DURABILITY;
+                    action = full_hand_to_occupied_slot(
+                        container, slot,
+                        &hand_item_type, &hand_item_stack, &hand_item_durability,
+                        slot_item_type, slot_item_stack, slot_item_durability
+                    );
                     #endif
                     #if DC_SERVER
-                    merge_item_stack(hand_item, slot_item); // merge_item_stack(src, dest)
-                    broadcast_item_state(slot_item);
-                    destroy_item(hand_item);
-                    hand_item = NULL_ITEM;
-                    send_hand_remove(client_id);
+                    action = full_hand_to_occupied_slot(client_id, slot, &hand_item, slot_item);
                     #endif
-                    action = FULL_HAND_TO_OCCUPIED_SLOT;
                 }
                 else
                 // stacks will not completely merge
@@ -350,36 +524,29 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     // the stack is full
                     {  // SWAP
                         #if DC_CLIENT
-                        container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                        hand_item_type = slot_item_type;
-                        hand_item_stack = slot_item_stack;
-                        hand_item_durability = slot_item_durability;
+                        action = full_hand_swap_with_slot(
+                            container, slot,
+                            &hand_item_type, &hand_item_stack, &hand_item_durability,
+                            slot_item_type, slot_item_stack, slot_item_durability
+                        );
                         #endif
                         #if DC_SERVER
-                        container->insert_item(slot, hand_item);
-                        send_container_insert(client_id, hand_item, container->id, slot);
-                        hand_item = slot_item;
-                        send_hand_insert(client_id, hand_item);
+                        action = full_hand_swap_with_slot(client_id, container, slot, &hand_item, slot_item);
                         #endif
-                        action = FULL_HAND_SWAP_WITH_SLOT;
                     }
                     else
                     // some of the hand stack will fit in the slot
                     {   // PARTIAL STACK MERGE
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
-                        //hand_item_type unchanged
-                        hand_item_stack -= slot_item_space;
-                        assert(hand_item_stack > 0);
+                        action = partial_hand_to_occupied_slot(
+                            container, slot,
+                            &hand_item_stack,
+                            slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
+                        );
                         #endif
                         #if DC_SERVER
-                        merge_item_stack(hand_item, slot_item, slot_item_space);
-                        // update items
-                        broadcast_item_state(slot_item);
-                        broadcast_item_state(hand_item);
-                        // hand item unchanged
+                        action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
                         #endif
-                        action = PARTIAL_HAND_TO_OCCUPIED_SLOT;
                     }
                 }
             }
@@ -387,18 +554,15 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             // types are different
             {   // SWAP
                 #if DC_CLIENT
-                container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                hand_item_type = slot_item_type;
-                hand_item_stack = slot_item_stack;
-                hand_item_durability = slot_item_durability;
+                action = full_hand_swap_with_slot(
+                    container, slot,
+                    &hand_item_type, &hand_item_stack, &hand_item_durability,
+                    slot_item_type, slot_item_stack, slot_item_durability
+                );
                 #endif
                 #if DC_SERVER
-                container->insert_item(slot, hand_item);
-                send_container_insert(client_id, hand_item, container->id, slot);
-                hand_item = slot_item;
-                send_hand_insert(client_id, hand_item);
+                action = full_hand_swap_with_slot(client_id, container, slot, &hand_item, slot_item);
                 #endif
-                action = FULL_HAND_SWAP_WITH_SLOT;
             }
         }
     }
@@ -434,8 +598,8 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     #if DC_SERVER
     ItemID hand_item = get_agent_hand(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    int hand_item_type = get_item_type(hand_item);
-    int hand_item_stack = get_stack_size(hand_item);
+    int hand_item_type = Item::get_item_type(hand_item);
+    int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
     // client was inside container, but not a slot
@@ -456,16 +620,16 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     int slot_item_type = container->get_slot_type(slot);
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
     int slot_item_stack = container->get_slot_stack(slot);
-    int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
+    int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
     int slot_item_durability = container->get_slot_durability(slot);
     #endif
 
     #if DC_SERVER
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    int slot_item_type = get_item_type(slot_item);
-    //int slot_item_stack = get_stack_size(slot_item);
-    int slot_item_space = get_stack_space(slot_item);
+    int slot_item_type = Item::get_item_type(slot_item);
+    //int slot_item_stack = Item::get_stack_size(slot_item);
+    int slot_item_space = Item::get_stack_space(slot_item);
     #endif
 
     // NANITE
@@ -500,18 +664,15 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
             if (!slot_empty)
             {   // pick up food
                 #if DC_CLIENT
-                container->remove_item(slot);
-                hand_item_type = slot_item_type;
-                hand_item_stack = slot_item_stack;
-                hand_item_durability = slot_item_durability;
+                action = full_slot_to_empty_hand(
+                    container, slot,
+                    &hand_item_type, &hand_item_stack, &hand_item_durability,
+                    slot_item_type, slot_item_stack, slot_item_durability
+                );
                 #endif
                 #if DC_SERVER
-                container->remove_item(slot);
-                send_container_remove(client_id, container->id, slot);
-                hand_item = slot_item;
-                send_hand_insert(client_id, hand_item);
+                action = full_slot_to_empty_hand(client_id, container, slot, &hand_item, slot_item);
                 #endif
-                action = FULL_SLOT_TO_EMPTY_HAND;                        
             }
         }
         else
@@ -527,18 +688,14 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                 if (can_insert)
                 {
                     #if DC_CLIENT
-                    container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                    hand_item_type = NULL_ITEM_TYPE;
-                    hand_item_stack = 1;
-                    hand_item_durability = NULL_DURABILITY;
+                    action = full_hand_to_empty_slot(
+                        container, slot,
+                        &hand_item_type, &hand_item_stack, &hand_item_durability
+                    );
                     #endif
                     #if DC_SERVER
-                    container->insert_item(slot, hand_item);
-                    send_container_insert(client_id, hand_item, container->id, slot);
-                    hand_item = NULL_ITEM;
-                    send_hand_remove(client_id);
+                    action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
                     #endif
-                    action = FULL_HAND_TO_EMPTY_SLOT;
                 }
             }
             // dont swap
@@ -551,18 +708,15 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
             if (!slot_empty)
             {   // pickup coins
                 #if DC_CLIENT
-                container->remove_item(slot);
-                hand_item_type = slot_item_type;
-                hand_item_stack = slot_item_stack;
-                hand_item_durability = slot_item_durability;
+                action = full_slot_to_empty_hand(
+                    container, slot,
+                    &hand_item_type, &hand_item_stack, &hand_item_durability,
+                    slot_item_type, slot_item_stack, slot_item_durability
+                );
                 #endif
                 #if DC_SERVER
-                container->remove_item(slot);
-                send_container_remove(client_id, container->id, slot);
-                hand_item = slot_item;
-                send_hand_insert(client_id, hand_item);
+                action = full_slot_to_empty_hand(client_id, container, slot, &hand_item, slot_item);
                 #endif
-                action = FULL_SLOT_TO_EMPTY_HAND;
             }
         }
         else
@@ -578,18 +732,14 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                 if (can_insert)
                 {
                     #if DC_CLIENT
-                    container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                    hand_item_type = NULL_ITEM_TYPE;
-                    hand_item_stack = 1;
-                    hand_item_durability = NULL_DURABILITY;
+                    action = full_hand_to_empty_slot(
+                        container, slot,
+                        &hand_item_type, &hand_item_stack, &hand_item_durability
+                    );
                     #endif
                     #if DC_SERVER
-                    container->insert_item(slot, hand_item);
-                    send_container_insert(client_id, hand_item, container->id, slot);
-                    hand_item = NULL_ITEM;
-                    send_hand_remove(client_id);
+                    action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
                     #endif
-                    action = FULL_HAND_TO_EMPTY_SLOT;
                 }
             }
             else
@@ -599,21 +749,16 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                     // hand stack will fit entirely in slot
                     if (hand_item_stack <= slot_item_space)
                     {   // FULL STACK MERGE
-                        // add stacks
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + hand_item_stack, slot_item_durability);
-                        hand_item_type = NULL_ITEM_TYPE;
-                        hand_item_stack = 1;
-                        hand_item_durability = NULL_DURABILITY;
+                        action = full_hand_to_occupied_slot(
+                            container, slot,
+                            &hand_item_type, &hand_item_stack, &hand_item_durability,
+                            slot_item_type, slot_item_stack, slot_item_durability
+                        );
                         #endif
                         #if DC_SERVER
-                        merge_item_stack(hand_item, slot_item); // merge_item_stack(src, dest)
-                        broadcast_item_state(slot_item);
-                        destroy_item(hand_item);
-                        hand_item = NULL_ITEM;
-                        send_hand_remove(client_id);
+                        action = full_hand_to_occupied_slot(client_id, slot, &hand_item, slot_item);
                         #endif
-                        action = FULL_HAND_TO_OCCUPIED_SLOT;
                     }
                     else
                     // stacks will not completely merge
@@ -622,36 +767,29 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                         // the stack is full
                         {  // SWAP
                             #if DC_CLIENT
-                            container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                            hand_item_type = slot_item_type;
-                            hand_item_stack = slot_item_stack;
-                            hand_item_durability = slot_item_durability;
+                            action = full_hand_swap_with_slot(
+                                container, slot,
+                                &hand_item_type, &hand_item_stack, &hand_item_durability,
+                                slot_item_type, slot_item_stack, slot_item_durability
+                            );
                             #endif
                             #if DC_SERVER
-                            container->insert_item(slot, hand_item);
-                            send_container_insert(client_id, hand_item, container->id, slot);
-                            hand_item = slot_item;
-                            send_hand_insert(client_id, hand_item);
+                            action = full_hand_swap_with_slot(client_id, container, slot, &hand_item, slot_item);
                             #endif
-                            action = FULL_HAND_SWAP_WITH_SLOT;
                         }
                         else
                         // some of the hand stack will fit in the slot
                         {   // PARTIAL STACK MERGE
                             #if DC_CLIENT
-                            container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
-                            //hand_item_type unchanged
-                            hand_item_stack -= slot_item_space;
-                            assert(hand_item_stack > 0);
+                            action = partial_hand_to_occupied_slot(
+                                container, slot,
+                                &hand_item_stack,
+                                slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
+                            );
                             #endif
                             #if DC_SERVER
-                            merge_item_stack(hand_item, slot_item, slot_item_space);
-                            // update items
-                            broadcast_item_state(slot_item);
-                            broadcast_item_state(hand_item);
-                            // hand item unchanged
+                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
                             #endif
-                            action = PARTIAL_HAND_TO_OCCUPIED_SLOT;
                         }
                     }
                 }
@@ -700,7 +838,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     int slot_item_type = container->get_slot_type(slot);
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
     int slot_item_stack = container->get_slot_stack(slot);
-    int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
+    int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
     int slot_item_durability = container->get_slot_durability(slot);
 
     bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
@@ -712,14 +850,14 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     #if DC_SERVER
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    int slot_item_type = get_item_type(slot_item);
-    int slot_item_stack = get_stack_size(slot_item);
-    int slot_item_space = get_stack_space(slot_item);
+    int slot_item_type = Item::get_item_type(slot_item);
+    int slot_item_stack = Item::get_stack_size(slot_item);
+    int slot_item_space = Item::get_stack_space(slot_item);
 
     ItemID hand_item = get_agent_hand(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    int hand_item_type = get_item_type(hand_item);
-    int hand_item_stack = get_stack_size(hand_item);
+    int hand_item_type = Item::get_item_type(hand_item);
+    int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
 
@@ -747,23 +885,16 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
             if (slot_item_stack > 1)
             // stack can split
             {
-                // split stack, rounded down
                 #if DC_CLIENT
-                hand_item_type = slot_item_type;
-                hand_item_stack = slot_item_stack / 2;
-                hand_item_durability = slot_item_durability;
-                container->insert_item(slot, slot_item_type, slot_item_stack - hand_item_stack, slot_item_durability);
-                // slot item type unchanged
+                action = partial_slot_to_empty_hand(
+                    container, slot,
+                    &hand_item_type, &hand_item_stack, &hand_item_durability,
+                    slot_item_type, slot_item_stack, slot_item_durability
+                );
                 #endif
                 #if DC_SERVER
-                ItemID new_item = split_item_stack_in_half(slot_item);
-                hand_item = new_item;
-                // slot id is unchanged
-                broadcast_item_state(slot_item);
-                broadcast_item_create(new_item);
-                send_hand_insert(client_id, new_item);
+                action = partial_slot_to_empty_hand(client_id, slot, &hand_item, slot_item);
                 #endif
-                action = PARTIAL_SLOT_TO_EMPTY_HAND;
             }
         }
     }
@@ -780,37 +911,27 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
             // only 1 in stack, do simple insert
             {
                 #if DC_CLIENT
-                container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                hand_item_type = NULL_ITEM_TYPE;
-                hand_item_stack = 1;
-                hand_item_durability = NULL_DURABILITY;
+                action = full_hand_to_empty_slot(
+                    container, slot,
+                    &hand_item_type, &hand_item_stack, &hand_item_durability
+                );
                 #endif
                 #if DC_SERVER
-                container->insert_item(slot, hand_item);
-                send_container_insert(client_id, hand_item, container->id, slot);
-                hand_item = NULL_ITEM;
-                send_hand_remove(client_id);
+                action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
                 #endif
-                action = FULL_HAND_TO_EMPTY_SLOT;
             }
             else
             // must split stack
             {
                 #if DC_CLIENT
-                container->insert_item(slot, hand_item_type, 1, hand_item_durability);
-                // hand item type unchanged
-                hand_item_stack -= 1;
-                assert(hand_item_stack > 0);
+                action = partial_hand_to_empty_slot(
+                    container, slot,
+                    hand_item_type, &hand_item_stack, hand_item_durability
+                );
                 #endif
                 #if DC_SERVER
-                ItemID new_item = split_item_stack(hand_item, 1);   // WARNING: CREATES ITEM
-                container->insert_item(slot, new_item);
-                broadcast_item_state(hand_item);
-                broadcast_item_create(new_item);
-                send_container_insert(client_id, new_item, container->id, slot);
-                // hand item id is unchanged
+                action = partial_hand_to_empty_slot(client_id, container, slot, hand_item);
                 #endif
-                action = PARTIAL_HAND_TO_EMPTY_SLOT;
             }
         }
         else
@@ -826,39 +947,29 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                     // hand only had one
                     {
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + 1, slot_item_durability);
-                        hand_item_type = NULL_ITEM_TYPE;
-                        hand_item_stack = 1;
-                        hand_item_durability = NULL_DURABILITY;
+                        action = full_hand_to_occupied_slot(
+                            container, slot,
+                            &hand_item_type, &hand_item_stack, &hand_item_durability,
+                            slot_item_type, slot_item_stack, slot_item_durability
+                        );
                         #endif
                         #if DC_SERVER
-                        merge_item_stack(hand_item, slot_item);
-                        // update dest
-                        broadcast_item_state(slot_item);
-                        // destroy src
-                        send_hand_remove(client_id);
-                        destroy_item(hand_item);    // sends packet
-                        hand_item = NULL_ITEM;
+                        action = full_hand_to_occupied_slot(client_id, slot, &hand_item, slot_item);
                         #endif
-                        action = FULL_HAND_TO_OCCUPIED_SLOT;
                     }
                     else
                     // hand has >1 stack
                     {
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + 1, slot_item_durability);
-                        // hand item type unchanged
-                        hand_item_stack -= 1;
-                        assert(hand_item_stack > 0);
+                        action = partial_hand_to_occupied_slot(
+                            container, slot,
+                            &hand_item_stack,
+                            slot_item_type, slot_item_stack, 1, slot_item_durability
+                        );
                         #endif
                         #if DC_SERVER
-                        merge_item_stack(hand_item, slot_item, 1);
-                        // update items
-                        broadcast_item_state(slot_item);
-                        broadcast_item_state(hand_item);
+                        action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, 1);
                         #endif
-                        // hand item unchanged
-                        action = PARTIAL_HAND_TO_OCCUPIED_SLOT;
                     }
                 }
             }
@@ -900,7 +1011,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     int slot_item_type = container->get_slot_type(slot);
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
     int slot_item_stack = container->get_slot_stack(slot);
-    int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
+    int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
     int slot_item_durability = container->get_slot_durability(slot);
 
     bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
@@ -912,14 +1023,14 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     #if DC_SERVER
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    int slot_item_type = get_item_type(slot_item);
-    int slot_item_stack = get_stack_size(slot_item);
-    int slot_item_space = get_stack_space(slot_item);
+    int slot_item_type = Item::get_item_type(slot_item);
+    int slot_item_stack = Item::get_stack_size(slot_item);
+    int slot_item_space = Item::get_stack_space(slot_item);
 
     ItemID hand_item = get_agent_hand(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    int hand_item_type = get_item_type(hand_item);
-    int hand_item_stack = get_stack_size(hand_item);
+    int hand_item_type = Item::get_item_type(hand_item);
+    int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
     // if hand empty
@@ -952,23 +1063,16 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                 if (slot_item_stack > 1)
                 // stack can split
                 {
-                    // split stack, rounded down
                     #if DC_CLIENT
-                    hand_item_type = slot_item_type;
-                    hand_item_stack = slot_item_stack / 2;
-                    hand_item_durability = slot_item_durability;
-                    container->insert_item(slot, slot_item_type, slot_item_stack - hand_item_stack, slot_item_durability);
-                    // slot item type unchanged
+                    action = partial_slot_to_empty_hand(
+                        container, slot,
+                        &hand_item_type, &hand_item_stack, &hand_item_durability,
+                        slot_item_type, slot_item_stack, slot_item_durability
+                    );
                     #endif
                     #if DC_SERVER
-                    ItemID new_item = split_item_stack_in_half(slot_item);
-                    hand_item = new_item;
-                    // slot id is unchanged
-                    broadcast_item_state(slot_item);
-                    broadcast_item_create(new_item);
-                    send_hand_insert(client_id, new_item);
+                    action = partial_slot_to_empty_hand(client_id, slot, &hand_item, slot_item);
                     #endif
-                    action = PARTIAL_SLOT_TO_EMPTY_HAND;
                 }
             }
             // do nothing for shopping
@@ -996,38 +1100,27 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                     // only 1 in stack, do simple insert
                     {
                         #if DC_CLIENT
-                        container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
-                        hand_item_type = NULL_ITEM_TYPE;
-                        hand_item_stack = 1;
-                        hand_item_durability = NULL_DURABILITY;
+                        action = full_hand_to_empty_slot(
+                            container, slot,
+                            &hand_item_type, &hand_item_stack, &hand_item_durability
+                        );
                         #endif
                         #if DC_SERVER
-                        container->insert_item(slot, hand_item);
-                        send_container_insert(client_id, hand_item, container->id, slot);
-                        send_hand_remove(client_id);
-                        destroy_item(hand_item);
-                        hand_item = NULL_ITEM;
+                        action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
                         #endif
-                        action = FULL_HAND_TO_EMPTY_SLOT;
                     }
                     else
                     // must split stack
                     {
                         #if DC_CLIENT
-                        container->insert_item(slot, hand_item_type, 1, hand_item_durability);
-                        // hand item type unchanged
-                        hand_item_stack -= 1;
-                        assert(hand_item_stack > 0);
+                        action = partial_hand_to_empty_slot(
+                            container, slot,
+                            hand_item_type, &hand_item_stack, hand_item_durability
+                        );
                         #endif
                         #if DC_SERVER
-                        ItemID new_item = split_item_stack(hand_item, 1);   // WARNING: CREATES ITEM
-                        container->insert_item(slot, new_item);
-                        broadcast_item_state(hand_item);
-                        broadcast_item_create(new_item);
-                        send_container_insert(client_id, new_item, container->id, slot);
-                        // hand item id is unchanged
+                        action = partial_hand_to_empty_slot(client_id, container, slot, hand_item);
                         #endif
-                        action = PARTIAL_HAND_TO_EMPTY_SLOT;
                     }
                 }
             }
@@ -1053,39 +1146,29 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                         // hand only had one
                         {
                             #if DC_CLIENT
-                            container->insert_item(slot, slot_item_type, slot_item_stack + 1, slot_item_durability);
-                            hand_item_type = NULL_ITEM_TYPE;
-                            hand_item_stack = 1;
-                            hand_item_durability = NULL_DURABILITY;
+                            action = full_hand_to_occupied_slot(
+                                container, slot,
+                                &hand_item_type, &hand_item_stack, &hand_item_durability,
+                                slot_item_type, slot_item_stack, slot_item_durability
+                            );
                             #endif
                             #if DC_SERVER
-                            merge_item_stack(hand_item, slot_item);
-                            // update dest
-                            broadcast_item_state(slot_item);
-                            // destroy src
-                            send_hand_remove(client_id);
-                            destroy_item(hand_item);
-                            hand_item = NULL_ITEM;
+                            action = full_hand_to_occupied_slot(client_id, slot, &hand_item, slot_item);
                             #endif
-                            action = FULL_HAND_TO_OCCUPIED_SLOT;
                         }
                         else
                         // hand has >1 stack
                         {
                             #if DC_CLIENT
-                            container->insert_item(slot, slot_item_type, slot_item_stack + 1, slot_item_durability);
-                            // hand item type unchanged
-                            hand_item_stack -= 1;
-                            assert(hand_item_stack > 0);
+                            action = partial_hand_to_occupied_slot(
+                                container, slot,
+                                &hand_item_stack,
+                                slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
+                            );
                             #endif
                             #if DC_SERVER
-                            merge_item_stack(hand_item, slot_item, 1);
-                            // update items
-                            broadcast_item_state(slot_item);
-                            broadcast_item_state(hand_item);
+                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
                             #endif
-                            // hand item unchanged
-                            action = PARTIAL_HAND_TO_OCCUPIED_SLOT;
                         }
                     }
                 }
@@ -1149,13 +1232,13 @@ ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int cl
     #if DC_CLIENT
     int hand_item_type = player_hand_type_ui;
     bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
-    int stack_space = get_max_stack_size(hand_item_type) - player_hand_stack_ui;
+    int stack_space = Item::get_max_stack_size(hand_item_type) - player_hand_stack_ui;
     #endif
     #if DC_SERVER
     ItemID hand_item = get_agent_hand(agent_id);
-    int hand_item_type = get_item_type(hand_item);
+    int hand_item_type = Item::get_item_type(hand_item);
     bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
-    int stack_space = get_stack_space(hand_item);
+    int stack_space = Item::get_stack_space(hand_item);
     #endif
  
     assert(stack_space >= 0);
@@ -1163,7 +1246,7 @@ ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int cl
     if (hand_empty) return CRAFT_ITEM_FROM_BENCH;
     if (stack_space > 0)
     {
-        int craft_item_type = get_selected_craft_recipe_type(container_id, slot);
+        int craft_item_type = Item::get_selected_craft_recipe_type(container_id, slot);
         if (hand_item_type == craft_item_type) return CRAFT_ITEM_FROM_BENCH;
     }
     return CONTAINER_ACTION_NONE;
@@ -1203,16 +1286,11 @@ ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int cl
     if (!hand_empty)
     {   // remove
         #if DC_CLIENT
-        hand_item_type = NULL_ITEM_TYPE;
-        hand_item_stack = 1;
-        hand_item_durability = NULL_DURABILITY;
+        action = full_hand_to_world(&hand_item_type, &hand_item_stack, &hand_item_durability);
         #endif
         #if DC_SERVER
-        ItemParticle::throw_agent_item(agent_id, hand_item);
-        hand_item = NULL_ITEM;
-        send_hand_remove(client_id);
+        action = full_hand_to_world(client_id, agent_id, &hand_item);
         #endif
-        action = FULL_HAND_TO_WORLD;
     }
 
     #if DC_CLIENT
@@ -1239,8 +1317,6 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
 
 /* Network */
 #if DC_SERVER
-
-#include <item/net/StoC.hpp>
 
 //  tell client to assign container to an agent
 void send_container_assign(int client_id, int container_id)

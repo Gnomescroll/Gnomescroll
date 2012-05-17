@@ -228,7 +228,7 @@ static HudText::Text* grabbed_icon_stack_text = NULL;
 
 static void draw_grabbed_icon()
 {
-    if (Item::player_hand_type_ui == NULL_ITEM_TYPE) return;
+    if (ItemContainer::player_hand_type_ui == NULL_ITEM_TYPE) return;
 
     const float w = 32;
 
@@ -245,10 +245,10 @@ static void draw_grabbed_icon()
     glBegin(GL_QUADS);
 
     // render durability
-    int durability = Item::player_hand_durability_ui;
+    int durability = ItemContainer::player_hand_durability_ui;
     if (durability != NULL_DURABILITY)
     {
-        int max_durability = Item::get_max_durability(Item::player_hand_type_ui);
+        int max_durability = Item::get_max_durability(ItemContainer::player_hand_type_ui);
         float ratio = ((float)durability)/((float)max_durability);
         if (ratio >= 0.75)
             glColor4ub(7, 247, 0, 128);    // green
@@ -277,7 +277,7 @@ static void draw_grabbed_icon()
 
     glBegin(GL_QUADS);
         
-    int tex_id = Item::get_sprite_index_for_type(Item::player_hand_type_ui);
+    int tex_id = Item::get_sprite_index_for_type(ItemContainer::player_hand_type_ui);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width
@@ -309,8 +309,8 @@ static void draw_grabbed_icon()
 
     // Draw stack numbers
     if (grabbed_icon_stack_text == NULL) return;
-    if (Item::player_hand_stack_ui <= 1) return;
-    assert(count_digits(Item::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);   // string only fits 99
+    if (ItemContainer::player_hand_stack_ui <= 1) return;
+    assert(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);   // string only fits 99
 
     HudFont::start_font_draw();
     const int font_size = 12;
@@ -320,7 +320,7 @@ static void draw_grabbed_icon()
     // calc posuition
     x = x + (w/2) + font_size;
     y = y + (w/2) - font_size;
-    grabbed_icon_stack_text->update_formatted_string(1, Item::player_hand_stack_ui);
+    grabbed_icon_stack_text->update_formatted_string(1, ItemContainer::player_hand_stack_ui);
     grabbed_icon_stack_text->set_position(x,y);
     grabbed_icon_stack_text->draw();
 

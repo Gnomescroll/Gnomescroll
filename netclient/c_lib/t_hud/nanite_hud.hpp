@@ -261,7 +261,7 @@ void AgentNaniteUI::draw()
 
 
     // draw food
-    Item::ItemContainerNaniteUI* container = (Item::ItemContainerNaniteUI*)Item::get_container_ui(this->container_id);
+    ItemContainer::ItemContainerNaniteUI* container = (ItemContainer::ItemContainerNaniteUI*)ItemContainer::get_container_ui(this->container_id);
     if (container == NULL) return;
 
     int food_item_type = container->get_food_type();

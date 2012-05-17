@@ -114,9 +114,9 @@ void AgentToolbeltUI::draw()
     }
     glEnd();
 
-    int* slot_types = Item::get_container_ui_types(this->container_id);
-    int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
-    int* slot_durabilities = Item::get_container_ui_durabilities(this->container_id);
+    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
+    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
+    int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);
     if (slot_types == NULL) return;
     assert(slot_stacks != NULL);
     assert(slot_durabilities != NULL);

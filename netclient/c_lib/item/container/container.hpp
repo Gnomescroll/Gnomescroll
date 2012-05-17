@@ -6,11 +6,11 @@
 #include <item/common/constant.hpp>
 #include <item/properties.hpp>
 
-namespace Item
+namespace ItemContainer
 {
 
 // init
-void init_container(class ItemContainer* container);
+void init_container(class ItemContainerInterface* container);
 
 #if DC_CLIENT
 // transactions
@@ -78,6 +78,7 @@ class ItemContainerInterface
 
         bool is_valid_slot(int slot)
         {
+            assert(this->slot_max > 0);
             return (slot >= 0 && slot < this->slot_max);
         }
 
@@ -109,8 +110,8 @@ class ItemContainerInterface
         virtual void init(int xdim, int ydim) = 0;
 
         virtual bool can_be_opened_by(int agent_id) { return true; }
-        virtual void lock(int agent_id) {}
-        virtual void unlock(int agent_id) {}
+        virtual void lock(int agent_id) { this->owner = agent_id; }
+        virtual void unlock(int agent_id) { this->owner = NO_AGENT; }
 
         virtual ~ItemContainerInterface()
         {
@@ -139,8 +140,8 @@ class ItemContainer: public ItemContainerInterface
             for (int i=0; i<this->slot_max; i++)
             {
                 if (this->slot[i] == NULL_ITEM) continue;
-                if (get_item_type(this->slot[i]) == item_type   // stacks
-                && get_stack_space(this->slot[i]) >= stack_size) // stack will fit
+                if (Item::get_item_type(this->slot[i]) == item_type   // stacks
+                && Item::get_stack_space(this->slot[i]) >= stack_size) // stack will fit
                     return i;
             }
             return NULL_SLOT;
@@ -164,6 +165,7 @@ class ItemContainer: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
+            assert(this->slot_max > 0);
             assert(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
@@ -205,14 +207,14 @@ class ItemContainerNanite: public ItemContainerInterface
         bool can_insert_item(int slot, ItemID item_id)
         {
             assert(this->is_valid_slot(slot));
-            int item_type = get_item_type(item_id);
+            int item_type = Item::get_item_type(item_id);
             if (slot == 0)
             {   // check against nanite's food
-                return get_nanite_edibility(item_type);
+                return Item::get_nanite_edibility(item_type);
             }
             else if (slot == this->slot_max-1)
             {   // nanite coins only
-                if (item_type == get_item_type((char*)"nanite_coin")) return true;
+                if (item_type == Item::get_item_type((char*)"nanite_coin")) return true;
                 return false;
             }
             return false;   // no other slots accept insertions
@@ -221,12 +223,12 @@ class ItemContainerNanite: public ItemContainerInterface
         int get_stackable_slot(int item_type, int stack_size)
         {
             // check food slot
-            if (get_item_type(this->slot[0]) == item_type
-            && get_stack_space(this->slot[0]) >= stack_size)
+            if (Item::get_item_type(this->slot[0]) == item_type
+            && Item::get_stack_space(this->slot[0]) >= stack_size)
                 return 0;
             // check coin slot
-            if (get_item_type(this->slot[this->slot_max-1]) == item_type
-            && get_stack_space(this->slot[this->slot_max-1]) >= stack_size)
+            if (Item::get_item_type(this->slot[this->slot_max-1]) == item_type
+            && Item::get_stack_space(this->slot[this->slot_max-1]) >= stack_size)
                 return this->slot_max-1;
             return NULL_SLOT;
         }
@@ -248,6 +250,7 @@ class ItemContainerNanite: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim + 1; // +1 for the extra food slot
+            assert(this->slot_max > 0);
             assert(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
@@ -293,6 +296,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim; // +1 for the extra food slot
+            assert(this->slot_max > 0);
             assert(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
@@ -308,7 +312,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
 
 #include <common/template/multi_object_list.hpp>
 
-namespace Item
+namespace ItemContainer
 {
 
 ItemContainerInterface* create_item_container_interface(int type, int id)

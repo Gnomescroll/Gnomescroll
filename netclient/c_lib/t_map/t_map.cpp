@@ -48,6 +48,9 @@ int get(int x, int y, int z)
 
 void set(int x, int y, int z, int value)
 {
+    #if DC_SERVER
+    if (value == 0) t_map::destroy_item_container_block(x,y,z);
+    #endif
     main_map->set_block(x,y,z,value);
 }
 
@@ -106,11 +109,11 @@ int apply_damage(int x, int y, int z, int dmg)
 }
 
 #if DC_SERVER
-
-
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
+    assert(dmg > 0);
+    
     int block_type;
     int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
     if (res != 0) return;
@@ -238,14 +241,12 @@ void _set(int x, int y, int z, int value)
 */
 #if DC_SERVER
 void _set_broadcast(int x, int y, int z, int value) 
-{
-    if (value == 0) t_map::destroy_item_container_block(x,y,z);
-    
+{    
     t_map::block_StoC msg;
     int i = _get(x,y,z);
     if (i != value) 
     {
-        _set(x,y,z, value);
+        t_map::set(x,y,z, value);
         msg.x = x;
         msg.y = y;
         msg.z = z;

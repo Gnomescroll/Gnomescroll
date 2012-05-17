@@ -14,6 +14,8 @@
 #include <t_map/net/t_CtoS.hpp>
 
 #include <item/_interface.hpp>
+#include <item/container/_interface.hpp>
+#include <item/container/net/CtoS.hpp>
 #include <item/properties.hpp>
 #include <item/config/item_attribute.hpp>
 
@@ -321,7 +323,7 @@ void PlayerAgent_action::set_block(ItemID placer_id)
     int val = attr->placer_block_type_id;
     if (t_map::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
-        t_map::create_container_block_CtoS msg;
+        ItemContainer::create_container_block_CtoS msg;
         msg.x = b[0];
         msg.y = b[1];
         msg.z = b[2];

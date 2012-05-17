@@ -90,6 +90,7 @@ dont_include_this_file_in_client
 #include <item/_include.hpp>
 #include <item/toolbelt/_include.hpp>
 #include <item/particle/_include.hpp>
+#include <item/container/_include.hpp>
 
 /* Game modes */
 #include <game/flag.cpp>
@@ -173,6 +174,7 @@ int init_c_lib()
     t_map::init_t_map();
 
     Item::init();
+    ItemContainer::init();
 
     //lua_load_block_dat(); /* Load Block Dat */
     t_map::load_block_dat();
@@ -201,6 +203,7 @@ void close_c_lib()
     
     Toolbelt::teardown();
     Item::teardown();
+    ItemContainer::teardown();
 
     teardown_chat_server();
 

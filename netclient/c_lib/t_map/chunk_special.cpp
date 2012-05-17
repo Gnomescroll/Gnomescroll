@@ -1,5 +1,8 @@
 #include "chunk_special.hpp"
 
+#include <item/container/_interface.hpp>
+#include <item/container/container.hpp>
+
 namespace t_map
 {
 
@@ -12,7 +15,7 @@ void CHUNK_ITEM_CONTAINER::remove_index(int i)
     //int subscriber_count;
     //unsigned short* subscribers = map_history->get_subscribers(&subscriber_count)
     // dont send to subscribers only here -- there may be different subscriber infrastructure for this later
-    Item::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
+    ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
     #endif
     
     _remove(i);
@@ -68,7 +71,7 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
     map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
 
     assert(container_id != NULL_CONTAINER);
-    Item::ItemContainerInterface* container = Item::get_container(container_id);
+    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     assert(container != NULL);
     container->chunk = this->chunk_index;
     #endif    
@@ -96,7 +99,7 @@ void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(int client_id)
         msg.container_id = iba[i].container_id;
         msg.sendToClient(client_id);
 
-        Item::send_container_create(client_id, iba[i].container_id);
+        ItemContainer::send_container_create(client_id, iba[i].container_id);
     }
 }
 
@@ -107,7 +110,7 @@ void CHUNK_ITEM_CONTAINER::send_reset_chunk_item_containers(int client_id)
     msg.sendToClient(client_id);
 
     for (int i=0; i< iban; i++)
-        Item::send_container_delete(client_id, iba[i].container_id);
+        ItemContainer::send_container_delete(client_id, iba[i].container_id);
 }
 
 #endif
