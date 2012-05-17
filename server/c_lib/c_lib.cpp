@@ -174,7 +174,9 @@ int init_c_lib()
 
     Item::init();
 
-    lua_load_block_dat(); /* Load Block Dat */
+    //lua_load_block_dat(); /* Load Block Dat */
+    t_map::load_block_dat();
+
     Item::load_item_dat();
     Item::load_nanite_store();
     

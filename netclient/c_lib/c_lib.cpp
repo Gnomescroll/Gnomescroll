@@ -231,7 +231,8 @@ int init_c_lib()
     //printf("Checkpoint 2 \n");
     HudCubeSelector::init();
     //printf("Checkpoint 3 \n");
-    lua_load_block_dat();  /* Load Block Dat */
+    //lua_load_block_dat();  /* Load Block Dat */
+    t_map::load_block_dat();
     //printf("Checkpoint 4 \n");
     t_map::init_for_draw();
     //printf("Checkpoint 5 \n");
