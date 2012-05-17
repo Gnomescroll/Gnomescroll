@@ -377,13 +377,6 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     Item::Item* item = Item::get_item(item_id);
     assert(item != NULL);
 
-    // 2 modes here:
-    // items that are  not click-and-hold will have their new state sent out immediately (here)
-    // click-and-hold items will have their state sent out when they are turned off
-    // (or when they run out and die). the client will predict state until then
-    Item::ItemAttribute* attr = Item::get_item_attributes(item->type);
-    assert(attr != NULL);
-
     // will need to notify agent of state changes
     Agent_state* a = ServerState::agent_list->get(agent_id);
 

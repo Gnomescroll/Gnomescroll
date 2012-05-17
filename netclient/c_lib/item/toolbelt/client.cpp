@@ -40,9 +40,11 @@ bool toolbelt_item_begin_alpha_action()
         case IG_DEBUG:
             if (item_type == Item::get_item_type((char*)"location_pointer"))
                 ClientState::set_location_pointer();
+            #if !PRODUCTION
             else
             if (item_type == Item::get_item_type((char*)"block_placer"))
                 ClientState::playerAgent_state.action.admin_set_block();
+            #endif
             else assert(false);
             break;
         case IG_PLACER:

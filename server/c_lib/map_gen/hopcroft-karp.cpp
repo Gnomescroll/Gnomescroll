@@ -584,7 +584,7 @@ int choose_shortest_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, 
     int h_len = h_diagonals[h_index].length(p);
     int v_len = DEFAULT_V_LEN;
     int v_len_tmp;
-    int v_index;
+    int v_index = 0;
     int ct = 0;
     for (i=0; i<i_ct; i++) {
         if (in[i].dh == h_index) {

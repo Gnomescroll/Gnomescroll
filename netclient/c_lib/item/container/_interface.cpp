@@ -593,11 +593,10 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
 
     for (int i=0; i<recipe->reagent_num; i++)
     {   // remove reagents from inputs
+        assert(recipe->reagent[i] != NULL_ITEM_TYPE);
 
         // gather recipe data
-        int type = recipe->reagent[i];
         int count = recipe->reagent_count[i];
-        assert(type != NULL_ITEM_TYPE);
         assert(count > 0);
 
         ItemID item_id = inputs[i];
@@ -605,6 +604,7 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
         Item::Item* item = Item::get_item(item_id);
         assert(item != NULL);
         assert(item->stack_size >= count);
+        assert(recipe->reagant[i] == item->type);
 
         // determine whether to decrement or fully remove item
         if (item->stack_size <= count)

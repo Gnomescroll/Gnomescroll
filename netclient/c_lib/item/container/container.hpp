@@ -337,7 +337,9 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
             assert(false);
+            return NULL;
     }
+    return NULL;
 }
 
 const int ITEM_CONTAINER_MAX = 1024;
