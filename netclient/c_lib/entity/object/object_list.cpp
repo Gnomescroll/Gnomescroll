@@ -204,21 +204,37 @@ ObjectList::~ObjectList()
     if (this->objects != NULL)
     {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
+        {
+            // delete objects tracked in objects array
             if (this->used[i] != NULL)
                 for (int j=0; j<this->maximums[i]; j++)
                     delete this->objects[i][j];
-                    
+
+            // delete objects*
+            if (this->objects[i] != NULL) free(this->objects[i]);
+        }
+
+        // delete objects**
         free(this->objects);
     }
 
     if (this->staging_objects != NULL)
+    {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
             if (this->staging_objects[i] != NULL)
                 delete this->staging_objects[i];
+        free(this->staging_objects);
+    }
     
     if (this->indices != NULL) free(this->indices);
     if (this->maximums != NULL) free(this->maximums);
-    if (this->used != NULL) free(this->used);
+    if (this->used != NULL)
+    {
+        for (int i=0; i<MAX_OBJECT_TYPES; i++)
+            if (this->used[i] != NULL)
+                free(this->used[i]);
+        free(this->used);
+    }
 }
 
 } // Objects

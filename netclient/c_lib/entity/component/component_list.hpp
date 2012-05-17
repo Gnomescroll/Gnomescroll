@@ -48,7 +48,10 @@ class ComponentList
     }
     
     ~ComponentList<Component,TYPE,SIZE>()
-    { 
+    {
+        for (int i=0; i<this->max; i++)
+            if (this->components[i] != NULL)
+                delete this->components[i];
         if (this->components != NULL) free(this->components);
     }
 };

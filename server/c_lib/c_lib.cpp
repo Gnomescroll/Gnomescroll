@@ -207,13 +207,14 @@ void close_c_lib()
 
     teardown_chat_server();
 
-    ServerState::teardown();
     Particle::teardown_particles();
     ItemParticle::teardown();
 
     Objects::teardown();    // Entity system
     Objects::teardown_net_interfaces();
     Components::teardown();
+
+    ServerState::teardown();
 
     printf("Server closed\n"); 
     Log::teardown();

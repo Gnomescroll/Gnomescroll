@@ -45,6 +45,11 @@ class CHUNK_ITEM_CONTAINER
         }
     }
 
+    ~CHUNK_ITEM_CONTAINER()
+    {
+        free(iba);
+    }
+
     //deletes all
     void _reset()
     {
