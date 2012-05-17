@@ -39,9 +39,9 @@ class L_System
 
         void set_n_rules(int n)
         {
-            n_rules = n;
-            this->rules = (char**)malloc(n * sizeof(char*));
-            this->rule_lengths = (int*)malloc(n * sizeof(int));
+            this->n_rules = n;
+            this->rules = (char**)calloc(n, sizeof(char*));
+            this->rule_lengths = (int*)calloc(n, sizeof(int));
         }
 
     public:
@@ -365,39 +365,44 @@ class L_System
 
         char* parse_rule(char* rule, int* token_id)
         {
+            // get token id
             char token = rule[0];
             *token_id = char_in_string(token, this->tokens);
-            if (*token_id < 0) printf("L_System :: parse_rule WARNING -- Token %c not in tokens\n", token);
-
-            char* parsed = (char*)malloc(strlen(rule) * sizeof(char));
-            if (strlen(rule) <= 1) printf("WARNING -- %s -- rule length is <= 1\n", __FUNCTION__);
+            assert(*token_id >= 0 && *token_id < this->n_tokens);
             
-            int j=0;
-            for (int i=1; rule[i] != '\0'; i++)
+            // calculate size of rule
+            int rule_length=0;
+            int start_index = -1;
+            for (int i=1; rule[i] != '\0'; i++) // skip first token; A -> B
             {
                 if (char_in_string(rule[i], this->tokens) < 0) continue;
-                parsed[j++] = rule[i];
+                if (start_index < 0) start_index = i;
+                rule_length++;
             }
-            parsed[j] = '\0';
+            assert(start_index >= 0);
+            assert(rule_length > 0);
 
-            if ((unsigned int)j >= strlen(rule)) printf("ERROR %s -- overwrote rule buffer by %d\n", __FUNCTION__, j - strlen(rule));
-            if (strlen(rule) != (unsigned int)j) parsed = (char*)realloc(parsed, (j+1) * sizeof(char));
-            //printf("%d\n", strlen(rule));
-            //printf("%s\n", parsed);
-            //printf("%d\n", *token_id);
-            //if (strlen(rule) != (unsigned int)j) printf("WARNING -- %s -- buffer sizes do not match, (original:%d, final:%d)\n", __FUNCTION__, strlen(rule), j+1);
+            // copy rule
+            char* parsed = (char*)malloc((rule_length+1) * sizeof(char));
+            assert(parsed != NULL);
+            for (int i=0; i<rule_length; i++)
+            {
+                parsed[i] = rule[start_index+i];
+            }
+            parsed[rule_length] = '\0';
             return parsed;
         }
 
         void add_rule(char* rule)
         {
-            int token_id = -1;
+            int token_id;
             char* new_rule = parse_rule(rule, &token_id);
-            if (token_id >= n_rules || token_id < 0) printf("WARNING -- L_System %s -- rules/rule_lengths index out of bounds (index:%d, arrsize:%d)\n", __FUNCTION__, token_id, n_rules);
-            //this->rules[token_id] = (char*)malloc((strlen(rule)+1) * sizeof(char));
+            assert(new_rule != NULL);
+            assert(token_id < n_rules && token_id >= 0);
+            assert(this->rules[token_id] == NULL);
+            assert(this->rule_lengths[token_id] == 0);
             this->rules[token_id] = new_rule;
-            //strcpy(rules[token_id], rule);
-            this->rule_lengths[token_id] = strlen(new_rule);
+            this->rule_lengths[token_id] = strlen(new_rule);    // Invalid read of size 4
         }
 
         //returns length of next rule
