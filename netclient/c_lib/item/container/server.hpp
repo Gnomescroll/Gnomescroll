@@ -10,6 +10,13 @@ namespace ItemContainer
 {
 
 // packets
+
+void send_container_assign(int client_id, int container_id);
+void send_container_create(int client_id, int container_id);
+void send_container_delete(int client_id, int container_id);
+void broadcast_container_create(int container_id);
+void broadcast_container_delete(int container_id);
+
 void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot);
 
 void send_container_insert(int client_id, ItemID item_id, int container_id, int slot)

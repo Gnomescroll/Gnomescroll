@@ -45,13 +45,6 @@ ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int cli
 ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int client_id);
 ContainerActionType no_container_beta_action_decision_tree(int agent_id, int client_id);
 
-//network
-//  tell client to assign container to an agent
-void send_container_assign(int client_id, int container_id);
-void send_container_create(int client_id, int container_id);
-void send_container_delete(int client_id, int container_id);
-void broadcast_container_create(int container_id);
-void broadcast_container_delete(int container_id);
 #endif
 
 class ItemContainerInterface

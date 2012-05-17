@@ -7,6 +7,63 @@ dont_include_this_file_in_client
 namespace ItemContainer
 {
 
+/* Network */
+
+//  tell client to assign container to an agent
+void send_container_assign(int client_id, int container_id)
+{
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    class assign_item_container_StoC msg;
+    msg.container_id = container->id;
+    msg.container_type = container->type;
+    msg.agent_id = client_id;
+    msg.sendToClient(client_id);
+}
+
+static bool pack_container_create(int container_id, create_item_container_StoC* msg)
+{
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return false;
+    msg->container_id = container->id;
+    msg->container_type = container->type;
+    msg->chunk = container->chunk;
+    return true;
+}
+
+void send_container_create(int client_id, int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    create_item_container_StoC msg;
+    if (!pack_container_create(container_id, &msg)) return;
+    msg.sendToClient(client_id);
+}
+
+void broadcast_container_create(int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    create_item_container_StoC msg;
+    if (!pack_container_create(container_id, &msg)) return;
+    msg.broadcast();
+}
+
+void send_container_delete(int client_id, int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    delete_item_container_StoC msg;
+    msg.container_id = container_id;
+    msg.sendToClient(client_id);
+}
+
+void broadcast_container_delete(int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    delete_item_container_StoC msg;
+    msg.container_id = container_id;
+    msg.broadcast();
+}
+
 void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot)
 {
     Item::Item* item = Item::send_item_create(client_id, item_id);

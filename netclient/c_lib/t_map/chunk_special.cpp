@@ -2,6 +2,9 @@
 
 #include <item/container/_interface.hpp>
 #include <item/container/container.hpp>
+#if DC_SERVER
+#include <item/container/server.hpp>
+#endif
 
 namespace t_map
 {

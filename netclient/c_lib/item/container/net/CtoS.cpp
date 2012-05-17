@@ -355,7 +355,7 @@ void create_container_block_CtoS::handle()
     if (container == NULL) return;
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
-    send_container_create(client_id, container->id);
+    broadcast_container_create(container->id);
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
     _set_broadcast(x,y,z, val);
