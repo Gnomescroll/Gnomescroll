@@ -604,7 +604,7 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
         Item::Item* item = Item::get_item(item_id);
         assert(item != NULL);
         assert(item->stack_size >= count);
-        assert(recipe->reagant[i] == item->type);
+        assert(recipe->reagent[i] == item->type);
 
         // determine whether to decrement or fully remove item
         if (item->stack_size <= count)
