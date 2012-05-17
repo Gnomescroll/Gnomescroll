@@ -7,7 +7,7 @@
 #include <map_gen/simplex.h>
 #include <map_gen/ridged_mf.h>
 #include <map_gen/interpolator.h>
-#include <map_gen/perturb.h>
+#include <map_gen/perturb.hpp>
 #include <map_gen/gradient.h>
 #include <map_gen/features.hpp>
 

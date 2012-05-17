@@ -1,7 +1,7 @@
 const int _num_bins = 1000; //parameter
 
-float percentile_cutoff_calculation(float percentile, float* arr, int n) {
-
+float percentile_cutoff_calculation(float percentile, float* arr, int n)
+{
     int i;
     printf("=== Start percentile_cutoff_calculation ===\n");
     float* bin_array = (float*) malloc(sizeof(float)*_num_bins);
@@ -10,7 +10,8 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
     double average = 0;
     float min =  100000;
     float max = -100000;
-    for(i=0; i<n; i++) {
+    for(i=0; i<n; i++)
+    {
         if(arr[i] < min) min = arr[i];
         if(arr[i] > max) max = arr[i];
         average += arr[i];
@@ -25,18 +26,21 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
 
     //do binning
     int bin_index;
-    for(i=0; i<n; i++) {
+    for(i=0; i<n; i++)
+    {
         bin_index = (arr[i]-min) / _bin_inc;
         bin_array[bin_index]++;
     }
     //do percentile calculation
     int counter = 0;
-    int terminal = percentile* ((float)(n));
+    int terminal = percentile * ((float)(n));
     float cutoff = -1;
-    for(i=0; i<_num_bins; i++) {
+    for(i=0; i<_num_bins; i++)
+    {
         counter += bin_array[i];
         //printf("i=%i, count=%i \n", i, counter);
-        if(counter > terminal) {
+        if(counter > terminal)
+        {
             cutoff = min+i*_bin_inc;
             printf("debug: count=%i, samples=%i, terminal= %i i=%i of %i, min=%f, _bin_inc=%f\n", counter, n, terminal, i, _num_bins, min, _bin_inc);
             printf("percentile_cuttoff: percentile= %f, cutoff= %f \n", percentile, cutoff);
