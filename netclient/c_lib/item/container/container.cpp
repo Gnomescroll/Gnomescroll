@@ -1246,8 +1246,9 @@ ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int cl
     if (hand_empty) return CRAFT_ITEM_FROM_BENCH;
     if (stack_space > 0)
     {
-        int craft_item_type = Item::get_selected_craft_recipe_type(container_id, slot);
-        if (hand_item_type == craft_item_type) return CRAFT_ITEM_FROM_BENCH;
+        bool available;
+        int craft_item_type = Item::get_selected_craft_recipe_type(container_id, slot, &available);
+        if (available && hand_item_type == craft_item_type) return CRAFT_ITEM_FROM_BENCH;
     }
     return CONTAINER_ACTION_NONE;
 }

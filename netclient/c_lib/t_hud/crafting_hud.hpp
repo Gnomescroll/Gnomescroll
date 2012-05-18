@@ -19,9 +19,6 @@ class CraftingUI : public UIElement
     static const int input_xdim = 4;
     static const int input_ydim = 1;
 
-    static const int output_xdim = 1;
-    static const int output_ydim = 1;
-
     static const int input_slots = 4;
     static const int output_slots = 1;
     static const int input_output_gap = 1;
@@ -133,16 +130,16 @@ void CraftingUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    const float w = render_width;
-    const float h = render_height;
+    float w = render_width;
+    float h = render_height;
 
     float x = xoff;
     float y = yoff;
 
-    const float tx_min = 0.0;
-    const float ty_min = 0.0;
-    const float tx_max = render_width/512.0;
-    const float ty_max = render_height/512.0;
+    float tx_min = 0.0;
+    float ty_min = 0.0;
+    float tx_max = render_width/512.0;
+    float ty_max = render_height/512.0;
 
     //draw background
     glBegin(GL_QUADS);
@@ -233,30 +230,29 @@ void CraftingUI::draw()
     }
     glEnd();
 
-    // draw output items
-    glBegin(GL_QUADS);
-
-    //draw input items
-    for (int xslot=0; xslot<output_xdim; xslot++)
-    for (int yslot=0; yslot<output_ydim; yslot++)
+    //draw output items
+    bool available;
+    int item_type = Item::get_selected_craft_recipe_type(this->container_id, 0, &available);
+    if (item_type != NULL_ITEM_TYPE)
     {
-        int slot = output_xdim*yslot + xslot;
-        int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot);
-        if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
-        const float x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
-        const float y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);
+        // switch to greyscale texture if unavailable
+        if (!available) glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
 
-        const float w = slot_size;
+        x = xoff + output_offset_x + cell_offset_x;// + cell_size*xslot;
+        y = yoff - (output_offset_y + cell_offset_y);// + cell_size*yslot);
+
+        w = slot_size;
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
 
-        const float tx_min = (1.0/iw)*(tex_id % iiw);
-        const float ty_min = (1.0/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
+        tx_min = (1.0/iw)*(tex_id % iiw);
+        ty_min = (1.0/iw)*(tex_id / iiw);
+        tx_max = tx_min + 1.0/iw;
+        ty_max = ty_min + 1.0/iw;
 
+        glBegin(GL_QUADS);
         glTexCoord2f( tx_min, ty_min );
         glVertex2f(x, y);
 
@@ -268,8 +264,8 @@ void CraftingUI::draw()
 
         glTexCoord2f( tx_max, ty_min );
         glVertex2f(x+w, y);
+        glEnd();
     }
-    glEnd();
 
     glDisable(GL_TEXTURE_2D);
 

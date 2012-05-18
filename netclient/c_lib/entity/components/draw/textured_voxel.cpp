@@ -48,12 +48,17 @@ void TexturedVoxelComponent::set_texture()
     this->ty = fty;
 }
 
+inline void TexturedVoxelComponent::draw(Vec3 position)
+{
+    drawTexturedMinivox(position, this->forward, this->right, this->normal,
+        this->texture_index, this->tx, this->ty, this->pixel_margin);
+}
+
 void TexturedVoxelComponent::call()
 {
     PhysicsComponent* state = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (state == NULL) return;
-    drawTexturedMinivox(state->get_position(), this->forward, this->right, this->normal,
-        this->texture_index, this->tx, this->ty, this->pixel_margin);
+    this->draw(state->get_position());
 }
 
 } // Components

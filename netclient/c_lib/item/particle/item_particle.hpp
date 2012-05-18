@@ -39,6 +39,9 @@ class ItemParticle //: public VerletComponent
         
         // render stuff
         #if DC_CLIENT
+        // config
+        bool is_voxel;
+        Components::TexturedVoxelComponent voxel;
         int sprite_index;
         void draw();
         #endif
@@ -133,12 +136,25 @@ void ItemParticle_list::draw()
     glBegin(GL_QUADS);
 
     for (int i=0; i<this->n_max; i++)
-        if (this->a[i] != NULL)
+        if (this->a[i] != NULL && !this->a[i]->is_voxel)
             this->a[i]->draw();
-
     glEnd();
 
     glDisable(GL_ALPHA_TEST);
+
+    // draw textured voxels
+    glColor4ub(255,255,255,255);
+    glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
+    glBegin(GL_QUADS);
+    for (int i=0; i<this->n_max; i++)
+        if (this->a[i] != NULL && this->a[i]->is_voxel)
+        {
+            ItemParticle* p = this->a[i];
+            p->voxel.delta_rotation(0.02f, 0.0f);
+            p->voxel.draw(p->verlet.position);
+        }
+    glEnd();
+
     #endif
 }
 

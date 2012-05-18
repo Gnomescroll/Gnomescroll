@@ -41,6 +41,8 @@ int get_item_group_for_type(int item_type);
 
 int dat_get_item_type(const char* name);
 
+bool item_type_is_voxel(int item_type);
+
 int get_max_stack_size(int item_type);
 int get_max_energy(int item_type);
 int get_max_durability(int item_type);
@@ -53,6 +55,7 @@ class CraftingRecipe* get_craft_recipe(int recipe_id);
 
 class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot);
 int get_selected_craft_recipe_type(int container_id, int slot);
+int get_selected_craft_recipe_type(int container_id, int slot, bool* available);
 
 bool container_type_is_block(ItemContainerType type);
 

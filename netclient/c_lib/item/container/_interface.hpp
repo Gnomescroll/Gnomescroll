@@ -69,7 +69,7 @@ void digest_nanite_food();
 void purchase_item_from_nanite(int agent_id, int slot);
 
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
-void consume_crafting_reagents(int agent_id, int container_id, int recipe_id);
+bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id);
 
 void send_container_contents(int agent_id, int client_id, int container_id);
 

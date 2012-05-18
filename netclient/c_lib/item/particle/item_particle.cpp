@@ -103,7 +103,15 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     this->item_type = item_type;
     #if DC_CLIENT
     this->sprite_index = Item::get_sprite_index_for_type(item_type);
-    #endif
+    this->is_voxel = Item::item_type_is_voxel(item_type);
+    if (this->is_voxel)
+    {
+        this->voxel.size = 0.2f;
+        this->voxel.pixel_width = 4;
+        this->voxel.texture_index = this->sprite_index;
+        this->voxel.init();
+    }
+    #endif    
     #if DC_SERVER
     this->item_id = item_id;
     #endif
@@ -124,8 +132,8 @@ void ItemParticle::picked_up(int agent_id)
 }
 #endif
 
-ItemParticle::ItemParticle(int id)
-:   id(id),
+ItemParticle::ItemParticle(int id) :
+    id(id),
     item_type(NULL_ITEM_TYPE),
     #if DC_SERVER
     item_id(NULL_ITEM),
@@ -133,6 +141,7 @@ ItemParticle::ItemParticle(int id)
     was_picked_up(false),
     #endif
     #if DC_CLIENT
+    is_voxel(false),
     sprite_index(ERROR_SPRITE),
     #endif
     ttl(ITEM_PARTICLE_TTL)
