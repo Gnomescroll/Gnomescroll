@@ -16,7 +16,7 @@ void simple_map()
     generator->interpolate(4,4,1);
     generator->scale(4.0f, 4.0f, 1.0f);
     generator->enable_heightmap(20, 30);
-    generator->repeat(64,64,128);
+    //generator->repeat(64,64,128);
 
     generator->p2();
 

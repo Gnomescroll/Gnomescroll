@@ -160,41 +160,29 @@ float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, 
 }
 
 /* fill methods */
-void perlin1_fill(float* noisemap, int x, int repeat, int base) {
+void perlin1_fill(float* noisemap, int x, int repeat, int base)
+{
     float fx = (float)x + 2.0f; // padding
-    int i;
-    float h;
-    for (i=0; i<x; i++) {
-        h = perlin1(((float)(i+1)/fx)*xnoise_scale, repeat, base);
-        noisemap[i] = h;
-    }
+    for (int i=0; i<x; i++)
+        noisemap[i] = perlin1(((float)(i+1)/fx)*xnoise_scale, repeat, base);
 }
 
-void perlin2_fill(float* noisemap, int x, int y, int repeatx, int repeaty, int base) {
+void perlin2_fill(float* noisemap, int x, int y, int repeatx, int repeaty, int base)
+{
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
-    int i,j;
-    float h;
-    for (i=0; i<x; i++) {
-        for (j=0; j<y; j++) {
-            h = perlin2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale, repeatx, repeaty, base);
-            noisemap[i + x*j] = h;
-        }
-    }
+    for (int i=0; i<x; i++)
+    for (int j=0; j<y; j++)
+        noisemap[i + x*j] = perlin2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale, repeatx, repeaty, base);
 }
 
-void perlin3_fill(float* noisemap, int x, int y, int z, int repeatx, int repeaty, int repeatz, int base) {
+void perlin3_fill(float* noisemap, int x, int y, int z, int repeatx, int repeaty, int repeatz, int base)
+{
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f,
            fz = (float)z + 2.0f;
-    int i,j,k;
-    float h;
-    for (i=0; i<x; i++) {
-        for (j=0; j<y; j++) {
-            for (k=0; k<z; k++) {
-                h = perlin3(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale,((float)(k+1)/fz)*znoise_scale, repeatx, repeaty, repeatz, base);
-                noisemap[i + x*j + x*y*k] = h;
-            }
-        }
-    }
+    for (int i=0; i<x; i++)
+    for (int j=0; j<y; j++)
+    for (int k=0; k<z; k++)
+        noisemap[i + x*j + x*y*k] = perlin3(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale,((float)(k+1)/fz)*znoise_scale, repeatx, repeaty, repeatz, base);
 }
