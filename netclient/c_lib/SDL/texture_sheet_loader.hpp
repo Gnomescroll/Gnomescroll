@@ -43,7 +43,7 @@ extern struct SDL_Surface* ItemSurface;
 extern Uint32* ItemTextureStack;
 
 extern struct SDL_Surface* GreyScaleItemSurface;
-extern Uint32 GreyScaleItemTexture;
+extern unsigned int GreyScaleItemTexture;
 
 void init();
 void init_greyscale();

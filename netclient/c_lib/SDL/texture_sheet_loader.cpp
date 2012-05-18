@@ -195,7 +195,7 @@ struct SDL_Surface* ItemSurface = NULL;
 Uint32* ItemTextureStack = NULL;
 
 struct SDL_Surface* GreyScaleItemSurface = NULL;
-Uint32 GreyScaleItemTexture = 0;
+unsigned int GreyScaleItemTexture = 0;
 
 void init()
 {
@@ -208,8 +208,6 @@ void init()
     ItemTextureStack = ItemTextureSheetLoader->texture_stack;
     ItemSurface = ItemTextureSheetLoader->texture_sheet;
     GreyScaleItemSurface = ItemTextureSheetLoader->grey_scale_texture_sheet;
-    int ret = create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture);
-    assert(ret == 0);
 }
 
 void init_greyscale()
@@ -217,6 +215,8 @@ void init_greyscale()
     ItemTextureSheetLoader->generate_grey_scale();
     save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
     save_surface_to_png(ItemSurface , (char*)"./screenshot/items.png");
+    create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture);
+
 }
 
 void teardown()
