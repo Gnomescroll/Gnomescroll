@@ -343,7 +343,7 @@ void noise_destroy()
 #include <map_gen/ridged_mf.c>
 #include <map_gen/interpolator.c>
 #include <map_gen/gradient.c>
-#include <map_gen/perturb.cpp>
+#include <map_gen/mix.cpp>
 #include <map_gen/features.cpp>
 
 #ifdef DUNGEON
