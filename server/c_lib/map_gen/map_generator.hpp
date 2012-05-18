@@ -2,7 +2,7 @@
 
 #include <options/options.hpp>
 #include <t_map/t_map.hpp>
-#include <map_gen/noise.h>
+#include <map_gen/noise.hpp>
 #include <map_gen/perlin.h>
 #include <map_gen/simplex.h>
 #include <map_gen/ridged_mf.h>
@@ -266,6 +266,8 @@ class Generator
 
         static int inited_noise = 0;
         if (!(inited_noise++)) noise_init(this->x, this->y, this->z);
+
+        seed_noise(Options::seed);
 
         set_noise_parameters(octaves, persistence, amplitude, lacunarity, frequency);
         set_noise_scale(xscale, yscale, zscale);

@@ -5,6 +5,20 @@
 
 float* noisemap = NULL;
 
+int _oct = 1;
+float _per = 0.6f;
+float _amp = 1.0f;
+float _lac = 2.0f;
+float _freq = 1.0f;
+
+float xnoise_scale = 1.0f;
+float ynoise_scale = 1.0f;
+float znoise_scale = 1.0f;
+
+int _base_seed = 1;
+int _set_base_seed = 0;
+int _seed = 1;
+
 static int heightmap_tile = 0;
 
 int seed_noise(int seed)
@@ -13,7 +27,8 @@ int seed_noise(int seed)
     srand((unsigned)seed);
 
     // build PERM table
-    for (int i=0; i < PERM_SIZE; PERM[i++] = rand() & 255);
+    //for (int i=0; i < PERM_SIZE; PERM[i++] = rand() & 255);
+    for (int i=0; i < PERM_SIZE; PERM[i++] = rand());
 
     _seed = seed;
     if (!_set_base_seed)

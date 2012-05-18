@@ -114,7 +114,7 @@ dont_include_this_file_in_client
 //#include <map_gen/hopcroft-karp.cpp>
 #include <map_gen/dragon.cpp>
 //#endif
-#include <map_gen/noise.c>
+#include <map_gen/noise.cpp>
 #include <map_gen/map_generator.cpp>
 #include <map_gen/recipes.cpp>
 
