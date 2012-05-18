@@ -40,4 +40,11 @@ void abs_noise(float* dest, float* na, int size)
 }
 void abs_noise(float *na, int size) { abs_noise(na, na, size); }    // in place
 
+void neg_noise(float* dest, float* na, int size)
+{
+    for (int i=0; i<size; i++)
+        dest[i] = -na[i];
+}
+void neg_noise(float *na, int size) { neg_noise(na, na, size); }    // in place
+
 }   // map_gen
