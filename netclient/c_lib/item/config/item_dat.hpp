@@ -1,6 +1,6 @@
 #pragma once
 
-#include <item/config/_util.hpp>
+#include <item/config/_interface.hpp>
 
 #include <t_map/t_properties.hpp>
 
@@ -46,6 +46,7 @@ namespace Item
 
 void load_item_dat()
 {
+    start_item_dat();
     int i0 = texture_alias("media/sprites/i00.png");
     int i1 = texture_alias("media/sprites/i01.png");
 
@@ -123,21 +124,65 @@ void load_item_dat()
     sprite_def(i0, 5,1);
 
     item_def(15, IG_PLACER, "crate_1");
-    sprite_def(i0, 1,4);
+    iso_block_sprite_def("crate_1");
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_1");
     s.max_stack_size = 1;
 
     item_def(16, IG_PLACER, "crate_2");
-    sprite_def(i0, 2,3);
+    iso_block_sprite_def("crate_2");
+    //sprite_def(i0, 2,3);
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_2");
     s.max_stack_size = 1;
 
     item_def(17, IG_PLACER, "crate_3");
-    sprite_def(i0, 2,4);
+    iso_block_sprite_def("crate_3");
+    //sprite_def(i0, 2,4);
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_3");
     s.max_stack_size = 1;
 
     end_item_dat();
 }
+
+
+int _item_cube_iso_spritesheet_id = -1;
+
+void start_item_dat()
+{
+#if DC_CLIENT
+    _item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_surface);
+#endif
+}
+
+void end_item_dat()
+{
+    _set_attribute();
+    
+    #if DC_CLIENT
+    LUA_save_item_texture();
+    #endif
+}
+
+void iso_block_sprite_def(const char* block_name)
+{
+#ifdef DC_CLIENT
+    if(_item_cube_iso_spritesheet_id == -1)
+    {
+        printf("Error: iso_block_sprite_def, must call start_item_dat!!!\n");
+        GS_ABORT();
+    }
+
+    int id = t_map::dat_get_cube_id(block_name);
+
+    int xpos = id % 16;
+    int ypos = id / 16;
+
+    int index = LUA_blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
+    sprite_array[_current_item_id] = index; //check
+
+#endif
+}
+
+
+
 
 }

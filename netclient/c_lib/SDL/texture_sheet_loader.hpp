@@ -26,6 +26,8 @@ class TextureSheetLoader
     ~TextureSheetLoader();
 
     int load_texture(char* filename);
+    int load_texture_from_surface(struct SDL_Surface* surface);
+
     void reload_texture(int id, char* filename);
 
     //blit to sheet or return texture id
@@ -53,15 +55,13 @@ void teardown();
 }
 
 
-extern "C"
-{
-    //cube texture sheet api
-    int LUA_load_cube_texture_sheet(char* filename) GNOMESCROLL_API; //LUA_API;
-    int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y) GNOMESCROLL_API;
-    void LUA_save_cube_texture() GNOMESCROLL_API;
+//cube texture sheet api
+int LUA_load_cube_texture_sheet(char* filename);
+int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y);
+void LUA_save_cube_texture();
 
-    //item texture sheet api
-    int LUA_load_item_texture_sheet(char* filename) GNOMESCROLL_API; //LUA_API;
-    int LUA_blit_item_texture(int sheet_id, int source_x, int source_y) GNOMESCROLL_API;
-    void LUA_save_item_texture() GNOMESCROLL_API;
-}
+//item texture sheet api
+int LUA_load_item_texture_sheet(char* filename);
+int LUA_load_item_texture_sheet(struct SDL_Surface* surface);
+int LUA_blit_item_texture(int sheet_id, int source_x, int source_y);
+void LUA_save_item_texture();

@@ -248,7 +248,6 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 
     for(int i=0; i<24; i++)  a[i] = b[i]*scale;
 
-
     int tex_id, i;
     float tx0,tx1;
     float ty0,ty1;
@@ -328,22 +327,5 @@ void draw_iso_cube(float x, float y, int side0, int side1, int side2)
     glTexCoord2f(tx1,ty0);
     glVertex2f(x+a[i+6],y+a[i+7]+1.0);
 
-
     glColor3ub(255, 255,255);
-
-/*
-    quad_cache[cube_id*6*4 +4*side + 0].tx = _0;
-    quad_cache[cube_id*6*4 +4*side + 0].ty = _0;
-
-    quad_cache[cube_id*6*4 +4*side + 1].tx = _0;
-    quad_cache[cube_id*6*4 +4*side + 1].ty = _1;
-
-    quad_cache[cube_id*6*4 +4*side + 2].tx = _1;
-    quad_cache[cube_id*6*4 +4*side + 2].ty = _1;
-
-    quad_cache[cube_id*6*4 +4*side + 3].tx = _1;
-    quad_cache[cube_id*6*4 +4*side + 3].ty = _0;
-*/
-
-
 }

@@ -37,7 +37,7 @@ e east
 
 void load_block_dat()
 {
-    
+
     int t0 = texture_alias("media/sprites/t00.png");
     int t1 = texture_alias("media/sprites/t01.png");
 

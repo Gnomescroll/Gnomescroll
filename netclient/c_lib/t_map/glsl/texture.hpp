@@ -25,6 +25,8 @@ namespace t_map
     extern SDL_PixelFormat *block_surface_pixel_format;
     extern int block_surface_width, block_surface_height;
 
+    extern struct SDL_Surface* block_item_surface;
+
     void init_textures();
 
     void set_cube_side_texture(int id, int side, int tex_id);

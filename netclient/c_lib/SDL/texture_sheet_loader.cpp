@@ -51,6 +51,15 @@ int TextureSheetLoader::load_texture(char* filename)
     return id;
 }
 
+int TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* surface)
+{
+    int id = texture_num;
+    textures[texture_num]= surface;
+    texture_num++;
+    return id;
+}
+
+
 void TextureSheetLoader::reload_texture(int id, char* filename)
 {
 
@@ -228,39 +237,41 @@ void teardown()
 
 }
 
-extern "C"
+
+int LUA_load_cube_texture_sheet(char* filename)
 {
-    //CUBE API
-    //returns destination index
-
-    int LUA_load_cube_texture_sheet(char* filename)
-    {
-        return TextureSheetLoader::CubeTextureSheetLoader->load_texture(filename);
-    }
-
-    int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y)
-    {
-        return TextureSheetLoader::CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
-    }
-
-    void LUA_save_cube_texture()
-    {
-        save_surface_to_png(TextureSheetLoader::CubeTexture, (char*) "./screenshot/cube_texture.png");
-    }
-
-    //Item API
-    int LUA_load_item_texture_sheet(char* filename)
-    {
-        return TextureSheetLoader::ItemTextureSheetLoader->load_texture( (char*) filename);
-    }
-
-    int LUA_blit_item_texture(int sheet_id, int source_x, int source_y)
-    {
-        return TextureSheetLoader::ItemTextureSheetLoader->blit(sheet_id, source_x, source_y);
-    }
-
-    void LUA_save_item_texture()
-    {
-        save_surface_to_png(TextureSheetLoader::ItemSurface, (char*) "./screenshot/item_texture.png");
-    }
+    return TextureSheetLoader::CubeTextureSheetLoader->load_texture(filename);
 }
+
+int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y)
+{
+    return TextureSheetLoader::CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
+}
+
+void LUA_save_cube_texture()
+{
+    save_surface_to_png(TextureSheetLoader::CubeTexture, (char*) "./screenshot/cube_texture.png");
+}
+
+//Item API
+int LUA_load_item_texture_sheet(char* filename)
+{
+    return TextureSheetLoader::ItemTextureSheetLoader->load_texture( (char*) filename);
+}
+
+int LUA_load_item_texture(struct SDL_Surface* surface)
+{
+    return TextureSheetLoader::ItemTextureSheetLoader->load_texture_from_surface(surface);
+}
+
+int LUA_blit_item_texture(int sheet_id, int source_x, int source_y)
+{
+    return TextureSheetLoader::ItemTextureSheetLoader->blit(sheet_id, source_x, source_y);
+}
+
+void LUA_save_item_texture()
+{
+    save_surface_to_png(TextureSheetLoader::ItemSurface, (char*) "./screenshot/item_texture.png");
+}
+
+

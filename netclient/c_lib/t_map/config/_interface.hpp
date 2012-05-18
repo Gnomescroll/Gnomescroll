@@ -312,60 +312,24 @@ void blit_block_item_sheet()
     }
     glEnd();
 
-    char* PBUFFER = (char*) malloc(4*xres*yres);
-    glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
-    glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
-    glBindTexture( GL_TEXTURE_2D, 0);
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0); 
     glViewport (0, 0, _xres, _yres);
 
-    char FileName[128];
 
-    sprintf(FileName,"./screenshot/%s.png",  (char*) "fbo_test");
+    block_item_surface = create_surface_from_nothing(512, 512);
 
-    for(int i=0; i < xres; i++)
-    for(int j=0; j < yres; j++)
-    {
-        PBUFFER[4*(xres*j + i) + 3] = 255;
-    }
+    SDL_LockSurface(block_item_surface);
+    glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_surface->pixels);
+    SDL_UnlockSurface(block_item_surface);
 
-    {
-        int index;
-        void* temp_row;
-        int height_div_2;
+    glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+    glBindTexture( GL_TEXTURE_2D, 0);
 
-        temp_row = (void *)malloc(4*xres);
-        if(NULL == temp_row)
-        {
-            SDL_SetError("save_screenshot: not enough memory for surface inversion");
-        }
-        int pitch = xres * 4;
-        int h = yres;
+    save_surface_to_png(block_item_surface, (char*)"screenshot/fbo_test.png");
 
-        height_div_2 = (int) (yres * .5);
-        for(index = 0; index < height_div_2; index++)    
-        {
-            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
-        }
-        free(temp_row); 
-    }
-
-    size_t png_size;
-    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
-        (const char*) PBUFFER, xres, yres, 4, &png_size);
-    FILE * pFile;
-    pFile = fopen ( FileName , "wb" );
-    fwrite (PNG_IMAGE , 1 , png_size, pFile );
-    fclose (pFile);
-
-    free(PNG_IMAGE);
-    free(PBUFFER); 
 #endif
 }
 
-}   // t_map
+}
 
 /*
     DROP DAT

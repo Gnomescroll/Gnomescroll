@@ -13,7 +13,7 @@
 #include <item/_state.cpp>
 #include <item/_interface.cpp>
 
-#include <item/config/_util.hpp>
+#include <item/config/_interface.hpp>
 #include <item/config/item_dat.hpp>
 #include <item/config/nanite_store_dat.hpp>
 #include <item/config/crafting_dat.hpp>
