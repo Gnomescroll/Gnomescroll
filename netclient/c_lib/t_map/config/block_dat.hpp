@@ -14,7 +14,7 @@ void side_texture(int side, int sheet_id, int ypos, int xpos);
 void hud_def(int hudy, int hudx, int tex_id);
 void hud_def(int hudy,int hudx, int sheet_id, int ypos, int xpos);
 int texture_alias(const char* spritesheet);
-
+void blit_block_item_sheet();
 
 
 /*
@@ -140,6 +140,7 @@ void load_block_dat()
 
 void blit_block_item_sheet()
 {
+#if DC_CLIENT
     unsigned int color_tex, fb, depth_rb;
     int xres = 512;
     int yres = 512;
@@ -201,7 +202,11 @@ void blit_block_item_sheet()
     glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
 
     glBegin(GL_QUADS);
-    draw_iso_cube(32.0,32.0, 48,48,48);
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+        draw_iso_cube(i*32.0,j*32.0, 48,48,48);
+    }
     glEnd();
 
     char* PBUFFER = (char*) malloc(4*xres*yres);
@@ -210,7 +215,6 @@ void blit_block_item_sheet()
     glBindTexture( GL_TEXTURE_2D, 0);
     //glBindFramebuffer(GL_FRAMEBUFFER, 0); 
     glViewport (0, 0, _xres, _yres);
-
 
     char FileName[128];
 
@@ -233,7 +237,6 @@ void blit_block_item_sheet()
             SDL_SetError("save_screenshot: not enough memory for surface inversion");
         }
         int pitch = xres * 4;
-        //int w = xres;
         int h = yres;
 
         height_div_2 = (int) (yres * .5);
@@ -256,7 +259,7 @@ void blit_block_item_sheet()
 
     free(PNG_IMAGE);
     free(PBUFFER); 
-
+#endif
 }
 
 }

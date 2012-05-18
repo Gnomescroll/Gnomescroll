@@ -232,8 +232,8 @@ RGB scales:
 void draw_iso_cube(float x, float y, int side0, int side1, int side2)
 {
     const float scale = 16.0;
-    x -= scale;
-    y -= scale;
+    x += scale;
+    y += scale;
 
     const float aa = sqrt(3.0)/2.0;
 

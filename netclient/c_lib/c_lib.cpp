@@ -296,7 +296,7 @@ int init_c_lib()
 
     obj_load::init_draw_model();
 
-    t_map::init_block_item_sheet();
+    //t_map::init_block_item_sheet();
     Item::load_crafting_dat();
 
     //check_gl_error();
