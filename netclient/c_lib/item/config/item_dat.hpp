@@ -56,6 +56,7 @@ void load_item_dat()
     sprite_def(i0, 1,3);
     s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
     s.max_stack_size = 50;
+    s.particle_voxel = true;
 
     item_def(2, IG_RESOURCE, "copper_ore");
     sprite_def(i1, 1,3);

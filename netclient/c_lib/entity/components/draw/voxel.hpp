@@ -10,7 +10,7 @@ namespace Components
 
 /*
  * Dont attach this component  (no type is defined)
- * Only hold commons minivox stuff
+ * Only hold common minivox stuff
  */
 
 class VoxelComponent: public DrawComponent

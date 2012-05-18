@@ -26,6 +26,7 @@ class TexturedVoxelComponent: public VoxelComponent
             this->set_texture();
         }
         void call();
+        inline void draw(Vec3 position);   __attribute((always_inline));
 
     TexturedVoxelComponent()
     : VoxelComponent(COMPONENT_TEXTURED_VOXEL),
