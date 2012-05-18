@@ -347,9 +347,6 @@ void draw_hud()
 
     draw_grabbed_icon();
 
-    glBegin(GL_QUADS);
-    draw_iso_cube(350.0,350.0, 0,0,0);
-    glEnd();
 }
 
 /* Main init/teardown */

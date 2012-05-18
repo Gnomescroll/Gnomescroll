@@ -31,3 +31,5 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 
 // NEW ONE:: (others are shit)
 void draw_bound_texture_sprite2(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height);
+
+void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side2);

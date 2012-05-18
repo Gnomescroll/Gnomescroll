@@ -231,8 +231,8 @@ void blit_block_item_sheet()
 {
 #if DC_CLIENT
     unsigned int color_tex, fb, depth_rb;
-    int xres = 512;
-    int yres = 512;
+    int xres = 256;
+    int yres = 256;
 
     //RGBA8 2D texture, 24 bit depth texture, 256x256
     glGenTextures(1, &color_tex);
@@ -308,14 +308,13 @@ void blit_block_item_sheet()
         int s2 = get_cube_side_texture(index, 2); //N
         int s3 = get_cube_side_texture(index, 4); //W
 
-        draw_iso_cube(i*32.0,j*32.0, s1,s2,s3);
+        const float scale = 16.0;
+        draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
     }
     glEnd();
 
-    glViewport (0, 0, _xres, _yres);
 
-
-    block_item_surface = create_surface_from_nothing(512, 512);
+    block_item_surface = create_surface_from_nothing(xres, yres);
 
     SDL_LockSurface(block_item_surface);
     glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_surface->pixels);
@@ -323,6 +322,7 @@ void blit_block_item_sheet()
 
     glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
     glBindTexture( GL_TEXTURE_2D, 0);
+    glViewport (0, 0, _xres, _yres);
 
     save_surface_to_png(block_item_surface, (char*)"screenshot/fbo_test.png");
 
