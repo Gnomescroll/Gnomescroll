@@ -231,8 +231,8 @@ void blit_block_item_sheet()
 {
 #if DC_CLIENT
     unsigned int color_tex, fb, depth_rb;
-    int xres = 256;
-    int yres = 256;
+    int xres = 1024;
+    int yres = 1024;
 
     //RGBA8 2D texture, 24 bit depth texture, 256x256
     glGenTextures(1, &color_tex);
@@ -308,7 +308,7 @@ void blit_block_item_sheet()
         int s2 = get_cube_side_texture(index, 2); //N
         int s3 = get_cube_side_texture(index, 4); //W
 
-        const float scale = 16.0;
+        const float scale = 64.0;
         draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
     }
     glEnd();
