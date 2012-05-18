@@ -650,7 +650,7 @@ void send_container_contents(int agent_id, int client_id, int container_id)
     for (int i=0; i<container->slot_max; i++)
     {
         if (container->slot[i] == NULL_ITEM) continue;
-        Item::send_item_state(client_id, container->slot[i]);
+        Item::send_item_create(client_id, container->slot[i]);
         send_container_insert(client_id, container->slot[i], container->id, i);
     }
 }
