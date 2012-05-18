@@ -142,7 +142,8 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     return event;
 }
 
-static const ContainerInputEvent NULL_EVENT = {
+static const ContainerInputEvent NULL_EVENT =
+{
     NULL_CONTAINER,         // null container id
     NULL_SLOT,   // null slot
     false,  // nanite click
@@ -345,6 +346,10 @@ void draw_hud()
     if (block_container_enabled) crafting_container->draw();
 
     draw_grabbed_icon();
+
+    glBegin(GL_QUADS);
+    draw_iso_cube(350.0,350.0, 0,0,0);
+    glEnd();
 }
 
 /* Main init/teardown */
