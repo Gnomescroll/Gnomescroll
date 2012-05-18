@@ -13,33 +13,22 @@ void simple_map()
     //generator->size(512, 512, 128);
     //generator->tile((char*)"holy_stone");
     generator->tile(54);
-    generator->interpolate(4,4,1);
-    generator->scale(4.0f, 4.0f, 1.0f);
-    generator->enable_heightmap(20, 30);
+    generator->interpolate(8,4,2);
+    generator->scale(8.0f, 4.0f, 1.0f);
+    generator->enable_heightmap(20, 32);
 
     generator->p2();
 
-    int octaves = 6;
-    float persistence = 0.35f;
-    float amplitude = 1.0f;
-    float frequency = 0.1f;
+    int octaves = 8;
+    float persistence = 1.5f;
+    float amplitude = 2.0f;
+    float frequency = 3.0f;
     float lacunarity = 2.0f;
     
     generator->set_noise_parameters(octaves, persistence, amplitude, frequency, lacunarity);
 
     generator->start();
 
-    //// caves
-    //generator->p3();
-    //generator->tile(0);
-    //generator->rmf();
-    //generator->density(0.98f);
-    //generator->gradient(-1,1,-1,1,0.5,0);
-    //frequency = 2.0f;
-    //persistence = 0.92f;
-    //generator->set_noise_parameters(octaves, persistence, amplitude, frequency, lacunarity);
-    //generator->start();
-    
     MapGen::reset();
 }
 
