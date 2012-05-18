@@ -37,6 +37,7 @@ e east
 
 void load_block_dat()
 {
+    
     int t0 = texture_alias("media/sprites/t00.png");
     int t1 = texture_alias("media/sprites/t01.png");
 
@@ -129,159 +130,133 @@ void load_block_dat()
     iso_texture(t1,10,6);
     hud_def(4,2, t1,10,6);
 
-
-/*
-
-b = NewSolidBlock(6, "crate_2");
-b.texture = iso_texture(t01,6,2);
-b.texture.t = register_texture(t01,7,1);
-b.texture.b = register_texture(t01,7,1);
-b.texture.n = register_texture(t01,7,2);
-b.hud = hud(24+1, b.texture.n);
-b.max_damage = 32;
-
-b = NewSolidBlock(7, "crate_3");
-b.texture = iso_texture(t01,4,3);
-b.texture.t = register_texture(t01,5,2);
-b.texture.b = register_texture(t01,6,3);
-b.texture.n = register_texture(t01,5,3);
-b.hud = hud(24+2, b.texture.n);
-b.max_damage = 32;
-
---dust
-b = NewSolidBlock(16, "methane_1");
-b.texture = iso_texture(t01,2,2);
-b.hud = hud(16+0, b.texture.n);
-b.max_damage = 1;
-
-b = NewSolidBlock(17, "methane_2");
-b.texture = iso_texture(t01,2,3);
-b.hud = hud(16+1, b.texture.n);
-b.max_damage = 2;
-
-b = NewSolidBlock(18, "methane_3");
-b.texture = iso_texture(t01,2,4);
-b.hud = hud(16+2, b.texture.n);
-b.max_damage = 6;
-
-b = NewSolidBlock(19, "methane_4");
-b.texture = iso_texture(t01,2,5);
-b.hud = hud(16+3, b.texture.n);
-b.max_damage = 12;
-
-b = NewSolidBlock(20, "methane_5");
-b.texture = iso_texture(t01,1,4);
-b.hud = hud(16+4, b.texture.n);
-b.max_damage = 10;
-
-b = NewSolidBlock(54, "regolith");
-b.texture = iso_texture(t01,4,10);
-b.texture.t = register_texture(t01,3,10);
-b.texture.b = register_texture(t01,5,10);
-b.hud = hud(56-16+7, b.texture.n);
-
-b = NewSolidBlock(55, "carbon");
-b.texture = iso_texture(t01,6,10);
-b.hud = hud(24+8+0, b.texture.n);
-
-
-*/
 	end_block_dat();
+    //end_block_item_sheet();
+
+    blit_block_item_sheet();
 
 }
 
-/*
 
---register texture sheets
-t00 = register_spritesheet("t00.png")
-t01 = register_spritesheet("t01.png")
+void blit_block_item_sheet()
+{
+    unsigned int color_tex, fb, depth_rb;
+    int xres = 512;
+    int yres = 512;
 
---alias texture
-error_block = texture_alias(t00,1,1)
+    //RGBA8 2D texture, 24 bit depth texture, 256x256
+    glGenTextures(1, &color_tex);
+    glBindTexture(GL_TEXTURE_2D, color_tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //NULL means reserve texture memory, but texels are undefined
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    //-------------------------
+    glGenFramebuffersEXT(1, &fb);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    //Attach 2D texture to this FBO
+    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, color_tex, 0);
+    //-------------------------
+    glGenRenderbuffersEXT(1, &depth_rb);
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_rb);
+    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, xres,yres);
+    //-------------------------
+    //Attach depth buffer to FBO
+    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_rb);
+    //-------------------------
+    //Does the GPU support current FBO configuration?
+    GLenum status;
+    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+    switch(status)
+    {
+        case GL_FRAMEBUFFER_COMPLETE_EXT:
+        printf("FBO works\n");
+        break;
 
---Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
+        default:
+        printf("FBO error\n");
+    }
+    //-------------------------
+    //and now you can render to GL_TEXTURE_2D
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-b = NewSolidBlock(255, "error_block"); -- id, name
-b.texture = iso_texture(error_block);
---b.hud = hud(0, error_block);
+    //-------------------------
+    glViewport(0, 0, xres, yres);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
---- Classic Blocks ---
+    //-------------------------
+    //glDisable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
 
-b = NewSolidBlock(1, "terminal_blue");
-b.texture = iso_texture(t00,3,1);
-b.hud = hud(8+0, b.texture.n);
+    glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
 
-b = NewSolidBlock(2, "terminal_green");
-b.texture = iso_texture(t00,4,1);
-b.hud = hud(8+1, b.texture.n);
+    glBegin(GL_QUADS);
+    draw_iso_cube(32.0,32.0, 48,48,48);
+    glEnd();
 
-b = NewSolidBlock(3, "solar_panel");
-b.texture = iso_texture(t00,1,2);
-b.hud = hud(8+2, b.texture.n);
-
-b = NewSolidBlock(4, "battery");
-b.texture = iso_texture(t00,3,2);
-b.texture.t = register_texture(t00,2,2);
-b.texture.b = register_texture(t00,4,2);
-b.hud = hud(8+3, b.texture.n);
-b.max_damage = 32;
+    char* PBUFFER = (char*) malloc(4*xres*yres);
+    glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
+    glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+    glBindTexture( GL_TEXTURE_2D, 0);
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+    glViewport (0, 0, _xres, _yres);
 
 
--- cell blocks --
+    char FileName[128];
 
-b = NewSolidBlock(6, "crate_2");
-b.texture = iso_texture(t01,6,2);
-b.texture.t = register_texture(t01,7,1);
-b.texture.b = register_texture(t01,7,1);
-b.texture.n = register_texture(t01,7,2);
-b.hud = hud(24+1, b.texture.n);
-b.max_damage = 32;
+    sprintf(FileName,"./screenshot/%s.png",  (char*) "fbo_test");
 
-b = NewSolidBlock(7, "crate_3");
-b.texture = iso_texture(t01,4,3);
-b.texture.t = register_texture(t01,5,2);
-b.texture.b = register_texture(t01,6,3);
-b.texture.n = register_texture(t01,5,3);
-b.hud = hud(24+2, b.texture.n);
-b.max_damage = 32;
+    for(int i=0; i < xres; i++)
+    for(int j=0; j < yres; j++)
+    {
+        PBUFFER[4*(xres*j + i) + 3] = 255;
+    }
 
---dust
-b = NewSolidBlock(16, "methane_1");
-b.texture = iso_texture(t01,2,2);
-b.hud = hud(16+0, b.texture.n);
-b.max_damage = 1;
+    {
+        int index;
+        void* temp_row;
+        int height_div_2;
 
-b = NewSolidBlock(17, "methane_2");
-b.texture = iso_texture(t01,2,3);
-b.hud = hud(16+1, b.texture.n);
-b.max_damage = 2;
+        temp_row = (void *)malloc(4*xres);
+        if(NULL == temp_row)
+        {
+            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+        }
+        int pitch = xres * 4;
+        //int w = xres;
+        int h = yres;
 
-b = NewSolidBlock(18, "methane_3");
-b.texture = iso_texture(t01,2,4);
-b.hud = hud(16+2, b.texture.n);
-b.max_damage = 6;
+        height_div_2 = (int) (yres * .5);
+        for(index = 0; index < height_div_2; index++)    
+        {
+            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+        }
+        free(temp_row); 
+    }
 
-b = NewSolidBlock(19, "methane_4");
-b.texture = iso_texture(t01,2,5);
-b.hud = hud(16+3, b.texture.n);
-b.max_damage = 12;
+    size_t png_size;
+    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        (const char*) PBUFFER, xres, yres, 4, &png_size);
+    FILE * pFile;
+    pFile = fopen ( FileName , "wb" );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fclose (pFile);
 
-b = NewSolidBlock(20, "methane_5");
-b.texture = iso_texture(t01,1,4);
-b.hud = hud(16+4, b.texture.n);
-b.max_damage = 10;
+    free(PNG_IMAGE);
+    free(PBUFFER); 
 
-b = NewSolidBlock(54, "regolith");
-b.texture = iso_texture(t01,4,10);
-b.texture.t = register_texture(t01,3,10);
-b.texture.b = register_texture(t01,5,10);
-b.hud = hud(56-16+7, b.texture.n);
-
-b = NewSolidBlock(55, "carbon");
-b.texture = iso_texture(t01,6,10);
-b.hud = hud(24+8+0, b.texture.n);
-
-*/
-
+}
 
 }

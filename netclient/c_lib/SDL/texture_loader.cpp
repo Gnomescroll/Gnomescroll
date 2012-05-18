@@ -106,6 +106,27 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex)
     return 0;
 }
 
+int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, unsigned int MAG_FILTER)
+{
+    if(surface == NULL)
+    {
+        printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
+        return 1;
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures( 1, tex );
+    // Bind the texture object
+    glBindTexture( GL_TEXTURE_2D, *tex );
+    // Set the texture's stretching properties
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MAG_FILTER );
+    // Edit the texture object's image data using the information SDL_Surface gives us
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
+    glDisable(GL_TEXTURE_2D);
+    return 0;
+}
+
 int create_texture_from_file(char* filename, GLuint* tex)
 {
     SDL_Surface *surface;

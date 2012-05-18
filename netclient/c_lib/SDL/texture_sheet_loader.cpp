@@ -215,7 +215,7 @@ void init_greyscale()
     ItemTextureSheetLoader->generate_grey_scale();
     save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
     save_surface_to_png(ItemSurface , (char*)"./screenshot/items.png");
-    create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture);
+    create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture, GL_NEAREST);
 
 }
 
