@@ -7,7 +7,6 @@
 #include <map_gen/simplex.h>
 #include <map_gen/ridged_mf.h>
 #include <map_gen/interpolator.h>
-#include <map_gen/perturb.hpp>
 #include <map_gen/gradient.h>
 #include <map_gen/features.hpp>
 
@@ -69,10 +68,6 @@ class Generator
     
     bool use_density;
     
-    bool use_perturb;
-    float turbulence;
-    int perturb_height_clamp;
-
     bool add_grass;
     int dirt_tile;
     int grass_tile;
@@ -253,13 +248,6 @@ class Generator
         this->add_grass = true;
     }
 
-    void perturb(float turbulence, int height_clamp)
-    {
-        this->use_perturb = true;
-        this->turbulence = turbulence;
-        this->perturb_height_clamp = height_clamp;
-    }
-
     void start()
     {
         long t = _GET_MS_TIME();
@@ -427,11 +415,7 @@ class Generator
         if (this->use_density)
             set_terrain_density(x,y,z, this->density_threshold, this->base_tile);
         else if (this->use_heightmap)
-        {
             set_terrain_height(x,y,z, this->baseline, this->maxheight, this->base_tile);
-            if (this->use_perturb)
-                perturb_heightmap(x,y, this->turbulence, this->base_tile, this->perturb_height_clamp);
-        }
 
         if (this->use_reverse_heightmap)
             reverse_heightmap(x,y,z, this->reverse_baseline, this->reverse_maxheight, this->reverse_minheight, this->base_tile);
@@ -467,7 +451,6 @@ class Generator
     baseline(0), maxheight(0), reverse_baseline(0), reverse_maxheight(0), reverse_minheight(0),
     use_heightmap_tile(true), heightmap_tile(0),
     use_density(false),
-    use_perturb(false), turbulence(1.0f), perturb_height_clamp(1),
     add_grass(false),
     dirt_tile(0),
     grass_tile(0),
