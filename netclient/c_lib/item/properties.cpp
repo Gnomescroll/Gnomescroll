@@ -294,11 +294,18 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
     return craft_recipes_possible[slot];
 }
 
+int get_selected_craft_recipe_type(int container_id, int slot, bool* available)
+{
+    CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
+    if (recipe == NULL) return NULL_ITEM_TYPE;
+    *available = recipe->available;
+    return recipe->output;
+}
+
 int get_selected_craft_recipe_type(int container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
-    if (!recipe->available) return dat_get_item_type((char*)"unknown");
     return recipe->output;
 }
 

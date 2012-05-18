@@ -497,6 +497,11 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     bool hand_can_stack_recipe = (Item::get_item_type(hand_item) == recipe->output && Item::get_stack_space(hand_item) >= 1);
     if (!hand_empty && !hand_can_stack_recipe) return;
         
+    // remove reagents from container
+    // deleting items as needed, modifying others
+    bool consumed = consume_crafting_reagents(agent_id, container_id, recipe->id);
+    if (!consumed) return;
+
     // place in hand
     if (hand_empty)
     {
@@ -515,13 +520,9 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         item->stack_size += 1;
         Item::send_item_state(agent->client_id, item->id);
     }
-
-    // remove reagents from container
-    // deleting items as needed, modifying others
-    consume_crafting_reagents(agent_id, container_id, recipe->id);
 }
 
-void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
+bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
 {
     assert(container_id != NULL_CONTAINER);
     assert(recipe_id != NULL_CRAFTING_RECIPE);
@@ -530,10 +531,10 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     assert(agent_hand_list != NULL);
 
     Agent_state* agent = ServerState::agent_list->get(agent_id);
-    if (agent == NULL) return;
+    if (agent == NULL) return false;
 
     // agent does not own container, abort
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(agent->id, container_id)) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(agent->id, container_id)) return false;
 
     ItemContainerCraftingBench* bench = (ItemContainerCraftingBench*)get_container(container_id);
     assert(bench != NULL);
@@ -591,6 +592,7 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
         input_count++;
     }
 
+    // first verify we can craft with the reagents
     for (int i=0; i<recipe->reagent_num; i++)
     {   // remove reagents from inputs
         assert(recipe->reagent[i] != NULL_ITEM_TYPE);
@@ -603,8 +605,25 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
         assert(item_id != NULL_ITEM);
         Item::Item* item = Item::get_item(item_id);
         assert(item != NULL);
+        assert(recipe->reagent[i] == item->type);   // verifies sorting
+        if (item->stack_size < count) return false; // cant craft
+    }
+
+    // now actually craft
+    for (int i=0; i<recipe->reagent_num; i++)
+    {   // remove reagents from inputs
+        assert(recipe->reagent[i] != NULL_ITEM_TYPE);
+
+        // gather recipe data
+        int count = recipe->reagent_count[i];
+        assert(count > 0);
+
+        ItemID item_id = inputs[i];
+        assert(item_id != NULL_ITEM);
+        Item::Item* item = Item::get_item(item_id);
+        assert(item != NULL);
+        assert(recipe->reagent[i] == item->type);   // verifies sorting
         assert(item->stack_size >= count);
-        assert(recipe->reagent[i] == item->type);
 
         // determine whether to decrement or fully remove item
         if (item->stack_size <= count)
@@ -617,6 +636,8 @@ void consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
             Item::send_item_state(agent->client_id, item->id);
         }
     }
+    
+    return true;
 }
 
 void send_container_contents(int agent_id, int client_id, int container_id)
