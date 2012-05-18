@@ -12,6 +12,9 @@
 namespace Item
 {
 
+void start_item_dat();
+void end_item_dat();
+
 int texture_alias(const char* spritesheet);
 void item_def(int id, int group, const char* name);
 void sprite_def(int spritesheet, int xpos, int ypos);
@@ -20,7 +23,9 @@ int sprite_alias(int spritesheet, int xpos, int ypos);
 void _set_attribute();
 
 void set_attribute();
-void end_item_dat();
+
+void iso_block_sprite_def(const char* block_name);
+
 
 class ItemAttribute s;
 
@@ -51,14 +56,6 @@ void _set_attribute()
     item_attribute_array[_current_item_id] = s;
 }
 
-void end_item_dat()
-{
-    _set_attribute();
-    
-    #if DC_CLIENT
-    LUA_save_item_texture();
-    #endif
-}
 
 #if DC_CLIENT
 
@@ -105,6 +102,7 @@ void sprite_def(int spritesheet, int xpos, int ypos) {}
 void sprite_def(int alias) {}
 int sprite_alias(int spritesheet, int xpos, int ypos) { return 0; }
 #endif
+
 
 }
 
