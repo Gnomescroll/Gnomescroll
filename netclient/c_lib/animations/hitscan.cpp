@@ -13,7 +13,7 @@ namespace Animations
 
 const int hitscan_laser_ttl = 10;
 
-static int hitscan_texture_id;
+static GLuint hitscan_texture_id;
 
 void init_hitscan()
 {

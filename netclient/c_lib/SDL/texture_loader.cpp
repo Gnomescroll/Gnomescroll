@@ -85,28 +85,6 @@ void _load_image_create_texture(char *file, struct Texture *tex)
     SDL_FreeSurface(image);
 }
 
-//deprecated
-int create_texture_from_surface(SDL_Surface *surface, int *tex)
-{
-    if(surface == NULL)
-    {
-        printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
-        return 1;
-    }
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, (GLuint*)tex );
-    // Bind the texture object
-    glBindTexture( GL_TEXTURE_2D, *tex );
-    // Set the texture's stretching properties
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    // Edit the texture object's image data using the information SDL_Surface gives us
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
-    glDisable(GL_TEXTURE_2D);
-    return 0;
-}
-
 int create_texture_from_surface(SDL_Surface *surface, GLuint *tex)
 {
     if(surface == NULL)
@@ -125,43 +103,6 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex)
     // Edit the texture object's image data using the information SDL_Surface gives us
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
     glDisable(GL_TEXTURE_2D);
-    return 0;
-}
-
-//deprecated
-int create_texture_from_file(char* filename, int* tex)
-{
-    SDL_Surface *surface;
-    surface=IMG_Load(filename);
-    if (!surface)
-    {
-        *tex = 0;
-        printf("Error loading texture %s, %s \n", filename, IMG_GetError());
-        return 1;
-    }
-    if (surface->format->BytesPerPixel != 4)
-    {
-        *tex = 0;
-        printf("IMG_Load: image is missing alpha channel \n");
-        return 2;
-    }
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, (GLuint*)tex );
-    glBindTexture( GL_TEXTURE_2D, *tex );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    int texture_format;
-    if (surface->format->Rmask == 0x000000ff)
-    {
-        texture_format = GL_RGBA;
-    } else {
-        texture_format = GL_BGRA;
-    }
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
-    glDisable(GL_TEXTURE_2D);
-    SDL_FreeSurface(surface);
     return 0;
 }
 

@@ -17,8 +17,8 @@
 namespace Animations
 {
 
-static int hitscan_laser_texture_00_id;
-static int hitscan_laser_texture_01_id;
+static GLuint hitscan_laser_texture_00_id;
+static GLuint hitscan_laser_texture_01_id;
 
 void init_hitscan_laser()
 {

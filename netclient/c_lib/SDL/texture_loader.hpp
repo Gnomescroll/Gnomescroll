@@ -2,8 +2,9 @@
 
 //#include <common/compat_gl.h>
 
-struct Texture {
-    int tex;
+struct Texture
+{
+    GLuint tex;
     int w;
     int h;
 };
@@ -15,9 +16,7 @@ struct Texture _load_image_create_texture(char *file);
 void _load_image_create_texture(char *file, struct Texture* tex);
 
 SDL_Surface* create_surface_from_file(char* file);
-int create_texture_from_file(char* filename, int* tex);   // deprecated
 int create_texture_from_file(char* filename, GLuint* tex);
-int create_texture_from_surface(SDL_Surface* surface, int* tex);   // deprecated
 int create_texture_from_surface(SDL_Surface* surface, GLuint* tex);
 SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex);
 

@@ -26,14 +26,10 @@ void init_texture()
 
 void init_item_sheet()
 {
-    SDL_Surface* s;
+    SDL_Surface* s = TextureSheetLoader::ItemSurface;
 
-    s = TextureSheetLoader::ItemSurface;
-
-    if(s == NULL)
-    {
-        printf("ItemContainer::init_item_sheet, error \n");
-    }
+    if (s == NULL) printf("ItemContainer::init_item_sheet, error \n");
+    assert(s != NULL);
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &ItemSheetTexture );
@@ -47,42 +43,14 @@ void init_item_sheet()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
     
     glDisable(GL_TEXTURE_2D);
-
-
-    s = TextureSheetLoader::ItemSurface;
-
-    if(s == NULL)
-    {
-        printf("ItemContainer::init_item_sheet, error \n");
-    }
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &ItemSheetTexture );
-
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
-
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
-    
-    glDisable(GL_TEXTURE_2D);
-    
 }
 
 void init_nanite_texture()
 {
-    SDL_Surface* s;
-
-    s = create_surface_from_file((char*) "media/sprites/nanite_4.png");
+    SDL_Surface* s = create_surface_from_file((char*) "media/sprites/nanite_4.png");
     
-    if (s == NULL)
-    {
-        printf("t_hud: init_nanite_texture spritesheet load error\n");
-        assert(s != NULL);
-        return;
-    }
+    if (s == NULL) printf("t_hud: init_nanite_texture spritesheet load error\n");
+    assert(s != NULL);
  
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &NaniteTexture );
@@ -104,12 +72,8 @@ void init_crafting_texture()
 
     s = create_surface_from_file((char*) "media/sprites/crafting_bench.png");
     
-    if (s == NULL)
-    {
-        printf("t_hud: init_crafting_texture( spritesheet load error\n");
-        assert(s != NULL);
-        return;
-    }
+    if (s == NULL) printf("t_hud: init_crafting_texture( spritesheet load error\n");
+    assert(s != NULL);
  
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &CraftingTexture );
