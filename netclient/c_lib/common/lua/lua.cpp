@@ -104,63 +104,6 @@ int run_lua_test()
 
 }
 
-int lua_load_block_dat()
-{
-/*
-    int test;
-    LUA_init_options();
-    LUA_register_int_option("x_res", &test);
-    LUA_register_int_option("y_res", &test);
-    LUA_register_options();
-*/
-
-    /*
-        End test
-    */
-
-    int status, result;
-    lua_State *L;
-
-    /*
-     * All Lua contexts are held in this structure. We work with it almost
-     * all the time.
-     */
-    L = luaL_newstate();
-
-    luaL_openlibs(L); /* Load Lua libraries */
-
-    /* Load the file containing the script we are going to run */
-    
-    #if DC_CLIENT
-        status = luaL_loadfile(L, "lua/block/client_load_blocks.lua");
-    #endif
-
-    #if DC_SERVER
-        status = luaL_loadfile(L, "lua/block/server_load_blocks.lua");
-    #endif
-
-    if (status) 
-    {
-        /* If something went wrong, error message is at the top of the stack */
-        fprintf(stderr, "lua_load_map_tiles: Couldn't load file: %s\n", lua_tostring(L, -1));
-        GS_ABORT();
-    }
-
-    result = lua_pcall(L, 0, LUA_MULTRET, 0);
-    if (result) 
-    {
-        fprintf(stderr, "lua_load_map_tiles: Failed to run script: %s\n", lua_tostring(L, -1));
-        GS_ABORT();
-    }
-
-    lua_close(L);   /* Cya, Lua */
-
-    printf("lua_load_map_tiles: finished \n");
-
-    return 0;
-
-}
-
 #include <options/options.hpp>
 
 namespace LUA

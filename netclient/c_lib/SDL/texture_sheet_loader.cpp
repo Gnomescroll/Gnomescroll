@@ -23,7 +23,7 @@ TextureSheetLoader::TextureSheetLoader(int tile_size)
 
     texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
     grey_scale_texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
-    texture_stack = (unsigned int*) malloc(256*TILE_SIZE*TILE_SIZE);
+    texture_stack = (unsigned int*) malloc(4*256*TILE_SIZE*TILE_SIZE);
 }
 
 TextureSheetLoader::~TextureSheetLoader()
