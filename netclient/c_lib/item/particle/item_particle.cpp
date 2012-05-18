@@ -16,7 +16,7 @@ unsigned int ItemSheetTexture = 0;
 void init_item_particle()
 {
 
-    SDL_Surface* s = TextureSheetLoader::ItemTexture;
+    SDL_Surface* s = TextureSheetLoader::ItemSurface;
 
     if(s == NULL)
     {

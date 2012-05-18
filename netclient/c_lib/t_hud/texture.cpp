@@ -28,7 +28,7 @@ void init_item_sheet()
 {
     SDL_Surface* s;
 
-    s = TextureSheetLoader::ItemTexture;
+    s = TextureSheetLoader::ItemSurface;
 
     if(s == NULL)
     {
@@ -49,7 +49,7 @@ void init_item_sheet()
     glDisable(GL_TEXTURE_2D);
 
 
-    s = TextureSheetLoader::ItemTexture;
+    s = TextureSheetLoader::ItemSurface;
 
     if(s == NULL)
     {

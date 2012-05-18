@@ -191,10 +191,11 @@ struct SDL_Surface* CubeTexture = NULL;
 Uint32* CubeTextureStack = NULL;
 
 class TextureSheetLoader* ItemTextureSheetLoader = NULL;
-struct SDL_Surface* ItemTexture = NULL;
+struct SDL_Surface* ItemSurface = NULL;
 Uint32* ItemTextureStack = NULL;
 
-struct SDL_Surface* GreyScaleItemTexture = NULL;
+struct SDL_Surface* GreyScaleItemSurface = NULL;
+Uint32 GreyScaleItemTexture = 0;
 
 void init()
 {
@@ -205,16 +206,17 @@ void init()
     //ItemTextureSheet
     ItemTextureSheetLoader = new TextureSheetLoader(16);
     ItemTextureStack = ItemTextureSheetLoader->texture_stack;
-    ItemTexture = ItemTextureSheetLoader->texture_sheet;
-    GreyScaleItemTexture = ItemTextureSheetLoader->grey_scale_texture_sheet;
-
+    ItemSurface = ItemTextureSheetLoader->texture_sheet;
+    GreyScaleItemSurface = ItemTextureSheetLoader->grey_scale_texture_sheet;
+    int ret = create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture);
+    assert(ret == 0);
 }
 
 void init_greyscale()
 {    
     ItemTextureSheetLoader->generate_grey_scale();
-    save_surface_to_png(GreyScaleItemTexture, (char*)"./screenshot/grey_scale_items.png");
-    save_surface_to_png(ItemTexture , (char*)"./screenshot/items.png");
+    save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
+    save_surface_to_png(ItemSurface , (char*)"./screenshot/items.png");
 }
 
 void teardown()
@@ -259,6 +261,6 @@ extern "C"
 
     void LUA_save_item_texture()
     {
-        save_surface_to_png(TextureSheetLoader::ItemTexture, (char*) "./screenshot/item_texture.png");
+        save_surface_to_png(TextureSheetLoader::ItemSurface, (char*) "./screenshot/item_texture.png");
     }
 }

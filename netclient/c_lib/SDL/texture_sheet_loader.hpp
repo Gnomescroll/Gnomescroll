@@ -39,10 +39,11 @@ extern struct SDL_Surface* CubeTexture;
 extern Uint32* CubeTextureStack;
 
 extern class TextureSheetLoader* ItemTextureSheetLoader;
-extern struct SDL_Surface* ItemTexture;
+extern struct SDL_Surface* ItemSurface;
 extern Uint32* ItemTextureStack;
 
-extern struct SDL_Surface* GreyScaleItemTexture;
+extern struct SDL_Surface* GreyScaleItemSurface;
+extern Uint32 GreyScaleItemTexture;
 
 void init();
 void init_greyscale();
