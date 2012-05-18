@@ -473,20 +473,20 @@ void _rmf_simplex_interp3(
 /* Public API */
 
 /* 1D */
-void apply_interp1_perlin(int x, int x_interval, int repeat, int base)
+void apply_interp1_perlin(float* noisemap, int x, int x_interval, int repeat, int base)
 {
     assert(x <= XMAX && x > 0);
     _perlin_interp1(noisemap, x, x_interval, repeat, base);
 }
 
-void apply_interp1_rmf_perlin(int x, int x_interval, int repeat, int base)
+void apply_interp1_rmf_perlin(float* noisemap, int x, int x_interval, int repeat, int base)
 {
     assert(x <= XMAX && x > 0);
     _rmf_perlin_interp1(noisemap, x, x_interval, repeat, base);
 }
 
 /* 2d */
-void apply_interp2_perlin(
+void apply_interp2_perlin(float* noisemap, 
     int x, int y,
     int x_interval, int y_interval,
     int rep_x, int rep_y,
@@ -498,7 +498,7 @@ void apply_interp2_perlin(
     _perlin_interp2(noisemap, x,y, x_interval, y_interval, rep_x, rep_y, base);
 }
 
-void apply_interp2_rmf_perlin(
+void apply_interp2_rmf_perlin(float* noisemap, 
     int x, int y,
     int x_interval, int y_interval,
     int rep_x, int rep_y,
@@ -510,14 +510,14 @@ void apply_interp2_rmf_perlin(
     _rmf_perlin_interp2(noisemap, x,y, x_interval, y_interval, rep_x, rep_y, base);
 }
 
-void apply_interp2_simplex(int x, int y, int x_interval, int y_interval)
+void apply_interp2_simplex(float* noisemap, int x, int y, int x_interval, int y_interval)
 {
     assert(x <= XMAX && x > 0);
     assert(y <= YMAX && y > 0);
     _simplex_interp2(noisemap, x,y, x_interval, y_interval);
 }
 
-void apply_interp2_rmf_simplex(int x, int y, int x_interval, int y_interval)
+void apply_interp2_rmf_simplex(float* noisemap, int x, int y, int x_interval, int y_interval)
 {
     assert(x <= XMAX && x > 0);
     assert(y <= YMAX && y > 0);
@@ -526,7 +526,7 @@ void apply_interp2_rmf_simplex(int x, int y, int x_interval, int y_interval)
 
 /* 3d */
 
-void apply_interp3_perlin(
+void apply_interp3_perlin(float* noisemap, 
     int x, int y, int z,
     int x_interval, int y_interval, int z_interval,
     int rep_x, int rep_y, int rep_z,
@@ -539,7 +539,7 @@ void apply_interp3_perlin(
     _perlin_interp3(noisemap, x,y,z, x_interval, y_interval, z_interval, rep_x, rep_y, rep_z, base);
 }
 
-void apply_interp3_rmf_perlin(
+void apply_interp3_rmf_perlin(float* noisemap, 
     int x, int y, int z,
     int x_interval, int y_interval, int z_interval,
     int rep_x, int rep_y, int rep_z,
@@ -552,7 +552,7 @@ void apply_interp3_rmf_perlin(
     _rmf_perlin_interp3(noisemap, x,y,z, x_interval, y_interval, z_interval, rep_x, rep_y, rep_z, base);
 }
 
-void apply_interp3_simplex(
+void apply_interp3_simplex(float* noisemap, 
     int x, int y, int z,
     int x_interval, int y_interval, int z_interval
 )
@@ -563,7 +563,7 @@ void apply_interp3_simplex(
     _simplex_interp3(noisemap, x,y,z, x_interval, y_interval, z_interval);
 }
 
-void apply_interp3_rmf_simplex(
+void apply_interp3_rmf_simplex(float* noisemap, 
     int x, int y, int z,
     int x_interval, int y_interval, int z_interval
 )

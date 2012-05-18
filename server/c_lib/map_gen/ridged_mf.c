@@ -70,14 +70,14 @@ float rmf_simplex3(float x, float y, float z)
 
 // Fill methods
 
-void rmf_perlin1_fill(int x, int repeat, int base)
+void rmf_perlin1_fill(float* noisemap, int x, int repeat, int base)
 {
     float fx = (float)x + 2.0f;
     for (int i=0; i<x; i++)
         noisemap[i] = rmf_perlin1(((float)(i+1)/fx)*xnoise_scale, repeat, base);
 }
 
-void rmf_perlin2_fill(int x, int y, int repeatx, int repeaty, int base)
+void rmf_perlin2_fill(float* noisemap, int x, int y, int repeatx, int repeaty, int base)
 {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
@@ -86,7 +86,7 @@ void rmf_perlin2_fill(int x, int y, int repeatx, int repeaty, int base)
         noisemap[i + x*j] = rmf_perlin2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale, repeatx, repeaty, base);
 }
 
-void rmf_perlin3_fill(int x, int y, int z, int repeatx, int repeaty, int repeatz, int base)
+void rmf_perlin3_fill(float* noisemap, int x, int y, int z, int repeatx, int repeaty, int repeatz, int base)
 {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f,
@@ -97,7 +97,7 @@ void rmf_perlin3_fill(int x, int y, int z, int repeatx, int repeaty, int repeatz
         noisemap[i + x*j + x*y*k] = rmf_perlin3(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale,((float)(k+1)/fz)*znoise_scale, repeatx, repeaty, repeatz, base);
 }
 
-void rmf_simplex2_fill(int x, int y)
+void rmf_simplex2_fill(float* noisemap, int x, int y)
 {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
@@ -106,7 +106,7 @@ void rmf_simplex2_fill(int x, int y)
         noisemap[i + x*j] = rmf_simplex2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale);
 }
 
-void rmf_simplex3_fill(int x, int y, int z)
+void rmf_simplex3_fill(float* noisemap, int x, int y, int z)
 {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f,

@@ -160,7 +160,7 @@ float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, 
 }
 
 /* fill methods */
-void perlin1_fill(int x, int repeat, int base) {
+void perlin1_fill(float* noisemap, int x, int repeat, int base) {
     float fx = (float)x + 2.0f; // padding
     int i;
     float h;
@@ -170,7 +170,7 @@ void perlin1_fill(int x, int repeat, int base) {
     }
 }
 
-void perlin2_fill(int x, int y, int repeatx, int repeaty, int base) {
+void perlin2_fill(float* noisemap, int x, int y, int repeatx, int repeaty, int base) {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
     int i,j;
@@ -183,7 +183,7 @@ void perlin2_fill(int x, int y, int repeatx, int repeaty, int base) {
     }
 }
 
-void perlin3_fill(int x, int y, int z, int repeatx, int repeaty, int repeatz, int base) {
+void perlin3_fill(float* noisemap, int x, int y, int z, int repeatx, int repeaty, int repeatz, int base) {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f,
            fz = (float)z + 2.0f;

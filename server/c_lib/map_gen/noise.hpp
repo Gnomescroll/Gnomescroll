@@ -34,9 +34,8 @@ const int PERM_SIZE = 512;
 // int here to try to ensure that this table fits in L1 cache
 extern unsigned char* PERM;
 
-extern float* noisemap;
-float* noise_init(int x, int y, int z);
-void noise_destroy();
+void noise_init();
+void noise_teardown();
 
 extern int _oct;
 extern float _per;
@@ -56,13 +55,16 @@ int next_seed();
 int set_seed_grp(int grp);
 
 void set_heightmap_tile(int tile);
-void set_terrain_density(int x, int y, int z, float threshold, int tile);
-void clear_noisemap();
+void set_terrain_density(float* noisemap, int x, int y, int z, float threshold, int tile);
 void invert_map(int x, int y, int z, int tile);
-void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile);
-void reverse_heightmap (int x, int y, int z, int baseline, int maxheight, int minheight, int tile);
-void set_terrain_height_over_tile(int x, int y, int z, int baseline, int maxheight, int tile);
-void reverse_heightmap_over_tile (int x, int y, int z, int baseline, int maxheight, int minheight, int tile);
+void set_terrain_height(float* noisemap, int x, int y, int z, int baseline, int maxheight, int tile);
+void reverse_heightmap (float* noisemap, int x, int y, int z, int baseline, int maxheight, int minheight, int tile);
+void set_terrain_height_over_tile(float* noisemap, int x, int y, int z, int baseline, int maxheight, int tile);
+void reverse_heightmap_over_tile (float* noisemap, int x, int y, int z, int baseline, int maxheight, int minheight, int tile);
 
 void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency);
 void set_noise_scale(float xscale, float yscale, float zscale);
+
+float* create_noisemap(int x, int y, int z);
+void destroy_noisemap();
+void clear_noisemap(float* noisemap);

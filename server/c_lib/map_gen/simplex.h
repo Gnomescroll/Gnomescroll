@@ -6,5 +6,5 @@ float snoise3(float x, float y, float z);
 float simplex2(float x, float y);
 float simplex3(float x, float y, float z);
 
-void simplex2_fill(int x, int y);
-void simplex3_fill(int x, int y, int z);
+void simplex2_fill(float* noisemap, int x, int y);
+void simplex3_fill(float* noisemap, int x, int y, int z);

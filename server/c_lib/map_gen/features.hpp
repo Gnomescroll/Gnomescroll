@@ -9,7 +9,7 @@ namespace map_gen
 {
     
 void grass(int x, int y, int base, int dirt, int grass);
-void caves(int x, int y, int z, float threshold, int base);
+void caves(float* noisemap, int x, int y, int z, float threshold, int base);
 void ceiling(int x, int y, int z, int height, int tile);
 void floor(int x, int y, int z_start, int height, int tile);
 void walls(int x, int y, int z_start, int height, int tile);

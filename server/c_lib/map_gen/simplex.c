@@ -168,7 +168,7 @@ float simplex3(float x, float y, float z)
 }
 
 /* fill methods */
-void simplex2_fill(int x, int y) {
+void simplex2_fill(float* noisemap, int x, int y) {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
     int i,j;
@@ -181,7 +181,7 @@ void simplex2_fill(int x, int y) {
     }
 }
 
-void simplex3_fill(int x, int y, int z) {
+void simplex3_fill(float* noisemap, int x, int y, int z) {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f,
            fz = (float)z + 2.0f;

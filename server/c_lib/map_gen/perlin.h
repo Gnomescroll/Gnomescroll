@@ -8,7 +8,7 @@ float perlin1(float x, int repeat, int base);
 float perlin2(float x, float y, int repeatx, int repeaty, int base);
 float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base);
 
-void perlin1_fill(int x, int repeat, int base);
-void perlin2_fill(int x, int y, int repeatx, int repeaty, int base);
-void perlin3_fill(int x, int y, int z, int repeatx, int repeaty, int repeatz, int base);
+void perlin1_fill(float* noisemap, int x, int repeat, int base);
+void perlin2_fill(float* noisemap, int x, int y, int repeatx, int repeaty, int base);
+void perlin3_fill(float* noisemap, int x, int y, int z, int repeatx, int repeaty, int repeatz, int base);
 

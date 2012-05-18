@@ -252,10 +252,9 @@ class Generator
     {
         long t = _GET_MS_TIME();
 
-        static int inited_noise = 0;
-        if (!(inited_noise++)) noise_init(this->x, this->y, this->z);
-
         seed_noise(Options::seed);
+
+        float* noisemap = create_noisemap(x,y,z);
 
         set_noise_parameters(octaves, persistence, amplitude, lacunarity, frequency);
         set_noise_scale(xscale, yscale, zscale);
@@ -267,13 +266,13 @@ class Generator
                 switch (this->dimensions)
                 {
                     case 1:
-                        rmf_perlin1_fill(x, repeat_x, this->base_tile);
+                        rmf_perlin1_fill(noisemap, x, repeat_x, this->base_tile);
                         break;
                     case 2:
-                        rmf_perlin2_fill(x,y, repeat_x, repeat_y, this->base_tile);
+                        rmf_perlin2_fill(noisemap, x,y, repeat_x, repeat_y, this->base_tile);
                         break;
                     case 3:
-                        rmf_perlin3_fill(x,y,z, repeat_x, repeat_y, repeat_z, this->base_tile);
+                        rmf_perlin3_fill(noisemap, x,y,z, repeat_x, repeat_y, repeat_z, this->base_tile);
                         break;
                     default:
                         printf("RMF perlin dimension %d not implemented\n", this->dimensions);
@@ -285,10 +284,10 @@ class Generator
                 switch (this->dimensions)
                 {
                     case 2:
-                        rmf_simplex2_fill(x,y);
+                        rmf_simplex2_fill(noisemap, x,y);
                         break;
                     case 3:
-                        rmf_simplex3_fill(x,y,z);
+                        rmf_simplex3_fill(noisemap, x,y,z);
                         break;
                     default:
                         printf("RMF Simplex dimension %d not implemented\n", this->dimensions);
@@ -301,13 +300,13 @@ class Generator
             switch (this->dimensions)
             {
                 case 1:
-                    perlin1_fill(x, repeat_x, this->base_tile);
+                    perlin1_fill(noisemap, x, repeat_x, this->base_tile);
                     break;
                 case 2:
-                    perlin2_fill(x,y, repeat_x, repeat_y, this->base_tile);
+                    perlin2_fill(noisemap, x,y, repeat_x, repeat_y, this->base_tile);
                     break;
                 case 3:
-                    perlin3_fill(x,y,z, repeat_x, repeat_y, repeat_z, this->base_tile);
+                    perlin3_fill(noisemap, x,y,z, repeat_x, repeat_y, repeat_z, this->base_tile);
                     break;
                 default:
                     printf("Perlin dimension %d not implemented\n", this->dimensions);
@@ -319,10 +318,10 @@ class Generator
             switch (this->dimensions)
             {
                 case 2:
-                    simplex2_fill(x,y);
+                    simplex2_fill(noisemap, x,y);
                     break;
                 case 3:
-                    simplex3_fill(x,y,z);
+                    simplex3_fill(noisemap, x,y,z);
                     break;
                 default:
                     printf("Simplex dimension %d not implemented\n", this->dimensions);
@@ -342,13 +341,13 @@ class Generator
                     switch (this->dimensions)
                     {
                         case 1:
-                            apply_interp1_rmf_perlin(x, interpolate_x, repeat_x, this->base_tile);
+                            apply_interp1_rmf_perlin(noisemap, x, interpolate_x, repeat_x, this->base_tile);
                             break;
                         case 2:
-                            apply_interp2_rmf_perlin(x,y, interpolate_x, interpolate_y, repeat_x, repeat_y, this->base_tile);
+                            apply_interp2_rmf_perlin(noisemap, x,y, interpolate_x, interpolate_y, repeat_x, repeat_y, this->base_tile);
                             break;
                         case 3:
-                            apply_interp3_rmf_perlin(x,y,z, interpolate_x, interpolate_y, interpolate_z, repeat_x, repeat_y, repeat_z, this->base_tile);
+                            apply_interp3_rmf_perlin(noisemap, x,y,z, interpolate_x, interpolate_y, interpolate_z, repeat_x, repeat_y, repeat_z, this->base_tile);
                             break;
                         default:
                             printf("RMF perlin dimension %d not implemented\n", this->dimensions);
@@ -360,10 +359,10 @@ class Generator
                     switch (this->dimensions)
                     {
                         case 2:
-                            apply_interp2_rmf_simplex(x,y, interpolate_x, interpolate_y);
+                            apply_interp2_rmf_simplex(noisemap, x,y, interpolate_x, interpolate_y);
                             break;
                         case 3:
-                            apply_interp3_rmf_simplex(x,y,z, interpolate_x, interpolate_y, interpolate_z);
+                            apply_interp3_rmf_simplex(noisemap, x,y,z, interpolate_x, interpolate_y, interpolate_z);
                             break;
                         default:
                             printf("RMF Simplex dimension %d not implemented\n", this->dimensions);
@@ -376,13 +375,13 @@ class Generator
                 switch (this->dimensions)
                 {
                     case 1:
-                        apply_interp1_perlin(x, interpolate_x, repeat_x, this->base_tile);
+                        apply_interp1_perlin(noisemap, x, interpolate_x, repeat_x, this->base_tile);
                         break;
                     case 2:
-                        apply_interp2_perlin(x,y, interpolate_x, interpolate_y, repeat_x, repeat_y, this->base_tile);
+                        apply_interp2_perlin(noisemap, x,y, interpolate_x, interpolate_y, repeat_x, repeat_y, this->base_tile);
                         break;
                     case 3:
-                        apply_interp3_perlin(x,y,z, interpolate_x, interpolate_y, interpolate_z, repeat_x, repeat_y, repeat_z, this->base_tile);
+                        apply_interp3_perlin(noisemap, x,y,z, interpolate_x, interpolate_y, interpolate_z, repeat_x, repeat_y, repeat_z, this->base_tile);
                         break;
                     default:
                         printf("Perlin dimension %d not implemented\n", this->dimensions);
@@ -394,10 +393,10 @@ class Generator
                 switch (this->dimensions)
                 {
                     case 2:
-                        apply_interp2_simplex(x,y, interpolate_x, interpolate_y);
+                        apply_interp2_simplex(noisemap, x,y, interpolate_x, interpolate_y);
                         break;
                     case 3:
-                        apply_interp3_simplex(x,y,z, interpolate_x, interpolate_y, interpolate_z);
+                        apply_interp3_simplex(noisemap, x,y,z, interpolate_x, interpolate_y, interpolate_z);
                         break;
                     default:
                         printf("Simplex dimension %d not implemented\n", this->dimensions);
@@ -408,20 +407,22 @@ class Generator
         }
 
         if (this->use_gradient2)
-            apply_grad3_falloff(x,y,z, gx,gy,gz);
+            apply_grad3_falloff(noisemap, x,y,z, gx,gy,gz);
         else if (this->use_gradient)
-            apply_grad3(x,y,z, gx0,gy0,gz0, gx1,gy1,gz1);
+            apply_grad3(noisemap, x,y,z, gx0,gy0,gz0, gx1,gy1,gz1);
 
         if (this->use_density)
-            set_terrain_density(x,y,z, this->density_threshold, this->base_tile);
+            set_terrain_density(noisemap, x,y,z, this->density_threshold, this->base_tile);
         else if (this->use_heightmap)
-            set_terrain_height(x,y,z, this->baseline, this->maxheight, this->base_tile);
+            set_terrain_height(noisemap, x,y,z, this->baseline, this->maxheight, this->base_tile);
 
         if (this->use_reverse_heightmap)
-            reverse_heightmap(x,y,z, this->reverse_baseline, this->reverse_maxheight, this->reverse_minheight, this->base_tile);
+            reverse_heightmap(noisemap, x,y,z, this->reverse_baseline, this->reverse_maxheight, this->reverse_minheight, this->base_tile);
 
         if (this->add_grass)
             map_gen::grass(x,y, this->base_tile, this->dirt_tile, this->grass_tile);
+
+        destroy_noisemap(noisemap);
 
         next_seed();
 
@@ -431,7 +432,6 @@ class Generator
 
     ~Generator()
     {
-        noise_destroy();
     }
     
     Generator()
@@ -459,7 +459,6 @@ class Generator
         set_noise_parameters(octaves, persistence, amplitude, lacunarity, frequency);
         set_noise_scale(xscale, yscale, zscale);
     }
-
 };
 
 int Generator::seed_value = 666;
@@ -472,6 +471,7 @@ Generator* generator = NULL;
 
 void init()
 {
+    noise_init();
     if (generator == NULL) generator = new Generator;
 }
 
@@ -484,6 +484,7 @@ void reset()
 void teardown()
 {
     if (generator != NULL) delete generator;
+    noise_teardown();
 }
 
 } // MapGen

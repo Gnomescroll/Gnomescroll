@@ -7,8 +7,6 @@
 
 unsigned char* PERM = NULL;
 
-float* noisemap = NULL;
-
 int _oct = 1;
 float _per = 0.6f;
 float _amp = 1.0f;
@@ -63,7 +61,7 @@ void set_heightmap_tile(int tile)
     heightmap_tile = tile;
 }
 
-void set_terrain_density(int x, int y, int z, float threshold, int tile)
+void set_terrain_density(float* noisemap, int x, int y, int z, float threshold, int tile)
 {
     if (threshold < 0.0f || threshold > 1.0f)
     {
@@ -81,11 +79,11 @@ void set_terrain_density(int x, int y, int z, float threshold, int tile)
             _set(i,j,k, tile);
 }
 
-void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
+void set_terrain_height(float* noisemap, int x, int y, int z, int baseline, int maxheight, int tile)
 {
     if (heightmap_tile)
     {
-        set_terrain_height_over_tile(x,y,z,baseline,maxheight,tile);
+        set_terrain_height_over_tile(noisemap, x,y,z,baseline,maxheight,tile);
         return;
     }
 
@@ -130,11 +128,11 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
     }
 }
 
-void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int minheight, int tile)
+void reverse_heightmap(float* noisemap, int x, int y, int z, int baseline, int maxheight, int minheight, int tile)
 {
     if (heightmap_tile)
     {
-        reverse_heightmap_over_tile(x,y,z,baseline,maxheight,minheight,tile);
+        reverse_heightmap_over_tile(noisemap, x,y,z,baseline,maxheight,minheight,tile);
         return;
     }
     assert(maxheight > 0);
@@ -181,7 +179,7 @@ void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int min
     }
 }
 
-void set_terrain_height_over_tile(int x, int y, int z, int baseline, int maxheight, int tile)
+void set_terrain_height_over_tile(float* noisemap, int x, int y, int z, int baseline, int maxheight, int tile)
 {
     assert(maxheight > 0);
     assert(x <= map_dim.x && y <= map_dim.y && z <= map_dim.z && x > 0 && y > 0 && z > 0);
@@ -238,7 +236,7 @@ void set_terrain_height_over_tile(int x, int y, int z, int baseline, int maxheig
     }
 }
 
-void reverse_heightmap_over_tile(int x, int y, int z, int baseline, int maxheight, int minheight, int tile)
+void reverse_heightmap_over_tile(float* noisemap, int x, int y, int z, int baseline, int maxheight, int minheight, int tile)
 {
     assert(maxheight > 0);
     assert(minheight >= 0);
@@ -285,7 +283,7 @@ void reverse_heightmap_over_tile(int x, int y, int z, int baseline, int maxheigh
     }
 }
 
-void clear_noisemap()
+void clear_noisemap(float* noisemap)
 {
     for (int i=0; i<map_dim.x*map_dim.y*map_dim.z; noisemap[i++] = 0.0f);
 }
@@ -313,7 +311,6 @@ void set_noise_parameters(int oct, float per, float amp, float lac, float freq)
     _freq = freq;
 }
 
-
 void set_noise_scale(float xscale, float yscale, float zscale)
 {
     xnoise_scale = xscale;
@@ -321,21 +318,27 @@ void set_noise_scale(float xscale, float yscale, float zscale)
     znoise_scale = zscale;
 }
 
-float* noise_init(int x, int y, int z)
+void noise_init()
 {
     assert(PERM == NULL);
     PERM = (unsigned char*)malloc(PERM_SIZE * sizeof(unsigned char));
-    assert(noisemap == NULL);
-    noisemap = (float*)malloc(sizeof(float)*x*y*z);
-    return noisemap;
 }
 
-void noise_destroy()
+void noise_teardown()
 {
-    if (noisemap != NULL) free(noisemap);
-    noisemap = NULL;
     if (PERM != NULL) free(PERM);
     PERM = NULL;
+}
+
+float* create_noisemap(int x, int y, int z)
+{
+    return (float*)malloc(sizeof(float)*x*y*z);
+}
+
+void destroy_noisemap(float* noisemap)
+{
+    assert(noisemap != NULL);
+    free(noisemap);
 }
 
 #include <map_gen/perlin.c>
