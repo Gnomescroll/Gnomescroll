@@ -227,6 +227,10 @@ void end_block_dat()
 #endif
 }
 
+
+/*
+    TODO Write cleanup!!! of textures and FBO surfaces
+*/
 void blit_block_item_sheet()
 {
 #if DC_CLIENT
@@ -323,6 +327,12 @@ void blit_block_item_sheet()
 
         save_surface_to_png(block_item_64_surface, (char*)"screenshot/fbo_test_64.png");
 
+        //Delete resources
+        glDeleteTextures(1, &color_tex);
+        glDeleteRenderbuffersEXT(1, &depth_rb);
+        //Bind 0, which means render to back buffer, as a result, fb is unbound
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+        glDeleteFramebuffersEXT(1, &fb);
     }
 
     {
@@ -417,13 +427,17 @@ void blit_block_item_sheet()
 
         save_surface_to_png(block_item_16_surface, (char*)"screenshot/fbo_test_16.png");
 
+        //Delete resources
+        glDeleteTextures(1, &color_tex);
+        glDeleteRenderbuffersEXT(1, &depth_rb);
+        //Bind 0, which means render to back buffer, as a result, fb is unbound
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+        glDeleteFramebuffersEXT(1, &fb);
+    }
+  
         glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
         glBindTexture( GL_TEXTURE_2D, 0);
         glViewport (0, 0, _xres, _yres);
-
-        
-    }
-
 
 
 #endif
