@@ -32,18 +32,18 @@ void player_agent_sound_movement_event(class AgentState s0,  class AgentState s1
 	static const float distance_per_step = 1.0;
 	static float total_distance = 0.0;
 
-	float dx = (s1.x - s0.x);
-	float dy = (s1.y - s0.y);
+    float dx = (s1.x - s0.x);
+    float dy = (s1.y - s0.y);
 
-	float d = sqrt(dx*dx + dy*dy);
+    float d = sqrt(dx*dx + dy*dy);
 
-	total_distance += d;
+    total_distance += d;
 
-	if(total_distance > distance_per_step )
-	{
-		//play sound
-		//printf("play agent sound !!! \n");
-		total_distance -= distance_per_step;
-	}
+    if(total_distance > distance_per_step )
+    {
+        //play sound
+        //printf("play agent sound !!! \n");
+        total_distance -= distance_per_step;
+    }
 
 }

@@ -169,6 +169,20 @@ int get_max_durability(int item_type)
     return attr->max_durability;
 }
 
+int get_placer_block_type_id(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    assert(attr != NULL);
+    return attr->placer_block_type_id;
+}
+
+int get_particle_voxel_texture(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    assert(attr != NULL);
+    return attr->particle_voxel_texture;
+}
+
 bool get_nanite_edibility(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
