@@ -1,6 +1,5 @@
 #pragma once
 
-#include <game/constants.hpp>
 #include <entity/constants.hpp>
 #include <agent/constants.hpp>
 

@@ -2,8 +2,6 @@
 
 #include <math.h>
 
-//#include <inventory/include.hpp>
-
 #if DC_SERVER
 #include <chat/server.hpp>
 #include <chat/interface.hpp>

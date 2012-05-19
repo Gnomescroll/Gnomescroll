@@ -101,9 +101,6 @@ dont_include_this_file_in_server
 //#include <particle/particle_lib.cpp>
 #include <particle/_include.hpp>
 
-/* Items */
-#include <game/constants.hpp>
-
 /* Skybox */
 #include <camera/skybox/skybox.cpp>
 

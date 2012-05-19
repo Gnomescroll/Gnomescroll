@@ -75,9 +75,6 @@ dont_include_this_file_in_client
 /* Particles */
 #include <particle/_include.hpp>
 
-/* Items */
-#include <game/constants.hpp>
-
 /* mechanisms */
 #include <t_mech/_include.hpp>
 
