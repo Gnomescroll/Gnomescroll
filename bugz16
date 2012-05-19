@@ -21,11 +21,12 @@ FIXED
 replace assert with GS_ASSERT
 DONE
 
-fish see through terrain, or keep shooting through it
+agent inventory not dropped on quit
+FIXED
 
 mining laser beam on player can lag camera -- this is because skeleton is used and out of sync
 solutions:
     force update the skeleton along with camera position
     use animation origin relative to camera instead of skeleton
 
-agent inventory not dropped on quit
+fish see through terrain, or keep shooting through it
