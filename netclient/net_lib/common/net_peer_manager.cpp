@@ -114,10 +114,10 @@ void NetPeerManager::send_remaining_state()
 
 void NetPeerManager::teardown()
 {
-    //item::delete_agent_inventory(this->client_id); //set player inventory
-    //item::delete_agent_toolbelt(this->client_id); //set player inventory
-    //item::delete_agent_nanite(this->client_id); //set player inventory
-
+    Agent_state* a = NetServer::agents[this->client_id];
+    GS_ASSERT(a != NULL);
+    if (a != NULL) ItemContainer::agent_quit(a->id);
+    
     ServerState::agent_disconnect(this->client_id);
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
 }
