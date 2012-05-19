@@ -36,8 +36,6 @@ void save_drop_dat_to_file()
     FILE *fp = fopen("screenshot/drop_dat","w");
     if(!fp) GS_ABORT();
 
-    fprintf(fp,"TEST! \n");
-
     for(int i=0; i<256; i++)
     {
         int num_drop = meta_drop_table[i].num_drop;
