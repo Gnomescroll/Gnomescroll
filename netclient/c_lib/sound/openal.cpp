@@ -65,7 +65,8 @@ static int buffer_index = 0;
 static const ALsizei MAX_SOURCES = 16;
 static ALuint* sources = NULL;
 
-struct GS_SoundSource {
+struct GS_SoundSource
+{
     int source_id;
     bool two_dimensional;
 };
@@ -129,13 +130,10 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 
 void init()
 {
-    if (inited)
-    {
-        printf("WARNING: attempt to init OpenAl more than once\n");
-        return;
-    }
+    assert(!inited);
+    inited = true;
 
-    inited = enabled = Options::sound;
+    enabled = Options::sound;
     if (!enabled) return;
 
     // allocate memory
@@ -157,7 +155,7 @@ void init()
     {
         printf("OpenAL error: sound device %s not found\n", Options::sound_device);
         close();
-        inited = enabled = false;
+        enabled = false;
         return;
     }
 
@@ -168,7 +166,7 @@ void init()
     if (checkError())
     {
         close();
-        inited = enabled = false;
+        enabled = false;
         device = NULL;
         return;
     }
@@ -181,7 +179,7 @@ void init()
     if (checkError())
     {
         close();
-        inited = enabled = false;
+        enabled = false;
         return;
     }
 
@@ -190,7 +188,7 @@ void init()
     if (checkError())
     {
         close();
-        inited = enabled = false;
+        enabled = false;
         return;
     }
     buffers_inited = true;
@@ -200,7 +198,7 @@ void init()
     if (checkError())
     {
         close();
-        inited = enabled = false;
+        enabled = false;
         return;
     }
     sources_inited = true;
@@ -224,7 +222,7 @@ void init()
     if (checkError())
     {
         close();
-        inited = enabled = false;
+        enabled = false;
         return;
     }
     
@@ -275,8 +273,7 @@ void close()
 
     Sound::teardown_wav_buffers();
     enabled = false;
-    if (inited)
-        printf("OpenAL sound closed.\n");
+    if (inited) printf("OpenAL sound closed.\n");
 }
 
 static unsigned int hash(char* s)
@@ -546,6 +543,7 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
 
 void update()
 {
+    if (!enabled) return;
     // get listener state
     ALfloat x,y,z;
     ALfloat vx,vy,vz;

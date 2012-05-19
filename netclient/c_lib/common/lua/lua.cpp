@@ -387,7 +387,7 @@ extern "C"
     {
         if(LUA::LUA_bool_option_table[option_id] == NULL)
         {
-            printf("LUA_set_int_option: error \n");
+            printf("LUA_set_bool_option: error \n");
             GS_ABORT();
         }
         if(value == 0)
@@ -405,7 +405,7 @@ extern "C"
     {
         if(LUA::LUA_float_option_table[option_id] == NULL)
         {
-            printf("LUA_set_int_option: error \n");
+            printf("LUA_set_float_option: error \n");
             GS_ABORT();
         }
         *LUA::LUA_float_option_table[option_id] = value;
@@ -415,7 +415,7 @@ extern "C"
     {
         if(LUA::LUA_string_option_table[option_id] == NULL)
         {
-            printf("LUA_set_int_option: error \n");
+            printf("LUA_set_string_option: error \n");
             GS_ABORT();
         }
         *LUA::LUA_string_option_table[option_id] = value;

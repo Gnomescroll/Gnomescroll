@@ -3,6 +3,7 @@ build 16 bugs
 durabilities out of sync / toolbelt copying wrong data?
 
 when crafting multiple in hand, hand stack does not increase in UI
+DONE
 
 nanite food slot does not respond to normal merge
 FIXED
@@ -19,3 +20,8 @@ FIXED
 fish see through terrain, or keep shooting through it
 
 replace assert with GS_ASSERT
+
+minig laser beam on player can lag camera -- this is because skeleton is used and out of sync
+solutions:
+    force update the skeleton along with camera position
+    use animation origin relative to camera instead of skeleton

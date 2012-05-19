@@ -41,8 +41,8 @@ OPT_STRING(font, "inc_18_b.fnt")
 
 /* Sound */
 OPT_BOOL(sound, true)
-OPT_INT(sfx, 1)
-OPT_INT(music, 20)
+OPT_INT(sfx, 50)
+OPT_INT(music, 50)
 OPT_STRING(sound_device, "")
 
 /* Graphics */
