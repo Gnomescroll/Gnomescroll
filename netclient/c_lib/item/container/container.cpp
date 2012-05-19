@@ -696,8 +696,18 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                     #if DC_SERVER
                     action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
                     #endif
-
-
+                }
+            }
+            else
+            {   // see if we can merge some
+                #if DC_CLIENT
+                bool can_insert = container->can_insert_item(slot, hand_item_type);
+                #endif
+                #if DC_SERVER
+                bool can_insert = container->can_insert_item(slot, hand_item);
+                #endif
+                if (can_insert)
+                {
                     // hand stack will fit entirely in slot
                     if (hand_item_stack <= slot_item_space)
                     {   // FULL STACK MERGE
@@ -735,20 +745,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                             action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
                             #endif
                         }
-                    }
-                }
-            }
-            else
-            {   // see if we can merge some
-                #if DC_CLIENT
-                bool can_insert = container->can_insert_item(slot, hand_item_type);
-                #endif
-                #if DC_SERVER
-                bool can_insert = container->can_insert_item(slot, hand_item);
-                #endif
-                if (can_insert)
-                {
-                    
+                    }                    
                 }
             }
         }
