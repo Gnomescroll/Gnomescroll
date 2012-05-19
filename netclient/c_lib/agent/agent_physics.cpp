@@ -21,15 +21,11 @@ inline bool on_ground(float box_r, float x, float y, float z)
 
     int zz = z - GROUND_MARGIN;
 
-    if(isSolid(_get(x_max,y_max,zz) != 0)) //north, west
-        return true;
-    if(isSolid(_get(x_max,y_min,zz) != 0)) //north, east
-        return true;
-    if(isSolid(_get(x_min,y_min,zz) != 0)) //south, east
-        return true;
-    if(isSolid(_get(x_min,y_max,zz) != 0)) //south, west
-        return true;
-
+    if( isSolid(x_max,y_max,zz) || //north, west
+        isSolid(x_max,y_min,zz) || //north, east
+        isSolid(x_min,y_min,zz) || //south, east
+        isSolid(x_min,y_max,zz) )  //south, west
+    return true;
     return false;
 }
 #undef GROUND_MARGIN
@@ -49,15 +45,12 @@ inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
         int zz = (int)z + i;
         if (i == n_z-1)
             zz = (int)(z + box_h);
-        
-        if(isSolid(_get(x_max,y_max,zz) != 0)) //north, west
-            return true;
-        if(isSolid(_get(x_max,y_min,zz) != 0)) //north, east
-            return true;
-        if(isSolid(_get(x_min,y_min,zz) != 0)) //south, east
-            return true;
-        if(isSolid(_get(x_min,y_max,zz) != 0)) //south, west
-            return true;
+
+        if( isSolid(x_max,y_max,zz) || //north, west
+            isSolid(x_max,y_min,zz) || //north, east
+            isSolid(x_min,y_min,zz) || //south, east
+            isSolid(x_min,y_max,zz) )  //south, west
+        return true;
     }
     return false;
 }
@@ -77,14 +70,11 @@ inline bool collision_check_final_current(float box_r, float box_h, float x, flo
     {
         int zz = (int)(z + i*step_size);
 
-        if(isSolid(_get(x_max,y_max,zz) != 0)) //north, west
-            return true;
-        if(isSolid(_get(x_max,y_min,zz) != 0)) //north, east
-            return true;
-        if(isSolid(_get(x_min,y_min,zz) != 0)) //south, east
-            return true;
-        if(isSolid(_get(x_min,y_max,zz) != 0)) //south, west
-            return true;  
+        if( isSolid(x_max,y_max,zz) || //north, west
+            isSolid(x_max,y_min,zz) || //north, east
+            isSolid(x_min,y_min,zz) || //south, east
+            isSolid(x_min,y_max,zz) )  //south, west
+        return true;
     }
     return false;
 }
@@ -105,14 +95,11 @@ inline bool collision_check_final_xy(float box_r, float box_h, float x, float y,
     {
         int zz = (int)(z + i*step_size);
 
-        if(isSolid(_get(x_max,y_max,zz) != 0)) //north, west
-            return true;
-        if(isSolid(_get(x_max,y_min,zz) != 0)) //north, east
-            return true;
-        if(isSolid(_get(x_min,y_min,zz) != 0)) //south, east
-            return true;
-        if(isSolid(_get(x_min,y_max,zz) != 0)) //south, west
-            return true;      
+        if( isSolid(x_max,y_max,zz) || //north, west
+            isSolid(x_max,y_min,zz) || //north, east
+            isSolid(x_min,y_min,zz) || //south, east
+            isSolid(x_min,y_max,zz) )  //south, west
+        return true;   
     }
     return false;
 }
@@ -139,14 +126,12 @@ inline bool collision_check_final_z(float box_r, float box_h, float x, float y, 
         if (zz > (z+box_h))
             zz = (int)(z + box_h);
 
-        if(isSolid(_get(x_max,y_max,zz) != 0)) //north, west
-            return true;
-        if(isSolid(_get(x_max,y_min,zz) != 0)) //north, east
-            return true;
-        if(isSolid(_get(x_min,y_min,zz) != 0)) //south, east
-            return true;
-        if(isSolid(_get(x_min,y_max,zz) != 0)) //south, west
-            return true;       
+        if( isSolid(x_max,y_max,zz) || //north, west
+            isSolid(x_max,y_min,zz) || //north, east
+            isSolid(x_min,y_min,zz) || //south, east
+            isSolid(x_min,y_max,zz) )  //south, west
+        return true;
+
     }
     return false;
 }
