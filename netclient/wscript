@@ -259,7 +259,7 @@ def build(bld):
     bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
-    if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
+    if '-DPRODUCTION=1' in bld.env.CXXFLAGS and '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS:
         bld.add_post_fun(strip_symbols)
 
 
@@ -365,7 +365,7 @@ def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
     
 def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
+    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DNDEBUG','-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
 
 # developers' build of the production build
 def production_dev(ctx, add=[], rm=[]):
@@ -437,3 +437,10 @@ def lint(ctx):
     ]
     ctx.env.CFLAGS += lint_flags
     ctx.env.CXXFLAGS += lint_flags
+
+class prodtest_ctx(ConfigurationContext):
+    cmd = 'prodtest'
+    fun = 'prodtest'
+
+def prodtest(ctx, add=[], rm=[]):
+    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-Winline', '-DNOSTRIPSYMBOLS'], rm_flags=rm)

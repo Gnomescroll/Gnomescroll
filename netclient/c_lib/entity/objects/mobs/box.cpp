@@ -19,7 +19,7 @@ void load_mob_robot_box_data()
     ObjectType type = OBJECT_MONSTER_BOX;
     
     #if DC_SERVER
-    const int n_components = 7;
+    const int n_components = 8;
     #endif
     #if DC_CLIENT
     const int n_components = 7;
@@ -36,6 +36,7 @@ void load_mob_robot_box_data()
 
     #if DC_SERVER
     object_data->attach_component(type, COMPONENT_SPAWN_CHILD);
+    object_data->attach_component(type, COMPONENT_RATE_LIMIT);
     #endif
     #if DC_CLIENT
     object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
@@ -87,6 +88,10 @@ static void set_mob_robot_box_properties(Object* object)
 
     #if DC_SERVER
     add_component_to_object(object, COMPONENT_SPAWN_CHILD);
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    limiter->limit = MONSTER_BOX_BROADCAST_RATE;
     #endif
 
     #if DC_CLIENT
@@ -295,6 +300,10 @@ void server_tick_mob_robot_box(Object* object)
         //object->broadcastState(); // send state packet if state changed
     //else if (this->canSendState())
         //object->broadcastState(); // send state packet every N ticks
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed()) object->broadcastState();
 }
 #endif
 

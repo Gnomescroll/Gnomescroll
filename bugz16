@@ -1,0 +1,16 @@
+build 16 bugs
+
+durabilities out of sync
+
+when crafting multiple in hand, hand stack does not increase in UI
+
+nanite food slot does not respond to normal merge
+
+hearing other players' pickup sounds??
+FIXED
+
+send periodic state teleport for bots
+
+flag pickup? -- says "You have the flag" but at least is not hidden
+
+fish see through terrain, or keep shooting through it

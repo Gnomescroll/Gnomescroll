@@ -30,7 +30,7 @@ inline void item_particle_state_StoC::handle()
 inline void item_particle_picked_up_StoC::handle()
 {
     destroy(id);
-    Sound::pickup_item();
+    if (agent_id == ClientState::playerAgent_state.agent_id) Sound::pickup_item();
 }
 #endif
 

@@ -18,12 +18,12 @@ typedef unsigned int GLuint;
     #define  PRODUCTION 0
 #endif
 
-/*
-  Turn off asserts when production is enabled
-*/
-#if PRODUCTION
-    #define NDEBUG 
-#endif
+///*
+  //Turn off asserts when production is enabled
+//*/
+//#if PRODUCTION
+    //#define NDEBUG 
+//#endif
 
 //Generic helper definitions for shared library support
 #if defined _WIN32 || defined __CYGWIN__
