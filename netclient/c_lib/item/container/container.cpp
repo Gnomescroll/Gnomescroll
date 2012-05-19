@@ -696,9 +696,61 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                     #if DC_SERVER
                     action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
                     #endif
+
+
+                    // hand stack will fit entirely in slot
+                    if (hand_item_stack <= slot_item_space)
+                    {   // FULL STACK MERGE
+                        #if DC_CLIENT
+                        action = full_hand_to_occupied_slot(
+                            container, slot,
+                            &hand_item_type, &hand_item_stack, &hand_item_durability,
+                            slot_item_type, slot_item_stack, slot_item_durability
+                        );
+                        #endif
+                        #if DC_SERVER
+                        action = full_hand_to_occupied_slot(client_id, slot, &hand_item, slot_item);
+                        #endif
+                    }
+                    else
+                    // stacks will not completely merge
+                    {
+                        if (slot_item_space == 0)
+                        // the stack is full
+                        {
+                            // do nothing.
+                            // default container would swap here
+                        }
+                        else
+                        // some of the hand stack will fit in the slot
+                        {   // PARTIAL STACK MERGE
+                            #if DC_CLIENT
+                            action = partial_hand_to_occupied_slot(
+                                container, slot,
+                                &hand_item_stack,
+                                slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
+                            );
+                            #endif
+                            #if DC_SERVER
+                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
+                            #endif
+                        }
+                    }
                 }
             }
-            // dont swap
+            else
+            {   // see if we can merge some
+                #if DC_CLIENT
+                bool can_insert = container->can_insert_item(slot, hand_item_type);
+                #endif
+                #if DC_SERVER
+                bool can_insert = container->can_insert_item(slot, hand_item);
+                #endif
+                if (can_insert)
+                {
+                    
+                }
+            }
         }
     }
     else if (slot == container->slot_max-1)
