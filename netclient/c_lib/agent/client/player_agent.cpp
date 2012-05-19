@@ -1,7 +1,5 @@
 #include "player_agent.hpp"
 
-#ifdef DC_CLIENT
-
 #include <agent/agent.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #include <sound/sound.hpp>
@@ -12,6 +10,8 @@
 
 #include <chat/interface.hpp>
 #include <t_map/_interface.hpp>
+
+#include <agent/client/agent_sound_handler.hpp>
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->you = ClientState::agent_list->get(id);
@@ -260,6 +260,8 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
     s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp);
+
+    player_agent_sound_movement_event(s0, s1);
 }
 
 float PlayerAgent_state::camera_height() {
@@ -488,5 +490,3 @@ int PlayerAgent_state::facing_container()
     
     return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
-
-#endif
