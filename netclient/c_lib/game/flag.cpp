@@ -26,13 +26,12 @@ held(false)
 
 Flag::~Flag()
 {
-    if (this->vox != NULL)
-        delete this->vox;
+    if (this->vox != NULL) delete this->vox;
 }
 
 void Flag::tick()
 {
-#if DC_SERVER
+    #if DC_SERVER
     float old_z = this->z;
 
     int x,y,z;
@@ -66,12 +65,13 @@ void Flag::tick()
     }
     if (old_z != (float)z)
         ServerState::ctf->set_flag_position(this->team, this->x, this->y, (float)z);
-#endif
+    #endif
 }
 
 void Flag::animate()
 {
     if (this->vox == NULL) return;
+    if (this->held) return;
 
     float dtheta = 0.02f;
     this->theta += dtheta;
@@ -82,6 +82,11 @@ void Flag::update()
 {
     #if DC_CLIENT
     this->vox->was_updated = false;
+    if (this->held)
+    {
+        this->vox->set_draw(false);
+        return;
+    }
     Vec3 center = this->vox->get_part(0)->get_center();
     float radius = this->vox->get_part(0)->radius;
     if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
