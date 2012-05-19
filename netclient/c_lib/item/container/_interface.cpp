@@ -522,6 +522,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         assert(item != NULL);
         item->stack_size += 1;
         Item::send_item_state(agent->client_id, item->id);
+        send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
     }
 }
 

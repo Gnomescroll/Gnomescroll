@@ -154,7 +154,7 @@ void block_action_StoC::handle()
     {
         int cube_id = _get(x,y,z);
         Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id, (TerrainModificationAction)action);
-        Sound::block_destroyed(x,y,z, 0,0,0);
+        Sound::block_destroyed(x+0.5f,y+0.5f,z+0.5f, 0,0,0);
     }
     else
         Sound::block_set(x,y,z,0,0,0);
