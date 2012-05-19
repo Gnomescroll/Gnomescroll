@@ -25,7 +25,8 @@ namespace t_map
     extern SDL_PixelFormat *block_surface_pixel_format;
     extern int block_surface_width, block_surface_height;
 
-    extern struct SDL_Surface* block_item_surface;
+    extern struct SDL_Surface* block_item_64_surface;
+    extern struct SDL_Surface* block_item_16_surface;
 
     void init_textures();
 

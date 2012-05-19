@@ -13,7 +13,8 @@ SDL_Surface *block_surface = NULL;
 SDL_PixelFormat *block_surface_pixel_format = NULL;
 int block_surface_width, block_surface_height;
 
-struct SDL_Surface* block_item_surface = NULL;
+struct SDL_Surface* block_item_64_surface;
+struct SDL_Surface* block_item_16_surface;
 
 }   // t_map
 

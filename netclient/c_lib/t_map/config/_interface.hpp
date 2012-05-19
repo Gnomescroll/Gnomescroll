@@ -230,101 +230,201 @@ void end_block_dat()
 void blit_block_item_sheet()
 {
 #if DC_CLIENT
-    unsigned int color_tex, fb, depth_rb;
-    int xres = 1024;
-    int yres = 1024;
 
-    //RGBA8 2D texture, 24 bit depth texture, 256x256
-    glGenTextures(1, &color_tex);
-    glBindTexture(GL_TEXTURE_2D, color_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //NULL means reserve texture memory, but texels are undefined
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-    //-------------------------
-    glGenFramebuffersEXT(1, &fb);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
-    //Attach 2D texture to this FBO
-    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, color_tex, 0);
-    //-------------------------
-    glGenRenderbuffersEXT(1, &depth_rb);
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_rb);
-    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, xres,yres);
-    //-------------------------
-    //Attach depth buffer to FBO
-    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_rb);
-    //-------------------------
-    //Does the GPU support current FBO configuration?
-    GLenum status;
-    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-    switch(status)
     {
-        case GL_FRAMEBUFFER_COMPLETE_EXT:
-        printf("FBO works\n");
-        break;
-
-        default:
-        printf("FBO error\n");
-    }
-    //-------------------------
-    //and now you can render to GL_TEXTURE_2D
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //-------------------------
-    glViewport(0, 0, xres, yres);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    //-------------------------
-    //glDisable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-
-    glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
-
-    glBegin(GL_QUADS);
-    for(int i=0; i<16; i++)
-    for(int j=0; j<16; j++)
-    {
-        /*
-            const int T = 0;
-            const int B = 1;
-            const int N = 2;
-            const int S = 3;
-            const int W = 4;
-            const int E = 5;
-        */
-
-        int index = 16*j+i;
-        int s1 = get_cube_side_texture(index, 0); //T
-        int s2 = get_cube_side_texture(index, 2); //N
-        int s3 = get_cube_side_texture(index, 4); //W
-
+        unsigned int color_tex, fb, depth_rb;
+        const int xres = 1024;
+        const int yres = 1024;
         const float scale = 64.0;
-        draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
+
+        //RGBA8 2D texture, 24 bit depth texture, 256x256
+        glGenTextures(1, &color_tex);
+        glBindTexture(GL_TEXTURE_2D, color_tex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //NULL means reserve texture memory, but texels are undefined
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        //-------------------------
+        glGenFramebuffersEXT(1, &fb);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+        //Attach 2D texture to this FBO
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, color_tex, 0);
+        //-------------------------
+        glGenRenderbuffersEXT(1, &depth_rb);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_rb);
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, xres,yres);
+        //-------------------------
+        //Attach depth buffer to FBO
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_rb);
+        //-------------------------
+        //Does the GPU support current FBO configuration?
+        GLenum status;
+        status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        switch(status)
+        {
+            case GL_FRAMEBUFFER_COMPLETE_EXT:
+            printf("FBO works\n");
+            break;
+
+            default:
+            printf("FBO error\n");
+        }
+        //-------------------------
+        //and now you can render to GL_TEXTURE_2D
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        //-------------------------
+        glViewport(0, 0, xres, yres);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        //-------------------------
+        //glDisable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+
+        glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+
+        glBegin(GL_QUADS);
+        for(int i=0; i<16; i++)
+        for(int j=0; j<16; j++)
+        {
+            /*
+                const int T = 0;
+                const int B = 1;
+                const int N = 2;
+                const int S = 3;
+                const int W = 4;
+                const int E = 5;
+            */
+
+            int index = 16*j+i;
+            int s1 = get_cube_side_texture(index, 0); //T
+            int s2 = get_cube_side_texture(index, 2); //N
+            int s3 = get_cube_side_texture(index, 4); //W
+
+            draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
+        }
+        glEnd();
+
+        block_item_64_surface = create_surface_from_nothing(xres, yres);
+
+        SDL_LockSurface(block_item_64_surface);
+        glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_64_surface->pixels);
+        SDL_UnlockSurface(block_item_64_surface);
+
+        save_surface_to_png(block_item_64_surface, (char*)"screenshot/fbo_test_64.png");
+
     }
-    glEnd();
+
+    {
+        unsigned int color_tex, fb, depth_rb;
+        const int xres = 256;
+        const int yres = 256;
+        const float scale = 16.0;
+
+        //RGBA8 2D texture, 24 bit depth texture, 256x256
+        glGenTextures(1, &color_tex);
+        glBindTexture(GL_TEXTURE_2D, color_tex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //NULL means reserve texture memory, but texels are undefined
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        //-------------------------
+        glGenFramebuffersEXT(1, &fb);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+        //Attach 2D texture to this FBO
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, color_tex, 0);
+        //-------------------------
+        glGenRenderbuffersEXT(1, &depth_rb);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_rb);
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, xres,yres);
+        //-------------------------
+        //Attach depth buffer to FBO
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_rb);
+        //-------------------------
+        //Does the GPU support current FBO configuration?
+        GLenum status;
+        status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        switch(status)
+        {
+            case GL_FRAMEBUFFER_COMPLETE_EXT:
+            printf("FBO works\n");
+            break;
+
+            default:
+            printf("FBO error\n");
+        }
+        //-------------------------
+        //and now you can render to GL_TEXTURE_2D
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        //-------------------------
+        glViewport(0, 0, xres, yres);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        //-------------------------
+        //glDisable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+
+        glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+
+        glBegin(GL_QUADS);
+        for(int i=0; i<16; i++)
+        for(int j=0; j<16; j++)
+        {
+            /*
+                const int T = 0;
+                const int B = 1;
+                const int N = 2;
+                const int S = 3;
+                const int W = 4;
+                const int E = 5;
+            */
+
+            int index = 16*j+i;
+            int s1 = get_cube_side_texture(index, 0); //T
+            int s2 = get_cube_side_texture(index, 2); //N
+            int s3 = get_cube_side_texture(index, 4); //W
+
+            draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
+        }
+        glEnd();
+
+        block_item_16_surface = create_surface_from_nothing(xres, yres);
+
+        SDL_LockSurface(block_item_16_surface);
+        glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
+        SDL_UnlockSurface(block_item_64_surface);
+
+        save_surface_to_png(block_item_16_surface, (char*)"screenshot/fbo_test_16.png");
+
+        glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+        glBindTexture( GL_TEXTURE_2D, 0);
+        glViewport (0, 0, _xres, _yres);
+
+        
+    }
 
 
-    block_item_surface = create_surface_from_nothing(xres, yres);
-
-    SDL_LockSurface(block_item_surface);
-    glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_surface->pixels);
-    SDL_UnlockSurface(block_item_surface);
-
-    glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
-    glBindTexture( GL_TEXTURE_2D, 0);
-    glViewport (0, 0, _xres, _yres);
-
-    save_surface_to_png(block_item_surface, (char*)"screenshot/fbo_test.png");
 
 #endif
 }

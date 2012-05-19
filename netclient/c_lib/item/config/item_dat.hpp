@@ -150,7 +150,7 @@ int _item_cube_iso_spritesheet_id = -1;
 void start_item_dat()
 {
 #if DC_CLIENT
-    _item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_surface);
+    _item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_16_surface);
 #endif
 }
 
@@ -179,7 +179,6 @@ void iso_block_sprite_def(const char* block_name)
 
     int index = LUA_blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
     sprite_array[_current_item_id] = index; //check
-
 #endif
 }
 
