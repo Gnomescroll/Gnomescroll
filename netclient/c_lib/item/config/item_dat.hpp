@@ -54,7 +54,7 @@ void load_item_dat()
     sprite_def(i0, 4,1);
 
     item_def(1, IG_PLACER, "regolith");
-    sprite_def(i0, 1,3);
+    iso_block_sprite_def("regolith");
     s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
     s.max_stack_size = 50;
     s.particle_voxel = true;
