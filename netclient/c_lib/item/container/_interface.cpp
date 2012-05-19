@@ -326,7 +326,10 @@ void assign_containers_to_agent(int agent_id, int client_id)
     Item::Item* mining_laser = Item::create_item(Item::get_item_type((char*)"mining_laser"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
 
-    #if !PRODUCTION
+    #if PRODUCTION
+    Item::Item* crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
+    #else
     // put a grenade launcher in the toolbelt to selt
     Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create

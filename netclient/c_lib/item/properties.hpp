@@ -47,6 +47,9 @@ int get_max_stack_size(int item_type);
 int get_max_energy(int item_type);
 int get_max_durability(int item_type);
 
+int get_placer_block_type_id(int item_type);
+int get_particle_voxel_texture(int item_type);
+
 bool get_nanite_edibility(int item_type);
 
 void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost);
