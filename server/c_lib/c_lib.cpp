@@ -20,6 +20,9 @@ dont_include_this_file_in_client
 #include <common/list_assert.hpp>
 #include <common/macros.hpp>
 
+// crash report
+#include <common/crash_report/stack_trace.hpp>
+
 //options
 #include <common/option_macros.hpp>
 #include <options/options.cpp>
