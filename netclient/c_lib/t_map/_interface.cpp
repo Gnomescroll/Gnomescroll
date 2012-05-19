@@ -76,7 +76,7 @@ void destroy_item_container_block(int x, int y, int z)
     if (get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
 
     struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
-    GS_ASSERT(c == NULL);
+    GS_ASSERT(c != NULL);
 
     c->chunk_item_container.remove(x,y,z);
 }

@@ -70,7 +70,7 @@ void tick()
         {
             #if DC_CLIENT
             if (local_agent_id == i) trigger_local_agent_selected_item_type(agent_selected_type[i]);
-            trigger_agent_selected_item_type(i, agent_selected_type[i]);
+            else trigger_agent_selected_item_type(i, agent_selected_type[i]);
             #endif
             #if DC_SERVER
             trigger_agent_selected_item(i, agent_selected_item[i]);
@@ -185,21 +185,11 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
 
-    // get container state for ui prediction
-    ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(toolbelt_id);
-    int durability = container->get_slot_durability(selected_slot);
-
     int group = Item::get_item_group_for_type(item_type);
     switch (group)
     {
         case IG_MINING_LASER:
             a->event.fired_mining_laser();
-            if (container != NULL)
-            {   // consume durability
-                durability -= 1;
-                if (durability < 0) durability = 0;
-                ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
-            }
             break;
 
         case IG_ERROR:
@@ -222,10 +212,22 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
 void tick_local_agent_selected_item_type(int item_type)
 {
     int group = Item::get_item_group_for_type(item_type);
+
+    // get container state for ui prediction
+    ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(toolbelt_id);
+    GS_ASSERT(container != NULL);
+    int durability = container->get_slot_durability(selected_slot);
+
     switch (group)
     {
         case IG_MINING_LASER:
             ClientState::playerAgent_state.action.tick_mining_laser();
+            if (container != NULL)
+            {   // consume durability
+                durability -= 1;
+                if (durability < 0) durability = 0;
+                ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
+            }
             break;
 
         case IG_ERROR:
