@@ -150,7 +150,7 @@ void ItemParticle_list::draw()
         if (this->a[i] != NULL && this->a[i]->is_voxel)
         {
             ItemParticle* p = this->a[i];
-            p->voxel.delta_rotation(0.02f, 0.0f);
+            p->voxel.delta_rotation(0.01f, 0.0f);
             p->voxel.draw(p->verlet.position);
         }
     glEnd();
@@ -167,13 +167,13 @@ void ItemParticle_list::tick()
         ip = this->a[i];
 
         ip->tick();
+        #if DC_SERVER
         if (ip->ttl <= 0)
         {
-            #if DC_SERVER
             ip->die();
             this->destroy(ip->id);
-            #endif
         }
+        #endif
     }
 }
 
