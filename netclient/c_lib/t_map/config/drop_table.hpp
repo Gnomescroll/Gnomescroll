@@ -43,7 +43,7 @@ void def_drop(const char* block_name)
 
 void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 {
-    assert(max_drops > 0);
+    GS_ASSERT(max_drops > 0);
     
     int item_type = Item::dat_get_item_type(item_name);
     int block_id = _current_drop_block_id;

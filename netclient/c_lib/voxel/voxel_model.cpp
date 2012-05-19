@@ -553,14 +553,14 @@ Voxel_volume* Voxel_model::get_part(int part)
 
 Vec3 Voxel_model::get_center()
 {
-    assert(this->n_parts > 0);
+    GS_ASSERT(this->n_parts > 0);
     return this->get_part(0)->get_center();
 }
 
 Vec3 Voxel_model::get_center(int part)
 {
-    assert(part < this->n_parts);
-    assert(part >= 0);
+    GS_ASSERT(part < this->n_parts);
+    GS_ASSERT(part >= 0);
     return this->get_part(part)->get_center();
 }
 

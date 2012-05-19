@@ -41,7 +41,7 @@ class AgentContainerUI : public UIElement
 
     void init()
     {
-        assert(this->stack_numbers == NULL);
+        GS_ASSERT(this->stack_numbers == NULL);
         
         // create HudText objects needed for stack rendering
         int max = xdim * ydim;
@@ -120,8 +120,8 @@ void AgentContainerUI::draw()
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);
     if (slot_types == NULL) return;
-    assert(slot_stacks != NULL);
-    assert(slot_durabilities != NULL);
+    GS_ASSERT(slot_stacks != NULL);
+    GS_ASSERT(slot_durabilities != NULL);
 
     //glColor4ub(80, 80, 80, 128);
     // render durability
@@ -241,7 +241,7 @@ void AgentContainerUI::draw()
         const int slot = j * this->xdim + i;
         int count = slot_stacks[slot];
         if (count <= 1) continue;
-        assert(count_digits(count) < STACK_COUNT_MAX_LENGTH);
+        GS_ASSERT(count_digits(count) < STACK_COUNT_MAX_LENGTH);
         
         text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);

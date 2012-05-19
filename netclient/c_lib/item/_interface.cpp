@@ -57,7 +57,7 @@ int get_stack_size(ItemID id)
 {   // space used in a stack
     if (id == NULL_ITEM) return 1;
     Item* item = get_item(id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
     return item->stack_size;
 }
 
@@ -65,9 +65,9 @@ int get_stack_space(ItemID id)
 {   // space left in a stack
     if (id == NULL_ITEM) return 0;
     Item* item = get_item(id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
     int stack_space = get_max_stack_size(item->type) - item->stack_size;
-    assert(stack_space >= 0);
+    GS_ASSERT(stack_space >= 0);
     return stack_space;
 }
 
@@ -99,37 +99,37 @@ void destroy_item(ItemID id)
 
 void merge_item_stack(ItemID src, ItemID dest)
 {
-    assert(src != NULL_ITEM);
-    assert(dest != NULL_ITEM);
+    GS_ASSERT(src != NULL_ITEM);
+    GS_ASSERT(dest != NULL_ITEM);
 
     Item* src_item = get_item(src);
-    assert(src_item != NULL);
+    GS_ASSERT(src_item != NULL);
     Item* dest_item = get_item(dest);
-    assert(dest_item != NULL);
+    GS_ASSERT(dest_item != NULL);
 
     // add src's stack to dest
     dest_item->stack_size += src_item->stack_size;
-    assert(dest_item->stack_size <= get_max_stack_size(dest_item->type));
+    GS_ASSERT(dest_item->stack_size <= get_max_stack_size(dest_item->type));
 }
 
 void merge_item_stack(ItemID src, ItemID dest, int amount)
 {
-    assert(src != NULL_ITEM);
-    assert(dest != NULL_ITEM);
-    assert(amount > 0);
+    GS_ASSERT(src != NULL_ITEM);
+    GS_ASSERT(dest != NULL_ITEM);
+    GS_ASSERT(amount > 0);
     
     Item* src_item = get_item(src);
-    assert(src_item != NULL);
+    GS_ASSERT(src_item != NULL);
     Item* dest_item = get_item(dest);
-    assert(dest_item != NULL);
+    GS_ASSERT(dest_item != NULL);
 
     // add src's stack to dest
     dest_item->stack_size += amount;
-    assert(dest_item->stack_size <= get_max_stack_size(dest_item->type));
+    GS_ASSERT(dest_item->stack_size <= get_max_stack_size(dest_item->type));
     
     // remove from src
     src_item->stack_size -= amount;
-    assert(src_item->stack_size >= 1);
+    GS_ASSERT(src_item->stack_size >= 1);
 }
 
 }   // Item
@@ -140,7 +140,7 @@ namespace Item
 {
 Item* create_item(int item_type, ItemID item_id)
 {
-    assert(item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE);
     return item_list->create_type(item_type, item_id);
 }
 }   // Item
@@ -153,13 +153,13 @@ namespace Item
 
 ItemID split_item_stack(ItemID src, int amount)
 {
-    assert(src != NULL_ITEM);
-    assert(amount >= 1);
+    GS_ASSERT(src != NULL_ITEM);
+    GS_ASSERT(amount >= 1);
 
     Item* src_item = get_item(src);
-    assert(src_item != NULL);
+    GS_ASSERT(src_item != NULL);
     src_item->stack_size -= amount;
-    assert(src_item->stack_size >= 1);
+    GS_ASSERT(src_item->stack_size >= 1);
 
     Item* new_item = create_item(src_item->type);
     new_item->stack_size = amount;
@@ -168,12 +168,12 @@ ItemID split_item_stack(ItemID src, int amount)
 
 ItemID split_item_stack_in_half(ItemID src)
 {
-    assert(src != NULL_ITEM);
+    GS_ASSERT(src != NULL_ITEM);
 
     Item* src_item = get_item(src);
-    assert(src_item != NULL);
+    GS_ASSERT(src_item != NULL);
     int split_amount = src_item->stack_size / 2;
-    assert(split_amount >= 1);  // Do not call this function for a stack with only 1 (cannot split)
+    GS_ASSERT(split_amount >= 1);  // Do not call this function for a stack with only 1 (cannot split)
     src_item->stack_size -= split_amount;
 
     Item* new_item = create_item(src_item->type);
@@ -183,30 +183,30 @@ ItemID split_item_stack_in_half(ItemID src)
 
 Item* create_item(int item_type)
 {
-    assert(item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE);
     return item_list->create_type(item_type);
 }
 
 Item* create_item(char* item_name)
 {
     int item_type = get_item_type(item_name);
-    assert(item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE);
     return create_item(item_type);
 }
 
 // returns stack size
 int consume_stack_item(ItemID item_id)
 {
-    assert(item_id != NULL_ITEM);
+    GS_ASSERT(item_id != NULL_ITEM);
     int stack_size = get_stack_size(item_id);
-    assert(stack_size > 0);
+    GS_ASSERT(stack_size > 0);
     if (stack_size == 1)
     {
         destroy_item(item_id);
         return 0;
     }
     Item* item = get_item(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
     item->stack_size -= 1;
     return item->stack_size;
 }

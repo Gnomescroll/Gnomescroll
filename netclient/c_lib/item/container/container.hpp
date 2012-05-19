@@ -65,19 +65,19 @@ class ItemContainerInterface
 
         bool is_full()
         {
-            assert(this->slot_count <= this->slot_max && this->slot_count >= 0);
+            GS_ASSERT(this->slot_count <= this->slot_max && this->slot_count >= 0);
             return (this->slot_count >= this->slot_max);
         }
 
         bool is_valid_slot(int slot)
         {
-            assert(this->slot_max > 0);
+            GS_ASSERT(this->slot_max > 0);
             return (slot >= 0 && slot < this->slot_max);
         }
 
         ItemID get_item(int slot)
         {
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(this->is_valid_slot(slot));
             return this->slot[slot];
         }
 
@@ -158,8 +158,8 @@ class ItemContainer: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
-            assert(this->slot_max > 0);
-            assert(this->slot_max < NULL_SLOT);
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
@@ -199,7 +199,7 @@ class ItemContainerNanite: public ItemContainerInterface
 
         bool can_insert_item(int slot, ItemID item_id)
         {
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(this->is_valid_slot(slot));
             int item_type = Item::get_item_type(item_id);
             if (slot == 0)
             {   // check against nanite's food
@@ -243,8 +243,8 @@ class ItemContainerNanite: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim + 1; // +1 for the extra food slot
-            assert(this->slot_max > 0);
-            assert(this->slot_max < NULL_SLOT);
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
@@ -289,8 +289,8 @@ class ItemContainerCraftingBench: public ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim; // +1 for the extra food slot
-            assert(this->slot_max > 0);
-            assert(this->slot_max < NULL_SLOT);
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
@@ -329,7 +329,7 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
 
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
-            assert(false);
+            GS_ASSERT(false);
             return NULL;
     }
     return NULL;
@@ -347,7 +347,7 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface, ITEM_CO
         ItemContainerInterface* create(int type)
         {
             printf("must create item container with id\n");
-            assert(false);
+            GS_ASSERT(false);
             return NULL;
         }
 

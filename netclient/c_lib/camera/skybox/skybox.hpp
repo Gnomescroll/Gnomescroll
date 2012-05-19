@@ -142,7 +142,7 @@ void teardown()
 
 void draw()
 {
-	assert(current_camera != NULL);
+	GS_ASSERT(current_camera != NULL);
 
     /*
 		Optimize where GL BLEND APPEARS this appears

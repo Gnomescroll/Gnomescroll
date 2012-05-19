@@ -6,9 +6,9 @@ namespace Toolbelt
 
 void init()
 {
-    assert(agent_selected_type == NULL);
-    assert(agent_fire_tick     == NULL);
-    assert(agent_fire_on       == NULL);
+    GS_ASSERT(agent_selected_type == NULL);
+    GS_ASSERT(agent_fire_tick     == NULL);
+    GS_ASSERT(agent_fire_on       == NULL);
 
     agent_selected_type = (int*)malloc(AGENT_MAX * sizeof(int));
     for (int i=0; i<AGENT_MAX; agent_selected_type[i++] = NULL_ITEM_TYPE);
@@ -19,8 +19,8 @@ void init()
     #endif
 
     #if DC_SERVER
-    assert(agent_selected_slot == NULL);
-    assert(agent_selected_item == NULL);
+    GS_ASSERT(agent_selected_slot == NULL);
+    GS_ASSERT(agent_selected_item == NULL);
     agent_selected_slot = (int*)calloc(AGENT_MAX, sizeof(int));
     agent_selected_item = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
     for (int i=0; i<AGENT_MAX; agent_selected_item[i++] = NULL_ITEM);
@@ -50,11 +50,11 @@ void teardown()
 void tick()
 {
     #if DC_SERVER
-    assert(agent_selected_item != NULL);
+    GS_ASSERT(agent_selected_item != NULL);
     #endif
-    assert(agent_selected_type != NULL);
-    assert(agent_fire_tick     != NULL);
-    assert(agent_fire_on       != NULL);
+    GS_ASSERT(agent_selected_type != NULL);
+    GS_ASSERT(agent_fire_tick     != NULL);
+    GS_ASSERT(agent_fire_on       != NULL);
 
     #if DC_CLIENT
     update_selected_item_type();
@@ -92,11 +92,11 @@ void remove_agent(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
 
     #if DC_SERVER
-    assert(agent_selected_item != NULL);
+    GS_ASSERT(agent_selected_item != NULL);
     #endif
-    assert(agent_selected_type != NULL);
-    assert(agent_fire_tick     != NULL);
-    assert(agent_fire_on       != NULL);
+    GS_ASSERT(agent_selected_type != NULL);
+    GS_ASSERT(agent_fire_tick     != NULL);
+    GS_ASSERT(agent_fire_on       != NULL);
 
     #if DC_SERVER
     agent_selected_item[agent_id] = NULL_ITEM;
@@ -111,11 +111,11 @@ void agent_died(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
 
     #if DC_SERVER
-    assert(agent_selected_item != NULL);
+    GS_ASSERT(agent_selected_item != NULL);
     #endif
-    assert(agent_selected_type != NULL);
-    assert(agent_fire_tick     != NULL);
-    assert(agent_fire_on       != NULL);
+    GS_ASSERT(agent_selected_type != NULL);
+    GS_ASSERT(agent_fire_tick     != NULL);
+    GS_ASSERT(agent_fire_on       != NULL);
 
     agent_fire_tick[agent_id] = 0;
     agent_fire_on[agent_id] = false;
@@ -129,7 +129,7 @@ namespace Toolbelt
 
 int get_selected_item_type()
 {
-    assert(agent_selected_type != NULL);
+    GS_ASSERT(agent_selected_type != NULL);
     int agent_id = ClientState::playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
@@ -173,7 +173,7 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
             break;
             
         default:
-            assert(false);
+            GS_ASSERT(false);
             break;
     }
 }
@@ -213,7 +213,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
             break;
             
         default:
-            assert(false);
+            GS_ASSERT(false);
             break;
     }
 }
@@ -239,7 +239,7 @@ void tick_local_agent_selected_item_type(int item_type)
             break;
             
         default:
-            assert(false);
+            GS_ASSERT(false);
             break;
     }
 }
@@ -266,7 +266,7 @@ void trigger_local_agent_selected_item_type(int item_type)
             break;
             
         default:
-            assert(false);
+            GS_ASSERT(false);
             break;
     }
 }
@@ -339,7 +339,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     if (item_id == NULL_ITEM) return;
 
     Item::Item* item = Item::get_item(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
 
     int group = Item::get_item_group_for_type(item->type);
     switch (group)
@@ -358,7 +358,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
             break;
             
         default:
-            assert(false);
+            GS_ASSERT(false);
             break;
     }
     // dont send state here
@@ -375,7 +375,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     if (item_id == NULL_ITEM) return;
 
     Item::Item* item = Item::get_item(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
 
     // will need to notify agent of state changes
     Agent_state* a = ServerState::agent_list->get(agent_id);
@@ -407,7 +407,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             break;
 
         default:
-            assert(false);
+            GS_ASSERT(false);
             break;
     }
 
@@ -426,9 +426,9 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 
 void update_toolbelt_items()
 {
-    assert(agent_selected_type != NULL);
-    assert(agent_selected_item != NULL);
-    assert(agent_selected_slot != NULL);
+    GS_ASSERT(agent_selected_type != NULL);
+    GS_ASSERT(agent_selected_item != NULL);
+    GS_ASSERT(agent_selected_slot != NULL);
     // make sure agent_selected_item is current
     // if any discrepancies exist, send a set_selected_item packet
     for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
@@ -457,7 +457,7 @@ ItemID get_agent_selected_item(int agent_id)
 bool set_agent_toolbelt_slot(int agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
+    GS_ASSERT(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
     agent_selected_slot[agent_id] = slot;
     ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
     if (item_id == agent_selected_item[agent_id]) return false;

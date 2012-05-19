@@ -59,7 +59,7 @@ inline void assign_item_container_StoC::handle()
             player_nanite_ui->load_data(ic->slot);
             break;
         default:
-            assert(false);
+            GS_ASSERT(false);
             return;
     }
     t_hud::set_container_id(type, container_id);

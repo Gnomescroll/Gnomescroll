@@ -44,7 +44,7 @@ void set_container_id(ItemContainerType container_type, int container_id)
             //break;
             
         default:
-            assert(false);
+            GS_ASSERT(false);
             return;
     }
 }
@@ -61,7 +61,7 @@ float mouse_y = -1;
 
 void enable_agent_container_hud()
 {
-    assert(!block_container_enabled);
+    GS_ASSERT(!block_container_enabled);
     agent_container_enabled = true;
 }
 
@@ -75,7 +75,7 @@ void disable_agent_container_hud()
 
 void enable_block_container_hud()
 {
-    assert(!agent_container_enabled);
+    GS_ASSERT(!agent_container_enabled);
     block_container_enabled = true;
 }
 
@@ -311,7 +311,7 @@ static void draw_grabbed_icon()
     // Draw stack numbers
     if (grabbed_icon_stack_text == NULL) return;
     if (ItemContainer::player_hand_stack_ui <= 1) return;
-    assert(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);   // string only fits 99
+    GS_ASSERT(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);   // string only fits 99
 
     HudFont::start_font_draw();
     const int font_size = 12;

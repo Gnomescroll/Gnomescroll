@@ -29,7 +29,7 @@ class ItemContainerUIInterface
         
         bool is_full()
         {
-            assert(this->slot_count <= this->slot_max && this->slot_count >= 0);
+            GS_ASSERT(this->slot_count <= this->slot_max && this->slot_count >= 0);
             return (this->slot_count >= this->slot_max);
         }
 
@@ -40,27 +40,27 @@ class ItemContainerUIInterface
 
         int get_slot_durability(int slot)
         {
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(this->is_valid_slot(slot));
             return this->slot_durability[slot];
         }
 
         int get_slot_stack(int slot)
         {
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(this->is_valid_slot(slot));
             return this->slot_stack[slot];
         }
 
         int get_slot_type(int slot)
         {
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(this->is_valid_slot(slot));
             return this->slot_type[slot];
         }
 
         void insert_item(int slot, int item_type, int stack_size, int durability)
         {
-            assert(item_type != NULL_ITEM_TYPE);
-            assert(stack_size > 0);
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(item_type != NULL_ITEM_TYPE);
+            GS_ASSERT(stack_size > 0);
+            GS_ASSERT(this->is_valid_slot(slot));
             this->slot_type[slot] = item_type;
             this->slot_stack[slot] = stack_size;
             this->slot_durability[slot] = durability;
@@ -69,7 +69,7 @@ class ItemContainerUIInterface
 
         void remove_item(int slot)
         {
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(this->is_valid_slot(slot));
             this->slot_type[slot] = NULL_ITEM_TYPE;
             this->slot_stack[slot] = 1;
             this->slot_durability[slot] = NULL_DURABILITY;
@@ -153,7 +153,7 @@ class ItemContainerUI: public ItemContainerUIInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
-            assert(this->slot_max < NULL_SLOT);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
             this->slot_type = new int[this->slot_max];
             this->slot_stack = new int[this->slot_max];
             this->slot_durability = new int[this->slot_max];
@@ -193,7 +193,7 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
 
         bool can_insert_item(int slot, int item_type)
         {
-            assert(this->is_valid_slot(slot));
+            GS_ASSERT(this->is_valid_slot(slot));
             if (slot == 0)
             {   // check against nanite's food
                 return Item::get_nanite_edibility(item_type);
@@ -232,7 +232,7 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim + 1; // +1 for the food slot
-            assert(this->slot_max < NULL_SLOT);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
             this->slot_type = new int[this->slot_max];
             this->slot_stack = new int[this->slot_max];
             this->slot_durability = new int[this->slot_max];

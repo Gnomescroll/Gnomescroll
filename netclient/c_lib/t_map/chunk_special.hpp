@@ -78,7 +78,7 @@ class CHUNK_ITEM_CONTAINER
             }
 
         printf("ERROR - container %d not found in chunk %d\n", container_id, chunk_index);
-        assert(false);
+        GS_ASSERT(false);
     }
     
     void add(int x, int y, int z, int container_type, int container_id);

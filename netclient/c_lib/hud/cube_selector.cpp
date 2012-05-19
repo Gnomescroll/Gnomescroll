@@ -17,7 +17,7 @@ namespace HudCubeSelector
 
 void CubeSelector::init()
 {
-    assert(this->cubes == NULL);
+    GS_ASSERT(this->cubes == NULL);
     this->cubes = (struct cube_select_element*)malloc(N_CUBES * sizeof(struct cube_select_element));
     for(int i=0;i<N_CUBES;i++)
     {
@@ -83,7 +83,7 @@ void CubeSelector::update_block_applier()
 
 void CubeSelector::draw()
 {
-    assert(this->cubes != NULL);
+    GS_ASSERT(this->cubes != NULL);
     int i,j;
     float x0,y0,x1,y1;
 

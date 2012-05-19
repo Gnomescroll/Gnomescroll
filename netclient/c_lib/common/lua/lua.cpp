@@ -123,7 +123,7 @@ char* options_file = NULL;
 
 void set_options_file(char* path)
 {
-    assert(path != NULL);
+    GS_ASSERT(path != NULL);
     if (options_file != NULL)
         free(options_file);
     options_file = (char*)malloc(sizeof(char) * (strlen(path) + 1));

@@ -49,16 +49,16 @@ void ObjectDataList::init()
     this->expected_component_sizes = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
     this->component_sizes = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
 
-    assert(this->component_types != NULL);
-    assert(this->interface_types != NULL);
-    assert(this->expected_component_sizes != NULL);
-    assert(this->component_sizes != NULL);
+    GS_ASSERT(this->component_types != NULL);
+    GS_ASSERT(this->interface_types != NULL);
+    GS_ASSERT(this->expected_component_sizes != NULL);
+    GS_ASSERT(this->component_sizes != NULL);
 }
 
 void ObjectDataList::sanity_check()
 {
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
-        assert(this->expected_component_sizes[i] == this->component_sizes[i]);
+        GS_ASSERT(this->expected_component_sizes[i] == this->component_sizes[i]);
 }
 
 ObjectDataList::~ObjectDataList()

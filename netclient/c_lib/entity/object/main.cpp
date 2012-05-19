@@ -351,11 +351,11 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
     if (object_list->empty(type)) return false;
 
     Object** objects = object_list->get_objects(type);
-    assert(objects != NULL);
+    GS_ASSERT(objects != NULL);
     char* used = object_list->get_used(type);
-    assert(used != NULL);
+    GS_ASSERT(used != NULL);
     int max = object_list->max(type);
-    assert(max > 0);
+    GS_ASSERT(max > 0);
     
     using Components::PhysicsComponent;
     using Components::DimensionComponent;
@@ -371,7 +371,7 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
         obj = objects[i];
         
         physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        assert(physics != NULL);
+        GS_ASSERT(physics != NULL);
         Vec3 position = physics->get_position();
         px = (int)position.x;
         py = (int)position.y;
@@ -451,11 +451,11 @@ void spawn_mobs()
     const ObjectType spawn_type = OBJECT_MONSTER_BOX;
     if (object_list->empty(type)) return;
     Object** objects = object_list->get_objects(type);
-    assert(objects != NULL);
+    GS_ASSERT(objects != NULL);
     char* used = object_list->get_used(type);;\
-    assert(used != NULL);
+    GS_ASSERT(used != NULL);
     int max = object_list->max(type);
-    assert(max > 0);
+    GS_ASSERT(max > 0);
     Object* obj;
     Object* child;
     using Components::MonsterSpawnerComponent;
@@ -465,7 +465,7 @@ void spawn_mobs()
         if (!used[i]) continue;
         obj = objects[i];
         spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
-        assert(spawner != NULL);
+        GS_ASSERT(spawner != NULL);
         child = spawner->spawn_child(spawn_type);
         if (child != NULL) Objects::ready(child);
     }

@@ -86,7 +86,7 @@ class AgentNaniteUI : public UIElement
     {
         int max = (xdim * ydim) - 1;    // last slot is reserved
 
-        assert(this->prices == NULL);
+        GS_ASSERT(this->prices == NULL);
         this->prices = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
@@ -98,7 +98,7 @@ class AgentNaniteUI : public UIElement
         }
 
         // stacks only for food/coins
-        assert(this->stacks == NULL);
+        GS_ASSERT(this->stacks == NULL);
         this->stacks = new HudText::Text[max];
         for (int i=0; i<2; i++)
         {
@@ -351,7 +351,7 @@ void AgentNaniteUI::draw()
         Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
         if (item_type == NULL_ITEM_TYPE) continue;
 
-        assert(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
+        GS_ASSERT(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
 
         text = &this->prices[slot];
         text->update_formatted_string(1, cost);
@@ -367,7 +367,7 @@ void AgentNaniteUI::draw()
     HudText::Text* food_stack = &this->stacks[0];
 
     int food_stack_size = container->get_food_stack();
-    assert(count_digits(food_stack_size) < STACK_COUNT_MAX_LENGTH);
+    GS_ASSERT(count_digits(food_stack_size) < STACK_COUNT_MAX_LENGTH);
     if (food_stack_size > 1)
     {
         food_stack->update_formatted_string(1, food_stack_size);
@@ -381,7 +381,7 @@ void AgentNaniteUI::draw()
     HudText::Text* coin_stack = &this->stacks[0];
 
     int coin_stack_size = container->get_coin_stack();
-    assert(count_digits(coin_stack_size) < STACK_COUNT_MAX_LENGTH);
+    GS_ASSERT(count_digits(coin_stack_size) < STACK_COUNT_MAX_LENGTH);
     if (coin_stack_size > 1)
     {
         int xslot = xdim-1;

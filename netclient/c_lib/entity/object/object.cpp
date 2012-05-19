@@ -14,9 +14,9 @@ using Components::Component;
 
 void Object::add_component(int slot, Component* component)
 {
-    assert(slot >= 0);
-    assert(slot < this->n_components);
-    assert(this->components[slot] == NULL);
+    GS_ASSERT(slot >= 0);
+    GS_ASSERT(slot < this->n_components);
+    GS_ASSERT(this->components[slot] == NULL);
     this->components[slot] = component;
 }
 
@@ -26,7 +26,7 @@ Component* Object::get_component(ComponentType type)
 {
     int slot = object_data->get_component_slot(this->type, type);
     if (slot < 0) return NULL;
-    assert(slot < this->n_components);
+    GS_ASSERT(slot < this->n_components);
     return this->components[slot];
 }
 
@@ -34,7 +34,7 @@ Component* Object::get_component_interface(ComponentInterfaceType interface)
 {
     int slot = object_data->get_component_interface_slot(this->type, interface);
     if (slot < 0) return NULL;
-    assert(slot < this->n_components);
+    GS_ASSERT(slot < this->n_components);
     return this->components[slot];
 }
 
@@ -48,8 +48,8 @@ void Object::broadcastDeath()
 
 void Object::init(int n_components)
 {
-    assert(this->components == NULL);
-    assert(this->n_components == 0);
+    GS_ASSERT(this->components == NULL);
+    GS_ASSERT(this->n_components == 0);
     this->components = (Component**)calloc(n_components, sizeof(Component*));
     this->n_components = n_components;
 }

@@ -3,7 +3,7 @@
 #include "compat_gl.h"
 
 /*
-This prints error/line when gl assertion fails
+This prints error/line when gl GS_ASSERTion fails
 
 example:
 

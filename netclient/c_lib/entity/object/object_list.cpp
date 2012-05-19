@@ -26,9 +26,9 @@ void ObjectList::set_object_id(Object* object)
 void ObjectList::set_object_id(Object* object, int id)
 {
     ObjectType type = object->type;
-    assert(this->used[type][id] == 0);
-    assert(id >= 0);
-    assert(id < this->max(type));
+    GS_ASSERT(this->used[type][id] == 0);
+    GS_ASSERT(id >= 0);
+    GS_ASSERT(id < this->max(type));
 
     // swap from staging slot
     this->staging_objects[type] = this->objects[type][id];
@@ -62,7 +62,7 @@ inline bool ObjectList::full(ObjectType type)
 void ObjectList::destroy(ObjectType type, int id)
 {
     if (this->used[type] == NULL) return;
-    assert(this->used[type][id]);
+    GS_ASSERT(this->used[type][id]);
     this->used[type][id] = 0;
     this->indices[type] -= 1;
 }
@@ -81,25 +81,25 @@ Object* ObjectList::create(ObjectType type)
 
 Object** ObjectList::get_objects(ObjectType type)
 {
-    assert(type < MAX_OBJECT_TYPES);
-    assert(type >= 0);
+    GS_ASSERT(type < MAX_OBJECT_TYPES);
+    GS_ASSERT(type >= 0);
     return this->objects[type];
 }
 
 char* ObjectList::get_used(ObjectType type)
 {
-    assert(type < MAX_OBJECT_TYPES);
-    assert(type >= 0);
+    GS_ASSERT(type < MAX_OBJECT_TYPES);
+    GS_ASSERT(type >= 0);
     return this->used[type];
 }
 
 void ObjectList::set_object_max(ObjectType type, int max)
 {
-    assert(type < MAX_OBJECT_TYPES);
-    assert(type >= 0);
-    assert(this->maximums[type] == 0);
-    assert(this->objects[type] == NULL);
-    assert(this->used[type] == NULL);
+    GS_ASSERT(type < MAX_OBJECT_TYPES);
+    GS_ASSERT(type >= 0);
+    GS_ASSERT(this->maximums[type] == 0);
+    GS_ASSERT(this->objects[type] == NULL);
+    GS_ASSERT(this->used[type] == NULL);
     this->maximums[type] = max;
     this->objects[type] = (Object**)calloc(max, sizeof(Object*));
     this->used[type] = (char*)calloc(max, sizeof(char));
@@ -186,13 +186,13 @@ void ObjectList::harvest()
 
 void ObjectList::send_to_client(ObjectType type, int client_id)
 {
-    assert(type < MAX_OBJECT_TYPES);
-    assert(type >= 0);
+    GS_ASSERT(type < MAX_OBJECT_TYPES);
+    GS_ASSERT(type >= 0);
     if (this->empty(type)) return;
     Object** objects = this->get_objects(type);
-    assert(objects != NULL);
+    GS_ASSERT(objects != NULL);
     int max = this->max(type);
-    assert(max > 0);
+    GS_ASSERT(max > 0);
 
     for (int i=0; i<max; i++)
         if (this->used[type][i])

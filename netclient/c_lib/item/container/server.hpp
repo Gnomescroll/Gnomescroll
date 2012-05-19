@@ -21,9 +21,9 @@ void send_container_item_create(int client_id, ItemID item_id, int container_id,
 
 void send_container_insert(int client_id, ItemID item_id, int container_id, int slot)
 {
-    assert(item_id != NULL_ITEM);
-    assert(container_id != NULL_CONTAINER);
-    assert(slot != NULL_SLOT);
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(slot != NULL_SLOT);
     insert_item_in_container_StoC msg;
     msg.container_id = container_id;
     msg.item_id = item_id;
@@ -33,8 +33,8 @@ void send_container_insert(int client_id, ItemID item_id, int container_id, int 
 
 void send_container_remove(int client_id, int container_id, int slot)
 {
-    assert(container_id != NULL_CONTAINER);
-    assert(slot != NULL_SLOT);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(slot != NULL_SLOT);
     remove_item_from_container_StoC msg;
     msg.container_id = container_id;
     msg.slot = slot;
@@ -43,7 +43,7 @@ void send_container_remove(int client_id, int container_id, int slot)
 
 void send_hand_insert(int client_id, ItemID item_id)
 {
-    assert(item_id != NULL_ITEM);
+    GS_ASSERT(item_id != NULL_ITEM);
 
     insert_item_in_hand_StoC msg;
     msg.item_id = item_id;

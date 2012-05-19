@@ -20,7 +20,7 @@ int record_container_event(int container_id)
 
 static void send_container_alpha_action(ContainerActionType action, int container_id, int slot)
 {
-    assert(action != CONTAINER_ACTION_NONE);
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
     
     record_container_event(container_id);
     
@@ -42,7 +42,7 @@ static void send_container_alpha_action(ContainerActionType action, int containe
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        assert(container != NULL);
+        GS_ASSERT(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -53,8 +53,8 @@ static void send_container_alpha_action(ContainerActionType action, int containe
 
 static void send_container_beta_action(ContainerActionType action, int container_id, int slot)
 {
-    assert(container_id != NULL_CONTAINER);
-    assert(action != CONTAINER_ACTION_NONE);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
     
     record_container_event(container_id);
 
@@ -76,7 +76,7 @@ static void send_container_beta_action(ContainerActionType action, int container
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        assert(container != NULL);
+        GS_ASSERT(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -87,7 +87,7 @@ static void send_container_beta_action(ContainerActionType action, int container
 
 static void send_nanite_alpha_action(ContainerActionType action, int container_id, int slot)
 {
-    assert(action != CONTAINER_ACTION_NONE);
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
     
     record_container_event(container_id);
     
@@ -109,7 +109,7 @@ static void send_nanite_alpha_action(ContainerActionType action, int container_i
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        assert(container != NULL);
+        GS_ASSERT(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -120,8 +120,8 @@ static void send_nanite_alpha_action(ContainerActionType action, int container_i
 
 static void send_nanite_beta_action(ContainerActionType action, int container_id, int slot)
 {
-    assert(container_id != NULL_CONTAINER);
-    assert(action != CONTAINER_ACTION_NONE);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
     
     record_container_event(container_id);
 
@@ -143,7 +143,7 @@ static void send_nanite_beta_action(ContainerActionType action, int container_id
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        assert(container != NULL);
+        GS_ASSERT(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -154,7 +154,7 @@ static void send_nanite_beta_action(ContainerActionType action, int container_id
 
 static void send_craft_alpha_action(ContainerActionType action, int container_id, int slot)
 {
-    assert(action != CONTAINER_ACTION_NONE);
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
     
     record_container_event(container_id);
     
@@ -176,7 +176,7 @@ static void send_craft_alpha_action(ContainerActionType action, int container_id
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        assert(container != NULL);
+        GS_ASSERT(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -187,8 +187,8 @@ static void send_craft_alpha_action(ContainerActionType action, int container_id
 
 static void send_craft_beta_action(ContainerActionType action, int container_id, int slot)
 {
-    assert(container_id != NULL_CONTAINER);
-    assert(action != CONTAINER_ACTION_NONE);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
     
     record_container_event(container_id);
 
@@ -210,7 +210,7 @@ static void send_craft_beta_action(ContainerActionType action, int container_id,
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        assert(container != NULL);
+        GS_ASSERT(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -221,7 +221,7 @@ static void send_craft_beta_action(ContainerActionType action, int container_id,
 
 static void send_craft_item_action(int container_id, int slot)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
 
     record_container_event(container_id);
     
@@ -292,7 +292,7 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             action = no_container_alpha_action_decision_tree();
             break;
         default:
-            assert(false);
+            GS_ASSERT(false);
             return;
     }
 
@@ -318,7 +318,7 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             send_no_container_alpha_action(action);
             break;
         default:
-            assert(false);
+            GS_ASSERT(false);
             return;
     }
 }
@@ -355,7 +355,7 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
             action = no_container_beta_action_decision_tree();
             break;
         default:
-            assert(false);
+            GS_ASSERT(false);
             return;
     }
 
@@ -382,7 +382,7 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
             send_no_container_beta_action(action);
             break;
         default:
-            assert(false);
+            GS_ASSERT(false);
             return;
     }
 }

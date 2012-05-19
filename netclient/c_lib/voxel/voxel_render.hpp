@@ -5,6 +5,7 @@ dont_include_this_file_on_server
 #endif
 
 #include <common/compat_gl.h>
+#include <common/macros.hpp>
 #include <voxel/voxel_volume.hpp>
 #include <SDL/shader_loader.hpp>
 
@@ -79,7 +80,7 @@ class Voxel_render_list_manager
 
         void init(int max)
         {
-            assert(lists == NULL);
+            GS_ASSERT(lists == NULL);
             this->max = max;
             this->lists = new Voxel_render_list[this->max];
             for (int i=0; i<this->max; i++) this->lists[i].id = i;

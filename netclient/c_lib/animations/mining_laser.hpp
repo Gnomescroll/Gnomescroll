@@ -214,7 +214,7 @@ void MiningLaserEffect_list::draw()
     if(mining_laser_vlist->vertex_number == 0) return;
     const static unsigned int stride = sizeof(struct vertexElement1);
 
-    assert(mining_laser_vlist->VBO != 0);
+    GS_ASSERT(mining_laser_vlist->VBO != 0);
 
     //printf("%i \n", mining_laser_vlist->vlist_index);
 

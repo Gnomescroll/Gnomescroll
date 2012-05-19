@@ -19,26 +19,26 @@ namespace ItemContainer
 
 void ItemContainer::insert_item(int slot, ItemID item_id)
 {
-    assert(item_id != NULL_ITEM);
-    assert(this->is_valid_slot(slot));
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(this->is_valid_slot(slot));
     this->slot[slot] = item_id;
     this->slot_count++;
 
     Item::Item* item = Item::get_item_object(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
     item->container_id = this->id;
     item->container_slot = slot;
 }
 
 void ItemContainer::remove_item(int slot)
 {
-    assert(this->is_valid_slot(slot));
+    GS_ASSERT(this->is_valid_slot(slot));
 
     ItemID item_id = this->slot[slot];
     if (item_id != NULL_ITEM)
     {
         Item::Item* item = Item::get_item_object(this->slot[slot]);
-        assert(item != NULL);
+        GS_ASSERT(item != NULL);
         item->container_id = NULL_CONTAINER;
         item->container_slot = NULL_SLOT;
     }
@@ -51,13 +51,13 @@ void ItemContainer::remove_item(int slot)
 
 void ItemContainerNanite::insert_item(int slot, ItemID item_id)
 {
-    assert(item_id != NULL_ITEM);
-    assert(this->is_valid_slot(slot));
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(this->is_valid_slot(slot));
     this->slot[slot] = item_id;
     this->slot_count++;
 
     Item::Item* item = Item::get_item_object(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
     item->container_id = this->id;
     item->container_slot = slot;
 
@@ -68,13 +68,13 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
 
 void ItemContainerNanite::remove_item(int slot)
 {
-    assert(this->is_valid_slot(slot));
+    GS_ASSERT(this->is_valid_slot(slot));
 
     ItemID item_id = this->slot[slot];
     if (item_id != NULL_ITEM)
     {
         Item::Item* item = Item::get_item_object(this->slot[slot]);
-        assert(item != NULL);
+        GS_ASSERT(item != NULL);
         item->container_id = NULL_CONTAINER;
         item->container_slot = NULL_SLOT;
     }
@@ -102,7 +102,7 @@ void ItemContainerNanite::digest()
 
     // decrement stack
     Item::Item* item = Item::get_item_object(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
     item->stack_size -= 1;
     
     Agent_state* a = STATE::agent_list->get(this->owner);
@@ -123,7 +123,7 @@ void ItemContainerNanite::digest()
     if (coins_id == NULL_ITEM)
     {   // no coins were in coin slot, create new stack
         Item::Item* coin = Item::create_item((char*)"nanite_coin");
-        assert(coin != NULL);
+        GS_ASSERT(coin != NULL);
         if (a != NULL) Item::send_item_create(a->client_id, coin->id);
         this->insert_item(this->slot_max-1, coin->id);
         if (a != NULL) send_container_insert(a->client_id, coin->id, this->id, this->slot_max-1);
@@ -141,26 +141,26 @@ void ItemContainerNanite::digest()
 
 void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
 {
-    assert(item_id != NULL_ITEM);
-    assert(this->is_valid_slot(slot));
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(this->is_valid_slot(slot));
     this->slot[slot] = item_id;
     this->slot_count++;
 
     Item::Item* item = Item::get_item_object(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
     item->container_id = this->id;
     item->container_slot = slot;
 }
 
 void ItemContainerCraftingBench::remove_item(int slot)
 {
-    assert(this->is_valid_slot(slot));
+    GS_ASSERT(this->is_valid_slot(slot));
 
     ItemID item_id = this->slot[slot];
     if (item_id != NULL_ITEM)
     {
         Item::Item* item = Item::get_item_object(this->slot[slot]);
-        assert(item != NULL);
+        GS_ASSERT(item != NULL);
         item->container_id = NULL_CONTAINER;
         item->container_slot = NULL_SLOT;
     }
@@ -173,7 +173,7 @@ void ItemContainerCraftingBench::remove_item(int slot)
 
 void init_container(ItemContainerInterface* container)
 {
-    assert(container != NULL);
+    GS_ASSERT(container != NULL);
     switch (container->type)
     {
         case AGENT_CONTAINER:
@@ -199,7 +199,7 @@ void init_container(ItemContainerInterface* container)
             break;
         default:
             printf("%s - Unhandled container type %d\n", __FUNCTION__, container->type);
-            assert(false);
+            GS_ASSERT(false);
             break;
     }
 }
@@ -253,7 +253,7 @@ ContainerActionType partial_hand_to_empty_slot(
     container->insert_item(slot, hand_item_type, 1, hand_item_durability);
     // hand item type unchanged
     *hand_item_stack -= 1;
-    assert(*hand_item_stack > 0);
+    GS_ASSERT(*hand_item_stack > 0);
     return PARTIAL_HAND_TO_EMPTY_SLOT;
 }
 
@@ -266,7 +266,7 @@ ContainerActionType partial_hand_to_occupied_slot(
     container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
     //hand_item_type unchanged
     *hand_item_stack -= slot_item_space;
-    assert(*hand_item_stack > 0);
+    GS_ASSERT(*hand_item_stack > 0);
     return PARTIAL_HAND_TO_OCCUPIED_SLOT;
 }
 
@@ -375,7 +375,7 @@ ContainerActionType partial_slot_to_empty_hand(int client_id, int slot, ItemID* 
 
 ContainerActionType full_slot_to_empty_hand(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item, ItemID slot_item)
 {
-    assert(container != NULL);
+    GS_ASSERT(container != NULL);
     container->remove_item(slot);
     send_container_remove(client_id, container->id, slot);
     *hand_item = slot_item;
@@ -428,7 +428,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     #if DC_SERVER
     ItemContainerInterface* container = get_container(id);
     #endif
-    assert(container != NULL);
+    GS_ASSERT(container != NULL);
 
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
@@ -613,8 +613,8 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     #if DC_SERVER
     ItemContainerInterface* container = get_container(id);
     #endif
-    assert(container != NULL);
-    assert(container->type = AGENT_NANITE);
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(container->type = AGENT_NANITE);
 
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
@@ -950,7 +950,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     else
     // hand is holding something
     {
-        assert(hand_item_stack >= 1);
+        GS_ASSERT(hand_item_stack >= 1);
 
         if (slot_empty)
         // slot is empty
@@ -1054,7 +1054,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     ItemContainerInterface* container = get_container(id);
     #endif
     if (container == NULL) return action;
-    assert(container->type = AGENT_NANITE);
+    GS_ASSERT(container->type = AGENT_NANITE);
 
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
@@ -1130,7 +1130,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     else
     // hand is holding something
     {
-        assert(hand_item_stack >= 1);
+        GS_ASSERT(hand_item_stack >= 1);
 
         if (slot_empty)
         {
@@ -1290,7 +1290,7 @@ ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int cl
     int stack_space = Item::get_stack_space(hand_item);
     #endif
  
-    assert(stack_space >= 0);
+    GS_ASSERT(stack_space >= 0);
 
     if (hand_empty) return CRAFT_ITEM_FROM_BENCH;
     if (stack_space > 0)

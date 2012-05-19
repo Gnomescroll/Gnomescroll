@@ -29,7 +29,7 @@ void init_item_sheet()
     SDL_Surface* s = TextureSheetLoader::ItemSurface;
 
     if (s == NULL) printf("ItemContainer::init_item_sheet, error \n");
-    assert(s != NULL);
+    GS_ASSERT(s != NULL);
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &ItemSheetTexture );
@@ -50,7 +50,7 @@ void init_nanite_texture()
     SDL_Surface* s = create_surface_from_file((char*) "media/sprites/nanite_4.png");
     
     if (s == NULL) printf("t_hud: init_nanite_texture spritesheet load error\n");
-    assert(s != NULL);
+    GS_ASSERT(s != NULL);
  
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &NaniteTexture );
@@ -73,7 +73,7 @@ void init_crafting_texture()
     s = create_surface_from_file((char*) "media/sprites/crafting_bench.png");
     
     if (s == NULL) printf("t_hud: init_crafting_texture( spritesheet load error\n");
-    assert(s != NULL);
+    GS_ASSERT(s != NULL);
  
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &CraftingTexture );

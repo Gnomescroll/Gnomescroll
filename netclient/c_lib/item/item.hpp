@@ -69,7 +69,7 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
         Item* create()
         {
             printf("must create item with id\n");
-            assert(false);
+            GS_ASSERT(false);
             return NULL;
         }
         #endif

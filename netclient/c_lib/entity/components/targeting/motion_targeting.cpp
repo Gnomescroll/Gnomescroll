@@ -65,7 +65,7 @@ void MotionTargetingComponent::choose_destination()
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    assert(physics != NULL);
+    GS_ASSERT(physics != NULL);
 
     Vec3 position = physics->get_position();
     position.x += x;
@@ -102,7 +102,7 @@ bool MotionTargetingComponent::move_on_surface()
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    assert(physics != NULL);
+    GS_ASSERT(physics != NULL);
 
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;

@@ -14,7 +14,7 @@ bool toolbelt_item_reload_action();
 
 void send_set_slot_packet(int slot)
 {
-    assert(slot >= 0 && slot != NULL_SLOT && slot < TOOLBELT_MAX_SLOTS);
+    GS_ASSERT(slot >= 0 && slot != NULL_SLOT && slot < TOOLBELT_MAX_SLOTS);
     toolbelt_set_slot_CtoS msg;
     msg.slot = slot;
     msg.send();

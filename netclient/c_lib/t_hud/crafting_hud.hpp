@@ -62,7 +62,7 @@ class CraftingUI : public UIElement
 
     void init()
     {
-        assert(this->stacks == NULL);
+        GS_ASSERT(this->stacks == NULL);
 
         int max = input_slots;
         this->stacks = new HudText::Text[max];
@@ -187,7 +187,7 @@ void CraftingUI::draw()
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     if (slot_types == NULL) return;
-    assert(slot_stacks != NULL);
+    GS_ASSERT(slot_stacks != NULL);
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -286,7 +286,7 @@ void CraftingUI::draw()
         int stack = slot_stacks[slot];
         if (stack <= 1) continue;
 
-        assert(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
+        GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
 
         text = &this->stacks[slot];
         text->update_formatted_string(1, stack);

@@ -19,7 +19,7 @@ typedef unsigned int GLuint;
 #endif
 
 ///*
-  //Turn off asserts when production is enabled
+  //Turn off GS_ASSERTs when production is enabled
 //*/
 //#if PRODUCTION
     //#define NDEBUG 

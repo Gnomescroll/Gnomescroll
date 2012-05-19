@@ -83,10 +83,10 @@ void destroy_item_container_block(int x, int y, int z)
 
 void get_container_location(int container_id, int position[3])
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    assert(container != NULL);
-    assert(container->chunk >= 0);
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(container->chunk >= 0);
     
     struct MAP_CHUNK* c = main_map->chunk[container->chunk];
     GS_ASSERT(c != NULL);

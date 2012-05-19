@@ -32,9 +32,9 @@ void init_properties()
     for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
     for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_ERROR);
 
-    assert(item_attribute_array == NULL);
+    GS_ASSERT(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
-    assert(nanite_store_item_array == NULL);
+    GS_ASSERT(nanite_store_item_array == NULL);
     nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
 
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
@@ -60,17 +60,17 @@ int get_item_fire_rate(int item_type)
 
 int get_sprite_index_for_id(ItemID id)
 {
-    assert(id < MAX_ITEMS && id >= 0);
+    GS_ASSERT(id < MAX_ITEMS && id >= 0);
     int type = get_item_type(id);
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
-    assert(type >= 0 && type < MAX_ITEMS);
+    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
     return sprite_array[type];
 }
 
 int get_sprite_index_for_type(int type)
 {
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
-    assert(type >= 0 && type < MAX_ITEMS);
+    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
     return sprite_array[type];
 }
 
@@ -85,13 +85,13 @@ int item_name_index[MAX_ITEMS];
 
 void set_item_name(int id, char* name, int length)
 {
-    assert(length > 0);
-    assert(id >= 0 || id < MAX_ITEMS);
+    GS_ASSERT(length > 0);
+    GS_ASSERT(id >= 0 || id < MAX_ITEMS);
     
     if (length >= ITEM_NAME_MAX_LENGTH)
     {
         printf("Error: %s, name length greater than 63 characters \n", __func__ );
-        assert(length < ITEM_NAME_MAX_LENGTH);
+        GS_ASSERT(length < ITEM_NAME_MAX_LENGTH);
     }
 
     static int index = 0;
@@ -113,7 +113,7 @@ void set_item_name(int id, char* name)
 
 char* get_item_name(int type)
 {
-    assert(type >= 0 || type < MAX_ITEMS);
+    GS_ASSERT(type >= 0 || type < MAX_ITEMS);
     return (item_names + item_name_index[type]);
 }
 
@@ -144,49 +144,49 @@ int dat_get_item_type(const char* name)
 bool item_type_is_voxel(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    assert(attr != NULL);
+    GS_ASSERT(attr != NULL);
     return attr->particle_voxel;
 }
 
 int get_max_stack_size(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    assert(attr != NULL);
+    GS_ASSERT(attr != NULL);
     return attr->max_stack_size;
 }
 
 int get_max_energy(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    assert(attr != NULL);
+    GS_ASSERT(attr != NULL);
     return attr->max_energy;
 }
 
 int get_max_durability(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    assert(attr != NULL);
+    GS_ASSERT(attr != NULL);
     return attr->max_durability;
 }
 
 int get_placer_block_type_id(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    assert(attr != NULL);
+    GS_ASSERT(attr != NULL);
     return attr->placer_block_type_id;
 }
 
 int get_particle_voxel_texture(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    assert(attr != NULL);
+    GS_ASSERT(attr != NULL);
     return attr->particle_voxel_texture;
 }
 
 bool get_nanite_edibility(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    assert(attr != NULL);
+    GS_ASSERT(attr != NULL);
     return attr->nanite_food;
 }
 
@@ -208,14 +208,14 @@ void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int*
 
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
-    assert(recipe_id >= 0 && recipe_id < crafting_recipe_count);
+    GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);
     return &crafting_recipe_array[recipe_id];
 }
 
 class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
 {
     // get container
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     if (container == NULL) return NULL;
 
@@ -231,9 +231,9 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
         ItemID item_id = container->get_item(i);
         if (item_id == NULL_ITEM) continue;
         int item_type = get_item_type(item_id);
-        assert(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
+        GS_ASSERT(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
         int stack_size = get_stack_size(item_id);
-        assert(stack_size >= 1);
+        GS_ASSERT(stack_size >= 1);
 
         // insert into type buffer
         if (unique_inputs == 0)
@@ -279,8 +279,8 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
     for (int i=0; i<crafting_recipe_count; i++)
     {
         CraftingRecipe* recipe = &crafting_recipe_array[i];
-        assert(recipe->output != NULL_ITEM_TYPE);
-        assert(recipe->reagent_num > 0);
+        GS_ASSERT(recipe->output != NULL_ITEM_TYPE);
+        GS_ASSERT(recipe->reagent_num > 0);
         // make sure to set availability state to default
         recipe->available = true;
 

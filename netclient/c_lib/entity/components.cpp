@@ -7,9 +7,9 @@ static ComponentInterfaceType* component_interface_map = NULL;
 
 ComponentInterfaceType get_interface_for_component(ComponentType component)
 {
-    assert(component_interface_map != NULL);
-    assert(component >= 0);
-    assert(component < MAX_COMPONENT_TYPES);
+    GS_ASSERT(component_interface_map != NULL);
+    GS_ASSERT(component >= 0);
+    GS_ASSERT(component < MAX_COMPONENT_TYPES);
     return component_interface_map[component];
 }
 

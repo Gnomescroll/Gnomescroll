@@ -114,14 +114,14 @@ void Shrapnel_list::draw()
     #if DC_CLIENT
     if(shrapnel_vlist->vertex_number == 0) return;
 
-    assert(shrapnel_vlist->VBO != 0);
+    GS_ASSERT(shrapnel_vlist->VBO != 0);
     
     const unsigned int stride = shrapnel_vlist->stride;
 
     //printf("draw: %i \n", shrapnel_vlist->vertex_number);
     //printf("draw2: %i \n", shrapnel_vlist->VBO);
 
-    assert(particle_texture != 0);
+    GS_ASSERT(particle_texture != 0);
 
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE);

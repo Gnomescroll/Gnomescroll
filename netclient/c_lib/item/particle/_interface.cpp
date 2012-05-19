@@ -23,7 +23,7 @@ void teardown()
 
 void tick()
 {
-    assert(item_particle_list != NULL);
+    GS_ASSERT(item_particle_list != NULL);
     item_particle_list->tick();
 
     #if DC_SERVER
@@ -56,7 +56,7 @@ void draw_teardown()
 
 void draw()
 {
-    assert(item_particle_list != NULL);
+    GS_ASSERT(item_particle_list != NULL);
     item_particle_list->draw();
 }
 
@@ -100,7 +100,7 @@ Item::Item* create_item_particle(int item_type, float x, float y, float z, float
 static void pack_particle_item_create(int particle_id, item_particle_create_StoC* msg)
 {
     ItemParticle* particle = item_particle_list->get(particle_id);
-    assert(particle != NULL);
+    GS_ASSERT(particle != NULL);
     
     msg->id = particle->id;
     msg->item_type = particle->item_type;
@@ -156,7 +156,7 @@ void check_item_pickups()
         ItemParticle* item_particle = item_particle_list->a[i];
         if (!item_particle->can_be_picked_up()) continue;
         Item::Item* item = Item::get_item(item_particle->item_id);
-        assert(item != NULL);
+        GS_ASSERT(item != NULL);
     
         const static float pick_up_distance = 1.0f;
         Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
@@ -192,7 +192,7 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
 
 void throw_agent_item(int agent_id, ItemID item_id)
 {
-    assert(item_id != NULL_ITEM);
+    GS_ASSERT(item_id != NULL_ITEM);
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
 
@@ -211,7 +211,7 @@ void throw_agent_item(int agent_id, ItemID item_id)
 void dump_container_item(ItemID item_id, float x, float y, float z)
 {
     printf("dump container item\n");
-    assert(item_id != NULL_ITEM);
+    GS_ASSERT(item_id != NULL_ITEM);
     
     Vec3 position = vec3_init(x,y,z);
     position = vec3_add(position, vec3_init(randf(), randf(), randf())); // random point inside box

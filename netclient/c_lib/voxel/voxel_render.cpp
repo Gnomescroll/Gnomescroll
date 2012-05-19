@@ -208,7 +208,7 @@ void Voxel_render_list::update_vertex_buffer_object()
         vv->vvl.voff = index;
         index += vv->vvl.vnum;
     }
-    assert(index == v_num);
+    GS_ASSERT(index == v_num);
     if (_vbo->id == 0 )  glGenBuffers( 1, &_vbo->id );
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), NULL, GL_STATIC_DRAW);
@@ -225,8 +225,8 @@ void Voxel_render_list::update_vertex_buffer_object()
 
 void Voxel_render_list_manager::register_voxel_volume(class Voxel_volume* vv)
 {
-    assert(this->max > 0);
-    assert(this->lists != NULL);
+    GS_ASSERT(this->max > 0);
+    GS_ASSERT(this->lists != NULL);
     // choose a list to register with
     int smallest = 0;
     int smallest_count = 99999999;
@@ -243,8 +243,8 @@ void Voxel_render_list_manager::register_voxel_volume(class Voxel_volume* vv)
 
 void Voxel_render_list_manager::unregister_voxel_volume(class Voxel_volume* vv)
 {
-    assert(this->max > 0);
-    assert(this->lists != NULL);
+    GS_ASSERT(this->max > 0);
+    GS_ASSERT(this->lists != NULL);
     // unregister from correct list
 
     int id = vv->voxel_render_list_id;

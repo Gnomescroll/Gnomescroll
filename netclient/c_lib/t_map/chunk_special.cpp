@@ -73,9 +73,9 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
     #if DC_SERVER
     map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
 
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    assert(container != NULL);
+    GS_ASSERT(container != NULL);
     container->chunk = this->chunk_index;
     #endif    
 }

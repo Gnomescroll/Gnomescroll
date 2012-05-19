@@ -112,7 +112,7 @@ int apply_damage(int x, int y, int z, int dmg)
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
-    assert(dmg > 0);
+    GS_ASSERT(dmg > 0);
     
     int block_type;
     int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
@@ -302,7 +302,7 @@ int get_height_at(int x, int y)
 #if DC_CLIENT
 unsigned char get_cached_height(int x, int y)
 {
-    assert(t_map::main_map != NULL);
+    GS_ASSERT(t_map::main_map != NULL);
     return t_map::main_map->get_cached_height(x,y);
 }
 #endif

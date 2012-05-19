@@ -125,7 +125,7 @@ void ItemParticle_list::draw()
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
 
-    //assert(ItemSheetTexture != 0);
+    //GS_ASSERT(ItemSheetTexture != 0);
 
     glEnable(GL_ALPHA_TEST);
 

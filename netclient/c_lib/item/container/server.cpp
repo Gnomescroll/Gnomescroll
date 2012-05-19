@@ -34,7 +34,7 @@ static bool pack_container_create(int container_id, create_item_container_StoC* 
 
 void send_container_create(int client_id, int container_id)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     create_item_container_StoC msg;
     if (!pack_container_create(container_id, &msg)) return;
     msg.sendToClient(client_id);
@@ -42,7 +42,7 @@ void send_container_create(int client_id, int container_id)
 
 void broadcast_container_create(int container_id)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     create_item_container_StoC msg;
     if (!pack_container_create(container_id, &msg)) return;
     msg.broadcast();
@@ -50,7 +50,7 @@ void broadcast_container_create(int container_id)
 
 void send_container_delete(int client_id, int container_id)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     delete_item_container_StoC msg;
     msg.container_id = container_id;
     msg.sendToClient(client_id);
@@ -58,7 +58,7 @@ void send_container_delete(int client_id, int container_id)
 
 void broadcast_container_delete(int container_id)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     delete_item_container_StoC msg;
     msg.container_id = container_id;
     msg.broadcast();
@@ -106,9 +106,9 @@ void send_open_container_failed(int client_id, int container_id, int event_id)
 // transactions
 bool agent_open_container(int agent_id, int container_id)
 {
-    assert(opened_containers != NULL);
+    GS_ASSERT(opened_containers != NULL);
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
@@ -122,7 +122,7 @@ bool agent_open_container(int agent_id, int container_id)
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
-        assert(opened != NULL);
+        GS_ASSERT(opened != NULL);
         opened->unlock(a->id);
         opened_containers[agent_id] = NULL_CONTAINER;
     }
@@ -138,9 +138,9 @@ bool agent_open_container(int agent_id, int container_id)
 
 void agent_close_container(int agent_id, int container_id)
 {
-    assert(opened_containers != NULL);
+    GS_ASSERT(opened_containers != NULL);
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;

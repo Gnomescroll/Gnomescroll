@@ -59,7 +59,7 @@ void teardown()
 
 ItemContainerInterface* get_container(int id)
 {
-    assert(item_container_list != NULL);
+    GS_ASSERT(item_container_list != NULL);
     return item_container_list->get(id);
 }
 
@@ -121,7 +121,7 @@ void close_inventory()
 
 void open_container(int container_id)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
 
     // setup UI widget
     // TODO -- handle multiple UI types 
@@ -165,13 +165,13 @@ void close_container()
 
 int get_event_container_id(int event_id)
 {
-    assert(event_id >= 0 && event_id < CONTAINER_EVENT_MAX);
+    GS_ASSERT(event_id >= 0 && event_id < CONTAINER_EVENT_MAX);
     return container_event[event_id];
 }
 
 ItemContainerUIInterface* get_container_ui(int container_id)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     if (player_craft_bench_ui != NULL && player_craft_bench_ui->id == container_id) return player_craft_bench_ui;
     if (player_container_ui   != NULL && player_container_ui->id   == container_id) return player_container_ui;
     if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
@@ -181,8 +181,8 @@ ItemContainerUIInterface* get_container_ui(int container_id)
 
 ItemID get_toolbelt_item(int slot)
 {
-    assert(player_toolbelt != NULL);
-    assert(slot >= 0 && slot < player_toolbelt->xdim);
+    GS_ASSERT(player_toolbelt != NULL);
+    GS_ASSERT(slot >= 0 && slot < player_toolbelt->xdim);
     return player_toolbelt->get_item(slot);
 }
 
@@ -276,21 +276,21 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot)
 ItemID get_agent_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(agent_hand_list != NULL);
+    GS_ASSERT(agent_hand_list != NULL);
     return agent_hand_list[agent_id];
 }
     
 int get_agent_container(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(agent_container_list != NULL);
+    GS_ASSERT(agent_container_list != NULL);
     return agent_container_list[agent_id];
 }
 
 int get_agent_toolbelt(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(agent_toolbelt_list != NULL);
+    GS_ASSERT(agent_toolbelt_list != NULL);
     return agent_toolbelt_list[agent_id];
 }
 
@@ -301,8 +301,8 @@ ItemContainerInterface* create_container(ItemContainerType type)
 
 void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
 {
-    assert(container != NULL);
-    assert(container_list[agent_id] == NULL_ITEM);
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(container_list[agent_id] == NULL_ITEM);
     container_list[agent_id] = container->id;
     container->assign_owner(agent_id);
     init_container(container);
@@ -371,10 +371,10 @@ void agent_died(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
-    assert(a->status.dead);
+    GS_ASSERT(a->status.dead);
 
     // remove items from agent inventory
-    assert(agent_container_list != NULL);
+    GS_ASSERT(agent_container_list != NULL);
     ItemContainer* container = (ItemContainer*)get_container(agent_container_list[agent_id]);
     if (container == NULL) return;
     for (int i=0; i<container->slot_max; i++)
@@ -387,7 +387,7 @@ void agent_died(int agent_id)
     }
 
     // close container
-    assert(opened_containers != NULL);
+    GS_ASSERT(opened_containers != NULL);
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
         send_container_close(agent_id, opened_containers[agent_id]);
@@ -420,8 +420,8 @@ void purchase_item_from_nanite(int agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
-    assert(agent_nanite_list != NULL);
-    assert(agent_hand_list != NULL);
+    GS_ASSERT(agent_nanite_list != NULL);
+    GS_ASSERT(agent_hand_list != NULL);
 
     // if hand is not empty there will be item leaks
     if (agent_hand_list[agent_id] != NULL_ITEM) return;
@@ -440,7 +440,7 @@ void purchase_item_from_nanite(int agent_id, int slot)
     int yslot = slot / nanite->xdim;
     int item_type, cost;
     Item::get_nanite_store_item(nanite->level, xslot, yslot, &item_type, &cost);
-    assert(cost >= 0);
+    GS_ASSERT(cost >= 0);
     if (item_type == NULL_ITEM_TYPE) return;
     
     // get the coins
@@ -473,7 +473,7 @@ void purchase_item_from_nanite(int agent_id, int slot)
         else
         {   // decrement coin stack
             Item::Item* coin_item = Item::get_item_object(coins);
-            assert(coin_item != NULL);
+            GS_ASSERT(coin_item != NULL);
             coin_item->stack_size -= cost;
             if (a != NULL) Item::send_item_state(a->client_id, coins);
         }
@@ -483,7 +483,7 @@ void purchase_item_from_nanite(int agent_id, int slot)
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(agent_hand_list != NULL);
+    GS_ASSERT(agent_hand_list != NULL);
 
     Agent_state* agent = ServerState::agent_list->get(agent_id);
     if (agent == NULL) return;
@@ -519,7 +519,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     {
         // update item stack
         Item::Item* item = Item::get_item(hand_item);
-        assert(item != NULL);
+        GS_ASSERT(item != NULL);
         item->stack_size += 1;
         Item::send_item_state(agent->client_id, item->id);
         send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
@@ -528,11 +528,11 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
 
 bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
 {
-    assert(container_id != NULL_CONTAINER);
-    assert(recipe_id != NULL_CRAFTING_RECIPE);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(recipe_id != NULL_CRAFTING_RECIPE);
 
     ASSERT_VALID_AGENT_ID(agent_id);
-    assert(agent_hand_list != NULL);
+    GS_ASSERT(agent_hand_list != NULL);
 
     Agent_state* agent = ServerState::agent_list->get(agent_id);
     if (agent == NULL) return false;
@@ -541,10 +541,10 @@ bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     if (container_id != NULL_CONTAINER && !agent_can_access_container(agent->id, container_id)) return false;
 
     ItemContainerCraftingBench* bench = (ItemContainerCraftingBench*)get_container(container_id);
-    assert(bench != NULL);
+    GS_ASSERT(bench != NULL);
 
     Item::CraftingRecipe* recipe = Item::get_craft_recipe(recipe_id);
-    assert(recipe != NULL);
+    GS_ASSERT(recipe != NULL);
 
     // assemble sorted bench inputs
     // we need them sorted so we can correctly decrement from each item
@@ -562,7 +562,7 @@ bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
         ItemID item_id = bench->get_item(i);
         if (item_id == NULL_ITEM) continue;
         int item_type = Item::get_item_type(item_id);
-        assert(item_type != NULL_ITEM_TYPE);
+        GS_ASSERT(item_type != NULL_ITEM_TYPE);
 
         // insert sorted
         if (input_count == 0)
@@ -599,35 +599,35 @@ bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     // first verify we can craft with the reagents
     for (int i=0; i<recipe->reagent_num; i++)
     {   // remove reagents from inputs
-        assert(recipe->reagent[i] != NULL_ITEM_TYPE);
+        GS_ASSERT(recipe->reagent[i] != NULL_ITEM_TYPE);
 
         // gather recipe data
         int count = recipe->reagent_count[i];
-        assert(count > 0);
+        GS_ASSERT(count > 0);
 
         ItemID item_id = inputs[i];
-        assert(item_id != NULL_ITEM);
+        GS_ASSERT(item_id != NULL_ITEM);
         Item::Item* item = Item::get_item(item_id);
-        assert(item != NULL);
-        assert(recipe->reagent[i] == item->type);   // verifies sorting
+        GS_ASSERT(item != NULL);
+        GS_ASSERT(recipe->reagent[i] == item->type);   // verifies sorting
         if (item->stack_size < count) return false; // cant craft
     }
 
     // now actually craft
     for (int i=0; i<recipe->reagent_num; i++)
     {   // remove reagents from inputs
-        assert(recipe->reagent[i] != NULL_ITEM_TYPE);
+        GS_ASSERT(recipe->reagent[i] != NULL_ITEM_TYPE);
 
         // gather recipe data
         int count = recipe->reagent_count[i];
-        assert(count > 0);
+        GS_ASSERT(count > 0);
 
         ItemID item_id = inputs[i];
-        assert(item_id != NULL_ITEM);
+        GS_ASSERT(item_id != NULL_ITEM);
         Item::Item* item = Item::get_item(item_id);
-        assert(item != NULL);
-        assert(recipe->reagent[i] == item->type);   // verifies sorting
-        assert(item->stack_size >= count);
+        GS_ASSERT(item != NULL);
+        GS_ASSERT(recipe->reagent[i] == item->type);   // verifies sorting
+        GS_ASSERT(item->stack_size >= count);
 
         // determine whether to decrement or fully remove item
         if (item->stack_size <= count)
@@ -661,13 +661,13 @@ void send_container_contents(int agent_id, int client_id, int container_id)
 
 void container_block_destroyed(int container_id, int x, int y, int z)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
     // close all opened containers
-    assert(opened_containers != NULL);
+    GS_ASSERT(opened_containers != NULL);
     for (int i=0; i<AGENT_MAX; i++)
         if (opened_containers[i] == container_id)
             opened_containers[i] = NULL_CONTAINER;
@@ -700,7 +700,7 @@ bool agent_in_container_range(int agent_id, int container_id)
 
     // get container position, if applicable
     ItemContainerInterface* container = get_container(container_id);
-    assert(container != NULL);
+    GS_ASSERT(container != NULL);
     if (!Item::container_type_is_block(container->type)) return false;
 
     int position[3];
@@ -731,13 +731,13 @@ void check_agents_in_container_range()
 
 int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
 {
-    assert(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id != NULL_CONTAINER);
 
     Item::Item* item = Item::get_item(item_id);
-    assert(item != NULL);
+    GS_ASSERT(item != NULL);
 
     ItemContainerInterface* container = get_container(container_id);
-    assert(container != NULL);
+    GS_ASSERT(container != NULL);
 
     int slot = container->get_stackable_slot(item->type, item->stack_size);
     if (slot == NULL_SLOT)
@@ -750,7 +750,7 @@ int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
     else
     {   // stack
         ItemID slot_item_id = container->get_item(slot);
-        assert(slot_item_id != NULL_ITEM);
+        GS_ASSERT(slot_item_id != NULL_ITEM);
         Item::merge_item_stack(item_id, slot_item_id);
         Item::send_item_state(client_id, slot_item_id);
         send_container_insert(client_id, slot_item_id, container_id, slot);

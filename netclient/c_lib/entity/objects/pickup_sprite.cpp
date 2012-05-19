@@ -112,7 +112,7 @@ Object* create_pickup_sprite(ObjectType type)
 */
         default:
             printf("create_pickup_sprite() -- type %d not handled\n", type);
-            assert(false);
+            GS_ASSERT(false);
     }
     return obj;
 }

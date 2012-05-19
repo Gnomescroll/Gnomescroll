@@ -1,5 +1,7 @@
 #pragma once 
 
+#include <common/macros.hpp>
+
 /*
  * Objects managed by MultiObject_list must support the minimum interface:
  *
@@ -137,7 +139,7 @@ int MultiObject_list<Object_interface, max_n>::get_free_id()
 template <class Object_interface, int max_n>
 Object_interface* MultiObject_list<Object_interface, max_n>::create(int type)
 {
-    assert(create_interface != NULL);
+    GS_ASSERT(create_interface != NULL);
     //where();
     int i;
     int id;
@@ -160,7 +162,7 @@ Object_interface* MultiObject_list<Object_interface, max_n>::create(int type)
 template <class Object_interface, int max_n>
 Object_interface* MultiObject_list<Object_interface, max_n>::create(int type, int id)
 {
-    assert(create_interface != NULL);
+    GS_ASSERT(create_interface != NULL);
     //where();
     if(a[id] == NULL)
     {

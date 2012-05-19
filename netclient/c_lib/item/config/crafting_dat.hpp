@@ -21,14 +21,14 @@ void def_recipe(const char* item_name)
 
 void set_reagent(const char* item_name, int quantity)
 {
-    assert(_current_reagent_id < CRAFT_BENCH_INPUTS_MAX);
+    GS_ASSERT(_current_reagent_id < CRAFT_BENCH_INPUTS_MAX);
 
     int type = dat_get_item_type(item_name);
     
 
     // require specifying item,quantity at once
     //for (int i=0; i<_current_reagent_id; i++)
-        //assert(_cr.reagent[i] != type);
+        //GS_ASSERT(_cr.reagent[i] != type);
     
     // insert reagents sorted by type
     if (_current_reagent_id == 0)

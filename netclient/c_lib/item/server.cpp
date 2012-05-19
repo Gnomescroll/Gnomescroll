@@ -9,10 +9,10 @@ namespace Item
 
 static void pack_item_create(Item* item, item_create_StoC* msg)
 {
-    assert(item->id != NULL_ITEM);
-    assert(item->type != NULL_ITEM_TYPE);
-    assert(item->group != NULL_ITEM_GROUP);
-    assert(item->stack_size > 0);
+    GS_ASSERT(item->id != NULL_ITEM);
+    GS_ASSERT(item->type != NULL_ITEM_TYPE);
+    GS_ASSERT(item->group != NULL_ITEM_GROUP);
+    GS_ASSERT(item->stack_size > 0);
     msg->id = item->id;
     msg->type = item->type;
     msg->group = item->group;

@@ -122,7 +122,7 @@ class Terrain_map_subscription
     {
         xdim = (_xdim/16)*16; 
         ydim = (_ydim/16)*16;
-        assert(xdim == _xdim && ydim == _ydim);
+        GS_ASSERT(xdim == _xdim && ydim == _ydim);
 
         xchunk_dim = _xdim/16; 
         ychunk_dim = _ydim/16;

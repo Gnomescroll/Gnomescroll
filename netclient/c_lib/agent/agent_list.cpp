@@ -322,7 +322,7 @@ Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
     while (i < n)
     {   // skip all viewing agents
         agent = agent_list->filtered_objects[i];
-        assert(agent != NULL);
+        GS_ASSERT(agent != NULL);
         if (agent->status.team != NO_TEAM) break;
         i++;
     }
@@ -340,7 +340,7 @@ Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radi
     while (i < n)
     {   // skip all viewing agents
         agent = agent_list->filtered_objects[i];
-        assert(agent != NULL);
+        GS_ASSERT(agent != NULL);
         if (!agent->status.dead && agent->status.team != NO_TEAM) break;
         i++;
     }

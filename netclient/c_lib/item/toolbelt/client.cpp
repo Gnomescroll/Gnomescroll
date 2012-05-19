@@ -45,7 +45,7 @@ bool toolbelt_item_begin_alpha_action()
             if (item_type == Item::get_item_type((char*)"block_placer"))
                 ClientState::playerAgent_state.action.admin_set_block();
             #endif
-            else assert(false);
+            else GS_ASSERT(false);
             break;
         case IG_PLACER:
             ClientState::playerAgent_state.action.set_block(item_id);

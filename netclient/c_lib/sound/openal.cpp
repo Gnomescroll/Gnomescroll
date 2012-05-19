@@ -130,7 +130,7 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 
 void init()
 {
-    assert(!inited);
+    GS_ASSERT(!inited);
     inited = true;
 
     enabled = Options::sound;

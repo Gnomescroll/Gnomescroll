@@ -8,11 +8,11 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec
     if (list->empty(type)) return 0;
 
     Object** objects = list->get_objects(type);
-    assert(objects != NULL);
+    GS_ASSERT(objects != NULL);
     char* used = list->get_used(type);
-    assert(used != NULL);
+    GS_ASSERT(used != NULL);
     int max = list->max(type);
-    assert(max >= 0);
+    GS_ASSERT(max >= 0);
     
     const float radius_squared = radius*radius;
     int ct = 0;
@@ -69,11 +69,11 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, c
         type = types[j];
         if (list->empty(type)) continue;
         objects = list->get_objects(type);
-        assert(objects != NULL);
+        GS_ASSERT(objects != NULL);
         used = list->get_used(type);
-        assert(used != NULL);
+        GS_ASSERT(used != NULL);
         max = list->max(type);
-        assert(max > 0);
+        GS_ASSERT(max > 0);
 
         for (int i=0; i<max; i++)
         {
