@@ -1,7 +1,7 @@
 ./waf clean
 ./waf production
 ./waf
-version=`cat ../VERSIONX`
+version=`cat ../VERSIONX.old`
 f="gnomescroll_linux32_"$version
 rm -rf $f
 mkdir $f
