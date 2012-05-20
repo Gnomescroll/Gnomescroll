@@ -40,13 +40,16 @@ class gCoord
   }
 public:
   static int sgn(double d) {return d<=-gCoordTolerance ? -1 : (d>=gCoordTolerance);}
+#if 0
   static double GetTolerance() {return Tolerance();}
-  struct NewTolerance { // Use to temporarily alter the tolerance NOT THREAD SAFE
+  struct NewTolerance 
+  { // Use to temporarily alter the tolerance NOT THREAD SAFE
     double OldTolerance;
     NewTolerance(double NewTolerance) : OldTolerance(gCoord::Tolerance()) {gCoord::Tolerance(NewTolerance);}
    ~NewTolerance() { gCoord::Tolerance(OldTolerance); }
   };
-
+#endif
+  
   double Coord; // <<<<<<<<<<<<<<<<<<< The value being controlled
   gCoord() {}
 
