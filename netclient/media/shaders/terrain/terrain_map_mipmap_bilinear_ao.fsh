@@ -43,10 +43,11 @@ void main()
     //vec3 color = tmp*vec3(1.0, 0.0, 0.0);
 
 
-    float intensity = 3.0f / (inColor.r + inColor.g + inColor.b);
-    vec3 color2 = intensity*inColor;
-    color = color2 * color;
-
+    //float intensity = 3.0f / (inColor.r + inColor.g + inColor.b);
+    //vec3 color2 = intensity*inColor;
+    //color = color2 * color;
+    color = color * inColor;
+    
     //color = inColor * color;
 
 
