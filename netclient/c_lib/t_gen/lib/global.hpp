@@ -6,11 +6,15 @@ Most things are obvious, but the following four are worth understanding:
 _______________________________________________________________________________
 Minimise mapping by having everything return normalised ranges [0,1] or [-1,1].
 Unsigned Interval is [0,1]; Signed interval is [-1,1]; These change between the two (useful for double or float): */
+
+#if 0
 template<typename T> T  Unsigned(T t) {return (t+1)/2;}
 template<typename T> T    Signed(T t) {return 2*t-1;}
 
 template<typename T> double Parameterize(T x, T a, T b) { return double(x-a)/(b-a);} // x is normally between a and b. returns 0 if x==a, 1 if x==b, 0.5 if x is in the middle of a and b etc.
 template<typename T> T Interpolate(const double& t, T a, T b) {return T(a+(b-a)*t);} // The reverse of Parameterize: if t=0.5, returns the value in the middle of a and b.
+#endif 
+
 //_____________________________________________________________________________
 
 //#include <limits.h> // For INT_MAX etc.
@@ -19,8 +23,8 @@ template<typename T> T Interpolate(const double& t, T a, T b) {return T(a+(b-a)*
 //#define _USE_MATH_DEFINES // Exposes  M_PI and M_SQRT2
 //#include <math.h> // For sqrt, hypot, M_PI and M_SQRT2
 
-//#define M_SQRT3     1.7320508075688772935274463415059 // Add a few more defines suitable for long double:
-//#define M_GOLD      1.6180339887498948482045868343656 // The Golden Ratio suitable for long double
+#define M_SQRT3     1.7320508075688772935274463415059 // Add a few more defines suitable for long double:
+#define M_GOLD      1.6180339887498948482045868343656 // The Golden Ratio suitable for long double
 
 //_____________________________________________________________________________
 
