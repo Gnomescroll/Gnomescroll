@@ -49,7 +49,11 @@ DONE
 monster spawners respawning?
 FIXED
 
-include guards on server_/client_state.*pp
+include guards on server_/client_state.*pp, c_lib/agent/client/*
+DONE
 
 footstep sound function
 left foot, right foot, soft fall, hard fall
+
+step 1-4: soft,hard
+fall 1-4: soft,hard

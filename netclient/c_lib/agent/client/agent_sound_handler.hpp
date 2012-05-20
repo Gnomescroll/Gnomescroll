@@ -48,6 +48,7 @@ void player_agent_sound_movement_event(class AgentState s0,  class AgentState s1
         //play sound
         //printf("play agent sound !!! \n");
         total_distance -= distance_per_step;
+        //Sound::walking();
     }
 
 }
