@@ -24,6 +24,7 @@ To make sure that the normal, untoleranced <kbd><span class="KeyWord">double</sp
 All the rest of the code is to make the class work as if it were derived from "double" as a class.
 */
 
+#if 1
 #define gCoordTolerance (gCoord::GetTolerance()) // <<<< This is the whole point of the gCoord struct.
 
 class gCoord 
@@ -261,3 +262,4 @@ __inline bool   operator<=(unsigned long  i, const gCoord& c) {return c.Compare(
 __inline bool   operator>=(unsigned long  i, const gCoord& c) {return c.Compare(i)<=0;}
 __inline bool   operator< (unsigned long  i, const gCoord& c) {return c.Compare(i)> 0;}
 __inline bool   operator> (unsigned long  i, const gCoord& c) {return c.Compare(i)< 0;}
+#endif

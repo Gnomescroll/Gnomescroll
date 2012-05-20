@@ -13,11 +13,11 @@ template<typename T> double Parameterize(T x, T a, T b) { return double(x-a)/(b-
 template<typename T> T Interpolate(const double& t, T a, T b) {return T(a+(b-a)*t);} // The reverse of Parameterize: if t=0.5, returns the value in the middle of a and b.
 //_____________________________________________________________________________
 
-#include <limits.h> // For INT_MAX etc.
-#include <float.h>  // For DBL_MAX etc.
+//#include <limits.h> // For INT_MAX etc.
+//#include <float.h>  // For DBL_MAX etc.
 
-#define _USE_MATH_DEFINES // Exposes  M_PI and M_SQRT2
-#include <math.h> // For sqrt, hypot, M_PI and M_SQRT2
+//#define _USE_MATH_DEFINES // Exposes  M_PI and M_SQRT2
+//#include <math.h> // For sqrt, hypot, M_PI and M_SQRT2
 #define M_SQRT3     1.7320508075688772935274463415059 // Add a few more defines suitable for long double:
 #define M_GOLD      1.6180339887498948482045868343656 // The Golden Ratio suitable for long double
 //_____________________________________________________________________________
@@ -112,5 +112,5 @@ static void sincos(double Radians, double* Sine, double* Cosine) {
     return d;
   }
   */
-#pragma warning (default: 4725)
+//#pragma warning (default: 4725)
 //_____________________________________________________________________________

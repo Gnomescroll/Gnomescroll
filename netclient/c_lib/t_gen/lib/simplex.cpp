@@ -36,7 +36,7 @@ This code was used to find the range-correction values (the return value equatio
 */
 
 //#include "stdafx.h"
-#include "simplex.h"
+#include "simplex.hpp"
 
 //#include <math.h>
 //#include <float.h>
