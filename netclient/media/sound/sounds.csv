@@ -14,7 +14,7 @@ Reload,,reload,,y,,,,,,,
 "Spawner placed",,spawner_placed,,y,,,,,,,
 Respawned,,respawned,,y,,,,,,,
 Died,,died,,y,,,,,,,
-Walking,,walking,,,,,,,,,"these are more complicated that simple triggered sounds"
+Walking,random_fx_001.wav,walking,y,y,,,,,,,"these are more complicated that simple triggered sounds"
 Running,,running,,,,,,,,,"these are more complicated that simple triggered sounds"
 "Jetpack on",,jetpack_on,,,,,,,,,
 "Soft landing (land from normal jump)",,soft_landing,,,,,,,,,

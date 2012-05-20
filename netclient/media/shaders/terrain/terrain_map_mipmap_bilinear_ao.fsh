@@ -21,54 +21,57 @@ uniform sampler2DArray base_texture;
 varying float fogFragDepth;
 
 const vec3 fog_color = vec3(0.0, 0.0, 0.0);
-const float fog_start = 96.0;
-const float fog_depth = 32.0;
+//const float fog_start = 96.0;
+//const float fog_depth = 32.0;
+//const vec3 fog_color = vec3(200.0, 150.0, 200.0);
+const float fog_start = 48.0;
+const float fog_depth = 128.0 - fog_start;
 
 void main() 
 {
-	//float gamma = 2.2f;
+    //float gamma = 2.2f;
 
-	vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
-	vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
+    vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
+    vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 
-	float tmp = dot(vx, lightMatrix * vy);
+    float tmp = dot(vx, lightMatrix * vy);
 
-	//vec3 color = inColor.rgb;	
-	
+    //vec3 color = inColor.rgb; 
+    
 
-    vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));	    
+    vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));      
     //vec3 color = tmp*vec3(1.0, 0.0, 0.0);
 
 
-	float intensity = 3.0f / (inColor.r + inColor.g + inColor.b);
-	vec3 color2 = intensity*inColor;
-	color = color2 * color;
+    float intensity = 3.0f / (inColor.r + inColor.g + inColor.b);
+    vec3 color2 = intensity*inColor;
+    color = color2 * color;
 
-	//color = inColor * color;
+    //color = inColor * color;
 
-	color = pow(color, vec3(1.0f / 2.2f) );
+    color = pow(color, vec3(1.0f / 2.2f) );
 
-	if(fogFragDepth <= fog_start)
-	{
-		gl_FragColor.rgb = color;
-	}
-	else
-	{
-		//gl_FragColor.rgb = fog_color;
-		float fogFactor = (fogFragDepth - fog_start) / fog_depth;
+    if(fogFragDepth <= fog_start)
+    {
+        gl_FragColor.rgb = color;
+    }
+    else
+    {
+        //gl_FragColor.rgb = fog_color;
+        float fogFactor = (fogFragDepth - fog_start) / fog_depth;
 
-		if(fogFactor >= 1.0) discard;
-		gl_FragColor.rgb = mix( color, fog_color, fogFactor);
-	}
+        if(fogFactor >= 1.0) discard;
+        gl_FragColor.rgb = mix( color, fog_color, fogFactor);
+    }
 
-	//gl_FragColor.rgb = fogFactor*vec3(1.0, 0.0, 0.0);
-	//gl_FragColor.rgb = mix(color, vec3(0.0, 0.0, 0.0), fogFactor);
+    //gl_FragColor.rgb = fogFactor*vec3(1.0, 0.0, 0.0);
+    //gl_FragColor.rgb = mix(color, vec3(0.0, 0.0, 0.0), fogFactor);
 
-	//fogFragDepth
-	//fogFactor = clamp(fogFactor, 0.0, 1.0);
-	//gl_FragColor = mix(gl_Fog.color, gl_Color, fogFactor);
+    //fogFragDepth
+    //fogFactor = clamp(fogFactor, 0.0, 1.0);
+    //gl_FragColor = mix(gl_Fog.color, gl_Color, fogFactor);
 
-	//gl_FragColor.rgb = vec3(1.0,0,0);
+    //gl_FragColor.rgb = vec3(1.0,0,0);
 
 }
 
