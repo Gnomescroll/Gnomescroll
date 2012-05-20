@@ -1,10 +1,8 @@
-// Voronoi.h
-
 #pragma once
 
 //#include "stdafx.h"
 #include "voronoi.hpp"
-#include "g3.hpp"
+#include "global.hpp"
 
 typedef unsigned char BYTE;
 
