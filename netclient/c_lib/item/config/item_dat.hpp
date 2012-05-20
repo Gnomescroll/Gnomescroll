@@ -77,7 +77,7 @@ void load_item_dat()
     s.hitscan_damage = 5;
     s.hitscan_max_ammo = 30;
     s.hitscan_bullet_effect_enum = 0;
-    s.max_durability = 400;
+    s.max_durability = 100;
     s.max_energy = 50;
     s.max_stack_size = 1;
 
