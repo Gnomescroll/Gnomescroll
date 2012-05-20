@@ -51,8 +51,10 @@ static int Round(double a)
 
 //________________ Extra functions that depend on those above _________________
 
+#if 0
 static double Frac(const double& a)          {return a- Truncate(a);}
 static double Mod(double a, const double& b) {return a-=Truncate(a/b)*b;}
+#endif
 
 //________________________ Fast Trigonometry functions ________________________
 
