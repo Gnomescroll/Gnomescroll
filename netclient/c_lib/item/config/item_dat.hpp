@@ -125,10 +125,10 @@ void load_item_dat()
     item_def(14, IG_UNKNOWN, "unknown");
     sprite_def(i0, 5,1);
 
-    item_def(15, IG_PLACER, "crate_1");
-    iso_block_sprite_def("crate_1");
-    s.placer_block_type_id = t_map::dat_get_cube_id("crate_1");
-    s.max_stack_size = 1;
+    //item_def(15, IG_PLACER, "crate_1");
+    //iso_block_sprite_def("crate_1");
+    //s.placer_block_type_id = t_map::dat_get_cube_id("crate_1");
+    //s.max_stack_size = 1;
 
     item_def(16, IG_PLACER, "crate_2");
     iso_block_sprite_def("crate_2");

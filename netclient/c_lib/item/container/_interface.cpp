@@ -399,7 +399,6 @@ void agent_quit(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     // destroy containers
-    agent_died(agent_id);
     destroy_container(agent_container_list[agent_id]);
     destroy_container(agent_toolbelt_list[agent_id]);
     destroy_container(agent_nanite_list[agent_id]);

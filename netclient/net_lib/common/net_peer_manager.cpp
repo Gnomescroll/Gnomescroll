@@ -116,7 +116,11 @@ void NetPeerManager::teardown()
 {
     Agent_state* a = NetServer::agents[this->client_id];
     GS_ASSERT(a != NULL);
-    if (a != NULL) ItemContainer::agent_quit(a->id);
+    if (a != NULL)
+    {
+        a->status.die();
+        ItemContainer::agent_quit(a->id);
+    }
     
     ServerState::agent_disconnect(this->client_id);
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
