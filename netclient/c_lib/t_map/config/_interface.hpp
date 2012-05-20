@@ -194,6 +194,10 @@ void hud_def(int hudy,int hudx, int sheet_id, int ypos, int xpos)
 #endif
 }
 
+void set_max_dmg(int dmg)
+{
+    LUA_set_block_max_damage(_current_cube_id, dmg);
+}
 
 int texture_alias(const char* spritesheet) 
 { 

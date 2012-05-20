@@ -44,9 +44,13 @@ void main(void)
 {                      
         //vec3 Normal = NormalArray[inColor[4]*255];
 
+        ///vec4 eyePos = gl_ModelViewMatrix * gl_Vertex;
+        //gl_FogFragCoord = abs(eyePos.z/eyePos.w);
+
         vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
         gl_Position = gl_ModelViewProjectionMatrix * vertex;
- 
+        gl_FogFragCoord = abs(gl_Position.z/gl_Position.w);
+        
         inColor = InRGB.rgb;
  
         texCoord = InTexCoord;

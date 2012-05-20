@@ -16,6 +16,7 @@ void hud_def(int hudy,int hudx, int sheet_id, int ypos, int xpos);
 int texture_alias(const char* spritesheet);
 void blit_block_item_sheet();
 
+void set_max_dmg(int dmg);
 
 /*
 --[[
@@ -72,11 +73,12 @@ void load_block_dat()
     cube_def(1, SolidBlock, "terminal_blue");
     iso_texture(t0,1,3);
     hud_def(1,2, t0,1,1);
+    set_max_dmg(5);
 
     cube_def(2, SolidBlock, "terminal_green");
     iso_texture(t0,1,4);
     hud_def(1,3, t0,1,2);
-
+    set_max_dmg(5);
 
     cube_def(3, SolidBlock, "battery");
     iso_texture(t0,2,3);
@@ -102,23 +104,27 @@ void load_block_dat()
     cube_def(16, SolidBlock, "methane_1");
     iso_texture(t1,2,2);
     hud_def(3,1, t1,2,2);
+    set_max_dmg(5);
 
     cube_def(17, SolidBlock, "methane_2");
     iso_texture(t1,3,2);
     hud_def(3,2, t1,3,2);
+    set_max_dmg(5);
 
     cube_def(18, SolidBlock, "methane_3");
     iso_texture(t1,4,3);
     hud_def(3,3, t1,4,3);
+    set_max_dmg(5);
 
     cube_def(19, SolidBlock, "methane_4");
     iso_texture(t1,5,3);
     hud_def(3,4, t1,5,3);
+    set_max_dmg(5);
 
     cube_def(20, SolidBlock, "methane_5");
     iso_texture(t1,4,1);
     hud_def(3,5, t1,4,1);
-
+    set_max_dmg(5);
 
     cube_def(54, SolidBlock, "regolith");
     iso_texture(t1,10,4);
