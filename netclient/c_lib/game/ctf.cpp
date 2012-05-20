@@ -1,13 +1,12 @@
 #include "ctf.hpp"
 
 #include <t_map/t_map.hpp>
-//#include <agent/player_agent.hpp>
-#include <state/client_state.hpp>
 #include <game/packets.hpp>
 #include <common/random.h>
 #include <options/options.hpp>
 
 #ifdef DC_CLIENT
+#include <state/client_state.hpp>
 #include <hud/map.hpp>
 #include <hud/compass.hpp>
 #endif

@@ -4,9 +4,6 @@
 #include <agent/agent_status.hpp>
 #include <agent/client/player_agent_action.hpp>
 
-//#include <inventory/inventory.hpp>
-#include <state/client_state.hpp>
-
 enum active_camera_states {
     net_agent = 0,
     client_side_prediction_interpolated,

@@ -1,16 +1,15 @@
 #include "player_agent.hpp"
 
+#if DC_CLIENT
+#include <state/client_state.hpp>
+#endif
 #include <agent/agent.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #include <sound/sound.hpp>
-
 #include <common/time/physics_timer.hpp>
-#include <state/client_state.hpp>
 #include <input/handlers.hpp>
-
 #include <chat/interface.hpp>
 #include <t_map/_interface.hpp>
-
 #include <agent/client/agent_sound_handler.hpp>
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {

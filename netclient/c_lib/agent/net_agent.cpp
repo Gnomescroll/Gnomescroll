@@ -1,8 +1,12 @@
 #include "net_agent.hpp"
 
 #include <agent/agent.hpp>
-#include <state/server_state.hpp>
+#if DC_CLIENT
 #include <state/client_state.hpp>
+#endif
+#if DC_SERVER
+#include <state/server_state.hpp>
+#endif
 #include <common/defines.h>
 
 #if DC_CLIENT

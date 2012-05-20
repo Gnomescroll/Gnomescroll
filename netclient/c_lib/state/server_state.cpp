@@ -1,5 +1,9 @@
 #include "server_state.hpp"
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <agent/agent.hpp>
 
 #include <game/ctf.hpp>

@@ -10,7 +10,9 @@
 #include <agent/net_agent.hpp>
 #include <state/packet_init.hpp>
 #include <options/options.hpp>
+#if DC_CLIENT
 #include <state/client_state.hpp>
+#endif
 
 const int DEFAULT_PORT = 4096;
 

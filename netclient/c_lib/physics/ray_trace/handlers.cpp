@@ -1,7 +1,11 @@
 #include "handlers.hpp"
 
+#if DC_CLIENT
 #include <state/client_state.hpp>
+#endif
+#if DC_SERVER
 #include <state/server_state.hpp>
+#endif
 #include <agent/agent.hpp>
 #include <entity/network/packets.hpp>
 

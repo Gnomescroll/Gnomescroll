@@ -1,5 +1,8 @@
 #pragma once
-#if DC_SERVER
+
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
 
 #include <agent/agent_list.hpp>
 #include <game/ctf.hpp>
@@ -42,5 +45,3 @@ namespace ServerState
 
     void spawn_monsters(ObjectType type, int n);
 }
-
-#endif
