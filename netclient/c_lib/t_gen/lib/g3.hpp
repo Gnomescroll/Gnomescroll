@@ -84,7 +84,7 @@ struct g3Vector
   gCoord x,y,z;
   g3Vector() {}
   //g3Vector(const g3D& V)                 : g3D(V)     {}
-  g3Vector(double x, double y, double z) : g3D(x,y,z) {}
+  g3Vector(double x, double y, double z) {x=X; y=Y; z=Z;}
   void Set(double X, double Y, double Z) {x=X; y=Y; z=Z;}
 
   //g3Vector(const double* DDD)            : g3D(DDD)   {}
