@@ -28,10 +28,15 @@ template<typename T> T Interpolate(const double& t, T a, T b) {return T(a+(b-a)*
 
 //_____________________________________________________________________________
 
-
+/*
 template<typename T> T    Clamped(T lo, T it, T hi) {return Min(Max(lo,it),hi);} // useful for acos, asin etc. clamp(-1,1); // (me<lo) ? lo : ((me>hi) ? hi : me);}
 template<typename T> T        Min(T  a, T  b)       {return a<b ? a : b;}
 template<typename T> T        Max(T  a, T  b)       {return a>b ? a : b;}
+*/
+
+double Clamped(double lo, double it, double hi) {return Min(Max(lo,it),hi);} // useful for acos, asin etc. clamp(-1,1); // (me<lo) ? lo : ((me>hi) ? hi : me);}
+double Min(double  a, double b) {return a<b ? a : b;}
+double Max(double a, double b) {return a>b ? a : b;}
 
 static int Floor(double x) 
 { 
