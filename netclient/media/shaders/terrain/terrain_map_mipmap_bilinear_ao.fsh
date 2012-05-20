@@ -49,19 +49,21 @@ void main()
 
     //color = inColor * color;
 
-    color = pow(color, vec3(1.0f / 2.2f) );
 
     if(fogFragDepth <= fog_start)
     {
+		color = pow(color, vec3(1.0f / 2.2f) );
         gl_FragColor.rgb = color;
     }
     else
     {
-        //gl_FragColor.rgb = fog_color;
         float fogFactor = (fogFragDepth - fog_start) / fog_depth;
 
         if(fogFactor >= 1.0) discard;
-        gl_FragColor.rgb = mix( color, fog_color, fogFactor);
+        
+        color = mix( color, fog_color, fogFactor);
+        color = pow(color, vec3(1.0f / 2.2f) );
+        gl_FragColor.rgb = color;
     }
 
     //gl_FragColor.rgb = fogFactor*vec3(1.0, 0.0, 0.0);
