@@ -7,6 +7,8 @@
 #include <SDL/texture_loader.hpp>
 #endif
 
+#include <t_gen/interface.hpp>
+
 namespace t_gen
 {
 
@@ -223,6 +225,9 @@ void test()
 
 void gen_map()
 {
+
+    dump_voronoi_to_disc();
+
 	//genrand_real2()
 	//genrand_int32());
     unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
@@ -303,7 +308,7 @@ void gen_map()
         noise_map_2d_char[512*j+i] = v;
     }
 
-
+/*
 
 #if DC_SERVER
 
@@ -319,7 +324,7 @@ void gen_map()
 	}
 
 #endif
-
+*/
 }
 
 }

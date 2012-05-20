@@ -44,26 +44,19 @@ double Vo(double x, double y, double z, int a, int b) {
 
     switch(b) {
         case 0:
-        B = Voronoi::Length;
-        break;
+        B = Voronoi::Length;break;
         case 1:
-        B = Voronoi::Length2;
-        break;
+        B = Voronoi::Length2;break;
         case 2:
-        B = Voronoi::Manhattan;
-        break;
+        B = Voronoi::Manhattan;break;
         case 3:
-        B = Voronoi::Chebychev;
-        break;
+        B = Voronoi::Chebychev;break;
         case 4:
-        B = Voronoi::Quadratic;
-        break;
+        B = Voronoi::Quadratic;break;
         case 5:
-        B = Voronoi::Minkowski4;
-        break;
+        B = Voronoi::Minkowski4;break;
         case 6:
-        B = Voronoi::Minkowski5;
-        break;
+        B = Voronoi::Minkowski5;break;
         default:
         printf("option %i not valid for b\n", b);
         B = Voronoi::Length;
@@ -72,5 +65,26 @@ double Vo(double x, double y, double z, int a, int b) {
     return Voronoi::Get(x,y,z, A,B);
 // VoronoiType {First, Second, Third, Fourth, Difference21, Difference32, Crackle};
     //enum DistanceMethod {Length, Length2, Manhattan, Chebychev, Quadratic, Minkowski4, Minkowski5};
+
+}
+
+
+void dump_voronoi_to_disc()
+{
+    const int xdim = 512;
+    const int ydim = 512;
+
+    float fm[xdim*ydim];
+
+    const double depth = 0;
+    for(int i=0; i< xdim; i++)
+    for(int j=0; j< ydim; j++)
+    {
+        double x = i;
+        double y = j;
+        fm[j*xdim * i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Length);
+    }
+
+    t_gen::save_png("screenshot/voronoi.png", fm, xdim, ydim);
 
 }
