@@ -40,13 +40,24 @@ varying vec3 texCoord;
  
 varying vec3 inColor;
 
+varying float fogFragDepth;
+
 void main(void) 
 {                      
         //vec3 Normal = NormalArray[inColor[4]*255];
 
+        ///vec4 eyePos = gl_ModelViewMatrix * gl_Vertex;
+        //gl_FogFragCoord = abs(eyePos.z/eyePos.w);
+
         vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
         gl_Position = gl_ModelViewProjectionMatrix * vertex;
- 
+
+        //vec4 eyePos = gl_ModelViewMatrix * vertex;
+        //fogFragDepth = abs(eyePos.z/eyePos.w);
+
+        //fogFragDepth = length(gl_Position.xyz);
+        fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
+
         inColor = InRGB.rgb;
  
         texCoord = InTexCoord;

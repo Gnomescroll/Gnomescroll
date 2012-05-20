@@ -75,7 +75,9 @@ void Vbo_map::prep_draw()
         if( col == NULL ) continue;
         //if( chunk_render_check( col->xpos, col->ypos) && xy_point_fulstrum_test(col->xpos, col->ypos) )
         //if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 11.4) )
-        if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 32.0) )
+        //if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 32.0) )
+        if( chunk_render_check( col->xpos, col->ypos) )
+
         // probably an error
 
         //xy_circle_fulstrum_test(col->xpos, col->ypos, 8.0)

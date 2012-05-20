@@ -2,6 +2,13 @@
     - prolong combat
     - allow players to remove self from danger
 
+Alchemy System:
+    - morrowind style
+    - each reagant has 1 to 3 attributes from level 1 to 3
+    - 1 to 3 reagants can be combined to produce a potion
+    - potion attribute is additive in reagents and increases if all potions have attribute
+    - potions stack if they have the same attributes
+
 !!! Environment
 
 Solid, transparent blocks (liquid methane).  Like water but solid.  Lakes cover surface.
