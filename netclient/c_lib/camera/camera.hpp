@@ -4,7 +4,7 @@
 #include <math.h>
 
 const int N_CAMERAS = 2;
-const float CAMERA_VIEW_DISTANCE = 128.0f;
+const float CAMERA_VIEW_DISTANCE = 128.0f + 16.0; // 16.0 for fog
 const float CAMERA_VIEW_DISTANCE_SQUARED = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 
 enum CAMERA_TYPES {

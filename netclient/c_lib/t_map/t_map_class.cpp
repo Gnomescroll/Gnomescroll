@@ -455,7 +455,7 @@ namespace t_map
                 if (h > highest) highest = h;
                 this->column_heights[x + y*MAP_WIDTH] = h;
             }
-
+            
         this->chunk_heights_changed[cx + cy*MAP_CHUNK_WIDTH] = true;
         this->height_changed = true;
 
