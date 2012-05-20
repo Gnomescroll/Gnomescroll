@@ -168,7 +168,7 @@ void init_pallete()
 
         float avg = ((r+g+b) / 3.0);
         avg /= 255.0;
-        
+
         _palletn[3*i+0] = (unsigned char) (r / avg);
         _palletn[3*i+1] = (unsigned char) (g / avg);
         _palletn[3*i+2] = (unsigned char) (b / avg);
@@ -185,13 +185,17 @@ static inline void _set_quad_color_default(struct Vertex* v_list, int offset, in
     _ce.g = _palletn[index+1];
     _ce.b = _palletn[index+2];
     _ce.a = 0;
-    
-    for(int i=0 ;i <4; i++)
-    {
-        v_list[offset+i].r = _ce.r;
-        v_list[offset+i].g = _ce.g;
-        v_list[offset+i].b = _ce.b;
-    }
+
+    for(int i=0 ;i <4; i++) v_list[offset+i].color = _ce.color;
+
+    /*
+        for(int i=0 ;i <4; i++)
+        {
+            v_list[offset+i].r = _ce.r;
+            v_list[offset+i].g = _ce.g;
+            v_list[offset+i].b = _ce.b;
+        }
+    */
 }
 
 static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
@@ -302,14 +306,14 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 
     switch( t_map::cube_list[tile_id].color_type )
     {
-        case 2:
-            _set_quad_color_default(v_list, offset, x, y, z, side);
-            break;
-        case 1:
+        case 0:
             _set_quad_color_flat(v_list, offset, x, y, z, side);
             break;
-        case 0:
+        case 1:
             _set_quad_color_perlin(v_list, offset, x, y, z, side);
+            break;
+        case 2:
+            _set_quad_color_default(v_list, offset, x, y, z, side);
             break;
         default:
             break;

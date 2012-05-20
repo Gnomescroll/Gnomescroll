@@ -153,6 +153,11 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
 #endif
 }
 
+void color_type(int color_type)
+{
+    LUA_set_block_color_type(_current_cube_id, color_type);
+}
+
 void hud_def(int hudy, int hudx, int tex_id)
 {
 #ifdef DC_CLIENT
