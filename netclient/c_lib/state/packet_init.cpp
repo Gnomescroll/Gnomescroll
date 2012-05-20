@@ -190,6 +190,8 @@ void RegisterMessages() {
     object_choose_target_StoC::register_client_packet();
     object_choose_destination_StoC::register_client_packet();
 
+    // damage
+    object_took_damage_StoC::register_client_packet();
 
     /* init phase */
 

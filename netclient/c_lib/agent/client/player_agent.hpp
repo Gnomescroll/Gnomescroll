@@ -101,9 +101,9 @@ class PlayerAgent_state {
 
         int facing_container();
 
+        void update_sound();
+
         PlayerAgent_state();
         ~PlayerAgent_state();
-
-        void update_sound();
 };
 

@@ -77,8 +77,7 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg)
 {
-    Particle::BillboardText* b = Particle::billboard_text_list->create(
-    );
+    Particle::BillboardText* b = Particle::billboard_text_list->create();
     if (b==NULL) return;
     b->set_state(
         a->s.x + (randf()*(a->box.box_r*2) - a->box.box_r),

@@ -335,3 +335,19 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
     inline void handle();
 };
 
+class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_took_damage_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint16_t damage;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&damage, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+

@@ -15,14 +15,8 @@ class HitPointsHealthComponent: public HealthComponent
         int health;
         int max_health;
 
-        void take_damage(int dmg)
-        {
-            if (this->health <= 0) return;
-            this->health -= dmg;
-            this->health = (this->health < 0) ? 0 : this->health; // floor at 0
-            if (this->health <= 0) this->died = true;
-        }
-
+        void take_damage(int dmg);
+        
         bool did_die()
         {
             bool ret = this->died;

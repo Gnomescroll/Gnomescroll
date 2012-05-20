@@ -564,6 +564,19 @@ Vec3 Voxel_model::get_center(int part)
     return this->get_part(part)->get_center();
 }
 
+float Voxel_model::get_radius()
+{
+    GS_ASSERT(this->n_parts > 0);
+    return this->get_part(0)->radius;
+}
+
+float Voxel_model::get_radius(int part)
+{
+    GS_ASSERT(part < this->n_parts);
+    GS_ASSERT(part >= 0);
+    return this->get_part(part)->radius;
+}
+
 Affine* Voxel_model::get_node(int node)
 {
     if (node < 0 || node >= this->n_skeleton_nodes)

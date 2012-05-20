@@ -12,6 +12,9 @@
 #include <entity/constants.hpp>
 #include <entity/objects.hpp>
 
+#include <particle/_interface.hpp>
+#include <particle/billboard_text.hpp>
+
 /* Construction */
 
 inline void object_create_StoC::handle()
@@ -371,6 +374,44 @@ inline void object_choose_destination_StoC::handle()
     if (weapon != NULL) weapon->locked_on_target = false;
 }
 
+inline void object_took_damage_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+
+    // get object position
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
+
+    // put position at top of object
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL) position.z += dims->get_height();
+
+    // get radial range to place damage particle within
+    float radius = 0.0f;
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    if (vox != NULL) radius = vox->get_radius();
+
+    // create billboard text at position
+    Particle::BillboardText* b = Particle::billboard_text_list->create();
+    if (b == NULL) return;
+    b->set_state(
+        position.x + (radius * (2*randf() - 1)),
+        position.y + (radius * (2*randf() - 1)),
+        position.z,
+        0.0f,0.0f, 6.0f
+    );
+    b->set_color(255,10,10, 255);   // red
+    char txt[10+1];
+    sprintf(txt, "%d", this->damage);
+    b->set_text(txt);
+    b->set_size(1.0f);
+    b->set_ttl(5);
+}
 #endif
 
 #if DC_SERVER
@@ -389,4 +430,5 @@ inline void object_shot_terrain_StoC::handle() {}
 inline void object_shot_nothing_StoC::handle() {}
 inline void object_choose_target_StoC::handle() {}
 inline void object_choose_destination_StoC::handle() {}
+inline void object_took_damage_StoC::handle() {}
 #endif
