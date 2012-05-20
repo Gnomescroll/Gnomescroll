@@ -27,6 +27,15 @@ FIXED
 fish see through terrain, or keep shooting through it
 FIXED
 
+agent_died assert
+FIXED
+
+20-10-5 player damage
+DONE
+
+reduce laser rifle durability
+DONE
+
 mining laser beam on player can lag camera -- this is because skeleton is used and out of sync
 solutions:
     force update the skeleton along with camera position
@@ -36,6 +45,3 @@ fix damage indicator terrain bleedthrough
 
 damage indicator on mobs
 
-agent_died assert
-
-20-10-5 player damage

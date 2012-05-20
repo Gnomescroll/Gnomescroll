@@ -411,7 +411,7 @@ void set_texture()
     bound_gl_font = font;
 }
 
-// call this once for all text
+// call this once for all hud text
 void start_font_draw()
 {
     // all fonts must have alpha
@@ -421,12 +421,33 @@ void start_font_draw()
     glEnable(GL_TEXTURE_2D);
 }
 
-// call this when done with all text
+// call this when done with all hud text
 void end_font_draw()
 {
     if (bound_gl_font != NULL) glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
+    bound_gl_font = NULL;
+}
+
+// call this once for all world space text
+void start_world_font_draw()
+{
+    // all fonts must have alpha
+    //glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+}
+
+// call this when done with all text
+void end_world_font_draw()
+{
+    if (bound_gl_font != NULL) glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+    //glDisable(GL_DEPTH_TEST);
     bound_gl_font = NULL;
 }
 

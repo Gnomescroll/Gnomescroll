@@ -78,6 +78,8 @@ extern Font* font;
 
 void start_font_draw();
 void end_font_draw();
+void start_world_font_draw();
+void end_world_font_draw();
 void set_texture();
 
 

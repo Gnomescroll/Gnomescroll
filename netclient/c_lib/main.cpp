@@ -28,7 +28,7 @@ namespace Main
 
 void time_since(int n)
 {
-    static int c_time = _GET_MS_TIME();;
+    static int c_time = _GET_MS_TIME();
 
     int t = _GET_MS_TIME();
 

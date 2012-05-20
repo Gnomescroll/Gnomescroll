@@ -213,7 +213,7 @@ void BillboardText_list::draw()
     if (HudFont::font == NULL) return;
 
     HudFont::reset_default();
-    HudFont::start_font_draw(); // gl calls
+    HudFont::start_world_font_draw(); // gl calls
     HudFont::set_texture();
     for(int i=0; i<n_max; i++)
     {
@@ -221,7 +221,7 @@ void BillboardText_list::draw()
         if (!a[i]->should_draw) continue;
         a[i]->draw();
     }
-    HudFont::end_font_draw();
+    HudFont::end_world_font_draw();
     #endif
 }
 
