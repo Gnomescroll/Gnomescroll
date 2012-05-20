@@ -28,6 +28,7 @@ void destroy_switch(Object* object);
 void destroy_switch(ObjectType type, int id);
 
 Object* get_object(ObjectType type, int id);
+int count(ObjectType type);
 bool full(ObjectType type);
 void send_to_client(ObjectType type, int client_id);
 

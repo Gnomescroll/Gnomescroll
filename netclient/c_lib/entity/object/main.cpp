@@ -336,6 +336,11 @@ Object* get_object(ObjectType type, int id)
     return object_list->get(type, id);
 }
 
+int count(ObjectType type)
+{
+    return object_list->count(type);
+}
+
 bool full(ObjectType type)
 {
     return object_list->full(type);

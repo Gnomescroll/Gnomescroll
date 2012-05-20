@@ -183,10 +183,11 @@ namespace ServerState
         ItemParticle::create_item_particle(type, x,y,z, 0,0,-3);
     }
 
-    // TODO -- move this test/convenince method
+    // TODO -- move this
     void spawn_monsters(ObjectType type, int n)
     {
-        for (int i=0; i<n; i++)
+        int count = Objects::count(type);
+        for (int i=0; i<n-count; i++)
         {
             Objects::Object* obj = Objects::create(type);
             if (obj == NULL) break;
@@ -198,6 +199,7 @@ namespace ServerState
 
             using Components::PhysicsComponent;
             PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            assert(physics != NULL);
             if (physics == NULL)
             {
                 Objects::ready(obj);    // sets id
@@ -212,11 +214,6 @@ namespace ServerState
     void start_game()
     {
         ctf->start();
-
-        // TESTING -- remove later
-        // creates mob spawners
-        spawn_monsters(OBJECT_MONSTER_BOMB, 100);
-        spawn_monsters(OBJECT_MONSTER_SPAWNER, 12);
     }
 
     void agent_disconnect(int agent_id)

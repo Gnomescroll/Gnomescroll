@@ -44,5 +44,9 @@ mining laser beam on player can lag camera -- this is because skeleton is used a
 FIXED
 
 damage indicator on mobs
+DONE
 
 monster spawners respawning?
+
+footstep sound function
+left foot, right foot, soft fall, hard fall

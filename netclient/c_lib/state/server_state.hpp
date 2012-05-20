@@ -3,11 +3,9 @@
 
 #include <agent/agent_list.hpp>
 #include <game/ctf.hpp>
-//#include <monsters/monsters.hpp>
 #include <voxel/voxel_hitscan.hpp>
 
 #include <particle/grenade.hpp>
-//#include <particle/cspray.hpp>
 
 namespace ServerState
 {
@@ -41,6 +39,8 @@ namespace ServerState
     char* agent_name(int id) GNOMESCROLL_API;
 
     void start_game() GNOMESCROLL_API;
+
+    void spawn_monsters(ObjectType type, int n);
 }
 
 #endif
