@@ -22,14 +22,19 @@ template<typename T> T Interpolate(const double& t, T a, T b) {return T(a+(b-a)*
 #define M_GOLD      1.6180339887498948482045868343656 // The Golden Ratio suitable for long double
 //_____________________________________________________________________________
 
+
+template<typename T> T    Clamped(T lo, T it, T hi) {return Min(Max(lo,it),hi);} // useful for acos, asin etc. clamp(-1,1); // (me<lo) ? lo : ((me>hi) ? hi : me);}
 template<typename T> T        Min(T  a, T  b)       {return a<b ? a : b;}
 template<typename T> T        Max(T  a, T  b)       {return a>b ? a : b;}
-template<typename T> T        Min(T  a, T  b, T  c) {return Min(Min(a,b),c);}
-template<typename T> T        Max(T  a, T  b, T  c) {return Max(Max(a,b),c);}
+//template<typename T> T        Min(T  a, T  b, T  c) {return Min(Min(a,b),c);}
+//template<typename T> T        Max(T  a, T  b, T  c) {return Max(Max(a,b),c);}
+#if 0
 template<typename T> T   Saturate(      T it      ) {return Min(Max(0.0,it),1.0);} // Convention from GPU shaders
 template<typename T> T    Clamped(T lo, T it, T hi) {return Min(Max(lo,it),hi);} // useful for acos, asin etc. clamp(-1,1); // (me<lo) ? lo : ((me>hi) ? hi : me);}
 template<typename T> bool Between(T lo, T it, T hi) {return (lo<=it)&&(it<=hi);} // Inclusive
 template<typename T> bool  Within(T lo, T it, T hi) {return (lo< it)&&(it< hi);} // Exclusive
+#endif 
+
 /*
 template<typename T> T  Floor(T a) This is defined at the bottom of this file.
 template<typename T> T  Round(T a) This is defined at the bottom of this file.

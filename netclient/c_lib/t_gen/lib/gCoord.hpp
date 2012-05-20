@@ -39,8 +39,9 @@ class gCoord
     return GlobalTolerance;
   }
 public:
+
   static int sgn(double d) {return d<=-gCoordTolerance ? -1 : (d>=gCoordTolerance);}
-#if 0
+
   static double GetTolerance() {return Tolerance();}
   struct NewTolerance 
   { // Use to temporarily alter the tolerance NOT THREAD SAFE
@@ -48,8 +49,7 @@ public:
     NewTolerance(double NewTolerance) : OldTolerance(gCoord::Tolerance()) {gCoord::Tolerance(NewTolerance);}
    ~NewTolerance() { gCoord::Tolerance(OldTolerance); }
   };
-#endif
-  
+
   double Coord; // <<<<<<<<<<<<<<<<<<< The value being controlled
   gCoord() {}
 
@@ -205,6 +205,8 @@ __inline bool   operator<=(double         d, const gCoord& c) {return c.Compare(
 __inline bool   operator>=(double         d, const gCoord& c) {return c.Compare(d)<=0;}
 __inline bool   operator< (double         d, const gCoord& c) {return c.Compare(d)> 0;}
 __inline bool   operator> (double         d, const gCoord& c) {return c.Compare(d)< 0;}
+
+/*
 __inline gCoord operator+ (short          i, const gCoord& c) {return i+c.Coord;}
 __inline gCoord operator- (short          i, const gCoord& c) {return i-c.Coord;}
 __inline gCoord operator* (short          i, const gCoord& c) {return i*c.Coord;}
@@ -265,4 +267,5 @@ __inline bool   operator<=(unsigned long  i, const gCoord& c) {return c.Compare(
 __inline bool   operator>=(unsigned long  i, const gCoord& c) {return c.Compare(i)<=0;}
 __inline bool   operator< (unsigned long  i, const gCoord& c) {return c.Compare(i)> 0;}
 __inline bool   operator> (unsigned long  i, const gCoord& c) {return c.Compare(i)< 0;}
+*/
 #endif
