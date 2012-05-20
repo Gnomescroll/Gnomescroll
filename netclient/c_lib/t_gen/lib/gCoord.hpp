@@ -1,16 +1,9 @@
-// gCoord.h
-
-#ifndef gCoordh
-#define gCoordh
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#include "./Global.h"
-#include "./Twister.h"
+#include "global.hpp"
+#include "twister.hpp"
 
-#include <string.h>
+//#include <string.h>
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>> gCoord <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 This is a Quantised double (for when you only need a known number of decimal places in comparisons - which is ALWAYS).
@@ -33,11 +26,13 @@ All the rest of the code is to make the class work as if it were derived from "d
 
 #define gCoordTolerance (gCoord::GetTolerance()) // <<<< This is the whole point of the gCoord struct.
 
-class gCoord { // A quantised double. Quantisation Tolerance is handled in the sgn function:
-#if _MSC_VER < 1310
+class gCoord 
+{ // A quantised double. Quantisation Tolerance is handled in the sgn function:
+
   public: // Older versions won't let NewTolerance access Tolerance() and you can't friend a sub-structure
-#endif
-  static double Tolerance(double NewTolerance=0) {
+
+  static double Tolerance(double NewTolerance=0) 
+  {
     static double GlobalTolerance=0.0001; // <<<< This is the whole point of the gCoord class. Smallest value would be DBL_EPSILON
     if(NewTolerance) GlobalTolerance=NewTolerance;
     return GlobalTolerance;
@@ -48,18 +43,12 @@ public:
   struct NewTolerance { // Use to temporarily alter the tolerance NOT THREAD SAFE
     double OldTolerance;
     NewTolerance(double NewTolerance) : OldTolerance(gCoord::Tolerance()) {gCoord::Tolerance(NewTolerance);}
-   ~NewTolerance() {try{gCoord::Tolerance(OldTolerance);}catch(...){}}
+   ~NewTolerance() { gCoord::Tolerance(OldTolerance); }
   };
-#ifdef _DEBUG
-  union {
-    double Coord; // <<<<<<<<<<<<<<<<<<< The value being controlled
-    long lCoord;
-  };
-  gCoord() : lCoord(0xBadF00D) {} // Debug initialises to Bad Food. Coord=-9.2559594354769001e+061 lCoord=0x0badf00d
-#else
+
   double Coord; // <<<<<<<<<<<<<<<<<<< The value being controlled
   gCoord() {}
-#endif
+
   gCoord(double d) : Coord(d) {}
   gCoord(double RandMin, double RandMax) : Coord(Twister::Get(RandMin,RandMax)) {} // Random Value
   gCoord& operator= (const gCoord&        c)       {                    Coord= c.Coord; return *this;}
@@ -272,154 +261,3 @@ __inline bool   operator<=(unsigned long  i, const gCoord& c) {return c.Compare(
 __inline bool   operator>=(unsigned long  i, const gCoord& c) {return c.Compare(i)<=0;}
 __inline bool   operator< (unsigned long  i, const gCoord& c) {return c.Compare(i)> 0;}
 __inline bool   operator> (unsigned long  i, const gCoord& c) {return c.Compare(i)< 0;}
-
-#ifdef Assert
-static struct gCoordTester : Tester {
-  gCoordTester() {
-    Assert(MinMax(0,1,2)==1);
-    Assert(MinMax(1,0,2)==1);
-    Assert(MinMax(0,2,1)==1);
-    gCoord a(0.00011);
-    Assert(a.Coord==0.00011); // double:double comparisons
-    Assert(a.Coord!=0.0001 );
-    Assert(a==0.00011); // gCoord:double Comparisons
-    Assert(a==0.0001 );
-    Assert(0.00011==a); // double:gCoord Comparisons
-    Assert(0.0001 ==a);
-    gCoord b(0.00012);
-    gCoord c(0.00022);
-    Assert(a==a); // gCoord:gCoord Comparisons
-    Assert(a==b);
-    Assert(b==a);
-    Assert(a!=c);
-    Assert(c!=a);
-    Assert(c-0.00011==a); // gCoord:double subtraction
-    Assert(0.00022-a==a); // double:gCoord subtraction
-    Assert(c-a==a);       // gCoord:gCoord subtraction
-    Assert(c-0.0001==a);  // gCoord:double subtraction ensure Tolerance works
-    Assert(0.0002-a==a);  // double:gCoord subtraction ensure Tolerance works
-    Assert(a.RawReport()==0.0001);
-    Assert((1-a)==0.9998); // 0.99989
-    Assert((1-a).RawReport()==0.9999);
-    // gCoord:double
-    a=2.00034; // Assignment
-    Assert(a.Coord==2.00034);
-    Assert((a+=1.).Coord==(2.00034+1.));
-    Assert((a-=1.).Coord==(2.00034));
-    Assert((a*=2.).Coord==(2.00034*2.));
-    Assert((a/=2.).Coord==(2.00034));
-    Assert((a+1.).Coord==(2.00034+1.));
-    Assert((a-1.).Coord==(2.00034-1.));
-    Assert((a*2.).Coord==(2.00034*2.));
-    Assert((a/2.).Coord==(2.00034/2.));
-    Assert( (a<=2.00034)); // <= and >= test the = bit:
-    Assert( (a>=2.00034));
-    Assert( (a<=2.00034+0.0001));
-    Assert(!(a<=2.00034-0.0001));
-    Assert( (a>=2.00034-0.0001));
-    Assert(!(a>=2.00034+0.0001));
-    Assert( (a< 2.00034+0.0001));
-    Assert(!(a< 2.00034-0.0001));
-    Assert( (a> 2.00034-0.0001));
-    Assert(!(a> 2.00034+0.0001));
-    // gCoord:int
-    a=200034; // Assignment
-    Assert(a.Coord==200034);
-    Assert((a+=1).Coord==(200034+1));
-    Assert((a-=1).Coord==(200034));
-    Assert((a*=2).Coord==(200034*2));
-    Assert((a/=2).Coord==(200034));
-    Assert((a+1).Coord==(200034+1));
-    Assert((a-1).Coord==(200034-1));
-    Assert((a*2).Coord==(200034*2));
-    Assert((a/2).Coord==(200034/2));
-    Assert( (a<=200034)); // <= and >= test the = bit:
-    Assert( (a>=200034));
-    Assert( (a<=200034+1));
-    Assert(!(a<=200034-1));
-    Assert( (a>=200034-1));
-    Assert(!(a>=200034+1));
-    Assert( (a< 200034+1));
-    Assert(!(a< 200034-1));
-    Assert( (a> 200034-1));
-    Assert(!(a> 200034+1));
-    // gCoord
-    a=2.00034; // Assignment
-    b=2.00034;
-    Assert(a.Coord==b);
-    Assert((a+=1.).Coord==(b+1.));
-    Assert((a-=1.).Coord==(b));
-    Assert((a*=2.).Coord==(b*2.));
-    Assert((a/=2.).Coord==(b));
-    Assert((a+1.).Coord==(b+1.));
-    Assert((a-1.).Coord==(b-1.));
-    Assert((a*2.).Coord==(b*2.));
-    Assert((a/2.).Coord==(b/2.));
-    Assert( (a<=b)); // <= and >= test the = bit:
-    Assert( (a>=b));
-    Assert( (a<=b+0.0001));
-    Assert(!(a<=b-0.0001));
-    Assert( (a>=b-0.0001));
-    Assert(!(a>=b+0.0001));
-    Assert( (a< b+0.0001));
-    Assert(!(a< b-0.0001));
-    Assert( (a> b-0.0001));
-    Assert(!(a> b+0.0001));
-    Assert(-a==-2.00034);
-    Assert(a==-(-a));
-    Assert(a);
-    b=0;
-    Assert(!b);
-    Assert(a.sgn()==1);
-    Assert(b.sgn()==0);
-    Assert((-a).sgn()==-1);
-    // double:gCoord
-    b=2.;
-    double d=a;
-    Assert(d==2.00034);
-    Assert((d+=a)==(2.00034*2.));
-    Assert((d-=a)==(2.00034));
-    Assert((d*=b)==(2.00034*2.));
-    Assert((d/=b)==(2.00034));
-    Assert((d+a)==(2.00034*2.));
-    Assert((d-a)==(0.));
-    Assert((d*b)==(2.00034*2.));
-    Assert((d/b)==(2.00034/2.));
-    Assert( (2.00034       <=a)); // <= and >= test the = bit:
-    Assert( (2.00034       >=a));
-    Assert( (2.00034+0.0001>=a));
-    Assert(!(2.00034-0.0001>=a));
-    Assert( (2.00034-0.0001<=a));
-    Assert(!(2.00034+0.0001<=a));
-    Assert( (2.00034+0.0001> a));
-    Assert(!(2.00034-0.0001> a));
-    Assert( (2.00034-0.0001< a));
-    Assert(!(2.00034+0.0001< a));
-    // double:gCoord
-    a=200034; // Assignment
-    b=2;
-    int i=a;
-    Assert(i==200034);
-    Assert((i+=a)==(200034*2));
-    Assert((i-=a)==(200034));
-    Assert((i*=b)==(200034*2));
-    Assert((i/=b)==(200034));
-    Assert((i+a)==(200034*2));
-    Assert((i-a)==(0));
-    Assert((i*b)==(200034*2));
-    Assert((i/b)==(200034/2));
-    Assert( (200034  <=a)); // <= and >= test the = bit:
-    Assert( (200034  >=a));
-    Assert( (200034+1>=a));
-    Assert(!(200034-1>=a));
-    Assert( (200034-1<=a));
-    Assert(!(200034+1<=a));
-    Assert( (200034+1> a));
-    Assert(!(200034-1> a));
-    Assert( (200034-1< a));
-    Assert(!(200034+1< a));
-  }
-} gCoordTester;
-#endif // def Assert
-
-#endif // ndef gCoordh

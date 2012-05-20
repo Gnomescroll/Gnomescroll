@@ -1,14 +1,7 @@
-// g3.h
-
-#ifndef g3h
-#define g3h
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#include "gCoord.h"
-#include <stdio.h>
+#include "gCoord.hpp"
+//#include <stdio.h>
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>> g3D <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Lots of 3D packages use simple double* parameters to pass the coordinates around.
@@ -189,40 +182,6 @@ Looking down the local horizontal axis to the origin, local Z-Axis is either ant
   }
 };
 
-#ifdef Assert
-static struct g3VectorTester : Tester {
-  g3VectorTester() {
-    OperatorTester();
-    NormaliseTester();
-  }
-  void OperatorTester() {
-    g3Vector v1(1,2,3);
-    g3Vector v2(1,2,4);
-    Assert(v1==v1);
-    Assert(v1<=v1);
-    Assert(v1>=v1);
-    Assert(v1==g3Vector(1,2,3));
-    Assert(v1!=v2);
-    Assert(v1< v2);
-    Assert(v1<=v2);
-    Assert(v2> v1);
-    Assert(v2>=v1);
-  }
-  void NormaliseTester() {
-    g3Vector v1(100, 2, 3);
-    v1.Normalise(0.0006); //Should just Normalise
-    Assert(v1.Report()=="(0.9994, 0.02, 0.03)");
-    v1.Normalise(0.0007); //Should normalise and Snap to X Axis
-    Assert(v1.Report()=="(1, 0, 0)");
-    v1.Set(-100, 2, 3);
-    v1.Normalise(0.0006); //Should just Normalise
-    Assert(v1.Report()=="(-0.9994, 0.02, 0.03)");
-    v1.Normalise(0.0007); //Should normalise and Snap to X Axis
-    Assert(v1.Report()=="(-1, 0, 0)");
-  }
-} g3VectorTester;
-#endif
-
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3Point <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 struct g3Point : public g3D { // 3D Point Vertex
@@ -261,7 +220,7 @@ struct g3Point : public g3D { // 3D Point Vertex
 };
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3Cr <<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+#if 0
 struct g3Cr { // Center and radius (Sphere)
   g3Point C;
   gCoord  r;
@@ -338,9 +297,10 @@ struct g3Cr { // Center and radius (Sphere)
   g3Point GetFurthestPoint(const g3Point& P) {return C+(C-GetClosestPoint(P));}
   //CString Report()                     const {return C.Report()+", "+r.Report();}
 };
-
+#endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3PV <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+#if 0
 struct g3PV { // Position Vector (or "Point and Vector"). May describe a Plane (P is the Origin, V is the Axis), or Cuboid (V is the diagonal extents).
   g3Point  P; // NormalisePlaneOrigin in the constructors, moves the provided point to the closest point on the plane to the global origin. This helps identify coincident planes.
   g3Vector V;
@@ -471,119 +431,11 @@ struct g3PV { // Position Vector (or "Point and Vector"). May describe a Plane (
   //CString Report() const {return P.Report()+V.Report();}
 };
 
-#ifdef Assert
-static struct g3PVTester : Tester {
-  g3PVTester() {
-    { //Scope:
-      g3PV Line1(1,2, 2, 4, 3, 2);
-      g3PV Line2(1,0,-3, 4,-6,-1);
-      Assert(Line1.ClosestDistance(Line2)==4);
-      g3PV Line3;
-      Assert(Line1.ClosestPoints(Line2,Line3)==3);
-      Assert(Line3.P==g3Point(-41./39,18./39,38./39));
-      Assert(Line3.V.GetLength()==4);
-      Assert(Line3.GetEnd()==g3Point(-5./39,66./39,-106./39));
-    }
-    { //Scope: IntersectPlane
-      g3PV  Line(1,1,1, 1,1,1);
-      g3PV Plane(0,0,0, 0,0,1);
-      g3Point Point;
-      Assert(Line.IntersectPlane(Plane, Point));
-      Assert(Point.IsOrigin());
-      Line.V.Set(-1,-1,-1);
-      Assert(Line.IntersectPlane(Plane, Point));
-      Assert(Point.IsOrigin());
-      Line.Set(3,0,4, 3,0,-4);
-      Assert(Line.IntersectPlane(Plane, Point));
-      Assert(Point==g3Point(6,0,0));
-      Line.Set(0,0,0, 3,0,-4);
-      Assert(Line.IntersectPlane(Plane, Point));
-      Assert(Point.IsOrigin());
-      Line.Set(1,2,0, 0,0,1);
-      Assert(Line.IntersectPlane(Plane, Point));
-      Assert(Point==g3Point(1,2,0));
-      Plane.Set(10,10,10, 1,1,1);
-      Line.Set(10,0,0, 0,0,1);
-      Assert(Line.IntersectPlane(Plane, Point));
-      Assert(Point==g3Point(10,0,20));
-    }
-    { //Scope:
-      g3PV Line1(2,1,1, 6,8,8);
-      g3PV Line2(1,8,8, 8,-6,-6);
-      Assert(Line1.ClosestDistance(Line2)==0);
-      Assert(Line1.IntersectLine(Line2));
-      g3PV Line3;
-      Assert(Line1.ClosestPoints(Line2,Line3)==2);
-      Assert(Line3.P==g3Point(5,5,5));
-      Assert(Line3.V.IsNull());
-    }
-    { //Scope:
-      g3PV Line1(0,0,10, 0,1,0);
-      g3PV Line2(0,0, 0, 1,0,0);
-      Assert( Line1.ClosestDistance(Line2)==10);
-      Assert(!Line1.IntersectLine(Line2));
-      g3PV Line3;
-      Assert(Line1.ClosestPoints(Line2,Line3)==3);
-      Assert(Line3.P==g3Point(0,0,10));
-      Assert(Line3.V.GetLength()==10);
-      Assert(Line3.GetEnd().IsOrigin());
-    }
-    { //Scope:
-      g3PV Line1(0,3,0, 1,1,-1);
-      g3PV Line2(5,8,2, 3,7,-1);
-      Assert(Line1.ClosestDistance(Line2)==sqrt(14.));
-      g3PV Line3;
-      Assert(Line1.ClosestPoints(Line2,Line3)==3);
-      Assert(Line3.P==g3Point(-1,2,1));
-      Assert(Line3.V.GetLength()==sqrt(14.));
-      Assert(Line3.GetEnd()==g3Point(2,1,3));
-    }
-    { //Scope:
-      g3PV Line(3,3,3, 2,2,2);
-      Assert( Line.PointToLine(g3Point(3,4,5))==g3Point(4,4,4));
-      Assert( Line.MinimumDistanceFromLineTo(g3Point(3,4,5))==sqrt(2.));
-      Assert( Line.HitLine(g3Point(3,3,3))==0);
-      Assert( Line.HitLine(g3Point(4,4,4))==0.5);
-      Assert( Line.HitLine(g3Point(5,5,5))==1);
-      Assert( Line.HitLine(g3Point(6,6,6))==-1);
-      Assert( Line.HitLine(g3Point(0,0,0))==-1);
-      Assert( Line.HitLine(g3Point(3,4,5))==-1);
-      Assert( Line.HitInfiniteLine(g3Point(3,3,3)));
-      Assert( Line.HitInfiniteLine(g3Point(4,4,4)));
-      Assert( Line.HitInfiniteLine(g3Point(5,5,5)));
-      Assert( Line.HitInfiniteLine(g3Point(6,6,6)));
-      Assert( Line.HitInfiniteLine(g3Point(0,0,0)));
-      Assert(!Line.HitInfiniteLine(g3Point(3,4,5)));
-      Assert( Line.IsNearestPointOnFiniteLine(g3Point(3,3,3)));
-      Assert( Line.IsNearestPointOnFiniteLine(g3Point(4,4,4)));
-      Assert( Line.IsNearestPointOnFiniteLine(g3Point(5,5,5)));
-      Assert(!Line.IsNearestPointOnFiniteLine(g3Point(6,6,6)));
-      Assert(!Line.IsNearestPointOnFiniteLine(g3Point(0,0,0)));
-      Assert( Line.IsNearestPointOnFiniteLine(g3Point(3,4,5)));
-      Assert( Line.IsOnBox(g3Point(3,3,3)));
-      Assert(!Line.IsOnBox(g3Point(4,4,4)));
-      Assert( Line.IsOnBox(g3Point(5,5,5)));
-      Assert(!Line.IsOnBox(g3Point(6,6,6)));
-      Assert(!Line.IsOnBox(g3Point(0,0,0)));
-      Assert( Line.IsOnBox(g3Point(3,4,5)));
-      Assert( Line.IsInBox(g3Point(3,3,3)));
-      Assert( Line.IsInBox(g3Point(4,4,4)));
-      Assert( Line.IsInBox(g3Point(5,5,5)));
-      Assert(!Line.IsInBox(g3Point(6,6,6)));
-      Assert(!Line.IsInBox(g3Point(0,0,0)));
-      Assert( Line.IsInBox(g3Point(3,4,5)));
-      Assert( Line.ParameterTo(g3Point(3,3,3))==0);
-      Assert( Line.ParameterTo(g3Point(4,4,4))==0.5);
-      Assert( Line.ParameterTo(g3Point(5,5,5))==1);
-      Assert( Line.ParameterTo(g3Point(6,6,6))== 1.5);
-      Assert( Line.ParameterTo(g3Point(0,0,0))==-1.5);
-      //Assert( Line.Parameter2(g3Point(3,4,5))==-1);
-    }
-  }
-} g3PVTester;
-#endif // def Assert
+#endif
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3PP <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#if 0
 
 struct g3PP {  // 2 3D Points
   g3Point S,E; // Start End
@@ -680,4 +532,4 @@ struct g3Box : public g3PP { // Start, End: Diagonally Opposite Corners
   }
 };
 
-#endif // ndef g3h
+#endif

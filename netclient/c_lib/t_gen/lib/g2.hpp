@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gCoord.h"
+#include "gCoord.hpp"
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g2D <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
