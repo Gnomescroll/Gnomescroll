@@ -36,12 +36,13 @@ DONE
 reduce laser rifle durability
 DONE
 
+fix damage indicator terrain bleedthrough
+DONE
+
 mining laser beam on player can lag camera -- this is because skeleton is used and out of sync
 solutions:
     force update the skeleton along with camera position
     use animation origin relative to camera instead of skeleton
-
-fix damage indicator terrain bleedthrough
 
 damage indicator on mobs
 

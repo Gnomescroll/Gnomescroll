@@ -86,8 +86,8 @@ class PlayerAgent_state {
 
         Vec3 get_weapon_fire_animation_origin()
         {
-            Vec3 origin = this->you->get_center();
-            origin.z += 0.4f;
+            Vec3 origin = this->camera_position();
+            origin.z -= 0.4f;
             return origin;
         }
 
