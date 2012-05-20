@@ -9,7 +9,7 @@
 
 #include "t_properties.hpp"
 
-
+#include <t_gen/interface.hpp>
 
 namespace t_map
 {
@@ -249,6 +249,7 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
 
     struct ColorElement ce;
     ce.color = 0;
+    ce.b = voronoi_char(x,y,z);
     return ce;
 }
 

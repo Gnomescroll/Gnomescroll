@@ -1,6 +1,8 @@
 
 #include "interface.hpp"
 
+#include <t_gen/lib/voronoi.hpp>
+
 double Vo(double x, double y, double z, int a, int b) {
 
     //BYTE B=BYTE(Round(255*Clamped(0.0, Voronoi::Get(x/10.0,y/10.0, 0.5, Voronoi::Difference21, Voronoi::Quadratic), 1.0))); // Turn the parameter into a Greyscale Level.
@@ -92,14 +94,16 @@ void dump_voronoi_to_disc()
 }
 
 
+
 unsigned char voronoi_char(double x, double y, double z)
 {
-    const double scale = 1.0/32.0;
+    const double scale = 1.0/8.0;
 
     double tmp = Voronoi::Get(x*scale,y*scale,x*scale, Voronoi::First, Voronoi::Length);
 
     if(tmp <= 0.0) return 0;
     if(tmp >= 1.0) return 255;
 
+    //printf("out= %i \n", (int)(255*tmp) );
     return (unsigned char) (255*tmp);
 }
