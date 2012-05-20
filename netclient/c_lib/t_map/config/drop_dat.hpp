@@ -18,6 +18,9 @@ void load_map_drop_dat()
     add_drop("food_rock-0", 2.0, 0.5, 8);
 
     end_drop_dat();
+    #if DC_CLIENT
+    save_drop_dat_to_file();
+    #endif
 }
 
 

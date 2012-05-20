@@ -313,18 +313,26 @@ int init_video() {
     } else {
         printf("ARB_MULTISAMPLE not supported \n");
     }
-
+/*
     if(GLEW_EXT_provoking_vertex) 
     {
         //glProvokingVertexEXT(GL_FIRST_VERTEX_CONVENTION_EXT);
     } else {
         printf("warning: ProvokingVertex extention not supported \n");
-
     }
+*/
     if(GLEW_EXT_timer_query) {
-        //printf("GL_EXT_timer_query supported\n");
+        if(PRODUCTION) printf("GL_EXT_timer_query supported\n");
     } else {
         printf("GL_EXT_timer_query not supported\n");
+    }
+
+    if( GLEW_EXT_texture_array )
+    {
+        if(PRODUCTION) printf("GL_EXT_texture_array supported\n");
+    } else 
+    {
+        printf("GL_EXT_texture_array not supported\n"); 
     }
 
     //printf("SDL: %s\n", SDL_GetError());
