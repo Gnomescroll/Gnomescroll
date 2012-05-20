@@ -3,9 +3,8 @@
 #include "interface.hpp"
 //#include "Simplex.h"
 
-#include <stdio.h>
-
-#include <math.h>
+//#include <stdio.h>
+//#include <math.h>
 
 Simplex s;
 

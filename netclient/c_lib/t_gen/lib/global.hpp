@@ -1,11 +1,4 @@
-// Global.h
-
-#ifndef Globalh
-#define Globalh
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 /* This file provides the most fundamental and generic constants and templates for the graphics primitives.
 The things in here are used a lot: it's a tiny file, so it's worth remembering what's here.
@@ -121,5 +114,3 @@ static void sincos(double Radians, double* Sine, double* Cosine) {
   */
 #pragma warning (default: 4725)
 //_____________________________________________________________________________
-
-#endif // ndef Globalh

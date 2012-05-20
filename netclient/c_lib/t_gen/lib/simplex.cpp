@@ -36,9 +36,10 @@ This code was used to find the range-correction values (the return value equatio
 */
 
 //#include "stdafx.h"
-#include "Simplex.h"
-#include <math.h>
-#include <float.h>
+#include "simplex.h"
+
+//#include <math.h>
+//#include <float.h>
 
 // Permutation table. This is just a random jumble of all numbers 0-255,
 // repeated twice to avoid wrapping the index at 255 for each lookup.

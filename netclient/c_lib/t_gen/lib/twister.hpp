@@ -2,9 +2,6 @@
 
 #pragma once
 
-#ifndef Twisterh
-#define Twisterh
-
 typedef unsigned int DWORD ;
 // Mersenne Twister MT19937 with some subtle changes.
 
@@ -24,4 +21,4 @@ private:
   static inline void SetState(int i, int j, int k);
 };
 
-#endif // def Twisterh
+

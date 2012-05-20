@@ -1,11 +1,4 @@
-// g2.h
-
-#ifndef g2h
-#define g2h // Used in gPlane.cpp
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "gCoord.h"
 
@@ -509,6 +502,3 @@ static struct g2ArcTester : Tester {
   }
 } g2ArcTester;
 #endif // def Assert
-
-#endif // ndef g2h
-

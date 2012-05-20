@@ -3,8 +3,8 @@
 #pragma once
 
 //#include "stdafx.h"
-#include "Voronoi.h"
-#include "./Cpp/g3.h"
+#include "voronoi.hpp"
+#include "g3.hpp"
 
 typedef unsigned char BYTE;
 
