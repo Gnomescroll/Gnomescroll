@@ -13,16 +13,22 @@ this works because none of the primitives have Virtual Functions. */
 struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
   gCoord x,y,z;
   g3D() {}
-  g3D(double RandMin, double RandMax) : x(RandMin,RandMax), y(RandMin,RandMax), z(RandMin,RandMax) {} // Random Values
+  //g3D(double RandMin, double RandMax) : x(RandMin,RandMax), y(RandMin,RandMax), z(RandMin,RandMax) {} // Random Values
   g3D(double x, double y, double z) : x(x), y(y), z(z) {}
-  g3D(const double* DDD)                 {Set(DDD);}
+  //g3D(const double* DDD)                 {Set(DDD);}
+
+  //void Set(const double* DDD)            {x=*DDD++; y=*DDD++; z=*DDD;}
   void Set(double X, double Y, double Z) {x=X; y=Y; z=Z;}
-  void Set(const double* DDD)            {x=*DDD++; y=*DDD++; z=*DDD;}
+#if 0
+
   void Set(const g3D& DDD)               {x=DDD.x; y=DDD.y; z=DDD.z;}
   bool IsZero()                    const {return !x && !y && !z;}
   void ToArray(double* DDD)        const {*DDD++=x; *DDD++=y; *DDD=z;}
   void ToFloatArray(float* FFF)    const {*FFF++=static_cast<float>(x.Coord); *FFF++=static_cast<float>(y.Coord); *FFF=static_cast<float>(z.Coord);}
-  g3D& operator =(const g3D& DDD)        {Set(DDD);                       return *this;}
+#endif
+
+
+  //g3D& operator =(const g3D& DDD)        {Set(DDD);                       return *this;}
   g3D& operator+=(const g3D& DDD)        {  x+=DDD.x; y+=DDD.y; z+=DDD.z; return *this;}
   g3D& operator-=(const g3D& DDD)        {  x-=DDD.x; y-=DDD.y; z-=DDD.z; return *this;}
   g3D& operator*=(double d)              {              x*=d; y*=d; z*=d; return *this;}
@@ -35,12 +41,16 @@ struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
 
   operator double*()                     {return &x.Coord;}
   operator const double*()         const {return &x.Coord;}
+#if 0
   bool operator==(const g3D& DDD)  const {return Compare(DDD)==0;}
   bool operator!=(const g3D& DDD)  const {return Compare(DDD)!=0;}
   bool operator<=(const g3D& DDD)  const {return Compare(DDD)<=0;}
   bool operator>=(const g3D& DDD)  const {return Compare(DDD)>=0;}
   bool operator< (const g3D& DDD)  const {return Compare(DDD)< 0;}
   bool operator> (const g3D& DDD)  const {return Compare(DDD)> 0;}
+#endif
+
+#if 0
   bool SameX     (const g3D& DDD)  const {return DDD.x==x;}
   bool SameY     (const g3D& DDD)  const {return DDD.y==y;}
   bool SameZ     (const g3D& DDD)  const {return DDD.z==z;}
@@ -49,6 +59,7 @@ struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
         Result=y.Compare(DDD.y); if(Result) return Result;
     return     x.Compare(DDD.x);
   }
+#endif
   //CString Report() const {CString S; S.Format("(%g, %g, %g)",x.RawReport(),y.RawReport(),z.RawReport()); return S;}
 };
 
