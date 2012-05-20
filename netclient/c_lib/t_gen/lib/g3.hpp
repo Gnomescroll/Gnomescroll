@@ -8,6 +8,8 @@ Lots of 3D packages use simple double* parameters to pass the coordinates around
 When you need to copy to a double* from a g3D or derived class you can use the following shortcut:
   void Myfunction(g3Point in, double* out) {*((g3D*)out)=in;}
 this works because none of the primitives have Virtual Functions. */
+
+#if 1
 struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
   gCoord x,y,z;
   g3D() {}
@@ -56,8 +58,11 @@ inline g3D operator* (gCoord c, const g3D& DDD) {return g3D(DDD.x*c, DDD.y*c, DD
 inline g3D operator* (double d, const g3D& DDD) {return g3D(DDD.x*d, DDD.y*d, DDD.z*d);}
 inline g3D operator* (int    i, const g3D& DDD) {return g3D(DDD.x*i, DDD.y*i, DDD.z*i);}
 
+#endif
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3Vector <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+#if 1
 struct g3Vector : public g3D { // 3D Vector
   g3Vector() {}
   g3Vector(const g3D& V)                 : g3D(V)     {}
@@ -181,9 +186,10 @@ Looking down the local horizontal axis to the origin, local Z-Axis is either ant
     } }
   }
 };
-
+#endif 
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3Point <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+#if 0
 struct g3Point : public g3D { // 3D Point Vertex
   g3Point() {}
   g3Point(const g3D& P)                 : g3D(P)     {}
@@ -218,6 +224,7 @@ struct g3Point : public g3D { // 3D Point Vertex
   gCoord GetPhi   () const {return acos(z/GetRadius());}
   gCoord DistanceTo(const g3Point& E) const {return (E-*this).GetLength();} // For signed Distances use g3PV::GetDisplacement();
 };
+#endif
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3Cr <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #if 0
