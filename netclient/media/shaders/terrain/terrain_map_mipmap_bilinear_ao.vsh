@@ -63,7 +63,6 @@ void main(void)
         texCoord = InTexCoord;
 
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
- 
 }
 
 //texCoord = vec3(InTexCoord[0], InTexCoord[1], 0.0);
