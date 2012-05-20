@@ -9,7 +9,7 @@ When you need to copy to a double* from a g3D or derived class you can use the f
   void Myfunction(g3Point in, double* out) {*((g3D*)out)=in;}
 this works because none of the primitives have Virtual Functions. */
 
-#if 1
+#if 0
 struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
   gCoord x,y,z;
   g3D() {}
@@ -84,7 +84,7 @@ struct g3Vector
   gCoord x,y,z;
   g3Vector() {}
   //g3Vector(const g3D& V)                 : g3D(V)     {}
-  g3Vector(double x, double y, double z) {x=X; y=Y; z=Z;}
+  g3Vector(double X, double Y, double Z) {x=X; y=Y; z=Z;}
   void Set(double X, double Y, double Z) {x=X; y=Y; z=Z;}
 
   //g3Vector(const double* DDD)            : g3D(DDD)   {}

@@ -24,7 +24,7 @@ To make sure that the normal, untoleranced <kbd><span class="KeyWord">double</sp
 All the rest of the code is to make the class work as if it were derived from "double" as a class.
 */
 
-#if 1
+#if 2
 #define gCoordTolerance (gCoord::GetTolerance()) // <<<< This is the whole point of the gCoord struct.
 
 class gCoord 
@@ -32,13 +32,13 @@ class gCoord
 
   public: // Older versions won't let NewTolerance access Tolerance() and you can't friend a sub-structure
 
+#if 0
   static double Tolerance(double NewTolerance=0) 
   {
     static double GlobalTolerance=0.0001; // <<<< This is the whole point of the gCoord class. Smallest value would be DBL_EPSILON
     if(NewTolerance) GlobalTolerance=NewTolerance;
     return GlobalTolerance;
   }
-public:
 
   static int sgn(double d) {return d<=-gCoordTolerance ? -1 : (d>=gCoordTolerance);}
 
@@ -49,10 +49,14 @@ public:
     NewTolerance(double NewTolerance) : OldTolerance(gCoord::Tolerance()) {gCoord::Tolerance(NewTolerance);}
    ~NewTolerance() { gCoord::Tolerance(OldTolerance); }
   };
+#endif
 
   double Coord; // <<<<<<<<<<<<<<<<<<< The value being controlled
   gCoord() {}
 
+  gCoord  abs()                              const {return fabs(Coord)     ;}
+
+#if 0
   gCoord(double d) : Coord(d) {}
   gCoord(double RandMin, double RandMax) : Coord(Twister::Get(RandMin,RandMax)) {} // Random Value
   gCoord& operator= (const gCoord&        c)       {                    Coord= c.Coord; return *this;}
@@ -85,6 +89,9 @@ public:
   bool    operator>=(const double         d) const {              return Compare(d)>=0;}
   bool    operator< (const double         d) const {              return Compare(d)< 0;}
   bool    operator> (const double         d) const {              return Compare(d)> 0;}
+#endif 
+
+  /*
   gCoord& operator= (const short          i)       {              Coord= i; return *this;}
   gCoord& operator+=(const short          i)       {              Coord+=i; return *this;}
   gCoord& operator-=(const short          i)       {              Coord-=i; return *this;}
@@ -175,6 +182,9 @@ public:
   bool    operator>=(unsigned const long  i) const {              return Compare(i)>=0;}
   bool    operator< (unsigned const long  i) const {              return Compare(i)< 0;}
   bool    operator> (unsigned const long  i) const {              return Compare(i)> 0;}
+  */
+
+#if 0
   gCoord  operator-      ()                  const {return -Coord;}
   bool    operator!      ()                  const {return Compare(0)==0;}
           operator   bool()                  const {return Compare(0)!=0;}
@@ -182,15 +192,15 @@ public:
           operator double()                  const {return Coord           ;}
   int     Compare(double d)                  const {return sgn(Coord-d)    ;}
   int     sgn()                              const {return sgn(Coord)      ;}
-  gCoord  abs()                              const {return fabs(Coord)     ;}
   //double  RawReport()                        const {gCoord c(gCoordTolerance*(Coord<0 ? ceil(-0.5+Coord/gCoordTolerance) : floor(0.5+Coord/gCoordTolerance))); return c.abs() ? c : 0;} // Rounds to gCoordTolerance and forces return of 0 to stop small returns like: 1e-14
   ///CString Report()                           const {CString S; S.Format("%g",RawReport()); return S;}
   gCoord Clamped(double lo, double hi)       const {return ::Clamped(lo,Coord,hi);} // Useful for acos, asin etc. Clamp(-1,1);
   void   Clamp  (double lo, double hi)             {Coord=Clamped(lo,hi);} // Useful for acos, asin etc. Clamp(-1,1);
   bool   Between(double lo, double hi)       const {return (lo<=Coord)&&(Coord<=hi);} // Inclusive
   bool   Within (double lo, double hi)       const {return (lo< Coord)&&(Coord< hi);} // Exclusive
+#endif
 };
-
+#if 0
 __inline gCoord operator+ (double         d, const gCoord& c) {return d+c.Coord;}
 __inline gCoord operator- (double         d, const gCoord& c) {return d-c.Coord;}
 __inline gCoord operator* (double         d, const gCoord& c) {return d*c.Coord;}
@@ -205,6 +215,7 @@ __inline bool   operator<=(double         d, const gCoord& c) {return c.Compare(
 __inline bool   operator>=(double         d, const gCoord& c) {return c.Compare(d)<=0;}
 __inline bool   operator< (double         d, const gCoord& c) {return c.Compare(d)> 0;}
 __inline bool   operator> (double         d, const gCoord& c) {return c.Compare(d)< 0;}
+#endif
 
 /*
 __inline gCoord operator+ (short          i, const gCoord& c) {return i+c.Coord;}
