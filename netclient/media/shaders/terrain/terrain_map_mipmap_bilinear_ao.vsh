@@ -18,6 +18,19 @@ attribute vec3 InRGB;
 
 attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
 
+
+#ifdef GL_EXT_gpu_shader4
+    flat attribute vec3 InCE1;
+    flat attribute vec3 InCE2;
+    flat attribute vec3 InCE3;
+    flat attribute vec3 InCE4;
+#else
+    attribute vec3 InCE1;
+    attribute vec3 InCE2;
+    attribute vec3 InCE3;
+    attribute vec3 InCE4;
+#endif
+
 /*
 Uniform
 */

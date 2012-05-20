@@ -107,6 +107,8 @@ namespace t_map
             unsigned char ao[4]; 
             unsigned int AO;
         };
+
+        struct ColorElement ce[4];
     };
     
 }

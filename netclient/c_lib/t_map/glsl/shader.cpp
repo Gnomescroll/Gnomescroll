@@ -112,6 +112,11 @@ namespace t_map
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
         
+        map_CE1 = glGetAttribLocation(map_shader[index], "InCE1");
+        map_CE2 = glGetAttribLocation(map_shader[index], "InCE2");
+        map_CE3 = glGetAttribLocation(map_shader[index], "InCE3");
+        map_CE4 = glGetAttribLocation(map_shader[index], "InCE4");
+
         //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
 
         free(vs);
@@ -323,6 +328,10 @@ namespace t_map
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
         
+        map_CE1 = glGetAttribLocation(map_shader[index], "InCE1");
+        map_CE2 = glGetAttribLocation(map_shader[index], "InCE2");
+        map_CE3 = glGetAttribLocation(map_shader[index], "InCE3");
+        map_CE4 = glGetAttribLocation(map_shader[index], "InCE4");
         //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
 
         free(vs);
