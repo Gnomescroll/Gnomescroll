@@ -14,6 +14,7 @@
 
 #include <particle/_interface.hpp>
 #include <particle/billboard_text.hpp>
+#include <particle/constants.hpp>
 
 /* Construction */
 
@@ -25,10 +26,7 @@ inline void object_create_StoC::handle()
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x,y,z));
-    }
+    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
     Objects::ready(obj);
 }
 
@@ -403,9 +401,9 @@ inline void object_took_damage_StoC::handle()
         position.x + (radius * (2*randf() - 1)),
         position.y + (radius * (2*randf() - 1)),
         position.z,
-        0.0f,0.0f, 6.0f
+        0.0f,0.0f, BB_PARTICLE_DMG_VELOCITY_Z
     );
-    b->set_color(255,10,10, 255);   // red
+    b->set_color(BB_PARTICLE_DMG_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", this->damage);
     b->set_text(txt);

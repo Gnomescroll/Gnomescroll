@@ -7,7 +7,8 @@
 #include <chat/client.hpp>
 #include <hud/map.hpp>
 
-#include <particle/_include.hpp>
+#include <particle/_interface.hpp>
+#include <particle/constants.hpp>
 
 #include <animations/_interface.hpp>
 #include <animations/animations.hpp>
@@ -83,9 +84,9 @@ void Agent_event::took_damage(int dmg)
         a->s.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.y + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.z + a->current_height(),
-        0.0f,0.0f, 8.0f
+        0.0f,0.0f, BB_PARTICLE_DMG_VELOCITY_Z
     );
-    b->set_color(255,10,10, 255);   // red
+    b->set_color(BB_PARTICLE_DMG_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", dmg);
     b->set_text(txt);

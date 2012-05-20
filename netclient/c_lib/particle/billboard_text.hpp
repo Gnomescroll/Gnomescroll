@@ -26,6 +26,7 @@ class BillboardText: public ParticleMotion
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
+        void set_color(struct Color color);
         void set_gravity(bool grav);
         void set_text(char* t);
         void set_draw(bool draw);

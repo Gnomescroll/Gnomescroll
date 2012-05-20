@@ -81,6 +81,14 @@ void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b,
     this->b = b;
     this->a = a;
 }
+
+void BillboardText::set_color(struct Color color)
+{
+    this->r = color.r;
+    this->g = color.g;
+    this->b = color.b;
+}
+
 void BillboardText::set_size(float size)
 {
     this->size = size;

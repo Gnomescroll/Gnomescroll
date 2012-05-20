@@ -4,8 +4,9 @@
 
 /* objects */
 
-#include <particle/particles.cpp>
+#include <particle/constants.hpp>
 
+#include <particle/particles.cpp>
 #include <particle/grenade.cpp>
 
 #if DC_CLIENT
