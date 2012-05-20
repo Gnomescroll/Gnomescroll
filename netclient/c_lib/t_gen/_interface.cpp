@@ -226,7 +226,7 @@ void test()
 void gen_map()
 {
 
-    dump_voronoi_to_disc();
+    //dump_voronoi_to_disc();
 
 	//genrand_real2()
 	//genrand_int32());

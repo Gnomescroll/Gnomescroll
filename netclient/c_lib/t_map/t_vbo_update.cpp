@@ -226,8 +226,8 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
     //4th element is side+vertex index
     index[0] = 3*(hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num) ;
     index[1] = 3*(hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num) ;
-    index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num) ;
-    index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num) ;
+    index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) ) % _pallet_num) ;
+    index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) ) % _pallet_num) ;
 
     for(int i=0 ;i <4; i++)
     {
@@ -237,6 +237,62 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
     }
 
 }
+
+static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index) __attribute((always_inline));
+
+static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index)
+{
+    x += _vi2[index+0];
+    y += _vi2[index+1];
+    z += _vi2[index+2];
+
+
+    struct ColorElement ce;
+    ce.color = 0;
+    return ce;
+}
+
+static inline void _set_quad_color_voronoi(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+{
+
+    struct ColorElement _ce[4];
+
+    _ce[0] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
+    _ce[1] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
+    _ce[2] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
+    _ce[3] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
+/*
+    _ce.r = 0;
+    _ce.g = 0;
+    _ce.b = 255;
+    _ce.a = 0;
+*/
+    for(int i=0 ;i <4; i++)
+    {
+        v_list[offset+i].ce[0] = _ce[0];
+        v_list[offset+i].ce[1] = _ce[1];
+        v_list[offset+i].ce[2] = _ce[2];
+        v_list[offset+i].ce[3] = _ce[3];
+    }
+
+#if 0
+    int index[4];
+    //4th element is side+vertex index
+    index[0] = 3*(hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num) ;
+    index[1] = 3*(hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num) ;
+    index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num) ;
+    index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num) ;
+
+    for(int i=0 ;i <4; i++)
+    {
+        v_list[offset+i].r = _palletn[index[i]+0];
+        v_list[offset+i].g = _palletn[index[i]+1];
+        v_list[offset+i].b = _palletn[index[i]+2];
+    }
+#endif
+
+}
+
 
 static const unsigned char _0 = 0;
 static const unsigned char _1 = 1;
@@ -307,13 +363,16 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
     switch( t_map::cube_list[tile_id].color_type )
     {
         case 0:
-            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            _set_quad_color_default(v_list, offset, x, y, z, side);
             break;
         case 1:
-            _set_quad_color_perlin(v_list, offset, x, y, z, side);
+            _set_quad_color_voronoi(v_list, offset, x, y, z, side);
             break;
         case 2:
-            _set_quad_color_default(v_list, offset, x, y, z, side);
+            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            break;
+        case 3:
+            _set_quad_color_perlin(v_list, offset, x, y, z, side);
             break;
         default:
             break;
@@ -399,6 +458,9 @@ static inline void add_quad_comptability(struct Vertex* v_list, int offset, int 
             _set_quad_color_flat(v_list, offset, x, y, z, side);
             break;
         case 2:
+            _set_quad_color_voronoi(v_list, offset, x, y, z, side);
+            break;
+        case 3:
             _set_quad_color_perlin(v_list, offset, x, y, z, side);
             break;
         default:

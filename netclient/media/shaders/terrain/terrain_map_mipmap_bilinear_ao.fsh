@@ -15,16 +15,16 @@ varying vec3 texCoord;
 #endif
 
 
-# ifdef GL_EXT_gpu_shader4
-    flat attribute vec3 InCE1;
-    flat attribute vec3 InCE2;
-    flat attribute vec3 InCE3;
-    flat attribute vec3 InCE4;
+#ifdef GL_EXT_gpu_shader4
+    flat varying vec3 CE1;
+    flat varying vec3 CE2;
+    flat varying vec3 CE3;
+    flat varying vec3 CE4;
 #else
-    attribute vec3 InCE1;
-    attribute vec3 InCE2;
-    attribute vec3 InCE3;
-    attribute vec3 InCE4;
+    varying vec3 CE1;
+    varying vec3 CE2;
+    varying vec3 CE3;
+    varying vec3 CE4;
 #endif
 
 
@@ -71,7 +71,6 @@ void main()
     if(fogFragDepth <= fog_start)
     {
 		color = pow(color, vec3(1.0f / 2.2f) );
-        color = InCE1;
         gl_FragColor.rgb = color;
     }
     else

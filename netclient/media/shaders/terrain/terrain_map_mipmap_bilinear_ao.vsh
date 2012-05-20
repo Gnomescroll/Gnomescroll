@@ -18,18 +18,11 @@ attribute vec3 InRGB;
 
 attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
 
+attribute vec3 InCE1;
+attribute vec3 InCE2;
+attribute vec3 InCE3;
+attribute vec3 InCE4;
 
-#ifdef GL_EXT_gpu_shader4
-    flat attribute vec3 InCE1;
-    flat attribute vec3 InCE2;
-    flat attribute vec3 InCE3;
-    flat attribute vec3 InCE4;
-#else
-    attribute vec3 InCE1;
-    attribute vec3 InCE2;
-    attribute vec3 InCE3;
-    attribute vec3 InCE4;
-#endif
 
 /*
 Uniform
@@ -48,6 +41,19 @@ varying vec3 texCoord;
 #else
     varying mat2 lightMatrix;
 #endif
+
+#ifdef GL_EXT_gpu_shader4
+    flat varying vec3 CE1;
+    flat varying vec3 CE2;
+    flat varying vec3 CE3;
+    flat varying vec3 CE4;
+#else
+    varying vec3 CE1;
+    varying vec3 CE2;
+    varying vec3 CE3;
+    varying vec3 CE4;
+#endif
+
 
 //flat varying mat2 lightMatrix;
  
@@ -76,6 +82,11 @@ void main(void)
         texCoord = InTexCoord;
 
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
+
+        CE1 = InCE1;
+        CE2 = InCE2;
+        CE3 = InCE3;
+        CE4 = InCE4;
 }
 
 //texCoord = vec3(InTexCoord[0], InTexCoord[1], 0.0);
