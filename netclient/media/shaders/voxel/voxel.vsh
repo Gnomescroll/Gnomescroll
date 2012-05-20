@@ -18,11 +18,17 @@ const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));
     //return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 //}
 
+//varying float fogFragDepth;
+
 void main(void) 
 {
     gl_FrontColor = gl_Color;
-    vec3 pos = (InRotationMatrix*gl_Vertex.xyz) + InTranslation;
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(pos.x, pos.y, pos.z, 1);
+    vec4 pos = vec4(0.0, 0.0, 0.0, 1.0);
+    pos.xyz = (InRotationMatrix*gl_Vertex.xyz) + InTranslation;
+    gl_Position = gl_ModelViewProjectionMatrix * pos;
+
+
+    //fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
 
     /* apply rotation matrix to normal */
     vec3 normal = gl_NormalMatrix*(InRotationMatrix*InNormal);
