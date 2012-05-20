@@ -1,6 +1,9 @@
 #pragma once
 
-#include "gCoord.hpp"
+#include "global.hpp"
+#include "twister.hpp"
+
+//#include "gCoord.hpp"
 //#include <stdio.h>
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>> g3D <<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -81,7 +84,9 @@ inline g3D operator* (int    i, const g3D& DDD) {return g3D(DDD.x*i, DDD.y*i, DD
 //struct g3Vector : public g3D { // 3D Vector
 struct g3Vector
 {
-  gCoord x,y,z;
+  //gCoord x,y,z;
+  double x,y,z;
+
   g3Vector() {}
   //g3Vector(const g3D& V)                 : g3D(V)     {}
   g3Vector(double X, double Y, double Z) {x=X; y=Y; z=Z;}
@@ -97,14 +102,14 @@ struct g3Vector
   //bool   IsHorizontal () const {return !z;}
   //bool   IsVertical   () const {return (!x)&&(!y);}
   //bool   IsNull       () const {return IsZero();}
-  gCoord GetLength    () const {return sqrt(GetL2());} // Euclidean (shortest line)
-  gCoord GetL2        () const {return x*x+y*y+z*z;} // The length squared. Saves the slow Square Root for some calculations.
-  gCoord GetManhattan () const {double d=x.abs()+y.abs()+z.abs(); return d*d;} // The length of the distance in axial directions (as if travelling around a city).
-  gCoord GetChebychev () const {double d=Max(x.abs(),Max(y.abs(),z.abs())); return d*d;} // The length of the longest Axial journey.
-  gCoord GetQuadratic () const {return GetL2()+x*y+x*z+y*z;} // The sum of everything multiplied by everything else!
-  gCoord GetMinkowski(double p) const {return pow(pow(x.abs(), p) + pow(y.abs(), p) + pow(z.abs(), M_E), 1.0/p);} // General (and slowest) case. p=1 is Chebychev, p=2 is the Euclidean and P at infinity is Chebychev!
-  gCoord GetMinkowski4() const {return pow(x*x*x*x+y*y*y*y+z*z*z*z,0.25);}                       // Same as Minkowski(4);
-  gCoord GetMinkowski5() const {double d=sqrt(x.abs())+sqrt(y.abs())+sqrt(z.abs()); return d*d;} // Same as Minkowski(0.5);
+  double GetLength    () const {return sqrt(GetL2());} // Euclidean (shortest line)
+  double GetL2        () const {return x*x+y*y+z*z;} // The length squared. Saves the slow Square Root for some calculations.
+  double GetManhattan () const {double d=fabs(x)+fabs(y)+fabs(z); return d*d;} // The length of the distance in axial directions (as if travelling around a city).
+  double GetChebychev () const {double d=Max(fabs(x),Max(fabs(y),fabs(z))); return d*d;} // The length of the longest Axial journey.
+  double GetQuadratic () const {return GetL2()+x*y+x*z+y*z;} // The sum of everything multiplied by everything else!
+  double GetMinkowski(double p) const {return pow(pow(fabs(x), p) + pow(fabs(y), p) + pow(fabs(z), M_E), 1.0/p);} // General (and slowest) case. p=1 is Chebychev, p=2 is the Euclidean and P at infinity is Chebychev!
+  double GetMinkowski4() const {return pow(x*x*x*x+y*y*y*y+z*z*z*z,0.25);}                       // Same as Minkowski(4);
+  double GetMinkowski5() const {double d=sqrt(fabs(x))+sqrt(fabs(y))+sqrt(fabs(z)); return d*d;} // Same as Minkowski(0.5);
   //gCoord GetArea      () const {return 2*(x*y+x*z+y*z);} // The Surface area of the axially-aligned cuboid this vector fills.
   //gCoord GetVolume    () const {return x*y*z;}
 
