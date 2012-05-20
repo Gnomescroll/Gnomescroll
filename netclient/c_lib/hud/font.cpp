@@ -434,7 +434,6 @@ void end_font_draw()
 void start_world_font_draw()
 {
     // all fonts must have alpha
-    //glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -447,7 +446,6 @@ void end_world_font_draw()
     if (bound_gl_font != NULL) glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-    //glDisable(GL_DEPTH_TEST);
     bound_gl_font = NULL;
 }
 
