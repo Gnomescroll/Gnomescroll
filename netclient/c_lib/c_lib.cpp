@@ -281,7 +281,6 @@ int init_c_lib()
     VoxDats::init();
     init_voxel_volume();
     
-
     init_network();
     NetClient::init_net_client();
     

@@ -140,6 +140,8 @@ void signal_terminate_handler(int sig)
 }
 #endif
  
+
+
 int init_c_lib()
 {
     #ifdef linux
