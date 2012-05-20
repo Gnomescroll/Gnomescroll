@@ -74,6 +74,22 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position, int team)
     return false;
 }
 
+bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
+{
+    Agent_state* target = STATE::agent_list->get(this->target_id);
+    // target exists / is attackable
+    if (target == NULL || target->status.team == NO_TEAM)
+        return false;
+    // target in range
+    if (vec3_distance_squared(target->get_center(), firing_position) > this->sight_range*this->sight_range)
+        return false;
+    // target visible
+    Vec3 sink;
+    if (target->in_sight_of(firing_position, &sink, 1.0f))
+        return true;
+    return false;
+}
+
 void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position)
 {
     if (this->target_type == OBJECT_NONE) return;

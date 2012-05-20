@@ -195,11 +195,11 @@ void server_tick_mob_robot_box(Object* object)
     Agent_state* agent = NULL;
     if (weapon->locked_on_target)
     {   // target locked
-        // check target still exists
+        // query agent
         if (weapon->target_type == OBJECT_AGENT)
             agent = STATE::agent_list->get(weapon->target_id);
-        if (agent == NULL
-        || vec3_distance_squared(agent->get_center(), camera_position) > weapon->sight_range*weapon->sight_range)
+        // check target still exists
+        if (!weapon->target_is_visible(camera_position))
             weapon->locked_on_target = false;
     }
 

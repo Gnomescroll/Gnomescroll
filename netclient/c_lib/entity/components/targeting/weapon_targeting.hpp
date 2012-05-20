@@ -31,6 +31,8 @@ class WeaponTargetingComponent: public TargetingComponent
         {
             this->fire_tick = randrange(0, fire_rate_limit);
         }
+
+        bool target_is_visible(Vec3 firing_position);
         
         bool fire_on_target(Vec3 camera_position, int team);
         bool fire_on_target(Vec3 camera_position);
@@ -46,7 +48,9 @@ class WeaponTargetingComponent: public TargetingComponent
     : TargetingComponent(COMPONENT_WEAPON_TARGETING),
     fire_tick(0), fire_rate_limit(1), uses_bias(false), accuracy_bias(0.0f),
     attacks_enemies(true), attack_at_random(true), locked_on_target(false)
-    {}
+    {
+        this->set_random_fire_tick();
+    }
 };
 
 } // Components

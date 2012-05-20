@@ -30,3 +30,9 @@ solutions:
     use animation origin relative to camera instead of skeleton
 
 fish see through terrain, or keep shooting through it
+
+fix damage indicator terrain bleedthrough
+
+damage indicator on mobs
+
+agent_died assert
