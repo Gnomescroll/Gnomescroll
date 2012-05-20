@@ -18,7 +18,7 @@ struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
   //g3D(const double* DDD)                 {Set(DDD);}
 
   //void Set(const double* DDD)            {x=*DDD++; y=*DDD++; z=*DDD;}
-  void Set(double X, double Y, double Z) {x=X; y=Y; z=Z;}
+  //void Set(double X, double Y, double Z) {x=X; y=Y; z=Z;}
 #if 0
 
   void Set(const g3D& DDD)               {x=DDD.x; y=DDD.y; z=DDD.z;}
@@ -29,6 +29,8 @@ struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
 
 
   //g3D& operator =(const g3D& DDD)        {Set(DDD);                       return *this;}
+
+#if 0
   g3D& operator+=(const g3D& DDD)        {  x+=DDD.x; y+=DDD.y; z+=DDD.z; return *this;}
   g3D& operator-=(const g3D& DDD)        {  x-=DDD.x; y-=DDD.y; z-=DDD.z; return *this;}
   g3D& operator*=(double d)              {              x*=d; y*=d; z*=d; return *this;}
@@ -41,6 +43,8 @@ struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
 
   operator double*()                     {return &x.Coord;}
   operator const double*()         const {return &x.Coord;}
+#endif
+
 #if 0
   bool operator==(const g3D& DDD)  const {return Compare(DDD)==0;}
   bool operator!=(const g3D& DDD)  const {return Compare(DDD)!=0;}
@@ -74,10 +78,15 @@ inline g3D operator* (int    i, const g3D& DDD) {return g3D(DDD.x*i, DDD.y*i, DD
 //>>>>>>>>>>>>>>>>>>>>>>>>>> g3Vector <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #if 1
-struct g3Vector : public g3D { // 3D Vector
+//struct g3Vector : public g3D { // 3D Vector
+struct g3Vector
+{
+  gCoord x,y,z;
   g3Vector() {}
   //g3Vector(const g3D& V)                 : g3D(V)     {}
   g3Vector(double x, double y, double z) : g3D(x,y,z) {}
+  void Set(double X, double Y, double Z) {x=X; y=Y; z=Z;}
+
   //g3Vector(const double* DDD)            : g3D(DDD)   {}
   //gCoord        Dot(const g3Vector& V)                    const {return x*V.x+y*V.y+z*V.z;}                               // =|a||b|cos(t)
   //gCoord   CrossDot(const g3Vector& C, const g3Vector& D) const {return Cross(C).Dot(D);} // scalar triple product: |D.(VxC)| = Volume of parallelepiped.
