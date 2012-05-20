@@ -143,8 +143,9 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 
 //#3D525E
 
-const int _pallet_num = 5;
-const char _pallet[ 3*(_pallet_num+1) ] = 
+/*
+const int _pallet_num = 6;
+const char _pallet[ 3*(_pallet_num) ] = 
 {
     0xa0, 0xa0,0xa0,
     0x3d, 0x52,0x5e,
@@ -153,14 +154,25 @@ const char _pallet[ 3*(_pallet_num+1) ] =
     0x3d,0x52,0x5e,
     0x94,0xb2,0xbb,
 };
+*/
 
+const int _pallet_num = 3;
+const char _pallet[ 3*(_pallet_num) ] = 
+{
+    //0xa0, 0xa0,0xa0,
+    //0x3d, 0x52,0x5e,
+    0x57, 0x6e,0x62,
+    //0x6d,0x8e, 0x86,
+    0x3d,0x52,0x5e,
+    0x94,0xb2,0xbb,
+};
 
-char _palletn[ 3*(_pallet_num+1) ];
+char _palletn[ 3*(_pallet_num) ];
 
 
 void init_pallete()
 {
-    for(int i=0; i<=_pallet_num; i++)
+    for(int i=0; i<_pallet_num; i++)
     {
         float r = _pallet[3*i+0];
         float g = _pallet[3*i+1];
@@ -177,7 +189,7 @@ void init_pallete()
 
 static inline void _set_quad_color_default(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
-    int index = 3*((hash_function4(x, y, z) % _pallet_num)+1) ;
+    int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
 
     struct ColorElement _ce;
 
@@ -204,9 +216,6 @@ static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x
     for(int i=0 ;i <4; i++)
     {
         v_list[offset+i].color = 0xffffffff;
-        //v_list[offset+i].r = _ce.r;
-        //v_list[offset+i].g = _ce.g;
-        //v_list[offset+i].b = _ce.b;
     }
 }
 
@@ -215,10 +224,10 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
 
     int index[4];
     //4th element is side+vertex index
-    index[0] = 3*((hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num)+1) ;
-    index[1] = 3*((hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num)+1) ;
-    index[2] = 3*((hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num)+1) ;
-    index[3] = 3*((hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num)+1) ;
+    index[0] = 3*(hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num) ;
+    index[1] = 3*(hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num) ;
+    index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num) ;
+    index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num) ;
 
     for(int i=0 ;i <4; i++)
     {
@@ -227,15 +236,6 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
         v_list[offset+i].b = _palletn[index[i]+2];
     }
 
-/*
-    for(int i=0 ;i <4; i++)
-    {
-        unsigned char color = hash_function_perlin2(x, y, z, 3*(4*side+i) );
-        v_list[offset+i].r = 255;
-        v_list[offset+i].g = 255;
-        v_list[offset+i].b = color;
-    }
-*/
 }
 
 static const unsigned char _0 = 0;
