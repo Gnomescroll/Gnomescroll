@@ -74,17 +74,32 @@ void dump_voronoi_to_disc()
     const int xdim = 512;
     const int ydim = 512;
 
-    float fm[xdim*ydim];
+    float* fm = new float[xdim*ydim];
 
-    const double depth = 0;
-    for(int i=0; i< xdim; i++)
-    for(int j=0; j< ydim; j++)
+    const double scale = 1.0/32.0;
+    const double depth = 0.0;
+    for(int i=0; i<xdim; i++)
     {
-        double x = i;
-        double y = j;
-        fm[j*xdim * i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Length);
+        for(int j=0; j<ydim; j++)
+        {
+            double x = scale*((double)i);
+            double y = scale*((double)j);
+            fm[j*xdim + i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Length);
+        }
     }
+    t_gen::save_png("voronoi", fm, xdim, ydim);
+    delete[] fm;
+}
 
-    t_gen::save_png("screenshot/voronoi.png", fm, xdim, ydim);
 
+unsigned char voronoi_char(double x, double y, double z)
+{
+    const double scale = 1.0/32.0;
+
+    double tmp = Voronoi::Get(x*scale,y*scale,x*scale, Voronoi::First, Voronoi::Length);
+
+    if(tmp <= 0.0) return 0;
+    if(tmp >= 1.0) return 255;
+
+    return (unsigned char) (255*tmp);
 }
