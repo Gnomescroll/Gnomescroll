@@ -14,6 +14,7 @@
 namespace t_map
 {
 
+void init_pallete();
 
 struct Vertex* vlist_scratch_0;
 struct Vertex* vlist_scratch_1;
@@ -22,6 +23,8 @@ void t_vbo_update_init()
 {
     vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
     vlist_scratch_1 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+
+    init_pallete();
 }
 
 void t_vbo_update_end()
@@ -152,15 +155,35 @@ const char _pallet[ 3*(_pallet_num+1) ] =
 };
 
 
+char _palletn[ 3*(_pallet_num+1) ];
+
+
+void init_pallete()
+{
+    for(int i=0; i<=_pallet_num; i++)
+    {
+        float r = _pallet[3*i+0];
+        float g = _pallet[3*i+1];
+        float b = _pallet[3*i+2];
+
+        float avg = ((r+g+b) / 3.0);
+        avg /= 255.0;
+        
+        _palletn[3*i+0] = (unsigned char) (r / avg);
+        _palletn[3*i+1] = (unsigned char) (g / avg);
+        _palletn[3*i+2] = (unsigned char) (b / avg);
+    }
+}
+
 static inline void _set_quad_color_default(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int index = 3*((hash_function4(x, y, z) % _pallet_num)+1) ;
 
     struct ColorElement _ce;
 
-    _ce.r = _pallet[index+0];
-    _ce.g = _pallet[index+1];
-    _ce.b = _pallet[index+2];
+    _ce.r = _palletn[index+0];
+    _ce.g = _palletn[index+1];
+    _ce.b = _palletn[index+2];
     _ce.a = 0;
     
     for(int i=0 ;i <4; i++)
@@ -195,9 +218,9 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
 
     for(int i=0 ;i <4; i++)
     {
-        v_list[offset+i].r = _pallet[index[i]+0];
-        v_list[offset+i].g = _pallet[index[i]+1];
-        v_list[offset+i].b = _pallet[index[i]+2];
+        v_list[offset+i].r = _palletn[index[i]+0];
+        v_list[offset+i].g = _palletn[index[i]+1];
+        v_list[offset+i].b = _palletn[index[i]+2];
     }
 
 /*
@@ -279,10 +302,10 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 
     switch( t_map::cube_list[tile_id].color_type )
     {
-        case 1:
+        case 2:
             _set_quad_color_default(v_list, offset, x, y, z, side);
             break;
-        case 2:
+        case 1:
             _set_quad_color_flat(v_list, offset, x, y, z, side);
             break;
         case 0:
