@@ -14,18 +14,8 @@ double Min(double  a, double b) {return a<b ? a : b;}
 double Max(double a, double b) {return a>b ? a : b;}
 //double Clamped(double lo, double it, double hi) {return Min(Max(lo,it),hi);} // useful for acos, asin etc. clamp(-1,1); // (me<lo) ? lo : ((me>hi) ? hi : me);}
 
+
 static int Floor(double x) 
 { 
   return x>0 ? int(x) : int(x)-1;
-}
-
-static int Truncate(double a) 
-{
-    return int(a);
-}
-
-static int Round(double a) 
-{
-  const double Half=0.5;
-    return int(a+Half);
 }
