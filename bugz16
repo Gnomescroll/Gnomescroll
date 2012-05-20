@@ -47,6 +47,9 @@ damage indicator on mobs
 DONE
 
 monster spawners respawning?
+FIXED
+
+include guards on server_/client_state.*pp
 
 footstep sound function
 left foot, right foot, soft fall, hard fall

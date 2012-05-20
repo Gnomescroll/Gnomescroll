@@ -1,5 +1,9 @@
 #include "agent_event.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <particle/billboard_text_hud.hpp>
 
 #include <state/client_state.hpp>

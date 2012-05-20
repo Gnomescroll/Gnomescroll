@@ -5,7 +5,9 @@
 #include <game/packets.hpp>
 
 #include <agent/net_agent.hpp>
+#if DC_CLIENT
 #include <agent/client/player_agent.hpp>
+#endif
 
 #include <t_map/net/t_CtoS.hpp>
 #include <t_map/net/t_StoC.hpp>

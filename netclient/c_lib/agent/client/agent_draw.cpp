@@ -1,15 +1,13 @@
 #include "agent_draw.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
-/*
- *  Client only
- */
-#ifdef DC_CLIENT
+const int SNAPSHOT_DRAW_ARRAY_SIZE = 32;
 
-
-#define SNAPSHOT_DRAW_ARRAY_SIZE 32
-
-namespace AgentDraw {
+namespace AgentDraw
+{
 
 static int snapshot_draw_array_i = 0;
 static int snapshot_draw_last_seq = 0;
@@ -280,4 +278,3 @@ void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
 }
 
 }
-#endif

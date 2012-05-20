@@ -1,5 +1,9 @@
 #include "player_agent.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #if DC_CLIENT
 #include <state/client_state.hpp>
 #endif
