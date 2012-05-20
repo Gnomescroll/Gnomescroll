@@ -63,9 +63,11 @@ struct g3D { // 3 Doubles (Used as x 3 Dimensional Point or Vector)
   //CString Report() const {CString S; S.Format("(%g, %g, %g)",x.RawReport(),y.RawReport(),z.RawReport()); return S;}
 };
 
+#if 0
 inline g3D operator* (gCoord c, const g3D& DDD) {return g3D(DDD.x*c, DDD.y*c, DDD.z*c);}
 inline g3D operator* (double d, const g3D& DDD) {return g3D(DDD.x*d, DDD.y*d, DDD.z*d);}
 inline g3D operator* (int    i, const g3D& DDD) {return g3D(DDD.x*i, DDD.y*i, DDD.z*i);}
+#endif
 
 #endif
 
