@@ -31,6 +31,9 @@ void main()
 {
     //float gamma = 2.2f;
 
+/*
+	Can split into 3 bilinear interpolations
+*/
     vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
     vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 
@@ -47,7 +50,7 @@ void main()
     //vec3 color2 = intensity*inColor;
     //color = color2 * color;
     color = color * inColor;
-    
+
     //color = inColor * color;
 
 
