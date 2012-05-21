@@ -2,6 +2,7 @@
 
 double Vo(double x, double y, double z, int a, int b);
 
+void init_voronoi_noise_maps();
 void dump_voronoi_to_disc();
 
 

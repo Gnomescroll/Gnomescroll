@@ -226,8 +226,6 @@ void test()
 void gen_map()
 {
 
-    dump_voronoi_to_disc();
-
 	//genrand_real2()
 	//genrand_int32());
     unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;

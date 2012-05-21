@@ -80,7 +80,6 @@ void main()
 
 
 
-
     if(fogFragDepth <= fog_start)
     {
         color = pow(color, vec3(1.0f / 2.2f) );
@@ -96,27 +95,6 @@ void main()
         color = pow(color, vec3(1.0f / 2.2f) );
         gl_FragColor.rgb = color;
     }
-
-    //float fog_z = fogFragZ - fog_z_start;
-    //if (fog_z > 0)
-    //{
-        //fog_z = 1.0 - (fog_z / z_depth_max);
-        //float fogFactor = exp2(- fog_z_density*fog_z_density * fog_z*fog_z * LOG2);
-        //fogFactor = clamp(fogFactor, 0.0, 1.0);
-
-        //color = mix(fog_z_color, color, fogFactor);
-        ////color = pow(color, vec3(1.0f / 2.2f));
-        //gl_FragColor.rgb = color;
-    //}
-
-    //gl_FragColor.rgb = fogFactor*vec3(1.0, 0.0, 0.0);
-    //gl_FragColor.rgb = mix(color, vec3(0.0, 0.0, 0.0), fogFactor);
-
-    //fogFragDepth
-    //fogFactor = clamp(fogFactor, 0.0, 1.0);
-    //gl_FragColor = mix(gl_Fog.color, gl_Color, fogFactor);
-
-    //gl_FragColor.rgb = vec3(1.0,0,0);
 
 }
 

@@ -70,15 +70,18 @@ double Vo(double x, double y, double z, int a, int b) {
 
 }
 
+
+
 float voronoi_float(float x, float y, float z);
+float voronoi_float_fast(int x, int y, int z);
 
 void dump_voronoi_to_disc()
 {
     const int xdim = 512;
     const int ydim = 512;
 
-    float* fm = new float[xdim*ydim];
-
+    float* fm1 = new float[xdim*ydim];
+    float* fm2 = new float[xdim*ydim];
     //const double scale = 1.0/32.0;
     const double depth = 0.0;
     for(int i=0; i<xdim; i++)
@@ -88,19 +91,118 @@ void dump_voronoi_to_disc()
             //double x = scale*((double)i);
             //double y = scale*((double)j);
             //fm[j*xdim + i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Minkowski4);
-            fm[j*xdim + i ] = voronoi_float(i,j, depth);
-
+            fm1[j*xdim + i ] = voronoi_float(i,j, depth);
+            fm2[j*xdim + i ] = voronoi_float_fast(i,j,0);
         }
     }
-    t_gen::save_png("voronoi", fm, xdim, ydim);
-    delete[] fm;
+    t_gen::save_png("voronoi1", fm1, xdim, ydim);
+    t_gen::save_png("voronoi2", fm1, xdim, ydim);
+    delete[] fm1;
+    delete[] fm2;
 }
 
+
+float* vornoi_map_00 = NULL;
+
+
+static const int VOI_00_MASK = ~3; // every 4 blocks
+static const int VOI_00_INTERPOLATION_XY = 4; // every 4 blocks
+static const int VOI_00_INTERPOLATION_Z = 4; // every 4 blocks
+
+static const float lerp_factor[16] = {0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0};
+
+void init_voronoi_noise_maps()
+{
+
+
+    int xmax = 512 / VOI_00_INTERPOLATION_XY;
+    int ymax = 512 / VOI_00_INTERPOLATION_XY;
+    int zmax = 128 / VOI_00_INTERPOLATION_Z;
+
+    vornoi_map_00 = new float [xmax*ymax*zmax*2]; //2 for safety
+
+    const float scale = 1.0/32.0;
+    const float zscale = 1.0/32.0;
+    //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
+
+
+
+
+    for(int i=0; i<xmax; i++)
+    for(int j=0; j<ymax; j++)
+    for(int k=0; k<zmax; k++)
+
+    {
+
+        double _x = 4.0*scale* ((double)i);
+        double _y = 4.0*scale* ((double)j);
+        double _z = 4.0*zscale* ((double)k);
+
+        float tmp = Voronoi::Get(_x,_y,_z, Voronoi::Fourth, Voronoi::Chebychev);
+        const float f = 1.5;
+        tmp = f*tmp - f/2.0;
+
+        if(tmp <= 0.0) tmp = 0.0;
+        if(tmp >= 1.0) tmp = 1.0;
+
+
+    }
+
+
+    dump_voronoi_to_disc();
+
+}
+
+//#define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
+
+float voronoi_float_fast(int x, int y, int z)
+{
+
+    static const int xmax = 512 / VOI_00_INTERPOLATION_XY;
+    static const int ymax = 512 / VOI_00_INTERPOLATION_XY;
+    static const int zmax = 128 / VOI_00_INTERPOLATION_Z;
+
+    static const int xymax = xmax*ymax;
+
+    const float ax = lerp_factor[x|3];
+    const float ay = lerp_factor[y|3];
+    const float az = lerp_factor[z|3];
+
+    x = x >> 2;
+    y = y >> 2;
+    z = z >> 2;
+
+    const float l1 = vornoi_map_00[xymax*z + xmax*y + x];
+    const float l2 = vornoi_map_00[xymax*z + xmax*y + (x+1)];
+    const float l3 = vornoi_map_00[xymax*z + xmax*(y+1) + x];
+    const float l4 = vornoi_map_00[xymax*z + xmax*(y+1) + (x+1)];
+
+    const float lx1 = l1 + ax*(l2-l1);
+    const float lx2 = l3 + ax*(l3-l4);
+
+    const float lx3 = lx1 + ay*(lx1 - lx2);
+
+    const float l5 = vornoi_map_00[xymax*(z+1) + xmax*y + x];
+    const float l6 = vornoi_map_00[xymax*(z+1) + xmax*y + (x+1)];
+    const float l7 = vornoi_map_00[xymax*(z+1) + xmax*(y+1) + x];
+    const float l8 = vornoi_map_00[xymax*(z+1) + xmax*(y+1) + (x+1)];
+
+    const float lx4 = l5 + ax*(l6-l5);
+    const float lx5 = l7 + ax*(l8-l7);
+
+    const float lx6 = lx4 + ay*(lx4 - lx5);
+
+    const float value = lx3 + az*(lx6-lx3);
+
+    return value;
+
+}
 
 
 float voronoi_float(float x, float y, float z)
 {
 
+/*
     const float scale = 1.0/32.0;
     const float zscale = 1.0/32.0;
     //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
@@ -114,8 +216,13 @@ float voronoi_float(float x, float y, float z)
 
     //printf("out= %i \n", (int)(255*tmp) );
     return tmp;
+*/
+
+
+
 }
 
+//#define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
 
 unsigned char voronoi_char(float x, float y, float z)
 {
