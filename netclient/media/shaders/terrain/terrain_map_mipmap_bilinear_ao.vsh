@@ -60,6 +60,7 @@ varying vec3 texCoord;
 varying vec3 inColor;
 
 varying float fogFragDepth;
+//varying float fogFragZ;
 
 void main(void) 
 {                      
@@ -76,6 +77,7 @@ void main(void)
 
         //fogFragDepth = length(gl_Position.xyz);
         fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
+        //fogFragZ = gl_ModelViewMatrixInverse[3].z - vertex.z;
 
         inColor = InRGB.rgb;
  
@@ -103,15 +105,15 @@ varying mat2 lightMatrix0;
 varying vec4 inColor;
 
 void main(void) 
-{			
+{           
 
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
-	inColor = gl_Color;
+    inColor = gl_Color;
 
-	texCoord = InTexCoord0;
+    texCoord = InTexCoord0;
 
-	lightMatrix0 = mat2(InLightMatrix0[0], InLightMatrix0[1], InLightMatrix0[2],InLightMatrix0[3] );
+    lightMatrix0 = mat2(InLightMatrix0[0], InLightMatrix0[1], InLightMatrix0[2],InLightMatrix0[3] );
 
 }
 */

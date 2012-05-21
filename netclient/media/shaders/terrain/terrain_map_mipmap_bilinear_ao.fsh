@@ -33,20 +33,28 @@ varying vec3 inColor;
 uniform sampler2DArray base_texture;
 
 varying float fogFragDepth;
+//varying float fogFragZ;
 
 const vec3 fog_color = vec3(0.0, 0.0, 0.0);
 //const float fog_start = 96.0;
 //const float fog_depth = 32.0;
-//const vec3 fog_color = vec3(200.0, 150.0, 200.0);
+//const vec3 fog_z_color = vec3(40.0, 0.0, 20.0);
+//const vec3 fog_color = vec3(10.0);
 const float fog_start = 48.0;
 const float fog_depth = 128.0 - fog_start;
+//const float fog_z_start = 16.0f;
+//const float fog_z_depth = 128.0f;
+//const float fog_z_density = 0.35f;
+//const float z_depth_max = 128.0f;
+
+const float LOG2 = 1.442695;
 
 void main() 
 {
     //float gamma = 2.2f;
 
 /*
-	Can split into 3 bilinear interpolations
+    Can split into 3 bilinear interpolations
 */
     vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
     vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
@@ -75,7 +83,7 @@ void main()
 
     if(fogFragDepth <= fog_start)
     {
-		color = pow(color, vec3(1.0f / 2.2f) );
+        color = pow(color, vec3(1.0f / 2.2f) );
         gl_FragColor.rgb = color;
     }
     else
@@ -88,6 +96,18 @@ void main()
         color = pow(color, vec3(1.0f / 2.2f) );
         gl_FragColor.rgb = color;
     }
+
+    //float fog_z = fogFragZ - fog_z_start;
+    //if (fog_z > 0)
+    //{
+        //fog_z = 1.0 - (fog_z / z_depth_max);
+        //float fogFactor = exp2(- fog_z_density*fog_z_density * fog_z*fog_z * LOG2);
+        //fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+        //color = mix(fog_z_color, color, fogFactor);
+        ////color = pow(color, vec3(1.0f / 2.2f));
+        //gl_FragColor.rgb = color;
+    //}
 
     //gl_FragColor.rgb = fogFactor*vec3(1.0, 0.0, 0.0);
     //gl_FragColor.rgb = mix(color, vec3(0.0, 0.0, 0.0), fogFactor);
