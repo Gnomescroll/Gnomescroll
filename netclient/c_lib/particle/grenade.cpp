@@ -131,7 +131,7 @@ void Grenade::tick()
     bool bounced = this->verlet_bounce(GRENADE_DAMP);
     if (bounced)
     {
-        bounce_count++;
+        this->bounce_count++;
         #if DC_CLIENT
         Vec3 position = this->get_position();
         Sound::grenade_bounce(
@@ -142,7 +142,7 @@ void Grenade::tick()
         );
         #endif
     }
-    if (bounce_count==GRENADE_BOUNCE_EXPLODE_LIMIT)
+    if (this->bounce_count >= GRENADE_BOUNCE_EXPLODE_LIMIT)
         this->ttl = this->ttl_max;
     this->ttl++;
 }

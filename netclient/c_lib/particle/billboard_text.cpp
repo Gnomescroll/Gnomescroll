@@ -18,6 +18,7 @@ static const float DEFAULT_MASS = 1.0;
 BillboardText::BillboardText(int id)
 :
 ParticleMotion(id, 0,0,0,0,0,0, DEFAULT_MASS),
+bounce_count(0),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
@@ -31,6 +32,7 @@ size(BILLBOARD_TEXT_TEXTURE_SCALE)
 BillboardText::BillboardText(int id, float x, float y, float z, float mx, float my, float mz)
 :
 ParticleMotion(id, x,y,z, mx,my,mz, DEFAULT_MASS),
+bounce_count(0),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
@@ -44,7 +46,12 @@ size(BILLBOARD_TEXT_TEXTURE_SCALE)
 void BillboardText::tick()
 {
     if (this->gravity)
-        this->verlet_bounce(BILLBOARD_TEXT_DAMP);
+    {
+        bool bounced = this->verlet_bounce(BILLBOARD_TEXT_DAMP);
+        if (bounced) this->bounce_count++;
+    }
+    if (this->bounce_count >= BILLBOARD_TEXT_BOUNCE_EXPLODE_LIMIT)
+        this->ttl = this->ttl_max;
     if (this->ttl >= 0)
         this->ttl++;
 }

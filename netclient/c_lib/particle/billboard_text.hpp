@@ -3,7 +3,7 @@
 #include <particle/particles.hpp>
 
 const int BILLBOARD_TEXT_MAX = 1024;
-const int BILLBOARD_TEXT_TTL = 300;
+const int BILLBOARD_TEXT_TTL = 250;
 const int BILLBOARD_TEXT_TYPE = 10;
 const float BILLBOARD_TEXT_DAMP = 0.2f;
 const float BILLBOARD_TEXT_TEXTURE_SCALE = 0.2f;
@@ -11,11 +11,13 @@ const float BILLBOARD_TEXT_TEXTURE_SCALE = 0.2f;
 namespace Particle
 {
 
-
-const static int BILLBOARD_TEXT_MAX_LETTERS = 12;
+const int BILLBOARD_TEXT_BOUNCE_EXPLODE_LIMIT = 2;
+const int BILLBOARD_TEXT_MAX_LETTERS = 12;
 
 class BillboardText: public ParticleMotion
 {
+    private:
+        int bounce_count;
     public:
         unsigned char r,g,b,a;
         char text[BILLBOARD_TEXT_MAX_LETTERS+1];
