@@ -52,7 +52,7 @@ void end_drop_dat()
             total = 0.0;
             for(int k=1; k<cidt->drop_entries; k++)
             {
-                total += drop_probabilities[k];
+                total += cidt->drop_probabilities[k];
             }
 
             if(total > 1.0)
@@ -61,17 +61,16 @@ void end_drop_dat()
                 GS_ABORT();
             }
 
-            drop_probabilities[0] = 1.0 - total;
+            cidt->drop_probabilities[0] = 1.0 - total;
 
 
-            float fa[cidt->drop_entries];
+            //float fa[cidt->drop_entries];
 
             total = 0.0;
             for(int k=0; k<cidt->drop_entries; k++)
             {
-                fa[k] = total;
-                drop_cumulative_probabilities[k] = total;
-
+                total += cidt->drop_probabilities[k];
+                cidt->drop_cumulative_probabilities[k] = total;
             }
             //fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type) );
 
@@ -157,18 +156,16 @@ void handle_block_drop(int x, int y, int z, int block_type)
 {
     for (int i=0; i < meta_drop_table[block_type].num_drop; i++)
     {
-
         CubeItemDropTable* cidt = &item_drop_table[i+meta_drop_table[block_type].index];
-
         float p = randf();
 
-        for (int j=0; j < cidt->drop_entries; j++)
+        if(p <= cidt->drop_cumulative_probabilities[0]) continue;
+
+        for (int j=1; j < cidt->drop_entries; j++)
         {
             //check each drop until commulative probability table hit
-            if (p <= cidt->drop_probabilities[j])
+            if (p <= cidt->drop_cumulative_probabilities[j])
             {
-                if (j==0) return;; //no drop
-
                 for (int k=0; k<cidt->item_drop_num[j]; k++)
                 {
                     const float mom = 2.0f;
@@ -178,8 +175,7 @@ void handle_block_drop(int x, int y, int z, int block_type)
                     ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
                         (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom); 
                 }
-                return;
-
+                break;
             }
         }
     }

@@ -453,17 +453,3 @@ void blit_block_item_sheet()
 }
 
 }
-
-/*
-    DROP DAT
-*/
-
-namespace t_map
-{
-
-void end_drop_dat()
-{
-
-}
-
-}   // t_map
