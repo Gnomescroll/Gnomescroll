@@ -16,14 +16,15 @@ struct CubeItemDropMeta
 struct CubeItemDropTable
 {
     int item_type;
-    int max_drops;  //number of entries
+    int drop_entries;                //number of entries
     float* drop_probabilities;      //index into probability table
+    int* item_drop_num;                 //number of items to drop
 };
 
 
-int probability_table_index = 0;
+int _table_index = 0;
 float probability_table[4096];
-
+int item_drop_num_table[4096];
 
 struct CubeItemDropMeta meta_drop_table[256];
 
@@ -35,7 +36,7 @@ void save_drop_dat_to_file()
 {
     FILE *fp = fopen("screenshot/drop_dat","w");
     if(!fp) GS_ABORT();
-
+/*
     for(int i=0; i<256; i++)
     {
         int num_drop = meta_drop_table[i].num_drop;
@@ -51,22 +52,22 @@ void save_drop_dat_to_file()
 
             float average = 0;
             float _clast = 0.;
-            for(int k=0; k<cidt->max_drops; k++)
+            for(int k=0; k<cidt->drop_entries; k++)
             {
                 _clast = cidt->drop_probabilities[k] - _clast;
                 average += k*_clast;
                 _clast = cidt->drop_probabilities[k];
             }
 
-            fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type) );
+            //fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type) );
 
-            fprintf(fp,"\tavg= %2.4f max= %i \n", average , cidt->max_drops-1);
+            //fprintf(fp,"\tavg= %2.4f max= %i \n", average , cidt->max_drops-1);
 
 
             float clast = 0;
             float dprob = 0;
             float cdrop = 0.0;
-            for(int k=0; k<cidt->max_drops; k++)
+            for(int k=0; k<cidt->drop_entries; k++)
             {
                 float p = cidt->drop_probabilities[k];
                 dprob = p - clast;
@@ -80,6 +81,7 @@ void save_drop_dat_to_file()
 
 
     }
+*/
     fclose(fp);
 
 
@@ -95,15 +97,14 @@ void handle_block_drop(int x, int y, int z, int block_type)
 
         float p = randf();
 
-        for (int j=0; j < cidt->max_drops; j++)
+        for (int j=0; j < cidt->drop_entries; j++)
         {
             //check each drop until commulative probability table hit
             if (p <= cidt->drop_probabilities[j])
             {
-                j = cidt->max_drops; //terminate inner loop  
-                if (j==0) continue; //no drop
+                if (j==0) return;; //no drop
 
-                for (int k=0; k<j; k++)
+                for (int k=0; k<cidt->item_drop_num[j]; k++)
                 {
                     const float mom = 2.0f;
                     x = (float)x + 0.5f + randf()*0.33;
@@ -112,6 +113,7 @@ void handle_block_drop(int x, int y, int z, int block_type)
                     ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
                         (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom); 
                 }
+                return;
 
             }
         }
@@ -120,6 +122,8 @@ void handle_block_drop(int x, int y, int z, int block_type)
 #endif
 
 int _current_drop_block_id;
+struct CubeItemDropTable* _current_cide;
+int _current_drop_num = 1;
 
 void def_drop(const char* block_name)
 {
@@ -129,10 +133,10 @@ void def_drop(const char* block_name)
     _current_drop_block_id = block_id;
 }
 
-void add_drop(const char* item_name, float mean, float falloff, int max_drops)
+void add_drop(const char* item_name, int drop_entries)
 {
-    GS_ASSERT(max_drops > 0);
-    max_drops++;
+    drop_entries += 1;
+    GS_ASSERT(drop_entries > 0);
 
     int item_type = Item::dat_get_item_type(item_name);
     int block_id = _current_drop_block_id;
@@ -149,16 +153,26 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
     item_drop_table_index++;
 
     cide->item_type = item_type;
-    cide->max_drops = max_drops;
-    cide->drop_probabilities = &probability_table[probability_table_index];
-    probability_table_index += max_drops;
+    cide->drop_entries = drop_entries;
+    cide->drop_probabilities = &probability_table[_table_index];
+    cide->item_drop_num = &item_drop_num[_table_index];
+    _table_index += drop_entries;
+
+    for (int i=0; i<drop_entries; i++)
+    {
+        cide->drop_probabilities[i] = 1.0;
+        cide->item_drop_num[i] = 0;
+    }
+
+    _current_cide = cide;
+    _current_drop_num= 1;
 
     //procedure, calculate mean, adjust probabilites down to mean, and normalize 0 drop
+/*
+    double p[max_entries];
 
-    double p[max_drops];
-
-    p[0] = 1.0f;
-    for (int i=1; i<max_drops; i++) p[i] = p[i-1] * falloff;
+    //p[0] = 1.0f;
+    //for (int i=1; i<max_drops; i++) p[i] = p[i-1] * falloff;
     
     //normalize distribution
     double sum = 0.0;
@@ -183,6 +197,22 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
         for (int j=0; j <= i; j++) sum += p[j];
         cide->drop_probabilities[i] = (float) sum;
     }
+*/
+}
+
+void set_drop(float drop_probability, int drops)
+{
+    if(_current_drop_num == cidt->drop_entries)
+    {
+        printf("Item Drop Dat Error: current item id exceeds drop entries \n");
+        GS_ABORT();
+    }
+
+    cide->drop_probabilities[_current_drop_num] = drop_probability;
+    cide->item_drop_num[_current_drop_num] = drops;
+
+
+    _current_drop_num++;
 }
 
 
