@@ -67,6 +67,7 @@ int get_free_wav_data(WavData** data)
             *data = &wav_buffers[i];
             break;
         }
+    if (i >= MAX_WAV_BUFFERS) assert(false);
     return i;
 }
 
@@ -237,6 +238,7 @@ int load_wav_file(char *fn, unsigned char** buffer)
     *buffer = NULL;
     WavData* data = NULL;
     int id = get_free_wav_data(&data);
+    printf("wav data id %d\n", id);
     if (data == NULL)
     {
         printf("No free wav data slots found.\n");

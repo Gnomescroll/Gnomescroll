@@ -43,12 +43,25 @@ void player_agent_sound_movement_event(class AgentState s0,  class AgentState s1
 
     total_distance += d;
 
+    const int n_footsteps = 4;
+    void (*footsteps[n_footsteps])(void) =
+    {
+        Sound::soft_step_3,
+        Sound::soft_step_4,
+        Sound::soft_step_1,
+        Sound::soft_step_2,
+    };
+
+    static int step = 0;
     if(total_distance > distance_per_step )
     {
         //play sound
         //printf("play agent sound !!! \n");
         total_distance -= distance_per_step;
         //Sound::walking();
+        footsteps[randrange(0,n_footsteps-1)]();
+        //footsteps[step++]();
+        //step %= n_footsteps;
     }
 
 }

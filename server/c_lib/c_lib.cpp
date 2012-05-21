@@ -202,10 +202,6 @@ void close_c_lib()
 
     t_map::end_t_map();
     
-    Toolbelt::teardown();
-    Item::teardown();
-    ItemContainer::teardown();
-
     teardown_chat_server();
 
     Particle::teardown_particles();
@@ -216,6 +212,9 @@ void close_c_lib()
     Components::teardown();
 
     ServerState::teardown();
+    Toolbelt::teardown();
+    Item::teardown();
+    ItemContainer::teardown();
 
     printf("Server closed\n"); 
     Log::teardown();
