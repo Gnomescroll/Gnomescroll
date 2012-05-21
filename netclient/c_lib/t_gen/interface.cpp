@@ -106,7 +106,7 @@ float voronoi_float(float x, float y, float z)
     //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
     float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::Fourth, Voronoi::Chebychev);
 
-    const float f = 1.5
+    const float f = 1.5;
     tmp = f*tmp - f/2.0;
     //tmp = 1.0 - tmp;
     if(tmp <= 0.0) return 0.0;
