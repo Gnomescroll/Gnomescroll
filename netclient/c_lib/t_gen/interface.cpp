@@ -65,7 +65,7 @@ double Vo(double x, double y, double z, int a, int b) {
     }
 
     return Voronoi::Get(x,y,z, A,B);
-// VoronoiType {First, Second, Third, Fourth, Difference21, Difference32, Crackle};
+    // VoronoiType {First, Second, Third, Fourth, Difference21, Difference32, Crackle};
     //enum DistanceMethod {Length, Length2, Manhattan, Chebychev, Quadratic, Minkowski4, Minkowski5};
 
 }
@@ -75,35 +75,8 @@ double Vo(double x, double y, double z, int a, int b) {
 float voronoi_float(float x, float y, float z);
 float voronoi_float_fast(int x, int y, int z);
 
-void dump_voronoi_to_disc()
-{
-    const int xdim = 512;
-    const int ydim = 512;
-
-    float* fm1 = new float[xdim*ydim];
-    float* fm2 = new float[xdim*ydim];
-    //const double scale = 1.0/32.0;
-    const double depth = 0.0;
-    for(int i=0; i<xdim; i++)
-    {
-        for(int j=0; j<ydim; j++)
-        {
-            //double x = scale*((double)i);
-            //double y = scale*((double)j);
-            //fm[j*xdim + i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Minkowski4);
-            fm1[j*xdim + i ] = voronoi_float(i,j, depth);
-            fm2[j*xdim + i ] = voronoi_float_fast(i,j,0);
-        }
-    }
-    t_gen::save_png("voronoi1", fm1, xdim, ydim);
-    t_gen::save_png("voronoi2", fm1, xdim, ydim);
-    delete[] fm1;
-    delete[] fm2;
-}
-
 
 float* vornoi_map_00 = NULL;
-
 
 static const int VOI_00_MASK = ~3; // every 4 blocks
 static const int VOI_00_INTERPOLATION_XY = 4; // every 4 blocks
@@ -111,29 +84,63 @@ static const int VOI_00_INTERPOLATION_Z = 4; // every 4 blocks
 
 static const float lerp_factor[16] = {0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0};
 
+void dump_voronoi_to_disc()
+{
+    const int xdim = 512;
+    const int ydim = 512;
+
+    static const int xmax = 512 / VOI_00_INTERPOLATION_XY;
+    static const int ymax = 512 / VOI_00_INTERPOLATION_XY;
+    static const int xymax = xmax*ymax;
+
+    float* fm1 = new float[xdim*ydim];
+    float* fm2 = new float[xdim*ydim];
+    float* fm3 = new float[xdim*ydim];
+    //const double scale = 1.0/32.0;
+    //const double depth = 0.0;
+    for(int i=0; i<xdim; i++)
+    for(int j=0; j<ydim; j++)
+    {
+        //fm[j*xdim + i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Minkowski4);
+        fm1[j*xdim + i ] = voronoi_float(i,j, 0);
+        fm2[j*xdim + i ] = vornoi_map_00[xymax*(0>>2) + xmax*(j>>2) + (i>>2)];
+        fm3[j*xdim + i ] = voronoi_float_fast(i,j,0);
+    }
+
+    t_gen::save_png("voronoi1", fm1, xdim, ydim);
+    t_gen::save_png("voronoi2", fm2, xdim, ydim);
+    t_gen::save_png("voronoi3", fm3, xdim, ydim);
+    delete[] fm1;
+    delete[] fm2;
+    delete[] fm3;
+}
+
 void init_voronoi_noise_maps()
 {
 
 
-    int xmax = 512 / VOI_00_INTERPOLATION_XY;
-    int ymax = 512 / VOI_00_INTERPOLATION_XY;
-    int zmax = 128 / VOI_00_INTERPOLATION_Z;
+    static const int xmax = 512 / VOI_00_INTERPOLATION_XY;
+    static const int ymax = 512 / VOI_00_INTERPOLATION_XY;
+    static const int zmax = 128 / VOI_00_INTERPOLATION_Z;
+
+    static const int xymax = xmax*ymax;
 
     vornoi_map_00 = new float [xmax*ymax*zmax*2]; //2 for safety
 
-    const float scale = 1.0/32.0;
-    const float zscale = 1.0/32.0;
+    //const float scale = 1.0/32.0;
+    //const float zscale = 1.0/32.0;
+
+    const float scale = 1.0/512.0;
+    const float zscale = 1.0/512.0;
+
+
     //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
-
-
-
 
     for(int i=0; i<xmax; i++)
     for(int j=0; j<ymax; j++)
     for(int k=0; k<zmax; k++)
-
     {
-
+/*
         double _x = 4.0*scale* ((double)i);
         double _y = 4.0*scale* ((double)j);
         double _z = 4.0*zscale* ((double)k);
@@ -145,7 +152,10 @@ void init_voronoi_noise_maps()
         if(tmp <= 0.0) tmp = 0.0;
         if(tmp >= 1.0) tmp = 1.0;
 
+        vornoi_map_00[xymax*k + xmax*j + i] = tmp;
+*/
 
+        vornoi_map_00[xymax*k + xmax*j + i] = voronoi_float(i*4, j*4, k*4);
     }
 
 
@@ -160,7 +170,7 @@ float voronoi_float_fast(int x, int y, int z)
 
     static const int xmax = 512 / VOI_00_INTERPOLATION_XY;
     static const int ymax = 512 / VOI_00_INTERPOLATION_XY;
-    static const int zmax = 128 / VOI_00_INTERPOLATION_Z;
+    //static const int zmax = 128 / VOI_00_INTERPOLATION_Z;
 
     static const int xymax = xmax*ymax;
 
@@ -173,6 +183,7 @@ float voronoi_float_fast(int x, int y, int z)
     z = z >> 2;
 
     const float l1 = vornoi_map_00[xymax*z + xmax*y + x];
+
     const float l2 = vornoi_map_00[xymax*z + xmax*y + (x+1)];
     const float l3 = vornoi_map_00[xymax*z + xmax*(y+1) + x];
     const float l4 = vornoi_map_00[xymax*z + xmax*(y+1) + (x+1)];
@@ -201,12 +212,18 @@ float voronoi_float_fast(int x, int y, int z)
 
 float voronoi_float(float x, float y, float z)
 {
+    //const float scale = 1.0/32.0;
+    //const float zscale = 1.0/32.0;
+    
+    static const float scale = 1.0/64.0;
+    static const float zscale = 1.0/64.0;
 
-/*
-    const float scale = 1.0/32.0;
-    const float zscale = 1.0/32.0;
+    const double _x = scale*x;
+    const double _y = scale*y;
+    const double _z = zscale*z;
+
     //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
-    float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::Fourth, Voronoi::Chebychev);
+    float tmp = Voronoi::Get(_x,_y,_z, Voronoi::Fourth, Voronoi::Chebychev);
 
     const float f = 1.5;
     tmp = f*tmp - f/2.0;
@@ -216,10 +233,6 @@ float voronoi_float(float x, float y, float z)
 
     //printf("out= %i \n", (int)(255*tmp) );
     return tmp;
-*/
-
-
-
 }
 
 //#define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
