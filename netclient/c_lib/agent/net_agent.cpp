@@ -819,7 +819,6 @@ inline void melee_object_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    //if (!a->weapons.pick.fire()) return;
 
     Agent_state* agent = NULL;
     const int obj_dmg = randrange(20,45);
