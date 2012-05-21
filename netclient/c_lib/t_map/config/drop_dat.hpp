@@ -25,6 +25,16 @@ void load_map_drop_dat()
     set_drop(0.03, 3);
     set_drop(0.05, 5);
 
+    add_drop("gallium_ore", 1);
+    set_drop(0.50, 1);
+
+    add_drop("iron_ore", 1);
+    set_drop(0.50, 1);
+
+    add_drop("iridium_ore", 1);
+    set_drop(0.50, 1);
+
+
     add_drop("food_rock-0", 3);
     set_drop(0.20, 1);
     set_drop(0.10, 2);
