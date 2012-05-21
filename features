@@ -9,6 +9,11 @@ Alchemy System:
     - potion attribute is additive in reagents and increases if all potions have attribute
     - potions stack if they have the same attributes
 
+Procedural Plants:
+    - vines
+    - fruit
+    - allow to cross over and colonize multiple blocks
+
 !!! Environment
 
 Solid, transparent blocks (liquid methane).  Like water but solid.  Lakes cover surface.

@@ -155,7 +155,7 @@ void add_drop(const char* item_name, int drop_entries)
     cide->item_type = item_type;
     cide->drop_entries = drop_entries;
     cide->drop_probabilities = &probability_table[_table_index];
-    cide->item_drop_num = &item_drop_num[_table_index];
+    cide->item_drop_num = &item_drop_num_table[_table_index];
     _table_index += drop_entries;
 
     for (int i=0; i<drop_entries; i++)
@@ -202,14 +202,14 @@ void add_drop(const char* item_name, int drop_entries)
 
 void set_drop(float drop_probability, int drops)
 {
-    if(_current_drop_num == cidt->drop_entries)
+    if(_current_drop_num == _current_cide->drop_entries)
     {
         printf("Item Drop Dat Error: current item id exceeds drop entries \n");
         GS_ABORT();
     }
 
-    cide->drop_probabilities[_current_drop_num] = drop_probability;
-    cide->item_drop_num[_current_drop_num] = drops;
+    _current_cide->drop_probabilities[_current_drop_num] = drop_probability;
+    _current_cide->item_drop_num[_current_drop_num] = drops;
 
 
     _current_drop_num++;
