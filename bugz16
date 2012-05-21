@@ -78,8 +78,9 @@ DONE
 fix segfault when clicking before received toolbelt
 DONE
 
-craft container blocks drop craft container block
+ctrl-c exit for client
+DONE
 
-ctrl-c exit for client?
+craft container blocks drop craft container block
 
 tiling noise
