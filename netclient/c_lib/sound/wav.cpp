@@ -238,7 +238,6 @@ int load_wav_file(char *fn, unsigned char** buffer)
     *buffer = NULL;
     WavData* data = NULL;
     int id = get_free_wav_data(&data);
-    printf("wav data id %d\n", id);
     if (data == NULL)
     {
         printf("No free wav data slots found.\n");

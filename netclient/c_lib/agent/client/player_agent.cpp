@@ -264,7 +264,9 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     acs = cs_local[cs_seq_local % 128];
     s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp);
 
-    player_agent_sound_movement_event(s0, s1);
+    // tick sound motion
+    bool is_on_ground = on_ground(this->you->box.box_r, camera_state.x, camera_state.y, camera_state.z);
+    player_agent_sound_ground_movement_event(s0, s1, is_on_ground);
 }
 
 float PlayerAgent_state::camera_height() {
