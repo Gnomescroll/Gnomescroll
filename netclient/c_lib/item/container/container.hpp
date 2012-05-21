@@ -303,7 +303,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
 
 }
 
-#include <common/template/multi_object_list.hpp>
+#include <common/template/dynamic_multi_object_list.hpp>
 
 namespace ItemContainer
 {
@@ -337,7 +337,7 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
 
 const int ITEM_CONTAINER_MAX = 1024;
 
-class ItemContainerList: public MultiObject_list<ItemContainerInterface, ITEM_CONTAINER_MAX>
+class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX>
 {
     private:
         const char* name() { return "ItemContainer"; }
@@ -353,12 +353,12 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface, ITEM_CO
 
         ItemContainerInterface* create(int type, int id)
         {
-            return MultiObject_list<ItemContainerInterface, ITEM_CONTAINER_MAX>::create(type, id);
+            return DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX>::create(type, id);
         }
         #endif
 
         ItemContainerList()
-        : MultiObject_list<ItemContainerInterface, ITEM_CONTAINER_MAX>(create_item_container_interface)
+        : DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX>(create_item_container_interface)
         {
             print_list((char*)this->name(), this);
         }

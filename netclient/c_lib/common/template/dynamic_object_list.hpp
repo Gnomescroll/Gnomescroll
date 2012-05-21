@@ -39,6 +39,8 @@ class DynamicObjectList
         
         Object_state* get_or_create(int id);
 
+        void resize(int new_size);
+
         bool contains(int id);
         bool full();
 
@@ -131,6 +133,19 @@ int DynamicObjectList<Object_state, max_n>::get_free_id()
 }
 
 template <class Object_state, int max_n>
+void DynamicObjectList<Object_state, max_n>::resize(int new_size)
+{
+    printf("Resizing %s list from %d to %d\n", this->name(), this->n_max, new_size);
+    GS_ASSERT(this->n_max < new_size);
+    int old_size = this->n_max;
+    this->a = (Object_state**)realloc(this->a, new_size * sizeof(Object_state**));
+    GS_ASSERT(this->a != NULL);
+    // initialize to NULL
+    for (int i=old_size; i<new_size; this->a[i++] = NULL);
+    this->n_max = new_size;
+}
+
+template <class Object_state, int max_n>
 Object_state* DynamicObjectList<Object_state, max_n>::create() {
     //where();
     int i;
@@ -143,12 +158,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::create() {
     if (i==n_max)
     {
         id = n_max; // save next id
-        // resize
-        this->n_max += n_max_base;
-        printf("Resizing %s list to %d\n", this->name(), this->n_max);
-        this->a = (Object_state**)realloc(this->a, this->n_max * sizeof(Object_state**));
-        for (int i=this->n_max-n_max_base; i<this->n_max; this->a[i++] = NULL);
-        GS_ASSERT(this->a != NULL);
+        int new_size = this->n_max + n_max_base;
+        this->resize(new_size);
     }
     a[id] = new Object_state(id);
     num++;
@@ -159,6 +170,11 @@ Object_state* DynamicObjectList<Object_state, max_n>::create() {
 template <class Object_state, int max_n>
 Object_state* DynamicObjectList<Object_state, max_n>::create(int id) {
     //where();
+    if (id >= this->n_max)
+    {   // need to resize
+        int new_size = ((id/this->n_max_base) + 1) * this->n_max_base;
+        this->resize(new_size);
+    }
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
         num++;
@@ -172,7 +188,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::create(int id) {
 template <class Object_state, int max_n>
 Object_state* DynamicObjectList<Object_state, max_n>::get_or_create(int id) {
     //where();
-    Object_state* obj = a[id];
+    Object_state* obj = NULL;
+    if (id < this->n_max) obj = a[id];
     if (obj == NULL) {
         obj = create(id);
     }
@@ -182,7 +199,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::get_or_create(int id) {
 template <class Object_state, int max_n>
 bool DynamicObjectList<Object_state, max_n>::contains(int id) {
     //where();
-    Object_state* obj = a[id];
+    Object_state* obj = NULL;
+    if (id < this->n_max) obj = a[id];
     if (obj == NULL) {
         return false;
     }
@@ -193,7 +211,7 @@ template <class Object_state, int max_n>
 void DynamicObjectList<Object_state, max_n>::destroy(int id)
 {
     //where();
-    if(a[id]==NULL) {
+    if(id >= this->n_max || a[id]==NULL) {
         printf("%s_list: Cannot delete object: object is null\n", name() );
         return;
     }

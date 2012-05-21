@@ -96,14 +96,14 @@ class ItemParticle //: public VerletComponent
     List Definition
 */
 
-#include <common/template/object_list.hpp>
+#include <common/template/dynamic_object_list.hpp>
 
 namespace ItemParticle
 {
 
 const int ITEM_PARTICLE_MAX = 1024;
 
-class ItemParticle_list: public Object_list<ItemParticle, ITEM_PARTICLE_MAX>
+class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MAX>
 {
     private:
         const char* name() { return "ItemParticle"; }

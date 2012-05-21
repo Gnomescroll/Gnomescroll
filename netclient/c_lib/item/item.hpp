@@ -51,7 +51,7 @@ class Item
 
 }
 
-#include <common/template/object_list.hpp>
+#include <common/template/dynamic_object_list.hpp>
 
 namespace Item
 {

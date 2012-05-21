@@ -32,7 +32,9 @@ void init()
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
     ServerState::start_game();
 
+    #if !PRODUCTION
     Item::test_item_list_capacity();
+    #endif
 }
    
 void tick()

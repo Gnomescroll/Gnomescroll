@@ -66,8 +66,13 @@ DONE
 destroy damage indicators on 2nd bounce
 DONE
 
-tiling noise
+dynamic object list templates -- integrated for item, itemparticle and itemcontainer
+DONE
 
-investigate capacity bugs
+remove craft container from initial toolbelt
+
+craft container blocks drop craft container block
+
+tiling noise
 
 ctrl-c exit for client?
