@@ -531,9 +531,9 @@ void Voxel_model::thaw()
 float Voxel_model::largest_radius() {
     float largest = 0.0f;
     if (this->vv == NULL) return largest;
-    int i;
     Voxel_volume* vv;
-    for (i=0; i<this->n_parts; i++) {
+    for (int i=0; i<this->n_parts; i++)
+    {
         vv = &this->vv[i];
         if (vv->radius > largest) largest = vv->radius;
     }
@@ -633,4 +633,27 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probabi
         }
     }
     return false;
+}
+
+bool Voxel_model::is_completely_destroyed()
+{
+    #if DC_CLIENT
+    Voxel_volume* vv;
+    for (int i=0; i<this->n_parts; i++)
+    {
+        vv = &this->vv[i];
+        if (vv->vvl.vnum != 0) return false;
+    }
+    return true;
+    #endif
+
+    #if DC_SERVER
+    for (int i=0; i<this->n_parts; i++)
+    {
+        for (unsigned int j=0; j<this->vv[i].index_max; j++)
+            if (this->vv[i].voxel[j].color != 0)
+                return false;
+    }
+    return true;
+    #endif
 }

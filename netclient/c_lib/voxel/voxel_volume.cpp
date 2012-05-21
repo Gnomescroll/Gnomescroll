@@ -746,25 +746,25 @@ void destroy_object_voxel(int id, int type, int part, const int voxel[3], int ra
     int tmp[3] = {voxel[0], voxel[1], voxel[2] };
     
     for (int i=0; i<radius; i++)
-        for (int j=0; j<radius; j++)
-            for (int k=0; k<radius; k++)
-            {
-                tmp[0] = mx + i;
-                tmp[1] = my + j;
-                tmp[2] = mz + k;
-                destroy_object_voxel(id, type, part, tmp);
-                tmp[0] = mx - i;
-                destroy_object_voxel(id, type, part, tmp);
-                tmp[1] = my - j;
-                destroy_object_voxel(id, type, part, tmp);
-                tmp[1] = my + j;
-                tmp[2] = mz - k;
-                destroy_object_voxel(id, type, part, tmp);
-                tmp[0] = mx + i;
-                tmp[1] = my - j;
-                destroy_object_voxel(id, type, part, tmp);
-                tmp[0] = mx - i;
-                destroy_object_voxel(id, type, part, tmp);
-            }
+    for (int j=0; j<radius; j++)
+    for (int k=0; k<radius; k++)
+    {
+        tmp[0] = mx + i;
+        tmp[1] = my + j;
+        tmp[2] = mz + k;
+        destroy_object_voxel(id, type, part, tmp);
+        tmp[0] = mx - i;
+        destroy_object_voxel(id, type, part, tmp);
+        tmp[1] = my - j;
+        destroy_object_voxel(id, type, part, tmp);
+        tmp[1] = my + j;
+        tmp[2] = mz - k;
+        destroy_object_voxel(id, type, part, tmp);
+        tmp[0] = mx + i;
+        tmp[1] = my - j;
+        destroy_object_voxel(id, type, part, tmp);
+        tmp[0] = mx - i;
+        destroy_object_voxel(id, type, part, tmp);
+    }
 }
 

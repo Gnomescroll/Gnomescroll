@@ -117,15 +117,17 @@ void load_item_dat()
 
     item_def(16, IG_PLACER, "crate_2");
     iso_block_sprite_def("crate_2");
-    //sprite_def(i0, 2,3);
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_2");
     s.max_stack_size = 1;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_2");
 
     item_def(17, IG_PLACER, "crate_3");
     iso_block_sprite_def("crate_3");
-    //sprite_def(i0, 2,4);
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_3");
     s.max_stack_size = 1;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_3");
 
 
 /*
