@@ -250,7 +250,8 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
     struct ColorElement ce;
     ce.color = 0;
     //ce.b = voronoi_char(x,y,z);
-    float m1 = voronoi_float(x,y,z);
+    //float m1 = voronoi_float(x,y,z);
+    float m1 = voronoi_float_fast(x,y,z);
     float m2 = 1.0 - m1;
 
     //float m1 = voronoi_float(x,y,z);

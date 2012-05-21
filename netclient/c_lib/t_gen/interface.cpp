@@ -82,7 +82,20 @@ static const int VOI_00_MASK = ~3; // every 4 blocks
 static const int VOI_00_INTERPOLATION_XY = 4; // every 4 blocks
 static const int VOI_00_INTERPOLATION_Z = 4; // every 4 blocks
 
-static const float lerp_factor[16] = {0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0};
+
+/*
+static const float lerp_factor[16] = {
+    0.0,1.0,2.0,3.0,
+    4.0,5.0,6.0,7.0,
+    8.0,9.0,10.0,11.0,
+    12.0,13.0,14.0,15.0
+};
+*/
+
+static const float lerp_factor[4] = 
+{
+    0.0, 0.25, 0.50, 0.75
+};
 
 void dump_voronoi_to_disc()
 {
@@ -127,11 +140,11 @@ void init_voronoi_noise_maps()
 
     vornoi_map_00 = new float [xmax*ymax*zmax*2]; //2 for safety
 
-    //const float scale = 1.0/32.0;
-    //const float zscale = 1.0/32.0;
+    const float scale = 1.0/32.0;
+    const float zscale = 1.0/32.0;
 
-    const float scale = 1.0/512.0;
-    const float zscale = 1.0/512.0;
+    //const float scale = 1.0/512.0;
+    //const float zscale = 1.0/512.0;
 
 
     //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
@@ -163,7 +176,7 @@ void init_voronoi_noise_maps()
 
 }
 
-//#define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
+#define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
 
 float voronoi_float_fast(int x, int y, int z)
 {
@@ -174,24 +187,35 @@ float voronoi_float_fast(int x, int y, int z)
 
     static const int xymax = xmax*ymax;
 
-    const float ax = lerp_factor[x|3];
-    const float ay = lerp_factor[y|3];
-    const float az = lerp_factor[z|3];
+/*
+    const float ax = lerp_factor[x%4];
+    const float ay = lerp_factor[y%4];
+    const float az = lerp_factor[z%4];
+*/
+
+    const float ax = lerp_factor[x&3];
+    const float ay = lerp_factor[y&3];
+    const float az = lerp_factor[z&3];
 
     x = x >> 2;
     y = y >> 2;
     z = z >> 2;
 
     const float l1 = vornoi_map_00[xymax*z + xmax*y + x];
-
     const float l2 = vornoi_map_00[xymax*z + xmax*y + (x+1)];
     const float l3 = vornoi_map_00[xymax*z + xmax*(y+1) + x];
     const float l4 = vornoi_map_00[xymax*z + xmax*(y+1) + (x+1)];
 
     const float lx1 = l1 + ax*(l2-l1);
-    const float lx2 = l3 + ax*(l3-l4);
+    const float lx2 = l3 + ax*(l4-l3);
+    const float lx3 = lx1 + ay*(lx2 - lx1);
+    
+    //const float lx1 = lerp(ax, l1, l2);
+    //const float lx2 = lerp(ax, l3, l4);
+    //const float lx3 = lerp(ay, lx1, lx2);
 
-    const float lx3 = lx1 + ay*(lx1 - lx2);
+
+    //return lx3;
 
     const float l5 = vornoi_map_00[xymax*(z+1) + xmax*y + x];
     const float l6 = vornoi_map_00[xymax*(z+1) + xmax*y + (x+1)];
@@ -200,11 +224,24 @@ float voronoi_float_fast(int x, int y, int z)
 
     const float lx4 = l5 + ax*(l6-l5);
     const float lx5 = l7 + ax*(l8-l7);
+    const float lx6 = lx4 + ay*(lx5 - lx4);
 
-    const float lx6 = lx4 + ay*(lx4 - lx5);
+    //const float lx4 = lerp(ax, l5, l6);
+    //const float lx5 = lerp(ax, l7, l8);
+    //const float lx6 = lerp(ay, lx4, lx5);
 
     const float value = lx3 + az*(lx6-lx3);
+    //const float value = lerp(az, lx3, lx6);
 
+    GS_ASSERT(lerp(ax, l1, l2) == l1 + ax*(l2-l1) );
+    GS_ASSERT(lerp(ax, l3, l4) == l3 + ax*(l4-l3) );
+    GS_ASSERT(lerp(ay, lx1, lx2) == lx1 + ay*(lx2 - lx1) );
+
+    GS_ASSERT(lerp(ax, l5, l6) == l5 + ax*(l6-l5) );
+    GS_ASSERT(lerp(ax, l7, l8) == l7 + ax*(l8-l7) );
+    GS_ASSERT(lerp(ay, lx4, lx5) == lx4 + ay*(lx5 - lx4) );
+
+    GS_ASSERT(lerp(az, lx3, lx6) == lx3 + az*(lx6-lx3) );
     return value;
 
 }
@@ -212,11 +249,12 @@ float voronoi_float_fast(int x, int y, int z)
 
 float voronoi_float(float x, float y, float z)
 {
-    //const float scale = 1.0/32.0;
-    //const float zscale = 1.0/32.0;
-    
-    static const float scale = 1.0/64.0;
-    static const float zscale = 1.0/64.0;
+
+    //static const float scale = 1.0/64.0;
+    //static const float zscale = 1.0/64.0;
+
+    const float scale = 1.0/32.0;
+    const float zscale = 1.0/32.0;
 
     const double _x = scale*x;
     const double _y = scale*y;
