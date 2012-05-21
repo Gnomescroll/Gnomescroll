@@ -34,7 +34,7 @@ void init()
 
     #if !PRODUCTION
     //Item::test_item_list_capacity();
-    ItemContainer::test_container_list_capacity();
+    //ItemContainer::test_container_list_capacity();
     #endif
 }
    

@@ -70,11 +70,15 @@ dynamic object list templates -- integrated for item, itemparticle and itemconta
 DONE
 
 remove craft container from initial toolbelt
+DONE
+
+Add block placer to nanite
+DONE
 
 craft container blocks drop craft container block
-
-tiling noise
 
 ctrl-c exit for client?
 
 segfault in client early exit
+
+tiling noise

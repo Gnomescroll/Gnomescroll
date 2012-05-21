@@ -181,6 +181,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
 
 ItemID get_toolbelt_item(int slot)
 {
+    if (player_toolbelt == NULL) return NULL_ITEM;
     GS_ASSERT(player_toolbelt != NULL);
     GS_ASSERT(slot >= 0 && slot < player_toolbelt->xdim);
     return player_toolbelt->get_item(slot);
@@ -773,7 +774,7 @@ int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
 void test_container_list_capacity()
 {
     for (int i=0; i<ITEM_CONTAINER_MAX*2; i++)
-        item_container_list->create(0);
+        item_container_list->create(AGENT_CONTAINER);
 }
 
 }   // ItemContainer
