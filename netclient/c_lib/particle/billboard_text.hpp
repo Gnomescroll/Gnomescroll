@@ -2,11 +2,11 @@
 
 #include <particle/particles.hpp>
 
-#define BILLBOARD_TEXT_MAX 1024
-#define BILLBOARD_TEXT_TTL 300
-#define BILLBOARD_TEXT_TYPE 10
-#define BILLBOARD_TEXT_DAMP 0.2f
-#define BILLBOARD_TEXT_TEXTURE_SCALE 0.2f
+const int BILLBOARD_TEXT_MAX = 1024;
+const int BILLBOARD_TEXT_TTL = 300;
+const int BILLBOARD_TEXT_TYPE = 10;
+const float BILLBOARD_TEXT_DAMP = 0.2f;
+const float BILLBOARD_TEXT_TEXTURE_SCALE = 0.2f;
 
 namespace Particle
 {

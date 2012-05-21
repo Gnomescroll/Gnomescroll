@@ -6,18 +6,18 @@
 namespace Particle
 {
 
-#define MINIVOX_MAX 4096
-#define MINIVOX_TTL 100
-#define MINIVOX_DAMP 0.5f
-#define MINIVOX_TYPE 6
+const int MINIVOX_MAX = 4096;
+const int MINIVOX_TTL = 100;
+const float MINIVOX_DAMP = 0.5f;
+const int MINIVOX_TYPE = 6;
 
 /* voxel properties */
 const float MINIVOX_MASS = 2.0f;
 const float MINIVOX_SIZE = 0.05f;
-#define MINIVOX_R 136
-#define MINIVOX_G 27
-#define MINIVOX_B 224
-#define MINIVOX_A 255
+const unsigned char MINIVOX_R = 136;
+const unsigned char MINIVOX_G = 27;
+const unsigned char MINIVOX_B = 224;
+const unsigned char MINIVOX_A = 255;
 
 
 class ColoredMinivox: public ParticleMotion

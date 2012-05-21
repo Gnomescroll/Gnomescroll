@@ -9,12 +9,11 @@ namespace Particle
 void init_shrapnel();
 void teardown_shrapnel();
 
-#define SHRAPNEL_MAX 4096
-#define SHRAPNEL_TTL 30
-#define SHRAPNEL_DAMP 0.5f
-#define SHRAPNEL_TYPE 5
-#define SHRAPNEL_TEXTURE_ID 5
-#define SHRAPNEL_TEXTURE_SCALE 0.15f
+const int SHRAPNEL_MAX = 4096;
+const int SHRAPNEL_TTL = 30;
+const float SHRAPNEL_DAMP = 0.5f;
+const int SHRAPNEL_TEXTURE_ID = 5;
+const float SHRAPNEL_TEXTURE_SCALE = 0.15f;
 
 //class Shrapnel: public ParticleMotion, public BillboardSprite
 

@@ -4,10 +4,10 @@ namespace Particle
 {
 
 
-#define GRENADE_SHRAPNEL_MAX 4096
-#define GRENADE_SHRAPNEL_TTL 20
-#define GRENADE_SHRAPNEL_DAMP 1.0f
-#define GRENADE_SHRAPNEL_TYPE 9
+const int GRENADE_SHRAPNEL_MAX = 4096;
+const int GRENADE_SHRAPNEL_TTL = 20;
+const float GRENADE_SHRAPNEL_DAMP = 1.0f;
+const int GRENADE_SHRAPNEL_TYPE = 9;
 
 class Grenade_shrapnel: public ParticleMotion
 {

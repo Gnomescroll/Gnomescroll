@@ -3,12 +3,12 @@
 namespace Particle
 {
 
-#define BLOOD_MAX 4096
-#define BLOOD_TTL 30
-#define BLOOD_DAMP 0.6f
-#define BLOOD_TYPE 2
-#define BLOOD_TEXTURE_ID 54
-#define BLOOD_TEXTURE_SCALE 0.1f
+const int BLOOD_MAX = 4096;
+const int BLOOD_TTL = 30;
+const float BLOOD_DAMP = 0.6f;
+const int BLOOD_TYPE = 2;
+const int BLOOD_TEXTURE_ID = 54;
+const float BLOOD_TEXTURE_SCALE = 0.1f;
 
 
 class Blood: public ParticleMotion, public BillboardSprite
