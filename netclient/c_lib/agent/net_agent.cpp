@@ -662,7 +662,7 @@ inline void hitscan_object_CtoS::handle()
     //if (!a->weapons.laser.fire()) return;
 
     Agent_state* agent = NULL;
-    const int obj_dmg = 50;
+    const int obj_dmg = randrange(10,25);
     int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;
