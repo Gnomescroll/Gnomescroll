@@ -159,9 +159,9 @@ const char _pallet[ 3*(_pallet_num) ] =
 const int _pallet_num = 3;
 const char _pallet[ 3*(_pallet_num) ] = 
 {
-    //0xa0, 0xa0,0xa0,
+    0xa0, 0xa0,0xa0,
     //0x3d, 0x52,0x5e,
-    0x57, 0x6e,0x62,
+    //0x57, 0x6e,0x62,
     //0x6d,0x8e, 0x86,
     0x3d,0x52,0x5e,
     0x94,0xb2,0xbb,
@@ -249,7 +249,31 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
 
     struct ColorElement ce;
     ce.color = 0;
-    ce.b = voronoi_char(x,y,z);
+    //ce.b = voronoi_char(x,y,z);
+    float m1 = voronoi_float(x,y,z);
+    float m2 = 1.0 - m1;
+
+    //float m1 = voronoi_float(x,y,z);
+    //float m2 = 1.0 - m1;
+
+    //struct ColorElement ce1;
+    //struct ColorElement ce2;
+
+    const int i = 0;
+    const int j = 1;
+
+    float r1 = _palletn[3*i+0];
+    float g1 = _palletn[3*i+1];
+    float b1 = _palletn[3*i+2];
+
+    float r2 = _palletn[3*j+0];
+    float g2 = _palletn[3*j+1];
+    float b2 = _palletn[3*j+2];
+
+    ce.r = (unsigned char) (m1*r1 + m2*r2);
+    ce.g = (unsigned char) (m1*g1 + m2*g2);
+    ce.b = (unsigned char) (m1*b1 + m2*b2);
+
     return ce;
 }
 
@@ -259,9 +283,9 @@ static inline void _set_quad_color_voronoi(struct Vertex* v_list, int offset, in
     struct ColorElement _ce[4];
 
     _ce[0] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
-    _ce[1] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
-    _ce[2] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
-    _ce[3] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
+    _ce[1] = calc_voronoi_color(x,y,z, 3*(4*side+1) );
+    _ce[2] = calc_voronoi_color(x,y,z, 3*(4*side+2) );
+    _ce[3] = calc_voronoi_color(x,y,z, 3*(4*side+3) );
 /*
     _ce.r = 0;
     _ce.g = 0;

@@ -37,6 +37,7 @@ void time_since(int n)
 
 }
 
+
 void init()
 {
     //_set_resolution(Options::width, Options::height, Options::fullscreen);

@@ -70,6 +70,7 @@ double Vo(double x, double y, double z, int a, int b) {
 
 }
 
+float voronoi_float(float x, float y, float z);
 
 void dump_voronoi_to_disc()
 {
@@ -78,15 +79,17 @@ void dump_voronoi_to_disc()
 
     float* fm = new float[xdim*ydim];
 
-    const double scale = 1.0/32.0;
+    //const double scale = 1.0/32.0;
     const double depth = 0.0;
     for(int i=0; i<xdim; i++)
     {
         for(int j=0; j<ydim; j++)
         {
-            double x = scale*((double)i);
-            double y = scale*((double)j);
-            fm[j*xdim + i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Length);
+            //double x = scale*((double)i);
+            //double y = scale*((double)j);
+            //fm[j*xdim + i ] = Voronoi::Get(x,y, depth, Voronoi::First, Voronoi::Minkowski4);
+            fm[j*xdim + i ] = voronoi_float(i,j, depth);
+
         }
     }
     t_gen::save_png("voronoi", fm, xdim, ydim);
@@ -95,15 +98,35 @@ void dump_voronoi_to_disc()
 
 
 
-unsigned char voronoi_char(double x, double y, double z)
+float voronoi_float(float x, float y, float z)
 {
-    const double scale = 1.0/8.0;
 
-    double tmp = Voronoi::Get(x*scale,y*scale,x*scale, Voronoi::First, Voronoi::Length);
+    const float scale = 1.0/32.0;
+    const float zscale = 1.0/32.0;
+    //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
+    float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::Fourth, Voronoi::Chebychev);
 
-    if(tmp <= 0.0) return 0;
+    const float f = 1.5
+    tmp = f*tmp - f/2.0;
+    //tmp = 1.0 - tmp;
+    if(tmp <= 0.0) return 0.0;
+    if(tmp >= 1.0) return 1.0;
+
+    //printf("out= %i \n", (int)(255*tmp) );
+    return tmp;
+}
+
+
+unsigned char voronoi_char(float x, float y, float z)
+{
+    const float scale = 1.0/16.0;
+    const float zscale = 1.0/16.0;
+    float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Minkowski4);
+
+    tmp = 1.0 - tmp;
+    if(tmp <= 0.0) return 128;
     if(tmp >= 1.0) return 255;
 
     //printf("out= %i \n", (int)(255*tmp) );
-    return (unsigned char) (255*tmp);
+    return (unsigned char) 64+((63+128)*tmp);
 }

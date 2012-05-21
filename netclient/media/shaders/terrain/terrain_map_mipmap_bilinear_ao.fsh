@@ -55,24 +55,27 @@ void main()
 
     //vec3 color = inColor.rgb; 
     
+    vec3 c1 = mix(CE1, CE4, texCoord.x);
+    vec3 c2 = mix(CE2, CE3, texCoord.x);
+    vec3 color = mix(c1, c2, texCoord.y);
 
-    vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));      
-    //vec3 color = tmp*vec3(1.0, 0.0, 0.0);
+    //color = CE2;
+
+    //color = c2;
+    //color = color*tmp;
+    //color = pow(color, vec3(1.0f / 2.2f) );
+    //gl_FragColor.rgb = color;
+
+    color = tmp*color;
+    color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
+    //color = color * inColor;
 
 
-    //float intensity = 3.0f / (inColor.r + inColor.g + inColor.b);
-    //vec3 color2 = intensity*inColor;
-    //color = color2 * color;
-    color = color * inColor;
 
-    //color = inColor * color;
 
-    gl_FragColor.rgb = CE2;
-/*
     if(fogFragDepth <= fog_start)
     {
 		color = pow(color, vec3(1.0f / 2.2f) );
-        color = CE2;
         gl_FragColor.rgb = color;
     }
     else
@@ -85,7 +88,7 @@ void main()
         color = pow(color, vec3(1.0f / 2.2f) );
         gl_FragColor.rgb = color;
     }
-*/
+
     //gl_FragColor.rgb = fogFactor*vec3(1.0, 0.0, 0.0);
     //gl_FragColor.rgb = mix(color, vec3(0.0, 0.0, 0.0), fogFactor);
 
