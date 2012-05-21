@@ -75,10 +75,11 @@ DONE
 Add block placer to nanite
 DONE
 
+fix segfault when clicking before received toolbelt
+DONE
+
 craft container blocks drop craft container block
 
 ctrl-c exit for client?
-
-segfault in client early exit
 
 tiling noise

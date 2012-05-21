@@ -204,14 +204,28 @@ dont_include_this_file_in_server
 
 //#include <unistd.h>
 
+#ifdef linux
+#include <signal.h>
+
+void close_c_lib();
+void signal_terminate_handler(int sig)
+{
+    close_c_lib();
+    exit(1);
+}
+#endif
+
 int init_c_lib() 
 {
     static int inited = 0;
-    if (inited++)
-    {
-        printf("WARNING: Attempt to init c_lib more than once\n");
-        return 0;
-    }
+    assert(inited == 0);
+    inited++;
+
+    #ifdef linux
+    signal(SIGTERM, signal_terminate_handler);  // kill <pid>
+    signal(SIGINT, signal_terminate_handler);   // ctrl-c
+    #endif
+
     Log::init();
     printf("init c_lib\n");
 
