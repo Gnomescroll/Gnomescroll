@@ -58,7 +58,7 @@ namespace Item
 
 const int ITEM_LIST_MAX = 1024;
 
-class ItemList: public Object_list<Item, ITEM_LIST_MAX>
+class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
 {
     private:
         const char* name() { return "Item"; }
@@ -77,7 +77,7 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
         #if DC_CLIENT
         Item* create_type(int item_type, ItemID item_id)
         {
-            Item* item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
+            Item* item = DynamicObjectList<Item, ITEM_LIST_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;
@@ -93,7 +93,7 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
                 return item;
             }
             
-            item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
+            item = DynamicObjectList<Item, ITEM_LIST_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;

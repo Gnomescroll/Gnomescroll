@@ -1,0 +1,211 @@
+#pragma once 
+
+/*
+ * Objects managed by DynamicObjectList must support the minimum interface:
+ *
+ * void draw();
+ * void client_tick();
+ * void server_tick();
+ */
+ 
+//#include <common/common.hpp>
+//#include <physics/common.hpp>
+
+#define OBJECT_LIST_DEBUG 0
+
+template <class Object_state, int max_n=1024>
+class DynamicObjectList
+{
+    private:
+        //#if PRODUCTION
+        //const char* name() { return "Object"; }
+        //#else
+        virtual const char* name() = 0;
+        //#endif
+
+    protected:
+        int id_c;
+        
+    public:
+        static const int n_max_base = max_n;
+        int n_max;
+        int num;
+
+        Object_state** a;
+
+        Object_state* get(int id);
+        Object_state* create();         //object auto id
+        Object_state* create(int id);   //create object with id
+        
+        Object_state* get_or_create(int id);
+
+        bool contains(int id);
+        bool full();
+
+        int get_free_id();
+        
+        void destroy(int _id);
+
+        void where();
+        void print_members();
+
+        DynamicObjectList(); //default constructor
+        virtual ~DynamicObjectList(); //default deconstructor
+};
+
+template <class Object_state, int max_n> 
+DynamicObjectList<Object_state, max_n>::DynamicObjectList()
+:
+id_c(0),
+n_max(max_n),
+num(0)
+{
+    this->a = (Object_state**)calloc(max_n, sizeof(Object_state*));
+    //where();
+}
+
+template <class Object_state, int max_n> 
+DynamicObjectList<Object_state, max_n>::~DynamicObjectList()
+{
+    if (a != NULL)
+    {
+        for (int i=0; i<this->n_max; i++)
+        {
+            if (this->a[i] != NULL)
+                delete this->a[i];
+        }
+        free(this->a);
+    }
+}
+
+template <class Object_state, int max_n>
+void DynamicObjectList<Object_state, max_n>::where()
+{
+    printf("%s_list pointer is %p\n", name(), this);
+}
+
+template <class Object_state, int max_n>
+Object_state* DynamicObjectList<Object_state, max_n>::get(int id)
+{
+    //where();
+    if((id < 0) || (id >= n_max)) {
+        //printf("%s id error: id=%i\n", name() ,id);
+        //if (id != NO_AGENT) // TODO 
+        //    print_trace();
+        return NULL;
+    } 
+    if(a[id] == NULL) {
+        //printf("%s get error: object is null, id=%i\n",name(), id);
+        //this->print_members();
+        return NULL;
+    }
+    return a[id];
+}
+
+template <class Object_state, int max_n>
+void DynamicObjectList<Object_state, max_n>::print_members() {
+    int i;
+    printf("%s members:\n", name());
+    for (i=0; i<n_max; i++) {
+        if (a[i] == NULL) continue;
+        printf("%d\n", i);
+    }
+}
+
+template <class Object_state, int max_n>
+int DynamicObjectList<Object_state, max_n>::get_free_id()
+{
+    int i;
+    int id;
+    for (i=0; i<n_max; i++)
+    {
+        id = (i + id_c) % n_max;
+        if (a[id] == NULL) break;
+    }
+    if (i == n_max)
+    {
+        printf("%s_list Error: no free ids found\n", name());
+        return -1;
+    }
+    return id;
+}
+
+template <class Object_state, int max_n>
+Object_state* DynamicObjectList<Object_state, max_n>::create() {
+    //where();
+    int i;
+    int id;
+    for(i=0; i<n_max;i++)
+    {
+        id = (i+id_c)%n_max;
+        if(a[id] == NULL) break;
+    }
+    if (i==n_max)
+    {
+        id = n_max; // save next id
+        // resize
+        this->n_max += n_max_base;
+        printf("Resizing %s list to %d\n", this->name(), this->n_max);
+        this->a = (Object_state**)realloc(this->a, this->n_max * sizeof(Object_state**));
+        for (int i=this->n_max-n_max_base; i<this->n_max; this->a[i++] = NULL);
+        GS_ASSERT(this->a != NULL);
+    }
+    a[id] = new Object_state(id);
+    num++;
+    id_c = id+1;
+    return a[id];
+}
+
+template <class Object_state, int max_n>
+Object_state* DynamicObjectList<Object_state, max_n>::create(int id) {
+    //where();
+    if(a[id] == NULL) {
+        a[id] = new Object_state(id);
+        num++;
+        return a[id];
+    } else {
+        printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
+        return NULL;
+    }
+}
+
+template <class Object_state, int max_n>
+Object_state* DynamicObjectList<Object_state, max_n>::get_or_create(int id) {
+    //where();
+    Object_state* obj = a[id];
+    if (obj == NULL) {
+        obj = create(id);
+    }
+    return obj;
+}
+
+template <class Object_state, int max_n>
+bool DynamicObjectList<Object_state, max_n>::contains(int id) {
+    //where();
+    Object_state* obj = a[id];
+    if (obj == NULL) {
+        return false;
+    }
+    return true;
+}
+
+template <class Object_state, int max_n>
+void DynamicObjectList<Object_state, max_n>::destroy(int id)
+{
+    //where();
+    if(a[id]==NULL) {
+        printf("%s_list: Cannot delete object: object is null\n", name() );
+        return;
+    }
+    delete a[id];
+    a[id] = NULL;
+    num--;
+    //printf("%s_list: Deleted object %i\n",name(), id);
+}
+ 
+template <class Object_state, int max_n>
+bool DynamicObjectList<Object_state, max_n>::full()
+{
+    if (this->num > max_n) printf("WARNING: Objet_list -- Num %d exceeds max_n %d\n", num, max_n);
+    return (this->num >= max_n);
+}
