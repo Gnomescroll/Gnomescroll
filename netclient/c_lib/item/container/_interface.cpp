@@ -315,23 +315,29 @@ void assign_containers_to_agent(int agent_id, int client_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     
     ItemContainer* agent_container = (ItemContainer*)item_container_list->create(AGENT_CONTAINER);
+    GS_ASSERT(agent_container != NULL);
     assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
     
     ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
+    GS_ASSERT(agent_toolbelt != NULL);
     assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
 
     Item::Item* laser_rifle = Item::create_item(Item::get_item_type((char*)"laser_rifle"));
+    GS_ASSERT(laser_rifle != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);    // this will send the item create
 
     Item::Item* mining_laser = Item::create_item(Item::get_item_type((char*)"mining_laser"));
+    GS_ASSERT(mining_laser != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
 
     #if PRODUCTION
     Item::Item* crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     #else
     // put a grenade launcher in the toolbelt to selt
     Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
+    GS_ASSERT(grenade_launcher != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
 
     // add a few container blocks
@@ -341,28 +347,34 @@ void assign_containers_to_agent(int agent_id, int client_id)
     //crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
     //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     #endif
 
+    // debug items
+    Item::Item* block_placer = Item::create_item(Item::get_item_type((char*)"block_placer"));
+    GS_ASSERT(block_placer != NULL):
+    agent_toolbelt->insert_item(agent_toolbelt->slot_max-1, block_placer->id);
+    send_container_item_create(client_id, block_placer->id, agent_toolbelt->id, agent_toolbelt->slot_max-1);
 
     #if !PRODUCTION
-    // debug items
     Item::Item* location_pointer = Item::create_item(Item::get_item_type((char*)"location_pointer"));
-    agent_toolbelt->insert_item(agent_toolbelt->slot_max-1, location_pointer->id);
-    send_container_item_create(client_id, location_pointer->id, agent_toolbelt->id, agent_toolbelt->slot_max-1);
-
-    Item::Item* block_placer = Item::create_item(Item::get_item_type((char*)"block_placer"));
-    agent_toolbelt->insert_item(agent_toolbelt->slot_max-2, block_placer->id);
-    send_container_item_create(client_id, block_placer->id, agent_toolbelt->id, agent_toolbelt->slot_max-2);
+    GS_ASSERT(location_pointer != NULL):
+    agent_toolbelt->insert_item(agent_toolbelt->slot_max-2, location_pointer->id);
+    send_container_item_create(client_id, location_pointer->id, agent_toolbelt->id, agent_toolbelt->slot_max-2);
     #endif
     
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
+    GS_ASSERT(agent_nanite != NULL):
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
 }
 

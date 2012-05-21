@@ -31,6 +31,8 @@ void init()
     address_from_string(Options::ip_address, address);
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
     ServerState::start_game();
+
+    Item::test_item_list_capacity();
 }
    
 void tick()

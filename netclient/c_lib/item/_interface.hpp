@@ -43,6 +43,10 @@ class Item* create_item(char* item_name);
 
 // returns stack size
 int consume_stack_item(ItemID item_id);
+
+// tests
+void test_item_list_capacity();
+
 }   // Item
 #endif
 

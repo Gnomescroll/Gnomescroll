@@ -63,10 +63,10 @@ step 1-4: soft,hard
 fall 1-4: soft,hard
 DONE
 
-tiling noise
-
 destroy damage indicators on 2nd bounce
-animation for destroying? shrapnel? fade out?
+DONE
+
+tiling noise
 
 investigate capacity bugs
 

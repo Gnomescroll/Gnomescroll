@@ -211,6 +211,14 @@ int consume_stack_item(ItemID item_id)
     return item->stack_size;
 }
 
+// tests
+void test_item_list_capacity()
+{
+    printf("Testing item list capacity\n");
+    for (int i=0; i<ITEM_LIST_MAX*2; i++)
+        item_list->create_type(0);
+}
+
 }   // Item
 
 #endif 
