@@ -60,3 +60,5 @@ step 1-4: soft,hard
 fall 1-4: soft,hard
 
 ctrl-c server while agent connected -- segfault
+
+tiling noise
