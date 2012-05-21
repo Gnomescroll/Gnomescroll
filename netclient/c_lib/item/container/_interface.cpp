@@ -769,6 +769,13 @@ int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
     return slot;
 }
 
+//tests
+void test_container_list_capacity()
+{
+    for (int i=0; i<ITEM_CONTAINER_MAX*2; i++)
+        item_container_list->create(0);
+}
+
 }   // ItemContainer
 
 #endif 
