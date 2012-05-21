@@ -190,22 +190,22 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
     switch (part_id)
     {
         case AGENT_PART_HEAD:
-            dmg = AGENT_PART_HEAD_DAMAGE;
+            dmg = randrange(15,25);
             break;
         case AGENT_PART_TORSO:
-            dmg = AGENT_PART_TORSO_DAMAGE;
+            dmg = randrange(10,15);
             break;
         case AGENT_PART_LARM:
-            dmg = AGENT_PART_LARM_DAMAGE;
+            dmg = randrange(5,10);
             break;
         case AGENT_PART_RARM:
-            dmg = AGENT_PART_RARM_DAMAGE;
+            dmg = randrange(5,10);
             break;
         case AGENT_PART_LLEG:
-            dmg = AGENT_PART_LLEG_DAMAGE;
+            dmg = randrange(5,10);
             break;
         case AGENT_PART_RLEG:
-            dmg = AGENT_PART_RLEG_DAMAGE;
+            dmg = randrange(5,10);
             break;
         default:
             printf("WARNING Agent_status::apply_hitscan_laser_damage_to_part -- unknown part %d\n", part_id);

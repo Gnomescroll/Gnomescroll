@@ -662,7 +662,7 @@ inline void hitscan_object_CtoS::handle()
     //if (!a->weapons.laser.fire()) return;
 
     Agent_state* agent = NULL;
-    const int obj_dmg = 50;
+    const int obj_dmg = randrange(10,25);
     int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;
@@ -819,10 +819,9 @@ inline void melee_object_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    //if (!a->weapons.pick.fire()) return;
 
     Agent_state* agent = NULL;
-    const int obj_dmg = 50;
+    const int obj_dmg = randrange(20,45);
     int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;
