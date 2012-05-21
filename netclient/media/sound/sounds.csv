@@ -29,10 +29,10 @@ Victory,,victory,,,,,,,,,"there are no victory condition implemented"
 "other player left server",,player_left_server,,,,,,,,,
 "turret shoot laser",laser_01.wav,turret_shoot,Y,Y,0.1,,,,,,
 "collect item drop",Plink_07.wav,pickup_item,Y,Y,,0.25,,,,,"Should only play 2d, for client's agent"
-soft_step_1,FOLEY_FOOTSTEPS_MUD_FOREST_SINGLE_STEP_01.wav,soft_step_1,y,y,,,,,,,
+soft_step_1,FOLEY_FOOTSTEPS_MARBLE_TILE_01.wav,soft_step_1,y,y,,,,,,,
 soft_step_2,FOLEY_FOOTSTEPS_EARTH_GRASS_STEP_01.wav,soft_step_2,y,y,,,,,,,
 soft_step_3,FOOTSTEPS_TENNIS_SHOES_WOOD_CHIPS_01.wav,soft_step_3,y,y,,,,,,,
-soft_step_4,FOLEY_FOOTSTEPS_MARBLE_TILE_01.wav,soft_step_4,y,y,,,,,,,
+soft_step_4,FOLEY_FOOTSTEPS_MARBLE_TILE_01.wav,soft_step_4,y,y,0.9,,,,,,
 hard_step_1,FOLEY_FOOTSTEPS_BOOTS_SINGLE_STOMP_DIRT_01.wav,hard_step_1,y,y,,,,,,,
 hard_step_2,FOLEY_HUMAN_STOMP_DIRT_01.wav,hard_step_2,y,y,,,,,,,
 hard_step_3,,hard_step_3,y,y,,,,,,,
