@@ -22,9 +22,6 @@ namespace t_map
 namespace t_map
 {
 
-void end_drop_dat()
-{
 
-}
 
 }   // t_map
