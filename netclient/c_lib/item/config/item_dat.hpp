@@ -60,14 +60,6 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"regolith");
 
-    item_def(2, IG_RESOURCE, "copper_ore");
-    sprite_def(i1, 1,3);
-    s.max_stack_size = 50;
-
-    item_def(3, IG_RESOURCE, "copper_bar");
-    sprite_def(i1, 1,2);
-    s.max_stack_size = 50;
-
     item_def(4, IG_RESOURCE, "quartz_crystal");
     sprite_def(i0, 1,5);
 
@@ -79,13 +71,6 @@ void load_item_dat()
     s.hitscan_bullet_effect_enum = 0;
     s.max_durability = 100;
     s.max_energy = 50;
-    s.max_stack_size = 1;
-
-    item_def(6, IG_MELEE_WEAPON, "copper_shovel");
-    sprite_def(i1, 1,1);
-    s.melee_fire_cooldown = 250;
-    s.melee_damage = 2;
-    s.max_durability = 400;
     s.max_stack_size = 1;
 
     item_def(7, IG_MINING_LASER, "mining_laser");
@@ -140,6 +125,82 @@ void load_item_dat()
     iso_block_sprite_def("crate_3");
     //sprite_def(i0, 2,4);
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_3");
+    s.max_stack_size = 1;
+
+
+/*
+    Copper
+*/
+    item_def(32, IG_RESOURCE, "copper_ore");
+    sprite_def(i1, 3,3);
+    s.max_stack_size = 64;
+
+    item_def(33, IG_RESOURCE, "copper_bar");
+    sprite_def(i1, 3,2);
+    s.max_stack_size = 64;
+
+    item_def(34, IG_MELEE_WEAPON, "copper_shovel");
+    sprite_def(i1, 3,1);
+    s.melee_fire_cooldown = 250;
+    s.melee_damage = 2;
+    s.max_durability = 400;
+    s.max_stack_size = 1;
+
+
+/*
+    Gallium
+*/
+
+    item_def(35, IG_RESOURCE, "gallium_ore");
+    sprite_def(i1, 2,3);
+    s.max_stack_size = 64;
+
+    item_def(36, IG_RESOURCE, "gallium_bar");
+    sprite_def(i1, 2,2);
+    s.max_stack_size = 64;
+
+    item_def(37, IG_MELEE_WEAPON, "gallium_shovel");
+    sprite_def(i1, 2,1);
+    s.melee_fire_cooldown = 250;
+    s.melee_damage = 4;
+    s.max_durability = 400;
+    s.max_stack_size = 1;
+
+/*
+    Iron
+*/
+    item_def(38, IG_RESOURCE, "iron_ore");
+    sprite_def(i1, 1,3);
+    s.max_stack_size = 64;
+
+    item_def(39, IG_RESOURCE, "iron_bar");
+    sprite_def(i1, 1,2);
+    s.max_stack_size = 64;
+
+    item_def(40, IG_MELEE_WEAPON, "iron_shovel");
+    sprite_def(i1, 1,1);
+    s.melee_fire_cooldown = 250;
+    s.melee_damage = 6;
+    s.max_durability = 400;
+    s.max_stack_size = 1;
+
+
+/*
+iridium
+*/
+    item_def(41, IG_RESOURCE, "iridium_ore");
+    sprite_def(i1, 4,3);
+    s.max_stack_size = 64;
+
+    item_def(42, IG_RESOURCE, "iridium_bar");
+    sprite_def(i1, 4,2);
+    s.max_stack_size = 64;
+
+    item_def(43, IG_MELEE_WEAPON, "iridium_shovel");
+    sprite_def(i1, 4,1);
+    s.melee_fire_cooldown = 250;
+    s.melee_damage = 30;
+    s.max_durability = 400;
     s.max_stack_size = 1;
 
     end_item_dat();

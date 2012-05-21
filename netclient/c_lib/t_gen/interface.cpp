@@ -140,8 +140,8 @@ void init_voronoi_noise_maps()
 
     vornoi_map_00 = new float [xmax*ymax*zmax*2]; //2 for safety
 
-    const float scale = 1.0/32.0;
-    const float zscale = 1.0/32.0;
+    //const float scale = 1.0/32.0;
+    //const float zscale = 1.0/32.0;
 
     //const float scale = 1.0/512.0;
     //const float zscale = 1.0/512.0;

@@ -8,70 +8,9 @@
 namespace Item
 {
 
-int crafting_recipe_count = 0;
-int _current_reagent_id = 0;
-
-class CraftingRecipe _cr;
-
-void def_recipe(const char* item_name)
-{
-    _cr.output = dat_get_item_type(item_name);
-}
-
-
-void set_reagent(const char* item_name, int quantity)
-{
-    GS_ASSERT(_current_reagent_id < CRAFT_BENCH_INPUTS_MAX);
-
-    int type = dat_get_item_type(item_name);
-    
-
-    // require specifying item,quantity at once
-    //for (int i=0; i<_current_reagent_id; i++)
-        //GS_ASSERT(_cr.reagent[i] != type);
-    
-    // insert reagents sorted by type
-    if (_current_reagent_id == 0)
-    {   // degenerate case
-        _cr.reagent[_current_reagent_id] = type;
-        _cr.reagent_count[_current_reagent_id] = quantity;
-    }
-    else
-    {   // keep reagents sorted by type
-        int i=0;
-        for (; i<_current_reagent_id; i++)
-        {
-            if (_cr.reagent[i] <= type) continue;
-
-            // shift forward
-            for (int j=_current_reagent_id; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
-            for (int j=_current_reagent_id; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
-            
-            // insert
-            _cr.reagent[i] = type;
-            _cr.reagent_count[i] = quantity;
-            break;
-        }
-        
-        if (i == _current_reagent_id)
-        {   // append to end
-            _cr.reagent[_current_reagent_id] = type;
-            _cr.reagent_count[_current_reagent_id] = quantity;
-        }
-    }
-
-    _current_reagent_id++;
-}
-
-void end_recipe()
-{
-    _cr.reagent_num = _current_reagent_id;
-    _cr.id = crafting_recipe_count;
-    crafting_recipe_array[crafting_recipe_count] = _cr;
-    _cr.init();
-    crafting_recipe_count++;
-    _current_reagent_id = 0;
-}
+void def_recipe(const char* item_name);
+void set_reagent(const char* item_name, int quantity);
+void end_recipe();
 
 }   // Item
 
@@ -81,16 +20,57 @@ namespace Item
 void load_crafting_dat()
 {
 
+/*
+    Ore
+*/
+
     def_recipe("copper_bar");
     set_reagent("copper_ore", 1);
     set_reagent("copper_ore", 1);
     end_recipe();
+
+    def_recipe("gallium_bar");
+    set_reagent("gallium_ore", 1);
+    set_reagent("gallium_ore", 1);
+    end_recipe();
+
+    def_recipe("iron_bar");
+    set_reagent("iron_ore", 1);
+    set_reagent("iron_ore", 1);
+    end_recipe();
+
+    def_recipe("iridium_bar");
+    set_reagent("iridium_ore", 1);
+    set_reagent("iridium_ore", 1);
+    end_recipe();
+
+/*
+    Shovel
+*/
 
     def_recipe("copper_shovel");
     set_reagent("copper_bar", 1);
     set_reagent("copper_bar", 1);
     end_recipe();
 
+    def_recipe("gallium_shovel");
+    set_reagent("gallium_bar", 1);
+    set_reagent("gallium_bar", 1);
+    end_recipe();
+
+    def_recipe("iron_shovel");
+    set_reagent("iron_bar", 1);
+    set_reagent("iron_bar", 1);
+    end_recipe();
+
+    def_recipe("iridium_shovel");
+    set_reagent("iridium_bar", 1);
+    set_reagent("iridium_bar", 1);
+    end_recipe();
+
+/*
+    Other
+*/
     def_recipe("food_rock-0");
     set_reagent("regolith", 1);
     set_reagent("regolith", 1);

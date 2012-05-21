@@ -240,6 +240,9 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
 
 static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index) __attribute((always_inline));
 
+/*
+    Replace with voronoi color map loopup
+*/
 static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index)
 {
     x += _vi2[index+0];
