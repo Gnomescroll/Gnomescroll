@@ -37,6 +37,7 @@ void time_since(int n)
 
 }
 
+
 void init()
 {
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
@@ -55,6 +56,7 @@ void init()
 int run()
 {
     //t_gen::test();
+   
     t_gen::gen_map();
     
     using Profiling::frame_graph;

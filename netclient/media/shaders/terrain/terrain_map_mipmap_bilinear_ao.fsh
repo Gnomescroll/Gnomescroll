@@ -14,6 +14,20 @@ varying vec3 texCoord;
     varying mat2 lightMatrix;
 #endif
 
+
+#ifdef GL_EXT_gpu_shader4
+    flat varying vec3 CE1;
+    flat varying vec3 CE2;
+    flat varying vec3 CE3;
+    flat varying vec3 CE4;
+#else
+    varying vec3 CE1;
+    varying vec3 CE2;
+    varying vec3 CE3;
+    varying vec3 CE4;
+#endif
+
+
 varying vec3 inColor;
  
 uniform sampler2DArray base_texture;
@@ -41,17 +55,22 @@ void main()
 
     //vec3 color = inColor.rgb; 
     
+    vec3 c1 = mix(CE1, CE4, texCoord.x);
+    vec3 c2 = mix(CE2, CE3, texCoord.x);
+    vec3 color = mix(c1, c2, texCoord.y);
 
-    vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));      
-    //vec3 color = tmp*vec3(1.0, 0.0, 0.0);
+    //color = CE2;
+
+    //color = c2;
+    //color = color*tmp;
+    //color = pow(color, vec3(1.0f / 2.2f) );
+    //gl_FragColor.rgb = color;
+
+    color = tmp*color;
+    color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
+    //color = color * inColor;
 
 
-    //float intensity = 3.0f / (inColor.r + inColor.g + inColor.b);
-    //vec3 color2 = intensity*inColor;
-    //color = color2 * color;
-    color = color * inColor;
-
-    //color = inColor * color;
 
 
     if(fogFragDepth <= fog_start)

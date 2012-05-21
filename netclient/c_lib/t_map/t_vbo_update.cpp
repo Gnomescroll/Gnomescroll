@@ -9,7 +9,7 @@
 
 #include "t_properties.hpp"
 
-
+#include <t_gen/interface.hpp>
 
 namespace t_map
 {
@@ -143,8 +143,9 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 
 //#3D525E
 
-const int _pallet_num = 5;
-const char _pallet[ 3*(_pallet_num+1) ] = 
+/*
+const int _pallet_num = 6;
+const char _pallet[ 3*(_pallet_num) ] = 
 {
     0xa0, 0xa0,0xa0,
     0x3d, 0x52,0x5e,
@@ -153,14 +154,25 @@ const char _pallet[ 3*(_pallet_num+1) ] =
     0x3d,0x52,0x5e,
     0x94,0xb2,0xbb,
 };
+*/
 
+const int _pallet_num = 3;
+const char _pallet[ 3*(_pallet_num) ] = 
+{
+    0xa0, 0xa0,0xa0,
+    //0x3d, 0x52,0x5e,
+    //0x57, 0x6e,0x62,
+    //0x6d,0x8e, 0x86,
+    0x3d,0x52,0x5e,
+    0x94,0xb2,0xbb,
+};
 
-char _palletn[ 3*(_pallet_num+1) ];
+char _palletn[ 3*(_pallet_num) ];
 
 
 void init_pallete()
 {
-    for(int i=0; i<=_pallet_num; i++)
+    for(int i=0; i<_pallet_num; i++)
     {
         float r = _pallet[3*i+0];
         float g = _pallet[3*i+1];
@@ -177,7 +189,7 @@ void init_pallete()
 
 static inline void _set_quad_color_default(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
-    int index = 3*((hash_function4(x, y, z) % _pallet_num)+1) ;
+    int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
 
     struct ColorElement _ce;
 
@@ -204,9 +216,6 @@ static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x
     for(int i=0 ;i <4; i++)
     {
         v_list[offset+i].color = 0xffffffff;
-        //v_list[offset+i].r = _ce.r;
-        //v_list[offset+i].g = _ce.g;
-        //v_list[offset+i].b = _ce.b;
     }
 }
 
@@ -215,10 +224,10 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
 
     int index[4];
     //4th element is side+vertex index
-    index[0] = 3*((hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num)+1) ;
-    index[1] = 3*((hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num)+1) ;
-    index[2] = 3*((hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num)+1) ;
-    index[3] = 3*((hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num)+1) ;
+    index[0] = 3*(hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num) ;
+    index[1] = 3*(hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num) ;
+    index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) ) % _pallet_num) ;
+    index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) ) % _pallet_num) ;
 
     for(int i=0 ;i <4; i++)
     {
@@ -227,16 +236,88 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
         v_list[offset+i].b = _palletn[index[i]+2];
     }
 
+}
+
+static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index) __attribute((always_inline));
+
+static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index)
+{
+    x += _vi2[index+0];
+    y += _vi2[index+1];
+    z += _vi2[index+2];
+
+
+    struct ColorElement ce;
+    ce.color = 0;
+    //ce.b = voronoi_char(x,y,z);
+    float m1 = voronoi_float(x,y,z);
+    float m2 = 1.0 - m1;
+
+    //float m1 = voronoi_float(x,y,z);
+    //float m2 = 1.0 - m1;
+
+    //struct ColorElement ce1;
+    //struct ColorElement ce2;
+
+    const int i = 0;
+    const int j = 1;
+
+    float r1 = _palletn[3*i+0];
+    float g1 = _palletn[3*i+1];
+    float b1 = _palletn[3*i+2];
+
+    float r2 = _palletn[3*j+0];
+    float g2 = _palletn[3*j+1];
+    float b2 = _palletn[3*j+2];
+
+    ce.r = (unsigned char) (m1*r1 + m2*r2);
+    ce.g = (unsigned char) (m1*g1 + m2*g2);
+    ce.b = (unsigned char) (m1*b1 + m2*b2);
+
+    return ce;
+}
+
+static inline void _set_quad_color_voronoi(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+{
+
+    struct ColorElement _ce[4];
+
+    _ce[0] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
+    _ce[1] = calc_voronoi_color(x,y,z, 3*(4*side+1) );
+    _ce[2] = calc_voronoi_color(x,y,z, 3*(4*side+2) );
+    _ce[3] = calc_voronoi_color(x,y,z, 3*(4*side+3) );
 /*
+    _ce.r = 0;
+    _ce.g = 0;
+    _ce.b = 255;
+    _ce.a = 0;
+*/
     for(int i=0 ;i <4; i++)
     {
-        unsigned char color = hash_function_perlin2(x, y, z, 3*(4*side+i) );
-        v_list[offset+i].r = 255;
-        v_list[offset+i].g = 255;
-        v_list[offset+i].b = color;
+        v_list[offset+i].ce[0] = _ce[0];
+        v_list[offset+i].ce[1] = _ce[1];
+        v_list[offset+i].ce[2] = _ce[2];
+        v_list[offset+i].ce[3] = _ce[3];
     }
-*/
+
+#if 0
+    int index[4];
+    //4th element is side+vertex index
+    index[0] = 3*(hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num) ;
+    index[1] = 3*(hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num) ;
+    index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num) ;
+    index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num) ;
+
+    for(int i=0 ;i <4; i++)
+    {
+        v_list[offset+i].r = _palletn[index[i]+0];
+        v_list[offset+i].g = _palletn[index[i]+1];
+        v_list[offset+i].b = _palletn[index[i]+2];
+    }
+#endif
+
 }
+
 
 static const unsigned char _0 = 0;
 static const unsigned char _1 = 1;
@@ -307,13 +388,16 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
     switch( t_map::cube_list[tile_id].color_type )
     {
         case 0:
-            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            _set_quad_color_default(v_list, offset, x, y, z, side);
             break;
         case 1:
-            _set_quad_color_perlin(v_list, offset, x, y, z, side);
+            _set_quad_color_voronoi(v_list, offset, x, y, z, side);
             break;
         case 2:
-            _set_quad_color_default(v_list, offset, x, y, z, side);
+            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            break;
+        case 3:
+            _set_quad_color_perlin(v_list, offset, x, y, z, side);
             break;
         default:
             break;
@@ -399,6 +483,9 @@ static inline void add_quad_comptability(struct Vertex* v_list, int offset, int 
             _set_quad_color_flat(v_list, offset, x, y, z, side);
             break;
         case 2:
+            _set_quad_color_voronoi(v_list, offset, x, y, z, side);
+            break;
+        case 3:
             _set_quad_color_perlin(v_list, offset, x, y, z, side);
             break;
         default:

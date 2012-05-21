@@ -112,6 +112,16 @@ namespace t_map
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
         
+        
+        map_CE1 = glGetAttribLocation(map_shader[index], "InCE1");
+        map_CE2 = glGetAttribLocation(map_shader[index], "InCE2");
+        map_CE3 = glGetAttribLocation(map_shader[index], "InCE3");
+        map_CE4 = glGetAttribLocation(map_shader[index], "InCE4");
+        printf("map_CE1= %i \n", map_CE1);
+        printf("map_CE2= %i \n", map_CE2);
+        printf("map_CE3= %i \n", map_CE3);
+        printf("map_CE4= %i \n", map_CE4);
+
         //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
 
         free(vs);
@@ -162,7 +172,7 @@ namespace t_map
     //warning: random segfault on start in graphics driver
     void init_map_3d_texture()
     {
-        printf("init_map_3d_texture: 0 \n");
+        //printf("init_map_3d_texture: 0 \n");
 
         if(terrain_map_glsl != 0)
         {
@@ -172,7 +182,7 @@ namespace t_map
         }
 
 
-        printf("init_map_3d_texture: 1 \n");
+        //printf("init_map_3d_texture: 1 \n");
         //glEnable(GL_TEXTURE_2D);
         glDisable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -197,7 +207,7 @@ namespace t_map
             glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
 
-        printf("init_map_3d_texture: 2 \n");
+        //printf("init_map_3d_texture: 2 \n");
 
         if( T_MAP_TEXTURE_2D_ARRAY_MIPMAPS == 0)
         {
@@ -250,7 +260,7 @@ namespace t_map
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
 
-        printf("init_map_3d_texture: 3 \n");
+        //printf("init_map_3d_texture: 3 \n");
 
         // crash happens here
 
@@ -270,7 +280,7 @@ namespace t_map
         glDisable(GL_TEXTURE_2D);
 
 
-        printf("init_map_3d_texture: 4 \n");
+        //printf("init_map_3d_texture: 4 \n");
     }
 
     void teardown_shader()
@@ -322,9 +332,14 @@ namespace t_map
         map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
-        
-        //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
+     
 
+    /*   
+        map_CE1 = glGetAttribLocation(map_shader[index], "InCE1");
+        map_CE2 = glGetAttribLocation(map_shader[index], "InCE2");
+        map_CE3 = glGetAttribLocation(map_shader[index], "InCE3");
+        map_CE4 = glGetAttribLocation(map_shader[index], "InCE4");
+    */
         free(vs);
         free(fs);
 

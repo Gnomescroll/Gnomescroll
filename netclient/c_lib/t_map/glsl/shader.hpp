@@ -32,6 +32,12 @@ namespace t_map
 
     int map_LightMatrix;
 
+    //int map_ColorElement;
+    int map_CE1;
+    int map_CE2;
+    int map_CE3;
+    int map_CE4;
+
     //texture
     extern SDL_Surface *terrain_map_surface;
     extern GLuint terrain_map_texture;
