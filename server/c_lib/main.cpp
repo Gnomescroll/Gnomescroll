@@ -33,7 +33,7 @@ void init()
     ServerState::start_game();
 
     #if !PRODUCTION
-    Item::test_item_list_capacity();
+    //Item::test_item_list_capacity();
     #endif
 }
    
