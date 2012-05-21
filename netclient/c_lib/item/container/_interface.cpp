@@ -360,13 +360,13 @@ void assign_containers_to_agent(int agent_id, int client_id)
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     #endif
 
+    #if !PRODUCTION
     // debug items
     Item::Item* block_placer = Item::create_item(Item::get_item_type((char*)"block_placer"));
     GS_ASSERT(block_placer != NULL);
     agent_toolbelt->insert_item(agent_toolbelt->slot_max-1, block_placer->id);
     send_container_item_create(client_id, block_placer->id, agent_toolbelt->id, agent_toolbelt->slot_max-1);
 
-    #if !PRODUCTION
     Item::Item* location_pointer = Item::create_item(Item::get_item_type((char*)"location_pointer"));
     GS_ASSERT(location_pointer != NULL);
     agent_toolbelt->insert_item(agent_toolbelt->slot_max-2, location_pointer->id);
