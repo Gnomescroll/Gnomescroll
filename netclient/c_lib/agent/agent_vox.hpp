@@ -13,9 +13,9 @@ enum AGENT_BODY_PARTS
     AGENT_PART_RLEG
 };
 
-const int AGENT_PART_HEAD_DAMAGE  = 20;
-const int AGENT_PART_TORSO_DAMAGE = 10;
-const int AGENT_PART_LARM_DAMAGE  = 5;
-const int AGENT_PART_RARM_DAMAGE  = 5;
-const int AGENT_PART_LLEG_DAMAGE  = 5;
-const int AGENT_PART_RLEG_DAMAGE  = 5;
+//const int AGENT_PART_HEAD_DAMAGE  = 20;
+//const int AGENT_PART_TORSO_DAMAGE = 10;
+//const int AGENT_PART_LARM_DAMAGE  = 5;
+//const int AGENT_PART_RARM_DAMAGE  = 5;
+//const int AGENT_PART_LLEG_DAMAGE  = 5;
+//const int AGENT_PART_RLEG_DAMAGE  = 5;
