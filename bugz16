@@ -84,11 +84,18 @@ DONE
 adjust damages against mobs
 DONE
 
+craft container blocks drop craft container block
+DONE
+
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
 --the completely empty function is done. need to integrate it into component system
 --agents need more careful restrictions. they can't just die early. maybe N blocks per N damage
 --server should keep track of solid voxel counts instead of recalculating constantly
 
-craft container blocks drop craft container block
+use 64pixel isometric texture, and orient correctly
+
+blue bombs should aggro if shot
+
+blue bombs should be wandering, slowly
 
 tiling noise
