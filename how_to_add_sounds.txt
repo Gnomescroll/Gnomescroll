@@ -38,3 +38,6 @@ Otherwise, save the csv for me, (rename it sounds.csv.failure1 or whatever, and 
 and I will test it. We shouldnt run into bugs more than twice, if any
 
 
+======================
+Notes:
+Make sure there are no newlines (\n) in spreadsheet cells. this fucks up the csv and thus fucks up the parser

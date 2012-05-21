@@ -55,10 +55,14 @@ DONE
 alpha blending on container hud text
 DONE
 
+ctrl-c server while agent connected -- segfault
+FIXED
+
 footstep sound function
 step 1-4: soft,hard
 fall 1-4: soft,hard
 
-ctrl-c server while agent connected -- segfault
-
 tiling noise
+
+destroy damage indicators on 2nd bounce
+animation for destroying? shrapnel? fade out?
