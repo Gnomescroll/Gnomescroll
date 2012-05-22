@@ -41,6 +41,8 @@ ContainerInputEvent scroll_down();
 ContainerInputEvent select_slot(int numkey);
 ContainerInputEvent null_input_event();
 
+void set_mouse_position(int x, int y);
+
 // network
 void network_container_assignment(ObjectType type, int id);
 

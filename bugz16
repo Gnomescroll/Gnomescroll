@@ -164,3 +164,4 @@ GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object_list.cp
 ./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object.cpp, line 19 function: add_component 
 
+hand item is not thrown when closing craft bench

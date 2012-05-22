@@ -185,6 +185,12 @@ ContainerInputEvent mouse_motion(int x, int y)
     return NULL_EVENT;
 }
 
+void set_mouse_position(int x, int y)
+{
+    mouse_x = x;
+    mouse_y = y;
+}
+
 ContainerInputEvent scroll_up()
 {
     if (agent_toolbelt == NULL) return NULL_EVENT;

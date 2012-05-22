@@ -60,20 +60,28 @@ int process_events()
     else
         unbind_mouse();
 
+    bool ignore_events = false;
     if (ItemContainer::container_was_opened())
     {
+        // force set the mouse position, because we wont have a motion event coming in initially
+        int x,y;
+        SDL_GetMouseState(&x, &y);
+        t_hud::set_mouse_position(x,y);
         enable_block_container();
         // need to ignore further events this tick
-        return 0;
+        //printf("enabled\n");
+        ignore_events = true;
     }
     else if (ItemContainer::container_was_closed())
     {
         disable_block_container();
-        return 0;
+        //printf("disabled\n");
+        ignore_events = true;
     }
 
     while(SDL_PollEvent(&Event))
     { //returns 0 if no event
+        if (ignore_events) continue;
         Event.user.code = SDL_EVENT_USER_NONE;
         switch( Event.type )
         {
