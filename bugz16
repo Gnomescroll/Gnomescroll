@@ -98,6 +98,14 @@ use 64pixel isometric texture
 --Try: shirnking the 64 texture to 16 after generation. the shitty look is due to the draw_iso_sprite() method, opengl should interpolate better
 DONE
 
+fix failure to unset container ui widget id
+DONE
+
+fist
+DONE
+
+shovels
+
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
 --the completely empty function is done. need to integrate it into component system
 --agents need more careful restrictions. they can't just die early. maybe N blocks per N damage
@@ -118,8 +126,6 @@ blue bombs should damage terrain like grenades
 
 red bots should do random dmg, have random health etc
 
-shovels/fist melee
-
 tiling noise (argh)
 
 refill players' starting items on respawn
@@ -127,3 +133,34 @@ refill players' starting items on respawn
 --if has one or more partially full mining lasers, fill the most full one
 --if no mining laser found, add one (if room)
 -do the same for laser rifle
+
+opening container also executes click on inventory
+
+item eater:
+"halve a stack, place it where another stack of a different item is, place in the same spot, move the stack that was halved anywhere, the replaced stack disappears"
+
+GS_ASSERTs sometimes on connect with some components
+
+./run(_Z11print_tracev+0x25) [0x80b61b9]
+./run(_ZN7Objects10ObjectList13set_object_idEPNS_6ObjectEi+0x3c) [0x80ed304]
+./run(_ZN7Objects6createE10ObjectTypei+0x4b) [0x80eef7f]
+./run(_ZN34object_create_momentum_angles_StoC6handleEv+0x33) [0x814548d]
+./run(_ZN34FixedSizeReliableNetPacketToClientI34object_create_momentum_angles_StoCE7handlerEPciPii+0x74) [0x816e688]
+./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
+./run(_ZN9NetClient30client_dispatch_network_eventsEv+0xc6) [0x80caf10]
+./run(_ZN4Main3runEv+0x150) [0x8139ffd]
+./run(main+0x35) [0x813a728]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb715c113]
+GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object_list.cpp, line 29 function: set_object_id 
+./run(_Z11print_tracev+0x25) [0x80b61b9]
+./run(_ZN7Objects6Object13add_componentEiPN10Components9ComponentE+0x99) [0x80ecf73]
+./run(_ZN7Objects23add_component_to_objectEPNS_6ObjectE13ComponentType+0x5d) [0x80eeaaf]
+./run() [0x80ebfa1]
+./run(_ZN7Objects20create_mob_robot_boxEv+0x4b) [0x80ec1e8]
+./run() [0x80eeebe]
+./run(_ZN7Objects6createE10ObjectTypei+0x1d) [0x80eef51]
+./run(_ZN34object_create_momentum_angles_StoC6handleEv+0x33) [0x814548d]
+./run(_ZN34FixedSizeReliableNetPacketToClientI34object_create_momentum_angles_StoCE7handlerEPciPii+0x74) [0x816e688]
+./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
+GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object.cpp, line 19 function: add_component 
+

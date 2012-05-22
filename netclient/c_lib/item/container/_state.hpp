@@ -11,6 +11,8 @@ extern class ItemContainerList* item_container_list;
 extern int player_container_id;
 extern int player_toolbelt_id;
 extern int player_nanite_id;
+extern bool was_opened;
+extern bool was_closed;
 extern int opened_container;
 extern int opened_container_event_id;
 

@@ -26,6 +26,9 @@ void close_container();
 void open_inventory();
 void close_inventory();
 
+bool container_was_opened();
+bool container_was_closed();
+
 int get_event_container_id(int event_id);
 class ItemContainerUIInterface* get_container_ui(int container_id);
 ItemID get_toolbelt_item(int slot);

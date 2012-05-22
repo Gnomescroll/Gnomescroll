@@ -11,6 +11,8 @@ ItemContainerList* item_container_list = NULL;
 int player_container_id = NULL_CONTAINER;   //store id of player container
 int player_toolbelt_id = NULL_CONTAINER;   //store id of player container
 int player_nanite_id = NULL_CONTAINER;   //store id of player container
+bool was_opened = false;
+bool was_closed = false;
 int opened_container = NULL_CONTAINER;
 int opened_container_event_id = 0;
 

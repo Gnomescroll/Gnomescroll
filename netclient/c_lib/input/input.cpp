@@ -13,7 +13,8 @@ struct MouseMotionAverage
     float x,y;
 };
 
-int init_input() {
+int init_input()
+{
     static int inited = 0;
     if (inited) return 1;
     keystate = SDL_GetKeyState(&numkeys);
@@ -59,8 +60,17 @@ int process_events()
     else
         unbind_mouse();
 
-    if (ItemContainer::opened_container != NULL_CONTAINER) enable_block_container();
-    else disable_block_container();
+    if (ItemContainer::container_was_opened())
+    {
+        enable_block_container();
+        // need to ignore further events this tick
+        return 0;
+    }
+    else if (ItemContainer::container_was_closed())
+    {
+        disable_block_container();
+        return 0;
+    }
 
     while(SDL_PollEvent(&Event))
     { //returns 0 if no event

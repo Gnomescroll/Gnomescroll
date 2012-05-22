@@ -134,6 +134,7 @@ void open_container(int container_id)
     t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
     
     // assigned "opened_container" id
+    if (opened_container == NULL_CONTAINER) was_opened = true;
     opened_container = container_id;
 
     // send open packet
@@ -157,6 +158,7 @@ void close_container()
     // unset hud container id
     t_hud::close_container(opened_container);
 
+    if (opened_container != NULL_CONTAINER) was_closed = true;
     opened_container = NULL_CONTAINER;
     
     // send packet
@@ -165,6 +167,25 @@ void close_container()
     msg.send();
 }
 
+bool container_was_opened()
+{
+    if (was_opened)
+    {
+        was_opened = false;
+        return true;
+    }
+    return false;
+}
+
+bool container_was_closed()
+{
+    if (was_closed)
+    {
+        was_closed = false;
+        return true;
+    }
+    return false;
+}
 
 int get_event_container_id(int event_id)
 {
