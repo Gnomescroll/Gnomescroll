@@ -156,18 +156,19 @@ const char _pallet[ 3*(_pallet_num) ] =
 };
 */
 
-const int _pallet_num = 3;
+const int _pallet_num = 2;
 const char _pallet[ 3*(_pallet_num) ] = 
 {
-    0xa0, 0xa0,0xa0,
-    //0x3d, 0x52,0x5e,
-    //0x57, 0x6e,0x62,
+    0x3d, 0x52,0x5e,
+    0x57, 0x6e,0x62,
+
+    //0xa0, 0xa0,0xa0,
+
     //0x6d,0x8e, 0x86,
-    0x3d,0x52,0x5e,
-    0x94,0xb2,0xbb,
+    //0x94,0xb2,0xbb,
 };
 
-char _palletn[ 3*(_pallet_num) ];
+unsigned char _palletn[ 3*(_pallet_num) ];
 
 
 void init_pallete()
@@ -251,33 +252,63 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
 
 
     struct ColorElement ce;
-    ce.color = 0;
+    //ce.color = 0;
     //ce.b = voronoi_char(x,y,z);
     //float m1 = voronoi_float(x,y,z);
     float m1 = voronoi_float_fast(x,y,z);
-    float m2 = 1.0 - m1;
+    //float m2 = 1.0 - m1;
 
     //float m1 = voronoi_float(x,y,z);
     //float m2 = 1.0 - m1;
 
+
+    //printf("m= %f \n", m1);
     //struct ColorElement ce1;
     //struct ColorElement ce2;
 
-    const int i = 0;
-    const int j = 1;
+    static const int i = 0;
+    static const int j = 1;
 
-    float r1 = _palletn[3*i+0];
-    float g1 = _palletn[3*i+1];
-    float b1 = _palletn[3*i+2];
+    const float r1 = (float) _palletn[3*i+0];
+    const float g1 = (float) _palletn[3*i+1];
+    const float b1 = (float) _palletn[3*i+2];
 
-    float r2 = _palletn[3*j+0];
-    float g2 = _palletn[3*j+1];
-    float b2 = _palletn[3*j+2];
+    const float r2 = (float) _palletn[3*j+0];
+    const float g2 = (float) _palletn[3*j+1];
+    const float b2 = (float) _palletn[3*j+2];
 
+
+/*
+    const float r1 = 1.0;
+    const float g1 = 1.0;
+    const float b1 = 1.0;
+
+    const float r2 = 0.0;
+    const float g2 = 0.0;
+    const float b2 = 0.0;
+*/
+
+    if(r1 + m1*(r2-r1) > 255.0)
+   {
+        printf("0: %f %f %f %f\n", r1 + m1*(r2-r1), m1, r1, r2);
+
+   }
+   if(r1 + m1*(r2-r1) < 0.0)
+   {
+        printf("2: %f %f %f %f\n", r1 + m1*(r2-r1), m1, r1, r2);
+   }
+    //GS_ASSERT((r1 + m1*(r2-r1)) <= 255.0);
+    //GS_ASSERT((r1 + m1*(r2-r1)) >= 0.0);
+
+    ce.r = (unsigned char) (r1 + m1*(r2-r1));
+    ce.g = (unsigned char) (g1 + m1*(g2-g1));
+    ce.b = (unsigned char) (b1 + m1*(b2-b1));
+
+/*
     ce.r = (unsigned char) (m1*r1 + m2*r2);
     ce.g = (unsigned char) (m1*g1 + m2*g2);
     ce.b = (unsigned char) (m1*b1 + m2*b2);
-
+*/
     return ce;
 }
 
