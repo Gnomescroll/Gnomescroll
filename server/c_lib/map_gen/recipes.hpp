@@ -15,7 +15,7 @@ void simple_map()
     generator->tile(54);
     generator->interpolate(4,4,1);
     generator->scale(4.0f, 4.0f, 1.0f);
-    generator->enable_heightmap(20, 30);
+    generator->enable_heightmap(20, 35);
     //generator->repeat(64,64,128);
 
     generator->p2();
@@ -31,6 +31,13 @@ void simple_map()
     generator->start();
     
     MapGen::reset();
+
+    //int x = 512, y = 512, z = 128;
+    //float* noisemap = create_noisemap(x,y,1);
+    //_oct = 1;
+    //perlin2_fill(noisemap, x,y, 512, 512, 54);
+    //set_terrain_height(noisemap, x,y,z, 0, z, 54);
+    //destroy_noisemap(noisemap);
 }
 
 //void simple_map()
