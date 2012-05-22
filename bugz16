@@ -114,6 +114,10 @@ destroy 2 voxels in robot
 
 or just do voxel destruction based on cumulative damage
 
+blue bombs should damage terrain like grenades
+
+red bots should do random dmg, have random health etc
+
 shovels/fist melee
 
 tiling noise
