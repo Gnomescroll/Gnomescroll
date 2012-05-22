@@ -107,7 +107,7 @@ void load_item_dat()
     sprite_def(i1, 3,2);
     s.max_stack_size = 64;
 
-    item_def(34, IG_MELEE_WEAPON, "copper_shovel");
+    item_def(34, IG_SHOVEL, "copper_shovel");
     sprite_def(i1, 3,1);
     s.melee_fire_cooldown = 250;
     s.melee_damage = 2;
@@ -115,7 +115,7 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 7;
-    s.block_damage = 9;
+    s.block_damage = 4;
     s.object_damage_min = 15;
     s.object_damage_max = 25;
 
@@ -128,7 +128,7 @@ void load_item_dat()
     sprite_def(i1, 2,2);
     s.max_stack_size = 64;
 
-    item_def(37, IG_MELEE_WEAPON, "gallium_shovel");
+    item_def(37, IG_SHOVEL, "gallium_shovel");
     sprite_def(i1, 2,1);
     s.melee_fire_cooldown = 250;
     s.melee_damage = 4;
@@ -136,7 +136,7 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 7;
-    s.block_damage = 11;
+    s.block_damage = 5;
     s.object_damage_min = 20;
     s.object_damage_max = 30;
 
@@ -149,7 +149,7 @@ void load_item_dat()
     sprite_def(i1, 1,2);
     s.max_stack_size = 64;
 
-    item_def(40, IG_MELEE_WEAPON, "iron_shovel");
+    item_def(40, IG_SHOVEL, "iron_shovel");
     sprite_def(i1, 1,1);
     s.melee_fire_cooldown = 250;
     s.melee_damage = 6;
@@ -157,7 +157,7 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 7;
-    s.block_damage = 16;
+    s.block_damage = 6;
     s.object_damage_min = 25;
     s.object_damage_max = 35;
 
@@ -170,7 +170,7 @@ void load_item_dat()
     sprite_def(i1, 4,2);
     s.max_stack_size = 64;
 
-    item_def(43, IG_MELEE_WEAPON, "iridium_shovel");
+    item_def(43, IG_SHOVEL, "iridium_shovel");
     sprite_def(i1, 4,1);
     s.melee_fire_cooldown = 250;
     s.melee_damage = 30;
@@ -178,7 +178,7 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 7;
-    s.block_damage = 32;
+    s.block_damage = 8;
     s.object_damage_min = 30;
     s.object_damage_max = 40;
 

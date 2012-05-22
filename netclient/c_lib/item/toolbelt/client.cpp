@@ -31,15 +31,21 @@ bool toolbelt_item_end_alpha_action()
     agent_fire_tick[agent_id] = 0;
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    int item_group = Item::get_item_group(item_id);
+    int item_group;
+    if (item_id == NULL_ITEM) item_group = IG_NONE;
+    else item_group = Item::get_item_group(item_id);
     switch (item_group)
     {
+        case IG_MINING_LASER:
+        case IG_SHOVEL:
+        case IG_NONE:
+            return true;
+            
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:
             return false;   // nothing happened. they arent click-and-hold
-        case IG_MINING_LASER:
         default:
-            return true;    // the default action would be click and hold (punching air)
+            return false;    // the default action is click once
     }
     return true;
 }

@@ -166,6 +166,10 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
         case IG_NONE:
             //a->event.tick_fist();
             break;
+
+        case IG_SHOVEL:
+            //a->event.tick_shovel();
+            break;
             
         case IG_MINING_LASER:
             a->event.tick_mining_laser();
@@ -202,6 +206,10 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
         case IG_NONE:
             //a->event.punch_fist();
             break;
+
+        case IG_SHOVEL:
+            //a->event.used_shovel();
+            break;
             
         case IG_MINING_LASER:
             a->event.fired_mining_laser();
@@ -234,6 +242,7 @@ void tick_local_agent_selected_item_type(int item_type)
 
     switch (group)
     {
+        case IG_SHOVEL:
         case IG_NONE:
             //ClientState::playerAgent_state.action.tick_fist();
             break;
@@ -262,8 +271,8 @@ void tick_local_agent_selected_item_type(int item_type)
 // will send hitscan packets
 void trigger_local_agent_selected_item_type(int item_type)
 {
-    int group = IG_NONE;    // empty hand
-    if (item_type != NULL_ITEM_TYPE) group = Item::get_item_group_for_type(item_type);
+    if (item_type == NULL_ITEM_TYPE) item_type = Item::get_item_type((char*)"fist");
+    int group = Item::get_item_group_for_type(item_type);
 
     // get container state for ui prediction
     if (toolbelt_id == NULL_CONTAINER) return;
@@ -278,24 +287,16 @@ void trigger_local_agent_selected_item_type(int item_type)
     switch (group)
     {
         case IG_NONE:
-            // punch fist
-            ClientState::playerAgent_state.action.fire_close_range_weapon(Item::get_item_type((char*)"fist"));
-            one_click = false;
-            break;
-            
+        case IG_SHOVEL:
         case IG_MINING_LASER:
             ClientState::playerAgent_state.action.fire_close_range_weapon(item_type);
             if (container != NULL)
             {   // consume durability
-                durability -= 1;
+                if (durability != NULL_DURABILITY) durability -= 1;
                 if (durability < 0) durability = 0;
-                ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
+                if (group != IG_NONE)
+                    ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
             }
-            one_click = false;
-            break;
-
-        case IG_SHOVEL:
-            //ClientState::playerAgent_state.action.dig_shovel();
             one_click = false;
             break;
 
@@ -422,7 +423,8 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     {
         case IG_NONE:
             break;
-            
+
+        case IG_SHOVEL:
         case IG_MINING_LASER:
             break;
 
@@ -489,7 +491,8 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 
         case IG_SHOVEL:
         case IG_MINING_LASER:
-            item->durability -= 1;
+            if (item->durability != NULL_DURABILITY);
+                item->durability -= 1;
             break;
 
         default:

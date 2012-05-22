@@ -104,6 +104,9 @@ DONE
 fist
 DONE
 
+opening container also executes click on inventory
+FIXED
+
 shovels
 
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
@@ -133,8 +136,6 @@ refill players' starting items on respawn
 --if has one or more partially full mining lasers, fill the most full one
 --if no mining laser found, add one (if room)
 -do the same for laser rifle
-
-opening container also executes click on inventory
 
 item eater:
 "halve a stack, place it where another stack of a different item is, place in the same spot, move the stack that was halved anywhere, the replaced stack disappears"
