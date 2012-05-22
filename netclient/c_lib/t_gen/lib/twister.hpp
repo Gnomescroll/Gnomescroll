@@ -2,7 +2,7 @@
 
 #pragma once
 
-typedef unsigned int DWORD ;
+typedef long unsigned int DWORD;
 // Mersenne Twister MT19937 with some subtle changes.
 
 int SEED = 512;
