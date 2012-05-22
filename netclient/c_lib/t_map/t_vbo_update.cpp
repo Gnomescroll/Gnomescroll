@@ -209,6 +209,19 @@ static inline void _set_quad_color_default(struct Vertex* v_list, int offset, in
             v_list[offset+i].b = _ce.b;
         }
     */
+
+/*
+    Null interpolation
+*/
+    static const struct ColorElement null_ce = {{{255,255,255,255}}};
+
+    for(int i=0; i <4; i++)
+    {
+        v_list[offset+i].ce[0] = null_ce;
+        v_list[offset+i].ce[1] = null_ce;
+        v_list[offset+i].ce[2] = null_ce;
+        v_list[offset+i].ce[3] = null_ce;
+    }
 }
 
 static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
@@ -217,6 +230,20 @@ static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x
     for(int i=0 ;i <4; i++)
     {
         v_list[offset+i].color = 0xffffffff;
+    }
+
+
+/*
+    Null interpolation
+*/
+    static const struct ColorElement null_ce = {{{255,255,255,255}}};
+
+    for(int i=0; i <4; i++)
+    {
+        v_list[offset+i].ce[0] = null_ce;
+        v_list[offset+i].ce[1] = null_ce;
+        v_list[offset+i].ce[2] = null_ce;
+        v_list[offset+i].ce[3] = null_ce;
     }
 }
 
@@ -237,6 +264,18 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
         v_list[offset+i].b = _palletn[index[i]+2];
     }
 
+/*
+    Null interpolation
+*/
+    static const struct ColorElement null_ce = {{{255,255,255,255}}};
+
+    for(int i=0; i <4; i++)
+    {
+        v_list[offset+i].ce[0] = null_ce;
+        v_list[offset+i].ce[1] = null_ce;
+        v_list[offset+i].ce[2] = null_ce;
+        v_list[offset+i].ce[3] = null_ce;
+    }
 }
 
 static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index) __attribute((always_inline));
@@ -309,11 +348,19 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
     ce.g = (unsigned char) (m1*g1 + m2*g2);
     ce.b = (unsigned char) (m1*b1 + m2*b2);
 */
+
     return ce;
 }
 
+
+/*
+        static const struct ColorElement null_ce = {{{255,255,255,255}}};
+        return null_ce;
+*/
+
 static inline void _set_quad_color_voronoi(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
+
 
     struct ColorElement _ce[4];
 
@@ -327,7 +374,7 @@ static inline void _set_quad_color_voronoi(struct Vertex* v_list, int offset, in
     _ce.b = 255;
     _ce.a = 0;
 */
-    for(int i=0 ;i <4; i++)
+    for(int i=0; i <4; i++)
     {
         v_list[offset+i].ce[0] = _ce[0];
         v_list[offset+i].ce[1] = _ce[1];
