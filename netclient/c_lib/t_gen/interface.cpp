@@ -157,7 +157,7 @@ void init_voronoi_noise_maps()
     }
 
 
-    dump_voronoi_to_disc();
+    //dump_voronoi_to_disc();
 
 }
 
