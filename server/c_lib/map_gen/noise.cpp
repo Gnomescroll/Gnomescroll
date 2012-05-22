@@ -29,7 +29,11 @@ int seed_noise(int seed)
     srand(seed);
 
     // build PERM table
-    for (int i=0; i < PERM_SIZE; PERM[i++] = randrange(0,255));
+    for (int i=0; i < PERM_SIZE; i++)
+    {
+        PERM[i] = rand() & 255;
+        PERM[i+PERM_SIZE] = PERM[i];
+    }
 
     _seed = seed;
     static int _set_base_seed = 0;
@@ -321,7 +325,7 @@ void set_noise_scale(float xscale, float yscale, float zscale)
 void noise_init()
 {
     assert(PERM == NULL);
-    PERM = (unsigned char*)malloc(PERM_SIZE * sizeof(unsigned char));
+    PERM = (unsigned char*)malloc(2 * PERM_SIZE * sizeof(unsigned char));
 }
 
 void noise_teardown()

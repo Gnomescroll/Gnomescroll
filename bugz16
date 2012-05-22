@@ -101,4 +101,9 @@ blue bombs should aggro if shot
 
 blue bombs should be wandering, slowly
 
+destroy 1 voxel in monster spawner
+destroy 2 voxels in robot
+
+or just do voxel destruction based on cumulative damage
+
 tiling noise
