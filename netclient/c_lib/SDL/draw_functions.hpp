@@ -21,6 +21,7 @@ int _bind_VBO(struct Quad* quad_list, int v_num);
 
 // Draw full texture
 void draw_bound_texture(float x, float y, float w, float h, float z);
+void draw_bound_texture(float x, float y, float w, float h);
 void draw_bound_texture_rotated(float x, float y, float w, float h, float z, float theta);
 void draw_bound_texture_rotated(float x, float y, float w, float h, float tx, float ty, float tw, float th, float depth, float theta);
 

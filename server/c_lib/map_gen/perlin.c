@@ -104,6 +104,52 @@ float perlin2(float x, float y, int repeatx, int repeaty, int base)
     );
 }
 
+//def noise(x, y, per):
+    //def surflet(gridX, gridY):
+        //distX, distY = abs(x-gridX), abs(y-gridY)
+        //polyX = 1 - 6*distX**5 + 15*distX**4 - 10*distX**3
+        //polyY = 1 - 6*distY**5 + 15*distY**4 - 10*distY**3
+        //hashed = perm[perm[int(gridX)%per] + int(gridY)%per]
+        //grad = (x-gridX)*dirs[hashed][0] + (y-gridY)*dirs[hashed][1]
+        //return polyX * polyY * grad
+    //intX, intY = int(x), int(y)
+    //return (surflet(intX+0, intY+0) + surflet(intX+1, intY+0) +
+            //surflet(intX+0, intY+1) + surflet(intX+1, intY+1))
+
+float p2_surflet(float x, float y, int gx, int gy, int period)
+{
+    // distance from grid points
+    float dx = abs(x-gx);
+    float dy = abs(y-gy);
+    // interpolated
+    float px = 1.0f - 6.0f*pow(dx,5.0f) + 15.0f*pow(dx,4.0f) - 10.0f*pow(dx,3.0f);
+    float py = 1.0f - 6.0f*pow(dy,5.0f) + 15.0f*pow(dy,4.0f) - 10.0f*pow(dy,3.0f);
+    // gradient index
+    int hash = tiling_indexes[tiling_indexes[gx%period] + gy%period];
+    float g = (x-gx)*tiling_gradients[hash].x + (y-gy)*tiling_gradients[hash].y;
+    return px * py * g;
+}
+
+float pnoise2_tiling(float x, float y, int period)
+{
+    int ix = (int)x;
+    int iy = (int)y;
+    return   p2_surflet(x,y, ix+0,iy+0, period)
+            + p2_surflet(x,y, ix+1,iy+0, period)
+            + p2_surflet(x,y, ix+0,iy+1, period)
+            + p2_surflet(x,y, ix+1,iy+1, period);
+}
+
+float perlin2_tiling(float x, float y, int period)
+{
+    //assert(_oct >= 1);
+    assert(_oct == 1);
+    float total = 0.0f;
+    for (int i=0; i<_oct; i++)  
+        total += pow(0.5, i) * pnoise2_tiling(x * pow(2,i), y * pow(2,i), period*pow(2,i));
+    return total;
+}
+
 float inline
 grad3(const int hash, const float x, const float y, const float z)
 {
@@ -174,6 +220,24 @@ void perlin2_fill(float* noisemap, int x, int y, int repeatx, int repeaty, int b
     for (int i=0; i<x; i++)
     for (int j=0; j<y; j++)
         noisemap[i + x*j] = perlin2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale, repeatx, repeaty, base);
+
+    //float ifreq = 512.0f;    // inverse freq
+    //int size = 512;
+    //int iters = 512 / size;
+    //assert(iters == 1);
+    //for (int m=0; m<iters; m++)
+    //for (int n=0; n<iters; n++)
+    //for (int i=0; i<size; i++)
+    //for (int j=0; j<size; j++)
+    //{
+        //float fi = ((float)i) / ifreq;
+        //float fj = ((float)j) / ifreq;
+        //int period = ((float)size) / ifreq;
+        //float val = perlin2_tiling(fi, fj, period);
+        ////printf("val %0.2f\n", val);
+        ////noisemap[(i+m*size) + size*(j+n*size)] = val;
+        //noisemap[i + x*j] = val;
+    //}
 }
 
 void perlin3_fill(float* noisemap, int x, int y, int z, int repeatx, int repeaty, int repeatz, int base)

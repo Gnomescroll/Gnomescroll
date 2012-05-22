@@ -7,6 +7,9 @@
 
 unsigned char* PERM = NULL;
 
+Vec3* tiling_gradients = NULL;
+int* tiling_indexes = NULL;
+
 int _oct = 1;
 float _per = 0.6f;
 float _amp = 1.0f;
@@ -29,7 +32,11 @@ int seed_noise(int seed)
     srand(seed);
 
     // build PERM table
-    for (int i=0; i < PERM_SIZE; PERM[i++] = randrange(0,255));
+    for (int i=0; i < PERM_SIZE; i++)
+    {
+        PERM[i] = rand() & 255;
+        PERM[i+PERM_SIZE] = PERM[i];
+    }
 
     _seed = seed;
     static int _set_base_seed = 0;
@@ -87,6 +94,8 @@ void set_terrain_height(float* noisemap, int x, int y, int z, int baseline, int 
         return;
     }
 
+    int* heights = (int*)malloc(x*y*sizeof(int));
+
     assert(maxheight > 0);
     assert(x <= map_dim.x && y <= map_dim.y && z <= map_dim.z && x > 0 && y > 0 && z > 0);
     assert(maxheight + baseline <= map_dim.z);
@@ -99,7 +108,7 @@ void set_terrain_height(float* noisemap, int x, int y, int z, int baseline, int 
         int h = noisemap[i + x*j] * z;
         if (h > maxh) maxh = h;
         if (h < minh) minh = h;
-        noisemap[i + x*j] = h;  // will cause problems if noisemap is reused without clearing
+        heights[i + x*j] = h;
     }
 
     // for height range exceeding max height:
@@ -120,12 +129,15 @@ void set_terrain_height(float* noisemap, int x, int y, int z, int baseline, int 
     for (int i=0; i<x; i++)       // use heights, adjusted to be positive
     for (int j=0; j<y; j++)
     {
-        int h = (noisemap[i + x*j] - minh) * scale;
+        int h = (heights[i + x*j] - minh) * scale;
+        //int h = heights[i + x*j];
         h = (h >= maxheight) ? maxheight : h;
         h = (h <= -maxheight) ? -maxheight : h;
         for (int k=0; k<baseline+h; k++)
+        //for (int k=0; k<h; k++)
             _set(i,j,k, tile);
     }
+    free(heights);
 }
 
 void reverse_heightmap(float* noisemap, int x, int y, int z, int baseline, int maxheight, int minheight, int tile)
@@ -321,13 +333,37 @@ void set_noise_scale(float xscale, float yscale, float zscale)
 void noise_init()
 {
     assert(PERM == NULL);
-    PERM = (unsigned char*)malloc(PERM_SIZE * sizeof(unsigned char));
+    PERM = (unsigned char*)malloc(2 * PERM_SIZE * sizeof(unsigned char));
+
+    assert(tiling_gradients == NULL);
+    tiling_gradients = (Vec3*)malloc(TILING_SIZE * sizeof(Vec3));
+    for (int i=0; i<TILING_SIZE; i++)
+    {
+        //tiling_gradients[i].x = cos(i * 2.0f * (PI / ((float)TILING_SIZE)));
+        //tiling_gradients[i].y = sin(i * 2.0f * (PI / ((float)TILING_SIZE)));
+        tiling_gradients[i].x = cos(i * 2.0f * PI / TILING_SIZE);
+        tiling_gradients[i].y = sin(i * 2.0f * PI / TILING_SIZE);
+        tiling_gradients[i].z = 0; // ?
+        //printf("%f, %f\n", tiling_gradients[i].x, tiling_gradients[i].y);
+    }
+
+    assert(tiling_indexes == NULL);
+    tiling_indexes = (int*)malloc(2 * TILING_SIZE * sizeof(int));
+    for (int i=0; i<TILING_SIZE; i++) tiling_indexes[i] = i;
+    shuffle_int_array(tiling_indexes, TILING_SIZE);
+    //for (int i=0; i<TILING_SIZE; i++) printf("%d\n", tiling_indexes[i]);
+    for (int i=0; i<TILING_SIZE; i++) tiling_indexes[i+TILING_SIZE] = tiling_indexes[i];
 }
 
 void noise_teardown()
 {
     if (PERM != NULL) free(PERM);
     PERM = NULL;
+
+    if (tiling_gradients != NULL) free(tiling_gradients);
+    tiling_gradients = NULL;
+    if (tiling_indexes != NULL) free(tiling_indexes);
+    tiling_indexes = NULL;
 }
 
 float* create_noisemap(int x, int y, int z)

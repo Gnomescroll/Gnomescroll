@@ -6,6 +6,7 @@
 int seed_max = INT_MAX;
 
 #include <t_map/t_map.hpp>
+#include <physics/vec3.hpp>
 
 typedef union f3
 {
@@ -24,12 +25,12 @@ const float GRAD3[][3] =
     {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0}, 
     {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1}, 
     {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1},
-    {1,0,-1},{-1,0,-1},{0,-1,1},{0,1,1}}
-;
+    {1,0,-1},{-1,0,-1},{0,-1,1},{0,1,1}
+};
 
 #define fastfloor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
 
-const int PERM_SIZE = 512;
+const int PERM_SIZE = 256;
 // At the possible cost of unaligned access, we use char instead of
 // int here to try to ensure that this table fits in L1 cache
 extern unsigned char* PERM;
@@ -68,3 +69,7 @@ void set_noise_scale(float xscale, float yscale, float zscale);
 float* create_noisemap(int x, int y, int z);
 void destroy_noisemap();
 void clear_noisemap(float* noisemap);
+
+const int TILING_SIZE = 512;
+extern Vec3* tiling_gradients;
+extern int* tiling_indexes;
