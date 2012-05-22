@@ -183,6 +183,8 @@ void CraftingUI::draw()
     }
     glEnd();
 
+    if (this->container_id == NULL_CONTAINER) return;
+
     // get data for rendering items
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);

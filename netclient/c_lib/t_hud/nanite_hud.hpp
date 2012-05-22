@@ -259,6 +259,7 @@ void AgentNaniteUI::draw()
     }
     glEnd();
 
+    if (this->container_id == NULL_CONTAINER) return;
 
     // draw food
     ItemContainer::ItemContainerNaniteUI* container = (ItemContainer::ItemContainerNaniteUI*)ItemContainer::get_container_ui(this->container_id);

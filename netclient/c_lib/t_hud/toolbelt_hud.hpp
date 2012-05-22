@@ -114,6 +114,7 @@ void AgentToolbeltUI::draw()
     }
     glEnd();
 
+    if (this->container_id == NULL_CONTAINER) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);

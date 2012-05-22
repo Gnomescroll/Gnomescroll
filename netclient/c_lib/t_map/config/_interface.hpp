@@ -359,7 +359,7 @@ void blit_block_item_sheet()
         unsigned int color_tex, fb, depth_rb;
         const int xres = 256;
         const int yres = 256;
-        const float scale = 16.0;
+        //const float scale = 16.0;
 
         //RGBA8 2D texture, 24 bit depth texture, 256x256
         glGenTextures(1, &color_tex);
