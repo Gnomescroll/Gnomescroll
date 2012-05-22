@@ -69,23 +69,23 @@ void cube_def(int id, int type, const char* name)
 
     switch(type)
     {
-    	case ErrorBlock:
-    	break;
+        case ErrorBlock:
+        break;
 
         case EmptyBlock:
         p.active = false;
         p.solid = false;
         p.occludes = false;
         break;
-    	case SolidBlock:
-    	break;
+        case SolidBlock:
+        break;
 
-    	case ItemContainerBlock:
-    	p.item_container = true;
-    	break;
+        case ItemContainerBlock:
+        p.item_container = true;
+        break;
 
-    	default:
-    	GS_ABORT();
+        default:
+        GS_ABORT();
     }
 
 
@@ -96,12 +96,12 @@ void cube_def(int id, int type, const char* name)
 void iso_texture(int tex_id)
 {
 #ifdef DC_CLIENT
-	set_cube_side_texture(_current_cube_id, 0, tex_id);
-	set_cube_side_texture(_current_cube_id, 1, tex_id);
-	set_cube_side_texture(_current_cube_id, 2, tex_id);
-	set_cube_side_texture(_current_cube_id, 3, tex_id);
-	set_cube_side_texture(_current_cube_id, 4, tex_id);
-	set_cube_side_texture(_current_cube_id, 5, tex_id);
+    set_cube_side_texture(_current_cube_id, 0, tex_id);
+    set_cube_side_texture(_current_cube_id, 1, tex_id);
+    set_cube_side_texture(_current_cube_id, 2, tex_id);
+    set_cube_side_texture(_current_cube_id, 3, tex_id);
+    set_cube_side_texture(_current_cube_id, 4, tex_id);
+    set_cube_side_texture(_current_cube_id, 5, tex_id);
 #endif
 }
 
@@ -118,14 +118,14 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     ypos--;
 
     //printf("Blit 1: %i %i %i \n", sheet_id, xpos, ypos);
-	int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
-	//set cube side textures
-	set_cube_side_texture(_current_cube_id, 0, tex_id);
-	set_cube_side_texture(_current_cube_id, 1, tex_id);
-	set_cube_side_texture(_current_cube_id, 2, tex_id);
-	set_cube_side_texture(_current_cube_id, 3, tex_id);
-	set_cube_side_texture(_current_cube_id, 4, tex_id);
-	set_cube_side_texture(_current_cube_id, 5, tex_id);
+    int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
+    //set cube side textures
+    set_cube_side_texture(_current_cube_id, 0, tex_id);
+    set_cube_side_texture(_current_cube_id, 1, tex_id);
+    set_cube_side_texture(_current_cube_id, 2, tex_id);
+    set_cube_side_texture(_current_cube_id, 3, tex_id);
+    set_cube_side_texture(_current_cube_id, 4, tex_id);
+    set_cube_side_texture(_current_cube_id, 5, tex_id);
 #endif
 }
 
@@ -432,7 +432,7 @@ void blit_block_item_sheet()
 
         SDL_LockSurface(block_item_16_surface);
         glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
-        SDL_UnlockSurface(block_item_64_surface);
+        SDL_UnlockSurface(block_item_16_surface);
 
         save_surface_to_png(block_item_16_surface, (char*)"screenshot/fbo_test_16.png");
 

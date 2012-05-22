@@ -238,6 +238,12 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
 
     const float aa = sqrt(3.0)/2.0;
 
+    //const float b[8*3] =
+    //{
+        //0.0,0.0, -aa,0.5, 0.0,1.0, aa,0.5,
+        //-aa,0.5, 0.0,0.0, 0.0,-1.0, -aa,-0.5,
+        //0.0,0.0, aa,0.5, aa,-0.5, 0.0,-1.0
+    //};
     const float b[8*3] =
     {
         0.0,0.0, -aa,0.5, 0.0,1.0, aa,0.5,
@@ -248,6 +254,8 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
     float a[8*3];
 
     for(int i=0; i<24; i++)  a[i] = b[i]*scale;
+    // flip upside down
+    for(int i=1; i<24; i+=2) a[i] *= -1;
 
     int tex_id, i;
     float tx0,tx1;
@@ -275,7 +283,8 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
     glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
         
     glTexCoord2f(tx1,ty1);  // top
-    glVertex2f(x+a[i+4],y+a[i+5]-1.0);
+    //glVertex2f(x+a[i+4],y+a[i+5]-1.0);
+    glVertex2f(x+a[i+4],y+a[i+5]+1.0);  // flipped
 
     glTexCoord2f(tx1,ty0);
     glVertex2f(x+a[i+6],y+a[i+7]);
@@ -299,7 +308,8 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
     glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
         
     glTexCoord2f(tx1,ty1);  // top
-    glVertex2f(x+a[i+4],y+a[i+5]+1.0);
+    //glVertex2f(x+a[i+4],y+a[i+5]+1.0);
+    glVertex2f(x+a[i+4],y+a[i+5]-1.0);  // flipped
 
     glTexCoord2f(tx1,ty0);
     glVertex2f(x+a[i+6],y+a[i+7]);
@@ -326,7 +336,8 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
     glVertex2f(x+a[i+4],y+a[i+5]);
 
     glTexCoord2f(tx1,ty0);
-    glVertex2f(x+a[i+6],y+a[i+7]+1.0);
+    //glVertex2f(x+a[i+6],y+a[i+7]+1.0);
+    glVertex2f(x+a[i+6],y+a[i+7]-1.0);  // flipped
 
     glColor3ub(255, 255,255);
 }

@@ -32,7 +32,7 @@ class UIElement
         virtual bool point_inside(int px, int py) = 0;
 
         UIElement()
-        : type(UI_ELEMENT_NONE), visible(false), xoff(0), yoff(0), container_id(-1)
+        : type(UI_ELEMENT_NONE), visible(false), xoff(0), yoff(0), container_id(NULL_CONTAINER)
         {}
     
         virtual ~UIElement() {} //abc virtual deconstructor
