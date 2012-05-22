@@ -75,8 +75,11 @@ void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModific
         case t_map::TMA_LASER:
             momentum = 0.5f;
             break;
+        case t_map::TMA_MONSTER_BOX:
+            momentum = 0.5f;
+            break;
         default:
-            printf("block_crumble received unhandled terrain modification action %d\n", action);
+            GS_ASSERT(false);
             break;
     }
     block_crumble(x,y,z, n, cube_id, momentum);

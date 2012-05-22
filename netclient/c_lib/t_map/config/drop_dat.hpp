@@ -11,6 +11,7 @@ namespace t_map
     //float mean, float falloff, int max_drops
 void load_map_drop_dat()
 {
+    ////////////////////
     def_drop("regolith");
 
         add_drop("regolith", 3);
@@ -38,9 +39,11 @@ void load_map_drop_dat()
         set_drop(0.10, 2);
         set_drop(0.05, 3);
 
+    ////////////////////
     def_drop("crate_2");
         drop_always("crate_2");
-    
+
+    ////////////////////
     def_drop("crate_3");
         drop_always("crate_3");
 
