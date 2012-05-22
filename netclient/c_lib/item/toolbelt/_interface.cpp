@@ -218,6 +218,7 @@ void tick_local_agent_selected_item_type(int item_type)
     if (toolbelt_id == NULL_CONTAINER) return;
     ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(toolbelt_id);
     GS_ASSERT(container != NULL);
+    if (container == NULL) return;
     int durability = container->get_slot_durability(selected_slot);
 
     switch (group)
