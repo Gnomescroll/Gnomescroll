@@ -29,7 +29,7 @@ class PlayerAgent_action {
         void hitscan_laser();
 
         void tick_mining_laser();
-        void fire_mining_laser();
+        void fire_close_range_weapon(int weapon_type);
 
         void set_block(ItemID placer_id);
 

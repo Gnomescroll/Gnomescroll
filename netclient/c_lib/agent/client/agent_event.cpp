@@ -17,6 +17,8 @@ dont_include_this_file_in_server
 #include <animations/_interface.hpp>
 #include <animations/animations.hpp>
 
+#include <item/properties.hpp>
+
 void Agent_event::name_changed(char* old_name)
 {
     if (this->bb != NULL)
@@ -264,7 +266,10 @@ void Agent_event::scored_flag()
 
 void Agent_event::tick_mining_laser()
 {
-    Animations::mining_laser_beam(this->a->arm_center(), this->a->s.forward_vector(), MINING_LASER_HITSCAN_RANGE);
+    int weapon_type = Item::get_item_type((char*)"mining_laser");
+    float range = Item::get_weapon_range(weapon_type);
+
+    Animations::mining_laser_beam(this->a->arm_center(), this->a->s.forward_vector(), range);
 }
 
 void Agent_event::fired_mining_laser()

@@ -645,8 +645,12 @@ inline void hit_block_CtoS::handle()
     msg.z = z;
     msg.broadcast();
     
-    //int dmg = a->weapons.pick.damage;
-    int block_damage = 6;
+    // TODO -- load this from dat
+    //t_map::TerrainModificationAction tma = Item::get_item_terrain_modification_enum(weapon_type);
+
+    int block = t_map::get(x,y,z);
+    if (block == 0) return;
+    int block_damage = Item::get_item_block_damage(weapon_type, block);
     t_map::apply_damage_broadcast(x,y,z, block_damage, t_map::TMA_PICK);
 }
 
@@ -788,7 +792,9 @@ inline void hitscan_block_CtoS::handle()
     // damage block
     // WARNING:
     // *must* call this after raycasting, or you will be raycasting altered terrain
-    int weapon_block_damage = randrange(3,4);
+    int block = t_map::get(fx,fy,fz);
+    if (block == 0) return;
+    int weapon_block_damage = Item::get_item_block_damage(Item::get_item_type((char*)"hitscan_laser"), block);
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
     //printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg
@@ -820,7 +826,7 @@ inline void melee_object_CtoS::handle()
     if (a->status.team == 0) return;
 
     Agent_state* agent = NULL;
-    const int obj_dmg = randrange(20,45);
+    const int obj_dmg = Item::get_item_object_damage(weapon_type);
     int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;

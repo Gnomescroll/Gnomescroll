@@ -165,16 +165,24 @@ void PlayerAgent_action::hitscan_laser()
 void PlayerAgent_action::tick_mining_laser()
 {
     if (this->p->you == NULL) return;
+
+    int weapon_type = Item::get_item_type((char*)"mining_laser");
+    float range = Item::get_weapon_range(weapon_type);
+
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
-    Animations::mining_laser_beam(origin, this->target_direction, MINING_LASER_HITSCAN_RANGE);
+    Animations::mining_laser_beam(origin, this->target_direction, range);
 }
 
-
-void PlayerAgent_action::fire_mining_laser()
-{
+void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
+{    
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
+
+    GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
+    if (weapon_type == NULL_ITEM_TYPE) return;
+
+    float range = Item::get_weapon_range(weapon_type);
 
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
@@ -206,7 +214,7 @@ void PlayerAgent_action::fire_mining_laser()
     switch (target_type)
     {
         case Hitscan::HITSCAN_TARGET_VOXEL:
-            if (vox_distance > MINING_LASER_HITSCAN_RANGE)
+            if (vox_distance > range)
             {
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
@@ -218,6 +226,7 @@ void PlayerAgent_action::fire_mining_laser()
             obj_msg.vx = target.voxel[0];
             obj_msg.vy = target.voxel[1];
             obj_msg.vz = target.voxel[2];
+            obj_msg.weapon_type = weapon_type;
             obj_msg.send();
 
             if (target.entity_type == OBJECT_AGENT)
@@ -251,7 +260,7 @@ void PlayerAgent_action::fire_mining_laser()
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:
-            if (block_distance > MINING_LASER_HITSCAN_RANGE)
+            if (block_distance > range)
             {
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
@@ -259,6 +268,7 @@ void PlayerAgent_action::fire_mining_laser()
             block_msg.x = block_pos[0];
             block_msg.y = block_pos[1];
             block_msg.z = block_pos[2];
+            block_msg.weapon_type = weapon_type;
             block_msg.send();
 
             // FOR SOME REASON COLLISION_POINT IS WORTHLESS AND WE HAVE TO CALCULATE IT HERE.
@@ -296,8 +306,6 @@ void PlayerAgent_action::fire_mining_laser()
     }
 
     this->target_direction = look;
-
-    //Sound::fire_mining_laser();
 }
 
 void PlayerAgent_action::set_block(ItemID placer_id)
@@ -374,86 +382,6 @@ void PlayerAgent_action::admin_set_block()
     msg.send();
 }
 #endif
-
-
-//void PlayerAgent_action::reload() {
-    //if (p->you == NULL) return;
-    //if (p->you->status.dead) return;
-    //if (p->you->status.team == 0) return;
-
-    //AgentReloadWeapon_CtoS msg;
-    //msg.type = p->you->weapons.active_type();
-    //msg.send();
-    //Sound::reload();
-//}
-
-//bool PlayerAgent_action::switch_weapon(int i) {
-    //if (p->you == NULL) return false;
-    //if (p->you->status.dead) return false;
-    //if (p->you->status.team == 0) return false;
-
-    //static const int UP = -1;
-    //static const int DOWN = -2;
-
-    //bool switched = false;
-    //int old_active = p->you->weapons.active;
-
-    //if (i == UP) {
-        //p->you->weapons.switch_up();
-    //} else if (i == DOWN) {
-        //p->you->weapons.switch_down();
-    //} else {
-        //p->you->weapons.set_active(i);
-    //}
-
-    //if (p->you->weapons.active != old_active)
-        //switched = true;
-
-    //return switched;
-//}
-
-//int PlayerAgent_action::select_block()
-//{
-    //if (p->you == NULL) return 0;
-    //if (p->you->status.dead) return 0;
-    //if (p->you->status.team == 0) return 0;
-
-    //int block_type = this->p->you->get_facing_block_type();
-    //if (block_type)
-        //this->p->you->weapons.set_active_block(block_type);
-
-    //return block_type;
-//}
-
-//void PlayerAgent_action::pickup_item()
-//{
-    //if (p->you == NULL) return;
-    //if (p->you->status.dead) return;
-    //if (p->you->status.team == 0) return;
-
-    //Vec3 pos = this->p->camera_position();
-    //Vec3 vec = agent_camera->forward_vector();
-
-    //struct Voxel_hitscan_target target;
-    //float vox_distance;
-    //float collision_point[3];
-    //int block_pos[3];
-    //int side[3];
-    //int tile;
-    //float block_distance;
-
-    //Hitscan::HitscanTargetTypes target_type =
-        //Hitscan::hitscan_against_world(
-            //pos, vec, this->p->agent_id, OBJECT_AGENT,
-            //&target, &vox_distance, collision_point,
-            //block_pos, side, &tile, &block_distance
-        //);
-
-    //if (target_type != Hitscan::HITSCAN_TARGET_VOXEL) return;
-    //if (vox_distance > MINING_LASER_HITSCAN_RANGE) return;
-    //this->add_item_to_inventory(target.entity_id, (ObjectType)target.entity_type);
-//}
-
 
 void PlayerAgent_action::throw_grenade()
 {

@@ -65,7 +65,9 @@ void tick()
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (!agent_fire_on[i]) continue;
-        int fire_rate = Item::get_item_fire_rate(agent_selected_type[i]);
+        int item_type = agent_selected_type[i];
+        if (item_type == NULL_ITEM_TYPE) item_type = Item::get_item_type((char*)"fist");
+        int fire_rate = Item::get_item_fire_rate(item_type);
         if (agent_fire_tick[i] % fire_rate == 0)
         {
             #if DC_CLIENT
@@ -156,9 +158,15 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
 
-    int group = Item::get_item_group_for_type(item_type);
+    int group = IG_NONE;    // empty hand
+    if (item_type != NULL_ITEM_TYPE) group = Item::get_item_group_for_type(item_type);
+
     switch (group)
     {
+        case IG_NONE:
+            //a->event.tick_fist();
+            break;
+            
         case IG_MINING_LASER:
             a->event.tick_mining_laser();
             break;
@@ -186,9 +194,15 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
 
-    int group = Item::get_item_group_for_type(item_type);
+    int group = IG_NONE;    // empty hand
+    if (item_type != NULL_ITEM_TYPE) group = Item::get_item_group_for_type(item_type);
+
     switch (group)
     {
+        case IG_NONE:
+            //a->event.punch_fist();
+            break;
+            
         case IG_MINING_LASER:
             a->event.fired_mining_laser();
             break;
@@ -201,6 +215,9 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
         case IG_GRENADE_LAUNCHER:
         case IG_NANITE_COIN:
         case IG_DEBUG:
+            // one click items, turn them off
+            agent_fire_on[agent_id] = false;
+            agent_fire_tick[agent_id] = 0;
             break;
             
         default:
@@ -212,25 +229,17 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
 // tick for the local agent
 void tick_local_agent_selected_item_type(int item_type)
 {
-    int group = Item::get_item_group_for_type(item_type);
-
-    // get container state for ui prediction
-    if (toolbelt_id == NULL_CONTAINER) return;
-    ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(toolbelt_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
-    int durability = container->get_slot_durability(selected_slot);
+    int group = IG_NONE;    // empty hand
+    if (item_type != NULL_ITEM_TYPE) group = Item::get_item_group_for_type(item_type);
 
     switch (group)
     {
+        case IG_NONE:
+            //ClientState::playerAgent_state.action.tick_fist();
+            break;
+            
         case IG_MINING_LASER:
             ClientState::playerAgent_state.action.tick_mining_laser();
-            if (container != NULL)
-            {   // consume durability
-                durability -= 1;
-                if (durability < 0) durability = 0;
-                ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
-            }
             break;
 
         case IG_ERROR:
@@ -253,26 +262,86 @@ void tick_local_agent_selected_item_type(int item_type)
 // will send hitscan packets
 void trigger_local_agent_selected_item_type(int item_type)
 {
-    int group = Item::get_item_group_for_type(item_type);
+    int group = IG_NONE;    // empty hand
+    if (item_type != NULL_ITEM_TYPE) group = Item::get_item_group_for_type(item_type);
+
+    // get container state for ui prediction
+    if (toolbelt_id == NULL_CONTAINER) return;
+    ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(toolbelt_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    int durability = container->get_slot_durability(selected_slot);
+
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+
+    bool one_click = true;
     switch (group)
     {
+        case IG_NONE:
+            // punch fist
+            ClientState::playerAgent_state.action.fire_close_range_weapon(Item::get_item_type((char*)"fist"));
+            one_click = false;
+            break;
+            
         case IG_MINING_LASER:
-            ClientState::playerAgent_state.action.fire_mining_laser();
+            ClientState::playerAgent_state.action.fire_close_range_weapon(item_type);
+            if (container != NULL)
+            {   // consume durability
+                durability -= 1;
+                if (durability < 0) durability = 0;
+                ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
+            }
+            one_click = false;
             break;
 
-        case IG_ERROR:
-        case IG_RESOURCE:
-        case IG_PLACER:
+        case IG_SHOVEL:
+            //ClientState::playerAgent_state.action.dig_shovel();
+            one_click = false;
+            break;
+
         case IG_HITSCAN_WEAPON:
-        case IG_MELEE_WEAPON:
+            ClientState::playerAgent_state.action.hitscan_laser();
+            break;
+            
         case IG_GRENADE_LAUNCHER:
-        case IG_NANITE_COIN:
+            ClientState::playerAgent_state.action.throw_grenade();
+            break;
+            
         case IG_DEBUG:
+            #if !PRODUCTION
+            if (item_type == Item::get_item_type((char*)"location_pointer"))
+                ClientState::set_location_pointer();
+            else
+            #endif
+            if (item_type == Item::get_item_type((char*)"block_placer"))
+                ClientState::playerAgent_state.action.admin_set_block();
+            else GS_ASSERT(false);
+            break;
+            
+        case IG_PLACER:
+            ClientState::playerAgent_state.action.set_block(item_id);
+            break;
+
+        case IG_MELEE_WEAPON:
+        case IG_RESOURCE:
+        case IG_NANITE_COIN:
+        case IG_ERROR:
             break;
             
         default:
             GS_ASSERT(false);
             break;
+    }
+
+    if (one_click)
+    {
+        int agent_id = ClientState::playerAgent_state.agent_id;
+        if (agent_id >= 0 && agent_id < AGENT_MAX)
+        {
+            ASSERT_VALID_AGENT_ID(agent_id);
+            agent_fire_on[agent_id] = false;
+            agent_fire_tick[agent_id] = 0;
+        }
     }
 }
 
@@ -341,14 +410,19 @@ namespace Toolbelt
 // use for continuous click-and-hold weapons
 void tick_agent_selected_item(int agent_id, ItemID item_id)
 {
-    if (item_id == NULL_ITEM) return;
+    int group = IG_NONE;    // empty hand
+    if (item_id != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item(item_id);
+        GS_ASSERT(item != NULL);
+        group = Item::get_item_group_for_type(item->type);
+    }
 
-    Item::Item* item = Item::get_item(item_id);
-    GS_ASSERT(item != NULL);
-
-    int group = Item::get_item_group_for_type(item->type);
     switch (group)
     {
+        case IG_NONE:
+            break;
+            
         case IG_MINING_LASER:
             break;
 
@@ -376,18 +450,24 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     // restrict events as needed
     //  -- this need to be integrated with the old hitscan_pick packet handlers
 
-    // later remove this when we have generic action for null item (hand punching or something)
-    if (item_id == NULL_ITEM) return;
-
-    Item::Item* item = Item::get_item(item_id);
-    GS_ASSERT(item != NULL);
-
     // will need to notify agent of state changes
     Agent_state* a = ServerState::agent_list->get(agent_id);
 
-    int group = Item::get_item_group_for_type(item->type);
+    Item::Item* item = NULL;
+    int group = IG_NONE;    // empty hand
+    if (item_id != NULL_ITEM)
+    {
+        item = Item::get_item(item_id);
+        GS_ASSERT(item != NULL);
+        group = Item::get_item_group_for_type(item->type);
+    }
+    
     switch (group)
     {
+        case IG_NONE:   // hand
+            // unlimited durability
+            break;
+
         case IG_PLACER:
             // the ammo decrement is deferred until packet receipt
             break;
@@ -406,7 +486,8 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             agent_fire_on[agent_id] = false;
             agent_fire_tick[agent_id] = 0;
             break;
-            
+
+        case IG_SHOVEL:
         case IG_MINING_LASER:
             item->durability -= 1;
             break;

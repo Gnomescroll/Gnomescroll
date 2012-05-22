@@ -47,16 +47,18 @@ typedef enum
 
 typedef enum
 {
+    IG_NONE,    // null value
     IG_ERROR,
     IG_RESOURCE,    //does nothing, resources, stackable
     IG_PLACER,  //consumed to create block
     IG_HITSCAN_WEAPON,
     IG_MELEE_WEAPON,
     IG_MINING_LASER,
+    IG_SHOVEL,
     IG_GRENADE_LAUNCHER,
     IG_NANITE_COIN,
-    IG_DEBUG,
-    IG_UNKNOWN,
+    IG_DEBUG,       // debug only items
+    IG_UNKNOWN,     // used by recipes
 } ItemGroup;
 
 /* No typedef for ItemType, use string names */

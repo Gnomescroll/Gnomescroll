@@ -50,6 +50,10 @@ int get_max_durability(int item_type);
 int get_placer_block_type_id(int item_type);
 int get_particle_voxel_texture(int item_type);
 
+float get_weapon_range(int weapon_type);
+int get_item_block_damage(int weapon_type, int block_type);
+int get_item_object_damage(int weapon_type);
+
 bool get_nanite_edibility(int item_type);
 
 void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost);

@@ -27,8 +27,17 @@ class ItemAttribute
     //IG_MINING_LASER
     int mining_fire_cooldown;
     int mining_damage;
-    int mining_block_damage;
 
+    // weapons
+    float firing_range;
+    int firing_rate;
+    int block_damage;
+
+    int object_damage;       // if this is nonzero it will be used, otherwise randrange will be used
+    int object_damage_min;  // for randrange(min,max);
+    int object_damage_max;
+    
+    
     // All items
     int max_energy;
     int max_durability;
@@ -58,6 +67,12 @@ class ItemAttribute
         particle_voxel = false;
         particle_voxel_texture = 0;
         nanite_food = false;
+        firing_range = NULL_FIRING_RANGE;
+        firing_rate = 1;
+        block_damage = 0;
+        object_damage = 0;
+        object_damage_min = 0;
+        object_damage_max = 1;
     }
 };
 

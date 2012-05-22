@@ -55,7 +55,9 @@ class ItemAttribute* get_item_attributes(int item_type)
 int get_item_fire_rate(int item_type)
 {
     // TODO
-    return 5;
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    return attr->firing_rate;
 }
 
 int get_sprite_index_for_id(ItemID id)
@@ -181,6 +183,31 @@ int get_particle_voxel_texture(int item_type)
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     return attr->particle_voxel_texture;
+}
+
+float get_weapon_range(int weapon_type)
+{
+    ItemAttribute* attr = get_item_attributes(weapon_type);
+    GS_ASSERT(attr != NULL);
+    GS_ASSERT(attr->firing_range != NULL_FIRING_RANGE);
+    return attr->firing_range;
+}
+
+int get_item_block_damage(int weapon_type, int block_type)
+{
+    // TODO -- block damage dependent on (weapon,block)
+    ItemAttribute* attr = get_item_attributes(weapon_type);
+    GS_ASSERT(attr != NULL);
+    return attr->block_damage;
+}
+
+int get_item_object_damage(int weapon_type)
+{
+    ItemAttribute* attr = get_item_attributes(weapon_type);
+    GS_ASSERT(attr != NULL);
+    if (attr->object_damage) return attr->object_damage;
+    GS_ASSERT(attr->object_damage_min < attr->object_damage_max);
+    return randrange(attr->object_damage_min, attr->object_damage_max);
 }
 
 bool get_nanite_edibility(int item_type)

@@ -4,43 +4,6 @@
 
 #include <t_map/t_properties.hpp>
 
-/*
-typedef enum
-{
-    IG_ERROR,
-    IG_RESOURCE,    //does nothing, resources, stackable
-    IG_PLACER,  //consumed to create block
-    IG_HITSCAN_WEAPON,
-    IG_MELEE_WEAPON,
-    IG_MINING_LASER,
-    IG_GRENADE_LAUNCHER
-
-} ItemGroups;
-*/
-
-/*
-    int item_group_type;
-    
-    //IG_PLACER
-    char* placer_block_type;    //type of block that it creates
-
-    //IG_HITSCAN_WEAPON
-    int hitscan_fire_cooldown;      // ms per bullet
-    int hitscan_damage;             // damage
-    int hitscan_max_ammo;           // max ammo
-    int hitscan_bullet_effect_enum; // bullet effect
-
-    //IG_MELEE_WEAPON
-    int melee_fire_cooldown;
-    int melee_damage;
-
-    //IG_MINING_LASER
-    int mining_fire_cooldown;
-    int mining_damage;
-    int mining_block_damage;
-*/
-
-
 namespace Item
 {
 
@@ -72,15 +35,21 @@ void load_item_dat()
     s.max_durability = 100;
     s.max_energy = 50;
     s.max_stack_size = 1;
+    s.object_damage_min = 15;
+    s.object_damage_max = 25;
 
     item_def(7, IG_MINING_LASER, "mining_laser");
     sprite_def(i0, 3,5);
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
-    s.mining_block_damage = 3;
     s.max_durability = 200;
     s.max_energy = 50;
     s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 5;
+    s.block_damage = 6;
+    s.object_damage_min = 25;
+    s.object_damage_max = 50;
 
     item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
     sprite_def(i0, 1,7);
@@ -129,10 +98,7 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_3");
 
-
-/*
-    Copper
-*/
+    // Copper
     item_def(32, IG_RESOURCE, "copper_ore");
     sprite_def(i1, 3,3);
     s.max_stack_size = 64;
@@ -147,12 +113,13 @@ void load_item_dat()
     s.melee_damage = 2;
     s.max_durability = 400;
     s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 7;
+    s.block_damage = 9;
+    s.object_damage_min = 15;
+    s.object_damage_max = 25;
 
-
-/*
-    Gallium
-*/
-
+    // Gallium
     item_def(35, IG_RESOURCE, "gallium_ore");
     sprite_def(i1, 2,3);
     s.max_stack_size = 64;
@@ -167,10 +134,13 @@ void load_item_dat()
     s.melee_damage = 4;
     s.max_durability = 400;
     s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 7;
+    s.block_damage = 11;
+    s.object_damage_min = 20;
+    s.object_damage_max = 30;
 
-/*
-    Iron
-*/
+    // Iron
     item_def(38, IG_RESOURCE, "iron_ore");
     sprite_def(i1, 1,3);
     s.max_stack_size = 64;
@@ -185,11 +155,13 @@ void load_item_dat()
     s.melee_damage = 6;
     s.max_durability = 400;
     s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 7;
+    s.block_damage = 16;
+    s.object_damage_min = 25;
+    s.object_damage_max = 35;
 
-
-/*
-iridium
-*/
+    // Iridium
     item_def(41, IG_RESOURCE, "iridium_ore");
     sprite_def(i1, 4,3);
     s.max_stack_size = 64;
@@ -204,6 +176,20 @@ iridium
     s.melee_damage = 30;
     s.max_durability = 400;
     s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 7;
+    s.block_damage = 32;
+    s.object_damage_min = 30;
+    s.object_damage_max = 40;
+
+    item_def(44, IG_NONE, "fist");
+    s.mining_fire_cooldown = 200;
+    s.mining_damage = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 8;
+    s.block_damage = 4;
+    s.object_damage_min = 5;
+    s.object_damage_max = 10;
 
     end_item_dat();
 }
@@ -213,9 +199,9 @@ int _item_cube_iso_spritesheet_id = -1;
 
 void start_item_dat()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     _item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_16_surface);
-#endif
+    #endif
 }
 
 void end_item_dat()

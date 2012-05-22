@@ -44,3 +44,5 @@ const int CRAFT_BENCH_INPUTS_MAX = 9;
 const int CRAFT_BENCH_OUTPUTS_MAX = 6;
 
 const float AGENT_CONTAINER_REACH = 4.0f;
+
+const float NULL_FIRING_RANGE = 0.0f;

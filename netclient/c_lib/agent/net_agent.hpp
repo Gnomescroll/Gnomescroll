@@ -346,12 +346,14 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
 {
     public:
         uint16_t x,y,z;
+        uint16_t weapon_type;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
             pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&weapon_type, buff, buff_n, pack);
         }
 
         inline void handle();
@@ -411,6 +413,7 @@ class melee_object_CtoS: public FixedSizeNetPacketToServer<melee_object_CtoS>
         uint8_t type;
         uint8_t part;
         uint8_t vx,vy,vz;
+        uint16_t weapon_type;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -420,6 +423,7 @@ class melee_object_CtoS: public FixedSizeNetPacketToServer<melee_object_CtoS>
             pack_u8(&vx, buff, buff_n, pack);
             pack_u8(&vy, buff, buff_n, pack);
             pack_u8(&vz, buff, buff_n, pack);
+            pack_u16(&weapon_type, buff, buff_n, pack);
         }
         inline void handle();
 };
