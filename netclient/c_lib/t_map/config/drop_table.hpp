@@ -34,6 +34,57 @@ int item_drop_table_index = 0;
 struct CubeItemDropTable item_drop_table[512];
 
 
+void save_drop_dat_to_file()
+{
+    FILE *fp = fopen("screenshot/drop_dat","w");
+    if(!fp) GS_ABORT();
+
+    for(int i=0; i<256; i++)
+    {
+        int num_drop = meta_drop_table[i].num_drop;
+        if(num_drop == 0) continue;
+
+        fprintf(fp,"Block: %s \n", get_cube_name(i));
+
+        int index = meta_drop_table[i].index;
+
+        for(int j=0; j<num_drop; j++)
+        {
+            struct CubeItemDropTable* cidt = &item_drop_table[index+j];
+
+            float average = 0;
+
+            for(int k=0; k<cidt->drop_entries; k++)
+            {
+                average += cidt->item_drop_num[k]*cidt->drop_probabilities[k];
+            }
+
+            fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type) );
+
+            fprintf(fp,"\tavg= %2.4f \n", average);
+
+            float cdrop = 0.0;
+            for(int k=0; k<cidt->drop_entries; k++)
+            {
+                cdrop += cidt->item_drop_num[k]*cidt->drop_probabilities[k];
+                //cumulative probability, probability, drop average, cumulative drop average
+                fprintf(fp,"\t\t%i: %2.4f \t %2.4f \t %2.2f \t %2.2f \n", 
+                    cidt->item_drop_num[k],
+                    cidt->drop_probabilities[k],
+                    cidt->drop_cumulative_probabilities[k], 
+                    cidt->item_drop_num[k]*cidt->drop_probabilities[k]
+                    ,cdrop);
+
+            }
+
+        }
+
+
+    }
+
+    fclose(fp);
+}
+
 void end_drop_dat()
 {
     for(int i=0; i<256; i++)
@@ -96,60 +147,6 @@ void end_drop_dat()
     }
 }
 
-void save_drop_dat_to_file()
-{
-    FILE *fp = fopen("screenshot/drop_dat","w");
-    if(!fp) GS_ABORT();
-/*
-    for(int i=0; i<256; i++)
-    {
-        int num_drop = meta_drop_table[i].num_drop;
-        if(num_drop == 0) continue;
-
-        fprintf(fp,"Block: %s \n", get_cube_name(i));
-
-        int index = meta_drop_table[i].index;
-
-        for(int j=0; j<num_drop; j++)
-        {
-            struct CubeItemDropTable* cidt = &item_drop_table[index+j];
-
-            float average = 0;
-            float _clast = 0.;
-            for(int k=0; k<cidt->drop_entries; k++)
-            {
-                _clast = cidt->drop_probabilities[k] - _clast;
-                average += k*_clast;
-                _clast = cidt->drop_probabilities[k];
-            }
-
-            //fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type) );
-
-            //fprintf(fp,"\tavg= %2.4f max= %i \n", average , cidt->max_drops-1);
-
-
-            float clast = 0;
-            float dprob = 0;
-            float cdrop = 0.0;
-            for(int k=0; k<cidt->drop_entries; k++)
-            {
-                float p = cidt->drop_probabilities[k];
-                dprob = p - clast;
-                cdrop += k*dprob;
-                //cumulative probability, probability, drop average, cumulative drop average
-                fprintf(fp,"\t\t%i: %2.4f \t %2.4f \t %2.2f \t %2.2f \n", k ,p, dprob, dprob*k, cdrop);
-                clast = cidt->drop_probabilities[k];
-            }
-
-        }
-
-
-    }
-*/
-    fclose(fp);
-
-
-}
 
 #if DC_SERVER
 void handle_block_drop(int x, int y, int z, int block_type)
