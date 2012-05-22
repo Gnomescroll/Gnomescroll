@@ -7,6 +7,9 @@
 
 unsigned char* PERM = NULL;
 
+Vec3* tiling_gradients = NULL;
+int* tiling_indexes = NULL;
+
 int _oct = 1;
 float _per = 0.6f;
 float _amp = 1.0f;
@@ -326,12 +329,31 @@ void noise_init()
 {
     assert(PERM == NULL);
     PERM = (unsigned char*)malloc(2 * PERM_SIZE * sizeof(unsigned char));
+
+    assert(tiling_gradients == NULL);
+    tiling_gradients = (Vec3*)malloc(TILING_SIZE * sizeof(Vec3));
+    for (int i=0; i<TILING_SIZE; i++)
+    {
+        tiling_gradients[i].x = cos(i * 2 * (PI / TILING_SIZE));
+        tiling_gradients[i].y = sin(i * 2 * (PI / TILING_SIZE));
+        tiling_gradients[i].z = 0; // ?
+    }
+
+    assert(tiling_indexes == NULL);
+    tiling_indexes = (int*)malloc(TILING_SIZE * sizeof(int));
+    for (int i=0; i<TILING_SIZE; i++) tiling_indexes[i] = i;
+    shuffle_int_array(tiling_indexes, TILING_SIZE);
 }
 
 void noise_teardown()
 {
     if (PERM != NULL) free(PERM);
     PERM = NULL;
+
+    if (tiling_gradients != NULL) free(tiling_gradients);
+    tiling_gradients = NULL;
+    if (tiling_indexes != NULL) free(tiling_indexes);
+    tiling_indexes = NULL;
 }
 
 float* create_noisemap(int x, int y, int z)
