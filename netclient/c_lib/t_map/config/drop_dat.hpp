@@ -28,7 +28,7 @@ void load_map_drop_dat()
     set_drop(0.10, 1);
 
     add_drop("iron_ore", 1);
-    set_drop(0.5, 1);
+    set_drop(0.05, 1);
 
     add_drop("iridium_ore", 1);
     set_drop(0.25, 1);
