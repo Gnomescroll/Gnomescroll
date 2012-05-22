@@ -120,4 +120,10 @@ red bots should do random dmg, have random health etc
 
 shovels/fist melee
 
-tiling noise
+tiling noise (argh)
+
+refill players' starting items on respawn
+--if has one  full mining laser, do nothing
+--if has one or more partially full mining lasers, fill the most full one
+--if no mining laser found, add one (if room)
+-do the same for laser rifle
