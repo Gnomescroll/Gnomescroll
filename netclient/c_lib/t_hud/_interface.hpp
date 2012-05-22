@@ -29,6 +29,8 @@ void disable_agent_container_hud();
 void enable_block_container_hud();
 void disable_block_container_hud();
 
+void close_container(int container_id);
+
 ContainerInputEvent left_mouse_down(int x, int y);
 ContainerInputEvent left_mouse_up(int x, int y);
 ContainerInputEvent right_mouse_down(int x, int y);

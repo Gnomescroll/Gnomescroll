@@ -49,6 +49,13 @@ void set_container_id(ItemContainerType container_type, int container_id)
     }
 }
 
+void close_container(int container_id)
+{
+    //if (agent_container != NULL && agent_container->container_id == container_id) agent_container->container_id = NULL_CONTAINER;
+    //if (agent_toolbelt != NULL && agent_toolbelt->container_id == container_id) agent_toolbelt->container_id = NULL_CONTAINER;
+    //if (nanite_container != NULL && nanite_container->container_id == container_id) nanite_container->container_id = NULL_CONTAINER;
+    if (crafting_container != NULL && crafting_container->container_id == container_id) crafting_container->container_id = NULL_CONTAINER;
+}
 
 /*
     Input Handling
@@ -109,6 +116,7 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
     {
         container = inventories[i];
         if (container == NULL) continue;
+        if (container->container_id == NULL_CONTAINER) continue;
         if (!container->point_inside(x,y)) continue;
         slot_tmp = container->get_slot_at(x,y);
         closest_container = container;

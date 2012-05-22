@@ -149,6 +149,7 @@ inline void open_container_StoC::handle()
 
 inline void close_container_StoC::handle()
 {
+    t_hud::close_container(opened_container);
     opened_container = NULL_CONTAINER;
 }
 

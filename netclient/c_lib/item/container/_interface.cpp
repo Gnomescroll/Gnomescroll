@@ -154,6 +154,9 @@ void close_container()
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     player_craft_bench_ui = NULL;
 
+    // unset hud container id
+    t_hud::close_container(opened_container);
+
     opened_container = NULL_CONTAINER;
     
     // send packet

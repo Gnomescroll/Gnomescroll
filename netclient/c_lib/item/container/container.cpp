@@ -174,6 +174,7 @@ void ItemContainerCraftingBench::remove_item(int slot)
 void init_container(ItemContainerInterface* container)
 {
     GS_ASSERT(container != NULL);
+    if (container == NULL) return;
     switch (container->type)
     {
         case AGENT_CONTAINER:
@@ -376,6 +377,7 @@ ContainerActionType partial_slot_to_empty_hand(int client_id, int slot, ItemID* 
 ContainerActionType full_slot_to_empty_hand(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item, ItemID slot_item)
 {
     GS_ASSERT(container != NULL);
+    if (container == NULL) return CONTAINER_ACTION_NONE;
     container->remove_item(slot);
     send_container_remove(client_id, container->id, slot);
     *hand_item = slot_item;
@@ -429,6 +431,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     ItemContainerInterface* container = get_container(id);
     #endif
     GS_ASSERT(container != NULL);
+    if (container == NULL) return action;
 
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
@@ -614,6 +617,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     ItemContainerInterface* container = get_container(id);
     #endif
     GS_ASSERT(container != NULL);
+    if (container == NULL) return action;
     GS_ASSERT(container->type = AGENT_NANITE);
 
     #if DC_CLIENT
