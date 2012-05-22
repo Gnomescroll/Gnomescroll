@@ -143,7 +143,8 @@ void update_selected_item_type()
     int agent_id = ClientState::playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return;
     int item_type = NULL_ITEM_TYPE;
-    ItemContainer::ItemContainer* toolbelt = (ItemContainer::ItemContainer*)ItemContainer::get_container(toolbelt_id);
+    ItemContainer::ItemContainer* toolbelt = NULL;
+    if (toolbelt_id != NULL_CONTAINER) toolbelt = (ItemContainer::ItemContainer*)ItemContainer::get_container(toolbelt_id);
     if (toolbelt != NULL) item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
     agent_selected_type[agent_id] = item_type;
 }
@@ -214,8 +215,10 @@ void tick_local_agent_selected_item_type(int item_type)
     int group = Item::get_item_group_for_type(item_type);
 
     // get container state for ui prediction
+    if (toolbelt_id == NULL_CONTAINER) return;
     ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(toolbelt_id);
     GS_ASSERT(container != NULL);
+    if (container == NULL) return;
     int durability = container->get_slot_durability(selected_slot);
 
     switch (group)
