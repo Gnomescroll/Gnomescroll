@@ -33,6 +33,8 @@ struct InputState
     InputStateMode input_mode;
     InputStateMode camera_mode;
 
+    bool ignore_next_container_right_click_event;
+
     // options
     bool invert_mouse;
     float sensitivity;

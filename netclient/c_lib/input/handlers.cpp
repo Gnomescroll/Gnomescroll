@@ -46,6 +46,12 @@ void toggle_agent_container()
 void enable_block_container()
 {
     if (input_state.block_container) return;
+    // force set the mouse position
+    // because we wont have a motion event coming in initially sometimes
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+    t_hud::set_mouse_position(x,y);
+    
     input_state.block_container = true;
     t_hud::enable_block_container_hud();
     rebind_mouse = input_state.mouse_bound;
@@ -380,6 +386,14 @@ void container_mouse_down_handler(SDL_Event* event)
 
 void container_mouse_up_handler(SDL_Event* event)
 {
+    if (!input_state.mouse_bound // for whatever reason it only needs to be done when mouse is unbound
+      && input_state.ignore_next_container_right_click_event
+      && event->button.button == SDL_BUTTON_RIGHT)
+    {
+        input_state.ignore_next_container_right_click_event = false;
+        return;
+    }
+    
     // check intersection with any slots
 
     //SDL_MouseButtonEvent e = event->button;
