@@ -20,7 +20,7 @@ void load_map_drop_dat()
 
     add_drop("copper_ore", 4);
     set_drop(0.15, 1);
-    set_drop(0.5, 2);
+    set_drop(0.05, 2);
     set_drop(0.03, 3);
     set_drop(0.05, 5);
 
@@ -40,12 +40,10 @@ void load_map_drop_dat()
     set_drop(0.5,  3);
 
     def_drop("crate_2");
-    add_drop("crate_2", 1);
-    set_drop(1.0, 1);
+    drop_always("crate_2");
     
     def_drop("crate_3");
-    add_drop("crate_3", 1);
-    set_drop(1.0, 1);
+    drop_always("crate_3");
 
     end_drop_dat();
     #if DC_CLIENT

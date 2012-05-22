@@ -7,6 +7,11 @@
 namespace t_map
 {
 
+void def_drop(const char* block_name);
+void add_drop(const char* item_name, int drop_entries);
+void set_drop(float drop_probability, int drops);
+void drop_always(const char* item_name);
+
 struct CubeItemDropMeta
 {
     unsigned short index;   //start index
@@ -244,5 +249,11 @@ void set_drop(float drop_probability, int drops)
     _current_drop_num++;
 }
 
+
+void drop_always(const char* item_name)
+{
+    add_drop(item_name, 1);
+    set_drop(1.0, 1);
+}
 
 }   // t_map
