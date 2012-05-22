@@ -10,7 +10,7 @@ namespace Item
 
 void load_nanite_store()
 {
-    nanite_item_def("mining_laser", 10);
+    nanite_item_def("mining_laser", 8);
     nanite_item_set(0, 0,0);
 
     nanite_item_def("laser_rifle", 10);
