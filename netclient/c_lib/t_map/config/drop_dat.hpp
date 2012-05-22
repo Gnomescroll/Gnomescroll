@@ -37,8 +37,7 @@ void load_map_drop_dat()
 
         add_drop("food_rock-0", 2);
         set_drop(0.10, 1);
-        set_drop(0.05, 2);
-
+        set_drop(0.08, 2);
     ////////////////////
     def_drop("crate_2");
         drop_always("crate_2");
