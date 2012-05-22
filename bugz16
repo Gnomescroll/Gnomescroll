@@ -104,10 +104,11 @@ DONE
 fist
 DONE
 
+shovels
+DONE
+
 opening container also executes click on inventory
 FIXED
-
-shovels
 
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
 --the completely empty function is done. need to integrate it into component system
@@ -164,5 +165,19 @@ GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object_list.cp
 ./run(_ZN34FixedSizeReliableNetPacketToClientI34object_create_momentum_angles_StoCE7handlerEPciPii+0x74) [0x816e688]
 ./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object.cpp, line 19 function: add_component 
+
+fix:
+./run(_Z11print_tracev+0x25) [0x80b2028]
+./run(_ZN5t_map22apply_damage_broadcastEiiiiNS_25TerrainModificationActionE+0x1d) [0x80b6aca]
+./run(_ZN18hitscan_block_CtoS6handleEv+0x27c) [0x8110d44]
+./run(_ZN26FixedSizeNetPacketToServerI18hitscan_block_CtoSE7handlerEPciPii+0x7a) [0x812ad1c]
+./run(_Z23process_packet_messagesPcPiii+0x100) [0x80fc3b2]
+./run(_ZN9NetServer23dispatch_network_eventsEv+0xf0) [0x80fb5e6]
+./run(_ZN4Main3runEv+0x64) [0x80fd9fe]
+./run(main+0x5d) [0x80fda69]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7471113]
+./run() [0x80a8201]
+GS_ASSERT error: /home/steve/dc_mmo/server/c_lib/t_map/t_map.cpp, line 115 function: apply_damage_broadcast 
+
 
 hand item is not thrown when closing craft bench
