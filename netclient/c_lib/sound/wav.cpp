@@ -67,7 +67,7 @@ int get_free_wav_data(WavData** data)
             *data = &wav_buffers[i];
             break;
         }
-    if (i >= MAX_WAV_BUFFERS) assert(false);
+    if (i >= MAX_WAV_BUFFERS) GS_ASSERT(false);
     return i;
 }
 

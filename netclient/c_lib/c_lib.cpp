@@ -218,7 +218,7 @@ void signal_terminate_handler(int sig)
 int init_c_lib() 
 {
     static int inited = 0;
-    assert(inited == 0);
+    GS_ASSERT(inited == 0);
     inited++;
 
     #ifdef linux

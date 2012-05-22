@@ -203,7 +203,7 @@ namespace ServerState
 
             using Components::PhysicsComponent;
             PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            assert(physics != NULL);
+            GS_ASSERT(physics != NULL);
             if (physics == NULL)
             {
                 Objects::ready(obj);    // sets id

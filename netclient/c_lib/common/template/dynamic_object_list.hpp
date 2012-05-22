@@ -148,8 +148,9 @@ void DynamicObjectList<Object_state, max_n>::resize(int new_size)
 template <class Object_state, int max_n>
 Object_state* DynamicObjectList<Object_state, max_n>::create() {
     //where();
+    GS_ASSERT(n_max > 0);
     int i;
-    int id;
+    int id=0;
     for(i=0; i<n_max;i++)
     {
         id = (i+id_c)%n_max;

@@ -125,8 +125,9 @@ void DynamicMultiObjectList<Object_interface, max_n>::print_members()
 template <class Object_interface, int max_n>
 int DynamicMultiObjectList<Object_interface, max_n>::get_free_id()
 {
+    GS_ASSERT(n_max > 0);
     int i;
-    int id;
+    int id=0;
     for (i=0; i<n_max; i++)
     {
         id = (i + id_c) % n_max;
