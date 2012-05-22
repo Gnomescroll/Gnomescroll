@@ -271,12 +271,17 @@ float voronoi_float(float x, float y, float z)
 //    if(tmp <= 0.0) return 0.0;
 //    if(tmp >= 1.0) return 1.0;
 
+    if(tmp <= 0.5) return 0.0;
+
+    tmp *= 2.0;
+    if(tmp >= 1.0) return 1.0;
+/*
     const float f = 3;
     tmp = f*tmp - f/2.0;
     //tmp = 1.0 - tmp;
     if(tmp <= 0.0) return 0.0;
     if(tmp >= 1.0) return 1.0;
-
+*/
     //printf("out= %i \n", (int)(255*tmp) );
     return tmp;
 }
