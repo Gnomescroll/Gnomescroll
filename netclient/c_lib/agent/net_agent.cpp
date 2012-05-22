@@ -749,7 +749,6 @@ inline void hitscan_block_CtoS::handle()
     }
 
     if (a->status.team == 0) return;
-    //if (!a->weapons.laser.fire()) return;
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
@@ -789,7 +788,7 @@ inline void hitscan_block_CtoS::handle()
     // damage block
     // WARNING:
     // *must* call this after raycasting, or you will be raycasting altered terrain
-    int weapon_block_damage = 12;
+    int weapon_block_damage = randrange(3,4);
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
     //printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg
