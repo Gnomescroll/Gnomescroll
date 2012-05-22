@@ -127,7 +127,7 @@ int DynamicMultiObjectList<Object_interface, max_n>::get_free_id()
 {
     GS_ASSERT(n_max > 0);
     int i;
-    int id=0;
+    int id;
     for (i=0; i<n_max; i++)
     {
         id = (i + id_c) % n_max;
@@ -158,9 +158,10 @@ template <class Object_interface, int max_n>
 Object_interface* DynamicMultiObjectList<Object_interface, max_n>::create(int type)
 {
     GS_ASSERT(create_interface != NULL);
+    GS_ASSERT(n_max > 0);
     //where();
     int i;
-    int id;
+    int id=0;
     for(i=0; i<n_max;i++)
     {
         id = (i+id_c)%n_max;
