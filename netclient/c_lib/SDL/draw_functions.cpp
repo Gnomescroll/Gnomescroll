@@ -106,6 +106,25 @@ void draw_bound_texture(float x, float y, float w, float h, float z)
 }
 
 // y coordinates start along the bottom
+void draw_bound_texture(float x, float y, float w, float h)
+{
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(0.0,0.0);
+    glVertex2f(x, y);  // Top left
+
+    glTexCoord2f(1.0,0.0);
+    glVertex2f(x+w, y);  // Top right
+
+    glTexCoord2f(1.0,1.0);
+    glVertex2f(x+w, y+h);  // Bottom right
+
+    glTexCoord2f(0.0,1.0);
+    glVertex2f(x, y+h);  // Bottom left
+    glEnd();
+}
+
+// y coordinates start along the bottom
 void draw_bound_texture_rotated(float x, float y, float w, float h, float z, float theta)
 {
     theta *= kPI;

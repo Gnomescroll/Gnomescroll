@@ -90,12 +90,17 @@ DONE
 better robot laser sound
 DONE
 
+right side up isometric blocks
+DONE
+
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
 --the completely empty function is done. need to integrate it into component system
 --agents need more careful restrictions. they can't just die early. maybe N blocks per N damage
 --server should keep track of solid voxel counts instead of recalculating constantly
 
-use 64pixel isometric texture, and orient correctly
+use 64pixel isometric texture
+-- texture blit copies pixels directly
+--Try: shirnking the 64 texture to 16 after generation. the shitty look is due to the draw_iso_sprite() method, opengl should interpolate better
 
 blue bombs should aggro if shot
 

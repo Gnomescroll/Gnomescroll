@@ -244,6 +244,7 @@ void blit_block_item_sheet()
 {
 #if DC_CLIENT
 
+    GLuint block_item_64_texture = 0;
     {
         unsigned int color_tex, fb, depth_rb;
         const int xres = 1024;
@@ -283,6 +284,7 @@ void blit_block_item_sheet()
 
             default:
             printf("FBO error\n");
+            break;
         }
         //-------------------------
         //and now you can render to GL_TEXTURE_2D
@@ -323,7 +325,7 @@ void blit_block_item_sheet()
             int s1 = get_cube_side_texture(index, 0); //T
             int s2 = get_cube_side_texture(index, 2); //N
             int s3 = get_cube_side_texture(index, 4); //W
-
+            
             draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
         }
         glEnd();
@@ -342,6 +344,15 @@ void blit_block_item_sheet()
         //Bind 0, which means render to back buffer, as a result, fb is unbound
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         glDeleteFramebuffersEXT(1, &fb);
+
+        //http://stackoverflow.com/questions/5102277/resizing-an-image-using-opengl
+        // setup another framebuffer here
+        // bind the 64 pixel texture
+        // draw to a 256x256 framebuffer
+        // save surface to png again
+
+        create_texture_from_surface(block_item_64_surface, &block_item_64_texture, GL_NEAREST);
+        assert(block_item_64_texture != 0);
     }
 
     {
@@ -383,6 +394,7 @@ void blit_block_item_sheet()
 
             default:
             printf("FBO error\n");
+            break;
         }
         //-------------------------
         //and now you can render to GL_TEXTURE_2D
@@ -404,29 +416,34 @@ void blit_block_item_sheet()
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
 
-        glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+        //glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
 
-        glBegin(GL_QUADS);
-        for(int i=0; i<16; i++)
-        for(int j=0; j<16; j++)
-        {
-            /*
-                const int T = 0;
-                const int B = 1;
-                const int N = 2;
-                const int S = 3;
-                const int W = 4;
-                const int E = 5;
-            */
+        //glBegin(GL_QUADS);
+        //for(int i=0; i<16; i++)
+        //for(int j=0; j<16; j++)
+        //{
+            ///*
+                //const int T = 0;
+                //const int B = 1;
+                //const int N = 2;
+                //const int S = 3;
+                //const int W = 4;
+                //const int E = 5;
+            //*/
 
-            int index = 16*j+i;
-            int s1 = get_cube_side_texture(index, 0); //T
-            int s2 = get_cube_side_texture(index, 2); //N
-            int s3 = get_cube_side_texture(index, 4); //W
+            //int index = 16*j+i;
+            //int s1 = get_cube_side_texture(index, 0); //T
+            //int s2 = get_cube_side_texture(index, 2); //N
+            //int s3 = get_cube_side_texture(index, 4); //W
+            
+            //draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
+        //}
+        //glEnd();
 
-            draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
-        }
-        glEnd();
+        //glBegin(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, block_item_64_texture);
+        draw_bound_texture(0.0, 0.0, xres, yres);
+        //glDisable(GL_TEXTURE_2D);
 
         block_item_16_surface = create_surface_from_nothing(xres, yres);
 

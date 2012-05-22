@@ -214,7 +214,6 @@ int _item_cube_iso_spritesheet_id = -1;
 void start_item_dat()
 {
 #if DC_CLIENT
-    //_item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_16_surface);
     _item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_16_surface);
 #endif
 }
