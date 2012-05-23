@@ -195,7 +195,6 @@ void container_block_create_StoC::handle()
         GS_ABORT();
     }
     main_map->chunk[chunk_index]->chunk_item_container.add(x,y,z, container_type, container_id);
-    printf("create container %i of type %i at %i %i %i \n", container_id, container_type, x,y,z);
 }
 
 void container_block_delete_StoC::handle()

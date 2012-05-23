@@ -126,6 +126,9 @@ destroy 2 voxels in robot
 
 or just do voxel destruction based on cumulative damage
 
+try to fix the cpu spike in voxel adjustments -- recalculating entire list may be unnecessary since each model has their own sublist
+if cant fix, probably disable voxel damage
+
 blue bombs should damage terrain like grenades
 
 red bots should do random dmg, have random health etc
@@ -189,7 +192,7 @@ storage blocks
 <Kaprekar> i miss grenades
 <Kaprekar> i don't think blocks are stacking properly. i opened my inventory and had about 4 stacks of varying sizes of the same item type after mining away for a while
 
-public server:
+in client (may have fixed):
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/toolbelt/_interface.cpp, line 218 function: tick_local_agent_selected_item_type 
 Segmentation fault
 
