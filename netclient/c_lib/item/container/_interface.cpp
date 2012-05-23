@@ -147,6 +147,9 @@ void open_container(int container_id)
 
 void close_container()
 {
+    // attempt throw
+    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
+
     if (opened_container == NULL_CONTAINER) return;
 
     // teardown UI widget
