@@ -179,5 +179,52 @@ fix:
 ./run() [0x80a8201]
 GS_ASSERT error: /home/steve/dc_mmo/server/c_lib/t_map/t_map.cpp, line 115 function: apply_damage_broadcast 
 
-
 hand item is not thrown when closing craft bench
+
+storage blocks
+
+<Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
+<Kaprekar> storage blocks are really needed.. just carved out a huge room and the floor is made of drops because my inventory is full and i'm maxed out on money
+<Kaprekar> strange, i have a stack of about 11 blocks in my inventory, and it's not picking up very many of the blocks on the ground
+<Kaprekar> i miss grenades
+<Kaprekar> i don't think blocks are stacking properly. i opened my inventory and had about 4 stacks of varying sizes of the same item type after mining away for a while
+
+public server:
+GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/toolbelt/_interface.cpp, line 218 function: tick_local_agent_selected_item_type 
+Segmentation fault
+
+./gnomescroll_server(_Z11print_tracev+0x15) [0x468a05]
+./gnomescroll_server(_ZN4Item16merge_item_stackE6ItemIDS0_i+0xe5) [0x46b4b5]
+./gnomescroll_server(_ZN13ItemContainer29partial_hand_to_occupied_slotEii6ItemIDS0_i+0x1e) [0x46b60e]
+./gnomescroll_server(_ZN13ItemContainer32nanite_beta_action_decision_treeEiiii+0x1b8) [0x497ae8]
+./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerIN13ItemContainer33nanite_container_action_beta_CtoSEE7handlerEPciPii+0xb2) [0x4b2122]
+./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x71) [0x44fd81]
+./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0x2ba) [0x49afca]
+./gnomescroll_server(_ZN4Main3runEv+0x15) [0x49be45]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f9d412a9c4d]
+./gnomescroll_server() [0x448979]
+GS_ASSERT error: /usr/freespace/dc_mmo/server/c_lib/item/_interface.cpp, line 132 function: merge_item_stack 
+./gnomescroll_server(_Z11print_tracev+0x15) [0x468a05]
+./gnomescroll_server(_ZN4Item16merge_item_stackE6ItemIDS0_i+0xe5) [0x46b4b5]
+./gnomescroll_server(_ZN13ItemContainer29partial_hand_to_occupied_slotEii6ItemIDS0_i+0x1e) [0x46b60e]
+./gnomescroll_server(_ZN13ItemContainer32nanite_beta_action_decision_treeEiiii+0x1b8) [0x497ae8]
+./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerIN13ItemContainer33nanite_container_action_beta_CtoSEE7handlerEPciPii+0xb2) [0x4b2122]
+./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x71) [0x44fd81]
+./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0x2ba) [0x49afca]
+./gnomescroll_server(_ZN4Main3runEv+0x15) [0x49be45]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f9d412a9c4d]
+./gnomescroll_server() [0x448979]
+GS_ASSERT error: /usr/freespace/dc_mmo/server/c_lib/item/_interface.cpp, line 132 function: merge_item_stack 
+
+./run(_Z11print_tracev+0x25) [0x80b2028]
+./run(_ZN5t_map22apply_damage_broadcastEiiiiNS_25TerrainModificationActionE+0x1d) [0x80b6aca]
+./run(_ZN18hitscan_block_CtoS6handleEv+0x27c) [0x8110d44]
+./run(_ZN26FixedSizeNetPacketToServerI18hitscan_block_CtoSE7handlerEPciPii+0x7a) [0x812ad1c]
+./run(_Z23process_packet_messagesPcPiii+0x100) [0x80fc3b2]
+./run(_ZN9NetServer23dispatch_network_eventsEv+0xf0) [0x80fb5e6]
+./run(_ZN4Main3runEv+0x64) [0x80fd9fe]
+./run(main+0x5d) [0x80fda69]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb748a113]
+./run() [0x80a8201]
+GS_ASSERT error: /home/steve/dc_mmo/server/c_lib/t_map/t_map.cpp, line 115 function: apply_damage_broadcast 
+
