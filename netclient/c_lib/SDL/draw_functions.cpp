@@ -291,23 +291,26 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
     ty0 = (tex_id/16)*h+hh;
     ty1 = (tex_id/16)*h+h-hh;
 
+    // top side
     i = 0;
 
     glColor3ub(255, 255,255);
 
     glTexCoord2f(tx0,ty0); // top left
-    glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
+    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
 
     glTexCoord2f(tx0,ty1);    // top right
-    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
+    glVertex2f(x+a[i+4],y+a[i+5]+1.0);  // flipped
         
     glTexCoord2f(tx1,ty1);  // top
-    //glVertex2f(x+a[i+4],y+a[i+5]-1.0);
-    glVertex2f(x+a[i+4],y+a[i+5]+1.0);  // flipped
-
-    glTexCoord2f(tx1,ty0);
     glVertex2f(x+a[i+6],y+a[i+7]);
 
+    glTexCoord2f(tx1,ty0);
+    glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
+    
+    // left side
+
+    // rotate all draw coordinates 90 degrees clockwise
     i = 8;
 
     tex_id = side1;
@@ -320,19 +323,20 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
 
     glColor3ub(171, 171, 171);
 
+    // correct rotation
     glTexCoord2f(tx0,ty0); // top left
     glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
     glTexCoord2f(tx0,ty1);    // top right
-    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
+    glVertex2f(x+a[i+6],y+a[i+7]);
         
     glTexCoord2f(tx1,ty1);  // top
-    //glVertex2f(x+a[i+4],y+a[i+5]+1.0);
     glVertex2f(x+a[i+4],y+a[i+5]-1.0);  // flipped
 
     glTexCoord2f(tx1,ty0);
-    glVertex2f(x+a[i+6],y+a[i+7]);
+    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
 
+    // right side
     i = 16;
 
     tex_id = side2;
@@ -349,14 +353,13 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
     glVertex2f(x+a[i+0],y+a[i+1]);  // bottom left
 
     glTexCoord2f(tx0,ty1);    // top right
-    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
+    glVertex2f(x+a[i+6],y+a[i+7]-1.0);  // flipped
         
     glTexCoord2f(tx1,ty1);  // top
     glVertex2f(x+a[i+4],y+a[i+5]);
 
     glTexCoord2f(tx1,ty0);
-    //glVertex2f(x+a[i+6],y+a[i+7]+1.0);
-    glVertex2f(x+a[i+6],y+a[i+7]-1.0);  // flipped
+    glVertex2f(x+a[i+2],y+a[i+3]);   // bottom right
 
     glColor3ub(255, 255,255);
 }

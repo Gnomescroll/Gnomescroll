@@ -352,6 +352,7 @@ void blit_block_item_sheet()
         // save surface to png again
 
         create_texture_from_surface(block_item_64_surface, &block_item_64_texture, GL_NEAREST);
+        //create_texture_from_surface(block_item_64_surface, &block_item_64_texture, GL_LINEAR);
         GS_ASSERT(block_item_64_texture != 0);
     }
 
