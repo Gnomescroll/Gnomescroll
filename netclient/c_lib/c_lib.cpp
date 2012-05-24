@@ -258,16 +258,18 @@ int init_c_lib()
     Item::init();
     ItemContainer::init();
 
-// Load Dats
+    Toolbelt::init();
+
+    // Load Dats
 
     //t_map::load_map_dat();
     Item::load_item_dat();
     Item::load_nanite_store();
-    TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
 
     t_map::load_map_drop_dat(); //load drop dat after items
 
-    Toolbelt::init();
+    TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
+    TextureSheetLoader::init_item_texture();
 
     t_hud::init();
     t_hud::draw_init();

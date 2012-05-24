@@ -139,19 +139,17 @@ void AgentContainerUI::draw()
             int max_durability = Item::get_max_durability(slot_types[slot]);
             ratio = ((float)durability)/((float)max_durability);
         }
+        const float alpha = 255;
         if (durability == NULL_DURABILITY)
-            glColor4ub(80, 80, 80, 255);    // grey
+            glColor4ub(80, 80, 80, alpha);    // grey
         else if (ratio >= 0.75)
-            glColor4ub(7, 247, 0, 255);    // green
+            glColor4ub(7, 247, 0, alpha);    // green
         else if (ratio >= 0.5)
-            glColor4ub(243, 247, 0, 255);  // yellow
+            glColor4ub(243, 247, 0, alpha);  // yellow
         else if (ratio >= 0.25)
-            glColor4ub(247, 159, 0, 255);  // orange
-        else if (ratio >= 0.05)
-            glColor4ub(247, 71, 0, 255);    // red-orange
+            glColor4ub(247, 71, 0, alpha);    // red-orange
         else
-            glColor4ub(247, 14, 0, 255);   // red
-
+            glColor4ub(247, 14, 0, alpha);   // red
 
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
@@ -184,7 +182,7 @@ void AgentContainerUI::draw()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+    glBindTexture( GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture );
 
     glBegin(GL_QUADS);
 

@@ -43,12 +43,14 @@ extern Uint32* CubeTextureStack;
 extern class TextureSheetLoader* ItemTextureSheetLoader;
 extern struct SDL_Surface* ItemSurface;
 extern Uint32* ItemTextureStack;
+extern GLuint ItemSheetTexture;
 
 extern struct SDL_Surface* GreyScaleItemSurface;
-extern unsigned int GreyScaleItemTexture;
+extern GLuint GreyScaleItemTexture;
 
 void init();
 void init_greyscale();
+void init_item_texture();
 
 void teardown();
 

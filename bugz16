@@ -1,4 +1,6 @@
-build 16 bugs
+============
+==BUILD 16==
+============
 
 durabilities out of sync / toolbelt copying wrong data?
 FIXED
@@ -98,6 +100,10 @@ use 64pixel isometric texture
 --Try: shirnking the 64 texture to 16 after generation. the shitty look is due to the draw_iso_sprite() method, opengl should interpolate better
 DONE
 
+============
+==BUILD 17==
+============
+
 fix failure to unset container ui widget id
 DONE
 
@@ -122,6 +128,15 @@ FIXED !!! (needed to call container_remove in full hand swap to get the item's  
 
 <Kaprekar> i don't think blocks are stacking properly. i opened my inventory and had about 4 stacks of varying sizes of the same item type after mining away for a while
 -- better autofill
+DONE
+
+grey out purchase that cant be afforded
+DONE
+
+fix infinite money bug in nanite (beta action error)
+DONE
+
+adjust durability coloring thresholds
 DONE
 
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
@@ -154,6 +169,7 @@ refill players' starting items on respawn
 --if has one or more partially full mining lasers, fill the most full one
 --if no mining laser found, add one (if room)
 -do the same for laser rifle
+[[ Does this matter now that we have the fist? ]]
 
 GS_ASSERTs sometimes on connect with some components:
 
@@ -187,40 +203,11 @@ storage blocks
 <Kaprekar> i miss grenades
 -- drop them from blue bombs
 
-./gnomescroll_server(_Z11print_tracev+0x15) [0x468a05]
-./gnomescroll_server(_ZN4Item16merge_item_stackE6ItemIDS0_i+0xe5) [0x46b4b5]
-./gnomescroll_server(_ZN13ItemContainer29partial_hand_to_occupied_slotEii6ItemIDS0_i+0x1e) [0x46b60e]
-./gnomescroll_server(_ZN13ItemContainer32nanite_beta_action_decision_treeEiiii+0x1b8) [0x497ae8]
-./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerIN13ItemContainer33nanite_container_action_beta_CtoSEE7handlerEPciPii+0xb2) [0x4b2122]
-./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x71) [0x44fd81]
-./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0x2ba) [0x49afca]
-./gnomescroll_server(_ZN4Main3runEv+0x15) [0x49be45]
-/lib/libc.so.6(__libc_start_main+0xfd) [0x7f9d412a9c4d]
-./gnomescroll_server() [0x448979]
-GS_ASSERT error: /usr/freespace/dc_mmo/server/c_lib/item/_interface.cpp, line 132 function: merge_item_stack 
-./gnomescroll_server(_Z11print_tracev+0x15) [0x468a05]
-./gnomescroll_server(_ZN4Item16merge_item_stackE6ItemIDS0_i+0xe5) [0x46b4b5]
-./gnomescroll_server(_ZN13ItemContainer29partial_hand_to_occupied_slotEii6ItemIDS0_i+0x1e) [0x46b60e]
-./gnomescroll_server(_ZN13ItemContainer32nanite_beta_action_decision_treeEiiii+0x1b8) [0x497ae8]
-./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerIN13ItemContainer33nanite_container_action_beta_CtoSEE7handlerEPciPii+0xb2) [0x4b2122]
-./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x71) [0x44fd81]
-./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0x2ba) [0x49afca]
-./gnomescroll_server(_ZN4Main3runEv+0x15) [0x49be45]
-/lib/libc.so.6(__libc_start_main+0xfd) [0x7f9d412a9c4d]
-./gnomescroll_server() [0x448979]
-GS_ASSERT error: /usr/freespace/dc_mmo/server/c_lib/item/_interface.cpp, line 132 function: merge_item_stack
-
---unknown. earlier cause not located
-
 shrapnel
-
-make weapon durability warning clearer
 
 have chat display a "Press U to relock mouse" when window gains focus and mouse is unlocked
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
 alt tab doesnt work in fullscreen
-
-grey out purchase that cant be afforded
 
 move ItemSheetTexture out of t_hud and into TextureSheetLoader

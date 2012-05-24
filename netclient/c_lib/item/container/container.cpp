@@ -1334,11 +1334,11 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                             action = partial_hand_to_occupied_slot(
                                 container, slot,
                                 &hand_item_stack,
-                                slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
+                                slot_item_type, slot_item_stack, 1, slot_item_durability
                             );
                             #endif
                             #if DC_SERVER
-                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
+                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, 1);
                             #endif
                         }
                     }

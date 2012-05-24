@@ -288,7 +288,7 @@ static void draw_grabbed_icon()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
     glBegin(GL_QUADS);
         

@@ -202,9 +202,10 @@ Uint32* CubeTextureStack = NULL;
 class TextureSheetLoader* ItemTextureSheetLoader = NULL;
 struct SDL_Surface* ItemSurface = NULL;
 Uint32* ItemTextureStack = NULL;
+GLuint ItemSheetTexture = 0;
 
 struct SDL_Surface* GreyScaleItemSurface = NULL;
-unsigned int GreyScaleItemTexture = 0;
+GLuint GreyScaleItemTexture = 0;
 
 void init()
 {
@@ -216,16 +217,37 @@ void init()
     ItemTextureSheetLoader = new TextureSheetLoader(16);
     ItemTextureStack = ItemTextureSheetLoader->texture_stack;
     ItemSurface = ItemTextureSheetLoader->texture_sheet;
-    GreyScaleItemSurface = ItemTextureSheetLoader->grey_scale_texture_sheet;
+}
+
+void init_item_texture()
+{
+    create_texture_from_surface(ItemSurface, &ItemSheetTexture, GL_NEAREST);
+    //SDL_Surface* s = TextureSheetLoader::ItemSurface;
+
+    //if (s == NULL) printf("ItemContainer::init_item_sheet, error \n");
+    //GS_ASSERT(s != NULL);
+
+    //glEnable(GL_TEXTURE_2D);
+    //glGenTextures( 1, &ItemSheetTexture );
+
+    //glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+
+    ////glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
+    
+    //glDisable(GL_TEXTURE_2D);
 }
 
 void init_greyscale()
 {    
     ItemTextureSheetLoader->generate_grey_scale();
+    GreyScaleItemSurface = ItemTextureSheetLoader->grey_scale_texture_sheet;
     save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
     save_surface_to_png(ItemSurface , (char*)"./screenshot/items.png");
     create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture, GL_NEAREST);
-
 }
 
 void teardown()

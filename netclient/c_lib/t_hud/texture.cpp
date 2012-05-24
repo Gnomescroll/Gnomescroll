@@ -3,9 +3,6 @@
 namespace t_hud
 {
 
-//SDL_Surface* ItemSheetSurface;
-unsigned int ItemSheetTexture;
-
 SDL_Surface* ItemGridSlotSurface;
 unsigned int ItemGridSlotTexture;
 
@@ -13,36 +10,13 @@ unsigned int NaniteTexture;
 
 unsigned int CraftingTexture;
 
-void init_item_sheet();
 void init_nanite_texture();
 void init_crafting_texture();
 
 void init_texture()
 {
-    init_item_sheet();
     init_nanite_texture();
     init_crafting_texture();
-}
-
-void init_item_sheet()
-{
-    SDL_Surface* s = TextureSheetLoader::ItemSurface;
-
-    if (s == NULL) printf("ItemContainer::init_item_sheet, error \n");
-    GS_ASSERT(s != NULL);
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &ItemSheetTexture );
-
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
-
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
-    
-    glDisable(GL_TEXTURE_2D);
 }
 
 void init_nanite_texture()
@@ -63,7 +37,7 @@ void init_nanite_texture()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels );
     glDisable(GL_TEXTURE_2D);
 
-    //NaniteSurface = s;
+    SDL_FreeSurface(s);
 }
 
 void init_crafting_texture()
@@ -88,12 +62,12 @@ void init_crafting_texture()
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
     glDisable(GL_TEXTURE_2D);
+
+    SDL_FreeSurface(s);
 }
 
 void teardown_texture()
 {
-
-
 }
 
 }

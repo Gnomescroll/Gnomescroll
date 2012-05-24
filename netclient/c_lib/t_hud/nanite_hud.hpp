@@ -257,7 +257,7 @@ void AgentNaniteUI::draw()
     glEnd();
 
     // item sheet items
-    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
     glBegin(GL_QUADS);
     //draw available store items
