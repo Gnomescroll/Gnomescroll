@@ -5,20 +5,6 @@
 namespace t_hud
 {
 
-//Item
-//void get_nanite_store_item(int level, int slotx, int sloty, int* item_id, int* cost)
-
-/*
-enum NaniteUIregions
-{
-    ItemPickup,
-    ItemDropoff,
-    NannitePickup,
-    NaniteDropoff,
-    NaniteCollection
-}
-*/
-
 //221x147
 
 const int ITEM_PRICE_MAX_LENGTH = 4;
@@ -160,7 +146,7 @@ void AgentNaniteUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glBindTexture( GL_TEXTURE_2D, NaniteTexture );
+    glBindTexture(GL_TEXTURE_2D, NaniteTexture);
 
     glColor4ub(255, 255, 255, 255);
 
@@ -178,16 +164,16 @@ void AgentNaniteUI::draw()
     //draw background
     glBegin(GL_QUADS);
 
-    glTexCoord2f( tx_min, ty_min );
+    glTexCoord2f(tx_min, ty_min);
     glVertex2f(x, y);
 
-    glTexCoord2f( tx_min, ty_max );
+    glTexCoord2f(tx_min, ty_max);
     glVertex2f(x,y-h);
 
-    glTexCoord2f( tx_max, ty_max );
-    glVertex2f(x+w, y-h );
+    glTexCoord2f(tx_max, ty_max);
+    glVertex2f(x+w, y-h);
 
-    glTexCoord2f( tx_max, ty_min );
+    glTexCoord2f(tx_max, ty_min);
     glVertex2f(x+w, y);
 
     glEnd();
@@ -215,14 +201,24 @@ void AgentNaniteUI::draw()
     }
     glEnd();
 
+    if (this->container_id == NULL_CONTAINER) return;
+
+    // draw food
+    ItemContainer::ItemContainerNaniteUI* container = (ItemContainer::ItemContainerNaniteUI*)ItemContainer::get_container_ui(this->container_id);
+    if (container == NULL) return;
+
+    int coins = 0;
+    if (container->get_coin_type() != NULL_ITEM_TYPE) coins = container->get_coin_stack();
+
+    // greyscale items
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
 
     glBegin(GL_QUADS);
 
-    //draw store items
+    //draw unavailable store items
     for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
@@ -230,6 +226,7 @@ void AgentNaniteUI::draw()
 
         int item_type, cost;
         Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        if (coins >= cost) continue; // we can afford it; move on
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
@@ -245,25 +242,61 @@ void AgentNaniteUI::draw()
         const float tx_max = tx_min + 1.0/iw;
         const float ty_max = ty_min + 1.0/iw;
 
-        glTexCoord2f( tx_min, ty_min );
+        glTexCoord2f(tx_min, ty_min);
         glVertex2f(x, y);
 
-        glTexCoord2f( tx_min, ty_max );
+        glTexCoord2f(tx_min, ty_max);
         glVertex2f(x,y-w);
 
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y-w );
+        glTexCoord2f(tx_max, ty_max);
+        glVertex2f(x+w, y-w);
 
-        glTexCoord2f( tx_max, ty_min );
+        glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y);
     }
     glEnd();
 
-    if (this->container_id == NULL_CONTAINER) return;
+    // item sheet items
+    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 
-    // draw food
-    ItemContainer::ItemContainerNaniteUI* container = (ItemContainer::ItemContainerNaniteUI*)ItemContainer::get_container_ui(this->container_id);
-    if (container == NULL) return;
+    glBegin(GL_QUADS);
+    //draw available store items
+    for (int xslot=0; xslot<xdim; xslot++)
+    for (int yslot=0; yslot<ydim; yslot++)
+    {
+        if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
+
+        int item_type, cost;
+        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        if (coins < cost) continue; // we can't afford it; move on
+        if (item_type == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(item_type);
+
+        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
+        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+
+        const float w = slot_size;
+        const float iw = 16.0f; // icon_width
+        const int iiw = 16; // integer icon width
+
+        const float tx_min = (1.0/iw)*(tex_id % iiw);
+        const float ty_min = (1.0/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0/iw;
+        const float ty_max = ty_min + 1.0/iw;
+
+        glTexCoord2f(tx_min, ty_min);
+        glVertex2f(x, y);
+
+        glTexCoord2f(tx_min, ty_max);
+        glVertex2f(x,y-w);
+
+        glTexCoord2f(tx_max, ty_max);
+        glVertex2f(x+w, y-w);
+
+        glTexCoord2f(tx_max, ty_min);
+        glVertex2f(x+w, y);
+    }
+    glEnd();
 
     int food_item_type = container->get_food_type();
     if (food_item_type != NULL_ITEM_TYPE)
@@ -282,16 +315,16 @@ void AgentNaniteUI::draw()
         const float ty_max = ty_min + 1.0/iw;
 
         glBegin(GL_QUADS);
-        glTexCoord2f( tx_min, ty_min );
+        glTexCoord2f(tx_min, ty_min);
         glVertex2f(x, y);
 
-        glTexCoord2f( tx_min, ty_max );
+        glTexCoord2f(tx_min, ty_max);
         glVertex2f(x,y-w);
 
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y-w );
+        glTexCoord2f(tx_max, ty_max);
+        glVertex2f(x+w, y-w);
 
-        glTexCoord2f( tx_max, ty_min );
+        glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y);
         glEnd();
     }
@@ -317,16 +350,16 @@ void AgentNaniteUI::draw()
         const float ty_max = ty_min + 1.0/iw;
 
         glBegin(GL_QUADS);
-        glTexCoord2f( tx_min, ty_min );
+        glTexCoord2f(tx_min, ty_min);
         glVertex2f(x, y);
 
-        glTexCoord2f( tx_min, ty_max );
+        glTexCoord2f(tx_min, ty_max);
         glVertex2f(x,y-w);
 
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y-w );
+        glTexCoord2f(tx_max, ty_max);
+        glVertex2f(x+w, y-w);
 
-        glTexCoord2f( tx_max, ty_min );
+        glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y);
         glEnd();
     }
@@ -400,7 +433,7 @@ void AgentNaniteUI::draw()
     glColor4ub(255, 255, 255, 255);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+    glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
@@ -424,7 +457,7 @@ void u_dot(float x, float y)
     glBegin(GL_QUADS);
 
     glVertex2f(x-p,y+p);
-    glVertex2f(x+p, y+p );
+    glVertex2f(x+p, y+p);
     glVertex2f(x+p, y-p);
     glVertex2f(x-p, y-p);
 
