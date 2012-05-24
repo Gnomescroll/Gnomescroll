@@ -159,12 +159,16 @@ const char _pallet[ 3*(_pallet_num) ] =
 const int _pallet_num = 2;
 const char _pallet[ 3*(_pallet_num) ] = 
 {
-    //0xff,0xff,0xff,
+/*
     0x3d, 0x52,0x5e,
-    //0x57, 0x6e,0x62,
-
     0xa0, 0xa0,0xa0,
+*/  
+    //0x00, 0x32,0x64,
+    0xff, 0xff,0xff,
+    0xa0, 0x64,0x32,
 
+    //0xff,0xff,0xff,
+    //0x57, 0x6e,0x62,
     //0x6d,0x8e, 0x86,
     //0x94,0xb2,0xbb,
 };
@@ -290,6 +294,11 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
     y += _vi2[index+1];
     z += _vi2[index+2];
 
+    /*
+        Debug return
+    */
+    static const struct ColorElement null_ce = {{{255,255,255,255}}};
+    return null_ce;
 
     struct ColorElement ce;
     //ce.color = 0;
@@ -328,6 +337,7 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
     const float b2 = 0.0;
 */
 
+#if !PRODUCTION
     if(r1 + m1*(r2-r1) > 255.0)
    {
         printf("0: %f %f %f %f\n", r1 + m1*(r2-r1), m1, r1, r2);
@@ -337,6 +347,7 @@ static inline struct ColorElement calc_voronoi_color(float x, float y, float z, 
    {
         printf("2: %f %f %f %f\n", r1 + m1*(r2-r1), m1, r1, r2);
    }
+#endif
     //GS_ASSERT((r1 + m1*(r2-r1)) <= 255.0);
     //GS_ASSERT((r1 + m1*(r2-r1)) >= 0.0);
 

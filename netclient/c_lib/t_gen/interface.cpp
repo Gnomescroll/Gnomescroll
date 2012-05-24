@@ -129,7 +129,10 @@ void dump_voronoi_to_disc()
 
 void init_voronoi_noise_maps()
 {
-
+    /*
+        DEBUG RETURN
+    */
+    return;
 
     static const int xmax = 512 / VOI_00_INTERPOLATION_XY;
     static const int ymax = 512 / VOI_00_INTERPOLATION_XY;
@@ -251,7 +254,8 @@ float voronoi_float_fast(int x, int y, int z)
 
 }
 
-
+// VoronoiType {First, Second, Third, Fourth, Difference21, Difference32, Crackle};
+//enum DistanceMethod {Length, Length2, Manhattan, Chebychev, Quadratic, Minkowski4, Minkowski5};
 float voronoi_float(float x, float y, float z)
 {
 
@@ -266,14 +270,15 @@ float voronoi_float(float x, float y, float z)
     const double _z = zscale*z;
 
     //float tmp = Voronoi::Get(x*scale,y*scale,x*zscale, Voronoi::First, Voronoi::Manhattan);
-    float tmp = Voronoi::Get(_x,_y,_z, Voronoi::Fourth, Voronoi::Chebychev);
+    float tmp = Voronoi::Get(_x,_y,_z, Voronoi::First, Voronoi::Length2);
 
 //    if(tmp <= 0.0) return 0.0;
 //    if(tmp >= 1.0) return 1.0;
 
-    if(tmp <= 0.5) return 0.0;
+    //tmp = tmp*2.0 - 1.0;
 
-    tmp *= 2.0;
+    if(tmp <= 0.0) return 0.0;
+
     if(tmp >= 1.0) return 1.0;
 /*
     const float f = 3;
