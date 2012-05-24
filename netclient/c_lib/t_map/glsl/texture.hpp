@@ -11,6 +11,8 @@ struct SDL_PixelFormat;
 extern GLuint block_texture;
 //GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
 
+#include "structs.hpp"
+
 namespace t_map
 {
     const int MAX_TEXTURES = MAX_CUBES*6;
@@ -46,10 +48,57 @@ namespace t_map
     
     void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
     void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
-    
-}   // t_map
+ 
+    void set_cube_side_texture(int id, int side, int tex_id);
 
-extern "C"
+
+//static int cube_palette_index = 1;
+
+static int cube_texture_palette_index = 1;
+
+static unsigned short cube_texture_palette_lookup[256];
+static unsigned char cube_texture_palette[512*6];
+
+
+static int cube_color_palette_index = 1;
+
+static unsigned short cube_color_palette_lookup[256];
+static struct ColorElement cube_color_palette[512];
+
+
+void start_cube_palette(int cube_id);
+void end_cube_palette();
+void set_cube_palette_texture(int id, int side, int tex_id);
+void set_cube_palette_color(int r, int g, int b, int a);
+
+void start_cube_palette(int cube_id)
 {
-void set_cube_side_texture(int id, int side, int tex_id) GNOMESCROLL_API;
+    if(cube_texture_palette_lookup[cube_id] != 0)
+    {
+        cube_texture_palette_lookup[cube_id] = cube_texture_palette_index;
+        cube_color_palette_lookup[cube_id] = cube_color_palette_index;
+    }
+}
+
+void end_cube_palette()
+{
+    cube_texture_palette_index += 6;
+}
+
+void set_cube_palette_texture(int id, int side, int tex_id)
+{
+    cube_texture_palette[cube_texture_palette_index+side] = tex_id;
+}
+
+void set_cube_palette_color(int r, int g, int b, int a)
+{
+    struct ColorElement c;
+    c.r = r;
+    c.g = g;
+    c.b = b;
+    c.a = a;
+    cube_color_palette[cube_color_palette_index] = c;
+    cube_color_palette_index++;
+}
+
 }
