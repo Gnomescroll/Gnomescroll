@@ -142,12 +142,13 @@ DONE
 move ItemSheetTexture out of t_hud and into TextureSheetLoader
 DONE
 
+fix rotation on isometric block sides
+DONE
+
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
 --the completely empty function is done. need to integrate it into component system
 --agents need more careful restrictions. they can't just die early. maybe N blocks per N damage
 --server should keep track of solid voxel counts instead of recalculating constantly
-
-fix rotation on isometric block sides
 
 blue bombs should aggro if shot
 
@@ -163,16 +164,11 @@ if cant fix, probably disable voxel damage
 
 blue bombs should damage terrain like grenades
 
+blue bombs should drop grenades
+
 red bots should do random dmg, have random health etc
 
 tiling noise (argh) [brandon]
-
-refill players' starting items on respawn
---if has one  full mining laser, do nothing
---if has one or more partially full mining lasers, fill the most full one
---if no mining laser found, add one (if room)
--do the same for laser rifle
-[[ Does this matter now that we have the fist? ]]
 
 GS_ASSERTs sometimes on connect with some components:
 
@@ -203,8 +199,6 @@ storage blocks
 
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
-<Kaprekar> i miss grenades
--- drop them from blue bombs
 
 shrapnel
 

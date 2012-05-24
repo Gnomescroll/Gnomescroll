@@ -1,5 +1,9 @@
 #include "voxel_render.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <state/client_state.hpp>
 #include <camera/fulstrum_test.hpp>
 
@@ -187,23 +191,20 @@ void Voxel_render_list::update_vertex_buffer_object()
     
     if (v_num >= _vbo->max_size ) 
     {
-        while(v_num >= _vbo->max_size)
-        {
-            _vbo->max_size *= 2; //double max size until its large enough and realloc
-        }
+        while (v_num >= _vbo->max_size) _vbo->max_size *= 2; //double max size until its large enough and realloc
         _vbo->vertex_list = (Voxel_vertex*) realloc (_vbo->vertex_list, _vbo->max_size*sizeof(Voxel_vertex) );
     }
 
     int index = 0;
+    // continue counting indices, but realigning changed data
     for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        //if (this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
         if (this->render_list[i] == NULL) continue;
         vv = this->render_list[i];
 
-        if (vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
-        if (vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
-
+        GS_ASSERT(vv->vvl.vnum != 0);
+        GS_ASSERT(vv->vvl.vertex_list != 0)
+        
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         vv->vvl.voff = index;
         index += vv->vvl.vnum;
