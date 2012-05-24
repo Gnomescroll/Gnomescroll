@@ -163,11 +163,11 @@ void check_item_pickups()
         if (agent == NULL) continue;
 
         int container_id = ItemContainer::get_agent_container(agent->id);
-        if (container_id == NULL_CONTAINER) return;
+        if (container_id == NULL_CONTAINER) continue;
 
         // get slot for placing in container
-        int slot = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
-        if (slot == NULL_SLOT) return;
+        bool picked_up = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
+        if (!picked_up) continue;
 
         // update particle
         item_particle->picked_up(agent->id);

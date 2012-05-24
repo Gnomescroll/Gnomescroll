@@ -768,23 +768,65 @@ void check_agents_in_container_range()
     }
 }
 
-int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
+// returns true if the entire item was picked up
+// Note: this function may return false yet still have picked up some amount
+// in this case, part of the source item's stack was migrated to a container item
+// if the item is not fully destroyed, this function will broadcast the item source item's updated state
+bool auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
 
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
+    if (item == NULL) return NULL_SLOT;
+    GS_ASSERT(item->stack_size > 0);
+    GS_ASSERT(item->type != NULL_ITEM_TYPE);
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
 
     int slot = container->get_stackable_slot(item->type, item->stack_size);
     if (slot == NULL_SLOT)
-    {   // insert normal
+    {   // no easy stack slot found
+        // try to put in empty slot
         slot = container->get_empty_slot();
-        if (slot == NULL_SLOT) return NULL_SLOT;
-        container->insert_item(slot, item_id);
-        send_container_item_create(client_id, item_id, container_id, slot);
+        if (slot == NULL_SLOT)
+        {   // no empty slot found, try to break this stack up and redistribute
+            int stack_size = item->stack_size;
+            int item_type = item->type;
+
+            // distribute as much as we can into slots
+            for (int i=0; i<container->slot_max; i++)
+            {
+                GS_ASSERT(stack_size > 0);
+                if (container->slot[i] == NULL_ITEM) continue;
+                Item::Item* slot_item = Item::get_item(container->slot[i]);
+                GS_ASSERT(slot_item != NULL);
+                if (slot_item == NULL) continue;
+                if (slot_item->type != item_type) continue;
+                int stack_space = Item::get_stack_space(slot_item->id);
+                if (stack_space == 0) continue;
+                GS_ASSERT(stack_space < stack_size); // if we can fit the entire thing, it shouldve been placed in this slot eatlier
+                int merge_size = (stack_space < stack_size) ? stack_space : stack_size;
+                Item::merge_item_stack(item->id, slot_item->id, merge_size);
+                Item::send_item_state(client_id, slot_item->id);
+                stack_size -= merge_size;
+                GS_ASSERT(stack_size >= 0);
+                if (stack_size <= 0) break;
+            }
+            if (stack_size == 0) return true;   // return true if entire item was consumed
+            else
+            {   // source item was not fully consumed
+                Item::broadcast_item_state(item->id); // broadcast modified source item's state
+                return false;
+            }
+        }
+        else
+        {   // empty slot found, put it there
+            container->insert_item(slot, item_id);
+            send_container_item_create(client_id, item_id, container_id, slot);
+            return true;
+        }
     }
     else
     {   // stack
@@ -793,8 +835,9 @@ int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
         Item::merge_item_stack(item_id, slot_item_id);
         Item::send_item_state(client_id, slot_item_id);
         send_container_insert(client_id, slot_item_id, container_id, slot);
+        return true;
     }
-    return slot;
+    return true;
 }
 
 //tests

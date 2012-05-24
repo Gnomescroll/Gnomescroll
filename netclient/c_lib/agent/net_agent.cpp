@@ -651,6 +651,7 @@ inline void hit_block_CtoS::handle()
     int block = t_map::get(x,y,z);
     if (block == 0) return;
     int block_damage = Item::get_item_block_damage(weapon_type, block);
+    if (block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, block_damage, t_map::TMA_PICK);
 }
 
@@ -795,6 +796,7 @@ inline void hitscan_block_CtoS::handle()
     int block = t_map::get(fx,fy,fz);
     if (block == 0) return;
     int weapon_block_damage = Item::get_item_block_damage(Item::get_item_type((char*)"hitscan_laser"), block);
+    if (weapon_block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
     //printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg

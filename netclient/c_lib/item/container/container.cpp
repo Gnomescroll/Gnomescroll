@@ -215,6 +215,9 @@ ContainerActionType full_hand_to_world(
     int* hand_item_type, int* hand_item_stack, int* hand_item_durability
 )
 {
+    GS_ASSERT(*hand_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(*hand_item_stack > 0);
+
     *hand_item_type = NULL_ITEM_TYPE;
     *hand_item_stack = 1;
     *hand_item_durability = NULL_DURABILITY;
@@ -226,6 +229,12 @@ ContainerActionType full_hand_to_empty_slot(
     int* hand_item_type, int* hand_item_stack, int* hand_item_durability
 )
 {   // put hand item in slot
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(*hand_item_stack > 0);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
     container->insert_item(slot, *hand_item_type, *hand_item_stack, *hand_item_durability);
     *hand_item_type = NULL_ITEM_TYPE;
     *hand_item_stack = 1;
@@ -239,10 +248,19 @@ ContainerActionType full_hand_to_occupied_slot(
     int slot_item_type, int slot_item_stack, int slot_item_durability
 )
 { // add stacks
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(*hand_item_stack > 0);
+    GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(slot_item_stack > 0);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
     container->insert_item(slot, slot_item_type, slot_item_stack + *hand_item_stack, slot_item_durability);
     *hand_item_type = NULL_ITEM_TYPE;
     *hand_item_stack = 1;
     *hand_item_durability = NULL_DURABILITY;
+
     return FULL_HAND_TO_OCCUPIED_SLOT;
 }
 
@@ -251,6 +269,12 @@ ContainerActionType partial_hand_to_empty_slot(
     int hand_item_type, int* hand_item_stack, int hand_item_durability
 )
 {
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(hand_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(*hand_item_stack > 1);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
     container->insert_item(slot, hand_item_type, 1, hand_item_durability);
     // hand item type unchanged
     *hand_item_stack -= 1;
@@ -264,6 +288,13 @@ ContainerActionType partial_hand_to_occupied_slot(
     int slot_item_type, int slot_item_stack, int slot_item_space, int slot_item_durability
 )
 {
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item_stack > 1);
+    GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(slot_item_stack > 0);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
     container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
     //hand_item_type unchanged
     *hand_item_stack -= slot_item_space;
@@ -277,6 +308,13 @@ ContainerActionType partial_slot_to_empty_hand(
     int slot_item_type, int slot_item_stack, int slot_item_durability
 )
 {   // split stack, rounded down
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item_type == NULL_ITEM_TYPE);
+    GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(slot_item_stack > 1);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
     *hand_item_type = slot_item_type;
     *hand_item_stack = slot_item_stack / 2;
     *hand_item_durability = slot_item_durability;
@@ -291,10 +329,18 @@ ContainerActionType full_slot_to_empty_hand(
     int slot_item_type, int slot_item_stack, int slot_item_durability
 )
 {
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item_type == NULL_ITEM_TYPE);
+    GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(slot_item_stack > 0);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
     container->remove_item(slot);
     *hand_item_type = slot_item_type;
     *hand_item_stack = slot_item_stack;
     *hand_item_durability = slot_item_durability;
+
     return FULL_SLOT_TO_EMPTY_HAND;
 }
 
@@ -304,10 +350,19 @@ ContainerActionType full_hand_swap_with_slot(
     int slot_item_type, int slot_item_stack, int slot_item_durability
 )    
 {
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(*hand_item_stack > 0);
+    GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(slot_item_stack > 0);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
     container->insert_item(slot, *hand_item_type, *hand_item_stack, *hand_item_durability);
     *hand_item_type = slot_item_type;
     *hand_item_stack = slot_item_stack;
     *hand_item_durability = slot_item_durability;
+
     return FULL_HAND_SWAP_WITH_SLOT;
 }
 
@@ -317,7 +372,11 @@ ContainerActionType full_hand_swap_with_slot(
 
 ContainerActionType full_hand_to_world(int client_id, int agent_id, ItemID* hand_item)
 {
+    GS_ASSERT(*hand_item != NULL_ITEM);
+
+    // throw item
     ItemParticle::throw_agent_item(agent_id, *hand_item);
+    // remove item from hand
     *hand_item = NULL_ITEM;
     send_hand_remove(client_id);
     return FULL_HAND_TO_WORLD;
@@ -325,8 +384,15 @@ ContainerActionType full_hand_to_world(int client_id, int agent_id, ItemID* hand
 
 ContainerActionType full_hand_to_empty_slot(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item)
 {   // put hand item in slot
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item != NULL_ITEM);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
+    // put hand in slot
     container->insert_item(slot, *hand_item);
     send_container_insert(client_id, *hand_item, container->id, slot);
+    // remove item from hand
     *hand_item = NULL_ITEM;
     send_hand_remove(client_id);
     return FULL_HAND_TO_EMPTY_SLOT;
@@ -334,20 +400,38 @@ ContainerActionType full_hand_to_empty_slot(int client_id, ItemContainerInterfac
 
 ContainerActionType full_hand_to_occupied_slot(int client_id, int slot, ItemID* hand_item, ItemID slot_item)
 { // add stacks
+    GS_ASSERT(*hand_item != slot_item);
+    GS_ASSERT(*hand_item != NULL_ITEM);
+    GS_ASSERT(slot_item != NULL_ITEM);
+
+    // merge the hand with the slot
     Item::merge_item_stack(*hand_item, slot_item); // Item::merge_item_stack(src, dest)
+    // update the slot
     Item::broadcast_item_state(slot_item);
+    // destroy the hand
     Item::destroy_item(*hand_item);
+    // clear hand
     *hand_item = NULL_ITEM;
+    // remove item from hand
     send_hand_remove(client_id);
     return FULL_HAND_TO_OCCUPIED_SLOT;
 }
 
 ContainerActionType partial_hand_to_empty_slot(int client_id, ItemContainerInterface* container, int slot, ItemID hand_item)
 {
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(hand_item != NULL_ITEM);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
+    // split 1 unit of hand item
     ItemID new_item = Item::split_item_stack(hand_item, 1);   // WARNING: CREATES ITEM
+    // put in slot
     container->insert_item(slot, new_item);
+    // update items
     Item::broadcast_item_state(hand_item);
     Item::broadcast_item_create(new_item);
+    // insert split 1 stack into container
     send_container_insert(client_id, new_item, container->id, slot);
     // hand item id is unchanged
     return PARTIAL_HAND_TO_EMPTY_SLOT;
@@ -355,6 +439,11 @@ ContainerActionType partial_hand_to_empty_slot(int client_id, ItemContainerInter
 
 ContainerActionType partial_hand_to_occupied_slot(int client_id, int slot, ItemID hand_item, ItemID slot_item, int slot_item_space)
 {
+    GS_ASSERT(hand_item != slot_item);
+    GS_ASSERT(hand_item != NULL_ITEM);
+    GS_ASSERT(slot_item != NULL_ITEM);
+    GS_ASSERT(slot_item_space > 0);
+
     Item::merge_item_stack(hand_item, slot_item, slot_item_space);
     // update items
     Item::broadcast_item_state(slot_item);
@@ -365,9 +454,16 @@ ContainerActionType partial_hand_to_occupied_slot(int client_id, int slot, ItemI
 
 ContainerActionType partial_slot_to_empty_hand(int client_id, int slot, ItemID* hand_item, ItemID slot_item)
 {   // split stack, rounded down
+    GS_ASSERT(*hand_item == NULL_ITEM);
+    GS_ASSERT(slot_item != NULL_ITEM);
+
+    // split slot item
     ItemID new_item = Item::split_item_stack_in_half(slot_item);
+    // put new stack in hand
     *hand_item = new_item;
     // slot id is unchanged
+
+    // send new state
     Item::broadcast_item_state(slot_item);
     Item::broadcast_item_create(new_item);
     send_hand_insert(client_id, new_item);
@@ -377,30 +473,50 @@ ContainerActionType partial_slot_to_empty_hand(int client_id, int slot, ItemID* 
 ContainerActionType full_slot_to_empty_hand(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item, ItemID slot_item)
 {
     GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item == NULL_ITEM);
+    GS_ASSERT(slot_item != NULL_ITEM);
+    
     if (container == NULL) return CONTAINER_ACTION_NONE;
+    
+    // remove slot
     container->remove_item(slot);
     send_container_remove(client_id, container->id, slot);
+    // put slot in hand
     *hand_item = slot_item;
     send_hand_insert(client_id, *hand_item);
+
     return FULL_SLOT_TO_EMPTY_HAND;
 }
 
 ContainerActionType full_hand_swap_with_slot(int client_id, ItemContainerInterface* container, int slot, ItemID* hand_item, ItemID slot_item)
 {
+    GS_ASSERT(container != NULL);
+    GS_ASSERT(*hand_item != slot_item);
+    GS_ASSERT(slot_item != NULL_ITEM);
+    GS_ASSERT(*hand_item != NULL_ITEM);
+
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+
+    // remove item from slot (we need to do this to trigger item's reference to container_id and slot
+    container->remove_item(slot);
+    send_container_remove(client_id, container->id, slot);
+    // put hand in slot
     container->insert_item(slot, *hand_item);
     send_container_insert(client_id, *hand_item, container->id, slot);
+    // put slot in hand
     *hand_item = slot_item;
-    send_hand_insert(client_id, *hand_item);
+    send_hand_insert(client_id, slot_item);
+
     return FULL_HAND_SWAP_WITH_SLOT;
 }
 
 #endif
 
 #if DC_CLIENT
-ContainerActionType alpha_action_decision_tree(int id, int slot)
+ContainerActionType alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -425,10 +541,10 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
 
     // get container
     #if DC_CLIENT
-    ItemContainerUIInterface* container = get_container_ui(id);
+    ItemContainerUIInterface* container = get_container_ui(container_id);
     #endif
     #if DC_SERVER
-    ItemContainerInterface* container = get_container(id);
+    ItemContainerInterface* container = get_container(container_id);
     #endif
     GS_ASSERT(container != NULL);
     if (container == NULL) return action;
@@ -1085,6 +1201,8 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     int hand_item_type = Item::get_item_type(hand_item);
     int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
+
+    GS_ASSERT(hand_item_stack >= 1);
 
     // if hand empty
         // if food slot
