@@ -11,6 +11,7 @@ extern CreatePacketOwnerTeam* create_packet_owner_team;
 extern CreatePacketOwnerTeamIndex* create_packet_owner_team_index;
 extern CreatePacketMomentum* create_packet_momentum;
 extern CreatePacketMomentumAngles* create_packet_momentum_angles;
+extern CreatePacketMomentumAnglesHealth* create_packet_momentum_angles_health;
 
 extern StatePacketNone* state_packet_none;
 extern StatePacket* state_packet;

@@ -59,9 +59,15 @@ static void set_mob_robot_box_properties(Object* object)
     vox->init_draw = MONSTER_BOX_INIT_WITH_DRAW;
 
     using Components::HitPointsHealthComponent;
+    #if DC_CLIENT
+    add_component_to_object(object, COMPONENT_HIT_POINTS);
+    #endif
+    #if DC_SERVER   // health will be set by packet initializer
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
-    health->health = MONSTER_BOX_MAX_HEALTH;
-    health->max_health = MONSTER_BOX_MAX_HEALTH;
+    int health_amt = randrange(MONSTER_BOX_HEALTH_MIN, MONSTER_BOX_HEALTH_MAX);
+    health->health = health_amt;
+    health->max_health = health_amt;
+    #endif
     
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
@@ -108,7 +114,7 @@ static void set_mob_robot_box_properties(Object* object)
     object->tick = &tick_mob_robot_box;
     object->update = &update_mob_robot_box;
 
-    object->create = create_packet_momentum_angles;
+    object->create = create_packet_momentum_angles_health;
     object->state = state_packet_momentum_angles;
 }
 

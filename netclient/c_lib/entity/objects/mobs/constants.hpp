@@ -8,7 +8,8 @@ namespace Objects
 /* Common/Defaults */
 
 // health
-const int MONSTER_BOMB_MAX_HEALTH = 75;
+const int MONSTER_BOMB_HEALTH_MIN = 65;
+const int MONSTER_BOMB_HEALTH_MAX = 85;
 
 // vox
 const bool MONSTER_BOMB_INIT_WITH_HITSCAN = true;
@@ -49,7 +50,8 @@ const int MONSTER_BOMB_ITEM_DROP_MAX_AMOUNT = 10;    // TODO --  a good item dro
 /* MONSTER_BOX */
 
 // health
-const int MONSTER_BOX_MAX_HEALTH = 25;
+const int MONSTER_BOX_HEALTH_MIN = 20;
+const int MONSTER_BOX_HEALTH_MAX = 30;
 
 //vox
 const bool MONSTER_BOX_INIT_WITH_HITSCAN = true;

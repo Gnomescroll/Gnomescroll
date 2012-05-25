@@ -157,13 +157,15 @@ DONE
 replace grenade durability with stacks
 DONE
 
+red bots should do random dmg
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
 blue bombs should drop grenades
 
 blue bombs and red bots should have random health
-red bots should do random dmg
 
 GS_ASSERTs sometimes on connect with some components:
 --something overwriting, only sometimes?
@@ -204,3 +206,7 @@ shrapnel
 get rid of grue model blocking view on init
 
 glsl colored/textured voxels
+
+shovel sounds
+
+block placement sounds

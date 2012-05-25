@@ -110,6 +110,39 @@ void CreatePacketMomentumAngles::message(Object* object, object_create_momentum_
     msg->phi = angles.y;
 }
 
+void CreatePacketMomentumAnglesHealth::message(Object* object, object_create_momentum_angles_health_StoC* msg)
+{
+    using Components::PhysicsComponent;
+    using Components::HitPointsHealthComponent;
+    
+    msg->id = object->id;
+    msg->type = object->type;
+    
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+
+    Vec3 momentum = physics->get_momentum();
+    msg->mx = momentum.x;
+    msg->my = momentum.y;
+    msg->mz = momentum.z;
+
+    Vec3 angles = physics->get_angles();
+    msg->theta = angles.x;
+    msg->phi = angles.y;
+
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)object->get_component(COMPONENT_HIT_POINTS);
+    GS_ASSERT(health != NULL);
+    if (health == NULL) return;
+    GS_ASSERT(health->health == health->max_health); // assert this, because our create packet handler assumes they are the same
+    GS_ASSERT(health->max_health >= 0);
+    msg->health = health->max_health;
+}
+
 
 /* State */
 

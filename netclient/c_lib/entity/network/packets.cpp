@@ -26,6 +26,7 @@ inline void object_create_StoC::handle()
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL) physics->set_position(vec3_init(x,y,z));
     Objects::ready(obj);
 }
@@ -38,6 +39,7 @@ inline void object_create_momentum_StoC::handle()
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -54,6 +56,7 @@ inline void object_create_momentum_angles_StoC::handle()
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -62,6 +65,33 @@ inline void object_create_momentum_angles_StoC::handle()
     }
     Objects::ready(obj);
 }
+
+inline void object_create_momentum_angles_health_StoC::handle()
+{
+    using Objects::Object;
+    using Components::PhysicsComponent;
+    using Components::HitPointsHealthComponent;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+        physics->set_momentum(vec3_init(mx,my,mz));
+        physics->set_angles(vec3_init(theta, phi, 0));
+    }
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
+    GS_ASSERT(health != NULL);
+    if (health != NULL)
+    {
+        health->max_health = this->health;
+        health->health = this->health;
+    }
+    Objects::ready(obj);
+}
+
 
 inline void object_create_owner_team_StoC::handle()
 {
@@ -165,6 +195,8 @@ inline void object_state_momentum_angles_StoC::handle()
     Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) printf("object type %d\n", obj->type);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -416,6 +448,7 @@ inline void object_took_damage_StoC::handle()
 inline void object_create_StoC::handle() {}
 inline void object_create_momentum_StoC::handle() {}
 inline void object_create_momentum_angles_StoC::handle() {}
+inline void object_create_momentum_angles_health_StoC::handle() {}
 inline void object_create_owner_team_StoC::handle() {}
 inline void object_create_owner_team_index_StoC::handle() {}
 inline void object_destroy_StoC::handle() {}

@@ -59,9 +59,15 @@ static void set_mob_bomb_properties(Object* object)
     vox->init_draw = MONSTER_BOMB_INIT_WITH_DRAW;
 
     using Components::HitPointsHealthComponent;
+    #if DC_CLIENT
+    add_component_to_object(object, COMPONENT_HIT_POINTS);
+    #endif
+    #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
-    health->health = MONSTER_BOMB_MAX_HEALTH;
-    health->max_health = MONSTER_BOMB_MAX_HEALTH;
+    int health_amt = randrange(MONSTER_BOMB_HEALTH_MIN, MONSTER_BOMB_HEALTH_MAX);
+    health->health = health_amt;
+    health->max_health = health_amt;
+    #endif
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
@@ -101,7 +107,7 @@ static void set_mob_bomb_properties(Object* object)
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;
 
-    object->create = create_packet_momentum_angles;
+    object->create = create_packet_momentum_angles_health;
     object->state = state_packet_momentum_angles;
 }
 

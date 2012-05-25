@@ -173,13 +173,14 @@ void RegisterMessages() {
 
     object_create_momentum_StoC::register_client_packet();
     object_create_momentum_angles_StoC::register_client_packet();
+    object_create_momentum_angles_health_StoC::register_client_packet();
     
     object_destroy_StoC::register_client_packet();
 
     object_state_StoC::register_client_packet();
     object_state_momentum_StoC::register_client_packet();
     object_state_momentum_angles_StoC::register_client_packet();
-    
+
     // object actions
     object_picked_up_StoC::register_client_packet();
 

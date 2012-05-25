@@ -123,6 +123,35 @@ class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToCli
     inline void handle();
 };
 
+// NOTE: only packs theta/phi for now
+class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPacketToClient<object_create_momentum_angles_health_StoC>
+{
+    public:
+        uint8_t type;
+        uint16_t id;
+        float x,y,z;
+        float mx,my,mz;
+        float theta, phi;
+        uint16_t health;
+
+    
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+        pack_float(&mx, buff, buff_n, pack);
+        pack_float(&my, buff, buff_n, pack);
+        pack_float(&mz, buff, buff_n, pack);
+        pack_float(&theta, buff, buff_n, pack);
+        pack_float(&phi, buff, buff_n, pack);
+        pack_u16(&health, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
 /* Destruction */
 
 class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_destroy_StoC>
