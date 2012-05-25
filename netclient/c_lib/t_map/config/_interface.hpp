@@ -165,6 +165,8 @@ void palette_def(int palette_number)
     if( cube_texture_palette_lookup[_current_cube_id] + palette_number-1 != cube_texture_palette_index)
     {
         printf("start_palette_def error!!! mismatch on cube %i \n", _current_cube_id);
+        printf("palette_lookup= %i palette_number= %i palette_index= %i \n", 
+            cube_texture_palette_lookup[_current_cube_id],palette_number,cube_texture_palette_index  );
     }
 #endif
 }

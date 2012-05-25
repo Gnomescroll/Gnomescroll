@@ -73,7 +73,7 @@ void set_cube_palette_color(int r, int g, int b, int a);
 
 void start_cube_palette(int cube_id)
 {
-    if(cube_texture_palette_lookup[cube_id] != 0)
+    if(cube_texture_palette_lookup[cube_id] == 0)
     {
         cube_texture_palette_lookup[cube_id] = cube_texture_palette_index;
         cube_color_palette_lookup[cube_id] = cube_color_palette_index;
