@@ -42,18 +42,6 @@ varying vec3 texCoord;
     varying mat2 lightMatrix;
 #endif
 
-#ifdef GL_EXT_gpu_shader4
-    flat varying vec3 CE1;
-    flat varying vec3 CE2;
-    flat varying vec3 CE3;
-    flat varying vec3 CE4;
-#else
-    varying vec3 CE1;
-    varying vec3 CE2;
-    varying vec3 CE3;
-    varying vec3 CE4;
-#endif
-
 
 //flat varying mat2 lightMatrix;
  
@@ -85,10 +73,6 @@ void main(void)
 
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
 
-        CE1 = InCE1;
-        CE2 = InCE2;
-        CE3 = InCE3;
-        CE4 = InCE4;
 }
 
 //texCoord = vec3(InTexCoord[0], InTexCoord[1], 0.0);

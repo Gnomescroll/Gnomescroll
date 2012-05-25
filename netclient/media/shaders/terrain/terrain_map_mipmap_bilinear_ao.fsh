@@ -14,20 +14,6 @@ varying vec3 texCoord;
     varying mat2 lightMatrix;
 #endif
 
-
-#ifdef GL_EXT_gpu_shader4
-    flat varying vec3 CE1;
-    flat varying vec3 CE2;
-    flat varying vec3 CE3;
-    flat varying vec3 CE4;
-#else
-    varying vec3 CE1;
-    varying vec3 CE2;
-    varying vec3 CE3;
-    varying vec3 CE4;
-#endif
-
-
 varying vec3 inColor;
  
 uniform sampler2DArray base_texture;
@@ -61,15 +47,8 @@ void main()
 
     float tmp = dot(vx, lightMatrix * vy);
 
-    //vec3 color = inColor.rgb; 
+    vec3 color = inColor.rgb; 
     
-    vec3 c1 = mix(CE1, CE4, texCoord.x);
-    vec3 c2 = mix(CE2, CE3, texCoord.x);
-    vec3 color = mix(c1, c2, texCoord.y);
-
-    //color = CE2;
-
-    //color = c2;
     //color = color*tmp;
     //color = pow(color, vec3(1.0f / 2.2f) );
     //gl_FragColor.rgb = color;

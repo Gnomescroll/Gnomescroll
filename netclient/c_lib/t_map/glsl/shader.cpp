@@ -111,16 +111,6 @@ namespace t_map
         map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
-        
-        
-        map_CE1 = glGetAttribLocation(map_shader[index], "InCE1");
-        map_CE2 = glGetAttribLocation(map_shader[index], "InCE2");
-        map_CE3 = glGetAttribLocation(map_shader[index], "InCE3");
-        map_CE4 = glGetAttribLocation(map_shader[index], "InCE4");
-        printf("map_CE1= %i \n", map_CE1);
-        printf("map_CE2= %i \n", map_CE2);
-        printf("map_CE3= %i \n", map_CE3);
-        printf("map_CE4= %i \n", map_CE4);
 
         //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
 
@@ -332,14 +322,7 @@ namespace t_map
         map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
-     
 
-    /*   
-        map_CE1 = glGetAttribLocation(map_shader[index], "InCE1");
-        map_CE2 = glGetAttribLocation(map_shader[index], "InCE2");
-        map_CE3 = glGetAttribLocation(map_shader[index], "InCE3");
-        map_CE4 = glGetAttribLocation(map_shader[index], "InCE4");
-    */
         free(vs);
         free(fs);
 

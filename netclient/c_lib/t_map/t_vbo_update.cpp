@@ -223,27 +223,6 @@ static inline void _set_quad_color_default(struct Vertex* v_list, int offset, in
 
     for(int i=0 ;i <4; i++) v_list[offset+i].color = _ce.color;
 
-    /*
-        for(int i=0 ;i <4; i++)
-        {
-            v_list[offset+i].r = _ce.r;
-            v_list[offset+i].g = _ce.g;
-            v_list[offset+i].b = _ce.b;
-        }
-    */
-
-/*
-    Null interpolation
-*/
-    static const struct ColorElement null_ce = {{{255,255,255,255}}};
-
-    for(int i=0; i <4; i++)
-    {
-        v_list[offset+i].ce[0] = null_ce;
-        v_list[offset+i].ce[1] = null_ce;
-        v_list[offset+i].ce[2] = null_ce;
-        v_list[offset+i].ce[3] = null_ce;
-    }
 }
 
 static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
@@ -252,20 +231,6 @@ static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x
     for(int i=0 ;i <4; i++)
     {
         v_list[offset+i].color = 0xffffffff;
-    }
-
-
-/*
-    Null interpolation
-*/
-    static const struct ColorElement null_ce = {{{255,255,255,255}}};
-
-    for(int i=0; i <4; i++)
-    {
-        v_list[offset+i].ce[0] = null_ce;
-        v_list[offset+i].ce[1] = null_ce;
-        v_list[offset+i].ce[2] = null_ce;
-        v_list[offset+i].ce[3] = null_ce;
     }
 }
 
@@ -286,18 +251,6 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
         v_list[offset+i].b = _palletn[index[i]+2];
     }
 
-/*
-    Null interpolation
-*/
-    static const struct ColorElement null_ce = {{{255,255,255,255}}};
-
-    for(int i=0; i <4; i++)
-    {
-        v_list[offset+i].ce[0] = null_ce;
-        v_list[offset+i].ce[1] = null_ce;
-        v_list[offset+i].ce[2] = null_ce;
-        v_list[offset+i].ce[3] = null_ce;
-    }
 }
 
 
