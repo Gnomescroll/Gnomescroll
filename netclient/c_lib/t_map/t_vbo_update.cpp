@@ -478,6 +478,7 @@ static const int VERTEX_SLACK = 32;
 //int update_column_VBO(struct vm_column* column) {
 
 
+static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
 static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
