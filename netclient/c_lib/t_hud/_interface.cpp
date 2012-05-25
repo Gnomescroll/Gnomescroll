@@ -123,12 +123,13 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
     int closest_slot = NULL_SLOT;
 
     // set up container array
-    const int n_inventories = 4;
+    const int n_inventories = 5;
     UIElement* inventories[n_inventories] = {
         agent_container,
         agent_toolbelt,
         nanite_container,
         crafting_container,
+        storage_block,
     };
 
     // get topmost container click

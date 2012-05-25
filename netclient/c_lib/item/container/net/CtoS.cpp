@@ -311,6 +311,7 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
+    printf("create container block\n");
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.team == 0) return;
@@ -356,6 +357,7 @@ void create_container_block_CtoS::handle()
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);
+    printf("broadcast container create\n");
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
     _set_broadcast(x,y,z, val);
