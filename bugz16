@@ -174,6 +174,9 @@ DONE
 disable grue (annoying in camera on startup)
 DONE
 
+restore shrapnel animations
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
@@ -211,7 +214,6 @@ alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
 tiling noise [BRANDON]
-shrapnel [BRANDON]
 
 glsl colored/textured voxels
 

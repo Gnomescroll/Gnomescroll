@@ -225,9 +225,9 @@ void terrain_sparks(float x, float y, float z)
     if (!Options::animations) return;
     int n = randrange(15,20);
 
-    float vx = 1.0f;
-    float vy = 1.0f;
-    float vz = 1.0f;
+    float vx = 3.5f;
+    float vy = 3.5f;
+    float vz = 3.5f;
 
     float cx,cy,cz;
     float cvx,cvy,cvz;
