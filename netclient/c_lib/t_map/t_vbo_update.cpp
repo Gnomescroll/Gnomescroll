@@ -301,7 +301,7 @@ static int vertex_max = 0;
 
 //int update_column_VBO(struct vm_column* column) {
 
-#define USE_QUAD_CACHE 1
+#define USE_QUAD_CACHE 0
 
 static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
@@ -314,8 +314,9 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
     //unsigned char tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
 
     //lower 4 bits are texture palette, upper 4 bits are color palette
-    unsigned char tile_tex = cube_texture_palette[6*(cube_texture_palette_lookup[tile_id]+(element.palette|0x0f)) + side];
-
+    //int _p = element.palette|0x0f;
+    //_p = 0;
+    unsigned char tile_tex = cube_texture_palette[ 6*( cube_texture_palette_lookup[tile_id] + (element.palette&0x0f) ) + side ];
 
     struct TextureElement tex;
     tex.tex = 0;

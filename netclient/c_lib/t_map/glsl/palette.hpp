@@ -37,12 +37,12 @@ void start_cube_palette(int cube_id)
 
 void push_cube_palette()
 {
-    cube_texture_palette_index += 6;
+    cube_texture_palette_index += 1;
 }
 
 void set_cube_palette_texture(int id, int side, int tex_id)
 {
-    cube_texture_palette[cube_texture_palette_index+side] = tex_id;
+    cube_texture_palette[6*cube_texture_palette_index + side] = tex_id;
 
     GS_ASSERT(cube_texture_palette_lookup[id] + cube_texture_palette_lookup_max[id] >= cube_texture_palette_index);
     GS_ASSERT(cube_texture_palette_index >= cube_texture_palette_lookup[id]);

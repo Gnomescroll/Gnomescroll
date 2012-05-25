@@ -27,12 +27,13 @@ namespace t_map
         xpos = _xpos;
         ypos = _ypos;
         //for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
-        memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
         for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;i++) top_block[i] = 0;
 
         chunk_index = (ypos / 16)*(MAP_WIDTH/16) + (xpos / 16);
         //printf("xpos,ypos = %i, %i  chunk_index= %i \n", xpos, ypos, chunk_index);
         chunk_item_container.chunk_index = chunk_index;
+
+        memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
 
     }
 
