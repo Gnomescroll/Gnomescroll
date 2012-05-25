@@ -92,6 +92,7 @@ GLuint particle_texture = 0;
 void draw_init() 
 {
     create_texture_from_file((char*) "./media/texture/particles_01.png", &particle_texture);
+    GS_ASSERT(particle_texture != 0);
 }
 
 void draw_teardown()
@@ -132,12 +133,10 @@ void draw_shrapnel()
 // TODO -- RESTORE SHRAPNEL ONCE RENDERING IS FIXED
 Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz)
 {
-    return NULL;
-    
-    //Shrapnel* s = shrapnel_list->create();
-    //if(s == NULL) return NULL;
-    //s->init(x,y,z, vx,vy,vz);
-    //return s;
+    Shrapnel* s = shrapnel_list->create();
+    if(s == NULL) return NULL;
+    s->init(x,y,z, vx,vy,vz);
+    return s;
 }
 #endif
 

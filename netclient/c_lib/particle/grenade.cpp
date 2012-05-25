@@ -233,7 +233,7 @@ int Grenade::block_damage(int dist)
 
 void Grenade::damage_blocks()
 {
-#if DC_SERVER
+    #if DC_SERVER
     using t_map::apply_damage_broadcast;
     const t_map::TerrainModificationAction action = t_map::TMA_GRENADE;
 
@@ -268,7 +268,7 @@ void Grenade::damage_blocks()
                 bx = mx - i;
                 apply_damage_broadcast(bx,by,bz, dmg, action);
             }
-#endif
+    #endif
 }
 
 /* Grenade list */
@@ -289,12 +289,12 @@ void Grenade_list::tick()
 
 void Grenade_list::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     if (num <= 0) return;
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)
             a[i]->draw(a[i]->get_position());
-#endif
+    #endif
 }
 
 }

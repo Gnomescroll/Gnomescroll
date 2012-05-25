@@ -9,6 +9,10 @@ namespace Particle
 using Animations::VertexElementList1;
 
 const float SHRAPNEL_MASS = 0.2f;
+const int SHRAPNEL_TTL = 30;
+const float SHRAPNEL_DAMP = 0.5f;
+const int SHRAPNEL_TEXTURE_ID = 5;
+const float SHRAPNEL_TEXTURE_SCALE = 0.15f;
 
 
 /* Shrapnel vlist */
@@ -91,19 +95,14 @@ void Shrapnel_list::tick()
     for(int i=0; i<this->num; i++)
     {
         a[i].tick();
-        if (a[i].ttl <= 0)
-            destroy(a[i].id);
+        if (a[i].ttl <= 0) destroy(a[i].id);
     }
 }
 
 void Shrapnel_list::prep()
 {
     #if DC_CLIENT
-    for(int i=0; i<this->num; i++)
-    {
-        a[i].prep();
-    }
-
+    for(int i=0; i<this->num; i++) a[i].prep();
     shrapnel_vlist->buffer();
     #endif
 }
@@ -114,27 +113,26 @@ void Shrapnel_list::draw()
     #if DC_CLIENT
     if(shrapnel_vlist->vertex_number == 0) return;
 
+    GS_ASSERT(particle_texture != 0);
     GS_ASSERT(shrapnel_vlist->VBO != 0);
     
     const unsigned int stride = shrapnel_vlist->stride;
 
-    //printf("draw: %i \n", shrapnel_vlist->vertex_number);
-    //printf("draw2: %i \n", shrapnel_vlist->VBO);
+    glColor3ub(255,255,255);
 
-    GS_ASSERT(particle_texture != 0);
-
+    //glDepthMask(GL_FALSE);
+    
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glColor3ub(255,255,255);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, particle_texture);
 
-    //glEnable(GL_TEXTURE_2D);
-
-    //glDisable(GL_TEXTURE_2D); //DEBUG
+    GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_BLEND, true);
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
 
     glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
@@ -142,11 +140,11 @@ void Shrapnel_list::draw()
 
     glDrawArrays(GL_QUADS, 0, shrapnel_vlist->vertex_number);
     
-    glDisable(GL_BLEND);
-
     glDisableClientState(GL_VERTEX_ARRAY);
 
-    //glEnable(GL_TEXTURE_2D); //DEBUG
+    //glDisable(GL_BLEND);
+
+    glDisable(GL_TEXTURE_2D);
     #endif
 }
 

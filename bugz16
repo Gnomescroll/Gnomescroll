@@ -154,6 +154,9 @@ DONE
 disable voxel model damage
 DONE
 
+blue bombs drop grenades
+DONE
+
 replace grenade durability with stacks
 DONE
 
@@ -166,10 +169,12 @@ DONE
 health transmitted with mobs
 DONE
 
+disable grue (annoying in camera on startup)
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
-blue bombs should drop grenades
 
 GS_ASSERTs sometimes on connect with some components:
 --something overwriting, only sometimes?
@@ -204,8 +209,6 @@ alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
 shrapnel (glsl)
-
-get rid of grue model blocking view on init
 
 glsl colored/textured voxels
 

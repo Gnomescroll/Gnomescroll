@@ -50,7 +50,7 @@ class VertexElementList1
         {
             vlist_max *= 2;
             vlist = (vertexElement1*) realloc(vlist, vlist_max*sizeof(struct vertexElement1));
-            printf("1 size= %i \n", vlist_max); 
+            //printf("1 size= %i \n", vlist_max); 
 
         }
      }
