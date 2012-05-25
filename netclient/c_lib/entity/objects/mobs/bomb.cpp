@@ -136,6 +136,10 @@ void die_mob_bomb(Object* object)
 {
     #if DC_SERVER
     // drop item
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    GS_ASSERT(item_drop != NULL);
+    item_drop->drop_item();
     
     // explosion damage
     using Components::ExplosionComponent;

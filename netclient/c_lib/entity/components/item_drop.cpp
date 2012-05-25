@@ -5,6 +5,9 @@ dont_include_this_file_in_client
 #endif
 
 #include <item/_interface.hpp>
+#include <item/item.hpp>
+#include <item/particle/_interface.hpp>
+#include <item/particle/item_particle.hpp>
 
 namespace Components
 {
@@ -19,13 +22,13 @@ void ItemDropComponent::drop_item()
     if (this->max_amount < 1) return;
 
     // probability check
-    if (rand() > this->probability) return;
+    if (randf() > this->probability) return;
 
     // get amount to drop
     int amt = randrange(1, this->max_amount);
     GS_ASSERT(amt >= 1);
     if (amt < 1) return;
-    
+
     // get object state
     Vec3 position;
     float radius = 1.0f;
@@ -50,15 +53,28 @@ void ItemDropComponent::drop_item()
     }
 
     const float mom = 2.0f;
-    for (int i=0; i<amt; i++)
-    {
-        // create item particle
-        float x = position.x + (randf()*2*radius) - radius;
-        float y = position.y + (randf()*2*radius) - radius;
-        float z = position.z;
-        ItemParticle::create_item_particle(this->item_type, x, y, z, 
-            (randf()-0.5f)*mom, (randf()-0.5f)*mom, (randf()-0.5f)*mom); 
-    }
+    float x = position.x + (randf()*2*radius) - radius;
+    float y = position.y + (randf()*2*radius) - radius;
+    float z = position.z;
+    float vx = (randf()-0.5f)*mom;
+    float vy = (randf()-0.5f)*mom;
+    float vz = mom;
+
+    // create item
+    Item::Item* item = Item::create_item(this->item_type);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return;
+    // set stack size
+    item->stack_size = amt;
+
+    // create item particle
+    ItemParticle::ItemParticle* item_particle = ItemParticle::create_item_particle(
+        item->id, item->type, x, y, z, vx, vy, vz);
+    GS_ASSERT(item_particle != NULL);
+    if (item_particle == NULL) return;
+
+    // broadcast
+    ItemParticle::broadcast_particle_item_create(item_particle->id);
 }
 
 }   // Components

@@ -97,10 +97,11 @@ Item::Item* create_item_particle(int item_type, float x, float y, float z, float
     return item;
 }
 
-static void pack_particle_item_create(int particle_id, item_particle_create_StoC* msg)
+static bool pack_particle_item_create(int particle_id, item_particle_create_StoC* msg)
 {
     ItemParticle* particle = item_particle_list->get(particle_id);
     GS_ASSERT(particle != NULL);
+    if (particle == NULL) return false;
     
     msg->id = particle->id;
     msg->item_type = particle->item_type;
@@ -110,19 +111,20 @@ static void pack_particle_item_create(int particle_id, item_particle_create_StoC
     msg->mx = particle->verlet.velocity.x;
     msg->my = particle->verlet.velocity.y;
     msg->mz = particle->verlet.velocity.z;
+    return true;
 }
 
 void broadcast_particle_item_create(int particle_id)
 {
     item_particle_create_StoC msg;
-    pack_particle_item_create(particle_id, &msg);
+    if (!pack_particle_item_create(particle_id, &msg)) return;
     msg.broadcast();
 }
 
 void send_particle_item_create_to_client(int particle_id, int client_id)
 {
     item_particle_create_StoC msg;
-    pack_particle_item_create(particle_id, &msg);
+    if (!pack_particle_item_create(particle_id, &msg)) return;
     msg.sendToClient(client_id);
 }
 

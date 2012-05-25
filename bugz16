@@ -197,3 +197,5 @@ have chat display a "Press U to relock mouse" when window gains focus and mouse 
 alt tab doesnt work in fullscreen
 
 shrapnel
+
+get rid of grue model blocking view on init
