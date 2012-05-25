@@ -25,14 +25,6 @@ VerletPhysicsComponentList* verlet_physics_component_list = NULL;
 
 StackableComponentList* stackable_component_list = NULL;
 
-#if DC_CLIENT
-BillboardSpriteComponentList* billboard_sprite_component_list = NULL;
-ColoredVoxelComponentList* colored_voxel_component_list = NULL;
-TexturedVoxelComponentList* textured_voxel_component_list = NULL;
-
-AnimationComponentList* animation_component_list = NULL;
-#endif
-
 PickupComponentList* pickup_component_list = NULL;
 
 TTLHealthComponentList* ttl_health_component_list = NULL;
@@ -55,8 +47,17 @@ DimensionComponentList* dimension_component_list = NULL;
 WeaponTargetingComponentList* weapon_targeting_component_list = NULL;
 MotionTargetingComponentList* motion_targeting_component_list = NULL;
 
+#if DC_CLIENT
+BillboardSpriteComponentList* billboard_sprite_component_list = NULL;
+ColoredVoxelComponentList* colored_voxel_component_list = NULL;
+TexturedVoxelComponentList* textured_voxel_component_list = NULL;
+
+AnimationComponentList* animation_component_list = NULL;
+#endif
+
 #if DC_SERVER
 ExplosionComponentList* explosion_component_list = NULL;
+ItemDropComponentList* item_drop_component_list = NULL;
 #endif
 
 RateLimitComponentList* rate_limit_component_list = NULL;
@@ -80,18 +81,6 @@ Component* get_switch(ComponentType type)
             
         case COMPONENT_STACKABLE:
             return stackable_component_list->subscribe();
-
-        #if DC_CLIENT
-        case COMPONENT_BILLBOARD_SPRITE:
-            return billboard_sprite_component_list->subscribe();
-        case COMPONENT_COLORED_VOXEL:
-            return colored_voxel_component_list->subscribe();
-        case COMPONENT_TEXTURED_VOXEL:
-            return textured_voxel_component_list->subscribe();
-
-        case COMPONENT_VOXEL_ANIMATION:
-            return animation_component_list->subscribe();
-        #endif
 
         case COMPONENT_PICKUP:
             return pickup_component_list->subscribe();
@@ -128,13 +117,27 @@ Component* get_switch(ComponentType type)
         case COMPONENT_MOTION_TARGETING:
             return motion_targeting_component_list->subscribe();
 
+        case COMPONENT_RATE_LIMIT:
+            return rate_limit_component_list->subscribe();
+
+        #if DC_CLIENT
+        case COMPONENT_BILLBOARD_SPRITE:
+            return billboard_sprite_component_list->subscribe();
+        case COMPONENT_COLORED_VOXEL:
+            return colored_voxel_component_list->subscribe();
+        case COMPONENT_TEXTURED_VOXEL:
+            return textured_voxel_component_list->subscribe();
+
+        case COMPONENT_VOXEL_ANIMATION:
+            return animation_component_list->subscribe();
+        #endif
+
         #if DC_SERVER
         case COMPONENT_EXPLOSION:
             return explosion_component_list->subscribe();
+        case COMPONENT_ITEM_DROP:
+            return item_drop_component_list->subscribe();
         #endif
-
-        case COMPONENT_RATE_LIMIT:
-            return rate_limit_component_list->subscribe();
         
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -166,22 +169,6 @@ void release_switch(Component* component)
         case COMPONENT_STACKABLE:
             stackable_component_list->unsubscribe((StackableComponent*)component);
             break;
-
-        #if DC_CLIENT
-        case COMPONENT_BILLBOARD_SPRITE:
-            billboard_sprite_component_list->unsubscribe((BillboardSpriteComponent*)component);
-            break;
-        case COMPONENT_COLORED_VOXEL:
-            colored_voxel_component_list->unsubscribe((ColoredVoxelComponent*)component);
-            break;
-        case COMPONENT_TEXTURED_VOXEL:
-            textured_voxel_component_list->unsubscribe((TexturedVoxelComponent*)component);
-            break;
-
-        case COMPONENT_VOXEL_ANIMATION:
-            animation_component_list->unsubscribe((AnimationComponent*)component);
-            break;
-        #endif
 
         case COMPONENT_PICKUP:
             pickup_component_list->unsubscribe((PickupComponent*)component);
@@ -231,15 +218,34 @@ void release_switch(Component* component)
             motion_targeting_component_list->unsubscribe((MotionTargetingComponent*)component);
             break;
 
+        case COMPONENT_RATE_LIMIT:
+            rate_limit_component_list->unsubscribe((RateLimitComponent*)component);
+            break;
+
+        #if DC_CLIENT
+        case COMPONENT_BILLBOARD_SPRITE:
+            billboard_sprite_component_list->unsubscribe((BillboardSpriteComponent*)component);
+            break;
+        case COMPONENT_COLORED_VOXEL:
+            colored_voxel_component_list->unsubscribe((ColoredVoxelComponent*)component);
+            break;
+        case COMPONENT_TEXTURED_VOXEL:
+            textured_voxel_component_list->unsubscribe((TexturedVoxelComponent*)component);
+            break;
+
+        case COMPONENT_VOXEL_ANIMATION:
+            animation_component_list->unsubscribe((AnimationComponent*)component);
+            break;
+        #endif
+
         #if DC_SERVER
         case COMPONENT_EXPLOSION:
             explosion_component_list->unsubscribe((ExplosionComponent*)component);
             break;
-        #endif
-
-        case COMPONENT_RATE_LIMIT:
-            rate_limit_component_list->unsubscribe((RateLimitComponent*)component);
+        case COMPONENT_ITEM_DROP:
+            item_drop_component_list->unsubscribe((ItemDropComponent*)component);
             break;
+        #endif
 
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
@@ -256,14 +262,6 @@ void init_components()
     verlet_physics_component_list = new VerletPhysicsComponentList;
 
     stackable_component_list = new StackableComponentList;
-
-    #if DC_CLIENT
-    billboard_sprite_component_list = new BillboardSpriteComponentList;
-    colored_voxel_component_list = new ColoredVoxelComponentList;
-    textured_voxel_component_list = new TexturedVoxelComponentList;
-
-    animation_component_list = new AnimationComponentList;
-    #endif
     
     pickup_component_list = new PickupComponentList;
 
@@ -287,11 +285,20 @@ void init_components()
     weapon_targeting_component_list = new WeaponTargetingComponentList;
     motion_targeting_component_list = new MotionTargetingComponentList;
 
-    #if DC_SERVER
-    explosion_component_list = new ExplosionComponentList;
+    rate_limit_component_list = new RateLimitComponentList;
+
+    #if DC_CLIENT
+    billboard_sprite_component_list = new BillboardSpriteComponentList;
+    colored_voxel_component_list = new ColoredVoxelComponentList;
+    textured_voxel_component_list = new TexturedVoxelComponentList;
+
+    animation_component_list = new AnimationComponentList;
     #endif
 
-    rate_limit_component_list = new RateLimitComponentList;
+    #if DC_SERVER
+    explosion_component_list = new ExplosionComponentList;
+    item_drop_component_list = new ItemDropComponentList;
+    #endif
 }
 
 void teardown_components()
@@ -303,14 +310,6 @@ void teardown_components()
     if (verlet_physics_component_list != NULL) delete  verlet_physics_component_list;
     
     if (stackable_component_list != NULL) delete stackable_component_list;
-
-    #if DC_CLIENT
-    if (billboard_sprite_component_list != NULL) delete billboard_sprite_component_list;
-    if (colored_voxel_component_list != NULL) delete colored_voxel_component_list;
-    if (textured_voxel_component_list != NULL) delete textured_voxel_component_list;
-
-    if (animation_component_list != NULL) delete animation_component_list;
-    #endif
 
     if (pickup_component_list != NULL) delete pickup_component_list;
 
@@ -334,11 +333,20 @@ void teardown_components()
     if (weapon_targeting_component_list != NULL) delete weapon_targeting_component_list;
     if (motion_targeting_component_list != NULL) delete motion_targeting_component_list;
 
-    #if DC_SERVER
-    if (explosion_component_list != NULL) delete explosion_component_list;
+    if (rate_limit_component_list != NULL) delete rate_limit_component_list;
+
+    #if DC_CLIENT
+    if (billboard_sprite_component_list != NULL) delete billboard_sprite_component_list;
+    if (colored_voxel_component_list != NULL) delete colored_voxel_component_list;
+    if (textured_voxel_component_list != NULL) delete textured_voxel_component_list;
+
+    if (animation_component_list != NULL) delete animation_component_list;
     #endif
 
-    if (rate_limit_component_list != NULL) delete rate_limit_component_list;
+    #if DC_SERVER
+    if (explosion_component_list != NULL) delete explosion_component_list;
+    if (item_drop_component_list != NULL) delete item_drop_component_list;
+    #endif
 }
 
 } // Components

@@ -151,17 +151,16 @@ DONE
 storage blocks
 DONE
 
+disable voxel model damage
+DONE
+
 blue bombs should aggro if shot
-
 blue bombs should be wandering, slowly
-
-disable voxel model deformation
-
 blue bombs should damage terrain like grenades
-
 blue bombs should drop grenades
 
-red bots should do random dmg, have random health etc
+blue bombs and red bots should have random health
+red bots should do random dmg
 
 GS_ASSERTs sometimes on connect with some components:
 --something overwriting, only sometimes?

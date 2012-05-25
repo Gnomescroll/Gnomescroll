@@ -28,14 +28,6 @@ extern VerletPhysicsComponentList* verlet_physics_component_list;
 
 extern StackableComponentList* stackable_component_list;
 
-#if DC_CLIENT
-extern BillboardSpriteComponentList* billboard_sprite_component_list;
-extern ColoredVoxelComponentList* colored_voxel_component_list;
-extern TexturedVoxelComponentList* textured_voxel_component_list;
-
-extern AnimationComponentList* animation_component_list;
-#endif
-
 extern PickupComponentList* pickup_component_list;
 
 extern TTLHealthComponentList* ttl_health_component_list;
@@ -58,11 +50,20 @@ extern DimensionComponentList* dimension_component_list;
 extern WeaponTargetingComponentList* weapon_targeting_component_list;
 extern MotionTargetingComponentList* motion_targeting_component_list;
 
-#if DC_SERVER
-extern ExplosionComponentList* explosion_component_list;
+extern RateLimitComponentList* rate_limit_component_list;
+
+#if DC_CLIENT
+extern BillboardSpriteComponentList* billboard_sprite_component_list;
+extern ColoredVoxelComponentList* colored_voxel_component_list;
+extern TexturedVoxelComponentList* textured_voxel_component_list;
+
+extern AnimationComponentList* animation_component_list;
 #endif
 
-extern RateLimitComponentList* rate_limit_component_list;
+#if DC_SERVER
+extern ExplosionComponentList* explosion_component_list;
+extern ItemDropComponentList* item_drop_component_list;
+#endif
 
 /* ComponentList handler switches */
 
