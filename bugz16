@@ -180,6 +180,9 @@ DONE
 fixed a major bug in ObjectList, was returning uninitialised/old objects when should have been returning NULL
 DONE
 
+fix teardown for agent quit in container
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
