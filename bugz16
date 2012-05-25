@@ -154,6 +154,9 @@ DONE
 disable voxel model damage
 DONE
 
+replace grenade durability with stacks
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
@@ -201,5 +204,3 @@ shrapnel
 get rid of grue model blocking view on init
 
 glsl colored/textured voxels
-
-replace grenade durability with stacks

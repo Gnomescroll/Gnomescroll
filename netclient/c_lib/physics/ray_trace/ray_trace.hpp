@@ -1,11 +1,9 @@
 #pragma once
 
-#define ssize 256
-#define bsize 65536
-
-#define RAYCAST_SAMPLING_DENSITY 100.0f;
-
-#define raycast_tick_max 1024
+const int ssize = 256;
+const int bsize = 65536;
+const float RAYCAST_SAMPLING_DENSITY = 100.0f;
+const int raycast_tick_max = 1024;
 
 //int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
 void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out);

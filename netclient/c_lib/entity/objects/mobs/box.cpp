@@ -75,7 +75,8 @@ static void set_mob_robot_box_properties(Object* object)
     // we dont have ID yet, need to set that in the ready() call
     target->attacker_properties.type = OBJECT_MONSTER_BOX;
     target->attacker_properties.block_damage = MONSTER_BOX_TERRAIN_DAMAGE;
-    target->attacker_properties.agent_damage = MONSTER_BOX_AGENT_DAMAGE;
+    target->attacker_properties.agent_damage_min = MONSTER_BOX_AGENT_DAMAGE_MIN;
+    target->attacker_properties.agent_damage_max = MONSTER_BOX_AGENT_DAMAGE_MAX;
     //target->attacker_properties.voxel_damage_radius = MONSTER_BOX_VOXEL_DAMAGE_RADIUS;
     target->attacker_properties.agent_protection_duration = MONSTER_BOX_AGENT_IMMUNITY_DURATION;
     target->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
