@@ -70,6 +70,8 @@ void cube_def(int id, int type, const char* name)
     p.transparent = false;
     p.item_drop = false;
     p.item_container = false;
+    p.reserved7 = false;
+    p.reserved8 = false;
 
     p.max_damage = 32;
     p.color_type = 0;
