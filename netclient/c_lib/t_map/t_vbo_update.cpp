@@ -430,6 +430,7 @@ static const int VERTEX_SLACK = 32;
 
 //int update_column_VBO(struct vm_column* column) {
 
+static int vertex_max = 0;
 
 static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
@@ -493,7 +494,7 @@ void generate_vertex_list(struct Vertex* vlist)
 {
     int offset = 0;
 
-    for(int i=0; i<6; i++)
+    for(int i=0; i<7; i++)
     for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
     {
         struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
@@ -505,6 +506,10 @@ void generate_vertex_list(struct Vertex* vlist)
         struct MAP_ELEMENT element = sb.element;
 
         push_quad1(vlist, offset, x,y,z, i, element);
+
+    #if !PRODUCTOIN
+        GS_ASSERT( offset < vertex_max);
+    #endif
         offset += 4;
     }
 
@@ -606,6 +611,7 @@ void Vbo_map::update_vbo(int i, int j)
 
     int vnum = vertex_count[0] + vertex_count[1];
 
+    vertex_max = vnum;
     vbo->_v_num[0] = vertex_count[0];
     vbo->_v_num[1] = vertex_count[1];
 
@@ -615,7 +621,7 @@ void Vbo_map::update_vbo(int i, int j)
     if(vnum == 0) 
     {
         vbo->vnum = 0;
-        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
+        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id); vbo->vbo_id = 0;
         return;
     } 
     else 

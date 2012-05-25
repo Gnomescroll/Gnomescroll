@@ -72,15 +72,11 @@ void Vbo_map::prep_draw()
     for(int j=0; j<map->ychunk_dim; j++) {
         col = vbo_array[j*xchunk_dim + i ];
 
-        if( col == NULL ) continue;
+        if(col == NULL) continue;
+        if(col->vnum == 0) continue;
         //if( chunk_render_check( col->xpos, col->ypos) && xy_point_fulstrum_test(col->xpos, col->ypos) )
         //if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 11.4) )
         if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 32.0) )
-        //if( chunk_render_check( col->xpos, col->ypos) )
-
-        // probably an error
-
-        //xy_circle_fulstrum_test(col->xpos, col->ypos, 8.0)
         {
             c_drawn++;
 
@@ -143,7 +139,9 @@ void Vbo_map::draw_map()
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
 
+    //glShadeModel(GL_FLAT);
     glShadeModel(GL_SMOOTH);
+
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
 
