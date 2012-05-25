@@ -145,6 +145,9 @@ DONE
 fix rotation on isometric block sides
 DONE
 
+fix block damage for laser rifles
+DONE
+
 if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
 --the completely empty function is done. need to integrate it into component system
 --agents need more careful restrictions. they can't just die early. maybe N blocks per N damage

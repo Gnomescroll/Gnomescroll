@@ -139,7 +139,11 @@ inline void open_container_failed_StoC::handle()
 {
     if (opened_container_event_id == event_id && opened_container == container_id)
     {
-        if (opened_container != NULL_CONTAINER) was_closed = true;
+        if (opened_container != NULL_CONTAINER)
+        {
+            closed_crafting_block = true;
+            closed_storage_block = true;
+        }
         opened_container = NULL_CONTAINER;
     }
 }
@@ -147,6 +151,7 @@ inline void open_container_failed_StoC::handle()
 inline void open_container_StoC::handle()
 {
     if (opened_container != container_id) return;
+    // dont do this here:
     //if (opened_container == NULL_CONTAINER) was_opened = true;
     update_container_ui_from_state();
 }
@@ -154,7 +159,11 @@ inline void open_container_StoC::handle()
 inline void close_container_StoC::handle()
 {
     t_hud::close_container(opened_container);
-    if (opened_container != NULL_CONTAINER) was_closed = true;
+    if (opened_container != NULL_CONTAINER)
+    {
+        closed_crafting_block = true;
+        closed_storage_block = true;
+    }
     opened_container = NULL_CONTAINER;
 }
 

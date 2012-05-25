@@ -43,26 +43,51 @@ void toggle_agent_container()
     }
 }
 
-void enable_block_container()
+void enable_crafting_container()
 {
-    if (input_state.block_container) return;
+    if (input_state.crafting_block) return;
     // force set the mouse position
     // because we wont have a motion event coming in initially sometimes
     int x,y;
     SDL_GetMouseState(&x, &y);
     t_hud::set_mouse_position(x,y);
     
-    input_state.block_container = true;
-    t_hud::enable_block_container_hud();
+    input_state.crafting_block = true;
+    t_hud::enable_crafting_container_hud();
     rebind_mouse = input_state.mouse_bound;
     input_state.mouse_bound = false;
 }
 
-void disable_block_container()
+void disable_crafting_container()
 {
-    if (!input_state.block_container) return;
-    input_state.block_container = false;
-    t_hud::disable_block_container_hud();
+    if (!input_state.crafting_block) return;
+    input_state.crafting_block = false;
+    t_hud::disable_crafting_container_hud();
+    ItemContainer::close_container();
+    input_state.mouse_bound = rebind_mouse;
+    input_state.ignore_mouse_motion = true;
+}
+
+void enable_storage_block_container()
+{
+    if (input_state.storage_block) return;
+    // force set the mouse position
+    // because we wont have a motion event coming in initially sometimes
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+    t_hud::set_mouse_position(x,y);
+    
+    input_state.storage_block = true;
+    t_hud::enable_storage_block_hud();
+    rebind_mouse = input_state.mouse_bound;
+    input_state.mouse_bound = false;
+}
+
+void disable_storage_block_container()
+{
+    if (!input_state.storage_block) return;
+    input_state.storage_block = false;
+    t_hud::disable_storage_block_hud();
     ItemContainer::close_container();
     input_state.mouse_bound = rebind_mouse;
     input_state.ignore_mouse_motion = true;
@@ -186,8 +211,6 @@ void init_handlers()
     #endif
 
     input_state.help_menu = false;
-    input_state.agent_container = false;
-    input_state.block_container = false;
     input_state.scoreboard = false;
     input_state.map = false;
     input_state.chat = false;
@@ -201,7 +224,12 @@ void init_handlers()
     input_state.ignore_mouse_motion = false;
     input_state.last_mouse_button_down_event_frame = -1;
     input_state.last_mouse_button_up_event_frame = -1;
-    
+
+    // containers
+    input_state.agent_container = false;
+    input_state.crafting_block = false;
+    input_state.storage_block = false;
+
     // options
     input_state.invert_mouse = false;
     input_state.sensitivity = 100.0f;
@@ -337,7 +365,8 @@ void container_key_down_handler(SDL_Event* event)
     {
         case SDLK_e:
         case SDLK_ESCAPE:
-            if (input_state.block_container) disable_block_container();
+            if (input_state.crafting_block) disable_crafting_container();
+            else if (input_state.storage_block) disable_storage_block_container();
             else toggle_agent_container();
             break;
 
@@ -387,10 +416,10 @@ void container_mouse_down_handler(SDL_Event* event)
 void container_mouse_up_handler(SDL_Event* event)
 {
     if (!input_state.mouse_bound // for whatever reason it only needs to be done when mouse is unbound
-      && input_state.ignore_next_container_right_click_event
+      && input_state.ignore_next_right_click_event
       && event->button.button == SDL_BUTTON_RIGHT)
     {
-        input_state.ignore_next_container_right_click_event = false;
+        input_state.ignore_next_right_click_event = false;
         return;
     }
     
@@ -690,7 +719,7 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.agent_container || input_state.block_container)
+    if (input_state.agent_container || input_state.crafting_block || input_state.storage_block)
         container_key_down_handler(event);
     else if (input_state.chat)
         chat_key_down_handler(event);
@@ -867,7 +896,7 @@ void key_up_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.agent_container || input_state.block_container)
+    if (input_state.agent_container || input_state.crafting_block || input_state.storage_block)
         container_key_up_handler(event);
     else if (input_state.chat)
         chat_key_up_handler(event);
@@ -924,7 +953,7 @@ void mouse_button_down_handler(SDL_Event* event)
     }
 
     // chat doesnt affect mouse
-    if (input_state.agent_container || input_state.block_container)
+    if (input_state.agent_container || input_state.crafting_block || input_state.storage_block)
         container_mouse_down_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
@@ -951,7 +980,7 @@ void mouse_button_up_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
 
-    if (input_state.agent_container || input_state.block_container)
+    if (input_state.agent_container || input_state.crafting_block || input_state.storage_block)
         container_mouse_up_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
@@ -975,7 +1004,7 @@ void mouse_motion_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.agent_container || input_state.block_container)
+    if (input_state.agent_container || input_state.crafting_block || input_state.storage_block)
     {
         SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         container_mouse_motion_handler(event);

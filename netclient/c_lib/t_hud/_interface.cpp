@@ -5,15 +5,16 @@
 #include <t_hud/container_hud.hpp>
 #include <t_hud/toolbelt_hud.hpp>
 #include <t_hud/nanite_hud.hpp>
+#include <t_hud/storage_block.hpp>
 
 namespace t_hud
 {
 
 class AgentContainerUI* agent_container;
 class AgentToolbeltUI* agent_toolbelt;
-// TODO -- TMP -- replace witha ctual types
 class AgentNaniteUI* nanite_container;
 class CraftingUI* crafting_container;
+class StorageBlockUI* storage_block;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -39,9 +40,9 @@ void set_container_id(ItemContainerType container_type, int container_id)
             //cryofreezer->container_id = container_id;
             //break;
 
-        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-            //storage_block->container_id = container_id;
-            //break;
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            storage_block->container_id = container_id;
+            break;
             
         default:
             GS_ASSERT(false);
@@ -54,7 +55,10 @@ void close_container(int container_id)
     //if (agent_container != NULL && agent_container->container_id == container_id) agent_container->container_id = NULL_CONTAINER;
     //if (agent_toolbelt != NULL && agent_toolbelt->container_id == container_id) agent_toolbelt->container_id = NULL_CONTAINER;
     //if (nanite_container != NULL && nanite_container->container_id == container_id) nanite_container->container_id = NULL_CONTAINER;
+    
+    // unset ids for variable container UIs
     if (crafting_container != NULL && crafting_container->container_id == container_id) crafting_container->container_id = NULL_CONTAINER;
+    if (storage_block != NULL && storage_block->container_id == container_id) storage_block->container_id = NULL_CONTAINER;
 }
 
 /*
@@ -62,13 +66,15 @@ void close_container(int container_id)
 */
 
 static bool agent_container_enabled = false;
-static bool block_container_enabled = false;
+static bool container_block_enabled = false;
+static bool storage_block_enabled = false;
 float mouse_x = -1;
 float mouse_y = -1;
 
 void enable_agent_container_hud()
 {
-    GS_ASSERT(!block_container_enabled);
+    GS_ASSERT(!container_block_enabled);
+    GS_ASSERT(!storage_block_enabled);
     agent_container_enabled = true;
 }
 
@@ -80,18 +86,34 @@ void disable_agent_container_hud()
     agent_container_enabled = false;
 }
 
-void enable_block_container_hud()
+void enable_crafting_container_hud()
 {
     GS_ASSERT(!agent_container_enabled);
-    block_container_enabled = true;
+    GS_ASSERT(!storage_block_enabled);
+    container_block_enabled = true;
 }
 
-void disable_block_container_hud()
+void disable_crafting_container_hud()
 {
     // reset mouse state
     mouse_x = -1;
     mouse_y = -1;
-    block_container_enabled = false;
+    container_block_enabled = false;
+}
+
+void enable_storage_block_hud()
+{
+    GS_ASSERT(!agent_container_enabled);
+    GS_ASSERT(!container_block_enabled);
+    storage_block_enabled = true;
+}
+
+void disable_storage_block_hud()
+{
+    // reset mouse state
+    mouse_x = -1;
+    mouse_y = -1;
+    storage_block_enabled = false;
 }
 
 static UIElement* get_container_and_slot(int x, int y, int* slot)
@@ -353,11 +375,12 @@ void draw_hud()
 {
     agent_toolbelt->draw();
 
-    if (!agent_container_enabled && !block_container_enabled) return;
+    if (!agent_container_enabled && !container_block_enabled && !storage_block_enabled) return;
 
     agent_container->draw();
     nanite_container->draw();
-    if (block_container_enabled) crafting_container->draw();
+    if (container_block_enabled) crafting_container->draw();
+    if (storage_block_enabled) storage_block->draw();
 
     draw_grabbed_icon();
 
@@ -396,6 +419,12 @@ void init()
     crafting_container->yoff = -150.0 + (_yresf + crafting_container->height())/2;
     crafting_container->init();
 
+    storage_block = new StorageBlockUI;
+    storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
+    storage_block->xoff = (_xresf - storage_block->width())/2 + 1;
+    storage_block->yoff = -150.0 + (_yresf + storage_block->height())/2;
+    storage_block->init();
+
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format((char*) "%d");
     grabbed_icon_stack_text->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
@@ -409,6 +438,7 @@ void teardown()
     if (agent_toolbelt != NULL) delete agent_toolbelt;
     if (nanite_container != NULL) delete nanite_container;
     if (crafting_container != NULL) delete crafting_container;
+    if (storage_block != NULL) delete storage_block;
 
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
 }

@@ -64,15 +64,14 @@ int get_sprite_index_for_id(ItemID id)
 {
     GS_ASSERT(id < MAX_ITEMS && id >= 0);
     int type = get_item_type(id);
-    if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
-    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
-    return sprite_array[type];
+    return get_sprite_index_for_type(type);
 }
 
 int get_sprite_index_for_type(int type)
 {
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
     GS_ASSERT(type >= 0 && type < MAX_ITEMS);
+    if (type < 0 || type >= MAX_ITEMS) return ERROR_SPRITE;
     return sprite_array[type];
 }
 

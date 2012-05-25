@@ -26,30 +26,27 @@ void CHUNK_ITEM_CONTAINER::remove_index(int i)
 
 void CHUNK_ITEM_CONTAINER::remove(int container_id)
 {
+    // find container
     int i;
     for(i=0; i<iban; i++)
-    {
         if(container_id == iba[i].container_id)
-        {
             break;
-        }
-    }
-    if(i == iban) GS_ABORT();
+    GS_ASSERT(i < iban);   // did not find
+    if (i >= iban) return;
+
 
     this->remove_index(i);
 }
 
 void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 {
+    // find container
     int i;
     for(i=0; i<iban; i++)
-    {
         if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
-        {
             break;
-        }
-    }
-    if(i == iban) GS_ABORT();
+    GS_ASSERT(i < iban);   // did not find
+    if (i >= iban) return;
 
     this->remove_index(i);
 }
@@ -60,7 +57,8 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
     {
         ibam *= 2;
         iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
-        if(iba == NULL) GS_ABORT();
+        GS_ASSERT(iba != NULL);
+        return;
     }
 
     iba[iban].x = x;
@@ -76,6 +74,7 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
     GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     GS_ASSERT(container != NULL);
+    if (container == NULL) return;
     container->chunk = this->chunk_index;
     #endif    
 }
@@ -84,17 +83,13 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
 #if DC_SERVER
 void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(int client_id)
 {
-    {
-        class container_block_chunk_reset_StoC msgr;
-        msgr.chunk_index = chunk_index;
-        msgr.sendToClient(client_id);
-        //printf("chunk index scic = %i \n", chunk_index);
-    }
-
-    class container_block_create_StoC msg;
+    class container_block_chunk_reset_StoC reset_msg;
+    reset_msg.chunk_index = chunk_index;
+    reset_msg.sendToClient(client_id);
 
     for(int i=0; i < iban; i++)
     {
+        class container_block_create_StoC msg;
         msg.x = iba[i].x;
         msg.y = iba[i].y;
         msg.z = iba[i].z;
