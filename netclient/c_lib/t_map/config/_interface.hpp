@@ -2,7 +2,9 @@
 
 
 #if DC_CLIENT
-#include <c_lib/SDL/texture_sheet_loader.hpp>
+#include <SDL/texture_sheet_loader.hpp>
+#include <t_map/glsl/palette.hpp>
+
 #endif
 
 /*
@@ -54,8 +56,9 @@ int _current_pallet = 0;
 
 void cube_def(int id, int type, const char* name)
 { 
+#if DC_CLIENT
     if(_current_cube_id != -1) push_cube_palette();
-
+#endif
     _current_cube_id = id;
     set_cube_name(id, (char*) name);
 
@@ -96,8 +99,9 @@ void cube_def(int id, int type, const char* name)
     //extern struct cubeProperties* cube_list;
     cube_list[id] = p;
     _current_pallet = 0;
-
+#if DC_CLIENT
     start_cube_palette(id);
+#endif
 }
 
 void iso_texture(int tex_id)
@@ -177,6 +181,7 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
 #endif
 }
 
+/*
 void palette_def(int palette_number)
 {
 #ifdef DC_CLIENT
@@ -243,6 +248,7 @@ void palette_iso_texture(int sheet_id, int ypos, int xpos)
     palette_side_texture(5, tex_id);
 #endif 
 }
+*/
 
 /*
 void new_cube_palette(int cube_id);
