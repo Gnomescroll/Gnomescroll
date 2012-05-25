@@ -131,9 +131,4 @@ void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsig
 
 }
 
-void set_cube_side_texture(int id, int side, int tex_id)
-{
-    t_map::set_cube_side_texture(id, side, tex_id);
-}
-
 #endif

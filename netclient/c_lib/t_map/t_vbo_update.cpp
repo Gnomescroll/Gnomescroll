@@ -16,6 +16,20 @@ namespace t_map
 
 void init_pallete();
 
+
+
+struct SIDE_BUFFER
+{
+    unsigned short x;
+    unsigned short y;
+    unsigned short z;
+    unsigned short side;
+    struct MAP_ELEMENT element;
+};
+
+int SIDE_BUFFER_INDEX[7];   //index
+struct SIDE_BUFFER* SIDE_BUFFER_ARRAY[7];
+
 struct Vertex* vlist_scratch_0;
 struct Vertex* vlist_scratch_1;
 
@@ -24,6 +38,10 @@ void t_vbo_update_init()
     vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
     vlist_scratch_1 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
 
+    const int b_size = (1+(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT/2))*sizeof(struct SIDE_BUFFER);
+    for(int i=0; i<7; i++) SIDE_BUFFER_ARRAY[i] = (struct SIDE_BUFFER*) malloc(b_size);
+    for(int i=0; i<7; i++) SIDE_BUFFER_INDEX[i] = 0;
+
     init_pallete();
 }
 
@@ -31,6 +49,8 @@ void t_vbo_update_end()
 {
     free(vlist_scratch_0);
     free(vlist_scratch_1);
+
+    for(int i=0; i<7; i++) free(SIDE_BUFFER_ARRAY[i]);
 }
 
 //cache line optimization; minimize size
@@ -70,14 +90,11 @@ const static int_fast8_t s_array[18] = {
         0,-1,0, //east
         };
 
+//this is doing a get, but can use within chunk lookup
 static inline int _is_occluded(int x,int y,int z, int side_num)
 {
     int i = 3*side_num;
-    x += s_array[i+0];
-    y += s_array[i+1];
-    z += s_array[i+2];
-
-    return isOccludes( t_map::get(x,y,z) );
+    return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
 }
 
 static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
@@ -103,7 +120,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
     for(i=0; i<8; i++) 
     {
         index = side*8*3+i*3;
-        CX[i] = isOccludes( t_map::get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+        CX[i] = isOccludes(x+CI[index+0],y+CI[index+1],z+CI[index+2]);
     }
 
 #if AO_DEBUG
@@ -283,135 +300,6 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
     }
 }
 
-static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index) __attribute((always_inline));
-
-/*
-    Replace with voronoi color map loopup
-*/
-static inline struct ColorElement calc_voronoi_color(float x, float y, float z, int index)
-{
-    x += _vi2[index+0];
-    y += _vi2[index+1];
-    z += _vi2[index+2];
-
-    /*
-        Debug return
-    */
-    static const struct ColorElement null_ce = {{{255,255,255,255}}};
-    return null_ce;
-
-    struct ColorElement ce;
-    //ce.color = 0;
-    //ce.b = voronoi_char(x,y,z);
-    //float m1 = voronoi_float(x,y,z);
-    float m1 = voronoi_float_fast(x,y,z);
-    //float m2 = 1.0 - m1;
-
-    //float m1 = voronoi_float(x,y,z);
-    //float m2 = 1.0 - m1;
-
-
-    //printf("m= %f \n", m1);
-    //struct ColorElement ce1;
-    //struct ColorElement ce2;
-
-    static const int i = 0;
-    static const int j = 1;
-
-    const float r1 = (float) _palletn[3*i+0];
-    const float g1 = (float) _palletn[3*i+1];
-    const float b1 = (float) _palletn[3*i+2];
-
-    const float r2 = (float) _palletn[3*j+0];
-    const float g2 = (float) _palletn[3*j+1];
-    const float b2 = (float) _palletn[3*j+2];
-
-
-/*
-    const float r1 = 1.0;
-    const float g1 = 1.0;
-    const float b1 = 1.0;
-
-    const float r2 = 0.0;
-    const float g2 = 0.0;
-    const float b2 = 0.0;
-*/
-
-#if !PRODUCTION
-    if(r1 + m1*(r2-r1) > 255.0)
-   {
-        printf("0: %f %f %f %f\n", r1 + m1*(r2-r1), m1, r1, r2);
-
-   }
-   if(r1 + m1*(r2-r1) < 0.0)
-   {
-        printf("2: %f %f %f %f\n", r1 + m1*(r2-r1), m1, r1, r2);
-   }
-#endif
-    //GS_ASSERT((r1 + m1*(r2-r1)) <= 255.0);
-    //GS_ASSERT((r1 + m1*(r2-r1)) >= 0.0);
-
-    ce.r = (unsigned char) (r1 + m1*(r2-r1));
-    ce.g = (unsigned char) (g1 + m1*(g2-g1));
-    ce.b = (unsigned char) (b1 + m1*(b2-b1));
-
-/*
-    ce.r = (unsigned char) (m1*r1 + m2*r2);
-    ce.g = (unsigned char) (m1*g1 + m2*g2);
-    ce.b = (unsigned char) (m1*b1 + m2*b2);
-*/
-
-    return ce;
-}
-
-
-/*
-        static const struct ColorElement null_ce = {{{255,255,255,255}}};
-        return null_ce;
-*/
-
-static inline void _set_quad_color_voronoi(struct Vertex* v_list, int offset, int x, int y, int z, int side)
-{
-
-
-    struct ColorElement _ce[4];
-
-    _ce[0] = calc_voronoi_color(x,y,z, 3*(4*side+0) );
-    _ce[1] = calc_voronoi_color(x,y,z, 3*(4*side+1) );
-    _ce[2] = calc_voronoi_color(x,y,z, 3*(4*side+2) );
-    _ce[3] = calc_voronoi_color(x,y,z, 3*(4*side+3) );
-/*
-    _ce.r = 0;
-    _ce.g = 0;
-    _ce.b = 255;
-    _ce.a = 0;
-*/
-    for(int i=0; i <4; i++)
-    {
-        v_list[offset+i].ce[0] = _ce[0];
-        v_list[offset+i].ce[1] = _ce[1];
-        v_list[offset+i].ce[2] = _ce[2];
-        v_list[offset+i].ce[3] = _ce[3];
-    }
-
-#if 0
-    int index[4];
-    //4th element is side+vertex index
-    index[0] = 3*(hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num) ;
-    index[1] = 3*(hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num) ;
-    index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num) ;
-    index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num) ;
-
-    for(int i=0 ;i <4; i++)
-    {
-        v_list[offset+i].r = _palletn[index[i]+0];
-        v_list[offset+i].g = _palletn[index[i]+1];
-        v_list[offset+i].b = _palletn[index[i]+2];
-    }
-#endif
-
-}
-
 
 static const unsigned char _0 = 0;
 static const unsigned char _1 = 1;
@@ -442,9 +330,9 @@ static const struct PositionElement _v_index[4*6] =
 
 #define USE_QUAD_CACHE 1
 
-static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
+static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
-
+    int tile_id = element.block;
 #if USE_QUAD_CACHE
     memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
 #else
@@ -485,12 +373,9 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
             _set_quad_color_default(v_list, offset, x, y, z, side);
             break;
         case 1:
-            _set_quad_color_voronoi(v_list, offset, x, y, z, side);
-            break;
-        case 2:
             _set_quad_color_flat(v_list, offset, x, y, z, side);
             break;
-        case 3:
+        case 2:
             _set_quad_color_perlin(v_list, offset, x, y, z, side);
             break;
         default:
@@ -516,8 +401,11 @@ const struct TextureElement texElementArray2[4] =
 
 //quad_cache_comptability[cube_id*6*4 +4*side + 3]
 
-static inline void add_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
+static inline void add_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
+
+    int tile_id = element.block;
+
 #if USE_QUAD_CACHE_COMPATIBABILITY
     memcpy(&v_list[offset], &quad_cache_comptability[tile_id*6*4 +4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
 #else
@@ -577,32 +465,234 @@ static inline void add_quad_comptability(struct Vertex* v_list, int offset, int 
             _set_quad_color_flat(v_list, offset, x, y, z, side);
             break;
         case 2:
-            _set_quad_color_voronoi(v_list, offset, x, y, z, side);
-            break;
-        case 3:
             _set_quad_color_perlin(v_list, offset, x, y, z, side);
             break;
         default:
             break;
-    }    
+    }   
 }
 
 
-static const int VERTEX_SLACK = 128;
+static const int VERTEX_SLACK = 32;
 
 //int update_column_VBO(struct vm_column* column) {
+
+
+static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
+
+static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+{
+    int tile_id = element.block;
+#if USE_QUAD_CACHE
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+#else
+    unsigned char tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
+
+    struct TextureElement tex;
+    tex.tex = 0;
+    tex.tz = tile_tex;
+
+    v_list[offset+0].tex = texElementArray[0].tex | tex.tex;
+    v_list[offset+1].tex = texElementArray[1].tex | tex.tex;
+    v_list[offset+2].tex = texElementArray[2].tex | tex.tex;
+    v_list[offset+3].tex = texElementArray[3].tex | tex.tex;
+
+    v_list[offset+0].pos = _v_index[4*side+0].pos;
+    v_list[offset+1].pos = _v_index[4*side+1].pos;
+    v_list[offset+2].pos = _v_index[4*side+2].pos;
+    v_list[offset+3].pos = _v_index[4*side+3].pos;
+#endif
+
+    {
+        int _x = x & 15;
+        int _y = y & 15;
+
+        for(int i=0; i<4;i++) 
+        {
+            v_list[offset+i].x += _x;
+            v_list[offset+i].y += _y;
+            v_list[offset+i].z += z;
+        }
+    }
+    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+    //_set_quad_color(v_list, offset, x, y, z, side);
+
+    switch( t_map::cube_list[tile_id].color_type )
+    {
+        case 0:
+            _set_quad_color_default(v_list, offset, x, y, z, side);
+            break;
+        case 1:
+            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            break;
+        case 2:
+            _set_quad_color_perlin(v_list, offset, x, y, z, side);
+            break;
+        default:
+            break;
+    }  
+
+}
+
+
+
+void generate_vertex_list(struct Vertex* vlist)
+{
+    int offset = 0;
+
+    for(int i=0; i<6; i++)
+    for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
+    {
+        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
+
+        int x = sb.x;
+        int y = sb.y;
+        int z = sb.z;
+
+        struct MAP_ELEMENT element = sb.element;
+
+        push_quad1(vlist, offset, x,y,z, i, element);
+        offset += 4;
+    }
+
+}
+
+
+
+
+/*
+    BUFFER
+*/
+static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
+static inline void push_buffer2(unsigned short side , unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
+
+
+//for solid blocks
+static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
+{
+    struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[side][SIDE_BUFFER_INDEX[side]];
+    sb->x = x;
+    sb->y = y;
+    sb->z = z;
+    sb->element = element;
+    SIDE_BUFFER_INDEX[side]++;
+}
+
+
+//for transparent blocks
+static inline void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
+{
+    struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[6][SIDE_BUFFER_INDEX[side]];
+    sb->x = x;
+    sb->y = y;
+    sb->z = z;
+    sb->side = side;
+    sb->element = element;
+    SIDE_BUFFER_INDEX[6]++;
+}
+
 
 /*
     Two optimizations: incremental updates and by sidesgoogl
 
 */
+
+void set_vertex_buffers(class MAP_CHUNK* chunk)
+{
+    for(int _z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+
+        for(int _x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
+        for(int _y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
+
+
+            struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
+            int tile_id = element.block;
+
+            if( !isActive(tile_id) ) continue;
+
+            if( !isTransparent(tile_id) )
+            {
+                if(! _is_occluded(_x,_y,_z,0)) push_buffer1(0, _x,_y,_z, element);
+                if(! _is_occluded(_x,_y,_z,1)) push_buffer1(1, _x,_y,_z, element);
+                if(! _is_occluded(_x,_y,_z,2)) push_buffer1(2, _x,_y,_z, element);
+                if(! _is_occluded(_x,_y,_z,3)) push_buffer1(3, _x,_y,_z, element);
+                if(! _is_occluded(_x,_y,_z,4)) push_buffer1(4, _x,_y,_z, element);
+                if(! _is_occluded(_x,_y,_z,5)) push_buffer1(5, _x,_y,_z, element);
+            } 
+            else
+            {
+                //active block that does not occlude
+                for(int side_num=0; side_num<6; side_num++) 
+                {
+                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id))  push_buffer2(side_num, _x,_y,_z, element);
+                }
+            }
+
+        }}
+    }
+}
+
 void Vbo_map::update_vbo(int i, int j)
 {
+
+    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
+    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+
+    for(int i=0; i<7; i++) SIDE_BUFFER_INDEX[i] = 0;
+
+    if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
+    if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
+
+    int vertex_count[2] = {0, 0};
+
+
+    set_vertex_buffers(chunk); //set the vertex 
+
+    for(int i=0; i<6; i++) vertex_count[0] += 4*SIDE_BUFFER_INDEX[i];
+    vertex_count[1] = 4*SIDE_BUFFER_INDEX[6];
+
+    int vnum = vertex_count[0] + vertex_count[1];
+
+    vbo->_v_num[0] = vertex_count[0];
+    vbo->_v_num[1] = vertex_count[1];
+
+    vbo->_v_offset[0] = 0;
+    vbo->_v_offset[1] = vertex_count[0];
+
+    if(vnum == 0) 
+    {
+        vbo->vnum = 0;
+        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
+        return;
+    } 
+    else 
+    {
+        vbo->vnum = vnum; //total vertices, size of VBO
+        // if( vnum > vbo->vnum_max ) vbo->resize(vnum);
+    }
+
+
+    struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
+
+    generate_vertex_list(vlist);
+
+    free(vbo->v_list); //free old memory
+    vbo->v_list = vlist;
+
+    if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+}
+
+#if 0
 
     int _x, _y, _z;
 
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+
+    for(int i=0; i<6; i++) SIDE_BUFFER_INDEX[i] = 0;
 
     if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
     if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
@@ -614,16 +704,19 @@ void Vbo_map::update_vbo(int i, int j)
         for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
         for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
 
-            int tile_id = chunk->get_block(_x,_y,_z); //faster
+
+            struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z);  
+            int tile_id = element.block; //faster
 
             if( !isActive(tile_id) ) continue;
 
             if( !isTransparent(tile_id) )
             { 
-                for(int side_num=0; side_num<6; side_num++) {
+                for(int side_num=0; side_num<6; side_num++)
+                {
                     if(! _is_occluded(_x,_y,_z,side_num)) 
                     {
-                        add_quad2( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,tile_id);
+                        add_quad2( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,element);
                         vertex_count[0] += 4;
                     }
                 }
@@ -635,7 +728,7 @@ void Vbo_map::update_vbo(int i, int j)
                 {
                     if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
                     {
-                        add_quad2( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,tile_id);
+                        add_quad2( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,element);
                         vertex_count[1] += 4;
                     }
                 }
@@ -651,7 +744,6 @@ void Vbo_map::update_vbo(int i, int j)
 
     vbo->_v_offset[0] = 0;
     vbo->_v_offset[1] = vertex_count[0];
-
 
 
     if(vnum == 0) 
@@ -677,7 +769,7 @@ void Vbo_map::update_vbo(int i, int j)
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
-}
+#endif
 
 void Vbo_map::update_vbo_comptability(int i, int j)
 {
@@ -686,6 +778,8 @@ void Vbo_map::update_vbo_comptability(int i, int j)
 
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+
+    for(int i=0; i<7; i++) SIDE_BUFFER_INDEX[i] = 0;
 
     if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
     if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
@@ -697,7 +791,8 @@ void Vbo_map::update_vbo_comptability(int i, int j)
         for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
         for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
 
-            int tile_id = chunk->get_block(_x,_y,_z); //faster
+            struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z);  
+            int tile_id = element.block; //faster
 
             if( !isActive(tile_id) ) continue;
 
@@ -706,7 +801,7 @@ void Vbo_map::update_vbo_comptability(int i, int j)
                 for(int side_num=0; side_num<6; side_num++) {
                     if(! _is_occluded(_x,_y,_z,side_num)) 
                     {
-                        add_quad_comptability( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,tile_id);
+                        add_quad_comptability( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,element);
                         vertex_count[0] += 4;
                     }
                 }
@@ -718,7 +813,7 @@ void Vbo_map::update_vbo_comptability(int i, int j)
                 {
                     if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
                     {
-                        add_quad_comptability( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,tile_id);
+                        add_quad_comptability( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,element);
                         vertex_count[1] += 4;
                     }
                 }

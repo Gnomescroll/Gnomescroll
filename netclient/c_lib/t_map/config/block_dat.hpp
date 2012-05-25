@@ -130,8 +130,17 @@ void load_block_dat()
     iso_texture(t1,10,4);
     side_texture(T, t1,10,3);
     side_texture(B, t1,10,5);
+    
+    palette_def(1);
+    palette_iso_texture(t1,10,3);
+    palette_side_texture(N, t1,10,5);
+    palette_def(1);
+
+
+    end_palette_def();
+
     hud_def(4,1, t1,10,4);
-    color_type(1); //perlin
+    //color_type(1); //perlin
 
     cube_def(55, SolidBlock, "carbon");
     iso_texture(t1,10,6);
