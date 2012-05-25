@@ -506,7 +506,7 @@ void agent_quit(int agent_id)
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
         send_container_close(agent_id, opened_containers[agent_id]);
-        agent_close_container(opened_container[agent_id];
+        agent_close_container(agent_id, opened_containers[agent_id]);
     }
 
     GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);

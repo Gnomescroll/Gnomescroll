@@ -196,7 +196,12 @@ void throw_agent_item(int agent_id, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     Agent_state* a = ServerState::agent_list->get(agent_id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {   // we cannot get the agent state, so just destroy the item
+        GS_ASSERT(false);
+        Item::destroy_item(item_id);
+        return;
+    }
 
     Vec3 position = a->get_center();
 
