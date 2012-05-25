@@ -118,7 +118,7 @@ char* get_item_name(int type)
     return (item_names + item_name_index[type]);
 }
 
-int get_item_type(char* name)
+int get_item_type(const char* name)
 {
     for (int i=0; i<MAX_ITEMS; i++)
         if (strcmp(name, get_item_name(i)) == 0)

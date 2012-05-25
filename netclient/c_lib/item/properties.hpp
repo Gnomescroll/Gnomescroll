@@ -35,7 +35,7 @@ void set_item_name(int type, char* name, int length);
 void set_item_name(int type, char* name);
 
 char* get_item_name(int type);
-int get_item_type(char* name);
+int get_item_type(const char* name);
 
 int get_item_group_for_type(int item_type);
 

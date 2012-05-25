@@ -19,7 +19,7 @@ void load_mob_bomb_data()
     ObjectType type = OBJECT_MONSTER_BOMB;
     
     #if DC_SERVER
-    const int n_components = 7;
+    const int n_components = 8;
     #endif
     #if DC_CLIENT
     const int n_components = 6;
@@ -36,6 +36,7 @@ void load_mob_bomb_data()
     #if DC_SERVER
     object_data->attach_component(type, COMPONENT_EXPLOSION);
     object_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    object_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
 
     #if DC_CLIENT
@@ -79,6 +80,12 @@ static void set_mob_bomb_properties(Object* object)
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
     limiter->limit = MONSTER_BOMB_BROADCAST_RATE;
+
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    item_drop->item_type = Item::get_item_type(MONSTER_BOMB_ITEM_DROP_NAME);
+    item_drop->probability = MONSTER_BOMB_ITEM_DROP_PROBABILITY;
+    item_drop->max_amount = MONSTER_BOMB_ITEM_DROP_MAX_AMOUNT;
     #endif
 
     #if DC_CLIENT
