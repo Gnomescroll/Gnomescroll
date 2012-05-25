@@ -12,7 +12,7 @@ int ObjectList::get_free_id(ObjectType type)
 {
     if (this->objects[type] == NULL) return -1;
     for (int i=0; i<this->maximums[type]; i++)
-        if (!this->used[type][i]) return i;
+        if (this->used[type][i] == 0) return i;
     return -1;
 }
 
@@ -29,6 +29,8 @@ void ObjectList::set_object_id(Object* object, int id)
     GS_ASSERT(this->used[type][id] == 0);
     GS_ASSERT(id >= 0);
     GS_ASSERT(id < this->max(type));
+    if (this->used[type][id] != 0) return;
+    if (id < 0 || id >= this->max(type)) return;
 
     // swap from staging slot
     this->staging_objects[type] = this->objects[type][id];
@@ -59,6 +61,16 @@ inline bool ObjectList::full(ObjectType type)
     return (this->count(type) >= this->max(type));
 }
 
+inline bool ObjectList::in_use(ObjectType type, int id)
+{
+    GS_ASSERT(this->used != NULL);
+    GS_ASSERT(this->used[type] != NULL);
+    GS_ASSERT(this->maximums != NULL);
+    GS_ASSERT(id >= 0 && id < this->maximums[type]);
+    return (this->used[type][id] == 1);
+}
+
+
 void ObjectList::destroy(ObjectType type, int id)
 {
     if (this->used[type] == NULL) return;
@@ -70,13 +82,20 @@ void ObjectList::destroy(ObjectType type, int id)
 Object* ObjectList::get(ObjectType type, int id)
 {
     if (this->objects[type] == NULL) return NULL;
-    if (this->used[type] == NULL || !this->used[type][id]) return NULL;
+    if (this->used[type] == NULL || this->used[type][id] == 0) return NULL;
     return this->objects[type][id];
 }
 
 Object* ObjectList::create(ObjectType type)
 {
     if (this->full(type)) return NULL;
+    return this->staging_objects[type];
+}
+
+// preemptively check against used ids
+Object* ObjectList::create(ObjectType type, int id)
+{
+    if (this->used[type] == NULL || this->used[type][id] == 1) return NULL;
     return this->staging_objects[type];
 }
 
