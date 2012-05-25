@@ -95,6 +95,7 @@ void cube_def(int id, int type, const char* name)
     cube_list[id] = p;
     _current_pallet = 0;
 
+    start_cube_palette(id);
 }
 
 void iso_texture(int tex_id)
@@ -174,7 +175,7 @@ void palette_def(int palette_number)
 void end_palette_def()
 {
 #ifdef DC_CLIENT
-    end_cube_palette();
+    push_cube_palette();
 #endif
 }
 

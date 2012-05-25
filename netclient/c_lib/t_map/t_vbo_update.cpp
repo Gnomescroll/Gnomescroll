@@ -3,6 +3,7 @@
 #include <t_map/glsl/structs.hpp>
 #include <t_map/glsl/cache.hpp>
 #include <t_map/glsl/hash_functions.hpp>
+#include <t_map/glsl/palette.hpp>
 
 #include "t_map_class.hpp"
 #include "t_vbo_update.hpp"
@@ -282,66 +283,10 @@ static const struct PositionElement _v_index[4*6] =
     Test this!
 */
 
-#define USE_QUAD_CACHE 1
-
-static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
-{
-    int tile_id = element.block;
-#if USE_QUAD_CACHE
-    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-#else
-    unsigned char tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
-
-    struct TextureElement tex;
-    tex.tex = 0;
-    tex.tz = tile_tex;
-
-    v_list[offset+0].tex = texElementArray[0].tex | tex.tex;
-    v_list[offset+1].tex = texElementArray[1].tex | tex.tex;
-    v_list[offset+2].tex = texElementArray[2].tex | tex.tex;
-    v_list[offset+3].tex = texElementArray[3].tex | tex.tex;
-
-    v_list[offset+0].pos = _v_index[4*side+0].pos;
-    v_list[offset+1].pos = _v_index[4*side+1].pos;
-    v_list[offset+2].pos = _v_index[4*side+2].pos;
-    v_list[offset+3].pos = _v_index[4*side+3].pos;
-#endif
-
-    {
-        int _x = x & 15;
-        int _y = y & 15;
-
-        for(int i=0; i<4;i++) 
-        {
-            v_list[offset+i].x += _x;
-            v_list[offset+i].y += _y;
-            v_list[offset+i].z += z;
-        }
-    }
-    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
-    //_set_quad_color(v_list, offset, x, y, z, side);
-
-    switch( t_map::cube_list[tile_id].color_type )
-    {
-        case 0:
-            _set_quad_color_default(v_list, offset, x, y, z, side);
-            break;
-        case 1:
-            _set_quad_color_flat(v_list, offset, x, y, z, side);
-            break;
-        case 2:
-            _set_quad_color_perlin(v_list, offset, x, y, z, side);
-            break;
-        default:
-            break;
-    }  
-
-}
 
 
 static const unsigned char _02 = 0;
 static const unsigned char _12 = 255;
-
 
 const struct TextureElement texElementArray2[4] =
 {
@@ -351,87 +296,12 @@ const struct TextureElement texElementArray2[4] =
     {{{_12,_02,0,0}}}
 };
 
-#define USE_QUAD_CACHE_COMPATIBABILITY 0
-
-//quad_cache_comptability[cube_id*6*4 +4*side + 3]
-
-static inline void add_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
-{
-
-    int tile_id = element.block;
-
-#if USE_QUAD_CACHE_COMPATIBABILITY
-    memcpy(&v_list[offset], &quad_cache_comptability[tile_id*6*4 +4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-#else
-
-    v_list[offset+0].tex = texElementArray2[0].tex;
-    v_list[offset+1].tex = texElementArray2[1].tex;
-    v_list[offset+2].tex = texElementArray2[2].tex;
-    v_list[offset+3].tex = texElementArray2[3].tex;
-
-    //int iz = 0;
-    //int iw = 0;
-
-    int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
-
-    int iz = (tile_tex % TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
-    int iw = (tile_tex / TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
-
-    v_list[offset+0].tz = iz;
-    v_list[offset+0].tw = iw;
-
-    v_list[offset+1].tz = iz;
-    v_list[offset+1].tw = iw;
-
-    v_list[offset+2].tz = iz;
-    v_list[offset+2].tw = iw;
-
-    v_list[offset+3].tz = iz;
-    v_list[offset+3].tw = iw;
-
-
-    v_list[offset+0].pos = _v_index[4*side+0].pos;
-    v_list[offset+1].pos = _v_index[4*side+1].pos;
-    v_list[offset+2].pos = _v_index[4*side+2].pos;
-    v_list[offset+3].pos = _v_index[4*side+3].pos;
-#endif
-
-    {
-        int _x = x & 15;
-        int _y = y & 15;
-
-        for(int i=0; i<4;i++) 
-        {
-            v_list[offset+i].x += _x;
-            v_list[offset+i].y += _y;
-            v_list[offset+i].z += z;
-        }
-    }
-    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
-
-
-    switch( t_map::cube_list[tile_id].color_type )
-    {
-        case 0:
-            _set_quad_color_default(v_list, offset, x, y, z, side);
-            break;
-        case 1:
-            _set_quad_color_flat(v_list, offset, x, y, z, side);
-            break;
-        case 2:
-            _set_quad_color_perlin(v_list, offset, x, y, z, side);
-            break;
-        default:
-            break;
-    }   
-}
-
-
 static const int VERTEX_SLACK = 32;
+static int vertex_max = 0;
 
 //int update_column_VBO(struct vm_column* column) {
 
-static int vertex_max = 0;
+#define USE_QUAD_CACHE 0
 
 static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
@@ -442,6 +312,10 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
     memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
 #else
     unsigned char tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
+
+    //lower 4 bits are texture palette, upper 4 bits are color palette
+    //unsigned char tile_tex = cube_texture_palette[6*(cube_texture_palette_lookup[tile_id]+(element.palette|0x0f)) + side];
+
 
     struct TextureElement tex;
     tex.tex = 0;
@@ -646,91 +520,106 @@ void Vbo_map::update_vbo(int i, int j)
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
 }
 
-#if 0
+ 
+#define USE_QUAD_CACHE_COMPATIBABILITY 0
 
-    int _x, _y, _z;
+static inline void push_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element)  __attribute((always_inline)); 
 
-    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
-    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+static inline void push_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+{
 
-    for(int i=0; i<6; i++) SIDE_BUFFER_INDEX[i] = 0;
+    int tile_id = element.block;
 
-    if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
-    if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
+#if USE_QUAD_CACHE_COMPATIBABILITY
+    memcpy(&v_list[offset], &quad_cache_comptability[tile_id*6*4 +4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+#else
 
-    int vertex_count[2] = {0, 0};
+    v_list[offset+0].tex = texElementArray2[0].tex;
+    v_list[offset+1].tex = texElementArray2[1].tex;
+    v_list[offset+2].tex = texElementArray2[2].tex;
+    v_list[offset+3].tex = texElementArray2[3].tex;
 
-    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+    //int iz = 0;
+    //int iw = 0;
 
-        for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
-        for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
+    int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
 
+    int iz = (tile_tex % TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
+    int iw = (tile_tex / TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
 
-            struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z);  
-            int tile_id = element.block; //faster
+    v_list[offset+0].tz = iz;
+    v_list[offset+0].tw = iw;
 
-            if( !isActive(tile_id) ) continue;
+    v_list[offset+1].tz = iz;
+    v_list[offset+1].tw = iw;
 
-            if( !isTransparent(tile_id) )
-            { 
-                for(int side_num=0; side_num<6; side_num++)
-                {
-                    if(! _is_occluded(_x,_y,_z,side_num)) 
-                    {
-                        add_quad2( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,element);
-                        vertex_count[0] += 4;
-                    }
-                }
-            } 
-            else
-            {
-                //active block that does not occlude
-                for(int side_num=0; side_num<6; side_num++) 
-                {
-                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
-                    {
-                        add_quad2( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,element);
-                        vertex_count[1] += 4;
-                    }
-                }
-            }
+    v_list[offset+2].tz = iz;
+    v_list[offset+2].tw = iw;
 
-        }}
-    }
-
-    int vnum = vertex_count[0] + vertex_count[1];
-
-    vbo->_v_num[0] = vertex_count[0];
-    vbo->_v_num[1] = vertex_count[1];
-
-    vbo->_v_offset[0] = 0;
-    vbo->_v_offset[1] = vertex_count[0];
+    v_list[offset+3].tz = iz;
+    v_list[offset+3].tw = iw;
 
 
-    if(vnum == 0) 
-    {
-        vbo->vnum = 0;
-        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
-        return;
-    } 
-    else 
-    {
-        vbo->vnum = vnum; //total vertices, size of VBO
-        if( vnum > vbo->vnum_max ) vbo->resize(vnum);
-    }
-
-    /*
-        Memcpy from buffer into vlist
-    */
-    memcpy(vbo->v_list, vlist_scratch_0, vertex_count[0]*sizeof(struct Vertex));
-    memcpy(vbo->v_list+vertex_count[0], vlist_scratch_1, vertex_count[1]*sizeof(struct Vertex));
-
-    //push to graphics card
-    if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+    v_list[offset+0].pos = _v_index[4*side+0].pos;
+    v_list[offset+1].pos = _v_index[4*side+1].pos;
+    v_list[offset+2].pos = _v_index[4*side+2].pos;
+    v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
+
+    {
+        int _x = x & 15;
+        int _y = y & 15;
+
+        for(int i=0; i<4;i++) 
+        {
+            v_list[offset+i].x += _x;
+            v_list[offset+i].y += _y;
+            v_list[offset+i].z += z;
+        }
+    }
+    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+
+
+    switch( t_map::cube_list[tile_id].color_type )
+    {
+        case 0:
+            _set_quad_color_default(v_list, offset, x, y, z, side);
+            break;
+        case 1:
+            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            break;
+        case 2:
+            _set_quad_color_perlin(v_list, offset, x, y, z, side);
+            break;
+        default:
+            break;
+    }   
+}
+
+void generate_vertex_list_comptability(struct Vertex* vlist)
+{
+    int offset = 0;
+
+    for(int i=0; i<7; i++)
+    for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
+    {
+        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
+
+        int x = sb.x;
+        int y = sb.y;
+        int z = sb.z;
+
+        struct MAP_ELEMENT element = sb.element;
+
+        push_quad_comptability(vlist, offset, x,y,z, i, element);
+
+    #if !PRODUCTOIN
+        GS_ASSERT( offset < vertex_max);
+    #endif
+        offset += 4;
+    }
+
+}
 
 void Vbo_map::update_vbo_comptability(int i, int j)
 {
@@ -774,7 +663,7 @@ void Vbo_map::update_vbo_comptability(int i, int j)
     //struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
     struct Vertex* vlist = new Vertex[vnum];
 
-    generate_vertex_list(vlist);
+    generate_vertex_list_comptability(vlist);
 
     delete[] vbo->v_list; //free old memory
     vbo->v_list = vlist;

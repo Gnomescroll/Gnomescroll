@@ -19,6 +19,8 @@
 
 #include <t_map/glsl/cache.cpp>
 #include <t_map/glsl/shader.cpp>
+#include <t_map/glsl/palette.hpp>
+
 #endif
 
 #if DC_SERVER

@@ -14,6 +14,11 @@ Procedural Plants:
     - fruit
     - allow to cross over and colonize multiple blocks
 
+Gas Canisters:
+    - color orb based upon type of gas
+    - has a level of gas, which depletes and gas canister becomes empty
+    - is filled by compressing gas cystals
+    - 
 !!! Environment
 
 Solid, transparent blocks (liquid methane).  Like water but solid.  Lakes cover surface.
