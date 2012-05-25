@@ -70,6 +70,7 @@ void ObjectList::destroy(ObjectType type, int id)
 Object* ObjectList::get(ObjectType type, int id)
 {
     if (this->objects[type] == NULL) return NULL;
+    if (this->used[type] == NULL || !this->used[type][id]) return NULL;
     return this->objects[type][id];
 }
 

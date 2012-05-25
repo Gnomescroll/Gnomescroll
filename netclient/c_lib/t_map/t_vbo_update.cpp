@@ -672,11 +672,12 @@ void Vbo_map::update_vbo(int i, int j)
     }
 
 
-    struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
+    //struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
+    struct Vertex* vlist = new Vertex[vnum];
 
     generate_vertex_list(vlist);
 
-    free(vbo->v_list); //free old memory
+    delete[] vbo->v_list; //free old memory
     vbo->v_list = vlist;
 
     if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);

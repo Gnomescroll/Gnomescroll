@@ -480,6 +480,7 @@ Agent_event::Agent_event(Agent_state* owner)
 :
 a(owner),
 r(0),g(0),b(0),
+vox_status(AGENT_VOX_IS_STANDING),
 model_was_changed(true),
 bb(NULL)
 {}

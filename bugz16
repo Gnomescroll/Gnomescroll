@@ -222,6 +222,9 @@ a possibly related error: (health component is null when it should not be)
 ./run() [0x80b7351]
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/network/packets.cpp, line 198 function: handle 
 
+-- this error happens when there is a lag in init. the object has not been created, but we are getting its state
+-- the error is that Objects::get() is not returning NULL
+
 both happen on init/connect
 
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
@@ -236,3 +239,5 @@ glsl colored/textured voxels
 
 shovel sounds
 block placement sounds
+
+remove 2nd ping number
