@@ -214,7 +214,7 @@ int run()
 
         glEnd();
 
-        obj_load::draw_model(0.0,0.0,0.0); //draw test model
+        //obj_load::draw_model(0.0,0.0,0.0); //draw test model
         //glDisable(GL_TEXTURE_2D);
 
         GL_ASSERT(GL_BLEND, false);

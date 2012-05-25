@@ -160,12 +160,16 @@ DONE
 red bots should do random dmg
 DONE
 
+blue bombs and red bots should have random health
+DONE
+
+health transmitted with mobs
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
 blue bombs should drop grenades
-
-blue bombs and red bots should have random health
 
 GS_ASSERTs sometimes on connect with some components:
 --something overwriting, only sometimes?
@@ -195,13 +199,11 @@ GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object.cpp, li
 
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
-
 have chat display a "Press U to relock mouse" when window gains focus and mouse is unlocked
+alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
-alt tab doesnt work in fullscreen
-
-shrapnel
+shrapnel (glsl)
 
 get rid of grue model blocking view on init
 

@@ -31,7 +31,7 @@ namespace ClientState {
     int tick_id = 0;
     int frame_id = 0;
 
-    Vec3 location_pointer;
+    Vec3 location_pointer = vec3_init(0,0,0);
     bool location_pointer_set = false;
 
     Agent_list* agent_list = NULL;

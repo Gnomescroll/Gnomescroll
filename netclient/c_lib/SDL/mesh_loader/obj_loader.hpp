@@ -187,9 +187,6 @@ void init_draw_model()
 
 void draw_model(float x, float y, float z)
 {
-    //x = current_camera->x+5.0;
-    //y = current_camera->y;
-    //z = current_camera->z;
     x = ClientState::location_pointer.x;
     y = ClientState::location_pointer.y;
     z = ClientState::location_pointer.z;
