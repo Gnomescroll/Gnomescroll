@@ -28,7 +28,11 @@ namespace t_map
         //determine support for anisotropic filtering
         //if( true || !GLEW_texture_array)
 
-        if(!GLEW_EXT_texture_array)
+        if(GLEW_EXT_texture_array)
+        {
+            if(PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
+        }
+        else
         {
             printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
             T_MAP_BACKUP_SHADER = 1;

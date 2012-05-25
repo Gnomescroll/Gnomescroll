@@ -173,16 +173,17 @@ const char _pallet[ 3*(_pallet_num) ] =
 };
 */
 
-const int _pallet_num = 2;
+const int _pallet_num = 1;
 const char _pallet[ 3*(_pallet_num) ] = 
 {
+    0xff, 0xff,0xff
 /*
     0x3d, 0x52,0x5e,
     0xa0, 0xa0,0xa0,
 */  
     //0x00, 0x32,0x64,
-    0xff, 0xff,0xff,
-    0xa0, 0x64,0x32,
+    //0xff, 0xff,0xff,
+    //0xa0, 0x64,0x32,
 
     //0xff,0xff,0xff,
     //0x57, 0x6e,0x62,
@@ -733,9 +734,6 @@ void Vbo_map::update_vbo(int i, int j)
 
 void Vbo_map::update_vbo_comptability(int i, int j)
 {
-
-    int _x, _y, _z;
-
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
 
@@ -746,163 +744,46 @@ void Vbo_map::update_vbo_comptability(int i, int j)
 
     int vertex_count[2] = {0, 0};
 
-    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+    set_vertex_buffers(chunk); //set the vertex 
 
-        for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
-        for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
-
-            struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z);  
-            int tile_id = element.block; //faster
-
-            if( !isActive(tile_id) ) continue;
-
-            if( !isTransparent(tile_id) )
-            { 
-                for(int side_num=0; side_num<6; side_num++) {
-                    if(! _is_occluded(_x,_y,_z,side_num)) 
-                    {
-                        add_quad_comptability( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,element);
-                        vertex_count[0] += 4;
-                    }
-                }
-            } 
-            else
-            {
-                //active block that does not occlude
-                for(int side_num=0; side_num<6; side_num++) 
-                {
-                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
-                    {
-                        add_quad_comptability( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,element);
-                        vertex_count[1] += 4;
-                    }
-                }
-            }
-
-        }}
-    }
+    for(int i=0; i<6; i++) vertex_count[0] += 4*SIDE_BUFFER_INDEX[i];
+    vertex_count[1] = 4*SIDE_BUFFER_INDEX[6];
 
     int vnum = vertex_count[0] + vertex_count[1];
 
+    vertex_max = vnum;
     vbo->_v_num[0] = vertex_count[0];
     vbo->_v_num[1] = vertex_count[1];
 
     vbo->_v_offset[0] = 0;
     vbo->_v_offset[1] = vertex_count[0];
 
-
-
     if(vnum == 0) 
     {
         vbo->vnum = 0;
-        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
+        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id); vbo->vbo_id = 0;
         return;
     } 
     else 
     {
         vbo->vnum = vnum; //total vertices, size of VBO
-        if( vnum > vbo->vnum_max ) vbo->resize(vnum);
+        // if( vnum > vbo->vnum_max ) vbo->resize(vnum);
     }
 
-    /*
-        Memcpy from buffer into vlist
-    */
-    memcpy(vbo->v_list, vlist_scratch_0, vertex_count[0]*sizeof(struct Vertex));
-    memcpy(vbo->v_list+vertex_count[0], vlist_scratch_1, vertex_count[1]*sizeof(struct Vertex));
 
-    //push to graphics card
+    //struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
+    struct Vertex* vlist = new Vertex[vnum];
+
+    generate_vertex_list(vlist);
+
+    delete[] vbo->v_list; //free old memory
+    vbo->v_list = vlist;
+
     if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
 }
-
-#if 0
-void Vbo_map::update_vbo(int i, int j)
-{
-    int _x, _y, _z;
-
-    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
-    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
-
-    //if(chunk == NULL) printf("chunk null\n");
-    //if(vbo == NULL) printf("vbo null\n");
-
-    int vertex_count[2] = {0, 0};
-
-    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-
-    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
-
-        for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
-        for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
-
-            int tile_id = map->get_block(_x,_y,_z);
-
-            if( !isActive(tile_id) ) continue;
-
-            if( !isTransparent(tile_id) )
-            { 
-                for(int side_num=0; side_num<6; side_num++) {
-                    if(! _is_occluded(_x,_y,_z,side_num)) 
-                    {
-                        add_quad2( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,tile_id);
-                        vertex_count[0] += 4;
-                    }
-                }
-            } 
-            else
-            {
-                //active block that does not occlude
-                for(int side_num=0; side_num<6; side_num++) 
-                {
-                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
-                    {
-                        add_quad2( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,tile_id);
-                        vertex_count[1] += 4;
-                    }
-                }
-            }
-
-        }}
-    }
-
-    int vnum = vertex_count[0] + vertex_count[1];
-
-    vbo->_v_num[0] = vertex_count[0];
-    vbo->_v_num[1] = vertex_count[1];
-
-    vbo->_v_offset[0] = 0;
-    vbo->_v_offset[1] = vertex_count[0];
-
-
-
-    if(vnum == 0) 
-    {
-        vbo->vnum = 0;
-        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
-        return;
-    } 
-    else 
-    {
-        vbo->vnum = vnum; //total vertices, size of VBO
-        if( vnum > vbo->vnum_max ) vbo->resize(vnum);
-    }
-
-    /*
-        Memcpy from buffer into vlist
-    */
-    memcpy(vbo->v_list, vlist_scratch_0, vertex_count[0]*sizeof(struct Vertex));
-    memcpy(vbo->v_list+vertex_count[0], vlist_scratch_1, vertex_count[1]*sizeof(struct Vertex));
-
-    //push to graphics card
-    if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
-}
-#endif
 
 int update_chunks() {
 #if 0
