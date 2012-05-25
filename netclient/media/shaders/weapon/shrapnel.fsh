@@ -8,6 +8,7 @@ void main()
 {
 
     gl_FragColor = texture2D(base_texture, texCoord.xy);
+    //gl_FragColor.a = 0.5;
 
 }
 
