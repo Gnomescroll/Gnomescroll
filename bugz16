@@ -145,25 +145,17 @@ DONE
 fix rotation on isometric block sides
 DONE
 
-fix block damage for laser rifles
+restore block damage for laser rifles
 DONE
 
-if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
---the completely empty function is done. need to integrate it into component system
---agents need more careful restrictions. they can't just die early. maybe N blocks per N damage
---server should keep track of solid voxel counts instead of recalculating constantly
+storage blocks
+DONE
 
 blue bombs should aggro if shot
 
 blue bombs should be wandering, slowly
 
-destroy 1 voxel in monster spawner
-destroy 2 voxels in robot
-
-or just do voxel destruction based on cumulative damage
-
-try to fix the cpu spike in voxel adjustments -- recalculating entire list may be unnecessary since each model has their own sublist
-if cant fix, probably disable voxel damage
+disable voxel model deformation
 
 blue bombs should damage terrain like grenades
 
@@ -171,9 +163,8 @@ blue bombs should drop grenades
 
 red bots should do random dmg, have random health etc
 
-tiling noise (argh) [brandon]
-
 GS_ASSERTs sometimes on connect with some components:
+--something overwriting, only sometimes?
 
 ./run(_Z11print_tracev+0x25) [0x80b61b9]
 ./run(_ZN7Objects10ObjectList13set_object_idEPNS_6ObjectEi+0x3c) [0x80ed304]
@@ -198,16 +189,12 @@ GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object_list.cp
 ./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object.cpp, line 19 function: add_component 
 
-storage blocks
-
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
-
-shrapnel
 
 have chat display a "Press U to relock mouse" when window gains focus and mouse is unlocked
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
 alt tab doesnt work in fullscreen
 
-restore block damage for laser rifle
+shrapnel

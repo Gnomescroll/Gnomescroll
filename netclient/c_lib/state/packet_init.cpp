@@ -160,7 +160,7 @@ void RegisterMessages() {
 
     agent_conflict_notification_StoC::register_client_packet();
 
-    destroy_voxel_StoC::register_client_packet();
+    //destroy_voxel_StoC::register_client_packet();
 
     /*
      * Objects

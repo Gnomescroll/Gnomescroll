@@ -233,16 +233,16 @@ inline void object_shot_object_StoC::handle()
     );
 
     // destroy model
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
-    if (weapon != NULL)
-    {
-        int voxel[3] = { this->voxel_x, this->voxel_y, this->voxel_z };
-        destroy_object_voxel(
-            this->target_id, this->target_type, this->target_part,
-            voxel, weapon->attacker_properties.voxel_damage_radius
-        );
-    }
+    //using Components::WeaponTargetingComponent;
+    //WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
+    //if (weapon != NULL)
+    //{
+        //int voxel[3] = { this->voxel_x, this->voxel_y, this->voxel_z };
+        //destroy_object_voxel(
+            //this->target_id, this->target_type, this->target_part,
+            //voxel, weapon->attacker_properties.voxel_damage_radius
+        //);
+    //}
 
     // todo -- sound event
     Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);

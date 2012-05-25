@@ -168,10 +168,10 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
                     agent->status.apply_damage(
                         p.agent_damage, p.id, p.type, t.part
                     );
-                    destroy_object_voxel(
-                        t.id, t.type, t.part, t.voxel,
-                        p.voxel_damage_radius
-                    );
+                    //destroy_object_voxel(
+                        //t.id, t.type, t.part, t.voxel,
+                        //p.voxel_damage_radius
+                    //);
                 }
             }
             break;

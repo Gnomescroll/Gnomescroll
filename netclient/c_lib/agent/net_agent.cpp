@@ -115,22 +115,22 @@ inline void agent_shot_object_StoC::handle()
     }
     a->event.fired_weapon_at_object(target_id, target_type, target_part);
     // get obj from metadata, set voxel
-    int voxel[3];
-    voxel[0] = vx;
-    voxel[1] = vy;
-    voxel[2] = vz;
-    int voxel_blast_radius = 1;
-    if (target_type == OBJECT_AGENT)
-    {
-        Agent_state* target = ClientState::agent_list->get(target_id);
-        if (target->status.team == a->status.team) return;
-        voxel_blast_radius = 3;
-    }
-    else if (target_type == OBJECT_MONSTER_BOMB)
-    {
-        voxel_blast_radius = 2;
-    }
-    destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
+    //int voxel[3];
+    //voxel[0] = vx;
+    //voxel[1] = vy;
+    //voxel[2] = vz;
+    //int voxel_blast_radius = 1;
+    //if (target_type == OBJECT_AGENT)
+    //{
+        //Agent_state* target = ClientState::agent_list->get(target_id);
+        //if (target->status.team == a->status.team) return;
+        //voxel_blast_radius = 3;
+    //}
+    //else if (target_type == OBJECT_MONSTER_BOMB)
+    //{
+        //voxel_blast_radius = 2;
+    //}
+    //destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
 }
 
 inline void agent_shot_block_StoC::handle()
@@ -168,22 +168,22 @@ inline void agent_melee_object_StoC::handle()
     }
     a->event.melee_attack_object(target_id, target_type, target_part);
     // get obj from metadata, set voxel
-    int voxel[3];
-    voxel[0] = vx;
-    voxel[1] = vy;
-    voxel[2] = vz;
-    int voxel_blast_radius = 1;
-    if (target_type == OBJECT_AGENT)
-    {
-        Agent_state* target = ClientState::agent_list->get(target_id);
-        if (target->status.team == a->status.team) return;
-        voxel_blast_radius = 3;
-    }
-    else if (target_type == OBJECT_MONSTER_BOMB)
-    {
-        voxel_blast_radius = 2;
-    }
-    destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
+    //int voxel[3];
+    //voxel[0] = vx;
+    //voxel[1] = vy;
+    //voxel[2] = vz;
+    //int voxel_blast_radius = 1;
+    //if (target_type == OBJECT_AGENT)
+    //{
+        //Agent_state* target = ClientState::agent_list->get(target_id);
+        //if (target->status.team == a->status.team) return;
+        //voxel_blast_radius = 3;
+    //}
+    //else if (target_type == OBJECT_MONSTER_BOMB)
+    //{
+        //voxel_blast_radius = 2;
+    //}
+    //destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
 }
 
 inline void agent_melee_nothing_StoC::handle()
@@ -498,11 +498,11 @@ inline void alter_item_ownership_StoC::handle()
     //obj->set_owner(owner);
 }
 
-inline void destroy_voxel_StoC::handle()
-{
-    int voxel[3] = { x,y,z };
-    destroy_object_voxel(entity_id, entity_type, entity_part, voxel, radius);
-}
+//inline void destroy_voxel_StoC::handle()
+//{
+    //int voxel[3] = { x,y,z };
+    //destroy_object_voxel(entity_id, entity_type, entity_part, voxel, radius);
+//}
 
 inline void inventory_StoC::handle()
 {
@@ -580,7 +580,7 @@ inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
 inline void spawn_location_StoC::handle(){}
 inline void alter_item_ownership_StoC::handle(){}
-inline void destroy_voxel_StoC::handle(){}
+//inline void destroy_voxel_StoC::handle(){}
 inline void inventory_StoC::handle() {}
 
 //for benchmarking
@@ -668,7 +668,7 @@ inline void hitscan_object_CtoS::handle()
 
     Agent_state* agent = NULL;
     const int obj_dmg = randrange(10,25);
-    int voxel[3] = { vx,vy,vz };
+    //int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;
     Object* obj = NULL;
@@ -691,7 +691,7 @@ inline void hitscan_object_CtoS::handle()
             agent->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
             // apply damage
             agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
+            //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
             break;
 
  
@@ -829,7 +829,7 @@ inline void melee_object_CtoS::handle()
 
     Agent_state* agent = NULL;
     const int obj_dmg = Item::get_item_object_damage(weapon_type);
-    int voxel[3] = { vx,vy,vz };
+    //int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;
     Object* obj = NULL;
@@ -851,7 +851,7 @@ inline void melee_object_CtoS::handle()
             if (agent==NULL) return;
             // apply damage
             agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            destroy_object_voxel(agent->id, agent->type, part, voxel, 3);
+            //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);
             break;
 
         case OBJECT_MONSTER_BOMB:
