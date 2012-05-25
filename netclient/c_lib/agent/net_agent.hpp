@@ -664,7 +664,7 @@ class agent_set_block_CtoS: public FixedSizeNetPacketToServer<agent_set_block_Ct
         inline void handle();
 };
 
-#if !PRODUCTION
+//#if !PRODUCTION
 class admin_set_block_CtoS: public FixedSizeNetPacketToServer<admin_set_block_CtoS>
 {
     public:
@@ -680,7 +680,7 @@ class admin_set_block_CtoS: public FixedSizeNetPacketToServer<admin_set_block_Ct
         }
         inline void handle();
 };
-#endif
+//#endif
 
 /****************/
 

@@ -529,9 +529,9 @@ inline void ThrowGrenade_CtoS::handle(){}
 //inline void AgentActiveWeapon_CtoS::handle() {}
 //inline void AgentReloadWeapon_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
-#if !PRODUCTION
+//#if !PRODUCTION
 inline void admin_set_block_CtoS::handle() {}
-#endif
+//#endif
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
@@ -1028,7 +1028,7 @@ inline void agent_set_block_CtoS::handle()
     }
 }
 
-#if !PRODUCTION
+//#if !PRODUCTION
 inline void admin_set_block_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
@@ -1067,7 +1067,7 @@ inline void admin_set_block_CtoS::handle()
         msg.broadcast();
     }
 }
-#endif
+//#endif
 
 #define ITEM_PLACEMENT_Z_DIFF_LIMIT 3
 

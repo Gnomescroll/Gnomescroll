@@ -201,3 +201,20 @@ shovel sounds
 block placement sounds
 
 remove 2nd ping number
+
+red box random walk is biased to +/+
+
+use quadrants for spawning
+
+bug that appears after client/agent ids have been recycled:
+./gnomescroll_server(_Z11print_tracev+0x15) [0x468a05]
+./gnomescroll_server(_ZN13ItemContainer25assign_container_to_agentEPNS_22ItemContainerInterfaceEPiii+0x42) [0x469b52]
+./gnomescroll_server(_ZN14NetPeerManager5readyEv+0x57) [0x496da7]
+./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerI13identify_CtoSE7handlerEPciPii+0x1ad) [0x4b19ed]
+./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x71) [0x44fd81]
+./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0x2ba) [0x49afca]
+./gnomescroll_server(_ZN4Main3runEv+0x15) [0x49be45]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f9d412a9c4d]
+./gnomescroll_server() [0x448979]
+GS_ASSERT error: /usr/freespace/dc_mmo/server/c_lib/item/container/_interface.cpp, line 306 function: assign_container_to_agent 
+

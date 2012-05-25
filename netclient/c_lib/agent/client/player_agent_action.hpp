@@ -33,9 +33,9 @@ class PlayerAgent_action
 
         void set_block(ItemID placer_id);
 
-        #if !PRODUCTION
+        //#if !PRODUCTION
         void admin_set_block();
-        #endif
+        //#endif
         
         void throw_grenade();
         void place_spawner();

@@ -57,9 +57,9 @@ void RegisterMessages() {
     client_disconnected_StoC::register_client_packet();
     
     agent_set_block_CtoS::register_server_packet();
-    #if !PRODUCTION
+    //#if !PRODUCTION
     admin_set_block_CtoS::register_server_packet();
-    #endif
+    //#endif
 
     // particle system messages
     Particle::grenade_StoC::register_client_packet();

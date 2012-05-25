@@ -353,7 +353,7 @@ void PlayerAgent_action::set_block(ItemID placer_id)
     }
 }
 
-#if !PRODUCTION
+//#if !PRODUCTION
 void PlayerAgent_action::admin_set_block()
 {
     if (p->you == NULL) return;
@@ -381,7 +381,7 @@ void PlayerAgent_action::admin_set_block()
     msg.val = val;
     msg.send();
 }
-#endif
+//#endif
 
 void PlayerAgent_action::throw_grenade()
 {
