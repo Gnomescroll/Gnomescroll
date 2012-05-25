@@ -55,9 +55,7 @@ void load_item_dat()
 
     item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
     sprite_def(i0, 1,7);
-    s.max_durability = 200;
-    s.max_energy = 100;
-    s.max_stack_size = 1;
+    s.max_stack_size = 100;
 
     item_def(9, IG_RESOURCE, "food_rock-0");
     sprite_def(i1, 1,4);

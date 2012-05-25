@@ -200,7 +200,7 @@ int consume_stack_item(ItemID item_id)
     GS_ASSERT(item_id != NULL_ITEM);
     int stack_size = get_stack_size(item_id);
     GS_ASSERT(stack_size > 0);
-    if (stack_size == 1)
+    if (stack_size <= 1)
     {
         destroy_item(item_id);
         return 0;
@@ -208,6 +208,7 @@ int consume_stack_item(ItemID item_id)
     Item* item = get_item(item_id);
     GS_ASSERT(item != NULL);
     item->stack_size -= 1;
+    GS_ASSERT(item->stack_size > 0);
     return item->stack_size;
 }
 

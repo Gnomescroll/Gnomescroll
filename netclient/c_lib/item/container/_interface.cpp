@@ -427,6 +427,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     // put a grenade launcher in the toolbelt to selt
     Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
     GS_ASSERT(grenade_launcher != NULL);
+    grenade_launcher->stack_size = 100;
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
 
     // add a few container blocks
