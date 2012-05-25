@@ -112,6 +112,7 @@ void begin_particle_draw()
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBegin(GL_QUADS);
 }
+
 void end_particle_draw()
 {
     glEnd();

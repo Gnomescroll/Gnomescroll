@@ -145,6 +145,8 @@ DONE
 fix rotation on isometric block sides
 DONE
 
+--May 24, told brandon he would take two weeks to do map gen
+
 restore block damage for laser rifles
 DONE
 
@@ -208,7 +210,8 @@ have chat display a "Press U to relock mouse" when window gains focus and mouse 
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
-shrapnel (glsl)
+tiling noise [BRANDON]
+shrapnel [BRANDON]
 
 glsl colored/textured voxels
 
