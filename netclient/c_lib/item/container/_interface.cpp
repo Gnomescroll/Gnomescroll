@@ -392,6 +392,7 @@ void assign_container_to_agent(ItemContainerInterface* container, int* container
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(container_list[agent_id] == NULL_ITEM);
+    if (container == NULL) return;
     container_list[agent_id] = container->id;
     container->assign_owner(agent_id);
     init_container(container);
@@ -500,10 +501,28 @@ void agent_died(int agent_id)
 void agent_quit(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+
+    // close opened container (this will also throw any items sitting in hand)
+    if (opened_containers[agent_id] != NULL_CONTAINER)
+    {
+        send_container_close(agent_id, opened_containers[agent_id]);
+        agent_close_container(opened_container[agent_id];
+    }
+
+    GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
+    opened_containers[agent_id] = NULL_CONTAINER;
+
+    GS_ASSERT(agent_hand_list[agent_id] == NULL_ITEM);
+    agent_hand_list[agent_id] = NULL_ITEM;
+
     // destroy containers
     destroy_container(agent_container_list[agent_id]);
     destroy_container(agent_toolbelt_list[agent_id]);
     destroy_container(agent_nanite_list[agent_id]);
+
+    agent_container_list[agent_id] = NULL_CONTAINER;
+    agent_toolbelt_list[agent_id] = NULL_CONTAINER;
+    agent_nanite_list[agent_id] = NULL_CONTAINER;
 }
 
 void digest_nanite_food()

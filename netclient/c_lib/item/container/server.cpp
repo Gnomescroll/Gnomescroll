@@ -141,7 +141,17 @@ void agent_close_container(int agent_id, int container_id)
     GS_ASSERT(opened_containers != NULL);
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
+
+    Agent_state* a = ClientState::agent_list->get(agent_id);
     
+    // throw anything in hand
+    if (agent_hand_list[agent_id] != NULL_ITEM)
+    {
+        if (a != NULL) send_hand_remove(a->client_id);
+        ItemParticle::throw_item(agent_hand_list[agent_id]);
+    }
+    agent_hand_list[agent_id] = NULL_ITEM;
+
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
