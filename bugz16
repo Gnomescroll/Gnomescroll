@@ -177,55 +177,15 @@ DONE
 restore shrapnel animations
 DONE
 
+fixed a major bug in ObjectList, was returning uninitialised/old objects when should have been returning NULL
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
 
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
 this will let players "dodge"
-
-GS_ASSERTs sometimes on connect with some components:
---something overwriting, only sometimes?
-
-./run(_Z11print_tracev+0x25) [0x80b61b9]
-./run(_ZN7Objects10ObjectList13set_object_idEPNS_6ObjectEi+0x3c) [0x80ed304]
-./run(_ZN7Objects6createE10ObjectTypei+0x4b) [0x80eef7f]
-./run(_ZN34object_create_momentum_angles_StoC6handleEv+0x33) [0x814548d]
-./run(_ZN34FixedSizeReliableNetPacketToClientI34object_create_momentum_angles_StoCE7handlerEPciPii+0x74) [0x816e688]
-./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
-./run(_ZN9NetClient30client_dispatch_network_eventsEv+0xc6) [0x80caf10]
-./run(_ZN4Main3runEv+0x150) [0x8139ffd]
-./run(main+0x35) [0x813a728]
-/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb715c113]
-GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object_list.cpp, line 29 function: set_object_id 
-./run(_Z11print_tracev+0x25) [0x80b61b9]
-./run(_ZN7Objects6Object13add_componentEiPN10Components9ComponentE+0x99) [0x80ecf73]
-./run(_ZN7Objects23add_component_to_objectEPNS_6ObjectE13ComponentType+0x5d) [0x80eeaaf]
-./run() [0x80ebfa1]
-./run(_ZN7Objects20create_mob_robot_boxEv+0x4b) [0x80ec1e8]
-./run() [0x80eeebe]
-./run(_ZN7Objects6createE10ObjectTypei+0x1d) [0x80eef51]
-./run(_ZN34object_create_momentum_angles_StoC6handleEv+0x33) [0x814548d]
-./run(_ZN34FixedSizeReliableNetPacketToClientI34object_create_momentum_angles_StoCE7handlerEPciPii+0x74) [0x816e688]
-./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
-GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object.cpp, line 19 function: add_component 
-
-a possibly related error: (health component is null when it should not be)
-./run(_Z11print_tracev+0x25) [0x80b7409]
-./run(_ZN33object_state_momentum_angles_StoC6handleEv+0x6f) [0x8148cbd]
-./run(_ZN34FixedSizeReliableNetPacketToClientI33object_state_momentum_angles_StoCE7handlerEPciPii+0x74) [0x81720c6]
-./run(_Z23process_packet_messagesPcPiii+0x100) [0x80ccc4a]
-./run(_ZN9NetClient30client_dispatch_network_eventsEv+0xc6) [0x80cc160]
-./run(_ZN4Main3runEv+0x150) [0x813cd92]
-./run(main+0x35) [0x813d49e]
-/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7108113]
-./run() [0x80b7351]
-GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/network/packets.cpp, line 198 function: handle 
-
--- this error happens when there is a lag in init. the object has not been created, but we are getting its state
--- the error is that Objects::get() is not returning NULL
-
-both happen on init/connect
 
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?

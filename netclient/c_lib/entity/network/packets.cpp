@@ -104,18 +104,21 @@ inline void object_create_owner_team_StoC::handle()
     if (obj == NULL) return;
 
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
     }
 
     OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    GS_ASSERT(owner_component != NULL);
     if (owner_component != NULL)
     {
         owner_component->set_owner(owner);
     }
     
     TeamComponent* team_component = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
+    GS_ASSERT(team_component != NULL);
     if (team_component != NULL)
     {
         team_component->set_team(team);
@@ -135,24 +138,27 @@ inline void object_create_owner_team_index_StoC::handle()
     if (obj == NULL) return;
 
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
     }
 
     OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    GS_ASSERT(owner_component != NULL);
     if (owner_component != NULL)
     {
         owner_component->set_owner(owner);
     }
     
     IndexedTeamComponent* team_component = (IndexedTeamComponent*)obj->get_component(COMPONENT_INDEXED_TEAM);
+    GS_ASSERT(team_component != NULL);
     if (team_component != NULL)
     {
         team_component->set_team(team);
         team_component->set_team_index(team_index);
     }
-    
+
     Objects::ready(obj);
 }
 
@@ -166,10 +172,8 @@ inline void object_state_StoC::handle()
     Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x,y,z));
-    }
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
 }
 
 inline void object_state_momentum_StoC::handle()
@@ -180,6 +184,7 @@ inline void object_state_momentum_StoC::handle()
     Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -196,7 +201,6 @@ inline void object_state_momentum_angles_StoC::handle()
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
-    if (physics == NULL) printf("object type %d\n", obj->type);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
