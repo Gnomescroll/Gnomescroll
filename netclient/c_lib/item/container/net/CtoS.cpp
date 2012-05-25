@@ -329,11 +329,7 @@ void create_container_block_CtoS::handle()
 
     bool collides = false;
     _set(x,y,z, val); // set temporarily to test against
-    if (agent_collides_terrain(a))
-    {
-        collides = true;
-        //printf("collides w/ player\n");
-    }
+    if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
         for (int i=0; i<ServerState::agent_list->n_max; i++)

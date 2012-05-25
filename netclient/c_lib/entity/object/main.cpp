@@ -21,23 +21,6 @@ void load_object_data()
     load_pickup_sprite_data(OBJECT_GRENADE_REFILL);
     // gemstones
 
-/*
-    load_pickup_sprite_data(OBJECT_GEMSTONE_MALACHITE);
-    load_pickup_sprite_data(OBJECT_GEMSTONE_RUBY);
-    load_pickup_sprite_data(OBJECT_GEMSTONE_TURQUOISE);
-    load_pickup_sprite_data(OBJECT_GEMSTONE_SILVER);
-    load_pickup_sprite_data(OBJECT_GEMSTONE_AMETHYST);
-    load_pickup_sprite_data(OBJECT_GEMSTONE_JADE);
-    load_pickup_sprite_data(OBJECT_GEMSTONE_ONYX);
-
-    // block drops
-    load_dirt_block_drop_data();
-    load_stone_block_drop_data();
-    load_soft_rock_block_drop_data();
-    load_medium_rock_block_drop_data();
-    load_hard_rock_block_drop_data();
-    load_infected_rock_block_drop_data();
-*/
     // fabs
     load_agent_spawner_data();
     load_turret_data();
@@ -62,24 +45,6 @@ void init()
     object_list->set_object_max(OBJECT_LASER_REFILL, 256);
     object_list->set_object_max(OBJECT_GRENADE_REFILL, 256);
 
-/*
-    // block drops
-    object_list->set_object_max(OBJECT_DIRT_BLOCK_DROP, 256);
-    object_list->set_object_max(OBJECT_STONE_BLOCK_DROP, 256);
-    object_list->set_object_max(OBJECT_SOFT_ROCK_BLOCK_DROP, 256);
-    object_list->set_object_max(OBJECT_MEDIUM_ROCK_BLOCK_DROP, 256);
-    object_list->set_object_max(OBJECT_HARD_ROCK_BLOCK_DROP, 256);
-    object_list->set_object_max(OBJECT_INFECTED_ROCK_BLOCK_DROP, 256);
-
-    // gemstones
-    object_list->set_object_max(OBJECT_GEMSTONE_MALACHITE, 256);
-    object_list->set_object_max(OBJECT_GEMSTONE_RUBY, 256);
-    object_list->set_object_max(OBJECT_GEMSTONE_TURQUOISE, 256);
-    object_list->set_object_max(OBJECT_GEMSTONE_SILVER, 256);
-    object_list->set_object_max(OBJECT_GEMSTONE_AMETHYST, 256);
-    object_list->set_object_max(OBJECT_GEMSTONE_JADE, 256);
-    object_list->set_object_max(OBJECT_GEMSTONE_ONYX, 256);
-*/
     // fabs
     object_list->set_object_max(OBJECT_AGENT_SPAWNER, 256);
     object_list->set_object_max(OBJECT_TURRET, 512);
@@ -140,21 +105,7 @@ static Object* create_switch(ObjectType type)
         case OBJECT_GEMSTONE_JADE:
         case OBJECT_GEMSTONE_ONYX:
             return create_pickup_sprite(type);
-/*
-        // block drops
-        case OBJECT_DIRT_BLOCK_DROP:
-            return create_dirt_block_drop();
-        case OBJECT_STONE_BLOCK_DROP:
-            return create_stone_block_drop();
-        case OBJECT_SOFT_ROCK_BLOCK_DROP:
-            return create_soft_rock_block_drop();
-        case OBJECT_MEDIUM_ROCK_BLOCK_DROP:
-            return create_medium_rock_block_drop();
-        case OBJECT_HARD_ROCK_BLOCK_DROP:
-            return create_hard_rock_block_drop();
-        case OBJECT_INFECTED_ROCK_BLOCK_DROP:
-            return create_infected_rock_block_drop();
-*/
+
         // fabs
         case OBJECT_AGENT_SPAWNER:
             return create_agent_spawner();
@@ -186,6 +137,7 @@ Object* create(ObjectType type)
 
 Object* create(ObjectType type, int id)
 {
+    if (object_list->in_use(type, id)) return NULL;
     Object* object = create_switch(type);
     if (object == NULL) return NULL;
     object_list->set_object_id(object, id);
@@ -210,27 +162,7 @@ void ready_switch(Object* object)
         case OBJECT_GEMSTONE_ONYX:
             ready_pickup_sprite(object);
             break;
-/*
-        // block drops
-        case OBJECT_DIRT_BLOCK_DROP:
-            ready_dirt_block_drop(object);
-            break;
-        case OBJECT_STONE_BLOCK_DROP:
-            ready_stone_block_drop(object);
-            break;
-        case OBJECT_SOFT_ROCK_BLOCK_DROP:
-            ready_soft_rock_block_drop(object);
-            break;
-        case OBJECT_MEDIUM_ROCK_BLOCK_DROP:
-            ready_medium_rock_block_drop(object);
-            break;
-        case OBJECT_HARD_ROCK_BLOCK_DROP:
-            ready_hard_rock_block_drop(object);
-            break;
-        case OBJECT_INFECTED_ROCK_BLOCK_DROP:
-            ready_infected_rock_block_drop(object);
-            break;
-*/
+
         // fabs
         case OBJECT_AGENT_SPAWNER:
             ready_agent_spawner(object);
@@ -275,27 +207,7 @@ void destroy_switch(Object* object)
         case OBJECT_GEMSTONE_ONYX:
             die_pickup_sprite(object);
             break;
-/*
-        // block drops
-        case OBJECT_DIRT_BLOCK_DROP:
-            die_dirt_block_drop(object);
-            break;
-        case OBJECT_STONE_BLOCK_DROP:
-            die_stone_block_drop(object);
-            break;
-        case OBJECT_SOFT_ROCK_BLOCK_DROP:
-            die_soft_rock_block_drop(object);
-            break;
-        case OBJECT_MEDIUM_ROCK_BLOCK_DROP:
-            die_medium_rock_block_drop(object);
-            break;
-        case OBJECT_HARD_ROCK_BLOCK_DROP:
-            die_hard_rock_block_drop(object);
-            break;
-        case OBJECT_INFECTED_ROCK_BLOCK_DROP:
-            die_infected_rock_block_drop(object);
-            break;
-*/
+
         // fabs
         case OBJECT_AGENT_SPAWNER:
             die_agent_spawner(object);
@@ -457,7 +369,7 @@ void spawn_mobs()
     if (object_list->empty(type)) return;
     Object** objects = object_list->get_objects(type);
     GS_ASSERT(objects != NULL);
-    char* used = object_list->get_used(type);;\
+    char* used = object_list->get_used(type);
     GS_ASSERT(used != NULL);
     int max = object_list->max(type);
     GS_ASSERT(max > 0);

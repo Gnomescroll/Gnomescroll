@@ -46,7 +46,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
         ~Grenade();
 };
 
-}
+}   // Particle
 
 namespace Particle
 {
@@ -80,4 +80,4 @@ int get_grenade_damage(ObjectType type)
     }
 }
 
-}
+}   // Particle

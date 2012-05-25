@@ -12,7 +12,8 @@ dont_include_this_file_in_server
 
 class PlayerAgent_state;// forward declare
 
-class PlayerAgent_action {
+class PlayerAgent_action
+{
     private:
         PlayerAgent_state* p;
         
@@ -25,7 +26,6 @@ class PlayerAgent_action {
         // compute this vector whenever a htiscan target is acquired
         Vec3 target_direction;
     
-        //void fire();
         void hitscan_laser();
 
         void tick_mining_laser();
@@ -36,11 +36,6 @@ class PlayerAgent_action {
         #if !PRODUCTION
         void admin_set_block();
         #endif
-        
-        //bool switch_weapon(int i);
-        //void reload();
-        //int select_block();
-        //void pickup_item(); // raycast to nearby item, add to inventory if found
         
         void throw_grenade();
         void place_spawner();

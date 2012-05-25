@@ -32,7 +32,7 @@ ParticleMotion(id, x,y,z, mx,my,mz, GRENADE_SHRAPNEL_MASS)
 void Grenade_shrapnel::tick()
 {
     const float base_dmg = 55;
-    const int voxel_blast_radius = 3;
+    //const int voxel_blast_radius = 3;
     Voxel_hitscan_target target;
     bool voxel_hit;
     int j=0;
@@ -61,16 +61,16 @@ void Grenade_shrapnel::tick()
             return;
         }
 
-        destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
-        destroy_voxel_StoC msg;
-        msg.x = target.voxel[0];
-        msg.y = target.voxel[1];
-        msg.z = target.voxel[2];
-        msg.entity_id = target.entity_id;
-        msg.entity_type = target.entity_type;
-        msg.entity_part = target.part_id;
-        msg.radius = voxel_blast_radius;
-        msg.broadcast();
+        //destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
+        //destroy_voxel_StoC msg;
+        //msg.x = target.voxel[0];
+        //msg.y = target.voxel[1];
+        //msg.z = target.voxel[2];
+        //msg.entity_id = target.entity_id;
+        //msg.entity_type = target.entity_type;
+        //msg.entity_part = target.part_id;
+        //msg.radius = voxel_blast_radius;
+        //msg.broadcast();
 
         float dmg = base_dmg * ((float)(this->ttl+i)/((float)ttl_max+1));
         a->status.apply_damage(dmg, this->owner, OBJECT_GRENADE);

@@ -463,9 +463,16 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
         GS_ASSERT(item != NULL);
         group = Item::get_item_group_for_type(item->type);
     }
+
+    // setup vars
+    int stack_size;
+    int remaining_stack_size;
     
     switch (group)
     {
+        case IG_NANITE_COIN:
+        case IG_ERROR:
+        case IG_RESOURCE:
         case IG_NONE:   // hand
             // unlimited durability
             break;
@@ -474,12 +481,9 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             // the ammo decrement is deferred until packet receipt
             break;
 
-        case IG_ERROR:
-        case IG_RESOURCE:
+        // durability decrements
         case IG_HITSCAN_WEAPON:
         case IG_MELEE_WEAPON:
-        case IG_GRENADE_LAUNCHER:
-        case IG_NANITE_COIN:
         case IG_DEBUG:
             if (item->durability != NULL_DURABILITY)   // dont decrement durability for nulls
                 item->durability -= 1;
@@ -488,6 +492,25 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             agent_fire_on[agent_id] = false;
             agent_fire_tick[agent_id] = 0;
             break;
+
+        // stack decrements (note: some are deferred until confirmation of action, e.g. block placers)
+        case IG_GRENADE_LAUNCHER:
+            // adjust stack
+            stack_size = item->stack_size;
+            remaining_stack_size = Item::consume_stack_item(item->id);  // this will destroy the item if consumed
+            if (remaining_stack_size <= 0)
+            {   // item was destroyed, remove from hand
+                agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+                agent_selected_item[agent_id] = NULL_ITEM;
+            }
+            else if (stack_size != remaining_stack_size)
+                // we must send item updates ourself however. consume_stack_item only destroys
+                if (a != NULL) Item::send_item_state(a->client_id, item->id);        
+            
+            agent_fire_on[agent_id] = false;
+            agent_fire_tick[agent_id] = 0;
+            break;
+
 
         case IG_SHOVEL:
         case IG_MINING_LASER:
@@ -564,7 +587,7 @@ void use_block_placer(int agent_id, ItemID placer_id)
 
     int stack_size = placer->stack_size;
     int remaining_stack_size = Item::consume_stack_item(placer->id);
-    if (remaining_stack_size == 0)
+    if (remaining_stack_size <= 0)
     {
         agent_selected_type[agent_id] = NULL_ITEM_TYPE;
         agent_selected_item[agent_id] = NULL_ITEM;

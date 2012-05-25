@@ -165,13 +165,15 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
                 if (agent->status.lifetime > p.agent_protection_duration
                   && !agent->near_base())
                 {
+                    GS_ASSERT(p.agent_damage_min <= p.agent_damage_max);
+                    int dmg = randrange(p.agent_damage_min, p.agent_damage_max);
                     agent->status.apply_damage(
-                        p.agent_damage, p.id, p.type, t.part
+                        dmg, p.id, p.type, t.part
                     );
-                    destroy_object_voxel(
-                        t.id, t.type, t.part, t.voxel,
-                        p.voxel_damage_radius
-                    );
+                    //destroy_object_voxel(
+                        //t.id, t.type, t.part, t.voxel,
+                        //p.voxel_damage_radius
+                    //);
                 }
             }
             break;

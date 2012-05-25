@@ -4,11 +4,13 @@ namespace t_hud
 {
 
 extern SDL_Surface* ItemGridSlotSurface;
-extern unsigned int ItemGridSlotTexture;
+extern GLuint ItemGridSlotTexture;
 
-extern unsigned int NaniteTexture;
+extern GLuint NaniteTexture;
 
-extern unsigned int CraftingTexture;
+extern GLuint CraftingTexture;
+
+extern GLuint StorageBlockTexture;
 
 void init_texture();
 void teardown_texture();

@@ -34,7 +34,7 @@ class VertexElementList1
 
         vlist_index = 0;
         vlist_max = 1024;
-        vlist = (vertexElement1*) malloc(1024*sizeof(struct vertexElement1));
+        vlist = (vertexElement1*) malloc(vlist_max*sizeof(struct vertexElement1));
     }
 
     __attribute__((always_inline))
@@ -50,8 +50,6 @@ class VertexElementList1
         {
             vlist_max *= 2;
             vlist = (vertexElement1*) realloc(vlist, vlist_max*sizeof(struct vertexElement1));
-            printf("1 size= %i \n", vlist_max); 
-
         }
      }
 
@@ -65,9 +63,6 @@ class VertexElementList1
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
             glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
-        
-            //printf("1 wtf 1\n");
-
         } 
         else
         {
@@ -76,13 +71,9 @@ class VertexElementList1
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
             }
-
-            //printf("1 wtf 2\n");
         }
 
-
         vertex_number = vlist_index;
-
         vlist_index = 0;
     }
 
@@ -120,7 +111,7 @@ class VertexElementList2
 
         vlist_index = 0;
         vlist_max = 1024;
-        vlist = (vertexElement2*) malloc(1024*sizeof(struct vertexElement2));
+        vlist = (vertexElement2*) malloc(vlist_max*sizeof(struct vertexElement2));
     }
 
     ~VertexElementList2()
@@ -142,7 +133,6 @@ class VertexElementList2
             vlist_max *= 2;
             vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
             printf("1 size= %i \n", vlist_max); 
-
         }
      }
 
@@ -156,8 +146,6 @@ class VertexElementList2
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
             glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
-        
-            //printf("2 wtf 1\n");
         } 
         else
         {
@@ -166,13 +154,9 @@ class VertexElementList2
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
             }
-
-            //printf("2 wtf 2\n");
         }
 
-
         vertex_number = vlist_index;
-
         vlist_index = 0;
     }
 

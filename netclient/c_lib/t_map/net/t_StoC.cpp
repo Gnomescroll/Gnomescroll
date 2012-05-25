@@ -157,7 +157,7 @@ void block_action_StoC::handle()
         Sound::block_destroyed(x+0.5f,y+0.5f,z+0.5f, 0,0,0);
     }
     else
-        Sound::block_set(x,y,z,0,0,0);
+        Sound::block_set(x+0.5f,y+0.5f,z+0.5f,0,0,0);
     _set(x,y,z,val);
 }
 
@@ -168,44 +168,26 @@ void map_metadata_StoC::handle()
     map_dim.z = z;
 }
 
-
-
 void container_block_chunk_reset_StoC::handle()
 {
-    //uint32_t chunk_index
-    if( main_map->chunk[chunk_index] == NULL) 
-    {
-        printf("chunk_index= %i \n", chunk_index);
-        GS_ABORT();
-    }
+    GS_ASSERT(main_map->chunk[chunk_index] != NULL);
+    if (main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container._reset();
 };
 
 
 void container_block_create_StoC::handle()
 {
-//    uint16_t x,y,z;
-//    uint8_t container_type;
-//    uint16_t container_id;
-
     int chunk_index = (y/16)*(MAP_WIDTH/16) + (x/16);
-    if( main_map->chunk[chunk_index] == NULL) 
-    {
-        printf("chunk_index= %i \n", chunk_index);
-        GS_ABORT();
-    }
+    GS_ASSERT(main_map->chunk[chunk_index] != NULL);
+    if (main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container.add(x,y,z, container_type, container_id);
 }
 
 void container_block_delete_StoC::handle()
 {
-//    uint32_t chunk_index;
-//    uint16_t container_id;
-    if( main_map->chunk[chunk_index] == NULL) 
-    {
-        printf("chunk_index= %i \n", chunk_index);
-        GS_ABORT();
-    }
+    GS_ASSERT(main_map->chunk[chunk_index] != NULL);
+    if (main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container.remove(container_id);
 }
 

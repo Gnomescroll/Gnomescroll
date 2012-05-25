@@ -9,22 +9,39 @@ namespace Particle
 using Animations::VertexElementList1;
 
 const float SHRAPNEL_MASS = 0.2f;
+const int SHRAPNEL_TTL = 30;
+const float SHRAPNEL_DAMP = 0.5f;
+const int SHRAPNEL_TEXTURE_ID = 5;
+const float SHRAPNEL_TEXTURE_SCALE = 0.15f;
 
+class SHADER shrapnel_shader;
+unsigned int shrapnel_TexCoord;
 
 /* Shrapnel vlist */
 
 VertexElementList1* shrapnel_vlist = NULL;
 
+void init_shrapnel_shader()
+{
+    shrapnel_shader.set_debug(false);
+
+    shrapnel_shader.load_shader( "shrapnel shader",
+        "./media/shaders/weapon/shrapnel.vsh",
+        "./media/shaders/weapon/shrapnel.fsh" );
+    shrapnel_TexCoord = shrapnel_shader.get_attribute("InTexCoord");
+
+}
+
 void init_shrapnel()
 {
     shrapnel_vlist = new VertexElementList1;
+    init_shrapnel_shader();
 }
 
 void teardown_shrapnel()
 {
     delete shrapnel_vlist;
 }
-
 
 /* Shrapnel */
 
@@ -70,6 +87,7 @@ void Shrapnel::prep()
     ty_max = ty_min + (1.0/16.0);
 
     Vec3 position = verlet.position;
+    position.z += this->scale / 2.0f;
 
     Vec3 p = vec3_sub(position, vec3_add(right, up));
     shrapnel_vlist->push_vertex(p, tx_min,ty_max);
@@ -91,19 +109,14 @@ void Shrapnel_list::tick()
     for(int i=0; i<this->num; i++)
     {
         a[i].tick();
-        if (a[i].ttl <= 0)
-            destroy(a[i].id);
+        if (a[i].ttl <= 0) destroy(a[i].id);
     }
 }
 
 void Shrapnel_list::prep()
 {
     #if DC_CLIENT
-    for(int i=0; i<this->num; i++)
-    {
-        a[i].prep();
-    }
-
+    for(int i=0; i<this->num; i++) a[i].prep();
     shrapnel_vlist->buffer();
     #endif
 }
@@ -114,39 +127,44 @@ void Shrapnel_list::draw()
     #if DC_CLIENT
     if(shrapnel_vlist->vertex_number == 0) return;
 
+    GS_ASSERT(particle_texture != 0);
     GS_ASSERT(shrapnel_vlist->VBO != 0);
     
     const unsigned int stride = shrapnel_vlist->stride;
 
-    //printf("draw: %i \n", shrapnel_vlist->vertex_number);
-    //printf("draw2: %i \n", shrapnel_vlist->VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
 
-    GS_ASSERT(particle_texture != 0);
+    glDepthMask(GL_FALSE);    
 
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glColor3ub(255,255,255);
 
-    //glEnable(GL_TEXTURE_2D);
-
-    //glDisable(GL_TEXTURE_2D); //DEBUG
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
-    glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
 
+    glUseProgramObjectARB(shrapnel_shader.shader);
+    
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableVertexAttribArray(shrapnel_TexCoord);
+    
+    GS_ASSERT(sizeof(float) == sizeof(GL_FLOAT));
+    GS_ASSERT(sizeof(Vec3) == sizeof(GL_FLOAT)*3);
     glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
-    glTexCoordPointer(2, GL_FLOAT, stride, (GLvoid*)12);
+    //glTexCoordPointer(2, GL_FLOAT, stride, (GLvoid*)12);
+    glVertexAttribPointer(shrapnel_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
 
     glDrawArrays(GL_QUADS, 0, shrapnel_vlist->vertex_number);
     
-    glDisable(GL_BLEND);
-
     glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(shrapnel_TexCoord);
+    glUseProgramObjectARB(0);
 
-    //glEnable(GL_TEXTURE_2D); //DEBUG
+    glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
+    glDepthMask(GL_TRUE);
     #endif
 }
 

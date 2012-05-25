@@ -40,7 +40,7 @@ int get_key_state() {
 
 void bind_mouse()
 {
-    if (!input_state.block_container && !input_state.agent_container)
+    if (!input_state.crafting_block && !input_state.agent_container)
         SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 }
@@ -60,19 +60,34 @@ int process_events()
     else
         unbind_mouse();
 
-    if (ItemContainer::container_was_opened())
+    if (ItemContainer::crafting_block_was_closed())
     {
-        enable_block_container();
-        // need to ignore remaining right click up event
-        input_state.ignore_next_container_right_click_event = true;
+        disable_crafting_container();
+        input_state.ignore_next_right_click_event = false;
     }
-    else if (ItemContainer::container_was_closed())
-        disable_block_container();
+    if (ItemContainer::crafting_block_was_opened())
+    {
+        enable_crafting_container();
+        // need to ignore remaining right click up event
+        input_state.ignore_next_right_click_event = true;
+    }
+
+    if (ItemContainer::storage_block_was_closed())
+    {
+        disable_storage_block_container();
+        input_state.ignore_next_right_click_event = false;
+    }
+    if (ItemContainer::storage_block_was_opened())
+    {
+        enable_storage_block_container();
+        // need to ignore remaining right click up event
+        input_state.ignore_next_right_click_event = true;
+    }
 
     while(SDL_PollEvent(&Event))
     { //returns 0 if no event
         Event.user.code = SDL_EVENT_USER_NONE;
-        switch( Event.type )
+        switch (Event.type)
         {
             case SDL_QUIT:
                 quit_event_handler(&Event);
@@ -343,7 +358,7 @@ void apply_camera_physics()
 
 void poll_mouse()
 {
-    if (input_state.agent_container || input_state.block_container) return;
+    if (input_state.agent_container || input_state.crafting_block || input_state.storage_block) return;
     if (input_state.ignore_mouse_motion)
     {
         // flush mouse buffer

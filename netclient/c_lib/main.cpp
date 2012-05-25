@@ -214,7 +214,7 @@ int run()
 
         glEnd();
 
-        obj_load::draw_model(0.0,0.0,0.0); //draw test model
+        //obj_load::draw_model(0.0,0.0,0.0); //draw test model
         //glDisable(GL_TEXTURE_2D);
 
         GL_ASSERT(GL_BLEND, false);
@@ -240,9 +240,9 @@ int run()
         
         Animations::draw_insect_mob();
 
-        Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         // draw animations
         glEnable(GL_DEPTH_TEST);
+        Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();

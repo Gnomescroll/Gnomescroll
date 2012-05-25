@@ -33,14 +33,15 @@ struct InputState
     InputStateMode input_mode;
     InputStateMode camera_mode;
 
-    bool ignore_next_container_right_click_event;
+    bool ignore_next_right_click_event;
 
     // options
     bool invert_mouse;
     float sensitivity;
 
     bool agent_container;
-    bool block_container;
+    bool crafting_block;
+    bool storage_block;
 };
 
 extern InputState input_state;
@@ -71,9 +72,12 @@ void enable_quit();
 void toggle_input_mode();
 void toggle_camera_mode();
 
+// container toggles
 void toggle_agent_container();
-void enable_block_container();
-void disable_block_container();
+void enable_crafting_container();
+void disable_crafting_container();
+void enable_storage_block_container();
+void disable_storage_block_container();
 
 // options
 void set_input_options(

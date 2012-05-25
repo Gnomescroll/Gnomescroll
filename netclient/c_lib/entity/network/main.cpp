@@ -9,6 +9,7 @@ CreatePacketOwnerTeam* create_packet_owner_team = NULL;
 CreatePacketOwnerTeamIndex* create_packet_owner_team_index = NULL;
 CreatePacketMomentum* create_packet_momentum = NULL;
 CreatePacketMomentumAngles* create_packet_momentum_angles = NULL;
+CreatePacketMomentumAnglesHealth* create_packet_momentum_angles_health;
 
 StatePacketNone* state_packet_none = NULL;
 StatePacket* state_packet = NULL;
@@ -23,7 +24,8 @@ void init_net_interfaces()
     create_packet_owner_team_index = new CreatePacketOwnerTeamIndex;
     create_packet_momentum = new CreatePacketMomentum;
     create_packet_momentum_angles = new CreatePacketMomentumAngles;
-
+    create_packet_momentum_angles_health = new CreatePacketMomentumAnglesHealth;
+    
     state_packet_none = new StatePacketNone;
     state_packet = new StatePacket;
     state_packet_momentum = new StatePacketMomentum;
@@ -38,6 +40,7 @@ void teardown_net_interfaces()
     if (create_packet_owner_team_index != NULL) delete create_packet_owner_team_index;
     if (create_packet_momentum != NULL) delete create_packet_momentum;
     if (create_packet_momentum_angles != NULL) delete create_packet_momentum_angles;
+    if (create_packet_momentum_angles_health != NULL) delete create_packet_momentum_angles_health;
 
     if (state_packet_none != NULL) delete state_packet_none;
     if (state_packet != NULL) delete state_packet;

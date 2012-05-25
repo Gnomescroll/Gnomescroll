@@ -1,6 +1,6 @@
 ============
-==BUILD 16==
-============
+==BUILD 16== released
+============    build 14 was ?; build 15 was items + inventory + nanites; build 16 added crafting blocks
 
 durabilities out of sync / toolbelt copying wrong data?
 FIXED
@@ -101,7 +101,7 @@ use 64pixel isometric texture
 DONE
 
 ============
-==BUILD 17==
+==BUILD 17== released
 ============
 
 fix failure to unset container ui widget id
@@ -145,66 +145,59 @@ DONE
 fix rotation on isometric block sides
 DONE
 
-if voxel model gets destroyed to 0 (or maybe a % threshold like 15) just die
---the completely empty function is done. need to integrate it into component system
---agents need more careful restrictions. they can't just die early. maybe N blocks per N damage
---server should keep track of solid voxel counts instead of recalculating constantly
+--May 24, told brandon he would take two weeks to do map gen
 
-blue bombs should aggro if shot
-
-blue bombs should be wandering, slowly
-
-destroy 1 voxel in monster spawner
-destroy 2 voxels in robot
-
-or just do voxel destruction based on cumulative damage
-
-try to fix the cpu spike in voxel adjustments -- recalculating entire list may be unnecessary since each model has their own sublist
-if cant fix, probably disable voxel damage
-
-blue bombs should damage terrain like grenades
-
-blue bombs should drop grenades
-
-red bots should do random dmg, have random health etc
-
-tiling noise (argh) [brandon]
-
-GS_ASSERTs sometimes on connect with some components:
-
-./run(_Z11print_tracev+0x25) [0x80b61b9]
-./run(_ZN7Objects10ObjectList13set_object_idEPNS_6ObjectEi+0x3c) [0x80ed304]
-./run(_ZN7Objects6createE10ObjectTypei+0x4b) [0x80eef7f]
-./run(_ZN34object_create_momentum_angles_StoC6handleEv+0x33) [0x814548d]
-./run(_ZN34FixedSizeReliableNetPacketToClientI34object_create_momentum_angles_StoCE7handlerEPciPii+0x74) [0x816e688]
-./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
-./run(_ZN9NetClient30client_dispatch_network_eventsEv+0xc6) [0x80caf10]
-./run(_ZN4Main3runEv+0x150) [0x8139ffd]
-./run(main+0x35) [0x813a728]
-/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb715c113]
-GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object_list.cpp, line 29 function: set_object_id 
-./run(_Z11print_tracev+0x25) [0x80b61b9]
-./run(_ZN7Objects6Object13add_componentEiPN10Components9ComponentE+0x99) [0x80ecf73]
-./run(_ZN7Objects23add_component_to_objectEPNS_6ObjectE13ComponentType+0x5d) [0x80eeaaf]
-./run() [0x80ebfa1]
-./run(_ZN7Objects20create_mob_robot_boxEv+0x4b) [0x80ec1e8]
-./run() [0x80eeebe]
-./run(_ZN7Objects6createE10ObjectTypei+0x1d) [0x80eef51]
-./run(_ZN34object_create_momentum_angles_StoC6handleEv+0x33) [0x814548d]
-./run(_ZN34FixedSizeReliableNetPacketToClientI34object_create_momentum_angles_StoCE7handlerEPciPii+0x74) [0x816e688]
-./run(_Z23process_packet_messagesPcPiii+0x100) [0x80cb9fa]
-GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/entity/object/object.cpp, line 19 function: add_component 
+restore block damage for laser rifles
+DONE
 
 storage blocks
+DONE
+
+disable voxel model damage
+DONE
+
+blue bombs drop grenades
+DONE
+
+replace grenade durability with stacks
+DONE
+
+red bots should do random dmg
+DONE
+
+blue bombs and red bots should have random health
+DONE
+
+health transmitted with mobs
+DONE
+
+disable grue (annoying in camera on startup)
+DONE
+
+restore shrapnel animations
+DONE
+
+fixed a major bug in ObjectList, was returning uninitialised/old objects when should have been returning NULL
+DONE
+
+blue bombs should aggro if shot
+blue bombs should be wandering, slowly
+blue bombs should damage terrain like grenades
+
+red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
+this will let players "dodge"
 
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
-
-shrapnel
-
 have chat display a "Press U to relock mouse" when window gains focus and mouse is unlocked
+alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
-alt tab doesnt work in fullscreen
+tiling noise [BRANDON]
 
-restore block damage for laser rifle
+glsl colored/textured voxels
+
+shovel sounds
+block placement sounds
+
+remove 2nd ping number

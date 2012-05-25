@@ -11,16 +11,6 @@
 #include <entity/components/physics/position_momentum_changed.cpp>
 #include <entity/components/physics/verlet.cpp>
 
-#if DC_CLIENT
-#include <entity/components/draw.cpp>
-#include <entity/components/draw/billboard_sprite.cpp>
-#include <entity/components/draw/voxel.cpp>
-#include <entity/components/draw/colored_voxel.cpp>
-#include <entity/components/draw/textured_voxel.cpp>
-
-#include <entity/components/animation.cpp>
-#endif
-
 #include <entity/components/pickup.cpp>
 
 #include <entity/components/health.cpp>
@@ -46,8 +36,19 @@
 #include <entity/components/targeting/motion_targeting.cpp>
 #include <entity/components/targeting/weapon_targeting.cpp>
 
-#if DC_SERVER
-#include <entity/components/explosion.cpp>
+#include <entity/components/rate_limit.cpp>
+
+#if DC_CLIENT
+#include <entity/components/draw.cpp>
+#include <entity/components/draw/billboard_sprite.cpp>
+#include <entity/components/draw/voxel.cpp>
+#include <entity/components/draw/colored_voxel.cpp>
+#include <entity/components/draw/textured_voxel.cpp>
+
+#include <entity/components/animation.cpp>
 #endif
 
-#include <entity/components/rate_limit.cpp>
+#if DC_SERVER
+#include <entity/components/explosion.cpp>
+#include <entity/components/item_drop.cpp>
+#endif

@@ -6,9 +6,9 @@ namespace t_hud
 // UI State
 extern class AgentContainerUI* agent_container;
 extern class AgentToolbeltUI* agent_toolbelt;
-// TODO -- TMP -- replace witha ctual types
 extern class AgentNaniteUI* nanite_container;
 extern class CraftingUI* crafting_container;
+extern class StorageBlockUI* storage_block;
 
 void set_container_id(ItemContainerType container_type, int container_id);
 
@@ -26,8 +26,10 @@ typedef struct
 
 void enable_agent_container_hud();
 void disable_agent_container_hud();
-void enable_block_container_hud();
-void disable_block_container_hud();
+void enable_crafting_container_hud();
+void disable_crafting_container_hud();
+void enable_storage_block_hud();
+void disable_storage_block_hud();
 
 void close_container(int container_id);
 

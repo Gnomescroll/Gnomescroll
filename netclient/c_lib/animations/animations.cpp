@@ -220,37 +220,14 @@ void grenade_explode(float x, float y, float z)
     }
 }
 
-//void grenade_explode(float x, float y, float z)
-//{
-    //if (!Options::animations) return;
-
-    //const float vel = 30.0f;
-
-    //Particle::Shrapnel* g;
-    //Vec3 cv;
-    
-    //for (int i=0; i<26; i++)
-    //{
-        //cv = vec3_scalar_mult(gvset[i], vel);
-        //g = Particle::shrapnel_list->create(
-            //x, y, z,
-            //cv.x, cv.y, cv.z
-        //);
-        //if (g == NULL) break;
-        ////g->owner = this->owner;
-    //}
-    
-
-//}
-
 void terrain_sparks(float x, float y, float z)
 {
     if (!Options::animations) return;
     int n = randrange(15,20);
 
-    float vx = 1.0f;
-    float vy = 1.0f;
-    float vz = 1.0f;
+    float vx = 3.5f;
+    float vy = 3.5f;
+    float vz = 3.5f;
 
     float cx,cy,cz;
     float cvx,cvy,cvz;

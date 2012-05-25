@@ -540,6 +540,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     if (slot < 0 || slot == NULL_SLOT) return action;
 
     // get container
+    GS_ASSERT(container_id != NULL_CONTAINER);
     #if DC_CLIENT
     ItemContainerUIInterface* container = get_container_ui(container_id);
     #endif

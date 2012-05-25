@@ -31,8 +31,9 @@ struct AttackerProperties
     int id;
     ObjectType type;
     int block_damage;
-    int agent_damage;
-    int voxel_damage_radius;
+    int agent_damage_min;
+    int agent_damage_max;
+    //int voxel_damage_radius;
     int agent_protection_duration;
     t_map::TerrainModificationAction terrain_modification_action;
 };

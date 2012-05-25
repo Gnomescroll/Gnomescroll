@@ -151,6 +151,27 @@ class CreatePacketMomentumAngles: public CreatePacketDelegate
         }
 };
 
+class CreatePacketMomentumAnglesHealth: public CreatePacketDelegate
+{
+    private:
+        void message(Object* object, object_create_momentum_angles_health_StoC* msg);
+    
+    public:
+        void sendToClient(Object* object, int client_id)
+        {
+            object_create_momentum_angles_health_StoC msg;
+            this->message(object, &msg);
+            msg.sendToClient(client_id);
+        }
+
+        void broadcast(Object* object)
+        {
+            object_create_momentum_angles_health_StoC msg;
+            this->message(object, &msg);
+            msg.broadcast();
+        }
+};
+
 
 /* State Packet */
 

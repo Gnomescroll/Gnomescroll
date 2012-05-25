@@ -26,6 +26,7 @@ inline void object_create_StoC::handle()
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL) physics->set_position(vec3_init(x,y,z));
     Objects::ready(obj);
 }
@@ -38,6 +39,7 @@ inline void object_create_momentum_StoC::handle()
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -54,6 +56,7 @@ inline void object_create_momentum_angles_StoC::handle()
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -62,6 +65,33 @@ inline void object_create_momentum_angles_StoC::handle()
     }
     Objects::ready(obj);
 }
+
+inline void object_create_momentum_angles_health_StoC::handle()
+{
+    using Objects::Object;
+    using Components::PhysicsComponent;
+    using Components::HitPointsHealthComponent;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+        physics->set_momentum(vec3_init(mx,my,mz));
+        physics->set_angles(vec3_init(theta, phi, 0));
+    }
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
+    GS_ASSERT(health != NULL);
+    if (health != NULL)
+    {
+        health->max_health = this->health;
+        health->health = this->health;
+    }
+    Objects::ready(obj);
+}
+
 
 inline void object_create_owner_team_StoC::handle()
 {
@@ -74,18 +104,21 @@ inline void object_create_owner_team_StoC::handle()
     if (obj == NULL) return;
 
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
     }
 
     OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    GS_ASSERT(owner_component != NULL);
     if (owner_component != NULL)
     {
         owner_component->set_owner(owner);
     }
     
     TeamComponent* team_component = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
+    GS_ASSERT(team_component != NULL);
     if (team_component != NULL)
     {
         team_component->set_team(team);
@@ -105,24 +138,27 @@ inline void object_create_owner_team_index_StoC::handle()
     if (obj == NULL) return;
 
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
     }
 
     OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    GS_ASSERT(owner_component != NULL);
     if (owner_component != NULL)
     {
         owner_component->set_owner(owner);
     }
     
     IndexedTeamComponent* team_component = (IndexedTeamComponent*)obj->get_component(COMPONENT_INDEXED_TEAM);
+    GS_ASSERT(team_component != NULL);
     if (team_component != NULL)
     {
         team_component->set_team(team);
         team_component->set_team_index(team_index);
     }
-    
+
     Objects::ready(obj);
 }
 
@@ -136,10 +172,8 @@ inline void object_state_StoC::handle()
     Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x,y,z));
-    }
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
 }
 
 inline void object_state_momentum_StoC::handle()
@@ -150,6 +184,7 @@ inline void object_state_momentum_StoC::handle()
     Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -165,6 +200,7 @@ inline void object_state_momentum_angles_StoC::handle()
     Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         physics->set_position(vec3_init(x,y,z));
@@ -233,16 +269,16 @@ inline void object_shot_object_StoC::handle()
     );
 
     // destroy model
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
-    if (weapon != NULL)
-    {
-        int voxel[3] = { this->voxel_x, this->voxel_y, this->voxel_z };
-        destroy_object_voxel(
-            this->target_id, this->target_type, this->target_part,
-            voxel, weapon->attacker_properties.voxel_damage_radius
-        );
-    }
+    //using Components::WeaponTargetingComponent;
+    //WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
+    //if (weapon != NULL)
+    //{
+        //int voxel[3] = { this->voxel_x, this->voxel_y, this->voxel_z };
+        //destroy_object_voxel(
+            //this->target_id, this->target_type, this->target_part,
+            //voxel, weapon->attacker_properties.voxel_damage_radius
+        //);
+    //}
 
     // todo -- sound event
     Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
@@ -416,6 +452,7 @@ inline void object_took_damage_StoC::handle()
 inline void object_create_StoC::handle() {}
 inline void object_create_momentum_StoC::handle() {}
 inline void object_create_momentum_angles_StoC::handle() {}
+inline void object_create_momentum_angles_health_StoC::handle() {}
 inline void object_create_owner_team_StoC::handle() {}
 inline void object_create_owner_team_index_StoC::handle() {}
 inline void object_destroy_StoC::handle() {}

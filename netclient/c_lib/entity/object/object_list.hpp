@@ -32,6 +32,7 @@ class ObjectList
         inline int max(ObjectType type);
         inline bool empty(ObjectType type);
         inline bool full(ObjectType type);
+        inline bool in_use(ObjectType type, int id);
 
         // object accessors
         Object* get(ObjectType type, int id);

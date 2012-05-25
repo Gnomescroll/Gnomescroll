@@ -19,7 +19,7 @@ void load_mob_bomb_data()
     ObjectType type = OBJECT_MONSTER_BOMB;
     
     #if DC_SERVER
-    const int n_components = 7;
+    const int n_components = 8;
     #endif
     #if DC_CLIENT
     const int n_components = 6;
@@ -36,6 +36,7 @@ void load_mob_bomb_data()
     #if DC_SERVER
     object_data->attach_component(type, COMPONENT_EXPLOSION);
     object_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    object_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
 
     #if DC_CLIENT
@@ -58,9 +59,15 @@ static void set_mob_bomb_properties(Object* object)
     vox->init_draw = MONSTER_BOMB_INIT_WITH_DRAW;
 
     using Components::HitPointsHealthComponent;
+    #if DC_CLIENT
+    add_component_to_object(object, COMPONENT_HIT_POINTS);
+    #endif
+    #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
-    health->health = MONSTER_BOMB_MAX_HEALTH;
-    health->max_health = MONSTER_BOMB_MAX_HEALTH;
+    int health_amt = randrange(MONSTER_BOMB_HEALTH_MIN, MONSTER_BOMB_HEALTH_MAX);
+    health->health = health_amt;
+    health->max_health = health_amt;
+    #endif
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
@@ -79,6 +86,12 @@ static void set_mob_bomb_properties(Object* object)
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
     limiter->limit = MONSTER_BOMB_BROADCAST_RATE;
+
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    item_drop->item_type = Item::get_item_type(MONSTER_BOMB_ITEM_DROP_NAME);
+    item_drop->probability = MONSTER_BOMB_ITEM_DROP_PROBABILITY;
+    item_drop->max_amount = MONSTER_BOMB_ITEM_DROP_MAX_AMOUNT;
     #endif
 
     #if DC_CLIENT
@@ -94,7 +107,7 @@ static void set_mob_bomb_properties(Object* object)
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;
 
-    object->create = create_packet_momentum_angles;
+    object->create = create_packet_momentum_angles_health;
     object->state = state_packet_momentum_angles;
 }
 
@@ -129,6 +142,10 @@ void die_mob_bomb(Object* object)
 {
     #if DC_SERVER
     // drop item
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    GS_ASSERT(item_drop != NULL);
+    item_drop->drop_item();
     
     // explosion damage
     using Components::ExplosionComponent;

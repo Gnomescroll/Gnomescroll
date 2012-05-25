@@ -705,66 +705,66 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, u
 { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
 
 
-static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
-{
-    using Components::VoxelModelComponent;
-    Agent_state* agent;
-    Objects::Object* object;
-    VoxelModelComponent* vox_component;
-    Voxel_volume* vv;
-    switch (type)
-    {
-        case OBJECT_AGENT:
-            agent = STATE::agent_list->get(id);
-            if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
-            vv = ((Agent_state*)agent)->vox->get_part(part);
-            if (vv == NULL) return;
-            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            break;
+//static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
+//{
+    //using Components::VoxelModelComponent;
+    //Agent_state* agent;
+    //Objects::Object* object;
+    //VoxelModelComponent* vox_component;
+    //Voxel_volume* vv;
+    //switch (type)
+    //{
+        //case OBJECT_AGENT:
+            //agent = STATE::agent_list->get(id);
+            //if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
+            //vv = ((Agent_state*)agent)->vox->get_part(part);
+            //if (vv == NULL) return;
+            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            //break;
             
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_MONSTER_BOX:
-        case OBJECT_MONSTER_SPAWNER:
-            object = Objects::get(OBJECT_MONSTER_BOMB, id);
-            if (object == NULL) return;
-            vox_component = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-            if (vox_component == NULL || vox_component->vox == NULL) return;
-            vv = vox_component->vox->get_part(part);
-            if (vv == NULL) return;
-            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            break;
-        default: break;
-    }
-}
+        //case OBJECT_MONSTER_BOMB:
+        //case OBJECT_MONSTER_BOX:
+        //case OBJECT_MONSTER_SPAWNER:
+            //object = Objects::get(OBJECT_MONSTER_BOMB, id);
+            //if (object == NULL) return;
+            //vox_component = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            //if (vox_component == NULL || vox_component->vox == NULL) return;
+            //vv = vox_component->vox->get_part(part);
+            //if (vv == NULL) return;
+            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            //break;
+        //default: break;
+    //}
+//}
 
-void destroy_object_voxel(int id, int type, int part, const int voxel[3], int radius)
-{
-    int mx = voxel[0];
-    int my = voxel[1];
-    int mz = voxel[2];
+//void destroy_object_voxel(int id, int type, int part, const int voxel[3], int radius)
+//{
+    //int mx = voxel[0];
+    //int my = voxel[1];
+    //int mz = voxel[2];
 
-    int tmp[3] = {voxel[0], voxel[1], voxel[2] };
+    //int tmp[3] = {voxel[0], voxel[1], voxel[2] };
     
-    for (int i=0; i<radius; i++)
-    for (int j=0; j<radius; j++)
-    for (int k=0; k<radius; k++)
-    {
-        tmp[0] = mx + i;
-        tmp[1] = my + j;
-        tmp[2] = mz + k;
-        destroy_object_voxel(id, type, part, tmp);
-        tmp[0] = mx - i;
-        destroy_object_voxel(id, type, part, tmp);
-        tmp[1] = my - j;
-        destroy_object_voxel(id, type, part, tmp);
-        tmp[1] = my + j;
-        tmp[2] = mz - k;
-        destroy_object_voxel(id, type, part, tmp);
-        tmp[0] = mx + i;
-        tmp[1] = my - j;
-        destroy_object_voxel(id, type, part, tmp);
-        tmp[0] = mx - i;
-        destroy_object_voxel(id, type, part, tmp);
-    }
-}
+    //for (int i=0; i<radius; i++)
+    //for (int j=0; j<radius; j++)
+    //for (int k=0; k<radius; k++)
+    //{
+        //tmp[0] = mx + i;
+        //tmp[1] = my + j;
+        //tmp[2] = mz + k;
+        //destroy_object_voxel(id, type, part, tmp);
+        //tmp[0] = mx - i;
+        //destroy_object_voxel(id, type, part, tmp);
+        //tmp[1] = my - j;
+        //destroy_object_voxel(id, type, part, tmp);
+        //tmp[1] = my + j;
+        //tmp[2] = mz - k;
+        //destroy_object_voxel(id, type, part, tmp);
+        //tmp[0] = mx + i;
+        //tmp[1] = my - j;
+        //destroy_object_voxel(id, type, part, tmp);
+        //tmp[0] = mx - i;
+        //destroy_object_voxel(id, type, part, tmp);
+    //}
+//}
 

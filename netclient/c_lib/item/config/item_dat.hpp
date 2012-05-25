@@ -38,6 +38,7 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.object_damage_min = 15;
     s.object_damage_max = 25;
+    s.block_damage = 2;
 
     item_def(7, IG_MINING_LASER, "mining_laser");
     sprite_def(i0, 3,5);
@@ -54,9 +55,7 @@ void load_item_dat()
 
     item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
     sprite_def(i0, 1,7);
-    s.max_durability = 200;
-    s.max_energy = 100;
-    s.max_stack_size = 1;
+    s.max_stack_size = 100;
 
     item_def(9, IG_RESOURCE, "food_rock-0");
     sprite_def(i1, 1,4);
@@ -85,6 +84,7 @@ void load_item_dat()
     //s.placer_block_type_id = t_map::dat_get_cube_id("crate_1");
     //s.max_stack_size = 1;
 
+    // small storage container
     item_def(16, IG_PLACER, "crate_2");
     iso_block_sprite_def("crate_2");
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_2");
@@ -92,6 +92,7 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_2");
 
+    // level 1 utility crafting block
     item_def(17, IG_PLACER, "crate_3");
     iso_block_sprite_def("crate_3");
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_3");

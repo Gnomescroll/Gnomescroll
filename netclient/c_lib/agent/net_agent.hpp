@@ -858,27 +858,27 @@ class alter_item_ownership_StoC: public FixedSizeReliableNetPacketToClient<alter
         inline void handle();
 };
 
-class destroy_voxel_StoC: public FixedSizeNetPacketToClient<destroy_voxel_StoC>
-{
-    public:
-        uint8_t x,y,z;
-        uint8_t entity_id;
-        uint8_t entity_type;
-        uint8_t entity_part;
-        uint8_t radius;
+//class destroy_voxel_StoC: public FixedSizeNetPacketToClient<destroy_voxel_StoC>
+//{
+    //public:
+        //uint8_t x,y,z;
+        //uint8_t entity_id;
+        //uint8_t entity_type;
+        //uint8_t entity_part;
+        //uint8_t radius;
         
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-        pack_u8(&x, buff, buff_n, pack);
-        pack_u8(&y, buff, buff_n, pack);
-        pack_u8(&z, buff, buff_n, pack);
-        pack_u8(&entity_id, buff, buff_n, pack);
-        pack_u8(&entity_type, buff, buff_n, pack);
-        pack_u8(&entity_part, buff, buff_n, pack);
-        pack_u8(&radius, buff, buff_n, pack);
-    }
-    inline void handle();
-};
+    //inline void packet(char* buff, int* buff_n, bool pack)
+    //{
+        //pack_u8(&x, buff, buff_n, pack);
+        //pack_u8(&y, buff, buff_n, pack);
+        //pack_u8(&z, buff, buff_n, pack);
+        //pack_u8(&entity_id, buff, buff_n, pack);
+        //pack_u8(&entity_type, buff, buff_n, pack);
+        //pack_u8(&entity_part, buff, buff_n, pack);
+        //pack_u8(&radius, buff, buff_n, pack);
+    //}
+    //inline void handle();
+//};
 
 
 class request_remaining_state_CtoS: public FixedSizeReliableNetPacketToServer<request_remaining_state_CtoS>

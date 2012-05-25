@@ -45,6 +45,7 @@ void teardown()
     if (player_toolbelt_ui    != NULL) delete player_toolbelt_ui;
     if (player_nanite_ui      != NULL) delete player_nanite_ui;
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
+    if (storage_block_ui      != NULL) delete storage_block_ui;
     #endif
 
     #if DC_SERVER
@@ -123,18 +124,49 @@ void open_container(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
 
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
+
     // setup UI widget
-    // TODO -- handle multiple UI types 
-    player_craft_bench = (ItemContainerCraftingBench*)get_container(container_id);
-    if (player_craft_bench == NULL) return;
-    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
-    player_craft_bench_ui = new ItemContainerUI(container_id);
-    player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
-    player_craft_bench_ui->load_data(player_craft_bench->slot);
-    t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
-    
-    // assigned "opened_container" id
-    if (opened_container == NULL_CONTAINER) was_opened = true;
+    switch (container->type)
+    {
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+            GS_ASSERT(storage_block == NULL);
+            GS_ASSERT(storage_block_ui == NULL);
+
+            player_craft_bench = (ItemContainerCraftingBench*)container;
+            if (player_craft_bench == NULL) return;
+            // setup ui
+            if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
+            player_craft_bench_ui = new ItemContainerUI(container_id);
+            player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
+            player_craft_bench_ui->load_data(player_craft_bench->slot);
+            t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
+            if (opened_container == NULL_CONTAINER) opened_crafting_block = true;
+            break;
+
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            GS_ASSERT(player_craft_bench == NULL);
+            GS_ASSERT(player_craft_bench_ui == NULL);
+            
+            storage_block = (ItemContainer*)container;
+            if (storage_block == NULL) return;
+            // setup ui
+            if (storage_block_ui == NULL) delete storage_block_ui;
+            storage_block_ui = new ItemContainerUI(container_id);
+            storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
+            storage_block_ui->load_data(storage_block->slot);
+            t_hud::set_container_id(storage_block->type, storage_block->id);
+            if (opened_container == NULL_CONTAINER) opened_storage_block = true;
+            break;
+
+        default:
+            GS_ASSERT(false);
+            break;
+    }
+
     opened_container = container_id;
 
     // send open packet
@@ -158,10 +190,18 @@ void close_container()
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     player_craft_bench_ui = NULL;
 
+    storage_block = NULL;
+    if (storage_block_ui != NULL) delete storage_block_ui;
+    storage_block_ui = NULL;
+
     // unset hud container id
     t_hud::close_container(opened_container);
 
-    if (opened_container != NULL_CONTAINER) was_closed = true;
+    if (opened_container != NULL_CONTAINER)
+    {
+        closed_crafting_block = true;
+        closed_storage_block = true;
+    }
     opened_container = NULL_CONTAINER;
     
     // send packet
@@ -170,21 +210,41 @@ void close_container()
     msg.send();
 }
 
-bool container_was_opened()
+bool crafting_block_was_opened()
 {
-    if (was_opened)
+    if (opened_crafting_block)
     {
-        was_opened = false;
+        opened_crafting_block = false;
         return true;
     }
     return false;
 }
 
-bool container_was_closed()
+bool crafting_block_was_closed()
 {
-    if (was_closed)
+    if (closed_crafting_block)
     {
-        was_closed = false;
+        closed_crafting_block = false;
+        return true;
+    }
+    return false;
+}
+
+bool storage_block_was_opened()
+{
+    if (opened_storage_block)
+    {
+        opened_storage_block = false;
+        return true;
+    }
+    return false;
+}
+
+bool storage_block_was_closed()
+{
+    if (closed_storage_block)
+    {
+        closed_storage_block = false;
         return true;
     }
     return false;
@@ -203,6 +263,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_container_ui   != NULL && player_container_ui->id   == container_id) return player_container_ui;
     if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
     if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
+    if (storage_block_ui      != NULL && storage_block_ui->id      == container_id) return storage_block_ui;
     return NULL;
 }
 
@@ -366,6 +427,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     // put a grenade launcher in the toolbelt to selt
     Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
     GS_ASSERT(grenade_launcher != NULL);
+    grenade_launcher->stack_size = 100;
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
 
     // add a few container blocks
@@ -380,10 +442,10 @@ void assign_containers_to_agent(int agent_id, int client_id)
     crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
     GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
     GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
     GS_ASSERT(crate != NULL);
     auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     #endif

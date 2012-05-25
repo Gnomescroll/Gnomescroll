@@ -274,7 +274,7 @@ void AgentToolbeltUI::draw()
         const int slot = j * this->xdim + i;
         int count = slot_stacks[slot];
         if (count <= 1) continue;
-        GS_ASSERT(count_digits(count) < STACK_COUNT_MAX_LENGTH);
+        GS_ASSERT(count_digits(count) <= STACK_COUNT_MAX_LENGTH);
         
         text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);

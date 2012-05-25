@@ -46,9 +46,10 @@ const float TURRET_SIGHT_RANGE = 128.0f - 16.0f;
 const bool TURRET_ATTACK_ONLY_ENEMIES = false;
 const bool TURRET_ATTACK_AT_RANDOM = true;
 const int TURRET_TERRAIN_DAMAGE = 8;
-const int TURRET_AGENT_DAMAGE = 10;
+const int TURRET_AGENT_DAMAGE_MIN = 8;
+const int TURRET_AGENT_DAMAGE_MAX = 12;
 const int TURRET_AGENT_IMMUNITY_DURATION = 30 * 5;
-const int TURRET_VOXEL_DAMAGE_RADIUS = 1;
+//const int TURRET_VOXEL_DAMAGE_RADIUS = 1;
 
 // explosion
 const float TURRET_EXPLOSION_RADIUS = 2.0f;

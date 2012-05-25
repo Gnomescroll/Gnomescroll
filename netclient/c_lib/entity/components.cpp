@@ -54,8 +54,6 @@ void init()
 
     set_interface_for_component(COMPONENT_DIMENSION, COMPONENT_INTERFACE_DIMENSION);
 
-    set_interface_for_component(COMPONENT_EXPLOSION, COMPONENT_INTERFACE_EXPLOSION);
-
     set_interface_for_component(COMPONENT_RATE_LIMIT, COMPONENT_INTERFACE_RATE_LIMIT);
 
     #if DC_CLIENT
@@ -65,6 +63,11 @@ void init()
 
     set_interface_for_component(COMPONENT_VOXEL_ANIMATION, COMPONENT_INTERFACE_ANIMATION);
     set_interface_for_component(COMPONENT_SPRITE_ANIMATION, COMPONENT_INTERFACE_ANIMATION);
+    #endif
+
+    #if DC_SERVER
+    set_interface_for_component(COMPONENT_EXPLOSION, COMPONENT_INTERFACE_EXPLOSION);
+    set_interface_for_component(COMPONENT_ITEM_DROP, COMPONENT_INTERFACE_ITEM_DROP);
     #endif
 
     init_components();

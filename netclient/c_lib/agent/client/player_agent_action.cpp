@@ -72,7 +72,7 @@ void PlayerAgent_action::hitscan_laser()
     hitscan_object_CtoS obj_msg;
 
     Agent_state* agent;
-    int voxel_blast_radius = 1;
+    //int voxel_blast_radius = 1;
     
     switch (target_type)
     {
@@ -104,13 +104,13 @@ void PlayerAgent_action::hitscan_laser()
                 agent = ClientState::agent_list->get(target.entity_id);
                 if (agent==NULL) break;
                 if (agent->status.team == this->p->you->status.team) break;
-                voxel_blast_radius = 3;
+                //voxel_blast_radius = 3;
             }
-            else if (target.entity_type == OBJECT_MONSTER_BOMB)
-            {
-                voxel_blast_radius = 2;
-            }
-            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
+            //else if (target.entity_type == OBJECT_MONSTER_BOMB)
+            //{
+                //voxel_blast_radius = 2;
+            //}
+            //destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:            
@@ -209,7 +209,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     melee_object_CtoS obj_msg;
 
     Agent_state* agent;
-    int voxel_blast_radius = 1;
+    //int voxel_blast_radius = 1;
 
     switch (target_type)
     {
@@ -250,13 +250,13 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                     collision_point[0], collision_point[1], collision_point[2],
                     0,0,0
                 );
-                voxel_blast_radius = 3;
+                //voxel_blast_radius = 3;
             }
-            else if (target.entity_type == OBJECT_MONSTER_BOMB)
-            {
-                voxel_blast_radius = 2;
-            }
-            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
+            //else if (target.entity_type == OBJECT_MONSTER_BOMB)
+            //{
+                //voxel_blast_radius = 2;
+            //}
+            //destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:

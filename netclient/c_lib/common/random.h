@@ -2,11 +2,15 @@
 
 #include <stdlib.h>
 
-inline int randrange(int min, int max) {
+// returns random integer with lowest value min, and highest value max
+inline int randrange(int min, int max)
+{
+    GS_ASSERT(min <= max);
     return rand() % (max - min + 1) + min;
 }
 
-inline float randf() {
+inline float randf()
+{
     return (float)rand()/(float)RAND_MAX;
 }
 

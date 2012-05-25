@@ -8,7 +8,8 @@ namespace Objects
 /* Common/Defaults */
 
 // health
-const int MONSTER_BOMB_MAX_HEALTH = 75;
+const int MONSTER_BOMB_HEALTH_MIN = 65;
+const int MONSTER_BOMB_HEALTH_MAX = 85;
 
 // vox
 const bool MONSTER_BOMB_INIT_WITH_HITSCAN = true;
@@ -40,10 +41,17 @@ const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 // state broadcast rate
 const int MONSTER_BOMB_BROADCAST_RATE = 30; // once every 30 ticks
 
+// item drop
+const char* MONSTER_BOMB_ITEM_DROP_NAME = "grenade_launcher";
+// avg drop size; 5.5, 5.5 * 0.8 = 4.4 grenades per slime
+const float MONSTER_BOMB_ITEM_DROP_PROBABILITY = 0.8f;
+const int MONSTER_BOMB_ITEM_DROP_MAX_AMOUNT = 10;    // TODO --  a good item drop table
+
 /* MONSTER_BOX */
 
 // health
-const int MONSTER_BOX_MAX_HEALTH = 25;
+const int MONSTER_BOX_HEALTH_MIN = 20;
+const int MONSTER_BOX_HEALTH_MAX = 30;
 
 //vox
 const bool MONSTER_BOX_INIT_WITH_HITSCAN = true;
@@ -62,9 +70,10 @@ const float MONSTER_BOX_FIRING_SIGHT_RANGE = 15.0f;
 const bool MONSTER_BOX_ATTACK_ONLY_ENEMIES = false;
 const bool MONSTER_BOX_ATTACK_AT_RANDOM = false;
 const int MONSTER_BOX_TERRAIN_DAMAGE = 5;
-const int MONSTER_BOX_AGENT_DAMAGE = 5;
+const int MONSTER_BOX_AGENT_DAMAGE_MIN = 4;
+const int MONSTER_BOX_AGENT_DAMAGE_MAX = 6;
 const int MONSTER_BOX_AGENT_IMMUNITY_DURATION = 30 * 3;
-const int MONSTER_BOX_VOXEL_DAMAGE_RADIUS = 1;
+//const int MONSTER_BOX_VOXEL_DAMAGE_RADIUS = 1;
 
 // animations
 const struct Color MONSTER_BOX_ANIMATION_COLOR = { 223,31,31 };

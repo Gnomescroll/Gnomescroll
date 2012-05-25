@@ -255,6 +255,7 @@ void MiningLaserEffect_list::draw()
 
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
 }
 
 void MiningLaserEffect_list::tick()

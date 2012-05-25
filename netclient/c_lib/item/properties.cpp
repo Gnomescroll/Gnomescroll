@@ -64,15 +64,14 @@ int get_sprite_index_for_id(ItemID id)
 {
     GS_ASSERT(id < MAX_ITEMS && id >= 0);
     int type = get_item_type(id);
-    if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
-    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
-    return sprite_array[type];
+    return get_sprite_index_for_type(type);
 }
 
 int get_sprite_index_for_type(int type)
 {
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
     GS_ASSERT(type >= 0 && type < MAX_ITEMS);
+    if (type < 0 || type >= MAX_ITEMS) return ERROR_SPRITE;
     return sprite_array[type];
 }
 
@@ -119,11 +118,13 @@ char* get_item_name(int type)
     return (item_names + item_name_index[type]);
 }
 
-int get_item_type(char* name)
+int get_item_type(const char* name)
 {
     for (int i=0; i<MAX_ITEMS; i++)
         if (strcmp(name, get_item_name(i)) == 0)
             return i;
+    GS_ASSERT(false);
+    printf("%s:%d -- No item for name %s\n", __FUNCTION__, __LINE__, name);
     return NULL_ITEM_TYPE;
 }
 
