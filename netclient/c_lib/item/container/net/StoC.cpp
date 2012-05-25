@@ -15,6 +15,8 @@ namespace ItemContainer
 inline void create_item_container_StoC::handle()
 {
     ItemContainerInterface* ic = create_container((ItemContainerType)container_type,  container_id);
+    GS_ASSERT(ic != NULL);
+    if (ic == NULL) return;
     init_container(ic);
     ic->chunk = chunk;  // TODO
 }

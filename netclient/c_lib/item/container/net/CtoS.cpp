@@ -311,7 +311,6 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
-    printf("create container block\n");
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.team == 0) return;
@@ -330,11 +329,7 @@ void create_container_block_CtoS::handle()
 
     bool collides = false;
     _set(x,y,z, val); // set temporarily to test against
-    if (agent_collides_terrain(a))
-    {
-        collides = true;
-        //printf("collides w/ player\n");
-    }
+    if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
         for (int i=0; i<ServerState::agent_list->n_max; i++)
@@ -357,7 +352,6 @@ void create_container_block_CtoS::handle()
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);
-    printf("broadcast container create\n");
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
     _set_broadcast(x,y,z, val);

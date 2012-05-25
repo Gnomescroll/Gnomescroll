@@ -118,7 +118,6 @@ int dat_get_cube_id(const char* name)
 
 ItemContainerType get_container_type_for_block(int block_value)
 {
-    printf("get container type for block -- value = %d\n", block_value);
     // TODO -- return actual type from dat
     switch (block_value)
     {
