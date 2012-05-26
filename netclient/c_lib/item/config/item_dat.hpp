@@ -20,7 +20,7 @@ void load_item_dat()
     iso_block_sprite_def("regolith");
     s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
     //s.max_stack_size = 50;
-    s.max_stack_size = 10;
+    s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"regolith");
 

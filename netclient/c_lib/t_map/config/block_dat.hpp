@@ -88,11 +88,11 @@ void load_block_dat()
 
 
     cube_def(6, ItemContainerBlock, "crate_2");
-    iso_texture(t1,2,6);
-    side_texture(T, t1, 1,7);
-    side_texture(B, t1, 1,7);
-    side_texture(B, t1, 1,7);
-    hud_def(2,1, t1,1,3);
+    iso_texture(t1, 13,4);
+    side_texture(T, t1, 1,3);
+    side_texture(B, t1, 1,3);
+    side_texture(N, t1, 13,5);
+    hud_def(2,2,t1,13,5);
 /*
     cube_def(7, ItemContainerBlock, "crate_3");
     iso_texture(t1,3,4);
@@ -111,11 +111,11 @@ void load_block_dat()
     hud_def(2,2,t1,12,2);
 */
     cube_def(7, ItemContainerBlock, "crate_3");
-    iso_texture(t1, 13,4);
-    side_texture(T, t1, 1,3);
-    side_texture(B, t1, 1,3);
-    side_texture(N, t1, 13,5);
-    hud_def(2,2,t1,13,5);
+    iso_texture(t1, 3,4);
+    side_texture(T, t1, 2,5);
+    side_texture(B, t1, 3,6);
+    side_texture(N, t1, 3,5);
+    hud_def(2,2,t1,3,5);
 
 /*
     cube_def(7, ItemContainerBlock, "crate_3");
