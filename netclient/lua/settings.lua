@@ -4,31 +4,15 @@ package.path = "lua/?.lua;lua/block/?.lua;?.lua"
 
 require("lua_library");
 
---print("LuaJit: run_lua_test finished");
-
-if( options_table == nil) then
-    print "WTF"
-end
-
-
---sprint(table.val_to_str(options_table))
-
-
-
-
 options = {}
-
 
 -- player name --
 options.name = "flarb"
 
 -- server --
 
----options.server = "174.37.26.119"
-options.server = "127.0.0.1"
+options.server = "174.37.26.119"
 options.port = 0
----options.port = 4096
-
 
 -- display options -- 
 options.fullscreen = false
@@ -46,14 +30,14 @@ options.invert_mouse = false
 
 -- hud setting --
 options.hud = true
-options.diagnostic_hud = true
+options.diagnostic_hud = false
 options.fps = true
 options.ping = true
 options.ping_update_interval = 500
 
 -- sound settings --
 options.sound = true
-options.sfx = 50
+options.sfx = 100
 options.music = 100
 
 
@@ -80,9 +64,9 @@ for key,value in pairs(options) do
             ffi.copy(str, options[key]);
             ffi.C.LUA_set_string_option(id, str);
         else
-            print("Set Options Error: type error"); 
+            print("Set Options Error: type error\n"); 
         end
     else
-        print("Set Options Error: option " .. key .. " does not exist ");
+        print("Set Options Error: option " .. key .. " does not exist \n");
     end
 end

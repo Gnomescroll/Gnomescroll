@@ -222,3 +222,5 @@ health != health_max
 ./run(_ZN4Main3runEv+0x15) [0x4a6aa5]
 GS_ASSERT error: /usr/freespace/dc_mmo_dev/server/c_lib/entity/network/interfaces.cpp, line 141 function: message 
 x2
+
+swap settings_production with settings
