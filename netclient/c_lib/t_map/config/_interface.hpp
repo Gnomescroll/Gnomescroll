@@ -113,10 +113,8 @@ void cube_def(int id, int type, const char* name)
 
 void iso_texture(int tex_id)
 {
-
-
     for(int i=0; i<6; i++) _side_texture[i] = tex_id;
-/*
+
 #ifdef DC_CLIENT
     set_cube_side_texture(_current_cube_id, 0, tex_id);
     set_cube_side_texture(_current_cube_id, 1, tex_id);
@@ -132,7 +130,7 @@ void iso_texture(int tex_id)
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
 #endif
-*/
+
 }
 
 
@@ -142,7 +140,7 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     //printf("Blit 1: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     for(int i=0; i<6; i++) _side_texture[i] = tex_id;
-/*
+
     //set cube side textures
     set_cube_side_texture(_current_cube_id, 0, tex_id);
     set_cube_side_texture(_current_cube_id, 1, tex_id);
@@ -157,7 +155,7 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     set_cube_palette_texture(_current_cube_id, 3, tex_id);
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
-*/
+
 #endif
 }
 
@@ -176,85 +174,8 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     set_cube_side_texture(_current_cube_id, side, tex_id);
     set_cube_palette_texture(_current_cube_id, side, tex_id);
-
 #endif
 }
-
-/*
-void palette_def(int palette_number)
-{
-#ifdef DC_CLIENT
-    start_cube_palette(_current_cube_id);
-
-    if( cube_texture_palette_lookup[_current_cube_id] + palette_number-1 != cube_texture_palette_index)
-    {
-        printf("start_palette_def error!!! mismatch on cube %i \n", _current_cube_id);
-        printf("palette_lookup= %i palette_number= %i palette_index= %i \n", 
-            cube_texture_palette_lookup[_current_cube_id],palette_number,cube_texture_palette_index  );
-    }
-#endif
-}
-
-void end_palette_def()
-{
-#ifdef DC_CLIENT
-    push_cube_palette();
-#endif
-}
-
-void palette_side_texture(int side, int sheet_id, int ypos, int xpos)
-{
-#ifdef DC_CLIENT
-    if(xpos <= 0 || ypos <= 0)
-    {
-        printf("Block Dat Error: side_texture index on block %i is less than zero! \n", _current_cube_id);
-        abort();
-    }
-    xpos--;
-    ypos--;
-
-    //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
-    int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
-    set_cube_palette_texture(_current_cube_id, side, tex_id);
-#endif
-}
-
-void palette_side_texture(int side, int tex_id)
-{
-#ifdef DC_CLIENT
-    set_cube_palette_texture(_current_cube_id, side, tex_id);
-#endif
-}
-
-void palette_iso_texture(int sheet_id, int ypos, int xpos)
-{
-#ifdef DC_CLIENT
-    if(xpos <= 0 || ypos <= 0)
-    {
-        printf("Error: iso_texture index on block %i is less than zero! \n", _current_cube_id);
-        abort();
-    }
-    xpos--;
-    ypos--;
-
-    int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
-    //set cube side textures
-    palette_side_texture(0, tex_id);
-    palette_side_texture(1, tex_id);
-    palette_side_texture(2, tex_id);
-    palette_side_texture(3, tex_id);
-    palette_side_texture(4, tex_id);
-    palette_side_texture(5, tex_id);
-#endif 
-}
-*/
-
-/*
-void new_cube_palette(int cube_id);
-void end_cube_palette();
-void set_cube_palette_texture(int id, int palette, int side, int tex_id);
-void set_cube_palette_color(int r, int g, int b, int a);
-*/
 
 
 void color_type(int color_type)
@@ -269,10 +190,9 @@ void hud_def(int hudy, int hudx, int tex_id)
 #endif
 }
 
-void hud_def(int hudy,int hudx, int sheet_id, int xpos, int ypos)
+void hud_def(int hudy, int hudx, int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
-    //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
 #endif
@@ -543,3 +463,79 @@ void blit_block_item_sheet()
 }
 
 }
+
+/*
+void palette_def(int palette_number)
+{
+#ifdef DC_CLIENT
+    start_cube_palette(_current_cube_id);
+
+    if( cube_texture_palette_lookup[_current_cube_id] + palette_number-1 != cube_texture_palette_index)
+    {
+        printf("start_palette_def error!!! mismatch on cube %i \n", _current_cube_id);
+        printf("palette_lookup= %i palette_number= %i palette_index= %i \n", 
+            cube_texture_palette_lookup[_current_cube_id],palette_number,cube_texture_palette_index  );
+    }
+#endif
+}
+
+void end_palette_def()
+{
+#ifdef DC_CLIENT
+    push_cube_palette();
+#endif
+}
+
+void palette_side_texture(int side, int sheet_id, int ypos, int xpos)
+{
+#ifdef DC_CLIENT
+    if(xpos <= 0 || ypos <= 0)
+    {
+        printf("Block Dat Error: side_texture index on block %i is less than zero! \n", _current_cube_id);
+        abort();
+    }
+    xpos--;
+    ypos--;
+
+    //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
+    int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
+    set_cube_palette_texture(_current_cube_id, side, tex_id);
+#endif
+}
+
+void palette_side_texture(int side, int tex_id)
+{
+#ifdef DC_CLIENT
+    set_cube_palette_texture(_current_cube_id, side, tex_id);
+#endif
+}
+
+void palette_iso_texture(int sheet_id, int ypos, int xpos)
+{
+#ifdef DC_CLIENT
+    if(xpos <= 0 || ypos <= 0)
+    {
+        printf("Error: iso_texture index on block %i is less than zero! \n", _current_cube_id);
+        abort();
+    }
+    xpos--;
+    ypos--;
+
+    int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
+    //set cube side textures
+    palette_side_texture(0, tex_id);
+    palette_side_texture(1, tex_id);
+    palette_side_texture(2, tex_id);
+    palette_side_texture(3, tex_id);
+    palette_side_texture(4, tex_id);
+    palette_side_texture(5, tex_id);
+#endif 
+}
+*/
+
+/*
+void new_cube_palette(int cube_id);
+void end_cube_palette();
+void set_cube_palette_texture(int id, int palette, int side, int tex_id);
+void set_cube_palette_color(int r, int g, int b, int a);
+*/

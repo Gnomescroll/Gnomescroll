@@ -68,7 +68,6 @@ void TextureSheetLoader::reload_texture(int id, char* filename)
 //blit to sheet or return texture id
 int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
 {
-
     source_y --;
     source_x --;
 
