@@ -240,7 +240,10 @@ void init()
 
 }
 
-void set_cube_hud(int pos, int cube_id, int tex_id)
+void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id)
 {
+    hudx--;hudy--;
+    GS_ASSERT(hudx > 0 && hudy > 0);
+    int pos = 8*hudy+ hudx;
     HudCubeSelector::cube_selector.set_block_selector(pos, cube_id, tex_id);
 }

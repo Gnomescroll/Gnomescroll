@@ -29,8 +29,6 @@ void iso_block_sprite_def(const char* block_name);
 
 class ItemAttribute s;
 
-
-
 int _current_item_id = 0;
 
 void item_def(int type, int group, const char* name)

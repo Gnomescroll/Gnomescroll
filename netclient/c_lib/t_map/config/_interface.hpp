@@ -54,8 +54,13 @@ enum CubeType
 int _current_cube_id = -1;
 int _current_pallet = 0;
 
+int _side_texture[6];
+
 void cube_def(int id, int type, const char* name)
 { 
+
+    for(int i=0; i<6; i++) _side_texture[i] = 0;
+
 #if DC_CLIENT
     if(_current_cube_id != -1) push_cube_palette();
 #endif
@@ -108,6 +113,10 @@ void cube_def(int id, int type, const char* name)
 
 void iso_texture(int tex_id)
 {
+
+
+    for(int i=0; i<6; i++) _side_texture[i] = tex_id;
+/*
 #ifdef DC_CLIENT
     set_cube_side_texture(_current_cube_id, 0, tex_id);
     set_cube_side_texture(_current_cube_id, 1, tex_id);
@@ -123,22 +132,17 @@ void iso_texture(int tex_id)
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
 #endif
+*/
 }
 
 
 void iso_texture(int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
-    if(xpos <= 0 || ypos <= 0)
-    {
-        printf("Error: iso_texture index on block %i is less than zero! \n", _current_cube_id);
-        abort();
-    }
-    xpos--;
-    ypos--;
-
     //printf("Blit 1: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
+    for(int i=0; i<6; i++) _side_texture[i] = tex_id;
+/*
     //set cube side textures
     set_cube_side_texture(_current_cube_id, 0, tex_id);
     set_cube_side_texture(_current_cube_id, 1, tex_id);
@@ -153,6 +157,7 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     set_cube_palette_texture(_current_cube_id, 3, tex_id);
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
+*/
 #endif
 }
 
@@ -167,14 +172,6 @@ void side_texture(int side, int tex_id)
 void side_texture(int side, int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
-    if(xpos <= 0 || ypos <= 0)
-    {
-        printf("Block Dat Error: side_texture index on block %i is less than zero! \n", _current_cube_id);
-        abort();
-    }
-    xpos--;
-    ypos--;
-
     //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     set_cube_side_texture(_current_cube_id, side, tex_id);
@@ -268,41 +265,16 @@ void color_type(int color_type)
 void hud_def(int hudy, int hudx, int tex_id)
 {
 #ifdef DC_CLIENT
-
-    if(hudx <= 0 || hudy <= 0)
-    {
-        printf("Block Dat Error: hud_def1 index on block %i less than zero! \n", _current_cube_id);
-        abort();
-    }
-    hudy--;
-    hudx--;
-
-    set_cube_hud(8*hudy+ hudx, _current_cube_id, tex_id);
+    set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
 #endif
 }
 
-void hud_def(int hudy,int hudx, int sheet_id, int ypos, int xpos)
+void hud_def(int hudy,int hudx, int sheet_id, int xpos, int ypos)
 {
 #ifdef DC_CLIENT
-    if(hudx <= 0 || hudy <= 0)
-    {
-        printf("Block Dat Error: hud_def2, hudx,hudy on block %i less than zero! \n", _current_cube_id);
-        abort();
-    }
-    hudy--;
-    hudx--;
-
-    if(xpos <= 0 || ypos <= 0)
-    {
-        printf("Block Dat Error: hud_def2, xpos,ypos on block %i less than zero! \n", _current_cube_id);
-        abort();
-    }
-    xpos--;
-    ypos--;
-
     //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
-    set_cube_hud(8*hudy+ hudx, _current_cube_id, tex_id);
+    set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
 #endif
 }
 
@@ -323,13 +295,6 @@ int texture_alias(const char* spritesheet)
 int sprite_alias(int sheet_id, int ypos, int xpos)
 {
 #if DC_CLIENT
-    if(xpos <= 0 || ypos <= 0)
-    {
-        printf("Block Dat Error: hud_def2, xpos,ypos on block %i less than zero! \n", _current_cube_id);
-        abort();
-    }
-    xpos--;
-    ypos--;
     return LUA_blit_cube_texture(sheet_id, xpos, ypos); 
 #else
     return 0;
