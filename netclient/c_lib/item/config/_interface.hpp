@@ -64,12 +64,9 @@ int texture_alias(const char* spritesheet)
 
 void sprite_def(int spritesheet, int ypos, int xpos)
 {
-    ypos -= 1;
-    xpos -= 1;
-
-    if(xpos < 0 || ypos < 0)
+    if(xpos < 1 || ypos < 1)
     {
-        printf("ITEM CONFIG ERROR: id= %i xpos,ypos less than zero \n", _current_item_id);
+        printf("ITEM CONFIG ERROR: id= %i xpos,ypos less than one \n", _current_item_id);
         GS_ASSERT(false);
     }
 
@@ -84,10 +81,7 @@ void sprite_def(int alias)
 
 int sprite_alias(int spritesheet, int ypos, int xpos)
 {
-    ypos -= 1;
-    xpos -= 1;
-
-    if(xpos < 0 || ypos < 0)
+    if(xpos < 1 || ypos < 1)
     {
         printf("ITEM CONFIG ERROR: sprite alias xpos,ypos less than zero \n");
         GS_ASSERT(false);

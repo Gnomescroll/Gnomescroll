@@ -68,20 +68,20 @@ void TextureSheetLoader::reload_texture(int id, char* filename)
 //blit to sheet or return texture id
 int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
 {
-    source_y --;
-    source_x --;
-
-    if(source_x < 0)
+    if(source_x < 1)
     {
         printf("TextureSheetLoader::blit source_x less than 1: sheet_id= %i source_y= %i source_x= %i \n", sheet_id, source_x, source_y);
+        GS_ASSERT(false);
         return 0;
     }
-
-    if(source_y < 0)
+    if(source_y < 1)
     {
         printf("TextureSheetLoader::blit source_y less than 1: sheet_id= %i source_y= %i source_x= %i \n", sheet_id, source_x, source_y);
+        GS_ASSERT(false);
         return 0;
     }
+    source_y --;
+    source_x --;
 
     if(sheet_id >= texture_num)
     {

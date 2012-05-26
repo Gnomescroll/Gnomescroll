@@ -29,7 +29,7 @@ void CubeSelector::init()
 void CubeSelector::set_block_selector(int pos, int cube_id, int tex_id)
 {
     //printf("set block selector: %d %d %d\n", pos, cube_id, tex_id);
-    if(pos == -1 || tex_id == -1) return;
+    if(pos < 0 || tex_id < 0) return;
     if(pos < 0 || pos >= 64)
     {
         printf("CubeSelector::load_cube_property error!\n");
@@ -242,8 +242,10 @@ void init()
 
 void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id)
 {
-    hudx--;
-    hudy--;
-    GS_ASSERT(hudx > 0 && hudy > 0);
+    if(hudx < 1 || hudy < 1)
+    {
+        printf("set_cube_hud error! hux= %i hudy= %i \n", hudx,hudy);
+        return;
+    }
     HudCubeSelector::cube_selector.set_block_selector(8*hudy+hudx, cube_id, tex_id);
 }

@@ -137,6 +137,13 @@ void iso_texture(int tex_id)
 void iso_texture(int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
+
+    if(xpos < 1 || ypos < 1)
+    {
+        printf("iso_texture error: xpos= %i ypos= %i \n", xpos,ypos);
+        return;
+    }
+
     //printf("Blit 1: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     for(int i=0; i<6; i++) _side_texture[i] = tex_id;
@@ -170,6 +177,11 @@ void side_texture(int side, int tex_id)
 void side_texture(int side, int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
+    if(xpos < 1 || ypos < 1)
+    {
+        printf("side_texture error: xpos= %i ypos= %i \n", xpos,ypos);
+        return;
+    }
     //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     set_cube_side_texture(_current_cube_id, side, tex_id);
@@ -186,6 +198,11 @@ void color_type(int color_type)
 void hud_def(int hudy, int hudx, int tex_id)
 {
 #ifdef DC_CLIENT
+    if(hudy < 1 || hudx < 1)
+    {
+        printf("hud_def error: hudx= %i hudy= %i \n", hudx,hudy);
+        return;
+    }
     set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
 #endif
 }
@@ -193,6 +210,16 @@ void hud_def(int hudy, int hudx, int tex_id)
 void hud_def(int hudy, int hudx, int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
+    if(xpos < 1 || ypos < 1)
+    {
+        printf("hud_def error: xpos= %i ypos= %i \n", xpos,ypos);
+        return;
+    }
+    if(hudy < 1 || hudx < 1)
+    {
+        printf("hud_def error: hudx= %i hudy= %i \n", hudx,hudy);
+        return;
+    }
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
 #endif
@@ -215,6 +242,12 @@ int texture_alias(const char* spritesheet)
 int sprite_alias(int sheet_id, int ypos, int xpos)
 {
 #if DC_CLIENT
+
+    if(xpos < 1 || ypos < 1)
+    {
+        printf("sprite_alias error: xpos= %i ypos= %i \n", xpos,ypos);
+        return 0;
+    }
     return LUA_blit_cube_texture(sheet_id, xpos, ypos); 
 #else
     return 0;
