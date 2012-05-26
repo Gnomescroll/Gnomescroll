@@ -102,9 +102,16 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
 
+    if OS == 'Darwin':
+        # 64 bit lua shit
+        conf.env.append_value("CXXFLAGS", "-Xlinker -pagezero_size -Xlinker 10000")
+        conf.env.append_value("CXXFLAGS", "-Xlinker -image_base -Xlinker 100000000")
+
     lua_path = '/usr/include/luajit-2.0'
     if OS == 'Darwin':
 	lua_path = '/usr/local/include/luajit-2.0'
+
+    print lua_path
 
     conf.check(header_name='lua.h',
            lib='luajit-5.1', #'lua5.1',
