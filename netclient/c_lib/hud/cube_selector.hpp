@@ -53,7 +53,4 @@ extern CubeSelector cube_selector;
 void init();
 }
 
-extern "C"
-{
-void set_cube_hud(int pos, int cube_id, int tex_id) GNOMESCROLL_API;;
-}
+void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id);
