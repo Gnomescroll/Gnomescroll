@@ -12,7 +12,7 @@ if platform.system() != "Linux":
 
 subprocess.Popen('ulimit -c unlimited', shell=True)
 
-with open('./VERSIONX.old') as f:
+with open('../VERSIONX.old') as f:
     version = f.read().strip()
 
 print "Server version is ", version
