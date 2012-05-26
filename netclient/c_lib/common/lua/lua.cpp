@@ -128,7 +128,6 @@ void set_options_file(char* path)
         free(options_file);
     options_file = (char*)malloc(sizeof(char) * (strlen(path) + 1));
     strcpy(options_file, path);
-    printf("Set lua options file to %s\n", options_file);
 }
 
 /*
@@ -143,6 +142,8 @@ void load_options()
     char* options_path = options_file;
     if (options_path == NULL)
         options_path = (char*)default_options_file;
+
+    printf("Loading settings file %s\n", options_path);
 
     if(LUA_options_table == NULL)
     {

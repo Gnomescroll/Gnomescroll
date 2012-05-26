@@ -20,6 +20,10 @@ dont_include_this_file_in_server
     #undef interface
 #endif
 
+#ifdef __APPLE__
+#include <common/osx.hpp>
+#endif
+
 /* Common headers */
 #include <common/version.h>
 #include <common/defines.h>
@@ -216,7 +220,7 @@ void signal_terminate_handler(int sig)
 #endif
 
 int init_c_lib() 
-{
+{    
     static int inited = 0;
     GS_ASSERT(inited == 0);
     inited++;
