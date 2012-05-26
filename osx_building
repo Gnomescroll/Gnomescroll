@@ -3,3 +3,17 @@
 <q66[mac]>   Referenced from: /Users/q66/Downloads/Contents/./MacOS/Gnomescroll
 <q66[mac]>   Reason: image not found
 <q66[mac]> Trace/BPT trap
+
+ldd replacement:
+ otool -L <binary>
+
+
+TODO:
+
+--dylib path is wrong
+
+copy dylibs to frameworks
+
+
+
+copy lua files individually
