@@ -8,6 +8,8 @@ syntax: glob
 *.so
 *.o
 
+.DS_Store
+
 *~
 
 gmon.out
