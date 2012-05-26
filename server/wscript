@@ -102,12 +102,16 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
 
+    lua_path = '/usr/include/luajit-2.0'
+    if OS == 'Darwin':
+	lua_path = '/usr/local/include/luajit-2.0'
+
     conf.check(header_name='lua.h',
            lib='luajit-5.1', #'lua5.1',
            use='luajit-5.1', #'lua5.1',
            uselib_store='LUA',
            fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-           includes='/usr/include/luajit-2.0',
+           includes=lua_path,
            mandatory=True)
 
     #conf.check(header_name="noise/noise.h",
