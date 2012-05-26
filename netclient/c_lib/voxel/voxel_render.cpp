@@ -43,7 +43,7 @@ void init_voxel_render_list_shader1()
     }
     printf("init voxel shader\n");
 
-    int DEBUG = 0;
+    int DEBUG1 = 0;
 
     voxel_shader_prog = glCreateProgramObjectARB(); //glCreateProgram();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -58,17 +58,17 @@ void init_voxel_render_list_shader1()
     glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
 
     glCompileShaderARB(voxel_shader_vert);
-    if (DEBUG) printShaderInfoLog(voxel_shader_vert);
+    if (DEBUG1) printShaderInfoLog(voxel_shader_vert);
 
     glCompileShaderARB(voxel_shader_frag);
-    if (DEBUG) printShaderInfoLog(voxel_shader_frag);
+    if (DEBUG1) printShaderInfoLog(voxel_shader_frag);
     
     glAttachObjectARB(voxel_shader_prog, voxel_shader_vert);
     glAttachObjectARB(voxel_shader_prog, voxel_shader_frag);
 
     glLinkProgramARB(voxel_shader_prog);
 
-    if (DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
+    if (DEBUG1) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
 
     //uniforms
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
