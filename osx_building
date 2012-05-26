@@ -1,0 +1,5 @@
+<q66[mac]> q66book:Contents q66$ ./MacOS/Gnomescroll
+<q66[mac]> dyld: Library not loaded: /usr/local/lib/libGLEW.1.7.0.dylib
+<q66[mac]>   Referenced from: /Users/q66/Downloads/Contents/./MacOS/Gnomescroll
+<q66[mac]>   Reason: image not found
+<q66[mac]> Trace/BPT trap

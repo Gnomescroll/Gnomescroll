@@ -113,7 +113,11 @@ namespace LUA
 lua_State* LUA_options_table = NULL;
 
 #if DC_CLIENT
-const char* default_options_file = "./lua/settings.lua";
+    #if PRODUCTION
+        const char* default_options_file = "./lua/settings.lua";
+    #else
+        const char* default_options_file = "./lua/settings_dev.lua";
+    #endif
 #endif
 #if DC_SERVER
 const char* default_options_file = "./lua/settings_server.lua";
@@ -155,7 +159,7 @@ void load_options()
         //if (luaL_loadfile(L, "lua/settings.lua")) 
         if (luaL_loadfile(L, options_path)) 
         {
-            fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+            fprintf(stderr, "%s:%d -- Couldn't load file: %s\n", __FUNCTION__, __LINE__, lua_tostring(L, -1));
             GS_ABORT();
         }
 
