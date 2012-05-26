@@ -52,7 +52,6 @@ enum CubeType
 
 
 int _current_cube_id = -1;
-int _current_pallet = 0;
 
 int _side_texture[6];
 
@@ -61,9 +60,9 @@ void cube_def(int id, int type, const char* name)
 
     for(int i=0; i<6; i++) _side_texture[i] = 0;
 
-#if DC_CLIENT
-    if(_current_cube_id != -1) push_cube_palette();
-#endif
+//#if DC_CLIENT
+//    if(_current_cube_id != -1) push_cube_palette();
+//#endif
     _current_cube_id = id;
     set_cube_name(id, (char*) name);
 
@@ -105,16 +104,15 @@ void cube_def(int id, int type, const char* name)
 
     //extern struct cubeProperties* cube_list;
     cube_list[id] = p;
-    _current_pallet = 0;
-#if DC_CLIENT
-    start_cube_palette(id);
-#endif
+//#if DC_CLIENT
+//    start_cube_palette(id);
+//#endif
 }
 
 void iso_texture(int tex_id)
 {
     for(int i=0; i<6; i++) _side_texture[i] = tex_id;
-
+/*
 #ifdef DC_CLIENT
     set_cube_side_texture(_current_cube_id, 0, tex_id);
     set_cube_side_texture(_current_cube_id, 1, tex_id);
@@ -130,7 +128,7 @@ void iso_texture(int tex_id)
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
 #endif
-
+*/
 }
 
 
@@ -147,7 +145,7 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     //printf("Blit 1: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     for(int i=0; i<6; i++) _side_texture[i] = tex_id;
-
+/*
     //set cube side textures
     set_cube_side_texture(_current_cube_id, 0, tex_id);
     set_cube_side_texture(_current_cube_id, 1, tex_id);
@@ -162,15 +160,16 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     set_cube_palette_texture(_current_cube_id, 3, tex_id);
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
-
+*/
 #endif
 }
 
 void side_texture(int side, int tex_id)
 {
 #ifdef DC_CLIENT 
-    set_cube_side_texture(_current_cube_id, side, tex_id);
-    set_cube_palette_texture(_current_cube_id, side, tex_id);
+    _side_texture[side] = tex_id;
+    //set_cube_side_texture(_current_cube_id, side, tex_id);
+    //set_cube_palette_texture(_current_cube_id, side, tex_id);
 #endif
 }
 
@@ -184,11 +183,22 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
     }
     //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
-    set_cube_side_texture(_current_cube_id, side, tex_id);
-    set_cube_palette_texture(_current_cube_id, side, tex_id);
+    _side_texture[side] = tex_id;
+
+    //set_cube_side_texture(_current_cube_id, side, tex_id);
+    //set_cube_palette_texture(_current_cube_id, side, tex_id);
 #endif
 }
 
+void push_pallete()
+{
+#if DC_CLIENT 
+    start_cube_palette(_current_cube_id);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
+    for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
+    push_cube_palette();
+#endif
+}
 
 void color_type(int color_type)
 {

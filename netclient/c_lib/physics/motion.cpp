@@ -1,7 +1,7 @@
 #include "motion.hpp"
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/t_map/t_map.hpp>
+#include <physics/vec3.hpp>
+#include <t_map/t_map.hpp>
 
 int stick_to_terrain_surface(Vec3 position)
 {   // fall/climb with terrain
