@@ -301,7 +301,7 @@ static int vertex_max = 0;
 
 //int update_column_VBO(struct vm_column* column) {
 
-#define USE_QUAD_CACHE 1
+#define USE_QUAD_CACHE 0
 
 static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 

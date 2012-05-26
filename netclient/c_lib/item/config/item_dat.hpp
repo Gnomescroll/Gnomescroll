@@ -229,7 +229,7 @@ void iso_block_sprite_def(const char* block_name)
     int xpos = id % 16;
     int ypos = id / 16;
 
-    int index = LUA_blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
+    int index = LUA_blit_item_texture(_item_cube_iso_spritesheet_id, xpos+1, ypos+1);
     sprite_array[_current_item_id] = index; //check
 #endif
 }

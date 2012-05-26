@@ -75,7 +75,7 @@ namespace t_map
     void set_map_shader_0() 
     {
         const int index = 0;    //shader index
-        const int DEBUG = 1;
+        const int DEBUG1 = 1;
 
         map_shader[index] = glCreateProgramObjectARB();
         map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -83,7 +83,7 @@ namespace t_map
 
         char *vs, *fs;
 
-        if(DEBUG) printf("set_map_shader_0: \n");
+        if(DEBUG1) printf("set_map_shader_0: \n");
 
         vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
         fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
@@ -91,17 +91,17 @@ namespace t_map
         glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
         glCompileShaderARB(map_vert_shader[index]);
-        if(DEBUG) printShaderInfoLog(map_vert_shader[index]);
+        if(DEBUG1) printShaderInfoLog(map_vert_shader[index]);
 
         glCompileShaderARB(map_frag_shader[index]);
-        if(DEBUG) printShaderInfoLog(map_frag_shader[index]);
+        if(DEBUG1) printShaderInfoLog(map_frag_shader[index]);
         
         glAttachObjectARB(map_shader[index], map_vert_shader[index]);
         glAttachObjectARB(map_shader[index], map_frag_shader[index]);
 
         glLinkProgramARB(map_shader[index]);
 
-        if(DEBUG) printProgramInfoLog(map_shader[index]);
+        if(DEBUG1) printProgramInfoLog(map_shader[index]);
         
         //uniforms
 
@@ -286,7 +286,7 @@ namespace t_map
     void set_map_shader_0_comptability() 
     {
         const int index = 0;    //shader index
-        const int DEBUG = 1;
+        const int DEBUG1 = 1;
 
         map_shader[index] = glCreateProgramObjectARB();
         map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -294,7 +294,7 @@ namespace t_map
 
         char *vs, *fs;
 
-        if(DEBUG) printf("set_map_shader_0: \n");
+        if(DEBUG1) printf("set_map_shader_0: \n");
 
         vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_comptability.vsh");
         fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_comptability.fsh");
@@ -302,17 +302,17 @@ namespace t_map
         glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
         glCompileShaderARB(map_vert_shader[index]);
-        if(DEBUG) printShaderInfoLog(map_vert_shader[index]);
+        if(DEBUG1) printShaderInfoLog(map_vert_shader[index]);
 
         glCompileShaderARB(map_frag_shader[index]);
-        if(DEBUG) printShaderInfoLog(map_frag_shader[index]);
+        if(DEBUG1) printShaderInfoLog(map_frag_shader[index]);
         
         glAttachObjectARB(map_shader[index], map_vert_shader[index]);
         glAttachObjectARB(map_shader[index], map_frag_shader[index]);
 
         glLinkProgramARB(map_shader[index]);
 
-        if(DEBUG) printProgramInfoLog(map_shader[index]);
+        if(DEBUG1) printProgramInfoLog(map_shader[index]);
         
         //uniforms
 

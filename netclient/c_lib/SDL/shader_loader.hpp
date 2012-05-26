@@ -15,19 +15,19 @@ class SHADER
     unsigned int frag_shader;
     unsigned int vert_shader;
 
-    bool DEBUG;
+    bool DEBUG1;
     SHADER()
     {
         shader = 0;
         frag_shader = 0;
         vert_shader = 0;
         
-        DEBUG = true;
+        DEBUG1 = true;
     }
 
     void set_debug(bool value)
     {
-        DEBUG = value;
+        DEBUG1 = value;
     }
 
     void load_shader(const char* name, const char* vertex_shader_file, const char* fragment_shader_file)
@@ -39,7 +39,7 @@ class SHADER
 
         char *vs, *fs;
 
-        if(DEBUG) printf("set shader: %s \n", name);
+        if(DEBUG1) printf("set shader: %s \n", name);
 
         vs = textFileRead( (char*) vertex_shader_file );
         fs = textFileRead( (char*) fragment_shader_file );
@@ -48,17 +48,17 @@ class SHADER
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
         
         glCompileShaderARB(vert_shader);
-        if(DEBUG) printShaderInfoLog(vert_shader);
+        if(DEBUG1) printShaderInfoLog(vert_shader);
 
         glCompileShaderARB(frag_shader);
-        if(DEBUG) printShaderInfoLog(frag_shader);
+        if(DEBUG1) printShaderInfoLog(frag_shader);
         
         glAttachObjectARB(shader, vert_shader);
         glAttachObjectARB(shader, frag_shader);
 
         glLinkProgramARB(shader);
 
-        if(DEBUG) printProgramInfoLog(shader);
+        if(DEBUG1) printProgramInfoLog(shader);
     }
 
     unsigned int get_attribute(const char* attribute_name)
