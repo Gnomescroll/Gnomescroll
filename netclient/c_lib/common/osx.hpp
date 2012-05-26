@@ -22,7 +22,7 @@ void set_working_directory_to_Resources()
     CFRelease(resourcesURL);
 
     chdir(path);
-    std::cout << "Current Path: " << path << std::endl;
+    printf("Working directory set to: %s", path);
 }
 #endif
 // ----------------------------------------------------------------------------
