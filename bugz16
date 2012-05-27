@@ -199,6 +199,9 @@ DONE
 check that packets are reliable
 DONE (all were)
 
+add graceful failure for some missing container conditions
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
@@ -240,3 +243,9 @@ Normal, but need to add both max and starting health to packet?
 some container cant be opened
 
 container window doesnt close when active container gets destroyed
+
+refactor nanite container/ui to conform to craft bench style
+
+parameterize open/close container input handling shit
+
+map gen uses strictly canonical block names

@@ -86,9 +86,10 @@ void set_cube_name(int id, char* name)
 
 char* get_cube_name(int id)
 {
-    if(id < 0 || id >= MAX_CUBES)
+    GS_ASSERT(id >= 0 && id < MAX_CUBES);
+    if (id < 0 || id >= MAX_CUBES)
     {
-        printf("Error: cube_name_index(), cube id error\n");
+        printf("%s:%d, cube id %d invalid\n", __FUNCTION__, __LINE__, id);
         return NULL;
     }
 
@@ -102,6 +103,8 @@ int get_cube_id(char* name)
         if (strcmp(name, get_cube_name(i)) == 0)
             return i;
     }
+    GS_ASSERT(false);
+    printf("No cube id found for name %s\n", name);
     return -1;
 }
 
