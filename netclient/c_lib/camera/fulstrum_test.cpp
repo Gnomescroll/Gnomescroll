@@ -113,7 +113,7 @@ bool point_fulstrum_test(float x, float y, float  z)
     return true;
 }
 
-bool point_fulstrum_test2(float x, float y, float  z)
+inline bool point_fulstrum_test2(float x, float y, float  z)
 {
     //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
     //    return false;

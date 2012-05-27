@@ -23,6 +23,7 @@ SDL_Surface* _load_image(char *file)
         printf("IMG_Load: %s \n", IMG_GetError());
         return 0;
     }
+    GS_ASSERT(image->format->BytesPerPixel == 4);
     if(image->format->BytesPerPixel != 4)
     {
         printf("IMG_Load: image is missing alpha channel \n");
@@ -129,6 +130,11 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, unsigned int 
 
 int create_texture_from_file(char* filename, GLuint* tex)
 {
+    return create_texture_from_file(filename, tex, GL_LINEAR, GL_LINEAR);
+}
+
+int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLuint mag_filter)
+{
     SDL_Surface *surface;
     surface=IMG_Load(filename);
     if (!surface)
@@ -146,17 +152,15 @@ int create_texture_from_file(char* filename, GLuint* tex)
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, tex );
     glBindTexture( GL_TEXTURE_2D, *tex );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     int texture_format;
     if (surface->format->Rmask == 0x000000ff)
-    {
         texture_format = GL_RGBA;
-    } else {
+    else
         texture_format = GL_BGRA;
-    }
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
     SDL_FreeSurface(surface);
@@ -186,11 +190,9 @@ SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     int texture_format;
     if (surface->format->Rmask == 0x000000ff)
-    {
         texture_format = GL_RGBA;
-    } else {
+    else
         texture_format = GL_BGRA;
-    }
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
     return surface;
@@ -238,6 +240,7 @@ void load_colored_texture(
         printf("ERROR: Failed to create surface for %s\n", path);
         return;
     }
+
     SDL_LockSurface(s);
     glEnable(GL_TEXTURE_2D);
 
