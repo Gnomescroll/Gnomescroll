@@ -7,3 +7,7 @@ drivers = pulse,alsa,oss
 
 find line "[alsa]"
 uncomment the line "device = default", in the [alsa] section
+
+
+NEVERMIND IT WORKED FOR SOME OTHER REASON PROBABLY
+UBUNTU RANDOMLY DISABLING SHIT. I CANT GET IT BACK
