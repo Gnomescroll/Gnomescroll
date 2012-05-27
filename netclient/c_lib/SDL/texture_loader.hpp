@@ -20,7 +20,7 @@ int create_texture_from_file(char* filename, GLuint* tex);
 int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLuint mag_filter);
 
 int create_texture_from_surface(SDL_Surface* surface, GLuint* tex);
-int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, unsigned int MAG_FILTER);
+int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FILTER);
 
 SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex);
 

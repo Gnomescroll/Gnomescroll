@@ -88,32 +88,22 @@ void _load_image_create_texture(char *file, struct Texture *tex)
 
 int create_texture_from_surface(SDL_Surface *surface, GLuint *tex)
 {
-    if(surface == NULL)
-    {
-        printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
-        return 1;
-    }
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, tex );
-    // Bind the texture object
-    glBindTexture( GL_TEXTURE_2D, *tex );
-    // Set the texture's stretching properties
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    // Edit the texture object's image data using the information SDL_Surface gives us
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
-    glDisable(GL_TEXTURE_2D);
-    return 0;
+    return create_texture_from_surface(surface, tex, GL_LINEAR);
 }
 
-int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, unsigned int MAG_FILTER)
+int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FILTER)
 {
     if(surface == NULL)
     {
         printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
         return 1;
     }
+
+    int texture_format;
+    if (surface->format->Rmask == 0x000000ff)
+        texture_format = GL_RGBA;
+    else
+        texture_format = GL_BGRA;
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, tex );
@@ -123,7 +113,7 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, unsigned int 
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MAG_FILTER );
     // Edit the texture object's image data using the information SDL_Surface gives us
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
     glDisable(GL_TEXTURE_2D);
     return 0;
 }
@@ -204,17 +194,17 @@ SDL_Surface* create_surface_from_nothing(int w, int h)
     SDL_Surface* surface;
 
     static Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
     gmask = 0x00ff0000;
     bmask = 0x0000ff00;
     amask = 0x000000ff;
-#else
+    #else
     rmask = 0x000000ff;
     gmask = 0x0000ff00;
     bmask = 0x00ff0000;
     amask = 0xff000000;
-#endif
+    #endif
 
     //surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w,h, 32, rmask, gmask, bmask, amask);
     surface = SDL_CreateRGBSurface(SDL_SRCALPHA, w,h, 32, rmask, gmask, bmask, amask);

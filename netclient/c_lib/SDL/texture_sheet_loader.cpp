@@ -39,7 +39,7 @@ int TextureSheetLoader::load_texture(char* filename)
 {
     int id = texture_num;
 
-    textures[texture_num]= _load_image(filename);
+    textures[texture_num] = _load_image(filename);
 
     if(textures[texture_num] == NULL)
     {
