@@ -32,6 +32,7 @@ inline void assign_item_container_StoC::handle()
 {
     ItemContainerInterface* ic = get_container(container_id);
     ASSERT_NOT_NULL(ic);
+    if (ic == NULL) return;
     ItemContainerType type = (ItemContainerType)container_type;
     switch (type)
     {
@@ -73,6 +74,7 @@ inline void insert_item_in_container_StoC::handle()
 {
     ItemContainerInterface* ic = get_container(container_id);
     ASSERT_NOT_NULL(ic);
+    if (ic == NULL) return;
     ic->insert_item(slot, (ItemID)item_id);
     ItemContainerUIInterface* ui = get_container_ui(container_id);
     if (ui == NULL) return;
@@ -86,6 +88,7 @@ inline void remove_item_from_container_StoC::handle()
 {
     ItemContainerInterface* ic = get_container(container_id);
     ASSERT_NOT_NULL(ic);
+    if (ic == NULL) return;
     ic->remove_item(slot);
     ItemContainerUIInterface* ui = get_container_ui(container_id);
     if (ui == NULL) return;

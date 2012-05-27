@@ -193,7 +193,7 @@ DONE
 osx 10.5+ build
 DONE
 
-remove 2nf fps label; switch to fps units
+remove 2nd fps label; switch to fps units
 DONE
 
 check that packets are reliable
@@ -216,8 +216,6 @@ glsl colored/textured voxels
 
 shovel sounds
 block placement sounds
-
-remove 2nd ping number
 
 red box random walk is biased to +/+
 
