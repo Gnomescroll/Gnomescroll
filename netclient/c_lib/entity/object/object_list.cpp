@@ -63,13 +63,18 @@ inline bool ObjectList::full(ObjectType type)
 
 inline bool ObjectList::in_use(ObjectType type, int id)
 {
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     GS_ASSERT(this->used != NULL);
     GS_ASSERT(this->used[type] != NULL);
     GS_ASSERT(this->maximums != NULL);
     GS_ASSERT(id >= 0 && id < this->maximums[type]);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return true;
+    if (this->used == NULL) return true;
+    if (this->used[type] == NULL) return true;
+    if (this->maximums == NULL) return true;
+    if (id < 0 || id >= this->maximums[type]) return true;
     return (this->used[type][id] == 1);
 }
-
 
 void ObjectList::destroy(ObjectType type, int id)
 {
