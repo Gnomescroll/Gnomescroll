@@ -129,6 +129,11 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, unsigned int 
 
 int create_texture_from_file(char* filename, GLuint* tex)
 {
+    return create_texture_from_file(filename, tex, GL_LINEAR);
+}
+
+int create_texture_from_file(char* filename, GLuint* tex, GLuint mag_filter)
+{
     SDL_Surface *surface;
     surface=IMG_Load(filename);
     if (!surface)
@@ -147,7 +152,7 @@ int create_texture_from_file(char* filename, GLuint* tex)
     glGenTextures( 1, tex );
     glBindTexture( GL_TEXTURE_2D, *tex );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     int texture_format;

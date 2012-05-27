@@ -46,27 +46,8 @@ void teardown_mining_laser()
 
 void init_mining_laser_texture()
 {
-    SDL_Surface* s = create_surface_from_file((char*) "./media/sprites/mining_laser2.png");
-
-    if(s == NULL)
-    {
-        printf("init_insect_mob: texture load error\n");
-        GS_ABORT();
-    }
- 
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &mining_laser_texture );
-    glBindTexture( GL_TEXTURE_2D, mining_laser_texture  );
-
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-    GLuint internalFormat = GL_RGBA; //GL_RGBA;
-    GLuint format = GL_RGBA;
- 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
-    glDisable(GL_TEXTURE_2D);
+    int ret = create_texture_from_file((char*) "./media/sprites/mining_laser2.png", &mining_laser_texture, GL_LINEAR);
+    assert(ret == 0);
 }
 
 void init_mining_laser_shader()
