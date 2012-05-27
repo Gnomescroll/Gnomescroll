@@ -158,7 +158,16 @@ void block_action_StoC::handle()
     }
     else
         Sound::block_set(x+0.5f,y+0.5f,z+0.5f,0,0,0);
-    _set(x,y,z,val);
+    
+    struct MAP_ELEMENT e;
+    e.n = 0;
+    e.block = val;
+    e.palette = 1;
+    
+    main_map->set_element(x,y,z, e);
+    //_set(x,y,z,val);
+
+    printf("block set! \n");
 }
 
 void map_metadata_StoC::handle() 

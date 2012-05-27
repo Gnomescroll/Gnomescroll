@@ -52,6 +52,7 @@ enum CubeType
 
 
 int _current_cube_id = -1;
+int _palette_number = 0;
 
 int _side_texture[6];
 
@@ -63,6 +64,7 @@ void cube_def(int id, int type, const char* name)
 //#if DC_CLIENT
 //    if(_current_cube_id != -1) push_cube_palette();
 //#endif
+    _palette_number = 0;
     _current_cube_id = id;
     set_cube_name(id, (char*) name);
 
@@ -194,9 +196,75 @@ void push_pallete()
 {
 #if DC_CLIENT 
     start_cube_palette(_current_cube_id);
+
+    //for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
     for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
-    for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
     push_cube_palette();
+    _palette_number++;
+#endif
+}
+
+/*
+    NSWE //normal
+    EWNS
+    SNEW
+    WESN
+*/
+
+void push_oriented_pallete()
+{
+#if DC_CLIENT 
+ 
+    const int T = 0;
+    const int B = 1;
+    const int N = 2;
+    const int S = 3;
+    const int W = 4;
+    const int E = 5;
+
+    //for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
+
+    //NORTH
+    start_cube_palette(_current_cube_id);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[2]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[3]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[4]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[5]);
+    push_cube_palette();
+
+    //WEST
+    start_cube_palette(_current_cube_id);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[2]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[3]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[4]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[5]);
+    push_cube_palette();
+
+    //SOUTH
+    start_cube_palette(_current_cube_id);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[1]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[2]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[3]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[4]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[5]);
+    push_cube_palette();
+
+    //EAST
+    start_cube_palette(_current_cube_id);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[2]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[3]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[4]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[5]);
+    push_cube_palette();
+
+    _palette_number += 4;
 #endif
 }
 

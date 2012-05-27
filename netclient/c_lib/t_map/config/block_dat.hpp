@@ -99,7 +99,7 @@ void load_block_dat()
     side_texture(T, t1, 1,3);
     side_texture(B, t1, 1,3);
     side_texture(N, t1, 13,5);
-    push_pallete();
+    push_oriented_pallete();
 
     hud_def(2,2,t1,13,5);
 /*
@@ -124,7 +124,7 @@ void load_block_dat()
     side_texture(T, t1, 2,5);
     side_texture(B, t1, 3,6);
     side_texture(N, t1, 3,5);
-    push_pallete();
+    push_oriented_pallete();
 
     hud_def(2,2,t1,3,5);
 
@@ -197,6 +197,12 @@ void load_block_dat()
     set_max_dmg(5);
 
     cube_def(54, SolidBlock, "regolith");
+    
+    //pallete 0
+    iso_texture(t1,10,5);
+    push_pallete();
+
+    //pallete 1
     iso_texture(t1,10,4);
     side_texture(T, t1,10,3);
     side_texture(B, t1,10,5);
