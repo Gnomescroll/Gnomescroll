@@ -18,8 +18,9 @@ void CHUNK_ITEM_CONTAINER::remove_index(int i)
     //int subscriber_count;
     //unsigned short* subscribers = map_history->get_subscribers(&subscriber_count)
     // dont send to subscribers only here -- there may be different subscriber infrastructure for this later
-    ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
     #endif
+
+    ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
     
     _remove(i);
 }
@@ -53,12 +54,20 @@ void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 
 void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int container_id)
 {
+    GS_ASSERT(ibam < MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT);
+    
     if(iban == ibam)
     {
+        int o_ibam = ibam;
         ibam *= 2;
-        iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
+        ibam = (ibam >= MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) ? (MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) - 1 : ibam;
+        GS_ASSERT(ibam >= o_ibam);
+        GS_ASSERT(iban < ibam);
+        if (iban >= ibam) return;
+        if (o_ibam != ibam)
+            iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
         GS_ASSERT(iba != NULL);
-        return;
+        if (iba == NULL) return;
     }
 
     iba[iban].x = x;
@@ -76,7 +85,10 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
     container->chunk = this->chunk_index;
-    #endif    
+    #endif
+
+    // need to create the container here
+    
 }
 
 

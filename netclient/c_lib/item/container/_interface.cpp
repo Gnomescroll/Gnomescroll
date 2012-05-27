@@ -105,6 +105,43 @@ ItemContainerType get_container_type(int container_id)
     return container->type;
 }
 
+void container_block_destroyed(int container_id, int x, int y, int z)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    #if DC_SERVER
+    // close all opened containers
+    GS_ASSERT(opened_containers != NULL);
+    for (int i=0; i<AGENT_MAX; i++)
+        if (opened_containers[i] == container_id)
+            opened_containers[i] = NULL_CONTAINER;
+
+    // queue the container delete packet first
+    // the handler will destroy the contents -- then the item_particle create will recreate
+    broadcast_container_delete(container_id);
+
+    // dump contents
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        ItemParticle::dump_container_item(container->slot[i], x,y,z);
+        container->remove_item(i);
+        // no need to send container removal packet
+    }
+    #endif
+
+    #if DC_CLIENT
+    if (opened_container == container_id) close_container();
+    #endif
+
+    // destroy container
+    destroy_container(container_id);
+}
+
+
 }   // ItemContainer
  
 // Client
@@ -428,6 +465,17 @@ void assign_containers_to_agent(int agent_id, int client_id)
     ItemContainer* agent_container = (ItemContainer*)item_container_list->create(AGENT_CONTAINER);
     GS_ASSERT(agent_container != NULL);
     assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
+
+    #if !PRODUCTION
+    Item::Item* crate;
+    int n_crates = 12;
+    for (int i=0; i<n_crates; i++)
+    {
+        crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+        GS_ASSERT(crate != NULL);
+        auto_add_item_to_container(client_id, agent_container->id, crate->id);
+    }
+    #endif
     
     ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
     GS_ASSERT(agent_toolbelt != NULL);
@@ -453,7 +501,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
 
     // add a few container blocks
-    Item::Item* crate;
+    //Item::Item* crate;
     //crate = Item::create_item(Item::get_item_type((char*)"crate_1"));
     //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
     //crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
@@ -798,36 +846,6 @@ void send_container_contents(int agent_id, int client_id, int container_id)
         Item::send_item_create(client_id, container->slot[i]);
         send_container_insert(client_id, container->slot[i], container->id, i);
     }
-}
-
-void container_block_destroyed(int container_id, int x, int y, int z)
-{
-    GS_ASSERT(container_id != NULL_CONTAINER);
-
-    ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return;
-
-    // close all opened containers
-    GS_ASSERT(opened_containers != NULL);
-    for (int i=0; i<AGENT_MAX; i++)
-        if (opened_containers[i] == container_id)
-            opened_containers[i] = NULL_CONTAINER;
-
-    // queue the container delete packet first
-    // the handler will destroy the contents -- then the item_particle create will recreate
-    broadcast_container_delete(container_id);
-
-    // dump contents
-    for (int i=0; i<container->slot_max; i++)
-    {
-        if (container->slot[i] == NULL_ITEM) continue;
-        ItemParticle::dump_container_item(container->slot[i], x,y,z);
-        container->remove_item(i);
-        // no need to send container removal packet
-    }
-
-    // destroy container
-    destroy_container(container_id);
 }
 
 bool agent_in_container_range(int agent_id, int container_id)
