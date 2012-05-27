@@ -202,6 +202,22 @@ DONE (all were)
 add graceful failure for some missing container conditions
 DONE
 
+object health state packets -- send actual health on init (will need later for enemy health UI)
+DONE
+
+map gen uses strictly canonical block names
+DONE
+
+container window doesnt close when active container gets destroyed
+FIXED
+
+some container cant be opened
+DONE
+
+higher res textured voxel block drops (full 32x32)
+DONE
+
+== PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
@@ -209,43 +225,33 @@ blue bombs should damage terrain like grenades
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
 this will let players "dodge"
 
+red box random walk is biased to +/+
+
+use quadrants for spawning
+
+== GFX ==
+glsl colored/textured voxels
+glsl skybox
+
+    if (surface->format->Rmask == 0x000000ff)
+        tex_format = GL_RGBA;
+    else
+        tex_format = GL_BGRA;
+for all texture loading (fix os x coloring)
+
+== SOUND ==
+shovel sounds
+block placement sounds
+
+== MAINTENANCE/REFACTORS ==
+refactor nanite container/ui to conform to craft bench style
+parameterize open/close container input handling shit
+
+== UI/UX ==
+close client if version does not match
+tooltips
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
 have chat display a "Press U to relock mouse" when window gains focus and mouse is unlocked
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
-
-glsl colored/textured voxels
-
-shovel sounds
-block placement sounds
-
-red box random walk is biased to +/+
-
-use quadrants for spawning
-
-health != health_max
-./run(_Z11print_tracev+0x15) [0x468845]
-./run(_ZN7Objects32CreatePacketMomentumAnglesHealth7messageEPNS_6ObjectEP41object_create_momentum_angles_health_StoC+0x142) [0x46fe82]
-./run(_ZN7Objects32CreatePacketMomentumAnglesHealth12sendToClientEPNS_6ObjectEi+0x35) [0x4b1da5]
-./run(_ZN7Objects10ObjectList14send_to_clientE10ObjectTypei+0xd7) [0x46dab7]
-./run(_ZN11ServerState33send_initial_game_state_to_clientEi+0x55) [0x47e0d5]
-./run(_ZN14NetPeerManager5readyEv+0x5e) [0x495dbe]
-./run(_ZN34FixedSizeReliableNetPacketToServerI13identify_CtoSE7handlerEPciPii+0x1ad) [0x4b498d]
-./run(_Z23process_packet_messagesPcPiii+0x71) [0x4507d1]
-./run(_ZN9NetServer23dispatch_network_eventsEv+0x2ba) [0x49ec0a]
-./run(_ZN4Main3runEv+0x15) [0x4a6aa5]
-GS_ASSERT error: /usr/freespace/dc_mmo_dev/server/c_lib/entity/network/interfaces.cpp, line 141 function: message 
-x2
-Normal, but need to add both max and starting health to packet?
---Since packets are ordered, look into sending a minimal create then a state packet right after
-
-some container cant be opened
-
-container window doesnt close when active container gets destroyed
-
-refactor nanite container/ui to conform to craft bench style
-
-parameterize open/close container input handling shit
-
-map gen uses strictly canonical block names

@@ -10,6 +10,8 @@ void teardown();
 class ItemContainerInterface* get_container(int id);
 ItemContainerType get_container_type(int container_id);
 void destroy_container(int container_id);
+void container_block_destroyed(int container_id, int x, int y, int z);
+
 }   // ItemContainer
 
 //CLIENT
@@ -77,8 +79,6 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
 bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id);
 
 void send_container_contents(int agent_id, int client_id, int container_id);
-
-void container_block_destroyed(int container_id, int x, int y, int z);
 
 bool agent_in_container_range(int agent_id, int container_id);
 void check_agents_in_container_range(); // checks that any agent accessing a container is still in range

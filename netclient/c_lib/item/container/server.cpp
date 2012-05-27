@@ -130,7 +130,7 @@ bool agent_open_container(int agent_id, int container_id)
     // place player lock on container if we want
     container->lock(a->id);
     opened_containers[agent_id] = container->id;
-
+    
     // send container contents to player
     send_container_contents(a->id, a->client_id, container_id);
     return true;
@@ -151,12 +151,13 @@ void agent_close_container(int agent_id, int container_id)
         ItemParticle::throw_agent_item(agent_id, agent_hand_list[agent_id]);
     }
     agent_hand_list[agent_id] = NULL_ITEM;
+    
+    opened_containers[agent_id] = NULL_CONTAINER;
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
     container->unlock(agent_id);
-    opened_containers[agent_id] = NULL_CONTAINER;
 }
 
 }   // ItemContainer

@@ -32,14 +32,13 @@ class SHADER
 
     void load_shader(const char* name, const char* vertex_shader_file, const char* fragment_shader_file)
     {
-
         shader = glCreateProgramObjectARB();
         vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
         frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
         char *vs, *fs;
 
-        if(DEBUG1) printf("set shader: %s \n", name);
+        printf("Loading shader: %s\n", name);
 
         vs = textFileRead( (char*) vertex_shader_file );
         fs = textFileRead( (char*) fragment_shader_file );

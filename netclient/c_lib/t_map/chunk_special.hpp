@@ -54,6 +54,11 @@ class CHUNK_ITEM_CONTAINER
     void _reset()
     {
         iban = 0;
+        for (int i=0; i<ibam; i++)
+        {
+            iba[i].container_id = NULL_CONTAINER;
+            iba[i].container_type = CONTAINER_TYPE_NONE;
+        }
     }
 
     void _remove(int index)
