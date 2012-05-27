@@ -154,9 +154,6 @@ inline void open_container_StoC::handle()
 
 inline void close_container_StoC::handle()
 {
-    printf("\n");
-    printf("close container\n");
-    printf("\n");
     close_container();
 }
 

@@ -66,12 +66,10 @@ ItemContainerInterface* get_container(int id)
 
 void destroy_container(int id)
 {
-    printf("destory container %d\n", id);
     ItemContainerInterface* container = get_container(id);
     if (container == NULL) return;
     
     #if DC_CLIENT
-    printf("opened container is %d\n", opened_container);
     // close it, if we had it open
     if (opened_container == container->id) close_container();
 
@@ -89,7 +87,6 @@ void destroy_container(int id)
     {
         int container_id = opened_containers[i];
         if (container_id != id) continue;
-        printf("closing opened container %d\n", id);
         agent_close_container(i, container_id);
         send_container_close(i, container_id);
     }
@@ -233,11 +230,8 @@ void open_container(int container_id)
 
 void close_container()
 {
-    printf("close container\n");
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
-
-    printf("opened container is %d\n", opened_container);
 
     if (opened_container == NULL_CONTAINER) return;
 

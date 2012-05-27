@@ -62,7 +62,6 @@ int process_events()
 
     if (ItemContainer::crafting_block_was_closed())
     {
-        printf("input: crafting block was closed\n");
         disable_crafting_container();
         input_state.ignore_next_right_click_event = false;
     }
@@ -75,7 +74,6 @@ int process_events()
 
     if (ItemContainer::storage_block_was_closed())
     {
-        printf("input: storage block was closed\n");
         disable_storage_block_container();
         input_state.ignore_next_right_click_event = false;
     }
