@@ -183,6 +183,12 @@ DONE
 fix teardown for agent quit in container
 DONE
 
+swap settings_production with settings -- settings_dev is default in dev build
+DONE
+
+osx 10.5+ build
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
@@ -223,4 +229,11 @@ health != health_max
 GS_ASSERT error: /usr/freespace/dc_mmo_dev/server/c_lib/entity/network/interfaces.cpp, line 141 function: message 
 x2
 
-swap settings_production with settings
+osx 10.4 build
+
+some container cant be opened
+
+container window doesnt close when active container gets destroyed
+
+linux build (static compile)
+
