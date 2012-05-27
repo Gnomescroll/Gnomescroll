@@ -138,9 +138,24 @@ void CreatePacketMomentumAnglesHealth::message(Object* object, object_create_mom
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)object->get_component(COMPONENT_HIT_POINTS);
     GS_ASSERT(health != NULL);
     if (health == NULL) return;
-    GS_ASSERT(health->health == health->max_health); // assert this, because our create packet handler assumes they are the same
-    GS_ASSERT(health->max_health >= 0);
-    msg->health = health->max_health;
+    GS_ASSERT(health->max_health >= 0); // should be dead
+    msg->max_health = health->max_health;
+}
+
+void CreatePacketMomentumAnglesHealth::health_message(Object* object, object_state_health_StoC* msg)
+{
+    GS_ASSERT(msg != NULL);
+
+    using Components::HitPointsHealthComponent;
+
+    msg->id = object->id;
+    msg->type = object->type;
+
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)object->get_component(COMPONENT_HIT_POINTS);
+    GS_ASSERT(health != NULL);
+    if (health == NULL) return;
+    GS_ASSERT(health->health >= 0);
+    msg->health = health->health;
 }
 
 

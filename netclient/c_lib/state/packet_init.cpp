@@ -22,10 +22,13 @@
 #include <item/container/net/StoC.hpp>
 
 #include <particle/grenade.hpp> // move into net folder in particles
-namespace PacketInit {
+namespace PacketInit
+{
+
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
-void RegisterMessages() {
+void RegisterMessages()
+{
 
 /*
     add back in 
@@ -180,7 +183,8 @@ void RegisterMessages() {
     object_state_StoC::register_client_packet();
     object_state_momentum_StoC::register_client_packet();
     object_state_momentum_angles_StoC::register_client_packet();
-
+    object_state_health_StoC::register_client_packet();
+    
     // object actions
     object_picked_up_StoC::register_client_packet();
 

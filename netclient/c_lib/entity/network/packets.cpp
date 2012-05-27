@@ -86,8 +86,8 @@ inline void object_create_momentum_angles_health_StoC::handle()
     GS_ASSERT(health != NULL);
     if (health != NULL)
     {
-        health->max_health = this->health;
-        health->health = this->health;
+        health->max_health = this->max_health;
+        health->health = this->max_health;
     }
     Objects::ready(obj);
 }
@@ -207,6 +207,17 @@ inline void object_state_momentum_angles_StoC::handle()
         physics->set_momentum(vec3_init(mx,my,mz));
         physics->set_angles(vec3_init(theta, phi, 0));
     }
+}
+
+inline void object_state_health_StoC::handle()
+{
+    using Objects::Object;
+    using Components::HitPointsHealthComponent;
+    Object* obj = Objects::get((ObjectType)type, id);
+    if (obj == NULL) return;
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
+    GS_ASSERT(health != NULL);
+    if (health != NULL) health->health = this->health;
 }
 
 /* Destruction */
@@ -466,4 +477,5 @@ inline void object_shot_nothing_StoC::handle() {}
 inline void object_choose_target_StoC::handle() {}
 inline void object_choose_destination_StoC::handle() {}
 inline void object_took_damage_StoC::handle() {}
+inline void object_state_health_StoC::handle() {}
 #endif

@@ -155,6 +155,7 @@ class CreatePacketMomentumAnglesHealth: public CreatePacketDelegate
 {
     private:
         void message(Object* object, object_create_momentum_angles_health_StoC* msg);
+        void health_message(Object* object, object_state_health_StoC* msg);
     
     public:
         void sendToClient(Object* object, int client_id)
@@ -162,12 +163,20 @@ class CreatePacketMomentumAnglesHealth: public CreatePacketDelegate
             object_create_momentum_angles_health_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
+
+            object_state_health_StoC health_msg;
+            this->health_message(object, &health_msg);
+            msg.sendToClient(client_id);
         }
 
         void broadcast(Object* object)
         {
             object_create_momentum_angles_health_StoC msg;
             this->message(object, &msg);
+            msg.broadcast();
+            
+            object_state_health_StoC health_msg;
+            this->health_message(object, &health_msg);
             msg.broadcast();
         }
 };

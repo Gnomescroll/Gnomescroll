@@ -132,7 +132,7 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
         float x,y,z;
         float mx,my,mz;
         float theta, phi;
-        uint16_t health;
+        uint16_t max_health;
 
     
     inline void packet(char* buff, int* buff_n, bool pack)
@@ -147,7 +147,7 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
         pack_float(&mz, buff, buff_n, pack);
         pack_float(&theta, buff, buff_n, pack);
         pack_float(&phi, buff, buff_n, pack);
-        pack_u16(&health, buff, buff_n, pack);
+        pack_u16(&max_health, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -232,6 +232,22 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
             pack_float(&mz, buff, buff_n, pack);
             pack_float(&theta, buff, buff_n, pack);
             pack_float(&phi, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class object_state_health_StoC: public FixedSizeReliableNetPacketToClient<object_state_health_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint16_t health;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+            pack_u16(&health, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -364,6 +380,8 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
     inline void handle();
 };
 
+// redundant? health state overrides?
+// leave it separate for now, in case the packets are no longer 1:1 (may want to batch send health etc)
 class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_took_damage_StoC>
 {
     public:
