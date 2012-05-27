@@ -73,6 +73,10 @@ void send_container_item_create(int client_id, ItemID item_id, int container_id,
 
 void send_container_close(int agent_id, int container_id)
 {
+    printf("\n");
+    printf("send container close\n");
+    printf("\n");
+
     ASSERT_VALID_AGENT_ID(agent_id);
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
@@ -106,6 +110,7 @@ void send_open_container_failed(int client_id, int container_id, int event_id)
 // transactions
 bool agent_open_container(int agent_id, int container_id)
 {
+    printf("agent open container\n");
     GS_ASSERT(opened_containers != NULL);
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -113,23 +118,34 @@ bool agent_open_container(int agent_id, int container_id)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
 
+    printf("container not null\n");
+
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return false;
 
+    printf("agent not null\n");
+    
     if (!container->can_be_opened_by(a->id)) return false;
+
+    printf("can open container\n");
 
     // release currently opened container
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
+        printf("closing current open container\n");
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
         GS_ASSERT(opened != NULL);
         opened->unlock(a->id);
         opened_containers[agent_id] = NULL_CONTAINER;
     }
 
+    printf("locking container\n");
+
     // place player lock on container if we want
     container->lock(a->id);
     opened_containers[agent_id] = container->id;
+    
+    printf("set opened container for %d to %d\n", agent_id, container->id);
 
     // send container contents to player
     send_container_contents(a->id, a->client_id, container_id);
@@ -138,6 +154,7 @@ bool agent_open_container(int agent_id, int container_id)
 
 void agent_close_container(int agent_id, int container_id)
 {
+    printf("agent close container\n");
     GS_ASSERT(opened_containers != NULL);
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -151,12 +168,13 @@ void agent_close_container(int agent_id, int container_id)
         ItemParticle::throw_agent_item(agent_id, agent_hand_list[agent_id]);
     }
     agent_hand_list[agent_id] = NULL_ITEM;
+    
+    opened_containers[agent_id] = NULL_CONTAINER;
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
     container->unlock(agent_id);
-    opened_containers[agent_id] = NULL_CONTAINER;
 }
 
 }   // ItemContainer

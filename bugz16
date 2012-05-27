@@ -202,6 +202,12 @@ DONE (all were)
 add graceful failure for some missing container conditions
 DONE
 
+object health state packets -- send actual health on init (will need later for enemy health UI)
+DONE
+
+map gen uses strictly canonical block names
+DONE
+
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
 blue bombs should damage terrain like grenades
@@ -248,4 +254,6 @@ refactor nanite container/ui to conform to craft bench style
 
 parameterize open/close container input handling shit
 
-map gen uses strictly canonical block names
+close client if version does not match
+
+tooltips

@@ -277,6 +277,7 @@ inline void no_container_action_beta_CtoS::handle()
 
 inline void open_container_CtoS::handle()
 {
+    printf("open_container_CtoS\n");
     if (container_id == NULL_CONTAINER) return;
     
     Agent_state* a = NetServer::agents[client_id];
@@ -285,6 +286,7 @@ inline void open_container_CtoS::handle()
     bool in_reach = agent_in_container_range(a->id, container_id);
     if (!in_reach)
     {
+        printf("container not in reach, failed\n");
         send_open_container_failed(a->client_id, container_id, event_id);
         return;
     }
@@ -292,6 +294,7 @@ inline void open_container_CtoS::handle()
     bool opened = agent_open_container(a->id, container_id);
     if (!opened)
     {
+        printf("couldnt open container for whatever reason\n");
         send_open_container_failed(a->client_id, container_id, event_id);
         return;
     }
@@ -301,10 +304,15 @@ inline void open_container_CtoS::handle()
 
 inline void close_container_CtoS::handle()
 {
+    printf("close container CtoS\n");
     if (container_id == NULL_CONTAINER) return;
+
+    printf("container id not NULL\n");
 
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+
+    printf("agent not null\n");
 
     agent_close_container(a->id, container_id);
 }

@@ -66,15 +66,32 @@ ItemContainerInterface* get_container(int id)
 
 void destroy_container(int id)
 {
+    printf("destory container %d\n", id);
     ItemContainerInterface* container = get_container(id);
     if (container == NULL) return;
     
     #if DC_CLIENT
+    printf("opened container is %d\n", opened_container);
+    // close it, if we had it open
+    if (opened_container == container->id) close_container();
+
     // destroy contents
     for (int i=0; i<container->slot_max; i++)
     {
         if (container->slot[i] == NULL_ITEM) continue;
         Item::destroy_item(container->slot[i]);
+    }
+    #endif
+
+    #if DC_SERVER
+    // close container if anyone is accessing it
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        int container_id = opened_containers[i];
+        if (container_id != id) continue;
+        printf("closing opened container %d\n", id);
+        agent_close_container(i, container_id);
+        send_container_close(i, container_id);
     }
     #endif
 
@@ -179,8 +196,11 @@ void open_container(int container_id)
 
 void close_container()
 {
+    printf("close container\n");
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
+
+    printf("opened container is %d\n", opened_container);
 
     if (opened_container == NULL_CONTAINER) return;
 
@@ -202,12 +222,13 @@ void close_container()
         closed_crafting_block = true;
         closed_storage_block = true;
     }
-    opened_container = NULL_CONTAINER;
     
     // send packet
     close_container_CtoS msg;
     msg.container_id = opened_container;
     msg.send();
+
+    opened_container = NULL_CONTAINER;
 }
 
 bool crafting_block_was_opened()
