@@ -174,33 +174,23 @@ void TextureSheetLoader::generate_grey_scale()
     if(c_lock) SDL_LockSurface( texture_sheet);
     if(s_lock) SDL_LockSurface( grey_scale_texture_sheet);
 
-    unsigned char* s = (unsigned char*)texture_sheet->pixels;
-    unsigned char* d = (unsigned char*)grey_scale_texture_sheet->pixels;
-
-    unsigned char r,g,b,a;
+    Uint8 r,g,b,a;
 
     for(int x=0; x<16*TILE_SIZE; x++)
     for(int y=0; y<16*TILE_SIZE; y++)
     {
-        r = s[4*(y*16*TILE_SIZE+x) + 0];
-        g = s[4*(y*16*TILE_SIZE+x) + 1];
-        b = s[4*(y*16*TILE_SIZE+x) + 2];
-        a = s[4*(y*16*TILE_SIZE+x) + 3];
+        int index = y*16*TILE_SIZE + x;
+        Uint32 pix = ((Uint32*)texture_sheet->pixels)[index];
+        SDL_GetRGBA(pix, texture_sheet->format, &r, &g, &b, &a);
 
         float avg = (gamma_correction[r] + gamma_correction[g] + gamma_correction[b]) / 3.0;
         avg = pow(avg, 2.2);
 
-        if(avg > 1.0 || avg < 0.0)
-        {
-            printf("ERROR TextureSheetLoader::generate_grey_scale: %f \n", avg);
-        }
+        if(avg > 1.0 || avg < 0.0) printf("ERROR TextureSheetLoader::generate_grey_scale: %f \n", avg);
 
         unsigned char g = (int)(255.0*avg);
 
-        d[4*(y*16*TILE_SIZE+x) + 0] = g;
-        d[4*(y*16*TILE_SIZE+x) + 1] = g;
-        d[4*(y*16*TILE_SIZE+x) + 2] = g;
-        d[4*(y*16*TILE_SIZE+x) + 3] = a;
+        ((Uint32*)grey_scale_texture_sheet->pixels)[index] = SDL_MapRGBA(grey_scale_texture_sheet->format, g,g,g,a);
 
     }
 

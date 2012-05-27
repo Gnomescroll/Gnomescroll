@@ -221,7 +221,6 @@ void init_surface()
     }
 
     /* Init blank map surface */
-    Uint32 tex_format;
     map_surface = create_surface_from_nothing(width, height);
     if (map_surface==NULL)
     {
@@ -229,7 +228,7 @@ void init_surface()
         return;
     }
 
-    tex_format = GL_BGRA;
+    GLuint tex_format = GL_BGRA;
     if (map_surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
 
