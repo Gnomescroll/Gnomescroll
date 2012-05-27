@@ -171,6 +171,7 @@ int run()
 
         Animations::prep_insect_mob();
         Particle::prep_shrapnel();
+        Skybox::prep_skybox();
 
         /*
             Map
@@ -242,6 +243,7 @@ int run()
 
         // draw animations
         glEnable(GL_DEPTH_TEST);
+
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
