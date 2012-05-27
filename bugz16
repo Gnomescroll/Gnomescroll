@@ -220,6 +220,12 @@ DONE
 glsl skybox
 DONE
 
+fix texture loading formats for OSX
+DONE
+
+adjust mining laser png to remove edge
+DONE
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -234,12 +240,6 @@ use quadrants for spawning
 
 == GFX ==
 glsl colored/textured voxels
-
-    if (surface->format->Rmask == 0x000000ff)
-        tex_format = GL_RGBA;
-    else
-        tex_format = GL_BGRA;
-for all texture loading (fix os x coloring)
 
 == SOUND ==
 shovel sounds
