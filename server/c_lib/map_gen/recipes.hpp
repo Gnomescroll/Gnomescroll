@@ -12,7 +12,8 @@ void simple_map()
     generator->max_size();
     //generator->size(512, 512, 128);
     //generator->tile((char*)"holy_stone");
-    generator->tile(54);
+    int tile = t_map::get_cube_id((char*)"regolith");
+    generator->tile(tile);
     generator->interpolate(4,4,1);
     generator->scale(4.0f, 4.0f, 1.0f);
     generator->enable_heightmap(20, 35);
@@ -35,8 +36,8 @@ void simple_map()
     //int x = 512, y = 512, z = 128;
     //float* noisemap = create_noisemap(x,y,1);
     //_oct = 1;
-    //perlin2_fill(noisemap, x,y, 512, 512, 54);
-    //set_terrain_height(noisemap, x,y,z, 0, z, 54);
+    //perlin2_fill(noisemap, x,y, 512, 512, tile);
+    //set_terrain_height(noisemap, x,y,z, 0, z, tile);
     //destroy_noisemap(noisemap);
 }
 
