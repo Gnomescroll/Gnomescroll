@@ -320,19 +320,25 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
     //unsigned char tile_tex = cube_texture_palette[ 6*( cube_texture_palette_lookup[tile_id] + (element.palette&0x0f) ) + side ];
     unsigned char tile_tex = cube_texture_palette[ 6*( cube_texture_palette_lookup[tile_id] + element.palette ) + side ];
 
+
+    /*
+        DEBUGGING CODE, remove soon
+    */
+#if !PRODUCTION
     int id1 = cube_texture_palette_lookup[tile_id];
     int id2 = cube_texture_palette_lookup[tile_id] + element.palette;
-    if(id2 >= cube_texture_palette_lookup[id1] + cube_texture_palette_lookup_max[id1])
+    if(element.palette >= cube_texture_palette_lookup_max[tile_id] )
     {
         printf("0: block_id= %i id1= %i id2= %i \t", tile_id,id1,id2);
-        printf("base_index= %i pallete_index= %i pallete_lookup_value= %i pallete_lookup_max= %i \n", id1, id2, cube_texture_palette_lookup[id1], cube_texture_palette_lookup_max[id1]);
+        printf("base_index= %i pallete_index= %i pallete_lookup_value= %i pallete_lookup_max= %i \n", id1, id2, cube_texture_palette_lookup[tile_id]+element.palette, cube_texture_palette_lookup_max[tile_id]);
     }
 
-    if(id2 < cube_texture_palette_lookup[id1] )
+    if(id2 < cube_texture_palette_lookup[tile_id] )
     {
         printf("1: block_id= %i id1= %i id2= %i \t", tile_id,id1,id2);
-        printf("base_index= %i pallete_index= %i pallete_lookup_value= %i pallete_lookup_max= %i \n", id1, id2, cube_texture_palette_lookup[id1], cube_texture_palette_lookup_max[id1]);
+        printf("base_index= %i pallete_index= %i pallete_lookup_value= %i pallete_lookup_max= %i \n", id1, id2, cube_texture_palette_lookup[tile_id]+element.palette, cube_texture_palette_lookup_max[tile_id]);
     }
+#endif
 
     struct TextureElement tex;
     tex.tex = 0;

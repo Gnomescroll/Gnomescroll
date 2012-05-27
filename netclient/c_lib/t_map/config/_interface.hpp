@@ -192,11 +192,10 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
 #endif
 }
 
-void push_pallete()
+void push_texture()
 {
 #if DC_CLIENT 
     start_cube_palette(_current_cube_id);
-
     //for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
     for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
     push_cube_palette();
@@ -211,7 +210,7 @@ void push_pallete()
     WESN
 */
 
-void push_oriented_pallete()
+void push_oriented_texture()
 {
 #if DC_CLIENT 
  
@@ -222,7 +221,8 @@ void push_oriented_pallete()
     const int W = 4;
     const int E = 5;
 
-    //for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
+    printf("current_block= %i \n", _current_cube_id);
+    for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
 
     //NORTH
     start_cube_palette(_current_cube_id);
@@ -336,6 +336,7 @@ void end_block_dat()
 {
 #if DC_CLIENT
     LUA_save_cube_texture();
+    print_palette();
 #endif
 }
 

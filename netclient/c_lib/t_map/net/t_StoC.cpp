@@ -145,7 +145,18 @@ void map_element_update::handle()
 
 void block_StoC::handle() 
 {
-    _set(x,y,z,val);
+    //_set(x,y,z,val);
+
+    struct MAP_ELEMENT e;
+    e.n = 0;
+    e.block = val;
+    e.palette = 1;
+    
+    main_map->set_element(x,y,z, e);
+    //_set(x,y,z,val);
+
+    struct MAP_ELEMENT e2 = main_map->get_element(x,y,z);
+    printf("block set! palette= %i \n", e2.block);
 }
 
 void block_action_StoC::handle()
@@ -158,16 +169,8 @@ void block_action_StoC::handle()
     }
     else
         Sound::block_set(x+0.5f,y+0.5f,z+0.5f,0,0,0);
-    
-    struct MAP_ELEMENT e;
-    e.n = 0;
-    e.block = val;
-    e.palette = 1;
-    
-    main_map->set_element(x,y,z, e);
-    //_set(x,y,z,val);
 
-    printf("block set! \n");
+    main_map->set_block(x,y,z, val);
 }
 
 void map_metadata_StoC::handle() 
