@@ -37,7 +37,7 @@ class TextureSheetLoader
 };
 
 extern class TextureSheetLoader* CubeTextureSheetLoader;
-extern struct SDL_Surface* CubeTexture;
+extern struct SDL_Surface* CubeSurface;
 extern Uint32* CubeTextureStack;
 
 extern class TextureSheetLoader* ItemTextureSheetLoader;

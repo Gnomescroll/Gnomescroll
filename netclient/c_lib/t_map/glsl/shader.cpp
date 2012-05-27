@@ -254,11 +254,13 @@ namespace t_map
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
 
-        //printf("init_map_3d_texture: 3 \n");
+        GS_ASSERT(TextureSheetLoader::CubeSurface != NULL);
+        if (TextureSheetLoader::CubeSurface == NULL) return;
+        
+        GLenum format = GL_BGRA;
+        if (TextureSheetLoader::CubeSurface->format->Rmask == 0x000000ff)
+            format = GL_RGBA;
 
-        // crash happens here
-
-        GLuint format = GL_RGBA;
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
         //GLuint internalFormat = GL_SRGB8_ALPHA8; //GL_RGBA;
 
@@ -266,15 +268,13 @@ namespace t_map
         const int h = 32;
         const int d = 256;
 
-        if(TextureSheetLoader::CubeTextureStack == NULL) printf("!!! ERRROR !!! \n");
+        GS_ASSERT(TextureSheetLoader::CubeTextureStack != NULL);
+        if (TextureSheetLoader::CubeTextureStack == NULL) return;
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTextureStack);
 
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         glDisable(GL_TEXTURE_2D);
-
-
-        //printf("init_map_3d_texture: 4 \n");
     }
 
     void teardown_shader()
@@ -336,7 +336,7 @@ namespace t_map
     void init_map_3d_texture_comptability()
     {
 
-        SDL_Surface* s = TextureSheetLoader::CubeTexture;
+        SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
         if(s == NULL)
         {
@@ -373,7 +373,7 @@ namespace t_map
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
 
-        GLuint texture_format;
+        GLenum texture_format;
         if (s->format->Rmask == 0x000000ff)
             texture_format = GL_RGBA;
         else
@@ -388,7 +388,7 @@ namespace t_map
     void init_block_texture_normal()
     {
 
-        SDL_Surface* s = TextureSheetLoader::CubeTexture;
+        SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
         if(s == NULL)
         {
@@ -413,7 +413,7 @@ namespace t_map
         //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
         GLuint internalFormat = GL_RGBA; //GL_RGBA;
-        GLuint texture_format;
+        GLenum texture_format;
         if (s->format->Rmask == 0x000000ff)
             texture_format = GL_RGBA;
         else

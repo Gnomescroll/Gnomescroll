@@ -420,7 +420,11 @@ void save_screenshot()
 
     SDL_LockSurface(surface);
 
-    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+    GLenum format = GL_BGRA;
+    if (s->format->Rmask == 0x000000ff)
+        format = GL_RGBA;
+
+    glReadPixels(0, 0, _xres, _yres, format, GL_UNSIGNED_BYTE, surface->pixels);
 
     {
         int index;

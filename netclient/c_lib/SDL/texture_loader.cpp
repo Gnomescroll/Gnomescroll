@@ -99,7 +99,7 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FI
         return 1;
     }
 
-    GLuint texture_format;
+    GLenum texture_format;
     if (surface->format->Rmask == 0x000000ff)
         texture_format = GL_RGBA;
     else
@@ -146,7 +146,7 @@ int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLu
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    GLuint texture_format;
+    GLenum texture_format;
     if (surface->format->Rmask == 0x000000ff)
         texture_format = GL_RGBA;
     else
@@ -178,7 +178,7 @@ SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    GLuint texture_format;
+    GLenum texture_format;
     if (surface->format->Rmask == 0x000000ff)
         texture_format = GL_RGBA;
     else

@@ -57,11 +57,9 @@ void init_texture()
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;
 
-    GLuint tex_format;
+    GLenum tex_format = GL_BGRA;
     if (surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
-    else
-        tex_format = GL_BGRA;
 
     glEnable(GL_TEXTURE_2D);
 

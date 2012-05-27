@@ -23,7 +23,7 @@ TextureSheetLoader::TextureSheetLoader(int tile_size)
 
     texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
     grey_scale_texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
-    texture_stack = (unsigned int*) malloc(4*256*TILE_SIZE*TILE_SIZE);
+    texture_stack = (Uint32*) malloc(4*256*TILE_SIZE*TILE_SIZE);
 }
 
 TextureSheetLoader::~TextureSheetLoader()
@@ -115,7 +115,7 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
 
     SDL_Surface* s = this->textures[sheet_id];
     
-    //SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
+    //SDL_Surface* CubeSurface = TextureSheetLoader::CubeSurface;
     //Uint32* CubeTextureStack = (Uint32*) this->texture_stack;
     CubeTextureStack = (Uint32*) this->texture_stack;
 
@@ -145,6 +145,8 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
     {
         pix = ((Uint32*) s->pixels)[ s->w*(j+TILE_SIZE*source_y) + (i+TILE_SIZE*source_x) ];
         
+        //Pixels1[ TILE_SIZE*TILE_SIZE*index + (j*TILE_SIZE+i) ] = pix;
+        //Pixels2[ (16*TILE_SIZE)*( (dest_y*TILE_SIZE + j) ) + (TILE_SIZE*dest_x + i) ] = pix;
         Pixels1[ TILE_SIZE*TILE_SIZE*index + (j*TILE_SIZE+i) ] = pix;
         Pixels2[ (16*TILE_SIZE)*( (dest_y*TILE_SIZE + j) ) + (TILE_SIZE*dest_x + i) ] = pix;
     }
@@ -201,7 +203,7 @@ void TextureSheetLoader::generate_grey_scale()
 
 
 class TextureSheetLoader* CubeTextureSheetLoader = NULL;
-struct SDL_Surface* CubeTexture = NULL;
+struct SDL_Surface* CubeSurface = NULL;
 Uint32* CubeTextureStack = NULL;
 
 class TextureSheetLoader* ItemTextureSheetLoader = NULL;
@@ -214,10 +216,10 @@ GLuint GreyScaleItemTexture = 0;
 
 void init()
 {
-    //CubeTextureSheet
+    //CubeSurfaceSheet
     CubeTextureSheetLoader = new TextureSheetLoader(32);
     CubeTextureStack = CubeTextureSheetLoader->texture_stack;
-    CubeTexture = CubeTextureSheetLoader->texture_sheet;
+    CubeSurface = CubeTextureSheetLoader->texture_sheet;
     //ItemTextureSheet
     ItemTextureSheetLoader = new TextureSheetLoader(16);
     ItemTextureStack = ItemTextureSheetLoader->texture_stack;
@@ -260,7 +262,7 @@ int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y)
 
 void LUA_save_cube_texture()
 {
-    save_surface_to_png(TextureSheetLoader::CubeTexture, (char*) "./screenshot/cube_texture.png");
+    save_surface_to_png(TextureSheetLoader::CubeSurface, (char*) "./screenshot/cube_texture.png");
 }
 
 //Item API

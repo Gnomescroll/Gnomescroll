@@ -228,7 +228,7 @@ void init_surface()
         return;
     }
 
-    GLuint tex_format = GL_BGRA;
+    GLenum tex_format = GL_BGRA;
     if (map_surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
 
