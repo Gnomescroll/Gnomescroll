@@ -217,6 +217,9 @@ DONE
 higher res textured voxel block drops (full 32x32)
 DONE
 
+glsl skybox
+DONE
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -231,7 +234,6 @@ use quadrants for spawning
 
 == GFX ==
 glsl colored/textured voxels
-glsl skybox
 
     if (surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
