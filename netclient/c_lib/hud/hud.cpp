@@ -44,7 +44,7 @@ static const char help_text[] =
 static const char disconnected_text[] = "Server not connected.";
 static const char version_mismatch_text[] = "Version mismatch. Update the client.";
 static const char dead_text[] = "You died.";
-static const char fps_format[] = "%3.2f";
+static const char fps_format[] = "%3.2ffps";
 static const char ping_format[] = "%dms";
 
 static const char no_agent_text[] = "No Agent Assigned";
@@ -293,7 +293,10 @@ void draw_hud_text()
 
     if (hud_draw_settings.fps)
     {
-        hud->fps->update_formatted_string(1, hud_draw_settings.fps_val);
+        float fps_val = 0.0f;
+        if (hud_draw_settings.fps_val >= 0.1f) fps_val = 1000.0f / hud_draw_settings.fps_val;
+        //hud->fps->update_formatted_string(1, hud_draw_settings.fps_val);
+        hud->fps->update_formatted_string(1, fps_val);
         hud->fps->draw();
     }
 
@@ -301,8 +304,8 @@ void draw_hud_text()
     {
         hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
         hud->ping->draw();
-        hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
-        hud->reliable_ping->draw();
+        //hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
+        //hud->reliable_ping->draw();
     }
 
     if (hud_draw_settings.agent_status)

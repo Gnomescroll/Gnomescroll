@@ -101,7 +101,7 @@ use 64pixel isometric texture
 DONE
 
 ============
-==BUILD 17== released
+==BUILD 17== released may 22
 ============
 
 fix failure to unset container ui widget id
@@ -183,11 +183,21 @@ DONE
 fix teardown for agent quit in container
 DONE
 
+==============
+== BUILD 18 ==  released may 25
+==============
+
 swap settings_production with settings -- settings_dev is default in dev build
 DONE
 
 osx 10.5+ build
 DONE
+
+remove 2nf fps label; switch to fps units
+DONE
+
+check that packets are reliable
+DONE (all were)
 
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -201,8 +211,6 @@ this will let players "dodge"
 have chat display a "Press U to relock mouse" when window gains focus and mouse is unlocked
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
-
-tiling noise [BRANDON]
 
 glsl colored/textured voxels
 
@@ -228,12 +236,9 @@ health != health_max
 ./run(_ZN4Main3runEv+0x15) [0x4a6aa5]
 GS_ASSERT error: /usr/freespace/dc_mmo_dev/server/c_lib/entity/network/interfaces.cpp, line 141 function: message 
 x2
-
-osx 10.4 build
+Normal, but need to add both max and starting health to packet?
+--Since packets are ordered, look into sending a minimal create then a state packet right after
 
 some container cant be opened
 
 container window doesnt close when active container gets destroyed
-
-linux build (static compile)
-
