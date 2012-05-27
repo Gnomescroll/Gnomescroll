@@ -107,7 +107,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     if (this->is_voxel)
     {
         this->voxel.size = 0.25f;
-        this->voxel.pixel_width = 8;
+        this->voxel.pixel_width = 32;
         this->voxel.texture_index = Item::get_particle_voxel_texture(item_type);
         this->voxel.init();
     }

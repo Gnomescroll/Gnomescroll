@@ -31,15 +31,21 @@ void TexturedVoxelComponent::set_texture()
     ftx = itx * scale;
     fty = ity * scale;
 
-    int mx,my;
-    float fx,fy;
-    // random point within cube, with margins wide enough to fit pix
-    mx = (rand() % (cube_w -(pix*2))) + pix;
-    my = (rand() % (cube_w -(pix*2))) + pix;
+    int margin = cube_w - pix;
+    GS_ASSERT(margin >= 0);
 
+    //0 0 randrange(1,1) - 1;
+    //1 0, 1,-1 randrange(1,3) - 2;
+    //2 0, 1, 2, -1, -2 randrange(1, 5) - 3;
+    //3 0, 1, 2, 3, -1, -2, -3 randrange(1, 7) - 4;
+
+    // random offset in x,y within texture quad to sample
+    int mx = randrange(1, (margin*2)+1) - (margin+1);
+    int my = randrange(1, (margin*2)+1) - (margin+1);
+    
     // ...scaled to texture
-    fx = ((float)mx) * pixel_w;
-    fy = ((float)my) * pixel_w;
+    float fx = ((float)mx) * pixel_w;
+    float fy = ((float)my) * pixel_w;
 
     ftx += fx;
     fty += fy;
