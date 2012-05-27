@@ -457,9 +457,11 @@ void set_vertex_buffers(class MAP_CHUNK* chunk)
 {
     for(int _z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
-        for(int _x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
-        for(int _y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
+        for(int x = 0; x<16; x++) {
+        for(int y = 0; y<16; y++) {
 
+            int _x = x + chunk->xpos;
+            int _y = y + chunk->ypos;
 
             struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
             int tile_id = element.block;

@@ -5,6 +5,7 @@
 #include <map_gen/recipes.hpp>
 
 #include <t_gen/_interface.hpp>
+#include <t_map/_interface.hpp>
 
 namespace Main
 {
@@ -22,6 +23,8 @@ void init()
 
     Dragon::caves();
     Dragon::test_filters();
+
+    t_map::map_post_processing();
 
     srand(time(NULL));
     
