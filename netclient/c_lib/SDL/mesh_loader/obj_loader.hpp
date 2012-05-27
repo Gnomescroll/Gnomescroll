@@ -164,7 +164,7 @@ void init_texture()
     //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
-    GLuint internalFormat = GL_RGBA; //GL_RGBA;
+    GLenum internalFormat = 4; //GL_RGBA;
     GLenum format = GL_BGRA;
     if (s->format->Rmask == 0x000000ff)
         format = GL_RGBA;

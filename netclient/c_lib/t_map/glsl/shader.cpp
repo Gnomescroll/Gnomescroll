@@ -261,6 +261,7 @@ namespace t_map
         if (TextureSheetLoader::CubeSurface->format->Rmask == 0x000000ff)
             format = GL_RGBA;
 
+        //GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
         //GLuint internalFormat = GL_SRGB8_ALPHA8; //GL_RGBA;
 
@@ -412,7 +413,7 @@ namespace t_map
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
-        GLuint internalFormat = GL_RGBA; //GL_RGBA;
+        GLenum internalFormat = 4; //GL_RGBA;
         GLenum texture_format;
         if (s->format->Rmask == 0x000000ff)
             texture_format = GL_RGBA;
