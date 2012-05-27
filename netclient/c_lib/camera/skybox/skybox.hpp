@@ -57,7 +57,7 @@ void init_texture()
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;
 
-    int tex_format;
+    GLuint tex_format;
     if (surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
     else

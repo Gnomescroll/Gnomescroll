@@ -237,23 +237,6 @@ void init()
 void init_item_texture()
 {
     create_texture_from_surface(ItemSurface, &ItemSheetTexture, GL_NEAREST);
-    //SDL_Surface* s = TextureSheetLoader::ItemSurface;
-
-    //if (s == NULL) printf("ItemContainer::init_item_sheet, error \n");
-    //GS_ASSERT(s != NULL);
-
-    //glEnable(GL_TEXTURE_2D);
-    //glGenTextures( 1, &ItemSheetTexture );
-
-    //glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
-
-    ////glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
-    
-    //glDisable(GL_TEXTURE_2D);
 }
 
 void init_greyscale()
