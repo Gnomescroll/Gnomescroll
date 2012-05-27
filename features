@@ -21,6 +21,12 @@ Gas Canisters:
     - 
 !!! Environment
 
+Social:
+    -?personal worlds for item storage etc?
+    - clan access
+    - access lists
+    - beacons (recall points)
+
 Solid, transparent blocks (liquid methane).  Like water but solid.  Lakes cover surface.
     -attenuates light by 3 per block   
     -may flow like liquid (but extremely slowly)
