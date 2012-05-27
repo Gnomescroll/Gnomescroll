@@ -36,6 +36,7 @@ int star_num = 0;
 // glsl
 class SHADER star_shader;
 GLuint star_TexCoord;
+GLint star_CameraPos; 
 Animations::VertexElementList1* star_vlist = NULL;
 
 void init_shader()
@@ -46,6 +47,7 @@ void init_shader()
         "./media/shaders/skybox/stars.vsh",
         "./media/shaders/skybox/stars.fsh" );
     star_TexCoord = star_shader.get_attribute("InTexCoord");
+    star_CameraPos = star_shader.get_uniform("CameraPos");
 }
 
 void init_texture()
@@ -171,16 +173,16 @@ void pack_vertex_list()
 
     for(int i=0; i<star_num; i++)
     {
-        STAR s = star_list[i];
+        //STAR s = star_list[i];
 
         Vec3 v;
-        v.x = s.x + cx;
-        v.y = s.y + cy;
-        v.z = s.z + cz;
+        v.x = star_list[i].x + cx;
+        v.y = star_list[i].y + cy;
+        v.z = star_list[i].z + cz;
 
         if(point_fulstrum_test2(v.x, v.y, v.z) == false) continue;
 
-        float scale = s.size / 2.0;
+        float scale = star_list[i].size / 2.0;
 
         Vec3 up = vec3_init(
             model_view_matrix[0]*scale,
@@ -194,28 +196,32 @@ void pack_vertex_list()
         );
 
         Vec3 p = vec3_sub(v, vec3_add(right, up));
-        star_vlist->push_vertex(p, s.tx_min,s.ty_max);
+        star_vlist->push_vertex(p, star_list[i].tx_min,star_list[i].ty_max);
 
         p = vec3_add(v, vec3_sub(up, right));
-        star_vlist->push_vertex(p, s.tx_max,s.ty_max);
+        star_vlist->push_vertex(p, star_list[i].tx_max,star_list[i].ty_max);
 
         p = vec3_add(v, vec3_add(up, right));
-        star_vlist->push_vertex(p, s.tx_max,s.ty_min);
+        star_vlist->push_vertex(p, star_list[i].tx_max,star_list[i].ty_min);
 
         p = vec3_add(v, vec3_sub(right, up));
-        star_vlist->push_vertex(p, s.tx_min,s.ty_min);
+        star_vlist->push_vertex(p, star_list[i].tx_min,star_list[i].ty_min);
     }
 }
 
 void prep_skybox()
 {
     GS_ASSERT(star_vlist != NULL);
-    pack_vertex_list();
+    static int packed = 0;
+    if (!(packed++)) pack_vertex_list();
     star_vlist->buffer();
 }
 
 void draw()
 {
+    GS_ASSERT(current_camera != NULL);
+    if (current_camera == NULL) return;
+
     GS_ASSERT(star_sheet != 0);
     if (star_sheet == 0) return;
 
@@ -239,9 +245,11 @@ void draw()
     glBindTexture(GL_TEXTURE_2D, star_sheet);
 
     glUseProgramObjectARB(star_shader.shader);
+
+    glUniform3f(star_CameraPos, current_camera->x, current_camera->y, current_camera->z);
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(star_TexCoord);
-
     glVertexPointer(3, GL_FLOAT, star_vlist->stride, (GLvoid*)0);
     glVertexAttribPointer(star_TexCoord, 2, GL_FLOAT, GL_FALSE, star_vlist->stride, (GLvoid*)12);
 
