@@ -220,7 +220,7 @@ DONE
 glsl skybox
 DONE
 
-fix texture loading formats for OSX
+fix hud texture loading formats for OSX
 DONE
 
 adjust mining laser png to remove edge
@@ -257,3 +257,10 @@ tooltips
 have chat display a "Press U to relock mouse" when window gains focus and mouse is unlocked
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
+
+
+textures to fix:
+item sheets
+blocks
+compass
+map?

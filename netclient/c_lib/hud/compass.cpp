@@ -5,7 +5,7 @@
 
 namespace Compass {
 
-static char file[] = "media/texture/compass.png";
+static const char file[] = "media/texture/compass.png";
 
 static const float scale = 1.0f;
 static const int x_margin = 4;
@@ -24,29 +24,36 @@ static GLuint texture[N_TEAMS] = {0};
 
 void update_team_colors()
 {
-    static struct Color cache[N_TEAMS] = {{0,0,0}};
-    unsigned char r,g,b;
-    if (ClientState::ctf == NULL) return;
-    for (int i=0; i<(int)N_TEAMS; i++)
-    {
-        if (ClientState::ctf->get_team_color(i+1, &r, &g, &b))
-            continue;
-        if (cache[i].r == r && cache[i].g == g && cache[i].b == b)
-            continue;
-        load_colored_texture(file, &texture[i],
-            base_color.r, base_color.g, base_color.b,
-            r, g, b
-        );
-        cache[i].r = r;
-        cache[i].g = g;
-        cache[i].b = b;
-    }
+    //static struct Color cache[N_TEAMS] = {{0,0,0}};
+    //unsigned char r,g,b;
+    //if (ClientState::ctf == NULL) return;
+    //for (int i=0; i<(int)N_TEAMS; i++)
+    //{
+        //if (ClientState::ctf->get_team_color(i+1, &r, &g, &b))
+            //continue;
+        //if (cache[i].r == r && cache[i].g == g && cache[i].b == b)
+            //continue;
+        //load_colored_texture(file, &texture[i],
+            //base_color.r, base_color.g, base_color.b,
+            //r, g, b
+        //);
+        //cache[i].r = r;
+        //cache[i].g = g;
+        //cache[i].b = b;
+    //}
+}
+
+void init_texture()
+{
+    int ret = create_texture_from_file((char*)file, &texture[current_texture_index]);
+    GS_ASSERT(ret == 0);
 }
 
 void init()
 {
     x = _xresf - (((float)width)*scale + x_margin);
     y = _yresf - (((float)height)*scale + y_margin);
+    init_texture();
 }
 
 //// rotate compass texture
@@ -115,8 +122,8 @@ void update()
     Agent_state* a = playerAgent_state.you;
     AgentState* s = &playerAgent_state.camera_state;
 
-    if (a != NULL && a->status.team)    // set index to current team by default
-        current_texture_index = a->status.team - 1;
+    //if (a != NULL && a->status.team)    // set index to current team by default
+        //current_texture_index = a->status.team - 1;
 
     if (a == NULL)
     {   // just point in camera direction
