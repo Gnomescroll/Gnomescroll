@@ -469,6 +469,8 @@ inline void version_StoC::handle()
 
         #if DC_CLIENT
         VersionMismatchBox(DC_VERSION, version);
+        input_state.quit = true;
+        input_state.confirm_quit = true;
         #endif
     }
     else

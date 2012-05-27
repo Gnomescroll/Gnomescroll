@@ -327,77 +327,82 @@ int init_c_lib()
     return 0;
 }
 
-void close_c_lib() {
+void close_c_lib()
+{
     printf("Closing game...\n");
 
-    printf("t_map end t map\n");
+    #define TEARDOWN_DEBUG 0
+
+    if (TEARDOWN_DEBUG) printf("t_map end t map\n");
     t_map::end_t_map();
 
-    printf("t_hud draw teardown\n");
+    if (TEARDOWN_DEBUG) printf("t_hud draw teardown\n");
     t_hud::draw_teardown();
-    printf("t_hud teardown\n");
+    if (TEARDOWN_DEBUG) printf("t_hud teardown\n");
     t_hud::teardown();
-    printf("t_mech draw teardown\n");
+    if (TEARDOWN_DEBUG) printf("t_mech draw teardown\n");
     t_mech::draw_teardown();
     //t_mech::state_teardown();
-    printf("particle draw teardown\n");
+    if (TEARDOWN_DEBUG) printf("particle draw teardown\n");
     Particle::draw_teardown();
-    printf("item particle draw teardown\n");
+    if (TEARDOWN_DEBUG) printf("item particle draw teardown\n");
     ItemParticle::draw_teardown();
     
-    printf("particle teardown particles\n");
+    if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
     Particle::teardown_particles();
-    printf("item particle teardown\n");
+    if (TEARDOWN_DEBUG) printf("item particle teardown\n");
     ItemParticle::teardown();
 
-    printf("skybox teardown\n");
+    if (TEARDOWN_DEBUG) printf("skybox teardown\n");
     Skybox::teardown();
 
-    printf("texture sheet loader teardown\n");
+    if (TEARDOWN_DEBUG) printf("texture sheet loader teardown\n");
     TextureSheetLoader::teardown();
 
-    printf("netclient shutdown\n");
+    if (TEARDOWN_DEBUG) printf("netclient shutdown\n");
     NetClient::shutdown_net_client();
 
-    printf("camera teardown\n");
+    if (TEARDOWN_DEBUG) printf("camera teardown\n");
     teardown_cameras();
-    printf("hudfont teardown\n");
+    if (TEARDOWN_DEBUG) printf("hudfont teardown\n");
     HudFont::teardown();
-    printf("chat client teardown\n");
+    if (TEARDOWN_DEBUG) printf("chat client teardown\n");
     teardown_chat_client();
 
-    printf("objects teardown\n");
+    if (TEARDOWN_DEBUG) printf("objects teardown\n");
     Objects::teardown();    // Entity system
-    printf("components teardown\n");
+    if (TEARDOWN_DEBUG) printf("components teardown\n");
     Components::teardown();
-    printf("object net interfaces teardown\n");
+    if (TEARDOWN_DEBUG) printf("object net interfaces teardown\n");
     Objects::teardown_net_interfaces();
     
-    printf("voxel volume teardown\n");
+    if (TEARDOWN_DEBUG) printf("voxel volume teardown\n");
     teardown_voxel_volume();
-    printf("hud text teardown\n");
+    if (TEARDOWN_DEBUG) printf("hud text teardown\n");
     HudText::teardown();
     
     // free surfaces
-    printf("t_map teardown\n");
+    if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::teardown_shader();
-    printf("hud map teardown\n");
+    if (TEARDOWN_DEBUG) printf("hud map teardown\n");
     HudMap::teardown();
 
-    printf("client state teardown\n");
+    if (TEARDOWN_DEBUG) printf("client state teardown\n");
     ClientState::teardown();
 
-    printf("item teardown\n");
+    if (TEARDOWN_DEBUG) printf("item teardown\n");
     Item::teardown();
-    printf("toolbelt teardown\n");
+    if (TEARDOWN_DEBUG) printf("toolbelt teardown\n");
     Toolbelt::teardown();
-    printf("container teardown\n");
+    if (TEARDOWN_DEBUG) printf("container teardown\n");
     ItemContainer::teardown();
 
-    printf("sound close\n");
+    if (TEARDOWN_DEBUG) printf("sound close\n");
     Sound::close();
-    printf("SDL close\n");
+    if (TEARDOWN_DEBUG) printf("SDL close\n");
     close_SDL();
+
+    #undef TEARDOWN_DEBUG
 
     printf("Game closed\n");
 
