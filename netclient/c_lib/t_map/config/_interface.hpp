@@ -196,7 +196,7 @@ void push_texture()
 {
 #if DC_CLIENT 
     start_cube_palette(_current_cube_id);
-    //for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
+    for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
     for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
     push_cube_palette();
     _palette_number++;
