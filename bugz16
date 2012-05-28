@@ -232,6 +232,10 @@ DONE
 build# subfolders in downloads on site
 DONE
 
+preallocated minivox particles
+DONE
+
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -256,7 +260,6 @@ block placement sounds
 == MAINTENANCE/REFACTORS ==
 refactor nanite container/ui to conform to craft bench style
 parameterize open/close container input handling shit
-preallocated particles
 
 == UI/UX ==
 tooltips
