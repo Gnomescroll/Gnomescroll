@@ -24,12 +24,14 @@ extern class Terrain_map* main_map;
 
 typedef enum TerrainModificationAction
 {
-    TMA_PICK=0,
+    TMA_NONE=0,
+    TMA_PICK,
     TMA_APPLIER,
     TMA_GRENADE,
     TMA_LASER,
     TMA_TURRET,
-    TMA_MONSTER_BOX
+    TMA_MONSTER_BOX,
+    TMA_MONSTER_BOMB,
 } TerrainModificationAction;
  
 void init_t_map();

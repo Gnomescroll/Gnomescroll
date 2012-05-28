@@ -78,6 +78,11 @@ void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModific
         case t_map::TMA_MONSTER_BOX:
             momentum = 0.5f;
             break;
+        case t_map::TMA_MONSTER_BOMB:
+            momentum = 10.0f;
+            break;
+        case t_map::TMA_NONE:
+            break;
         default:
             GS_ASSERT(false);
             break;
