@@ -51,6 +51,9 @@ class Map_vbo
     float xoff;
     float yoff;
 
+    float wxoff;
+    float wyoff;
+
     int vnum;
     int vnum_max;
     struct Vertex* v_list;

@@ -13,6 +13,8 @@
 
 #include <common/qsort.h>
 
+#include <physics/quadrant.hpp>
+
 namespace t_map
 {
 
@@ -31,7 +33,6 @@ static struct _VBO_DRAW_STRUCT* draw_vbo_array;
 
 void vbo_draw_init()
 {
-
     draw_vbo_array = (_VBO_DRAW_STRUCT*) malloc(MAX_DRAWN_VBO * sizeof(_VBO_DRAW_STRUCT));
 }
 
@@ -46,7 +47,7 @@ void vbo_draw_end()
 */
 bool chunk_render_check( float x, float y)
 {
-    const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
+    static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 
     float dx = current_camera->x - x;
     float dy = current_camera->y - y;
@@ -54,14 +55,96 @@ bool chunk_render_check( float x, float y)
     return (dx*dx + dy*dy > dist2) ? false : true;
 }
 
+void translate_chunk(float camera_x, float camera_y, float pos_x, float pos_y)
+{
+
+    if(camera_x < QUADRANT_DIVIDE)
+    {
+        if(pos_x > QUADRANT_DIVIDE)
+        {
+
+        }
+
+    }
+    else
+    {
 
 
+    }
+
+    if(camera_y < QUADRANT_DIVIDE)
+    {
 
 
+    }
+    else
+    {
+
+
+    }
+
+}
 
 void Vbo_map::prep_draw()
 {
     struct Map_vbo* col;
+
+    const float cx = current_camera->x;
+    const float cy = current_camera->y;
+
+    for(int i=0; i<map->xchunk_dim; i++)
+    for(int j=0; j<map->ychunk_dim; j++)
+    {
+        col = vbo_array[j*xchunk_dim + i ];
+        if(col == NULL) continue;
+
+        float xoff = col->xoff;
+        float yoff = col->yoff;
+
+        //int q1x = (cx < QUADRANT_DIVIDE);
+        //int q2x = (xoff < QUADRANT_DIVIDE);
+
+        if(cx < QUADRANT_DIVIDE)
+        {
+            //camera in first half
+            if(xoff < QUADRANT_DIVIDE)
+            {
+                //chunk is in first half
+                col->wxoff = xoff;
+            }
+            else
+            {
+                //chunk is in second half
+                col->wxoff = Min_f( xoff-cx, xoff-512.0-cx, xoff, xoff-512.0);
+            }
+        }
+        else
+        {
+            //camera is in second half
+            if(xoff < QUADRANT_DIVIDE)
+            {
+                col->wxoff = Min_f( xoff-cx, xoff+512.0-cx, xoff, xoff+512.0);
+            }
+            else
+            {
+                //col->wxoff = Min2( xoff-cx, xoff-512.0-cx);
+                col->wxoff = xoff;
+            }
+        }
+
+        col->wyoff = yoff;
+/*
+        if(cy < QUADRANT_DIVIDE)
+        {
+            col->wyoff = Min2( yoff-cy, yoff-512.0-cy);
+        }
+        else
+        {
+            col->wyoff = Min2( yoff-cy, yoff+512.0-cy);
+        }
+*/
+
+    }
 
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
@@ -72,14 +155,12 @@ void Vbo_map::prep_draw()
     for(int j=0; j<map->ychunk_dim; j++) {
         col = vbo_array[j*xchunk_dim + i ];
 
-        if(col == NULL) continue;
-        if(col->vnum == 0) continue;
+        if(col == NULL || col->vnum == 0) continue;
         //if( chunk_render_check( col->xpos, col->ypos) && xy_point_fulstrum_test(col->xpos, col->ypos) )
         //if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 11.4) )
-        if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 32.0) )
+        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
         {
-            c_drawn++;
-
+            c_drawn++; 
             /*
                 Fulstrum culling
             */
@@ -114,6 +195,7 @@ void Vbo_map::sort_draw()
         float _y = (v->ypos - y);
 
         draw_vbo_array[i].distance = _x*_x + _y*_y; //set this
+
     }
 
   #define _VBO_DRAW_STRUCT_lt(a,b) ((a)->distance < (b)->distance)
@@ -174,7 +256,8 @@ void Vbo_map::draw_map()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
+        //glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
+        glUniform3f(map_ChunkPosition, vbo->wxoff, vbo->wyoff, 0.0f);
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
         glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);

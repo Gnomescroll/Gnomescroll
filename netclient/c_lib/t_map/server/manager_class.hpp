@@ -7,6 +7,8 @@
 
 #include <common/qsort.h>
 
+#include <physics/quadrant.hpp>
+
 namespace t_map
 {
 
@@ -39,6 +41,7 @@ const unsigned QUED = 0xffff-1;
     0xffff
     0x0000
 */
+
 class MAP_MANAGER_ELEMENT
 {
     public:
@@ -250,36 +253,56 @@ void Map_manager::update()
         int x = 16*(alias_list[i] % xchunk_dim)+8;
         int y = 16*(alias_list[i] / ychunk_dim)+8;
 
-        x = x - xpos;
-        y = y - ypos; 
+        //x = x - xpos;
+        //y = y - ypos; 
 
-        if( x*x + y*y > UNSUB_RADIUS2 ) unsub(i);
+        int dx = quadrant_distance2i(xpos, x);
+        int dy = quadrant_distance2i(ypos, y);
+
+        if( dx+dy > UNSUB_RADIUS2 ) unsub(i);
+
     }
 
     /*
         sub part
     */
-    
+/*
     int imin = MY_MAX(_xpos - _SUB_RADIUS, 0);
     int jmin = MY_MAX(_ypos - _SUB_RADIUS, 0);
 
     int imax = MY_MIN( _xpos + _SUB_RADIUS, xchunk_dim);
     int jmax = MY_MIN( _ypos + _SUB_RADIUS, ychunk_dim);
+*/
+
+    int imin = (_xpos - _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
+    int jmin = (_ypos - _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
+
+    int imax = (_xpos + _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
+    int jmax = (_ypos + _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
 
     int SUB_RADIUS2 = SUB_RADIUS*SUB_RADIUS;
 
     //printf("imin, imax = %i %i jmin jmax = %i %i \n", imin,imax, jmin,jmax);
-    for(int i=imin;i<imax; i++)
-    for(int j=jmin;j<jmax; j++)
+    for(int i=imin; i != imax; i= (i+1)& CHUNK_MAP_WIDTH_BIT_MASK2 )
+    for(int j=jmin; j != jmax; j= (j+1)& CHUNK_MAP_WIDTH_BIT_MASK2 )
     {
-        int x = xpos - (i*16 + 8);
-        int y = ypos - (j*16 + 8);
+        //i &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        if( x*x + y*y >= SUB_RADIUS2 ) continue;
 
         unsigned int version = version_list[j*xchunk_dim + i].version;
-
         if( version == SUBSCRIBED || version == QUED ) continue;
+
+/*
+    Quadrant Math
+*/  
+        int x = quadrant_distance2i(xpos, i*16 + 8);
+        int y = quadrant_distance2i(ypos, j*16 + 8);
+
+        if(x+y >= SUB_RADIUS2 ) continue;
+        //int x = xpos - (i*16 + 8);
+        //int y = ypos - (j*16 + 8);
+
+        //if( x + y*y >= SUB_RADIUS2 ) continue;
         //printf("sub %i %i \n", i,j);
 
         if(i<0 || i >= xchunk_dim || j<0 || j >= ychunk_dim) printf("Map_manager::update(), ERROR!!!\n");
