@@ -277,7 +277,8 @@ int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMet
         if (this->has_flag)
         {
             this->drop_flag();
-            ServerState::ctf->agent_drop_flag(this->team, this->a->s.x, this->a->s.y, this->a->s.z);
+            Vec3 p = this->a->get_position();
+            ServerState::ctf->agent_drop_flag(this->team, p.x, p.y, p.z);
         }
 
         // send conflict notification to clients
@@ -576,10 +577,11 @@ bool Agent_status::lose_item(ObjectType item)
 void Agent_status::check_if_at_base()
 {
     #if DC_CLIENT
+    Vec3 p = this->a->get_position();
     if (ClientState::ctf != NULL
       && ClientState::ctf->is_at_base(
         this->a->status.team,
-        this->a->s.x, this->a->s.y, this->a->s.z
+        p.x, p.y, p.z
     ))
     {   // regenerate model
         voxel_model_restore_throttle++;

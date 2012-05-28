@@ -604,7 +604,8 @@ void draw_team_text_icons(float z)
         if (a==NULL) continue;
         if (a->status.team != playerAgent_state.you->status.team) continue;
         if (a == playerAgent_state.you) continue;
-        world_to_map_screen_coordinates(a->s.x, a->s.y, &x, &y);
+        Vec3 p = a->get_position();
+        world_to_map_screen_coordinates(p.x, p.y, &x, &y);
         ally[j]->set_position(x,y);
         ally[j]->set_depth(z);
         ally[j]->draw_centered();

@@ -9,35 +9,33 @@ const int SNAPSHOT_DRAW_ARRAY_SIZE = 32;
 namespace AgentDraw
 {
 
-static int snapshot_draw_array_i = 0;
-static int snapshot_draw_last_seq = 0;
-AgentState snapshot_draw_array[SNAPSHOT_DRAW_ARRAY_SIZE];
+//static int snapshot_draw_array_i = 0;
+//static int snapshot_draw_last_seq = 0;
+//AgentState snapshot_draw_array[SNAPSHOT_DRAW_ARRAY_SIZE];
 
-static int _last_seq = 0;
+//static int _last_seq = 0;
 
-void add_snapshot_to_history(Agent_state* g) {
-    return;
-    if(g->state_snapshot.seq != snapshot_draw_last_seq) {
-        snapshot_draw_last_seq = g->state_snapshot.seq;
-        snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
-        snapshot_draw_array_i = (snapshot_draw_array_i+1)%SNAPSHOT_DRAW_ARRAY_SIZE;
+void add_snapshot_to_history(Agent_state* g)
+{
+    //if(g->state_snapshot.seq != snapshot_draw_last_seq) {
+        //snapshot_draw_last_seq = g->state_snapshot.seq;
+        //snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
+        //snapshot_draw_array_i = (snapshot_draw_array_i+1)%SNAPSHOT_DRAW_ARRAY_SIZE;
 
 
-        if(g->state_snapshot.seq != (_last_seq + SNAPSHOT_DRAW_ARRAY_SIZE)%256) {
+        //if(g->state_snapshot.seq != (_last_seq + SNAPSHOT_DRAW_ARRAY_SIZE)%256) {
             
-            printf("AgentDraw, add_snapshot_to_history !!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
+            //printf("AgentDraw, add_snapshot_to_history !!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
 
-        }
-        _last_seq = g->state_snapshot.seq;
-    }
-
-
+        //}
+        //_last_seq = g->state_snapshot.seq;
+    //}
 }
 
 void draw_agent(Agent_state* g) {
 
     //printf("agent draw \n");
-    AgentState* s = &g->s;
+    AgentState s = g->get_state();
     //draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
     //printf("id=%i, x= %f, y= %f, z= %f \n", g->id, s->x, s->y, s->z);
     //printf("draw\n");
@@ -51,7 +49,7 @@ void draw_agent(Agent_state* g) {
         draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);  
     }
 */
-    draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
+    draw_agent_bounding_box(s.x, s.y, s.z, 0.4, 1.8, 2.5, 0,0,255);
 }
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {

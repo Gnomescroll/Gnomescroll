@@ -77,7 +77,8 @@ void Agent_event::display_name()
         this->bb->set_size(0.7);
     }
     const float z_margin = 0.4;
-    this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height + z_margin, 0.0f, 0.0f, 0.0f);
+    Vec3 p = this->a->get_position();
+    this->bb->set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
     this->bb->set_draw(true);
 }
 
@@ -86,10 +87,12 @@ void Agent_event::took_damage(int dmg)
 {
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     if (b==NULL) return;
+
+    Vec3 p = this->a->get_position();
     b->set_state(
-        a->s.x + (randf()*(a->box.box_r*2) - a->box.box_r),
-        a->s.y + (randf()*(a->box.box_r*2) - a->box.box_r),
-        a->s.z + a->current_height(),
+        p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
+        p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
+        p.z + a->current_height(),
         0.0f,0.0f, BB_PARTICLE_DMG_VELOCITY_Z
     );
     b->set_color(BB_PARTICLE_DMG_COLOR);   // red
@@ -103,7 +106,7 @@ void Agent_event::took_damage(int dmg)
         Sound::agent_took_damage();
     // TODO: attenuated damage sound
     //else
-        //Sound::agent_took_damage(a->s.x, a->s.y, a->s.z, 0,0,0);
+        //Sound::agent_took_damage(p.x, p.y, p.z, 0,0,0);
 }
 
 void Agent_event::healed(int health)
@@ -122,12 +125,10 @@ void Agent_event::healed(int health)
     else
     {
         if (healed)
-            Sound::restore_health(
-                a->s.x,
-                a->s.y,
-                a->s.z,
-                0,0,0
-            );
+        {
+            Vec3 p = this->a->get_position();
+            Sound::restore_health(p.x, p.y, p.z, 0,0,0);
+        }
     }
 }
 
@@ -139,7 +140,10 @@ void Agent_event::died()
         if (a->is_you())
             Sound::died();
         else
-            Sound::died(a->s.x, a->s.y, a->s.z, 0,0,0);
+        {
+            Vec3 p = this->a->get_position();
+            Sound::died(p.x, p.y, p.z, 0,0,0);
+        }
         this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
     }
@@ -210,7 +214,8 @@ void Agent_event::set_agent_vox_status(AgentVoxStatus status)
 
 void Agent_event::reload_weapon(int type) {
     //if (! a->weapons.is_active(type)) return;
-    Sound::reload(a->s.x, a->s.y, a->s.z, 0,0,0);
+    Vec3 p = this->a->get_position();
+    Sound::reload(p.x, p.y, p.z, 0,0,0);
     // play reload animation/sound for the weapon
 }
 
@@ -269,7 +274,7 @@ void Agent_event::tick_mining_laser()
     int weapon_type = Item::get_item_type((char*)"mining_laser");
     float range = Item::get_weapon_range(weapon_type);
 
-    Animations::mining_laser_beam(this->a->arm_center(), this->a->s.forward_vector(), range);
+    Animations::mining_laser_beam(this->a->arm_center(), this->a->forward_vector(), range);
 }
 
 void Agent_event::fired_mining_laser()
@@ -279,15 +284,13 @@ void Agent_event::fired_mining_laser()
 
 void Agent_event::fired_weapon_at_object(int id, int type, int part)
 {
-    float sx,sy,sz;
-    sx = this->a->s.x;
-    sy = this->a->s.y;
-    sz = this->a->camera_z();
+    AgentState s = this->a->get_state();
+    s.z = this->a->camera_z();
 
-    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser(s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
     float f[3];
-    this->a->s.forward_vector(f);
+    this->a->forward_vector(f);
 
     if (type == OBJECT_AGENT)
     {
@@ -325,12 +328,10 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
 
 void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
 {
-    float sx,sy,sz;
-    sx = this->a->s.x;
-    sy = this->a->s.y;
-    sz = this->a->camera_z();
+    AgentState s = this->a->get_state();
+    s.z = this->a->camera_z();
 
-    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser(s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
     if (this->a->vox == NULL) return;
 
@@ -346,7 +347,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     Vec3 f = vec3_sub(p, arm_center);
     normalize_vector(&f);
 
-    //Vec3 look = this->a->s.forward_vector();    // wrong thing
+    //Vec3 look = this->a->forward_vector();    // wrong thing
     //// NEED THE FKN FORWARD VECTOR OF THE NODE
     //// ROTATE FROM DEFAULT FORWARD VECTOR OF NODE (READ MATRIX OFF VOX DAT)
     //// TO LASER
@@ -407,17 +408,15 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
 
 void Agent_event::fired_weapon_at_nothing()
 {
-    float sx,sy,sz;
-    sx = this->a->s.x;
-    sy = this->a->s.y;
-    sz = this->a->camera_z();
+    AgentState s = this->a->get_state();
+    s.z = this->a->camera_z();
 
-    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser(s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
     if (this->a->vox == NULL) return;
     
     float f[3];
-    this->a->s.forward_vector(f);
+    this->a->forward_vector(f);
     
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
@@ -444,7 +443,8 @@ void Agent_event::hit_block()
     // play pick swing
     // play block damage animation
     //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
-    //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
+    //Vec3 p = this->a->get_camera_position();
+    //Sound::pick_swung(p.x, p.y, p.z, 0,0,0);
 }
 
 void Agent_event::melee_attack_object(int id, int type, int part)
@@ -453,19 +453,23 @@ void Agent_event::melee_attack_object(int id, int type, int part)
     // play blood animation
     // play swing sound
     // play object's hurt sound
-    //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
-    //Sound::pick_hit_agent(a->s.x, a->s.y, a->s.z,0,0,0);
+
+    //Vec3 p = this->a->get_camera_position();
+    //Sound::pick_swung(p.x,p.y,p.z,0,0,0);
+    //Sound::pick_hit_agent(p.x, p.y, p.z,0,0,0);
 }
 
 void Agent_event::melee_attack_nothing()
 {
     // play pick swing animation
-    //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
+    //Vec3 p = this->a->get_camera_position();
+    //Sound::pick_swung(p.x, p.y, p.z, 0,0,0);
 }
 
 void Agent_event::fire_empty_weapon(int weapon_type)
 {
-    Sound::out_of_ammo(a->s.x, a->s.y, a->s.z, 0,0,0);
+    Vec3 p = this->a->get_camera_position();
+    Sound::out_of_ammo(p.x, p.y, p.z, 0,0,0);
 }
 
 Agent_event::~Agent_event()

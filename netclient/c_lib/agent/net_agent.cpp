@@ -685,12 +685,13 @@ inline void hitscan_object_CtoS::handle()
     int team_id = NO_TEAM;
     bool died = true;   // assume hitting object kills it, unless object says otherwise
 
+    AgentState s = a->get_state();
     switch (type)
     {
         case OBJECT_AGENT:
             agent = ServerState::agent_list->get(id);
             if (agent == NULL || agent->vox == NULL) return;
-            agent->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
+            agent->vox->update(s.x, s.y, s.z, s.theta, s.phi);
             // apply damage
             agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
@@ -767,27 +768,24 @@ inline void hitscan_block_CtoS::handle()
     float distance=0.0f;
 
     float f[3];
-    a->s.forward_vector(f);
+    a->forward_vector(f);
 
-    float
-        fx = a->s.x,
-        fy = a->s.y,
-        fz = a->camera_z();
+    Vec3 p = a->get_camera_position();
 
-    int collided = _ray_cast6(fx,fy,fz, f[0], f[1], f[2], max_l, &distance, collision, pre_collision, &cube, side);
+    int collided = _ray_cast6(p.x, p.y, p.z, f[0], f[1], f[2], max_l, &distance, collision, pre_collision, &cube, side);
     if (!collided) return;
     // pt of collision
-    fx += f[0] * distance;
-    fy += f[1] * distance;
-    fz += f[2] * distance;
+    p.x += f[0] * distance;
+    p.y += f[1] * distance;
+    p.z += f[2] * distance;
 
     int cube_side = get_cube_side_from_side_array(side);
 
     agent_shot_block_StoC msg;
     msg.id = a->id;
-    msg.x = fx;
-    msg.y = fy;
-    msg.z = fz;
+    msg.x = p.x;
+    msg.y = p.y;
+    msg.z = p.z;
     msg.cube = cube;
     msg.side = cube_side;
     msg.broadcast();
@@ -795,7 +793,7 @@ inline void hitscan_block_CtoS::handle()
     // damage block
     // WARNING:
     // *must* call this after raycasting, or you will be raycasting altered terrain
-    int block = t_map::get(fx,fy,fz);
+    int block = t_map::get(p.x, p.y, p.z);
     if (block == 0) return;
     int weapon_block_damage = Item::get_item_block_damage(Item::get_item_type((char*)"laser_rifle"), block);
     if (weapon_block_damage <= 0) return;
@@ -1248,11 +1246,7 @@ inline void agent_camera_state_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->id != id) return;
-    a->camera.x = x;
-    a->camera.y = y;
-    a->camera.z = z;
-    a->camera.theta = theta;
-    a->camera.phi = phi;
+    a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
 }
 

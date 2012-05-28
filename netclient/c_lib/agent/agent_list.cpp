@@ -22,10 +22,12 @@ void Agent_list::update_map_manager_positions()
     for(int i=0; i<n_max; i++)
         if (this->a[i] != NULL)
         {
+            Vec3 p;
             if (this->a[i]->camera_ready)
-                t_map::t_map_manager_update_client_position(i, this->a[i]->camera.x, this->a[i]->camera.y);
+                p = this->a[i]->get_camera_state_position();
             else
-                t_map::t_map_manager_update_client_position(i, this->a[i]->s.x, this->a[i]->s.y);
+                p = this->a[i]->get_position();
+            t_map::t_map_manager_update_client_position(i, p.x, p.y);
         }
 }
 #endif
@@ -162,7 +164,8 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (a[i] == NULL) continue;
-        dist = distancef_squared(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
+        Vec3 p = this->a[i]->get_position();
+        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
         if (dist < radius_squared)
         {   // agent in sphere
             filtered_objects[ct] = a[i];
@@ -185,7 +188,8 @@ int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, i
     {
         if (a[i] == NULL) continue;
         if (a[i]->status.team != enemy_team) continue;
-        dist = distancef_squared(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
+        Vec3 p = this->a[i]->get_position();
+        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
         if (dist < radius_squared)
         {   // agent in sphere
             filtered_objects[ct] = a[i];
@@ -214,9 +218,10 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
         Agent_state* a = this->a[i];
         if (a == NULL) continue;
 
-        ax = a->s.x - x;
-        ay = a->s.y - y;
-        az = a->s.z - z;
+        Vec3 p = a->get_position();
+        ax = p.x - x;
+        ay = p.y - y;
+        az = p.z - z;
 
         len = sqrt(ax*ax + ay*ay + az*az);
         ax /= len;

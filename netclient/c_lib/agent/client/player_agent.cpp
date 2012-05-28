@@ -58,8 +58,9 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     c.z = s0.z*(1-delta) + s1.z*delta;  
 
     if (this->you == NULL) return;
-    c.theta = this->you->s.theta;
-    c.phi = this->you->s.phi;
+    AgentState s = this->you->get_state();
+    c.theta = s.theta;
+    c.phi = s.phi;
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
@@ -217,10 +218,11 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     cs_seq_local = (cs_seq_local+1) % 256;
 
+    AgentState s = this->you->get_state();
     if (this->you->status.dead)
     {   // use the last agent state's theta,phi (instead of the camera which is normally passed in)
-        theta = this->you->s.theta;
-        phi = this->you->s.phi;
+        theta = s.theta;
+        phi = s.phi;
     }
 
     Agent_cs_CtoS csp;
@@ -392,7 +394,7 @@ void PlayerAgent_state::pump_camera() {
         case net_agent:
             if(agent_id != -1) {
                 Agent_state* A = ClientState::agent_list->get(agent_id);
-                camera_state = A->s;
+                camera_state = A->get_state();
             } else {
                 printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");
             }
@@ -467,7 +469,8 @@ void PlayerAgent_state::update_model()
         
     a->vox->set_vox_dat(vox_dat);
     a->update_legs();
-    a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
+    AgentState s = a->get_state();
+    a->vox->update(s.x, s.y, s.z, s.theta, s.phi);
     if (current_camera->first_person)
     {
         a->vox->set_draw(false);

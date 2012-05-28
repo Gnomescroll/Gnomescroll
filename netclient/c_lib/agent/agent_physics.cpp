@@ -6,7 +6,8 @@
 bool agent_collides_terrain(Agent_state* a)
 {
     float h = a->current_height();
-    return collision_check_final_current(a->box.box_r, h, a->s.x, a->s.y, a->s.z);
+    Vec3 p = a->get_position();
+    return collision_check_final_current(a->box.box_r, h, p.x, p.y, p.z);
 }
 
 #define GROUND_MARGIN 0.03f

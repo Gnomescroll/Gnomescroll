@@ -206,7 +206,7 @@ void throw_agent_item(int agent_id, ItemID item_id)
     Vec3 position = a->get_center();
 
     const float mom = 2.0f;
-    Vec3 force = a->s.forward_vector();
+    Vec3 force = a->forward_vector();
     force.z = 0;
     normalize_vector(&force);
     force = vec3_scalar_mult(force, mom);

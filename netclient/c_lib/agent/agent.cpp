@@ -75,9 +75,7 @@ bool Agent_state::is_you()
 
 void Agent_state::teleport(float x,float y,float z)
 {
-    s.x = x;
-    s.y = y;
-    s.z = z;
+    this->set_position(x,y,z);
 
     Agent_teleport_message A;
 
@@ -96,13 +94,7 @@ void Agent_state::teleport(float x,float y,float z)
 
 void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi)
 {
-    s.x = x;
-    s.y = y;
-    s.z = z;
-    s.vx = vx;
-    s.vy = vy;
-    s.vz = vz;
-
+    this->set_state(x,y,z,vx,vy,vz);
     s.theta = theta;
     s.phi = phi;
     
@@ -449,14 +441,33 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     #endif
 }
 
+void Agent_state::set_position(float x, float y, float z)
+{
+    Vec3 p = vec3_init(x,y,z);
+    p = t_map::translate_position(p);
+    s.x = p.x;
+    s.y = p.y;
+    s.z = p.z;
+}
+
 void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz)
 {
-    s.x = x;
-    s.y = y;
-    s.z = z;
+    this->set_position(x,y,z);
     s.vx = vx;
     s.vy = vy;
     s.vz = vz;
+}
+
+void Agent_state::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz)
+{
+    Vec3 p = vec3_init(x,y,z);
+    p = t_map::translate_position(p);
+    state_snapshot.x = p.x;
+    state_snapshot.y = p.y;
+    state_snapshot.z = p.z;
+    state_snapshot.vx = vx;
+    state_snapshot.vy = vy;
+    state_snapshot.vz = vz;
 }
 
 void Agent_state::set_angles(float theta, float phi)
@@ -464,6 +475,18 @@ void Agent_state::set_angles(float theta, float phi)
     s.theta = theta;
     s.phi = phi;
 }
+
+#if DC_SERVER
+void Agent_state::set_camera_state(float x, float y, float z, float theta, float phi)
+{
+    Vec3 p = t_map::translate_position(vec3_init(x,y,z));
+    this->camera.x = p.x;
+    this->camera.y = p.y;
+    this->camera.z = p.z;
+    this->camera.theta = theta;
+    this->camera.phi = phi;
+}
+#endif
 
 void Agent_state::get_spawn_point(Vec3* spawn)
 {
@@ -526,12 +549,12 @@ void Agent_state::init_vox()
 
 Agent_state::Agent_state(int id)
 :
-#if DC_SERVER
-camera_ready(false),
-#endif
 id (id), type(OBJECT_AGENT), status(this)
 #if DC_CLIENT
 , event(this)
+#endif
+#if DC_SERVER
+, camera_ready(false)
 #endif
 {
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
@@ -561,10 +584,6 @@ id (id), type(OBJECT_AGENT), status(this)
     //NetServer::assign_agent_to_client(this->client_id, this);
 
     #if DC_SERVER
-    this->camera.vx = 0;
-    this->camera.vy = 0;
-    this->camera.vz = 0;
-
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;

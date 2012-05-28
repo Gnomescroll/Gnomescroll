@@ -60,13 +60,13 @@ class Agent_state {
 
         void get_spawn_point(Vec3* spawn);
 
-    public:    
         class AgentState s; //state current
         class AgentState state_snapshot;
         #if DC_SERVER
-        bool camera_ready;
-        class AgentState camera;    // agent's camera state, sent by client
+        AgentState camera;    // agent's camera state, sent by client
         #endif
+
+    public:    
 
         int id;
         int client_id;
@@ -90,14 +90,29 @@ class Agent_state {
         bool in_sight_of(Vec3 source, Vec3 *sink);
         bool in_sight_of(Vec3 source, Vec3 *sink, float acquisition_probability);
 
-        void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
+        #if DC_SERVER
+        bool camera_ready;
+        AgentState get_camera_state() { return this->camera; }
+        Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.x, this->camera.x); }
+        void set_camera_state(float x, float y, float z, float theta, float phi);
+        #endif
+
+        AgentState get_state() { return this->s; }
+        void set_position(float x, float y, float z);
+        void set_state(float x, float y, float z, float vx, float vy, float vz);
+        AgentState get_state_snapshot() { return this->state_snapshot; }
+        void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz);
         void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
 
         void spawn_state();
 
+        void forward_vector(float f[3]) { this->s.forward_vector(f); }
+        Vec3 forward_vector() { return this->s.forward_vector(); }
+
         Vec3 get_position() { return vec3_init(this->s.x, this->s.y, this->s.z); }
+        Vec3 get_camera_position() { Vec3 p = this->get_position(); p.z += this->camera_height(); return p; }
         Vec3 get_center()
         {
             if (this->vox == NULL) return this->get_position();
