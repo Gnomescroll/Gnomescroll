@@ -20,7 +20,7 @@ class VerletPhysicsComponent: public PhysicsComponent
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {
-            this->position = position;
+            this->position = t_map::translate_position(position);
             return true;
         }
 

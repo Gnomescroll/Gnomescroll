@@ -88,8 +88,10 @@ const float MONSTER_BOX_ANIMATION_FORCE = 20.0f;
 const float MONSTER_BOX_MOTION_SIGHT_RANGE = 50.0f;
 const float MONSTER_BOX_SPEED = 0.2f;
 const int MONSTER_BOX_WALK_RANGE = 30;
-const int MONSTER_BOX_MOTION_MAX_Z_DOWN = 4;
-const int MONSTER_BOX_MOTION_MAX_Z_UP = 3;
+//const int MONSTER_BOX_MOTION_MAX_Z_DOWN = 4;
+//const int MONSTER_BOX_MOTION_MAX_Z_UP = 3;
+const int MONSTER_BOX_MOTION_MAX_Z_DOWN = 20;
+const int MONSTER_BOX_MOTION_MAX_Z_UP = 20;
 
 // state broadcast rate
 const int MONSTER_BOX_BROADCAST_RATE = 30; // once every 30 ticks

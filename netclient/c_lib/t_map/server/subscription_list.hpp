@@ -1,8 +1,8 @@
 #pragma once
 
-
 #include <t_map/common/map_element.hpp>
 #include <t_map/net/t_StoC.hpp>
+#include <t_map/t_map.hpp>
 
 namespace t_map
 {
@@ -141,6 +141,8 @@ class Terrain_map_subscription
 
     void send_block_action(int x, int y, int z, int value, int action)
     {
+        x = translate_mapx(x);
+        y = translate_mapy(y);
         GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;

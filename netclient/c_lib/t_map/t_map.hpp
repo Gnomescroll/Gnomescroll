@@ -1,5 +1,7 @@
 #pragma once
 
+#include <physics/vec3.hpp>
+
 #include <common/defines.h>
 #include <t_map/common/constants.hpp>
 #include <t_map/common/map_element.hpp>
@@ -55,6 +57,26 @@ inline int get_highest_open_block(int x, int y);
 inline int get_lowest_open_block(int x, int y, int n);
 inline int get_highest_solid_block(int x, int y, int z=MAP_HEIGHT);
 inline int get_lowest_solid_block(int x, int y);
+
+struct Vec3 translate_position(struct Vec3 pos);
+
+// translates a map integer coordinate into the map boundaries
+// dim is the size of the axis
+__attribute((always_inline))
+inline int translate_mapx(int x)
+{
+    while (x >= map_dim.x) x -= map_dim.x;
+    while (x < 0) x += map_dim.y;
+    return x;
+}
+
+__attribute((always_inline))
+inline int translate_mapy(int y)
+{
+    while (y >= map_dim.y) y -= map_dim.y;
+    while (y < 0) y += map_dim.y;
+    return y;
+}
 
 }   // t_map
 

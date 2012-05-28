@@ -20,7 +20,6 @@
     //#include <t_map/net/t_StoC.hpp>
 
     #include <common/random.h>
-    #include <physics/vec3.hpp>
 
     #include <particle/_interface.hpp>
 
@@ -211,15 +210,31 @@ inline int get_lowest_solid_block(int x, int y)
     return i;
 }
 
+struct Vec3 translate_position(struct Vec3 pos)
+{
+    if (pos.x >= map_dim.x) pos.x -= map_dim.x;
+    else
+    if (pos.x < 0) pos.x += map_dim.x;
+    
+    if (pos.y >= map_dim.y) pos.y -= map_dim.y;
+    else
+    if (pos.y < 0) pos.y += map_dim.y;
+    return pos;
+}
+
 }   // t_map
  
 
 int _get(int x, int y, int z)
 {
+    x = t_map::translate_mapx(x);
+    y = t_map::translate_mapy(y);
+    
     //return t_map::main_map->get_block(x,y,z);
-    if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)
-        | (y & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-    ) return 0;
+    //if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)
+        //| (y & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+    //) return 0;
+    if((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
     struct t_map::MAP_CHUNK* c = t_map::main_map->chunk[ t_map::MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
     if(c == NULL) return 0;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;

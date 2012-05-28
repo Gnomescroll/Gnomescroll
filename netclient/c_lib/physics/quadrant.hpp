@@ -1,7 +1,7 @@
 #pragma once
 
 #include <t_map/common/constants.hpp>
-
+#include <physics/vec3.hpp>
 
 
 static inline int Min_i(int x, int y, int x1, int y1)
@@ -33,7 +33,7 @@ static inline int Min_2i(int x, int y)
 int quadrant_distance2i(int cx, int px)
 {
 
-	int distance;
+    int distance;
 
     if(cx < QUADRANT_DIVIDEi)
     {
@@ -46,7 +46,7 @@ int quadrant_distance2i(int cx, int px)
         }
         else
         {
-        	distance = Min_2i(px-cx, px-cx-512);
+            distance = Min_2i(px-cx, px-cx-512);
         }
     }
     else
@@ -54,7 +54,7 @@ int quadrant_distance2i(int cx, int px)
         //camera is in second half
         if(px < QUADRANT_DIVIDEi)
         {
-        	distance = Min_2i(px-cx, px-cx+512);
+            distance = Min_2i(px-cx, px-cx+512);
         }
         else
         {

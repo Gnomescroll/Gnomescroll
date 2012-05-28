@@ -330,6 +330,12 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     as.y = new_y;
     as.z = new_z;
 
+    Vec3 pos = vec3_init(as.x, as.y, as.z);
+    pos = t_map::translate_position(pos);
+    as.x = pos.x;
+    as.y = pos.y;
+    as.z = pos.z;
+
 #if ADVANCED_JUMP
     as.jump_pow = new_jump_pow;
 #endif

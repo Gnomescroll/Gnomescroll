@@ -20,7 +20,8 @@ double model_view_matrix_dbl[16];
 double projection_matrix[16];
 GLint viewport[4];
 
-void set_camera(Camera* cam) {
+void set_camera(Camera* cam)
+{
     current_camera = cam;
 }
 
@@ -72,6 +73,7 @@ zoom_factor(CAMERA_ZOOM_FACTOR)
     set_dimensions();
     set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 }
+#undef CAMERA_ZOOM_FACTOR
 
 void Camera::toggle_zoom()
 {
@@ -95,32 +97,33 @@ void Camera::unzoom()
     this->fov *= this->zoom_factor;
 }
 
-int Camera::is_current() {
-    if (this == current_camera) {
-        return 1;
-    }
-    return 0;
+bool Camera::is_current()
+{
+    if (this == current_camera) return true;
+    return false;
 }
 
-void Camera::set_aspect(float fov, float z_near, float z_far) {
+void Camera::set_aspect(float fov, float z_near, float z_far)
+{
     this->fov = fov;
     this->z_near = z_near;
     this->z_far = z_far;
 }
 
-void Camera::set_fov(float fov) {
+void Camera::set_fov(float fov)
+{
     this->fov = fov;
 }
 
-void Camera::set_projection(float x, float y, float z, float theta, float phi) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
+void Camera::set_projection(float x, float y, float z, float theta, float phi)
+{
+    this->set_state(x,y,z);
     this->theta = theta;
     this->phi = phi;
 }
 
-void Camera::set_dimensions() {
+void Camera::set_dimensions()
+{
     x_size = _xresf;
     y_size = _yresf;
     ratio = x_size / y_size;
@@ -128,36 +131,38 @@ void Camera::set_dimensions() {
 
 void Camera::set_state(float x, float y, float z)
 {
-    this->x = x;
-    this->y = y;
-    this->z = z;
+    Vec3 p = vec3_init(x,y,z);
+    p = t_map::translate_position(p);
+    this->x = p.x;
+    this->y = p.y;
+    this->z = p.z;
 }
 
-void Camera::pan(float dx, float dy) {    // args are deltas
+void Camera::pan(float dx, float dy)
+{   // args are deltas
     theta += dx;
     phi += dy;
 
-    if (theta > 1.0f) {
-        theta -= 2.0f;
-    } else if (theta < -1.0f) {
-        theta += 2.0f;
-    }
+    if (theta > 1.0f) theta -= 2.0f;
+    else if (theta < -1.0f) theta += 2.0f;
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
     // Camera behavior when looking straight up or down is fucked up otherwise
-    if (phi > 0.4999f) {
-        phi = 0.4999f;
-    } else if (phi < -0.4999f) {
-        phi = -0.4999f;
-    }
+    if (phi > 0.4999f) phi = 0.4999f;
+    else if (phi < -0.4999f) phi = -0.4999f;
 }
 
-void Camera::move(float dx, float dy, float dz) {
+void Camera::move(float dx, float dy, float dz)
+{
+    float x = this->x;
+    float y = this->y;
+    float z = this->z;
     x += dx*cos(theta * PI);
     x += dy*cos(theta * PI + PI/2.0f);
     y += dx*sin(theta * PI);
     y += dy*sin(theta * PI + PI/2.0f);
     z += dz;
+    this->set_state(x,y,z);
 }
 
 void Camera::world_projection()
@@ -197,13 +202,14 @@ void Camera::world_projection()
     glColor3ub(255, 255, 255);
 }
 
-void Camera::set_angles(float theta, float phi) {
+void Camera::set_angles(float theta, float phi)
+{
     this->theta = theta;
     this->phi = phi;
 }
 
-void Camera::hud_projection() {
-
+void Camera::hud_projection()
+{
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -222,22 +228,15 @@ void Camera::hud_projection() {
 
 void Camera::forward_vector(float f[3])
 {
-
     float xa = theta;
     float ya = phi;
-    if (theta > 1.0f) {
-        xa -= 2.0f;
-    } else if (theta < -1.0f) {
-        xa += 2.0f;
-    }
+    if (theta > 1.0f) xa -= 2.0f;
+    else if (theta < -1.0f) xa += 2.0f;
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
     // Camera behavior when looking straight up or down is fucked up otherwise
-    if (phi > 0.4999f) {
-        ya = 0.4999f;
-    } else if (phi < -0.4999f) {
-        ya = -0.4999f;
-    }
+    if (phi > 0.4999f) phi = 0.4999f;
+    else if (phi < -0.4999f) phi = -0.4999f;
     
     f[0] = cos( xa * PI) * cos( ya * PI);
     f[1] = sin( xa * PI) * cos( ya * PI);
@@ -259,6 +258,7 @@ Vec3 Camera::forward_vector()
 
 void Camera::copy_state_from(Camera* c)
 {
+    GS_ASSERT(c != NULL);
     this->set_state(c->x, c->y, c->z);
     this->set_angles(c->theta, c->phi);
 }

@@ -47,7 +47,7 @@ class Camera {
         void hud_projection();
         void world_projection();
 
-        int is_current();
+        bool is_current();
 
         void toggle_zoom();
         void zoom();

@@ -69,11 +69,7 @@ void MotionTargetingComponent::choose_destination()
 
     Vec3 position = physics->get_position();
     position.x += x;
-    if (position.x < 0) position.x = 0;
-    if (position.x > map_dim.x) position.x = map_dim.x;
     position.y += y;
-    if (position.y < 0) position.y = 0;
-    if (position.y > map_dim.y) position.y = map_dim.y;
     position.z = t_map::get_highest_solid_block(position.x, position.y);
     this->destination = position;
     this->at_destination = false;

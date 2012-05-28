@@ -258,10 +258,6 @@ void server_tick_mob_robot_box(Object* object)
         int dy = randrange(0,walk_len) - walk_len/2;
         destination = vec3_add(position, vec3_init(((float)dx)+randf(), ((float)dy)+randf(),0));
         // clamp
-        if (destination.x < 0) destination.x = 0;
-        if (destination.x >= map_dim.x) destination.x = map_dim.x -1;
-        if (destination.y < 0) destination.y = 0;
-        if (destination.y >= map_dim.y) destination.y = map_dim.y -1;
         destination.z = (float)t_map::get_highest_open_block(destination.x,destination.y);
         if (destination.z < 0) destination.z = 0;
 
