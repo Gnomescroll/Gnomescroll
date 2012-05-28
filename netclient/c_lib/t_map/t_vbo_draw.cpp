@@ -55,97 +55,24 @@ bool chunk_render_check( float x, float y)
     return (dx*dx + dy*dy > dist2) ? false : true;
 }
 
-void translate_chunk(float camera_x, float camera_y, float pos_x, float pos_y)
-{
-
-    if(camera_x < QUADRANT_DIVIDE)
-    {
-        if(pos_x > QUADRANT_DIVIDE)
-        {
-
-        }
-
-    }
-    else
-    {
-
-
-    }
-
-    if(camera_y < QUADRANT_DIVIDE)
-    {
-
-
-    }
-    else
-    {
-
-
-    }
-
-}
-
 void Vbo_map::prep_draw()
 {
     struct Map_vbo* col;
 
     const float cx = current_camera->x;
     const float cy = current_camera->y;
-
+/*
     for(int i=0; i<map->xchunk_dim; i++)
     for(int j=0; j<map->ychunk_dim; j++)
     {
         col = vbo_array[j*xchunk_dim + i ];
         if(col == NULL) continue;
 
-        float xoff = col->xoff;
-        float yoff = col->yoff;
-
-        //int q1x = (cx < QUADRANT_DIVIDE);
-        //int q2x = (xoff < QUADRANT_DIVIDE);
-
-        if(cx < QUADRANT_DIVIDE)
-        {
-            //camera in first half
-            if(xoff < QUADRANT_DIVIDE)
-            {
-                //chunk is in first half
-                col->wxoff = xoff;
-            }
-            else
-            {
-                //chunk is in second half
-                col->wxoff = Min_f( xoff-cx, xoff-512.0-cx, xoff, xoff-512.0);
-            }
-        }
-        else
-        {
-            //camera is in second half
-            if(xoff < QUADRANT_DIVIDE)
-            {
-                col->wxoff = Min_f( xoff-cx, xoff+512.0-cx, xoff, xoff+512.0);
-            }
-            else
-            {
-                //col->wxoff = Min2( xoff-cx, xoff-512.0-cx);
-                col->wxoff = xoff;
-            }
-        }
-
-        col->wyoff = yoff;
-/*
-        if(cy < QUADRANT_DIVIDE)
-        {
-            col->wyoff = Min2( yoff-cy, yoff-512.0-cy);
-        }
-        else
-        {
-            col->wyoff = Min2( yoff-cy, yoff+512.0-cy);
-        }
-*/
+        col->wxoff = quadrant_translate_f(cx, col->xoff);
+        col->wyoff = quadrant_translate_f(cy, col->yoff);
 
     }
-
+*/
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
     //start_vbo_draw();
@@ -156,8 +83,10 @@ void Vbo_map::prep_draw()
         col = vbo_array[j*xchunk_dim + i ];
 
         if(col == NULL || col->vnum == 0) continue;
-        //if( chunk_render_check( col->xpos, col->ypos) && xy_point_fulstrum_test(col->xpos, col->ypos) )
-        //if( chunk_render_check( col->xpos, col->ypos) && xy_circle_fulstrum_test(col->xpos, col->ypos, 11.4) )
+
+        col->wxoff = quadrant_translate_f(cx, col->xoff);
+        col->wyoff = quadrant_translate_f(cy, col->yoff);
+
         if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
         {
             c_drawn++; 
@@ -184,17 +113,17 @@ void Vbo_map::prep_draw()
 void Vbo_map::sort_draw()
 {
 
-    float x = current_camera->x;
-    float y = current_camera->y;
+    float cx = current_camera->x;
+    float cy = current_camera->y;
 
     for(int i=0; i<draw_vbo_n; i++ )
     {
         class Map_vbo* v = draw_vbo_array[i].map_vbo;
 
-        float _x = (v->xpos - x);
-        float _y = (v->ypos - y);
+        float dx = (v->wxoff - cx);
+        float dy = (v->wyoff - cy);
 
-        draw_vbo_array[i].distance = _x*_x + _y*_y; //set this
+        draw_vbo_array[i].distance = dx*dx + dy*dy; //set this
 
     }
 
