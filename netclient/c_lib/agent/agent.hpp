@@ -64,6 +64,7 @@ class Agent_state {
         class AgentState s; //state current
         class AgentState state_snapshot;
         #if DC_SERVER
+        bool camera_ready;
         class AgentState camera;    // agent's camera state, sent by client
         #endif
 

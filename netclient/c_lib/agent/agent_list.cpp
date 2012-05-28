@@ -21,7 +21,12 @@ void Agent_list::update_map_manager_positions()
 {
     for(int i=0; i<n_max; i++)
         if (this->a[i] != NULL)
-            t_map::t_map_manager_update_client_position(i, this->a[i]->camera.x, this->a[i]->camera.y);
+        {
+            if (this->a[i]->camera_ready)
+                t_map::t_map_manager_update_client_position(i, this->a[i]->camera.x, this->a[i]->camera.y);
+            else
+                t_map::t_map_manager_update_client_position(i, this->a[i]->s.x, this->a[i]->s.y);
+        }
 }
 #endif
 

@@ -1253,6 +1253,7 @@ inline void agent_camera_state_CtoS::handle()
     a->camera.z = z;
     a->camera.theta = theta;
     a->camera.phi = phi;
+    a->camera_ready = true;
 }
 
 

@@ -568,6 +568,9 @@ id (id), type(OBJECT_AGENT), status(this)
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
 :
+#if DC_SERVER
+camera_ready(false),
+#endif
 id(id), type(OBJECT_AGENT), status(this)
 #if DC_CLIENT
 , event(this)
