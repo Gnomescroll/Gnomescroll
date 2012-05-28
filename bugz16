@@ -241,6 +241,15 @@ DONE
 blue bombs should damage terrain like grenades
 DONE
 
+map wrap entity system physics components
+DONE
+
+map wrap agent states
+DONE
+
+map wrap camera
+DONE
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -272,7 +281,12 @@ have chat display a "Press U to relock mouse" when window gains focus and mouse 
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
-update health text
+update health text (??)
 
 == TERRAIN ==
 Palette value for container blocks
+
+== MAP WRAP ==
+sounds (shift everything to local coordinates)
+rendering particles/models
+

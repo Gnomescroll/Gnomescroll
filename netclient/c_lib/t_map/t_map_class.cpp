@@ -92,8 +92,10 @@ namespace t_map
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
             return NO_MAP_ELEMENT;
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
 
@@ -129,8 +131,10 @@ namespace t_map
     {
         //printf("set update: %i %i \n", x,y);
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
         if( c != NULL ) c->needs_update = true;
@@ -162,8 +166,10 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
@@ -189,8 +195,11 @@ namespace t_map
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
         //printf("set %i, %i, %i \n", x,y,z);
         struct MAP_CHUNK* c;
         {
@@ -249,8 +258,10 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
@@ -296,8 +307,10 @@ namespace t_map
         //if( x >= 512 || x < 0 ) return -2 ;
         //if( y >= 512 || y < 0 ) return -2;
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         //printf("set %i, %i, %i \n", x,y,z);
         struct MAP_CHUNK* c;
@@ -367,9 +380,11 @@ namespace t_map
 */
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
-
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
@@ -412,8 +427,10 @@ namespace t_map
         //if( x >= 512 || x < 0 ) return -2 ;
         //if( y >= 512 || y < 0 ) return -2;
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         //printf("set %i, %i, %i \n", x,y,z);
         struct MAP_CHUNK* c;
@@ -527,8 +544,10 @@ namespace t_map
     
     inline unsigned char Terrain_map::get_cached_height(int x, int y)
     {
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         return this->column_heights[x + y*MAP_WIDTH];
     }
 
@@ -567,8 +586,10 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
 
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
         if(c == NULL) return 0;
@@ -579,8 +600,10 @@ namespace t_map
 
     void Terrain_map::set_block(int x, int y, int z, int value)
     {
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x = translate_mapx(x);
+        y = translate_mapy(y);
+        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_ELEMENT element = {{{value, 0,0,0}}};
         set_element(x,y,z, element);

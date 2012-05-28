@@ -63,7 +63,11 @@ class MAP_CHUNK_SUBSCRIPTION
 
     void send_block_action(int x, int y, int z, int value, int action)
     {
+        x = translate_mapx(x);
+        y = translate_mapy(y);
 
+        GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+        
         block_action_StoC msg;
         msg.x = x;
         msg.y = y;

@@ -37,14 +37,17 @@ class Terrain_map* main_map;
 
 int get(int x, int y, int z)
 {
-    if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
+    return _get(x,y,z);
+    
+    //if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
 
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    //// this is broken
+    //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
-    if(c == NULL) return 0;
-    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+    //struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    //if(c == NULL) return 0;
+    //return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
 
 void set(int x, int y, int z, int value)
@@ -177,7 +180,7 @@ inline int get_highest_solid_block(int x, int y, int z)
     #if DC_SERVER
     int i = z-1;
     for (; i>=0; i--)
-        if (isSolid(_get(x,y,i))) break;
+        if (isSolid(x,y,i)) break;
     return i;
     #endif
 }
@@ -205,7 +208,7 @@ inline int get_lowest_solid_block(int x, int y)
 {
     int i;
     for (i=0; i < ZMAX; i++)
-        if (isSolid(_get(x,y,i))) break;
+        if (isSolid(x,y,i)) break;
     if (i >= ZMAX) i = -1;  // failure
     return i;
 }
@@ -303,7 +306,7 @@ void set_map_size(int x, int y, int z)
 int get_height_at(int x, int y)
 {
     for (int i=map_dim.z-1; i>=0; i--)
-        if (isSolid(_get(x,y,i)))
+        if (isSolid(x,y,i))
             return i;
     return 0;
 }

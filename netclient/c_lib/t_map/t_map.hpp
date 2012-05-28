@@ -62,20 +62,25 @@ struct Vec3 translate_position(struct Vec3 pos);
 
 // translates a map integer coordinate into the map boundaries
 // dim is the size of the axis
+
+__attribute((always_inline))
+inline int translate_map_coord(int coord, int dim)
+{
+    while (coord >= dim) coord -= dim;
+    while (coord < 0) coord += dim;
+    return coord;
+}
+
 __attribute((always_inline))
 inline int translate_mapx(int x)
 {
-    while (x >= map_dim.x) x -= map_dim.x;
-    while (x < 0) x += map_dim.y;
-    return x;
+    return translate_map_coord(x, map_dim.x);
 }
 
 __attribute((always_inline))
 inline int translate_mapy(int y)
 {
-    while (y >= map_dim.y) y -= map_dim.y;
-    while (y < 0) y += map_dim.y;
-    return y;
+    return translate_map_coord(y, map_dim.y);
 }
 
 }   // t_map
