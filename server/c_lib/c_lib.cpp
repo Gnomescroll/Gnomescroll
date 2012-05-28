@@ -65,7 +65,8 @@ dont_include_this_file_in_client
 #include <physics/mat3.hpp>
 #include <physics/mat4.hpp>
 #include <physics/affine.hpp>
- 
+#include <physics/quadrant.cpp>
+
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>
 #include <voxel/voxel_hitscan.cpp>

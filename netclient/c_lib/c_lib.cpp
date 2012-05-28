@@ -79,7 +79,7 @@ dont_include_this_file_in_server
 #include <physics/verlet.cpp>
 #include <physics/verlet_particle.cpp>
 #include <physics/motion.cpp>
-
+#include <physics/quadrant.cpp>
 /* SDL */
 #include <SDL/shader_loader.cpp>
 #include <SDL/texture_loader.cpp>
@@ -159,7 +159,6 @@ dont_include_this_file_in_server
 /* camera */
 #include <camera/camera.cpp>
 #include <camera/fulstrum_test.cpp>
- 
 //#ifdef linux
 //#include <SDL/IMG_savepng.c>
 //#endif
