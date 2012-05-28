@@ -33,13 +33,20 @@ void PlayerAgent_state::was_identified()
     msg.send();    
 }
 
+#define SKIP_INTERPOLATION_THRESHOLD 256.0f
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
     int last_tick = _LAST_TICK();
     int _t = _GET_MS_TIME();
 
-    //printf("ms since last update= %i \n", _t - last_tick);
-    float delta = ((float)(_t - last_tick)) / 33.3f;
+    // calculate interpolation delta
+    // if the distance travelled is extreme, dont interpolate (delta=1)
+    // this is because of the teleport in map wrapping
+    // the player will suddenly jump ~512 meters, with a noticable interpolation flicker in between
+    float delta = 1.0f;
+    float dist2 = distancef_squared(s0.x, s0.y, s0.z, s1.x, s1.y, s1.z);
+    if (dist2 < SKIP_INTERPOLATION_THRESHOLD*SKIP_INTERPOLATION_THRESHOLD)
+        delta = ((float)(_t - last_tick)) / 33.3f;
 
     if(delta > 1.0f)
     {
@@ -62,6 +69,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     c.theta = s.theta;
     c.phi = s.phi;
 }
+#undef SKIP_INTERPOLATION_THRESHOLD
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
 
