@@ -232,20 +232,23 @@ DONE
 build# subfolders in downloads on site
 DONE
 
-preallocated minivox particles, blood
+simple object list for preallocated minivox particles, blood
 DONE
 
+fix initial map loading position
+DONE
+
+blue bombs should damage terrain like grenades
+DONE
 
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
-blue bombs should damage terrain like grenades
 
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
 this will let players "dodge"
 
 red box random walk is biased to +/+
-
 use quadrants for spawning
 
 == GFX ==
@@ -270,3 +273,6 @@ alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
 update health text
+
+== TERRAIN ==
+Palette value for container blocks
