@@ -520,15 +520,14 @@ void Agent_state::init_vox()
 
 Agent_state::Agent_state(int id)
 :
+#if DC_SERVER
+camera_ready(false),
+#endif
 id (id), type(OBJECT_AGENT), status(this)
 #if DC_CLIENT
 , event(this)
 #endif
 {
-    inventory_id = -1;
-    toolbar_id = -1;
-    nanite_id = -1;
-
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
     set_angles(0.5f, 0.0f);
 
@@ -554,52 +553,6 @@ id (id), type(OBJECT_AGENT), status(this)
 
     // add to NetServer pool
     //NetServer::assign_agent_to_client(this->client_id, this);
-
-    #if DC_SERVER
-    agent_create_StoC msg;
-    msg.id = id;
-    msg.team = this->status.team;
-    msg.client_id = this->client_id;
-    msg.broadcast();
-    #endif
-
-    this->init_vox();
-}
-
-Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
-:
-#if DC_SERVER
-camera_ready(false),
-#endif
-id(id), type(OBJECT_AGENT), status(this)
-#if DC_CLIENT
-, event(this)
-#endif
-{
-    inventory_id = -1;
-
-    set_state(x, y, z, vx, vy, vz);
-    set_angles(0.5f, 0.0f);
-    
-    box.b_height = AGENT_HEIGHT;
-    box.c_height = AGENT_HEIGHT_CROUCHED;
-    box.box_r = AGENT_BOX_RADIUS;
-
-    CS_seq = 0;
-
-    printf("Agent_state::Agent_state, new agent, id=%i \n", id);
-    
-    state_snapshot.seq = -1;
-    state_rollback.seq = -1;
-    for(int i=0; i<256; i++)
-    {
-        cs[i].seq = -1;
-        cs[i].cs = 0;
-        cs[i].theta = 0;
-        cs[i].phi = 0;
-    }
-
-    client_id = id;
 
     #if DC_SERVER
     this->camera.vx = 0;

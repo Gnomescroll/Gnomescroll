@@ -71,10 +71,6 @@ class Agent_state {
         int id;
         int client_id;
 
-        int inventory_id;
-        int toolbar_id;
-        int nanite_id;
-        
         ObjectType type;
         
         struct Agent_collision_box box;
@@ -143,7 +139,6 @@ class Agent_state {
         Vec3 arm_center();
 
         explicit Agent_state(int id); //default constructor
-        Agent_state(int id, float x, float y, float z, float vx, float vy, float vz);
 
         ~Agent_state();
 };
