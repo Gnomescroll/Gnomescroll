@@ -105,7 +105,7 @@ void end_t_map()
 int apply_damage(int x, int y, int z, int dmg)
 {
     #if DC_CLIENT
-    Sound::block_took_damage(x,y,z,0,0,0);
+    Sound::block_took_damage(x+0.5f,y+0.5f,z+0.5f,0,0,0);
     #endif
     return t_map::main_map->apply_damage(x,y,z,dmg);
 }
@@ -178,29 +178,24 @@ inline int get_highest_solid_block(int x, int y, int z)
     #if DC_SERVER
     int i = z-1;
     for (; i>=0; i--)
-        if (isSolid(_get(x,y,i)))
-            break;
+        if (isSolid(_get(x,y,i))) break;
     return i;
     #endif
 }
 
 inline int get_lowest_open_block(int x, int y, int n)
 {
-    if (n < 1) {
-        printf("WARNING: _get_lowest_open_block :: called with n < 1\n");
-        return -1;
-    }
+    GS_ASSERT(n > 0);
+    if (n < 1) return -1;
 
     int i;
     int block;
     int open=0;
-    for (i=0; i<ZMAX; i++) {
+    for (i=0; i<ZMAX; i++)
+    {
         block = _get(x,y,i);
-        if (isSolid(block)) {
-            open = 0;
-        } else {
-            open++;
-        }
+        if (isSolid(block)) open = 0;
+        else open++;
         if (open >= n) return i-open+1;
     }
 
@@ -210,11 +205,8 @@ inline int get_lowest_open_block(int x, int y, int n)
 inline int get_lowest_solid_block(int x, int y)
 {
     int i;
-    for (i=0; i < ZMAX; i++) {
-        if (isSolid(_get(x,y,i))) {
-            break;
-        }
-    }
+    for (i=0; i < ZMAX; i++)
+        if (isSolid(_get(x,y,i))) break;
     if (i >= ZMAX) i = -1;  // failure
     return i;
 }
