@@ -12,30 +12,25 @@
 namespace Particle
 {
 
-ColoredMinivox::ColoredMinivox(int id)
-:
-ParticleMotion(id, 0,0,0,0,0,0, MINIVOX_MASS*MINIVOX_SIZE),
-theta(0.0f), phi(0.0f),
-dtheta(0.0f), dphi(0.0f),
-r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
-size(MINIVOX_SIZE)
+void ColoredMinivox::init()
 {
-    this->ttl_max = MINIVOX_TTL;
+    this->theta = 0.0f;
+    this->phi = 0.0f;
+    this->dtheta = 0.0f;
+    this->dphi = 0.0f;
+    this->ttl = MINIVOX_TTL;
     this->type = MINIVOX_TYPE;
     orient_vectors();
 }
 
-ColoredMinivox::ColoredMinivox(int id, float x, float y, float z, float mx, float my, float mz)
+
+ColoredMinivox::ColoredMinivox()
 :
-ParticleMotion(id, x,y,z, mx,my,mz, MINIVOX_MASS*MINIVOX_SIZE),
-theta(0.0f), phi(0.0f),
-dtheta(0.0f), dphi(0.0f),
+ParticleMotion(-1, 0,0,0,0,0,0, MINIVOX_MASS*MINIVOX_SIZE),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
 size(MINIVOX_SIZE)
 {
-    this->ttl_max = MINIVOX_TTL;
-    this->type = MINIVOX_TYPE;
-    orient_vectors();
+    this->init();
 }
 
 // recalculates orientation vectors from angular parameter
@@ -109,7 +104,7 @@ void ColoredMinivox::tick()
 {
     this->verlet_bounce(MINIVOX_DAMP);
     this->spin();
-    this->ttl++;
+    this->ttl--;
 }
 
 /* ColoredMinivox list */
@@ -118,20 +113,18 @@ void ColoredMinivox_list::tick()
 {
     for (int i=0; i<n_max; i++)
     {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max)
-            destroy(a[i]->id);
+        if (!this->used[i]) continue;
+        if (a[i].ttl == 0) this->destroy(a[i].id);
+        a[i].tick();
     }
 }
 
 void ColoredMinivox_list::draw()
 {
     #if DC_CLIENT
-    if(num == 0) return;
     for (int i=0; i<n_max; i++)
-        if (a[i] != NULL)
-            a[i]->draw();
+        if (this->used[i])
+            a[i].draw();
     #endif
 }
 

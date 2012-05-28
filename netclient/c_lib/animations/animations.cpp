@@ -51,13 +51,13 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         tex_id = t_map::get_cube_side_texture(cube_id, side);
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->set_state(nx,ny,nz, vx,vy,vz);
-        //minivox->set_color(r,g,b);
-        ttl = randrange(20,40);
+        minivox->init();
+        ttl = randrange(60,80);
         minivox->set_ttl(ttl);
-        minivox->set_texture(tex_id);
+        minivox->set_texture(tex_id, 2);
         minivox->set_angles(theta, phi);
         minivox->set_size(crumble_size);
+        minivox->set_state(nx,ny,nz, vx,vy,vz);
     }
 }
 
@@ -129,6 +129,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     float vx,vy,vz;
     float nx,ny,nz;
 
+    const float vox_size = 0.05f;
     int n = randrange(10,15);
     int ttl;
     for (int i=0; i<n; i++)
@@ -150,11 +151,13 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->set_state(nx,ny,nz, vx,vy,vz);
+        minivox->init();
         minivox->set_texture(tex_id, 2);
-        ttl = randrange(15,25);
+        ttl = randrange(75,85);
         minivox->set_ttl(ttl);
+        minivox->set_size(vox_size);
         minivox->set_angles(theta, phi);
+        minivox->set_state(nx,ny,nz, vx,vy,vz);
     }
 }
 
@@ -262,7 +265,7 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
     int ttl;
     for (int i=0; i<count; i++)
     {
-        ttl = randrange(50,80);
+        ttl = randrange(20,50);
         cx = position.x + ((randf() - 0.5f) / 20.0f);
         cy = position.y + ((randf() - 0.5f) / 20.0f);
         cz = position.z + ((randf() - 0.5f) / 20.0f);
@@ -277,12 +280,13 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
 
         minivox = Particle::colored_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->set_size(size);
-        minivox->set_state(cx,cy,cz, cvx,cvy,cvz);
+        minivox->init();
         minivox->set_color(color.r, color.g, color.b);//sky blue
         minivox->set_ttl(ttl);
         minivox->set_spin(dtheta, dphi);
         minivox->set_angles(theta, phi);
+        minivox->set_size(size);
+        minivox->set_state(cx,cy,cz, cvx,cvy,cvz);
     }
 }
 
@@ -312,7 +316,6 @@ void voxel_explode_team(Vec3 position, int count_min, int count_max, float size,
     int count = randrange(count_min, count_max);
     voxel_explode_team(position, count, size, force, team);
 }
-
 
 void agent_bleed(float x, float y, float z)
 {

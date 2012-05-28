@@ -229,6 +229,9 @@ DONE
 close client if version does not match
 DONE
 
+build# subfolders in downloads on site
+DONE
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -244,6 +247,7 @@ use quadrants for spawning
 == GFX ==
 glsl colored/textured voxels
 texture color problem in OSX -- for blocks and for items
+Hud Weapon sprites + animation
 
 == SOUND ==
 shovel sounds
@@ -252,6 +256,7 @@ block placement sounds
 == MAINTENANCE/REFACTORS ==
 refactor nanite container/ui to conform to craft bench style
 parameterize open/close container input handling shit
+preallocated particles
 
 == UI/UX ==
 tooltips
@@ -261,6 +266,4 @@ have chat display a "Press U to relock mouse" when window gains focus and mouse 
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
-
-== WEB ==
-build# subfolders in downloads on site
+update health text

@@ -11,9 +11,11 @@ class Simple_object_list {
         
     public:
         Object_state* a;
+        bool* used;
 
         static const int n_max = max_n;
         int num;
+        int id_c;
 
         Simple_object_list(); //default constructor
         ~Simple_object_list(); //default deconstructor
@@ -28,15 +30,20 @@ class Simple_object_list {
 template <class Object_state, int max_n> 
 Simple_object_list<Object_state, max_n>::Simple_object_list()
 :
-num(0)
+num(0),
+id_c(0)
 {
-    this->a = (Object_state*)calloc(max_n, sizeof(Object_state));
+    this->a = new Object_state[max_n];
+    for (int i=0; i<max_n; i++) this->a[i].id = i;
+    this->used = (bool*)calloc(max_n, sizeof(bool));
+    for (int i=0; i<max_n; i++) this->used[i] = false;
 }
 
 template <class Object_state, int max_n> 
 Simple_object_list<Object_state, max_n>::~Simple_object_list()
 {
-    free(this->a);
+    delete[] this->a;
+    free(this->used);
 }
 
 template <class Object_state, int max_n> 
@@ -49,31 +56,42 @@ void Simple_object_list<Object_state, max_n>::print()
 template <class Object_state, int max_n>
 Object_state* Simple_object_list<Object_state, max_n>::create() 
 {
+    GS_ASSERT(n_max == max_n);
     if(num >= max_n)
     {
-        printf("client particle list: max reached\n");
+        printf("%s list: max reached\n", this->name());
         return NULL;
     }
 
-    Object_state* o = &a[num];
-    a[num].id = num;
+    int id;
+    int i=0;
+    for (; i<max_n; i++)
+    {
+        id = (i+id_c)%max_n;
+        if (!this->used[id]) break;
+    }
+
+    GS_ASSERT(i < max_n);
+    if (i >= max_n) return NULL;
+
+    GS_ASSERT(!this->used[id]);
+
+    this->used[id] = true;
     num++;
-    return o;
-    //return &a[num++];
+    id_c = id;
+    return &a[id];
 }
 
 
 template <class Object_state, int max_n>
 void Simple_object_list<Object_state, max_n>::destroy(int id)
 {
-    if(id >= num)
-    {
-        printf("simple object list index error: num= %i, id= %i \n", num, id);
-        return;
-    }
+    GS_ASSERT(id >= 0 && id < max_n);
+    if (id < 0 || id >= max_n) return;
+
+    GS_ASSERT(this->used[id]);
 
     num--;
-    a[id] = a[num];
-    a[id].id = id;
-
+    id_c = id;
+    this->used[id] = false;
 }
