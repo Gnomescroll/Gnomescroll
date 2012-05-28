@@ -52,7 +52,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
         minivox->init();
-        ttl = randrange(60,80);
+        ttl = randrange(60,95);
         minivox->set_ttl(ttl);
         minivox->set_texture(tex_id);
         minivox->set_angles(theta, phi);

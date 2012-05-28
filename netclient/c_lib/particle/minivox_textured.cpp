@@ -140,21 +140,17 @@ void TexturedMinivox::tick()
 
 void TexturedMinivox_list::tick()
 {
-    for (int i=0; i<n_max; i++)
+    for (int i=0; i<num; i++)
     {
-        if (!this->used[i]) continue;
-        if (a[i].ttl == a[i].ttl_max)
-            this->destroy(a[i].id);
         a[i].tick();
+        if (a[i].ttl <= 0) this->destroy(i);
     }
 }
 
 void TexturedMinivox_list::draw()
 {
     #if DC_CLIENT
-    for (int i=0; i<n_max; i++)
-        if (this->used[i])
-            a[i].draw();
+    for (int i=0; i<num; a[i++].draw());
     #endif
 }
 

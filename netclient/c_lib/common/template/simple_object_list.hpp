@@ -11,7 +11,6 @@ class Simple_object_list {
         
     public:
         Object_state* a;
-        bool* used;
 
         static const int n_max = max_n;
         int num;
@@ -35,15 +34,12 @@ id_c(0)
 {
     this->a = new Object_state[max_n];
     for (int i=0; i<max_n; i++) this->a[i].id = i;
-    this->used = (bool*)calloc(max_n, sizeof(bool));
-    for (int i=0; i<max_n; i++) this->used[i] = false;
 }
 
 template <class Object_state, int max_n> 
 Simple_object_list<Object_state, max_n>::~Simple_object_list()
 {
     delete[] this->a;
-    free(this->used);
 }
 
 template <class Object_state, int max_n> 
@@ -63,35 +59,23 @@ Object_state* Simple_object_list<Object_state, max_n>::create()
         return NULL;
     }
 
-    int id;
-    int i=0;
-    for (; i<max_n; i++)
-    {
-        id = (i+id_c)%max_n;
-        if (!this->used[id]) break;
-    }
-
-    GS_ASSERT(i < max_n);
-    if (i >= max_n) return NULL;
-
-    GS_ASSERT(!this->used[id]);
-
-    this->used[id] = true;
+    Object_state* obj = &a[num];
     num++;
-    id_c = id;
-    return &a[id];
+    return obj;
 }
 
 
 template <class Object_state, int max_n>
-void Simple_object_list<Object_state, max_n>::destroy(int id)
+void Simple_object_list<Object_state, max_n>::destroy(int index)
 {
-    GS_ASSERT(id >= 0 && id < max_n);
-    if (id < 0 || id >= max_n) return;
-
-    GS_ASSERT(this->used[id]);
+    GS_ASSERT(num > 0);
+    GS_ASSERT(index >= 0 && index < max_n);
+    if (index < 0 || index >= max_n) return;
 
     num--;
-    id_c = id;
-    this->used[id] = false;
+
+    // swap
+    Object_state tmp = this->a[index];
+    this->a[index] = this->a[num];
+    this->a[num] = tmp;
 }

@@ -106,18 +106,17 @@ void Shrapnel::prep()
 
 void Shrapnel_list::tick()
 {
-    for(int i=0; i<this->n_max; i++)
+    for(int i=0; i<this->num; i++)
     {
-        if (!this->used[i]) continue;
         a[i].tick();
-        if (a[i].ttl <= 0) destroy(a[i].id);
+        if (a[i].ttl <= 0) destroy(i);
     }
 }
 
 void Shrapnel_list::prep()
 {
     #if DC_CLIENT
-    for(int i=0; i<this->n_max; i++) if (this->used[i]) a[i].prep();
+    for(int i=0; i<this->num; a[i++].prep());
     shrapnel_vlist->buffer();
     #endif
 }

@@ -33,19 +33,17 @@ void Blood::tick()
 
 void Blood_list::tick()
 {
-    for (int i=0; i<n_max; i++)
+    for (int i=0; i<num; i++)
     {
-        if (!this->used[i]) continue;
-        if (a[i].ttl == 0) destroy(a[i].id);
         a[i].tick();
+        if (a[i].ttl <= 0) destroy(i);
     }
 }
 
 void Blood_list::draw()
 {
     #if DC_CLIENT
-    for(int i=0; i<n_max; i++)
-        if (this->used[i])
+    for(int i=0; i<num; i++)
             a[i].draw(a[i].get_position());
     #endif
 }
