@@ -54,7 +54,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         minivox->init();
         ttl = randrange(60,80);
         minivox->set_ttl(ttl);
-        minivox->set_texture(tex_id, 2);
+        minivox->set_texture(tex_id);
         minivox->set_angles(theta, phi);
         minivox->set_size(crumble_size);
         minivox->set_state(nx,ny,nz, vx,vy,vz);
@@ -152,7 +152,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
         minivox->init();
-        minivox->set_texture(tex_id, 2);
+        minivox->set_texture(tex_id);
         ttl = randrange(75,85);
         minivox->set_ttl(ttl);
         minivox->set_size(vox_size);
