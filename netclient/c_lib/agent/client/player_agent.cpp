@@ -33,7 +33,7 @@ void PlayerAgent_state::was_identified()
     msg.send();    
 }
 
-#define SKIP_INTERPOLATION_THRESHOLD 256.0f
+#define SKIP_INTERPOLATION_THRESHOLD 128.0f // travel distance above which we dont bother interpolating to
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
     int last_tick = _LAST_TICK();
@@ -48,17 +48,8 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     if (dist2 < SKIP_INTERPOLATION_THRESHOLD*SKIP_INTERPOLATION_THRESHOLD)
         delta = ((float)(_t - last_tick)) / 33.3f;
 
-    if(delta > 1.0f)
-    {
-        //printf("PlayerAgent_state::update_client_side_prediction_interpolated: delta >1\n");
-        delta = 1.0f;
-    }
-
-
-    if(delta < 0.0f)
-    {
-        printf("PlayerAgent_state::update_client_side_prediction_interpolated: delta is negative\n");
-    }
+    if(delta > 1.0f) delta = 1.0f;
+    GS_ASSERT(delta >= 0.0f);
 
     c.x = s0.x*(1-delta) + s1.x*delta;
     c.y = s0.y*(1-delta) + s1.y*delta;
@@ -71,8 +62,8 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
 }
 #undef SKIP_INTERPOLATION_THRESHOLD
 
-void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
-
+void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
+{
     class AgentState ss;
 
     ss.seq = seq;
@@ -81,20 +72,20 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
     ss.x=x;ss.y=y;ss.z=z;
     ss.vx=vx;ss.vy=vy;ss.vz=vz;
 
-    int index = seq%AGENT_STATE_HISTORY_SIZE;
+    int index = seq % AGENT_STATE_HISTORY_SIZE;
 
     state_history[index] = ss;
 
-    if( (state_history_seq - seq) > 30 || seq > state_history_seq) {
+    if( (state_history_seq - seq) > 30 || seq > state_history_seq)
+    {
         state_history_index = index;
         state_history_seq = seq; //set index
         state_snapshot = ss;    //set state snapsot
     }
-
 }
 
-void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi) {
-
+void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi)
+{
     int index = _seq%128;
 
     //save cs
