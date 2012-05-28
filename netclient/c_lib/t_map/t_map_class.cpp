@@ -162,8 +162,7 @@ namespace t_map
         ) return;
     */
 
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
-            return;
+        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
