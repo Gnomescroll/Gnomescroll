@@ -42,8 +42,8 @@ namespace t_map
     {
         xdim = _xdim; 
         ydim = _xdim;
-        xchunk_dim = xdim/TERRAIN_CHUNK_WIDTH; 
-        ychunk_dim = ydim/TERRAIN_CHUNK_WIDTH;
+        xchunk_dim = MAP_CHUNK_WIDTH; 
+        ychunk_dim = MAP_CHUNK_HEIGHT;
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
@@ -140,6 +140,14 @@ namespace t_map
 /*
     Set Methods 
 */
+
+
+    void MAP_CHUNK::set_element(int x, int y, int z, struct MAP_ELEMENT element)
+    {
+        e[ (z<<8)+((y&15)<<4)+(x&15) ] = element;
+    }
+
+
     void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
         //printf("set element: %i %i %i \n", x,y,z);

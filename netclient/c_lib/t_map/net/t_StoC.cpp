@@ -147,11 +147,10 @@ void block_StoC::handle()
 {
     //_set(x,y,z,val);
 
-    struct MAP_ELEMENT e;
-    e.n = 0;
+    struct MAP_ELEMENT e = {{{0}}};
     e.block = val;
-    e.palette = 1;
-    
+    //e.palette = 1;
+
     main_map->set_element(x,y,z, e);
     //_set(x,y,z,val);
 
