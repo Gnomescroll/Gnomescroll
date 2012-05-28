@@ -129,13 +129,11 @@ namespace t_map
     {
         //printf("set update: %i %i \n", x,y);
 
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
-        if( c == NULL ) return;
-        c->needs_update = true;
+        struct MAP_CHUNK* c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+        if( c != NULL ) c->needs_update = true;
     }
 #endif
 

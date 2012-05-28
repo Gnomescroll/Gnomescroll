@@ -38,9 +38,11 @@ class Terrain_map* main_map;
 
 int get(int x, int y, int z)
 {
-    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
-        | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-    ) return 0;
+    if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
     struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
     if(c == NULL) return 0;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
