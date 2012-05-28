@@ -9,23 +9,15 @@ const float BLOOD_MASS = 0.1f;
 
 void Blood::init()
 {
-    this->ttl_max = BLOOD_TTL;
+    this->ttl = BLOOD_TTL;
     this->type = BLOOD_TYPE;
     this->texture_index = BLOOD_TEXTURE_ID;
     this->scale = BLOOD_TEXTURE_SCALE;
 }
 
-Blood::Blood(int id)
+Blood::Blood()
 :
-ParticleMotion(id, 0,0,0,0,0,0, BLOOD_MASS),
-BillboardSprite()
-{
-    this->init();
-}
-
-Blood::Blood(int id, float x, float y, float z, float mx, float my, float mz)
-:
-ParticleMotion(id, x,y,z, mx,my,mz, BLOOD_MASS),
+ParticleMotion(-1, 0,0,0,0,0,0, BLOOD_MASS),
 BillboardSprite()
 {
     this->init();
@@ -34,7 +26,7 @@ BillboardSprite()
 void Blood::tick()
 {
     this->verlet_bounce(BLOOD_DAMP);
-    this->ttl++;
+    this->ttl--;
 }
 
 /* Blood list */
@@ -43,21 +35,19 @@ void Blood_list::tick()
 {
     for (int i=0; i<n_max; i++)
     {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max)
-            destroy(a[i]->id);
+        if (!this->used[i]) continue;
+        if (a[i].ttl == 0) destroy(a[i].id);
+        a[i].tick();
     }
 }
 
 void Blood_list::draw()
 {
-#if DC_CLIENT
-    if(num == 0) return;
+    #if DC_CLIENT
     for(int i=0; i<n_max; i++)
-        if (a[i] != NULL)
-            a[i]->draw(a[i]->get_position());
-#endif
+        if (this->used[i])
+            a[i].draw(a[i].get_position());
+    #endif
 }
 
 }

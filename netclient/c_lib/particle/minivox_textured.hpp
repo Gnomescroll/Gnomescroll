@@ -37,9 +37,10 @@ class TexturedMinivox: public ParticleMotion
         
         void draw();
         void tick();
+
+        void init();
         
-        explicit TexturedMinivox(int id);
-        TexturedMinivox(int id, float x, float y, float z, float mx, float my, float mz);
+        TexturedMinivox();
 };
 
 }
@@ -49,7 +50,7 @@ class TexturedMinivox: public ParticleMotion
 namespace Particle
 {
 
-class TexturedMinivox_list: public Object_list<TexturedMinivox, MINIVOX_MAX>
+class TexturedMinivox_list: public Simple_object_list<TexturedMinivox, MINIVOX_MAX>
 {
     private:
         const char* name() { return "TexturedMinivox"; }

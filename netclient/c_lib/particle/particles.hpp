@@ -4,19 +4,8 @@
 #include <physics/verlet.hpp>
 #include <physics/verlet_particle.hpp>
 
-//#include <objects/components/spatial/components.hpp>
-
 namespace Particle
 {
-
-//class Particle
-//{
-    //public:
-        //virtual void draw() = 0;
-        //virtual void tick() = 0;
-
-    //virtual ~Particle() {}
-//};
 
 class ParticleMotion
 {
@@ -30,9 +19,6 @@ class ParticleMotion
 
         void set_state(float x, float y, float z, float mx, float my, float mz)
         {
-            //verlet.position = vec3_init(x,y,z);
-            //verlet.velocity = vec3_init(mx,my,mz);
-
             this->verlet.set_state(x,y,z,mx,my,mz);
         }
 

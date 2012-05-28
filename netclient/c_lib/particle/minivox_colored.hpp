@@ -43,9 +43,9 @@ class ColoredMinivox: public ParticleMotion
 
         void draw();
         void tick();
-        
-        explicit ColoredMinivox(int id);
-        ColoredMinivox(int id, float x, float y, float z, float mx, float my, float mz);
+
+        void init();        
+        ColoredMinivox();
 };
 
 }
@@ -55,7 +55,7 @@ class ColoredMinivox: public ParticleMotion
 namespace Particle
 {
 
-class ColoredMinivox_list: public Object_list<ColoredMinivox, MINIVOX_MAX>
+class ColoredMinivox_list: public Simple_object_list<ColoredMinivox, MINIVOX_MAX>
 {
     private:
         const char* name() { return "ColoredMinivox"; }

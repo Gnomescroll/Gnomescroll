@@ -181,10 +181,9 @@ void MiningLaserEffect_list::prep()
     //mining_laser_vlist->reset_index();
 
     Vec3 cam = vec3_init(current_camera->x, current_camera->y, current_camera->z);
-    for (int i=0; i<this->num; i++)
-    {
-        this->a[i].prep(cam);
-    }
+    for (int i=0; i<this->n_max; i++)
+        if (this->used[i])
+            this->a[i].prep(cam);
 
     mining_laser_vlist->buffer(); //upload data to GPU and reset list
 }
@@ -242,8 +241,10 @@ void MiningLaserEffect_list::draw()
 
 void MiningLaserEffect_list::tick()
 {
-    for (int i=0; i<this->num; i++)
+    for (int i=0; i<this->n_max; i++)
     {
+        if (!this->used[i]) continue;
+        
         a[i].tick();
 
         if (a[i].ttl <= 0 )

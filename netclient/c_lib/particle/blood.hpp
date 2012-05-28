@@ -16,8 +16,7 @@ class Blood: public ParticleMotion, public BillboardSprite
     public:
         void init();
         void tick();
-        explicit Blood(int id);
-        Blood(int id, float x, float y, float z, float mx, float my, float mz);
+        Blood();
 };
 
 }
@@ -27,7 +26,7 @@ class Blood: public ParticleMotion, public BillboardSprite
 namespace Particle
 {
 
-class Blood_list: public Object_list<Blood, BLOOD_MAX>
+class Blood_list: public Simple_object_list<Blood, BLOOD_MAX>
 {
     private:
         const char* name() { return "Blood"; }
