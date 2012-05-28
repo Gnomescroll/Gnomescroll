@@ -238,11 +238,12 @@ DONE
 fix initial map loading position
 DONE
 
+blue bombs should damage terrain like grenades
+DONE
 
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
-blue bombs should damage terrain like grenades
 
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
 this will let players "dodge"
