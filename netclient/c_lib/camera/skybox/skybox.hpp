@@ -210,8 +210,7 @@ void pack_vertex_list()
 void prep_skybox()
 {
     GS_ASSERT(star_vlist != NULL);
-    static int packed = 0;
-    if (!(packed++)) pack_vertex_list();
+    pack_vertex_list();
     star_vlist->buffer();
 }
 
