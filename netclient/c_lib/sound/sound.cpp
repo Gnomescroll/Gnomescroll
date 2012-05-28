@@ -1,7 +1,11 @@
 #include "sound.hpp"
 
+#include <physics/vec3.hpp>
+
 namespace Sound
 {
+
+Vec3 listener_position;
 
 void init()
 {
@@ -25,7 +29,9 @@ void set_volume(float vol)
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
 {
     if (!Options::sound) return;
-    return OpenALSound::update_listener(x,y,z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
+    listener_position = vec3_init(x,y,z);
+    //return OpenALSound::update_listener(x,y,z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
+    return OpenALSound::update_listener(0,0,0, vx,vy,vz, fx,fy,fz, ux,uy,uz);
 }
 
 // Public
@@ -46,6 +52,9 @@ int play_2d_sound(char* fn)
 int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz)
 {
     if (!Options::sound) return -1;
+    x -= listener_position.x;
+    y -= listener_position.y;
+    z -= listener_position.z;
     return OpenALSound::play_3d_sound(fn, x,y,z, vx,vy,vz);
 }
 
