@@ -93,7 +93,7 @@ class Agent_state {
         #if DC_SERVER
         bool camera_ready;
         AgentState get_camera_state() { return this->camera; }
-        Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.x, this->camera.x); }
+        Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.y, this->camera.z); }
         void set_camera_state(float x, float y, float z, float theta, float phi);
         #endif
 
