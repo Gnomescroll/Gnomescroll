@@ -29,12 +29,12 @@ void init_cameras()
 {
     agent_camera = new Camera();
     agent_camera->first_person = true;
-    agent_camera->set_state(0,0,50.0f);
+    agent_camera->set_position(vec3_init(0,0,50.0f));
     agent_camera->set_fov(85.0f);
     
     free_camera = new Camera();
     free_camera->first_person = false;
-    free_camera->set_state(64,64,128);
+    free_camera->set_position(vec3_init(64,64,128));
     free_camera->set_fov(85.0f);
 
     current_camera = free_camera;
@@ -47,10 +47,10 @@ void init_cameras()
     r = vec3_euler_rotation(r, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
     u = vec3_euler_rotation(u, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
 
+    Vec3 p = current_camera->get_position();
     setup_fulstrum(
         current_camera->fov, current_camera->ratio, current_camera->z_far,
-        vec3_init(current_camera->x,current_camera->y,current_camera->z),
-        f,r,u
+        p,f,r,u
     );
 
 }
@@ -117,7 +117,7 @@ void Camera::set_fov(float fov)
 
 void Camera::set_projection(float x, float y, float z, float theta, float phi)
 {
-    this->set_state(x,y,z);
+    this->set_position(vec3_init(x,y,z));
     this->theta = theta;
     this->phi = phi;
 }
@@ -129,13 +129,10 @@ void Camera::set_dimensions()
     ratio = x_size / y_size;
 }
 
-void Camera::set_state(float x, float y, float z)
+void Camera::set_position(struct Vec3 p)
 {
-    Vec3 p = vec3_init(x,y,z);
-    p = translate_position(p);
-    this->x = p.x;
-    this->y = p.y;
-    this->z = p.z;
+    this->position = translate_position(p);
+    ASSERT_BOXED_POSITION(this->position);
 }
 
 void Camera::pan(float dx, float dy)
@@ -154,15 +151,15 @@ void Camera::pan(float dx, float dy)
 
 void Camera::move(float dx, float dy, float dz)
 {
-    float x = this->x;
-    float y = this->y;
-    float z = this->z;
+    float x = this->position.x;
+    float y = this->position.y;
+    float z = this->position.z;
     x += dx*cos(theta * PI);
     x += dy*cos(theta * PI + PI/2.0f);
     y += dx*sin(theta * PI);
     y += dy*sin(theta * PI + PI/2.0f);
     z += dz;
-    this->set_state(x,y,z);
+    this->set_position(vec3_init(x,y,z));
 }
 
 void Camera::world_projection()
@@ -180,6 +177,10 @@ void Camera::world_projection()
     Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
     Vec3 look = vec3_init(1.0, 0.0, 0.0);
     look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
+
+    float x = position.x;
+    float y = position.y;
+    float z = position.z;
 
     // DEPRECATE GLU
     gluLookAt(
@@ -259,7 +260,7 @@ Vec3 Camera::forward_vector()
 void Camera::copy_state_from(Camera* c)
 {
     GS_ASSERT(c != NULL);
-    this->set_state(c->x, c->y, c->z);
+    this->set_position(c->get_position());
     this->set_angles(c->theta, c->phi);
 }
 
@@ -308,7 +309,11 @@ void update_agent_camera()
     ClientState::playerAgent_state.pump_camera();
 
     // set agent_camera from state
-    agent_camera->x = ClientState::playerAgent_state.camera_state.x;
-    agent_camera->y = ClientState::playerAgent_state.camera_state.y;
-    agent_camera->z = ClientState::playerAgent_state.camera_z();
+    float x = ClientState::playerAgent_state.camera_state.x;
+    float y = ClientState::playerAgent_state.camera_state.y;
+    float z = ClientState::playerAgent_state.camera_z();
+
+    Vec3 pos = vec3_init(x,y,z);
+    pos = translate_position(pos);
+    agent_camera->set_position(pos);
 }

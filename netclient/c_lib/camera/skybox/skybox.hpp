@@ -164,10 +164,11 @@ void pack_vertex_list()
         star_vlist->vertex_number = 0;
         return;
     }
-    
-    float cx = current_camera->x; 
-    float cy = current_camera->y; 
-    float cz = current_camera->z; 
+
+    Vec3 p = current_camera->get_position();
+    float cx = p.x; 
+    float cy = p.y; 
+    float cz = p.z; 
 
     for(int i=0; i<star_num; i++)
     {
@@ -243,7 +244,8 @@ void draw()
 
     glUseProgramObjectARB(star_shader.shader);
 
-    glUniform3f(star_CameraPos, current_camera->x, current_camera->y, current_camera->z);
+    Vec3 p = current_camera->get_position();
+    glUniform3f(star_CameraPos, p.x, p.y, p.z);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(star_TexCoord);
@@ -258,64 +260,6 @@ void draw()
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-
-    //glBegin(GL_QUADS);
-
-    //float cx = current_camera->x; 
-    //float cy = current_camera->y; 
-    //float cz = current_camera->z; 
-
-    //for(int i=0; i<star_num; i++)
-    //{
-        //STAR s = star_list[i];
-
-        //Vec3 v;
-        //v.x = s.x + cx;
-        //v.y = s.y + cy;
-        //v.z = s.z + cz;
-
-        //if(point_fulstrum_test2(v.x, v.y, v.z) == false) continue;
-
-        //float scale = s.size / 2.0;
-
-        //Vec3 up = vec3_init(
-            //model_view_matrix[0]*scale,
-            //model_view_matrix[4]*scale,
-            //model_view_matrix[8]*scale
-        //);
-        //Vec3 right = vec3_init(
-            //model_view_matrix[1]*scale,
-            //model_view_matrix[5]*scale,
-            //model_view_matrix[9]*scale
-        //);
-
-        ////tx_min = (float)(s.type%4)* (1.0/4.0);
-        ////tx_max = tx_min + (1.0/4.0);
-        ////ty_min = (float)(s.type/4)* (1.0/4.0);
-        ////ty_max = ty_min + (1.0/4.0);
-
-        //Vec3 p = vec3_sub(v, vec3_add(right, up));
-        //glTexCoord2f(s.tx_min,s.ty_max);
-        //glVertex3f(p.x, p.y, p.z);
-
-        //p = vec3_add(v, vec3_sub(up, right));
-        //glTexCoord2f(s.tx_max,s.ty_max);
-        //glVertex3f(p.x, p.y, p.z);
-
-        //p = vec3_add(v, vec3_add(up, right));
-        //glTexCoord2f(s.tx_max,s.ty_min);
-        //glVertex3f(p.x, p.y, p.z);
-
-        //p = vec3_add(v, vec3_sub(right, up));
-        //glTexCoord2f(s.tx_min,s.ty_min);
-        //glVertex3f(p.x, p.y, p.z);
-
-    //}
-
-    //glEnd();
-    
-    //glDisable(GL_BLEND);
-    //glDepthMask(GL_TRUE);
 }
 
 }

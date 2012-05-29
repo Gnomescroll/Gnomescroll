@@ -16,13 +16,15 @@ enum CAMERA_TYPES
 
 class Camera
 {
+    private:
+        struct Vec3 position;
     public:
         float fov;
         float x_size,y_size;
         float ratio;
         float z_near, z_far;
 
-        float x,y,z;
+        //float x,y,z;
         float xl, yl, zl;
         float xu, yu, zu;
         float theta, phi;
@@ -41,7 +43,9 @@ class Camera
         void set_fov(float fov);
         void move(float dx, float dy, float dz);
         void set_angles(float theta, float phi);
-        void set_state(float x, float y, float z);
+        
+        void set_position(struct Vec3 p);
+        struct Vec3 get_position() { return this->position; }
         
         void forward_vector(float f[3]);
         Vec3 forward_vector();

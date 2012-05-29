@@ -169,7 +169,7 @@ void HitscanEffect_list::draw()
         delta = 1.0f;
     delta /= tick_rate;
 
-    Vec3 camera = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 camera = current_camera->get_position();
 
     glColor3ub(255,255,255);
 

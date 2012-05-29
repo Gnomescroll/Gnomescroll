@@ -179,7 +179,7 @@ void MiningLaserEffect_list::prep()
 {
     //mining_laser_vlist->reset_index();
 
-    Vec3 cam = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 cam = current_camera->get_position();
     for (int i=0; i<this->num; i++) this->a[i].prep(cam);
 
     mining_laser_vlist->buffer(); //upload data to GPU and reset list

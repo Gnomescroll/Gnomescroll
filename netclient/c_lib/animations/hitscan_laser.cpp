@@ -177,7 +177,7 @@ void HitscanLaserEffect_list::draw()
     delta /= 30.0f;
     //printf("delta= %f \n", delta);
 
-    Vec3 camera = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 camera = current_camera->get_position();
  
     glColor3ub(255,255,255);
 

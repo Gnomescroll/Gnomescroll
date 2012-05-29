@@ -185,9 +185,10 @@ namespace ClientState {
         if (playerAgent_state.you == NULL) return;
         agent_camera_state_CtoS msg;
         msg.id = playerAgent_state.you->client_id;
-        msg.x = current_camera->x;
-        msg.y = current_camera->y;
-        msg.z = current_camera->z;
+        Vec3 p = current_camera->get_position();
+        msg.x = p.x;
+        msg.y = p.y;
+        msg.z = p.z;
         msg.theta = current_camera->theta;
         msg.phi = current_camera->phi;
         msg.send();

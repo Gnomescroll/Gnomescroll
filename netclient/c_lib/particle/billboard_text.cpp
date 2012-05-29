@@ -120,10 +120,11 @@ void BillboardText::draw()
 
     float norm;
 
+    Vec3 p = current_camera->get_position();
     float look[3];
-    look[0] = current_camera->x - position.x;
-    look[1] = current_camera->y - position.y;
-    look[2] = current_camera->z - position.z;
+    look[0] = p.x - position.x;
+    look[1] = p.y - position.y;
+    look[2] = p.z - position.z;
     norm = sqrt(look[0]*look[0] + look[1]*look[1] + look[2]*look[2]);
     look[0] /= -norm;
     look[1] /= -norm;

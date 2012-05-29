@@ -41,7 +41,7 @@ struct HitscanBlock {
 
 void add_mech()
 {
-    Vec3 pos = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 pos = current_camera->get_position();
     Vec3 vec = current_camera->forward_vector();
 
 
@@ -66,7 +66,7 @@ void add_mech()
 
 void rotate_mech()
 {
-    Vec3 pos = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 pos = current_camera->get_position();
     Vec3 vec = current_camera->forward_vector();
 
     Hitscan::HitscanBlock* h;
@@ -92,7 +92,7 @@ int resolve_position()
     //playerAgent_state* p;
     //p = &ClientState::playerAgent_state;
 
-    Vec3 pos = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 pos = current_camera->get_position();
     Vec3 vec = current_camera->forward_vector();
 
 /*

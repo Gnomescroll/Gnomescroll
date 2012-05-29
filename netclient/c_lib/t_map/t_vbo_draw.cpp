@@ -49,8 +49,9 @@ bool chunk_render_check( float x, float y)
 {
     static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 
-    float dx = current_camera->x - x;
-    float dy = current_camera->y - y;
+    Vec3 p = current_camera->get_position();
+    float dx = p.x - x;
+    float dy = p.y - y;
 
     return (dx*dx + dy*dy > dist2) ? false : true;
 }
@@ -59,8 +60,10 @@ void Vbo_map::prep_draw()
 {
     struct Map_vbo* col;
 
-    const float cx = current_camera->x;
-    const float cy = current_camera->y;
+    Vec3 p = current_camera->get_position();
+    ASSERT_BOXED_POSITION(p);
+    const float cx = p.x;
+    const float cy = p.y;
 /*
     for(int i=0; i<map->xchunk_dim; i++)
     for(int j=0; j<map->ychunk_dim; j++)
@@ -113,8 +116,9 @@ void Vbo_map::prep_draw()
 void Vbo_map::sort_draw()
 {
 
-    float cx = current_camera->x;
-    float cy = current_camera->y;
+    Vec3 p = current_camera->get_position();
+    const float cx = p.x;
+    const float cy = p.y;
 
     for(int i=0; i<draw_vbo_n; i++ )
     {
