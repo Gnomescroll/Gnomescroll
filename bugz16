@@ -257,8 +257,8 @@ blue bombs should be wandering, slowly
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
 this will let players "dodge"
 
-red box random walk is biased to +/+
-use quadrants for spawning
+some boxes arent getting destination correctly -- just jumping around with state updates
+
 
 == GFX ==
 glsl colored/textured voxels
@@ -287,6 +287,6 @@ update health text (??)
 Palette value for container blocks
 
 == MAP WRAP ==
-sounds (shift everything to local coordinates)
+sounds (shift everything to local coordinates) -- need to rotate in and shift (coordinate system transformation)
 rendering particles/models
 
