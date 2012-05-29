@@ -31,9 +31,9 @@ void set_volume(float vol)
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
 {
     if (!Options::sound) return;
-    origin = vec3_init(map_dim.x/2, map_dim.y/2, z);
+    origin = vec3_init(map_dim.x/2, map_dim.y/2, 0);
     listener_position = vec3_init(x,y,z);
-    return OpenALSound::update_listener(origin.x, origin.y, origin.z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
+    return OpenALSound::update_listener(origin.x, origin.y, z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
 }
 
 // Public

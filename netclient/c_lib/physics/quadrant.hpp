@@ -127,15 +127,15 @@ struct Vec3 translate_position(struct Vec3 pos)
     return pos;
 }
 
-struct Vec3 quadrant_translate_position(struct Vec3 pos)
+struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos2)
 {
-    if(pos.x <  0.0) pos.x += 512.0;
-    if(pos.x >= 512.0) pos.x -= 512.0;
+    ASSERT_BOXED_POSITION(pos1);
+    ASSERT_BOXED_POSITION(pos2);
+    
+    pos2.x = quadrant_translate_f(pos1.x, pos2.x);
+    pos2.y = quadrant_translate_f(pos1.y, pos2.y);
 
-    if(pos.y <  0.0) pos.y += 512.0;
-    if(pos.y >= 512.0) pos.y -= 512.0;
+    ASSERT_BOXED_POSITION(pos2);
 
-    ASSERT_BOXED_POSITION(pos);
-
-    return pos;
+    return pos2;
 }

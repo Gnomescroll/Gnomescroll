@@ -325,7 +325,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     as.z = new_z;
 
     Vec3 pos = vec3_init(as.x, as.y, as.z);
-    pos = quadrant_translate_position(pos);
+    pos = translate_position(pos);
     as.x = pos.x;
     as.y = pos.y;
     as.z = pos.z;
@@ -446,7 +446,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
 void Agent_state::set_position(float x, float y, float z)
 {
     Vec3 p = vec3_init(x,y,z);
-    p = quadrant_translate_position(p);
+    p = translate_position(p);
     s.x = p.x;
     s.y = p.y;
     s.z = p.z;
@@ -463,7 +463,7 @@ void Agent_state::set_state(float  x, float y, float z, float vx, float vy, floa
 void Agent_state::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz)
 {
     Vec3 p = vec3_init(x,y,z);
-    p = quadrant_translate_position(p);
+    p = translate_position(p);
     state_snapshot.x = p.x;
     state_snapshot.y = p.y;
     state_snapshot.z = p.z;
@@ -481,7 +481,7 @@ void Agent_state::set_angles(float theta, float phi)
 #if DC_SERVER
 void Agent_state::set_camera_state(float x, float y, float z, float theta, float phi)
 {
-    Vec3 p = quadrant_translate_position(vec3_init(x,y,z));
+    Vec3 p = translate_position(vec3_init(x,y,z));
     this->camera.x = p.x;
     this->camera.y = p.y;
     this->camera.z = p.z;
