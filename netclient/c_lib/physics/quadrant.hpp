@@ -114,13 +114,19 @@ int quadrant_translate_f(float cx, float px)
     }
 }
 
+__attribute((always_inline))
+inline float translate_point(float pt)
+{
+    if(pt <  0.0) pt += 512.0;
+    if(pt >= 512.0) pt -= 512.0;
+    ASSERT_BOXED_POINT(pt);
+    return pt;
+}
+
 struct Vec3 translate_position(struct Vec3 pos)
 {
-    if(pos.x <  0.0) pos.x += 512.0;
-    if(pos.x >= 512.0) pos.x -= 512.0;
-
-    if(pos.y <  0.0) pos.y += 512.0;
-    if(pos.y >= 512.0) pos.y -= 512.0;
+    pos.x = translate_point(pos.x);
+    pos.y = translate_point(pos.y);
 
     ASSERT_BOXED_POSITION(pos);
 

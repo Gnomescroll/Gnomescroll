@@ -14,11 +14,16 @@ bool agent_collides_terrain(Agent_state* a)
 // checks the (agent bottom - margin) at 4 corners of the agent
 inline bool on_ground(float box_r, float x, float y, float z)
 {
-    int x_min = x - box_r;
-    int x_max = x + box_r;
+    float x_min = x - box_r;
+    float x_max = x + box_r;
 
-    int y_min = y - box_r;
-    int y_max = y + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
 
     int zz = z - GROUND_MARGIN;
 
@@ -33,11 +38,16 @@ inline bool on_ground(float box_r, float x, float y, float z)
 
 inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
 {
-    int x_min = x - box_r;
-    int x_max = x + box_r;
+    float x_min = x - box_r;
+    float x_max = x + box_r;
 
-    int y_min = y - box_r;
-    int y_max = y + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+    
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
 
     int n_z = (int)ceil(box_h);
 
@@ -58,11 +68,16 @@ inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
 
 inline bool collision_check_final_current(float box_r, float box_h, float x, float y, float z)
 {
-    int x_min = x - box_r;
-    int x_max = x + box_r;
+    float x_min = x - box_r;
+    float x_max = x + box_r;
 
-    int y_min = y - box_r;
-    int y_max = y + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
 
     const int steps = 6;    // CALIBRATED TO AGENT'S HEIGHT SETTINGS. AD HOC
     const float step_size = box_h / ((float)steps);
@@ -82,11 +97,16 @@ inline bool collision_check_final_current(float box_r, float box_h, float x, flo
 
 inline bool collision_check_final_xy(float box_r, float box_h, float x, float y, float z)
 {
-    int x_min = x - box_r;
-    int x_max = x + box_r;
+    float x_min = x - box_r;
+    float x_max = x + box_r;
 
-    int y_min = y - box_r;
-    int y_max = y + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
 
     const int steps = 6;
     const float top_margin = 0.01f;
@@ -107,11 +127,16 @@ inline bool collision_check_final_xy(float box_r, float box_h, float x, float y,
 
 inline bool collision_check_final_z(float box_r, float box_h, float x, float y, float z, bool* top)
 {
-    int x_min = x - box_r;
-    int x_max = x + box_r;
+    float x_min = x - box_r;
+    float x_max = x + box_r;
 
-    int y_min = y - box_r;
-    int y_max = y + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
 
     const float step_size = 0.9f;
     int steps = (int)ceil(box_h/step_size);

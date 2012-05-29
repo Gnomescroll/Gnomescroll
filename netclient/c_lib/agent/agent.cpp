@@ -280,7 +280,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_z = as.z + as.vz;
     //collision
     bool current_collision = collision_check_final_current(box.box_r, height, as.x,as.y,as.z);
-    if(current_collision) {
+    if(current_collision)
+    {
+        // nudge the player upward
         //printf("current\n");
         as.x = new_x;
         as.y = new_y;
@@ -340,7 +342,8 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     return as;
 }
 
-void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) {
+void Agent_state::handle_control_state(int seq, int cs, float theta, float phi)
+{
 
     //printf("cs= %i \n", seq);
 

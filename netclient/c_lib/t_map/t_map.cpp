@@ -37,18 +37,6 @@ class Terrain_map* main_map;
 
 int get(int x, int y, int z)
 {
-    //return _get(x,y,z);
-    
-    //if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
-
-    //// this is broken
-    //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    //struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
-    //if(c == NULL) return 0;
-    //return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
-
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
     x = translate_mapx(x);
     y = translate_mapy(y);
