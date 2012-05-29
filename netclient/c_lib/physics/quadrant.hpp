@@ -32,6 +32,15 @@ static inline int Min_2i(int x, int y)
 //camera x and position x
 int quadrant_distance2i(int cx, int px)
 {
+    if(cx < 0 || cx >= 512)
+    {
+        printf("WARNING: quadrant_distance2i, cx= %i \n", cx);
+    }
+
+    if(px < 0 || px >= 512)
+    {
+        printf("WARNING: quadrant_distance2i, px= %i \n", px);
+    }
 
     int distance;
 
@@ -68,8 +77,18 @@ int quadrant_distance2i(int cx, int px)
 
 
 //camera x and position x
-int quadrant_translate_f(int cx, int px)
+int quadrant_translate_f(float cx, float px)
 {
+    if(cx < 0.0 || cx >= 512.0)
+    {
+        printf("WARNING: quadrant_distance_f, cx= %f \n", cx);
+    }
+
+    if(px < 0.0 || px >= 512.0)
+    {
+        printf("WARNING: quadrant_distance_f, px= %f \n", px);
+    }
+
     if(cx < QUADRANT_DIVIDEf)
     {
         //camera in first half
@@ -80,7 +99,7 @@ int quadrant_translate_f(int cx, int px)
         }
         else
         {
-            return Min_f(px-cx, px-cx-512, px, px-512);
+            return Min_f(px-cx, px-cx-512.0, px, px-512.0);
         }
     }
     else
@@ -88,11 +107,37 @@ int quadrant_translate_f(int cx, int px)
         //camera is in second half
         if(px < QUADRANT_DIVIDEf)
         {
-            return Min_f(px-cx, px-cx+512, px, px+512);
+            return Min_f(px-cx, px-cx+512.0, px, px+512.0);
         }
         else
         {
             return px;
         }
     }
+}
+
+struct Vec3 translate_position(struct Vec3 pos)
+{
+    return pos;
+
+    if(pos.x <  0.0) pos.x += 512.0;
+    if(pos.x >= 512.0) pos.x -= 512.0;
+
+    if(pos.y <  0.0) pos.y += 512.0;
+    if(pos.y >= 512.0) pos.y -= 512.0;
+
+    return pos;
+}
+
+struct Vec3 quadrant_translate_position(struct Vec3 pos)
+{
+    return pos;
+
+    if(pos.x <  0.0) pos.x += 512.0;
+    if(pos.x >= 512.0) pos.x -= 512.0;
+
+    if(pos.y <  0.0) pos.y += 512.0;
+    if(pos.y >= 512.0) pos.y -= 512.0;
+
+    return pos;
 }

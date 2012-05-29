@@ -142,31 +142,29 @@ ItemContainerType get_container_type_for_block(int block_value)
     LUA interface
 */
 
-extern "C"
+void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent)
 {
-    void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent)
-    {
-        t_map::cube_list[id].active = active;
-        t_map::cube_list[id].solid = solid;
-        t_map::cube_list[id].occludes = occludes;
-        t_map::cube_list[id].transparent = transparent;        
-    }
-
-    void LUA_set_block_max_damage(int id, int max_damage)
-    {
-        t_map::cube_list[id].max_damage = max_damage;
-    }
-
-    void LUA_set_block_color_type(int id, int color_type)
-    {
-        t_map::cube_list[id].color_type = color_type;
-    }
-
-    void LUA_set_block_name(int id, char* name, int length)
-    {
-        t_map::set_cube_name(id, name, length);
-    }
+    t_map::cube_list[id].active = active;
+    t_map::cube_list[id].solid = solid;
+    t_map::cube_list[id].occludes = occludes;
+    t_map::cube_list[id].transparent = transparent;        
 }
+
+void LUA_set_block_max_damage(int id, int max_damage)
+{
+    t_map::cube_list[id].max_damage = max_damage;
+}
+
+void LUA_set_block_color_type(int id, int color_type)
+{
+    t_map::cube_list[id].color_type = color_type;
+}
+
+void LUA_set_block_name(int id, char* name, int length)
+{
+    t_map::set_cube_name(id, name, length);
+}
+
 
 /*
     Properties by cube id

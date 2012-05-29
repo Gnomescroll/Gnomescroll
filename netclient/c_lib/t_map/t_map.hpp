@@ -58,16 +58,17 @@ inline int get_lowest_open_block(int x, int y, int n);
 inline int get_highest_solid_block(int x, int y, int z=MAP_HEIGHT);
 inline int get_lowest_solid_block(int x, int y);
 
-struct Vec3 translate_position(struct Vec3 pos);
-
 // translates a map integer coordinate into the map boundaries
 // dim is the size of the axis
 
+/*
+    WTF IS THIS SHIT!?
+*/
 __attribute((always_inline))
 inline int translate_map_coord(int coord, int dim)
 {
-    while (coord >= dim) coord -= dim;
-    while (coord < 0) coord += dim;
+    while (coord >= 512) coord -= 512;
+    while (coord < 0) coord += 512;
     return coord;
 }
 
@@ -85,8 +86,8 @@ inline int translate_mapy(int y)
 
 }   // t_map
 
-int _get(int x, int y, int z) GNOMESCROLL_API;
-void _set(int x, int y, int z, int value) GNOMESCROLL_API;
+int _get(int x, int y, int z);
+void _set(int x, int y, int z, int value);
 
 /*
     Deprecate eventually

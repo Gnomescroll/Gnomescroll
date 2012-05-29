@@ -132,7 +132,7 @@ void Camera::set_dimensions()
 void Camera::set_state(float x, float y, float z)
 {
     Vec3 p = vec3_init(x,y,z);
-    p = t_map::translate_position(p);
+    p = translate_position(p);
     this->x = p.x;
     this->y = p.y;
     this->z = p.z;

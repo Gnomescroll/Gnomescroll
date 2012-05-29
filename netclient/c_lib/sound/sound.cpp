@@ -1,11 +1,12 @@
 #include "sound.hpp"
 
 #include <physics/vec3.hpp>
+#include <t_map/t_map.hpp>
 
 namespace Sound
 {
 
-const struct Vec3 origin = {{{ 128.0f, 128.0f, 128.0f }}};
+struct Vec3 origin;
 Vec3 listener_position;
 
 void init()
@@ -30,6 +31,7 @@ void set_volume(float vol)
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
 {
     if (!Options::sound) return;
+    origin = vec3_init(map_dim.x, map_dim.y, z);
     listener_position = vec3_init(x,y,z);
     return OpenALSound::update_listener(origin.x, origin.y, origin.z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
 }
@@ -58,7 +60,7 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
     Vec3 p = vec3_init(x,y,z);
     p = vec3_sub(p, listener_position);
     p = vec3_add(p, origin);
-    p = t_map::translate_position(p);
+    p = translate_position(p);
 
     return OpenALSound::play_3d_sound(fn, p.x,p.y,p.z, vx,vy,vz);
 }

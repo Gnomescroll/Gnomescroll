@@ -60,14 +60,12 @@ ItemContainerType get_container_type_for_block(int block_value);
 /*
     LUA interface
 */
-extern "C"
-{
-    void LUA_set_block_name(int id, char* name, int length);
-    
-    void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
-    void LUA_set_block_max_damage(int id, int max_damage);
-    void LUA_set_block_color_type(int id, int color_type);
-}
+
+void LUA_set_block_name(int id, char* name, int length);
+
+void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
+void LUA_set_block_max_damage(int id, int max_damage);
+void LUA_set_block_color_type(int id, int color_type);
 
 /*
 Cube Properties

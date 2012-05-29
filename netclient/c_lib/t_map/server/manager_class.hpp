@@ -234,7 +234,7 @@ static inline int MY_MAX(int x, int y)
 
 void Map_manager::update()
 {
-
+    //printf("xpos= %i ypos= %i \n", xpos, ypos);
     if(needs_update == false) return;
 
     /*
@@ -245,6 +245,9 @@ void Map_manager::update()
     int _ypos = ypos / 16;  
 
     int _SUB_RADIUS = (SUB_RADIUS/16) + 1;
+
+    GS_ASSERT(xpos >= 0 && xpos <= 512.0);
+    GS_ASSERT(ypos >= 0 && ypos <= 512.0);
 
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
@@ -266,25 +269,23 @@ void Map_manager::update()
     /*
         sub part
     */
-/*
-    int imin = MY_MAX(_xpos - _SUB_RADIUS, 0);
-    int jmin = MY_MAX(_ypos - _SUB_RADIUS, 0);
 
-    int imax = MY_MIN( _xpos + _SUB_RADIUS, xchunk_dim);
-    int jmax = MY_MIN( _ypos + _SUB_RADIUS, ychunk_dim);
-*/
 
-    int imin = (_xpos - _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
-    int jmin = (_ypos - _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
+    const int CHUNK_BIT_MASK = 32-1;
 
-    int imax = (_xpos + _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
-    int jmax = (_ypos + _SUB_RADIUS) & CHUNK_MAP_WIDTH_BIT_MASK2;
+    int imin = (_xpos - _SUB_RADIUS) & CHUNK_BIT_MASK;
+    int imax = (_xpos + _SUB_RADIUS) & CHUNK_BIT_MASK;
+
+    int jmin = (_ypos - _SUB_RADIUS) & CHUNK_BIT_MASK;
+    int jmax = (_ypos + _SUB_RADIUS) & CHUNK_BIT_MASK;
+
+    //printf("xpos= %i ypos= %i \t imin= %i imax= %i jmin= %i jmax= %i \n", xpos, ypos, imin,imax, jmin,jmax);
 
     int SUB_RADIUS2 = SUB_RADIUS*SUB_RADIUS;
 
     //printf("imin, imax = %i %i jmin jmax = %i %i \n", imin,imax, jmin,jmax);
-    for(int i=imin; i != imax; i= (i+1)& CHUNK_MAP_WIDTH_BIT_MASK2 )
-    for(int j=jmin; j != jmax; j= (j+1)& CHUNK_MAP_WIDTH_BIT_MASK2 )
+    for(int i=imin; i != imax; i= (i+1)& CHUNK_BIT_MASK )
+    for(int j=jmin; j != jmax; j= (j+1)& CHUNK_BIT_MASK )
     {
         //i &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -308,7 +309,10 @@ void Map_manager::update()
         if(i<0 || i >= xchunk_dim || j<0 || j >= ychunk_dim) printf("Map_manager::update(), ERROR!!!\n");
 
         que_for_sub(i,j);
+        //printf("que_for_sub: i,j= %i %i \t xpos= %i ypos= %i \n", i,j, xpos, ypos);
+
     }
+
 
     needs_update = false;
 }
@@ -388,7 +392,6 @@ void Map_manager::send_chunk_item_container_reset(int chunk_index)
     t->chunk[chunk_index]->chunk_item_container.send_reset_chunk_item_containers(client_id);
 }
 
-//this is chunk position!
 void Map_manager::set_position(int x, int y)
 {
     if(x != xpos || y != ypos) needs_update = true;
