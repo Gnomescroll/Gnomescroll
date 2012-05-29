@@ -11,6 +11,8 @@
 extern float _xresf;
 extern float _yresf;
 
+struct Vec3 current_camera_position;
+
 Camera* agent_camera = NULL;
 Camera* free_camera = NULL;
 Camera* current_camera = NULL;
@@ -132,6 +134,7 @@ void Camera::set_dimensions()
 void Camera::set_position(struct Vec3 p)
 {
     this->position = translate_position(p);
+    current_camera_position = this->position;
     ASSERT_BOXED_POSITION(this->position);
 }
 

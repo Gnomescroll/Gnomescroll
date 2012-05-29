@@ -68,6 +68,7 @@ void set_camera(Camera* cam);
 void init_cameras();
 void update_camera_matrices();
 
+extern struct Vec3 current_camera_position;
 extern int current_camera_id;
 extern Camera* current_camera;
 extern Camera* agent_camera;
