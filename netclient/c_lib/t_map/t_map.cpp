@@ -37,7 +37,7 @@ class Terrain_map* main_map;
 
 int get(int x, int y, int z)
 {
-    return _get(x,y,z);
+    //return _get(x,y,z);
     
     //if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
 
@@ -48,6 +48,14 @@ int get(int x, int y, int z)
     //struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
     //if(c == NULL) return 0;
     //return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
+    x = translate_mapx(x);
+    y = translate_mapy(y);
+    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    if(c == NULL) return 0;
+    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+
 }
 
 void set(int x, int y, int z, int value)
@@ -213,6 +221,7 @@ inline int get_lowest_solid_block(int x, int y)
     return i;
 }
 
+/*
 struct Vec3 translate_position(struct Vec3 pos)
 {
     if (pos.x >= map_dim.x) pos.x -= map_dim.x;
@@ -224,6 +233,7 @@ struct Vec3 translate_position(struct Vec3 pos)
     if (pos.y < 0) pos.y += map_dim.y;
     return pos;
 }
+*/
 
 }   // t_map
  

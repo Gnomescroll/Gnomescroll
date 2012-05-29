@@ -45,12 +45,14 @@ void t_map_manager_update_client_position(int client_id, float _x, float _y)
     int x = _x;
     int y = _y;
 
+/*
     if(x<0) x = 0;
     if(x >= MAP_WIDTH) x = MAP_WIDTH - 1;
 
     if(y<0) y = 0;
     if(y >= MAP_HEIGHT) x = MAP_HEIGHT - 1;
-
+*/
+    //printf("player_position= %f %f \n", _x, _y);
 
     if(client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS)
     {

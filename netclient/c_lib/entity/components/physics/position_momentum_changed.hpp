@@ -4,6 +4,8 @@
 #include <entity/constants.hpp>
 #include <entity/components/physics.hpp>
 
+#include <physics/quadrant.hpp>
+
 namespace Components
 {
 
@@ -18,7 +20,7 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {
-            position = t_map::translate_position(position);
+            position = translate_position(position);
             if (vec3_equal(this->position, position)) return false;
             this->position = position;
             this->changed = true;

@@ -71,7 +71,7 @@ void MotionTargetingComponent::choose_destination()
     position.x += x;
     position.y += y;
     position.z = t_map::get_highest_solid_block(position.x, position.y);
-    this->destination = t_map::translate_position(position);
+    this->destination = translate_position(position);
     this->at_destination = false;
     this->en_route = true;
 }

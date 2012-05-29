@@ -27,6 +27,8 @@ void Agent_list::update_map_manager_positions()
                 p = this->a[i]->get_camera_state_position();
             else
                 p = this->a[i]->get_position();
+
+            //printf("Agent_list::update_map_manager_positions, p.x= %f p.y= %f state= %i \n", p.x, p.y, this->a[i]->camera_ready);
             t_map::t_map_manager_update_client_position(i, p.x, p.y);
         }
 }
