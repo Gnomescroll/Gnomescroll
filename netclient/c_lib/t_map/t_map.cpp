@@ -38,8 +38,8 @@ class Terrain_map* main_map;
 int get(int x, int y, int z)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
-    x = translate_mapx(x);
-    y = translate_mapy(y);
+    x = translate_point(x);
+    y = translate_point(y);
     struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
     if(c == NULL) return 0;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
@@ -228,8 +228,8 @@ struct Vec3 translate_position(struct Vec3 pos)
 
 int _get(int x, int y, int z)
 {
-    x = t_map::translate_mapx(x);
-    y = t_map::translate_mapy(y);
+    x = translate_point(x);
+    y = translate_point(y);
     
     //return t_map::main_map->get_block(x,y,z);
     //if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)

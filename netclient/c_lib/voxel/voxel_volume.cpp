@@ -548,9 +548,10 @@ void Voxel_volume::update_vertex_list()
 
     int index = 0;
 
-    for(int x=0; x < xdim; x++){
-    for(int y=0; y < ydim; y++){
-    for(int z=0; z < zdim; z++){
+    for(int x=0; x < xdim; x++)
+    for(int y=0; y < ydim; y++)
+    for(int z=0; z < zdim; z++)
+    {
         if (get_as_int(x,y,z) == 0) continue;
 
     #if VOXEL_RENDER_DEBUG_02
@@ -568,7 +569,7 @@ void Voxel_volume::update_vertex_list()
         if(y+1 ==ydim || get_as_int(x,y+1,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
         if(y == 0 || get_as_int(x,y-1,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #endif
-    }}}
+    }
 
     if (vvl.vertex_list != NULL)
     {

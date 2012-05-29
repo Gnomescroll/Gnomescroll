@@ -638,6 +638,10 @@ inline void hit_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+
+    x = translate_point(x);
+    y = translate_point(y);
+    
     if (a->status.team == 0) return;
     //if (!a->weapons.pick.fire()) return;
     agent_hit_block_StoC msg;

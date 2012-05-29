@@ -3,6 +3,7 @@
 #include <common/defines.h>
 #include <common/random.h>
 #include <physics/affine.hpp>
+#include <physics/quadrant.hpp>
 #include <voxel/voxel_hitscan.hpp>
 
 #if DC_CLIENT
@@ -17,6 +18,14 @@
 //set offset and rotation
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
+    #if DC_CLIENT
+    //x -= current_camera_position.x;
+    //y -= current_camera_position.y;
+    //x = translate_point(x);
+    //y = translate_point(y);
+    //x = quadrant_translate_f(current_camera_position.x, x);
+    //y = quadrant_translate_f(current_camera_position.y, y);
+    #endif
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0,0.0);
 }
 void Voxel_model::set_skeleton_root(float *data)

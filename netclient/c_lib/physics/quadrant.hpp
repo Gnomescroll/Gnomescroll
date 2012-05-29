@@ -117,8 +117,17 @@ int quadrant_translate_f(float cx, float px)
 __attribute((always_inline))
 inline float translate_point(float pt)
 {
-    if(pt <  0.0) pt += 512.0;
-    if(pt >= 512.0) pt -= 512.0;
+    if(pt <  0.0f) pt += 512.0f;
+    if(pt >= 512.0f) pt -= 512.0f;
+    ASSERT_BOXED_POINT(pt);
+    return pt;
+}
+
+__attribute((always_inline))
+inline int translate_point(int pt)
+{
+    if(pt <  0) pt += 512;
+    if(pt >= 512) pt -= 512;
     ASSERT_BOXED_POINT(pt);
     return pt;
 }

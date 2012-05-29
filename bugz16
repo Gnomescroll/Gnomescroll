@@ -288,8 +288,10 @@ update health text (??)
 
 == TERRAIN ==
 Palette value for container blocks
+NWSE 0123
 
 == MAP WRAP ==
 rendering particles/models
-off by 1 error
 
+== BUGS ==
+laser rifle not damaging terrain?

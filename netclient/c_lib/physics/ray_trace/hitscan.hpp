@@ -12,7 +12,8 @@ typedef enum {
     HITSCAN_TARGET_BLOCK
 } HitscanTargetTypes;
 
-struct HitscanBlock {
+struct HitscanBlock
+{
     int hit;
     int x,y,z;
     float distance;

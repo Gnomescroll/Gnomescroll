@@ -4,6 +4,7 @@
 #include <t_map/t_properties.hpp>
 #include <t_map/_interface.hpp>
 #include <t_map/common/constants.hpp>
+#include <physics/quadrant.hpp>
 
 namespace t_map
 {
@@ -92,8 +93,8 @@ namespace t_map
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
             return NO_MAP_ELEMENT;
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -131,8 +132,8 @@ namespace t_map
     {
         //printf("set update: %i %i \n", x,y);
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -166,8 +167,8 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -195,8 +196,8 @@ namespace t_map
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -258,8 +259,8 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -307,8 +308,8 @@ namespace t_map
         //if( x >= 512 || x < 0 ) return -2 ;
         //if( y >= 512 || y < 0 ) return -2;
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -381,8 +382,8 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
         
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -427,8 +428,8 @@ namespace t_map
         //if( x >= 512 || x < 0 ) return -2 ;
         //if( y >= 512 || y < 0 ) return -2;
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -544,8 +545,8 @@ namespace t_map
     
     inline unsigned char Terrain_map::get_cached_height(int x, int y)
     {
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         return this->column_heights[x + y*MAP_WIDTH];
@@ -586,8 +587,8 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
 
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -600,8 +601,8 @@ namespace t_map
 
     void Terrain_map::set_block(int x, int y, int z, int value)
     {
-        x = translate_mapx(x);
-        y = translate_mapy(y);
+        x = translate_point(x);
+        y = translate_point(y);
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 

@@ -58,32 +58,6 @@ inline int get_lowest_open_block(int x, int y, int n);
 inline int get_highest_solid_block(int x, int y, int z=MAP_HEIGHT);
 inline int get_lowest_solid_block(int x, int y);
 
-// translates a map integer coordinate into the map boundaries
-// dim is the size of the axis
-
-/*
-    WTF IS THIS SHIT!?
-*/
-__attribute((always_inline))
-inline int translate_map_coord(int coord, int dim)
-{
-    while (coord >= 512) coord -= 512;
-    while (coord < 0) coord += 512;
-    return coord;
-}
-
-__attribute((always_inline))
-inline int translate_mapx(int x)
-{
-    return translate_map_coord(x, map_dim.x);
-}
-
-__attribute((always_inline))
-inline int translate_mapy(int y)
-{
-    return translate_map_coord(y, map_dim.y);
-}
-
 }   // t_map
 
 int _get(int x, int y, int z);

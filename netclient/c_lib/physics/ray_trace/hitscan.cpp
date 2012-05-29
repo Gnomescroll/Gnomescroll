@@ -2,6 +2,7 @@
 
 #include <t_map/t_map.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
+#include <physics/quadrant.hpp>
 
 //forward decl
 namespace STATE
@@ -39,8 +40,8 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
     //dummy_hitscan_block.x = pos[0];
     //dummy_hitscan_block.y = pos[1];
     //dummy_hitscan_block.z = pos[2];
-    dummy_hitscan_block.x = collision[0];
-    dummy_hitscan_block.y = collision[1];
+    dummy_hitscan_block.x = translate_point(collision[0]);
+    dummy_hitscan_block.y = translate_point(collision[1]);
     dummy_hitscan_block.z = collision[2];
     //dummy_hitscan_block.distance = distance(x,y,z, (float)pos[0], (float)pos[1], (float)pos[2]);
     dummy_hitscan_block.distance = distance;
@@ -62,8 +63,8 @@ HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float 
     if (block->hit)
     {
         target = HITSCAN_TARGET_BLOCK;
-        pos[0] = block->x;
-        pos[1] = block->y;
+        pos[0] = translate_point(block->x);
+        pos[1] = translate_point(block->y);
         pos[2] = block->z;
         *distance = block->distance;
         side[0] = block->side[0];
