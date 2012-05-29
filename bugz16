@@ -250,6 +250,9 @@ DONE
 map wrap camera
 DONE
 
+map wrap sound
+DONE
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -287,6 +290,5 @@ update health text (??)
 Palette value for container blocks
 
 == MAP WRAP ==
-sounds (shift everything to local coordinates) -- need to rotate in and shift (coordinate system transformation)
 rendering particles/models
 
