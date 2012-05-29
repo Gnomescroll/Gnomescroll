@@ -1246,7 +1246,6 @@ inline void agent_camera_state_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->id != id) return;
-    Vec3 p = a->get_position();
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
 }

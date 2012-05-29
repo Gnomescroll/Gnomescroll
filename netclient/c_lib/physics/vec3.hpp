@@ -335,3 +335,20 @@ void vec3_print_dot(struct Vec3 v1, struct Vec3 v2)
     float d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
     printf("dot= %f \n", d);
 }
+
+
+//struct Vec3 vec3_rotate_point(struct Vec3 forward, struct Vec3 normal, struct Vec3 right, struct Vec3 point)
+//{
+    //struct Vec3 transformed;
+    //transformed.x = vec3_dot(forward, point);
+    //transformed.y = vec3_dot(normal, point);
+    //transformed.z = vec3_dot(right, point);
+    //return transformed;
+//}
+
+//struct Vec3 vec3_transform_point(struct Vec3 forward, struct Vec3 normal, struct Vec3 right, struct Vec3 origin, struct Vec3 point)
+//{
+    //struct Vec3 transformed = vec3_rotate_point(forward, normal, right, point);
+    //transformed = vec3_sub(transformed, origin);
+    //return transformed;
+//}

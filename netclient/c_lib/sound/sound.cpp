@@ -5,6 +5,7 @@
 namespace Sound
 {
 
+const struct Vec3 origin = {{{ 128.0f, 128.0f, 128.0f }}};
 Vec3 listener_position;
 
 void init()
@@ -30,8 +31,7 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 {
     if (!Options::sound) return;
     listener_position = vec3_init(x,y,z);
-    //return OpenALSound::update_listener(x,y,z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
-    return OpenALSound::update_listener(0,0,0, vx,vy,vz, fx,fy,fz, ux,uy,uz);
+    return OpenALSound::update_listener(origin.x, origin.y, origin.z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
 }
 
 // Public
@@ -52,10 +52,15 @@ int play_2d_sound(char* fn)
 int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz)
 {
     if (!Options::sound) return -1;
-    x -= listener_position.x;
-    y -= listener_position.y;
-    z -= listener_position.z;
-    return OpenALSound::play_3d_sound(fn, x,y,z, vx,vy,vz);
+
+    // translate point to our origin
+    // handles map wrapping
+    Vec3 p = vec3_init(x,y,z);
+    p = vec3_sub(p, listener_position);
+    p = vec3_add(p, origin);
+    p = t_map::translate_position(p);
+
+    return OpenALSound::play_3d_sound(fn, p.x,p.y,p.z, vx,vy,vz);
 }
 
 void close()

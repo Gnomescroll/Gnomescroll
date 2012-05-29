@@ -7,13 +7,15 @@ const int N_CAMERAS = 2;
 const float CAMERA_VIEW_DISTANCE = 128.0f + 16.0; // 16.0 for fog
 const float CAMERA_VIEW_DISTANCE_SQUARED = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 
-enum CAMERA_TYPES {
+enum CAMERA_TYPES
+{
     UNKNOWN_CAM,
     AGENT_CAM,
     CAMERA_CAM
 };
 
-class Camera {
+class Camera
+{
     public:
         float fov;
         float x_size,y_size;
