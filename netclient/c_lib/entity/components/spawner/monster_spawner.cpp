@@ -21,12 +21,10 @@ void MonsterSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* s
     
     float sx,sy;
     sx = position.x + ((randf() * this->radius * 2) - this->radius);
-    sx = (sx > map_dim.x - 1) ? map_dim.x - 1 : sx;
-    sx = (sx < 0) ? 0 : sx;
+    sx = translate_point(sx);
 
     sy = position.y + ((randf() * this->radius * 2) - this->radius);
-    sy = (sy < map_dim.y - 1) ? sy : map_dim.y - 1;
-    sy = (sy < 0) ? 0 : sy;
+    sy = translate_point(sy);
 
     int h = (int)ceil(spawned_object_height);
     spawn_point->x = sx;
