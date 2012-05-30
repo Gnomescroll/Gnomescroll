@@ -64,7 +64,7 @@ bool position_is_equal(Vec3 p, float x, float y, float z)
     return true;
 }
 
-// 0,1,2,3 N,W,S,E +y,-x,-y,+x
+// 0123 +x,-y,-x,+y
 // return integer value of axis orientation where point a is source and point b is dest
 int axis_orientation(Vec3 a, Vec3 b)
 {
@@ -73,10 +73,10 @@ int axis_orientation(Vec3 a, Vec3 b)
     float ax = abs(a.x);
     float ay = abs(a.y);
 
-    if (a.y >= 0 && ay >= ax) return 0;
-    if (a.x <= 0 && ax >= ay) return 1;
-    if (a.y <= 0 && ay >= ax) return 2;
-    if (a.x >= 0 && ax >= ay) return 3;
+    if (a.x <= 0 && ax >= ay) return 0; // +x
+    if (a.y >= 0 && ay >= ax) return 1; // -y
+    if (a.x >= 0 && ax >= ay) return 2; // -x
+    if (a.y <= 0 && ay >= ax) return 3; // +y
     
     return 0;
 }

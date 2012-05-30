@@ -154,9 +154,6 @@ void block_set_palette_StoC::handle()
     e.palette = palette;
 
     main_map->set_element(x,y,z, e);
-
-    struct MAP_ELEMENT e2 = main_map->get_element(x,y,z);
-    printf("block set! block= %i palette= %i \n", e2.palette, e2.block);
 }
 
 void block_action_StoC::handle()

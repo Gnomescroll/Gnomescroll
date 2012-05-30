@@ -307,7 +307,7 @@ class create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<cre
     public:
         uint16_t x,y,z;
         uint16_t placer_id;
-        uint8_t orientation;    // NWSE 0123 +y-x-y+x
+        uint8_t orientation;    // 0123 +x,-y,-x,+y
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
