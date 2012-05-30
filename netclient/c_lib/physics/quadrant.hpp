@@ -114,6 +114,20 @@ int quadrant_translate_f(float cx, float px)
     }
 }
 
+#if DC_CLIENT
+
+#include <camera/camera.hpp>
+
+void quadrant_translate_draw_position(float* x, float* y)
+{
+    *x = quadrant_translate_f(current_camera_position.x, *x);
+    *y = quadrant_translate_f(current_camera_position.y, *y);
+}
+
+#else
+struct Vec3 quadrant_translate_f(struct Vec3* v) {}
+#endif
+
 __attribute((always_inline))
 inline float translate_point(float pt)
 {
