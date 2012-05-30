@@ -68,6 +68,7 @@ bool position_is_equal(Vec3 p, float x, float y, float z)
 // return integer value of axis orientation where point a is source and point b is dest
 int axis_orientation(Vec3 a, Vec3 b)
 {
+    b = quadrant_translate_position(a,b);
     a = vec3_sub(b,a);  // vector to point
 
     float ax = abs(a.x);
