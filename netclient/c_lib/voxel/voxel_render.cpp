@@ -336,9 +336,6 @@ void Voxel_render_list_manager::draw()
         glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
         glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
 
-        Vec3 pos = ClientState::playerAgent_state.camera_position();
-        //Vec3 pos = ClientState::playerAgent_state.you->get_position();
-        //vec3_print(pos);
         for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
             if (vrl->render_list[i] == NULL) continue;
@@ -348,10 +345,7 @@ void Voxel_render_list_manager::draw()
 
             
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
-            //glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
-
-            Vec3 p = quadrant_translate_position(pos, vv->world_matrix.c);
-            //vec3_print(p);
+            Vec3 p = quadrant_translate_position(current_camera_position, vv->world_matrix.c);
             glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
 
             if (_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
