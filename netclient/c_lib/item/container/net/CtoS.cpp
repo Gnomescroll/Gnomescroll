@@ -360,6 +360,8 @@ void create_container_block_CtoS::handle()
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
 
+    t_map::broadcast_set_block_palette(x,y,z,val,orientation);
+/*
     t_map::set(x,y,z, val);
     t_map::set_palette(x,y,z,orientation);
 
@@ -368,6 +370,7 @@ void create_container_block_CtoS::handle()
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
+*/
 }
 
 } // ItemContainer

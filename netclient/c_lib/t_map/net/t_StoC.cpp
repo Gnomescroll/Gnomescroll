@@ -136,7 +136,6 @@ void set_map_alias_StoC::handle()
     //printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH);
 }
 
-
 void map_element_update::handle()
 {
     printf("received map element update \n");
@@ -145,32 +144,19 @@ void map_element_update::handle()
 
 void block_set_StoC::handle() 
 {
-    //_set(x,y,z,val);
-
-    struct MAP_ELEMENT e = {{{0}}};
-    e.block = block;
-    //e.palette = 1;
-
-    main_map->set_element(x,y,z, e);
-    //_set(x,y,z,val);
-
-    struct MAP_ELEMENT e2 = main_map->get_element(x,y,z);
-    printf("block set! palette= %i \n", e2.block);
+    main_map->set_block(x,y,z, block);
 }
 
 void block_set_palette_StoC::handle()
 {
-    //_set(x,y,z,val);
-
     struct MAP_ELEMENT e = {{{0}}};
     e.block = block;
-    //e.palette = 1;
+    e.palette = palette;
 
     main_map->set_element(x,y,z, e);
-    //_set(x,y,z,val);
 
     struct MAP_ELEMENT e2 = main_map->get_element(x,y,z);
-    printf("block set! palette= %i \n", e2.block);
+    printf("block set! block= %i palette= %i \n", e2.palette, e2.block);
 }
 
 void block_action_StoC::handle()
