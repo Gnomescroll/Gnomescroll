@@ -1005,10 +1005,7 @@ inline void agent_set_block_CtoS::handle()
     bool collides = false;
     _set(x,y,z, val); // set temporarily to test against
     if (agent_collides_terrain(a))
-    {
         collides = true;
-        //printf("collides w/ player\n");
-    }
     else
     {
         for (int i=0; i<ServerState::agent_list->n_max; i++)
@@ -1028,7 +1025,6 @@ inline void agent_set_block_CtoS::handle()
     {
         Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
         _set_broadcast(x,y,z, val);
-        //a->weapons.blocks.fire();
         agent_placed_block_StoC msg;
         msg.id = a->id;
         msg.broadcast();
