@@ -12,6 +12,31 @@ namespace Components
 
 /* Targeting */
 
+void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
+{
+    GS_ASSERT(target_type == OBJECT_AGENT);
+
+    Agent_state* a = STATE::agent_list->get(target_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
+
+    Vec3 dest = a->get_position();
+    this->target_direction = quadrant_translate_position(position, dest);
+    normalize_vector(&this->target_direction);
+    
+    this->target_type = target_type;
+    this->target_id = target_id;
+    this->locked_on_target = true;
+
+    this->broadcast_target_choice();
+}
+
 void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
 {   // lock on agent
     Agent_state* target;
@@ -27,6 +52,7 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
+    this->broadcast_target_choice();
 }
 
 void MotionTargetingComponent::lock_target(Vec3 camera_position)
@@ -40,6 +66,7 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
+    this->broadcast_target_choice();
 }
 
 void MotionTargetingComponent::choose_destination()
@@ -110,6 +137,16 @@ bool MotionTargetingComponent::move_on_surface()
     return moved;
 }
 
+void MotionTargetingComponent::broadcast_target_choice()
+{
+    GS_ASSERT(this->object != NULL);
+    object_choose_motion_target_StoC msg;
+    msg.id = this->object->id;
+    msg.type = this->object->type;
+    msg.target_id = this->target_id;
+    msg.target_type = this->target_type;
+    msg.broadcast();
+}
 
 void MotionTargetingComponent::broadcast_destination()
 {

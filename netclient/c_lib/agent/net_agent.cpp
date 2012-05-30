@@ -682,12 +682,13 @@ inline void hitscan_object_CtoS::handle()
     using Components::OwnerComponent;
     using Components::TeamComponent;
     using Components::HealthComponent;
+    using Components::MotionTargetingComponent;
     OwnerComponent* owner;
     TeamComponent* team;
     HealthComponent* health;
+    MotionTargetingComponent* motion_targeting;
     int owner_id = NO_AGENT;
     int team_id = NO_TEAM;
-    bool died = true;   // assume hitting object kills it, unless object says otherwise
 
     AgentState s = a->get_state();
     switch (type)
@@ -722,17 +723,12 @@ inline void hitscan_object_CtoS::handle()
                 
             // apply damage
             health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
-            if (health != NULL)
-            {
-                health->take_damage(obj_dmg);
-                died = health->did_die();
-            }
+            if (health != NULL) health->take_damage(obj_dmg);
 
-            if (died)
-            {
-                if (obj->type == OBJECT_MONSTER_BOMB)
-                    a->status.kill_slime(); // TODO, de-type this
-            }
+            motion_targeting = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
+            if (motion_targeting != NULL && motion_targeting->target_type == OBJECT_NONE)
+                motion_targeting->set_target(OBJECT_AGENT, a->id);
+            
             break;
 
         default:
