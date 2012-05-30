@@ -51,6 +51,11 @@ void set_palette(int x, int y, int z, int value);
 int apply_damage(int x, int y, int z, int dmg);
 #if DC_SERVER
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
+
+void broadcast_set_block_action();
+void broadcast_set_block();
+void broadcast_set_block_palette();
+
 #endif
 
 inline int get_highest_open_block(int x, int y, int agent_height);

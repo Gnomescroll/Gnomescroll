@@ -94,7 +94,28 @@ class map_element_update: public MapMessagePacketToClient<map_element_update>
 };
 
 
-class block_StoC: public MapMessagePacketToClient<block_StoC>
+/*
+    Set Block packets
+*/
+class block_set_StoC: public MapMessagePacketToClient<block_set_StoC>
+{
+    public:
+
+        uint16_t x,y,z;
+        uint16_t val;
+        
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&val, buff, buff_n, pack);
+        }
+        
+        inline void handle() __attribute((always_inline));
+};
+
+class block_set_StoC: public MapMessagePacketToClient<block_set_StoC>
 {
     public:
 
@@ -148,10 +169,6 @@ class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
     inline void handle() __attribute((always_inline));
 };
 
-/*
-    Special Blocks
-*/
-
 
 class container_block_chunk_reset_StoC: public MapMessagePacketToClient<container_block_chunk_reset_StoC>
 {
@@ -165,6 +182,11 @@ class container_block_chunk_reset_StoC: public MapMessagePacketToClient<containe
     
     inline void handle() __attribute((always_inline));
 };
+
+
+/*
+    Special Blocks
+*/
 
 class container_block_create_StoC: public MapMessagePacketToClient<container_block_create_StoC>
 {

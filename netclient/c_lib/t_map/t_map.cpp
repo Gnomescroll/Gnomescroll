@@ -133,6 +133,24 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     if(cube_list[block_type].item_drop == true) 
         handle_block_drop(x,y,z, block_type);
 }
+
+void broadcast_set_block_action(int x, int y, int z, int res, int action)
+{
+    map_history->send_block_action(x,y,z,res,action);
+}
+
+void broadcast_set_block(int x, int y, int z, int block)
+{
+    main_map->set(x,y,z,block);
+    
+}
+
+void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
+{
+
+}
+
+
 #endif
 
 inline int get_highest_open_block(int x, int y, int n)
@@ -273,6 +291,9 @@ void _set_broadcast(int x, int y, int z, int value)
     }
 }
 
+#endif
+
+/*
 void send_map_metadata(int client_id)
 {
     t_map::map_metadata_StoC msg;
@@ -281,29 +302,7 @@ void send_map_metadata(int client_id)
     msg.z = map_dim.z;
     msg.sendToClient(client_id);
 }
-#endif
-
-/*
-void send_map_metadata()
-{
-    class map_metadata_StoC msg;
-    msg.x = map_dim.x;
-    msg.y = map_dim.y;
-    msg.z = map_dim.z;
-    msg.broadcast();
-}
 */
-
-/*
-void set_map_size(int x, int y, int z)
-{
-    map_dim.x = x;
-    map_dim.y = y;
-    map_dim.z = z;
-    send_map_metadata();
-}
-*/
-
 
 /*
     Move this somewhere

@@ -124,8 +124,6 @@ void quadrant_translate_draw_position(float* x, float* y)
     *y = quadrant_translate_f(current_camera_position.y, *y);
 }
 
-#else
-struct Vec3 quadrant_translate_f(struct Vec3* v) {}
 #endif
 
 __attribute((always_inline))
