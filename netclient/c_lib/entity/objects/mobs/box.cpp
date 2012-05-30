@@ -254,10 +254,8 @@ void server_tick_mob_robot_box(Object* object)
         // choose destination
         Vec3 destination;
         const int walk_len = MONSTER_BOX_WALK_RANGE;
-        //int dx = randrange(0,walk_len) - walk_len/2;
-        //int dy = randrange(0,walk_len) - walk_len/2;
-        int dx = walk_len - walk_len/2;
-        int dy = walk_len - walk_len/2;
+        int dx = randrange(0,walk_len) - walk_len/2;
+        int dy = randrange(0,walk_len) - walk_len/2;
         destination = vec3_add(position, vec3_init(((float)dx)+randf(), ((float)dy)+randf(),0));
         // clamp
         destination.z = (float)t_map::get_highest_open_block(destination.x,destination.y);
@@ -303,13 +301,9 @@ void server_tick_mob_robot_box(Object* object)
         physics->set_angles(vec3_init(theta, phi, 0));
     }
 
-    //if (physics->changed)
-        //object->broadcastState(); // send state packet if state changed
-    //else if (this->canSendState())
-        //object->broadcastState(); // send state packet every N ticks
-
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    GS_ASSERT(limiter != NULL);
     if (limiter->allowed()) object->broadcastState();
 }
 #endif
