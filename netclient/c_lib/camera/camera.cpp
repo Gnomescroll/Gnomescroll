@@ -134,8 +134,9 @@ void Camera::set_dimensions()
 void Camera::set_position(struct Vec3 p)
 {
     this->position = translate_position(p);
-    current_camera_position = this->position;
     ASSERT_BOXED_POSITION(this->position);
+    if (this->is_current()) current_camera_position = this->position;
+    if (this->is_current()) GS_ASSERT(vec3_equal(this->position, current_camera_position));
 }
 
 void Camera::pan(float dx, float dy)
@@ -181,9 +182,9 @@ void Camera::world_projection()
     Vec3 look = vec3_init(1.0, 0.0, 0.0);
     look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
 
-    float x = position.x;
-    float y = position.y;
-    float z = position.z;
+    float x = this->position.x;
+    float y = this->position.y;
+    float z = this->position.z;
 
     // DEPRECATE GLU
     gluLookAt(
@@ -199,7 +200,7 @@ void Camera::world_projection()
     right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
     up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
 
-    setup_fulstrum(fov, ratio, z_far, vec3_init(x,y,z), look, right, up);
+    setup_fulstrum(fov, ratio, z_far, this->position, look, right, up);
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);

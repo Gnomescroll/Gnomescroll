@@ -113,10 +113,12 @@ bool MotionTargetingComponent::move_on_surface()
 
 void MotionTargetingComponent::broadcast_destination()
 {
+    //printf("Object %d broadcast destination\n", this->object->id);
     object_choose_destination_StoC msg;
     msg.x = this->destination.x;
     msg.y = this->destination.y;
     msg.z = this->destination.z;
+    ASSERT_BOXED_POSITION(this->destination);
     msg.id = this->object->id;
     msg.type = this->object->type;
     msg.ticks = this->ticks_to_destination;

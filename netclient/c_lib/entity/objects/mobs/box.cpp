@@ -254,8 +254,10 @@ void server_tick_mob_robot_box(Object* object)
         // choose destination
         Vec3 destination;
         const int walk_len = MONSTER_BOX_WALK_RANGE;
-        int dx = randrange(0,walk_len) - walk_len/2;
-        int dy = randrange(0,walk_len) - walk_len/2;
+        //int dx = randrange(0,walk_len) - walk_len/2;
+        //int dy = randrange(0,walk_len) - walk_len/2;
+        int dx = walk_len - walk_len/2;
+        int dy = walk_len - walk_len/2;
         destination = vec3_add(position, vec3_init(((float)dx)+randf(), ((float)dy)+randf(),0));
         // clamp
         destination.z = (float)t_map::get_highest_open_block(destination.x,destination.y);
@@ -351,7 +353,9 @@ void client_tick_mob_robot_box(Object* object)
 
     if (!motion->at_destination)
     {   // check if at destination
-        float dist = vec3_distance_squared(motion->destination, physics->get_position());
+        Vec3 position = physics->get_position();
+        Vec3 dest = quadrant_translate_position(position, motion->destination);
+        float dist = vec3_distance_squared(position, dest);
         if (dist < 1.0f)    // TODO Margin
         {   // at destination, stop
             motion->en_route = false;

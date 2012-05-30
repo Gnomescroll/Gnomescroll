@@ -53,6 +53,7 @@ bool chunk_render_check( float x, float y)
     const float cy = current_camera_position.y;
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(cy);
+    
     float dx = cx - x;
     float dy = cy - y;
 
@@ -119,7 +120,6 @@ void Vbo_map::prep_draw()
 
 void Vbo_map::sort_draw()
 {
-
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
     ASSERT_BOXED_POINT(cx);

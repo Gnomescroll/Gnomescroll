@@ -4,7 +4,7 @@
 #include <physics/vec3.hpp>
 
 #define ASSERT_BOXED_POINT(p) GS_ASSERT(p >= 0 && p < 512)
-#define ASSERT_BOXED_POSITION(p) GS_ASSERT(p.x >= 0 && p.x < 512 && p.y >= 0 && p.y < 512)
+#define ASSERT_BOXED_POSITION(p) GS_ASSERT(p.x >= 0.0f && p.x < 512.0f && p.y >= 0.0f && p.y < 512.0f)
 
 static inline int Min_i(int x, int y, int x1, int y1)
 {
@@ -112,18 +112,6 @@ float quadrant_translate_f(float cx, float px)
         }
     }
 }
-
-#if DC_CLIENT
-
-#include <camera/camera.hpp>
-
-void quadrant_translate_draw_position(float* x, float* y)
-{
-    *x = quadrant_translate_f(current_camera_position.x, *x);
-    *y = quadrant_translate_f(current_camera_position.y, *y);
-}
-
-#endif
 
 __attribute((always_inline))
 inline float translate_point(float pt)

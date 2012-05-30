@@ -389,13 +389,14 @@ inline void object_choose_destination_StoC::handle()
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics == NULL) return;
+    Vec3 position = physics->get_position();
     
-    motion->destination = vec3_init(this->x, this->y, this->z);
-    motion->destination = quadrant_translate_position(physics->get_position(), motion->destination);
+    Vec3 destination = vec3_init(this->x, this->y, this->z);
+    motion->destination = quadrant_translate_position(position, destination);
     motion->ticks_to_destination = this->ticks;
 
     // set momentum from destination :: TODO MOVE
-    Vec3 direction = vec3_sub(motion->destination, physics->get_position());
+    Vec3 direction = vec3_sub(motion->destination, position);
     if (this->ticks)
     {
         float len = vec3_length(direction);
