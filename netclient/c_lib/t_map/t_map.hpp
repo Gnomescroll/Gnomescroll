@@ -46,6 +46,7 @@ class Terrain_map* get_map();
 
 int get(int x, int y, int z);
 void set(int x, int y, int z, int value);
+void set_palette(int x, int y, int z, int value);
 
 int apply_damage(int x, int y, int z, int dmg);
 #if DC_SERVER

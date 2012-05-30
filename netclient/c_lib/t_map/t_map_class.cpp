@@ -613,17 +613,6 @@ namespace t_map
         #endif
     }
 
-    inline void Terrain_map::set_palette(int x, int y, int z, int value)
-    {
-        x = translate_point(x);
-        y = translate_point(y);
-
-        struct MAP_ELEMENT element = get_element(x,y,z);
-        element.palette = value;
-        set_element(x,y,z,element);
-    }
-
-
 
 /*
     void Terrain_map::reset_chunk_container_blocks(int chunk_index)

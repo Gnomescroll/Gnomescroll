@@ -328,6 +328,9 @@ void PlayerAgent_action::set_block(ItemID placer_id)
     );
     if (b==NULL) return;
 
+    int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
+    GS_ASSERT(orientation >= 0 && orientation <= 3);
+
     int placer_type = Item::get_item_type(placer_id);
     GS_ASSERT(placer_type != NULL_ITEM_TYPE);
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
@@ -340,6 +343,8 @@ void PlayerAgent_action::set_block(ItemID placer_id)
         msg.y = b[1];
         msg.z = b[2];
         msg.placer_id = placer_id;
+        printf("orientation %d\n", orientation);
+        msg.orientation = orientation;
         msg.send();
     }
     else

@@ -324,6 +324,11 @@ void create_container_block_CtoS::handle()
     ItemContainerType container_type = t_map::get_container_type_for_block(val);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
+    GS_ASSERT(orientation >= 0 && orientation <= 3);
+    if (orientation < 0 || orientation > 3) orientation = 0;
+    x = translate_point(x);
+    y = translate_point(y);
+
     // dont allow block to be set on existing block
     if (t_map::get(x,y,z) != 0) return;
 
@@ -354,7 +359,12 @@ void create_container_block_CtoS::handle()
     broadcast_container_create(container->id);
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
-    _set_broadcast(x,y,z, val);
+
+    t_map::set(x,y,z, val);
+    t_map::set_palette(x,y,z,orientation);
+
+    printf("set palette %d\n", orientation);
+
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();

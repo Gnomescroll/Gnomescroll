@@ -54,6 +54,14 @@ void set(int x, int y, int z, int value)
     main_map->set_block(x,y,z,value);
 }
 
+void set_palette(int x, int y, int z, int value)
+{
+    struct MAP_ELEMENT element = main_map->get_element(x,y,z);
+    element.palette = value;
+    main_map->set_element(x,y,z,element);
+}
+
+
 class Terrain_map* get_map()
 {
     return main_map;

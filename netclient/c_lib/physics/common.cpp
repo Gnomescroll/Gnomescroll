@@ -1,5 +1,7 @@
 #include "common.hpp"
 
+#include <physics/vec3.hpp>
+
 bool cube_intersects(
     float x, float y, float z, float w, float h, float d,
     float x2, float y2, float z2, float w2, float h2, float d2
@@ -60,4 +62,21 @@ bool position_is_equal(Vec3 p, float x, float y, float z)
 {
     if (p.x != x || p.y != y || p.z != z) return false;
     return true;
+}
+
+// 0,1,2,3 N,W,S,E +y,-x,-y,+x
+// return integer value of axis orientation where point a is source and point b is dest
+int axis_orientation(Vec3 a, Vec3 b)
+{
+    a = vec3_sub(b,a);  // vector to point
+
+    float ax = abs(a.x);
+    float ay = abs(a.y);
+
+    if (a.y >= 0 && ay >= ax) return 0;
+    if (a.x <= 0 && ax >= ay) return 1;
+    if (a.y <= 0 && ay >= ax) return 2;
+    if (a.x >= 0 && ax >= ay) return 3;
+    
+    return 0;
 }

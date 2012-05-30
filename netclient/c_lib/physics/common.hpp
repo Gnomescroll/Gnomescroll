@@ -21,4 +21,6 @@ float gaussian_value(const float mean, const float stddev, const float x);
 struct Vec3;
 bool position_is_equal(Vec3 p, float x, float y, float z);
 
+int axis_orientation(Vec3 a, Vec3 b);
+
 const float kE = 2.71828f;
