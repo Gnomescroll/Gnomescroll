@@ -292,4 +292,6 @@ alt tab doesnt work in fullscreen
 version mismatch popup for OS X
 update health text (??)
 
-test map wrap again
+== MAP WRAP ==
+-why do models disappear when camera is out of box?
+--doesnt happen to agents
