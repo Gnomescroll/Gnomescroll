@@ -6,7 +6,6 @@
 namespace t_hud
 {
 
-
 class UIElement
 {
         public:

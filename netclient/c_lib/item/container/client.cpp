@@ -101,7 +101,7 @@ static void send_nanite_alpha_action(ContainerActionType action, int container_i
     msg.hand_type = player_hand_type_ui;
     msg.hand_stack = player_hand_stack_ui;
 
-    if (action == FULL_HAND_TO_WORLD)
+    if (action == FULL_HAND_TO_WORLD || action == PURCHASE_ITEM_FROM_NANITE)
     {
         msg.slot_type = NULL_ITEM_TYPE;
         msg.slot_stack = 1;
