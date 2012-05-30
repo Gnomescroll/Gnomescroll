@@ -259,6 +259,9 @@ DONE
 map wrap rendering, targeting hitscan etc
 DONE
 
+nanite container refactor
+DONE
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly
@@ -278,7 +281,6 @@ shovel sounds
 block placement sounds
 
 == MAINTENANCE/REFACTORS ==
-refactor nanite container/ui to conform to craft bench style
 parameterize open/close container input handling shit
 
 == UI/UX ==
@@ -299,3 +301,8 @@ smelter
 craft bench levels
 multiple craft outputs
 variable stack outputs
+
+
+bugz-
+item particles not being transformed
+axis orientation wrong acorss boundary
