@@ -82,8 +82,8 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
     if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
     Agent_state* target = STATE::agent_list->get(this->target_id);
     if (target == NULL) return;
-    Vec3 p = target->get_position();
-    Vec3 target_position = vec3_init(p.x, p.y, p.z);
+    Vec3 target_position = target->get_position();
+    target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);
 }

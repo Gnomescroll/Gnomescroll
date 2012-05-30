@@ -17,6 +17,8 @@ dont_include_this_file_in_server
 
 #include <input/handlers.hpp>
 
+#include <agent/client/player_agent.hpp>
+
 #define VOXEL_RENDER_DEBUG 0
 
 // Shader
@@ -334,32 +336,22 @@ void Voxel_render_list_manager::draw()
         glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
         glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
 
-        //struct Affine matrix;
-        //int drawn = 0;
+        Vec3 pos = ClientState::playerAgent_state.camera_position();
+        //Vec3 pos = ClientState::playerAgent_state.you->get_position();
+        //vec3_print(pos);
         for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
-            //if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
             if (vrl->render_list[i] == NULL) continue;
             Voxel_volume* vv = vrl->render_list[i];
             if (!vv->draw) continue;
-
-            // sphere test was done in the model update pass
-            //if (!sphere_fulstrum_test(
-                //vv->world_matrix.v[3].x,
-                //vv->world_matrix.v[3].y,
-                //vv->world_matrix.v[3].z,
-                //vv->radius
-            //)) continue;
-
-            //vrl->update_vertex_buffer_object(); 
             if (vv->vvl.vnum == 0) continue;
 
-            //matrix = vv->world_matrix;
-            //matrix.c = quadrant_translate_position(current_camera_position, matrix.c);
-            Vec3 p = quadrant_translate_position(current_camera_position, vv->world_matrix.c);
             
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
-            //glUniform3fv(InTranslation, 1, (GLfloat*) (matrix._f + 9) );
+            //glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
+
+            Vec3 p = quadrant_translate_position(pos, vv->world_matrix.c);
+            //vec3_print(p);
             glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
 
             if (_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))

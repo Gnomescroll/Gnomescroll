@@ -253,6 +253,9 @@ DONE
 map wrap sound
 DONE
 
+container orientation palette
+DONE
+
 == PVE ==
 blue bombs should aggro if shot
 blue bombs should be wandering, slowly

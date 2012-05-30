@@ -26,5 +26,5 @@ const int MAP_CHUNK_HEIGHT = MAP_HEIGHT/TERRAIN_CHUNK_WIDTH;
 
 } // t_map
 
-const float QUADRANT_DIVIDEf = 256.0;
+const float QUADRANT_DIVIDEf = 256.0f;
 const int QUADRANT_DIVIDEi = 256;

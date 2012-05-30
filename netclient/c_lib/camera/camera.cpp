@@ -312,11 +312,6 @@ void update_agent_camera()
     ClientState::playerAgent_state.pump_camera();
 
     // set agent_camera from state
-    float x = ClientState::playerAgent_state.camera_state.x;
-    float y = ClientState::playerAgent_state.camera_state.y;
-    float z = ClientState::playerAgent_state.camera_z();
-
-    Vec3 pos = vec3_init(x,y,z);
-    pos = translate_position(pos);
+    Vec3 pos = ClientState::playerAgent_state.camera_position();
     agent_camera->set_position(pos);
 }

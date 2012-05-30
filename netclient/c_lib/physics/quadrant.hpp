@@ -20,13 +20,12 @@ static inline float Min_f(float x, float y, float x1, float y1)
     return abs(x)<abs(y) ? x1 : y1;
 }
 
-
-static inline int Min_2f(float x, float y)
+static inline int Min_2i(int x, int y)
 {
     return abs(x)<abs(y) ? x*x : y*y;
 }
 
-static inline int Min_2i(int x, int y)
+static inline float Min_2f(float x, float y)
 {
     return abs(x)<abs(y) ? x*x : y*y;
 }
@@ -82,7 +81,7 @@ int quadrant_distance2i(int cx, int px)
 
 
 //camera x and position x
-int quadrant_translate_f(float cx, float px)
+float quadrant_translate_f(float cx, float px)
 {
     //ASSERT_BOXED_POINT(cx);
     //ASSERT_BOXED_POINT(px);
@@ -97,7 +96,7 @@ int quadrant_translate_f(float cx, float px)
         }
         else
         {
-            return Min_f(px-cx, px-cx-512.0, px, px-512.0);
+            return Min_f(px-cx, px-cx-512.0f, px, px-512.0f);
         }
     }
     else
@@ -105,7 +104,7 @@ int quadrant_translate_f(float cx, float px)
         //camera is in second half
         if(px < QUADRANT_DIVIDEf)
         {
-            return Min_f(px-cx, px-cx+512.0, px, px+512.0);
+            return Min_f(px-cx, px-cx+512.0f, px, px+512.0f);
         }
         else
         {
