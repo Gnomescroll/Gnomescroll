@@ -7,6 +7,7 @@ namespace Particle
 void BillboardSprite::draw(Vec3 v)
 {
     #if DC_CLIENT
+    v = quadrant_translate_position(current_camera_position, v);
     if (point_fulstrum_test(v.x, v.y, v.z) == false)
         return;
 
@@ -48,7 +49,7 @@ void BillboardSprite::draw(Vec3 v)
 void BillboardSprite::draw_from_bottom(Vec3 v)
 {
     #if DC_CLIENT
-
+    v = quadrant_translate_position(current_camera_position, v);
     //v.z += this->scale / 2;
     v.z += this->scale;
     

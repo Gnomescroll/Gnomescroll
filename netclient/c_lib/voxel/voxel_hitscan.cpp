@@ -4,8 +4,8 @@
 #include <physics/ray_trace/ray_trace.hpp>
 
 bool Voxel_hitscan_list::hitscan(
-    const float x0, const float y0, const float z0, 
-    const float x1, const float y1, const float z1,
+    const float x0, const float y0, const float z0,     // source
+    const float x1, const float y1, const float z1,     // direction
     int skip_id, ObjectType skip_type, // skip player agent id
     float collision_point[3], float *distance,
     Voxel_hitscan_target* target
@@ -29,6 +29,7 @@ bool Voxel_hitscan_list::hitscan(
     float max_dist = 10000.0f;
     float tpos[3];
 
+    Vec3 source = vec3_init(x0,y0,z0);
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         vhe = hitscan_list[i];
@@ -37,7 +38,8 @@ bool Voxel_hitscan_list::hitscan(
         // skip firing agent
         if (vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
 
-        float* _tmp = vhe->vv->world_matrix.v[3].f;
+        Vec3 p = quadrant_translate_position(source, vhe->vv->world_matrix.c);
+        float* _tmp = p.f;
         x2 = _tmp[0];
         y2 = _tmp[1];
         z2 = _tmp[2];

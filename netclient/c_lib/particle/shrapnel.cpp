@@ -66,7 +66,8 @@ void Shrapnel::tick()
 
 void Shrapnel::prep()
 {
-    if (point_fulstrum_test(verlet.position.x, verlet.position.y, verlet.position.z) == false)
+    Vec3 position = quadrant_translate_position(current_camera_position, this->verlet.position);
+    if (point_fulstrum_test(position.x, position.y, position.z) == false)
         return;
 
     Vec3 up = vec3_init(
@@ -86,7 +87,6 @@ void Shrapnel::prep()
     ty_min = (float)(this->texture_index/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    Vec3 position = verlet.position;
     position.z += this->scale / 2.0f;
 
     Vec3 p = vec3_sub(position, vec3_add(right, up));

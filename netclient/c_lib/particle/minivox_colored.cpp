@@ -132,6 +132,7 @@ void ColoredMinivox::draw()
     if (this->a == 0) return;
 
     Vec3 position = this->get_position();
+    position = quadrant_translate_position(current_camera_position, position);
     const float
         x0 = position.x,
         y0 = position.y,

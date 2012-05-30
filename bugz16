@@ -289,12 +289,5 @@ alt tab doesnt work in fullscreen
 version mismatch popup for OS X
 update health text (??)
 
-== TERRAIN ==
-Palette value for container blocks
-NWSE 0123
-
 == MAP WRAP ==
 rendering particles/models
-
-== BUGS ==
-laser rifle not damaging terrain?

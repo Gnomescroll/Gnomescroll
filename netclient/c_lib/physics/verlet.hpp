@@ -1,6 +1,7 @@
 #pragma once
 
 #include <physics/vec3.hpp>
+#include <physics/quadrant.hpp>
 
 namespace Verlet
 {
@@ -32,6 +33,7 @@ class VerletComponent
             if (position_is_equal(this->position, x,y,z))
                 return false;
             this->position = vec3_init(x,y,z);
+            this->position = translate_position(this->position);
             return true;
         }
 

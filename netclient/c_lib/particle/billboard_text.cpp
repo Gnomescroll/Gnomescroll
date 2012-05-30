@@ -107,6 +107,8 @@ void BillboardText::draw()
     if (HudFont::font == NULL) return;
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
     Vec3 position = this->get_position();
+    Vec3 p = current_camera->get_position();
+    position = quadrant_translate_position(p,position);
     if (point_fulstrum_test(position.x, position.y, position.z) == false)
         return;
 
@@ -119,8 +121,6 @@ void BillboardText::draw()
     };
 
     float norm;
-
-    Vec3 p = current_camera->get_position();
     float look[3];
     look[0] = p.x - position.x;
     look[1] = p.y - position.y;

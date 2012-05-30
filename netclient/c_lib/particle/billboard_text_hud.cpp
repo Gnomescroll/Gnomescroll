@@ -68,6 +68,7 @@ void BillboardTextHud::draw()
     if (current_camera == NULL) return;
 
     Vec3 position = this->get_position();
+    position = quadrant_translate_position(current_camera_position, position);
     GLdouble sx,sy,sz;
     GLint res = gluProject(position.x, position.y, position.z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
     if (res == GLU_FALSE)
@@ -95,7 +96,8 @@ void BillboardTextHud::draw()
 namespace Particle
 {
 
-void BillboardTextHud_list::tick() {
+void BillboardTextHud_list::tick()
+{
     for (int i=0; i<n_max; i++)
     {
         if (a[i] == NULL) continue;
@@ -105,8 +107,9 @@ void BillboardTextHud_list::tick() {
     }
 }
 
-void BillboardTextHud_list::draw() {
-#if DC_CLIENT
+void BillboardTextHud_list::draw()
+{
+    #if DC_CLIENT
     if (num == 0) return;
     if (current_camera == NULL) return;
     if (HudFont::font == NULL) return;
@@ -119,7 +122,7 @@ void BillboardTextHud_list::draw() {
         if (!a[i]->should_draw) continue;
         a[i]->draw();
     }
-#endif
+    #endif
 }
 
 }

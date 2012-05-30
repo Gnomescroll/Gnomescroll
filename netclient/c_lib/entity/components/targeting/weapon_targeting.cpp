@@ -81,7 +81,9 @@ bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
     if (target == NULL || target->status.team == NO_TEAM)
         return false;
     // target in range
-    if (vec3_distance_squared(target->get_center(), firing_position) > this->sight_range*this->sight_range)
+    Vec3 target_position = target->vox->get_center();
+    target_position = quadrant_translate_position(firing_position, target_position);
+    if (vec3_distance_squared(target_position, firing_position) > this->sight_range*this->sight_range)
         return false;
     // target visible
     Vec3 sink;
@@ -98,6 +100,7 @@ void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position
     if (target == NULL || target->vox == NULL) return;
     int part = randrange(0, target->vox->n_parts-1);
     Vec3 target_position = target->vox->get_center(part);
+    target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);
 }

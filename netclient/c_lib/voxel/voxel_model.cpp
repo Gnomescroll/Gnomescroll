@@ -611,7 +611,7 @@ void Voxel_model::restore(int team)
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
 {   // ray cast from source to each body part center (shuffled)
-    return this->in_sight_of(source, sink, 0.0f);
+    return this->in_sight_of(source, sink, 1.0f);
 }
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability)
@@ -627,6 +627,7 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probabi
     {
         vv = &this->vv[part_numbers[i]];
         c = vv->get_center(); // ray cast to center of volume
+        c = quadrant_translate_position(source, c);
         if (randf() < acquisition_probability && ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
         {
             *sink = c;
@@ -636,25 +637,25 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probabi
     return false;
 }
 
-bool Voxel_model::is_completely_destroyed()
-{
-    #if DC_CLIENT
-    Voxel_volume* vv;
-    for (int i=0; i<this->n_parts; i++)
-    {
-        vv = &this->vv[i];
-        if (vv->vvl.vnum != 0) return false;
-    }
-    return true;
-    #endif
+//bool Voxel_model::is_completely_destroyed()
+//{
+    //#if DC_CLIENT
+    //Voxel_volume* vv;
+    //for (int i=0; i<this->n_parts; i++)
+    //{
+        //vv = &this->vv[i];
+        //if (vv->vvl.vnum != 0) return false;
+    //}
+    //return true;
+    //#endif
 
-    #if DC_SERVER
-    for (int i=0; i<this->n_parts; i++)
-    {
-        for (unsigned int j=0; j<this->vv[i].index_max; j++)
-            if (this->vv[i].voxel[j].color != 0)
-                return false;
-    }
-    return true;
-    #endif
-}
+    //#if DC_SERVER
+    //for (int i=0; i<this->n_parts; i++)
+    //{
+        //for (unsigned int j=0; j<this->vv[i].index_max; j++)
+            //if (this->vv[i].voxel[j].color != 0)
+                //return false;
+    //}
+    //return true;
+    //#endif
+//}

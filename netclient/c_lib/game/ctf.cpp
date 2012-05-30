@@ -178,6 +178,12 @@ void CTF::set_flag_position(int team, float x, float y, float z)
 
 void CTF::set_base_position(int team, float x, float y, float z)
 {
+    // TODO -- undo
+    //////////////
+    x = 0.0f;
+    y = 0.0f;
+    //////////////
+    
     switch (team) {
         case 1:
             one.base->set_position(x,y,z);

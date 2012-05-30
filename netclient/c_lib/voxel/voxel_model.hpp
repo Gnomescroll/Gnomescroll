@@ -71,7 +71,7 @@ class Voxel_model
 
         float largest_radius(); // temporary, until real body collision detection
 
-        bool is_completely_destroyed();
+        //bool is_completely_destroyed();
 
         Voxel_model(VoxDat* vox_dat, int id, ObjectType type);
         Voxel_model(VoxDat* vox_dat, int id, ObjectType type, int team);
