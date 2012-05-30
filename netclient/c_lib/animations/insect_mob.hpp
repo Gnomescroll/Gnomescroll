@@ -142,7 +142,9 @@ class InsectMob
 
     inline void draw_legs()
     {
-
+        float x = quadrant_translate_f(current_camera_position.x, this->x);
+        float y = quadrant_translate_f(current_camera_position.y, this->y);
+        float z = this->z;
         //static float t = 0.0;
         //printf("sf\n");
 
@@ -185,6 +187,10 @@ class InsectMob
 
     inline void draw_torso()
     {
+
+        float x = quadrant_translate_f(current_camera_position.x, this->x);
+        float y = quadrant_translate_f(current_camera_position.y, this->y);
+        float z = this->z;
 
         const float z0 = 0;
         const float z1 = 0.3;

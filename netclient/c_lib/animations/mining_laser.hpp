@@ -130,7 +130,7 @@ class MiningLaser
         ty_min = (float)(texture_index/4)* (1.0/4.0);
         ty_max = ty_min + (1.0/4.0);
 
-        Vec3 position = verlet.position;
+        Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
         position.z += _h;
 
         Vec3 p = vec3_sub(position, vec3_add(right, up));
