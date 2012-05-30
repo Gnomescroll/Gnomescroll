@@ -261,14 +261,16 @@ void server_tick_mob_robot_box(Object* object)
         destination.z = (float)t_map::get_highest_open_block(destination.x,destination.y);
         if (destination.z < 0) destination.z = 0;
 
-        motion->destination = destination;
+        destination = quadrant_translate_position(camera_position, destination);
 
+        Vec3 direction = vec3_sub(destination, position);
+        float len = vec3_length(direction);
+
+        motion->ticks_to_destination = (int)ceil(len/motion->speed);
+        motion->destination = translate_position(destination);
         motion->en_route = true;
         motion->at_destination = false;
         
-        Vec3 direction = vec3_sub(motion->destination, position);
-        float len = vec3_length(direction);
-        motion->ticks_to_destination = (int)ceil(len/motion->speed);
         if (len)
         {
             direction.z = 0;
@@ -325,15 +327,16 @@ void client_tick_mob_robot_box(Object* object)
     if (weapon->locked_on_target)
     {   // target locked
         if (weapon->target_type != OBJECT_AGENT) return;    // TODO -- more objects
-        Agent_state* agent = ClientState::agent_list->get(weapon->target_id);
-        if (agent == NULL) return;
-        Vec3 agent_position = agent->get_center();
 
         using Components::VoxelModelComponent;
         VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component(COMPONENT_VOXEL_MODEL);
+        Vec3 position = vox->get_center();
+
+        Agent_state* agent = ClientState::agent_list->get(weapon->target_id);
+        if (agent == NULL) return;
+        Vec3 agent_position = quadrant_translate_position(position, agent->get_center());
         
         // face target
-        Vec3 position = vox->get_center();
         Vec3 direction = vec3_sub(agent_position, position);
         if (vec3_length(direction))
         {

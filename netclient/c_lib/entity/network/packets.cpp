@@ -269,6 +269,7 @@ inline void object_shot_object_StoC::handle()
     Voxel_volume* vv = a->vox->get_part(this->target_part);
     if (vv == NULL) return;
     Vec3 dest = vv->get_center();
+    dest = quadrant_translate_position(position, dest);
 
     // laser animation
     const float hitscan_effect_speed = 200.0f;
@@ -312,6 +313,7 @@ inline void object_shot_terrain_StoC::handle()
     if (dims != NULL) position.z += dims->get_camera_height();
 
     Vec3 dest = vec3_init(this->x, this->y, this->z);
+    dest = quadrant_translate_position(position, dest);
     Vec3 v = vec3_sub(dest, position); 
     normalize_vector(&v);
     const float hitscan_effect_speed = 200.0f;
@@ -389,6 +391,7 @@ inline void object_choose_destination_StoC::handle()
     if (physics == NULL) return;
     
     motion->destination = vec3_init(this->x, this->y, this->z);
+    motion->destination = quadrant_translate_position(physics->get_position(), motion->destination);
     motion->ticks_to_destination = this->ticks;
 
     // set momentum from destination :: TODO MOVE
