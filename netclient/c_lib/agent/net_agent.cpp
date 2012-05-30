@@ -1024,7 +1024,7 @@ inline void agent_set_block_CtoS::handle()
     if (!collides)
     {
         Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
-        _set_broadcast(x,y,z, val);
+        t_map::broadcast_set_block(x,y,z, val);
         agent_placed_block_StoC msg;
         msg.id = a->id;
         msg.broadcast();
@@ -1067,7 +1067,7 @@ inline void admin_set_block_CtoS::handle()
 
     if (!collides)
     {
-        _set_broadcast(x,y,z, val);
+        t_map::broadcast_set_block(x,y,z, val);
         agent_placed_block_StoC msg;
         msg.id = a->id;
         msg.broadcast();

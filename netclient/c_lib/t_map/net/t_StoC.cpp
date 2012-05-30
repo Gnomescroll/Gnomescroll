@@ -143,12 +143,27 @@ void map_element_update::handle()
 }
 
 
-void block_StoC::handle() 
+void block_set_StoC::handle() 
 {
     //_set(x,y,z,val);
 
     struct MAP_ELEMENT e = {{{0}}};
-    e.block = val;
+    e.block = block;
+    //e.palette = 1;
+
+    main_map->set_element(x,y,z, e);
+    //_set(x,y,z,val);
+
+    struct MAP_ELEMENT e2 = main_map->get_element(x,y,z);
+    printf("block set! palette= %i \n", e2.block);
+}
+
+void block_set_palette_StoC::handle()
+{
+    //_set(x,y,z,val);
+
+    struct MAP_ELEMENT e = {{{0}}};
+    e.block = block;
     //e.palette = 1;
 
     main_map->set_element(x,y,z, e);
@@ -160,7 +175,7 @@ void block_StoC::handle()
 
 void block_action_StoC::handle()
 {
-    if (val == 0) 
+    if (block == 0) 
     {
         int cube_id = _get(x,y,z);
         Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id, (TerrainModificationAction)action);
@@ -169,7 +184,7 @@ void block_action_StoC::handle()
     else
         Sound::block_set(x+0.5f,y+0.5f,z+0.5f,0,0,0);
 
-    main_map->set_block(x,y,z, val);
+    main_map->set_block(x,y,z, block);
 }
 
 void map_metadata_StoC::handle() 
@@ -213,7 +228,9 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_size) {}
 void clear_alias_StoC::handle() {}
 void set_map_alias_StoC::handle() {}
 
-void block_StoC::handle() {}
+void block_set_StoC::handle() {}
+void block_set_palette_StoC::handle() {}
+
 void block_action_StoC::handle() {}
 void map_metadata_StoC::handle() {}
 

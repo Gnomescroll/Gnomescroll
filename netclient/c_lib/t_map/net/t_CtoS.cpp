@@ -12,7 +12,7 @@ inline void block_CtoS::handle() {}
 #if DC_SERVER
 inline void block_CtoS::handle() 
 {
-    _set_broadcast(x,y,z, val);
+    broadcast_set_block(x,y,z, val);
 }
 #endif
 

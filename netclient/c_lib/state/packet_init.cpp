@@ -79,7 +79,9 @@ void RegisterMessages()
 
     // block value change
     t_map::block_CtoS::register_server_packet();
-    t_map::block_StoC::register_client_packet();
+    t_map::block_set_StoC::register_client_packet();
+    t_map::block_set_palette_StoC::register_client_packet();
+
     t_map::block_action_StoC::register_client_packet();
     t_map::map_metadata_StoC::register_client_packet();
     

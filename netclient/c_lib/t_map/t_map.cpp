@@ -126,7 +126,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
     if (res != 0) return;
 
-    //NOTE: should only send to clients who are subscribed to map chunk
+    //NOTE: only sends to clients who are subscribed to map chunk
 
     map_history->send_block_action(x,y,z,res,action);
 
@@ -134,22 +134,27 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
         handle_block_drop(x,y,z, block_type);
 }
 
-void broadcast_set_block_action(int x, int y, int z, int res, int action)
+//not used by anything
+void broadcast_set_block_action(int x, int y, int z, int block, int action)
 {
-    map_history->send_block_action(x,y,z,res,action);
+    map_history->send_block_action(x,y,z,block,action);
 }
 
 void broadcast_set_block(int x, int y, int z, int block)
 {
-    main_map->set(x,y,z,block);
-    
+    main_map->set_block(x,y,z,block);
+    map_history->send_set_block(x,y,z,block);
 }
 
 void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
 {
+    struct MAP_ELEMENT e = {{{0}}};
+    e.block = block;
+    e.palette = palette;
 
+    main_map->set_element(x,y,z,e);
+    map_history->send_set_block_palette(x,y,z,block,palette);
 }
-
 
 #endif
 
@@ -272,26 +277,6 @@ void _set(int x, int y, int z, int value)
     t_map::main_map->set_block(x,y,z,value);
 }
 
-/*
-    WTF
-*/
-#if DC_SERVER
-void _set_broadcast(int x, int y, int z, int value) 
-{    
-    t_map::block_StoC msg;
-    int i = _get(x,y,z);
-    if (i != value) 
-    {
-        t_map::set(x,y,z, value);
-        msg.x = x;
-        msg.y = y;
-        msg.z = z;
-        msg.val = value;
-        msg.broadcast();
-    }
-}
-
-#endif
 
 /*
 void send_map_metadata(int client_id)

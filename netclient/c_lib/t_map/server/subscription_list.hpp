@@ -62,7 +62,7 @@ class MAP_CHUNK_SUBSCRIPTION
         chunk_aliases[i] = chunk_aliases[subscriber_num];
     }
 
-    void send_block_action(int x, int y, int z, int value, int action)
+    void send_block_action(int x, int y, int z, int block, int action)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         
@@ -70,7 +70,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.val = value;
+        msg.block = block;
         msg.action = action;
 
         for(int i=0; i < subscriber_num; i++)
@@ -83,12 +83,11 @@ class MAP_CHUNK_SUBSCRIPTION
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         
-        block_action_StoC msg;
+        block_set_StoC msg;
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.val = value;
-        msg.action = action;
+        msg.block = block;
 
         for(int i=0; i < subscriber_num; i++)
         {
@@ -100,12 +99,12 @@ class MAP_CHUNK_SUBSCRIPTION
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         
-        block_action_StoC msg;
+        block_set_palette_StoC msg;
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.val = value;
-        msg.action = action;
+        msg.block = block;
+        msg.palette = palette;
 
         for(int i=0; i < subscriber_num; i++)
         {

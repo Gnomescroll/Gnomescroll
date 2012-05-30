@@ -52,9 +52,9 @@ int apply_damage(int x, int y, int z, int dmg);
 #if DC_SERVER
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
 
-void broadcast_set_block_action();
-void broadcast_set_block();
-void broadcast_set_block_palette();
+void broadcast_set_block_action(int x, int y, int z, int block, int action);
+void broadcast_set_block(int x, int y, int z, int block);
+void broadcast_set_block_palette(int x, int y, int z, int block, int palette);
 
 #endif
 
@@ -69,18 +69,10 @@ inline int get_lowest_solid_block(int x, int y);
 int _get(int x, int y, int z);
 void _set(int x, int y, int z, int value);
 
-/*
-    Deprecate eventually
-*/
 #if DC_SERVER
-void _set_broadcast(int x, int y, int z, int value);
-/*
-    Deprecated
-*/
 
 void send_map_metadata(int client_id);  //Deprecate
 #endif
-//void send_map_metadata();   //Deprecate
 void set_map_size(int x, int y, int z); //Deprecate
 
 
