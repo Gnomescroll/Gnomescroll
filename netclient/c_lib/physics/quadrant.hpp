@@ -84,8 +84,8 @@ int quadrant_distance2i(int cx, int px)
 //camera x and position x
 int quadrant_translate_f(float cx, float px)
 {
-    ASSERT_BOXED_POINT(cx);
-    ASSERT_BOXED_POINT(px);
+    //ASSERT_BOXED_POINT(cx);
+    //ASSERT_BOXED_POINT(px);
 
     if(cx < QUADRANT_DIVIDEf)
     {
@@ -144,13 +144,11 @@ struct Vec3 translate_position(struct Vec3 pos)
 
 struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos2)
 {
-    ASSERT_BOXED_POSITION(pos1);
-    ASSERT_BOXED_POSITION(pos2);
+    //ASSERT_BOXED_POSITION(pos1);
+    //ASSERT_BOXED_POSITION(pos2);
     
     pos2.x = quadrant_translate_f(pos1.x, pos2.x);
     pos2.y = quadrant_translate_f(pos1.y, pos2.y);
-
-    ASSERT_BOXED_POSITION(pos2);
 
     return pos2;
 }

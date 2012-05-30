@@ -995,6 +995,9 @@ inline void agent_set_block_CtoS::handle()
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 
+    x = translate_point(x);
+    y = translate_point(y);
+
     // dont set on existing block
     if (t_map::get(x,y,z) != 0) return;
 
@@ -1041,7 +1044,10 @@ inline void admin_set_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    
+
+    x = translate_point(x);
+    y = translate_point(y);
+
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 

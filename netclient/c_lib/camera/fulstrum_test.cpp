@@ -53,6 +53,9 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
 
 bool sphere_fulstrum_test(float x, float y, float  z, float r)
 {
+    x = quadrant_translate_f(fulstrum.c.x, x);
+    y = quadrant_translate_f(fulstrum.c.y, y);
+    
     if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
         return false;
     
@@ -93,6 +96,9 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 
 bool point_fulstrum_test(float x, float y, float  z)
 {
+    x = quadrant_translate_f(fulstrum.c.x, x);
+    y = quadrant_translate_f(fulstrum.c.y, y);
+
     //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
     //    return false;
 
@@ -115,6 +121,8 @@ bool point_fulstrum_test(float x, float y, float  z)
 
 inline bool point_fulstrum_test2(float x, float y, float  z)
 {
+    // DOES NOT TRANSLATE POINT
+
     //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
     //    return false;
 
@@ -137,6 +145,9 @@ inline bool point_fulstrum_test2(float x, float y, float  z)
 
 bool xy_circle_fulstrum_test(float x, float y, float r)
 {
+    x = quadrant_translate_f(fulstrum.c.x, x);
+    y = quadrant_translate_f(fulstrum.c.y, y);
+
     //float dz = x*fulstrum.f.x + y*fulstrum.f.y;
     //if( dz + r < 0 || dz > fulstrum.zfar - r ) return false;
 
@@ -159,6 +170,9 @@ bool xy_circle_fulstrum_test(float x, float y, float r)
 
 bool xy_point_fulstrum_test(float x, float y)
 {
+    x = quadrant_translate_f(fulstrum.c.x, x);
+    y = quadrant_translate_f(fulstrum.c.y, y);
+
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
 

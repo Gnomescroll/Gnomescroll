@@ -88,11 +88,14 @@ class Terrain_map
 
     inline int get_block(int x, int y, int z) __attribute((always_inline));
     inline void set_block(int x, int y, int z, int value) __attribute((always_inline));
+
+    inline void set_palette(int x, int y, int z, int value) __attribute((always_inline));
 #else
     struct MAP_ELEMENT get_element(int x, int y, int z);
     void set_element(int x, int y, int z, struct MAP_ELEMENT element);
     int get_block(int x, int y, int z);
     void set_block(int x, int y, int z, int value);
+    void set_palette(int x, int y, int z, int value);
 
 #endif
 

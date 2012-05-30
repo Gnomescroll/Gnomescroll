@@ -11,10 +11,114 @@
 #include <physics/common.hpp>
 
 #include <physics/vec3.hpp>
+#include <physics/quadrant.hpp>
 
-static inline int collision_check(int x, int y, int z) {
+static inline int collision_check(int x, int y, int z)
+{
     return isSolid(x,y,z);
 }
+
+//// split a ray into line segments that wrap the map
+//// return number of line segments
+//// max value is 3
+
+//// alpha coefficient to get point along vector, with a fixed axis point
+//static float segment_alpha(float a, float b, float target)
+//{
+    //return (target - a) / (b - a);
+//}
+
+//int partition_ray(struct Vec3 a, struct Vec3 b, struct Vec3 o[6])
+//{
+    //int segments = 1;
+
+    //o[0] = a;
+
+    //// x or y cross axis
+    //bool x_crosses = (a.x < 0 || a.x >= map_dim.x)
+    //bool y_crosses = (a.y < 0 || a.y >= map_dim.y)
+
+    //// calculate slope
+    //float m = (b.y - a.y) / (b.x - a.x);
+    //float len = vec3_length(a,b);
+
+
+    //if (x_crosses && y_crosses)
+    //{
+        //o[5] = quadrant_translate_position(b);
+        //Vec3 seg;
+        //segments = 3;
+        //// get which axis is closer, using distance from center of map
+        //bool x_closer = (abs(a.x - (map_dim.x/2)) > abs(a.y - (map_dim.y/2)));
+        //if (x_closer)
+        //{
+            //float x = map_dim.x - 0.01f;
+            //if (a.x < 0) x = 0.0f;
+            //float alpha = segment_alpha(a.x, b.x, x);
+            //seg = vec3_init(x, a.y, a.z);
+            //seg = vec3_scalar_mult(alpha);
+        //}
+        //else
+        //{
+            //float y = map_dim.y - 0.01f;
+            //if (a.y < 0) y = 0.0f;
+            //float alpha = segment_alpha(a.y, b.y, y);
+            //seg = vec3_init(a.x, y, a.z);
+            //seg = vec3_scalar_mult(alpha);
+        //}
+        //o[1] = seg;
+        //o[2] = quadrant_translate_position(seg);
+        //// now split starting from the 2nd segment
+        //// the axis that will be crossed is the axis that wasnt crossed in the first pass
+        //if (x_closer)
+        //{
+            //float y = map_dim.y;
+            //if (o[1].y < 0) y = 0.0f;
+            //float alpha = segment_alpha(o[1].y, b.y, y);
+            //seg = vec3_init(o[1].x, y, o[1].z);
+            //seg = vec3_scalar_mult(alpha);
+        //}
+        //else
+        //{
+            //float x = map_dim.x - 0.01f;
+            //if (o[1].x < 0) x = 0.0f;
+            //float alpha = segment_alpha(o[1].x, b.x, x);
+            //seg = vec3_init(x, o[1].y, o[1].z);
+            //seg = vec3_scalar_mult(alpha);
+        //}
+        //o[3] = quadrant_translate_position(seg);
+        //o[4] = quadrant_translate_position(seg);
+    //}
+    //else
+    //if (x_crosses)
+    //{
+        //segments = 2;
+        //float x = map_dim.x - 0.01f;
+        //if (a.x < 0) x = 0.0f;
+        //float alpha = segment_alpha(a.x, b.x, x);
+        //Vec3 seg = vec3_init(x, a.y, a.z);
+        //seg = vec3_scalar_mult(alpha);
+        //o[1] = seg;
+        //o[2] = quadrant_translate_position(seg);
+        //o[3] = quadrant_translate_position(b);
+    //}
+    //else
+    //if (y_crosses)
+    //{
+        //segments = 2;
+        //float y = map_dim.y - 0.01f;
+        //if (a.y < 0) y = 0.0f;
+        //float alpha = segment_alpha(a.y, b.y, y);
+        //Vec3 seg = vec3_init(a.x, y, a.z);
+        //seg = vec3_scalar_mult(alpha);
+        //o[1] = seg;
+        //o[2] = quadrant_translate_position(seg);
+        //o[3] = quadrant_translate_position(b);
+    //}
+
+    //GS_ASSERT(segments >= 1 && segments <= 3);
+    //return segments;
+//}
 
 // called only by ray_cast_simple interfaces
 static bool _ray_cast_simple(float x, float y, float z, float a, float b, float c, float len)
@@ -172,7 +276,8 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 }
 #endif
 
-void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out) {
+void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out)
+{
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x,y,z;
@@ -727,7 +832,8 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
 
 /* Formerly raycast_utils.py */
 static int ray_cast_block[3];
-int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high) {
+int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
+{
 
     const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
     float xy_inc = sqrt(vx*vx + vy*vy);
@@ -739,35 +845,41 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
     int x_, y_, z_;
     int x__, y__, z__;
 
-    if (vz >= 0.0f) {
+    if (vz >= 0.0f)
+    {
         z_max = z_high;
         z_inc = vz;
-    } else {
+    }
+    else
+    {
         z_max = z_low;
         z_inc = -1.0f*vz;
     }
 
-    while (!(n*xy_inc > max_distance || n*z_inc > z_max)) {
+    while (!(n*xy_inc > max_distance || n*z_inc > z_max))
+    {
         n += inc;
 
-        x_ = (int)(x+vx*n);
-        y_ = (int)(y+vy*n);
+        x_ = (int)translate_point(x+vx*n);
+        y_ = (int)translate_point(y+vy*n);
         z_ = (int)(z+vz*n);
 
-        x__ = (int)(x+ vx*(n+inc));
-        y__ = (int)(y+ vy*(n+inc));
+        x__ = (int)translate_point(x+ vx*(n+inc));
+        y__ = (int)translate_point(y+ vy*(n+inc));
         z__ = (int)(z+ vz*(n+inc));
 
-        if (x_ != x__ || y_ != y__ || z_ != z__) {
-            if (collision_check(x__, y__, z__)) {
-                if (z_ >= z-z_low and z_ <= z+z_high) {
-                    ray_cast_block[0] = x_;
-                    ray_cast_block[1] = y_;
+        if (x_ != x__ || y_ != y__ || z_ != z__)
+        {
+            if (collision_check(x__, y__, z__))
+            {
+                if (z_ >= z-z_low and z_ <= z+z_high)
+                {
+                    ray_cast_block[0] = translate_point(x_);
+                    ray_cast_block[1] = translate_point(y_);
                     ray_cast_block[2] = z_;
                     return ray_cast_block;
-                } else {
-                    break;
                 }
+                break;
             }
         }
     }
@@ -797,19 +909,19 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
     while (!(n*xy_inc > max_distance || n*z_inc > z_max)) {
         n += inc;
 
-        x_ = (int)(x+vx*n);
-        y_ = (int)(y+vy*n);
+        x_ = (int)translate_point(x+vx*n);
+        y_ = (int)translate_point(y+vy*n);
         z_ = (int)(z+vz*n);
 
-        x__ = (int)(x+ vx*(n+inc));
-        y__ = (int)(y+ vy*(n+inc));
+        x__ = (int)translate_point(x+ vx*(n+inc));
+        y__ = (int)translate_point(y+ vy*(n+inc));
         z__ = (int)(z+ vz*(n+inc));
 
         if (x_ != x__ || y_ != y__ || z_ != z__) {
             if (collision_check(x__, y__, z__)) {
-                ray_cast_block[0] = x__;
-                ray_cast_block[1] = y__;
-                ray_cast_block[2] = z__;
+                ray_cast_block[0] = translate_point(x__);
+                ray_cast_block[1] = translate_point(y__);
+                ray_cast_block[2] = translate_point(z__);
                 return ray_cast_block;
             }
         }
