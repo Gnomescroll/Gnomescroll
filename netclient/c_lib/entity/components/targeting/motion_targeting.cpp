@@ -22,19 +22,11 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
     );
     if (target == NULL)
     {
-        //if  (this->target_type != OBJECT_NONE)
-        //{
-            //this->en_route = false;
-            //this->at_destination = false;
-        //}
         this->target_type = OBJECT_NONE;
         return;
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    //this->destination = target->get_position();
-    //this->en_route = true;
-    //this->at_destination = false;
 }
 
 void MotionTargetingComponent::lock_target(Vec3 camera_position)
@@ -43,19 +35,11 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
-        //if  (this->target_type != OBJECT_NONE)
-        //{
-            //this->en_route = false;
-            //this->at_destination = false;
-        //}
         this->target_type = OBJECT_NONE;
         return;
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    //this->destination = target->get_position();
-    //this->en_route = true;
-    //this->at_destination = false;
 }
 
 void MotionTargetingComponent::choose_destination()
@@ -122,12 +106,6 @@ bool MotionTargetingComponent::move_on_surface()
 
     // set en_route if we are in motion
     this->en_route = moved;
-
-    //if (vec3_distance_squared(new_position, this->destination) < 1.0f)
-    //{
-        //this->en_route = false;
-        //this->at_destination = true;
-    //}
     
     return moved;
 }
