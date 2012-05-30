@@ -366,6 +366,7 @@ void create_container_block_CtoS::handle()
     t_map::set_palette(x,y,z,orientation);
 
     printf("set palette %d\n", orientation);
+    // TODO call set broadcast
 
     agent_placed_block_StoC msg;
     msg.id = a->id;
