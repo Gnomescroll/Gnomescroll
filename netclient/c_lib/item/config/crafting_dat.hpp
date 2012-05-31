@@ -95,7 +95,6 @@ void load_crafting_dat()
     set_reagent("copper_bar", 1);
     set_reagent("quartz_crystal", 1);
     end_recipe();
-
 }
 
 }   // Item

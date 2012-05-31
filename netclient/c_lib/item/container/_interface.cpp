@@ -599,7 +599,7 @@ void digest_nanite_food()
     }
 }
 
-void purchase_item_from_nanite(int agent_id, int slot)
+void purchase_item_from_nanite(int agent_id, int shopping_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
@@ -614,13 +614,9 @@ void purchase_item_from_nanite(int agent_id, int slot)
     ItemContainerNanite* nanite = (ItemContainerNanite*)get_container(agent_nanite_list[agent_id]);
     if (nanite == NULL) return;
 
-    // transform plain slot to a shopping slot (as used by dat)
-    slot = nanite->get_shopping_slot(slot);
-    if (slot == NULL_SLOT) return;
-    
     // get the store item
-    int xslot = slot % nanite->xdim;
-    int yslot = slot / nanite->xdim;
+    int xslot = shopping_slot % nanite->xdim;
+    int yslot = shopping_slot / nanite->xdim;
     int item_type, cost;
     Item::get_nanite_store_item(nanite->level, xslot, yslot, &item_type, &cost);
     GS_ASSERT(cost >= 0);

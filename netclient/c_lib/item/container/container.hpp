@@ -180,13 +180,6 @@ class ItemContainerNanite: public ItemContainerInterface
         void digest();
         #endif
 
-        // transforms plain slot to a 0-indexed shopping slot, that the dat uses
-        int get_shopping_slot(int slot)
-        {
-            if (slot < slot_max) return NULL_SLOT;
-            return slot - 2;
-        }
-
         ItemID get_coins()
         {
             return this->get_item(1);

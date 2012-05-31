@@ -13,8 +13,6 @@ class CraftingUI : public UIElement
     public:
           
     static const int cell_size = 37;
-    static const int xdim = 6;    // grid cell size
-    static const int ydim = 1;
 
     static const int input_xdim = 4;
     static const int input_ydim = 1;
@@ -26,9 +24,16 @@ class CraftingUI : public UIElement
     static const int output_slots = output_xdim * output_ydim;
     static const int input_output_gap = 1;
 
-    // size of texture/render area
-    static const float render_width = cell_size * 6;
-    static const float render_height = cell_size * 1;
+    static const int xdim = input_xdim + input_output_gap + output_xdim;    // grid cell size
+    static const int ydim = input_ydim + output_ydim;
+
+    // size of render area (texture + clickable area (will render highlights there still)
+    static const float render_width = cell_size * (input_xdim + input_output_gap + output_xdim);
+    static const float render_height = cell_size * (input_ydim + output_ydim);
+
+    // texture area
+    static const float texture_width = cell_size * 6;
+    static const float texture_height = cell_size;
 
     static const float slot_size = 32;
     static const float cell_offset_x = 3;
@@ -62,6 +67,7 @@ class CraftingUI : public UIElement
         return (this->get_slot_at(px,py) != NULL_SLOT);
     }
 
+    bool in_craft_input_region(int px, int py);
     bool in_craft_output_region(int px, int py);
 
     void init()
@@ -93,7 +99,7 @@ class CraftingUI : public UIElement
     }
 
     CraftingUI()
-    : stacks(NULL)
+    : stacks(NULL), output_stacks(NULL)
     {}
 
     ~CraftingUI()
@@ -122,17 +128,59 @@ int CraftingUI::get_grid_at(int px, int py)
 int CraftingUI::get_slot_at(int px, int py)
 {  
     int slot = this->get_grid_at(px,py);
-    // filter out non-slots
-    if (slot >= input_slots + input_output_gap + output_slots) return NULL_SLOT;
-    if (slot >= input_slots && slot < input_slots + input_output_gap) return NULL_SLOT;
-    // transform to output region slot
-    if (slot >= input_slots + input_output_gap) slot -= input_slots + input_output_gap;
+    if (slot == NULL_SLOT) return NULL_SLOT;
+    int xslot = slot % xdim;
+    int yslot = slot / xdim;
+
+    // asserts
+    int xslots_max = input_xdim + input_output_gap + output_ydim;
+    GS_ASSERT(xslot < xslots_max);
+    int yslots_max = (input_ydim > output_ydim) ? input_ydim : output_ydim;
+    GS_ASSERT(yslot < yslots_max);
+
+    // detect blank regions
+    
+    // in gap between input & output
+    if (xslot >= input_xdim && xslot < input_xdim + input_output_gap) return NULL_SLOT;
+
+    // in unused input region
+    if (xslot < input_xdim && yslot >= input_ydim) return NULL_SLOT;
+
+    // in unused output region
+    if (xslot >= input_xdim + input_output_gap
+     && xslot < input_xdim + input_output_gap + output_xdim
+     && yslot >= output_ydim)
+        return NULL_SLOT;
+
+    if (this->in_craft_input_region(px,py)) slot = yslot * input_xdim + xslot;
+    else
+    if (this->in_craft_output_region(px,py))
+    {
+        xslot -= input_xdim + input_output_gap;
+        slot = yslot * output_xdim + xslot;
+    }
+    else GS_ASSERT(false);  // it shouldnt be anywhere else
     return slot;
+}
+
+bool CraftingUI::in_craft_input_region(int px, int py)
+{
+    int slot = this->get_grid_at(px,py);
+    if (slot == NULL_SLOT) return false;
+    int xslot = slot % xdim;
+    int yslot = slot / xdim;
+    return (xslot < input_xdim && yslot < input_ydim);
 }
 
 bool CraftingUI::in_craft_output_region(int px, int py)
 {
-    return (this->get_grid_at(px,py) >= input_slots + input_output_gap);
+    int slot = this->get_grid_at(px,py);
+    if (slot == NULL_SLOT) return false;
+    int xslot = slot % xdim;
+    int yslot = slot / xdim;
+    return (xslot >= input_xdim + input_output_gap
+          && xslot < input_xdim + input_output_gap + output_xdim
+          && yslot < output_ydim);
 }
 
 void CraftingUI::draw()
@@ -147,16 +195,16 @@ void CraftingUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    float w = render_width;
-    float h = render_height;
+    float w = texture_width;
+    float h = texture_height;
 
     float x = xoff;
     float y = yoff;
 
     float tx_min = 0.0;
     float ty_min = 0.0;
-    float tx_max = render_width/512.0;
-    float ty_max = render_height/512.0;
+    float tx_max = texture_width/512.0;
+    float ty_max = texture_height/512.0;
 
     //draw background
     glBegin(GL_QUADS);
@@ -180,12 +228,10 @@ void CraftingUI::draw()
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
-    int hover_slot = this->get_slot_at(mouse_x, mouse_y);
+    int hover_slot = this->get_grid_at(mouse_x, mouse_y);
     
-    if (hover_slot != NULL_SLOT)
+    if (hover_slot != NULL_SLOT && (this->in_craft_input_region(mouse_x,mouse_y) || this->in_craft_output_region(mouse_x,mouse_y)))
     {
-        // shift to output region
-        if (this->in_craft_output_region(mouse_x, mouse_y)) hover_slot += input_slots + input_output_gap;
         int w = slot_size;
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;

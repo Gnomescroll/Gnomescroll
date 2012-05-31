@@ -73,7 +73,7 @@ void agent_died(int agent_id);
 void agent_quit(int agent_id);
 
 void digest_nanite_food();
-void purchase_item_from_nanite(int agent_id, int slot);
+void purchase_item_from_nanite(int agent_id, int shopping_slot);
 
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
 bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id);
