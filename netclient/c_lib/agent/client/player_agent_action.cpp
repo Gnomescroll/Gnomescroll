@@ -86,8 +86,8 @@ void PlayerAgent_action::hitscan_laser()
             obj_msg.send();
 
             // subtract the collision point from the origin to get the new vector for animation
-            look.x = collision_point[0] - origin[0];
-            look.y = collision_point[1] - origin[1];
+            look.x = quadrant_translate_f(origin[0], collision_point[0]) - origin[0];
+            look.y = quadrant_translate_f(origin[1], collision_point[1]) - origin[1];
             look.z = collision_point[2] - origin[2];
             normalize_vector(&look);
 
@@ -124,8 +124,8 @@ void PlayerAgent_action::hitscan_laser()
             // add agent position, now we have collision point
             look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
-            collision_point[0] = look.x;
-            collision_point[1] = look.y;
+            collision_point[0] = quadrant_translate_f(current_camera_position.x, look.x);
+            collision_point[1] = quadrant_translate_f(current_camera_position.y, look.y);
             collision_point[2] = look.z;
             // subtract translated animation origin from collision point (vec) to get new vector
             look.x -= origin[0];
@@ -278,8 +278,8 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             // add agent position, now we have collision point
             look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
-            collision_point[0] = look.x;
-            collision_point[1] = look.y;
+            collision_point[0] = quadrant_translate_f(current_camera_position.x, look.x);
+            collision_point[1] = quadrant_translate_f(current_camera_position.y, look.y);
             collision_point[2] = look.z;
             
             // subtract translated animation origin from collision point (look) to get new vector
@@ -343,7 +343,6 @@ void PlayerAgent_action::set_block(ItemID placer_id)
         msg.y = b[1];
         msg.z = b[2];
         msg.placer_id = placer_id;
-        printf("orientation %d\n", orientation);
         msg.orientation = orientation;
         msg.send();
     }

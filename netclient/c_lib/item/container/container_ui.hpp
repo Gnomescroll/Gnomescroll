@@ -183,12 +183,12 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
 
         int get_coin_type()
         {
-            return this->get_slot_type(this->slot_max-1);
+            return this->get_slot_type(1);
         }
         
         int get_coin_stack()
         {
-            return this->get_slot_stack(this->slot_max-1);
+            return this->get_slot_stack(1);
         }
 
         bool can_insert_item(int slot, int item_type)
@@ -198,7 +198,7 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
             {   // check against nanite's food
                 return Item::get_nanite_edibility(item_type);
             }
-            else if (slot == this->slot_max-1)
+            else if (slot == 1)
             {   // nanite coins only
                 if (item_type == Item::get_item_type((char*)"nanite_coin")) return true;
                 return false;
@@ -213,9 +213,9 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
             && (Item::get_max_stack_size(this->slot_type[0]) - this->slot_stack[0]) >= stack_size)
                 return 0;
             // check coin slot
-            if (this->slot_type[this->slot_max-1] == item_type
-            && (Item::get_max_stack_size(this->slot_type[this->slot_max-1]) - this->slot_stack[this->slot_max-1]) >= stack_size)
-                return this->slot_max-1;
+            if (this->slot_type[1] == item_type
+            && (Item::get_max_stack_size(this->slot_type[1]) - this->slot_stack[1]) >= stack_size)
+                return 1;
             return NULL_SLOT;
         }
 
@@ -231,7 +231,7 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
             this->type = type;
             this->xdim = xdim;
             this->ydim = ydim;
-            this->slot_max = xdim*ydim + 1; // +1 for the food slot
+            this->slot_max = xdim*ydim;
             GS_ASSERT(this->slot_max < NULL_SLOT);
             this->slot_type = new int[this->slot_max];
             this->slot_stack = new int[this->slot_max];

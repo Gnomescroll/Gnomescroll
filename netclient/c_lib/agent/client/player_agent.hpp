@@ -8,7 +8,8 @@ dont_include_this_file_in_server
 #include <agent/agent_status.hpp>
 #include <agent/client/player_agent_action.hpp>
 
-enum active_camera_states {
+enum active_camera_states
+{
     net_agent = 0,
     client_side_prediction_interpolated,
     client_side_prediction,
@@ -16,7 +17,8 @@ enum active_camera_states {
     CameraStatesEnd
 };
 
-class PlayerAgent_state {
+class PlayerAgent_state
+{
     private:
         uint16_t sanitize_control_state(uint16_t cs);
         uint16_t pack_control_state(

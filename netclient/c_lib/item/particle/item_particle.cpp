@@ -35,7 +35,7 @@ void init_item_particle()
     if (s->format->Rmask == 0x000000ff)
         format = GL_RGBA;
  
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
     
     glDisable(GL_TEXTURE_2D);
 }
@@ -67,7 +67,7 @@ void ItemParticle::draw()
     ty_min = (float)(this->sprite_index/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    Vec3 position = verlet.position;
+    Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
     Vec3 p = vec3_sub(position, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
     glVertex3f(p.x, p.y, p.z+h);

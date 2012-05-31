@@ -66,6 +66,14 @@ void HitscanLaserEffect::draw1(float delta, Vec3 camera)
 {
     const float width = 0.5;
 
+    float x = quadrant_translate_f(camera.x, this->x);
+    float y = quadrant_translate_f(camera.y, this->y);
+    float z = this->z;
+    
+    float fx = quadrant_translate_f(camera.x, this->fx);
+    float fy = quadrant_translate_f(camera.y, this->fy);
+    float fz = this->fz;
+
     Vec3 r = vec3_init(x-fx, y-fy, z-fz);
     normalize_vector(&r);
 
@@ -114,9 +122,17 @@ void HitscanLaserEffect::draw2(float delta, Vec3 camera)
 {
     const float width = 0.5;
     const float height = 12.0;
+
+    float x = quadrant_translate_f(camera.x, this->x);
+    float y = quadrant_translate_f(camera.y, this->y);
+    float z = this->z;
+    
+    float fx = quadrant_translate_f(camera.x, this->fx);
+    float fy = quadrant_translate_f(camera.y, this->fy);
+    float fz = this->fz;
+
     Vec3 r = vec3_init(fx-x, fy-y, fz-z);
     normalize_vector( &r );
-
 
     float ratio = ((float) (hitscan_lader_ttl - ttl))/30.0;
     if(ratio > 1.0) ratio = 1.0;

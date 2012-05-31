@@ -240,20 +240,6 @@ inline int get_lowest_solid_block(int x, int y)
     return i;
 }
 
-/*
-struct Vec3 translate_position(struct Vec3 pos)
-{
-    if (pos.x >= map_dim.x) pos.x -= map_dim.x;
-    else
-    if (pos.x < 0) pos.x += map_dim.x;
-    
-    if (pos.y >= map_dim.y) pos.y -= map_dim.y;
-    else
-    if (pos.y < 0) pos.y += map_dim.y;
-    return pos;
-}
-*/
-
 }   // t_map
  
 

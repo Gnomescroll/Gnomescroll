@@ -2,8 +2,8 @@
 
 void Flag::set_position(float x, float y, float z)
 {
-    this->x = x;
-    this->y = y;
+    this->x = translate_point(x);
+    this->y = translate_point(y);
     this->z = z;
     this->vox->update(x,y,z, this->theta, this->phi);
 }

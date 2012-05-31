@@ -24,11 +24,11 @@ void init()
     Dragon::caves();
     Dragon::test_filters();
 
-    t_map::map_post_processing();
-
     srand(time(NULL));
     
     //t_gen::gen_map();
+
+    t_map::map_post_processing();
 
     int address[4];
     address_from_string(Options::ip_address, address);
@@ -69,22 +69,8 @@ void tick()
 
     Components::rate_limit_component_list->call(); // advance rate limiter ticks
 
-    if(counter % 10 == 0)
-    {
-        ItemParticle::check_item_pickups();
-    }
-
-    if (counter % 6 == 0)
-    {
-        ItemContainer::check_agents_in_container_range();
-    }
-
-    //const int monster_spawners = 10;
-    //const int monsters = 100;
-    //const int slimes = 50;
-    //Monsters::create_monsters_spawners(monster_spawners);
-    //Monsters::spawn_monsters(monsters);
-    //Monsters::populate_slimes(slimes);
+    if (counter % 10 == 0) ItemParticle::check_item_pickups();
+    if (counter % 6  == 0) ItemContainer::check_agents_in_container_range();
 
     ServerState::ctf->check_agent_proximities();
     ServerState::ctf->update();

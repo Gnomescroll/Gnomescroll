@@ -22,7 +22,7 @@ class AgentNaniteUI : public UIElement
 
     //slots are 37 px in size
 
-    static const int xdim = 2;    // slot dimensions
+    static const int xdim = 2;    // slot dimensions for shopping area
     static const int ydim = 4;
 
     static const int level = 0;    //nanite level
@@ -134,7 +134,10 @@ int AgentNaniteUI::get_slot_at(int px, int py)
     int yslot = py / (slot_size + slot_border*2 + slot_border_gap);
     int slot = xslot + yslot * xdim;
 
-    return slot+1;  // offset all by 1, because slot 0 is the food slot
+    if (slot == xdim*ydim-1) slot = 1; // convert last slot (coins) to slot 1
+    else slot += 2; // all shopping slots offset by 2 (food + coins slot)
+    
+    return slot;
 }
 
 //221x147
@@ -186,11 +189,13 @@ void AgentNaniteUI::draw()
     int hover_slot = this->get_slot_at(mouse_x, mouse_y);
     if (hover_slot != 0 && hover_slot != NULL_SLOT)
     {
-        hover_slot -= 1;
+        if (hover_slot == 1) hover_slot = xdim*ydim-1;
+        else hover_slot -= 2;
+
         int w = slot_size;
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;
-        
+
         const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
         const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
 

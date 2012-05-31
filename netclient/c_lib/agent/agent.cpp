@@ -321,16 +321,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.vz = 0.0f;
     }       
 
-
-    as.x = new_x;
-    as.y = new_y;
+    as.x = translate_point(new_x);
+    as.y = translate_point(new_y);
     as.z = new_z;
-
-    Vec3 pos = vec3_init(as.x, as.y, as.z);
-    pos = translate_position(pos);
-    as.x = pos.x;
-    as.y = pos.y;
-    as.z = pos.z;
 
 #if ADVANCED_JUMP
     as.jump_pow = new_jump_pow;
@@ -448,11 +441,9 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
 
 void Agent_state::set_position(float x, float y, float z)
 {
-    Vec3 p = vec3_init(x,y,z);
-    p = translate_position(p);
-    s.x = p.x;
-    s.y = p.y;
-    s.z = p.z;
+    s.x = translate_point(x);
+    s.y = translate_point(y);
+    s.z = z;
 }
 
 void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz)
@@ -465,11 +456,9 @@ void Agent_state::set_state(float  x, float y, float z, float vx, float vy, floa
 
 void Agent_state::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz)
 {
-    Vec3 p = vec3_init(x,y,z);
-    p = translate_position(p);
-    state_snapshot.x = p.x;
-    state_snapshot.y = p.y;
-    state_snapshot.z = p.z;
+    state_snapshot.x = translate_point(x);
+    state_snapshot.y = translate_point(y);
+    state_snapshot.z = z;
     state_snapshot.vx = vx;
     state_snapshot.vy = vy;
     state_snapshot.vz = vz;
@@ -484,10 +473,9 @@ void Agent_state::set_angles(float theta, float phi)
 #if DC_SERVER
 void Agent_state::set_camera_state(float x, float y, float z, float theta, float phi)
 {
-    Vec3 p = translate_position(vec3_init(x,y,z));
-    this->camera.x = p.x;
-    this->camera.y = p.y;
-    this->camera.z = p.z;
+    this->camera.x = translate_point(x);
+    this->camera.y = translate_point(y);
+    this->camera.z = z;
     this->camera.theta = theta;
     this->camera.phi = phi;
     //printf("set camera state: %f %f \n",x ,y);
@@ -952,10 +940,12 @@ void Agent_state::update_model()
 
 bool Agent_state::near_base()
 {
-            bool near_base();   // is within the base's spawn radius
     Base* b = STATE::ctf->get_base(this->status.team);
     if (b == NULL) return false;
-    if (distancef_squared(b->x, b->y, b->z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
+    float x = quadrant_translate_f(this->s.x, b->x);
+    float y = quadrant_translate_f(this->s.y, b->y);
+    float z= b->z;
+    if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
         return true;
     return false;
 }

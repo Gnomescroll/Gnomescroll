@@ -30,7 +30,10 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec
         object = objects[i];
 
         physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        dist = vec3_distance_squared(position, physics->get_position());
+        GS_ASSERT(physics != NULL);
+        if (physics == NULL) continue;
+        Vec3 p = quadrant_translate_position(position, physics->get_position());
+        dist = vec3_distance_squared(position, p);
         
         if (dist < radius_squared)
         {   // object is in sphere
@@ -81,7 +84,10 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, c
             object = objects[i];
             
             physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            dist = vec3_distance_squared(position, physics->get_position());
+            GS_ASSERT(physics != NULL);
+            if (physics == NULL) continue;
+            Vec3 p = quadrant_translate_position(position, physics->get_position());
+            dist = vec3_distance_squared(position, p);
             
             if (dist < radius_squared)
             {   // object is in sphere

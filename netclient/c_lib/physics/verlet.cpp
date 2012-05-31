@@ -58,6 +58,7 @@ bool bounce(Vec3* position, Vec3* velocity, float damp)
         *position = old_position;
         *velocity = old_velocity;
         velocity_integrate(position, velocity, dt*interval);
+        *position = translate_position(*position);
         //Vec3 norm = vec3_init(s[0], s[1], s[2]);
         *velocity = vec3_reflect(*velocity, norm);
         *velocity = vec3_scalar_mult(*velocity, damp);
@@ -86,6 +87,7 @@ int* bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* til
         *position = old_position;
         *velocity = old_velocity;
         velocity_integrate(position, velocity, dt*interval);
+        *position = translate_position(*position);
         //Vec3 norm = vec3_init(s[0], s[1], s[2]);
         *velocity = vec3_reflect(*velocity, norm);
         *velocity = vec3_scalar_mult(*velocity, damp);
@@ -125,7 +127,7 @@ bool bounce_box(Vec3* position, Vec3* velocity, float damp, float radius)
         old_velocity = vec3_reflect(old_velocity, norm);
         old_velocity = vec3_scalar_mult(old_velocity, damp);
         *velocity = old_velocity;
-        *position = old_position;
+        *position = translate_position(old_position);
     }
     return bounced;
 }

@@ -11,6 +11,7 @@ dont_include_this_file_on_server
 
 void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_scale)
 {
+    position = quadrant_translate_position(current_camera_position, position);
     position.z += texture_scale;
 
     if (point_fulstrum_test(position.x, position.y, position.z) == false)
@@ -52,6 +53,7 @@ void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_sc
 
 void drawBillboardSprite(Vec3 position, int texture_index, float texture_scale)
 {
+    position = quadrant_translate_position(current_camera_position, position);
     position.z += texture_scale;    // draw from bottom
 
     Vec3 up = vec3_init(
@@ -90,6 +92,7 @@ void drawBillboardSprite(Vec3 position, int texture_index, float texture_scale)
 
 void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Color color)
 {
+    position = quadrant_translate_position(current_camera_position, position);
     const float
         x0 = position.x,
         y0 = position.y,
@@ -125,6 +128,7 @@ void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Co
 
 void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, int sprite_index, float tx, float ty, float pixel_margin)
 {
+    position = quadrant_translate_position(current_camera_position, position);
     const float
         x0 = position.x,
         y0 = position.y,

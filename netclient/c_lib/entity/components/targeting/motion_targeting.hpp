@@ -20,6 +20,9 @@ class MotionTargetingComponent: public TargetingComponent
         bool en_route;
         int ticks_to_destination;
 
+        // explicitly set the target
+        void set_target(ObjectType target_type, int target_id);
+
         // lock to agent
         void lock_target(Vec3 camera_position);
         void lock_target(Vec3 camera_position, int team);
@@ -33,6 +36,7 @@ class MotionTargetingComponent: public TargetingComponent
 
         bool move_on_surface();
 
+        void broadcast_target_choice();
         void broadcast_destination();
 
     MotionTargetingComponent()

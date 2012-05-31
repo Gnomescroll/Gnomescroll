@@ -342,7 +342,25 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
 
 /* Targeting */
 
-class object_choose_target_StoC: public FixedSizeReliableNetPacketToClient<object_choose_target_StoC>
+class object_choose_weapon_target_StoC: public FixedSizeReliableNetPacketToClient<object_choose_weapon_target_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint16_t target_id;
+        uint8_t target_type;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&target_id, buff, buff_n, pack);
+        pack_u8(&target_type, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class object_choose_motion_target_StoC: public FixedSizeReliableNetPacketToClient<object_choose_motion_target_StoC>
 {
     public:
         uint16_t id;

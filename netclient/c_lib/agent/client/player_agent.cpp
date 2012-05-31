@@ -388,17 +388,16 @@ void PlayerAgent_state::toggle_camera_mode() {
     }
 }
 
-void PlayerAgent_state::pump_camera() {
-    switch (camera_mode) {
+void PlayerAgent_state::pump_camera()
+{
+    Agent_state* A;
+    switch (camera_mode)
+    {
         case net_agent:
-            if(agent_id != -1) {
-                Agent_state* A = ClientState::agent_list->get(agent_id);
-                camera_state = A->get_state();
-            } else {
-                printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");
-            }
+            A = ClientState::agent_list->get(agent_id);
+            if (A != NULL) camera_state = A->get_state();
             break;
-        case client_side_prediction_interpolated:
+        case client_side_prediction_interpolated:   // default
             update_client_side_prediction_interpolated();
             camera_state = c;
             break;
@@ -409,7 +408,7 @@ void PlayerAgent_state::pump_camera() {
             camera_state = state_snapshot;
             break;
         default:
-            printf("PlayerAgent toggle_camera_mode: error\n");
+            GS_ASSERT(false);
             break;
     }
 }

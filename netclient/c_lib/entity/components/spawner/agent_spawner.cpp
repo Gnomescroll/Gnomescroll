@@ -27,13 +27,11 @@ void AgentSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* spa
     int sx,sy;
 
     sx = randrange(x - this->radius, x + this->radius);
-    sx = (sx < map_dim.x) ? sx : map_dim.x;
-    sx = (spawn_point->x < 0) ? 0 : spawn_point->x;
+    sx = translate_point(sx);
     spawn_point->x = sx;
 
     sy = randrange(y - this->radius, y + this->radius);
-    sy = (sy < map_dim.y) ? sy : map_dim.y;
-    sy = (spawn_point->y < 0) ? 0 : spawn_point->y;
+    sy = translate_point(sy);
     spawn_point->y = sy;
 
     spawn_point->z = _get_highest_open_block(sx, sy, spawned_object_height);

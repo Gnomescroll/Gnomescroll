@@ -183,18 +183,28 @@ class ItemContainerNanite: public ItemContainerInterface
         // transforms plain slot to a 0-indexed shopping slot, that the dat uses
         int get_shopping_slot(int slot)
         {
-            if (slot <= 0 || slot >= this->slot_max-1) return NULL_SLOT;
-            return slot-1;
+            if (slot < slot_max) return NULL_SLOT;
+            return slot - 2;
         }
 
         ItemID get_coins()
         {
-            return this->get_item(this->slot_max-1);
+            return this->get_item(1);
         }
 
         ItemID get_food()
         {
             return this->get_item(0);
+        }
+
+        void insert_coins(ItemID item_id)
+        {
+            this->insert_item(1, item_id);
+        }
+
+        void insert_food(ItemID item_id)
+        {
+            this->insert_item(0, item_id);
         }
 
         bool can_insert_item(int slot, ItemID item_id)
@@ -205,7 +215,7 @@ class ItemContainerNanite: public ItemContainerInterface
             {   // check against nanite's food
                 return Item::get_nanite_edibility(item_type);
             }
-            else if (slot == this->slot_max-1)
+            else if (slot == 1)
             {   // nanite coins only
                 if (item_type == Item::get_item_type((char*)"nanite_coin")) return true;
                 return false;
@@ -220,9 +230,9 @@ class ItemContainerNanite: public ItemContainerInterface
             && Item::get_stack_space(this->slot[0]) >= stack_size)
                 return 0;
             // check coin slot
-            if (Item::get_item_type(this->slot[this->slot_max-1]) == item_type
-            && Item::get_stack_space(this->slot[this->slot_max-1]) >= stack_size)
-                return this->slot_max-1;
+            if (Item::get_item_type(this->slot[1]) == item_type
+            && Item::get_stack_space(this->slot[1]) >= stack_size)
+                return 1;
             return NULL_SLOT;
         }
 
@@ -242,7 +252,7 @@ class ItemContainerNanite: public ItemContainerInterface
         {
             this->xdim = xdim;
             this->ydim = ydim;
-            this->slot_max = xdim*ydim + 1; // +1 for the extra food slot
+            this->slot_max = xdim*ydim;
             GS_ASSERT(this->slot_max > 0);
             GS_ASSERT(this->slot_max < NULL_SLOT);
             this->slot = new ItemID[this->slot_max];

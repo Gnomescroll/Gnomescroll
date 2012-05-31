@@ -12,6 +12,31 @@ namespace Components
 
 /* Targeting */
 
+void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
+{
+    GS_ASSERT(target_type == OBJECT_AGENT);
+
+    Agent_state* a = STATE::agent_list->get(target_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
+
+    Vec3 dest = a->get_position();
+    this->target_direction = quadrant_translate_position(position, dest);
+    normalize_vector(&this->target_direction);
+    
+    this->target_type = target_type;
+    this->target_id = target_id;
+    this->locked_on_target = true;
+
+    this->broadcast_target_choice();
+}
+
 void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
 {   // lock on agent
     Agent_state* target;
@@ -22,19 +47,12 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
     );
     if (target == NULL)
     {
-        //if  (this->target_type != OBJECT_NONE)
-        //{
-            //this->en_route = false;
-            //this->at_destination = false;
-        //}
         this->target_type = OBJECT_NONE;
         return;
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    //this->destination = target->get_position();
-    //this->en_route = true;
-    //this->at_destination = false;
+    this->broadcast_target_choice();
 }
 
 void MotionTargetingComponent::lock_target(Vec3 camera_position)
@@ -43,19 +61,12 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
-        //if  (this->target_type != OBJECT_NONE)
-        //{
-            //this->en_route = false;
-            //this->at_destination = false;
-        //}
         this->target_type = OBJECT_NONE;
         return;
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    //this->destination = target->get_position();
-    //this->en_route = true;
-    //this->at_destination = false;
+    this->broadcast_target_choice();
 }
 
 void MotionTargetingComponent::choose_destination()
@@ -82,8 +93,8 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
     if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
     Agent_state* target = STATE::agent_list->get(this->target_id);
     if (target == NULL) return;
-    Vec3 p = target->get_position();
-    Vec3 target_position = vec3_init(p.x, p.y, p.z);
+    Vec3 target_position = target->get_position();
+    target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);
 }
@@ -122,23 +133,29 @@ bool MotionTargetingComponent::move_on_surface()
 
     // set en_route if we are in motion
     this->en_route = moved;
-
-    //if (vec3_distance_squared(new_position, this->destination) < 1.0f)
-    //{
-        //this->en_route = false;
-        //this->at_destination = true;
-    //}
     
     return moved;
 }
 
+void MotionTargetingComponent::broadcast_target_choice()
+{
+    GS_ASSERT(this->object != NULL);
+    object_choose_motion_target_StoC msg;
+    msg.id = this->object->id;
+    msg.type = this->object->type;
+    msg.target_id = this->target_id;
+    msg.target_type = this->target_type;
+    msg.broadcast();
+}
 
 void MotionTargetingComponent::broadcast_destination()
 {
+    //printf("Object %d broadcast destination\n", this->object->id);
     object_choose_destination_StoC msg;
     msg.x = this->destination.x;
     msg.y = this->destination.y;
     msg.z = this->destination.z;
+    ASSERT_BOXED_POSITION(this->destination);
     msg.id = this->object->id;
     msg.type = this->object->type;
     msg.ticks = this->ticks_to_destination;

@@ -193,7 +193,7 @@ void tick_mob_bomb(Object* object)
     MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
 
     // acquire target
-    motion->lock_target(position);
+    if (motion->target_type == OBJECT_NONE) motion->lock_target(position);
     if (motion->target_type == OBJECT_NONE) return;
     //if (motion->target_type == OBJECT_NONE && motion->at_destination)
     //{   // choose new destination

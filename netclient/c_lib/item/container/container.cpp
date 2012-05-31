@@ -125,7 +125,7 @@ void ItemContainerNanite::digest()
         Item::Item* coin = Item::create_item((char*)"nanite_coin");
         GS_ASSERT(coin != NULL);
         if (a != NULL) Item::send_item_create(a->client_id, coin->id);
-        this->insert_item(this->slot_max-1, coin->id);
+        this->insert_coins(coin->id);
         if (a != NULL) send_container_insert(a->client_id, coin->id, this->id, this->slot_max-1);
     }
     else
@@ -737,6 +737,14 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     if (container == NULL) return action;
     GS_ASSERT(container->type = AGENT_NANITE);
 
+    if (slot > 1)
+    {   // shopping
+        if (hand_empty)
+        {   // send purchase packet
+            return PURCHASE_ITEM_FROM_NANITE;
+        }
+    }
+
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
@@ -871,7 +879,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
             }
         }
     }
-    else if (slot == container->slot_max-1)
+    else if (slot == 1)
     {   // coin slot
         if (hand_empty)
         {
@@ -964,13 +972,6 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                     }
                 }
             }
-        }
-    }
-    else
-    {   // shopping
-        if (hand_empty)
-        {   // send purchase packet
-            action = PURCHASE_ITEM_FROM_NANITE;
         }
     }
 
@@ -1230,24 +1231,20 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     {
         if (!slot_empty)
         {
-            if (slot == 0 || slot == container->slot_max-1)
+            if (slot_item_stack > 1)
+            // stack can split
             {
-                if (slot_item_stack > 1)
-                // stack can split
-                {
-                    #if DC_CLIENT
-                    action = partial_slot_to_empty_hand(
-                        container, slot,
-                        &hand_item_type, &hand_item_stack, &hand_item_durability,
-                        slot_item_type, slot_item_stack, slot_item_durability
-                    );
-                    #endif
-                    #if DC_SERVER
-                    action = partial_slot_to_empty_hand(client_id, slot, &hand_item, slot_item);
-                    #endif
-                }
+                #if DC_CLIENT
+                action = partial_slot_to_empty_hand(
+                    container, slot,
+                    &hand_item_type, &hand_item_stack, &hand_item_durability,
+                    slot_item_type, slot_item_stack, slot_item_durability
+                );
+                #endif
+                #if DC_SERVER
+                action = partial_slot_to_empty_hand(client_id, slot, &hand_item, slot_item);
+                #endif
             }
-            // do nothing for shopping
         }
     }
     else
@@ -1257,43 +1254,40 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
 
         if (slot_empty)
         {
-            if (slot == 0 || slot == container->slot_max-1)
+            #if DC_CLIENT
+            bool can_insert = container->can_insert_item(slot, hand_item_type);
+            #endif
+            #if DC_SERVER
+            bool can_insert = container->can_insert_item(slot, hand_item);
+            #endif
+            if (can_insert)
             {
-                #if DC_CLIENT
-                bool can_insert = container->can_insert_item(slot, hand_item_type);
-                #endif
-                #if DC_SERVER
-                bool can_insert = container->can_insert_item(slot, hand_item);
-                #endif
-                if (can_insert)
+                // place 1 stack unit in slot
+                if (hand_item_stack == 1)
+                // only 1 in stack, do simple insert
                 {
-                    // place 1 stack unit in slot
-                    if (hand_item_stack == 1)
-                    // only 1 in stack, do simple insert
-                    {
-                        #if DC_CLIENT
-                        action = full_hand_to_empty_slot(
-                            container, slot,
-                            &hand_item_type, &hand_item_stack, &hand_item_durability
-                        );
-                        #endif
-                        #if DC_SERVER
-                        action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
-                        #endif
-                    }
-                    else
-                    // must split stack
-                    {
-                        #if DC_CLIENT
-                        action = partial_hand_to_empty_slot(
-                            container, slot,
-                            hand_item_type, &hand_item_stack, hand_item_durability
-                        );
-                        #endif
-                        #if DC_SERVER
-                        action = partial_hand_to_empty_slot(client_id, container, slot, hand_item);
-                        #endif
-                    }
+                    #if DC_CLIENT
+                    action = full_hand_to_empty_slot(
+                        container, slot,
+                        &hand_item_type, &hand_item_stack, &hand_item_durability
+                    );
+                    #endif
+                    #if DC_SERVER
+                    action = full_hand_to_empty_slot(client_id, container, slot, &hand_item);
+                    #endif
+                }
+                else
+                // must split stack
+                {
+                    #if DC_CLIENT
+                    action = partial_hand_to_empty_slot(
+                        container, slot,
+                        hand_item_type, &hand_item_stack, hand_item_durability
+                    );
+                    #endif
+                    #if DC_SERVER
+                    action = partial_hand_to_empty_slot(client_id, container, slot, hand_item);
+                    #endif
                 }
             }
         }

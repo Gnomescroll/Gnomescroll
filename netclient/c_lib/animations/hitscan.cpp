@@ -107,6 +107,10 @@ void HitscanEffect::draw(float delta, Vec3 camera)
     const float width = 0.50;
     const float height = 1.0/4.0;   //length per velocity
 
+    float x = quadrant_translate_f(camera.x, this->x);
+    float y = quadrant_translate_f(camera.y, this->y);
+    float z = this->z;
+
     Vec3 v = vec3_init(vx,vy,vz);
     normalize_vector(&v);
 

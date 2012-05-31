@@ -269,6 +269,7 @@ inline void object_shot_object_StoC::handle()
     Voxel_volume* vv = a->vox->get_part(this->target_part);
     if (vv == NULL) return;
     Vec3 dest = vv->get_center();
+    dest = quadrant_translate_position(position, dest);
 
     // laser animation
     const float hitscan_effect_speed = 200.0f;
@@ -312,6 +313,7 @@ inline void object_shot_terrain_StoC::handle()
     if (dims != NULL) position.z += dims->get_camera_height();
 
     Vec3 dest = vec3_init(this->x, this->y, this->z);
+    dest = quadrant_translate_position(position, dest);
     Vec3 v = vec3_sub(dest, position); 
     normalize_vector(&v);
     const float hitscan_effect_speed = 200.0f;
@@ -356,13 +358,14 @@ inline void object_shot_nothing_StoC::handle()
     Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
 }
 
-inline void object_choose_target_StoC::handle()
+inline void object_choose_weapon_target_StoC::handle()
 {
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
+    GS_ASSERT(weapon != NULL);
     if (weapon != NULL)
     {
         weapon->target_id = this->target_id;    // set target
@@ -373,6 +376,18 @@ inline void object_choose_target_StoC::handle()
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
     if (motion != NULL) motion->en_route = false;  // cancel all motion
+}
+
+inline void object_choose_motion_target_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
+    GS_ASSERT(motion != NULL);
+    if (motion == NULL) return;
+    motion->set_target((ObjectType)target_type, target_id);
 }
 
 inline void object_choose_destination_StoC::handle()
@@ -387,12 +402,14 @@ inline void object_choose_destination_StoC::handle()
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics == NULL) return;
+    Vec3 position = physics->get_position();
     
-    motion->destination = vec3_init(this->x, this->y, this->z);
+    Vec3 destination = vec3_init(this->x, this->y, this->z);
+    motion->destination = quadrant_translate_position(position, destination);
     motion->ticks_to_destination = this->ticks;
 
     // set momentum from destination :: TODO MOVE
-    Vec3 direction = vec3_sub(motion->destination, physics->get_position());
+    Vec3 direction = vec3_sub(motion->destination, position);
     if (this->ticks)
     {
         float len = vec3_length(direction);
@@ -475,7 +492,8 @@ inline void object_state_momentum_angles_StoC::handle() {}
 inline void object_shot_object_StoC::handle() {}
 inline void object_shot_terrain_StoC::handle() {}
 inline void object_shot_nothing_StoC::handle() {}
-inline void object_choose_target_StoC::handle() {}
+inline void object_choose_motion_target_StoC::handle() {}
+inline void object_choose_weapon_target_StoC::handle() {}
 inline void object_choose_destination_StoC::handle() {}
 inline void object_took_damage_StoC::handle() {}
 inline void object_state_health_StoC::handle() {}

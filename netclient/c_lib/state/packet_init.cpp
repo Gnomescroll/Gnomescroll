@@ -196,7 +196,8 @@ void RegisterMessages()
     object_shot_nothing_StoC::register_client_packet();
 
     // object/monster motion
-    object_choose_target_StoC::register_client_packet();
+    object_choose_weapon_target_StoC::register_client_packet();
+    object_choose_motion_target_StoC::register_client_packet();
     object_choose_destination_StoC::register_client_packet();
 
     // damage

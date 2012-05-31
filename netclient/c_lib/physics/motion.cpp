@@ -38,6 +38,7 @@ int stick_to_terrain_surface(Vec3 position)
 
 Vec3 move_to_point(Vec3 dest, Vec3 origin, Vec3 momentum)
 {   // moves vector from origin to dest by momentum amount
+    dest = quadrant_translate_position(origin, dest);
     Vec3 direction = vec3_sub(dest, origin);
     normalize_vector(&direction);
     direction = vec3_mult(direction, momentum);             //  apply magnitude to velocity
@@ -47,12 +48,14 @@ Vec3 move_to_point(Vec3 dest, Vec3 origin, Vec3 momentum)
 
 float orient_to_point(Vec3 dest, Vec3 origin)
 {   // return x-angle (theta) rotation between two Vec3s
+    dest = quadrant_translate_position(origin, dest);
     Vec3 direction = vec3_sub(dest, origin);
     return vec3_to_theta(direction);
 }
 
 void orient_to_point(Vec3 dest, Vec3 origin, float* theta, float* phi)
 {   //  x- and y-angle (theta,phi) rotation between two Vec3s
+    dest = quadrant_translate_position(origin, dest);
     Vec3 direction = vec3_sub(dest, origin);
     vec3_to_angles(direction, theta, phi);
 }
@@ -75,11 +78,8 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     int z = t_map::get_highest_open_block(move_to.x, move_to.y);
 
     float z_diff = ((float)z) - position.z;
-    //printf("z_diff %0.2f\n", z_diff);
-    //printf("z,posz %d,%0.2f\n", z, position.z);
     if (z_diff > max_z_up || z_diff < -max_z_down)
     {   // cant move
-        //printf("cant move, z_diff = %0.2f\n", z_diff);
         *new_position = position;
         *new_momentum = vec3_init(0,0,0);
         return false;
@@ -97,7 +97,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     new_direction.z = 0;
     float xy_len = vec3_length_squared(new_direction);
     if (xy_len < (speed*speed)/2) position.z = z;
-    *new_position = position;
+    *new_position = translate_position(position);
     
     return true;
 }
@@ -127,7 +127,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
 
     position = vec3_add(position, new_direction);
     position.z = z;
-    *new_position = position;
+    *new_position = translate_position(position);
     *new_momentum = new_direction;
 
     return true;

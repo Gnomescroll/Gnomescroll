@@ -19,16 +19,14 @@ const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
 #if DC_SERVER
 void Agent_list::update_map_manager_positions()
 {
+    Vec3 p;
     for(int i=0; i<n_max; i++)
         if (this->a[i] != NULL)
         {
-            Vec3 p;
             if (this->a[i]->camera_ready)
                 p = this->a[i]->get_camera_state_position();
             else
                 p = this->a[i]->get_position();
-
-            //printf("Agent_list::update_map_manager_positions, p.x= %f p.y= %f state= %i \n", p.x, p.y, this->a[i]->camera_ready);
             t_map::t_map_manager_update_client_position(i, p.x, p.y);
         }
 }
@@ -167,6 +165,8 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
     {
         if (a[i] == NULL) continue;
         Vec3 p = this->a[i]->get_position();
+        p.x = quadrant_translate_f(x, p.x);
+        p.y = quadrant_translate_f(y, p.y);
         dist = distancef_squared(x,y,z, p.x, p.y, p.z);
         if (dist < radius_squared)
         {   // agent in sphere
@@ -191,6 +191,8 @@ int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, i
         if (a[i] == NULL) continue;
         if (a[i]->status.team != enemy_team) continue;
         Vec3 p = this->a[i]->get_position();
+        p.x = quadrant_translate_f(x, p.x);
+        p.y = quadrant_translate_f(y, p.y);
         dist = distancef_squared(x,y,z, p.x, p.y, p.z);
         if (dist < radius_squared)
         {   // agent in sphere
@@ -221,6 +223,8 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
         if (a == NULL) continue;
 
         Vec3 p = a->get_position();
+        p.x = quadrant_translate_f(x, p.x);
+        p.y = quadrant_translate_f(y, p.y);
         ax = p.x - x;
         ay = p.y - y;
         az = p.z - z;
@@ -361,7 +365,6 @@ Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radi
     if (i >= n) agent = NULL;
     return agent;
 }
-
 
 Agent_state* random_agent_in_range(const Vec3 position, const float radius)
 {
