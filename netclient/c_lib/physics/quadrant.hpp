@@ -149,6 +149,9 @@ struct Vec3 translate_position(struct Vec3 pos)
     pos.x = translate_point(pos.x);
     pos.y = translate_point(pos.y);
 
+    //pos.x = quadrant_translate_f(current_camera_position.x, pos.x);
+    //pos.y = quadrant_translate_f(current_camera_position.y, pos.y);
+
     ASSERT_BOXED_POSITION(pos);
 
     return pos;

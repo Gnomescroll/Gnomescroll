@@ -325,6 +325,8 @@ void Voxel_render_list_manager::draw()
             continue;
         }
 
+        float UN[3];
+
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
         glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
@@ -334,7 +336,7 @@ void Voxel_render_list_manager::draw()
         glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
         glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
 
-        //struct Affine matrix;
+        struct Affine matrix;
         //int drawn = 0;
         for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
@@ -354,13 +356,21 @@ void Voxel_render_list_manager::draw()
             //vrl->update_vertex_buffer_object(); 
             if (vv->vvl.vnum == 0) continue;
 
-            //matrix = vv->world_matrix;
+            matrix = vv->world_matrix;
             //matrix.c = quadrant_translate_position(current_camera_position, matrix.c);
-            Vec3 p = quadrant_translate_position(current_camera_position, vv->world_matrix.c);
+            //Vec3 p = quadrant_translate_position(current_camera_position, vv->world_matrix.c);
             
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
+            
+            UN[0] = *(matrix._f + 9);
+            UN[1] = *(matrix._f + 10);
+            UN[2] = *(matrix._f + 11);
+
+            quadrant_translate_draw_position(UN+0, UN+1);
+            //quadrant_translate_draw_position((GLfloat*) (matrix._f + 9), (GLfloat*) (matrix._f + 10) );
+            glUniform3fv(InTranslation, 1, (GLfloat*) UN );
             //glUniform3fv(InTranslation, 1, (GLfloat*) (matrix._f + 9) );
-            glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
+            //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
 
             if (_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
             {
