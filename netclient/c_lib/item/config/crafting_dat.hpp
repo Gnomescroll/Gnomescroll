@@ -42,11 +42,11 @@ void load_crafting_dat()
     end_recipe();
     
     // Blocks
-    def_recipe("steel_1", 4);
+    def_recipe("iron_block", 4);
     set_reagent("iron_bar", 1);
     end_recipe();
     
-    def_recipe("steel_2", 4);
+    def_recipe("steel_block", 4);
     set_reagent("iron_bar", 1);
     set_reagent("graphite", 1);
     end_recipe();

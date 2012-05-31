@@ -709,7 +709,6 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         Item::send_item_state(agent->client_id, item->id);
         send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
     }
-    GS_ASSERT(false);   // should never get to this point
 }
 
 bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)

@@ -258,7 +258,11 @@ void CraftingUI::draw()
         bool available;
         int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
         if (item_type == NULL_ITEM_TYPE) continue;
-        if (!available) any_unavailable = true;
+        if (!available)
+        {
+            any_unavailable = true;
+            continue;
+        }
         
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
@@ -300,6 +304,7 @@ void CraftingUI::draw()
             int slot = output_xdim*yslot + xslot;
             bool available;
             int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
+            if (available) continue;
             if (item_type == NULL_ITEM_TYPE) continue;
             
             int tex_id = Item::get_sprite_index_for_type(item_type);

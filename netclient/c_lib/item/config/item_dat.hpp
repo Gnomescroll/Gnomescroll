@@ -196,13 +196,15 @@ void load_item_dat()
     sprite_def(i0, 5,2);
     s.max_stack_size = 64;
 
-    item_def(46, IG_PLACER, "steel_1");
+    item_def(46, IG_PLACER, "iron_block");
+    iso_block_sprite_def("steel_1");
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_1");
     s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_1");
     
-    item_def(47, IG_PLACER, "steel_2");
+    item_def(47, IG_PLACER, "steel_block");
+    iso_block_sprite_def("steel_2");
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_2");
     s.max_stack_size = 16;
     s.particle_voxel = true;
