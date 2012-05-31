@@ -173,6 +173,37 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     return event;
 }
 
+// returns item type at screen position x,y
+static int get_item_type_at(int x, int y)
+{
+    int slot;
+    UIElement* ui = get_container_and_slot(x,y, &slot);
+    if (ui == NULL) return NULL_ITEM_TYPE;
+    if (ui->container_id == NULL_CONTAINER) return NULL_ITEM_TYPE;
+    if (slot == NULL_SLOT) return NULL_ITEM_TYPE;
+
+    using ItemContainer::ItemContainerUIInterface;
+    ItemContainerUIInterface* container = ItemContainer::get_container_ui(ui->container_id);
+    if (container == NULL) return NULL_ITEM_TYPE;
+
+    if (ui->type == UI_ELEMENT_NANITE_CONTAINER)
+    {
+        if (((AgentNaniteUI*)ui)->in_nanite_region(x,y))
+            Item::get_nanite_store_item(((AgentNaniteUI*)ui)->level, (slot-2)%2, (slot-2)/2);  // TODO -- use store dimensions for x,yslot
+        else
+            return container->get_slot_type(slot);
+    }
+    
+    if (ui->type == UI_ELEMENT_CRAFTING_CONTAINER)
+    {
+        if (((CraftingUI*)ui)->in_craft_output_region(x,y))
+            return Item::get_selected_craft_recipe_type(container->id, slot);
+        else
+            return container->get_slot_type(slot);
+    }
+    return container->get_slot_type(slot);
+}
+
 static const ContainerInputEvent NULL_EVENT =
 {
     NULL_CONTAINER,         // null container id
@@ -262,7 +293,7 @@ ContainerInputEvent select_slot(int numkey)
 */
 
 static HudText::Text* grabbed_icon_stack_text = NULL;
-
+static HudText::Text* tooltip_text = NULL;
 
 static void draw_grabbed_icon()
 {
@@ -342,9 +373,6 @@ static void draw_grabbed_icon()
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
-    glDisable(GL_BLEND);
-
     // Draw stack numbers
     if (grabbed_icon_stack_text == NULL) return;
     if (ItemContainer::player_hand_stack_ui <= 1) return;
@@ -364,13 +392,41 @@ static void draw_grabbed_icon()
 
     HudFont::reset_default();
     HudFont::end_font_draw();
-    //glDisable(GL_TEXTURE_2D);
-    //glDisable(GL_BLEND);
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
 }
 
+static void draw_tooltip()
+{
+    // dont draw tooltips if we're holding something
+    if (ItemContainer::player_hand_type_ui != NULL_ITEM_TYPE) return;
+
+    // get item type hovered
+    int item_type = get_item_type_at(mouse_x, mouse_y);
+    if (item_type == NULL_ITEM_TYPE) return;
+    
+    // get name
+    char* name = Item::get_item_pretty_name(item_type);
+    GS_ASSERT(name != NULL);
+    if (name == NULL) return;
+    GS_ASSERT(name[0] != '\0');
+    if (name[0] == '\0') return;
+
+    HudFont::start_font_draw();
+    const int font_size = 12;
+    HudFont::set_properties(font_size);
+    HudFont::set_texture();
+
+    // align
+    tooltip_text->set_position(mouse_x + 15, _yresf-mouse_y);
+
+    tooltip_text->set_text(name);
+    tooltip_text->draw();
+
+    HudFont::reset_default();
+    HudFont::end_font_draw();
+}
 
 void draw_hud()
 {
@@ -384,6 +440,7 @@ void draw_hud()
     if (storage_block_enabled) storage_block->draw();
 
     draw_grabbed_icon();
+    draw_tooltip();
 
 }
 
@@ -431,6 +488,10 @@ void init()
     grabbed_icon_stack_text->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
     grabbed_icon_stack_text->set_color(255,255,255,255);
     grabbed_icon_stack_text->set_depth(-0.1f);
+
+    tooltip_text = new HudText::Text;
+    tooltip_text->set_color(255,255,255,255);
+    tooltip_text->set_depth(-0.1f);
 }
 
 void teardown()

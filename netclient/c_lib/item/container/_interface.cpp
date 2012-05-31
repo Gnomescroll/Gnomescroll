@@ -617,8 +617,8 @@ void purchase_item_from_nanite(int agent_id, int shopping_slot)
     // get the store item
     int xslot = shopping_slot % nanite->xdim;
     int yslot = shopping_slot / nanite->xdim;
-    int item_type, cost;
-    Item::get_nanite_store_item(nanite->level, xslot, yslot, &item_type, &cost);
+    int cost;
+    int item_type = Item::get_nanite_store_item(nanite->level, xslot, yslot, &cost);
     GS_ASSERT(cost >= 0);
     if (item_type == NULL_ITEM_TYPE) return;
     

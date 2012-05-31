@@ -229,8 +229,8 @@ void AgentNaniteUI::draw()
     {
         if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
 
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        int cost;
+        int item_type = Item::get_nanite_store_item(level, xslot, yslot, &cost);
         if (coins >= cost) continue; // we can afford it; move on
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
@@ -271,8 +271,8 @@ void AgentNaniteUI::draw()
     {
         if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
 
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        int cost;
+        int item_type = Item::get_nanite_store_item(level, xslot, yslot, &cost);
         if (coins < cost) continue; // we can't afford it; move on
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
@@ -386,8 +386,8 @@ void AgentNaniteUI::draw()
         const int slot = yslot*xdim + xslot;
         if (slot == xdim*ydim-1) continue;  // skip last slot, reserved
 
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        int cost;
+        int item_type = Item::get_nanite_store_item(level, xslot, yslot, &cost);
         if (item_type == NULL_ITEM_TYPE) continue;
 
         GS_ASSERT(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);

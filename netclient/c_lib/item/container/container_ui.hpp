@@ -41,18 +41,21 @@ class ItemContainerUIInterface
         int get_slot_durability(int slot)
         {
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return NULL_DURABILITY;
             return this->slot_durability[slot];
         }
 
         int get_slot_stack(int slot)
         {
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return 1;
             return this->slot_stack[slot];
         }
 
         int get_slot_type(int slot)
         {
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return NULL_ITEM_TYPE;
             return this->slot_type[slot];
         }
 
