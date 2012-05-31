@@ -19,8 +19,11 @@ class CraftingUI : public UIElement
     static const int input_xdim = 4;
     static const int input_ydim = 1;
 
-    static const int input_slots = 4;
-    static const int output_slots = 1;
+    static const int output_xdim = 1;
+    static const int output_ydim = 3;
+
+    static const int input_slots = input_xdim * input_ydim;
+    static const int output_slots = output_xdim * output_ydim;
     static const int input_output_gap = 1;
 
     // size of texture/render area
@@ -38,6 +41,7 @@ class CraftingUI : public UIElement
     static const float output_offset_y = 0;
 
     HudText::Text* stacks;
+    HudText::Text* output_stacks;
 
     void draw();
 
@@ -63,6 +67,7 @@ class CraftingUI : public UIElement
     void init()
     {
         GS_ASSERT(this->stacks == NULL);
+        GS_ASSERT(this->output_stacks == NULL);
 
         int max = input_slots;
         this->stacks = new HudText::Text[max];
@@ -71,7 +76,18 @@ class CraftingUI : public UIElement
             HudText::Text* t = &this->stacks[i];
             t->set_format((char*) "%d");
             t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
-            t->set_color(255,255,255,255);    // some kind of red
+            t->set_color(255,255,255,255);
+            t->set_depth(-0.1f);
+        }
+        
+        max = output_slots;
+        this->output_stacks = new HudText::Text[max];
+        for (int i=0; i<max; i++)
+        {
+            HudText::Text* t = &this->output_stacks[i];
+            t->set_format((char*) "%d");
+            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+            t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
     }
@@ -83,6 +99,7 @@ class CraftingUI : public UIElement
     ~CraftingUI()
     {
         if (this->stacks != NULL) delete[] this->stacks;
+        if (this->output_stacks != NULL) delete[] this->output_stacks;
     }
 };
 
@@ -232,18 +249,21 @@ void CraftingUI::draw()
     }
     glEnd();
 
-    //draw output items
-    bool available;
-    int item_type = Item::get_selected_craft_recipe_type(this->container_id, 0, &available);
-    if (item_type != NULL_ITEM_TYPE)
+    //draw available output items
+    bool any_unavailable = false;
+    for (int xslot=0; xslot<output_xdim; xslot++)
+    for (int yslot=0; yslot<output_ydim; yslot++)
     {
+        int slot = output_xdim*yslot + xslot;
+        bool available;
+        int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
+        if (item_type == NULL_ITEM_TYPE) continue;
+        if (!available) any_unavailable = true;
+        
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
-        // switch to greyscale texture if unavailable
-        if (!available) glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
-
-        x = xoff + output_offset_x + cell_offset_x;// + cell_size*xslot;
-        y = yoff - (output_offset_y + cell_offset_y);// + cell_size*yslot);
+        x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
+        y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);
 
         w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -268,6 +288,52 @@ void CraftingUI::draw()
         glVertex2f(x+w, y);
         glEnd();
     }
+    
+    //draw unavailable output items
+    // switch to greyscale texture if unavailable
+    if (any_unavailable)
+    {
+        glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
+        for (int xslot=0; xslot<output_xdim; xslot++)
+        for (int yslot=0; yslot<output_ydim; yslot++)
+        {
+            int slot = output_xdim*yslot + xslot;
+            bool available;
+            int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
+            if (item_type == NULL_ITEM_TYPE) continue;
+            
+            int tex_id = Item::get_sprite_index_for_type(item_type);
+
+            // switch to greyscale texture if unavailable
+            if (!available) glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
+
+            x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
+            y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);
+
+            w = slot_size;
+            const float iw = 16.0f; // icon_width
+            const int iiw = 16; // integer icon width
+
+            tx_min = (1.0/iw)*(tex_id % iiw);
+            ty_min = (1.0/iw)*(tex_id / iiw);
+            tx_max = tx_min + 1.0/iw;
+            ty_max = ty_min + 1.0/iw;
+
+            glBegin(GL_QUADS);
+            glTexCoord2f( tx_min, ty_min );
+            glVertex2f(x, y);
+
+            glTexCoord2f( tx_min, ty_max );
+            glVertex2f(x,y-w);
+
+            glTexCoord2f( tx_max, ty_max );
+            glVertex2f(x+w, y-w );
+
+            glTexCoord2f( tx_max, ty_min );
+            glVertex2f(x+w, y);
+            glEnd();
+        }
+    }
 
     glDisable(GL_TEXTURE_2D);
 
@@ -278,6 +344,7 @@ void CraftingUI::draw()
     HudFont::set_texture();
 
     HudText::Text* text;
+    // inputs
     for (int xslot=0; xslot<input_xdim; xslot++)
     for (int yslot=0; yslot<input_ydim; yslot++)
     {
@@ -295,6 +362,29 @@ void CraftingUI::draw()
 
         const float x = xoff + input_offset_x + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (input_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
+
+        text->set_position(x,y);
+        text->draw();
+    }
+    
+    // outputs
+    for (int xslot=0; xslot<output_xdim; xslot++)
+    for (int yslot=0; yslot<output_ydim; yslot++)
+    {
+        // the nanite store slots in dat are indexed from 0
+        // it is not aware of the implementation detail we have for food
+        const int slot = output_xdim*yslot + xslot;
+
+        int stack = Item::get_selected_craft_recipe_stack(this->container_id, slot);
+        if (stack <= 1) continue;
+
+        GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
+
+        text = &this->output_stacks[slot];
+        text->update_formatted_string(1, stack);
+
+        const float x = xoff + output_offset_x + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
+        const float y = yoff - (output_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
 
         text->set_position(x,y);
         text->draw();

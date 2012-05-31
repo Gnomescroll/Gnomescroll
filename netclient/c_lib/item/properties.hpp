@@ -63,6 +63,7 @@ class CraftingRecipe* get_craft_recipe(int recipe_id);
 class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot);
 int get_selected_craft_recipe_type(int container_id, int slot);
 int get_selected_craft_recipe_type(int container_id, int slot, bool* available);
+int get_selected_craft_recipe_stack(int container_id, int slot);
 
 bool container_type_is_block(ItemContainerType type);
 

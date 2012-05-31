@@ -694,19 +694,22 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         // create new item of type
         Item::Item* item = Item::create_item(recipe->output);
         if (item == NULL) return;
+        item->stack_size = recipe->output_stack;
         Item::send_item_create(agent->client_id, item->id);
         agent_hand_list[agent_id] = item->id;
         send_hand_insert(agent->client_id, item->id);
     }
-    else
+    else if (hand_can_stack_recipe)
     {
         // update item stack
         Item::Item* item = Item::get_item(hand_item);
         GS_ASSERT(item != NULL);
-        item->stack_size += 1;
+        if (item == NULL) return;
+        item->stack_size += recipe->output_stack;
         Item::send_item_state(agent->client_id, item->id);
         send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
     }
+    GS_ASSERT(false);   // should never get to this point
 }
 
 bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)

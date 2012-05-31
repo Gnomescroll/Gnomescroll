@@ -145,19 +145,19 @@ void load_block_dat()
     hud_def(2,2,t1,13,2);
 */
 
-    cube_def(8, ItemContainerBlock, "steel_1");
+    cube_def(8, SolidBlock, "steel_1");
     iso_texture(t1, 1,3);
     push_texture();
 
     hud_def(5,1,t1,1,3);
 
-    cube_def(9, ItemContainerBlock, "steel_2");
+    cube_def(9, SolidBlock, "steel_2");
     iso_texture(t1, 1,4);
     push_texture();
 
     hud_def(5,2,t1,1,4);
 
-    cube_def(10, ItemContainerBlock, "steel_3");
+    cube_def(10, SolidBlock, "steel_3");
     iso_texture(t1, 1,5);
     push_texture();
 
@@ -226,7 +226,7 @@ void load_block_dat()
 
     hud_def(4,2, t1,10,6);
 
-	end_block_dat();
+    end_block_dat();
     //end_block_item_sheet();
 
 }

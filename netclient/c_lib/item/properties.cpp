@@ -358,6 +358,13 @@ int get_selected_craft_recipe_type(int container_id, int slot)
     return recipe->output;
 }
 
+int get_selected_craft_recipe_stack(int container_id, int slot)
+{
+    CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
+    if (recipe == NULL) return 1;
+    return recipe->output_stack;
+}
+
 bool container_type_is_block(ItemContainerType type)
 {
     switch (type)

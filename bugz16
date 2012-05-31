@@ -265,6 +265,9 @@ DONE
 blue bombs aggro if shot
 DONE
 
+add steel
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -303,3 +306,4 @@ smelter
 craft bench levels
 multiple craft outputs
 variable stack outputs
+--BUG: whre the fuck is my steel blocK??
