@@ -940,10 +940,12 @@ void Agent_state::update_model()
 
 bool Agent_state::near_base()
 {
-            bool near_base();   // is within the base's spawn radius
     Base* b = STATE::ctf->get_base(this->status.team);
     if (b == NULL) return false;
-    if (distancef_squared(b->x, b->y, b->z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
+    float x = quadrant_translate_f(this->s.x, b->x);
+    float y = quadrant_translate_f(this->s.y, b->y);
+    float z= b->z;
+    if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
         return true;
     return false;
 }
