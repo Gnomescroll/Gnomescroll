@@ -34,6 +34,7 @@ typedef enum TerrainModificationAction
     TMA_TURRET,
     TMA_MONSTER_BOX,
     TMA_MONSTER_BOMB,
+    TMA_PLACE_BLOCK,
 } TerrainModificationAction;
  
 void init_t_map();

@@ -135,7 +135,6 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
         handle_block_drop(x,y,z, block_type);
 }
 
-//not used by anything
 void broadcast_set_block_action(int x, int y, int z, int block, int action)
 {
     map_history->send_block_action(x,y,z,block,action);

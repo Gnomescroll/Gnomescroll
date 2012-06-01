@@ -108,7 +108,8 @@ void set_soundfile_properties(
     float max_distance,
     float reference_distance,
     float minimum_gain,
-    float maximum_gain
+    float maximum_gain,
+    float rolloff_factor
 )
 {
     if (snd_id < 0 || snd_id >= n_sounds)
@@ -123,6 +124,7 @@ void set_soundfile_properties(
     s->reference_distance = reference_distance;
     s->minimum_gain = minimum_gain;
     s->maximum_gain = maximum_gain;
+    s->rolloff_factor = rolloff_factor;
     //printf("set properties: ");
     //printf("%0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f\n", pitch, gain, max_distance, reference_distance, minimum_gain, maximum_gain);
 }

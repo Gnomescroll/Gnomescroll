@@ -7,6 +7,7 @@
 namespace Sound
 {
 
+const float GS_SOUND_DISTANCE_CUTOFF = 128.0f;
 struct Vec3 listener_position;
 
 void init()
@@ -56,6 +57,10 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
 
     x = quadrant_translate_f(listener_position.x, x);
     y = quadrant_translate_f(listener_position.y, y);
+
+    float dist = vec3_distance_squared(listener_position, vec3_init(x,y,z));
+    if (dist > GS_SOUND_DISTANCE_CUTOFF*GS_SOUND_DISTANCE_CUTOFF)
+        return -1;
 
     return OpenALSound::play_3d_sound(fn, x,y,z, vx,vy,vz);
 }

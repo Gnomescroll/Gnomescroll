@@ -277,6 +277,16 @@ DONE
 tooltips
 DONE
 
+block damage sound
+DONE
+
+block placement sound
+DONE
+
+OpenAL attenuation graph tool
+https://www.desmos.com/calculator/uh7trifxxx
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -292,7 +302,6 @@ Hud Weapon sprites + animation
 
 == SOUND ==
 shovel sounds
-block placement sounds
 fix attenuations
 mining laser whoosh
 
@@ -315,3 +324,7 @@ animation on decay
 cryofreezer
 smelter
 craft bench levels
+
+== BUGZ ==
+when placing container over 512->0 border, the axis  alignment is opposite
+cannot destroy blocks with laser rifle across quadrant

@@ -363,6 +363,8 @@ void create_container_block_CtoS::handle()
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
+
+    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
 }
 
 } // ItemContainer
