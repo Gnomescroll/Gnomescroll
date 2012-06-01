@@ -39,6 +39,11 @@ class PerlinField3D
         }
     }
 
+    ~PerlinField3D()
+    {
+        if (this->gradient_array != NULL) delete[] this->gradient_array;
+    }
+
 // This method is a *lot* faster than using (int)Math.floor(x)
 static inline int fastfloor(float x) 
 {

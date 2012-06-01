@@ -318,6 +318,7 @@ red bots should have a small random tick delay (0-5 maybe) between acquiring age
 this will let players "dodge"
 
 some boxes arent getting destination correctly -- just jumping around with state updates
+--especially when cross boundaries
 
 == GFX ==
 glsl colored/textured voxels
