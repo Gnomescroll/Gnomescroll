@@ -25,8 +25,8 @@ void CTF::init() {
     two.init(2);
 }
 
-void CTF::start() {
-
+void CTF::start()
+{
     #ifdef DC_CLIENT
     this->auto_assign = Options::auto_assign_team;
     #endif
