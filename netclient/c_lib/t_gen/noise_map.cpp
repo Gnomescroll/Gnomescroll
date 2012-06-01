@@ -3,6 +3,9 @@
 
 #include <t_gen/twister.hpp>
 
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.hpp>
+
 namespace t_gen
 {
 
@@ -21,7 +24,7 @@ class PerlinField3D
     static const int xs = 8; //x sample density
     static const int zs = 4; //y sample density
 
-    static const int ssize = 64*64*32;
+    static const int ssize = 64*64*(32+1);
     static const int xsize = 64;
     static const int zsize = 32;
 
@@ -39,7 +42,7 @@ class PerlinField3D
 // This method is a *lot* faster than using (int)Math.floor(x)
 static inline int fastfloor(float x) 
 {
-return x>0 ? (int)x : (int)x-1;
+return x>=0 ? (int)x : (int)x-1;
 }
 
 static inline float dot(const int g[], float x, float y, float z)
@@ -49,8 +52,8 @@ return g[0]*x + g[1]*y + g[2]*z;
 
 static inline float mix(float a, float b, float t) 
 {
-    return (1-t)*a + t*b;
-//    return a + t*(a-b);   //optimized version
+//    return (1-t)*a + t*b;
+    return a + t*(a-b);   //optimized version
 }
 
 static inline float fade(float t) 
@@ -62,9 +65,10 @@ inline int get_gradiant(int x, int y, int z)
 {
     x = x % 64; //replace with bitmask
     y = y % 64;
-    GS_ASSERT(z > 0 && z < 32);
 
+    GS_ASSERT(x >= 0 && y >= 0);
     GS_ASSERT(x + y*64 + z*64*64 < ssize)
+
     return gradient_array[x + y*64 + z*64*64];
 }
 
@@ -87,7 +91,7 @@ float noise(float x, float y, float z)
     Y = Y & 255;
     Z = Z & 255;
 */
-    x /= 8.0;
+    x /= 8.0;  //replace with multiplication
     y /= 8.0;
     z /= 4.0;
     //get grid point
@@ -97,10 +101,15 @@ float noise(float x, float y, float z)
 
     //get interpolation ratio
 
+    //if(z >= 32 || z < 0) printf("ERROR1 z = %f \n", z);
+
     x = x - X;
     y = y - Y;
     z = z - Z;
 
+    //if(z >= 32 || z < 0) printf("ERROR2 z = %f \n", z);
+    //if(x<0 || y<0 || z<0) printf("x,y,z= %f %f %f \n", x,y,z);
+    //if(z >= 32) printf("x,y,z= %f %f %f X,Y,Z= %i %i %i \n", x+X,y+Y,z+Z,X,Y,Z);
     // Calculate a set of eight hashed gradient indices
 
 
@@ -159,7 +168,7 @@ float noise(float x, float y, float z)
     // Interpolate the two last results along z
     float nxyz = mix(nxy0, nxy1, w);
 
-    return nxyz;
+    return ((nxyz * 0.707106781)+1.0)/2.0;   //-1 to 1
 }
 
 };
@@ -168,7 +177,7 @@ float noise(float x, float y, float z)
 
 void noise_map_test()
 {
-    PerlinField3D p3d(5);
+    PerlinField3D p3d(516514);
 
     const int xres = 512;
     const int yres = 512;
@@ -178,10 +187,42 @@ void noise_map_test()
     for(int i=0; i<xres; i++)
     for(int j=0; j<yres; j++)
     {
-        out[i+j*yres] = p3d.noise(2*i,2*j,64.0);
+        const float factor = 1.0;
+        float x = i*factor;
+        float y = j*factor;
+
+        out[i+j*yres] = p3d.noise(x,y,64.5);
+        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
     }
 
     save_png("n_map_00", out, xres, yres);
+}
+
+void noise_map_generate_map()
+{
+#if DC_SERVER
+
+    PerlinField3D p3d(516514);
+
+    int tile = t_map::dat_get_cube_id("regolith");
+
+    for(int i=0; i<512; i++)
+    for(int j=0; j<512; j++)
+    for(int k=0; k<32; k++)
+    {
+
+        float x = i;
+        float y = j;
+        float z = k;
+        float value = p3d.noise(x,y,z);
+        if(value > 0.2)
+        {
+            t_map::set(i,j,k, tile);
+
+        }
+        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
+    }
+#endif
 }
 
 

@@ -10,6 +10,8 @@
 namespace Main
 {
 
+
+
 void init()
 {
     init_c_lib();
@@ -17,12 +19,18 @@ void init()
     // generate floor map
     //_floor(512,512,0,32,1);
     
+    if(0)
+    {
     MapGen::init();
     MapRecipes::simple_map();
     MapGen::teardown();
-
     Dragon::caves();
     Dragon::test_filters();
+    }
+    else
+    {
+        t_gen::noise_map_generate_map();
+    }   
 
     srand(time(NULL));
     
