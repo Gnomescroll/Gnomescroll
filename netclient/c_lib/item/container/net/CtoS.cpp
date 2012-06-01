@@ -351,20 +351,20 @@ void create_container_block_CtoS::handle()
 
     ItemContainerInterface* container = create_container(container_type);
     if (container == NULL) return;
+
+    Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
+
+    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_palette(x,y,z,val,orientation);
+
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);
 
-    Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
-
-    //orientation = 0;
-    t_map::broadcast_set_block_palette(x,y,z,val,orientation);
 
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
-
-    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
 }
 
 } // ItemContainer

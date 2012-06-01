@@ -196,7 +196,7 @@ class container_block_create_StoC: public MapMessagePacketToClient<container_blo
     uint16_t x,y,z;
     uint8_t container_type;
     uint16_t container_id;
-
+    
     inline void packet(char* buff, int* buff_n, bool pack)
     {
         pack_u16(&x, buff, buff_n, pack);

@@ -341,19 +341,24 @@ void CTF::unregister_items_for_hitscan()
 
 #ifdef DC_SERVER
 
-void CTF::on_client_connect(int client_id) {
+void CTF::on_client_connect(int client_id)
+{
     one.update_client(client_id);
     two.update_client(client_id);
 }
 
-void CTF::auto_assign_agent(int agent_id) {
+void CTF::auto_assign_agent(int agent_id)
+{
     // choose the less populated team
-    CTFTeam* team = (one.n > two.n) ? &two : &one;
+    //CTFTeam* team = (one.n > two.n) ? &two : &one;
+    CTFTeam* team = &one;   // TODO -- ren-enable teams
     bool added = false;
-    if (!team->full()) {
+    if (!team->full())
+    {
         added = add_agent_to_team(team->id, agent_id);
     }
-    if (added) {
+    if (added)
+    {
         AgentJoinTeam_StoC msg;
         msg.team = team->id;
         msg.agent = agent_id;

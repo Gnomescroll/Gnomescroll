@@ -53,6 +53,9 @@ bool chunk_render_check( float x, float y)
     const float cy = current_camera_position.y;
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(cy);
+
+    x = quadrant_translate_f(cx, x);
+    y = quadrant_translate_f(cy, y);
     
     float dx = cx - x;
     float dy = cy - y;
@@ -131,6 +134,9 @@ void Vbo_map::sort_draw()
 
         float dx = (v->wxoff - cx);
         float dy = (v->wyoff - cy);
+
+        dx = quadrant_translate_f(cx, dx);
+        dy = quadrant_translate_f(cx, dy);
 
         draw_vbo_array[i].distance = dx*dx + dy*dy; //set this
 
