@@ -317,6 +317,9 @@ DONE
 "Press H for help" on connect
 DONE
 
+Never spawn partially inside a block
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -354,6 +357,3 @@ animation on decay
 cryofreezer
 smelter
 craft bench levels
-
-== BUGZ ==
-fix spawning inside blocks (sometimes)
