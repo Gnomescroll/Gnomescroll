@@ -290,14 +290,26 @@ DONE
 grenade/laser attenuations
 DONE
 
-/team stuff/
 spawn everyone on same team
 DONE
 spawn base in center of map
 DONE
-
 disable flag
+DONE
+disable team chat
+DONE
 
+auto-pickup tries the toolbelt first, then inventory
+DONE
+
+fix click-hold lock when toggling inventory:
+If a container block is opened, Toolbelt action releae will force triger
+If mouse is released with agent inventory open, Toolbelt action release will force trigger
+You can still hold down, open+close agent inventory, and if you hadn't released the mouse it will still be held
+DONE
+
+update help text
+DONE
 
 == PVE ==
 blue bombs should be wandering, slowly
@@ -313,8 +325,7 @@ texture color problem in OSX -- for blocks and for items
 Hud Weapon sprites + animation
 
 == SOUND ==
-shovel sounds
-fix attenuations
+improve digging sounds
 mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
@@ -336,6 +347,3 @@ animation on decay
 cryofreezer
 smelter
 craft bench levels
-
-autopickup should go to toolbelt first
-fix click-hold lock when toggling inventory

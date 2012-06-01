@@ -36,6 +36,13 @@ void toggle_agent_container()
     }
     else
     {
+        // poll mouse button state
+        // if left or right is unpressed, trigger an up event
+        int x,y;
+        Uint8 btns = SDL_GetMouseState(&x,&y);
+        if (!(btns & SDL_BUTTON_LEFT)) Toolbelt::left_trigger_up_event();
+        if (!(btns & SDL_BUTTON_RIGHT)) Toolbelt::right_trigger_up_event();
+        
         t_hud::disable_agent_container_hud();
         ItemContainer::close_inventory();
         input_state.mouse_bound = rebind_mouse;
@@ -46,6 +53,11 @@ void toggle_agent_container()
 void enable_crafting_container()
 {
     if (input_state.crafting_block) return;
+
+    // release all toolbelt
+    Toolbelt::left_trigger_up_event();
+    Toolbelt::right_trigger_up_event();
+    
     // force set the mouse position
     // because we wont have a motion event coming in initially sometimes
     int x,y;
@@ -71,6 +83,11 @@ void disable_crafting_container()
 void enable_storage_block_container()
 {
     if (input_state.storage_block) return;
+
+    // release all toolbelt
+    Toolbelt::left_trigger_up_event();
+    Toolbelt::right_trigger_up_event();
+
     // force set the mouse position
     // because we wont have a motion event coming in initially sometimes
     int x,y;
@@ -158,8 +175,7 @@ void toggle_skeleton_editor()
     input_state.skeleton_editor = false;
     #else
     input_state.skeleton_editor = (!input_state.skeleton_editor);
-    if (input_state.skeleton_editor)
-        printf("Skeleton editor enabled\n");
+    if (input_state.skeleton_editor) printf("Skeleton editor enabled\n");
     #endif
 }
 
@@ -415,6 +431,9 @@ void container_mouse_down_handler(SDL_Event* event)
 
 void container_mouse_up_handler(SDL_Event* event)
 {
+    Toolbelt::left_trigger_up_event(); // clear any trigger events
+    Toolbelt::right_trigger_up_event(); // clear any trigger events
+    
     if (!input_state.mouse_bound // for whatever reason it only needs to be done when mouse is unbound
       && input_state.ignore_next_right_click_event
       && event->button.button == SDL_BUTTON_RIGHT)
@@ -785,9 +804,9 @@ void key_down_handler(SDL_Event* event)
                     enable_quit();
                     break;
                 }
-                toggle_chat();
-                if (!input_state.debug)
-                    chat_client->use_team_channel();
+                //toggle_chat();
+                //if (!input_state.debug)
+                    //chat_client->use_team_channel();
                 break;
 
             case SDLK_TAB:
