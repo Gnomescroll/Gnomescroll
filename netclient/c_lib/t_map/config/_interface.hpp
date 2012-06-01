@@ -336,7 +336,7 @@ void end_block_dat()
 {
 #if DC_CLIENT
     LUA_save_cube_texture();
-    print_palette();
+    //print_palette();
 #endif
 }
 

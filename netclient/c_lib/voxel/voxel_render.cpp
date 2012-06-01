@@ -348,14 +348,7 @@ void Voxel_render_list_manager::draw()
             
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
             Vec3 p = quadrant_translate_position(current_camera_position, vv->world_matrix.c);
-            UN[0] = *(matrix._f + 9);
-            UN[1] = *(matrix._f + 10);
-            UN[2] = *(matrix._f + 11);
-
-            quadrant_translate_draw_position(UN+0, UN+1);
-            //quadrant_translate_draw_position((GLfloat*) (matrix._f + 9), (GLfloat*) (matrix._f + 10) );
-            glUniform3fv(InTranslation, 1, (GLfloat*) UN );
-            //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
+            glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
 
             if (_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
             {
