@@ -45,7 +45,7 @@ dont_include_this_file_in_server
 #include <common/template/object_pool.hpp>
 
 /* configuration options */
-#include <common/option_macros.hpp>
+#include <options/option_macros.hpp>
 #include <options/options.cpp>
 
 /* Network */

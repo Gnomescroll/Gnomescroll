@@ -636,18 +636,21 @@ void draw_team_text_icons(float z)
     
     using Components::BASE_SPAWN_ID;
     Base* b = ctf->get_base(playerAgent_state.you->status.team);
-    world_to_map_screen_coordinates(b->x, b->y, &x, &y);
-    base->set_position(x,y);
-    base->set_depth(z);
-    if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
-        base->set_color(highlight.r, highlight.g, highlight.b);
-    else
-        base->set_color(current_color.r, current_color.g, current_color.b);
-    base->draw_centered();
+    if (b != NULL)
+    {
+        world_to_map_screen_coordinates(b->x, b->y, &x, &y);
+        base->set_position(x,y);
+        base->set_depth(z);
+        if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
+            base->set_color(highlight.r, highlight.g, highlight.b);
+        else
+            base->set_color(current_color.r, current_color.g, current_color.b);
+        base->draw_centered();
+    }
 
     int team = playerAgent_state.you->status.team;
     Flag* f = ctf->get_flag(team);
-    if (!f->held)
+    if (f != NULL && !f->held)
     {
         world_to_map_screen_coordinates(f->x, f->y, &x, &y);
         flag->set_position(x,y);
@@ -657,7 +660,7 @@ void draw_team_text_icons(float z)
 
     team = (team == 1) ? 2 : 1; // TODO, retrieve enemy flag from ctf
     f = ctf->get_flag(team);
-    if (!f->held)
+    if (f != NULL && !f->held)
     {
         world_to_map_screen_coordinates(f->x, f->y, &x, &y);
         enemy_flag->set_position(x,y);

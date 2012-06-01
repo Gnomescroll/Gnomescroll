@@ -290,6 +290,15 @@ DONE
 grenade/laser attenuations
 DONE
 
+/team stuff/
+spawn everyone on same team
+DONE
+spawn base in center of map
+DONE
+
+disable flag
+
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -327,3 +336,6 @@ animation on decay
 cryofreezer
 smelter
 craft bench levels
+
+autopickup should go to toolbelt first
+fix click-hold lock when toggling inventory
