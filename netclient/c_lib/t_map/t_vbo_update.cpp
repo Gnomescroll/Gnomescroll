@@ -10,8 +10,6 @@
 
 #include "t_properties.hpp"
 
-#include <t_gen/interface.hpp>
-
 namespace t_map
 {
 

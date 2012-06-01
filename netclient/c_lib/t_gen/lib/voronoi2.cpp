@@ -1,5 +1,5 @@
 
-#include "interface.hpp"
+#include "voronoi2.hpp"
 
 #include <t_gen/lib/voronoi.hpp>
 

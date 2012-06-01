@@ -57,16 +57,3 @@ static inline int hash_function_perlin(int x,int y,int z, int index)
     v ^= v >> 4;
     return v;
 }
-
-#include <t_gen/_interface.hpp>
-
-static inline int hash_function_perlin2(int x,int y,int z, int index)
-{
-    x += _vi2[index+0];
-    y += _vi2[index+1];
-    z += _vi2[index+2];
-
-    float value = t_gen::noise_map_2d_char[512*y+x];
-
-    return value;
-}

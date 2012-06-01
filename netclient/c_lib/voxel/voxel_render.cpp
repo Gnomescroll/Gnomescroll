@@ -327,6 +327,8 @@ void Voxel_render_list_manager::draw()
             continue;
         }
 
+        float UN[3];
+
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
         glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
