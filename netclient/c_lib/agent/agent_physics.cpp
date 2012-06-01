@@ -10,6 +10,12 @@ bool agent_collides_terrain(Agent_state* a)
     return collision_check_final_current(a->box.box_r, h, p.x, p.y, p.z);
 }
 
+bool object_collides_terrain(Vec3 position, float height, float radius)
+{
+    ASSERT_BOXED_POSITION(position);
+    return collision_check_final_current(radius, height, position.x, position.y, position.z);
+}
+
 #define GROUND_MARGIN 0.03f
 // checks the (agent bottom - margin) at 4 corners of the agent
 inline bool on_ground(float box_r, float x, float y, float z)

@@ -9,6 +9,7 @@ namespace Components
 
 void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool state_changed)
 {
+    if (this->vox == NULL) return;
     #if DC_CLIENT
     this->vox->was_updated = false;   // Reset was_updated flag (Voxel_model::update will restore if it does update)
     Vec3 center = this->get_center();
@@ -37,6 +38,7 @@ void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool sta
 
 void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bool state_changed)
 {
+    if (this->vox == NULL) return;
     #if DC_CLIENT
     vox->was_updated = false;   // Reset updated flag (Voxel_model::update will restore if it did)
     Vec3 center = this->get_center();

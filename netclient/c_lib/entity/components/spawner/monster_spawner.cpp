@@ -1,21 +1,19 @@
 #include "monster_spawner.hpp"
 
 #include <physics/vec3.hpp>
+#include <t_map/t_map.hpp>
+#include <agent/agent_physics.hpp>
 #include <entity/components/physics.hpp>
 
 namespace Components
 {
 
-void MonsterSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* spawn_point)
+struct Vec3 MonsterSpawnerComponent::get_spawn_point(float spawned_object_height, float spawned_object_radius)
 {
+    Vec3 spawn_point = vec3_init(0,0,0);
+
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics == NULL)
-    {
-        spawn_point->x = 0;
-        spawn_point->y = 0;
-        spawn_point->z = 0;
-        return;
-    }
+    if (physics == NULL) return spawn_point;
 
     Vec3 position = physics->get_position();
     
@@ -26,10 +24,14 @@ void MonsterSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* s
     sy = position.y + ((randf() * this->radius * 2) - this->radius);
     sy = translate_point(sy);
 
-    int h = (int)ceil(spawned_object_height);
-    spawn_point->x = sx;
-    spawn_point->y = sy;
-    spawn_point->z = t_map::get_highest_open_block((int)sx, (int)sy, h);
+    spawn_point.x = sx;
+    spawn_point.y = sy;
+    spawn_point.z = t_map::get_highest_open_block((int)sx, (int)sy, (int)ceil(spawned_object_height));
+
+    while(object_collides_terrain(spawn_point, spawned_object_height, spawned_object_radius) && spawn_point.z < map_dim.z)
+        spawn_point.z += 1;
+
+    return spawn_point;
 }
 
 Objects::Object* MonsterSpawnerComponent::spawn_child()
@@ -49,13 +51,17 @@ Objects::Object* MonsterSpawnerComponent::spawn_child(ObjectType type)
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics != NULL)
     {
-        int height = 1;
+        float height = 1.0f;
         using Components::DimensionComponent;
         DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-        if (dims != NULL) height = dims->get_integer_height();
+        if (dims != NULL) height = dims->get_height();
+
+        float radius = 1.0f;
+        using Components::VoxelModelComponent;
+        VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+        if (vox != NULL) radius = vox->get_radius();
         
-        Vec3 position;
-        this->get_spawn_point(height, &position);
+        Vec3 position = this->get_spawn_point(height, radius);
         physics->set_position(position);
     }
 

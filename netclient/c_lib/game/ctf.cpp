@@ -712,28 +712,26 @@ void CTF::set_team_color(
     #endif
 }
 
-void CTF::get_base_spawn_point(int team, int agent_height, Vec3* spawn)
+struct Vec3 CTF::get_base_spawn_point(int team, float agent_height, float agent_radius)
 {
-    GS_ASSERT(spawn != NULL);
-    if (spawn == NULL) return;
-    Vec3 default_spawn = vec3_init(map_dim.x/2+0.5f, map_dim.y/2+0.5f, 0);
+    struct Vec3 default_spawn = vec3_init(map_dim.x/2+0.5f, map_dim.y/2+0.5f, 0);
     default_spawn.z = t_map::get_highest_open_block(default_spawn.x, default_spawn.y, agent_height); 
     switch (team)
     {
         case 1:
-            if (one.base != NULL) one.base->get_spawn_point(agent_height, spawn);
-            else *spawn = default_spawn;
+            if (one.base != NULL) return one.base->get_spawn_point(agent_height, agent_radius);
+            else return default_spawn;
             break;
         case 2:
-            if (two.base != NULL) two.base->get_spawn_point(agent_height, spawn);
-            else *spawn = default_spawn;
+            if (two.base != NULL) return two.base->get_spawn_point(agent_height, agent_radius);
+            else return default_spawn;
             break;
         case 0:
-            *spawn = default_spawn;
+            return default_spawn;
             break;
         default:
             GS_ASSERT(false);
-            *spawn = default_spawn;
+            return default_spawn;
             break;
     }
 }

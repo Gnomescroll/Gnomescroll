@@ -1,6 +1,8 @@
 #include "base.hpp"
 
 #include <common/random.h>
+#include <physics/vec3.hpp>
+#include <agent/agent_physics.hpp>
 
 void Base::set_position(float x, float y, float z)
 {
@@ -10,26 +12,33 @@ void Base::set_position(float x, float y, float z)
     this->vox->update(x,y,z, this->theta, this->phi);
 }
 
-void Base::get_spawn_point(int agent_height, Vec3* spawn)
+struct Vec3 Base::get_spawn_point(float agent_height, float agent_radius)
 {
+    Vec3 spawn;
+    
     int x,y;
     x = (int)this->x;
     y = (int)this->y;
 
-    int sx,sy;
+    float sx,sy;
 
-    sx = randrange(x-spawn_radius, x+spawn_radius);
-    sy = randrange(y-spawn_radius, y+spawn_radius);
+    sx = randrange(x-spawn_radius, x+spawn_radius) + 0.5f;
+    sy = randrange(y-spawn_radius, y+spawn_radius) + 0.5f;
     sx = translate_point(sx);
     sy = translate_point(sy);
-    spawn->x = sx;
-    spawn->y = sy;
-    spawn->z = _get_highest_open_block(sx, sy, agent_height);
+    spawn.x = sx;
+    spawn.y = sy;
+    spawn.z = _get_highest_open_block(sx, sy, (int)ceil(agent_height));
+
+    while(object_collides_terrain(spawn, agent_height, agent_radius) && spawn.z < map_dim.z)
+        spawn.z += 1;
+
+    return spawn;
 }
 
 void Base::tick()
 {
-#if DC_SERVER
+    #if DC_SERVER
     float old_z = this->z;
 
     int x,y,z;
@@ -62,7 +71,7 @@ void Base::tick()
 
     if (old_z != (float)z)  // sends packet
         ServerState::ctf->set_base_position(this->team, this->x, this->y, (float)z);
-#endif
+    #endif
 }
 
 void Base::update()
