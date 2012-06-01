@@ -327,7 +327,7 @@ void Voxel_render_list_manager::draw()
             continue;
         }
 
-        float UN[3];
+        //float UN[3];
 
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
