@@ -24,7 +24,7 @@ class PerlinField3D
     static const int xs = 8; //x sample density
     static const int zs = 4; //y sample density
 
-    static const int ssize = 64*64*(32+1);
+    static const int ssize = 64*64*32;
     static const int xsize = 64;
     static const int zsize = 32;
 
@@ -53,7 +53,7 @@ return g[0]*x + g[1]*y + g[2]*z;
 static inline float mix(float a, float b, float t) 
 {
 //    return (1-t)*a + t*b;
-    return a + t*(a-b);   //optimized version
+    return a + t*(b-a);   //optimized version
 }
 
 static inline float fade(float t) 
@@ -65,9 +65,9 @@ inline int get_gradiant(int x, int y, int z)
 {
     x = x % 64; //replace with bitmask
     y = y % 64;
+    z = z % 32;
 
-    GS_ASSERT(x >= 0 && y >= 0);
-    GS_ASSERT(x + y*64 + z*64*64 < ssize)
+    if(x + y*64 + z*64*64 >= ssize) GS_ABORT();
 
     return gradient_array[x + y*64 + z*64*64];
 }
@@ -75,7 +75,7 @@ inline int get_gradiant(int x, int y, int z)
 public:
 
 // Classic Perlin noise, 3D version
-float noise(float x, float y, float z) 
+float base(float x, float y, float z) 
 {
 /*
     // Find unit grid cell containing point
@@ -154,9 +154,17 @@ float noise(float x, float y, float z)
     float n011= dot(_grad3[gi011], x, y-1, z-1);
     float n111= dot(_grad3[gi111], x-1, y-1, z-1);
     // Compute the fade curve value for each of x, y, z
+    
+#if 1
     float u = fade(x);
     float v = fade(y);
     float w = fade(z);
+#else
+    float u = x;
+    float v = y;
+    float w = z;
+#endif
+
     // Interpolate along x the contributions from each of the corners
     float nx00 = mix(n000, n100, u);
     float nx01 = mix(n001, n101, u);
@@ -168,8 +176,23 @@ float noise(float x, float y, float z)
     // Interpolate the two last results along z
     float nxyz = mix(nxy0, nxy1, w);
 
-    return ((nxyz * 0.707106781)+1.0)/2.0;   //-1 to 1
+    return nxyz * 0.707106781;   //-1 to 1
 }
+
+float noise(float x, float y, float z)
+{
+    return base(x,y,z);
+}
+
+float one_over_f(float x, float y, float z) 
+{   
+    float tmp = 0;
+    tmp += noise(x,y,z);
+    tmp += 0.50 * noise(2*x, 2*y,z);
+    tmp += 0.25 * noise(4*x,4*y,z);
+    return tmp;
+}
+
 
 };
 
@@ -192,7 +215,7 @@ void noise_map_test()
         float y = j*factor;
 
         out[i+j*yres] = p3d.noise(x,y,64.5);
-        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
+        //out[i+j*yres] = p3d.one_over_f(x,y,64.5);
     }
 
     save_png("n_map_00", out, xres, yres);
@@ -208,20 +231,30 @@ void noise_map_generate_map()
 
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)
-    for(int k=0; k<32; k++)
+    {
+        t_map::set(i,j,0,0);
+    }
+
+    double sum = 0.0;
+    for(int i=0; i<512; i++)
+    for(int j=0; j<512; j++)
+    for(int k=0; k<64; k++)
     {
 
         float x = i;
         float y = j;
         float z = k;
         float value = p3d.noise(x,y,z);
-        if(value > 0.2)
+        sum += value;
+        if(value+.4 > k*0.03 )
         {
             t_map::set(i,j,k, tile);
 
         }
         //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
     }
+
+    printf("NOISE MAP AVERAGE: = %f \n", (float) sum / (float)(512*512*32));
 #endif
 }
 
