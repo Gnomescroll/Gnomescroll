@@ -185,6 +185,21 @@ static void send_craft_alpha_action(ContainerActionType action, int container_id
     msg.send();
 }
 
+static void send_purchase_item_action(int container_id, int slot)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+
+    record_container_event(container_id);
+    
+    purchase_item_from_nanite_action_CtoS msg;
+    msg.event_id = container_event_id;
+    
+    msg.container_id = container_id;
+    msg.slot = slot;
+
+    msg.send();
+}
+
 static void send_craft_beta_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -260,7 +275,7 @@ static void send_no_container_beta_action(ContainerActionType action)
 
 // Handlers
 
-void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craft_output)
+void mouse_left_click_handler(int container_id, int slot, bool nanite_shopping, bool craft_output)
 {
     ContainerActionType action;
 
@@ -281,7 +296,8 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             action = alpha_action_decision_tree(container_id, slot);
             break;
         case AGENT_NANITE:
-            action = nanite_alpha_action_decision_tree(container_id, slot);
+            if (nanite_shopping) action = nanite_shopping_alpha_action_decision_tree(container_id, slot);
+            else action = nanite_alpha_action_decision_tree(container_id, slot);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
@@ -306,7 +322,8 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
             send_container_alpha_action(action, container_id, slot);
             break;
         case AGENT_NANITE:
-            send_nanite_alpha_action(action, container_id, slot);
+            if (action == PURCHASE_ITEM_FROM_NANITE) send_purchase_item_action(container_id, slot);
+            else send_nanite_alpha_action(action, container_id, slot);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
@@ -323,7 +340,7 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craf
     }
 }
 
-void mouse_right_click_handler(int container_id, int slot, bool nanite, bool craft_output)
+void mouse_right_click_handler(int container_id, int slot, bool nanite_shopping, bool craft_output)
 {
     ContainerActionType action;
 
@@ -344,7 +361,8 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
             action = beta_action_decision_tree(container_id, slot);
             break;
         case AGENT_NANITE:
-            action = nanite_beta_action_decision_tree(container_id, slot);
+            if (nanite_shopping) action = nanite_shopping_beta_action_decision_tree(container_id, slot);
+            else action = nanite_beta_action_decision_tree(container_id, slot);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
@@ -370,7 +388,8 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite, bool cra
             send_container_beta_action(action, container_id, slot);
             break;
         case AGENT_NANITE:
-            send_nanite_beta_action(action, container_id, slot);
+            if (action == PURCHASE_ITEM_FROM_NANITE) send_purchase_item_action(container_id, slot);
+            else send_nanite_beta_action(action, container_id, slot);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:

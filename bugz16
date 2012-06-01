@@ -265,6 +265,31 @@ DONE
 blue bombs aggro if shot
 DONE
 
+add steel
+DONE
+
+variable stack sizes and outputs in craft recipes
+DONE
+
+nanite hud refacotr
+DONE
+
+tooltips
+DONE
+
+block damage sound
+DONE
+
+block placement sound
+DONE
+
+OpenAL attenuation graph tool
+https://www.desmos.com/calculator/uh7trifxxx
+DONE
+
+grenade/laser attenuations
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -280,13 +305,13 @@ Hud Weapon sprites + animation
 
 == SOUND ==
 shovel sounds
-block placement sounds
+fix attenuations
+mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
 parameterize open/close container input handling shit
 
 == UI/UX ==
-tooltips
 indicate where something can be placed
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
@@ -294,6 +319,7 @@ have chat display a "Press U to relock mouse" when window gains focus and mouse 
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
+right click on osx???
 
 == CONTAINERS ETC ==
 methane blocks that decay
@@ -301,5 +327,7 @@ animation on decay
 cryofreezer
 smelter
 craft bench levels
-multiple craft outputs
-variable stack outputs
+
+== BUGZ ==
+when placing container over 512->0 border, the axis  alignment is opposite
+cannot destroy blocks with laser rifle across quadrant

@@ -3,7 +3,7 @@
 namespace t_hud
 {
 
-const int STACK_COUNT_MAX_LENGTH = 3;   // 999
+const int STACK_COUNT_MAX_LENGTH = 4;   // 9999
 
 typedef enum
 {

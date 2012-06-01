@@ -1017,14 +1017,15 @@ inline void agent_set_block_CtoS::handle()
     }
     _set(x,y,z,0);  // unset
 
-    if (!collides)
-    {
-        Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
-        t_map::broadcast_set_block(x,y,z, val);
-        agent_placed_block_StoC msg;
-        msg.id = a->id;
-        msg.broadcast();
-    }
+    if (collides) return;
+    
+    Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
+    t_map::broadcast_set_block(x,y,z, val);
+    agent_placed_block_StoC msg;
+    msg.id = a->id;
+    msg.broadcast();
+
+    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
 }
 
 //#if !PRODUCTION
@@ -1061,13 +1062,14 @@ inline void admin_set_block_CtoS::handle()
     }
     _set(x,y,z,0);  // unset
 
-    if (!collides)
-    {
-        t_map::broadcast_set_block(x,y,z, val);
-        agent_placed_block_StoC msg;
-        msg.id = a->id;
-        msg.broadcast();
-    }
+    if (collides) return;
+    
+    t_map::broadcast_set_block(x,y,z, val);
+    agent_placed_block_StoC msg;
+    msg.id = a->id;
+    msg.broadcast();
+
+    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
 }
 //#endif
 

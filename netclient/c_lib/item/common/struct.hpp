@@ -45,6 +45,7 @@ class CraftingRecipe
 
     int id;
     int output; //item type
+    int output_stack;
     int reagent_num;
     int reagent[CRAFT_BENCH_INPUTS_MAX];
     int reagent_count[CRAFT_BENCH_INPUTS_MAX];
@@ -61,6 +62,7 @@ class CraftingRecipe
     {
         id = NULL_CRAFTING_RECIPE;
         output = NULL_ITEM_TYPE;
+        output_stack = 1;
         reagent_num = 0;
         for(int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
         {

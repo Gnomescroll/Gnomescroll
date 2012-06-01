@@ -209,8 +209,9 @@ void init()
         alSourcef(sources[i], AL_PITCH, 1.0f);
         alSourcef(sources[i], AL_MIN_GAIN, 0.0f);
         alSourcef(sources[i], AL_MAX_GAIN, 1.0f);
-        alSourcef(sources[i], AL_MAX_DISTANCE, 1000.0f);
-        alSourcef(sources[i], AL_REFERENCE_DISTANCE, 5.0f);
+        alSourcef(sources[i], AL_MAX_DISTANCE, 256.0f);
+        alSourcef(sources[i], AL_REFERENCE_DISTANCE, 1.0f);
+        alSourcef(sources[i], AL_ROLLOFF_FACTOR, 1.0f);
     }
 
     // set distance model
@@ -413,6 +414,7 @@ int set_source_properties(int source_id, Soundfile* snd)
     alSourcef(sources[source_id], AL_REFERENCE_DISTANCE, snd->reference_distance);
     alSourcef(sources[source_id], AL_MIN_GAIN, snd->minimum_gain);
     alSourcef(sources[source_id], AL_MAX_GAIN, snd->maximum_gain);
+    alSourcef(sources[source_id], AL_ROLLOFF_FACTOR, snd->rolloff_factor);
     return (checkError());
 }
 

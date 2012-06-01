@@ -599,7 +599,7 @@ void digest_nanite_food()
     }
 }
 
-void purchase_item_from_nanite(int agent_id, int slot)
+void purchase_item_from_nanite(int agent_id, int shopping_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
@@ -614,15 +614,11 @@ void purchase_item_from_nanite(int agent_id, int slot)
     ItemContainerNanite* nanite = (ItemContainerNanite*)get_container(agent_nanite_list[agent_id]);
     if (nanite == NULL) return;
 
-    // transform plain slot to a shopping slot (as used by dat)
-    slot = nanite->get_shopping_slot(slot);
-    if (slot == NULL_SLOT) return;
-    
     // get the store item
-    int xslot = slot % nanite->xdim;
-    int yslot = slot / nanite->xdim;
-    int item_type, cost;
-    Item::get_nanite_store_item(nanite->level, xslot, yslot, &item_type, &cost);
+    int xslot = shopping_slot % nanite->xdim;
+    int yslot = shopping_slot / nanite->xdim;
+    int cost;
+    int item_type = Item::get_nanite_store_item(nanite->level, xslot, yslot, &cost);
     GS_ASSERT(cost >= 0);
     if (item_type == NULL_ITEM_TYPE) return;
     
@@ -694,16 +690,18 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         // create new item of type
         Item::Item* item = Item::create_item(recipe->output);
         if (item == NULL) return;
+        item->stack_size = recipe->output_stack;
         Item::send_item_create(agent->client_id, item->id);
         agent_hand_list[agent_id] = item->id;
         send_hand_insert(agent->client_id, item->id);
     }
-    else
+    else if (hand_can_stack_recipe)
     {
         // update item stack
         Item::Item* item = Item::get_item(hand_item);
         GS_ASSERT(item != NULL);
-        item->stack_size += 1;
+        if (item == NULL) return;
+        item->stack_size += recipe->output_stack;
         Item::send_item_state(agent->client_id, item->id);
         send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
     }

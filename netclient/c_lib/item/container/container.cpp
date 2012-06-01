@@ -708,6 +708,11 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
 
+    // client was inside container, but not a slot
+    // do nothing
+    GS_ASSERT(slot == 0 || slot == 1);
+    if (slot < 0 || slot == NULL_SLOT || slot > 1) return action;
+
     #if DC_CLIENT
     bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
     int hand_item_type = player_hand_type_ui;
@@ -722,10 +727,6 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
-    // client was inside container, but not a slot
-    // do nothing
-    if (slot < 0 || slot == NULL_SLOT) return action;
-
     // get container
     #if DC_CLIENT
     ItemContainerUIInterface* container = get_container_ui(id);
@@ -736,15 +737,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     GS_ASSERT(container != NULL);
     if (container == NULL) return action;
     GS_ASSERT(container->type = AGENT_NANITE);
-
-    if (slot > 1)
-    {   // shopping
-        if (hand_empty)
-        {   // send purchase packet
-            return PURCHASE_ITEM_FROM_NANITE;
-        }
-    }
-
+    
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
@@ -1352,6 +1345,46 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     #endif
 
     return action;
+}
+
+#if DC_CLIENT
+ContainerActionType nanite_shopping_alpha_action_decision_tree(int container_id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType nanite_shopping_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+#endif
+{
+    if (slot == NULL_SLOT || container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;
+
+    #if DC_CLIENT
+    int hand_item_type = player_hand_type_ui;
+    bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
+    //int stack_space = Item::get_max_stack_size(hand_item_type) - player_hand_stack_ui;
+    #endif
+    #if DC_SERVER
+    ItemID hand_item = get_agent_hand(agent_id);
+    int hand_item_type = Item::get_item_type(hand_item);
+    bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
+    //int stack_space = Item::get_stack_space(hand_item);
+    #endif
+
+    // TODO -- Allow multiple purchasing if it stacks
+    if (hand_empty)
+    {   // send purchase packet
+        return PURCHASE_ITEM_FROM_NANITE;
+    }
+
+    return CONTAINER_ACTION_NONE;
+}
+
+#if DC_CLIENT
+ContainerActionType nanite_shopping_beta_action_decision_tree(int container_id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType nanite_shopping_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+#endif
+{
+    return CONTAINER_ACTION_NONE;
 }
 
 #if DC_CLIENT

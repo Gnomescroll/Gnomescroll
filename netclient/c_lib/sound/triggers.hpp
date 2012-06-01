@@ -65,6 +65,7 @@ struct Soundfile
     float reference_distance;
     float minimum_gain;
     float maximum_gain;
+    float rolloff_factor;
 };
 
 extern struct Soundfile* sound_file_functions;
@@ -78,7 +79,8 @@ void set_soundfile_properties(
     float max_distance,
     float reference_distance,
     float minimum_gain,
-    float maximum_gain
+    float maximum_gain,
+    float rolloff_factor
 );
 
 void teardown_triggers();

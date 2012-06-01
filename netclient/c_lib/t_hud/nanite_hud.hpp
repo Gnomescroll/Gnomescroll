@@ -15,34 +15,28 @@ class AgentNaniteUI : public UIElement
 {
     public:
 
-    static const float inc1 = 6; // spacing between slot icons
-    static const float inc2 = 2;  // border around a slot icon
+    static const int cell_size = 37;    // pixel dimension
 
-    static const float slot_size = 32;    // pixel dimension
+    static const int nanite_xdim = 4;
+    static const int nanite_ydim = 4;
+    
+    static const int shopping_xdim = 2;
+    static const int shopping_ydim = 4;
 
-    //slots are 37 px in size
-
-    static const int xdim = 2;    // slot dimensions for shopping area
-    static const int ydim = 4;
+    static const int xdim = nanite_xdim + shopping_xdim;
+    static const int ydim = (nanite_ydim > shopping_ydim) ? nanite_ydim : shopping_ydim;
 
     static const int level = 0;    //nanite level
 
     // size of texture/render area
-    static const float render_width = 222.0f;
-    static const float render_height = 148.0f;
+    static const float render_width = cell_size * xdim;
+    static const float render_height = cell_size * ydim;
 
-    // nanite region data
-    static const int nanite_offset_x = 1;
-    static const int nanite_offset_y = 1;
-    static const int nanite_border = 2;
-    static const int nanite_width = 143;
-    static const int nanite_height = 143;
-    
-    // slot region data
-    static const int slot_offset_x = 149;   // offset to beginning of slot area border
-    static const int slot_offset_y = 1;
-    static const int slot_border = 2;
-    static const int slot_border_gap = 1;
+    static const float slot_size = 32;
+    static const float cell_offset_x = 3;
+    static const float cell_offset_y = 3;
+    static const float cell_offset_x_right = 2;
+    static const float cell_offset_y_bottom = 2;
 
     HudText::Text* prices;
     HudText::Text* stacks;
@@ -60,19 +54,21 @@ class AgentNaniteUI : public UIElement
     }
 
     int get_slot_at(int px, int py);
+    int get_grid_at(int px, int py);
 
     bool point_inside(int px, int py)
     {
-        return (this->get_slot_at(px,py) != NULL_SLOT || this->in_nanite_region(px,py));
+        return (this->get_grid_at(px,py) != NULL_SLOT);
     }
 
     bool in_nanite_region(int px, int py);
+    bool in_shopping_region(int px, int py);
+    bool in_coins_region(int px, int py);
 
     void init()
     {
-        int max = (xdim * ydim) - 1;    // last slot is reserved
-
         GS_ASSERT(this->prices == NULL);
+        int max = shopping_xdim * shopping_ydim - 1;    // last slot is coins
         this->prices = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
@@ -85,8 +81,9 @@ class AgentNaniteUI : public UIElement
 
         // stacks only for food/coins
         GS_ASSERT(this->stacks == NULL);
+        max = 2;
         this->stacks = new HudText::Text[max];
-        for (int i=0; i<2; i++)
+        for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stacks[i];
             t->set_format((char*) "%d");
@@ -102,41 +99,83 @@ class AgentNaniteUI : public UIElement
     ~AgentNaniteUI()
     {
         if (this->prices != NULL) delete[] this->prices;
+        if (this->stacks != NULL) delete[] this->stacks;
     }
 };
 
 bool AgentNaniteUI::in_nanite_region(int px, int py)
 {
-    // check nanite region
-    int nx = px - (xoff + nanite_offset_x + nanite_border);
-    int ny = py - (_yresf - yoff + nanite_offset_y + nanite_border);
+    int slot = this->get_grid_at(px,py);
+    if (slot == NULL_SLOT) return false;
+    
+    int xslot = slot % xdim;
+    int yslot = slot / xdim;
+    GS_ASSERT(xslot >= 0 && xslot < xdim);
+    GS_ASSERT(yslot >= 0 && yslot < ydim);
 
-    if (nx >= 0 && nx < nanite_width && ny >= 0 && ny < nanite_height)
-        return true;
+    if (xslot < 0 || xslot >= nanite_xdim) return false;
+    if (yslot < 0 || yslot >= nanite_ydim) return false;
+    return true;
+}
+
+bool AgentNaniteUI::in_shopping_region(int px, int py)
+{
+    int slot = this->get_grid_at(px,py);
+    if (slot == NULL_SLOT) return false;
+    
+    int xslot = slot % xdim;
+    int yslot = slot / xdim;
+    GS_ASSERT(xslot >= 0 && xslot < xdim);
+    GS_ASSERT(yslot >= 0 && yslot < ydim);
+    
+    if (xslot == xdim-1 && yslot == ydim-1) return false;  // coins slot
+    if (xslot < nanite_xdim || xslot >= xdim) return false;
+    if (yslot < 0 || yslot >= ydim) return false;
+    return true;
+}
+
+bool AgentNaniteUI::in_coins_region(int px, int py)
+{
+    int slot = this->get_grid_at(px,py);
+    if (slot == NULL_SLOT) return false;
+    if (slot == xdim*ydim-1) return true;
     return false;
+}
+
+int AgentNaniteUI::get_grid_at(int px, int py)
+{
+    px -= xoff;
+    py -= _yresf - yoff;
+
+    if (px < 0 || px >= render_width) return NULL_SLOT;
+    if (py < 0 || py >= render_height) return NULL_SLOT;
+
+    int xslot = px / cell_size;
+    int yslot = py / cell_size;
+    int slot = xslot + yslot * xdim;
+
+    GS_ASSERT(slot < xdim*ydim);
+    
+    return slot;
 }
 
 int AgentNaniteUI::get_slot_at(int px, int py)
 {
-    if (in_nanite_region(px,py)) return 0;  // food slot
+    int slot = this->get_grid_at(px,py);
+    if (slot == NULL_SLOT) return NULL_SLOT;
     
-    //pixels from upper left
-    px -= xoff + slot_offset_x;
-    py -= _yresf - yoff + slot_offset_y;
+    if (this->in_nanite_region(px,py)) return 0;  // food slot
+    if (this->in_coins_region(px,py)) return 1;
 
-    float width  = xdim*slot_size + xdim*slot_border*2 + (xdim-1)*slot_border_gap;
-    float height = ydim*slot_size + ydim*slot_border*2 + (ydim-1)*slot_border_gap;
+    // convert grid slot to shopping slot (0-indexed)
 
-    if (px < 0 || px > width)  return NULL_SLOT;
-    if (py < 0 || py > height) return NULL_SLOT;
-
-    int xslot = px / (slot_size + slot_border*2 + slot_border_gap);
-    int yslot = py / (slot_size + slot_border*2 + slot_border_gap);
-    int slot = xslot + yslot * xdim;
-
-    if (slot == xdim*ydim-1) slot = 1; // convert last slot (coins) to slot 1
-    else slot += 2; // all shopping slots offset by 2 (food + coins slot)
+    int xslot = slot % xdim;
+    int yslot = slot / xdim;
+    GS_ASSERT(xslot >= nanite_xdim && xslot < xdim);
+    GS_ASSERT(yslot >= 0 && yslot < ydim);
     
+    xslot -= nanite_xdim;
+    slot = xslot + yslot * shopping_xdim;
     return slot;
 }
 
@@ -149,6 +188,7 @@ void AgentNaniteUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    GS_ASSERT(NaniteTexture != 0);
     glBindTexture(GL_TEXTURE_2D, NaniteTexture);
 
     glColor4ub(255, 255, 255, 255);
@@ -159,10 +199,10 @@ void AgentNaniteUI::draw()
     float x = xoff;
     float y = yoff;
 
-    const float tx_min = 0.0;
-    const float ty_min = 0.0;
-    const float tx_max = render_width/512.0;
-    const float ty_max = render_height/512.0;
+    const float tx_min = 0.0f;
+    const float ty_min = 0.0f;
+    const float tx_max = w/512.0f;
+    const float ty_max = h/512.0f;
 
     //draw background
     glBegin(GL_QUADS);
@@ -186,18 +226,15 @@ void AgentNaniteUI::draw()
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
-    int hover_slot = this->get_slot_at(mouse_x, mouse_y);
-    if (hover_slot != 0 && hover_slot != NULL_SLOT)
+    int hover_slot = this->get_grid_at(mouse_x, mouse_y);
+    if (hover_slot != NULL_SLOT && !this->in_nanite_region(mouse_x, mouse_y))
     {
-        if (hover_slot == 1) hover_slot = xdim*ydim-1;
-        else hover_slot -= 2;
-
         int w = slot_size;
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;
 
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+        const float x = xoff + cell_size*xslot + cell_offset_x;
+        const float y = yoff - (cell_size*yslot + cell_offset_y);
 
         glVertex2f(x,y);
         glVertex2f(x, y-w);
@@ -219,24 +256,30 @@ void AgentNaniteUI::draw()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
+    GS_ASSERT(TextureSheetLoader::GreyScaleItemTexture != 0);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
 
     glBegin(GL_QUADS);
 
     //draw unavailable store items
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    bool any_available;
+    for (int xslot=0; xslot<shopping_xdim; xslot++)
+    for (int yslot=0; yslot<shopping_ydim; yslot++)
     {
-        if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
+        if (xslot == shopping_xdim-1 && yslot == shopping_ydim-1) continue;    // this is the last slot, put money here
 
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
-        if (coins >= cost) continue; // we can afford it; move on
+        int cost;
+        int item_type = Item::get_nanite_store_item(level, xslot, yslot, &cost);
+        if (coins >= cost)
+        {
+            any_available = true;
+            continue; // we can afford it; move on
+        }
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+        const float x = xoff + cell_size*nanite_xdim + cell_size*xslot + cell_offset_x;
+        const float y = yoff - (cell_size*yslot + cell_offset_y);
 
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -262,54 +305,58 @@ void AgentNaniteUI::draw()
     glEnd();
 
     // item sheet items
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
-
-    glBegin(GL_QUADS);
-    //draw available store items
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    if (any_available)
     {
-        if (xslot == xdim-1 && yslot == ydim-1) continue;    // this is the last slot, put money here
+        GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
+        glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
-        if (coins < cost) continue; // we can't afford it; move on
-        if (item_type == NULL_ITEM_TYPE) continue;
-        int tex_id = Item::get_sprite_index_for_type(item_type);
+        glBegin(GL_QUADS);
+        //draw available store items
+        for (int xslot=0; xslot<shopping_xdim; xslot++)
+        for (int yslot=0; yslot<shopping_ydim; yslot++)
+        {
+            if (xslot == shopping_xdim-1 && yslot == shopping_ydim-1) continue;    // this is the last slot, put money here
 
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+            int cost;
+            int item_type = Item::get_nanite_store_item(level, xslot, yslot, &cost);
+            if (coins < cost) continue; // we can't afford it; move on
+            if (item_type == NULL_ITEM_TYPE) continue;
+            int tex_id = Item::get_sprite_index_for_type(item_type);
 
-        const float w = slot_size;
-        const float iw = 16.0f; // icon_width
-        const int iiw = 16; // integer icon width
+            const float x = xoff + cell_size*nanite_xdim + cell_size*xslot + cell_offset_x;
+            const float y = yoff - (cell_size*yslot + cell_offset_y);
+            
+            const float w = slot_size;
+            const float iw = 16.0f; // icon_width
+            const int iiw = 16; // integer icon width
 
-        const float tx_min = (1.0/iw)*(tex_id % iiw);
-        const float ty_min = (1.0/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
+            const float tx_min = (1.0/iw)*(tex_id % iiw);
+            const float ty_min = (1.0/iw)*(tex_id / iiw);
+            const float tx_max = tx_min + 1.0/iw;
+            const float ty_max = ty_min + 1.0/iw;
 
-        glTexCoord2f(tx_min, ty_min);
-        glVertex2f(x, y);
+            glTexCoord2f(tx_min, ty_min);
+            glVertex2f(x, y);
 
-        glTexCoord2f(tx_min, ty_max);
-        glVertex2f(x,y-w);
+            glTexCoord2f(tx_min, ty_max);
+            glVertex2f(x,y-w);
 
-        glTexCoord2f(tx_max, ty_max);
-        glVertex2f(x+w, y-w);
+            glTexCoord2f(tx_max, ty_max);
+            glVertex2f(x+w, y-w);
 
-        glTexCoord2f(tx_max, ty_min);
-        glVertex2f(x+w, y);
+            glTexCoord2f(tx_max, ty_min);
+            glVertex2f(x+w, y);
+        }
+        glEnd();
     }
-    glEnd();
 
     int food_item_type = container->get_food_type();
     if (food_item_type != NULL_ITEM_TYPE)
     {
         int food_sprite_id = Item::get_sprite_index_for_type(food_item_type);
-        float x = xoff + nanite_offset_x + nanite_width - slot_size;
-        float y = yoff - (nanite_offset_y + nanite_height - slot_size);
-
+        const float x = xoff + (nanite_xdim-1)*cell_size + cell_offset_x;
+        const float y = yoff - ((nanite_ydim-1)*cell_size + cell_offset_y);
+        
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
@@ -338,12 +385,9 @@ void AgentNaniteUI::draw()
     int coin_item_type = container->get_coin_type();
     if (coin_item_type != NULL_ITEM_TYPE)
     {
-        int xslot = xdim-1;
-        int yslot = ydim-1;
-        
         int coin_sprite_id = Item::get_sprite_index_for_type(coin_item_type);
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+        const float x = xoff + (xdim-1)*cell_size + cell_offset_x;
+        const float y = yoff - ((ydim-1)*cell_size + cell_offset_y);
 
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -371,65 +415,65 @@ void AgentNaniteUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    //draw text for item cost in upper right
+    ////draw text for item cost in upper right
+
+    GS_ASSERT(this->stacks != NULL);
+    GS_ASSERT(this->prices != NULL);
+
     HudFont::start_font_draw();
     const int font_size = 12;
     HudFont::set_properties(font_size);
     HudFont::set_texture();
 
-    HudText::Text* text;
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    for (int xslot=0; xslot<shopping_xdim; xslot++)
+    for (int yslot=0; yslot<shopping_ydim; yslot++)
     {
-        // the nanite store slots in dat are indexed from 0
-        // it is not aware of the implementation detail we have for food
-        const int slot = yslot*xdim + xslot;
-        if (slot == xdim*ydim-1) continue;  // skip last slot, reserved
+        if (xslot == shopping_xdim-1 && yslot == shopping_ydim-1) continue;  // skip last slot, reserved
 
-        int item_type, cost;
-        Item::get_nanite_store_item(level, xslot, yslot, &item_type, &cost);
+        int cost;
+        int item_type = Item::get_nanite_store_item(level, xslot, yslot, &cost);
         if (item_type == NULL_ITEM_TYPE) continue;
 
         GS_ASSERT(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
 
-        text = &this->prices[slot];
+        const int slot = yslot*shopping_xdim + xslot;
+        GS_ASSERT(slot < shopping_xdim*shopping_ydim-1);
+        HudText::Text* text = &this->prices[slot];
         text->update_formatted_string(1, cost);
 
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot + slot_size - text->get_width();
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
-        
+        const float x = xoff + nanite_xdim*cell_size + (xslot+1)*cell_size - cell_offset_x_right - text->get_width();
+        const float y = yoff - ((yslot+1)*cell_size - cell_offset_y_bottom - text->get_height());
+
         text->set_position(x,y);
         text->draw();
     }
 
     // draw food stack
-    HudText::Text* food_stack = &this->stacks[0];
-
     int food_stack_size = container->get_food_stack();
     GS_ASSERT(count_digits(food_stack_size) < STACK_COUNT_MAX_LENGTH);
     if (food_stack_size > 1)
     {
-        food_stack->update_formatted_string(1, food_stack_size);
-        const float x = xoff + nanite_offset_x + nanite_width - food_stack->get_width();
-        const float y = yoff - (nanite_offset_y + nanite_height - food_stack->get_height());
-        food_stack->set_position(x,y);
-        food_stack->draw();
+        this->stacks[0].update_formatted_string(1, food_stack_size);
+
+        const float x = xoff + nanite_xdim*cell_size - cell_offset_x_right - this->stacks[0].get_width();
+        const float y = yoff - (nanite_ydim*cell_size - cell_offset_y_bottom - this->stacks[0].get_height());
+        
+        this->stacks[0].set_position(x,y);
+        this->stacks[0].draw();
     }
     
     // draw coin stack
-    HudText::Text* coin_stack = &this->stacks[0];
-
     int coin_stack_size = container->get_coin_stack();
     GS_ASSERT(count_digits(coin_stack_size) < STACK_COUNT_MAX_LENGTH);
     if (coin_stack_size > 1)
     {
-        int xslot = xdim-1;
-        int yslot = ydim-1;
-        coin_stack->update_formatted_string(1, coin_stack_size);
-        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot + slot_size - coin_stack->get_width();
-        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot + slot_size - coin_stack->get_height());
-        coin_stack->set_position(x,y);
-        coin_stack->draw();
+        this->stacks[1].update_formatted_string(1, coin_stack_size);
+
+        const float x = xoff + xdim*cell_size - cell_offset_x_right - this->stacks[1].get_width();
+        const float y = yoff - (ydim*cell_size - cell_offset_y_bottom - this->stacks[1].get_height());
+
+        this->stacks[1].set_position(x,y);
+        this->stacks[1].draw();
     }
 
     HudFont::reset_default();
@@ -437,16 +481,8 @@ void AgentNaniteUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
-
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
-
-    glDisable(GL_TEXTURE_2D);
-
-    //u_dot(xoff,yoff);
-    glColor4ub(255, 255, 255, 255);
 }
 
 

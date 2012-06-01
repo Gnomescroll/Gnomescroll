@@ -20,10 +20,7 @@ namespace Item
 void load_crafting_dat()
 {
 
-/*
-    Ore
-*/
-
+    // Ore
     def_recipe("copper_bar");
     set_reagent("copper_ore", 1);
     set_reagent("copper_ore", 1);
@@ -38,16 +35,23 @@ void load_crafting_dat()
     set_reagent("iron_ore", 1);
     set_reagent("iron_ore", 1);
     end_recipe();
-
+    
     def_recipe("iridium_bar");
     set_reagent("iridium_ore", 1);
     set_reagent("iridium_ore", 1);
     end_recipe();
+    
+    // Blocks
+    def_recipe("iron_block", 4);
+    set_reagent("iron_bar", 1);
+    end_recipe();
+    
+    def_recipe("steel_block", 4);
+    set_reagent("iron_bar", 1);
+    set_reagent("graphite", 1);
+    end_recipe();
 
-/*
-    Shovel
-*/
-
+    // Shovel
     def_recipe("copper_shovel");
     set_reagent("copper_bar", 1);
     set_reagent("copper_bar", 1);
@@ -68,9 +72,7 @@ void load_crafting_dat()
     set_reagent("iridium_bar", 1);
     end_recipe();
 
-/*
-    Other
-*/
+    // Other
     def_recipe("food_rock-0");
     set_reagent("regolith", 1);
     set_reagent("regolith", 1);
@@ -83,6 +85,7 @@ void load_crafting_dat()
     set_reagent("regolith", 2);
     end_recipe();
 
+    // Weapons
     def_recipe("mining_laser");
     set_reagent("copper_bar", 1);
     set_reagent("blue_cystal", 1);
@@ -92,7 +95,6 @@ void load_crafting_dat()
     set_reagent("copper_bar", 1);
     set_reagent("quartz_crystal", 1);
     end_recipe();
-
 }
 
 }   // Item

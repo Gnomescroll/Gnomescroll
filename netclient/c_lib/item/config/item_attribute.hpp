@@ -10,8 +10,9 @@ class ItemAttribute
 
     int item_group_type;
     
+    char* pretty_name;
+
     //IG_PLACER
-    //char* placer_block_type;  //type of block that it creates
     int placer_block_type_id;   //id of block type that it creates
 
     //IG_HITSCAN_WEAPON
@@ -59,8 +60,9 @@ class ItemAttribute
     void load_defaults(int group_type)
     {
         // PUT ALL DEFAULTS HERE
+
+        pretty_name = NULL;
         item_group_type = group_type;
-        //placer_block_type = NULL;
         max_energy = NULL_ENERGY;
         max_durability = NULL_DURABILITY;
         max_stack_size = 1;

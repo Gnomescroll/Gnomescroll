@@ -111,7 +111,6 @@ void set_item_name(int id, char* name)
     set_item_name(id, name, length);
 }
 
-
 char* get_item_name(int type)
 {
     GS_ASSERT(type >= 0 || type < MAX_ITEMS);
@@ -126,6 +125,21 @@ int get_item_type(const char* name)
     GS_ASSERT(false);
     printf("%s:%d -- No item for name %s\n", __FUNCTION__, __LINE__, name);
     return NULL_ITEM_TYPE;
+}
+
+char* get_item_pretty_name(int item_type)
+{
+    GS_ASSERT(item_type != NULL_ITEM_TYPE);
+    if (item_type == NULL_ITEM_TYPE) return NULL;
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return NULL;
+    GS_ASSERT(attr->pretty_name != NULL);
+    char* name = NULL;
+    if (attr->pretty_name == NULL) name = get_item_name(item_type); // use item name is no pretty name defined
+    else name = attr->pretty_name;
+    GS_ASSERT(name != NULL);
+    return name;
 }
 
 int get_item_group_for_type(int item_type)
@@ -218,20 +232,25 @@ bool get_nanite_edibility(int item_type)
     return attr->nanite_food;
 }
 
-void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost)
+int get_nanite_store_item(int level, int xslot, int yslot)
+{
+    int cost;
+    return get_nanite_store_item(level, xslot, yslot, &cost);
+}
+
+int get_nanite_store_item(int level, int xslot, int yslot, int* cost)
 {
     for(int i=0; i<MAX_ITEMS; i++)
     {
         class NaniteStoreItem* n = &nanite_store_item_array[i];
         if(n->level == level && n->xslot == xslot && n->yslot == yslot)
         {
-            *item_type = n->item_type;
             *cost = n->nanite_cost;
-            return;
+            return n->item_type;
         }
     }
-    *item_type = NULL_ITEM_TYPE;
     *cost = 0;
+    return NULL_ITEM_TYPE;
 }
 
 class CraftingRecipe* get_craft_recipe(int recipe_id)
@@ -356,6 +375,13 @@ int get_selected_craft_recipe_type(int container_id, int slot)
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
     return recipe->output;
+}
+
+int get_selected_craft_recipe_stack(int container_id, int slot)
+{
+    CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
+    if (recipe == NULL) return 1;
+    return recipe->output_stack;
 }
 
 bool container_type_is_block(ItemContainerType type)

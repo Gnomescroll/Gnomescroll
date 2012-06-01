@@ -107,9 +107,15 @@ int _current_reagent_id = 0;
 
 class CraftingRecipe _cr;
 
-void def_recipe(const char* item_name)
+void def_recipe(const char* item_name, int amount)
 {
     _cr.output = dat_get_item_type(item_name);
+    _cr.output_stack = amount;
+}
+
+void def_recipe(const char* item_name)
+{
+    def_recipe(item_name, 1);
 }
 
 

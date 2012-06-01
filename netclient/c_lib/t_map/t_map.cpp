@@ -110,6 +110,7 @@ void end_t_map()
 
 int apply_damage(int x, int y, int z, int dmg)
 {
+    GS_ASSERT(dmg > 0);
     #if DC_CLIENT
     Sound::block_took_damage(x+0.5f,y+0.5f,z+0.5f,0,0,0);
     #endif
@@ -134,7 +135,6 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
         handle_block_drop(x,y,z, block_type);
 }
 
-//not used by anything
 void broadcast_set_block_action(int x, int y, int z, int block, int action)
 {
     map_history->send_block_action(x,y,z,block,action);

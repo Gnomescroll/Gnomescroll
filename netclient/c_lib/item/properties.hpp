@@ -34,8 +34,10 @@ int get_sprite_index_for_type(int type);
 void set_item_name(int type, char* name, int length);
 void set_item_name(int type, char* name);
 
-char* get_item_name(int type);
+char* get_item_name(int item_type);
 int get_item_type(const char* name);
+
+char* get_item_pretty_name(int type);
 
 int get_item_group_for_type(int item_type);
 
@@ -56,13 +58,15 @@ int get_item_object_damage(int weapon_type);
 
 bool get_nanite_edibility(int item_type);
 
-void get_nanite_store_item(int level, int xslot, int yslot, int* item_type, int* cost);
+int get_nanite_store_item(int level, int xslot, int yslot);
+int get_nanite_store_item(int level, int xslot, int yslot, int* cost);
 
 class CraftingRecipe* get_craft_recipe(int recipe_id);
 
 class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot);
 int get_selected_craft_recipe_type(int container_id, int slot);
 int get_selected_craft_recipe_type(int container_id, int slot, bool* available);
+int get_selected_craft_recipe_stack(int container_id, int slot);
 
 bool container_type_is_block(ItemContainerType type);
 
