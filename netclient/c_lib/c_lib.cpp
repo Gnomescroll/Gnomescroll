@@ -322,6 +322,8 @@ int init_c_lib()
 
     init_voronoi_noise_maps();
     
+    t_gen::noise_map_test();
+
     //check_gl_error();
     return 0;
 }

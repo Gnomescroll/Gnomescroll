@@ -49,7 +49,8 @@ return g[0]*x + g[1]*y + g[2]*z;
 
 static inline float mix(float a, float b, float t) 
 {
-return (1-t)*a + t*b;
+    return (1-t)*a + t*b;
+//    return a + t*(a-b);   //optimized version
 }
 
 static inline float fade(float t) 
@@ -159,9 +160,29 @@ float noise(float x, float y, float z)
     float nxyz = mix(nxy0, nxy1, w);
 
     return nxyz;
-
 }
 
 };
+
+
+
+void noise_map_test()
+{
+    PerlinField3D p3d(5);
+
+    const int xres = 512;
+    const int yres = 512;
+
+    float* out = new float[xres*yres];
+
+    for(int i=0; i<xres; i++)
+    for(int j=0; j<yres; j++)
+    {
+        out[i+j*yres] = p3d.noise(2*i,2*j,64.0);
+    }
+
+    save_png("n_map_00", out, xres, yres);
+}
+
 
 }
