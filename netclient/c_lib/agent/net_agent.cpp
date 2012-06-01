@@ -779,6 +779,8 @@ inline void hitscan_block_CtoS::handle()
     p.y += f[1] * distance;
     p.z += f[2] * distance;
 
+    p = translate_position(p);
+
     int cube_side = get_cube_side_from_side_array(side);
 
     agent_shot_block_StoC msg;

@@ -329,5 +329,4 @@ smelter
 craft bench levels
 
 == BUGZ ==
-when placing container over 512->0 border, the axis  alignment is opposite
 cannot destroy blocks with laser rifle across quadrant

@@ -343,7 +343,8 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     Vec3 arm_center = this->a->vox->get_node(5)->c;
     
     // vector from arm center to collision point
-    Vec3 p = vec3_init(x,y,z);
+    Vec3 p = vec3_init(x+0.5f,y+0.5f,z+0.5f);
+    p = quadrant_translate_position(this->a->get_position(), p);
     Vec3 f = vec3_sub(p, arm_center);
     normalize_vector(&f);
 
