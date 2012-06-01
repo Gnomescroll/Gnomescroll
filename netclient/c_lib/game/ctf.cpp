@@ -5,16 +5,14 @@
 #include <common/random.h>
 #include <options/options.hpp>
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <state/client_state.hpp>
 #include <hud/map.hpp>
 #include <hud/compass.hpp>
 #endif
 
-CTF::CTF()
-{}
-
-void CTF::init() {
+void CTF::init()
+{
     //this->set_team_color(1, 34, 144, 191);    //dark teal
     //this->set_team_color(1, 93, 158, 24);    //dark green
     this->set_team_color(1, 59, 99, 17);    //dark green
@@ -27,11 +25,11 @@ void CTF::init() {
 
 void CTF::start()
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     this->auto_assign = Options::auto_assign_team;
     #endif
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     float x,y,z;
 
     int x_max = map_dim.x;
@@ -40,17 +38,22 @@ void CTF::start()
     // bases
     // base should spawn in the back 2/16 or 7/16 strip of the side it belongs on
     // also shouldnt spawn within 1/8 of edge
-    x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
-    y = randrange((map_dim.y * 1)/16, (map_dim.y * 5)/16 - 1); // 2/16 - 5/16
+    
+    //x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
+    //y = randrange((map_dim.y * 1)/16, (map_dim.y * 5)/16 - 1); // 2/16 - 5/16
+    x = map_dim.x / 2 + 0.5f;
+    y = map_dim.y / 2 + 0.5f;
     z = _get_highest_open_block(x,y);
-    x+=0.5f;y+=0.5f;
+    //x+=0.5f;y+=0.5f;
     this->set_base_position(1, x,y,z);
 
-    x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
-    //y = randrange((map_dim.y * 11)/16, (map_dim.y * 15)/16 - 1);  // 11/16 - 15/16
-    y = map_dim.y - y;  // keep y distance equal, for balance
+    //x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
+    ////y = randrange((map_dim.y * 11)/16, (map_dim.y * 15)/16 - 1);  // 11/16 - 15/16
+    //y = map_dim.y - y;  // keep y distance equal, for balance
+    x = map_dim.x / 2 + 0.5f;
+    y = map_dim.y / 2 + 0.5f;
     z = _get_highest_open_block(x,y);
-    x+=0.5f;y+=0.5f;
+    //x+=0.5f;y+=0.5f;
     this->set_base_position(2,x,y,z);
 
     // flags
@@ -115,7 +118,8 @@ char* CTF::get_team_name(int team)
 
 void CTF::set_score(int team, int score)
 {
-    switch (team) {
+    switch (team)
+    {
         case 1:
             one.base_score = score;
             break;
@@ -155,18 +159,19 @@ void CTF::set_flag_position(int team, float x, float y, float z)
     if (z < 0) z = 0;
     if (z >= map_dim.z) z = map_dim.z - 1;
     
-    switch (team) {
+    switch (team)
+    {
         case 1:
-            one.flag->set_position(x,y,z);
+            if (one.flag != NULL) one.flag->set_position(x,y,z);
             break;
         case 2:
-            two.flag->set_position(x,y,z);
+            if (two.flag != NULL) two.flag->set_position(x,y,z);
             break;
         default:
             break;
     }
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     FlagState_StoC msg;
     msg.team = team;
     msg.x = x;
@@ -178,24 +183,19 @@ void CTF::set_flag_position(int team, float x, float y, float z)
 
 void CTF::set_base_position(int team, float x, float y, float z)
 {
-    // TODO -- undo
-    //////////////
-    x = 0.0f;
-    y = 0.0f;
-    //////////////
-    
-    switch (team) {
+    switch (team)
+    {
         case 1:
-            one.base->set_position(x,y,z);
+            if (one.base != NULL) one.base->set_position(x,y,z);
             break;
         case 2:
-            two.base->set_position(x,y,z);
+            if (two.base != NULL) two.base->set_position(x,y,z);
             break;
         default:
             break;
     }
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     BaseState_StoC msg;
     msg.team = team;
     msg.x = x;
@@ -205,15 +205,17 @@ void CTF::set_base_position(int team, float x, float y, float z)
     #endif
 }
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
-void CTF::join_team(int team) {
+void CTF::join_team(int team)
+{
     AgentJoinTeam_CtoS msg;
     msg.team = team;
     msg.send();
 }
 
-void CTF::on_ready() {
+void CTF::on_ready()
+{
     static int once = 0;
     if (once) return;
     if (!auto_assign) return;
@@ -227,15 +229,15 @@ void CTF::flag_picked_up(int team)
     switch (team)
     {
         case 1:
-            if (two.flag->vox != NULL)
+            if (two.flag != NULL && two.flag->vox != NULL)
                 two.flag->held = true;
             break;
         case 2:
-            if (one.flag->vox != NULL)
-                two.flag->held = true;
+            if (one.flag != NULL && one.flag->vox != NULL)
+                one.flag->held = true;
             break;
         default:
-            printf("CTF::flag_picked_up -- invalid team %d\n", team);
+            GS_ASSERT(false);
             return;
     }
 }
@@ -245,15 +247,15 @@ void CTF::flag_dropped(int team)
     switch (team)
     {
         case 1:
-            if (two.flag->vox != NULL)
+            if (two.flag != NULL && two.flag->vox != NULL)
                 two.flag->held = false;
             break;
         case 2:
-            if (one.flag->vox != NULL)
-                two.flag->held = false;
+            if (one.flag != NULL && one.flag->vox != NULL)
+                one.flag->held = false;
             break;
         default:
-            printf("CTF::flag_dropped -- invalid team %d\n", team);
+            GS_ASSERT(false);
             return;
     }
 }
@@ -271,13 +273,14 @@ void CTF::flag_scored(int team)
                 two.flag->held = false;
             break;
         default:
-            printf("CTF::flag_scored -- invalid team %d\n", team);
+            GS_ASSERT(false);
             return;
     }
 }
 
 int CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
 {
+    GS_ASSERT(r != NULL && g != NULL && b != NULL);
     switch (team)
     {
         case 1:
@@ -299,8 +302,7 @@ int CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned c
 
 int CTF::get_enemy_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
 {
-    if (team)
-        team = (team == 1) ? 2 : 1;
+    if (team) team = (team == 1) ? 2 : 1;
     return get_team_color(team, r,g,b);
 }
 
@@ -314,32 +316,49 @@ void CTF::animate_flags()
 
 void CTF::register_items_for_hitscan()
 {
-    one.flag->vox->set_hitscan(true);
-    two.flag->vox->set_hitscan(true);
-    one.base->vox->set_hitscan(true);
-    two.base->vox->set_hitscan(true);
+    if (one.flag != NULL && one.flag->vox != NULL)
+        one.flag->vox->set_hitscan(true);
+    if (two.flag != NULL && two.flag->vox != NULL)
+        two.flag->vox->set_hitscan(true);
+    if (one.base != NULL && one.base->vox != NULL)
+        one.base->vox->set_hitscan(true);
+    if (two.base != NULL && two.base->vox != NULL)
+        two.base->vox->set_hitscan(true);
 
-    one.flag->vox->register_hitscan();
-    two.flag->vox->register_hitscan();
-    one.base->vox->register_hitscan();
-    two.base->vox->register_hitscan();
+    if (one.flag != NULL && one.flag->vox != NULL)
+        one.flag->vox->register_hitscan();
+    if (two.flag != NULL && two.flag->vox != NULL)
+        two.flag->vox->register_hitscan();
+    if (one.base != NULL && one.base->vox != NULL)
+        one.base->vox->register_hitscan();
+    if (two.base != NULL && two.base->vox != NULL)
+        two.base->vox->register_hitscan();
+
 
 }
 void CTF::unregister_items_for_hitscan()
 {
-    one.flag->vox->set_hitscan(false);
-    two.flag->vox->set_hitscan(false);
-    one.base->vox->set_hitscan(false);
-    two.base->vox->set_hitscan(false);
+    if (one.flag != NULL && one.flag->vox != NULL)
+        one.flag->vox->set_hitscan(false);
+    if (two.flag != NULL && two.flag->vox != NULL)
+        two.flag->vox->set_hitscan(false);
+    if (one.base != NULL && one.base->vox != NULL)
+        one.base->vox->set_hitscan(false);
+    if (two.base != NULL && two.base->vox != NULL)
+        two.base->vox->set_hitscan(false);
 
-    one.flag->vox->unregister_hitscan();
-    two.flag->vox->unregister_hitscan();
-    one.base->vox->unregister_hitscan();
-    two.base->vox->unregister_hitscan();
+    if (one.flag != NULL && one.flag->vox != NULL)
+        one.flag->vox->unregister_hitscan();
+    if (two.flag != NULL && two.flag->vox != NULL)
+        two.flag->vox->unregister_hitscan();
+    if (one.base != NULL && one.base->vox != NULL)
+        one.base->vox->unregister_hitscan();
+    if (two.base != NULL && two.base->vox != NULL)
+        two.base->vox->unregister_hitscan();
 }
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 void CTF::on_client_connect(int client_id)
 {
@@ -353,10 +372,7 @@ void CTF::auto_assign_agent(int agent_id)
     //CTFTeam* team = (one.n > two.n) ? &two : &one;
     CTFTeam* team = &one;   // TODO -- ren-enable teams
     bool added = false;
-    if (!team->full())
-    {
-        added = add_agent_to_team(team->id, agent_id);
-    }
+    if (!team->full()) added = add_agent_to_team(team->id, agent_id);
     if (added)
     {
         AgentJoinTeam_StoC msg;
@@ -374,8 +390,10 @@ void CTF::send_to_client(int client_id)
     char *name;
     int score;
     int i;
-    for (i=1; i<=2; i++) {
-        switch (i) {
+    for (i=1; i<=2; i++)
+    {
+        switch (i)
+        {
             case 1:
                 flag = one.flag;
                 base = one.base;
@@ -391,19 +409,26 @@ void CTF::send_to_client(int client_id)
             default:
                 break;
         }
-        FlagState_StoC flag_msg;
-        flag_msg.team = i;
-        flag_msg.x = flag->x;
-        flag_msg.y = flag->y;
-        flag_msg.z = flag->z;
-        flag_msg.sendToClient(client_id);
-        
-        BaseState_StoC base_msg;
-        base_msg.team = i;
-        base_msg.x = base->x;
-        base_msg.y = base->y;
-        base_msg.z = base->z;
-        base_msg.sendToClient(client_id);
+
+        if (flag != NULL)
+        {
+            FlagState_StoC flag_msg;
+            flag_msg.team = i;
+            flag_msg.x = flag->x;
+            flag_msg.y = flag->y;
+            flag_msg.z = flag->z;
+            flag_msg.sendToClient(client_id);
+        }
+
+        if (base != NULL)
+        {
+            BaseState_StoC base_msg;
+            base_msg.team = i;
+            base_msg.x = base->x;
+            base_msg.y = base->y;
+            base_msg.z = base->z;
+            base_msg.sendToClient(client_id);
+        }
 
         TeamName_StoC name_msg;
         name_msg.team = i;
@@ -446,11 +471,11 @@ void CTF::agent_drop_flag(int agent_team, float x, float y, float z)
     {
         case 1:
             this->set_flag_position(2, x,y,z);
-            two.flag->held = false;
+            if (two.flag != NULL) two.flag->held = false;
             break;
         case 2:
             this->set_flag_position(1, x,y,z);
-            one.flag->held = false;
+            if (one.flag != NULL) one.flag->held = false;
             break;
         default:
             printf("CTF::agent_drop_flag -- agent_team %d invalid.\n", agent_team);
@@ -458,7 +483,8 @@ void CTF::agent_drop_flag(int agent_team, float x, float y, float z)
     }
 }
 
-void CTF::check_agent_proximities() {
+void CTF::check_agent_proximities()
+{
     float r;
     Flag* f;
     Base* b;
@@ -466,7 +492,7 @@ void CTF::check_agent_proximities() {
     int i;
         
     f = one.flag;
-    if (!f->held)
+    if (f != NULL && !f->held)
     {
         r = f->vox->largest_radius();
         STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
@@ -484,31 +510,38 @@ void CTF::check_agent_proximities() {
     }
 
     b = one.base;
-    r = b->vox->largest_radius();
-    STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
-    for (i=0; i<STATE::agent_list->n_filtered; i++) {
-        a = STATE::agent_list->filtered_objects[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team != 1) continue;
-        // heal
-        if (!a->status.dead) {
-            if (a->status.has_flag) {
-                // scored
-                this->reset_flag(2);
-                one.captured_flag();
-                a->status.score_flag();
+    if (b != NULL)
+    {
+        r = b->vox->largest_radius();
+        STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
+        for (i=0; i<STATE::agent_list->n_filtered; i++)
+        {
+            a = STATE::agent_list->filtered_objects[i];
+            if (a==NULL) continue;
+            if (!a->status.team || a->status.team != 1) continue;
+            // heal
+            if (!a->status.dead)
+            {
+                if (a->status.has_flag)
+                {
+                    // scored
+                    this->reset_flag(2);
+                    one.captured_flag();
+                    a->status.score_flag();
+                }
+                a->status.at_base();
             }
-            a->status.at_base();
         }
     }
 
     f = two.flag;
-    if (!f->held)
+    if (f != NULL && !f->held)
     {
         r = f->vox->largest_radius();
         STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
         STATE::agent_list->sort_filtered_objects_by_distance();
-        for (i=0; i<STATE::agent_list->n_filtered; i++) {
+        for (i=0; i<STATE::agent_list->n_filtered; i++)
+        {
             a = STATE::agent_list->filtered_objects[i];
             if (a==NULL) continue;
             if (!a->status.team || a->status.team == 2) continue;
@@ -521,32 +554,40 @@ void CTF::check_agent_proximities() {
     }
 
     b = two.base;
-    r = b->vox->largest_radius();
-    STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
-    for (i=0; i<STATE::agent_list->n_filtered; i++) {
-        a = STATE::agent_list->filtered_objects[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team != 2) continue;
-        // heal
-        if (!a->status.dead) {
-            if (a->status.has_flag) {
-                // scored
-                this->reset_flag(1);
-                two.captured_flag();
-                a->status.score_flag();
+    if (b != NULL)
+    {
+        r = b->vox->largest_radius();
+        STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
+        for (i=0; i<STATE::agent_list->n_filtered; i++)
+        {
+            a = STATE::agent_list->filtered_objects[i];
+            if (a==NULL) continue;
+            if (!a->status.team || a->status.team != 2) continue;
+            // heal
+            if (!a->status.dead)
+            {
+                if (a->status.has_flag)
+                {
+                    // scored
+                    this->reset_flag(1);
+                    two.captured_flag();
+                    a->status.score_flag();
+                }
+                a->status.at_base();
             }
-            a->status.at_base();
         }
     }
 }
 
-bool CTF::remove_agent_from_team(int agent) {
+bool CTF::remove_agent_from_team(int agent)
+{
     bool success = false;
 
     Agent_state* a = ServerState::agent_list->get(agent);
     if (a==NULL) return success;
     
-    switch(a->status.team) {
+    switch(a->status.team)
+    {
         case 0:
             success = none.remove_agent(agent);
             break;
@@ -572,25 +613,19 @@ bool CTF::is_at_base(int team, float x, float y, float z)
     switch (team)
     {
         case 1:
-            if (one.base->vox == NULL)
-                return false;
+            if (one.base == NULL || one.base->vox == NULL) return false;
             d = distancef_squared(x,y,z, one.base->x, one.base->y, one.base->z);
             r = one.base->vox->largest_radius();
-            if (d < r*r)
-                return true;
-            else
-                return false;
+            if (d < r*r) return true;
+            return false;
             break;
 
         case 2:
-            if (two.base->vox == NULL)
-                return false;
+            if (two.base == NULL || two.base->vox == NULL) return false;
             d = distancef_squared(x,y,z, two.base->x, two.base->y, two.base->z);
             r = two.base->vox->largest_radius();
-            if (d < r*r)
-                return true;
-            else
-                return false;
+            if (d < r*r) return true;
+            return false;
             break;
 
         default:
@@ -600,23 +635,22 @@ bool CTF::is_at_base(int team, float x, float y, float z)
 }
 
 
-bool CTF::add_agent_to_team(int team, int agent) {
+bool CTF::add_agent_to_team(int team, int agent)
+{
     bool success = false;
 
-    if (team < 0 || team > 2) {
+    if (team < 0 || team > 2)
+    {
         printf("CTF::add_agent_to_team -- team id %d out of range\n", team);
         return success;
     }
 
     Agent_state* a = STATE::agent_list->get(agent);
     if (a==NULL) return success;
+    if (a->status.team == team) return success;    // already in team
 
-    if (a->status.team == team) {
-        return success;    // already in team
-    }
-
-
-    switch(a->status.team) {
+    switch(a->status.team)
+    {
         case 0:
             none.remove_agent(agent);
             break;
@@ -630,7 +664,8 @@ bool CTF::add_agent_to_team(int team, int agent) {
             break;
     }
     
-    switch(team) {
+    switch(team)
+    {
         case 0:
             success = none.add_agent(agent);
             break;
@@ -654,7 +689,8 @@ void CTF::set_team_color(
     unsigned char r, unsigned char g, unsigned char b
 )
 {
-    switch (team) {
+    switch (team)
+    {
         case 1:
             one.set_color(r,g,b);
             break;
@@ -678,20 +714,27 @@ void CTF::set_team_color(
 
 void CTF::get_base_spawn_point(int team, int agent_height, Vec3* spawn)
 {
+    GS_ASSERT(spawn != NULL);
+    if (spawn == NULL) return;
+    Vec3 default_spawn = vec3_init(map_dim.x/2+0.5f, map_dim.y/2+0.5f, 0);
+    default_spawn.z = t_map::get_highest_open_block(default_spawn.x, default_spawn.y, agent_height); 
     switch (team)
     {
         case 1:
-            one.base->get_spawn_point(agent_height, spawn);
+            if (one.base != NULL) one.base->get_spawn_point(agent_height, spawn);
+            else *spawn = default_spawn;
             break;
         case 2:
-            two.base->get_spawn_point(agent_height, spawn);
+            if (two.base != NULL) two.base->get_spawn_point(agent_height, spawn);
+            else *spawn = default_spawn;
             break;
         case 0:
-            spawn = NULL;
+            *spawn = default_spawn;
             break;
         default:
-            printf("CTF::get_base_spawn_point -- invalid team %d\n", team);
-            return;
+            GS_ASSERT(false);
+            *spawn = default_spawn;
+            break;
     }
 }
 
@@ -699,8 +742,8 @@ void CTF::update_flags_held()
 {
     using STATE::agent_list;
     Agent_state* a;
-    one.flag->held = false;
-    two.flag->held = false;
+    if (one.flag != NULL) one.flag->held = false;
+    if (two.flag != NULL) two.flag->held = false;
     for (int i=0; i<agent_list->n_max; i++)
     {
         a = agent_list->a[i];
@@ -709,10 +752,10 @@ void CTF::update_flags_held()
             switch (a->status.team)
             {
                 case 1:
-                    two.flag->held = true;
+                    if (two.flag != NULL) two.flag->held = true;
                     break;
                 case 2:
-                    one.flag->held = true;
+                    if (one.flag != NULL) one.flag->held = true;
                     break;
                 default:
                     printf("WARNING -- CTF::update_flags_held() -- agent %d has_flag but has team %d\n", a->id, a->status.team);
@@ -724,10 +767,16 @@ void CTF::update_flags_held()
 void CTF::update()
 {
     update_flags_held();
-    one.flag->update();
-    one.base->update();
-    two.flag->update();
-    two.base->update();
+    
+    if (one.flag != NULL)
+        one.flag->update();
+    if (two.flag != NULL)
+        two.flag->update();
+
+    if (one.base != NULL)
+        one.base->update();
+    if (two.base != NULL)
+        two.base->update();
 }
 
 Base* CTF::get_base(int team)
@@ -745,8 +794,7 @@ Base* CTF::get_base(int team)
 
 Base* CTF::get_enemy_base(int team)
 {
-    if (team)
-        team = (team == 1) ? 2 : 1;
+    if (team) team = (team == 1) ? 2 : 1;
     return this->get_base(team);
 }
 
@@ -765,7 +813,6 @@ Flag* CTF::get_flag(int team)
 
 Flag* CTF::get_enemy_flag(int team)
 {
-    if (team)
-        team = (team == 1) ? 2 : 1;
+    if (team) team = (team == 1) ? 2 : 1;
     return this->get_flag(team);
 }

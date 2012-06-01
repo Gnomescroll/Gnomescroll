@@ -170,11 +170,14 @@ flag_captures(0)
 
 void CTFTeam::init(int id)
 {
+    GS_ASSERT(this->flag == NULL);
+    GS_ASSERT(this->base == NULL);
+    
     static int item_id = 0;
     
     Team::init(id);
-    
-    this->flag = new Flag(item_id, id);
+
+    if (use_ctf_flags) this->flag = new Flag(item_id, id);
     this->base = new Base(item_id, id);
 
     item_id++;
@@ -206,16 +209,12 @@ void CTFTeam::captured_flag()
 
 void CTFTeam::tick()
 {
-    if (this->flag != NULL)
-        this->flag->tick();
-    if (this->base != NULL)
-        this->base->tick();
+    if (this->flag != NULL) this->flag->tick();
+    if (this->base != NULL) this->base->tick();
 }
 
 CTFTeam::~CTFTeam()
 {
-    if (this->flag != NULL)
-        delete this->flag;
-    if (this->base != NULL)
-        delete this->base;
+    if (this->flag != NULL) delete this->flag;
+    if (this->base != NULL) delete this->base;
 }

@@ -7,7 +7,8 @@
 const unsigned int TEAM_NAME_MAX_LENGTH = 31;
 const unsigned int TEAM_MAX_PLAYERS = GAME_MAX_PLAYERS;
 
-class Team {
+class Team
+{
     public:
         int id;
         unsigned char r,g,b;
@@ -38,7 +39,8 @@ class Team {
         Team();
 };
 
-class NoTeam {
+class NoTeam
+{
     public:
         int id;
         char name[7+1]; // strlen("Viewers") + '\0'
@@ -57,8 +59,8 @@ class NoTeam {
         NoTeam();
 };
 
-class CTFTeam: public Team {
-
+class CTFTeam: public Team
+{
     public:
 
         Flag* flag;

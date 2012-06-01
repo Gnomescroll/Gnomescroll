@@ -66,6 +66,6 @@ class CTF {
     void set_team_color(int team,
         unsigned char r, unsigned char g, unsigned char b) GNOMESCROLL_API;
 
-    CTF();
+    CTF() {}
 };
 
