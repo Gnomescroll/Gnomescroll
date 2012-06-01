@@ -232,6 +232,7 @@ void RegisterMessages()
 
     ItemContainer::nanite_container_action_alpha_CtoS::register_server_packet();
     ItemContainer::nanite_container_action_beta_CtoS::register_server_packet();
+    ItemContainer::purchase_item_from_nanite_action_CtoS::register_server_packet();
     
     ItemContainer::craft_container_action_alpha_CtoS::register_server_packet();
     ItemContainer::craft_container_action_beta_CtoS::register_server_packet();

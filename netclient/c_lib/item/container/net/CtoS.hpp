@@ -145,6 +145,24 @@ class nanite_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServ
         inline void handle();
 };
 
+class purchase_item_from_nanite_action_CtoS: public FixedSizeReliableNetPacketToServer<purchase_item_from_nanite_action_CtoS>
+{
+    public:
+        uint16_t event_id;
+
+        uint16_t container_id;
+        uint8_t slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&event_id, buff, buff_n, pack);
+            
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 class craft_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<craft_container_action_alpha_CtoS>
 {
     public:

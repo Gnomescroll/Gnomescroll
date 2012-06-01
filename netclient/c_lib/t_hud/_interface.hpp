@@ -20,7 +20,7 @@ typedef struct
 {
     int container_id;
     int slot;
-    bool nanite;
+    bool nanite_shopping;
     bool craft_output;
 } ContainerInputEvent;
 

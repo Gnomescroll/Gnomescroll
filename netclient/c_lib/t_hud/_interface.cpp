@@ -163,9 +163,9 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     ContainerInputEvent event;
     event.container_id = container_id;
     event.slot = slot;
-    event.nanite = (container != NULL
+    event.nanite_shopping = (container != NULL
                  && container->type == UI_ELEMENT_NANITE_CONTAINER
-                 && ((AgentNaniteUI*)container)->in_nanite_region(x,y));
+                 && ((AgentNaniteUI*)container)->in_shopping_region(x,y));
     event.craft_output = (container != NULL
                         && container->type == UI_ELEMENT_CRAFTING_CONTAINER
                         && ((CraftingUI*)container)->in_craft_output_region(x,y));
@@ -188,28 +188,29 @@ static int get_item_type_at(int x, int y)
 
     if (ui->type == UI_ELEMENT_NANITE_CONTAINER)
     {
-        if (((AgentNaniteUI*)ui)->in_nanite_region(x,y))
-            Item::get_nanite_store_item(((AgentNaniteUI*)ui)->level, (slot-2)%2, (slot-2)/2);  // TODO -- use store dimensions for x,yslot
-        else
-            return container->get_slot_type(slot);
+        if (((AgentNaniteUI*)ui)->in_shopping_region(x,y))
+        {
+            int xslot = slot % ((AgentNaniteUI*)ui)->shopping_xdim;
+            int yslot = slot / ((AgentNaniteUI*)ui)->shopping_xdim;
+            return Item::get_nanite_store_item(((AgentNaniteUI*)ui)->level, xslot, yslot);
+        }
     }
     
     if (ui->type == UI_ELEMENT_CRAFTING_CONTAINER)
     {
         if (((CraftingUI*)ui)->in_craft_output_region(x,y))
             return Item::get_selected_craft_recipe_type(container->id, slot);
-        else
-            return container->get_slot_type(slot);
     }
+    
     return container->get_slot_type(slot);
 }
 
 static const ContainerInputEvent NULL_EVENT =
 {
     NULL_CONTAINER,         // null container id
-    NULL_SLOT,   // null slot
-    false,  // nanite click
-    false,  // craft output
+    NULL_SLOT,              // null slot
+    false,                 // nanite shopping click
+    false,                 // craft output
 };
 
 ContainerInputEvent left_mouse_down(int x, int y)
@@ -255,7 +256,8 @@ ContainerInputEvent scroll_up()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
-    event.nanite = false;
+    event.nanite_shopping = false;
+    event.craft_output = false;
     return event;
 }
 
@@ -268,7 +270,8 @@ ContainerInputEvent scroll_down()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
-    event.nanite = false;
+    event.nanite_shopping = false;
+    event.craft_output = false;
     return event;
 }
 
@@ -284,7 +287,8 @@ ContainerInputEvent select_slot(int numkey)
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = slot;
-    event.nanite = false;
+    event.nanite_shopping = false;
+    event.craft_output = false;
     return event;
 }
 

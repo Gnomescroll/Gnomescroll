@@ -10,6 +10,7 @@ inline void container_action_alpha_CtoS::handle() {}
 inline void container_action_beta_CtoS::handle() {}
 inline void nanite_container_action_alpha_CtoS::handle() {}
 inline void nanite_container_action_beta_CtoS::handle() {}
+inline void purchase_item_from_nanite_action_CtoS::handle(){}
 inline void craft_container_action_alpha_CtoS::handle() {}
 inline void craft_container_action_beta_CtoS::handle() {}
 inline void craft_item_from_bench_action_CtoS::handle() {}
@@ -110,13 +111,6 @@ inline void nanite_container_action_alpha_CtoS::handle()
         return;
     }
 
-    if (action == PURCHASE_ITEM_FROM_NANITE)
-    {
-        // do purchase action
-        purchase_item_from_nanite(a->id, slot);
-        return;
-    }
-
     ItemID hand_item = get_agent_hand(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
@@ -154,15 +148,18 @@ inline void nanite_container_action_beta_CtoS::handle()
         return;
     }
 
-    if (action == PURCHASE_ITEM_FROM_NANITE)
-    {
-        // do purchase action
-        return;
-    }
-
     ItemID slot_item = container->get_item(slot);
     if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
+}
+
+inline void purchase_item_from_nanite_action_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+
+    purchase_item_from_nanite(a->id, slot);
 }
 
 inline void craft_container_action_alpha_CtoS::handle()

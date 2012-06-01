@@ -25,11 +25,11 @@ class CraftingUI : public UIElement
     static const int input_output_gap = 1;
 
     static const int xdim = input_xdim + input_output_gap + output_xdim;    // grid cell size
-    static const int ydim = input_ydim + output_ydim;
+    static const int ydim = (input_ydim > output_ydim) ? input_ydim : output_ydim;
 
     // size of render area (texture + clickable area (will render highlights there still)
-    static const float render_width = cell_size * (input_xdim + input_output_gap + output_xdim);
-    static const float render_height = cell_size * (input_ydim + output_ydim);
+    static const float render_width = cell_size * xdim;
+    static const float render_height = cell_size * ydim;
 
     // texture area
     static const float texture_width = cell_size * 6;
@@ -115,12 +115,14 @@ int CraftingUI::get_grid_at(int px, int py)
     px -= xoff;
     py -= _yresf - yoff;
 
-    if (px < 0 || px > render_width)  return NULL_SLOT;
-    if (py < 0 || py > render_height) return NULL_SLOT;
+    if (px < 0 || px >= render_width)  return NULL_SLOT;
+    if (py < 0 || py >= render_height) return NULL_SLOT;
 
     int xslot = px / cell_size;
     int yslot = py / cell_size;
     int slot = xslot + yslot * xdim;
+
+    GS_ASSERT(slot < xdim*ydim);
 
     return slot;
 }
