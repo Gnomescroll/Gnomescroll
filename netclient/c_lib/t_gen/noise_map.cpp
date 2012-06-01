@@ -224,6 +224,8 @@ void noise_map_test()
     }
 
     save_png("n_map_00", out, xres, yres);
+
+    delete[] out;
 }
 
 void noise_map_generate_map()

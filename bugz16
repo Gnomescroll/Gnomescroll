@@ -348,3 +348,6 @@ animation on decay
 cryofreezer
 smelter
 craft bench levels
+
+== BUGZ ==
+fix spawning inside blocks (sometimes)

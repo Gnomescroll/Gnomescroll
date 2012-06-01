@@ -32,16 +32,24 @@ class SHADER
 
     void load_shader(const char* name, const char* vertex_shader_file, const char* fragment_shader_file)
     {
-        shader = glCreateProgramObjectARB();
-        vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-        frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
         char *vs, *fs;
 
         printf("Loading shader: %s\n", name);
 
         vs = textFileRead( (char*) vertex_shader_file );
         fs = textFileRead( (char*) fragment_shader_file );
+        GS_ASSERT(vs != NULL);
+        GS_ASSERT(fs != NULL);
+        if (vs == NULL || fs == NULL)
+        {
+            if (vs != NULL) free(vs);
+            if (fs != NULL) free(fs);
+            return;
+        }
+
+        shader = glCreateProgramObjectARB();
+        vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+        frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
@@ -58,6 +66,9 @@ class SHADER
         glLinkProgramARB(shader);
 
         if(DEBUG1) printProgramInfoLog(shader);
+
+        free(vs);
+        free(fs);
     }
 
     unsigned int get_attribute(const char* attribute_name)
