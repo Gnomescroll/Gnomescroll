@@ -311,6 +311,9 @@ DONE
 update help text
 DONE
 
+valgrind fixes
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -351,3 +354,4 @@ craft bench levels
 
 == BUGZ ==
 fix spawning inside blocks (sometimes)
+print press H on connect

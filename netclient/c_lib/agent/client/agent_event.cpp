@@ -26,6 +26,9 @@ void Agent_event::name_changed(char* old_name)
 
     if (a->is_you())
     {
+        const char help_msg[] = "Press H for help";
+        chat_client->send_system_message((char*)help_msg);
+
         const char fmt[] = "You are identified as %s";
         char* msg = (char*)calloc(strlen(fmt) + strlen(this->a->status.name) - 2 + 1, sizeof(char));
         sprintf(msg, fmt, this->a->status.name);
