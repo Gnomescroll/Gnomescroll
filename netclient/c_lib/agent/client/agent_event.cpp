@@ -442,9 +442,11 @@ void Agent_event::hit_block()
 {
     // play pick swing
     // play block damage animation
-    //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
     //Vec3 p = this->a->get_camera_position();
     //Sound::pick_swung(p.x, p.y, p.z, 0,0,0);
+
+    // TODO -- need collision point
+    //Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
 }
 
 void Agent_event::melee_attack_object(int id, int type, int part)

@@ -291,7 +291,8 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 look.x, look.y, look.z,
                 tile, side
             );
-            Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;
             

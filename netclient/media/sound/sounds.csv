@@ -5,7 +5,7 @@ Event,Soundfile,"function name","IN USE",Integrated,pitch,gain,"max distance","r
 "Out of ammo",,out_of_ammo,,y,,,,,,,click
 Reload,,reload,,y,,,,,,,
 "Laser hit block",,laser_hit_block,,y,,,,,,,
-"Pick hit block",,pick_hit_block,,y,,,,,,,
+"Pick hit block",,pick_hit_block,,N,,,,,,,
 "Pick hit agent",,pick_hit_agent,,y,,,,,,,
 "Pick swung",,pick_swung,,y,,,,,,,
 "Block destroyed",block_crumble.wav,block_destroyed,y,y,,,,8,,,
@@ -18,7 +18,7 @@ Died,,died,,y,,,,,,,
 Victory,,victory,,,,,,,,,"there are no victory condition implemented"
 "restore ammo",,restore_ammo,,y,,,,,,,
 "Block set nonzero",,block_set,,y,,,,,,,
-"block took damage",,block_took_damage,,y,,,,,,,"block dmg is entirely server side at the moment"
+"block took damage",random_fx_002.wav,block_took_damage,y,y,,0.3,,,,,"block dmg is entirely server side at the moment"
 "laser hit agent",,laser_hit_agent,,y,,,,,,,
 "grenade explode",plasma_grenade_explode.wav,grenade_explode,y,y,0.7,0.8,,,,,
 "grenade bounce",,grenade_bounce,,y,,,,,,,

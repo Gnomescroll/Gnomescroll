@@ -110,6 +110,7 @@ void end_t_map()
 
 int apply_damage(int x, int y, int z, int dmg)
 {
+    GS_ASSERT(dmg > 0);
     #if DC_CLIENT
     Sound::block_took_damage(x+0.5f,y+0.5f,z+0.5f,0,0,0);
     #endif
