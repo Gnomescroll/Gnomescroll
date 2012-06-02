@@ -243,7 +243,8 @@ void noise_map_generate_map()
         t_map::set(i,j,0,tile);
     }
 
-    //double sum = 0.0;
+    double sum = 0.0;
+
     //for(int i=0; i<512; i++)
     //for(int j=0; j<512; j++)
     //for(int k=1; k<64; k++)
@@ -261,26 +262,45 @@ void noise_map_generate_map()
         ////out[i+j*yres] = p3d.one_over_f(x,y,64.0);
     //}
 
-    double sum = 0.0;
-    for(int i=0; i<512; i++)
-    for(int j=0; j<512; j++)
-    {
-        float x = i;
-        float y = j;
-        float divisor = (256.0f/float(abs(256-i) + abs(256-j) + abs(i-j))) * 16.0f;
-        float multiplier = pow(2.0, 256.0f/float(abs(256-i)*abs(256-j) + abs(i-j)));
-        multiplier = (multiplier > 1.0f) ? 1.0f : multiplier;
-        x /= divisor;
-        y /= divisor;
-        x *= multiplier;
-        y *= multiplier;
-        float value = p3d.noise(x,y,0);
-        sum += value;
-        int h = (value+1) * 32 + 1;
-        for (int k=0; k<h; k++) t_map::set(i,j,k,tile);
+    // steve
+    //for(int i=0; i<512; i++)
+    //for(int j=0; j<512; j++)
+    //{
+        //float x = i;
+        //float y = j;
+        //float divisor = (256.0f/float(abs(256-i) + abs(256-j) + abs(i-j))) * 16.0f;
+        //float multiplier = pow(2.0, 256.0f/float(abs(256-i)*abs(256-j) + abs(i-j)));
+        //multiplier = (multiplier > 1.0f) ? 1.0f : multiplier;
+        //x /= divisor;
+        //y /= divisor;
+        //x *= multiplier;
+        //y *= multiplier;
+        //float value = p3d.noise(x,y,0);
+        //sum += value;
+        //int h = (value+1) * 32 + 1;
+        //for (int k=0; k<h; k++) t_map::set(i,j,k,tile);
         
-        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
-    }
+        ////out[i+j*yres] = p3d.one_over_f(x,y,64.0);
+    //}
+
+    //float* noisemap = (float*)calloc(512*512, sizeof(float));
+    //int n_maps = 4;
+    //for (int n=0; n<n_maps; n++)
+    //{
+        //init_genrand(rand());
+        //for (int i=0; i<512; i++)
+        //for (int j=0; j<512; j++)
+            //noisemap[i+512*j] += p3d.noise(i,j,0);
+    //}
+
+    //for (int i=0; i<512; i++)
+    //for (int j=0; j<512; j++)
+    //{
+        //float value = noisemap[i + 512*j] / n_maps;
+        //int h = (value+1) * 32 + 1;
+        //for (int k=0; k<h; k++) t_map::set(i,j,k,tile);
+    //}
+    //free(noisemap);
 
     printf("NOISE MAP AVERAGE: = %f \n", (float) sum / (float)(512*512*32));
     #endif
