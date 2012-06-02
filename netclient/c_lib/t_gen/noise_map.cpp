@@ -192,9 +192,9 @@ float noise(float x, float y, float z)
 float one_over_f(float x, float y, float z) 
 {   
     float tmp = 0;
-    tmp += noise(x,y,z);
-    tmp += 0.50 * noise(2*x, 2*y,2*z);
-    tmp += 0.25 * noise(4*x,4*y,2*z);
+    tmp += base(x,y,z);
+    tmp += 0.50 * base(2*x, 2*y,2*z);
+    tmp += 0.25 * base(4*x,4*y,2*z);
     return tmp;
 }
 
@@ -203,12 +203,12 @@ float one_over_f(float x, float y, float z)
 
 
 
-class PerlinField2d
+class PerlinField2D
 {
     public:
 
     unsigned char* ga;  //gradient array
-    unsigned float* grad; //gradient vector array
+    float* grad; //gradient vector array
     //static const int ssize = 64*64*32;
     //static const int xsize = 64;
 
@@ -221,7 +221,7 @@ class PerlinField2d
     int grad_max;   //number of gradients
 
 
-    PerlinField2d(int seed, int _xs, int _grad_max)
+    PerlinField2D(int seed, int _xs, int _grad_max)
     {
         xs = _xs;
         xsize = 512 / xs;
@@ -312,11 +312,9 @@ float base(float x, float y)
 #if 1
     float u = fade(x);
     float v = fade(y);
-    float w = fade(z);
 #else
     float u = x;
     float v = y;
-    float w = z;
 #endif
 
     // Interpolate along x the contributions from each of the corners
@@ -328,17 +326,17 @@ float base(float x, float y)
     return nxy;   //-1 to 1
 }
 
-float noise(float x, float y, float z)
+float noise(float x, float y)
 {
-    return base(x,y,z);
+    return base(x,y);
 }
 
 float one_over_f(float x, float y) 
 {   
     float tmp = 0;
-    tmp += noise(x,y);
-    tmp += 0.50 * noise(2*x, 2*y);
-    tmp += 0.25 * noise(4*x,4*y);
+    tmp += base(x,y);
+    tmp += 0.50 * base(2*x, 2*y);
+    tmp += 0.25 * base(4*x,4*y);
     return tmp;
 }
 
