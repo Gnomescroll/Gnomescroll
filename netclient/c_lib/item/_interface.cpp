@@ -58,6 +58,7 @@ int get_stack_size(ItemID id)
     if (id == NULL_ITEM) return 1;
     Item* item = get_item(id);
     GS_ASSERT(item != NULL);
+    if (item == NULL) return 1;
     return item->stack_size;
 }
 
@@ -66,6 +67,7 @@ int get_stack_space(ItemID id)
     if (id == NULL_ITEM) return 0;
     Item* item = get_item(id);
     GS_ASSERT(item != NULL);
+    if (item == NULL) return 0;
     int stack_space = get_max_stack_size(item->type) - item->stack_size;
     GS_ASSERT(stack_space >= 0);
     return stack_space;
@@ -104,8 +106,10 @@ void merge_item_stack(ItemID src, ItemID dest)
 
     Item* src_item = get_item(src);
     GS_ASSERT(src_item != NULL);
+    if (src_item == NULL) return;
     Item* dest_item = get_item(dest);
     GS_ASSERT(dest_item != NULL);
+    if (dest_item == NULL) return;
 
     // add src's stack to dest
     dest_item->stack_size += src_item->stack_size;
@@ -120,8 +124,10 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
     
     Item* src_item = get_item(src);
     GS_ASSERT(src_item != NULL);
+    if (src_item == NULL) return;
     Item* dest_item = get_item(dest);
     GS_ASSERT(dest_item != NULL);
+    if (dest_item == NULL) return;
 
     // add src's stack to dest
     dest_item->stack_size += amount;
@@ -141,6 +147,8 @@ namespace Item
 Item* create_item(int item_type, ItemID item_id)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
+    GS_ASSERT(item_list != NULL);
+    GS_ASSERT(item_id != NULL_ITEM);
     return item_list->create_type(item_type, item_id);
 }
 }   // Item
@@ -158,10 +166,13 @@ ItemID split_item_stack(ItemID src, int amount)
 
     Item* src_item = get_item(src);
     GS_ASSERT(src_item != NULL);
+    if (src_item == NULL) return NULL_ITEM;
     src_item->stack_size -= amount;
     GS_ASSERT(src_item->stack_size >= 1);
 
     Item* new_item = create_item(src_item->type);
+    GS_ASSERT(new_item != NULL);
+    if (new_item == NULL) return NULL_ITEM;
     new_item->stack_size = amount;
     return new_item->id;
 }
@@ -172,11 +183,13 @@ ItemID split_item_stack_in_half(ItemID src)
 
     Item* src_item = get_item(src);
     GS_ASSERT(src_item != NULL);
+    if (src_item == NULL) return NULL_ITEM;
     int split_amount = src_item->stack_size / 2;
     GS_ASSERT(split_amount >= 1);  // Do not call this function for a stack with only 1 (cannot split)
     src_item->stack_size -= split_amount;
 
     Item* new_item = create_item(src_item->type);
+    if (new_item == NULL) return NULL_ITEM;
     new_item->stack_size = split_amount;
     return new_item->id;
 }
@@ -207,6 +220,7 @@ int consume_stack_item(ItemID item_id)
     }
     Item* item = get_item(item_id);
     GS_ASSERT(item != NULL);
+    if (item == NULL) return 0;
     item->stack_size -= 1;
     GS_ASSERT(item->stack_size > 0);
     return item->stack_size;

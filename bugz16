@@ -330,6 +330,9 @@ DONE
 fix k kill switch
 DONE
 
+graceful handling of null item errors
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
