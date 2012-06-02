@@ -188,8 +188,8 @@ float one_over_f(float x, float y, float z)
 {   
     float tmp = 0;
     tmp += noise(x,y,z);
-    tmp += 0.50 * noise(2*x, 2*y,z);
-    tmp += 0.25 * noise(4*x,4*y,z);
+    tmp += 0.50 * noise(2*x, 2*y,2*z);
+    tmp += 0.25 * noise(4*x,4*y,2*z);
     return tmp;
 }
 
@@ -245,6 +245,7 @@ void noise_map_generate_map()
         float y = j;
         float z = k;
         float value = p3d.noise(x,y,z);
+        //float value = p3d.one_over_f(x,y,z);
         sum += value;
         if(value+.4 > k*0.03 )
         {
