@@ -242,7 +242,7 @@ namespace NetServer
 static void client_connect(ENetEvent* event);
 static void client_disconnect(ENetEvent* event);
 
-static int client_id_offset = 1;
+static int client_id_offset = -1;
 
 void init_server(int a, int b, int c, int d, int port)
 {

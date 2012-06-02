@@ -332,6 +332,7 @@ DONE
 
 == PVE ==
 blue bombs should be wandering, slowly
+blue bombs lose target if target dies
 
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
 this will let players "dodge"

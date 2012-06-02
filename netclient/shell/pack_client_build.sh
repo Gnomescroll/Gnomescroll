@@ -8,9 +8,9 @@ mkdir $f
 cp run $f/
 cp *.pyc $f/
 cp -R media $f/
-cp -R lua $f
-rm $f/lua/settings.lua
-mv $f/lua/settings_production.lua $f/lua/settings.lua
+mkdir $f/lua
+cp ./lua/settings.lua $f/lua/settings.lua
+cp ./lua/lua_library.lua $f/lua/lua_library.lua
 mkdir $f/screenshot
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
