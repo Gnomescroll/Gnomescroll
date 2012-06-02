@@ -399,3 +399,5 @@ refill toolbelt on death, if empty/low
 spawn the bases apart from each other
 
 fix enemy hud names
+
+use camera state for right click container open
