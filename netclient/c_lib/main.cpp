@@ -63,7 +63,7 @@ int run()
 {
     //t_gen::test();
    
-    t_gen::gen_map();
+    //t_gen::gen_map();
     
     using Profiling::frame_graph;
     Profiling::init_frame_graph();

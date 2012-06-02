@@ -6,26 +6,31 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *textFileRead(char *fn) {
+char *textFileRead(char *fn)
+{
     FILE *fp;
     char *content = NULL;
 
     int count=0;
 
-    if (fn != NULL) {
+    if (fn != NULL)
+    {
         fp = fopen(fn,"rt");
-        if (fp == NULL) {
+        if (fp == NULL)
+        {
             printf("Error: cannot open file %s \n", fn);
             return NULL;
         }
 
-        if (fp != NULL) {
+        if (fp != NULL)
+        {
 
-      fseek(fp, 0, SEEK_END);
-      count = ftell(fp);
-      rewind(fp);
+          fseek(fp, 0, SEEK_END);
+          count = ftell(fp);
+          rewind(fp);
 
-            if (count > 0) {
+            if (count > 0)
+            {
                 content = (char *)malloc(sizeof(char) * (count+1));
                 count = fread(content,sizeof(char),count,fp);
                 content[count] = '\0';

@@ -12,87 +12,87 @@ unsigned char noise_map_2d_char[512*512  + 1];
 //xdim/ydim might be odd
 void init_gaussian_kernel(float* kernel, int xdim)
 {
-	const double k = 1.0; //normalization constant
+    const double k = 1.0; //normalization constant
     const double sigma = 1.0; //standard deviation
 
-	for(int i=0; i<xdim; i++) kernel[i] = 0.0;
+    for(int i=0; i<xdim; i++) kernel[i] = 0.0;
 
-	const float m = (xdim-1)/2;
+    const float m = (xdim-1)/2;
 
-	double tmp[xdim];
+    double tmp[xdim];
 
-	double _i = 0.0;
-	for(int i=0; i < xdim; i++)
-	{
-		float a = (m-_i)*(m-_i);
-		tmp[i] = exp(-1.0*a/sigma);
-		_i += 1.0;
-	}
+    double _i = 0.0;
+    for(int i=0; i < xdim; i++)
+    {
+        float a = (m-_i)*(m-_i);
+        tmp[i] = exp(-1.0*a/sigma);
+        _i += 1.0;
+    }
 
-	//for(int i=0; i < xdim; ++i) kernel[i] = 1.0;
+    //for(int i=0; i < xdim; ++i) kernel[i] = 1.0;
 
-	double sum = 0.0;
-	for(int i=0; i < xdim; i++)
-	{
-		sum += tmp[i];
-	}
+    double sum = 0.0;
+    for(int i=0; i < xdim; i++)
+    {
+        sum += tmp[i];
+    }
 
-	//double average = sum / ((float) xdim);
+    //double average = sum / ((float) xdim);
 
-	for(int i=0; i < xdim; i++)
-	{
-		kernel[i] = (float) ( k*tmp[i] / sum  );
-	}
+    for(int i=0; i < xdim; i++)
+    {
+        kernel[i] = (float) ( k*tmp[i] / sum  );
+    }
 
-	sum = 0.0;
-	for(int i=0; i < xdim; ++i)
-	{
-		sum += kernel[i];
-	}
-	printf("kernel: sum= %f average= %f \n", sum, (sum /((float) xdim) ));
+    sum = 0.0;
+    for(int i=0; i < xdim; ++i)
+    {
+        sum += kernel[i];
+    }
+    printf("kernel: sum= %f average= %f \n", sum, (sum /((float) xdim) ));
 
 }
 
 void convolve(float* in, float* out, int xdim, int ydim)
 {
-	const int kdim = 5;
-	const int kcen = (kdim-1) / 2;
+    const int kdim = 5;
+    const int kcen = (kdim-1) / 2;
 
-	float kernel[kdim];
+    float kernel[kdim];
 
-	init_gaussian_kernel( (float*) kernel, kdim);
+    init_gaussian_kernel( (float*) kernel, kdim);
 
-	int ii, jj;
+    int ii, jj;
 
-	for(int i=0; i < xdim; i++)
-	for(int j=0; j < ydim; j++)
-	{
-    	float sum = 0.0;
-		for(int n=0; n < kdim; n++)
+    for(int i=0; i < xdim; i++)
+    for(int j=0; j < ydim; j++)
+    {
+        float sum = 0.0;
+        for(int n=0; n < kdim; n++)
         {
             ii = i + (n - kcen);
             if( ii >= 0 && ii < xdim) // ignore input samples which are out of bound
             {
-            	sum += in[xdim*j+ii] * kernel[n];
+                sum += in[xdim*j+ii] * kernel[n];
             }
         }
         out[xdim*j+i] = sum;
-	}
+    }
 
-	for(int i=0; i < xdim; i++)
-	for(int j=0; j < ydim; j++)
-	{
-    	float sum = 0.0;
-		for(int n=0; n < kdim; n++)
+    for(int i=0; i < xdim; i++)
+    for(int j=0; j < ydim; j++)
+    {
+        float sum = 0.0;
+        for(int n=0; n < kdim; n++)
         {
             jj = j + (n - kcen);
             if( jj >= 0 && jj < ydim) // ignore input samples which are out of bound
             {
-            	sum += out[xdim*jj+i] * kernel[n];
+                sum += out[xdim*jj+i] * kernel[n];
             }
         }
         out[xdim*j+i] = sum;
-	}
+    }
 
 // && jj >= 0 && jj < ydim 
 
@@ -139,8 +139,10 @@ void test()
     convolve(out,in, xres,yres);
     convolve(in,out, xres,yres);
 
-
     save_png("001", out, xres, yres);
+
+    delete[] in;
+    delete[] out;
 
 }
 
@@ -226,6 +228,9 @@ void gen_map()
 
         noise_map_2d_char[512*j+i] = v;
     }
+
+    delete[] in;
+    delete[] out;
 
 }
 

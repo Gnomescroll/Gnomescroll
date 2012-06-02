@@ -286,27 +286,17 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale)
 
 Voxel_volume::Voxel_volume()
 :
+parent_world_matrix(NULL),
 id(-1),
 draw(true),
 hitscan(true),
+scale(1.0f),
 radius(0),
+xdim(1),ydim(1),zdim(1),
 voxel(NULL),
-needs_vbo_update(false),
-damaged(false)
-#if DC_CLIENT
-,
-voxel_render_list(NULL),
-voxel_render_list_id(-1)
-#endif
-{}
-
-Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
-:
-id(-1),
-draw(true),
-hitscan(true),
-radius(0),
-voxel(NULL),
+index1(0), index12(0),
+index_max(0),
+hdx(1),hdy(1),hdz(1),
 needs_vbo_update(false),
 damaged(false)
 #if DC_CLIENT
@@ -315,6 +305,32 @@ voxel_render_list(NULL),
 voxel_render_list_id(-1)
 #endif
 {
+    this->world_matrix.c = vec3_init(0,0,0);
+    this->local_matrix.c = vec3_init(0,0,0);
+}
+
+Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
+:
+parent_world_matrix(NULL),
+id(-1),
+draw(true),
+hitscan(true),
+scale(1.0f),
+radius(0),
+voxel(NULL),
+index1(0), index12(0),
+index_max(0),
+hdx(1),hdy(1),hdz(1),
+needs_vbo_update(false),
+damaged(false)
+#if DC_CLIENT
+,
+voxel_render_list(NULL),
+voxel_render_list_id(-1)
+#endif
+{
+    this->world_matrix.c = vec3_init(0,0,0);
+    this->local_matrix.c = vec3_init(0,0,0);
     this->init(xdim, ydim, zdim, scale);
 }
 

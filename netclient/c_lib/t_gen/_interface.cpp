@@ -10,7 +10,7 @@
 namespace t_gen
 {
 
-void save_png(const char* filename, float*in, int xres, int yres)
+void save_png(const char* filename, float* in, int xres, int yres)
 {
 #if DC_CLIENT
     char FileName[128];
@@ -27,20 +27,21 @@ void save_png(const char* filename, float*in, int xres, int yres)
     }
 
     for(int i=0; i < xres; i++) 
-    for(int j=0; j < yres; j++) {
-    	int index = 4*(j*xres + i);
+    for(int j=0; j < yres; j++)
+    {
+        int index = 4*(j*xres + i);
 
-    	float _v = in[j*xres+i];
+        float _v = in[j*xres+i];
 
-    	if( _v < 0.0) _v = 0.0;
-    	if( _v > 1.0) _v = 1.0;
-    	unsigned char v = ((int) 255.0*_v );
-    	unsigned char v2 = gamma_correction[v];
+        if( _v < 0.0) _v = 0.0;
+        if( _v > 1.0) _v = 1.0;
+        unsigned char v = ((int) 255.0*_v );
+        unsigned char v2 = gamma_correction[v];
 
-    	PBUFFER[index+0] = v2;
-    	PBUFFER[index+1] = v2;
-    	PBUFFER[index+2] = v2;
-    	PBUFFER[index+3] = 255;
+        PBUFFER[index+0] = v2;
+        PBUFFER[index+1] = v2;
+        PBUFFER[index+2] = v2;
+        PBUFFER[index+3] = 255;
     }
 
     for(int i=0; i < xres; i++)
@@ -80,6 +81,9 @@ void save_png(const char* filename, float*in, int xres, int yres)
     pFile = fopen ( FileName , "wb" );
     fwrite (PNG_IMAGE , 1 , png_size, pFile );
     fclose (pFile);
+
+    free(PBUFFER);
+    free(PNG_IMAGE);
 #endif
 }
 

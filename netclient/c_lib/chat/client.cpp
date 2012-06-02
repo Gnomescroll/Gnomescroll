@@ -451,6 +451,7 @@ void ChatClient::received_message(int channel, int sender, char* payload)
 {
     ChatClientChannel* chan = NULL;
 
+    // get channel
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
         chan = this->channels[i];
@@ -461,21 +462,28 @@ void ChatClient::received_message(int channel, int sender, char* payload)
         chan = NULL;
     }
 
+    GS_ASSERT(chan != NULL);
     if (chan == NULL)
     {
         printlog(Log::CHAT, Log::Always, "unknown message channel %d\n", channel);
         return;
     }
 
+    // create message
     ChatMessage* m = chat_message_list->create();
     m->sender = sender;
     m->channel = channel;
+
+    // copy payload
     if (strlen(payload) > (unsigned int)CHAT_MESSAGE_SIZE_MAX)
         payload[CHAT_MESSAGE_SIZE_MAX] = '\0';
     strcpy(m->payload, payload);
+
+    // set properties
     m->set_color();
     m->set_name();
     m->timestamp = _GET_MS_TIME();
+    
     chan->add_message(m);
 }
 

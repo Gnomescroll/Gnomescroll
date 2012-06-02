@@ -18,7 +18,7 @@ class MonsterSpawnerComponent: public SpawnerComponent
         Objects::Object* spawn_child();
         Objects::Object* spawn_child(ObjectType type);
         void lose_child(ObjectType type, int id);
-        void get_spawn_point(int spawned_object_height, Vec3* spawn_point);
+        struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
         
     MonsterSpawnerComponent()
     : SpawnerComponent(COMPONENT_MONSTER_SPAWNER),

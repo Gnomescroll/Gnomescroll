@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/option_macros.hpp>
+#include <options/option_macros.hpp>
 
 #include <common/lua/lua.hpp>
 

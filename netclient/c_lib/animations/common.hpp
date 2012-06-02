@@ -37,6 +37,11 @@ class VertexElementList1
         vlist = (vertexElement1*) malloc(vlist_max*sizeof(struct vertexElement1));
     }
 
+    ~VertexElementList1()
+    {
+        if (this->vlist != NULL) free(this->vlist);
+    }
+
     __attribute__((always_inline))
     inline void push_vertex(struct Vec3 pos, float tx, float ty)
      {
@@ -116,7 +121,7 @@ class VertexElementList2
 
     ~VertexElementList2()
     {
-        free(vlist);
+        if (this->vlist != NULL) free(this->vlist);
     }
 
     __attribute__((always_inline))

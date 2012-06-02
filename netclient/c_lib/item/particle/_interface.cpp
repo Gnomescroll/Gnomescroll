@@ -164,11 +164,20 @@ void check_item_pickups()
         Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
         if (agent == NULL) continue;
 
-        int container_id = ItemContainer::get_agent_container(agent->id);
-        if (container_id == NULL_CONTAINER) continue;
+        // try to add to toolbelt first
+        bool picked_up = false;
+        int container_id = ItemContainer::get_agent_toolbelt(agent->id);
+        if (container_id != NULL_CONTAINER)
+            picked_up = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
 
-        // get slot for placing in container
-        bool picked_up = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
+        // then try to add to inventory
+        if (!picked_up)
+        {
+            container_id = ItemContainer::get_agent_container(agent->id);
+            if (container_id != NULL_CONTAINER)
+                picked_up = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
+        }
+
         if (!picked_up) continue;
 
         // update particle

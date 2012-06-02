@@ -484,6 +484,7 @@ void Agent_state::set_camera_state(float x, float y, float z, float theta, float
 
 void Agent_state::get_spawn_point(Vec3* spawn)
 {
+    // put agent in middle of map if no team assigned
     if (this->status.team == 0)
     {
         spawn->x = map_dim.x/2;
@@ -494,7 +495,7 @@ void Agent_state::get_spawn_point(Vec3* spawn)
     
     using Components::BASE_SPAWN_ID;
 
-    int h = this->current_height_int();
+    float fh = this->current_height();
     Components::AgentSpawnerComponent *s = NULL;
     
     if (this->status.spawner != BASE_SPAWN_ID)
@@ -507,23 +508,9 @@ void Agent_state::get_spawn_point(Vec3* spawn)
     }
 
     if (this->status.spawner == BASE_SPAWN_ID)
-    {   // spawner is base
-        STATE::ctf->get_base_spawn_point(this->status.team, h, spawn);
-
-        // team is 0, or spawn get failed for some reason. spawn anywhere
-        if (spawn == NULL)
-        {
-            int x,y,z;
-            x = randrange(0, map_dim.x-1);
-            y = randrange(0, map_dim.y-1);
-            z = _get_highest_open_block(x,y, h);
-            spawn->x = x;
-            spawn->y = y;
-            spawn->z = z;
-        }
-    }
+        *spawn = STATE::ctf->get_base_spawn_point(this->status.team, fh, this->box.box_r);
     else // spawner was found
-        s->get_spawn_point(h, spawn);
+        *spawn = s->get_spawn_point(fh, this->box.box_r);
 }
 
 void Agent_state::spawn_state()

@@ -12,6 +12,7 @@ class VoxelModelComponent: public Component
             // Initializes vox model properties. almost always desired
         void set_properties()
         {
+            if (this->vox == NULL) return;
             this->vox->set_hitscan(this->init_hitscan);
             this->vox->register_hitscan();
             #if DC_CLIENT
@@ -27,26 +28,31 @@ class VoxelModelComponent: public Component
 
         float get_radius()
         {
+            if (this->vox == NULL) return 1.0f;
             return vox->get_part(0)->radius;
         }
         
         float get_radius(int part)
         {
+            if (this->vox == NULL) return 1.0f;
             return vox->get_part(part)->radius;
         }
 
-        Vec3 get_center()
+        struct Vec3 get_center()
         {
+            if (this->vox == NULL) return vec3_init(0,0,0);
             return this->vox->get_part(0)->get_center();
         }
         
-        Vec3 get_center(int part)
+        struct Vec3 get_center(int part)
         {
+            if (this->vox == NULL) return vec3_init(0,0,0);
             return this->vox->get_part(part)->get_center();
         }
 
         void ready(Vec3 position, float theta, float phi)
         {
+            GS_ASSERT(this->vox == NULL);
             this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type);
             this->set_properties();
             vox->update(position.x, position.y, position.z, theta, phi);
@@ -56,6 +62,7 @@ class VoxelModelComponent: public Component
 
         void ready(Vec3 position, float theta, float phi, int team)
         {
+            GS_ASSERT(this->vox == NULL);
             this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type, team);
             this->set_properties();
             vox->update(position.x, position.y, position.z, theta, phi);
@@ -65,6 +72,7 @@ class VoxelModelComponent: public Component
 
         void freeze()
         {
+            if (this->vox == NULL) return;
             this->vox->freeze();
         }
 

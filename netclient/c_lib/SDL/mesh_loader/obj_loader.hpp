@@ -123,6 +123,8 @@ void load_model()
             v_array[3*i+j] = v;
         }
     }
+
+    free(memory);
 }
 
 class SHADER monster_shader;
@@ -171,6 +173,8 @@ void init_texture()
  
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
     glDisable(GL_TEXTURE_2D);
+
+    SDL_FreeSurface(s);
 }
 
 void init_draw_model()
