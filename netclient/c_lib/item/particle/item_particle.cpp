@@ -47,6 +47,9 @@ void teardown_item_particle()
 
 void ItemParticle::draw()
 {
+    Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
+    if (point_fulstrum_test(position.x, position.y, position.z) == false) return;
+
     const float scale = 0.25;
     const float h = 0.35;
 
@@ -67,7 +70,6 @@ void ItemParticle::draw()
     ty_min = (float)(this->sprite_index/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
     Vec3 p = vec3_sub(position, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
     glVertex3f(p.x, p.y, p.z+h);

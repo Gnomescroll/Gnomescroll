@@ -354,6 +354,12 @@ DONE
 use current_camera for right click container open
 DONE
 
+move 3d settings toggle and screenshot keys to debug input mode only
+DONE
+
+fix enemy hud names
+DONE
+
 
 == PVE ==
 blue bombs should be wandering, slowly
@@ -377,6 +383,8 @@ mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
 parameterize open/close container input handling shit
+simple object list for all particles
+check all GS_ASSERTs and make sure not missing null check
 
 == UI/UX ==
 indicate where something can be placed
@@ -397,10 +405,6 @@ craft bench levels
 
 == ANALYTICS ==
 Record time played per user
-
-== MISC ==
-Anything that has a z level below -128 should die
-Especially particles
 
 ==BUGZ==
 <HaltingState> ./run(_Z11print_tracev+0x26) [0x809c116]
@@ -428,6 +432,6 @@ ERROR: -- GS_SoundBuffer::add_source -- attempt to add source 2 to GS_SoundBuffe
 
 refill toolbelt on death, if empty/low
 
-fix enemy hud names
-
 item sprites, hitscan lasers not fulstrum culled properly
+
+punch with any item

@@ -74,6 +74,9 @@ void HitscanLaserEffect::draw1(float delta, Vec3 camera)
     float fy = quadrant_translate_f(camera.y, this->fy);
     float fz = this->fz;
 
+    if (point_fulstrum_test(x,y,z) == false && point_fulstrum_test(fx,fy,fz) == false)
+        return;
+
     Vec3 r = vec3_init(x-fx, y-fy, z-fz);
     normalize_vector(&r);
 
@@ -130,6 +133,9 @@ void HitscanLaserEffect::draw2(float delta, Vec3 camera)
     float fx = quadrant_translate_f(camera.x, this->fx);
     float fy = quadrant_translate_f(camera.y, this->fy);
     float fz = this->fz;
+
+    if (point_fulstrum_test(x,y,z) == false && point_fulstrum_test(fx,fy,fz) == false)
+        return;
 
     Vec3 r = vec3_init(fx-x, fy-y, fz-z);
     normalize_vector( &r );
