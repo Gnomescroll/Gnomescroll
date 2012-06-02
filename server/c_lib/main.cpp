@@ -21,11 +21,11 @@ void init()
     
     if(0)
     {
-    MapGen::init();
-    MapRecipes::simple_map();
-    MapGen::teardown();
-    Dragon::caves();
-    Dragon::test_filters();
+        MapGen::init();
+        MapRecipes::simple_map();
+        MapGen::teardown();
+        Dragon::caves();
+        Dragon::test_filters();
     }
     else
     {

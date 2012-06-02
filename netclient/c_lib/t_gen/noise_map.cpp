@@ -66,7 +66,7 @@ static inline float fade(float t)
 return t*t*t*(t*(t*6-15)+10);
 }
 
-inline int get_gradiant(int x, int y, int z)
+inline int get_gradient(int x, int y, int z)
 {
     x = x % 64; //replace with bitmask
     y = y % 64;
@@ -118,15 +118,15 @@ float base(float x, float y, float z)
     // Calculate a set of eight hashed gradient indices
 
 
-    int gi000 = get_gradiant(X+0,Y+0,Z+0);
-    int gi001 = get_gradiant(X+0,Y+0,Z+1);
-    int gi010 = get_gradiant(X+0,Y+1,Z+0);
-    int gi011 = get_gradiant(X+0,Y+1,Z+1);
+    int gi000 = get_gradient(X+0,Y+0,Z+0);
+    int gi001 = get_gradient(X+0,Y+0,Z+1);
+    int gi010 = get_gradient(X+0,Y+1,Z+0);
+    int gi011 = get_gradient(X+0,Y+1,Z+1);
 
-    int gi100 = get_gradiant(X+1,Y+0,Z+0);
-    int gi101 = get_gradiant(X+1,Y+0,Z+1);
-    int gi110 = get_gradiant(X+1,Y+1,Z+0);
-    int gi111 = get_gradiant(X+1,Y+1,Z+1);
+    int gi100 = get_gradient(X+1,Y+0,Z+0);
+    int gi101 = get_gradient(X+1,Y+0,Z+1);
+    int gi110 = get_gradient(X+1,Y+1,Z+0);
+    int gi111 = get_gradient(X+1,Y+1,Z+1);
 
 /*
     int gi000 = perm[X+perm[Y+perm[Z]]] % 12;
@@ -230,39 +230,60 @@ void noise_map_test()
 
 void noise_map_generate_map()
 {
-#if DC_SERVER
+    #if DC_SERVER
 
     PerlinField3D p3d(516514);
 
     int tile = t_map::dat_get_cube_id("regolith");
 
+    // set floor
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)
     {
-        t_map::set(i,j,0,0);
+        t_map::set(i,j,0,tile);
     }
+
+    //double sum = 0.0;
+    //for(int i=0; i<512; i++)
+    //for(int j=0; j<512; j++)
+    //for(int k=1; k<64; k++)
+    //{
+        //float x = i;
+        //float y = j;
+        //float z = k;
+        //float value = p3d.noise(x,y,z);
+        //sum += value;
+        //if(value+.4 > k*0.03 )
+        //{
+            //t_map::set(i,j,k, tile);
+
+        //}
+        ////out[i+j*yres] = p3d.one_over_f(x,y,64.0);
+    //}
 
     double sum = 0.0;
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)
-    for(int k=0; k<64; k++)
     {
-
         float x = i;
         float y = j;
-        float z = k;
-        float value = p3d.noise(x,y,z);
+        float divisor = (256.0f/float(abs(256-i) + abs(256-j) + abs(i-j))) * 16.0f;
+        float multiplier = pow(2.0, 256.0f/float(abs(256-i)*abs(256-j) + abs(i-j)));
+        multiplier = (multiplier > 1.0f) ? 1.0f : multiplier;
+        x /= divisor;
+        y /= divisor;
+        x *= multiplier;
+        y *= multiplier;
+        float value = p3d.noise(x,y,0);
         sum += value;
-        if(value+.4 > k*0.03 )
-        {
-            t_map::set(i,j,k, tile);
-
-        }
+        int h = (value+1) * 32 + 1;
+        for (int k=0; k<h; k++) t_map::set(i,j,k,tile);
+        
         //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
     }
 
     printf("NOISE MAP AVERAGE: = %f \n", (float) sum / (float)(512*512*32));
-#endif
+    #endif
 }
 
 
