@@ -336,9 +336,25 @@ DONE
 dump toolbelt & nanite contents on exit
 DONE
 
+client_id counting starts at 0
+DONE
+
+version is packet 0
+DONE
+
+destroy itemparticles if they fall below a certain depth
+DONE
+
+destroy item tied to itemparticle if itemparticle falls to death to times out
+DONE
+
+spawn team bases at 1/4 x,y and 3/4 x,y
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
+blue bombs should lose target after N ticks
 
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
 this will let players "dodge"
@@ -378,6 +394,10 @@ craft bench levels
 == ANALYTICS ==
 Record time played per user
 
+== MISC ==
+Anything that has a z level below -128 should die
+Especially particles
+
 ==BUGZ==
 <HaltingState> ./run(_Z11print_tracev+0x26) [0x809c116]
 <HaltingState> ./run(_ZN4Item14get_stack_sizeE6ItemID+0x4d) [0x80f815d]
@@ -392,11 +412,17 @@ Record time played per user
 <HaltingState> GS_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/item/_interface.cpp, line 60 function: get_stack_size 
 <HaltingState> Segmentation fault
 
+./run(_Z11print_tracev+0x26) [0x809bdd6]
+./run(_ZN5t_hud8draw_hudEv+0x9ea) [0x81094da]
+./run(_ZN4Main3runEv+0x746) [0x8128f86]
+./run(main+0x41) [0x8097951]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7179113]
+./run() [0x8097e25]
+GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type 
+
 ERROR: -- GS_SoundBuffer::add_source -- attempt to add source 2 to GS_SoundBuffer 9, but it is full.
 
 refill toolbelt on death, if empty/low
-
-spawn the bases apart from each other
 
 fix enemy hud names
 

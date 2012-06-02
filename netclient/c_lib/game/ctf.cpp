@@ -41,8 +41,8 @@ void CTF::start()
     
     //x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
     //y = randrange((map_dim.y * 1)/16, (map_dim.y * 5)/16 - 1); // 2/16 - 5/16
-    x = map_dim.x / 2 + 0.5f;
-    y = map_dim.y / 2 + 0.5f;
+    x = map_dim.x / 4 + 0.5f;
+    y = map_dim.y / 4 + 0.5f;
     z = _get_highest_open_block(x,y);
     //x+=0.5f;y+=0.5f;
     this->set_base_position(1, x,y,z);
@@ -50,8 +50,8 @@ void CTF::start()
     //x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
     ////y = randrange((map_dim.y * 11)/16, (map_dim.y * 15)/16 - 1);  // 11/16 - 15/16
     //y = map_dim.y - y;  // keep y distance equal, for balance
-    x = map_dim.x / 2 + 0.5f;
-    y = map_dim.y / 2 + 0.5f;
+    x = (3*map_dim.x / 4) + 0.5f;
+    y = (3*map_dim.y / 4) + 0.5f;
     z = _get_highest_open_block(x,y);
     //x+=0.5f;y+=0.5f;
     this->set_base_position(2,x,y,z);

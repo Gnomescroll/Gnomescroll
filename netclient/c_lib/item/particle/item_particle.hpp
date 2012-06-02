@@ -67,6 +67,7 @@ class ItemParticle //: public VerletComponent
         {
             verlet.bounce_box(ITEM_PARTICLE_RADIUS);
             this->ttl--;
+            if (this->verlet.position.z < OBJECT_DEPTH_MAX) this->ttl = 0;
             #if DC_SERVER
             this->pickup_prevention--;
             #endif

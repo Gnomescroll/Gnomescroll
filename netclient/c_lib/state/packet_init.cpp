@@ -30,6 +30,10 @@ typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 void RegisterMessages()
 {
 
+    //version
+    version_StoC::register_client_packet(); // THIS MUST BE PACKET 0
+
+
 /*
     add back in 
     benchmarkCtoS::register_server_packet();    //packet for benchmarking
@@ -159,9 +163,6 @@ void RegisterMessages()
     ping_StoC::register_client_packet();
     ping_reliable_CtoS::register_server_packet();
     ping_reliable_StoC::register_client_packet();
-
-    //version
-    version_StoC::register_client_packet();
 
     agent_conflict_notification_StoC::register_client_packet();
 

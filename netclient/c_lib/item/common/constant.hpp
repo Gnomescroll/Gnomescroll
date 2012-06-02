@@ -46,3 +46,5 @@ const int CRAFT_BENCH_OUTPUTS_MAX = 6;
 const float AGENT_CONTAINER_REACH = 4.0f;
 
 const float NULL_FIRING_RANGE = 0.0f;
+
+const float OBJECT_DEPTH_MAX = -128.0f;

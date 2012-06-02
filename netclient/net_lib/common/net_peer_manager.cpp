@@ -33,6 +33,10 @@ void send_version_to_client(int client_id)
     msg.sendToClient(client_id);
 }
 
+/*
+ * Phase 1:
+ * send version
+ */
 void NetPeerManager::init(int client_id)
 {
 
@@ -46,7 +50,22 @@ void NetPeerManager::init(int client_id)
     this->client_id = client_id;
 
     send_version_to_client(client_id);
- 
+
+    // TODO -- have client confirm version
+    this->version_passed(client_id);
+ }
+
+/*
+ * Phase 2:
+ * Send ClientID,
+ * Create agent
+ * Send AgentID
+ * Add player to chat server
+ * 
+ * Sent after version confirmed matching
+ */
+void NetPeerManager::version_passed(int client_id)
+{
     SendClientId_StoC client_id_msg;
     client_id_msg.client_id = client_id;
     client_id_msg.sendToClient(client_id);
@@ -56,12 +75,15 @@ void NetPeerManager::init(int client_id)
 
     send_player_agent_id_to_client(client_id);
     add_player_to_chat(client_id);
-
-    //item::create_agent_inventory(client_id, client_id); //set player inventory
-    //item::create_agent_toolbelt(client_id, client_id); //set player inventory
-    //item::create_agent_nanite(client_id, client_id); //set player inventory
 }
 
+/*
+ * Phase 3:
+ * Create agent's containers
+ * Send initial state (game mode data, agents, mobs)
+ * 
+ * Sent after client identifies with name
+ */
 void NetPeerManager::ready()
 {
 
@@ -84,15 +106,19 @@ void NetPeerManager::ready()
     this->loaded = true;
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
     ServerState::send_initial_game_state_to_client(this->client_id);
-    printf("loaded\n");
 
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
-
 }
 
+/*
+ * Phase 4:
+ * Send remaining state (containers, items)
+ * 
+ * Sent upon client request
+ * Client sends request after being identified
+ */
 void NetPeerManager::send_remaining_state()
 {
-
     printf("NPM::send_remaining_state\n");
     if (!this->inited)
     {
