@@ -20,7 +20,7 @@ void load_item_dat()
     iso_block_sprite_def("regolith");
     s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
     s.pretty_name = (char*)"Regolith";
-    s.max_stack_size = 16;
+    s.max_stack_size = 64;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"regolith");
 
@@ -65,7 +65,7 @@ void load_item_dat()
     item_def(9, IG_RESOURCE, "food_rock-0");
     sprite_def(i1, 1,4);
     s.pretty_name = (char*)"Small Rock";
-    s.max_stack_size = 8;
+    s.max_stack_size = 16;
     s.nanite_food = true;
 
     item_def(10, IG_RESOURCE, "blue_cystal");

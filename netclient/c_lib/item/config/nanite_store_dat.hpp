@@ -16,13 +16,15 @@ void load_nanite_store()
     nanite_item_def("laser_rifle", 5);
     nanite_item_set(0, 1,0);
 
-    nanite_item_def("crate_2", 10);
+    nanite_item_def("crate_3", 1);
     nanite_item_set(0, 0,1);
-    nanite_item_def("crate_3", 10);
+
+    nanite_item_def("crate_2", 5);
     nanite_item_set(0, 1,1);
 
+
     nanite_item_def("block_placer", 20);
-    nanite_item_set(0, 0,2);
+    nanite_item_set(0, 0,3);
 }
 
 
