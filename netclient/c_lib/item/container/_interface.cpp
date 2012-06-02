@@ -25,7 +25,7 @@ void init()
     agent_container_list   = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list    = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list      = (int*)   malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list        = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
+    agent_hand_list        = (ItemID*) malloc(AGENT_MAX * sizeof(ItemID));
     opened_containers      = (int*)   malloc(AGENT_MAX * sizeof(int));
     
     for (int i=0; i<AGENT_MAX; i++) agent_container_list  [i] = NULL_CONTAINER;
@@ -462,7 +462,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
 
     #if !PRODUCTION
     Item::Item* crate;
-    int n_crates = 12;
+    int n_crates = 0;
     for (int i=0; i<n_crates; i++)
     {
         crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
@@ -532,6 +532,22 @@ void assign_containers_to_agent(int agent_id, int client_id)
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
 }
 
+static void throw_items_from_container(int client_id, int agent_id, int container_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    ItemContainer* container = (ItemContainer*)get_container(container_id);
+    if (container == NULL) return;
+    for (int i=0; i<container->slot_max; i++)
+    {
+        ItemID item_id = container->slot[i];
+        if (item_id == NULL_ITEM) continue;
+        container->remove_item(i);
+        send_container_remove(client_id, container->id, i);
+        ItemParticle::throw_agent_item(agent_id, item_id);
+    }
+}
+
 void agent_died(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -539,18 +555,10 @@ void agent_died(int agent_id)
     if (a == NULL) return;
     GS_ASSERT(a->status.dead);
 
-    // remove items from agent inventory
+    // throw agent inventory items
     GS_ASSERT(agent_container_list != NULL);
-    ItemContainer* container = (ItemContainer*)get_container(agent_container_list[agent_id]);
-    if (container == NULL) return;
-    for (int i=0; i<container->slot_max; i++)
-    {
-        ItemID item_id = container->slot[i];
-        if (item_id == NULL_ITEM) continue;
-        container->remove_item(i);
-        send_container_remove(a->client_id, container->id, i);
-        ItemParticle::throw_agent_item(agent_id, item_id);
-    }
+    if (agent_container_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
 
     // close container
     GS_ASSERT(opened_containers != NULL);
@@ -564,6 +572,9 @@ void agent_died(int agent_id)
 void agent_quit(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
 
     // close opened container (this will also throw any items sitting in hand)
     if (opened_containers[agent_id] != NULL_CONTAINER)
@@ -577,6 +588,19 @@ void agent_quit(int agent_id)
 
     GS_ASSERT(agent_hand_list[agent_id] == NULL_ITEM);
     agent_hand_list[agent_id] = NULL_ITEM;
+
+    // throw all items away (inventory, toolbelt and nanite)
+    GS_ASSERT(agent_container_list != NULL);
+    if (agent_container_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
+
+    GS_ASSERT(agent_nanite_list != NULL);
+    if (agent_nanite_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_nanite_list[agent_id]);
+
+    GS_ASSERT(agent_toolbelt_list != NULL);
+    if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_toolbelt_list[agent_id]);
 
     // destroy containers
     destroy_container(agent_container_list[agent_id]);

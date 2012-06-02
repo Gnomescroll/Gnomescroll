@@ -333,6 +333,9 @@ DONE
 graceful handling of null item errors
 DONE
 
+dump toolbelt & nanite contents on exit
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -376,4 +379,23 @@ craft bench levels
 Record time played per user
 
 ==BUGZ==
-make sure dropping nanite and toobelt contents on exit
+<HaltingState> ./run(_Z11print_tracev+0x26) [0x809c116]
+<HaltingState> ./run(_ZN4Item14get_stack_sizeE6ItemID+0x4d) [0x80f815d]
+<HaltingState> ./run(_ZN13ItemContainer30update_container_ui_from_stateEv+0x2ea) [0x80fb6ca]
+<HaltingState> ./run(_ZN34FixedSizeReliableNetPacketToClientIN4Item15item_state_StoCEE7handlerEPciPii+0x92) [0x813c0f2]
+<HaltingState> ./run(_Z23process_packet_messagesPcPiii+0x6f) [0x80a8f0f]
+<HaltingState> ./run(_ZN9NetClient30client_dispatch_network_eventsEv+0xac) [0x8128dbc]
+<HaltingState> ./run(_ZN4Main3runEv+0x160) [0x81291b0]
+<HaltingState> ./run(main+0x41) [0x8097981]
+<HaltingState> /lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7170113]
+<HaltingState> ./run() [0x8097e55]
+<HaltingState> GS_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/item/_interface.cpp, line 60 function: get_stack_size 
+<HaltingState> Segmentation fault
+
+ERROR: -- GS_SoundBuffer::add_source -- attempt to add source 2 to GS_SoundBuffer 9, but it is full.
+
+refill toolbelt on death, if empty/low
+
+spawn the bases apart from each other
+
+fix enemy hud names
