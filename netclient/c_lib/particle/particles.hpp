@@ -13,7 +13,6 @@ class ParticleMotion
         Verlet::VerletComponent verlet;
         int id;
         int ttl;
-        int ttl_max;
         int type;
         float damp;
 

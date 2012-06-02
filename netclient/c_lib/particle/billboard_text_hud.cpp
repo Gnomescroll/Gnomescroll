@@ -17,7 +17,7 @@ void BillboardTextHud::init()
     this->attached_to_agent = NO_AGENT;
     this->permanent = false;
     
-    this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
+    this->ttl = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
     GS_ASSERT(this->text == NULL);
     GS_ASSERT(HudText::text_list != NULL);

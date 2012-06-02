@@ -30,6 +30,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
         void init();
     public:
         int owner;  // agent_id
+        int ttl_max;
 
         void tick();
         void explode();
