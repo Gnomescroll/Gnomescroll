@@ -11,20 +11,13 @@ const float GRENADE_SHRAPNEL_MASS = 1.0f;
 
 void Grenade_shrapnel::init()
 {
-    this->ttl_max = GRENADE_SHRAPNEL_TTL;
+    this->ttl = GRENADE_SHRAPNEL_TTL;
     this->type = GRENADE_SHRAPNEL_TYPE;
 }
 
-Grenade_shrapnel::Grenade_shrapnel(int id)
+Grenade_shrapnel::Grenade_shrapnel()
 :
-ParticleMotion(id, 0,0,0,0,0,0, GRENADE_SHRAPNEL_MASS)
-{
-    this->init();
-}
-
-Grenade_shrapnel::Grenade_shrapnel(int id, float x, float y, float z, float mx, float my, float mz)
-:
-ParticleMotion(id, x,y,z, mx,my,mz, GRENADE_SHRAPNEL_MASS)
+ParticleMotion(-1, 0,0,0,0,0,0, GRENADE_SHRAPNEL_MASS)
 {
     this->init();
 }
@@ -36,11 +29,11 @@ void Grenade_shrapnel::tick()
     Voxel_hitscan_target target;
     bool voxel_hit;
     int j=0;
-    for (int i=this->ttl; i<=this->ttl_max; i++)
+    for (int i=this->ttl; i>0; i--)
     {
         if (j == 10)
         {
-            this->ttl += j;
+            this->ttl -= j;
             return;
         }
         j++;
@@ -50,14 +43,14 @@ void Grenade_shrapnel::tick()
         if (!voxel_hit) continue;
         if (target.entity_type != OBJECT_AGENT)
         {
-            this->ttl = this->ttl_max;
+            this->ttl = 0;
             return;   // collided with a model we arent handling
         }
 
         Agent_state* a = ServerState::agent_list->get(target.entity_id);
         if (a == NULL)
         {
-            this->ttl = this->ttl_max;
+            this->ttl = 0;
             return;
         }
 
@@ -72,10 +65,10 @@ void Grenade_shrapnel::tick()
         //msg.radius = voxel_blast_radius;
         //msg.broadcast();
 
-        float dmg = base_dmg * ((float)(this->ttl+i)/((float)ttl_max+1));
-        a->status.apply_damage(dmg, this->owner, OBJECT_GRENADE);
+        float dmg = base_dmg * ((float)(this->ttl-i)/((float)GRENADE_SHRAPNEL_TTL+1));
+        if (dmg > 0) a->status.apply_damage(dmg, this->owner, OBJECT_GRENADE);
         
-        this->ttl = this->ttl_max;
+        this->ttl = 0;
         return;
     }
 }
@@ -89,12 +82,10 @@ namespace Particle
 
 void Grenade_shrapnel_list::tick()
 {
-    for (int i=0; i<n_max; i++)
+    for (int i=0; i<this->num; i++)
     {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max)
-            destroy(a[i]->id);
+        a[i].tick();
+        if (a[i].ttl <= 0) destroy(i);
     }
 }
 

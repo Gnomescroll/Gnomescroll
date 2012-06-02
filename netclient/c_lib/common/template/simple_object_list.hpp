@@ -5,7 +5,8 @@
 #define SIMPLE_OBJECT_LIST_DEBUG 0
 
 template <class Object_state, int max_n=1024>
-class Simple_object_list {
+class Simple_object_list
+{
     private:
         virtual const char* name() = 0;
         
@@ -55,7 +56,9 @@ Object_state* Simple_object_list<Object_state, max_n>::create()
     GS_ASSERT(n_max == max_n);
     if(num >= max_n)
     {
+        #if !PRODUCTION
         printf("%s list: max reached\n", this->name());
+        #endif
         return NULL;
     }
 

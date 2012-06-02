@@ -11,7 +11,7 @@
 namespace Animations
 {
 
-const int hitscan_lader_ttl = 30;
+const int HITSCAN_LASER_TTL = 30;
 
 void init_hitscan_laser();
 void teardown_hitscan_laser();
@@ -28,12 +28,10 @@ class HitscanLaserEffect
     inline void draw2(float delta, Vec3 camera) __attribute((always_inline));
     void tick();
 
-    explicit HitscanLaserEffect(int id);
-    HitscanLaserEffect(float x, float y, float z, float fx, float fy, float fz);
-    HitscanLaserEffect(int id, float x, float y, float z, float fx, float fy, float fz);
+    void init();
 };
 
-class HitscanLaserEffect_list: public Object_list<HitscanLaserEffect>
+class HitscanLaserEffect_list: public Simple_object_list<HitscanLaserEffect>
 {
     private:
         const char* name() { return "HitscanLaserEffect"; }

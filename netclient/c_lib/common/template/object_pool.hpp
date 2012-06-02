@@ -156,7 +156,7 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
             //static const char* _name = name();
             printf("%s: Memory Pool Retire Error, allocated= %i, object= %lx \n", Base::name(), nmb->allocated, (long) nmb );
             int segfault = *((int*) NULL);
-            printf("sefault= %i", segfault);
+            printf("segfault= %i", segfault);
         }
         nmb->allocated--;
     #endif

@@ -243,6 +243,6 @@ void DynamicMultiObjectList<Object_interface, max_n>::destroy(int id)
 template <class Object_interface, int max_n>
 bool DynamicMultiObjectList<Object_interface, max_n>::full()
 {
-    if (this->num > max_n) printf("WARNING: Objet_list -- Num %d exceeds max_n %d\n", num, max_n);
+    GS_ASSERT(this->num <= max_n);
     return (this->num >= max_n);
 }

@@ -359,44 +359,60 @@ void HUD::init()
     int line_height = HudFont::font->data.line_height;
     
     help = HudText::text_list->create();
+    GS_ASSERT(help != NULL);
+    if (help == NULL) return;
     help->set_text((char*) help_text);
     int help_width = help->get_width();
     help->set_position(_xres - help_width - 5, _yresf - 5);
 
     disconnected = HudText::text_list->create();
+    GS_ASSERT(disconnected != NULL);
+    if (disconnected == NULL) return;
     disconnected->set_text((char*) disconnected_text);
     disconnected->set_color(255,10,10,255);
     disconnected->set_position(_xresf/2, _yresf/2);
 
     version_mismatch = HudText::text_list->create();
+    GS_ASSERT(version_mismatch != NULL);
+    if (version_mismatch == NULL) return;
     version_mismatch->set_text((char*)version_mismatch_text);
     version_mismatch->set_color(255,10,10,255);
     version_mismatch->set_position(_xresf/2, _yresf/2);
     
     dead = HudText::text_list->create();
+    GS_ASSERT(dead != NULL);
+    if (dead == NULL) return;
     dead->set_text((char*) dead_text);
     dead->set_color(255,10,10,255);
     dead->set_position(_xresf/2, _yresf/2);
     
     fps = HudText::text_list->create();
+    GS_ASSERT(fps != NULL);
+    if (fps == NULL) return;
     fps->set_format((char*) fps_format);
     fps->set_format_extra_length(6 - 5);
     fps->set_color(255,10,10,255);
     fps->set_position(3, line_height+3);
     
     ping = HudText::text_list->create();
+    GS_ASSERT(ping != NULL);
+    if (ping == NULL) return;
     ping->set_format((char*) ping_format);
     ping->set_format_extra_length(3 - 2);
     ping->set_color(255,10,10,255);
     ping->set_position(3, (line_height*2)+3);
     
     reliable_ping = HudText::text_list->create();
+    GS_ASSERT(reliable_ping != NULL);
+    if (reliable_ping == NULL) return;
     reliable_ping->set_format((char*) ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
     reliable_ping->set_color(255,10,10,255);
     reliable_ping->set_position(3, (line_height*3)+3);
 
     health = HudText::text_list->create();
+    GS_ASSERT(health != NULL);
+    if (health == NULL) return;
     health->set_text((char*) "");
     health->set_format((char*) health_format);
     health->set_format_extra_length((3 - 2));
@@ -404,6 +420,8 @@ void HUD::init()
     health->set_position(HudEquipment::rendered_width + 2, _yresf + 2);
 
     confirm_quit = HudText::text_list->create();
+    GS_ASSERT(confirm_quit != NULL);
+    if (confirm_quit == NULL) return;
     confirm_quit->set_text((char*)confirm_quit_text);
     confirm_quit->set_color(255,10,10,255);
     confirm_quit->set_position(_xresf/2, _yresf/2);
@@ -471,7 +489,8 @@ void ChatRender::init()
 {
     if (HudFont::font == NULL)
         printf("WARNING: initing ChatRender before HudFont\n");
-        
+
+    GS_ASSERT(!this->inited);
     if (this->inited) return;
     int i=0;
     int line_height = HudFont::font->data.line_height;
@@ -480,6 +499,8 @@ void ChatRender::init()
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
         HudText::Text* t = HudText::text_list->create();
+        GS_ASSERT(t != NULL);
+        if (t == NULL) return;
         t->set_position(x_offset, _yresf - (y_offset + (line_height + 2)*i));
         t->set_text((char*) "");
         t->set_format((char*) "%s%s%s");
@@ -489,6 +510,8 @@ void ChatRender::init()
     }
 
     input = HudText::text_list->create();
+    GS_ASSERT(input != NULL);
+    if (input == NULL) return;
     input->set_text((char*)"");
     input->set_color(255,10,10,255);
     input->set_position(x_offset, _yresf - (y_offset + (line_height + 2)*i));
@@ -632,6 +655,8 @@ void Scoreboard::init()
     for (i=0; i<N_STATS; i++)
     {
         tags[i] = HudText::text_list->create();
+        GS_ASSERT(tags[i] != NULL);
+        if (tags[i] == NULL) return;
         tags[i]->set_color(150, 150, 255, 255);
         tags[i]->set_position(start_x + i*col_width, _yresf - start_y);
     }
@@ -646,9 +671,14 @@ void Scoreboard::init()
     for (i=0; i<(int)N_TEAMS; i++)
     {
         team_names[i] = HudText::text_list->create();
+        GS_ASSERT(team_names[i] != NULL);
+        if (team_names[i] == NULL) return;
         team_names[i]->set_format((char*)team_name_fmt);
         team_names[i]->set_format_extra_length(TEAM_NAME_MAX_LENGTH - 2);
+
         team_scores[i] = HudText::text_list->create();
+        GS_ASSERT(team_scores[i] != NULL);
+        if (team_scores[i] == NULL) return;
         team_scores[i]->set_format((char*)team_score_fmt);
         team_scores[i]->set_format_extra_length(6 - 2);
     }
@@ -661,22 +691,32 @@ void Scoreboard::init()
     for (i=0; i<PLAYERS_MAX; i++)
     {
         ids[i] = HudText::text_list->create();
+        GS_ASSERT(ids[i] != NULL);
+        if (ids[i] == NULL) return;
         ids[i]->set_format((char*)id_fmt);
         ids[i]->set_format_extra_length(3 - 2);
 
         names[i] = HudText::text_list->create();
+        GS_ASSERT(names[i] != NULL);
+        if (names[i] == NULL) return;
         names[i]->set_format((char*)name_fmt);
         names[i]->set_format_extra_length(PLAYER_NAME_MAX_LENGTH - 2);
 
         kills[i] = HudText::text_list->create();
+        GS_ASSERT(kills[i] != NULL);
+        if (kills[i] == NULL) return;
         kills[i]->set_format((char*)kills_fmt);
         kills[i]->set_format_extra_length(3 - 2);
 
         deaths[i] = HudText::text_list->create();
+        GS_ASSERT(deaths[i] != NULL);
+        if (deaths[i] == NULL) return;
         deaths[i]->set_format((char*)deaths_fmt);
         deaths[i]->set_format_extra_length(3 - 2);
 
         scores[i] = HudText::text_list->create();
+        GS_ASSERT(scores[i] != NULL);
+        if (scores[i] == NULL) return;
         scores[i]->set_format((char*)score_fmt);
         scores[i]->set_format_extra_length(4 - 2);
     }

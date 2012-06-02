@@ -11,48 +11,45 @@
 namespace Particle
 {
 
-
-BillboardTextHud::BillboardTextHud(int id)
-:
-ParticleMotion(id, 0,0,0,0,0,0, DEFAULT_MASS),
-should_draw(true),
-attached_to_agent(NO_AGENT)
+void BillboardTextHud::init()
 {
+    this->should_draw = true;
+    this->attached_to_agent = NO_AGENT;
+    this->permanent = false;
+    
     this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
+    GS_ASSERT(this->text == NULL);
+    GS_ASSERT(HudText::text_list != NULL);
     this->text = HudText::text_list->create();
     this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
 }
 
-BillboardTextHud::BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz)
-:
-ParticleMotion(id, x,y,z, mx,my,mz, DEFAULT_MASS),
-should_draw(true),
-attached_to_agent(NO_AGENT)
+void BillboardTextHud::destroy()
 {
-    this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
-    this->type = BILLBOARD_TEXT_HUD_TYPE;
-    this->text = HudText::text_list->create();
-    this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
-}
-
-BillboardTextHud::~BillboardTextHud()
-{
+    if (this->text != NULL) HudText::text_list->destroy(this->text->id);
+    this->text = NULL;
     if (this->attached_to_agent == NO_AGENT) return;
     Agent_state* a = ClientState::agent_list->get(this->attached_to_agent);
     if (a == NULL) return;
-    a->event.bb = NULL;
+    a->event.bb = NULL;    
+}
+
+BillboardTextHud::BillboardTextHud()
+:
+ParticleMotion(-1, 0,0,0,0,0,0, DEFAULT_MASS)
+{
+    this->init();
 }
 
 void BillboardTextHud::tick()
 {
-    if (this->ttl >= 0)
-        this->ttl++;
+    if (!this->permanent) this->ttl--;
 }
 
 void BillboardTextHud::set_text(char* t)
 {
-    this->text->set_text(t);
+    if (this->text != NULL) this->text->set_text(t);
 }
 void BillboardTextHud::set_draw(bool draw)
 {
@@ -60,20 +57,20 @@ void BillboardTextHud::set_draw(bool draw)
 }
 void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b)
 {
-    this->text->set_color(r,g,b);
+    if (this->text != NULL) this->text->set_color(r,g,b);
 }
 void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
 {
-    this->text->set_color(r,g,b,a);
+    if (this->text != NULL) this->text->set_color(r,g,b,a);
 }
 void BillboardTextHud::set_size(float size)
 {
-    this->text->set_scale(size);
+    if (this->text != NULL) this->text->set_scale(size);
 }
 
 void BillboardTextHud::draw()
 {
-    #if DC_CLIENT
+    if (this->text == NULL) return;
     if(!this->text->charcount()) return;
     if (current_camera == NULL) return;
     if (!this->should_draw) return;
@@ -94,7 +91,6 @@ void BillboardTextHud::draw()
 
     this->text->set_depth((float)sz);
     this->text->draw_centered();
-    #endif
 }
 
 }
@@ -106,12 +102,14 @@ namespace Particle
 
 void BillboardTextHud_list::tick()
 {
-    for (int i=0; i<n_max; i++)
+    for (int i=0; i<this->num; i++)
     {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max)
-            destroy(a[i]->id);
+        a[i].tick();
+        if (a[i].ttl <= 0)
+        {
+            a[i].destroy();
+            destroy(i);
+        }
     }
 }
 
@@ -124,11 +122,10 @@ void BillboardTextHud_list::draw()
 
     HudFont::reset_default();
     HudFont::set_texture();
-    for (int i=0; i<n_max; i++)
+    for (int i=0; i<this->num; i++)
     {
-        if (a[i] == NULL) continue;
-        if (!a[i]->should_draw) continue;
-        a[i]->draw();
+        if (!a[i].should_draw) continue;
+        a[i].draw();
     }
     #endif
 }

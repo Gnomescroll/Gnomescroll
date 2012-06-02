@@ -17,8 +17,7 @@ class Grenade_shrapnel: public ParticleMotion
 
         int owner;
 
-        explicit Grenade_shrapnel(int id);
-        Grenade_shrapnel(int id, float x, float y, float z, float mx, float my, float mz);
+        Grenade_shrapnel();
 };
 
 }
@@ -29,7 +28,7 @@ namespace Particle
 {
 
 
-class Grenade_shrapnel_list: public Object_list<Grenade_shrapnel, GRENADE_SHRAPNEL_MAX>
+class Grenade_shrapnel_list: public Simple_object_list<Grenade_shrapnel, GRENADE_SHRAPNEL_MAX>
 {
     private:
         const char* name() { return "Grenade_shrapnel"; }

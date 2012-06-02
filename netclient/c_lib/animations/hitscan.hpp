@@ -29,11 +29,10 @@ class HitscanEffect
         this->vx = vx; this->vy = vy; this->vz = vz;
     }
 
-    explicit HitscanEffect(int id);
-    HitscanEffect();
+    void init();
 };
 
-class HitscanEffect_list: public Object_list<HitscanEffect>
+class HitscanEffect_list: public Simple_object_list<HitscanEffect>
 {
     private:
         const char* name() { return "HitscanEffect"; }

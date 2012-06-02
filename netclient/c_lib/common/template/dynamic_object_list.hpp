@@ -225,6 +225,6 @@ void DynamicObjectList<Object_state, max_n>::destroy(int id)
 template <class Object_state, int max_n>
 bool DynamicObjectList<Object_state, max_n>::full()
 {
-    if (this->num > max_n) printf("WARNING: Objet_list -- Num %d exceeds max_n %d\n", num, max_n);
+    GS_ASSERT(this->num <= max_n);
     return (this->num >= max_n);
 }

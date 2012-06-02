@@ -73,7 +73,7 @@ void Agent_event::display_name()
     {
         this->bb = Particle::billboard_text_hud_list->create();
         if (this->bb == NULL) return;
-        this->bb->set_ttl(-1000);          // dont die
+        this->bb->permanent = true;          // dont die
         this->bb->set_text(this->a->status.name);
         this->bb->set_color(r,g,b,255);
         this->bb->set_size(0.7);
@@ -102,7 +102,7 @@ void Agent_event::took_damage(int dmg)
     sprintf(txt, "%d", dmg);
     b->set_text(txt);
     b->set_size(1.0f);
-    b->set_ttl(5);
+    b->set_ttl(245);
 
     if (a->is_you())
         Sound::agent_took_damage();
@@ -478,7 +478,7 @@ Agent_event::~Agent_event()
 {
     if (this->bb != NULL)
     {   // BUG -- particle list dtor might be called before this, on close
-        this->bb->set_ttl(10000);   // let it die (will be culled next tick)
+        this->bb->permanent = true;          // dont die
     }
 }
 

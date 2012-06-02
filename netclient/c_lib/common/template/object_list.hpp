@@ -133,7 +133,8 @@ int Object_list<Object_state, max_n>::get_free_id()
 }
 
 template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create() {
+Object_state* Object_list<Object_state, max_n>::create()
+{
     //where();
     int i;
     int id;
@@ -141,8 +142,9 @@ Object_state* Object_list<Object_state, max_n>::create() {
         id = (i+id_c)%n_max;
         if(a[id] == NULL) break;
     }
-    if(i==n_max) {
-        printf("%s_list Error: cannot create object, object limit exceeded\n", name() );
+    if(i==n_max)
+    {
+        printf("%s_list Error: cannot create object, object limit %d exceeded\n", name(), this->n_max);
         return NULL;
     }
     a[id] = new Object_state(id);
@@ -154,11 +156,13 @@ Object_state* Object_list<Object_state, max_n>::create() {
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(int id) {
     //where();
-    if(a[id] == NULL) {
+    if(a[id] == NULL)
+    {
         a[id] = new Object_state(id);
         num++;
         return a[id];
-    } else {
+    } else
+    {
         printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
         return NULL;
     }
@@ -188,19 +192,19 @@ template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::destroy(int id)
 {
     //where();
-    if(a[id]==NULL) {
+    if(a[id]==NULL)
+    {
         printf("%s_list: Cannot delete object: object is null\n", name() );
         return;
     }
     delete a[id];
     a[id] = NULL;
     num--;
-    //printf("%s_list: Deleted object %i\n",name(), id);
 }
  
 template <class Object_state, int max_n>
 bool Object_list<Object_state, max_n>::full()
 {
-    if (this->num > max_n) printf("WARNING: Objet_list -- Num %d exceeds max_n %d\n", num, max_n);
+    GS_ASSERT(this->num <= max_n);
     return (this->num >= max_n);
 }

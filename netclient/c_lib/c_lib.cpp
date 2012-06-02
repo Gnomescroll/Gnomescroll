@@ -258,6 +258,10 @@ int init_c_lib()
     t_map::blit_block_item_sheet();
     //printf("Checkpoint 5 \n");
 
+    HudText::init();
+    HudFont::init();
+    HudMap::init();
+
     Item::init();
     ItemContainer::init();
 
@@ -285,10 +289,6 @@ int init_c_lib()
 
     Skybox::init();
     //Sound::test();
-
-    HudText::init();
-    HudFont::init();
-    HudMap::init();
  
     HudEquipment::init();
     HudReticle::init();

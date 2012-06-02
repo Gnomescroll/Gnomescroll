@@ -15,32 +15,28 @@ namespace Particle
 
 static const float DEFAULT_MASS = 1.0;
 
-BillboardText::BillboardText(int id)
-:
-ParticleMotion(id, 0,0,0,0,0,0, DEFAULT_MASS),
-bounce_count(0),
-r(100), g(100), b(100), a(255),
-gravity(true),
-should_draw(true),
-size(BILLBOARD_TEXT_TEXTURE_SCALE)
+void BillboardText::init()
 {
-    text[0] = '\0';
-    this->ttl_max = BILLBOARD_TEXT_TTL;
+    this->bounce_count = 0;
+    this->r = 100;
+    this->g = 100;
+    this->b = 100;
+    this->a = 255;
+    this->gravity = true;
+    this->should_draw = true;
+    this->size = BILLBOARD_TEXT_TEXTURE_SCALE;
+    this->permanent = false;
+
+    this->text[0] = '\0';
+    this->ttl = BILLBOARD_TEXT_TTL;
     this->type = BILLBOARD_TEXT_TYPE;
 }
 
-BillboardText::BillboardText(int id, float x, float y, float z, float mx, float my, float mz)
+BillboardText::BillboardText()
 :
-ParticleMotion(id, x,y,z, mx,my,mz, DEFAULT_MASS),
-bounce_count(0),
-r(100), g(100), b(100), a(255),
-gravity(true),
-should_draw(true),
-size(BILLBOARD_TEXT_TEXTURE_SCALE)
+ParticleMotion(-1, 0,0,0,0,0,0, DEFAULT_MASS)
 {
-    text[0] = '\0';
-    this->ttl_max = BILLBOARD_TEXT_TTL;
-    this->type = BILLBOARD_TEXT_TYPE;
+    this->init();
 }
 
 void BillboardText::tick()
@@ -51,9 +47,8 @@ void BillboardText::tick()
         if (bounced) this->bounce_count++;
     }
     if (this->bounce_count >= BILLBOARD_TEXT_BOUNCE_EXPLODE_LIMIT)
-        this->ttl = this->ttl_max;
-    if (this->ttl >= 0)
-        this->ttl++;
+        this->ttl = 0;
+    if (!this->permanent) this->ttl--;
 }
 
 
@@ -158,11 +153,9 @@ void BillboardText::draw()
 
     // letters draw a bit into the ground, this offset fixes that
     const float ground_offset = 0.05;
+    position = vec3_scalar_add(position, ground_offset);
     float x,y,z;
     x=position.x; y=position.y; z=position.z;
-    x += ground_offset;
-    y += ground_offset;
-    z += ground_offset;
 
     struct HudFont::Glyph glyph;
     float tx_min, tx_max, ty_min, ty_max;
@@ -214,12 +207,11 @@ namespace Particle
 
 void BillboardText_list::tick()
 {
-    for (int i=0; i<n_max; i++)
+    for (int i=0; i<this->num; i++)
     {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max)
-            destroy(a[i]->id);
+        a[i].tick();
+        if (a[i].ttl <= 0)
+            destroy(i);
     }
 }
 
@@ -233,11 +225,10 @@ void BillboardText_list::draw()
     HudFont::reset_default();
     HudFont::start_world_font_draw(); // gl calls
     HudFont::set_texture();
-    for(int i=0; i<n_max; i++)
+    for(int i=0; i<this->num; i++)
     {
-        if (a[i] == NULL) continue;
-        if (!a[i]->should_draw) continue;
-        a[i]->draw();
+        if (!a[i].should_draw) continue;
+        a[i].draw();
     }
     HudFont::end_world_font_draw();
     #endif

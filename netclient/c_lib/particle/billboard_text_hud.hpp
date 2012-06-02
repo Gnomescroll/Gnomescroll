@@ -6,7 +6,7 @@
 namespace Particle
 {
 
-const int BILLBOARD_TEXT_HUD_MAX = 1024;
+const int BILLBOARD_TEXT_HUD_MAX = 256;
 const int BILLBOARD_TEXT_HUD_TTL = 300;
 const int BILLBOARD_TEXT_HUD_TYPE = 10;
 const float BILLBOARD_TEXT_HUD_DAMP = 0.2f;
@@ -20,6 +20,7 @@ class BillboardTextHud: public ParticleMotion
         HudText::Text* text;
         bool should_draw;
         int attached_to_agent;
+        bool permanent;
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
@@ -30,9 +31,10 @@ class BillboardTextHud: public ParticleMotion
         void draw();
         void tick();
 
-        ~BillboardTextHud();
-        BillboardTextHud(int id);
-        BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz);
+        void init();
+        void destroy();
+
+        BillboardTextHud();
 };
 
 }
@@ -42,7 +44,7 @@ class BillboardTextHud: public ParticleMotion
 namespace Particle
 {
 
-class BillboardTextHud_list: public Object_list<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>
+class BillboardTextHud_list: public Simple_object_list<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>
 {
     private:
         const char* name() { return "BillboardTextHud"; }

@@ -34,27 +34,10 @@ void teardown_hitscan_laser()
 
 }
 
-
-HitscanLaserEffect::HitscanLaserEffect(int id)
-:
-id(id),
-ttl(hitscan_lader_ttl)
-{}
-
-HitscanLaserEffect::HitscanLaserEffect(float x, float y, float z, float fx, float fy, float fz)
-:
-x(x), y(y), z(z),
-fx(fx), fy(fy), fz(fz),
-ttl(hitscan_lader_ttl)
-{}
-
-HitscanLaserEffect::HitscanLaserEffect(int id, float x, float y, float z, float fx, float fy, float fz)
-:
-id(id),
-x(x), y(y), z(z),
-fx(fx), fy(fy), fz(fz),
-ttl(hitscan_lader_ttl)
-{}
+void HitscanLaserEffect::init()
+{
+    this->ttl = HITSCAN_LASER_TTL;
+}
 
 void HitscanLaserEffect::tick()
 {
@@ -86,7 +69,7 @@ void HitscanLaserEffect::draw1(float delta, Vec3 camera)
     Vec3 u1 = vec3_cross(l1, r);
     normalize_vector(&u1);
 
-    float ratio = ((float) (hitscan_lader_ttl - ttl))/15.0;
+    float ratio = ((float) (HITSCAN_LASER_TTL - ttl))/15.0;
     if(ratio > 1.0) ratio = 1.0;
     float _fx = x + (fx-x)*ratio;
     float _fy = y + (fy-y)*ratio;
@@ -140,7 +123,7 @@ void HitscanLaserEffect::draw2(float delta, Vec3 camera)
     Vec3 r = vec3_init(fx-x, fy-y, fz-z);
     normalize_vector( &r );
 
-    float ratio = ((float) (hitscan_lader_ttl - ttl))/30.0;
+    float ratio = ((float) (HITSCAN_LASER_TTL - ttl))/30.0;
     if(ratio > 1.0) ratio = 1.0;
     float _fx = x + (fx-x)*ratio;
     float _fy = y + (fy-y)*ratio;
@@ -215,20 +198,16 @@ void HitscanLaserEffect_list::draw()
     glBindTexture( GL_TEXTURE_2D, hitscan_laser_texture_00_id );
     glBegin( GL_QUADS );
 
-    for(int i=0; i<n_max; i++) 
-    {
-        if (a[i] == NULL) continue;
-        a[i]->draw1(delta, camera); //diffuse beam
-    }
+    for(int i=0; i<this->num; i++) 
+        a[i].draw1(delta, camera); //diffuse beam
+
     glEnd();
 
     glBindTexture( GL_TEXTURE_2D, hitscan_laser_texture_01_id );
     glBegin( GL_QUADS );
-    for(int i=0; i<n_max; i++) 
-    {
-        if (a[i] == NULL) continue;
-        a[i]->draw2(delta, camera); //diffuse beam
-    }
+    for(int i=0; i<this->num; i++) 
+        a[i].draw2(delta, camera); //diffuse beam
+
     glEnd();
 
     glDepthMask(GL_TRUE);
@@ -263,12 +242,11 @@ void HitscanLaserEffect_list::tick()
     //create_hitscan(0.0, 0.0, 0.0, 0.0, 0.0, 160.0);
 
     //int count= 0;
-    int i;
-    for(i=0; i<n_max; i++) {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        a[i]->ttl--;
-        if(a[i]->ttl == 0) destroy(a[i]->id);
+    for(int i=0; i<this->num; i++)
+    {
+        a[i].tick();
+        a[i].ttl--;
+        if(a[i].ttl == 0) destroy(i);
         //count++;
     }
     //printf("count= %i \n", count);

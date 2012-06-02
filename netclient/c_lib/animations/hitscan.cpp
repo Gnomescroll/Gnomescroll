@@ -11,7 +11,7 @@
 namespace Animations
 {
 
-const int hitscan_laser_ttl = 10;
+const int HITSCAN_TTL = 10;
 
 static GLuint hitscan_texture_id;
 
@@ -28,16 +28,10 @@ void teardown_hitscan()
 
 }
 
-HitscanEffect::HitscanEffect(int id)
-:
-id(id),
-ttl(hitscan_laser_ttl)
-{}
-
-HitscanEffect::HitscanEffect()
-:
-ttl(hitscan_laser_ttl)
-{}
+void HitscanEffect::init()
+{
+    this->ttl = HITSCAN_LASER_TTL;
+}
 
 // DO NOT USE:: TESTING PURPOSES ONLY
 void HitscanEffect::add_plane_bias()
@@ -110,6 +104,8 @@ void HitscanEffect::draw(float delta, Vec3 camera)
     float x = quadrant_translate_f(camera.x, this->x);
     float y = quadrant_translate_f(camera.y, this->y);
     float z = this->z;
+
+    if (point_fulstrum_test(x,y,z) == false) return;
 
     Vec3 v = vec3_init(vx,vy,vz);
     normalize_vector(&v);
@@ -188,12 +184,8 @@ void HitscanEffect_list::draw()
 
     glBegin( GL_QUADS );
 
-    int i;
-    for(i=0; i<n_max; i++) 
-    {
-        if (a[i] == NULL) continue;
-        a[i]->draw(delta, camera);
-    }
+    for(int i=0; i<this->num; i++) 
+        a[i].draw(delta, camera);
     
     glEnd();
     glDepthMask(GL_TRUE);
@@ -224,13 +216,12 @@ void HitscanEffect_list::tick()
 
     }
 
-    int i;
-    for(i=0; i<n_max; i++) {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        a[i]->ttl--;
-        if(a[i]->ttl <= 0)
-            destroy(a[i]->id);
+    for(int i=0; i<this->num; i++)
+    {
+        a[i].tick();
+        a[i].ttl--;
+        if(a[i].ttl <= 0)
+            destroy(i);
     }
 }
 

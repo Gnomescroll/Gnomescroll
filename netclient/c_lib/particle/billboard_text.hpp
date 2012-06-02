@@ -25,6 +25,7 @@ class BillboardText: public ParticleMotion
         bool gravity;
         bool should_draw;
         float size;
+        bool permanent;
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
@@ -37,8 +38,9 @@ class BillboardText: public ParticleMotion
         void draw();
         void tick();
 
-        explicit BillboardText(int id);
-        BillboardText(int id, float x, float y, float z, float mx, float my, float mz);
+        void init();
+
+        BillboardText();
 };
 
 }
@@ -48,7 +50,7 @@ class BillboardText: public ParticleMotion
 namespace Particle
 {
 
-class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
+class BillboardText_list: public Simple_object_list<BillboardText, BILLBOARD_TEXT_MAX>
 {
     private:
         const char* name() { return "BillboardText"; }
