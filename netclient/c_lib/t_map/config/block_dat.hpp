@@ -102,6 +102,7 @@ void load_block_dat()
     push_oriented_texture();
 
     hud_def(2,2,t1,13,5);
+    set_max_dmg(128);
 /*
     cube_def(7, ItemContainerBlock, "crate_3");
     iso_texture(t1,3,4);
@@ -127,7 +128,7 @@ void load_block_dat()
     push_oriented_texture();
 
     hud_def(2,2,t1,3,5);
-
+    set_max_dmg(128);
 /*
     cube_def(7, ItemContainerBlock, "crate_3");
     iso_texture(t1,12,4);
