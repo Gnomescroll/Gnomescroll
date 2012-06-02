@@ -850,11 +850,11 @@ void key_down_handler(SDL_Event* event)
     switch (event->key.keysym.sym)
     {
         case SDLK_HOME:
-            save_screenshot();
+            if (input_state.debug) save_screenshot();
             break;
 
         case SDLK_F10:
-            t_map::toggle_3d_texture_settings();
+            if (input_state.debug) t_map::toggle_3d_texture_settings();
             break;
 
         case SDLK_F12:

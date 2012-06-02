@@ -63,8 +63,7 @@ void Agent_event::name_changed(char* old_name)
 
 void Agent_event::hide_name()
 {
-    if (this->bb != NULL)
-        this->bb->set_draw(false);
+    if (this->bb != NULL) this->bb->set_draw(false);
 }
 
 void Agent_event::display_name()
@@ -170,7 +169,6 @@ void Agent_event::born()
         // regenerate model
         if (this->a->vox != NULL)
             this->a->vox->restore(this->a->status.team);
-
     }
 }
 
@@ -188,7 +186,6 @@ void Agent_event::set_spawner(int pt)
 
 void Agent_event::crouched()
 {
-    printf("crouched\n");
     this->model_was_changed = true;
     this->a->vox->set_vox_dat(&VoxDats::agent_crouched);
     this->a->vox->reset_skeleton();
@@ -196,7 +193,6 @@ void Agent_event::crouched()
 
 void Agent_event::uncrouched()
 {
-    printf("uncrouched\n");
     this->model_was_changed = true;
     this->a->vox->set_vox_dat(&VoxDats::agent);
     this->a->vox->reset_skeleton();

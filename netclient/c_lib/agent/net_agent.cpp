@@ -288,7 +288,6 @@ inline void agent_name_StoC::handle()
 
 inline void agent_destroy_StoC::handle()
 {
-    printf("destroying agent %d\n", id);
     ClientState::agent_list->destroy(id);
 }
 

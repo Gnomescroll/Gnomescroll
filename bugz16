@@ -351,6 +351,10 @@ DONE
 spawn team bases at 1/4 x,y and 3/4 x,y
 DONE
 
+use current_camera for right click container open
+DONE
+
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -426,4 +430,4 @@ refill toolbelt on death, if empty/low
 
 fix enemy hud names
 
-use camera state for right click container open
+item sprites, hitscan lasers not fulstrum culled properly

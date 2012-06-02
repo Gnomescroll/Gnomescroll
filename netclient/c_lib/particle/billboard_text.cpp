@@ -103,9 +103,11 @@ void BillboardText::set_size(float size)
 
 void BillboardText::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     if (HudFont::font == NULL) return;
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
+    if (!this->should_draw) return;
+    
     Vec3 position = this->get_position();
     Vec3 p = current_camera->get_position();
     position = quadrant_translate_position(p,position);
@@ -200,7 +202,7 @@ void BillboardText::draw()
         glTexCoord2f(tx_min,ty_max);
         glVertex3f(bx, by, az);
     }
-#endif    
+    #endif
 }
 
 }

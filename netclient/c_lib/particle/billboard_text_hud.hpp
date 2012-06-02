@@ -19,6 +19,7 @@ class BillboardTextHud: public ParticleMotion
     public:
         HudText::Text* text;
         bool should_draw;
+        int attached_to_agent;
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
@@ -28,7 +29,8 @@ class BillboardTextHud: public ParticleMotion
 
         void draw();
         void tick();
-        
+
+        ~BillboardTextHud();
         BillboardTextHud(int id);
         BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz);
 };

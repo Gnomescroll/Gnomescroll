@@ -270,7 +270,8 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     player_agent_sound_ground_movement_event(s0, s1, is_on_ground);
 }
 
-float PlayerAgent_state::camera_height() {
+float PlayerAgent_state::camera_height()
+{
     if (this->you == NULL) return 0.0f;
     return this->you->camera_height();
 }
@@ -304,16 +305,9 @@ void PlayerAgent_state::display_agent_names()
     {
         Agent_state* a = ClientState::agent_list->a[i];
         if (a==NULL) continue;
-        if (a->id == this->agent_id)
-        {
-            a->event.hide_name();
-            continue;
-        }
-        if (a->status.team != you->status.team) // only show teammates
-        {
-            a->event.hide_name();
-            continue;
-        }
+        if (a->id == this->agent_id) continue;  // our name
+        if (a->status.team != you->status.team) continue;  // enemy names
+        // display only teammate names
         a->event.display_name();
     }
 }
@@ -434,10 +428,9 @@ void PlayerAgent_state::update_model()
     {   // agent not in view fulcrum
         a->vox->set_draw(false);
         a->vox->set_hitscan(false);
-        if (a->event.bb != NULL) a->event.bb->set_draw(false);
         return;
     }
-    if (a->event.bb != NULL) a->event.bb->set_draw(true);
+
     if (a->crouched())
     {
         vox_dat = &VoxDats::agent_crouched;

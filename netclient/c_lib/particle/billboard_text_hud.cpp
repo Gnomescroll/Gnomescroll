@@ -15,7 +15,8 @@ namespace Particle
 BillboardTextHud::BillboardTextHud(int id)
 :
 ParticleMotion(id, 0,0,0,0,0,0, DEFAULT_MASS),
-should_draw(true)
+should_draw(true),
+attached_to_agent(NO_AGENT)
 {
     this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
@@ -26,12 +27,21 @@ should_draw(true)
 BillboardTextHud::BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz)
 :
 ParticleMotion(id, x,y,z, mx,my,mz, DEFAULT_MASS),
-should_draw(true)
+should_draw(true),
+attached_to_agent(NO_AGENT)
 {
     this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
     this->text = HudText::text_list->create();
     this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
+}
+
+BillboardTextHud::~BillboardTextHud()
+{
+    if (this->attached_to_agent == NO_AGENT) return;
+    Agent_state* a = ClientState::agent_list->get(this->attached_to_agent);
+    if (a == NULL) return;
+    a->event.bb = NULL;
 }
 
 void BillboardTextHud::tick()
@@ -66,16 +76,14 @@ void BillboardTextHud::draw()
     #if DC_CLIENT
     if(!this->text->charcount()) return;
     if (current_camera == NULL) return;
+    if (!this->should_draw) return;
 
     Vec3 position = this->get_position();
     position = quadrant_translate_position(current_camera_position, position);
     GLdouble sx,sy,sz;
     GLint res = gluProject(position.x, position.y, position.z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
-    if (res == GLU_FALSE)
-    {
-        printf("BillboardTextHud hud projection -- gluProject failed\n");
-        return;
-    }
+    GS_ASSERT(res != GLU_FALSE);
+    if (res == GLU_FALSE) return;
 
     this->text->set_position((float)sx, (float)sy);
     this->text->center();

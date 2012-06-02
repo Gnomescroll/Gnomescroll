@@ -861,10 +861,8 @@ void Agent_state::update_model()
     {   // agent not in view fulcrum
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);
-        if (this->event.bb != NULL) this->event.bb->set_draw(false);
         return;
     }
-    if (this->event.bb != NULL) this->event.bb->set_draw(true);
     if (this->crouched())
     {
         vox_dat = &VoxDats::agent_crouched;
