@@ -285,7 +285,7 @@ inline int get_gradient(int x, int y)
 public:
 
 // Classic Perlin noise, 3D version
-float base(float x, float y, float z) 
+float base(float x, float y) 
 {
 
     x *= xscale;  //replace with multiplication
@@ -303,10 +303,10 @@ float base(float x, float y, float z)
     int gi11 = get_gradient(X+1,Y+1);
     
     // Calculate noise contributions from each of the eight corners
-    float n00= dot(grad3[3*gi00], x, y);
-    float n10= dot(grad3[3*gi10], x-1, y);
-    float n01= dot(grad3[3*gi01], x, y-1);
-    float n11= dot(grad3[3*gi11], x-1, y-1);
+    float n00= dot(grad+3*gi00, x, y);
+    float n10= dot(grad+3*gi10, x-1, y);
+    float n01= dot(grad+3*gi01, x, y-1);
+    float n11= dot(grad+3*gi11, x-1, y-1);
     // Compute the fade curve value for each of x, y, z
     
 #if 1
@@ -320,8 +320,8 @@ float base(float x, float y, float z)
 #endif
 
     // Interpolate along x the contributions from each of the corners
-    float nx00 = mix(n000, n100, u);
-    float nx10 = mix(n010, n110, u);
+    float nx00 = mix(n00, n10, u);
+    float nx10 = mix(n01, n11, u);
     // Interpolate the four results along y
     float nxy = mix(nx00, nx10, v);
 
@@ -333,12 +333,12 @@ float noise(float x, float y, float z)
     return base(x,y,z);
 }
 
-float one_over_f(float x, float y, float z) 
+float one_over_f(float x, float y) 
 {   
     float tmp = 0;
-    tmp += noise(x,y,z);
-    tmp += 0.50 * noise(2*x, 2*y,2*z);
-    tmp += 0.25 * noise(4*x,4*y,2*z);
+    tmp += noise(x,y);
+    tmp += 0.50 * noise(2*x, 2*y);
+    tmp += 0.25 * noise(4*x,4*y);
     return tmp;
 }
 
