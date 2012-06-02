@@ -327,6 +327,9 @@ DONE
 if switching weapons while holding down, cancel
 DONE
 
+fix k kill switch
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -369,5 +372,4 @@ craft bench levels
 Record time played per user
 
 ==BUGZ==
-k kills program
 make sure dropping nanite and toobelt contents on exit
