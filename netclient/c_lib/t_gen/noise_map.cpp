@@ -41,7 +41,7 @@ class PerlinField3D
 
     ~PerlinField3D()
     {
-        if (this->gradient_array != NULL) delete[] this->gradient_array;
+        delete[] this->gradient_array;
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
@@ -202,6 +202,148 @@ float one_over_f(float x, float y, float z)
 };
 
 
+
+class PerlinField2d
+{
+    public:
+
+    unsigned char* ga;  //gradient array
+    unsigned float* grad; //gradient vector array
+    //static const int ssize = 64*64*32;
+    //static const int xsize = 64;
+
+    int ssize;
+    int xsize;
+    int xs;
+
+    float xscale;   //scale multiplier
+
+    int grad_max;   //number of gradients
+
+
+    PerlinField2d(int seed, int _xs, int _grad_max)
+    {
+        xs = _xs;
+        xsize = 512 / xs;
+        ssize = xsize*xsize;
+        grad_max = _grad_max;
+        xscale = 1.0 / ((float) xs);
+
+        init_genrand(seed);
+
+        ga = new unsigned char[ssize];
+        for(int i=0; i<ssize; i++)
+        {
+            ga[i] = genrand_int32() % grad_max; //gradient number
+        }
+        grad = new float[grad_max];
+        generate_gradient_vectors();
+    }
+
+    ~PerlinField2D()
+    {
+        delete[] this->grad;
+    }
+
+    void generate_gradient_vectors()
+    {
+        //generate vectors
+    }
+
+// This method is a *lot* faster than using (int)Math.floor(x)
+static inline int fastfloor(float x) 
+{
+return x>=0 ? (int)x : (int)x-1;
+}
+
+static inline float dot(float g[], float x, float y)
+{
+return g[0]*x + g[1]*y;
+}
+
+static inline float mix(float a, float b, float t) 
+{
+//    return (1-t)*a + t*b;
+    return a + t*(b-a);   //optimized version
+}
+
+static inline float fade(float t) 
+{
+return t*t*t*(t*(t*6-15)+10);
+}
+
+inline int get_gradient(int x, int y)
+{
+    x = x % xsize; //replace with bitmask
+    y = y % xsize;
+
+    if(x + y*xsize >= ssize) GS_ABORT();
+
+    return ga[x + y*xsize];
+}
+
+public:
+
+// Classic Perlin noise, 3D version
+float base(float x, float y, float z) 
+{
+
+    x *= xscale;  //replace with multiplication
+    y *= xscale;
+    //get grid point
+    int X = fastfloor(x);
+    int Y = fastfloor(y);
+
+    x = x - X;
+    y = y - Y;
+
+    int gi00 = get_gradient(X+0,Y+0);
+    int gi01 = get_gradient(X+0,Y+1);
+    int gi10 = get_gradient(X+1,Y+0);
+    int gi11 = get_gradient(X+1,Y+1);
+    
+    // Calculate noise contributions from each of the eight corners
+    float n00= dot(grad3[3*gi00], x, y);
+    float n10= dot(grad3[3*gi10], x-1, y);
+    float n01= dot(grad3[3*gi01], x, y-1);
+    float n11= dot(grad3[3*gi11], x-1, y-1);
+    // Compute the fade curve value for each of x, y, z
+    
+#if 1
+    float u = fade(x);
+    float v = fade(y);
+    float w = fade(z);
+#else
+    float u = x;
+    float v = y;
+    float w = z;
+#endif
+
+    // Interpolate along x the contributions from each of the corners
+    float nx00 = mix(n000, n100, u);
+    float nx10 = mix(n010, n110, u);
+    // Interpolate the four results along y
+    float nxy = mix(nx00, nx10, v);
+
+    return nxy;   //-1 to 1
+}
+
+float noise(float x, float y, float z)
+{
+    return base(x,y,z);
+}
+
+float one_over_f(float x, float y, float z) 
+{   
+    float tmp = 0;
+    tmp += noise(x,y,z);
+    tmp += 0.50 * noise(2*x, 2*y,2*z);
+    tmp += 0.25 * noise(4*x,4*y,2*z);
+    return tmp;
+}
+
+
+};
 
 void noise_map_test()
 {
