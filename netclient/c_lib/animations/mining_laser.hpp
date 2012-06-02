@@ -48,7 +48,7 @@ void init_mining_laser_texture()
 {
     //int ret = create_texture_from_file((char*) "./media/sprites/mining_laser2.png", &mining_laser_texture);
     int ret = create_texture_from_file((char*) "./media/sprites/mining_laser4.png", &mining_laser_texture);
-    assert(ret == 0);
+    GS_ASSERT(ret == 0);
 }
 
 void init_mining_laser_shader()

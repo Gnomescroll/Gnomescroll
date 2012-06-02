@@ -353,10 +353,18 @@ void assign_toolbelt(int container_id)
 
 void toolbelt_item_selected_event(int container_id, int slot)
 {
+    if (selected_slot == slot) return;
     // dont check for death here
     // let them switch selected
     // if we want to prevent this, we need to have the UI also check for dead
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_id == toolbelt_id);
     if (container_id == NULL_CONTAINER || container_id != toolbelt_id) return;
+
+    // cancel current triggers
+    left_trigger_up_event();
+    right_trigger_up_event();
+    
     // update selected item
     selected_slot = slot;
     send_set_slot_packet(slot);

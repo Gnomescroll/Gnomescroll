@@ -320,6 +320,13 @@ DONE
 Never spawn partially inside a block
 DONE
 
+==============
+== BUILD 19 ==  released jun 1
+==============
+
+if switching weapons while holding down, cancel
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -357,3 +364,10 @@ animation on decay
 cryofreezer
 smelter
 craft bench levels
+
+== ANALYTICS ==
+Record time played per user
+
+==BUGZ==
+k kills program
+make sure dropping nanite and toobelt contents on exit

@@ -511,9 +511,9 @@ void agent_key_down_handler(SDL_Event* event)
     t_hud::ContainerInputEvent container_event;
     switch (event->key.keysym.sym)
     {
-        case SDLK_k:
-            run_lua_test();
-            break;
+        //case SDLK_k:
+            //run_lua_test();
+            //break;
 
         //case SDLK_9:
             //t_mech::add_mech();
