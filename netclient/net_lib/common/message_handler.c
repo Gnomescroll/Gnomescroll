@@ -10,10 +10,10 @@ static int h_server_packet_size[256];
 
 typedef void (*pt2handler)(char*, int, int* read_bytes, int client_id);
 
-pt2handler handler_array[256] = {NULL};
+static pt2handler handler_array[256];
 
-pt2handler client_handler_array[256] = {NULL};
-pt2handler server_handler_array[256] = {NULL};
+static pt2handler client_handler_array[256];
+static pt2handler server_handler_array[256];
 
 //should disconnect client
 void default_handler_function(char* buff, int n, int* read_bytes, int client_id) {
