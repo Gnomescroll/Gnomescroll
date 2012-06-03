@@ -424,6 +424,10 @@ craft bench levels
 == ANALYTICS ==
 Record time played per user
 
+== PERFORMANCE ==
+Blood spray lags green (swap buffers) ?? Twice as much when shooting head ???
+Is it simple object list ??
+
 ==BUGZ==
 <HaltingState> ./run(_Z11print_tracev+0x26) [0x809c116]
 <HaltingState> ./run(_ZN4Item14get_stack_sizeE6ItemID+0x4d) [0x80f815d]
