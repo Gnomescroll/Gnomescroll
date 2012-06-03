@@ -412,7 +412,6 @@ have chat display a "Press U to relock mouse" when window gains focus and mouse 
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
-right click on osx???
 
 == CONTAINERS ETC ==
 methane blocks that decay
@@ -423,10 +422,6 @@ craft bench levels
 
 == ANALYTICS ==
 Record time played per user
-
-== PERFORMANCE ==
-Blood spray lags green (swap buffers) ?? Twice as much when shooting head ???
-Is it simple object list ??
 
 ==BUGZ==
 <HaltingState> ./run(_Z11print_tracev+0x26) [0x809c116]
