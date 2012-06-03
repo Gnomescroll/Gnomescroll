@@ -59,8 +59,6 @@ void register_client_message_handler(int message_id, int size, pt2handler fptr) 
 void init_message_handler() 
 {
 
-printf("init_message_handler \n");
-
 #if !NET_STATIC_ARRAYS
 
 h_client_packet_size = (int*) calloc(256, sizeof(int));
@@ -77,8 +75,6 @@ server_handler_array =  (pt2handler*) calloc(256, sizeof(pt2handler));
         handler_array = NULL;
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
-        h_server_packet_size[i] = -1;
-        h_client_packet_size[i] = -1;
     }
 
 }
