@@ -69,12 +69,12 @@ class ItemAttribute
         particle_voxel = false;
         particle_voxel_texture = 0;
         nanite_food = false;
-        firing_range = NULL_FIRING_RANGE;
-        firing_rate = 1;
-        block_damage = 0;
+        firing_range = DEFAULT_FIRING_RANGE;
+        firing_rate = 8;
+        block_damage = 4;
         object_damage = 0;
-        object_damage_min = 0;
-        object_damage_max = 1;
+        object_damage_min = 5;
+        object_damage_max = 10;
     }
 };
 

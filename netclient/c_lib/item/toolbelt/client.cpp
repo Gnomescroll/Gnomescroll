@@ -42,11 +42,16 @@ bool toolbelt_item_end_alpha_action()
     else item_group = Item::get_item_group(item_id);
     switch (item_group)
     {
+        case IG_ERROR:
+        case IG_RESOURCE:
+        case IG_MELEE_WEAPON:
+        case IG_NANITE_COIN:
         case IG_MINING_LASER:
         case IG_SHOVEL:
         case IG_NONE:
             return true;
-            
+
+        case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:
             return false;   // nothing happened. they arent click-and-hold

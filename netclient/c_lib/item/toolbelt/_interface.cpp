@@ -66,8 +66,20 @@ void tick()
     {
         if (!agent_fire_on[i]) continue;
         int item_type = agent_selected_type[i];
-        if (item_type == NULL_ITEM_TYPE) item_type = Item::get_item_type((char*)"fist");
+        int item_group = Item::get_item_group_for_type(item_type);
+
+        // use fist for everything that isnt a known weapon
+        if (item_type == NULL_ITEM_TYPE
+         || item_group == IG_NONE
+         || item_group == IG_ERROR
+         || item_group == IG_RESOURCE
+         || item_group == IG_NANITE_COIN)
+            item_type = Item::get_item_type((char*)"fist");
+
         int fire_rate = Item::get_item_fire_rate(item_type);
+        GS_ASSERT(fire_rate >= 1);
+        if (fire_rate < 1) fire_rate = 1;
+        
         if (agent_fire_tick[i] % fire_rate == 0)
         {
             #if DC_CLIENT
@@ -177,11 +189,13 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
 
         case IG_ERROR:
         case IG_RESOURCE:
+        case IG_NANITE_COIN:
+            break;
+
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_MELEE_WEAPON:
         case IG_GRENADE_LAUNCHER:
-        case IG_NANITE_COIN:
         case IG_DEBUG:
             break;
             
@@ -215,13 +229,15 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
             a->event.fired_mining_laser();
             break;
 
+        case IG_MELEE_WEAPON:
         case IG_ERROR:
         case IG_RESOURCE:
+        case IG_NANITE_COIN:
+            break;
+        
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
-        case IG_MELEE_WEAPON:
         case IG_GRENADE_LAUNCHER:
-        case IG_NANITE_COIN:
         case IG_DEBUG:
             // one click items, turn them off
             agent_fire_on[agent_id] = false;
@@ -251,13 +267,15 @@ void tick_local_agent_selected_item_type(int item_type)
             ClientState::playerAgent_state.action.tick_mining_laser();
             break;
 
+        case IG_NANITE_COIN:
         case IG_ERROR:
         case IG_RESOURCE:
+            break;
+
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_MELEE_WEAPON:
         case IG_GRENADE_LAUNCHER:
-        case IG_NANITE_COIN:
         case IG_DEBUG:
             break;
             
@@ -286,6 +304,11 @@ void trigger_local_agent_selected_item_type(int item_type)
     bool one_click = true;
     switch (group)
     {
+
+        case IG_MELEE_WEAPON:
+        case IG_RESOURCE:
+        case IG_NANITE_COIN:
+        case IG_ERROR:
         case IG_NONE:
         case IG_SHOVEL:
         case IG_MINING_LASER:
@@ -321,12 +344,6 @@ void trigger_local_agent_selected_item_type(int item_type)
             
         case IG_PLACER:
             ClientState::playerAgent_state.action.set_block(item_id);
-            break;
-
-        case IG_MELEE_WEAPON:
-        case IG_RESOURCE:
-        case IG_NANITE_COIN:
-        case IG_ERROR:
             break;
             
         default:
@@ -429,6 +446,9 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
 
     switch (group)
     {
+        case IG_ERROR:
+        case IG_RESOURCE:
+        case IG_NANITE_COIN:
         case IG_NONE:
             break;
 
@@ -436,13 +456,10 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
         case IG_MINING_LASER:
             break;
 
-        case IG_ERROR:
-        case IG_RESOURCE:
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_MELEE_WEAPON:
         case IG_GRENADE_LAUNCHER:
-        case IG_NANITE_COIN:
         case IG_DEBUG:
             break;
             
@@ -478,6 +495,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     
     switch (group)
     {
+        case IG_MELEE_WEAPON:
         case IG_NANITE_COIN:
         case IG_ERROR:
         case IG_RESOURCE:
@@ -491,7 +509,6 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 
         // durability decrements
         case IG_HITSCAN_WEAPON:
-        case IG_MELEE_WEAPON:
         case IG_DEBUG:
             if (item->durability != NULL_DURABILITY)   // dont decrement durability for nulls
                 item->durability -= 1;

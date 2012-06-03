@@ -31,7 +31,7 @@ class PlayerAgent_action
         void tick_mining_laser();
         void fire_close_range_weapon(int weapon_type);
 
-        void set_block(ItemID placer_id);
+        bool set_block(ItemID placer_id);
 
         //#if !PRODUCTION
         void admin_set_block();

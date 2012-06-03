@@ -360,6 +360,14 @@ DONE
 fix enemy hud names
 DONE
 
+simple object list for hitscan lasers, grenade shrapnel, billboard text
+DONE
+
+fulstrum culling for hitscan lasers, billboard text, item particles
+DONE
+
+items with no special action default to punching
+DONE
 
 == PVE ==
 blue bombs should be wandering, slowly
@@ -432,8 +440,5 @@ ERROR: -- GS_SoundBuffer::add_source -- attempt to add source 2 to GS_SoundBuffe
 
 refill toolbelt on death, if empty/low
 
-item sprites, hitscan lasers not fulstrum culled properly
-
-punch with any item
-
-fix hitscan laser, billbboard text
+put camera on map when in free cam mode
+use camera for compass

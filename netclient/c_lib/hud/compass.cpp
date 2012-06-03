@@ -117,21 +117,7 @@ void init()
 // this function points north
 void update()
 {
-    using ClientState::playerAgent_state;
-    
-    Agent_state* a = playerAgent_state.you;
-    AgentState* s = &playerAgent_state.camera_state;
-
-    //if (a != NULL && a->status.team)    // set index to current team by default
-        //current_texture_index = a->status.team - 1;
-
-    if (a == NULL)
-    {   // just point in camera direction
-        theta = s->theta;
-        return;
-    }
-
-    Vec3 forward = s->forward_vector();
+    Vec3 forward = current_camera->forward_vector();
     forward.z = 0;
     normalize_vector(&forward);
 

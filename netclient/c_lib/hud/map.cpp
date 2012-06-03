@@ -94,6 +94,7 @@ const char base_symbol[] = "B";
 const char flag_symbol[] = "F";
 const char spawner_symbol[] = "S%d";
 const char turret_symbol[] = "T";
+const char camera_symbol[] = "C";
 
 using HudText::Text;
 static Text* you_star = NULL;
@@ -104,6 +105,7 @@ static Text* enemy_flag = NULL;
 static Text* ally[TEAM_MAX_PLAYERS] = {NULL};
 static Text* spawner[Components::AGENT_SPAWNER_PER_TEAM] = {NULL};
 //static Text turret[MAX_TURRETS];
+static Text* camera = NULL;
 
 static bool text_icons_inited = false;
 
@@ -115,22 +117,35 @@ void init_text_icons()
         return;
     }
     you_star = HudText::text_list->create();
+    GS_ASSERT(you_star != NULL);
+    if (you_star == NULL) return;
     you_star->set_text((char*)you_star_symbol);
+
     you_A = HudText::text_list->create();
+    GS_ASSERT(you_A != NULL);
+    if (you_A == NULL) return;
     you_A->set_text((char*)you_A_symbol);
 
     base = HudText::text_list->create();
+    GS_ASSERT(base != NULL);
+    if (base == NULL) return;
     base->set_text((char*)base_symbol);
 
     flag = HudText::text_list->create();
+    GS_ASSERT(flag != NULL);
+    if (flag == NULL) return;
     flag->set_text((char*)flag_symbol);
     
     enemy_flag = HudText::text_list->create();
+    GS_ASSERT(enemy_flag != NULL);
+    if (enemy_flag == NULL) return;
     enemy_flag->set_text((char*)flag_symbol);
 
     for (int i=0; i<(int)TEAM_MAX_PLAYERS; i++)
     {
         ally[i] = HudText::text_list->create();
+        GS_ASSERT(ally[i] != NULL);
+        if (ally[i] == NULL) return;
         ally[i]->set_text((char*)ally_symbol);
     }
         
@@ -140,10 +155,17 @@ void init_text_icons()
     for (int i=0; i<Components::AGENT_SPAWNER_PER_TEAM; i++)
     {
         spawner[i] = HudText::text_list->create();
+        GS_ASSERT(spawner[i] != NULL);
+        if (spawner[i] == NULL) break;
         spawner[i]->set_format((char*)spawner_symbol);
         spawner[i]->set_format_extra_length(len - 1);
     }
     free(spawner_max_string);
+
+    camera = HudText::text_list->create();
+    GS_ASSERT(camera != NULL);
+    if (camera == NULL) return;
+    camera->set_text((char*)camera_symbol);
 
     text_icons_inited = true;
 }
@@ -152,27 +174,36 @@ static void set_team_icons_color(
     unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
 )
 {
+    if (you_star == NULL) return;
+    if (you_A == NULL) return;
+    if (base == NULL) return;
+    if (flag == NULL) return;
+    if (camera == NULL) return;
+    
     //you_star->set_color(r,g,b,a);
     //you_A->set_color(r,g,b,a);
     you_star->set_color(highlight.r, highlight.g, highlight.b, a);
     you_A->set_color(highlight.r, highlight.g, highlight.b, a);
     base->set_color(r,g,b,a);
     flag->set_color(r,g,b,a);
-    for (int i=0; i<(int)TEAM_MAX_PLAYERS;
-        ally[i++]->set_color(r,g,b,a));
-    for (int i=0; i<Components::AGENT_SPAWNER_PER_TEAM;
-        spawner[i++]->set_color(r,g,b,a));
+    for (int i=0; i<(int)TEAM_MAX_PLAYERS; i++)
+        if (ally[i] != NULL) ally[i]->set_color(r,g,b,a);
+    for (int i=0; i<Components::AGENT_SPAWNER_PER_TEAM; i++)
+        if (spawner[i] != NULL) spawner[i]->set_color(r,g,b,a);
+    camera->set_color(highlight.r, highlight.g, highlight.b, a);
 }
 
 static void set_enemy_team_icons_color(
     unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
 )
 {
-    enemy_flag->set_color(r,g,b,a);
+    if (enemy_flag != NULL) enemy_flag->set_color(r,g,b,a);
 }
 
 void update_team(int team)
 {
+    GS_ASSERT(ClientState::ctf != NULL);
+    if (ClientState::ctf == NULL) return;
     if (!text_icons_inited)
     {
         printf("WARNING: HudMap::update_team -- text icons are not inited\n");
@@ -671,6 +702,10 @@ void draw_team_text_icons(float z)
 
 void draw_text_icons(float z)
 {
+    if (you_star == NULL) return;
+    if (you_A == NULL) return;
+    if (camera == NULL) return;
+    
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
     if (playerAgent_state.you == NULL) return;
@@ -686,6 +721,17 @@ void draw_text_icons(float z)
     you_A->set_position(x,y);
     you_A->set_depth(z);
     you_A->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5);
+
+    if (free_camera == NULL) return;
+    if (free_camera->is_current())
+    {
+        Vec3 p = free_camera->get_position();
+        world_to_map_screen_coordinates(p.x, p.y, &x, &y);
+        camera->set_position(x,y);
+        camera->set_depth(z);
+        camera->draw_character_rotated(free_camera->theta - 0.5f);
+    }
+    
     // -0.5 offset to orient texture properly
 }
 

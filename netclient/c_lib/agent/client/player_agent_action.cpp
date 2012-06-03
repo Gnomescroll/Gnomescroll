@@ -309,12 +309,12 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     this->target_direction = look;
 }
 
-void PlayerAgent_action::set_block(ItemID placer_id)
+bool PlayerAgent_action::set_block(ItemID placer_id)
 {
     GS_ASSERT(placer_id != NULL_ITEM);
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
+    if (p->you == NULL) return false;
+    if (p->you->status.dead) return false;
+    if (p->you->status.team == 0) return false;
 
     // get nearest empty block
     const float max_dist = 4.0f;
@@ -327,15 +327,17 @@ void PlayerAgent_action::set_block(ItemID placer_id)
         f.x, f.y, f.z,
         max_dist, z_low, z_high
     );
-    if (b==NULL) return;
+    if (b==NULL) return false;
 
     int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
     GS_ASSERT(orientation >= 0 && orientation <= 3);
+    if (orientation < 0 || orientation > 3) orientation = 0;
 
     int placer_type = Item::get_item_type(placer_id);
     GS_ASSERT(placer_type != NULL_ITEM_TYPE);
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return true;
     int val = attr->placer_block_type_id;
     if (t_map::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
@@ -346,6 +348,7 @@ void PlayerAgent_action::set_block(ItemID placer_id)
         msg.placer_id = placer_id;
         msg.orientation = orientation;
         msg.send();
+        return true;
     }
     else
     {
@@ -355,6 +358,7 @@ void PlayerAgent_action::set_block(ItemID placer_id)
         msg.z = b[2];
         msg.placer_id = placer_id;
         msg.send();
+        return true;
     }
 }
 
