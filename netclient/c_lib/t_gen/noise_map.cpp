@@ -229,7 +229,8 @@ class PerlinField2D
         grad_max = _grad_max;
         xscale = 1.0 / ((float) xs);
 
-        init_genrand(seed);
+        //init_genrand(seed);
+        init_genrand(rand());
 
         ga = new unsigned char[ssize];
         for(int i=0; i<ssize; i++)
