@@ -30,6 +30,8 @@ typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 void RegisterMessages()
 {
 
+    dont_send_this_packet::register_client_packet();
+
     //version
     version_StoC::register_client_packet(); // THIS MUST BE PACKET 0
 

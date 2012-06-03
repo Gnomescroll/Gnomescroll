@@ -22,23 +22,25 @@ static pt2handler server_handler_array[256];
 
 #else
 
-static int* h_client_packet_size;; 
-static int* h_server_packet_size;; 
+static int* h_client_packet_size; 
+static int* h_server_packet_size; 
 
-static pt2handler* handler_array;;
+static pt2handler* handler_array;
 
-static pt2handler* client_handler_array;;
-static pt2handler* server_handler_array;;
+static pt2handler* client_handler_array;
+static pt2handler* server_handler_array;
 
 #endif
 //should disconnect client
-void default_handler_function(char* buff, int n, int* read_bytes, int client_id) {
+void default_handler_function(char* buff, int n, int* read_bytes, int client_id)
+{
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
     *read_bytes = -1;
 }
 
-void register_server_message_handler(int message_id, int size, pt2handler fptr) {
+void register_server_message_handler(int message_id, int size, pt2handler fptr)
+{
     if(message_id > 255 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
     if(server_handler_array[message_id] != NULL) {printf("register_server_message_handler: reassigning message_id %i !!!\n", message_id);}
 
@@ -96,6 +98,8 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
     do {
         //UNPACK_uint8_t(&message_id, buff, n);
         unpack_message_id(&message_id, buff, n);
+        GS_ASSERT(message_id >= 0 && message_id < 255);
+        
         //if(IS_CLIENT) printf("pop message: n= %i, message_id= %i \n", _n, message_id);
 
         //printf("0 n= %i, max_n= %i \n", *n, max_n);

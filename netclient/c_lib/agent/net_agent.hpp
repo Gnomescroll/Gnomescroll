@@ -874,3 +874,13 @@ class request_remaining_state_CtoS: public FixedSizeReliableNetPacketToServer<re
     }
     inline void handle();
 };
+
+class dont_send_this_packet: public FixedSizeReliableNetPacketToClient<dont_send_this_packet>
+{
+    public:
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+    }
+    inline void handle() {}
+};
