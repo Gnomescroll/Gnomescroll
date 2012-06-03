@@ -119,8 +119,6 @@ void RegisterMessages()
     agent_threw_grenade_StoC::register_client_packet();
     agent_placed_block_StoC::register_client_packet();
 
-    alter_item_ownership_StoC::register_client_packet();
-    
     // agent item actions
     place_spawner_CtoS::register_server_packet();
     choose_spawn_location_CtoS::register_server_packet();

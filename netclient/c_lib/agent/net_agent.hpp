@@ -842,22 +842,6 @@ class client_disconnected_StoC: public FixedSizeReliableNetPacketToClient<client
         inline void handle();
 };
 
-class alter_item_ownership_StoC: public FixedSizeReliableNetPacketToClient<alter_item_ownership_StoC>
-{
-    public:
-        uint8_t owner;
-        uint16_t id;
-        uint8_t type;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&owner, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
 //class destroy_voxel_StoC: public FixedSizeNetPacketToClient<destroy_voxel_StoC>
 //{
     //public:
@@ -890,70 +874,3 @@ class request_remaining_state_CtoS: public FixedSizeReliableNetPacketToServer<re
     }
     inline void handle();
 };
-
-
-
-class inventory_StoC: public FixedSizeReliableNetPacketToClient<inventory_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t x,y;
-        uint8_t owner;
-        /* TODO Assume empty on create (for now) TODO*/
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&x, buff, buff_n, pack);
-            pack_u8(&y, buff, buff_n, pack);
-            pack_u8(&owner, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-//class add_to_inventory_slot_CtoS: public FixedSizeReliableNetPacketToServer<add_to_inventory_slot_CtoS>
-//{
-    //public:
-        //uint16_t id;
-        //uint8_t type;
-        //uint8_t x,y;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u16(&id, buff, buff_n, pack);
-            //pack_u8(&type, buff, buff_n, pack);
-            //pack_u8(&x, buff, buff_n, pack);
-            //pack_u8(&y, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class add_to_inventory_CtoS: public FixedSizeReliableNetPacketToServer<add_to_inventory_CtoS>
-//{
-    //public:
-        //uint16_t id;
-        //uint8_t type;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u16(&id, buff, buff_n, pack);
-            //pack_u8(&type, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class remove_from_inventory_CtoS: public FixedSizeReliableNetPacketToServer<remove_from_inventory_CtoS>
-//{
-    //public:
-        //uint8_t x,y;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&x, buff, buff_n, pack);
-            //pack_u8(&y, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-// TODO -- more packets, handlers
-// need full protocol between client and server

@@ -492,34 +492,12 @@ inline void spawn_location_StoC::handle()
     playerAgent_state.you->event.set_spawner(pt);
 }
 
-inline void alter_item_ownership_StoC::handle()
-{
-    //ObjectPolicyInterface* obj = ClientState::object_list->get((ObjectType)type, (int)id);
-    //if (obj == NULL) return;
-    //obj->set_owner(owner);
-}
-
 //inline void destroy_voxel_StoC::handle()
 //{
     //int voxel[3] = { x,y,z };
     //destroy_object_voxel(entity_id, entity_type, entity_part, voxel, radius);
 //}
 
-inline void inventory_StoC::handle()
-{
-    //Inventory* inventory = (Inventory*)ClientState::object_list->create(OBJECT_INVENTORY, id);
-    //if (inventory == NULL)
-    //{
-        //printf("WARNING: inventory_StoC::handle() -- failed to create inventory %d\n", id);
-        //return;
-    //}
-    //inventory->init(x,y);
-    ////Agent_state* agent = ClientState::agent_list->get(owner);
-    ////if (agent == NULL)  // TODO -- better method for saving this
-        ////ClientState::playerAgent_state.cached_inventory = inventory;
-    ////else
-        ////agent->status.inventory = inventory;
-}
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
@@ -570,8 +548,6 @@ inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
 inline void agent_destroy_StoC::handle() {}
 inline void PlayerAgent_id_StoC::handle() {}
-//inline void AgentActiveWeapon_StoC::handle() {}
-//inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
 inline void identified_StoC::handle(){}
 inline void ping_StoC::handle(){}
@@ -580,9 +556,7 @@ inline void agent_conflict_notification_StoC::handle(){}
 inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
 inline void spawn_location_StoC::handle(){}
-inline void alter_item_ownership_StoC::handle(){}
 //inline void destroy_voxel_StoC::handle(){}
-inline void inventory_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;
