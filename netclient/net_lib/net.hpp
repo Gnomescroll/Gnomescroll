@@ -91,6 +91,7 @@ class FixedSizeNetPacketToClient {
     public:
         static uint8_t message_id;
         static int size;
+        static int _in;
         //int client_id; //not used yet
 
         FixedSizeNetPacketToClient() { nm = NULL; }
@@ -114,6 +115,7 @@ class FixedSizeNetPacketToClient {
         */
         void sendToClient(int client_id) 
         {
+            printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
 
             nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
@@ -130,6 +132,8 @@ class FixedSizeNetPacketToClient {
         void broadcast() 
         {
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
+
+            printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
             Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
@@ -167,6 +171,7 @@ class FixedSizeNetPacketToClient {
 
 template <class Derived> uint8_t FixedSizeNetPacketToClient<Derived>::message_id(255);
 template <class Derived> int FixedSizeNetPacketToClient<Derived>::size(-1);
+template <class Derived> int FixedSizeNetPacketToClient<Derived>::_in(0);
 
 //reliable packets
 
@@ -240,6 +245,8 @@ class FixedSizeReliableNetPacketToClient {
         static uint8_t message_id;
         static int size;
 
+        static int _in;
+
         FixedSizeReliableNetPacketToClient(){ nm = NULL; }
 
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
@@ -257,7 +264,7 @@ class FixedSizeReliableNetPacketToClient {
 
         void sendToClient(int client_id) 
         {
-            
+            printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
             nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
@@ -277,6 +284,8 @@ class FixedSizeReliableNetPacketToClient {
             Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
+
+            printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
             for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
             {
@@ -307,4 +316,5 @@ class FixedSizeReliableNetPacketToClient {
 
 template <class Derived> uint8_t FixedSizeReliableNetPacketToClient<Derived>::message_id(255);
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::size(-1);
+template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::_in(0);
 

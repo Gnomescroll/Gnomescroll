@@ -49,7 +49,8 @@ void register_server_message_handler(int message_id, int size, pt2handler fptr)
     server_handler_array[message_id] = fptr;
 }
 
-void register_client_message_handler(int message_id, int size, pt2handler fptr) {
+void register_client_message_handler(int message_id, int size, pt2handler fptr)
+{
     if(message_id >=256 || message_id <0) {printf("register_client_message_handler: message ID invalid!\n");return;}
     if(client_handler_array[message_id] != NULL) {printf("register_client_message_handler: Reassigning message_id %i !!!\n", message_id);}
 
@@ -93,6 +94,8 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
 
     int read_bytes;
 
+    static int _in = 0;
+
     do {
         //UNPACK_uint8_t(&message_id, buff, n);
         unpack_message_id(&message_id, buff, n);
@@ -109,6 +112,8 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
         #ifdef DC_CLIENT
         size  = h_client_packet_size[message_id];
         #endif
+
+        printf("%d Receiving packet %d,%d\n", _in++, message_id, size);
 
         if(*n+size-1 > max_n) 
         { // > or >= ?
