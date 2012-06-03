@@ -37,12 +37,14 @@ struct Vec3 MonsterSpawnerComponent::get_spawn_point(float spawned_object_height
 Objects::Object* MonsterSpawnerComponent::spawn_child()
 {
     GS_ASSERT(this->spawn_type != OBJECT_NONE);    // dont use this method when any component can be spawned
+    if (this->spawn_type == OBJECT_NONE) return NULL;
     return this->spawn_child(this->spawn_type);
 }
 
 Objects::Object* MonsterSpawnerComponent::spawn_child(ObjectType type)
 {
     GS_ASSERT(this->spawn_type == OBJECT_NONE || this->spawn_type == type);    // dont allow this method if type does not match
+    if (this->spawn_type != OBJECT_NONE && this->spawn_type != type) return NULL;
     if (this->children >= this->max_children) return NULL;
     Object* object = Objects::create(type);
     if (object == NULL) return NULL;
@@ -79,6 +81,7 @@ void MonsterSpawnerComponent::lose_child(ObjectType type, int id)
 {
     this->children--;
     GS_ASSERT(this->children >= 0);
+    if (this->children < 0) this->children = 0;
 }
 
 }; // Objects

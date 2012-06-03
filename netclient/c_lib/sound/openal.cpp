@@ -23,14 +23,11 @@ class GS_SoundBuffer
         int current_sources;
         int* sources;
 
-    void add_source(int source_id)
+    bool add_source(int source_id)
     {
-        if (this->current_sources >= this->max_sources)
-        {
-            printf("ERROR: -- GS_SoundBuffer::add_source -- attempt to add source %d to GS_SoundBuffer %d, but it is full.\n", source_id, this->id);
-            return;
-        }
+        if (this->current_sources >= this->max_sources) return false;
         this->sources[this->current_sources++] = source_id;
+        return true;
     }
 
     GS_SoundBuffer():
@@ -443,8 +440,7 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
         {
             active_sources[i].source_id = source_id;
             active_sources[i].two_dimensional = two_dimensional;
-            sound_buffers[soundfile_id]->add_source(source_id);
-            return true;
+            return sound_buffers[soundfile_id]->add_source(source_id);
         }
     return false;
 }

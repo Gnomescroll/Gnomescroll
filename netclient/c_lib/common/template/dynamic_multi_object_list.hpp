@@ -149,6 +149,7 @@ void DynamicMultiObjectList<Object_interface, max_n>::resize(int new_size)
     int old_size = this->n_max;
     this->a = (Object_interface**)realloc(this->a, new_size * sizeof(Object_interface**));
     GS_ASSERT(this->a != NULL);
+    if (this->a == NULL) return;
     // initialize to NULL
     for (int i=old_size; i<new_size; this->a[i++] = NULL);
     this->n_max = new_size;

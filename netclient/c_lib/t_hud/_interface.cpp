@@ -380,7 +380,8 @@ static void draw_grabbed_icon()
     // Draw stack numbers
     if (grabbed_icon_stack_text == NULL) return;
     if (ItemContainer::player_hand_stack_ui <= 1) return;
-    GS_ASSERT(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);   // string only fits 99
+    GS_ASSERT(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);
+    if (count_digits(ItemContainer::player_hand_stack_ui) >= STACK_COUNT_MAX_LENGTH) return;
 
     HudFont::start_font_draw();
     const int font_size = 12;

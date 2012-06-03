@@ -166,7 +166,9 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
                   && !agent->near_base())
                 {
                     GS_ASSERT(p.agent_damage_min <= p.agent_damage_max);
-                    int dmg = randrange(p.agent_damage_min, p.agent_damage_max);
+                    int dmg = 0;
+                    if (p.agent_damage_min <= p.agent_damage_max)
+                        dmg = randrange(p.agent_damage_min, p.agent_damage_max);
                     agent->status.apply_damage(
                         dmg, p.id, p.type, t.part
                     );

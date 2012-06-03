@@ -193,7 +193,8 @@ void MiningLaserEffect_list::draw()
     const static unsigned int stride = sizeof(struct vertexElement1);
 
     GS_ASSERT(mining_laser_vlist->VBO != 0);
-
+    if (mining_laser_vlist->VBO == 0) return;
+    
     //printf("%i \n", mining_laser_vlist->vlist_index);
 
     //glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vbo);

@@ -140,6 +140,7 @@ template <class Object_interface, int max_n>
 Object_interface* MultiObject_list<Object_interface, max_n>::create(int type)
 {
     GS_ASSERT(create_interface != NULL);
+    if (create_interface == NULL) return NULL;
     //where();
     int i;
     int id;
@@ -163,6 +164,7 @@ template <class Object_interface, int max_n>
 Object_interface* MultiObject_list<Object_interface, max_n>::create(int type, int id)
 {
     GS_ASSERT(create_interface != NULL);
+    if (create_interface == NULL) return NULL;
     //where();
     if(a[id] == NULL)
     {

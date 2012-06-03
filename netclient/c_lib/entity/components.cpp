@@ -10,11 +10,20 @@ ComponentInterfaceType get_interface_for_component(ComponentType component)
     GS_ASSERT(component_interface_map != NULL);
     GS_ASSERT(component >= 0);
     GS_ASSERT(component < MAX_COMPONENT_TYPES);
+    if (component_interface_map == NULL) return COMPONENT_INTERFACE_NONE;
+    if (component < 0) return COMPONENT_INTERFACE_NONE;
+    if (component >= MAX_COMPONENT_TYPES) return COMPONENT_INTERFACE_NONE;
     return component_interface_map[component];
 }
 
 static void set_interface_for_component(ComponentType component, ComponentInterfaceType interface)
 {
+    GS_ASSERT(component_interface_map != NULL);
+    GS_ASSERT(component >= 0);
+    GS_ASSERT(component < MAX_COMPONENT_TYPES);
+    if (component_interface_map == NULL) return;
+    if (component < 0) return;
+    if (component >= MAX_COMPONENT_TYPES) return;
     component_interface_map[component] = interface;
 }
 

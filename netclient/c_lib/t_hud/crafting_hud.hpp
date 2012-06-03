@@ -74,6 +74,8 @@ class CraftingUI : public UIElement
     {
         GS_ASSERT(this->stacks == NULL);
         GS_ASSERT(this->output_stacks == NULL);
+        if (this->stacks != NULL) return;
+        if (this->output_stacks != NULL) return;
 
         int max = input_slots;
         this->stacks = new HudText::Text[max];
@@ -255,6 +257,7 @@ void CraftingUI::draw()
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     if (slot_types == NULL) return;
     GS_ASSERT(slot_stacks != NULL);
+    if (slot_stacks == NULL) return;
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -409,6 +412,7 @@ void CraftingUI::draw()
         if (stack <= 1) continue;
 
         GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
+        if (count_digits(stack) >= STACK_COUNT_MAX_LENGTH) continue;
 
         text = &this->stacks[slot];
         text->update_formatted_string(1, stack);
@@ -432,6 +436,7 @@ void CraftingUI::draw()
         if (stack <= 1) continue;
 
         GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
+        if (count_digits(stack) >= STACK_COUNT_MAX_LENGTH) continue;
 
         text = &this->output_stacks[slot];
         text->update_formatted_string(1, stack);

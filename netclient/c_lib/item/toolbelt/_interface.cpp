@@ -51,10 +51,14 @@ void tick()
 {
     #if DC_SERVER
     GS_ASSERT(agent_selected_item != NULL);
+    if (agent_selected_item == NULL) return;
     #endif
     GS_ASSERT(agent_selected_type != NULL);
     GS_ASSERT(agent_fire_tick     != NULL);
     GS_ASSERT(agent_fire_on       != NULL);
+    if (agent_selected_type == NULL) return;
+    if (agent_fire_tick == NULL) return;
+    if (agent_fire_on == NULL) return;
 
     #if DC_CLIENT
     update_selected_item_type();
@@ -107,10 +111,14 @@ void remove_agent(int agent_id)
 
     #if DC_SERVER
     GS_ASSERT(agent_selected_item != NULL);
+    if (agent_selected_item == NULL) return;
     #endif
     GS_ASSERT(agent_selected_type != NULL);
     GS_ASSERT(agent_fire_tick     != NULL);
     GS_ASSERT(agent_fire_on       != NULL);
+    if (agent_selected_type == NULL) return;
+    if (agent_fire_tick == NULL) return;
+    if (agent_fire_on == NULL) return;
 
     #if DC_SERVER
     agent_selected_item[agent_id] = NULL_ITEM;
@@ -124,13 +132,11 @@ void agent_died(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
-    #if DC_SERVER
-    GS_ASSERT(agent_selected_item != NULL);
-    #endif
-    GS_ASSERT(agent_selected_type != NULL);
     GS_ASSERT(agent_fire_tick     != NULL);
     GS_ASSERT(agent_fire_on       != NULL);
-
+    if (agent_fire_tick == NULL) return;
+    if (agent_fire_on == NULL) return;
+    
     agent_fire_tick[agent_id] = 0;
     agent_fire_on[agent_id] = false;
 }
@@ -144,6 +150,7 @@ namespace Toolbelt
 int get_selected_item_type()
 {
     GS_ASSERT(agent_selected_type != NULL);
+    if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
     int agent_id = ClientState::playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
@@ -441,6 +448,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     {
         Item::Item* item = Item::get_item(item_id);
         GS_ASSERT(item != NULL);
+        if (item == NULL) return;
         group = Item::get_item_group_for_type(item->type);
     }
 
@@ -486,6 +494,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     {
         item = Item::get_item(item_id);
         GS_ASSERT(item != NULL);
+        if (item == NULL) return;
         group = Item::get_item_group_for_type(item->type);
     }
 
@@ -566,6 +575,9 @@ void update_toolbelt_items()
     GS_ASSERT(agent_selected_type != NULL);
     GS_ASSERT(agent_selected_item != NULL);
     GS_ASSERT(agent_selected_slot != NULL);
+    if (agent_selected_type == NULL) return;
+    if (agent_selected_item == NULL) return;
+    if (agent_selected_slot == NULL) return;
     // make sure agent_selected_item is current
     // if any discrepancies exist, send a set_selected_item packet
     for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
@@ -595,6 +607,7 @@ bool set_agent_toolbelt_slot(int agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
+    if (slot < 0 || slot >= TOOLBELT_MAX_SLOTS || slot == NULL_SLOT) return false;
     agent_selected_slot[agent_id] = slot;
     ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
     if (item_id == agent_selected_item[agent_id]) return false;

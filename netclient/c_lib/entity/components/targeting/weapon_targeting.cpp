@@ -108,6 +108,7 @@ void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position
 void WeaponTargetingComponent::broadcast_target_choice()
 {
     GS_ASSERT(this->object != NULL);
+    if (this->object == NULL) return;
     object_choose_weapon_target_StoC msg;
     msg.id = this->object->id;
     msg.type = this->object->type;

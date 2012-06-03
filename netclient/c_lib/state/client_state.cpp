@@ -61,12 +61,12 @@ namespace ClientState {
     void teardown_lists()
     {
         // voxel models
-        delete agent_list;
+        if (agent_list != NULL) delete agent_list;
 
         // voxel lists
         // must go after all voxels
-        delete voxel_render_list;
-        delete voxel_hitscan_list;
+        if (voxel_render_list != NULL) delete voxel_render_list;
+        if (voxel_hitscan_list != NULL) delete voxel_hitscan_list;
     }
 
     static void init_ctf()
@@ -83,8 +83,7 @@ namespace ClientState {
     
     static void teardown_ctf()
     {
-        if (ctf != NULL)
-            delete ctf;
+        if (ctf != NULL) delete ctf;
     }
 
     void init()

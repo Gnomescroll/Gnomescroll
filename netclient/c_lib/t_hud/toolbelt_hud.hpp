@@ -42,6 +42,7 @@ class AgentToolbeltUI : public UIElement
     void init()
     {
         GS_ASSERT(this->stack_numbers == NULL);
+        if (this->stack_numbers != NULL) return;
         
         // create HudText objects needed for stack rendering
         int max = xdim * ydim;
@@ -121,6 +122,8 @@ void AgentToolbeltUI::draw()
     if (slot_types == NULL) return;
     GS_ASSERT(slot_stacks != NULL);
     GS_ASSERT(slot_durabilities != NULL);
+    if (slot_stacks == NULL) return;
+    if (slot_durabilities == NULL) return;
 
     //glColor4ub(80, 80, 80, 128);
     // render durability
@@ -274,7 +277,8 @@ void AgentToolbeltUI::draw()
         const int slot = j * this->xdim + i;
         int count = slot_stacks[slot];
         if (count <= 1) continue;
-        GS_ASSERT(count_digits(count) <= STACK_COUNT_MAX_LENGTH);
+        GS_ASSERT(count_digits(count) < STACK_COUNT_MAX_LENGTH);
+        if (count_digits(count) > STACK_COUNT_MAX_LENGTH) continue;
         
         text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);

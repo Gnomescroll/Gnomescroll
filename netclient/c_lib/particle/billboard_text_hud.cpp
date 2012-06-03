@@ -20,6 +20,7 @@ void BillboardTextHud::init()
     this->ttl = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
     GS_ASSERT(this->text == NULL);
+    if (this->text != NULL) return;
     GS_ASSERT(HudText::text_list != NULL);
     this->text = HudText::text_list->create();
     this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);

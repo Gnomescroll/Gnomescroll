@@ -17,7 +17,11 @@ void init_item_particle()
 {
     SDL_Surface* s = TextureSheetLoader::ItemSurface;
 
-    if (s == NULL) printf("ItemParticle::init_item_particle, error \n");
+    if (s == NULL)
+    {
+        printf("ItemParticle::init_item_particle, error \n");
+        return;
+    }
     GS_ASSERT(s != NULL);
 
     glEnable(GL_TEXTURE_2D);

@@ -15,6 +15,7 @@ namespace Components
 void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
 {
     GS_ASSERT(target_type == OBJECT_AGENT);
+    if (target_type != OBJECT_AGENT) return;
 
     Agent_state* a = STATE::agent_list->get(target_id);
     GS_ASSERT(a != NULL);
@@ -77,6 +78,7 @@ void MotionTargetingComponent::choose_destination()
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
 
     Vec3 position = physics->get_position();
     position.x += x;
@@ -111,6 +113,7 @@ bool MotionTargetingComponent::move_on_surface()
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
+    if (physics == NULL) return false;
 
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
@@ -140,6 +143,7 @@ bool MotionTargetingComponent::move_on_surface()
 void MotionTargetingComponent::broadcast_target_choice()
 {
     GS_ASSERT(this->object != NULL);
+    if (this->object == NULL) return;
     object_choose_motion_target_StoC msg;
     msg.id = this->object->id;
     msg.type = this->object->type;

@@ -128,7 +128,9 @@ void Shrapnel_list::draw()
     if(shrapnel_vlist->vertex_number == 0) return;
 
     GS_ASSERT(particle_texture != 0);
+    if (particle_texture == 0) return;
     GS_ASSERT(shrapnel_vlist->VBO != 0);
+    if (shrapnel_vlist->VBO == 0) return;
     
     const unsigned int stride = shrapnel_vlist->stride;
 

@@ -12,6 +12,8 @@ namespace ItemContainer
 //  tell client to assign container to an agent
 void send_container_assign(int client_id, int container_id)
 {
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
@@ -24,6 +26,8 @@ void send_container_assign(int client_id, int container_id)
 
 static bool pack_container_create(int container_id, create_item_container_StoC* msg)
 {
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
     msg->container_id = container->id;
@@ -35,6 +39,7 @@ static bool pack_container_create(int container_id, create_item_container_StoC* 
 void send_container_create(int client_id, int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
     create_item_container_StoC msg;
     if (!pack_container_create(container_id, &msg)) return;
     msg.sendToClient(client_id);
@@ -43,6 +48,7 @@ void send_container_create(int client_id, int container_id)
 void broadcast_container_create(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
     create_item_container_StoC msg;
     if (!pack_container_create(container_id, &msg)) return;
     msg.broadcast();
@@ -51,6 +57,7 @@ void broadcast_container_create(int container_id)
 void send_container_delete(int client_id, int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
     delete_item_container_StoC msg;
     msg.container_id = container_id;
     msg.sendToClient(client_id);
@@ -59,6 +66,7 @@ void send_container_delete(int client_id, int container_id)
 void broadcast_container_delete(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
     delete_item_container_StoC msg;
     msg.container_id = container_id;
     msg.broadcast();
@@ -107,8 +115,10 @@ void send_open_container_failed(int client_id, int container_id, int event_id)
 bool agent_open_container(int agent_id, int container_id)
 {
     GS_ASSERT(opened_containers != NULL);
+    if (opened_containers == NULL) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
@@ -123,6 +133,7 @@ bool agent_open_container(int agent_id, int container_id)
     {
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
         GS_ASSERT(opened != NULL);
+        if (opened == NULL) return false;
         opened->unlock(a->id);
         opened_containers[agent_id] = NULL_CONTAINER;
     }
@@ -139,8 +150,10 @@ bool agent_open_container(int agent_id, int container_id)
 void agent_close_container(int agent_id, int container_id)
 {
     GS_ASSERT(opened_containers != NULL);
+    if (opened_containers == NULL) return;
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
     

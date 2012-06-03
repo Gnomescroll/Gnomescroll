@@ -53,6 +53,7 @@ class VoxelModelComponent: public Component
         void ready(Vec3 position, float theta, float phi)
         {
             GS_ASSERT(this->vox == NULL);
+            if (this->vox != NULL) return;
             this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type);
             this->set_properties();
             vox->update(position.x, position.y, position.z, theta, phi);
@@ -63,6 +64,7 @@ class VoxelModelComponent: public Component
         void ready(Vec3 position, float theta, float phi, int team)
         {
             GS_ASSERT(this->vox == NULL);
+            if (this->vox != NULL) return;
             this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type, team);
             this->set_properties();
             vox->update(position.x, position.y, position.z, theta, phi);

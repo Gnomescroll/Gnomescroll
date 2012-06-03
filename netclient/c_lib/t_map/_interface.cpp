@@ -61,22 +61,26 @@ int get_block_item_container(int x, int y, int z)
 void create_item_container_block(int x, int y, int z, int container_type, int container_id)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
+    if (((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0) return;
 
     struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
-
+    if (c == NULL) return;
+    
     c->chunk_item_container.add(x,y,z, container_type, container_id);
 }
 
 void destroy_item_container_block(int x, int y, int z)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
-
+    if (((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0) return;
+    
     int val = _get(x,y,z);
     if (get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
 
     struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
+    if (c == NULL) return;
 
     c->chunk_item_container.remove(x,y,z);
 }
@@ -84,12 +88,17 @@ void destroy_item_container_block(int x, int y, int z)
 void get_container_location(int container_id, int position[3])
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
+    
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     GS_ASSERT(container != NULL);
+    if (container == NULL) return;
     GS_ASSERT(container->chunk >= 0);
+    if (container->chunk < 0) return;
     
     struct MAP_CHUNK* c = main_map->chunk[container->chunk];
     GS_ASSERT(c != NULL);
+    if (c == NULL) return;
 
     c->chunk_item_container.get_container_location(container_id, position);
 }

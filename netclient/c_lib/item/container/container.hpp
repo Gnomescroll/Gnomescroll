@@ -82,6 +82,7 @@ class ItemContainerInterface
         ItemID get_item(int slot)
         {
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return NULL_ITEM;
             return this->slot[slot];
         }
 
@@ -164,6 +165,7 @@ class ItemContainer: public ItemContainerInterface
             this->slot_max = xdim*ydim;
             GS_ASSERT(this->slot_max > 0);
             GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
@@ -207,6 +209,8 @@ class ItemContainerNanite: public ItemContainerInterface
         bool can_insert_item(int slot, ItemID item_id)
         {
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_id == NULL_ITEM) return false;
             int item_type = Item::get_item_type(item_id);
             if (slot == 0)
             {   // check against nanite's food
@@ -252,6 +256,7 @@ class ItemContainerNanite: public ItemContainerInterface
             this->slot_max = xdim*ydim;
             GS_ASSERT(this->slot_max > 0);
             GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
@@ -298,6 +303,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
             this->slot_max = xdim*ydim; // +1 for the extra food slot
             GS_ASSERT(this->slot_max > 0);
             GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }

@@ -140,6 +140,7 @@ void DynamicObjectList<Object_state, max_n>::resize(int new_size)
     int old_size = this->n_max;
     this->a = (Object_state**)realloc(this->a, new_size * sizeof(Object_state**));
     GS_ASSERT(this->a != NULL);
+    if (this->a == NULL) return;
     // initialize to NULL
     for (int i=old_size; i<new_size; this->a[i++] = NULL);
     this->n_max = new_size;
@@ -149,6 +150,7 @@ template <class Object_state, int max_n>
 Object_state* DynamicObjectList<Object_state, max_n>::create() {
     //where();
     GS_ASSERT(n_max > 0);
+    if (n_max <= 0) return NULL;
     int i;
     int id=0;
     for(i=0; i<n_max;i++)

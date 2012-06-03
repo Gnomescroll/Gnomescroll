@@ -21,7 +21,9 @@ int record_container_event(int container_id)
 static void send_container_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    
+    if (container_id == NULL_CONTAINER) return;
+    if (action == CONTAINER_ACTION_NONE) return;
+
     record_container_event(container_id);
     
     container_action_alpha_CtoS msg;
@@ -43,6 +45,7 @@ static void send_container_alpha_action(ContainerActionType action, int containe
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         GS_ASSERT(container != NULL);
+        if (container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -55,7 +58,9 @@ static void send_container_beta_action(ContainerActionType action, int container
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    
+    if (container_id == NULL_CONTAINER) return;
+    if (action == CONTAINER_ACTION_NONE) return;
+
     record_container_event(container_id);
 
     container_action_beta_CtoS msg;
@@ -77,7 +82,8 @@ static void send_container_beta_action(ContainerActionType action, int container
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         GS_ASSERT(container != NULL);
-
+        if (container == NULL) return;
+        
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
     }
@@ -88,7 +94,8 @@ static void send_container_beta_action(ContainerActionType action, int container
 static void send_nanite_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    
+    if (action == CONTAINER_ACTION_NONE) return;
+
     record_container_event(container_id);
     
     nanite_container_action_alpha_CtoS msg;
@@ -110,6 +117,7 @@ static void send_nanite_alpha_action(ContainerActionType action, int container_i
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         GS_ASSERT(container != NULL);
+        if (container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -122,7 +130,9 @@ static void send_nanite_beta_action(ContainerActionType action, int container_id
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    
+    if (container_id == NULL_CONTAINER) return;
+    if (action == CONTAINER_ACTION_NONE) return;
+
     record_container_event(container_id);
 
     nanite_container_action_beta_CtoS msg;
@@ -144,6 +154,7 @@ static void send_nanite_beta_action(ContainerActionType action, int container_id
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         GS_ASSERT(container != NULL);
+        if (container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -155,6 +166,7 @@ static void send_nanite_beta_action(ContainerActionType action, int container_id
 static void send_craft_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
+    if (action == CONTAINER_ACTION_NONE) return;
     
     record_container_event(container_id);
     
@@ -177,6 +189,7 @@ static void send_craft_alpha_action(ContainerActionType action, int container_id
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         GS_ASSERT(container != NULL);
+        if (container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -188,6 +201,7 @@ static void send_craft_alpha_action(ContainerActionType action, int container_id
 static void send_purchase_item_action(int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
     
@@ -204,6 +218,8 @@ static void send_craft_beta_action(ContainerActionType action, int container_id,
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
+    if (container_id == NULL_CONTAINER) return;
+    if (action == CONTAINER_ACTION_NONE) return;
     
     record_container_event(container_id);
 
@@ -226,6 +242,7 @@ static void send_craft_beta_action(ContainerActionType action, int container_id,
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         GS_ASSERT(container != NULL);
+        if (container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -237,6 +254,7 @@ static void send_craft_beta_action(ContainerActionType action, int container_id,
 static void send_craft_item_action(int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
     

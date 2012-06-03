@@ -369,6 +369,18 @@ DONE
 items with no special action default to punching
 DONE
 
+compass uses current camera state
+DONE
+
+C glyph on map when free camera in use
+DONE
+
+better handling of sound buffer filling
+DONE
+
+graceful error handling for ~half of the GS_ASSERTs
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -391,8 +403,6 @@ mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
 parameterize open/close container input handling shit
-simple object list for all particles
-check all GS_ASSERTs and make sure not missing null check
 
 == UI/UX ==
 indicate where something can be placed
@@ -436,9 +446,4 @@ Record time played per user
 ./run() [0x8097e25]
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type 
 
-ERROR: -- GS_SoundBuffer::add_source -- attempt to add source 2 to GS_SoundBuffer 9, but it is full.
-
 refill toolbelt on death, if empty/low
-
-put camera on map when in free cam mode
-use camera for compass

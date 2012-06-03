@@ -297,6 +297,7 @@ void Insect_mob_list::draw()
     if(insect_mob_vlist->vertex_number == 0) return;
 
     GS_ASSERT(insect_mob_vlist->VBO != 0);
+    if (insect_mob_vlist->VBO == 0) return;
 
     const static unsigned int stride = sizeof(struct vertexElement2);
 

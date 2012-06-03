@@ -602,6 +602,8 @@ void Voxel_volume::update_vertex_list()
     
     GS_ASSERT(index < VOXEL_VERTEX_SCRATCH_SIZE);
     GS_ASSERT(index >= 0);
+    if (index >= VOXEL_VERTEX_SCRATCH_SIZE) return;
+    if (index < 0) return;
 
     vvl.vertex_list = new Voxel_vertex[index];
     memcpy(vvl.vertex_list, voxel_vertex_scratch_buffer, index*sizeof(Voxel_vertex));

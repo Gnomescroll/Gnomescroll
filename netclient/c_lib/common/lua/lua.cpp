@@ -128,6 +128,7 @@ char* options_file = NULL;
 void set_options_file(char* path)
 {
     GS_ASSERT(path != NULL);
+    if (path == NULL) return;
     if (options_file != NULL)
         free(options_file);
     options_file = (char*)malloc(sizeof(char) * (strlen(path) + 1));

@@ -64,6 +64,7 @@ class CHUNK_ITEM_CONTAINER
     void _remove(int index)
     {
         GS_ASSERT(index < ibam);
+        if (index >= ibam) return;
         iban--;
         iba[index] = iba[iban];
     }

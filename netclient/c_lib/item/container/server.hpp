@@ -24,6 +24,9 @@ void send_container_insert(int client_id, ItemID item_id, int container_id, int 
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(slot != NULL_SLOT);
+    if (item_id == NULL_ITEM) return;
+    if (container_id == NULL_CONTAINER) return;
+    if (slot == NULL_SLOT) return;
     insert_item_in_container_StoC msg;
     msg.container_id = container_id;
     msg.item_id = item_id;
@@ -35,6 +38,8 @@ void send_container_remove(int client_id, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(slot != NULL_SLOT);
+    if (container_id == NULL_CONTAINER) return;
+    if (slot == NULL_SLOT) return;
     remove_item_from_container_StoC msg;
     msg.container_id = container_id;
     msg.slot = slot;

@@ -230,6 +230,8 @@ void Voxel_render_list_manager::register_voxel_volume(class Voxel_volume* vv)
 {
     GS_ASSERT(this->max > 0);
     GS_ASSERT(this->lists != NULL);
+    if (this->max <= 0) return;
+    if (this->lists == NULL) return;
     // choose a list to register with
     int smallest = 0;
     int smallest_count = 99999999;

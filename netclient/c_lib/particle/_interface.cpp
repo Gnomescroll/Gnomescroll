@@ -102,7 +102,8 @@ void draw_teardown()
 void begin_particle_draw()
 {
     GS_ASSERT(particle_texture != 0);
-
+    if (particle_texture == 0) return;
+    
     glColor4ub(255,255,255,255);
     glDepthMask(GL_FALSE);
     

@@ -87,13 +87,11 @@ int item_name_index[MAX_ITEMS];
 void set_item_name(int id, char* name, int length)
 {
     GS_ASSERT(length > 0);
-    GS_ASSERT(id >= 0 || id < MAX_ITEMS);
+    GS_ASSERT(length < ITEM_NAME_MAX_LENGTH);
+    GS_ASSERT(id >= 0 || id < MAX_ITEMS);    
     
-    if (length >= ITEM_NAME_MAX_LENGTH)
-    {
-        printf("Error: %s, name length greater than 63 characters \n", __func__ );
-        GS_ASSERT(length < ITEM_NAME_MAX_LENGTH);
-    }
+    if (length <= 0 || length >= ITEM_NAME_MAX_LENGTH) return;
+    if (id < 0 || id >= MAX_ITEMS) return;
 
     static int index = 0;
 
@@ -114,6 +112,7 @@ void set_item_name(int id, char* name)
 char* get_item_name(int type)
 {
     GS_ASSERT(type >= 0 || type < MAX_ITEMS);
+    if (type < 0 || type >= MAX_ITEMS) return NULL;
     return (item_names + item_name_index[type]);
 }
 
@@ -144,17 +143,15 @@ char* get_item_pretty_name(int item_type)
 
 int get_item_group_for_type(int item_type)
 {
+    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
+    if (item_type < 0 || item_type >= MAX_ITEMS) return IG_ERROR;
     return group_array[item_type];
 }
 
 int dat_get_item_type(const char* name)
 {
     int type = get_item_type((char*) name);
-    if (type == NULL_ITEM_TYPE)
-    {
-        printf("Dat Loading Failure:item_type, dat failure, item '%s' does not exist! \n", name);
-        GS_ABORT();
-    }
+    GS_ASSERT(type != NULL_ITEM_TYPE);
     return type;
 }
 
@@ -162,6 +159,7 @@ bool item_type_is_voxel(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return false;
     return attr->particle_voxel;
 }
 
@@ -169,6 +167,7 @@ int get_max_stack_size(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 10;
     return attr->max_stack_size;
 }
 
@@ -176,6 +175,7 @@ int get_max_energy(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 100;
     return attr->max_energy;
 }
 
@@ -183,6 +183,7 @@ int get_max_durability(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 100;
     return attr->max_durability;
 }
 
@@ -190,6 +191,7 @@ int get_placer_block_type_id(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 0;
     return attr->placer_block_type_id;
 }
 
@@ -197,6 +199,7 @@ int get_particle_voxel_texture(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return false;
     return attr->particle_voxel_texture;
 }
 
@@ -205,6 +208,7 @@ float get_weapon_range(int weapon_type)
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
     GS_ASSERT(attr->firing_range != NULL_FIRING_RANGE);
+    if (attr == NULL) return 1.0f;
     return attr->firing_range;
 }
 
@@ -213,6 +217,7 @@ int get_item_block_damage(int weapon_type, int block_type)
     // TODO -- block damage dependent on (weapon,block)
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 0;
     return attr->block_damage;
 }
 
@@ -220,6 +225,7 @@ int get_item_object_damage(int weapon_type)
 {
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 0;
     if (attr->object_damage) return attr->object_damage;
     GS_ASSERT(attr->object_damage_min < attr->object_damage_max);
     return randrange(attr->object_damage_min, attr->object_damage_max);
@@ -229,6 +235,7 @@ bool get_nanite_edibility(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return false;
     return attr->nanite_food;
 }
 

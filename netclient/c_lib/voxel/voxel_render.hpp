@@ -81,7 +81,8 @@ class Voxel_render_list_manager
 
         void init(int max)
         {
-            GS_ASSERT(lists == NULL);
+            GS_ASSERT(this->lists == NULL);
+            if (this->lists != NULL) return;
             this->max = max;
             this->lists = new Voxel_render_list[this->max];
             for (int i=0; i<this->max; i++) this->lists[i].id = i;

@@ -5,12 +5,17 @@ namespace Objects
 
 int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec3 position, float radius)
 {
+    GS_ASSERT(list != NULL);
+    if (list == NULL) return 0;
+    
     if (list->empty(type)) return 0;
 
     Object** objects = list->get_objects(type);
     GS_ASSERT(objects != NULL);
+    if (objects == NULL) return 0;
     char* used = list->get_used(type);
     GS_ASSERT(used != NULL);
+    if (used == NULL) return 0;
     int max = list->max(type);
     GS_ASSERT(max >= 0);
     
@@ -51,6 +56,9 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec
 // array of types to filter
 int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, const int n_types, Vec3 position, float radius)
 {
+    GS_ASSERT(list != NULL);
+    if (list == NULL) return 0;
+    
     const float radius_squared = radius*radius;
     ObjectType type;
     int ct = 0;
@@ -73,8 +81,10 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, c
         if (list->empty(type)) continue;
         objects = list->get_objects(type);
         GS_ASSERT(objects != NULL);
+        if (objects == NULL) continue;
         used = list->get_used(type);
         GS_ASSERT(used != NULL);
+        if (used == NULL) continue;
         max = list->max(type);
         GS_ASSERT(max > 0);
 

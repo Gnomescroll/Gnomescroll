@@ -35,7 +35,6 @@ void CHUNK_ITEM_CONTAINER::remove(int container_id)
     GS_ASSERT(i < iban);   // did not find
     if (i >= iban) return;
 
-
     this->remove_index(i);
 }
 
@@ -55,6 +54,7 @@ void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int container_id)
 {
     GS_ASSERT(ibam < MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT);
+    if (ibam >= MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) return;
     
     if(iban == ibam)
     {
@@ -62,6 +62,7 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
         ibam *= 2;
         ibam = (ibam >= MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) ? (MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) - 1 : ibam;
         GS_ASSERT(ibam >= o_ibam);
+        if (ibam < o_ibam) return;
         GS_ASSERT(iban < ibam);
         if (iban >= ibam) return;
         if (o_ibam != ibam)
