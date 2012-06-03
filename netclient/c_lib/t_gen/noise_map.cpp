@@ -236,7 +236,7 @@ class PerlinField2D
         {
             ga[i] = genrand_int32() % grad_max; //gradient number
         }
-        grad = new float[grad_max];
+        grad = new float[2*grad_max];
         generate_gradient_vectors();
     }
 
@@ -247,7 +247,18 @@ class PerlinField2D
 
     void generate_gradient_vectors()
     {
-        //generate vectors
+        for(int i=0; i<grad_max; i++)
+        {
+            float x = 2*genrand_real1() -1;
+            float y = 2*genrand_real1() -1;
+
+            float len = sqrt(x*x+y*y);
+            x /= len;
+            y /= len;
+
+            grad[2*i+0] = x;
+            grad[2*i+1] = y;
+        }
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
@@ -256,7 +267,7 @@ static inline int fastfloor(float x)
 return x>=0 ? (int)x : (int)x-1;
 }
 
-static inline float dot(float g[], float x, float y)
+static inline float dot(float* g, float x, float y)
 {
 return g[0]*x + g[1]*y;
 }
@@ -303,10 +314,10 @@ float base(float x, float y)
     int gi11 = get_gradient(X+1,Y+1);
     
     // Calculate noise contributions from each of the eight corners
-    float n00= dot(grad+3*gi00, x, y);
-    float n10= dot(grad+3*gi10, x-1, y);
-    float n01= dot(grad+3*gi01, x, y-1);
-    float n11= dot(grad+3*gi11, x-1, y-1);
+    float n00= dot(grad+2*gi00, x, y);
+    float n10= dot(grad+2*gi10, x-1, y);
+    float n01= dot(grad+2*gi01, x, y-1);
+    float n11= dot(grad+2*gi11, x-1, y-1);
     // Compute the fade curve value for each of x, y, z
     
 #if 1
@@ -323,6 +334,7 @@ float base(float x, float y)
     // Interpolate the four results along y
     float nxy = mix(nx00, nx10, v);
 
+    if(nxy < -1 || nxy > 1 ) printf("Error: noise %f \n", nxy);
     return nxy;   //-1 to 1
 }
 
@@ -337,14 +349,66 @@ float one_over_f(float x, float y)
     tmp += base(x,y);
     tmp += 0.50 * base(2*x, 2*y);
     tmp += 0.25 * base(4*x,4*y);
+    tmp += 0.125 * base(8*x,8*y);
+    tmp += 0.0625 * base(16*x,16*y);
     return tmp;
 }
 
+float one_over_f(float x, float y, float persistance) 
+{   
+    float tmp = 0;
+    float m = 1.0;
+
+    tmp += base(x,y);
+    m *= persistance;
+
+    tmp += m * base(2*x, 2*y);
+    m *= persistance;
+
+    tmp += m * base(4*x,4*y);
+    m *= persistance;
+
+    tmp += m * base(8*x,8*y);
+    
+    m *= persistance;
+    tmp += m * base(16*x,16*y);
+    return tmp;
+}
+
+//order 0 is base
+float order(float x, float y, float persistance, int order) 
+{   
+    float tmp = 0;
+    float m = 1.0;
+    int b = 1;
+
+    for(int i=0; i<=order; i++)
+    {
+        tmp += base(b*x,b*y);
+        m *= persistance;
+        b *= 2;
+    }
+    return tmp;
+}
+
+float abs(float x, float y)
+{
+    float tmp = base(x,y);
+    return sqrt(tmp*tmp);
+}
 
 };
 
+float MIX(float a, float x, float y)
+{
+    //if(a<0) a=0;
+    //if(a>1) a=1;
+    return x+ a*(y-x);
+}
+
 void noise_map_test()
 {
+/*
     PerlinField3D p3d(516514);
 
     const int xres = 512;
@@ -366,6 +430,43 @@ void noise_map_test()
     save_png("n_map_00", out, xres, yres);
 
     delete[] out;
+*/
+
+    //PerlinField2D p2d_1(515414, 64, 32); //(int seed, int _xs, int _grad_max)
+    PerlinField2D p2d_0(5141473, 64, 16); //(int seed, int _xs, int _grad_max)
+    PerlinField2D p2d_1(5141473, 32, 16); //(int seed, int _xs, int _grad_max)
+    PerlinField2D p2d_2(5154426, 16, 16); //(int seed, int _xs, int _grad_max)
+    PerlinField2D p2d_3(1541417, 8, 16); //(int seed, int _xs, int _grad_max)
+
+    const int xres = 512;
+    const int yres = 512;
+
+    float* out = new float[xres*yres];
+
+    for(int i=0; i<xres; i++)
+    for(int j=0; j<yres; j++)
+    {
+        float x = i;
+        float y = j;
+
+        float n = 0.0;
+
+        n += p2d_0.one_over_f(x,y) + 0.5;
+        //n += p2d_1.one_over_f(x,y);
+        //n += p2d_2.one_over_f(x,y);
+        //n += p2d_3.one_over_f(x,y);
+
+
+        //n = MIX(p2d_1.one_over_f(x,y), p2d_2.one_over_f(x,y), p2d_3.one_over_f(x,y));
+        //n = p2d_1.one_over_f(x,y);
+        //n *= p2d_0.abs(x,y);;
+        out[i+j*yres] = n;
+    }
+
+    save_png("n_map_01", out, xres, yres);
+
+    delete[] out;
+
 }
 
 void noise_map_generate_map()
@@ -373,6 +474,9 @@ void noise_map_generate_map()
     #if DC_SERVER
 
     PerlinField3D p3d(516514);
+
+    PerlinField2D p2d_0(51473, 128, 32); //(int seed, int _xs, int _grad_max)
+    PerlinField2D p2d_1(5141473, 16, 32); //(int seed, int _xs, int _grad_max)
 
     int tile = t_map::dat_get_cube_id("regolith");
 
@@ -387,7 +491,10 @@ void noise_map_generate_map()
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)
     {
-        float value = 64+8*p3d.noise(i,j,32.5);
+        //float value = 64+8*p3d.noise(i,j,32.5);
+        float value = 64;
+        //value += 32*p2d_0.one_over_f(i,j);
+        value += 1*p2d_1.one_over_f(i,j);
 
         for (int k=0; k<value; k++) t_map::set(i,j,k,tile);
 
