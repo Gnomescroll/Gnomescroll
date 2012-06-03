@@ -403,6 +403,7 @@ mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
 parameterize open/close container input handling shit
+using ItemGroup typedef
 
 == UI/UX ==
 indicate where something can be placed

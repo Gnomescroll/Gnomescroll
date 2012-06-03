@@ -467,69 +467,22 @@ void assign_containers_to_agent(int agent_id, int client_id)
     {
         crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
         GS_ASSERT(crate != NULL);
-        auto_add_item_to_container(client_id, agent_container->id, crate->id);
+        if (crate != NULL)
+        {
+            bool added = auto_add_item_to_container(client_id, agent_container->id, crate->id);
+            if (!added) Item::destroy_item_silently(crate->id);
+        }
     }
     #endif
-    
-    ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
-    GS_ASSERT(agent_toolbelt != NULL);
-    assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
-
-    Item::Item* laser_rifle = Item::create_item(Item::get_item_type((char*)"laser_rifle"));
-    GS_ASSERT(laser_rifle != NULL);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);    // this will send the item create
-
-    Item::Item* mining_laser = Item::create_item(Item::get_item_type((char*)"mining_laser"));
-    GS_ASSERT(mining_laser != NULL);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
-
-    #if PRODUCTION
-    //Item::Item* crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
-    //GS_ASSERT(crate != NULL);
-    //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    #else
-    // put a grenade launcher in the toolbelt to selt
-    Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
-    GS_ASSERT(grenade_launcher != NULL);
-    grenade_launcher->stack_size = 100;
-    auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
-
-    // add a few container blocks
-    //Item::Item* crate;
-    //crate = Item::create_item(Item::get_item_type((char*)"crate_1"));
-    //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    //crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
-    //auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
-    GS_ASSERT(crate != NULL);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
-    GS_ASSERT(crate != NULL);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
-    GS_ASSERT(crate != NULL);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
-    GS_ASSERT(crate != NULL);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, crate->id);
-    #endif
-
-    #if !PRODUCTION
-    // debug items
-    Item::Item* block_placer = Item::create_item(Item::get_item_type((char*)"block_placer"));
-    GS_ASSERT(block_placer != NULL);
-    agent_toolbelt->insert_item(agent_toolbelt->slot_max-1, block_placer->id);
-    send_container_item_create(client_id, block_placer->id, agent_toolbelt->id, agent_toolbelt->slot_max-1);
-
-    Item::Item* location_pointer = Item::create_item(Item::get_item_type((char*)"location_pointer"));
-    GS_ASSERT(location_pointer != NULL);
-    agent_toolbelt->insert_item(agent_toolbelt->slot_max-2, location_pointer->id);
-    send_container_item_create(client_id, location_pointer->id, agent_toolbelt->id, agent_toolbelt->slot_max-2);
-    #endif
-    
+        
     ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
     GS_ASSERT(agent_nanite != NULL);
     assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
+
+    ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
+    GS_ASSERT(agent_toolbelt != NULL);
+    assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
+    // toolbelt contents are added by agent_born
 }
 
 static void throw_items_from_container(int client_id, int agent_id, int container_id)
@@ -546,6 +499,210 @@ static void throw_items_from_container(int client_id, int agent_id, int containe
         send_container_remove(client_id, container->id, i);
         ItemParticle::throw_agent_item(agent_id, item_id);
     }
+}
+
+void agent_born(int agent_id)
+{
+    // refill toolbelt if needed
+
+    // toolbelt should have at least 1 maxed out laser rifle
+    // and 1 maxed out mining_laser
+
+    // if we have one or more of either not maxed out, fill up the most full one
+
+    // if we have neither and there is only one slot, add the laser rifle (because fist can replace mining_laser)
+
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    int client_id = a->client_id;
+    
+    GS_ASSERT(agent_toolbelt_list != NULL);
+    if (agent_toolbelt_list == NULL) return;
+
+    ItemContainerInterface* toolbelt = get_container(agent_toolbelt_list[agent_id]);
+    GS_ASSERT(toolbelt != NULL);
+    if (toolbelt == NULL) return;
+
+    // collect information on mining_laser / laser rifle contents
+
+    int toolbelt_space = toolbelt->slot_max - toolbelt->slot_count;
+
+    int laser_rifle_type = Item::get_item_type((char*)"laser_rifle");
+    GS_ASSERT(laser_rifle_type != NULL_ITEM_TYPE);
+    bool has_laser_rifle = false;
+    Item::Item* most_durable_laser_rifle = NULL;
+    int most_durable_laser_rifle_value = 0;
+
+    int mining_laser_type = Item::get_item_type((char*)"mining_laser");
+    GS_ASSERT(mining_laser_type != NULL_ITEM_TYPE);
+    bool has_mining_laser = false;
+    Item::Item* most_durable_mining_laser = NULL;
+    int most_durable_mining_laser_value = 0;
+    
+    for (int i=toolbelt->slot_max-1; i>=0; i--)
+    {
+        ItemID item_id = toolbelt->slot[i];
+        if (item_id == NULL_ITEM) continue;
+        Item::Item* item = Item::get_item(item_id);
+        GS_ASSERT(item != NULL);
+        if (item == NULL) continue;
+
+        if (item->type == laser_rifle_type)
+        {
+            has_laser_rifle = true;
+            GS_ASSERT(item->durability > 0 && item->durability != NULL_DURABILITY);
+            if (item->durability >= most_durable_laser_rifle_value)
+            {
+                most_durable_laser_rifle = item;
+                most_durable_laser_rifle_value = item->durability;
+            }
+        }
+
+        if (item->type == mining_laser_type)
+        {
+            has_mining_laser = true;
+            GS_ASSERT(item->durability > 0 && item->durability != NULL_DURABILITY);
+            if (item->durability >= most_durable_mining_laser_value)
+            {
+                most_durable_mining_laser = item;
+                most_durable_mining_laser_value = item->durability;
+            }
+        }
+    }
+
+    // decide what to add/ modify
+
+    if (has_laser_rifle)
+    {   // max out the durability
+        GS_ASSERT(most_durable_laser_rifle != NULL);
+        if (most_durable_laser_rifle != NULL)
+        {
+            most_durable_laser_rifle->durability = Item::get_max_durability(laser_rifle_type);
+            Item::send_item_state(client_id, most_durable_laser_rifle->id);
+        }
+    }
+    else
+    {   // add a laser rifle
+        if (toolbelt_space > 0)
+        {
+            Item::Item* laser_rifle = Item::create_item(laser_rifle_type);
+            GS_ASSERT(laser_rifle != NULL);
+            bool added = false;
+            if (laser_rifle != NULL)
+                added = auto_add_item_to_container(client_id, toolbelt->id, laser_rifle->id);    // this will send the item create
+            GS_ASSERT(added);
+            toolbelt_space--;
+        }
+    }
+
+    if (has_mining_laser)
+    {   // max out the durability
+        GS_ASSERT(most_durable_mining_laser != NULL);
+        if (most_durable_mining_laser != NULL)
+        {
+            most_durable_mining_laser->durability = Item::get_max_durability(mining_laser_type);
+            Item::send_item_state(client_id, most_durable_mining_laser->id);
+        }
+    }
+    else
+    {   // add a mining_laser
+        if (toolbelt_space > 0)
+        {
+            Item::Item* mining_laser = Item::create_item(mining_laser_type);
+            GS_ASSERT(mining_laser != NULL);
+            bool added = false;
+            if (mining_laser != NULL)
+                added = auto_add_item_to_container(client_id, toolbelt->id, mining_laser->id);    // this will send the item create
+            GS_ASSERT(added);
+            toolbelt_space--;
+        }
+    }
+        
+    //Item::Item* laser_rifle = Item::create_item(Item::get_item_type((char*)"laser_rifle"));
+    //GS_ASSERT(laser_rifle != NULL);
+    //auto_add_item_to_container(client_id, toolbelt->id, laser_rifle->id);    // this will send the item create
+
+    //Item::Item* mining_laser = Item::create_item(Item::get_item_type((char*)"mining_laser"));
+    //GS_ASSERT(mining_laser != NULL);
+    //auto_add_item_to_container(client_id, toolbelt->id, mining_laser->id);    // this will send the item create
+
+    #if !PRODUCTION
+    bool added;
+    
+    // put a grenade launcher in the toolbelt to selt
+    Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
+    GS_ASSERT(grenade_launcher != NULL);
+    if (grenade_launcher != NULL)
+    {
+        grenade_launcher->stack_size = 100;
+        added = auto_add_item_to_container(client_id, toolbelt->id, grenade_launcher->id);    // this will send the item create
+        if (!added) Item::destroy_item_silently(grenade_launcher->id);
+    }
+
+    // add a few container blocks
+    Item::Item* crate;
+    //crate = Item::create_item(Item::get_item_type((char*)"crate_1"));
+    //auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+    //crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+    //auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    GS_ASSERT(crate != NULL);
+    if (crate != NULL)
+    {
+        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (!added) Item::destroy_item_silently(crate->id);
+    }
+    
+    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    GS_ASSERT(crate != NULL);
+    if (crate != NULL)
+    {
+        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (!added) Item::destroy_item_silently(crate->id);
+    }
+    
+    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+    GS_ASSERT(crate != NULL);
+    if (crate != NULL)
+    {
+        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (!added) Item::destroy_item_silently(crate->id);
+    }
+    
+    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+    GS_ASSERT(crate != NULL);
+    if (crate != NULL)
+    {
+        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (!added) Item::destroy_item_silently(crate->id);
+    }
+
+    // debug items
+    if (toolbelt->get_item(toolbelt->slot_max-1) == NULL_ITEM)
+    {
+        Item::Item* block_placer = Item::create_item(Item::get_item_type((char*)"block_placer"));
+        GS_ASSERT(block_placer != NULL);
+        if (block_placer != NULL)
+        {
+            toolbelt->insert_item(toolbelt->slot_max-1, block_placer->id);
+            send_container_item_create(client_id, block_placer->id, toolbelt->id, toolbelt->slot_max-1);
+        }
+    }
+
+    if (toolbelt->get_item(toolbelt->slot_max-2) == NULL_ITEM)
+    {
+        Item::Item* location_pointer = Item::create_item(Item::get_item_type((char*)"location_pointer"));
+        GS_ASSERT(location_pointer != NULL);
+        if (location_pointer != NULL)
+        {
+            toolbelt->insert_item(toolbelt->slot_max-2, location_pointer->id);
+            send_container_item_create(client_id, location_pointer->id, toolbelt->id, toolbelt->slot_max-2);
+        }
+    }
+    #endif
+
 }
 
 void agent_died(int agent_id)
