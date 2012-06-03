@@ -73,6 +73,7 @@ void Agent_event::display_name()
     {
         this->bb = Particle::billboard_text_hud_list->create();
         if (this->bb == NULL) return;
+        this->bb->init();
         this->bb->permanent = true;          // dont die
         this->bb->set_text(this->a->status.name);
         this->bb->set_color(r,g,b,255);
@@ -89,6 +90,7 @@ void Agent_event::took_damage(int dmg)
 {
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     if (b==NULL) return;
+    b->init();
 
     Vec3 p = this->a->get_position();
     b->set_state(

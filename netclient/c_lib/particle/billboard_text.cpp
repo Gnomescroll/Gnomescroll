@@ -210,8 +210,7 @@ void BillboardText_list::tick()
     for (int i=0; i<this->num; i++)
     {
         a[i].tick();
-        if (a[i].ttl <= 0)
-            destroy(i);
+        if (a[i].ttl <= 0) destroy(i);
     }
 }
 

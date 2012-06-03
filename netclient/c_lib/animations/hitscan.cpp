@@ -17,8 +17,7 @@ static GLuint hitscan_texture_id;
 
 void init_hitscan()
 {
-    int i;
-    i = create_texture_from_file( (char*) "./media/texture/hitscan/hitscan_01.png", &hitscan_texture_id);
+    int i = create_texture_from_file( (char*) "./media/texture/hitscan/hitscan_01.png", &hitscan_texture_id);
     if (i) { printf("init_hitscan failed with code %d\n", i); }
 }
 
@@ -220,8 +219,7 @@ void HitscanEffect_list::tick()
     {
         a[i].tick();
         a[i].ttl--;
-        if(a[i].ttl <= 0)
-            destroy(i);
+        if(a[i].ttl <= 0) destroy(i);
     }
 }
 

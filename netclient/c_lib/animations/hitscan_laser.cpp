@@ -175,10 +175,7 @@ void HitscanLaserEffect_list::draw()
     int _t = _GET_MS_TIME();
     //printf("ms since last update= %i \n", _t - last_tick);
     float delta = ((float)(_t - last_tick)) / 33.3f;
-    if(delta > 1.0f)
-    {
-        delta = 1.0f;
-    }
+    if (delta > 1.0f) delta = 1.0f;
     delta /= 30.0f;
     //printf("delta= %f \n", delta);
 
@@ -219,8 +216,6 @@ void HitscanLaserEffect_list::draw()
 
 void HitscanLaserEffect_list::tick()
 {
-    //printf("tick \n");
-
     //const int debug = 0;
 
     //if(debug)

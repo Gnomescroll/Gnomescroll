@@ -136,6 +136,8 @@ void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float s
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)
 {
     HitscanEffect* he = hitscan_effect_list->create();
+    if (he == NULL) return;
+    he->init();
     he->set_state(x,y,z,vx,vy,vz);
 }
 

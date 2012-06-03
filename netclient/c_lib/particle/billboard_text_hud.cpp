@@ -37,7 +37,8 @@ void BillboardTextHud::destroy()
 
 BillboardTextHud::BillboardTextHud()
 :
-ParticleMotion(-1, 0,0,0,0,0,0, DEFAULT_MASS)
+ParticleMotion(-1, 0,0,0,0,0,0, DEFAULT_MASS),
+text(NULL)
 {
     this->init();
 }

@@ -435,3 +435,5 @@ refill toolbelt on death, if empty/low
 item sprites, hitscan lasers not fulstrum culled properly
 
 punch with any item
+
+fix hitscan laser, billbboard text
