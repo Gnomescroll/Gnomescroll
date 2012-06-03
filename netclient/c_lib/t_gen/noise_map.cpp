@@ -202,6 +202,250 @@ float one_over_f(float x, float y, float z)
 };
 
 
+class OctaveMap3D
+{
+    public:
+
+    int xs; // = 8; //x sample density
+    int zs; // = 4; //y sample density
+    float xsf;
+    float zsf;
+
+    int xsize; // = 64;
+    int zsize; // = 32;
+
+    unsigned char* grad_array;
+
+    OctaveMap3D()
+    {
+        grad_array = NULL;
+    }
+
+
+    void init(int xsample_density, int zsample_density)
+    {
+        xs = xsample_density;
+        xz = zsample_density;
+
+        xsf = 1.0 / ((float) xs);
+        zsf = 1.0 / ((float) zs);
+
+        xsize = 512 / xs;
+        ysize = 512 / xs;
+
+        if(!grad_index) grad_index = new unsigned char [xsize*xsize*zsize];
+        populate_grad_array();
+    }
+
+    ~OctaveMap3D()
+    {
+        delete[] grad_array;
+    }
+
+    void populate_grad_array()
+    {
+        for(int i=0; i<xsize*xsize*zsize; i++) 
+            grad_array[i] = genrand_int32() & 0xff; //gradient number
+    }
+};
+
+
+class PerlinOctave3D
+{
+    private:
+    int xs;
+    int zs;
+
+    public:
+
+    int octaves;
+    class OctaveMap3D* octave_array;
+
+    //base sample rates
+    PerlinField3D(int _octaves, int base_x, int base_z)
+    {
+        init_genrand(randf());
+        octaves = _octaves;
+
+        octave_array = new OctaveMap3D[octaves];
+
+        for(int i=0; i<octaves; i++)
+        {
+            octaves_array(base_x, base_z);
+
+            base_x *= 2;
+            base_z *= 2;
+        }
+
+        if(base_x >= 512)
+        {
+            printf("PerlinField3D warning: base octaves too large for map size \n");
+            printf("octaves= %i, base_x= %i, base_y= %i \n", octaves, base_x, base_y);
+            abort();
+        }
+
+    }
+
+    ~PerlinField3D()
+    {
+        delete[] octave_array;
+    }
+
+// This method is a *lot* faster than using (int)Math.floor(x)
+static inline int fastfloor(float x) 
+{
+    //return x>=0 ? (int)x : (int)x-1;
+    return (int) x;
+}
+
+static inline float dot(const int g[], float x, float y, float z)
+{
+return g[0]*x + g[1]*y + g[2]*z;
+}
+
+static inline float mix(float a, float b, float t) 
+{
+    return a + t*(b-a);
+}
+
+static inline float fade(float t) 
+{
+return t*t*t*(t*(t*6-15)+10);
+}
+
+inline int get_gradient(int x, int y, int z)
+{
+    x = x % xs; //replace with bitmask
+    y = y % xs;
+    z = z % zs;
+
+    return gradient_array[x + y*64 + z*64*64];
+}
+
+public:
+
+// Classic Perlin noise, 3D version
+float base(float x, float y, float z) 
+{
+/*
+    // Find unit grid cell containing point
+    int X = fastfloor(x);
+    int Y = fastfloor(y);
+    int Z = fastfloor(z);
+    // Get relative xyz coordinates of point within that cell
+    x = x - X;
+    y = y - Y;
+    z = z - Z;
+    // Wrap the integer cells at 255 (smaller integer period can be introduced here)
+    X = X & 255;
+    Y = Y & 255;
+    Z = Z & 255;
+*/
+    x /= 8.0;  //replace with multiplication
+    y /= 8.0;
+    z /= 4.0;
+    //get grid point
+    int X = fastfloor(x);
+    int Y = fastfloor(y);
+    int Z = fastfloor(z);
+
+    //get interpolation ratio
+
+    //if(z >= 32 || z < 0) printf("ERROR1 z = %f \n", z);
+
+    x = x - X;
+    y = y - Y;
+    z = z - Z;
+
+    //if(z >= 32 || z < 0) printf("ERROR2 z = %f \n", z);
+    //if(x<0 || y<0 || z<0) printf("x,y,z= %f %f %f \n", x,y,z);
+    //if(z >= 32) printf("x,y,z= %f %f %f X,Y,Z= %i %i %i \n", x+X,y+Y,z+Z,X,Y,Z);
+    // Calculate a set of eight hashed gradient indices
+
+
+    int gi000 = get_gradient(X+0,Y+0,Z+0);
+    int gi001 = get_gradient(X+0,Y+0,Z+1);
+    int gi010 = get_gradient(X+0,Y+1,Z+0);
+    int gi011 = get_gradient(X+0,Y+1,Z+1);
+
+    int gi100 = get_gradient(X+1,Y+0,Z+0);
+    int gi101 = get_gradient(X+1,Y+0,Z+1);
+    int gi110 = get_gradient(X+1,Y+1,Z+0);
+    int gi111 = get_gradient(X+1,Y+1,Z+1);
+
+/*
+    int gi000 = perm[X+perm[Y+perm[Z]]] % 12;
+    int gi001 = perm[X+perm[Y+perm[Z+1]]] % 12;
+    int gi010 = perm[X+perm[Y+1+perm[Z]]] % 12;
+    int gi011 = perm[X+perm[Y+1+perm[Z+1]]] % 12;
+
+    int gi100 = perm[X+1+perm[Y+perm[Z]]] % 12;
+    int gi101 = perm[X+1+perm[Y+perm[Z+1]]] % 12;
+    int gi110 = perm[X+1+perm[Y+1+perm[Z]]] % 12;
+    int gi111 = perm[X+1+perm[Y+1+perm[Z+1]]] % 12;
+*/
+    // The gradients of each corner are now:
+    // g000 = grad3[gi000];
+    // g001 = grad3[gi001];
+    // g010 = grad3[gi010];
+    // g011 = grad3[gi011];
+    // g100 = grad3[gi100];
+    // g101 = grad3[gi101];
+    // g110 = grad3[gi110];
+    // g111 = grad3[gi111];
+    
+    // Calculate noise contributions from each of the eight corners
+    float n000= dot(_grad3[gi000], x, y, z);
+    float n100= dot(_grad3[gi100], x-1, y, z);
+    float n010= dot(_grad3[gi010], x, y-1, z);
+    float n110= dot(_grad3[gi110], x-1, y-1, z);
+    float n001= dot(_grad3[gi001], x, y, z-1);
+    float n101= dot(_grad3[gi101], x-1, y, z-1);
+    float n011= dot(_grad3[gi011], x, y-1, z-1);
+    float n111= dot(_grad3[gi111], x-1, y-1, z-1);
+    // Compute the fade curve value for each of x, y, z
+    
+#if 1
+    float u = fade(x);
+    float v = fade(y);
+    float w = fade(z);
+#else
+    float u = x;
+    float v = y;
+    float w = z;
+#endif
+
+    // Interpolate along x the contributions from each of the corners
+    float nx00 = mix(n000, n100, u);
+    float nx01 = mix(n001, n101, u);
+    float nx10 = mix(n010, n110, u);
+    float nx11 = mix(n011, n111, u);
+    // Interpolate the four results along y
+    float nxy0 = mix(nx00, nx10, v);
+    float nxy1 = mix(nx01, nx11, v);
+    // Interpolate the two last results along z
+    float nxyz = mix(nxy0, nxy1, w);
+
+    return nxyz * 0.707106781;   //-1 to 1
+}
+
+float noise(float x, float y, float z)
+{
+    return base(x,y,z);
+}
+
+float one_over_f(float x, float y, float z) 
+{   
+    float tmp = 0;
+    tmp += base(x,y,z);
+    tmp += 0.50 * base(2*x, 2*y,2*z);
+    tmp += 0.25 * base(4*x,4*y,2*z);
+    return tmp;
+}
+
+
+};
+
 
 class PerlinField2D
 {
