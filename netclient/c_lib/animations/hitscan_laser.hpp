@@ -28,7 +28,7 @@ class HitscanLaserEffect
     inline void draw2(float delta, Vec3 camera) __attribute((always_inline));
     void tick();
 
-    void init();
+    inline void init();
 };
 
 class HitscanLaserEffect_list: public Simple_object_list<HitscanLaserEffect>

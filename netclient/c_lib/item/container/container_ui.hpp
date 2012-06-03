@@ -35,6 +35,7 @@ class ItemContainerUIInterface
 
         bool is_valid_slot(int slot)
         {
+            if (!(slot >= 0 && slot < this->slot_max)) printf("Slot %d, slot_max %d\n", slot, this->slot_max);
             return (slot >= 0 && slot < this->slot_max);
         }
 

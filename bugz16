@@ -444,6 +444,10 @@ Record time played per user
 ./run(main+0x41) [0x8097951]
 /lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7179113]
 ./run() [0x8097e25]
-GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type 
+GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type
+
+container state is desynced
+
+container locks not working
 
 refill toolbelt on death, if empty/low

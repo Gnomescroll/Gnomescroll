@@ -12,7 +12,7 @@
 namespace Particle
 {
 
-void TexturedMinivox::init()
+inline void TexturedMinivox::init()
 {
     this->theta = 0.0f;
     this->phi = 0.0f;

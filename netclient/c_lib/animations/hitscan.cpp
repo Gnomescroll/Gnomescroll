@@ -27,7 +27,7 @@ void teardown_hitscan()
 
 }
 
-void HitscanEffect::init()
+inline void HitscanEffect::init()
 {
     this->ttl = HITSCAN_LASER_TTL;
 }

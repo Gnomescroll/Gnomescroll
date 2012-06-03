@@ -53,7 +53,6 @@ void Simple_object_list<Object_state, max_n>::print()
 template <class Object_state, int max_n>
 Object_state* Simple_object_list<Object_state, max_n>::create() 
 {
-    GS_ASSERT(n_max == max_n);
     if(num >= max_n)
     {
         #if !PRODUCTION

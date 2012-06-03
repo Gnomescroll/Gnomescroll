@@ -15,7 +15,7 @@ namespace Particle
 
 static const float DEFAULT_MASS = 1.0;
 
-void BillboardText::init()
+inline void BillboardText::init()
 {
     this->bounce_count = 0;
     this->r = 100;

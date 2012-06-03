@@ -11,7 +11,7 @@
 namespace Particle
 {
 
-void BillboardTextHud::init()
+inline void BillboardTextHud::init_properties()
 {
     this->should_draw = true;
     this->attached_to_agent = NO_AGENT;
@@ -19,11 +19,21 @@ void BillboardTextHud::init()
     
     this->ttl = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
+    this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
+}
+
+inline void BillboardTextHud::init_text()
+{
     GS_ASSERT(this->text == NULL);
     if (this->text != NULL) return;
     GS_ASSERT(HudText::text_list != NULL);
     this->text = HudText::text_list->create();
-    this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
+}
+
+inline void BillboardTextHud::init()
+{
+    this->init_properties();
+    this->init_text();
 }
 
 void BillboardTextHud::destroy()
@@ -41,7 +51,7 @@ BillboardTextHud::BillboardTextHud()
 ParticleMotion(-1, 0,0,0,0,0,0, DEFAULT_MASS),
 text(NULL)
 {
-    this->init();
+    this->init_properties();
 }
 
 void BillboardTextHud::tick()

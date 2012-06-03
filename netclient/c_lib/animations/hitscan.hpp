@@ -21,7 +21,7 @@ class HitscanEffect
     int ttl;
 
     inline void draw(float delta, Vec3 camera) __attribute((always_inline));
-    void tick();
+    inline void tick();
 
     void set_state(float x, float y, float z, float vx, float vy, float vz)
     {

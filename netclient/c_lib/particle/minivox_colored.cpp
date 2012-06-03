@@ -12,7 +12,7 @@
 namespace Particle
 {
 
-void ColoredMinivox::init()
+inline void ColoredMinivox::init()
 {
     this->theta = 0.0f;
     this->phi = 0.0f;

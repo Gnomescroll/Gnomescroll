@@ -16,6 +16,10 @@ const static int BILLBOARD_TEXT_HUD_MAX_LETTERS = 12;
 
 class BillboardTextHud: public ParticleMotion
 {
+    private:
+        inline void init_properties();
+        inline void init_text();
+        
     public:
         HudText::Text* text;
         bool should_draw;
@@ -31,7 +35,7 @@ class BillboardTextHud: public ParticleMotion
         void draw();
         void tick();
 
-        void init();
+        inline void init();
         void destroy();
 
         BillboardTextHud();

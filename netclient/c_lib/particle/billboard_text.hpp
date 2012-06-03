@@ -38,7 +38,7 @@ class BillboardText: public ParticleMotion
         void draw();
         void tick();
 
-        void init();
+        inline void init();
 
         BillboardText();
 };

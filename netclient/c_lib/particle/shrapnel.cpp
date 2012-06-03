@@ -45,7 +45,7 @@ void teardown_shrapnel()
 
 /* Shrapnel */
 
-void Shrapnel::init(float x, float y, float z, float mx, float my, float mz)
+inline void Shrapnel::init(float x, float y, float z, float mx, float my, float mz)
 {
     verlet.dampening = SHRAPNEL_DAMP;
 

@@ -80,7 +80,7 @@ class MiningLaser
 
         float damp;
 
-    void init(float x, float y, float z, float mx, float my, float mz, const float speed, const float length)
+    inline void init(float x, float y, float z, float mx, float my, float mz, const float speed, const float length)
     {
         type = 0+rand()%4;
         verlet.dampening = MINING_LASER_DAMPENING;

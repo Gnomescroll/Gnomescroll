@@ -7,7 +7,7 @@ namespace Particle
 
 const float BLOOD_MASS = 0.1f;
 
-void Blood::init()
+inline void Blood::init()
 {
     this->ttl = BLOOD_TTL;
     this->type = BLOOD_TYPE;

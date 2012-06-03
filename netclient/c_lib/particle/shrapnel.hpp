@@ -21,7 +21,7 @@ class Shrapnel
         float scale;
         int texture_index;
 
-        void init();
+        inline void init();
         void prep();
         void tick();
 

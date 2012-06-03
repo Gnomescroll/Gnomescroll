@@ -9,7 +9,7 @@ namespace Particle
 
 const float GRENADE_SHRAPNEL_MASS = 1.0f;
 
-void Grenade_shrapnel::init()
+inline void Grenade_shrapnel::init()
 {
     this->ttl = GRENADE_SHRAPNEL_TTL;
     this->type = GRENADE_SHRAPNEL_TYPE;
