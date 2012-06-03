@@ -41,8 +41,7 @@ void register_client_message_handler(int message_id, int size, pt2handler fptr) 
 }
 
 void init_message_handler() {
-    int i;
-    for(i=0;i<256;i++) {
+    for(int i=0;i<256;i++) {
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
         h_server_packet_size[i] = -1;
