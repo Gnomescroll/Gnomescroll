@@ -221,7 +221,7 @@ void push_oriented_texture()
     const int W = 4;
     const int E = 5;
 
-    printf("current_block= %i \n", _current_cube_id);
+    //printf("current_block= %i \n", _current_cube_id);
     for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
 
     //NORTH

@@ -22,13 +22,13 @@ static pt2handler server_handler_array[256];
 
 #else
 
-static int* h_client_packet_size;; 
-static int* h_server_packet_size;; 
+static int* h_client_packet_size;
+static int* h_server_packet_size;
 
-static pt2handler* handler_array;;
+static pt2handler* handler_array;
 
-static pt2handler* client_handler_array;;
-static pt2handler* server_handler_array;;
+static pt2handler* client_handler_array;
+static pt2handler* server_handler_array;
 
 #endif
 //should disconnect client
@@ -72,9 +72,11 @@ server_handler_array =  (pt2handler*) calloc(256, sizeof(pt2handler));
 
     for(int i=0;i<256;i++) 
     {
-        handler_array = NULL;
+        handler_array[i] = NULL;
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
+        h_server_packet_size[i] = -1;
+        h_client_packet_size[i] = -1;
     }
 
 }
@@ -108,7 +110,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
         { // > or >= ?
             printf("ERROR! message processor would read past end of packet!\n");
 
-            printf("n= %i, max_n= %i \n", *n, max_n);
+            printf("n= %i, max_n= %i, message_id= %i message_size= %i \n", *n, max_n, message_id, size);
             return 0;
         }
 

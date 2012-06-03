@@ -170,7 +170,7 @@ NetMessageManager::NetMessageManager()
 
 void NetMessageManager::push_message(Net_message* nm) 
 {
-    if(nm->len == 0) {printf("NETMESSAGEERROR!!!!\n");}
+    //if(nm->len == 0) {printf("NETMESSAGEERROR!!!!\n");}
 
     pending_bytes_out += nm->len;
     pending_messages++;
@@ -197,11 +197,13 @@ void NetMessageManager::serialize_messages(char* buff_, int index)
 {
     int max = pending_bytes_out;
     //printf("Starting serialization at address %i \n", buff_);
+/*
     if(pending_messages == 0)
     {
         printf("impossible error \n");
         return;
     }
+*/
     /*
         Create packet and serialize to it
     */
@@ -215,12 +217,12 @@ void NetMessageManager::serialize_messages(char* buff_, int index)
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
 
-
+/*
         if(index > max)
         {
             printf("BLOODY HELL: %i, %i \n", index, max);
         }
-
+*/
         nm->decrement(); //reference count on packet
 
         nma_read_index++;
