@@ -44,7 +44,7 @@ void Blood_list::draw()
 {
     #if DC_CLIENT
     for(int i=0; i<num; i++)
-            a[i].draw(a[i].get_position());
+        a[i].draw(a[i].get_position());
     #endif
 }
 

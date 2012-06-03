@@ -72,12 +72,14 @@ void Simple_object_list<Object_state, max_n>::destroy(int index)
 {
     GS_ASSERT(num > 0);
     GS_ASSERT(index >= 0 && index < max_n);
-    if (index < 0 || index >= max_n) return;
+    //if (index < 0 || index >= max_n) return;
 
     num--;
 
     // swap
-    Object_state tmp = this->a[index];
-    this->a[index] = this->a[num];
-    this->a[num] = tmp;
+    //Object_state tmp = this->a[index];
+    //this->a[index] = this->a[num];
+    //this->a[num] = tmp;
+
+    this->a[index] = a[num];
 }
