@@ -212,8 +212,8 @@ void toggle_camera_mode()
 void init_handlers()
 {   // set input_state defaults
 
-    #if PRODUCTION
     input_state.mouse_bound = true;
+    #if PRODUCTION
     input_state.debug = false;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;

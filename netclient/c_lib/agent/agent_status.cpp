@@ -377,7 +377,8 @@ void Agent_status::send_scores() {
     as.broadcast();
 }
 
-void Agent_status::respawn() {
+void Agent_status::respawn()
+{
     if (!dead) return;  // ignore if not waiting to respawn
     
     respawn_countdown--;                  // decrement
@@ -398,6 +399,10 @@ void Agent_status::respawn() {
     dead_msg.broadcast();
 
     respawn_countdown = RESPAWN_TICKS; // reset timer
+
+    #if DC_SERVER
+    ItemContainer::agent_born(this->a->id);
+    #endif
 }
 
 float Agent_status::get_spawn_angle()

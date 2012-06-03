@@ -33,10 +33,6 @@ class Item
         printf("Container slot %d\n", container_slot);
     }
 
-    #if DC_SERVER
-    ~Item();
-    #endif
-
     explicit Item(int id)
     :   id((ItemID)id),
         group(NULL_ITEM_GROUP),

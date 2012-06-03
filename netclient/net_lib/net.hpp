@@ -38,6 +38,7 @@ class FixedSizeNetPacketToServer {
         //flatten this
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
+            GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
@@ -70,6 +71,7 @@ class FixedSizeNetPacketToServer {
         static void register_server_packet() {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
+            GS_ASSERT(Derived::message_id != 255);
             Derived::size = x.Size();
             register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
@@ -95,6 +97,7 @@ class FixedSizeNetPacketToClient {
         
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
+            GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
@@ -156,6 +159,7 @@ class FixedSizeNetPacketToClient {
         {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
+            GS_ASSERT(Derived::message_id != 255);
             x.size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
@@ -179,6 +183,7 @@ class FixedSizeReliableNetPacketToServer {
 
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
+            GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
@@ -210,6 +215,7 @@ class FixedSizeReliableNetPacketToServer {
         static void register_server_packet() {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
+            GS_ASSERT(Derived::message_id != 255);
             Derived::size = x.Size();
             register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
@@ -238,6 +244,7 @@ class FixedSizeReliableNetPacketToClient {
 
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
+            GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
@@ -292,6 +299,7 @@ class FixedSizeReliableNetPacketToClient {
         {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
+            GS_ASSERT(Derived::message_id != 255);
             Derived::size = x.Size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }

@@ -17,11 +17,4 @@ void Item::init(int item_type)
     this->durability = attr->max_durability;
 }
 
-#if DC_SERVER
-Item::~Item()
-{
-    broadcast_item_destroy(this->id);
-}
-#endif
-
 }   // Item

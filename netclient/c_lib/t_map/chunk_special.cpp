@@ -40,6 +40,9 @@ void CHUNK_ITEM_CONTAINER::remove(int container_id)
 
 void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 {
+    x = translate_point(x);
+    y = translate_point(y);
+
     // find container
     int i;
     for(i=0; i<iban; i++)
@@ -53,6 +56,11 @@ void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 
 void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int container_id)
 {
+    x = translate_point(x);
+    y = translate_point(y);
+    GS_ASSERT(x >= 0 && x < XMAX && y >= 0 && y < YMAX && z >= 0 && z < ZMAX);
+    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(ibam < MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT);
     if (ibam >= MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) return;
     
