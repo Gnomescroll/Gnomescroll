@@ -21,6 +21,7 @@ struct _ENetHost* client_host;
 
 void init_network()
 {
+    init_message_handler();
     PacketInit::RegisterMessages();
 
     if (enet_initialize () != 0)

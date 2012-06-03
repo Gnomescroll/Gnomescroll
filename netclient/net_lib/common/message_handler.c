@@ -5,16 +5,32 @@
 
 #include <net_lib/global.hpp>
 
-static int h_client_packet_size[256]; 
-static int h_server_packet_size[256]; 
+
 
 typedef void (*pt2handler)(char*, int, int* read_bytes, int client_id);
+
+#define NET_STATIC_ARRAYS 0
+
+#if NET_STATIC_ARRAYS
+static int h_client_packet_size[256]; 
+static int h_server_packet_size[256]; 
 
 static pt2handler handler_array[256];
 
 static pt2handler client_handler_array[256];
 static pt2handler server_handler_array[256];
 
+#else
+
+static int* h_client_packet_size;; 
+static int* h_server_packet_size;; 
+
+static pt2handler* handler_array;;
+
+static pt2handler* client_handler_array;;
+static pt2handler* server_handler_array;;
+
+#endif
 //should disconnect client
 void default_handler_function(char* buff, int n, int* read_bytes, int client_id) {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
@@ -40,9 +56,25 @@ void register_client_message_handler(int message_id, int size, pt2handler fptr) 
     client_handler_array[message_id] = fptr;
 }
 
-void init_message_handler() {
-    int i;
-    for(i=0;i<256;i++) {
+void init_message_handler() 
+{
+
+printf("init_message_handler \n");
+
+#if !NET_STATIC_ARRAYS
+
+h_client_packet_size = (int*) calloc(256, sizeof(int));
+h_server_packet_size = (int*) calloc(256, sizeof(int));
+
+handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
+client_handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
+server_handler_array =  (pt2handler*) calloc(256, sizeof(pt2handler));
+
+#endif
+
+    for(int i=0;i<256;i++) 
+    {
+        handler_array = NULL;
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
         h_server_packet_size[i] = -1;
