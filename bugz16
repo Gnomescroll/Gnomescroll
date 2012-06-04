@@ -388,6 +388,9 @@ lots of error handling, debugging.
 if running private production testing MAKE SURE TO CALL RUN LIKE: ./run lua/settings_dev.lua
 DONE
 
+fix container locks
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -453,11 +456,17 @@ Record time played per user
 /lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7179113]
 ./run() [0x8097e25]
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type
-
+    -- this one might be when item is destroyed?
+    
 container state is desynced
 
-container locks not working
+network container locks so we dont blink inventory
 
 player shouldnt interact with inventory when dead
 --inventory should be closed, throwing anything in hand
 
+swapping nanite food doesnt reset the food counter
+
+item ids might not be rolling over
+
+close all temp locked containers when agent dies/quits

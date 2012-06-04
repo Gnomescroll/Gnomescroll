@@ -179,6 +179,7 @@ void open_container(int container_id)
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
     GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
+    if (!container->can_be_opened_by(ClientState::playerAgent_state.agent_id)) return;
 
     // setup UI widget
     switch (container->type)
@@ -384,24 +385,14 @@ void set_ui_slot_stack_size(int container_id, int slot, int stack_size)
 namespace ItemContainer
 {
 
-bool agent_owns_container(int agent_id, int container_id)
-{
-    ASSERT_VALID_AGENT_ID(agent_id);
-    if (container_id == NULL_CONTAINER) return false;
-    if (agent_container_list[agent_id] == container_id) return true;
-    if (agent_toolbelt_list[agent_id] == container_id) return true;
-    if (agent_nanite_list[agent_id] == container_id) return true;
-    return false;
-}
-
 bool agent_can_access_container(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
-    // owned by other player
-    if (container->owner != NO_AGENT && container->owner != agent_id) return false;
-    return true;
+    return container->can_be_opened_by(agent_id);
 }
 
 ItemID get_agent_toolbelt_item(int agent_id, int slot)

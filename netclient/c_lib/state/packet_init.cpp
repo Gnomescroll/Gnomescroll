@@ -224,6 +224,10 @@ void RegisterMessages()
     ItemContainer::insert_item_in_hand_StoC::register_client_packet();
     ItemContainer::remove_item_from_hand_StoC::register_client_packet();
 
+    // locks
+    ItemContainer::lock_container_StoC::register_client_packet();
+    ItemContainer::unlock_container_StoC::register_client_packet();
+
     // container blocks
     ItemContainer::create_container_block_CtoS::register_server_packet();
 

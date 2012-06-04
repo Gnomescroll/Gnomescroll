@@ -56,7 +56,6 @@ void set_ui_slot_stack_size(int container_id, int slot, int stack_size);
 namespace ItemContainer
 {
 
-bool agent_owns_container(int agent_id, int container_id);
 bool agent_can_access_container(int agent_id, int container_id);
 
 ItemID get_agent_hand(int agent_id);

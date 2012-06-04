@@ -119,6 +119,7 @@ void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(int client_id)
         msg.sendToClient(client_id);
 
         ItemContainer::send_container_create(client_id, iba[i].container_id);
+        ItemContainer::send_container_state(client_id, iba[i].container_id);
     }
 }
 

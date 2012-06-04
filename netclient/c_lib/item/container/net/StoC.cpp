@@ -162,6 +162,22 @@ inline void close_container_StoC::handle()
     close_container();
 }
 
+inline void lock_container_StoC::handle()
+{
+    if (container_id == NULL_CONTAINER) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+    container->lock(agent_id);
+}
+
+inline void unlock_container_StoC::handle()
+{
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+    container->unlock(agent_id);
+}
+
 } // ItemContainer
 #endif
 
@@ -185,6 +201,9 @@ inline void container_action_failed_StoC::handle() {}
 inline void open_container_failed_StoC::handle() {}
 inline void open_container_StoC::handle() {}
 inline void close_container_StoC::handle() {}
+
+inline void lock_container_StoC::handle() {}
+inline void unlock_container_StoC::handle() {}
 
 } // ItemContainer
 

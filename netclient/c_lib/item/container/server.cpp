@@ -72,6 +72,62 @@ void broadcast_container_delete(int container_id)
     msg.broadcast();
 }
 
+static bool pack_container_lock(int container_id, lock_container_StoC* msg)
+{
+    GS_ASSERT(msg != NULL);
+    if (msg == NULL) return false;
+
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return false;
+    ASSERT_VALID_AGENT_ID(container->owner);
+    if (container->owner == NO_AGENT) return false;
+    
+    msg->container_id = container->id;
+    msg->agent_id = container->owner;
+    return true;
+}
+
+void send_container_lock(int client_id, int container_id)
+{
+    lock_container_StoC msg;
+    if (!pack_container_lock(container_id, &msg)) return;
+    msg.sendToClient(client_id);
+}
+
+void broadcast_container_lock(int container_id)
+{
+    lock_container_StoC msg;
+    if (!pack_container_lock(container_id, &msg)) return;
+    msg.broadcast();
+}
+
+void broadcast_container_unlock(int container_id, int unlocking_agent_id)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+    GS_ASSERT(container->owner == NO_AGENT);
+    if (container->owner != NO_AGENT) return;
+
+    unlock_container_StoC msg;
+    msg.container_id = container->id;
+    msg.agent_id = unlocking_agent_id;
+    msg.broadcast();
+}
+
+void send_container_state(int client_id, int container_id)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    send_container_lock(client_id, container_id);
+}
+
 void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot)
 {
     Item::Item* item = Item::send_item_create(client_id, item_id);
@@ -120,13 +176,13 @@ bool agent_open_container(int agent_id, int container_id)
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return false;
 
+    if (!agent_can_access_container(agent_id, container_id)) return false;
+
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return false;
-
-    if (!container->can_be_opened_by(a->id)) return false;
 
     // release currently opened container
     if (opened_containers[agent_id] != NULL_CONTAINER)
@@ -136,11 +192,14 @@ bool agent_open_container(int agent_id, int container_id)
         if (opened == NULL) return false;
         opened->unlock(a->id);
         opened_containers[agent_id] = NULL_CONTAINER;
+        broadcast_container_unlock(container_id, agent_id);
     }
 
     // place player lock on container if we want
     container->lock(a->id);
     opened_containers[agent_id] = container->id;
+    // send new lock to players
+    broadcast_container_lock(container->id);
     
     // send container contents to player
     send_container_contents(a->id, a->client_id, container_id);
@@ -171,6 +230,7 @@ void agent_close_container(int agent_id, int container_id)
     if (container == NULL) return;
 
     container->unlock(agent_id);
+    broadcast_container_unlock(container->id, agent_id);
 }
 
 }   // ItemContainer

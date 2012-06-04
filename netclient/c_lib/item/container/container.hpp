@@ -107,9 +107,25 @@ class ItemContainerInterface
 
         virtual void init(int xdim, int ydim) = 0;
 
-        virtual bool can_be_opened_by(int agent_id) { return true; }
-        virtual void lock(int agent_id) { this->owner = agent_id; }
-        virtual void unlock(int agent_id) { this->owner = NO_AGENT; }
+        virtual bool can_be_opened_by(int agent_id)
+        {
+            return (this->owner == agent_id || this->owner == NO_AGENT);
+        }
+        virtual void lock(int agent_id)
+        {
+            ASSERT_VALID_AGENT_ID(agent_id);
+            GS_ASSERT(this->can_be_opened_by(agent_id));
+            if (!this->can_be_opened_by(agent_id)) return;
+            this->owner = agent_id;
+        }
+        virtual void unlock(int agent_id)
+        {
+            ASSERT_VALID_AGENT_ID(agent_id);
+            GS_ASSERT(this->owner != NO_AGENT);
+            GS_ASSERT(this->owner == agent_id);
+            if (this->owner != agent_id) return;
+            this->owner = NO_AGENT;
+        }
 
         virtual ~ItemContainerInterface()
         {

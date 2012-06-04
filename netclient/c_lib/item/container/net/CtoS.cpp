@@ -303,6 +303,8 @@ inline void close_container_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
 
+    if (!agent_can_access_container(a->id, container_id)) return;
+
     agent_close_container(a->id, container_id);
 }
 
@@ -360,7 +362,6 @@ void create_container_block_CtoS::handle()
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);
-
 
     agent_placed_block_StoC msg;
     msg.id = a->id;

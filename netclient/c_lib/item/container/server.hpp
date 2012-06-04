@@ -17,6 +17,12 @@ void send_container_delete(int client_id, int container_id);
 void broadcast_container_create(int container_id);
 void broadcast_container_delete(int container_id);
 
+void send_container_lock(int client_id, int container_id);
+void broadcast_container_lock(int container_id);
+void broadcast_container_unlock(int container_id, int unlocking_agent_id);
+
+void send_container_state(int client_id, int container_id);
+
 void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot);
 
 void send_container_insert(int client_id, ItemID item_id, int container_id, int slot)
