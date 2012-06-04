@@ -607,10 +607,17 @@ class PerlinOctave3D
             base_z *= 2;
         }
 
-        if(base_x >= 256 || base_z >= 64)
+        if(base_x >= 512 || base_z >= 128)
         {
             printf("PerlinField3D warning: base octaves too large for map size \n");
             printf("octaves= %i, base_x= %i, base_y= %i \n", octaves, base_x, base_z);
+        } else
+        {
+            if(base_x >= 256 || base_z >= 64)
+            {
+                printf("PerlinField3D warning: base octaves too large for map size \n");
+                printf("octaves= %i, base_x= %i, base_y= %i \n", octaves, base_x, base_z);
+            }
             abort();
         }
 
@@ -623,6 +630,15 @@ class PerlinOctave3D
         delete[] octave_array;
     }
 
+    float sample(float x, float y, float z)
+    {
+        float tmp = 0.0;
+        for(int i=0; i<octaves; i++)
+        {
+            tmp += octave_array[i].sample(x,y,z);
+        }
+        return tmp;
+    }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
 static inline int fastfloor(float x) 
@@ -778,7 +794,7 @@ float base(float x, float y, float z)
         return nxyz * 0.707106781;   //-1 to 1
 }
 
-float sample(float x, float y, float z)
+float sample2(float x, float y, float z)
 {
     int i = (int)(x /_xsf ); //for lerp
     int j = (int)(y /_xsf );
@@ -854,7 +870,7 @@ void noise_map_test()
     delete[] out;
 */
 
-    PerlinOctave3D oct_0(1,4,4); //int _octaves, int base_x, int base_z
+    PerlinOctave3D oct_0(6,4,4); //int _octaves, int base_x, int base_z
 
     oct_0.populate_value_array();
 
@@ -896,7 +912,7 @@ void noise_map_generate_map()
     {
         t_map::set(i,j,0,tile);
     }
-#if 1
+#if 0
     double sum = 0.0;
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)
@@ -911,24 +927,24 @@ void noise_map_generate_map()
 
         //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
     }
+    printf("NOISE MAP AVERAGE: = %f \n", (float) sum / (float)(512*512*32));
+
 #else
-    //{
-        //float x = i;
-        //float y = j;
-        //float divisor = (256.0f/float(abs(256-i) + abs(256-j) + abs(i-j))) * 16.0f;
-        //float multiplier = pow(2.0, 256.0f/float(abs(256-i)*abs(256-j) + abs(i-j)));
-        //multiplier = (multiplier > 1.0f) ? 1.0f : multiplier;
-        //x /= divisor;
-        //y /= divisor;
-        //x *= multiplier;
-        //y *= multiplier;
-        //float value = p3d.noise(x,y,0);
-        //sum += value;
-        //int h = (value+1) * 32 + 1;
-        //for (int k=0; k<h; k++) t_map::set(i,j,k,tile);
-        
-        ////out[i+j*yres] = p3d.one_over_f(x,y,64.0);
-    //}
+    PerlinOctave3D oct_0(6,4,4); //int _octaves, int base_x, int base_z
+
+    for(int i=0; i<512; i++)
+    for(int j=0; j<512; j++)
+    {
+        //float value = 64+8*p3d.noise(i,j,32.5);
+        float value = 64;
+        //value += 32*p2d_0.one_over_f(i,j);
+        value += 8*oct_0.sample(i,j, 32.5);
+
+        for (int k=0; k<value; k++) t_map::set(i,j,k,tile);
+
+
+        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
+    }
 #endif
     //float* noisemap = (float*)calloc(512*512, sizeof(float));
     //int n_maps = 4;
@@ -948,7 +964,7 @@ void noise_map_generate_map()
         //for (int k=0; k<h; k++) t_map::set(i,j,k,tile);
     //}
     //free(noisemap);
-    printf("NOISE MAP AVERAGE: = %f \n", (float) sum / (float)(512*512*32));
+    
     #endif
 }
 
