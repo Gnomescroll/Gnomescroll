@@ -43,11 +43,15 @@ void ObjectList::set_object_id(Object* object, int id)
 
 inline int ObjectList::count(ObjectType type)
 {
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return this->indices[type];
 }
 
 inline int ObjectList::max(ObjectType type)
 {
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return this->maximums[type];
 }
 
@@ -86,6 +90,11 @@ void ObjectList::destroy(ObjectType type, int id)
 
 Object* ObjectList::get(ObjectType type, int id)
 {
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
+    GS_ASSERT(id >= 0 && id < this->maximums[type]);
+    if (id < 0 || id >= this->maximums[type]) return NULL;
+    
     if (this->objects[type] == NULL) return NULL;
     if (this->used[type] == NULL || this->used[type][id] == 0) return NULL;
     return this->objects[type][id];
@@ -93,6 +102,8 @@ Object* ObjectList::get(ObjectType type, int id)
 
 Object* ObjectList::create(ObjectType type)
 {
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
     if (this->full(type)) return NULL;
     return this->staging_objects[type];
 }
@@ -100,6 +111,10 @@ Object* ObjectList::create(ObjectType type)
 // preemptively check against used ids
 Object* ObjectList::create(ObjectType type, int id)
 {
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
+    GS_ASSERT(id >= 0 && id < this->maximums[type]);
+    if (id < 0 || id >= this->maximums[type]) return NULL;
     if (this->used[type] == NULL || this->used[type][id] == 1) return NULL;
     return this->staging_objects[type];
 }
@@ -125,9 +140,14 @@ void ObjectList::set_object_max(ObjectType type, int max)
     GS_ASSERT(this->maximums[type] == 0);
     GS_ASSERT(this->objects[type] == NULL);
     GS_ASSERT(this->used[type] == NULL);
+    GS_ASSERT(max >= 0);
+    if (max < 0) max = 0;
     this->maximums[type] = max;
-    this->objects[type] = (Object**)calloc(max, sizeof(Object*));
-    this->used[type] = (char*)calloc(max, sizeof(char));
+    if (max > 0)
+    {
+        this->objects[type] = (Object**)calloc(max, sizeof(Object*));
+        this->used[type] = (char*)calloc(max, sizeof(char));
+    }
 }
 
 void ObjectList::load_object_data(ObjectDataList* data)

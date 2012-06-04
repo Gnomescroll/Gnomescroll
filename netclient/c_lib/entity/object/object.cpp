@@ -50,8 +50,11 @@ void Object::init(int n_components)
 {
     GS_ASSERT(this->components == NULL);
     GS_ASSERT(this->n_components == 0);
-    this->components = (Component**)calloc(n_components, sizeof(Component*));
+    GS_ASSERT(n_components >= 0);
+    if (n_components < 0) n_components = 0;
     this->n_components = n_components;
+    if (n_components <= 0) return;
+    this->components = (Component**)calloc(n_components, sizeof(Component*));
 }
 
 Object::~Object()

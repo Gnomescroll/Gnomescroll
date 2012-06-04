@@ -38,6 +38,9 @@ enet_host_create (const ENetAddress * address, size_t peerCount, size_t channelL
     host = (ENetHost *) enet_malloc (sizeof (ENetHost));
     if (host == NULL)
       return NULL;
+
+    // patch from http://lists.cubik.org/pipermail/enet-discuss/2011-December/001828.html
+    memset (host, 0, sizeof(ENetHost));
     
     host -> peers = (ENetPeer *) enet_malloc (peerCount * sizeof (ENetPeer));
     if (host -> peers == NULL)

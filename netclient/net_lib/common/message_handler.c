@@ -19,9 +19,7 @@ static pt2handler handler_array[256];
 
 static pt2handler client_handler_array[256];
 static pt2handler server_handler_array[256];
-
 #else
-
 static int* h_client_packet_size;
 static int* h_server_packet_size;
 
@@ -29,8 +27,8 @@ static pt2handler* handler_array;
 
 static pt2handler* client_handler_array;
 static pt2handler* server_handler_array;
-
 #endif
+
 //should disconnect client
 void default_handler_function(char* buff, int n, int* read_bytes, int client_id)
 {
@@ -62,16 +60,16 @@ void register_client_message_handler(int message_id, int size, pt2handler fptr)
 void init_message_handler() 
 {
 
-#if !NET_STATIC_ARRAYS
+    #if !NET_STATIC_ARRAYS
 
-h_client_packet_size = (int*) calloc(256, sizeof(int));
-h_server_packet_size = (int*) calloc(256, sizeof(int));
+    h_client_packet_size = (int*) calloc(256, sizeof(int));
+    h_server_packet_size = (int*) calloc(256, sizeof(int));
 
-handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
-client_handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
-server_handler_array =  (pt2handler*) calloc(256, sizeof(pt2handler));
+    handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
+    client_handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
+    server_handler_array =  (pt2handler*) calloc(256, sizeof(pt2handler));
 
-#endif
+    #endif
 
     for(int i=0;i<256;i++) 
     {
@@ -94,7 +92,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
 
     int read_bytes;
 
-    static int _in = 0;
+    //static int _in = 0;
 
     do {
         //UNPACK_uint8_t(&message_id, buff, n);
@@ -105,15 +103,15 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
 
         //printf("0 n= %i, max_n= %i \n", *n, max_n);
 
-        #ifdef DC_SERVER
+        #if DC_SERVER
         size  = h_server_packet_size[message_id];
         #endif
 
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
         size  = h_client_packet_size[message_id];
         #endif
 
-        printf("%d Receiving packet %d,%d\n", _in++, message_id, size);
+        //printf("%d Receiving packet %d,%d\n", _in++, message_id, size);
 
         if(*n+size-1 > max_n) 
         { // > or >= ?
@@ -124,7 +122,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
         }
 
         
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
         //remove this!
         if(client_handler_array[message_id] == NULL)
         {
@@ -134,7 +132,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
         client_handler_array[message_id](buff, *n, &read_bytes, client_id);
         #endif
 
-        #ifdef DC_SERVER
+        #if DC_SERVER
         //remove this check
         if(server_handler_array[message_id] == NULL) 
         {
@@ -176,7 +174,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
 */
 int process_client_map_messages(char* buff, int *n, int max_n, int client_id) 
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     printf("process_client_map_messages Error: this should never be called on server\n");
     #endif
     //printf("*n= %i, max_n= %i \n", *n, max_n);

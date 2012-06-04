@@ -146,6 +146,8 @@ Object* create(ObjectType type, int id)
 
 void ready_switch(Object* object)
 {
+    GS_ASSERT(object != NULL);
+    if (object == NULL) return;
     switch (object->type)
     {
         // refills
@@ -190,6 +192,8 @@ void ready_switch(Object* object)
 
 void destroy_switch(Object* object)
 {
+    GS_ASSERT(object != NULL);
+    if (object == NULL) return;
     ObjectType type = object->type;
     switch (type)
     {
@@ -239,8 +243,7 @@ void destroy_switch(Object* object)
 void destroy_switch(ObjectType type, int id)
 {
     Object* object = get_object(type, id);
-    if (object != NULL)
-        destroy_switch(object);
+    if (object != NULL) destroy_switch(object);
 }
 
 Object* get_object(ObjectType type, int id)

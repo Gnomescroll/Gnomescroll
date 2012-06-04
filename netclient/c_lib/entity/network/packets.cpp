@@ -23,6 +23,11 @@ inline void object_create_StoC::handle()
     using Objects::Object;
     using Components::PhysicsComponent;
 
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return;
+    if (id < 0 || id >= GAME_OBJECTS_MAX) return;
+
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);

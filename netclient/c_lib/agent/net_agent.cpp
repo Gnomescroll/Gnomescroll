@@ -468,8 +468,8 @@ inline void version_StoC::handle()
 
         #if DC_CLIENT
         VersionMismatchBox(DC_VERSION, version);
-        input_state.quit = true;
-        input_state.confirm_quit = true;
+        //input_state.quit = true;
+        //input_state.confirm_quit = true;
         #endif
     }
     else
@@ -505,8 +505,6 @@ inline void hitscan_object_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
-//inline void AgentActiveWeapon_CtoS::handle() {}
-//inline void AgentReloadWeapon_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
 //#if !PRODUCTION
 inline void admin_set_block_CtoS::handle() {}
@@ -917,35 +915,6 @@ inline void ThrowGrenade_CtoS::handle()
     g->owner = a->id;
     g->broadcast();
 }
-
-//inline void AgentActiveWeapon_CtoS::handle()
-//{
-    //Agent_state* a = NetServer::agents[client_id];
-    //if (a == NULL)
-    //{
-        //printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        //return;
-    //}
-    //if (a->status.team == 0) return;
-    ////a->weapons.set_active(slot);
-//}
-
-//inline void AgentReloadWeapon_CtoS::handle()
-//{
-    //Agent_state* a = NetServer::agents[client_id];
-    //if (a == NULL)
-    //{
-        //printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        //return;
-    //}
-    //if (a->status.team == 0) return;
-    ////a->weapons.reload(type);
-    //// forward action
-    //AgentReloadWeapon_StoC msg;
-    //msg.id = a->id;
-    //msg.type = type;
-    //msg.broadcast();
-//}
 
 inline void agent_set_block_CtoS::handle()
 {

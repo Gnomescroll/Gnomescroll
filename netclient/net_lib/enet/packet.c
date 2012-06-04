@@ -36,6 +36,9 @@ enet_packet_create (const void * data, size_t dataLength, enet_uint32 flags)
 
        if (data != NULL)
          memcpy (packet -> data, data, dataLength);
+       // NOTE: adding this in attempt to fix valgrind complaints
+       else
+         memset (packet -> data, 0, dataLength);
     }
 
     packet -> referenceCount = 0;

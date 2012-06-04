@@ -1,21 +1,39 @@
 #include "global.hpp"
 
+#include <c_lib/agent/agent.hpp>
+
 NetMessageArray_pool net_message_array_pool;
 
 namespace NetClient
 {
-    NetPeer Server;
-}
+
+NetPeer Server;
+
+}   // NetClient
 
 namespace NetServer
 {
-    NetPeer* pool[HARD_MAX_CONNECTIONS];
-    NetPeerManager* clients[HARD_MAX_CONNECTIONS];
+    
+NetPeer** pool = NULL;
+NetPeerManager** clients = NULL;
 
-    Agent_state* agents[HARD_MAX_CONNECTIONS];
-    void assign_agent_to_client(int client_id, Agent_state* a)
-    {
-        agents[client_id] = a;
-    }
+Agent_state** agents = NULL;
 
+void assign_agent_to_client(int client_id, Agent_state* a)
+{
+    GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
+    agents[client_id] = a;
 }
+
+void init_globals()
+{
+    GS_ASSERT(pool == NULL);
+    GS_ASSERT(clients == NULL);
+    GS_ASSERT(agents == NULL);
+    
+    pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
+    clients = (NetPeerManager**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeerManager*));
+    agents = (Agent_state**)calloc(HARD_MAX_CONNECTIONS, sizeof(Agent_state*));
+}
+
+}   // NetServer

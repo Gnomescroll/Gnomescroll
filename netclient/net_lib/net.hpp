@@ -59,7 +59,17 @@ class FixedSizeNetPacketToServer {
         }
         
         //will overflow if more than 128 bytes
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+        int _size()
+        {
+            char buff[128];
+            int buff_n = 0;
+            int size = 0;
+            unserialize(buff, &buff_n, &size);
+            size++; // add a byte for the message id
+            GS_ASSERT(size > 0 && size < 128);
+            //printf("ToServer: %2d,%2d\n", message_id, size);
+            return size;
+        }
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -72,7 +82,7 @@ class FixedSizeNetPacketToServer {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
             GS_ASSERT(Derived::message_id != 255);
-            Derived::size = x.Size();
+            Derived::size = x._size();
             register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 
@@ -115,7 +125,7 @@ class FixedSizeNetPacketToClient {
         */
         void sendToClient(int client_id) 
         {
-            printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
+            //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
 
             nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
@@ -133,7 +143,7 @@ class FixedSizeNetPacketToClient {
         {
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
-            printf("%d Sending packet %d,%d\n", _in++, message_id, size);
+            //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
             Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
@@ -150,7 +160,17 @@ class FixedSizeNetPacketToClient {
         }
 
         //will overflow if more than 128 bytes
-        int _size() { char buff[128];int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size+1;}
+        int _size()
+        {
+            char buff[128];
+            int buff_n = 0;
+            int size = 0;
+            unserialize(buff, &buff_n, &size);
+            size++; // add a byte for the message id
+            GS_ASSERT(size > 0 && size < 128);
+            //printf("ToClient: %2d,%2d\n", message_id, size);
+            return size;
+        }
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
         {
@@ -208,7 +228,17 @@ class FixedSizeReliableNetPacketToServer {
         }
         
         //will overflow if more than 128 bytes
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+        int _size()
+        {
+            char buff[128];
+            int buff_n = 0;
+            int size = 0;
+            unserialize(buff, &buff_n, &size);
+            size++; // add a byte for the message id
+            GS_ASSERT(size > 0 && size < 128);
+            //printf("ReliableToServer: %2d,%2d\n", message_id, size);
+            return size;
+        }
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -221,7 +251,7 @@ class FixedSizeReliableNetPacketToServer {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
             GS_ASSERT(Derived::message_id != 255);
-            Derived::size = x.Size();
+            Derived::size = x._size();
             register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 
@@ -264,7 +294,7 @@ class FixedSizeReliableNetPacketToClient {
 
         void sendToClient(int client_id) 
         {
-            printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
+            //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
             nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
@@ -285,7 +315,7 @@ class FixedSizeReliableNetPacketToClient {
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
-            printf("%d Sending packet %d,%d\n", _in++, message_id, size);
+            //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
             for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
             {
@@ -295,7 +325,18 @@ class FixedSizeReliableNetPacketToClient {
             }
         }
 
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+        //will overflow if more than 128 bytes
+        int _size()
+        {
+            char buff[128];
+            int buff_n = 0;
+            int size = 0;
+            unserialize(buff, &buff_n, &size);
+            size++; // add a byte for the message id
+            GS_ASSERT(size > 0 && size < 128);
+            //printf("ReliableToClient: %2d,%2d\n", message_id, size);
+            return size;
+        }
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
         {
@@ -309,7 +350,7 @@ class FixedSizeReliableNetPacketToClient {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
             GS_ASSERT(Derived::message_id != 255);
-            Derived::size = x.Size();
+            Derived::size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 };

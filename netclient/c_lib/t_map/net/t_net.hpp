@@ -48,7 +48,17 @@ class MapMessagePacketToServer {
         }
         
         //will overflow if more than 128 bytes
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+        int _size()
+        {
+            char buff[128];
+            int buff_n = 0;
+            int size = 0;
+            unserialize(buff, &buff_n, &size);
+            size++; // add a byte for the message id
+            GS_ASSERT(size > 0 && size < 128);
+            //printf("MapMessageToServer: %2d,%2d\n", message_id, size);
+            return size;
+        }
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -60,7 +70,7 @@ class MapMessagePacketToServer {
         static void register_server_packet() {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
-            Derived::size = x.Size();
+            Derived::size = x._size();
             register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 
@@ -133,7 +143,18 @@ class MapMessagePacketToClient {
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
         }
 
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+        //will overflow if more than 128 bytes
+        int _size()
+        {
+            char buff[128];
+            int buff_n = 0;
+            int size = 0;
+            unserialize(buff, &buff_n, &size);
+            size++; // add a byte for the message id
+            GS_ASSERT(size > 0 && size < 128);
+            //printf("MapMessageToClient: %2d,%2d\n", message_id, size);
+            return size;
+        }
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
         {
@@ -145,7 +166,7 @@ class MapMessagePacketToClient {
         static void register_client_packet() {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
-            Derived::size = x.Size();
+            Derived::size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 }; 
@@ -223,7 +244,18 @@ class MapMessageArrayPacketToClient {
             if(np->map_message_buffer_index >= 1024) np->flush_map_messages();
         }
 
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+        //will overflow if more than 128 bytes
+        int _size()
+        {
+            char buff[128];
+            int buff_n = 0;
+            int size = 0;
+            unserialize(buff, &buff_n, &size);
+            size++; // add a byte for the message id
+            GS_ASSERT(size > 0 && size < 128);
+            //printf("MapMessageArrayToClient: %2d,%2d\n", message_id, size);
+            return size;
+        }
 
         static void handler(char* buff, int buff_n, int* bytes_read, int max_n) 
         {
@@ -246,7 +278,7 @@ class MapMessageArrayPacketToClient {
         static void register_client_packet() {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
-            Derived::size = x.Size();
+            Derived::size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 }; 

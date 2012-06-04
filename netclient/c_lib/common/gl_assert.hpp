@@ -16,26 +16,26 @@ GL_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/./particle/minivox.cpp, lin
 
 bool _gl_assert(GLenum flag)
 {
-	GLboolean value;
-	glGetBooleanv(flag, &value);
+    GLboolean value;
+    glGetBooleanv(flag, &value);
 
-	if(value == GL_FALSE)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+    if(value == GL_FALSE)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 /*
-	Disable in production
+    Disable in production
 */
-#if PRODUCTION
-	#define GL_ASSERT(flag, truth) ;
-#else
-	#define GL_ASSERT(flag, truth) \
-	if(_gl_assert(flag) !=  truth) \
-	fprintf (stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
-#endif
+//#if PRODUCTION
+    //#define GL_ASSERT(flag, truth) ;
+//#else
+    #define GL_ASSERT(flag, truth) \
+    if(_gl_assert(flag) !=  truth) \
+    fprintf (stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
+//#endif

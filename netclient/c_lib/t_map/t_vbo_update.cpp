@@ -26,8 +26,11 @@ struct SIDE_BUFFER
     struct MAP_ELEMENT element;
 };
 
-int SIDE_BUFFER_INDEX[7];   //index
-struct SIDE_BUFFER* SIDE_BUFFER_ARRAY[7];
+const int SIDE_BUFFER_ARRAY_SIZE = 7;
+//int SIDE_BUFFER_INDEX[SIDE_BUFFER_ARRAY_SIZE];   //index
+//struct SIDE_BUFFER* SIDE_BUFFER_ARRAY[SIDE_BUFFER_ARRAY_SIZE];
+int* SIDE_BUFFER_INDEX;   //index
+struct SIDE_BUFFER** SIDE_BUFFER_ARRAY;
 
 struct Vertex* vlist_scratch_0;
 struct Vertex* vlist_scratch_1;
@@ -37,9 +40,12 @@ void t_vbo_update_init()
     vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
     vlist_scratch_1 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
 
+    SIDE_BUFFER_ARRAY = (struct SIDE_BUFFER**)malloc(SIDE_BUFFER_ARRAY_SIZE * sizeof(struct SIDE_BUFFER*));
+    SIDE_BUFFER_INDEX = (int*)malloc(SIDE_BUFFER_ARRAY_SIZE * sizeof(int));
+
     const int b_size = (1+(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT/2))*sizeof(struct SIDE_BUFFER);
-    for(int i=0; i<7; i++) SIDE_BUFFER_ARRAY[i] = (struct SIDE_BUFFER*) malloc(b_size);
-    for(int i=0; i<7; i++) SIDE_BUFFER_INDEX[i] = 0;
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_ARRAY[i] = (struct SIDE_BUFFER*) malloc(b_size);
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
 
     init_pallete();
 }
@@ -49,7 +55,7 @@ void t_vbo_update_end()
     free(vlist_scratch_0);
     free(vlist_scratch_1);
 
-    for(int i=0; i<7; i++) free(SIDE_BUFFER_ARRAY[i]);
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) free(SIDE_BUFFER_ARRAY[i]);
 }
 
 //cache line optimization; minimize size
@@ -322,7 +328,7 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
     /*
         DEBUGGING CODE, remove soon
     */
-#if !PRODUCTION
+    #if !PRODUCTION
     //int id1 = cube_texture_palette_lookup[tile_id];
     int id2 = cube_texture_palette_lookup[tile_id] + element.palette;
     if(element.palette >= cube_texture_palette_lookup_max[tile_id] )
@@ -336,7 +342,7 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
         //printf("1: block_id= %i id1= %i id2= %i \t", tile_id,id1,id2);
         //printf("base_index= %i pallete_index= %i pallete_lookup_value= %i pallete_lookup_max= %i \n", id1, id2, cube_texture_palette_lookup[tile_id]+element.palette, cube_texture_palette_lookup_max[tile_id]);
     }
-#endif
+    #endif
 
     struct TextureElement tex;
     tex.tex = 0;
@@ -390,7 +396,7 @@ void generate_vertex_list(struct Vertex* vlist)
 {
     int offset = 0;
 
-    for(int i=0; i<7; i++)
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
     for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
     {
         struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
@@ -494,7 +500,7 @@ void Vbo_map::update_vbo(int i, int j)
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
 
-    for(int i=0; i<7; i++) SIDE_BUFFER_INDEX[i] = 0;
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
 
     if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
     if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
@@ -623,7 +629,7 @@ void generate_vertex_list_comptability(struct Vertex* vlist)
 {
     int offset = 0;
 
-    for(int i=0; i<7; i++)
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
     for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
     {
         struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
@@ -649,7 +655,7 @@ void Vbo_map::update_vbo_comptability(int i, int j)
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
 
-    for(int i=0; i<7; i++) SIDE_BUFFER_INDEX[i] = 0;
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
 
     if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
     if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");

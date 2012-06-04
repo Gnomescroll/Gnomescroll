@@ -37,7 +37,7 @@ const float GRENADE_MASS = 0.5f;
  */
 
 
-class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
+class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
 {
     public:
 

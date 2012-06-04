@@ -30,11 +30,8 @@ typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 void RegisterMessages()
 {
 
-    dont_send_this_packet::register_client_packet();
-
     //version
     version_StoC::register_client_packet(); // THIS MUST BE PACKET 0
-
 
 /*
     add back in 
@@ -72,28 +69,6 @@ void RegisterMessages()
 
     // particle system messages
     Particle::grenade_StoC::register_client_packet();
-
-    /*
-        Map Messages
-    */
-    
-    t_map::map_chunk_compressed_StoC::register_client_packet();
-    t_map::map_chunk_uncompressed_StoC::register_client_packet();
-
-    t_map::set_map_alias_StoC::register_client_packet();
-    t_map::clear_alias_StoC::register_client_packet();
-
-    // block value change
-    t_map::block_CtoS::register_server_packet();
-    t_map::block_set_StoC::register_client_packet();
-    t_map::block_set_palette_StoC::register_client_packet();
-
-    t_map::block_action_StoC::register_client_packet();
-    t_map::map_metadata_StoC::register_client_packet();
-    
-    t_map::container_block_chunk_reset_StoC::register_client_packet();
-    t_map::container_block_create_StoC::register_client_packet();
-    t_map::container_block_delete_StoC::register_client_packet();
  
     // agent hit block action
     hit_block_CtoS::register_server_packet();
@@ -272,6 +247,28 @@ void RegisterMessages()
     ItemParticle::item_particle_destroy_StoC::register_client_packet();
     ItemParticle::item_particle_state_StoC::register_client_packet();
     ItemParticle::item_particle_picked_up_StoC::register_client_packet();
+
+    /*
+        Map Messages
+    */
+    
+    t_map::map_chunk_compressed_StoC::register_client_packet();
+    t_map::map_chunk_uncompressed_StoC::register_client_packet();
+
+    t_map::set_map_alias_StoC::register_client_packet();
+    t_map::clear_alias_StoC::register_client_packet();
+
+    // block value change
+    t_map::block_CtoS::register_server_packet();
+    t_map::block_set_StoC::register_client_packet();
+    t_map::block_set_palette_StoC::register_client_packet();
+
+    t_map::block_action_StoC::register_client_packet();
+    t_map::map_metadata_StoC::register_client_packet();
+    
+    t_map::container_block_chunk_reset_StoC::register_client_packet();
+    t_map::container_block_create_StoC::register_client_packet();
+    t_map::container_block_delete_StoC::register_client_packet();
 }
 
 }

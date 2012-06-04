@@ -10,14 +10,10 @@
 class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapshot>
 {
     public:
-
         uint8_t id;
         uint8_t seq;
-        //uint16_t tick;
 
-        float x;
-        float y;
-        float z;
+        float x,y,z;
         float vx,vy,vz;
         float theta, phi;
 
@@ -25,7 +21,6 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
         {
             pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
             pack_u8(&seq, buff, buff_n, pack);
-            //pack_16(&tick, buff, buff_n, pack);
 
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
@@ -64,7 +59,6 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
         uint8_t id;
         uint8_t seq;
-        //int tick;
 
         float x,y,z;
         float vx,vy,vz;
@@ -75,7 +69,6 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         {
             pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
             pack_u8(&seq, buff, buff_n, pack);
-            //pack_16(&tick, buff, buff_n, pack);
 
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
@@ -162,7 +155,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
 
 
 // hitscan StoC actions (for client to animate)
-class agent_shot_nothing_StoC: public FixedSizeNetPacketToClient<agent_shot_nothing_StoC>
+class agent_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_shot_nothing_StoC>
 {
     public:
         uint8_t id;
@@ -174,7 +167,7 @@ class agent_shot_nothing_StoC: public FixedSizeNetPacketToClient<agent_shot_noth
         inline void handle();
 };
 
-class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_object_StoC>
+class agent_shot_object_StoC: public FixedSizeReliableNetPacketToClient<agent_shot_object_StoC>
 {
     public:
         uint8_t id;
@@ -197,7 +190,7 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
         inline void handle();
 };
 
-class agent_shot_block_StoC: public FixedSizeNetPacketToClient<agent_shot_block_StoC>
+class agent_shot_block_StoC: public FixedSizeReliableNetPacketToClient<agent_shot_block_StoC>
 {
     public:
         uint8_t id;
@@ -218,7 +211,7 @@ class agent_shot_block_StoC: public FixedSizeNetPacketToClient<agent_shot_block_
 };
 
 // for pick
-class agent_hit_block_StoC: public FixedSizeNetPacketToClient<agent_hit_block_StoC>
+class agent_hit_block_StoC: public FixedSizeReliableNetPacketToClient<agent_hit_block_StoC>
 {
     public:
         uint8_t id;
@@ -235,7 +228,7 @@ class agent_hit_block_StoC: public FixedSizeNetPacketToClient<agent_hit_block_St
 };
 
 // hitscan StoC actions (for client to animate)
-class agent_melee_nothing_StoC: public FixedSizeNetPacketToClient<agent_melee_nothing_StoC>
+class agent_melee_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_melee_nothing_StoC>
 {
     public:
         uint8_t id;
@@ -247,7 +240,7 @@ class agent_melee_nothing_StoC: public FixedSizeNetPacketToClient<agent_melee_no
         inline void handle();
 };
 
-class agent_melee_object_StoC: public FixedSizeNetPacketToClient<agent_melee_object_StoC>
+class agent_melee_object_StoC: public FixedSizeReliableNetPacketToClient<agent_melee_object_StoC>
 {
     public:
         uint8_t id;
@@ -278,7 +271,7 @@ class agent_melee_object_StoC: public FixedSizeNetPacketToClient<agent_melee_obj
         inline void handle();
 };
 
-class agent_threw_grenade_StoC: public FixedSizeNetPacketToClient<agent_threw_grenade_StoC>
+class agent_threw_grenade_StoC: public FixedSizeReliableNetPacketToClient<agent_threw_grenade_StoC>
 {
     public:
         uint8_t id;
@@ -289,7 +282,7 @@ class agent_threw_grenade_StoC: public FixedSizeNetPacketToClient<agent_threw_gr
         inline void handle();
 };
 
-class agent_placed_block_StoC: public FixedSizeNetPacketToClient<agent_placed_block_StoC>
+class agent_placed_block_StoC: public FixedSizeReliableNetPacketToClient<agent_placed_block_StoC>
 {
     public:
         uint8_t id;
@@ -301,7 +294,7 @@ class agent_placed_block_StoC: public FixedSizeNetPacketToClient<agent_placed_bl
 };
 
 // damage indicator packet (USE THIS FOR BLOOD!)
-class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
+class agent_damage_StoC: public FixedSizeReliableNetPacketToClient<agent_damage_StoC>
 {
     public:
 
@@ -322,7 +315,7 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
  */
  
 //agent control state, client to server
-class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
+class Agent_cs_CtoS: public FixedSizeReliableNetPacketToServer<Agent_cs_CtoS>
 {
     public:
         uint8_t seq;
@@ -342,7 +335,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 };
 
 // agent block hit action
-class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
+class hit_block_CtoS: public FixedSizeReliableNetPacketToServer<hit_block_CtoS>
 {
     public:
         uint16_t x,y,z;
@@ -359,7 +352,7 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
         inline void handle();
 };
 
-class hitscan_object_CtoS: public FixedSizeNetPacketToServer<hitscan_object_CtoS>
+class hitscan_object_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_object_CtoS>
 {
     public:
         uint16_t id;
@@ -380,7 +373,7 @@ class hitscan_object_CtoS: public FixedSizeNetPacketToServer<hitscan_object_CtoS
 };
 
 // hitscan: target = block
-class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
+class hitscan_block_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_block_CtoS>
 {
     public:
         uint16_t x,y,z;
@@ -397,7 +390,7 @@ class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
 
 // hitscan: target = none
 // server will convert this to a fire packet for clients
-class hitscan_none_CtoS: public FixedSizeNetPacketToServer<hitscan_none_CtoS>
+class hitscan_none_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_none_CtoS>
 {
     public:
         inline void packet(char* buff, int* buff_n, bool pack) 
@@ -406,7 +399,7 @@ class hitscan_none_CtoS: public FixedSizeNetPacketToServer<hitscan_none_CtoS>
 };
 
 // melee: target = voxel object
-class melee_object_CtoS: public FixedSizeNetPacketToServer<melee_object_CtoS>
+class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_CtoS>
 {
     public:
         uint16_t id;
@@ -430,7 +423,7 @@ class melee_object_CtoS: public FixedSizeNetPacketToServer<melee_object_CtoS>
 
 // melee: target = none
 // server will convert this to a fire packet for clients
-class melee_none_CtoS: public FixedSizeNetPacketToServer<melee_none_CtoS>
+class melee_none_CtoS: public FixedSizeReliableNetPacketToServer<melee_none_CtoS>
 {
     public:
         inline void packet(char* buff, int* buff_n, bool pack) 
@@ -454,7 +447,7 @@ class agent_dead_StoC: public FixedSizeReliableNetPacketToClient<agent_dead_StoC
         inline void handle();
 };
 
-class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
+class agent_health_StoC: public FixedSizeReliableNetPacketToClient<agent_health_StoC>
 {
     public:
         uint8_t id;
@@ -596,59 +589,7 @@ class AgentSuicides_StoC: public FixedSizeReliableNetPacketToClient<AgentSuicide
         inline void handle();
 };
 
-//class AgentActiveWeapon_StoC:  public FixedSizeReliableNetPacketToClient<AgentActiveWeapon_StoC>
-//{
-    //public:
-        //uint8_t id;
-        //uint8_t slot;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_u8(&slot, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class AgentActiveWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentActiveWeapon_CtoS>
-//{
-    //public:
-        //uint8_t slot;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&slot, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class AgentReloadWeapon_StoC: public FixedSizeReliableNetPacketToClient<AgentReloadWeapon_StoC>
-//{
-    //public:
-        //uint8_t id;
-        //uint8_t type;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_u8(&type, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentReloadWeapon_CtoS>
-//{
-    //public:
-        //uint8_t type;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&type, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-class agent_set_block_CtoS: public FixedSizeNetPacketToServer<agent_set_block_CtoS>
+class agent_set_block_CtoS: public FixedSizeReliableNetPacketToServer<agent_set_block_CtoS>
 {
     public:
         uint16_t x,y,z;
@@ -665,7 +606,7 @@ class agent_set_block_CtoS: public FixedSizeNetPacketToServer<agent_set_block_Ct
 };
 
 //#if !PRODUCTION
-class admin_set_block_CtoS: public FixedSizeNetPacketToServer<admin_set_block_CtoS>
+class admin_set_block_CtoS: public FixedSizeReliableNetPacketToServer<admin_set_block_CtoS>
 {
     public:
         uint16_t x,y,z;
@@ -803,7 +744,7 @@ class ping_reliable_CtoS: public FixedSizeReliableNetPacketToServer<ping_reliabl
         inline void handle();
 };
 
-class agent_conflict_notification_StoC: public FixedSizeNetPacketToClient<agent_conflict_notification_StoC>
+class agent_conflict_notification_StoC: public FixedSizeReliableNetPacketToClient<agent_conflict_notification_StoC>
 {
     public:
         uint8_t attacker;
@@ -842,7 +783,7 @@ class client_disconnected_StoC: public FixedSizeReliableNetPacketToClient<client
         inline void handle();
 };
 
-//class destroy_voxel_StoC: public FixedSizeNetPacketToClient<destroy_voxel_StoC>
+//class destroy_voxel_StoC: public FixedSizeReliableNetPacketToClient<destroy_voxel_StoC>
 //{
     //public:
         //uint8_t x,y,z;
@@ -873,14 +814,4 @@ class request_remaining_state_CtoS: public FixedSizeReliableNetPacketToServer<re
     {
     }
     inline void handle();
-};
-
-class dont_send_this_packet: public FixedSizeReliableNetPacketToClient<dont_send_this_packet>
-{
-    public:
-
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-    }
-    inline void handle() {}
 };

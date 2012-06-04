@@ -195,6 +195,7 @@ int run()
             Non-transparent
         */
 
+        glDisable(GL_TEXTURE_2D);
         GL_ASSERT(GL_TEXTURE_2D, false);
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);

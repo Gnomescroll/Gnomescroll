@@ -39,7 +39,7 @@ void send_version_to_client(int client_id)
  */
 void NetPeerManager::init(int client_id)
 {
-
+    printf("NetPeerManager: init client %d\n", client_id);
     if(client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) printf("FATAL ERROR: NetPeerManager::init, client id invalid \n");
     if (this->inited) 
     {

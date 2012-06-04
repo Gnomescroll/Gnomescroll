@@ -173,6 +173,7 @@ int init_c_lib()
     VoxDats::init();
     init_chat_server();
 
+    NetServer::init_globals();
     init_network();
 
     t_map::init_t_map();

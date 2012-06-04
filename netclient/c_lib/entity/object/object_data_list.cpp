@@ -7,8 +7,15 @@ namespace Objects
 
 void ObjectDataList::set_components(ObjectType type, int n_components)
 {
-    this->component_types[type] = (ComponentType*)malloc(n_components * sizeof(ComponentType));
-    this->interface_types[type] = (ComponentInterfaceType*)malloc(n_components * sizeof(ComponentInterfaceType));
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return;
+    GS_ASSERT(n_components >= 0);
+    if (n_components < 0) n_components = 0;
+    if (n_components > 0)
+    {
+        this->component_types[type] = (ComponentType*)malloc(n_components * sizeof(ComponentType));
+        this->interface_types[type] = (ComponentInterfaceType*)malloc(n_components * sizeof(ComponentInterfaceType));
+    }
     this->expected_component_sizes[type] = n_components;
 }
 

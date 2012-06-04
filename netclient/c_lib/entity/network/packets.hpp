@@ -274,7 +274,7 @@ class object_picked_up_StoC: public FixedSizeReliableNetPacketToClient<object_pi
 
 /* Shooting */
 
-class object_shot_object_StoC: public FixedSizeNetPacketToClient<object_shot_object_StoC>
+class object_shot_object_StoC: public FixedSizeReliableNetPacketToClient<object_shot_object_StoC>
 {
     public:
         uint16_t id;
@@ -300,7 +300,7 @@ class object_shot_object_StoC: public FixedSizeNetPacketToClient<object_shot_obj
     inline void handle();
 };
 
-class object_shot_terrain_StoC: public FixedSizeNetPacketToClient<object_shot_terrain_StoC>
+class object_shot_terrain_StoC: public FixedSizeReliableNetPacketToClient<object_shot_terrain_StoC>
 {
     public:
         uint16_t id;
@@ -322,7 +322,7 @@ class object_shot_terrain_StoC: public FixedSizeNetPacketToClient<object_shot_te
     inline void handle();
 };
 
-class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_nothing_StoC>
+class object_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<object_shot_nothing_StoC>
 {
     public:
         uint16_t id;
