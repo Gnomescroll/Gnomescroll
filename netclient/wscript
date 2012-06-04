@@ -259,10 +259,10 @@ def build(bld):
     bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
-    if '-DPRODUCTION=1' in bld.env.CXXFLAGS and '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS:
-        bld.add_post_fun(strip_symbols)
+    #if '-DPRODUCTION=1' in bld.env.CXXFLAGS and '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS:
+    #    bld.add_post_fun(strip_symbols)
 
-
+'''
 def strip_symbols(ctx):
     OS = platform.system()
     if OS == 'Linux':
@@ -271,6 +271,7 @@ def strip_symbols(ctx):
             subprocess.Popen(['strip', '-s', 'libc_lib.so'])
         if os.path.exists('./libfont_lib.so'):
             subprocess.Popen(['strip', '-s', 'libfont_lib.so'])
+'''
 
 def install_bin(ctx):
     global out

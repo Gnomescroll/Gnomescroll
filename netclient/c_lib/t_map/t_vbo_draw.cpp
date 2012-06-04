@@ -265,7 +265,9 @@ void Vbo_map::draw_map_comptability()
         } 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
         
-        glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
+        //glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
+
+        glUniform3f(map_ChunkPosition, vbo->wxoff, vbo->wyoff, 0.0f);
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
         glVertexAttribPointer(map_TexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
