@@ -455,7 +455,7 @@ void sum_octave(int octave)
 float sample(float x, float y, float z)
 {
 
-
+    return 0.0f;
 }
 
 };
