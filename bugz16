@@ -381,6 +381,13 @@ DONE
 graceful error handling for ~half of the GS_ASSERTs
 DONE
 
+refill toolbelt on death, if empty/low
+DONE
+
+lots of error handling, debugging.
+if running private production testing MAKE SURE TO CALL RUN LIKE: ./run lua/settings_dev.lua
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -396,6 +403,7 @@ some boxes arent getting destination correctly -- just jumping around with state
 glsl colored/textured voxels
 texture color problem in OSX -- for blocks and for items
 Hud Weapon sprites + animation
+map wrap doesnt render in opengl 2.1 mesa drivers
 
 == SOUND ==
 improve digging sounds
@@ -450,4 +458,6 @@ container state is desynced
 
 container locks not working
 
-refill toolbelt on death, if empty/low
+player shouldnt interact with inventory when dead
+--inventory should be closed, throwing anything in hand
+
