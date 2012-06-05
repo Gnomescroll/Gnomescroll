@@ -171,15 +171,15 @@ void close_inventory()
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 }
 
-void open_container(int container_id)
+bool open_container(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    if (container == NULL) return false;
     GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
-    if (!container->can_be_opened_by(ClientState::playerAgent_state.agent_id)) return;
+    if (!container->can_be_opened_by(ClientState::playerAgent_state.agent_id)) return false;
 
     // setup UI widget
     switch (container->type)
@@ -189,7 +189,7 @@ void open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
-            if (player_craft_bench == NULL) return;
+            if (player_craft_bench == NULL) return false;
             // setup ui
             if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
             player_craft_bench_ui = new ItemContainerUI(container_id);
@@ -204,7 +204,7 @@ void open_container(int container_id)
             GS_ASSERT(player_craft_bench_ui == NULL);
             
             storage_block = (ItemContainer*)container;
-            if (storage_block == NULL) return;
+            if (storage_block == NULL) return false;
             // setup ui
             if (storage_block_ui == NULL) delete storage_block_ui;
             storage_block_ui = new ItemContainerUI(container_id);
@@ -216,7 +216,7 @@ void open_container(int container_id)
 
         default:
             GS_ASSERT(false);
-            break;
+            return false;
     }
 
     opened_container = container_id;
@@ -227,6 +227,7 @@ void open_container(int container_id)
     msg.container_id = container_id;
     msg.event_id = opened_container_event_id;
     msg.send();
+    return true;
 }
 
 void close_container()
@@ -437,8 +438,8 @@ void assign_container_to_agent(ItemContainerInterface* container, int* container
     GS_ASSERT(container_list[agent_id] == NULL_ITEM);
     if (container == NULL) return;
     container_list[agent_id] = container->id;
-    container->assign_owner(agent_id);
     init_container(container);
+    container->assign_owner(agent_id);
     send_container_create(client_id, container->id);
     send_container_assign(client_id, container->id);
 }
@@ -715,6 +716,14 @@ void agent_died(int agent_id)
         send_container_close(agent_id, opened_containers[agent_id]);
         agent_close_container(agent_id, opened_containers[agent_id]);
     }
+
+    // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
+    if (agent_hand_list[agent_id] != NULL_ITEM)
+    {
+        if (a != NULL) send_hand_remove(a->client_id);
+        ItemParticle::throw_agent_item(agent_id, agent_hand_list[agent_id]);
+    }
+    agent_hand_list[agent_id] = NULL_ITEM;
 }
 
 void agent_quit(int agent_id)
@@ -724,7 +733,7 @@ void agent_quit(int agent_id)
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
-    // close opened container (this will also throw any items sitting in hand)
+    // close opened free container (this will throw any items sitting in hand)
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
         send_container_close(agent_id, opened_containers[agent_id]);
@@ -734,7 +743,12 @@ void agent_quit(int agent_id)
     GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
     opened_containers[agent_id] = NULL_CONTAINER;
 
-    GS_ASSERT(agent_hand_list[agent_id] == NULL_ITEM);
+    // still have to throw any items in hand, in case we have our private inventory opened
+    if (agent_hand_list[agent_id] != NULL_ITEM)
+    {
+        if (a != NULL) send_hand_remove(a->client_id);
+        ItemParticle::throw_agent_item(agent_id, agent_hand_list[agent_id]);
+    }
     agent_hand_list[agent_id] = NULL_ITEM;
 
     // throw all items away (inventory, toolbelt and nanite)

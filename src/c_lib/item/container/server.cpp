@@ -181,6 +181,9 @@ bool agent_open_container(int agent_id, int container_id)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
 
+    GS_ASSERT(!container->attached_to_agent);   // we shouldnt use this function for attached containers
+    if (container->attached_to_agent) return false;
+
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return false;
 
@@ -190,13 +193,16 @@ bool agent_open_container(int agent_id, int container_id)
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
         GS_ASSERT(opened != NULL);
         if (opened == NULL) return false;
-        opened->unlock(a->id);
         opened_containers[agent_id] = NULL_CONTAINER;
+        bool did_unlock = opened->unlock(a->id);
+        GS_ASSERT(did_unlock);
         broadcast_container_unlock(container_id, agent_id);
     }
 
     // place player lock on container if we want
-    container->lock(a->id);
+    bool did_lock = container->lock(a->id);
+    GS_ASSERT(did_lock);
+    GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
     opened_containers[agent_id] = container->id;
     // send new lock to players
     broadcast_container_lock(container->id);
@@ -214,6 +220,12 @@ void agent_close_container(int agent_id, int container_id)
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
 
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    GS_ASSERT(!container->attached_to_agent);
+    if (container->attached_to_agent) return;
+
     Agent_state* a = ServerState::agent_list->get(agent_id);
     
     // throw anything in hand
@@ -226,10 +238,8 @@ void agent_close_container(int agent_id, int container_id)
     
     opened_containers[agent_id] = NULL_CONTAINER;
 
-    ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return;
-
-    container->unlock(agent_id);
+    bool did_unlock = container->unlock(agent_id);
+    GS_ASSERT(did_unlock);
     broadcast_container_unlock(container->id, agent_id);
 }
 

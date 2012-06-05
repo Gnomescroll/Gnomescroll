@@ -74,10 +74,13 @@ void toggle_camera_mode();
 
 // container toggles
 void toggle_agent_container();
+void enable_agent_container();
+void disable_agent_container();
 void enable_crafting_container();
 void disable_crafting_container();
 void enable_storage_block_container();
 void disable_storage_block_container();
+void close_all_containers();
 
 // options
 void set_input_options(

@@ -24,30 +24,39 @@ void toggle_help_menu()
 }
 
 static bool rebind_mouse = false;
+
+void enable_agent_container()
+{
+    if (input_state.agent_container) return;
+    input_state.agent_container = true;
+    
+    t_hud::enable_agent_container_hud();
+    ItemContainer::open_inventory();
+    rebind_mouse = input_state.mouse_bound;
+    input_state.mouse_bound = false;
+}
+
+void disable_agent_container()
+{
+    if (!input_state.agent_container) return;
+    input_state.agent_container = false;
+    // poll mouse button state
+    // if left or right is unpressed, trigger an up event
+    int x,y;
+    Uint8 btns = SDL_GetMouseState(&x,&y);
+    if (!(btns & SDL_BUTTON_LEFT)) Toolbelt::left_trigger_up_event();
+    if (!(btns & SDL_BUTTON_RIGHT)) Toolbelt::right_trigger_up_event();
+    
+    t_hud::disable_agent_container_hud();
+    ItemContainer::close_inventory();
+    input_state.mouse_bound = rebind_mouse;
+    input_state.ignore_mouse_motion = true;
+}
+
 void toggle_agent_container()
 {
-    input_state.agent_container = (!input_state.agent_container);
-    if (input_state.agent_container)
-    {
-        t_hud::enable_agent_container_hud();
-        ItemContainer::open_inventory();
-        rebind_mouse = input_state.mouse_bound;
-        input_state.mouse_bound = false;
-    }
-    else
-    {
-        // poll mouse button state
-        // if left or right is unpressed, trigger an up event
-        int x,y;
-        Uint8 btns = SDL_GetMouseState(&x,&y);
-        if (!(btns & SDL_BUTTON_LEFT)) Toolbelt::left_trigger_up_event();
-        if (!(btns & SDL_BUTTON_RIGHT)) Toolbelt::right_trigger_up_event();
-        
-        t_hud::disable_agent_container_hud();
-        ItemContainer::close_inventory();
-        input_state.mouse_bound = rebind_mouse;
-        input_state.ignore_mouse_motion = true;
-    }
+    if (input_state.agent_container) disable_agent_container();
+    else enable_agent_container();
 }
 
 void enable_crafting_container()
@@ -109,6 +118,14 @@ void disable_storage_block_container()
     input_state.mouse_bound = rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
+
+void close_all_containers()
+{
+    if (input_state.crafting_block) disable_crafting_container();
+    else if (input_state.storage_block) disable_storage_block_container();
+    else disable_agent_container();
+}
+
 
 void toggle_scoreboard()
 {
@@ -383,9 +400,7 @@ void container_key_down_handler(SDL_Event* event)
     {
         case SDLK_e:
         case SDLK_ESCAPE:
-            if (input_state.crafting_block) disable_crafting_container();
-            else if (input_state.storage_block) disable_storage_block_container();
-            else toggle_agent_container();
+            close_all_containers();
             break;
 
         default: break;
@@ -492,9 +507,6 @@ void container_mouse_up_handler(SDL_Event* event)
 
 void container_mouse_motion_handler(SDL_Event* event)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.dead) return;
-
     //SDL_MouseMotionEvent e = event->motion;
 
     //printf("Motion type: %d\n", e.type);
