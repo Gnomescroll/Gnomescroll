@@ -181,6 +181,9 @@ bool agent_open_container(int agent_id, int container_id)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
 
+    GS_ASSERT(!container->attached_to_agent);   // we shouldnt use this function for attached containers
+    if (container->attached_to_agent) return false;
+
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return false;
 
@@ -217,6 +220,12 @@ void agent_close_container(int agent_id, int container_id)
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
 
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    GS_ASSERT(!container->attached_to_agent);
+    if (container->attached_to_agent) return;
+
     Agent_state* a = ServerState::agent_list->get(agent_id);
     
     // throw anything in hand
@@ -228,9 +237,6 @@ void agent_close_container(int agent_id, int container_id)
     agent_hand_list[agent_id] = NULL_ITEM;
     
     opened_containers[agent_id] = NULL_CONTAINER;
-
-    ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return;
 
     bool did_unlock = container->unlock(agent_id);
     GS_ASSERT(did_unlock);

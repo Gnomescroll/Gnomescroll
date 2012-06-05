@@ -400,6 +400,12 @@ DONE
 trigger ItemContainer::agent_died when switching teams
 DONE
 
+block container interactions at input,client container handling and CtoS handler levels, if player dead
+DONE
+
+close private inventory if player dies
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -468,6 +474,3 @@ container state is desynced?
 ./run() [0x8097e25]
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type
     -- this one might be when item is destroyed?
-    
-player shouldnt interact with inventory when dead
---inventory should be closed, throwing anything in hand

@@ -181,24 +181,31 @@ void init_container(ItemContainerInterface* container)
     switch (container->type)
     {
         case AGENT_CONTAINER:
+            container->attached_to_agent = true;
             container->init(AGENT_CONTAINER_X, AGENT_CONTAINER_Y);
             break;
         case AGENT_TOOLBELT:
+            container->attached_to_agent = true;
             container->init(AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
             break;
         case AGENT_NANITE:
+            container->attached_to_agent = true;
             container->init(AGENT_NANITE_X, AGENT_NANITE_Y);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+            container->attached_to_agent = false;
             container->init(CRAFTING_BENCH_UTILITY_X, CRAFTING_BENCH_UTILITY_Y);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+            container->attached_to_agent = false;
             container->init(CRAFTING_BENCH_REFINERY_X, CRAFTING_BENCH_REFINERY_Y);
             break;
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            container->attached_to_agent = false;
             container->init(CRYOFREEZER_SMALL_X, CRYOFREEZER_SMALL_Y);
             break;
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            container->attached_to_agent = false;
             container->init(STORAGE_BLOCK_SMALL_X, STORAGE_BLOCK_SMALL_Y);
             break;
         default:

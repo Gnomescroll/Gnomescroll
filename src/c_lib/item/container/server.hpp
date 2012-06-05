@@ -78,7 +78,7 @@ void send_container_close(int agent_id, int container_id);
 void send_container_open(int agent_id, int container_id);
 void send_open_container_failed(int client_id, int container_id, int event_id);
 
-// transactions
+// transactions on free containers (not private containers)
 bool agent_open_container(int agent_id, int container_id);
 void agent_close_container(int agent_id, int container_id);
 

@@ -6,6 +6,8 @@ dont_include_this_file_in_server
 
 #include <particle/billboard_text_hud.hpp>
 
+#include <input/handlers.hpp>
+
 #include <state/client_state.hpp>
 #include <sound/triggers.hpp>
 #include <chat/client.hpp>
@@ -142,7 +144,10 @@ void Agent_event::died()
     {
         this->a->status.dead = true;
         if (a->is_you())
+        {
+            close_all_containers();
             Sound::died();
+        }
         else
         {
             Vec3 p = this->a->get_position();

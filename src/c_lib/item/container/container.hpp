@@ -67,6 +67,8 @@ class ItemContainerInterface
         int owner;
         int chunk;  // TODO -- move to subclass
 
+        bool attached_to_agent; // true for containers permanently attached to agents (inventory, nanite)
+
         bool is_full()
         {
             GS_ASSERT(this->slot_count <= this->slot_max && this->slot_count >= 0);
@@ -88,6 +90,7 @@ class ItemContainerInterface
 
         void assign_owner(int owner)
         {
+            GS_ASSERT(this->attached_to_agent); // should only use this for attached containers
             this->owner = owner;
         }
 
@@ -109,6 +112,8 @@ class ItemContainerInterface
 
         virtual bool can_be_opened_by(int agent_id)
         {
+            GS_ASSERT(!this->attached_to_agent || this->owner != NO_AGENT);  // agent should be assigned
+            if (this->attached_to_agent && this->owner != agent_id) return false;
             return (this->owner == agent_id || this->owner == NO_AGENT);
         }
         virtual bool lock(int agent_id)
@@ -116,6 +121,8 @@ class ItemContainerInterface
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->can_be_opened_by(agent_id));
             if (!this->can_be_opened_by(agent_id)) return false;
+            GS_ASSERT(!this->attached_to_agent);
+            if (this->attached_to_agent) return false;
             this->owner = agent_id;
             return true;
         }
@@ -124,6 +131,8 @@ class ItemContainerInterface
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->owner != NO_AGENT);
             GS_ASSERT(this->owner == agent_id);
+            GS_ASSERT(!this->attached_to_agent);
+            if (this->attached_to_agent) return false;
             if (this->owner != agent_id) return false;
             this->owner = NO_AGENT;
             return true;
@@ -138,7 +147,8 @@ class ItemContainerInterface
         : id(id), type(type),
         xdim(0), ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
-        owner(NO_AGENT), chunk(0xffff)
+        owner(NO_AGENT), chunk(0xffff),
+        attached_to_agent(false)
         {}
 };
 
