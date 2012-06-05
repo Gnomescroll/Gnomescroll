@@ -214,7 +214,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
 
-    conf.env.INCLUDES += ['./', '../src/c_lib', '../src','../src/net_lib',  '/usr/include']
+    conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
     conf.env.RPATH = ['.', '..', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
     
 def build(bld):
