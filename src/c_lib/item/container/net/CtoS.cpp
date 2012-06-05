@@ -39,6 +39,8 @@ inline void container_action_alpha_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
     ItemContainerInterface* container = get_container(container_id);
@@ -68,6 +70,8 @@ inline void container_action_beta_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
     ItemContainerInterface* container = get_container(container_id);
@@ -98,6 +102,8 @@ inline void nanite_container_action_alpha_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
     ItemContainerInterface* container = get_container(container_id);
@@ -127,6 +133,8 @@ inline void nanite_container_action_beta_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
     ItemContainerInterface* container = get_container(container_id);
@@ -157,6 +165,8 @@ inline void purchase_item_from_nanite_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
     purchase_item_from_nanite(a->id, slot);
@@ -166,6 +176,8 @@ inline void craft_container_action_alpha_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
 
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
@@ -195,6 +207,8 @@ inline void craft_container_action_beta_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
     ItemContainerInterface* container = get_container(container_id);
@@ -225,6 +239,8 @@ inline void craft_item_from_bench_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
     craft_item_from_bench(a->id, container_id, slot);
@@ -234,6 +250,8 @@ inline void no_container_action_alpha_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
 
     ContainerActionType action = no_container_alpha_action_decision_tree(a->id, client_id);
 
@@ -255,6 +273,8 @@ inline void no_container_action_beta_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
 
     ContainerActionType action = no_container_beta_action_decision_tree(a->id, client_id);
 
@@ -278,6 +298,8 @@ inline void open_container_CtoS::handle()
     
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
 
     bool in_reach = agent_in_container_range(a->id, container_id);
     if (!in_reach)
@@ -302,6 +324,8 @@ inline void close_container_CtoS::handle()
 
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
 
     if (!agent_can_access_container(a->id, container_id)) return;
 
@@ -312,7 +336,8 @@ void create_container_block_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
-    if (a->status.team == 0) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
 
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;

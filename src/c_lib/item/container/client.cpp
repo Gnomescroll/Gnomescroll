@@ -295,6 +295,9 @@ static void send_no_container_beta_action(ContainerActionType action)
 
 void mouse_left_click_handler(int container_id, int slot, bool nanite_shopping, bool craft_output)
 {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.dead) return;
+    
     ContainerActionType action;
 
     int container_type = CONTAINER_TYPE_NONE;
@@ -360,6 +363,9 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite_shopping, 
 
 void mouse_right_click_handler(int container_id, int slot, bool nanite_shopping, bool craft_output)
 {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.dead) return;
+
     ContainerActionType action;
 
     int container_type = CONTAINER_TYPE_NONE;

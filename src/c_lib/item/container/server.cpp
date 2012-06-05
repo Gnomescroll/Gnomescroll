@@ -125,7 +125,7 @@ void send_container_state(int client_id, int container_id)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
-    send_container_lock(client_id, container_id);
+    if (container->owner != NO_AGENT) send_container_lock(client_id, container_id);
 }
 
 void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot)
