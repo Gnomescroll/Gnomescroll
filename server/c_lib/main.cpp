@@ -85,8 +85,8 @@ void tick()
     ServerState::ctf->tick();
 
     //ServerState::spawn_items(2);
-    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);
-    ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 12);
+    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 120);
+    ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 8);
 
     ItemContainer::digest_nanite_food();
     Toolbelt::update_toolbelt_items();

@@ -406,6 +406,12 @@ DONE
 close private inventory if player dies
 DONE
 
+map wrap rendering in intel gpu mode
+DONE [[ BRANDON ]]
+
+increase bombs, decrease fish
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -421,7 +427,6 @@ some boxes arent getting destination correctly -- just jumping around with state
 glsl colored/textured voxels
 texture color problem in OSX -- for blocks and for items
 Hud Weapon sprites + animation
-map wrap doesnt render in opengl 2.1 mesa drivers
 
 == SOUND ==
 improve digging sounds

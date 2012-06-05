@@ -8,7 +8,8 @@ namespace MapRecipes
 void simple_map()
 {
     using MapGen::generator;
-    
+
+    generator->seed(Options::seed);
     generator->max_size();
     //generator->size(512, 512, 128);
     //generator->tile((char*)"holy_stone");
