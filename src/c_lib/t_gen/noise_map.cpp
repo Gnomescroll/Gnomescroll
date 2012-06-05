@@ -127,7 +127,7 @@ class OctaveMap3D
         float n111= dot(_grad3[gi111], x-1, y-1, z-1);
         // Compute the fade curve value for each of x, y, z
         
-    #if 0
+    #if 1
         float u = fade(x);
         float v = fade(y);
         float w = fade(z);
