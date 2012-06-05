@@ -5,6 +5,8 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+#include <t_gen/noise_map2.hpp>
+
 namespace t_gen
 {
 
@@ -427,6 +429,10 @@ const float PERSISTANCE = 0.40;
 
 void noise_map_test()
 {
+
+    test_octave_2d();
+
+#if 0
     printf("df\n");
 
     PerlinOctave3D oct_0(6,4,8); //int _octaves, int base_x, int base_z
@@ -452,6 +458,7 @@ void noise_map_test()
     save_png("n_map_01", out, xres, yres);
 
     delete[] out;
+#endif
 }
 
 void noise_map_generate_map()
@@ -459,44 +466,9 @@ void noise_map_generate_map()
 #if DC_SERVER
     int tile = t_map::dat_get_cube_id("regolith");
 
-#if 0
 
-    PerlinField3D p3d(516514);
-
-    PerlinField2D p2d_0(51473, 128, 32); //(int seed, int _xs, int _grad_max)
-    PerlinField2D p2d_1(5141473, 16, 32); //(int seed, int _xs, int _grad_max)
-
-    int tile = t_map::dat_get_cube_id("regolith");
-
-    // set floor
-    for(int i=0; i<512; i++)
-    for(int j=0; j<512; j++)
-    {
-        t_map::set(i,j,0,tile);
-    }
-
-#else
-    PerlinOctave3D oct_0(6,4,8); //int _octaves, int base_x, int base_z
-
-    for(int i=0; i<512; i++)
-    for(int j=0; j<512; j++)
-    {
-        //float value = 64+8*p3d.noise(i,j,32.5);
-        float value = 64;
-        //value += 32*p2d_0.one_over_f(i,j);
-
-        float x = i;
-        float y = j;
-
-        value += 32*oct_0.sample(x+0.5, y+0.5, 32.5, 0.50);
-        //value += 32*oct_0.sample(x, y, 32.5, PERSISTANCE);
-
-        for (int k=0; k<value; k++) t_map::set(i,j,k,tile);
-
-
-        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
-    }
-#endif
+    test_octave_2d_map_gen(tile);
+    
 
 #endif
 }
