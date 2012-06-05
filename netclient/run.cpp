@@ -1,6 +1,6 @@
 
-#include <c_lib.cpp>
-#include <main.cpp>
+#include "./c_lib/c_lib.cpp"
+#include "./c_lib/main.cpp"
 #include <common/lua/lua.hpp>
 
 #include <SDL.h>
