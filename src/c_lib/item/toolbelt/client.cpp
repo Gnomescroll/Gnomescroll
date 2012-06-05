@@ -5,6 +5,7 @@ dont_include_this_file_in_server
 #endif
 
 #include <item/toolbelt/_state.hpp>
+#include <chat/interface.hpp>
 
 namespace Toolbelt
 {
@@ -69,8 +70,13 @@ bool toolbelt_item_beta_action()
     int container_id = playerAgent_state.facing_container();
     if (container_id == NULL_CONTAINER) return false;
 
-    ItemContainer::open_container(container_id);
-    return true;
+    bool opened = ItemContainer::open_container(container_id);
+    if (!opened)
+    {
+        const char msg[] = "This container is locked.";
+        chat_client->send_system_message((char*)msg);
+    }
+    return opened;
 }
 
 bool toolbelt_item_reload_action()

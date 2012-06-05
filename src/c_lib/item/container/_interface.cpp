@@ -171,15 +171,15 @@ void close_inventory()
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 }
 
-void open_container(int container_id)
+bool open_container(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    if (container == NULL) return false;
     GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
-    if (!container->can_be_opened_by(ClientState::playerAgent_state.agent_id)) return;
+    if (!container->can_be_opened_by(ClientState::playerAgent_state.agent_id)) return false;
 
     // setup UI widget
     switch (container->type)
@@ -189,7 +189,7 @@ void open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
-            if (player_craft_bench == NULL) return;
+            if (player_craft_bench == NULL) return false;
             // setup ui
             if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
             player_craft_bench_ui = new ItemContainerUI(container_id);
@@ -204,7 +204,7 @@ void open_container(int container_id)
             GS_ASSERT(player_craft_bench_ui == NULL);
             
             storage_block = (ItemContainer*)container;
-            if (storage_block == NULL) return;
+            if (storage_block == NULL) return false;
             // setup ui
             if (storage_block_ui == NULL) delete storage_block_ui;
             storage_block_ui = new ItemContainerUI(container_id);
@@ -216,7 +216,7 @@ void open_container(int container_id)
 
         default:
             GS_ASSERT(false);
-            break;
+            return false;
     }
 
     opened_container = container_id;
@@ -227,6 +227,7 @@ void open_container(int container_id)
     msg.container_id = container_id;
     msg.event_id = opened_container_event_id;
     msg.send();
+    return true;
 }
 
 void close_container()
