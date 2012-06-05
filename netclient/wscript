@@ -94,9 +94,9 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     if OS == 'Linux':
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
-        conf.env.append_value("LINKFLAGS", "-static") # static lib
-        conf.env.SHLIB_MARKER = '-Wl,-Bstatic'  # static lib
-    if OS == 'Darwin':
+        #conf.env.append_value("LINKFLAGS", "-static") # static lib
+        #conf.env.SHLIB_MARKER = '-Wl,-Bstatic'  # static lib
+    if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
     
     #version = get_version()
