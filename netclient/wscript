@@ -104,6 +104,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     if OS == 'Linux':
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
+        #conf.env.append_value("LINKFLAGS", "-static") # static lib
+        #conf.env.SHLIB_MARKER = '-Wl,-Bstatic'  # static lib
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
     
@@ -259,7 +261,6 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(
         features = 'cxx cxxprogram',
@@ -274,7 +275,7 @@ def build(bld):
     )
     bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
-    bld.add_post_fun(install_bin)
+    #bld.add_post_fun(install_bin)
     #if '-DPRODUCTION=1' in bld.env.CXXFLAGS and '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS:
     #    bld.add_post_fun(strip_symbols)
 
@@ -300,7 +301,10 @@ def install_bin(ctx):
         else:
             run_dest = 'run'
         try:
-            shutil.copy2(os.path.join(out, run_target), './' + run_dest)
+            src = os.path.join(out, run_target)
+            dest = './' + run_dest
+            shutil.copy2(src,dest)
+            print "Copied %s to %s" % (src,dest,)
         except Exception, e:
             pass
         #if OS == 'Linux':
@@ -315,16 +319,19 @@ def install_bin(ctx):
         
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
-        shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
+        src = os.path.join(out, c_lib_target)
+        dest = './' + c_lib_target
+        shutil.copy2(src,dest)
+        print "Copied %s to %s" % (src,dest,)
     except Exception, e:
         pass
 
-def ensure_dir(path):
-    try:
-        os.makedirs(path)
-    except OSError, e:
-        if e.errno != errno.EEXIST:
-            raise
+#def ensure_dir(path):
+    #try:
+        #os.makedirs(path)
+    #except OSError, e:
+        #if e.errno != errno.EEXIST:
+            #raise
 
 from waflib.Configure import ConfigurationContext
 class optimized_ctx(ConfigurationContext):

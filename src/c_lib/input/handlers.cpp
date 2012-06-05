@@ -377,6 +377,8 @@ void chat_mouse_motion_handler(SDL_Event* event){}
 
 void container_key_down_handler(SDL_Event* event)
 {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.dead) return;
     switch (event->key.keysym.sym)
     {
         case SDLK_e:
@@ -392,10 +394,14 @@ void container_key_down_handler(SDL_Event* event)
 
 void container_key_up_handler(SDL_Event* event)
 {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.dead) return;
 }
 
 void container_mouse_down_handler(SDL_Event* event)
 {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.dead) return;
     //// check intersection with any slots
 
     ////SDL_MouseButtonEvent e = event->button;
@@ -431,6 +437,9 @@ void container_mouse_down_handler(SDL_Event* event)
 
 void container_mouse_up_handler(SDL_Event* event)
 {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.dead) return;
+    
     Toolbelt::left_trigger_up_event(); // clear any trigger events
     Toolbelt::right_trigger_up_event(); // clear any trigger events
     
@@ -483,6 +492,9 @@ void container_mouse_up_handler(SDL_Event* event)
 
 void container_mouse_motion_handler(SDL_Event* event)
 {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.dead) return;
+
     //SDL_MouseMotionEvent e = event->motion;
 
     //printf("Motion type: %d\n", e.type);
