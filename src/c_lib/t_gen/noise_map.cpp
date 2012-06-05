@@ -803,7 +803,6 @@ float base(float x, float y, float z)
 }
 
 float sample2(float x, float y, float z)
-    return 0.0f;
 {
     int i = (int)(x /_xsf ); //for lerp
     int j = (int)(y /_xsf );
