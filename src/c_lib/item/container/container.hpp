@@ -111,20 +111,22 @@ class ItemContainerInterface
         {
             return (this->owner == agent_id || this->owner == NO_AGENT);
         }
-        virtual void lock(int agent_id)
+        virtual bool lock(int agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->can_be_opened_by(agent_id));
-            if (!this->can_be_opened_by(agent_id)) return;
+            if (!this->can_be_opened_by(agent_id)) return false;
             this->owner = agent_id;
+            return true;
         }
-        virtual void unlock(int agent_id)
+        virtual bool unlock(int agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->owner != NO_AGENT);
             GS_ASSERT(this->owner == agent_id);
-            if (this->owner != agent_id) return;
+            if (this->owner != agent_id) return false;
             this->owner = NO_AGENT;
+            return true;
         }
 
         virtual ~ItemContainerInterface()

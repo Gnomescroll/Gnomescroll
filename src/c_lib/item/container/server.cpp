@@ -190,13 +190,16 @@ bool agent_open_container(int agent_id, int container_id)
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
         GS_ASSERT(opened != NULL);
         if (opened == NULL) return false;
-        opened->unlock(a->id);
         opened_containers[agent_id] = NULL_CONTAINER;
+        bool did_unlock = opened->unlock(a->id);
+        GS_ASSERT(did_unlock);
         broadcast_container_unlock(container_id, agent_id);
     }
 
     // place player lock on container if we want
-    container->lock(a->id);
+    bool did_lock = container->lock(a->id);
+    GS_ASSERT(did_lock);
+    GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
     opened_containers[agent_id] = container->id;
     // send new lock to players
     broadcast_container_lock(container->id);
@@ -229,7 +232,8 @@ void agent_close_container(int agent_id, int container_id)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
-    container->unlock(agent_id);
+    bool did_unlock = container->unlock(agent_id);
+    GS_ASSERT(did_unlock);
     broadcast_container_unlock(container->id, agent_id);
 }
 
