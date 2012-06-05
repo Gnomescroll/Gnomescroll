@@ -13,9 +13,13 @@ extern NetPeer Server;
 
 }   // NetClient
 
+class Agent_state;
+
 namespace NetServer
 {
-    
+   
+
+
 const int HARD_MAX_CONNECTIONS = PLAYERS_MAX;
 
 int number_of_clients = 0;

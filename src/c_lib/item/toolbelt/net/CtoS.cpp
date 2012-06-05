@@ -22,7 +22,7 @@ inline void toolbelt_reload_action_CtoS::handle() {}
 
 inline void toolbelt_set_slot_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    class Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     bool item_changed = set_agent_toolbelt_slot(a->id, slot);
 
@@ -44,7 +44,7 @@ inline void toolbelt_begin_alpha_action_CtoS::handle()
 
 inline void toolbelt_end_alpha_action_CtoS::handle() 
 {
-    Agent_state* a = NetServer::agents[client_id];
+    class Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
