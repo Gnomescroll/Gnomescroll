@@ -147,7 +147,8 @@ void DynamicObjectList<Object_state, max_n>::resize(int new_size)
 }
 
 template <class Object_state, int max_n>
-Object_state* DynamicObjectList<Object_state, max_n>::create() {
+Object_state* DynamicObjectList<Object_state, max_n>::create()
+{
     //where();
     GS_ASSERT(n_max > 0);
     if (n_max <= 0) return NULL;
@@ -171,7 +172,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::create() {
 }
 
 template <class Object_state, int max_n>
-Object_state* DynamicObjectList<Object_state, max_n>::create(int id) {
+Object_state* DynamicObjectList<Object_state, max_n>::create(int id)
+{
     //where();
     if (id >= this->n_max)
     {   // need to resize
@@ -189,7 +191,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::create(int id) {
 }
 
 template <class Object_state, int max_n>
-Object_state* DynamicObjectList<Object_state, max_n>::get_or_create(int id) {
+Object_state* DynamicObjectList<Object_state, max_n>::get_or_create(int id)
+{
     //where();
     Object_state* obj = NULL;
     if (id < this->n_max) obj = a[id];

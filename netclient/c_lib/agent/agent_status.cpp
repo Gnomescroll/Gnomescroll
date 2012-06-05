@@ -492,6 +492,11 @@ void Agent_status::set_team(int team)
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();
+
+    // tell container we died
+    // the die() method also does this
+    // but we are not using the die() method here because of points scoring
+    ItemContainer::agent_died(this->a->id);
     #endif
 }
 

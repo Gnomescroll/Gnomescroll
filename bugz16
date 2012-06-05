@@ -391,6 +391,12 @@ DONE
 fix container locks
 DONE
 
+network container lock state
+DONE
+
+item ids should be rolling over; might not have been destroying source item for particles
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -449,6 +455,8 @@ Record time played per user
 <HaltingState> GS_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/item/_interface.cpp, line 60 function: get_stack_size 
 <HaltingState> Segmentation fault
 
+container state is desynced?
+
 ./run(_Z11print_tracev+0x26) [0x809bdd6]
 ./run(_ZN5t_hud8draw_hudEv+0x9ea) [0x81094da]
 ./run(_ZN4Main3runEv+0x746) [0x8128f86]
@@ -458,15 +466,9 @@ Record time played per user
 GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type
     -- this one might be when item is destroyed?
     
-container state is desynced
-
-network container locks so we dont blink inventory
-
 player shouldnt interact with inventory when dead
 --inventory should be closed, throwing anything in hand
 
 swapping nanite food doesnt reset the food counter
 
-item ids might not be rolling over
-
-close all temp locked containers when agent dies/quits
+inventory not dumped when switching teams
