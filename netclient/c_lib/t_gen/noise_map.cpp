@@ -460,16 +460,10 @@ class OctaveMap3D
         #endif
     }
 
-static inline float dot(const int g[], float x, float y, float z)
-{
-    #if 1
+    static inline float dot(const int g[], float x, float y, float z)
+    {
         return g[0]*x + g[1]*y + g[2]*z;
-    #else
-        float tmp =  g[0]*x + g[1]*y + g[2]*z;
-        printf("tmp= %f x,y,z= %f %f %f g1,g2,g3= %i %i %i \n", tmp, x,y,z, g[0],g[1],g[2] );
-        return tmp;
-    #endif
-}
+    }
 
     static inline float mix(float a, float b, float t) 
     {
@@ -524,7 +518,7 @@ static inline float dot(const int g[], float x, float y, float z)
         float n111= dot(_grad3[gi111], x-1, y-1, z-1);
         // Compute the fade curve value for each of x, y, z
         
-    #if 1
+    #if 0
         float u = fade(x);
         float v = fade(y);
         float w = fade(z);
@@ -636,6 +630,20 @@ class PerlinOctave3D
         for(int i=0; i<octaves; i++)
         {
             tmp += octave_array[i].sample(x,y,z);
+        }
+        return tmp;
+    }
+
+
+    float sample(float x, float y, float z, float persistance)
+    {
+
+        float p = 1.0;
+        float tmp = 0.0;
+        for(int i=octaves-1; i>=0; i--)
+        {
+            tmp += p*octave_array[i].sample(x,y,z);
+            p *= persistance;
         }
         return tmp;
     }
@@ -806,71 +814,12 @@ float sample2(float x, float y, float z)
 
 };
 
+const float PERSISTANCE = 0.40;
 
 void noise_map_test()
 {
-/*
-    PerlinField3D p3d(516514);
 
-    const int xres = 512;
-    const int yres = 512;
-
-    float* out = new float[xres*yres];
-
-    for(int i=0; i<xres; i++)
-    for(int j=0; j<yres; j++)
-    {
-        const float factor = 1.0;
-        float x = i*factor;
-        float y = j*factor;
-
-        out[i+j*yres] = p3d.noise(x,y,64.5);
-        //out[i+j*yres] = p3d.one_over_f(x,y,64.5);
-    }
-
-    save_png("n_map_00", out, xres, yres);
-
-    delete[] out;
-*/
-
-/*
-    //PerlinField2D p2d_1(515414, 64, 32); //(int seed, int _xs, int _grad_max)
-    PerlinField2D p2d_0(5141473, 64, 16); //(int seed, int _xs, int _grad_max)
-    PerlinField2D p2d_1(5141473, 32, 16); //(int seed, int _xs, int _grad_max)
-    PerlinField2D p2d_2(5154426, 16, 16); //(int seed, int _xs, int _grad_max)
-    PerlinField2D p2d_3(1541417, 8, 16); //(int seed, int _xs, int _grad_max)
-
-    const int xres = 512;
-    const int yres = 512;
-
-    float* out = new float[xres*yres];
-
-    for(int i=0; i<xres; i++)
-    for(int j=0; j<yres; j++)
-    {
-        float x = i;
-        float y = j;
-
-        float n = 0.0;
-
-        n += p2d_0.one_over_f(x,y) + 0.5;
-        //n += p2d_1.one_over_f(x,y);
-        //n += p2d_2.one_over_f(x,y);
-        //n += p2d_3.one_over_f(x,y);
-
-
-        //n = MIX(p2d_1.one_over_f(x,y), p2d_2.one_over_f(x,y), p2d_3.one_over_f(x,y));
-        //n = p2d_1.one_over_f(x,y);
-        //n *= p2d_0.abs(x,y);;
-        out[i+j*yres] = n;
-    }
-
-    save_png("n_map_01", out, xres, yres);
-
-    delete[] out;
-*/
-
-    PerlinOctave3D oct_0(6,4,4); //int _octaves, int base_x, int base_z
+    PerlinOctave3D oct_0(6,4,8); //int _octaves, int base_x, int base_z
 
     oct_0.populate_value_array();
 
@@ -885,7 +834,7 @@ void noise_map_test()
         float x = i;
         float y = j;
 
-        float n = oct_0.sample(x,y, 32.0);
+        float n = oct_0.sample(x,y, 32.0, PERSISTANCE);
         //printf("n= %f \n", n);
         out[i+j*yres] = n;
     }
@@ -897,7 +846,10 @@ void noise_map_test()
 
 void noise_map_generate_map()
 {
-    #if DC_SERVER
+#if DC_SERVER
+    int tile = t_map::dat_get_cube_id("regolith");
+
+#if 0
 
     PerlinField3D p3d(516514);
 
@@ -912,25 +864,9 @@ void noise_map_generate_map()
     {
         t_map::set(i,j,0,tile);
     }
-#if 0
-    double sum = 0.0;
-    for(int i=0; i<512; i++)
-    for(int j=0; j<512; j++)
-    {
-        //float value = 64+8*p3d.noise(i,j,32.5);
-        float value = 64;
-        //value += 32*p2d_0.one_over_f(i,j);
-        value += 1*p2d_1.one_over_f(i,j);
-
-        for (int k=0; k<value; k++) t_map::set(i,j,k,tile);
-
-
-        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
-    }
-    printf("NOISE MAP AVERAGE: = %f \n", (float) sum / (float)(512*512*32));
 
 #else
-    PerlinOctave3D oct_0(6,4,4); //int _octaves, int base_x, int base_z
+    PerlinOctave3D oct_0(6,4,8); //int _octaves, int base_x, int base_z
 
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)
@@ -938,7 +874,12 @@ void noise_map_generate_map()
         //float value = 64+8*p3d.noise(i,j,32.5);
         float value = 64;
         //value += 32*p2d_0.one_over_f(i,j);
-        value += 8*oct_0.sample(i,j, 32.5);
+
+        float x = i;
+        float y = j;
+
+        value += 32*oct_0.sample(x+0.5, y+0.5, 32.5, 0.50);
+        //value += 32*oct_0.sample(x, y, 32.5, PERSISTANCE);
 
         for (int k=0; k<value; k++) t_map::set(i,j,k,tile);
 
@@ -946,26 +887,8 @@ void noise_map_generate_map()
         //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
     }
 #endif
-    //float* noisemap = (float*)calloc(512*512, sizeof(float));
-    //int n_maps = 4;
-    //for (int n=0; n<n_maps; n++)
-    //{
-        //init_genrand(rand());
-        //for (int i=0; i<512; i++)
-        //for (int j=0; j<512; j++)
-            //noisemap[i+512*j] += p3d.noise(i,j,0);
-    //}
 
-    //for (int i=0; i<512; i++)
-    //for (int j=0; j<512; j++)
-    //{
-        //float value = noisemap[i + 512*j] / n_maps;
-        //int h = (value+1) * 32 + 1;
-        //for (int k=0; k<h; k++) t_map::set(i,j,k,tile);
-    //}
-    //free(noisemap);
-    
-    #endif
+#endif
 }
 
 
