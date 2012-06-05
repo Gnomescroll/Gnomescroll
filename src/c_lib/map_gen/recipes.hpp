@@ -9,7 +9,6 @@ void simple_map()
 {
     using MapGen::generator;
 
-    generator->seed(Options::seed);
     generator->max_size();
     //generator->size(512, 512, 128);
     //generator->tile((char*)"holy_stone");
@@ -17,8 +16,9 @@ void simple_map()
     generator->tile(tile);
     generator->interpolate(4,4,1);
     generator->scale(4.0f, 4.0f, 1.0f);
+    //generator->enable_heightmap(20, 35);
     generator->enable_heightmap(20, 35);
-    //generator->repeat(64,64,128);
+    generator->repeat(512,512,128);
 
     generator->p2();
 
@@ -31,8 +31,17 @@ void simple_map()
     generator->set_noise_parameters(octaves, persistence, amplitude, frequency, lacunarity);
 
     generator->start();
+
+    //octaves = 1;
+    persistence = 0.9f;
+    frequency = 2.0f;
+    generator->enable_heightmap(20,27);
+    generator->set_noise_parameters(octaves, persistence, amplitude, frequency, lacunarity);
+    generator->scale(16.0f,8.0f,1.0f);
+    generator->start();
     
     MapGen::reset();
+
 
     //int x = 512, y = 512, z = 128;
     //float* noisemap = create_noisemap(x,y,1);

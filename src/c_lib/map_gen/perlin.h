@@ -1,7 +1,7 @@
 #pragma once
 
 float pnoise1(float x, const int repeat, const int base);
-float pnoise2(float x, float y, const float repeatx, const float repeaty, const int base);
+float pnoise2(float x, float y, const int repeatx, const int repeaty, const int base);
 float pnoise3(float x, float y, float z, const int repeatx, const int repeaty, const int repeatz, const int base);
 
 float perlin1(float x, int repeat, int base);
