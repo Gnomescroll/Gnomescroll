@@ -12,6 +12,9 @@ import shutil
 import subprocess
 import re
 
+from waflib import Tools;
+Tools.c_preproc.go_absolute = True
+
 MAIN_TEST_CODE = """
 int main(int argc, char *argv[]) {
     return 0;
@@ -218,8 +221,14 @@ def configure(conf, add_flags=[], rm_flags=[]):
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
-
+    '''
+    P1 = os.path.abspath('../src/c_lib')
+    P2 = os.path.abspath('../src')
+    P3 = os.path.abspath('../src/net_lib')
+    conf.env.INCLUDES += [P1, P2, P3,  '/usr/include']
+    '''
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
+
     conf.env.RPATH = ['.', '..', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
     
 def build(bld):
