@@ -141,7 +141,7 @@ def build(bld):
     common_libraries = []
 
     ##attemping C++ build
-    #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(
         features = 'cxx cxxprogram',
         source = ['run.cpp',],
@@ -149,7 +149,7 @@ def build(bld):
         lib = time_lib,
         target = 'run'
     )
-    #bld.env.CXXFLAGS.remove('-fvisibility=hidden')
+    bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
     #if '-DPRODUCTION=1' in bld.env.CXXFLAGS:

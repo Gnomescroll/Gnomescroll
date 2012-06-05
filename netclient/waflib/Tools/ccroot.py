@@ -96,7 +96,8 @@ def to_incnodes(self, inlst):
 				else:
 					p = self.path.get_bld().make_node(x)
 					v = self.path.make_node(x)
-				p.mkdir()
+				if p.is_child_of(self.bld.bldnode):				
+					p.mkdir()
 				lst.append(p)
 				lst.append(v)
 	return lst
