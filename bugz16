@@ -397,6 +397,9 @@ DONE
 item ids should be rolling over; might not have been destroying source item for particles
 DONE
 
+trigger ItemContainer::agent_died when switching teams
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -468,7 +471,3 @@ GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.
     
 player shouldnt interact with inventory when dead
 --inventory should be closed, throwing anything in hand
-
-swapping nanite food doesnt reset the food counter
-
-inventory not dumped when switching teams

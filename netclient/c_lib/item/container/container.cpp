@@ -21,6 +21,7 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
+    //GS_ASSERT(item_id != this->get_item(slot));
     this->slot[slot] = item_id;
     this->slot_count++;
 
@@ -53,6 +54,7 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
+    //GS_ASSERT(item_id != this->get_item(slot));
     this->slot[slot] = item_id;
     this->slot_count++;
 
@@ -143,6 +145,7 @@ void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
+    //GS_ASSERT(item_id != this->get_item(slot));
     this->slot[slot] = item_id;
     this->slot_count++;
 
