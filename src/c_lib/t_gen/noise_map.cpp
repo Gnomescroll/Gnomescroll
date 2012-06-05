@@ -427,7 +427,7 @@ const float PERSISTANCE = 0.40;
 
 void noise_map_test()
 {
-    printf("dffdF\n");
+    printf("dff\n");
 
     PerlinOctave3D oct_0(6,4,8); //int _octaves, int base_x, int base_z
 

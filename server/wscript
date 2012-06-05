@@ -12,6 +12,8 @@ import platform
 import shutil
 import subprocess
 
+from waflib import Tools;
+Tools.c_preproc.go_absolute = True
 
 MAIN_TEST_CODE = """
 int main(int argc, char *argv[]) {
