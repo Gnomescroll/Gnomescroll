@@ -13,7 +13,7 @@ void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int ne
 class Agent_status {
 
     private:
-        Agent_state* a;
+        class Agent_state* a;
         int voxel_model_restore_throttle;
 
     public:

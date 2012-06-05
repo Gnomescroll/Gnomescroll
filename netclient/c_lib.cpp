@@ -49,7 +49,7 @@ dont_include_this_file_in_server
 #include <options/client_options.cpp>
 
 /* Network */
-#include <net_lib/_include.hpp>
+#include <net_lib/net_lib.h>
 
 //utility
 #include <common/gl_assert.hpp>

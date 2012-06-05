@@ -121,7 +121,7 @@ dont_include_this_file_in_client
 #include <map_gen/map_generator.cpp>
 #include <map_gen/recipes.cpp>
 
-#include <net_lib/net_lib.h>
+#include <net_lib/_include.hpp>
 
 #include <state/packet_init.cpp>
 #include <state/server_state.cpp>

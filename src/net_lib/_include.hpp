@@ -29,8 +29,9 @@
 #include <net_lib/common/message_handler.c>
 #include <net_lib/common/net_time.c>
 
-#include <net_lib/net.cpp>
 #include <net_lib/common/packet_id_counter.cpp>
+#include <net_lib/net_StoC.cpp>
+#include <net_lib/net_CtoS.cpp>
 
 #ifdef DC_SERVER
 #include <net_lib/common/net_peer_manager.cpp>
