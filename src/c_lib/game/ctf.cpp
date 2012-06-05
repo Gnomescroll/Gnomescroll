@@ -3,7 +3,16 @@
 #include <t_map/t_map.hpp>
 #include <game/packets.hpp>
 #include <common/random.h>
-#include <options/options.hpp>
+
+
+#if DC_CLIENT
+#include <options/client_options.hpp>
+#endif
+
+#if DC_SERVER
+#include <options/server_options.hpp>
+#endif
+
 
 #if DC_CLIENT
 #include <state/client_state.hpp>

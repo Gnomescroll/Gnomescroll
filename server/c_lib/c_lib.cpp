@@ -25,7 +25,7 @@ dont_include_this_file_in_client
 
 //options
 #include <options/option_macros.hpp>
-#include <options/options.cpp>
+#include <options/server_options.cpp>
  
 //utility
 #include <common/time/physics_timer.cpp>
