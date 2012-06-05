@@ -15,7 +15,8 @@ void regolith_post_processing()
         for(int i=0; i < MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT; i++)
         {
             c = main_map->chunk[i];
-
+            if(c == NULL) continue;
+            
             for(int z=0; z<TERRAIN_MAP_HEIGHT-1; z++)
             {
 	            for(int x=0; x<16; x++)
