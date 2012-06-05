@@ -1,5 +1,5 @@
 #include "./lib_c/c_lib.cpp"
-#include "./lib_n/main.cpp"
+#include "./lib_c/main.cpp"
 #include <c_lib/common/lua/lua.hpp>
 
 #include <stdio.h>
