@@ -18,6 +18,13 @@ int main(int argc, char *argv[]) {
 }
 """
 
+
+"""
+How do I build static C binaries?
+For gcc, set conf.env.SHLIB_MARKER = '-Wl,-Bstatic' to link all libraries in static mode,
+and add '-static' to the linkflags to make a fully static binary.
+"""
+
 _OS = None
 os_libpth = ''
 
