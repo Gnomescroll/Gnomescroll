@@ -284,7 +284,10 @@ def install_bin(ctx):
         else:
             run_dest = 'run'
         try:
-            shutil.copy2(os.path.join(out, run_target), './' + run_dest)
+            src = os.path.join(out, run_target)
+            dest = './' + run_dest
+            shutil.copy2(src,dest)
+            print "Copied %s to %s" % (src,dest,)
         except Exception, e:
             pass
         #if OS == 'Linux':
@@ -299,7 +302,10 @@ def install_bin(ctx):
         
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
-        shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
+        src = os.path.join(out, c_lib_target)
+        dest = './' + c_lib_target
+        shutil.copy2(src,dest)
+        print "Copied %s to %s" % (src,dest,)
     except Exception, e:
         pass
 
