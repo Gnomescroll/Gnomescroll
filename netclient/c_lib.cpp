@@ -46,7 +46,7 @@ dont_include_this_file_in_server
 
 /* configuration options */
 #include <options/option_macros.hpp>
-#include <options/options.cpp>
+#include <options/client_options.cpp>
 
 /* Network */
 #include <net_lib/net_lib.h>
