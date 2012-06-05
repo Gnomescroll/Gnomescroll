@@ -5,13 +5,8 @@
 #include <common/random.h>
 
 
-#if DC_CLIENT
-#include <options/client_options.hpp>
-#endif
+#include <options/options.hpp>
 
-#if DC_SERVER
-#include <options/server_options.hpp>
-#endif
 
 
 #if DC_CLIENT
