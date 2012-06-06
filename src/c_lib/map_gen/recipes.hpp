@@ -43,6 +43,9 @@ void simple_map()
     MapGen::reset();
 
 
+    //void erosion(const int x, const int y, const int passes, const int h_diff, const int max_iters);
+    map_gen::erosion(512,512, 1, 3, 10);
+
     //int x = 512, y = 512, z = 128;
     //float* noisemap = create_noisemap(x,y,1);
     //_oct = 1;

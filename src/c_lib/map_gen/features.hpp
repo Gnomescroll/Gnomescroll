@@ -15,4 +15,6 @@ void floor(int x, int y, int z_start, int height, int tile);
 void walls(int x, int y, int z_start, int height, int tile);
 void box(int x, int y, int z_start, int height, int tile);
 
+void erosion(const int x, const int y, const int passes, const int h_diff, const int max_iters);
+
 }   // map_gen

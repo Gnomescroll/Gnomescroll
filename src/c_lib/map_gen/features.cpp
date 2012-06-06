@@ -118,5 +118,65 @@ void box(int x, int y, int z_start, int height, int tile)
     map_gen::floor(x,y,z_start+height, 1, tile);
 }
 
+void erosion(const int x, const int y, const int passes, const int h_diff, const int max_iters)
+{
+    // iterate heights
+    // look at all 4 heights surrounding
+    // move 1 block from current height to lowest height until max height diff is at threshold
+    // or max iters reached
+
+    int heights[4];
+    int h_diffs[4];
+    int dis[4] = {1,-1,0,0};
+    int djs[4] = {0,0,-1,1};
+
+    for (int k=0; k<passes; k++)
+    {
+        for (int i=0; i<x; i++)
+        for (int j=0; j<y; j++)
+        {
+            int h = t_map::get_highest_solid_block(i,j);
+
+            // collect h diff info
+            int max_h = -1000;
+            int max_d = 0;
+            for (int m=0; m<4; m++)
+            {
+                heights[m] = t_map::get_highest_solid_block(i+dis[m],j+djs[m]);
+                h_diffs[m] = h-heights[m];
+                if (h_diffs[m] > max_h)
+                {
+                    max_h = h_diffs[m];
+                    max_d = m;
+                }
+            }
+
+            int tile = t_map::get(i,j,h);
+
+            // redistribute from high to low
+            int n = 0;
+            while (max_h > h_diff && n < max_iters)
+            {
+                t_map::set(i,j,h,0);
+                t_map::set(i+dis[max_d],j+djs[max_d],heights[max_d]+1,tile);
+                heights[max_d] += 1;
+                max_h -= 1;
+                for (int p=0; p<4; p++)
+                {
+                    if (h_diffs[p] > max_h)
+                    {
+                        max_h = h_diffs[p];
+                        max_d = p;
+                    }
+                }
+                n++;
+            }
+        }
+
+    }
+    
+    
+}
+
 }   // map_gen
 
