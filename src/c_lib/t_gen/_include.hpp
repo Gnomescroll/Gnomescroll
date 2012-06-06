@@ -8,6 +8,7 @@
 #include <t_gen/lib/gaussian.cpp>
 
 #include <t_gen/noise_map.cpp>
+#include <t_gen/noise_map2.hpp>
 
 #if DC_CLIENT
 #include <t_gen/perlin.hpp>

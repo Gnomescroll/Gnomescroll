@@ -328,7 +328,7 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
     /*
         DEBUGGING CODE, remove soon
     */
-    #if !PRODUCTION
+    #if 0
     //int id1 = cube_texture_palette_lookup[tile_id];
     int id2 = cube_texture_palette_lookup[tile_id] + element.palette;
     if(element.palette >= cube_texture_palette_lookup_max[tile_id] )
@@ -571,7 +571,8 @@ static inline void push_quad_comptability(struct Vertex* v_list, int offset, int
     //int iz = 0;
     //int iw = 0;
 
-    int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
+    //int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
+    int tile_tex = cube_texture_palette[ 6*( cube_texture_palette_lookup[tile_id] + element.palette ) + side ];
 
     int iz = (tile_tex % TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
     int iw = (tile_tex / TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
