@@ -196,7 +196,7 @@ bool open_container(int container_id)
             player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
             player_craft_bench_ui->load_data(player_craft_bench->slot);
             t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
-            if (opened_container == NULL_CONTAINER) opened_crafting_block = true;
+            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
@@ -211,7 +211,7 @@ bool open_container(int container_id)
             storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
             storage_block_ui->load_data(storage_block->slot);
             t_hud::set_container_id(storage_block->type, storage_block->id);
-            if (opened_container == NULL_CONTAINER) opened_storage_block = true;
+            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
         default:
@@ -251,10 +251,7 @@ void close_container()
     t_hud::close_container(opened_container);
 
     if (opened_container != NULL_CONTAINER)
-    {
-        closed_crafting_block = true;
-        closed_storage_block = true;
-    }
+        did_close_container_block = true;
     
     // send packet
     close_container_CtoS msg;
@@ -264,41 +261,26 @@ void close_container()
     opened_container = NULL_CONTAINER;
 }
 
-bool crafting_block_was_opened()
+bool container_block_was_opened(int* container_id)
 {
-    if (opened_crafting_block)
+    GS_ASSERT(container_id != NULL);
+    if (container_id == NULL) return false;
+
+    if (did_open_container_block)
     {
-        opened_crafting_block = false;
+        did_open_container_block = false;
+        *container_id = opened_container;
         return true;
     }
+    *container_id = NULL_CONTAINER;
     return false;
 }
 
-bool crafting_block_was_closed()
+bool container_block_was_closed()
 {
-    if (closed_crafting_block)
+    if (did_close_container_block)
     {
-        closed_crafting_block = false;
-        return true;
-    }
-    return false;
-}
-
-bool storage_block_was_opened()
-{
-    if (opened_storage_block)
-    {
-        opened_storage_block = false;
-        return true;
-    }
-    return false;
-}
-
-bool storage_block_was_closed()
-{
-    if (closed_storage_block)
-    {
-        closed_storage_block = false;
+        did_close_container_block = false;
         return true;
     }
     return false;

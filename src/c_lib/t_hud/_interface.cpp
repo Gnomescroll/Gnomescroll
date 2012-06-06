@@ -67,14 +67,13 @@ void close_container(int container_id)
 
 static bool agent_container_enabled = false;
 static bool container_block_enabled = false;
-static bool storage_block_enabled = false;
+static int container_block_enabled_id = NULL_CONTAINER;
 float mouse_x = -1;
 float mouse_y = -1;
 
 void enable_agent_container_hud()
 {
     GS_ASSERT(!container_block_enabled);
-    GS_ASSERT(!storage_block_enabled);
     agent_container_enabled = true;
 }
 
@@ -86,34 +85,21 @@ void disable_agent_container_hud()
     agent_container_enabled = false;
 }
 
-void enable_crafting_container_hud()
+void enable_container_block_hud(int container_id)
 {
     GS_ASSERT(!agent_container_enabled);
-    GS_ASSERT(!storage_block_enabled);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(container_block_enabled_id == NULL_CONTAINER);
     container_block_enabled = true;
+    container_block_enabled_id = container_id;
 }
 
-void disable_crafting_container_hud()
+void disable_container_block_hud()
 {
-    // reset mouse state
     mouse_x = -1;
     mouse_y = -1;
     container_block_enabled = false;
-}
-
-void enable_storage_block_hud()
-{
-    GS_ASSERT(!agent_container_enabled);
-    GS_ASSERT(!container_block_enabled);
-    storage_block_enabled = true;
-}
-
-void disable_storage_block_hud()
-{
-    // reset mouse state
-    mouse_x = -1;
-    mouse_y = -1;
-    storage_block_enabled = false;
+    container_block_enabled_id = NULL_CONTAINER;
 }
 
 static UIElement* get_container_and_slot(int x, int y, int* slot)
@@ -437,12 +423,40 @@ void draw_hud()
 {
     agent_toolbelt->draw();
 
-    if (!agent_container_enabled && !container_block_enabled && !storage_block_enabled) return;
+    if (!agent_container_enabled && !container_block_enabled) return;
 
     agent_container->draw();
     nanite_container->draw();
-    if (container_block_enabled) crafting_container->draw();
-    if (storage_block_enabled) storage_block->draw();
+    if (container_block_enabled)
+    {
+        GS_ASSERT(container_block_enabled_id != NULL_CONTAINER);
+        ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_block_enabled_id);
+        GS_ASSERT(container != NULL);
+        if (container != NULL)
+        {
+            int container_type = container->type;
+            GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+            switch (container_type)
+            {
+                case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+                    storage_block->draw();
+                    break;
+                case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+                    crafting_container->draw();
+                    break;
+                //case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
+                    //break;
+                //case CONTAINER_TYPE_CRAFTING_BENCH_SMELTER:
+                    //break;
+                //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+                    //break;
+
+                default:
+                    GS_ASSERT(false);
+                    break;
+            }
+        }
+    }
 
     draw_grabbed_icon();
     draw_tooltip();
