@@ -415,6 +415,9 @@ DONE
 using ItemGroup typedef
 DONE
 
+repair kits, heals 50, buy them from nanite
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -456,8 +459,6 @@ smelter
 craft bench levels
 
 == ITEMS ==
-repair kit
-^ add it to nanite store. drop it from fish
 
 == ANALYTICS ==
 Record time played per user

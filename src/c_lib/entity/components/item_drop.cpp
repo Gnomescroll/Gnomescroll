@@ -64,7 +64,11 @@ void ItemDropComponent::drop_item()
     Item::Item* item = Item::create_item(this->item_type);
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
+    
     // set stack size
+    int max_stack = Item::get_max_stack_size(this->item_type);
+    GS_ASSERT(amt <= max_stack);
+    if (amt > max_stack) amt = max_stack;
     item->stack_size = amt;
 
     // create item particle
