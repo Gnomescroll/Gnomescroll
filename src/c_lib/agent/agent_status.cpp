@@ -149,12 +149,17 @@ int Agent_status::apply_damage(int dmg)
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
 
+    this->send_health_msg();
+    
+    return this->health;
+}
+
+void Agent_status::send_health_msg()
+{
     agent_health_StoC health_msg;
     health_msg.id = a->id;
     health_msg.health = this->health;
     health_msg.sendToClient(a->client_id);
-
-    return this->health;
 }
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
@@ -422,10 +427,7 @@ void Agent_status::restore_health()
 {
     if (this->health == AGENT_HEALTH) return;
     this->health = AGENT_HEALTH;
-    agent_health_StoC health_msg;
-    health_msg.id = a->id;
-    health_msg.health = this->health;
-    health_msg.sendToClient(a->client_id);
+    this->send_health_msg();
 }
 
 void Agent_status::at_base()
@@ -548,12 +550,34 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
 }
 
 #if DC_SERVER
-bool Agent_status::gain_stack_item(ObjectType type, int id, int stack_size)
+bool Agent_status::consume_item(ItemID item_id)
 {
-/*
-    return this->inventory->auto_add_action(id, type, stack_size);
-*/
-    return false;
+    int item_type = Item::get_item_type(item_id);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE);
+    if (item_type == NULL_ITEM_TYPE) return false;
+    
+    ItemGroup item_group = Item::get_item_group_for_type(item_type);
+    GS_ASSERT(item_group == IG_CONSUMABLE);
+    if (item_group != IG_CONSUMABLE) return false;
+
+    Item::ItemAttribute* attr = Item::get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return false;
+
+    static const int repair_kit = Item::get_item_type("repair_kit");
+
+    if (item_type == repair_kit)
+    {
+        GS_ASSERT(attr->repair_agent_amount > 0);
+        this->heal(attr->repair_agent_amount);
+        this->send_health_msg();
+    }
+    else
+    {
+        assert(false);
+        return false;
+    }
+    return true;
 }
 #endif
 

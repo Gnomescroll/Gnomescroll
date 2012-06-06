@@ -57,6 +57,7 @@ class Agent_status {
         void set_spawner(int pt);
         void set_spawner();
 
+        void send_health_msg();
         void heal(unsigned int amt);
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
@@ -86,7 +87,7 @@ class Agent_status {
         const bool can_gain_item(ObjectType item);
         bool gain_item(int item_id, ObjectType item);
         #if DC_SERVER
-        bool gain_stack_item(ObjectType type, int id, int stack_size);
+        bool consume_item(ItemID item_id);
         #endif
         bool lose_item(ObjectType item);
 

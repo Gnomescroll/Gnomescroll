@@ -52,6 +52,7 @@ bool toolbelt_item_end_alpha_action()
         case IG_NONE:
             return true;
 
+        case IG_CONSUMABLE:
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:

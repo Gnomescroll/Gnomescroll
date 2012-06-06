@@ -122,7 +122,7 @@ int get_item_type(const char* name)
         if (strcmp(name, get_item_name(i)) == 0)
             return i;
     GS_ASSERT(false);
-    printf("%s:%d -- No item for name %s\n", __FUNCTION__, __LINE__, name);
+    printf("In function %s:%d -- No item for name %s\n", __FUNCTION__, __LINE__, name);
     return NULL_ITEM_TYPE;
 }
 

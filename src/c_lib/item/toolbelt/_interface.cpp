@@ -200,6 +200,7 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
             break;
 
         case IG_PLACER:
+        case IG_CONSUMABLE:
         case IG_HITSCAN_WEAPON:
         case IG_MELEE_WEAPON:
         case IG_GRENADE_LAUNCHER:
@@ -242,6 +243,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
         case IG_NANITE_COIN:
             break;
         
+        case IG_CONSUMABLE:
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:
@@ -279,6 +281,7 @@ void tick_local_agent_selected_item_type(int item_type)
         case IG_RESOURCE:
             break;
 
+        case IG_CONSUMABLE:
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_MELEE_WEAPON:
@@ -351,6 +354,9 @@ void trigger_local_agent_selected_item_type(int item_type)
             
         case IG_PLACER:
             ClientState::playerAgent_state.action.set_block(item_id);
+            break;
+
+        case IG_CONSUMABLE:
             break;
             
         default:
@@ -464,6 +470,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
         case IG_MINING_LASER:
             break;
 
+        case IG_CONSUMABLE:
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_MELEE_WEAPON:
@@ -536,6 +543,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             {   // item was destroyed, remove from hand
                 agent_selected_type[agent_id] = NULL_ITEM_TYPE;
                 agent_selected_item[agent_id] = NULL_ITEM;
+                item = NULL;
             }
             else if (stack_size != remaining_stack_size)
                 // we must send item updates ourself however. consume_stack_item only destroys
@@ -551,6 +559,21 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             if (item->durability != NULL_DURABILITY);
                 item->durability -= 1;
             break;
+
+        case IG_CONSUMABLE:
+            // consume the item
+            if (a != NULL && a->status.consume_item(item->id))
+            {
+                remaining_stack_size = Item::consume_stack_item(item->id);
+                if (remaining_stack_size <= 0)
+                {   // item was destroyed, remove from hand
+                    agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+                    agent_selected_item[agent_id] = NULL_ITEM;
+                    item = NULL;
+                }
+            }
+            break;
+
 
         default:
             GS_ASSERT(false);

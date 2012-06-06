@@ -51,6 +51,9 @@ class ItemAttribute
     // nanite
     bool nanite_food;
 
+    // health
+    unsigned int repair_agent_amount;
+
     ItemAttribute()
     // DONT PUT ANYTHING HERE OR BREAKS
     {
@@ -75,6 +78,7 @@ class ItemAttribute
         object_damage = 0;
         object_damage_min = 5;
         object_damage_max = 10;
+        repair_agent_amount = 0;
     }
 };
 

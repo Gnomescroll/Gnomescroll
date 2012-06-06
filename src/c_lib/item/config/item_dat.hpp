@@ -220,7 +220,7 @@ void load_item_dat()
     s.object_damage_max = 10;
 
     item_def(45, IG_RESOURCE, "graphite");
-    sprite_def(i0, 5,2);
+    sprite_def(i0, 2,5);
     s.pretty_name = (char*)"Graphite";
     s.max_stack_size = 64;
 
@@ -241,10 +241,11 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_2");
 
     item_def(48, IG_CONSUMABLE, "repair_kit");
-    sprite_def(i0, 8,2);
+    sprite_def(i0, 2,8);
     s.pretty_name = (char*)"Repair Kit";
     s.max_stack_size = 1;
-
+    s.repair_agent_amount = 50;
+    
     end_item_dat();
 }
 
