@@ -75,13 +75,13 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
     {
         printf("TextureSheetLoader::blit source_x less than 1: sheet_id= %i source_y= %i source_x= %i \n", sheet_id, source_x, source_y);
         GS_ASSERT(false);
-        return 0;
+        return 255;
     }
     if(source_y < 1)
     {
         printf("TextureSheetLoader::blit source_y less than 1: sheet_id= %i source_y= %i source_x= %i \n", sheet_id, source_x, source_y);
         GS_ASSERT(false);
-        return 0;
+        return 255;
     }
     source_y --;
     source_x --;

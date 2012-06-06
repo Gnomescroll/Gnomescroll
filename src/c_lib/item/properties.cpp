@@ -14,7 +14,7 @@ namespace Item
 {
 
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
-int group_array[MAX_ITEMS];
+ItemGroup group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
 class NaniteStoreItem* nanite_store_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
@@ -141,7 +141,7 @@ char* get_item_pretty_name(int item_type)
     return name;
 }
 
-int get_item_group_for_type(int item_type)
+ItemGroup get_item_group_for_type(int item_type)
 {
     GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
     if (item_type < 0 || item_type >= MAX_ITEMS) return IG_ERROR;

@@ -412,6 +412,9 @@ DONE [[ BRANDON ]]
 increase bombs, decrease fish
 DONE
 
+using ItemGroup typedef
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -434,10 +437,10 @@ improve digging sounds
 mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
-using ItemGroup typedef
 
 == UI/UX ==
 indicate where something can be placed
+--particularly, feeding the nanite
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
 alt tab doesnt work in fullscreen

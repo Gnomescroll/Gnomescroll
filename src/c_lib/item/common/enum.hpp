@@ -59,6 +59,7 @@ typedef enum
     IG_NANITE_COIN,
     IG_DEBUG,       // debug only items
     IG_UNKNOWN,     // used by recipes
+    IG_CONSUMABLE,
 } ItemGroup;
 
 /* No typedef for ItemType, use string names */

@@ -7,7 +7,7 @@ namespace Item
 
 extern int sprite_array[MAX_ITEMS];
 extern int type_array[MAX_ITEMS];
-extern int group_array[MAX_ITEMS];
+extern ItemGroup group_array[MAX_ITEMS];
 extern class ItemAttribute* item_attribute_array;
 
 extern class NaniteStoreItem* nanite_store_item_array;
@@ -39,7 +39,7 @@ int get_item_type(const char* name);
 
 char* get_item_pretty_name(int type);
 
-int get_item_group_for_type(int item_type);
+ItemGroup get_item_group_for_type(int item_type);
 
 int dat_get_item_type(const char* name);
 

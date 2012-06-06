@@ -16,7 +16,7 @@ void start_item_dat();
 void end_item_dat();
 
 int texture_alias(const char* spritesheet);
-void item_def(int id, int group, const char* name);
+void item_def(int id, ItemGroup group, const char* name);
 void sprite_def(int spritesheet, int xpos, int ypos);
 void sprite_def(int alias);
 int sprite_alias(int spritesheet, int xpos, int ypos);
@@ -31,7 +31,7 @@ class ItemAttribute s;
 
 int _current_item_id = 0;
 
-void item_def(int type, int group, const char* name)
+void item_def(int type, ItemGroup group, const char* name)
 {
     if(type != 0) _set_attribute(); //assumes first type defined is 0
 
@@ -70,7 +70,16 @@ void sprite_def(int spritesheet, int ypos, int xpos)
         GS_ASSERT(false);
     }
 
+    // check if we have already set this sprite
+    GS_ASSERT(sprite_array[_current_item_id] == ERROR_SPRITE);
+
     int index = LUA_blit_item_texture(spritesheet, xpos, ypos);
+    GS_ASSERT(index != 255);    // failure
+    
+    // check if we are already using this sprite
+    if (index != ERROR_SPRITE)
+        for (int i=0; i<MAX_ITEMS; i++) GS_ASSERT(sprite_array[i] != index);
+
     sprite_array[_current_item_id] = index; //check
 }
 

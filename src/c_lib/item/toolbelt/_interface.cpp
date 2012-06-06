@@ -70,7 +70,7 @@ void tick()
     {
         if (!agent_fire_on[i]) continue;
         int item_type = agent_selected_type[i];
-        int item_group = Item::get_item_group_for_type(item_type);
+        ItemGroup item_group = Item::get_item_group_for_type(item_type);
 
         // use fist for everything that isnt a known weapon
         if (item_type == NULL_ITEM_TYPE
@@ -297,7 +297,7 @@ void tick_local_agent_selected_item_type(int item_type)
 void trigger_local_agent_selected_item_type(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) item_type = Item::get_item_type((char*)"fist");
-    int group = Item::get_item_group_for_type(item_type);
+    ItemGroup group = Item::get_item_group_for_type(item_type);
 
     // get container state for ui prediction
     if (toolbelt_id == NULL_CONTAINER) return;
@@ -443,7 +443,7 @@ namespace Toolbelt
 // use for continuous click-and-hold weapons
 void tick_agent_selected_item(int agent_id, ItemID item_id)
 {
-    int group = IG_NONE;    // empty hand
+    ItemGroup group = IG_NONE;    // empty hand
     if (item_id != NULL_ITEM)
     {
         Item::Item* item = Item::get_item(item_id);
@@ -489,7 +489,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     Agent_state* a = ServerState::agent_list->get(agent_id);
 
     Item::Item* item = NULL;
-    int group = IG_NONE;    // empty hand
+    ItemGroup group = IG_NONE;    // empty hand
     if (item_id != NULL_ITEM)
     {
         item = Item::get_item(item_id);

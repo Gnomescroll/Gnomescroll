@@ -240,6 +240,11 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_2");
 
+    item_def(48, IG_CONSUMABLE, "repair_kit");
+    sprite_def(i0, 8,2);
+    s.pretty_name = (char*)"Repair Kit";
+    s.max_stack_size = 1;
+
     end_item_dat();
 }
 
