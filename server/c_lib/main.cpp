@@ -19,7 +19,7 @@ void init()
     // generate floor map
     //_floor(512,512,0,32,1);
     
-    if(0)
+    if(1)
     {
         MapGen::init();
         MapRecipes::simple_map();
