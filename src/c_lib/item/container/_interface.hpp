@@ -28,11 +28,6 @@ void close_container();
 void open_inventory();
 void close_inventory();
 
-bool crafting_block_was_opened();
-bool crafting_block_was_closed();
-bool storage_block_was_opened();
-bool storage_block_was_closed();
-
 int get_event_container_id(int event_id);
 class ItemContainerUIInterface* get_container_ui(int container_id);
 ItemID get_toolbelt_item(int slot);

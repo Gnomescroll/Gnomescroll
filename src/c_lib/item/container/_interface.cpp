@@ -199,6 +199,7 @@ bool open_container(int container_id)
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             GS_ASSERT(player_craft_bench == NULL);
             GS_ASSERT(player_craft_bench_ui == NULL);
@@ -629,7 +630,7 @@ void agent_born(int agent_id)
         if (!added) Item::destroy_item_silently(crate->id);
     }
     
-    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    crate = Item::create_item(Item::get_item_type((char*)"cryofreezer_1"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {

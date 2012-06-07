@@ -53,7 +53,6 @@ int get_cube_id(char* name);
 
 int dat_get_cube_id(const char* name);  //use for dat files
 
-ItemContainerType get_container_type_for_block(int block_value);
 }   // t_map
 
 

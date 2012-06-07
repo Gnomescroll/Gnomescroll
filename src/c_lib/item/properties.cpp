@@ -19,6 +19,8 @@ class ItemAttribute* item_attribute_array = NULL;
 class NaniteStoreItem* nanite_store_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
 
+ItemContainerType container_block_types[t_map::MAX_CUBES];    // maps block value -> container type
+
 // buffers for condensing craft bench inputs to unique type,count pairs
 int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
 int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
@@ -31,6 +33,8 @@ void init_properties()
 {
     for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
     for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_ERROR);
+    
+    for (int i=0; i<t_map::MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
 
     GS_ASSERT(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
@@ -405,5 +409,13 @@ bool container_type_is_block(ItemContainerType type)
     }
     return false;
 }
+
+ItemContainerType get_container_type_for_block(int block_value)
+{
+    GS_ASSERT(block_value >= 0 && block_value < t_map::MAX_CUBES);
+    if (block_value < 0 || block_value >= t_map::MAX_CUBES) return CONTAINER_TYPE_NONE;
+    return container_block_types[block_value];
+}
+
 
 }   // Item

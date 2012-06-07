@@ -76,17 +76,25 @@ class StorageBlockUI : public UIElement
 
     void center()
     {
-        this->yoff = -150.0 + (_yresf + this->height())/2;
+        printf("Centering\n");
+        int x = _xresf - this->width();
+        float off = 0;
+        if (x % 2) off = 1;
+        this->xoff = x/2 + off;
     }
 
     void refresh_render_size()
     {
         this->render_width = this->cell_size * this->xdim;
         this->render_height = this->cell_size * this->ydim;
+        printf("Render width: %0.2f\n", this->render_width);
+        printf("Render height: %0.2f\n", this->render_height);
     }
 
     void set_container_type(int container_type)
     {
+        if (this->container_type == container_type) return;
+        
         this->container_type = container_type;
 
         switch (container_type)

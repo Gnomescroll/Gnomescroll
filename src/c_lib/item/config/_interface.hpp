@@ -25,6 +25,7 @@ void _set_attribute();
 void set_attribute();
 
 void iso_block_sprite_def(const char* block_name);
+void container_block_def(const char* block_name, ItemContainerType container_type);
 
 
 class ItemAttribute s;
@@ -54,6 +55,15 @@ void _set_attribute()
     item_attribute_array[_current_item_id] = s;
 }
 
+ItemContainerType _current_container_type = CONTAINER_TYPE_NONE;
+
+void container_block_def(const char* block_name, ItemContainerType container_type)
+{
+    int val = t_map::get_cube_id((char*)block_name);
+    GS_ASSERT(val >= 0 && val < t_map::MAX_CUBES);
+    if (val < 0 || val >= t_map::MAX_CUBES) return;
+    container_block_types[val] = container_type;
+}
 
 #if DC_CLIENT
 
@@ -104,8 +114,7 @@ void sprite_def(int alias) {}
 int sprite_alias(int spritesheet, int xpos, int ypos) { return 0; }
 #endif
 
-
-}
+}   // Item
 
 
 namespace Item
@@ -182,7 +191,7 @@ void end_recipe()
     _current_reagent_id = 0;
 }
 
-}
+}   // Item
 
 
 namespace Item
@@ -223,5 +232,4 @@ void nanite_item_set(int level, int xslot, int yslot)
     _current_nanite_item_type++;
 }
 
-
-}
+}   // Item

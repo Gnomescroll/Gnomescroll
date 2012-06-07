@@ -15,6 +15,8 @@ extern class NaniteStoreItem* nanite_store_item_array;
 extern class NaniteStoreItem* nanite_store_item_array;
 extern class CraftingRecipe* crafting_recipe_array;
 
+extern ItemContainerType container_block_types[t_map::MAX_CUBES]; // maps block value -> container type
+
 // buffers for condensing craft bench inputs to unique type,count pairs
 extern int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
 extern int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
@@ -69,5 +71,7 @@ int get_selected_craft_recipe_type(int container_id, int slot, bool* available);
 int get_selected_craft_recipe_stack(int container_id, int slot);
 
 bool container_type_is_block(ItemContainerType type);
+
+ItemContainerType get_container_type_for_block(int block_value);
 
 }   // Item

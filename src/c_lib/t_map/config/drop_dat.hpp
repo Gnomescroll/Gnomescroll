@@ -46,6 +46,9 @@ void load_map_drop_dat()
     def_drop("crate_3");
         drop_always("crate_3");
 
+    def_drop("cryofreezer_1");
+        drop_always("cryofreezer_1");
+
     end_drop_dat();
     #if DC_CLIENT
     save_drop_dat_to_file();

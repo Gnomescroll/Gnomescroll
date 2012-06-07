@@ -70,8 +70,8 @@ inline void assign_item_container_StoC::handle()
 
 inline void insert_item_in_container_StoC::handle()
 {
-    GS_ASSERT(item_id >= 0 && item_id < MAX_ITEMS && item_id != NULL_ITEM);
-    if (item_id < 0 || item_id == NULL_ITEM || item_id >= MAX_ITEMS) return;
+    GS_ASSERT(item_id >= 0 && item_id != NULL_ITEM);
+    if (item_id < 0 || item_id == NULL_ITEM) return;
 
     ItemContainerInterface* ic = get_container(container_id);
     ASSERT_NOT_NULL(ic);
@@ -98,8 +98,8 @@ inline void remove_item_from_container_StoC::handle()
 
 inline void insert_item_in_hand_StoC::handle()
 {
-    GS_ASSERT(item_id >= 0 && item_id < MAX_ITEMS && item_id != NULL_ITEM);
-    if (item_id < 0 || item_id == NULL_ITEM || item_id >= MAX_ITEMS) return;
+    GS_ASSERT(item_id >= 0 && item_id != NULL_ITEM);
+    if (item_id < 0 || item_id == NULL_ITEM) return;
     player_hand = (ItemID)item_id;
     int item_type = Item::get_item_type((ItemID)item_id);
     int item_stack = Item::get_stack_size((ItemID)item_id);

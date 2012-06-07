@@ -353,6 +353,7 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
         case AGENT_CONTAINER:
         case AGENT_TOOLBELT:
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             return new ItemContainer((ItemContainerType)type, id);
 
         case AGENT_NANITE:

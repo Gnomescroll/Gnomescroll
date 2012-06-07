@@ -345,7 +345,7 @@ void create_container_block_CtoS::handle()
     if (attr == NULL) return;
     int val = attr->placer_block_type_id;
 
-    ItemContainerType container_type = t_map::get_container_type_for_block(val);
+    ItemContainerType container_type = Item::get_container_type_for_block(val);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
     GS_ASSERT(orientation >= 0 && orientation <= 3);

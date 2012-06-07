@@ -41,6 +41,7 @@ void set_container_id(ItemContainerType container_type, int container_id)
             //break;
 
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             storage_block->container_id = container_id;
             break;
             
@@ -502,7 +503,7 @@ void init()
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
     storage_block->set_container_type(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     storage_block->centered = true;
-    storage_block->xoff = (_xresf - storage_block->width())/2 + 1;
+    storage_block->yoff = -150.0 + (_yresf + storage_block->height())/2;
     storage_block->init();
 
     grabbed_icon_stack_text = new HudText::Text;

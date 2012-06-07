@@ -103,6 +103,8 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_2");
+    s.container_type = CONTAINER_TYPE_STORAGE_BLOCK_SMALL;
+    container_block_def("crate_2", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
 
     // level 1 utility crafting block
     item_def(17, IG_PLACER, "crate_3");
@@ -112,6 +114,8 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_3");
+    s.container_type = CONTAINER_TYPE_CRAFTING_BENCH_UTILITY;
+    container_block_def("crate_3", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
 
     // Copper
     item_def(32, IG_RESOURCE, "copper_ore");
@@ -245,6 +249,16 @@ void load_item_dat()
     s.pretty_name = (char*)"Repair Kit";
     s.max_stack_size = 1;
     s.repair_agent_amount = 50;
+
+    item_def(49, IG_PLACER, "cryofreezer_1");
+    iso_block_sprite_def("cryofreezer_1");
+    s.pretty_name = (char*)"Small Cryofreezer";
+    s.placer_block_type_id = t_map::dat_get_cube_id("cryofreezer_1");
+    s.max_stack_size = 1;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"cryofreezer_1");
+    s.container_type = CONTAINER_TYPE_CRYOFREEZER_SMALL;
+    container_block_def("cryofreezer_1", CONTAINER_TYPE_CRYOFREEZER_SMALL);
     
     end_item_dat();
 }

@@ -54,6 +54,8 @@ class ItemAttribute
     // health
     unsigned int repair_agent_amount;
 
+    ItemContainerType container_type;
+
     ItemAttribute()
     // DONT PUT ANYTHING HERE OR BREAKS
     {
@@ -79,6 +81,7 @@ class ItemAttribute
         object_damage_min = 5;
         object_damage_max = 10;
         repair_agent_amount = 0;
+        container_type = CONTAINER_TYPE_NONE;
     }
 };
 

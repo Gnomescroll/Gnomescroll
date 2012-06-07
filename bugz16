@@ -421,6 +421,9 @@ DONE
 parameterize open/close container input handling shit
 DONE
 
+container type loading for storage block ui element
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies

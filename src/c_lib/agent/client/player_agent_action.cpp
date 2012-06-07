@@ -339,7 +339,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return true;
     int val = attr->placer_block_type_id;
-    if (t_map::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
+    if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
         ItemContainer::create_container_block_CtoS msg;
         msg.x = b[0];

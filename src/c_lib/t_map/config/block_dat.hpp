@@ -127,7 +127,7 @@ void load_block_dat()
     set_max_dmg(128);
 
 
-    cube_def(9, ItemContainerBlock, "cyrofreezer");
+    cube_def(9, ItemContainerBlock, "cryofreezer_1");
     iso_texture(t1, 14,2);
     side_texture(T, t1, 14,2);
     side_texture(B, t1, 14,2);

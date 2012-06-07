@@ -22,6 +22,9 @@ void load_nanite_store()
     nanite_item_def("crate_2", 5);
     nanite_item_set(0, 1,1);
 
+    nanite_item_def("cryofreezer_1", 3);
+    nanite_item_set(0, 1,2);
+
     nanite_item_def("repair_kit", 3);
     nanite_item_set(0, 0,2);
 
