@@ -30,6 +30,13 @@ void enable_agent_container()
     if (input_state.agent_container) return;
     input_state.agent_container = true;
     
+    // force set the mouse position
+    // because we wont have a motion event coming in initially sometimes
+    SDL_ShowCursor(0);
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+    t_hud::set_mouse_position(x,y);
+
     t_hud::enable_agent_container_hud();
     ItemContainer::open_inventory();
     rebind_mouse = input_state.mouse_bound;
@@ -71,6 +78,7 @@ void enable_container_block(int container_id)
     
     // force set the mouse position
     // because we wont have a motion event coming in initially sometimes
+    SDL_ShowCursor(0);
     int x,y;
     SDL_GetMouseState(&x, &y);
     t_hud::set_mouse_position(x,y);

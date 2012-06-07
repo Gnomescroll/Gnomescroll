@@ -100,6 +100,11 @@ class CraftingUI : public UIElement
         }
     }
 
+    void set_container_type(int container_type)
+    {
+        this->container_type = container_type;
+    }
+
     CraftingUI()
     : stacks(NULL), output_stacks(NULL)
     {}

@@ -439,16 +439,18 @@ void draw_hud()
             switch (container_type)
             {
                 case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+                case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+                    storage_block->set_container_type(container_type);
                     storage_block->draw();
                     break;
+
                 case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
                     crafting_container->draw();
                     break;
+
                 //case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
                     //break;
                 //case CONTAINER_TYPE_CRAFTING_BENCH_SMELTER:
-                    //break;
-                //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
                     //break;
 
                 default:
@@ -498,8 +500,9 @@ void init()
 
     storage_block = new StorageBlockUI;
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
+    storage_block->set_container_type(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    storage_block->centered = true;
     storage_block->xoff = (_xresf - storage_block->width())/2 + 1;
-    storage_block->yoff = -150.0 + (_yresf + storage_block->height())/2;
     storage_block->init();
 
     grabbed_icon_stack_text = new HudText::Text;

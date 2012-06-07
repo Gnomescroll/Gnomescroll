@@ -17,6 +17,9 @@ class UIElement
         float yoff;
 
         int container_id;
+        int container_type;
+
+        GLuint* texture;
 
         void set_position(float x, float y)
         {
@@ -30,8 +33,14 @@ class UIElement
         virtual int get_slot_at(int px, int py) = 0;
         virtual bool point_inside(int px, int py) = 0;
 
+        virtual void set_container_type(int container_type) { this->type = type; }
+
         UIElement()
-        : type(UI_ELEMENT_NONE), visible(false), xoff(0), yoff(0), container_id(NULL_CONTAINER)
+        :
+        type(UI_ELEMENT_NONE),
+        visible(false), xoff(0), yoff(0),
+        container_id(NULL_CONTAINER), container_type(CONTAINER_TYPE_NONE),
+        texture(NULL)
         {}
     
         virtual ~UIElement() {} //abc virtual deconstructor
