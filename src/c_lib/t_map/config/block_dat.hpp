@@ -134,7 +134,7 @@ void load_block_dat()
     side_texture(N, t1, 14,3);
     push_oriented_texture();
 
-    hud_def(2,3,t1,14,1);
+    hud_def(2,4,t1,14,1);
     set_max_dmg(128);
 
 /*
