@@ -48,6 +48,18 @@ void ItemContainer::remove_item(int slot)
     this->slot_count--;
 }
 
+/* Cryofreezer */
+void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
+{   // reset gas decay
+    #if DC_SERVER
+    Item::Item* item = Item::get_item(item_id);
+    GS_ASSERT(item != NULL);
+    if (item != NULL) item->gas_decay = ITEM_GAS_LIFETIME;
+    #endif
+    ItemContainer::insert_item(slot, item_id);
+}
+
+
 /* Nanite */
 
 void ItemContainerNanite::insert_item(int slot, ItemID item_id)

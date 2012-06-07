@@ -187,6 +187,8 @@ bool open_container(int container_id)
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             GS_ASSERT(storage_block == NULL);
             GS_ASSERT(storage_block_ui == NULL);
+            GS_ASSERT(cryofreezer == NULL);
+            GS_ASSERT(cryofreezer_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
             if (player_craft_bench == NULL) return false;
@@ -199,10 +201,11 @@ bool open_container(int container_id)
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             GS_ASSERT(player_craft_bench == NULL);
             GS_ASSERT(player_craft_bench_ui == NULL);
+            GS_ASSERT(cryofreezer == NULL);
+            GS_ASSERT(cryofreezer_ui == NULL);
             
             storage_block = (ItemContainer*)container;
             if (storage_block == NULL) return false;
@@ -212,6 +215,23 @@ bool open_container(int container_id)
             storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
             storage_block_ui->load_data(storage_block->slot);
             t_hud::set_container_id(storage_block->type, storage_block->id);
+            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            break;
+
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            GS_ASSERT(player_craft_bench == NULL);
+            GS_ASSERT(player_craft_bench_ui == NULL);
+            GS_ASSERT(storage_block == NULL);
+            GS_ASSERT(storage_block_ui == NULL);
+            
+            cryofreezer = (ItemContainerCryofreezer*)container;
+            if (cryofreezer == NULL) return false;
+            // setup ui
+            if (cryofreezer_ui == NULL) delete cryofreezer_ui;
+            cryofreezer_ui = new ItemContainerUI(container_id);
+            cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
+            cryofreezer_ui->load_data(cryofreezer->slot);
+            t_hud::set_container_id(cryofreezer->type, cryofreezer->id);
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
@@ -247,6 +267,10 @@ void close_container()
     storage_block = NULL;
     if (storage_block_ui != NULL) delete storage_block_ui;
     storage_block_ui = NULL;
+
+    cryofreezer = NULL;
+    if (cryofreezer_ui != NULL) delete cryofreezer_ui;
+    cryofreezer_ui = NULL;
 
     // unset hud container id
     t_hud::close_container(opened_container);

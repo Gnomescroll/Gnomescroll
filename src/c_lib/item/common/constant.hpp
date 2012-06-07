@@ -49,3 +49,5 @@ const float NULL_FIRING_RANGE = 0.0f;
 const float DEFAULT_FIRING_RANGE = 4.0f;
 
 const float OBJECT_DEPTH_MAX = -128.0f;
+
+const int ITEM_GAS_LIFETIME = 60 * 30; // 60 seconds

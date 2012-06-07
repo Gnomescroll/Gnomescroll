@@ -90,6 +90,7 @@ void tick()
 
     ItemContainer::digest_nanite_food();
     Toolbelt::update_toolbelt_items();
+    Item::item_list->tick();
 }
  
 int run()
