@@ -854,7 +854,7 @@ void key_down_handler(SDL_Event* event)
     switch (event->key.keysym.sym)
     {
         case SDLK_HOME:
-            if (input_state.debug) save_screenshot();
+            save_screenshot();
             break;
 
         case SDLK_F10:
