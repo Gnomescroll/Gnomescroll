@@ -148,7 +148,6 @@ namespace ItemContainer
 
 ItemContainerInterface* create_container(ItemContainerType type, int id)
 {
-    printf("Creating container %d,%d\n", id,type);
     return item_container_list->create(type, id);
 }
 

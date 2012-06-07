@@ -50,8 +50,9 @@ void ItemContainer::remove_item(int slot)
 
 /* Cryofreezer */
 void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
-{   // reset gas decay
+{
     #if DC_SERVER
+    // reset gas decay
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item != NULL) item->gas_decay = ITEM_GAS_LIFETIME;
@@ -541,7 +542,6 @@ ContainerActionType alpha_action_decision_tree(int container_id, int slot)
 ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
-    printf("alpha action: container id %d\n", container_id);
     ContainerActionType action = CONTAINER_ACTION_NONE;
 
     #if DC_CLIENT

@@ -40,6 +40,15 @@ void tick()
 
 void destroy(int particle_id)
 {
+    #if DC_SERVER
+    ItemParticle* particle = item_particle_list->get(particle_id);
+    GS_ASSERT(particle != NULL);
+    if (particle == NULL) return;
+    Item::Item* item = Item::get_item(particle->item_id);
+    if (item != NULL) item->particle_id = NULL_PARTICLE;
+
+    broadcast_particle_item_destroy(particle->id);
+    #endif
     item_particle_list->destroy(particle_id);
 }
 
@@ -65,10 +74,10 @@ ItemParticle* create_item_particle(
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
-    ItemParticle* ip = item_particle_list->create(particle_id);
-    if (ip == NULL) return NULL;
-    ip->init(item_type, x,y,z,vx,vy,vz);
-    return ip;
+    ItemParticle* particle = item_particle_list->create(particle_id);
+    if (particle == NULL) return NULL;
+    particle->init(item_type, x,y,z,vx,vy,vz);
+    return particle;
 }
 #endif
 
@@ -80,10 +89,12 @@ ItemParticle* create_item_particle(
 ) {
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return NULL;
-    ItemParticle* ip = item_particle_list->create();
-    if (ip == NULL) return NULL; 
-    ip->init(item_id, item_type, x,y,z,vx,vy,vz);
-    return ip;
+    ItemParticle* particle = item_particle_list->create();
+    if (particle == NULL) return NULL;
+    particle->init(item_id, item_type, x,y,z,vx,vy,vz);
+    GS_ASSERT(item->container_id == NULL_CONTAINER);
+    item->particle_id = particle->id;
+    return particle;
 }
 
 // create Item and ItemParticle
@@ -93,6 +104,7 @@ Item::Item* create_item_particle(int item_type, float x, float y, float z, float
     if (item == NULL) return NULL;
     ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
     if (particle == NULL) return item;
+    item->particle_id = particle->id;
     broadcast_particle_item_create(particle->id);
     return item;
 }
@@ -150,6 +162,13 @@ void broadcast_particle_item_state(int particle_id)
     msg.broadcast();
 }
 
+void broadcast_particle_item_destroy(int particle_id)
+{
+    class item_particle_destroy_StoC msg;
+    msg.id = particle_id;
+    msg.broadcast();
+}
+
 void check_item_pickups()
 {
     for (int i=0; i<item_particle_list->n_max; i++)
@@ -179,6 +198,9 @@ void check_item_pickups()
         }
 
         if (!picked_up) continue;
+
+        // remove from item
+        item->particle_id = NULL_PARTICLE;
 
         // update particle
         item_particle->picked_up(agent->id);

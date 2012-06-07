@@ -96,10 +96,8 @@ void ItemParticle::die()
 {
     #if DC_SERVER
     if (this->was_picked_up) return; // already send a packet, and we dont want to kill the source item
-    
-    class item_particle_destroy_StoC msg;
-    msg.id = this->id;
-    msg.broadcast();
+
+    broadcast_particle_item_destroy(this->id);
 
     Item::destroy_item(this->item_id);
     #endif

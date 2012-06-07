@@ -18,6 +18,8 @@ class Item
         int container_id;
         int container_slot;
 
+        int particle_id;
+
         int gas_decay;
 
     void init(int item_type);
@@ -44,6 +46,7 @@ class Item
         stack_size(1),
         container_id(NULL_CONTAINER),
         container_slot(NULL_SLOT),
+        particle_id(NULL_PARTICLE),
         gas_decay(ITEM_GAS_LIFETIME)
     {}
 

@@ -166,16 +166,27 @@ void destroy_item(ItemID id)
 {
     Item* item = get_item(id);
     if (item == NULL) return;
+
+    // remove from container
     int container_id = item->container_id;
-    int slot = item->container_slot;
-    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    if (container != NULL && slot != NULL_SLOT)
+    if (container_id != NULL_CONTAINER)
     {
-        container->remove_item(slot);
-        // TODO -- check against all players accessing this container
-        Agent_state* a = STATE::agent_list->get(container->owner);
-        if (a != NULL) ItemContainer::send_container_remove(container->owner, container_id, slot);
+        ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+        GS_ASSERT(container != NULL);
+        GS_ASSERT(item->container_slot != NULL_SLOT);
+        if (container != NULL && item->container_slot != NULL_SLOT)
+        {
+            container->remove_item(item->container_slot);
+            // TODO -- check against all players accessing this container
+            Agent_state* a = STATE::agent_list->get(container->owner);
+            if (a != NULL) ItemContainer::send_container_remove(container->owner, container_id, item->container_slot);
+        }
     }
+
+    // destroy source particle
+    if (item->particle_id != NULL_PARTICLE) ItemParticle::destroy(item->particle_id);
+    
+    ItemParticle::destroy(item->particle_id);
     item_list->destroy(id);
     broadcast_item_destroy(id);
 }

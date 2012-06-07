@@ -509,3 +509,25 @@ GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.
 
 item does not exist on destruction msgs
 --add better warning
+
+
+CONTINUATION OF METHANE DECAY:
+./run(_Z11print_tracev+0x25) [0x80b65a8]
+./run(_ZN12ItemParticle7destroyEi+0x37) [0x80e456d]
+./run(_ZN4Item12destroy_itemE6ItemID+0x157) [0x80e135b]
+./run(_ZN4Item8ItemList4tickEv+0x126) [0x80e0a48]
+./run(_ZN4Main4tickEv+0x187) [0x810a16d]
+./run(_ZN4Main3runEv+0x32) [0x810a1a5]
+./run(main+0x5d) [0x810a242]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb74cf113]
+./run() [0x80ac781]
+GS_ASSERT error: /home/steve/dc_mmo/src/c_lib/item/particle/_interface.cpp, line 45 function: destroy
+
+./run(_Z11print_tracev+0x25) [0x80b65a8]
+./run(_ZN4Item8ItemList4tickEv+0x142) [0x80e0a64]
+./run(_ZN4Main4tickEv+0x187) [0x810a177]
+./run(_ZN4Main3runEv+0x32) [0x810a1af]
+./run(main+0x5d) [0x810a24c]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7412113]
+./run() [0x80ac781]
+GS_ASSERT error: /home/steve/dc_mmo/src/c_lib/item/item.cpp, line 61 function: tick 

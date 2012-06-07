@@ -32,7 +32,6 @@ void ItemList::tick()
     Item* item;
     ItemAttribute* attr;
     ItemContainer::ItemContainerInterface* container;
-    Agent_state* agent;
     for (int i=0; i<this->n_max; i++)
     {
         // get item
@@ -43,14 +42,24 @@ void ItemList::tick()
         if (attr == NULL) continue;
         if (!attr->gas) continue;
 
-        // get container
-        container_id = item->container_id;
-        if (container_id == NULL_CONTAINER)
+        // particle items -- gases decay much faster
+        // could do this with variable ttl in item particle,
+        // but keeping this loop in one place
+        if (item->particle_id != NULL_PARTICLE)
         {   // free item
             item->gas_decay -= GAS_TICK_INTERVAL;
-            if (item->gas_decay <= 0) destroy_item(item->id);
+            if (item->gas_decay <= 0)
+            {
+                printf("Decaying gas particle\n");
+                destroy_item(item->id);
+            }
             continue;
         }
+
+        // get container
+        container_id = item->container_id;
+        GS_ASSERT(container_id != NULL_CONTAINER);  // if it wasnt a particle it should be in a container
+        if (container_id == NULL_CONTAINER) continue;
         
         container = ItemContainer::get_container(container_id);
         GS_ASSERT(container != NULL);
@@ -63,17 +72,8 @@ void ItemList::tick()
         item->gas_decay -= GAS_TICK_INTERVAL;
         if (item->gas_decay <= 0)
         {
-            destroy_item_silently(item->id);
-            container->remove_item(item->container_slot);
-            if (container->owner != NO_AGENT)
-            {
-                agent = ServerState::agent_list->get(container->owner);
-                if (agent != NULL)
-                {
-                    ItemContainer::send_container_remove(agent->client_id, container->id, item->container_slot);
-                    send_item_destroy(agent->client_id, item->id);
-                }
-            }
+            printf("Decaying gas particle\n");
+            destroy_item(item->id);
         }
     }
     #endif
