@@ -41,7 +41,7 @@ int get_key_state()
 
 void bind_mouse()
 {
-    if (!input_state.crafting_block && !input_state.agent_container)
+    if (!input_state.agent_container && !input_state.container_block)
         SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 }
@@ -61,27 +61,15 @@ int process_events()
     else
         unbind_mouse();
 
-    if (ItemContainer::crafting_block_was_closed())
+    int container_id = NULL_CONTAINER;
+    if (ItemContainer::container_block_was_closed())
     {
-        disable_crafting_container();
+        disable_container_block();
         input_state.ignore_next_right_click_event = false;
     }
-    if (ItemContainer::crafting_block_was_opened())
+    if (ItemContainer::container_block_was_opened(&container_id))
     {
-        enable_crafting_container();
-        // need to ignore remaining right click up event
-        input_state.ignore_next_right_click_event = true;
-    }
-
-    if (ItemContainer::storage_block_was_closed())
-    {
-        disable_storage_block_container();
-        input_state.ignore_next_right_click_event = false;
-    }
-    if (ItemContainer::storage_block_was_opened())
-    {
-        enable_storage_block_container();
-        // need to ignore remaining right click up event
+        enable_container_block(container_id);
         input_state.ignore_next_right_click_event = true;
     }
 
@@ -359,7 +347,7 @@ void apply_camera_physics()
 
 void poll_mouse()
 {
-    if (input_state.agent_container || input_state.crafting_block || input_state.storage_block) return;
+    if (input_state.agent_container || input_state.container_block) return;
     if (input_state.ignore_mouse_motion)
     {
         // flush mouse buffer

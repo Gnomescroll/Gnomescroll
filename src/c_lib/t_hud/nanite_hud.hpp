@@ -93,6 +93,11 @@ class AgentNaniteUI : public UIElement
         }
     }
 
+    void set_container_type(int container_type)
+    {
+        this->container_type = container_type;
+    }
+
     AgentNaniteUI() : prices(NULL), stacks(NULL)
     {}
 

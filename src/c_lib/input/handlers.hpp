@@ -40,8 +40,8 @@ struct InputState
     float sensitivity;
 
     bool agent_container;
-    bool crafting_block;
-    bool storage_block;
+    bool container_block;
+    int container_block_id;
 };
 
 extern InputState input_state;
@@ -76,10 +76,10 @@ void toggle_camera_mode();
 void toggle_agent_container();
 void enable_agent_container();
 void disable_agent_container();
-void enable_crafting_container();
-void disable_crafting_container();
-void enable_storage_block_container();
-void disable_storage_block_container();
+
+void enable_container_block(int container_id);
+void disable_container_block();
+
 void close_all_containers();
 
 // options

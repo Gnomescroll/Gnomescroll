@@ -302,8 +302,6 @@ class ItemContainerCraftingBench: public ItemContainerInterface
 {
     public:
 
-        int level;
-
         bool can_insert_item(int slot, ItemID item_id)
         {
             return true;
@@ -337,8 +335,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
         }
         
         ItemContainerCraftingBench(ItemContainerType type, int id)
-        : ItemContainerInterface(type, id),
-        level(0)
+        : ItemContainerInterface(type, id)
         {}
 };
 

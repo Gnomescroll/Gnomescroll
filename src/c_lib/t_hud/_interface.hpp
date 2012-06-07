@@ -26,10 +26,10 @@ typedef struct
 
 void enable_agent_container_hud();
 void disable_agent_container_hud();
-void enable_crafting_container_hud();
-void disable_crafting_container_hud();
-void enable_storage_block_hud();
-void disable_storage_block_hud();
+
+// parameterize these:
+void enable_container_block_hud(int container_id);
+void disable_container_block_hud();
 
 void close_container(int container_id);
 

@@ -10,12 +10,12 @@ class StorageBlockUI : public UIElement
     public:
           
     static const int cell_size = 37;
-    static const int xdim = 3;    // grid cell size
-    static const int ydim = 3;
+    int xdim;    // grid cell size
+    int ydim;
 
     // size of texture/render area
-    static const float render_width = cell_size * xdim;
-    static const float render_height = cell_size * xdim;
+    float render_width;
+    float render_height;
 
     static const float slot_size = 32;
     static const float cell_offset_x = 3;
@@ -23,10 +23,12 @@ class StorageBlockUI : public UIElement
     static const float cell_offset_x_right = 2;
     static const float cell_offset_y_bottom = 2;
 
-    static const float texture_offset_x = 0;
-    static const float texture_offset_y = 0;
+    float texture_offset_x;
+    float texture_offset_y;
 
     HudText::Text* stacks;
+
+    bool centered;
 
     void draw();
 
@@ -49,9 +51,18 @@ class StorageBlockUI : public UIElement
 
     void init()
     {
-        GS_ASSERT(this->stacks == NULL);
+        this->init_text();
+        this->refresh_render_size();
+        if (this->centered) this->center();
+    }
 
+    void init_text()
+    {
+        if (this->stacks != NULL) delete[] this->stacks;
+        
         int max = xdim * ydim;
+        GS_ASSERT(max > 0);
+        if (max < 0) return;
         this->stacks = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
@@ -63,8 +74,54 @@ class StorageBlockUI : public UIElement
         }
     }
 
+    void center()
+    {
+        this->yoff = -150.0 + (_yresf + this->height())/2;
+    }
+
+    void refresh_render_size()
+    {
+        this->render_width = this->cell_size * this->xdim;
+        this->render_height = this->cell_size * this->ydim;
+    }
+
+    void set_container_type(int container_type)
+    {
+        this->container_type = container_type;
+
+        switch (container_type)
+        {
+            case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+                this->xdim = STORAGE_BLOCK_SMALL_X;
+                this->ydim = STORAGE_BLOCK_SMALL_Y;
+                this->texture = &StorageBlockTexture;
+                this->texture_offset_x = 0.0f;
+                this->texture_offset_y = 0.0f;
+                break;
+
+            case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+                this->xdim = CRYOFREEZER_SMALL_X;
+                this->ydim = CRYOFREEZER_SMALL_Y;
+                this->texture = &StorageBlockTexture;
+                this->texture_offset_x = 0.0f;
+                this->texture_offset_y = 0.0f;
+                break;
+
+            default:
+                assert(false);
+                break;
+        }
+        this->init_text();
+        this->refresh_render_size();
+        if (this->centered) this->center();
+    }
+
     StorageBlockUI()
-    : stacks(NULL)
+    : xdim(1), ydim(1),
+    render_width(1.0f), render_height(1.0f),
+    texture_offset_x(0.0f), texture_offset_y(0.0f),
+    stacks(NULL),
+    centered(true)
     {}
 
     ~StorageBlockUI()
@@ -91,13 +148,16 @@ int StorageBlockUI::get_slot_at(int px, int py)
 
 void StorageBlockUI::draw()
 {
+    GS_ASSERT(this->texture != NULL);
+    if (this->texture == NULL) return;
+    
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glBindTexture(GL_TEXTURE_2D, StorageBlockTexture);
+    glBindTexture(GL_TEXTURE_2D, *this->texture);
 
     glColor4ub(255, 255, 255, 255);
 
@@ -107,10 +167,10 @@ void StorageBlockUI::draw()
     float x = xoff;
     float y = yoff;
 
-    float tx_min = 0.0;
-    float ty_min = 0.0;
-    float tx_max = render_width/512.0;
-    float ty_max = render_height/512.0;
+    float tx_min = texture_offset_x;
+    float ty_min = texture_offset_y;
+    float tx_max = render_width/256.0f;
+    float ty_max = render_height/256.0f;
 
     //draw background
     glBegin(GL_QUADS);

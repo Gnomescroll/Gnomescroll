@@ -415,6 +415,12 @@ DONE
 using ItemGroup typedef
 DONE
 
+repair kits, heals 50, buy them from nanite, drop from fish
+DONE
+
+parameterize open/close container input handling shit
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -447,17 +453,14 @@ alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
 
-== CONTAINERS ETC ==
-parameterize open/close container input handling shit
-methane blocks that decay
-animation on decay
+== CONTAINERS ==
 cryofreezer
+methane blocks, go in cryofreezer
+decay methane items when not in cryofreezer
 smelter
 craft bench levels
 
 == ITEMS ==
-repair kit
-^ add it to nanite store. drop it from fish
 
 == ANALYTICS ==
 Record time played per user

@@ -19,7 +19,7 @@ void load_mob_robot_box_data()
     ObjectType type = OBJECT_MONSTER_BOX;
     
     #if DC_SERVER
-    const int n_components = 8;
+    const int n_components = 9;
     #endif
     #if DC_CLIENT
     const int n_components = 7;
@@ -37,6 +37,7 @@ void load_mob_robot_box_data()
     #if DC_SERVER
     object_data->attach_component(type, COMPONENT_SPAWN_CHILD);
     object_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    object_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
     #if DC_CLIENT
     object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
@@ -99,6 +100,12 @@ static void set_mob_robot_box_properties(Object* object)
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
     limiter->limit = MONSTER_BOX_BROADCAST_RATE;
+
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    item_drop->item_type = Item::get_item_type(MONSTER_BOX_ITEM_DROP_NAME);
+    item_drop->probability = MONSTER_BOX_ITEM_DROP_PROBABILITY;
+    item_drop->max_amount = MONSTER_BOX_ITEM_DROP_MAX_AMOUNT;
     #endif
 
     #if DC_CLIENT
@@ -152,7 +159,12 @@ void ready_mob_robot_box(Object* object)
 void die_mob_robot_box(Object* object)
 {
     #if DC_SERVER
-    //boxDropItem(); -- todo, item drop component
+    // drop item
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    GS_ASSERT(item_drop != NULL);
+    item_drop->drop_item();
+
     object->broadcastDeath();
 
     using Components::SpawnChildComponent;
