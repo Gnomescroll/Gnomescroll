@@ -157,21 +157,23 @@ void load_block_dat()
     cube_def(16, SolidBlock, "steel_1");
     iso_texture(t1, 1,3);
     push_texture();
+    set_max_dmg(64);
 
     hud_def(5,1,t1,1,3);
 
     cube_def(17, SolidBlock, "steel_2");
     iso_texture(t1, 1,4);
     push_texture();
+    set_max_dmg(64);
 
     hud_def(5,2,t1,1,4);
 
     cube_def(18, SolidBlock, "steel_3");
     iso_texture(t1, 1,5);
     push_texture();
+    set_max_dmg(64);
 
     hud_def(5,3,t1,1,5);
-
 
     cube_def(19, SolidBlock, "methane_1");
     iso_texture(t1,2,2);
@@ -205,6 +207,12 @@ void load_block_dat()
     hud_def(3,5, t1,4,1);
     set_max_dmg(5);
 
+    cube_def(24, SolidBlock, "methane_ice"); // we only need one
+    iso_texture(t1, 5,4);
+    push_texture();
+    hud_def(3,6, t1, 5,4);
+    set_max_dmg(5);
+
     cube_def(54, SolidBlock, "regolith");
     
     //pallete 0
@@ -218,7 +226,7 @@ void load_block_dat()
     push_texture();
 
 
-    cube_def(24, SolidBlock, "carbon");
+    cube_def(25, SolidBlock, "carbon");
     iso_texture(t1,10,6);
     push_texture();
 

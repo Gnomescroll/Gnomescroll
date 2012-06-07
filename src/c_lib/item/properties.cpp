@@ -414,6 +414,7 @@ ItemContainerType get_container_type_for_block(int block_value)
 {
     GS_ASSERT(block_value >= 0 && block_value < t_map::MAX_CUBES);
     if (block_value < 0 || block_value >= t_map::MAX_CUBES) return CONTAINER_TYPE_NONE;
+    printf("Container type for block %d\n", container_block_types[block_value]);
     return container_block_types[block_value];
 }
 

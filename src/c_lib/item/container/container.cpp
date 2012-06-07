@@ -541,6 +541,7 @@ ContainerActionType alpha_action_decision_tree(int container_id, int slot)
 ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
+    printf("alpha action: container id %d\n", container_id);
     ContainerActionType action = CONTAINER_ACTION_NONE;
 
     #if DC_CLIENT

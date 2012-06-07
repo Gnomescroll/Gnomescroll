@@ -24,7 +24,7 @@ void init_t_properties()
 
     cube_list = (cubeProperties*) malloc(sizeof(struct cubeProperties) * MAX_CUBES);
     memset(cube_list, 0, sizeof(struct cubeProperties) * MAX_CUBES);
-
+    for (int i=0; i<MAX_CUBES; cube_list[i++].in_use = false);
 
     memset(cube_names, 0, 64* MAX_CUBES);
     memset(cube_name_index, 0, sizeof(int) * MAX_CUBES);

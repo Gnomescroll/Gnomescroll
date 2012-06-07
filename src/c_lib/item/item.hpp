@@ -111,7 +111,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
         #endif
 
     private:
-        int gas_tick;
+        unsigned int gas_tick;
         static const int GAS_TICK_INTERVAL = 30;
     public:
         void draw() {}

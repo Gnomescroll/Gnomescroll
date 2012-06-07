@@ -25,7 +25,7 @@ void init()
         MapRecipes::simple_map();
         MapGen::teardown();
         Dragon::caves();
-        Dragon::test_filters();
+        Dragon::surface_veins();
     }
     else
     {

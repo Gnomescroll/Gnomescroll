@@ -377,6 +377,7 @@ void create_container_block_CtoS::handle()
     if (collides) return;
 
     ItemContainerInterface* container = create_container(container_type);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);

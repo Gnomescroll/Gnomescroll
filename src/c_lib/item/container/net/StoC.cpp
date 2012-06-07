@@ -14,11 +14,11 @@ namespace ItemContainer
 
 inline void create_item_container_StoC::handle()
 {
-    ItemContainerInterface* ic = create_container((ItemContainerType)container_type,  container_id);
-    GS_ASSERT(ic != NULL);
-    if (ic == NULL) return;
-    init_container(ic);
-    ic->chunk = chunk;  // TODO
+    ItemContainerInterface* container = create_container((ItemContainerType)container_type,  container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    init_container(container);
+    container->chunk = chunk;  // TODO
 }
 
 inline void delete_item_container_StoC::handle()
@@ -28,36 +28,36 @@ inline void delete_item_container_StoC::handle()
 
 inline void assign_item_container_StoC::handle()
 {
-    ItemContainerInterface* ic = get_container(container_id);
-    ASSERT_NOT_NULL(ic);
-    if (ic == NULL) return;
+    ItemContainerInterface* container = get_container(container_id);
+    ASSERT_NOT_NULL(container);
+    if (container == NULL) return;
     ItemContainerType type = (ItemContainerType)container_type;
     switch (type)
     {
         case AGENT_CONTAINER:
             player_container_id = container_id;
-            player_container = (ItemContainer*)ic;
+            player_container = (ItemContainer*)container;
             if (player_container_ui != NULL) delete player_container_ui;
-            player_container_ui = new ItemContainerUI(ic->id);
-            player_container_ui->init(ic->type, ic->xdim, ic->ydim);
-            player_container_ui->load_data(ic->slot);
+            player_container_ui = new ItemContainerUI(container->id);
+            player_container_ui->init(container->type, container->xdim, container->ydim);
+            player_container_ui->load_data(container->slot);
             break;
         case AGENT_TOOLBELT:
             player_toolbelt_id = container_id;
-            player_toolbelt = (ItemContainer*)ic;
+            player_toolbelt = (ItemContainer*)container;
             if (player_toolbelt_ui != NULL) delete player_toolbelt_ui;
-            player_toolbelt_ui = new ItemContainerUI(ic->id);
-            player_toolbelt_ui->init(ic->type, ic->xdim, ic->ydim);
-            player_toolbelt_ui->load_data(ic->slot);
-            Toolbelt::assign_toolbelt(ic->id);
+            player_toolbelt_ui = new ItemContainerUI(container->id);
+            player_toolbelt_ui->init(container->type, container->xdim, container->ydim);
+            player_toolbelt_ui->load_data(container->slot);
+            Toolbelt::assign_toolbelt(container->id);
             break;
         case AGENT_NANITE:
             player_nanite_id = container_id;
-            player_nanite = (ItemContainerNanite*)ic;
+            player_nanite = (ItemContainerNanite*)container;
             if (player_nanite_ui != NULL) delete player_nanite_ui;
-            player_nanite_ui = new ItemContainerNaniteUI(ic->id);
-            player_nanite_ui->init(ic->type, ic->xdim, ic->ydim);
-            player_nanite_ui->load_data(ic->slot);
+            player_nanite_ui = new ItemContainerNaniteUI(container->id);
+            player_nanite_ui->init(container->type, container->xdim, container->ydim);
+            player_nanite_ui->load_data(container->slot);
             break;
         default:
             GS_ASSERT(false);
@@ -73,10 +73,10 @@ inline void insert_item_in_container_StoC::handle()
     GS_ASSERT(item_id >= 0 && item_id != NULL_ITEM);
     if (item_id < 0 || item_id == NULL_ITEM) return;
 
-    ItemContainerInterface* ic = get_container(container_id);
-    ASSERT_NOT_NULL(ic);
-    if (ic == NULL) return;
-    ic->insert_item(slot, (ItemID)item_id);
+    ItemContainerInterface* container = get_container(container_id);
+    ASSERT_NOT_NULL(container);
+    if (container == NULL) return;
+    container->insert_item(slot, (ItemID)item_id);
     ItemContainerUIInterface* ui = get_container_ui(container_id);
     if (ui == NULL) return;
     int item_type = Item::get_item_type((ItemID)item_id);
@@ -87,10 +87,10 @@ inline void insert_item_in_container_StoC::handle()
 
 inline void remove_item_from_container_StoC::handle()
 {
-    ItemContainerInterface* ic = get_container(container_id);
-    ASSERT_NOT_NULL(ic);
-    if (ic == NULL) return;
-    ic->remove_item(slot);
+    ItemContainerInterface* container = get_container(container_id);
+    ASSERT_NOT_NULL(container);
+    if (container == NULL) return;
+    container->remove_item(slot);
     ItemContainerUIInterface* ui = get_container_ui(container_id);
     if (ui == NULL) return;
     ui->remove_item(slot);

@@ -58,6 +58,9 @@ int _side_texture[6];
 
 void cube_def(int id, int type, const char* name)
 { 
+    GS_ASSERT(!cube_list[id].in_use); // dont overwrite anything
+    if (cube_list[id].in_use)
+        printf("Error in function: %s:%d -- cube %d is already registered\n", __FUNCTION__, __LINE__, id);
 
     for(int i=0; i<6; i++) _side_texture[i] = 0;
 
@@ -106,6 +109,7 @@ void cube_def(int id, int type, const char* name)
 
     //extern struct cubeProperties* cube_list;
     cube_list[id] = p;
+    cube_list[id].in_use = true;
 //#if DC_CLIENT
 //    start_cube_palette(id);
 //#endif

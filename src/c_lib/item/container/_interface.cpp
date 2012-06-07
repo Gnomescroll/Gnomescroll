@@ -148,6 +148,7 @@ namespace ItemContainer
 
 ItemContainerInterface* create_container(ItemContainerType type, int id)
 {
+    printf("Creating container %d,%d\n", id,type);
     return item_container_list->create(type, id);
 }
 
@@ -325,6 +326,8 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
     if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
     if (storage_block_ui      != NULL && storage_block_ui->id      == container_id) return storage_block_ui;
+    if (cryofreezer_ui        != NULL && cryofreezer_ui->id        == container_id) return cryofreezer_ui;
+    GS_ASSERT(false);
     return NULL;
 }
 

@@ -424,6 +424,18 @@ DONE
 container type loading for storage block ui element
 DONE
 
+cryofreezer
+DONE
+
+decay gaseous block items
+DONE
+
+methane blocks
+DONE
+
+steel blocks take higher damage
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -458,15 +470,17 @@ alt tab doesnt work in fullscreen
 version mismatch popup for OS X
 
 == CONTAINERS ==
-cryofreezer
-methane blocks, go in cryofreezer
-decay methane items when not in cryofreezer
+methane blocks as item drops
 smelter
 
 == ITEMS ==
 
 == ANALYTICS ==
 Record time played per user
+
+== MAP ==
+Put some methane underground
+Regenerate methane blocks somehow
 
 ==BUGZ==
 <HaltingState> ./run(_Z11print_tracev+0x26) [0x809c116]
@@ -494,3 +508,4 @@ GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.
     -- this one might be when item is destroyed?
 
 item does not exist on destruction msgs
+--add better warning

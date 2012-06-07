@@ -300,7 +300,7 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite_shopping, 
     
     ContainerActionType action;
 
-    int container_type = CONTAINER_TYPE_NONE;
+    ItemContainerType container_type = CONTAINER_TYPE_NONE;
     if (container_id != NULL_CONTAINER)
     {
         ItemContainerInterface* container = get_container(container_id);
@@ -368,7 +368,7 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite_shopping,
 
     ContainerActionType action;
 
-    int container_type = CONTAINER_TYPE_NONE;
+    ItemContainerType container_type = CONTAINER_TYPE_NONE;
     if (container_id != NULL_CONTAINER)
     {
         ItemContainerInterface* container = get_container(container_id);
