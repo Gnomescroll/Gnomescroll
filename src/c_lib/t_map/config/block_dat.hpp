@@ -101,25 +101,10 @@ void load_block_dat()
     side_texture(N, t1, 13,5);
     push_oriented_texture();
 
-    hud_def(2,2,t1,13,5);
+    hud_def(2,1,t1,13,5);
     set_max_dmg(128);
-/*
-    cube_def(7, ItemContainerBlock, "crate_3");
-    iso_texture(t1,3,4);
-    side_texture(T, t1, 2,5);
-    side_texture(B, t1, 3,6);
-    side_texture(N, t1, 3,5);
-    hud_def(2,2,t1,1,3);
-*/
 
-/*
-    cube_def(7, ItemContainerBlock, "crate_3");
-    iso_texture(t1, 12,1);
-    side_texture(T, t1, 12,3);
-    side_texture(B, t1, 12,3);
-    side_texture(N, t1, 12,2);
-    hud_def(2,2,t1,12,2);
-*/
+
     cube_def(7, ItemContainerBlock, "crate_3");
     iso_texture(t1, 3,4);
     side_texture(T, t1, 2,5);
@@ -129,6 +114,29 @@ void load_block_dat()
 
     hud_def(2,2,t1,3,5);
     set_max_dmg(128);
+
+
+    cube_def(8, ItemContainerBlock, "smelter");
+    iso_texture(t1, 14,2);
+    side_texture(T, t1, 14,2);
+    side_texture(B, t1, 14,2);
+    side_texture(N, t1, 14,1);
+    push_oriented_texture();
+
+    hud_def(2,3,t1,14,1);
+    set_max_dmg(128);
+
+
+    cube_def(9, ItemContainerBlock, "cyrofreezer");
+    iso_texture(t1, 14,2);
+    side_texture(T, t1, 14,2);
+    side_texture(B, t1, 14,2);
+    side_texture(N, t1, 14,3);
+    push_oriented_texture();
+
+    hud_def(2,3,t1,14,1);
+    set_max_dmg(128);
+
 /*
     cube_def(7, ItemContainerBlock, "crate_3");
     iso_texture(t1,12,4);
@@ -146,52 +154,52 @@ void load_block_dat()
     hud_def(2,2,t1,13,2);
 */
 
-    cube_def(8, SolidBlock, "steel_1");
+    cube_def(16, SolidBlock, "steel_1");
     iso_texture(t1, 1,3);
     push_texture();
 
     hud_def(5,1,t1,1,3);
 
-    cube_def(9, SolidBlock, "steel_2");
+    cube_def(17, SolidBlock, "steel_2");
     iso_texture(t1, 1,4);
     push_texture();
 
     hud_def(5,2,t1,1,4);
 
-    cube_def(10, SolidBlock, "steel_3");
+    cube_def(18, SolidBlock, "steel_3");
     iso_texture(t1, 1,5);
     push_texture();
 
     hud_def(5,3,t1,1,5);
 
 
-    cube_def(16, SolidBlock, "methane_1");
+    cube_def(19, SolidBlock, "methane_1");
     iso_texture(t1,2,2);
     push_texture();
 
     hud_def(3,1, t1,2,2);
     set_max_dmg(5);
 
-    cube_def(17, SolidBlock, "methane_2");
+    cube_def(20, SolidBlock, "methane_2");
     iso_texture(t1,3,2);
     push_texture();
     hud_def(3,2, t1,3,2);
     set_max_dmg(5);
 
-    cube_def(18, SolidBlock, "methane_3");
+    cube_def(21, SolidBlock, "methane_3");
     iso_texture(t1,4,3);
     push_texture();
 
     hud_def(3,3, t1,4,3);
     set_max_dmg(5);
 
-    cube_def(19, SolidBlock, "methane_4");
+    cube_def(22, SolidBlock, "methane_4");
     iso_texture(t1,5,3);
     push_texture();
     hud_def(3,4, t1,5,3);
     set_max_dmg(5);
 
-    cube_def(20, SolidBlock, "methane_5");
+    cube_def(23, SolidBlock, "methane_5");
     iso_texture(t1,4,1);
     push_texture();
     hud_def(3,5, t1,4,1);
@@ -209,26 +217,14 @@ void load_block_dat()
     side_texture(B, t1,10,5);
     push_texture();
 
-/* 
-    palette_def(1);
-    palette_iso_texture(t1,10,3);
-    palette_side_texture(N, t1,10,5);
-    palette_def(1);
 
-
-    end_palette_def();
-
-    hud_def(4,1, t1,10,4);
-    //color_type(1); //perlin
-*/
-    cube_def(55, SolidBlock, "carbon");
+    cube_def(24, SolidBlock, "carbon");
     iso_texture(t1,10,6);
     push_texture();
 
     hud_def(4,2, t1,10,6);
 
     end_block_dat();
-    //end_block_item_sheet();
 
 }
 

@@ -249,5 +249,7 @@ void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id)
         printf("set_cube_hud error! hux= %i hudy= %i \n", hudx,hudy);
         return;
     }
+    hudx--;
+    hudy--;
     HudCubeSelector::cube_selector.set_block_selector(8*hudy+hudx, cube_id, tex_id);
 }
