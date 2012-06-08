@@ -874,6 +874,7 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
             {
                 if (z_ >= z-z_low and z_ <= z+z_high)
                 {
+                    if (z_ < 0 || z >= map_dim.z) return NULL;
                     ray_cast_block[0] = translate_point(x_);
                     ray_cast_block[1] = translate_point(y_);
                     ray_cast_block[2] = z_;

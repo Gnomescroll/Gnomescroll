@@ -451,6 +451,11 @@ DONE
 early user analytics, recording time played per client to analytics log
 DONE
 
+==============
+== BUILD 20 ==  released jun 8
+==============
+
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies

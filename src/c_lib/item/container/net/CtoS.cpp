@@ -334,6 +334,8 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
+    if (z < 0 || z >= map_dim.z) return;
+
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;

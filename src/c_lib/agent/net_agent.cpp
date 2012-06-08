@@ -918,6 +918,8 @@ inline void ThrowGrenade_CtoS::handle()
 
 inline void agent_set_block_CtoS::handle()
 {
+    if (z < 0 || z >= map_dim.z) return;
+
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
     {
@@ -975,6 +977,8 @@ inline void agent_set_block_CtoS::handle()
 //#if !PRODUCTION
 inline void admin_set_block_CtoS::handle()
 {
+    if (z < 0 || z >= map_dim.z) return;
+
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
     {
