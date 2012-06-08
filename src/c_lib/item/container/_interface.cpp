@@ -849,6 +849,8 @@ void purchase_item_from_nanite(int agent_id, int shopping_slot)
 
     if (a != NULL) Item::send_item_create(a->client_id, purchase->id);
     // add to hand
+    purchase->container_id = AGENT_HAND;
+    purchase->container_slot = agent_id;
     agent_hand_list[agent_id] = purchase->id;
     if (a != NULL) send_hand_insert(a->client_id, purchase->id);
 
@@ -904,6 +906,8 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         if (item == NULL) return;
         item->stack_size = recipe->output_stack;
         Item::send_item_create(agent->client_id, item->id);
+        item->container_id = AGENT_HAND;
+        item->container_slot = agent_id;
         agent_hand_list[agent_id] = item->id;
         send_hand_insert(agent->client_id, item->id);
     }

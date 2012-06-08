@@ -475,6 +475,7 @@ mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
 switch item's container_id,slot & particle_id to an enum (HAND,CONTAINER,PARTICLE) and context-dependent id
+make hand insert/remove a function
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
