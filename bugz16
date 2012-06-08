@@ -439,6 +439,12 @@ DONE
 refactor item transition shit
 DONE
 
+better methane distribution
+DONE
+
+indicate slot on nanite graphic
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -465,8 +471,6 @@ mining laser whoosh
 switch item's container_id,slot & particle_id to an enum (HAND,CONTAINER,PARTICLE) and context-dependent id
 
 == UI/UX ==
-indicate where something can be placed
---particularly, feeding the nanite
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
 alt tab doesnt work in fullscreen
@@ -493,3 +497,16 @@ item does not exist on destruction msgs
 --add better warning
 
 no sound when pickup merges
+
+./run(_Z11print_tracev+0x25) [0x80bab19]
+./run(_ZN13ItemContainer26remove_item_from_hand_StoC6handleEv+0x26) [0x8168626]
+./run(_ZN34FixedSizeReliableNetPacketToClientIN13ItemContainer26remove_item_from_hand_StoCEE7handlerEPciPii+0x74) [0x8188939]
+./run(_Z23process_packet_messagesPcPiii+0x157) [0x80d0b32]
+./run(_ZN9NetClient30client_dispatch_network_eventsEv+0xc6) [0x80cfe14]
+./run(_ZN4Main3runEv+0x14b) [0x814a874]
+./run(main+0x43) [0x814af9f]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7235113]
+./run() [0x80baa61]
+GS_ASSERT error: /home/steve/dc_mmo/src/c_lib/item/container/net/StoC.cpp, line 119 function: handle 
+
+--on inventory item split

@@ -41,7 +41,7 @@ void send_container_insert(int client_id, ItemID item_id, int container_id, int 
 }
 
 void send_container_remove(int client_id, int container_id, int slot)
-{
+{    
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(slot != NULL_SLOT);
     if (container_id == NULL_CONTAINER) return;

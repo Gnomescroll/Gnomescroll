@@ -174,6 +174,8 @@ void broadcast_particle_item_destroy(int particle_id)
 
 void broadcast_particle_item_picked_up(int agent_id, int particle_id)
 {
+    GS_ASSERT(particle_id != NULL_PARTICLE);
+    ASSERT_VALID_AGENT_ID(agent_id);
     item_particle_picked_up_StoC msg;
     msg.agent_id = agent_id;
     msg.id = particle_id;
@@ -216,7 +218,10 @@ void check_item_pickups()
          || (inventory_event != CONTAINER_ACTION_NONE && inventory_event != PARTIAL_WORLD_TO_OCCUPIED_SLOT))
         {
             if (toolbelt_event == FULL_WORLD_TO_OCCUPIED_SLOT || inventory_event == FULL_WORLD_TO_OCCUPIED_SLOT)
+            {
+                broadcast_particle_item_picked_up(agent->id, item_particle->id);
                 Item::destroy_item(item->id);
+            }
             else if (toolbelt_event == FULL_WORLD_TO_EMPTY_SLOT || inventory_event == FULL_WORLD_TO_EMPTY_SLOT)
             {
                 // update particle

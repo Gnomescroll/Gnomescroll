@@ -431,12 +431,11 @@ ContainerActionType full_hand_to_occupied_slot(int client_id, int slot, ItemID* 
     Item::merge_item_stack(*hand_item, slot_item); // Item::merge_item_stack(src, dest)
     // update the slot
     Item::broadcast_item_state(slot_item);
-    // destroy the hand
+    // destroy the hand item (will also send hand removal packet)
     Item::destroy_item(*hand_item);
     // clear hand
     *hand_item = NULL_ITEM;
-    // remove item from hand
-    send_hand_remove(client_id);
+
     return FULL_HAND_TO_OCCUPIED_SLOT;
 }
 
