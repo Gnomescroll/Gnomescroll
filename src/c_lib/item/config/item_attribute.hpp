@@ -54,6 +54,8 @@ class ItemAttribute
     // health
     unsigned int repair_agent_amount;
 
+    bool gas;
+
     ItemContainerType container_type;
 
     ItemAttribute()
@@ -82,6 +84,7 @@ class ItemAttribute
         object_damage_max = 10;
         repair_agent_amount = 0;
         container_type = CONTAINER_TYPE_NONE;
+        gas = false;
     }
 };
 

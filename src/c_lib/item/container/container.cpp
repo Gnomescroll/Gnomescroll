@@ -48,6 +48,19 @@ void ItemContainer::remove_item(int slot)
     this->slot_count--;
 }
 
+/* Cryofreezer */
+void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
+{
+    #if DC_SERVER
+    // reset gas decay
+    Item::Item* item = Item::get_item(item_id);
+    GS_ASSERT(item != NULL);
+    if (item != NULL) item->gas_decay = ITEM_GAS_LIFETIME;
+    #endif
+    ItemContainer::insert_item(slot, item_id);
+}
+
+
 /* Nanite */
 
 void ItemContainerNanite::insert_item(int slot, ItemID item_id)
@@ -704,6 +717,16 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;
+    if (hand_item != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item(hand_item);
+        GS_ASSERT(item != NULL);
+        if (item != NULL)
+        {
+            item->container_id = AGENT_HAND;
+            item->container_slot = agent_id;
+        }
+    }
     #endif
 
     return action;
@@ -985,6 +1008,16 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;
+    if (hand_item != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item(hand_item);
+        GS_ASSERT(item != NULL);
+        if (item != NULL)
+        {
+            item->container_id = AGENT_HAND;
+            item->container_slot = agent_id;
+        }
+    }
     #endif
 
     return action;
@@ -1157,6 +1190,16 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;
+    if (hand_item != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item(hand_item);
+        GS_ASSERT(item != NULL);
+        if (item != NULL)
+        {
+            item->container_id = AGENT_HAND;
+            item->container_slot = agent_id;
+        }
+    }
     #endif
 
     return action;
@@ -1352,6 +1395,16 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;
+    if (hand_item != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item(hand_item);
+        GS_ASSERT(item != NULL);
+        if (item != NULL)
+        {
+            item->container_id = AGENT_HAND;
+            item->container_slot = agent_id;
+        }
+    }
     #endif
 
     return action;
@@ -1510,6 +1563,16 @@ ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int cl
     #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;
+    if (hand_item != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item(hand_item);
+        GS_ASSERT(item != NULL);
+        if (item != NULL)
+        {
+            item->container_id = AGENT_HAND;
+            item->container_slot = agent_id;
+        }
+    }
     #endif
 
     return action;

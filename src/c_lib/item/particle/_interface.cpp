@@ -40,6 +40,16 @@ void tick()
 
 void destroy(int particle_id)
 {
+    #if DC_SERVER
+    GS_ASSERT(particle_id != NULL_PARTICLE);
+    ItemParticle* particle = item_particle_list->get(particle_id);
+    GS_ASSERT(particle != NULL);
+    if (particle == NULL) return;
+    Item::Item* item = Item::get_item(particle->item_id);
+    if (item != NULL) item->particle_id = NULL_PARTICLE;
+
+    broadcast_particle_item_destroy(particle->id);
+    #endif
     item_particle_list->destroy(particle_id);
 }
 
@@ -65,10 +75,10 @@ ItemParticle* create_item_particle(
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
-    ItemParticle* ip = item_particle_list->create(particle_id);
-    if (ip == NULL) return NULL;
-    ip->init(item_type, x,y,z,vx,vy,vz);
-    return ip;
+    ItemParticle* particle = item_particle_list->create(particle_id);
+    if (particle == NULL) return NULL;
+    particle->init(item_type, x,y,z,vx,vy,vz);
+    return particle;
 }
 #endif
 
@@ -80,10 +90,12 @@ ItemParticle* create_item_particle(
 ) {
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return NULL;
-    ItemParticle* ip = item_particle_list->create();
-    if (ip == NULL) return NULL; 
-    ip->init(item_id, item_type, x,y,z,vx,vy,vz);
-    return ip;
+    ItemParticle* particle = item_particle_list->create();
+    if (particle == NULL) return NULL;
+    particle->init(item_id, item_type, x,y,z,vx,vy,vz);
+    GS_ASSERT(item->container_id == NULL_CONTAINER);
+    item->particle_id = particle->id;
+    return particle;
 }
 
 // create Item and ItemParticle
@@ -93,6 +105,7 @@ Item::Item* create_item_particle(int item_type, float x, float y, float z, float
     if (item == NULL) return NULL;
     ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
     if (particle == NULL) return item;
+    item->particle_id = particle->id;
     broadcast_particle_item_create(particle->id);
     return item;
 }
@@ -150,6 +163,23 @@ void broadcast_particle_item_state(int particle_id)
     msg.broadcast();
 }
 
+void broadcast_particle_item_destroy(int particle_id)
+{
+    GS_ASSERT(particle_id != NULL_PARTICLE);
+    if (particle_id == NULL_PARTICLE) return;
+    class item_particle_destroy_StoC msg;
+    msg.id = particle_id;
+    msg.broadcast();
+}
+
+void broadcast_particle_item_picked_up(int agent_id, int particle_id)
+{
+    item_particle_picked_up_StoC msg;
+    msg.agent_id = agent_id;
+    msg.id = particle_id;
+    msg.broadcast();
+}
+
 void check_item_pickups()
 {
     for (int i=0; i<item_particle_list->n_max; i++)
@@ -159,36 +189,61 @@ void check_item_pickups()
         if (!item_particle->can_be_picked_up()) continue;
         Item::Item* item = Item::get_item(item_particle->item_id);
         GS_ASSERT(item != NULL);
+        if (item == NULL) continue;
+
+        int starting_size = item->stack_size;
     
-        const static float pick_up_distance = 1.0f;
+        const static float pick_up_distance = 1.1f;
         Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
         if (agent == NULL) continue;
 
         // try to add to toolbelt first
-        bool picked_up = false;
+        ContainerActionType toolbelt_event = CONTAINER_ACTION_NONE;
+        ContainerActionType inventory_event = CONTAINER_ACTION_NONE;
         int container_id = ItemContainer::get_agent_toolbelt(agent->id);
         if (container_id != NULL_CONTAINER)
-            picked_up = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
+            toolbelt_event = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
 
         // then try to add to inventory
-        if (!picked_up)
+        if (toolbelt_event == CONTAINER_ACTION_NONE || toolbelt_event == PARTIAL_WORLD_TO_OCCUPIED_SLOT)
         {
             container_id = ItemContainer::get_agent_container(agent->id);
             if (container_id != NULL_CONTAINER)
-                picked_up = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
+                inventory_event = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
         }
 
-        if (!picked_up) continue;
-
-        // update particle
-        item_particle->picked_up(agent->id);
+        if ((toolbelt_event != CONTAINER_ACTION_NONE && toolbelt_event != PARTIAL_WORLD_TO_OCCUPIED_SLOT)
+         || (inventory_event != CONTAINER_ACTION_NONE && inventory_event != PARTIAL_WORLD_TO_OCCUPIED_SLOT))
+        {
+            if (toolbelt_event == FULL_WORLD_TO_OCCUPIED_SLOT || inventory_event == FULL_WORLD_TO_OCCUPIED_SLOT)
+                Item::destroy_item(item->id);
+            else if (toolbelt_event == FULL_WORLD_TO_EMPTY_SLOT || inventory_event == FULL_WORLD_TO_EMPTY_SLOT)
+            {
+                // update particle
+                item_particle->picked_up(agent->id);
+                // remove from item
+                destroy(item_particle->id);
+                item->particle_id = NULL_PARTICLE;
+            }
+        }
+        else if (toolbelt_event == PARTIAL_WORLD_TO_OCCUPIED_SLOT || inventory_event == PARTIAL_WORLD_TO_OCCUPIED_SLOT)
+        {   // partial stack pickup
+            GS_ASSERT(item->stack_size > 0);
+            GS_ASSERT(starting_size != item->stack_size);
+            // send a pickup notification so sounds/anim can playX
+            broadcast_particle_item_picked_up(agent->id, item_particle->id);
+        }
     }
 }
 
 static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
 {
+    GS_ASSERT(item_id != NULL_ITEM);
+    if (item_id == NULL_ITEM) return;
     Item::Item* item = Item::get_item(item_id);
+    GS_ASSERT(item != NULL);
     if (item == NULL) return;
+    item->container_id = NULL_CONTAINER;
 
     // create particle
     ItemParticle* particle = create_item_particle(
@@ -204,7 +259,10 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
 void throw_agent_item(int agent_id, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
+    if (item_id == NULL_ITEM) return;
+    
     Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
     if (a == NULL)
     {   // we cannot get the agent state, so just destroy the item
         GS_ASSERT(false);

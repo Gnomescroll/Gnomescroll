@@ -203,6 +203,17 @@ class ItemContainer: public ItemContainerInterface
         {}
 };
 
+class ItemContainerCryofreezer: public ItemContainer
+{
+    public:
+
+        void insert_item(int slot, ItemID item_id);
+        
+        ItemContainerCryofreezer(ItemContainerType type, int id)
+        : ItemContainer(type,id)
+        {}
+};
+
 class ItemContainerNanite: public ItemContainerInterface
 {
     public:
@@ -339,7 +350,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
         {}
 };
 
-}
+}   // ItemContainer
 
 #include <common/template/dynamic_multi_object_list.hpp>
 
@@ -353,7 +364,6 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
         case AGENT_CONTAINER:
         case AGENT_TOOLBELT:
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             return new ItemContainer((ItemContainerType)type, id);
 
         case AGENT_NANITE:
@@ -363,8 +373,8 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             return new ItemContainerCraftingBench((ItemContainerType)type, id);
 
-        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-            //return new ItemContainerCryofreezer((ItemContainerType)type, id);
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            return new ItemContainerCryofreezer((ItemContainerType)type, id);
 
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);

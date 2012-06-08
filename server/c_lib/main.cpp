@@ -25,7 +25,7 @@ void init()
         MapRecipes::simple_map();
         MapGen::teardown();
         Dragon::caves();
-        Dragon::test_filters();
+        Dragon::surface_veins();
     }
     else
     {
@@ -85,11 +85,13 @@ void tick()
     ServerState::ctf->tick();
 
     //ServerState::spawn_items(2);
-    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 120);
+    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 8);
 
     ItemContainer::digest_nanite_food();
     Toolbelt::update_toolbelt_items();
+    Item::item_list->tick();
+    Item::item_list->verify_items();
 }
  
 int run()

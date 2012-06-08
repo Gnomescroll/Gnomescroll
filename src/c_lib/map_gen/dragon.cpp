@@ -853,15 +853,16 @@ struct iPoint*  remove_all_stranded_points(struct iPoint* points, int n_points, 
     return points;
 }
 
-void test_filters()
+void surface_veins()
 {
-    int n_tiles = 5;
+    int n_tiles = 1;
     int tiles[n_tiles];
-    tiles[0] = t_map::get_cube_id((char*)"methane_1");
-    tiles[1] = t_map::get_cube_id((char*)"methane_2");
-    tiles[2] = t_map::get_cube_id((char*)"methane_3");
-    tiles[3] = t_map::get_cube_id((char*)"methane_4");
-    tiles[4] = t_map::get_cube_id((char*)"methane_5");
+    tiles[0] = t_map::get_cube_id((char*)"methane_ice");
+    //tiles[0] = t_map::get_cube_id((char*)"methane_1");
+    //tiles[1] = t_map::get_cube_id((char*)"methane_2");
+    //tiles[2] = t_map::get_cube_id((char*)"methane_3");
+    //tiles[3] = t_map::get_cube_id((char*)"methane_4");
+    //tiles[4] = t_map::get_cube_id((char*)"methane_5");
     
     const int n = 40;
     for (int i=0; i<n; i++)

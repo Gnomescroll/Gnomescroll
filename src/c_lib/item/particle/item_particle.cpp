@@ -8,7 +8,7 @@
 namespace ItemParticle
 {
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 //SDL_Surface* ItemSheetSurface = NULL;
 unsigned int ItemSheetTexture = 0;
@@ -96,11 +96,13 @@ void ItemParticle::die()
 {
     #if DC_SERVER
     if (this->was_picked_up) return; // already send a packet, and we dont want to kill the source item
-    
-    class item_particle_destroy_StoC msg;
-    msg.id = this->id;
-    msg.broadcast();
 
+    broadcast_particle_item_destroy(this->id);
+
+    GS_ASSERT(this->item_id != NULL_ITEM);
+    Item::Item* item = Item::get_item(this->item_id);
+    GS_ASSERT(item != NULL);
+    if (item != NULL) item->particle_id = NULL_PARTICLE;
     Item::destroy_item(this->item_id);
     #endif
 }
@@ -137,10 +139,7 @@ void ItemParticle::picked_up(int agent_id)
 {
     this->ttl = 0;
     this->was_picked_up = true;
-    item_particle_picked_up_StoC msg;
-    msg.id = this->id;
-    msg.agent_id = agent_id;
-    msg.broadcast();
+    broadcast_particle_item_picked_up(agent_id, this->id);
 }
 #endif
 

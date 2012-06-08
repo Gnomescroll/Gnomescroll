@@ -424,6 +424,18 @@ DONE
 container type loading for storage block ui element
 DONE
 
+cryofreezer
+DONE
+
+decay gaseous block items
+DONE
+
+methane blocks
+DONE
+
+steel blocks take higher damage
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -440,12 +452,14 @@ glsl colored/textured voxels
 cap number of animation particles created in a single frame
 texture color problem in OSX -- for blocks and for items
 Hud Weapon sprites + animation
+use font DST_COLOR only for certain ui elements
 
 == SOUND ==
 improve digging sounds
 mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
+switch item's container_id,slot & particle_id to an enum (HAND,CONTAINER,PARTICLE) and context-dependent id
 
 == UI/UX ==
 indicate where something can be placed
@@ -455,40 +469,23 @@ indicate where something can be placed
 alt tab doesnt work in fullscreen
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
+hud disable key in production build
 
 == CONTAINERS ==
-cryofreezer
-methane blocks, go in cryofreezer
-decay methane items when not in cryofreezer
 smelter
-craft bench levels
+if item can stack in the inventory, do that before going in toolbelt
+right click throw throws 1
+am able to open inventory when dead, but not close it
 
 == ITEMS ==
 
 == ANALYTICS ==
 Record time played per user
 
+== MAP ==
+Put some methane underground
+Regenerate methane blocks somehow
+
 ==BUGZ==
-<HaltingState> ./run(_Z11print_tracev+0x26) [0x809c116]
-<HaltingState> ./run(_ZN4Item14get_stack_sizeE6ItemID+0x4d) [0x80f815d]
-<HaltingState> ./run(_ZN13ItemContainer30update_container_ui_from_stateEv+0x2ea) [0x80fb6ca]
-<HaltingState> ./run(_ZN34FixedSizeReliableNetPacketToClientIN4Item15item_state_StoCEE7handlerEPciPii+0x92) [0x813c0f2]
-<HaltingState> ./run(_Z23process_packet_messagesPcPiii+0x6f) [0x80a8f0f]
-<HaltingState> ./run(_ZN9NetClient30client_dispatch_network_eventsEv+0xac) [0x8128dbc]
-<HaltingState> ./run(_ZN4Main3runEv+0x160) [0x81291b0]
-<HaltingState> ./run(main+0x41) [0x8097981]
-<HaltingState> /lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7170113]
-<HaltingState> ./run() [0x8097e55]
-<HaltingState> GS_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/item/_interface.cpp, line 60 function: get_stack_size 
-<HaltingState> Segmentation fault
-
-container state is desynced?
-
-./run(_Z11print_tracev+0x26) [0x809bdd6]
-./run(_ZN5t_hud8draw_hudEv+0x9ea) [0x81094da]
-./run(_ZN4Main3runEv+0x746) [0x8128f86]
-./run(main+0x41) [0x8097951]
-/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb7179113]
-./run() [0x8097e25]
-GS_ASSERT error: /home/steve/dc_mmo/netclient/c_lib/item/container/container_ui.hpp, line 57 function: get_slot_type
-    -- this one might be when item is destroyed?
+item does not exist on destruction msgs
+--add better warning

@@ -249,11 +249,11 @@ void set_drop(float drop_probability, int drops)
     _current_drop_num++;
 }
 
-
-void drop_always(const char* item_name)
+void drop_always(const char* item_name, int drops)
 {
     add_drop(item_name, 1);
-    set_drop(1.0, 1);
+    set_drop(1.0, drops);
 }
+void drop_always(const char* item_name) { drop_always(item_name, 1); }
 
 }   // t_map

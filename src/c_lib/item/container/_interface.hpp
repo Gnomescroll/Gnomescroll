@@ -78,7 +78,7 @@ void send_container_contents(int agent_id, int client_id, int container_id);
 bool agent_in_container_range(int agent_id, int container_id);
 void check_agents_in_container_range(); // checks that any agent accessing a container is still in range
 
-bool auto_add_item_to_container(int client_id, int container_id, ItemID item_id);
+ContainerActionType auto_add_item_to_container(int client_id, int container_id, ItemID item_id);
 
 // definition in server.hpp
 void send_container_remove(int client_id, int container_id, int slot);

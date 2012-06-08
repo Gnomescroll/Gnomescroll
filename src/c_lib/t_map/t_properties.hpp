@@ -20,6 +20,9 @@ struct cubeProperties
     unsigned char color_type; //flat, discrete and perlin
     //bool solid;
     //bool gravity;
+
+    //for dat debug assistance
+    bool in_use;
 };
 
 const int MAX_CUBES = 256;

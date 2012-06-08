@@ -259,6 +259,15 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"cryofreezer_1");
     s.container_type = CONTAINER_TYPE_CRYOFREEZER_SMALL;
     container_block_def("cryofreezer_1", CONTAINER_TYPE_CRYOFREEZER_SMALL);
+
+    item_def(50, IG_RESOURCE, "methane_ice");
+    iso_block_sprite_def("methane_ice");
+    s.pretty_name = (char*)"Methane Ice";
+    s.placer_block_type_id = t_map::dat_get_cube_id("methane_ice");
+    s.max_stack_size = 16;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"methane_ice");
+    s.gas = true;
     
     end_item_dat();
 }
@@ -284,7 +293,7 @@ void end_item_dat()
 
 void iso_block_sprite_def(const char* block_name)
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     if(_item_cube_iso_spritesheet_id == -1)
     {
         printf("Error: iso_block_sprite_def, must call start_item_dat!!!\n");

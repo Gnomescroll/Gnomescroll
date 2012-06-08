@@ -16,7 +16,11 @@ class Item
         int stack_size;
 
         int container_id;
-        int container_slot;
+        int container_slot; // container_slot is agent_id if container_id is AGENT_HAND
+
+        int particle_id;
+
+        int gas_decay;
 
     void init(int item_type);
 
@@ -31,6 +35,7 @@ class Item
         printf("Stack size %d\n", stack_size);
         printf("Container ID %d\n", container_id);
         printf("Container slot %d\n", container_slot);
+        printf("Gas decay %d\n", gas_decay);
     }
 
     explicit Item(int id)
@@ -40,7 +45,9 @@ class Item
         durability(NULL_DURABILITY),
         stack_size(1),
         container_id(NULL_CONTAINER),
-        container_slot(NULL_SLOT)
+        container_slot(NULL_SLOT),
+        particle_id(NULL_PARTICLE),
+        gas_decay(ITEM_GAS_LIFETIME)
     {}
 
 };
@@ -106,8 +113,13 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
         }
         #endif
 
+    private:
+        unsigned int gas_tick;
+        static const int GAS_TICK_INTERVAL = 30;
+    public:
         void draw() {}
-        void tick() {}
+        void tick();
+        void verify_items();
 };
 
 }   // Item

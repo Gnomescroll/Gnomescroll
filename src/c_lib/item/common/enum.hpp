@@ -24,6 +24,7 @@ typedef enum
     CONTAINER_ACTION_NONE = 0,      // null
     
     FULL_HAND_TO_WORLD,             // remove
+    PARTIAL_HAND_TO_WORLD,
 
     // inserts
     FULL_HAND_TO_EMPTY_SLOT,        // drop
@@ -44,6 +45,12 @@ typedef enum
 
     // crafting
     CRAFT_ITEM_FROM_BENCH,
+
+    // pickup
+    FULL_WORLD_TO_EMPTY_SLOT,
+    FULL_WORLD_TO_OCCUPIED_SLOT,
+    PARTIAL_WORLD_TO_OCCUPIED_SLOT,
+    
 } ContainerActionType;
 
 typedef enum

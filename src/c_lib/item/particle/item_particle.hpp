@@ -9,15 +9,16 @@
 namespace ItemParticle
 {
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 extern SDL_Surface* ItemSheetSurface;
-extern unsigned int ItemSheetTexture;
+extern GLuint ItemSheetTexture;
 
 void init_item_particle();
 void teardown_item_particle();
 #endif
 
 const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
+//const int ITEM_PARTICLE_TTL = 3*30; // 5 minutes
 const float ITEM_PARTICLE_DAMPENING = 0.50;
 const float ITEM_PARTICLE_RADIUS = 0.35;
 

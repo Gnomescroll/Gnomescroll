@@ -153,10 +153,25 @@ ItemContainerInterface* create_container(ItemContainerType type, int id)
 
 void update_container_ui_from_state()
 {
-    if (player_container_ui != NULL) player_container_ui->load_data(player_container->slot);
-    if (player_toolbelt_ui  != NULL) player_toolbelt_ui->load_data(player_toolbelt->slot);
-    if (player_nanite_ui    != NULL) player_nanite_ui->load_data(player_nanite->slot);
-    if (player_craft_bench_ui != NULL) player_craft_bench_ui->load_data(player_craft_bench->slot);
+    if (player_container_ui   != NULL) player_container_ui   ->load_data (player_container   ->slot);
+    if (player_toolbelt_ui    != NULL) player_toolbelt_ui    ->load_data (player_toolbelt    ->slot);
+    if (player_nanite_ui      != NULL) player_nanite_ui      ->load_data (player_nanite      ->slot);
+    if (player_craft_bench_ui != NULL) player_craft_bench_ui ->load_data (player_craft_bench ->slot);
+    if (storage_block_ui      != NULL) storage_block_ui      ->load_data (storage_block      ->slot);
+    if (cryofreezer_ui        != NULL) cryofreezer_ui        ->load_data (cryofreezer        ->slot);
+    
+    if (player_hand == NULL_ITEM)
+    {
+        player_hand_type_ui = NULL_ITEM_TYPE;
+        player_hand_stack_ui = 1;
+        player_hand_durability_ui = NULL_DURABILITY;
+    }
+    else
+    {
+        player_hand_type_ui = Item::get_item_type(player_hand);
+        player_hand_stack_ui = Item::get_stack_size(player_hand);
+        player_hand_durability_ui = Item::get_item_durability(player_hand);
+    }
 }
 
 void open_inventory()
@@ -187,6 +202,8 @@ bool open_container(int container_id)
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             GS_ASSERT(storage_block == NULL);
             GS_ASSERT(storage_block_ui == NULL);
+            GS_ASSERT(cryofreezer == NULL);
+            GS_ASSERT(cryofreezer_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
             if (player_craft_bench == NULL) return false;
@@ -199,10 +216,11 @@ bool open_container(int container_id)
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             GS_ASSERT(player_craft_bench == NULL);
             GS_ASSERT(player_craft_bench_ui == NULL);
+            GS_ASSERT(cryofreezer == NULL);
+            GS_ASSERT(cryofreezer_ui == NULL);
             
             storage_block = (ItemContainer*)container;
             if (storage_block == NULL) return false;
@@ -212,6 +230,23 @@ bool open_container(int container_id)
             storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
             storage_block_ui->load_data(storage_block->slot);
             t_hud::set_container_id(storage_block->type, storage_block->id);
+            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            break;
+
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+            GS_ASSERT(player_craft_bench == NULL);
+            GS_ASSERT(player_craft_bench_ui == NULL);
+            GS_ASSERT(storage_block == NULL);
+            GS_ASSERT(storage_block_ui == NULL);
+            
+            cryofreezer = (ItemContainerCryofreezer*)container;
+            if (cryofreezer == NULL) return false;
+            // setup ui
+            if (cryofreezer_ui == NULL) delete cryofreezer_ui;
+            cryofreezer_ui = new ItemContainerUI(container_id);
+            cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
+            cryofreezer_ui->load_data(cryofreezer->slot);
+            t_hud::set_container_id(cryofreezer->type, cryofreezer->id);
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
@@ -247,6 +282,10 @@ void close_container()
     storage_block = NULL;
     if (storage_block_ui != NULL) delete storage_block_ui;
     storage_block_ui = NULL;
+
+    cryofreezer = NULL;
+    if (cryofreezer_ui != NULL) delete cryofreezer_ui;
+    cryofreezer_ui = NULL;
 
     // unset hud container id
     t_hud::close_container(opened_container);
@@ -301,6 +340,8 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
     if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
     if (storage_block_ui      != NULL && storage_block_ui->id      == container_id) return storage_block_ui;
+    if (cryofreezer_ui        != NULL && cryofreezer_ui->id        == container_id) return cryofreezer_ui;
+    GS_ASSERT(false);
     return NULL;
 }
 
@@ -444,8 +485,9 @@ void assign_containers_to_agent(int agent_id, int client_id)
         GS_ASSERT(crate != NULL);
         if (crate != NULL)
         {
-            bool added = auto_add_item_to_container(client_id, agent_container->id, crate->id);
-            if (!added) Item::destroy_item_silently(crate->id);
+            ContainerActionType event = auto_add_item_to_container(client_id, agent_container->id, crate->id);
+            if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT)
+                Item::destroy_item_silently(crate->id);
         }
     }
     #endif
@@ -564,10 +606,10 @@ void agent_born(int agent_id)
         {
             Item::Item* laser_rifle = Item::create_item(laser_rifle_type);
             GS_ASSERT(laser_rifle != NULL);
-            bool added = false;
+            ContainerActionType event = CONTAINER_ACTION_NONE;
             if (laser_rifle != NULL)
-                added = auto_add_item_to_container(client_id, toolbelt->id, laser_rifle->id);    // this will send the item create
-            GS_ASSERT(added);
+                event = auto_add_item_to_container(client_id, toolbelt->id, laser_rifle->id);    // this will send the item create
+            GS_ASSERT(event != CONTAINER_ACTION_NONE && event != PARTIAL_WORLD_TO_OCCUPIED_SLOT);
             toolbelt_space--;
         }
     }
@@ -587,10 +629,10 @@ void agent_born(int agent_id)
         {
             Item::Item* mining_laser = Item::create_item(mining_laser_type);
             GS_ASSERT(mining_laser != NULL);
-            bool added = false;
+            ContainerActionType event = CONTAINER_ACTION_NONE;
             if (mining_laser != NULL)
-                added = auto_add_item_to_container(client_id, toolbelt->id, mining_laser->id);    // this will send the item create
-            GS_ASSERT(added);
+                event = auto_add_item_to_container(client_id, toolbelt->id, mining_laser->id);    // this will send the item create
+            GS_ASSERT(event != CONTAINER_ACTION_NONE && event != PARTIAL_WORLD_TO_OCCUPIED_SLOT);
             toolbelt_space--;
         }
     }
@@ -604,7 +646,7 @@ void agent_born(int agent_id)
     //auto_add_item_to_container(client_id, toolbelt->id, mining_laser->id);    // this will send the item create
 
     #if !PRODUCTION
-    bool added;
+    ContainerActionType event;
     
     // put a grenade launcher in the toolbelt to selt
     Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
@@ -612,8 +654,9 @@ void agent_born(int agent_id)
     if (grenade_launcher != NULL)
     {
         grenade_launcher->stack_size = 100;
-        added = auto_add_item_to_container(client_id, toolbelt->id, grenade_launcher->id);    // this will send the item create
-        if (!added) Item::destroy_item_silently(grenade_launcher->id);
+        event = auto_add_item_to_container(client_id, toolbelt->id, grenade_launcher->id);    // this will send the item create
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item_silently(grenade_launcher->id);
+        if (grenade_launcher->stack_size <= 0) Item::destroy_item_silently(grenade_launcher->id);
     }
 
     // add a few container blocks
@@ -626,32 +669,32 @@ void agent_born(int agent_id)
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
-        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
-        if (!added) Item::destroy_item_silently(crate->id);
+        event = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item_silently(crate->id);
     }
     
     crate = Item::create_item(Item::get_item_type((char*)"cryofreezer_1"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
-        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
-        if (!added) Item::destroy_item_silently(crate->id);
+        event = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item_silently(crate->id);
     }
     
     crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
-        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
-        if (!added) Item::destroy_item_silently(crate->id);
+        event = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item_silently(crate->id);
     }
     
     crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
-        added = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
-        if (!added) Item::destroy_item_silently(crate->id);
+        event = auto_add_item_to_container(client_id, toolbelt->id, crate->id);
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item_silently(crate->id);
     }
 
     // debug items
@@ -1049,17 +1092,14 @@ void check_agents_in_container_range()
     }
 }
 
-// returns true if the entire item was picked up
-// Note: this function may return false yet still have picked up some amount
-// in this case, part of the source item's stack was migrated to a container item
-// if the item is not fully destroyed, this function will broadcast the item source item's updated state
-bool auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
+// You must check the event return type and destroy based on it
+ContainerActionType auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
 
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
-    if (item == NULL) return NULL_SLOT;
+    if (item == NULL) return CONTAINER_ACTION_NONE;
     GS_ASSERT(item->stack_size > 0);
     GS_ASSERT(item->type != NULL_ITEM_TYPE);
 
@@ -1073,6 +1113,7 @@ bool auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
         slot = container->get_empty_slot();
         if (slot == NULL_SLOT)
         {   // no empty slot found, try to break this stack up and redistribute
+            int starting_stack_size = item->stack_size;
             int stack_size = item->stack_size;
             int item_type = item->type;
 
@@ -1095,18 +1136,19 @@ bool auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
                 GS_ASSERT(stack_size >= 0);
                 if (stack_size <= 0) break;
             }
-            if (stack_size == 0) return true;   // return true if entire item was consumed
-            else
-            {   // source item was not fully consumed
+            
+            if (stack_size <= 0) return FULL_WORLD_TO_OCCUPIED_SLOT;
+            else if (starting_stack_size != stack_size)
+            {   // source item was only partially consumed
                 Item::broadcast_item_state(item->id); // broadcast modified source item's state
-                return false;
+                return PARTIAL_WORLD_TO_OCCUPIED_SLOT; 
             }
         }
         else
         {   // empty slot found, put it there
             container->insert_item(slot, item_id);
             send_container_item_create(client_id, item_id, container_id, slot);
-            return true;
+            return FULL_WORLD_TO_EMPTY_SLOT;
         }
     }
     else
@@ -1115,10 +1157,9 @@ bool auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
         GS_ASSERT(slot_item_id != NULL_ITEM);
         Item::merge_item_stack(item_id, slot_item_id);
         Item::send_item_state(client_id, slot_item_id);
-        send_container_insert(client_id, slot_item_id, container_id, slot);
-        return true;
+        return FULL_WORLD_TO_OCCUPIED_SLOT;
     }
-    return true;
+    return CONTAINER_ACTION_NONE;
 }
 
 //tests

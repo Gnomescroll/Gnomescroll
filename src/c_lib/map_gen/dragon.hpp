@@ -11,6 +11,6 @@ void generate(int z=13);
 
 void caves();
 
-void test_filters();
+void surface_veins();
 
 }   // Dragon
