@@ -12,7 +12,7 @@ if platform.system() != "Linux":
 
 subprocess.Popen('ulimit -c unlimited', shell=True)
 
-with open('../../VERSIONX.old') as f:
+with open('../VERSIONX.old') as f:
     version = f.read().strip()
 
 print "Server version is ", version
@@ -22,7 +22,7 @@ ct = 0
 while True:
     print '%d-th server run' % ct
     logname = 'log-%s-%d' % (version, time.time(),)
-    subprocess.call(['./m643_run_log.sh %s %d' % (logname, int(time.time()),)], shell=True)
+    subprocess.call(['./shell/m643_run_log.sh %s %d' % (logname, int(time.time()),)], shell=True)
     print "Server died"
     ct += 1
     if ct >= MAX_DUMPS:
