@@ -491,3 +491,5 @@ Regenerate methane blocks somehow?
 ==BUGZ==
 item does not exist on destruction msgs
 --add better warning
+
+no sound when pickup merges

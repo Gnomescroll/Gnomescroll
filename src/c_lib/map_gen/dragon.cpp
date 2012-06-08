@@ -907,7 +907,7 @@ void flat_veins()
     int tiles[n_tiles];
     tiles[0] = t_map::get_cube_id((char*)"methane_ice");
     
-    const int n = 100;
+    const int n = 200;
     for (int i=0; i<n; i++)
     {
         L_System* cave = _caves();
