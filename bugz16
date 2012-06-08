@@ -436,6 +436,9 @@ DONE
 steel blocks take higher damage
 DONE
 
+refactor item transition shit
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -483,8 +486,7 @@ am able to open inventory when dead, but not close it
 Record time played per user
 
 == MAP ==
-Put some methane underground
-Regenerate methane blocks somehow
+Regenerate methane blocks somehow?
 
 ==BUGZ==
 item does not exist on destruction msgs
