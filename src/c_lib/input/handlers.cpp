@@ -128,11 +128,7 @@ void toggle_full_chat()
 
 void toggle_hud()
 {
-    #if PRODUCTION
-    Options::hud = true;
-    #else
     Options::hud = (!Options::hud);
-    #endif
 }
 
 void toggle_debug()
@@ -373,8 +369,8 @@ void chat_mouse_motion_handler(SDL_Event* event){}
 
 void container_key_down_handler(SDL_Event* event)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.dead) return;
+    //if (ClientState::playerAgent_state.you == NULL) return;
+    //if (ClientState::playerAgent_state.you->status.dead) return;
     switch (event->key.keysym.sym)
     {
         case SDLK_e:
@@ -823,7 +819,8 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_SLASH:
-                toggle_hud();
+                if (input_state.debug)
+                    toggle_hud();
                 break;
 
             case SDLK_LEFTBRACKET:
