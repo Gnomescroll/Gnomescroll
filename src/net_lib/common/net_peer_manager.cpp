@@ -159,4 +159,18 @@ client_id(-1),
 inited(false),
 loaded(false),
 received_initial_state(false)
-{}
+{
+    this->connection_time = time(NULL);
+}
+
+NetPeerManager::~NetPeerManager()
+{
+    // log time
+    printlog(
+        Log::ANALYTICS,
+        Log::Always,
+        "Client %d was connected for %d seconds\n",
+        this->client_id,
+        time(NULL) - this->connection_time
+    );
+}

@@ -27,14 +27,11 @@ void address_from_string(char* ip, int address[4])
 
 }
 
-// strcpy but dont add \0 to the end of a
-//void strcpy_no_null(char* dest, char* src)
-//{
-    //char c;
-    //int i = 0;
-    //while ((c = src[i]) != '\0')
-        //dest[i++] = c;
-//}
+void address_from_uint32(uint32_t ip, uint8_t address[4])
+{
+    for (int i=0; i<4; i++)
+        address[i] = (uint8_t) (ip >> i*8) & 0xFF;
+}
 
 static bool is_valid_name_character(char c)
 {

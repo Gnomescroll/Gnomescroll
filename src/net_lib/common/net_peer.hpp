@@ -9,6 +9,8 @@
 
 #include <net_lib/enet/enet.h>
 
+#include <time.h>
+
 class NetMessageArray; //forward declaration
 
 struct packet_sequence {
@@ -45,7 +47,7 @@ class NetPeer
     int client_id;
     int connected;
     bool version_match;
-    
+
     ENetPeer *  enet_peer;
 
     //uint32_t ip;

@@ -1,9 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
-
-// strcpy but dont add \0 to the end of a
-//void strcpy_no_null(char* dest, char* src);
+#include <stdint.h>
 
 unsigned int sanitize_player_name(char* name);
 
@@ -33,3 +31,4 @@ int count_digits(int n)
 }
 
 void address_from_string(char* ip, int address[4]);
+void address_from_uint32(uint32_t ip, uint8_t address[4]);

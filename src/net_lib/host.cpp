@@ -14,6 +14,8 @@
 #include <state/client_state.hpp>
 #endif
 
+#include <common/common.hpp>
+
 #include <options/options.hpp>
 
 const int DEFAULT_PORT = 4096;
@@ -406,10 +408,13 @@ static void client_connect(ENetEvent* event)
         break;    
     }
 
+    uint8_t address[4];
+    address_from_uint32(event->peer->address.host, address);
+
     printf(
-        "client %i connected from %x:%u. %i clients connected\n", 
+        "client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
         index,
-        event->peer -> address.host, 
+        address[0], address[1], address[2], address[3],
         event->peer -> address.port, 
         NetServer::number_of_clients
     );
@@ -417,10 +422,16 @@ static void client_connect(ENetEvent* event)
     printlog( 
         Log::ANALYTICS,
         Log::Always,
-        "client %i connected from %x:%u. %i clients connected\n", 
+        "client %d connected from %d.%d.%d.%d:%d\n", 
         index,
-        event->peer -> address.host, 
-        event->peer -> address.port, 
+        address[0], address[1], address[2], address[3],
+        event->peer -> address.port
+    );
+
+    printlog(
+        Log::ANALYTICS,
+        Log::Always,
+        "%d clients connected\n",
         NetServer::number_of_clients
     );
     
@@ -449,7 +460,21 @@ static void client_disconnect(ENetEvent* event)
     NetServer::agents[client_id] = NULL;
     NetServer::clients[client_id] = NULL;
 
-    printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);
+    printf("Client %d disconnected, %d clients connected\n", client_id, NetServer::number_of_clients);
+
+    printlog(
+        Log::ANALYTICS,
+        Log::Always,
+        "Client %d disconnected\n",
+        client_id
+    );
+    
+    printlog(
+        Log::ANALYTICS,
+        Log::Always,
+        "%d clients connected\n",
+        NetServer::number_of_clients
+    );
 
     enet_peer_reset(event->peer); //TEST
     event->peer -> data = NULL;
