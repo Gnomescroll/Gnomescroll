@@ -59,7 +59,7 @@ class PerlinField2D
 
     int xsize;
 
-    float xscale;   //scale multiplier
+    //float xscale;   //scale multiplier
 
     int grad_max;   //number of gradients
 

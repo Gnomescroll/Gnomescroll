@@ -17,23 +17,25 @@ class PerlinField3D
 
     int ssize;	//number of gradients
 
-    int xsize;
-    int xsize2;
+    int xsize; int xsize2;
+    int zsize;
 
     float xscale;   //scale multiplier
+    float zscale;
 
     int grad_max;   //number of gradients
 
     //xsize is number of gradients
     PerlinField3D() {}
 
-    void init(int _xsize, int _ysize, int _grad_max)
+    void init(int _xsize, int _zsize, int _grad_max)
     {
     	if(_xsize < 1) GS_ABORT();
+        if(_zsize < 1) GS_ABORT();
 
     	xsize = _xsize; xsize2 = xsize*xsize;
-        ysize = _ysize;
-        ssize = xsize*xsize*ysize;
+        zsize = _zsize;
+        ssize = xsize*xsize*zsize;
 
        	grad_max = _grad_max;
         init_genrand(rand());
@@ -53,26 +55,27 @@ class PerlinField3D
 // This method is a *lot* faster than using (int)Math.floor(x)
 static inline int fastfloor(float x) 
 {
-return x>=0 ? (int)x : (int)x-1;
+    return x>=0 ? (int)x : (int)x-1;
 }
 
-inline int get_gradient(int x, int y)
+inline int get_gradient(int x, int y, int z)
 {
     x = x % xsize; //replace with bitmask
     y = y % xsize;
     z = z % zsize;
 
-    return ga[x + y*xsize + z*zsize2];
+    return ga[x + y*xsize + z*xsize2];
 }
 
 public:
 
 // Classic Perlin noise, 3D version
-float base(float x, float y) 
+float base(float x, float y, float z) 
 {
-    x *= xsf;  //replace with multiplication
-    y *= xsf;
-    z *= zsf;
+    x *= xsize;
+    y *= xsize;
+    z *= zsize;
+
     //get grid point
     int X = fastfloor(x);
     int Y = fastfloor(y);
@@ -93,14 +96,14 @@ float base(float x, float y)
     int gi111 = get_gradient(X+1,Y+1,Z+1);
     
     // Calculate noise contributions from each of the eight corners
-    float n000= dot(_grad3[gi000], x, y, z);
-    float n100= dot(_grad3[gi100], x-1, y, z);
-    float n010= dot(_grad3[gi010], x, y-1, z);
-    float n110= dot(_grad3[gi110], x-1, y-1, z);
-    float n001= dot(_grad3[gi001], x, y, z-1);
-    float n101= dot(_grad3[gi101], x-1, y, z-1);
-    float n011= dot(_grad3[gi011], x, y-1, z-1);
-    float n111= dot(_grad3[gi111], x-1, y-1, z-1);
+    float n000= dot(gi000, x, y, z);
+    float n100= dot(gi100, x-1, y, z);
+    float n010= dot(gi010, x, y-1, z);
+    float n110= dot(gi110, x-1, y-1, z);
+    float n001= dot(gi001, x, y, z-1);
+    float n101= dot(gi101, x-1, y, z-1);
+    float n011= dot(gi011, x, y-1, z-1);
+    float n111= dot(gi111, x-1, y-1, z-1);
     // Compute the fade curve value for each of x, y, z
     
 #if 1
