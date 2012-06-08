@@ -144,8 +144,10 @@ class PerlinOctave3D
 		octave_array = new PerlinField2D[octaves];
 
 		//for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
-		for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
+		//for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
 		//for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
+
+        for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
 	}
 
 	~PerlinOctave3D()
@@ -225,13 +227,13 @@ class PerlinOctave3D
 	}
 
 
-	float sample(float x, float y, float persistance)
+	float sample(float x, float y, float z, float persistance)
 	{	
 		float p = 1.0;
 		float tmp = 0.0;
 		for(int i=0; i<octaves; i++)
 		{
-			tmp += octave_array[i].base(x,y);
+			tmp += octave_array[i].base(x,y,z);
 			p *= persistance;
 		}
 		return tmp;
