@@ -920,14 +920,14 @@ void flat_veins()
         points = remove_all_stranded_points(points, n_points, &n_points, adjacency_distance);
 
         int tile = tiles[randrange(0,n_tiles-1)];
-        int start_z;
+        int start_z = 0;
         for (int i=0; i<n_points; i++)
         {
             int x = points[i].x;
             int y = points[i].y;
             int z = t_map::get_highest_solid_block(x,y);
             if (z < 1) z = 1;
-            if (i==0) start_z = randrange(0,z-1);
+            if (i == 0) start_z = randrange(0,z-1);
             if (z > start_z) z = start_z;
             t_map::set(x,y,z,tile);
         }

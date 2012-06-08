@@ -48,7 +48,10 @@ void ItemList::tick()
         {   // free item
             item->gas_decay -= GAS_TICK_INTERVAL;
             if (item->gas_decay <= 0)
-                consume_stack_item(item->id);
+            {
+                int final_stack = consume_stack_item(item->id);
+                if (final_stack > 0) item->gas_decay = ITEM_GAS_LIFETIME;
+            }
             continue;
         }
 
@@ -62,7 +65,11 @@ void ItemList::tick()
             container = ItemContainer::get_container(container_id);
             GS_ASSERT(container != NULL);
             // ignore cryofreezer items
-            if (container != NULL && container->type == CONTAINER_TYPE_CRYOFREEZER_SMALL) continue;
+            if (container != NULL && container->type == CONTAINER_TYPE_CRYOFREEZER_SMALL)
+            {
+                item->gas_decay = ITEM_GAS_LIFETIME;    // reset decay
+                continue;
+            }
         }
         else container = NULL;
 
@@ -72,14 +79,18 @@ void ItemList::tick()
         {
             int stack_size = item->stack_size;
             int final_stack = consume_stack_item(item->id);
-            if (final_stack > 0 && stack_size != final_stack)
+            if (final_stack > 0)
             {
-                int agent_id;
-                if (container != NULL) agent_id = container->owner;
-                else agent_id = item->container_slot;
-                Agent_state* agent = ServerState::agent_list->get(agent_id);
-                if (agent != NULL)
-                    send_item_state(agent->client_id, item->id);
+                item->gas_decay = ITEM_GAS_LIFETIME;
+                if (stack_size != final_stack)
+                {
+                    int agent_id;
+                    if (container != NULL) agent_id = container->owner;
+                    else agent_id = item->container_slot;
+                    Agent_state* agent = ServerState::agent_list->get(agent_id);
+                    if (agent != NULL)
+                        send_item_state(agent->client_id, item->id);
+                }
             }
             
         }

@@ -91,8 +91,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
             Item* item = this->get(item_id);
             if (item != NULL)
             {
-                if (item_type != item->type)
-                    printf("WARNING: %s -- %s, item_type %d does not match item->type %d\n", this->name(), __FUNCTION__, item_type, item->type);
+                GS_ASSERT(item_type == item->type);
                 return item;
             }
             

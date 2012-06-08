@@ -342,10 +342,10 @@ DONE
 version is packet 0
 DONE
 
-destroy itemparticles if they fall below a certain depth
+destroy item particles if they fall below a certain depth
 DONE
 
-destroy item tied to itemparticle if itemparticle falls to death to times out
+destroy item tied to item particle if item particle falls to death or times out
 DONE
 
 spawn team bases at 1/4 x,y and 3/4 x,y
@@ -448,6 +448,9 @@ DONE
 enable hud toggle in debug mode only, but for all builds
 DONE
 
+early user analytics, recording time played per client to analytics log
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -488,7 +491,13 @@ right click throw throws 1
 == ITEMS ==
 
 == ANALYTICS ==
-Record time played per user
+Need to keep track of IP address etc in a new data structure:
+Indexes on IP address
+--Record all sessions
+Sessions:
+    --Record all names used
+    --Time played
+Record population to log at regular time interval, so can be graphed easy
 
 == MAP ==
 Regenerate methane blocks somehow?

@@ -18,6 +18,10 @@ typedef unsigned int GLuint;
     #define  PRODUCTION 0
 #endif
 
+#ifndef PRODUCTION_DEV
+    #define  PRODUCTION_DEV 0
+#endif
+
 ///*
   //Turn off GS_ASSERTs when production is enabled
 //*/
