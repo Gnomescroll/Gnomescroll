@@ -58,7 +58,7 @@ void shutdown_file(LogType type)
 
 bool file_ok(FILE* f)
 {
-    if (feof(f) || ferror(f))
+    if (f == NULL || feof(f) || ferror(f))
         return false;
     return true;
 }
@@ -72,7 +72,7 @@ FILE* get_file_descriptor(LogType type, LogLevel level)
             f = log_files[UNKNOWN];
         else
             f = log_files[type];
-        if (!file_ok(f))
+        if (f == NULL || !file_ok(f))
         {
             shutdown_file(type);
             return NULL;
@@ -96,7 +96,6 @@ int print(LogType type, LogLevel level, const char* file, int line, const char* 
     
     if (log_buffer == NULL) return -1;
     FILE* f = get_file_descriptor(type, level);
-    GS_ASSERT(f != NULL);
     if (f == NULL) return -1;
 
     int len = strlen(file) + 10 + strlen(function) + strlen(LOG_MSG_FMT) - 8;
@@ -188,6 +187,7 @@ void open_files()
     for (int i=0; i<N_LOG_FILES; i++)
     {
         log_files[i] = fopen(log_filenames[i], "w");
+        if (log_files[i] == NULL) printf("Couldnt create log file %s. Does the folder %s exist?\n", log_filenames[i], LOG_DIR);
         if (log_files[i] != NULL && feof(log_files[i]))
         {
             fclose(log_files[i]);
