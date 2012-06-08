@@ -50,12 +50,10 @@ void load_map_drop_dat()
         drop_always("cryofreezer_1");
 
     def_drop("methane_ice");
-        drop_always("methane_ice", 2);
-        // i want the following to be mutually exclusive:
-        //add_drop("methane_ice", 3);
-        //set_drop(0.50, 1);
-        //set_drop(0.35, 2);
-        //set_drop(0.15, 3);
+        add_drop("methane_ice", 3);
+        set_drop(0.50, 1);
+        set_drop(0.35, 2);
+        set_drop(0.15, 3);
 
     end_drop_dat();
     #if DC_CLIENT
