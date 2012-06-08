@@ -1,11 +1,10 @@
 #pragma once
 
 #include <t_gen/twister.hpp>
-
+#include <t_gen/noise_map2.hpp>
 
 namespace t_gen
 {
-
 
 class PerlinField3D
 {
@@ -19,6 +18,7 @@ class PerlinField3D
     int ssize;	//number of gradients
 
     int xsize;
+    int xsize2;
 
     float xscale;   //scale multiplier
 
@@ -27,15 +27,15 @@ class PerlinField3D
     //xsize is number of gradients
     PerlinField3D() {}
 
-    void init(int _xsize, int _grad_max)
+    void init(int _xsize, int _ysize, int _grad_max)
     {
     	if(_xsize < 1) GS_ABORT();
 
-    	xsize = _xsize;
-        ssize = xsize*xsize;
+    	xsize = _xsize; xsize2 = xsize*xsize;
+        ysize = _ysize;
+        ssize = xsize*xsize*ysize;
 
        	grad_max = _grad_max;
-        //init_genrand(seed);
         init_genrand(rand());
 
         ga = new unsigned char[ssize];
@@ -43,42 +43,11 @@ class PerlinField3D
         {
             ga[i] = genrand_int32() % grad_max; //gradient number
         }
-        grad = new float[2*grad_max];
-        generate_gradient_vectors();
     }
 
     ~PerlinField3D()
     {
-        delete[] this->grad;
         delete[] this->ga;
-    }
-
-    void generate_gradient_vectors()
-    {
-    #if 1
-        for(int i=0; i<grad_max; i++)
-        {
-        	float t = 6.28318531*i* (1.0 / ((float) grad_max));
-            float x = sin(t);
-            float y = cos(t);
-
-            grad[2*i+0] = x;
-            grad[2*i+1] = y;
-        }
-    #else
-        for(int i=0; i<grad_max; i++)
-        {
-            float x = 2*genrand_real1() -1.0;
-            float y = 2*genrand_real1() -1.0;
-
-            float len = sqrt(x*x+y*y);
-            x /= len;
-            y /= len;
-
-            grad[2*i+0] = x;
-            grad[2*i+1] = y;
-        }
-    #endif
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
@@ -91,8 +60,9 @@ inline int get_gradient(int x, int y)
 {
     x = x % xsize; //replace with bitmask
     y = y % xsize;
+    z = z % zsize;
 
-    return ga[x + y*xsize];
+    return ga[x + y*xsize + z*zsize2];
 }
 
 public:
@@ -100,40 +70,61 @@ public:
 // Classic Perlin noise, 3D version
 float base(float x, float y) 
 {
-    x *= xsize;  //replace with multiplication
-    y *= xsize;
+    x *= xsf;  //replace with multiplication
+    y *= xsf;
+    z *= zsf;
     //get grid point
     int X = fastfloor(x);
     int Y = fastfloor(y);
+    int Z = fastfloor(z);
 
     x = x - X;
     y = y - Y;
+    z = z - Z;
 
-    int gi00 = get_gradient(X+0,Y+0);
-    int gi01 = get_gradient(X+0,Y+1);
-    int gi10 = get_gradient(X+1,Y+0);
-    int gi11 = get_gradient(X+1,Y+1);
+    int gi000 = get_gradient(X+0,Y+0,Z+0);
+    int gi001 = get_gradient(X+0,Y+0,Z+1);
+    int gi010 = get_gradient(X+0,Y+1,Z+0);
+    int gi011 = get_gradient(X+0,Y+1,Z+1);
+
+    int gi100 = get_gradient(X+1,Y+0,Z+0);
+    int gi101 = get_gradient(X+1,Y+0,Z+1);
+    int gi110 = get_gradient(X+1,Y+1,Z+0);
+    int gi111 = get_gradient(X+1,Y+1,Z+1);
     
     // Calculate noise contributions from each of the eight corners
-    float n00= dot(grad+2*gi00, x, y);
-    float n10= dot(grad+2*gi10, x-1, y);
-    float n01= dot(grad+2*gi01, x, y-1);
-    float n11= dot(grad+2*gi11, x-1, y-1);
+    float n000= dot(_grad3[gi000], x, y, z);
+    float n100= dot(_grad3[gi100], x-1, y, z);
+    float n010= dot(_grad3[gi010], x, y-1, z);
+    float n110= dot(_grad3[gi110], x-1, y-1, z);
+    float n001= dot(_grad3[gi001], x, y, z-1);
+    float n101= dot(_grad3[gi101], x-1, y, z-1);
+    float n011= dot(_grad3[gi011], x, y-1, z-1);
+    float n111= dot(_grad3[gi111], x-1, y-1, z-1);
     // Compute the fade curve value for each of x, y, z
     
-    #if 1
-        float u = fade(x);
-        float v = fade(y);
-    #else
-        float u = x;
-        float v = y;
-    #endif
+#if 1
+    float u = fade(x);
+    float v = fade(y);
+    float w = fade(z);
+#else
+    float u = x;
+    float v = y;
+    float w = z;
+#endif
 
-    float nx00 = mix(n00, n10, u);
-    float nx10 = mix(n01, n11, u);
-    float nxy = mix(nx00, nx10, v);
+    // Interpolate along x the contributions from each of the corners
+    float nx00 = mix(n000, n100, u);
+    float nx01 = mix(n001, n101, u);
+    float nx10 = mix(n010, n110, u);
+    float nx11 = mix(n011, n111, u);
+    // Interpolate the four results along y
+    float nxy0 = mix(nx00, nx10, v);
+    float nxy1 = mix(nx01, nx11, v);
+    // Interpolate the two last results along z
+    float nxyz = mix(nxy0, nxy1, w);
 
-    return nxy;   //-1 to 1
+    return nxyz * 0.707106781;   //-1 to 1 
 }
 
 };

@@ -10,15 +10,29 @@ int primes[20] = {
 	2,3,5,7,11,
 	13,17,19,23,29,
 	31,37,41,43,47,
-	53,59,61,67,71};
+	53,59,61,67,71
+};
 
 __attribute((always_inline)) static float dot(float* g, float x, float y);
+__attribute((always_inline)) static float dot(int gi, float x, float y, float z);
+
 __attribute((always_inline)) static float mix(float a, float b, float t);
 __attribute((always_inline)) static float fade(float t);
 
 static float dot(float* g, float x, float y)
 {
 	return g[0]*x + g[1]*y;
+}
+
+static float dot(int gi, float x, float y, float z)
+{
+	static const int g3[][3] = {
+	{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
+	{1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
+	{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
+	};
+
+    return g3[gi][0]*x + g3[gi][1]*y + g3[gi][2]*z;
 }
 
 static float mix(float a, float b, float t) 
