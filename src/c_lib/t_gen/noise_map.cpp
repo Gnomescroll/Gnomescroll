@@ -16,6 +16,8 @@ static const int _grad3[][3] = {
 {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
 };
 
+
+#if 0
 class OctaveMap3D
 {
     public:
@@ -153,8 +155,9 @@ class OctaveMap3D
         return nxyz * 0.707106781;   //-1 to 1 
     }
 };
+#endif
 
-
+#if 0
 class PerlinOctave3D
 {
     private:
@@ -424,41 +427,11 @@ float sample2(float x, float y, float z)
 }
 
 };
-
-const float PERSISTANCE = 0.40;
+#endif
 
 void noise_map_test()
 {
-
-    //test_octave_2d();
-
-#if 0
-    printf("df\n");
-
-    PerlinOctave3D oct_0(6,4,8); //int _octaves, int base_x, int base_z
-
-    oct_0.populate_value_array();
-
-    const int xres = 512;
-    const int yres = 512;
-
-    float* out = new float[xres*yres];
-
-    for(int i=0; i<xres; i++)
-    for(int j=0; j<yres; j++)
-    {
-        float x = i;
-        float y = j;
-
-        float n = oct_0.sample(x,y, 32.0, PERSISTANCE);
-        //printf("n= %f \n", n);
-        out[i+j*yres] = n;
-    }
-
-    save_png("n_map_01", out, xres, yres);
-
-    delete[] out;
-#endif
+    test_octave_2d();
 }
 
 void noise_map_generate_map()

@@ -1,17 +1,38 @@
 #pragma once
 
 
+#include <t_gen/twister.hpp>
 
 namespace t_gen
 {
 
+int primes[20] = {
+	2,3,5,7,11,
+	13,17,19,23,29,
+	31,37,41,43,47,
+	53,59,61,67,71
+};
+
 __attribute((always_inline)) static float dot(float* g, float x, float y);
+__attribute((always_inline)) static float dot(int gi, float x, float y, float z);
+
 __attribute((always_inline)) static float mix(float a, float b, float t);
 __attribute((always_inline)) static float fade(float t);
 
 static float dot(float* g, float x, float y)
 {
     return g[0]*x + g[1]*y;
+}
+
+static float dot(int gi, float x, float y, float z)
+{
+	static const int g3[][3] = {
+	{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
+	{1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
+	{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
+	};
+
+    return g3[gi][0]*x + g3[gi][1]*y + g3[gi][2]*z;
 }
 
 static float mix(float a, float b, float t) 
@@ -38,7 +59,7 @@ class PerlinField2D
 
     int xsize;
 
-    float xscale;   //scale multiplier
+    //float xscale;   //scale multiplier
 
     int grad_max;   //number of gradients
 
@@ -168,8 +189,11 @@ class PerlinOctave2D
         octave_array = new PerlinField2D[octaves];
 
         //for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
-        for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
+        //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
         //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
+	
+		for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
+
     }
 
     ~PerlinOctave2D()
@@ -332,16 +356,17 @@ class PerlinOctave2D
 void test_octave_2d()
 {
     return;
-    PerlinOctave2D m(8);
+    PerlinOctave2D m(6);
 
     m.save_octaves2();
 }
 
 void test_octave_2d_map_gen(int tile)
 {
+	//return;
 
-    PerlinOctave2D m1(8);
-    PerlinOctave2D m2(8);
+    PerlinOctave2D m1(6);
+    PerlinOctave2D m2(6);
 
     const int xres = 512;
     const int yres = 512;
@@ -362,7 +387,7 @@ void test_octave_2d_map_gen(int tile)
         float y = j*yresf;
 
         //value += 32*m.sample(x,y, 0.75);
-        float roughness = m2.sample(x,y, 0.250);
+        float roughness = m2.sample(x,y, 0.125);
         //if(roughness < 0) roughness = 0.0;
         if(roughness < 0) roughness *= -1.0/32.0;
 

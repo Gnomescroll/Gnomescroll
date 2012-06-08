@@ -9,6 +9,7 @@
 
 #include <t_gen/noise_map.cpp>
 #include <t_gen/noise_map2.hpp>
+#include <t_gen/noise_map3.hpp>
 
 #if DC_CLIENT
 #include <t_gen/perlin.hpp>
