@@ -34,7 +34,7 @@ options.team_name_two = "Red Team"
 
 -- map --
 options.map = 'natural_terrain'
-options.seed = 999004
+options.seed = 9990
 
 -- logger --
 options.logger = true
