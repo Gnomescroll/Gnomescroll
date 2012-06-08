@@ -1,38 +1,13 @@
 #pragma once
 
-
 #include <t_gen/twister.hpp>
+
 
 namespace t_gen
 {
 
-int primes[20] = {
-	2,3,5,7,11,
-	13,17,19,23,29,
-	31,37,41,43,47,
-	53,59,61,67,71};
 
-__attribute((always_inline)) static float dot(float* g, float x, float y);
-__attribute((always_inline)) static float mix(float a, float b, float t);
-__attribute((always_inline)) static float fade(float t);
-
-static float dot(float* g, float x, float y)
-{
-	return g[0]*x + g[1]*y;
-}
-
-static float mix(float a, float b, float t) 
-{
-    return a + t*(b-a);   //optimized version
-}
-
-static float fade(float t) 
-{
-	return t*t*t*(t*(t*6-15)+10);
-}
-
-
-class PerlinField2D
+class PerlinField3D
 {
     public:
 
@@ -50,7 +25,7 @@ class PerlinField2D
     int grad_max;   //number of gradients
 
     //xsize is number of gradients
-    PerlinField2D() {}
+    PerlinField3D() {}
 
     void init(int _xsize, int _grad_max)
     {
@@ -72,7 +47,7 @@ class PerlinField2D
         generate_gradient_vectors();
     }
 
-    ~PerlinField2D()
+    ~PerlinField3D()
     {
         delete[] this->grad;
         delete[] this->ga;
@@ -163,31 +138,28 @@ float base(float x, float y)
 
 };
 
-class PerlinOctave2D
+class PerlinOctave3D
 {
 	public:
 	int octaves;
 	class PerlinField2D* octave_array;
 
-	PerlinOctave2D(int _octaves)
+	PerlinOctave3D(int _octaves)
 	{
 		octaves = _octaves;
 		octave_array = new PerlinField2D[octaves];
 
 		//for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
-		//for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
+		for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
 		//for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
-	
-		for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
-
 	}
 
-	~PerlinOctave2D()
+	~PerlinOctave3D()
 	{
 		delete[] octave_array;
 	}
 
-	void save_octaves()
+	void save_octaves(int _DEGREE)	//number of gradulations
 	{
 
 		const int xres = 512;
@@ -196,72 +168,7 @@ class PerlinOctave2D
 		const float xresf = 1.0 / ((float) xres);
 		const float yresf = 1.0 / ((float) yres);
 
-	    float* out = new float[xres*yres*octaves];
-
-	    class PerlinField2D* m;
-		for(int k=0; k<octaves; k++)
-		{
-			m = &octave_array[k];
-			int zoff = k*xres*yres;
-		    for(int i=0; i<xres; i++)
-		    for(int j=0; j<yres; j++)
-		    {
-		        float x = i*xresf;
-		        float y = j*yresf;
-
-		        out[i+j*yres+zoff] = m->base(x,y);
-		    }
-		}
-
-		save_perlin("octave_map_01", out, xres, yres*octaves);
-
-		for(int k=0; k<octaves; k++)
-	    for(int i=0; i<xres; i++)
-	    for(int j=0; j<yres; j++)
-	    {
-	        out[i+j*yres+k*xres*yres] = 0.0;
-	    }
-
-		for(int k=0; k<octaves; k++)
-		{
-
-			for(int k2=0; k2< k; k2++)
-			{
-				m = &octave_array[k2];
-				float p = 1.0;
-				int zoff = k*xres*yres;
-
-			    for(int i=0; i<xres; i++)
-			    for(int j=0; j<yres; j++)
-			    {
-			        float x = i*xresf;
-			        float y = j*yresf;
-
-			        out[i+j*yres+zoff] += p*m->base(x,y);
-			    }
-
-			    p *= 0.50;
-			}
-		}
-
-
-    	//save_png("octave_map_01", out, xres, yres*octaves);
-		save_perlin("octave_map_02", out, xres, yres*octaves);
-		//void save_png(const char* filename, float* in, int xres, int yres)
-
-
-	}
-
-	void save_octaves2()
-	{
-
-		const int xres = 512;
-		const int yres = 512;
-
-		const float xresf = 1.0 / ((float) xres);
-		const float yresf = 1.0 / ((float) yres);
-
-		const int DEGREE = octaves; //8;
+		const int DEGREE = _DEGREE; //8;
 
 		//(i + xres*DEGREE*n)+ (j*xres*yres*DEGREE)
 	    float* out = new float[xres*yres*octaves*DEGREE];
@@ -271,7 +178,6 @@ class PerlinOctave2D
 	    for(int i=0; i<xres*yres*octaves*DEGREE; i++) out[i] = 0.0;
 
 	    class PerlinField2D* m;
-
 
 		for(int k=0; k<octaves; k++)
 		{
@@ -339,17 +245,17 @@ class PerlinOctave2D
 };
 
 
-void test_octave_2d()
+void test_octave_3d()
 {
-	//return;
+	return;
     PerlinOctave2D m(6);
-
     m.save_octaves2();
 }
 
-void test_octave_2d_map_gen(int tile)
+void test_octave_3d_map_gen(int tile)
 {
-	//return;
+/*
+	return;
 
     PerlinOctave2D m1(6);
     PerlinOctave2D m2(6);
@@ -381,6 +287,7 @@ void test_octave_2d_map_gen(int tile)
 
         //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
     }
+*/
 }
 
 }
