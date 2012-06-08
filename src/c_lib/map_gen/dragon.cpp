@@ -901,4 +901,40 @@ void surface_veins()
     }
 }
 
+void flat_veins()
+{
+    int n_tiles = 1;
+    int tiles[n_tiles];
+    tiles[0] = t_map::get_cube_id((char*)"methane_ice");
+    
+    const int n = 100;
+    for (int i=0; i<n; i++)
+    {
+        L_System* cave = _caves();
+
+        struct iPoint* points = convert_to_int_points(cave->points, cave->n_points);
+        int n_points;
+        points = remove_duplicate_points(points, cave->n_points, &n_points);
+
+        const int adjacency_distance = 3;
+        points = remove_all_stranded_points(points, n_points, &n_points, adjacency_distance);
+
+        int tile = tiles[randrange(0,n_tiles-1)];
+        int start_z;
+        for (int i=0; i<n_points; i++)
+        {
+            int x = points[i].x;
+            int y = points[i].y;
+            int z = t_map::get_highest_solid_block(x,y);
+            if (z < 1) z = 1;
+            if (i==0) start_z = randrange(0,z-1);
+            if (z > start_z) z = start_z;
+            t_map::set(x,y,z,tile);
+        }
+
+        delete cave;
+        free(points);
+    }
+}
+
 }   // Dragon

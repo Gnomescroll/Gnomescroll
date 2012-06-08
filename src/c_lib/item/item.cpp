@@ -48,10 +48,7 @@ void ItemList::tick()
         {   // free item
             item->gas_decay -= GAS_TICK_INTERVAL;
             if (item->gas_decay <= 0)
-            {
-                printf("Decaying gas particle\n");
                 consume_stack_item(item->id);
-            }
             continue;
         }
 
@@ -71,9 +68,8 @@ void ItemList::tick()
 
         // decay item
         item->gas_decay -= GAS_TICK_INTERVAL;
-        if (item->gas_decay <= 0)
+        if (item->gas_decay <= -GAS_TICK_INTERVAL)
         {
-            printf("Decaying gas item\n");
             int stack_size = item->stack_size;
             int final_stack = consume_stack_item(item->id);
             if (final_stack > 0 && stack_size != final_stack)

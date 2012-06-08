@@ -18,7 +18,7 @@ void init()
 
     // generate floor map
     //_floor(512,512,0,32,1);
-    
+
     if(0)
     {
         MapGen::init();
@@ -29,8 +29,15 @@ void init()
     }
     else
     {
+        srand(Options::seed);
+
         t_gen::noise_map_generate_map();
+
+        map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
+        Dragon::caves();
+        Dragon::flat_veins();
     }   
+
 
     srand(time(NULL));
     
