@@ -37,7 +37,7 @@ options.map = 'natural_terrain'
 options.seed = 800751
 
 -- logger --
-options.logger = false
+options.logger = true
 
 ffi = require("ffi")
 ffi.cdef[[

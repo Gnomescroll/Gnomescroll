@@ -413,6 +413,17 @@ static void client_connect(ENetEvent* event)
         event->peer -> address.port, 
         NetServer::number_of_clients
     );
+    
+    printlog( 
+        Log::ANALYTICS,
+        Log::Always,
+        "client %i connected from %x:%u. %i clients connected\n", 
+        index,
+        event->peer -> address.host, 
+        event->peer -> address.port, 
+        NetServer::number_of_clients
+    );
+    
     //startup sequence
 
     /*

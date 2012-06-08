@@ -26,8 +26,7 @@ OPT_UINT(seed, 8007513)
 //OPT_INT(seed, 8007513)
 
 /* Logging */
-OPT_BOOL(logger, false)
-
+OPT_BOOL(logger, true)
 
 void register_options()
 {

@@ -20,6 +20,7 @@ typedef enum
     HUD,
     CHAT,
     WEAPON,
+    ANALYTICS,
     UNKNOWN // always leave this at the end
 } LogType;
 
