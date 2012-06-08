@@ -218,7 +218,7 @@ void DynamicObjectList<Object_state, max_n>::destroy(int id)
 {
     //where();
     if(id >= this->n_max || a[id]==NULL) {
-        printf("%s_list: Cannot delete object: object is null\n", name() );
+        printf("%s_list: Cannot delete object %d: object is null\n", name(), id);
         return;
     }
     delete a[id];

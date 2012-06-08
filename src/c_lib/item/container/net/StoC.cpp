@@ -100,6 +100,11 @@ inline void insert_item_in_hand_StoC::handle()
 {
     GS_ASSERT(item_id >= 0 && item_id != NULL_ITEM);
     if (item_id < 0 || item_id == NULL_ITEM) return;
+    Item::Item* item = Item::get_item((ItemID)item_id);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return;
+    item->container_id = AGENT_HAND;
+    item->container_slot = ClientState::playerAgent_state.agent_id;
     player_hand = (ItemID)item_id;
     int item_type = Item::get_item_type((ItemID)item_id);
     int item_stack = Item::get_stack_size((ItemID)item_id);
@@ -111,6 +116,15 @@ inline void insert_item_in_hand_StoC::handle()
 
 inline void remove_item_from_hand_StoC::handle()
 {
+    GS_ASSERT(player_hand != NULL_ITEM);
+    if (player_hand != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item(player_hand);
+        GS_ASSERT(item != NULL);
+        if (item == NULL) return;
+        item->container_id = NULL_CONTAINER;
+    }
+
     player_hand = NULL_ITEM;
     player_hand_type_ui = NULL_ITEM_TYPE;
     player_hand_stack_ui = 1;

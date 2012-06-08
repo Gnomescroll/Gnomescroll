@@ -16,7 +16,7 @@ class Item
         int stack_size;
 
         int container_id;
-        int container_slot;
+        int container_slot; // container_slot is agent_id if container_id is AGENT_HAND
 
         int particle_id;
 
@@ -119,6 +119,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
     public:
         void draw() {}
         void tick();
+        void verify_items();
 };
 
 }   // Item

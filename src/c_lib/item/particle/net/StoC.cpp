@@ -17,6 +17,8 @@ inline void item_particle_create_StoC::handle()
 
 inline void item_particle_destroy_StoC::handle()
 {
+    GS_ASSERT(id != NULL_PARTICLE);
+    if (id == NULL_PARTICLE) return;
     destroy(id);
 }
 
@@ -29,7 +31,6 @@ inline void item_particle_state_StoC::handle()
 
 inline void item_particle_picked_up_StoC::handle()
 {
-    destroy(id);
     if (agent_id == ClientState::playerAgent_state.agent_id)
     {
         // only play this sound once per frame. sometimes you pick up multiple items in a frame

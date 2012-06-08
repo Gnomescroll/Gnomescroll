@@ -7,6 +7,7 @@
 
 #if DC_SERVER
 #include <item/net/StoC.hpp>
+#include <item/container/_state.hpp>
 #endif
 
 #if DC_CLIENT
@@ -81,6 +82,7 @@ int get_item_durability(ItemID id)
     return item->durability;
 }
 
+// Caller of this function is expected to destroy the src
 void merge_item_stack(ItemID src, ItemID dest)
 {
     GS_ASSERT(src != NULL_ITEM);
@@ -164,29 +166,48 @@ namespace Item
 
 void destroy_item(ItemID id)
 {
+    GS_ASSERT(ItemContainer::agent_hand_list != NULL);
+    if (ItemContainer::agent_hand_list == NULL) return;
+    
     Item* item = get_item(id);
+    GS_ASSERT(item != NULL);
     if (item == NULL) return;
 
     // remove from container
     int container_id = item->container_id;
     if (container_id != NULL_CONTAINER)
     {
-        ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-        GS_ASSERT(container != NULL);
-        GS_ASSERT(item->container_slot != NULL_SLOT);
-        if (container != NULL && item->container_slot != NULL_SLOT)
+        if (container_id == AGENT_HAND)
         {
-            container->remove_item(item->container_slot);
-            // TODO -- check against all players accessing this container
-            Agent_state* a = STATE::agent_list->get(container->owner);
-            if (a != NULL) ItemContainer::send_container_remove(container->owner, container_id, item->container_slot);
+            int agent_id = item->container_slot;
+            ASSERT_VALID_AGENT_ID(agent_id);
+            if (agent_id >= 0 && agent_id < AGENT_MAX)
+            {
+                GS_ASSERT(ItemContainer::agent_hand_list[agent_id] != NULL_ITEM);
+                ItemContainer::agent_hand_list[agent_id] = NULL_ITEM;
+                Agent_state* agent = ServerState::agent_list->get(agent_id);
+                if (agent != NULL) ItemContainer::send_hand_remove(agent->client_id);
+            }
+        }
+        else
+        {
+            int slot = item->container_slot;
+            ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+            GS_ASSERT(container != NULL);
+            GS_ASSERT(slot != NULL_SLOT);
+            if (container != NULL && slot != NULL_SLOT)
+            {
+                container->remove_item(slot);
+                // TODO -- check against all players accessing this container
+                Agent_state* a = STATE::agent_list->get(container->owner);
+                if (a != NULL) ItemContainer::send_container_remove(container->owner, container_id, slot);
+            }            
         }
     }
 
     // destroy source particle
     if (item->particle_id != NULL_PARTICLE) ItemParticle::destroy(item->particle_id);
     
-    ItemParticle::destroy(item->particle_id);
     item_list->destroy(id);
     broadcast_item_destroy(id);
 }
@@ -200,6 +221,9 @@ void destroy_item_silently(ItemID id)
     int slot = item->container_slot;
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
+
+    /// TODO - remove from particle,hand silently
+    
     item_list->destroy(id);
 }
 
@@ -258,6 +282,7 @@ Item* create_item(char* item_name)
     return create_item(item_type);
 }
 
+// will destroy item if fully consumed
 // returns stack size
 int consume_stack_item(ItemID item_id)
 {
