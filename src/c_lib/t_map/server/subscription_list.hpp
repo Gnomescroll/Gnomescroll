@@ -65,6 +65,7 @@ class MAP_CHUNK_SUBSCRIPTION
     void send_block_action(int x, int y, int z, int block, int action)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+        if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
         
         block_action_StoC msg;
         msg.x = x;
@@ -82,7 +83,8 @@ class MAP_CHUNK_SUBSCRIPTION
     void send_set_block(int x, int y, int z, int block)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
-        
+        if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+
         block_set_StoC msg;
         msg.x = x;
         msg.y = y;
@@ -98,7 +100,8 @@ class MAP_CHUNK_SUBSCRIPTION
     void send_set_block_palette(int x, int y, int z, int block, int palette)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
-        
+        if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+
         block_set_palette_StoC msg;
         msg.x = x;
         msg.y = y;
@@ -114,6 +117,9 @@ class MAP_CHUNK_SUBSCRIPTION
 
     void container_block_create(int x, int y, int z, int container_type, int container_id)
     {
+        GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+        if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+
         class container_block_create_StoC msg;
         msg.x = x;
         msg.y = y;

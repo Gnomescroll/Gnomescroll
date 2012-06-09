@@ -122,7 +122,9 @@ int apply_damage(int x, int y, int z, int dmg)
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
     GS_ASSERT(dmg > 0);
-    
+    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+
     int block_type;
     int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
     if (res != 0) return;
@@ -137,17 +139,26 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 
 void broadcast_set_block_action(int x, int y, int z, int block, int action)
 {
+    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+
     map_history->send_block_action(x,y,z,block,action);
 }
 
 void broadcast_set_block(int x, int y, int z, int block)
 {
+    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+
     main_map->set_block(x,y,z,block);
     map_history->send_set_block(x,y,z,block);
 }
 
 void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
 {
+    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+
     struct MAP_ELEMENT e = {{{0}}};
     e.block = block;
     e.palette = palette;

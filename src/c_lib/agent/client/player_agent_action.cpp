@@ -328,6 +328,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
         max_dist, z_low, z_high
     );
     if (b==NULL) return false;
+    if (b[2] < 0 || b[2] >= map_dim.z) return false;
 
     int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
     GS_ASSERT(orientation >= 0 && orientation <= 3);
@@ -379,6 +380,7 @@ void PlayerAgent_action::admin_set_block()
         max_dist, z_low, z_high
     );
     if (b==NULL) return;
+    if (b[2] < 0 || b[2] >= map_dim.z) return;
 
     // get block value from somewhere
     int val = HudCubeSelector::cube_selector.get_active_id();

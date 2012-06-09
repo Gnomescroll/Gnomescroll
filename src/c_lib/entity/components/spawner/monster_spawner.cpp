@@ -47,10 +47,12 @@ Objects::Object* MonsterSpawnerComponent::spawn_child(ObjectType type)
     if (this->spawn_type != OBJECT_NONE && this->spawn_type != type) return NULL;
     if (this->children >= this->max_children) return NULL;
     Object* object = Objects::create(type);
+    GS_ASSERT(object != NULL);
     if (object == NULL) return NULL;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         float height = 1.0f;
@@ -69,6 +71,7 @@ Objects::Object* MonsterSpawnerComponent::spawn_child(ObjectType type)
 
     using Components::SpawnChildComponent;
     SpawnChildComponent* child = (SpawnChildComponent*)object->get_component(COMPONENT_SPAWN_CHILD);
+    GS_ASSERT(child != NULL);
     if (child == NULL) return object;
     child->assign_parent(this->object->type, this->object->id);
     

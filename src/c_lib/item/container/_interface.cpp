@@ -266,12 +266,12 @@ bool open_container(int container_id)
     return true;
 }
 
-void close_container()
+bool close_container_silently()
 {
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 
-    if (opened_container == NULL_CONTAINER) return;
+    if (opened_container == NULL_CONTAINER) return false;
 
     // teardown UI widget
     // TODO -- handle multiple UI types
@@ -290,15 +290,26 @@ void close_container()
     // unset hud container id
     t_hud::close_container(opened_container);
 
-    if (opened_container != NULL_CONTAINER)
-        did_close_container_block = true;
+    did_close_container_block = true;
     
+    opened_container = NULL_CONTAINER;
+
+    return true;
+}
+
+bool close_container()
+{
+    int container_id = opened_container;
+    if (!close_container_silently()) return false;
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
+
     // send packet
     close_container_CtoS msg;
-    msg.container_id = opened_container;
+    msg.container_id = container_id;
     msg.send();
 
-    opened_container = NULL_CONTAINER;
+    return true;
 }
 
 bool container_block_was_opened(int* container_id)
@@ -739,17 +750,18 @@ void agent_died(int agent_id)
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
-        send_container_close(agent_id, opened_containers[agent_id]);
         agent_close_container(agent_id, opened_containers[agent_id]);
+        send_container_close(agent_id, opened_containers[agent_id]);
     }
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
     if (agent_hand_list[agent_id] != NULL_ITEM)
     {
+        ItemID item_id = agent_hand_list[agent_id];
+        remove_item_from_hand(agent_id);
         if (a != NULL) send_hand_remove(a->client_id);
-        ItemParticle::throw_agent_item(agent_id, agent_hand_list[agent_id]);
+        ItemParticle::throw_agent_item(agent_id, item_id);
     }
-    agent_hand_list[agent_id] = NULL_ITEM;
 }
 
 void agent_quit(int agent_id)
@@ -762,8 +774,8 @@ void agent_quit(int agent_id)
     // close opened free container (this will throw any items sitting in hand)
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
-        send_container_close(agent_id, opened_containers[agent_id]);
         agent_close_container(agent_id, opened_containers[agent_id]);
+        send_container_close(agent_id, opened_containers[agent_id]);
     }
 
     GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
@@ -772,10 +784,11 @@ void agent_quit(int agent_id)
     // still have to throw any items in hand, in case we have our private inventory opened
     if (agent_hand_list[agent_id] != NULL_ITEM)
     {
+        ItemID item_id = agent_hand_list[agent_id];
+        remove_item_from_hand(agent_id);
         if (a != NULL) send_hand_remove(a->client_id);
-        ItemParticle::throw_agent_item(agent_id, agent_hand_list[agent_id]);
+        ItemParticle::throw_agent_item(agent_id, item_id);
     }
-    agent_hand_list[agent_id] = NULL_ITEM;
 
     // throw all items away (inventory, toolbelt and nanite)
     GS_ASSERT(agent_container_list != NULL);
@@ -849,9 +862,7 @@ void purchase_item_from_nanite(int agent_id, int shopping_slot)
 
     if (a != NULL) Item::send_item_create(a->client_id, purchase->id);
     // add to hand
-    purchase->container_id = AGENT_HAND;
-    purchase->container_slot = agent_id;
-    agent_hand_list[agent_id] = purchase->id;
+    insert_item_in_hand(nanite->owner, purchase->id);
     if (a != NULL) send_hand_insert(a->client_id, purchase->id);
 
     // update coins
@@ -906,9 +917,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         if (item == NULL) return;
         item->stack_size = recipe->output_stack;
         Item::send_item_create(agent->client_id, item->id);
-        item->container_id = AGENT_HAND;
-        item->container_slot = agent_id;
-        agent_hand_list[agent_id] = item->id;
+        insert_item_in_hand(agent->id, item->id);
         send_hand_insert(agent->client_id, item->id);
     }
     else if (hand_can_stack_recipe)
@@ -1096,7 +1105,6 @@ void check_agents_in_container_range()
     }
 }
 
-// You must check the event return type and destroy based on it
 ContainerActionType auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -1109,6 +1117,7 @@ ContainerActionType auto_add_item_to_container(int client_id, int container_id, 
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
+    if (container == NULL) return CONTAINER_ACTION_NONE;
 
     int slot = container->get_stackable_slot(item->type, item->stack_size);
     if (slot == NULL_SLOT)
@@ -1132,16 +1141,27 @@ ContainerActionType auto_add_item_to_container(int client_id, int container_id, 
                 if (slot_item->type != item_type) continue;
                 int stack_space = Item::get_stack_space(slot_item->id);
                 if (stack_space == 0) continue;
-                GS_ASSERT(stack_space < stack_size); // if we can fit the entire thing, it shouldve been placed in this slot eatlier
-                int merge_size = (stack_space < stack_size) ? stack_space : stack_size;
-                Item::merge_item_stack(item->id, slot_item->id, merge_size);
-                Item::send_item_state(client_id, slot_item->id);
-                stack_size -= merge_size;
-                GS_ASSERT(stack_size >= 0);
+
+                if (stack_space >= stack_size)
+                {   // full, final merge
+                    Item::merge_item_stack(item->id, slot_item->id);
+                    stack_size = 0;
+                }
+                else
+                {
+                    Item::merge_item_stack(item->id, slot_item->id, stack_space);
+                    Item::send_item_state(client_id, slot_item->id);
+                    stack_size -= stack_space;
+                    GS_ASSERT(stack_size > 0);
+                }
                 if (stack_size <= 0) break;
             }
             
-            if (stack_size <= 0) return FULL_WORLD_TO_OCCUPIED_SLOT;
+            if (stack_size <= 0)
+            {
+                Item::destroy_item(item_id);
+                return FULL_WORLD_TO_OCCUPIED_SLOT;
+            }
             else if (starting_stack_size != stack_size)
             {   // source item was only partially consumed
                 Item::broadcast_item_state(item->id); // broadcast modified source item's state
@@ -1160,6 +1180,7 @@ ContainerActionType auto_add_item_to_container(int client_id, int container_id, 
         ItemID slot_item_id = container->get_item(slot);
         GS_ASSERT(slot_item_id != NULL_ITEM);
         Item::merge_item_stack(item_id, slot_item_id);
+        Item::destroy_item(item_id);
         Item::send_item_state(client_id, slot_item_id);
         return FULL_WORLD_TO_OCCUPIED_SLOT;
     }

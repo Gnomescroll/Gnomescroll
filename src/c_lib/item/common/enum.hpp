@@ -70,4 +70,12 @@ typedef enum
     IG_CONSUMABLE,
 } ItemGroup;
 
+typedef enum
+{
+    IL_NOWHERE,
+    IL_PARTICLE,
+    IL_CONTAINER,
+    IL_HAND,
+} ItemLocationType;
+
 /* No typedef for ItemType, use string names */

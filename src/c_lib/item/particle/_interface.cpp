@@ -46,7 +46,7 @@ void destroy(int particle_id)
     GS_ASSERT(particle != NULL);
     if (particle == NULL) return;
     Item::Item* item = Item::get_item(particle->item_id);
-    if (item != NULL) item->particle_id = NULL_PARTICLE;
+    if (item != NULL) item->location = IL_NOWHERE;
 
     broadcast_particle_item_destroy(particle->id);
     #endif
@@ -83,6 +83,19 @@ ItemParticle* create_item_particle(
 #endif
 
 #if DC_SERVER
+void destroy_silently(int particle_id)
+{
+    #if DC_SERVER
+    GS_ASSERT(particle_id != NULL_PARTICLE);
+    ItemParticle* particle = item_particle_list->get(particle_id);
+    GS_ASSERT(particle != NULL);
+    if (particle == NULL) return;
+    Item::Item* item = Item::get_item(particle->item_id);
+    if (item != NULL) item->location = IL_NOWHERE;
+    #endif
+    item_particle_list->destroy(particle_id);
+}
+
 ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
     float x, float y, float z, 
@@ -93,8 +106,9 @@ ItemParticle* create_item_particle(
     ItemParticle* particle = item_particle_list->create();
     if (particle == NULL) return NULL;
     particle->init(item_id, item_type, x,y,z,vx,vy,vz);
-    GS_ASSERT(item->container_id == NULL_CONTAINER);
-    item->particle_id = particle->id;
+    GS_ASSERT(item->location == IL_NOWHERE);
+    item->location = IL_PARTICLE;
+    item->location_id = particle->id;
     return particle;
 }
 
@@ -104,8 +118,10 @@ Item::Item* create_item_particle(int item_type, float x, float y, float z, float
     Item::Item* item = Item::create_item(item_type);
     if (item == NULL) return NULL;
     ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
+    GS_ASSERT(particle != NULL);
     if (particle == NULL) return item;
-    item->particle_id = particle->id;
+    GS_ASSERT(item->location == IL_PARTICLE);
+    // location stuff was already set
     broadcast_particle_item_create(particle->id);
     return item;
 }
@@ -182,6 +198,9 @@ void broadcast_particle_item_picked_up(int agent_id, int particle_id)
     msg.broadcast();
 }
 
+
+// this method is huge and doesnt use auto_add_item_to_container because it has to handle certain transitions from particle state
+// into container/etc that I was not able to write generically while ensuring correct state transition order
 void check_item_pickups()
 {
     for (int i=0; i<item_particle_list->n_max; i++)
@@ -192,51 +211,181 @@ void check_item_pickups()
         Item::Item* item = Item::get_item(item_particle->item_id);
         GS_ASSERT(item != NULL);
         if (item == NULL) continue;
+        GS_ASSERT(item->stack_size > 0);
+        GS_ASSERT(item->type != NULL_ITEM_TYPE);
 
-        int starting_size = item->stack_size;
-    
         const static float pick_up_distance = 1.1f;
         Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
         if (agent == NULL) continue;
 
         // try to add to toolbelt first
-        ContainerActionType toolbelt_event = CONTAINER_ACTION_NONE;
-        ContainerActionType inventory_event = CONTAINER_ACTION_NONE;
+        bool item_remaining = true;
+        bool was_picked_up = false;
+        ItemContainer::ItemContainerInterface* container = NULL;
+        
         int container_id = ItemContainer::get_agent_toolbelt(agent->id);
         if (container_id != NULL_CONTAINER)
-            toolbelt_event = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
-
-        // then try to add to inventory
-        if (toolbelt_event == CONTAINER_ACTION_NONE || toolbelt_event == PARTIAL_WORLD_TO_OCCUPIED_SLOT)
+            container = ItemContainer::get_container(container_id);
+            
+        if (container != NULL)
         {
-            container_id = ItemContainer::get_agent_container(agent->id);
-            if (container_id != NULL_CONTAINER)
-                inventory_event = ItemContainer::auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
-        }
+            int slot = container->get_stackable_slot(item->type, item->stack_size);
+            if (slot == NULL_SLOT)
+            {   // no easy stack slot found
+                // try to put in empty slot
+                slot = container->get_empty_slot();
+                if (slot == NULL_SLOT)
+                {   // no empty slot found, try to break this stack up and redistribute
+                    int starting_stack_size = item->stack_size;
+                    int stack_size = item->stack_size;
+                    int item_type = item->type;
 
-        if ((toolbelt_event != CONTAINER_ACTION_NONE && toolbelt_event != PARTIAL_WORLD_TO_OCCUPIED_SLOT)
-         || (inventory_event != CONTAINER_ACTION_NONE && inventory_event != PARTIAL_WORLD_TO_OCCUPIED_SLOT))
-        {
-            if (toolbelt_event == FULL_WORLD_TO_OCCUPIED_SLOT || inventory_event == FULL_WORLD_TO_OCCUPIED_SLOT)
-            {
+                    // distribute as much as we can into slots
+                    for (int i=0; i<container->slot_max; i++)
+                    {
+                        GS_ASSERT(stack_size > 0);
+                        if (container->slot[i] == NULL_ITEM) continue;
+                        Item::Item* slot_item = Item::get_item(container->slot[i]);
+                        GS_ASSERT(slot_item != NULL);
+                        if (slot_item == NULL) continue;
+                        if (slot_item->type != item_type) continue;
+                        int stack_space = Item::get_stack_space(slot_item->id);
+                        if (stack_space == 0) continue;
+
+                        if (stack_space >= stack_size)
+                        {   // full, final merge
+                            Item::merge_item_stack(item->id, slot_item->id);
+                            stack_size = 0;
+                        }
+                        else
+                        {
+                            Item::merge_item_stack(item->id, slot_item->id, stack_space);
+                            Item::send_item_state(agent->client_id, slot_item->id);
+                            stack_size -= stack_space;
+                            GS_ASSERT(stack_size > 0);
+                        }
+                        if (stack_size <= 0) break;
+                    }
+                    
+                    if (stack_size <= 0)
+                    {
+                        was_picked_up = true;
+                        broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                        Item::destroy_item(item->id);
+                        item_remaining = false;
+                    }
+                    else if (starting_stack_size != stack_size)
+                    {   // source item was only partially consumed
+                        was_picked_up = true;
+                        broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                        Item::broadcast_item_state(item->id); // broadcast modified source item's state
+                        item_remaining = true;
+                    }
+                }
+                else
+                {   // empty slot found, put it there
+                    was_picked_up = true;
+                    item_particle->picked_up(agent->id);
+                    broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                    destroy(item_particle->id);
+                    container->insert_item(slot, item->id);
+                    ItemContainer::send_container_item_create(agent->client_id, item->id, container_id, slot);
+                    item_remaining = false;
+                }
+            }
+            else
+            {   // stack
                 broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                was_picked_up = true;
+                ItemID slot_item_id = container->get_item(slot);
+                GS_ASSERT(slot_item_id != NULL_ITEM);
+                Item::merge_item_stack(item->id, slot_item_id);
                 Item::destroy_item(item->id);
-            }
-            else if (toolbelt_event == FULL_WORLD_TO_EMPTY_SLOT || inventory_event == FULL_WORLD_TO_EMPTY_SLOT)
-            {
-                // update particle
-                item_particle->picked_up(agent->id);
-                // remove from item
-                destroy(item_particle->id);
-                item->particle_id = NULL_PARTICLE;
+                Item::send_item_state(agent->client_id, slot_item_id);
+                item_remaining = false;
             }
         }
-        else if (toolbelt_event == PARTIAL_WORLD_TO_OCCUPIED_SLOT || inventory_event == PARTIAL_WORLD_TO_OCCUPIED_SLOT)
-        {   // partial stack pickup
-            GS_ASSERT(item->stack_size > 0);
-            GS_ASSERT(starting_size != item->stack_size);
-            // send a pickup notification so sounds/anim can playX
-            broadcast_particle_item_picked_up(agent->id, item_particle->id);
+
+        // skip if we've already put everything in the toolbelt
+        if (!item_remaining) continue;
+
+        // get the agent inventory
+        container = NULL;
+        container_id = ItemContainer::get_agent_container(agent->id);
+        if (container_id != NULL_CONTAINER)
+            container = ItemContainer::get_container(container_id);
+
+        // attempt to place in agent inventory
+        if (container != NULL)
+        {
+            int slot = container->get_stackable_slot(item->type, item->stack_size);
+            if (slot == NULL_SLOT)
+            {   // no easy stack slot found
+                // try to put in empty slot
+                slot = container->get_empty_slot();
+                if (slot == NULL_SLOT)
+                {   // no empty slot found, try to break this stack up and redistribute
+                    int starting_stack_size = item->stack_size;
+                    int stack_size = item->stack_size;
+                    int item_type = item->type;
+
+                    // distribute as much as we can into slots
+                    for (int i=0; i<container->slot_max; i++)
+                    {
+                        GS_ASSERT(stack_size > 0);
+                        if (container->slot[i] == NULL_ITEM) continue;
+                        Item::Item* slot_item = Item::get_item(container->slot[i]);
+                        GS_ASSERT(slot_item != NULL);
+                        if (slot_item == NULL) continue;
+                        if (slot_item->type != item_type) continue;
+                        int stack_space = Item::get_stack_space(slot_item->id);
+                        if (stack_space == 0) continue;
+
+                        if (stack_space >= stack_size)
+                        {   // full, final merge
+                            Item::merge_item_stack(item->id, slot_item->id);
+                            stack_size = 0;
+                        }
+                        else
+                        {
+                            Item::merge_item_stack(item->id, slot_item->id, stack_space);
+                            Item::send_item_state(agent->client_id, slot_item->id);
+                            stack_size -= stack_space;
+                            GS_ASSERT(stack_size > 0);
+                        }
+                        if (stack_size <= 0) break;
+                    }
+                    
+                    if (stack_size <= 0)
+                    {
+                        if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                        Item::destroy_item(item->id);
+                    }
+                    else if (starting_stack_size != stack_size)
+                    {   // source item was only partially consumed
+                        if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                        Item::broadcast_item_state(item->id); // broadcast modified source item's state
+                        item_remaining = true;
+                    }
+                }
+                else
+                {   // empty slot found, put it there
+                    item_particle->picked_up(agent->id);
+                    if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                    destroy(item_particle->id);
+                    container->insert_item(slot, item->id);
+                    ItemContainer::send_container_item_create(agent->client_id, item->id, container_id, slot);
+                }
+            }
+            else
+            {   // stack
+                if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
+                ItemID slot_item_id = container->get_item(slot);
+                GS_ASSERT(slot_item_id != NULL_ITEM);
+                Item::merge_item_stack(item->id, slot_item_id);
+                Item::destroy_item(item->id);
+                Item::send_item_state(agent->client_id, slot_item_id);
+            }
         }
     }
 }
@@ -248,7 +397,7 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
-    item->container_id = NULL_CONTAINER;
+    item->location = IL_NOWHERE;
 
     // create particle
     ItemParticle* particle = create_item_particle(
@@ -257,6 +406,7 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
         velocity.x, velocity.y, velocity.z
     );
     if (particle == NULL) return;
+    GS_ASSERT(item->location == IL_PARTICLE);
     broadcast_particle_item_create(particle->id);
     particle->lock_pickup();
 }

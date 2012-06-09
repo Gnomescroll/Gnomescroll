@@ -9,6 +9,10 @@ dont_include_this_file_in_client
 namespace ItemContainer
 {
 
+// transactions (does not send packets)
+void remove_item_from_hand(int agent_id);
+void insert_item_in_hand(int agent_id, ItemID item_id);
+
 // packets
 
 void send_container_assign(int client_id, int container_id);

@@ -102,7 +102,7 @@ void ItemParticle::die()
     GS_ASSERT(this->item_id != NULL_ITEM);
     Item::Item* item = Item::get_item(this->item_id);
     GS_ASSERT(item != NULL);
-    if (item != NULL) item->particle_id = NULL_PARTICLE;
+    if (item != NULL) item->location = IL_NOWHERE;
     Item::destroy_item(this->item_id);
     #endif
 }
@@ -139,7 +139,6 @@ void ItemParticle::picked_up(int agent_id)
 {
     this->ttl = 0;
     this->was_picked_up = true;
-    broadcast_particle_item_picked_up(agent_id, this->id);
 }
 #endif
 

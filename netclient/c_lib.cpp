@@ -349,8 +349,6 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("item particle draw teardown\n");
     ItemParticle::draw_teardown();
     
-    if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
-    Particle::teardown_particles();
     if (TEARDOWN_DEBUG) printf("item particle teardown\n");
     ItemParticle::teardown();
 
@@ -390,6 +388,9 @@ void close_c_lib()
 
     if (TEARDOWN_DEBUG) printf("client state teardown\n");
     ClientState::teardown();
+
+    if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
+    Particle::teardown_particles(); // teardown after ClientState::agent_list, because of billboard particle
 
     if (TEARDOWN_DEBUG) printf("item teardown\n");
     Item::teardown();

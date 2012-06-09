@@ -451,6 +451,19 @@ DONE
 early user analytics, recording time played per client to analytics log
 DONE
 
+==============
+== BUILD 20 ==  released jun 8
+==============
+
+fix client attempting to set block outside of map z, and server relaying it
+DONE
+
+fix container unlock feedback loop when detaching due to distance
+DONE
+
+fix billboard hud names not disappearing
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -501,7 +514,6 @@ Sessions:
 Record population to log at regular time interval, so can be graphed easy
 
 == MAP ==
-Regenerate methane blocks somehow?
 
 ==BUGZ==
 item does not exist on destruction msgs
