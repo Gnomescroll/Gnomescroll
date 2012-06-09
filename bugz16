@@ -455,6 +455,8 @@ DONE
 == BUILD 20 ==  released jun 8
 ==============
 
+fix client attempting to set block outside of map z, and server relaying it
+DONE
 
 == PVE ==
 blue bombs should be wandering, slowly
