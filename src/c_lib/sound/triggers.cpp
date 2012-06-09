@@ -16,6 +16,26 @@ void NAME(float x, float y, float z, float vx, float vy, float vz)\
     play_3d_sound((char*)#NAME, x,y,z,vx,vy,vz);\
 }
 
+#define SOUND_LOOP_TRIGGER(NAME)\
+int NAME(bool start, int source_id)\
+{\
+    if (start) return play_2d_sound((char*)#NAME);\
+    else\
+    {\
+        stop_sound(source_id);\
+        return -1;\
+    }\
+}\
+int NAME(bool start, int source_id, float x, float y, float z, float vx, float vy, float vz)\
+{\
+    if (start) return play_3d_sound((char*)#NAME, x,y,z,vx,vy,vz);\
+    else\
+    {\
+        stop_sound(source_id);\
+        return -1;\
+    }\
+}
+
 /* triggers */
 
 SOUND_TRIGGER(fire_laser)
@@ -65,6 +85,9 @@ SOUND_TRIGGER(hard_landing_2)
 SOUND_TRIGGER(hard_landing_3)
 SOUND_TRIGGER(hard_landing_4)
 
+// on/off loops
+SOUND_LOOP_TRIGGER(mining_laser);
+
 /* function -> filename mapping */
 
 struct Soundfile* sound_file_functions = NULL;  // allocated by csv_parser
@@ -109,7 +132,8 @@ void set_soundfile_properties(
     float reference_distance,
     float minimum_gain,
     float maximum_gain,
-    float rolloff_factor
+    float rolloff_factor,
+    bool loop
 )
 {
     if (snd_id < 0 || snd_id >= n_sounds)
@@ -125,6 +149,7 @@ void set_soundfile_properties(
     s->minimum_gain = minimum_gain;
     s->maximum_gain = maximum_gain;
     s->rolloff_factor = rolloff_factor;
+    s->loop = loop;
     //printf("set properties: ");
     //printf("%0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f\n", pitch, gain, max_distance, reference_distance, minimum_gain, maximum_gain);
 }

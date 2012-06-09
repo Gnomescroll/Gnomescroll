@@ -65,6 +65,11 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
     return OpenALSound::play_3d_sound(fn, x,y,z, vx,vy,vz);
 }
 
+void stop_sound(int sound_id)
+{
+    OpenALSound::stop_sound(sound_id);
+}
+
 void close()
 {
     return OpenALSound::close();

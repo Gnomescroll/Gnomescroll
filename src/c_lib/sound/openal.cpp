@@ -412,6 +412,8 @@ int set_source_properties(int source_id, Soundfile* snd)
     alSourcef(sources[source_id], AL_MIN_GAIN, snd->minimum_gain);
     alSourcef(sources[source_id], AL_MAX_GAIN, snd->maximum_gain);
     alSourcef(sources[source_id], AL_ROLLOFF_FACTOR, snd->rolloff_factor);
+    ALboolean loop = (snd->loop) ? AL_TRUE : AL_FALSE;
+    alSourcei(sources[source_id], AL_LOOPING, loop);
     return (checkError());
 }
 
@@ -582,6 +584,14 @@ void update()
             }
         }
     }
+}
+
+void stop_sound(int sound_id)
+{
+    GS_ASSERT(sound_id >= 0);
+    if (sound_id < 0) return;
+    alSourceStop(sources[sound_id]);
+    checkError();
 }
 
 int test()

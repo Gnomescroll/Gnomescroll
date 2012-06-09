@@ -473,6 +473,9 @@ DONE
 correct server side state transitions for a lot of events
 DONE
 
+right click outside of container throws 1
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -507,9 +510,9 @@ window gains focus on death?
 
 == CONTAINERS ==
 smelter
-right click throw throws 1
 
 == ITEMS ==
+need subscription lists per item for state changes
 
 == ANALYTICS ==
 Need to keep track of IP address etc in a new data structure:
@@ -523,5 +526,3 @@ Record population to log at regular time interval, so can be graphed easy
 == MAP ==
 
 ==BUGZ==
-item does not exist on destruction msgs
---add better warning

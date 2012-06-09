@@ -22,6 +22,31 @@ bool toolbelt_item_begin_alpha_action()
     agent_fire_on[agent_id] = true;
     agent_fire_tick[agent_id] = 0;
 
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+    int item_group;
+    if (item_id == NULL_ITEM) item_group = IG_NONE;
+    else item_group = Item::get_item_group(item_id);
+    switch (item_group)
+    {
+        case IG_MINING_LASER:
+            ClientState::playerAgent_state.action.begin_mining_laser();
+            break;
+
+        case IG_ERROR:
+        case IG_RESOURCE:
+        case IG_MELEE_WEAPON:
+        case IG_NANITE_COIN:
+        case IG_SHOVEL:
+        case IG_NONE:
+
+        case IG_CONSUMABLE:
+        case IG_PLACER:
+        case IG_HITSCAN_WEAPON:
+        case IG_GRENADE_LAUNCHER:
+        default:
+            break;    // the default action is click once
+    }
+
     return true;
 }
 
@@ -47,9 +72,12 @@ bool toolbelt_item_end_alpha_action()
         case IG_RESOURCE:
         case IG_MELEE_WEAPON:
         case IG_NANITE_COIN:
-        case IG_MINING_LASER:
         case IG_SHOVEL:
         case IG_NONE:
+            return true;
+
+        case IG_MINING_LASER:
+            ClientState::playerAgent_state.action.end_mining_laser();
             return true;
 
         case IG_CONSUMABLE:

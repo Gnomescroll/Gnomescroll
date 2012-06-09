@@ -7,6 +7,10 @@ namespace Sound
 void NAME();\
 void NAME(float x, float y, float z, float vx, float vy, float vz);
 
+#define SOUND_LOOP_TRIGGER_HEADER(NAME)\
+int NAME(bool start, int source_id);\
+int NAME(bool start, int source_id, float x, float y, float z, float vx, float vy, float vz);
+
 SOUND_TRIGGER_HEADER(fire_laser)
 SOUND_TRIGGER_HEADER(out_of_ammo)
 SOUND_TRIGGER_HEADER(reload)
@@ -54,6 +58,9 @@ SOUND_TRIGGER_HEADER(hard_landing_2)
 SOUND_TRIGGER_HEADER(hard_landing_3)
 SOUND_TRIGGER_HEADER(hard_landing_4)
 
+// on/off loops
+SOUND_LOOP_TRIGGER_HEADER(mining_laser);
+
 struct Soundfile
 {
     char* fn;
@@ -66,6 +73,7 @@ struct Soundfile
     float minimum_gain;
     float maximum_gain;
     float rolloff_factor;
+    bool loop;
 };
 
 extern struct Soundfile* sound_file_functions;
@@ -80,7 +88,8 @@ void set_soundfile_properties(
     float reference_distance,
     float minimum_gain,
     float maximum_gain,
-    float rolloff_factor
+    float rolloff_factor,
+    bool loop
 );
 
 void teardown_triggers();

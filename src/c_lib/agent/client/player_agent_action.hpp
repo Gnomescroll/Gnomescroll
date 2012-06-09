@@ -28,7 +28,12 @@ class PlayerAgent_action
     
         void hitscan_laser();
 
+        // mining laser
+        int mining_laser_sound_id;
         void tick_mining_laser();
+        void begin_mining_laser();
+        void end_mining_laser();
+        
         void fire_close_range_weapon(int weapon_type);
 
         bool set_block(ItemID placer_id);

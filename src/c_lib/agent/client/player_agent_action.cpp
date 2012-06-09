@@ -173,6 +173,21 @@ void PlayerAgent_action::tick_mining_laser()
     Animations::mining_laser_beam(origin, this->target_direction, range);
 }
 
+void PlayerAgent_action::begin_mining_laser()
+{
+    GS_ASSERT(this->mining_laser_sound_id < 0);
+    if (this->mining_laser_sound_id >= 0) return;
+    this->mining_laser_sound_id = Sound::mining_laser(true, 0);
+    GS_ASSERT(!Options::sound || this->mining_laser_sound_id >= 0);
+}
+
+void PlayerAgent_action::end_mining_laser()
+{
+    if (this->mining_laser_sound_id < 0) return;
+    Sound::mining_laser(false, this->mining_laser_sound_id);
+    this->mining_laser_sound_id = -1;
+}
+
 void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 {    
     if (p->you == NULL) return;
@@ -512,6 +527,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
 
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
 :
-p(player_agent)
+p(player_agent),
+mining_laser_sound_id(-1)
 {}
 
