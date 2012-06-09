@@ -1,7 +1,13 @@
 #pragma once
 
+#if DC_SERVER
+#include <common/subscriber_list.hpp>
+#endif
+
 namespace Item
 {
+
+const int ITEM_SUBSCRIBER_LIST_INITIAL_SIZE = 4;
 
 class Item
 {
@@ -21,6 +27,10 @@ class Item
 
         int gas_decay;
 
+        #if DC_SERVER
+        SubscriberList subscribers;
+        #endif
+
     void init(int item_type);
 
     void print()
@@ -36,6 +46,12 @@ class Item
         printf("Location ID %d\n", location_id);
         printf("Container slot %d\n", container_slot);
         printf("Gas decay %d\n", gas_decay);
+        #if DC_SERVER
+        printf("Subscribers %d\n", subscribers.n);
+        printf("\t");
+        for (unsigned int i=0; i<subscribers.n; i++) printf("%d ", subscribers.subscribers[i]);
+        printf("\n");
+        #endif
     }
 
     explicit Item(int id)
@@ -48,6 +64,9 @@ class Item
         location_id(-1),
         container_slot(NULL_SLOT),
         gas_decay(ITEM_GAS_LIFETIME)
+        #if DC_SERVER
+        , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE)
+        #endif
     {}
 
 };

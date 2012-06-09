@@ -485,6 +485,9 @@ DONE
 improve toolbelt on/off state & event handling (still needs work especially when we are triggering allies' events)
 DONE
 
+add sendToClients method for StoC packets
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
