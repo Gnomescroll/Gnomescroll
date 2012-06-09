@@ -11,6 +11,8 @@
 #include <t_gen/noise_map2.hpp>
 #include <t_gen/noise_map3.hpp>
 
+#include <t_gen/ore_cluster.hpp>
+
 #if DC_CLIENT
 #include <t_gen/perlin.hpp>
 #endif
