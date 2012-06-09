@@ -265,6 +265,15 @@ ContainerActionType full_hand_to_world(
     return FULL_HAND_TO_WORLD;
 }
 
+ContainerActionType partial_hand_to_world(
+    int* hand_item_stack, int transfer_stack_size
+)
+{
+    GS_ASSERT(*hand_item_stack > 1);
+    *hand_item_stack -= transfer_stack_size;
+    return PARTIAL_HAND_TO_WORLD;
+}
+
 ContainerActionType full_hand_to_empty_slot(
     ItemContainerUIInterface* container, int slot,
     int* hand_item_type, int* hand_item_stack, int* hand_item_durability
@@ -414,7 +423,7 @@ ContainerActionType full_hand_swap_with_slot(
 ContainerActionType full_hand_to_world(int client_id, int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    ItemID hand_item = agent_hand_list[agent_id];
+    ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
 
     // remove item from hand
@@ -427,13 +436,32 @@ ContainerActionType full_hand_to_world(int client_id, int agent_id)
     return FULL_HAND_TO_WORLD;
 }
 
+ContainerActionType partial_hand_to_world(int client_id, int agent_id, int transfer_stack_size)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    ItemID hand_item = get_agent_hand(agent_id);
+    GS_ASSERT(hand_item != NULL_ITEM);
+
+    // split 1 unit of hand item
+    ItemID new_item = Item::split_item_stack(hand_item, 1);   // WARNING: CREATES ITEM
+
+    // update items
+    Item::broadcast_item_state(hand_item);
+    Item::broadcast_item_create(new_item);    
+
+    // throw item
+    ItemParticle::throw_agent_item(agent_id, new_item);
+
+    return PARTIAL_HAND_TO_WORLD;
+}
+
 ContainerActionType full_hand_to_empty_slot(int client_id, int agent_id, ItemContainerInterface* container, int slot)
 {   // put hand item in slot
     GS_ASSERT(container != NULL);
     if (container == NULL) return CONTAINER_ACTION_NONE;
 
     ASSERT_VALID_AGENT_ID(agent_id);
-    ItemID hand_item = agent_hand_list[agent_id];
+    ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
 
     // remove item from hand
@@ -451,7 +479,7 @@ ContainerActionType full_hand_to_occupied_slot(int client_id, int agent_id, int 
     GS_ASSERT(slot_item != NULL_ITEM);
 
     ASSERT_VALID_AGENT_ID(agent_id);
-    ItemID hand_item = agent_hand_list[agent_id];
+    ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
     GS_ASSERT(hand_item != slot_item);
 
@@ -545,7 +573,7 @@ ContainerActionType full_hand_swap_with_slot(int client_id, int agent_id, ItemCo
     if (container == NULL) return CONTAINER_ACTION_NONE;
 
     ASSERT_VALID_AGENT_ID(agent_id);
-    ItemID hand_item = agent_hand_list[agent_id];
+    ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
     GS_ASSERT(hand_item != slot_item);
 
@@ -1555,7 +1583,51 @@ ContainerActionType no_container_beta_action_decision_tree()
 ContainerActionType no_container_beta_action_decision_tree(int agent_id, int client_id)
 #endif
 {
-    return CONTAINER_ACTION_NONE;
+    ContainerActionType action = CONTAINER_ACTION_NONE;
+
+    #if DC_CLIENT
+    bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
+    int hand_item_type = player_hand_type_ui;
+    int hand_item_stack = player_hand_stack_ui;
+    int hand_item_durability = player_hand_durability_ui;
+    GS_ASSERT(hand_item_stack >= 1);
+    #endif
+
+    #if DC_SERVER
+    ItemID hand_item = get_agent_hand(agent_id);
+    int hand_item_stack = Item::get_stack_size(hand_item);
+    bool hand_empty = (hand_item == NULL_ITEM);
+    #endif
+
+    if (!hand_empty)
+    {   // throw
+        if (hand_item_stack == 1)
+        {   // only 1 remains, so throw whole thing
+            #if DC_CLIENT
+            action = full_hand_to_world(&hand_item_type, &hand_item_stack, &hand_item_durability);
+            #endif
+            #if DC_SERVER
+            action = full_hand_to_world(client_id, agent_id);
+            #endif
+        }
+        else
+        {   // throw just 1
+            #if DC_CLIENT
+            action = partial_hand_to_world(&hand_item_stack, 1);
+            #endif
+            #if DC_SERVER
+            action = partial_hand_to_world(client_id, agent_id, 1);
+            #endif
+        }
+    }
+
+    #if DC_CLIENT
+    player_hand_type_ui = hand_item_type;
+    player_hand_stack_ui = hand_item_stack;
+    player_hand_durability_ui = hand_item_durability;
+    #endif
+
+    return action;
 }
 
 }
