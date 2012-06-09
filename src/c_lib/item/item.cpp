@@ -2,6 +2,7 @@
 
 #if DC_SERVER
 #include <item/server.hpp>
+#include <item/container/_state.hpp>
 #endif
 
 namespace Item
@@ -44,7 +45,7 @@ void ItemList::tick()
         // particle items -- gases decay much faster
         // could do this with variable ttl in item particle,
         // but keeping this loop in one place
-        if (item->particle_id != NULL_PARTICLE)
+        if (item->location == IL_PARTICLE)
         {   // free item
             item->gas_decay -= GAS_TICK_INTERVAL;
             if (item->gas_decay <= 0)
@@ -52,48 +53,63 @@ void ItemList::tick()
                 int final_stack = consume_stack_item(item->id);
                 if (final_stack > 0) item->gas_decay = ITEM_GAS_LIFETIME;
             }
-            continue;
         }
+        else if (item->location == IL_CONTAINER)
+        {   // get container
+            container_id = item->location_id;
+            GS_ASSERT(container_id != NULL_CONTAINER);  // if it wasnt a particle it should be in a container
+            if (container_id == NULL_CONTAINER) continue;
 
-        // get container
-        container_id = item->container_id;
-        GS_ASSERT(container_id != NULL_CONTAINER);  // if it wasnt a particle it should be in a container
-        if (container_id == NULL_CONTAINER) continue;
-
-        if (container_id != AGENT_HAND)
-        {
             container = ItemContainer::get_container(container_id);
             GS_ASSERT(container != NULL);
+            if (container == NULL) continue;
             // ignore cryofreezer items
-            if (container != NULL && container->type == CONTAINER_TYPE_CRYOFREEZER_SMALL)
+            if (container->type == CONTAINER_TYPE_CRYOFREEZER_SMALL)
             {
                 item->gas_decay = ITEM_GAS_LIFETIME;    // reset decay
                 continue;
             }
-        }
-        else container = NULL;
 
-        // decay item
-        item->gas_decay -= GAS_TICK_INTERVAL;
-        if (item->gas_decay <= -GAS_TICK_INTERVAL)
-        {
-            int stack_size = item->stack_size;
-            int final_stack = consume_stack_item(item->id);
-            if (final_stack > 0)
+            // decay item
+            item->gas_decay -= GAS_TICK_INTERVAL;
+            if (item->gas_decay <= -GAS_TICK_INTERVAL)
             {
-                item->gas_decay = ITEM_GAS_LIFETIME;
-                if (stack_size != final_stack)
+                int stack_size = item->stack_size;
+                int final_stack = consume_stack_item(item->id);
+                if (final_stack > 0)
                 {
-                    int agent_id;
-                    if (container != NULL) agent_id = container->owner;
-                    else agent_id = item->container_slot;
-                    Agent_state* agent = ServerState::agent_list->get(agent_id);
-                    if (agent != NULL)
-                        send_item_state(agent->client_id, item->id);
+                    item->gas_decay = ITEM_GAS_LIFETIME;
+                    if (stack_size != final_stack)
+                    {
+                        int agent_id = container->owner;
+                        Agent_state* agent = ServerState::agent_list->get(agent_id);
+                        if (agent != NULL)
+                            send_item_state(agent->client_id, item->id);
+                    }
                 }
             }
-            
         }
+        else if (item->location == IL_HAND)
+        {   // hand
+            item->gas_decay -= GAS_TICK_INTERVAL;
+            if (item->gas_decay <= -GAS_TICK_INTERVAL)
+            {
+                int stack_size = item->stack_size;
+                int final_stack = consume_stack_item(item->id);
+                if (final_stack > 0)
+                {
+                    item->gas_decay = ITEM_GAS_LIFETIME;
+                    if (stack_size != final_stack)
+                    {
+                        int agent_id = item->location_id;
+                        Agent_state* agent = ServerState::agent_list->get(agent_id);
+                        if (agent != NULL)
+                            send_item_state(agent->client_id, item->id);
+                    }
+                }
+            }
+        }
+        else GS_ASSERT(false);
     }
     #endif
 }
@@ -104,10 +120,28 @@ void ItemList::verify_items()
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        if (this->a[i]->container_id == NULL_CONTAINER && this->a[i]->particle_id == NULL_PARTICLE)
+
+        if (this->a[i]->location == IL_NOWHERE)
             printf("Item %d is lost\n", this->a[i]->id);
-        if (this->a[i]->container_id != NULL_CONTAINER && this->a[i]->container_slot == NULL_SLOT)
-            printf("Item %d is in container %d but has NULL_SLOT\n", this->a[i]->id, this->a[i]->container_id);
+
+        if (this->a[i]->location == IL_CONTAINER && this->a[i]->location_id == NULL_CONTAINER)
+            printf("Item %d is located in container but has NULL_CONTAINER location_id\n", this->a[i]->id);
+
+        if (this->a[i]->location == IL_CONTAINER && this->a[i]->location_id != NULL_CONTAINER && this->a[i]->container_slot == NULL_SLOT)
+            printf("Item %d is in container %d but has NULL_SLOT\n", this->a[i]->id, this->a[i]->location_id);
+
+        if (this->a[i]->location == IL_PARTICLE && this->a[i]->location_id == NULL_PARTICLE)
+            printf("Item %d is located in particle but has NULL_PARTICLE location_id\n", this->a[i]->id);
+            
+        if (this->a[i]->location == IL_HAND && (this->a[i]->location_id < 0 || this->a[i]->location_id >= AGENT_MAX))
+            printf("Item %d is located in agent hand but has invalid agent location_id %d\n", this->a[i]->id, this->a[i]->location_id);
+            
+        if (this->a[i]->location == IL_HAND && this->a[i]->location_id >= 0 && this->a[i]->location_id < AGENT_MAX && ItemContainer::agent_hand_list[this->a[i]->location_id] == NULL_ITEM)
+            printf("Item %d is located in agent hand but agent %d hand is empty\n", this->a[i]->id, this->a[i]->location_id);
+            
+        if (this->a[i]->location == IL_HAND && this->a[i]->location_id >= 0 && this->a[i]->location_id < AGENT_MAX && ItemContainer::agent_hand_list[this->a[i]->location_id] != this->a[i]->id)
+            printf("Item %d is located in agent hand but agent %d hand is a different item, %d\n", this->a[i]->id, this->a[i]->location_id, ItemContainer::agent_hand_list[this->a[i]->location_id]);
+
         if (this->a[i]->stack_size <= 0)
             printf("Item %d has no stack size\n", this->a[i]->id);
     }

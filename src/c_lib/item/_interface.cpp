@@ -138,10 +138,12 @@ void destroy_item(ItemID id)
 {
     Item* item = get_item(id);
     if (item == NULL) return;
-    int container_id = item->container_id;
-    int slot = item->container_slot;
-    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
+
+    //int container_id = item->container_id;
+    //int slot = item->container_slot;
+    //ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+    //if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
+    
     item_list->destroy(id);
 }
     
@@ -173,40 +175,29 @@ void destroy_item(ItemID id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
 
-    // remove from container
-    int container_id = item->container_id;
-    if (container_id != NULL_CONTAINER)
+    if (item->location == IL_CONTAINER)
     {
-        if (container_id == AGENT_HAND)
+        int container_id = item->location_id;
+        int slot = item->container_slot;
+        ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+        if (container != NULL && slot != NULL_SLOT)
         {
-            int agent_id = item->container_slot;
-            ASSERT_VALID_AGENT_ID(agent_id);
-            if (agent_id >= 0 && agent_id < AGENT_MAX)
-            {
-                GS_ASSERT(ItemContainer::agent_hand_list[agent_id] != NULL_ITEM);
-                ItemContainer::agent_hand_list[agent_id] = NULL_ITEM;
-                Agent_state* agent = ServerState::agent_list->get(agent_id);
-                if (agent != NULL) ItemContainer::send_hand_remove(agent->client_id);
-            }
-        }
-        else
-        {
-            int slot = item->container_slot;
-            ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-            GS_ASSERT(container != NULL);
-            GS_ASSERT(slot != NULL_SLOT);
-            if (container != NULL && slot != NULL_SLOT)
-            {
-                container->remove_item(slot);
-                // TODO -- check against all players accessing this container
-                Agent_state* a = STATE::agent_list->get(container->owner);
-                if (a != NULL) ItemContainer::send_container_remove(container->owner, container_id, slot);
-            }            
+            container->remove_item(slot);
+            Agent_state* a = ServerState::agent_list->get(container->owner);
+            if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
         }
     }
+    else if (item->location == IL_HAND)
+    {
+        ItemContainer::remove_item_from_hand(item->location_id);
+        Agent_state* a = ServerState::agent_list->get(item->location_id);
+        if (a != NULL) ItemContainer::send_hand_remove(a->client_id);
+    }
+    else if (item->location == IL_PARTICLE)
+        ItemParticle::destroy(item->location_id);
 
     // destroy source particle
-    if (item->particle_id != NULL_PARTICLE) ItemParticle::destroy(item->particle_id);
+    if (item->location == IL_PARTICLE) ItemParticle::destroy(item->location_id);
     
     item_list->destroy(id);
     broadcast_item_destroy(id);
@@ -217,12 +208,17 @@ void destroy_item_silently(ItemID id)
 {
     Item* item = get_item(id);
     if (item == NULL) return;
-    int container_id = item->container_id;
-    int slot = item->container_slot;
-    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
-
-    /// TODO - remove from particle,hand silently
+    if (item->location == IL_CONTAINER)
+    {
+        int container_id = item->location_id;
+        int slot = item->container_slot;
+        ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+        if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
+    }
+    else if (item->location == IL_PARTICLE)
+        ItemParticle::destroy_silently(item->location_id);
+    else if (item->location == IL_HAND)
+        ItemContainer::remove_item_from_hand(item->location_id);
     
     item_list->destroy(id);
 }

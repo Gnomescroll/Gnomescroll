@@ -103,8 +103,8 @@ inline void insert_item_in_hand_StoC::handle()
     Item::Item* item = Item::get_item((ItemID)item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
-    item->container_id = AGENT_HAND;
-    item->container_slot = ClientState::playerAgent_state.agent_id;
+    item->location = IL_HAND;
+    item->location_id = ClientState::playerAgent_state.agent_id;
     player_hand = (ItemID)item_id;
     int item_type = Item::get_item_type((ItemID)item_id);
     int item_stack = Item::get_stack_size((ItemID)item_id);
@@ -122,7 +122,7 @@ inline void remove_item_from_hand_StoC::handle()
         Item::Item* item = Item::get_item(player_hand);
         GS_ASSERT(item != NULL);
         if (item == NULL) return;
-        item->container_id = NULL_CONTAINER;
+        item->location = IL_NOWHERE;
     }
 
     player_hand = NULL_ITEM;
@@ -173,7 +173,7 @@ inline void open_container_StoC::handle()
 
 inline void close_container_StoC::handle()
 {
-    close_container();
+    close_container_silently(); // dont broadcast a close_container back
 }
 
 inline void lock_container_StoC::handle()

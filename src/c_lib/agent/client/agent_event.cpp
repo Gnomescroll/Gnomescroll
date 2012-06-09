@@ -485,7 +485,8 @@ Agent_event::~Agent_event()
 {
     if (this->bb != NULL)
     {   // BUG -- particle list dtor might be called before this, on close
-        this->bb->permanent = true;          // dont die
+        this->bb->ttl = 0;
+        this->bb->permanent = false;
     }
 }
 

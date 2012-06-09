@@ -4,8 +4,40 @@
 dont_include_this_file_in_client
 #endif
 
+#include <item/container/_state.hpp>
+
 namespace ItemContainer
 {
+
+/* Transactions (no packets) */
+
+void remove_item_from_hand(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(agent_hand_list[agent_id] != NULL_ITEM);
+    if (agent_hand_list[agent_id] == NULL_ITEM) return;
+    Item::Item* item = Item::get_item(agent_hand_list[agent_id]);
+    GS_ASSERT(item != NULL);
+    if (item != NULL) item->location = IL_NOWHERE;
+    agent_hand_list[agent_id] = NULL_ITEM;
+}
+
+void insert_item_in_hand(int agent_id, ItemID item_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(agent_hand_list[agent_id] == NULL_ITEM);
+    if (agent_hand_list[agent_id] != NULL_ITEM) return;
+    Item::Item* item = Item::get_item(item_id);
+    GS_ASSERT(item != NULL);
+    if (item != NULL)
+    {
+        //GS_ASSERT(item->location == IL_NOWHERE);
+        item->location = IL_HAND;
+        item->location_id = agent_id;
+    }
+    agent_hand_list[agent_id] = item_id;
+}
 
 /* Network */
 

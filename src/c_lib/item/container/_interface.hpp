@@ -23,7 +23,8 @@ class ItemContainerInterface* create_container(ItemContainerType type, int id);
 void update_container_ui_from_state();
 
 bool open_container(int container_id);
-void close_container();
+bool close_container_silently();
+bool close_container();
 
 void open_inventory();
 void close_inventory();

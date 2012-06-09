@@ -15,10 +15,9 @@ class Item
         int durability;
         int stack_size;
 
-        int container_id;
-        int container_slot; // container_slot is agent_id if container_id is AGENT_HAND
-
-        int particle_id;
+        ItemLocationType location;
+        int location_id;
+        int container_slot;
 
         int gas_decay;
 
@@ -33,7 +32,8 @@ class Item
         printf("Energy %d\n", energy);
         printf("Durability %d\n", durability);
         printf("Stack size %d\n", stack_size);
-        printf("Container ID %d\n", container_id);
+        printf("Location %d\n", location);
+        printf("Location ID %d\n", location_id);
         printf("Container slot %d\n", container_slot);
         printf("Gas decay %d\n", gas_decay);
     }
@@ -44,9 +44,9 @@ class Item
         type(NULL_ITEM_TYPE),
         durability(NULL_DURABILITY),
         stack_size(1),
-        container_id(NULL_CONTAINER),
+        location(IL_NOWHERE),
+        location_id(-1),
         container_slot(NULL_SLOT),
-        particle_id(NULL_PARTICLE),
         gas_decay(ITEM_GAS_LIFETIME)
     {}
 
