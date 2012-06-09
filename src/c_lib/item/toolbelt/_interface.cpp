@@ -169,6 +169,8 @@ void update_selected_item_type()
     ItemContainer::ItemContainer* toolbelt = NULL;
     if (toolbelt_id != NULL_CONTAINER) toolbelt = (ItemContainer::ItemContainer*)ItemContainer::get_container(toolbelt_id);
     if (toolbelt != NULL) item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
+    if (agent_selected_type[agent_id] == item_type) return;
+    turn_fire_off(agent_id);
     agent_selected_type[agent_id] = item_type;
 }
 
@@ -366,11 +368,7 @@ void trigger_local_agent_selected_item_type(int item_type)
     }
 
     if (one_click)
-    {
-        int agent_id = ClientState::playerAgent_state.agent_id;
-        if (agent_id >= 0 && agent_id < AGENT_MAX)
-            turn_fire_off(agent_id);
-    }
+        turn_fire_off(ClientState::playerAgent_state.agent_id);
 }
 
 void assign_toolbelt(int container_id)

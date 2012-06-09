@@ -24,7 +24,15 @@ inline void toolbelt_set_active_item_StoC::handle()
 
 inline void toolbelt_item_begin_alpha_action_StoC::handle() 
 {
+    if (agent_id == ClientState::playerAgent_state.agent_id) return;    // ignore ourself
+    
     turn_fire_on(agent_id);
+
+    // TODO --
+        // This is needed for indicating other agents' went on
+        // BUT we only want the server's command when it is forcing us to begin,
+        // i.e. we did not initiate it
+        // So we will need 2 packets (don't really need the force command one right yet)
 }
 
 inline void toolbelt_item_end_alpha_action_StoC::handle() 

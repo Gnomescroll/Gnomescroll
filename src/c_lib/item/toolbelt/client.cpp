@@ -14,10 +14,11 @@ void turn_fire_on(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
+    agent_fire_tick[agent_id] = 0;
+
     if (agent_fire_on[agent_id]) return;
 
     agent_fire_on[agent_id] = true;
-    agent_fire_tick[agent_id] = 0;
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemGroup item_group;
@@ -31,10 +32,11 @@ void turn_fire_off(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
+    agent_fire_tick[agent_id] = 0;
+
     if (!agent_fire_on[agent_id]) return;
 
     agent_fire_on[agent_id] = false;
-    agent_fire_tick[agent_id] = 0;
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemGroup item_group;
