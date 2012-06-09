@@ -476,6 +476,15 @@ DONE
 right click outside of container throws 1
 DONE
 
+sound config for loops
+DONE
+
+mining laser whoosh sound
+DONE
+
+improve toolbelt on/off state & event handling (still needs work especially when we are triggering allies' events)
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -496,10 +505,9 @@ use font DST_COLOR only for certain ui elements
 
 == SOUND ==
 improve digging sounds
-mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
-turn fire on/off for server
+toolbelt: turn fire on/off for server
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
