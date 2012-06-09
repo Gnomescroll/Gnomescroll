@@ -156,75 +156,7 @@ class PerlinOctave3D
 	}
 
 	void save_octaves(int _DEGREE)	//number of gradulations
-	{
-#if 0
-		const int xres = 512;
-		const int yres = 512;
-
-		const float xresf = 1.0 / ((float) xres);
-		const float yresf = 1.0 / ((float) yres);
-
-		const int DEGREE = _DEGREE; //8;
-
-		//(i + xres*DEGREE*n)+ (j*xres*yres*DEGREE)
-	    float* out = new float[xres*yres*octaves*DEGREE];
-
-	    int line_width = xres*DEGREE;
-
-	    for(int i=0; i<xres*yres*octaves*DEGREE; i++) out[i] = 0.0;
-
-	    class PerlinField3D* m;
-
-		for(int k=0; k<octaves; k++)
-		{
-			m = &octave_array[k];
-			int zoff = k*yres*line_width;
-
-		    for(int i=0; i<xres; i++)
-		    for(int j=0; j<yres; j++)
-		    {
-		        float x = i*xresf;
-		        float y = j*yresf;
-
-		        out[i+j*line_width+zoff] += m->base(x,y,);
-		    }
-		}
-
-	    for(int n=1; n<DEGREE; n++)
-	    {
-	    	float PERSISTANCE = (n+1)*(1.0/( (float) DEGREE ));
-
-	    	int xoff = n*xres;
-
-			for(int k=0; k<octaves; k++)
-			{
-				int yoff = k*yres*line_width;
-				float p = 1.0;
-
-				for(int k2=0; k2 <= k; k2++)
-				{
-					m = &octave_array[k2];
-
-				    for(int i=0; i<xres; i++)
-				    for(int j=0; j<yres; j++)
-				    {
-				        float x = i*xresf;
-				        float y = j*yresf;
-
-				        out[ (i+xoff)+ (j*line_width+yoff) ] += p*m->base(x,y);
-				    }
-
-				    p *= PERSISTANCE;
-				}
-			}
-
-		}
-    	//save_png("octave_map_01", out, xres, yres*octaves);
-		save_perlin("octave_map_03", out, xres*DEGREE, yres*octaves);
-		//void save_png(const char* filename, float* in, int xres, int yres)
-
-#endif
-	}
+	{}
 
 
 	float sample(float x, float y, float z, float persistance)

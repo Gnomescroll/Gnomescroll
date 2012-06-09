@@ -251,7 +251,7 @@ void push_oriented_texture()
     //SOUTH
     start_cube_palette(_current_cube_id);
     for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[1]);
+    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
     for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[2]);
     for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[3]);
     for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[4]);

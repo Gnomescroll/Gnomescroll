@@ -175,38 +175,6 @@ void load_block_dat()
 
     hud_def(5,3,t1,1,5);
 
-    cube_def(19, SolidBlock, "methane_1");
-    iso_texture(t1,2,2);
-    push_texture();
-
-    hud_def(3,1, t1,2,2);
-    set_max_dmg(5);
-
-    cube_def(20, SolidBlock, "methane_2");
-    iso_texture(t1,3,2);
-    push_texture();
-    hud_def(3,2, t1,3,2);
-    set_max_dmg(5);
-
-    cube_def(21, SolidBlock, "methane_3");
-    iso_texture(t1,4,3);
-    push_texture();
-
-    hud_def(3,3, t1,4,3);
-    set_max_dmg(5);
-
-    cube_def(22, SolidBlock, "methane_4");
-    iso_texture(t1,5,3);
-    push_texture();
-    hud_def(3,4, t1,5,3);
-    set_max_dmg(5);
-
-    cube_def(23, SolidBlock, "methane_5");
-    iso_texture(t1,4,1);
-    push_texture();
-    hud_def(3,5, t1,4,1);
-    set_max_dmg(5);
-
     cube_def(24, SolidBlock, "methane_ice"); // we only need one
     iso_texture(t1, 5,4);
     push_texture();
