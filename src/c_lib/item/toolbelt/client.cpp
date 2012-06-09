@@ -10,6 +10,40 @@ dont_include_this_file_in_server
 namespace Toolbelt
 {
 
+void turn_fire_on(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    if (agent_fire_on[agent_id]) return;
+
+    agent_fire_on[agent_id] = true;
+    agent_fire_tick[agent_id] = 0;
+
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+    ItemGroup item_group;
+    if (item_id == NULL_ITEM) item_group = IG_NONE;
+    else item_group = Item::get_item_group(item_id);
+    if (ClientState::playerAgent_state.agent_id == agent_id)
+        toolbelt_item_begin_alpha_action_event_handler(item_group);
+}
+
+void turn_fire_off(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    if (!agent_fire_on[agent_id]) return;
+
+    agent_fire_on[agent_id] = false;
+    agent_fire_tick[agent_id] = 0;
+
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+    ItemGroup item_group;
+    if (item_id == NULL_ITEM) item_group = IG_NONE;
+    else item_group = Item::get_item_group(item_id);
+    if (ClientState::playerAgent_state.agent_id == agent_id)
+        toolbelt_item_end_alpha_action_event_handler(item_group);
+}
+
 bool toolbelt_item_begin_alpha_action()
 {
     int agent_id = ClientState::playerAgent_state.agent_id;
@@ -17,15 +51,51 @@ bool toolbelt_item_begin_alpha_action()
     ASSERT_VALID_AGENT_ID(agent_id);
 
     if (agent_fire_on[agent_id]) return false;
+    turn_fire_on(agent_id);
+    return true;
+}
 
-    // set tick on
-    agent_fire_on[agent_id] = true;
-    agent_fire_tick[agent_id] = 0;
+bool toolbelt_item_end_alpha_action()
+{    
+    // stop advancing fire tick
+    int agent_id = ClientState::playerAgent_state.agent_id;
+    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    if (!agent_fire_on[agent_id]) return false;
+    turn_fire_off(agent_id);
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    int item_group;
+    ItemGroup item_group;
     if (item_id == NULL_ITEM) item_group = IG_NONE;
     else item_group = Item::get_item_group(item_id);
+    
+    switch (item_group)
+    {
+        case IG_ERROR:
+        case IG_RESOURCE:
+        case IG_MELEE_WEAPON:
+        case IG_NANITE_COIN:
+        case IG_SHOVEL:
+        case IG_NONE:
+            return true;
+
+        case IG_MINING_LASER:
+            return true;
+
+        case IG_CONSUMABLE:
+        case IG_PLACER:
+        case IG_HITSCAN_WEAPON:
+        case IG_GRENADE_LAUNCHER:
+            return false;   // nothing happened. they arent click-and-hold
+        default:
+            return false;    // the default action is click once
+    }
+    return true;
+}
+
+void toolbelt_item_begin_alpha_action_event_handler(ItemGroup item_group)
+{
     switch (item_group)
     {
         case IG_MINING_LASER:
@@ -46,49 +116,30 @@ bool toolbelt_item_begin_alpha_action()
         default:
             break;    // the default action is click once
     }
-
-    return true;
 }
 
-bool toolbelt_item_end_alpha_action()
-{    
-    // stop advancing fire tick
-    int agent_id = ClientState::playerAgent_state.agent_id;
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
-    ASSERT_VALID_AGENT_ID(agent_id);
-
-    if (!agent_fire_on[agent_id]) return false;
-
-    agent_fire_on[agent_id] = false;
-    agent_fire_tick[agent_id] = 0;
-
-    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    int item_group;
-    if (item_id == NULL_ITEM) item_group = IG_NONE;
-    else item_group = Item::get_item_group(item_id);
+void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group)
+{
     switch (item_group)
     {
+        case IG_MINING_LASER:
+            ClientState::playerAgent_state.action.end_mining_laser();
+            break;
+
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_MELEE_WEAPON:
         case IG_NANITE_COIN:
         case IG_SHOVEL:
         case IG_NONE:
-            return true;
-
-        case IG_MINING_LASER:
-            ClientState::playerAgent_state.action.end_mining_laser();
-            return true;
 
         case IG_CONSUMABLE:
         case IG_PLACER:
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:
-            return false;   // nothing happened. they arent click-and-hold
         default:
-            return false;    // the default action is click once
+            break;
     }
-    return true;
 }
 
 bool toolbelt_item_beta_action()

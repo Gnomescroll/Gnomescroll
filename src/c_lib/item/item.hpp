@@ -8,7 +8,7 @@ class Item
     public:
 
         ItemID id;
-        int group; //stack, laser, mining_laser
+        ItemGroup group; //stack, laser, mining_laser
         int type;  // stone_block, dirt_block, mining_laser_beta,
 
         int energy;

@@ -1,7 +1,7 @@
 #pragma once
 
 const int NULL_SLOT = 0xff;           // invalid slot value
-const int NULL_ITEM_GROUP = 0xff;
+const ItemGroup NULL_ITEM_GROUP = IG_NONE;
 const int NULL_ITEM_TYPE = 0xff;
 const int NULL_DURABILITY = 0xffff;
 const int NULL_ENERGY = 0xffff;

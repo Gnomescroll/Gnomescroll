@@ -499,6 +499,7 @@ improve digging sounds
 mining laser whoosh
 
 == MAINTENANCE/REFACTORS ==
+turn fire on/off for server
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out

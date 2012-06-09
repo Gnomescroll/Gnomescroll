@@ -7,10 +7,17 @@ dont_include_this_file_in_server
 namespace Toolbelt
 {
 
+void turn_fire_on(int agent_id);
+void turn_fire_off(int agent_id);
+
 bool toolbelt_item_begin_alpha_action();
 bool toolbelt_item_end_alpha_action();
 bool toolbelt_item_beta_action();
 bool toolbelt_item_reload_action();
+
+// calls event handlers that trigger animations/sounds
+void toolbelt_item_begin_alpha_action_event_handler(ItemGroup item_group);
+void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group);
 
 void send_set_slot_packet(int slot)
 {

@@ -36,7 +36,7 @@ class MAP_CHUNK
 
     class CHUNK_ITEM_CONTAINER chunk_item_container;
 
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     bool needs_update;
     #endif
 

@@ -22,7 +22,7 @@ namespace t_map
     MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
     {
         //GS_ASSERT( (_xpos % 16) == 0 && (_ypos % 16) == 0 );
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
             needs_update = false;
         #endif
         xpos = _xpos;
@@ -183,7 +183,7 @@ namespace t_map
         //c->e[(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH)*z+ TERRAIN_CHUNK_WIDTH*(y | 15) + (x | 15)] = element;
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
             c->needs_update = true; 
 
             if((x & 15) == 0)  set_update(x-1,y);
@@ -227,7 +227,7 @@ namespace t_map
 
         c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
             c->needs_update = true; 
 
             if((x & 15) == 0)  set_update(x-1,y);
@@ -280,7 +280,7 @@ namespace t_map
             // destroy block
             *e = NO_MAP_ELEMENT; 
             
-            #ifdef DC_CLIENT
+            #if DC_CLIENT
                 c->needs_update = true; 
 
                 if((x & 15) == 0)  set_update(x-1,y);
@@ -343,7 +343,7 @@ namespace t_map
             // destroy block
             *e = NO_MAP_ELEMENT; 
 
-            #ifdef DC_CLIENT
+            #if DC_CLIENT
                 c->needs_update = true; 
 
                 if((x & 15) == 0)  set_update(x-1,y);
@@ -403,7 +403,7 @@ namespace t_map
             // destroy block
             *e = NO_MAP_ELEMENT; 
             
-            #ifdef DC_CLIENT
+            #if DC_CLIENT
                 c->needs_update = true; 
 
                 if((x & 15) == 0)  set_update(x-1,y);
@@ -465,7 +465,7 @@ namespace t_map
             // destroy block
             *e = NO_MAP_ELEMENT; 
 
-            #ifdef DC_CLIENT
+            #if DC_CLIENT
                 c->needs_update = true; 
 
                 if((x & 15) == 0)  set_update(x-1,y);

@@ -124,8 +124,9 @@ void remove_agent(int agent_id)
     agent_selected_item[agent_id] = NULL_ITEM;
     #endif
     agent_selected_type[agent_id] = NULL_ITEM_TYPE;
-    agent_fire_tick[agent_id] = 0;
-    agent_fire_on[agent_id] = false;
+    #if DC_CLIENT
+    turn_fire_off(agent_id);
+    #endif
 }
 
 void agent_died(int agent_id)
@@ -137,8 +138,9 @@ void agent_died(int agent_id)
     if (agent_fire_tick == NULL) return;
     if (agent_fire_on == NULL) return;
     
-    agent_fire_tick[agent_id] = 0;
-    agent_fire_on[agent_id] = false;
+    #if DC_CLIENT
+    turn_fire_off(agent_id);
+    #endif
 }
 
 } // Toolbelt
@@ -249,8 +251,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
         case IG_GRENADE_LAUNCHER:
         case IG_DEBUG:
             // one click items, turn them off
-            agent_fire_on[agent_id] = false;
-            agent_fire_tick[agent_id] = 0;
+            turn_fire_off(agent_id);
             break;
             
         default:
@@ -368,11 +369,7 @@ void trigger_local_agent_selected_item_type(int item_type)
     {
         int agent_id = ClientState::playerAgent_state.agent_id;
         if (agent_id >= 0 && agent_id < AGENT_MAX)
-        {
-            ASSERT_VALID_AGENT_ID(agent_id);
-            agent_fire_on[agent_id] = false;
-            agent_fire_tick[agent_id] = 0;
-        }
+            turn_fire_off(agent_id);
     }
 }
 
@@ -585,6 +582,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
         if (item->durability < 0) item->durability = 0;
         if (item->durability <= 0)
         {
+            broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
             Item::destroy_item(item->id);
             agent_selected_type[agent_id] = NULL_ITEM_TYPE;
             agent_selected_item[agent_id] = NULL_ITEM;
@@ -614,6 +612,7 @@ void update_toolbelt_items()
             agent_selected_type[agent_id] = item_type;
             agent_fire_on[agent_id] = false;
             agent_fire_tick[agent_id] = 0;
+            broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
             broadcast_agent_set_active_item_packet(agent_id, item_type);
         }
         

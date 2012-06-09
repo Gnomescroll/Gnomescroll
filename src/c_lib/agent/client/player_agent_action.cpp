@@ -196,6 +196,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 
     GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
     if (weapon_type == NULL_ITEM_TYPE) return;
+    ItemGroup weapon_group = Item::get_item_group_for_type(weapon_type);
 
     float range = Item::get_weapon_range(weapon_type);
 
@@ -307,8 +308,8 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 tile, side
             );
             //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
-            Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
-            
+            if (weapon_group != IG_MINING_LASER)
+                Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             break;
             
         default:

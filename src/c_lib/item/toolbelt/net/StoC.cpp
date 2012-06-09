@@ -2,10 +2,15 @@
 
 #include <item/toolbelt/_state.hpp>
 
+#if DC_CLIENT
+#include <item/toolbelt/client.hpp>
+#endif
+
 namespace Toolbelt
 {
 
 #if DC_CLIENT
+
 inline void toolbelt_set_active_item_StoC::handle() 
 {
     //if (agent_id == ClientState::playerAgent_state.agent_id) return;
@@ -13,27 +18,18 @@ inline void toolbelt_set_active_item_StoC::handle()
     agent_selected_type[agent_id] = item_type;
     if (old_type != item_type)
     {   // the selected item was force-changed by the server
-        agent_fire_on[agent_id] = false;
-        agent_fire_tick[agent_id] = 0;
+        turn_fire_off(agent_id);
     }
 }
 
 inline void toolbelt_item_begin_alpha_action_StoC::handle() 
 {
-    if (agent_id == ClientState::playerAgent_state.agent_id) return;
-    Agent_state* a = ClientState::agent_list->get(agent_id);
-    if (a == NULL) return;
-    agent_fire_on[a->id] = true;
-    agent_fire_tick[a->id] = 0;
+    turn_fire_on(agent_id);
 }
 
 inline void toolbelt_item_end_alpha_action_StoC::handle() 
 {
-    if (agent_id == ClientState::playerAgent_state.agent_id) return;
-    Agent_state* a = ClientState::agent_list->get(agent_id);
-    if (a == NULL) return;
-    agent_fire_on[a->id] = false;
-    agent_fire_tick[a->id] = 0;
+    turn_fire_off(agent_id);
 }
 
 inline void toolbelt_item_beta_action_StoC::handle() 

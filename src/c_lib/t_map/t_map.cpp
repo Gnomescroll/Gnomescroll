@@ -112,6 +112,7 @@ int apply_damage(int x, int y, int z, int dmg)
 {
     GS_ASSERT(dmg > 0);
     #if DC_CLIENT
+    print_trace();
     Sound::block_took_damage(x+0.5f,y+0.5f,z+0.5f,0,0,0);
     #endif
     return t_map::main_map->apply_damage(x,y,z,dmg);
