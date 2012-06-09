@@ -13,6 +13,7 @@ void populate_ore()
 {
 
 	int methane_ice = t_map::dat_get_cube_id("methane_ice");
+	//methane_ice = 0;
 
 	for(int i=0; i<4096; i++)
 	{
@@ -23,8 +24,8 @@ void populate_ore()
 		int ctile = t_map::get(x,y,z);
 		if(ctile == 0) continue;
 
-		int s = genrand_int32() % 5;
-		generate_ore_vein(x,y,z, 4*s*s+1, methane_ice);
+		int s = genrand_int32() % 128;
+		generate_ore_vein(x,y,z, 2*s+1, methane_ice);
 	}
 
 }
@@ -32,7 +33,6 @@ void populate_ore()
 
 void generate_ore_vein(int x, int y, int z, int size, int tile_id)
 {
-
 	const static int_fast8_t s_array[18] = {
 	        0,0,1,  //top
 	        0,0,-1, //bottom
