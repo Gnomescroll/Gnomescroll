@@ -69,6 +69,16 @@ namespace t_map
             set_map_shader_0();
             init_map_3d_texture();
         }
+
+
+        if(shader_error_check(map_shader[0]) == true)
+        {
+            printf("Graphics card failed to compile shader!  Falling on backup shader\n");
+            T_MAP_BACKUP_SHADER = 1;
+            set_map_shader_0();
+            init_map_3d_texture();  
+        }
+
         init_block_texture_normal();
     }
 

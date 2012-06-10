@@ -172,6 +172,13 @@ class PerlinOctave3D
 	}
 };
 
+class NoiseMap3D
+{
+    //for mixing
+
+    
+};
+
 
 void test_octave_3d()
 {

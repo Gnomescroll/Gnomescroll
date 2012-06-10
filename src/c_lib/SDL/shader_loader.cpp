@@ -104,3 +104,24 @@ void load_shaders(char *vert, char* frag, GLuint* prog)
     printProgramInfoLog(p); // print diagonostic information
     *prog = p;
 }
+
+//returns true if error
+bool shader_error_check(int shader) 
+{
+    int status;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    if(status != GL_TRUE)
+    {
+        printf("Shader compilation failed! \n");
+        return true;
+    }
+
+    glGetProgramiv(shader, GL_LINK_STATUS, &status);
+    if(status != GL_TRUE)
+    {
+        printf("Shader linking failed! \n");
+        return true;
+     }
+
+  return false;
+}

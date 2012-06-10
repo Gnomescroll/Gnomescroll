@@ -38,8 +38,10 @@ class Terrain_map* main_map;
 int get(int x, int y, int z)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
-    x = translate_point(x);
-    y = translate_point(y);
+    //x = translate_point(x);
+    //y = translate_point(y);
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
     if(c == NULL) return 0;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
@@ -257,9 +259,11 @@ inline int get_lowest_solid_block(int x, int y)
 
 int _get(int x, int y, int z)
 {
-    x = translate_point(x);
-    y = translate_point(y);
-    
+    //x = translate_point(x);
+    //y = translate_point(y);
+    x &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
+
     //return t_map::main_map->get_block(x,y,z);
     //if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)
         //| (y & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 

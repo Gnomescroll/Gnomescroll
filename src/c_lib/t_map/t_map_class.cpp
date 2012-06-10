@@ -93,10 +93,10 @@ namespace t_map
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
             return NO_MAP_ELEMENT;
 
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //x = translate_point(x);
+        //y = translate_point(y);
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
 
@@ -132,10 +132,10 @@ namespace t_map
     {
         //printf("set update: %i %i \n", x,y);
 
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //x = translate_point(x);
+        //y = translate_point(y);
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
         if( c != NULL ) c->needs_update = true;
@@ -167,10 +167,10 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //x = translate_point(x);
+        //y = translate_point(y);
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
@@ -196,10 +196,10 @@ namespace t_map
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
 
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //x = translate_point(x);
+        //y = translate_point(y);
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         //printf("set %i, %i, %i \n", x,y,z);
         struct MAP_CHUNK* c;
@@ -259,10 +259,10 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
 
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //x = translate_point(x);
+        //y = translate_point(y);
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
@@ -308,10 +308,10 @@ namespace t_map
         //if( x >= 512 || x < 0 ) return -2 ;
         //if( y >= 512 || y < 0 ) return -2;
 
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //x = translate_point(x);
+        //y = translate_point(y);
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         //printf("set %i, %i, %i \n", x,y,z);
         struct MAP_CHUNK* c;
@@ -382,10 +382,10 @@ namespace t_map
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
         
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        //x = translate_point(x);
+        //y = translate_point(y);
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         struct MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
@@ -428,10 +428,7 @@ namespace t_map
         //if( x >= 512 || x < 0 ) return -2 ;
         //if( y >= 512 || y < 0 ) return -2;
 
-        x = translate_point(x);
-        y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
 
         //printf("set %i, %i, %i \n", x,y,z);
         struct MAP_CHUNK* c;
@@ -518,29 +515,34 @@ namespace t_map
         this->chunk_heights_changed[cx + cy*MAP_CHUNK_WIDTH] = true;
         this->height_changed = true;
 
-        #if DC_CLIENT
-        if(cx+1 < MAP_CHUNK_WIDTH)
-        {
-            if(chunk[ MAP_CHUNK_WIDTH*(cy) + cx+1 ] != NULL)
-                chunk[ MAP_CHUNK_WIDTH*(cy) + cx+1 ]->needs_update = true;
-        }
-        if(cx-1 >= 0)
-        {
-            if(chunk[ MAP_CHUNK_WIDTH*(cy) + cx-1 ] != NULL)
-                chunk[ MAP_CHUNK_WIDTH*(cy) + cx-1 ]->needs_update = true;
-        }
-        if(cy+1 < MAP_CHUNK_WIDTH)
-        {
-            if(chunk[ MAP_CHUNK_WIDTH*(cy+1) + cx ] != NULL)
-                chunk[ MAP_CHUNK_WIDTH*(cy+1) + cx ]->needs_update = true;
-        }
-        if(cy-1 >= 0)
-        {
-            if(chunk[ MAP_CHUNK_WIDTH*(cy-1) + cx ] != NULL)
-                chunk[ MAP_CHUNK_WIDTH*(cy-1) + cx ]->needs_update = true;
-        }
-        #endif
+    #if DC_CLIENT
 
+        const static int MASK = 512/16 -1 ; //chunk width
+
+        int CX;
+        int CY;
+
+        CX = (cx+1) & MASK;
+        CY = cy;
+        if(chunk[ MAP_CHUNK_WIDTH*CY + CX ] != NULL)
+            chunk[ MAP_CHUNK_WIDTH*CY + CX ]->needs_update = true;
+
+        CX = (cx-1) & MASK;
+        CY = cy;
+        if(chunk[ MAP_CHUNK_WIDTH*CY + CX ] != NULL)
+            chunk[ MAP_CHUNK_WIDTH*CY + CX ]->needs_update = true;
+
+        CX = cx;
+        CY = (cy+1) & MASK;
+        if(chunk[ MAP_CHUNK_WIDTH*CY + CX ] != NULL)
+            chunk[ MAP_CHUNK_WIDTH*CY + CX ]->needs_update = true;
+
+        CX = cx;
+        CY = (cy-1) & MASK;
+        if(chunk[ MAP_CHUNK_WIDTH*CY + CX ] != NULL)
+            chunk[ MAP_CHUNK_WIDTH*CY + CX ]->needs_update = true;
+
+    #endif
     }
     
     inline unsigned char Terrain_map::get_cached_height(int x, int y)

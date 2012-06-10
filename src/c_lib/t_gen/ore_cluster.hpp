@@ -30,6 +30,9 @@ void populate_ore()
 
 }
 
+/*
+	Add branching ore veins
+*/
 
 void generate_ore_vein(int x, int y, int z, int size, int tile_id)
 {
