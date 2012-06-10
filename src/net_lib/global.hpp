@@ -20,7 +20,8 @@ namespace NetServer
    
 const int HARD_MAX_CONNECTIONS = PLAYERS_MAX;
 
-int number_of_clients = 0;
+extern unsigned int number_of_clients;
+extern unsigned int login_count;
 
 extern class NetPeer** pool;
 extern class NetPeerManager** clients;
@@ -28,9 +29,6 @@ extern class NetPeerManager** clients;
 extern class Agent_state** agents;
 
 void assign_agent_to_client(int client_id, class Agent_state* a);
-
-
-
 
 void init_globals();
 

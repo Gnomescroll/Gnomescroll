@@ -377,7 +377,7 @@ static void client_connect(ENetEvent* event)
     NetPeer* nc = NULL;
     NetPeerManager* npm = NULL;
     
-    if(NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
+    if((int)NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
         //send a disconnect reason packet
@@ -404,8 +404,8 @@ static void client_connect(ENetEvent* event)
         npm = new NetPeerManager();
         npm->init(index);
         NetServer::clients[index] = npm;
-        
-        break;    
+        NetServer::login_count++;
+        break;
     }
 
     uint8_t address[4];

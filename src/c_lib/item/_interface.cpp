@@ -199,8 +199,8 @@ void destroy_item(ItemID id)
     // destroy source particle
     if (item->location == IL_PARTICLE) ItemParticle::destroy(item->location_id);
     
-    item_list->destroy(id);
     broadcast_item_destroy(id);
+    item_list->destroy(id);
 }
 
 // broadcasts nothing

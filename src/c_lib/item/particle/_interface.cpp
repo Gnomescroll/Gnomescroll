@@ -103,6 +103,9 @@ ItemParticle* create_item_particle(
 ) {
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return NULL;
+    // transitioning to item particle, remove all subscribers
+    Item::unsubscribe_all_from_item(item->id);
+    
     ItemParticle* particle = item_particle_list->create();
     if (particle == NULL) return NULL;
     particle->init(item_id, item_type, x,y,z,vx,vy,vz);
@@ -117,6 +120,7 @@ Item::Item* create_item_particle(int item_type, float x, float y, float z, float
 {    
     Item::Item* item = Item::create_item(item_type);
     if (item == NULL) return NULL;
+    // no subscribers
     ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
     GS_ASSERT(particle != NULL);
     if (particle == NULL) return item;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <net_lib/net_StoC.hpp>
+
 namespace Toolbelt
 {
 

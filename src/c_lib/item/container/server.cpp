@@ -18,7 +18,11 @@ void remove_item_from_hand(int agent_id)
     if (agent_hand_list[agent_id] == NULL_ITEM) return;
     Item::Item* item = Item::get_item(agent_hand_list[agent_id]);
     GS_ASSERT(item != NULL);
-    if (item != NULL) item->location = IL_NOWHERE;
+    if (item != NULL)
+    {
+        item->location = IL_NOWHERE;
+        Item::unsubscribe_agent_from_item(agent_id, item->id);
+    }
     agent_hand_list[agent_id] = NULL_ITEM;
 }
 
@@ -32,9 +36,10 @@ void insert_item_in_hand(int agent_id, ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item != NULL)
     {
-        //GS_ASSERT(item->location == IL_NOWHERE);
+        GS_ASSERT(item->location == IL_NOWHERE);
         item->location = IL_HAND;
         item->location_id = agent_id;
+        Item::subscribe_agent_to_item(agent_id, item->id);
     }
     agent_hand_list[agent_id] = item_id;
 }
@@ -162,8 +167,10 @@ void send_container_state(int client_id, int container_id)
 
 void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot)
 {
-    Item::Item* item = Item::send_item_create(client_id, item_id);
-    if (item == NULL) return;
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(slot != NULL_SLOT);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    Item::send_item_create(client_id, item_id);
     send_container_insert(client_id, item_id, container_id, slot);
 }
 

@@ -72,6 +72,31 @@ class FixedSizeNetPacketToClient {
             NetServer::pool[client_id]->push_unreliable_message(nm);
         }
 
+        void sendToClients(int* client_ids, unsigned int n_clients)
+        {
+            GS_ASSERT(n_clients > 0);
+            if (n_clients <= 0) return;
+
+            GS_ASSERT(n_clients <= NetServer::number_of_clients);
+            if (n_clients <= NetServer::number_of_clients) return;
+
+            Net_message* nm = Net_message::acquire(Derived::size);
+            int buff_n = 0;
+            serialize(nm->buff, &buff_n);
+
+            int client_id;
+            class NetPeer* np;
+            for(unsigned int i=0; i<n_clients; i++) 
+            {
+                client_id = client_ids[n_clients];
+                GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
+                np = NetServer::pool[client_id]; //use better iterator
+                GS_ASSERT(np != NULL);
+                if (np == NULL) continue;
+                np->push_reliable_message(nm);
+            }
+        }
+
         void broadcast() 
         {
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
@@ -170,6 +195,31 @@ class FixedSizeReliableNetPacketToClient {
                 return;
             }
             NetServer::pool[client_id]->push_reliable_message(nm);
+        }
+
+        void sendToClients(int* client_ids, unsigned int n_clients)
+        {
+            GS_ASSERT(n_clients > 0);
+            if (n_clients <= 0) return;
+
+            GS_ASSERT(n_clients <= NetServer::number_of_clients);
+            if (n_clients <= NetServer::number_of_clients) return;
+
+            Net_message* nm = Net_message::acquire(Derived::size);
+            int buff_n = 0;
+            serialize(nm->buff, &buff_n);
+
+            int client_id;
+            class NetPeer* np;
+            for(unsigned int i=0; i<n_clients; i++) 
+            {
+                client_id = client_ids[n_clients];
+                GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
+                np = NetServer::pool[client_id]; //use better iterator
+                GS_ASSERT(np != NULL);
+                if (np == NULL) continue;
+                np->push_reliable_message(nm);
+            }
         }
 
         void broadcast() 

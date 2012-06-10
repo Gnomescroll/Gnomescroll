@@ -17,7 +17,6 @@ dont_include_this_file_in_client
 
 #include <common/compression/miniz.c>
 
-#include <common/list_assert.hpp>
 #include <common/macros.hpp>
 
 // crash report

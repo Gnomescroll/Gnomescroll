@@ -100,7 +100,7 @@ class ItemContainerInterface
             printf("\n");
         }
 
-        virtual void insert_item(int slot, ItemID item_id) = 0;
+        virtual void insert_item(int slot, ItemID item_id)= 0;
         virtual void remove_item(int slot) = 0;
 
         virtual bool can_insert_item(int slot, ItemID item_id) = 0;

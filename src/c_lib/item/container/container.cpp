@@ -31,6 +31,11 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
+
+    #if DC_SERVER
+    if (this->owner != NO_AGENT)
+        Item::subscribe_agent_to_item(this->owner, item->id);
+    #endif
 }
 
 void ItemContainer::remove_item(int slot)
@@ -38,6 +43,7 @@ void ItemContainer::remove_item(int slot)
     GS_ASSERT(this->is_valid_slot(slot));
 
     ItemID item_id = this->slot[slot];
+    GS_ASSERT(item_id != NULL_ITEM);
     if (item_id != NULL_ITEM)
     {
         Item::Item* item = Item::get_item_object(this->slot[slot]);
@@ -46,11 +52,17 @@ void ItemContainer::remove_item(int slot)
         {
             item->location = IL_NOWHERE;
             item->container_slot = NULL_SLOT;
+            #if DC_SERVER
+            if (this->owner != NO_AGENT)
+                Item::unsubscribe_agent_from_item(this->owner, item->id);
+            #endif
         }
     }
 
     this->slot[slot] = NULL_ITEM;
     this->slot_count--;
+
+
 }
 
 /* Cryofreezer */
@@ -87,6 +99,9 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
     }
 
     #if DC_SERVER
+    if (this->owner != NO_AGENT)
+        Item::subscribe_agent_to_item(this->owner, item->id);
+
     if (slot == 0) this->digestion_tick = 0;
     #endif
 }
@@ -96,6 +111,7 @@ void ItemContainerNanite::remove_item(int slot)
     GS_ASSERT(this->is_valid_slot(slot));
 
     ItemID item_id = this->slot[slot];
+    GS_ASSERT(item_id != NULL_ITEM);
     if (item_id != NULL_ITEM)
     {
         Item::Item* item = Item::get_item_object(this->slot[slot]);
@@ -104,6 +120,10 @@ void ItemContainerNanite::remove_item(int slot)
         {
             item->location = IL_NOWHERE;
             item->container_slot = NULL_SLOT;
+            #if DC_SERVER
+            if (this->owner != NO_AGENT)
+                Item::unsubscribe_agent_from_item(this->owner, item->id);
+            #endif
         }
     }
 
@@ -181,6 +201,11 @@ void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
+
+    #if DC_SERVER
+    if (this->owner != NO_AGENT)
+        Item::subscribe_agent_to_item(this->owner, item->id);
+    #endif
 }
 
 void ItemContainerCraftingBench::remove_item(int slot)
@@ -188,6 +213,7 @@ void ItemContainerCraftingBench::remove_item(int slot)
     GS_ASSERT(this->is_valid_slot(slot));
 
     ItemID item_id = this->slot[slot];
+    GS_ASSERT(item_id != NULL_ITEM);
     if (item_id != NULL_ITEM)
     {
         Item::Item* item = Item::get_item_object(this->slot[slot]);
@@ -196,6 +222,10 @@ void ItemContainerCraftingBench::remove_item(int slot)
         {
             item->location = IL_NOWHERE;
             item->container_slot = NULL_SLOT;
+            #if DC_SERVER
+            if (this->owner != NO_AGENT)
+                Item::unsubscribe_agent_from_item(this->owner, item->id);
+            #endif
         }
     }
 

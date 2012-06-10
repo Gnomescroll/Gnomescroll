@@ -18,6 +18,7 @@ class SubscriberList
             this->max *= 2;
             if (this->max > SUBSCRIBER_LIST_HARD_MAX) this->max = SUBSCRIBER_LIST_HARD_MAX;
             this->subscribers = (int*)realloc(this->subscribers, this->max * sizeof(int));
+            return true;
         }
 
         // grows to a specified size
@@ -30,6 +31,7 @@ class SubscriberList
             
             this->max = new_max;
             this->subscribers = (int*)realloc(this->subscribers, this->max * sizeof(int));
+            return true;
         }
         
     public:
@@ -76,6 +78,11 @@ class SubscriberList
             }
 
         return false;
+    }
+
+    void remove_all()
+    {
+        this->n = 0;
     }
 
     SubscriberList(unsigned int initial_size)

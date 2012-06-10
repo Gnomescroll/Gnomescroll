@@ -1,6 +1,8 @@
 #pragma once
 
-#include <net_lib/net.hpp>
+#include <net_lib/net_StoC.hpp>
+#include <net_lib/net_CtoS.hpp>
+
 
 #include <agent/agent_status.hpp>
 /*
