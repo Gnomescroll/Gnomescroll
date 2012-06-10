@@ -249,8 +249,8 @@ int _get(int x, int y, int z)
 {
     //x = translate_point(x);
     //y = translate_point(y);
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    x &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     //return t_map::main_map->get_block(x,y,z);
     //if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)
