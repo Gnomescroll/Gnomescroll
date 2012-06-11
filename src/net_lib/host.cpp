@@ -66,15 +66,17 @@ void init_net_client()
 
 void shutdown_net_client()
 {
-
     if(NetClient::Server.enet_peer != NULL)
     {
         enet_peer_disconnect(NetClient::Server.enet_peer, 0);   //graceful shutdown
         //enet_host_flush(client_host);   //flush packets
         client_dispatch_network_events();
     }
+    NetClient::Server.enet_peer = NULL;
 
-    enet_host_destroy(client_host);
+    if (client_host != NULL)
+        enet_host_destroy(client_host);
+    client_host = NULL;
 }
 
 static void client_connect(ENetEvent* event)
@@ -145,6 +147,8 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
 
 void client_dispatch_network_events()
 {
+    if (client_host == NULL) return;
+    
     ENetEvent event;
     
     /* Wait up to 5 milliseconds for an event. */

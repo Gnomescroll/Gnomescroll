@@ -205,6 +205,8 @@ bool open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
             GS_ASSERT(cryofreezer == NULL);
             GS_ASSERT(cryofreezer_ui == NULL);
+            GS_ASSERT(smelter == NULL);
+            GS_ASSERT(smelter_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
             if (player_craft_bench == NULL) return false;
@@ -222,7 +224,9 @@ bool open_container(int container_id)
             GS_ASSERT(player_craft_bench_ui == NULL);
             GS_ASSERT(cryofreezer == NULL);
             GS_ASSERT(cryofreezer_ui == NULL);
-            
+            GS_ASSERT(smelter == NULL);
+            GS_ASSERT(smelter_ui == NULL);
+
             storage_block = (ItemContainer*)container;
             if (storage_block == NULL) return false;
             // setup ui
@@ -239,6 +243,8 @@ bool open_container(int container_id)
             GS_ASSERT(player_craft_bench_ui == NULL);
             GS_ASSERT(storage_block == NULL);
             GS_ASSERT(storage_block_ui == NULL);
+            GS_ASSERT(smelter == NULL);
+            GS_ASSERT(smelter_ui == NULL);
             
             cryofreezer = (ItemContainerCryofreezer*)container;
             if (cryofreezer == NULL) return false;
@@ -248,6 +254,25 @@ bool open_container(int container_id)
             cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
             cryofreezer_ui->load_data(cryofreezer->slot);
             t_hud::set_container_id(cryofreezer->type, cryofreezer->id);
+            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            break;
+            
+        case CONTAINER_TYPE_SMELTER_ONE:
+            GS_ASSERT(player_craft_bench == NULL);
+            GS_ASSERT(player_craft_bench_ui == NULL);
+            GS_ASSERT(storage_block == NULL);
+            GS_ASSERT(storage_block_ui == NULL);
+            GS_ASSERT(cryofreezer == NULL);
+            GS_ASSERT(cryofreezer_ui == NULL);
+            
+            smelter = (ItemContainerSmelter*)container;
+            if (smelter == NULL) return false;
+            // setup ui
+            if (smelter_ui == NULL) delete smelter_ui;
+            smelter_ui = new ItemContainerSmelterUI(container_id);
+            smelter_ui->init(smelter->type, smelter->xdim, smelter->ydim);
+            smelter_ui->load_data(smelter->slot);
+            t_hud::set_container_id(smelter->type, smelter->id);
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 

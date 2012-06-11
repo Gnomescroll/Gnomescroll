@@ -8,7 +8,7 @@ NetPeer::NetPeer()
 :
 client_id(-1),
 connected(0),
-version_match(false),
+version_match(true),
 enet_peer(NULL)
 {
 #ifdef DC_SERVER

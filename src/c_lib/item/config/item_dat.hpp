@@ -59,7 +59,7 @@ void load_item_dat()
 
     item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
     sprite_def(i0, 1,7);
-    s.pretty_name = (char*)"Grenade Launcher";
+    s.pretty_name = (char*)"Plasma Grenade";
     s.max_stack_size = 100;
 
     item_def(9, IG_RESOURCE, "food_rock-0");
@@ -109,7 +109,7 @@ void load_item_dat()
     // level 1 utility crafting block
     item_def(17, IG_PLACER, "crate_3");
     iso_block_sprite_def("crate_3");
-    s.pretty_name = (char*)"Small Utility Crafting Block";
+    s.pretty_name = (char*)"Small Crafting Bench";
     s.placer_block_type_id = t_map::dat_get_cube_id("crate_3");
     s.max_stack_size = 1;
     s.particle_voxel = true;
@@ -268,7 +268,17 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"methane_ice");
     s.gas = true;
-    
+
+    item_def(51, IG_PLACER, "smelter_1");
+    iso_block_sprite_def("smelter_1");
+    s.pretty_name = (char*)"Simple Smelter";
+    s.placer_block_type_id = t_map::dat_get_cube_id("smelter_1");
+    s.max_stack_size = 1;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"smelter_1");
+    s.container_type = CONTAINER_TYPE_SMELTER_ONE;
+    container_block_def("smelter_1", CONTAINER_TYPE_SMELTER_ONE);
+
     end_item_dat();
 }
 

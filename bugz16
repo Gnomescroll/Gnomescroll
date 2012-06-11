@@ -491,6 +491,24 @@ DONE
 fix asymmetrical fish climbing
 DONE
 
+subscription lists integrated for items -- still has bugs
+DONE
+
+symmetrical z up/down for mobs so things don't get stuck
+DONE
+
+change "grenade launcher" to "plasma grenade"
+DONE
+
+fix durability colors hand item
+DONE
+
+disconnect on version mismatch and draw message on screen
+DONE
+
+nanite FOOD slot
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -501,8 +519,6 @@ this will let players "dodge"
 
 some boxes arent getting destination correctly -- just jumping around with state updates
 --especially when cross boundaries
-
-symmetrical z up/down so things don't get stuck
 
 == GFX ==
 glsl colored/textured voxels
@@ -515,22 +531,26 @@ use font DST_COLOR only for certain ui elements
 improve digging sounds
 
 == MAINTENANCE/REFACTORS ==
-toolbelt: turn fire on/off for server
+toolbelt: turn fire on/off method for server
+rename/clean container type enums
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
 alt tab doesnt work in fullscreen (on linux at least)
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
-version mismatch popup for OS X
-window gains focus on death?
-don't abort on mismatch version, disconnect from server and print "VERSION MISMATCH" etc on screen
+use FOOD slot graphic for nanite
 
 == CONTAINERS ==
 smelter
 
+rendering
+state
+
 == ITEMS ==
-need subscription lists per item for state changes
+switch methane ice sprite from iso to cell's work
+New bugs from subscription lists:
+Toolbelt durabilities out of sync
 
 == ANALYTICS ==
 Need to keep track of IP address etc in a new data structure:
@@ -544,9 +564,7 @@ log chat history
 
 == GENERAL ==
 put spawners back in
-change grenade launcher to plasma grenade
 
 == MAP ==
 
 ==BUGZ==
-durability colors wrong for hand

@@ -9,8 +9,6 @@ namespace t_hud
 
 const int ITEM_PRICE_MAX_LENGTH = 4;
 
-void u_dot(float x, float y);
-
 class AgentNaniteUI : public UIElement
 {
     public:
@@ -207,10 +205,10 @@ void AgentNaniteUI::draw()
     float x = xoff;
     float y = yoff;
 
-    const float tx_min = 0.0f;
-    const float ty_min = 0.0f;
-    const float tx_max = w/512.0f;
-    const float ty_max = h/512.0f;
+    float tx_min = 0.0f;
+    float ty_min = 0.0f;
+    float tx_max = w/512.0f;
+    float ty_max = h/512.0f;
 
     //draw background
     glBegin(GL_QUADS);
@@ -226,23 +224,41 @@ void AgentNaniteUI::draw()
 
     glTexCoord2f(tx_max, ty_min);
     glVertex2f(x+w, y);
+    
+    // draw a slot on the nanite for indication
+    // use FOOD slot in top right corner of texture
+    tx_min = (512.0f - cell_size)/512.0f;
+    ty_min = 0.0f;
+    tx_max = tx_min + cell_size/512.0f;
+    ty_max = ty_min + cell_size/512.0f;
+
+    // these coordinates place it at hardcoded special location
+    //x = xoff + (nanite_slot_render_offset_x);
+    //y = yoff - (nanite_slot_render_offset_y + slot_size);
+
+    // bottom right corner
+    x = xoff + (nanite_xdim - 1) * cell_size;
+    y = yoff - ((nanite_ydim - 1) * cell_size);
+
+    w = cell_size;
+    h = cell_size;
+    
+    glTexCoord2f(tx_min, ty_min);
+    glVertex2f(x, y);
+
+    glTexCoord2f(tx_min, ty_max);
+    glVertex2f(x,y-h);
+
+    glTexCoord2f(tx_max, ty_max);
+    glVertex2f(x+w, y-h);
+
+    glTexCoord2f(tx_max, ty_min);
+    glVertex2f(x+w, y);
 
     glEnd();
+
     glDisable(GL_TEXTURE_2D);
 
-    // draw a slot on the nanite for indication
-    glBegin(GL_QUADS);
-    int g1 = 64 + 32;
-    glColor4ub(g1,g1,g1, 256-32);
-    x = xoff + (nanite_slot_render_offset_x);
-    y = yoff - (nanite_slot_render_offset_y + slot_size);
-    w = slot_size;
-    glVertex2f(x,y+w);
-    glVertex2f(x+w, y+w);
-    glVertex2f(x+w, y);
-    glVertex2f(x, y);
-    glEnd();
-    
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
@@ -250,21 +266,20 @@ void AgentNaniteUI::draw()
     if (hover_slot != NULL_SLOT)
     {
         int w = slot_size;
-        float x;
-        float y;
+        int xslot,yslot;
 
         if (this->in_nanite_region(mouse_x, mouse_y))
         {
-            x = xoff + nanite_slot_render_offset_x;
-            y = yoff - nanite_slot_render_offset_y;
+            xslot = nanite_xdim - 1;
+            yslot = nanite_ydim - 1;
         }
         else
         {
-            int xslot = hover_slot % this->xdim;
-            int yslot = hover_slot / this->xdim;
-            x = xoff + cell_size*xslot + cell_offset_x;
-            y = yoff - (cell_size*yslot + cell_offset_y);
+            xslot = hover_slot % this->xdim;
+            yslot = hover_slot / this->xdim;
         }
+        float x = xoff + cell_size*xslot + cell_offset_x;
+        float y = yoff - (cell_size*yslot + cell_offset_y);
 
         glVertex2f(x,y);
         glVertex2f(x, y-w);
@@ -384,10 +399,10 @@ void AgentNaniteUI::draw()
     if (food_item_type != NULL_ITEM_TYPE)
     {
         int food_sprite_id = Item::get_sprite_index_for_type(food_item_type);
-        //const float x = xoff + (nanite_xdim-1)*cell_size + cell_offset_x;
-        //const float y = yoff - ((nanite_ydim-1)*cell_size + cell_offset_y);
-        const float x = xoff + nanite_slot_render_offset_x;
-        const float y = yoff - nanite_slot_render_offset_y;
+        const float x = xoff + (nanite_xdim-1)*cell_size + cell_offset_x;
+        const float y = yoff - ((nanite_ydim-1)*cell_size + cell_offset_y);
+        //const float x = xoff + nanite_slot_render_offset_x;
+        //const float y = yoff - nanite_slot_render_offset_y;
         
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -487,8 +502,8 @@ void AgentNaniteUI::draw()
     {
         this->stacks[0].update_formatted_string(1, food_stack_size);
 
-        const float x = xoff + nanite_slot_render_offset_x + slot_size - cell_offset_x_right - this->stacks[0].get_width();
-        const float y = yoff - (nanite_slot_render_offset_y + slot_size - cell_offset_y_bottom - this->stacks[0].get_height());
+        const float x = xoff + nanite_xdim*cell_size - cell_offset_x_right - this->stacks[0].get_width();
+        const float y = yoff - (nanite_ydim*cell_size - cell_offset_y_bottom - this->stacks[0].get_height());
         
         this->stacks[0].set_position(x,y);
         this->stacks[0].draw();
@@ -515,26 +530,6 @@ void AgentNaniteUI::draw()
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
-}
-
-
-void u_dot(float x, float y)
-{
-    /*
-        Draw dot in upper left corner
-    */
-    glDisable(GL_TEXTURE_2D);
-    glColor4ub(255, 0, 0, 255);
-
-    float p = 1.0;
-    glBegin(GL_QUADS);
-
-    glVertex2f(x-p,y+p);
-    glVertex2f(x+p, y+p);
-    glVertex2f(x+p, y-p);
-    glVertex2f(x-p, y-p);
-
-    glEnd();
 }
 
 }

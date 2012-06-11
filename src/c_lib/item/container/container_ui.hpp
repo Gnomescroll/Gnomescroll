@@ -250,4 +250,54 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
         {}
 };
 
+class ItemContainerSmelterUI: public ItemContainerUIInterface
+{
+    public:
+        bool can_insert_item(int slot, int item_type)
+        {
+            return true;
+        }
+
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+            for (int i=0; i<this->slot_max; i++)
+            {
+                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
+                if (this->slot_type[i] == item_type   // stacks
+                && (Item::get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
+                    return i;
+            }
+            return NULL_SLOT;
+        }
+
+        int get_empty_slot()
+        {
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot_type[i] == NULL_ITEM_TYPE)
+                    return i;
+            return NULL_SLOT;
+        }
+
+        void init(ItemContainerType type, int xdim, int ydim)
+        {
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + 1; // +1 for Fuel
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0) return;
+            this->slot_type = new int[this->slot_max];
+            this->slot_stack = new int[this->slot_max];
+            this->slot_durability = new int[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
+            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
+            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
+        }
+
+    explicit ItemContainerSmelterUI(int id)
+    : ItemContainerUIInterface(id)
+    {}
+};
+
 } // Item

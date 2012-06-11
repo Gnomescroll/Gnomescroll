@@ -10,11 +10,12 @@
 namespace t_hud
 {
 
-class AgentContainerUI* agent_container;
-class AgentToolbeltUI* agent_toolbelt;
-class AgentNaniteUI* nanite_container;
-class CraftingUI* crafting_container;
-class StorageBlockUI* storage_block;
+class AgentContainerUI* agent_container = NULL;
+class AgentToolbeltUI* agent_toolbelt = NULL;
+class AgentNaniteUI* nanite_container = NULL;
+class CraftingUI* crafting_container = NULL;
+class StorageBlockUI* storage_block = NULL;
+class SmelterUI* smelter = NULL;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -30,19 +31,17 @@ void set_container_id(ItemContainerType container_type, int container_id)
             nanite_container->container_id = container_id;
             break;
             
-        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             crafting_container->container_id = container_id;
             break;
 
-        // TODO -- cryofreezer UI widget
-        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-            //cryofreezer->container_id = container_id;
-            //break;
-
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             storage_block->container_id = container_id;
+            break;
+
+        case CONTAINER_TYPE_SMELTER_ONE:
+            smelter->container_id = container_id;
             break;
             
         default:
@@ -60,6 +59,7 @@ void close_container(int container_id)
     // unset ids for variable container UIs
     if (crafting_container != NULL && crafting_container->container_id == container_id) crafting_container->container_id = NULL_CONTAINER;
     if (storage_block != NULL && storage_block->container_id == container_id) storage_block->container_id = NULL_CONTAINER;
+    if (smelter != NULL && smelter->container_id == container_id) smelter->container_id = NULL_CONTAINER;
 }
 
 /*
@@ -110,13 +110,14 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
     int closest_slot = NULL_SLOT;
 
     // set up container array
-    const int n_inventories = 5;
+    const int n_inventories = 6;
     UIElement* inventories[n_inventories] = {
         agent_container,
         agent_toolbelt,
         nanite_container,
         crafting_container,
         storage_block,
+        smelter,
     };
 
     // get topmost container click
@@ -310,16 +311,15 @@ static void draw_grabbed_icon()
     {
         int max_durability = Item::get_max_durability(ItemContainer::player_hand_type_ui);
         float ratio = ((float)durability)/((float)max_durability);
+        const float alpha = 128;
         if (ratio >= 0.75)
-            glColor4ub(7, 247, 0, 128);    // green
+            glColor4ub(7, 247, 0, alpha);    // green
         else if (ratio >= 0.5)
-            glColor4ub(243, 247, 0, 128);  // yellow
+            glColor4ub(243, 247, 0, alpha);  // yellow
         else if (ratio >= 0.25)
-            glColor4ub(247, 159, 0, 128);  // orange
-        else if (ratio >= 0.05)
-            glColor4ub(247, 71, 0, 128);    // red-orange
+            glColor4ub(247, 71, 0, alpha);    // red-orange
         else
-            glColor4ub(247, 14, 0, 128);   // red
+            glColor4ub(247, 14, 0, alpha);   // red
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);
@@ -449,10 +449,9 @@ void draw_hud()
                     crafting_container->draw();
                     break;
 
-                //case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
-                    //break;
-                //case CONTAINER_TYPE_CRAFTING_BENCH_SMELTER:
-                    //break;
+                case CONTAINER_TYPE_SMELTER_ONE:
+                    smelter->draw();
+                    break;
 
                 default:
                     GS_ASSERT(false);
@@ -506,6 +505,13 @@ void init()
     storage_block->yoff = -150.0 + (_yresf + storage_block->height())/2;
     storage_block->init();
 
+    smelter = new SmelterUI;
+    smelter->type = UI_ELEMENT_SMELTER;
+    smelter->set_container_type(CONTAINER_TYPE_SMELTER_ONE);
+    smelter->centered = true;
+    smelter->yoff = -150.0 + (_yresf + smelter->height())/2;
+    smelter->init();
+
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format((char*) "%d");
     grabbed_icon_stack_text->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
@@ -524,6 +530,7 @@ void teardown()
     if (nanite_container != NULL) delete nanite_container;
     if (crafting_container != NULL) delete crafting_container;
     if (storage_block != NULL) delete storage_block;
+    if (smelter != NULL) delete smelter;
 
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
 }
