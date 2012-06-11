@@ -233,8 +233,8 @@ class MapGenerator1
     {
         cache = NULL;
 
-        erosion3D = new PerlinOctave3D(4);
         erosion2D = new PerlinOctave2D(4);
+        erosion3D = new PerlinOctave3D(4);
 
         height2D = new PerlinOctave2D(4);
         roughness2D = new PerlinOctave2D(4);
@@ -243,8 +243,8 @@ class MapGenerator1
 
     void set_persistance(float p1, float p2, float p3, float p4)
     {
-        erosion3D->set_persistance(p1);
         erosion2D->set_persistance(p2);
+        erosion3D->set_persistance(p1);
 
         height2D->set_persistance(p3);
         roughness2D->set_persistance(p4);
@@ -263,9 +263,41 @@ class MapGenerator1
     }
 
     float calc(int i, int j, int k)
-    {
-        return 0;
+    {        
+        float x = i*4;
+        float y = j*4;
+        float z = k*4;
 
+        float v = 0.0; //value;
+
+        int index = k*XMAX*YMAX + j*XMAX + i;
+
+        float h2 = height2D->cache[index];
+        float r2 = roughness2D->cache[index];
+
+        float e2 = erosion2D->cache[index];
+        float e3 = erosion3D->cache[index];
+
+        /*
+            Threshold height
+        */
+
+        static const float hrange = 16.0;   //half of range (can perturb this with another map)
+        static const float hmin = 64;
+
+        static const float _hmin = -1.0;
+        static const float _hmax = 1.0;
+
+        static const float _hmix = 1.0;
+
+        float tmp1 = _hmix*((hmin + h2*hrange) - z);
+
+        if(tmp1 < _hmin) tmp1 = _hmin;
+        if(tmp1 > _hmax) tmp1 = _hmax;
+
+        v += tmp1;
+
+        cache[index] = v;
     }
 
     void generate_map()
