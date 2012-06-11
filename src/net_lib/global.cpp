@@ -13,6 +13,9 @@ NetPeer Server;
 
 namespace NetServer
 {
+
+unsigned int number_of_clients = 0;
+unsigned int login_count = 0;
     
 NetPeer** pool = NULL;
 NetPeerManager** clients = NULL;

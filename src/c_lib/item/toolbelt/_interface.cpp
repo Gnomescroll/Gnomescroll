@@ -542,7 +542,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             }
             else if (stack_size != remaining_stack_size)
                 // we must send item updates ourself however. consume_stack_item only destroys
-                if (a != NULL) Item::send_item_state(a->client_id, item->id);        
+                if (a != NULL) Item::send_item_state(item->id);        
             
             agent_fire_on[agent_id] = false;
             agent_fire_tick[agent_id] = 0;
@@ -585,7 +585,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             agent_selected_type[agent_id] = NULL_ITEM_TYPE;
             agent_selected_item[agent_id] = NULL_ITEM;
         }
-        else if (a != NULL) Item::send_item_state(a->client_id, item->id);
+        else if (a != NULL) Item::send_item_state(item->id);
     }
 }
 
@@ -651,7 +651,7 @@ void use_block_placer(int agent_id, ItemID placer_id)
         agent_selected_item[agent_id] = NULL_ITEM;
     }
     else if (stack_size != remaining_stack_size) 
-        if (a != NULL) Item::send_item_state(a->client_id, placer->id);        
+        if (a != NULL) Item::send_item_state(placer->id);        
 }
 
 } // Toolbelt

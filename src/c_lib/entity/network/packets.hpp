@@ -1,6 +1,5 @@
 #pragma once
 
-#include <net_lib/net.hpp>
 
 // Position
 class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_create_StoC>

@@ -11,9 +11,9 @@ namespace Item
 void Item::init(int item_type)
 {
     this->type = item_type;
-    this->group = get_item_group_for_type(item_type);
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
+    if (attr == NULL) return;
     this->energy = attr->max_energy;
     this->durability = attr->max_durability;
 }
@@ -84,7 +84,7 @@ void ItemList::tick()
                         int agent_id = container->owner;
                         Agent_state* agent = ServerState::agent_list->get(agent_id);
                         if (agent != NULL)
-                            send_item_state(agent->client_id, item->id);
+                            send_item_state(item->id);
                     }
                 }
             }
@@ -104,7 +104,7 @@ void ItemList::tick()
                         int agent_id = item->location_id;
                         Agent_state* agent = ServerState::agent_list->get(agent_id);
                         if (agent != NULL)
-                            send_item_state(agent->client_id, item->id);
+                            send_item_state(item->id);
                     }
                 }
             }

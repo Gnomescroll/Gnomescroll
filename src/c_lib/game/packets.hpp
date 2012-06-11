@@ -1,6 +1,5 @@
 #pragma once
 
-#include <net_lib/net.hpp>
 #include <net_lib/global.hpp>
 
 #include <game/teams.hpp>

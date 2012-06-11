@@ -36,7 +36,7 @@ namespace Item
 {
 
 void destroy_item(ItemID id);
-void destroy_item_silently(ItemID id);  // wont broadcast
+//void destroy_item_silently(ItemID id);  // wont broadcast
     
 ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);
@@ -46,6 +46,8 @@ class Item* create_item(char* item_name);
 
 // returns stack size
 int consume_stack_item(ItemID item_id);
+
+void agent_quit(int agent_id);
 
 // tests
 void test_item_list_capacity();

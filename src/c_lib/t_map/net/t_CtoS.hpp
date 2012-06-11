@@ -2,7 +2,6 @@
 
 #include "t_net.hpp"
 
-#include <net_lib/net.hpp>
 
 namespace t_map
 {

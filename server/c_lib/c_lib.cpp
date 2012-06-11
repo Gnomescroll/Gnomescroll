@@ -17,7 +17,6 @@ dont_include_this_file_in_client
 
 #include <common/compression/miniz.c>
 
-#include <common/list_assert.hpp>
 #include <common/macros.hpp>
 
 // crash report
@@ -37,6 +36,7 @@ dont_include_this_file_in_client
 #include <common/template/dynamic_multi_object_list.hpp>
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
+#include <common/subscriber_list.hpp>
  
 // logging
 #include <common/logger.cpp>

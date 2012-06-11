@@ -15,7 +15,6 @@
 
 #include <particle/_interface.hpp>
 
-#include <net_lib/net.hpp>
 /* properties */
 
 

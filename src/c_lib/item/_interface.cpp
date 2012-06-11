@@ -51,7 +51,7 @@ ItemGroup get_item_group(ItemID id)
 {
     Item* item = get_item(id);
     if (item == NULL) return IG_ERROR;
-    return item->group;
+    return get_item_group_for_type(item->type);
 }
 
 int get_stack_size(ItemID id)
@@ -168,9 +168,6 @@ namespace Item
 
 void destroy_item(ItemID id)
 {
-    GS_ASSERT(ItemContainer::agent_hand_list != NULL);
-    if (ItemContainer::agent_hand_list == NULL) return;
-    
     Item* item = get_item(id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
@@ -198,30 +195,33 @@ void destroy_item(ItemID id)
 
     // destroy source particle
     if (item->location == IL_PARTICLE) ItemParticle::destroy(item->location_id);
-    
+
+    for (unsigned int i=0; i<item->subscribers.n; i++)
+        printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], id);
+
+    send_item_destroy(id);
     item_list->destroy(id);
-    broadcast_item_destroy(id);
 }
 
-// broadcasts nothing
-void destroy_item_silently(ItemID id)
-{
-    Item* item = get_item(id);
-    if (item == NULL) return;
-    if (item->location == IL_CONTAINER)
-    {
-        int container_id = item->location_id;
-        int slot = item->container_slot;
-        ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-        if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
-    }
-    else if (item->location == IL_PARTICLE)
-        ItemParticle::destroy_silently(item->location_id);
-    else if (item->location == IL_HAND)
-        ItemContainer::remove_item_from_hand(item->location_id);
+//// broadcasts nothing
+//void destroy_item_silently(ItemID id)
+//{
+    //Item* item = get_item(id);
+    //if (item == NULL) return;
+    //if (item->location == IL_CONTAINER)
+    //{
+        //int container_id = item->location_id;
+        //int slot = item->container_slot;
+        //ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+        //if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
+    //}
+    //else if (item->location == IL_PARTICLE)
+        //ItemParticle::destroy_silently(item->location_id);
+    //else if (item->location == IL_HAND)
+        //ItemContainer::remove_item_from_hand(item->location_id);
     
-    item_list->destroy(id);
-}
+    //item_list->destroy(id);
+//}
 
 ItemID split_item_stack(ItemID src, int amount)
 {
@@ -298,6 +298,23 @@ int consume_stack_item(ItemID item_id)
     GS_ASSERT(item->stack_size > 0);
     return item->stack_size;
 }
+
+void agent_quit(int agent_id)
+{
+    Agent_state* agent = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(agent != NULL);
+    if (agent == NULL) return;
+
+    // remove client from item subscription lists
+    // TODO -- reverse lookup from agent
+
+    int client_id = agent->client_id;
+    for (int i=0; i<item_list->n_max; i++)
+        if (item_list->a[i] != NULL)
+            if (item_list->a[i]->subscribers.remove(client_id))
+                printf("Unsubscribed %d from %d\n", client_id, item_list->a[i]->id);
+}
+
 
 // tests
 void test_item_list_capacity()

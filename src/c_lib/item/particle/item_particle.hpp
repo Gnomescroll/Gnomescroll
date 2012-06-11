@@ -156,7 +156,6 @@ void ItemParticle_list::draw()
             p->voxel.draw(p->verlet.position);
         }
     glEnd();
-
     #endif
 }
 

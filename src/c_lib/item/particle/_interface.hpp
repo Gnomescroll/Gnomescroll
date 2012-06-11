@@ -11,6 +11,8 @@ void teardown();
 void tick();
 void destroy(int particle_id);
 
+class ItemParticle* get(int particle_id);
+
 #if DC_CLIENT
 void draw();
 void draw_init();
@@ -25,7 +27,7 @@ class ItemParticle* create_item_particle(
 
 #if DC_SERVER
 
-void destroy_silently(int particle_id);
+//void destroy_silently(int particle_id);
 
 class ItemParticle* create_item_particle(
     ItemID item_id, int item_type,

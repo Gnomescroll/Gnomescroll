@@ -53,7 +53,6 @@ dont_include_this_file_in_server
 
 //utility
 #include <common/gl_assert.hpp>
-#include <common/list_assert.hpp>
 #include <common/macros.hpp>
 #include <common/common.cpp>
 #include <common/files.cpp>

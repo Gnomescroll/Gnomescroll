@@ -1,6 +1,6 @@
 #pragma once
 
-#include <net_lib/net.hpp>
+#include <net_lib/net_CtoS.hpp>
 
 static int _CtoSbenchmark_counter = 0;
 
