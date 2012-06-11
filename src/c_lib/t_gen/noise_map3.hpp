@@ -227,12 +227,23 @@ class MapGenerator1
     MapGenerator1()
     {
         erosion3D = new PerlinOctave3D(4);
-        erosion3D = new PerlinOctave3D(4);
+        erosion2D = new PerlinOctave2D(4);
 
         height2D = new PerlinOctave2D(4);
         roughness2D = new PerlinOctave2D(4);
     }
 
+
+    void set_persistance(float p1, float p2, float p3, float p4)
+    {
+        erosion3D->set_persistance(p1);
+        erosion2D->set_persistance(p2);
+
+        height2D->set_persistance(p3);
+        roughness2D->set_persistance(p4);
+
+
+    }
 };
 
 
