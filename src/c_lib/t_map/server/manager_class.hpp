@@ -262,7 +262,7 @@ void Map_manager::update()
         //y = y - ypos; 
 
         int dx = xpos - quadrant_translate_i(xpos, x);
-        int dy = xpos - quadrant_translate_i(ypos, y);
+        int dy = ypos - quadrant_translate_i(ypos, y);
 
         if( dx*dx+dy*dy > UNSUB_RADIUS2 ) unsub(i);
 
@@ -299,7 +299,7 @@ void Map_manager::update()
     Quadrant Math
 */  
         int x = xpos - quadrant_translate_i(xpos, i*16 + 8);
-        int y = xpos - quadrant_translate_i(ypos, j*16 + 8);
+        int y = ypos - quadrant_translate_i(ypos, j*16 + 8);
 
         if(x*x+y*y >= SUB_RADIUS2 ) continue;
         //int x = xpos - (i*16 + 8);
