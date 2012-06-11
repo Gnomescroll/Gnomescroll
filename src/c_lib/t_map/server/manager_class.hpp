@@ -56,6 +56,8 @@ class MAP_MANAGER_ELEMENT
 struct QUE_ELEMENT
 {
     int distance2;
+    int xpos;
+    int ypos;
     int index;
     short version;
 };
@@ -341,9 +343,11 @@ void Map_manager::que_for_sub(int x, int y)
     //printf("version = %hx \n", q.version);
 
     {
-        int _x = xpos - (x*16 + 8);
-        int _y = ypos - (y*16 + 8);
-        q.distance2 = _x*_x + _y*_y;
+        //int _x = xpos - (x*16 + 8);
+        //int _y = ypos - (y*16 + 8);
+        //q.distance2 = _x*_x + _y*_y;
+        q.xpos = 16*x + 8;
+        q.ypos = 16*y + 8;
     }
     q.index = index;
 
@@ -353,16 +357,29 @@ void Map_manager::que_for_sub(int x, int y)
     version_list[index].version = QUED; //set subscription property, so it does not get requed
 }
 
-static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned n) 
+static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, int xpos, int ypos) 
 {
+//    #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
+//    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
+
+
+    for(unsigned int i=0; i<n; i++)
+    {
+        int x = xpos - quadrant_distance2i(xpos, arr[i].xpos);
+        int y = ypos - quadrant_distance2i(xpos, arr[i].ypos);
+        arr[i].distance2 = x*x + y*y;
+    }
+
     #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
     QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
+
+
 }
 
 void Map_manager::sort_que()
 {
     if(chunk_que_num == 0) return;
-    QUE_ELEMENT_qsort(chunk_que, chunk_que_num);
+    QUE_ELEMENT_qsort(chunk_que, chunk_que_num, xpos, ypos);
 }
 
 void Map_manager::dispatch_que()
@@ -396,7 +413,7 @@ void Map_manager::set_position(int x, int y)
 {
     if(x != xpos || y != ypos) needs_update = true;
     xpos = x;
-    ypos = y;      
+    ypos = y;
 }
 
 void Map_manager::sub(int chunk_index, int version)
