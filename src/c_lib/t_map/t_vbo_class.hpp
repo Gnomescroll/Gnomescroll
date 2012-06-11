@@ -91,12 +91,14 @@ class Vbo_map
         delete[] vbo_array;
     }
 
+    #define MAP_VBO_CULLING 1
     //update all VBOs that need updating
     void update_map()
     {
-
+    #if MAP_VBO_CULLING
         int cx = (int) current_camera_position.x;
         int cy = (int) current_camera_position.y;
+    #endif
 
         class MAP_CHUNK* m;
 
@@ -107,6 +109,7 @@ class Vbo_map
             m = map->chunk[index];
             if( m == NULL ) continue; //can speed up by maintain list of chunks
 
+        #if MAP_VBO_CULLING
             int x = quadrant_translate_i(cx, 16*i+8 );
             int y = quadrant_translate_i(cy, 16*j+8 );
             int distance2 = x*x+y*y;
@@ -128,6 +131,7 @@ class Vbo_map
                     continue;
                 }
             }
+        #endif
 
             if( m->needs_update == false ) continue;
             m->needs_update = false; //reset flag
