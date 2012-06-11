@@ -22,6 +22,7 @@ class ItemContainerNanite* player_nanite = NULL;
 class ItemContainerCraftingBench* player_craft_bench = NULL;
 class ItemContainer* storage_block = NULL;
 class ItemContainerCryofreezer* cryofreezer = NULL;
+class ItemContainerSmelter* smelter = NULL;
 ItemID player_hand = NULL_ITEM;
 
 class ItemContainerUI* player_container_ui = NULL;
@@ -30,6 +31,7 @@ class ItemContainerNaniteUI* player_nanite_ui = NULL;
 class ItemContainerUI* player_craft_bench_ui = NULL;
 class ItemContainerUI* storage_block_ui = NULL;
 class ItemContainerUI* cryofreezer_ui = NULL;
+class ItemContainerSmelterUI* smelter_ui = NULL;
 int player_hand_type_ui = NULL_ITEM_TYPE;
 int player_hand_stack_ui = 1;
 int player_hand_durability_ui = NULL_DURABILITY;

@@ -63,6 +63,8 @@ bool get_nanite_edibility(int item_type);
 int get_nanite_store_item(int level, int xslot, int yslot);
 int get_nanite_store_item(int level, int xslot, int yslot, int* cost);
 
+bool is_fuel(int item_type);
+
 class CraftingRecipe* get_craft_recipe(int recipe_id);
 
 class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot);

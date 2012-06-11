@@ -509,6 +509,9 @@ DONE
 nanite FOOD slot
 DONE
 
+fix off-by-1 ui slot
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -548,6 +551,7 @@ rendering
 state
 
 == ITEMS ==
+switch methane ice sprite from iso to cell's work
 New bugs from subscription lists:
 Toolbelt durabilities out of sync
 

@@ -160,6 +160,7 @@ void update_container_ui_from_state()
     if (player_craft_bench_ui != NULL) player_craft_bench_ui ->load_data (player_craft_bench ->slot);
     if (storage_block_ui      != NULL) storage_block_ui      ->load_data (storage_block      ->slot);
     if (cryofreezer_ui        != NULL) cryofreezer_ui        ->load_data (cryofreezer        ->slot);
+    if (smelter_ui            != NULL) smelter_ui            ->load_data (smelter            ->slot);
     
     if (player_hand == NULL_ITEM)
     {
@@ -176,14 +177,12 @@ void update_container_ui_from_state()
 }
 
 void open_inventory()
-{
-    // copy state to ui
+{   // copy state to ui
     update_container_ui_from_state();
 }
 
 void close_inventory()
-{
-    // attempt throw
+{   // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 }
 
@@ -205,6 +204,8 @@ bool open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
             GS_ASSERT(cryofreezer == NULL);
             GS_ASSERT(cryofreezer_ui == NULL);
+            GS_ASSERT(smelter == NULL);
+            GS_ASSERT(smelter_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
             if (player_craft_bench == NULL) return false;
@@ -222,7 +223,9 @@ bool open_container(int container_id)
             GS_ASSERT(player_craft_bench_ui == NULL);
             GS_ASSERT(cryofreezer == NULL);
             GS_ASSERT(cryofreezer_ui == NULL);
-            
+            GS_ASSERT(smelter == NULL);
+            GS_ASSERT(smelter_ui == NULL);
+
             storage_block = (ItemContainer*)container;
             if (storage_block == NULL) return false;
             // setup ui
@@ -239,6 +242,8 @@ bool open_container(int container_id)
             GS_ASSERT(player_craft_bench_ui == NULL);
             GS_ASSERT(storage_block == NULL);
             GS_ASSERT(storage_block_ui == NULL);
+            GS_ASSERT(smelter == NULL);
+            GS_ASSERT(smelter_ui == NULL);
             
             cryofreezer = (ItemContainerCryofreezer*)container;
             if (cryofreezer == NULL) return false;
@@ -248,6 +253,25 @@ bool open_container(int container_id)
             cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
             cryofreezer_ui->load_data(cryofreezer->slot);
             t_hud::set_container_id(cryofreezer->type, cryofreezer->id);
+            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            break;
+            
+        case CONTAINER_TYPE_SMELTER_ONE:
+            GS_ASSERT(player_craft_bench == NULL);
+            GS_ASSERT(player_craft_bench_ui == NULL);
+            GS_ASSERT(storage_block == NULL);
+            GS_ASSERT(storage_block_ui == NULL);
+            GS_ASSERT(cryofreezer == NULL);
+            GS_ASSERT(cryofreezer_ui == NULL);
+            
+            smelter = (ItemContainerSmelter*)container;
+            if (smelter == NULL) return false;
+            // setup ui
+            if (smelter_ui == NULL) delete smelter_ui;
+            smelter_ui = new ItemContainerSmelterUI(container_id);
+            smelter_ui->init(smelter->type, smelter->xdim, smelter->ydim);
+            smelter_ui->load_data(smelter->slot);
+            t_hud::set_container_id(smelter->type, smelter->id);
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
@@ -287,6 +311,10 @@ bool close_container_silently()
     cryofreezer = NULL;
     if (cryofreezer_ui != NULL) delete cryofreezer_ui;
     cryofreezer_ui = NULL;
+
+    smelter = NULL;
+    if (smelter_ui != NULL) delete smelter_ui;
+    smelter_ui = NULL;
 
     // unset hud container id
     t_hud::close_container(opened_container);
@@ -353,6 +381,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
     if (storage_block_ui      != NULL && storage_block_ui->id      == container_id) return storage_block_ui;
     if (cryofreezer_ui        != NULL && cryofreezer_ui->id        == container_id) return cryofreezer_ui;
+    if (smelter_ui            != NULL && smelter_ui->id            == container_id) return smelter_ui;
     GS_ASSERT(false);
     return NULL;
 }
@@ -701,7 +730,7 @@ void agent_born(int agent_id)
         if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
     }
     
-    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+    crate = Item::create_item(Item::get_item_type((char*)"smelter_1"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {

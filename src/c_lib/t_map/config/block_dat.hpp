@@ -116,7 +116,7 @@ void load_block_dat()
     set_max_dmg(128);
 
 
-    cube_def(8, ItemContainerBlock, "smelter");
+    cube_def(8, ItemContainerBlock, "smelter_1");
     iso_texture(t1, 14,2);
     side_texture(T, t1, 14,2);
     side_texture(B, t1, 14,2);

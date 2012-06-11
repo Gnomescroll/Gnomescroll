@@ -264,6 +264,14 @@ int get_nanite_store_item(int level, int xslot, int yslot, int* cost)
     return NULL_ITEM_TYPE;
 }
 
+bool is_fuel(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return false;
+    return attr->fuel;
+}
+
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
     GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);

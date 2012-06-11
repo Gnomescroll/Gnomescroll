@@ -22,6 +22,7 @@ extern class ItemContainerNanite* player_nanite;
 extern class ItemContainerCraftingBench* player_craft_bench;
 extern class ItemContainer* storage_block;
 extern class ItemContainerCryofreezer* cryofreezer;
+extern class ItemContainerSmelter* smelter;
 extern ItemID player_hand;
 
 extern class ItemContainerUI* player_container_ui;
@@ -30,6 +31,7 @@ extern class ItemContainerNaniteUI* player_nanite_ui;
 extern class ItemContainerUI* player_craft_bench_ui;
 extern class ItemContainerUI* storage_block_ui;
 extern class ItemContainerUI* cryofreezer_ui;
+extern class ItemContainerSmelterUI* smelter_ui;
 extern int player_hand_type_ui;
 extern int player_hand_stack_ui;
 extern int player_hand_durability_ui;
