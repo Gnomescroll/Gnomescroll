@@ -40,7 +40,7 @@ static const char help_text[] =
 ;
 
 static const char disconnected_text[] = "Server not connected.";
-static const char version_mismatch_text[] = "Version mismatch. Update the client.";
+static const char version_mismatch_text[] = "Version mismatch. Update the client.\nwww.gnomescroll.com";
 static const char dead_text[] = "You died.";
 static const char fps_format[] = "%3.2ffps";
 static const char ping_format[] = "%dms";
@@ -217,7 +217,7 @@ void draw_hud_text()
     HudFont::set_properties(large_text_size);
     set_texture();
 
-    if (!hud_draw_settings.connected)
+    if (!hud_draw_settings.connected && hud_draw_settings.version_match)
     {
         hud->disconnected->draw_centered();
         end_font_draw();
@@ -230,8 +230,8 @@ void draw_hud_text()
     {
         if (hud_draw_settings.dead)
             hud->dead->draw_centered();
-        //if (!hud_draw_settings.version_match)
-            //hud->version_mismatch->draw_centered();
+        if (!hud_draw_settings.version_match)
+            hud->version_mismatch->draw_centered();
     }
 
     //end_font_draw();

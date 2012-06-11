@@ -310,16 +310,15 @@ static void draw_grabbed_icon()
     {
         int max_durability = Item::get_max_durability(ItemContainer::player_hand_type_ui);
         float ratio = ((float)durability)/((float)max_durability);
+        const float alpha = 128;
         if (ratio >= 0.75)
-            glColor4ub(7, 247, 0, 128);    // green
+            glColor4ub(7, 247, 0, alpha);    // green
         else if (ratio >= 0.5)
-            glColor4ub(243, 247, 0, 128);  // yellow
+            glColor4ub(243, 247, 0, alpha);  // yellow
         else if (ratio >= 0.25)
-            glColor4ub(247, 159, 0, 128);  // orange
-        else if (ratio >= 0.05)
-            glColor4ub(247, 71, 0, 128);    // red-orange
+            glColor4ub(247, 71, 0, alpha);    // red-orange
         else
-            glColor4ub(247, 14, 0, 128);   // red
+            glColor4ub(247, 14, 0, alpha);   // red
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);

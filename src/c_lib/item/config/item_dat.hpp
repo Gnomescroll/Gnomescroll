@@ -59,7 +59,7 @@ void load_item_dat()
 
     item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
     sprite_def(i0, 1,7);
-    s.pretty_name = (char*)"Grenade Launcher";
+    s.pretty_name = (char*)"Plasma Grenade";
     s.max_stack_size = 100;
 
     item_def(9, IG_RESOURCE, "food_rock-0");
