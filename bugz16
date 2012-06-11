@@ -535,20 +535,14 @@ improve digging sounds
 
 == MAINTENANCE/REFACTORS ==
 toolbelt: turn fire on/off method for server
-rename/clean container type enums
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
 alt tab doesnt work in fullscreen (on linux at least)
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
-use FOOD slot graphic for nanite
 
 == CONTAINERS ==
-smelter
-
-rendering
-state
 
 == ITEMS ==
 switch methane ice sprite from iso to cell's work
@@ -569,5 +563,15 @@ log chat history
 put spawners back in
 
 == MAP ==
+
+== SMELTER ==
+Fuel duration property on item
+fuel status property on container
+packet for fuel status
+Smelting timer on container
+Predicted smelting on container
+--Do packet, begin/end?
+calculate outputs -- should be similar to craft recipe
+Rendering fuel/progress state
 
 ==BUGZ==
