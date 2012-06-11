@@ -324,16 +324,16 @@ class MapGenerator1
 
             // Calculate noise contributions from each of the eight corners
             float n000= get_cache(i+0,j+0,k+0);
-            float n100= get_cache(i+0,j+0,k+1);
+            float n100= get_cache(i+1,j+0,k+0);
             float n010= get_cache(i+0,j+1,k+0);
-            float n110= get_cache(i+0,j+1,k+1);
-            float n001= get_cache(i+1,j+0,k+0);
+            float n110= get_cache(i+1,j+1,k+0);
+            float n001= get_cache(i+0,j+0,k+1);
             float n101= get_cache(i+1,j+0,k+1);
-            float n011= get_cache(i+1,j+1,k+0);
+            float n011= get_cache(i+0,j+1,k+1);
             float n111= get_cache(i+1,j+1,k+1);
             // Compute the fade curve value for each of x, y, z
 
-        #if 0
+        #if 1
             for(int i0=0; i0<4; i0++)
             {
                 for(int j0=0; j0<4; j0++)
@@ -355,12 +355,13 @@ class MapGenerator1
                         // Interpolate the two last results along z
                         float nxyz = mix(nxy0, nxy1, w);
 
+                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
                     }
                 }
             }
         #endif
 
-        #if 1
+        #if 0
             for(int i0=0; i0<4; i0++)
             {
                 float u = 0.25 * i0;    //x interpolation
@@ -380,7 +381,7 @@ class MapGenerator1
                         float w = 0.125 * k0;   //z interpolation
                         float nxyz = mix(nxy0, nxy1, w);
 
-                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 4*k+k0, tile_id);
+                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
                     }
                 }
             }
