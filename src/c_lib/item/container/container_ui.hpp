@@ -253,8 +253,23 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
 class ItemContainerSmelterUI: public ItemContainerUIInterface
 {
     public:
+
+        bool is_smelter_output(int slot)
+        {
+            int xslot = (slot-1) % this->xdim;  // -1 to offset fuel slot
+            return (xslot == this->xdim - 1);   // in last column
+        }
+
         bool can_insert_item(int slot, int item_type)
         {
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_type == NULL_ITEM_TYPE) return false;
+
+            if (slot == 0)
+                return Item::is_fuel(item_type);
+            else if (this->is_smelter_output(slot))
+                return false;
             return true;
         }
 
@@ -272,9 +287,12 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
 
         int get_empty_slot()
         {
-            for (int i=0; i<this->slot_max; i++)
+            for (int i=1; i<this->slot_max; i++)    // skip fuel slot
+            {
+                if (this->is_smelter_output(i)) continue;
                 if (this->slot_type[i] == NULL_ITEM_TYPE)
                     return i;
+            }
             return NULL_SLOT;
         }
 

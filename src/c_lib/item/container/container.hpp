@@ -262,6 +262,9 @@ class ItemContainerCraftingBench: public ItemContainerInterface
 
         bool can_insert_item(int slot, ItemID item_id)
         {
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_id == NULL_ITEM) return false;
             return true;
         }
 
@@ -297,16 +300,41 @@ class ItemContainerSmelter: public ItemContainerInterface
 {
     public:
 
+        bool is_smelter_output(int slot)
+        {
+            int xslot = (slot-1) % this->xdim;  // -1 to offset fuel slot
+            return (xslot == this->xdim - 1);   // in last column
+        }
+
         bool can_insert_item(int slot, ItemID item_id)
         {
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_id == NULL_ITEM) return false;
+
+            // check fuel slot
+            if (slot == 0)
+                return Item::is_fuel(Item::get_item_type(item_id));
+            else
+            {
+                if (this->is_smelter_output(slot))
+                {   // last row of x is a fuel slot
+                    // we can't insert anything here through an action.
+                    // the insert can only be done by server with special function
+                    return false;
+                }
+            }
             return true;
         }
 
         int get_empty_slot()
         {
-            for (int i=0; i<this->slot_max; i++)
+            for (int i=1; i<this->slot_max; i++)    // skip fuel slot
+            {
+                if (this->is_smelter_output(i)) continue;
                 if (this->slot[i] == NULL_ITEM)
                     return i;
+            }
             return NULL_SLOT;
         }
 

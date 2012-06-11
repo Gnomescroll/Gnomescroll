@@ -65,6 +65,7 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
     //GS_ASSERT(item_id != this->get_item(slot));
+    if (!this->is_valid_slot(slot)) return;
     this->slot[slot] = item_id;
     this->slot_count++;
 
@@ -79,6 +80,7 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
 void ItemContainer::remove_item(int slot)
 {
     GS_ASSERT(this->is_valid_slot(slot));
+    if (!this->is_valid_slot(slot)) return;
 
     ItemID item_id = this->slot[slot];
     GS_ASSERT(item_id != NULL_ITEM);
@@ -117,6 +119,7 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
     //GS_ASSERT(item_id != this->get_item(slot));
+    if (!this->is_valid_slot(slot)) return;
     this->slot[slot] = item_id;
     this->slot_count++;
 
@@ -137,6 +140,7 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
 void ItemContainerNanite::remove_item(int slot)
 {
     GS_ASSERT(this->is_valid_slot(slot));
+    if (!this->is_valid_slot(slot)) return;
 
     ItemID item_id = this->slot[slot];
     GS_ASSERT(item_id != NULL_ITEM);
@@ -214,6 +218,7 @@ void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
     //GS_ASSERT(item_id != this->get_item(slot));
+    if (!this->is_valid_slot(slot)) return;
     this->slot[slot] = item_id;
     this->slot_count++;
 
@@ -228,6 +233,7 @@ void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
 void ItemContainerCraftingBench::remove_item(int slot)
 {
     GS_ASSERT(this->is_valid_slot(slot));
+    if (!this->is_valid_slot(slot)) return;
 
     ItemID item_id = this->slot[slot];
     GS_ASSERT(item_id != NULL_ITEM);
@@ -251,12 +257,41 @@ void ItemContainerCraftingBench::remove_item(int slot)
 
 void ItemContainerSmelter::insert_item(int slot, ItemID item_id)
 {
-    // TODO
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(this->is_valid_slot(slot));
+    if (!this->is_valid_slot(slot)) return;
+
+    this->slot[slot] = item_id;
+    this->slot_count++;
+
+    Item::Item* item = Item::get_item_object(item_id);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return;
+    item->location = IL_CONTAINER;
+    item->location_id = this->id;
+    item->container_slot = slot;
 }
 
 void ItemContainerSmelter::remove_item(int slot)
 {
-    // TODO
+    GS_ASSERT(this->is_valid_slot(slot));
+    if (!this->is_valid_slot(slot)) return;
+
+    ItemID item_id = this->slot[slot];
+    GS_ASSERT(item_id != NULL_ITEM);
+    if (item_id != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item_object(this->slot[slot]);
+        GS_ASSERT(item != NULL);
+        if (item != NULL)
+        {
+            item->location = IL_NOWHERE;
+            item->container_slot = NULL_SLOT;
+        }
+    }
+
+    this->slot[slot] = NULL_ITEM;
+    this->slot_count--;
 }
 
 }   // ItemContainer

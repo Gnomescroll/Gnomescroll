@@ -726,7 +726,7 @@ void agent_born(int agent_id)
         if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
     }
     
-    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+    crate = Item::create_item(Item::get_item_type((char*)"smelter_1"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
