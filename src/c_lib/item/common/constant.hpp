@@ -35,9 +35,9 @@ const int STORAGE_BLOCK_SMALL_Y = 3;
 const int CRYOFREEZER_SMALL_X = 2;
 const int CRYOFREEZER_SMALL_Y = 2;
 
-const int SMELTER_ONE_X = 2;
-const int SMELTER_ONE_Y = 2;
-const int SMELTER_ONE_FUEL = 1;
+const int SMELTER_ONE_X = 3;
+const int SMELTER_ONE_Y = 3;
+//const int SMELTER_ONE_FUEL = 1;
 
 const int MAX_ITEMS = 256;
 const int MAX_CRAFTING_RECIPE = 256;

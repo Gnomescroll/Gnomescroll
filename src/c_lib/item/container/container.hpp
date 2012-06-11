@@ -12,45 +12,6 @@ namespace ItemContainer
 // init
 void init_container(class ItemContainerInterface* container);
 
-#if DC_CLIENT
-// transactions
-ContainerActionType alpha_action_decision_tree(int id, int slot);
-ContainerActionType beta_action_decision_tree(int id, int slot);
-
-ContainerActionType nanite_alpha_action_decision_tree(int id, int slot);
-ContainerActionType nanite_beta_action_decision_tree(int id, int slot);
-ContainerActionType nanite_shopping_alpha_action_decision_tree(int id, int slot);
-ContainerActionType nanite_shopping_beta_action_decision_tree(int id, int slot);
-
-ContainerActionType craft_input_alpha_action_decision_tree(int id, int slot);
-ContainerActionType craft_input_beta_action_decision_tree(int id, int slot);
-ContainerActionType craft_output_alpha_action_decision_tree(int id, int slot);
-ContainerActionType craft_output_beta_action_decision_tree(int id, int slot);
-
-ContainerActionType no_container_alpha_action_decision_tree();
-ContainerActionType no_container_beta_action_decision_tree();
-#endif
-
-#if DC_SERVER
-// transactions
-ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
-
-ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType nanite_shopping_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType nanite_shopping_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
-
-ContainerActionType craft_input_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType craft_input_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
-
-ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int client_id);
-ContainerActionType no_container_beta_action_decision_tree(int agent_id, int client_id);
-
-#endif
-
 class ItemContainerInterface
 {
     public:
@@ -100,12 +61,23 @@ class ItemContainerInterface
             printf("\n");
         }
 
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+            for (int i=0; i<this->slot_max; i++)
+            {
+                if (this->slot[i] == NULL_ITEM) continue;
+                if (Item::get_item_type(this->slot[i]) == item_type   // stacks
+                && Item::get_stack_space(this->slot[i]) >= stack_size) // stack will fit
+                    return i;
+            }
+            return NULL_SLOT;
+        }
+
         virtual void insert_item(int slot, ItemID item_id)= 0;
         virtual void remove_item(int slot) = 0;
 
         virtual bool can_insert_item(int slot, ItemID item_id) = 0;
 
-        virtual int get_stackable_slot(int item_type, int stack_size) = 0;
         virtual int get_empty_slot() = 0;
 
         virtual void init(int xdim, int ydim) = 0;
@@ -159,18 +131,6 @@ class ItemContainer: public ItemContainerInterface
         bool can_insert_item(int slot, ItemID item_id)
         {
             return true;
-        }
-
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-            for (int i=0; i<this->slot_max; i++)
-            {
-                if (this->slot[i] == NULL_ITEM) continue;
-                if (Item::get_item_type(this->slot[i]) == item_type   // stacks
-                && Item::get_stack_space(this->slot[i]) >= stack_size) // stack will fit
-                    return i;
-            }
-            return NULL_SLOT;
         }
 
         int get_empty_slot()
@@ -263,19 +223,6 @@ class ItemContainerNanite: public ItemContainerInterface
             return false;   // no other slots accept insertions
         }
 
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-            // check food slot
-            if (Item::get_item_type(this->slot[0]) == item_type
-            && Item::get_stack_space(this->slot[0]) >= stack_size)
-                return 0;
-            // check coin slot
-            if (Item::get_item_type(this->slot[1]) == item_type
-            && Item::get_stack_space(this->slot[1]) >= stack_size)
-                return 1;
-            return NULL_SLOT;
-        }
-
         int get_empty_slot()
         {
             // only food slot can be empty slot
@@ -318,11 +265,6 @@ class ItemContainerCraftingBench: public ItemContainerInterface
             return true;
         }
 
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-            return true;
-        }
-
         int get_empty_slot()
         {
             return NULL_SLOT;
@@ -337,7 +279,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
         {
             this->xdim = xdim;
             this->ydim = ydim;
-            this->slot_max = xdim*ydim; // +1 for the extra food slot
+            this->slot_max = xdim*ydim;
             GS_ASSERT(this->slot_max > 0);
             GS_ASSERT(this->slot_max < NULL_SLOT);
             if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
@@ -348,6 +290,44 @@ class ItemContainerCraftingBench: public ItemContainerInterface
         ItemContainerCraftingBench(ItemContainerType type, int id)
         : ItemContainerInterface(type, id)
         {}
+};
+
+
+class ItemContainerSmelter: public ItemContainerInterface
+{
+    public:
+
+        bool can_insert_item(int slot, ItemID item_id)
+        {
+            return true;
+        }
+
+        int get_empty_slot()
+        {
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot[i] == NULL_ITEM)
+                    return i;
+            return NULL_SLOT;
+        }
+
+        void insert_item(int slot, ItemID item_id);
+        void remove_item(int slot);
+
+        void init(int xdim, int ydim)
+        {
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + 1; // +1 for fuel
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+            this->slot = new ItemID[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+        }
+
+    ItemContainerSmelter(ItemContainerType type, int id)
+    : ItemContainerInterface(type, id)
+    {}
 };
 
 }   // ItemContainer
@@ -374,6 +354,9 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
 
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             return new ItemContainerCryofreezer((ItemContainerType)type, id);
+
+        case CONTAINER_TYPE_SMELTER_ONE:
+            return new ItemContainerSmelter((ItemContainerType)type, id);
 
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
