@@ -503,6 +503,9 @@ DONE
 fix durability colors hand item
 DONE
 
+disconnect on version mismatch and draw message on screen
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies

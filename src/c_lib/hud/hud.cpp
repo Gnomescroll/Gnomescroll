@@ -40,7 +40,7 @@ static const char help_text[] =
 ;
 
 static const char disconnected_text[] = "Server not connected.";
-static const char version_mismatch_text[] = "Version mismatch. Update the client.\nwww.gnomescroll.com";
+static const char version_mismatch_text[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
 static const char dead_text[] = "You died.";
 static const char fps_format[] = "%3.2ffps";
 static const char ping_format[] = "%dms";
