@@ -13,6 +13,21 @@ namespace ItemContainer
 void remove_item_from_hand(int agent_id);
 void insert_item_in_hand(int agent_id, ItemID item_id);
 
+// hand/container -> container/hand
+void transfer_item_between_containers(ItemID item_id, int container_id_a, int slot_a, int container_id_b, int slot_b);
+void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int slot, int agent_id);
+void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int slot, int agent_id);
+
+// brand new item -> container/hand
+void transfer_free_item_to_container(ItemID item_id, int container_id, int slot);
+void transfer_free_item_to_hand(ItemID item_id, int agent_id);
+
+// particle -> container/hand
+void transfer_particle_to_container(ItemID item_id, int particle_id, int container_id, int slot);
+void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id);
+
+// everything -> particle is handled by create_item_particle
+
 // packets
 
 void send_container_assign(int client_id, int container_id);
@@ -85,5 +100,8 @@ void send_open_container_failed(int client_id, int container_id, int event_id);
 // transactions on free containers (not private containers)
 bool agent_open_container(int agent_id, int container_id);
 void agent_close_container(int agent_id, int container_id);
+
+void unsubscribe_agent_from_container_contents(int agent_id, int container_id);
+
 
 }   // ItemContainer

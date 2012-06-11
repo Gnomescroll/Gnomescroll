@@ -39,14 +39,15 @@ class SubscriberList
         unsigned int n;
         unsigned int max;
 
-    // returns true is subscriber was in or is added to the list
+    // returns true is subscriber is added to the list
+    // if subscriber was already in the list, or if the list is maxed out, returns false
     bool add(int client_id)
     {
         ASSERT_VALID_CLIENT_ID(client_id);
         // no duplicates
         for (unsigned int i=0; i<this->n; i++)
             if (this->subscribers[i] == client_id)
-                return true;
+                return false;
 
         // resize
         if (this->n >= this->max && !this->grow()) return false;
@@ -76,7 +77,6 @@ class SubscriberList
                 this->subscribers[i] = this->subscribers[this->n--];
                 return true;
             }
-
         return false;
     }
 

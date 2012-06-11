@@ -14,7 +14,6 @@ class Item
     public:
 
         ItemID id;
-        ItemGroup group; //stack, laser, mining_laser
         int type;  // stone_block, dirt_block, mining_laser_beta,
 
         int energy;
@@ -37,7 +36,7 @@ class Item
     {
         printf("Item:\n");
         printf("ID %d\n", id);
-        printf("Group %d\n", group);
+        printf("Group %d\n", get_item_group_for_type(this->type));
         printf("Type %d\n", type);
         printf("Energy %d\n", energy);
         printf("Durability %d\n", durability);
@@ -56,7 +55,6 @@ class Item
 
     explicit Item(int id)
     :   id((ItemID)id),
-        group(NULL_ITEM_GROUP),
         type(NULL_ITEM_TYPE),
         durability(NULL_DURABILITY),
         stack_size(1),

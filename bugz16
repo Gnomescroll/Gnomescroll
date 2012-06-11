@@ -488,6 +488,9 @@ DONE
 add sendToClients method for StoC packets
 DONE
 
+fix asymmetrical fish climbing
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -498,6 +501,8 @@ this will let players "dodge"
 
 some boxes arent getting destination correctly -- just jumping around with state updates
 --especially when cross boundaries
+
+symmetrical z up/down so things don't get stuck
 
 == GFX ==
 glsl colored/textured voxels
@@ -519,6 +524,7 @@ alt tab doesnt work in fullscreen (on linux at least)
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 version mismatch popup for OS X
 window gains focus on death?
+don't abort on mismatch version, disconnect from server and print "VERSION MISMATCH" etc on screen
 
 == CONTAINERS ==
 smelter
@@ -534,7 +540,13 @@ Sessions:
     --Record all names used
     --Time played
 Record population to log at regular time interval, so can be graphed easy
+log chat history
+
+== GENERAL ==
+put spawners back in
+change grenade launcher to plasma grenade
 
 == MAP ==
 
 ==BUGZ==
+durability colors wrong for hand

@@ -53,6 +53,13 @@ void destroy(int particle_id)
     item_particle_list->destroy(particle_id);
 }
 
+class ItemParticle* get(int particle_id)
+{
+    GS_ASSERT(particle_id != NULL_PARTICLE);
+    if (particle_id == NULL_PARTICLE) return NULL;
+    return item_particle_list->get(particle_id);
+}
+
 #if DC_CLIENT
 void draw_init()
 {
@@ -83,18 +90,18 @@ ItemParticle* create_item_particle(
 #endif
 
 #if DC_SERVER
-void destroy_silently(int particle_id)
-{
-    #if DC_SERVER
-    GS_ASSERT(particle_id != NULL_PARTICLE);
-    ItemParticle* particle = item_particle_list->get(particle_id);
-    GS_ASSERT(particle != NULL);
-    if (particle == NULL) return;
-    Item::Item* item = Item::get_item(particle->item_id);
-    if (item != NULL) item->location = IL_NOWHERE;
-    #endif
-    item_particle_list->destroy(particle_id);
-}
+//void destroy_silently(int particle_id)
+//{
+    //#if DC_SERVER
+    //GS_ASSERT(particle_id != NULL_PARTICLE);
+    //ItemParticle* particle = item_particle_list->get(particle_id);
+    //GS_ASSERT(particle != NULL);
+    //if (particle == NULL) return;
+    //Item::Item* item = Item::get_item(particle->item_id);
+    //if (item != NULL) item->location = IL_NOWHERE;
+    //#endif
+    //item_particle_list->destroy(particle_id);
+//}
 
 ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
@@ -264,7 +271,7 @@ void check_item_pickups()
                         else
                         {
                             Item::merge_item_stack(item->id, slot_item->id, stack_space);
-                            Item::send_item_state(agent->client_id, slot_item->id);
+                            Item::send_item_state(slot_item->id);
                             stack_size -= stack_space;
                             GS_ASSERT(stack_size > 0);
                         }
@@ -291,9 +298,10 @@ void check_item_pickups()
                     was_picked_up = true;
                     item_particle->picked_up(agent->id);
                     broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                    destroy(item_particle->id);
-                    container->insert_item(slot, item->id);
-                    ItemContainer::send_container_item_create(agent->client_id, item->id, container_id, slot);
+                    ItemContainer::transfer_particle_to_container(item->id, item_particle->id, container_id, slot);
+                    //destroy(item_particle->id);
+                    //container->insert_item(slot, item->id);
+                    //ItemContainer::send_container_item_create(agent->client_id, item->id, container_id, slot);
                     item_remaining = false;
                 }
             }
@@ -305,7 +313,7 @@ void check_item_pickups()
                 GS_ASSERT(slot_item_id != NULL_ITEM);
                 Item::merge_item_stack(item->id, slot_item_id);
                 Item::destroy_item(item->id);
-                Item::send_item_state(agent->client_id, slot_item_id);
+                Item::send_item_state(slot_item_id);
                 item_remaining = false;
             }
         }
@@ -353,7 +361,7 @@ void check_item_pickups()
                         else
                         {
                             Item::merge_item_stack(item->id, slot_item->id, stack_space);
-                            Item::send_item_state(agent->client_id, slot_item->id);
+                            Item::send_item_state(slot_item->id);
                             stack_size -= stack_space;
                             GS_ASSERT(stack_size > 0);
                         }
@@ -376,9 +384,10 @@ void check_item_pickups()
                 {   // empty slot found, put it there
                     item_particle->picked_up(agent->id);
                     if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                    destroy(item_particle->id);
-                    container->insert_item(slot, item->id);
-                    ItemContainer::send_container_item_create(agent->client_id, item->id, container_id, slot);
+                    ItemContainer::transfer_particle_to_container(item->id, item_particle->id, container_id, slot);
+                    //destroy(item_particle->id);
+                    //container->insert_item(slot, item->id);
+                    //ItemContainer::send_container_item_create(agent->client_id, item->id, container_id, slot);
                 }
             }
             else
@@ -388,7 +397,7 @@ void check_item_pickups()
                 GS_ASSERT(slot_item_id != NULL_ITEM);
                 Item::merge_item_stack(item->id, slot_item_id);
                 Item::destroy_item(item->id);
-                Item::send_item_state(agent->client_id, slot_item_id);
+                Item::send_item_state(slot_item_id);
             }
         }
     }

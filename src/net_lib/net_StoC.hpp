@@ -74,6 +74,8 @@ class FixedSizeNetPacketToClient {
 
         void sendToClients(int* client_ids, unsigned int n_clients)
         {
+            GS_ASSERT(client_ids != NULL);
+            if (client_ids == NULL) return;
             GS_ASSERT(n_clients > 0);
             if (n_clients <= 0) return;
 
@@ -88,12 +90,13 @@ class FixedSizeNetPacketToClient {
             class NetPeer* np;
             for(unsigned int i=0; i<n_clients; i++) 
             {
-                client_id = client_ids[n_clients];
+                client_id = client_ids[i];
                 GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
+                if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) continue;
                 np = NetServer::pool[client_id]; //use better iterator
                 GS_ASSERT(np != NULL);
                 if (np == NULL) continue;
-                np->push_reliable_message(nm);
+                np->push_unreliable_message(nm);
             }
         }
 
@@ -199,6 +202,8 @@ class FixedSizeReliableNetPacketToClient {
 
         void sendToClients(int* client_ids, unsigned int n_clients)
         {
+            GS_ASSERT(client_ids != NULL);
+            if (client_ids == NULL) return;
             GS_ASSERT(n_clients > 0);
             if (n_clients <= 0) return;
 
@@ -213,8 +218,9 @@ class FixedSizeReliableNetPacketToClient {
             class NetPeer* np;
             for(unsigned int i=0; i<n_clients; i++) 
             {
-                client_id = client_ids[n_clients];
+                client_id = client_ids[i];
                 GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
+                if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) continue;
                 np = NetServer::pool[client_id]; //use better iterator
                 GS_ASSERT(np != NULL);
                 if (np == NULL) continue;

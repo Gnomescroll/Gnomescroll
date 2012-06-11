@@ -2,14 +2,16 @@
 
 #ifndef __WIN32__
 #include <execinfo.h>
+
+#define PRINT_TRACE_STACK_SIZE 15
 void print_trace()
 {
-    void *array[10];
+    void *array[PRINT_TRACE_STACK_SIZE];
     size_t size;
     char **strings;
     size_t i;
 
-    size = backtrace(array, 10);
+    size = backtrace(array, PRINT_TRACE_STACK_SIZE);
     strings = backtrace_symbols(array, size);
 
     //printf ("Obtained %zd stack frames.\n", size);
@@ -18,6 +20,7 @@ void print_trace()
 
     free(strings);
 }
+#undef PRINT_TRACE_STACK_SIZE
 #else
 void print_trace() {}
 #endif

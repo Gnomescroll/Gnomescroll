@@ -144,6 +144,7 @@ void NetPeerManager::teardown()
     GS_ASSERT(a != NULL);
     if (a != NULL)
     {
+        Item::agent_quit(a->id);    // unsubscribes agent from all item
         a->status.die();
         ItemContainer::agent_quit(a->id);
     }

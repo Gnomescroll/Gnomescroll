@@ -17,7 +17,7 @@ void broadcast_item_create(ItemID item_id);
 void send_item_create(int client_id, ItemID item_id);
 void send_item_create(ItemID item_id);   // sends to item subscribers
 
-void send_item_state(int client_id, ItemID item_id);
+//void send_item_state(int client_id, ItemID item_id);
 void send_item_state(ItemID item_id);   // sends to item subscribers
 void broadcast_item_state(ItemID item_id);
 

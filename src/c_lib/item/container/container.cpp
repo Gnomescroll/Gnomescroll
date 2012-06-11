@@ -31,11 +31,6 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
-
-    #if DC_SERVER
-    if (this->owner != NO_AGENT)
-        Item::subscribe_agent_to_item(this->owner, item->id);
-    #endif
 }
 
 void ItemContainer::remove_item(int slot)
@@ -52,17 +47,11 @@ void ItemContainer::remove_item(int slot)
         {
             item->location = IL_NOWHERE;
             item->container_slot = NULL_SLOT;
-            #if DC_SERVER
-            if (this->owner != NO_AGENT)
-                Item::unsubscribe_agent_from_item(this->owner, item->id);
-            #endif
         }
     }
 
     this->slot[slot] = NULL_ITEM;
     this->slot_count--;
-
-
 }
 
 /* Cryofreezer */
@@ -77,7 +66,6 @@ void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
     #endif
     ItemContainer::insert_item(slot, item_id);
 }
-
 
 /* Nanite */
 
@@ -99,9 +87,6 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
     }
 
     #if DC_SERVER
-    if (this->owner != NO_AGENT)
-        Item::subscribe_agent_to_item(this->owner, item->id);
-
     if (slot == 0) this->digestion_tick = 0;
     #endif
 }
@@ -120,10 +105,6 @@ void ItemContainerNanite::remove_item(int slot)
         {
             item->location = IL_NOWHERE;
             item->container_slot = NULL_SLOT;
-            #if DC_SERVER
-            if (this->owner != NO_AGENT)
-                Item::unsubscribe_agent_from_item(this->owner, item->id);
-            #endif
         }
     }
 
@@ -164,7 +145,7 @@ void ItemContainerNanite::digest()
     }
     else
     {
-        if (a != NULL) Item::send_item_state(a->client_id, item->id);
+        if (a != NULL) Item::send_item_state(item->id);
     }
 
     // update coins
@@ -172,15 +153,13 @@ void ItemContainerNanite::digest()
     {   // no coins were in coin slot, create new stack
         Item::Item* coin = Item::create_item((char*)"nanite_coin");
         GS_ASSERT(coin != NULL);
-        if (a != NULL) Item::send_item_create(a->client_id, coin->id);
-        this->insert_coins(coin->id);
-        if (a != NULL) send_container_insert(a->client_id, coin->id, this->id, this->slot_max-1);
+        transfer_free_item_to_container(coin->id, this->id, this->slot_max-1);
     }
     else
     {   // add to existing coin stack
         Item::Item* coins = Item::get_item_object(coins_id);
         coins->stack_size += 1;
-        if (a != NULL) Item::send_item_state(a->client_id, coins_id);
+        if (a != NULL) Item::send_item_state(coins_id);
     }
 }
 #endif
@@ -201,11 +180,6 @@ void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
-
-    #if DC_SERVER
-    if (this->owner != NO_AGENT)
-        Item::subscribe_agent_to_item(this->owner, item->id);
-    #endif
 }
 
 void ItemContainerCraftingBench::remove_item(int slot)
@@ -222,10 +196,6 @@ void ItemContainerCraftingBench::remove_item(int slot)
         {
             item->location = IL_NOWHERE;
             item->container_slot = NULL_SLOT;
-            #if DC_SERVER
-            if (this->owner != NO_AGENT)
-                Item::unsubscribe_agent_from_item(this->owner, item->id);
-            #endif
         }
     }
 
@@ -477,7 +447,7 @@ ContainerActionType partial_hand_to_world(int client_id, int agent_id, int trans
 
     // update items
     Item::broadcast_item_state(hand_item);
-    Item::broadcast_item_create(new_item);    
+    //Item::broadcast_item_create(new_item); 
 
     // throw item
     ItemParticle::throw_agent_item(agent_id, new_item);
@@ -494,13 +464,15 @@ ContainerActionType full_hand_to_empty_slot(int client_id, int agent_id, ItemCon
     ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
 
-    // remove item from hand
-    remove_item_from_hand(agent_id);
-    send_hand_remove(client_id);
+    transfer_item_from_hand_to_container(hand_item, container->id, slot, agent_id);
 
-    // put hand in slot
-    container->insert_item(slot, hand_item);
-    send_container_insert(client_id, hand_item, container->id, slot);
+    //// remove item from hand
+    //remove_item_from_hand(agent_id);
+    //send_hand_remove(client_id);
+
+    //// put hand in slot
+    //container->insert_item(slot, hand_item);
+    //send_container_insert(client_id, hand_item, container->id, slot);
     return FULL_HAND_TO_EMPTY_SLOT;
 }
 
@@ -536,12 +508,15 @@ ContainerActionType partial_hand_to_empty_slot(int client_id, ItemContainerInter
     // split 1 unit of hand item
     ItemID new_item = Item::split_item_stack(hand_item, 1);   // WARNING: CREATES ITEM
     // put in slot
-    container->insert_item(slot, new_item);
+
+    transfer_free_item_to_container(new_item, container->id, slot);
+    
+    //container->insert_item(slot, new_item);
     // update items
-    Item::broadcast_item_state(hand_item);
-    Item::broadcast_item_create(new_item);
+    //Item::broadcast_item_state(hand_item);
+    //Item::broadcast_item_create(new_item);
     // insert split 1 stack into container
-    send_container_insert(client_id, new_item, container->id, slot);
+    //send_container_insert(client_id, new_item, container->id, slot);
     // hand item id is unchanged
     return PARTIAL_HAND_TO_EMPTY_SLOT;
 }
@@ -568,12 +543,13 @@ ContainerActionType partial_slot_to_empty_hand(int client_id, int agent_id, int 
     // split slot item
     ItemID new_item = Item::split_item_stack_in_half(slot_item);
     // put in hand
-    insert_item_in_hand(agent_id, new_item);
+    transfer_free_item_to_hand(new_item, agent_id);
+    //insert_item_in_hand(agent_id, new_item);
 
     // send new state
     Item::broadcast_item_state(slot_item);
-    Item::broadcast_item_create(new_item);
-    send_hand_insert(client_id, new_item);
+    //Item::broadcast_item_create(new_item);
+    //send_hand_insert(client_id, new_item);
     return PARTIAL_SLOT_TO_EMPTY_HAND;
 }
 
@@ -581,16 +557,20 @@ ContainerActionType full_slot_to_empty_hand(int client_id, int agent_id, ItemCon
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(slot_item != NULL_ITEM);
+    GS_ASSERT(slot != NULL_SLOT);
     
     if (container == NULL) return CONTAINER_ACTION_NONE;
-    
-    // remove slot
-    container->remove_item(slot);
-    send_container_remove(client_id, container->id, slot);
+    if (slot == NULL_SLOT) return CONTAINER_ACTION_NONE;
 
-    // put slot in hand
-    insert_item_in_hand(agent_id, slot_item);
-    send_hand_insert(client_id, slot_item);
+    transfer_item_from_container_to_hand(slot_item, container->id, slot, agent_id);
+    
+    //// remove slot
+    //container->remove_item(slot);
+    //send_container_remove(client_id, container->id, slot);
+
+    //// put slot in hand
+    //insert_item_in_hand(agent_id, slot_item);
+    //send_hand_insert(client_id, slot_item);
 
     return FULL_SLOT_TO_EMPTY_HAND;
 }
@@ -615,13 +595,16 @@ ContainerActionType full_hand_swap_with_slot(int client_id, int agent_id, ItemCo
     remove_item_from_hand(agent_id);
     send_hand_remove(client_id);
     
-    // put container slot in hand
-    insert_item_in_hand(agent_id, slot_item);
-    send_hand_insert(client_id, slot_item);
+    //// put container slot in hand
+    //insert_item_in_hand(agent_id, slot_item);
+    //send_hand_insert(client_id, slot_item);
     
-    // put hand in slot
-    container->insert_item(slot, hand_item);
-    send_container_insert(client_id, hand_item, container->id, slot);
+    //// put hand in slot
+    //container->insert_item(slot, hand_item);
+    //send_container_insert(client_id, hand_item, container->id, slot);
+
+    transfer_free_item_to_container(hand_item, container->id, slot);
+    transfer_free_item_to_hand(slot_item, agent_id);
 
     return FULL_HAND_SWAP_WITH_SLOT;
 }
