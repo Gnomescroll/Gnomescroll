@@ -227,10 +227,6 @@ void init_container(ItemContainerInterface* container)
             container->attached_to_agent = false;
             container->init(CRAFTING_BENCH_UTILITY_X, CRAFTING_BENCH_UTILITY_Y);
             break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
-            container->attached_to_agent = false;
-            container->init(CRAFTING_BENCH_REFINERY_X, CRAFTING_BENCH_REFINERY_Y);
-            break;
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             container->attached_to_agent = false;
             container->init(CRYOFREEZER_SMALL_X, CRYOFREEZER_SMALL_Y);

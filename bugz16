@@ -506,6 +506,9 @@ DONE
 disconnect on version mismatch and draw message on screen
 DONE
 
+nanite FOOD slot
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -529,6 +532,7 @@ improve digging sounds
 
 == MAINTENANCE/REFACTORS ==
 toolbelt: turn fire on/off method for server
+rename/clean container type enums
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out

@@ -369,7 +369,6 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
         case AGENT_NANITE:
             return new ItemContainerNanite((ItemContainerType)type, id);
 
-        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             return new ItemContainerCraftingBench((ItemContainerType)type, id);
 

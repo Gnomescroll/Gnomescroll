@@ -401,10 +401,10 @@ void AgentNaniteUI::draw()
     if (food_item_type != NULL_ITEM_TYPE)
     {
         int food_sprite_id = Item::get_sprite_index_for_type(food_item_type);
-        //const float x = xoff + (nanite_xdim-1)*cell_size + cell_offset_x;
-        //const float y = yoff - ((nanite_ydim-1)*cell_size + cell_offset_y);
-        const float x = xoff + nanite_slot_render_offset_x;
-        const float y = yoff - nanite_slot_render_offset_y;
+        const float x = xoff + (nanite_xdim-1)*cell_size + cell_offset_x;
+        const float y = yoff - ((nanite_ydim-1)*cell_size + cell_offset_y);
+        //const float x = xoff + nanite_slot_render_offset_x;
+        //const float y = yoff - nanite_slot_render_offset_y;
         
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -504,8 +504,8 @@ void AgentNaniteUI::draw()
     {
         this->stacks[0].update_formatted_string(1, food_stack_size);
 
-        const float x = xoff + nanite_slot_render_offset_x + slot_size - cell_offset_x_right - this->stacks[0].get_width();
-        const float y = yoff - (nanite_slot_render_offset_y + slot_size - cell_offset_y_bottom - this->stacks[0].get_height());
+        const float x = xoff + nanite_xdim*cell_size - cell_offset_x_right - this->stacks[0].get_width();
+        const float y = yoff - (nanite_ydim*cell_size - cell_offset_y_bottom - this->stacks[0].get_height());
         
         this->stacks[0].set_position(x,y);
         this->stacks[0].draw();

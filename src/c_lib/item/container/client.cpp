@@ -320,7 +320,6 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite_shopping, 
             if (nanite_shopping) action = nanite_shopping_alpha_action_decision_tree(container_id, slot);
             else action = nanite_alpha_action_decision_tree(container_id, slot);
             break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (craft_output) action = craft_output_alpha_action_decision_tree(container_id, slot);
             else action = craft_input_alpha_action_decision_tree(container_id, slot);
@@ -346,7 +345,6 @@ void mouse_left_click_handler(int container_id, int slot, bool nanite_shopping, 
             if (action == PURCHASE_ITEM_FROM_NANITE) send_purchase_item_action(container_id, slot);
             else send_nanite_alpha_action(action, container_id, slot);
             break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
             else send_craft_alpha_action(action, container_id, slot);
@@ -388,7 +386,6 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite_shopping,
             if (nanite_shopping) action = nanite_shopping_beta_action_decision_tree(container_id, slot);
             else action = nanite_beta_action_decision_tree(container_id, slot);
             break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (craft_output) action = craft_output_beta_action_decision_tree(container_id, slot);
             else action = craft_input_beta_action_decision_tree(container_id, slot);
@@ -415,7 +412,6 @@ void mouse_right_click_handler(int container_id, int slot, bool nanite_shopping,
             if (action == PURCHASE_ITEM_FROM_NANITE) send_purchase_item_action(container_id, slot);
             else send_nanite_beta_action(action, container_id, slot);
             break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_REFINERY:
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
             else send_craft_beta_action(action, container_id, slot);
