@@ -91,7 +91,8 @@ class Vbo_map
         delete[] vbo_array;
     }
 
-    #define MAP_VBO_CULLING 0
+    #define MAP_VBO_CULLING 1
+    #define MAP_VBO_CULLING_RECYCLE 0
     //update all VBOs that need updating
     void update_map()
     {
@@ -99,7 +100,7 @@ class Vbo_map
         int cx = (int) current_camera_position.x;
         int cy = (int) current_camera_position.y;
     #endif
-        
+
         class MAP_CHUNK* m;
 
         for(int i=0; i<MAP_CHUNK_XDIM; i++)
@@ -111,11 +112,13 @@ class Vbo_map
 
         #if MAP_VBO_CULLING
             int x = cx - quadrant_translate_i(cx, 16*i+8 );
-            int y = cx - quadrant_translate_i(cy, 16*j+8 );
+            int y = cy - quadrant_translate_i(cy, 16*j+8 );
             int distance2 = x*x+y*y;
 
             if(distance2 >= CHUNK_IGNORE_DISTANCE2)
             {
+
+            #if MAP_VBO_CULLING_RECYCLE
                 if( vbo_array[index] != NULL )
                 {
                     //chunk vbo is out of radius and is loaded
@@ -125,11 +128,10 @@ class Vbo_map
                     m->needs_update == true;    //so it gets recreated if in range
                     continue;
                 }
-                else
-                {
-                    //chunk vbo is out of radius and is not loaded, do nothing
-                    continue;
-                }
+            #endif
+                //chunk vbo is out of radius and is not loaded, do nothing
+                continue;
+
             }
         #endif
 
