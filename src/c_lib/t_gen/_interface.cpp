@@ -6,6 +6,7 @@
 #include <SDL/texture_loader.hpp>
 #endif
 
+typedef unsigned char Uint8;
 
 namespace t_gen
 {
@@ -79,6 +80,11 @@ void save_png(const char* filename, float* in, int xres, int yres)
 
     FILE * pFile;
     pFile = fopen ( FileName , "wb" );
+    if(pFile <= 0)
+    {
+        printf("Error: could not save image.  Check that screenshot folder exists\n");
+        return;
+    }
     fwrite (PNG_IMAGE , 1 , png_size, pFile );
     fclose (pFile);
 
@@ -89,7 +95,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
 
 void save_perlin(const char* filename, float* in, int xres, int yres)
 {
-#if DC_CLIENT
+//#if DC_CLIENT
     char FileName[128];
     sprintf(FileName,"./screenshot/%s.png", (char*) filename);
     char* PBUFFER = (char*) malloc(4*xres*yres);
@@ -149,7 +155,8 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
         temp_row = (void *)malloc(4*xres);
         if(NULL == temp_row)
         {
-            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+            printf("save_screenshot: not enough memory for surface inversion \n");
+            return;
         }
         int pitch = xres * 4;
         int h = yres;
@@ -170,12 +177,18 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
 
     FILE * pFile;
     pFile = fopen ( FileName , "wb" );
+
+    if(pFile <= 0)
+    {
+        printf("Error: could not save image.  Check that screenshot folder exists\n");
+        return;
+    }
     fwrite (PNG_IMAGE , 1 , png_size, pFile );
     fclose (pFile);
 
     free(PBUFFER);
     free(PNG_IMAGE);
-#endif
+//#endif
 }
 
 }

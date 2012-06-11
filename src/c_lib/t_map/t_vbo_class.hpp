@@ -14,6 +14,13 @@ namespace t_map
 /*
     Delete VBOs for map chunks outside of a given radius
     Do not update VBOs for map chunks outside of radius
+    Put VBO refreshes on a que and sort by distance, recency and viewing fulstrum
+    Thead VBO generation
+    Double buffer VBOs
+*/
+
+/*
+    Improve viewing fulstrum test
 */
 
 class Map_vbo

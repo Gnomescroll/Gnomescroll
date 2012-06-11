@@ -12,6 +12,8 @@ dont_include_this_file_in_client
 #include <stdlib.h>
 #include <string.h>
 
+//typedef Uint8 unsigned char;
+
 #include <common/version.h>
 #include <common/defines.h>
 

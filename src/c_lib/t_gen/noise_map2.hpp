@@ -301,16 +301,14 @@ class PerlinOctave2D
 
     }
 
-    void save_octaves2()
+    void save_octaves2(int DEGREE, const char* filename)
     {
 
-        const int xres = 512;
-        const int yres = 512;
+        const int xres = 128;
+        const int yres = 128;
 
         const float xresf = 1.0 / ((float) xres);
         const float yresf = 1.0 / ((float) yres);
-
-        const int DEGREE = octaves; //8;
 
         //(i + xres*DEGREE*n)+ (j*xres*yres*DEGREE)
         float* out = new float[xres*yres*octaves*DEGREE];
@@ -367,7 +365,7 @@ class PerlinOctave2D
 
         }
         //save_png("octave_map_01", out, xres, yres*octaves);
-        save_perlin("octave_map_03", out, xres*DEGREE, yres*octaves);
+        save_perlin(filename, out, xres*DEGREE, yres*octaves);
         //void save_png(const char* filename, float* in, int xres, int yres)
 
 
@@ -393,7 +391,7 @@ void test_octave_2d()
     return;
     PerlinOctave2D m(6);
 
-    m.save_octaves2();
+    //m.save_octaves2(8, "test");
 }
 
 void test_octave_2d_map_gen(int tile)

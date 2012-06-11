@@ -252,6 +252,11 @@ class MapGenerator1
         roughness2D->set_persistance(p4);
     }
 
+    void save_noisemaps()
+    {
+        height2D->save_octaves2(8,"n_height");
+    }
+
     void populate_cache()
     {
         if(cache == NULL) cache = new float[XMAX*YMAX*ZMAX];
@@ -437,6 +442,8 @@ void test_octave_3d_map_gen(int tile_id)
     mg.set_persistance(0.5, 0.5, 0.5, 0.5);
 
     mg.generate_map(tile_id);
+    mg.save_noisemaps();
+
 }
 
 }
