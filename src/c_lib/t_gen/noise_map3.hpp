@@ -213,6 +213,8 @@ class PerlinOctave3D
 
 class MapGenerator1
 {
+    public:
+    
     PerlinOctave3D* erosion3D;
     PerlinOctave2D* erosion2D;
 
@@ -270,13 +272,14 @@ class MapGenerator1
 
         float v = 0.0; //value;
 
-        int index = k*XYMAX + j*XMAX + i;
+        int index2 = j*XMAX + i;
+        int index3 = k*XYMAX + j*XMAX + i;
 
-        float h2 = height2D->cache[index];
-        float r2 = roughness2D->cache[index];
+        float h2 = height2D->cache[index2];
+        float r2 = roughness2D->cache[index2];
 
-        float e2 = erosion2D->cache[index];
-        float e3 = erosion3D->cache[index];
+        float e2 = erosion2D->cache[index2];
+        float e3 = erosion3D->cache[index3];
 
         /*
             Threshold height
@@ -431,7 +434,7 @@ void test_octave_3d_map_gen(int tile_id)
 
     mg.set_persistance(0.5, 0.5, 0.5, 0.5);
 
-    mg.generate_map(tile);
+    mg.generate_map(tile_id);
 }
 
 }
