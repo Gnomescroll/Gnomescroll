@@ -137,8 +137,14 @@ class PerlinOctave3D
 	int octaves;
 	class PerlinField3D* octave_array;
 
+    float* cache;
+    float cache_persistance;
+
 	PerlinOctave3D(int _octaves)
-	{
+    {
+        cache = NULL;
+        cache_persistance = 0.0;
+
 		octaves = _octaves;
 		octave_array = new PerlinField3D[octaves];
 
@@ -153,11 +159,8 @@ class PerlinOctave3D
 	~PerlinOctave3D()
 	{
 		delete[] octave_array;
+        if(cache != NULL) delete[] cache;
 	}
-
-	void save_octaves(int _DEGREE)	//number of gradulations
-	{}
-
 
 	float sample(float x, float y, float z, float persistance)
 	{	
@@ -170,13 +173,66 @@ class PerlinOctave3D
 		}
 		return tmp;
 	}
+
+    void save_octaves(float _DEIN) {}
+
+    void set_persistance(float persistance)
+    {
+        if(cache_persistance != persistance)
+        {
+            cache_persistance = persistance;
+            populate_cache(persistance);
+        }
+
+    }
+    
+    void populate_cache(float persistance)
+    {
+        if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
+
+        const int XMAX = 512/4;
+        const int YMAX = 512/4;
+        const int ZMAX = 128/8;
+
+        float x,y,z;
+
+        for(int k=0; k<ZMAX; k++)
+        for(int i=0; i<XMAX; i++)
+        for(int j=0; j<YMAX; j++)
+        {
+            x = i*(4.0/512.0);
+            y = j*(4.0/512.0);
+            z = k*(8.0/512.0);
+
+            cache[k*XMAX*YMAX + j*XMAX + i] = sample(x,y,z, persistance);
+        }
+
+    }
+
+
 };
 
-class NoiseMap3D
+class MapGenerator1
 {
-    //for mixing
+    PerlinOctave3D* erosion3D;
+    PerlinOctave2D* erosion2D;
 
-    
+    PerlinOctave2D* height2D;
+    PerlinOctave2D* roughness2D;
+
+/*
+    Multiply by 3, subtract 2 and then clamp to -1 to 1
+*/
+  
+    MapGenerator1()
+    {
+        erosion3D = new PerlinOctave3D(4);
+        erosion3D = new PerlinOctave3D(4);
+
+        height2D = new PerlinOctave2D(4);
+        roughness2D = new PerlinOctave2D(4);
+    }
+
 };
 
 
