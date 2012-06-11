@@ -206,7 +206,6 @@ class PerlinOctave3D
 
             cache[k*XMAX*YMAX + j*XMAX + i] = sample(x,y,z, persistance);
         }
-
     }
 
 
@@ -220,12 +219,20 @@ class MapGenerator1
     PerlinOctave2D* height2D;
     PerlinOctave2D* roughness2D;
 
+    static const float XMAX = 512/4;
+    static const float YMAX = 512/4;
+    static const float ZMAX = 128/8;
+
+
 /*
     Multiply by 3, subtract 2 and then clamp to -1 to 1
 */
   
+    float* cache;
     MapGenerator1()
     {
+        cache = NULL;
+
         erosion3D = new PerlinOctave3D(4);
         erosion2D = new PerlinOctave2D(4);
 
@@ -241,9 +248,31 @@ class MapGenerator1
 
         height2D->set_persistance(p3);
         roughness2D->set_persistance(p4);
+    }
 
+    void populate_cache()
+    {
+        if(cache == NULL) cache = new float[XMAX*YMAX*ZMAX];
+
+        for(int k=0; k<ZMAX; k++)
+        for(int i=0; i<XMAX; i++)
+        for(int j=0; j<YMAX; j++)
+        {
+            cache[k*XMAX*YMAX + j*XMAX + i] = calc(i,j,k);
+        }
+    }
+
+    float calc(int i, int j, int k)
+    {
+        float x = 
 
     }
+
+    void generate_map()
+    {
+        populate_cache();
+    }
+
 };
 
 
