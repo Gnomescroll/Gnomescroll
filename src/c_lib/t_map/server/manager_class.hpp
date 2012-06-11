@@ -261,10 +261,10 @@ void Map_manager::update()
         //x = x - xpos;
         //y = y - ypos; 
 
-        int dx = quadrant_distance2i(xpos, x);
-        int dy = quadrant_distance2i(ypos, y);
+        int dx = quadrant_translate_i(xpos, x);
+        int dy = quadrant_translate_i(ypos, y);
 
-        if( dx+dy > UNSUB_RADIUS2 ) unsub(i);
+        if( dx*dx+dy*dy > UNSUB_RADIUS2 ) unsub(i);
 
     }
 
@@ -298,10 +298,10 @@ void Map_manager::update()
 /*
     Quadrant Math
 */  
-        int x = quadrant_distance2i(xpos, i*16 + 8);
-        int y = quadrant_distance2i(ypos, j*16 + 8);
+        int x = quadrant_translate_i(xpos, i*16 + 8);
+        int y = quadrant_translate_i(ypos, j*16 + 8);
 
-        if(x+y >= SUB_RADIUS2 ) continue;
+        if(x*x+y*y >= SUB_RADIUS2 ) continue;
         //int x = xpos - (i*16 + 8);
         //int y = ypos - (j*16 + 8);
 
@@ -361,8 +361,8 @@ static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, in
 {
     for(unsigned int i=0; i<n; i++)
     {
-        int x = xpos - quadrant_distance2i(xpos, arr[i].xpos);
-        int y = ypos - quadrant_distance2i(xpos, arr[i].ypos);
+        int x = xpos - quadrant_translate_i(xpos, arr[i].xpos);
+        int y = ypos - quadrant_translate_i(xpos, arr[i].ypos);
         arr[i].distance2 = x*x + y*y;
     }
 

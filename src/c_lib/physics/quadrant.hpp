@@ -32,22 +32,10 @@ float Min_2f(float x, float y)
 
 //camera x and position x
 __attribute((always_inline))
-int quadrant_distance2i(int cx, int px)
+int quadrant_translate_i(int cx, int px)
 {
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(px);
-
-    if(cx < 0 || cx >= 512)
-    {
-        printf("WARNING: quadrant_distance2i, cx= %i \n", cx);
-    }
-
-    if(px < 0 || px >= 512)
-    {
-        printf("WARNING: quadrant_distance2i, px= %i \n", px);
-    }
-
-    int distance;
 
     if(cx < QUADRANT_DIVIDEi)
     {
@@ -55,12 +43,11 @@ int quadrant_distance2i(int cx, int px)
         if(px < QUADRANT_DIVIDEi)
         {
             //chunk is in first half
-            distance = px - cx;
-            distance = distance*distance;
+            return px;
         }
         else
         {
-            distance = Min_2i(px-cx, px-cx-512);
+            return Min_i(px-cx, px-cx-512, px, px-512);
         }
     }
     else
@@ -68,16 +55,13 @@ int quadrant_distance2i(int cx, int px)
         //camera is in second half
         if(px < QUADRANT_DIVIDEi)
         {
-            distance = Min_2i(px-cx, px-cx+512);
+            return Min_i(px-cx, px-cx+512, px, px+512);
         }
         else
         {
-            distance = px - cx;
-            distance = distance*distance;
+            return px;
         }
     }
-
-    return distance;
 }
 
 

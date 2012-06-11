@@ -107,8 +107,8 @@ class Vbo_map
             m = map->chunk[index];
             if( m == NULL ) continue; //can speed up by maintain list of chunks
 
-            int x = quadrant_distance2i(cx, 16*i+8 );
-            int y = quadrant_distance2i(cy, 16*j+8 );
+            int x = quadrant_translate_i(cx, 16*i+8 );
+            int y = quadrant_translate_i(cy, 16*j+8 );
             int distance2 = x*x+y*y;
 
             if(distance2 >= CHUNK_IGNORE_DISTANCE2)
