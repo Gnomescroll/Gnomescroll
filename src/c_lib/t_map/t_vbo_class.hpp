@@ -99,7 +99,7 @@ class Vbo_map
     }
 
     #define MAP_VBO_CULLING 1
-    #define MAP_VBO_CULLING_RECYCLE 0   //delete and free vbos out of range
+    #define MAP_VBO_CULLING_RECYCLE 1   //delete and free vbos out of range
     //update all VBOs that need updating
     void update_map()
     {
