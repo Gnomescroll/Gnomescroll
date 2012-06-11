@@ -568,9 +568,14 @@ put spawners back in
 Fuel duration property on item
 fuel status property on container
 packet for fuel status
+    -- set_smelter_fuel_StoC
+        container_id
+        fuel (0-100)
+    burn rate can be predicted
+        
 Smelting timer on container
 Predicted smelting on container
---Do packet, begin/end?
+    
 calculate outputs -- should be similar to craft recipe
 Rendering fuel/progress state
 
