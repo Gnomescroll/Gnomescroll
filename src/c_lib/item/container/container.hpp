@@ -130,6 +130,8 @@ class ItemContainer: public ItemContainerInterface
 
         bool can_insert_item(int slot, ItemID item_id)
         {
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_id == NULL_ITEM) return false;
             return true;
         }
 
@@ -315,15 +317,11 @@ class ItemContainerSmelter: public ItemContainerInterface
             // check fuel slot
             if (slot == 0)
                 return Item::is_fuel(Item::get_item_type(item_id));
-            else
-            {
-                if (this->is_smelter_output(slot))
-                {   // last row of x is a fuel slot
-                    // we can't insert anything here through an action.
-                    // the insert can only be done by server with special function
-                    return false;
-                }
-            }
+            else if (this->is_smelter_output(slot))
+                // last row of x is a fuel slot
+                // we can't insert anything here through an action.
+                // the insert can only be done by server with special function
+                return false;
             return true;
         }
 

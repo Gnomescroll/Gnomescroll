@@ -450,6 +450,15 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     // else
                         // move avail stack amt from hand stack
 
+    #if DC_CLIENT
+    bool can_insert = container->can_insert_item(slot, hand_item_type);
+    #endif
+    #if DC_SERVER
+    bool can_insert = container->can_insert_item(slot, hand_item);
+    #endif
+
+    if (!hand_empty && !can_insert) return action;
+
     if (hand_empty)
     // hand is empty
     {
@@ -644,6 +653,13 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
         // else
             // do nothing
 
+    #if DC_CLIENT
+    bool can_insert = container->can_insert_item(slot, hand_item_type);
+    #endif
+    #if DC_SERVER
+    bool can_insert = container->can_insert_item(slot, hand_item);
+    #endif
+
     if (slot == 0)
     {   // food slot
         if (hand_empty)
@@ -666,12 +682,6 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
         {
             if (slot_empty)
             {   // place food
-                #if DC_CLIENT
-                bool can_insert = container->can_insert_item(slot, hand_item_type);
-                #endif
-                #if DC_SERVER
-                bool can_insert = container->can_insert_item(slot, hand_item);
-                #endif
                 if (can_insert)
                 {
                     #if DC_CLIENT
@@ -687,12 +697,6 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
             }
             else
             {   // see if we can merge some
-                #if DC_CLIENT
-                bool can_insert = container->can_insert_item(slot, hand_item_type);
-                #endif
-                #if DC_SERVER
-                bool can_insert = container->can_insert_item(slot, hand_item);
-                #endif
                 if (can_insert)
                 {
                     // hand stack will fit entirely in slot
@@ -759,12 +763,6 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
         {
             if (slot_empty)
             {
-                #if DC_CLIENT
-                bool can_insert = container->can_insert_item(slot, hand_item_type);
-                #endif
-                #if DC_SERVER
-                bool can_insert = container->can_insert_item(slot, hand_item);
-                #endif
                 if (can_insert)
                 {
                     #if DC_CLIENT
@@ -785,16 +783,19 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                     // hand stack will fit entirely in slot
                     if (hand_item_stack <= slot_item_space)
                     {   // FULL STACK MERGE
-                        #if DC_CLIENT
-                        action = full_hand_to_occupied_slot(
-                            container, slot,
-                            &hand_item_type, &hand_item_stack, &hand_item_durability,
-                            slot_item_type, slot_item_stack, slot_item_durability
-                        );
-                        #endif
-                        #if DC_SERVER
-                        action = full_hand_to_occupied_slot(client_id, agent_id, slot, slot_item);
-                        #endif
+                        if (can_insert)
+                        {
+                            #if DC_CLIENT
+                            action = full_hand_to_occupied_slot(
+                                container, slot,
+                                &hand_item_type, &hand_item_stack, &hand_item_durability,
+                                slot_item_type, slot_item_stack, slot_item_durability
+                            );
+                            #endif
+                            #if DC_SERVER
+                            action = full_hand_to_occupied_slot(client_id, agent_id, slot, slot_item);
+                            #endif
+                        }
                     }
                     else
                     // stacks will not completely merge
@@ -802,30 +803,36 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                         if (slot_item_space == 0)
                         // the stack is full
                         {  // SWAP
-                            #if DC_CLIENT
-                            action = full_hand_swap_with_slot(
-                                container, slot,
-                                &hand_item_type, &hand_item_stack, &hand_item_durability,
-                                slot_item_type, slot_item_stack, slot_item_durability
-                            );
-                            #endif
-                            #if DC_SERVER
-                            action = full_hand_swap_with_slot(client_id, agent_id, container, slot, slot_item);
-                            #endif
+                            if (can_insert)
+                            {
+                                #if DC_CLIENT
+                                action = full_hand_swap_with_slot(
+                                    container, slot,
+                                    &hand_item_type, &hand_item_stack, &hand_item_durability,
+                                    slot_item_type, slot_item_stack, slot_item_durability
+                                );
+                                #endif
+                                #if DC_SERVER
+                                action = full_hand_swap_with_slot(client_id, agent_id, container, slot, slot_item);
+                                #endif
+                            }
                         }
                         else
                         // some of the hand stack will fit in the slot
                         {   // PARTIAL STACK MERGE
-                            #if DC_CLIENT
-                            action = partial_hand_to_occupied_slot(
-                                container, slot,
-                                &hand_item_stack,
-                                slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
-                            );
-                            #endif
-                            #if DC_SERVER
-                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
-                            #endif
+                            if (can_insert)
+                            {
+                                #if DC_CLIENT
+                                action = partial_hand_to_occupied_slot(
+                                    container, slot,
+                                    &hand_item_stack,
+                                    slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
+                                );
+                                #endif
+                                #if DC_SERVER
+                                action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
+                                #endif
+                            }
                         }
                     }
                 }
@@ -1419,9 +1426,12 @@ ContainerActionType smelter_alpha_action_decision_tree(int id, int slot)
 ContainerActionType smelter_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
 #endif
 {
-    ContainerActionType action = CONTAINER_ACTION_NONE;
-
-    return action;
+    #if DC_CLIENT
+    return alpha_action_decision_tree(id, slot);
+    #endif
+    #if DC_SERVER
+    return alpha_action_decision_tree(agent_id, client_id, id, slot);
+    #endif
 }
 
 #if DC_CLIENT
@@ -1431,9 +1441,12 @@ ContainerActionType smelter_beta_action_decision_tree(int id, int slot)
 ContainerActionType smelter_beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
 #endif
 {
-    ContainerActionType action = CONTAINER_ACTION_NONE;
-
-    return action;
+    #if DC_CLIENT
+    return beta_action_decision_tree(id, slot);
+    #endif
+    #if DC_SERVER
+    return beta_action_decision_tree(agent_id, client_id, id, slot);
+    #endif
 }
 
 }   // ItemContainer

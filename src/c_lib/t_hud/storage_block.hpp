@@ -141,8 +141,8 @@ int StorageBlockUI::get_slot_at(int px, int py)
     px -= xoff;
     py -= _yresf - yoff;
 
-    if (px < 0 || px > render_width)  return NULL_SLOT;
-    if (py < 0 || py > render_height) return NULL_SLOT;
+    if (px < 0 || px >= render_width)  return NULL_SLOT;
+    if (py < 0 || py >= render_height) return NULL_SLOT;
 
     int xslot = px / cell_size;
     int yslot = py / cell_size;

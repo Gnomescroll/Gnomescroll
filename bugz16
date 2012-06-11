@@ -509,6 +509,9 @@ DONE
 nanite FOOD slot
 DONE
 
+fix off-by-1 ui slot
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -540,6 +543,7 @@ rename/clean container type enums
 alt tab doesnt work in fullscreen (on linux at least)
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 use FOOD slot graphic for nanite
+might be a pixel edge error leading to extra slot hover
 
 == CONTAINERS ==
 smelter

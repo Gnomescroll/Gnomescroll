@@ -36,7 +36,7 @@ const int CRYOFREEZER_SMALL_X = 2;
 const int CRYOFREEZER_SMALL_Y = 2;
 
 const int SMELTER_ONE_X = 3;
-const int SMELTER_ONE_Y = 3;
+const int SMELTER_ONE_Y = 2;
 //const int SMELTER_ONE_FUEL = 1;
 
 const int MAX_ITEMS = 256;
