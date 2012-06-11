@@ -535,12 +535,13 @@ toolbelt: turn fire on/off method for server
 -- windows only?
 alt tab doesnt work in fullscreen (on linux at least)
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
-version mismatch popup for OS X
-window gains focus on death?
-don't abort on mismatch version, disconnect from server and print "VERSION MISMATCH" etc on screen
+use FOOD slot graphic for nanite
 
 == CONTAINERS ==
 smelter
+
+rendering
+state
 
 == ITEMS ==
 New bugs from subscription lists:
