@@ -213,6 +213,8 @@ class PerlinOctave3D
 
 class MapGenerator1
 {
+    public:
+    
     PerlinOctave3D* erosion3D;
     PerlinOctave2D* erosion2D;
 
@@ -222,7 +224,7 @@ class MapGenerator1
     static const int XMAX = 512/4;
     static const int YMAX = 512/4;
     static const int ZMAX = 128/8;
-
+    static const int XYMAX = 128*128;
 
 /*
     Multiply by 3, subtract 2 and then clamp to -1 to 1
@@ -233,8 +235,8 @@ class MapGenerator1
     {
         cache = NULL;
 
-        erosion3D = new PerlinOctave3D(4);
         erosion2D = new PerlinOctave2D(4);
+        erosion3D = new PerlinOctave3D(4);
 
         height2D = new PerlinOctave2D(4);
         roughness2D = new PerlinOctave2D(4);
@@ -243,8 +245,8 @@ class MapGenerator1
 
     void set_persistance(float p1, float p2, float p3, float p4)
     {
-        erosion3D->set_persistance(p1);
         erosion2D->set_persistance(p2);
+        erosion3D->set_persistance(p1);
 
         height2D->set_persistance(p3);
         roughness2D->set_persistance(p4);
@@ -258,19 +260,163 @@ class MapGenerator1
         for(int i=0; i<XMAX; i++)
         for(int j=0; j<YMAX; j++)
         {
-            cache[k*XMAX*YMAX + j*XMAX + i] = calc(i,j,k);
+            cache[k*XYMAX + j*XMAX + i] = calc(i,j,k);
         }
     }
 
     float calc(int i, int j, int k)
-    {
-        return 0;
+    {        
+        float x = i*4;
+        float y = j*4;
+        float z = k*8;
 
+        float v = 0.0; //value;
+
+        int index2 = j*XMAX + i;
+        int index3 = k*XYMAX + j*XMAX + i;
+
+        float h2 = height2D->cache[index2];
+        float r2 = roughness2D->cache[index2];
+
+        float e2 = erosion2D->cache[index2];
+        float e3 = erosion3D->cache[index3];
+
+        /*
+            Threshold height
+        */
+
+        static const float hrange = 16.0;   //half of range (can perturb this with another map)
+        static const float hmin = 64;
+
+        static const float _hmin = -1.0;
+        static const float _hmax = 1.0;
+
+        static const float _hmix = 1.0/16.0;
+
+        //if(k == 5) printf("h2= %f \n", h2);
+        float tmp1 = _hmix*(z - (hmin + h2*hrange) );
+
+        if(tmp1 < _hmin) tmp1 = _hmin;
+        if(tmp1 > _hmax) tmp1 = _hmax;
+
+        v += tmp1;
+
+        //cache[index] = v;
+        return v;
     }
 
-    void generate_map()
+    float get_cache(int i, int j, int k)
+    {
+        i &= 127;
+        j &= 127;
+        k &= 15;
+        return cache[k*XYMAX + j*XMAX + i];
+    }
+
+    void generate_map(int tile_id)
     {
         populate_cache();
+
+
+        for(int k=0; k<ZMAX; k++)
+        for(int i=0; i<XMAX; i++)
+        for(int j=0; j<YMAX; j++)
+        {
+
+            // Calculate noise contributions from each of the eight corners
+            float n000= get_cache(i+0,j+0,k+0);
+            float n100= get_cache(i+1,j+0,k+0);
+            float n010= get_cache(i+0,j+1,k+0);
+            float n110= get_cache(i+1,j+1,k+0);
+            float n001= get_cache(i+0,j+0,k+1);
+            float n101= get_cache(i+1,j+0,k+1);
+            float n011= get_cache(i+0,j+1,k+1);
+            float n111= get_cache(i+1,j+1,k+1);
+            // Compute the fade curve value for each of x, y, z
+
+        #if 1
+            for(int i0=0; i0<4; i0++)
+            {
+                for(int j0=0; j0<4; j0++)
+
+                {
+                    for(int k0=0; k0<8; k0++)
+                    {
+                        float u = 0.25 * i0;
+                        float v = 0.25 * j0;
+                        float w = 0.125 * k0; 
+
+                        float nx00 = mix(n000, n100, u);
+                        float nx01 = mix(n001, n101, u);
+                        float nx10 = mix(n010, n110, u);
+                        float nx11 = mix(n011, n111, u);
+                        // Interpolate the four results along y
+                        float nxy0 = mix(nx00, nx10, v);
+                        float nxy1 = mix(nx01, nx11, v);
+                        // Interpolate the two last results along z
+                        float nxyz = mix(nxy0, nxy1, w);
+
+                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
+                    }
+                }
+            }
+        #endif
+
+        #if 0
+            for(int i0=0; i0<4; i0++)
+            {
+                float u = 0.25 * i0;    //x interpolation
+                float nx00 = mix(n000, n100, u);
+                float nx01 = mix(n001, n101, u);
+                float nx10 = mix(n010, n110, u);
+                float nx11 = mix(n011, n111, u);
+
+                for(int j0=0; j0<4; j0++)
+                {
+                    float v = 0.25 * j0;    //y interpolation
+                    float nxy0 = mix(nx00, nx10, v);
+                    float nxy1 = mix(nx01, nx11, v);
+
+                    for(int k0=0; k0<8; k0++)
+                    {
+                        float w = 0.125 * k0;   //z interpolation
+                        float nxyz = mix(nxy0, nxy1, w);
+
+                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
+                    }
+                }
+            }
+        #endif
+
+
+        #if 0
+            /*
+                Optimize so it uses no multiplications
+            */
+
+            for(int i0=0; i0<4; i0++)
+            {
+                float u = 0.25 * i0;    //x interpolation
+                float nx00 = mix(n000, n100, u);
+                float nx01 = mix(n001, n101, u);
+                float nx10 = mix(n010, n110, u);
+                float nx11 = mix(n011, n111, u);
+
+                for(int j0=0; j0<4; j0++)
+                {
+                    float v = 0.25 * j0;    //y interpolation
+                    float nxy0 = mix(nx00, nx10, v);
+                    float nxy1 = mix(nx01, nx11, v);
+
+                    for(int k0=0; k0<8; k0++)
+                    {
+                        float w = 0.125 * k0;   //z interpolation
+                        float nxyz = mix(nxy0, nxy1, w);
+                    }
+                }
+            }
+        #endif
+        }
     }
 
 };
@@ -283,42 +429,14 @@ void test_octave_3d()
     m.save_octaves(8);
 }
 
-void test_octave_3d_map_gen(int tile)
+void test_octave_3d_map_gen(int tile_id)
 {
-/*
-	return;
 
-    PerlinOctave2D m1(6);
-    PerlinOctave2D m2(6);
+    class MapGenerator1 mg;
 
-	const int xres = 512;
-	const int yres = 512;
+    mg.set_persistance(0.5, 0.5, 0.5, 0.5);
 
-	const float xresf = 1.0 / ((float) xres);
-	const float yresf = 1.0 / ((float) yres);
-
-    for(int i=0; i<512; i++)
-    for(int j=0; j<512; j++)
-    {
-
-        float x = i*xresf;
-        float y = j*yresf;
-
-        //value += 32*m.sample(x,y, 0.75);
-        float roughness = m2.sample(x,y, 0.125);
-        //if(roughness < 0) roughness = 0.0;
-        if(roughness < 0) roughness *= -1.0/32.0;
-
-        float value = 32 + 32*roughness*m1.sample(x,y, 0.450); //0.125);
-
-        //value += 32*oct_0.sample(x, y, 32.5, PERSISTANCE);
-
-        for (int k=0; k<value; k++) t_map::set(i,j,k,tile);
-
-
-        //out[i+j*yres] = p3d.one_over_f(x,y,64.0);
-    }
-*/
+    mg.generate_map(tile_id);
 }
 
 }
