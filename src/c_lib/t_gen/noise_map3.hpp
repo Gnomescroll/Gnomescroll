@@ -3,6 +3,8 @@
 #include <t_gen/twister.hpp>
 #include <t_gen/noise_map2.hpp>
 
+#include <common/time/physics_timer.hpp>
+
 namespace t_gen
 {
 
@@ -320,8 +322,6 @@ class MapGenerator1
 
     void generate_map(int tile_id)
     {
-        populate_cache();
-
 
         for(int k=0; k<ZMAX-1; k++)
         for(int i=0; i<XMAX; i++)
@@ -437,13 +437,30 @@ void test_octave_3d()
 void test_octave_3d_map_gen(int tile_id)
 {
 
+    int ti[6]; int i=0;
+    ti[i++] = _GET_MS_TIME();
+
     class MapGenerator1 mg;
+    ti[i++] = _GET_MS_TIME();
 
     mg.set_persistance(0.5, 0.5, 0.5, 0.5);
+    ti[i++] = _GET_MS_TIME();
+
+    mg.populate_cache();
+    ti[i++] = _GET_MS_TIME();
 
     mg.generate_map(tile_id);
-    mg.save_noisemaps();
+    ti[i++] = _GET_MS_TIME();
 
+    mg.save_noisemaps();
+    ti[i++] = _GET_MS_TIME();
+
+    printf("Map Gen: \n");
+    printf("0 init noise map: %i ms \n", ti[1]-ti[0] );
+    printf("1 set persistance: %i ms \n", ti[2]-ti[1] );
+    printf("3 populate cache: %i ms \n", ti[3]-ti[2] );
+    printf("4 map volume lerp: %i ms \n", ti[4]-ti[3] );
+    printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
 }
 
 }
