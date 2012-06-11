@@ -296,7 +296,7 @@ class MapGenerator1
         static const float _hmin = -1.0;
         static const float _hmax = 1.0;
 
-        static const float _hmix = 0.125;
+        static const float _hmix = 0.5; //0.125;
 
         //if(k == 5) printf("h2= %f \n", h2);
         float tmp1 = _hmix*(z - (hmin + h2*hrange) );
@@ -339,7 +339,7 @@ class MapGenerator1
             float n111= get_cache(i+1,j+1,k+1);
             // Compute the fade curve value for each of x, y, z
 
-        #if 1
+        #if 0
             for(int i0=0; i0<4; i0++)
             {
                 for(int j0=0; j0<4; j0++)
@@ -367,7 +367,7 @@ class MapGenerator1
             }
         #endif
 
-        #if 0
+        #if 1
             for(int i0=0; i0<4; i0++)
             {
                 float u = 0.25 * i0;    //x interpolation
