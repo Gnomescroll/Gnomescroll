@@ -80,7 +80,7 @@ class FixedSizeNetPacketToClient {
             if (n_clients <= 0) return;
 
             GS_ASSERT(n_clients <= NetServer::number_of_clients);
-            if (n_clients <= NetServer::number_of_clients) return;
+            if (n_clients > NetServer::number_of_clients) return;
 
             Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
@@ -208,7 +208,7 @@ class FixedSizeReliableNetPacketToClient {
             if (n_clients <= 0) return;
 
             GS_ASSERT(n_clients <= NetServer::number_of_clients);
-            if (n_clients <= NetServer::number_of_clients) return;
+            if (n_clients > NetServer::number_of_clients) return;
 
             Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;

@@ -55,7 +55,8 @@ class ItemAttribute
     unsigned int repair_agent_amount;
 
     bool gas;
-
+    bool fuel;
+    
     ItemContainerType container_type;
 
     ItemAttribute()
@@ -85,6 +86,7 @@ class ItemAttribute
         repair_agent_amount = 0;
         container_type = CONTAINER_TYPE_NONE;
         gas = false;
+        fuel = false;
     }
 };
 

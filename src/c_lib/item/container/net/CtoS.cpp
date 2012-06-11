@@ -16,6 +16,8 @@ inline void craft_container_action_beta_CtoS::handle() {}
 inline void craft_item_from_bench_action_CtoS::handle() {}
 inline void no_container_action_alpha_CtoS::handle(){}
 inline void no_container_action_beta_CtoS::handle(){}
+inline void smelter_container_action_alpha_CtoS::handle(){}
+inline void smelter_container_action_beta_CtoS::handle(){}
 
 inline void open_container_CtoS::handle() {}
 inline void close_container_CtoS::handle() {}
@@ -290,6 +292,69 @@ inline void no_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
         return;
     }
+}
+
+inline void smelter_container_action_alpha_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action = smelter_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+
+    if (this->action != action)
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID hand_item = get_agent_hand(a->id);
+    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID slot_item = container->get_item(slot);
+    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+        send_container_failed_action(client_id, event_id);
+}
+
+inline void smelter_container_action_beta_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action = smelter_beta_action_decision_tree(a->id, client_id, container_id, slot);
+
+    if (this->action != action)
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+    
+    ItemID hand_item = get_agent_hand(a->id);
+
+    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID slot_item = container->get_item(slot);
+    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+        send_container_failed_action(client_id, event_id);
 }
 
 inline void open_container_CtoS::handle()
