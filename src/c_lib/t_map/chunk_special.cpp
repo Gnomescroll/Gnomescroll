@@ -61,14 +61,14 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
     GS_ASSERT(x >= 0 && x < XMAX && y >= 0 && y < YMAX && z >= 0 && z < ZMAX);
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     GS_ASSERT(container_id != NULL_CONTAINER);
-    GS_ASSERT(ibam < MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT);
-    if (ibam >= MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) return;
+    GS_ASSERT(ibam < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM);
+    if (ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return;
     
     if(iban == ibam)
     {
         int o_ibam = ibam;
         ibam *= 2;
-        ibam = (ibam >= MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) ? (MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT) - 1 : ibam;
+        ibam = (ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) ? (MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) - 1 : ibam;
         GS_ASSERT(ibam >= o_ibam);
         if (ibam < o_ibam) return;
         GS_ASSERT(iban < ibam);

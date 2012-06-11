@@ -40,7 +40,7 @@ class MAP_CHUNK
     bool needs_update;
     #endif
 
-    unsigned char top_block[MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT];
+    unsigned char top_block[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];
 
     struct MAP_ELEMENT e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT];
 
@@ -67,7 +67,7 @@ class Terrain_map
 
     #if DC_CLIENT
     bool height_changed;
-    bool chunk_heights_changed[MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT];
+    bool chunk_heights_changed[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];
     void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
     inline unsigned char get_cached_height(int x, int y);

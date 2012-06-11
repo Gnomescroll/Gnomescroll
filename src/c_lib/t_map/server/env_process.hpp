@@ -12,7 +12,7 @@ void regolith_post_processing()
     int regolith_id = dat_get_cube_id("regolith");
 
     class MAP_CHUNK* c;
-        for(int i=0; i < MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT; i++)
+        for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
         {
             c = main_map->chunk[i];
             if(c == NULL) continue;

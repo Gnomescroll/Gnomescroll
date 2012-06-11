@@ -24,6 +24,7 @@ struct column
     Iterate over slices, copying in chunks until something needs to be updated, update, insert and continue
 */
 
+/*
 const int MAP_VBO_STARTING_SIZE = 128;
 const int MAP_VBO_INCREMENT = 128;
 
@@ -40,12 +41,16 @@ struct VBO_FLAGS
         int flags;
     };
 };
+*/
 
 class Map_vbo
 {
+
+    static const int MAP_VBO_STARTING_SIZE = 128;
+
     public:
     //flags
-    struct VBO_FLAGS flags;
+    //struct VBO_FLAGS flags;
 
     float xpos;
     float ypos;
@@ -68,7 +73,7 @@ class Map_vbo
     Map_vbo( class MAP_CHUNK* m )
     {
 
-        flags.flags = 0; //zero all flags
+        //flags.flags = 0; //zero all flags
 
         xpos = m->xpos + 8.0;
         ypos = m->ypos + 8.0;

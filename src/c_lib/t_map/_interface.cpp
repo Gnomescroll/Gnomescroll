@@ -20,7 +20,7 @@ int get_block_item_container(int x, int y, int z)
         | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
     ) GS_ABORT();
 
-    struct MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    struct MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
     if(c == NULL) return NULL_CONTAINER;
     return c->chunk_item_container.get(x,y,z); 
@@ -63,7 +63,7 @@ void create_item_container_block(int x, int y, int z, int container_type, int co
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
     if (((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0) return;
 
-    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
     if (c == NULL) return;
     
@@ -78,7 +78,7 @@ void destroy_item_container_block(int x, int y, int z)
     int val = _get(x,y,z);
     if (Item::get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
 
-    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
     if (c == NULL) return;
 

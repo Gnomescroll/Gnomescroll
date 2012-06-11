@@ -78,8 +78,8 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     //printf("received chunk: index = %i compressed \n", chunk_index);
 
-    int x = chunk_index % MAP_CHUNK_WIDTH;
-    int y = chunk_index / MAP_CHUNK_WIDTH;
+    int x = chunk_index % MAP_CHUNK_XDIM;
+    int y = chunk_index / MAP_CHUNK_XDIM;
     
     struct MAP_CHUNK* m = main_map->chunk[chunk_index];
     if(m == NULL)
@@ -99,7 +99,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
 void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 {
-    //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH );
+    //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM );
     //printf("byte_size= %i \n", byte_size);
 #if MAP_NET_DEBUG
     printf("map chunk is %i bytes \n", byte_size);
@@ -107,8 +107,8 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
-    int x = chunk_index % MAP_CHUNK_WIDTH;
-    int y = chunk_index / MAP_CHUNK_WIDTH;
+    int x = chunk_index % MAP_CHUNK_XDIM;
+    int y = chunk_index / MAP_CHUNK_XDIM;
     
     main_map->set_block(16*x,16*y,0, 1); //create chunk
 
@@ -133,7 +133,7 @@ void clear_alias_StoC::handle()
 void set_map_alias_StoC::handle()
 {
     client_chunk_alias_list[chunk_alias] = chunk_index;
-    //printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH);
+    //printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM);
 }
 
 void map_element_update::handle()
