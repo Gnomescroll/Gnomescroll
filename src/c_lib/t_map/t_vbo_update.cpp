@@ -497,8 +497,8 @@ void set_vertex_buffers(class MAP_CHUNK* chunk)
 void Vbo_map::update_vbo(int i, int j)
 {
 
-    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
-    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+    class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
+    class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
 
     for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
 
@@ -653,8 +653,8 @@ void generate_vertex_list_comptability(struct Vertex* vlist)
 
 void Vbo_map::update_vbo_comptability(int i, int j)
 {
-    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
-    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+    class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
+    class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
 
     for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
 

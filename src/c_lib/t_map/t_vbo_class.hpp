@@ -113,10 +113,10 @@ class Vbo_map
     Vbo_map(class Terrain_map* _map)
     {
         map = _map;
-        xchunk_dim = _map->xchunk_dim;
-        ychunk_dim = _map->ychunk_dim;
-        vbo_array = new Map_vbo*[ xchunk_dim*ychunk_dim ];
-        for(int i=0; i<xchunk_dim*ychunk_dim; i++) vbo_array[i] = NULL;
+        //xchunk_dim = _map->xchunk_dim;
+        //ychunk_dim = _map->ychunk_dim;
+        vbo_array = new Map_vbo*[ MAP_CHUNK_XDIM*MAP_CHUNK_YDIM ];
+        for(int i=0; i<MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++) vbo_array[i] = NULL;
 
         //vbo_list = new Map_vbo*[VBO_LIST_SIZE];
         //for(int i=0; i<VBO_LIST_SIZE; i++) vbo_list[i] = NULL;
@@ -124,7 +124,7 @@ class Vbo_map
 
     ~Vbo_map()
     {
-        for(int i=0; i<xchunk_dim*ychunk_dim; i++) if(vbo_array[i] != NULL) delete vbo_array[i];
+        for(int i=0; i<MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++) if(vbo_array[i] != NULL) delete vbo_array[i];
         delete[] vbo_array;
         //delete[] vbo_list;
     }
@@ -149,18 +149,18 @@ class Vbo_map
         //int count = 0;
 
         class MAP_CHUNK* m;
-        for(int i=0; i<xchunk_dim; i++)
-        for(int j=0; j<ychunk_dim; j++)
+        for(int i=0; i<MAP_CHUNK_XDIM; i++)
+        for(int j=0; j<MAP_CHUNK_YDIM; j++)
         {
 
-            m = map->chunk[j*xchunk_dim + i];
+            m = map->chunk[j*MAP_CHUNK_XDIM + i];
             if( m == NULL ) continue; //can speed up by maintain list of chunks
 
             if( m->needs_update == false ) continue;
             m->needs_update = false; //reset flag
 
             //count++;
-            if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
+            if( vbo_array[j*MAP_CHUNK_XDIM + i] == NULL ) vbo_array[j*MAP_CHUNK_XDIM + i] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             
             if(T_MAP_BACKUP_SHADER == 0)

@@ -89,9 +89,9 @@ void Vbo_map::prep_draw()
     //start_vbo_draw();
     draw_vbo_n = 0;
     //printf("Start Map Draw\n");
-    for(int i=0; i<map->xchunk_dim; i++) {
-    for(int j=0; j<map->ychunk_dim; j++) {
-        col = vbo_array[j*xchunk_dim + i ];
+    for(int i=0; i<MAP_CHUNK_XDIM; i++) {
+    for(int j=0; j<MAP_CHUNK_YDIM; j++) {
+        col = vbo_array[j*MAP_CHUNK_XDIM + i ];
 
         if(col == NULL || col->vnum == 0) continue;
 
