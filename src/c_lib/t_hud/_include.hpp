@@ -1,5 +1,6 @@
 
 #include <t_hud/constants.hpp>
+#include <t_hud/common.hpp>
 
 #include <t_hud/texture.cpp>
 
