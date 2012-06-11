@@ -102,8 +102,8 @@ class Vbo_map
 {
     public:    
 
-    int xchunk_dim;
-    int ychunk_dim;
+    //int xchunk_dim;
+    //int ychunk_dim;
 
     class Map_vbo** vbo_array;
     class Terrain_map* map;
