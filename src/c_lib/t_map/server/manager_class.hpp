@@ -359,10 +359,6 @@ void Map_manager::que_for_sub(int x, int y)
 
 static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, int xpos, int ypos) 
 {
-//    #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
-//    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
-
-
     for(unsigned int i=0; i<n; i++)
     {
         int x = xpos - quadrant_distance2i(xpos, arr[i].xpos);
@@ -372,8 +368,6 @@ static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, in
 
     #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
     QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
-
-
 }
 
 void Map_manager::sort_que()

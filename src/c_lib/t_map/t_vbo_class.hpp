@@ -5,11 +5,12 @@
 
 #include "t_map_class.hpp"
 
-//#include <stdio.h>
+#include <physics/quadrant.hpp>
 
 namespace t_map 
 {
 
+/*
 struct column
 {
     int offset;
@@ -17,6 +18,7 @@ struct column
     unsigned short s[TERRAIN_MAP_HEIGHT]; //num vertices in slice
     //unsigned short o[TERRAIN_MAP_HEIGHT]; //offset of vertices in slice, for drawing
 };
+*/
 
 /*
     Iterate over slices, copying in chunks until something needs to be updated, update, insert and continue
@@ -63,7 +65,7 @@ class Map_vbo
 
     GLuint vbo_id;
 
-    explicit Map_vbo( class MAP_CHUNK* m )
+    Map_vbo( class MAP_CHUNK* m )
     {
 
         flags.flags = 0; //zero all flags
@@ -84,14 +86,14 @@ class Map_vbo
     {
         delete[] v_list;
     }
-
+/*
     void resize(int num)
     {
         delete[] v_list;
         vnum_max = (num - (num % MAP_VBO_INCREMENT)) + MAP_VBO_INCREMENT;
         v_list = new Vertex[ vnum_max ];
     }
-
+*/
 };
 
 const int VBO_LIST_SIZE = 1024; //max number of VBOS that can have loaded VBOs
@@ -106,9 +108,9 @@ class Vbo_map
     class Map_vbo** vbo_array;
     class Terrain_map* map;
 
-    class Map_vbo** vbo_list; //list of loaded vbos
+    //class Map_vbo** vbo_list; //list of loaded vbos
 
-    explicit Vbo_map(class Terrain_map* _map)
+    Vbo_map(class Terrain_map* _map)
     {
         map = _map;
         xchunk_dim = _map->xchunk_dim;
@@ -116,15 +118,15 @@ class Vbo_map
         vbo_array = new Map_vbo*[ xchunk_dim*ychunk_dim ];
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) vbo_array[i] = NULL;
 
-        vbo_list = new Map_vbo*[VBO_LIST_SIZE];
-        for(int i=0; i<VBO_LIST_SIZE; i++) vbo_list[i] = NULL;
+        //vbo_list = new Map_vbo*[VBO_LIST_SIZE];
+        //for(int i=0; i<VBO_LIST_SIZE; i++) vbo_list[i] = NULL;
     }
 
     ~Vbo_map()
     {
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) if(vbo_array[i] != NULL) delete vbo_array[i];
         delete[] vbo_array;
-        delete[] vbo_list;
+        //delete[] vbo_list;
     }
 
 /*
