@@ -291,7 +291,7 @@ class MapGenerator1
         static const float _hmin = -1.0;
         static const float _hmax = 1.0;
 
-        static const float _hmix = 1.0;
+        static const float _hmix = 1.0/16.0;
 
         //if(k == 5) printf("h2= %f \n", h2);
         float tmp1 = _hmix*(z - (hmin + h2*hrange) );
