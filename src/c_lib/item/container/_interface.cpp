@@ -160,6 +160,7 @@ void update_container_ui_from_state()
     if (player_craft_bench_ui != NULL) player_craft_bench_ui ->load_data (player_craft_bench ->slot);
     if (storage_block_ui      != NULL) storage_block_ui      ->load_data (storage_block      ->slot);
     if (cryofreezer_ui        != NULL) cryofreezer_ui        ->load_data (cryofreezer        ->slot);
+    if (smelter_ui            != NULL) smelter_ui            ->load_data (smelter            ->slot);
     
     if (player_hand == NULL_ITEM)
     {
@@ -176,14 +177,12 @@ void update_container_ui_from_state()
 }
 
 void open_inventory()
-{
-    // copy state to ui
+{   // copy state to ui
     update_container_ui_from_state();
 }
 
 void close_inventory()
-{
-    // attempt throw
+{   // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 }
 
@@ -313,6 +312,10 @@ bool close_container_silently()
     if (cryofreezer_ui != NULL) delete cryofreezer_ui;
     cryofreezer_ui = NULL;
 
+    smelter = NULL;
+    if (smelter_ui != NULL) delete smelter_ui;
+    smelter_ui = NULL;
+
     // unset hud container id
     t_hud::close_container(opened_container);
 
@@ -378,6 +381,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
     if (storage_block_ui      != NULL && storage_block_ui->id      == container_id) return storage_block_ui;
     if (cryofreezer_ui        != NULL && cryofreezer_ui->id        == container_id) return cryofreezer_ui;
+    if (smelter_ui            != NULL && smelter_ui->id            == container_id) return smelter_ui;
     GS_ASSERT(false);
     return NULL;
 }
