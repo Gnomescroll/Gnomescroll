@@ -219,9 +219,9 @@ class MapGenerator1
     PerlinOctave2D* height2D;
     PerlinOctave2D* roughness2D;
 
-    static const float XMAX = 512/4;
-    static const float YMAX = 512/4;
-    static const float ZMAX = 128/8;
+    static const int XMAX = 512/4;
+    static const int YMAX = 512/4;
+    static const int ZMAX = 128/8;
 
 
 /*
@@ -264,7 +264,7 @@ class MapGenerator1
 
     float calc(int i, int j, int k)
     {
-        float x = 
+        return 0;
 
     }
 
