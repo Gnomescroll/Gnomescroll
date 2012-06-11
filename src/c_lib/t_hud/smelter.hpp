@@ -44,6 +44,7 @@ class SmelterUI : public UIElement
 
     int get_grid_at(int px, int py);
     int get_slot_at(int px, int py);
+    int get_grid_for_slot(int slot);
 
     bool point_inside(int px, int py)
     {
@@ -61,7 +62,7 @@ class SmelterUI : public UIElement
     {
         if (this->stacks != NULL) delete[] this->stacks;
         
-        int max = xdim * ydim;
+        int max = (this->xdim-2) * ydim + 1;
         GS_ASSERT(max > 0);
         if (max < 0) return;
         this->stacks = new HudText::Text[max];
@@ -175,7 +176,7 @@ int SmelterUI::get_slot_at(int px, int py)
 {
     int slot = this->get_grid_at(px,py);
     int xslot = slot % this->xdim;
-    int yslot = slot / this->ydim;
+    int yslot = slot / this->xdim;
 
     if (this->in_inactive_region(px,py)) return NULL_SLOT;
     if (this->in_fuel_region(px,py)) return 0;
@@ -184,7 +185,23 @@ int SmelterUI::get_slot_at(int px, int py)
     xslot -= 2;
     slot = yslot * (this->xdim - 2) + xslot;
     slot += 1;
-    GS_ASSERT(slot >= 1 && slot <= (this->xdim - 2)*this->ydim - 1);
+    return slot;
+}
+
+int SmelterUI::get_grid_for_slot(int slot)
+{
+    GS_ASSERT(slot != NULL_SLOT);
+    if (slot == NULL_SLOT) return NULL_SLOT;
+
+    if (slot == 0) return this->xdim;   // fuel slot
+
+    slot -= 1;  // offset the fuel
+    int xslot = slot % (this->xdim - 2);  // container's xslot
+    int yslot = slot / (this->xdim - 2);  // container's yslot
+
+    // reconstruct into UI grid
+    xslot += 2; // shift to right
+    slot = yslot * this->xdim + xslot;
     return slot;
 }
 
@@ -257,6 +274,9 @@ void SmelterUI::draw()
     if (this->container_id == NULL_CONTAINER) return;
 
     // get data for rendering items
+    ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(this->container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     if (slot_types == NULL) return;
@@ -270,13 +290,15 @@ void SmelterUI::draw()
     glBegin(GL_QUADS);
 
     //draw items
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    for (int slot=0; slot<container->slot_max; slot++)
     {
-        int slot = xdim*yslot + xslot;
         int item_type = slot_types[slot];
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
+
+        int grid = this->get_grid_for_slot(slot);
+        int xslot = grid % this->xdim;
+        int yslot = grid / this->xdim;
 
         const float x = xoff + cell_offset_x + cell_size*xslot;
         const float y = yoff - (cell_offset_y + cell_size*yslot);
@@ -313,15 +335,14 @@ void SmelterUI::draw()
     HudFont::set_texture();
 
     HudText::Text* text;
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    for (int slot=0; slot<container->slot_max; slot++)
     {
-        // the nanite store slots in dat are indexed from 0
-        // it is not aware of the implementation detail we have for food
-        const int slot = xdim*yslot + xslot;
-
         int stack = slot_stacks[slot];
         if (stack <= 1) continue;
+
+        int grid = this->get_grid_for_slot(slot);
+        int xslot = grid % this->xdim;
+        int yslot = grid / this->xdim;
 
         GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
 
