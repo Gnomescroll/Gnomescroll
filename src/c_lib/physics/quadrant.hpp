@@ -6,31 +6,32 @@
 #define ASSERT_BOXED_POINT(p) GS_ASSERT(p >= 0 && p < 512)
 #define ASSERT_BOXED_POSITION(p) GS_ASSERT(p.x >= 0.0f && p.x < 512.0f && p.y >= 0.0f && p.y < 512.0f)
 
-static inline int Min_i(int x, int y, int x1, int y1)
+__attribute((always_inline))
+int Min_i(int x, int y, int x1, int y1)
 {
-    //float x2 = x*x;
-    //float y2 = y*y;
     return abs(x)<abs(y) ? x1 : y1;
 }
 
-static inline float Min_f(float x, float y, float x1, float y1)
+__attribute((always_inline))
+float Min_f(float x, float y, float x1, float y1)
 {
-    //float x2 = x*x;
-    //float y2 = y*y;
     return abs(x)<abs(y) ? x1 : y1;
 }
 
-static inline int Min_2i(int x, int y)
+__attribute((always_inline))
+int Min_2i(int x, int y)
 {
     return abs(x)<abs(y) ? x*x : y*y;
 }
 
-static inline float Min_2f(float x, float y)
+__attribute((always_inline))
+float Min_2f(float x, float y)
 {
     return abs(x)<abs(y) ? x*x : y*y;
 }
 
 //camera x and position x
+__attribute((always_inline))
 int quadrant_distance2i(int cx, int px)
 {
     ASSERT_BOXED_POINT(cx);
@@ -81,6 +82,7 @@ int quadrant_distance2i(int cx, int px)
 
 
 //camera x and position x
+__attribute((always_inline))
 float quadrant_translate_f(float cx, float px)
 {
     //ASSERT_BOXED_POINT(cx);
