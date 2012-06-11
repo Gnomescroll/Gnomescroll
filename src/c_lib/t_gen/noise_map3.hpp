@@ -268,7 +268,7 @@ class MapGenerator1
     {        
         float x = i*4;
         float y = j*4;
-        float z = k*4;
+        float z = k*8;
 
         float v = 0.0; //value;
 
@@ -293,7 +293,8 @@ class MapGenerator1
 
         static const float _hmix = 1.0;
 
-        float tmp1 = _hmix*((hmin + h2*hrange) - z);
+        //if(k == 5) printf("h2= %f \n", h2);
+        float tmp1 = _hmix*(z - (hmin + h2*hrange) );
 
         if(tmp1 < _hmin) tmp1 = _hmin;
         if(tmp1 > _hmax) tmp1 = _hmax;
