@@ -14,6 +14,7 @@ extern class NaniteStoreItem* nanite_store_item_array;
 
 extern class NaniteStoreItem* nanite_store_item_array;
 extern class CraftingRecipe* crafting_recipe_array;
+extern class SmeltingRecipe* smelting_recipe_array;
 
 extern ItemContainerType container_block_types[t_map::MAX_CUBES]; // maps block value -> container type
 

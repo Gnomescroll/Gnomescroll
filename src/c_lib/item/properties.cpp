@@ -18,6 +18,7 @@ ItemGroup group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
 class NaniteStoreItem* nanite_store_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
+class SmeltingRecipe* smelting_recipe_array = NULL;
 
 ItemContainerType container_block_types[t_map::MAX_CUBES];    // maps block value -> container type
 
@@ -42,13 +43,15 @@ void init_properties()
     nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
 
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
+    smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
 }
 
 void tear_down_properties()
 {
     if (item_attribute_array    != NULL) delete[] item_attribute_array;
     if (nanite_store_item_array != NULL) delete[] nanite_store_item_array;
-    if (nanite_store_item_array != NULL) delete[] crafting_recipe_array;
+    if (crafting_recipe_array != NULL) delete[] crafting_recipe_array;
+    if (smelting_recipe_array != NULL) delete[] smelting_recipe_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)
@@ -352,9 +355,7 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
     for (int i=0; i<crafting_recipe_count; i++)
     {
         CraftingRecipe* recipe = &crafting_recipe_array[i];
-        GS_ASSERT(recipe->output_num == 1);
-        if (recipe->output_num < 1) continue;
-        GS_ASSERT(recipe->output[0] != NULL_ITEM_TYPE);
+        GS_ASSERT(recipe->output != NULL_ITEM_TYPE);
         GS_ASSERT(recipe->reagent_num > 0);
         // make sure to set availability state to default
         recipe->available = true;
@@ -395,27 +396,21 @@ int get_selected_craft_recipe_type(int container_id, int slot, bool* available)
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
     *available = recipe->available;
-    GS_ASSERT(recipe->output_num == 1);
-    if (recipe->output_num < 1) return NULL_ITEM_TYPE;
-    return recipe->output[0];
+    return recipe->output;
 }
 
 int get_selected_craft_recipe_type(int container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
-    GS_ASSERT(recipe->output_num == 1);
-    if (recipe->output_num < 1) return NULL_ITEM_TYPE;
-    return recipe->output[0];
+    return recipe->output;
 }
 
 int get_selected_craft_recipe_stack(int container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return 1;
-    GS_ASSERT(recipe->output_num == 1);
-    if (recipe->output_num < 1) return 1;
-    return recipe->output_stack[0];
+    return recipe->output_stack;
 }
 
 bool container_type_is_block(ItemContainerType type)

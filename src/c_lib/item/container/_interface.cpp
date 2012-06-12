@@ -928,12 +928,11 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
 
     Item::CraftingRecipe* recipe = Item::get_selected_craft_recipe(container_id, craft_slot);
     if (recipe == NULL) return;
-    GS_ASSERT(recipe->output_num == 1);
 
     // hand is not empty and cannot stack the output
     ItemID hand_item = get_agent_hand(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    bool hand_can_stack_recipe = (Item::get_item_type(hand_item) == recipe->output[0] && Item::get_stack_space(hand_item) >= 1);
+    bool hand_can_stack_recipe = (Item::get_item_type(hand_item) == recipe->output && Item::get_stack_space(hand_item) >= 1);
     if (!hand_empty && !hand_can_stack_recipe) return;
         
     // remove reagents from container
@@ -945,9 +944,9 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     if (hand_empty)
     {
         // create new item of type
-        Item::Item* item = Item::create_item(recipe->output[0]);
+        Item::Item* item = Item::create_item(recipe->output);
         if (item == NULL) return;
-        item->stack_size = recipe->output_stack[0];
+        item->stack_size = recipe->output_stack;
         Item::send_item_create(agent->client_id, item->id);
         insert_item_in_hand(agent->id, item->id);
         send_hand_insert(agent->client_id, item->id);
@@ -958,7 +957,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         Item::Item* item = Item::get_item(hand_item);
         GS_ASSERT(item != NULL);
         if (item == NULL) return;
-        item->stack_size += recipe->output_stack[0];
+        item->stack_size += recipe->output_stack;
         Item::send_item_state(item->id);
         send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
     }
@@ -1263,7 +1262,7 @@ void update_smelters()
         GS_ASSERT(smelter->recipe_id != NULL_ITEM_TYPE || smelter->progress == 0)
 
         Item::CraftingRecipe* recipe = NULL;
-        int recipe_id = NULL_CRAFTING_RECIPE;
+        int recipe_id = NULL_SMELTING_RECIPE;
         
         if (smelter->fuel <= 0)
         {
@@ -1293,17 +1292,17 @@ void update_smelters()
             // look up recipe
             //recipe = ;
             GS_ASSERT(recipe != NULL);
-            recipe_id = NULL_CRAFTING_RECIPE;
+            recipe_id = NULL_SMELTING_RECIPE;
             if (recipe != NULL) recipe_id = recipe->id;
 
             if (smelter->progress <= 0)
             {
-                if (recipe_id != NULL_CRAFTING_RECIPE)
+                if (recipe_id != NULL_SMELTING_RECIPE)
                     smelter->begin_smelting(recipe_id);
             }
             else
             {
-                if (recipe_id != NULL_CRAFTING_RECIPE && recipe_id == smelter->recipe_id)
+                if (recipe_id != NULL_SMELTING_RECIPE && recipe_id == smelter->recipe_id)
                     smelter->tick_smelting();
                 else
                     smelter->reset_smelting();

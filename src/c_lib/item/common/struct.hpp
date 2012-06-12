@@ -39,16 +39,13 @@ class NaniteStoreItem
     }
 };
 
-const int MAX_CRAFTING_RECIPE_OUTPUTS = 2;
-
 class CraftingRecipe
 {
     public:
 
     int id;
-    int output_num;
-    int output[MAX_CRAFTING_RECIPE_OUTPUTS]; //item type
-    int output_stack[MAX_CRAFTING_RECIPE_OUTPUTS];
+    int output; //item type
+    int output_stack;
     int reagent_num;
     int reagent[CRAFT_BENCH_INPUTS_MAX];
     int reagent_count[CRAFT_BENCH_INPUTS_MAX];
@@ -64,9 +61,8 @@ class CraftingRecipe
     void init()
     {
         id = NULL_CRAFTING_RECIPE;
-        for (int i=0; i<MAX_CRAFTING_RECIPE_OUTPUTS; output[i++] = NULL_ITEM_TYPE);
-        for (int i=0; i<MAX_CRAFTING_RECIPE_OUTPUTS; output_stack[i++] = 1);
-        output_num = 0;
+        output = NULL_ITEM_TYPE;
+        output_stack = 1;
         reagent_num = 0;
         for(int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
         {
@@ -74,6 +70,39 @@ class CraftingRecipe
             reagent_count[i] = 1;
         }
         available = true;
+    }
+};
+
+
+class SmeltingRecipe
+{
+    public:
+
+    int id;
+    int output_num;
+    int output[SMELTER_OUTPUTS_MAX]; //item type
+    int output_stack[SMELTER_OUTPUTS_MAX];
+    int reagent_num;
+    int reagent[SMELTER_INPUTS_MAX];
+    int reagent_count[SMELTER_INPUTS_MAX];
+
+    SmeltingRecipe()
+    {
+        this->init();
+    }
+
+    void init()
+    {
+        this->id = NULL_SMELTING_RECIPE;
+        for (int i=0; i<SMELTER_OUTPUTS_MAX; this->output[i++] = NULL_ITEM_TYPE);
+        for (int i=0; i<SMELTER_OUTPUTS_MAX; this->output_stack[i++] = 1);
+        this->output_num = 0;
+        this->reagent_num = 0;
+        for(int i=0; i<SMELTER_INPUTS_MAX; i++)
+        {
+            this->reagent[i] = NULL_ITEM_TYPE;
+            this->reagent_count[i] = 1;
+        }
     }
 };
 

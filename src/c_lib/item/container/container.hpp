@@ -377,7 +377,7 @@ class ItemContainerSmelter: public ItemContainerInterface
     fuel(0.0f),
     fuel_type(NULL_ITEM_TYPE),
     progress(0.0f),
-    recipe_id(NULL_CRAFTING_RECIPE)
+    recipe_id(NULL_SMELTING_RECIPE)
     {}
 };
 

@@ -311,8 +311,8 @@ void ItemContainerSmelter::fill_fuel(int fuel_type)
 
 void ItemContainerSmelter::begin_smelting(int recipe_id)
 {
-    GS_ASSERT(recipe_id != NULL_CRAFTING_RECIPE);
-    GS_ASSERT(this->recipe_id == NULL_CRAFTING_RECIPE);
+    GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+    GS_ASSERT(this->recipe_id == NULL_SMELTING_RECIPE);
     GS_ASSERT(this->progress <= 0);
     this->recipe_id = recipe_id;
 
