@@ -232,11 +232,6 @@ void set_smelting_reagent(const char* item_name, int quantity)
 
     int type = dat_get_item_type(item_name);
     
-
-    // require specifying item,quantity at once
-    //for (int i=0; i<_current_reagent_id; i++)
-        //GS_ASSERT(_sr.reagent[i] != type);
-    
     // insert reagents sorted by type
     if (_current_smelting_reagent_id == 0)
     {   // degenerate case

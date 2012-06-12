@@ -86,6 +86,8 @@ class SmeltingRecipe
     int reagent[SMELTER_INPUTS_MAX];
     int reagent_count[SMELTER_INPUTS_MAX];
 
+    bool available;
+
     SmeltingRecipe()
     {
         this->init();
@@ -103,6 +105,7 @@ class SmeltingRecipe
             this->reagent[i] = NULL_ITEM_TYPE;
             this->reagent_count[i] = 1;
         }
+        this->available = true;
     }
 };
 

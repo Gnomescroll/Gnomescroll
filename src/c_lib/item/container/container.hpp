@@ -308,6 +308,16 @@ class ItemContainerSmelter: public ItemContainerInterface
         int progress;  // 0 - 100 , increment N every M ticks
         int recipe_id;  // recipe identifier
 
+        bool is_output_slot(int slot)
+        {   // output slot is if xslot == xdim-1;
+            int xslot = slot % (this->xdim);
+            return (xslot == this->xdim-1);
+        }
+
+        bool is_fuel_slot(int slot)
+        {
+            return (slot == 0);
+        }
 
         ItemID get_fuel()
         {
