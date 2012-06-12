@@ -539,6 +539,8 @@ improve digging sounds
 == MAINTENANCE/REFACTORS ==
 toolbelt: turn fire on/off method for server
 elastic component lists
+craft/smelting recipes need reagents sorted by stack size in addition to type -- currently only by type
+    -- is not a problem until multiple of the same type have different stack sizes
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out

@@ -415,7 +415,7 @@ int get_selected_craft_recipe_stack(int container_id, int slot)
     return recipe->output_stack;
 }
 
-class SmeltingRecipe* get_selected_smelting_recipe(int container_id, int slot)
+class SmeltingRecipe* get_selected_smelting_recipe(int container_id)
 {
     // get container
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -433,7 +433,7 @@ class SmeltingRecipe* get_selected_smelting_recipe(int container_id, int slot)
     int unique_inputs = 0;
     for (int i=0; i<smelter->slot_max; i++)
     {
-        if (smelter->is_fuel_slot(slot) || smelter->is_output_slot(i)) continue;
+        if (smelter->is_fuel_slot(i) || smelter->is_output_slot(i)) continue;
         
         // get slot content data
         ItemID item_id = smelter->get_item(i);
@@ -524,15 +524,15 @@ class SmeltingRecipe* get_smelting_recipe(int recipe_id)
     return &smelting_recipe_array[recipe_id];
 }
 
-int* get_selected_smelting_recipe_types(int container_id, int slot, int* recipe_count)
+int* get_selected_smelting_recipe_types(int container_id, int* recipe_count)
 {
     bool available;
-    return get_selected_smelting_recipe_types(container_id, slot, recipe_count, &available);
+    return get_selected_smelting_recipe_types(container_id, recipe_count, &available);
 }
 
-int* get_selected_smelting_recipe_types(int container_id, int slot, int* recipe_count, bool* available)
+int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available)
 {
-    class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id, slot);
+    class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id);
     if (recipe == NULL)
     {
         *recipe_count = 0;
@@ -543,9 +543,9 @@ int* get_selected_smelting_recipe_types(int container_id, int slot, int* recipe_
     return recipe->output;
 }
 
-int* get_selected_smelting_recipe_stacks(int container_id, int slot, int* recipe_count)
+int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count)
 {
-    class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id, slot);
+    class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id);
     if (recipe == NULL)
     {
         *recipe_count = 0;

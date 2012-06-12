@@ -46,6 +46,7 @@ class Item* create_item(char* item_name);
 
 // returns stack size
 int consume_stack_item(ItemID item_id);
+int consume_stack_item(ItemID item_id, int amount);
 
 void agent_quit(int agent_id);
 

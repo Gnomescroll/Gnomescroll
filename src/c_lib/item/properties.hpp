@@ -76,10 +76,10 @@ int get_selected_craft_recipe_type(int container_id, int slot, bool* available);
 int get_selected_craft_recipe_stack(int container_id, int slot);
 
 class SmeltingRecipe* get_smelting_recipe(int recipe_id);
-class SmeltingRecipe* get_selected_smelting_recipe(int container_id, int slot);
-int* get_selected_smelting_recipe_types(int container_id, int slot, int* recipe_count);
-int* get_selected_smelting_recipe_types(int container_id, int slot, int* recipe_count, bool* available);
-int* get_selected_smelting_recipe_stacks(int container_id, int slot, int* recipe_count);
+class SmeltingRecipe* get_selected_smelting_recipe(int container_id);
+int* get_selected_smelting_recipe_types(int container_id, int* recipe_count);
+int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available);
+int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count);
 
 
 bool container_type_is_block(ItemContainerType type);

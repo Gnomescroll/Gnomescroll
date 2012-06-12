@@ -302,6 +302,9 @@ class ItemContainerSmelter: public ItemContainerInterface
 {
     public:
 
+        static const int product_xdim = 1;
+        static const int input_xdim = 2;
+        
         int fuel;   // 0 - 100 , decrement N every M ticks
         int fuel_type;  // item type
 
@@ -332,6 +335,80 @@ class ItemContainerSmelter: public ItemContainerInterface
         void tick_smelting();
         void reset_smelting();
         #endif
+
+        unsigned int get_max_input_slots()
+        {
+            if (this->slot_max <= 0) return 0;
+            unsigned int max = this->slot_max - 1;    // remove fuel #
+            GS_ASSERT(ydim * this->product_xdim <= (int)max);
+            max -= ydim * this->product_xdim; // remove product slot
+            return max;
+        }
+
+        // fills *inputs with input items, sorted by type, up to max_inputs
+        // return number of inputs filled
+        int get_sorted_inputs(ItemID* inputs, unsigned int max_inputs)
+        {
+            // iterate input slots
+            // inserting to *inputs, sorted
+            GS_ASSERT(max_inputs > 0);
+            if (max_inputs <= 0) return 0;
+            GS_ASSERT(max_inputs == this->get_max_input_slots());
+
+            int n_inputs = 0;
+            int input_types[max_inputs];
+            for (unsigned int i=0; i<max_inputs; i++)
+            {
+                int slot = this->convert_input_slot(i);
+                ItemID input = this->slot[slot];
+                int input_type = Item::get_item_type(input);
+                if (n_inputs == 0)
+                {
+                    inputs[0] = input;
+                    input_types[0] = input_type;
+                }
+                else
+                {   //  insert sorted
+                    int j = 0;
+                    for (; j<n_inputs; j++)
+                    {
+                        if (input_types[j] <= input_type) continue;
+
+                        // shift forward
+                        for (int k=n_inputs; k>j; k--) inputs[k] = inputs[k-1];
+                        for (int k=n_inputs; k>j; k--) input_types[k] = input_types[k-1];
+                        
+                        // insert
+                        inputs[j] = input;
+                        input_types[j] = input_type;
+                        break;
+                    }
+
+                    if (j == n_inputs)
+                    {   // append to end
+                        inputs[j] = input;
+                        input_types[j] = input_type;
+                    }
+                }
+                n_inputs++;
+            }
+            return n_inputs;
+        }
+
+        int convert_input_slot(int input_slot)
+        {
+            int yslot = input_slot /  this->input_xdim;
+            int slot = input_slot + (yslot * this->product_xdim) + 1;
+            return slot;
+        }
+
+        int convert_product_slot(int product_slot)
+        {   // translate product_slot to native slot
+            // calculate yslot with xdim = 1
+            int yslot = product_slot / this->product_xdim;
+            int slot = xdim * (yslot + 1);
+            return slot;
+        }
 
         bool is_smelter_output(int slot)
         {

@@ -1261,7 +1261,7 @@ void update_smelters()
         GS_ASSERT(smelter->progress >= 0);
         GS_ASSERT(smelter->recipe_id != NULL_ITEM_TYPE || smelter->progress == 0)
 
-        Item::CraftingRecipe* recipe = NULL;
+        Item::SmeltingRecipe* recipe = NULL;
         int recipe_id = NULL_SMELTING_RECIPE;
         
         if (smelter->fuel <= 0)
@@ -1291,6 +1291,7 @@ void update_smelters()
         {
             // look up recipe
             //recipe = ;
+            recipe = Item::get_selected_smelting_recipe(smelter->id);
             GS_ASSERT(recipe != NULL);
             recipe_id = NULL_SMELTING_RECIPE;
             if (recipe != NULL) recipe_id = recipe->id;
@@ -1311,7 +1312,48 @@ void update_smelters()
 
         if (smelter->progress >= 100)
         {
-            GS_ASSERT(recipe != NULL); 
+            GS_ASSERT(recipe != NULL);
+            if (recipe == NULL) continue;
+            // consume recipe inputs
+            unsigned int max_inputs = smelter->get_max_input_slots();
+            ItemID inputs[max_inputs];
+            int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);    // sorted by type
+
+            GS_ASSERT(recipe->reagent_num <= n_inputs);
+            if (recipe->reagent_num > n_inputs) continue;
+            for (int i=0; i<recipe->reagent_num; i++)
+            {
+                GS_ASSERT(recipe->reagent[i] != NULL_ITEM_TYPE);
+                if (recipe->reagent[i] == NULL_ITEM_TYPE) continue;
+                int reagent = recipe->reagent[i];
+                int reagent_stack = recipe->reagent_count[i];
+
+                ItemID input = inputs[i];
+                GS_ASSERT(input != NULL_ITEM);
+                if (input == NULL_ITEM) continue;
+                int input_type = Item::get_item_type(input);
+                GS_ASSERT(input_type != NULL_ITEM_TYPE);
+                GS_ASSERT(input_type == reagent);
+                int input_stack = Item::get_stack_size(input);
+                GS_ASSERT(input_stack >= reagent_stack);
+                if (input_stack < reagent_stack) reagent_stack = input_stack;   // cap it
+                int remaining = Item::consume_stack_item(input, reagent_stack);
+                if (remaining > 0) Item::send_item_state(input);
+            }
+
+            // create outputs
+            for (int i=0; i<recipe->output_num; i++)
+            {
+                GS_ASSERT(recipe->output[i] != NULL_ITEM_TYPE);
+                if (recipe->output[i] == NULL_ITEM_TYPE) continue;
+                Item::Item* product = Item::create_item(recipe->output[i]);
+                GS_ASSERT(product != NULL);
+                if (product == NULL) continue;
+                product->stack_size = recipe->output_stack[i];
+                GS_ASSERT(product->stack_size > 0);
+                int slot = smelter->convert_product_slot(i);
+                transfer_free_item_to_container(product->id, smelter->id, slot);
+            }
         }
         
     }
