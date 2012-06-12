@@ -142,6 +142,8 @@ class SmelterUI : public UIElement
         return (!this->in_fuel_region(px,py) && !this->in_input_region(px,py) && !this->in_output_region(px,py));
     }
 
+    void draw_meter(float x, float y, float src_x, float src_y, float w, float h, float amount);
+
     SmelterUI()
     : xdim(1), ydim(1),
     render_width(1.0f), render_height(1.0f),
@@ -196,8 +198,8 @@ int SmelterUI::get_grid_for_slot(int slot)
     if (slot == 0) return this->xdim;   // fuel slot
 
     slot -= 1;  // offset the fuel
-    int xslot = slot % (this->xdim - 2);  // container's xslot
-    int yslot = slot / (this->xdim - 2);  // container's yslot
+    int xslot = slot % (this->xdim - 2);  // container_ui's xslot
+    int yslot = slot / (this->xdim - 2);  // container_ui's yslot
 
     // reconstruct into UI grid
     xslot += 2; // shift to right
@@ -205,10 +207,55 @@ int SmelterUI::get_grid_for_slot(int slot)
     return slot;
 }
 
+// x,y is the offset of the meter
+// src_x, src_y is the offset of the meter color strip
+// amount is a value between 0 and 1
+void SmelterUI::draw_meter(float x, float y, float src_x, float src_y, float w, float h, float amount)
+{
+    // the texture should already be bound
+    GL_ASSERT(GL_TEXTURE_2D, true);
+
+    // force the amount in range
+    GS_ASSERT(0.0f <= amount && amount <= 1.0f);
+    if (amount < 0.0f) amount = 0.0f;
+    if (amount > 1.0f) amount = 1.0f;
+
+    float tx_min = src_x / 512.0f;
+    float ty_min = src_y / 512.0f;
+    float tx_max = tx_min + (w/512.0f);
+    float ty_max = ty_min + (h/512.0f);
+    
+    float dh = h * (1.0f - amount);
+
+    // draw from bottom of meter
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(tx_min, ty_min);
+    glVertex2f(x, y - dh);
+
+    glTexCoord2f(tx_min, ty_max);
+    glVertex2f(x, y - h);
+
+    glTexCoord2f(tx_max, ty_max);
+    glVertex2f(x + w, y - h);
+    
+    glTexCoord2f(tx_max, ty_min);
+    glVertex2f(x + w, y - dh);
+    
+    glEnd();
+}
+
 void SmelterUI::draw()
 {
     GS_ASSERT(this->texture != NULL);
     if (this->texture == NULL) return;
+
+    if (this->container_id == NULL_CONTAINER) return;
+    ItemContainer::ItemContainerUIInterface* container_ui = ItemContainer::get_container_ui(this->container_id);
+    GS_ASSERT(container_ui != NULL);
+    if (container_ui == NULL) return;
+    ItemContainer::ItemContainerSmelter* smelter = (ItemContainer::ItemContainerSmelter*)ItemContainer::get_container(this->container_id);
+    GS_ASSERT(smelter != NULL);
     
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
@@ -248,6 +295,14 @@ void SmelterUI::draw()
 
     glEnd();
 
+    if (smelter != NULL)
+    {
+        float fuel = ((float)smelter->fuel) / 100.0f;
+        float progress = ((float)smelter->progress) / 100.0f;
+        this->draw_meter(xoff + 43.0f, yoff - 2.0f, 195.0f, 0.0f, 9.0f, 70.0f, fuel); // fuel
+        this->draw_meter(xoff + 60.0f, yoff - 2.0f, 205.0f, 0.0f, 9.0f, 70.0f, progress); // progress
+    }
+
     glDisable(GL_TEXTURE_2D);
 
     // draw hover highlight
@@ -271,12 +326,7 @@ void SmelterUI::draw()
     }
     glEnd();
 
-    if (this->container_id == NULL_CONTAINER) return;
-
     // get data for rendering items
-    ItemContainer::ItemContainerUIInterface* container = ItemContainer::get_container_ui(this->container_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     if (slot_types == NULL) return;
@@ -290,7 +340,7 @@ void SmelterUI::draw()
     glBegin(GL_QUADS);
 
     //draw items
-    for (int slot=0; slot<container->slot_max; slot++)
+    for (int slot=0; slot<container_ui->slot_max; slot++)
     {
         int item_type = slot_types[slot];
         if (item_type == NULL_ITEM_TYPE) continue;
@@ -335,7 +385,7 @@ void SmelterUI::draw()
     HudFont::set_texture();
 
     HudText::Text* text;
-    for (int slot=0; slot<container->slot_max; slot++)
+    for (int slot=0; slot<container_ui->slot_max; slot++)
     {
         int stack = slot_stacks[slot];
         if (stack <= 1) continue;

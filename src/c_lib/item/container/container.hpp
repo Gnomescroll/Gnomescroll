@@ -303,6 +303,7 @@ class ItemContainerSmelter: public ItemContainerInterface
     public:
 
         static const int product_xdim = 1;
+        static const int product_ydim = 2;
         static const int input_xdim = 2;
         
         int fuel;   // 0 - 100 , decrement N every M ticks
@@ -330,10 +331,12 @@ class ItemContainerSmelter: public ItemContainerInterface
         }
 
         #if DC_SERVER
+        void burn_fuel();
         void fill_fuel(int fuel_type);
         void begin_smelting(int recipe_id);
         void tick_smelting();
         void reset_smelting();
+        bool can_insert_outputs(int* outputs, int* output_stacks, int n_outputs);
         #endif
 
         unsigned int get_max_input_slots()
@@ -361,7 +364,10 @@ class ItemContainerSmelter: public ItemContainerInterface
             {
                 int slot = this->convert_input_slot(i);
                 ItemID input = this->slot[slot];
+                if (input == NULL_ITEM) continue;
                 int input_type = Item::get_item_type(input);
+                GS_ASSERT(input_type != NULL_ITEM_TYPE);
+                if (input_type == NULL_ITEM_TYPE) continue;
                 if (n_inputs == 0)
                 {
                     inputs[0] = input;
@@ -392,6 +398,15 @@ class ItemContainerSmelter: public ItemContainerInterface
                 }
                 n_inputs++;
             }
+
+            // Test output
+            int last_type = -1;
+            for (int i=0; i<n_inputs; i++)
+            {
+                GS_ASSERT(input_types[i] >= last_type);
+                last_type = input_types[i];
+            }
+            
             return n_inputs;
         }
 

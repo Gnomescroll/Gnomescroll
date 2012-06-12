@@ -69,6 +69,10 @@ void ItemList::tick()
                 item->gas_decay = ITEM_GAS_LIFETIME;    // reset decay
                 continue;
             }
+            // dont decrement if sitting in fuel slot
+            if (is_smelter(container->type)
+            && ((ItemContainer::ItemContainerSmelter*)container)->is_fuel_slot(item->container_slot))
+                continue;
 
             // decay item
             item->gas_decay -= GAS_TICK_INTERVAL;

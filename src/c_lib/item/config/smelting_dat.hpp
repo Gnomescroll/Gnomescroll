@@ -29,13 +29,14 @@ void load_smelting_dat()
     end_smelting_recipe();
 
     // TODO -- remove this recipe. its just to test multiple output
-    def_smelting_recipe("copper_bar");
-    add_smelting_product("copper_bar");
-    set_smelting_reagent("copper_ore", 1);
-    set_smelting_reagent("copper_ore", 1);
-    set_smelting_reagent("copper_ore", 1);
-    set_smelting_reagent("copper_ore", 1);
-    end_smelting_recipe();
+    // -works-
+    //def_smelting_recipe("copper_bar");
+    //add_smelting_product("copper_bar");
+    //set_smelting_reagent("copper_ore", 1);
+    //set_smelting_reagent("copper_ore", 1);
+    //set_smelting_reagent("copper_ore", 1);
+    //set_smelting_reagent("copper_ore", 1);
+    //end_smelting_recipe();
 
     def_smelting_recipe("gallium_bar");
     set_smelting_reagent("gallium_ore", 1);

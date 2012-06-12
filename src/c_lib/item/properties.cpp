@@ -29,8 +29,8 @@ int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
 class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
 int craft_recipes_possible_count = 0;
 
-int smelter_input_types[SMELTER_INPUTS_MAX];
-int smelter_input_totals[SMELTER_INPUTS_MAX];
+//int smelter_input_types[SMELTER_INPUTS_MAX];
+//int smelter_input_totals[SMELTER_INPUTS_MAX];
 
 void init_properties()
 {
@@ -426,60 +426,79 @@ class SmeltingRecipe* get_selected_smelting_recipe(int container_id)
     ItemContainer::ItemContainerSmelter* smelter = (ItemContainer::ItemContainerSmelter*)container;
 
     // clear input buffers
-    for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_types[i++] = NULL_ITEM_TYPE);
-    for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_totals[i++] = 0);
+    //for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_types[i++] = NULL_ITEM_TYPE);
+    //for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_totals[i++] = 0);
 
-    // condense smelter contents to unique types/counts
-    int unique_inputs = 0;
-    for (int i=0; i<smelter->slot_max; i++)
-    {
-        if (smelter->is_fuel_slot(i) || smelter->is_output_slot(i)) continue;
+    //// condense smelter contents to unique types/counts
+    //int unique_inputs = 0;
+    //for (int i=0; i<smelter->slot_max; i++)
+    //{
+        //if (smelter->is_fuel_slot(i) || smelter->is_output_slot(i)) continue;
         
-        // get slot content data
-        ItemID item_id = smelter->get_item(i);
-        if (item_id == NULL_ITEM) continue;
-        int item_type = get_item_type(item_id);
-        GS_ASSERT(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
-        int stack_size = get_stack_size(item_id);
-        GS_ASSERT(stack_size >= 1);
+        //// get slot content data
+        //ItemID item_id = smelter->get_item(i);
+        //if (item_id == NULL_ITEM) continue;
+        //int item_type = get_item_type(item_id);
+        //GS_ASSERT(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
+        //int stack_size = get_stack_size(item_id);
+        //GS_ASSERT(stack_size >= 1);
 
-        // insert into type buffer
-        if (unique_inputs == 0)
-        {   // degenerate case
-            smelter_input_types[unique_inputs] = item_type;
-            smelter_input_totals[unique_inputs] = stack_size;
-        }
-        else
-        {   // keep buffer sorted
-            int i=0;
-            for (; i<unique_inputs; i++)
-            {
-                if (smelter_input_types[i] <= item_type) continue;
+        //// insert into type buffer
+        //if (unique_inputs == 0)
+        //{   // degenerate case
+            //smelter_input_types[unique_inputs] = item_type;
+            //smelter_input_totals[unique_inputs] = stack_size;
+        //}
+        //else
+        //{   // keep buffer sorted
+            //int i=0;
+            //for (; i<unique_inputs; i++)
+            //{
+                //if (smelter_input_types[i] <= item_type) continue;
 
-                // shift forward
-                for (int j=unique_inputs; j>i; j--) smelter_input_types[j] = smelter_input_types[j-1];
-                for (int j=unique_inputs; j>i; j--) smelter_input_totals[j] = smelter_input_totals[j-1];
+                //// shift forward
+                //for (int j=unique_inputs; j>i; j--) smelter_input_types[j] = smelter_input_types[j-1];
+                //for (int j=unique_inputs; j>i; j--) smelter_input_totals[j] = smelter_input_totals[j-1];
 
-                // insert
-                smelter_input_types[i] = item_type;
-                smelter_input_totals[i] = stack_size;
-                break;
-            }
-            if (i == unique_inputs)
-            {   // append to end
-                smelter_input_types[unique_inputs] = item_type;
-                smelter_input_totals[unique_inputs] = stack_size;
-            }
-        }
-        unique_inputs++;
-    }
+                //// insert
+                //smelter_input_types[i] = item_type;
+                //smelter_input_totals[i] = stack_size;
+                //break;
+            //}
+            //if (i == unique_inputs)
+            //{   // append to end
+                //smelter_input_types[unique_inputs] = item_type;
+                //smelter_input_totals[unique_inputs] = stack_size;
+            //}
+        //}
+        //unique_inputs++;
+    //}
+
+    // Use get_sorted_inputs() ?
 
     // no inputs
-    if (unique_inputs == 0) return NULL;
+    //if (unique_inputs == 0) return NULL;
+
+    unsigned int max_inputs = smelter->get_max_input_slots();
+    GS_ASSERT(max_inputs > 0);
+    if (max_inputs <= 0) return NULL;
+    ItemID inputs[max_inputs];
+    int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);
+    if (n_inputs <= 0) return NULL;
+
+    int input_types[n_inputs];
+    int input_stacks[n_inputs];
+
+    for (int i=0; i<n_inputs; i++)
+    {
+        input_types[i] = get_item_type(inputs[i]);
+        input_stacks[i] = get_stack_size(inputs[i]);
+    }
 
     // iterate available recipes
     // if types match exactly, return recipe (only one recipe per combination for the smelter
 
+    GS_ASSERT(smelting_recipe_count > 0);
     for (int i=0; i<smelting_recipe_count; i++)
     {
         SmeltingRecipe* recipe = &smelting_recipe_array[i];
@@ -491,16 +510,17 @@ class SmeltingRecipe* get_selected_smelting_recipe(int container_id)
         recipe->available = true;
 
         // only match exactly
-        if (recipe->reagent_num != unique_inputs) continue;
+        if (recipe->reagent_num != n_inputs) continue;
 
         // check if reagents match inputs
         bool match = true;
         bool can_smelt = true;
         for (int j=0; j<recipe->reagent_num; j++)
         {
-            if (recipe->reagent[j] == smelter_input_types[j])
+            GS_ASSERT(recipe->reagent[j] != NULL_ITEM_TYPE);
+            if (recipe->reagent[j] == input_types[j])
             {   // check for reagent counts
-                if (recipe->reagent_count[j] > smelter_input_totals[j]) can_smelt = false;
+                if (recipe->reagent_count[j] > input_stacks[j]) can_smelt = false;
             }
             else
             {

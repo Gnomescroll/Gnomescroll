@@ -295,6 +295,25 @@ void ItemContainerSmelter::remove_item(int slot)
 }
 
 #if DC_SERVER
+void ItemContainerSmelter::burn_fuel()
+{
+    GS_ASSERT(this->fuel_type != NULL_ITEM_TYPE);
+    GS_ASSERT(this->fuel > 0);
+    if (this->fuel <= 0) return;
+    // TODO -- use dat
+    int inc = 1;
+    this->fuel -= inc;
+    GS_ASSERT(this->fuel >= 0);
+    if (this->fuel <= 0) this->fuel = 0;
+    if (this->owner != NO_AGENT)
+    {
+        smelter_fuel_StoC msg;
+        msg.container_id = this->id;
+        msg.fuel = this->fuel;
+        msg.sendToClient(this->owner);
+    }
+}
+
 void ItemContainerSmelter::fill_fuel(int fuel_type)
 {
     GS_ASSERT(this->fuel <= 0);
@@ -333,9 +352,19 @@ void ItemContainerSmelter::begin_smelting(int recipe_id)
 
 void ItemContainerSmelter::tick_smelting()
 {
-    // TDO -- inc amt and ticks between inc from dat
+    // TODO -- inc amt and ticks between inc from dat
     int inc = 1;
     this->progress += inc;
+    if (this->owner != NO_AGENT)
+    //if (this->progress == 0 && this->owner != NO_AGENT)
+    //{   // send starter packet
+    {
+        smelter_progress_StoC msg;
+        msg.container_id = this->id;
+        msg.progress = this->progress;
+        msg.sendToClient(this->owner);
+    }
+    if (this->progress > 100) this->progress = 100;
 }
 
 void ItemContainerSmelter::reset_smelting()
@@ -348,6 +377,28 @@ void ItemContainerSmelter::reset_smelting()
         msg.sendToClient(this->owner);
     }
     this->progress = 0;
+    this->recipe_id = NULL_SMELTING_RECIPE;
+}
+
+bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, int n_outputs)
+{
+    GS_ASSERT(n_outputs > 0);
+    if (n_outputs <= 0) return false;
+    GS_ASSERT(n_outputs <= product_xdim*product_ydim);
+    if (n_outputs > product_xdim*product_ydim) return false;
+
+    for (int i=0; i<n_outputs; i++)
+    {
+        GS_ASSERT(outputs[i] != NULL_ITEM_TYPE);
+        GS_ASSERT(output_stacks[i] >= 1);
+        int slot = this->convert_product_slot(i);
+        ItemID slot_item = this->get_item(slot);
+        if (slot_item == NULL_ITEM) continue;
+        int slot_item_type = Item::get_item_type(slot_item);
+        if (outputs[i] != slot_item_type) return false;   // items won't stack
+        if (output_stacks[i] >= Item::get_stack_space(slot_item)) return false; // no room to stack
+    }
+    return true;
 }
 #endif
 

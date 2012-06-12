@@ -19,7 +19,7 @@ void init()
     // generate floor map
     //_floor(512,512,0,32,1);
 
-    if(0)
+    if (0)
     {
         MapGen::init();
         MapRecipes::simple_map();
@@ -98,6 +98,7 @@ void tick()
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 8);
 
     ItemContainer::digest_nanite_food();
+    ItemContainer::update_smelters();
     Toolbelt::update_toolbelt_items();
     Item::item_list->tick();
     Item::item_list->verify_items();
