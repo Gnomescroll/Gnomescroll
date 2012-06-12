@@ -319,7 +319,7 @@ int init_c_lib()
     //t_map::init_block_item_sheet();
     Item::load_crafting_dat();
 
-    init_voronoi_noise_maps();
+    //init_voronoi_noise_maps();
     
     t_gen::noise_map_test();
 

@@ -59,7 +59,8 @@ void save_png(const char* filename, float* in, int xres, int yres)
         temp_row = (void *)malloc(4*xres);
         if(NULL == temp_row)
         {
-            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+            printf("save_screenshot: not enough memory for surface inversion \n");
+            return;
         }
         int pitch = xres * 4;
         int h = yres;
@@ -93,6 +94,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
 #endif
 }
 
+__attribute((always_inline, optimize("-O3")))
 void save_perlin(const char* filename, float* in, int xres, int yres)
 {
 //#if DC_CLIENT

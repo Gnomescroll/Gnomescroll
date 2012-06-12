@@ -1,5 +1,9 @@
 #pragma once
 
+//#pragma GCC push_options
+//#pragma GCC pop_options
+//#pragma GCC optimize ("O3")
+
 #include <t_gen/twister.hpp>
 #include <t_gen/noise_map2.hpp>
 
@@ -59,6 +63,7 @@ static inline int fastfloor(float x)
     return x>=0 ? (int)x : (int)x-1;
 }
 
+__attribute__((optimize("-O3")))
 inline int get_gradient(int x, int y, int z)
 {
     x = x % xsize; //replace with bitmask
@@ -71,6 +76,7 @@ inline int get_gradient(int x, int y, int z)
 public:
 
 // Classic Perlin noise, 3D version
+__attribute__((optimize("-O3")))
 float base(float x, float y, float z) 
 {
     x *= xsize;
@@ -164,6 +170,7 @@ class PerlinOctave3D
         if(cache != NULL) delete[] cache;
 	}
 
+    __attribute__((optimize("-O3")))
 	float sample(float x, float y, float z, float persistance)
 	{	
 		float p = 1.0;
@@ -187,7 +194,8 @@ class PerlinOctave3D
         }
 
     }
-    
+
+    __attribute__((optimize("-O3")))
     void populate_cache(float persistance)
     {
         if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
@@ -221,6 +229,8 @@ class MapGenerator1
     PerlinOctave2D* erosion2D;
 
     PerlinOctave2D* height2D;
+    PerlinOctave2D* ridge2D;
+
     PerlinOctave2D* roughness2D;
 
     static const int XMAX = 512/4;
@@ -241,17 +251,20 @@ class MapGenerator1
         erosion3D = new PerlinOctave3D(4);
 
         height2D = new PerlinOctave2D(4);
+        ridge2D = new PerlinOctave2D(4);
+
         roughness2D = new PerlinOctave2D(4);
     }
 
 
-    void set_persistance(float p1, float p2, float p3, float p4)
+    void set_persistance(float p1, float p2, float p3, float p4, float p5)
     {
         erosion2D->set_persistance(p2);
         erosion3D->set_persistance(p1);
 
         height2D->set_persistance(p3);
-        roughness2D->set_persistance(p4);
+        ridge2D->set_persistance(p4);
+        roughness2D->set_persistance(p5);
     }
 
     void save_noisemaps()
@@ -259,6 +272,8 @@ class MapGenerator1
         height2D->save_octaves2(8,"n_height");
     }
 
+
+    __attribute__((optimize("-O3")))
     void populate_cache()
     {
         if(cache == NULL) cache = new float[XMAX*YMAX*ZMAX];
@@ -271,7 +286,9 @@ class MapGenerator1
         }
     }
 
-    float calc(int i, int j, int k)
+
+    __attribute((always_inline, optimize("-O3")))
+    inline float calc(int i, int j, int k)
     {        
         float x = i*4;
         float y = j*4;
@@ -312,7 +329,9 @@ class MapGenerator1
         return v;
     }
 
-    float get_cache(int i, int j, int k)
+
+    __attribute__((optimize("-O3")))
+    inline float get_cache(int i, int j, int k)
     {
         i &= 127;
         j &= 127;
@@ -320,6 +339,7 @@ class MapGenerator1
         return cache[k*XYMAX + j*XMAX + i];
     }
 
+    __attribute__((optimize("-O3")))
     void generate_map(int tile_id)
     {
 
@@ -443,7 +463,7 @@ void test_octave_3d_map_gen(int tile_id)
     class MapGenerator1 mg;
     ti[i++] = _GET_MS_TIME();
 
-    mg.set_persistance(0.5, 0.5, 0.5, 0.5);
+    mg.set_persistance(0.5, 0.5, 0.5, 0.5, 0.5);
     ti[i++] = _GET_MS_TIME();
 
     mg.populate_cache();
