@@ -515,6 +515,9 @@ DONE
 fix server crash point -- entity system (core reason, components running out, not resolved)
 DONE
 
+smelter
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -572,7 +575,5 @@ put spawners back in
 prevent digging 0 layer
 
 == SMELTER ==
-load fuel/progress rate from dat
-integrate dat into predicted UI
 
 ==BUGZ==
