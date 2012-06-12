@@ -93,8 +93,9 @@ def configure(conf, add_flags=[], rm_flags=[]):
         #cxxflags += ['-D__OBJC__']  # disable "#define interface _COM_interface" in windows header basetyps.h
         #cxxflags += ['-D_OBJC_NO_COM_']  # disable "#define interface _COM_interface" in windows header basetyps.h
     else:
-        cxxflags = ['-ggdb', '-fPIC'] # '-lefence'
+        cxxflags = ['-ggdb'] # , '-fPIC'] # '-lefence'
 
+    # -fPIC may hurt optimization
     #    #'-Wl', '--export-dynamic'  to export symbols from exe to shared libaries
     if OS == 'Windows':
         conf.env.append_value("LINKFLAGS", "-lmingw32")
