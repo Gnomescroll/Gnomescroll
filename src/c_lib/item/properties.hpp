@@ -14,6 +14,7 @@ extern class NaniteStoreItem* nanite_store_item_array;
 
 extern class NaniteStoreItem* nanite_store_item_array;
 extern class CraftingRecipe* crafting_recipe_array;
+extern class SmeltingRecipe* smelting_recipe_array;
 
 extern ItemContainerType container_block_types[t_map::MAX_CUBES]; // maps block value -> container type
 
@@ -64,6 +65,8 @@ int get_nanite_store_item(int level, int xslot, int yslot);
 int get_nanite_store_item(int level, int xslot, int yslot, int* cost);
 
 bool is_fuel(int item_type);
+
+bool is_smelter(ItemContainerType type);
 
 class CraftingRecipe* get_craft_recipe(int recipe_id);
 

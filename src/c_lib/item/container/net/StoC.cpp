@@ -192,6 +192,26 @@ inline void unlock_container_StoC::handle()
     container->unlock(agent_id);
 }
 
+inline void smelter_fuel_StoC::handle()
+{
+    ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+    if (!Item::is_smelter(container->type)) return ;
+    container->fuel = fuel;
+}
+
+inline void smelter_progress_StoC::handle()
+{
+    ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+    if (!Item::is_smelter(container->type)) return ;
+    container->progress = progress;
+}
+
 } // ItemContainer
 #endif
 
@@ -218,6 +238,9 @@ inline void close_container_StoC::handle() {}
 
 inline void lock_container_StoC::handle() {}
 inline void unlock_container_StoC::handle() {}
+
+inline void smelter_fuel_StoC::handle() {}
+inline void smelter_progress_StoC::handle() {}
 
 } // ItemContainer
 

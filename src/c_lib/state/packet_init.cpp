@@ -234,6 +234,10 @@ void RegisterMessages()
     // container blocks
     ItemContainer::create_container_block_CtoS::register_server_packet();
 
+    // smelter
+    ItemContainer::smelter_fuel_StoC::register_client_packet();
+    ItemContainer::smelter_progress_StoC::register_client_packet();
+
     // toolbelt actions (to server)
     Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();
     Toolbelt::toolbelt_begin_alpha_action_CtoS::register_server_packet();

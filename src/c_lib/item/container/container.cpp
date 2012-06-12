@@ -294,4 +294,61 @@ void ItemContainerSmelter::remove_item(int slot)
     this->slot_count--;
 }
 
+#if DC_SERVER
+void ItemContainerSmelter::fill_fuel(int fuel_type)
+{
+    GS_ASSERT(this->fuel <= 0);
+    this->fuel = 100;
+    this->fuel_type = fuel_type;
+    if (this->owner != NO_AGENT)
+    {
+        smelter_fuel_StoC msg;
+        msg.container_id = this->id;
+        msg.fuel = this->fuel;
+        msg.sendToClient(this->owner);
+    }
+}
+
+void ItemContainerSmelter::begin_smelting(int recipe_id)
+{
+    GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+    GS_ASSERT(this->recipe_id == NULL_SMELTING_RECIPE);
+    GS_ASSERT(this->progress <= 0);
+    this->recipe_id = recipe_id;
+
+    // TODO -- get inc amt and ticks between inc
+    // Needs dat/properties
+    
+    int inc = 1;
+    this->progress += inc;
+
+    if (this->owner != NO_AGENT)
+    {
+        smelter_progress_StoC msg;
+        msg.container_id = this->id;
+        msg.progress = this->progress;
+        msg.sendToClient(this->owner);
+    }
+}
+
+void ItemContainerSmelter::tick_smelting()
+{
+    // TDO -- inc amt and ticks between inc from dat
+    int inc = 1;
+    this->progress += inc;
+}
+
+void ItemContainerSmelter::reset_smelting()
+{
+    if (this->progress != 0 && this->owner != NO_AGENT)
+    {
+        smelter_progress_StoC msg;
+        msg.container_id = this->id;
+        msg.progress = 0;
+        msg.sendToClient(this->owner);
+    }
+    this->progress = 0;
+}
+#endif
+
 }   // ItemContainer

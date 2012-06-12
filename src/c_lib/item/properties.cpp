@@ -18,6 +18,7 @@ ItemGroup group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
 class NaniteStoreItem* nanite_store_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
+class SmeltingRecipe* smelting_recipe_array = NULL;
 
 ItemContainerType container_block_types[t_map::MAX_CUBES];    // maps block value -> container type
 
@@ -42,13 +43,15 @@ void init_properties()
     nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
 
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
+    smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
 }
 
 void tear_down_properties()
 {
     if (item_attribute_array    != NULL) delete[] item_attribute_array;
     if (nanite_store_item_array != NULL) delete[] nanite_store_item_array;
-    if (nanite_store_item_array != NULL) delete[] crafting_recipe_array;
+    if (crafting_recipe_array != NULL) delete[] crafting_recipe_array;
+    if (smelting_recipe_array != NULL) delete[] smelting_recipe_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)
@@ -272,9 +275,16 @@ bool is_fuel(int item_type)
     return attr->fuel;
 }
 
+bool is_smelter(ItemContainerType type)
+{
+    if (type == CONTAINER_TYPE_SMELTER_ONE) return true;
+    return false;
+}
+
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
     GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);
+    if (recipe_id < 0 || recipe_id >= crafting_recipe_count) return NULL;
     return &crafting_recipe_array[recipe_id];
 }
 

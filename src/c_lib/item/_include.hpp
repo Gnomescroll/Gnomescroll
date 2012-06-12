@@ -17,6 +17,7 @@
 #include <item/config/item_dat.hpp>
 #include <item/config/nanite_store_dat.hpp>
 #include <item/config/crafting_dat.hpp>
+#include <item/config/smelting_dat.hpp>
 
 
 // Client

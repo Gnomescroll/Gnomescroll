@@ -73,4 +73,37 @@ class CraftingRecipe
     }
 };
 
+
+class SmeltingRecipe
+{
+    public:
+
+    int id;
+    int output_num;
+    int output[SMELTER_OUTPUTS_MAX]; //item type
+    int output_stack[SMELTER_OUTPUTS_MAX];
+    int reagent_num;
+    int reagent[SMELTER_INPUTS_MAX];
+    int reagent_count[SMELTER_INPUTS_MAX];
+
+    SmeltingRecipe()
+    {
+        this->init();
+    }
+
+    void init()
+    {
+        this->id = NULL_SMELTING_RECIPE;
+        for (int i=0; i<SMELTER_OUTPUTS_MAX; this->output[i++] = NULL_ITEM_TYPE);
+        for (int i=0; i<SMELTER_OUTPUTS_MAX; this->output_stack[i++] = 1);
+        this->output_num = 0;
+        this->reagent_num = 0;
+        for(int i=0; i<SMELTER_INPUTS_MAX; i++)
+        {
+            this->reagent[i] = NULL_ITEM_TYPE;
+            this->reagent_count[i] = 1;
+        }
+    }
+};
+
 }

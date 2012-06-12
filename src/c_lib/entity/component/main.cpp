@@ -148,6 +148,8 @@ Component* get_switch(ComponentType type)
 
 void release_switch(Component* component)
 {
+    GS_ASSERT(component != NULL);
+    if (component == NULL) return;
     switch (component->type)
     {
         case COMPONENT_POSITION:

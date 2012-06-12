@@ -186,4 +186,32 @@ class unlock_container_StoC: public FixedSizeReliableNetPacketToClient<unlock_co
         inline void handle();
 };
 
+class smelter_fuel_StoC: public FixedSizeReliableNetPacketToClient<smelter_fuel_StoC>
+{
+    public:
+        uint16_t container_id;
+        uint8_t fuel;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u8(&fuel, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class smelter_progress_StoC: public FixedSizeReliableNetPacketToClient<smelter_progress_StoC>
+{
+    public:
+        uint16_t container_id;
+        uint8_t progress;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u8(&progress, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 }   // ItemContainer

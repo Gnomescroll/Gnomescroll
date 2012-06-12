@@ -85,6 +85,8 @@ ContainerActionType auto_add_free_item_to_container(int client_id, int container
 // definition in server.hpp
 void send_container_remove(int client_id, int container_id, int slot);
 
+void update_smelters();
+
 // tests
 void test_container_list_capacity();
 
