@@ -501,8 +501,9 @@ void send_smelter_fuel(int container_id)
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
 
     smelter_fuel_StoC msg;
-    msg.fuel = smelter->fuel;
     msg.container_id = smelter->id;
+    msg.fuel = smelter->fuel;
+    msg.fuel_type = smelter->fuel_type;
     msg.sendToClient(smelter->owner);
 }
 

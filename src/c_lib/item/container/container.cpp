@@ -301,7 +301,6 @@ void ItemContainerSmelter::burn_fuel()
     GS_ASSERT(this->fuel > 0.0f);
     if (this->fuel <= 0.0f) return;
     this->fuel -= this->burn_rate;
-    GS_ASSERT(this->fuel >= 0.0f);
     if (this->fuel <= 0.0f)
         this->reset_fuel();
 }

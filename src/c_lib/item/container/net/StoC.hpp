@@ -191,11 +191,13 @@ class smelter_fuel_StoC: public FixedSizeReliableNetPacketToClient<smelter_fuel_
     public:
         uint16_t container_id;
         float fuel; // can be compressed
+        uint8_t fuel_type;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&container_id, buff, buff_n, pack);
             pack_float(&fuel, buff, buff_n, pack);
+            pack_u8(&fuel_type, buff, buff_n, pack);
         }
         inline void handle();
 };

@@ -255,11 +255,10 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
     public:
 
         float fuel;
-        int burn_rate;  // cache value
+        int fuel_type;
         float progress;
 
         void tick_fuel();
-        void reset_fuel();
         void tick_progress();
 
         bool is_smelter_output(int slot)
@@ -330,7 +329,7 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
 
     explicit ItemContainerSmelterUI(int id)
     : ItemContainerUIInterface(id),
-    fuel(0.0f), burn_rate(1.0f/30.0f), progress(0.0f)
+    fuel(0.0f), fuel_type(NULL_ITEM_TYPE), progress(0.0f)
     {}
 };
 

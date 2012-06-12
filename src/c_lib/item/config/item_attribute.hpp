@@ -88,7 +88,7 @@ class ItemAttribute
         container_type = CONTAINER_TYPE_NONE;
         gas = false;
         fuel = false;
-        fuel_burn_rate = 30 * 3;
+        fuel_burn_rate = 30;
     }
 };
 

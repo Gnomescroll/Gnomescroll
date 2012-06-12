@@ -10,30 +10,14 @@ namespace ItemContainer
 void ItemContainerSmelterUI::tick_fuel()
 {
     if (fuel <= 0.0f) return;
-    if (this->get_fuel() != NULL_ITEM_TYPE)
-    {
-        // only set it if the type hasnt gone blank
-        // this way its saved even after the last one is remove
-        // will need to send the type in a packet later, once multiple fuels are added TODO
-        this->burn_rate = 1.0f / ((float)Item::get_fuel_burn_rate(this->get_fuel()));
-    }
-    GS_ASSERT(this->burn_rate > 0.0f);
-    if (this->burn_rate <= 0.0f) this->burn_rate = 1.0f/30.0f;
-    fuel -= this->burn_rate;
+    float burn_rate;
+    if (this->fuel_type == NULL_ITEM_TYPE) burn_rate = 1.0f/30.0f;
+    else burn_rate = 1.0f / ((float)Item::get_fuel_burn_rate(this->fuel_type));
+    GS_ASSERT(burn_rate > 0.0f);
+    if (burn_rate <= 0.0f) burn_rate = 1.0f/30.0f;
+    fuel -= burn_rate;
     if (fuel > 1.0f) fuel = 1.0f;
-    if (fuel <= 0.0f)
-    {
-        fuel = 0.0f;
-        this->reset_fuel();
-    }
-}
-
-void ItemContainerSmelterUI::reset_fuel()
-{
     if (fuel < 0.0f) fuel = 0.0f;
-    if (fuel <= 0.0f) return;
-    this->fuel = 0.0f;
-    this->burn_rate = 1.0f/30.0f;
 }
 
 void ItemContainerSmelterUI::tick_progress()

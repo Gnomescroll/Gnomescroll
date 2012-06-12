@@ -288,7 +288,7 @@ int get_fuel_burn_rate(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
+    if (attr == NULL) return 30;
     return attr->fuel_burn_rate;
 }
 

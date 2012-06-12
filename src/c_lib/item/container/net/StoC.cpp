@@ -200,6 +200,7 @@ inline void smelter_fuel_StoC::handle()
     GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
     if (!Item::is_smelter(container->type)) return;
     container->fuel = fuel;
+    container->fuel_type = fuel_type;
 
     // update UI
     ItemContainerSmelterUI* container_ui = (ItemContainerSmelterUI*)get_container_ui(container_id);
@@ -209,8 +210,8 @@ inline void smelter_fuel_StoC::handle()
     GS_ASSERT(fuel >= 0.0f && fuel <= 1.0f);
     if (fuel < 0.0f) fuel = 0.0f;
     if (fuel > 1.0f) fuel = 1.0f;
-    if (fuel == 0.0f) container_ui->reset_fuel();
-    else container_ui->fuel = fuel;
+    container_ui->fuel = fuel;
+    container_ui->fuel_type = fuel_type;
     
 }
 
