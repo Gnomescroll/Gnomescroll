@@ -302,6 +302,12 @@ class ItemContainerSmelter: public ItemContainerInterface
 {
     public:
 
+        int fuel;   // 0 - 100 , decrement N every M ticks
+        int fuel_type;  // item type
+
+        int smelting_progress;  // 0 - 100 , increment N every M ticks
+        int smelter_output_recipe;  // recipe identifier
+
         bool is_smelter_output(int slot)
         {
             int xslot = (slot-1) % this->xdim;  // -1 to offset fuel slot
@@ -352,7 +358,11 @@ class ItemContainerSmelter: public ItemContainerInterface
         }
 
     ItemContainerSmelter(ItemContainerType type, int id)
-    : ItemContainerInterface(type, id)
+    : ItemContainerInterface(type, id),
+    fuel(0.0f),
+    fuel_type(NULL_ITEM_TYPE),
+    smelting_progress(0.0f),
+    smelter_output_recipe(NULL_CRAFTING_RECIPE)
     {}
 };
 

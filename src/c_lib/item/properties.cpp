@@ -275,6 +275,7 @@ bool is_fuel(int item_type)
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
     GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);
+    if (recipe_id < 0 || recipe_id >= crafting_recipe_count) return NULL;
     return &crafting_recipe_array[recipe_id];
 }
 
