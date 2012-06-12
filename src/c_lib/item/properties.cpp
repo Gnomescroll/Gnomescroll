@@ -283,6 +283,25 @@ bool is_smelter(ItemContainerType type)
     return false;
 }
 
+// total ticks to burn
+int get_fuel_burn_rate(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return false;
+    return attr->fuel_burn_rate;
+}
+
+int get_smelting_recipe_creation_time(int recipe_id)
+{
+    GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+    if (recipe_id == NULL_SMELTING_RECIPE) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
+    class SmeltingRecipe* recipe = get_smelting_recipe(recipe_id);
+    GS_ASSERT(recipe != NULL);
+    if (recipe == NULL) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
+    return recipe->creation_time;
+}
+
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
     GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);

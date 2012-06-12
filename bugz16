@@ -572,68 +572,7 @@ put spawners back in
 prevent digging 0 layer
 
 == SMELTER ==
-Fuel duration property on item
-fuel status property on container
-
-packet for fuel status
-    -- set_smelter_fuel_StoC
-        container_id
-        fuel (0-100)
-    burn rate can be predicted
-    send this when it is opened,
-    and send it when it gets filled
-        
-Smelting timer on container
-Predicted smelting on container
-
-calculate outputs -- should be similar to craft recipe
-Rendering fuel/progress state
-
---might want to copy data to container ui
-
-New properties:
-    Fuel
-    Fuel type (need to cache because we destroy og item)
-    Smelting Progress
-    Smelting Rate (should just cache because recipe lookup is expensive)
-
-2 packets:
-    set_smelter_fuel_StoC
-        -- send on container open, if non zero
-        -- send on non-decaying change (ie filling up)
-    set_smelter_progress_StoC
-        -- send on container open, if non zero
-        -- send on first increment
-        -- send on forced change (ie resetting)
-
-Server:
-    when fuel item is added to fuel slot
-        if fuel empty:
-            decrement fuel item
-            fill fuel meter
-
-    decrement fuel every N ticks
-
-    if fuel non empty and fuel progress 0
-        get output for inputs
-    if output non null
-        cache it
-        begin progress
-
-    if progress max
-        consume inputs
-        place output(s) in output slots
-        reset progress
-
-    if expected output changes (ie inputs cause change in recipe)
-        clear meter
-
-
-Client:
-    if fuel is non zero, decrement accoring to dat info for fuel slot
-    if smelter progress is non zero, increment progress according to the dat info
-
-
-DONT DECAY GAS IF IN FUEL SLOT
+load fuel/progress rate from dat
+integrate dat into predicted UI
 
 ==BUGZ==

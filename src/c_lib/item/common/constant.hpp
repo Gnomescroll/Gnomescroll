@@ -52,6 +52,8 @@ const int MAX_SMELTING_RECIPE = 256;
 const int SMELTER_INPUTS_MAX = 4;
 const int SMELTER_OUTPUTS_MAX = 2;
 
+const int DEFAULT_SMELTING_RECIPE_CREATION_TIME = 30;   // 1 second
+
 const float AGENT_CONTAINER_REACH = 4.0f;
 
 const float NULL_FIRING_RANGE = 0.0f;

@@ -85,7 +85,8 @@ class SmeltingRecipe
     int reagent_num;
     int reagent[SMELTER_INPUTS_MAX];
     int reagent_count[SMELTER_INPUTS_MAX];
-
+    int creation_time;  // total ticks to synthesize
+    
     bool available;
 
     SmeltingRecipe()
@@ -106,6 +107,7 @@ class SmeltingRecipe
             this->reagent_count[i] = 1;
         }
         this->available = true;
+        this->creation_time = DEFAULT_SMELTING_RECIPE_CREATION_TIME;
     }
 };
 

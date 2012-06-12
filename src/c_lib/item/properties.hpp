@@ -65,8 +65,10 @@ int get_nanite_store_item(int level, int xslot, int yslot);
 int get_nanite_store_item(int level, int xslot, int yslot, int* cost);
 
 bool is_fuel(int item_type);
-
 bool is_smelter(ItemContainerType type);
+
+int get_fuel_burn_rate(int item_type);
+int get_smelting_recipe_creation_time(int recipe_id);
 
 class CraftingRecipe* get_craft_recipe(int recipe_id);
 
@@ -80,7 +82,6 @@ class SmeltingRecipe* get_selected_smelting_recipe(int container_id);
 int* get_selected_smelting_recipe_types(int container_id, int* recipe_count);
 int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available);
 int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count);
-
 
 bool container_type_is_block(ItemContainerType type);
 

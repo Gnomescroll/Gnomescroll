@@ -200,6 +200,7 @@ namespace Item
 
 int smelting_recipe_count = 0;
 int _current_smelting_reagent_id = 0;
+int _current_smelting_recipe_creation_time = 30;
 
 class SmeltingRecipe _sr;
 
@@ -265,15 +266,23 @@ void set_smelting_reagent(const char* item_name, int quantity)
     _current_smelting_reagent_id++;
 }
 
+// in total ticks to synthesize
+void set_smelting_creation_time(int creation_time)
+{
+    _current_smelting_recipe_creation_time = creation_time;
+}
+
 void end_smelting_recipe()
 {
     GS_ASSERT(smelting_recipe_count <= MAX_SMELTING_RECIPE);
     _sr.reagent_num = _current_smelting_reagent_id;
     _sr.id = smelting_recipe_count;
+    _sr.creation_time = _current_smelting_recipe_creation_time;
     smelting_recipe_array[smelting_recipe_count] = _sr;
     _sr.init();
     smelting_recipe_count++;
     _current_smelting_reagent_id = 0;
+    _current_smelting_recipe_creation_time = 30;
 }
 
 }   // Item

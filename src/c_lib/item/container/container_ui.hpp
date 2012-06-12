@@ -254,10 +254,25 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
 {
     public:
 
+        float fuel;
+        int burn_rate;  // cache value
+        float progress;
+
+        void tick_fuel();
+        void reset_fuel();
+        void tick_progress();
+
         bool is_smelter_output(int slot)
         {
             int xslot = (slot-1) % this->xdim;  // -1 to offset fuel slot
             return (xslot == this->xdim - 1);   // in last column
+        }
+
+        int get_fuel()
+        {
+            GS_ASSERT(this->slot_max > 0);
+            if (this->slot_max <= 0) return NULL_ITEM_TYPE;
+            return this->slot_type[0];
         }
 
         bool can_insert_item(int slot, int item_type)
@@ -314,7 +329,8 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
         }
 
     explicit ItemContainerSmelterUI(int id)
-    : ItemContainerUIInterface(id)
+    : ItemContainerUIInterface(id),
+    fuel(0.0f), burn_rate(1.0f/30.0f), progress(0.0f)
     {}
 };
 

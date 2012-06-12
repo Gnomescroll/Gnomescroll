@@ -306,12 +306,14 @@ class ItemContainerSmelter: public ItemContainerInterface
         static const int product_ydim = 2;
         static const int input_xdim = 2;
         
-        int fuel;   // 0 - 100 , decrement N every M ticks
+        float fuel;       // 0.0f - 1.0f
         int fuel_type;  // item type
-
-        int progress;  // 0 - 100 , increment N every M ticks
+        float burn_rate;  // for item type
+        
         int recipe_id;  // recipe identifier
-
+        float progress;   // 0.0f - 1.0f
+        float progress_rate;  // for recipe type
+        
         bool is_output_slot(int slot)
         {   // output slot is if xslot == xdim-1;
             int xslot = slot % (this->xdim);
@@ -332,6 +334,7 @@ class ItemContainerSmelter: public ItemContainerInterface
 
         #if DC_SERVER
         void burn_fuel();
+        void reset_fuel();
         void fill_fuel(int fuel_type);
         void begin_smelting(int recipe_id);
         void tick_smelting();
@@ -478,8 +481,10 @@ class ItemContainerSmelter: public ItemContainerInterface
     : ItemContainerInterface(type, id),
     fuel(0.0f),
     fuel_type(NULL_ITEM_TYPE),
+    burn_rate(1.0f/30.0f),
+    recipe_id(NULL_SMELTING_RECIPE),
     progress(0.0f),
-    recipe_id(NULL_SMELTING_RECIPE)
+    progress_rate(1.0f/30.0f)
     {}
 };
 

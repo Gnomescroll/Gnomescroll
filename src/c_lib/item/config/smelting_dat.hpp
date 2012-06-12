@@ -22,10 +22,12 @@ void load_smelting_dat()
     def_smelting_recipe("copper_bar");
     set_smelting_reagent("copper_ore", 1);
     set_smelting_reagent("copper_ore", 1);
+    set_smelting_creation_time(30 * 3);
     end_smelting_recipe();
 
     def_smelting_recipe("copper_bar");
     set_smelting_reagent("copper_ore", 2);
+    set_smelting_creation_time(30 * 3);
     end_smelting_recipe();
 
     // TODO -- remove this recipe. its just to test multiple output
@@ -38,32 +40,38 @@ void load_smelting_dat()
     //set_smelting_reagent("copper_ore", 1);
     //end_smelting_recipe();
 
-    def_smelting_recipe("gallium_bar");
-    set_smelting_reagent("gallium_ore", 1);
-    set_smelting_reagent("gallium_ore", 1);
-    end_smelting_recipe();
-
-    def_smelting_recipe("gallium_bar");
-    set_smelting_reagent("gallium_ore", 2);
-    end_smelting_recipe();
-
     def_smelting_recipe("iron_bar");
     set_smelting_reagent("iron_ore", 1);
     set_smelting_reagent("iron_ore", 1);
+    set_smelting_creation_time(30 * 4);
     end_smelting_recipe();
     
     def_smelting_recipe("iron_bar");
     set_smelting_reagent("iron_ore", 2);
+    set_smelting_creation_time(30 * 4);
     end_smelting_recipe();
     
+    def_smelting_recipe("gallium_bar");
+    set_smelting_reagent("gallium_ore", 1);
+    set_smelting_reagent("gallium_ore", 1);
+    set_smelting_creation_time(30 * 5);
+    end_smelting_recipe();
+
+    def_smelting_recipe("gallium_bar");
+    set_smelting_reagent("gallium_ore", 2);
+    set_smelting_creation_time(30 * 5);
+    end_smelting_recipe();
+
     def_smelting_recipe("iridium_bar");
     set_smelting_reagent("iridium_ore", 1);
     set_smelting_reagent("iridium_ore", 1);
+    set_smelting_creation_time(30 * 6);
     end_smelting_recipe();
 
     def_smelting_recipe("iridium_bar");
     set_smelting_reagent("iridium_ore", 2);
-    end_smelting_recipe();    
+    set_smelting_creation_time(30 * 6);
+    end_smelting_recipe();
 }
 
 }   // Item

@@ -190,12 +190,12 @@ class smelter_fuel_StoC: public FixedSizeReliableNetPacketToClient<smelter_fuel_
 {
     public:
         uint16_t container_id;
-        uint8_t fuel;
+        float fuel; // can be compressed
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&container_id, buff, buff_n, pack);
-            pack_u8(&fuel, buff, buff_n, pack);
+            pack_float(&fuel, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -204,12 +204,12 @@ class smelter_progress_StoC: public FixedSizeReliableNetPacketToClient<smelter_p
 {
     public:
         uint16_t container_id;
-        uint8_t progress;
+        float progress; // can be compressed
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&container_id, buff, buff_n, pack);
-            pack_u8(&progress, buff, buff_n, pack);
+            pack_float(&progress, buff, buff_n, pack);
         }
         inline void handle();
 };

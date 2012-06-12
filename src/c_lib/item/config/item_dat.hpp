@@ -269,6 +269,7 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"methane_ice");
     s.gas = true;
     s.fuel = true;
+    s.fuel_burn_rate = 30 * 30; // 30 seconds
 
     item_def(51, IG_PLACER, "smelter_1");
     iso_block_sprite_def("smelter_1");

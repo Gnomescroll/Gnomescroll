@@ -254,8 +254,8 @@ void SmelterUI::draw()
     ItemContainer::ItemContainerUIInterface* container_ui = ItemContainer::get_container_ui(this->container_id);
     GS_ASSERT(container_ui != NULL);
     if (container_ui == NULL) return;
-    ItemContainer::ItemContainerSmelter* smelter = (ItemContainer::ItemContainerSmelter*)ItemContainer::get_container(this->container_id);
-    GS_ASSERT(smelter != NULL);
+    GS_ASSERT(Item::is_smelter(container_ui->type));
+    ItemContainer::ItemContainerSmelterUI* smelter = (ItemContainer::ItemContainerSmelterUI*)container_ui;
     
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
@@ -297,10 +297,8 @@ void SmelterUI::draw()
 
     if (smelter != NULL)
     {
-        float fuel = ((float)smelter->fuel) / 100.0f;
-        float progress = ((float)smelter->progress) / 100.0f;
-        this->draw_meter(xoff + 43.0f, yoff - 2.0f, 195.0f, 0.0f, 9.0f, 70.0f, fuel); // fuel
-        this->draw_meter(xoff + 60.0f, yoff - 2.0f, 205.0f, 0.0f, 9.0f, 70.0f, progress); // progress
+        this->draw_meter(xoff + 43.0f, yoff - 2.0f, 195.0f, 0.0f, 9.0f, 70.0f, smelter->fuel); // fuel
+        this->draw_meter(xoff + 60.0f, yoff - 2.0f, 205.0f, 0.0f, 9.0f, 70.0f, smelter->progress); // progress
     }
 
     glDisable(GL_TEXTURE_2D);
@@ -340,7 +338,7 @@ void SmelterUI::draw()
     glBegin(GL_QUADS);
 
     //draw items
-    for (int slot=0; slot<container_ui->slot_max; slot++)
+    for (int slot=0; slot<smelter->slot_max; slot++)
     {
         int item_type = slot_types[slot];
         if (item_type == NULL_ITEM_TYPE) continue;
@@ -385,7 +383,7 @@ void SmelterUI::draw()
     HudFont::set_texture();
 
     HudText::Text* text;
-    for (int slot=0; slot<container_ui->slot_max; slot++)
+    for (int slot=0; slot<smelter->slot_max; slot++)
     {
         int stack = slot_stacks[slot];
         if (stack <= 1) continue;

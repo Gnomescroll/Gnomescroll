@@ -118,6 +118,8 @@ int run()
             Objects::tick();    // update physics state
 
             if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
+
+            ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
         }
         Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
@@ -273,7 +275,6 @@ int run()
             Draw Hud
         */
 
-        
         if (Options::hud)
         {
             // switch to hud  projection

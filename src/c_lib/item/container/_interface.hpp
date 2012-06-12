@@ -22,6 +22,8 @@ class ItemContainerInterface* create_container(ItemContainerType type, int id);
 
 void update_container_ui_from_state();
 
+void update_smelter_ui();
+
 bool open_container(int container_id);
 bool close_container_silently();
 bool close_container();

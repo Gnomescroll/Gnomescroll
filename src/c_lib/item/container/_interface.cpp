@@ -176,6 +176,13 @@ void update_container_ui_from_state()
     }
 }
 
+void update_smelter_ui()
+{
+    if (smelter_ui == NULL) return;
+    smelter_ui->tick_fuel();
+    smelter_ui->tick_progress();
+}
+
 void open_inventory()
 {   // copy state to ui
     update_container_ui_from_state();
@@ -1236,7 +1243,7 @@ void update_smelters()
             // else
                 // assert fuel slot item is fuel
                 // consume 1 fuel stack
-                // set fuel_type to type,meter to 100
+                // set fuel_type to type,meter to 1.0f
                 // send fuel packet to subscribers
 
         // else
@@ -1253,7 +1260,7 @@ void update_smelters()
                     // reset progress
                     // send progress packet
 
-        // if progress is 100
+        // if progress is 1.0f
             // consume inputs according to recipe
             // create output(s), put in output slots
 
@@ -1313,7 +1320,7 @@ void update_smelters()
             GS_ASSERT(smelter->progress <= 0 || recipe != NULL);
         }
 
-        if (smelter->progress >= 100)
+        if (smelter->progress >= 1.0f)
         {
             GS_ASSERT(recipe != NULL);
             if (recipe == NULL) continue;

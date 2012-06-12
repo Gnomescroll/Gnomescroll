@@ -298,86 +298,64 @@ void ItemContainerSmelter::remove_item(int slot)
 void ItemContainerSmelter::burn_fuel()
 {
     GS_ASSERT(this->fuel_type != NULL_ITEM_TYPE);
-    GS_ASSERT(this->fuel > 0);
-    if (this->fuel <= 0) return;
-    // TODO -- use dat
-    int inc = 1;
-    this->fuel -= inc;
-    GS_ASSERT(this->fuel >= 0);
-    if (this->fuel <= 0) this->fuel = 0;
-    if (this->owner != NO_AGENT)
-    {
-        smelter_fuel_StoC msg;
-        msg.container_id = this->id;
-        msg.fuel = this->fuel;
-        msg.sendToClient(this->owner);
-    }
+    GS_ASSERT(this->fuel > 0.0f);
+    if (this->fuel <= 0.0f) return;
+    this->fuel -= this->burn_rate;
+    GS_ASSERT(this->fuel >= 0.0f);
+    if (this->fuel <= 0.0f)
+        this->reset_fuel();
 }
 
 void ItemContainerSmelter::fill_fuel(int fuel_type)
 {
-    GS_ASSERT(this->fuel <= 0);
-    this->fuel = 100;
+    GS_ASSERT(this->fuel <= 0.0f);
+    this->fuel = 1.0f;
     this->fuel_type = fuel_type;
-    if (this->owner != NO_AGENT)
-    {
-        smelter_fuel_StoC msg;
-        msg.container_id = this->id;
-        msg.fuel = this->fuel;
-        msg.sendToClient(this->owner);
-    }
+    this->burn_rate = 1.0f / ((float)Item::get_fuel_burn_rate(fuel_type));
+    GS_ASSERT(this->burn_rate > 0.0f);
+    if (this->burn_rate <= 0.0f) this->burn_rate = 1.0f/30.0f;
+    send_smelter_fuel(this->id);
+}
+
+void ItemContainerSmelter::reset_fuel()
+{
+    this->fuel_type = NULL_ITEM_TYPE;
+    this->burn_rate = 1.0f/30.0f;
+    if (this->fuel < 0.0f) this->fuel = 0.0f;
+    if (this->fuel == 0.0f) return;
+    this->fuel = 0.0f;
+    send_smelter_fuel(this->id);
 }
 
 void ItemContainerSmelter::begin_smelting(int recipe_id)
 {
     GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
     GS_ASSERT(this->recipe_id == NULL_SMELTING_RECIPE);
-    GS_ASSERT(this->progress <= 0);
+    GS_ASSERT(this->progress <= 0.0f);
     this->recipe_id = recipe_id;
-
-    // TODO -- get inc amt and ticks between inc
-    // Needs dat/properties
-    
-    int inc = 1;
-    this->progress += inc;
-
-    if (this->owner != NO_AGENT)
-    {
-        smelter_progress_StoC msg;
-        msg.container_id = this->id;
-        msg.progress = this->progress;
-        msg.sendToClient(this->owner);
-    }
+    this->progress_rate = 1.0f / ((float)Item::get_smelting_recipe_creation_time(recipe_id));
+    GS_ASSERT(this->progress_rate > 0.0f);
+    if (this->progress_rate <= 0.0f) this->progress_rate = 1.0f/30.0f;
+    this->progress += this->progress_rate;
+    send_smelter_progress(this->id);
 }
 
 void ItemContainerSmelter::tick_smelting()
 {
-    // TODO -- inc amt and ticks between inc from dat
-    int inc = 1;
-    this->progress += inc;
-    if (this->owner != NO_AGENT)
-    //if (this->progress == 0 && this->owner != NO_AGENT)
-    //{   // send starter packet
-    {
-        smelter_progress_StoC msg;
-        msg.container_id = this->id;
-        msg.progress = this->progress;
-        msg.sendToClient(this->owner);
-    }
-    if (this->progress > 100) this->progress = 100;
+    GS_ASSERT(this->recipe_id != NULL_SMELTING_RECIPE);
+    GS_ASSERT(this->progress > 0.0f); // should have incremented once in begin_smelting()
+    this->progress += this->progress_rate;
+    if (this->progress > 1.0f) this->progress = 1.0f;
 }
 
 void ItemContainerSmelter::reset_smelting()
 {
-    if (this->progress != 0 && this->owner != NO_AGENT)
-    {
-        smelter_progress_StoC msg;
-        msg.container_id = this->id;
-        msg.progress = 0;
-        msg.sendToClient(this->owner);
-    }
-    this->progress = 0;
     this->recipe_id = NULL_SMELTING_RECIPE;
+    this->progress_rate = 1.0f/30.0f;
+    if (this->progress < 0.0f) this->progress = 0.0f;
+    if (this->progress == 0.0f) return;
+    this->progress = 0.0f;
+    send_smelter_progress(this->id);
 }
 
 bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, int n_outputs)

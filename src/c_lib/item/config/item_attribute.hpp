@@ -56,6 +56,7 @@ class ItemAttribute
 
     bool gas;
     bool fuel;
+    int fuel_burn_rate; // in ticks
     
     ItemContainerType container_type;
 
@@ -87,6 +88,7 @@ class ItemAttribute
         container_type = CONTAINER_TYPE_NONE;
         gas = false;
         fuel = false;
+        fuel_burn_rate = 30 * 3;
     }
 };
 
