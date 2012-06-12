@@ -203,12 +203,22 @@ int _current_smelting_reagent_id = 0;
 
 class SmeltingRecipe _sr;
 
-void def_smelting_recipe(const char* item_name, int amount)
+void add_smelting_product(const char* item_name, int amount)
 {
     GS_ASSERT(_sr.output_num < SMELTER_OUTPUTS_MAX);
     _sr.output[_sr.output_num] = dat_get_item_type(item_name);
     _sr.output_stack[_sr.output_num] = amount;
-    _sr.output_num++;
+    _sr.output_num++;    
+}
+
+void add_smelting_product(const char* item_name)
+{
+    add_smelting_product(item_name, 1);
+}
+
+void def_smelting_recipe(const char* item_name, int amount)
+{
+    add_smelting_product(item_name, amount);
 }
 
 void def_smelting_recipe(const char* item_name)
