@@ -197,8 +197,8 @@ inline void smelter_fuel_StoC::handle()
     ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    GS_ASSERT(container->type == CONTAINER_TYPE_SMELTER_ONE);   // TODO -- multiple smelter types
-    if (container->type != CONTAINER_TYPE_SMELTER_ONE) return;  // undefined behaviour
+    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+    if (!Item::is_smelter(container->type)) return ;
     container->fuel = fuel;
 }
 
@@ -207,9 +207,9 @@ inline void smelter_progress_StoC::handle()
     ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    GS_ASSERT(container->type == CONTAINER_TYPE_SMELTER_ONE);   // TODO -- multiple smelter types
-    if (container->type != CONTAINER_TYPE_SMELTER_ONE) return;  // undefined behaviour
-    container->smelting_progress = progress;
+    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+    if (!Item::is_smelter(container->type)) return ;
+    container->progress = progress;
 }
 
 } // ItemContainer

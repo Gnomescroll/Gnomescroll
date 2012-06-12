@@ -587,6 +587,7 @@ Predicted smelting on container
 calculate outputs -- should be similar to craft recipe
 Rendering fuel/progress state
 
+--might want to copy data to container ui
 
 New properties:
     Fuel

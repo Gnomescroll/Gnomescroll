@@ -928,11 +928,12 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
 
     Item::CraftingRecipe* recipe = Item::get_selected_craft_recipe(container_id, craft_slot);
     if (recipe == NULL) return;
+    GS_ASSERT(recipe->output_num == 1);
 
     // hand is not empty and cannot stack the output
     ItemID hand_item = get_agent_hand(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    bool hand_can_stack_recipe = (Item::get_item_type(hand_item) == recipe->output && Item::get_stack_space(hand_item) >= 1);
+    bool hand_can_stack_recipe = (Item::get_item_type(hand_item) == recipe->output[0] && Item::get_stack_space(hand_item) >= 1);
     if (!hand_empty && !hand_can_stack_recipe) return;
         
     // remove reagents from container
@@ -944,9 +945,9 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     if (hand_empty)
     {
         // create new item of type
-        Item::Item* item = Item::create_item(recipe->output);
+        Item::Item* item = Item::create_item(recipe->output[0]);
         if (item == NULL) return;
-        item->stack_size = recipe->output_stack;
+        item->stack_size = recipe->output_stack[0];
         Item::send_item_create(agent->client_id, item->id);
         insert_item_in_hand(agent->id, item->id);
         send_hand_insert(agent->client_id, item->id);
@@ -957,7 +958,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         Item::Item* item = Item::get_item(hand_item);
         GS_ASSERT(item != NULL);
         if (item == NULL) return;
-        item->stack_size += recipe->output_stack;
+        item->stack_size += recipe->output_stack[0];
         Item::send_item_state(item->id);
         send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
     }
@@ -1218,6 +1219,103 @@ ContainerActionType auto_add_free_item_to_container(int client_id, int container
         return FULL_WORLD_TO_OCCUPIED_SLOT;
     }
     return CONTAINER_ACTION_NONE;
+}
+
+void update_smelters()
+{
+    for (int i=0; i<item_container_list->n_max; i++)
+    {
+        if (item_container_list->a[i] == NULL) continue;
+        ItemContainerInterface* container = item_container_list->a[i];
+        if (!Item::is_smelter(container->type)) continue;
+        ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+
+        // if fuel is 0
+            // if fuel slot is empty (or not fuel -- invalid state)
+                // reset progress
+                // send progress packet
+            // else
+                // assert fuel slot item is fuel
+                // consume 1 fuel stack
+                // set fuel_type to type,meter to 100
+                // send fuel packet to subscribers
+
+        // else
+            // look up recipe
+            // if progress is 0
+                // if recipe is non null
+                    // set recipe type
+                    // increment progress by amount prescribed by recipe
+                    // send progress packet
+            // else
+                // if recipe matches
+                    // increment progress by amount according to recipe
+                // else
+                    // reset progress
+                    // send progress packet
+
+        // if progress is 100
+            // consume inputs according to recipe
+            // create output(s), put in output slots
+
+        GS_ASSERT(smelter->fuel >= 0);
+        GS_ASSERT(smelter->progress >= 0);
+        GS_ASSERT(smelter->recipe_id != NULL_ITEM_TYPE || smelter->progress == 0)
+
+        Item::CraftingRecipe* recipe = NULL;
+        int recipe_id = NULL_CRAFTING_RECIPE;
+        
+        if (smelter->fuel <= 0)
+        {
+            ItemID fuel_item = smelter->get_fuel();
+            int fuel_item_type = NULL_ITEM_TYPE;
+            bool is_fuel = false;
+            if (fuel_item != NULL_ITEM)
+            {
+                fuel_item_type = Item::get_item_type(fuel_item);
+                is_fuel = Item::is_fuel(fuel_item_type);
+            }
+            GS_ASSERT(fuel_item_type == NULL_ITEM_TYPE || is_fuel);
+
+            if (fuel_item_type == NULL_ITEM_TYPE || !is_fuel)
+            {   // reset progress
+                smelter->reset_smelting();
+            }
+            else
+            {   // consume fuel item stack
+                int remaining = Item::consume_stack_item(fuel_item);
+                if (remaining > 0) Item::send_item_state(fuel_item);
+                smelter->fill_fuel(fuel_item_type);
+            }
+        }
+        else
+        {
+            // look up recipe
+            //recipe = ;
+            GS_ASSERT(recipe != NULL);
+            recipe_id = NULL_CRAFTING_RECIPE;
+            if (recipe != NULL) recipe_id = recipe->id;
+
+            if (smelter->progress <= 0)
+            {
+                if (recipe_id != NULL_CRAFTING_RECIPE)
+                    smelter->begin_smelting(recipe_id);
+            }
+            else
+            {
+                if (recipe_id != NULL_CRAFTING_RECIPE && recipe_id == smelter->recipe_id)
+                    smelter->tick_smelting();
+                else
+                    smelter->reset_smelting();
+            }
+        }
+
+        if (smelter->progress >= 100)
+        {
+            GS_ASSERT(recipe != NULL); 
+        }
+        
+    }
 }
 
 //tests

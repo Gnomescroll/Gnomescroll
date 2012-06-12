@@ -127,8 +127,9 @@ class CraftingRecipe _cr;
 
 void def_recipe(const char* item_name, int amount)
 {
-    _cr.output = dat_get_item_type(item_name);
-    _cr.output_stack = amount;
+    _cr.output[_cr.output_num] = dat_get_item_type(item_name);
+    _cr.output_stack[_cr.output_num] = amount;
+    _cr.output_num++;
 }
 
 void def_recipe(const char* item_name)

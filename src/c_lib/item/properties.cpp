@@ -272,6 +272,12 @@ bool is_fuel(int item_type)
     return attr->fuel;
 }
 
+bool is_smelter(ItemContainerType type)
+{
+    if (type == CONTAINER_TYPE_SMELTER_ONE) return true;
+    return false;
+}
+
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
     GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);
@@ -346,7 +352,9 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
     for (int i=0; i<crafting_recipe_count; i++)
     {
         CraftingRecipe* recipe = &crafting_recipe_array[i];
-        GS_ASSERT(recipe->output != NULL_ITEM_TYPE);
+        GS_ASSERT(recipe->output_num == 1);
+        if (recipe->output_num < 1) continue;
+        GS_ASSERT(recipe->output[0] != NULL_ITEM_TYPE);
         GS_ASSERT(recipe->reagent_num > 0);
         // make sure to set availability state to default
         recipe->available = true;
@@ -387,21 +395,27 @@ int get_selected_craft_recipe_type(int container_id, int slot, bool* available)
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
     *available = recipe->available;
-    return recipe->output;
+    GS_ASSERT(recipe->output_num == 1);
+    if (recipe->output_num < 1) return NULL_ITEM_TYPE;
+    return recipe->output[0];
 }
 
 int get_selected_craft_recipe_type(int container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
-    return recipe->output;
+    GS_ASSERT(recipe->output_num == 1);
+    if (recipe->output_num < 1) return NULL_ITEM_TYPE;
+    return recipe->output[0];
 }
 
 int get_selected_craft_recipe_stack(int container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return 1;
-    return recipe->output_stack;
+    GS_ASSERT(recipe->output_num == 1);
+    if (recipe->output_num < 1) return 1;
+    return recipe->output_stack[0];
 }
 
 bool container_type_is_block(ItemContainerType type)

@@ -39,13 +39,16 @@ class NaniteStoreItem
     }
 };
 
+const int MAX_CRAFTING_RECIPE_OUTPUTS = 2;
+
 class CraftingRecipe
 {
     public:
 
     int id;
-    int output; //item type
-    int output_stack;
+    int output_num;
+    int output[MAX_CRAFTING_RECIPE_OUTPUTS]; //item type
+    int output_stack[MAX_CRAFTING_RECIPE_OUTPUTS];
     int reagent_num;
     int reagent[CRAFT_BENCH_INPUTS_MAX];
     int reagent_count[CRAFT_BENCH_INPUTS_MAX];
@@ -61,8 +64,9 @@ class CraftingRecipe
     void init()
     {
         id = NULL_CRAFTING_RECIPE;
-        output = NULL_ITEM_TYPE;
-        output_stack = 1;
+        for (int i=0; i<MAX_CRAFTING_RECIPE_OUTPUTS; output[i++] = NULL_ITEM_TYPE);
+        for (int i=0; i<MAX_CRAFTING_RECIPE_OUTPUTS; output_stack[i++] = 1);
+        output_num = 0;
         reagent_num = 0;
         for(int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
         {
