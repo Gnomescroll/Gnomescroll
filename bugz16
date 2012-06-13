@@ -527,6 +527,9 @@ DONE
 admin set block for container blocks creates a container (fixes assert issue)
 DONE
 
+put caps on the elastic lists
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
