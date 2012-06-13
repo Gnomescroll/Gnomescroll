@@ -162,6 +162,9 @@ void ItemContainerNanite::remove_item(int slot)
 #if DC_SERVER
 void ItemContainerNanite::digest()
 {
+    GS_ASSERT(this->slot_max > 0);
+    if (this->slot_max <= 0) return;
+    
     // dont eat if coins are full
     ItemID coins_id = this->get_coins();
     if (coins_id != NULL_ITEM)

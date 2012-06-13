@@ -614,7 +614,9 @@ void agent_born(int agent_id)
     bool has_mining_laser = false;
     Item::Item* most_durable_mining_laser = NULL;
     int most_durable_mining_laser_value = 0;
-    
+
+    GS_ASSERT(toolbelt->slot_max > 0);
+    if (toolbelt->slot_max <= 0) return;
     for (int i=toolbelt->slot_max-1; i>=0; i--)
     {
         ItemID item_id = toolbelt->slot[i];

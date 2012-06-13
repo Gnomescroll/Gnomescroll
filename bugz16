@@ -521,6 +521,9 @@ DONE
 players can't destroy z level 0
 DONE
 
+clear container block contents on close, client side
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies

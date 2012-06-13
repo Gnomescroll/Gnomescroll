@@ -96,6 +96,7 @@ class ItemContainerInterface
             if (this->attached_to_agent && this->owner != agent_id) return false;
             return (this->owner == agent_id || this->owner == NO_AGENT);
         }
+        
         virtual bool lock(int agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
@@ -106,6 +107,7 @@ class ItemContainerInterface
             this->owner = agent_id;
             return true;
         }
+
         virtual bool unlock(int agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
@@ -236,6 +238,8 @@ class ItemContainerNanite: public ItemContainerInterface
         int get_empty_slot()
         {
             // only food slot can be empty slot
+            GS_ASSERT(this->slot_max > 0);
+            if (this->slot_max <= 0) return NULL_SLOT;
             if (this->slot[0] == NULL_ITEM) return 0;
             return NULL_SLOT;
         }

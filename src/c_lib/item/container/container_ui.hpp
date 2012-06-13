@@ -35,7 +35,6 @@ class ItemContainerUIInterface
 
         bool is_valid_slot(int slot)
         {
-            if (!(slot >= 0 && slot < this->slot_max)) printf("Slot %d, slot_max %d\n", slot, this->slot_max);
             return (slot >= 0 && slot < this->slot_max);
         }
 
@@ -65,6 +64,7 @@ class ItemContainerUIInterface
             GS_ASSERT(item_type != NULL_ITEM_TYPE);
             GS_ASSERT(stack_size > 0);
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return;
             this->slot_type[slot] = item_type;
             this->slot_stack[slot] = stack_size;
             this->slot_durability[slot] = durability;
@@ -74,6 +74,7 @@ class ItemContainerUIInterface
         void remove_item(int slot)
         {
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return;
             this->slot_type[slot] = NULL_ITEM_TYPE;
             this->slot_stack[slot] = 1;
             this->slot_durability[slot] = NULL_DURABILITY;
@@ -198,6 +199,7 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
         bool can_insert_item(int slot, int item_type)
         {
             GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
             if (slot == 0)
             {   // check against nanite's food
                 return Item::get_nanite_edibility(item_type);
