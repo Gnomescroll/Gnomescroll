@@ -40,7 +40,6 @@ void time_since(int n)
 
 void init()
 {
-    int mode = 0;
     mkdir("./screenshot", S_IRWXU );
 
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
