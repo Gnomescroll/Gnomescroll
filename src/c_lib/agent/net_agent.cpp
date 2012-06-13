@@ -700,6 +700,7 @@ inline void hitscan_object_CtoS::handle()
             health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
             if (health != NULL) health->take_damage(obj_dmg);
 
+            // set target on person attacking
             motion_targeting = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
             if (motion_targeting != NULL && motion_targeting->target_type == OBJECT_NONE)
                 motion_targeting->set_target(OBJECT_AGENT, a->id);

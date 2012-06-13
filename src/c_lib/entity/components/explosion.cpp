@@ -100,7 +100,7 @@ bool ExplosionComponent::proximity_check()
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     
-    Agent_state* agent = nearest_agent_in_range(position, this->proximity_radius);
+    Agent_state* agent = nearest_living_agent_in_range(position, this->proximity_radius);
     if (agent != NULL)
     {
         using Components::HealthComponent;

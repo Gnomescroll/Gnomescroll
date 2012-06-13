@@ -38,6 +38,18 @@ void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
     this->broadcast_target_choice();
 }
 
+void MotionTargetingComponent::check_target_alive()
+{
+    if (this->target_type != OBJECT_AGENT) return;
+    Agent_state* target = STATE::agent_list->get(this->target_id);
+    if (target == NULL || target->status.dead)
+    {
+        this->target_id = NO_AGENT;
+        this->target_type = OBJECT_NONE;
+        this->broadcast_remove_target();
+    }
+}
+
 void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
 {   // lock on agent
     Agent_state* target;
@@ -48,6 +60,8 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
     );
     if (target == NULL)
     {
+        if (this->target_type == OBJECT_AGENT)
+            this->broadcast_remove_target();
         this->target_type = OBJECT_NONE;
         return;
     }
@@ -152,6 +166,16 @@ void MotionTargetingComponent::broadcast_target_choice()
     msg.broadcast();
 }
 
+void MotionTargetingComponent::broadcast_remove_target()
+{
+    GS_ASSERT(this->object != NULL);
+    if (this->object == NULL) return;
+    object_remove_motion_target_StoC msg;
+    msg.id = this->object->id;
+    msg.type = this->object->type;
+    msg.broadcast();
+}
+
 void MotionTargetingComponent::broadcast_destination()
 {
     //printf("Object %d broadcast destination\n", this->object->id);
@@ -164,6 +188,23 @@ void MotionTargetingComponent::broadcast_destination()
     msg.type = this->object->type;
     msg.ticks = this->ticks_to_destination;
     msg.broadcast();
+}
+
+void MotionTargetingComponent::call()
+{
+    if (this->target_type == OBJECT_NONE)
+    {
+        this->ticks_locked = 0;
+        return;
+    }
+    this->ticks_locked++;
+    if (this->max_lock_ticks && this->ticks_locked > this->max_lock_ticks)
+    {   // reset
+        this->target_type == OBJECT_NONE;
+        this->target_id = NO_AGENT;
+        this->ticks_locked = 0;
+        this->broadcast_remove_target();
+    }
 }
 
 } // Objects

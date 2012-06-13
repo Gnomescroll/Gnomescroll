@@ -54,7 +54,7 @@ typedef ComponentList<VoxelModelComponent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODE
 const int MAX_TARGETING_COMPONENTS = 2048;
 typedef ComponentList<WeaponTargetingComponent, COMPONENT_WEAPON_TARGETING, MAX_TARGETING_COMPONENTS>
     WeaponTargetingComponentList;
-typedef ComponentList<MotionTargetingComponent, COMPONENT_MOTION_TARGETING, MAX_TARGETING_COMPONENTS>
+typedef CallableComponentList<MotionTargetingComponent, COMPONENT_MOTION_TARGETING, MAX_TARGETING_COMPONENTS>
     MotionTargetingComponentList;
 
 /* Spawner */

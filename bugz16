@@ -533,9 +533,11 @@ DONE
 touched up food/coin/fuel text in hud textures
 DONE
 
+bombs stop chasing if player dies
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
-blue bombs lose target if target dies
 blue bombs should lose target after N ticks
 
 red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
@@ -552,6 +554,8 @@ use font DST_COLOR only for certain ui elements
 
 == SOUND ==
 improve digging sounds
+falling sounds
+    -- record last velocity when colliding with z. at 2 thresholds play harsher sounds
 
 == MAINTENANCE/REFACTORS ==
 toolbelt: turn fire on/off method for server
@@ -592,3 +596,8 @@ put spawners back in
 
 ==BUGZ==
 
+GS_ASSERT error: /home/steve/dc_mmo/src/c_lib/item/net/StoC.cpp, line 30 function: handle 
+
+occurs after death
+might be with stacking
+maybe grenade drops only?

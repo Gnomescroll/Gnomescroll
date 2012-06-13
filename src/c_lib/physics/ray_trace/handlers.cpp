@@ -53,7 +53,7 @@ Agent_state* lock_agent_target(
             agent = agent_list->filtered_objects[chosen[i]];
         else
             agent = agent_list->filtered_objects[i];
-        if (agent == NULL || agent->status.team == NO_TEAM) continue;
+        if (agent->status.dead || agent == NULL || agent->status.team == NO_TEAM) continue;
         if (agent->in_sight_of(firing_position, &sink, acquisition_probability))
         {
             *firing_direction = vec3_sub(sink, firing_position);

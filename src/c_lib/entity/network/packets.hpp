@@ -377,6 +377,21 @@ class object_choose_motion_target_StoC: public FixedSizeReliableNetPacketToClien
     inline void handle();
 };
 
+class object_remove_motion_target_StoC: public FixedSizeReliableNetPacketToClient<object_remove_motion_target_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+
 class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<object_choose_destination_StoC>
 {
     public:

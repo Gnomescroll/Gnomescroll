@@ -75,6 +75,7 @@ static void set_mob_bomb_properties(Object* object)
     motion->speed = MONSTER_BOMB_SPEED;
     motion->max_z_down = MONSTER_BOMB_MOTION_MAX_Z_DOWN;
     motion->max_z_up = MONSTER_BOMB_MOTION_MAX_Z_UP;
+    motion->max_lock_ticks = MONSTER_BOMB_MAX_TARGET_LOCK_TICKS;
 
     #if DC_SERVER
     using Components::ExplosionComponent;
@@ -191,6 +192,8 @@ void tick_mob_bomb(Object* object)
     
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
+    GS_ASSERT(motion != NULL);
+    motion->check_target_alive();
 
     // acquire target
     if (motion->target_type == OBJECT_NONE) motion->lock_target(position);

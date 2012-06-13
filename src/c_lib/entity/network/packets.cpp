@@ -395,6 +395,19 @@ inline void object_choose_motion_target_StoC::handle()
     motion->set_target((ObjectType)target_type, target_id);
 }
 
+inline void object_remove_motion_target_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
+    GS_ASSERT(motion != NULL);
+    if (motion == NULL) return;
+    motion->target_type = OBJECT_NONE;
+    motion->target_id = NO_AGENT;
+}
+
 inline void object_choose_destination_StoC::handle()
 {
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
@@ -499,6 +512,7 @@ inline void object_shot_object_StoC::handle() {}
 inline void object_shot_terrain_StoC::handle() {}
 inline void object_shot_nothing_StoC::handle() {}
 inline void object_choose_motion_target_StoC::handle() {}
+inline void object_remove_motion_target_StoC::handle() {}
 inline void object_choose_weapon_target_StoC::handle() {}
 inline void object_choose_destination_StoC::handle() {}
 inline void object_took_damage_StoC::handle() {}
