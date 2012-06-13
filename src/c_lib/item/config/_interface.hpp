@@ -121,25 +121,25 @@ namespace Item
 {
 
 int crafting_recipe_count = 0;
-int _current_reagent_id = 0;
+int _current_crafting_reagent_id = 0;
 
 class CraftingRecipe _cr;
 
-void def_recipe(const char* item_name, int amount)
+void def_crafting_recipe(const char* item_name, int amount)
 {
     _cr.output = dat_get_item_type(item_name);
     _cr.output_stack = amount;
 }
 
-void def_recipe(const char* item_name)
+void def_crafting_recipe(const char* item_name)
 {
-    def_recipe(item_name, 1);
+    def_crafting_recipe(item_name, 1);
 }
 
 
-void set_reagent(const char* item_name, int quantity)
+void set_crafting_reagent(const char* item_name, int quantity)
 {
-    GS_ASSERT(_current_reagent_id < CRAFT_BENCH_INPUTS_MAX);
+    GS_ASSERT(_current_crafting_reagent_id < CRAFT_BENCH_INPUTS_MAX);
 
     int type = dat_get_item_type(item_name);
     
@@ -149,21 +149,21 @@ void set_reagent(const char* item_name, int quantity)
         //GS_ASSERT(_cr.reagent[i] != type);
     
     // insert reagents sorted by type
-    if (_current_reagent_id == 0)
+    if (_current_crafting_reagent_id == 0)
     {   // degenerate case
-        _cr.reagent[_current_reagent_id] = type;
-        _cr.reagent_count[_current_reagent_id] = quantity;
+        _cr.reagent[_current_crafting_reagent_id] = type;
+        _cr.reagent_count[_current_crafting_reagent_id] = quantity;
     }
     else
     {   // keep reagents sorted by type
         int i=0;
-        for (; i<_current_reagent_id; i++)
+        for (; i<_current_crafting_reagent_id; i++)
         {
             if (_cr.reagent[i] <= type) continue;
 
             // shift forward
-            for (int j=_current_reagent_id; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
-            for (int j=_current_reagent_id; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
+            for (int j=_current_crafting_reagent_id; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
+            for (int j=_current_crafting_reagent_id; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
             
             // insert
             _cr.reagent[i] = type;
@@ -171,24 +171,118 @@ void set_reagent(const char* item_name, int quantity)
             break;
         }
         
-        if (i == _current_reagent_id)
+        if (i == _current_crafting_reagent_id)
         {   // append to end
-            _cr.reagent[_current_reagent_id] = type;
-            _cr.reagent_count[_current_reagent_id] = quantity;
+            _cr.reagent[_current_crafting_reagent_id] = type;
+            _cr.reagent_count[_current_crafting_reagent_id] = quantity;
         }
     }
 
-    _current_reagent_id++;
+    _current_crafting_reagent_id++;
 }
 
-void end_recipe()
+void end_crafting_recipe()
 {
-    _cr.reagent_num = _current_reagent_id;
+    GS_ASSERT(crafting_recipe_count <= MAX_CRAFTING_RECIPE);
+    _cr.reagent_num = _current_crafting_reagent_id;
     _cr.id = crafting_recipe_count;
     crafting_recipe_array[crafting_recipe_count] = _cr;
     _cr.init();
     crafting_recipe_count++;
-    _current_reagent_id = 0;
+    _current_crafting_reagent_id = 0;
+}
+
+}   // Item
+
+
+namespace Item
+{
+
+int smelting_recipe_count = 0;
+int _current_smelting_reagent_id = 0;
+int _current_smelting_recipe_creation_time = 30;
+
+class SmeltingRecipe _sr;
+
+void add_smelting_product(const char* item_name, int amount)
+{
+    GS_ASSERT(_sr.output_num < SMELTER_OUTPUTS_MAX);
+    _sr.output[_sr.output_num] = dat_get_item_type(item_name);
+    _sr.output_stack[_sr.output_num] = amount;
+    _sr.output_num++;    
+}
+
+void add_smelting_product(const char* item_name)
+{
+    add_smelting_product(item_name, 1);
+}
+
+void def_smelting_recipe(const char* item_name, int amount)
+{
+    add_smelting_product(item_name, amount);
+}
+
+void def_smelting_recipe(const char* item_name)
+{
+    def_smelting_recipe(item_name, 1);
+}
+
+void set_smelting_reagent(const char* item_name, int quantity)
+{
+    GS_ASSERT(_current_smelting_reagent_id < SMELTER_INPUTS_MAX);
+
+    int type = dat_get_item_type(item_name);
+    
+    // insert reagents sorted by type
+    if (_current_smelting_reagent_id == 0)
+    {   // degenerate case
+        _sr.reagent[_current_smelting_reagent_id] = type;
+        _sr.reagent_count[_current_smelting_reagent_id] = quantity;
+    }
+    else
+    {   // keep reagents sorted by type
+        int i=0;
+        for (; i<_current_smelting_reagent_id; i++)
+        {
+            if (_sr.reagent[i] <= type) continue;
+
+            // shift forward
+            for (int j=_current_smelting_reagent_id; j>i; j--) _sr.reagent[j] = _sr.reagent[j-1];
+            for (int j=_current_smelting_reagent_id; j>i; j--) _sr.reagent_count[j] = _sr.reagent_count[j-1];
+            
+            // insert
+            _sr.reagent[i] = type;
+            _sr.reagent_count[i] = quantity;
+            break;
+        }
+        
+        if (i == _current_smelting_reagent_id)
+        {   // append to end
+            _sr.reagent[_current_smelting_reagent_id] = type;
+            _sr.reagent_count[_current_smelting_reagent_id] = quantity;
+        }
+    }
+
+    _current_smelting_reagent_id++;
+}
+
+// in total ticks to synthesize
+void set_smelting_creation_time(int creation_time)
+{
+    _current_smelting_recipe_creation_time = creation_time;
+}
+
+void end_smelting_recipe()
+{
+    GS_ASSERT(smelting_recipe_count <= MAX_SMELTING_RECIPE);
+    _sr.reagent_num = _current_smelting_reagent_id;
+    _sr.id = smelting_recipe_count;
+    _sr.creation_time = _current_smelting_recipe_creation_time;
+    smelting_recipe_array[smelting_recipe_count] = _sr;
+    _sr.init();
+    smelting_recipe_count++;
+    _current_smelting_reagent_id = 0;
+    _current_smelting_recipe_creation_time = 30;
 }
 
 }   // Item

@@ -176,6 +176,13 @@ void update_container_ui_from_state()
     }
 }
 
+void update_smelter_ui()
+{
+    if (smelter_ui == NULL) return;
+    smelter_ui->tick_fuel();
+    smelter_ui->tick_progress();
+}
+
 void open_inventory()
 {   // copy state to ui
     update_container_ui_from_state();
@@ -1218,6 +1225,169 @@ ContainerActionType auto_add_free_item_to_container(int client_id, int container
         return FULL_WORLD_TO_OCCUPIED_SLOT;
     }
     return CONTAINER_ACTION_NONE;
+}
+
+void update_smelters()
+{
+    for (int i=0; i<item_container_list->n_max; i++)
+    {
+        if (item_container_list->a[i] == NULL) continue;
+        ItemContainerInterface* container = item_container_list->a[i];
+        if (!Item::is_smelter(container->type)) continue;
+        ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+
+        // if fuel is 0
+            // if fuel slot is empty (or not fuel -- invalid state)
+                // reset progress
+                // send progress packet
+            // else
+                // assert fuel slot item is fuel
+                // consume 1 fuel stack
+                // set fuel_type to type,meter to 1.0f
+                // send fuel packet to subscribers
+
+        // else
+            // look up recipe
+            // if progress is 0
+                // if recipe is non null
+                    // set recipe type
+                    // increment progress by amount prescribed by recipe
+                    // send progress packet
+            // else
+                // if recipe matches
+                    // increment progress by amount according to recipe
+                // else
+                    // reset progress
+                    // send progress packet
+
+        // if progress is 1.0f
+            // consume inputs according to recipe
+            // create output(s), put in output slots
+
+        GS_ASSERT(smelter->fuel >= 0);
+        GS_ASSERT(smelter->progress >= 0);
+        GS_ASSERT(smelter->recipe_id != NULL_ITEM_TYPE || smelter->progress == 0)
+
+        Item::SmeltingRecipe* recipe = NULL;
+        int recipe_id = NULL_SMELTING_RECIPE;
+        
+        if (smelter->fuel <= 0)
+        {
+            ItemID fuel_item = smelter->get_fuel();
+            int fuel_item_type = NULL_ITEM_TYPE;
+            bool is_fuel = false;
+            if (fuel_item != NULL_ITEM)
+            {
+                fuel_item_type = Item::get_item_type(fuel_item);
+                is_fuel = Item::is_fuel(fuel_item_type);
+            }
+            GS_ASSERT(fuel_item_type == NULL_ITEM_TYPE || is_fuel);
+
+            if (fuel_item_type == NULL_ITEM_TYPE || !is_fuel)
+            {   // reset progress
+                smelter->reset_smelting();
+            }
+            else
+            {   // consume fuel item stack
+                int remaining = Item::consume_stack_item(fuel_item);
+                if (remaining > 0) Item::send_item_state(fuel_item);
+                smelter->fill_fuel(fuel_item_type);
+            }
+        }
+        else
+        {
+            // burn fuel
+            smelter->burn_fuel();
+            
+            // look up recipe
+            recipe = Item::get_selected_smelting_recipe(smelter->id);
+            recipe_id = NULL_SMELTING_RECIPE;
+            if (recipe != NULL && recipe->available) recipe_id = recipe->id;
+
+            if (smelter->progress <= 0)
+            {
+                if (recipe_id != NULL_SMELTING_RECIPE)
+                    smelter->begin_smelting(recipe_id);
+            }
+            else
+            {
+                if (recipe_id != NULL_SMELTING_RECIPE && recipe_id == smelter->recipe_id
+                && smelter->can_insert_outputs(recipe->output, recipe->output_stack, recipe->output_num))
+                    smelter->tick_smelting();
+                else
+                    smelter->reset_smelting();
+            }
+            GS_ASSERT(smelter->progress <= 0 || recipe != NULL);
+        }
+
+        if (smelter->progress >= 1.0f)
+        {
+            GS_ASSERT(recipe != NULL);
+            if (recipe == NULL) continue;
+            // consume recipe inputs
+            unsigned int max_inputs = smelter->get_max_input_slots();
+            ItemID inputs[max_inputs];
+            int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);    // sorted by type
+
+            GS_ASSERT(recipe->reagent_num <= n_inputs);
+            if (recipe->reagent_num > n_inputs) continue;
+            for (int i=0; i<recipe->reagent_num; i++)
+            {
+                GS_ASSERT(recipe->reagent[i] != NULL_ITEM_TYPE);
+                if (recipe->reagent[i] == NULL_ITEM_TYPE) continue;
+                int reagent = recipe->reagent[i];
+                int reagent_stack = recipe->reagent_count[i];
+
+                ItemID input = inputs[i];
+                GS_ASSERT(input != NULL_ITEM);
+                if (input == NULL_ITEM) continue;
+                int input_type = Item::get_item_type(input);
+                GS_ASSERT(input_type != NULL_ITEM_TYPE);
+                GS_ASSERT(input_type == reagent);
+                int input_stack = Item::get_stack_size(input);
+                GS_ASSERT(input_stack >= reagent_stack);
+                if (input_stack < reagent_stack) reagent_stack = input_stack;   // cap it
+                int remaining = Item::consume_stack_item(input, reagent_stack);
+                if (remaining > 0) Item::send_item_state(input);
+            }
+
+            // create outputs
+            for (int i=0; i<recipe->output_num; i++)
+            {
+                GS_ASSERT(recipe->output[i] != NULL_ITEM_TYPE);
+                if (recipe->output[i] == NULL_ITEM_TYPE) continue;
+
+                int slot = smelter->convert_product_slot(i);
+                ItemID item_id = smelter->get_item(slot);
+                if (item_id == NULL_ITEM)
+                {   // item does not exist, create
+                    Item::Item* product = Item::create_item(recipe->output[i]);
+                    GS_ASSERT(product != NULL);
+                    if (product == NULL) continue;
+                    product->stack_size = recipe->output_stack[i];
+                    GS_ASSERT(product->stack_size > 0);
+                    transfer_free_item_to_container(product->id, smelter->id, slot);
+                }
+                else
+                {   // item exists, increment
+                    Item::Item* item = Item::get_item(item_id);
+                    GS_ASSERT(item != NULL);
+                    if (item == NULL) continue;
+                    GS_ASSERT(item->type == recipe->output[i]);
+                    if (item->type != recipe->output[i]) continue;
+                    item->stack_size += recipe->output_stack[i];
+                    GS_ASSERT(recipe->output_stack[i] >= 1);
+                    int max_stack_size = Item::get_max_stack_size(item->type);
+                    GS_ASSERT(item->stack_size <= max_stack_size);
+                    if (item->stack_size > max_stack_size)
+                        item->stack_size = max_stack_size;
+                    Item::send_item_state(item->id);
+                }
+            }
+            smelter->reset_smelting();
+        }
+        
+    }
 }
 
 //tests

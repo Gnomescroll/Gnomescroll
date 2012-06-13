@@ -15,6 +15,8 @@ using Components::Component;
 Component* add_component_to_object(Object* object, ComponentType type)
 {
     Component* component = Components::get(type);
+    GS_ASSERT(component != NULL);
+    if (component == NULL) return NULL;
     int slot = object_data->get_component_slot(object->type, type);
     object->add_component(slot, component);
     component->object = object;
@@ -25,6 +27,8 @@ void release_object_components(Object* object)
 {
     for (int i=0; i<object->n_components; i++)
     {
+        GS_ASSERT(object->components[i] != NULL);
+        if (object->components[i] == NULL) continue;
         object->components[i]->object = NULL;
         Components::release(object->components[i]);
         object->components[i] = NULL;

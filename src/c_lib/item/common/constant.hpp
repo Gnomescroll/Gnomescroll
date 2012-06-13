@@ -10,6 +10,7 @@ const int NULL_PARTICLE = -1;
 const int NULL_ITEM_LEVEL = -1;
 const int NULL_COST = 0;
 const int NULL_CRAFTING_RECIPE = 0xffff;
+const int NULL_SMELTING_RECIPE = 0xffff;
 
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
@@ -40,12 +41,18 @@ const int SMELTER_ONE_Y = 2;
 //const int SMELTER_ONE_FUEL = 1;
 
 const int MAX_ITEMS = 256;
-const int MAX_CRAFTING_RECIPE = 256;
 
 const int NANITE_DIGESTION_RATE = 30 * 5;
 
+const int MAX_CRAFTING_RECIPE = 256;
 const int CRAFT_BENCH_INPUTS_MAX = 9;
 const int CRAFT_BENCH_OUTPUTS_MAX = 6;
+
+const int MAX_SMELTING_RECIPE = 256;
+const int SMELTER_INPUTS_MAX = 4;
+const int SMELTER_OUTPUTS_MAX = 2;
+
+const int DEFAULT_SMELTING_RECIPE_CREATION_TIME = 30;   // 1 second
 
 const float AGENT_CONTAINER_REACH = 4.0f;
 

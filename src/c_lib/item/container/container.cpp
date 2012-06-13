@@ -294,4 +294,89 @@ void ItemContainerSmelter::remove_item(int slot)
     this->slot_count--;
 }
 
+#if DC_SERVER
+void ItemContainerSmelter::burn_fuel()
+{
+    GS_ASSERT(this->fuel_type != NULL_ITEM_TYPE);
+    GS_ASSERT(this->fuel > 0.0f);
+    if (this->fuel <= 0.0f) return;
+    this->fuel -= this->burn_rate;
+    if (this->fuel <= 0.0f)
+        this->reset_fuel();
+}
+
+void ItemContainerSmelter::fill_fuel(int fuel_type)
+{
+    GS_ASSERT(this->fuel <= 0.0f);
+    this->fuel = 1.0f;
+    this->fuel_type = fuel_type;
+    this->burn_rate = 1.0f / ((float)Item::get_fuel_burn_rate(fuel_type));
+    GS_ASSERT(this->burn_rate > 0.0f);
+    if (this->burn_rate <= 0.0f) this->burn_rate = 1.0f/30.0f;
+    send_smelter_fuel(this->id);
+}
+
+void ItemContainerSmelter::reset_fuel()
+{
+    this->fuel_type = NULL_ITEM_TYPE;
+    this->burn_rate = 1.0f/30.0f;
+    if (this->fuel < 0.0f) this->fuel = 0.0f;
+    if (this->fuel == 0.0f) return;
+    this->fuel = 0.0f;
+    send_smelter_fuel(this->id);
+}
+
+void ItemContainerSmelter::begin_smelting(int recipe_id)
+{
+    GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+    GS_ASSERT(this->recipe_id == NULL_SMELTING_RECIPE);
+    GS_ASSERT(this->progress <= 0.0f);
+    this->recipe_id = recipe_id;
+    this->progress_rate = 1.0f / ((float)Item::get_smelting_recipe_creation_time(recipe_id));
+    GS_ASSERT(this->progress_rate > 0.0f);
+    if (this->progress_rate <= 0.0f) this->progress_rate = 1.0f/30.0f;
+    this->progress += this->progress_rate;
+    send_smelter_progress(this->id);
+}
+
+void ItemContainerSmelter::tick_smelting()
+{
+    GS_ASSERT(this->recipe_id != NULL_SMELTING_RECIPE);
+    GS_ASSERT(this->progress > 0.0f); // should have incremented once in begin_smelting()
+    this->progress += this->progress_rate;
+    if (this->progress > 1.0f) this->progress = 1.0f;
+}
+
+void ItemContainerSmelter::reset_smelting()
+{
+    this->recipe_id = NULL_SMELTING_RECIPE;
+    this->progress_rate = 1.0f/30.0f;
+    if (this->progress < 0.0f) this->progress = 0.0f;
+    if (this->progress == 0.0f) return;
+    this->progress = 0.0f;
+    send_smelter_progress(this->id);
+}
+
+bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, int n_outputs)
+{
+    GS_ASSERT(n_outputs > 0);
+    if (n_outputs <= 0) return false;
+    GS_ASSERT(n_outputs <= product_xdim*product_ydim);
+    if (n_outputs > product_xdim*product_ydim) return false;
+
+    for (int i=0; i<n_outputs; i++)
+    {
+        GS_ASSERT(outputs[i] != NULL_ITEM_TYPE);
+        GS_ASSERT(output_stacks[i] >= 1);
+        int slot = this->convert_product_slot(i);
+        ItemID slot_item = this->get_item(slot);
+        if (slot_item == NULL_ITEM) continue;
+        int slot_item_type = Item::get_item_type(slot_item);
+        if (outputs[i] != slot_item_type) return false;   // items won't stack
+        if (output_stacks[i] >= Item::get_stack_space(slot_item)) return false; // no room to stack
+    }
+    return true;
+}
+#endif
+
 }   // ItemContainer

@@ -488,6 +488,43 @@ void send_open_container_failed(int client_id, int container_id, int event_id)
     msg.sendToClient(client_id);
 }
 
+void send_smelter_fuel(int container_id)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    if (container->owner == NO_AGENT) return;
+    GS_ASSERT(Item::is_smelter(container->type));
+    if (!Item::is_smelter(container->type)) return;
+    ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+
+    smelter_fuel_StoC msg;
+    msg.container_id = smelter->id;
+    msg.fuel = smelter->fuel;
+    msg.fuel_type = smelter->fuel_type;
+    msg.sendToClient(smelter->owner);
+}
+
+void send_smelter_progress(int container_id)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    if (container->owner == NO_AGENT) return;
+    GS_ASSERT(Item::is_smelter(container->type));
+    if (!Item::is_smelter(container->type)) return;
+    ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+
+    smelter_progress_StoC msg;
+    msg.progress = smelter->progress;
+    msg.container_id = smelter->id;
+    msg.sendToClient(smelter->owner);
+}
+
 // transactions
 bool agent_open_container(int agent_id, int container_id)
 {
@@ -530,6 +567,13 @@ bool agent_open_container(int agent_id, int container_id)
     
     // send container contents to player
     send_container_contents(a->id, a->client_id, container_id);
+
+    if (Item::is_smelter(container->type))
+    {   // send fuel, progress state
+        send_smelter_fuel(container->id);
+        send_smelter_progress(container->id);
+    }
+    
     return true;
 }
 

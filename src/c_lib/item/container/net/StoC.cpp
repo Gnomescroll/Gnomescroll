@@ -192,6 +192,49 @@ inline void unlock_container_StoC::handle()
     container->unlock(agent_id);
 }
 
+inline void smelter_fuel_StoC::handle()
+{
+    ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+    if (!Item::is_smelter(container->type)) return;
+    container->fuel = fuel;
+    container->fuel_type = fuel_type;
+
+    // update UI
+    ItemContainerSmelterUI* container_ui = (ItemContainerSmelterUI*)get_container_ui(container_id);
+    GS_ASSERT(container_ui != NULL);
+    if (container_ui == NULL) return;
+    GS_ASSERT(container_ui->id == container->id);
+    GS_ASSERT(fuel >= 0.0f && fuel <= 1.0f);
+    if (fuel < 0.0f) fuel = 0.0f;
+    if (fuel > 1.0f) fuel = 1.0f;
+    container_ui->fuel = fuel;
+    container_ui->fuel_type = fuel_type;
+    
+}
+
+inline void smelter_progress_StoC::handle()
+{
+    ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+    if (!Item::is_smelter(container->type)) return ;
+    container->progress = progress;
+
+    // update UI
+    ItemContainerSmelterUI* container_ui = (ItemContainerSmelterUI*)get_container_ui(container_id);
+    GS_ASSERT(container_ui != NULL);
+    if (container_ui == NULL) return;
+    GS_ASSERT(container_ui->id == container->id);
+    GS_ASSERT(progress >= 0.0f && progress <= 1.0f);
+    if (progress < 0.0f) progress = 0.0f;
+    if (progress > 1.0f) progress = 1.0f;
+    container_ui->progress = progress;
+}
+
 } // ItemContainer
 #endif
 
@@ -218,6 +261,9 @@ inline void close_container_StoC::handle() {}
 
 inline void lock_container_StoC::handle() {}
 inline void unlock_container_StoC::handle() {}
+
+inline void smelter_fuel_StoC::handle() {}
+inline void smelter_progress_StoC::handle() {}
 
 } // ItemContainer
 

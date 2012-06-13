@@ -282,11 +282,18 @@ Item* create_item(char* item_name)
 // returns stack size
 int consume_stack_item(ItemID item_id)
 {
+    return consume_stack_item(item_id, 1);
+}
+
+// will destroy item if fully consumed
+// returns stack size
+int consume_stack_item(ItemID item_id, int amount)
+{
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return 0;
     int stack_size = get_stack_size(item_id);
-    GS_ASSERT(stack_size > 0);
-    if (stack_size <= 1)
+    GS_ASSERT(stack_size >= amount);
+    if (stack_size <= amount)
     {
         destroy_item(item_id);
         return 0;
@@ -294,8 +301,9 @@ int consume_stack_item(ItemID item_id)
     Item* item = get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return 0;
-    item->stack_size -= 1;
+    item->stack_size -= amount;
     GS_ASSERT(item->stack_size > 0);
+    if (item->stack_size < 0) item->stack_size = 0;
     return item->stack_size;
 }
 

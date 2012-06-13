@@ -302,6 +302,132 @@ class ItemContainerSmelter: public ItemContainerInterface
 {
     public:
 
+        static const int product_xdim = 1;
+        static const int product_ydim = 2;
+        static const int input_xdim = 2;
+        
+        float fuel;       // 0.0f - 1.0f
+        int fuel_type;  // item type
+        float burn_rate;  // for item type
+        
+        int recipe_id;  // recipe identifier
+        float progress;   // 0.0f - 1.0f
+        float progress_rate;  // for recipe type
+        
+        bool is_output_slot(int slot)
+        {   // output slot is if xslot == xdim-1;
+            int xslot = slot % (this->xdim);
+            return (xslot == this->xdim-1);
+        }
+
+        bool is_fuel_slot(int slot)
+        {
+            return (slot == 0);
+        }
+
+        ItemID get_fuel()
+        {
+            GS_ASSERT(this->slot_max > 0);
+            if (this->slot_max <= 0) return NULL_ITEM;
+            return this->slot[0];
+        }
+
+        #if DC_SERVER
+        void burn_fuel();
+        void reset_fuel();
+        void fill_fuel(int fuel_type);
+        void begin_smelting(int recipe_id);
+        void tick_smelting();
+        void reset_smelting();
+        bool can_insert_outputs(int* outputs, int* output_stacks, int n_outputs);
+        #endif
+
+        unsigned int get_max_input_slots()
+        {
+            if (this->slot_max <= 0) return 0;
+            unsigned int max = this->slot_max - 1;    // remove fuel #
+            GS_ASSERT(ydim * this->product_xdim <= (int)max);
+            max -= ydim * this->product_xdim; // remove product slot
+            return max;
+        }
+
+        // fills *inputs with input items, sorted by type, up to max_inputs
+        // return number of inputs filled
+        int get_sorted_inputs(ItemID* inputs, unsigned int max_inputs)
+        {
+            // iterate input slots
+            // inserting to *inputs, sorted
+            GS_ASSERT(max_inputs > 0);
+            if (max_inputs <= 0) return 0;
+            GS_ASSERT(max_inputs == this->get_max_input_slots());
+
+            int n_inputs = 0;
+            int input_types[max_inputs];
+            for (unsigned int i=0; i<max_inputs; i++)
+            {
+                int slot = this->convert_input_slot(i);
+                ItemID input = this->slot[slot];
+                if (input == NULL_ITEM) continue;
+                int input_type = Item::get_item_type(input);
+                GS_ASSERT(input_type != NULL_ITEM_TYPE);
+                if (input_type == NULL_ITEM_TYPE) continue;
+                if (n_inputs == 0)
+                {
+                    inputs[0] = input;
+                    input_types[0] = input_type;
+                }
+                else
+                {   //  insert sorted
+                    int j = 0;
+                    for (; j<n_inputs; j++)
+                    {
+                        if (input_types[j] <= input_type) continue;
+
+                        // shift forward
+                        for (int k=n_inputs; k>j; k--) inputs[k] = inputs[k-1];
+                        for (int k=n_inputs; k>j; k--) input_types[k] = input_types[k-1];
+                        
+                        // insert
+                        inputs[j] = input;
+                        input_types[j] = input_type;
+                        break;
+                    }
+
+                    if (j == n_inputs)
+                    {   // append to end
+                        inputs[j] = input;
+                        input_types[j] = input_type;
+                    }
+                }
+                n_inputs++;
+            }
+
+            // Test output
+            int last_type = -1;
+            for (int i=0; i<n_inputs; i++)
+            {
+                GS_ASSERT(input_types[i] >= last_type);
+                last_type = input_types[i];
+            }
+            
+            return n_inputs;
+        }
+
+        int convert_input_slot(int input_slot)
+        {
+            int yslot = input_slot /  this->input_xdim;
+            int slot = input_slot + (yslot * this->product_xdim) + 1;
+            return slot;
+        }
+
+        int convert_product_slot(int product_slot)
+        {   // translate product_slot to native slot
+            // calculate yslot with xdim = 1
+            int yslot = product_slot / this->product_xdim;
+            int slot = xdim * (yslot + 1);
+            return slot;
+        }
+
         bool is_smelter_output(int slot)
         {
             int xslot = (slot-1) % this->xdim;  // -1 to offset fuel slot
@@ -352,7 +478,13 @@ class ItemContainerSmelter: public ItemContainerInterface
         }
 
     ItemContainerSmelter(ItemContainerType type, int id)
-    : ItemContainerInterface(type, id)
+    : ItemContainerInterface(type, id),
+    fuel(0.0f),
+    fuel_type(NULL_ITEM_TYPE),
+    burn_rate(1.0f/30.0f),
+    recipe_id(NULL_SMELTING_RECIPE),
+    progress(0.0f),
+    progress_rate(1.0f/30.0f)
     {}
 };
 

@@ -198,7 +198,8 @@ int init_c_lib()
     ItemParticle::init();
 
     Item::load_crafting_dat();
-
+    Item::load_smelting_dat();
+    
     return 0;
 } 
  

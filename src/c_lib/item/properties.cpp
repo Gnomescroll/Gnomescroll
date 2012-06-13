@@ -18,16 +18,19 @@ ItemGroup group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
 class NaniteStoreItem* nanite_store_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
+class SmeltingRecipe* smelting_recipe_array = NULL;
 
 ItemContainerType container_block_types[t_map::MAX_CUBES];    // maps block value -> container type
 
 // buffers for condensing craft bench inputs to unique type,count pairs
 int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
 int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
-
 // buffers for recipe outputs available
 class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
 int craft_recipes_possible_count = 0;
+
+//int smelter_input_types[SMELTER_INPUTS_MAX];
+//int smelter_input_totals[SMELTER_INPUTS_MAX];
 
 void init_properties()
 {
@@ -42,13 +45,15 @@ void init_properties()
     nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
 
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
+    smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
 }
 
 void tear_down_properties()
 {
     if (item_attribute_array    != NULL) delete[] item_attribute_array;
     if (nanite_store_item_array != NULL) delete[] nanite_store_item_array;
-    if (nanite_store_item_array != NULL) delete[] crafting_recipe_array;
+    if (crafting_recipe_array != NULL) delete[] crafting_recipe_array;
+    if (smelting_recipe_array != NULL) delete[] smelting_recipe_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)
@@ -272,9 +277,35 @@ bool is_fuel(int item_type)
     return attr->fuel;
 }
 
+bool is_smelter(ItemContainerType type)
+{
+    if (type == CONTAINER_TYPE_SMELTER_ONE) return true;
+    return false;
+}
+
+// total ticks to burn
+int get_fuel_burn_rate(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 30;
+    return attr->fuel_burn_rate;
+}
+
+int get_smelting_recipe_creation_time(int recipe_id)
+{
+    GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+    if (recipe_id == NULL_SMELTING_RECIPE) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
+    class SmeltingRecipe* recipe = get_smelting_recipe(recipe_id);
+    GS_ASSERT(recipe != NULL);
+    if (recipe == NULL) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
+    return recipe->creation_time;
+}
+
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
     GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);
+    if (recipe_id < 0 || recipe_id >= crafting_recipe_count) return NULL;
     return &crafting_recipe_array[recipe_id];
 }
 
@@ -402,6 +433,167 @@ int get_selected_craft_recipe_stack(int container_id, int slot)
     if (recipe == NULL) return 1;
     return recipe->output_stack;
 }
+
+class SmeltingRecipe* get_selected_smelting_recipe(int container_id)
+{
+    // get container
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+    if (container == NULL) return NULL;
+    GS_ASSERT(is_smelter(container->type));
+    if (!is_smelter(container->type)) return NULL;
+    ItemContainer::ItemContainerSmelter* smelter = (ItemContainer::ItemContainerSmelter*)container;
+
+    // clear input buffers
+    //for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_types[i++] = NULL_ITEM_TYPE);
+    //for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_totals[i++] = 0);
+
+    //// condense smelter contents to unique types/counts
+    //int unique_inputs = 0;
+    //for (int i=0; i<smelter->slot_max; i++)
+    //{
+        //if (smelter->is_fuel_slot(i) || smelter->is_output_slot(i)) continue;
+        
+        //// get slot content data
+        //ItemID item_id = smelter->get_item(i);
+        //if (item_id == NULL_ITEM) continue;
+        //int item_type = get_item_type(item_id);
+        //GS_ASSERT(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
+        //int stack_size = get_stack_size(item_id);
+        //GS_ASSERT(stack_size >= 1);
+
+        //// insert into type buffer
+        //if (unique_inputs == 0)
+        //{   // degenerate case
+            //smelter_input_types[unique_inputs] = item_type;
+            //smelter_input_totals[unique_inputs] = stack_size;
+        //}
+        //else
+        //{   // keep buffer sorted
+            //int i=0;
+            //for (; i<unique_inputs; i++)
+            //{
+                //if (smelter_input_types[i] <= item_type) continue;
+
+                //// shift forward
+                //for (int j=unique_inputs; j>i; j--) smelter_input_types[j] = smelter_input_types[j-1];
+                //for (int j=unique_inputs; j>i; j--) smelter_input_totals[j] = smelter_input_totals[j-1];
+
+                //// insert
+                //smelter_input_types[i] = item_type;
+                //smelter_input_totals[i] = stack_size;
+                //break;
+            //}
+            //if (i == unique_inputs)
+            //{   // append to end
+                //smelter_input_types[unique_inputs] = item_type;
+                //smelter_input_totals[unique_inputs] = stack_size;
+            //}
+        //}
+        //unique_inputs++;
+    //}
+
+    // Use get_sorted_inputs() ?
+
+    // no inputs
+    //if (unique_inputs == 0) return NULL;
+
+    unsigned int max_inputs = smelter->get_max_input_slots();
+    GS_ASSERT(max_inputs > 0);
+    if (max_inputs <= 0) return NULL;
+    ItemID inputs[max_inputs];
+    int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);
+    if (n_inputs <= 0) return NULL;
+
+    int input_types[n_inputs];
+    int input_stacks[n_inputs];
+
+    for (int i=0; i<n_inputs; i++)
+    {
+        input_types[i] = get_item_type(inputs[i]);
+        input_stacks[i] = get_stack_size(inputs[i]);
+    }
+
+    // iterate available recipes
+    // if types match exactly, return recipe (only one recipe per combination for the smelter
+
+    GS_ASSERT(smelting_recipe_count > 0);
+    for (int i=0; i<smelting_recipe_count; i++)
+    {
+        SmeltingRecipe* recipe = &smelting_recipe_array[i];
+        GS_ASSERT(recipe->output_num > 0);
+        if (recipe->output_num <= 0) continue;
+        GS_ASSERT(recipe->output[0] != NULL_ITEM_TYPE);
+        GS_ASSERT(recipe->reagent_num > 0);
+        // make sure to set availability state to default
+        recipe->available = true;
+
+        // only match exactly
+        if (recipe->reagent_num != n_inputs) continue;
+
+        // check if reagents match inputs
+        bool match = true;
+        bool can_smelt = true;
+        for (int j=0; j<recipe->reagent_num; j++)
+        {
+            GS_ASSERT(recipe->reagent[j] != NULL_ITEM_TYPE);
+            if (recipe->reagent[j] == input_types[j])
+            {   // check for reagent counts
+                if (recipe->reagent_count[j] > input_stacks[j]) can_smelt = false;
+            }
+            else
+            {
+                match = false;
+                break;
+            }
+        }
+        if (!match) continue;
+
+        if (!can_smelt) recipe->available = false;
+        return recipe;
+    }
+    return NULL;
+}
+
+class SmeltingRecipe* get_smelting_recipe(int recipe_id)
+{
+    GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+    GS_ASSERT(recipe_id >= 0 && recipe_id < smelting_recipe_count);
+    if (recipe_id < 0 || recipe_id >= smelting_recipe_count) return NULL;
+    return &smelting_recipe_array[recipe_id];
+}
+
+int* get_selected_smelting_recipe_types(int container_id, int* recipe_count)
+{
+    bool available;
+    return get_selected_smelting_recipe_types(container_id, recipe_count, &available);
+}
+
+int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available)
+{
+    class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id);
+    if (recipe == NULL)
+    {
+        *recipe_count = 0;
+        return NULL;
+    }
+    *recipe_count = recipe->output_num;
+    *available = recipe->available;
+    return recipe->output;
+}
+
+int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count)
+{
+    class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id);
+    if (recipe == NULL)
+    {
+        *recipe_count = 0;
+        return NULL;
+    }
+    *recipe_count = recipe->output_num;
+    return recipe->output_stack;
+}
+
 
 bool container_type_is_block(ItemContainerType type)
 {
