@@ -1,5 +1,52 @@
 #pragma once
 
+/*
+
+Ray Triangle Intersection
+float rayTriangleIntersection(lbVec3f& rayOrigin,lbVec3f& rayDir, lbVec3f& vertA,lbVec3f& vertB,lbVec3f& vertC)
+{
+    lbVec3f edge1=vertB-vertA;
+    lbVec3f edge2=vertC-vertA;
+
+    lbVec3f pvec=rayDir.crossed(edge2); //cross product
+    float det=edge1.dot(pvec);  //dot
+    if(det>-1.0e-9f && det<1.0e-9f)
+    {
+        return -1;
+    }
+    float invDet=1.0f/det;
+
+    lbVec3f dst=rayOrigin-vertA;    //sub
+    float u=dst.dot(pvec)*invDet;   //dot
+    if(u<0.0f || u>1.0f)
+    {
+        return -1;
+    }
+
+    lbVec3f qvec=dst.crossed(edge1);    //cross
+    float v=rayDir.dot(qvec)*invDet;    //dot
+    if(v<0.0f || u+v>1.0f)
+    {
+        return -1;
+    }
+
+    return edge2.dot(qvec)*invDet;      //dot and scalar
+}
+
+//<Spliter> HaltingState: it returns a value between 0 and 1 if it hits and >=1 if it doesn't hit
+
+<Spliter> HaltingState: yes, using that value and the start and end of the ray you can obtain the exact point at which it hit the triangle
+
+{
+    float time=rayTriangleIntersection( rayOrigin, rayDir   ,
+                            _verts[_tris[i].ids[0]].fpos,
+                            _verts[_tris[i].ids[1]].fpos,
+                            _verts[_tris[i].ids[2]].fpos
+                            );
+        if(time<minTime&&time>=0.0f)
+            minTime=time;
+}
+*/
 
 //#include <stdlib.h>
 //#include <stdio.h>
@@ -59,7 +106,9 @@ int v_num = 0;
 void load_model()
 {
     char* memory = NULL;
-    char* model_file = (char*) "media/mesh/mob4.obj";
+    //char* model_file = (char*) "media/mesh/mob4.obj";
+    char* model_file = (char*) "media/mesh/drone1.obj";
+
     size_t bytes = ObjLoadFile(model_file, &memory);
 
     if (memory == NULL)
@@ -106,8 +155,8 @@ void load_model()
             }
             //printf("triangle: %i,  iv= %i itx= %i \n", i, iv, itx);
             v.x = model->VertexArray[iv].x;
-            v.z = model->VertexArray[iv].y;
-            v.y = model->VertexArray[iv].z;
+            v.y = model->VertexArray[iv].y;
+            v.z = model->VertexArray[iv].z;
 
             v.u = model->TexCoordArray[itx].u;
             v.v = 1.0 - model->TexCoordArray[itx].v;
@@ -150,7 +199,7 @@ void init_shader()
 
 void init_texture()
 {
-    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/mob1_dm.png");
+    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/flat.png");
 
     if(s == NULL)
     {
@@ -203,7 +252,7 @@ void draw_model(float x, float y, float z)
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glCullFace(GL_BACK);
 
     glBindTexture( GL_TEXTURE_2D, monster_texture );
 
