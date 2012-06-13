@@ -82,10 +82,20 @@ XYMAX = 128*128;
 
 hmin = 64;
 
+hrange = 4.0;   --half of range (can perturb this with another map)
+
+_hmin = -1.0;
+_hmax = 1.0;
+_hmix = 0.01; --0.125; height mix
+
+rmix = 0.8;	--range mix
+
+
 for k=0,16  do
 for i=0,127 do 
 for j=0,127 do 
 
+	v = 0.0
 
 	x = 4.0*i
 	y = 4.0*j
@@ -109,6 +119,13 @@ for j=0,127 do
 
     ri2 = math.abs(ri2);
     ri2 = 40*0.20*math.floor(ri2 * 5);
+
+    if( z < hmin + ri2) v = v-0.25;
+
+    v = v + 0.40*e3*e3;
+
+    if(v < -1) then v = -1 end
+    if(v >  1) then v = 1 end
 
 
 --[[
