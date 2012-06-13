@@ -48,6 +48,15 @@ float rayTriangleIntersection(lbVec3f& rayOrigin,lbVec3f& rayDir, lbVec3f& vertA
 }
 */
 
+/*
+    Smoothing Groups: 
+    http://www.martinreddy.net/gfx/3d/OBJ.spec
+
+    Calculating Normals for Smoothing Groups: 
+    http://www.gamedev.net/topic/486058-normal-calculation-by-using-smoothing-groups-in-meshes/
+*/
+
+
 //#include <stdlib.h>
 //#include <stdio.h>
 //#include "obj.h"
@@ -199,7 +208,7 @@ void init_shader()
 
 void init_texture()
 {
-    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/flat.png");
+    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/drone0.png");
 
     if(s == NULL)
     {
