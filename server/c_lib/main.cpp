@@ -16,8 +16,6 @@ void init()
 {
     init_c_lib();
 
-    // generate floor map
-    //_floor(512,512,0,32,1);
 
     if (0)
     {
@@ -33,13 +31,12 @@ void init()
 
         t_gen::noise_map_generate_map();
 
+        t_gen::populate_ore();
+
         map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         //Dragon::caves();
         //Dragon::flat_veins();
-
-        t_gen::populate_ore();
     }   
-
 
     srand(time(NULL));
     
