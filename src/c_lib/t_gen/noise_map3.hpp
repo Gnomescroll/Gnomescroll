@@ -165,6 +165,8 @@ class PerlinOctave3D
 		//for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
 		//for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
 
+        cache = new float[(512/4)*(512/4)*(128/8)];
+
         for(int i=0; i<octaves; i++) octave_array[i].init(
             primes[i+1], primes[i+1]);
 	}
@@ -172,7 +174,7 @@ class PerlinOctave3D
 	~PerlinOctave3D()
 	{
 		delete[] octave_array;
-        if(cache != NULL) delete[] cache;
+        delete[] cache;
 	}
 
     __attribute__((optimize("-O3")))
@@ -225,7 +227,7 @@ class PerlinOctave3D
     __attribute__((optimize("-O3")))
     void populate_cache(float persistance)
     {
-        if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
+        //if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
 
         const int XMAX = 512/4;
         const int YMAX = 512/4;
@@ -686,19 +688,19 @@ extern "C"
         switch(noise_map)
           {
              case 0:
-                map_generator->erosion3D->cache;
+                return map_generator->erosion3D->cache;
                 break;
              case 1:
-                map_generator->erosion2D->cache;
+                return map_generator->erosion2D->cache;
                 break;
              case 2:
-                map_generator->height2D->cache;
+                return map_generator->height2D->cache;
                 break;
              case 3:
-                map_generator->ridge2D->cache;
+                return map_generator->ridge2D->cache;
                 break;
              case 4:
-                map_generator->roughness2D->cache;
+                return map_generator->roughness2D->cache;
                 break;
              default:
                 printf("LUA_get_noisemap_map_cache Error: noisemap %i does not exist \n", noise_map);

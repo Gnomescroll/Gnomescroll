@@ -202,6 +202,7 @@ class PerlinOctave2D
         octaves = _octaves;
         octave_array = new PerlinField2D[octaves];
 
+        cache = new float[(512/4)*(512/4)];
         //for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
         //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
         //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
@@ -213,6 +214,7 @@ class PerlinOctave2D
     ~PerlinOctave2D()
     {
         delete[] octave_array;
+        delete[] cache;
     }
 
     void set_persistance(float persistance)
@@ -250,7 +252,7 @@ class PerlinOctave2D
     __attribute((optimize("-O3")))
     void populate_cache(float persistance)
     {
-        if(cache == NULL) cache = new float[(512/4)*(512/4)];
+        //if(cache == NULL) cache = new float[(512/4)*(512/4)];
 
         const int XMAX = 512/4;
         const int YMAX = 512/4;
