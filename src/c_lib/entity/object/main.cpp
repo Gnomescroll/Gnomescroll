@@ -33,6 +33,9 @@ void load_object_data()
 
 void init()
 {   // must specify maximum values for objects here
+    GS_ASSERT(object_list == NULL);
+    GS_ASSERT(object_data == NULL);
+    GS_ASSERT(filter == NULL);
 
     filter = new ObjectListFilter;
     filter->init();
@@ -116,6 +119,7 @@ static Object* create_switch(ObjectType type)
             return create_mob_bomb();
         
         default:
+            GS_ASSERT(false);
             printf("WARNING: creating unknown object type %d\n", type);
             return NULL;
     }
