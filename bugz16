@@ -518,6 +518,9 @@ DONE
 smelter
 DONE
 
+players can't destroy z level 0
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 blue bombs lose target if target dies
@@ -572,7 +575,6 @@ log chat history
 put spawners back in
 
 == MAP ==
-prevent digging 0 layer
 
 == SMELTER ==
 

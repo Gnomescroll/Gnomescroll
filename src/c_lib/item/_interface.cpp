@@ -59,6 +59,7 @@ int get_stack_size(ItemID id)
     if (id == NULL_ITEM) return 1;
     Item* item = get_item(id);
     GS_ASSERT(item != NULL);
+    if (item == NULL) printf("Item: %d\n", id);
     if (item == NULL) return 1;
     return item->stack_size;
 }

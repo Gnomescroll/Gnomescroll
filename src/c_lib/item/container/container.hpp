@@ -73,6 +73,14 @@ class ItemContainerInterface
             return NULL_SLOT;
         }
 
+        #if DC_CLIENT
+        void clear()
+        {
+            for (int i=0; i<this->slot_max; i++)
+                this->slot[i] = NULL_ITEM;
+        }
+        #endif
+
         virtual void insert_item(int slot, ItemID item_id)= 0;
         virtual void remove_item(int slot) = 0;
 
