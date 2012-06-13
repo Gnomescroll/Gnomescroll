@@ -116,13 +116,13 @@ namespace t_map
         //uniforms
 
         map_ChunkPosition = glGetUniformLocation(map_shader[index], "ChunkPosition");
-        map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
+        //map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
 
         //attributes
         map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
         map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
         map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
-        map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
+        //map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
 
