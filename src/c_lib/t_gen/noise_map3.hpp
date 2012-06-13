@@ -270,6 +270,7 @@ class MapGenerator1
 */
   
     float* cache;
+
     MapGenerator1()
     {
         cache = NULL;
@@ -624,7 +625,7 @@ static unsigned long hash_string(unsigned char *str)
     unsigned long hash = 0;
     int c;
 
-    while (c = *str++)
+    while ((c = *str++))
         hash = c + (hash << 6) + (hash << 16) - hash;
 
     return hash;
@@ -641,9 +642,9 @@ extern "C"
 
     PerlinOctave2D* roughness2D;
 */
-    float* LUA_set_map_param(int noise_map, float persistance, char* seedc)
+    void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* seed_string)
     {
-        unsigned long seed = hash_string(seedc);
+        unsigned long seed = hash_string(seed_string);
         switch(noise_map)
           {
              case 0:
@@ -662,10 +663,42 @@ extern "C"
                 map_generator->roughness2D->set_param(persistance, seed);
                 break;
              default:
-                nota++;
+                printf("LUA_set_noisemap_param Error: noisemap %i does not exist \n", noise_map);
+                abort();
           }
     }
 
+
+   float* LUA_get_noisemap_map_cache(int noise_map)
+    {
+        switch(noise_map)
+          {
+             case 0:
+                map_generator->erosion3D->cache;
+                break;
+             case 1:
+                map_generator->erosion2D->cache;
+                break;
+             case 2:
+                map_generator->height2D->cache;
+                break;
+             case 3:
+                map_generator->ridge2D->cache;
+                break;
+             case 4:
+                map_generator->roughness2D->cache;
+                break;
+             default:
+                printf("LUA_get_noisemap_map_cache Error: noisemap %i does not exist \n", noise_map);
+                abort();
+          }
+        return NULL;
+    }
+
+    float* LUA_get_map_lerp_array()
+    {
+        return map_generator->cache;
+    }
 
 }
 
