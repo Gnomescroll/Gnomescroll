@@ -9,6 +9,9 @@
 
 #include <common/time/physics_timer.hpp>
 
+
+#include <t_map/server/env_process.hpp>
+
 namespace t_gen
 {
 
@@ -500,7 +503,15 @@ class MapGenerator1
                         float w = 0.125 * k0;   //z interpolation
                         float nxyz = mix(nxy0, nxy1, w);
 
-                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
+                        if(nxyz < 0.0)
+                        {
+
+                            t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
+                        }
+                        else
+                        {
+                            t_map::set(4*i+i0, 4*j+j0, 8*k+k0, 0);
+                        }
                     }
                 }
             }
@@ -723,9 +734,10 @@ extern "C"
 
     void LUA_generate_map()
     {
-
+        int tile = t_map::dat_get_cube_id("regolith");
+        map_generator->generate_map(tile);
+        t_map::map_post_processing();
     }
 }
-
 
 }

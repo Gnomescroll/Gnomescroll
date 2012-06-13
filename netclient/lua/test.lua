@@ -175,3 +175,4 @@ end
 end
 
 
+ffi.C.LUA_generate_map();
