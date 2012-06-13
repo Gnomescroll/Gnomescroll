@@ -543,7 +543,6 @@ some boxes arent getting destination correctly -- just jumping around with state
 
 == GFX ==
 glsl colored/textured voxels
-cap number of animation particles created in a single frame
 texture color problem in OSX -- for blocks and for items
 Hud Weapon sprites + animation
 use font DST_COLOR only for certain ui elements
@@ -589,6 +588,4 @@ put spawners back in
 == SMELTER ==
 
 ==BUGZ==
-investigate component exhaustion crash
---could have been due to array overwrite
 
