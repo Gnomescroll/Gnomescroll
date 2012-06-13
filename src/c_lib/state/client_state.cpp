@@ -236,6 +236,8 @@ namespace ClientState {
         if (vec3_equal(loc, vec3_init(0,0,0))) return;
         location_pointer = loc;
         location_pointer_set = true;
+
+        printf("Locator: %2.2f %2.2f %2.2f \n", loc.x, loc.y, loc.z);
     }
 
 }

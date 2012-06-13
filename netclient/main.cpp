@@ -40,6 +40,9 @@ void time_since(int n)
 
 void init()
 {
+    int mode = 0;
+    mkdir("./screenshot", S_IRWXU );
+
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib();
     ClientState::set_desired_name(Options::name);
@@ -227,7 +230,7 @@ int run()
 
         glEnd();
 
-        //obj_load::draw_model(0.0,0.0,0.0); //draw test model
+        obj_load::draw_model(0.0,0.0,0.0); //draw test model
         //glDisable(GL_TEXTURE_2D);
 
         GL_ASSERT(GL_BLEND, false);
