@@ -56,16 +56,16 @@ ffi.copy(seed, erosion3D_seed)
 ffi.C.LUA_set_noisemap_param(0, erosion3D_persistance, seed)
 
 ffi.copy(seed, erosion2D_seed)
-ffi.C.LUA_set_noisemap_param(0, erosion2D_persistance, seed)
+ffi.C.LUA_set_noisemap_param(1, erosion2D_persistance, seed)
 
 ffi.copy(seed, height2D_seed)
-ffi.C.LUA_set_noisemap_param(0, height2D_persistance, seed)
+ffi.C.LUA_set_noisemap_param(2, height2D_persistance, seed)
 
 ffi.copy(seed, ridge2D_seed)
-ffi.C.LUA_set_noisemap_param(0, ridge2D_persistance, seed)
+ffi.C.LUA_set_noisemap_param(3, ridge2D_persistance, seed)
 
 ffi.copy(seed, roughness2D_seed)
-ffi.C.LUA_set_noisemap_param(0, roughness2D_persistance, seed)
+ffi.C.LUA_set_noisemap_param(4, roughness2D_persistance, seed)
 
 cache = ffi.C.LUA_get_map_lerp_array();
 
