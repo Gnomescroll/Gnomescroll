@@ -652,6 +652,8 @@ extern "C"
 */
     void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* seed_string)
     {
+        if(map_generator == NULL)   map_generator = new MapGenerator1;
+        
         unsigned long seed = hash_string(seed_string);
         switch(noise_map)
           {
@@ -710,7 +712,7 @@ extern "C"
 
     void LUA_generate_map()
     {
-        
+
     }
 }
 
