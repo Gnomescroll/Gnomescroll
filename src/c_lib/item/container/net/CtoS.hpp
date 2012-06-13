@@ -408,4 +408,22 @@ class create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<cre
     inline void handle();
 };
 
+class admin_create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<admin_create_container_block_CtoS>
+{
+    public:
+        uint16_t x,y,z;
+        uint8_t val;
+        uint8_t orientation;    // 0123 +x,-y,-x,+y
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&x, buff, buff_n, pack);
+        pack_u16(&y, buff, buff_n, pack);
+        pack_u16(&z, buff, buff_n, pack);
+        pack_u8(&val, buff, buff_n, pack);
+        pack_u8(&orientation, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
 }   // ItemContainer

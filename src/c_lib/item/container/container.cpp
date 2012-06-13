@@ -182,6 +182,7 @@ void ItemContainerNanite::digest()
     // decrement stack
     Item::Item* item = Item::get_item_object(item_id);
     GS_ASSERT(item != NULL);
+    if (item == NULL) return;
     item->stack_size -= 1;
     
     Agent_state* a = STATE::agent_list->get(this->owner);

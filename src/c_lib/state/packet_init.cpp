@@ -233,6 +233,7 @@ void RegisterMessages()
 
     // container blocks
     ItemContainer::create_container_block_CtoS::register_server_packet();
+    ItemContainer::admin_create_container_block_CtoS::register_server_packet();
 
     // smelter
     ItemContainer::smelter_fuel_StoC::register_client_packet();

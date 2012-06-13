@@ -23,6 +23,7 @@ inline void open_container_CtoS::handle() {}
 inline void close_container_CtoS::handle() {}
 
 inline void create_container_block_CtoS::handle() {}
+inline void admin_create_container_block_CtoS::handle() {}
 
 } // ItemContainer
 #endif
@@ -449,6 +450,62 @@ void create_container_block_CtoS::handle()
     if (container == NULL) return;
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
+
+    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_palette(x,y,z,val,orientation);
+
+    init_container(container);
+    t_map::create_item_container_block(x,y,z, container->type, container->id);
+    broadcast_container_create(container->id);
+
+    agent_placed_block_StoC msg;
+    msg.id = a->id;
+    msg.broadcast();
+}
+
+void admin_create_container_block_CtoS::handle()
+{
+    if (z < 0 || z >= map_dim.z) return;
+ 
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (a->status.team == NO_TEAM || a->status.team == 0) return;
+
+    ItemContainerType container_type = Item::get_container_type_for_block(val);
+    if (container_type == CONTAINER_TYPE_NONE) return;
+
+    GS_ASSERT(orientation >= 0 && orientation <= 3);
+    if (orientation < 0 || orientation > 3) orientation = 0;
+    x = translate_point(x);
+    y = translate_point(y);
+
+    // dont allow block to be set on existing block
+    if (t_map::get(x,y,z) != 0) return;
+
+    bool collides = false;
+    _set(x,y,z, val); // set temporarily to test against
+    if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
+    else
+    {
+        for (int i=0; i<ServerState::agent_list->n_max; i++)
+        {
+            Agent_state* agent = ServerState::agent_list->a[i];
+            if (agent == NULL || agent == a) continue;
+            if (agent_collides_terrain(agent))
+            {
+                collides = true;
+                break;
+            }
+        }
+    }
+    _set(x,y,z,0);  // unset
+
+    if (collides) return;
+
+    ItemContainerInterface* container = create_container(container_type);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
 
     t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
     t_map::broadcast_set_block_palette(x,y,z,val,orientation);

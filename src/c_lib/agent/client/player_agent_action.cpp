@@ -402,15 +402,32 @@ void PlayerAgent_action::admin_set_block()
     if (b==NULL) return;
     if (b[2] < 0 || b[2] >= map_dim.z) return;
 
+    int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
+    GS_ASSERT(orientation >= 0 && orientation <= 3);
+    if (orientation < 0 || orientation > 3) orientation = 0;
+
     // get block value from somewhere
     int val = HudCubeSelector::cube_selector.get_active_id();
 
-    admin_set_block_CtoS msg;
-    msg.x = b[0];
-    msg.y = b[1];
-    msg.z = b[2];
-    msg.val = val;
-    msg.send();
+    if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
+    {
+        ItemContainer::admin_create_container_block_CtoS msg;
+        msg.x = b[0];
+        msg.y = b[1];
+        msg.z = b[2];
+        msg.val = val;
+        msg.orientation = orientation;
+        msg.send();
+    }
+    else
+    {
+        admin_set_block_CtoS msg;
+        msg.x = b[0];
+        msg.y = b[1];
+        msg.z = b[2];
+        msg.val = val;
+        msg.send();
+    }
 }
 //#endif
 
