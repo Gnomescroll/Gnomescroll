@@ -275,11 +275,11 @@ class MapGenerator1
 
     MapGenerator1()
     {
-        cache = NULL;
+        cache = new float[XMAX*YMAX*ZMAX];
         init_genrand(rand());
 
-        erosion2D = new PerlinOctave2D(4);
         erosion3D = new PerlinOctave3D(4);
+        erosion2D = new PerlinOctave2D(4);
 
         height2D = new PerlinOctave2D(4);
         ridge2D = new PerlinOctave2D(4);
@@ -287,7 +287,16 @@ class MapGenerator1
         roughness2D = new PerlinOctave2D(4);
     }
 
+    ~MapGenerator1()
+    {
+        delete[] cache;
+        delete erosion3D;
+        delete erosion2D;
+        delete height2D;
+        delete ridge2D;
+        delete roughness2D;
 
+    }
     void set_persistance(float p1, float p2, float p3, float p4, float p5)
     {
         erosion2D->set_persistance(p2);
@@ -307,8 +316,6 @@ class MapGenerator1
     __attribute__((optimize("-O3")))
     void populate_cache()
     {
-        if(cache == NULL) cache = new float[XMAX*YMAX*ZMAX];
-
         for(int k=0; k<ZMAX; k++)
         for(int i=0; i<XMAX; i++)
         for(int j=0; j<YMAX; j++)

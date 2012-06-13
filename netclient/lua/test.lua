@@ -67,6 +67,13 @@ ffi.C.LUA_set_noisemap_param(3, ridge2D_persistance, seed)
 ffi.copy(seed, roughness2D_seed)
 ffi.C.LUA_set_noisemap_param(4, roughness2D_persistance, seed)
 
+--[[
+local erosion3D   = ffi.new("float*")
+local erosion2D   = ffi.new("float*")
+local height2D    = ffi.new("float*")
+local ridge2D     = ffi.new("float*")
+local roughness2D = ffi.new("float*")
+]]
 
 erosion3D   = ffi.C.LUA_get_noisemap_map_cache(0)
 erosion2D   = ffi.C.LUA_get_noisemap_map_cache(1)
@@ -91,18 +98,28 @@ _hmix = 0.01; --0.125; height mix
 rmix = 0.8;	--range mix
 
 
-for k=0,16  do
+--[[
+local e3 = ffi.new("float")
+local e2 = ffi.new("float")
+local ri2 = ffi.new("float")
+local h2 = ffi.new("float")
+local r2 = ffi.new("float")
+]]
+
+for k=0,15  do
 for i=0,127 do 
 for j=0,127 do 
 
-	v = 0.0
+	local v = 0.0
+
+	--print( i , j, k);
 
 	x = 4.0*i
 	y = 4.0*j
 	z = 8.0*k
 
-    index2 = j*XMAX + i;
-    index3 = k*XMAX*XMAX + j*XMAX + i;
+    local index2 = j*XMAX + i;
+    local index3 = (k*XMAX*XMAX) + (j*XMAX) + i;
 
 
     e3 = erosion3D[index3];
@@ -111,7 +128,7 @@ for j=0,127 do
     h2 = height2D[index2];
     r2 = roughness2D[index2];
 
-
+    --e3 = .5
 
     --if(ri2 < 0) then ri2 = r1*-1 end;
     --ri2 *= .20;
@@ -120,40 +137,27 @@ for j=0,127 do
     ri2 = math.abs(ri2);
     ri2 = 40*0.20*math.floor(ri2 * 5);
 
-    if( z < hmin + ri2) v = v-0.25;
+    if( z < hmin + ri2) then v = v-0.25 end;
 
     v = v + 0.40*e3*e3;
 
     if(v < -1) then v = -1 end
     if(v >  1) then v = 1 end
 
+    if(r2 < 0.125) then r2 = 0.0125 end; 
+
+    tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
+
+    if(tmp1 < _hmin) then tmp1 = _hmin end;
+    if(tmp1 > _hmax) then tmp1 = _hmax end;
+
+    v = v + tmp1;
+
+
+
+    cache[index3] = v
 
 --[[
-    if( z < hmin + ri2) v -= 0.25;
-
-    if(v < -1) v = -1;
-    if(v > 1) v = 1;
-
-
-    //v += e3*(e2*e2);
-    v += 0.40*e3*e3;
-
-    if(v < -1) v = -1;
-    if(v > 1) v = 1;
-
-    //return v;
-
-    static const float hrange = 4.0;   //half of range (can perturb this with another map)
-
-    static const float _hmin = -1.0;
-    static const float _hmax = 1.0;
-
-    static const float _hmix = 0.01; //0.125;
-
-    //if(k == 5) printf("h2= %f \n", h2);
-
-    static const float rmix = 0.8;
-
 
     //r2 = 5*r2 -2;
     //if(r2 > 1) r2 = 1.0;
@@ -164,7 +168,8 @@ for j=0,127 do
 
     if(tmp1 < _hmin) tmp1 = _hmin;
     if(tmp1 > _hmax) tmp1 = _hmax;
-	]]
+]]
+
 end
 end
 end
