@@ -89,10 +89,10 @@ class PerlinField2D
         delete[] this->ga;
     }
 
-    __attribute((optimize("-O3")))
+    //__attribute((optimize("-O3")))
     void generate_gradient_array()
     {
-        for(int i=0; i<ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
+        for(int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
     }
 
     void generate_gradient_vectors()

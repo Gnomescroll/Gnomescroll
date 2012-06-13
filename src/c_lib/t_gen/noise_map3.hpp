@@ -53,10 +53,10 @@ class PerlinField3D
         delete[] this->ga;
     }
 
-    __attribute((optimize("-O3")))
+    //__attribute((optimize("-O3")))
     void generate_gradient_array()
     {
-        for(int i=0; i<ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
+        for(int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
     }
 
 
@@ -274,6 +274,7 @@ class MapGenerator1
     MapGenerator1()
     {
         cache = NULL;
+        init_genrand(rand());
 
         erosion2D = new PerlinOctave2D(4);
         erosion3D = new PerlinOctave3D(4);
@@ -599,7 +600,14 @@ void test_octave_3d_map_gen(int tile_id)
     map_generator = new MapGenerator1;
     ti[i++] = _GET_MS_TIME();
 
-    map_generator->set_persistance(0.6, 0.8, 0.8, 0.5, 0.85);
+    //map_generator->set_persistance(0.6, 0.8, 0.8, 0.5, 0.85);
+
+    map_generator->erosion3D->set_param(0.6, 15);
+    map_generator->erosion2D->set_param(0.8, 17);
+    map_generator->height2D->set_param(0.8, 21);
+    map_generator->ridge2D->set_param(0.5, 57);
+    map_generator->roughness2D->set_param(0.85, 81);
+
     ti[i++] = _GET_MS_TIME();
 
     map_generator->populate_cache();
@@ -700,6 +708,10 @@ extern "C"
         return map_generator->cache;
     }
 
+    void LUA_generate_map()
+    {
+        
+    }
 }
 
 
