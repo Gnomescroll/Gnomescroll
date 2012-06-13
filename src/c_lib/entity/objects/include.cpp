@@ -2,11 +2,11 @@
 
 #include "include.hpp"
 
-#include <entity/objects/refills/health_refill.cpp>
-#include <entity/objects/refills/laser_refill.cpp>
-#include <entity/objects/refills/grenade_refill.cpp>
+//#include <entity/objects/refills/health_refill.cpp>
+//#include <entity/objects/refills/laser_refill.cpp>
+//#include <entity/objects/refills/grenade_refill.cpp>
 
-#include <entity/objects/pickup_sprite.cpp>
+//#include <entity/objects/pickup_sprite.cpp>
 
 /*
 #include <entity/objects/gemstones/malachite.cpp>

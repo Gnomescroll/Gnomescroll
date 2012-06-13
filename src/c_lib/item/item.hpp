@@ -77,8 +77,9 @@ namespace Item
 {
 
 const int ITEM_LIST_MAX = 1024;
+const int ITEM_LIST_HARD_MAX = 0xffff;  // 65535 maximum (highest ID will be 65534)
 
-class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
+class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>
 {
     private:
         const char* name() { return "Item"; }
@@ -97,7 +98,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
         #if DC_CLIENT
         Item* create_type(int item_type, ItemID item_id)
         {
-            Item* item = DynamicObjectList<Item, ITEM_LIST_MAX>::create(item_id);
+            Item* item = DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;
@@ -112,7 +113,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX>
                 return item;
             }
             
-            item = DynamicObjectList<Item, ITEM_LIST_MAX>::create(item_id);
+            item = DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;

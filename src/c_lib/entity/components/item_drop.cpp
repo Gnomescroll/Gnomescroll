@@ -74,7 +74,7 @@ void ItemDropComponent::drop_item()
     // create item particle
     ItemParticle::ItemParticle* item_particle = ItemParticle::create_item_particle(
         item->id, item->type, x, y, z, vx, vy, vz);
-    GS_ASSERT(item_particle != NULL);
+    //GS_ASSERT(item_particle != NULL);
     if (item_particle == NULL) return;
 
     // broadcast

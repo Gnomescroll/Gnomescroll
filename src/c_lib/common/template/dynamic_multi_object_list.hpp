@@ -15,7 +15,7 @@
 
 #define OBJECT_LIST_DEBUG 0
 
-template <class Object_interface, int max_n=1024>
+template <class Object_interface, int max_n=1024, int HARD_MAX=0>
 class DynamicMultiObjectList
 {
     private:
@@ -61,8 +61,8 @@ class DynamicMultiObjectList
         virtual ~DynamicMultiObjectList(); //default deconstructor
 };
 
-template <class Object_interface, int max_n> 
-DynamicMultiObjectList<Object_interface, max_n>::DynamicMultiObjectList(Object_interface* (*create_interface)(int, int))
+template <class Object_interface, int max_n, int HARD_MAX> 
+DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::DynamicMultiObjectList(Object_interface* (*create_interface)(int, int))
 :
 id_c(0),
 n_max(max_n),
@@ -73,8 +73,8 @@ create_interface(create_interface)
     //where();
 }
 
-template <class Object_interface, int max_n> 
-DynamicMultiObjectList<Object_interface, max_n>::~DynamicMultiObjectList()
+template <class Object_interface, int max_n, int HARD_MAX> 
+DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::~DynamicMultiObjectList()
 {
     if (a != NULL)
     {
@@ -87,14 +87,14 @@ DynamicMultiObjectList<Object_interface, max_n>::~DynamicMultiObjectList()
     }
 }
 
-template <class Object_interface, int max_n>
-void DynamicMultiObjectList<Object_interface, max_n>::where()
+template <class Object_interface, int max_n, int HARD_MAX>
+void DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::where()
 {
     printf("%s_list pointer is %p\n", name(), this);
 }
 
-template <class Object_interface, int max_n>
-Object_interface* DynamicMultiObjectList<Object_interface, max_n>::get(int id)
+template <class Object_interface, int max_n, int HARD_MAX>
+Object_interface* DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::get(int id)
 {
     //where();
     if((id < 0) || (id >= n_max)) {
@@ -111,8 +111,8 @@ Object_interface* DynamicMultiObjectList<Object_interface, max_n>::get(int id)
     return a[id];
 }
 
-template <class Object_interface, int max_n>
-void DynamicMultiObjectList<Object_interface, max_n>::print_members()
+template <class Object_interface, int max_n, int HARD_MAX>
+void DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::print_members()
 {
     printf("%s members:\n", name());
     for (int i=0; i<n_max; i++)
@@ -122,8 +122,8 @@ void DynamicMultiObjectList<Object_interface, max_n>::print_members()
     }
 }
 
-template <class Object_interface, int max_n>
-int DynamicMultiObjectList<Object_interface, max_n>::get_free_id()
+template <class Object_interface, int max_n, int HARD_MAX>
+int DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::get_free_id()
 {
     GS_ASSERT(n_max > 0);
     int i;
@@ -141,11 +141,14 @@ int DynamicMultiObjectList<Object_interface, max_n>::get_free_id()
     return id;
 }
 
-template <class Object_interface, int max_n>
-void DynamicMultiObjectList<Object_interface, max_n>::resize(int new_size)
+template <class Object_interface, int max_n, int HARD_MAX>
+void DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::resize(int new_size)
 {
+    //GS_ASSERT(HARD_MAX == 0 || new_size < HARD_MAX);
+    if (HARD_MAX && new_size >= HARD_MAX) new_size = HARD_MAX-1;
+    //GS_ASSERT(this->n_max < new_size);
+    if (this->n_max == new_size) return;
     printf("Resizing %s list from %d to %d\n", this->name(), this->n_max, new_size);
-    GS_ASSERT(this->n_max < new_size);
     int old_size = this->n_max;
     this->a = (Object_interface**)realloc(this->a, new_size * sizeof(Object_interface**));
     GS_ASSERT(this->a != NULL);
@@ -155,8 +158,8 @@ void DynamicMultiObjectList<Object_interface, max_n>::resize(int new_size)
     this->n_max = new_size;
 }
 
-template <class Object_interface, int max_n>
-Object_interface* DynamicMultiObjectList<Object_interface, max_n>::create(int type)
+template <class Object_interface, int max_n, int HARD_MAX>
+Object_interface* DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::create(int type)
 {
     GS_ASSERT(create_interface != NULL);
     GS_ASSERT(n_max > 0);
@@ -180,8 +183,8 @@ Object_interface* DynamicMultiObjectList<Object_interface, max_n>::create(int ty
     return a[id];
 }
 
-template <class Object_interface, int max_n>
-Object_interface* DynamicMultiObjectList<Object_interface, max_n>::create(int type, int id)
+template <class Object_interface, int max_n, int HARD_MAX>
+Object_interface* DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::create(int type, int id)
 {
     if (id >= this->n_max)
     {   // need to resize
@@ -203,8 +206,8 @@ Object_interface* DynamicMultiObjectList<Object_interface, max_n>::create(int ty
     }
 }
 
-template <class Object_interface, int max_n>
-Object_interface* DynamicMultiObjectList<Object_interface, max_n>::get_or_create(int type, int id)
+template <class Object_interface, int max_n, int HARD_MAX>
+Object_interface* DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::get_or_create(int type, int id)
 {
     //where();
     Object_interface* obj = NULL;
@@ -215,8 +218,8 @@ Object_interface* DynamicMultiObjectList<Object_interface, max_n>::get_or_create
     return obj;
 }
 
-template <class Object_interface, int max_n>
-bool DynamicMultiObjectList<Object_interface, max_n>::contains(int id)
+template <class Object_interface, int max_n, int HARD_MAX>
+bool DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::contains(int id)
 {
     //where();
     Object_interface* obj = NULL;
@@ -227,8 +230,8 @@ bool DynamicMultiObjectList<Object_interface, max_n>::contains(int id)
     return true;
 }
 
-template <class Object_interface, int max_n>
-void DynamicMultiObjectList<Object_interface, max_n>::destroy(int id)
+template <class Object_interface, int max_n, int HARD_MAX>
+void DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::destroy(int id)
 {
     //where();
     if(id >= this->n_max || a[id]==NULL) {
@@ -241,8 +244,8 @@ void DynamicMultiObjectList<Object_interface, max_n>::destroy(int id)
     //printf("%s_list: Deleted object %i\n",name(), id);
 }
  
-template <class Object_interface, int max_n>
-bool DynamicMultiObjectList<Object_interface, max_n>::full()
+template <class Object_interface, int max_n, int HARD_MAX>
+bool DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::full()
 {
     GS_ASSERT(this->num <= max_n);
     return (this->num >= max_n);

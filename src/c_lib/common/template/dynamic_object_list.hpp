@@ -13,7 +13,7 @@
 
 #define OBJECT_LIST_DEBUG 0
 
-template <class Object_state, int max_n=1024>
+template <class Object_state, int max_n=1024, int HARD_MAX=0>   // 0 means unlimited
 class DynamicObjectList
 {
     private:
@@ -55,8 +55,8 @@ class DynamicObjectList
         virtual ~DynamicObjectList(); //default deconstructor
 };
 
-template <class Object_state, int max_n> 
-DynamicObjectList<Object_state, max_n>::DynamicObjectList()
+template <class Object_state, int max_n, int HARD_MAX> 
+DynamicObjectList<Object_state, max_n, HARD_MAX>::DynamicObjectList()
 :
 id_c(0),
 n_max(max_n),
@@ -66,8 +66,8 @@ num(0)
     //where();
 }
 
-template <class Object_state, int max_n> 
-DynamicObjectList<Object_state, max_n>::~DynamicObjectList()
+template <class Object_state, int max_n, int HARD_MAX> 
+DynamicObjectList<Object_state, max_n, HARD_MAX>::~DynamicObjectList()
 {
     if (a != NULL)
     {
@@ -80,14 +80,14 @@ DynamicObjectList<Object_state, max_n>::~DynamicObjectList()
     }
 }
 
-template <class Object_state, int max_n>
-void DynamicObjectList<Object_state, max_n>::where()
+template <class Object_state, int max_n, int HARD_MAX>
+void DynamicObjectList<Object_state, max_n, HARD_MAX>::where()
 {
     printf("%s_list pointer is %p\n", name(), this);
 }
 
-template <class Object_state, int max_n>
-Object_state* DynamicObjectList<Object_state, max_n>::get(int id)
+template <class Object_state, int max_n, int HARD_MAX>
+Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::get(int id)
 {
     //where();
     if((id < 0) || (id >= n_max)) {
@@ -104,8 +104,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::get(int id)
     return a[id];
 }
 
-template <class Object_state, int max_n>
-void DynamicObjectList<Object_state, max_n>::print_members() {
+template <class Object_state, int max_n, int HARD_MAX>
+void DynamicObjectList<Object_state, max_n, HARD_MAX>::print_members() {
     int i;
     printf("%s members:\n", name());
     for (i=0; i<n_max; i++) {
@@ -114,8 +114,8 @@ void DynamicObjectList<Object_state, max_n>::print_members() {
     }
 }
 
-template <class Object_state, int max_n>
-int DynamicObjectList<Object_state, max_n>::get_free_id()
+template <class Object_state, int max_n, int HARD_MAX>
+int DynamicObjectList<Object_state, max_n, HARD_MAX>::get_free_id()
 {
     int i;
     int id;
@@ -132,11 +132,14 @@ int DynamicObjectList<Object_state, max_n>::get_free_id()
     return id;
 }
 
-template <class Object_state, int max_n>
-void DynamicObjectList<Object_state, max_n>::resize(int new_size)
+template <class Object_state, int max_n, int HARD_MAX>
+void DynamicObjectList<Object_state, max_n, HARD_MAX>::resize(int new_size)
 {
+    //GS_ASSERT(HARD_MAX == 0 || new_size < HARD_MAX);
+    if (HARD_MAX && new_size >= HARD_MAX) new_size = HARD_MAX-1;
+    //GS_ASSERT(this->n_max < new_size);
+    if (this->n_max == new_size) return;
     printf("Resizing %s list from %d to %d\n", this->name(), this->n_max, new_size);
-    GS_ASSERT(this->n_max < new_size);
     int old_size = this->n_max;
     this->a = (Object_state**)realloc(this->a, new_size * sizeof(Object_state**));
     GS_ASSERT(this->a != NULL);
@@ -146,8 +149,8 @@ void DynamicObjectList<Object_state, max_n>::resize(int new_size)
     this->n_max = new_size;
 }
 
-template <class Object_state, int max_n>
-Object_state* DynamicObjectList<Object_state, max_n>::create()
+template <class Object_state, int max_n, int HARD_MAX>
+Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create()
 {
     //where();
     GS_ASSERT(n_max > 0);
@@ -171,8 +174,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::create()
     return a[id];
 }
 
-template <class Object_state, int max_n>
-Object_state* DynamicObjectList<Object_state, max_n>::create(int id)
+template <class Object_state, int max_n, int HARD_MAX>
+Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create(int id)
 {
     //where();
     if (id >= this->n_max)
@@ -190,8 +193,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::create(int id)
     }
 }
 
-template <class Object_state, int max_n>
-Object_state* DynamicObjectList<Object_state, max_n>::get_or_create(int id)
+template <class Object_state, int max_n, int HARD_MAX>
+Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::get_or_create(int id)
 {
     //where();
     Object_state* obj = NULL;
@@ -202,8 +205,8 @@ Object_state* DynamicObjectList<Object_state, max_n>::get_or_create(int id)
     return obj;
 }
 
-template <class Object_state, int max_n>
-bool DynamicObjectList<Object_state, max_n>::contains(int id) {
+template <class Object_state, int max_n, int HARD_MAX>
+bool DynamicObjectList<Object_state, max_n, HARD_MAX>::contains(int id) {
     //where();
     Object_state* obj = NULL;
     if (id < this->n_max) obj = a[id];
@@ -213,8 +216,8 @@ bool DynamicObjectList<Object_state, max_n>::contains(int id) {
     return true;
 }
 
-template <class Object_state, int max_n>
-void DynamicObjectList<Object_state, max_n>::destroy(int id)
+template <class Object_state, int max_n, int HARD_MAX>
+void DynamicObjectList<Object_state, max_n, HARD_MAX>::destroy(int id)
 {
     //where();
     if(id >= this->n_max || a[id]==NULL)
@@ -230,8 +233,8 @@ void DynamicObjectList<Object_state, max_n>::destroy(int id)
     //printf("%s_list: Deleted object %i\n",name(), id);
 }
  
-template <class Object_state, int max_n>
-bool DynamicObjectList<Object_state, max_n>::full()
+template <class Object_state, int max_n, int HARD_MAX>
+bool DynamicObjectList<Object_state, max_n, HARD_MAX>::full()
 {
     GS_ASSERT(this->num <= max_n);
     return (this->num >= max_n);

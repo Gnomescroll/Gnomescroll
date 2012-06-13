@@ -16,9 +16,9 @@ ObjectListFilter* filter = NULL;
 void load_object_data()
 {
     // refills
-    load_pickup_sprite_data(OBJECT_HEALTH_REFILL);
-    load_pickup_sprite_data(OBJECT_LASER_REFILL);
-    load_pickup_sprite_data(OBJECT_GRENADE_REFILL);
+    //load_pickup_sprite_data(OBJECT_HEALTH_REFILL);
+    //load_pickup_sprite_data(OBJECT_LASER_REFILL);
+    //load_pickup_sprite_data(OBJECT_GRENADE_REFILL);
     // gemstones
 
     // fabs
@@ -40,11 +40,6 @@ void init()
     object_list = new ObjectList;
     object_list->init();
     
-    // refills
-    object_list->set_object_max(OBJECT_HEALTH_REFILL, 256);
-    object_list->set_object_max(OBJECT_LASER_REFILL, 256);
-    object_list->set_object_max(OBJECT_GRENADE_REFILL, 256);
-
     // fabs
     object_list->set_object_max(OBJECT_AGENT_SPAWNER, 256);
     object_list->set_object_max(OBJECT_TURRET, 512);
@@ -93,18 +88,18 @@ static Object* create_switch(ObjectType type)
     switch (type)
     {
         // refills
-        case OBJECT_HEALTH_REFILL:
-        case OBJECT_LASER_REFILL:
-        case OBJECT_GRENADE_REFILL:
-        // gemstones
-        case OBJECT_GEMSTONE_MALACHITE:
-        case OBJECT_GEMSTONE_RUBY:
-        case OBJECT_GEMSTONE_TURQUOISE:
-        case OBJECT_GEMSTONE_SILVER:
-        case OBJECT_GEMSTONE_AMETHYST:
-        case OBJECT_GEMSTONE_JADE:
-        case OBJECT_GEMSTONE_ONYX:
-            return create_pickup_sprite(type);
+        //case OBJECT_HEALTH_REFILL:
+        //case OBJECT_LASER_REFILL:
+        //case OBJECT_GRENADE_REFILL:
+        //// gemstones
+        //case OBJECT_GEMSTONE_MALACHITE:
+        //case OBJECT_GEMSTONE_RUBY:
+        //case OBJECT_GEMSTONE_TURQUOISE:
+        //case OBJECT_GEMSTONE_SILVER:
+        //case OBJECT_GEMSTONE_AMETHYST:
+        //case OBJECT_GEMSTONE_JADE:
+        //case OBJECT_GEMSTONE_ONYX:
+            //return create_pickup_sprite(type);
 
         // fabs
         case OBJECT_AGENT_SPAWNER:
@@ -150,20 +145,20 @@ void ready_switch(Object* object)
     if (object == NULL) return;
     switch (object->type)
     {
-        // refills
-        case OBJECT_HEALTH_REFILL:
-        case OBJECT_LASER_REFILL:
-        case OBJECT_GRENADE_REFILL:
-        // gemstones
-        case OBJECT_GEMSTONE_MALACHITE:
-        case OBJECT_GEMSTONE_RUBY:
-        case OBJECT_GEMSTONE_TURQUOISE:
-        case OBJECT_GEMSTONE_SILVER:
-        case OBJECT_GEMSTONE_AMETHYST:
-        case OBJECT_GEMSTONE_JADE:
-        case OBJECT_GEMSTONE_ONYX:
-            ready_pickup_sprite(object);
-            break;
+        //// refills
+        //case OBJECT_HEALTH_REFILL:
+        //case OBJECT_LASER_REFILL:
+        //case OBJECT_GRENADE_REFILL:
+        //// gemstones
+        //case OBJECT_GEMSTONE_MALACHITE:
+        //case OBJECT_GEMSTONE_RUBY:
+        //case OBJECT_GEMSTONE_TURQUOISE:
+        //case OBJECT_GEMSTONE_SILVER:
+        //case OBJECT_GEMSTONE_AMETHYST:
+        //case OBJECT_GEMSTONE_JADE:
+        //case OBJECT_GEMSTONE_ONYX:
+            //ready_pickup_sprite(object);
+            //break;
 
         // fabs
         case OBJECT_AGENT_SPAWNER:
@@ -197,20 +192,20 @@ void destroy_switch(Object* object)
     ObjectType type = object->type;
     switch (type)
     {
-        // refills
-        case OBJECT_HEALTH_REFILL:
-        case OBJECT_LASER_REFILL:
-        case OBJECT_GRENADE_REFILL:
-        // gemstones
-        case OBJECT_GEMSTONE_MALACHITE:
-        case OBJECT_GEMSTONE_RUBY:
-        case OBJECT_GEMSTONE_TURQUOISE:
-        case OBJECT_GEMSTONE_SILVER:
-        case OBJECT_GEMSTONE_AMETHYST:
-        case OBJECT_GEMSTONE_JADE:
-        case OBJECT_GEMSTONE_ONYX:
-            die_pickup_sprite(object);
-            break;
+        //// refills
+        //case OBJECT_HEALTH_REFILL:
+        //case OBJECT_LASER_REFILL:
+        //case OBJECT_GRENADE_REFILL:
+        //// gemstones
+        //case OBJECT_GEMSTONE_MALACHITE:
+        //case OBJECT_GEMSTONE_RUBY:
+        //case OBJECT_GEMSTONE_TURQUOISE:
+        //case OBJECT_GEMSTONE_SILVER:
+        //case OBJECT_GEMSTONE_AMETHYST:
+        //case OBJECT_GEMSTONE_JADE:
+        //case OBJECT_GEMSTONE_ONYX:
+            //die_pickup_sprite(object);
+            //break;
 
         // fabs
         case OBJECT_AGENT_SPAWNER:

@@ -52,6 +52,7 @@ void init()
     #if !PRODUCTION
     //Item::test_item_list_capacity();
     //ItemContainer::test_container_list_capacity();
+    //Objects::stress_test();
     #endif
 }
    

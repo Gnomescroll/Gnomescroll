@@ -248,11 +248,15 @@ void Grenade::damage_blocks()
         for (int j=0; j<ir; j++)
             for (int k=0; k<ir; k++)
             {
-                dmg = block_damage(i+j+k);
-
                 bx = mx + i;
                 by = my + j;
                 bz = mz + k;
+                if (bz <= 0) continue;  // dont damage floor
+
+                bx = translate_point(bx);
+                by = translate_point(by);
+                
+                dmg = block_damage(i+j+k);
                 apply_damage_broadcast(bx,by,bz, dmg, action);
                 bx = mx - i;
                 apply_damage_broadcast(bx,by,bz, dmg, action);

@@ -539,9 +539,9 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
             owned_spawners++;
             break;
 
-        case OBJECT_HEALTH_REFILL:
-            this->a->status.heal(50);
-            break;
+        //case OBJECT_HEALTH_REFILL:
+            //this->a->status.heal(50);
+            //break;
 
         default:
             break;

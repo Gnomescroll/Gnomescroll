@@ -151,10 +151,11 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
     switch (t.hitscan)
     {
         case HITSCAN_TARGET_BLOCK:
-            t_map::apply_damage_broadcast(
-                t.collision_point.x, t.collision_point.y, t.collision_point.z,
-                p.block_damage, p.terrain_modification_action
-            );
+            if (t.collision_point.z > 0)    // dont damage floor
+                t_map::apply_damage_broadcast(
+                    t.collision_point.x, t.collision_point.y, t.collision_point.z,
+                    p.block_damage, p.terrain_modification_action
+                );
             break;
 
         case HITSCAN_TARGET_VOXEL:

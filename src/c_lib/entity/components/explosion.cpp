@@ -48,11 +48,17 @@ void ExplosionComponent::damage_blocks()
         for (int j=0; j<ir; j++)
             for (int k=0; k<ir; k++)
             {
-                dmg = this->get_block_damage(i+j+k);
-
                 bx = mx + i;
                 by = my + j;
                 bz = mz + k;
+
+                if (bz <= 0) continue;  // ignore floor
+
+                bx = translate_point(bx);
+                by = translate_point(by);
+
+                dmg = this->get_block_damage(i+j+k);
+
                 apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
                 bx = mx - i;
                 apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <entity/objects/refills/constants.hpp>
-#include <entity/objects/refills/health_refill.hpp>
-#include <entity/objects/refills/laser_refill.hpp>
-#include <entity/objects/refills/grenade_refill.hpp>
+//#include <entity/objects/refills/constants.hpp>
+//#include <entity/objects/refills/health_refill.hpp>
+//#include <entity/objects/refills/laser_refill.hpp>
+//#include <entity/objects/refills/grenade_refill.hpp>
 
-#include <entity/objects/pickup_sprite.hpp>
+//#include <entity/objects/pickup_sprite.hpp>
 
 /*
 #include <entity/objects/gemstones/constants.hpp>

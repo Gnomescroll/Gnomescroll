@@ -1,12 +1,12 @@
-#pragma once
+//#pragma once
 
-namespace Objects
-{
+//namespace Objects
+//{
 
-// forward decl
-class Object;
+//// forward decl
+//class Object;
 
-void create_laser_refill(Object* object);
+//void create_laser_refill(Object* object);
 
-} // Objects
+//} // Objects
 

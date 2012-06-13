@@ -22,4 +22,6 @@ void ready(Object* object);
 void destroy(Object* object);
 void destroy(ObjectType type, int id);
 
+void stress_test();
+
 } // Objects

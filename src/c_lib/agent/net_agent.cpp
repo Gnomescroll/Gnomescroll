@@ -628,6 +628,7 @@ inline void hit_block_CtoS::handle()
     // TODO -- load this from dat
     //t_map::TerrainModificationAction tma = Item::get_item_terrain_modification_enum(weapon_type);
 
+    if (z <= 0) return; // dont damage floor
     int block = t_map::get(x,y,z);
     if (block == 0) return;
     int block_damage = Item::get_item_block_damage(weapon_type, block);
@@ -769,6 +770,7 @@ inline void hitscan_block_CtoS::handle()
     // damage block
     // WARNING:
     // *must* call this after raycasting, or you will be raycasting altered terrain
+    if (p.z <= 0) return; // dont damage floor
     int block = t_map::get(p.x, p.y, p.z);
     if (block == 0) return;
     int weapon_block_damage = Item::get_item_block_damage(Item::get_item_type((char*)"laser_rifle"), block);

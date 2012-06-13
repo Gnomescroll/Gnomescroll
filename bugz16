@@ -553,6 +553,7 @@ toolbelt: turn fire on/off method for server
 elastic component lists
 craft/smelting recipes need reagents sorted by stack size in addition to type -- currently only by type
     -- is not a problem until multiple of the same type have different stack sizes
+    -- so add assert in the recipe def
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
@@ -564,8 +565,6 @@ alt tab doesnt work in fullscreen (on linux at least)
 
 == ITEMS ==
 switch methane ice sprite from iso to cell's work
-New bugs from subscription lists:
-Toolbelt durabilities out of sync
 
 == ANALYTICS ==
 Need to keep track of IP address etc in a new data structure:
@@ -579,6 +578,8 @@ log chat history
 
 == GENERAL ==
 put spawners back in
+    -- needs better UI
+    -- needs crafting path
 
 == MAP ==
 
