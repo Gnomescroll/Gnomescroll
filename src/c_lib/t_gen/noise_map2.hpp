@@ -75,15 +75,11 @@ class PerlinField2D
         ssize = xsize*xsize;
 
         grad_max = _grad_max;
-        //init_genrand(seed);
-        init_genrand(rand());
 
         ga = new unsigned char[ssize];
-        for(int i=0; i<ssize; i++)
-        {
-            ga[i] = genrand_int32() % grad_max; //gradient number
-        }
         grad = new float[2*grad_max];
+
+        generate_gradient_array();
         generate_gradient_vectors();
     }
 
@@ -91,6 +87,12 @@ class PerlinField2D
     {
         delete[] this->grad;
         delete[] this->ga;
+    }
+
+    __attribute((optimize("-O3")))
+    void generate_gradient_array()
+    {
+        for(int i=0; i<ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
     }
 
     void generate_gradient_vectors()
@@ -189,11 +191,13 @@ class PerlinOctave2D
 
     float* cache;
     float cache_persistance;
+    unsigned long cache_seed;
 
     PerlinOctave2D(int _octaves)
     {
         cache = NULL;
         cache_persistance = 0.0;
+        cache_seed = 0;
 
         octaves = _octaves;
         octave_array = new PerlinField2D[octaves];
@@ -221,6 +225,28 @@ class PerlinOctave2D
 
     }
     
+    void set_param(int persistance, unsigned long seed)
+    {
+        static int first_run = 0;
+        bool update = false;
+        if(seed != cache_seed || first_run == 0)
+        {
+            update = true;
+            cache_seed = seed;
+            init_genrand(seed);
+            for(int i=0; i<octaves; i++)
+                octave_array[i].generate_gradient_array();
+        }
+
+        if(persistance != cache_persistance || update)
+        {
+            cache_persistance = persistance;
+            populate_cache(persistance); 
+        }
+
+        first_run++;
+    }
+
     __attribute((optimize("-O3")))
     void populate_cache(float persistance)
     {
