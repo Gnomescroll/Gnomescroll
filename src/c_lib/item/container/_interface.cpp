@@ -66,6 +66,7 @@ ItemContainerInterface* get_container(int id)
 
 void destroy_container(int id)
 {
+    GS_ASSERT(id != NULL_CONTAINER);
     ItemContainerInterface* container = get_container(id);
     if (container == NULL) return;
     
@@ -203,6 +204,8 @@ bool open_container(int container_id)
     GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
     if (!container->can_be_opened_by(ClientState::playerAgent_state.agent_id)) return false;
 
+    GS_ASSERT(opened_container == NULL_CONTAINER);
+    
     // setup UI widget
     switch (container->type)
     {
@@ -298,12 +301,20 @@ bool open_container(int container_id)
     return true;
 }
 
-bool close_container_silently()
-{
+bool close_container_silently(int container_id)
+{    
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 
-    if (opened_container == NULL_CONTAINER) return false;
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container != NULL && !container->attached_to_agent)
+    {   // clear the contents, for public containers
+        container->clear();
+    }
+
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
 
     // teardown UI widget
     // TODO -- handle multiple UI types
@@ -324,22 +335,20 @@ bool close_container_silently()
     smelter_ui = NULL;
 
     // unset hud container id
-    t_hud::close_container(opened_container);
-
-    did_close_container_block = true;
+    t_hud::close_container(container_id);
     
-    opened_container = NULL_CONTAINER;
-
     return true;
 }
 
 bool close_container()
 {
     int container_id = opened_container;
-    if (!close_container_silently()) return false;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return false;
-
+    if (!close_container_silently(container_id)) return false;
+    opened_container = NULL_CONTAINER;
+    did_close_container_block = true;
+    
     // send packet
     close_container_CtoS msg;
     msg.container_id = container_id;
@@ -789,8 +798,8 @@ void agent_died(int agent_id)
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
-        agent_close_container(agent_id, opened_containers[agent_id]);
         send_container_close(agent_id, opened_containers[agent_id]);
+        agent_close_container(agent_id, opened_containers[agent_id]);
     }
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open

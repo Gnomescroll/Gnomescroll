@@ -459,6 +459,8 @@ void send_container_item_create(int client_id, ItemID item_id, int container_id,
 void send_container_close(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;

@@ -25,7 +25,7 @@ void update_container_ui_from_state();
 void update_smelter_ui();
 
 bool open_container(int container_id);
-bool close_container_silently();
+bool close_container_silently(int container_id);
 bool close_container();
 
 void open_inventory();

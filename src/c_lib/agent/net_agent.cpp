@@ -603,6 +603,9 @@ inline void Agent_cs_CtoS::handle()
 // agent hit block action
 inline void hit_block_CtoS::handle()
 {
+    if (z < 0 || z >= map_dim.z) return;
+    if (z == 0) return;
+    
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
     {
@@ -919,6 +922,7 @@ inline void ThrowGrenade_CtoS::handle()
 inline void agent_set_block_CtoS::handle()
 {
     if (z < 0 || z >= map_dim.z) return;
+    if (z == 0) return;     // dont set bottom layer
 
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
