@@ -253,6 +253,27 @@ class PerlinOctave3D
 
 };
 
+//http://en.wikipedia.org/wiki/Sigmoid_function
+
+//reaction is inverse of interval over which effect occurs
+__attribute((always_inline, optimize("-O3")))
+float sigmoid(float t, float mean, float reaction)
+{
+    t = t -mean;
+    t *= reaction;
+    return (1.0 / (1+exp(-t)));
+}
+
+//-1 to 1
+__attribute((always_inline, optimize("-O3")))
+float sigmoid2(float t, float mean, float reaction)
+{
+    t = t -mean;
+    t *= reaction;
+    return (2.0 / (1+exp(-t))) - 1;
+}
+
+
 class MapGenerator1
 {
     public:
@@ -363,18 +384,31 @@ class MapGenerator1
         ri2 *= 40;
 
         //v += 0.0625*(z - (hmin + ri2) );
-        if( z < hmin + ri2) v -= 0.25;
+        
+        //v += 0.25*sigmoid(z, hmin+ri2, 0.50);
+        //v += 0.25*sigmoid2(z, hmin+ri2, 0.125);
+        if( z < hmin + ri2) v -= 0.25; //0,25  //hard threshold
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
 
-
+#if 0
         //v += e3*(e2*e2);
-        v += 0.40*e3*e3;
+        //v += 0.60*e3*e3;   more extreme //only erodes in this form
+        v += 0.40*e3*e3;   //only erodes in this form
+        //v -= 0.40*e3*e3;   //only adds in this form
+        //v += 0.40*e3;
+        //v += 0.40*abs(e3 + .40);
+
+        //e3 = 3*e3;
+        //if(e3 < 0) e3= 0;
+        //if(e3 > 1) e3 = 1;
+
+        //v += 0.40*e3;
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
-
+#endif
         //return v;
 
         static const float hrange = 4.0;   //half of range (can perturb this with another map)
@@ -420,6 +454,7 @@ class MapGenerator1
     */
         //
 
+        //v = floor(v*8.0)*0.125;
 
         return v;
     }
@@ -603,6 +638,7 @@ class MapGenerator1* map_generator;
 
 void test_octave_3d_map_gen(int tile_id)
 {
+#if DC_SERVER
 /*
     void set_persistance(float p1, float p2, float p3, float p4, float p5)
     {
@@ -613,20 +649,18 @@ void test_octave_3d_map_gen(int tile_id)
         ridge2D->set_persistance(p4);
         roughness2D->set_persistance(p5);
 */
-
     int ti[6]; int i=0;
     ti[i++] = _GET_MS_TIME();
 
     map_generator = new MapGenerator1;
     ti[i++] = _GET_MS_TIME();
 
-    //map_generator->set_persistance(0.6, 0.8, 0.8, 0.5, 0.85);
-
-    map_generator->erosion3D->set_param(0.6, 15);
-    map_generator->erosion2D->set_param(0.8, 17);
-    map_generator->height2D->set_param(0.8, 21);
-    map_generator->ridge2D->set_param(0.5, 57);
-    map_generator->roughness2D->set_param(0.85, 81);
+    //set seeds for each of the noise maps
+    map_generator->erosion3D->set_param(0.6, rand() );
+    map_generator->erosion2D->set_param(0.8, rand() );
+    map_generator->height2D->set_param(0.8, rand() );
+    map_generator->ridge2D->set_param(0.5, rand() );
+    map_generator->roughness2D->set_param(0.85, rand() );
 
     ti[i++] = _GET_MS_TIME();
 
@@ -645,6 +679,7 @@ void test_octave_3d_map_gen(int tile_id)
     printf("3 populate cache: %i ms \n", ti[3]-ti[2] );
     printf("4 map volume lerp: %i ms \n", ti[4]-ti[3] );
     printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
+#endif
 }
 
 
