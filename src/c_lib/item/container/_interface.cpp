@@ -1214,7 +1214,7 @@ ContainerActionType auto_add_free_item_to_container(int client_id, int container
             }
             else if (starting_stack_size != stack_size)
             {   // source item was only partially consumed
-                Item::broadcast_item_state(item->id); // broadcast modified source item's state
+                Item::send_item_state(item->id); // broadcast modified source item's state
                 return PARTIAL_WORLD_TO_OCCUPIED_SLOT; 
             }
         }

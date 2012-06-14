@@ -603,3 +603,11 @@ GS_ASSERT error: /home/steve/dc_mmo/src/c_lib/item/net/StoC.cpp, line 30 functio
 occurs after death
 might be with stacking
 maybe grenade drops only?
+
+TODO for build
+fix that item assert
+--happens when auto pickup, and item is split across containers
+
+better analytics
+    -- clean printing
+    -- store session data by ip

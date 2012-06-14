@@ -289,7 +289,7 @@ void check_item_pickups()
                     {   // source item was only partially consumed
                         was_picked_up = true;
                         broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                        Item::broadcast_item_state(item->id); // broadcast modified source item's state
+                        Item::send_item_state(item->id); // broadcast modified source item's state
                         item_remaining = true;
                     }
                 }
@@ -376,7 +376,7 @@ void check_item_pickups()
                     else if (starting_stack_size != stack_size)
                     {   // source item was only partially consumed
                         if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                        Item::broadcast_item_state(item->id); // broadcast modified source item's state
+                        Item::send_item_state(item->id); // broadcast modified source item's state
                         item_remaining = true;
                     }
                 }

@@ -197,8 +197,8 @@ void destroy_item(ItemID id)
     // destroy source particle
     if (item->location == IL_PARTICLE) ItemParticle::destroy(item->location_id);
 
-    for (unsigned int i=0; i<item->subscribers.n; i++)
-        printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], id);
+    //for (unsigned int i=0; i<item->subscribers.n; i++)
+        //printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], id);
 
     send_item_destroy(id);
     item_list->destroy(id);
@@ -320,8 +320,9 @@ void agent_quit(int agent_id)
     int client_id = agent->client_id;
     for (int i=0; i<item_list->n_max; i++)
         if (item_list->a[i] != NULL)
-            if (item_list->a[i]->subscribers.remove(client_id))
-                printf("Unsubscribed %d from %d\n", client_id, item_list->a[i]->id);
+            item_list->a[i]->subscribers.remove(client_id);
+            //if (item_list->a[i]->subscribers.remove(client_id))
+                //printf("Unsubscribed %d from %d\n", client_id, item_list->a[i]->id);
 }
 
 
