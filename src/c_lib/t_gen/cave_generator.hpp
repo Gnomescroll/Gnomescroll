@@ -70,7 +70,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 		float z = ((float)k) + 0.5;
 
 		float d = point_line_distance2(xs,ys,zs, xs+dx,ys+dy,zs+dz, x,y,z);
-		if(d > cave_size) t_map::set(i,j,k, 0);
+		if(d > cave_size*cave_size) t_map::set(i,j,k, 0);
 	}
 
 
@@ -78,13 +78,13 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 	ys += length*dy;
 	zs += length*dz;
 
-	static const float theta_adj = 0.20;
-	static const float phi_adj = 0.10;
+	static const float theta_adj = 0.08;
+	static const float phi_adj = 0.05;
 
 	theta += theta_adj*3.1419*2*(2*genrand_real1() - 1.0);
 	phi += phi_adj*3.1419*2*(2*genrand_real1() - 1.0);
 
-	if( genrand_real1() < 0.99 )
+	if( genrand_real1() < 0.999 )
 	{
 		generate_node(xs,ys,zs, theta,phi, cave_size);
 	}
@@ -95,7 +95,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 void start_cave_generator()
 {
 	const int nodes = 50;
-	const float cave_size = 2.4;
+	const float cave_size = 2.0;
 
 	init_genrand(rand());
 
