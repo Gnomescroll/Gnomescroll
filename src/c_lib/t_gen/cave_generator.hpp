@@ -11,7 +11,7 @@
 namespace t_gen 
 {
 
-
+/*
 __attribute((always_inline, optimize("-O3")))
 float point_line_distance2(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz)
 {
@@ -27,6 +27,41 @@ float point_line_distance2(float px, float py, float pz, float ox, float oy, flo
     float y = t*oy - ty;
     float z = t*oz - tz;
     return x*x+y*y+z*z; // minimum distance squared between target and line
+
+}
+*/
+
+/*
+float minimum_distance(vec2 v, vec2 w, vec2 p) {
+  // Return minimum distance between line segment vw and point p
+  const float l2 = length_squared(v, w);  // i.e. |w-v|^2 -  avoid a sqrt
+  if (l2 == 0.0) return distance(p, v);   // v == w case
+  // Consider the line extending the segment, parameterized as v + t (w - v).
+  // We find projection of point p onto the line. 
+  // It falls where t = [(p-v) . (w-v)] / |w-v|^2
+  const float t = dot(p - v, w - v) / l2;
+  if (t < 0.0) return distance(p, v);       // Beyond the 'v' end of the segment
+  else if (t > 1.0) return distance(p, w);  // Beyond the 'w' end of the segment
+  const vec2 projection = v + t * (w - v);  // Projection falls on the segment
+  return distance(p, projection);
+}
+*/
+
+__attribute((always_inline, optimize("-O3")))
+float point_line_distance2(float vx, float vy, float vz, float wx, float wy, float wz, float px, float py, float pz)
+{
+
+	px -= vx;
+	py -= vy;
+	pz -= vz;
+
+	float t = px*wx + py*wy + pz*wz;
+
+	float x = t*wx - px;
+	float y = t*wy - py;
+	float z = t*wz - pz;
+
+	return x*x + y*y + z*z;
 
 }
 
@@ -69,8 +104,8 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 		float y = ((float)j) + 0.5;
 		float z = ((float)k) + 0.5;
 
-		float d = point_line_distance2(xs,ys,zs, xs+dx,ys+dy,zs+dz, x,y,z);
-		if(d > cave_size*cave_size) t_map::set(i,j,k, 0);
+		float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
+		if(d < cave_size*cave_size) t_map::set(i,j,k, 0);
 	}
 
 
