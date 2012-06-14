@@ -392,7 +392,7 @@ class MapGenerator1
         if(v < -1) v = -1;
         if(v > 1) v = 1;
 
-#if 0
+#if 1
         //v += e3*(e2*e2);
         //v += 0.60*e3*e3;   more extreme //only erodes in this form
         v += 0.40*e3*e3;   //only erodes in this form

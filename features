@@ -7,6 +7,7 @@ Add Lithium
 silica + energy = quartz crystal (oven)
 silica = silicon crystal (oven)
 silicon crystal + copper = solar mesh (crafting)
+silicon crystal + 2x copper wire = solar mesh (crafting)
 
 copper = 4x wires (crafting)
 copper + lithium = storage cell
