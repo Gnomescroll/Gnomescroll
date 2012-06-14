@@ -205,12 +205,6 @@ void load_block_dat()
     iso_texture(t1,4,8);
     push_texture();
     hud_def(6,1, t1,1,8);
-/*
-    cube_def(26, SolidBlock, "rock_layer1");
-    iso_texture(t1,2,8);
-    push_texture();
-    hud_def(6,2, t1,1,8);
-*/
 
     end_block_dat();
 
