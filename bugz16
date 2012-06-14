@@ -539,6 +539,12 @@ DONE
 blue bombs lose target after N ticks (10 seconds)
 DONE
 
+fix item state assert
+DONE
+
+switch methane ice to item sprite
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -575,7 +581,6 @@ alt tab doesnt work in fullscreen (on linux at least)
 == CONTAINERS ==
 
 == ITEMS ==
-switch methane ice sprite from iso to cell's work
 
 == ANALYTICS ==
 Need to keep track of IP address etc in a new data structure:
@@ -598,15 +603,7 @@ put spawners back in
 
 ==BUGZ==
 
-GS_ASSERT error: /home/steve/dc_mmo/src/c_lib/item/net/StoC.cpp, line 30 function: handle 
-
-occurs after death
-might be with stacking
-maybe grenade drops only?
-
 TODO for build
-fix that item assert
---happens when auto pickup, and item is split across containers
 
 better analytics
     -- clean printing
