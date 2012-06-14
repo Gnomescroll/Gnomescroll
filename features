@@ -1,14 +1,8 @@
-Energy:
-    - energy mesh (goes over block, generates electricity in day light)
-    - wires (copper)
-    - energy collector (sits on ground, pedistool, grows energy crystals for collection)
-    - better collectors yields larger energy cystals?  More collectors on face yields larger cystrals?
-
-!!! 
-Implement jetpacks ASAP
-    - dash is shift
-    - vertical jetpack is z
-    - recharge bar
+Todo: Add gas compressor
+Add Iron Ore
+Add Copper Ore
+Add Silica
+Add Lithium
 
 silica + energy = quartz crystal (oven)
 silica = silicon crystal (oven)
@@ -50,7 +44,22 @@ Gas Compressor:
     Steel + Steel Rod + Steel Piston + copper = Gas compressor
     Steel + Steel Rod + Steel Piston + 2x copper wire = Gas compressor
 
+etc...
 silicon + alien artifact = CPU core
+
+
+Energy:
+    - energy mesh (goes over block, generates electricity in day light)
+    - wires (copper)
+    - energy collector (sits on ground, pedistool, grows energy crystals for collection)
+    - better collectors yields larger energy cystals?  More collectors on face yields larger cystrals?
+
+!!! 
+Implement jetpacks ASAP
+    - dash is shift
+    - vertical jetpack is z
+    - recharge bar
+
 
 Methane Hydrate Ice Storms:
     - ambient weather conditions
