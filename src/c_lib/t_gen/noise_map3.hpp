@@ -331,8 +331,8 @@ class MapGenerator1
     __attribute((always_inline, optimize("-O3")))
     inline float calc(int i, int j, int k)
     {        
-        float x = i*4;
-        float y = j*4;
+        //float x = i*4;
+        //float y = j*4;
         float z = k*8;
 
         float v = 0.0; //value;
@@ -345,7 +345,7 @@ class MapGenerator1
 
         float ri2 = ridge2D->cache[index2];
 
-        float e2 = erosion2D->cache[index2];
+        //float e2 = erosion2D->cache[index2];
         float e3 = erosion3D->cache[index3];
 
         /*
@@ -386,7 +386,7 @@ class MapGenerator1
 
         //if(k == 5) printf("h2= %f \n", h2);
 
-        static const float rmix = 0.8;
+        //static const float rmix = 0.8;
 
 
         //r2 = 5*r2 -2;

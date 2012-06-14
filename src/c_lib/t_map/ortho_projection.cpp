@@ -173,23 +173,20 @@ void save_map_ortho_projection(const char* filename)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     // DEPRECATE GLU
+
+
+#if 0
     float fov = 85.0;
     float ratio = 1.0;
 
- 	float z_near = 1.0;
- 	float z_far = 1024;
+    float z_near = 1.0;
+    float z_far = 1024;
 
-    //gluPerspective(fov, ratio, z_near, z_far);
-    
-	//flip y and x
-	//glOrtho(-256, 256, -256, 256, z_near, z_far);
-	glOrtho(-256, 256, -256, 256, z_near, z_far);
+    gluPerspective(fov, ratio, z_near, z_far);
 
-    // DEPRECATE GLU
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-#if 0
     Vec3 right = vec3_init(0.0, 1.0, 0.0);
     Vec3 up = vec3_init(1.0f, 0.0f, 0.0f);
     Vec3 look = vec3_init(0.0, 0.0, -1.0);
@@ -205,6 +202,14 @@ void save_map_ortho_projection(const char* filename)
         up.x, up.y, up.z
     );
 #else
+
+    float z_near = 1.0;
+    float z_far = 1024;
+    glOrtho(-256, 256, -256, 256, z_near, z_far);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
 	double dist = sqrt(1 / 3.0);
 
 	float f1 = 128.0;
