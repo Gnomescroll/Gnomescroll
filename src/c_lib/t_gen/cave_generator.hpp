@@ -12,7 +12,7 @@ namespace t_gen
 {
 
 
-
+__attribute((always_inline, optimize("-O3")))
 float point_line_distance2(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz)
 {
     tx -= px;
@@ -30,6 +30,7 @@ float point_line_distance2(float px, float py, float pz, float ox, float oy, flo
 
 }
 
+__attribute__((optimize("-O3")))
 void generate_node(float xs, float ys, float zs, float theta, float phi, float cave_size)
 {
 	const static float length = 2.0;
@@ -62,6 +63,8 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 	for(int j=ymin; j<=ymax; j++)
 	for(int k=zmin; k<=zmax; k++)
 	{
+		if(k < 0 || k > 127) continue;
+
 		float x = ((float)i) + 0.5;
 		float y = ((float)j) + 0.5;
 		float z = ((float)k) + 0.5;
@@ -75,8 +78,13 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 	ys += length*dy;
 	zs += length*dz;
 
+	static const float theta_adj = 0.20;
+	static const float phi_adj = 0.10;
 
-	if( genrand_real1() < 0.95 )
+	theta += theta_adj*3.1419*2*(2*genrand_real1() - 1.0);
+	phi += phi_adj*3.1419*2*(2*genrand_real1() - 1.0);
+
+	if( genrand_real1() < 0.99 )
 	{
 		generate_node(xs,ys,zs, theta,phi, cave_size);
 	}
