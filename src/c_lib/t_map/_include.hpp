@@ -21,6 +21,8 @@
 #include <t_map/glsl/shader.cpp>
 #include <t_map/glsl/palette.hpp>
 
+#include <t_map/ortho_projection.cpp>
+
 #endif
 
 #if DC_SERVER

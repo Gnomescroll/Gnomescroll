@@ -51,7 +51,12 @@ int get(int x, int y, int z)
 void set(int x, int y, int z, int value)
 {
     #if DC_SERVER
-    if (value == 0) t_map::destroy_item_container_block(x,y,z);
+    /*
+        ERROR!!
+        Check if block is container block before calling this!!!
+    */
+
+    //if (value == 0) t_map::destroy_item_container_block(x,y,z);
     #endif
     main_map->set_block(x,y,z,value);
 }

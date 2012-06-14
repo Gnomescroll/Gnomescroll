@@ -275,6 +275,9 @@ namespace t_map
         if(e->damage >= maxDamage(e->block) ) 
         {
             #if DC_SERVER
+            /*
+                Check if block is container block before calling this!!!
+            */
             destroy_item_container_block(x,y,z);
             #endif
             // destroy block
@@ -338,6 +341,10 @@ namespace t_map
         if(e->damage >= maxDamage(e->block) ) 
         {
             #if DC_SERVER
+            /*
+                ERROR!!
+                Check if block is container block before calling this!!!
+            */
             destroy_item_container_block(x,y,z);
             #endif
             // destroy block
@@ -398,6 +405,10 @@ namespace t_map
         if(e->damage >= maxDamage(e->block) ) 
         {
             #if DC_SERVER
+            /*
+                ERROR!!
+                Check if block is container block before calling this!!!
+            */
             destroy_item_container_block(x,y,z);
             #endif
             // destroy block

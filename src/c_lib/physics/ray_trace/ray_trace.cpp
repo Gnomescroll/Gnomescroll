@@ -954,10 +954,14 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
     y = t*oy + py;
     z = t*oz + pz;
 
+    pos[0] = z;
+    pos[1] = y;
+    pos[2] = z;
+/*
     pos[0] = translate_point(x);
     pos[1] = translate_point(y);
     pos[2] = z;
-
+*/
     return d;
 }
 

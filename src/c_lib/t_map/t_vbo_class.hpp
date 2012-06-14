@@ -160,6 +160,24 @@ class Vbo_map
 
     }
 
+    //for VBO projection
+    void load_all()
+    {
+        for(int i=0; i<MAP_CHUNK_XDIM; i++)
+        for(int j=0; j<MAP_CHUNK_YDIM; j++)
+        {
+            const int index = j*MAP_CHUNK_XDIM + i;
+            class MAP_CHUNK* m = map->chunk[index];
+            if( m == NULL ) continue; //can speed up by maintain list of chunks
+            if( m->needs_update == false ) continue;
+            m->needs_update = false; //reset flag
+            if( vbo_array[index] == NULL ) vbo_array[index] = new Map_vbo( m );
+            update_vbo(i, j);
+        }
+
+    }
+
+
     void update_vbo(int i, int j);
     void update_vbo_comptability(int i, int j);
 

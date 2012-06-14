@@ -6,8 +6,12 @@
 
 #include <t_gen/twister.hpp>
 #include <t_gen/noise_map2.hpp>
+#include <t_gen/cave_generator.hpp>
 
 #include <common/time/physics_timer.hpp>
+
+
+#include <t_map/server/env_process.hpp>
 
 namespace t_gen
 {
@@ -165,6 +169,8 @@ class PerlinOctave3D
 		//for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
 		//for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
 
+        cache = new float[(512/4)*(512/4)*(128/8)];
+
         for(int i=0; i<octaves; i++) octave_array[i].init(
             primes[i+1], primes[i+1]);
 	}
@@ -172,7 +178,7 @@ class PerlinOctave3D
 	~PerlinOctave3D()
 	{
 		delete[] octave_array;
-        if(cache != NULL) delete[] cache;
+        delete[] cache;
 	}
 
     __attribute__((optimize("-O3")))
@@ -225,7 +231,7 @@ class PerlinOctave3D
     __attribute__((optimize("-O3")))
     void populate_cache(float persistance)
     {
-        if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
+        //if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
 
         const int XMAX = 512/4;
         const int YMAX = 512/4;
@@ -247,6 +253,27 @@ class PerlinOctave3D
 
 
 };
+
+//http://en.wikipedia.org/wiki/Sigmoid_function
+
+//reaction is inverse of interval over which effect occurs
+__attribute((always_inline, optimize("-O3")))
+float sigmoid(float t, float mean, float reaction)
+{
+    t = t -mean;
+    t *= reaction;
+    return (1.0 / (1+exp(-t)));
+}
+
+//-1 to 1
+__attribute((always_inline, optimize("-O3")))
+float sigmoid2(float t, float mean, float reaction)
+{
+    t = t -mean;
+    t *= reaction;
+    return (2.0 / (1+exp(-t))) - 1;
+}
+
 
 class MapGenerator1
 {
@@ -273,11 +300,11 @@ class MapGenerator1
 
     MapGenerator1()
     {
-        cache = NULL;
+        cache = new float[XMAX*YMAX*ZMAX];
         init_genrand(rand());
 
-        erosion2D = new PerlinOctave2D(4);
         erosion3D = new PerlinOctave3D(4);
+        erosion2D = new PerlinOctave2D(4);
 
         height2D = new PerlinOctave2D(4);
         ridge2D = new PerlinOctave2D(4);
@@ -285,7 +312,16 @@ class MapGenerator1
         roughness2D = new PerlinOctave2D(4);
     }
 
+    ~MapGenerator1()
+    {
+        delete[] cache;
+        delete erosion3D;
+        delete erosion2D;
+        delete height2D;
+        delete ridge2D;
+        delete roughness2D;
 
+    }
     void set_persistance(float p1, float p2, float p3, float p4, float p5)
     {
         erosion2D->set_persistance(p2);
@@ -305,8 +341,6 @@ class MapGenerator1
     __attribute__((optimize("-O3")))
     void populate_cache()
     {
-        if(cache == NULL) cache = new float[XMAX*YMAX*ZMAX];
-
         for(int k=0; k<ZMAX; k++)
         for(int i=0; i<XMAX; i++)
         for(int j=0; j<YMAX; j++)
@@ -319,8 +353,8 @@ class MapGenerator1
     __attribute((always_inline, optimize("-O3")))
     inline float calc(int i, int j, int k)
     {        
-        float x = i*4;
-        float y = j*4;
+        //float x = i*4;
+        //float y = j*4;
         float z = k*8;
 
         float v = 0.0; //value;
@@ -333,7 +367,7 @@ class MapGenerator1
 
         float ri2 = ridge2D->cache[index2];
 
-        float e2 = erosion2D->cache[index2];
+        //float e2 = erosion2D->cache[index2];
         float e3 = erosion3D->cache[index3];
 
         /*
@@ -351,18 +385,31 @@ class MapGenerator1
         ri2 *= 40;
 
         //v += 0.0625*(z - (hmin + ri2) );
-        if( z < hmin + ri2) v -= 0.25;
+        
+        //v += 0.25*sigmoid(z, hmin+ri2, 0.50);
+        //v += 0.25*sigmoid2(z, hmin+ri2, 0.125);
+        if( z < hmin + ri2) v -= 0.25; //0,25  //hard threshold
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
 
-
+#if 1
         //v += e3*(e2*e2);
-        v += 0.40*e3*e3;
+        //v += 0.60*e3*e3;   more extreme //only erodes in this form
+        v += 0.40*e3*e3;   //only erodes in this form
+        //v -= 0.40*e3*e3;   //only adds in this form
+        //v += 0.40*e3;
+        //v += 0.40*abs(e3 + .40);
+
+        //e3 = 3*e3;
+        //if(e3 < 0) e3= 0;
+        //if(e3 > 1) e3 = 1;
+
+        //v += 0.40*e3;
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
-
+#endif
         //return v;
 
         static const float hrange = 4.0;   //half of range (can perturb this with another map)
@@ -374,7 +421,7 @@ class MapGenerator1
 
         //if(k == 5) printf("h2= %f \n", h2);
 
-        static const float rmix = 0.8;
+        //static const float rmix = 0.8;
 
 
         //r2 = 5*r2 -2;
@@ -408,6 +455,7 @@ class MapGenerator1
     */
         //
 
+        //v = floor(v*8.0)*0.125;
 
         return v;
     }
@@ -491,7 +539,15 @@ class MapGenerator1
                         float w = 0.125 * k0;   //z interpolation
                         float nxyz = mix(nxy0, nxy1, w);
 
-                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
+                        if(nxyz < 0.0)
+                        {
+
+                            t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
+                        }
+                        else
+                        {
+                            t_map::set(4*i+i0, 4*j+j0, 8*k+k0, 0);
+                        }
                     }
                 }
             }
@@ -583,6 +639,7 @@ class MapGenerator1* map_generator;
 
 void test_octave_3d_map_gen(int tile_id)
 {
+#if DC_SERVER
 /*
     void set_persistance(float p1, float p2, float p3, float p4, float p5)
     {
@@ -593,20 +650,18 @@ void test_octave_3d_map_gen(int tile_id)
         ridge2D->set_persistance(p4);
         roughness2D->set_persistance(p5);
 */
-
     int ti[6]; int i=0;
     ti[i++] = _GET_MS_TIME();
 
     map_generator = new MapGenerator1;
     ti[i++] = _GET_MS_TIME();
 
-    //map_generator->set_persistance(0.6, 0.8, 0.8, 0.5, 0.85);
-
-    map_generator->erosion3D->set_param(0.6, 15);
-    map_generator->erosion2D->set_param(0.8, 17);
-    map_generator->height2D->set_param(0.8, 21);
-    map_generator->ridge2D->set_param(0.5, 57);
-    map_generator->roughness2D->set_param(0.85, 81);
+    //set seeds for each of the noise maps
+    map_generator->erosion3D->set_param(0.6, rand() );
+    map_generator->erosion2D->set_param(0.8, rand() );
+    map_generator->height2D->set_param(0.8, rand() );
+    map_generator->ridge2D->set_param(0.5, rand() );
+    map_generator->roughness2D->set_param(0.85, rand() );
 
     ti[i++] = _GET_MS_TIME();
 
@@ -625,6 +680,7 @@ void test_octave_3d_map_gen(int tile_id)
     printf("3 populate cache: %i ms \n", ti[3]-ti[2] );
     printf("4 map volume lerp: %i ms \n", ti[4]-ti[3] );
     printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
+#endif
 }
 
 
@@ -652,7 +708,11 @@ extern "C"
 */
     void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* seed_string)
     {
+        if(map_generator == NULL)   map_generator = new MapGenerator1;
+
         unsigned long seed = hash_string(seed_string);
+
+        printf("i= %i seed= %li \n", noise_map, seed);
         switch(noise_map)
           {
              case 0:
@@ -682,19 +742,19 @@ extern "C"
         switch(noise_map)
           {
              case 0:
-                map_generator->erosion3D->cache;
+                return map_generator->erosion3D->cache;
                 break;
              case 1:
-                map_generator->erosion2D->cache;
+                return map_generator->erosion2D->cache;
                 break;
              case 2:
-                map_generator->height2D->cache;
+                return map_generator->height2D->cache;
                 break;
              case 3:
-                map_generator->ridge2D->cache;
+                return map_generator->ridge2D->cache;
                 break;
              case 4:
-                map_generator->roughness2D->cache;
+                return map_generator->roughness2D->cache;
                 break;
              default:
                 printf("LUA_get_noisemap_map_cache Error: noisemap %i does not exist \n", noise_map);
@@ -710,9 +770,15 @@ extern "C"
 
     void LUA_generate_map()
     {
-        
+        int tile = t_map::dat_get_cube_id("regolith");
+        map_generator->generate_map(tile);
+        t_map::map_post_processing();
+    #if DC_CLIENT
+        int ti = _GET_MS_TIME();
+        t_map::save_map_ortho_projection("ortho_test");
+        printf("ortho took: %i ms \n", _GET_MS_TIME() - ti);
+    #endif
     }
 }
-
 
 }

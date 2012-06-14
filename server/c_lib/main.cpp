@@ -24,14 +24,21 @@ void init()
         MapGen::teardown();
         Dragon::caves();
         Dragon::surface_veins();
+
+        t_map::map_post_processing();
     }
     else
     {
         srand(Options::seed);
 
         t_gen::noise_map_generate_map();
+        
 
         t_gen::populate_ore();
+
+        t_map::map_post_processing(); //regolith stuff
+
+        t_gen::start_cave_generator();
 
         map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         //Dragon::caves();
@@ -41,8 +48,6 @@ void init()
     srand(time(NULL));
     
     //t_gen::gen_map();
-
-    t_map::map_post_processing();
 
     int address[4];
     address_from_string(Options::ip_address, address);
