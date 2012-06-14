@@ -13,7 +13,7 @@ namespace t_gen
 
 
 
-float point_line_distance2(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2)
+float point_line_distance2(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz)
 {
     tx -= px;
     ty -= py;
@@ -39,7 +39,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 	float dy = length*sin(phi)*sin(theta);
 	float dz = length*cos(phi);
 */
-	float dx = sin(phi)*cos(theta)
+	float dx = sin(phi)*cos(theta);
 	float dy = sin(phi)*sin(theta);
 	float dz = cos(phi);
 
@@ -47,14 +47,14 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 	float ym = abs(dy) + cave_size;
 	float zm = abs(dz) + cave_size;
 
-	int xmin = x - xm;
-	int xmax = x + xm;
+	int xmin = xs - xm;
+	int xmax = xs + xm;
 	
-	int ymin = y - ym;
-	int ymax = y + ym;
+	int ymin = ys - ym;
+	int ymax = ys + ym;
 
-	int zmin = z - zm;
-	int zmax = z + zm;
+	int zmin = zs - zm;
+	int zmax = zs + zm;
 
 
 	//can speed up by 8
@@ -109,7 +109,7 @@ void start_cave_generator()
 		float phi = genrand_real1()*2*3.14159;
 		float theta = genrand_real1()*2*3.14159;
 
-		generate_node(x,y,z, thi, theta, cave_size)
+		generate_node(x,y,z, theta, phi, cave_size);
 
 	}
 

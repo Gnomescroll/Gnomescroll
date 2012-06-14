@@ -32,6 +32,7 @@ void init()
         t_gen::noise_map_generate_map();
 
         t_gen::populate_ore();
+        t_gen::start_cave_generator();
 
         map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         //Dragon::caves();

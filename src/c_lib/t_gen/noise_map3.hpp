@@ -6,6 +6,7 @@
 
 #include <t_gen/twister.hpp>
 #include <t_gen/noise_map2.hpp>
+#include <t_gen/cave_generator.hpp>
 
 #include <common/time/physics_timer.hpp>
 
