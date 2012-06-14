@@ -737,6 +737,10 @@ extern "C"
         int tile = t_map::dat_get_cube_id("regolith");
         map_generator->generate_map(tile);
         t_map::map_post_processing();
+
+        int ti = _GET_MS_TIME();
+        t_map::save_map_ortho_projection("ortho_test");
+        printf("ortho took: %i ms \n", _GET_MS_TIME() - ti);
     }
 }
 

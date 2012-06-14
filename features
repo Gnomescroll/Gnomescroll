@@ -1,12 +1,56 @@
+Energy:
+    - energy mesh (goes over block, generates electricity in day light)
+    - wires (copper)
+    - energy collector (sits on ground, pedistool, grows energy crystals for collection)
+    - better collectors yields larger energy cystals?  More collectors on face yields larger cystrals?
+
 !!! 
 Implement jetpacks ASAP
     - dash is shift
     - vertical jetpack is z
     - recharge bar
-silica + energy = quartz
-2x quartz + copper  = solar cell
-copper = 4x wires
+
+silica + energy = quartz crystal (oven)
+silica = silicon crystal (oven)
+silicon crystal + copper = solar mesh (crafting)
+
+copper = 4x wires (crafting)
 copper + lithium = storage cell
+
+Solar Mesh
+    silicon crystal + copper = solar mesh
+    silicon crystal + 2x copper wire = solar mesh
+Battery unit
+    copper + lithium = battery unit
+    2x copper wire + lithium = battery unit
+Quartz Laser Cystal
+    quartz + energy cystral
+Mining Laser:
+    Iron + battery unit + quartz laser crystal 
+    (base material gives durability multiplier?)
+    Iron + battery unit + ruby laser crystal
+Storage Unit:
+    4x iron = storage unit
+
+4x steel = gas compressor
+1x steel = steel cylinder
+steel cylinder + methane (compressor) -> gas cylinder
+
+Jet Pack:
+    iron + gas cylinder + battery unit
+
+Steel -> 4x Steel Rod
+Steel -> 2x Steel Piston
+
+Cyro Freezer:
+    Steel + Steel Rod + Steel Piston + copper = Cryo freezer
+    Steel + Steel Rod + Steel Piston + 2x copper wire = Cryo freezer
+
+Gas Compressor:
+    Steel + Steel Rod + Steel Piston + copper = Gas compressor
+    Steel + Steel Rod + Steel Piston + 2x copper wire = Gas compressor
+
+silicon + alien artifact = CPU core
 
 Methane Hydrate Ice Storms:
     - ambient weather conditions
