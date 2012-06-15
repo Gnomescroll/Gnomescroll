@@ -51,7 +51,7 @@ void regolith_post_processing()
 
 void rock_layer_post_processing()
 {
-
+    int regolith = dat_get_cube_id("regolith");
     int rock_layer = dat_get_cube_id("rock_layer");
 
     class MAP_CHUNK* c;
@@ -82,7 +82,7 @@ void rock_layer_post_processing()
 		            	}
 
 
-		            	if(run > 2)
+		            	if(run > 2 && e1.block == regolith)
 		            	{
 		            		e1.block = rock_layer;
 		            		c->set_element(x,y,z, e1);
