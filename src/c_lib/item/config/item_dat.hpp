@@ -68,10 +68,10 @@ void load_item_dat()
     s.max_stack_size = 16;
     s.nanite_food = true;
 
-    item_def(10, IG_RESOURCE, "blue_cystal");
-    sprite_def(i0, 1,4);
-    s.pretty_name = (char*)"Blue Crystal";
-    s.max_stack_size = 8;
+    //item_def(10, IG_RESOURCE, "blue_crystal");
+    //sprite_def(i0, 1,4);
+    //s.pretty_name = (char*)"Blue Crystal";
+    //s.max_stack_size = 8;
 
     item_def(11, IG_NANITE_COIN, "nanite_coin");
     sprite_def(i1, 2, 7);

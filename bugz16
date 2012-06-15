@@ -597,6 +597,13 @@ put spawners back in
     -- needs better UI
     -- needs crafting path
 
+disable teams
+get rid of green team thing
+pick single good color for team
+use durability coloring to teammate health
+add right click to heal teammate with health pack
+show +health in green particle
+
 == MAP ==
 
 == SMELTER ==
@@ -605,6 +612,7 @@ put spawners back in
 
 TODO for build
 
-better analytics
-    -- clean printing
-    -- store session data by ip
+print user session data on logout
+print # of client on connect and disconnect
+clean the printlog for analytics
+record names

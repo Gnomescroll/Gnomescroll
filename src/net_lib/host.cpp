@@ -15,6 +15,7 @@
 #endif
 
 #include <common/common.hpp>
+#include <common/analytics/sessions.hpp>
 
 #include <options/options.hpp>
 
@@ -391,23 +392,23 @@ static void client_connect(ENetEvent* event)
     }
     NetServer::number_of_clients++;
 
-    int index = client_id_offset;
+    int client_id = client_id_offset;
     client_id_offset++;
 
     for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
     {   // find free peer slot
-        index = (index+1) % NetServer::HARD_MAX_CONNECTIONS;
-        if (NetServer::pool[index] != NULL) continue;
+        client_id = (client_id+1) % NetServer::HARD_MAX_CONNECTIONS;
+        if (NetServer::pool[client_id] != NULL) continue;
         nc = new NetPeer;
         nc->enet_peer = event->peer;
-        nc->client_id = index;
+        nc->client_id = client_id;
         nc->connected = 1;
-        NetServer::pool[index]= nc;
+        NetServer::pool[client_id]= nc;
         event->peer->data = (NetPeer*) nc;
 
         npm = new NetPeerManager();
-        npm->init(index);
-        NetServer::clients[index] = npm;
+        npm->init(client_id);
+        NetServer::clients[client_id] = npm;
         NetServer::login_count++;
         break;
     }
@@ -417,7 +418,7 @@ static void client_connect(ENetEvent* event)
 
     printf(
         "client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
-        index,
+        client_id,
         address[0], address[1], address[2], address[3],
         event->peer -> address.port, 
         NetServer::number_of_clients
@@ -427,7 +428,7 @@ static void client_connect(ENetEvent* event)
         Log::ANALYTICS,
         Log::Always,
         "client %d connected from %d.%d.%d.%d:%d\n", 
-        index,
+        client_id,
         address[0], address[1], address[2], address[3],
         event->peer -> address.port
     );
@@ -438,6 +439,9 @@ static void client_connect(ENetEvent* event)
         "%d clients connected\n",
         NetServer::number_of_clients
     );
+
+    Session* session = begin_session(event->peer->address.host, client_id);
+    users->assign_session_to_user(session);
     
     //startup sequence
 
@@ -479,6 +483,15 @@ static void client_disconnect(ENetEvent* event)
         "%d clients connected\n",
         NetServer::number_of_clients
     );
+
+    class User* user = users->get_user(event->peer->address.host);
+    GS_ASSERT(user != NULL);
+    if (user != NULL)
+    {
+        class Session* session = user->get_current_session();
+        GS_ASSERT(session != NULL);
+        if (session != NULL) end_session(session);
+    }
 
     enet_peer_reset(event->peer); //TEST
     event->peer -> data = NULL;

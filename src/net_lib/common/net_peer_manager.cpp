@@ -12,6 +12,7 @@
 
 
 #include <item/_interface.hpp>
+#include <common/analytics/sessions.hpp>
 
 /*
     Utility Functions

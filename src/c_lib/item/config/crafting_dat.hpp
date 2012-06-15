@@ -86,10 +86,10 @@ void load_crafting_dat()
     end_crafting_recipe();
 
     // Weapons
-    def_crafting_recipe("mining_laser");
-    set_crafting_reagent("copper_bar", 1);
-    set_crafting_reagent("blue_cystal", 1);
-    end_crafting_recipe();
+    //def_crafting_recipe("mining_laser");
+    //set_crafting_reagent("copper_bar", 1);
+    //set_crafting_reagent("blue_crystal", 1);
+    //end_crafting_recipe();
 
     def_crafting_recipe("laser_rifle");
     set_crafting_reagent("copper_bar", 1);
