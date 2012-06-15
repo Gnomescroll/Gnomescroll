@@ -616,3 +616,5 @@ print user session data on logout
 print # of client on connect and disconnect
 clean the printlog for analytics
 record names
+
+run valgrind
