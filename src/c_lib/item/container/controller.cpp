@@ -215,7 +215,7 @@ ContainerActionType partial_hand_to_world(int client_id, int agent_id, int trans
     ItemID new_item = Item::split_item_stack(hand_item, 1);   // WARNING: CREATES ITEM
 
     // update items
-    Item::broadcast_item_state(hand_item);
+    Item::send_item_state(hand_item);
     //Item::broadcast_item_create(new_item); 
 
     // throw item
@@ -260,7 +260,7 @@ ContainerActionType full_hand_to_occupied_slot(int client_id, int agent_id, int 
     // merge the hand with the slot
     Item::merge_item_stack(hand_item, slot_item); // Item::merge_item_stack(src, dest)
     // update the slot
-    Item::broadcast_item_state(slot_item);
+    Item::send_item_state(slot_item);
 
     Item::destroy_item(hand_item);
 
@@ -282,7 +282,7 @@ ContainerActionType partial_hand_to_empty_slot(int client_id, ItemContainerInter
     
     //container->insert_item(slot, new_item);
     // update items
-    //Item::broadcast_item_state(hand_item);
+    //Item::send_item_state(hand_item);
     //Item::broadcast_item_create(new_item);
     // insert split 1 stack into container
     //send_container_insert(client_id, new_item, container->id, slot);
@@ -299,8 +299,8 @@ ContainerActionType partial_hand_to_occupied_slot(int client_id, int slot, ItemI
 
     Item::merge_item_stack(hand_item, slot_item, slot_item_space);
     // update items
-    Item::broadcast_item_state(slot_item);
-    Item::broadcast_item_state(hand_item);
+    Item::send_item_state(slot_item);
+    Item::send_item_state(hand_item);
     // hand item unchanged
     return PARTIAL_HAND_TO_OCCUPIED_SLOT;
 }
@@ -316,7 +316,7 @@ ContainerActionType partial_slot_to_empty_hand(int client_id, int agent_id, int 
     //insert_item_in_hand(agent_id, new_item);
 
     // send new state
-    Item::broadcast_item_state(slot_item);
+    Item::send_item_state(slot_item);
     //Item::broadcast_item_create(new_item);
     //send_hand_insert(client_id, new_item);
     return PARTIAL_SLOT_TO_EMPTY_HAND;

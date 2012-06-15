@@ -50,12 +50,14 @@ bool Voxel_hitscan_list::hitscan(
         if (r2 < radius*radius)
         {
             if (dist > min_dist) continue;
-            if (!vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
+            tpos[0] = translate_point(tpos[0]);
+            tpos[1] = translate_point(tpos[1]);
+            if (!vhe->vv->hitscan_test(tpos[0], tpos[1], tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
             min_dist = dist;
+            target_hit = vhe;
             x = tpos[0];
             y = tpos[1];
             z = tpos[2];
-            target_hit = vhe;
         }
     }
 

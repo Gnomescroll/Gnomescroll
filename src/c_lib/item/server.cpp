@@ -7,6 +7,9 @@ dont_include_this_file_in_client
 namespace Item
 {
 
+static void send_item_create(int client_id, ItemID item_id);
+static void send_item_destroy(int client_id, ItemID item_id);
+
 // subscriptions
 
 void subscribe_agent_to_item(int agent_id, ItemID item_id)
@@ -29,7 +32,7 @@ void subscribe_agent_to_item(int agent_id, ItemID item_id)
     // only one person subscribed at a time right now
     GS_ASSERT(item->subscribers.n == 1);
 
-    printf("Subscribed %d to %d\n", a->client_id, item->id);
+    //printf("Subscribed %d to %d\n", a->client_id, item->id);
 
     send_item_create(a->client_id, item->id);
 }
@@ -50,7 +53,7 @@ void unsubscribe_agent_from_item(int agent_id, ItemID item_id)
 
     if (!item->subscribers.remove(a->client_id)) return;
 
-    printf("Unsubscribed %d from %d\n", a->client_id, item->id);
+    //printf("Unsubscribed %d from %d\n", a->client_id, item->id);
 
     // send destroy packet to client
     send_item_destroy(a->client_id, item->id);
@@ -65,8 +68,8 @@ void unsubscribe_all_from_item(ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
 
-    for (unsigned int i=0; i<item->subscribers.n; i++)
-        printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], item->id);
+    //for (unsigned int i=0; i<item->subscribers.n; i++)
+        //printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], item->id);
     
     send_item_destroy(item->id);    // sends to all subscribers
     item->subscribers.remove_all();
@@ -92,17 +95,17 @@ static bool pack_item_create(Item* item, item_create_StoC* msg)
     return true;
 }
 
-void broadcast_item_create(ItemID item_id)
-{
-    Item* item = get_item(item_id);
-    if (item == NULL) return;
+//void broadcast_item_create(ItemID item_id)
+//{
+    //Item* item = get_item(item_id);
+    //if (item == NULL) return;
     
-    item_create_StoC msg;
-    if (!pack_item_create(item, &msg)) return;
-    msg.broadcast();
-}
+    //item_create_StoC msg;
+    //if (!pack_item_create(item, &msg)) return;
+    //msg.broadcast();
+//}
 
-void send_item_create(int client_id, ItemID item_id)
+static void send_item_create(int client_id, ItemID item_id)
 {
     Item* item = get_item(item_id);
     if (item == NULL) return;
@@ -152,17 +155,17 @@ void send_item_state(ItemID item_id)
     msg.sendToClients(item->subscribers.subscribers, item->subscribers.n);
 }
 
-void broadcast_item_state(ItemID item_id)
-{
-    Item* item = get_item(item_id);
-    if (item == NULL) return;
+//void broadcast_item_state(ItemID item_id)
+//{
+    //Item* item = get_item(item_id);
+    //if (item == NULL) return;
 
-    item_state_StoC msg;
-    pack_item_state(item, &msg);
-    msg.broadcast();
-}
+    //item_state_StoC msg;
+    //pack_item_state(item, &msg);
+    //msg.broadcast();
+//}
 
-void send_item_destroy(int client_id, ItemID item_id)
+static void send_item_destroy(int client_id, ItemID item_id)
 {
     Item* item = get_item(item_id);
     GS_ASSERT(item != NULL);
@@ -183,14 +186,14 @@ void send_item_destroy(ItemID item_id)
     msg.sendToClients(item->subscribers.subscribers, item->subscribers.n);
 }
 
-void broadcast_item_destroy(ItemID item_id)
-{
-    Item* item = get_item(item_id);
-    GS_ASSERT(item != NULL);
+//void broadcast_item_destroy(ItemID item_id)
+//{
+    //Item* item = get_item(item_id);
+    //GS_ASSERT(item != NULL);
 
-    item_destroy_StoC msg;
-    msg.id = item_id;
-    msg.broadcast();
-}
+    //item_destroy_StoC msg;
+    //msg.id = item_id;
+    //msg.broadcast();
+//}
 
 }   // Item
