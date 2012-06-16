@@ -100,7 +100,7 @@ inline float quadrant_translate_f(float cx, float px)
 }
 
 __attribute((always_inline))
-inline inline float translate_point(float pt)
+inline float translate_point(float pt)
 {
     if(pt <  0.0f) pt += 512.0f;
     if(pt >= 512.0f) pt -= 512.0f;
