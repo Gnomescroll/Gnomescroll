@@ -41,12 +41,12 @@ void load_map_drop_dat()
         set_drop(0.01, 2);
 */
     ////////////////////
-    def_drop("crate_2");
-        drop_always("crate_2");
+    def_drop("small_storage");
+        drop_always("small_storage");
 
     ////////////////////
-    def_drop("crate_3");
-        drop_always("crate_3");
+    def_drop("small_crafting_bench");
+        drop_always("small_crafting_bench");
 
     def_drop("cryofreezer_1");
         drop_always("cryofreezer_1");

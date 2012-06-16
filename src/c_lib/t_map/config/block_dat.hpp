@@ -94,7 +94,7 @@ void load_block_dat()
     hud_def(1,4, t0,1,3);
 
 
-    cube_def(6, ItemContainerBlock, "crate_2");
+    cube_def(6, ItemContainerBlock, "small_storage");
     iso_texture(t1, 13,4);
     side_texture(T, t1, 1,3);
     side_texture(B, t1, 1,3);
@@ -105,7 +105,7 @@ void load_block_dat()
     set_max_dmg(128);
 
 
-    cube_def(7, ItemContainerBlock, "crate_3");
+    cube_def(7, ItemContainerBlock, "small_crafting_bench");
     iso_texture(t1, 3,4);
     side_texture(T, t1, 2,5);
     side_texture(B, t1, 3,6);
@@ -138,7 +138,7 @@ void load_block_dat()
     set_max_dmg(128);
 
 /*
-    cube_def(7, ItemContainerBlock, "crate_3");
+    cube_def(7, ItemContainerBlock, "small_crafting_bench");
     iso_texture(t1,12,4);
     side_texture(T, t1, 12,6);
     side_texture(B, t1, 12,6);
@@ -146,7 +146,7 @@ void load_block_dat()
     hud_def(2,2,t1,12,2);
 */
 /*
-    cube_def(7, ItemContainerBlock, "crate_3");
+    cube_def(7, ItemContainerBlock, "small_crafting_bench");
     iso_texture(t1,13,1);
     side_texture(T, t1, 13,3);
     side_texture(B, t1, 13,3);

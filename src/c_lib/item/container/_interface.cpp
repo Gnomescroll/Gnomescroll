@@ -538,7 +538,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     int n_crates = 0;
     for (int i=0; i<n_crates; i++)
     {
-        crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+        crate = Item::create_item(Item::get_item_type((char*)"small_storage"));
         GS_ASSERT(crate != NULL);
         if (crate != NULL)
         {
@@ -722,9 +722,9 @@ void agent_born(int agent_id)
     Item::Item* crate;
     //crate = Item::create_item(Item::get_item_type((char*)"crate_1"));
     //auto_add_free_item_to_container(client_id, toolbelt->id, crate->id);
-    //crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+    //crate = Item::create_item(Item::get_item_type((char*)"small_storage"));
     //auto_add_free_item_to_container(client_id, toolbelt->id, crate->id);
-    crate = Item::create_item(Item::get_item_type((char*)"crate_3"));
+    crate = Item::create_item(Item::get_item_type((char*)"small_crafting_bench"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
@@ -740,7 +740,7 @@ void agent_born(int agent_id)
         if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
     }
     
-    crate = Item::create_item(Item::get_item_type((char*)"crate_2"));
+    crate = Item::create_item(Item::get_item_type((char*)"small_storage"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {

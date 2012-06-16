@@ -16,10 +16,10 @@ void load_nanite_store()
     nanite_item_def("laser_rifle", 5);
     nanite_item_set(0, 1,0);
 
-    nanite_item_def("crate_3", 1);
+    nanite_item_def("small_crafting_bench", 1);
     nanite_item_set(0, 0,1);
 
-    nanite_item_def("crate_2", 5);
+    nanite_item_def("smelter_1", 5);
     nanite_item_set(0, 1,1);
 
     nanite_item_def("cryofreezer_1", 3);
