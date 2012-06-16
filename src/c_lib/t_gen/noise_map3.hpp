@@ -25,7 +25,7 @@ class PerlinField3D
     //static const int ssize = 64*64*32;
     //static const int xsize = 64;
 
-    int ssize;	//number of gradients
+    int ssize;  //number of gradients
 
     int xsize; int xsize2;
     int zsize;
@@ -36,14 +36,14 @@ class PerlinField3D
     static const int grad_max = 12;   //number of gradients
 
     //xsize is number of gradients
-    PerlinField3D() {}
+    PerlinField3D() : ga(NULL), grad(NULL) {}
 
     void init(int _xsize, int _zsize)
     {
-    	if(_xsize < 1) GS_ABORT();
+        if(_xsize < 1) GS_ABORT();
         if(_zsize < 1) GS_ABORT();
 
-    	xsize = _xsize; xsize2 = xsize*xsize;
+        xsize = _xsize; xsize2 = xsize*xsize;
         zsize = _zsize;
         ssize = xsize*xsize*zsize;
 
@@ -54,7 +54,7 @@ class PerlinField3D
 
     ~PerlinField3D()
     {
-        delete[] this->ga;
+        if (this->ga != NULL) delete[] this->ga;
     }
 
     //__attribute((optimize("-O3")))
@@ -148,51 +148,50 @@ float base(float x, float y, float z)
 
 class PerlinOctave3D
 {
-	public:
-	int octaves;
-	class PerlinField3D* octave_array;
+    public:
+    int octaves;
+    class PerlinField3D* octave_array;
 
     float* cache;
     float cache_persistance;
     unsigned long cache_seed;
 
-	PerlinOctave3D(int _octaves)
+    PerlinOctave3D(int _octaves)
     {
-        cache = NULL;
         cache_persistance = 0.0;
         cache_seed = 0;
 
-		octaves = _octaves;
-		octave_array = new PerlinField3D[octaves];
+        octaves = _octaves;
+        octave_array = new PerlinField3D[octaves];
 
-		//for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
-		//for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
-		//for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
+        //for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
+        //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
+        //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
 
         cache = new float[(512/4)*(512/4)*(128/8)];
 
         for(int i=0; i<octaves; i++) octave_array[i].init(
             primes[i+1], primes[i+1]);
-	}
+    }
 
-	~PerlinOctave3D()
-	{
-		delete[] octave_array;
+    ~PerlinOctave3D()
+    {
+        delete[] octave_array;
         delete[] cache;
-	}
+    }
 
     __attribute__((optimize("-O3")))
-	float sample(float x, float y, float z, float persistance)
-	{	
-		float p = 1.0;
-		float tmp = 0.0;
-		for(int i=0; i<octaves; i++)
-		{
-			tmp += octave_array[i].base(x,y,z);
-			p *= persistance;
-		}
-		return tmp;
-	}
+    float sample(float x, float y, float z, float persistance)
+    {   
+        float p = 1.0;
+        float tmp = 0.0;
+        for(int i=0; i<octaves; i++)
+        {
+            tmp += octave_array[i].base(x,y,z);
+            p *= persistance;
+        }
+        return tmp;
+    }
 
     void save_octaves(float _DEIN) {}
 
@@ -630,12 +629,12 @@ class MapGenerator1
 
 void test_octave_3d()
 {
-	return;
+    return;
     PerlinOctave3D m(6);
     m.save_octaves(8);
 }
 
-class MapGenerator1* map_generator;
+class MapGenerator1* map_generator = NULL;
 
 void test_octave_3d_map_gen(int tile_id)
 {
@@ -681,6 +680,11 @@ void test_octave_3d_map_gen(int tile_id)
     printf("4 map volume lerp: %i ms \n", ti[4]-ti[3] );
     printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
 #endif
+}
+
+void teardown_map_generator()
+{
+    if (map_generator != NULL) delete map_generator;
 }
 
 
