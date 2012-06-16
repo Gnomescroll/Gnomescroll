@@ -220,12 +220,6 @@ void free_filenames()
             free(log_filenames[i]);
 }
 
-void open_files()
-{
-    for (int i=0; i<=UNKNOWN; i++)
-        log_files[i] = open_file((LogType)i);
-}
-
 void close_files()
 {
     for (int i=0; i<N_LOG_FILES; i++)
@@ -236,18 +230,10 @@ void close_files()
         }
 }
 
-//void flush_files()
-//{   // buffers will flush on their own. DO NOT USE THIS UNLESS THERE IS PROBLEM
-    //for (int i=0; i<N_LOG_FILES; i++)
-        //if (log_files[i] != NULL)
-            //fflush(log_files[i]);
-//}
-
 void init()
 {
     if (!Options::logger) return;
     generate_filenames();
-    //open_files();
     log_buffer = (char*)malloc(sizeof(char) * LOG_MSG_MAX_LEN);
     GS_ASSERT(log_buffer != NULL);
 }

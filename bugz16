@@ -551,6 +551,18 @@ DONE
 valgrind
 DONE
 
+==============
+== BUILD 21 ==
+==============
+
+line buffered population/session logs
+DONE
+
+for logger, only create log file if file is printed to
+DONE
+
+----------------------
+
 == PVE ==
 blue bombs should be wandering, slowly
 
