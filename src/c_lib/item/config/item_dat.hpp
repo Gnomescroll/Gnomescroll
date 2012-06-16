@@ -224,7 +224,7 @@ void load_item_dat()
     s.object_damage_max = 10;
 
     item_def(45, IG_RESOURCE, "graphite");
-    sprite_def(i0, 2,5);
+    sprite_def(i0, 5,2);
     s.pretty_name = (char*)"Graphite";
     s.max_stack_size = 64;
 
