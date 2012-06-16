@@ -193,20 +193,17 @@ void load_block_dat()
     side_texture(B, t1,10,5);
     push_texture();
 
+    cube_def(25, SolidBlock, "rock_layer");
+    iso_texture(t1,1,8);
+    push_texture();
+    hud_def(6,1, t1,1,8);
 
-    cube_def(25, SolidBlock, "carbon");
+    cube_def(26, SolidBlock, "graphite");
     iso_texture(t1,10,6);
     push_texture();
-
     hud_def(4,2, t1,10,6);
 
 
-    cube_def(26, SolidBlock, "rock_layer");
-    iso_texture(t1,7,7);
-    push_texture();
-    hud_def(6,1, t1,7,7);
-
-/*
     cube_def(27, SolidBlock, "iron_ore");
     iso_texture(t1,8,3);
     push_texture();
@@ -227,7 +224,7 @@ void load_block_dat()
     iso_texture(t1,5,4);
     push_texture();
     hud_def(6,5, t1,5,4);
-*/
+
     end_block_dat();
 
 }

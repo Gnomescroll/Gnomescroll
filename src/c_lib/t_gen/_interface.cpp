@@ -15,18 +15,28 @@ namespace t_gen
 
 void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float persistance, int octaves)
 {
-    class PerlinOctave2D p2d(octaves);
+    //class PerlinOctave2D p2d(octaves);
     init_genrand(seed);
-    p2d.setup_octaves();
+    //p2d.setup_octaves();
+    //p2d.set_param(persistance, seed);
 
+    class PerlinOctave2D p2d(1);
+    //p2d.set_param(0.50, 1337);
+
+    float sum = 0.0;
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)  
     {
-        float x = i;
-        float y = j;
+        float _x = i*(1.0/512.0); // + (0.5/512.0);
+        float _y = j*(1.0/512.0); // + (0.5/512.0);
 
-        _2d_noise_array[512*j + i] = p2d.sample(x,y,persistance);
+        _2d_noise_array[512*j + i] = p2d.sample(_x,_y,persistance);
+
+        //printf("x,y= %f %f noise= %f \n", _x,_y, p2d.sample(_x,_y,persistance) );
+        sum += abs( p2d.sample(_x,_y, persistance) );
     }
+
+    printf("average= %f \n", sum/ (512.0*512.0));
 }
 
 void save_png(const char* filename, float* in, int xres, int yres)
