@@ -423,21 +423,21 @@ static void client_connect(ENetEvent* event)
         NetServer::number_of_clients
     );
     
-    log_simple( 
-        Log::ANALYTICS,
-        Log::Always,
-        "client %d connected from %d.%d.%d.%d:%d\n", 
-        client_id,
-        address[0], address[1], address[2], address[3],
-        event->peer -> address.port
-    );
+    //log_simple( 
+        //Log::ANALYTICS,
+        //Log::Always,
+        //"client %d connected from %d.%d.%d.%d:%d\n", 
+        //client_id,
+        //address[0], address[1], address[2], address[3],
+        //event->peer -> address.port
+    //);
 
-    log_simple(
-        Log::ANALYTICS,
-        Log::Always,
-        "%d clients connected\n",
-        NetServer::number_of_clients
-    );
+    //log_simple(
+        //Log::ANALYTICS,
+        //Log::Always,
+        //"%d clients connected\n",
+        //NetServer::number_of_clients
+    //);
 
     Session* session = begin_session(event->peer->address.host, client_id);
     users->assign_session_to_user(session);
@@ -467,21 +467,21 @@ static void client_disconnect(ENetEvent* event)
     NetServer::agents[client_id] = NULL;
     NetServer::clients[client_id] = NULL;
 
-    printf("Client %d disconnected, %d clients connected\n", client_id, NetServer::number_of_clients);
+    //printf("Client %d disconnected, %d clients connected\n", client_id, NetServer::number_of_clients);
 
-    log_simple(
-        Log::ANALYTICS,
-        Log::Always,
-        "Client %d disconnected\n",
-        client_id
-    );
+    //log_simple(
+        //Log::ANALYTICS,
+        //Log::Always,
+        //"Client %d disconnected\n",
+        //client_id
+    //);
     
-    log_simple(
-        Log::ANALYTICS,
-        Log::Always,
-        "%d clients connected\n",
-        NetServer::number_of_clients
-    );
+    //log_simple(
+        //Log::ANALYTICS,
+        //Log::Always,
+        //"%d clients connected\n",
+        //NetServer::number_of_clients
+    //);
 
     class User* user = users->get_user(event->peer->address.host);
     GS_ASSERT(user != NULL);

@@ -34,6 +34,7 @@ extern class UserRecorder* users;
 void assign_agent_to_client(int client_id, class Agent_state* a);
 
 void init_globals();
+void teardown_globals();
 
 class Session* begin_session(uint32_t ip_addr, int client_id);
 void end_session(class Session* session);

@@ -24,6 +24,9 @@ Agent_state** agents = NULL;
 
 class UserRecorder* users = NULL;
 
+FILE* session_log_file = NULL;
+FILE* population_log_file = NULL;
+
 void assign_agent_to_client(int client_id, Agent_state* a)
 {
     GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
@@ -40,6 +43,30 @@ void init_globals()
     clients = (NetPeerManager**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeerManager*));
     agents = (Agent_state**)calloc(HARD_MAX_CONNECTIONS, sizeof(Agent_state*));
     users = new UserRecorder;
+
+    const char* time_str = get_time_str();
+
+    // open sessions log file
+    const char sessions_fmt[] = "./log/sessions_%d_%s.log";
+    char fn_str[sizeof(sessions_fmt) + count_digits(DC_VERSION) + sizeof(time_str) + 1];
+    sprintf(fn_str, sessions_fmt, DC_VERSION, time_str);
+    session_log_file = fopen(fn_str, "w");
+
+    // open population log file
+    const char pop_fn[] = "./log/population.log";
+    population_log_file = fopen(pop_fn, "a");
+    // print startup time
+    fprintf(population_log_file, "%s Server started (build %d)\n", time_str, DC_VERSION);
+}
+
+void teardown_globals()
+{
+    if (users != NULL) delete users;
+    if (session_log_file != NULL) fclose(session_log_file);
+    if (population_log_file != NULL) fclose(population_log_file);
+    if (pool != NULL) free(pool);
+    if (clients != NULL) free(clients);
+    if (agents != NULL) free(agents);
 }
 
 class Session* begin_session(uint32_t ip_addr, int client_id)
@@ -49,7 +76,13 @@ class Session* begin_session(uint32_t ip_addr, int client_id)
     session_count++;
     session->id = session_count;
     session->login();
-    printf("%d clients connected\n", number_of_clients);
+    printf("Client %d connected. %d clients connected\n", client_id, number_of_clients);
+    GS_ASSERT(population_log_file != NULL);
+    if (population_log_file != NULL)
+    {
+        const char* time_str = get_time_str();
+        fprintf(population_log_file, "%s : Client %d connected. %d clients connected\n", time_str, client_id, number_of_clients);
+    }
     return session;
 }
 
@@ -58,8 +91,17 @@ void end_session(class Session* session)
     GS_ASSERT(session != NULL);
     if (session == NULL) return;
     session->logout();
-    session->print();
-    printf("%d clients connected\n", number_of_clients);
+    GS_ASSERT(session_log_file != NULL);
+    if (session_log_file != NULL)
+        session->print(session_log_file);
+    session->print(NULL);   // print to stdout too
+    printf("Client %d disconnected. %d clients connected\n", session->client_id, number_of_clients);
+    GS_ASSERT(population_log_file != NULL);
+    if (population_log_file != NULL)
+    {
+        const char* time_str = get_time_str();
+        fprintf(population_log_file, "%s : Client %d disconnected. %d clients connected\n", time_str, session->client_id, number_of_clients);
+    }
 }
 
 }   // NetServer

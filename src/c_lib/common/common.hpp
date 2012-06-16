@@ -32,3 +32,5 @@ int count_digits(int n)
 
 void address_from_string(char* ip, int address[4]);
 void address_from_uint32(uint32_t ip, uint8_t address[4]);
+
+char* get_time_str();

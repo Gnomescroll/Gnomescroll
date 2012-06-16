@@ -46,37 +46,39 @@ class Session
         return (this->logout_time == 0);
     }
 
-    void print()
+    void print(FILE* f)
     {
-        printf("Session %d: ", this->id);
+        if (f == NULL) f = stdout;
+        
+        fprintf(f, "Session %d; ", this->id);
 
         // version
-        printf("Version %d, ", this->version);
+        fprintf(f, "Version %d; ", this->version);
         
         // time
-        printf("%ld seconds, ", this->logout_time - this->login_time);
+        fprintf(f, "%ld seconds; ", this->logout_time - this->login_time);
 
         // addr
         uint8_t address[4];
         address_from_uint32(this->ip_addr, address);
-        printf("IP %d.%d.%d.%d, ", address[0], address[1], address[2], address[3]);
+        fprintf(f, "IP %d.%d.%d.%d; ", address[0], address[1], address[2], address[3]);
 
         // count
-        printf("Login %d, ", this->number+1);
+        fprintf(f, "Login %d; ", this->number+1);
 
         //client id
-        printf("Client id %d, ", this->client_id);
+        fprintf(f, "Client id %d; ", this->client_id);
 
         // names
-        printf("Names: ");
+        fprintf(f, "Names: ");
         for (int i=0; i<this->n_names; i++)
         {
             GS_ASSERT(this->names[i] != NULL);
             if (this->names[i] == NULL) continue;
-            printf("%s ", this->names[i]);
+            fprintf(f, "%s ", this->names[i]);
         }
 
-        printf("\n");
+        fprintf(f, "\n");
     }
 
     void add_name(char* name)

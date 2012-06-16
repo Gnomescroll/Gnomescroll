@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h>
 
 void address_from_string(char* ip, int address[4])
 {   // parse IP address string
@@ -65,4 +66,19 @@ unsigned int sanitize_player_name(char* name)
     strcpy(name, new_name);
     free(new_name);
     return j;
+}
+
+static const char time_fmt[] = "%m-%d-%Y-%H:%M:%S";
+static const int TIME_STR_LEN = 2 + 2 + 2 + 2 + 2 + 4 + 5 + 1;    // H,M,S,m,d,Y,-,\0
+static char time_str[TIME_STR_LEN];
+char* get_time_str()
+{
+    // get time data
+    time_t now;
+    time(&now);
+    const struct tm* time_info = localtime(&now);
+
+    // setup time formatter
+    strftime(time_str, TIME_STR_LEN, time_fmt, time_info);
+    return time_str;
 }
