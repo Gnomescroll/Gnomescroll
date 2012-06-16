@@ -112,14 +112,14 @@ bool shader_error_check(int shader)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
     if(status != GL_TRUE)
     {
-        printf("Shader compilation failed! \n");
+        printf("shader_error_check: Shader compilation failed! \n");
         return true;
     }
 
     glGetProgramiv(shader, GL_LINK_STATUS, &status);
     if(status != GL_TRUE)
     {
-        printf("Shader linking failed! \n");
+        printf("shader_error_check: Shader linking failed! \n");
         return true;
      }
 

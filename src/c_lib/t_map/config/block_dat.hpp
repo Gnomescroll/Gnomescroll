@@ -175,13 +175,13 @@ void load_block_dat()
 
     hud_def(5,3,t1,1,5);
 
-    cube_def(24, SolidBlock, "methane_ice"); // we only need one
+    cube_def(23, SolidBlock, "methane_ice"); // we only need one
     iso_texture(t1, 5,4);
     push_texture();
     hud_def(3,6, t1, 5,4);
     set_max_dmg(5);
 
-    cube_def(54, SolidBlock, "regolith");
+    cube_def(24, SolidBlock, "regolith");
     
     //pallete 0
     iso_texture(t1,10,5);
@@ -206,7 +206,7 @@ void load_block_dat()
     push_texture();
     hud_def(6,1, t1,7,7);
 
-
+/*
     cube_def(27, SolidBlock, "iron_ore");
     iso_texture(t1,8,3);
     push_texture();
@@ -227,7 +227,7 @@ void load_block_dat()
     iso_texture(t1,5,4);
     push_texture();
     hud_def(6,5, t1,5,4);
-
+*/
     end_block_dat();
 
 }

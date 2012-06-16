@@ -61,11 +61,11 @@ void rock_layer_post_processing()
 	t_gen::populate_2d_noise_array(_2d_noise_array, seed, persistance, octaves);
 
 
-	int* regolith_depth = new int[512*512]; 
+	int* regolith_depth_array = new int[512*512]; 
 	for(int i=0; i<512; i++)
 	for(int j=0; j<512; j++)
 	{
-		regolith_depth[512*j+i] = 0 + abs(_2d_noise_array[ 512*j+i]) *3;
+		regolith_depth_array[512*j+i] = 0 + abs(_2d_noise_array[ 512*j+i]) *3;
 	}
     int regolith = dat_get_cube_id("regolith");
     int rock_layer = dat_get_cube_id("rock_layer");
@@ -76,7 +76,7 @@ void rock_layer_post_processing()
         for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
         {
         	int _i = i % 32;
-        	int _j = j / 32;
+        	int _j = i / 32;
 
             c = main_map->chunk[i];
             if(c == NULL) continue;
@@ -84,7 +84,7 @@ void rock_layer_post_processing()
             for(int x=0; x<16; x++)
             for(int y=0; y<16; y++)
             {
-	       		int depth = regolith_depth[ 512*(_j+y) + (_i+x)];
+	       		int depth = regolith_depth_array[ 512*(_j+y) + (_i+x)];
 
 	            int run = 0;
 	            for(int z=TERRAIN_MAP_HEIGHT-1; z>0; z--)
@@ -106,6 +106,7 @@ void rock_layer_post_processing()
 
 
 		            	if(run > regolith_depth && e1.block == regolith)
+		            	//if(run > depth && e1.block == regolith)
 		            	{
 		            		e1.block = rock_layer;
 		            		c->set_element(x,y,z, e1);
@@ -114,7 +115,7 @@ void rock_layer_post_processing()
         	}
         }
     //main_map->chunk[]
-    delete[] regolith_depth;
+    delete[] regolith_depth_array;
     delete[] _2d_noise_array;
 }
 

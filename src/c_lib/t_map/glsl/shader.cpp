@@ -58,20 +58,23 @@ namespace t_map
         //T_MAP_BACKUP_SHADER = 1;
 
         // || true
-        if(T_MAP_BACKUP_SHADER == 1 )
+
+        if(T_MAP_BACKUP_SHADER == 0 )
+
+        {
+            set_map_shader_0();
+            init_map_3d_texture();
+        }
+        else
         {
             printf("!!! Warning: Using Intel GPU Compatability mode shader\n");
             set_map_shader_0_comptability();
             init_map_3d_texture_comptability();
         }
-        else
-        {
-            set_map_shader_0();
-            init_map_3d_texture();
-        }
 
 
-        if(shader_error_check(map_shader[0]) == false)
+
+        if(T_MAP_BACKUP_SHADER == 0 && shader_error_check(map_shader[0]) == false)
         {
             printf("Graphics card failed to compile shader!  Falling on backup shader\n");
             T_MAP_BACKUP_SHADER = 1;
