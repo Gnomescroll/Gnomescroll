@@ -6,10 +6,28 @@
 #include <SDL/texture_loader.hpp>
 #endif
 
+#include <t_gen/noise_map2.hpp>
+
 typedef unsigned char Uint8;
 
 namespace t_gen
 {
+
+void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float persistance, int octaves)
+{
+    class PerlinOctave2D p2d(octaves);
+    init_genrand(seed);
+    p2d.setup_octaves();
+
+    for(int i=0; i<512; i++)
+    for(int j=0; j<512; j++)  
+    {
+        float x = i;
+        float y = j;
+
+        _2d_noise_array[512*j + i] = p2d.sample(x,y,persistance);
+    }
+}
 
 void save_png(const char* filename, float* in, int xres, int yres)
 {

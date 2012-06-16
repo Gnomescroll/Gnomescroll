@@ -227,6 +227,12 @@ class PerlinOctave2D
 
     }
     
+    void setup_octaves()
+    {
+        for(int i=0; i<octaves; i++)
+            octave_array[i].generate_gradient_array();
+    }
+
     void set_param(int persistance, unsigned long seed)
     {
         static int first_run = 0;
@@ -236,8 +242,7 @@ class PerlinOctave2D
             update = true;
             cache_seed = seed;
             init_genrand(seed);
-            for(int i=0; i<octaves; i++)
-                octave_array[i].generate_gradient_array();
+            setup_octaves();
         }
 
         if(persistance != cache_persistance || update)

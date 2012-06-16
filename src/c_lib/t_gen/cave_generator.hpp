@@ -43,9 +43,13 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 	float dy = length*sin(phi)*sin(theta);
 	float dz = length*cos(phi);
 */
-	float dx = sin(phi)*cos(theta);
-	float dy = sin(phi)*sin(theta);
-	float dz = cos(phi);
+
+	const float _theta = theta*2*3.14159;
+	const float _phi = phi*2*3.14159;
+
+	float dx = sin(_phi)*cos(_theta);
+	float dy = sin(_phi)*sin(_theta);
+	float dz = cos(_phi);
 
 	float xm = abs(dx) + cave_size;
 	float ym = abs(dy) + cave_size;
@@ -61,32 +65,54 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 	int zmax = zs + zm;
 
 
+	bool hits_bottom = false;
 	//can speed up by 8
 	for(int i=xmin; i<=xmax; i++)
 	for(int j=ymin; j<=ymax; j++)
 	for(int k=zmin; k<=zmax; k++)
 	{
-		if(k < 0 || k > 127) continue;
+		if(k < 4 || k > 127) 
+		{
+			hits_bottom = true;
+			continue;
+		}
 
 		float x = ((float)i) + 0.5;
 		float y = ((float)j) + 0.5;
 		float z = ((float)k) + 0.5;
 
 		float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
-		if(d < cave_size*cave_size) t_map::set(i,j,k, 0);
+		if(d < cave_size*cave_size) t_map::set(i%512,j%512,k, 0);
 	}
 
+	if(hits_bottom == true) theta *= -1;
 
 	xs += length*dx;
 	ys += length*dy;
 	zs += length*dz;
 
-	static const float theta_adj = 0.08;
-	static const float phi_adj = 0.05;
+	static const float theta_adj = 0.10;
+	static const float phi_adj = 0.10;
 
-	theta += theta_adj*3.1419*2*(2*genrand_real1() - 1.0);
-	phi += phi_adj*3.1419*2*(2*genrand_real1() - 1.0);
+	theta += theta_adj*(2*genrand_real1() - 1.0);
+	phi += phi_adj*(2*genrand_real1() - 1.0);
 
+	if(phi < 0) phi += 1;
+	if(phi > 1) phi -= 1;
+
+	static const float phi_target = 0.0;
+	static const float phi_damp = 0.03;
+
+	phi -= phi_damp*(phi - phi_target);
+/*
+	if(phi < 0) phi += 1;
+	if(phi > 1) phi -= 1;
+
+	if(zs < 32 && genrand_real1() < 0.20)
+	{
+		if(phi > 0.25) phi -= 0.10;
+	} 
+*/
 	if( genrand_real1() < 0.999 )
 	{
 		generate_node(xs,ys,zs, theta,phi, cave_size);
@@ -97,7 +123,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 
 void start_cave_generator()
 {
-	const int nodes = 50;
+	const int nodes = 75;
 	const float cave_size = 2.0;
 
 	init_genrand(rand());

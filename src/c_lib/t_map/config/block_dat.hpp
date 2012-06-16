@@ -206,6 +206,28 @@ void load_block_dat()
     push_texture();
     hud_def(6,1, t1,7,7);
 
+
+    cube_def(27, SolidBlock, "iron_ore");
+    iso_texture(t1,8,3);
+    push_texture();
+    hud_def(6,2, t1,8,3);
+
+    cube_def(28, SolidBlock, "copper_ore");
+    iso_texture(t1,1,9);
+    push_texture();
+    hud_def(6,3, t1,1,9);
+
+
+    cube_def(29, SolidBlock, "gallium_ore");
+    iso_texture(t1,2,4);
+    push_texture();
+    hud_def(6,4, t1,2,4);
+
+    cube_def(30, SolidBlock, "iridium_ore");
+    iso_texture(t1,5,4);
+    push_texture();
+    hud_def(6,5, t1,5,4);
+
     end_block_dat();
 
 }
