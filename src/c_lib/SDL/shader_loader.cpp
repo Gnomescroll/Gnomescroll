@@ -108,9 +108,9 @@ void load_shaders(char *vert, char* frag, GLuint* prog)
 //returns true if error
 bool shader_error_check(int shader) 
 {
-    int status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-    if(status != GL_TRUE)
+    GLint status = GL_TRUE; // bad?
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);  // this function is not assigning any value to &status
+    if (status != GL_TRUE)
     {
         printf("Shader compilation failed! \n");
         return true;
