@@ -424,7 +424,7 @@ static void client_connect(ENetEvent* event)
         NetServer::number_of_clients
     );
     
-    printlog( 
+    print_simple( 
         Log::ANALYTICS,
         Log::Always,
         "client %d connected from %d.%d.%d.%d:%d\n", 
@@ -433,7 +433,7 @@ static void client_connect(ENetEvent* event)
         event->peer -> address.port
     );
 
-    printlog(
+    print_simple(
         Log::ANALYTICS,
         Log::Always,
         "%d clients connected\n",
@@ -470,14 +470,14 @@ static void client_disconnect(ENetEvent* event)
 
     printf("Client %d disconnected, %d clients connected\n", client_id, NetServer::number_of_clients);
 
-    printlog(
+    print_simple(
         Log::ANALYTICS,
         Log::Always,
         "Client %d disconnected\n",
         client_id
     );
     
-    printlog(
+    print_simple(
         Log::ANALYTICS,
         Log::Always,
         "%d clients connected\n",

@@ -117,6 +117,7 @@ int print(LogType type, LogLevel level, const char* file, int line, const char* 
 
 int print(LogType type, const char* file, int line, const char* function, char* fmt, ...)
 {
+    if (!Options::logger) return -1;
     va_list args;
     va_start(args, fmt);
     int res = print(type, DEFAULT_LEVEL, file, line, function, fmt, args);
@@ -126,9 +127,29 @@ int print(LogType type, const char* file, int line, const char* function, char* 
 
 int print(const char* file, int line, const char* function, char* fmt, ...)
 {
+    if (!Options::logger) return -1;
     va_list args;
     va_start(args, fmt);
     int res = print(DEFAULT_TYPE, DEFAULT_LEVEL, file, line, function, fmt, args);
+    va_end(args);
+    return res;
+}
+
+int print(LogType type, LogLevel level, char* fmt, ...)
+{
+    GS_ASSERT(fmt != NULL);
+    if (fmt == NULL) return -1;
+    
+    if (!Options::logger) return -1;
+    GS_ASSERT(log_buffer != NULL);
+    if (log_buffer == NULL) return -1;
+
+    FILE* f = get_file_descriptor(type, level);
+    if (f == NULL) return -1;
+    
+    va_list args;
+    va_start(args, fmt);
+    int res = vfprintf(f, fmt, args);
     va_end(args);
     return res;
 }
