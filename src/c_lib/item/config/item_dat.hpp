@@ -227,7 +227,9 @@ void load_item_dat()
     sprite_def(i0, 5,2);
     s.pretty_name = (char*)"Graphite";
     s.max_stack_size = 64;
-
+    s.fuel = true;
+    s.fuel_burn_rate = 30 * 30; // 30 seconds
+    
     item_def(46, IG_PLACER, "iron_block");
     iso_block_sprite_def("steel_1");
     s.pretty_name = (char*)"Iron Block";
