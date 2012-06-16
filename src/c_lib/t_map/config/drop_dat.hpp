@@ -18,6 +18,11 @@ void load_map_drop_dat()
         set_drop(0.35, 1);
         set_drop(0.20, 2);
 
+        add_drop("food_rock-0", 2);
+        set_drop(0.10, 1);
+        set_drop(0.08, 2);
+
+/*
         add_drop("copper_ore", 4);
         set_drop(0.06, 1);
         set_drop(0.02, 2);
@@ -34,10 +39,7 @@ void load_map_drop_dat()
         add_drop("iridium_ore", 2);
         set_drop(0.03, 1);
         set_drop(0.01, 2);
-
-        add_drop("food_rock-0", 2);
-        set_drop(0.10, 1);
-        set_drop(0.08, 2);
+*/
     ////////////////////
     def_drop("crate_2");
         drop_always("crate_2");
