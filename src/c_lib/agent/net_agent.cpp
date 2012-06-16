@@ -1157,6 +1157,7 @@ inline void identify_CtoS::handle()
     strcpy(msg.name, name);
     msg.sendToClient(client_id);
 
+    NetServer::users->add_name_to_client_id(client_id, name);
     NetServer::clients[client_id]->ready();
 }
 

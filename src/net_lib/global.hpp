@@ -22,7 +22,7 @@ namespace NetServer
 const int HARD_MAX_CONNECTIONS = PLAYERS_MAX;
 
 extern unsigned int number_of_clients;
-extern unsigned int login_count;
+extern unsigned int session_count;
 
 extern class NetPeer** pool;
 extern class NetPeerManager** clients;
@@ -35,5 +35,7 @@ void assign_agent_to_client(int client_id, class Agent_state* a);
 
 void init_globals();
 
+class Session* begin_session(uint32_t ip_addr, int client_id);
+void end_session(class Session* session);
 
 }   // NetServer

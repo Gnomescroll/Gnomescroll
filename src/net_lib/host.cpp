@@ -409,7 +409,6 @@ static void client_connect(ENetEvent* event)
         npm = new NetPeerManager();
         npm->init(client_id);
         NetServer::clients[client_id] = npm;
-        NetServer::login_count++;
         break;
     }
 
@@ -424,7 +423,7 @@ static void client_connect(ENetEvent* event)
         NetServer::number_of_clients
     );
     
-    print_simple( 
+    log_simple( 
         Log::ANALYTICS,
         Log::Always,
         "client %d connected from %d.%d.%d.%d:%d\n", 
@@ -433,7 +432,7 @@ static void client_connect(ENetEvent* event)
         event->peer -> address.port
     );
 
-    print_simple(
+    log_simple(
         Log::ANALYTICS,
         Log::Always,
         "%d clients connected\n",
@@ -470,14 +469,14 @@ static void client_disconnect(ENetEvent* event)
 
     printf("Client %d disconnected, %d clients connected\n", client_id, NetServer::number_of_clients);
 
-    print_simple(
+    log_simple(
         Log::ANALYTICS,
         Log::Always,
         "Client %d disconnected\n",
         client_id
     );
     
-    print_simple(
+    log_simple(
         Log::ANALYTICS,
         Log::Always,
         "%d clients connected\n",

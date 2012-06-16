@@ -168,7 +168,7 @@ received_initial_state(false)
 NetPeerManager::~NetPeerManager()
 {
     // log time
-    print_simple(
+    log_simple(
         Log::ANALYTICS,
         Log::Always,
         "Client %d was connected for %d seconds\n",

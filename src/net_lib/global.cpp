@@ -15,7 +15,7 @@ namespace NetServer
 {
 
 unsigned int number_of_clients = 0;
-unsigned int login_count = 0;
+unsigned int session_count = 0;
     
 NetPeer** pool = NULL;
 NetPeerManager** clients = NULL;
@@ -40,6 +40,26 @@ void init_globals()
     clients = (NetPeerManager**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeerManager*));
     agents = (Agent_state**)calloc(HARD_MAX_CONNECTIONS, sizeof(Agent_state*));
     users = new UserRecorder;
+}
+
+class Session* begin_session(uint32_t ip_addr, int client_id)
+{
+    class Session* session = new Session(ip_addr);
+    session->client_id = client_id;
+    session_count++;
+    session->id = session_count;
+    session->login();
+    printf("%d clients connected\n", number_of_clients);
+    return session;
+}
+
+void end_session(class Session* session)
+{
+    GS_ASSERT(session != NULL);
+    if (session == NULL) return;
+    session->logout();
+    session->print();
+    printf("%d clients connected\n", number_of_clients);
 }
 
 }   // NetServer
