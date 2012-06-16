@@ -96,26 +96,26 @@ void load_item_dat()
     //s.max_stack_size = 1;
 
     // small storage container
-    item_def(16, IG_PLACER, "crate_2");
-    iso_block_sprite_def("crate_2");
-    s.placer_block_type_id = t_map::dat_get_cube_id("crate_2");
+    item_def(16, IG_PLACER, "small_storage");
+    iso_block_sprite_def("small_storage");
+    s.placer_block_type_id = t_map::dat_get_cube_id("small_storage");
     s.pretty_name = (char*)"Small Storage Block";
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_2");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"small_storage");
     s.container_type = CONTAINER_TYPE_STORAGE_BLOCK_SMALL;
-    container_block_def("crate_2", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    container_block_def("small_storage", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
 
     // level 1 utility crafting block
-    item_def(17, IG_PLACER, "crate_3");
-    iso_block_sprite_def("crate_3");
+    item_def(17, IG_PLACER, "small_crafting_bench");
+    iso_block_sprite_def("small_crafting_bench");
     s.pretty_name = (char*)"Small Crafting Bench";
-    s.placer_block_type_id = t_map::dat_get_cube_id("crate_3");
+    s.placer_block_type_id = t_map::dat_get_cube_id("small_crafting_bench");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"crate_3");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"small_crafting_bench");
     s.container_type = CONTAINER_TYPE_CRAFTING_BENCH_UTILITY;
-    container_block_def("crate_3", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
+    container_block_def("small_crafting_bench", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
 
     // Copper
     item_def(32, IG_RESOURCE, "copper_ore");
