@@ -221,9 +221,9 @@ void load_block_dat()
     hud_def(6,4, t1,2,4);
 
     cube_def(30, SolidBlock, "iridium_ore");
-    iso_texture(t1,5,4);
+    iso_texture(t1,1,11);
     push_texture();
-    hud_def(6,5, t1,5,4);
+    hud_def(6,5, t1,1,11);
 
     end_block_dat();
 
