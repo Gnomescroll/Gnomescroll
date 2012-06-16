@@ -3,6 +3,8 @@
 #include <t_map/t_map.hpp>
 #include <t_map/common/constants.hpp>
 
+#include <t_gen/_interface.hpp>
+
 namespace t_map
 {
 
@@ -51,8 +53,17 @@ void regolith_post_processing()
 
 void rock_layer_post_processing()
 {
+	float* _2d_noise_array = new float [512*512];
+	const int seed = 58412;
+	const float persistance = 0;
+	const float octaves = 4;
+
+	t_gen::populate_2d_noise_array(_2d_noise_array, seed, persistance, octaves);
+
     int regolith = dat_get_cube_id("regolith");
     int rock_layer = dat_get_cube_id("rock_layer");
+
+    const static int regolith_depth = 8;
 
     class MAP_CHUNK* c;
         for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
@@ -82,7 +93,7 @@ void rock_layer_post_processing()
 		            	}
 
 
-		            	if(run > 2 && e1.block == regolith)
+		            	if(run > regolith_depth && e1.block == regolith)
 		            	{
 		            		e1.block = rock_layer;
 		            		c->set_element(x,y,z, e1);
@@ -92,6 +103,7 @@ void rock_layer_post_processing()
         }
     //main_map->chunk[]
 
+    delete[] _2d_noise_array;
 }
 
 

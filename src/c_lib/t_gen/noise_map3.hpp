@@ -374,7 +374,7 @@ class MapGenerator1
             Threshold height
         */
 
-        static const float hmin = 64;
+        static const float hmin = 96;
 
         if(ri2 < 0) ri2 *= -1;
 
@@ -770,6 +770,7 @@ extern "C"
 
     void LUA_generate_map()
     {
+#if !PRODUCTION
         int tile = t_map::dat_get_cube_id("regolith");
         map_generator->generate_map(tile);
         t_map::map_post_processing();
@@ -778,6 +779,7 @@ extern "C"
         t_map::save_map_ortho_projection("ortho_test");
         printf("ortho took: %i ms \n", _GET_MS_TIME() - ti);
     #endif
+#endif
     }
 }
 
