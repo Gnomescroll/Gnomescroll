@@ -57,7 +57,7 @@ void load_map_drop_dat()
 
 
     def_drop("iron_ore");
-        add_drop("methane_ice", 3);
+        add_drop("iron_ore", 3);
         set_drop(0.35, 1);
         set_drop(0.20, 2);
         set_drop(0.15, 3);
@@ -81,6 +81,11 @@ void load_map_drop_dat()
         set_drop(0.20, 2);
         set_drop(0.15, 3);
 
+    def_drop("graphite");
+        add_drop("graphite", 3);
+        set_drop(0.35, 1);
+        set_drop(0.20, 2);
+        set_drop(0.15, 3);
 
     end_drop_dat();
     #if DC_CLIENT

@@ -73,14 +73,14 @@ void rock_layer_post_processing()
     int regolith = dat_get_cube_id("regolith");
     int rock_layer = dat_get_cube_id("rock_layer");
     rock_layer = regolith;
-    
+
     const static int regolith_depth = 12;
 
     class MAP_CHUNK* c;
         for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
         {
-        	int _i = i % 32;
-        	int _j = i / 32;
+        	//int _i = i % 32;
+        	//int _j = i / 32;
 
             c = main_map->chunk[i];
             if(c == NULL) continue;

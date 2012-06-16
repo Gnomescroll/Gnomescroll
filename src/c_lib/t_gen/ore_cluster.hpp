@@ -9,13 +9,11 @@ namespace t_gen
 
 void generate_ore_vein(int x, int y, int z, int size, int tile_id);
 
-void populate_ore()
+void populate_ore_veins(int number, const char* block_name)
 {
+	int tile_id = t_map::dat_get_cube_id(block_name);
 
-	int methane_ice = t_map::dat_get_cube_id("methane_ice");
-	//methane_ice = 0;
-
-	for(int i=0; i<4096; i++)
+	for(int i=0; i<number; i++)
 	{
 		int x = genrand_int32() % 512;
 		int y = genrand_int32() % 512;
@@ -25,9 +23,19 @@ void populate_ore()
 		if(ctile == 0) continue;
 
 		int s = genrand_int32() % 128;
-		generate_ore_vein(x,y,z, 2*s+1, methane_ice);
+		generate_ore_vein(x,y,z, 2*s+1, tile_id);
 	}
+}
 
+void populate_ore()
+{
+	populate_ore_veins(4096, "methane_ice");
+
+	populate_ore_veins(2048, "graphite");
+	populate_ore_veins(2048, "iron_ore");
+	populate_ore_veins(2048, "copper_ore");
+	populate_ore_veins(2048, "gallium_ore");
+	populate_ore_veins(2048, "iridium_ore");
 }
 
 /*
