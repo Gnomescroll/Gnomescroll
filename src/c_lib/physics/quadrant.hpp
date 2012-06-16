@@ -7,32 +7,32 @@
 #define ASSERT_BOXED_POSITION(p) GS_ASSERT(p.x >= 0.0f && p.x < 512.0f && p.y >= 0.0f && p.y < 512.0f)
 
 __attribute((always_inline))
-int Min_i(int x, int y, int x1, int y1)
+inline int Min_i(int x, int y, int x1, int y1)
 {
     return abs(x)<abs(y) ? x1 : y1;
 }
 
 __attribute((always_inline))
-float Min_f(float x, float y, float x1, float y1)
+inline float Min_f(float x, float y, float x1, float y1)
 {
     return abs(x)<abs(y) ? x1 : y1;
 }
 
 __attribute((always_inline))
-int Min_2i(int x, int y)
+inline int Min_2i(int x, int y)
 {
     return abs(x)<abs(y) ? x*x : y*y;
 }
 
 __attribute((always_inline))
-float Min_2f(float x, float y)
+inline float Min_2f(float x, float y)
 {
     return abs(x)<abs(y) ? x*x : y*y;
 }
 
 //camera x and position x
 __attribute((always_inline))
-int quadrant_translate_i(int cx, int px)
+inline int quadrant_translate_i(int cx, int px)
 {
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(px);
@@ -67,7 +67,7 @@ int quadrant_translate_i(int cx, int px)
 
 //camera x and position x
 __attribute((always_inline))
-float quadrant_translate_f(float cx, float px)
+inline float quadrant_translate_f(float cx, float px)
 {
     //ASSERT_BOXED_POINT(cx);
     //ASSERT_BOXED_POINT(px);
@@ -100,7 +100,7 @@ float quadrant_translate_f(float cx, float px)
 }
 
 __attribute((always_inline))
-inline float translate_point(float pt)
+inline inline float translate_point(float pt)
 {
     if(pt <  0.0f) pt += 512.0f;
     if(pt >= 512.0f) pt -= 512.0f;
@@ -117,7 +117,8 @@ inline int translate_point(int pt)
     return pt;
 }
 
-struct Vec3 translate_position(struct Vec3 pos)
+__attribute((always_inline))
+inline struct Vec3 translate_position(struct Vec3 pos)
 {
     pos.x = translate_point(pos.x);
     pos.y = translate_point(pos.y);
@@ -130,7 +131,8 @@ struct Vec3 translate_position(struct Vec3 pos)
     return pos;
 }
 
-struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos2)
+__attribute((always_inline))
+inline struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos2)
 {
     //ASSERT_BOXED_POSITION(pos1);
     //ASSERT_BOXED_POSITION(pos2);
