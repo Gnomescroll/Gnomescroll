@@ -247,7 +247,7 @@ void init()
 {
     if (!Options::logger) return;
     generate_filenames();
-    open_files();
+    //open_files();
     log_buffer = (char*)malloc(sizeof(char) * LOG_MSG_MAX_LEN);
     GS_ASSERT(log_buffer != NULL);
 }
