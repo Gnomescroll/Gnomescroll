@@ -16,8 +16,9 @@ namespace t_gen
 void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float persistance, int octaves)
 {
     class PerlinOctave2D p2d(octaves);
-    init_genrand(seed);
-    p2d.setup_octaves();
+    //init_genrand(seed);
+    //p2d.setup_octaves();
+    p2d.set_param(persistance, seed);
 
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)  
@@ -26,6 +27,8 @@ void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float p
         float y = j;
 
         _2d_noise_array[512*j + i] = p2d.sample(x,y,persistance);
+
+        printf("x,y= %f %f persistance= %f noise= %f \n", x,y, persistance, p2d.sample(x,y,persistance) );
     }
 }
 

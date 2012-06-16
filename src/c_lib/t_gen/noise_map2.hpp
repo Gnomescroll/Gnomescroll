@@ -274,6 +274,19 @@ class PerlinOctave2D
         }
     }
 
+    __attribute((always_inline, optimize("-O3")))
+    float sample(float x, float y, float persistance)
+    {   
+        float p = 1.0;
+        float tmp = 0.0;
+        for(int i=0; i<octaves; i++)
+        {
+            tmp += octave_array[i].base(x,y);
+            p *= persistance;
+        }
+        return tmp;
+    }
+
     //__attribute((optimize("-O3")))
     void save_octaves()
     {
@@ -405,22 +418,8 @@ class PerlinOctave2D
         //save_png("octave_map_01", out, xres, yres*octaves);
         save_perlin(filename, out, xres*DEGREE, yres*octaves);
         //void save_png(const char* filename, float* in, int xres, int yres)
-
-
     }
 
-    __attribute((always_inline, optimize("-O3")))
-    float sample(float x, float y, float persistance)
-    {   
-        float p = 1.0;
-        float tmp = 0.0;
-        for(int i=0; i<octaves; i++)
-        {
-            tmp += octave_array[i].base(x,y);
-            p *= persistance;
-        }
-        return tmp;
-    }
 };
 
 

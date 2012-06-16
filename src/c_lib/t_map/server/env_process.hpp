@@ -54,19 +54,22 @@ void regolith_post_processing()
 void rock_layer_post_processing()
 {
 	float* _2d_noise_array = new float [512*512];
+	int* regolith_depth_array = new int[512*512]; 
+
 	const int seed = 58412;
-	const float persistance = 0;
+	const float persistance = 0.85;
 	const float octaves = 4;
 
 	t_gen::populate_2d_noise_array(_2d_noise_array, seed, persistance, octaves);
 
-
-	int* regolith_depth_array = new int[512*512]; 
 	for(int i=0; i<512; i++)
 	for(int j=0; j<512; j++)
 	{
-		regolith_depth_array[512*j+i] = 0 + abs(_2d_noise_array[ 512*j+i]) *3;
+		regolith_depth_array[512*j+i] = 1.0 + 3.0*abs(_2d_noise_array[ 512*j+i]);
+
+		printf("depth= %i \n", regolith_depth_array[512*j+i] );
 	}
+
     int regolith = dat_get_cube_id("regolith");
     int rock_layer = dat_get_cube_id("rock_layer");
 
