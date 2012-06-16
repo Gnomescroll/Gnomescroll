@@ -188,9 +188,14 @@ class PerlinOctave3D
 		float tmp = 0.0;
 		for(int i=0; i<octaves; i++)
 		{
-			tmp += octave_array[i].base(x,y,z);
-			p *= persistance;
-		}
+		#if 1
+            tmp += octave_array[i].base(x,y,z);
+            p *= persistance;
+        #else
+            p *= persistance;
+            tmp += p*octave_array[i].base(x,y,z);
+		#endif
+        }
 		return tmp;
 	}
 
@@ -367,6 +372,7 @@ class MapGenerator1
 
         float ri2 = ridge2D->cache[index2];
 
+        //printf("ri2= %f \n", ri2);
         //float e2 = erosion2D->cache[index2];
         float e3 = erosion3D->cache[index3];
 

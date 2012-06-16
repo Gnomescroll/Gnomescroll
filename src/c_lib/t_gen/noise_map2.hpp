@@ -14,11 +14,13 @@ int primes[20] = {
 	53,59,61,67,71
 };
 
+
 __attribute((always_inline, optimize("-O3"))) static float dot(float* g, float x, float y);
 __attribute((always_inline, optimize("-O3"))) static float dot(int gi, float x, float y, float z);
 
 __attribute((always_inline, optimize("-O3"))) static float mix(float a, float b, float t);
 __attribute((always_inline, optimize("-O3"))) static float fade(float t);
+
 
 static float dot(float* g, float x, float y)
 {
@@ -89,7 +91,7 @@ class PerlinField2D
         delete[] this->ga;
     }
 
-    //__attribute((optimize("-O3")))
+    __attribute((optimize("-O3")))
     void generate_gradient_array()
     {
         for(int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
@@ -124,13 +126,13 @@ class PerlinField2D
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-__attribute((always_inline, optimize("-O3")))
+//__attribute((always_inline, optimize("-O3")))
 static inline int fastfloor(float x) 
 {
 return x>=0 ? (int)x : (int)x-1;
 }
 
-__attribute((always_inline, optimize("-O3")))
+//__attribute((always_inline, optimize("-O3")))
 inline int get_gradient(int x, int y)
 {
     x = x % xsize; //replace with bitmask
@@ -142,7 +144,7 @@ inline int get_gradient(int x, int y)
 public:
 
 // Classic Perlin noise, 3D version
-__attribute((optimize("-O3")))
+//__attribute((optimize("-O3")))
 float base(float x, float y) 
 {
     x *= xsize;  //replace with multiplication
@@ -200,6 +202,9 @@ class PerlinOctave2D
         cache_seed = 0;
 
         octaves = _octaves;
+
+
+        init_genrand(randf());
         octave_array = new PerlinField2D[octaves];
 
         cache = new float[(512/4)*(512/4)];
@@ -207,7 +212,10 @@ class PerlinOctave2D
         //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
         //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
 	
-		for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
+        //init_genrand(randf());
+
+		for(int i=0; i<octaves; i++)
+            octave_array[i].init(primes[i+1], 16);
 
     }
 
@@ -226,12 +234,6 @@ class PerlinOctave2D
         }
 
     }
-    
-    void setup_octaves()
-    {
-        for(int i=0; i<octaves; i++)
-            octave_array[i].generate_gradient_array();
-    }
 
     void set_param(int persistance, unsigned long seed)
     {
@@ -242,7 +244,8 @@ class PerlinOctave2D
             update = true;
             cache_seed = seed;
             init_genrand(seed);
-            setup_octaves();
+            for(int i=0; i<octaves; i++)
+                octave_array[i].generate_gradient_array();
         }
 
         if(persistance != cache_persistance || update)
@@ -281,13 +284,33 @@ class PerlinOctave2D
         float tmp = 0.0;
         for(int i=0; i<octaves; i++)
         {
+        #if 1
             tmp += octave_array[i].base(x,y);
             p *= persistance;
+        #else
+            p *= persistance;
+            tmp += p*octave_array[i].base(x,y,z);
+        #endif
         }
         return tmp;
     }
 
-    //__attribute((optimize("-O3")))
+//    __attribute((always_inline, optimize("-O3")))
+    float sample2(float x, float y, float persistance)
+    {   
+        float p = 1.0;
+        float tmp = 0.0;
+        for(int i=0; i<octaves; i++)
+        {
+            printf("octave %i: %f \n", i, octave_array[i].base(x,y));
+            p *= persistance;
+            tmp += p*octave_array[i].base(x,y);
+        }
+        printf("tmp= %f x,y= %f %f \n", tmp, x,y);
+        return tmp;
+    }
+
+    __attribute((optimize("-O3")))
     void save_octaves()
     {
 

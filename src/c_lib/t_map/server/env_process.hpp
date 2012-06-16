@@ -67,7 +67,7 @@ void rock_layer_post_processing()
 	{
 		regolith_depth_array[512*j+i] = 1.0 + 3.0*abs(_2d_noise_array[ 512*j+i]);
 
-		printf("depth= %i \n", regolith_depth_array[512*j+i] );
+		//printf("depth= %i \n", regolith_depth_array[512*j+i] );
 	}
 
     int regolith = dat_get_cube_id("regolith");
