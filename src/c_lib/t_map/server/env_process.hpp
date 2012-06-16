@@ -103,6 +103,7 @@ void rock_layer_post_processing()
         }
     //main_map->chunk[]
 
+    delete[] _2d_noise_array;
 }
 
 
