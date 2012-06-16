@@ -545,6 +545,12 @@ DONE
 switch methane ice to item sprite
 DONE
 
+analytics data store & logging
+DONE
+
+valgrind
+DONE
+
 == PVE ==
 blue bombs should be wandering, slowly
 
