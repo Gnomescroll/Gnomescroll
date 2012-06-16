@@ -31,7 +31,7 @@ static const char WEAPON_FN[] = "weapon";
 static const char ANALYTICS_FN[] = "analytics";
 static const char UNKNOWN_FN[] = "unknown";
 
-static const char FILENAME_FMT[] = "%s%s-%d-%lld.log";
+static const char FILENAME_FMT[] = "%s%s-%d-%s.log";
 static const char LOG_DIR[] = "./log/";
 
 static const char LOG_MSG_FMT[] = "%s:%d %s -- %s";
@@ -43,6 +43,26 @@ static const LogLevel DEFAULT_LEVEL = Always;
 
 static FILE* log_files[N_LOG_FILES] = {NULL};
 static char* log_filenames[N_LOG_FILES] = {NULL};
+
+FILE* open_file(LogType type)
+{
+    if (type < 0 || type > UNKNOWN) return NULL;
+    FILE* f = fopen(log_filenames[type], "w");
+    if (f == NULL) printf("Couldnt create log file %s. Does the folder %s exist?\n", log_filenames[type], LOG_DIR);
+    if (f != NULL && feof(f))
+    {
+        fclose(f);
+        f = NULL;
+    }
+    return f;
+}
+
+FILE* get_file(LogType type)
+{
+    if (type < 0 || type > UNKNOWN) type = UNKNOWN;
+    if (log_files[type] != NULL) log_files[type] = open_file(type);
+    return log_files[type];
+}
 
 void shutdown_file(FILE* f)
 {
@@ -67,11 +87,7 @@ FILE* get_file_descriptor(LogType type, LogLevel level)
 {
     if (Options::logger)
     {
-        FILE *f;
-        if (type < 0 || type >= N_LOG_FILES)
-            f = log_files[UNKNOWN];
-        else
-            f = log_files[type];
+        FILE *f = get_file(type);
         if (f == NULL || !file_ok(f))
         {
             shutdown_file(type);
@@ -160,14 +176,15 @@ int print(LogType type, LogLevel level, char* fmt, ...)
             ((sizeof(TYPENAME##_FN)-1) \
           + (sizeof(FILENAME_FMT)-1) \
           + (sizeof(LOG_DIR)-1) \
-          + 30 - 10 + 1)); \
-        sprintf(fn, FILENAME_FMT, LOG_DIR, TYPENAME##_FN, DC_VERSION, timestamp); \
+          + (sizeof(time_str)-1) \
+          + 30 - 1)); \
+        sprintf(fn, FILENAME_FMT, LOG_DIR, TYPENAME##_FN, DC_VERSION, time_str); \
         log_filenames[i] = fn; \
         break;
 
 void generate_filenames()
 {
-    unsigned long long timestamp = (unsigned long long) time(NULL);
+    char* time_str = get_time_str();
     char* fn;
     for (int i=0; i<N_LOG_FILES; i++)
     {
@@ -205,16 +222,8 @@ void free_filenames()
 
 void open_files()
 {
-    for (int i=0; i<N_LOG_FILES; i++)
-    {
-        log_files[i] = fopen(log_filenames[i], "w");
-        if (log_files[i] == NULL) printf("Couldnt create log file %s. Does the folder %s exist?\n", log_filenames[i], LOG_DIR);
-        if (log_files[i] != NULL && feof(log_files[i]))
-        {
-            fclose(log_files[i]);
-            log_files[i] = NULL;
-        }
-    }
+    for (int i=0; i<=UNKNOWN; i++)
+        log_files[i] = open_file((LogType)i);
 }
 
 void close_files()

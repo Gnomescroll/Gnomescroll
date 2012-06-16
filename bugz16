@@ -589,14 +589,6 @@ alt tab doesnt work in fullscreen (on linux at least)
 == ITEMS ==
 
 == ANALYTICS ==
-Need to keep track of IP address etc in a new data structure:
-Indexes on IP address
---Record all sessions
-Sessions:
-    --Record all names used
-    --Time played
-Record population to log at regular time interval, so can be graphed easy
-log chat history
 
 == GENERAL ==
 put spawners back in
@@ -610,17 +602,12 @@ use durability coloring to teammate health
 add right click to heal teammate with health pack
 show +health in green particle
 
+put H FOR HELP in top right always
+
+only open log file if using it
+
 == MAP ==
 
 == SMELTER ==
 
 ==BUGZ==
-
-TODO for build
-
-print user session data on logout
-print # of client on connect and disconnect
-clean the printlog for analytics
-record names
-
-run valgrind
