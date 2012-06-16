@@ -55,6 +55,33 @@ void load_map_drop_dat()
         set_drop(0.35, 2);
         set_drop(0.15, 3);
 
+
+    def_drop("iron_ore");
+        add_drop("methane_ice", 3);
+        set_drop(0.35, 1);
+        set_drop(0.20, 2);
+        set_drop(0.15, 3);
+
+    def_drop("copper_ore");
+        add_drop("copper_ore", 3);
+        set_drop(0.35, 1);
+        set_drop(0.20, 2);
+        set_drop(0.15, 3);
+
+
+    def_drop("gallium_ore");
+        add_drop("gallium_ore", 3);
+        set_drop(0.35, 1);
+        set_drop(0.20, 2);
+        set_drop(0.15, 3);
+
+    def_drop("iridium_ore");
+        add_drop("iridium_ore", 3);
+        set_drop(0.35, 1);
+        set_drop(0.20, 2);
+        set_drop(0.15, 3);
+
+
     end_drop_dat();
     #if DC_CLIENT
     save_drop_dat_to_file();

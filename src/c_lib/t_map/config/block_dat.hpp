@@ -202,11 +202,11 @@ void load_block_dat()
 
 
     cube_def(26, SolidBlock, "rock_layer");
-    iso_texture(t1,7,7);
+    iso_texture(t1,1,8);
     push_texture();
-    hud_def(6,1, t1,7,7);
+    hud_def(6,1, t1,1,8);
 
-/*
+
     cube_def(27, SolidBlock, "iron_ore");
     iso_texture(t1,8,3);
     push_texture();
@@ -227,7 +227,7 @@ void load_block_dat()
     iso_texture(t1,5,4);
     push_texture();
     hud_def(6,5, t1,5,4);
-*/
+
     end_block_dat();
 
 }

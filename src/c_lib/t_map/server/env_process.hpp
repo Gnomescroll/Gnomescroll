@@ -72,8 +72,9 @@ void rock_layer_post_processing()
 
     int regolith = dat_get_cube_id("regolith");
     int rock_layer = dat_get_cube_id("rock_layer");
-
-    const static int regolith_depth = 8;
+    rock_layer = regolith;
+    
+    const static int regolith_depth = 12;
 
     class MAP_CHUNK* c;
         for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
@@ -87,7 +88,7 @@ void rock_layer_post_processing()
             for(int x=0; x<16; x++)
             for(int y=0; y<16; y++)
             {
-	       		int depth = regolith_depth_array[ 512*(_j+y) + (_i+x)];
+	       		//int depth = regolith_depth_array[ 512*(_j+y) + (_i+x)];
 
 	            int run = 0;
 	            for(int z=TERRAIN_MAP_HEIGHT-1; z>0; z--)
