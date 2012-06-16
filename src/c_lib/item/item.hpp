@@ -53,9 +53,10 @@ class Item
         #endif
     }
 
-    explicit Item(int id)
+    explicit Item(int id)   // is not ItemID id because of the container list template
     :   id((ItemID)id),
         type(NULL_ITEM_TYPE),
+        energy(NULL_ENERGY),
         durability(NULL_DURABILITY),
         stack_size(1),
         location(IL_NOWHERE),
@@ -84,7 +85,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX
     private:
         const char* name() { return "Item"; }
     public:
-        ItemList() { print_list((char*)this->name(), this); }
+        ItemList() : gas_tick(0) { print_list((char*)this->name(), this); }
 
         #if DC_CLIENT && !PRODUCTION
         Item* create()

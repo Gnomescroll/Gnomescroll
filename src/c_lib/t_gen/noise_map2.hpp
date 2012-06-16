@@ -8,10 +8,10 @@ namespace t_gen
 {
 
 int primes[20] = {
-	2,3,5,7,11,
-	13,17,19,23,29,
-	31,37,41,43,47,
-	53,59,61,67,71
+    2,3,5,7,11,
+    13,17,19,23,29,
+    31,37,41,43,47,
+    53,59,61,67,71
 };
 
 __attribute((always_inline, optimize("-O3"))) static float dot(float* g, float x, float y);
@@ -27,11 +27,11 @@ static float dot(float* g, float x, float y)
 
 static float dot(int gi, float x, float y, float z)
 {
-	static const int g3[][3] = {
-	{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
-	{1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
-	{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
-	};
+    static const int g3[][3] = {
+    {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
+    {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
+    {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
+    };
 
     return g3[gi][0]*x + g3[gi][1]*y + g3[gi][2]*z;
 }
@@ -206,8 +206,8 @@ class PerlinOctave2D
         //for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
         //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
         //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
-	
-		for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
+    
+        for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
 
     }
 
@@ -401,7 +401,7 @@ class PerlinOctave2D
         save_perlin(filename, out, xres*DEGREE, yres*octaves);
         //void save_png(const char* filename, float* in, int xres, int yres)
 
-
+        delete[] out;
     }
 
     __attribute((always_inline, optimize("-O3")))
@@ -429,7 +429,7 @@ void test_octave_2d()
 
 void test_octave_2d_map_gen(int tile)
 {
-	//return;
+    //return;
 
     PerlinOctave2D m1(6);
     PerlinOctave2D m2(6);

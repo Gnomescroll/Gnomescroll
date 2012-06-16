@@ -224,6 +224,8 @@ void close_c_lib()
     Item::teardown();
     ItemContainer::teardown();
 
+    t_gen::teardown_map_generator();
+
     NetServer::teardown_globals();
 
     printf("Server closed\n"); 
