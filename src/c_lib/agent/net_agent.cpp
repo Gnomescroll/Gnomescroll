@@ -520,6 +520,7 @@ inline void choose_spawn_location_CtoS::handle(){}
 inline void request_agent_name_CtoS::handle(){}
 inline void request_remaining_state_CtoS::handle() {}
 inline void agent_camera_state_CtoS::handle() {}
+inline void version_CtoS::handle(){}
 #endif
 
 // Client -> Server handlers
@@ -559,6 +560,11 @@ inline void spawn_location_StoC::handle(){}
 //for benchmarking
 //static int _total = 0;
 //static const int a_DEBUG = 1;
+
+inline void version_CtoS::handle()
+{
+    NetServer::users->record_client_version(client_id, version);
+}
 
 inline void Agent_cs_CtoS::handle()
 {

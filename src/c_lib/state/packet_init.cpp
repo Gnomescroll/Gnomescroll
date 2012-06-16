@@ -29,9 +29,9 @@ typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
 void RegisterMessages()
 {
-
-    //version
-    version_StoC::register_client_packet(); // THIS MUST BE PACKET 0
+    //version (keep these first in the list)
+    version_CtoS::register_server_packet();
+    version_StoC::register_client_packet();
 
 /*
     add back in 

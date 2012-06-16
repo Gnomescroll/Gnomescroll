@@ -772,6 +772,17 @@ class version_StoC: public FixedSizeReliableNetPacketToClient<version_StoC>
         inline void handle();
 };
 
+class version_CtoS: public FixedSizeReliableNetPacketToServer<version_CtoS>
+{
+    public:
+        uint32_t version;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u32(&version, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 class client_disconnected_StoC: public FixedSizeReliableNetPacketToClient<client_disconnected_StoC>
 {
     public:

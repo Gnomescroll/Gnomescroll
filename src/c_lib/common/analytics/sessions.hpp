@@ -27,6 +27,7 @@ class Session
         time_t logout_time;
         int number; // per user basis
         int id; // global basis
+        int version;
 
     void login()
     {
@@ -47,8 +48,11 @@ class Session
 
     void print()
     {
-        // TODO
         printf("Session %d: ", this->id);
+
+        // version
+        printf("Version %d, ", this->version);
+        
         // time
         printf("%ld seconds, ", this->logout_time - this->login_time);
 
@@ -92,7 +96,7 @@ class Session
 
     Session(uint32_t ip_addr)
     : ip_addr(ip_addr), client_id(-1), n_names(0), max_names(SESSION_INITIAL_MAX_NAMES),
-    login_time(0), logout_time(0), number(-1), id(-1)
+    login_time(0), logout_time(0), number(-1), id(-1), version(0)
     {
         GS_ASSERT(this->max_names > 0);
         this->names = (char**)calloc(this->max_names, sizeof(char*));
@@ -230,22 +234,37 @@ class UserRecorder
         user->add_session(session);
     }
 
-    void add_name_to_client_id(int client_id, char* name)
+    class Session* get_latest_session_for_client(int client_id)
     {
-        // get active user for client id
-        // add name
-
         for (int i=0; i<this->n_users; i++)
         {
             GS_ASSERT(this->users[i] != NULL);
             if (this->users[i] == NULL) continue;
             class Session* session = this->users[i]->get_current_session();
-            if (!session->is_active()) continue;
             if (session->client_id != client_id) continue;
-            session->add_name(name);
-            return;
+            return session;
         }
-        GS_ASSERT(false);
+        return NULL;
+    }
+
+    void add_name_to_client_id(int client_id, char* name)
+    {
+        class Session* session = get_latest_session_for_client(client_id);
+        GS_ASSERT(session != NULL);
+        if (session == NULL) return;
+        GS_ASSERT(session->is_active());
+        if (!session->is_active()) return;
+        session->add_name(name);
+    }
+
+    void record_client_version(int client_id, int version)
+    {
+        class Session* session = get_latest_session_for_client(client_id);
+        GS_ASSERT(session != NULL);
+        if (session == NULL) return;
+        GS_ASSERT(session->is_active());
+        if (!session->is_active()) return;
+        session->version = version;
     }
 
     UserRecorder()
