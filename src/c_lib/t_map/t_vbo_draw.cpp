@@ -23,10 +23,16 @@ static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will pis
 static int draw_vbo_n;
 //static struct Map_vbo* draw_vbo_array[MAX_DRAWN_VBO];
 
+int vbo_frustrum[32*32*2];  //start and end chunk index
+//int vbo_frustrum_bottom[32*32];
+int vbo_vertex_frustrum[32*32*2]; //start vertex and end vertex
+
 struct _VBO_DRAW_STRUCT
 {
     class Map_vbo* map_vbo;
     float distance;
+    int vertex_start; //start vertex for drawing
+    int vertex_end; //end vertex for drawing
 };
 
 static struct _VBO_DRAW_STRUCT* draw_vbo_array;
@@ -47,12 +53,11 @@ void vbo_draw_end()
 */
 bool chunk_render_check( float x, float y)
 {
-    static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
+    //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
+    static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
-    ASSERT_BOXED_POINT(cx);
-    ASSERT_BOXED_POINT(cy);
 
     x = quadrant_translate_f(cx, x);
     y = quadrant_translate_f(cy, y);
@@ -61,6 +66,72 @@ bool chunk_render_check( float x, float y)
     float dy = cy - y;
 
     return (dx*dx + dy*dy > dist2) ? false : true;
+}
+
+void Vbo_map::set_frustrum_column(int _i, int _j, float x, float y)
+{
+
+    int index = _j*MAP_CHUNK_XDIM + _i; // 32*j + i
+
+    //int lowest = 0;
+    //int highest = 128/8;
+
+    if(vbo_frustrum[2*index+0] != -1) return;
+
+    int i_min;
+    for(int i_min=0; i_min< 16; i_min++)
+    {
+        float z = 8*i_min;
+
+        if(point_fulstrum_test2(x,y,z) == true) break;
+    }
+
+    if(i_min == 16)
+    {
+        printf("culled column: %f %f \n", x, y);
+        vbo_frustrum[2*index+0] = 16;
+        vbo_frustrum[2*index+1] = 0;
+        return;
+    }
+
+    int i_max;
+    for(int i_max=16; i_max >= i_min; i_max--)
+    {
+        float z = 8*i_max;
+        if(point_fulstrum_test2(x,y,z) == true) break;
+    }
+
+    if(i_max == i_min) //invalid condition
+    {
+        printf("ERROR!!! Vbo_map::set_frustrum_column \n");
+        abort();
+    }
+
+    vbo_frustrum[2*index+0] = i_min;
+    vbo_frustrum[2*index+1] = i_max;
+}
+
+void Vbo_map::prep_frustrum()
+{
+    memset(vbo_frustrum, -1, 32*32*2);
+
+    for(int i=0; i<MAP_CHUNK_XDIM; i++) {
+    for(int j=0; j<MAP_CHUNK_YDIM; j++) {
+        struct Map_vbo* col = vbo_array[j*MAP_CHUNK_XDIM + i ];
+
+        if(col == NULL || col->vnum == 0) continue;
+
+        col->wxoff = quadrant_translate_f(cx, col->xoff);
+        col->wyoff = quadrant_translate_f(cy, col->yoff);
+
+        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
+        {
+            Vbo_map::set_frustrum_column(i,j, col->wxoff, col->wyoff)
+        }   
+
+    }}
+
+
 }
 
 void Vbo_map::prep_draw()
@@ -98,7 +169,8 @@ void Vbo_map::prep_draw()
         col->wxoff = quadrant_translate_f(cx, col->xoff);
         col->wyoff = quadrant_translate_f(cy, col->yoff);
 
-        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
+        //if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
+        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
         {
             c_drawn++; 
             /*
@@ -139,7 +211,6 @@ void Vbo_map::sort_draw()
         dy = quadrant_translate_f(cx, dy);
 
         draw_vbo_array[i].distance = dx*dx + dy*dy; //set this
-
     }
 
   #define _VBO_DRAW_STRUCT_lt(a,b) ((a)->distance < (b)->distance)

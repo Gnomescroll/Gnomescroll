@@ -2,6 +2,7 @@
 
 #include <t_map/glsl/structs.hpp>
 #include <t_map/glsl/settings.hpp>
+#include <t_map/common/map_element.hpp>
 
 #include "t_map_class.hpp"
 
@@ -47,7 +48,7 @@ class Map_vbo
     int _v_offset[4];
 
     int vertex_num[6];
-    int vertex_num_array[6][16];   //for each column
+    int vertex_num_array[6][16];   //for each column, every 8 z
     GLuint vbo_id;
 
     Map_vbo( class MAP_CHUNK* m )
@@ -208,6 +209,10 @@ class Vbo_map
 
     void draw_map();
     void draw_map_comptability();
+
+    void Vbo_map::set_frustrum_column(int i, int j);
+    void Vbo_map::prep_frustrum();
+
 };
 
 }

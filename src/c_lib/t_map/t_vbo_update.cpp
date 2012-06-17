@@ -310,6 +310,9 @@ static int vertex_max = 0;
 
 //static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
+//__attribute((always_inline, optimize("-O3")))
+
+//__attribute((always_inline))
 __attribute((always_inline, optimize("-O3")))
 static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
@@ -393,13 +396,13 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
 }
 
 
-__attribute((optimize("-O3")))
+//__attribute((optimize("-O3")))
 void generate_vertex_list(struct Vertex* vlist)
 {
     int offset = 0;
 
     for(int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
-    for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
+    for(int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
     {
         struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
 
@@ -416,21 +419,21 @@ void generate_vertex_list(struct Vertex* vlist)
 
 }
 
-__attribute((optimize("-O3")))
+//__attribute((optimize("-O3")))
 void generate_quad_ao_values(struct Vertex* vlist)
 {
     int offset = 0;
 
-    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
-    for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
+    for(int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
+    for(int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
     {
-        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
+        //struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
 
         int x = SIDE_BUFFER_ARRAY[side][j].x;
         int y = SIDE_BUFFER_ARRAY[side][j].y;
         int z = SIDE_BUFFER_ARRAY[side][j].z;
 
-        _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+        _set_quad_local_ambient_occlusion(vlist, offset, x, y, z, side);
 
         offset += 4;
     }
@@ -438,20 +441,16 @@ void generate_quad_ao_values(struct Vertex* vlist)
 }
 
 
-}
-
-
-
 /*
     BUFFER
 */
-static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
-static inline void push_buffer2(unsigned short side , unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
+//static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
+//static inline void push_buffer2(unsigned short side , unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
 
 
 //for solid blocks
-__attribute((optimize("-O3")))
-static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
+__attribute((always_inline, optimize("-O3")))
+void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[side][SIDE_BUFFER_INDEX[side]];
     sb->x = x;
@@ -463,7 +462,8 @@ static inline void push_buffer1(unsigned short side, unsigned short x, unsigned 
 
 
 //for transparent blocks
-static inline void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
+__attribute((always_inline, optimize("-O3")))
+void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[6][SIDE_BUFFER_INDEX[side]];
     sb->x = x;
@@ -488,13 +488,13 @@ static inline void push_buffer2(unsigned short side, unsigned short x, unsigned 
 __attribute((optimize("-O3")))
 void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 {
-    for(int zi0 = 0; zi0 < TERRAIN_MAP_HEIGHT/16; zi0++) {
+    for(int zi0 = 0; zi0 < TERRAIN_MAP_HEIGHT/8; zi0++) {
 
         for(int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = SIDE_BUFFER_INDEX[i];
 
         for(int zi1 = 0; zi1 < 16; zi1++) {
 
-            const int _z = 16*zi0 + zi1;
+            const int _z = 8*zi0 + zi1;
 
             for(int x = 0; x<16; x++) {
             for(int y = 0; y<16; y++) {
@@ -510,7 +510,15 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                 if( !isTransparent(tile_id) )
                 {
                     //for each side
-                    for(int i=0; i<6; i++) if(! _is_occluded(_x,_y,_z,i)) push_buffer1(i, _x,_y,_z, element);
+                    //for(int i=0; i<6; i++) if(! _is_occluded(_x,_y,_z,i)) push_buffer1(i, _x,_y,_z, element);
+                    //this is faster than a loop!
+                    if(! _is_occluded(_x,_y,_z,0)) push_buffer1(0, _x,_y,_z, element);
+                    if(! _is_occluded(_x,_y,_z,1)) push_buffer1(1, _x,_y,_z, element);
+                    if(! _is_occluded(_x,_y,_z,2)) push_buffer1(2, _x,_y,_z, element);
+                    if(! _is_occluded(_x,_y,_z,3)) push_buffer1(3, _x,_y,_z, element);
+                    if(! _is_occluded(_x,_y,_z,4)) push_buffer1(4, _x,_y,_z, element);
+                    if(! _is_occluded(_x,_y,_z,5)) push_buffer1(5, _x,_y,_z, element);
+                
                 } 
                 else
                 {
@@ -666,9 +674,9 @@ void generate_vertex_list_comptability(struct Vertex* vlist)
     int offset = 0;
 
     for(int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
-    for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
+    for(int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
     {
-        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
+        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
 
         int x = sb.x;
         int y = sb.y;
