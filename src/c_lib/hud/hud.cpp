@@ -86,6 +86,12 @@ void set_hud_fps_display(float fps_val)
     hud_draw_settings.fps_val = fps_val;
 }
 
+void init_hud_draw_settings()
+{
+    update_hud_draw_settings();
+    hud_draw_settings.press_help = Options::show_tips;   
+}
+
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
@@ -99,6 +105,7 @@ void update_hud_draw_settings()
       //&& ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
 
     hud_draw_settings.help = input_state.help_menu;
+    if (hud_draw_settings.help) hud_draw_settings.press_help = false;   // clear this after opening help once
 
     hud_draw_settings.dead = (
            hud_draw_settings.connected
@@ -158,8 +165,6 @@ void update_hud_draw_settings()
     }
 
     hud_draw_settings.confirm_quit = input_state.confirm_quit;
-
-    hud_draw_settings.press_help = true;
 }
 
 /* Draw routines */

@@ -48,6 +48,9 @@ OPT_BOOL_HEADER(animations)
 /* Logging */
 OPT_BOOL_HEADER(logger)
 
+/* Help */
+OPT_BOOL_HEADER(show_tips);
+
 void register_options();
 
 }
