@@ -9,9 +9,8 @@ dont_include_this_file_in_client
 namespace ItemContainer
 {
 
-// transactions (does not send packets)
+// does not manage subscriptions -- only use in special cases (like item destroy handler)
 void remove_item_from_hand(int agent_id);
-void insert_item_in_hand(int agent_id, ItemID item_id);
 
 // hand/container -> container/hand
 void transfer_item_between_containers(ItemID item_id, int container_id_a, int slot_a, int container_id_b, int slot_b);
@@ -25,6 +24,9 @@ void transfer_free_item_to_hand(ItemID item_id, int agent_id);
 // particle -> container/hand
 void transfer_particle_to_container(ItemID item_id, int particle_id, int container_id, int slot);
 void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id);
+
+// hand -> particle (throw)
+void transfer_hand_to_particle(int agent_id);
 
 // everything -> particle is handled by create_item_particle
 

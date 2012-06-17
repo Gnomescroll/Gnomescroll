@@ -118,18 +118,6 @@ void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float s
 {
     MiningLaser* effect = mining_laser_effect_list->create();
     if (effect == NULL) return;
-
-    // mysterious parameters
-    //const float hv = 0.0;
-    //const float hvv = 0.1;
-    //const float vv =  -4.0;
-    //const float ratio = 0.8;
-
-    //Vec3 mysterious_position_thing = vec3_init(hvv*randf(), hvv*randf(), 0.0f);
-    //position = vec3_add(position, mysterious_position_thing);
-
-    //Vec3 mysterious_orientation_thing = vec3_init(hv*randf() - hv/2, hv*randf() - hv/2, vv*ratio*randf() + vv*(1.0-ratio));
-    //orientation = vec3_mult(orientation, mysterious_orientation_thing);
     effect->init(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, speed, length);
 }
 
@@ -144,7 +132,7 @@ void create_hitscan_effect(float x, float y, float z, float vx, float vy, float 
 void mining_laser_beam(Vec3 position, Vec3 orientation, float length)
 {
     const float speed = 6.0f;
-    const int n = 6; //6
+    const int n = 2;
     const float spread = 0.05;
     Vec3 step = vec3_scalar_mult(orientation, spread);
     for (int i=0; i<n; i++)

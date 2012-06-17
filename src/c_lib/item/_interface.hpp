@@ -10,7 +10,7 @@ void teardown();
 
 class Item* get_item(ItemID id);
 class Item* get_item_object(ItemID id); // alias for get_item
-//class Item* get_or_create_item(int item_type, ItemID item_id);
+
 int get_item_type(ItemID id);
 ItemGroup get_item_group(ItemID id);
 int get_stack_size(ItemID id);  // space used in a stack
@@ -36,7 +36,6 @@ namespace Item
 {
 
 void destroy_item(ItemID id);
-//void destroy_item_silently(ItemID id);  // wont broadcast
     
 ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);

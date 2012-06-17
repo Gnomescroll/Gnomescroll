@@ -46,6 +46,7 @@ class Session
         return (this->logout_time == 0);
     }
 
+    // returns true if the file is fine
     void print(FILE* f)
     {
         if (f == NULL) f = stdout;

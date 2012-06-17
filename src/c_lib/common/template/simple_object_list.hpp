@@ -20,11 +20,11 @@ class Simple_object_list
         Simple_object_list(); //default constructor
         ~Simple_object_list(); //default deconstructor
 
-        Object_state* create();         //object auto id
+        inline Object_state* create();         //object auto id
         
-        void destroy(int _id);
+        inline void destroy(int _id);
 
-        void print();
+        inline void print();
 };
 
 template <class Object_state, int max_n> 
@@ -44,14 +44,13 @@ Simple_object_list<Object_state, max_n>::~Simple_object_list()
 }
 
 template <class Object_state, int max_n> 
-void Simple_object_list<Object_state, max_n>::print()
+inline void Simple_object_list<Object_state, max_n>::print()
 {
-    const char* n = this->name();
-    printf("%s list instantiated at %p\n", n, this);
+    printf("%s list instantiated at %p\n", this->name(), this);
 }
 
 template <class Object_state, int max_n>
-Object_state* Simple_object_list<Object_state, max_n>::create() 
+inline Object_state* Simple_object_list<Object_state, max_n>::create() 
 {
     if(num >= max_n)
     {
@@ -68,18 +67,11 @@ Object_state* Simple_object_list<Object_state, max_n>::create()
 
 
 template <class Object_state, int max_n>
-void Simple_object_list<Object_state, max_n>::destroy(int index)
+inline void Simple_object_list<Object_state, max_n>::destroy(int index)
 {
     GS_ASSERT(num > 0);
     GS_ASSERT(index >= 0 && index < max_n);
-    //if (index < 0 || index >= max_n) return;
-
     num--;
-
-    // swap
-    //Object_state tmp = this->a[index];
-    //this->a[index] = this->a[num];
-    //this->a[num] = tmp;
-
     this->a[index] = a[num];
+    this->a[index].id = index;
 }

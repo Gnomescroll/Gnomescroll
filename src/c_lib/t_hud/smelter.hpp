@@ -377,7 +377,7 @@ void SmelterUI::draw()
     glDisable(GL_TEXTURE_2D);
 
     // draw stacks
-    HudFont::start_font_draw();
+    HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
     HudFont::set_properties(font_size);
     HudFont::set_texture();

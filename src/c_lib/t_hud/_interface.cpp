@@ -370,7 +370,7 @@ static void draw_grabbed_icon()
     GS_ASSERT(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);
     if (count_digits(ItemContainer::player_hand_stack_ui) >= STACK_COUNT_MAX_LENGTH) return;
 
-    HudFont::start_font_draw();
+    HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
     HudFont::set_properties(font_size);
     HudFont::set_texture();
@@ -405,7 +405,7 @@ static void draw_tooltip()
     GS_ASSERT(name[0] != '\0');
     if (name[0] == '\0') return;
 
-    HudFont::start_font_draw();
+    HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
     HudFont::set_properties(font_size);
     HudFont::set_texture();

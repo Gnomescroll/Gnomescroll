@@ -412,14 +412,18 @@ void set_texture()
 }
 
 // call this once for all hud text
-void start_font_draw()
+void start_font_draw(GLenum blend_func)
 {
     // all fonts must have alpha
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_DST_COLOR);
+    glBlendFunc(GL_SRC_ALPHA,blend_func);
     glEnable(GL_TEXTURE_2D);
+}
+
+void start_font_draw()
+{
+    start_font_draw(GL_ONE_MINUS_SRC_ALPHA);
 }
 
 // call this when done with all hud text
@@ -449,6 +453,5 @@ void end_world_font_draw()
     glDisable(GL_BLEND);
     bound_gl_font = NULL;
 }
-
 
 }

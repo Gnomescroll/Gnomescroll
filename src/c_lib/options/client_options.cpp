@@ -51,6 +51,8 @@ OPT_BOOL(animations, true)
 /* Logging */
 OPT_BOOL(logger, false)
 
+/* Help */
+OPT_BOOL(show_tips, true);
 
 void register_options()
 {
@@ -96,6 +98,9 @@ void register_options()
 
     /* Logging */
     OPT_BOOL_REGISTER(logger)
+
+    /* Help */
+    OPT_BOOL_REGISTER(show_tips);
 }
 
 }

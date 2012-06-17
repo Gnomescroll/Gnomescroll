@@ -89,6 +89,7 @@ class HUD
     Text* reliable_ping;
     Text* health;
     Text* confirm_quit;
+    Text* press_help;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects
@@ -107,6 +108,7 @@ extern HUD* hud;
 void init();
 
 void set_hud_fps_display(float fps_val);
+void init_hud_draw_settings();
 void update_hud_draw_settings();
 void draw_hud();
 

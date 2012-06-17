@@ -324,6 +324,8 @@ int init_c_lib()
     
     t_gen::noise_map_test();
 
+    Hud::init_hud_draw_settings();
+
     //check_gl_error();
     return 0;
 }

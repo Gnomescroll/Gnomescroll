@@ -1,0 +1,164 @@
+Enemy ideas:
+
+Behaviours:
+
+Attacks:
+Jump at player, damage on contact
+Throw projectiles
+Shoot
+Punch (needs skeletal animations)
+Pause, blink, explode
+ranged grab-attack (like mortal kombat scoprion)
+paralysis attack
+DoT projectile (acid burn)
+
+Motion:
+Jump
+wander
+hide
+Fly
+
+Defense:
+Reflect laser
+
+Monster that always tries to move out of player fulcrum
+When not in player fulcrum, moves towards player
+
+Monster that calls on other monsters to attack
+
+Monster that occupies a single empty block
+When player digs to it, it bites or blows up
+
+Monster that latches to cave ceilings, dropping down to hurt player with contact damage
+
+Monster that lurks in caves, approaching player for contact damage when in range (light/dark needed to be effective) 
+
+Monsters that move in packs (2-5), ignoring player unless it is disturbed (can also do some passive thing like pick up item particles)
+
+Monsters that steal from the player (see zelda: like-like, and the stupid birds in majora's mask)
+
+Landmine type monster (also weapon)
+
+Turret type enemy (immobile, ranged damage)
+
+very large mob that steps on player
+
+Player Combat:
+Melee should do knock back
+
+
+
+<Kaprekar> i've got a wild idea for a mob
+<Kaprekar> a rare spawn, starts off neutral. stalks a player if it finds one. if the player does not attack, the mob wont attack. if the player drops food or something and backs off (or some friendly action), it will befriend the player
+* Sakani (~Niblet@50-104-51-36.prtg.in.frontiernet.net) has joined #gnomescroll
+<Kaprekar> the more good you do, the more it likes you, and eventually it will protect you
+<Kaprekar> or if you try to chase after it at first, it will run away. attack it and it will hide, and eventually hunt you down if you keep threatening it
+
+then there are mobs that help the player in various ways
+
+=========
+Mob behaviour planning guidelines:
+Mobs have several stages of behaviour, these are:
+
+Init    -- how is it initialized
+Idle/Passive    -- what does it do when it is not aggroed
+
+Aggro_init -- what causes mod to aggro
+Aggro   -- what does the mob begin doing after aggro_init
+Deaggro -- what does the mob do when it deaggros (will go back to idle, but does it do anything special to get back to idle?)
+
+Attack player   -- how does it attack the player
+Player attacks  -- how does it respond to a player attack (in various states, if different; i.e. if it is far away from the player, does it run, but close, aggro)
+Player flees    -- how does it respond to a player fleeing (does it chase, how far/long etc)
+
+For example, the blue bombs:
+
+Init
+    Place on any surface block
+Idle
+    Nothing (they should wander, but dont)
+Aggro_init
+    player in range; player does damage
+Aggro
+    Face and Move to player, for max 10 seconds
+Deaggro
+    Stop, go back to idle (nothing)
+Attack player
+    Move close to player, explode
+Player attacks
+    take damage as normal
+Player flees
+    Chase, for max 10 seconds
+
+And, the red bots:
+
+Init
+    Created by spawner, Place on surface block nearby
+Idle
+    Choose a destination +/- range(0,10) in x,y, move to it, repeat
+Aggro_init
+    player in range
+Aggro
+    Stop and face player, shoot
+Deaggro
+    Immediately go back to idle
+Attack player
+    stand, facing player, shooting
+Player attacks
+    take damage as normal
+Player flees
+    deaggro, dont chase
+
+=========
+
+
+--------
+FIRST NEW MOB:
+
+Minecraft silverfish-like thing
+ankle biters
+
+a couple hide underground near minerals or wherever
+when player breaches some radius, they emit from the ground (noise + raise up animation for ~1second)
+then they crawl to the player
+if in range, bite for small dmg every N ticks
+
+
+Do the cluster/breach version first:
+
+Put them at any surface block - 1;
+In groups of 3-8
+
+Each group needs an encapsulator, which manages them collectively
+Placing them, de/activating them.
+This encapsulator also detect player radius breach
+
+ANKLE BITER -- PROXIMITY ACTIVATE
+
+Init
+    Created by abstract mob placer. Placed inside a block that is open to air. Can be placed in the wall or the floor
+Idle
+    Do nothing. remain underground
+Aggro_init
+    Player enter radius determined by abstract mob placer
+Aggro
+    Raise from the ground. Face player. begin moving to player
+Deaggro
+    go back to home block. if home block does not exist, find new one. if none found, die.
+Attack player
+    Bite
+Player attacks
+    Take damage; knock back applies for melee.
+Player flees
+    Chase, until reaching max distance from abstract mob placer, then return.
+
+ABSTRACT PROXIMITY ANKLE BITER SPAWNER (not a mob)
+spawns inside a block near ore.
+spawn all children on init
+if its source block is destroyed, pick one nearby. if none found nearby (some range), die.
+if all children are dead, die.
+regenerate children slowly over time, only when not activated by players.
+manage proximity checks for agents entering range
+activate children when agent enters range
+keeps list of child ids and associated type
+
