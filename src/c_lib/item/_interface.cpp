@@ -187,7 +187,7 @@ void destroy_item(ItemID id)
     }
     else if (item->location == IL_HAND)
     {
-        ItemContainer::remove_item_from_hand(item->location_id);
+        ItemContainer::remove_item_from_hand(item->location_id);    // we're destroying the item, so subscriptions dont matter
         Agent_state* a = ServerState::agent_list->get(item->location_id);
         if (a != NULL) ItemContainer::send_hand_remove(a->client_id);
     }
@@ -203,26 +203,6 @@ void destroy_item(ItemID id)
     send_item_destroy(id);
     item_list->destroy(id);
 }
-
-//// broadcasts nothing
-//void destroy_item_silently(ItemID id)
-//{
-    //Item* item = get_item(id);
-    //if (item == NULL) return;
-    //if (item->location == IL_CONTAINER)
-    //{
-        //int container_id = item->location_id;
-        //int slot = item->container_slot;
-        //ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-        //if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
-    //}
-    //else if (item->location == IL_PARTICLE)
-        //ItemParticle::destroy_silently(item->location_id);
-    //else if (item->location == IL_HAND)
-        //ItemContainer::remove_item_from_hand(item->location_id);
-    
-    //item_list->destroy(id);
-//}
 
 ItemID split_item_stack(ItemID src, int amount)
 {

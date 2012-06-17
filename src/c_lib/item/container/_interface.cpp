@@ -806,12 +806,7 @@ void agent_died(int agent_id)
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
     if (agent_hand_list[agent_id] != NULL_ITEM)
-    {
-        ItemID item_id = agent_hand_list[agent_id];
-        remove_item_from_hand(agent_id);
-        if (a != NULL) send_hand_remove(a->client_id);
-        ItemParticle::throw_agent_item(agent_id, item_id);
-    }
+        transfer_hand_to_particle(agent_id);    // throw
 }
 
 void agent_quit(int agent_id)
@@ -834,11 +829,7 @@ void agent_quit(int agent_id)
     // still have to throw any items in hand, in case we have our private inventory opened
     ItemID hand_item = get_agent_hand(agent_id);
     if (hand_item != NULL_ITEM)
-    {
-        remove_item_from_hand(agent_id);
-        if (a != NULL) send_hand_remove(a->client_id);
-        ItemParticle::throw_agent_item(agent_id, hand_item);
-    }
+        transfer_hand_to_particle(agent_id);    // throw
     GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
 
     // throw all items away (inventory, toolbelt and nanite)
@@ -908,12 +899,11 @@ void purchase_item_from_nanite(int agent_id, int shopping_slot)
 
     // create shopped item
     Item::Item* purchase = Item::create_item(item_type);
+    GS_ASSERT(purchase != NULL);
     if (purchase == NULL) return;
 
-    if (a != NULL) Item::send_item_create(a->client_id, purchase->id);
     // add to hand
-    insert_item_in_hand(nanite->owner, purchase->id);
-    if (a != NULL) send_hand_insert(a->client_id, purchase->id);
+    transfer_free_item_to_hand(purchase->id, agent_id);
 
     // update coins
     if (cost)
@@ -965,9 +955,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         Item::Item* item = Item::create_item(recipe->output);
         if (item == NULL) return;
         item->stack_size = recipe->output_stack;
-        Item::send_item_create(agent->client_id, item->id);
-        insert_item_in_hand(agent->id, item->id);
-        send_hand_insert(agent->client_id, item->id);
+        transfer_free_item_to_hand(item->id, agent_id);
     }
     else if (hand_can_stack_recipe)
     {
@@ -977,7 +965,6 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
         if (item == NULL) return;
         item->stack_size += recipe->output_stack;
         Item::send_item_state(item->id);
-        send_hand_insert(agent->client_id, item->id);   // force client to update new hand state
     }
 }
 

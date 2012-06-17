@@ -12,7 +12,7 @@ namespace ItemContainer
 /* Transactions (no packets) */
 
 // first order transactions
-
+// only use internally here, for the 2nd order transactions
 void remove_item_from_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -25,7 +25,7 @@ void remove_item_from_hand(int agent_id)
     agent_hand_list[agent_id] = NULL_ITEM;
 }
 
-void insert_item_in_hand(int agent_id, ItemID item_id)
+static void insert_item_in_hand(int agent_id, ItemID item_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(item_id != NULL_ITEM);
@@ -324,6 +324,29 @@ void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id)
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
+}
+
+// use this, instead of remove_item_from_hand, because it handles subscriptions
+// use this only when no other hand transaction is sufficient
+// this does not handle item particle creation
+// you will need to call throw_item or whatever you want yourself
+void transfer_hand_to_particle(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    ItemID hand_item = get_agent_hand(agent_id);
+    GS_ASSERT(hand_item != NULL_ITEM);
+    if (hand_item == NULL_ITEM) return;
+
+    remove_item_from_hand(agent_id);
+
+    Agent_state* agent = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(agent != NULL);
+    if (agent != NULL) send_hand_remove(agent->client_id);
+    
+    Item::unsubscribe_agent_from_item(agent_id, hand_item);
+
+    ItemParticle::throw_agent_item(agent_id, hand_item);
 }
 
 /* Network */

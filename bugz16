@@ -561,6 +561,15 @@ DONE
 for logger, only create log file if file is printed to
 DONE
 
+"Press H for help" is at the top of the screen, until H is pressed
+DONE
+
+add show_tips option (disables beginner tutorial behaviour)
+DONE
+
+only use font dst color for t_hud text
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -619,14 +628,11 @@ put spawners back in
 
 disable teams
 get rid of green team thing
+get rid of scoreboard scores (just show names + id)
 pick single good color for team
 use durability coloring to teammate health
 add right click to heal teammate with health pack
 show +health in green particle
-
-put H FOR HELP in top right always
-
-only open log file if using it
 
 == SMELTER ==
 
@@ -646,3 +652,11 @@ Session 24; Version 21; 856 seconds; IP 82.47.76.232; Login 3; Client id 23; Nam
 06-16-2012-16:16:47 : Client 23 disconnected. 1 clients connected
 06-16-2012-16:30:54 : Client 23 disconnected. 0 clients connected
 
+<Kaprekar> i used up 2 mining lazers in a row and the durability stayed green the whole time
+<Kaprekar> i just crafted a bunch of iron bars, but it looks like 1 bar and it's a stack
+<Kaprekar> i can right click to place them in my inventory though
+<Kaprekar> the number isn't updating when the stack decreases size, but it does if you combine 2 stacks
+<Kaprekar> if you place a block, durability on your stuff in your toolbelt appears to go back to green
+<Kaprekar> this bug is messing with me now. now stack size is updating when i place one item, but goes back to what the size was initially if i place the stack
+Stacks of iron blocks turn into stacks of mining lasers
+<Kaprekar> i bought a repair kit and it turned into a mning lazer, then into a repair kit after dropping it and picking it up a few times
