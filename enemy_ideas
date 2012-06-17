@@ -60,11 +60,12 @@ then there are mobs that help the player in various ways
 Mob behaviour planning guidelines:
 Mobs have several stages of behaviour, these are:
 
-Init
-Idle/Passive
+Init    -- how is it initialized
+Idle/Passive    -- what does it do when it is not aggroed
 
-Aggro   -- what is the change in state for aggro
-Deaggro -- what is the change in state for deaggro (will go back to idle, but does it do anything special to get back to idle?)
+Aggro_init -- what causes mod to aggro
+Aggro   -- what does the mob begin doing after aggro_init
+Deaggro -- what does the mob do when it deaggros (will go back to idle, but does it do anything special to get back to idle?)
 
 Attack player   -- how does it attack the player
 Player attacks  -- how does it respond to a player attack (in various states, if different; i.e. if it is far away from the player, does it run, but close, aggro)
@@ -76,6 +77,8 @@ Init
     Place on any surface block
 Idle
     Nothing (they should wander, but dont)
+Aggro_init
+    player in range; player does damage
 Aggro
     Face and Move to player, for max 10 seconds
 Deaggro
@@ -83,7 +86,7 @@ Deaggro
 Attack player
     Move close to player, explode
 Player attacks
-    aggro if not already; take damage as normal
+    take damage as normal
 Player flees
     Chase, for max 10 seconds
 
@@ -93,16 +96,18 @@ Init
     Created by spawner, Place on surface block nearby
 Idle
     Choose a destination +/- range(0,10) in x,y, move to it, repeat
+Aggro_init
+    player in range
 Aggro
     Stop and face player, shoot
 Deaggro
     Immediately go back to idle
 Attack player
-    Move close to player, explode
+    stand, facing player, shooting
 Player attacks
-    aggro if not already; take damage as normal
+    take damage as normal
 Player flees
-    Chase, for max 10 seconds, then idle
+    deaggro, dont chase
 
 =========
 
@@ -128,16 +133,32 @@ Each group needs an encapsulator, which manages them collectively
 Placing them, de/activating them.
 This encapsulator also detect player radius breach
 
-Now the mob:
+ANKLE BITER -- PROXIMITY ACTIVATE
 
-When initialized:
+Init
+    Created by abstract mob placer. Placed inside a block that is open to air. Can be placed in the wall or the floor
+Idle
+    Do nothing. remain underground
+Aggro_init
+    Player enter radius determined by abstract mob placer
+Aggro
+    Raise from the ground. Face player. begin moving to player
+Deaggro
+    go back to home block. if home block does not exist, find new one. if none found, die.
+Attack player
+    Bite
+Player attacks
+    Take damage; knock back applies for melee.
+Player flees
+    Chase, until reaching max distance from abstract mob placer, then return.
 
-When activated:
-    
-When deactivated:
+ABSTRACT PROXIMITY ANKLE BITER SPAWNER (not a mob)
+spawns inside a block near ore.
+spawn all children on init
+if its source block is destroyed, pick one nearby. if none found nearby (some range), die.
+if all children are dead, die.
+regenerate children slowly over time, only when not activated by players.
+manage proximity checks for agents entering range
+activate children when agent enters range
+keeps list of child ids and associated type
 
-When attacking the player:
-
-When being attacked by the player:
-
-When the player runs away:
