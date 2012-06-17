@@ -137,14 +137,6 @@ namespace Item
 
 void destroy_item(ItemID id)
 {
-    Item* item = get_item(id);
-    if (item == NULL) return;
-
-    //int container_id = item->container_id;
-    //int slot = item->container_slot;
-    //ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    //if (container != NULL && slot != NULL_SLOT) container->remove_item(slot);
-    
     item_list->destroy(id);
 }
     
