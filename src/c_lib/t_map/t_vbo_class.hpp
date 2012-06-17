@@ -113,6 +113,7 @@ class Vbo_map
         int _i = -1;
         int _j = -1;
 
+        //find closest chunk to update
         for(int i=0; i<MAP_CHUNK_XDIM; i++)
         for(int j=0; j<MAP_CHUNK_YDIM; j++)
         {
@@ -156,7 +157,7 @@ class Vbo_map
             }
 
         }
-
+        //update if any chunks in range need updating
         if(_i != -1)
         {
             const int index = _j*MAP_CHUNK_XDIM + _i;
