@@ -563,6 +563,11 @@ DONE
 
 ----------------------
 
+== BUILD ==
+REMINDER:
+    Update the download link on gamejolt.com every build
+Script to pack all builds into one zip
+
 == PVE ==
 blue bombs should be wandering, slowly
 
@@ -577,6 +582,7 @@ glsl colored/textured voxels
 texture color problem in OSX -- for blocks and for items
 Hud Weapon sprites + animation
 use font DST_COLOR only for certain ui elements
+make item pickup fly to player
 
 == SOUND ==
 improve digging sounds
@@ -600,7 +606,11 @@ alt tab doesnt work in fullscreen (on linux at least)
 
 == ITEMS ==
 
+== BLOCKS/TERRAIN ==
+infinite health blocks, put at ground layer
+
 == ANALYTICS ==
+log chat
 
 == GENERAL ==
 put spawners back in
@@ -618,8 +628,21 @@ put H FOR HELP in top right always
 
 only open log file if using it
 
-== MAP ==
-
 == SMELTER ==
 
 ==BUGZ==
+
+durability is not updated correctly for mining laser, when purchased from nanite and placed in toolbelt
+
+in analytics, session_id/client_id counting is broken
+
+example:
+Session 22; Version 21; 51 seconds; IP 82.47.76.232; Login 1; Client id 21; Names: flarb 
+Session 24; Version 21; 9 seconds; IP 82.47.76.232; Login 3; Client id 23; Names: flarb7649 
+Session 24; Version 21; 856 seconds; IP 82.47.76.232; Login 3; Client id 23; Names: flarb7649 
+
+06-16-2012-16:16:23 : Client 22 connected. 1 clients connected
+06-16-2012-16:16:38 : Client 23 connected. 2 clients connected
+06-16-2012-16:16:47 : Client 23 disconnected. 1 clients connected
+06-16-2012-16:30:54 : Client 23 disconnected. 0 clients connected
+

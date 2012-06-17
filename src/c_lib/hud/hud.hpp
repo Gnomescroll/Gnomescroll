@@ -89,6 +89,7 @@ class HUD
     Text* reliable_ping;
     Text* health;
     Text* confirm_quit;
+    Text* press_help;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects

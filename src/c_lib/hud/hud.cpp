@@ -50,6 +50,8 @@ static const char health_format[] = "HP %d";
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
+static const char press_help_text[] = "Press H for help";
+
 static struct HudDrawSettings
 {
     bool zoom;
@@ -73,6 +75,7 @@ static struct HudDrawSettings
     bool graphs;
     bool draw;
     bool confirm_quit;
+    bool press_help;
 } hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -155,6 +158,8 @@ void update_hud_draw_settings()
     }
 
     hud_draw_settings.confirm_quit = input_state.confirm_quit;
+
+    hud_draw_settings.press_help = true;
 }
 
 /* Draw routines */
@@ -251,6 +256,9 @@ void draw_hud_text()
 
     if (hud_draw_settings.help)
         hud->help->draw();
+
+    if (hud_draw_settings.press_help)
+        hud->press_help->draw();
 
     if (hud->chat->inited)
     {
@@ -426,6 +434,13 @@ void HUD::init()
     confirm_quit->set_color(255,10,10,255);
     confirm_quit->set_position(_xresf/2, _yresf/2);
 
+    press_help = HudText::text_list->create();
+    GS_ASSERT(press_help != NULL);
+    if (press_help == NULL) return;
+    press_help->set_text((char*)press_help_text);
+    press_help->set_color(255,10,10,255);
+    press_help->set_position((_xresf - press_help->get_width()) / 2.0f, _yresf);
+
     scoreboard = new Scoreboard();
     scoreboard->init();
 
@@ -446,6 +461,7 @@ ping(NULL),
 reliable_ping(NULL),
 health(NULL),
 confirm_quit(NULL),
+press_help(NULL),
 scoreboard(NULL),
 chat(NULL)
 {}
@@ -468,6 +484,8 @@ HUD::~HUD()
         HudText::text_list->destroy(health->id);
     if (confirm_quit != NULL)
         HudText::text_list->destroy(confirm_quit->id);
+    if (press_help != NULL)
+        HudText::text_list->destroy(press_help->id);
     if (scoreboard != NULL)
         delete scoreboard;
     if (chat != NULL)
