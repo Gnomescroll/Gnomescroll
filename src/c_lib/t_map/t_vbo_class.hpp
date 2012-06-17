@@ -149,7 +149,7 @@ class Vbo_map
 
             if( m->needs_update == false ) continue;
 
-            if(distance2 < min_distance)
+            if(distance2 < min_distance2)
             {
                 min_distance2 = distance2;
                 _i = i;

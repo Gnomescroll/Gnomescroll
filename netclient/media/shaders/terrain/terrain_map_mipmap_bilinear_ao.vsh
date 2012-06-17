@@ -10,7 +10,7 @@
 Attributes
 */
 
-attribute vec3 InVertex;
+attribute vec4 InVertex;
 attribute vec3 InTexCoord;
 attribute vec3 InRGB;
 
@@ -36,10 +36,18 @@ Varying
 */
 varying vec3 texCoord;
 
-# ifdef GL_EXT_gpu_shader4
+/*
+#ifdef GL_EXT_gpu_shader4
     flat varying mat2 lightMatrix;
 #else
     varying mat2 lightMatrix;
+#endif
+*/
+
+#ifdef GL_EXT_gpu_shader4
+    flat varying vec4 _lightMatrix;
+#else
+    varying vec4 _lightMatrix;
 #endif
 
 
@@ -55,18 +63,20 @@ varying float fogFragDepth;
 
 void main(void) 
 {                      
-    vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
-    gl_Position = gl_ModelViewProjectionMatrix * vertex;
+    //vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
+    //gl_Position = gl_ModelViewProjectionMatrix * vec4(InVertex, 1.0);
+    gl_Position = gl_ModelViewProjectionMatrix * InVertex;
 
     //fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
-    fogFragDepth = distance(vertex.xy, gl_ModelViewMatrixInverse[3].xy);
+    fogFragDepth = distance(InVertex.xy, gl_ModelViewMatrixInverse[3].xy);
 
-    inColor = InRGB.rgb;
+    inColor = InRGB;
 
     texCoord = InTexCoord;
 
-    lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
+    //lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
 
+    _lightMatrix = InLightMatrix;
 }
 
 

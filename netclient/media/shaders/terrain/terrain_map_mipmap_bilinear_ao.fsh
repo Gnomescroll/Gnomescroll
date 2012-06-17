@@ -8,10 +8,18 @@
 
 varying vec3 texCoord;
 
-# ifdef GL_EXT_gpu_shader4
+/*
+#ifdef GL_EXT_gpu_shader4
     flat varying mat2 lightMatrix;
 #else
     varying mat2 lightMatrix;
+#endif
+*/
+
+#ifdef GL_EXT_gpu_shader4
+    flat varying vec4 _lightMatrix;
+#else
+    varying vec4 _lightMatrix;
 #endif
 
 varying vec3 inColor;
@@ -39,6 +47,10 @@ const float fog_depth = 128.0 - fog_start;
 
 void main() 
 {
+
+    mat2 lightMatrix = mat2(_lightMatrix[0], _lightMatrix[1], _lightMatrix[2],_lightMatrix[3] );
+
+
     //float gamma = 2.2f;
 
 /*
@@ -61,7 +73,7 @@ void main()
 
 
 
-    if(fogFragDepth <= fog_start || 0 < 1)
+    if(fogFragDepth <= fog_start)
     {
         color = pow(color, vec3(1.0f / 2.2f) );
         gl_FragColor.rgb = color;
