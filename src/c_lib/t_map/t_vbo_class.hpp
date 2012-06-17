@@ -46,6 +46,8 @@ class Map_vbo
     int _v_num[4];
     int _v_offset[4];
 
+    int vertex_num[6];
+    int vertex_num_array[6][16];   //for each column
     GLuint vbo_id;
 
     Map_vbo( class MAP_CHUNK* m )

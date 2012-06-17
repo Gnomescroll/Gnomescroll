@@ -117,6 +117,7 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
 
 #define AO_DEBUG 0
 
+__attribute((always_inline, optimize("-O3")))
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -307,8 +308,9 @@ static int vertex_max = 0;
 
 #define USE_QUAD_CACHE 0
 
-static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
+//static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
+__attribute((always_inline, optimize("-O3")))
 static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
     int tile_id = element.block;
@@ -370,7 +372,7 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
             v_list[offset+i].z += z;
         }
     }
-    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+    //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
     //_set_quad_color(v_list, offset, x, y, z, side);
 
     switch( t_map::cube_list[tile_id].color_type )
@@ -391,15 +393,15 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
 }
 
 
-
+__attribute((optimize("-O3")))
 void generate_vertex_list(struct Vertex* vlist)
 {
     int offset = 0;
 
-    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
+    for(int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
     for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
     {
-        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
+        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
 
         int x = sb.x;
         int y = sb.y;
@@ -407,16 +409,36 @@ void generate_vertex_list(struct Vertex* vlist)
 
         struct MAP_ELEMENT element = sb.element;
 
-        push_quad1(vlist, offset, x,y,z, i, element);
+        push_quad1(vlist, offset, x,y,z, side, element);
 
-    #if !PRODUCTOIN
-        GS_ASSERT( offset < vertex_max);
-    #endif
         offset += 4;
     }
 
 }
 
+__attribute((optimize("-O3")))
+void generate_quad_ao_values(struct Vertex* vlist)
+{
+    int offset = 0;
+
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
+    for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
+    {
+        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
+
+        int x = SIDE_BUFFER_ARRAY[side][j].x;
+        int y = SIDE_BUFFER_ARRAY[side][j].y;
+        int z = SIDE_BUFFER_ARRAY[side][j].z;
+
+        _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+
+        offset += 4;
+    }
+
+}
+
+
+}
 
 
 
@@ -428,6 +450,7 @@ static inline void push_buffer2(unsigned short side , unsigned short x, unsigned
 
 
 //for solid blocks
+__attribute((optimize("-O3")))
 static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[side][SIDE_BUFFER_INDEX[side]];
@@ -457,41 +480,52 @@ static inline void push_buffer2(unsigned short side, unsigned short x, unsigned 
 
 */
 
-void set_vertex_buffers(class MAP_CHUNK* chunk)
+/*
+    int vertex_num[6];
+    int vertex_num_array[6][16];   //for each column
+*/
+
+__attribute((optimize("-O3")))
+void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 {
-    for(int _z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+    for(int zi0 = 0; zi0 < TERRAIN_MAP_HEIGHT/16; zi0++) {
 
-        for(int x = 0; x<16; x++) {
-        for(int y = 0; y<16; y++) {
+        for(int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = SIDE_BUFFER_INDEX[i];
 
-            int _x = x + chunk->xpos;
-            int _y = y + chunk->ypos;
+        for(int zi1 = 0; zi1 < 16; zi1++) {
 
-            struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
-            int tile_id = element.block;
+            const int _z = 16*zi0 + zi1;
 
-            if( !isActive(tile_id) ) continue;
+            for(int x = 0; x<16; x++) {
+            for(int y = 0; y<16; y++) {
 
-            if( !isTransparent(tile_id) )
-            {
-                if(! _is_occluded(_x,_y,_z,0)) push_buffer1(0, _x,_y,_z, element);
-                if(! _is_occluded(_x,_y,_z,1)) push_buffer1(1, _x,_y,_z, element);
-                if(! _is_occluded(_x,_y,_z,2)) push_buffer1(2, _x,_y,_z, element);
-                if(! _is_occluded(_x,_y,_z,3)) push_buffer1(3, _x,_y,_z, element);
-                if(! _is_occluded(_x,_y,_z,4)) push_buffer1(4, _x,_y,_z, element);
-                if(! _is_occluded(_x,_y,_z,5)) push_buffer1(5, _x,_y,_z, element);
-            } 
-            else
-            {
-                //active block that does not occlude
-                for(int side_num=0; side_num<6; side_num++) 
+                int _x = x + chunk->xpos;
+                int _y = y + chunk->ypos;
+
+                struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
+                int tile_id = element.block;
+
+                if( !isActive(tile_id) ) continue;
+
+                if( !isTransparent(tile_id) )
                 {
-                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id))  push_buffer2(side_num, _x,_y,_z, element);
+                    //for each side
+                    for(int i=0; i<6; i++) if(! _is_occluded(_x,_y,_z,i)) push_buffer1(i, _x,_y,_z, element);
+                } 
+                else
+                {
+                    //active block that does not occlude
+                    for(int side_num=0; side_num<6; side_num++) 
+                    {
+                        if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id))  push_buffer2(side_num, _x,_y,_z, element);
+                    }
                 }
-            }
 
-        }}
+            }}
+        }
     }
+
+    for(int i=0; i<6; i++) vbo->vertex_num[i] = SIDE_BUFFER_INDEX[i];
 }
 
 void Vbo_map::update_vbo(int i, int j)
@@ -508,7 +542,7 @@ void Vbo_map::update_vbo(int i, int j)
     int vertex_count[2] = {0, 0};
 
 
-    set_vertex_buffers(chunk); //set the vertex 
+    set_vertex_buffers(chunk, vbo); //set the vertex 
 
     for(int i=0; i<6; i++) vertex_count[0] += 4*SIDE_BUFFER_INDEX[i];
     vertex_count[1] = 4*SIDE_BUFFER_INDEX[6];
@@ -539,6 +573,7 @@ void Vbo_map::update_vbo(int i, int j)
     struct Vertex* vlist = new Vertex[vnum];
 
     generate_vertex_list(vlist);
+    generate_quad_ao_values(vlist);
 
     delete[] vbo->v_list; //free old memory
     vbo->v_list = vlist;
@@ -630,7 +665,7 @@ void generate_vertex_list_comptability(struct Vertex* vlist)
 {
     int offset = 0;
 
-    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
+    for(int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
     for(int j=0; j<SIDE_BUFFER_INDEX[i]; j++)
     {
         struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[i][j];
@@ -641,11 +676,8 @@ void generate_vertex_list_comptability(struct Vertex* vlist)
 
         struct MAP_ELEMENT element = sb.element;
 
-        push_quad_comptability(vlist, offset, x,y,z, i, element);
+        push_quad_comptability(vlist, offset, x,y,z, side, element);
 
-    #if !PRODUCTOIN
-        GS_ASSERT( offset < vertex_max);
-    #endif
         offset += 4;
     }
 
@@ -663,7 +695,7 @@ void Vbo_map::update_vbo_comptability(int i, int j)
 
     int vertex_count[2] = {0, 0};
 
-    set_vertex_buffers(chunk); //set the vertex 
+    set_vertex_buffers(chunk, vbo); //set the vertex 
 
     for(int i=0; i<6; i++) vertex_count[0] += 4*SIDE_BUFFER_INDEX[i];
     vertex_count[1] = 4*SIDE_BUFFER_INDEX[6];
@@ -694,6 +726,7 @@ void Vbo_map::update_vbo_comptability(int i, int j)
     struct Vertex* vlist = new Vertex[vnum];
 
     generate_vertex_list_comptability(vlist);
+    generate_quad_ao_values(vlist);
 
     delete[] vbo->v_list; //free old memory
     vbo->v_list = vlist;
