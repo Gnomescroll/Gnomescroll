@@ -50,6 +50,39 @@ varying vec3 inColor;
 varying float fogFragDepth;
 //varying float fogFragZ;
 
+
+const float WORLD_RADIUS        = 512.0;
+const float WORLD_RADIUS_SQUARED = 262144.0;
+
+void main(void) 
+{      
+
+
+
+        vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
+
+
+        vec3 d = vertex.xyz - gl_ModelViewMatrixInverse[3].xyz;
+        float distanceSquared = dot(d,d);
+        //float distanceSquared = vertex.x * vertex.x + vertex.y * vertex.y;
+               
+        vertex.z -= WORLD_RADIUS - sqrt(max(1.0 - distanceSquared / WORLD_RADIUS_SQUARED, 0.0)) * WORLD_RADIUS;
+
+
+        gl_Position = gl_ModelViewProjectionMatrix * vertex;
+
+        fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
+
+        inColor = InRGB.rgb;
+ 
+        texCoord = InTexCoord;
+
+        lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
+
+}
+
+
+/*
 void main(void) 
 {                      
         //vec3 Normal = NormalArray[inColor[4]*255];
@@ -72,32 +105,6 @@ void main(void)
         texCoord = InTexCoord;
 
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
-
-}
-
-//texCoord = vec3(InTexCoord[0], InTexCoord[1], 0.0);
-
-/*
-attribute vec3 InTexCoord0;
-attribute vec4 InLightMatrix0;
-
-//varying float intensity;
-
-varying vec3 texCoord;
-varying mat2 lightMatrix0;
-
-varying vec4 inColor;
-
-void main(void) 
-{           
-
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-
-    inColor = gl_Color;
-
-    texCoord = InTexCoord0;
-
-    lightMatrix0 = mat2(InLightMatrix0[0], InLightMatrix0[1], InLightMatrix0[2],InLightMatrix0[3] );
 
 }
 */

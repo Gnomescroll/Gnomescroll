@@ -60,28 +60,28 @@ void load_map_drop_dat()
 
     def_drop("iron_ore");
         add_drop("iron_ore", 3);
-        set_drop(0.35, 1);
-        set_drop(0.20, 2);
-        set_drop(0.15, 3);
+        set_drop(0.20, 1);
+        set_drop(0.10, 2);
+        set_drop(0.05, 3);
 
     def_drop("copper_ore");
         add_drop("copper_ore", 3);
-        set_drop(0.35, 1);
-        set_drop(0.20, 2);
-        set_drop(0.15, 3);
+        set_drop(0.20, 1);
+        set_drop(0.10, 2);
+        set_drop(0.05, 3);
 
 
     def_drop("gallium_ore");
         add_drop("gallium_ore", 3);
-        set_drop(0.35, 1);
-        set_drop(0.20, 2);
-        set_drop(0.15, 3);
+        set_drop(0.20, 1);
+        set_drop(0.10, 2);
+        set_drop(0.05, 3);
 
     def_drop("iridium_ore");
         add_drop("iridium_ore", 3);
-        set_drop(0.35, 1);
-        set_drop(0.20, 2);
-        set_drop(0.15, 3);
+        set_drop(0.20, 1);
+        set_drop(0.10, 2);
+        set_drop(0.05, 3);
 
     def_drop("graphite");
         add_drop("graphite", 3);
