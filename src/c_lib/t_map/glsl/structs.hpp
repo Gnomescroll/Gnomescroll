@@ -107,6 +107,13 @@ namespace t_map
             unsigned char ao[4]; 
             unsigned int AO;
         };
+
+        union
+        {
+            unsigned char light_value[4]; 
+            unsigned int lighting;
+        };
+
     };
     
 }

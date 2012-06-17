@@ -109,6 +109,9 @@ class Vbo_map
     #endif
 
         class MAP_CHUNK* m;
+        int min_distance2 = 0x7FFFFFF;
+        int _i = -1;
+        int _j = -1;
 
         for(int i=0; i<MAP_CHUNK_XDIM; i++)
         for(int j=0; j<MAP_CHUNK_YDIM; j++)
@@ -117,10 +120,11 @@ class Vbo_map
             m = map->chunk[index];
             if( m == NULL ) continue; //can speed up by maintain list of chunks
 
-        #if MAP_VBO_CULLING
             int x = cx - quadrant_translate_i(cx, 16*i+8 );
             int y = cy - quadrant_translate_i(cy, 16*j+8 );
             int distance2 = x*x+y*y;
+
+        #if MAP_VBO_CULLING
 
             if(distance2 >= CHUNK_IGNORE_DISTANCE2)
             {
@@ -143,17 +147,32 @@ class Vbo_map
         #endif
 
             if( m->needs_update == false ) continue;
+
+            if(distance2 < min_distance)
+            {
+                min_distance2 = distance2;
+                _i = i;
+                _j = j;
+            }
+
+        }
+
+        if(_i != -1)
+        {
+            const int index = _j*MAP_CHUNK_XDIM + _i;
+            m = map->chunk[index];
+
             m->needs_update = false; //reset flag
             if( vbo_array[index] == NULL ) vbo_array[index] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             
             if(T_MAP_BACKUP_SHADER == 0)
             {
-                update_vbo(i, j);
+                update_vbo(_i, _j);
             }
             else
             {
-                update_vbo_comptability(i, j);
+                update_vbo_comptability(_i, _j);
             }
             return;
         }

@@ -21,19 +21,21 @@ uniform sampler2DArray base_texture;
 varying float fogFragDepth;
 //varying float fogFragZ;
 
-const vec3 fog_color = vec3(0.0, 0.0, 0.0);
+//const vec3 fog_color = vec3(0.0, 0.0, 0.0);
 //const float fog_start = 96.0;
 //const float fog_depth = 32.0;
 //const vec3 fog_z_color = vec3(40.0, 0.0, 20.0);
 //const vec3 fog_color = vec3(10.0);
-const float fog_start = 48.0;
-const float fog_depth = 128.0 - fog_start;
 //const float fog_z_start = 16.0f;
 //const float fog_z_depth = 128.0f;
 //const float fog_z_density = 0.35f;
 //const float z_depth_max = 128.0f;
 
-const float LOG2 = 1.442695;
+//const float LOG2 = 1.442695;
+
+const vec3 fog_color = vec3(0.0, 0.0, 0.0);
+const float fog_start = 48.0;
+const float fog_depth = 128.0 - fog_start;
 
 void main() 
 {
@@ -59,7 +61,7 @@ void main()
 
 
 
-    if(fogFragDepth <= fog_start)
+    if(fogFragDepth <= fog_start || 0 < 1)
     {
         color = pow(color, vec3(1.0f / 2.2f) );
         gl_FragColor.rgb = color;

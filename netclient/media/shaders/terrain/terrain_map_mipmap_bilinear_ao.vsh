@@ -51,60 +51,62 @@ varying float fogFragDepth;
 //varying float fogFragZ;
 
 
-const float WORLD_RADIUS        = 512.0;
-const float WORLD_RADIUS_SQUARED = 262144.0;
+
 
 void main(void) 
-{      
+{                      
+    vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
+    gl_Position = gl_ModelViewProjectionMatrix * vertex;
 
+    //fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
+    fogFragDepth = distance(vertex.xy, gl_ModelViewMatrixInverse[3].xy);
 
+    inColor = InRGB.rgb;
 
-        vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
+    texCoord = InTexCoord;
 
-
-        vec3 d = vertex.xyz - gl_ModelViewMatrixInverse[3].xyz;
-        float distanceSquared = dot(d,d);
-        //float distanceSquared = vertex.x * vertex.x + vertex.y * vertex.y;
-               
-        vertex.z -= WORLD_RADIUS - sqrt(max(1.0 - distanceSquared / WORLD_RADIUS_SQUARED, 0.0)) * WORLD_RADIUS;
-
-
-        gl_Position = gl_ModelViewProjectionMatrix * vertex;
-
-        fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
-
-        inColor = InRGB.rgb;
- 
-        texCoord = InTexCoord;
-
-        lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
+    lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
 
 }
 
 
 /*
+//const float WORLD_RADIUS        = 2500.0;
+//const float WORLD_RADIUS_SQUARED = 6250000.0;
+
+//const float WORLD_RADIUS        = 512.0;
+//const float WORLD_RADIUS_SQUARED = 262144.0;
+
+const float WORLD_RADIUS        = 1024.0;
+const float WORLD_RADIUS_SQUARED = 1024.0*1024.0;
+const float ONE_OVER_WORLD_RADIUS_SQUARED = 1.0/(1024.0*1024.0);
+
+//const float WORLD_RADIUS        = 128.0;
+//const float WORLD_RADIUS_SQUARED = 16384.0;
+
 void main(void) 
-{                      
-        //vec3 Normal = NormalArray[inColor[4]*255];
-
-        ///vec4 eyePos = gl_ModelViewMatrix * gl_Vertex;
-        //gl_FogFragCoord = abs(eyePos.z/eyePos.w);
-
+{      
         vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
+
+
+        //vec3 d = vertex.xyz - gl_ModelViewMatrixInverse[3].xyz;
+        //float distanceSquared = dot(d,d);
+        //float distanceSquared = vertex.x * vertex.x + vertex.y * vertex.y;
+
+        float distance = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
+        float distanceSquared = ONE_OVER_WORLD_RADIUS_SQUARED* distance*distance;
+               
+        //vertex.z -= WORLD_RADIUS - sqrt(max( (1.0 - distanceSquared), 0.0)) * WORLD_RADIUS;
+        vertex.z -= WORLD_RADIUS - sqrt( 1.0 - distanceSquared);
+
         gl_Position = gl_ModelViewProjectionMatrix * vertex;
 
-        //vec4 eyePos = gl_ModelViewMatrix * vertex;
-        //fogFragDepth = abs(eyePos.z/eyePos.w);
-
-        //fogFragDepth = length(gl_Position.xyz);
-        fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
-        //fogFragZ = gl_ModelViewMatrixInverse[3].z - vertex.z;
+        fogFragDepth = distance;
 
         inColor = InRGB.rgb;
  
         texCoord = InTexCoord;
 
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
-
 }
 */
