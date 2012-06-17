@@ -36,14 +36,6 @@ Varying
 */
 varying vec3 texCoord;
 
-/*
-#ifdef GL_EXT_gpu_shader4
-    flat varying mat2 lightMatrix;
-#else
-    varying mat2 lightMatrix;
-#endif
-*/
-
 #ifdef GL_EXT_gpu_shader4
     flat varying vec4 _lightMatrix;
 #else

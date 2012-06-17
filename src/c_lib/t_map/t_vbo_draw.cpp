@@ -210,9 +210,7 @@ void Vbo_map::draw_map()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        //glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
         //glUniform3f(map_ChunkPosition, vbo->wxoff, vbo->wyoff, 0.0f);
-        //glUniform3f(map_ChunkPosition, 0.0f, 0.0f, 0.0f);
 
         //translation
         //_modelview[3*4+0] = modelview[3*4+0] + vbo->xoff;
@@ -278,6 +276,12 @@ void Vbo_map::draw_map_comptability()
 
     //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
+    float modelview[16];
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+
+    glPushMatrix(); //save matrix
+    //glPushMatrix();
+
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
@@ -287,21 +291,21 @@ void Vbo_map::draw_map_comptability()
             //printf("t_vbo_draw.cpp:117 no blocks\n");
             continue; 
         } 
+
+        glLoadMatrixf(modelview);
+        glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
+
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-        
-        //glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
 
-        glUniform3f(map_ChunkPosition, vbo->wxoff, vbo->wyoff, 0.0f);
-
-        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
-        glVertexAttribPointer(map_TexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
-
+        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
+        glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
-
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
     }
+
+    glPopMatrix(); //restore matrix
 
     glDisableVertexAttribArray(map_Vertex);
     glDisableVertexAttribArray(map_TexCoord);
