@@ -189,23 +189,17 @@ ContainerActionType full_hand_swap_with_slot(
 
 #if DC_SERVER
 
-ContainerActionType full_hand_to_world(int client_id, int agent_id)
+ContainerActionType full_hand_to_world(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    ItemID hand_item = get_agent_hand(agent_id);
-    GS_ASSERT(hand_item != NULL_ITEM);
-
-    // remove item from hand
-    remove_item_from_hand(agent_id);
-    send_hand_remove(client_id);
 
     // throw item
-    ItemParticle::throw_agent_item(agent_id, hand_item);
+    transfer_hand_to_particle(agent_id);
 
     return FULL_HAND_TO_WORLD;
 }
 
-ContainerActionType partial_hand_to_world(int client_id, int agent_id, int transfer_stack_size)
+ContainerActionType partial_hand_to_world(int agent_id, int transfer_stack_size)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     ItemID hand_item = get_agent_hand(agent_id);
@@ -224,7 +218,7 @@ ContainerActionType partial_hand_to_world(int client_id, int agent_id, int trans
     return PARTIAL_HAND_TO_WORLD;
 }
 
-ContainerActionType full_hand_to_empty_slot(int client_id, int agent_id, ItemContainerInterface* container, int slot)
+ContainerActionType full_hand_to_empty_slot(int agent_id, ItemContainerInterface* container, int slot)
 {   // put hand item in slot
     GS_ASSERT(container != NULL);
     if (container == NULL) return CONTAINER_ACTION_NONE;
@@ -235,17 +229,10 @@ ContainerActionType full_hand_to_empty_slot(int client_id, int agent_id, ItemCon
 
     transfer_item_from_hand_to_container(hand_item, container->id, slot, agent_id);
 
-    //// remove item from hand
-    //remove_item_from_hand(agent_id);
-    //send_hand_remove(client_id);
-
-    //// put hand in slot
-    //container->insert_item(slot, hand_item);
-    //send_container_insert(client_id, hand_item, container->id, slot);
     return FULL_HAND_TO_EMPTY_SLOT;
 }
 
-ContainerActionType full_hand_to_occupied_slot(int client_id, int agent_id, int slot, ItemID slot_item)
+ContainerActionType full_hand_to_occupied_slot(int agent_id, int slot, ItemID slot_item)
 { // add stacks
     GS_ASSERT(slot_item != NULL_ITEM);
 
@@ -253,9 +240,6 @@ ContainerActionType full_hand_to_occupied_slot(int client_id, int agent_id, int 
     ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
     GS_ASSERT(hand_item != slot_item);
-
-    remove_item_from_hand(agent_id);
-    send_hand_remove(client_id);
 
     // merge the hand with the slot
     Item::merge_item_stack(hand_item, slot_item); // Item::merge_item_stack(src, dest)
@@ -267,7 +251,7 @@ ContainerActionType full_hand_to_occupied_slot(int client_id, int agent_id, int 
     return FULL_HAND_TO_OCCUPIED_SLOT;
 }
 
-ContainerActionType partial_hand_to_empty_slot(int client_id, ItemContainerInterface* container, int slot, ItemID hand_item)
+ContainerActionType partial_hand_to_empty_slot(ItemContainerInterface* container, int slot, ItemID hand_item)
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(hand_item != NULL_ITEM);
@@ -290,7 +274,7 @@ ContainerActionType partial_hand_to_empty_slot(int client_id, ItemContainerInter
     return PARTIAL_HAND_TO_EMPTY_SLOT;
 }
 
-ContainerActionType partial_hand_to_occupied_slot(int client_id, int slot, ItemID hand_item, ItemID slot_item, int slot_item_space)
+ContainerActionType partial_hand_to_occupied_slot(int slot, ItemID hand_item, ItemID slot_item, int slot_item_space)
 {
     GS_ASSERT(hand_item != slot_item);
     GS_ASSERT(hand_item != NULL_ITEM);
@@ -305,7 +289,7 @@ ContainerActionType partial_hand_to_occupied_slot(int client_id, int slot, ItemI
     return PARTIAL_HAND_TO_OCCUPIED_SLOT;
 }
 
-ContainerActionType partial_slot_to_empty_hand(int client_id, int agent_id, int slot, ItemID slot_item)
+ContainerActionType partial_slot_to_empty_hand(int agent_id, int slot, ItemID slot_item)
 {   // split stack, rounded down
     GS_ASSERT(slot_item != NULL_ITEM);
 
@@ -313,16 +297,14 @@ ContainerActionType partial_slot_to_empty_hand(int client_id, int agent_id, int 
     ItemID new_item = Item::split_item_stack_in_half(slot_item);
     // put in hand
     transfer_free_item_to_hand(new_item, agent_id);
-    //insert_item_in_hand(agent_id, new_item);
 
     // send new state
     Item::send_item_state(slot_item);
-    //Item::broadcast_item_create(new_item);
-    //send_hand_insert(client_id, new_item);
+
     return PARTIAL_SLOT_TO_EMPTY_HAND;
 }
 
-ContainerActionType full_slot_to_empty_hand(int client_id, int agent_id, ItemContainerInterface* container, int slot, ItemID slot_item)
+ContainerActionType full_slot_to_empty_hand(int agent_id, ItemContainerInterface* container, int slot, ItemID slot_item)
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(slot_item != NULL_ITEM);
@@ -333,14 +315,6 @@ ContainerActionType full_slot_to_empty_hand(int client_id, int agent_id, ItemCon
 
     transfer_item_from_container_to_hand(slot_item, container->id, slot, agent_id);
     
-    //// remove slot
-    //container->remove_item(slot);
-    //send_container_remove(client_id, container->id, slot);
-
-    //// put slot in hand
-    //insert_item_in_hand(agent_id, slot_item);
-    //send_hand_insert(client_id, slot_item);
-
     return FULL_SLOT_TO_EMPTY_HAND;
 }
 
@@ -364,14 +338,6 @@ ContainerActionType full_hand_swap_with_slot(int client_id, int agent_id, ItemCo
     remove_item_from_hand(agent_id);
     send_hand_remove(client_id);
     
-    //// put container slot in hand
-    //insert_item_in_hand(agent_id, slot_item);
-    //send_hand_insert(client_id, slot_item);
-    
-    //// put hand in slot
-    //container->insert_item(slot, hand_item);
-    //send_container_insert(client_id, hand_item, container->id, slot);
-
     transfer_free_item_to_container(hand_item, container->id, slot);
     transfer_free_item_to_hand(slot_item, agent_id);
 
@@ -474,7 +440,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             );
             #endif
             #if DC_SERVER
-            action = full_slot_to_empty_hand(client_id, agent_id, container, slot, slot_item);
+            action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
             #endif
         }
     }
@@ -491,7 +457,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             );
             #endif
             #if DC_SERVER
-            action = full_hand_to_empty_slot(client_id, agent_id, container, slot);
+            action = full_hand_to_empty_slot(agent_id, container, slot);
             #endif
         }
         else
@@ -511,7 +477,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     );
                     #endif
                     #if DC_SERVER
-                    action = full_hand_to_occupied_slot(client_id, agent_id, slot, slot_item);
+                    action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
                     #endif
                 }
                 else
@@ -542,7 +508,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                         );
                         #endif
                         #if DC_SERVER
-                        action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
+                        action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
                         #endif
                     }
                 }
@@ -674,7 +640,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                 );
                 #endif
                 #if DC_SERVER
-                action = full_slot_to_empty_hand(client_id, agent_id, container, slot, slot_item);
+                action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
                 #endif
             }
         }
@@ -691,7 +657,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                     );
                     #endif
                     #if DC_SERVER
-                    action = full_hand_to_empty_slot(client_id, agent_id, container, slot);
+                    action = full_hand_to_empty_slot(agent_id, container, slot);
                     #endif
                 }
             }
@@ -710,7 +676,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                         );
                         #endif
                         #if DC_SERVER
-                        action = full_hand_to_occupied_slot(client_id, agent_id, slot, slot_item);
+                        action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
                         #endif
                     }
                     else
@@ -733,7 +699,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                             );
                             #endif
                             #if DC_SERVER
-                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
+                            action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
                             #endif
                         }
                     }                    
@@ -755,7 +721,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                 );
                 #endif
                 #if DC_SERVER
-                action = full_slot_to_empty_hand(client_id, agent_id, container, slot, slot_item);
+                action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
                 #endif
             }
         }
@@ -772,7 +738,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                     );
                     #endif
                     #if DC_SERVER
-                    action = full_hand_to_empty_slot(client_id, agent_id, container, slot);
+                    action = full_hand_to_empty_slot(agent_id, container, slot);
                     #endif
                 }
             }
@@ -793,7 +759,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                             );
                             #endif
                             #if DC_SERVER
-                            action = full_hand_to_occupied_slot(client_id, agent_id, slot, slot_item);
+                            action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
                             #endif
                         }
                     }
@@ -830,7 +796,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
                                 );
                                 #endif
                                 #if DC_SERVER
-                                action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, slot_item_space);
+                                action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
                                 #endif
                             }
                         }
@@ -926,7 +892,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                 );
                 #endif
                 #if DC_SERVER
-                action = partial_slot_to_empty_hand(client_id, agent_id, slot, slot_item);
+                action = partial_slot_to_empty_hand(agent_id, slot, slot_item);
                 #endif
             }
         }
@@ -950,7 +916,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                 );
                 #endif
                 #if DC_SERVER
-                action = full_hand_to_empty_slot(client_id, agent_id, container, slot);
+                action = full_hand_to_empty_slot(agent_id, container, slot);
                 #endif
             }
             else
@@ -963,7 +929,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                 );
                 #endif
                 #if DC_SERVER
-                action = partial_hand_to_empty_slot(client_id, container, slot, hand_item);
+                action = partial_hand_to_empty_slot(container, slot, hand_item);
                 #endif
             }
         }
@@ -987,7 +953,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                         );
                         #endif
                         #if DC_SERVER
-                        action = full_hand_to_occupied_slot(client_id, agent_id, slot, slot_item);
+                        action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
                         #endif
                     }
                     else
@@ -1001,7 +967,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                         );
                         #endif
                         #if DC_SERVER
-                        action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, 1);
+                        action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, 1);
                         #endif
                     }
                 }
@@ -1101,7 +1067,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                 );
                 #endif
                 #if DC_SERVER
-                action = partial_slot_to_empty_hand(client_id, agent_id, slot, slot_item);
+                action = partial_slot_to_empty_hand(agent_id, slot, slot_item);
                 #endif
             }
         }
@@ -1132,7 +1098,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                     );
                     #endif
                     #if DC_SERVER
-                    action = full_hand_to_empty_slot(client_id, agent_id, container, slot);
+                    action = full_hand_to_empty_slot(agent_id, container, slot);
                     #endif
                 }
                 else
@@ -1145,7 +1111,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                     );
                     #endif
                     #if DC_SERVER
-                    action = partial_hand_to_empty_slot(client_id, container, slot, hand_item);
+                    action = partial_hand_to_empty_slot(container, slot, hand_item);
                     #endif
                 }
             }
@@ -1178,7 +1144,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                             );
                             #endif
                             #if DC_SERVER
-                            action = full_hand_to_occupied_slot(client_id, agent_id, slot, slot_item);
+                            action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
                             #endif
                         }
                         else
@@ -1192,7 +1158,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
                             );
                             #endif
                             #if DC_SERVER
-                            action = partial_hand_to_occupied_slot(client_id, slot, hand_item, slot_item, 1);
+                            action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, 1);
                             #endif
                         }
                     }
@@ -1352,7 +1318,7 @@ ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int cl
         action = full_hand_to_world(&hand_item_type, &hand_item_stack, &hand_item_durability);
         #endif
         #if DC_SERVER
-        action = full_hand_to_world(client_id, agent_id);
+        action = full_hand_to_world(agent_id);
         #endif
     }
 
@@ -1396,7 +1362,7 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
             action = full_hand_to_world(&hand_item_type, &hand_item_stack, &hand_item_durability);
             #endif
             #if DC_SERVER
-            action = full_hand_to_world(client_id, agent_id);
+            action = full_hand_to_world(agent_id);
             #endif
         }
         else
@@ -1405,7 +1371,7 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
             action = partial_hand_to_world(&hand_item_stack, 1);
             #endif
             #if DC_SERVER
-            action = partial_hand_to_world(client_id, agent_id, 1);
+            action = partial_hand_to_world(agent_id, 1);
             #endif
         }
     }

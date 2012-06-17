@@ -51,12 +51,14 @@ void init_globals()
     char fn_str[sizeof(sessions_fmt) + count_digits(DC_VERSION) + sizeof(time_str) + 1];
     sprintf(fn_str, sessions_fmt, DC_VERSION, time_str);
     session_log_file = fopen(fn_str, "w");
+    setvbuf(session_log_file, NULL, _IOLBF, 256);
 
     // open population log file
     const char pop_fn[] = "./log/population.log";
     population_log_file = fopen(pop_fn, "a");
     // print startup time
     fprintf(population_log_file, "%s Server started (build %d)\n", time_str, DC_VERSION);
+    setvbuf(population_log_file, NULL, _IOLBF, 256);
 }
 
 void teardown_globals()
@@ -82,6 +84,12 @@ class Session* begin_session(uint32_t ip_addr, int client_id)
     {
         const char* time_str = get_time_str();
         fprintf(population_log_file, "%s : Client %d connected. %d clients connected\n", time_str, client_id, number_of_clients);
+        if (feof(population_log_file))
+        {
+            GS_ASSERT(false);
+            fclose(population_log_file);
+            population_log_file = NULL;
+        }
     }
     return session;
 }
@@ -93,14 +101,28 @@ void end_session(class Session* session)
     session->logout();
     GS_ASSERT(session_log_file != NULL);
     if (session_log_file != NULL)
-        session->print(session_log_file);
-    session->print(NULL);   // print to stdout too
+    {
+        session->print(session_log_file); // unbuffered print to stdout
+        if (feof(session_log_file))
+        {
+            GS_ASSERT(false);
+            fclose(session_log_file);
+            session_log_file = NULL;
+        }
+    }
+    session->print(NULL);   // print to stdout
     printf("Client %d disconnected. %d clients connected\n", session->client_id, number_of_clients);
     GS_ASSERT(population_log_file != NULL);
     if (population_log_file != NULL)
     {
         const char* time_str = get_time_str();
         fprintf(population_log_file, "%s : Client %d disconnected. %d clients connected\n", time_str, session->client_id, number_of_clients);
+        if (feof(population_log_file))
+        {
+            GS_ASSERT(false);
+            fclose(population_log_file);
+            population_log_file = NULL;
+        }
     }
 }
 
