@@ -51,6 +51,16 @@ void load_map_drop_dat()
     def_drop("cryofreezer_1");
         drop_always("cryofreezer_1");
 
+    def_drop("steel_block_1");
+        drop_always("steel_block_1");
+
+    def_drop("steel_block_2");
+        drop_always("steel_block_2");
+
+    def_drop("steel_block_3");
+        drop_always("steel_block_3");
+
+
     def_drop("methane_ice");
         add_drop("methane_ice", 3);
         set_drop(0.50, 1);

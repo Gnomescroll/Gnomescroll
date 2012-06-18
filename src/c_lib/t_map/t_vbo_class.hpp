@@ -210,8 +210,9 @@ class Vbo_map
     void draw_map();
     void draw_map_comptability();
 
-    void Vbo_map::set_frustrum_column(int i, int j);
-    void Vbo_map::prep_frustrum();
+    void prep_frustrum();
+    void set_frustrum_column(int i, int j, float x, float y);
+    void set_frustrum_vertex(int i, int j);
 
 };
 

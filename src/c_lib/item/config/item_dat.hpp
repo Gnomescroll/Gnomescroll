@@ -36,7 +36,7 @@ void load_item_dat()
     s.hitscan_damage = 5;
     s.hitscan_max_ammo = 30;
     s.hitscan_bullet_effect_enum = 0;
-    s.max_durability = 100;
+    s.max_durability = 300;
     s.max_energy = 50;
     s.max_stack_size = 1;
     s.object_damage_min = 15;
@@ -48,7 +48,7 @@ void load_item_dat()
     s.pretty_name = (char*)"Mining Laser";
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
-    s.max_durability = 200;
+    s.max_durability = 2000;
     s.max_energy = 50;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
@@ -230,29 +230,38 @@ void load_item_dat()
     s.fuel = true;
     s.fuel_burn_rate = 30 * 30; // 30 seconds
     
-    item_def(46, IG_PLACER, "iron_block");
-    iso_block_sprite_def("steel_1");
-    s.pretty_name = (char*)"Iron Block";
-    s.placer_block_type_id = t_map::dat_get_cube_id("steel_1");
+    item_def(46, IG_PLACER, "steel_block_1");
+    iso_block_sprite_def("steel_block_1");
+    s.pretty_name = (char*)"Steel Block #1";
+    s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_1");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_1");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_1");
     
-    item_def(47, IG_PLACER, "steel_block");
-    s.pretty_name = (char*)"Steel Block";
-    iso_block_sprite_def("steel_2");
-    s.placer_block_type_id = t_map::dat_get_cube_id("steel_2");
+    item_def(47, IG_PLACER, "steel_block_2");
+    s.pretty_name = (char*)"Steel block #2";
+    iso_block_sprite_def("steel_block_2");
+    s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_2");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_2");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_2");
 
-    item_def(48, IG_CONSUMABLE, "repair_kit");
+    item_def(48, IG_PLACER, "steel_block_3");
+    s.pretty_name = (char*)"Steel Block #3";
+    iso_block_sprite_def("steel_block_3");
+    s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_3");
+    s.max_stack_size = 16;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_3");
+
+
+    item_def(49, IG_CONSUMABLE, "repair_kit");
     sprite_def(i0, 2,8);
     s.pretty_name = (char*)"Repair Kit";
     s.max_stack_size = 1;
     s.repair_agent_amount = 50;
 
-    item_def(49, IG_PLACER, "cryofreezer_1");
+    item_def(50, IG_PLACER, "cryofreezer_1");
     iso_block_sprite_def("cryofreezer_1");
     s.pretty_name = (char*)"Small Cryofreezer";
     s.placer_block_type_id = t_map::dat_get_cube_id("cryofreezer_1");
@@ -262,7 +271,7 @@ void load_item_dat()
     s.container_type = CONTAINER_TYPE_CRYOFREEZER_SMALL;
     container_block_def("cryofreezer_1", CONTAINER_TYPE_CRYOFREEZER_SMALL);
 
-    item_def(50, IG_RESOURCE, "methane_ice");
+    item_def(51, IG_RESOURCE, "methane_ice");
     sprite_def(i0, 1,4);
     s.pretty_name = (char*)"Methane Ice";
     s.max_stack_size = 16;
@@ -270,7 +279,7 @@ void load_item_dat()
     s.fuel = true;
     s.fuel_burn_rate = 30 * 30; // 30 seconds
 
-    item_def(51, IG_PLACER, "smelter_1");
+    item_def(52, IG_PLACER, "smelter_1");
     iso_block_sprite_def("smelter_1");
     s.pretty_name = (char*)"Simple Smelter";
     s.placer_block_type_id = t_map::dat_get_cube_id("smelter_1");

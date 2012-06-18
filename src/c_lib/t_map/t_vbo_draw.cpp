@@ -68,6 +68,16 @@ bool chunk_render_check( float x, float y)
     return (dx*dx + dy*dy > dist2) ? false : true;
 }
 
+/*
+    Use frustrum test to 8 block resolution because have to render partial chunks
+*/
+
+int _culled = 0;
+int _drawn = 0;
+int _edge = 0;
+int _total = 0;
+int _cached = 0;
+
 void Vbo_map::set_frustrum_column(int _i, int _j, float x, float y)
 {
 
@@ -76,44 +86,86 @@ void Vbo_map::set_frustrum_column(int _i, int _j, float x, float y)
     //int lowest = 0;
     //int highest = 128/8;
 
-    if(vbo_frustrum[2*index+0] != -1) return;
-
-    int i_min;
-    for(int i_min=0; i_min< 16; i_min++)
+    if(vbo_frustrum[2*index+0] != -1) 
     {
-        float z = 8*i_min;
-
-        if(point_fulstrum_test2(x,y,z) == true) break;
+        _cached ++;
+        return;
     }
 
-    if(i_min == 16)
+    int i_min;
+    for(i_min=0; i_min < 8; i_min++)
     {
-        printf("culled column: %f %f \n", x, y);
-        vbo_frustrum[2*index+0] = 16;
+        float z = 16*i_min;
+
+        if(point_fulstrum_test_map(x,y,z) == true) break;
+    }
+
+    if(i_min == 8)
+    {
+        if(point_fulstrum_test_map(x,y, 16*8) == true) 
+        {
+            //only top chunk is visible
+            vbo_frustrum[2*index+0] = 0;
+            vbo_frustrum[2*index+1] = 0;
+            _edge++;
+            return;
+        }
+
+        //printf("culled column: %f %f \n", x, y);
+
+
+        vbo_frustrum[2*index+0] = 0;
         vbo_frustrum[2*index+1] = 0;
+        _culled++;
         return;
     }
 
     int i_max;
-    for(int i_max=16; i_max >= i_min; i_max--)
+    for(i_max=8; i_max >= i_min; i_max--)
     {
-        float z = 8*i_max;
-        if(point_fulstrum_test2(x,y,z) == true) break;
+        float z = 16*i_max;
+        if(point_fulstrum_test_map(x,y,z) == true) break;
     }
 
-    if(i_max == i_min) //invalid condition
+    if(i_max == 0)
     {
-        printf("ERROR!!! Vbo_map::set_frustrum_column \n");
-        abort();
+        //i_min equals zero, only lowest chunk is visible
+        vbo_frustrum[2*index+0] = 0;
+        vbo_frustrum[2*index+1] = 0;
+        _edge++;
+        return;
+    }
+
+    if(i_max == i_min) //colomn is 
+    {
+        //single chunk to render?  Only passes fulstrum test for 1 point
+        vbo_frustrum[2*index+0] = 0;
+        vbo_frustrum[2*index+1] = 0;
+        _edge++;
+        return;
     }
 
     vbo_frustrum[2*index+0] = i_min;
     vbo_frustrum[2*index+1] = i_max;
+
+    _drawn++;
+}
+
+void Vbo_map::set_frustrum_vertex(int i, int j)
+{
+
 }
 
 void Vbo_map::prep_frustrum()
 {
-    memset(vbo_frustrum, -1, 32*32*2);
+    //memset(vbo_frustrum, -1, 32*32*2);
+    for(int i=0; i <32*32*2; i++) vbo_frustrum[i] = -1;
+
+    _culled = 0;
+    _drawn = 0;
+    _edge = 0;
+    _total = 0;
+    _cached = 0;
 
     for(int i=0; i<MAP_CHUNK_XDIM; i++) {
     for(int j=0; j<MAP_CHUNK_YDIM; j++) {
@@ -121,16 +173,22 @@ void Vbo_map::prep_frustrum()
 
         if(col == NULL || col->vnum == 0) continue;
 
-        col->wxoff = quadrant_translate_f(cx, col->xoff);
-        col->wyoff = quadrant_translate_f(cy, col->yoff);
+        //col->wxoff = quadrant_translate_f(cx, col->xoff);
+        //col->wyoff = quadrant_translate_f(cy, col->yoff);
 
         if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
         {
-            Vbo_map::set_frustrum_column(i,j, col->wxoff, col->wyoff)
+            _total++;
+
+            Vbo_map::set_frustrum_column(i,       j,            col->wxoff, col->wyoff);
+            Vbo_map::set_frustrum_column((i+1)%32,  j,          col->wxoff+16.0, col->wyoff);
+            Vbo_map::set_frustrum_column(i,         (j+1)%32,   col->wxoff, col->wyoff+16.0);
+            Vbo_map::set_frustrum_column((i+1)%32,  (j+1)%32,   col->wxoff+16.0, col->wyoff+16.0);
         }   
 
     }}
 
+    //printf("culled= %i drawn= %i edge= %i cached= %i total= %i \n", _culled, _drawn, _edge, _cached, _total);
 
 }
 
@@ -232,6 +290,7 @@ void Vbo_map::draw_map()
 
     prep_draw();
     sort_draw();
+    prep_frustrum();
 
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -323,6 +382,7 @@ void Vbo_map::draw_map_comptability()
 
     prep_draw();
     sort_draw();
+    prep_frustrum();
 
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);

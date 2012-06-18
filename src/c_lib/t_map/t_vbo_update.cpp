@@ -488,13 +488,13 @@ void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsig
 __attribute((optimize("-O3")))
 void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 {
-    for(int zi0 = 0; zi0 < TERRAIN_MAP_HEIGHT/8; zi0++) {
+    for(int zi0 = 0; zi0 < 128/16; zi0++) {
 
         for(int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = SIDE_BUFFER_INDEX[i];
 
         for(int zi1 = 0; zi1 < 16; zi1++) {
 
-            const int _z = 8*zi0 + zi1;
+            const int _z = 16*zi0 + zi1;
 
             for(int x = 0; x<16; x++) {
             for(int y = 0; y<16; y++) {

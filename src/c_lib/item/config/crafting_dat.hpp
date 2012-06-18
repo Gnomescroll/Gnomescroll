@@ -42,14 +42,25 @@ void load_crafting_dat()
     end_crafting_recipe();
     
     // Blocks
-    def_crafting_recipe("iron_block", 4);
-    set_crafting_reagent("iron_bar", 1);
+    def_crafting_recipe("steel_block_1", 4);
+    set_crafting_reagent("steel_block_1", 1);
     end_crafting_recipe();
-    
+
+    def_crafting_recipe("steel_block_2", 4);
+    set_crafting_reagent("steel_block_2", 1);
+    end_crafting_recipe();
+
+    def_crafting_recipe("steel_block_3", 4);
+    set_crafting_reagent("steel_block_3", 1);
+    end_crafting_recipe();
+
+
+/* 
     def_crafting_recipe("steel_block", 4);
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("graphite", 1);
     end_crafting_recipe();
+*/
 
     // Shovel
     def_crafting_recipe("copper_shovel");

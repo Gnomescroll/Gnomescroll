@@ -9,7 +9,10 @@ static struct
     float zfar;
 
     float hy;
+    float hx;
+
     float hy_sphere;
+    float hx_sphere;
 
     struct Vec3 c; //camera
     struct Vec3 f;   //forward
@@ -31,9 +34,10 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
     double tang = tan(angle);
     float anglex = atan(tang*aspect);
     fulstrum.hy = tan(fovy/2);
-    fulstrum.hy = fulstrum.hy*aspect;;
+    fulstrum.hx = fulstrum.hy*aspect;
+
     fulstrum.hy_sphere = 1.0/cos(angle);
-    fulstrum.hy_sphere = 1.0/cos(anglex);
+    fulstrum.hx_sphere = 1.0/cos(anglex);
     
     fulstrum.c = camera;
     fulstrum.f = forward;
@@ -71,11 +75,11 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 
     float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
     //printf("dx= %f, theshhold= %f \n", dx, dz*fulstrum.hy);
-    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
+    if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
 
     float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
     //printf("dy= %f, theshhold= %f \n", dy, dz*fulstrum.hy);
-    if( dy < -dz*(fulstrum.hy+r/2) || dy > dz*(fulstrum.hy+r/2) ) return false;
+    if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
 
     return true;
 #else
@@ -83,8 +87,8 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
     if( dz + r < 0 || dz > fulstrum.zfar - r ) return false;
     
     float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
-    float rx = fulstrum.hy_sphere*r;
-    if( dx < -dz*fulstrum.hy - rx|| dx > dz*fulstrum.hy + rx ) return false;
+    float rx = fulstrum.hx_sphere*r;
+    if( dx < -dz*fulstrum.hx - rx|| dx > dz*fulstrum.hx + rx ) return false;
     
     float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
     float ry = fulstrum.hy_sphere*r;
@@ -111,7 +115,7 @@ bool point_fulstrum_test(float x, float y, float  z)
     //if( dz < 0 || dz > fulstrum.zfar ) return false;
 
     float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
-    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
+    if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
 
     float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
     if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
@@ -130,11 +134,19 @@ inline bool point_fulstrum_test2(float x, float y, float  z)
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;
 
+    //vec3_normalize(vec3_init(x,y,z))
+    //printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.r) );
+    //printf("dot 2= %f \n", vec3_dot( fulstrum.f, fulstrum.u) );
+    //printf("dot 3= %f \n", vec3_dot( fulstrum.u, fulstrum.r) );
+
+    // printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.f) );
+    //printf("forward: %f %f %f = %f \n", fulstrum.f.x, fulstrum.f.y, fulstrum.f.z );
+
     float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
     if( dz < 0 || dz > fulstrum.zfar ) return false;
 
     float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
-    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
+    if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
 
     float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
     if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
@@ -142,6 +154,36 @@ inline bool point_fulstrum_test2(float x, float y, float  z)
     return true;
 }
 
+inline bool point_fulstrum_test_map(float x, float y, float  z)
+{
+    // DOES NOT TRANSLATE POINT
+
+    //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
+    //    return false;
+
+    x -= fulstrum.c.x;
+    y -= fulstrum.c.y;
+    z -= fulstrum.c.z;
+
+    //vec3_normalize(vec3_init(x,y,z))
+    //printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.r) );
+    //printf("dot 2= %f \n", vec3_dot( fulstrum.f, fulstrum.u) );
+    //printf("dot 3= %f \n", vec3_dot( fulstrum.u, fulstrum.r) );
+
+    // printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.f) );
+    //printf("forward: %f %f %f = %f \n", fulstrum.f.x, fulstrum.f.y, fulstrum.f.z );
+
+    float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
+    if( dz < 0 || dz > fulstrum.zfar ) return false;
+
+    float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
+    if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
+
+    float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
+    if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
+
+    return true;
+}
 
 bool xy_circle_fulstrum_test(float x, float y, float r)
 {
@@ -158,7 +200,7 @@ bool xy_circle_fulstrum_test(float x, float y, float r)
 
     float dx = x*fulstrum.r_2d.x + y*fulstrum.r_2d.y;
     float rx = fulstrum.hy_sphere*r;
-    if( dx < -dz*fulstrum.hy - rx|| dx > dz*fulstrum.hy + rx ) return false;
+    if( dx < -dz*fulstrum.hx - rx|| dx > dz*fulstrum.hx + rx ) return false;
     
     //float dy = x*fulstrum.u.x + y*fulstrum.u.y;
     //float ry = fulstrum.hy_sphere*r;
@@ -182,7 +224,7 @@ bool xy_point_fulstrum_test(float x, float y)
     if( dz < 0 || dz > fulstrum.zfar ) return false;
 
     float dx = (x*fulstrum.r.x + y*fulstrum.r.y);
-    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
+    if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
 
     //float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
     //if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
