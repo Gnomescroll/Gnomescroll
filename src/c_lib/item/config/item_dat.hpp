@@ -48,7 +48,7 @@ void load_item_dat()
     s.pretty_name = (char*)"Mining Laser";
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
-    s.max_durability = 2000;
+    s.max_durability = 2000; //was 200 which is 40 seconds
     s.max_energy = 50;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
