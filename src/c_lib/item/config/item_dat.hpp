@@ -34,14 +34,14 @@ void load_item_dat()
     s.pretty_name = (char*)"Laser Rifle";
     s.hitscan_fire_cooldown = 30;
     s.hitscan_damage = 5;
-    s.hitscan_max_ammo = 30;
+    s.hitscan_max_ammo = 30;    //WTF does this do?
     s.hitscan_bullet_effect_enum = 0;
-    s.max_durability = 300;
-    s.max_energy = 50;
+    s.max_durability = 100;
+    s.max_energy = 50;      //WTF does this do?
     s.max_stack_size = 1;
     s.object_damage_min = 15;
     s.object_damage_max = 25;
-    s.block_damage = 2;
+    s.block_damage = 4;
 
     item_def(7, IG_MINING_LASER, "mining_laser");
     sprite_def(i0, 3,5);
