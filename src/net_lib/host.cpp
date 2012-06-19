@@ -70,8 +70,8 @@ void shutdown_net_client()
     if(NetClient::Server.enet_peer != NULL)
     {
         enet_peer_disconnect(NetClient::Server.enet_peer, 1);   //graceful shutdown
-        //enet_host_flush(client_host);   //flush packets
-        client_dispatch_network_events();
+        enet_host_flush(client_host);   //flush packets
+        //client_dispatch_network_events();
     }
     NetClient::Server.enet_peer = NULL;
 
