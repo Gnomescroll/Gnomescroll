@@ -54,7 +54,7 @@ void main(void)
  
         texCoord = InTexCoord.xy;
 
-        vec2 texCoord2 = (0.0625f*InTexCoord.xy)+InTexCoord.zw;
+        //vec2 texCoord2 = (0.0625f*InTexCoord.xy)+InTexCoord.zw;
 
         vec2 tmp = (0.96f)*(InTexCoord.xy - vec2(0.5f,0.5f) )+ vec2(0.5f,0.5f);
         texCoord3 = 0.0625f*tmp +InTexCoord.zw;

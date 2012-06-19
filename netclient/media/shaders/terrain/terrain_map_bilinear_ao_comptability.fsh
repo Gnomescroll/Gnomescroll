@@ -54,7 +54,7 @@ void main()
     float tmp = dot(vx, lightMatrix * vy);
 
     vec3 color = tmp*inColor.rgb;
-    color = color*(texture2D(base_texture, texCoord).rgb);      
+    color = color*(texture2D(base_texture, texCoord3).rgb);      
 
     color = pow(color, vec3(1.0f / 2.2f) );
     gl_FragColor.rgb = color;
