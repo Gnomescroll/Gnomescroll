@@ -668,8 +668,10 @@ void Scoreboard::init()
     if (this->inited) return;
     const unsigned char r=255,g=10,b=10,a=255;
     const float start_y = 120;
-    const float start_x = _xresf / 8.0f;
-    const float col_width = (_xresf * 0.75f) / N_STATS;
+    //const float start_x = _xresf / 8.0f;
+    const float start_x = _xresf / 4.0f;
+    //const float col_width = (_xresf * 0.75f) / N_STATS;   // even spacing
+    const float col_width = (_xresf * 0.75f) / 5;
     int i;
     for (i=0; i<N_STATS; i++)
     {
@@ -710,11 +712,14 @@ void Scoreboard::update()
         return;
         
     const float start_y = 120;
-    const float start_x = _xresf / 8.0f;
-    const float col_width = (_xresf * 0.75f) / N_STATS;
+    //const float start_x = _xresf / 8.0f;
+    const float start_x = _xresf / 4.0f;
+    //const float col_width = (_xresf * 0.75f) / N_STATS;
+    const float col_width = (_xresf * 0.75f) / 5;
     
     int i,j=0;
     const unsigned char r=255,g=10,b=10,a=255;
+    ClientState::agent_list->filter_none();
     for (i=0; i<ClientState::agent_list->n_max; i++)
     {
         Agent_state* agent = ClientState::agent_list->filtered_objects[i];

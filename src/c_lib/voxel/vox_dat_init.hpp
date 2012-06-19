@@ -15,7 +15,6 @@ extern VoxDat robot_box;
 extern VoxDat monster_spawner;
 
 // items
-extern VoxDat flag;
 extern VoxDat base;
 extern VoxDat agent_spawner;
 extern VoxDat turret;

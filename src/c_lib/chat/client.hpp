@@ -164,10 +164,6 @@ class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HIST
 class ChatSystemMessage
 {
     public:
-    void agent_pickup_flag(Agent_state* a);
-    void agent_drop_flag(Agent_state* a);
-    void agent_score_flag(Agent_state* a);
-
     void object_destroyed(Objects::Object* object);
     void object_created(Objects::Object* object);
 };

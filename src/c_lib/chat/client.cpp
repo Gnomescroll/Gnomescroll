@@ -632,61 +632,6 @@ void ChatMessageList::filter_none()
 /* ChatSystemMessage */
 // collection of methods
 
-void ChatSystemMessage::agent_pickup_flag(Agent_state* a)
-{
-    char you[] = "You";
-    char *name;
-    char has[] = "has";
-    char have[] = "have";
-    char *verb;
-    if (a->is_you())
-    {
-        name = you;
-        verb = have;
-    }
-    else
-    {
-        name = a->status.name;
-        verb = has;
-    }
-    char fmt[] = "%s %s the flag";
-    char* msg = (char*)calloc(strlen(fmt) + strlen(name) + strlen(verb) - 4 + 1, sizeof(char));
-    sprintf(msg, fmt, name, verb);
-    chat_client->send_system_message(msg);
-    free(msg);
-}
-
-void ChatSystemMessage::agent_drop_flag(Agent_state* a)
-{
-    char you[] = "You";
-    char *name;
-    if (a->is_you())
-        name = you;
-    else
-        name = a->status.name;
-    char fmt[] = "%s dropped the flag";
-    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
-    sprintf(msg, fmt, name);
-    chat_client->send_system_message(msg);
-    free(msg);
-}
-
-void ChatSystemMessage::agent_score_flag(Agent_state* a)
-{
-    char you[] = "You";
-    char *name;
-    if (a->is_you())
-        name = you;
-    else
-        name = a->status.name;
-    char fmt[] = "%s captured the flag";
-    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
-    sprintf(msg, fmt, name);
-    chat_client->send_system_message(msg);
-    free(msg);
-}
-
-
 namespace SystemMessage
 {
     
