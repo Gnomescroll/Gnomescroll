@@ -271,6 +271,7 @@ namespace t_map
         struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
         if(e->block == 0) return -1;
+        if (maxDamage(e->block) == 255) return -5;
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
@@ -337,6 +338,7 @@ namespace t_map
         struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
         if(e->block == 0) return -1;
+        if (maxDamage(e->block) == 255) return -5;
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
@@ -401,6 +403,7 @@ namespace t_map
         struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
         if(e->block == 0) return -1;
+        if (maxDamage(e->block) == 255) return -5;
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
@@ -464,6 +467,7 @@ namespace t_map
         *block_type = e->block;
 
         if(e->block == 0) return -1;
+        if (maxDamage(e->block) == 255) return -5;
         e->damage += dmg;
         if(e->damage >= maxDamage(e->block) ) 
         {
