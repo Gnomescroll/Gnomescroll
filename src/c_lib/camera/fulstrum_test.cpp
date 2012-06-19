@@ -55,7 +55,7 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
 }
 
 #define SPHERE_FULSTRUM_DEBUG 0
-#define SPHERE_FULSTRUM_DEBUG2 1
+#define SPHERE_FULSTRUM_DEBUG2 0 //use planes based point fulstrum test
 
 bool sphere_fulstrum_test(float x, float y, float  z, float r)
 {

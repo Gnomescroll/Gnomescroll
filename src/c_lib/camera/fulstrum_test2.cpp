@@ -382,3 +382,25 @@ bool point_fulstrum_test_2(struct Vec3 p)
     }
     return true;
 }
+
+
+/*
+    enum {
+        TOP = 0, BOTTOM, LEFT,
+        RIGHT, NEARP, FARP
+    };
+*/
+
+float top_z_projection(float x, float y)
+{
+    vec3 n = _FrustrumG.pl[0].normal;
+    float d = _FrustrumG.pl[0].d;
+    return (x*n.x + y*n.y + d)/(-n.z)
+}
+
+float bottom_z_projection(float x, float y)
+{
+    vec3 n = _FrustrumG.pl[1].normal;
+    float d = _FrustrumG.pl[0].d;
+    return (x*n.x + y*n.y + d)/(-n.z)
+}

@@ -80,7 +80,7 @@ bool chunk_render_check( float x, float y)
     Use frustrum test to 8 block resolution because have to render partial chunks
 */
 
-
+#if 0
 void set_frustrum_column_max(int index, float x, float y)
 {
     if(vbo_frustrum_max[index] != -1)  GS_ABORT();
@@ -128,12 +128,12 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     for(int i=0; i < 8; i++)
     {
         z = i*16.0;
-    /*
+    
         if(point_fulstrum_test_map(x,y,z) != point_fulstrum_test_2(x,y,z))
         {
             printf("error: x,y,z= %f %f %f \n", x,y,z);
         }
-    */
+    
     
         //if(point_fulstrum_test_map(x,y,z) == true)
         if(point_fulstrum_test_2(x,y,z) == true)
@@ -148,8 +148,18 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     vbo_frustrum_min[index] = 8;
     vbo_frustrum_max[index] = 0;
 }
-
 //number of columns to draw
+#endif
+
+void set_frustrum_column_min(int _i, int _j, float x, float y)
+{   
+    _j %= 32;
+    _i %= 32;
+    const int index = 32*_j + _i;
+
+    
+}
+
 
 
 void Vbo_map::prep_frustrum()
@@ -515,7 +525,7 @@ void Vbo_map::draw_map()
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
         
-        #if 0
+        #if 1
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {

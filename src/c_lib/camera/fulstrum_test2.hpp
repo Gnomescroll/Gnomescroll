@@ -5,3 +5,6 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
 
 bool point_fulstrum_test_2(float x, float y, float z);
 bool point_fulstrum_test_2(struct Vec3 p);
+
+float top_z_projection(float x, float y);
+float bottom_z_projection(float x, float y);
