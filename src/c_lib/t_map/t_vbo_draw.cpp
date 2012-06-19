@@ -514,7 +514,8 @@ void Vbo_map::draw_map()
 
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
-  
+        
+        #if 0
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
@@ -547,15 +548,15 @@ void Vbo_map::draw_map()
             glDrawArrays(GL_QUADS, voff, vnum);
 
         }
-    
-        //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
-
+        #else 
+        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+        #endif
 
         //glPopMatrix();
         //glPushMatrix();
     }
 
-    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 

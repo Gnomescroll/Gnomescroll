@@ -19,7 +19,7 @@ public:
         struct Vec3 aux1 = vec3_sub(v1, v2);
         struct Vec3 aux2 = vec3_sub(v3, v2);
 
-        normal = vec3_normalize(vec3_cross(aux2, aux1));
+        normal = vec3_normalize(vec3_cross(aux1, aux2));
 
         point = v2;
         d = -vec3_dot(normal,point);
@@ -106,6 +106,7 @@ void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _f
 void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
 //void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) 
 {
+/*
     float f1,f2, f3;
 
     f1 = vec3_dot(f,r);
@@ -119,6 +120,14 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     f3 = vec3_dot(u,u);   
 
     printf("1: %f %f %f \n", f1,f2,f3);
+*/
+#if 1
+
+
+    //f = vec3_scalar_mult(f, -1);
+
+    //r = vec3_scalar_mult(r, -1);
+    //u = vec3_scalar_mult(u, -1);
 
     struct Vec3 nc,fc;
     //struct Vec3 X,Y,Z;
@@ -162,6 +171,68 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     pl[NEARP].set3Points(ntl,ntr,nbr);
     pl[FARP].set3Points(ftr,ftl,fbl);
 
+
+
+    Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15));
+
+    if( pl[TOP].distance(f2) < 0 ) printf("Top\n");
+    if( pl[BOTTOM].distance(f2) < 0 ) printf("Bottom\n");
+    if( pl[LEFT].distance(f2) < 0 ) printf("Left\n");
+    if( pl[RIGHT].distance(f2) < 0 ) printf("Right\n");
+    if( pl[NEARP].distance(f2) < 0 ) printf("NearP\n");
+    if( pl[FARP].distance(f2) < 0 ) printf("FarP\n");
+
+#else
+    nc = vec3_add(c, vec3_scalar_mult(f, nearD));
+    fc = vec3_add(c, vec3_scalar_mult(f, farD) );
+
+    pl[NEARP].setNormalAndPoint(vec3_scalar_mult(f, -1), nc);
+    pl[FARP].setNormalAndPoint(f,fc);
+
+    Vec3 aux,normal;
+/*
+    aux = (nc + Y*nh) - p;
+    aux.normalize();
+    normal = aux * X;
+    pl[TOP].setNormalAndPoint(normal,nc+Y*nh);
+
+    aux = (nc - Y*nh) - p;
+    aux.normalize();
+    normal = X * aux;
+    pl[BOTTOM].setNormalAndPoint(normal,nc-Y*nh);
+
+    aux = (nc - X*nw) - p;
+    aux.normalize();
+    normal = aux * Y;
+    pl[LEFT].setNormalAndPoint(normal,nc-X*nw);
+
+    aux = (nc + X*nw) - p;
+    aux.normalize();
+    normal = Y * aux;
+    pl[RIGHT].setNormalAndPoint(normal,nc+X*nw);
+*/
+
+    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
+    aux = vec3_normalize(aux);
+    normal = vec3_cross(aux, r);
+    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
+
+    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
+    aux = vec3_normalize(aux);
+    normal = vec3_cross(aux, r);
+    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
+
+    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
+    aux = vec3_normalize(aux);
+    normal = vec3_cross(aux, r);
+    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
+
+    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
+    aux = vec3_normalize(aux);
+    normal = vec3_cross(aux, r);
+    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
+
+#endif
 }
 
 #if 0
