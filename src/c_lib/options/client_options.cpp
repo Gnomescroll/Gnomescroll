@@ -15,9 +15,6 @@ OPT_STRING(name, "default-name")
 OPT_STRING(server, "127.0.0.1")
 OPT_INT(port, 4096)
 
-/* Game preferences */
-OPT_BOOL(auto_assign_team, true)
-
 /* Window / Camera */
 OPT_INT(width, 1280)
 OPT_INT(height, 800)
@@ -62,9 +59,6 @@ void register_options()
     /* Network */
     OPT_STRING_REGISTER(server)
     OPT_INT_REGISTER(port)
-
-    /* Game preferences */
-    OPT_BOOL_REGISTER(auto_assign_team)
 
     /* Window / Camera */
     OPT_INT_REGISTER(width)

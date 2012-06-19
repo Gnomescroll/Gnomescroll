@@ -25,13 +25,6 @@ options.server_name = "server_one"
 options.ip_address = "174.37.26.119"
 options.port = 0
 
--- game settings --
-options.game_mode = 'ctf'
-options.team_kills = false
-options.victory_points = 3
-options.team_name_one = "Green Team"
-options.team_name_two = "Red Team"
-
 -- map --
 options.map = 'natural_terrain'
 options.seed = 80075112

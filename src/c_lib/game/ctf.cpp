@@ -30,7 +30,8 @@ void CTF::init()
 void CTF::start()
 {
     #if DC_CLIENT
-    this->auto_assign = Options::auto_assign_team;
+    //this->auto_assign = Options::auto_assign_team;
+    this->auto_assign = true;
     #endif
 
     #if DC_SERVER
@@ -73,8 +74,8 @@ void CTF::start()
     x+=0.5f;y+=0.5f;
     this->set_flag_position(2,x,y,z);
 
-    this->set_team_name(1, Options::team_name_one);
-    this->set_team_name(2, Options::team_name_two);
+    this->set_team_name(1, (char*)"Green Team");
+    this->set_team_name(2, (char*)"Red Team");
     #endif
 }
 

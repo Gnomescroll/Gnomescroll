@@ -12,9 +12,6 @@ OPT_STRING_HEADER(name) // player_name
 OPT_STRING_HEADER(server)
 OPT_INT_HEADER(port)
 
-/* Game preferences */
-OPT_BOOL_HEADER(auto_assign_team)
-
 /* Window / Camera */
 OPT_INT_HEADER(width)
 OPT_INT_HEADER(height)

@@ -167,12 +167,12 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_t
     #if DC_SERVER
     // dont allow team kills
     if ((inflictor_type == OBJECT_AGENT || inflictor_type == OBJECT_GRENADE)
-      && inflictor_id != this->a->id)
-    {
-        Agent_state *inf = STATE::agent_list->get(inflictor_id);
-        if (inf == NULL) return this->health;
-        if (inf->status.team == this->team && (!Options::team_kills)) return this->health;
-    }
+      && inflictor_id != this->a->id) return this->health;
+    //{
+        //Agent_state *inf = STATE::agent_list->get(inflictor_id);
+        //if (inf == NULL) return this->health;
+        //if (inf->status.team == this->team) return this->health;
+    //}
     
     int health = this->apply_damage(dmg);
     AgentDeathMethod death_method = DEATH_NORMAL;

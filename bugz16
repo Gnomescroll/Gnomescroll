@@ -638,7 +638,6 @@ palette for smelter on/off
 == ITEMS ==
 
 == BLOCKS/TERRAIN ==
-infinite health blocks, put at ground layer
 send block health on request from agent
 --show meter in hud
 
@@ -656,7 +655,6 @@ get rid of scoreboard scores (just show names + id)
 pick single good color for team
 use durability coloring to teammate health
 add right click to heal teammate with health pack
-show +health in green particle
 
 get rid of nanite feeding
 drop chips from enemies
