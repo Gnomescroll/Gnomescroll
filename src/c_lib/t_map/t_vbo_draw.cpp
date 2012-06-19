@@ -272,7 +272,7 @@ void Vbo_map::prep_frustrum_vertices()
             }
 
             //int vs = vbo->voff_array[side][min-1];
-            int vs = vbo->voff_array[side][min-1];
+            int vs = vbo->voff_array[side][min];
             int ve = vbo->voff_array[side][max+1];
 
             int voff = vs;
@@ -602,7 +602,7 @@ void Vbo_map::draw_map_comptability()
 
     glPushMatrix(); //save matrix
     //glPushMatrix();
-
+/*
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
@@ -635,8 +635,8 @@ void Vbo_map::draw_map_comptability()
             if(vnum <= 0) continue;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
-
-        //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+*/
+        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
     }
 
     glPopMatrix(); //restore matrix
