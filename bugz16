@@ -617,7 +617,6 @@ some boxes arent getting destination correctly -- just jumping around with state
 glsl colored/textured voxels
 texture color problem in OSX -- for blocks and for items
 Hud Weapon sprites + animation
-use font DST_COLOR only for certain ui elements
 make item pickup fly to player
 
 == SOUND ==
@@ -631,6 +630,8 @@ elastic component lists
 craft/smelting recipes need reagents sorted by stack size in addition to type -- currently only by type
     -- is not a problem until multiple of the same type have different stack sizes
     -- so add assert in the recipe def
+--detect duplicate recipes
+--detect recursive recipes (input types == output types)
 
 == UI/UX ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
@@ -655,10 +656,6 @@ put spawners back in
     -- needs better UI
     -- needs crafting path
 
-disable teams
-get rid of green team thing
-get rid of scoreboard scores (just show names + id)
-pick single good color for team
 use durability coloring to teammate health
 add right click to heal teammate with health pack
 
@@ -671,4 +668,3 @@ add labels to the widgets
 ==BUGZ==
 
 == REPAIRS AFTER TEAM GUTTING ==
-base is spawning in caves, spawn on surface
