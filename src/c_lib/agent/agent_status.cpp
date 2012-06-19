@@ -27,7 +27,7 @@ Agent_status::Agent_status(Agent_state* a)
 a(a),
 voxel_model_restore_throttle(0),
 health(AGENT_HEALTH),
-dead(false),
+dead(true),
 respawn_countdown(RESPAWN_TICKS),
 spawner(Components::BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
 kills(0),

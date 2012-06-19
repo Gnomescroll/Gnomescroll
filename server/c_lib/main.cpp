@@ -56,6 +56,8 @@ void init()
     //ItemContainer::test_container_list_capacity();
     //Objects::stress_test();
     #endif
+
+    printf("Game starting\n");
 }
    
 void tick()

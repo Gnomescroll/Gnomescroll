@@ -563,12 +563,7 @@ id (id), type(OBJECT_AGENT), status(this)
     client_id = id;
 
     set_angles(0.5f, 0.0f);
-    #if DC_SERVER
-    this->spawn_state();
-    #endif
-    #if DC_CLIENT
     set_position(256,256,128);
-    #endif
 
     #if DC_SERVER
     agent_create_StoC msg;

@@ -669,21 +669,8 @@ add labels to the widgets
 
 investigate laser durability swap issue further -- source may not be addressed
 
-./run(_Z11print_tracev+0x25) [0x80b4638]
-./run(_ZN13ItemContainer17destroy_containerEi+0x20) [0x80ee041]
-./run(_ZN13ItemContainer10agent_quitEi+0x3ad) [0x80efa84]
-./run(_ZN14NetPeerManager8teardownEv+0x96) [0x810fc08]
-./run() [0x810e180]
-./run(_ZN9NetServer23dispatch_network_eventsEv+0x86) [0x810dcad]
-./run(_ZN4Main3runEv+0x64) [0x8110d34]
-./run(main+0x5d) [0x8110d9f]
-/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3) [0xb74b1113]
-./run() [0x80aa811]
-GS_ASSERT error: /home/steve/dc_mmo/src/c_lib/item/container/_interface.cpp, line 69 function: destroy_container 
--- on player init crash
-
+--where are my initial items??
 
 == REPAIRS AFTER TEAM GUTTING ==
-Send a single base point
-Use it for spawning
 Use it for healing
+

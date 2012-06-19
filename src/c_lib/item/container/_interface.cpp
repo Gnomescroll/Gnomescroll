@@ -577,6 +577,7 @@ static void throw_items_from_container(int client_id, int agent_id, int containe
 
 void agent_born(int agent_id)
 {
+    printf("Container -- Agent born\n");
     // refill toolbelt if needed
 
     // toolbelt should have at least 1 maxed out laser rifle
