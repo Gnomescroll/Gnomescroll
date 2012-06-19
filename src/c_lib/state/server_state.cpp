@@ -47,6 +47,21 @@ namespace ServerState
             return;
         }
         init_lists();
+        
+        // create a base
+        Objects::Object* base = Objects::create(OBJECT_BASE);
+        GS_ASSERT(base != NULL);
+        if (base != NULL)
+        {
+            using Components::PhysicsComponent;
+            PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            GS_ASSERT(physics != NULL);
+            float x = randrange(0, map_dim.x-1);
+            float y = randrange(0, map_dim.y-1);
+            float z = t_map::get_highest_open_block(x,y);
+            if (physics != NULL) physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
+            Objects::ready(base);
+        }
     }
 
     void teardown()
@@ -61,14 +76,12 @@ namespace ServerState
         bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     )
     {
-        int i;                
-
         // agents
         agent_list->objects_within_sphere(x,y,z,radius);
         Agent_state* a;
         const float blast_mean = 0;
         const float blast_stddev = 0.5;
-        for (i=0; i<agent_list->n_filtered; i++)
+        for (int i=0; i<agent_list->n_filtered; i++)
         {
             a = agent_list->filtered_objects[i];
             if (a == NULL) continue;
