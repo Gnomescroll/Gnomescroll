@@ -254,7 +254,10 @@ inline void agent_health_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-    a->event.healed(health);
+    GS_ASSERT(a->status.health != health);
+    if (health >= a->status.health)
+        a->event.healed(health - a->status.health);
+    a->status.health = health;
 }
 
 inline void agent_create_StoC::handle()

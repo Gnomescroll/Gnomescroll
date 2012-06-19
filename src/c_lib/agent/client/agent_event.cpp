@@ -115,14 +115,9 @@ void Agent_event::took_damage(int dmg)
         //Sound::agent_took_damage(p.x, p.y, p.z, 0,0,0);
 }
 
-void Agent_event::healed(int health)
+void Agent_event::healed(int amount)
 {
-    GS_ASSERT(health > 0);
-    GS_ASSERT(health > a->status.health);
-    bool healed = (a->status.health < health);
-    if (!healed) return;
-    a->status.health = health;
-
+    GS_ASSERT(amount >= 0);
     if (a->is_you())
     {
         Sound::restore_health();
@@ -149,7 +144,7 @@ void Agent_event::healed(int health)
     );
     b->set_color(BB_PARTICLE_HEAL_COLOR);   // red
     char txt[10+1];
-    sprintf(txt, "%d", health);
+    sprintf(txt, "%d", amount);
     b->set_text(txt);
     b->set_size(1.0f);
     b->set_ttl(245);
