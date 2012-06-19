@@ -284,24 +284,6 @@ void draw_hud_text()
         return;
     }
 
-    //if (hud_draw_settings.compass)
-    //{
-        //char* compass_text;
-        //if (ClientState::playerAgent_state.you == NULL)
-            //compass_text = (char*)"";
-        //else
-        //{
-            //if (ClientState::playerAgent_state.you->status.has_flag)
-                //compass_text = (char*)compass_friendy_base;
-            //else
-                //compass_text = (char*)compass_enemy_flag;
-        //}
-        //hud->compass->update_formatted_string(1, compass_text);
-        //int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
-        //hud->compass->set_position(compass_x, _yresf);
-        //hud->compass->draw();
-    //}
-
     if (hud_draw_settings.fps)
     {
         float fps_val = 0.0f;

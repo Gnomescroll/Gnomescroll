@@ -804,9 +804,6 @@ void key_down_handler(SDL_Event* event)
                     enable_quit();
                     break;
                 }
-                //toggle_chat();
-                //if (!input_state.debug)
-                    //chat_client->use_team_channel();
                 break;
 
             case SDLK_TAB:

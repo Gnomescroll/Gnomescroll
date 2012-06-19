@@ -291,36 +291,6 @@ void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 pos
     }
 }
 
-void damage_team_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage, int inflictor_team, int inflictor_id)
-{
-    Object* object;
-
-    using Components::HealthComponent;
-    HealthComponent* health;
-
-    using Components::OwnerComponent;
-    OwnerComponent* owner;    
-    int owner_id;
-    
-    int count = filter->within_sphere(object_list, types, n_types, position, radius);
-    for (int i=0; i<count; i++)
-    {
-        object = filter->objects[i];
-
-        health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
-        if (health == NULL) continue;
-
-        owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
-        if (owner != NULL) owner_id = owner->get_owner();
-        else owner_id = NO_AGENT;
-        
-        if (owner_id != inflictor_id)
-            continue;
-
-        health->take_damage(damage);
-    }
-}
-
 void spawn_mobs()
 {   // fill all monster spawner capacity
     const ObjectType type = OBJECT_MONSTER_SPAWNER;
