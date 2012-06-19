@@ -15,7 +15,7 @@
 Attributes
 */
 
-attribute vec3 InVertex;
+attribute vec4 InVertex;
 attribute vec4 InTexCoord;
 attribute vec3 InRGB;
 

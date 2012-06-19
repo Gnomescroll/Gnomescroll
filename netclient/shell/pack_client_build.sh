@@ -5,7 +5,7 @@ version=`cat ../VERSIONX.old`
 f="gnomescroll_linux32_"$version
 rm -rf $f
 mkdir $f
-cp run $f/
+cp run $f/gnomescroll
 cp *.pyc $f/
 cp -R media $f/
 mkdir $f/lua

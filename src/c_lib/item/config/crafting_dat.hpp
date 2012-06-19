@@ -59,12 +59,9 @@ void load_crafting_dat()
     def_crafting_recipe("food_rock-0");
     set_crafting_reagent("regolith", 1);
     set_crafting_reagent("regolith", 1);
-    set_crafting_reagent("regolith", 1);
-    set_crafting_reagent("regolith", 1);
     end_crafting_recipe();
 
     def_crafting_recipe("food_rock-0");
-    set_crafting_reagent("regolith", 2);
     set_crafting_reagent("regolith", 2);
     end_crafting_recipe();
 
