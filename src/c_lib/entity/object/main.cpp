@@ -44,6 +44,7 @@ void init()
     object_list->init();
     
     // fabs
+    object_list->set_object_max(OBJECT_BASE, 1);
     object_list->set_object_max(OBJECT_AGENT_SPAWNER, 256);
     object_list->set_object_max(OBJECT_TURRET, 512);
 

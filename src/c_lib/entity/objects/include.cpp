@@ -26,6 +26,7 @@
 #include <entity/objects/block_drops/infected_rock.cpp>
 */
 
+#include <entity/objects/fabs/base.cpp>
 #include <entity/objects/fabs/spawner.cpp>
 #include <entity/objects/fabs/turret.cpp>
 

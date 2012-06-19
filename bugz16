@@ -663,3 +663,12 @@ change nanite texture to remove graphic
 add labels to the widgets
 
 ==BUGZ==
+
+investigate laser durability swap issue further -- source may not be addressed
+
+
+== TEAM GUTTING ==
+Move base.cpp into entity system
+Remove game/*
+Remove all references to teams, colors
+Remove ctf

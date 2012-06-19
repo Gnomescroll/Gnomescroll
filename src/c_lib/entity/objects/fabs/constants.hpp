@@ -2,7 +2,19 @@
 
 namespace Objects
 {
-    
+
+/* Base */
+
+// dimensions
+const float BASE_HEIGHT = 1.9f;
+
+// voxel model
+const bool BASE_INIT_WITH_HITSCAN = false;
+const bool BASE_INIT_WITH_DRAW = true;
+
+// spawner
+const float BASE_SPAWN_RADIUS = 10.0f;
+
 /* Agent Spawner */
 
 // dimensions
