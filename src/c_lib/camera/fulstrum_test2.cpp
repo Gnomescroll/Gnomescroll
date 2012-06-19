@@ -226,11 +226,13 @@ pl[NEARP].setNormalAndPoint(-Z,nc);
 
 class FrustumG _FrustrumG;
 
-void setup_fulstrum2(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
+void setup_fulstrum2(float fovy, float aspect, float znear, float zfar, 
+    Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
 {
-
-
-
+    //setCamInternals(float fov, float aspect, float nearD, float farD);
+    //setCamDef(Vec3 p, Vec3 l, Vec3 u);
+    _FrustrumG.setCamInternals(fovy, aspect, znear, zfar);
+    _FrustrumG.setCamDef(camera, forward, up);
 }
 
 bool point_fulstrum_test_2(float x, float y, float z)
