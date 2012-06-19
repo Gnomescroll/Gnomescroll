@@ -50,6 +50,9 @@ class Map_vbo
     int vertex_num[6];
     int vertex_offset[6];
     int vertex_num_array[6][16];   //for each column, every 8 z
+    
+    int voff_array[6][8+1]; //levels
+
     GLuint vbo_id;
 
     Map_vbo( class MAP_CHUNK* m )
@@ -212,7 +215,6 @@ class Vbo_map
     void draw_map_comptability();
 
     void prep_frustrum();
-    void set_frustrum_column(int i, int j, float x, float y);
     void prep_frustrum_vertices();
 };
 

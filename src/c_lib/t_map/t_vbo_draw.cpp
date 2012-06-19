@@ -80,85 +80,6 @@ bool chunk_render_check( float x, float y)
     Use frustrum test to 8 block resolution because have to render partial chunks
 */
 
-int _culled = 0;
-int _drawn = 0;
-int _edge = 0;
-int _total = 0;
-int _cached = 0;
-
-void Vbo_map::set_frustrum_column(int _i, int _j, float x, float y)
-{
-
-    int index = _j*MAP_CHUNK_XDIM + _i; // 32*j + i
-
-    //int lowest = 0;
-    //int highest = 128/8;
-
-    if(vbo_frustrum[2*index+0] != -1) 
-    {
-        _cached ++;
-        return;
-    }
-
-    int i_min;
-    for(i_min=0; i_min < 8; i_min++)
-    {
-        float z = 16*i_min;
-
-        if(point_fulstrum_test_map(x,y,z) == true) break;
-    }
-
-    if(i_min == 8)
-    {
-        if(point_fulstrum_test_map(x,y, 16*8) == true) 
-        {
-            //only top chunk is visible
-            vbo_frustrum[2*index+0] = 7;
-            vbo_frustrum[2*index+1] = 7;
-            _edge++;
-            return;
-        }
-
-        //printf("culled column: %f %f \n", x, y);
-
-
-        vbo_frustrum[2*index+0] = 0;
-        vbo_frustrum[2*index+1] = 0;
-        _culled++;
-        return;
-    }
-
-    int i_max;
-    for(i_max=8; i_max >= i_min; i_max--)
-    {
-        float z = 16*i_max;
-        if(point_fulstrum_test_map(x,y,z) == true) break;
-    }
-
-    if(i_max == 0)
-    {
-        //i_min equals zero, only lowest chunk is visible
-        vbo_frustrum[2*index+0] = 0;
-        vbo_frustrum[2*index+1] = 0;
-        _edge++;
-        return;
-    }
-
-    if(i_max == i_min) //colomn is 
-    {
-        //single chunk to render?  Only passes fulstrum test for 1 point
-        vbo_frustrum[2*index+0] = i_max;
-        vbo_frustrum[2*index+1] = i_max;
-        _edge++;
-        return;
-    }
-
-    vbo_frustrum[2*index+0] = i_min;
-    vbo_frustrum[2*index+1] = i_max;
-
-    _drawn++;
-}
-
 
 void set_frustrum_column_max(int index, float x, float y)
 {
@@ -166,14 +87,14 @@ void set_frustrum_column_max(int index, float x, float y)
 
     int min = vbo_frustrum_min[index];
     GS_ASSERT(min != -1);
-/*
+
     if(point_fulstrum_test_map(x,y,128.0) == true)
     {
         vbo_frustrum_max[index] = 8;
         return;
     }
-*/
-    for(int i=8; i >= min; i--)
+
+    for(int i=7; i >= min; i--)
     {
         float z = i*16.0;
 
@@ -194,18 +115,18 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     const int index = 32*_j + i;
 
     if(vbo_frustrum_min[index] != -1)  return;
-
+/*
     if(point_fulstrum_test_map(x,y,0.0) == true)
     {
         vbo_frustrum_min[index] = 0;
         return;
     }
-
+*/
     float z = 0.0;
 
-    for(int i=0; i < 7; i++)
+    for(int i=0; i < 8; i++)
     {
-        z += 16.0;
+        z = i*16.0;
 
         if(point_fulstrum_test_map(x,y,z) == true)
         {
@@ -308,6 +229,15 @@ int _get_frustum_max(int i, int j)
     int vertex_num_array[6][16];   //for each column, every 16 z
 */
 
+//takes in min and max and calculates index to 
+void _draw_start(int min, int max, int* doff, int* dnum)
+{
+    *doff = min;
+
+    *dnum = 
+
+}
+
 void Vbo_map::prep_frustrum_vertices()
 {
     for(int i=0; i<32*32; i++)
@@ -327,19 +257,25 @@ void Vbo_map::prep_frustrum_vertices()
         int min = _get_frustum_min(xi,xj);
         int max = _get_frustum_max(xi,xj);
 
+        //int xoff,dnum;
+        GS_ASSERT(min >= 0);
+
+        _draw_start(min, max, &doff, &dnum);
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         for(int side=0; side<6; side++)
         {
-        /*
-            if(min >= max)
+            int voff;
+            int vnum;
+
+            if(min == 0 || min == 1)
             {
-                vbo_vertex_frustrum[index][2*side+0] = -1; 
-                vbo_vertex_frustrum[index][2*side+1] = -1; //draw zero vertices
+                voff = vbo->vertex_offset[side] + 0;
             }
-        */
-            if(min < 0) GS_ABORT();
-            //if(max >= 8) GS_ABORT();
-            if(max >= 8) max = 7;
+            else
+            {
+                voff = vbo->vertex_offset[side] + vbo->vertex_num_array[side][min-1]
+            }
+
 
             int vs = vbo->vertex_num_array[side][min];  //start
             int ve = vbo->vertex_num_array[side][max]; //end
