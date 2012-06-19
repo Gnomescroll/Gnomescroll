@@ -576,6 +576,9 @@ DONE
 reduce mining laser animation particles to 1/3
 DONE
 
+fix session printing dupes when player reconnects then original times out
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -652,15 +655,3 @@ add labels to the widgets
 == SMELTER ==
 
 ==BUGZ==
-
-in analytics, session_id/client_id counting is broken
-
-example:
-Session 22; Version 21; 51 seconds; IP 82.47.76.232; Login 1; Client id 21; Names: flarb 
-Session 24; Version 21; 9 seconds; IP 82.47.76.232; Login 3; Client id 23; Names: flarb7649 
-Session 24; Version 21; 856 seconds; IP 82.47.76.232; Login 3; Client id 23; Names: flarb7649 
-
-06-16-2012-16:16:23 : Client 22 connected. 1 clients connected
-06-16-2012-16:16:38 : Client 23 connected. 2 clients connected
-06-16-2012-16:16:47 : Client 23 disconnected. 1 clients connected
-06-16-2012-16:30:54 : Client 23 disconnected. 0 clients connected
