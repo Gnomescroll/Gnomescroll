@@ -476,8 +476,9 @@ static void client_disconnect(ENetEvent* event)
     NetPeer* nc = (NetPeer*) event->peer -> data;
     
     int client_id = nc->client_id;
-    NetPeerManager* npm = NetServer::clients[client_id];
-
+    GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
+    if (client_id < 0 || client_id >= HARD_MAX_CONNECTIONS) return;
+    
     //figure out client disconnection code
     if(event->data == 0)
     {
@@ -495,40 +496,27 @@ static void client_disconnect(ENetEvent* event)
         }
     }
 
-
-    npm->teardown();
-
-    NetServer::pool[client_id] = NULL;
-    NetServer::agents[client_id] = NULL;
-    NetServer::clients[client_id] = NULL;
+    NetPeerManager* npm = NetServer::clients[client_id];
+    GS_ASSERT(npm != NULL);
+    if (npm != NULL) npm->teardown();
 
     //printf("Client %d disconnected, %d clients connected\n", client_id, NetServer::number_of_clients);
-
-    //log_simple(
-        //Log::ANALYTICS,
-        //Log::Always,
-        //"Client %d disconnected\n",
-        //client_id
-    //);
-    
-    //log_simple(
-        //Log::ANALYTICS,
-        //Log::Always,
-        //"%d clients connected\n",
-        //NetServer::number_of_clients
-    //);
 
     class User* user = users->get_user(event->peer->address.host);
     GS_ASSERT(user != NULL);
     if (user != NULL)
     {
-        class Session* session = user->get_current_session();
+        class Session* session = user->get_current_session(npm->client_id);
         GS_ASSERT(session != NULL);
         if (session != NULL) end_session(session);
     }
 
     //enet_peer_reset(event->peer); //TEST
     event->peer -> data = NULL;
+
+    NetServer::pool[client_id] = NULL;
+    NetServer::agents[client_id] = NULL;
+    NetServer::clients[client_id] = NULL;
 
     delete nc;
     delete npm;

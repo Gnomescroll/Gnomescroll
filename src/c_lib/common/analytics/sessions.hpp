@@ -146,10 +146,17 @@ class User
         this->n_sessions++;
     }
 
-    class Session* get_current_session()
+    class Session* get_current_session(int client_id)
     {
         if (this->n_sessions <= 0) return NULL;
-        return this->sessions[this->n_sessions-1];
+        for (int i=this->n_sessions-1; i>=0; i--)
+        {
+            GS_ASSERT(this->sessions[i] != NULL);
+            if (this->sessions[i] == NULL) continue;
+            if (this->sessions[i]->client_id == client_id) return this->sessions[i];
+        }
+        GS_ASSERT(false);
+        return NULL;
     }
         
     User(uint32_t ip_addr)
@@ -243,7 +250,8 @@ class UserRecorder
         {
             GS_ASSERT(this->users[i] != NULL);
             if (this->users[i] == NULL) continue;
-            class Session* session = this->users[i]->get_current_session();
+            class Session* session = this->users[i]->get_current_session(client_id);
+            GS_ASSERT(session->client_id == client_id);
             if (session->client_id != client_id) continue;
             return session;
         }
