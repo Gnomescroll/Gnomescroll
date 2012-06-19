@@ -24,6 +24,11 @@ static int draw_vbo_n;
 //static struct Map_vbo* draw_vbo_array[MAX_DRAWN_VBO];
 
 int vbo_frustrum[32*32*2];  //start and end chunk index
+
+
+int vbo_frustrum_min[32*32];    //min on frustrum for column
+int vbo_frustrum_max[32*32];    //max on frustrum for column
+
 //int vbo_frustrum_bottom[32*32];
 int vbo_vertex_frustrum[32*32][12]; //start vertex and end vertex
 
@@ -154,6 +159,70 @@ void Vbo_map::set_frustrum_column(int _i, int _j, float x, float y)
     _drawn++;
 }
 
+
+void set_frustrum_column_max(int index, float x, float y)
+{
+    if(vbo_frustrum_max[index] != -1)  GG_ABORT();
+
+    int min = vbo_frustrum_min[index];
+    GS_ASSERT(min != -1);
+
+    if(point_fulstrum_test_map(x,y,128.0) == true)
+    {
+        vbo_frustrum_max[index] = 8;
+        return;
+    }
+
+    for(int i=8; i <= min; i--)
+    {
+        float z = i*16.0;
+
+        if(point_fulstrum_test_map(x,y,z) == true)
+        {
+            vbo_frustrum_max[index] = i;
+            return;
+        }
+    }
+
+    GS_ABORT();
+}
+
+void set_frustrum_column_min(int _i, int _j, float x, float y)
+{   
+    _j %= 32;
+    _i %= 32;
+    const int index = 32*_j + i;
+
+    if(vbo_frustrum_min[index] != -1)  return;
+
+    if(point_fulstrum_test_map(x,y,0.0) == true)
+    {
+        vbo_frustrum_min[index] = 0;
+        return;
+    }
+
+    float z = 0.0;
+
+    for(int i=0; i < 7; i++)
+    {
+        z += 16.0;
+
+        if(point_fulstrum_test_map(x,y,z) == true)
+        {
+            vbo_frustrum_min[index] = i;
+            set_frustrum_column_max(index,x,y);
+            return;
+        }
+    }
+
+    //column is not visible
+    vbo_frustrum_min[index] = 0;
+    vbo_frustrum_max[index] = 0;
+}
+
+//number of columns to draw
+
+
 void Vbo_map::set_frustrum_vertex(int i, int j)
 {
 
@@ -163,6 +232,8 @@ void Vbo_map::prep_frustrum()
 {
     //memset(vbo_frustrum, -1, 32*32*2);
     for(int i=0; i <32*32*2; i++) vbo_frustrum[i] = -1;
+    for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
+    for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
 
     _culled = 0;
     _drawn = 0;
@@ -501,7 +572,7 @@ void Vbo_map::draw_map()
 
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
-/*  
+  
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
@@ -531,15 +602,15 @@ void Vbo_map::draw_map()
             glDrawArrays(GL_QUADS, voff, vnum);
 
         }
-*/
-        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+
+        //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
 
 
         //glPopMatrix();
         //glPushMatrix();
     }
 
-    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
