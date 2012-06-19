@@ -35,26 +35,18 @@ Varying
 */
 
 varying vec2 texCoord;
-//varying vec2 texCoord2;
 varying vec2 texCoord3;
 
 varying vec3 inColor;
 
 void main(void) 
 {                      
-        //vec3 Normal = NormalArray[inColor[4]*255];
-
-        //vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
-        //gl_Position = gl_ModelViewProjectionMatrix * vertex;
- 
-        InVertex.w = 1.0;
+        //InVertex.w = 1.0;
         gl_Position = gl_ModelViewProjectionMatrix * InVertex;
 
         inColor = InRGB;
  
         texCoord = InTexCoord.xy;
-
-        //vec2 texCoord2 = (0.0625f*InTexCoord.xy)+InTexCoord.zw;
 
         vec2 tmp = (0.96f)*(InTexCoord.xy - vec2(0.5f,0.5f) )+ vec2(0.5f,0.5f);
         texCoord3 = 0.0625f*tmp +InTexCoord.zw;
