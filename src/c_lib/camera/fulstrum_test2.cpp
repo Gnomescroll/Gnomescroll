@@ -107,15 +107,14 @@ void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
    
     //Z = p - l;
     //Z.normalize();
-    Z = vec3_sub(p, l);
-    Z = vec3_normalize(Z);
+    Z = vec3_normalize(vec3_sub(p, l));
+
 
 
     // X axis of camera with given "up" vector and Z axis
     //X = u * Z;
     //X.normalize();
-    X = vec3_cross(u, Z);
-    X = vec3_normalize(X);
+    X = vec3_normalize(vec3_cross(u, Z));
 
     // the real "up" vector is the cross product of Z and X
     //Y = Z * X;
@@ -126,31 +125,33 @@ void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
     //fc = p - Z * farD;
 
     nc = vec3_sub(p, vec3_scalar_mult(Z, nearD) );
+    fc = vec3_sub(p, vec3_scalar_mult(Z, farD) );
     // compute the 4 corners of the frustum on the near plane
     
-
-    ntl = vec3_add( vec3_add(nc,vec3_scalar_mult(Y,nh)), vec3_scalar_mult(X,-nw) );
-    ntr = vec3_add( vec3_add(nc,vec3_scalar_mult(Y,nh)), vec3_scalar_mult(X,nw) );
-    nbl = vec3_add( vec3_add(nc,vec3_scalar_mult(Y,-nh)), vec3_scalar_mult(X,-nw) );
-    nbr = vec3_add( vec3_add(nc,vec3_scalar_mult(Y,-nh)), vec3_scalar_mult(X,nw) );
 /*
     ntl = nc + Y * nh - X * nw;
     ntr = nc + Y * nh + X * nw;
     nbl = nc - Y * nh - X * nw;
     nbr = nc - Y * nh + X * nw;
 */
+
+    ntl = vec3_add3( nc, vec3_scalar_mult(Y,nh)),  vec3_scalar_mult(X,-nw) );
+    ntr = vec3_add3( nc, vec3_scalar_mult(Y,nh)),  vec3_scalar_mult(X,nw)  );
+    nbl = vec3_add3( nc, vec3_scalar_mult(Y,-nh)), vec3_scalar_mult(X,-nw) );
+    nbr = vec3_add3( nc, vec3_scalar_mult(Y,-nh)), vec3_scalar_mult(X,nw)  );
     // compute the 4 corners of the frustum on the far plane
 
-    ftl = vec3_add( vec3_add(fc,vec3_scalar_mult(Y,fh)), vec3_scalar_mult(X,-fw) );
-    ftr = vec3_add( vec3_add(fc,vec3_scalar_mult(Y,fh)), vec3_scalar_mult(X,fw) );
-    fbl = vec3_add( vec3_add(fc,vec3_scalar_mult(Y,-fh)), vec3_scalar_mult(X,-fw) );
-    fbr = vec3_add( vec3_add(fc,vec3_scalar_mult(Y,-fh)), vec3_scalar_mult(X,fw) );
 /*
     ftl = fc + Y * fh - X * fw;
     ftr = fc + Y * fh + X * fw;
     fbl = fc - Y * fh - X * fw;
     fbr = fc - Y * fh + X * fw;
 */
+    ftl = vec3_add3( fc, vec3_scalar_mult(Y,fh), vec3_scalar_mult(X,-fw)  );
+    ftr = vec3_add3( fc, vec3_scalar_mult(Y,fh), vec3_scalar_mult(X,fw)   );
+    fbl = vec3_add3( fc, vec3_scalar_mult(Y,-fh), vec3_scalar_mult(X,-fw) );
+    fbr = vec3_add3( fc, vec3_scalar_mult(Y,-fh), vec3_scalar_mult(X,fw)  );
+
     // compute the six planes
     // the function set3Points assumes that the points
     // are given in counter clockwise order
