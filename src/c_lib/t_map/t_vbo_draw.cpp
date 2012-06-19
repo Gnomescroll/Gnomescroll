@@ -157,7 +157,15 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     _i %= 32;
     const int index = 32*_j + _i;
 
-    
+    float _x = camera.x;
+    float _y = camera.y;
+
+
+    float top =  top_z_projection(x,y);
+    float bottom = bottom_z_projection(x,y);
+
+
+
 }
 
 
