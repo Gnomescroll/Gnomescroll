@@ -75,7 +75,6 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
     z -= fulstrum.c.z;
 
 #if SPHERE_FULSTRUM_DEBUG
-
     float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
     //printf("dz= %f, radius= %f \n", dz,r);
     if( dz < 0 || dz > fulstrum.zfar ) return false;

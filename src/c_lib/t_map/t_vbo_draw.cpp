@@ -157,14 +157,32 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     _i %= 32;
     const int index = 32*_j + _i;
 
-    float _x = camera.x;
-    float _y = camera.y;
+    float cx = current_camera_position.x - x;
+    float cy = current_camera_position.y - y;
 
+    float len = 1.0 / sqrt( cx*cx+cy*cy );
+
+    cx *= len;
+    cy *= len;
+
+    const float radius = 22.8;
+
+    x += radius*cx;
+    y += radius*cy;
 
     float top =  top_z_projection(x,y);
     float bottom = bottom_z_projection(x,y);
 
 
+    int t = floor(top / 16);
+
+    int b = ceil(bottom / 16);
+
+    if(t < 0) t = 0;
+    if(b > 8) b = 8;
+
+    vbo_frustrum_min[index] = 8;
+    vbo_frustrum_max[index] = 0;
 
 }
 
@@ -183,15 +201,17 @@ void Vbo_map::prep_frustrum()
         class Map_vbo* col = draw_vbo_array[ix].map_vbo;
         int i = draw_vbo_array[ix].i;
         int j = draw_vbo_array[ix].j;
-
+    /*
         set_frustrum_column_min(i,j,     col->wxoff, col->wyoff);
         set_frustrum_column_min(i+1,j,   col->wxoff+16.0, col->wyoff);
         set_frustrum_column_min(i,j+1,   col->wxoff, col->wyoff+16.0);
         set_frustrum_column_min(i+1,j+1, col->wxoff+16.0, col->wyoff+16.0);
+    */
+        set_frustrum_column_min(i,j,     col->wxoff+8.0, col->wyoff+8.0);
     }
 }
 
-
+/*
 int _get_frustum_min(int i, int j)
 {
     int index;
@@ -246,6 +266,7 @@ int _get_frustum_max(int i, int j)
 
     return v; 
 }
+*/
 
 /*
     int vertex_num[6];
@@ -269,8 +290,11 @@ void Vbo_map::prep_frustrum_vertices()
 
         int index = 32*xj +xi;
 
-        int min = _get_frustum_min(xi,xj);
-        int max = _get_frustum_max(xi,xj);
+        //int min = _get_frustum_min(xi,xj);
+        //int max = _get_frustum_max(xi,xj);
+
+        int min = vbo_frustrum_min[index];
+        int max = vbo_frustrum_max[index];
 
         //int xoff,dnum;
         GS_ASSERT(min >= 0);
