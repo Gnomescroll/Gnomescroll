@@ -25,7 +25,7 @@ static int draw_vbo_n;
 
 int vbo_frustrum[32*32*2];  //start and end chunk index
 //int vbo_frustrum_bottom[32*32];
-int vbo_vertex_frustrum[32*32*2]; //start vertex and end vertex
+int vbo_vertex_frustrum[32*32][12]; //start vertex and end vertex
 
 struct _VBO_DRAW_STRUCT
 {
@@ -108,8 +108,8 @@ void Vbo_map::set_frustrum_column(int _i, int _j, float x, float y)
         if(point_fulstrum_test_map(x,y, 16*8) == true) 
         {
             //only top chunk is visible
-            vbo_frustrum[2*index+0] = 0;
-            vbo_frustrum[2*index+1] = 0;
+            vbo_frustrum[2*index+0] = 7;
+            vbo_frustrum[2*index+1] = 7;
             _edge++;
             return;
         }
@@ -142,8 +142,8 @@ void Vbo_map::set_frustrum_column(int _i, int _j, float x, float y)
     if(i_max == i_min) //colomn is 
     {
         //single chunk to render?  Only passes fulstrum test for 1 point
-        vbo_frustrum[2*index+0] = 0;
-        vbo_frustrum[2*index+1] = 0;
+        vbo_frustrum[2*index+0] = i_max;
+        vbo_frustrum[2*index+1] = i_max;
         _edge++;
         return;
     }
@@ -193,9 +193,100 @@ void Vbo_map::prep_frustrum()
     //printf("culled= %i drawn= %i edge= %i cached= %i total= %i \n", _culled, _drawn, _edge, _cached, _total);
 }
 
+
+int _get_frustum_min(int i, int j)
+{
+    int index;
+
+    index = 32*j + i;
+    int v1 = vbo_frustrum[2*index+0];
+
+    index = 32*j + (i+1)%32;
+    int v2 = vbo_frustrum[2*index+0];
+
+    index = 32*((j+1)%32) + i;
+    int v3 = vbo_frustrum[2*index+0];
+
+    index = 32*((j+1)%32) + (i+1)%32;
+    int v4 = vbo_frustrum[2*index+0];
+
+    int v = v1;
+
+    if(v2 < v) v = v2;
+    if(v3 < v) v = v3;
+    if(v4 < v) v = v4;
+
+    return v;
+}
+
+int _get_frustum_max(int i, int j)
+{
+    int index;
+
+    index = 32*j + i;
+    int v1 = vbo_frustrum[2*index+1];
+
+    index = 32*j + (i+1)%32;
+    int v2 = vbo_frustrum[2*index+1];
+
+    index = 32*((j+1)%32) + i;
+    int v3 = vbo_frustrum[2*index+1];
+
+    index = 32*((j+1)%32) + (i+1)%32;
+    int v4 = vbo_frustrum[2*index+1];
+
+    int v = v1;
+
+    if(v2 > v) v = v2;
+    if(v3 > v) v = v3;
+    if(v4 > v) v = v4;
+
+    return v; 
+}
+
+/*
+    int vertex_num[6];
+    int vertex_offset[6];
+    int vertex_num_array[6][16];   //for each column, every 16 z
+*/
+
 void Vbo_map::prep_frustrum_vertices()
 {
 
+    for(int i=0;i<draw_vbo_n;i++)
+    {
+        class Map_vbo* vbo = draw_vbo_array[i].map_vbo;
+        int xi = draw_vbo_array[i].i;
+        int xj = draw_vbo_array[i].j;
+
+        int index = 32*xj +xi;
+
+
+        int min = _get_frustum_min(xi,xj);
+        int max = _get_frustum_max(xi,xj);
+
+        for(int side=0; side<6; side++)
+        {
+            if(min <= max)
+            {
+                vbo_vertex_frustrum[index][2*side+0] = 0;
+                vbo_vertex_frustrum[index][2*side+1] = 0; //draw zero vertices
+            }
+        
+            int vs = vbo->vertex_num_array[side][min];  //start
+            int ve = vbo->vertex_num_array[side][max]; //end
+
+            int vn = ve - vs; //number of vertices
+
+            int voff =  vbo->vertex_offset[side] + vs;
+            int vnum =  vn;
+
+            vbo_vertex_frustrum[index][2*side+0] = voff;
+            vbo_vertex_frustrum[index][2*side+1] = vnum;
+        }
+
+
+    }
 }
 
 void Vbo_map::prep_draw()
@@ -364,7 +455,52 @@ void Vbo_map::draw_map()
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
-        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+
+        int xi = draw_vbo_array[i].i;
+        int xj = draw_vbo_array[i].j;
+        int index = 32*xj +xi;
+
+        /*
+            int vertex_num[6];
+            int vertex_offset[6];
+            int vertex_num_array[6][16];   //for each column, every 16 z
+        */
+
+        /*
+            int vs = vbo->vertex_num_array[side][min];  //start
+            int ve = vbo->vertex_num_array[side][max]; //end
+
+            int vn = ve - vs; //number of vertices
+
+            int voff =  vbo->vertex_offset[side] + vs;
+            int vnum =  vn;
+
+            vbo_vertex_frustrum[index][2*side+0] = voff;
+            vbo_vertex_frustrum[index][2*side+1] = vnum;
+        */
+/*
+        printf("vertices= %i \n", vbo->_v_num[0]);
+        for(int side=0; side<6; side++)
+        {
+            printf("side %i vertices: %i offset: %i \n", side, vbo->vertex_num[side], vbo->vertex_offset[side]);
+            
+            printf("drawing: vertices: %i offset %i \n", vbo_vertex_frustrum[index][2*side+0], vbo_vertex_frustrum[index][2*side+1]);
+            //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+            //glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
+            glDrawArrays(GL_QUADS, 
+                vbo_vertex_frustrum[index][2*side+0], 
+                vbo_vertex_frustrum[index][2*side+1]
+                );
+
+        }
+*/
+
+        //printf("vertices= %i \n", vbo->_v_num[0]);
+        for(int side=0; side<6; side++)
+        {
+            //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+            glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
+        }
 
         //glPopMatrix();
         //glPushMatrix();
