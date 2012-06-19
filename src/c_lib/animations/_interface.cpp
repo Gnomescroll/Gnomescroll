@@ -50,8 +50,6 @@ void teardown()
 
 void animations_tick()
 {
-    ClientState::ctf->animate_flags();
-
     hitscan_effect_list->tick();
     hitscan_laser_effect_list->tick();
     mining_laser_effect_list->tick();

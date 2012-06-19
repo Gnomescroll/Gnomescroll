@@ -75,7 +75,7 @@ void Agent_event::display_name()
         this->bb->init();
         this->bb->permanent = true;          // dont die
         this->bb->set_text(this->a->status.name);
-        this->bb->set_color(r,g,b,255);
+        this->bb->set_color(255,10,10,255); // TODO -- use health level
         this->bb->set_size(0.7);
     }
     const float z_margin = 0.4;
@@ -87,7 +87,10 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg)
 {
+    GS_ASSERT(dmg > 0);
+    if (dmg <= 0) return;
     Particle::BillboardText* b = Particle::billboard_text_list->create();
+    GS_ASSERT(b != NULL);
     if (b==NULL) return;
     b->init();
 
@@ -112,27 +115,39 @@ void Agent_event::took_damage(int dmg)
         //Sound::agent_took_damage(p.x, p.y, p.z, 0,0,0);
 }
 
-void Agent_event::healed(int health)
+void Agent_event::healed(int amount)
 {
-    bool healed = (a->status.health < health);
-    a->status.health = health;
-
+    GS_ASSERT(amount >= 0);
     if (a->is_you())
     {
-        if (healed)
-        {
-            Sound::restore_health();
-            chat_client->send_system_message((char*) "You healed.");
-        }
+        Sound::restore_health();
+        chat_client->send_system_message((char*) "You healed.");
     }
     else
     {
-        if (healed)
-        {
-            Vec3 p = this->a->get_position();
-            Sound::restore_health(p.x, p.y, p.z, 0,0,0);
-        }
+        Vec3 p = this->a->get_position();
+        Sound::restore_health(p.x, p.y, p.z, 0,0,0);
     }
+
+    // show billboard text particle
+    Particle::BillboardText* b = Particle::billboard_text_list->create();
+    GS_ASSERT(b != NULL);
+    if (b==NULL) return;
+    b->init();
+
+    Vec3 p = this->a->get_position();
+    b->set_state(
+        p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
+        p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
+        p.z + a->current_height(),
+        0.0f,0.0f, BB_PARTICLE_HEAL_VELOCITY_Z
+    );
+    b->set_color(BB_PARTICLE_HEAL_COLOR);   // red
+    char txt[10+1];
+    sprintf(txt, "%d", amount);
+    b->set_text(txt);
+    b->set_size(1.0f);
+    b->set_ttl(245);
 }
 
 void Agent_event::died()
@@ -170,9 +185,6 @@ void Agent_event::born()
         VoxDat* vd = (this->a->crouched()) ? &VoxDats::agent_crouched : &VoxDats::agent;
         this->a->vox->set_vox_dat(vd);
         this->a->vox->reset_skeleton();
-        // regenerate model
-        if (this->a->vox != NULL)
-            this->a->vox->restore(this->a->status.team);
     }
 }
 
@@ -220,56 +232,6 @@ void Agent_event::reload_weapon(int type) {
     Vec3 p = this->a->get_position();
     Sound::reload(p.x, p.y, p.z, 0,0,0);
     // play reload animation/sound for the weapon
-}
-
-void Agent_event::update_team_color(unsigned char r, unsigned char g, unsigned char b)
-{
-    if (r == this->r && g == this->g && b == this->b)
-        return;
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    if (this->a->vox != NULL)
-        this->a->vox->update_team_color(this->a->status.team);
-    if (this->bb != NULL)
-        this->bb->set_color(r,g,b);
-}
-
-void Agent_event::update_team_color()
-{
-    unsigned char r,g,b;
-    int ret = ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
-    if (ret) return;
-    this->update_team_color(r,g,b);
-}
-
-void Agent_event::joined_team(int team)
-{
-    int old_team = this->a->status.team;
-    this->a->status.team = team;
-    if (old_team != team)
-        this->update_team_color();
-    chat_client->subscribe_channels();
-    if (this->a->is_you() && old_team != team)
-        HudMap::update_team(team);
-}
-
-void Agent_event::picked_up_flag()
-{
-    Sound::flag_picked_up();
-    this->a->status.has_flag = true;
-}
-
-void Agent_event::dropped_flag()
-{
-    this->a->status.has_flag = false;
-}
-
-void Agent_event::scored_flag()
-{
-    Sound::flag_scored();
-    this->a->status.has_flag = false;
-    this->a->status.flag_captures++;
 }
 
 void Agent_event::tick_mining_laser()
@@ -490,7 +452,6 @@ Agent_event::~Agent_event()
 Agent_event::Agent_event(Agent_state* owner)
 :
 a(owner),
-r(0),g(0),b(0),
 vox_status(AGENT_VOX_IS_STANDING),
 model_was_changed(true),
 bb(NULL)

@@ -284,24 +284,6 @@ void draw_hud_text()
         return;
     }
 
-    //if (hud_draw_settings.compass)
-    //{
-        //char* compass_text;
-        //if (ClientState::playerAgent_state.you == NULL)
-            //compass_text = (char*)"";
-        //else
-        //{
-            //if (ClientState::playerAgent_state.you->status.has_flag)
-                //compass_text = (char*)compass_friendy_base;
-            //else
-                //compass_text = (char*)compass_enemy_flag;
-        //}
-        //hud->compass->update_formatted_string(1, compass_text);
-        //int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
-        //hud->compass->set_position(compass_x, _yresf);
-        //hud->compass->draw();
-    //}
-
     if (hud_draw_settings.fps)
     {
         float fps_val = 0.0f;
@@ -324,15 +306,10 @@ void draw_hud_text()
         Agent_state* a = ClientState::playerAgent_state.you;
         if (a != NULL)
         {
-            if (a->status.team == 0)
-                hud->health->set_text((char*)"");
-            else
-            {
-                int health = a->status.health;
-                health = (health >= 1000) ? 999 : health;
-                health = (health < 0) ? 0 : health;
-                hud->health->update_formatted_string(2, health);
-            }
+            int health = a->status.health;
+            health = (health >= 1000) ? 999 : health;
+            health = (health < 0) ? 0 : health;
+            hud->health->update_formatted_string(2, health);
         }
         else
             hud->health->set_text((char*)no_agent_text);
@@ -671,46 +648,26 @@ ChatRender::~ChatRender()
 void Scoreboard::init()
 {
     if (this->inited) return;
+    const unsigned char r=255,g=10,b=10,a=255;
     const float start_y = 120;
-    const float start_x = _xresf / 8.0f;
-    const float col_width = (_xresf * 0.75f) / N_STATS;
+    //const float start_x = _xresf / 8.0f;
+    const float start_x = _xresf / 4.0f;
+    //const float col_width = (_xresf * 0.75f) / N_STATS;   // even spacing
+    const float col_width = (_xresf * 0.75f) / 5;
     int i;
     for (i=0; i<N_STATS; i++)
     {
         tags[i] = HudText::text_list->create();
         GS_ASSERT(tags[i] != NULL);
         if (tags[i] == NULL) return;
-        tags[i]->set_color(150, 150, 255, 255);
+        tags[i]->set_color(r,g,b,a);
         tags[i]->set_position(start_x + i*col_width, _yresf - start_y);
     }
     tags[0]->set_text((char*) "ID");
     tags[1]->set_text((char*) "Name");
-    tags[2]->set_text((char*) "Kills");
-    tags[3]->set_text((char*) "Deaths");
-    tags[4]->set_text((char*) "Score");
-
-    const char team_name_fmt[] = "%s";
-    const char team_score_fmt[] = "%d";
-    for (i=0; i<(int)N_TEAMS; i++)
-    {
-        team_names[i] = HudText::text_list->create();
-        GS_ASSERT(team_names[i] != NULL);
-        if (team_names[i] == NULL) return;
-        team_names[i]->set_format((char*)team_name_fmt);
-        team_names[i]->set_format_extra_length(TEAM_NAME_MAX_LENGTH - 2);
-
-        team_scores[i] = HudText::text_list->create();
-        GS_ASSERT(team_scores[i] != NULL);
-        if (team_scores[i] == NULL) return;
-        team_scores[i]->set_format((char*)team_score_fmt);
-        team_scores[i]->set_format_extra_length(6 - 2);
-    }
 
     const char id_fmt[] = "%d";
     const char name_fmt[] = "%s";
-    const char kills_fmt[] = "%d";
-    const char deaths_fmt[] = "%d";
-    const char score_fmt[] = "%d";
     for (i=0; i<PLAYERS_MAX; i++)
     {
         ids[i] = HudText::text_list->create();
@@ -724,24 +681,6 @@ void Scoreboard::init()
         if (names[i] == NULL) return;
         names[i]->set_format((char*)name_fmt);
         names[i]->set_format_extra_length(PLAYER_NAME_MAX_LENGTH - 2);
-
-        kills[i] = HudText::text_list->create();
-        GS_ASSERT(kills[i] != NULL);
-        if (kills[i] == NULL) return;
-        kills[i]->set_format((char*)kills_fmt);
-        kills[i]->set_format_extra_length(3 - 2);
-
-        deaths[i] = HudText::text_list->create();
-        GS_ASSERT(deaths[i] != NULL);
-        if (deaths[i] == NULL) return;
-        deaths[i]->set_format((char*)deaths_fmt);
-        deaths[i]->set_format_extra_length(3 - 2);
-
-        scores[i] = HudText::text_list->create();
-        GS_ASSERT(scores[i] != NULL);
-        if (scores[i] == NULL) return;
-        scores[i]->set_format((char*)score_fmt);
-        scores[i]->set_format_extra_length(4 - 2);
     }
     this->inited = true;
     // set text of teams, stats later
@@ -755,57 +694,26 @@ void Scoreboard::update()
         return;
         
     const float start_y = 120;
-    const float start_x = _xresf / 8.0f;
-    const float col_width = (_xresf * 0.75f) / N_STATS;
-    
-    struct POS
-    {
-        float x,y;
-    };
-    struct POS team_name_pos[N_TEAMS];
-    team_name_pos[0].x = start_x;
-    team_name_pos[0].y = start_y;
-    team_name_pos[1].x = start_x;
-    team_name_pos[1].y = start_y;
-    struct POS team_score_pos[N_TEAMS];
-    team_score_pos[0].x = start_x + col_width;
-    team_score_pos[0].y = start_y;
-    team_score_pos[1].x = start_x + col_width;
-    team_score_pos[1].y = start_y;
-    bool team_draw[2] = {false, false};
+    //const float start_x = _xresf / 8.0f;
+    const float start_x = _xresf / 4.0f;
+    //const float col_width = (_xresf * 0.75f) / N_STATS;
+    const float col_width = (_xresf * 0.75f) / 5;
     
     int i,j=0;
-    unsigned char r,g,b,a=255;
-    int team = -1;
-    ClientState::agent_list->sort_by_team(); // sorts ascending
+    const unsigned char r=255,g=10,b=10,a=255;
+    ClientState::agent_list->filter_none();
     for (i=0; i<ClientState::agent_list->n_max; i++)
     {
         Agent_state* agent = ClientState::agent_list->filtered_objects[i];
-        if (i >= ClientState::agent_list->n_filtered || agent==NULL || agent->status.team == 0)
+        if (i >= ClientState::agent_list->n_filtered || agent==NULL)
         {
             ids[i]->set_text((char*)"");
             names[i]->set_text((char*)"");
-            kills[i]->set_text((char*)"");
-            deaths[i]->set_text((char*)"");
-            scores[i]->set_text((char*)"");
             continue;
         }
         float y = start_y + HudFont::font->data.line_height*(j+2);
-        if (agent->status.team != team)
-        {
-            team = agent->status.team;
-            team_draw[team-1] = true;
-            y += HudFont::font->data.line_height;    // newline
-            team_name_pos[team-1].y = y;
-            team_score_pos[team-1].y = y;
-            y += HudFont::font->data.line_height;    // team name line
-            j += 2; // newline + team name line
-        }
         j++;
 
-        int ret = ClientState::ctf->get_team_color(agent->status.team, &r, &g, &b);
-        if (ret) continue;
-        
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
         ids[i]->update_formatted_string(1, agent->id);
         ids[i]->set_color(r,g,b,a);
@@ -813,48 +721,6 @@ void Scoreboard::update()
         names[i]->set_position(start_x + col_width*1, _yresf - y);
         names[i]->update_formatted_string(1, agent->status.name);
         names[i]->set_color(r,g,b,a);
-
-        kills[i]->set_position(start_x + col_width*2, _yresf - y);
-        int k = agent->status.kills;
-        k = (k >= 1000) ? 999 : k;
-        k = (k < -99) ? -99 : k;
-        kills[i]->update_formatted_string(1, k);
-        kills[i]->set_color(r,g,b,a);
-
-        deaths[i]->set_position(start_x + col_width*3, _yresf - y);
-        int d = agent->status.deaths;
-        d = (d >= 1000) ? 999 : d;
-        d = (d < -99) ? -99 : d;
-        deaths[i]->update_formatted_string(1, d);
-        deaths[i]->set_color(r,g,b,a);
-        
-        scores[i]->set_position(start_x + col_width*4, _yresf - y);
-        int s = agent->status.score();
-        s = (s >= 10000) ? 9999 : s;
-        s = (s < -999) ? -999 : s;
-        scores[i]->update_formatted_string(1, s);
-        scores[i]->set_color(r,g,b,a);
-    }
-
-    for (i=0; i<(int)N_TEAMS; i++)
-    {
-        if (!team_draw[i])
-        {
-            team_names[i]->set_text((char*)"");
-            team_scores[i]->set_text((char*)"");
-            continue;
-        }
-        ClientState::ctf->get_team_color(i+1, &r, &g, &b);
-        team_names[i]->set_position(team_name_pos[i].x, _yresf - team_name_pos[i].y);
-        team_names[i]->update_formatted_string(1, ClientState::ctf->get_team_name(i+1));
-        team_names[i]->set_color(r,g,b,a);
-
-        team_scores[i]->set_position(team_score_pos[i].x, _yresf - team_score_pos[i].y);
-        int s = ClientState::ctf->get_score(i+1);
-        s = (s >= 1000000) ? 999999 : s;
-        s = (s < -99999) ? -99999 : s;
-        team_scores[i]->update_formatted_string(1, s);
-        team_scores[i]->set_color(r,g,b,a);
     }
 }
 
@@ -862,23 +728,12 @@ void Scoreboard::draw()
 {
     if (!this->inited) return;
     this->update();
-    int i;
-    for (i=0; i<N_STATS; i++)
-    {
+    for (int i=0; i<N_STATS; i++)
         tags[i]->draw();
-    }
-    for (i=0; i<(int)N_TEAMS; i++)
-    {
-        team_names[i]->draw();
-        team_scores[i]->draw();
-    }
-    for (i=0; i<PLAYERS_MAX; i++)
+    for (int i=0; i<PLAYERS_MAX; i++)
     {
         ids[i]->draw();
         names[i]->draw();
-        kills[i]->draw();
-        deaths[i]->draw();
-        scores[i]->draw();
     }
 }
 
@@ -886,45 +741,23 @@ Scoreboard::Scoreboard()
 :
 inited(false)
 {
-    int i;
-    for (i=0; i<N_STATS; i++)
-    {
+    for (int i=0; i<N_STATS; i++)
         tags[i] = NULL;
-    }
-    for (i=0; i<(int)N_TEAMS; i++)
-    {
-        team_names[i] = NULL;
-        team_scores[i] = NULL;
-    }
-    for (i=0; i<PLAYERS_MAX; i++)
+    for (int i=0; i<PLAYERS_MAX; i++)
     {
         ids[i] = NULL;
         names[i] = NULL;
-        kills[i] = NULL;
-        deaths[i] = NULL;
-        scores[i] = NULL;
     }
 }
 
 Scoreboard::~Scoreboard()
 {
-    int i;
-    for (i=0; i<N_STATS; i++)
-    {
+    for (int i=0; i<N_STATS; i++)
         if (tags[i] != NULL) HudText::text_list->destroy(tags[i]->id);
-    }
-    for (i=0; i<(int)N_TEAMS; i++)
-    {
-        if (team_names[i] != NULL) HudText::text_list->destroy(team_names[i]->id);
-        if (team_scores[i] != NULL) HudText::text_list->destroy(team_scores[i]->id);
-    }
-    for (i=0; i<PLAYERS_MAX; i++)
+    for (int i=0; i<PLAYERS_MAX; i++)
     {
         if (ids[i] != NULL) HudText::text_list->destroy(ids[i]->id);
         if (names[i] != NULL) HudText::text_list->destroy(names[i]->id);
-        if (kills[i] != NULL) HudText::text_list->destroy(kills[i]->id);
-        if (deaths[i] != NULL) HudText::text_list->destroy(deaths[i]->id);
-        if (scores[i] != NULL) HudText::text_list->destroy(scores[i]->id);
     }    
 }
 

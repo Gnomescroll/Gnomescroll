@@ -45,12 +45,9 @@ class Voxel_model
         void unregister_hitscan();
 
         void set_part_color(int part_num);
-        void set_part_team_color(int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b);
         void set_colors();
-        void update_team_color(int team);
 
         void update(float x, float y, float z, float theta, float phi);
-        void restore(int team=-1);
 
         Affine* get_node(int node);
 
@@ -74,6 +71,5 @@ class Voxel_model
         //bool is_completely_destroyed();
 
         Voxel_model(VoxDat* vox_dat, int id, ObjectType type);
-        Voxel_model(VoxDat* vox_dat, int id, ObjectType type, int team);
         ~Voxel_model();
 };

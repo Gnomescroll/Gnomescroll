@@ -35,7 +35,6 @@ void send_to_client(ObjectType type, int client_id);
 // misc interators. move to another file later
 bool point_occupied_by_type(ObjectType type, int x, int y, int z);
 void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage);
-void damage_team_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage, int inflictor_team, int inflictor_id);
 void spawn_mobs();
 
 } // Objects

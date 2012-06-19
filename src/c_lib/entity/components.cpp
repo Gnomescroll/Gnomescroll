@@ -48,9 +48,6 @@ void init()
 
     set_interface_for_component(COMPONENT_VOXEL_MODEL, COMPONENT_INTERFACE_VOXEL_MODEL);
 
-    set_interface_for_component(COMPONENT_TEAM, COMPONENT_INTERFACE_TEAM);
-    set_interface_for_component(COMPONENT_INDEXED_TEAM, COMPONENT_INTERFACE_TEAM);
-
     set_interface_for_component(COMPONENT_OWNER, COMPONENT_INTERFACE_OWNER);
 
     set_interface_for_component(COMPONENT_AGENT_SPAWNER, COMPONENT_INTERFACE_SPAWNER);

@@ -50,26 +50,6 @@ void MotionTargetingComponent::check_target_alive()
     }
 }
 
-void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
-{   // lock on agent
-    Agent_state* target;
-    target = Hitscan::lock_agent_target(
-        camera_position, &this->target_direction, team,
-        this->sight_range, this->target_acquisition_probability,
-        true, false
-    );
-    if (target == NULL)
-    {
-        if (this->target_type == OBJECT_AGENT)
-            this->broadcast_remove_target();
-        this->target_type = OBJECT_NONE;
-        return;
-    }
-    this->target_type = OBJECT_AGENT;
-    this->target_id = target->id;
-    this->broadcast_target_choice();
-}
-
 void MotionTargetingComponent::lock_target(Vec3 camera_position)
 {
     Agent_state* target;

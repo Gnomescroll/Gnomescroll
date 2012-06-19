@@ -22,6 +22,7 @@ void load_object_data()
     // gemstones
 
     // fabs
+    load_base_data();
     load_agent_spawner_data();
     load_turret_data();
 
@@ -44,6 +45,7 @@ void init()
     object_list->init();
     
     // fabs
+    object_list->set_object_max(OBJECT_BASE, 2);
     object_list->set_object_max(OBJECT_AGENT_SPAWNER, 256);
     object_list->set_object_max(OBJECT_TURRET, 512);
 
@@ -90,21 +92,9 @@ static Object* create_switch(ObjectType type)
 {
     switch (type)
     {
-        // refills
-        //case OBJECT_HEALTH_REFILL:
-        //case OBJECT_LASER_REFILL:
-        //case OBJECT_GRENADE_REFILL:
-        //// gemstones
-        //case OBJECT_GEMSTONE_MALACHITE:
-        //case OBJECT_GEMSTONE_RUBY:
-        //case OBJECT_GEMSTONE_TURQUOISE:
-        //case OBJECT_GEMSTONE_SILVER:
-        //case OBJECT_GEMSTONE_AMETHYST:
-        //case OBJECT_GEMSTONE_JADE:
-        //case OBJECT_GEMSTONE_ONYX:
-            //return create_pickup_sprite(type);
-
         // fabs
+        case OBJECT_BASE:
+            return create_base();
         case OBJECT_AGENT_SPAWNER:
             return create_agent_spawner();
         case OBJECT_TURRET:
@@ -149,22 +139,10 @@ void ready_switch(Object* object)
     if (object == NULL) return;
     switch (object->type)
     {
-        //// refills
-        //case OBJECT_HEALTH_REFILL:
-        //case OBJECT_LASER_REFILL:
-        //case OBJECT_GRENADE_REFILL:
-        //// gemstones
-        //case OBJECT_GEMSTONE_MALACHITE:
-        //case OBJECT_GEMSTONE_RUBY:
-        //case OBJECT_GEMSTONE_TURQUOISE:
-        //case OBJECT_GEMSTONE_SILVER:
-        //case OBJECT_GEMSTONE_AMETHYST:
-        //case OBJECT_GEMSTONE_JADE:
-        //case OBJECT_GEMSTONE_ONYX:
-            //ready_pickup_sprite(object);
-            //break;
-
         // fabs
+        case OBJECT_BASE:
+            ready_base(object);
+            break;
         case OBJECT_AGENT_SPAWNER:
             ready_agent_spawner(object);
             break;
@@ -196,22 +174,10 @@ void destroy_switch(Object* object)
     ObjectType type = object->type;
     switch (type)
     {
-        //// refills
-        //case OBJECT_HEALTH_REFILL:
-        //case OBJECT_LASER_REFILL:
-        //case OBJECT_GRENADE_REFILL:
-        //// gemstones
-        //case OBJECT_GEMSTONE_MALACHITE:
-        //case OBJECT_GEMSTONE_RUBY:
-        //case OBJECT_GEMSTONE_TURQUOISE:
-        //case OBJECT_GEMSTONE_SILVER:
-        //case OBJECT_GEMSTONE_AMETHYST:
-        //case OBJECT_GEMSTONE_JADE:
-        //case OBJECT_GEMSTONE_ONYX:
-            //die_pickup_sprite(object);
-            //break;
-
         // fabs
+        case OBJECT_BASE:
+            die_base(object);
+            break;
         case OBJECT_AGENT_SPAWNER:
             die_agent_spawner(object);
             break;
@@ -322,45 +288,6 @@ void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 pos
 
         health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
         if (health != NULL) health->take_damage(damage);
-    }
-}
-
-void damage_team_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage, int inflictor_team, int inflictor_id)
-{
-    Object* object;
-
-    using Components::HealthComponent;
-    HealthComponent* health;
-
-    using Components::TeamComponent;
-    TeamComponent* team;
-    int team_id;
-    
-    using Components::OwnerComponent;
-    OwnerComponent* owner;    
-    int owner_id;
-    
-    int count = filter->within_sphere(object_list, types, n_types, position, radius);
-    for (int i=0; i<count; i++)
-    {
-        object = filter->objects[i];
-
-        health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
-        if (health == NULL) continue;
-
-        team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-        if (team != NULL) team_id = team->get_team();
-        else team_id = NO_TEAM;
-
-        owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
-        if (owner != NULL) owner_id = owner->get_owner();
-        else owner_id = NO_AGENT;
-        
-        if ((team_id == inflictor_team && owner_id != NO_AGENT)
-            && owner_id != inflictor_id)
-            continue;
-
-        health->take_damage(damage);
     }
 }
 

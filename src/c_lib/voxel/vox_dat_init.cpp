@@ -17,7 +17,6 @@ VoxDat robot_box;
 VoxDat monster_spawner;
 
 // items
-VoxDat flag;
 VoxDat base;
 VoxDat agent_spawner;
 VoxDat turret;
@@ -36,7 +35,6 @@ void init()
     read_skeleton((char*)"./media/voxel/monster_spawner.skeleton", &monster_spawner);
 
     // items
-    read_skeleton((char*)"./media/voxel/dbag_flag.skeleton", &flag);
     read_skeleton((char*)"./media/voxel/base.skeleton", &base);
     read_skeleton((char*)"./media/voxel/spawner.skeleton", &agent_spawner);
     read_skeleton((char*)"./media/voxel/turret.skeleton", &turret);

@@ -32,6 +32,7 @@ vx(0), vy(0), vz(0),
 jump_pow(0)
 {}
 
+// TODO -- deprecate this method
 void AgentState::forward_vector(float f[3])
 {
 
@@ -117,19 +118,16 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
 
 void Agent_state::tick() 
 {
-    if (this->status.team != 0)
-    {   // dont apply physics to viewers
-        int _tc =0;
-        struct Agent_control_state _cs;
+    int _tc =0;
+    struct Agent_control_state _cs;
 
-        while(cs[CS_seq].seq == CS_seq )
-        {
-            _cs = cs[CS_seq];
-            s = _agent_tick(_cs, box, s);
+    while(cs[CS_seq].seq == CS_seq )
+    {
+        _cs = cs[CS_seq];
+        s = _agent_tick(_cs, box, s);
 
-            CS_seq = (CS_seq+1)%256;
-            _tc++;
-        }
+        CS_seq = (CS_seq+1)%256;
+        _tc++;
     }
 
     #if DC_SERVER
@@ -484,15 +482,8 @@ void Agent_state::set_camera_state(float x, float y, float z, float theta, float
 
 void Agent_state::get_spawn_point(Vec3* spawn)
 {
-    // put agent in middle of map if no team assigned
-    if (this->status.team == 0)
-    {
-        spawn->x = map_dim.x/2;
-        spawn->y = map_dim.y/2;
-        spawn->z = map_dim.z - 1;
-        return;
-    }
-    
+    Vec3 default_spawn = vec3_init(map_dim.x/2, map_dim.y/2, map_dim.z-1);
+
     using Components::BASE_SPAWN_ID;
 
     float fh = this->current_height();
@@ -500,19 +491,34 @@ void Agent_state::get_spawn_point(Vec3* spawn)
     
     if (this->status.spawner != BASE_SPAWN_ID)
     {    // check that assigned spawner still exists, reassign if not
-        while ((s = Components::agent_spawner_component_list->get_by_team_index(this->status.team, this->status.spawner)) == NULL)
-        {
-            this->status.set_spawner();
-            if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available
-        }
+        GS_ASSERT(false);   // TODO
+        //while ((s = Components::agent_spawner_component_list->get_by_team_index(this->status.team, this->status.spawner)) == NULL)
+        //{
+            //this->status.set_spawner();
+            //if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available
+        //}
     }
 
     if (this->status.spawner == BASE_SPAWN_ID)
-        *spawn = STATE::ctf->get_base_spawn_point(this->status.team, fh, this->box.box_r);
+    {
+        Objects::Object* base = Objects::get(OBJECT_BASE, 0);
+        GS_ASSERT(base != NULL);
+        if (base == NULL)
+        {
+            *spawn = default_spawn;
+            return;
+        }
+        using Components::AgentSpawnerComponent;
+        AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)base->get_component(COMPONENT_AGENT_SPAWNER);
+        GS_ASSERT(spawner != NULL);
+        if (spawner == NULL) *spawn = default_spawn;
+        else *spawn = spawner->get_spawn_point(fh, this->box.box_r);
+    }
     else // spawner was found
         *spawn = s->get_spawn_point(fh, this->box.box_r);
 }
 
+#if DC_SERVER
 void Agent_state::spawn_state()
 {   // update position
     Vec3 spawn;
@@ -520,6 +526,7 @@ void Agent_state::spawn_state()
     float theta = this->status.get_spawn_angle();
     teleport(spawn.x, spawn.y, spawn.z, 0, 0, 0, theta, 0.0f);
 }
+#endif
 
 void Agent_state::init_vox()
 {
@@ -533,14 +540,12 @@ Agent_state::Agent_state(int id)
 id (id), type(OBJECT_AGENT), status(this)
 #if DC_CLIENT
 , event(this)
+, initial_teleport(false)
 #endif
 #if DC_SERVER
 , camera_ready(false)
 #endif
 {
-    set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
-    set_angles(0.5f, 0.0f);
-
     box.b_height = AGENT_HEIGHT;
     box.c_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
@@ -561,18 +566,19 @@ id (id), type(OBJECT_AGENT), status(this)
 
     client_id = id;
 
-    // add to NetServer pool
-    //NetServer::assign_agent_to_client(this->client_id, this);
-
-    #if DC_SERVER
-    agent_create_StoC msg;
-    msg.id = id;
-    msg.team = this->status.team;
-    msg.client_id = this->client_id;
-    msg.broadcast();
-    #endif
+    set_angles(0.5f, 0.0f);
+    set_position(256,256,128);
 
     this->init_vox();
+
+    #if DC_SERVER    
+    agent_create_StoC msg;
+    msg.id = id;
+    msg.client_id = this->client_id;
+    msg.broadcast();
+
+    this->spawn_state();
+    #endif
 }
 
 Agent_state::~Agent_state()
@@ -925,11 +931,18 @@ void Agent_state::update_model()
 
 bool Agent_state::near_base()
 {
-    Base* b = STATE::ctf->get_base(this->status.team);
+    Objects::Object* b = Objects::get(OBJECT_BASE, 0);
     if (b == NULL) return false;
-    float x = quadrant_translate_f(this->s.x, b->x);
-    float y = quadrant_translate_f(this->s.y, b->y);
-    float z= b->z;
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return false;
+    Vec3 bp = physics->get_position();
+    
+    float x = quadrant_translate_f(this->s.x, bp.x);
+    float y = quadrant_translate_f(this->s.y, bp.y);
+    float z = bp.z;
+    using Objects::BASE_SPAWN_RADIUS;
     if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
         return true;
     return false;

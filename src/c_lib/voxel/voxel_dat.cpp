@@ -74,22 +74,9 @@ void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g
     this->index[i][2] = z;
 }
 
-void VoxColors::set_team(bool team)
-{
-    this->team = team;
-}
-
-void VoxColors::set_team_base(unsigned char r, unsigned char g, unsigned char b)
-{
-    this->team_r = r;
-    this->team_g = g;
-    this->team_b = b;
-}
-
 VoxColors::VoxColors()
 :
-rgba(NULL), index(NULL), n(0),
-team(false), team_r(0), team_g(0), team_b(0)
+rgba(NULL), index(NULL), n(0)
 {}
 
 VoxColors::~VoxColors()
@@ -363,20 +350,6 @@ void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned 
     int i = x + y*p->dimension.x + z*p->dimension.y*p->dimension.x;
     p->colors.set(i, x,y,z, r,g,b,a);
 }
-
-#if DC_CLIENT
-void VoxDat::set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b)
-{
-    VoxPart* p = vox_part[part];
-    if (p==NULL)
-    {
-        printf("WARNING VoxDat::set_color -- part %d is NULL\n", part);
-        return;
-    }
-    p->colors.set_team(team);
-    p->colors.set_team_base(r,g,b);
-}
-#endif
 
 VoxDat::VoxDat()
 :

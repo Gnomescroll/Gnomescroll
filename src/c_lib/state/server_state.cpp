@@ -6,8 +6,6 @@ dont_include_this_file_in_client
 
 #include <agent/agent.hpp>
 
-#include <game/ctf.hpp>
-
 #include <chat/interface.hpp>
 
 #include <entity/objects.hpp>
@@ -17,11 +15,8 @@ namespace ServerState
 {
     Agent_list* agent_list = NULL;
 
-
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     //Grenade_shrapnel_list* grenade_shrapnel_list;
-
-    CTF* ctf = NULL;
 
 /*
     Map update function called from here
@@ -43,23 +38,57 @@ namespace ServerState
         delete voxel_hitscan_list; // must go last
     }
 
-    //move this into interface
-    static void init_ctf()
+    void init_base()
     {
-        static int inited = 0;
-        if (inited++)
+        Objects::Object* base = Objects::create(OBJECT_BASE);
+        GS_ASSERT(base != NULL);
+        if (base != NULL)
         {
-            printf("WARNING: ServerState::init_ctf -- attempt to call more than once\n");
-            return;
+            using Components::PhysicsComponent;
+            PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            GS_ASSERT(physics != NULL);
+            if (physics != NULL)
+            {
+                using Components::DimensionComponent;
+                DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+                GS_ASSERT(dims != NULL);
+                int h = 1;
+                if (dims != NULL) h = ceil(dims->get_height());
+                float x = randrange(0, map_dim.x-1);
+                float y = randrange(0, map_dim.y-1);
+                float z = t_map::get_highest_open_block(x,y, h);
+                physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
+            }
+            Objects::ready(base);
         }
-        ctf = new CTF;
-        ctf->init();
     }
-    
-    //move this into interface
-    static void teardown_ctf()
+
+    void check_agents_at_base()
     {
-        if (ctf != NULL) delete ctf;
+        Objects::Object* base = Objects::get(OBJECT_BASE, 0);
+        GS_ASSERT(base != NULL);
+        if (base == NULL) return;
+
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (physics == NULL) return;
+        Vec3 p = physics->get_position();
+        
+        using Components::VoxelModelComponent;
+        float r = 1.0f;
+        VoxelModelComponent* vox = (VoxelModelComponent*)base->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+        GS_ASSERT(vox != NULL);
+        if (vox != NULL) r = vox->get_radius();
+        
+        agent_list->objects_within_sphere(p.x, p.y, p.z, r);
+        for (int i=0; i<agent_list->n_filtered; i++)
+        {
+            Agent_state* a = agent_list->filtered_objects[i];
+            GS_ASSERT(a != NULL);
+            if (a == NULL) continue;
+            a->status.at_base();
+        }
     }
 
     void init()
@@ -71,12 +100,13 @@ namespace ServerState
             return;
         }
         init_lists();
-        init_ctf();
+        
+        // create a base
+        init_base();
     }
 
     void teardown()
     {
-        teardown_ctf();
         teardown_lists();
     }
 
@@ -87,17 +117,12 @@ namespace ServerState
         bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     )
     {
-        Agent_state* agent = agent_list->get(owner);
-        // dont check null here, its not required.
-        // agent could have disconnected, we'll let his grenades stay effective
-        int i;                
-
         // agents
         agent_list->objects_within_sphere(x,y,z,radius);
         Agent_state* a;
         const float blast_mean = 0;
         const float blast_stddev = 0.5;
-        for (i=0; i<agent_list->n_filtered; i++)
+        for (int i=0; i<agent_list->n_filtered; i++)
         {
             a = agent_list->filtered_objects[i];
             if (a == NULL) continue;
@@ -107,15 +132,7 @@ namespace ServerState
             a->status.apply_damage(damage, owner, inflictor_type);
         }
 
-        if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
-
         Vec3 position = vec3_init(x,y,z);
-
-        const int n_team_types = 2;
-        const ObjectType team_types[n_team_types] = {
-            OBJECT_TURRET, OBJECT_AGENT_SPAWNER,
-        };
-        Objects::damage_team_objects_within_sphere(team_types, n_team_types, position, radius, damage, agent->status.team, agent->id);
 
         const int n_types = 3;
         const ObjectType types[n_types] = {
@@ -128,8 +145,8 @@ namespace ServerState
     void send_initial_game_state_to_client(int client_id)
     {
         agent_list->send_to_client(client_id);
-        ctf->send_to_client(client_id);
-
+        // TODO -- make these one function call
+        Objects::send_to_client(OBJECT_BASE, client_id);
         Objects::send_to_client(OBJECT_TURRET, client_id);
         Objects::send_to_client(OBJECT_AGENT_SPAWNER, client_id);
         Objects::send_to_client(OBJECT_MONSTER_BOMB, client_id);
@@ -215,25 +232,11 @@ namespace ServerState
         }
     }
 
-    void start_game()
-    {
-        ctf->start();
-    }
-
     void agent_disconnect(int agent_id)
     {
         remove_player_from_chat(agent_id);
-
-        ctf->remove_agent_from_team(agent_id);
         send_disconnect_notice(agent_id);
         agent_list->destroy(agent_id);
-        revoke_ownership(agent_id);
-    }
-
-    void revoke_ownership(int agent_id)
-    {
-        printf("revoking ownership\n");
         Components::owner_component_list->revoke(agent_id);
     }
-
-}
+}   // ServerState

@@ -9,7 +9,6 @@ void init();
 void update();
 void draw();
 void draw_text();
-
-void update_team(int team);
+void set_icon_colors();
 
 }

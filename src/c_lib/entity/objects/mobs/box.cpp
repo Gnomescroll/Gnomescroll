@@ -77,7 +77,6 @@ static void set_mob_robot_box_properties(Object* object)
     target->uses_bias = MONSTER_BOX_USES_BIAS;
     target->accuracy_bias = MONSTER_BOX_ACCURACY_BIAS;
     target->sight_range = MONSTER_BOX_FIRING_SIGHT_RANGE;
-    target->attacks_enemies = MONSTER_BOX_ATTACK_ONLY_ENEMIES;
     target->attack_at_random = MONSTER_BOX_ATTACK_AT_RANDOM;
     // we dont have ID yet, need to set that in the ready() call
     target->attacker_properties.type = OBJECT_MONSTER_BOX;

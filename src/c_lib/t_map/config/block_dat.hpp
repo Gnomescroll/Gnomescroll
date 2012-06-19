@@ -230,6 +230,11 @@ void load_block_dat()
     hud_def(6,5, t1,1,11);
     set_max_dmg(16);
 
+    cube_def(31, SolidBlock, "bedrock");
+    iso_texture(t1, 10,7);
+    push_texture();
+    set_max_dmg(255);
+
     end_block_dat();
 
 }

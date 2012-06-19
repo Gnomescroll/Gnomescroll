@@ -57,9 +57,9 @@ class CTF {
     struct Vec3 get_base_spawn_point(int team, float agent_height, float agent_radius);
     bool is_at_base(int team, float x, float y, float z);
 
-    Base* get_base(int team);
+    Objects::Object* get_base(int team);
     Flag* get_flag(int team);
-    Base* get_enemy_base(int team);
+    Objects::Object* get_enemy_base(int team);
     Flag* get_enemy_flag(int team);
 
     bool add_agent_to_team(int team, int agent);

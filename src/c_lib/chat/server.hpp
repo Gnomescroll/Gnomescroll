@@ -18,20 +18,18 @@ class ChatServerChannel
     ~ChatServerChannel();
 };
 
-const int CHAT_SERVER_CHANNELS_MAX = 1+1+N_TEAMS+PLAYERS_MAX;
+const int CHAT_SERVER_CHANNELS_MAX = 1+1+PLAYERS_MAX;
 class ChatServer
 {
     public:
     ChatServerChannel* system;
     ChatServerChannel* global;
-    ChatServerChannel** team;
     ChatServerChannel** pm;
 
     int channels[CHAT_SERVER_CHANNELS_MAX];
 
     void player_join(int id);
-    void player_join_team(int id, int old_team, int team);
-    void player_quit(int id, int team);
+    void player_quit(int id);
     void receive_message(int channel, int sender, char* payload);
 
     ChatServer();

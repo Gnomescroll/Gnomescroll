@@ -38,13 +38,6 @@ typedef ComponentList<TTLHealthComponent, COMPONENT_TTL, MAX_HEALTH_COMPONENTS>
 typedef ComponentList<HitPointsHealthComponent, COMPONENT_HIT_POINTS, MAX_HEALTH_COMPONENTS>
     HitPointsHealthComponentList;
 
-/* Team */
-const int MAX_TEAM_COMPONENTS = 1024;
-typedef ComponentList<TeamComponent, COMPONENT_TEAM, MAX_TEAM_COMPONENTS>
-    TeamComponentList;
-typedef ComponentList<IndexedTeamComponent, COMPONENT_INDEXED_TEAM, MAX_TEAM_COMPONENTS>
-    IndexedTeamComponentList;
-
 /* Voxel Model */
 const int MAX_VOXEL_MODEL_COMPONENTS = 1024;
 typedef ComponentList<VoxelModelComponent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL_COMPONENTS>

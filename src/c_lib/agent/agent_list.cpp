@@ -41,33 +41,6 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
             this->a[i]->update_model();
 }
 
-void Agent_list::quicksort_team(int beg, int end)
-{
-    if (end > beg + 1)
-    {
-        int team;
-        if (this->filtered_objects[beg] == NULL)
-            team = 10000;   //arbitrarily high, so it will be placed at the end
-        else
-            team = this->filtered_objects[beg]->status.team;
-        int l = beg + 1, r = end;
-        while (l < r)
-        {
-            int t;
-            t = (this->filtered_objects[l] == NULL) ? 10000 : this->filtered_objects[l]->status.team;
-            if (t <= team)
-                l++;
-            else
-            {
-                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[--r]);
-            }
-        }
-        swap_object_state(&this->filtered_objects[--l], &this->filtered_objects[beg]);
-        quicksort_team(beg, l);
-        quicksort_team(r, end);
-    }
-}
-
 /* quicksorts */
 
 void Agent_list::swap_object_state(Agent_state **a, Agent_state **b)
@@ -138,13 +111,13 @@ void Agent_list::filter_none()
 }
 
 
-void Agent_list::send_to_client(int client_id) {
-    int i;
-    for (i=0; i<AGENT_MAX; i++) {
+void Agent_list::send_to_client(int client_id)
+{
+    for (int i=0; i<AGENT_MAX; i++)
+    {
         if (a[i]==NULL) continue;
         agent_create_StoC msg;
         msg.id = a[i]->id;
-        msg.team = a[i]->status.team;
         msg.client_id = a[i]->client_id;
         msg.sendToClient(client_id);
 
@@ -164,32 +137,6 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (a[i] == NULL) continue;
-        Vec3 p = this->a[i]->get_position();
-        p.x = quadrant_translate_f(x, p.x);
-        p.y = quadrant_translate_f(y, p.y);
-        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
-        if (dist < radius_squared)
-        {   // agent in sphere
-            filtered_objects[ct] = a[i];
-            filtered_object_distances[ct] = dist;
-            ct++;            
-        }
-    }
-    this->n_filtered = ct;
-    return ct;
-}
-
-int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, int team)
-{
-    if (!team) return 0;
-    int enemy_team = (team == 1) ? 2 : 1; // swap to enemy team id
-    int ct = 0;
-    float dist;
-    const float radius_squared = radius*radius;
-    for (int i=0; i<AGENT_MAX; i++)
-    {
-        if (a[i] == NULL) continue;
-        if (a[i]->status.team != enemy_team) continue;
         Vec3 p = this->a[i]->get_position();
         p.x = quadrant_translate_f(x, p.x);
         p.y = quadrant_translate_f(y, p.y);
@@ -255,12 +202,6 @@ int Agent_list::get_ids() {
     return j;            
 }
 
-void Agent_list::sort_by_team()
-{
-    this->filter_none();    // copies all non null
-    this->quicksort_team(0, this->n_filtered);
-}
-
 bool Agent_list::name_available(char* name)
 {
     for (int i=0; i<AGENT_MAX; i++)
@@ -286,41 +227,6 @@ void Agent_list::check_missing_names()
     }
 }
 
-void Agent_list::check_if_at_base()
-{
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->status.check_if_at_base();
-    }
-}
-
-#if DC_CLIENT
-void Agent_list::update_team_colors()
-{
-    if (ClientState::ctf == NULL) return;
-    unsigned char r1,g1,b1;
-    unsigned char r2,g2,b2;
-    ClientState::ctf->get_team_color(1, &r1, &g1, &b1);
-    ClientState::ctf->get_team_color(2, &r2, &g2, &b2);
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->status.team == 0) continue;
-        switch (this->a[i]->status.team)
-        {
-            case 1:
-                this->a[i]->event.update_team_color(r1, g1, b1);
-                break;
-            case 2:
-                this->a[i]->event.update_team_color(r2, g2, b2);
-                break;
-            default: continue;
-        }
-    }
-}
-#endif
-
 Agent_list::Agent_list()
 :
 check_name_interval(0)
@@ -341,7 +247,6 @@ Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
     {   // skip all viewing agents
         agent = agent_list->filtered_objects[i];
         GS_ASSERT(agent != NULL);
-        if (agent != NULL && agent->status.team != NO_TEAM) break;
         i++;
     }
     if (i >= n) agent = NULL;
@@ -359,7 +264,7 @@ Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radi
     {   // skip all viewing agents
         agent = agent_list->filtered_objects[i];
         GS_ASSERT(agent != NULL);
-        if (agent != NULL && !agent->status.dead && agent->status.team != NO_TEAM) break;
+        if (agent != NULL && !agent->status.dead) break;
         i++;
     }
     if (i >= n) agent = NULL;
@@ -385,7 +290,6 @@ Agent_state* random_agent_in_range(const Vec3 position, const float radius)
     while (i < n)
     {
         agent = agent_list->filtered_objects[chosen[i]];
-        if (agent != NULL && agent->status.team != NO_TEAM) break;
         i++;
     }
     if (i >= n) agent = NULL;

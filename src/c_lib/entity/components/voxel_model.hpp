@@ -25,6 +25,8 @@ class VoxelModelComponent: public Component
         VoxDat* vox_dat;
         bool init_hitscan;
         bool init_draw;
+        bool should_hitscan;
+        bool should_draw;
 
         float get_radius()
         {
@@ -61,17 +63,6 @@ class VoxelModelComponent: public Component
             vox->set_draw(this->init_draw);
         }
 
-        void ready(Vec3 position, float theta, float phi, int team)
-        {
-            GS_ASSERT(this->vox == NULL);
-            if (this->vox != NULL) return;
-            this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type, team);
-            this->set_properties();
-            vox->update(position.x, position.y, position.z, theta, phi);
-            vox->set_hitscan(this->init_hitscan);
-            vox->set_draw(this->init_draw);
-        }
-
         void freeze()
         {
             if (this->vox == NULL) return;
@@ -91,7 +82,7 @@ class VoxelModelComponent: public Component
     VoxelModelComponent()
     : Component(COMPONENT_VOXEL_MODEL, COMPONENT_INTERFACE_VOXEL_MODEL),
     vox(NULL), vox_dat(NULL),
-    init_hitscan(false), init_draw(false)
+    init_hitscan(false), init_draw(false), should_hitscan(true), should_draw(true)
     {}
 };
 

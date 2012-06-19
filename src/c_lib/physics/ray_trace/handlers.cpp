@@ -13,25 +13,13 @@ namespace Hitscan
 {
 
 Agent_state* lock_agent_target(
-    Vec3 firing_position, Vec3* firing_direction, int team,
-    const float range, const float acquisition_probability,
-    const bool enemies, const bool random
+    Vec3 firing_position, Vec3* firing_direction,
+    const float range, const float acquisition_probability, const bool random
 )
 {
     // find agents in range
     using STATE::agent_list;
-    if (enemies)
-    {
-        agent_list->enemies_within_sphere(
-            firing_position.x, firing_position.y, firing_position.z, range, team
-        );
-    }
-    else
-    {
-        agent_list->objects_within_sphere(
-            firing_position.x, firing_position.y, firing_position.z, range
-        );
-    }
+    agent_list->objects_within_sphere(firing_position.x, firing_position.y, firing_position.z, range);
     if (!agent_list->n_filtered) return NULL;
 
     //printf("found %d agents in range\n", agent_list->n_filtered);
@@ -53,7 +41,7 @@ Agent_state* lock_agent_target(
             agent = agent_list->filtered_objects[chosen[i]];
         else
             agent = agent_list->filtered_objects[i];
-        if (agent->status.dead || agent == NULL || agent->status.team == NO_TEAM) continue;
+        if (agent->status.dead || agent == NULL) continue;
         if (agent->in_sight_of(firing_position, &sink, acquisition_probability))
         {
             *firing_direction = vec3_sub(sink, firing_position);

@@ -73,23 +73,8 @@ void ChatServer::player_join(int id)
     pm[id]->add_listener(id);
 }
 
-void ChatServer::player_join_team(int id, int old_team, int team)
+void ChatServer::player_quit(int id)
 {
-    old_team--;
-    if (old_team >= 0 && old_team < (int)N_TEAMS)
-        this->team[old_team]->remove_listener(id);
-    
-    team--;
-    if (team >= 0 && team < (int)N_TEAMS)
-        this->team[team]->add_listener(id);
-}
-
-void ChatServer::player_quit(int id, int team)
-{
-    team--;
-    if (team >= 0 && team < (int)N_TEAMS)
-        this->team[team]->remove_listener(id);
-
     pm[id]->remove_listener(id);
     system->remove_listener(id);
     global->remove_listener(id);
@@ -108,8 +93,6 @@ void ChatServer::receive_message(int channel, int sender, char* payload)
     }
     else if (channel == 1)
         global->broadcast(sender, payload);
-    else if (channel >= CHANNEL_ID_TEAM_OFFSET && channel < (int)(CHANNEL_ID_TEAM_OFFSET + N_TEAMS))
-        team[channel - CHANNEL_ID_TEAM_OFFSET]->broadcast(sender, payload);
     else if (channel >= CHANNEL_ID_AGENT_OFFSET && channel < CHANNEL_ID_AGENT_OFFSET + PLAYERS_MAX)
         pm[channel - CHANNEL_ID_AGENT_OFFSET]->broadcast(sender, payload);
 }
@@ -125,14 +108,6 @@ ChatServer::ChatServer()
     global->id = 1;
     channels[channel_index++] = 1;
 
-    team = (ChatServerChannel**)malloc(sizeof(ChatServerChannel*)*N_TEAMS);
-    for (int i=0; i<(int)N_TEAMS; i++)
-    {
-        team[i] = new ChatServerChannel(PLAYERS_MAX);
-        team[i]->id = CHANNEL_ID_TEAM_OFFSET + i;
-        channels[channel_index++] = team[i]->id;
-    }
-
     pm = (ChatServerChannel**)malloc(sizeof(ChatServerChannel*)*PLAYERS_MAX);
     for (int i=0; i<PLAYERS_MAX; i++)
     {
@@ -147,9 +122,6 @@ ChatServer::~ChatServer()
     delete system;
     delete global;
 
-    for (int i=0; i<(int)N_TEAMS; delete team[i++]);
-    free(this->team);
-    
     for (int i=0; i<PLAYERS_MAX; delete pm[i++]);
     free(this->pm);
 }

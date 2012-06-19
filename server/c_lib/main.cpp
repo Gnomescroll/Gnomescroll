@@ -37,7 +37,8 @@ void init()
         t_gen::start_cave_generator();
         t_gen::populate_ore();
 
-        map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
+        //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
+        map_gen::rough_floor(512,512,0,3, t_map::get_cube_id((char*)"bedrock"));
         //Dragon::caves();
         //Dragon::flat_veins();
     }   
@@ -49,13 +50,14 @@ void init()
     int address[4];
     address_from_string(Options::ip_address, address);
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
-    ServerState::start_game();
 
     #if !PRODUCTION
     //Item::test_item_list_capacity();
     //ItemContainer::test_container_list_capacity();
     //Objects::stress_test();
     #endif
+
+    printf("Game starting\n");
 }
    
 void tick()
@@ -89,10 +91,7 @@ void tick()
 
     if (counter % 10 == 0) ItemParticle::check_item_pickups();
     if (counter % 6  == 0) ItemContainer::check_agents_in_container_range();
-
-    ServerState::ctf->check_agent_proximities();
-    ServerState::ctf->update();
-    ServerState::ctf->tick();
+    if (counter % 6  == 0) ServerState::check_agents_at_base();
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);

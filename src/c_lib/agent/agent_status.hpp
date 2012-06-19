@@ -36,13 +36,7 @@ class Agent_status {
         char name[PLAYER_NAME_MAX_LENGTH + 1];
         bool identified;
 
-        int team;
-        bool has_flag;
-        unsigned int flag_captures;
-
         bool vox_crouched;
-
-        int base_restore_rate_limiter;
 
         int lifetime;
 
@@ -66,22 +60,18 @@ class Agent_status {
         int die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void kill_slime();
+        #if DC_SERVER
         void respawn();
+        void set_fresh_state();
+        #endif
         void restore_health();
         void at_base();
         
-        bool pickup_flag();
-        bool drop_flag();
-        void score_flag();
-
-        int score();
         void send_scores(int client_id);
         void send_scores();
 
-        void set_team(int team);
 
         float get_spawn_angle();
-        void check_if_at_base();
 
         // item stuff
         const bool can_gain_item(ObjectType item);

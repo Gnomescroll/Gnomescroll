@@ -40,11 +40,6 @@ void ChatMessage::set_color()
         b = CHAT_PM_COLOR_B;
         return;
     }
-    else if (channel >= CHANNEL_ID_TEAM_OFFSET && channel < (int)(CHANNEL_ID_TEAM_OFFSET+N_TEAMS))
-    {   // team
-        ClientState::ctf->get_team_color(channel - CHANNEL_ID_TEAM_OFFSET + 1, &r, &g, &b);
-        return;
-    }
     else
     {   // global
         r = CHAT_GLOBAL_COLOR_R;
@@ -325,24 +320,6 @@ bool ChatInput::route_command()
 
     if (i == 2) return false;
 
-    if (!strcmp(cmd, (char*)"team"))
-    {
-        if (buffer_len <= (int)(strlen((char*)"/team "))) return false;
-        char team_str[2];
-        team_str[1] = '\0';
-        team_str[0] = buffer[i];
-        int team;
-        if (team_str[0] == '0') //atoi returns 0 for failure, so check this case
-            team = 0;
-        else
-        {
-            team = atoi(team_str);
-            if (!team) return true; // failure
-        }
-        ClientState::ctf->join_team(team);
-        return true;
-    }
-    else
     if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
     {
         if (buffer_len <= (int)(strlen((char*)"/name "))) return false;
@@ -528,10 +505,9 @@ void ChatClient::subscribe_channels()
             case CHANNEL_PRIVATE:
                 chan->id = ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET;
                 break;
-            case CHANNEL_TEAM:
-                chan->id = ClientState::playerAgent_state.you->status.team + CHANNEL_ID_TEAM_OFFSET - 1;
+            default:
+                GS_ASSERT(false);
                 break;
-            default: break;
         }
     }
 }
@@ -548,14 +524,6 @@ void ChatClient::teardown()
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
         if (this->channels[i] != NULL)
             this->channels[i]->clear_history();
-}
-
-void ChatClient::use_team_channel()
-{
-    this->channel = 1;
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.team == 0) return;
-    this->channel = ClientState::playerAgent_state.you->status.team + CHANNEL_ID_TEAM_OFFSET - 1;
 }
 
 void ChatClient::use_global_channel()
@@ -664,81 +632,16 @@ void ChatMessageList::filter_none()
 /* ChatSystemMessage */
 // collection of methods
 
-void ChatSystemMessage::agent_pickup_flag(Agent_state* a)
-{
-    char you[] = "You";
-    char *name;
-    char has[] = "has";
-    char have[] = "have";
-    char *verb;
-    if (a->is_you())
-    {
-        name = you;
-        verb = have;
-    }
-    else
-    {
-        name = a->status.name;
-        verb = has;
-    }
-    char fmt[] = "%s %s the flag";
-    char* msg = (char*)calloc(strlen(fmt) + strlen(name) + strlen(verb) - 4 + 1, sizeof(char));
-    sprintf(msg, fmt, name, verb);
-    chat_client->send_system_message(msg);
-    free(msg);
-}
-
-void ChatSystemMessage::agent_drop_flag(Agent_state* a)
-{
-    char you[] = "You";
-    char *name;
-    if (a->is_you())
-        name = you;
-    else
-        name = a->status.name;
-    char fmt[] = "%s dropped the flag";
-    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
-    sprintf(msg, fmt, name);
-    chat_client->send_system_message(msg);
-    free(msg);
-}
-
-void ChatSystemMessage::agent_score_flag(Agent_state* a)
-{
-    char you[] = "You";
-    char *name;
-    if (a->is_you())
-        name = you;
-    else
-        name = a->status.name;
-    char fmt[] = "%s captured the flag";
-    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
-    sprintf(msg, fmt, name);
-    chat_client->send_system_message(msg);
-    free(msg);
-}
-
-
 namespace SystemMessage
 {
     
 char* spawner_created(Objects::Object* s)
 {
-    //char* team_name = ClientState::ctf->get_team_name(s->get_team());
-    //char fmt[] = "%s has built a new spawner";
-    //char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
-    //sprintf(msg, fmt, team_name);
-    //return msg;
     return NULL;
 }
 
 char* spawner_destroyed(Objects::Object* s)
 {
-    //char* team_name = ClientState::ctf->get_team_name(s->get_team());
-    //char fmt[] = "%s has lost a spawner";
-    //char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
-    //sprintf(msg, fmt, team_name);
-    //return msg;
     return NULL;
 }
 

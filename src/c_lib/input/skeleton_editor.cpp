@@ -107,7 +107,6 @@ void raycast_to_part()
     Vec3 p = current_camera->get_position();
 
     // hitscan against voxels
-    ClientState::ctf->register_items_for_hitscan();
     float vox_distance = 10000000.0f;
     float collision_point[3];
     Voxel_hitscan_target target;
@@ -118,7 +117,6 @@ void raycast_to_part()
         collision_point, &vox_distance,
         &target
     );
-    ClientState::ctf->unregister_items_for_hitscan();
 
     if (!voxel_hit)
         return;
@@ -135,18 +133,6 @@ void raycast_to_part()
             obj = ClientState::agent_list->get(id);
             if (obj==NULL) return;
             vox = ((Agent_state*)obj)->vox;
-            break;
-        case OBJECT_BASE:
-            vox_dat = &VoxDats::base;
-            obj = ClientState::ctf->get_base(id+1);
-            if (obj==NULL) return;
-            vox = ((Base*)obj)->vox;
-            break;
-        case OBJECT_FLAG:
-            vox_dat = &VoxDats::flag;
-            obj = ClientState::ctf->get_flag(id+1);
-            if (obj==NULL) return;
-            vox = ((Flag*)obj)->vox;
             break;
 
         //case OBJECT_AGENT_SPAWNER:

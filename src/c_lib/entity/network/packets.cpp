@@ -36,6 +36,28 @@ inline void object_create_StoC::handle()
     Objects::ready(obj);
 }
 
+inline void object_create_owner_StoC::handle()
+{
+    using Objects::Object;
+    using Components::PhysicsComponent;
+    using Components::OwnerComponent;
+
+    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
+    GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX);
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return;
+    if (id < 0 || id >= GAME_OBJECTS_MAX) return;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
+    OwnerComponent* owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    GS_ASSERT(owner != NULL);
+    if (owner != NULL) owner->set_owner(this->owner);
+    Objects::ready(obj);
+}
+
 inline void object_create_momentum_StoC::handle()
 {
     using Objects::Object;
@@ -94,76 +116,6 @@ inline void object_create_momentum_angles_health_StoC::handle()
         health->max_health = this->max_health;
         health->health = this->max_health;
     }
-    Objects::ready(obj);
-}
-
-
-inline void object_create_owner_team_StoC::handle()
-{
-    using Objects::Object;
-    using Components::PhysicsComponent;
-    using Components::OwnerComponent;
-    using Components::TeamComponent;
-
-    Object* obj = Objects::create((ObjectType)type, id);
-    if (obj == NULL) return;
-
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x,y,z));
-    }
-
-    OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    GS_ASSERT(owner_component != NULL);
-    if (owner_component != NULL)
-    {
-        owner_component->set_owner(owner);
-    }
-    
-    TeamComponent* team_component = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
-    GS_ASSERT(team_component != NULL);
-    if (team_component != NULL)
-    {
-        team_component->set_team(team);
-    }
-    
-    Objects::ready(obj);
-}
-
-inline void object_create_owner_team_index_StoC::handle()
-{
-    using Objects::Object;
-    using Components::PhysicsComponent;
-    using Components::OwnerComponent;
-    using Components::IndexedTeamComponent;
-
-    Object* obj = Objects::create((ObjectType)type, id);
-    if (obj == NULL) return;
-
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x,y,z));
-    }
-
-    OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    GS_ASSERT(owner_component != NULL);
-    if (owner_component != NULL)
-    {
-        owner_component->set_owner(owner);
-    }
-    
-    IndexedTeamComponent* team_component = (IndexedTeamComponent*)obj->get_component(COMPONENT_INDEXED_TEAM);
-    GS_ASSERT(team_component != NULL);
-    if (team_component != NULL)
-    {
-        team_component->set_team(team);
-        team_component->set_team_index(team_index);
-    }
-
     Objects::ready(obj);
 }
 
@@ -498,11 +450,10 @@ inline void object_took_damage_StoC::handle()
 
 #if DC_SERVER
 inline void object_create_StoC::handle() {}
+inline void object_create_owner_StoC::handle() {}
 inline void object_create_momentum_StoC::handle() {}
 inline void object_create_momentum_angles_StoC::handle() {}
 inline void object_create_momentum_angles_health_StoC::handle() {}
-inline void object_create_owner_team_StoC::handle() {}
-inline void object_create_owner_team_index_StoC::handle() {}
 inline void object_destroy_StoC::handle() {}
 inline void object_picked_up_StoC::handle() {}
 inline void object_state_StoC::handle() {}

@@ -468,13 +468,11 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
 {
     public:
         uint8_t id;
-        uint8_t team;
         uint8_t client_id;
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&team, buff, buff_n, pack);
             pack_u8(&client_id, buff, buff_n, pack);
         }
 

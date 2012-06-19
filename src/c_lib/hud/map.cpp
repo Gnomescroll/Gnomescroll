@@ -5,8 +5,6 @@
 #include <state/client_state.hpp>
 #include <SDL/texture_loader.hpp>
 #include <SDL/draw_functions.hpp>
-#include <game/teams.hpp>
-//#include <items/spawner.hpp>
 
 namespace HudMap
 {
@@ -46,43 +44,11 @@ void load_colored_icon(
     free(path);
 }
 
-/* Map icons */
-//static GLuint spawner_icons[N_TEAMS] = {0};
-//static GLuint base_icons[N_TEAMS] = {0};
-//static GLuint flag_icons[N_TEAMS] = {0};
-//void update_team_icons(
-    //int team,                                                     // team is optional; team=0 means generate all
-    //unsigned char br, unsigned char bg, unsigned char bb,   // base color
-    //unsigned char r, unsigned char g, unsigned char b       // replace with
-//)
-//{
-    //char spawner_icon_filename[] = "spawner_map_icon2.png";
-    //char base_icon_filename[] = "base_icon.png";
-    //char flag_icon_filename[] = "flag_icon.png";
-
-    //// pack filenames and icon arrays for easy looping
-    //int i=0;
-    //const int N_ICONS = 3;
-    //char* icon_filenames[N_ICONS];
-    //icon_filenames[i++] = spawner_icon_filename;
-    //icon_filenames[i++] = base_icon_filename;
-    //icon_filenames[i++] = flag_icon_filename;
-    //i=0;
-    //GLuint* icons[N_ICONS];
-    //icons[i++] = spawner_icons;
-    //icons[i++] = base_icons;
-    //icons[i++] = flag_icons;
-
-    //for (int j=0; j<N_ICONS; j++)
-        //load_colored_icon(icon_filenames[j], &icons[j][team-1], br,bg,bb, r,g,b);
-//}
-
 /* Map letter icons */
 /*
  * You: * and A on top of each other
- * Teammate: A (ally)
+ * Agent: A
  * Base:    B
- * Flag:    F
  * Spawner  S#
  * Turret   T
  */
@@ -91,7 +57,6 @@ const char you_star_symbol[] = "*";
 const char you_A_symbol[] = "A";
 const char ally_symbol[] = "A";
 const char base_symbol[] = "B";
-const char flag_symbol[] = "F";
 const char spawner_symbol[] = "S%d";
 const char turret_symbol[] = "T";
 const char camera_symbol[] = "C";
@@ -100,10 +65,8 @@ using HudText::Text;
 static Text* you_star = NULL;
 static Text* you_A = NULL;
 static Text* base = NULL;
-static Text* flag = NULL;
-static Text* enemy_flag = NULL;
-static Text* ally[TEAM_MAX_PLAYERS] = {NULL};
-static Text* spawner[Components::AGENT_SPAWNER_PER_TEAM] = {NULL};
+static Text* ally[AGENT_MAX] = {NULL};
+static Text* spawner[Components::MAX_AGENT_SPAWNER_COMPONENTS] = {NULL};
 //static Text turret[MAX_TURRETS];
 static Text* camera = NULL;
 
@@ -131,17 +94,7 @@ void init_text_icons()
     if (base == NULL) return;
     base->set_text((char*)base_symbol);
 
-    flag = HudText::text_list->create();
-    GS_ASSERT(flag != NULL);
-    if (flag == NULL) return;
-    flag->set_text((char*)flag_symbol);
-    
-    enemy_flag = HudText::text_list->create();
-    GS_ASSERT(enemy_flag != NULL);
-    if (enemy_flag == NULL) return;
-    enemy_flag->set_text((char*)flag_symbol);
-
-    for (int i=0; i<(int)TEAM_MAX_PLAYERS; i++)
+    for (int i=0; i<(int)AGENT_MAX; i++)
     {
         ally[i] = HudText::text_list->create();
         GS_ASSERT(ally[i] != NULL);
@@ -150,9 +103,9 @@ void init_text_icons()
     }
         
     char* spawner_max_string = (char*)malloc(sizeof(char) * (10+1));
-    sprintf(spawner_max_string, "%d", Components::AGENT_SPAWNER_PER_TEAM);
+    sprintf(spawner_max_string, "%d", Components::MAX_AGENT_SPAWNER_COMPONENTS);
     int len = strlen(spawner_max_string);
-    for (int i=0; i<Components::AGENT_SPAWNER_PER_TEAM; i++)
+    for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
     {
         spawner[i] = HudText::text_list->create();
         GS_ASSERT(spawner[i] != NULL);
@@ -170,66 +123,22 @@ void init_text_icons()
     text_icons_inited = true;
 }
 
-static void set_team_icons_color(
-    unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
-)
+void set_icon_colors()
 {
+    const unsigned char a = 255;
     if (you_star == NULL) return;
     if (you_A == NULL) return;
     if (base == NULL) return;
-    if (flag == NULL) return;
     if (camera == NULL) return;
     
-    //you_star->set_color(r,g,b,a);
-    //you_A->set_color(r,g,b,a);
     you_star->set_color(highlight.r, highlight.g, highlight.b, a);
     you_A->set_color(highlight.r, highlight.g, highlight.b, a);
-    base->set_color(r,g,b,a);
-    flag->set_color(r,g,b,a);
-    for (int i=0; i<(int)TEAM_MAX_PLAYERS; i++)
-        if (ally[i] != NULL) ally[i]->set_color(r,g,b,a);
-    for (int i=0; i<Components::AGENT_SPAWNER_PER_TEAM; i++)
-        if (spawner[i] != NULL) spawner[i]->set_color(r,g,b,a);
+    base->set_color(highlight.r, highlight.g, highlight.b,a);
+    for (int i=0; i<(int)AGENT_MAX; i++)
+        if (ally[i] != NULL) ally[i]->set_color(highlight.r, highlight.g, highlight.b,a);
+    for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
+        if (spawner[i] != NULL) spawner[i]->set_color(highlight.r, highlight.g, highlight.b,a);
     camera->set_color(highlight.r, highlight.g, highlight.b, a);
-}
-
-static void set_enemy_team_icons_color(
-    unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
-)
-{
-    if (enemy_flag != NULL) enemy_flag->set_color(r,g,b,a);
-}
-
-void update_team(int team)
-{
-    GS_ASSERT(ClientState::ctf != NULL);
-    if (ClientState::ctf == NULL) return;
-    if (!text_icons_inited)
-    {
-        printf("WARNING: HudMap::update_team -- text icons are not inited\n");
-        return;
-    }
-    if (!team) return;
-    unsigned char r,g,b;
-    int failure = ClientState::ctf->get_team_color(team, &r,&g,&b);
-    if (failure)
-        r=g=b=0;
-    if (r == current_color.r && g == current_color.g && b == current_color.b)
-        return;
-    current_color.r = r;
-    current_color.g = g;
-    current_color.b = b;
-    set_team_icons_color(r,g,b);
-
-    failure = ClientState::ctf->get_enemy_team_color(team, &r,&g,&b);
-    if (failure)
-        r=g=b=0;
-    if (r == current_enemy_color.r && g == current_enemy_color.g && b == current_enemy_color.b)
-        return;
-    current_enemy_color.r = r;
-    current_enemy_color.g = g;
-    current_enemy_color.b = b;
-    set_enemy_team_icons_color(r,g,b);
 }
 
 // create blank surface
@@ -343,6 +252,8 @@ void init()
     highlight.r = 247;  // yellow/gold
     highlight.g = 247;
     highlight.b = 10;
+
+    set_icon_colors();
 }
 
 
@@ -350,26 +261,12 @@ static int strip = 0;
 //const int strips = 16*16*2;
 const int strips = 16*8;
 
-void update_heightmap()
-{
-    //if (cells == NULL) return;
-    //int strip_width = map_dim.x / strips;
-    //unsigned char h;
-    //for (int i=strip_width*strip; i < strip_width*(strip+1); i++)
-        //for (int j=0; j < map_dim.y; j++)
-        //{
-            //h = get_cached_height(i,j);
-            //cells[i + map_dim.x*j] = h;
-        //}
-}
 
 void update_map_surface()
 {
     if (map_surface == NULL) return;
-    //if (cells == NULL) return;
     if (t_map::main_map == NULL) return;
     if (!t_map::main_map->height_changed) return;
-    //int strip_width = map_dim.x / strips;
     SDL_LockSurface(map_surface);
 
     Uint32 pix;
@@ -395,14 +292,6 @@ void update_map_surface()
 
     t_map::main_map->reset_heights_read();
 
-    //for (int i=strip_width*strip; i<strip_width*(strip+1); i++)
-        //for (int j=0; j < map_dim.y; j++)
-        //{
-            //pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[i + map_dim.x*j]];
-            //SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-            //((Uint32*)map_surface->pixels)[i + map_dim.x*j] = SDL_MapRGBA(map_surface->format, b,g,r,a);
-        //}
-
     SDL_UnlockSurface(map_surface);
 }
 
@@ -416,85 +305,20 @@ void update_texture(GLuint texture, SDL_Surface* surface)
     glDisable(GL_TEXTURE_2D);
 }
 
-//void update_overlay_surface()
-//{
-    //// blank the surface
-    //for (int i=0; i<num_cells; i++)
-        //((Uint32*)overlay_surface->pixels)[i] = SDL_MapRGBA(overlay_surface->format, 0,0,0,0);
-//}
-
 void draw_2x2_pixel(SDL_Surface* surface, Uint32 pix, int x, int y)
 {
     int j=0,k=0;
     for (int i=0; i<4; i++)
     {
-        if (i==2)
-            j = 1;
-        if (i==3)
-            k = 1;
-        
+        if (i==2) j = 1;
+        if (i==3) k = 1;
         if (x+j >= 0 && x+j < width && y+k >= 0 && y+k < height)    // only draw in surface bounds (or could segfault)
-        {
             ((Uint32*)surface->pixels)[x+j + map_dim.x*(y+k)] = pix;
-        }
     }
 }
 
-//void update_agents()
-//{
-    //if (ClientState::playerAgent_state.you == NULL) return;
-    //int team = ClientState::playerAgent_state.you->status.team;
-    //if (team == 0) return;
-
-    //int x,y;
-
-    //x = (int)ClientState::playerAgent_state.camera_state.x;
-    //y = (int)ClientState::playerAgent_state.camera_state.y;
-    
-    //// set agent pixel
-    //Uint8 r = 210,
-          //g = 150,
-          //b = 10,
-          //a = 255;
-    //Uint32 pix = SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red
-    //draw_2x2_pixel(overlay_surface, pix,x,y);
-
-    //// draw teammates
-    //ClientState::ctf->get_team_color(team, &r, &g, &b);
-    //for (int i=0; i<ClientState::agent_list->n_max; i++)
-    //{
-        //Agent_state* agent = ClientState::agent_list->a[i];
-        //if (agent == NULL) continue;
-        //if (agent->status.team != team) continue;
-        //if (agent->id == ClientState::playerAgent_state.agent_id) continue;
-
-        //x = (int)agent->s.x;
-        //y = (int)agent->s.y;
-
-        //pix = SDL_MapRGBA(overlay_surface->format, b, g, r, a);
-        //draw_2x2_pixel(overlay_surface, pix,x,y);
-    //}
-//}
-
-//void update_indicators(int tex_id)
-//{
-
-    //if (overlay_surface == NULL) return;
-    //SDL_LockSurface(overlay_surface);
-
-    //update_overlay_surface();
-    //update_agents();
-
-    //SDL_UnlockSurface(overlay_surface);
-    
-    //update_texture(overlay_textures[tex_id], overlay_surface);
-//}
-
 void update_terrain_map(int tex_id)
 {
-    //init_cells();   // updates cells array if map size changed
-    //if (cells == NULL) return;
-    update_heightmap();
     update_map_surface();
     update_texture(map_textures[tex_id], map_surface);
     strip++;
@@ -511,136 +335,24 @@ void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
     *sy += screen_y_offset;
 }
 
-//void draw_spawners(float z)
-//{
-    //// read all spawners
-    //// translate coordinates to map screen coordinate
-    //float sx,sy;
-    //const int w = 8;
-    //const int h = 8;
-    //for (int team=1; team<(int)N_TEAMS+1; team++)
-    //{
-        //if (ClientState::playerAgent_state.you != NULL
-            //&& ClientState::playerAgent_state.you->status.team != 0
-            //&& ClientState::playerAgent_state.you->status.team != team)
-            //continue;
-        //glBindTexture(GL_TEXTURE_2D, spawner_icons[team-1]);
-        //for (int i=0; i<ClientState::spawner_list->n_max; i++)
-        //{
-            //Spawner* s = ClientState::spawner_list->a[i];
-            //if (s == NULL) continue;
-            //if (s->get_team() != team) continue;
-            //world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
-            //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
-        //}
-    //}
-//}
-
-//void draw_bases(float z)
-//{
-    //float sx,sy;
-    //const int w = 8;
-    //const int h = 8;
-
-    //int team = 0;
-    //if (ClientState::playerAgent_state.you != NULL
-        //&& ClientState::playerAgent_state.you != NULL)
-        //team = ClientState::playerAgent_state.you->status.team;
-
-    //Base* b = NULL;
-    //if (team == 0)
-    //{   // draw both
-        //glBindTexture(GL_TEXTURE_2D, base_icons[0]);
-        //b = ClientState::ctf->one.base;
-        //world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
-        //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
-
-        //glBindTexture(GL_TEXTURE_2D, base_icons[1]);
-        //b = ClientState::ctf->two.base;
-        //world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
-        //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
-    //}
-    //else
-    //{
-        //glBindTexture(GL_TEXTURE_2D, base_icons[team-1]);
-        //if (team == 1)
-            //b = ClientState::ctf->one.base;
-        //else if (team == 2)
-            //b = ClientState::ctf->two.base;
-
-        //if (b != NULL)
-        //{
-            //world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
-            //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
-        //}
-    //}
-//}
-
-//void draw_flags(float z)
-//{
-    //float sx,sy;
-    //const int w = 8;
-    //const int h = 8;
-
-    //int team = 0;
-    //if (ClientState::playerAgent_state.you != NULL
-        //&& ClientState::playerAgent_state.you != NULL)
-        //team = ClientState::playerAgent_state.you->status.team;
-
-    //Flag* f = NULL;
-    //if (team == 0)
-    //{   // draw both
-        //glBindTexture(GL_TEXTURE_2D, flag_icons[0]);
-        //f = ClientState::ctf->one.flag;
-        //world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
-        //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
-
-        //glBindTexture(GL_TEXTURE_2D, flag_icons[1]);
-        //f = ClientState::ctf->two.flag;
-        //world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
-        //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
-    //}
-    //else
-    //{
-        //glBindTexture(GL_TEXTURE_2D, flag_icons[team-1]);
-        //if (team == 1)
-            //f = ClientState::ctf->one.flag;
-        //else if (team == 2)
-            //f = ClientState::ctf->two.flag;
-
-        //if (f != NULL)
-        //{
-            //world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
-            //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
-        //}
-    //}
-//}
-
-void draw_team_text_icons(float z)
+void draw_text_icons(float z)
 {
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
     using ClientState::agent_list;
-    //using ClientState::spawner_list;
-    using ClientState::ctf;
-    
-    if (playerAgent_state.you == NULL || playerAgent_state.you->status.team == 0)
-        return;
-        
+    if (playerAgent_state.you == NULL) return;
+            
     float x,y;
-    int j=0;
     for (int i=0; i<agent_list->n_max; i++)
     {
         Agent_state* a = agent_list->a[i];
-        if (a==NULL) continue;
-        if (a->status.team != playerAgent_state.you->status.team) continue;
+        if (a == NULL) continue;
         if (a == playerAgent_state.you) continue;
         Vec3 p = a->get_position();
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);
-        ally[j]->set_position(x,y);
-        ally[j]->set_depth(z);
-        ally[j]->draw_centered();
-        j++;
+        ally[i]->set_position(x,y);
+        ally[i]->set_depth(z);
+        ally[i]->draw_centered();
     }
 
     //SpawnerProperties* s;
@@ -666,12 +378,19 @@ void draw_team_text_icons(float z)
     //}
     
     using Components::BASE_SPAWN_ID;
-    Base* b = ctf->get_base(playerAgent_state.you->status.team);
+    Objects::Object* b = Objects::get(OBJECT_BASE, 0);
     if (b != NULL)
     {
-        world_to_map_screen_coordinates(b->x, b->y, &x, &y);
-        base->set_position(x,y);
-        base->set_depth(z);
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (physics != NULL)
+        {
+            Vec3 p = physics->get_position();
+            world_to_map_screen_coordinates(p.x, p.y, &x, &y);
+            base->set_position(x,y);
+            base->set_depth(z);
+        }
         if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
             base->set_color(highlight.r, highlight.g, highlight.b);
         else
@@ -679,29 +398,6 @@ void draw_team_text_icons(float z)
         base->draw_centered();
     }
 
-    int team = playerAgent_state.you->status.team;
-    Flag* f = ctf->get_flag(team);
-    if (f != NULL && !f->held)
-    {
-        world_to_map_screen_coordinates(f->x, f->y, &x, &y);
-        flag->set_position(x,y);
-        flag->set_depth(z);
-        flag->draw_centered();
-    }
-
-    team = (team == 1) ? 2 : 1; // TODO, retrieve enemy flag from ctf
-    f = ctf->get_flag(team);
-    if (f != NULL && !f->held)
-    {
-        world_to_map_screen_coordinates(f->x, f->y, &x, &y);
-        enemy_flag->set_position(x,y);
-        enemy_flag->set_depth(z);
-        enemy_flag->draw_centered();
-    }
-}
-
-void draw_text_icons(float z)
-{
     if (you_star == NULL) return;
     if (you_A == NULL) return;
     if (camera == NULL) return;
@@ -709,7 +405,6 @@ void draw_text_icons(float z)
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
     if (playerAgent_state.you == NULL) return;
-    float x,y;
     world_to_map_screen_coordinates(
         playerAgent_state.camera_state.x, playerAgent_state.camera_state.y,
         &x, &y
@@ -735,17 +430,10 @@ void draw_text_icons(float z)
     // -0.5 offset to orient texture properly
 }
 
-//void draw_items(float z)
-//{
-    //draw_bases(z);
-    //draw_flags(z);
-    //draw_spawners(z);
-//}
-
 void draw_text()
 {
     const float z = -0.1;
-    draw_team_text_icons(z);
+    draw_text_icons(z);
     draw_text_icons(z);
 }
 
@@ -753,8 +441,6 @@ void draw()
 {   //  double buffered texture swap indices
     static int draw_map_texture_index = 0;
     static int update_map_texture_index = 1;
-    //static int draw_overlay_texture_index = 0;
-    //static int update_overlay_texture_index = 1;
     
     static unsigned int update_counter = 0;
 
@@ -767,15 +453,6 @@ void draw()
         update_map_texture_index++;
         update_map_texture_index%=2;
     }
-
-    //if (update_counter % 2 == 0)
-    //{
-        //update_indicators(update_overlay_texture_index);
-        //draw_overlay_texture_index++;
-        //draw_overlay_texture_index%=2;
-        //update_overlay_texture_index++;
-        //update_overlay_texture_index%=2;
-    //}
 
     update_counter++;
 
@@ -790,28 +467,17 @@ void draw()
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
     draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z);
 
-    //draw_items(z+0.01);
-
-    //glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
-    //draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z+0.02);
-
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
 
 void teardown()
 {
-    //if (overlay_surface != NULL)
-        //SDL_FreeSurface(overlay_surface);
-
     if (map_surface != NULL)
         SDL_FreeSurface(map_surface);
 
     if (gradient_surface != NULL)
         SDL_FreeSurface(gradient_surface);
-
-    //if (cells != NULL)
-        //free(cells);
 }
 
 }

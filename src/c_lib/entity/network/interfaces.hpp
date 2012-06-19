@@ -67,43 +67,22 @@ class CreatePacket: public CreatePacketDelegate
         }
 };
 
-class CreatePacketOwnerTeam: public CreatePacketDelegate
+class CreatePacketOwner: public CreatePacketDelegate
 {
     private:
-        void message(Object* object, object_create_owner_team_StoC* msg);
+        void message(Object* object, object_create_owner_StoC* msg);
     
     public:
         void sendToClient(Object* object, int client_id)
         {
-            object_create_owner_team_StoC msg;
+            object_create_owner_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
         void broadcast(Object* object)
         {
-            object_create_owner_team_StoC msg;
-            this->message(object, &msg);
-            msg.broadcast();
-        }
-};
-
-class CreatePacketOwnerTeamIndex: public CreatePacketDelegate
-{
-    private:
-        void message(Object* object, object_create_owner_team_index_StoC* msg);
-    
-    public:
-        void sendToClient(Object* object, int client_id)
-        {
-            object_create_owner_team_index_StoC msg;
-            this->message(object, &msg);
-            msg.sendToClient(client_id);
-        }
-
-        void broadcast(Object* object)
-        {
-            object_create_owner_team_index_StoC msg;
+            object_create_owner_StoC msg;
             this->message(object, &msg);
             msg.broadcast();
         }

@@ -2,10 +2,10 @@
 
 
 /*
-	Server Interface
+    Server Interface
 */
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 /* globals */
 ChatServer* chat_server = NULL;
@@ -33,17 +33,17 @@ void remove_player_from_chat(int client_id)
         printf("WARNING ServerState::remove_player_from_chat -- id %d does not have an agent\n", client_id);
         return;
     }
-    chat_server->player_quit(client_id, a->status.team);
+    chat_server->player_quit(client_id);
 }
 
 #endif
 
 
 /*
-	Client Interface
+    Client Interface
 */
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 /* globals */
 ChatClient* chat_client = NULL;

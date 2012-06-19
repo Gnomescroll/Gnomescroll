@@ -33,9 +33,6 @@ extern PickupComponentList* pickup_component_list;
 extern TTLHealthComponentList* ttl_health_component_list;
 extern HitPointsHealthComponentList* hit_points_health_component_list;
 
-extern TeamComponentList* team_component_list;
-extern IndexedTeamComponentList* indexed_team_component_list;
-
 extern OwnerComponentList* owner_component_list;
 
 extern VoxelModelComponentList* voxel_model_component_list;
