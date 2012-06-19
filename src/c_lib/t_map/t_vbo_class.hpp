@@ -48,6 +48,7 @@ class Map_vbo
     int _v_offset[4];
 
     int vertex_num[6];
+    int vertex_offset[6];
     int vertex_num_array[6][16];   //for each column, every 8 z
     GLuint vbo_id;
 

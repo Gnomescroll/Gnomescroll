@@ -251,7 +251,7 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
     index[2] = 3*(hash_function_perlin(x, y, z, 3*(4*side+2) ) % _pallet_num) ;
     index[3] = 3*(hash_function_perlin(x, y, z, 3*(4*side+3) ) % _pallet_num) ;
 
-    for(int i=0 ;i <4; i++)
+    for(int i=0;i <4; i++)
     {
         v_list[offset+i].r = _palletn[index[i]+0];
         v_list[offset+i].g = _palletn[index[i]+1];
@@ -416,7 +416,6 @@ void generate_vertex_list(struct Vertex* vlist)
 
         offset += 4;
     }
-
 }
 
 //__attribute((optimize("-O3")))
@@ -534,6 +533,12 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
     }
 
     for(int i=0; i<6; i++) vbo->vertex_num[i] = SIDE_BUFFER_INDEX[i];
+
+    for(int i=0; i<6; i++)
+    {
+        vbo->vertex_offset[i] = 0;
+        for(int j=0; j<i; j++) vbo->vertex_offset[i] += SIDE_BUFFER_INDEX[j];
+    }
 }
 
 void Vbo_map::update_vbo(int i, int j)
