@@ -4,7 +4,6 @@
 
 #include <physics/vec3.hpp>
 
-
 class PlaneG  
 {
 
@@ -14,14 +13,6 @@ public:
     struct Vec3 point;
     float d;
 
-
-    //Plane::Plane( Vec3 &v1,  Vec3 &v2,  Vec3 &v3);
-    //Plane::Plane(void);
-    //Plane::~Plane();
-
-    //void set3Points( Vec3 &v1,  Vec3 &v2,  Vec3 &v3);
-    //void setCoefficients(float a, float b, float c, float d);
-    
     //3 points define a plane
     void set3Points( Vec3 v1,  Vec3 v2,  Vec3 v3)
     {
@@ -44,11 +35,6 @@ public:
     float distance(struct Vec3 p)
     {
         return d + vec3_dot(normal,p);
-    }
-
-    float distance(float x, float y, float z)
-    {
-        return d + x*normal.x + y*normal.y + z*normal.z;
     }
 
 };
@@ -74,9 +60,11 @@ public:
     float nearD, farD, aspect, fov,tang;
     float nw,nh,fw,fh;
 
-    //void setCamInternals(float fov, float aspect, float nearD, float farD);
+    void setCamInternals(float fov, float aspect, float nearD, float farD);
+    
     void setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up);
-    void setCamDef(Vec3 p, Vec3 l, Vec3 u);
+    //void setCamDef(Vec3 p, Vec3 l, Vec3 u);
+    
     //bool pointInFrustum(Vec3 v);
     //int sphereInFrustum(Vec3 &p, float raio);
     //int boxInFrustum(AABox &b);
@@ -97,6 +85,7 @@ public:
 
 void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _farD) 
 {
+    //printf("set camera\n");
     static const float ANG2RAD = 3.14159265358979323846/180.0;
     // store the information
     this->aspect = _aspect;
@@ -114,9 +103,68 @@ void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _f
     //printf("width= %f height= %f \n", fw, fh);
 }
 
-void FrustumG::setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
+void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
 //void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) 
 {
+    float f1,f2, f3;
+
+    f1 = vec3_dot(f,r);
+    f2 = vec3_dot(f,u);
+    f3 = vec3_dot(r,u);   
+
+    printf("0: %f %f %f \n", f1,f2,f3);
+
+    f1 = vec3_dot(f,f);
+    f2 = vec3_dot(r,r);
+    f3 = vec3_dot(u,u);   
+
+    printf("1: %f %f %f \n", f1,f2,f3);
+
+    struct Vec3 nc,fc;
+    //struct Vec3 X,Y,Z;
+
+    nc = vec3_add(c, vec3_scalar_mult(f, nearD));
+    fc = vec3_add(c, vec3_scalar_mult(f, farD) );
+    // compute the 4 corners of the frustum on the near plane
+    
+/*
+    ntl = nc + Y * nh - X * nw;
+    ntr = nc + Y * nh + X * nw;
+    nbl = nc - Y * nh - X * nw;
+    nbr = nc - Y * nh + X * nw;
+*/
+
+    ntl = vec3_add3( nc, vec3_scalar_mult(u,nh),  vec3_scalar_mult(r,-nw) );
+    ntr = vec3_add3( nc, vec3_scalar_mult(u,nh),  vec3_scalar_mult(r,nw)  );
+    nbl = vec3_add3( nc, vec3_scalar_mult(u,-nh), vec3_scalar_mult(r,-nw) );
+    nbr = vec3_add3( nc, vec3_scalar_mult(u,-nh), vec3_scalar_mult(r,nw)  );
+    // compute the 4 corners of the frustum on the far plane
+
+/*
+    ftl = fc + Y * fh - X * fw;
+    ftr = fc + Y * fh + X * fw;
+    fbl = fc - Y * fh - X * fw;
+    fbr = fc - Y * fh + X * fw;
+*/
+    ftl = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,-fw)  );
+    ftr = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,fw)   );
+    fbl = vec3_add3( fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,-fw) );
+    fbr = vec3_add3( fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,fw)  );
+
+    // compute the six planes
+    // the function set3Points assumes that the points
+    // are given in counter clockwise order
+
+    pl[TOP].set3Points(ntr,ntl,ftl);
+    pl[BOTTOM].set3Points(nbl,nbr,fbr);
+    pl[LEFT].set3Points(ntl,nbl,fbl);
+    pl[RIGHT].set3Points(nbr,ntr,fbr);
+    pl[NEARP].set3Points(ntl,ntr,nbr);
+    pl[FARP].set3Points(ftr,ftl,fbl);
+
+}
+
+#if 0
     struct Vec3 nc,fc;
     struct Vec3 X,Y,Z;
 
@@ -129,19 +177,9 @@ void FrustumG::setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
     Z = vec3_normalize(vec3_sub(p, l));
 
 
-
-    // X axis of camera with given "up" vector and Z axis
-    //X = u * Z;
-    //X.normalize();
     X = vec3_normalize(vec3_cross(u, Z));
 
-    // the real "up" vector is the cross product of Z and X
-    //Y = Z * X;
-
     Y = vec3_cross(Z,X);
-    // compute the centers of the near and far planes
-    //nc = p - Z * nearD;
-    //fc = p - Z * farD;
 
     nc = vec3_sub(p, vec3_scalar_mult(Z, nearD));
     fc = vec3_sub(p, vec3_scalar_mult(Z, farD) );
@@ -181,8 +219,7 @@ void FrustumG::setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
     pl[RIGHT].set3Points(nbr,ntr,fbr);
     pl[NEARP].set3Points(ntl,ntr,nbr);
     pl[FARP].set3Points(ftr,ftl,fbl);
-
-}
+#endif
 
 /*
 int FrustumG::sphereInFrustum(Vec3 &p, float radius) {
@@ -240,6 +277,7 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
     //forward = vec3_add(camera, forward);
     //up = vec3_add(camera, up);
     //_FrustrumG.setCamDef(camera, forward, up);
+
     _FrustrumG.setCamDef(camera, forward, right, up);
 }
 

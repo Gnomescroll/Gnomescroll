@@ -210,6 +210,8 @@ void Camera::world_projection()
         fov, ratio, z_near,z_far,
         this->position, look, right, up);
 
+    //printf("z_near= %f z_far= %f \n", z_near, z_far);
+
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glColor3ub(255, 255, 255);
