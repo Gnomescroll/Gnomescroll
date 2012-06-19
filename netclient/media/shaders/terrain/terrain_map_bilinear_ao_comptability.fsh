@@ -19,8 +19,11 @@ uniform sampler2D base_texture;
 
 void main() 
 {
-    vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
-    vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
+    //vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
+    //vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
+
+    vec2 vx = vec2(1.0f, 0.0f) - texCoord;
+    vec2 vy = vec2(1.0f, 0.0f) - texCoord;
 
     float tmp = dot(vx, lightMatrix * vy);
 

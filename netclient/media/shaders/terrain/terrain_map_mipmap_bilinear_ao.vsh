@@ -37,9 +37,9 @@ Varying
 varying vec3 texCoord;
 
 #ifdef GL_EXT_gpu_shader4
-    flat varying vec4 _lightMatrix;
+    flat varying vec4 lightMatrix;
 #else
-    varying vec4 _lightMatrix;
+    varying vec4 lightMatrix;
 #endif
 
 
@@ -62,7 +62,7 @@ void main(void)
 
     texCoord = InTexCoord;
 
-    //lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
+    lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
 
-    _lightMatrix = InLightMatrix;
+    //_lightMatrix = InLightMatrix;
 }
