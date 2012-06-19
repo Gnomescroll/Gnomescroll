@@ -284,6 +284,10 @@ void Vbo_map::prep_frustrum_vertices()
                 vbo_vertex_frustrum[index][2*side+1] = -1; //draw zero vertices
             }
         
+            if(min < 0) GS_ABORT();
+            //if(max >= 8) GS_ABORT();
+            if(max >= 8) max = 7;
+
             int vs = vbo->vertex_num_array[side][min];  //start
             int ve = vbo->vertex_num_array[side][max]; //end
 
@@ -437,6 +441,10 @@ void Vbo_map::draw_map()
     glPushMatrix(); //save matrix
     //glPushMatrix();
 
+    int v_total = 0;
+    int v_drawn = 0;
+    //int v_pruned = 0;
+
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
@@ -491,21 +499,35 @@ void Vbo_map::draw_map()
             vbo_vertex_frustrum[index][2*side+1] = vnum;
         */
 
-/*
-        printf("vertices= %i \n", vbo->_v_num[0]);
+
+        //printf("vertices= %i \n", vbo->_v_num[0]);
+/*  
+        v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
-            printf("side %i vertices: %i offset: %i \n", side, vbo->vertex_num[side], vbo->vertex_offset[side]);
-            
-            printf("drawing: offset %i vertices: %i\n", vbo_vertex_frustrum[index][2*side+0], vbo_vertex_frustrum[index][2*side+1]);
-            //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
-            //glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
 
 
             int voff = vbo_vertex_frustrum[index][2*side+0];
             int vnum = vbo_vertex_frustrum[index][2*side+1];
-            if(abs(voff) > 1000*1000) continue; //wtf
+
+            //printf("side %i offset: %i vertices: %i \n", side, vbo->vertex_offset[side], vbo->vertex_num[side]);
+            
+
+            //vbo->vertex_offset[side], vbo->vertex_num[side]
+
+            GS_ASSERT(voff >= vbo->vertex_offset[side] )
+            if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
+            {
+                printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
+                GS_ABORT();
+            }
+            //printf("drawing: offset %i vertices: %i\n", voff, vnum);
+            //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+            //glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
+
+            //if(abs(voff) > 1000*1000) continue; //wtf
             if(vnum <= 0) continue;
+            v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
 
         }
@@ -516,6 +538,8 @@ void Vbo_map::draw_map()
         //glPopMatrix();
         //glPushMatrix();
     }
+
+    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
