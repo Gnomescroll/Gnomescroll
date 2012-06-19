@@ -489,9 +489,8 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 {
     for(int zi0 = 0; zi0 < 128/16; zi0++) {
 
-        for(int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = 4*SIDE_BUFFER_INDEX[i];
-
-        for(int zi1 = 0; zi1 < 16; zi1++) {
+        for(int zi1 = 0; zi1 < 16; zi1++) 
+        {
 
             const int _z = 16*zi0 + zi1;
 
@@ -530,6 +529,9 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 
             }}
         }
+
+        for(int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = 4*SIDE_BUFFER_INDEX[i];
+
     }
 
     for(int i=0; i<6; i++) vbo->vertex_num[i] = 4*SIDE_BUFFER_INDEX[i];
