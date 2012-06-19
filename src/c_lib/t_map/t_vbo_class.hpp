@@ -213,7 +213,6 @@ class Vbo_map
 
     void prep_frustrum();
     void set_frustrum_column(int i, int j, float x, float y);
-    void set_frustrum_vertex(int i, int j);
     void prep_frustrum_vertices();
 };
 

@@ -166,14 +166,14 @@ void set_frustrum_column_max(int index, float x, float y)
 
     int min = vbo_frustrum_min[index];
     GS_ASSERT(min != -1);
-
+/*
     if(point_fulstrum_test_map(x,y,128.0) == true)
     {
         vbo_frustrum_max[index] = 8;
         return;
     }
-
-    for(int i=8; i <= min; i--)
+*/
+    for(int i=8; i >= min; i--)
     {
         float z = i*16.0;
 
@@ -223,45 +223,27 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
 //number of columns to draw
 
 
-void Vbo_map::set_frustrum_vertex(int i, int j)
-{
-
-}
-
 void Vbo_map::prep_frustrum()
 {
     //memset(vbo_frustrum, -1, 32*32*2);
-    for(int i=0; i <32*32*2; i++) vbo_frustrum[i] = -1;
+    //for(int i=0; i <32*32*2; i++) vbo_frustrum[i] = -1;
     for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
     for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
 
-    _culled = 0;
-    _drawn = 0;
-    _edge = 0;
-    _total = 0;
-    _cached = 0;
 
-    for(int i=0; i<MAP_CHUNK_XDIM; i++) {
-    for(int j=0; j<MAP_CHUNK_YDIM; j++) {
-        struct Map_vbo* col = vbo_array[j*MAP_CHUNK_XDIM + i ];
+    for(int i=0;i<draw_vbo_n;i++)
+    {
+        class Map_vbo* col = draw_vbo_array[i].map_vbo;
+        int xi = draw_vbo_array[i].i;
+        int xj = draw_vbo_array[i].j;
 
-        if(col == NULL || col->vnum == 0) continue;
+        _total++;
 
-        //col->wxoff = quadrant_translate_f(cx, col->xoff);
-        //col->wyoff = quadrant_translate_f(cy, col->yoff);
-
-        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
-        {
-            _total++;
-
-            Vbo_map::set_frustrum_column(i,         j,          col->wxoff, col->wyoff);
-            Vbo_map::set_frustrum_column((i+1)%32,  j,          col->wxoff+16.0, col->wyoff);
-            Vbo_map::set_frustrum_column(i,         (j+1)%32,   col->wxoff, col->wyoff+16.0);
-            Vbo_map::set_frustrum_column((i+1)%32,  (j+1)%32,   col->wxoff+16.0, col->wyoff+16.0);
-        }   
-
+        set_frustrum_column_min(i,j,     col->wxoff, col->wyoff);
+        set_frustrum_column_min(i+1,j,   col->wxoff+16.0, col->wyoff);
+        set_frustrum_column_min(i,j+1,   col->wxoff, col->wyoff+16.0);
+        set_frustrum_column_min(i+1,j+1, col->wxoff+16.0, col->wyoff+16.0);
     }}
-    //printf("culled= %i drawn= %i edge= %i cached= %i total= %i \n", _culled, _drawn, _edge, _cached, _total);
 }
 
 
@@ -270,16 +252,16 @@ int _get_frustum_min(int i, int j)
     int index;
 
     index = 32*j + i;
-    int v1 = vbo_frustrum[2*index+0];
+    int v1 = vbo_frustrum_min[index];
 
     index = 32*j + (i+1)%32;
-    int v2 = vbo_frustrum[2*index+0];
+    int v2 = vbo_frustrum_min[index];
 
     index = 32*((j+1)%32) + i;
-    int v3 = vbo_frustrum[2*index+0];
+    int v3 = vbo_frustrum_min[index];
 
     index = 32*((j+1)%32) + (i+1)%32;
-    int v4 = vbo_frustrum[2*index+0];
+    int v4 = vbo_frustrum_min[index];
 
     int v = v1;
 
@@ -297,16 +279,16 @@ int _get_frustum_max(int i, int j)
     int index;
 
     index = 32*j + i;
-    int v1 = vbo_frustrum[2*index+1];
+    int v1 = vbo_frustrum_max[index];
 
     index = 32*j + (i+1)%32;
-    int v2 = vbo_frustrum[2*index+1];
+    int v2 = vbo_frustrum_max[index];
 
     index = 32*((j+1)%32) + i;
-    int v3 = vbo_frustrum[2*index+1];
+    int v3 = vbo_frustrum_max[index];
 
     index = 32*((j+1)%32) + (i+1)%32;
-    int v4 = vbo_frustrum[2*index+1];
+    int v4 = vbo_frustrum_max[index];
 
     int v = v1;
 
@@ -342,19 +324,19 @@ void Vbo_map::prep_frustrum_vertices()
 
         int index = 32*xj +xi;
 
-
         int min = _get_frustum_min(xi,xj);
         int max = _get_frustum_max(xi,xj);
 
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         for(int side=0; side<6; side++)
         {
+        /*
             if(min >= max)
             {
                 vbo_vertex_frustrum[index][2*side+0] = -1; 
                 vbo_vertex_frustrum[index][2*side+1] = -1; //draw zero vertices
             }
-        
+        */
             if(min < 0) GS_ABORT();
             //if(max >= 8) GS_ABORT();
             if(max >= 8) max = 7;
