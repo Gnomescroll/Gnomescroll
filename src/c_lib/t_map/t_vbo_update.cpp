@@ -549,7 +549,7 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
         for(int i=0; i<=8; i++)
         for(int j=0; j<i; i++)
         {
-             vbo->voff_array[side][i] += vbo->vertex_num_array[side][j];
+            vbo->voff_array[side][i] += vbo->vertex_num_array[side][j];
         }
     }
 }

@@ -137,8 +137,8 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     }
 
     //column is not visible
-    vbo_frustrum_min[index] = 0;
-    vbo_frustrum_max[index] = 0;
+    vbo_frustrum_min[index] = 16;
+    vbo_frustrum_max[index] = -1;
 }
 
 //number of columns to draw
@@ -252,20 +252,38 @@ void Vbo_map::prep_frustrum_vertices()
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         for(int side=0; side<6; side++)
         {
-/*
+            if(min > max)
+            {
+                //dont draw anything, prune
+                int voff = vbo->vertex_offset[side];
+                int vnum = 0;
+                vbo_vertex_frustrum[index][2*side+0] = voff;
+                vbo_vertex_frustrum[index][2*side+1] = vnum;
+            }
+
             int voff;
             int vnum;
 
-            if(min == 0 || min == 1)
+            if(min == 0)
             {
-                voff = vbo->vertex_offset[side] + 0;
+                min = 1;
             }
-            else
+            
+            if(max == 8)
             {
-                voff = vbo->vertex_offset[side] + vbo->vertex_num_array[side][min-1];
+                max = 7;
             }
 
+            int vs = vbo->voff_array[side][min-1];
+            int ve = vbo->voff_array[side][max+1];
 
+            int voff = vs;
+            int vs = ve - vs;
+            
+            vbo_vertex_frustrum[index][2*side+0] = voff;
+            vbo_vertex_frustrum[index][2*side+1] = vnum;
+
+        /*
             int vs = vbo->vertex_num_array[side][min];  //start
             int ve = vbo->vertex_num_array[side][max]; //end
 
@@ -276,7 +294,7 @@ void Vbo_map::prep_frustrum_vertices()
 
             vbo_vertex_frustrum[index][2*side+0] = voff;
             vbo_vertex_frustrum[index][2*side+1] = vnum;
-*/
+        */
         }
 
 
