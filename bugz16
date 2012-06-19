@@ -579,6 +579,12 @@ DONE
 fix session printing dupes when player reconnects then original times out
 DONE
 
+make ore only smeltable
+DONE
+
+update steel block crafting dat
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -620,10 +626,10 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
 alt tab doesnt work in fullscreen (on linux at least)
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
-== CONTAINERS ==
+== SMELTER ==
+palette for smelter on/off
 
 == ITEMS ==
-only allow ore to be smelted (not crafting table)
 
 == BLOCKS/TERRAIN ==
 infinite health blocks, put at ground layer
@@ -651,7 +657,5 @@ drop chips from enemies
 chips go directly into nanite chip slot
 change nanite texture to remove graphic
 add labels to the widgets
-
-== SMELTER ==
 
 ==BUGZ==

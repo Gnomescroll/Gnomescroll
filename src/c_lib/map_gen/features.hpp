@@ -12,6 +12,7 @@ void grass(int x, int y, int base, int dirt, int grass);
 void caves(float* noisemap, int x, int y, int z, float threshold, int base);
 void ceiling(int x, int y, int z, int height, int tile);
 void floor(int x, int y, int z_start, int height, int tile);
+void rough_floor(int x, int y, int z_start, int height, int tile);    // white noise
 void walls(int x, int y, int z_start, int height, int tile);
 void box(int x, int y, int z_start, int height, int tile);
 
