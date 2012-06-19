@@ -87,7 +87,10 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg)
 {
+    GS_ASSERT(dmg > 0);
+    if (dmg <= 0) return;
     Particle::BillboardText* b = Particle::billboard_text_list->create();
+    GS_ASSERT(b != NULL);
     if (b==NULL) return;
     b->init();
 
@@ -112,27 +115,39 @@ void Agent_event::took_damage(int dmg)
         //Sound::agent_took_damage(p.x, p.y, p.z, 0,0,0);
 }
 
-void Agent_event::healed(int health)
+void Agent_event::healed(int amount)
 {
-    bool healed = (a->status.health < health);
-    a->status.health = health;
-
+    GS_ASSERT(amount >= 0);
     if (a->is_you())
     {
-        if (healed)
-        {
-            Sound::restore_health();
-            chat_client->send_system_message((char*) "You healed.");
-        }
+        Sound::restore_health();
+        chat_client->send_system_message((char*) "You healed.");
     }
     else
     {
-        if (healed)
-        {
-            Vec3 p = this->a->get_position();
-            Sound::restore_health(p.x, p.y, p.z, 0,0,0);
-        }
+        Vec3 p = this->a->get_position();
+        Sound::restore_health(p.x, p.y, p.z, 0,0,0);
     }
+
+    // show billboard text particle
+    Particle::BillboardText* b = Particle::billboard_text_list->create();
+    GS_ASSERT(b != NULL);
+    if (b==NULL) return;
+    b->init();
+
+    Vec3 p = this->a->get_position();
+    b->set_state(
+        p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
+        p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
+        p.z + a->current_height(),
+        0.0f,0.0f, BB_PARTICLE_HEAL_VELOCITY_Z
+    );
+    b->set_color(BB_PARTICLE_HEAL_COLOR);   // red
+    char txt[10+1];
+    sprintf(txt, "%d", amount);
+    b->set_text(txt);
+    b->set_size(1.0f);
+    b->set_ttl(245);
 }
 
 void Agent_event::died()

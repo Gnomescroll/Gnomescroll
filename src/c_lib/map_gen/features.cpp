@@ -97,6 +97,22 @@ void floor(int x, int y, int z_start, int height, int tile)
         _set(i,j,k, tile);
 }
 
+// white noise floor
+void rough_floor(int x, int y, int z_start, int height, int tile)
+{
+    GS_ASSERT(height > 0);
+    if (height <= 0) return;
+    GS_ASSERT(z_start >= 0 && z_start + height < map_dim.z);
+    for (int i=0; i<x; i++)
+    for (int j=0; j<y; j++)
+    {
+        int n = randrange(1, height);
+        for (int k=0; k<n; k++)
+            _set(i,j,k+z_start, tile);
+    }
+}
+
+
 void walls(int x, int y, int z_start, int height, int tile)
 {
     int i,j,k;

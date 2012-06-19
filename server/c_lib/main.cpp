@@ -37,7 +37,8 @@ void init()
         t_gen::start_cave_generator();
         t_gen::populate_ore();
 
-        map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
+        //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
+        map_gen::rough_floor(512,512,0,3, t_map::get_cube_id((char*)"bedrock"));
         //Dragon::caves();
         //Dragon::flat_veins();
     }   
