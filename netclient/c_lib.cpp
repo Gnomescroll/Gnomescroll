@@ -158,6 +158,7 @@ dont_include_this_file_in_server
 /* camera */
 #include <camera/camera.cpp>
 #include <camera/fulstrum_test.cpp>
+#include <camera/fulstrum_test2.cpp>
 //#ifdef linux
 //#include <SDL/IMG_savepng.c>
 //#endif
