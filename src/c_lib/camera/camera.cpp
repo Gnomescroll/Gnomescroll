@@ -60,7 +60,6 @@ void init_cameras()
         current_camera->fov, current_camera->ratio, current_camera->z_near,current_camera->z_far,
         p,f,r,u
     );
-
 }
 
 void teardown_cameras()

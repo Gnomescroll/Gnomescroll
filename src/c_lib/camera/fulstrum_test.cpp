@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include <physics/vec3.hpp>
+#include <camera/fulstrum_test2.hpp>
 
 static struct
 {
@@ -54,6 +55,7 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
 }
 
 #define SPHERE_FULSTRUM_DEBUG 0
+#define SPHERE_FULSTRUM_DEBUG2 1
 
 bool sphere_fulstrum_test(float x, float y, float  z, float r)
 {
@@ -63,12 +65,17 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
     if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
         return false;
     
+#if SPHERE_FULSTRUM_DEBUG2
+    return point_fulstrum_test_2(x,y,z);
+#endif
+
     //r = 1.0f;
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;
 
 #if SPHERE_FULSTRUM_DEBUG
+
     float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
     //printf("dz= %f, radius= %f \n", dz,r);
     if( dz < 0 || dz > fulstrum.zfar ) return false;

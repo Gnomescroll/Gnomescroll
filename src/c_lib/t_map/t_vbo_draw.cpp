@@ -7,9 +7,9 @@
 
 #include <camera/camera.hpp>
 #include <camera/fulstrum_test.hpp>
+#include <camera/fulstrum_test2.hpp>
 
 #include <t_map/glsl/settings.hpp>
-
 
 #include <common/qsort.h>
 
@@ -87,18 +87,19 @@ void set_frustrum_column_max(int index, float x, float y)
 
     int min = vbo_frustrum_min[index];
     GS_ASSERT(min != -1);
-
+/*
     if(point_fulstrum_test_map(x,y,128.0) == true)
     {
         vbo_frustrum_max[index] = 8;
         return;
     }
-
-    for(int i=7; i >= min; i--)
+*/
+    for(int i=8; i >= min; i--)
     {
         float z = i*16.0;
 
-        if(point_fulstrum_test_map(x,y,z) == true)
+        //if(point_fulstrum_test_map(x,y,z) == true)
+        if(point_fulstrum_test_2(x,y,z) == true)
         {
             vbo_frustrum_max[index] = i;
             return;
@@ -127,8 +128,15 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     for(int i=0; i < 8; i++)
     {
         z = i*16.0;
-
-        if(point_fulstrum_test_map(x,y,z) == true)
+    /*
+        if(point_fulstrum_test_map(x,y,z) != point_fulstrum_test_2(x,y,z))
+        {
+            printf("error: x,y,z= %f %f %f \n", x,y,z);
+        }
+    */
+    
+        //if(point_fulstrum_test_map(x,y,z) == true)
+        if(point_fulstrum_test_2(x,y,z) == true)
         {
             vbo_frustrum_min[index] = i;
             set_frustrum_column_max(index,x,y);
@@ -547,7 +555,7 @@ void Vbo_map::draw_map()
         //glPushMatrix();
     }
 
-    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 

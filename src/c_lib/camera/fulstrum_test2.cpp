@@ -28,9 +28,8 @@ public:
         struct Vec3 aux1 = vec3_sub(v1, v2);
         struct Vec3 aux2 = vec3_sub(v3, v2);
 
-        struct Vec3 normal = vec3_cross(aux2, aux1);
+        normal = vec3_normalize(vec3_cross(aux2, aux1));
 
-        normal = vec3_normalize(normal);
         point = v2;
         d = -vec3_dot(normal,point);
     }
@@ -75,7 +74,8 @@ public:
     float nearD, farD, aspect, fov,tang;
     float nw,nh,fw,fh;
 
-    void setCamInternals(float fov, float aspect, float nearD, float farD);
+    //void setCamInternals(float fov, float aspect, float nearD, float farD);
+    void setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up);
     void setCamDef(Vec3 p, Vec3 l, Vec3 u);
     //bool pointInFrustum(Vec3 v);
     //int sphereInFrustum(Vec3 &p, float raio);
@@ -93,10 +93,11 @@ public:
 };
 
 
-#define ANG2RAD 3.14159265358979323846/180.0
+//#define ANG2RAD 3.14159265358979323846/180.0
 
 void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _farD) 
 {
+    static const float ANG2RAD = 3.14159265358979323846/180.0;
     // store the information
     this->aspect = _aspect;
     this->fov = _fov;
@@ -109,10 +110,13 @@ void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _f
     nw = nh * aspect;
     fh = farD  * tang;
     fw = fh * aspect;
+
+    //printf("width= %f height= %f \n", fw, fh);
 }
 
-void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
-
+void FrustumG::setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
+//void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) 
+{
     struct Vec3 nc,fc;
     struct Vec3 X,Y,Z;
 
@@ -232,17 +236,32 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
     //setCamInternals(float fov, float aspect, float nearD, float farD);
     //setCamDef(Vec3 p, Vec3 l, Vec3 u);
     _FrustrumG.setCamInternals(fovy, aspect, znear, zfar);
-    _FrustrumG.setCamDef(camera, forward, up);
+
+    //forward = vec3_add(camera, forward);
+    //up = vec3_add(camera, up);
+    //_FrustrumG.setCamDef(camera, forward, up);
+    _FrustrumG.setCamDef(camera, forward, right, up);
 }
+
 
 bool point_fulstrum_test_2(float x, float y, float z)
 {
+    Vec3 p = vec3_init(x,y,z);
+    for(int i=0; i < 6; i++) 
+    {
+        if (_FrustrumG.pl[i].distance(p) < 0)
+            return false;
+    }
+    return true;
+
+/*
     for(int i=0; i < 6; i++) 
     {
         if (_FrustrumG.pl[i].distance(x,y,z) < 0)
             return false;
     }
     return true;
+*/
 }
 
 bool point_fulstrum_test_2(struct Vec3 p)
