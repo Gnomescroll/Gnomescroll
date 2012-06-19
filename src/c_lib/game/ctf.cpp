@@ -198,6 +198,7 @@ void CTF::set_base_position(int team, float x, float y, float z)
             base = two.base;
             break;
         default:
+            GS_ASSERT(false);
             break;
     }
     GS_ASSERT(base != NULL);
@@ -207,15 +208,7 @@ void CTF::set_base_position(int team, float x, float y, float z)
     PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics != NULL) physics->set_position(vec3_init(x,y,z));
-
-    #if DC_SERVER
-    BaseState_StoC msg;
-    msg.team = team;
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
-    msg.broadcast();
-    #endif
+    base->broadcastState();
 }
 
 #if DC_CLIENT
@@ -433,22 +426,7 @@ void CTF::send_to_client(int client_id)
             flag_msg.sendToClient(client_id);
         }
 
-        if (base != NULL)
-        {
-            using Components::PhysicsComponent;
-            PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            GS_ASSERT(physics != NULL);
-            if (physics != NULL)
-            {
-                Vec3 p = physics->get_position();
-                BaseState_StoC base_msg;
-                base_msg.team = i;
-                base_msg.x = p.x;
-                base_msg.y = p.y;
-                base_msg.z = p.z;
-                base_msg.sendToClient(client_id);
-            }
-        }
+        if (base != NULL) base->broadcastState();
 
         TeamName_StoC name_msg;
         name_msg.team = i;

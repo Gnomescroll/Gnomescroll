@@ -105,21 +105,21 @@ class FlagState_StoC: public FixedSizeReliableNetPacketToClient<FlagState_StoC>
         inline void handle();
 };
 
-class BaseState_StoC: public FixedSizeReliableNetPacketToClient<BaseState_StoC>
-{
-    public:
-        uint8_t team;
-        float x,y,z;
+//class BaseState_StoC: public FixedSizeReliableNetPacketToClient<BaseState_StoC>
+//{
+    //public:
+        //uint8_t team;
+        //float x,y,z;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&team, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&team, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
 class AgentPickupFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentPickupFlag_StoC>
 {

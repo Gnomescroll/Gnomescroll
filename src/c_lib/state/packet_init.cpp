@@ -111,7 +111,7 @@ void RegisterMessages()
     AgentAutoAssignTeam_CtoS::register_server_packet();
 
     FlagState_StoC::register_client_packet();
-    BaseState_StoC::register_client_packet();
+    //BaseState_StoC::register_client_packet();
 
     AgentPickupFlag_StoC::register_client_packet();
     AgentDropFlag_StoC::register_client_packet();

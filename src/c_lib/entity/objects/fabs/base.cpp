@@ -117,9 +117,7 @@ void update_base(Object* object)
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
-    if (physics->changed) printf("physics changed, should update vox\n");
-    //vox->force_update(physics->get_position(), angles.x, angles.y, physics->changed);
-    vox->force_update(physics->get_position(), angles.x, angles.y, true);
+    vox->force_update(physics->get_position(), angles.x, angles.y, physics->changed);
     physics->changed = false;    // reset changed state
 }
 

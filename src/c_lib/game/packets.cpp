@@ -31,10 +31,10 @@ inline void FlagState_StoC::handle()
     ClientState::ctf->set_flag_position(team, x,y,z);
 }
 
-inline void BaseState_StoC::handle()
-{
-    ClientState::ctf->set_base_position(team, x,y,z);
-}
+//inline void BaseState_StoC::handle()
+//{
+    //ClientState::ctf->set_base_position(team, x,y,z);
+//}
 
 inline void AgentPickupFlag_StoC::handle()
 {
@@ -77,7 +77,7 @@ inline void AgentJoinTeam_StoC::handle(){}
 inline void TeamName_StoC::handle(){}
 inline void TeamScore_StoC::handle() {}
 inline void FlagState_StoC::handle() {}
-inline void BaseState_StoC::handle() {}
+//inline void BaseState_StoC::handle() {}
 inline void AgentPickupFlag_StoC::handle() {}
 inline void AgentDropFlag_StoC::handle() {}
 inline void AgentScoreFlag_StoC::handle() {}

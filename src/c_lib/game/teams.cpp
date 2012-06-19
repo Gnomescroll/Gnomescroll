@@ -179,6 +179,8 @@ void CTFTeam::init(int id)
 
     if (use_ctf_flags) this->flag = new Flag(item_id, id);
     this->base = Objects::create(OBJECT_BASE);
+    GS_ASSERT(this->base != NULL);
+    Objects::ready(this->base);
 
     item_id++;
 }
