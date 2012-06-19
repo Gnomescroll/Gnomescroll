@@ -83,7 +83,7 @@ bool chunk_render_check( float x, float y)
 
 void set_frustrum_column_max(int index, float x, float y)
 {
-    if(vbo_frustrum_max[index] != -1)  GG_ABORT();
+    if(vbo_frustrum_max[index] != -1)  GS_ABORT();
 
     int min = vbo_frustrum_min[index];
     GS_ASSERT(min != -1);
@@ -112,7 +112,7 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
 {   
     _j %= 32;
     _i %= 32;
-    const int index = 32*_j + i;
+    const int index = 32*_j + _i;
 
     if(vbo_frustrum_min[index] != -1)  return;
 /*
@@ -152,19 +152,17 @@ void Vbo_map::prep_frustrum()
     for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
 
 
-    for(int i=0;i<draw_vbo_n;i++)
+    for(int ix=0;ix<draw_vbo_n;ix++)
     {
-        class Map_vbo* col = draw_vbo_array[i].map_vbo;
-        int xi = draw_vbo_array[i].i;
-        int xj = draw_vbo_array[i].j;
-
-        _total++;
+        class Map_vbo* col = draw_vbo_array[ix].map_vbo;
+        int i = draw_vbo_array[ix].i;
+        int j = draw_vbo_array[ix].j;
 
         set_frustrum_column_min(i,j,     col->wxoff, col->wyoff);
         set_frustrum_column_min(i+1,j,   col->wxoff+16.0, col->wyoff);
         set_frustrum_column_min(i,j+1,   col->wxoff, col->wyoff+16.0);
         set_frustrum_column_min(i+1,j+1, col->wxoff+16.0, col->wyoff+16.0);
-    }}
+    }
 }
 
 
@@ -229,15 +227,6 @@ int _get_frustum_max(int i, int j)
     int vertex_num_array[6][16];   //for each column, every 16 z
 */
 
-//takes in min and max and calculates index to 
-void _draw_start(int min, int max, int* doff, int* dnum)
-{
-    *doff = min;
-
-    *dnum = 
-
-}
-
 void Vbo_map::prep_frustrum_vertices()
 {
     for(int i=0; i<32*32; i++)
@@ -260,10 +249,10 @@ void Vbo_map::prep_frustrum_vertices()
         //int xoff,dnum;
         GS_ASSERT(min >= 0);
 
-        _draw_start(min, max, &doff, &dnum);
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         for(int side=0; side<6; side++)
         {
+/*
             int voff;
             int vnum;
 
@@ -273,7 +262,7 @@ void Vbo_map::prep_frustrum_vertices()
             }
             else
             {
-                voff = vbo->vertex_offset[side] + vbo->vertex_num_array[side][min-1]
+                voff = vbo->vertex_offset[side] + vbo->vertex_num_array[side][min-1];
             }
 
 
@@ -287,6 +276,7 @@ void Vbo_map::prep_frustrum_vertices()
 
             vbo_vertex_frustrum[index][2*side+0] = voff;
             vbo_vertex_frustrum[index][2*side+1] = vnum;
+*/
         }
 
 
