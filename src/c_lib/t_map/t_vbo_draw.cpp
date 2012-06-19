@@ -186,9 +186,9 @@ int _get_frustum_min(int i, int j)
 
     if(v1 < 0 || v2 < 0 || v3 < 0 || v4 < 0)
         printf("_get_frustum_min: error!!! \n");
-    if(v2 > v) v = v2;
-    if(v3 > v) v = v3;
-    if(v4 > v) v = v4;
+    if(v2 < v) v = v2;
+    if(v3 < v) v = v3;
+    if(v4 < v) v = v4;
 
     return v;
 }
@@ -214,9 +214,9 @@ int _get_frustum_max(int i, int j)
     if(v1 < 0 || v2 < 0 || v3 < 0 || v4 < 0)
         printf("_get_frustum_max: error!!! \n");
 
-    if(v2 < v) v = v2;
-    if(v3 < v) v = v3;
-    if(v4 < v) v = v4;
+    if(v2 > v) v = v2;
+    if(v3 > v) v = v3;
+    if(v4 > v) v = v4;
 
     return v; 
 }
@@ -271,6 +271,7 @@ void Vbo_map::prep_frustrum_vertices()
                 max = 7;
             }
 
+            //int vs = vbo->voff_array[side][min-1];
             int vs = vbo->voff_array[side][min-1];
             int ve = vbo->voff_array[side][max+1];
 
@@ -571,6 +572,7 @@ void Vbo_map::draw_map_comptability()
     prep_draw();
     sort_draw();
     prep_frustrum();
+    prep_frustrum_vertices();
 
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
