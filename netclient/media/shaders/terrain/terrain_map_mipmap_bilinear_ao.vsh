@@ -18,18 +18,11 @@ attribute vec3 InRGB;
 
 attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
 
-//attribute vec3 InCE1;
-//attribute vec3 InCE2;
-//attribute vec3 InCE3;
-//attribute vec3 InCE4;
-
-
 /*
 Uniform
 */
 
 uniform vec3 ChunkPosition;
-uniform vec3 NormalArray[6];
 
 /*
 Varying
@@ -37,14 +30,12 @@ Varying
 varying vec3 texCoord;
 
 #ifdef GL_EXT_gpu_shader4
-    flat varying vec4 lightMatrix;
+    flat varying mat2 lightMatrix;
 #else
-    varying vec4 lightMatrix;
+    varying mat2 lightMatrix;
 #endif
 
 
-//flat varying mat2 lightMatrix;
- 
 varying vec3 inColor;
 
 varying float fogFragDepth;

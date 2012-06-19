@@ -39,16 +39,11 @@ const float fog_depth = 128.0 - fog_start;
 
 void main() 
 {
-    //float gamma = 2.2f;
-
 /*
     Can split into 3 bilinear interpolations
 */
-    //vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
-    //vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
-
-    vec2 vx = vec2(1.0f, 0.0f) - texCoord;
-    vec2 vy = vec2(1.0f, 0.0f) - texCoord;
+    vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
+    vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 
     float tmp = dot(vx, lightMatrix * vy);
 
