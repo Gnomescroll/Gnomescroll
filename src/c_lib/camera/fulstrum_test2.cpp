@@ -61,7 +61,7 @@ private:
 
 public:
 
-    static enum {OUTSIDE, INTERSECT, INSIDE};
+    //static enum {OUTSIDE, INTERSECT, INSIDE};
     //Vec3 pln[6]; //plane normal
     //Vec3 plp[6]; //plane position
 
@@ -70,12 +70,9 @@ public:
     float nearD, farD, ratio, angle,tang;
     float nw,nh,fw,fh;
 
-    FrustumG::FrustumG();
-    FrustumG::~FrustumG();
-
     void setCamInternals(float angle, float ratio, float nearD, float farD);
     void setCamDef(Vec3 p, Vec3 l, Vec3 u);
-    bool pointInFrustum(Vec3 &);
+    bool pointInFrustum(Vec3 v);
     //int sphereInFrustum(Vec3 &p, float raio);
     //int boxInFrustum(AABox &b);
 };
@@ -169,8 +166,6 @@ void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
 
 bool FrustumG::pointInFrustum(struct Vec3 p) 
 {
-    int result = INSIDE;
-
     for(int i=0; i < 6; i++) 
     {
         if (pl[i].distance(p) < 0)

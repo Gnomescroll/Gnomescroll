@@ -623,11 +623,11 @@ void Vbo_map::draw_map_comptability()
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
+/*
         int xi = draw_vbo_array[i].i;
         int xj = draw_vbo_array[i].j;
         int index = 32*xj +xi;
 
-/*
         for(int side=0; side<6; side++)
         {
             int voff = vbo_vertex_frustrum[index][2*side+0];
