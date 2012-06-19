@@ -179,12 +179,8 @@ void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
 
 inline int get_highest_open_block(int x, int y, int n)
 {
-    if (n < 1)
-    {
-        printf("WARNING: _get_highest_open_block :: called with n < 1\n");
-        return -1;
-    }
-    
+    GS_ASSERT(n >= 1);
+    if (n < 1) return -1;
     if (n==1) return get_highest_open_block(x,y);
 
     int open=n;

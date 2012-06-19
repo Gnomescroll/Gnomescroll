@@ -501,6 +501,12 @@ void Agent_state::get_spawn_point(Vec3* spawn)
     if (this->status.spawner == BASE_SPAWN_ID)
     {
         Objects::Object* base = Objects::get(OBJECT_BASE, 0);
+        GS_ASSERT(base != NULL);
+        if (base == NULL)
+        {
+            *spawn = default_spawn;
+            return;
+        }
         using Components::AgentSpawnerComponent;
         AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)base->get_component(COMPONENT_AGENT_SPAWNER);
         GS_ASSERT(spawner != NULL);
@@ -536,9 +542,6 @@ id (id), type(OBJECT_AGENT), status(this)
 , camera_ready(false)
 #endif
 {
-    set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
-    set_angles(0.5f, 0.0f);
-
     box.b_height = AGENT_HEIGHT;
     box.c_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
@@ -559,8 +562,13 @@ id (id), type(OBJECT_AGENT), status(this)
 
     client_id = id;
 
-    // add to NetServer pool
-    //NetServer::assign_agent_to_client(this->client_id, this);
+    set_angles(0.5f, 0.0f);
+    #if DC_SERVER
+    this->spawn_state();
+    #endif
+    #if DC_CLIENT
+    set_position(256,256,128);
+    #endif
 
     #if DC_SERVER
     agent_create_StoC msg;

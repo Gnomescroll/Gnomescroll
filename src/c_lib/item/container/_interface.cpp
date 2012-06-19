@@ -846,9 +846,12 @@ void agent_quit(int agent_id)
         throw_items_from_container(a->client_id, a->id, agent_toolbelt_list[agent_id]);
 
     // destroy containers
-    destroy_container(agent_container_list[agent_id]);
-    destroy_container(agent_toolbelt_list[agent_id]);
-    destroy_container(agent_nanite_list[agent_id]);
+    if (agent_container_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_container_list[agent_id]);
+    if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_toolbelt_list[agent_id]);
+    if (agent_nanite_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_nanite_list[agent_id]);
 
     agent_container_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;

@@ -43,13 +43,15 @@ struct Agent_control_state {
 };
 #endif
 
-struct Agent_collision_box {
+struct Agent_collision_box
+{
     float b_height; //standing height
     float c_height; //crouch height
     float box_r;
 };
 
-class Agent_state {
+class Agent_state
+{
     private:
         void print_cs();
         Agent_control_state get_current_control_state();
