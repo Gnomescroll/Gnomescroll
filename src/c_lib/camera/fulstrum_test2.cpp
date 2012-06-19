@@ -107,14 +107,14 @@ void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
    
     //Z = p - l;
     //Z.normalize();
-    Z = vec3_normalize(vec3_sub(p, l));
+    Z = vec3_normalize(vec3_sub(p, l);
 
 
 
     // X axis of camera with given "up" vector and Z axis
     //X = u * Z;
     //X.normalize();
-    X = vec3_normalize(vec3_cross(u, Z));
+    X = vec3_normalize(vec3_cross(u, Z);
 
     // the real "up" vector is the cross product of Z and X
     //Y = Z * X;
@@ -124,8 +124,8 @@ void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
     //nc = p - Z * nearD;
     //fc = p - Z * farD;
 
-    nc = vec3_sub(p, vec3_scalar_mult(Z, nearD) );
-    fc = vec3_sub(p, vec3_scalar_mult(Z, farD) );
+    nc = vec3_sub(p, vec3_scalar_mult(Z, nearD) ));
+    fc = vec3_sub(p, vec3_scalar_mult(Z, farD) ));
     // compute the 4 corners of the frustum on the near plane
     
 /*
