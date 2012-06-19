@@ -157,8 +157,8 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     _i %= 32;
     const int index = 32*_j + _i;
 
-    float cx = current_camera_position.x - x;
-    float cy = current_camera_position.y - y;
+    float cx = x - current_camera_position.x;
+    float cy = y - current_camera_position.y;
 
     float len = 1.0 / sqrt( cx*cx+cy*cy );
 
@@ -173,10 +173,11 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     float top =  top_z_projection(x,y);
     float bottom = bottom_z_projection(x,y);
 
+    int t = ceil(top / 16);
 
-    int t = floor(top / 16);
+    int b = floor(bottom / 16);
 
-    int b = ceil(bottom / 16);
+    printf("top= %f bottom= %f t= %i b= %i \n", top, bottom, t, b);
 
     if(t < 0) t = 0;
     if(b > 8) b = 8;
