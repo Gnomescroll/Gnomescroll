@@ -1,6 +1,7 @@
 #include "./camera.hpp"
 
 #include <camera/fulstrum_test.hpp>
+#include <camera/fulstrum_test2.hpp>
 
 #include <physics/vec3.hpp>
 #include <physics/mat3.hpp>
@@ -52,6 +53,11 @@ void init_cameras()
     Vec3 p = current_camera->get_position();
     setup_fulstrum(
         current_camera->fov, current_camera->ratio, current_camera->z_far,
+        p,f,r,u
+    );
+
+    setup_fulstrum2(
+        current_camera->fov, current_camera->ratio, current_camera->z_near,current_camera->z_far,
         p,f,r,u
     );
 
@@ -201,6 +207,9 @@ void Camera::world_projection()
     up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
 
     setup_fulstrum(fov, ratio, z_far, this->position, look, right, up);
+    setup_fulstrum2(
+        fov, ratio, z_near,z_far,
+        this->position, look, right, up);
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
