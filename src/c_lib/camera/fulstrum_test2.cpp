@@ -235,7 +235,6 @@ void setup_fulstrum2(float fovy, float aspect, float zfar, Vec3 camera, Vec3 for
 
 bool point_fulstrum_test_2(float x, float y, float z)
 {
-{
     for(int i=0; i < 6; i++) 
     {
         if (_FrustrumG.pl[i].distance(x,y,z) < 0)
