@@ -591,6 +591,9 @@ DONE
 billboard particle for healing
 DONE
 
+gutted game/ctf, all teams
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -667,8 +670,7 @@ add labels to the widgets
 investigate laser durability swap issue further -- source may not be addressed
 
 
-== TEAM GUTTING ==
-Move base.cpp into entity system
-Remove game/*
-Remove all references to teams, colors
-Remove ctf
+== REPAIRS AFTER TEAM GUTTING ==
+Send a single base point
+Use it for spawning
+Use it for healing

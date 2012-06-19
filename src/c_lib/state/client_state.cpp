@@ -116,10 +116,8 @@ namespace ClientState {
             name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 
         len = sanitize_player_name(name);
-        if (len == 0)
-            return;
-        
-        printf("sending identify packet to server; name=%s\n", name);
+        if (len == 0) return;
+        // TODO -- disconnect the player here if they send 0 len name. something is fucked up
         identify_CtoS msg;
         strcpy(msg.name, name);
         msg.send();
