@@ -594,6 +594,9 @@ DONE
 gutted game/ctf, all teams
 DONE
 
+fix toolbelt item durability decrementing wrong slot, sometimes
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -667,11 +670,5 @@ add labels to the widgets
 
 ==BUGZ==
 
-investigate laser durability swap issue further -- source may not be addressed
-
---where are my initial items??
-
 == REPAIRS AFTER TEAM GUTTING ==
-make startup better (no died crap)
---hitscan not working
 base is spawning in caves, spawn on surface

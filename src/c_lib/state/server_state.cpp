@@ -47,10 +47,18 @@ namespace ServerState
             using Components::PhysicsComponent;
             PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
             GS_ASSERT(physics != NULL);
-            float x = randrange(0, map_dim.x-1);
-            float y = randrange(0, map_dim.y-1);
-            float z = t_map::get_highest_open_block(x,y);
-            if (physics != NULL) physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
+            if (physics != NULL)
+            {
+                using Components::DimensionComponent;
+                DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+                GS_ASSERT(dims != NULL);
+                int h = 1;
+                if (dims != NULL) h = ceil(dims->get_height());
+                float x = randrange(0, map_dim.x-1);
+                float y = randrange(0, map_dim.y-1);
+                float z = t_map::get_highest_open_block(x,y, h);
+                physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
+            }
             Objects::ready(base);
         }
     }

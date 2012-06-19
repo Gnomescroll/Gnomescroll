@@ -59,10 +59,11 @@ void broadcast_set_block_palette(int x, int y, int z, int block, int palette);
 
 #endif
 
-inline int get_highest_open_block(int x, int y, int agent_height);
+inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
 inline int get_lowest_open_block(int x, int y, int n);
-inline int get_highest_solid_block(int x, int y, int z=MAP_HEIGHT);
+inline int get_highest_solid_block(int x, int y);
+inline int get_highest_solid_block(int x, int y, int z);
 inline int get_lowest_solid_block(int x, int y);
 
 }   // t_map
