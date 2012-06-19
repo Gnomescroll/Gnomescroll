@@ -18,10 +18,10 @@ attribute vec3 InRGB;
 
 attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
 
-attribute vec3 InCE1;
-attribute vec3 InCE2;
-attribute vec3 InCE3;
-attribute vec3 InCE4;
+//attribute vec3 InCE1;
+//attribute vec3 InCE2;
+//attribute vec3 InCE3;
+//attribute vec3 InCE4;
 
 
 /*

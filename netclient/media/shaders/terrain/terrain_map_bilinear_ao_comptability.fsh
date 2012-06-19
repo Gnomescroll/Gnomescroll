@@ -21,6 +21,7 @@ uniform sampler2D base_texture;
 
 void main() 
 {
+/*
     mat2 lightMatrix = mat2(_lightMatrix[0], _lightMatrix[1], _lightMatrix[2],_lightMatrix[3] );
 
 	vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
@@ -28,7 +29,7 @@ void main()
 
 	float tmp = dot(vx, lightMatrix * vy);
 
- 
+    //tmp = 1.0;
     
     vec3 color = (tmp*texture2D(base_texture, texCoord3).rgb);
     //vec3 color = (tmp*texture2D(base_texture, texCoord).rgb);
@@ -43,16 +44,30 @@ void main()
 
 	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 	//gl_FragColor.rgb = vec3(1.0,0,0);
+*/
 
+    mat2 lightMatrix = mat2(_lightMatrix[0], _lightMatrix[1], _lightMatrix[2],_lightMatrix[3] );
+
+    vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
+    vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
+
+    float tmp = dot(vx, lightMatrix * vy);
+
+    vec3 color = tmp*inColor.rgb;
+    color = color*(texture2D(base_texture, texCoord).rgb);      
+
+    color = pow(color, vec3(1.0f / 2.2f) );
+    gl_FragColor.rgb = color;
 }
 
 
 /*
 void main() 
 {
+
         //float gamma = 2.2f;
  
-     	mat2 lightMatrix = mat2(_lightMatrix[0], _lightMatrix[1], _lightMatrix[2],_lightMatrix[3] );
+     	mat2 lightMatrix = mat2(_lightMatrix[0],_lightMatrix[1],_lightMatrix[2],_lightMatrix[3] );
 
         vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
         vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
@@ -65,7 +80,23 @@ void main()
         
         color = color2 * color;
         gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
+
+
+    mat2 lightMatrix = mat2(_lightMatrix[0], _lightMatrix[1], _lightMatrix[2],_lightMatrix[3] );
+
+    vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
+    vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
+
+    float tmp = dot(vx, lightMatrix * vy);
+
+    color = tmp*inColor.rgb;
+    color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
+
+    color = pow(color, vec3(1.0f / 2.2f) );
+    gl_FragColor.rgb = color;
+
 }
+
 */
 
 /*

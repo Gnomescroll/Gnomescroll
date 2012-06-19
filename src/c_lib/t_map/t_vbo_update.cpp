@@ -541,15 +541,23 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
         for(int j=0; j<i; j++) vbo->vertex_offset[i] += 4*SIDE_BUFFER_INDEX[j];
     }
 
+
+
     for(int side=0; side<6; side++)
     {
+        int vnum[8];
+        vnum[0] = vbo->vertex_num_array[side][0];
+        for(int i=1; i<8; i++)
+            vnum[i] = vbo->vertex_num_array[side][i] - vbo->vertex_num_array[side][i-1];
+
+
         for(int i=0; i<=8; i++)
              vbo->voff_array[side][i] = vbo->vertex_offset[side];
 
         for(int i=0; i<=8; i++)
-        for(int j=0; j<i; i++)
+        for(int j=0; j<=i; j++)
         {
-            vbo->voff_array[side][i] += vbo->vertex_num_array[side][j];
+            vbo->voff_array[side][i] += vnum[j];
         }
     }
 }

@@ -137,8 +137,8 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     }
 
     //column is not visible
-    vbo_frustrum_min[index] = 16;
-    vbo_frustrum_max[index] = -1;
+    vbo_frustrum_min[index] = 8;
+    vbo_frustrum_max[index] = 0;
 }
 
 //number of columns to draw
@@ -261,9 +261,6 @@ void Vbo_map::prep_frustrum_vertices()
                 vbo_vertex_frustrum[index][2*side+1] = vnum;
             }
 
-            int voff;
-            int vnum;
-
             if(min == 0)
             {
                 min = 1;
@@ -278,8 +275,8 @@ void Vbo_map::prep_frustrum_vertices()
             int ve = vbo->voff_array[side][max+1];
 
             int voff = vs;
-            int vs = ve - vs;
-            
+            int vnum = ve - vs;
+
             vbo_vertex_frustrum[index][2*side+0] = voff;
             vbo_vertex_frustrum[index][2*side+1] = vnum;
 
@@ -498,7 +495,7 @@ void Vbo_map::draw_map()
 
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
-  
+  /*
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
@@ -516,6 +513,9 @@ void Vbo_map::draw_map()
             if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
             {
                 printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
+                printf("voff= %i vnum= %i \n", voff, vnum);
+                printf("vbo->vertex_offset[sid]= %i vbo->vertex_num[side]= %i \n", vbo->vertex_offset[side], vbo->vertex_num[side]);
+
                 GS_ABORT();
             }
             //printf("drawing: offset %i vertices: %i\n", voff, vnum);
@@ -528,8 +528,8 @@ void Vbo_map::draw_map()
             glDrawArrays(GL_QUADS, voff, vnum);
 
         }
-
-        //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+    */
+        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
 
 
         //glPopMatrix();
@@ -606,8 +606,21 @@ void Vbo_map::draw_map_comptability()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
-        glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
+//        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
+//        glVertexAttribPointer(map_TexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
+
+
+
+        //glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
+        //glVertexAttribPointer(map_TexCoord, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
+
+        //glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
+        //glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+
+
+        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
+        glVertexAttribPointer(map_TexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
+
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 

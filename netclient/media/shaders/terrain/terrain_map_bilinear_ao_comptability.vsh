@@ -15,7 +15,7 @@
 Attributes
 */
 
-attribute vec3 InVertex;
+attribute vec4 InVertex;
 attribute vec4 InTexCoord;
 attribute vec3 InRGB;
 
@@ -47,6 +47,7 @@ void main(void)
         //vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
         //gl_Position = gl_ModelViewProjectionMatrix * vertex;
  
+        InVertex.w = 1.0;
         gl_Position = gl_ModelViewProjectionMatrix * InVertex;
 
         inColor = InRGB;
