@@ -620,9 +620,12 @@ alt tab doesnt work in fullscreen (on linux at least)
 == CONTAINERS ==
 
 == ITEMS ==
+only allow ore to be smelted (not crafting table)
 
 == BLOCKS/TERRAIN ==
 infinite health blocks, put at ground layer
+send block health on request from agent
+--show meter in hud
 
 == ANALYTICS ==
 log chat
@@ -640,11 +643,15 @@ use durability coloring to teammate health
 add right click to heal teammate with health pack
 show +health in green particle
 
+get rid of nanite feeding
+drop chips from enemies
+chips go directly into nanite chip slot
+change nanite texture to remove graphic
+add labels to the widgets
+
 == SMELTER ==
 
 ==BUGZ==
-
-durability is not updated correctly for mining laser, when purchased from nanite and placed in toolbelt
 
 in analytics, session_id/client_id counting is broken
 
