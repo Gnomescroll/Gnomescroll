@@ -15,7 +15,9 @@ using Components::Component;
 void Object::add_component(int slot, Component* component)
 {
     GS_ASSERT(slot >= 0);
+    if (slot < 0) return;
     GS_ASSERT(slot < this->n_components);
+    if (slot >= this->n_components) return;
     GS_ASSERT(this->components[slot] == NULL);
     this->components[slot] = component;
 }

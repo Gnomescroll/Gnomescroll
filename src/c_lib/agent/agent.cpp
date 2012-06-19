@@ -925,11 +925,17 @@ void Agent_state::update_model()
 
 bool Agent_state::near_base()
 {
-    Base* b = STATE::ctf->get_base(this->status.team);
+    Objects::Object* b = STATE::ctf->get_base(this->status.team);
     if (b == NULL) return false;
-    float x = quadrant_translate_f(this->s.x, b->x);
-    float y = quadrant_translate_f(this->s.y, b->y);
-    float z= b->z;
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return false;
+    Vec3 bp = physics->get_position();
+    
+    float x = quadrant_translate_f(this->s.x, bp.x);
+    float y = quadrant_translate_f(this->s.y, bp.y);
+    float z = bp.z;
     if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
         return true;
     return false;

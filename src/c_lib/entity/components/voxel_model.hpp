@@ -25,6 +25,8 @@ class VoxelModelComponent: public Component
         VoxDat* vox_dat;
         bool init_hitscan;
         bool init_draw;
+        bool should_hitscan;
+        bool should_draw;
 
         float get_radius()
         {
@@ -91,7 +93,7 @@ class VoxelModelComponent: public Component
     VoxelModelComponent()
     : Component(COMPONENT_VOXEL_MODEL, COMPONENT_INTERFACE_VOXEL_MODEL),
     vox(NULL), vox_dat(NULL),
-    init_hitscan(false), init_draw(false)
+    init_hitscan(false), init_draw(false), should_hitscan(true), should_draw(true)
     {}
 };
 

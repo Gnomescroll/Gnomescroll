@@ -188,17 +188,25 @@ void CTF::set_flag_position(int team, float x, float y, float z)
 
 void CTF::set_base_position(int team, float x, float y, float z)
 {
+    Objects::Object* base = NULL;
     switch (team)
     {
         case 1:
-            if (one.base != NULL) one.base->set_position(x,y,z);
+            base = one.base;
             break;
         case 2:
-            if (two.base != NULL) two.base->set_position(x,y,z);
+            base = two.base;
             break;
         default:
             break;
     }
+    GS_ASSERT(base != NULL);
+    if (base == NULL) return;
+    
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
 
     #if DC_SERVER
     BaseState_StoC msg;
@@ -325,19 +333,19 @@ void CTF::register_items_for_hitscan()
         one.flag->vox->set_hitscan(true);
     if (two.flag != NULL && two.flag->vox != NULL)
         two.flag->vox->set_hitscan(true);
-    if (one.base != NULL && one.base->vox != NULL)
-        one.base->vox->set_hitscan(true);
-    if (two.base != NULL && two.base->vox != NULL)
-        two.base->vox->set_hitscan(true);
+    //if (one.base != NULL && one.base->vox != NULL)
+        //one.base->vox->set_hitscan(true);
+    //if (two.base != NULL && two.base->vox != NULL)
+        //two.base->vox->set_hitscan(true);
 
     if (one.flag != NULL && one.flag->vox != NULL)
         one.flag->vox->register_hitscan();
     if (two.flag != NULL && two.flag->vox != NULL)
         two.flag->vox->register_hitscan();
-    if (one.base != NULL && one.base->vox != NULL)
-        one.base->vox->register_hitscan();
-    if (two.base != NULL && two.base->vox != NULL)
-        two.base->vox->register_hitscan();
+    //if (one.base != NULL && one.base->vox != NULL)
+        //one.base->vox->register_hitscan();
+    //if (two.base != NULL && two.base->vox != NULL)
+        //two.base->vox->register_hitscan();
 
 
 }
@@ -347,19 +355,19 @@ void CTF::unregister_items_for_hitscan()
         one.flag->vox->set_hitscan(false);
     if (two.flag != NULL && two.flag->vox != NULL)
         two.flag->vox->set_hitscan(false);
-    if (one.base != NULL && one.base->vox != NULL)
-        one.base->vox->set_hitscan(false);
-    if (two.base != NULL && two.base->vox != NULL)
-        two.base->vox->set_hitscan(false);
+    //if (one.base != NULL && one.base->vox != NULL)
+        //one.base->vox->set_hitscan(false);
+    //if (two.base != NULL && two.base->vox != NULL)
+        //two.base->vox->set_hitscan(false);
 
     if (one.flag != NULL && one.flag->vox != NULL)
         one.flag->vox->unregister_hitscan();
     if (two.flag != NULL && two.flag->vox != NULL)
         two.flag->vox->unregister_hitscan();
-    if (one.base != NULL && one.base->vox != NULL)
-        one.base->vox->unregister_hitscan();
-    if (two.base != NULL && two.base->vox != NULL)
-        two.base->vox->unregister_hitscan();
+    //if (one.base != NULL && one.base->vox != NULL)
+        //one.base->vox->unregister_hitscan();
+    //if (two.base != NULL && two.base->vox != NULL)
+        //two.base->vox->unregister_hitscan();
 }
 #endif
 
@@ -391,7 +399,7 @@ void CTF::send_to_client(int client_id)
 {
     // send flag/base states, scores, team names
     Flag* flag;
-    Base* base;
+    Objects::Object* base;
     char *name;
     int score;
     int i;
@@ -427,12 +435,19 @@ void CTF::send_to_client(int client_id)
 
         if (base != NULL)
         {
-            BaseState_StoC base_msg;
-            base_msg.team = i;
-            base_msg.x = base->x;
-            base_msg.y = base->y;
-            base_msg.z = base->z;
-            base_msg.sendToClient(client_id);
+            using Components::PhysicsComponent;
+            PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            GS_ASSERT(physics != NULL);
+            if (physics != NULL)
+            {
+                Vec3 p = physics->get_position();
+                BaseState_StoC base_msg;
+                base_msg.team = i;
+                base_msg.x = p.x;
+                base_msg.y = p.y;
+                base_msg.z = p.z;
+                base_msg.sendToClient(client_id);
+            }
         }
 
         TeamName_StoC name_msg;
@@ -490,98 +505,100 @@ void CTF::agent_drop_flag(int agent_team, float x, float y, float z)
 
 void CTF::check_agent_proximities()
 {
-    float r;
-    Flag* f;
-    Base* b;
-    Agent_state* a;
-    int i;
+    return;
+    
+    //float r;
+    //Flag* f;
+    //Objects::Object* b;
+    //Agent_state* a;
+    //int i;
         
-    f = one.flag;
-    if (f != NULL && !f->held)
-    {
-        r = f->vox->largest_radius();
-        STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
-        STATE::agent_list->sort_filtered_objects_by_distance();
-        for (i=0; i<STATE::agent_list->n_filtered; i++) {
-            a = STATE::agent_list->filtered_objects[i];
-            if (a==NULL) continue;
-            if (!a->status.team || a->status.team == 1) continue;
-            // pickup
-            if (!a->status.dead)
-                if (a->status.pickup_flag())
-                    f->held = true;
-            break;
-        }
-    }
+    //f = one.flag;
+    //if (f != NULL && !f->held)
+    //{
+        //r = f->vox->largest_radius();
+        //STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
+        //STATE::agent_list->sort_filtered_objects_by_distance();
+        //for (i=0; i<STATE::agent_list->n_filtered; i++) {
+            //a = STATE::agent_list->filtered_objects[i];
+            //if (a==NULL) continue;
+            //if (!a->status.team || a->status.team == 1) continue;
+            //// pickup
+            //if (!a->status.dead)
+                //if (a->status.pickup_flag())
+                    //f->held = true;
+            //break;
+        //}
+    //}
 
-    b = one.base;
-    if (b != NULL)
-    {
-        r = b->vox->largest_radius();
-        STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
-        for (i=0; i<STATE::agent_list->n_filtered; i++)
-        {
-            a = STATE::agent_list->filtered_objects[i];
-            if (a==NULL) continue;
-            if (!a->status.team || a->status.team != 1) continue;
-            // heal
-            if (!a->status.dead)
-            {
-                if (a->status.has_flag)
-                {
-                    // scored
-                    this->reset_flag(2);
-                    one.captured_flag();
-                    a->status.score_flag();
-                }
-                a->status.at_base();
-            }
-        }
-    }
+    //b = one.base;
+    //if (b != NULL)
+    //{
+        //r = b->vox->largest_radius();
+        //STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
+        //for (i=0; i<STATE::agent_list->n_filtered; i++)
+        //{
+            //a = STATE::agent_list->filtered_objects[i];
+            //if (a==NULL) continue;
+            //if (!a->status.team || a->status.team != 1) continue;
+            //// heal
+            //if (!a->status.dead)
+            //{
+                //if (a->status.has_flag)
+                //{
+                    //// scored
+                    //this->reset_flag(2);
+                    //one.captured_flag();
+                    //a->status.score_flag();
+                //}
+                //a->status.at_base();
+            //}
+        //}
+    //}
 
-    f = two.flag;
-    if (f != NULL && !f->held)
-    {
-        r = f->vox->largest_radius();
-        STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
-        STATE::agent_list->sort_filtered_objects_by_distance();
-        for (i=0; i<STATE::agent_list->n_filtered; i++)
-        {
-            a = STATE::agent_list->filtered_objects[i];
-            if (a==NULL) continue;
-            if (!a->status.team || a->status.team == 2) continue;
-            // pickup
-            if (!a->status.dead)
-                if (a->status.pickup_flag())
-                    f->held = true;
-            break;
-        }
-    }
+    //f = two.flag;
+    //if (f != NULL && !f->held)
+    //{
+        //r = f->vox->largest_radius();
+        //STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
+        //STATE::agent_list->sort_filtered_objects_by_distance();
+        //for (i=0; i<STATE::agent_list->n_filtered; i++)
+        //{
+            //a = STATE::agent_list->filtered_objects[i];
+            //if (a==NULL) continue;
+            //if (!a->status.team || a->status.team == 2) continue;
+            //// pickup
+            //if (!a->status.dead)
+                //if (a->status.pickup_flag())
+                    //f->held = true;
+            //break;
+        //}
+    //}
 
-    b = two.base;
-    if (b != NULL)
-    {
-        r = b->vox->largest_radius();
-        STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
-        for (i=0; i<STATE::agent_list->n_filtered; i++)
-        {
-            a = STATE::agent_list->filtered_objects[i];
-            if (a==NULL) continue;
-            if (!a->status.team || a->status.team != 2) continue;
-            // heal
-            if (!a->status.dead)
-            {
-                if (a->status.has_flag)
-                {
-                    // scored
-                    this->reset_flag(1);
-                    two.captured_flag();
-                    a->status.score_flag();
-                }
-                a->status.at_base();
-            }
-        }
-    }
+    //b = two.base;
+    //if (b != NULL)
+    //{
+        //r = b->vox->largest_radius();
+        //STATE::agent_list->objects_within_sphere(b->x, b->y, b->z, r);
+        //for (i=0; i<STATE::agent_list->n_filtered; i++)
+        //{
+            //a = STATE::agent_list->filtered_objects[i];
+            //if (a==NULL) continue;
+            //if (!a->status.team || a->status.team != 2) continue;
+            //// heal
+            //if (!a->status.dead)
+            //{
+                //if (a->status.has_flag)
+                //{
+                    //// scored
+                    //this->reset_flag(1);
+                    //two.captured_flag();
+                    //a->status.score_flag();
+                //}
+                //a->status.at_base();
+            //}
+        //}
+    //}
 }
 
 bool CTF::remove_agent_from_team(int agent)
@@ -615,27 +632,35 @@ bool CTF::remove_agent_from_team(int agent)
 bool CTF::is_at_base(int team, float x, float y, float z)
 {
     float d,r;
+    Objects::Object* base = NULL;
     switch (team)
     {
         case 1:
-            if (one.base == NULL || one.base->vox == NULL) return false;
-            d = distancef_squared(x,y,z, one.base->x, one.base->y, one.base->z);
-            r = one.base->vox->largest_radius();
-            if (d < r*r) return true;
-            return false;
+            base = one.base;
             break;
-
         case 2:
-            if (two.base == NULL || two.base->vox == NULL) return false;
-            d = distancef_squared(x,y,z, two.base->x, two.base->y, two.base->z);
-            r = two.base->vox->largest_radius();
-            if (d < r*r) return true;
-            return false;
+            base = two.base;
             break;
-
         default:
             return false;
     }
+    if (base == NULL) return false;
+
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)base->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    GS_ASSERT(vox != NULL);
+    if (vox == NULL) return false;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return false;
+    Vec3 p = physics->get_position();
+
+    d = distancef_squared(x,y,z, p.x, p.y, p.z);
+    r = vox->get_radius();
+    if (d < r*r) return true;
+
     return false;
 }
 
@@ -720,16 +745,15 @@ void CTF::set_team_color(
 struct Vec3 CTF::get_base_spawn_point(int team, float agent_height, float agent_radius)
 {
     struct Vec3 default_spawn = vec3_init(map_dim.x/2+0.5f, map_dim.y/2+0.5f, 0);
-    default_spawn.z = t_map::get_highest_open_block(default_spawn.x, default_spawn.y, agent_height); 
+    default_spawn.z = t_map::get_highest_open_block(default_spawn.x, default_spawn.y, agent_height);
+    Objects::Object* base = NULL;
     switch (team)
     {
         case 1:
-            if (one.base != NULL) return one.base->get_spawn_point(agent_height, agent_radius);
-            else return default_spawn;
+            base = one.base;
             break;
         case 2:
-            if (two.base != NULL) return two.base->get_spawn_point(agent_height, agent_radius);
-            else return default_spawn;
+            base = two.base;
             break;
         case 0:
             return default_spawn;
@@ -739,6 +763,14 @@ struct Vec3 CTF::get_base_spawn_point(int team, float agent_height, float agent_
             return default_spawn;
             break;
     }
+    GS_ASSERT(base != NULL);
+    if (base == NULL) return default_spawn;
+
+    using Components::AgentSpawnerComponent;
+    AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)base->get_component(COMPONENT_AGENT_SPAWNER);
+    GS_ASSERT(spawner != NULL);
+    if (spawner == NULL) return default_spawn;
+    return spawner->get_spawn_point(agent_height, agent_radius);
 }
 
 void CTF::update_flags_held()
@@ -776,13 +808,13 @@ void CTF::update()
     if (two.flag != NULL)
         two.flag->update();
 
-    if (one.base != NULL)
-        one.base->update();
-    if (two.base != NULL)
-        two.base->update();
+    //if (one.base != NULL)
+        //one.base->update();
+    //if (two.base != NULL)
+        //two.base->update();
 }
 
-Base* CTF::get_base(int team)
+Objects::Object* CTF::get_base(int team)
 {
     switch (team)
     {
@@ -795,7 +827,7 @@ Base* CTF::get_base(int team)
     }
 }
 
-Base* CTF::get_enemy_base(int team)
+Objects::Object* CTF::get_enemy_base(int team)
 {
     if (team) team = (team == 1) ? 2 : 1;
     return this->get_base(team);

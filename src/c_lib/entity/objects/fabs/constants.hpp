@@ -6,11 +6,12 @@ namespace Objects
 /* Base */
 
 // dimensions
-const float BASE_HEIGHT = 1.9f;
+const float BASE_HEIGHT = 1.0f;
 
 // voxel model
 const bool BASE_INIT_WITH_HITSCAN = false;
 const bool BASE_INIT_WITH_DRAW = true;
+const bool BASE_SHOULD_HITSCAN = false;
 
 // spawner
 const float BASE_SPAWN_RADIUS = 10.0f;

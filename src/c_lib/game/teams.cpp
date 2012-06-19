@@ -178,7 +178,7 @@ void CTFTeam::init(int id)
     Team::init(id);
 
     if (use_ctf_flags) this->flag = new Flag(item_id, id);
-    this->base = new Base(item_id, id);
+    this->base = Objects::create(OBJECT_BASE);
 
     item_id++;
 }
@@ -190,7 +190,7 @@ int CTFTeam::score()
     #endif
 
     #ifdef DC_CLIENT
-    return this->base_score;
+    return 0;
     #endif
 }
 
@@ -210,11 +210,10 @@ void CTFTeam::captured_flag()
 void CTFTeam::tick()
 {
     if (this->flag != NULL) this->flag->tick();
-    if (this->base != NULL) this->base->tick();
 }
 
 CTFTeam::~CTFTeam()
 {
     if (this->flag != NULL) delete this->flag;
-    if (this->base != NULL) delete this->base;
+    this->base = NULL;  // the entity system will clean up
 }

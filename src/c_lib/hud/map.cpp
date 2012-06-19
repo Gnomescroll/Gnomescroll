@@ -666,12 +666,19 @@ void draw_team_text_icons(float z)
     //}
     
     using Components::BASE_SPAWN_ID;
-    Base* b = ctf->get_base(playerAgent_state.you->status.team);
+    Objects::Object* b = ctf->get_base(playerAgent_state.you->status.team);
     if (b != NULL)
     {
-        world_to_map_screen_coordinates(b->x, b->y, &x, &y);
-        base->set_position(x,y);
-        base->set_depth(z);
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (physics != NULL)
+        {
+            Vec3 p = physics->get_position();
+            world_to_map_screen_coordinates(p.x, p.y, &x, &y);
+            base->set_position(x,y);
+            base->set_depth(z);
+        }
         if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
             base->set_color(highlight.r, highlight.g, highlight.b);
         else

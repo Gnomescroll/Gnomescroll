@@ -4,6 +4,8 @@
 #include <game/flag.hpp>
 #include <game/base.hpp>
 
+#include <entity/objects.hpp>
+
 const unsigned int TEAM_NAME_MAX_LENGTH = 31;
 const unsigned int TEAM_MAX_PLAYERS = GAME_MAX_PLAYERS;
 
@@ -64,7 +66,7 @@ class CTFTeam: public Team
     public:
 
         Flag* flag;
-        Base* base;
+        Objects::Object* base;
 
         unsigned int flag_captures;
 

@@ -44,6 +44,7 @@ static void set_base_properties(Object* object)
     vox->vox_dat = &VoxDats::base;
     vox->init_hitscan = BASE_INIT_WITH_HITSCAN;
     vox->init_draw = BASE_INIT_WITH_DRAW;
+    vox->should_hitscan = BASE_SHOULD_HITSCAN;
 
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
@@ -94,8 +95,9 @@ void tick_base(Object* object)
 {
     #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
 
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
@@ -115,7 +117,9 @@ void update_base(Object* object)
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
-    vox->force_update(physics->get_position(), angles.x, angles.y, physics->changed);
+    if (physics->changed) printf("physics changed, should update vox\n");
+    //vox->force_update(physics->get_position(), angles.x, angles.y, physics->changed);
+    vox->force_update(physics->get_position(), angles.x, angles.y, true);
     physics->changed = false;    // reset changed state
 }
 

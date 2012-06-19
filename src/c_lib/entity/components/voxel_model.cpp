@@ -21,8 +21,8 @@ void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool sta
     }
     else
     {
-        vox->set_draw(true);
-        vox->set_hitscan(true);
+        vox->set_draw(this->should_draw);
+        vox->set_hitscan(this->should_hitscan);
     }
     if (state_changed || input_state.skeleton_editor)
         vox->update(position.x, position.y, position.z, theta, phi);
@@ -30,7 +30,7 @@ void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool sta
 
     #if DC_SERVER
     vox->was_updated = false;
-    vox->set_hitscan(true);
+    vox->set_hitscan(this->should_hitscan);
     if (state_changed)
         vox->update(position.x, position.y, position.z, theta, phi);
     #endif
@@ -50,8 +50,8 @@ void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bo
     }
     else
     {
-        vox->set_draw(true);
-        vox->set_hitscan(true);
+        vox->set_draw(this->should_draw);
+        vox->set_hitscan(this->should_hitscan);
     }
     if (state_changed || input_state.skeleton_editor)
     {
@@ -63,7 +63,7 @@ void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bo
 
     #if DC_SERVER
     vox->was_updated = false;
-    vox->set_hitscan(true);
+    vox->set_hitscan(this->should_hitscan);
     if (state_changed)
     {
         vox->thaw();
