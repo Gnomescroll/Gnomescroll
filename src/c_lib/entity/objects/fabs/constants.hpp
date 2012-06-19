@@ -56,7 +56,6 @@ const int TURRET_FIRE_RATE_LIMIT = 45; // ticks
 const float TURRET_USES_BIAS = true;
 const float TURRET_ACCURACY_BIAS = 1.0f;
 const float TURRET_SIGHT_RANGE = 128.0f - 16.0f;
-const bool TURRET_ATTACK_ONLY_ENEMIES = false;
 const bool TURRET_ATTACK_AT_RANDOM = true;
 const int TURRET_TERRAIN_DAMAGE = 8;
 const int TURRET_AGENT_DAMAGE_MIN = 8;

@@ -30,7 +30,6 @@ class MotionTargetingComponent: public TargetingComponent
 
         // lock to agent
         void lock_target(Vec3 camera_position);
-        void lock_target(Vec3 camera_position, int team);
 
         void choose_destination();
 

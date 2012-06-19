@@ -298,10 +298,6 @@ void damage_team_objects_within_sphere(const ObjectType* types, int n_types, Vec
     using Components::HealthComponent;
     HealthComponent* health;
 
-    using Components::TeamComponent;
-    TeamComponent* team;
-    int team_id;
-    
     using Components::OwnerComponent;
     OwnerComponent* owner;    
     int owner_id;
@@ -314,16 +310,11 @@ void damage_team_objects_within_sphere(const ObjectType* types, int n_types, Vec
         health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
         if (health == NULL) continue;
 
-        team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-        if (team != NULL) team_id = team->get_team();
-        else team_id = NO_TEAM;
-
         owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
         if (owner != NULL) owner_id = owner->get_owner();
         else owner_id = NO_AGENT;
         
-        if ((team_id == inflictor_team && owner_id != NO_AGENT)
-            && owner_id != inflictor_id)
+        if (owner_id != inflictor_id)
             continue;
 
         health->take_damage(damage);

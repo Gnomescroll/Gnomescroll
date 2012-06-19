@@ -313,63 +313,6 @@ void Voxel_model::init_parts(int id, ObjectType type)
     }
 }
 
-void Voxel_model::update_team_color(int team)
-{
-    #if DC_CLIENT
-    unsigned char team_r, team_g, team_b;
-    int ret = ClientState::ctf->get_team_color(team, &team_r, &team_g, &team_b);
-    if (ret) return;
-    for (int i=0; i<this->n_parts; i++)
-        this->set_part_team_color(i, team_r, team_g, team_b);
-    #endif
-}
-
-void Voxel_model::set_part_team_color(int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b)
-{   // VERIFIED
-    #if DC_CLIENT
-    VoxPart *vp = vox_dat->vox_part[part_num];
-    // if team base color is 0,0,0 abort. this means team base color was not set. 0,0,0 is reserved for empty voxels
-    if (vp->colors.team_r == 0
-      && vp->colors.team_g == 0
-      && vp->colors.team_g == 0)
-          return;
-          
-    Voxel_volume* vv = &(this->vv[part_num]);
-    int x,y,z;
-    x = vp->dimension.x;
-    y = vp->dimension.y;
-    z = vp->dimension.z;
-    
-    unsigned char r,g,b,a;
-    int ix,iy,iz;
-    if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
-    for (int j=0; j < vp->colors.n; j++) {
-        ix = vp->colors.index[j][0];
-        iy = vp->colors.index[j][1];
-        iz = vp->colors.index[j][2];
-        if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
-
-        r = vp->colors.rgba[j][0];
-        g = vp->colors.rgba[j][1];
-        b = vp->colors.rgba[j][2];
-        a = vp->colors.rgba[j][3];
-
-        if (vp->colors.team
-          && r == vp->colors.team_r
-          && g == vp->colors.team_g
-          && b == vp->colors.team_b)
-        {
-            r = team_r;
-            g = team_g;
-            b = team_b;
-        }
-
-        vv->set_color(ix, iy, iz, r,g,b,a);
-    }
-    #endif
-
-}
-
 void Voxel_model::set_part_color(int part_num)
 {
     //#if DC_CLIENT
@@ -477,23 +420,6 @@ frozen(false)
     this->init_skeleton();
 }
 
-Voxel_model::Voxel_model(VoxDat* vox_dat, int id, ObjectType type, int team)
-:
-skeleton_inited(false),
-vox_inited(false),
-was_updated(false),
-frozen(false)
-{
-    if (team == 0) printf("WARNING ::Voxel_model() ctor -- team is 0\n");
-    if (vox_dat == NULL) printf("WARNING: ::Voxel_model() ctor -- vox_dat is NULL\n");
-    this->set_vox_dat(vox_dat);
-    this->n_parts = vox_dat->n_parts;
-    this->vv = new Voxel_volume[vox_dat->n_parts];
-    this->init_parts(id, type);
-    this->update_team_color(team);
-    this->init_skeleton();
-}
-
 Voxel_model::~Voxel_model()
 {
     if (this->vv != NULL)
@@ -591,27 +517,6 @@ Affine* Voxel_model::get_node(int node)
     }
     return &this->vox_skeleton_world_matrix[node];
 }
-// restores voxels to starting state
-void Voxel_model::restore(int team)
-{
-    Voxel_volume* vv;
-    #if DC_CLIENT
-    unsigned char r=0,g=0,b=0;
-    if (team >= 0 && ClientState::ctf != NULL)
-        ClientState::ctf->get_team_color(team, &r, &g, &b);
-    #endif
-    for (int i=0; i<this->n_parts; i++)
-    {
-        vv = &this->vv[i];
-        if (!vv->damaged) continue;
-        this->set_part_color(i);
-        #if DC_CLIENT
-        if (team >= 0)
-            this->set_part_team_color(i, r,g,b);
-        #endif
-        vv->damaged = false;
-    }
-}
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
 {   // ray cast from source to each body part center (shuffled)
@@ -640,26 +545,3 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probabi
     }
     return false;
 }
-
-//bool Voxel_model::is_completely_destroyed()
-//{
-    //#if DC_CLIENT
-    //Voxel_volume* vv;
-    //for (int i=0; i<this->n_parts; i++)
-    //{
-        //vv = &this->vv[i];
-        //if (vv->vvl.vnum != 0) return false;
-    //}
-    //return true;
-    //#endif
-
-    //#if DC_SERVER
-    //for (int i=0; i<this->n_parts; i++)
-    //{
-        //for (unsigned int j=0; j<this->vv[i].index_max; j++)
-            //if (this->vv[i].voxel[j].color != 0)
-                //return false;
-    //}
-    //return true;
-    //#endif
-//}

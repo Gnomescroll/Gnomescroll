@@ -6,7 +6,6 @@
 #include <entity/constants.hpp>
 #include <entity/objects/fabs/constants.hpp>
 #include <entity/components/physics/position_changed.hpp>
-#include <entity/components/team/indexed_team.hpp>
 #include <entity/components/owner.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
@@ -19,17 +18,16 @@ void load_agent_spawner_data()
     ObjectType type = OBJECT_AGENT_SPAWNER;
 
     #if DC_SERVER
-    int n_components = 7;
+    int n_components = 6;
     #endif
     #if DC_CLIENT
-    int n_components = 8;
+    int n_components = 7;
     #endif
 
     object_data->set_components(type, n_components);
 
     object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
     object_data->attach_component(type, COMPONENT_OWNER);
-    object_data->attach_component(type, COMPONENT_INDEXED_TEAM);
     object_data->attach_component(type, COMPONENT_DIMENSION);
     object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     object_data->attach_component(type, COMPONENT_HIT_POINTS);
@@ -44,7 +42,6 @@ static void set_agent_spawner_properties(Object* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
     add_component_to_object(object, COMPONENT_OWNER);
-    add_component_to_object(object, COMPONENT_INDEXED_TEAM);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
@@ -77,7 +74,7 @@ static void set_agent_spawner_properties(Object* object)
     object->tick = &tick_agent_spawner;
     object->update = &update_agent_spawner;
 
-    object->create = create_packet_owner_team_index;
+    object->create = create_packet_owner;
     object->state = state_packet;
 }
 
@@ -93,17 +90,15 @@ Object* create_agent_spawner()
 void ready_agent_spawner(Object* object)
 {
     using Components::VoxelModelComponent;
-    using Components::TeamComponent;
     using Components::PhysicsComponent;
     
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
     
-    vox->ready(position, angles.x, angles.y, team->get_team());
+    vox->ready(position, angles.x, angles.y);
     vox->freeze();
 
     #if DC_SERVER
@@ -126,11 +121,9 @@ void die_agent_spawner(Object* object)
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     if (vox->vox != NULL)
     {
-        using Components::TeamComponent;
-        TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
         using Components::AnimationComponent;
         AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
-        anim->explode_team_random(vox->get_center(), team->get_team());
+        anim->explode_random(vox->get_center());
     }
 
     //dieChatMessage(object);

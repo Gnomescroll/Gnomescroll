@@ -51,9 +51,6 @@ typedef enum
     
     COMPONENT_VOXEL_MODEL,
 
-    COMPONENT_TEAM,
-    COMPONENT_INDEXED_TEAM,
-
     COMPONENT_OWNER,
 
     COMPONENT_AGENT_SPAWNER,
@@ -93,7 +90,6 @@ typedef enum
     COMPONENT_INTERFACE_TICK,       // tick()
     COMPONENT_INTERFACE_PICKUP,
     COMPONENT_INTERFACE_HEALTH,     // is_dead()
-    COMPONENT_INTERFACE_TEAM,       // team getter/setter
     COMPONENT_INTERFACE_OWNER,      // owner getter/setter
     COMPONENT_INTERFACE_VOXEL_MODEL,
     COMPONENT_INTERFACE_SPAWNER,
@@ -123,8 +119,6 @@ typedef enum
 #include <physics/vec3.hpp>
 
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
-const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
-const unsigned int NULL_TEAM_INDEX = UINT_MAX;
 const int NULL_HEALTH = INT_MAX;
 const Vec3 NULL_POSITION = vec3_init(FLT_MAX,FLT_MAX,FLT_MAX);
 const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);

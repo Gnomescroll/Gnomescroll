@@ -6,8 +6,7 @@
 const int CHAT_BUFFER_SIZE = CHAT_MESSAGE_SIZE_MAX;
 const int CHAT_CLIENT_INPUT_HISTORY_MAX = 20;
 const int CHAT_CLIENT_MESSAGE_HISTORY_MAX = 50;
-const int CHAT_CLIENT_CHANNELS_MAX = 4; // pm, global, team, system
-
+const int CHAT_CLIENT_CHANNELS_MAX = 3; // pm, global, system
 
 class ChatMessage
 {
@@ -45,7 +44,6 @@ typedef enum ChannelTypes
     CHANNEL_SYSTEM,
     CHANNEL_GLOBAL,
     CHANNEL_PRIVATE,
-    CHANNEL_TEAM
 } ChannelTypes;
 
 class ChatClientChannel
@@ -120,7 +118,6 @@ class ChatClient
     void send_system_message(char* msg);
     void submit();
 
-    void use_team_channel();
     void use_global_channel();
 
     ChatInput* input;

@@ -111,14 +111,6 @@ dont_include_this_file_in_server
 /* Skybox */
 #include <camera/skybox/skybox.cpp>
 
-/* Game Stuff */
-#include <game/flag.cpp>
-#include <game/base.cpp>
-#include <game/game.cpp>
-#include <game/teams.cpp>
-#include <game/ctf.cpp>
-#include <game/packets.cpp>
-
 /* Agents */
 #include <agent/agent_include.h>
 
@@ -163,11 +155,6 @@ dont_include_this_file_in_server
 //#endif
 
 /* HUD */
-
-//#include <hud/font/font_loader.hpp> /* TEMP */
-//#include <hud/font/struct.hpp>
-
-#include <hud/constants.hpp>
 
 #include <hud/reticle.cpp>
 #include <hud/cube_selector.cpp>
@@ -310,8 +297,6 @@ int init_c_lib()
     Particle::draw_init();
     ItemParticle::draw_init();
 
-    ClientState::init_ctf();
-    
     Animations::init();
 
     obj_load::init_draw_model();

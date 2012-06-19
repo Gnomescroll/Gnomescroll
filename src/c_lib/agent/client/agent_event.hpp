@@ -18,7 +18,6 @@ typedef enum
 class Agent_event {
     private:
         Agent_state* a;
-        unsigned char r,g,b;  // team colors
         AgentVoxStatus vox_status;
         bool model_was_changed;
     public:
@@ -39,14 +38,7 @@ class Agent_event {
         void life_changing(bool dead);
         void reload_weapon(int type);
 
-        void joined_team(int team);
         void name_changed(char* old_name);
-        void update_team_color(unsigned char r, unsigned char b, unsigned char c);
-        void update_team_color();
-        
-        void picked_up_flag();
-        void dropped_flag();
-        void scored_flag();
 
         // new style weapon trigger events
         // only triggers agent specific animations/sounds

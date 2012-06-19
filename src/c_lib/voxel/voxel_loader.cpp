@@ -125,20 +125,18 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, file_name, (bool)biaxial);
 
     // team
+    // TODO -- remove
     int team;
     check_for_comments(buffer, &index);
     sscanf (buffer+index, "%d %n", &team, &read);
     index += read;
 
     // team base color
+    // TODO -- remove
     int team_r, team_g, team_b;
     check_for_comments(buffer, &index);
     sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
-
-    #if DC_CLIENT
-    vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
-    #endif
 
     int ret;
     int vox_num = 0;

@@ -20,8 +20,6 @@ class AnimationComponent: public Component
 
     void explode(Vec3 position);
     void explode_random(Vec3 position);
-    void explode_team(Vec3 position, int team);
-    void explode_team_random(Vec3 position, int team);
 
     AnimationComponent()
     : Component(COMPONENT_VOXEL_ANIMATION, COMPONENT_INTERFACE_ANIMATION),

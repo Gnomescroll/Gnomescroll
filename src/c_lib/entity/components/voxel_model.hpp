@@ -63,17 +63,6 @@ class VoxelModelComponent: public Component
             vox->set_draw(this->init_draw);
         }
 
-        void ready(Vec3 position, float theta, float phi, int team)
-        {
-            GS_ASSERT(this->vox == NULL);
-            if (this->vox != NULL) return;
-            this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type, team);
-            this->set_properties();
-            vox->update(position.x, position.y, position.z, theta, phi);
-            vox->set_hitscan(this->init_hitscan);
-            vox->set_draw(this->init_draw);
-        }
-
         void freeze()
         {
             if (this->vox == NULL) return;

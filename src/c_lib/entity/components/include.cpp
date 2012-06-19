@@ -17,9 +17,6 @@
 #include <entity/components/health/hit_points.cpp>
 #include <entity/components/health/ttl.cpp>
 
-#include <entity/components/team.cpp>
-#include <entity/components/team/indexed_team.cpp>
-
 #include <entity/components/owner.cpp>
 
 #include <entity/components/spawner.cpp>

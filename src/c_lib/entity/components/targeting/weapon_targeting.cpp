@@ -11,17 +11,12 @@ namespace Components
 /* Targeting */
 
 void WeaponTargetingComponent::lock_target(Vec3 camera_position)
-{
-    this->lock_target(camera_position, NO_TEAM);
-}
-
-void WeaponTargetingComponent::lock_target(Vec3 camera_position, int team)
 {   // lock on agent
     Agent_state* target;
     target = Hitscan::lock_agent_target(
-        camera_position, &this->target_direction, team,
+        camera_position, &this->target_direction,
         this->sight_range, this->target_acquisition_probability,
-        this->attacks_enemies, this->attack_at_random
+        this->attack_at_random
     );
     if (target == NULL)
     {
@@ -37,11 +32,6 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position, int team)
 
 bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
 {    
-    return this->fire_on_target(camera_position, NO_TEAM);
-}
-
-bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position, int team)
-{
     if (this->target_type == OBJECT_NONE) return false;
     if (this->target_type != OBJECT_AGENT) return false;    // todo -- target all types
     
@@ -77,8 +67,8 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position, int team)
 bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
 {
     Agent_state* target = STATE::agent_list->get(this->target_id);
-    // target exists / is attackable
-    if (target == NULL || target->status.team == NO_TEAM)
+    // target exists
+    if (target == NULL)
         return false;
     // target in range
     Vec3 target_position = target->vox->get_center();

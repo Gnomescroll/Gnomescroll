@@ -303,24 +303,6 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, floa
     voxel_explode(position, count, size, force, color);
 }
 
-void voxel_explode_team(Vec3 position, int count, float size, float force, int team)
-{
-    if (!Options::animations) return;
-    
-    struct Color color;
-    ClientState::ctf->get_team_color(team, &color.r, &color.g, &color.b);
-
-    voxel_explode(position, count, size, force, color);
-}
-
-void voxel_explode_team(Vec3 position, int count_min, int count_max, float size, float force, int team)
-{
-    if (!Options::animations) return;
-
-    int count = randrange(count_min, count_max);
-    voxel_explode_team(position, count, size, force, team);
-}
-
 void agent_bleed(float x, float y, float z)
 {
     if (!Options::animations) return;

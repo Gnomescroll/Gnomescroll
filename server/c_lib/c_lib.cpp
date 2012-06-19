@@ -98,14 +98,6 @@ dont_include_this_file_in_client
 #include <item/particle/_include.hpp>
 #include <item/container/_include.hpp>
 
-/* Game modes */
-#include <game/flag.cpp>
-#include <game/base.cpp>
-#include <game/game.cpp>
-#include <game/ctf.cpp>
-#include <game/teams.cpp> 
-#include <game/packets.cpp>
-
 /* Agents */
 #include <agent/agent_include.h>
 

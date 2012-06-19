@@ -4,7 +4,6 @@
 #include <entity/object/helpers.hpp>
 #include <entity/constants.hpp>
 #include <entity/components/physics/position_changed.hpp>
-#include <entity/components/team.hpp>
 #include <entity/components/owner.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <entity/objects/fabs/constants.hpp>
@@ -21,17 +20,16 @@ void load_turret_data()
     ObjectType type = OBJECT_TURRET;
 
     #if DC_SERVER
-    int n_components = 8;
+    int n_components = 7;
     #endif
     #if DC_CLIENT
-    int n_components = 8;
+    int n_components = 7;
     #endif
 
     object_data->set_components(type, n_components);
 
     object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
     object_data->attach_component(type, COMPONENT_OWNER);
-    object_data->attach_component(type, COMPONENT_TEAM);
     object_data->attach_component(type, COMPONENT_DIMENSION);
     object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     object_data->attach_component(type, COMPONENT_HIT_POINTS);
@@ -50,7 +48,6 @@ static void set_turret_properties(Object* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
     add_component_to_object(object, COMPONENT_OWNER);
-    add_component_to_object(object, COMPONENT_TEAM);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
@@ -75,7 +72,6 @@ static void set_turret_properties(Object* object)
     target->uses_bias = TURRET_USES_BIAS;
     target->accuracy_bias = TURRET_ACCURACY_BIAS;
     target->sight_range = TURRET_SIGHT_RANGE;
-    target->attacks_enemies = TURRET_ATTACK_ONLY_ENEMIES;
     target->attack_at_random = TURRET_ATTACK_AT_RANDOM;
     // we dont have ID yet, need to set that in the ready() call
     target->attacker_properties.type = OBJECT_TURRET;
@@ -106,7 +102,7 @@ static void set_turret_properties(Object* object)
     object->tick = &tick_turret;
     object->update = &update_turret;
 
-    object->create = create_packet_owner_team;
+    object->create = create_packet_owner;
     object->state = state_packet;
 }
 
@@ -127,17 +123,15 @@ void ready_turret(Object* object)
     target->attacker_properties.id = object->id;
 
     using Components::VoxelModelComponent;
-    using Components::TeamComponent;
     using Components::PhysicsComponent;
     
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
     
-    vox->ready(position, angles.x, angles.y, team->get_team());
+    vox->ready(position, angles.x, angles.y);
     vox->freeze();
 
     #if DC_SERVER
@@ -164,11 +158,9 @@ void die_turret(Object* object)
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     if (vox->vox != NULL)
     {
-        using Components::TeamComponent;
-        TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
         using Components::AnimationComponent;
         AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
-        anim->explode_team_random(vox->get_center(), team->get_team());
+        anim->explode_random(vox->get_center());
     }
     
     //dieChatMessage(object);
@@ -179,7 +171,6 @@ void tick_turret(Object* object)
 {
     #if DC_SERVER
     using Components::WeaponTargetingComponent;
-    using Components::TeamComponent;
     using Components::DimensionComponent;
     typedef Components::PositionChangedPhysicsComponent PCP;
 
@@ -196,9 +187,8 @@ void tick_turret(Object* object)
 
     // shoot at enemy
     WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
-    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
     targeting->lock_target(position);
-    if (targeting->can_fire()) targeting->fire_on_target(position, team->get_team());
+    if (targeting->can_fire()) targeting->fire_on_target(position);
 
     if (changed) object->broadcastState();
     #endif

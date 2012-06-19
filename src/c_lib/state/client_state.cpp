@@ -5,18 +5,11 @@ dont_include_this_file_in_server
 #endif
 
 #include <agent/agent_list.hpp>
-#include <game/ctf.hpp>
 #include <voxel/voxel_render.hpp>
-
-//#include <animations/hitscan.hpp>
-//#include <animations/hitscan_laser.hpp>
 #include <hud/text.hpp>
-
 #include <agent/agent.hpp>
 #include <agent/net_agent.hpp>
-
 #include <agent/client/player_agent.hpp>
-
 #include <particle/_interface.hpp>
 #include <item/particle/_interface.hpp>
 
@@ -47,8 +40,6 @@ namespace ClientState {
 
     int agent_control_state[16];
 
-    CTF* ctf = NULL;
-        
     void init_lists()
     {
         voxel_render_list = new Voxel_render_list_manager;
@@ -69,23 +60,6 @@ namespace ClientState {
         if (voxel_hitscan_list != NULL) delete voxel_hitscan_list;
     }
 
-    static void init_ctf()
-    {
-        static int inited = 0;
-        if (inited++)
-        {
-            printf("WARNING: ClientState::init_ctf -- attempt to call more than once\n");
-            return;
-        }
-        ctf = new CTF;
-        ctf->init();
-    }
-    
-    static void teardown_ctf()
-    {
-        if (ctf != NULL) delete ctf;
-    }
-
     void init()
     {
         static int inited = 0;
@@ -100,38 +74,21 @@ namespace ClientState {
 
     void teardown()
     {
-        teardown_ctf();
         teardown_lists();
     }
 
     void update()
     {
-        ctf->update();
-
-        if (playerAgent_state.you != NULL)
-            HudMap::update_team(playerAgent_state.you->status.team);
-        static int team_color_update = 30 * 5;  // start at 4seconds in, so initial update happens quickly
-        const int team_color_update_interval = 30 * 6;  // once every 6 seconds
-        if (team_color_update++ >= team_color_update_interval)
-        {
-            agent_list->update_team_colors();
-            Compass::update_team_colors();
-            team_color_update %= team_color_update_interval;
-        }
-
         // update hud projected names
         ClientState::playerAgent_state.display_agent_names();   
         // check if we've failed to receive any identify packets (lost in initialization)
         // Shouldn't be needed? initialization packets are reliable
         ClientState::agent_list->check_missing_names();  // will ratelimit itself
-        ClientState::agent_list->check_if_at_base();  // will ratelimit itself
-
     }
 
     void set_PlayerAgent_id(int id)
     {
         playerAgent_state.set_PlayerAgent_id(id);
-        ctf->on_ready();
     }
 
     void tick()

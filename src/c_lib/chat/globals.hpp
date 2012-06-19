@@ -4,10 +4,8 @@ const int CHAT_MESSAGE_SIZE_MAX = 90;
 const int CHAT_MESSAGE_RENDER_TIMEOUT = 1000*10; // 10 seconds
 
 // first 16 are reserved
-// next 16 are for teams
-// next [32,PLAYERS_MAX] are for pm channels 
-const int CHANNEL_ID_TEAM_OFFSET = 16;
-const int CHANNEL_ID_AGENT_OFFSET = 32;
+// next [16,PLAYERS_MAX] are for pm channels 
+const int CHANNEL_ID_AGENT_OFFSET = 16;
 
 const int CHAT_SENDER_SYSTEM = 255;
 const int CHAT_CHANNEL_SYSTEM = 0;

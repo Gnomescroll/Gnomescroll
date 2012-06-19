@@ -38,9 +38,8 @@ struct AttackerProperties
     t_map::TerrainModificationAction terrain_modification_action;
 };
 Agent_state* lock_agent_target(
-    Vec3 firing_position, Vec3 firing_direction, int team,
-    const float range, const float acquisition_probability,
-    const bool enemies=false, const bool random=false
+    Vec3 firing_position, Vec3 firing_direction,
+    const float range, const float acquisition_probability, const bool random=false
 );
 
 Agent_state* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,const float range);

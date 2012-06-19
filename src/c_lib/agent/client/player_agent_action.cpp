@@ -27,7 +27,6 @@ void PlayerAgent_action::hitscan_laser()
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
 
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
@@ -103,14 +102,7 @@ void PlayerAgent_action::hitscan_laser()
                 );
                 agent = ClientState::agent_list->get(target.entity_id);
                 if (agent==NULL) break;
-                if (agent->status.team == this->p->you->status.team) break;
-                //voxel_blast_radius = 3;
             }
-            //else if (target.entity_type == OBJECT_MONSTER_BOMB)
-            //{
-                //voxel_blast_radius = 2;
-            //}
-            //destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:            
@@ -192,7 +184,6 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 {    
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
 
     GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
     if (weapon_type == NULL_ITEM_TYPE) return;
@@ -249,11 +240,6 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             {
                 agent = ClientState::agent_list->get(target.entity_id);
                 if (agent==NULL)
-                {
-                    target_type = Hitscan::HITSCAN_TARGET_NONE;
-                    break;
-                }
-                if (agent->status.team == this->p->you->status.team)
                 {
                     target_type = Hitscan::HITSCAN_TARGET_NONE;
                     break;
@@ -333,7 +319,6 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     GS_ASSERT(placer_id != NULL_ITEM);
     if (p->you == NULL) return false;
     if (p->you->status.dead) return false;
-    if (p->you->status.team == 0) return false;
 
     // get nearest empty block
     const float max_dist = 4.0f;
@@ -435,7 +420,6 @@ void PlayerAgent_action::throw_grenade()
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
 
     // message to server
     Vec3 pos = p->you->get_camera_position();
@@ -473,7 +457,6 @@ void PlayerAgent_action::place_spawner()
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
 
     Vec3 v = agent_camera->forward_vector();
 
@@ -498,7 +481,6 @@ void PlayerAgent_action::place_turret()
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
 
     Vec3 v = agent_camera->forward_vector();
 
@@ -523,7 +505,6 @@ Vec3 PlayerAgent_action::get_aiming_point()
 {
     if (p->you == NULL) return vec3_init(0,0,0);
     if (p->you->status.dead) return vec3_init(0,0,0);
-    if (p->you->status.team == 0) return vec3_init(0,0,0);
 
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();

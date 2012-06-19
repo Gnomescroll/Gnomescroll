@@ -13,13 +13,8 @@ class VoxColors {
         int **index;
         int n;
 
-        bool team;
-        unsigned char team_r,team_g,team_b;
-        
         void init(int dx, int dy, int dz);
         void set(int i, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-        void set_team_base(unsigned char r, unsigned char g, unsigned char b);
-        void set_team(bool team);
         VoxColors();
         ~VoxColors();
 };
@@ -104,11 +99,7 @@ class VoxDat {
         //anchor x,y,z then rotation x,y,z
         void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
 
-        //#if DC_CLIENT
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-        #if DC_CLIENT
-        void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
-        #endif
 
         void save(char *fn);
 

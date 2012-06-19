@@ -6,8 +6,6 @@ dont_include_this_file_in_client
 
 #include <agent/agent.hpp>
 
-#include <game/ctf.hpp>
-
 #include <chat/interface.hpp>
 
 #include <entity/objects.hpp>
@@ -17,11 +15,8 @@ namespace ServerState
 {
     Agent_list* agent_list = NULL;
 
-
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     //Grenade_shrapnel_list* grenade_shrapnel_list;
-
-    CTF* ctf = NULL;
 
 /*
     Map update function called from here
@@ -43,25 +38,6 @@ namespace ServerState
         delete voxel_hitscan_list; // must go last
     }
 
-    //move this into interface
-    static void init_ctf()
-    {
-        static int inited = 0;
-        if (inited++)
-        {
-            printf("WARNING: ServerState::init_ctf -- attempt to call more than once\n");
-            return;
-        }
-        ctf = new CTF;
-        ctf->init();
-    }
-    
-    //move this into interface
-    static void teardown_ctf()
-    {
-        if (ctf != NULL) delete ctf;
-    }
-
     void init()
     {
         static int inited = 0;
@@ -71,12 +47,10 @@ namespace ServerState
             return;
         }
         init_lists();
-        init_ctf();
     }
 
     void teardown()
     {
-        teardown_ctf();
         teardown_lists();
     }
 
@@ -87,9 +61,6 @@ namespace ServerState
         bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     )
     {
-        Agent_state* agent = agent_list->get(owner);
-        // dont check null here, its not required.
-        // agent could have disconnected, we'll let his grenades stay effective
         int i;                
 
         // agents
@@ -107,15 +78,7 @@ namespace ServerState
             a->status.apply_damage(damage, owner, inflictor_type);
         }
 
-        if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
-
         Vec3 position = vec3_init(x,y,z);
-
-        const int n_team_types = 2;
-        const ObjectType team_types[n_team_types] = {
-            OBJECT_TURRET, OBJECT_AGENT_SPAWNER,
-        };
-        Objects::damage_team_objects_within_sphere(team_types, n_team_types, position, radius, damage, agent->status.team, agent->id);
 
         const int n_types = 3;
         const ObjectType types[n_types] = {
@@ -128,8 +91,8 @@ namespace ServerState
     void send_initial_game_state_to_client(int client_id)
     {
         agent_list->send_to_client(client_id);
-        ctf->send_to_client(client_id);
-
+        // TODO -- make these one function call
+        Objects::send_to_client(OBJECT_BASE, client_id);
         Objects::send_to_client(OBJECT_TURRET, client_id);
         Objects::send_to_client(OBJECT_AGENT_SPAWNER, client_id);
         Objects::send_to_client(OBJECT_MONSTER_BOMB, client_id);
@@ -215,25 +178,11 @@ namespace ServerState
         }
     }
 
-    void start_game()
-    {
-        ctf->start();
-    }
-
     void agent_disconnect(int agent_id)
     {
         remove_player_from_chat(agent_id);
-
-        ctf->remove_agent_from_team(agent_id);
         send_disconnect_notice(agent_id);
         agent_list->destroy(agent_id);
-        revoke_ownership(agent_id);
-    }
-
-    void revoke_ownership(int agent_id)
-    {
-        printf("revoking ownership\n");
         Components::owner_component_list->revoke(agent_id);
     }
-
-}
+}   // ServerState

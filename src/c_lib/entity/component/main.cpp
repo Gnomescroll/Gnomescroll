@@ -30,9 +30,6 @@ PickupComponentList* pickup_component_list = NULL;
 TTLHealthComponentList* ttl_health_component_list = NULL;
 HitPointsHealthComponentList* hit_points_health_component_list = NULL;
 
-TeamComponentList* team_component_list = NULL;
-IndexedTeamComponentList* indexed_team_component_list = NULL;
-
 OwnerComponentList* owner_component_list = NULL;
 
 VoxelModelComponentList* voxel_model_component_list = NULL;
@@ -89,11 +86,6 @@ Component* get_switch(ComponentType type)
             return ttl_health_component_list->subscribe();
         case COMPONENT_HIT_POINTS:
             return hit_points_health_component_list->subscribe();
-
-        case COMPONENT_TEAM:
-            return team_component_list->subscribe();
-        case COMPONENT_INDEXED_TEAM:
-            return indexed_team_component_list->subscribe();
 
         case COMPONENT_OWNER:
             return owner_component_list->subscribe();
@@ -183,13 +175,6 @@ void release_switch(Component* component)
             hit_points_health_component_list->unsubscribe((HitPointsHealthComponent*)component);
             break;
             
-        case COMPONENT_TEAM:
-            team_component_list->unsubscribe((TeamComponent*)component);
-            break;
-        case COMPONENT_INDEXED_TEAM:
-            indexed_team_component_list->unsubscribe((IndexedTeamComponent*)component);
-            break;
-
         case COMPONENT_OWNER:
             owner_component_list->unsubscribe((OwnerComponent*)component);
             break;
@@ -270,9 +255,6 @@ void init_components()
     ttl_health_component_list = new TTLHealthComponentList;
     hit_points_health_component_list = new HitPointsHealthComponentList;
 
-    team_component_list = new TeamComponentList;
-    indexed_team_component_list = new IndexedTeamComponentList;
-
     owner_component_list = new OwnerComponentList;
 
     voxel_model_component_list = new VoxelModelComponentList;
@@ -317,9 +299,6 @@ void teardown_components()
 
     if (ttl_health_component_list != NULL) delete ttl_health_component_list;
     if (hit_points_health_component_list != NULL) delete hit_points_health_component_list;
-
-    if (team_component_list != NULL) delete team_component_list;
-    if (indexed_team_component_list != NULL) delete indexed_team_component_list;
 
     if (owner_component_list != NULL) delete owner_component_list;
 

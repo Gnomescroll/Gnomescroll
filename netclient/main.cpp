@@ -49,7 +49,6 @@ void init()
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib();
     ClientState::set_desired_name(Options::name);
-    ClientState::ctf->start();
     _START_CLOCK(); // must start before networking
 
     // parse ip address and connect

@@ -65,12 +65,7 @@ inline void Agent_state_message::handle()
 inline void Agent_teleport_message::handle()
 {
     Agent_state* a = STATE::agent_list->get(id);
-    if(a == NULL)
-    {
-        //printf("Agent_teleport_message -- Agent %d does not exist\n", id);
-        return;
-    }
-    if (a->status.team == 0) return;
+    if (a == NULL) return;
     // reset camera angle
     if (a->is_you() && agent_camera != NULL)
         agent_camera->set_angles(theta, phi);
@@ -114,23 +109,6 @@ inline void agent_shot_object_StoC::handle()
         return;
     }
     a->event.fired_weapon_at_object(target_id, target_type, target_part);
-    // get obj from metadata, set voxel
-    //int voxel[3];
-    //voxel[0] = vx;
-    //voxel[1] = vy;
-    //voxel[2] = vz;
-    //int voxel_blast_radius = 1;
-    //if (target_type == OBJECT_AGENT)
-    //{
-        //Agent_state* target = ClientState::agent_list->get(target_id);
-        //if (target->status.team == a->status.team) return;
-        //voxel_blast_radius = 3;
-    //}
-    //else if (target_type == OBJECT_MONSTER_BOMB)
-    //{
-        //voxel_blast_radius = 2;
-    //}
-    //destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
 }
 
 inline void agent_shot_block_StoC::handle()
@@ -167,23 +145,6 @@ inline void agent_melee_object_StoC::handle()
         return;
     }
     a->event.melee_attack_object(target_id, target_type, target_part);
-    // get obj from metadata, set voxel
-    //int voxel[3];
-    //voxel[0] = vx;
-    //voxel[1] = vy;
-    //voxel[2] = vz;
-    //int voxel_blast_radius = 1;
-    //if (target_type == OBJECT_AGENT)
-    //{
-        //Agent_state* target = ClientState::agent_list->get(target_id);
-        //if (target->status.team == a->status.team) return;
-        //voxel_blast_radius = 3;
-    //}
-    //else if (target_type == OBJECT_MONSTER_BOMB)
-    //{
-        //voxel_blast_radius = 2;
-    //}
-    //destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
 }
 
 inline void agent_melee_nothing_StoC::handle()
@@ -269,8 +230,6 @@ inline void agent_create_StoC::handle()
         return;
     }
     a->client_id = client_id;
-    a->event.joined_team(team);
-    //printf("C Agent created. id: %d\n", a->id);
 }
 
 inline void agent_name_StoC::handle()
@@ -625,8 +584,6 @@ inline void hit_block_CtoS::handle()
     x = translate_point(x);
     y = translate_point(y);
     
-    if (a->status.team == 0) return;
-    //if (!a->weapons.pick.fire()) return;
     agent_hit_block_StoC msg;
     msg.id = a->id;
     msg.x = x;
@@ -653,26 +610,20 @@ inline void hitscan_object_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
-    //if (!a->weapons.laser.fire()) return;
 
     Agent_state* agent = NULL;
     const int obj_dmg = randrange(10,25);
-    //int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;
     Object* obj = NULL;
 
     using Components::OwnerComponent;
-    using Components::TeamComponent;
     using Components::HealthComponent;
     using Components::MotionTargetingComponent;
     OwnerComponent* owner;
-    TeamComponent* team;
     HealthComponent* health;
     MotionTargetingComponent* motion_targeting;
     int owner_id = NO_AGENT;
-    int team_id = NO_TEAM;
 
     AgentState s = a->get_state();
     switch (type)
@@ -698,12 +649,8 @@ inline void hitscan_object_CtoS::handle()
             owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
             if (owner != NULL) owner_id = owner->get_owner();
 
-            team = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
-            if (team != NULL) team_id = team->get_team();
-
-            if ((team_id == a->status.team && owner_id != NO_AGENT)
-              && owner_id != a->id)   // TODO -- kill rule per object?
-                return; // teammates cant kill turrets/spawners, unless object is unowned
+            if (owner_id != a->id)   // TODO -- kill rule per object?
+                return;
                 
             // apply damage
             health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
@@ -740,8 +687,6 @@ inline void hitscan_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
-    if (a->status.team == 0) return;
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
@@ -798,8 +743,6 @@ inline void hitscan_none_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
-    //if (!a->weapons.laser.fire()) return;
     agent_shot_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
@@ -813,23 +756,17 @@ inline void melee_object_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
-
     Agent_state* agent = NULL;
     const int obj_dmg = Item::get_item_object_damage(weapon_type);
-    //int voxel[3] = { vx,vy,vz };
 
     using Objects::Object;
     Object* obj = NULL;
 
     using Components::OwnerComponent;
-    using Components::TeamComponent;
     using Components::HealthComponent;
     OwnerComponent* owner;
-    TeamComponent* team;
     HealthComponent* health;
     int owner_id = NO_AGENT;
-    int team_id = NO_TEAM;
     bool died = true;   // assume hitting object kills it, unless object says otherwise
     
     switch (type)
@@ -853,12 +790,8 @@ inline void melee_object_CtoS::handle()
             owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
             if (owner != NULL) owner_id  = owner->get_owner();
 
-            team = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
-            if (team != NULL) team_id =  team->get_team();
-
-            if ((team_id == a->status.team && owner_id != NO_AGENT)
-              && owner_id != a->id)   // TODO -- kill rule per object?
-                return; // teammates cant kill turrets/spawners, unless object is unowned
+            if (owner_id != a->id)   // TODO -- kill rule per object?
+                return;
                 
             // apply damage
             health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
@@ -898,8 +831,6 @@ inline void melee_none_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
-    //if (!a->weapons.pick.fire()) return;
     agent_melee_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
@@ -913,8 +844,6 @@ inline void ThrowGrenade_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
-    //if (!a->weapons.grenades.fire()) return;
     agent_threw_grenade_StoC msg;
     msg.id = a->id;
     msg.broadcast();
@@ -943,8 +872,6 @@ inline void agent_set_block_CtoS::handle()
         return;
     }
     // fire block applier
-    if (a->status.team == 0) return;
-
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
@@ -1039,7 +966,7 @@ inline void admin_set_block_CtoS::handle()
 
 #define ITEM_PLACEMENT_Z_DIFF_LIMIT 3
 
-static Objects::Object* place_object_handler(ObjectType type, int x, int y, int z, int owner_id, int team_id)
+static Objects::Object* place_object_handler(ObjectType type, int x, int y, int z, int owner_id)
 {
     if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, z)) return NULL;
     if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, z)) return NULL;
@@ -1058,10 +985,6 @@ static Objects::Object* place_object_handler(ObjectType type, int x, int y, int 
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics != NULL) physics->set_position(vec3_init(x+0.5f,y+0.5f,new_z));
 
-    using Components::TeamComponent;
-    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-    if (team != NULL) team->set_team(team_id);
-
     using Components::OwnerComponent;
     OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
     if (owner != NULL) owner->set_owner(owner_id);
@@ -1078,12 +1001,10 @@ inline void place_spawner_CtoS::handle()
         printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
-    if (!Components::agent_spawner_component_list->team_spawner_available(a->status.team)) return;
-
-    Objects::Object* obj = place_object_handler(type, x,y,z, a->id, a->status.team);
+    Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
-    Components::agent_spawner_component_list->assign_team_index(obj);
+    // TODO -- handle spawners without teams
+    //Components::agent_spawner_component_list->assign_team_index(obj);
     Objects::ready(obj);
 }
 
@@ -1096,9 +1017,7 @@ inline void place_turret_CtoS::handle()
         printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
-    
-    Objects::Object* obj = place_object_handler(type, x,y,z, a->id, a->status.team);
+    Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     Objects::ready(obj);
 }
@@ -1113,7 +1032,6 @@ inline void choose_spawn_location_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    if (a->status.team == 0) return;
     a->status.set_spawner(id);
 }
 

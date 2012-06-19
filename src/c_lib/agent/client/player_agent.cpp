@@ -292,33 +292,20 @@ void PlayerAgent_state::display_agent_names()
 {
     if (this->you == NULL) return;
 
-    // hide all names
     for (int i=0; i < ClientState::agent_list->n_max; i++)
     {
         Agent_state* a = ClientState::agent_list->a[i];
         if (a==NULL) continue;
-        a->event.hide_name();
-    }
-
-    // choose names to display
-    for (int i=0; i < ClientState::agent_list->n_max; i++)
-    {
-        Agent_state* a = ClientState::agent_list->a[i];
-        if (a==NULL) continue;
-        if (a->id == this->agent_id) continue;  // our name
-        if (a->status.team != you->status.team) continue;  // enemy names
-        // display only teammate names
-        a->event.display_name();
+        if (a->id == this->agent_id) a->event.hide_name();
+        else a->event.display_name();
     }
 }
 
-void PlayerAgent_state::update_sound() {
+void PlayerAgent_state::update_sound()
+{
     AgentState s = camera_state;
-
-    float f[3];
-    agent_camera->forward_vector(f);
-
-    Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, f[0], f[1], f[2], 0,0,1);
+    Vec3 p = agent_camera->forward_vector();
+    Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, p.x, p.y, p.z, 0.0f,0.0f,1.0f);
 }
 
 PlayerAgent_state::PlayerAgent_state()

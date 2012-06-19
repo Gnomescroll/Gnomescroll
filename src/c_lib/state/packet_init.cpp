@@ -1,9 +1,5 @@
 #include "./packet_init.hpp"
 
-//#include <net_lib/common/message_handler.h>
-
-#include <game/packets.hpp>
-
 #include <agent/net_agent.hpp>
 #if DC_CLIENT
 #include <agent/client/player_agent.hpp>
@@ -102,21 +98,6 @@ void RegisterMessages()
     spawn_location_StoC::register_client_packet();
     place_turret_CtoS::register_server_packet();
 
-    // game/teams stuff
-    TeamColor_StoC::register_client_packet();
-    TeamScore_StoC::register_client_packet();
-    TeamName_StoC::register_client_packet();
-    AgentJoinTeam_StoC::register_client_packet();
-    AgentJoinTeam_CtoS::register_server_packet();
-    AgentAutoAssignTeam_CtoS::register_server_packet();
-
-    FlagState_StoC::register_client_packet();
-    //BaseState_StoC::register_client_packet();
-
-    AgentPickupFlag_StoC::register_client_packet();
-    AgentDropFlag_StoC::register_client_packet();
-    AgentScoreFlag_StoC::register_client_packet();
-
     PlayerAgent_id_StoC::register_client_packet();
 
     ThrowGrenade_CtoS::register_server_packet();
@@ -149,8 +130,8 @@ void RegisterMessages()
 
     // object crud
     object_create_StoC::register_client_packet();
-    object_create_owner_team_StoC::register_client_packet();
-    object_create_owner_team_index_StoC::register_client_packet();
+
+    object_create_owner_StoC::register_client_packet();
 
     object_create_momentum_StoC::register_client_packet();
     object_create_momentum_angles_StoC::register_client_packet();
