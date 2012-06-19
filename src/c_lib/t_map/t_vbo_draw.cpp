@@ -455,7 +455,52 @@ void Vbo_map::draw_map()
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
-        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+
+        int xi = draw_vbo_array[i].i;
+        int xj = draw_vbo_array[i].j;
+        int index = 32*xj +xi;
+
+        /*
+            int vertex_num[6];
+            int vertex_offset[6];
+            int vertex_num_array[6][16];   //for each column, every 16 z
+        */
+
+        /*
+            int vs = vbo->vertex_num_array[side][min];  //start
+            int ve = vbo->vertex_num_array[side][max]; //end
+
+            int vn = ve - vs; //number of vertices
+
+            int voff =  vbo->vertex_offset[side] + vs;
+            int vnum =  vn;
+
+            vbo_vertex_frustrum[index][2*side+0] = voff;
+            vbo_vertex_frustrum[index][2*side+1] = vnum;
+        */
+/*
+        printf("vertices= %i \n", vbo->_v_num[0]);
+        for(int side=0; side<6; side++)
+        {
+            printf("side %i vertices: %i offset: %i \n", side, vbo->vertex_num[side], vbo->vertex_offset[side]);
+            
+            printf("drawing: vertices: %i offset %i \n", vbo_vertex_frustrum[index][2*side+0], vbo_vertex_frustrum[index][2*side+1]);
+            //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+            //glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
+            glDrawArrays(GL_QUADS, 
+                vbo_vertex_frustrum[index][2*side+0], 
+                vbo_vertex_frustrum[index][2*side+1]
+                );
+
+        }
+*/
+
+        //printf("vertices= %i \n", vbo->_v_num[0]);
+        for(int side=0; side<6; side++)
+        {
+            //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+            glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
+        }
 
         //glPopMatrix();
         //glPushMatrix();
