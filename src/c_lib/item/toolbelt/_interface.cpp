@@ -122,6 +122,7 @@ void remove_agent(int agent_id)
 
     #if DC_SERVER
     agent_selected_item[agent_id] = NULL_ITEM;
+    agent_selected_slot[agent_id] = 0;
     #endif
     agent_selected_type[agent_id] = NULL_ITEM_TYPE;
     #if DC_CLIENT

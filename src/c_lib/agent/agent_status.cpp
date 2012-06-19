@@ -27,7 +27,7 @@ Agent_status::Agent_status(Agent_state* a)
 a(a),
 voxel_model_restore_throttle(0),
 health(AGENT_HEALTH),
-dead(true),
+dead(false),
 respawn_countdown(RESPAWN_TICKS),
 spawner(Components::BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
 kills(0),
@@ -39,7 +39,6 @@ owned_spawners(0),
 owned_turrets(0),
 identified(false),
 vox_crouched(false),
-base_restore_rate_limiter(0),
 lifetime(0),
 inventory(NULL),
 toolbelt(NULL)
@@ -367,19 +366,12 @@ void Agent_status::send_scores()
     as.broadcast();
 }
 
-void Agent_status::respawn()
+#if DC_SERVER
+void Agent_status::set_fresh_state()
 {
-    if (!dead) return;  // ignore if not waiting to respawn
-    
-    respawn_countdown--;                  // decrement
-    if (respawn_countdown > 0) return;  // abort if not ready
-    
     a->spawn_state();
     this->lifetime = 0;
-    // restore health
     this->restore_health();
-    // restore ammo
-    //this->a->weapons.restore_ammo();
     
     // revive
     dead = false;
@@ -388,12 +380,19 @@ void Agent_status::respawn()
     dead_msg.dead = dead;
     dead_msg.broadcast();
 
-    respawn_countdown = RESPAWN_TICKS; // reset timer
-
-    #if DC_SERVER
     ItemContainer::agent_born(this->a->id);
-    #endif
 }
+
+void Agent_status::respawn()
+{
+    if (!dead) return;  // ignore if not waiting to respawn
+    
+    respawn_countdown--;                  // decrement
+    if (respawn_countdown > 0) return;  // abort if not ready
+    this->set_fresh_state();
+    respawn_countdown = RESPAWN_TICKS; // reset timer
+}
+#endif
 
 float Agent_status::get_spawn_angle()
 {
@@ -409,8 +408,6 @@ void Agent_status::restore_health()
 
 void Agent_status::at_base()
 {
-    this->base_restore_rate_limiter++;
-    if (this->base_restore_rate_limiter % AGENT_BASE_PROXIMITY_EFFECT_RATE != 0) return;
     this->restore_health();
 }
 

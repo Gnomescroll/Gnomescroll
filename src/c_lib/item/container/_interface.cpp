@@ -577,7 +577,6 @@ static void throw_items_from_container(int client_id, int agent_id, int containe
 
 void agent_born(int agent_id)
 {
-    printf("Container -- Agent born\n");
     // refill toolbelt if needed
 
     // toolbelt should have at least 1 maxed out laser rifle
@@ -596,6 +595,8 @@ void agent_born(int agent_id)
     GS_ASSERT(agent_toolbelt_list != NULL);
     if (agent_toolbelt_list == NULL) return;
 
+    GS_ASSERT(agent_toolbelt_list[agent_id] != NULL_CONTAINER);
+    if (agent_toolbelt_list[agent_id] == NULL_CONTAINER) return;
     ItemContainerInterface* toolbelt = get_container(agent_toolbelt_list[agent_id]);
     GS_ASSERT(toolbelt != NULL);
     if (toolbelt == NULL) return;

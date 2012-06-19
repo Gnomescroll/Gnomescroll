@@ -108,6 +108,8 @@ void NetPeerManager::ready()
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
     ServerState::send_initial_game_state_to_client(this->client_id);
 
+    a->status.set_fresh_state();
+
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
 }
 

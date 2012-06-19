@@ -32,6 +32,7 @@ vx(0), vy(0), vz(0),
 jump_pow(0)
 {}
 
+// TODO -- deprecate this method
 void AgentState::forward_vector(float f[3])
 {
 
@@ -517,6 +518,7 @@ void Agent_state::get_spawn_point(Vec3* spawn)
         *spawn = s->get_spawn_point(fh, this->box.box_r);
 }
 
+#if DC_SERVER
 void Agent_state::spawn_state()
 {   // update position
     Vec3 spawn;
@@ -524,6 +526,7 @@ void Agent_state::spawn_state()
     float theta = this->status.get_spawn_angle();
     teleport(spawn.x, spawn.y, spawn.z, 0, 0, 0, theta, 0.0f);
 }
+#endif
 
 void Agent_state::init_vox()
 {
@@ -537,6 +540,7 @@ Agent_state::Agent_state(int id)
 id (id), type(OBJECT_AGENT), status(this)
 #if DC_CLIENT
 , event(this)
+, initial_teleport(false)
 #endif
 #if DC_SERVER
 , camera_ready(false)
@@ -565,14 +569,16 @@ id (id), type(OBJECT_AGENT), status(this)
     set_angles(0.5f, 0.0f);
     set_position(256,256,128);
 
-    #if DC_SERVER
+    this->init_vox();
+
+    #if DC_SERVER    
     agent_create_StoC msg;
     msg.id = id;
     msg.client_id = this->client_id;
     msg.broadcast();
-    #endif
 
-    this->init_vox();
+    this->spawn_state();
+    #endif
 }
 
 Agent_state::~Agent_state()

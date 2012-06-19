@@ -22,6 +22,8 @@ namespace ServerState
     void teardown();
     void teardown_lists();
 
+    void check_agents_at_base();
+
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
         int damage, int owner,
@@ -37,4 +39,5 @@ namespace ServerState
     char* agent_name(int id);
 
     void spawn_monsters(ObjectType type, int n);
+    
 }   // ServerState

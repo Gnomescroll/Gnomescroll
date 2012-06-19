@@ -38,8 +38,6 @@ class Agent_status {
 
         bool vox_crouched;
 
-        int base_restore_rate_limiter;
-
         int lifetime;
 
         class Inventory* inventory;
@@ -62,12 +60,16 @@ class Agent_status {
         int die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void kill_slime();
+        #if DC_SERVER
         void respawn();
+        void set_fresh_state();
+        #endif
         void restore_health();
         void at_base();
         
         void send_scores(int client_id);
         void send_scores();
+
 
         float get_spawn_angle();
 

@@ -68,7 +68,10 @@ inline void Agent_teleport_message::handle()
     if (a == NULL) return;
     // reset camera angle
     if (a->is_you() && agent_camera != NULL)
+    {
+        a->initial_teleport = true;
         agent_camera->set_angles(theta, phi);
+    }
     a->set_state(x,y,z, vx,vy,vz);
     a->set_angles(theta, phi);
 }
@@ -617,13 +620,10 @@ inline void hitscan_object_CtoS::handle()
     using Objects::Object;
     Object* obj = NULL;
 
-    using Components::OwnerComponent;
     using Components::HealthComponent;
     using Components::MotionTargetingComponent;
-    OwnerComponent* owner;
     HealthComponent* health;
     MotionTargetingComponent* motion_targeting;
-    int owner_id = NO_AGENT;
 
     AgentState s = a->get_state();
     switch (type)
@@ -646,12 +646,6 @@ inline void hitscan_object_CtoS::handle()
             obj = Objects::get((ObjectType)type, id);
             if (obj == NULL) return;
 
-            owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
-            if (owner != NULL) owner_id = owner->get_owner();
-
-            if (owner_id != a->id)   // TODO -- kill rule per object?
-                return;
-                
             // apply damage
             health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
             if (health != NULL) health->take_damage(obj_dmg);
@@ -762,11 +756,8 @@ inline void melee_object_CtoS::handle()
     using Objects::Object;
     Object* obj = NULL;
 
-    using Components::OwnerComponent;
     using Components::HealthComponent;
-    OwnerComponent* owner;
     HealthComponent* health;
-    int owner_id = NO_AGENT;
     bool died = true;   // assume hitting object kills it, unless object says otherwise
     
     switch (type)
@@ -787,12 +778,6 @@ inline void melee_object_CtoS::handle()
             obj = Objects::get((ObjectType)type, id);
             if (obj == NULL) return;
 
-            owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
-            if (owner != NULL) owner_id  = owner->get_owner();
-
-            if (owner_id != a->id)   // TODO -- kill rule per object?
-                return;
-                
             // apply damage
             health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
             if (health != NULL)

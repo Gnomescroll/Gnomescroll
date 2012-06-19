@@ -83,6 +83,7 @@ class Agent_state
         class Voxel_model* vox;
         #if DC_CLIENT
         Agent_event event;
+        bool initial_teleport;  // record first teleport from server
         #endif
 
         int crouched();
@@ -108,7 +109,9 @@ class Agent_state
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
 
+        #if DC_SERVER
         void spawn_state();
+        #endif
 
         void forward_vector(float f[3]) { this->s.forward_vector(f); }
         Vec3 forward_vector() { return this->s.forward_vector(); }

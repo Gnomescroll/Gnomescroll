@@ -137,6 +137,7 @@ namespace ClientState {
     {
         if (current_camera == NULL) return;
         if (playerAgent_state.you == NULL) return;
+        if (!playerAgent_state.you->initial_teleport) return;
         agent_camera_state_CtoS msg;
         msg.id = playerAgent_state.you->client_id;
         Vec3 p = current_camera->get_position();

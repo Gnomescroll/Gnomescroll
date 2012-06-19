@@ -38,17 +38,8 @@ namespace ServerState
         delete voxel_hitscan_list; // must go last
     }
 
-    void init()
+    void init_base()
     {
-        static int inited = 0;
-        if (inited++)
-        {
-            printf("WARNING: ServerState::init -- attempt to call more than once\n");
-            return;
-        }
-        init_lists();
-        
-        // create a base
         Objects::Object* base = Objects::create(OBJECT_BASE);
         GS_ASSERT(base != NULL);
         if (base != NULL)
@@ -62,6 +53,48 @@ namespace ServerState
             if (physics != NULL) physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
             Objects::ready(base);
         }
+    }
+
+    void check_agents_at_base()
+    {
+        Objects::Object* base = Objects::get(OBJECT_BASE, 0);
+        GS_ASSERT(base != NULL);
+        if (base == NULL) return;
+
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (physics == NULL) return;
+        Vec3 p = physics->get_position();
+        
+        using Components::VoxelModelComponent;
+        float r = 1.0f;
+        VoxelModelComponent* vox = (VoxelModelComponent*)base->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+        GS_ASSERT(vox != NULL);
+        if (vox != NULL) r = vox->get_radius();
+        
+        agent_list->objects_within_sphere(p.x, p.y, p.z, r);
+        for (int i=0; i<agent_list->n_filtered; i++)
+        {
+            Agent_state* a = agent_list->filtered_objects[i];
+            GS_ASSERT(a != NULL);
+            if (a == NULL) continue;
+            a->status.at_base();
+        }
+    }
+
+    void init()
+    {
+        static int inited = 0;
+        if (inited++)
+        {
+            printf("WARNING: ServerState::init -- attempt to call more than once\n");
+            return;
+        }
+        init_lists();
+        
+        // create a base
+        init_base();
     }
 
     void teardown()
