@@ -47,6 +47,11 @@ public:
         return d + vec3_dot(normal,p);
     }
 
+    float distance(float x, float y, float z)
+    {
+        return d + x*normal.x + y*normal.y + z*normal.z;
+    }
+
 };
 
 class FrustumG
@@ -67,33 +72,43 @@ public:
 
     PlaneG pl[6];
     Vec3 ntl,ntr,nbl,nbr,ftl,ftr,fbl,fbr;
-    float nearD, farD, ratio, angle,tang;
+    float nearD, farD, aspect, fov,tang;
     float nw,nh,fw,fh;
 
-    void setCamInternals(float angle, float ratio, float nearD, float farD);
+    void setCamInternals(float fov, float aspect, float nearD, float farD);
     void setCamDef(Vec3 p, Vec3 l, Vec3 u);
-    bool pointInFrustum(Vec3 v);
+    //bool pointInFrustum(Vec3 v);
     //int sphereInFrustum(Vec3 &p, float raio);
     //int boxInFrustum(AABox &b);
+
+    bool pointInFrustum(struct Vec3 p) 
+    {
+        for(int i=0; i < 6; i++) 
+        {
+            if (pl[i].distance(p) < 0)
+                return false;
+        }
+        return true;
+    }
 };
 
 
 #define ANG2RAD 3.14159265358979323846/180.0
 
-void FrustumG::setCamInternals(float _angle, float _ratio, float _nearD, float _farD) 
+void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _farD) 
 {
     // store the information
-    this->ratio = _ratio;
-    this->angle = _angle;
+    this->aspect = _aspect;
+    this->fov = _fov;
     this->nearD = _nearD;
     this->farD  = _farD;
 
     // compute width and height of the near and far plane sections
-    tang = (float)tan(ANG2RAD * angle * 0.5) ;
+    tang = (float)tan(ANG2RAD * fov * 0.5) ;
     nh = nearD * tang;
-    nw = nh * ratio;
+    nw = nh * aspect;
     fh = farD  * tang;
-    fw = fh * ratio;
+    fw = fh * aspect;
 }
 
 void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
@@ -165,16 +180,6 @@ void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
 
 }
 
-bool FrustumG::pointInFrustum(struct Vec3 p) 
-{
-    for(int i=0; i < 6; i++) 
-    {
-        if (pl[i].distance(p) < 0)
-            return false;
-    }
-    return true;
-}
-
 /*
 int FrustumG::sphereInFrustum(Vec3 &p, float radius) {
 
@@ -218,3 +223,33 @@ pl[NEARP].setNormalAndPoint(-Z,nc);
     normal = Y * aux;
     pl[RIGHT].setNormalAndPoint(normal,nc+X*nw);
 */
+
+class FrustumG _FrustrumG;
+
+void setup_fulstrum2(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
+{
+
+
+
+}
+
+bool point_fulstrum_test_2(float x, float y, float z)
+{
+{
+    for(int i=0; i < 6; i++) 
+    {
+        if (_FrustrumG.pl[i].distance(x,y,z) < 0)
+            return false;
+    }
+    return true;
+}
+
+bool point_fulstrum_test_2(struct Vec3 p)
+{
+    for(int i=0; i < 6; i++) 
+    {
+        if (_FrustrumG.pl[i].distance(p) < 0)
+            return false;
+    }
+    return true;
+}
