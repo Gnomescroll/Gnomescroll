@@ -80,13 +80,13 @@ public:
 
 #define ANG2RAD 3.14159265358979323846/180.0
 
-void FrustumG::setCamInternals(float angle, float ratio, float nearD, float farD) 
+void FrustumG::setCamInternals(float _angle, float _ratio, float _nearD, float _farD) 
 {
     // store the information
-    this->ratio = ratio;
-    this->angle = angle;
-    this->nearD = nearD;
-    this->farD = farD;
+    this->ratio = _ratio;
+    this->angle = _angle;
+    this->nearD = _nearD;
+    this->farD  = _farD;
 
     // compute width and height of the near and far plane sections
     tang = (float)tan(ANG2RAD * angle * 0.5) ;
@@ -98,7 +98,7 @@ void FrustumG::setCamInternals(float angle, float ratio, float nearD, float farD
 
 void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
 
-    struct Vec3 dir,nc,fc;
+    struct Vec3 nc,fc;
     struct Vec3 X,Y,Z;
 
     // compute the Z axis of camera
@@ -154,14 +154,14 @@ void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) {
     // compute the six planes
     // the function set3Points assumes that the points
     // are given in counter clockwise order
-/*
+
     pl[TOP].set3Points(ntr,ntl,ftl);
     pl[BOTTOM].set3Points(nbl,nbr,fbr);
     pl[LEFT].set3Points(ntl,nbl,fbl);
     pl[RIGHT].set3Points(nbr,ntr,fbr);
     pl[NEARP].set3Points(ntl,ntr,nbr);
     pl[FARP].set3Points(ftr,ftl,fbl);
-*/
+
 }
 
 bool FrustumG::pointInFrustum(struct Vec3 p) 
