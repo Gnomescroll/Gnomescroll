@@ -69,7 +69,7 @@ void shutdown_net_client()
 {
     if(NetClient::Server.enet_peer != NULL)
     {
-        enet_peer_disconnect(NetClient::Server.enet_peer, 0);   //graceful shutdown
+        enet_peer_disconnect(NetClient::Server.enet_peer, 1);   //graceful shutdown
         //enet_host_flush(client_host);   //flush packets
         client_dispatch_network_events();
     }
@@ -92,10 +92,25 @@ static void client_connect(ENetEvent* event)
     #endif
 }
 
+
+//client disconnect event
 static void client_disconnect(ENetEvent* event)
 {
+    if( event->data == 0)
+    {
+        printf("Client timeout from server\n");
+    } 
+    else
+    {
+        printf("Client was disconnected by server \n");
+
+        if(event->data == 2) 
+            printf("Server is full\n");
+    }
+
     event->peer -> data = NULL;
-    enet_peer_reset(event->peer); //TEST
+    //enet_peer_reset(event->peer); //TEST
+    
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
 
@@ -173,6 +188,7 @@ void client_dispatch_network_events()
 
         case ENET_EVENT_TYPE_CONNECT:
             NetClient::client_connect(&event);
+
             //printf("Client connected to server \n");
             break;
 
@@ -296,6 +312,7 @@ void init_server(int a, int b, int c, int d, int port)
     //enet_host_destroy(server);
 }
 
+//server
 void dispatch_network_events()
 {
     ENetEvent event;
@@ -386,8 +403,8 @@ static void client_connect(ENetEvent* event)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
         //send a disconnect reason packet
-        //enet_peer_disconnect(event->peer, 0); //gracefull disconnect client
-        enet_peer_reset(event->peer);   //force disconnect client, does not notify client
+        enet_peer_disconnect(event->peer, 2); //gracefull disconnect client
+        //enet_peer_reset(event->peer);   //force disconnect client, does not notify client
         return;
     }
     NetServer::number_of_clients++;
@@ -461,6 +478,24 @@ static void client_disconnect(ENetEvent* event)
     int client_id = nc->client_id;
     NetPeerManager* npm = NetServer::clients[client_id];
 
+    //figure out client disconnection code
+    if(event->data == 0)
+    {
+        printf("Client %i timed out \n", client_id);
+    }
+    else
+    {
+        if(event->data == 1)
+        {
+            printf("Client %i disconnected gracefully\n", client_id);
+        }
+        else
+        {
+            printf("Client %i disconnected with unknown code.  code= %i !!!\n", client_id, event->data);
+        }
+    }
+
+
     npm->teardown();
 
     NetServer::pool[client_id] = NULL;
@@ -492,7 +527,7 @@ static void client_disconnect(ENetEvent* event)
         if (session != NULL) end_session(session);
     }
 
-    enet_peer_reset(event->peer); //TEST
+    //enet_peer_reset(event->peer); //TEST
     event->peer -> data = NULL;
 
     delete nc;

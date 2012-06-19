@@ -31,8 +31,11 @@ struct _VBO_DRAW_STRUCT
 {
     class Map_vbo* map_vbo;
     float distance;
-    int vertex_start; //start vertex for drawing
-    int vertex_end; //end vertex for drawing
+    //int vertex_start; //start vertex for drawing
+    //int vertex_end; //end vertex for drawing
+    //int index;
+    short i;
+    short j;
 };
 
 static struct _VBO_DRAW_STRUCT* draw_vbo_array;
@@ -187,8 +190,11 @@ void Vbo_map::prep_frustrum()
         }   
 
     }}
-
     //printf("culled= %i drawn= %i edge= %i cached= %i total= %i \n", _culled, _drawn, _edge, _cached, _total);
+}
+
+void Vbo_map::prep_frustrum_vertices()
+{
 
 }
 
@@ -227,6 +233,7 @@ void Vbo_map::prep_draw()
         col->wxoff = quadrant_translate_f(cx, col->xoff);
         col->wyoff = quadrant_translate_f(cy, col->yoff);
 
+
         //if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
         if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
         {
@@ -235,6 +242,9 @@ void Vbo_map::prep_draw()
                 Fulstrum culling
             */
             draw_vbo_array[draw_vbo_n].map_vbo = col;
+            draw_vbo_array[draw_vbo_n].i = i;
+            draw_vbo_array[draw_vbo_n].j = j;
+
             draw_vbo_n++;
             
             if(draw_vbo_n == MAX_DRAWN_VBO)
