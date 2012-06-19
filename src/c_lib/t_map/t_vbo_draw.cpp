@@ -602,7 +602,7 @@ void Vbo_map::draw_map_comptability()
 
     glPushMatrix(); //save matrix
     //glPushMatrix();
-/*
+
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
@@ -627,6 +627,7 @@ void Vbo_map::draw_map_comptability()
         int xj = draw_vbo_array[i].j;
         int index = 32*xj +xi;
 
+/*
         for(int side=0; side<6; side++)
         {
             int voff = vbo_vertex_frustrum[index][2*side+0];
