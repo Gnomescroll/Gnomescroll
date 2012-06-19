@@ -5,9 +5,9 @@
 #endif
 
 #ifdef GL_EXT_gpu_shader4
-    flat varying vec4 _lightMatrix;
+    flat varying mat2 lightMatrix;
 #else
-    varying vec4 _lightMatrix;
+    varying mat2 lightMatrix;
 #endif
 
 varying vec2 texCoord;
@@ -19,9 +19,6 @@ uniform sampler2D base_texture;
 
 void main() 
 {
-
-    mat2 lightMatrix = mat2(_lightMatrix[0], _lightMatrix[1], _lightMatrix[2],_lightMatrix[3] );
-
     vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
     vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 

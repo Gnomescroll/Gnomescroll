@@ -545,8 +545,9 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 
     for(int side=0; side<6; side++)
     {
-        int vnum[8];
+        int vnum[8+1];
         vnum[0] = vbo->vertex_num_array[side][0];
+        vnum[8] = vbo->vertex_num[side] - vbo->vertex_num_array[side][7];
         for(int i=1; i<8; i++)
             vnum[i] = vbo->vertex_num_array[side][i] - vbo->vertex_num_array[side][i-1];
 
