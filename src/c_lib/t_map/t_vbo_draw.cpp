@@ -186,9 +186,9 @@ int _get_frustum_min(int i, int j)
 
     if(v1 < 0 || v2 < 0 || v3 < 0 || v4 < 0)
         printf("_get_frustum_min: error!!! \n");
-    if(v2 < v) v = v2;
-    if(v3 < v) v = v3;
-    if(v4 < v) v = v4;
+    if(v2 > v) v = v2;
+    if(v3 > v) v = v3;
+    if(v4 > v) v = v4;
 
     return v;
 }
@@ -214,9 +214,9 @@ int _get_frustum_max(int i, int j)
     if(v1 < 0 || v2 < 0 || v3 < 0 || v4 < 0)
         printf("_get_frustum_max: error!!! \n");
 
-    if(v2 > v) v = v2;
-    if(v3 > v) v = v3;
-    if(v4 > v) v = v4;
+    if(v2 < v) v = v2;
+    if(v3 < v) v = v3;
+    if(v4 < v) v = v4;
 
     return v; 
 }
@@ -279,6 +279,16 @@ void Vbo_map::prep_frustrum_vertices()
 
             vbo_vertex_frustrum[index][2*side+0] = voff;
             vbo_vertex_frustrum[index][2*side+1] = vnum;
+
+
+            if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
+            {
+                printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
+                printf("voff= %i vnum= %i \n", voff, vnum);
+                printf("vbo->vertex_offset[sid]= %i vbo->vertex_num[side]= %i \n", vbo->vertex_offset[side], vbo->vertex_num[side]);
+                printf("min= %i max= %i \n", min, max);
+                GS_ABORT();
+            }
 
         /*
             int vs = vbo->vertex_num_array[side][min];  //start
@@ -495,7 +505,7 @@ void Vbo_map::draw_map()
 
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
-  /*
+  
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
@@ -509,7 +519,7 @@ void Vbo_map::draw_map()
 
             //vbo->vertex_offset[side], vbo->vertex_num[side]
 
-            GS_ASSERT(voff >= vbo->vertex_offset[side] )
+            //GS_ASSERT(voff >= vbo->vertex_offset[side] )
             if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
             {
                 printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
@@ -528,15 +538,15 @@ void Vbo_map::draw_map()
             glDrawArrays(GL_QUADS, voff, vnum);
 
         }
-    */
-        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+    
+        //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
 
 
         //glPopMatrix();
         //glPushMatrix();
     }
 
-    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
