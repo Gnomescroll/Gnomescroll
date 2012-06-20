@@ -160,30 +160,38 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     float cx = x - current_camera_position.x;
     float cy = y - current_camera_position.y;
 
+/*
     float len = 1.0 / sqrt( cx*cx+cy*cy );
 
-    cx *= len;
-    cy *= len;
+    float dx = cx*len;
+    float dy = cy*len;
 
-    const float radius = 22.8;
+    const float radius = 11.4;
 
-    x += radius*cx;
-    y += radius*cy;
+    cx += radius*dx;
+    cy += radius*dy;
 
-    float top =  top_z_projection(x,y);
-    float bottom = bottom_z_projection(x,y);
+    float xf = cx + dx*radius;
+    float yf = cy + dy*radius;
+*/
+
+    float top =     top_z_projection(cx,cy);
+    float bottom =  bottom_z_projection(cx,cy);
 
     int t = ceil(top / 16);
 
     int b = floor(bottom / 16);
 
-    printf("top= %f bottom= %f t= %i b= %i \n", top, bottom, t, b);
+    //printf("top= %f bottom= %f t= %i b= %i \n", top, bottom, t, b);
 
-    if(t < 0) t = 0;
-    if(b > 8) b = 8;
+    if(b < 0) b = 0;
+    if(t > 8) t = 8;
+    //b = 0;
+    t = 8;
 
-    vbo_frustrum_min[index] = 8;
-    vbo_frustrum_max[index] = 0;
+    vbo_frustrum_min[index] = b;
+    vbo_frustrum_max[index] = t;
+
 
 }
 
@@ -303,15 +311,17 @@ void Vbo_map::prep_frustrum_vertices()
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         for(int side=0; side<6; side++)
         {
-            if(min > max)
+            if(min >= max)
             {
                 //dont draw anything, prune
                 int voff = vbo->vertex_offset[side];
                 int vnum = 0;
                 vbo_vertex_frustrum[index][2*side+0] = voff;
                 vbo_vertex_frustrum[index][2*side+1] = vnum;
-            }
 
+                continue;
+            }
+/*
             if(min == 0)
             {
                 min = 1;
@@ -321,10 +331,10 @@ void Vbo_map::prep_frustrum_vertices()
             {
                 max = 7;
             }
-
+*/
             //int vs = vbo->voff_array[side][min-1];
             int vs = vbo->voff_array[side][min];
-            int ve = vbo->voff_array[side][max+1];
+            int ve = vbo->voff_array[side][max];
 
             int voff = vs;
             int vnum = ve - vs;

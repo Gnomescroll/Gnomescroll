@@ -155,6 +155,9 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     fbl = fc - Y * fh - X * fw;
     fbr = fc - Y * fh + X * fw;
 */
+
+    if(u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
+
     ftl = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,-fw)  );
     ftr = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,fw)   );
     fbl = vec3_add3( fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,-fw) );
@@ -171,7 +174,7 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     pl[NEARP].set3Points(ntl,ntr,nbr);
     pl[FARP].set3Points(ftr,ftl,fbl);
 
-
+    printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
 
     Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15));
 
@@ -395,6 +398,7 @@ float top_z_projection(float x, float y)
 {
     struct Vec3 n = _FrustrumG.pl[0].normal;
     float d = _FrustrumG.pl[0].d;
+    d = 0;
     return (x*n.x + y*n.y + d)/(-n.z);
 }
 
@@ -402,5 +406,6 @@ float bottom_z_projection(float x, float y)
 {
     struct Vec3 n = _FrustrumG.pl[1].normal;
     float d = _FrustrumG.pl[1].d;
+    d = 0;
     return (x*n.x + y*n.y + d)/(-n.z);
 }

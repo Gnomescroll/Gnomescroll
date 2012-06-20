@@ -18,7 +18,7 @@ options.port = 0
 options.fullscreen = false
 options.width = 1280
 options.height = 720
-options.fov = 85
+options.fov = 90 -85
 
 
 --1280x720
