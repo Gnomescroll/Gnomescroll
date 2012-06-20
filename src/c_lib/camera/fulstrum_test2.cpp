@@ -19,7 +19,7 @@ public:
         struct Vec3 aux1 = vec3_sub(v1, v2);
         struct Vec3 aux2 = vec3_sub(v3, v2);
 
-        normal = vec3_normalize(vec3_cross(aux2, aux1));
+        normal = vec3_normalize(vec3_cross(aux1, aux2));
 
         point = v2;
         d = -vec3_dot(normal,point);
@@ -123,7 +123,8 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
 */
 #if 1
 
-
+    u.z *= -1;  //its fucked up
+    
     //f = vec3_scalar_mult(f, -1);
 
     //r = vec3_scalar_mult(r, -1);
