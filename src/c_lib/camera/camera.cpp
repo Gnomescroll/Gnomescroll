@@ -50,6 +50,12 @@ void init_cameras()
     r = vec3_euler_rotation(r, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
     u = vec3_euler_rotation(u, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
 
+    /*
+        Error: u is upside down!
+    */
+    u.z *= -1;
+
+
     Vec3 p = current_camera->get_position();
     setup_fulstrum(
         current_camera->fov, current_camera->ratio, current_camera->z_far,
@@ -185,7 +191,8 @@ void Camera::world_projection()
     Vec3 right = vec3_init(0.0, 1.0, 0.0);
     Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
     Vec3 look = vec3_init(1.0, 0.0, 0.0);
-    look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
+
+    look    = vec3_euler_rotation(look,  theta + 1.00,  phi-1.00, 0.0);
 
     float x = this->position.x;
     float y = this->position.y;
@@ -199,11 +206,26 @@ void Camera::world_projection()
     );
     // DEPRECATE GLU
 
+    right   = vec3_euler_rotation(right, theta+1.00,    phi-1.00,   0.0 );
+    up      = vec3_euler_rotation(up,    theta+1.00,    phi-1.00,   0.0 );
+
+/*
+    Error: The up direction is unside down!!!
+*/
+    up.z *= -1;
+
+    //printf("up: %f %f %f \n", up.x, up.y, up.z);
+
+/*
+    look    = vec3_euler_rotation(look,  theta + 1.00,  phi+0.50, 0.0);
+    right   = vec3_euler_rotation(right, theta+1.00,    phi+0.50,   0.0 );
+    up      = vec3_euler_rotation(up,    theta+1.00,    phi+0.50,   0.0 );
+*/
+
     update_camera_matrices();
     
     //set fulstrum camera up
-    right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
-    up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
+
 
     setup_fulstrum(fov, ratio, z_far, this->position, look, right, up);
     setup_fulstrum2(

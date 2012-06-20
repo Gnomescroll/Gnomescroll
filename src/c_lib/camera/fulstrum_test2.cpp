@@ -19,7 +19,7 @@ public:
         struct Vec3 aux1 = vec3_sub(v1, v2);
         struct Vec3 aux2 = vec3_sub(v3, v2);
 
-        normal = vec3_normalize(vec3_cross(aux1, aux2));
+        normal = vec3_normalize(vec3_cross(aux2, aux1));
 
         point = v2;
         d = -vec3_dot(normal,point);
