@@ -8,6 +8,9 @@ void printProgramInfoLog(GLuint obj);
 
 void load_shaders(char *vert, char* frag, GLuint* prog);
 
+//returns true on error
+bool shader_error_occured(int shader);
+
 class SHADER
 {
     public:

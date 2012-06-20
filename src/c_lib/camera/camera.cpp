@@ -57,7 +57,6 @@ void init_cameras()
     /*
         Error: u is upside down!
     */
-    u.z *= -1;
 
 
     Vec3 p = current_camera->get_position();
@@ -174,9 +173,10 @@ void Camera::move(float dx, float dy, float dz)
     float y = this->position.y;
     float z = this->position.z;
     x += dx*cos(theta * PI);
-    x += dy*cos(theta * PI + PI/2.0f);
+    x += dy*cos(theta * PI);
+
     y += dx*sin(theta * PI);
-    y += dy*sin(theta * PI + PI/2.0f);
+    y += dy*sin(theta * PI);
     z += dz;
     this->set_position(vec3_init(x,y,z));
 }
@@ -188,8 +188,7 @@ void Camera::world_projection()
     glLoadIdentity();
     // DEPRECATE GLU
     gluPerspective(fov, ratio, z_near, z_far);
-    // DEPRECATE GLU
-    glMatrixMode(GL_MODELVIEW);
+    // DEPRECA de(GL_MODELVIEW);
     glLoadIdentity();
 
     Vec3 look = vec3_init(1.0, 0.0, 0.0);
@@ -283,6 +282,8 @@ void Camera::forward_vector(float f[3])
 {
     float xa = theta;
     float ya = phi;
+
+#if 0
     if (theta > 1.0f) xa -= 2.0f;
     else if (theta < -1.0f) xa += 2.0f;
 
@@ -290,10 +291,11 @@ void Camera::forward_vector(float f[3])
     // Camera behavior when looking straight up or down is fucked up otherwise
     if (phi > 0.4999f) phi = 0.4999f;
     else if (phi < -0.4999f) phi = -0.4999f;
-    
-    f[0] = cos( xa * PI) * cos( ya * PI);
-    f[1] = sin( xa * PI) * cos( ya * PI);
-    f[2] = sin( ya * PI);
+#endif
+
+    f[0] = sin( ya * PI) * cos( xa * PI);
+    f[1] = sin( ya * PI) * cos( xa * PI);
+    f[2] = cos( ya * PI);
 
     // normalize
     float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);
