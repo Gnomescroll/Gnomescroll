@@ -45,11 +45,15 @@ void init_cameras()
     Vec3 f = vec3_init(1.0, 0.0, 0.0);
     Vec3 r = vec3_init(0.0, 1.0, 0.0);
     Vec3 u = vec3_init(0.0, 0.0, 1.0);
-
+/*
     f = vec3_euler_rotation(f, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
     r = vec3_euler_rotation(r, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
     u = vec3_euler_rotation(u, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
+*/
 
+    f = vec3_euler_rotation(f, current_camera->theta, current_camera->phi, 0.0 );
+    r = vec3_euler_rotation(r, current_camera->theta, current_camera->phi, 0.0 );
+    u = vec3_euler_rotation(u, current_camera->theta, current_camera->phi, 0.0 ); 
     /*
         Error: u is upside down!
     */
@@ -188,11 +192,12 @@ void Camera::world_projection()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    Vec3 look = vec3_init(1.0, 0.0, 0.0);
     Vec3 right = vec3_init(0.0, 1.0, 0.0);
     Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
-    Vec3 look = vec3_init(1.0, 0.0, 0.0);
 
-    look    = vec3_euler_rotation(look,  theta + 1.00,  phi-1.00, 0.0);
+    //look    = vec3_euler_rotation(look,  theta + 1.00,  phi-1.00, 0.0);
+    look    = vec3_euler_rotation(look,  theta,  phi, 0.0);
 
     float x = this->position.x;
     float y = this->position.y;
@@ -206,9 +211,14 @@ void Camera::world_projection()
     );
     // DEPRECATE GLU
 
-    right   = vec3_euler_rotation(right, theta+1.00,    phi-1.00,   0.0 );
-    up      = vec3_euler_rotation(up,    theta+1.00,    phi-1.00,   0.0 );
+    right   = vec3_euler_rotation(right, theta,    phi,   0.0 );
+    up      = vec3_euler_rotation(up,    theta,    phi,   0.0 );
 
+
+    Vec3 t = vec3_init(1.0, 0.0, 0.0);
+    t = vec3_euler_rotation(t, 0.0, 0.0, 0.0);
+
+    printf("test: %f %f %f \n", t.x, t.y, t.z);
 
     printf("look= %f %f %f right= %f %f %f up= %f %f %f\n", 
         right.x,right.y,right.z, 
