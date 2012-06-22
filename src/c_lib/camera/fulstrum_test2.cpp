@@ -171,7 +171,7 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
 
     if(u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
     
-    printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
+    //printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
 
     Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15));
 

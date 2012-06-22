@@ -251,6 +251,7 @@ void Camera::forward_vector(float f[3])
 {
     float xa = theta;
     float ya = phi;
+/*
     if (theta > 1.0f) xa -= 2.0f;
     else if (theta < -1.0f) xa += 2.0f;
 
@@ -258,7 +259,19 @@ void Camera::forward_vector(float f[3])
     // Camera behavior when looking straight up or down is fucked up otherwise
     if (phi > 0.4999f) phi = 0.4999f;
     else if (phi < -0.4999f) phi = -0.4999f;
-    
+*/
+    bool error = false;
+    if (theta > 1.0f) error = true;
+    if (theta < -1.0f) error = true;
+
+    if (phi > 0.4999f) phi = error = true;
+    if (phi < -0.4999f) phi = error = true;
+
+    if(error == true)
+    {
+        GS_ABORT();
+    }
+/*    
     f[0] = cos( xa * PI) * cos( ya * PI);
     f[1] = sin( xa * PI) * cos( ya * PI);
     f[2] = sin( ya * PI);
@@ -268,6 +281,11 @@ void Camera::forward_vector(float f[3])
     f[0] /= len;
     f[1] /= len;
     f[2] /= len;
+*/
+
+    Vec3 look = vec3_init(1.0, 0.0, 0.0);
+    look = vec3_euler_rotation(look, xa, ya, 0.0);
+
 }
 
 Vec3 Camera::forward_vector()
