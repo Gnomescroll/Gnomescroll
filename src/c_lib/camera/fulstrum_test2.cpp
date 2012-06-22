@@ -123,13 +123,6 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
 */
 #if 1
 
-    u.z *= -1;  //its fucked up
-    
-    //f = vec3_scalar_mult(f, -1);
-
-    //r = vec3_scalar_mult(r, -1);
-    //u = vec3_scalar_mult(u, -1);
-
     struct Vec3 nc,fc;
     //struct Vec3 X,Y,Z;
 
@@ -174,7 +167,7 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     pl[FARP].set3Points(ftr,ftl,fbl);
 
 //debugging
-#if 0
+#if 1
 
     if(u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
     
