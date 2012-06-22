@@ -184,7 +184,9 @@ void Camera::world_projection()
     Vec3 right = vec3_init(0.0, 1.0, 0.0);
     Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
     Vec3 look = vec3_init(1.0, 0.0, 0.0);
-    look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
+    
+    //look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
+    look = vec3_euler_rotation(look, theta, phi, 0.0);
 
     float x = this->position.x;
     float y = this->position.y;
@@ -201,8 +203,12 @@ void Camera::world_projection()
     update_camera_matrices();
     
     //set fulstrum camera up
-    right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
-    up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
+
+    //right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
+    //up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
+
+    right = vec3_euler_rotation(right, theta, phi, 0.0 );
+    up = vec3_euler_rotation(up, theta, phi, 0.0 );
 
     setup_fulstrum(fov, ratio, z_far, this->position, look, right, up);
 
