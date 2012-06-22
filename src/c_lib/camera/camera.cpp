@@ -283,9 +283,12 @@ void Camera::forward_vector(float f[3])
     f[2] /= len;
 */
 
-    Vec3 look = vec3_init(1.0, 0.0, 0.0);
-    look = vec3_euler_rotation(look, xa, ya, 0.0);
+    Vec3 _f = vec3_init(1.0, 0.0, 0.0);
+    _f = vec3_euler_rotation(_f, xa, ya, 0.0);
 
+    f[0] = _f.x;
+    f[1] = _f.y;
+    f[2] = _f.z;
 }
 
 Vec3 Camera::forward_vector()
