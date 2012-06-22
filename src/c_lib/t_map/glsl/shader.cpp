@@ -60,12 +60,28 @@ namespace t_map
         // || true
 
         if(T_MAP_BACKUP_SHADER == 0 )
-
         {
             set_map_shader_0();
             init_map_3d_texture();
+
+            //true on error
+            if(shader_error_occured(map_shader[0]) == true )
+            {
+                T_MAP_BACKUP_SHADER = 1;
+                printf("!!! Default map shader failed. Using backup shader level 1 \n");
+                set_map_shader_0();
+                init_map_3d_texture();
+
+                if(shader_error_occured(map_shader[0]) == true )
+                {
+                    printf("!!! Backup map shader failed.  Using backup shader level 2 \n");
+                    //implement backup level 2
+                }
+            }
+
+
         }
-        else
+        else if(T_MAP_BACKUP_SHADER == 1)
         {
             printf("!!! Warning: Using Intel GPU Compatability mode shader\n");
             set_map_shader_0_comptability();
@@ -74,13 +90,7 @@ namespace t_map
 
 
 
-        if(T_MAP_BACKUP_SHADER == 0 && shader_error_check(map_shader[0]) == false)
-        {
-            printf("Graphics card failed to compile shader!  Falling on backup shader\n");
-            T_MAP_BACKUP_SHADER = 1;
-            set_map_shader_0();
-            init_map_3d_texture();  
-        }
+
 
         init_block_texture_normal();
     }
@@ -104,6 +114,7 @@ namespace t_map
         glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
         glCompileShaderARB(map_vert_shader[index]);
+
         if(DEBUG1) printShaderInfoLog(map_vert_shader[index]);
 
         glCompileShaderARB(map_frag_shader[index]);

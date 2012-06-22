@@ -1,6 +1,7 @@
 #include "./camera.hpp"
 
 #include <camera/fulstrum_test.hpp>
+#include <camera/fulstrum_test2.hpp>
 
 #include <physics/vec3.hpp>
 #include <physics/mat3.hpp>
@@ -44,10 +45,19 @@ void init_cameras()
     Vec3 f = vec3_init(1.0, 0.0, 0.0);
     Vec3 r = vec3_init(0.0, 1.0, 0.0);
     Vec3 u = vec3_init(0.0, 0.0, 1.0);
-
+/*
     f = vec3_euler_rotation(f, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
     r = vec3_euler_rotation(r, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
     u = vec3_euler_rotation(u, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
+*/
+
+    f = vec3_euler_rotation(f, current_camera->theta, current_camera->phi, 0.0 );
+    r = vec3_euler_rotation(r, current_camera->theta, current_camera->phi, 0.0 );
+    u = vec3_euler_rotation(u, current_camera->theta, current_camera->phi, 0.0 ); 
+    /*
+        Error: u is upside down!
+    */
+
 
     Vec3 p = current_camera->get_position();
     setup_fulstrum(
@@ -55,6 +65,10 @@ void init_cameras()
         p,f,r,u
     );
 
+    setup_fulstrum2(
+        current_camera->fov, current_camera->ratio, current_camera->z_near,current_camera->z_far,
+        p,f,r,u
+    );
 }
 
 void teardown_cameras()
@@ -159,9 +173,10 @@ void Camera::move(float dx, float dy, float dz)
     float y = this->position.y;
     float z = this->position.z;
     x += dx*cos(theta * PI);
-    x += dy*cos(theta * PI + PI/2.0f);
+    x += dy*cos(theta * PI);
+
     y += dx*sin(theta * PI);
-    y += dy*sin(theta * PI + PI/2.0f);
+    y += dy*sin(theta * PI);
     z += dz;
     this->set_position(vec3_init(x,y,z));
 }
@@ -173,14 +188,15 @@ void Camera::world_projection()
     glLoadIdentity();
     // DEPRECATE GLU
     gluPerspective(fov, ratio, z_near, z_far);
-    // DEPRECATE GLU
-    glMatrixMode(GL_MODELVIEW);
+    // DEPRECA de(GL_MODELVIEW);
     glLoadIdentity();
 
+    Vec3 look = vec3_init(1.0, 0.0, 0.0);
     Vec3 right = vec3_init(0.0, 1.0, 0.0);
     Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
-    Vec3 look = vec3_init(1.0, 0.0, 0.0);
-    look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
+
+    //look    = vec3_euler_rotation(look,  theta + 1.00,  phi-1.00, 0.0);
+    look    = vec3_euler_rotation(look,  theta,  phi, 0.0);
 
     float x = this->position.x;
     float y = this->position.y;
@@ -194,13 +210,45 @@ void Camera::world_projection()
     );
     // DEPRECATE GLU
 
+    right   = vec3_euler_rotation(right, theta,    phi,   0.0 );
+    up      = vec3_euler_rotation(up,    theta,    phi,   0.0 );
+
+/*
+    Vec3 t = vec3_init(1.0, 0.0, 0.0);
+    t = vec3_euler_rotation(t, 0.0, 0.0, 0.0);
+
+    printf("test: %f %f %f \n", t.x, t.y, t.z);
+
+    printf("look= %f %f %f right= %f %f %f up= %f %f %f\n", 
+        right.x,right.y,right.z, 
+        look.x,look.y,look.z,
+        up.x,up.y,up.z);
+*/
+
+/*
+    Error: The up direction is unside down!!!
+*/
+    //up.z *= -1;
+
+    //printf("up: %f %f %f \n", up.x, up.y, up.z);
+
+/*
+    look    = vec3_euler_rotation(look,  theta + 1.00,  phi+0.50, 0.0);
+    right   = vec3_euler_rotation(right, theta+1.00,    phi+0.50,   0.0 );
+    up      = vec3_euler_rotation(up,    theta+1.00,    phi+0.50,   0.0 );
+*/
+
     update_camera_matrices();
     
     //set fulstrum camera up
-    right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
-    up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
+
 
     setup_fulstrum(fov, ratio, z_far, this->position, look, right, up);
+    setup_fulstrum2(
+        fov, ratio, z_near,z_far,
+        this->position, look, right, up);
+
+    //printf("z_near= %f z_far= %f \n", z_near, z_far);
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
@@ -235,6 +283,8 @@ void Camera::forward_vector(float f[3])
 {
     float xa = theta;
     float ya = phi;
+
+#if 0
     if (theta > 1.0f) xa -= 2.0f;
     else if (theta < -1.0f) xa += 2.0f;
 
@@ -242,10 +292,11 @@ void Camera::forward_vector(float f[3])
     // Camera behavior when looking straight up or down is fucked up otherwise
     if (phi > 0.4999f) phi = 0.4999f;
     else if (phi < -0.4999f) phi = -0.4999f;
-    
-    f[0] = cos( xa * PI) * cos( ya * PI);
-    f[1] = sin( xa * PI) * cos( ya * PI);
-    f[2] = sin( ya * PI);
+#endif
+
+    f[0] = sin( ya * PI) * cos( xa * PI);
+    f[1] = sin( ya * PI) * cos( xa * PI);
+    f[2] = cos( ya * PI);
 
     // normalize
     float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);

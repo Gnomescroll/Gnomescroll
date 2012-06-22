@@ -116,18 +116,18 @@ void load_shaders(char *vert, char* frag, GLuint* prog)
 }
 
 //returns true if error
-bool shader_error_check(int shader) 
+bool shader_error_occured(int shader) 
 {
-    GLint status = GL_FALSE;
+    GLint status = -1;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);  // this function does not assign any value to &status if a shader was not compiled
-    if (status != GL_TRUE)
+    if (status == GL_FALSE)
     {
         printf("shader_error_check: Shader compilation failed! \n");
         return true;
     }
 
     glGetProgramiv(shader, GL_LINK_STATUS, &status);
-    if(status != GL_TRUE)
+    if(status == GL_FALSE)
     {
         printf("shader_error_check: Shader linking failed! \n");
         return true;

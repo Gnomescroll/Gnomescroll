@@ -7,9 +7,9 @@
 
 #include <camera/camera.hpp>
 #include <camera/fulstrum_test.hpp>
+#include <camera/fulstrum_test2.hpp>
 
 #include <t_map/glsl/settings.hpp>
-
 
 #include <common/qsort.h>
 
@@ -80,25 +80,26 @@ bool chunk_render_check( float x, float y)
     Use frustrum test to 8 block resolution because have to render partial chunks
 */
 
-
+#if 0
 void set_frustrum_column_max(int index, float x, float y)
 {
     if(vbo_frustrum_max[index] != -1)  GS_ABORT();
 
     int min = vbo_frustrum_min[index];
     GS_ASSERT(min != -1);
-
+/*
     if(point_fulstrum_test_map(x,y,128.0) == true)
     {
         vbo_frustrum_max[index] = 8;
         return;
     }
-
-    for(int i=7; i >= min; i--)
+*/
+    for(int i=8; i >= min; i--)
     {
         float z = i*16.0;
 
-        if(point_fulstrum_test_map(x,y,z) == true)
+        //if(point_fulstrum_test_map(x,y,z) == true)
+        if(point_fulstrum_test_2(x,y,z) == true)
         {
             vbo_frustrum_max[index] = i;
             return;
@@ -127,8 +128,15 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     for(int i=0; i < 8; i++)
     {
         z = i*16.0;
-
-        if(point_fulstrum_test_map(x,y,z) == true)
+    
+        if(point_fulstrum_test_map(x,y,z) != point_fulstrum_test_2(x,y,z))
+        {
+            printf("error: x,y,z= %f %f %f \n", x,y,z);
+        }
+    
+    
+        //if(point_fulstrum_test_map(x,y,z) == true)
+        if(point_fulstrum_test_2(x,y,z) == true)
         {
             vbo_frustrum_min[index] = i;
             set_frustrum_column_max(index,x,y);
@@ -140,8 +148,53 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     vbo_frustrum_min[index] = 8;
     vbo_frustrum_max[index] = 0;
 }
-
 //number of columns to draw
+#endif
+
+void set_frustrum_column_min(int _i, int _j, float x, float y)
+{   
+    _j %= 32;
+    _i %= 32;
+    const int index = 32*_j + _i;
+
+    float cx = x - current_camera_position.x;
+    float cy = y - current_camera_position.y;
+
+/*
+    float len = 1.0 / sqrt( cx*cx+cy*cy );
+
+    float dx = cx*len;
+    float dy = cy*len;
+
+    const float radius = 11.4;
+
+    cx += radius*dx;
+    cy += radius*dy;
+
+    float xf = cx + dx*radius;
+    float yf = cy + dy*radius;
+*/
+
+    float top =     top_z_projection(cx,cy);
+    float bottom =  bottom_z_projection(cx,cy);
+
+    int t = ceil(top / 16);
+
+    int b = floor(bottom / 16);
+
+    //printf("top= %f bottom= %f t= %i b= %i \n", top, bottom, t, b);
+
+    if(b < 0) b = 0;
+    if(t > 8) t = 8;
+    //b = 0;
+    t = 8;
+
+    vbo_frustrum_min[index] = b;
+    vbo_frustrum_max[index] = t;
+
+
+}
+
 
 
 void Vbo_map::prep_frustrum()
@@ -157,15 +210,17 @@ void Vbo_map::prep_frustrum()
         class Map_vbo* col = draw_vbo_array[ix].map_vbo;
         int i = draw_vbo_array[ix].i;
         int j = draw_vbo_array[ix].j;
-
+    /*
         set_frustrum_column_min(i,j,     col->wxoff, col->wyoff);
         set_frustrum_column_min(i+1,j,   col->wxoff+16.0, col->wyoff);
         set_frustrum_column_min(i,j+1,   col->wxoff, col->wyoff+16.0);
         set_frustrum_column_min(i+1,j+1, col->wxoff+16.0, col->wyoff+16.0);
+    */
+        set_frustrum_column_min(i,j,     col->wxoff+8.0, col->wyoff+8.0);
     }
 }
 
-
+/*
 int _get_frustum_min(int i, int j)
 {
     int index;
@@ -220,6 +275,7 @@ int _get_frustum_max(int i, int j)
 
     return v; 
 }
+*/
 
 /*
     int vertex_num[6];
@@ -243,8 +299,11 @@ void Vbo_map::prep_frustrum_vertices()
 
         int index = 32*xj +xi;
 
-        int min = _get_frustum_min(xi,xj);
-        int max = _get_frustum_max(xi,xj);
+        //int min = _get_frustum_min(xi,xj);
+        //int max = _get_frustum_max(xi,xj);
+
+        int min = vbo_frustrum_min[index];
+        int max = vbo_frustrum_max[index];
 
         //int xoff,dnum;
         GS_ASSERT(min >= 0);
@@ -252,15 +311,17 @@ void Vbo_map::prep_frustrum_vertices()
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         for(int side=0; side<6; side++)
         {
-            if(min > max)
+            if(min >= max)
             {
                 //dont draw anything, prune
                 int voff = vbo->vertex_offset[side];
                 int vnum = 0;
                 vbo_vertex_frustrum[index][2*side+0] = voff;
                 vbo_vertex_frustrum[index][2*side+1] = vnum;
-            }
 
+                continue;
+            }
+/*
             if(min == 0)
             {
                 min = 1;
@@ -270,10 +331,10 @@ void Vbo_map::prep_frustrum_vertices()
             {
                 max = 7;
             }
-
+*/
             //int vs = vbo->voff_array[side][min-1];
             int vs = vbo->voff_array[side][min];
-            int ve = vbo->voff_array[side][max+1];
+            int ve = vbo->voff_array[side][max];
 
             int voff = vs;
             int vnum = ve - vs;
@@ -506,7 +567,8 @@ void Vbo_map::draw_map()
 
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
-  
+        
+        #if 0
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
@@ -539,9 +601,9 @@ void Vbo_map::draw_map()
             glDrawArrays(GL_QUADS, voff, vnum);
 
         }
-    
-        //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
-
+        #else 
+        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+        #endif
 
         //glPopMatrix();
         //glPushMatrix();
@@ -623,11 +685,11 @@ void Vbo_map::draw_map_comptability()
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
+/*
         int xi = draw_vbo_array[i].i;
         int xj = draw_vbo_array[i].j;
         int index = 32*xj +xi;
 
-/*
         for(int side=0; side<6; side++)
         {
             int voff = vbo_vertex_frustrum[index][2*side+0];

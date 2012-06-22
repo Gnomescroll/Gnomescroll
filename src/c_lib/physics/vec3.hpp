@@ -22,11 +22,13 @@ struct Vec3
 };
 
 //__attribute__((aligned (16)));
-static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
+//static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
 /*
     Vec3 operations
 */
+
+static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline));
 
 static void normalize_vector(struct Vec3* v)
 {
@@ -132,6 +134,17 @@ struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2)
     return v;
 }
 
+static struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3) __attribute((always_inline)); 
+
+struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3) 
+{
+    struct Vec3 v;
+    v.x = v1.x + v2.x + v3.x;
+    v.y = v1.y + v2.y + v3.y;
+    v.z = v1.z + v2.z + v3.z;
+    return v;
+}
+
 static struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) __attribute((always_inline)); 
 
 struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) 
@@ -229,7 +242,6 @@ Vec3 vec3_bias(Vec3 v, const float bias)
     scalar return
 */
 
-static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline));
 float vec3_dot(struct Vec3 v1, struct Vec3 v2) 
 {
     return v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
