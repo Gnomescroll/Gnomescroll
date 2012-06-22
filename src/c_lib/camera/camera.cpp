@@ -205,7 +205,10 @@ void Camera::world_projection()
     // DEPRECATE GLU
 
     update_camera_matrices();
-    
+
+    //right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
+    //up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
+
     right = vec3_euler_rotation(right, theta, phi, 0.0 );
     up = vec3_euler_rotation(up, theta, phi, 0.0 );
 
