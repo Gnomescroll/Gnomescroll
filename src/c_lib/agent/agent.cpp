@@ -38,6 +38,7 @@ void AgentState::forward_vector(float f[3])
 
     float xa = theta;
     float ya = phi;
+/*
     if (theta > 1.0f)
         xa -= 2.0f;
     else if (theta < -1.0f)
@@ -59,6 +60,25 @@ void AgentState::forward_vector(float f[3])
     f[0] /= len;
     f[1] /= len;
     f[2] /= len;
+*/
+    bool error = false;
+    if (theta > 1.0f) error = true;
+    if (theta < -1.0f) error = true;
+
+    if (phi > 0.4999f) phi = error = true;
+    if (phi < -0.4999f) phi = error = true;
+
+    if(error == true)
+    {
+        GS_ABORT();
+    }
+
+    Vec3 _f = vec3_init(1.0, 0.0, 0.0);
+    _f = vec3_euler_rotation(_f, xa, ya, 0.0);
+
+    f[0] = _f.x;
+    f[1] = _f.y;
+    f[2] = _f.z;
 }
 
 Vec3 AgentState::forward_vector()
