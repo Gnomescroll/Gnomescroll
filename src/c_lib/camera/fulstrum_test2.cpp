@@ -157,8 +157,6 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     fbr = fc - Y * fh + X * fw;
 */
 
-    if(u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
-
     ftl = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,-fw)  );
     ftr = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,fw)   );
     fbl = vec3_add3( fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,-fw) );
@@ -175,6 +173,11 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     pl[NEARP].set3Points(ntl,ntr,nbr);
     pl[FARP].set3Points(ftr,ftl,fbl);
 
+//debugging
+#if 0
+
+    if(u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
+    
     printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
 
     Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15));
@@ -185,6 +188,7 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     if( pl[RIGHT].distance(f2) < 0 ) printf("Right\n");
     if( pl[NEARP].distance(f2) < 0 ) printf("NearP\n");
     if( pl[FARP].distance(f2) < 0 ) printf("FarP\n");
+#endif
 
 #else
     nc = vec3_add(c, vec3_scalar_mult(f, nearD));

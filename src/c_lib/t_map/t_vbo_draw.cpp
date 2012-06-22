@@ -568,7 +568,7 @@ void Vbo_map::draw_map()
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
         
-        #if 1
+        #if 0
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {

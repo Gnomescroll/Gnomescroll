@@ -213,7 +213,7 @@ void Camera::world_projection()
     right   = vec3_euler_rotation(right, theta,    phi,   0.0 );
     up      = vec3_euler_rotation(up,    theta,    phi,   0.0 );
 
-
+/*
     Vec3 t = vec3_init(1.0, 0.0, 0.0);
     t = vec3_euler_rotation(t, 0.0, 0.0, 0.0);
 
@@ -223,6 +223,7 @@ void Camera::world_projection()
         right.x,right.y,right.z, 
         look.x,look.y,look.z,
         up.x,up.y,up.z);
+*/
 
 /*
     Error: The up direction is unside down!!!
