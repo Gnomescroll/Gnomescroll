@@ -6,6 +6,16 @@
 
 int main(int argc, char** argv)
 {
+    #if PRODUCTION
+    printf("Production build\n");
+    #else
+    printf("Debug build\n");
+    #endif
+
+    #ifdef __APPLE__
+    set_working_directory_to_Resources();
+    #endif
+
     // set output unbuffered
     setvbuf(stdout, NULL, _IONBF, 0);   // NULL,0 are ignored when _IONBF enabled
     

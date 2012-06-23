@@ -24,6 +24,9 @@ dont_include_this_file_in_client
 // crash report
 #include <common/crash_report/stack_trace.hpp>
 
+// osx tools
+#include <common/osx.hpp>
+
 //options
 #include <options/option_macros.hpp>
 #include <options/server_options.cpp>
