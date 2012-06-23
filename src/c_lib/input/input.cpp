@@ -378,7 +378,7 @@ void poll_mouse()
     non_zero++;
 
     dx *= -1;
-    dy *=  input_state.invert_mouse ? 1 : -1;
+    dy *=  input_state.invert_mouse ? -1 : 1;
 
     struct MOUSE_MOVEMENT m;
 
