@@ -94,11 +94,11 @@ bool MaxPaths() {
 int width = 128;
 int height = 128;
 
-class Point {
+class HKPoint {
     public:
     int x,y;
     int bx,by;
-    bool is_connected_axis_aligned_y(Point* p, int z, int tile) {
+    bool is_connected_axis_aligned_y(HKPoint* p, int z, int tile) {
         int start,end;
         if (p->y == y) {
             start = (p->x < x) ? p->x : x;
@@ -121,7 +121,7 @@ class Point {
         return true;
     }
     
-    bool is_connected_axis_aligned_x(Point* p, int z, int tile) {
+    bool is_connected_axis_aligned_x(HKPoint* p, int z, int tile) {
         int start,end;
         if (p->x == x) {
             start = (p->y < y) ? p->y : y;
@@ -143,7 +143,7 @@ class Point {
         return true;
     }
 
-    bool operator==(const Point& p) {   //EDIT
+    bool operator==(const HKPoint& p) {   //EDIT
         if (p.x == this->x && p.y == this->y) return true;  //EDIT
         return false;
     }
@@ -152,11 +152,11 @@ class Point {
         printf("%d %d %d %d\n", x,y,bx,by);
     }
 
-    Point() :
+    HKPoint() :
     x(0),y(0),bx(0),by(0)
     {}
 };
-bool point_taken(struct Point* pts, int n, struct Point* pt) {
+bool point_taken(struct HKPoint* pts, int n, struct HKPoint* pt) {
     int i;
     for (i=0; i<n; i++) {
         if (pt->x == pts[i].x && pt->y == pts[i].y) {
@@ -228,15 +228,15 @@ void quicksort_int(int* points, int beg, int end)
   }
 }
 
-void swap(Point *a, Point *b)
+void swap(HKPoint *a, HKPoint *b)
 {
-  Point t=*a; *a=*b; *b=t;
+  HKPoint t=*a; *a=*b; *b=t;
 }
-void quicksort_pts_x(Point* points, int beg, int end)
+void quicksort_pts_x(HKPoint* points, int beg, int end)
 {
   if (end > beg + 1)
   {
-    Point piv = points[beg];
+    HKPoint piv = points[beg];
     int l = beg + 1, r = end;
     while (l < r)
     {
@@ -250,11 +250,11 @@ void quicksort_pts_x(Point* points, int beg, int end)
     quicksort_pts_x(points, r, end);
   }
 }
-void quicksort_pts_y(Point* points, int beg, int end)
+void quicksort_pts_y(HKPoint* points, int beg, int end)
 {
   if (end > beg + 1)
   {
-    Point piv = points[beg];
+    HKPoint piv = points[beg];
     int l = beg + 1, r = end;
     while (l < r)
     {
@@ -305,7 +305,7 @@ inline bool get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int
     return true;
 }
 
-void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* points) {
+void get_convex_vertices(int z, int poly_tile, HKPoint* pts, int vertex_max, int* points) {
     int p = 0, _p = 0;
     int i,j;
     int q1=0,q2=0,q3=0,q4=0;
@@ -362,14 +362,14 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
 class Diagonal {
     public:
     int p,q;
-    int length(Point* pts) {
-        Point* _p = &pts[this->p];
-        Point* _q = &pts[this->q];
+    int length(HKPoint* pts) {
+        HKPoint* _p = &pts[this->p];
+        HKPoint* _q = &pts[this->q];
         return sqrt((_q->x - _p->x)*(_q->x - _p->x) + (_q->y - _p->y)*(_q->y - _p->y));
     }
 };
 
-void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
+void get_vertical_diagonals(HKPoint* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
     quicksort_pts_x(pts, 0, points);
     int i;
     int* indices = (int*)malloc(sizeof(int)*(width+1));
@@ -383,7 +383,7 @@ void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int dia
     int dct = 0;
     int j,k;
     int off;
-    Point* pt,*pt2;
+    HKPoint* pt,*pt2;
     int index = 0;
     for (i=0; i<width; i++) {
         off = 0;
@@ -410,7 +410,7 @@ void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int dia
     free(indices);
 }
 
-void get_horizontal_diagonals(Point* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
+void get_horizontal_diagonals(HKPoint* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
     quicksort_pts_y(pts, 0, points);
     int i;
     int* indices = (int*)malloc(sizeof(int)*(height+1));
@@ -424,7 +424,7 @@ void get_horizontal_diagonals(Point* pts, int points, Diagonal* diagonals, int d
     int dct = 0;
     int j,k;
     int off;
-    Point *pt,*pt2;
+    HKPoint *pt,*pt2;
     int index = 0;
     for (i=0; i<height; i++) {
         off = 0;
@@ -455,30 +455,30 @@ class Intersection {
     public:
     int dh,dv;
 };
-bool orthogonal_intersection(Point* v1, Point* v2, Point* h1, Point* h2) {
-    Point* top = (v1->y >= v2->y) ? v1 : v2;
-    Point* bottom = (v1->y < v2->y) ? v1 : v2;
-    Point* left = (h1->x >= h2->x) ? h1 : h2;
-    Point* right = (h1->x < h2->x) ? h1 : h2;
+bool orthogonal_intersection(HKPoint* v1, HKPoint* v2, HKPoint* h1, HKPoint* h2) {
+    HKPoint* top = (v1->y >= v2->y) ? v1 : v2;
+    HKPoint* bottom = (v1->y < v2->y) ? v1 : v2;
+    HKPoint* left = (h1->x >= h2->x) ? h1 : h2;
+    HKPoint* right = (h1->x < h2->x) ? h1 : h2;
 
     if (v1->x < left->x && v1->x > right->x
      && h1->y < top->y  && h1->y > bottom->y) return true;
     return false;
 }
-bool orthogonal_intersection_inclusive(Point* v1, Point* v2, Point* h1, Point* h2) {
-    Point* top = (v1->y >= v2->y) ? v1 : v2;
-    Point* bottom = (v1->y < v2->y) ? v1 : v2;
-    Point* left = (h1->x >= h2->x) ? h1 : h2;
-    Point* right = (h1->x < h2->x) ? h1 : h2;
+bool orthogonal_intersection_inclusive(HKPoint* v1, HKPoint* v2, HKPoint* h1, HKPoint* h2) {
+    HKPoint* top = (v1->y >= v2->y) ? v1 : v2;
+    HKPoint* bottom = (v1->y < v2->y) ? v1 : v2;
+    HKPoint* left = (h1->x >= h2->x) ? h1 : h2;
+    HKPoint* right = (h1->x < h2->x) ? h1 : h2;
 
     if (v1->x <= left->x && v1->x >= right->x
      && h1->y <= top->y  && h1->y >= bottom->y) return true;
     return false;
 }
-void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
+void find_intersections(HKPoint* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
     int i,j;
     int index = 0;
-    Point *p1, *p2, *q1, *q2;
+    HKPoint *p1, *p2, *q1, *q2;
     for (i=0; i<v_ct; i++) {
         p1 = &p[v[i].p];
         p2 = &p[v[i].q];
@@ -496,10 +496,10 @@ void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, 
     printf("%d intersections found\n", index);
 }
 
-void find_intersections(Point* p, Diagonal* d, int d_ct, int h_ct, Intersection* in, int* i_ct) {
+void find_intersections(HKPoint* p, Diagonal* d, int d_ct, int h_ct, Intersection* in, int* i_ct) {
     int i,j;
     int index = 0;
-    Point *p1, *p2, *q1, *q2;
+    HKPoint *p1, *p2, *q1, *q2;
     for (i=h_ct; i<d_ct; i++) {
         p1 = &p[d[i].p];
         p2 = &p[d[i].q];
@@ -575,7 +575,7 @@ int find_matching_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, in
     return -1;
 }
 
-int choose_shortest_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, Diagonal* h_diagonals, Diagonal* v_diagonals, Point* p, int* map) {
+int choose_shortest_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, Diagonal* h_diagonals, Diagonal* v_diagonals, HKPoint* p, int* map) {
     // look in intersections for dh==h_index
     // if multiple matches, find which dv is in matching set map
     // assign ptr to d
