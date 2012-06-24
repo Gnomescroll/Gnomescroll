@@ -462,6 +462,8 @@ void Vbo_map::sort_draw()
 //float _normal_array[3*6];
 float _chunk_position[3] = {0};
 
+#define ADV_PRUNE 0
+
 void Vbo_map::draw_map() 
 {
     if(T_MAP_BACKUP_SHADER != 0)
@@ -507,9 +509,11 @@ void Vbo_map::draw_map()
     glPushMatrix(); //save matrix
     //glPushMatrix();
 
+#if ADV_PRUNE
     int v_total = 0;
     int v_drawn = 0;
     //int v_pruned = 0;
+#endif
 
     for(int i=0;i<draw_vbo_n;i++)
     {
@@ -541,11 +545,6 @@ void Vbo_map::draw_map()
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
-
-        int xi = draw_vbo_array[i].i;
-        int xj = draw_vbo_array[i].j;
-        int index = 32*xj +xi;
-
         /*
             int vertex_num[6];
             int vertex_offset[6];
@@ -568,7 +567,12 @@ void Vbo_map::draw_map()
 
         //printf("vertices= %i \n", vbo->_v_num[0]);
         
-        #if 0
+        #if ADV_PRUNE
+
+        int xi = draw_vbo_array[i].i;
+        int xj = draw_vbo_array[i].j;
+        int index = 32*xj +xi;
+
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
