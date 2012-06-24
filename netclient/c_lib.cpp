@@ -89,6 +89,8 @@ dont_include_this_file_in_server
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
+#include <SDL/md5_loader/md5_test.cpp>
+
 /* Draw lists */
 #include <common/draw/draw.cpp>
 
