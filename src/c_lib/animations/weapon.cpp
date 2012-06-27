@@ -18,6 +18,8 @@ static float origin_dz = 0.0f;
 static float origin_dxy = 0.0f;
 static float origin_depth = 0.0f;
 
+static float sprite_scale = 0.3f;
+
 void parse_equipment_sprite_alignment_config()
 {
 	// get file contents
@@ -39,6 +41,8 @@ void parse_equipment_sprite_alignment_config()
 	int read = 0;
 	
 	// scanf for alignment config	
+	sscanf(buffer+index, "sprite_scale: %f %n", &sprite_scale, &read);
+    index += read;
 	sscanf(buffer+index, "focal_dz: %f %n", &focal_dz, &read);
     index += read;
 	sscanf(buffer+index, "focal_dxy: %f %n", &focal_dxy, &read);
@@ -57,8 +61,6 @@ void parse_equipment_sprite_alignment_config()
 	// free file contents
 	free(buffer);
 }
-
-static float item_scale = 0.3f;
 
 void move_focal_vertical(float delta)
 {	// vertical distance
@@ -92,18 +94,38 @@ void move_origin_depth(float delta)
 
 void dilate_equipped_sprite(float delta)
 {
-	item_scale += delta;
+	sprite_scale += delta;
 }
 
 void print_sprite_alignment_config()
 {
 	printf("Sprite alignment:\n");
+	printf("sprite_scale: %f\n", sprite_scale);
 	printf("focal_dz: %f\n", focal_dz);
 	printf("focal_dxy: %f\n", focal_dxy);
 	printf("focal_depth: %f\n", focal_depth);
 	printf("origin_dz: %f\n", origin_dz);
 	printf("origin_dxy: %f\n", origin_dxy);
 	printf("origin_depth: %f\n", origin_depth);
+}
+
+static Vec3 compute_point_offset(
+	Vec3 position, Vec3 forward, Vec3 right, Vec3 up,
+	float dxy, float dz, float depth)
+{
+	// move horizontal
+	right = vec3_scalar_mult(right, dxy);
+	Vec3 final = vec3_add(position, right);
+
+	// move vertical
+	up = vec3_scalar_mult(up, dz);
+	final = vec3_add(final, up);
+
+	// move depth
+	forward = vec3_scalar_mult(forward, depth);
+	final = vec3_add(final, forward);
+	
+	return final;
 }
 
 void draw_equipped_item(int item_type)
@@ -140,50 +162,21 @@ void draw_equipped_item(int item_type)
 	Vec3 up = agent_camera->up_vector();
 
 	// calculate focal,origin points from camera and focal/origin deltas
-	
-	//////////////////
-	// FOCAL /////////
-	//////////////////
-	// move horizontal
-	Vec3 dright = vec3_cross(forward, up);
-	dright.z = 0.0f;
-	normalize_vector(&dright);
-	dright = vec3_scalar_mult(dright, focal_dxy);
-	Vec3 focal = vec3_add(position, dright);
+	Vec3 focal = compute_point_offset(
+		position, forward, camera_right, up,
+		focal_dxy, focal_dz, focal_depth);
 
-	// move vertical
-	float dz = focal_dz * up.z;
-	//float dz = focal_dz;
-	focal.z += dz;
+	Vec3 origin = compute_point_offset(
+		position, forward, camera_right, up,
+		origin_dxy, origin_dz, origin_depth);
 
-	// move depth
-	focal = vec3_add(focal, vec3_scalar_mult(forward, focal_depth));
-
-	//////////////////
-	// ORIGIN ////////
-	//////////////////
-	// move horizontal
-	dright = vec3_cross(forward, up);
-	dright.z = 0.0f;
-	normalize_vector(&dright);
-	dright = vec3_scalar_mult(dright, origin_dxy);
-	Vec3 origin = vec3_add(position, dright);
-	
-	// move vertical
-	dz = origin_dz * up.z;
-	//dz = origin_dz;
-	origin.z += dz;
-
-	// move depth
-	origin = vec3_add(origin, vec3_scalar_mult(forward, origin_depth));
-	
 	// use focal and origin points to calculate right vector
 	Vec3 right = vec3_sub(focal, origin);
 	normalize_vector(&right);
 
 	// scale to size
-	up = vec3_scalar_mult(up, item_scale);
-	right = vec3_scalar_mult(right, item_scale);
+	up = vec3_scalar_mult(up, sprite_scale);
+	right = vec3_scalar_mult(right, sprite_scale);
 
 	// set up opengl state
 	glColor4ub(255,255,255,255);

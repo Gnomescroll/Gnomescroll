@@ -58,8 +58,6 @@ void animations_tick()
     insect_mob_list->tick();
 }
 
-
-
 void prep_insect_mob()
 {
     insect_mob_list->prep();
@@ -73,7 +71,6 @@ void draw_insect_mob()
 void draw_hitscan_effect()
 {
     hitscan_effect_list->draw();
-
 }
 
 void draw_hitscan_laser_effect()
