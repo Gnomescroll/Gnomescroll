@@ -8,8 +8,6 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
-//#include <state/client_state.hpp>
-//#include <state/server_state.hpp>
 #include <entity/constants.hpp>
 #include <common/random.h>
 
@@ -254,6 +252,7 @@ void Grenade::damage_blocks()
 		by = my + j;
 		bz = mz + k;
 		if (bz <= 0) continue;  // dont damage floor
+		if (bz >= map_dim.z) continue;  // dont damage floor
 
 		bx = translate_point(bx);
 		by = translate_point(by);
@@ -262,17 +261,18 @@ void Grenade::damage_blocks()
 		if (dmg <= 0) continue;
 		
 		apply_damage_broadcast(bx,by,bz, dmg, action);
-		bx = mx - i;
+		bx = translate_point(mx - i);
 		apply_damage_broadcast(bx,by,bz, dmg, action);
-		by = my - j;
+		by = translate_point(my - j);
 		apply_damage_broadcast(bx,by,bz, dmg, action);
-		by = my + j;
+		by = translate_point(my + j);
 		bz = mz - k;
+		if (bz > 0 && bz < map_dim.z)
+			apply_damage_broadcast(bx,by,bz, dmg, action);
+		bx = translate_point(mx + i);
+		by = translate_point(my - j);
 		apply_damage_broadcast(bx,by,bz, dmg, action);
-		bx = mx + i;
-		by = my - j;
-		apply_damage_broadcast(bx,by,bz, dmg, action);
-		bx = mx - i;
+		bx = translate_point(mx - i);
 		apply_damage_broadcast(bx,by,bz, dmg, action);
 	}
     #endif

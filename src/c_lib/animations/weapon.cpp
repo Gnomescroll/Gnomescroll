@@ -8,8 +8,18 @@ namespace Animations
 {
 
 static int rendered_item = NULL_ITEM_TYPE;
+static bool equipped_item_animating = false;
+static int equipped_item_animation_tick = false;
 
-// adjustments for aligning weapon sprite
+// offsets when equipped_item_animating
+static float anim_focal_dz = 0.0f;
+static float anim_focal_dxy = 0.0f;
+static float anim_focal_depth = 0.0f;
+static float anim_origin_dz = 0.0f;
+static float anim_origin_dxy = 0.0f;
+static float anim_origin_depth = 0.0f;
+
+// config; adjustments for aligning weapon sprite
 static float focal_dz = 0.0f;
 static float focal_dxy = 0.0f;
 static float focal_depth = 0.0f;
@@ -130,6 +140,7 @@ static Vec3 compute_point_offset(
 
 void draw_equipped_item(int item_type)
 {	// draw item in hud
+	GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
 
 	// setup texture
 	using TextureSheetLoader::ItemSheetTexture;
@@ -162,13 +173,30 @@ void draw_equipped_item(int item_type)
 	Vec3 up = agent_camera->up_vector();
 
 	// calculate focal,origin points from camera and focal/origin deltas
-	Vec3 focal = compute_point_offset(
-		position, forward, camera_right, up,
-		focal_dxy, focal_dz, focal_depth);
+	
+	Vec3 focal;
+	Vec3 origin;
+	
+	if (equipped_item_animating)
+	{
+		focal = compute_point_offset(
+			position, forward, camera_right, up,
+			anim_focal_dxy, anim_focal_dz, anim_focal_depth);
 
-	Vec3 origin = compute_point_offset(
-		position, forward, camera_right, up,
-		origin_dxy, origin_dz, origin_depth);
+		origin = compute_point_offset(
+			position, forward, camera_right, up,
+			anim_origin_dxy, anim_origin_dz, anim_origin_depth);
+	}
+	else
+	{	// use defaults
+		focal = compute_point_offset(
+			position, forward, camera_right, up,
+			focal_dxy, focal_dz, focal_depth);
+
+		origin = compute_point_offset(
+			position, forward, camera_right, up,
+			origin_dxy, origin_dz, origin_depth);
+	}
 
 	// use focal and origin points to calculate right vector
 	Vec3 right = vec3_sub(focal, origin);
@@ -215,12 +243,46 @@ void draw_equipped_item(int item_type)
 
 void begin_equipped_item_animation(int item_type)
 {
+	stop_equipped_item_animation();
+	
 	// begin action animation for item type
+	equipped_item_animating = true;
+	rendered_item = item_type;
+
+	equipped_item_animation_tick = 0;
+	
+	// copy default state
+	anim_focal_dz = focal_dz;
+	anim_focal_dxy = focal_dxy;
+	anim_focal_depth = focal_depth;
+	anim_origin_dz = origin_dz;
+	anim_origin_dxy = origin_dxy;
+	anim_origin_depth = origin_depth;
+}
+
+void tick_equipped_item_animation()
+{
+	if (!equipped_item_animating) return;
+	equipped_item_animation_tick++;
+
+	const int duration = 10; // ticks
+	if (equipped_item_animation_tick > duration)
+	{
+		stop_equipped_item_animation();
+		return;
+	}
+	
+	// calculate offsets based on tick value
+	float delta = 0.05f;
+	if (equipped_item_animation_tick >= duration/2) delta *= -1;
+	anim_origin_depth += delta;
+	if (anim_origin_depth < origin_depth) anim_origin_depth = origin_depth;
 }
 
 void stop_equipped_item_animation()
 {
 	// force stop current action animation
+	equipped_item_animating = false;
 }
     
 void init_weapon_sprite()

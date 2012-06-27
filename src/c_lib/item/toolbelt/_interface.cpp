@@ -168,11 +168,14 @@ void update_selected_item_type()
     if (agent_id < 0 || agent_id >= AGENT_MAX) return;
     int item_type = NULL_ITEM_TYPE;
     ItemContainer::ItemContainer* toolbelt = NULL;
-    if (toolbelt_id != NULL_CONTAINER) toolbelt = (ItemContainer::ItemContainer*)ItemContainer::get_container(toolbelt_id);
-    if (toolbelt != NULL) item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
+    if (toolbelt_id != NULL_CONTAINER) toolbelt =
+		(ItemContainer::ItemContainer*)ItemContainer::get_container(toolbelt_id);
+    if (toolbelt != NULL) item_type =
+		Item::get_item_type(toolbelt->get_item(selected_slot));
     if (agent_selected_type[agent_id] == item_type) return;
     turn_fire_off(agent_id);
     agent_selected_type[agent_id] = item_type;
+    Animations::stop_equipped_item_animation();
 }
 
 // tick for all agents (including local)
@@ -395,6 +398,9 @@ void toolbelt_item_selected_event(int container_id, int slot)
     selected_slot = slot;
     send_set_slot_packet(slot);
     update_selected_item_type();
+
+	// stop any animations
+    Animations::stop_equipped_item_animation();
 }
 
 void left_trigger_down_event()

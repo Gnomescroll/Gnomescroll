@@ -54,6 +54,14 @@ bool toolbelt_item_begin_alpha_action()
 
     if (agent_fire_on[agent_id]) return false;
     turn_fire_on(agent_id);
+    
+    if (agent_id == ClientState::playerAgent_state.agent_id)
+    {
+		ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+		int item_type = Item::get_item_type(item_id);
+		Animations::begin_equipped_item_animation(item_type);
+	}
+	
     return true;
 }
 
@@ -72,6 +80,12 @@ bool toolbelt_item_end_alpha_action()
     if (item_id == NULL_ITEM) item_group = IG_NONE;
     else item_group = Item::get_item_group(item_id);
     
+    if (agent_id == ClientState::playerAgent_state.agent_id)
+    {
+		int item_type = Item::get_item_type(item_id);
+		Animations::stop_equipped_item_animation();
+	}
+
     switch (item_group)
     {
         case IG_ERROR:
