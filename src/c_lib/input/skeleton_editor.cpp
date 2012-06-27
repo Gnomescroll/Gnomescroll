@@ -101,9 +101,7 @@ break;
 void raycast_to_part()
 {
     // get camera vector
-    float vec[3];
-    current_camera->forward_vector(vec);
-
+    Vec3 vec = current_camera->forward_vector();
     Vec3 p = current_camera->get_position();
 
     // hitscan against voxels
@@ -112,7 +110,7 @@ void raycast_to_part()
     Voxel_hitscan_target target;
     bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         p.x,p.y,p.z,
-        vec[0], vec[1], vec[2],
+        vec.x,vec.y,vec.z,
         -1, (ObjectType)-1,
         collision_point, &vox_distance,
         &target
