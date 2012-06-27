@@ -244,13 +244,16 @@ int run()
 
         ItemParticle::draw();
         //t_mech::draw();
-        int equipped_item_type = Toolbelt::get_selected_item_type();
-		Animations::draw_equipped_item(equipped_item_type);
 		
         /*
             Skybox
         */
         Skybox::draw();
+
+		glDisable(GL_DEPTH_TEST);
+		// with depth test disable
+        int equipped_item_type = Toolbelt::get_selected_item_type();
+		Animations::draw_equipped_item(equipped_item_type);
 
         /*
             Transparent

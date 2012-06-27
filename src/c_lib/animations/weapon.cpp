@@ -133,65 +133,45 @@ void draw_equipped_item(int item_type)
 	float ty_min = (item_sprite / TEXTURE_SPRITE_WIDTH) * SPRITE_WIDTH;
 	float ty_max = ty_min + SPRITE_WIDTH;
 	
-	// get world space coordinates (configured)
-	const float CAMERA_DIST = 0.15f;
-	
 	//// place sprite at camera position + distance
 	Vec3 position = agent_camera->get_position();
 	Vec3 forward = agent_camera->forward_vector();
-	//position = vec3_add(position, vec3_scalar_mult(forward, CAMERA_DIST));
-
-	//// rotate forward along xy plane
-	//const float ROT = 20.0f;
-	//const float THETA = (ROT/180.0f) * 3.14159f;	// radians
-	//Vec3 right = vec3_copy(forward);
-	//right.z = 0;
-	//normalize_vector(&right);
-	//float x = right.x * cos(THETA) - right.y * sin(THETA);
-	//float y = right.x * sin(THETA) + right.y * cos(THETA);
-	//right.x = x;
-	//right.y = y;
-	//right.z = forward.z; 
-	//normalize_vector(&right);
-	//right = vec3_scalar_mult(right, item_scale);
-
 	Vec3 camera_right = agent_camera->right_vector();
-	//// adjust weapon position
-    //const float dxy = 0.14f;	// magic numbers
-    //const float dz = 0.0f;
-	//position.x = position.x + dxy * camera_right.x;
-	//position.y = position.y + dxy * camera_right.y;
-	//position.z = position.z + dz;
-
 
 	// calculate focal,origin points from camera and focal/origin deltas
 	
 	// depths need to use the forward vector
 	// xy needs to use the right vector
 	// z assumes up vector of {0,0,1}, but we may need to adjust using correct up vector
-
-	// move depth
-	Vec3 focal = vec3_add(position, vec3_scalar_mult(forward, focal_depth));
 	
-	// move vertical
-	focal.z += focal_dz;
-	
+	// FOCAL /////////
+	//////////////////
 	// move horizontal
 	Vec3 dright = camera_right;
-	dright.z = 0;
+	float dz = origin_dz * dright.z;
+	dright.z = 0.0f;
 	normalize_vector(&dright);
 	dright = vec3_scalar_mult(dright, focal_dxy);
-	focal = vec3_add(focal, dright);
+	Vec3 focal = vec3_add(focal, dright);
 
+	// move vertical
+	focal.z += dz;
+
+	// move depth
+	focal = vec3_add(position, vec3_scalar_mult(forward, focal_depth));
+
+	// ORIGIN ////////
+	//////////////////
 	// move horizontal
 	dright = camera_right;
-	dright.z = 0;
+	dz = origin_dz * dright.z;
+	dright.z = 0.0f;
 	normalize_vector(&dright);
 	dright = vec3_scalar_mult(dright, origin_dxy);
 	Vec3 origin = vec3_add(position, dright);
 	
 	// move vertical
-	origin.z += origin_dz;
+	origin.z += dz;
 
 	// move depth
 	origin = vec3_add(origin, vec3_scalar_mult(forward, origin_depth));
@@ -214,8 +194,8 @@ void draw_equipped_item(int item_type)
 	// set up opengl state
 	glColor4ub(255,255,255,255);
     GL_ASSERT(GL_TEXTURE_2D, true);
-    GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
+	GL_ASSERT(GL_DEPTH_TEST, false);
 
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5);

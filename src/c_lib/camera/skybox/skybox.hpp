@@ -233,6 +233,7 @@ void draw()
     glColor3ub(255,255,255);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_DEPTH_TEST, true);
    
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
