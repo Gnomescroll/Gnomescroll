@@ -130,6 +130,7 @@ int apply_damage(int x, int y, int z, int dmg)
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
     GS_ASSERT(dmg > 0);
+    if (dmg <= 0) return;
     GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
     if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
 

@@ -221,9 +221,10 @@ void Grenade::explode()
     #endif
 }
 
-int Grenade::block_damage(int dist)
+inline int Grenade::block_damage(int dist)
 {
     int max_dist = GRENADE_BLOCK_DESTROY_RADIUS*3;
+    if (dist >= max_dist) return 0;
     float ratio = (float)(max_dist - dist) / (float)(max_dist);
     float dmg = ratio * (float)(GRENADE_BLOCK_DAMAGE);
     int idmg = (int)(dmg);
@@ -241,36 +242,39 @@ void Grenade::damage_blocks()
     int my = (int)position.y;
     int mz = (int)position.z;
     
-    int ir = GRENADE_BLOCK_DESTROY_RADIUS;
-    int bx,by,bz;
-    int dmg=0;
-    for (int i=0; i<ir; i++)
-        for (int j=0; j<ir; j++)
-            for (int k=0; k<ir; k++)
-            {
-                bx = mx + i;
-                by = my + j;
-                bz = mz + k;
-                if (bz <= 0) continue;  // dont damage floor
+	int ir = GRENADE_BLOCK_DESTROY_RADIUS;
+	int bx,by,bz;
+	int dmg = 0;
 
-                bx = translate_point(bx);
-                by = translate_point(by);
-                
-                dmg = block_damage(i+j+k);
-                apply_damage_broadcast(bx,by,bz, dmg, action);
-                bx = mx - i;
-                apply_damage_broadcast(bx,by,bz, dmg, action);
-                by = my - j;
-                apply_damage_broadcast(bx,by,bz, dmg, action);
-                by = my + j;
-                bz = mz - k;
-                apply_damage_broadcast(bx,by,bz, dmg, action);
-                bx = mx + i;
-                by = my - j;
-                apply_damage_broadcast(bx,by,bz, dmg, action);
-                bx = mx - i;
-                apply_damage_broadcast(bx,by,bz, dmg, action);
-            }
+	for (int i=0; i<ir; i++)
+	for (int j=0; j<ir; j++)
+	for (int k=0; k<ir; k++)
+	{
+		bx = mx + i;
+		by = my + j;
+		bz = mz + k;
+		if (bz <= 0) continue;  // dont damage floor
+
+		bx = translate_point(bx);
+		by = translate_point(by);
+		
+		dmg = block_damage(i+j+k);
+		if (dmg <= 0) continue;
+		
+		apply_damage_broadcast(bx,by,bz, dmg, action);
+		bx = mx - i;
+		apply_damage_broadcast(bx,by,bz, dmg, action);
+		by = my - j;
+		apply_damage_broadcast(bx,by,bz, dmg, action);
+		by = my + j;
+		bz = mz - k;
+		apply_damage_broadcast(bx,by,bz, dmg, action);
+		bx = mx + i;
+		by = my - j;
+		apply_damage_broadcast(bx,by,bz, dmg, action);
+		bx = mx - i;
+		apply_damage_broadcast(bx,by,bz, dmg, action);
+	}
     #endif
 }
 
