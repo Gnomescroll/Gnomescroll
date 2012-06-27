@@ -10,6 +10,8 @@ namespace Animations
 static int rendered_item = NULL_ITEM_TYPE;
 static bool equipped_item_animating = false;
 static int equipped_item_animation_tick = false;
+static int equipped_item_animation_tick_nudge = 1;
+static bool equipped_item_continuous_animation = false;
 
 // offsets when equipped_item_animating
 static float anim_focal_dz = 0.0f;
@@ -241,13 +243,14 @@ void draw_equipped_item(int item_type)
     glDisable(GL_ALPHA_TEST);
 }
 
-void begin_equipped_item_animation(int item_type)
+void begin_equipped_item_animation(int item_type, bool continuous)
 {
 	stop_equipped_item_animation();
 	
 	// begin action animation for item type
 	equipped_item_animating = true;
 	rendered_item = item_type;
+	equipped_item_continuous_animation = continuous;
 
 	equipped_item_animation_tick = 0;
 	
@@ -263,19 +266,35 @@ void begin_equipped_item_animation(int item_type)
 void tick_equipped_item_animation()
 {
 	if (!equipped_item_animating) return;
-	equipped_item_animation_tick++;
+
+	equipped_item_animation_tick += equipped_item_animation_tick_nudge;
 
 	const int duration = 10; // ticks
 	if (equipped_item_animation_tick > duration)
 	{
-		stop_equipped_item_animation();
-		return;
+		if (equipped_item_continuous_animation)
+			equipped_item_animation_tick_nudge *= -1;
+		else
+		{
+			stop_equipped_item_animation();
+			return;
+		}
+	}
+	if (equipped_item_animation_tick < 0)
+	{
+		if (equipped_item_continuous_animation)
+			equipped_item_animation_tick_nudge *= -1;
 	}
 	
 	// calculate offsets based on tick value
-	float delta = 0.05f;
-	if (equipped_item_animation_tick >= duration/2) delta *= -1;
-	anim_origin_depth += delta;
+	const float delta = 0.05f;
+	anim_origin_depth = origin_depth;
+	if (equipped_item_animation_tick < duration/2)
+		anim_origin_depth += delta * (float)equipped_item_animation_tick;
+	else
+		anim_origin_depth += delta * (float)(duration - equipped_item_animation_tick);
+	
+	// clamp
 	if (anim_origin_depth < origin_depth) anim_origin_depth = origin_depth;
 }
 
@@ -283,6 +302,7 @@ void stop_equipped_item_animation()
 {
 	// force stop current action animation
 	equipped_item_animating = false;
+	equipped_item_animation_tick = 0;
 }
     
 void init_weapon_sprite()
