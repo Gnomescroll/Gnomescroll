@@ -3,10 +3,10 @@
 #include <physics/ray_trace/ray_trace.hpp>
 #include <entity/constants.hpp>
 #include <common/defines.h>
+#include <voxel/voxel_model.hpp>
 
+#include <agent/constants.hpp>
 #include <agent/agent_status.hpp>
-#include <agent/agent_vox.hpp>
-//#include <agent/agent_weapons.hpp>
 
 #if DC_CLIENT
 #include <agent/client/agent_event.hpp>

@@ -4,8 +4,6 @@
 #include <common/compat_gl.h>
 #endif
 
-#include <agent/agent_vox.hpp>
-
 #include <agent/net_agent.hpp>
 #include <agent/agent_physics.hpp>
 
