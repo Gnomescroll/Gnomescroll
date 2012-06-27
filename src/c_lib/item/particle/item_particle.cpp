@@ -10,8 +10,7 @@ namespace ItemParticle
 
 #if DC_CLIENT
 
-//SDL_Surface* ItemSheetSurface = NULL;
-unsigned int ItemSheetTexture = 0;
+GLuint ItemSheetTexture = 0;
 
 void init_item_particle()
 {

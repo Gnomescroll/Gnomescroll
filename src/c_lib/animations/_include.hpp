@@ -7,6 +7,7 @@
 #include <animations/hitscan_laser.cpp>
 #include <animations/mining_laser.cpp>
 #include <animations/insect_mob.cpp>
+#include <animations/weapon.cpp>
 #endif
 
 

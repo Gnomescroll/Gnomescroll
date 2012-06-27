@@ -79,7 +79,7 @@ Camera::Camera()
 zoomed(false),
 zoom_factor(CAMERA_ZOOM_FACTOR)
 {
-    set_aspect(85.0f, 0.1f, 1000.0f);
+    set_aspect(85.0f, 0.01f, 1000.0f);
     set_dimensions();
     set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 }
@@ -247,55 +247,47 @@ void Camera::hud_projection()
     //glEnable(GL_TEXTURE_2D);
 }
 
-void Camera::forward_vector(float f[3])
+Vec3 Camera::forward_vector()
 {
     float xa = theta;
     float ya = phi;
-/*
-    if (theta > 1.0f) xa -= 2.0f;
-    else if (theta < -1.0f) xa += 2.0f;
 
-    // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
-    // Camera behavior when looking straight up or down is fucked up otherwise
-    if (phi > 0.4999f) phi = 0.4999f;
-    else if (phi < -0.4999f) phi = -0.4999f;
-  
-    f[0] = cos( xa * PI) * cos( ya * PI);
-    f[1] = sin( xa * PI) * cos( ya * PI);
-    f[2] = sin( ya * PI);
-
-    // normalize
-    float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);
-    f[0] /= len;
-    f[1] /= len;
-    f[2] /= len;
-*/
-
-    bool error = false;
-    if (theta > 1.0f) error = true;
-    if (theta < -1.0f) error = true;
-
-    if (phi > 0.4999f) phi = error = true;
-    if (phi < -0.4999f) phi = error = true;
-
-    if(error == true)
+    if (theta > 1.0f)
     {
-        GS_ABORT();
-    }
+		xa -= 2.0f;
+		GS_ASSERT(false);
+	}
+    if (theta < -1.0f)
+    {
+		xa += 2.0f;
+		GS_ASSERT(false);
+	}
 
-    Vec3 _f = vec3_init(1.0, 0.0, 0.0);
-    _f = vec3_euler_rotation(_f, xa, ya, 0.0);
+    if (phi > 0.4999f)
+    {
+		phi = 0.4999f;
+		GS_ASSERT(false);
+	}
+    if (phi < -0.4999f)
+    {
+		phi = -0.4999f;
+		GS_ASSERT(false);
+	}
 
-    f[0] = _f.x;
-    f[1] = _f.y;
-    f[2] = _f.z;
+    Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
+    f = vec3_euler_rotation(f, xa, ya, 0.0f);
+	normalize_vector(&f);
+
+	return f;
 }
 
-Vec3 Camera::forward_vector()
+// deprecated
+void Camera::forward_vector(float forward[3])
 {
-    float f[3];
-    this->forward_vector(f);
-    return vec3_init(f[0], f[1], f[2]);
+	Vec3 f = this->forward_vector();
+    forward[0] = f.x;
+    forward[1] = f.y;
+    forward[2] = f.z;
 }
 
 void Camera::copy_state_from(Camera* c)

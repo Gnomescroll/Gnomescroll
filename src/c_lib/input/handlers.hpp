@@ -17,10 +17,10 @@ struct InputState
     bool map;
     bool chat;
     bool full_chat;
-    //bool hud;
     bool debug;
     bool skeleton_editor;
     bool graphs;
+    bool equipped_sprite_adjuster;
     
     bool can_jump;
     bool confirm_quit;
@@ -65,6 +65,7 @@ void toggle_scoreboard();
 void toggle_map();
 void toggle_chat();
 void toggle_skeleton_editor();
+void toggle_equipped_sprite_adjuster();
 
 void enable_jump();
 void enable_quit();

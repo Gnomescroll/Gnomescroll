@@ -12,7 +12,6 @@ extern class ItemAttribute* item_attribute_array;
 
 extern class NaniteStoreItem* nanite_store_item_array;
 
-extern class NaniteStoreItem* nanite_store_item_array;
 extern class CraftingRecipe* crafting_recipe_array;
 extern class SmeltingRecipe* smelting_recipe_array;
 

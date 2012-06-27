@@ -47,8 +47,16 @@ class Camera
         void set_position(struct Vec3 p);
         struct Vec3 get_position() { return this->position; }
         
-        void forward_vector(float f[3]);
-        Vec3 forward_vector();
+        struct Vec3 forward_vector();
+        void forward_vector(float forward[3]);	// deprecated
+        struct Vec3 right_vector()
+        {
+			struct Vec3 look = this->forward_vector();
+			const struct Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
+			struct Vec3 right = vec3_cross(look, up);
+			normalize_vector(&right);
+			return right;
+		}
         
         void hud_projection();
         void world_projection();
