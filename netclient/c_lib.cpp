@@ -171,6 +171,7 @@ dont_include_this_file_in_server
 #include <input/input.cpp>
 #include <input/handlers.cpp>
 #include <input/skeleton_editor.cpp>
+#include <input/equipped_sprite_adjuster.cpp>
 
 /* sound */
 #include <sound/wav.cpp>

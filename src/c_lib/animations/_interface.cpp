@@ -5,6 +5,7 @@
 #include <animations/hitscan.hpp>
 #include <animations/hitscan_laser.hpp>
 #include <animations/mining_laser.hpp>
+#include <animations/weapon.hpp>
 
 namespace Animations 
 {
@@ -30,7 +31,7 @@ void init()
 
     Animations::init_insect_mob();
 
-
+	init_weapon_sprite();
 }
 
 void teardown()

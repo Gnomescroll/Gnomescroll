@@ -4,6 +4,7 @@
 #include <chat/client.hpp>
 #include <hud/hud.hpp>
 #include <input/skeleton_editor.hpp>
+#include <input/equipped_sprite_adjuster.hpp>
 
 //toggling graphics settings
 #include <t_map/glsl/shader.hpp>
@@ -167,8 +168,24 @@ void toggle_skeleton_editor()
     input_state.skeleton_editor = false;
     #else
     input_state.skeleton_editor = (!input_state.skeleton_editor);
-    if (input_state.skeleton_editor) printf("Skeleton editor enabled\n");
+    if (input_state.skeleton_editor)
+		printf("Skeleton editor enabled\n");
+    else
+		printf("Skeleton editor disabled\n");
     #endif
+}
+
+void toggle_equipped_sprite_adjuster()
+{
+	#if PRODUCTION
+	input_state.equipped_sprite_adjuster = false;
+	#else
+	input_state.equipped_sprite_adjuster = (!input_state.equipped_sprite_adjuster);
+	if (input_state.equipped_sprite_adjuster)
+		printf("Equipped sprite adjuster enabled\n");
+	else
+		printf("Equipped sprite adjuster disable\n");
+	#endif
 }
 
 void toggle_input_mode()
@@ -738,6 +755,22 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
+	if (input_state.equipped_sprite_adjuster)
+	{
+		switch (event->key.keysym.sym)
+		{
+			case SDLK_ESCAPE:
+			case SDLK_l:
+				toggle_equipped_sprite_adjuster();
+				return;
+			default:
+				break;
+		}
+
+		EquippedSpriteAdjuster::key_down_handler(event);
+		return;
+	}
+
     if (input_state.agent_container || input_state.container_block)
         container_key_down_handler(event);
     else if (input_state.chat)
@@ -781,8 +814,14 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_o:
-                toggle_skeleton_editor();
+				if (input_state.debug)
+					toggle_skeleton_editor();
                 break;
+                
+            case SDLK_l:
+				if (input_state.debug)
+					toggle_equipped_sprite_adjuster();
+				break;
             
             case SDLK_t:
                 if (input_state.debug)
@@ -912,6 +951,12 @@ void key_up_handler(SDL_Event* event)
         SkeletonEditor::key_up_handler(event);
         return;
     }
+
+	if (input_state.equipped_sprite_adjuster)
+	{
+		EquippedSpriteAdjuster::key_up_handler(event);
+		return;
+	}
 
     if (input_state.agent_container || input_state.container_block)
         container_key_up_handler(event);
