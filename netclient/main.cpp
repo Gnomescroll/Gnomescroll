@@ -244,7 +244,9 @@ int run()
 
         ItemParticle::draw();
         //t_mech::draw();
-
+        int equipped_item_type = Toolbelt::get_selected_item_type();
+		Animations::draw_equipped_item(equipped_item_type);
+		
         /*
             Skybox
         */
@@ -272,6 +274,8 @@ int run()
         Particle::grenade_list->draw();
         Particle::blood_list->draw();
         Particle::end_particle_draw();
+
+		glDisable(GL_DEPTH_TEST);
 
         // update mouse
         poll_mouse();
