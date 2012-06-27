@@ -25,7 +25,6 @@ class AgentState {
         
         AgentState();
         
-        void forward_vector(float f[3]);
         Vec3 forward_vector();
 };
 
@@ -113,7 +112,6 @@ class Agent_state
         void spawn_state();
         #endif
 
-        void forward_vector(float f[3]) { this->s.forward_vector(f); }
         Vec3 forward_vector() { return this->s.forward_vector(); }
 
         Vec3 get_position() { return vec3_init(this->s.x, this->s.y, this->s.z); }

@@ -6,26 +6,6 @@ dont_include_this_file_in_server
 
 #include <agent/agent.hpp>
 
-
-/*
-
-class AgentState {
-    public:
-        int seq;
-        float theta;
-        float phi;        
-        float x,y,z;
-        float vx,vy,vz;
-        float jump_pow;
-        
-        AgentState();
-        
-        void forward_vector(float f[3]);
-        Vec3 forward_vector();
-};
-
-*/
-
 // TODO: detect if player is on ground
 // TODO: detect when player goes form on-ground to ground (fall event)
 // TODO: detect the type of block the player is walking on

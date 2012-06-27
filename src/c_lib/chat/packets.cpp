@@ -8,7 +8,8 @@ inline void ChatMessage_StoC::handle()
     if (sender != CHAT_SENDER_SYSTEM)
     {
         Agent_state *a = ClientState::agent_list->get(sender);
-        if (a==NULL) return;
+        GS_ASSERT(a != NULL);
+        if (a == NULL) return;
     }
 
     msg[CHAT_MESSAGE_SIZE_MAX] = '\0';
@@ -25,7 +26,8 @@ inline void ChatMessage_CtoS::handle(){}
 inline void ChatMessage_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
 
     msg[CHAT_MESSAGE_SIZE_MAX] = '\0';
     chat_server->receive_message(channel, client_id, msg);
