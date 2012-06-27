@@ -885,7 +885,7 @@ void Agent_state::update_model()
         
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
-    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
+    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, -this->s.phi);
     this->vox->set_draw(true);
     this->vox->set_hitscan(true);
     #endif
@@ -917,7 +917,7 @@ void Agent_state::update_model()
 
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
-    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
+    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, -this->s.phi);
     this->vox->set_hitscan(true);
     #endif
 }
