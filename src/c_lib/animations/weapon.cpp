@@ -137,13 +137,7 @@ void draw_equipped_item(int item_type)
 	Vec3 position = agent_camera->get_position();
 	Vec3 forward = agent_camera->forward_vector();
 	Vec3 camera_right = agent_camera->right_vector();
-
-	// up vector
-    Vec3 up = vec3_init(
-		model_view_matrix[1],
-		model_view_matrix[5],
-		model_view_matrix[9]
-	);
+	Vec3 up = agent_camera->up_vector();
 
 	// calculate focal,origin points from camera and focal/origin deltas
 	

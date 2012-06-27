@@ -249,35 +249,9 @@ void Camera::hud_projection()
 
 Vec3 Camera::forward_vector()
 {
-    float xa = theta;
-    float ya = phi;
-
-    if (theta > 1.0f)
-    {
-		xa -= 2.0f;
-		GS_ASSERT(false);
-	}
-    if (theta < -1.0f)
-    {
-		xa += 2.0f;
-		GS_ASSERT(false);
-	}
-
-    if (phi > 0.4999f)
-    {
-		phi = 0.4999f;
-		GS_ASSERT(false);
-	}
-    if (phi < -0.4999f)
-    {
-		phi = -0.4999f;
-		GS_ASSERT(false);
-	}
-
     Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
-    f = vec3_euler_rotation(f, xa, ya, 0.0f);
+    f = vec3_euler_rotation(f, this->theta, this->phi, 0.0f);
 	normalize_vector(&f);
-
 	return f;
 }
 
