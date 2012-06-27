@@ -138,44 +138,6 @@ void draw_equipped_item(int item_type)
 	Vec3 forward = agent_camera->forward_vector();
 	Vec3 camera_right = agent_camera->right_vector();
 
-	// calculate focal,origin points from camera and focal/origin deltas
-	
-	// depths need to use the forward vector
-	// xy needs to use the right vector
-	// z assumes up vector of {0,0,1}, but we may need to adjust using correct up vector
-	
-	// FOCAL /////////
-	//////////////////
-	// move horizontal
-	Vec3 dright = camera_right;
-	float dz = origin_dz * dright.z;
-	dright.z = 0.0f;
-	normalize_vector(&dright);
-	dright = vec3_scalar_mult(dright, focal_dxy);
-	Vec3 focal = vec3_add(focal, dright);
-
-	// move vertical
-	focal.z += dz;
-
-	// move depth
-	focal = vec3_add(position, vec3_scalar_mult(forward, focal_depth));
-
-	// ORIGIN ////////
-	//////////////////
-	// move horizontal
-	dright = camera_right;
-	dz = origin_dz * dright.z;
-	dright.z = 0.0f;
-	normalize_vector(&dright);
-	dright = vec3_scalar_mult(dright, origin_dxy);
-	Vec3 origin = vec3_add(position, dright);
-	
-	// move vertical
-	origin.z += dz;
-
-	// move depth
-	origin = vec3_add(origin, vec3_scalar_mult(forward, origin_depth));
-	
 	// up vector
     Vec3 up = vec3_init(
 		model_view_matrix[1],
@@ -183,6 +145,44 @@ void draw_equipped_item(int item_type)
 		model_view_matrix[9]
 	);
 
+	// calculate focal,origin points from camera and focal/origin deltas
+	
+	//////////////////
+	// FOCAL /////////
+	//////////////////
+	// move horizontal
+	Vec3 dright = vec3_cross(forward, up);
+	dright.z = 0.0f;
+	normalize_vector(&dright);
+	dright = vec3_scalar_mult(dright, focal_dxy);
+	Vec3 focal = vec3_add(position, dright);
+
+	// move vertical
+	float dz = focal_dz * up.z;
+	//float dz = focal_dz;
+	focal.z += dz;
+
+	// move depth
+	focal = vec3_add(focal, vec3_scalar_mult(forward, focal_depth));
+
+	//////////////////
+	// ORIGIN ////////
+	//////////////////
+	// move horizontal
+	dright = vec3_cross(forward, up);
+	dright.z = 0.0f;
+	normalize_vector(&dright);
+	dright = vec3_scalar_mult(dright, origin_dxy);
+	Vec3 origin = vec3_add(position, dright);
+	
+	// move vertical
+	dz = origin_dz * up.z;
+	//dz = origin_dz;
+	origin.z += dz;
+
+	// move depth
+	origin = vec3_add(origin, vec3_scalar_mult(forward, origin_depth));
+	
 	// use focal and origin points to calculate right vector
 	Vec3 right = vec3_sub(focal, origin);
 	normalize_vector(&right);
