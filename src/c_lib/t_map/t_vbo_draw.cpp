@@ -202,8 +202,8 @@ bool chunk_render_check( float x, float y)
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
 
-    x = quadrant_translate_f(cx, x);
-    y = quadrant_translate_f(cy, y);
+    //x = quadrant_translate_f(cx, x);
+    //y = quadrant_translate_f(cy, y);
     
     float dx = cx - x;
     float dy = cy - y;
@@ -238,8 +238,8 @@ void Vbo_map::prep_draw()
 
         This function is fatally bugged!
 */
-        //if( chunk_render_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test( col->wxoff, col->wyoff, 11.4) )
-        if( chunk_render_check( col->wxoff, col->wyoff) )
+        if( chunk_render_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test( col->wxoff, col->wyoff, 11.4) )
+        //if( chunk_render_check( col->wxoff, col->wyoff) )
         {
             c_drawn++; 
             /*
