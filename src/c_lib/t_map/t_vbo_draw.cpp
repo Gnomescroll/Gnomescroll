@@ -199,69 +199,6 @@ void Vbo_map::prep_frustrum()
     }
 }
 
-/*
-int _get_frustum_min(int i, int j)
-{
-    int index;
-
-    index = 32*j + i;
-    int v1 = vbo_frustrum_min[index];
-
-    index = 32*j + (i+1)%32;
-    int v2 = vbo_frustrum_min[index];
-
-    index = 32*((j+1)%32) + i;
-    int v3 = vbo_frustrum_min[index];
-
-    index = 32*((j+1)%32) + (i+1)%32;
-    int v4 = vbo_frustrum_min[index];
-
-    int v = v1;
-
-    if(v1 < 0 || v2 < 0 || v3 < 0 || v4 < 0)
-        printf("_get_frustum_min: error!!! \n");
-    if(v2 < v) v = v2;
-    if(v3 < v) v = v3;
-    if(v4 < v) v = v4;
-
-    return v;
-}
-
-int _get_frustum_max(int i, int j)
-{
-    int index;
-
-    index = 32*j + i;
-    int v1 = vbo_frustrum_max[index];
-
-    index = 32*j + (i+1)%32;
-    int v2 = vbo_frustrum_max[index];
-
-    index = 32*((j+1)%32) + i;
-    int v3 = vbo_frustrum_max[index];
-
-    index = 32*((j+1)%32) + (i+1)%32;
-    int v4 = vbo_frustrum_max[index];
-
-    int v = v1;
-
-    if(v1 < 0 || v2 < 0 || v3 < 0 || v4 < 0)
-        printf("_get_frustum_max: error!!! \n");
-
-    if(v2 > v) v = v2;
-    if(v3 > v) v = v3;
-    if(v4 > v) v = v4;
-
-    return v; 
-}
-*/
-
-/*
-    int vertex_num[6];
-    int vertex_offset[6];
-    int vertex_num_array[6][16];   //for each column, every 16 z
-*/
-
 void Vbo_map::prep_frustrum_vertices()
 {
     for(int i=0; i<32*32; i++)
@@ -300,18 +237,7 @@ void Vbo_map::prep_frustrum_vertices()
 
                 continue;
             }
-/*
-            if(min == 0)
-            {
-                min = 1;
-            }
-            
-            if(max == 8)
-            {
-                max = 7;
-            }
-*/
-            //int vs = vbo->voff_array[side][min-1];
+
             int vs = vbo->voff_array[side][min];
             int ve = vbo->voff_array[side][max];
 
@@ -331,18 +257,6 @@ void Vbo_map::prep_frustrum_vertices()
                 GS_ABORT();
             }
 
-        /*
-            int vs = vbo->vertex_num_array[side][min];  //start
-            int ve = vbo->vertex_num_array[side][max]; //end
-
-            int vn = ve - vs; //number of vertices
-
-            int voff =  vbo->vertex_offset[side] + vs;
-            int vnum =  vn;
-
-            vbo_vertex_frustrum[index][2*side+0] = voff;
-            vbo_vertex_frustrum[index][2*side+1] = vnum;
-        */
         }
 
 
@@ -379,18 +293,6 @@ void Vbo_map::prep_draw()
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(cy);
     
-/*
-    for(int i=0; i<map->xchunk_dim; i++)
-    for(int j=0; j<map->ychunk_dim; j++)
-    {
-        col = vbo_array[j*xchunk_dim + i ];
-        if(col == NULL) continue;
-
-        col->wxoff = quadrant_translate_f(cx, col->xoff);
-        col->wyoff = quadrant_translate_f(cy, col->yoff);
-
-    }
-*/
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
     //start_vbo_draw();
