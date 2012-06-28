@@ -23,7 +23,6 @@ extern struct STAR* star_list;
 extern int star_num;
 
 extern GLuint star_sheet;
-extern GLuint north_star;
 
 void init_shader();
 void init_texture();

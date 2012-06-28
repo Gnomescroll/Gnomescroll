@@ -8,8 +8,8 @@
 namespace Skybox
 {
 
+const int NORTH_STAR_TYPE = 16;
 GLuint star_sheet = 0;
-GLuint north_star = 0;
 
 struct STAR* star_list = NULL;
 int star_num = 0;
@@ -31,15 +31,10 @@ void init_shader()
     star_CameraPos = star_shader.get_uniform("CameraPos");
 }
 
-void init_north_star_texture()
-{
-	north_star = create_texture_from_file((char*)"./media/texture/skybox/NorthStar.png");
-	GS_ASSERT(north_star != 0);	
-}
-
 void init_texture()
 {
-    SDL_Surface* surface = create_surface_from_file((char*) "./media/texture/skybox/Starsheet2.png");
+    SDL_Surface* surface = create_surface_from_file((char*)
+		"./media/texture/skybox/stars_and_north.png");
 
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;
@@ -79,28 +74,14 @@ void init_texture()
 
 void generate_sky()
 {
-    //printf("generate_sky \n");
-
     const int N = 1024;
     star_list = new STAR[N];
 
-    float r = 256.0;
+    float r = 256.0f;
 
-    for(int i=0; i < N; i++)
+    for(int i=0; i < N-1; i++)
     {
         STAR s;
-    /*
-        float theta = randf()*(3.14159265);
-        float phi = randf()*(3.14159265*2.0);
-
-        //printf("theta= %f\n", theta);
-
-        float x = r*cos(phi)*sin(theta);
-        float y = r*sin(phi)*sin(theta);
-        float z = r*cos(theta);
-    */
-
-        //printf("theta= %f\n", randf());
 
         float z = 2.0*randf()-1.0;
         float t = randf()*(3.14159265*2.0);
@@ -116,16 +97,34 @@ void generate_sky()
         
         s.brightness = 0.2 + (0.8)*randf();
         s.size = 1 + 3*randf();
-        s.type = rand()%16;
-
-        s.tx_min = (float)(s.type%4)* (1.0/4.0);
-        s.tx_max = s.tx_min + (1.0/4.0);
-        s.ty_min = (float)(s.type/4)* (1.0/4.0);
-        s.ty_max = s.ty_min + (1.0/4.0);
-
+        
+		s.type = rand()%16;
+		s.tx_min = (float)(s.type%4) * (1.0/4.0);
+		s.tx_max = s.tx_min + (1.0/4.0);
+		s.ty_min = (float)(s.type/4) * (1.0/4.0) * 0.5f;
+		s.ty_max = s.ty_min + (1.0/4.0) * 0.5f;
+		
         star_list[i] = s;
-
     }
+
+	// add north star
+	STAR s;
+	float t = 1.5f;
+	float z = 0.75f;
+	float _r = sqrt(1.0f - z*z);
+	float x = _r * cos(t);
+	float y = _r * sin(t);
+	s.size = 12.0f;
+	s.x = r * x;
+	s.y = r * y;
+	s.z = r * z;
+	s.brightness = 1.0f;
+	s.type = NORTH_STAR_TYPE;
+	s.tx_min = 0.0f;
+	s.tx_max = 1.0f;
+	s.ty_min = 0.5f;
+	s.ty_max = 1.0f;
+	star_list[N-1] = s;
 
     star_num = N;
 }
@@ -133,7 +132,6 @@ void generate_sky()
 void init()
 {
     init_texture();
-    init_north_star_texture();
     generate_sky();
     init_shader();
     star_vlist = new Animations::VertexElementList1;
@@ -160,14 +158,12 @@ void pack_vertex_list()
 
     for(int i=0; i<star_num; i++)
     {
-        //STAR s = star_list[i];
-
         Vec3 v;
         v.x = star_list[i].x + cx;
         v.y = star_list[i].y + cy;
         v.z = star_list[i].z + cz;
 
-        if(point_fulstrum_test2(v.x, v.y, v.z) == false) continue;
+        if (point_fulstrum_test2(v.x, v.y, v.z) == false) continue;
 
         float scale = star_list[i].size / 2.0;
 
@@ -181,6 +177,11 @@ void pack_vertex_list()
             model_view_matrix[5]*scale,
             model_view_matrix[9]*scale
         );
+
+		// align the star to the point that it was created at
+		// only matters for the north star
+		v = vec3_sub(v, up);
+		v = vec3_sub(v, right);
 
         Vec3 p = vec3_sub(v, vec3_add(right, up));
         star_vlist->push_vertex(p, star_list[i].tx_min,star_list[i].ty_max);
@@ -198,8 +199,9 @@ void pack_vertex_list()
 
 void prep_skybox()
 {
-    GS_ASSERT(star_vlist != NULL);
     pack_vertex_list();
+    GS_ASSERT(star_vlist != NULL);
+    if (star_vlist == NULL) return;
     star_vlist->buffer();
 }
 
@@ -210,6 +212,9 @@ void draw()
 
     GS_ASSERT(star_sheet != 0);
     if (star_sheet == 0) return;
+    
+    GS_ASSERT(star_vlist != NULL);
+    if (star_vlist == NULL) return;
 
     if (star_vlist->vertex_number <= 0) return;
 
@@ -249,10 +254,6 @@ void draw()
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(star_TexCoord);
     glUseProgramObjectARB(0);
-
-	// draw north star (not in vlist)
-	glBindTexture(GL_TEXTURE_2D, north_star);
-	draw_bound_texture(x,y,w,h,z);
 
     glDisable(GL_BLEND);
     if (restore_depth_mask)
