@@ -166,7 +166,6 @@ dont_include_this_file_in_server
 
 #include <hud/text.cpp>
 #include <hud/map.cpp>
-#include <hud/equipment.cpp>
 #include <hud/compass.cpp>
 #include <hud/hud.cpp>
 

@@ -133,16 +133,7 @@ void update_hud_draw_settings()
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
-    //hud_draw_settings.equipment = false;
-    //hud_draw_settings.equipment_slot = -1;
-    //if (ClientState::playerAgent_state.you != NULL)
-    //{
-        //hud_draw_settings.equipment = (input_state.input_mode == INPUT_STATE_AGENT);
-        //if (hud_draw_settings.equipment)
-            //hud_draw_settings.equipment_slot = ClientState::playerAgent_state.you->weapons.active;
-    //}
-
-    hud_draw_settings.compass = true;
+    hud_draw_settings.compass = false;
     hud_draw_settings.map = input_state.map;
     hud_draw_settings.graphs = input_state.graphs;
     
@@ -196,9 +187,6 @@ void draw_hud_textures()
 
     if (hud_draw_settings.cube_selector)
         HudCubeSelector::cube_selector.draw();
-
-    //if (hud_draw_settings.equipment)
-        //HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);
 
     if (hud_draw_settings.compass)
         Compass::draw();
