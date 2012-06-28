@@ -390,7 +390,7 @@ namespace t_map
         //if (s->format->Rmask != 0x000000ff) format = GL_BGRA;
 
         // Edit the texture object's image data using the information SDL_Surface gives us
-        //glTexImage2D(GL_TEXTURE_2D, 0, 4, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
         
         if(ANISOTROPIC_FILTERING)
         {
@@ -436,14 +436,13 @@ namespace t_map
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
-        GLenum internalFormat = 4; //GL_RGBA;
         GLenum texture_format;
         if (s->format->Rmask == 0x000000ff)
             texture_format = GL_RGBA;
         else
             texture_format = GL_BGRA;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
         
         glDisable(GL_TEXTURE_2D);
 

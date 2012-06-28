@@ -367,7 +367,7 @@ void blit_block_item_sheet()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         //NULL means reserve texture memory, but texels are undefined
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
         //-------------------------
         glGenFramebuffersEXT(1, &fb);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
@@ -485,7 +485,7 @@ void blit_block_item_sheet()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         //NULL means reserve texture memory, but texels are undefined
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
         //-------------------------
         glGenFramebuffersEXT(1, &fb);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
