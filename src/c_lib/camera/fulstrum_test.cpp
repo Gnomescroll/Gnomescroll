@@ -201,24 +201,12 @@ bool xy_circle_fulstrum_test(float x, float y, float r)
 
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
-/*   
-    float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
 
-    float dx = x*fulstrum.r_2d.x + y*fulstrum.r_2d.y;
-
-    float rx = fulstrum.hx_sphere*r;
-    if( dx < -dz*fulstrum.hx - rx || dx > dz*fulstrum.hx + rx ) return false;
-*/
-    
     float rx = fulstrum.hx_sphere*r;
 
     float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
     float dx = x*fulstrum.r_2d.x + y*fulstrum.r_2d.y;
     if( dx < -dz*fulstrum.hx - rx || dx > dz*fulstrum.hx + rx ) return false;
-
-    //float dy = x*fulstrum.u.x + y*fulstrum.u.y;
-    //float ry = fulstrum.hy_sphere*r;
-    //if( dy < -dz*fulstrum.hy - ry || dy > dz*fulstrum.hy + ry ) return false;
 
     return true;
 }
