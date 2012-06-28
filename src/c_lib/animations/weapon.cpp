@@ -198,12 +198,33 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 static void draw_voxel(int item_type,
 	Vec3 origin, Vec3 forward, Vec3 right, Vec3 up)
 {
-	const int sprite_id = Item::get_particle_voxel_texture(item_type);
-    const float sprite_width = 32.0f/512.0f;
+    glColor4ub(255,255,255,255);
+
+    GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_BLEND, false);
+	GL_ASSERT(GL_ALPHA_TEST, false);
+
+	glEnable(GL_DEPTH_TEST);
 	
+    // draw textured voxels
+    glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
+
+	GS_ASSERT(item_type != NULL_ITEM_TYPE);
+	const int sprite_id = Item::get_particle_voxel_texture(item_type);
+	GS_ASSERT(sprite_id != ERROR_SPRITE);
+    const float sprite_width = 32.0f/512.0f;
+    
+    float tx = (2.0f / 32.0f) * (sprite_id % (512/32));
+    float ty = (2.0f / 32.0f) * (sprite_id / (512/32));
+	
+    glBegin(GL_QUADS);
+
 	drawTexturedMinivox(
-		origin, forward, right, up,
-		sprite_id, 0.0f, 0.0f, sprite_width);
+		origin, right, forward, up,
+		sprite_id, tx, ty, sprite_width);
+		
+    glEnd();
+    glDisable(GL_DEPTH_TEST);
 }
 
 void draw_equipped_item(int item_type)

@@ -480,7 +480,7 @@ bool Agent_status::consume_item(ItemID item_id)
     }
     else
     {
-        assert(false);
+        GS_ASSERT(false);
         return false;
     }
     return true;

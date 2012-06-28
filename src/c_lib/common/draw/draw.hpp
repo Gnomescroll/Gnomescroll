@@ -20,4 +20,4 @@ void drawColoredMinivox(
 
 void drawTexturedMinivox(
 	Vec3 position, Vec3 forward, Vec3 right, Vec3 normal,
-	int sprite_index, float tx, float ty, float pixel_margin);
+	int sprite_index, float tx, float ty, float sprite_width);

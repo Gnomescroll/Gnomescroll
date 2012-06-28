@@ -18,7 +18,7 @@ void TexturedVoxelComponent::set_texture()
 
     const float pixel_w = 1.0f/((float)cube_surface_w);
 
-    this->pixel_margin = pixel_w*pix;
+    this->sprite_width = pixel_w*pix;
 
     int itx,ity;
     float ftx,fty;
@@ -57,7 +57,7 @@ void TexturedVoxelComponent::set_texture()
 inline void TexturedVoxelComponent::draw(Vec3 position)
 {
     drawTexturedMinivox(position, this->forward, this->right, this->normal,
-        this->texture_index, this->tx, this->ty, this->pixel_margin);
+        this->texture_index, this->tx, this->ty, this->sprite_width);
 }
 
 void TexturedVoxelComponent::call()

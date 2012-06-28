@@ -126,7 +126,7 @@ void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Co
     }
 }
 
-void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, int sprite_index, float tx, float ty, float pixel_margin)
+void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, int sprite_index, float tx, float ty, float sprite_width)
 {
     position = quadrant_translate_position(current_camera_position, position);
     const float
@@ -137,9 +137,9 @@ void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, i
     if (point_fulstrum_test(x0,y0,z0) == false) return; //check to see if they are in viewing fulstrum
 
     float tx_min = tx;
-    float tx_max = tx + pixel_margin;
+    float tx_max = tx + sprite_width;
     float ty_min = ty;
-    float ty_max = ty + pixel_margin;
+    float ty_max = ty + sprite_width;
 
     // fill vertex buffer
     int i,j;
