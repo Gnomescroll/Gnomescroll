@@ -1,1 +1,0 @@
-sprites = [('error.png', 255), ('ore.png', 0), ('grass-top.png', 1), ('dirt.png', 2), ('grass-side.png', 3)]

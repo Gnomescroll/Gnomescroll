@@ -116,7 +116,8 @@ void load_model()
 {
     char* memory = NULL;
     //char* model_file = (char*) "media/mesh/mob4.obj";
-    char* model_file = (char*) "media/mesh/drone1.obj";
+    //char* model_file = (char*) "media/mesh/drone1.obj";
+    char* model_file = (char*) "media/mesh/cube_test.obj";
 
     size_t bytes = ObjLoadFile(model_file, &memory);
 
@@ -208,7 +209,8 @@ void init_shader()
 
 void init_texture()
 {
-    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/drone0.png");
+    //SDL_Surface* s = create_surface_from_file((char*) "media/mesh/drone0.png");
+    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/red_flat.png");
 
     if(s == NULL)
     {
@@ -254,6 +256,7 @@ void draw_model(float x, float y, float z)
     x = ClientState::location_pointer.x;
     y = ClientState::location_pointer.y;
     z = ClientState::location_pointer.z;
+    z+= 2.0;
 
     const static unsigned int stride = sizeof(struct Vertex);
 
