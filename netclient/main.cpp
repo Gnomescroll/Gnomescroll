@@ -250,11 +250,6 @@ int run()
         */
         Skybox::draw();
 
-		glDisable(GL_DEPTH_TEST);
-		// with depth test disable
-        int equipped_item_type = Toolbelt::get_selected_item_type();
-		Animations::draw_equipped_item(equipped_item_type);
-
         /*
             Transparent
         */
@@ -264,7 +259,6 @@ int run()
         Animations::draw_insect_mob();
 
         // draw animations
-        glEnable(GL_DEPTH_TEST);
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         Animations::draw_hitscan_effect();
@@ -278,7 +272,7 @@ int run()
         Particle::blood_list->draw();
         Particle::end_particle_draw();
 
-		glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_DEPTH_TEST);
 
         // update mouse
         poll_mouse();
@@ -287,6 +281,13 @@ int run()
             Draw Hud
         */
 
+        glDisable(GL_DEPTH_TEST);
+        // with depth test disable
+        int equipped_item_type = Toolbelt::get_selected_item_type();
+        Animations::draw_equipped_item(equipped_item_type);
+
+        glEnable(GL_DEPTH_TEST);
+        
         if (Options::hud)
         {
             // switch to hud  projection
