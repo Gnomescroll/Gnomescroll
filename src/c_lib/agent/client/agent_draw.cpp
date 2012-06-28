@@ -4,6 +4,8 @@
 dont_include_this_file_in_server
 #endif
 
+#include <agent/constants.hpp>
+
 const int SNAPSHOT_DRAW_ARRAY_SIZE = 32;
 
 namespace AgentDraw

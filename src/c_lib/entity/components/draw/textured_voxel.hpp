@@ -12,7 +12,7 @@ class TexturedVoxelComponent: public VoxelComponent
 {
     private:
         float tx,ty;
-        float pixel_margin;
+        float sprite_width;
         
         void set_texture();
 

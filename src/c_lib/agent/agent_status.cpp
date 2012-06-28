@@ -473,13 +473,14 @@ bool Agent_status::consume_item(ItemID item_id)
 
     if (item_type == repair_kit)
     {
+        if (this->health >= health_max) return false;
         GS_ASSERT(attr->repair_agent_amount > 0);
         this->heal(attr->repair_agent_amount);
         this->send_health_msg();
     }
     else
     {
-        assert(false);
+        GS_ASSERT(false);
         return false;
     }
     return true;

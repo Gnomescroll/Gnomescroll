@@ -20,7 +20,7 @@ OPT_UINT_HEADER(seed)
 
 /* Logging */
 OPT_BOOL_HEADER(logger)
-
+OPT_BOOL_HEADER(log_chat)
 
 void register_options();
 

@@ -255,15 +255,6 @@ Vec3 Camera::forward_vector()
 	return f;
 }
 
-// deprecated
-void Camera::forward_vector(float forward[3])
-{
-	Vec3 f = this->forward_vector();
-    forward[0] = f.x;
-    forward[1] = f.y;
-    forward[2] = f.z;
-}
-
 void Camera::copy_state_from(Camera* c)
 {
     GS_ASSERT(c != NULL);

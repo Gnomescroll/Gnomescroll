@@ -24,7 +24,6 @@ class Camera
         float ratio;
         float z_near, z_far;
 
-        //float x,y,z;
         float xl, yl, zl;
         float xu, yu, zu;
         float theta, phi;
@@ -48,7 +47,6 @@ class Camera
         struct Vec3 get_position() { return this->position; }
         
         struct Vec3 forward_vector();
-        void forward_vector(float forward[3]);	// deprecated
         
         struct Vec3 right_vector()
         {

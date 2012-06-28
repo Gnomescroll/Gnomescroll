@@ -1,5 +1,0 @@
-"I just render to a screenWidth*2,screenHeight*2 FBO and then avrage the value."
-
-http://miners.walkyrie.se/mega-shot-05.png
-
-super sampling

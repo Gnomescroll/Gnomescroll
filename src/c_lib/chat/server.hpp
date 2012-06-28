@@ -28,10 +28,13 @@ class ChatServer
 
     int channels[CHAT_SERVER_CHANNELS_MAX];
 
+	FILE* log;
+
     void player_join(int id);
     void player_quit(int id);
     void receive_message(int channel, int sender, char* payload);
-
+	void log_message(int channel, int sender, char* payload);
+	
     ChatServer();
     ~ChatServer();
 };

@@ -31,6 +31,7 @@ options.seed = 800752
 
 -- logger --
 options.logger = true
+options.log_chat = true
 
 ffi = require("ffi")
 ffi.cdef[[

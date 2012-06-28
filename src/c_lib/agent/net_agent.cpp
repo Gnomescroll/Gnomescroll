@@ -631,7 +631,7 @@ inline void hitscan_object_CtoS::handle()
         case OBJECT_AGENT:
             agent = ServerState::agent_list->get(id);
             if (agent == NULL || agent->vox == NULL) return;
-            agent->vox->update(s.x, s.y, s.z, s.theta, s.phi);
+            agent->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
             // apply damage
             agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
@@ -691,18 +691,14 @@ inline void hitscan_block_CtoS::handle()
     const float max_l = 500.0f;
     float distance=0.0f;
 
-    float f[3];
-    a->forward_vector(f);
-
+    Vec3 f = a->forward_vector();
     Vec3 p = a->get_camera_position();
 
-    int collided = _ray_cast6(p.x, p.y, p.z, f[0], f[1], f[2], max_l, &distance, collision, pre_collision, &cube, side);
+    int collided = _ray_cast6(p.x, p.y, p.z, f.x, f.y, f.z, max_l, &distance, collision, pre_collision, &cube, side);
     if (!collided) return;
     // pt of collision
-    p.x += f[0] * distance;
-    p.y += f[1] * distance;
-    p.z += f[2] * distance;
-
+    f = vec3_scalar_mult(f, distance);
+    p = vec3_add(p,f);
     p = translate_position(p);
 
     int cube_side = get_cube_side_from_side_array(side);

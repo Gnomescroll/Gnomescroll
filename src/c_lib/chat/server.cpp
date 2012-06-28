@@ -82,6 +82,10 @@ void ChatServer::player_quit(int id)
 
 void ChatServer::receive_message(int channel, int sender, char* payload)
 {
+	GS_ASSERT(payload != NULL);
+	if (payload == NULL) return;
+	
+	GS_ASSERT(channel >= 0 && channel < CHAT_SERVER_CHANNELS_MAX);
     if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
 
     if (!is_valid_chat_message(payload)) return;
@@ -90,11 +94,49 @@ void ChatServer::receive_message(int channel, int sender, char* payload)
     {
         if (sender == CHAT_SENDER_SYSTEM)
             system->broadcast(sender, payload);
+        else GS_ASSERT(false);
     }
     else if (channel == 1)
         global->broadcast(sender, payload);
     else if (channel >= CHANNEL_ID_AGENT_OFFSET && channel < CHANNEL_ID_AGENT_OFFSET + PLAYERS_MAX)
         pm[channel - CHANNEL_ID_AGENT_OFFSET]->broadcast(sender, payload);
+    
+    if (Options::log_chat)    
+		this->log_message(channel, sender, payload);	// logging
+}
+
+void ChatServer::log_message(int channel, int sender, char* payload)
+{
+	GS_ASSERT(Options::log_chat);
+	if (!Options::log_chat) return;
+	
+	GS_ASSERT(payload != NULL);
+	if (payload == NULL) return;
+	
+	GS_ASSERT(channel >= 0 && channel < CHAT_SERVER_CHANNELS_MAX);
+    if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
+
+    if (!is_valid_chat_message(payload)) return;
+	
+	GS_ASSERT(this->log != NULL);
+	if (log == NULL) return;
+	
+	Agent_state* a = ServerState::agent_list->get(sender);
+	GS_ASSERT(a != NULL); 
+	if (a == NULL) return;
+	char* sender_name = a->status.name;
+	GS_ASSERT(sender_name != NULL);
+	if (sender_name == NULL) return;
+	GS_ASSERT(sender_name[0] != '\0');
+	
+	const char msg_fmt[] = "Channel: %d, Sender: %d %s; %s\n";
+	int msg_len = strlen(msg_fmt) + strlen(payload)
+		+ count_digits(channel) + count_digits(sender)
+		+ strlen(sender_name) + 1 - 8;
+	char* msg = (char*)malloc(msg_len * sizeof(char));
+	
+	sprintf(msg, msg_fmt, channel, sender, sender_name, payload);
+	fwrite(msg, sizeof(char), msg_len, this->log);
 }
 
 ChatServer::ChatServer()
@@ -115,6 +157,14 @@ ChatServer::ChatServer()
         pm[i]->id = CHANNEL_ID_AGENT_OFFSET + i;
         channels[channel_index++] = pm[i]->id;
     }
+    
+    if (Options::log_chat)
+    {
+		this->log = fopen("./log/chat", "a");
+		GS_ASSERT(this->log != NULL);
+	}
+	else
+		this->log = NULL;
 }
 
 ChatServer::~ChatServer()

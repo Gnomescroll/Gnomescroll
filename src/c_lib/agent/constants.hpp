@@ -31,6 +31,16 @@ typedef enum
     DEATH_SLIME
 } AgentDeathMethod;
 
+enum AGENT_BODY_PARTS
+{
+    AGENT_PART_TORSO,
+    AGENT_PART_HEAD,
+    AGENT_PART_LARM,
+    AGENT_PART_RARM,
+    AGENT_PART_LLEG,
+    AGENT_PART_RLEG
+};
+
 /* Main */
 const int AGENT_MAX = PLAYERS_MAX;
 //const float AGENT_HEIGHT = 2.8f;

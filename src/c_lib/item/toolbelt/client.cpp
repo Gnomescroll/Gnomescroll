@@ -54,6 +54,26 @@ bool toolbelt_item_begin_alpha_action()
 
     if (agent_fire_on[agent_id]) return false;
     turn_fire_on(agent_id);
+    
+    if (agent_id == ClientState::playerAgent_state.agent_id)
+    {
+		ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+		int item_type = Item::get_item_type(item_id);
+		int item_group = IG_NONE;
+		if (item_type == NULL_ITEM_TYPE) item_group = IG_MELEE_WEAPON;
+		else item_group = Item::get_item_group_for_type(item_type);
+		bool continuous = false; // TODO -- load from dat
+		if (item_group == IG_MINING_LASER ||
+			item_group == IG_MELEE_WEAPON ||
+			item_group == IG_NONE ||
+			item_group == IG_SHOVEL ||
+			item_group == IG_NANITE_COIN || 
+			item_group == IG_RESOURCE ||
+			item_group == IG_ERROR)
+			continuous = true;
+		Animations::begin_equipped_item_animation(item_type, continuous);
+	}
+	
     return true;
 }
 
@@ -72,6 +92,12 @@ bool toolbelt_item_end_alpha_action()
     if (item_id == NULL_ITEM) item_group = IG_NONE;
     else item_group = Item::get_item_group(item_id);
     
+    if (agent_id == ClientState::playerAgent_state.agent_id)
+    {
+		int item_type = Item::get_item_type(item_id);
+		Animations::stop_equipped_item_animation();
+	}
+
     switch (item_group)
     {
         case IG_ERROR:

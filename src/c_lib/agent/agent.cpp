@@ -4,8 +4,6 @@
 #include <common/compat_gl.h>
 #endif
 
-#include <agent/agent_vox.hpp>
-
 #include <agent/net_agent.hpp>
 #include <agent/agent_physics.hpp>
 
@@ -34,17 +32,14 @@ jump_pow(0)
 
 Vec3 AgentState::forward_vector()
 {
-    float xa = theta;
-    float ya = phi;
-
     if (theta > 1.0f)
     {
-		xa -= 2.0f;
+		theta -= 2.0f;
 		GS_ASSERT(false);
 	}
     if (theta < -1.0f)
     {
-		xa += 2.0f;
+		theta += 2.0f;
 		GS_ASSERT(false);
 	}
 
@@ -60,21 +55,11 @@ Vec3 AgentState::forward_vector()
 	}
 
     Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
-    f = vec3_euler_rotation(f, xa, ya, 0.0f);
+    f = vec3_euler_rotation(f, theta, phi, 0.0f);
 	normalize_vector(&f);
 
 	return f;
 }
-
-// deprecated
-void AgentState::forward_vector(float forward[3])
-{
-	Vec3 f = this->forward_vector();
-    forward[0] = f.x;
-    forward[1] = f.y;
-    forward[2] = f.z;
-}
-
 
 #if DC_CLIENT
 bool Agent_state::is_you()
@@ -900,7 +885,7 @@ void Agent_state::update_model()
         
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
-    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
+    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, -this->s.phi);
     this->vox->set_draw(true);
     this->vox->set_hitscan(true);
     #endif
@@ -932,7 +917,7 @@ void Agent_state::update_model()
 
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
-    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
+    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, -this->s.phi);
     this->vox->set_hitscan(true);
     #endif
 }

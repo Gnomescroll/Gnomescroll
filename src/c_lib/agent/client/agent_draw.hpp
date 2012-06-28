@@ -8,7 +8,6 @@ dont_include_this_file_in_server
 #include <common/compat_gl.h>
 
 #include <agent/agent.hpp>
-#include <agent/agent_vox.hpp>
 
 namespace AgentDraw
 {

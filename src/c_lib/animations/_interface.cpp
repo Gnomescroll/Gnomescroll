@@ -56,6 +56,8 @@ void animations_tick()
     mining_laser_effect_list->tick();
     
     insect_mob_list->tick();
+    
+    tick_equipped_item_animation();
 }
 
 void prep_insect_mob()

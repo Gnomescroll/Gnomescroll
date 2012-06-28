@@ -14,6 +14,7 @@ namespace Components
 int ExplosionComponent::get_block_damage(float distance)
 {
     float max_distance = this->block_destruction_radius*3;
+    if (distance >= max_distance) return 0;
     float ratio = (max_distance - distance) / max_distance;
     float dmg = ratio * (float)(this->block_damage);
     return (int)dmg;
@@ -45,34 +46,37 @@ void ExplosionComponent::damage_blocks()
     int bx,by,bz;
     int dmg=0;
     for (int i=0; i<ir; i++)
-        for (int j=0; j<ir; j++)
-            for (int k=0; k<ir; k++)
-            {
-                bx = mx + i;
-                by = my + j;
-                bz = mz + k;
+	for (int j=0; j<ir; j++)
+	for (int k=0; k<ir; k++)
+	{
+		bx = mx + i;
+		by = my + j;
+		bz = mz + k;
 
-                if (bz <= 0) continue;  // ignore floor
+		if (bz <= 0) continue;  // ignore floor
+		if (bz >= map_dim.z) continue;
 
-                bx = translate_point(bx);
-                by = translate_point(by);
+		bx = translate_point(bx);
+		by = translate_point(by);
 
-                dmg = this->get_block_damage(i+j+k);
+		dmg = this->get_block_damage(i+j+k);
+		if (dmg <= 0) continue;
 
-                apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
-                bx = mx - i;
-                apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
-                by = my - j;
-                apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
-                by = my + j;
-                bz = mz - k;
-                apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
-                bx = mx + i;
-                by = my - j;
-                apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
-                bx = mx - i;
-                apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
-            }
+		apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
+		bx = translate_point(mx - i);
+		apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
+		by = translate_point(my - j);
+		apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
+		by = translate_point(my + j);
+		bz = mz - k;
+		if (bz > 0 && bz < map_dim.z)
+			apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
+		bx = translate_point(mx + i);
+		by = translate_point(my - j);
+		apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
+		bx = translate_point(mx - i);
+		apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
+	}
 }
 
 

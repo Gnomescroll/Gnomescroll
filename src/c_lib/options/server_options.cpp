@@ -18,6 +18,7 @@ OPT_UINT(seed, 8007513)
 
 /* Logging */
 OPT_BOOL(logger, true)
+OPT_BOOL(log_chat, true)
 
 void register_options()
 {
@@ -34,7 +35,7 @@ void register_options()
 
     /* Logging */
     OPT_BOOL_REGISTER(logger)
-
+    OPT_BOOL_REGISTER(log_chat)
 }
 
 }
