@@ -54,7 +54,7 @@ void init_surface() {
     glBindTexture(GL_TEXTURE_2D, panel_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, panel_surface->w, panel_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, panel_surface->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, panel_surface->w, panel_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, panel_surface->pixels );
     glDisable(GL_TEXTURE_2D);
 
     tex_format = GL_BGRA;
@@ -67,7 +67,7 @@ void init_surface() {
     glBindTexture(GL_TEXTURE_2D, sprite_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, sprite_surface->w, sprite_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, sprite_surface->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite_surface->w, sprite_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, sprite_surface->pixels );
     glDisable(GL_TEXTURE_2D);
 
     SDL_FreeSurface(panel_surface);

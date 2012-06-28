@@ -86,7 +86,7 @@ class Texture_surface
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, 4, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels );
 
         /*
         glBindTexture( GL_TEXTURE_2D, tex[1] );

@@ -367,7 +367,7 @@ void blit_block_item_sheet()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         //NULL means reserve texture memory, but texels are undefined
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
         //-------------------------
         glGenFramebuffersEXT(1, &fb);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
@@ -442,13 +442,9 @@ void blit_block_item_sheet()
 
         SDL_LockSurface(block_item_64_surface);
 
-/*
         GLenum format = GL_BGRA;
         if (block_item_64_surface->format->Rmask == 0x000000ff)
             format = GL_RGBA;
-*/
-
-        GLenum format = GL_RGBA;
 
         //glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_64_surface->pixels);
         glReadPixels(0, 0, xres, yres, format, GL_UNSIGNED_BYTE, (void*) block_item_64_surface->pixels);
@@ -489,7 +485,7 @@ void blit_block_item_sheet()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         //NULL means reserve texture memory, but texels are undefined
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xres,yres, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
         //-------------------------
         glGenFramebuffersEXT(1, &fb);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
@@ -569,11 +565,9 @@ void blit_block_item_sheet()
 
         SDL_LockSurface(block_item_16_surface);
 
-        //GLenum format = GL_BGRA;
-        //if (block_item_16_surface->format->Rmask == 0x000000ff)
-        //    format = GL_RGBA;
-
-        GLenum format = GL_RGBA;
+        GLenum format = GL_BGRA;
+        if (block_item_16_surface->format->Rmask == 0x000000ff)
+            format = GL_RGBA;
 
         //glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
         glReadPixels(0, 0, xres, yres, format, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
