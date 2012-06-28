@@ -278,9 +278,7 @@ int init_c_lib()
     ItemParticle::init();
 
     Skybox::init();
-    //Sound::test();
  
-    HudEquipment::init();
     HudReticle::init();
     Compass::init();
     Hud::init();

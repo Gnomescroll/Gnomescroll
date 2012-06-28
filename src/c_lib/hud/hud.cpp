@@ -395,7 +395,7 @@ void HUD::init()
     health->set_format((char*) health_format);
     health->set_format_extra_length((3 - 2));
     health->set_color(255,10,10,255);
-    health->set_position(HudEquipment::rendered_width + 2, _yresf + 2);
+    health->set_position(2, _yresf + 2);
 
     confirm_quit = HudText::text_list->create();
     GS_ASSERT(confirm_quit != NULL);
