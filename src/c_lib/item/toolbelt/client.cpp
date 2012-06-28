@@ -106,7 +106,7 @@ bool toolbelt_item_end_alpha_action()
     
     if (agent_id == ClientState::playerAgent_state.agent_id)
     {
-		int item_type = Item::get_item_type(item_id);
+		//int item_type = Item::get_item_type(item_id);
 		Animations::stop_equipped_item_animation();
 	}
 

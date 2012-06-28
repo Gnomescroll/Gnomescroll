@@ -55,27 +55,6 @@ void vbo_draw_end()
     free(draw_vbo_array);
 }
 
-
-/*
-    Do distance check
-*/
-bool chunk_render_check( float x, float y)
-{
-    //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
-    static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
-
-    const float cx = current_camera_position.x;
-    const float cy = current_camera_position.y;
-
-    x = quadrant_translate_f(cx, x);
-    y = quadrant_translate_f(cy, y);
-    
-    float dx = cx - x;
-    float dy = cy - y;
-
-    return (dx*dx + dy*dy > dist2) ? false : true;
-}
-
 /*
     Use frustrum test to 8 block resolution because have to render partial chunks
 */
@@ -370,6 +349,27 @@ void Vbo_map::prep_frustrum_vertices()
     }
 }
 
+
+/*
+    Do distance check
+*/
+bool chunk_render_check( float x, float y)
+{
+    //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
+    static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
+
+    const float cx = current_camera_position.x;
+    const float cy = current_camera_position.y;
+
+    x = quadrant_translate_f(cx, x);
+    y = quadrant_translate_f(cy, y);
+    
+    float dx = cx - x;
+    float dy = cy - y;
+
+    return (dx*dx + dy*dy > dist2) ? false : true;
+}
+
 void Vbo_map::prep_draw()
 {
     struct Map_vbo* col;
@@ -406,8 +406,8 @@ void Vbo_map::prep_draw()
         col->wyoff = quadrant_translate_f(cy, col->yoff);
 
 
-        //if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
-        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
+        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
+        //if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
         {
             c_drawn++; 
             /*
