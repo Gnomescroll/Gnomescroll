@@ -229,29 +229,38 @@ static void draw_voxel(int item_type,
 
 void draw_equipped_item(int item_type)
 {	// draw item in hud
-	GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
-
-	if (agent_camera == NULL) return;
-
-	// get sprite id
 	if (item_type == NULL_ITEM_TYPE)
 		item_type = Item::get_item_type("fist");
 
+	GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
+	if (equipped_item_animating && rendered_item != item_type)
+	{
+		char* old_name = Item::get_item_name(rendered_item);
+		char* new_name = Item::get_item_name(item_type);
+		GS_ASSERT(old_name != NULL);
+		GS_ASSERT(new_name != NULL);
+		GS_ASSERT(strcmp(old_name, new_name) != 0);
+		if (old_name != NULL && new_name != NULL)
+			printf("Equipped item animating but weapon switched from %s to %s\n",
+				old_name, new_name);
+	}
+		
 	rendered_item = item_type;
+
+	if (agent_camera == NULL) return;
 	
-	//// place sprite at camera position + distance
+	// camera state
 	Vec3 position = agent_camera->get_position();
 	Vec3 forward = agent_camera->forward_vector();
 	Vec3 camera_right = agent_camera->right_vector();
 	Vec3 up = agent_camera->up_vector();
 
 	// calculate focal,origin points from camera and focal/origin deltas
-	
 	Vec3 focal;
 	Vec3 origin;
 	
 	if (equipped_item_animating)
-	{
+	{	// use animated state
 		focal = compute_point_offset(
 			position, forward, camera_right, up,
 			anim_focal_dxy, anim_focal_dz, anim_focal_depth);
@@ -293,6 +302,9 @@ void begin_equipped_item_animation(int item_type, bool continuous)
 {
 	stop_equipped_item_animation();
 	
+	if (item_type == NULL_ITEM_TYPE)
+		item_type = Item::get_item_type("fist");
+		
 	// begin action animation for item type
 	equipped_item_animating = true;
 	rendered_item = item_type;
