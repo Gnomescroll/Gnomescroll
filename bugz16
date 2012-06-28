@@ -649,6 +649,8 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
 alt tab doesnt work in fullscreen (on linux at least)
 --attempt to do best alt-tab again? (the issue before was with how it regrabbed focus -- the event for mouse passing over window was the same as alt-tabbing back to the window)
 
+use "north star" instead of compass
+
 == SMELTER ==
 palette for smelter on/off
 
