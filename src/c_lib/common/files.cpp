@@ -43,6 +43,11 @@ char* read_file_to_buffer(char* file_name, int* size)
         if(fp == NULL) printf("WTF\n");
         fclose(fp);
     }
+    else
+    {
+        printf("read_file_to_buffer: error, could not open %s \n", file_name);
+        GS_ABORT();
+    }
     //free(source); /* Don't forget to call free() later! */
     return source;
 }

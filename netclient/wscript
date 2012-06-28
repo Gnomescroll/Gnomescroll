@@ -276,7 +276,7 @@ def build(bld):
     )
     bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
-    #bld.add_post_fun(install_bin)
+    bld.add_post_fun(install_bin)
     #if '-DPRODUCTION=1' in bld.env.CXXFLAGS and '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS:
     #    bld.add_post_fun(strip_symbols)
 
