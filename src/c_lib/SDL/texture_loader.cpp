@@ -100,6 +100,7 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FI
     }
 
     GLenum texture_format;
+
     if (surface->format->Rmask == 0x000000ff)
         texture_format = GL_RGBA;
     else
@@ -113,7 +114,10 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FI
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MAG_FILTER );
     // Edit the texture object's image data using the information SDL_Surface gives us
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
+    
+    //glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
+
     glDisable(GL_TEXTURE_2D);
     return 0;
 }
@@ -146,12 +150,17 @@ int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLu
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
     GLenum texture_format;
     if (surface->format->Rmask == 0x000000ff)
         texture_format = GL_RGBA;
     else
         texture_format = GL_BGRA;
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+
+    //GLenum texture_format = GL_BGRA;
+    //glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+
     glDisable(GL_TEXTURE_2D);
     SDL_FreeSurface(surface);
     return 0;
@@ -178,12 +187,17 @@ SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
     GLenum texture_format;
     if (surface->format->Rmask == 0x000000ff)
         texture_format = GL_RGBA;
     else
         texture_format = GL_BGRA;
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+
+    //GLenum texture_format = GL_BGRA;
+    //glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+
     glDisable(GL_TEXTURE_2D);
     return surface;
 }
