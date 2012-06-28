@@ -668,6 +668,10 @@ put spawners back in
 use durability coloring to teammate health
 add right click to heal teammate with health pack
 
+option to hide name
+
+rename lua/ to settings/
+
 get rid of nanite feeding
 drop chips from enemies
 chips go directly into nanite chip slot
