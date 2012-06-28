@@ -1,5 +1,12 @@
 #pragma once
 
+#ifndef __APPLE__
+dont_include_this_file_in_non_OSX_builds
+#endif
+
+#include <common/crash_report/stack_trace.hpp>
+#include <common/macros.hpp>
+
 // copied from
 // http://stackoverflow.com/questions/516200/relative-paths-not-working-in-xcode-c
 
@@ -15,14 +22,12 @@ void set_working_directory_to_Resources()
     CFBundleRef mainBundle = CFBundleGetMainBundle();
     CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
     char path[PATH_MAX];
-    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
-    {
-        // error!
-    }
+    bool success = CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX);
+	GS_ASSERT(success);
     CFRelease(resourcesURL);
 
     chdir(path);
-    printf("Working directory set to: %s", path);
+    printf("Working directory set to: %s\n", path);
 }
 #endif
 // ----------------------------------------------------------------------------

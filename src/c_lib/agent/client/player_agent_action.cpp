@@ -423,35 +423,26 @@ void PlayerAgent_action::throw_grenade()
 
     // message to server
     Vec3 pos = p->you->get_camera_position();
-    float x = pos.x;
-    float y = pos.y;
-    float z = pos.z;
     ThrowGrenade_CtoS msg;
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
-    float f[3];
-    //agent_camera->forward_vector(f);
-    p->you->forward_vector(f);    // use network state
-    msg.vx = f[0];
-    msg.vy = f[1];
-    msg.vz = f[2];
+    msg.x = pos.x;
+    msg.y = pos.y;
+    msg.z = pos.z;
+    Vec3 f = p->you->forward_vector();    // use network state
+    msg.vx = f.x;
+    msg.vy = f.y;
+    msg.vz = f.z;
     msg.send();
 
     // local play (copied from ThrowGrenade_CtoS)
-    //if (!this->p->you->weapons.grenades.fire()) return;
     static const float PLAYER_ARM_FORCE = 15.0f; // make agent property
     //create grenade
-    f[0] *= PLAYER_ARM_FORCE;
-    f[1] *= PLAYER_ARM_FORCE;
-    f[2] *= PLAYER_ARM_FORCE;
+    f = vec3_scalar_mult(f, PLAYER_ARM_FORCE);
     Particle::Grenade* g = Particle::grenade_list->create();
-    g->set_state(x,y,z, f[0], f[1], f[2]);
-    if (g==NULL) return;
+    GS_ASSERT(g != NULL);
+    if (g == NULL) return;
+    g->set_state(pos.x, pos.y, pos.z, f.x, f.y, f.z);
     g->owner = this->p->agent_id;
-    
 }
-
 
 void PlayerAgent_action::place_spawner()
 {

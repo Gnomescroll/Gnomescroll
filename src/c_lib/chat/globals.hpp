@@ -33,6 +33,9 @@ bool is_valid_chat_character(char c)
 
 bool is_valid_chat_message(char* msg)
 {
+	GS_ASSERT(msg != NULL);
+	if (msg == NULL) return false;
+	
     int len = strlen(msg);
     if (!len) return false;
     if (msg[0] == '/')

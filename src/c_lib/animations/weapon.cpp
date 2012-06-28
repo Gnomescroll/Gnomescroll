@@ -8,8 +8,20 @@ namespace Animations
 {
 
 static int rendered_item = NULL_ITEM_TYPE;
+static bool equipped_item_animating = false;
+static int equipped_item_animation_tick = false;
+static int equipped_item_animation_tick_nudge = 1;
+static bool equipped_item_continuous_animation = false;
 
-// adjustments for aligning weapon sprite
+// offsets when equipped_item_animating
+static float anim_focal_dz = 0.0f;
+static float anim_focal_dxy = 0.0f;
+static float anim_focal_depth = 0.0f;
+static float anim_origin_dz = 0.0f;
+static float anim_origin_dxy = 0.0f;
+static float anim_origin_depth = 0.0f;
+
+// config; adjustments for aligning weapon sprite
 static float focal_dz = 0.0f;
 static float focal_dxy = 0.0f;
 static float focal_depth = 0.0f;
@@ -17,6 +29,8 @@ static float focal_depth = 0.0f;
 static float origin_dz = 0.0f;
 static float origin_dxy = 0.0f;
 static float origin_depth = 0.0f;
+
+static float sprite_scale = 0.3f;
 
 void parse_equipment_sprite_alignment_config()
 {
@@ -39,6 +53,8 @@ void parse_equipment_sprite_alignment_config()
 	int read = 0;
 	
 	// scanf for alignment config	
+	sscanf(buffer+index, "sprite_scale: %f %n", &sprite_scale, &read);
+    index += read;
 	sscanf(buffer+index, "focal_dz: %f %n", &focal_dz, &read);
     index += read;
 	sscanf(buffer+index, "focal_dxy: %f %n", &focal_dxy, &read);
@@ -57,8 +73,6 @@ void parse_equipment_sprite_alignment_config()
 	// free file contents
 	free(buffer);
 }
-
-static float item_scale = 0.3f;
 
 void move_focal_vertical(float delta)
 {	// vertical distance
@@ -92,12 +106,13 @@ void move_origin_depth(float delta)
 
 void dilate_equipped_sprite(float delta)
 {
-	item_scale += delta;
+	sprite_scale += delta;
 }
 
 void print_sprite_alignment_config()
 {
 	printf("Sprite alignment:\n");
+	printf("sprite_scale: %f\n", sprite_scale);
 	printf("focal_dz: %f\n", focal_dz);
 	printf("focal_dxy: %f\n", focal_dxy);
 	printf("focal_depth: %f\n", focal_depth);
@@ -106,8 +121,28 @@ void print_sprite_alignment_config()
 	printf("origin_depth: %f\n", origin_depth);
 }
 
+static Vec3 compute_point_offset(
+	Vec3 position, Vec3 forward, Vec3 right, Vec3 up,
+	float dxy, float dz, float depth)
+{
+	// move horizontal
+	right = vec3_scalar_mult(right, dxy);
+	Vec3 final = vec3_add(position, right);
+
+	// move vertical
+	up = vec3_scalar_mult(up, dz);
+	final = vec3_add(final, up);
+
+	// move depth
+	forward = vec3_scalar_mult(forward, depth);
+	final = vec3_add(final, forward);
+	
+	return final;
+}
+
 void draw_equipped_item(int item_type)
 {	// draw item in hud
+	GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
 
 	// setup texture
 	using TextureSheetLoader::ItemSheetTexture;
@@ -137,59 +172,41 @@ void draw_equipped_item(int item_type)
 	Vec3 position = agent_camera->get_position();
 	Vec3 forward = agent_camera->forward_vector();
 	Vec3 camera_right = agent_camera->right_vector();
-
-	// up vector
-    Vec3 up = vec3_init(
-		model_view_matrix[1],
-		model_view_matrix[5],
-		model_view_matrix[9]
-	);
+	Vec3 up = agent_camera->up_vector();
 
 	// calculate focal,origin points from camera and focal/origin deltas
 	
-	//////////////////
-	// FOCAL /////////
-	//////////////////
-	// move horizontal
-	Vec3 dright = vec3_cross(forward, up);
-	dright.z = 0.0f;
-	normalize_vector(&dright);
-	dright = vec3_scalar_mult(dright, focal_dxy);
-	Vec3 focal = vec3_add(position, dright);
-
-	// move vertical
-	float dz = focal_dz * up.z;
-	//float dz = focal_dz;
-	focal.z += dz;
-
-	// move depth
-	focal = vec3_add(focal, vec3_scalar_mult(forward, focal_depth));
-
-	//////////////////
-	// ORIGIN ////////
-	//////////////////
-	// move horizontal
-	dright = vec3_cross(forward, up);
-	dright.z = 0.0f;
-	normalize_vector(&dright);
-	dright = vec3_scalar_mult(dright, origin_dxy);
-	Vec3 origin = vec3_add(position, dright);
+	Vec3 focal;
+	Vec3 origin;
 	
-	// move vertical
-	dz = origin_dz * up.z;
-	//dz = origin_dz;
-	origin.z += dz;
+	if (equipped_item_animating)
+	{
+		focal = compute_point_offset(
+			position, forward, camera_right, up,
+			anim_focal_dxy, anim_focal_dz, anim_focal_depth);
 
-	// move depth
-	origin = vec3_add(origin, vec3_scalar_mult(forward, origin_depth));
-	
+		origin = compute_point_offset(
+			position, forward, camera_right, up,
+			anim_origin_dxy, anim_origin_dz, anim_origin_depth);
+	}
+	else
+	{	// use defaults
+		focal = compute_point_offset(
+			position, forward, camera_right, up,
+			focal_dxy, focal_dz, focal_depth);
+
+		origin = compute_point_offset(
+			position, forward, camera_right, up,
+			origin_dxy, origin_dz, origin_depth);
+	}
+
 	// use focal and origin points to calculate right vector
 	Vec3 right = vec3_sub(focal, origin);
 	normalize_vector(&right);
 
 	// scale to size
-	up = vec3_scalar_mult(up, item_scale);
-	right = vec3_scalar_mult(right, item_scale);
+	up = vec3_scalar_mult(up, sprite_scale);
+	right = vec3_scalar_mult(right, sprite_scale);
 
 	// set up opengl state
 	glColor4ub(255,255,255,255);
@@ -226,14 +243,66 @@ void draw_equipped_item(int item_type)
     glDisable(GL_ALPHA_TEST);
 }
 
-void begin_equipped_item_animation(int item_type)
+void begin_equipped_item_animation(int item_type, bool continuous)
 {
+	stop_equipped_item_animation();
+	
 	// begin action animation for item type
+	equipped_item_animating = true;
+	rendered_item = item_type;
+	equipped_item_continuous_animation = continuous;
+
+	equipped_item_animation_tick = 0;
+	
+	// copy default state
+	anim_focal_dz = focal_dz;
+	anim_focal_dxy = focal_dxy;
+	anim_focal_depth = focal_depth;
+	anim_origin_dz = origin_dz;
+	anim_origin_dxy = origin_dxy;
+	anim_origin_depth = origin_depth;
+}
+
+void tick_equipped_item_animation()
+{
+	if (!equipped_item_animating) return;
+
+	equipped_item_animation_tick += equipped_item_animation_tick_nudge;
+
+	const int duration = 10; // ticks
+	if (equipped_item_animation_tick > duration)
+	{
+		if (equipped_item_continuous_animation)
+			equipped_item_animation_tick_nudge *= -1;
+		else
+		{
+			stop_equipped_item_animation();
+			return;
+		}
+	}
+	if (equipped_item_animation_tick < 0)
+	{
+		if (equipped_item_continuous_animation)
+			equipped_item_animation_tick_nudge *= -1;
+	}
+	
+	// calculate offsets based on tick value
+	const float delta = 0.05f;
+	anim_origin_depth = origin_depth;
+	if (equipped_item_animation_tick < duration/2)
+		anim_origin_depth += delta * (float)equipped_item_animation_tick;
+	else
+		anim_origin_depth += delta * (float)(duration - equipped_item_animation_tick);
+	
+	// clamp
+	if (anim_origin_depth < origin_depth) anim_origin_depth = origin_depth;
 }
 
 void stop_equipped_item_animation()
 {
 	// force stop current action animation
+	equipped_item_animating = false;
+	equipped_item_animation_tick = 0;
 }
     
 void init_weapon_sprite()

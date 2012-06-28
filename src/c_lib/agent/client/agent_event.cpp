@@ -254,8 +254,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
 
     Sound::fire_laser(s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
-    float f[3];
-    this->a->forward_vector(f);
+    Vec3 f = this->a->forward_vector();
 
     if (type == OBJECT_AGENT)
     {
@@ -267,7 +266,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
             {
                 float c[3];
                 vv->get_center(c);
-                Animations::blood_spray(c[0], c[1], c[2], f[0], f[1], f[2]);
+                Animations::blood_spray(c[0], c[1], c[2], f.x, f.y, f.z);
                 Sound::pick_hit_agent(  // TODO: switch (weapon) {}
                     c[0], c[1], c[2],
                     0,0,0
@@ -286,7 +285,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
-        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+        f.x*hitscan_speed, f.y*hitscan_speed, f.z*hitscan_speed
     );
 
 }
@@ -313,53 +312,6 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     Vec3 f = vec3_sub(p, arm_center);
     normalize_vector(&f);
 
-    //Vec3 look = this->a->forward_vector();    // wrong thing
-    //// NEED THE FKN FORWARD VECTOR OF THE NODE
-    //// ROTATE FROM DEFAULT FORWARD VECTOR OF NODE (READ MATRIX OFF VOX DAT)
-    //// TO LASER
-    ////Vec3 look = vec3_scalar_mult(this->a->vox->get_node(5)->vz, -1);
-    //// need the look vector for the ARM
-    ////float theta = this->a->s.theta;
-    ////float _x,_y;
-    ////rotate_point(1,0, theta, &_x, &_y);
-    ////Vec3 look = vec3_init(_x, _y, 0);
-    ////look.z = 0;
-    ////normalize_vector(&look);
-
-    ////printf("f:");
-    ////vec3_print(f);
-    ////printf("look:");
-    ////vec3_print(look);
-    ////printf("\n");
-    //Vec3 f_cache = vec3_copy(f);
-    //Vec3 look_cache = vec3_copy(look);
-
-    //float theta, phi;
-
-    //// xy plane
-    //f.z = 0;
-    //look.z = 0;
-    //normalize_vector(&f);
-    //normalize_vector(&look);
-    //theta = acos(vec3_dot(f, look));
-
-    //f = vec3_copy(f_cache);
-    //look = vec3_copy(look_cache);
-
-    //// xz plane
-    //f.y = 0;
-    //look.y = 0;
-    //normalize_vector(&f);
-    //normalize_vector(&look);
-    //phi = acos(vec3_dot(f, look));
-
-    //f = vec3_copy(f_cache);
-    //look = vec3_copy(look_cache);
-
-    //ax /= kPI;
-    //ay /= kPI;
-    //this->a->vox->set_arm(-phi, -theta);
-
     f = vec3_scalar_mult(f, hitscan_speed);
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
@@ -381,15 +333,14 @@ void Agent_event::fired_weapon_at_nothing()
 
     if (this->a->vox == NULL) return;
     
-    float f[3];
-    this->a->forward_vector(f);
+    Vec3 f = this->a->forward_vector();
     
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
     Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
-        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+        f.x*hitscan_speed, f.y*hitscan_speed, f.z*hitscan_speed
     );
 }
 
