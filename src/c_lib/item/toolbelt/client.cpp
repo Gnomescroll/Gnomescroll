@@ -43,7 +43,19 @@ void turn_fire_off(int agent_id)
     if (item_id == NULL_ITEM) item_group = IG_NONE;
     else item_group = Item::get_item_group(item_id);
     if (ClientState::playerAgent_state.agent_id == agent_id)
+    {
         toolbelt_item_end_alpha_action_event_handler(item_group);
+        // force stop any continuous animations
+        // TODO -- continuous actions from dat
+        if (item_group == IG_MINING_LASER ||
+			item_group == IG_MELEE_WEAPON ||
+			item_group == IG_NONE ||
+			item_group == IG_SHOVEL ||
+			item_group == IG_NANITE_COIN || 
+			item_group == IG_RESOURCE ||
+			item_group == IG_ERROR)
+			Animations::stop_equipped_item_animation();
+	}
 }
 
 bool toolbelt_item_begin_alpha_action()

@@ -10,7 +10,7 @@ namespace Animations
 
 static int rendered_item = NULL_ITEM_TYPE;
 static bool equipped_item_animating = false;
-static int equipped_item_animation_tick = false;
+static int equipped_item_animation_tick = 0;
 static int equipped_item_animation_tick_nudge = 1;
 static bool equipped_item_continuous_animation = false;
 
@@ -349,6 +349,7 @@ void stop_equipped_item_animation()
 	// force stop current action animation
 	equipped_item_animating = false;
 	equipped_item_animation_tick = 0;
+	equipped_item_animation_tick_nudge = 1;
 }
     
 void init_weapon_sprite()
