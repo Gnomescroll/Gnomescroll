@@ -55,81 +55,6 @@ void vbo_draw_end()
     free(draw_vbo_array);
 }
 
-/*
-    Use frustrum test to 8 block resolution because have to render partial chunks
-*/
-
-#if 0
-void set_frustrum_column_max(int index, float x, float y)
-{
-    if(vbo_frustrum_max[index] != -1)  GS_ABORT();
-
-    int min = vbo_frustrum_min[index];
-    GS_ASSERT(min != -1);
-/*
-    if(point_fulstrum_test_map(x,y,128.0) == true)
-    {
-        vbo_frustrum_max[index] = 8;
-        return;
-    }
-*/
-    for(int i=8; i >= min; i--)
-    {
-        float z = i*16.0;
-
-        //if(point_fulstrum_test_map(x,y,z) == true)
-        if(point_fulstrum_test_2(x,y,z) == true)
-        {
-            vbo_frustrum_max[index] = i;
-            return;
-        }
-    }
-
-    GS_ABORT();
-}
-
-void set_frustrum_column_min(int _i, int _j, float x, float y)
-{   
-    _j %= 32;
-    _i %= 32;
-    const int index = 32*_j + _i;
-
-    if(vbo_frustrum_min[index] != -1)  return;
-/*
-    if(point_fulstrum_test_map(x,y,0.0) == true)
-    {
-        vbo_frustrum_min[index] = 0;
-        return;
-    }
-*/
-    float z = 0.0;
-
-    for(int i=0; i < 8; i++)
-    {
-        z = i*16.0;
-    
-        if(point_fulstrum_test_map(x,y,z) != point_fulstrum_test_2(x,y,z))
-        {
-            printf("error: x,y,z= %f %f %f \n", x,y,z);
-        }
-    
-    
-        //if(point_fulstrum_test_map(x,y,z) == true)
-        if(point_fulstrum_test_2(x,y,z) == true)
-        {
-            vbo_frustrum_min[index] = i;
-            set_frustrum_column_max(index,x,y);
-            return;
-        }
-    }
-
-    //column is not visible
-    vbo_frustrum_min[index] = 8;
-    vbo_frustrum_max[index] = 0;
-}
-//number of columns to draw
-#endif
-
 void set_frustrum_column_min(int _i, int _j, float x, float y)
 {   
     _j %= 32;
@@ -270,7 +195,9 @@ void Vbo_map::prep_frustrum_vertices()
 bool chunk_render_check( float x, float y)
 {
     //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
-    static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
+    //static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
+
+    static const float dist2 = (CAMERA_VIEW_DISTANCE+11.4)*(CAMERA_VIEW_DISTANCE+11.4);
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
@@ -304,12 +231,15 @@ void Vbo_map::prep_draw()
 
         if(col == NULL || col->vnum == 0) continue;
 
-        col->wxoff = quadrant_translate_f(cx, col->xoff);
-        col->wyoff = quadrant_translate_f(cy, col->yoff);
+        col->wxoff = quadrant_translate_f(cx, col->xoff+8.0);
+        col->wyoff = quadrant_translate_f(cy, col->yoff+8.0);
+/*
+        xy_circle_fulstrum_test( col->wxoff, col->wyoff, 11.4)
 
-
-        if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) && xy_circle_fulstrum_test( col->wxoff+8.0, col->wyoff+8.0, 32.0) )
-        //if( chunk_render_check( col->wxoff+8.0, col->wyoff+8.0) )
+        This function is fatally bugged!
+*/
+        //if( chunk_render_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test( col->wxoff, col->wyoff, 11.4) )
+        if( chunk_render_check( col->wxoff, col->wyoff) )
         {
             c_drawn++; 
             /*
@@ -349,8 +279,8 @@ void Vbo_map::sort_draw()
         float dx = (v->wxoff - cx);
         float dy = (v->wyoff - cy);
 
-        dx = quadrant_translate_f(cx, dx);
-        dy = quadrant_translate_f(cx, dy);
+        //dx = quadrant_translate_f(cx, dx);
+        //dy = quadrant_translate_f(cx, dy);
 
         draw_vbo_array[i].distance = dx*dx + dy*dy; //set this
     }
@@ -417,6 +347,28 @@ void Vbo_map::draw_map()
     //int v_pruned = 0;
 #endif
 
+    /*
+        Test Sorting
+    */
+    float distance = -1;
+    for(int i=0;i<draw_vbo_n;i++)
+    {
+        if(draw_vbo_array[i].distance >= distance)
+        {
+            //printf("0 i= %d distance= %f \n", i, sqrt(draw_vbo_array[i].distance)) ;
+            distance = draw_vbo_array[i].distance;
+        }
+        else
+        {
+            distance = draw_vbo_array[i].distance;
+            printf("1 i= %d distance= %f \n", i, sqrt(draw_vbo_array[i].distance));
+            //GS_ABORT();
+        }
+    }
+
+    /*
+        Draw
+    */
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
@@ -429,7 +381,7 @@ void Vbo_map::draw_map()
 
 
         glLoadMatrixf(modelview);
-        glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
+        glTranslatef(vbo->wxoff-8.0, vbo->wyoff-8.0, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
