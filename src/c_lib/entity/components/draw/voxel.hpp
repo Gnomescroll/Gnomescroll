@@ -36,7 +36,8 @@ class VoxelComponent: public DrawComponent
             normalize_vector(&right);
 
             normal = vec3_cross(forward, right);
-            right = vec3_cross(forward, normal);
+            normalize_vector(&normal);
+            //right = vec3_cross(forward, normal);
 
             forward = vec3_scalar_mult(forward, size);
             right = vec3_scalar_mult(right, size);
@@ -91,11 +92,10 @@ class VoxelComponent: public DrawComponent
 
         Vec3 get_center(Vec3 position)
         {   // takes a positon vector and offsets it by half size in each dimension
-            Vec3 center;
+            Vec3 center = position;
             float offset = this->size * 0.5f;
-            center.x = position.x - offset;
-            center.y = position.y - offset;
-            center.z = position.z;
+            center.x -= offset;
+            center.y -= offset;
             return center;
         }
 

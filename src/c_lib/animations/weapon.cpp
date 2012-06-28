@@ -3,6 +3,7 @@
 #include <item/_interface.hpp>
 #include <item/particle/_interface.hpp>
 #include <SDL/texture_sheet_loader.hpp>
+#include <common/draw/draw.hpp>
 
 namespace Animations
 {
@@ -140,25 +141,11 @@ static Vec3 compute_point_offset(
 	return final;
 }
 
-void draw_equipped_item(int item_type)
-{	// draw item in hud
-	GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
-
-	// setup texture
-	using TextureSheetLoader::ItemSheetTexture;
-    GS_ASSERT(ItemSheetTexture != 0);
-    if (ItemSheetTexture == 0) return;
-
-	if (agent_camera == NULL) return;
-
-	// get sprite id
-	if (item_type == NULL_ITEM_TYPE)
-		item_type = Item::get_item_type("fist");
+static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
+{	
 	int item_sprite = Item::get_sprite_index_for_type(item_type);
 	//GS_ASSERT(item_sprite != ERROR_SPRITE);	// TODO -- restore this assert, once there is a fist sprite
 	if (item_sprite == ERROR_SPRITE) return;
-
-	rendered_item = item_type;
 
 	// get texture coordinates
 	const float SPRITE_WIDTH = 1.0f/16.0f;
@@ -167,6 +154,69 @@ void draw_equipped_item(int item_type)
 	float tx_max = tx_min + SPRITE_WIDTH;
 	float ty_min = (item_sprite / TEXTURE_SPRITE_WIDTH) * SPRITE_WIDTH;
 	float ty_max = ty_min + SPRITE_WIDTH;
+
+	// setup texture
+	using TextureSheetLoader::ItemSheetTexture;
+    GS_ASSERT(ItemSheetTexture != 0);
+    if (ItemSheetTexture == 0) return;
+
+	// set up opengl state
+	glColor4ub(255,255,255,255);
+    GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_BLEND, false);
+	GL_ASSERT(GL_DEPTH_TEST, false);
+
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.5);
+    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
+
+	// vertex calls
+	glBegin(GL_QUADS);
+	
+	Vec3 p = vec3_sub(origin, vec3_add(right, up));
+    glTexCoord2f(tx_max, ty_max);
+    glVertex3f(p.x, p.y, p.z);
+
+    p = vec3_add(origin, vec3_sub(up, right));
+    glTexCoord2f(tx_max, ty_min);
+    glVertex3f(p.x, p.y, p.z);
+
+    p = vec3_add(origin, vec3_add(up, right));
+    glTexCoord2f(tx_min, ty_min);
+    glVertex3f(p.x, p.y, p.z);
+
+    p = vec3_add(origin, vec3_sub(right, up));
+    glTexCoord2f(tx_min, ty_max);
+    glVertex3f(p.x, p.y, p.z);
+
+	glEnd();
+	
+	// cleanup
+    glDisable(GL_ALPHA_TEST);
+}
+
+static void draw_voxel(int item_type,
+	Vec3 origin, Vec3 forward, Vec3 right, Vec3 up)
+{
+	const int sprite_id = Item::get_particle_voxel_texture(item_type);
+    const float sprite_width = 32.0f/512.0f;
+	
+	drawTexturedMinivox(
+		origin, forward, right, up,
+		sprite_id, 0.0f, 0.0f, sprite_width);
+}
+
+void draw_equipped_item(int item_type)
+{	// draw item in hud
+	GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
+
+	if (agent_camera == NULL) return;
+
+	// get sprite id
+	if (item_type == NULL_ITEM_TYPE)
+		item_type = Item::get_item_type("fist");
+
+	rendered_item = item_type;
 	
 	//// place sprite at camera position + distance
 	Vec3 position = agent_camera->get_position();
@@ -204,43 +254,18 @@ void draw_equipped_item(int item_type)
 	Vec3 right = vec3_sub(focal, origin);
 	normalize_vector(&right);
 
+	forward = vec3_cross(right, up);
+	normalize_vector(&forward);
+
 	// scale to size
 	up = vec3_scalar_mult(up, sprite_scale);
 	right = vec3_scalar_mult(right, sprite_scale);
-
-	// set up opengl state
-	glColor4ub(255,255,255,255);
-    GL_ASSERT(GL_TEXTURE_2D, true);
-    GL_ASSERT(GL_BLEND, false);
-	GL_ASSERT(GL_DEPTH_TEST, false);
-
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.5);
-    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
-
-	// vertex calls
-	glBegin(GL_QUADS);
+	forward = vec3_scalar_mult(forward, sprite_scale);
 	
-	Vec3 p = vec3_sub(origin, vec3_add(right, up));
-    glTexCoord2f(tx_max, ty_max);
-    glVertex3f(p.x, p.y, p.z);
-
-    p = vec3_add(origin, vec3_sub(up, right));
-    glTexCoord2f(tx_max, ty_min);
-    glVertex3f(p.x, p.y, p.z);
-
-    p = vec3_add(origin, vec3_add(up, right));
-    glTexCoord2f(tx_min, ty_min);
-    glVertex3f(p.x, p.y, p.z);
-
-    p = vec3_add(origin, vec3_sub(right, up));
-    glTexCoord2f(tx_min, ty_max);
-    glVertex3f(p.x, p.y, p.z);
-
-	glEnd();
-	
-	// cleanup
-    glDisable(GL_ALPHA_TEST);
+	if (Item::item_type_is_voxel(item_type))
+		draw_voxel(item_type, origin, forward, right, up);
+	else
+		draw_planar_sprite(item_type, origin, right, up);
 }
 
 void begin_equipped_item_animation(int item_type, bool continuous)
