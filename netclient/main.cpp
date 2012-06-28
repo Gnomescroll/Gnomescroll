@@ -281,13 +281,13 @@ int run()
             Draw Hud
         */
 
-        glDisable(GL_DEPTH_TEST);
         // with depth test disable
         int equipped_item_type = Toolbelt::get_selected_item_type();
-        Animations::draw_equipped_item(equipped_item_type);
 
+        glDisable(GL_DEPTH_TEST);
+        Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
-        
+
         if (Options::hud)
         {
             // switch to hud  projection
