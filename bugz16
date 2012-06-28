@@ -597,6 +597,15 @@ DONE
 fix toolbelt item durability decrementing wrong slot, sometimes
 DONE
 
+hud sprite weapon + basic animation
+DONE
+
+hud voxel weapon
+DONE
+
+chat logging on server
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -616,8 +625,9 @@ some boxes arent getting destination correctly -- just jumping around with state
 == GFX ==
 glsl colored/textured voxels
 texture color problem in OSX -- for blocks and for items
-Hud Weapon sprites + animation
+Improve Hud Weapon sprites animations
 make item pickup fly to player
+textured voxels / isometric blocks should use full palette info, instead of only one side
 
 == SOUND ==
 improve digging sounds
@@ -649,7 +659,6 @@ send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
-log chat
 
 == GENERAL ==
 put spawners back in
@@ -666,3 +675,5 @@ change nanite texture to remove graphic
 add labels to the widgets
 
 ==BUGZ==
+camera choppy when rotating laterally and phi is at max/min
+flickering quad vertices on terrain and voxel models in osx build
