@@ -442,9 +442,13 @@ void blit_block_item_sheet()
 
         SDL_LockSurface(block_item_64_surface);
 
+/*
         GLenum format = GL_BGRA;
         if (block_item_64_surface->format->Rmask == 0x000000ff)
             format = GL_RGBA;
+*/
+
+        GLenum format = GL_RGBA;
 
         //glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_64_surface->pixels);
         glReadPixels(0, 0, xres, yres, format, GL_UNSIGNED_BYTE, (void*) block_item_64_surface->pixels);
@@ -565,9 +569,11 @@ void blit_block_item_sheet()
 
         SDL_LockSurface(block_item_16_surface);
 
-        GLenum format = GL_BGRA;
-        if (block_item_16_surface->format->Rmask == 0x000000ff)
-            format = GL_RGBA;
+        //GLenum format = GL_BGRA;
+        //if (block_item_16_surface->format->Rmask == 0x000000ff)
+        //    format = GL_RGBA;
+
+        GLenum format = GL_RGBA;
 
         //glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
         glReadPixels(0, 0, xres, yres, format, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
