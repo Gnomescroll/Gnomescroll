@@ -15,6 +15,7 @@ syntax: glob
 gmon.out
 
 run
+autoupdate
 
 .pch
 
