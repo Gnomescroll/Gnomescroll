@@ -186,8 +186,7 @@ void HitscanLaserEffect_list::draw()
     glEnable(GL_TEXTURE_2D);
     
     GL_ASSERT(GL_DEPTH_TEST, true);
-
-    glDepthMask(GL_FALSE);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
 
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
@@ -207,7 +206,6 @@ void HitscanLaserEffect_list::draw()
 
     glEnd();
 
-    glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
 
     glDisable(GL_BLEND);

@@ -201,10 +201,12 @@ void MiningLaserEffect_list::draw()
     //glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
     //glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
 
+
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vlist->VBO);
 
     glEnable(GL_BLEND);
-    glDepthMask(GL_FALSE);
 
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -232,7 +234,6 @@ void MiningLaserEffect_list::draw()
     glDisableVertexAttribArray(mining_laser_TexCoord);
     glUseProgramObjectARB(0);
 
-    glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 }

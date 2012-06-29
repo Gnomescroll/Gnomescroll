@@ -136,7 +136,7 @@ void Shrapnel_list::draw()
 
     glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
 
-    glDepthMask(GL_FALSE);    
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
 
     glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -166,7 +166,6 @@ void Shrapnel_list::draw()
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
-    glDepthMask(GL_TRUE);
     #endif
 }
 
