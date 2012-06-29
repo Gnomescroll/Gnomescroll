@@ -15,7 +15,8 @@ syntax: glob
 gmon.out
 
 run
-autoupdate
+
+*dc_mmo/tools/autoupdate/autoupdate
 
 .pch
 
