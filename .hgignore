@@ -16,7 +16,7 @@ gmon.out
 
 run
 
-*dc_mmo/tools/autoupdate/autoupdate
+tools/autoupdate/autoupdate
 
 .pch
 
