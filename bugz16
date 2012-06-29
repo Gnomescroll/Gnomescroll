@@ -626,7 +626,7 @@ some boxes arent getting destination correctly -- just jumping around with state
 --especially when cross boundaries
 
 == GFX ==
-glsl colored/textured voxels
+glsl colored/textured voxels -- add normal lighting
 texture color problem in OSX -- for blocks and for items
 Improve Hud Weapon sprites animations
 make item pickup fly to player
