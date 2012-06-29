@@ -534,7 +534,7 @@ void Vbo_map::draw_map_comptability()
         } 
 
         glLoadMatrixf(modelview);
-        glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
+        glTranslatef(vbo->wxoff-8.0, vbo->wyoff-8.0, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
