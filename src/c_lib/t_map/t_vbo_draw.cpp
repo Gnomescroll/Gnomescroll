@@ -238,7 +238,7 @@ void Vbo_map::prep_draw()
 
         This function is fatally bugged!
 */
-        if( chunk_render_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test( col->wxoff, col->wyoff, 11.4) )
+        if( chunk_render_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test( col->wxoff, col->wyoff, 32) )
         //if( chunk_render_check( col->wxoff, col->wyoff) )
         {
             c_drawn++; 
