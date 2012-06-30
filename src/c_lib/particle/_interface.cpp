@@ -7,8 +7,8 @@
 #include <particle/blood.hpp>
 #include <particle/minivox_colored.hpp>
 #include <particle/minivox_textured.hpp>
-#include <particle/billboard_text.hpp>
-#include <particle/billboard_text_hud.hpp>
+#include <particle/text/billboard_text.hpp>
+#include <particle/text/billboard_text_hud.hpp>
 #include <particle/billboard_sprite.hpp>
 
 #include <common/compat_gl.h>

@@ -12,9 +12,6 @@
 namespace Particle
 {
 
-
-static const float DEFAULT_MASS = 1.0;
-
 inline void BillboardText::init()
 {
     this->bounce_count = 0;
@@ -24,17 +21,14 @@ inline void BillboardText::init()
     this->a = 255;
     this->gravity = true;
     this->should_draw = true;
-    this->size = BILLBOARD_TEXT_TEXTURE_SCALE;
+    this->scale = BILLBOARD_TEXT_TEXTURE_SCALE;
     this->permanent = false;
 
-    this->text[0] = '\0';
     this->ttl = BILLBOARD_TEXT_TTL;
     this->type = BILLBOARD_TEXT_TYPE;
 }
 
 BillboardText::BillboardText()
-:
-ParticleMotion(-1, 0,0,0,0,0,0, DEFAULT_MASS)
 {
     this->init();
 }
@@ -52,56 +46,23 @@ void BillboardText::tick()
 }
 
 
-void BillboardText::set_text(char* t)
-{
-    int i;
-    for (i=0; t[i] != '\0' && i < BILLBOARD_TEXT_MAX_LETTERS; i++)
-        text[i] = t[i];
-    text[i] = '\0';
-}
-
 void BillboardText::set_gravity(bool grav)
 {
     this->gravity = grav;
 }
+
 void BillboardText::set_draw(bool draw)
 {
     this->should_draw = draw;
 }
 
-void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b)
-{
-    this->r = r;
-    this->g = g;
-    this->b = b;
-}
-
-void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
-{
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    this->a = a;
-}
-
-void BillboardText::set_color(struct Color color)
-{
-    this->r = color.r;
-    this->g = color.g;
-    this->b = color.b;
-}
-
-void BillboardText::set_size(float size)
-{
-    this->size = size;
-}
-
 void BillboardText::draw()
 {
     #if DC_CLIENT
-    if (HudFont::font == NULL) return;
-    if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
     if (!this->should_draw) return;
+    if (HudFont::font == NULL) return;
+    if (current_camera == NULL) return;
+    if(text == NULL || text[0] == '\0') return;
     
     Vec3 position = this->get_position();
     Vec3 p = current_camera->get_position();
@@ -144,8 +105,8 @@ void BillboardText::draw()
     height = (float)_h;
     
     // calcalute half length pixel offset to center the text
-    const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled size
-    float start = -(0.5 * len * scale * this->size);
+    const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled scale
+    float start = -(0.5 * len * scale * this->scale);
     float cursor = 0.0f;
     float xoff, xw;
     float ax, ay, bx, by;
@@ -171,15 +132,15 @@ void BillboardText::draw()
         ty_max = glyph.y + glyph.th;
         
         // get char x offset and width, adjusted
-        xoff = (cursor + glyph.xoff) * scale * this->size;
-        xw = (cursor + glyph.xoff + glyph.w) * scale * this->size;
+        xoff = (cursor + glyph.xoff) * scale * this->scale;
+        xw = (cursor + glyph.xoff + glyph.w) * scale * this->scale;
         ax = x - (xw + start) * right[0];
         ay = y - (xw + start) * right[1];
         bx = x - (xoff  + start) * right[0];
         by = y - (xoff  + start) * right[1];
 
-        az = z + (height - glyph.yoff - glyph.h) * scale * this->size;
-        bz = z + (height - glyph.yoff)           * scale * this->size;
+        az = z + (height - glyph.yoff - glyph.h) * scale * this->scale;
+        bz = z + (height - glyph.yoff)           * scale * this->scale;
 
         cursor += glyph.xadvance;
 
@@ -198,7 +159,7 @@ void BillboardText::draw()
     #endif
 }
 
-}
+}   // Particles
 
 /* BillboardText list */
 
@@ -233,4 +194,4 @@ void BillboardText_list::draw()
     #endif
 }
 
-}
+}   // Particles

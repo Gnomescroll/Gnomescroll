@@ -15,8 +15,9 @@
 #include <particle/blood.cpp>
 #include <particle/minivox_colored.cpp>
 #include <particle/minivox_textured.cpp>
-#include <particle/billboard_text.cpp>
-#include <particle/billboard_text_hud.cpp>
+#include <particle/text/text_particle.cpp>
+#include <particle/text/billboard_text.cpp>
+#include <particle/text/billboard_text_hud.cpp>
 #include <particle/billboard_sprite.cpp>
 #endif
 

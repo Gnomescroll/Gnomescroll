@@ -4,8 +4,6 @@
 dont_include_this_file_in_server
 #endif
 
-#include <particle/billboard_text_hud.hpp>
-
 #include <input/handlers.hpp>
 
 #include <state/client_state.hpp>

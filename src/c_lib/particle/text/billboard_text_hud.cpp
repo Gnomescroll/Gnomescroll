@@ -22,24 +22,13 @@ inline void BillboardTextHud::init_properties()
     this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
 }
 
-inline void BillboardTextHud::init_text()
-{
-    GS_ASSERT(this->text == NULL);
-    if (this->text != NULL) return;
-    GS_ASSERT(HudText::text_list != NULL);
-    this->text = HudText::text_list->create();
-}
-
 inline void BillboardTextHud::init()
 {
     this->init_properties();
-    this->init_text();
 }
 
 void BillboardTextHud::destroy()
 {
-    if (this->text != NULL) HudText::text_list->destroy(this->text->id);
-    this->text = NULL;
     if (this->attached_to_agent == NO_AGENT) return;
     Agent_state* a = ClientState::agent_list->get(this->attached_to_agent);
     if (a == NULL) return;
@@ -47,9 +36,6 @@ void BillboardTextHud::destroy()
 }
 
 BillboardTextHud::BillboardTextHud()
-:
-ParticleMotion(-1, 0,0,0,0,0,0, DEFAULT_MASS),
-text(NULL)
 {
     this->init_properties();
 }
@@ -59,33 +45,16 @@ void BillboardTextHud::tick()
     if (!this->permanent) this->ttl--;
 }
 
-void BillboardTextHud::set_text(char* t)
-{
-    if (this->text != NULL) this->text->set_text(t);
-}
 void BillboardTextHud::set_draw(bool draw)
 {
     this->should_draw = draw;
 }
-void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b)
-{
-    if (this->text != NULL) this->text->set_color(r,g,b);
-}
-void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
-{
-    if (this->text != NULL) this->text->set_color(r,g,b,a);
-}
-void BillboardTextHud::set_size(float size)
-{
-    if (this->text != NULL) this->text->set_scale(size);
-}
 
 void BillboardTextHud::draw()
 {
-    if (this->text == NULL) return;
-    if(!this->text->charcount()) return;
-    if (current_camera == NULL) return;
     if (!this->should_draw) return;
+    if (current_camera == NULL) return;
+    if(!this->charcount()) return;
 
     Vec3 position = this->get_position();
     position = quadrant_translate_position(current_camera_position, position);
@@ -94,18 +63,18 @@ void BillboardTextHud::draw()
     GS_ASSERT(res != GLU_FALSE);
     if (res == GLU_FALSE) return;
 
-    this->text->set_position((float)sx, (float)sy);
-    this->text->center();
-    int w = this->text->get_width();
-    int h = this->text->get_height();
-    if (!rect_intersects(this->text->x, this->text->y-h, w, h, 0, 0, _xresf, _yresf)) // -h reason: text draw order
+    this->set_position((float)sx, (float)sy);
+    this->center();
+    int w = this->get_width();
+    int h = this->get_height();
+    if (!rect_intersects(this->x, this->y-h, w, h, 0, 0, _xresf, _yresf)) // -h reason: this draw order
         return; // not on screen (tested, works)
 
-    this->text->set_depth((float)sz);
-    this->text->draw_centered();
+    this->set_depth((float)sz);
+    this->draw_centered();
 }
 
-}
+}   // Particle
 
 /* BillboardTextHud list */
 
@@ -142,4 +111,4 @@ void BillboardTextHud_list::draw()
     #endif
 }
 
-}
+}   // Particle

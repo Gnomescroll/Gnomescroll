@@ -56,8 +56,10 @@ class Text
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+        void set_color(struct Color color);
         void set_position(float x, float y);
         void set_scale(float scale);
+        void set_size(float size) { this->set_scale(scale); }
         void set_depth(float depth);
         void draw_centered();
         int get_width();

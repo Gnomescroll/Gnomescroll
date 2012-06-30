@@ -4,7 +4,7 @@
 dont_include_this_file_in_server
 #endif
 
-#include <particle/billboard_text_hud.hpp>
+#include <particle/text/billboard_text_hud.hpp>
 
 class Agent_state;
 

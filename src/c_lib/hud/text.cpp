@@ -190,12 +190,20 @@ void Text::set_color(unsigned char r, unsigned char g, unsigned char b)
     this->g = g;
     this->b = b;
 }
+
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     this->r = r;
     this->g = g;
     this->b = b;
     this->a = a;
+}
+
+void Text::set_color(struct Color color)
+{
+    this->r = color.r;
+    this->g = color.g;
+    this->b = color.b;
 }
 
 void Text::set_position(float x, float y)

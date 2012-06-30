@@ -7,11 +7,10 @@
 namespace Particle
 {
 
-class ParticleMotion
+class ParticleMotionCore
 {
     public:
         Verlet::VerletComponent verlet;
-        int id;
         int ttl;
         int type;
         float damp;
@@ -24,6 +23,11 @@ class ParticleMotion
         void set_position(float x, float y, float z)
         {
             this->verlet.set_position(x,y,z);
+        }
+
+        void set_position(struct Vec3 p)
+        {
+            this->set_position(p.x, p.y, p.z);
         }
 
         void set_momentum(float mx, float my, float mz)
@@ -53,9 +57,19 @@ class ParticleMotion
 
         void set_ttl(int ttl);
 
-        ParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass);
+        ParticleMotionCore(float x, float y, float z, float mx, float my, float mz, float mass);
 
-        ~ParticleMotion(){}
+        ~ParticleMotionCore(){}
+};
+
+class ParticleMotion: public ParticleMotionCore
+{
+    public:
+        int id;
+
+        ParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass)
+        : ParticleMotionCore(x,y,z,mx,my,mz,mass),
+        id(id) {}
 };
 
 }

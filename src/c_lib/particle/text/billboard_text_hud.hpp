@@ -1,7 +1,7 @@
 #pragma once
 
 #include <particle/particles.hpp>
-#include <hud/text.hpp>
+#include <particle/text/text_particle.hpp>
 
 namespace Particle
 {
@@ -14,24 +14,21 @@ const float BILLBOARD_TEXT_HUD_TEXTURE_SCALE = 0.2f;
 
 const static int BILLBOARD_TEXT_HUD_MAX_LETTERS = 12;
 
-class BillboardTextHud: public ParticleMotion
+class BillboardTextHud: public TextParticle
 {
     private:
         inline void init_properties();
-        inline void init_text();
         
     public:
-        HudText::Text* text;
         bool should_draw;
         int attached_to_agent;
         bool permanent;
         
-        void set_color(unsigned char r, unsigned char g, unsigned char b);
-        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
-        void set_text(char* t);
         void set_draw(bool draw);
-        void set_size(float size);
-
+        void set_position(float x, float y)
+        {
+            HudText::Text::set_position(x,y);
+        }
         void draw();
         void tick();
 

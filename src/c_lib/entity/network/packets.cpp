@@ -13,7 +13,7 @@
 #include <entity/objects.hpp>
 
 #include <particle/_interface.hpp>
-#include <particle/billboard_text.hpp>
+#include <particle/text/billboard_text.hpp>
 #include <particle/constants.hpp>
 
 /* Construction */
