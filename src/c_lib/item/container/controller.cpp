@@ -264,12 +264,9 @@ ContainerActionType partial_hand_to_empty_slot(ItemContainerInterface* container
 
     transfer_free_item_to_container(new_item, container->id, slot);
     
-    //container->insert_item(slot, new_item);
     // update items
-    //Item::send_item_state(hand_item);
-    //Item::broadcast_item_create(new_item);
-    // insert split 1 stack into container
-    //send_container_insert(client_id, new_item, container->id, slot);
+    Item::send_item_state(hand_item);
+
     // hand item id is unchanged
     return PARTIAL_HAND_TO_EMPTY_SLOT;
 }
