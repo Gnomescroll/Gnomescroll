@@ -105,8 +105,9 @@ void begin_particle_draw()
     if (particle_texture == 0) return;
     
     glColor4ub(255,255,255,255);
-    glDepthMask(GL_FALSE);
     
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glEnable(GL_TEXTURE_2D);
@@ -118,7 +119,6 @@ void end_particle_draw()
 {
     glEnd();
     glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
 }
 
 

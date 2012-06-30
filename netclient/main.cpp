@@ -246,11 +246,6 @@ int run()
         //t_mech::draw();
 		
         /*
-            Skybox
-        */
-        Skybox::draw();
-
-        /*
             Transparent
         */
 
@@ -260,10 +255,15 @@ int run()
 
         // draw animations
 
+        glDepthMask(GL_FALSE);
+
+        Skybox::draw();
+
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
+
 
         poll_mouse();
 
@@ -271,6 +271,8 @@ int run()
         Particle::grenade_list->draw();
         Particle::blood_list->draw();
         Particle::end_particle_draw();
+
+        glDepthMask(GL_TRUE);
 
 		//glDisable(GL_DEPTH_TEST);
 

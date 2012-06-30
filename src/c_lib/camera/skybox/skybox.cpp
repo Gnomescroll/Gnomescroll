@@ -225,17 +225,15 @@ void draw()
 
     glColor3ub(255,255,255);
 
-    GL_ASSERT(GL_TEXTURE_2D, true);
+
+    glEnable(GL_TEXTURE_2D);
+
     GL_ASSERT(GL_DEPTH_TEST, true);
-   
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc(GL_ONE, GL_ONE);
-
-	// cache depthmask flag state & disable
-    GLboolean restore_depth_mask;
-    glGetBooleanv(GL_DEPTH_WRITEMASK, &restore_depth_mask);
-    glDepthMask(GL_FALSE);
     
     glBindTexture(GL_TEXTURE_2D, star_sheet);
 
@@ -256,8 +254,8 @@ void draw()
     glUseProgramObjectARB(0);
 
     glDisable(GL_BLEND);
-    if (restore_depth_mask)
-		glDepthMask(GL_TRUE);
+    glDisable(GL_TEXTURE_2D);
+
 }
 
 }	// Skybox

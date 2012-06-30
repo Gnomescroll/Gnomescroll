@@ -159,6 +159,8 @@ void HitscanEffect_list::draw()
         return;
     }
 
+    if(this->num == 0) return;
+    
     const float tick_rate = 30.0f;
 
     int last_tick = _LAST_TICK();
@@ -174,8 +176,7 @@ void HitscanEffect_list::draw()
 
     glEnable(GL_TEXTURE_2D);
     GL_ASSERT(GL_DEPTH_TEST, true);
-
-    glDepthMask(GL_FALSE);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
 
     glBindTexture( GL_TEXTURE_2D, hitscan_texture_id );
     glEnable(GL_BLEND);
@@ -187,7 +188,6 @@ void HitscanEffect_list::draw()
         a[i].draw(delta, camera);
     
     glEnd();
-    glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 
