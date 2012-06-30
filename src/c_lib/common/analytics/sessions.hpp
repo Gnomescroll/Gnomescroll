@@ -155,7 +155,6 @@ class User
             if (this->sessions[i] == NULL) continue;
             if (this->sessions[i]->client_id == client_id) return this->sessions[i];
         }
-        GS_ASSERT(false);
         return NULL;
     }
         
@@ -251,6 +250,7 @@ class UserRecorder
             GS_ASSERT(this->users[i] != NULL);
             if (this->users[i] == NULL) continue;
             class Session* session = this->users[i]->get_current_session(client_id);
+            if (session == NULL) continue;
             GS_ASSERT(session->client_id == client_id);
             if (session->client_id != client_id) continue;
             return session;
