@@ -4,6 +4,7 @@
 #include <physics/vec3.hpp>
 
 #define ASSERT_BOXED_POINT(p) GS_ASSERT(p >= 0 && p < 512)
+#define ASSERT_BOXED_POINTf(p) GS_ASSERT(p >= 0.0f && p < 512.0f)
 #define ASSERT_BOXED_POSITION(p) GS_ASSERT(p.x >= 0.0f && p.x < 512.0f && p.y >= 0.0f && p.y < 512.0f)
 
 __attribute((always_inline))
@@ -104,7 +105,7 @@ inline float translate_point(float pt)
 {
     if(pt <  0.0f) pt += 512.0f;
     if(pt >= 512.0f) pt -= 512.0f;
-    ASSERT_BOXED_POINT(pt);
+    //ASSERT_BOXED_POINTf(pt);
     return pt;
 }
 
