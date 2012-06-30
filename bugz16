@@ -692,3 +692,6 @@ add labels to the widgets
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
+
+group crash when players disconnect -- source is in strlen in BillboardHudText::draw (i think)
+some deallocation out of order
