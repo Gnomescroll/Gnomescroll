@@ -616,6 +616,9 @@ DONE
 == BUILD 22 == June 29, 2012
 ==============
 
+refactor text particles
+DONE (almost)
+
 ----------------------
 
 == BUILD ==
@@ -695,3 +698,6 @@ flickering quad vertices on terrain and voxel models in osx build
 
 group crash when players disconnect -- source is in strlen in BillboardHudText::draw (i think)
 some deallocation out of order
+--switch to agent->event.bb as integer with lookup
+--except they are simple object lists now
+--so create the object outside of the list
