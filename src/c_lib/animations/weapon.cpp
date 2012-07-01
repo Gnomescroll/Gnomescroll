@@ -144,7 +144,6 @@ static Vec3 compute_point_offset(
 static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 {	
 	int item_sprite = Item::get_sprite_index_for_type(item_type);
-	//GS_ASSERT(item_sprite != ERROR_SPRITE);	// TODO -- restore this assert, once there is a fist sprite
 	if (item_sprite == ERROR_SPRITE) return;
 
 	// get texture coordinates

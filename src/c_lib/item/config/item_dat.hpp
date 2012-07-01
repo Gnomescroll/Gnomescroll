@@ -214,7 +214,8 @@ void load_item_dat()
     s.object_damage_max = 40;
 
     item_def(44, IG_NONE, "fist");
-    //s.pretty_name = (char*)"Fist";
+    sprite_def(i1, 6, 2);
+    s.pretty_name = (char*)"Fist";
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
     s.firing_range = 4.0f;
