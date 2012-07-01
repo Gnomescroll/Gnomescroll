@@ -617,7 +617,13 @@ DONE
 ==============
 
 refactor text particles
-DONE (almost)
+DONE
+
+(possibly) Fixed group crash, (possibly) due to player hud text
+DONE
+
+Color agent name based on health
+DONE
 
 ----------------------
 
@@ -656,7 +662,7 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
 --detect duplicate recipes
 --detect recursive recipes (input types == output types)
 
-== UI/UX ==
+== CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
 alt tab doesnt work in fullscreen (on linux at least)
@@ -679,7 +685,6 @@ put spawners back in
     -- needs better UI
     -- needs crafting path
 
-use durability coloring to teammate health
 add right click to heal teammate with health pack
 
 option to hide name
@@ -696,8 +701,6 @@ add labels to the widgets
 camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
 
-group crash when players disconnect -- source is in strlen in BillboardHudText::draw (i think)
-some deallocation out of order
---switch to agent->event.bb as integer with lookup
---except they are simple object lists now
---so create the object outside of the list
+base is not spawning on top
+
+in free camera, when agent is shot, model flickers
