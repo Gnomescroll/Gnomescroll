@@ -16,28 +16,28 @@ void VoxColors::init(int dx, int dy, int dz)
         return;
     }
     this->n = dx*dy*dz;
-    this->rgba = (unsigned char**)malloc(sizeof(unsigned char*)*this->n);
-    this->index = (int**)malloc(sizeof(int*)*this->n);
-    int i;
+    this->rgba = (unsigned char*)malloc(sizeof(unsigned char)*this->n*4);
+    this->index = (int*)malloc(sizeof(int)*this->n*3);
     int x=0,y=0,z=0;
-    for (i=0; i<n; i++) {
-        this->rgba[i] = (unsigned char*)malloc(sizeof(unsigned char)*4);
-        this->rgba[i][0] = 0;
-        this->rgba[i][1] = 0;
-        this->rgba[i][2] = 0;
-        this->rgba[i][3] = 0;
-
-        this->index[i] = (int*)malloc(sizeof(int)*3);
-        this->index[i][0] = x;
-        this->index[i][1] = y;
-        this->index[i][2] = z;
-
+    for (int i=0; i<n; i++)
+    {
+		int rgba_index = i*4;
+		this->rgba[rgba_index+0] = 0;
+		this->rgba[rgba_index+1] = 0;
+		this->rgba[rgba_index+2] = 0;
+		this->rgba[rgba_index+3] = 0;
+		
+		int index_index = i * 3;
+		this->index[index_index+0] = x;
+		this->index[index_index+1] = y;
+		this->index[index_index+2] = z;
+		
         x++;
-        if (x==dx) {
+        if (x == dx)
+        {
             y++;
-            if (y==dy) {
-                z++;
-            }
+            if (y == dy)
+				z++;
         }
         x %= dx;
         y %= dy;
@@ -64,14 +64,16 @@ void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g
         return;
     }
     
-    this->rgba[i][0] = r;
-    this->rgba[i][1] = g;
-    this->rgba[i][2] = b;
-    this->rgba[i][3] = a;
+    int j = i*4;
+    this->rgba[j+0] = r;
+    this->rgba[j+1] = g;
+    this->rgba[j+2] = b;
+    this->rgba[j+3] = a;
 
-    this->index[i][0] = x;
-    this->index[i][1] = y;
-    this->index[i][2] = z;
+	j = i * 3;
+    this->index[j+0] = x;
+    this->index[j+1] = y;
+    this->index[j+2] = z;
 }
 
 VoxColors::VoxColors()
@@ -81,24 +83,10 @@ rgba(NULL), index(NULL), n(0)
 
 VoxColors::~VoxColors()
 {
-    if (this->n <= 0) return;
-    
-    int i;
-    if (this->rgba != NULL) {
-        for (i=0; i<this->n; i++) {
-            if (this->rgba[i] == NULL) continue;
-            free(this->rgba[i]);
-        }
+    if (this->rgba != NULL)
         free(this->rgba);
-    }
-
-    if (this->index != NULL) {
-        for (i=0; i<this->n; i++) {
-            if (this->index[i] == NULL) continue;
-            free(this->index[i]);
-        }
+    if (this->index != NULL)
         free(this->index);
-    }
 }
 //#endif
 

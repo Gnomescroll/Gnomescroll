@@ -6,6 +6,19 @@
 namespace HudText
 {
 
+Text_list* text_list = NULL;
+
+void init()
+{
+    if (text_list == NULL)
+    text_list = new Text_list;
+}
+void teardown()
+{
+    if (text_list != NULL)
+        delete text_list;
+}
+
 void blit_character(
     float tex_x_min, float tex_x_max,
     float tex_y_min, float tex_y_max,
@@ -103,24 +116,23 @@ void Text::draw_centered()
 // internal string copy
 // if string is changed, char buffer will expand
 // however, char buffer will never contract
-void Text::set_string(char* text, char** this_text, unsigned int* this_len)
+char* Text::set_string(char* text, char* this_text, unsigned int* this_len)
 {
     unsigned int len = strlen(text);
-    if (*this_text == NULL)
+    if (this_text == NULL)
     {   // first time adding
-        *this_text = (char*)malloc(sizeof(char) * (len+1));
-        strcpy(*this_text, text);
+        this_text = (char*)malloc(sizeof(char) * (len+1));
         *this_len = len;
     }
     else
-    {
-        if (len > *this_len)
-        {   // string is greater size
-            *this_text = (char*)realloc(*this_text, sizeof(char)*(len+1));
-            *this_len = len;
-        }
-        strcpy(*this_text, text);
-    }
+    if (len > *this_len)
+	{   // string is greater size
+		this_text = (char*)realloc(this_text, sizeof(char)*(len+1));
+		*this_len = len;
+	}
+	// copy string over
+    strcpy(this_text, text);
+    return this_text;
 }
 
 void Text::draw_character_rotated(float theta)
@@ -144,9 +156,10 @@ void Text::draw_character_rotated(float theta)
     draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
 }
 
-char* Text::resize_string(unsigned int n, char* str, unsigned int* str_len)
+char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
 {
 	GS_ASSERT(*str_len < n);
+	if (*str_len >= n) return str;
     if (str == NULL)
         str = (char*)malloc(sizeof(char) * (n+1));
     else
@@ -159,12 +172,12 @@ void Text::set_text(char* text)
 {
 	GS_ASSERT(text != NULL);
 	if (text == NULL) text = (char*)"";
-    this->set_string(text, &this->text, &this->text_len);
+    this->text = this->set_string(text, this->text, &this->text_len);
 }
 
 void Text::set_format(char* format)
 {
-    this->set_string(format, &this->format, &this->format_len);
+    this->format = this->set_string(format, this->format, &this->format_len);
     this->formatted = true;
 }
 
@@ -182,7 +195,7 @@ void Text::update_formatted_string(int n_args, ...)
     if (len > this->text_len)
     {
 		unsigned int new_len = this->text_len;
-        char* new_text = resize_string(len, this->text, &new_len);
+        char* new_text = grow_string(len, this->text, &new_len);
         if (new_text != NULL)
         {
 			this->text = new_text;
@@ -397,17 +410,4 @@ Text::~Text()
         free(this->format);
 }
 
-void init()
-{
-    if (text_list == NULL)
-    text_list = new Text_list;
-}
-void teardown()
-{
-    if (text_list != NULL)
-        delete text_list;
-}
-
-Text_list* text_list = NULL;
-
-}
+}	// HudText

@@ -326,16 +326,19 @@ void Voxel_model::set_part_color(int part_num)
     unsigned char r,g,b,a;
     int ix,iy,iz;
     if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
-    for (int j=0; j < vp->colors.n; j++) {
-        ix = vp->colors.index[j][0];
-        iy = vp->colors.index[j][1];
-        iz = vp->colors.index[j][2];
+    for (int j=0; j < vp->colors.n; j++)
+    {
+		int k = j * 3;
+        ix = vp->colors.index[k+0];
+        iy = vp->colors.index[k+1];
+        iz = vp->colors.index[k+2];
         if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
 
-        r = vp->colors.rgba[j][0];
-        g = vp->colors.rgba[j][1];
-        b = vp->colors.rgba[j][2];
-        a = vp->colors.rgba[j][3];
+		k = j * 4;
+        r = vp->colors.rgba[k+0];
+        g = vp->colors.rgba[k+1];
+        b = vp->colors.rgba[k+2];
+        a = vp->colors.rgba[k+3];
         vv->set_color(ix, iy, iz, r,g,b,a);
     }
     //#endif

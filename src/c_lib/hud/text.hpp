@@ -23,8 +23,8 @@ class Text
         unsigned int text_len;
         unsigned int format_len;
         unsigned int formatted_extra_len;
-        void set_string(char* text, char** this_text, unsigned int* this_len);
-        char* resize_string(unsigned int n, char* str, unsigned int *str_len);
+        char* set_string(char* text, char* this_text, unsigned int* this_len);
+        char* grow_string(unsigned int n, char* str, unsigned int *str_len);
 
     public:
         int id;
@@ -72,8 +72,6 @@ class Text
         Text();
         ~Text();
 };
-
-void init();
 
 const int TEXT_MAX = 1024;
 class Text_list: public Object_list<Text,TEXT_MAX>
