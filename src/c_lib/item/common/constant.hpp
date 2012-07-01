@@ -64,3 +64,12 @@ const float OBJECT_DEPTH_MAX = -128.0f;
 const int ITEM_GAS_LIFETIME = 20 * 30; // 60 seconds
 
 const int AGENT_HAND = NULL_CONTAINER - 1;
+
+const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
+const float ITEM_PARTICLE_DAMPENING = 0.50;
+const float ITEM_PARTICLE_RADIUS = 0.35;
+
+const int ITEM_PICKUP_PREVENTION_DELAY = 30 * 3; // 4 seconds
+
+const int ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE = 30 * 10;    // 10 seconds
+
