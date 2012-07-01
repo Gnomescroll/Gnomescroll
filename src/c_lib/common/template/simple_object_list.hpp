@@ -31,7 +31,7 @@ Simple_object_list<Object_state, max_n>::Simple_object_list()
 num(0),
 id_c(0)
 {
-    for (int i=0; i<max_n; i++) this->a[i].id = i;
+    for (unsigned int i=0; i<max_n; i++) this->a[i].id = i;
 }
 
 template <class Object_state, unsigned int max_n> 

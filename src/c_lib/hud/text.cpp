@@ -109,7 +109,7 @@ void draw_string(char* text, float x, float y, float depth, float scale)
 void Text::draw_centered()
 {
     center();
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
 
@@ -154,7 +154,7 @@ void Text::draw_character_rotated(float theta)
     sy = this->y - glyph.h/2;
     sh = glyph.h * this->scale;
 
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
     draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
 }
 
@@ -172,15 +172,20 @@ char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
 
 void Text::set_text(char* text)
 {
-	GS_ASSERT(text != NULL);
 	if (text == NULL) text = (char*)"";
     this->text = this->set_string(text, this->text, &this->text_len);
 }
 
 void Text::set_format(char* format)
 {
+    if (format == NULL)
+    {
+        format = (char*)"";
+        this->formatted = false;
+    }
+    else
+        this->formatted = true;
     this->format = this->set_string(format, this->format, &this->format_len);
-    this->formatted = true;
 }
 
 void Text::set_format_extra_length(unsigned int size)
@@ -212,24 +217,29 @@ void Text::update_formatted_string(int n_args, ...)
 
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b)
 {
-    this->r = r;
-    this->g = g;
-    this->b = b;
+    this->color.r = r;
+    this->color.g = g;
+    this->color.b = b;
 }
 
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    this->a = a;
+    this->color.r = r;
+    this->color.g = g;
+    this->color.b = b;
+    this->color.a = a;
 }
 
 void Text::set_color(struct Color color)
 {
-    this->r = color.r;
-    this->g = color.g;
-    this->b = color.b;
+    this->color.r = color.r;
+    this->color.g = color.g;
+    this->color.b = color.b;
+}
+
+void Text::set_color(struct Color4 color)
+{
+    this->color = color;
 }
 
 void Text::set_position(float x, float y)
@@ -299,7 +309,7 @@ void Text::Text::draw()
 {
     if (this->text == NULL || this->text_len == 0)
         return;
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
     this->reset_alignment();
 }
@@ -367,15 +377,14 @@ int Text:: get_height()
 
 Text::Text(int id)
 :
-width(10.0f),height(10.0f),
 text_len(0),
 format_len(0),
 formatted_extra_len(0),
+formatted(false),
 id(id),
 depth(-1.0f),
 scale(1.0f),
-formatted(false),
-r(255),g(255),b(255),a(255),
+color(color4_init(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),
@@ -387,15 +396,14 @@ refx(0.0f),refy(0.0f)
 
 Text::Text()
 :
-width(10.0f),height(10.0f),
 text_len(0),
 format_len(0),
 formatted_extra_len(0),
+formatted(false),
 id(-1),
 depth(-1.0f),
 scale(1.0f),
-formatted(false),
-r(255),g(255),b(255),a(255),
+color(color4_init(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),

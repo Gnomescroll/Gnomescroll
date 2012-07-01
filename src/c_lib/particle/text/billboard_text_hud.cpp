@@ -78,7 +78,7 @@ namespace Particle
 
 void BillboardTextHud_list::tick()
 {
-    for (int i=0; i<this->num; i++)
+    for (unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0)
@@ -89,7 +89,7 @@ void BillboardTextHud_list::tick()
 void BillboardTextHud_list::draw()
 {
     if (num == 0) return;
-    for (int i=0; i<this->num; i++)
+    for (unsigned int i=0; i<this->num; i++)
         a[i].draw();
 }
 

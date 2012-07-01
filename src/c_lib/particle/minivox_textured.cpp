@@ -140,7 +140,7 @@ void TexturedMinivox::tick()
 
 void TexturedMinivox_list::tick()
 {
-    for (int i=0; i<num; i++)
+    for (unsigned int i=0; i<num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) this->destroy(i);
@@ -150,7 +150,7 @@ void TexturedMinivox_list::tick()
 void TexturedMinivox_list::draw()
 {
     #if DC_CLIENT
-    for (int i=0; i<num; a[i++].draw());
+    for (unsigned int i=0; i<num; a[i++].draw());
     #endif
 }
 

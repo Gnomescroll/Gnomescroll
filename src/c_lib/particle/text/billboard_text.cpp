@@ -15,10 +15,7 @@ namespace Particle
 inline void BillboardText::init()
 {
     this->bounce_count = 0;
-    this->r = 100;
-    this->g = 100;
-    this->b = 100;
-    this->a = 255;
+    this->color = color4_init(100, 100, 100, 255);
     this->gravity = true;
     this->should_draw = true;
     this->scale = BILLBOARD_TEXT_TEXTURE_SCALE;
@@ -70,7 +67,7 @@ void BillboardText::draw()
     if (point_fulstrum_test(position.x, position.y, position.z) == false)
         return;
 
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
 
     float up[3] = {
         0.0f,
@@ -168,7 +165,7 @@ namespace Particle
 
 void BillboardText_list::tick()
 {
-    for (int i=0; i<this->num; i++)
+    for (unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);
@@ -185,7 +182,7 @@ void BillboardText_list::draw()
     HudFont::reset_default();
     HudFont::start_world_font_draw(); // gl calls
     HudFont::set_texture();
-    for(int i=0; i<this->num; i++)
+    for(unsigned int i=0; i<this->num; i++)
     {
         if (!a[i].should_draw) continue;
         a[i].draw();

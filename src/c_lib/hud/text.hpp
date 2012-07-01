@@ -20,21 +20,19 @@ typedef struct
 class Text
 {
     private:
-        float width,height;
         unsigned int text_len;
         unsigned int format_len;
         unsigned int formatted_extra_len;
+        bool formatted;
         char* set_string(char* text, char* this_text, unsigned int* this_len);
         char* grow_string(unsigned int n, char* str, unsigned int *str_len);
 
     public:
         int id;
-        bool inited;
         float depth;
         float scale;
-        bool formatted;
-        
-        unsigned char r,g,b,a;
+
+        struct Color4 color;
 
         char* text;
         char* format;
@@ -50,6 +48,8 @@ class Text
         void top();
         void bottom();
 
+        bool is_formatted() { return this->formatted; }
+
         void set_text(char* text);
         void set_format(char* format);
         void set_format_extra_length(unsigned int size);
@@ -58,6 +58,8 @@ class Text
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_color(struct Color color);
+        void set_color(struct Color4 color);
+        
         void set_position(float x, float y);
         void set_scale(float scale);
         void set_depth(float depth);
@@ -75,15 +77,21 @@ class Text
 		// and we hold a reference to dynamically allocated memory
 		// WARNING: the originating object t (that is being assigned from)
 		// 		is altered in the process.
-		Text& operator=(Text& t)
+		void operator=(Text& t)
 		{
-			// handle self assignment
-			char* text = t.text;
-			char* format = t.format;
-			t.text = NULL;
-			t.format = NULL;
-			this->text = text;
-			this->format = format;
+			set_text(t.text);
+			set_format(t.format);
+            formatted_extra_len = t.formatted_extra_len;
+            
+            id = t.id;
+            depth = t.depth;
+            scale = t.scale;
+            color = t.color;
+            x = t.x;
+            y = t.y;
+            refx = t.refx;
+            refy = t.refy;
+            alignment = t.alignment;
 		}
 
         explicit Text(int id);

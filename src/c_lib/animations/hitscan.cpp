@@ -184,7 +184,7 @@ void HitscanEffect_list::draw()
 
     glBegin( GL_QUADS );
 
-    for(int i=0; i<this->num; i++) 
+    for(unsigned int i=0; i<this->num; i++) 
         a[i].draw(delta, camera);
     
     glEnd();
@@ -215,7 +215,7 @@ void HitscanEffect_list::tick()
 
     }
 
-    for(int i=0; i<this->num; i++)
+    for(unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         a[i].ttl--;

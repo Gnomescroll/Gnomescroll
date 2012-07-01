@@ -106,7 +106,7 @@ void Shrapnel::prep()
 
 void Shrapnel_list::tick()
 {
-    for(int i=0; i<this->num; i++)
+    for(unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);
@@ -116,7 +116,7 @@ void Shrapnel_list::tick()
 void Shrapnel_list::prep()
 {
     #if DC_CLIENT
-    for(int i=0; i<this->num; a[i++].prep());
+    for(unsigned int i=0; i<this->num; a[i++].prep());
     shrapnel_vlist->buffer();
     #endif
 }
