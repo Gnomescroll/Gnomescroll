@@ -42,7 +42,7 @@ void render_ortho()
 
     GL_ASSERT(GL_DEPTH_TEST, true);
 
-    //glShadeModel(GL_FLAT);
+    
     glShadeModel(GL_SMOOTH);
 
     glEnable(GL_CULL_FACE);

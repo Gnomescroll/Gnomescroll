@@ -312,7 +312,7 @@ void Vbo_map::draw_map()
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
-    //glShadeModel(GL_FLAT);
+    
     glShadeModel(GL_SMOOTH);
 
     glEnable(GL_CULL_FACE);
