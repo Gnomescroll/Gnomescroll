@@ -140,6 +140,8 @@ void Text::draw_character_rotated(float theta)
     using HudFont::font;
     if (font == NULL)
         return;
+    GS_ASSERT(this->text != NULL);
+    if (this->text == NULL) return;
 
     char c = this->text[0];
     if (c == '\0') return;
@@ -148,9 +150,9 @@ void Text::draw_character_rotated(float theta)
     float sx,sy, sw,sh;
 
     sx = this->x - glyph.w/2;
-    sw = glyph.w * scale;
+    sw = glyph.w * this->scale;
     sy = this->y - glyph.h/2;
-    sh = glyph.h * scale;
+    sh = glyph.h * this->scale;
 
     glColor4ub(r,g,b,a);
     draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);

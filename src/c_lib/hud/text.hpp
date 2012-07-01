@@ -68,6 +68,23 @@ class Text
         void draw();
         void draw_character_rotated(float theta);   // draws as single character. glyph alignment offset not used
 
+		// assignment operator
+		// needed, because this object is tracked in a Simple_object_list
+		// which does swaps on objects
+		// and we hold a reference to dynamically allocated memory
+		// WARNING: the originating object t (that is being assigned from)
+		// 		is altered in the process.
+		Text& operator=(Text& t)
+		{
+			// handle self assignment
+			char* text = t.text;
+			char* format = t.format;
+			t.text = NULL;
+			t.format = NULL;
+			this->text = text;
+			this->format = format;
+		}
+
         explicit Text(int id);
         Text();
         ~Text();
