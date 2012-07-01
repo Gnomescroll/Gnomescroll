@@ -313,7 +313,7 @@ void Vbo_map::draw_map()
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     
-    glShadeModel(GL_SMOOTH);
+    //;
 
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -481,7 +481,7 @@ void Vbo_map::draw_map()
 
     //glEnable(GL_TEXTURE_2D);
 
-    glShadeModel(GL_FLAT);
+    //;
     glDisable(GL_CULL_FACE);
 }
 
@@ -498,7 +498,7 @@ void Vbo_map::draw_map_comptability()
     GL_ASSERT(GL_DEPTH_TEST, true);
 
     glEnable(GL_TEXTURE_2D);
-    glShadeModel(GL_SMOOTH);
+    //;
     glEnable(GL_CULL_FACE);
 
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -574,7 +574,7 @@ void Vbo_map::draw_map_comptability()
 
 
     //glEnable(GL_TEXTURE_2D);
-    glShadeModel(GL_FLAT);
+    //;
     glDisable(GL_CULL_FACE);
 
 }
