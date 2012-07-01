@@ -309,8 +309,8 @@ void Vbo_map::draw_map()
     prep_frustrum();
     prep_frustrum_vertices();
 
-    //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     //glShadeModel(GL_FLAT);
     glShadeModel(GL_SMOOTH);
@@ -501,6 +501,8 @@ void Vbo_map::draw_map_comptability()
     glShadeModel(GL_SMOOTH);
     glEnable(GL_CULL_FACE);
 
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     glColor3ub(255,255,255);
 
