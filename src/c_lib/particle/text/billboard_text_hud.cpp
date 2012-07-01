@@ -1,5 +1,9 @@
 #include "billboard_text_hud.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <physics/ray_trace/ray_trace.hpp>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
@@ -84,19 +88,9 @@ void BillboardTextHud_list::tick()
 
 void BillboardTextHud_list::draw()
 {
-    #if DC_CLIENT
     if (num == 0) return;
-    if (current_camera == NULL) return;
-    if (HudFont::font == NULL) return;
-
-    HudFont::reset_default();
-    HudFont::set_texture();
     for (int i=0; i<this->num; i++)
-    {
-        if (!a[i].should_draw) continue;
         a[i].draw();
-    }
-    #endif
 }
 
 }   // Particle

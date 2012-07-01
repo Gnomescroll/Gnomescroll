@@ -35,8 +35,9 @@ void Agent_list::draw_names()
 	{
 		if (this->a[i] == NULL) continue;
 		Agent_state* a = this->a[i];
-		if (a->id == agent_id) a->event.hide_name();
-        else a->event.display_name();
+		if (a->id == agent_id && current_camera == agent_camera)
+			continue;
+		a->event.update_hud_name();
 		a->event.bb.draw();
 	}
 }

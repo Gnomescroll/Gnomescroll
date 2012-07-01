@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common/template/object_list.hpp>
+#include <common/color.hpp>
 
 namespace HudText
 {

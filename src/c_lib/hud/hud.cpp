@@ -313,6 +313,8 @@ void draw_hud()
     // so i moved the list draw call out
     
     start_font_draw();
+    HudFont::reset_default();
+    HudFont::set_texture();
     Particle::billboard_text_hud_list->draw();
     ClientState::agent_list->draw_names();
     end_font_draw();
