@@ -194,14 +194,14 @@ void HitscanLaserEffect_list::draw()
     glBindTexture( GL_TEXTURE_2D, hitscan_laser_texture_00_id );
     glBegin( GL_QUADS );
 
-    for(int i=0; i<this->num; i++) 
+    for(unsigned int i=0; i<this->num; i++) 
         a[i].draw1(delta, camera); //diffuse beam
 
     glEnd();
 
     glBindTexture( GL_TEXTURE_2D, hitscan_laser_texture_01_id );
     glBegin( GL_QUADS );
-    for(int i=0; i<this->num; i++) 
+    for(unsigned int i=0; i<this->num; i++) 
         a[i].draw2(delta, camera); //diffuse beam
 
     glEnd();
@@ -214,35 +214,12 @@ void HitscanLaserEffect_list::draw()
 
 void HitscanLaserEffect_list::tick()
 {
-    //const int debug = 0;
-
-    //if(debug)
-    //{
-        //static int frame = 0;
-        //frame++;
-
-        //if(frame % 8 == 0 )
-        //{
-            //const float vm = 16.0;
-            //float vx = vm*(float)rand()/(float)RAND_MAX;
-            //float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
-            //float vz = vm*(float)rand()/(float)RAND_MAX;
-            //ClientState::hitscan_laser_effect_list->create(32.0, 32.0, 128.0, vx, vy, vz );
-        //}
-
-    //}
-
-    //create_hitscan(0.0, 0.0, 0.0, 0.0, 0.0, 160.0);
-
-    //int count= 0;
-    for(int i=0; i<this->num; i++)
+    for(unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         a[i].ttl--;
-        if(a[i].ttl == 0) destroy(i);
-        //count++;
+        if (a[i].ttl <= 0) destroy(i);
     }
-    //printf("count= %i \n", count);
 }
 
 }   // Animations

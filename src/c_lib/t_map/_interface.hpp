@@ -13,6 +13,7 @@ void init_t_vbo();
 void end_t_vbo();
 
 void draw_map();
+void draw_map_compatibility();
 void update_map();
 #endif
 

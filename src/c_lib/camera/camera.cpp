@@ -79,7 +79,10 @@ Camera::Camera()
 zoomed(false),
 zoom_factor(CAMERA_ZOOM_FACTOR)
 {
-    set_aspect(85.0f, 0.01f, 1000.0f);
+	const float FOV = 75.0f;
+	const float Z_NEAR = 0.1f;
+	const float Z_FAR = 256.0f;
+    set_aspect(FOV, Z_NEAR, Z_FAR);
     set_dimensions();
     set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 }

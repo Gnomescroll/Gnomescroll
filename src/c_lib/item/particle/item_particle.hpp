@@ -16,14 +16,6 @@ void init_item_particle();
 void teardown_item_particle();
 #endif
 
-const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
-const float ITEM_PARTICLE_DAMPENING = 0.50;
-const float ITEM_PARTICLE_RADIUS = 0.35;
-
-const int PICKUP_PREVENTION_DELAY = 30 * 4; // 4 seconds
-
-const int ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE = 30 * 10;    // 10 seconds
-
 class ItemParticle //: public VerletComponent
 {
     public:
@@ -57,7 +49,7 @@ class ItemParticle //: public VerletComponent
         }
         void lock_pickup()
         {
-            this->pickup_prevention = PICKUP_PREVENTION_DELAY;
+            this->pickup_prevention = ITEM_PICKUP_PREVENTION_DELAY;
         }
         #endif
 

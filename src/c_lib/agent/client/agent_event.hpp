@@ -23,9 +23,8 @@ class Agent_event {
     public:
 
         class Particle::BillboardTextHud bb;
-        void display_name();
-        void hide_name();
-
+		void update_hud_name();
+		
         // side effects of taking damage. dont modify health/death here
         void took_damage(int dmg);
         void healed(int health);

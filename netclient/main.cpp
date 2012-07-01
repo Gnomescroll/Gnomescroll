@@ -193,11 +193,16 @@ int run()
             Map
         */
 
+        poll_mouse();
+        
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
-
-        poll_mouse();
-        t_map::draw_map();
+        GL_ASSERT(GL_DEPTH_WRITEMASK, true);
+        if (t_map::T_MAP_BACKUP_SHADER)
+			t_map::draw_map_compatibility();
+		else
+			t_map::draw_map();
+			
         poll_mouse();
 
 
@@ -209,6 +214,7 @@ int run()
         GL_ASSERT(GL_TEXTURE_2D, false);
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
+        GL_ASSERT(GL_DEPTH_WRITEMASK, true);
         ClientState::voxel_render_list->draw();
 
         // quads

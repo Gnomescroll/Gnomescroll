@@ -622,15 +622,15 @@ void Vbo_map::update_vbo(int i, int j)
  
 #define USE_QUAD_CACHE_COMPATIBABILITY 0
 
-static inline void push_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element)  __attribute((always_inline)); 
+static inline void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element)  __attribute((always_inline)); 
 
-static inline void push_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+static inline void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
 
     int tile_id = element.block;
 
 #if USE_QUAD_CACHE_COMPATIBABILITY
-    memcpy(&v_list[offset], &quad_cache_comptability[tile_id*6*4 +4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+    memcpy(&v_list[offset], &quad_cache_compatibility[tile_id*6*4 +4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
 #else
 
     v_list[offset+0].tex = texElementArray2[0].tex;
@@ -696,7 +696,7 @@ static inline void push_quad_comptability(struct Vertex* v_list, int offset, int
     }   
 }
 
-void generate_vertex_list_comptability(struct Vertex* vlist)
+void generate_vertex_list_compatibility(struct Vertex* vlist)
 {
     int offset = 0;
 
@@ -711,14 +711,14 @@ void generate_vertex_list_comptability(struct Vertex* vlist)
 
         struct MAP_ELEMENT element = sb.element;
 
-        push_quad_comptability(vlist, offset, x,y,z, side, element);
+        push_quad_compatibility(vlist, offset, x,y,z, side, element);
 
         offset += 4;
     }
 
 }
 
-void Vbo_map::update_vbo_comptability(int i, int j)
+void Vbo_map::update_vbo_compatibility(int i, int j)
 {
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
@@ -760,7 +760,7 @@ void Vbo_map::update_vbo_comptability(int i, int j)
     //struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
     struct Vertex* vlist = new Vertex[vnum];
 
-    generate_vertex_list_comptability(vlist);
+    generate_vertex_list_compatibility(vlist);
     generate_quad_ao_values(vlist);
 
     delete[] vbo->v_list; //free old memory

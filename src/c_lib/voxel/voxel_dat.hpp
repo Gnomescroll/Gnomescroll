@@ -9,8 +9,8 @@ class VoxDat; // forward decl;
 //#if DC_CLIENT
 class VoxColors {
     public:
-        unsigned char** rgba;
-        int **index;
+        unsigned char* rgba;
+        int *index;
         int n;
 
         void init(int dx, int dy, int dz);

@@ -298,11 +298,12 @@ float _chunk_position[3] = {0};
 
 void Vbo_map::draw_map() 
 {
-    if(T_MAP_BACKUP_SHADER != 0)
-    {
-        draw_map_comptability();
-        return;
-    }
+	// this check is moved to main.cpp
+    //if(T_MAP_BACKUP_SHADER != 0)
+    //{
+        //draw_map_compatibility();
+        //return;
+    //}
 
     prep_draw();
     sort_draw();
@@ -485,9 +486,9 @@ void Vbo_map::draw_map()
     glDisable(GL_CULL_FACE);
 }
 
-void Vbo_map::draw_map_comptability()
+void Vbo_map::draw_map_compatibility()
 {
-    //printf("comptability \n");
+    //printf("compatibility \n");
 
     prep_draw();
     sort_draw();
@@ -497,10 +498,9 @@ void Vbo_map::draw_map_comptability()
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
 
-    glEnable(GL_TEXTURE_2D);
     //;
     glEnable(GL_CULL_FACE);
-
+    glEnable(GL_TEXTURE_2D);
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 

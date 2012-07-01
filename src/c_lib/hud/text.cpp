@@ -6,6 +6,19 @@
 namespace HudText
 {
 
+Text_list* text_list = NULL;
+
+void init()
+{
+    if (text_list == NULL)
+    text_list = new Text_list;
+}
+void teardown()
+{
+    if (text_list != NULL)
+        delete text_list;
+}
+
 void blit_character(
     float tex_x_min, float tex_x_max,
     float tex_y_min, float tex_y_max,
@@ -96,31 +109,30 @@ void draw_string(char* text, float x, float y, float depth, float scale)
 void Text::draw_centered()
 {
     center();
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
 
 // internal string copy
 // if string is changed, char buffer will expand
 // however, char buffer will never contract
-void Text::set_string(char* text, char** this_text, unsigned int* this_len)
+char* Text::set_string(char* text, char* this_text, unsigned int* this_len)
 {
     unsigned int len = strlen(text);
-    if (*this_text == NULL)
+    if (this_text == NULL)
     {   // first time adding
-        *this_text = (char*)malloc(sizeof(char) * (len+1));
-        strcpy(*this_text, text);
+        this_text = (char*)malloc(sizeof(char) * (len+1));
         *this_len = len;
     }
     else
-    {
-        if (len > *this_len)
-        {   // string is greater size
-            *this_text = (char*)realloc(*this_text, sizeof(char)*(len+1));
-            *this_len = len;
-        }
-        strcpy(*this_text, text);
-    }
+    if (len > *this_len)
+	{   // string is greater size
+		this_text = (char*)realloc(this_text, sizeof(char)*(len+1));
+		*this_len = len;
+	}
+	// copy string over
+    strcpy(this_text, text);
+    return this_text;
 }
 
 void Text::draw_character_rotated(float theta)
@@ -128,6 +140,8 @@ void Text::draw_character_rotated(float theta)
     using HudFont::font;
     if (font == NULL)
         return;
+    GS_ASSERT(this->text != NULL);
+    if (this->text == NULL) return;
 
     char c = this->text[0];
     if (c == '\0') return;
@@ -136,17 +150,18 @@ void Text::draw_character_rotated(float theta)
     float sx,sy, sw,sh;
 
     sx = this->x - glyph.w/2;
-    sw = glyph.w * scale;
+    sw = glyph.w * this->scale;
     sy = this->y - glyph.h/2;
-    sh = glyph.h * scale;
+    sh = glyph.h * this->scale;
 
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
     draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
 }
 
-char* Text::resize_string(unsigned int n, char* str, unsigned int* str_len)
+char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
 {
 	GS_ASSERT(*str_len < n);
+	if (*str_len >= n) return str;
     if (str == NULL)
         str = (char*)malloc(sizeof(char) * (n+1));
     else
@@ -157,15 +172,20 @@ char* Text::resize_string(unsigned int n, char* str, unsigned int* str_len)
 
 void Text::set_text(char* text)
 {
-	GS_ASSERT(text != NULL);
 	if (text == NULL) text = (char*)"";
-    this->set_string(text, &this->text, &this->text_len);
+    this->text = this->set_string(text, this->text, &this->text_len);
 }
 
 void Text::set_format(char* format)
 {
-    this->set_string(format, &this->format, &this->format_len);
-    this->formatted = true;
+    if (format == NULL)
+    {
+        format = (char*)"";
+        this->formatted = false;
+    }
+    else
+        this->formatted = true;
+    this->format = this->set_string(format, this->format, &this->format_len);
 }
 
 void Text::set_format_extra_length(unsigned int size)
@@ -182,7 +202,7 @@ void Text::update_formatted_string(int n_args, ...)
     if (len > this->text_len)
     {
 		unsigned int new_len = this->text_len;
-        char* new_text = resize_string(len, this->text, &new_len);
+        char* new_text = grow_string(len, this->text, &new_len);
         if (new_text != NULL)
         {
 			this->text = new_text;
@@ -197,24 +217,29 @@ void Text::update_formatted_string(int n_args, ...)
 
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b)
 {
-    this->r = r;
-    this->g = g;
-    this->b = b;
+    this->color.r = r;
+    this->color.g = g;
+    this->color.b = b;
 }
 
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    this->a = a;
+    this->color.r = r;
+    this->color.g = g;
+    this->color.b = b;
+    this->color.a = a;
 }
 
 void Text::set_color(struct Color color)
 {
-    this->r = color.r;
-    this->g = color.g;
-    this->b = color.b;
+    this->color.r = color.r;
+    this->color.g = color.g;
+    this->color.b = color.b;
+}
+
+void Text::set_color(struct Color4 color)
+{
+    this->color = color;
 }
 
 void Text::set_position(float x, float y)
@@ -284,7 +309,7 @@ void Text::Text::draw()
 {
     if (this->text == NULL || this->text_len == 0)
         return;
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
     this->reset_alignment();
 }
@@ -352,15 +377,14 @@ int Text:: get_height()
 
 Text::Text(int id)
 :
-width(10.0f),height(10.0f),
 text_len(0),
 format_len(0),
 formatted_extra_len(0),
+formatted(false),
 id(id),
 depth(-1.0f),
 scale(1.0f),
-formatted(false),
-r(255),g(255),b(255),a(255),
+color(color4_init(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),
@@ -372,15 +396,14 @@ refx(0.0f),refy(0.0f)
 
 Text::Text()
 :
-width(10.0f),height(10.0f),
 text_len(0),
 format_len(0),
 formatted_extra_len(0),
+formatted(false),
 id(-1),
 depth(-1.0f),
 scale(1.0f),
-formatted(false),
-r(255),g(255),b(255),a(255),
+color(color4_init(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),
@@ -397,17 +420,4 @@ Text::~Text()
         free(this->format);
 }
 
-void init()
-{
-    if (text_list == NULL)
-    text_list = new Text_list;
-}
-void teardown()
-{
-    if (text_list != NULL)
-        delete text_list;
-}
-
-Text_list* text_list = NULL;
-
-}
+}	// HudText
