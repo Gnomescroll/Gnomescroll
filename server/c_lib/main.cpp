@@ -57,6 +57,8 @@ void init()
     //Objects::stress_test();
     #endif
 
+	ServerState::init_base();
+
     printf("Game starting\n");
 }
    
