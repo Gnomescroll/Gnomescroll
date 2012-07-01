@@ -97,7 +97,9 @@ int _GET_TICK() {
     if(c_tick < t) {
         if(c_tick+5 < t)
         {
+			#if DC_SERVER || !PRODUCTION
             printf("Timer error: c_tick < t is %i < %i \n", c_tick,t);
+            #endif
             c_tick = t;
             return 1;
         }

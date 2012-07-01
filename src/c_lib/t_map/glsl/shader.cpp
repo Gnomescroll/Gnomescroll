@@ -84,8 +84,8 @@ namespace t_map
         else if(T_MAP_BACKUP_SHADER == 1)
         {
             printf("!!! Warning: Using Intel GPU Compatability mode shader\n");
-            set_map_shader_0_comptability();
-            init_map_3d_texture_comptability();
+            set_map_shader_0_compatibility();
+            init_map_3d_texture_compatibility();
         }
 
 
@@ -307,7 +307,7 @@ namespace t_map
             SDL_FreeSurface(terrain_map_surface);
     }
 
-    void set_map_shader_0_comptability() 
+    void set_map_shader_0_compatibility() 
     {
         const int index = 0;    //shader index
         const int DEBUG1 = 1;
@@ -320,8 +320,8 @@ namespace t_map
 
         if(DEBUG1) printf("set_map_shader_0: \n");
 
-        vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_comptability.vsh");
-        fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_comptability.fsh");
+        vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
+        fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
 
         glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
@@ -357,14 +357,14 @@ namespace t_map
     }
 
 
-    void init_map_3d_texture_comptability()
+    void init_map_3d_texture_compatibility()
     {
 
         SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
         if(s == NULL)
         {
-            printf("init_map_3d_texture_comptability() error \n");
+            printf("init_map_3d_texture_compatibility() error \n");
         }
 
 

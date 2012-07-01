@@ -180,7 +180,7 @@ class Vbo_map
             }
             else
             {
-                update_vbo_comptability(_i, _j);
+                update_vbo_compatibility(_i, _j);
             }
             return;
         }
@@ -206,13 +206,13 @@ class Vbo_map
 
 
     void update_vbo(int i, int j);
-    void update_vbo_comptability(int i, int j);
+    void update_vbo_compatibility(int i, int j);
 
     void prep_draw();
     void sort_draw();
 
     void draw_map();
-    void draw_map_comptability();
+    void draw_map_compatibility();
 
     void prep_frustrum();
     void prep_frustrum_vertices();

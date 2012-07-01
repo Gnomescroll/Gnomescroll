@@ -50,6 +50,11 @@ int get_block_item_container(int x, int y, int z)
     {
         vbo_map->draw_map();
     }
+    
+    void draw_map_compatibility()
+    {
+		vbo_map->draw_map_compatibility();
+	}
 
     void update_map()
     {

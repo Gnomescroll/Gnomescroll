@@ -10,8 +10,8 @@ namespace t_map
     void toggle_3d_texture_settings();
     void init_map_3d_texture();
 
-    void set_map_shader_0_comptability();
-    void init_map_3d_texture_comptability();
+    void set_map_shader_0_compatibility();
+    void init_map_3d_texture_compatibility();
     void init_block_texture_normal();
     //void init_block_item_sheet();
 

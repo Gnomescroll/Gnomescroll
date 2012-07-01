@@ -9,7 +9,7 @@ namespace t_map
 {
 
 struct Vertex* quad_cache = NULL;
-struct Vertex* quad_cache_comptability = NULL;
+struct Vertex* quad_cache_compatibility = NULL;
 
 void init_cache();
 

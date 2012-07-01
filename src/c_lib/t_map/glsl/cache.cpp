@@ -17,8 +17,8 @@ void init_quad_cache_vertex_cordinates();
 void init_quad_cache_texture_cordinates();
 void init_quad_cache_normals();
 
-void init_quad_cache_texture_cordinates_comptability();
-void init_quad_cache_vertex_cordinates_comptability();
+void init_quad_cache_texture_cordinates_compatibility();
+void init_quad_cache_vertex_cordinates_compatibility();
 
 void init_cache()
 {
@@ -27,16 +27,16 @@ void init_cache()
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
     memset(quad_cache, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
-    if( quad_cache_comptability == NULL ) quad_cache_comptability = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
-    memset(quad_cache_comptability, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
+    if( quad_cache_compatibility == NULL ) quad_cache_compatibility = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
+    memset(quad_cache_compatibility, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
     //init_quad_cache_normals();
 
     init_quad_cache_texture_cordinates();
     init_quad_cache_vertex_cordinates();
 
-    init_quad_cache_texture_cordinates_comptability();
-    init_quad_cache_vertex_cordinates_comptability();
+    init_quad_cache_texture_cordinates_compatibility();
+    init_quad_cache_vertex_cordinates_compatibility();
 
 }
 
@@ -126,7 +126,7 @@ void init_quad_cache_texture_cordinates()
 }
 
 
-void init_quad_cache_vertex_cordinates_comptability()
+void init_quad_cache_vertex_cordinates_compatibility()
 {
 
     for(int cube_id=0;cube_id<MAX_CUBES;cube_id++) 
@@ -136,15 +136,15 @@ void init_quad_cache_vertex_cordinates_comptability()
             for(int i=0; i<4; i++)
             {
                 int index = 12*side+3*i;
-                quad_cache_comptability[cube_id*6*4 +4*side + i].x = v_index[index + 0];
-                quad_cache_comptability[cube_id*6*4 +4*side + i].y = v_index[index + 1];
-                quad_cache_comptability[cube_id*6*4 +4*side + i].z = v_index[index + 2];
+                quad_cache_compatibility[cube_id*6*4 +4*side + i].x = v_index[index + 0];
+                quad_cache_compatibility[cube_id*6*4 +4*side + i].y = v_index[index + 1];
+                quad_cache_compatibility[cube_id*6*4 +4*side + i].z = v_index[index + 2];
             }
         }
     }
 
 }
-void init_quad_cache_texture_cordinates_comptability()
+void init_quad_cache_texture_cordinates_compatibility()
 {
     
     //static const unsigned char _0 = 0;
@@ -161,10 +161,10 @@ void init_quad_cache_texture_cordinates_comptability()
         for(int side=0;side<6;side++) 
         {
         /*
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tex = 0;
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].tex = 0;
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].tex = 0;
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].tex = 0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].tex = 0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].tex = 0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].tex = 0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].tex = 0;
 
             int tile_tex = (unsigned char) cube_side_texture_array[6*cube_id+side];
 
@@ -174,25 +174,25 @@ void init_quad_cache_texture_cordinates_comptability()
             ix = 0;
             iy = 0;
         
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tx = _0;
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].ty = _0;
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tz = ix;
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tw = iy;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].tx = _0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].ty = _0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].tz = ix;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].tw = iy;
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].tx = _0;
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].ty = _1;
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].tz = ix;
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].ty = iy;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].tx = _0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].ty = _1;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].tz = ix;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].ty = iy;
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].tx = _1;
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].ty = _1;
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].tz = ix;
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].tw = iy;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].tx = _1;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].ty = _1;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].tz = ix;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].tw = iy;
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].tx = _1;
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].ty = _0;
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].tz = ix;
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].tw = iy;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].tx = _1;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].ty = _0;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].tz = ix;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].tw = iy;
         */
 
             static const unsigned char _02 = 0;
@@ -208,10 +208,10 @@ void init_quad_cache_texture_cordinates_comptability()
             };
 
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tex = texElementArray2[0].tex;
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].tex = texElementArray2[1].tex;
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].tex = texElementArray2[2].tex;
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].tex = texElementArray2[3].tex;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].tex = texElementArray2[0].tex;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].tex = texElementArray2[1].tex;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].tex = texElementArray2[2].tex;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].tex = texElementArray2[3].tex;
 
             //int iz = 0;
             //int iw = 0;
@@ -221,17 +221,17 @@ void init_quad_cache_texture_cordinates_comptability()
             int iz = (tile_tex % 16)*16;
             int iw = (tile_tex / 16)*16;
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tz = iz;
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tw = iw;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].tz = iz;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 0].tw = iw;
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].tz = iz;
-            quad_cache_comptability[cube_id*6*4 +4*side + 1].tw = iw;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].tz = iz;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 1].tw = iw;
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].tz = iz;
-            quad_cache_comptability[cube_id*6*4 +4*side + 2].tw = iw;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].tz = iz;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 2].tw = iw;
 
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].tz = iz;
-            quad_cache_comptability[cube_id*6*4 +4*side + 3].tw = iw;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].tz = iz;
+            quad_cache_compatibility[cube_id*6*4 +4*side + 3].tw = iw;
 
 
             //v_list[offset+0].pos = _v_index[4*side+0].pos;
