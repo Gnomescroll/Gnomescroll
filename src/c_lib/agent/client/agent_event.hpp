@@ -22,7 +22,7 @@ class Agent_event {
         bool model_was_changed;
     public:
 
-        class Particle::BillboardTextHud* bb;
+        class Particle::BillboardTextHud bb;
         void display_name();
         void hide_name();
 

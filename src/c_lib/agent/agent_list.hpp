@@ -45,6 +45,10 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int objects_within_sphere(float x, float y, float z, float radius);
         void objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
 
+		#if DC_CLIENT
+		void draw_names();
+		#endif
+
         Agent_list();
         ~Agent_list()
         {

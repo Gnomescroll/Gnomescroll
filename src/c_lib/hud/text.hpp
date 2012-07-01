@@ -20,11 +20,11 @@ class Text
 {
     private:
         float width,height;
-        int text_len;
-        int format_len;
-        int formatted_extra_len;
-        void set_string(char* text, char** this_text, int* this_len);
-        void resize_string(int n, char** str, int *str_len);
+        unsigned int text_len;
+        unsigned int format_len;
+        unsigned int formatted_extra_len;
+        void set_string(char* text, char** this_text, unsigned int* this_len);
+        char* resize_string(unsigned int n, char* str, unsigned int *str_len);
 
     public:
         int id;
@@ -51,7 +51,7 @@ class Text
 
         void set_text(char* text);
         void set_format(char* format);
-        void set_format_extra_length(int size);
+        void set_format_extra_length(unsigned int size);
         void update_formatted_string(int n_args, ...);
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
@@ -59,7 +59,6 @@ class Text
         void set_color(struct Color color);
         void set_position(float x, float y);
         void set_scale(float scale);
-        void set_size(float size) { this->set_scale(scale); }
         void set_depth(float depth);
         void draw_centered();
         int get_width();

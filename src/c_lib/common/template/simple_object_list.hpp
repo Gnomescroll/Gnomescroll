@@ -1,21 +1,19 @@
 #pragma once 
-
-//#include <common/common.hpp>
  
 #define SIMPLE_OBJECT_LIST_DEBUG 0
 
-template <class Object_state, int max_n=1024>
+template <class Object_state, unsigned int max_n=1024>
 class Simple_object_list
 {
     private:
         virtual const char* name() = 0;
         
     public:
-        Object_state* a;
+        Object_state a[max_n];
 
         static const int n_max = max_n;
-        int num;
-        int id_c;
+        unsigned int num;
+        unsigned int id_c;
 
         Simple_object_list(); //default constructor
         ~Simple_object_list(); //default deconstructor
@@ -27,29 +25,27 @@ class Simple_object_list
         inline void print();
 };
 
-template <class Object_state, int max_n> 
+template <class Object_state, unsigned int max_n> 
 Simple_object_list<Object_state, max_n>::Simple_object_list()
 :
 num(0),
 id_c(0)
 {
-    this->a = new Object_state[max_n];
     for (int i=0; i<max_n; i++) this->a[i].id = i;
 }
 
-template <class Object_state, int max_n> 
+template <class Object_state, unsigned int max_n> 
 Simple_object_list<Object_state, max_n>::~Simple_object_list()
 {
-    delete[] this->a;
 }
 
-template <class Object_state, int max_n> 
+template <class Object_state, unsigned int max_n> 
 inline void Simple_object_list<Object_state, max_n>::print()
 {
     printf("%s list instantiated at %p\n", this->name(), this);
 }
 
-template <class Object_state, int max_n>
+template <class Object_state, unsigned int max_n>
 inline Object_state* Simple_object_list<Object_state, max_n>::create() 
 {
     if(num >= max_n)
@@ -66,12 +62,13 @@ inline Object_state* Simple_object_list<Object_state, max_n>::create()
 }
 
 
-template <class Object_state, int max_n>
+template <class Object_state, unsigned int max_n>
 inline void Simple_object_list<Object_state, max_n>::destroy(int index)
 {
     GS_ASSERT(num > 0);
-    GS_ASSERT(index >= 0 && index < max_n);
+    unsigned int uindex = index;
+    GS_ASSERT(index >= 0 && uindex < max_n);
     num--;
-    this->a[index] = a[num];
-    this->a[index].id = index;
+    this->a[uindex] = this->a[num];	// swap last good object with dead object
+    this->a[uindex].id = index;	// update id of swapped object
 }

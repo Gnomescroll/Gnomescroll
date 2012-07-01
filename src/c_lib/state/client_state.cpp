@@ -79,8 +79,6 @@ namespace ClientState {
 
     void update()
     {
-        // update hud projected names
-        ClientState::playerAgent_state.display_agent_names();   
         // check if we've failed to receive any identify packets (lost in initialization)
         // Shouldn't be needed? initialization packets are reliable
         ClientState::agent_list->check_missing_names();  // will ratelimit itself

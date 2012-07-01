@@ -288,19 +288,6 @@ Vec3 PlayerAgent_state::camera_position()
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
 }
 
-void PlayerAgent_state::display_agent_names()
-{
-    if (this->you == NULL) return;
-
-    for (int i=0; i < ClientState::agent_list->n_max; i++)
-    {
-        Agent_state* a = ClientState::agent_list->a[i];
-        if (a==NULL) continue;
-        if (a->id == this->agent_id) a->event.hide_name();
-        else a->event.display_name();
-    }
-}
-
 void PlayerAgent_state::update_sound()
 {
     AgentState s = camera_state;

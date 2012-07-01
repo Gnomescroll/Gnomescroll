@@ -443,7 +443,7 @@ inline void object_took_damage_StoC::handle()
     char txt[10+1];
     sprintf(txt, "%d", this->damage);
     b->set_text(txt);
-    b->set_size(1.0f);
+    b->set_scale(1.0f);
     b->set_ttl(245);
 }
 #endif

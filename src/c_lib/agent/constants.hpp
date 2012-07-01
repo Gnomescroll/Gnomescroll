@@ -73,4 +73,5 @@ const int AGENT_STATE_HISTORY_SIZE = 64;
 const float AGENT_INTERPOLATION_DECAY  = 0.8f;
 const int JETPACK_TICKS_MAX = 30 * 10 * 2;
 const int JETPACK_DECAY_TICKS = 30 * 10;
+const float AGENT_HUD_NAME_SIZE = 0.7f;
 #endif

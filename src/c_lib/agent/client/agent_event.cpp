@@ -21,8 +21,11 @@ dont_include_this_file_in_server
 
 void Agent_event::name_changed(char* old_name)
 {
-    if (this->bb != NULL)
-        this->bb->set_text(this->a->status.name);
+	GS_ASSERT(this->a->status.name != NULL);
+	GS_ASSERT(old_name != NULL);
+	if (this->a->status.name == NULL || old_name == NULL) return;
+	
+	this->bb.set_text(this->a->status.name);
 
     if (a->is_you())
     {
@@ -60,26 +63,17 @@ void Agent_event::name_changed(char* old_name)
 
 void Agent_event::hide_name()
 {
-    if (this->bb != NULL) this->bb->set_draw(false);
+    this->bb.set_draw(false);
 }
 
 void Agent_event::display_name()
 {
     if (this->a->status.dead) return;
-    if (this->bb == NULL)
-    {
-        this->bb = Particle::billboard_text_hud_list->create();
-        if (this->bb == NULL) return;
-        this->bb->init();
-        this->bb->permanent = true;          // dont die
-        this->bb->set_text(this->a->status.name);
-        this->bb->set_color(255,10,10,255); // TODO -- use health level
-        this->bb->set_size(0.7);
-    }
+
     const float z_margin = 0.4;
     Vec3 p = this->a->get_position();
-    this->bb->set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
-    this->bb->set_draw(true);
+    this->bb.set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
+    this->bb.set_draw(true);
 }
 
 // side effects of taking damage. dont modify health/death here
@@ -103,7 +97,7 @@ void Agent_event::took_damage(int dmg)
     char txt[10+1];
     sprintf(txt, "%d", dmg);
     b->set_text(txt);
-    b->set_size(1.0f);
+    b->set_scale(1.0f);
     b->set_ttl(245);
 
     if (a->is_you())
@@ -144,7 +138,7 @@ void Agent_event::healed(int amount)
     char txt[10+1];
     sprintf(txt, "%d", amount);
     b->set_text(txt);
-    b->set_size(1.0f);
+    b->set_scale(1.0f);
     b->set_ttl(245);
 }
 
@@ -225,8 +219,8 @@ void Agent_event::set_agent_vox_status(AgentVoxStatus status)
     this->vox_status = status;
 }
 
-void Agent_event::reload_weapon(int type) {
-    //if (! a->weapons.is_active(type)) return;
+void Agent_event::reload_weapon(int type)
+{
     Vec3 p = this->a->get_position();
     Sound::reload(p.x, p.y, p.z, 0,0,0);
     // play reload animation/sound for the weapon
@@ -277,13 +271,12 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
     Vec3 arm_center = this->a->arm_center();
-    //f[0] = x - arm_center.x;
-    //f[1] = y - arm_center.y;
-    //f[2] = z - arm_center.z;
+
+	f = vec3_scalar_mult(f, hitscan_speed);
     
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
-        f.x*hitscan_speed, f.y*hitscan_speed, f.z*hitscan_speed
+        f.x, f.y, f.z
     );
 
 }
@@ -335,10 +328,11 @@ void Agent_event::fired_weapon_at_nothing()
     
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
+	f = vec3_scalar_mult(f, hitscan_speed);
     Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
-        f.x*hitscan_speed, f.y*hitscan_speed, f.z*hitscan_speed
+        f.x, f.y, f.z
     );
 }
 
@@ -391,17 +385,18 @@ void Agent_event::fire_empty_weapon(int weapon_type)
 
 Agent_event::~Agent_event()
 {
-    if (this->bb != NULL)
-    {   // BUG -- particle list dtor might be called before this, on close
-        this->bb->ttl = 0;
-        this->bb->permanent = false;
-    }
 }
 
 Agent_event::Agent_event(Agent_state* owner)
 :
 a(owner),
 vox_status(AGENT_VOX_IS_STANDING),
-model_was_changed(true),
-bb(NULL)
-{}
+model_was_changed(true)
+{
+	this->bb.init();
+	this->bb.permanent = true;          // dont die
+	if (this->a->status.name != NULL)
+		this->bb.set_text(this->a->status.name);
+	this->bb.set_color(255,10,10,255); // TODO -- use health level
+	this->bb.set_scale(AGENT_HUD_NAME_SIZE);	
+}

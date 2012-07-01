@@ -9,11 +9,6 @@
 #include <t_map/server/manager.hpp>
 #endif
 
-/*
-    Warning: using agent position for map loading
-
-*/
-
 const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
 
 #if DC_SERVER
@@ -21,14 +16,29 @@ void Agent_list::update_map_manager_positions()
 {
     Vec3 p;
     for(int i=0; i<n_max; i++)
-        if (this->a[i] != NULL)
-        {
-            if (this->a[i]->camera_ready)
-                p = this->a[i]->get_camera_state_position();
-            else
-                p = this->a[i]->get_position();
-            t_map::t_map_manager_update_client_position(i, p.x, p.y);
-        }
+    {
+        if (this->a[i] == NULL) continue;
+		if (this->a[i]->camera_ready)
+			p = this->a[i]->get_camera_state_position();
+		else
+			p = this->a[i]->get_position();
+		t_map::t_map_manager_update_client_position(i, p.x, p.y);
+	}
+}
+#endif
+
+#if DC_CLIENT
+void Agent_list::draw_names()
+{
+	int agent_id = ClientState::playerAgent_state.agent_id;
+	for (int i=0; i<this->n_max; i++)
+	{
+		if (this->a[i] == NULL) continue;
+		Agent_state* a = this->a[i];
+		if (a->id == agent_id) a->event.hide_name();
+        else a->event.display_name();
+		a->event.bb.draw();
+	}
 }
 #endif
 

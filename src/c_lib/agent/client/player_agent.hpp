@@ -53,8 +53,6 @@ class PlayerAgent_state
         void toggle_camera_mode();
         void pump_camera();
 
-        void display_agent_names();
-
         //control state history buffer
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence

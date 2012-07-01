@@ -314,6 +314,7 @@ void draw_hud()
     
     start_font_draw();
     Particle::billboard_text_hud_list->draw();
+    ClientState::agent_list->draw_names();
     end_font_draw();
 
     draw_hud_textures();

@@ -15,7 +15,7 @@ class TextParticle: public ParticleMotionCore, public HudText::Text
                 
         TextParticle() :
             ParticleMotionCore(0,0,0,0,0,0, DEFAULT_MASS),
-            HudText::Text(-1),
+            HudText::Text(),
             id(id)
             {}
 };

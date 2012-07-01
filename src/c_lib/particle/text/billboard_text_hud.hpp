@@ -21,7 +21,6 @@ class BillboardTextHud: public TextParticle
         
     public:
         bool should_draw;
-        int attached_to_agent;
         bool permanent;
         
         void set_draw(bool draw);
@@ -33,7 +32,6 @@ class BillboardTextHud: public TextParticle
         void tick();
 
         inline void init();
-        void destroy();
 
         BillboardTextHud();
 };

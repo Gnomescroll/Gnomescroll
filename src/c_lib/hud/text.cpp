@@ -103,9 +103,9 @@ void Text::draw_centered()
 // internal string copy
 // if string is changed, char buffer will expand
 // however, char buffer will never contract
-void Text::set_string(char* text, char** this_text, int* this_len)
+void Text::set_string(char* text, char** this_text, unsigned int* this_len)
 {
-    int len = strlen(text);
+    unsigned int len = strlen(text);
     if (*this_text == NULL)
     {   // first time adding
         *this_text = (char*)malloc(sizeof(char) * (len+1));
@@ -144,18 +144,21 @@ void Text::draw_character_rotated(float theta)
     draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
 }
 
-void Text::resize_string(int n, char** str, int* str_len)
+char* Text::resize_string(unsigned int n, char* str, unsigned int* str_len)
 {
-    if (*str_len == n) return;
-    if (*str == NULL)
-        *str = (char*)malloc(sizeof(char) * (n+1));
+	GS_ASSERT(*str_len < n);
+    if (str == NULL)
+        str = (char*)malloc(sizeof(char) * (n+1));
     else
-        *str = (char*)realloc(*str, sizeof(char) * (n+1));
+        str = (char*)realloc(str, sizeof(char) * (n+1));
     *str_len = n;
+    return str;
 }
 
 void Text::set_text(char* text)
 {
+	GS_ASSERT(text != NULL);
+	if (text == NULL) text = (char*)"";
     this->set_string(text, &this->text, &this->text_len);
 }
 
@@ -165,7 +168,7 @@ void Text::set_format(char* format)
     this->formatted = true;
 }
 
-void Text::set_format_extra_length(int size)
+void Text::set_format_extra_length(unsigned int size)
 {
     // size large enough to fit formatted data
     // subtract format string sizes
@@ -175,9 +178,17 @@ void Text::set_format_extra_length(int size)
 
 void Text::update_formatted_string(int n_args, ...)
 {
-    int len = this->format_len + this->formatted_extra_len + 1;
+    unsigned int len = this->format_len + this->formatted_extra_len + 1;
     if (len > this->text_len)
-        resize_string(len, &this->text, &this->text_len);
+    {
+		unsigned int new_len = this->text_len;
+        char* new_text = resize_string(len, this->text, &new_len);
+        if (new_text != NULL)
+        {
+			this->text = new_text;
+			this->text_len = new_len;
+		}
+	}
     va_list args;
     va_start(args, n_args);
     vsprintf(this->text, this->format, args);
@@ -341,40 +352,39 @@ int Text:: get_height()
 
 Text::Text(int id)
 :
-width(10),height(10),
+width(10.0f),height(10.0f),
 text_len(0),
 format_len(0),
 formatted_extra_len(0),
 id(id),
-inited(false),
-depth(-1.0),
-scale(1.0),
+depth(-1.0f),
+scale(1.0f),
 formatted(false),
 r(255),g(255),b(255),a(255),
 text(NULL),
 format(NULL),
-x(0), y(0),
-refx(0),refy(0)
+x(0.0f), y(0.0f),
+refx(0.0f),refy(0.0f)
+
 {
     this->reset_alignment();
 }
 
 Text::Text()
 :
-width(10),height(10),
+width(10.0f),height(10.0f),
 text_len(0),
 format_len(0),
 formatted_extra_len(0),
 id(-1),
-inited(false),
-depth(-1.0),
-scale(1.0),
+depth(-1.0f),
+scale(1.0f),
 formatted(false),
 r(255),g(255),b(255),a(255),
 text(NULL),
 format(NULL),
-x(0), y(0),
-refx(0),refy(0)
+x(0.0f), y(0.0f),
+refx(0.0f),refy(0.0f)
 {
     this->reset_alignment();
 }

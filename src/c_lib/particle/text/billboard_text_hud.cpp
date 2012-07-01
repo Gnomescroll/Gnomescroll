@@ -14,25 +14,16 @@ namespace Particle
 inline void BillboardTextHud::init_properties()
 {
     this->should_draw = true;
-    this->attached_to_agent = NO_AGENT;
     this->permanent = false;
     
     this->ttl = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
-    this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
+    this->scale = BILLBOARD_TEXT_HUD_TEXTURE_SCALE;
 }
 
 inline void BillboardTextHud::init()
 {
     this->init_properties();
-}
-
-void BillboardTextHud::destroy()
-{
-    if (this->attached_to_agent == NO_AGENT) return;
-    Agent_state* a = ClientState::agent_list->get(this->attached_to_agent);
-    if (a == NULL) return;
-    a->event.bb = NULL;    
 }
 
 BillboardTextHud::BillboardTextHud()
@@ -87,10 +78,7 @@ void BillboardTextHud_list::tick()
     {
         a[i].tick();
         if (a[i].ttl <= 0)
-        {
-            a[i].destroy();
             destroy(i);
-        }
     }
 }
 

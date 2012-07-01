@@ -105,8 +105,8 @@ void BillboardText::draw()
     height = (float)_h;
     
     // calcalute half length pixel offset to center the text
-    const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled scale
-    float start = -(0.5 * len * scale * this->scale);
+    const float scale = 1.0f/16.0f * this->scale; // pixels to meters
+    float start = -(0.5 * len * scale);
     float cursor = 0.0f;
     float xoff, xw;
     float ax, ay, bx, by;
@@ -132,15 +132,15 @@ void BillboardText::draw()
         ty_max = glyph.y + glyph.th;
         
         // get char x offset and width, adjusted
-        xoff = (cursor + glyph.xoff) * scale * this->scale;
-        xw = (cursor + glyph.xoff + glyph.w) * scale * this->scale;
+        xoff = (cursor + glyph.xoff) * scale;
+        xw = (cursor + glyph.xoff + glyph.w) * scale;
         ax = x - (xw + start) * right[0];
         ay = y - (xw + start) * right[1];
         bx = x - (xoff  + start) * right[0];
         by = y - (xoff  + start) * right[1];
 
-        az = z + (height - glyph.yoff - glyph.h) * scale * this->scale;
-        bz = z + (height - glyph.yoff)           * scale * this->scale;
+        az = z + (height - glyph.yoff - glyph.h) * scale;
+        bz = z + (height - glyph.yoff)           * scale;
 
         cursor += glyph.xadvance;
 
