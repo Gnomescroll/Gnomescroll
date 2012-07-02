@@ -17,14 +17,6 @@ static HitscanBlock dummy_hitscan_block;
 HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy, float vz)
 {
     const float max_dist = 500.0f;  // far
-    //const int z_min = 128;
-    //const int z_max = 128;
-    
-    //int *pos = _nearest_block(x, y, z, vx, vy, vz, max_dist, z_min, z_max);
-    //if (pos == NULL) {
-        //dummy_hitscan_block.hit = false;
-        //return &dummy_hitscan_block;
-    //}
 
     float distance=0.0f;
     int collision[3];
@@ -37,13 +29,10 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
     dummy_hitscan_block.hit = collided;
     if (!collided) return &dummy_hitscan_block;
     
-    //dummy_hitscan_block.x = pos[0];
-    //dummy_hitscan_block.y = pos[1];
-    //dummy_hitscan_block.z = pos[2];
     dummy_hitscan_block.x = translate_point(collision[0]);
     dummy_hitscan_block.y = translate_point(collision[1]);
     dummy_hitscan_block.z = collision[2];
-    //dummy_hitscan_block.distance = distance(x,y,z, (float)pos[0], (float)pos[1], (float)pos[2]);
+
     dummy_hitscan_block.distance = distance;
     dummy_hitscan_block.side[0] = side[0];
     dummy_hitscan_block.side[1] = side[1];
@@ -55,7 +44,6 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
 
 HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], int *tile)
 {
-
     HitscanBlock* block = ray_intersect_block(x,y,z, vx,vy,vz);
 
     HitscanTargetTypes target = HITSCAN_TARGET_NONE;

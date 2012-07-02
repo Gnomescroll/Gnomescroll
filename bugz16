@@ -634,6 +634,12 @@ DONE
 add fist sprite to weapon hud animation
 DONE
 
+fix server crash in container module (missing NULL check) [did not fix root cause]
+DONE
+
+fix analytics session lookup
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -711,27 +717,3 @@ camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
 
 in free camera, when agent is shot, model flickers
-
-
-./gnomescroll_server(_Z11print_tracev+0x15) [0x4558c5]
-./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerI12version_CtoSE7handlerEPciPii+0x205) [0x4c1a45]
-./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x5e) [0x4a6bde]
-./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0xb0) [0x4b38d0]
-./gnomescroll_server(_ZN4Main3runEv+0x15) [0x4b80b5]
-/lib/libc.so.6(__libc_start_main+0xfd) [0x7f7135ecdc4d]
-./gnomescroll_server() [0x44cfd1]
-GS_ASSERT error: /usr/freespace/dc_mmo/src/c_lib/common/analytics/sessions.hpp, line 276 function: record_client_version 
-
-./gnomescroll_server(_Z11print_tracev+0x15) [0x4558c5]
-./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerI13identify_CtoSE7handlerEPciPii+0x4c5) [0x4cd7f5]
-./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x5e) [0x4a6bde]
-./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0xb0) [0x4b38d0]
-./gnomescroll_server(_ZN4Main3runEv+0x15) [0x4b80b5]
-/lib/libc.so.6(__libc_start_main+0xfd) [0x7f7135ecdc4d]
-./gnomescroll_server() [0x44cfd1]
-GS_ASSERT error: /usr/freespace/dc_mmo/src/c_lib/common/analytics/sessions.hpp, line 266 function: add_name_to_client_id 
-
-this is saying that the session found for client is not active, it has been logged out
-either:
-    it is logging out, then send the packet
-    it is getting the wrong session

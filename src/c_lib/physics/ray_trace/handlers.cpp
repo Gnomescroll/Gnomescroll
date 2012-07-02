@@ -116,6 +116,7 @@ HitscanTarget shoot_at_agent(
             }
             target_information.collision_point = vec3_add(source,
                         vec3_scalar_mult(firing_direction, block_distance));
+            target_information.collision_point = translate_position(target_information.collision_point);
             target_information.cube = tile;
             target_information.side = get_cube_side_from_side_array(side);
             break;
@@ -161,10 +162,6 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
                     agent->status.apply_damage(
                         dmg, p.id, p.type, t.part
                     );
-                    //destroy_object_voxel(
-                        //t.id, t.type, t.part, t.voxel,
-                        //p.voxel_damage_radius
-                    //);
                 }
             }
             break;
