@@ -696,11 +696,14 @@ send block health on request from agent
 == ANALYTICS ==
 
 == GENERAL ==
+get screenshots working in osx
+
 put spawners back in
     -- needs better UI
     -- needs crafting path
 
 add right click to heal teammate with health pack
+
 
 option to hide name
 
@@ -717,3 +720,50 @@ camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
 
 in free camera, when agent is shot, model flickers
+
+./gnomescroll_server(_Z11print_tracev+0x15) [0x4558c5]
+./gnomescroll_server(_ZN13ItemContainer15update_smeltersEv+0x255) [0x4afd95]
+./gnomescroll_server(_ZN4Main4tickEv+0x167) [0x4b7f97]
+./gnomescroll_server(_ZN4Main3runEv+0x2d) [0x4b80cd]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f28178e7c4d]
+./gnomescroll_server() [0x44cfd1]
+GS_ASSERT error: /usr/freespace/dc_mmo/src/c_lib/item/container/_interface.cpp, line 1287 function: update_smelters 
+
+./gnomescroll_server(_Z11print_tracev+0x15) [0x4558c5]
+./gnomescroll_server(_ZN8Toolbelt24tick_agent_selected_itemEi6ItemID+0x7d) [0x47eecd]
+./gnomescroll_server(_ZN8Toolbelt4tickEv+0x10a) [0x4aa91a]
+./gnomescroll_server(_ZN4Main4tickEv+0x48) [0x4b7e78]
+./gnomescroll_server(_ZN4Main3runEv+0x2d) [0x4b80cd]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f28178e7c4d]
+./gnomescroll_server() [0x44cfd1]
+GS_ASSERT error: /usr/freespace/dc_mmo/src/c_lib/item/toolbelt/_interface.cpp, line 458 function: tick_agent_selected_item
+
+./gnomescroll_server(_Z11print_tracev+0x15) [0x4558c5]
+./gnomescroll_server(_ZN13ItemContainer22ItemContainerInterface6unlockEi+0xfe) [0x4c0e5e]
+./gnomescroll_server(_ZN13ItemContainer21agent_close_containerEii+0x116) [0x4b1276]
+./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerIN13ItemContainer20close_container_CtoSEE7handlerEPciPii+0x9a) [0x4cc24a]
+./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x5e) [0x4a6bde]
+./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0xb0) [0x4b38d0]
+./gnomescroll_server(_ZN4Main3runEv+0x15) [0x4b80b5]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f28178e7c4d]
+./gnomescroll_server() [0x44cfd1]
+GS_ASSERT error: /usr/freespace/dc_mmo/src/c_lib/item/container/container.hpp, line 114 function: unlock 
+./gnomescroll_server(_Z11print_tracev+0x15) [0x4558c5]
+./gnomescroll_server(_ZN13ItemContainer22ItemContainerInterface6unlockEi+0x2b) [0x4c0d8b]
+./gnomescroll_server(_ZN13ItemContainer21agent_close_containerEii+0x116) [0x4b1276]
+./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerIN13ItemContainer20close_container_CtoSEE7handlerEPciPii+0x9a) [0x4cc24a]
+./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x5e) [0x4a6bde]
+./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0xb0) [0x4b38d0]
+./gnomescroll_server(_ZN4Main3runEv+0x15) [0x4b80b5]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f28178e7c4d]
+./gnomescroll_server() [0x44cfd1]
+GS_ASSERT error: /usr/freespace/dc_mmo/src/c_lib/item/container/container.hpp, line 115 function: unlock 
+./gnomescroll_server(_Z11print_tracev+0x15) [0x4558c5]
+./gnomescroll_server(_ZN13ItemContainer21agent_close_containerEii+0x23d) [0x4b139d]
+./gnomescroll_server(_ZN34FixedSizeReliableNetPacketToServerIN13ItemContainer20close_container_CtoSEE7handlerEPciPii+0x9a) [0x4cc24a]
+./gnomescroll_server(_Z23process_packet_messagesPcPiii+0x5e) [0x4a6bde]
+./gnomescroll_server(_ZN9NetServer23dispatch_network_eventsEv+0xb0) [0x4b38d0]
+./gnomescroll_server(_ZN4Main3runEv+0x15) [0x4b80b5]
+/lib/libc.so.6(__libc_start_main+0xfd) [0x7f28178e7c4d]
+./gnomescroll_server() [0x44cfd1]
+GS_ASSERT error: /usr/freespace/dc_mmo/src/c_lib/item/container/server.cpp, line 634 function: agent_close_container 
