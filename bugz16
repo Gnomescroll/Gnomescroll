@@ -625,6 +625,15 @@ DONE
 Color agent name based on health
 DONE
 
+fix base spawning
+DONE
+
+decrease pickup delay time after throwing to 3 seconds from 4
+DONE
+
+add fist sprite to weapon hud animation
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -672,7 +681,7 @@ alt tab doesnt work in fullscreen (on linux at least)
 palette for smelter on/off
 
 == ITEMS ==
-decrease pickup delay time after throwing
+Binoculars
 
 == BLOCKS/TERRAIN ==
 send block health on request from agent
@@ -700,7 +709,5 @@ add labels to the widgets
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
-
-base is not spawning on top
 
 in free camera, when agent is shot, model flickers
