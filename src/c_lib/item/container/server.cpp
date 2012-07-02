@@ -632,6 +632,7 @@ void agent_close_container(int agent_id, int container_id)
 
     bool did_unlock = container->unlock(agent_id);
     GS_ASSERT(did_unlock);
+    if (!did_unlock) return;
     broadcast_container_unlock(container->id, agent_id);
 
     unsubscribe_agent_from_container_contents(agent_id, container_id);
