@@ -146,7 +146,7 @@ class User
         this->n_sessions++;
     }
 
-    class Session* get_current_session(int client_id)
+    class Session* get_latest_session(int client_id)
     {
         if (this->n_sessions <= 0) return NULL;
         for (int i=this->n_sessions-1; i>=0; i--)
@@ -243,16 +243,17 @@ class UserRecorder
         user->add_session(session);
     }
 
-    class Session* get_latest_session_for_client(int client_id)
+    class Session* get_active_session_for_client(int client_id)
     {
         for (int i=0; i<this->n_users; i++)
         {
             GS_ASSERT(this->users[i] != NULL);
             if (this->users[i] == NULL) continue;
-            class Session* session = this->users[i]->get_current_session(client_id);
+            class Session* session = this->users[i]->get_latest_session(client_id);
             if (session == NULL) continue;
             GS_ASSERT(session->client_id == client_id);
             if (session->client_id != client_id) continue;
+            if (!session->is_active()) continue;
             return session;
         }
         return NULL;
@@ -260,7 +261,7 @@ class UserRecorder
 
     void add_name_to_client_id(int client_id, char* name)
     {
-        class Session* session = get_latest_session_for_client(client_id);
+        class Session* session = get_active_session_for_client(client_id);
         GS_ASSERT(session != NULL);
         if (session == NULL) return;
         GS_ASSERT(session->is_active());
@@ -270,7 +271,7 @@ class UserRecorder
 
     void record_client_version(int client_id, int version)
     {
-        class Session* session = get_latest_session_for_client(client_id);
+        class Session* session = get_active_session_for_client(client_id);
         GS_ASSERT(session != NULL);
         if (session == NULL) return;
         GS_ASSERT(session->is_active());

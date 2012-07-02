@@ -506,7 +506,7 @@ static void client_disconnect(ENetEvent* event)
     GS_ASSERT(user != NULL);
     if (user != NULL)
     {
-        class Session* session = user->get_current_session(npm->client_id);
+        class Session* session = user->get_latest_session(npm->client_id);
         GS_ASSERT(session != NULL);
         if (session != NULL) end_session(session);
     }
