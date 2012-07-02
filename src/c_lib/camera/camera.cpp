@@ -81,7 +81,7 @@ zoom_factor(CAMERA_ZOOM_FACTOR)
 {
 	const float FOV = 75.0f;
 	const float Z_NEAR = 0.1f;
-	const float Z_FAR = 256.0f;
+	const float Z_FAR = 320.0f;
     set_aspect(FOV, Z_NEAR, Z_FAR);
     set_dimensions();
     set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
