@@ -157,7 +157,7 @@ class Terrain_map_subscription
     int xchunk_dim;
     int ychunk_dim;
     
-    struct MAP_CHUNK_SUBSCRIPTION* chunk;
+    class MAP_CHUNK_SUBSCRIPTION* chunk;
 
     Terrain_map_subscription(int _xdim, int _ydim)
     {

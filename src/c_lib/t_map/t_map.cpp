@@ -42,7 +42,7 @@ int get(int x, int y, int z)
     //y = translate_point(y);
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    struct MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if(c == NULL) return 0;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 

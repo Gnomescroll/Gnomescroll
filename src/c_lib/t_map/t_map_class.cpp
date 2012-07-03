@@ -98,7 +98,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
 
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         //c = chunk[ (y | ~15) + (x >> 4)];
@@ -112,7 +112,7 @@ namespace t_map
         //if( x >= 512 || x < 0 ) return NO_MAP_ELEMENT;
         //if( y >= 512 || y < 0 ) return NO_MAP_ELEMENT;
 
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
@@ -137,7 +137,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+        class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         if( c != NULL ) c->needs_update = true;
     }
 #endif
@@ -172,7 +172,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         //c = chunk[ (y | ~15) + (x >> 4)];
         if( c != NULL )
@@ -202,7 +202,7 @@ namespace t_map
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         //printf("set %i, %i, %i \n", x,y,z);
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
@@ -264,7 +264,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         if( c != NULL ) return -3;
 
@@ -318,7 +318,7 @@ namespace t_map
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         //printf("set %i, %i, %i \n", x,y,z);
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
@@ -396,7 +396,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         if( c != NULL ) return -3;
 
@@ -445,7 +445,7 @@ namespace t_map
 
 
         //printf("set %i, %i, %i \n", x,y,z);
-        struct MAP_CHUNK* c;
+        class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
@@ -609,7 +609,7 @@ namespace t_map
         //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+        class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         if(c == NULL) return 0;
         //return c->e[(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH)*z+ TERRAIN_CHUNK_WIDTH*(y | 15) + (x | 15)];
 
@@ -634,7 +634,7 @@ namespace t_map
 /*
     void Terrain_map::reset_chunk_container_blocks(int chunk_index)
     {
-        struct MAP_CHUNK* c=chunk[chunk_index];
+        class MAP_CHUNK* c=chunk[chunk_index];
         if(c == NULL) GS_ABORT();
         c->chunk_item_container._reset();
     }

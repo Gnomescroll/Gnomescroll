@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <winsock2.h>
 
+#ifdef __MSVC__
+#include <Mmsystem.h>
+#endif
+ 
 typedef SOCKET ENetSocket;
 
 enum
