@@ -76,7 +76,7 @@ HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, ObjectType type,
     Agent_state* agent, const float range
 ) { // hitscan vector against world
-    struct Voxel_hitscan_target target;
+    class Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
