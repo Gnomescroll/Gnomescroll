@@ -327,17 +327,10 @@ void Vbo_map::sort_draw()
   //if(draw_vbo_n > 10) draw_vbo_n = 10;
 }
 
-#define ADV_PRUNE 1
+#define ADV_PRUNE 0
 
 void Vbo_map::draw_map() 
 {
-	// this check is moved to main.cpp
-    //if(T_MAP_BACKUP_SHADER != 0)
-    //{
-        //draw_map_compatibility();
-        //return;
-    //}
-
     prep_draw();
     sort_draw();
     prep_frustrum();
@@ -345,9 +338,6 @@ void Vbo_map::draw_map()
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
-
-    
-    //;
 
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -499,7 +489,7 @@ void Vbo_map::draw_map()
 
 
     //set_frustrum_column_min(i, j, )
-
+#if 0
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
 
@@ -553,6 +543,7 @@ void Vbo_map::draw_map()
     glEnd();
 
     glColor3ub(255, 255, 255);
+#endif
 }
 
 void Vbo_map::draw_map_compatibility()

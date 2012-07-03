@@ -20,13 +20,18 @@ return; \
 }
 
 
+
+// __GNUG__
+// The GNU C++ compiler defines this. Testing it is equivalent to testing (__GNUC__ && __cplusplus). 
+// preprocessor macros 
+// http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
+
+
 #ifdef __GNUC__
 #define ALWAYS_INLINE inline __attribute__((__always_inline__))
 #else
 #define ALWAYS_INLINE __forceinline
 #endif
-
-
 
 #ifdef __GNUC__
 #define ALWAYS_INLINE_OPTIMIZED inline __attribute__((__always_inline__, ))
@@ -37,6 +42,25 @@ return; \
 /*
 #else
 #define ALWAYS_INLINE inline
+#endif
+#endif
+*/
+
+
+/*
+#ifndef UNLIKELY
+#if COMPILER(GCC)
+#define UNLIKELY(x) __builtin_expect((x), 0)
+#else
+#define UNLIKELY(x) (x)
+#endif
+#endif
+
+#ifndef LIKELY
+#if COMPILER(GCC)
+#define LIKELY(x) __builtin_expect((x), 1)
+#else
+#define LIKELY(x) (x)
 #endif
 #endif
 */
