@@ -536,6 +536,10 @@ void kill_client(ENetPeer* peer)
 	GS_ASSERT(peer != NULL);
 	if (peer == NULL) return;
 	enet_peer_disconnect(peer, 1);
+	
+	// log it
+	int client_id = ((class NetPeer*)peer->data)->client_id;
+	NetServer::users->record_client_force_disconnect(client_id);
 }
 
 void flush_to_net()

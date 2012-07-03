@@ -28,6 +28,7 @@ class Session
         int number; // per user basis
         int id; // global basis
         int version;
+        bool killed;
 
     void login()
     {
@@ -78,6 +79,10 @@ class Session
             if (this->names[i] == NULL) continue;
             fprintf(f, "%s ", this->names[i]);
         }
+        
+        // was killed
+		if (this->killed)
+			fprintf(f, "; NOTE: Was forcibly disconnected", this->client_id);
 
         fprintf(f, "\n");
     }
@@ -99,7 +104,7 @@ class Session
 
     Session(uint32_t ip_addr)
     : ip_addr(ip_addr), client_id(-1), n_names(0), max_names(SESSION_INITIAL_MAX_NAMES),
-    login_time(0), logout_time(0), number(-1), id(-1), version(0)
+    login_time(0), logout_time(0), number(-1), id(-1), version(0), killed(false)
     {
         GS_ASSERT(this->max_names > 0);
         this->names = (char**)calloc(this->max_names, sizeof(char*));
@@ -268,6 +273,16 @@ class UserRecorder
         if (!session->is_active()) return;
         session->add_name(name);
     }
+    
+    void record_client_force_disconnect(int client_id)
+    {
+		class Session* session = get_active_session_for_client(client_id);
+		GS_ASSERT(session != NULL);
+		if (session == NULL) return;
+		GS_ASSERT(session->is_active());
+		if (!session->is_active()) return;
+		session->killed = true;
+	}
 
     void record_client_version(int client_id, int version)
     {

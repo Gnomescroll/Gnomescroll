@@ -238,11 +238,8 @@ inline void agent_create_StoC::handle()
 inline void agent_name_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        //printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);
-        return;
-    }
+    if (a == NULL) return;
+    
     char* old_name = (char*)calloc(strlen(a->status.name) + 1, sizeof(char));
     strcpy(old_name, a->status.name);
     bool new_name = a->status.set_name(name);
