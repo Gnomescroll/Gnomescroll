@@ -48,6 +48,8 @@ namespace Toolbelt
 
 void tick_agent_selected_item(int agent_id, ItemID item_id);
 void trigger_agent_selected_item(int agent_id, ItemID item_id);
+void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id);
+void trigger_agent_selected_item_reload_action(int agent_id, ItemID item_id);
 
 void update_toolbelt_items();
 

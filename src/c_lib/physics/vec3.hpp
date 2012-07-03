@@ -49,6 +49,17 @@ struct Vec3 vec3_init(float x, float y, float z)
     return v;
 }
 
+static struct Vec3 vec3_init(float p[3]) __attribute((always_inline)); 
+
+struct Vec3 vec3_init(float p[3])
+{
+    struct Vec3 v;
+    v.x = p[0];
+    v.y = p[1];
+    v.z = p[2];
+    return v;
+}
+
 static struct Vec3 vec3_copy(Vec3 f) __attribute((always_inline)); 
 
 struct Vec3 vec3_copy(Vec3 f)

@@ -66,7 +66,7 @@ inline void toolbelt_beta_action_CtoS::handle()
     if (a->status.dead) return;
 
     ItemID item_id = get_agent_selected_item(a->id);
-    if (item_id == NULL_ITEM) return;
+    trigger_agent_selected_item_beta_action(a->id, item_id);
     broadcast_agent_toolbelt_beta_action_packet(a->id, item_id);
 }
 
@@ -77,7 +77,7 @@ inline void toolbelt_reload_action_CtoS::handle()
     if (a->status.dead) return;
 
     ItemID item_id = get_agent_selected_item(a->id);
-    if (item_id == NULL_ITEM) return;
+    trigger_agent_selected_item_reload_action(a->id, item_id);
     broadcast_agent_toolbelt_item_reload_packet(a->id, item_id);
 }
 

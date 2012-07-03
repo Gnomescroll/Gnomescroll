@@ -75,6 +75,7 @@ void tick()
         t_map::t_map_sort_map_chunk_ques();
     }
 
+    Toolbelt::update_toolbelt_items();
     Toolbelt::tick();
 
     ServerState::agent_list->update_models(); // sets skeleton
@@ -101,7 +102,6 @@ void tick()
 
     ItemContainer::digest_nanite_food();
     ItemContainer::update_smelters();
-    Toolbelt::update_toolbelt_items();
     Item::item_list->tick();
     Item::item_list->verify_items();
 }

@@ -81,7 +81,6 @@ bool Voxel_hitscan_list::point_collision(Vec3 position, Voxel_hitscan_target* ta
     {
         vhe = this->hitscan_list[i];
         if (vhe == NULL) continue;
-        //if (!vhe->vv->hitscan) continue;  // dont do this check. we are not hitscanning here. example bug: player agent is always hitscan=false when in first person, so he doesnt shoot himself
         if (vhe->vv->point_collision_test(position, target->voxel))
         {
             target->copy_vhe(vhe);
