@@ -80,7 +80,7 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     for(int i=0; i<=8; i++)
     {
         //point_fulstrum_test(
-        if(sphere_fulstrum_test(cx,cy,16*i, 0.0) == true)
+        if(sphere_fulstrum_test(x,y,16*i, 0.0) == true)
         {
             b = i;
             break;
@@ -89,7 +89,7 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
 
     for(int i=8; i>= 0; i--)
     {
-        if(sphere_fulstrum_test(cx,cy,16*i, 0.0) == true)
+        if(sphere_fulstrum_test(x,y,16*i, 0.0) == true)
         {
             t = i;
             break;
