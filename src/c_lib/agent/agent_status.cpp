@@ -158,7 +158,7 @@ void Agent_status::send_health_msg()
     agent_health_StoC health_msg;
     health_msg.id = a->id;
     health_msg.health = this->health;
-    health_msg.sendToClient(a->client_id);
+    health_msg.broadcast();
 }
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
