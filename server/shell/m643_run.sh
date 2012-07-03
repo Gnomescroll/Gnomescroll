@@ -1,3 +1,3 @@
 cd ..
-./run ./lua/settings_server_production.lua
+./run ./settings/settings_server_production.lua
 cd -

@@ -1,1 +1,1 @@
-./run ./lua/settings_server_dev.lua
+./run ./settings/settings_server_dev.lua
