@@ -259,8 +259,8 @@ void load_item_dat()
     item_def(49, IG_CONSUMABLE, "repair_kit");
     sprite_def(i0, 2,8);
     s.pretty_name = (char*)"Repair Kit";
-    s.max_stack_size = 1;
-    s.repair_agent_amount = 50;
+    s.max_stack_size = 20;
+    s.repair_agent_amount = 25;
 
     item_def(50, IG_PLACER, "cryofreezer_1");
     iso_block_sprite_def("cryofreezer_1");
