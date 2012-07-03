@@ -508,8 +508,8 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     }
 
     // setup vars
-    int stack_size;
-    int remaining_stack_size;
+    int stack_size = 1;
+    int remaining_stack_size = 1;
     
     switch (group)
     {
@@ -564,16 +564,35 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 
         case IG_CONSUMABLE:
             // consume the item
-            if (a != NULL && a->status.consume_item(item->id))
+            if (a != NULL)
             {
-                remaining_stack_size = Item::consume_stack_item(item->id);
-                if (remaining_stack_size <= 0)
-                {   // item was destroyed, remove from hand
-                    agent_selected_type[agent_id] = NULL_ITEM_TYPE;
-                    agent_selected_item[agent_id] = NULL_ITEM;
-                    item = NULL;
-                }
-            }
+				if (item->type != Item::get_item_type((char*)"repair_kit"))
+				{
+					if (a->status.consume_item(item->id))
+						remaining_stack_size = Item::consume_stack_item(item->id);
+				}
+				else
+				{	// apply repair kit to teammates
+					// trace to nearest teammate in range
+					int teammate_id = Hitscan::against_agents(
+						a->get_camera_position(), a->forward_vector(),
+						APPLY_REPAIR_KIT_MAX_DISTANCE, a->id);
+					if (teammate_id != NO_AGENT)
+					{
+						Agent_state* teammate = ServerState::agent_list->get(teammate_id);
+						GS_ASSERT(teammate != NULL);
+						if (teammate != NULL && teammate->status.consume_item(item->id))
+							remaining_stack_size = Item::consume_stack_item(item->id);
+					}
+				}
+			}
+			
+			if (remaining_stack_size <= 0)
+			{   // item was destroyed, remove from hand
+				agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+				agent_selected_item[agent_id] = NULL_ITEM;
+				item = NULL;
+			}
             break;
 
 
@@ -594,6 +613,66 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
         }
         else if (a != NULL) Item::send_item_state(item->id);
     }
+}
+
+void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
+{
+	ASSERT_VALID_AGENT_ID(agent_id);
+	Agent_state* a = ServerState::agent_list->get(agent_id);
+	GS_ASSERT(a != NULL);
+	
+	Item::Item* item = NULL;
+    ItemGroup group = IG_NONE;    // empty hand
+    int item_type = NULL_ITEM_TYPE;
+    if (item_id != NULL_ITEM)
+    {
+        item = Item::get_item(item_id);
+        GS_ASSERT(item != NULL);
+        if (item == NULL) return;
+        item_type = item->type;
+        group = Item::get_item_group_for_type(item_type);
+    }
+    
+    int stack_size = 1;
+    int remaining_stack_size = 1;
+    
+	switch (group)
+	{
+		case IG_CONSUMABLE:
+            if (item_type == Item::get_item_type((char*)"repair_kit") &&
+				a != NULL && a->status.consume_item(item->id))
+            {	// players apply health kits to themselves with right click
+                remaining_stack_size = Item::consume_stack_item(item->id);
+                if (remaining_stack_size <= 0)
+                {   // item was destroyed, remove from hand
+                    agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+                    agent_selected_item[agent_id] = NULL_ITEM;
+                    item = NULL;
+                }
+            }
+			break;
+		
+        case IG_MINING_LASER:
+        case IG_ERROR:
+        case IG_RESOURCE:
+        case IG_MELEE_WEAPON:
+        case IG_NANITE_COIN:
+        case IG_SHOVEL:
+        case IG_NONE:
+        case IG_HITSCAN_WEAPON:
+        case IG_GRENADE_LAUNCHER:
+			break;
+			
+        default:
+			GS_ASSERT(false);
+            break;		
+	}
+
+}
+
+void trigger_agent_selected_item_reload_action(int agent_id, ItemID item_id)
+{
+
 }
 
 void update_toolbelt_items()
