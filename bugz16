@@ -653,6 +653,12 @@ DONE
 players heal teammates; agent health is now broadcast
 DONE
 
+rename lua/ to settings/
+DONE
+
+server forces client disconnect if received invalid packet data
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -707,7 +713,6 @@ send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
-record forced disconnect of client due to invalid packet data
 
 == GENERAL ==
 get screenshots working in osx
@@ -718,15 +723,11 @@ put spawners back in
 
 option to hide name
 
-rename lua/ to settings/
-
 get rid of nanite feeding
 drop chips from enemies
 chips go directly into nanite chip slot
 change nanite texture to remove graphic
 add labels to the widgets
-
-disconnect client if received invalid packet
 
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
