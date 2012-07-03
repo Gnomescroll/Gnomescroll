@@ -12,6 +12,8 @@ namespace ItemParticle
 #if DC_CLIENT
 inline void item_particle_create_StoC::handle()
 {
+    GS_ASSERT(id != NULL_PARTICLE);
+    if (id == NULL_PARTICLE) return;
     create_item_particle(id, item_type, x,y,z,mx,my,mz);
 }
 
@@ -32,8 +34,7 @@ inline void item_particle_state_StoC::handle()
 inline void item_particle_picked_up_StoC::handle()
 {
     if (agent_id == ClientState::playerAgent_state.agent_id)
-    {
-        // only play this sound once per frame. sometimes you pick up multiple items in a frame
+    {	// only play this sound once per frame. sometimes you pick up multiple items in a frame
         // and the gain spikes due to multiple plays (not to mention hogs buffers)
         static int pickup_sound_frame = 0;
         if (pickup_sound_frame != ClientState::frame_id)
@@ -52,4 +53,4 @@ inline void item_particle_state_StoC::handle() {}
 inline void item_particle_picked_up_StoC::handle() {}
 #endif
 
-}
+}	// ItemParticle

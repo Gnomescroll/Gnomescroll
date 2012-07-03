@@ -73,5 +73,4 @@ class item_particle_picked_up_StoC: public FixedSizeReliableNetPacketToClient<it
         inline void handle();
 };
 
-
-}
+}	// ItemParticle

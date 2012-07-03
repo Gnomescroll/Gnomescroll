@@ -6,6 +6,29 @@
 
 #include <physics/verlet_particle.hpp>
 
+/*
+ *
+    instead of getting picked up directly:
+	assign target agent
+	* the ttl should be reset to a fixed max lifespan here
+
+	will need to do item splits in the check_item_pickups method
+	
+	the "picked_up" packet will be sent when the target is decided
+	* client sets target
+	
+	both client and server will apply the same tick method
+	and advance the item towards the player
+	
+	in the server, if close enough to the target, or ttl=0,
+	die
+	
+	the client will play the sound for picking up when it
+	receives a destroy() packet for an item that is 
+	targeting the player's agent
+* 
+*/
+
 namespace ItemParticle
 {
 
@@ -23,6 +46,9 @@ class ItemParticle //: public VerletComponent
 
         int id;
         int item_type;
+        
+        int target_agent; // when being picked up
+        
         #if DC_SERVER
         ItemID item_id;
         int broadcast_tick;

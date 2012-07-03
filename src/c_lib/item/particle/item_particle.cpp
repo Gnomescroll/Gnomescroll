@@ -144,6 +144,7 @@ void ItemParticle::picked_up(int agent_id)
 ItemParticle::ItemParticle(int id) :
     id(id),
     item_type(NULL_ITEM_TYPE),
+    target_agent(NO_AGENT),
     #if DC_SERVER
     item_id(NULL_ITEM),
     pickup_prevention(0),
