@@ -162,9 +162,6 @@ void Vbo_map::prep_frustrum_vertices()
 
         int index = 32*xj +xi;
 
-        //int min = _get_frustum_min(xi,xj);
-        //int max = _get_frustum_max(xi,xj);
-
         int min = vbo_frustrum_min[index];
         int max = vbo_frustrum_max[index];
 
@@ -175,7 +172,6 @@ void Vbo_map::prep_frustrum_vertices()
             max = 0;
         }
         else
-
         {
             GS_ASSERT(min <= 8);
             GS_ASSERT(max <= 8);

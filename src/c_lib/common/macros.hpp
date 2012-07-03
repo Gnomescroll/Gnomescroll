@@ -18,3 +18,25 @@ if(p == NULL) \
 fprintf (stderr, "ASSERT_NOT_NULL: %s error: %s, line %d \n", __func__, __FILE__, __LINE__); \
 return; \
 }
+
+
+#ifdef __GNUC__
+#define ALWAYS_INLINE inline __attribute__((__always_inline__))
+#else
+#define ALWAYS_INLINE __forceinline
+#endif
+
+
+
+#ifdef __GNUC__
+#define ALWAYS_INLINE_OPTIMIZED inline __attribute__((__always_inline__, ))
+#else
+#define ALWAYS_INLINE __forceinline
+#endif
+
+/*
+#else
+#define ALWAYS_INLINE inline
+#endif
+#endif
+*/
