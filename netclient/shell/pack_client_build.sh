@@ -8,9 +8,9 @@ mkdir $f
 cp run $f/gnomescroll
 cp *.pyc $f/
 cp -R media $f/
-mkdir $f/lua
-cp ./lua/settings.lua $f/lua/settings.lua
-cp ./lua/lua_library.lua $f/lua/lua_library.lua
+mkdir $f/settings
+cp ./settings/settings.lua $f/settings/settings.lua
+cp ./settings/lua_library.lua $f/settings/lua_library.lua
 mkdir $f/screenshot
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/

@@ -10,16 +10,20 @@ struct _ENetHost;
 extern struct _ENetHost* server_host;
 extern struct _ENetHost* client_host;
 
-#ifdef DC_SERVER
+#if DC_SERVER
 namespace NetServer
 {
+
 void init_server(int a, int b, int c, int d, int port);
 void dispatch_network_events() GNOMESCROLL_API;
 void flush_to_net() GNOMESCROLL_API;
+
+void kill_client(ENetPeer* peer);
+
 }
 #endif
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 namespace NetClient
 {
 

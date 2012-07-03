@@ -36,10 +36,8 @@ bool is_valid_chat_message(char* msg)
 	GS_ASSERT(msg != NULL);
 	if (msg == NULL) return false;
 	
-    int len = strlen(msg);
-    if (!len) return false;
-    if (msg[0] == '/')
-        return false;
+	if (msg[0] == '\0') return false;	// empty
+    if (msg[0] == '/') return false;	// chat command
 
     char c;
     int i=0;

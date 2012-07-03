@@ -12,7 +12,7 @@ const int NORTH_STAR_TYPE = 16;
 GLuint star_sheet = 0;
 
 struct STAR* star_list = NULL;
-int star_num = 0;
+int star_num = 1024;
 
 // glsl
 class SHADER star_shader;
@@ -74,12 +74,13 @@ void init_texture()
 
 void generate_sky()
 {
-    const int N = 1024;
-    star_list = new STAR[N];
+	GS_ASSERT(star_num > 0);
+	if (star_num <= 0) return;
+    star_list = new STAR[star_num];
 
     float r = 256.0f;
 
-    for(int i=0; i < N-1; i++)
+    for(int i=0; i < star_num-1; i++)
     {
         STAR s;
 
@@ -124,9 +125,9 @@ void generate_sky()
 	s.tx_max = 1.0f;
 	s.ty_min = 0.5f;
 	s.ty_max = 1.0f;
-	star_list[N-1] = s;
+	star_list[star_num-1] = s;
 
-    star_num = N;
+    star_num = star_num;
 }
 
 void init()
@@ -156,7 +157,7 @@ void pack_vertex_list()
     float cy = p.y; 
     float cz = p.z; 
 
-    for(int i=0; i<star_num; i++)
+    for(int i=0; i<star_num-1; i++)
     {
         Vec3 v;
         v.x = star_list[i].x + cx;
@@ -178,11 +179,6 @@ void pack_vertex_list()
             model_view_matrix[9]*scale
         );
 
-		// align the star to the point that it was created at
-		// only matters for the north star
-		v = vec3_sub(v, up);
-		v = vec3_sub(v, right);
-
         Vec3 p = vec3_sub(v, vec3_add(right, up));
         star_vlist->push_vertex(p, star_list[i].tx_min,star_list[i].ty_max);
 
@@ -195,6 +191,47 @@ void pack_vertex_list()
         p = vec3_add(v, vec3_sub(right, up));
         star_vlist->push_vertex(p, star_list[i].tx_min,star_list[i].ty_min);
     }
+    
+    // north star
+    STAR s = star_list[star_num-1];
+    Vec3 v;
+    v.x = s.x + cx;
+    v.y = s.y + cy;
+    v.z = s.z + cz;
+    
+    float scale = s.size / 2.0f;
+
+	Vec3 up = vec3_init(
+		model_view_matrix[0]*scale,
+		model_view_matrix[4]*scale,
+		model_view_matrix[8]*scale
+	);
+	Vec3 right = vec3_init(
+		model_view_matrix[1]*scale,
+		model_view_matrix[5]*scale,
+		model_view_matrix[9]*scale
+	);
+
+	// align the star to the point that it was created at
+	v = vec3_sub(v, up);
+	v = vec3_sub(v, right);
+
+	Vec3 pt1 = vec3_sub(v, vec3_add(right, up));
+	Vec3 pt2 = vec3_add(v, vec3_sub(up, right));
+	Vec3 pt3 = vec3_add(v, vec3_add(up, right));
+	Vec3 pt4 = vec3_add(v, vec3_sub(right, up));
+	
+    if (
+		!point_fulstrum_test2(pt1.x, pt1.y, pt1.z) &&
+		!point_fulstrum_test2(pt2.x, pt2.y, pt2.z) &&
+		!point_fulstrum_test2(pt3.x, pt3.y, pt3.z) &&
+		!point_fulstrum_test2(pt4.x, pt4.y, pt4.z)
+	) return;
+
+	star_vlist->push_vertex(pt1, s.tx_min,s.ty_max);
+	star_vlist->push_vertex(pt2, s.tx_max,s.ty_max);
+	star_vlist->push_vertex(pt3, s.tx_max,s.ty_min);
+	star_vlist->push_vertex(pt4, s.tx_min,s.ty_min);
 }
 
 void prep_skybox()

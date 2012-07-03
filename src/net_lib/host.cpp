@@ -39,7 +39,7 @@ void init_network()
 
 ENetAddress address;
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 namespace NetClient
 {
@@ -87,11 +87,10 @@ static void client_connect(ENetEvent* event)
     NetClient::Server.connected = 1;
 
     printf("Client connected with server \n");
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     ClientState::on_connect();
     #endif
 }
-
 
 //client disconnect event
 static void client_disconnect(ENetEvent* event)
@@ -115,7 +114,7 @@ static void client_disconnect(ENetEvent* event)
     NetClient::Server.client_id = -1;
 
     printf("Client disconnected from server\n");
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     ClientState::on_disconnect();
     #endif
 }
@@ -248,7 +247,7 @@ void client_dispatch_network_events()
             enet_packet_destroy (event.packet);
             break;
         }
-    }
+    }    
 }
 
 void flush_to_net()
@@ -260,7 +259,7 @@ void flush_to_net()
 }
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 namespace NetServer
 {
@@ -321,6 +320,7 @@ void dispatch_network_events()
 
     int index = 0;
     int timeout = 1;
+    int ret = 0;
     while (enet_host_service (server_host, &event, timeout) > 0)
     {
         switch (event.type)
@@ -356,8 +356,8 @@ void dispatch_network_events()
             {
                 case 0:
                     //printf("server received channel 0 message \n");
-                    index= 0;
-                    process_packet_messages(
+                    index = 0;
+                    ret = process_packet_messages(
                         (char*) event.packet -> data, 
                         &index, 
                         event.packet->dataLength, 
@@ -392,6 +392,13 @@ void dispatch_network_events()
            
         }
     }
+    
+    if (ret == -2 || ret == -3)
+    {	// invalid data in packets, disconnect client
+		int client_id = ((class NetPeer*)event.peer->data)->client_id;
+		printf("Force disconnecting client %d for sending bad packets.\n", client_id);
+		kill_client(event.peer);
+	}
 }
 
 static void client_connect(ENetEvent* event)
@@ -506,7 +513,7 @@ static void client_disconnect(ENetEvent* event)
     GS_ASSERT(user != NULL);
     if (user != NULL)
     {
-        class Session* session = user->get_current_session(npm->client_id);
+        class Session* session = user->get_latest_session(npm->client_id);
         GS_ASSERT(session != NULL);
         if (session != NULL) end_session(session);
     }
@@ -524,6 +531,16 @@ static void client_disconnect(ENetEvent* event)
     /* Reset the peer's client information. */
 }
 
+void kill_client(ENetPeer* peer)
+{
+	GS_ASSERT(peer != NULL);
+	if (peer == NULL) return;
+	enet_peer_disconnect(peer, 1);
+	
+	// log it
+	int client_id = ((class NetPeer*)peer->data)->client_id;
+	NetServer::users->record_client_force_disconnect(client_id);
+}
 
 void flush_to_net()
 {

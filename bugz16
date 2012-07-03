@@ -625,6 +625,34 @@ DONE
 Color agent name based on health
 DONE
 
+fix base spawning
+DONE
+
+decrease pickup delay time after throwing to 3 seconds from 4
+DONE
+
+add fist sprite to weapon hud animation
+DONE
+
+fix server crash in container module (missing NULL check) [did not fix root cause]
+DONE
+
+fix analytics session lookup
+DONE
+
+add special error handling for when non-fuel ends up in fuel slot
+--should never occur, i think its a buffer overwrite
+DONE
+
+add possible fixes for remaining asserts in build 22 logs
+DONE
+
+fix chat logging (no NUL byte written)
+DONE
+
+players heal teammates; agent health is now broadcast
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -672,20 +700,21 @@ alt tab doesnt work in fullscreen (on linux at least)
 palette for smelter on/off
 
 == ITEMS ==
-decrease pickup delay time after throwing
+Binoculars
 
 == BLOCKS/TERRAIN ==
 send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
+record forced disconnect of client due to invalid packet data
 
 == GENERAL ==
+get screenshots working in osx
+
 put spawners back in
     -- needs better UI
     -- needs crafting path
-
-add right click to heal teammate with health pack
 
 option to hide name
 
@@ -697,10 +726,10 @@ chips go directly into nanite chip slot
 change nanite texture to remove graphic
 add labels to the widgets
 
+disconnect client if received invalid packet
+
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
-
-base is not spawning on top
 
 in free camera, when agent is shot, model flickers
