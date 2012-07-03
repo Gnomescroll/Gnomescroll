@@ -620,7 +620,6 @@ void update_toolbelt_items()
             broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
             broadcast_agent_set_active_item_packet(agent_id, item_type);
         }
-        
     }
 }
 
