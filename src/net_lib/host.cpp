@@ -248,7 +248,7 @@ void client_dispatch_network_events()
             enet_packet_destroy (event.packet);
             break;
         }
-    }
+    }    
 }
 
 void flush_to_net()
@@ -321,6 +321,7 @@ void dispatch_network_events()
 
     int index = 0;
     int timeout = 1;
+    int ret = 0;
     while (enet_host_service (server_host, &event, timeout) > 0)
     {
         switch (event.type)
@@ -356,8 +357,8 @@ void dispatch_network_events()
             {
                 case 0:
                     //printf("server received channel 0 message \n");
-                    index= 0;
-                    process_packet_messages(
+                    index = 0;
+                    ret = process_packet_messages(
                         (char*) event.packet -> data, 
                         &index, 
                         event.packet->dataLength, 
@@ -392,6 +393,13 @@ void dispatch_network_events()
            
         }
     }
+    
+    if (ret == -2 || ret == -3)
+    {	// invalid data in packets, disconnect client
+		int client_id = ((class NetPeer*)event.peer->data)->client_id;
+		printf("Force disconnecting client %d for sending bad packets.\n", client_id);
+		enet_peer_reset(event.peer);
+	}
 }
 
 static void client_connect(ENetEvent* event)
