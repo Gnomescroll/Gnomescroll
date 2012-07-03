@@ -39,7 +39,7 @@ void init_network()
 
 ENetAddress address;
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 namespace NetClient
 {
@@ -87,11 +87,10 @@ static void client_connect(ENetEvent* event)
     NetClient::Server.connected = 1;
 
     printf("Client connected with server \n");
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     ClientState::on_connect();
     #endif
 }
-
 
 //client disconnect event
 static void client_disconnect(ENetEvent* event)
@@ -115,7 +114,7 @@ static void client_disconnect(ENetEvent* event)
     NetClient::Server.client_id = -1;
 
     printf("Client disconnected from server\n");
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     ClientState::on_disconnect();
     #endif
 }
@@ -260,7 +259,7 @@ void flush_to_net()
 }
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 namespace NetServer
 {
@@ -398,7 +397,7 @@ void dispatch_network_events()
     {	// invalid data in packets, disconnect client
 		int client_id = ((class NetPeer*)event.peer->data)->client_id;
 		printf("Force disconnecting client %d for sending bad packets.\n", client_id);
-		enet_peer_reset(event.peer);
+		kill_client(event.peer);
 	}
 }
 
@@ -532,6 +531,12 @@ static void client_disconnect(ENetEvent* event)
     /* Reset the peer's client information. */
 }
 
+void kill_client(ENetPeer* peer)
+{
+	GS_ASSERT(peer != NULL);
+	if (peer == NULL) return;
+	enet_peer_disconnect(peer, 1);
+}
 
 void flush_to_net()
 {
