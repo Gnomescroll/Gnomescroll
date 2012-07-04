@@ -857,7 +857,7 @@ void surface_veins()
 {
     int n_tiles = 1;
     //int tiles[n_tiles];
-    MALLOX(int, tile, n_tiles); //type, name, size
+    MALLOX(int, tiles, n_tiles); //type, name, size
 
     tiles[0] = t_map::get_cube_id((char*)"methane_ice");
     //tiles[0] = t_map::get_cube_id((char*)"methane_1");
