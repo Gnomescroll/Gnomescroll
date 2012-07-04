@@ -687,6 +687,8 @@ texture color problem in OSX -- for blocks and for items
 Improve Hud Weapon sprites animations
 textured voxels / isometric blocks should use full palette info, instead of only one side
 better font
+use backface culling on hud item rendered voxels and re-enable the depth test
+
 
 == SOUND ==
 improve digging sounds
