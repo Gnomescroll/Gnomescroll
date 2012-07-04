@@ -659,6 +659,10 @@ DONE
 server forces client disconnect if received invalid packet data
 DONE
 
+item pickup flies to player
+DONE
+
+
 ----------------------
 
 == BUILD ==
@@ -679,8 +683,8 @@ some boxes arent getting destination correctly -- just jumping around with state
 glsl colored/textured voxels -- add normal lighting
 texture color problem in OSX -- for blocks and for items
 Improve Hud Weapon sprites animations
-make item pickup fly to player
 textured voxels / isometric blocks should use full palette info, instead of only one side
+better font
 
 == SOUND ==
 improve digging sounds
@@ -715,16 +719,12 @@ send block health on request from agent
 == ANALYTICS ==
 disable buffering on chat log
 
+== UI/UX ==
+add labels to the hud widgets
+
 == GENERAL ==
 get screenshots working in osx
-
 option to hide name
-
-get rid of nanite feeding
-drop chips from enemies
-chips go directly into nanite chip slot
-change nanite texture to remove graphic
-add labels to the widgets
 
 == MECHANISMS ==
 Spawner/Control Points
@@ -758,6 +758,13 @@ A: we can make it 1x1 but treat it as an object/model. it will render at its loc
     as a block, it will be set to invisible so no texture is rendered.
     Solid must also be false, so hitscan can pass through.
  
+----------
+get rid of nanite feeding
+drop chips from enemies, blocks
+chips go directly into nanite chip slot
+change nanite texture to remove graphic
+
+
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
