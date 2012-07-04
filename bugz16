@@ -713,13 +713,10 @@ send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
+disable buffering on chat log
 
 == GENERAL ==
 get screenshots working in osx
-
-put spawners back in
-    -- needs better UI
-    -- needs crafting path
 
 option to hide name
 
@@ -729,6 +726,38 @@ chips go directly into nanite chip slot
 change nanite texture to remove graphic
 add labels to the widgets
 
+== MECHANISMS ==
+Spawner/Control Points
+    -- User builds them like the old spawners
+    -- Requires:
+        Craft path
+        Entity modifications
+        
+All control points draw png border around them.
+Control point colors all cubes in radius a certain hue, for player's own 
+control point.
+
+Inside control zone, nobody except player can:
+Add block
+Damage/remove block
+Open chests
+Destroy the control point
+
+Any player can choose to use the control point as their spawn zone.
+When the player creates his control point he is automatically assigned to it. [change this once players are familiar with the mechanism / we have better UI feedback?]
+The player right-clicks to set his control point spawner.
+On the map, B is drawn where his spawner is assigned.
+
+The starting base is an unowned control point. Nobody can own this.
+
+A player can destroy the control point he owns.  The control point drops
+a control point when destroyed.  The color tint must be reset, and the border must not draw.
+
+Q: Should control points be another block type, or should it be a model?
+A: we can make it 1x1 but treat it as an object/model. it will render at its location
+    as a block, it will be set to invisible so no texture is rendered.
+    Solid must also be false, so hitscan can pass through.
+ 
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
