@@ -24,7 +24,9 @@ Agent_state* lock_agent_target(
 
     //printf("found %d agents in range\n", agent_list->n_filtered);
 
-    int chosen[agent_list->n_filtered];
+    //int chosen[agent_list->n_filtered];
+    MALLOX(int, chosen, agent_list->n_filtered); //type, name, size
+
     if (random)
     {
         for (int i=0; i<agent_list->n_filtered; i++)

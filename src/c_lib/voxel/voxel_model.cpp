@@ -528,7 +528,9 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability)
 {   // ray cast from source to each body part center (shuffled)
-    int part_numbers[this->n_parts];
+    //int part_numbers[this->n_parts];
+    MALLOX(int, part_numbers, this->n_parts); //type, name, size
+
     for (int i=0; i<this->n_parts; i++)
         part_numbers[i] = i;
     shuffle_int_array(part_numbers, this->n_parts);

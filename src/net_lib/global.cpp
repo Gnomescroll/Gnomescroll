@@ -48,7 +48,9 @@ void init_globals()
 
     // open sessions log file
     const char sessions_fmt[] = "./log/sessions.log";
-    char fn_str[sizeof(sessions_fmt) + count_digits(DC_VERSION) + sizeof(time_str) + 1];
+    //char fn_str[sizeof(sessions_fmt) + count_digits(DC_VERSION) + sizeof(time_str) + 1];
+    MALLOX(char, fn_str, sizeof(sessions_fmt) + count_digits(DC_VERSION) + sizeof(time_str) + 1); //type, name, size
+
     sprintf(fn_str, sessions_fmt, DC_VERSION, time_str);
     session_log_file = fopen(fn_str, "a");
     setvbuf(session_log_file, NULL, _IOLBF, 256);

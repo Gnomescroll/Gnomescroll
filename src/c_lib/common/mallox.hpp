@@ -12,13 +12,15 @@ return; \
 //char *a = (char *)_alloca(n);
 
 #ifndef __MSVC__
-#define MALLOX(type, array_name, size) type array_name[size];
+//#define MALLOX(type, array_name, size) type array_name[size];
+#define MALLOX(type, array_name, size) type* array_name = (type*) alloca(size);
 #else
 #define MALLOX(type, array_name, size) type* array_name = (type*) _alloca(size);
 #endif
 
+/*
 // define MALLOX(type, array_name, size) \
 // static type* array_name = NULL\
 // static array_name##__max int = 0;\
 // static array_name##__index int = 0; \
-
+*/
