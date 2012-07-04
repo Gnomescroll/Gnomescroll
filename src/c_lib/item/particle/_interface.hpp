@@ -27,8 +27,6 @@ class ItemParticle* create_item_particle(
 
 #if DC_SERVER
 
-//void destroy_silently(int particle_id);
-
 class ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
     float x, float y, float z, 

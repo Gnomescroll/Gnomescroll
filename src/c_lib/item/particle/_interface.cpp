@@ -90,19 +90,6 @@ ItemParticle* create_item_particle(
 #endif
 
 #if DC_SERVER
-//void destroy_silently(int particle_id)
-//{
-    //#if DC_SERVER
-    //GS_ASSERT(particle_id != NULL_PARTICLE);
-    //ItemParticle* particle = item_particle_list->get(particle_id);
-    //GS_ASSERT(particle != NULL);
-    //if (particle == NULL) return;
-    //Item::Item* item = Item::get_item(particle->item_id);
-    //if (item != NULL) item->location = IL_NOWHERE;
-    //#endif
-    //item_particle_list->destroy(particle_id);
-//}
-
 ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
     float x, float y, float z, 
@@ -324,19 +311,13 @@ void check_item_pickups()
 
                         if (stack_space >= stack_size)
                         {   // full, final merge
-                            //Item::merge_item_stack(item->id, slot_item->id);
                             stack_size = 0;
-                            
-                            // MAKE THIS ITEM HERE FLY
                             item_particle->picked_up(agent->id);
                         }
                         else
                         {
-                            //Item::merge_item_stack(item->id, slot_item->id, stack_space);
-                            //Item::send_item_state(slot_item->id);
                             stack_size -= stack_space;
                             GS_ASSERT(stack_size > 0);
-                            
                             // CREATE NEW ITEM HERE, MAKE IT FLY
                             split_item_particle(item, item_particle, item_type, stack_space, agent->id);
                         }
@@ -346,46 +327,29 @@ void check_item_pickups()
                     
                     if (stack_size <= 0)
                     {	// source item was fully consumed
-                        //was_picked_up = true;
-                        //broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                        //Item::destroy_item(item->id);
 						item_altered = true;
                         item_remaining = false;
                     }
                     else if (starting_stack_size != stack_size)
                     {   // source item was only partially consumed
                         was_picked_up = true;
-                        //broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                        //Item::send_item_state(item->id); // broadcast modified source item's state
                         item_altered = true;
                         item_remaining = true;
                     }
                 }
                 else
                 {   // empty slot found, put it there
-                
 					// MAKE ITEM FLY HERE
-                
                     was_picked_up = true;
                     item_particle->picked_up(agent->id);
-                    //broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                    //ItemContainer::transfer_particle_to_container(item->id, item_particle->id, container_id, slot);
                     item_remaining = false;
                 }
             }
             else
             {   // stack
-            
 				// MAKE ITEM FLY HERE
 				item_particle->picked_up(agent->id);
-            
-                //broadcast_particle_item_picked_up(agent->id, item_particle->id);
                 was_picked_up = true;
-                //ItemID slot_item_id = container->get_item(slot);
-                //GS_ASSERT(slot_item_id != NULL_ITEM);
-                //Item::merge_item_stack(item->id, slot_item_id);
-                //Item::destroy_item(item->id);
-                //Item::send_item_state(slot_item_id);
                 item_remaining = false;
             }
         }
@@ -428,16 +392,11 @@ void check_item_pickups()
                         if (stack_space >= stack_size)
                         {   // full, final merge
                             stack_size = 0;
-                        
 							// MAKE ITEM FLY HERE
 							item_particle->picked_up(agent->id);
-                            //Item::merge_item_stack(item->id, slot_item->id);
                         }
                         else
-                        {
-							// MAKE ITEM FLY HERE
-                            //Item::merge_item_stack(item->id, slot_item->id, stack_space);
-                            //Item::send_item_state(slot_item->id);
+                        {	// MAKE ITEM FLY HERE
                             stack_size -= stack_space;
                             GS_ASSERT(stack_size > 0);
                             split_item_particle(item, item_particle, item_type, stack_space, agent->id);
@@ -448,41 +407,26 @@ void check_item_pickups()
                     
                     if (stack_size <= 0)
                     {
-                        //if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                        //Item::destroy_item(item->id);
 						item_altered = true;
                         item_remaining = false;
                     }
                     else if (starting_stack_size != stack_size)
                     {   // source item was only partially consumed
                         if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                        //Item::send_item_state(item->id); // broadcast modified source item's state
                         item_altered = true;
                         item_remaining = true;
                     }
                 }
                 else
                 {   // empty slot found, put it there
-                
 					// MAKE ITEM FLY HERE
-                
                     item_particle->picked_up(agent->id);
-                    //if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                    //ItemContainer::transfer_particle_to_container(item->id, item_particle->id, container_id, slot);
                 }
             }
             else
             {   // stack
-            
 				// MAKE ITEM FLY HERE
 				item_particle->picked_up(agent->id);
-				
-                //if (!was_picked_up) broadcast_particle_item_picked_up(agent->id, item_particle->id);
-                //ItemID slot_item_id = container->get_item(slot);
-                //GS_ASSERT(slot_item_id != NULL_ITEM);
-                //Item::merge_item_stack(item->id, slot_item_id);
-                //Item::destroy_item(item->id);
-                //Item::send_item_state(slot_item_id);
             }
         }
 
