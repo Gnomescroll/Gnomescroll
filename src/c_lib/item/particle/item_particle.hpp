@@ -32,6 +32,15 @@
 namespace ItemParticle
 {
 
+// after pickup initiated, max ttl before being considered picked up
+const int ITEM_PARTICLE_PICKED_UP_TTL = 30 * 3;
+// momentum for flying at agent
+const int ITEM_PARTICLE_PICKUP_MOMENTUM = 2.0f;
+// distance where pickup initiates
+const float ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE = 1.5f;
+// distance where initiated pickup will become final
+const float ITEM_PARTICLE_PICKUP_END_DISTANCE = 0.05f;
+
 #if DC_CLIENT
 extern GLuint ItemSheetTexture;
 
@@ -49,11 +58,6 @@ class ItemParticle //: public VerletComponent
         
         int target_agent; // when being picked up
         
-        #if DC_SERVER
-        ItemID item_id;
-        int broadcast_tick;
-        #endif
-        
         // render stuff
         #if DC_CLIENT
         // config
@@ -63,15 +67,17 @@ class ItemParticle //: public VerletComponent
         void draw();
         #endif
 
-        // pickup stuff
         #if DC_SERVER
-        int pickup_prevention;
-        bool was_picked_up;
+        int ttl;
+        ItemID item_id;
+        int broadcast_tick;
+
+        int pickup_prevention;	// timer lock against auto pickup
+        bool get_picked_up;
         
-        void picked_up(int agent_id);
         bool can_be_picked_up()
         {
-            return (this->pickup_prevention <= 0);
+            return (this->pickup_prevention <= 0 && this->target_agent == NO_AGENT);
         }
         void lock_pickup()
         {
@@ -79,16 +85,10 @@ class ItemParticle //: public VerletComponent
         }
         #endif
 
-        int ttl;
-        void tick()
-        {
-            verlet.bounce_box(ITEM_PARTICLE_RADIUS);
-            this->ttl--;
-            if (this->verlet.position.z < OBJECT_DEPTH_MAX) this->ttl = 0;
-            #if DC_SERVER
-            this->pickup_prevention--;
-            #endif
-        }
+        void picked_up(int agent_id);
+		void pickup_cancelled();
+		
+        void tick();
 
         void set_state(float x, float y, float z, float mx, float my, float mz)
         {
@@ -173,25 +173,6 @@ void ItemParticle_list::draw()
         }
     glEnd();
     #endif
-}
-
-void ItemParticle_list::tick()
-{
-    ItemParticle* ip;
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        ip = this->a[i];
-
-        ip->tick();
-        #if DC_SERVER
-        if (ip->ttl <= 0)
-        {
-            ip->die();
-            this->destroy(ip->id);
-        }
-        #endif
-    }
 }
 
 }

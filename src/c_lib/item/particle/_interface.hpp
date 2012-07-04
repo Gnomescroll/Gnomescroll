@@ -37,6 +37,7 @@ class ItemParticle* create_item_particle(
 
 // create Item and ItemParticle
 class Item::Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz);
+class Item::Item* create_item_particle(int item_type, Vec3 position, Vec3 momentum);
 
 void broadcast_particle_item_create(int particle_id);
 void send_particle_item_create_to_client(int particle_id, int client_id);
@@ -44,6 +45,7 @@ void send_particle_items_to_client(int client_id);
 void broadcast_particle_item_state(int particle_id);
 void broadcast_particle_item_destroy(int particle_id);
 void broadcast_particle_item_picked_up(int agent_id, int particle_id);
+void broadcast_particle_item_pickup_cancelled(int particle_id);
 
 void check_item_pickups();
 void throw_agent_item(int agent_id, ItemID item_id);

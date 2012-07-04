@@ -241,6 +241,7 @@ void RegisterMessages()
     ItemParticle::item_particle_destroy_StoC::register_client_packet();
     ItemParticle::item_particle_state_StoC::register_client_packet();
     ItemParticle::item_particle_picked_up_StoC::register_client_packet();
+    ItemParticle::item_particle_pickup_cancelled_StoC::register_client_packet();
 
     /*
         Map Messages

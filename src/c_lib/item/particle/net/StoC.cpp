@@ -21,29 +21,54 @@ inline void item_particle_destroy_StoC::handle()
 {
     GS_ASSERT(id != NULL_PARTICLE);
     if (id == NULL_PARTICLE) return;
-    destroy(id);
-}
-
-inline void item_particle_state_StoC::handle()
-{
-    ItemParticle* particle = item_particle_list->get(id);
+    
+	// if particle destroyed while targeting agent (i.e. it is being
+	// picked up by agent) then assume agent picked it up
+    ItemParticle* particle = get(id);
+    GS_ASSERT(particle != NULL);
     if (particle == NULL) return;
-    particle->set_state(x,y,z,mx,my,mz);
-}
-
-inline void item_particle_picked_up_StoC::handle()
-{
-    if (agent_id == ClientState::playerAgent_state.agent_id)
-    {	// only play this sound once per frame. sometimes you pick up multiple items in a frame
-        // and the gain spikes due to multiple plays (not to mention hogs buffers)
+    if (particle->target_agent != NO_AGENT
+     && particle->target_agent == ClientState::playerAgent_state.agent_id)
+    {
         static int pickup_sound_frame = 0;
         if (pickup_sound_frame != ClientState::frame_id)
         {
             pickup_sound_frame = ClientState::frame_id;
             Sound::pickup_item();
         }
-    }
+	}
+	
+    destroy(id);
 }
+
+inline void item_particle_state_StoC::handle()
+{
+    ItemParticle* particle = get(id);
+    if (particle == NULL) return;
+    particle->set_state(x,y,z,mx,my,mz);
+}
+
+inline void item_particle_picked_up_StoC::handle()
+{
+	GS_ASSERT(id != NULL_PARTICLE);
+	if (id == NULL_PARTICLE) return;
+	ItemParticle* particle = get(id);
+	GS_ASSERT(particle != NULL);
+	if (particle == NULL) return;
+	
+	particle->picked_up(agent_id);
+}
+
+inline void item_particle_pickup_cancelled_StoC::handle()
+{
+	GS_ASSERT(id != NULL_PARTICLE);
+	if (id == NULL_PARTICLE) return;
+	ItemParticle* particle = get(id);
+	GS_ASSERT(particle != NULL);
+	if (particle == NULL) return;
+	particle->pickup_cancelled();
+}
+
 #endif
 
 #if DC_SERVER
@@ -51,6 +76,7 @@ inline void item_particle_create_StoC::handle() {}
 inline void item_particle_destroy_StoC::handle() {}
 inline void item_particle_state_StoC::handle() {}
 inline void item_particle_picked_up_StoC::handle() {}
+inline void item_particle_pickup_cancelled_StoC::handle() {}
 #endif
 
 }	// ItemParticle
