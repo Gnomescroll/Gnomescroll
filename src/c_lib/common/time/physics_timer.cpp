@@ -114,10 +114,12 @@ int _GET_TICK() {
         c_tick++;
         _last_tick = _ti;
         return 1;
-    } else {
-
+    } else 
+    {
         return 0;
     }
+
+    return 0;
 }
 
 int _GET_MS_TIME() 

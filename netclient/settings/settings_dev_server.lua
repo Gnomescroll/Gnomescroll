@@ -1,6 +1,6 @@
 
 
-package.path = "lua/?.lua;lua/block/?.lua;?.lua"
+package.path = "settings/?.lua;?.lua"
 
 require("lua_library");
 

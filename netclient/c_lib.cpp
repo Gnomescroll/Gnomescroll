@@ -31,6 +31,7 @@ dont_include_this_file_in_server
 #include <common/compat_al.h>
 #include <common/macros.hpp>
 #include <common/crash_report/stack_trace.hpp>
+#include <common/mallox.hpp>
 
 /* Compression */
 #include <common/compression/miniz.c>
