@@ -2,7 +2,15 @@
 
 #include <stdio.h>
 #include <time.h>
+
+#ifdef __GNUC__
 #include <unistd.h>
+#endif
+
+#ifdef __MSVC__
+#include <Windows.h>
+#include <WinBase.h>
+#endif
 
 #ifdef __MACH__
 #include <mach/clock.h>

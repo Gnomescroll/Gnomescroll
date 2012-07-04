@@ -11,7 +11,7 @@ return; \
 
 //char *a = (char *)_alloca(n);
 
-#if __MSVC__
+#ifndef __MSVC__
 #define MALLOX(type, array_name, size) type array_name[size];
 #else
 #define MALLOX(type, array_name, size) type* array_name = (type*) _alloca(size);
