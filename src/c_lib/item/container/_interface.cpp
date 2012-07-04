@@ -995,8 +995,10 @@ bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     // assemble sorted bench inputs
     // we need them sorted so we can correctly decrement from each item
     int input_count = 0;
-    ItemID inputs[bench->slot_max];
-    int input_types[bench->slot_max];
+    //ItemID inputs[bench->slot_max];
+    //int input_types[bench->slot_max];
+    MALLOX(ItemID, inputs, bench->slot_max); //type, name, size
+    MALLOX(int, input_types, bench->slot_max); //type, name, size
 
     // clear initial state
     for (int i=0; i<bench->slot_max; inputs[i++] = NULL_ITEM);
@@ -1372,7 +1374,9 @@ void update_smelters()
             if (recipe == NULL) continue;
             // consume recipe inputs
             unsigned int max_inputs = smelter->get_max_input_slots();
-            ItemID inputs[max_inputs];
+            //ItemID inputs[max_inputs];
+            MALLOX(ItemID, inputs, max_inputs); //type, name, size
+            
             int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);    // sorted by type
 
             GS_ASSERT(recipe->reagent_num <= n_inputs);
