@@ -9,9 +9,6 @@
     #define __WIN32__
     #define __MSVC__
 
-    #ifdef __GNUC__
-    #endif
-
     #pragma warning(disable: 4244) // possible loss of data
 
     #define WIN32_LEAN_AND_MEAN

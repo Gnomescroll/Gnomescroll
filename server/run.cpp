@@ -1,5 +1,23 @@
-#include "./c_lib/c_lib.cpp"
-#include "./c_lib/main.cpp"
+#ifdef __GNUC__
+#endif
+
+#if __MSVC__
+    #define __attribute__(x)
+    #define __attribute(x)
+    #define __WIN32__
+    #define __MSVC__
+
+    #pragma warning(disable: 4244) // possible loss of data
+
+    #define WIN32_LEAN_AND_MEAN
+    #define NOMINMAX
+
+    #define _CRT_SECURE_NO_DEPRECATE
+    #define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include "c_lib.cpp"
+#include "main.cpp"
 #include <common/lua/lua.hpp>
 
 #include <stdio.h>
