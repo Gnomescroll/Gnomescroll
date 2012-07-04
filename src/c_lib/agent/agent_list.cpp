@@ -290,7 +290,9 @@ Agent_state* random_agent_in_range(const Vec3 position, const float radius)
     if (n == 0) return NULL;
     
     // target random nearby player
-    int chosen[n];
+    //int chosen[n];
+    MALLOX(int, chosen, n); //type, name, size
+
     for (int i=0; i<n; i++)
         chosen[i] = i;
     shuffle_int_array(chosen, n);  // randomize

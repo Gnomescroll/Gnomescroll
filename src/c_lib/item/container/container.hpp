@@ -375,7 +375,9 @@ class ItemContainerSmelter: public ItemContainerInterface
             GS_ASSERT(max_inputs == this->get_max_input_slots());
 
             int n_inputs = 0;
-            int input_types[max_inputs];
+            //int input_types[max_inputs];
+            MALLOX(int, input_types, max_inputs); //type, name, size
+
             for (unsigned int i=0; i<max_inputs; i++)
             {
                 int slot = this->convert_input_slot(i);
