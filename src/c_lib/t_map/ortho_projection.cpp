@@ -42,8 +42,8 @@ void render_ortho()
 
     GL_ASSERT(GL_DEPTH_TEST, true);
 
-    //glShadeModel(GL_FLAT);
-    glShadeModel(GL_SMOOTH);
+    
+    //;
 
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -96,7 +96,7 @@ void render_ortho()
 
     //glEnable(GL_TEXTURE_2D);
 
-    glShadeModel(GL_FLAT);
+    //;
     glDisable(GL_CULL_FACE);
 }
 

@@ -4,23 +4,23 @@
 //always inline
 
 /*
-__attribute((always_inline)); will force gcc to inline
+__attribute__((always_inline)); will force gcc to inline
 */
-static inline void pack_message_id(uint8_t message_id, char* buff, int*buff_n)  __attribute((always_inline));
-static inline void unpack_message_id(uint8_t* message_id, char* buff, int*buff_n)  __attribute((always_inline));
+static inline void pack_message_id(uint8_t message_id, char* buff, int*buff_n)  __attribute__((always_inline));
+static inline void unpack_message_id(uint8_t* message_id, char* buff, int*buff_n)  __attribute__((always_inline));
 
-static inline void pack_float(float* x, char* buff, int*buff_n, bool pack) __attribute((always_inline));
+static inline void pack_float(float* x, char* buff, int*buff_n, bool pack) __attribute__((always_inline));
 
-static inline void pack_32(int32_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
-static inline void pack_u32_t(uint32_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_32(int32_t* x, char* buff, int* buff_n, bool pack) __attribute__((always_inline));
+static inline void pack_u32_t(uint32_t* x, char* buff, int* buff_n, bool pack) __attribute__((always_inline));
 
-static inline void pack_16(int16_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
-static inline void pack_u16(uint16_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_16(int16_t* x, char* buff, int* buff_n, bool pack) __attribute__((always_inline));
+static inline void pack_u16(uint16_t* x, char* buff, int* buff_n, bool pack) __attribute__((always_inline));
 
-static inline void pack_8(int8_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
-static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_8(int8_t* x, char* buff, int* buff_n, bool pack) __attribute__((always_inline));
+static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack) __attribute__((always_inline));
 
-static inline void pack_string(char* str, unsigned int len, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_string(char* str, unsigned int len, char* buff, int* buff_n, bool pack) __attribute__((always_inline));
 //use pack_string
 
 

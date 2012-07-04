@@ -1,0 +1,228 @@
+<HaltingState> I have a GCC project/game with a hierarchy of folders and need to get it imported into MSVC which seems to be hellish, any ideas?
+<Domiiii> HaltingState write a simple program that writes your vcprojx file and filters
+<HaltingState> Domiiii, its xml; oh boy
+<Domiiii> i have something basic in C# that makes it easier for me to add C++ classes to the project (adding a new class in 2 files and writing all the standard boiler plate takes like 2 minutes)
+<Domiiii> HaltingState yes so its easy
+<HaltingState> Domiiii, we have a server and a client application; should those be in same code base? they share source files
+<Domiiii> HaltingState same project, different solution
+<Domiiii> eeh
+<Domiiii> other way around, separate projects in one solution
+<Domiiii> a project is one application or library, a solution puts them all in one context
+<Domiiii> here is my C# code:
+<Domiiii> http://pastebin.com/51jrX9dE
+<RePaste> Domiiii: The paste 51jrX9dE has been moved to http://ideone.com/E3Sl6 (see http://tinyurl.com/yv88ul for why)
+<Domiiii> its of course not perfect
+<Domiiii> but it gets the job done
+<HaltingState> o0o0o thx
+<VaporTrace> never did understand client server on the same machine for other than testing but a lot of my utilities work that way
+
+<Domiiii> HaltingState filters are like virtual folders in your project hierarchy
+<Domiiii> so in order to setup a project, you need to modify the project and the filter file
+
+<Domiiii> what you have to do now, is to read the directory structure and create filters in the same way and copy files over and add them to the filtersd
+
+
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.XPath;
+
+namespace Squishy.CppOrganizer
+{
+	public interface ILogger
+	{
+		void Log(string msg);
+		void Log(string msg, params object[] args);
+	}
+
+	public class VCProjFile
+	{
+		public ILogger Logger { get; set; }
+		private readonly XmlDocument projDoc = new XmlDocument(), filterDoc = new XmlDocument();
+		private XPathNavigator projNav, filterNav;
+		private XmlNamespaceManager projNs;
+		private string nsUri;
+
+		public VCProjFile(ILogger logger)
+		{
+			Logger = logger;
+		}
+
+		public void Load()
+		{
+			projDoc.Load(Config.ProjFile);
+			filterDoc.Load(Config.FilterFile);
+
+			nsUri = projDoc.DocumentElement.Attributes["xmlns"].Value;
+
+			projNs = new XmlNamespaceManager(new NameTable());
+			projNs.AddNamespace("n", nsUri);
+
+			projNav = projDoc.CreateNavigator();
+			filterNav = filterDoc.CreateNavigator();
+		}
+
+		public void Backup(string file)
+		{
+			File.Copy(file, file + Config.BackupExtension, true);
+		}
+
+
+		public void InsertClass(string ns, string className)
+		{
+			var nsPath = NamespaceToPath(ns);
+			var inclName = string.Format("{0}{1}.h", nsPath.Length > 0 ? nsPath + "/" : "", className);
+			var inclFile = string.Format("{0}/{1}", Config.IncludeFolder, inclName);
+			var srcFile = string.Format("{0}/{1}{2}.cpp", Config.SrcFolder, nsPath.Length > 0 ? nsPath + "/" : "", className);
+
+			var includeParent = GetProjParentNode("Include");
+			var srcParent = GetProjParentNode("Compile");
+
+			var includeFilterParent = GetFilterParentNode("Include", Config.IncludeFolder);
+			var srcFilterParent = GetFilterParentNode("Compile", Config.SrcFolder);
+
+			if (includeParent == null || srcParent == null || includeFilterParent == null || srcFilterParent == null)
+			{
+				// TODO: Simply append new item group to file
+				Logger.Log("Could not add class \"{0}\" - Project file needs at least one source and one header file.", className);
+				return;
+			}
+
+			if (EnsureNoFile(inclFile) && EnsureNoFile(srcFile))
+			{
+				Backup(Config.ProjFile);
+				Backup(Config.ProjFile);
+
+				CreateClassIncludeFile(inclFile, includeParent, includeFilterParent, ns, className);
+				CreateClassSrcFile(srcFile, inclName, srcParent, srcFilterParent, ns, className);
+			}
+
+			projDoc.Save(Config.ProjFile);
+			filterDoc.Save(Config.FilterFile);
+		}
+
+		public void CreateClassIncludeFile(string file, XmlElement projParent, XmlElement filterParent, string ns, string className)
+		{
+			using (var writer = new StreamWriter(file))
+			{
+				var nsParts = (Config.DefaultNamespace + "." + ns).Split(new [] {'.'}, StringSplitOptions.RemoveEmptyEntries);
+				var guard = (ns.Replace('.', '_') + "_" + className + "_H").ToUpper();
+				writer.WriteLine("#ifndef " + guard);
+				writer.WriteLine("#define " + guard);
+				writer.WriteLine();
+
+				var tabs = "";
+				foreach (var part in nsParts)
+				{
+					writer.WriteLine("{0}namespace {1}", tabs, part);
+					writer.WriteLine(tabs + "{");
+					tabs += "    ";
+				}
+
+				writer.WriteLine(tabs + "class " + className);
+				writer.WriteLine(tabs + "{");
+				writer.WriteLine(tabs + "private:");
+				writer.WriteLine();
+				writer.WriteLine(tabs + "public:");
+				writer.WriteLine();
+				writer.WriteLine(tabs + "};");
+
+				for (int index = 0; index < nsParts.Length; index++)
+				{
+					tabs = tabs.Substring(0, tabs.Length - 4);
+					writer.WriteLine(tabs + "}");
+				}
+				writer.WriteLine("#endif");
+			}
+
+			AddNode(projDoc, projParent, "Include", file);
+			AddNode(filterDoc, filterParent, "Include", file, CreateFilterNode(Config.IncludeFolder));
+
+			Logger.Log("File added: " + file);
+		}
+
+		public void CreateClassSrcFile(string file, string inclName, XmlElement projParent, XmlElement filterParent, string ns, string className)
+		{
+			using (var writer = new StreamWriter(file))
+			{
+				writer.WriteLine("#include \"{0}\"", inclName);
+			}
+
+			AddNode(projDoc, projParent, "Compile", file);
+			AddNode(filterDoc, filterParent, "Compile", file, CreateFilterNode(Config.SrcFolder));
+
+			Logger.Log("File added: " + file);
+		}
+
+		public void AddNode(XmlDocument doc, XmlElement parent, string type, string file, params XmlNode[] childNodes)
+		{
+			var node = doc.CreateElement("Cl" + type, nsUri);
+			var attr = doc.CreateAttribute("Include");
+			attr.Value = file.Replace("/", "\\");
+			node.Attributes.Append(attr);
+			parent.AppendChild(node);
+
+			foreach (var child in childNodes)
+			{
+				node.AppendChild(child);
+			}
+		}
+
+		public XmlElement CreateFilterNode(string filter)
+		{
+			var el = filterDoc.CreateElement("Filter", nsUri);
+			var text = filterDoc.CreateTextNode(filter);
+			text.Value = filter;
+			el.AppendChild(text);
+			return el;
+		}
+
+		private bool EnsureNoFile(string file)
+		{
+			if (File.Exists(file))
+			{
+				var res = MessageBox.Show(
+					string.Format("File \"{0}\" already exists. Delete?", file), "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+				if (res != DialogResult.OK)
+				{
+					return false;
+				}
+				File.Delete(file);
+			}
+			return true;
+		}
+
+		public XmlElement GetProjParentNode(string type)
+		{
+			var query = "//n:Cl" + type + "[@Include]";
+			return GetParentNode(projNav, query);
+		}
+
+		public XmlElement GetFilterParentNode(string type, string folder)
+		{
+			var query = "//n:Cl" + type + "[n:Filter='" + folder + "']";
+			return GetParentNode(filterNav, query);
+		}
+
+		public XmlElement GetParentNode(XPathNavigator nav, string query)
+		{
+			var includeNodes = nav.Select(query, projNs);
+			while (includeNodes.MoveNext())
+			{
+				var node = (XmlElement)includeNodes.Current.UnderlyingObject;
+				return (XmlElement)node.ParentNode;
+			}
+			return null;
+		}
+
+		public static string NamespaceToPath(string ns)
+		{
+			return ns.Replace('.', '/');
+		}
+	}
+}

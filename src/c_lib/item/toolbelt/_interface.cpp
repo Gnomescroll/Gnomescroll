@@ -633,7 +633,7 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
         group = Item::get_item_group_for_type(item_type);
     }
     
-    int stack_size = 1;
+    //int stack_size = 1;
     int remaining_stack_size = 1;
     
 	switch (group)

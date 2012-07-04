@@ -12,17 +12,12 @@ dont_include_this_file_in_client
 #include <stdlib.h>
 #include <string.h>
 
-//typedef Uint8 unsigned char;
-
 #include <common/version.h>
 #include <common/defines.h>
-
 #include <common/compression/miniz.c>
-
 #include <common/macros.hpp>
-
-// crash report
 #include <common/crash_report/stack_trace.hpp>
+#include <common/mallox.hpp>
 
 // osx tools
 #ifdef __APPLE__

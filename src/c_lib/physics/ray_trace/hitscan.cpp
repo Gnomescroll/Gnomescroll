@@ -69,7 +69,7 @@ HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float 
 int against_agents(Vec3 position, Vec3 direction, float max_distance, int firing_agent_id)
 {
 	float vox_distance = 1000000.0f;
-	struct Voxel_hitscan_target target;
+	class Voxel_hitscan_target target;
 	float collision_point[3];
 	
 	// TODO -- keep agents in their own hitscan list
@@ -93,7 +93,7 @@ int against_agents(Vec3 position, Vec3 direction, float max_distance)
 
 HitscanTargetTypes hitscan_against_world(
     Vec3 p, Vec3 v, int ignore_id, ObjectType ignore_type,    // inputs
-    struct Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
+    class Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
     int block_pos[3], int side[3], int* tile, float* block_distance // outputs
 )
 {   // hitscan against voxels

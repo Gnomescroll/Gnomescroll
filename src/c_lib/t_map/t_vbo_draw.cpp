@@ -61,37 +61,64 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     _i %= 32;
     const int index = 32*_j + _i;
 
-    float cx = x - current_camera_position.x;
-    float cy = y - current_camera_position.y;
+    //float cx = x - current_camera_position.x;
+    //float cy = y - current_camera_position.y;
 
 /*
-    float len = 1.0 / sqrt( cx*cx+cy*cy );
-
-    float dx = cx*len;
-    float dy = cy*len;
-
-    const float radius = 11.4;
-
-    cx += radius*dx;
-    cy += radius*dy;
-
-    float xf = cx + dx*radius;
-    float yf = cy + dy*radius;
-*/
-
     float top =     top_z_projection(cx,cy);
     float bottom =  bottom_z_projection(cx,cy);
 
     int t = ceil(top / 16);
-
     int b = floor(bottom / 16);
+*/
+
+    int t,b;
+
+    b = -1;
+    t = -1;
+
+    for(int i=0; i<=8; i++)
+    {
+        //point_fulstrum_test(
+        if(sphere_fulstrum_test(x,y,16*i, 0.0) == true)
+        {
+            b = i;
+            break;
+        }
+    }
+
+    for(int i=8; i>= 0; i--)
+    {
+        if(sphere_fulstrum_test(x,y,16*i, 0.0) == true)
+        {
+            t = i;
+            break;
+        }
+    }
+
+
+    GS_ASSERT(t >= b);
+
+    if(b == -1 || t == -1)
+    {
+        if(b == -1 && t == -1)
+        {
+            b = -1;
+            t = -1;
+        }
+        else
+        {
+            printf("set_frustrum_column_min error: b= %i t= %i \n", b, t);
+        }
+
+    }
 
     //printf("top= %f bottom= %f t= %i b= %i \n", top, bottom, t, b);
 
-    if(b < 0) b = 0;
-    if(t > 8) t = 8;
-    //b = 0;
-    t = 8;
+    //if(b < 0) b = 0;
+    //if(t > 8) t = 8;
+    //b = 0;x
+    //t = 8;
 
     vbo_frustrum_min[index] = b;
     vbo_frustrum_max[index] = t;
@@ -105,8 +132,8 @@ void Vbo_map::prep_frustrum()
 {
     //memset(vbo_frustrum, -1, 32*32*2);
     //for(int i=0; i <32*32*2; i++) vbo_frustrum[i] = -1;
-    for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
-    for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
+    //for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
+    //for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
 
 
     for(int ix=0;ix<draw_vbo_n;ix++)
@@ -114,13 +141,8 @@ void Vbo_map::prep_frustrum()
         class Map_vbo* col = draw_vbo_array[ix].map_vbo;
         int i = draw_vbo_array[ix].i;
         int j = draw_vbo_array[ix].j;
-    /*
+
         set_frustrum_column_min(i,j,     col->wxoff, col->wyoff);
-        set_frustrum_column_min(i+1,j,   col->wxoff+16.0, col->wyoff);
-        set_frustrum_column_min(i,j+1,   col->wxoff, col->wyoff+16.0);
-        set_frustrum_column_min(i+1,j+1, col->wxoff+16.0, col->wyoff+16.0);
-    */
-        set_frustrum_column_min(i,j,     col->wxoff+8.0, col->wyoff+8.0);
     }
 }
 
@@ -140,15 +162,25 @@ void Vbo_map::prep_frustrum_vertices()
 
         int index = 32*xj +xi;
 
-        //int min = _get_frustum_min(xi,xj);
-        //int max = _get_frustum_max(xi,xj);
-
         int min = vbo_frustrum_min[index];
         int max = vbo_frustrum_max[index];
 
+        if(min == -1 && max == -1)
+        {
+            //prune!!!
+            min = 0;
+            max = 0;
+        }
+        else
+        {
+            GS_ASSERT(min <= 8);
+            GS_ASSERT(max <= 8);
+            GS_ASSERT(min >= 0);
+            GS_ASSERT(max >= 0);
+        }
         //int xoff,dnum;
         GS_ASSERT(min >= 0);
-
+        GS_ASSERT(max >= 0);
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         for(int side=0; side<6; side++)
         {
@@ -213,6 +245,10 @@ bool chunk_render_check( float x, float y)
 
 void Vbo_map::prep_draw()
 {
+
+    for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
+    for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
+
     struct Map_vbo* col;
 
     const float cx = current_camera_position.x;
@@ -291,30 +327,17 @@ void Vbo_map::sort_draw()
   //if(draw_vbo_n > 10) draw_vbo_n = 10;
 }
 
-//float _normal_array[3*6];
-float _chunk_position[3] = {0};
-
 #define ADV_PRUNE 0
 
 void Vbo_map::draw_map() 
 {
-	// this check is moved to main.cpp
-    //if(T_MAP_BACKUP_SHADER != 0)
-    //{
-        //draw_map_compatibility();
-        //return;
-    //}
-
     prep_draw();
     sort_draw();
     prep_frustrum();
     prep_frustrum_vertices();
 
-    //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
-
-    //glShadeModel(GL_FLAT);
-    glShadeModel(GL_SMOOTH);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -376,7 +399,7 @@ void Vbo_map::draw_map()
 
         if(vbo->_v_num[0] == 0)
         {
-            //printf("t_vbo_draw.cpp:117 no blocks\n");
+            printf("t_vbo_draw.cpp:376 no blocks\n");
             continue; 
         } 
 
@@ -386,41 +409,11 @@ void Vbo_map::draw_map()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        //glUniform3f(map_ChunkPosition, vbo->wxoff, vbo->wyoff, 0.0f);
-
-        //translation
-        //_modelview[3*4+0] = modelview[3*4+0] + vbo->xoff;
-        //_modelview[3*4+1] = modelview[3*4+1] + vbo->yoff;
-
-        //float _modelview[16];
-        //lGetFloatv(GL_MODELVIEW_MATRIX, _modelview);
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
         glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
-
-        /*
-            int vertex_num[6];
-            int vertex_offset[6];
-            int vertex_num_array[6][16];   //for each column, every 16 z
-        */
-
-        /*
-            int vs = vbo->vertex_num_array[side][min];  //start
-            int ve = vbo->vertex_num_array[side][max]; //end
-
-            int vn = ve - vs; //number of vertices
-
-            int voff =  vbo->vertex_offset[side] + vs;
-            int vnum =  vn;
-
-            vbo_vertex_frustrum[index][2*side+0] = voff;
-            vbo_vertex_frustrum[index][2*side+1] = vnum;
-        */
-
-
-        //printf("vertices= %i \n", vbo->_v_num[0]);
         
         #if ADV_PRUNE
 
@@ -432,6 +425,11 @@ void Vbo_map::draw_map()
         for(int side=0; side<6; side++)
         {
 
+            int min = vbo_frustrum_min[index];
+            int max = vbo_frustrum_max[index];
+
+            if(min == -1 && max == -1)
+                break;
 
             int voff = vbo_vertex_frustrum[index][2*side+0];
             int vnum = vbo_vertex_frustrum[index][2*side+1];
@@ -482,13 +480,74 @@ void Vbo_map::draw_map()
 
     //glEnable(GL_TEXTURE_2D);
 
-    glShadeModel(GL_FLAT);
+    //;
     glDisable(GL_CULL_FACE);
+
+/*
+    TEST
+*/
+
+
+    //set_frustrum_column_min(i, j, )
+#if 0
+    const float cx = current_camera_position.x;
+    const float cy = current_camera_position.y;
+
+    for(int i=0; i<32; i++)
+    for(int j=0; j<32; j++)
+    {
+        float x = i*16.0 + 8.0;
+        float y = j*16.0 + 8.0;
+
+
+        x = quadrant_translate_f(cx, x);
+        y = quadrant_translate_f(cy, y);
+
+        //set_frustrum_column_min
+    }
+
+    glColor3ub(255, 0, 0);
+
+    glBegin(GL_POINTS);
+    for(int i=0; i<32; i++)
+    {
+    for(int j=0; j<32; j++)
+    {
+    for(int k=0; k<=128; k+=16)
+    {
+        int index = 32*i +j;
+
+        int min = vbo_frustrum_min[index];
+        int max = vbo_frustrum_max[index];
+        
+        if(min == -1 && max == -1)
+            continue;
+        if(k <= min*16)
+        {
+            glColor3ub(255, 0, 0);
+        } 
+        else if(k >= max*16)
+        {
+            glColor3ub(0, 255, 0);
+        }
+        else
+        {
+            glColor3ub(0, 0, 255);
+        }
+
+        glVertex3f(16*i+8.0, 16*j+8.0 ,k);
+    }
+
+    }}
+
+    glEnd();
+
+    glColor3ub(255, 255, 255);
+#endif
 }
 
 void Vbo_map::draw_map_compatibility()
 {
-    //printf("compatibility \n");
 
     prep_draw();
     sort_draw();
@@ -497,10 +556,13 @@ void Vbo_map::draw_map_compatibility()
 
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
-    glShadeModel(GL_SMOOTH);
+    //;
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     glColor3ub(255,255,255);
 
@@ -521,7 +583,6 @@ void Vbo_map::draw_map_compatibility()
     glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
 
     glPushMatrix(); //save matrix
-    //glPushMatrix();
 
     for(int i=0;i<draw_vbo_n;i++)
     {
@@ -572,7 +633,7 @@ void Vbo_map::draw_map_compatibility()
 
 
     //glEnable(GL_TEXTURE_2D);
-    glShadeModel(GL_FLAT);
+    //;
     glDisable(GL_CULL_FACE);
 
 }

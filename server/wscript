@@ -74,13 +74,14 @@ def configure(conf, add_flags=[], rm_flags=[]):
     extra_options = [
         '-Wall',
         '-DDC_SERVER=1',
-         '-fno-exceptions',
-         '-Winline',
-         '-Wno-switch-enum',
-         '-Wno-switch',
-         '-DGNOMESCROLL_DSO_EXPORTS=1',
-         '-DGNOMESCROLL_DSO=1',
-         #'-DDC_VERSION=%d' % (version,),
+        '-fno-exceptions',
+        '-Winline',
+        '-Wvla', #warns variable array
+        '-Wno-switch-enum',
+        '-Wno-switch',
+        '-DGNOMESCROLL_DSO_EXPORTS=1',
+        '-DGNOMESCROLL_DSO=1',
+        #'-DDC_VERSION=%d' % (version,),
     ]
 
     cxxflags += extra_options

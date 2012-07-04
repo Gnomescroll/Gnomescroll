@@ -117,6 +117,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
         '-DDC_CLIENT=1',
         '-fno-exceptions',
         '-Winline',
+        '-Wvla', #warns variable array
         '-Wno-switch-enum',
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',

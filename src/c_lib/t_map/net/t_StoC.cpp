@@ -81,7 +81,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     int x = chunk_index % MAP_CHUNK_XDIM;
     int y = chunk_index / MAP_CHUNK_XDIM;
     
-    struct MAP_CHUNK* m = main_map->chunk[chunk_index];
+    class MAP_CHUNK* m = main_map->chunk[chunk_index];
     if(m == NULL)
     {
         main_map->set_block(16*x+8,16*y+8,0, 0); //create chunk    
@@ -115,7 +115,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 /*
     This is evil, dont do this
 */
-    struct MAP_CHUNK* m = main_map->chunk[chunk_index];
+    class MAP_CHUNK* m = main_map->chunk[chunk_index];
 
     memcpy( (char *) m->e, buff, byte_num);
 

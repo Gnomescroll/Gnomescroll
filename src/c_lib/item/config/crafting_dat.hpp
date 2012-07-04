@@ -25,13 +25,10 @@ void load_crafting_dat()
     
     def_crafting_recipe("steel_block_2", 4);
     set_crafting_reagent("iron_bar", 1);
-    set_crafting_reagent("graphite", 1);
     end_crafting_recipe();
     
     def_crafting_recipe("steel_block_3", 4);
     set_crafting_reagent("iron_bar", 1);
-    set_crafting_reagent("iron_bar", 1);
-    set_crafting_reagent("graphite", 1);
     end_crafting_recipe();
 
     // Shovel
@@ -56,14 +53,23 @@ void load_crafting_dat()
     end_crafting_recipe();
 
     // Other
+    /*
     def_crafting_recipe("food_rock-0");
     set_crafting_reagent("regolith", 1);
     set_crafting_reagent("regolith", 1);
+    end_crafting_recipe();
+*/
+    def_crafting_recipe("food_rock-0");
+    set_crafting_reagent("regolith", 4);
     end_crafting_recipe();
 
-    def_crafting_recipe("food_rock-0");
-    set_crafting_reagent("regolith", 2);
+    def_crafting_recipe("small_storage");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
     end_crafting_recipe();
+
 
     // Weapons
     //def_crafting_recipe("mining_laser");

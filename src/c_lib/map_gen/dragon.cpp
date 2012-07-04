@@ -856,7 +856,9 @@ struct iPoint*  remove_all_stranded_points(struct iPoint* points, int n_points, 
 void surface_veins()
 {
     int n_tiles = 1;
-    int tiles[n_tiles];
+    //int tiles[n_tiles];
+    MALLOX(int, tiles, n_tiles); //type, name, size
+
     tiles[0] = t_map::get_cube_id((char*)"methane_ice");
     //tiles[0] = t_map::get_cube_id((char*)"methane_1");
     //tiles[1] = t_map::get_cube_id((char*)"methane_2");
@@ -904,7 +906,9 @@ void surface_veins()
 void flat_veins()
 {
     int n_tiles = 1;
-    int tiles[n_tiles];
+    //int tiles[n_tiles];
+    MALLOX(int, tiles, n_tiles); //type, name, size
+
     tiles[0] = t_map::get_cube_id((char*)"methane_ice");
     
     const int n = 200;

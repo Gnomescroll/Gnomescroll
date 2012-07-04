@@ -82,7 +82,7 @@ class Session
         
         // was killed
 		if (this->killed)
-			fprintf(f, "; NOTE: Was forcibly disconnected", this->client_id);
+			fprintf(f, "; NOTE: Was forcibly disconnected");
 
         fprintf(f, "\n");
     }

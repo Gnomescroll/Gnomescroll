@@ -31,7 +31,7 @@ void PlayerAgent_action::hitscan_laser()
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
 
-    struct Voxel_hitscan_target target;
+    class Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -194,7 +194,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
 
-    struct Voxel_hitscan_target target;
+    class Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -500,7 +500,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
 
-    struct Voxel_hitscan_target target;
+    class Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
