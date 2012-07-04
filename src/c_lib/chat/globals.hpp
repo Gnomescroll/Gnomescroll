@@ -1,5 +1,7 @@
 #pragma once
 
+const int CHAT_SERVER_CHANNELS_MAX = 1+1+PLAYERS_MAX;
+
 const int CHAT_MESSAGE_SIZE_MAX = 90;
 const int CHAT_MESSAGE_RENDER_TIMEOUT = 1000*10; // 10 seconds
 

@@ -162,6 +162,8 @@ ChatServer::ChatServer()
     {
 		this->log = fopen("./log/chat.log", "a");
 		GS_ASSERT(this->log != NULL);
+        if (this->log != NULL)
+            setvbuf(this->log, NULL, _IOLBF, 256);
 	}
 	else
 		this->log = NULL;

@@ -662,6 +662,8 @@ DONE
 item pickup flies to player
 DONE
 
+disable buffering on chat log
+DONE
 
 ----------------------
 
@@ -717,7 +719,6 @@ send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
-disable buffering on chat log
 
 == UI/UX ==
 add labels to the hud widgets
@@ -764,6 +765,16 @@ drop chips from enemies, blocks
 chips go directly into nanite chip slot
 change nanite texture to remove graphic
 
+----------
+Health system
+
+Use super metroid's, minus the Reserve tanks (they are awkward and only existed in this game of the series)
+ENERGY 99 [] [] [] [] []
+Max N reserve tanks (5 for now maybe?)
+Reserve tanks are craftable?
+    -- Nanite chips somehow
+
+All players start with ENERGY 99
 
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
