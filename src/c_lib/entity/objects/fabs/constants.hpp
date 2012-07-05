@@ -53,7 +53,7 @@ const int TURRET_MAX_HEALTH = 125;
 // targeting
 const float TURRET_TARGET_ACQUISITION_PROBABILITY = 0.85f;
 const int TURRET_FIRE_RATE_LIMIT = 45; // ticks
-const float TURRET_USES_BIAS = true;
+const bool TURRET_USES_BIAS = true;
 const float TURRET_ACCURACY_BIAS = 1.0f;
 const float TURRET_SIGHT_RANGE = 128.0f - 16.0f;
 const bool TURRET_ATTACK_AT_RANDOM = true;
