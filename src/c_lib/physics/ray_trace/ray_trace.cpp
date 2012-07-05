@@ -877,7 +877,7 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
         {
             if (collision_check(x__, y__, z__))
             {
-                if (z_ >= z-z_low and z_ <= z+z_high)
+                if (z_ >= z-z_low && z_ <= z+z_high)
                 {
                     if (z_ < 0 || z >= map_dim.z) return NULL;
                     ray_cast_block[0] = translate_point(x_);
