@@ -689,7 +689,6 @@ textured voxels / isometric blocks should use full palette info, instead of only
 better font
 use backface culling on hud item rendered voxels and re-enable the depth test
 
-
 == SOUND ==
 improve digging sounds
 falling sounds

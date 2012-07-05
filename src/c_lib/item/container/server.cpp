@@ -644,7 +644,7 @@ void unsubscribe_agent_from_container_contents(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
     
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);

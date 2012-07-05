@@ -558,7 +558,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 
         case IG_SHOVEL:
         case IG_MINING_LASER:
-            if (item->durability != NULL_DURABILITY);
+            if (item->durability != NULL_DURABILITY)
                 item->durability -= 1;
             break;
 
