@@ -32,7 +32,7 @@ static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline
 
 static void normalize_vector(struct Vec3* v)
 {
-    float len = (float)sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
+    float len = sqrtf(v->x*v->x + v->y*v->y + v->z*v->z);
     v->x /= len;
     v->y /= len;
     v->z /= len;
@@ -262,7 +262,7 @@ static float vec3_length(struct Vec3 v) __attribute((always_inline));
 
 float vec3_length(struct Vec3 v) 
 {
-    return (float)sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    return sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
 static float vec3_length_squared(struct Vec3 v) __attribute((always_inline));
@@ -275,7 +275,7 @@ float vec3_length_squared(struct Vec3 v)
 static float vec3_distance(struct Vec3 v) __attribute((always_inline));
 float vec3_distance(struct Vec3 v1, struct Vec3 v2)
 {
-    return (float)sqrt((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
+    return sqrtf((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
 }
 
 static float vec3_distance_squared(struct Vec3 v) __attribute((always_inline));
@@ -347,7 +347,7 @@ void vec3_print(struct Vec3 v)
 
 void vec3_print_length(struct Vec3 v) 
 {
-    float l = (float)sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
     printf("Vec3_length= %fs \n", l);
 }
 

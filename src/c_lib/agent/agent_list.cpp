@@ -171,7 +171,7 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
     float ip;
     float arc;
 
-    float len = (float)sqrt(vx*vx + vy*vy + vz*vz);
+    float len = sqrtf(vx*vx + vy*vy + vz*vz);
     vx /= len;
     vy /= len;
     vz /= len;
@@ -187,7 +187,7 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
         ay = p.y - y;
         az = p.z - z;
 
-        len = (float)sqrt(ax*ax + ay*ay + az*az);
+        len = sqrtf(ax*ax + ay*ay + az*az);
         ax /= len;
         ay /= len;
         az /= len;

@@ -33,12 +33,12 @@ bool point_in_rect(float px, float py, float rx, float ry, float w, float h)
 
 float distancef(float x, float y, float a, float b)
 {
-    return (float)sqrt((a-x)*(a-x) + (b-y)*(b-y));
+    return sqrtf((a-x)*(a-x) + (b-y)*(b-y));
 }
 
 float distancef(float x, float y, float z, float a, float b, float c)
 {
-    return (float)sqrt((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
+    return sqrtf((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
 }
 
 float distancef_squared(float x, float y, float z, float a, float b, float c)
@@ -48,7 +48,7 @@ float distancef_squared(float x, float y, float z, float a, float b, float c)
 
 float gaussian_value(const float mean, const float stddev, const float x)
 {
-    const float sqrt_2pi = (float)sqrt(2*kPI);
+    const float sqrt_2pi = sqrtf(2*kPI);
     return (float)pow(kE, -((x - mean)*(x - mean))/(2 * stddev * stddev)) / (sqrt_2pi * stddev);
 }
 

@@ -210,7 +210,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     // normalize diagonal motion
     if (CS_vx < -precision || CS_vx > precision || CS_vy < -precision || CS_vy > precision)
     {
-        float len = (float)sqrt(CS_vx*CS_vx + CS_vy*CS_vy);
+        float len = sqrtf(CS_vx*CS_vx + CS_vy*CS_vy);
         CS_vx *= speed/len;
         CS_vy *= speed/len;
     }
