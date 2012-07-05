@@ -13,6 +13,11 @@
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 
+#ifdef __MSVC__
+#define fmin(x,y) x<y ? x : y
+#define fmax(x,y) x>y ? x : y
+#endif
+
 static inline int collision_check(int x, int y, int z)
 {
     return isSolid(x,y,z);

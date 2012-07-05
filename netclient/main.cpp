@@ -238,7 +238,7 @@ int run()
 
         glEnd();
 
-        obj_load::draw_model(0.0,0.0,0.0); //draw test model
+        //obj_load::draw_model(0.0,0.0,0.0); //draw test model
         //glDisable(GL_TEXTURE_2D);
 
         GL_ASSERT(GL_BLEND, false);
@@ -257,7 +257,7 @@ int run()
 
         Particle::billboard_text_list->draw();
         
-        Animations::draw_insect_mob();
+        //Animations::draw_insect_mob();
 
         // draw animations
 
