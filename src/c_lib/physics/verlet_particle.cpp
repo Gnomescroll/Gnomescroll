@@ -13,13 +13,13 @@ static inline void velocity_integrate(Vec3* p, Vec3* v, Vec3* a, float dt)
 {
     //const Vec3 va = vec3_init(0,0,gravity);
 
-    *p = vec3_add(*p, vec3_add(vec3_scalar_mult(*v, dt), vec3_scalar_mult(*a, 0.5*dt*dt)));  // r(t) + v(t)dt + (1/2)gravity(t)dtdt
+    *p = vec3_add(*p, vec3_add(vec3_scalar_mult(*v, dt), vec3_scalar_mult(*a, 0.5f*dt*dt)));  // r(t) + v(t)dt + (1/2)gravity(t)dtdt
     /* the following block is for nonconstant gravity (spring forces) */
     //v5 = vec3_scalar_add(vv, 0.5*gravity*dt);
     // gravity(t+dt) = gravity [constant]
     //v = vec3_scalar_add(v5, 0.5*gravity*dt);
     /* end block */
-    *v = vec3_add(*v, vec3_scalar_mult(*a, 0.5*dt));
+    *v = vec3_add(*v, vec3_scalar_mult(*a, 0.5f*dt));
 }
 
 static inline void velocity_integrate(Vec3* p, Vec3* v, float dt) __attribute((always_inline));;
@@ -28,13 +28,13 @@ static inline void velocity_integrate(Vec3* p, Vec3* v, float dt)
 {
     const Vec3 a = vec3_init(0,0,gravity);
 
-    *p = vec3_add(*p, vec3_add(vec3_scalar_mult(*v, dt), vec3_scalar_mult(a, 0.5*dt*dt)));  // r(t) + v(t)dt + (1/2)gravity(t)dtdt
+    *p = vec3_add(*p, vec3_add(vec3_scalar_mult(*v, dt), vec3_scalar_mult(a, 0.5f*dt*dt)));  // r(t) + v(t)dt + (1/2)gravity(t)dtdt
     /* the following block is for nonconstant gravity (spring forces) */
     //v5 = vec3_scalar_add(vv, 0.5*gravity*dt);
     // gravity(t+dt) = gravity [constant]
     //v = vec3_scalar_add(v5, 0.5*gravity*dt);
     /* end block */
-    *v = vec3_add(*v, vec3_scalar_mult(a, 0.5*dt));
+    *v = vec3_add(*v, vec3_scalar_mult(a, 0.5f*dt));
 }
 
 bool VerletParticle::bool_bounce()
@@ -112,7 +112,7 @@ void VerletParticle::bounce_box(float radius)
     Vec3 a = vec3_init(0,0,gravity);
 
     {
-        const float ac = -9.8;
+        const float ac = -9.8f;
 
         const int _z = position.z;
         const int _y = position.y;
@@ -158,10 +158,10 @@ void VerletParticle::bounce_box_no_gravity(float radius)
     
     //const float ac = 9.8;
 
-    Vec3 a = vec3_init(0,0,0);
+    Vec3 a = vec3_init(0.0f,0.0f,0.0f);
 
     {
-        const float ac = -9.8;
+        const float ac = -9.8f;
 
         const int _z = position.z;
         const int _y = position.y;
@@ -190,11 +190,11 @@ void VerletParticle::bounce_box_no_gravity(float radius)
         position = old_position;
         velocity = old_velocity;
 
-        const float th = 2.0*3.14159 * randf();
-        const float V = 5.0*randf();
+        const float th = 2.0f*3.14159f * randf();
+        const float V = 5.0f*randf();
 
-        velocity.x += V * sin(th);
-        velocity.y += V * cos(th);
+        velocity.x += V * (float)sin(th);
+        velocity.y += V * (float)cos(th);
 
         velocity_integrate(&position, &velocity, dt*interval);
         position = translate_position(position);
@@ -217,7 +217,7 @@ void VerletParticle::radial(float xr, float yr)
     Vec3 a = vec3_init(0,0,0);
 
     {
-        const float ac = -40.8;
+        const float ac = -40.8f;
 
         a.x += ac* (position.x - xr);
         a.y += ac* (position.y - yr);
@@ -239,11 +239,11 @@ void VerletParticle::radial(float xr, float yr)
         position = old_position;
         velocity = old_velocity;
 
-        const float th = 2.0*3.14159 * randf();
-        const float V = 5.0*randf();
+        const float th = 2.0f*3.14159f * randf();
+        const float V = 5.0f*randf();
 
-        velocity.x += V * sin(th);
-        velocity.y += V * cos(th);
+        velocity.x += V * (float)sin(th);
+        velocity.y += V * (float)cos(th);
 
         velocity_integrate(&position, &velocity, dt*interval);
         position = translate_position(position);
@@ -262,7 +262,7 @@ bool VerletParticle::bounce_no_gravity()
     
     //const float ac = 9.8;
 
-    Vec3 a = vec3_init(0,0,0);
+    Vec3 a = vec3_init(0.0f,0.0f,0.0f);
 
     velocity_integrate(&position, &velocity, &a, dt);
 
@@ -281,11 +281,11 @@ bool VerletParticle::bounce_no_gravity()
         position = old_position;
         velocity = old_velocity;
 
-        const float th = 2.0*3.14159 * randf();
-        const float V = 5.0*randf();
+        const float th = 2.0f*3.14159f * randf();
+        const float V = 5.0f*randf();
 
-        velocity.x += V * sin(th);
-        velocity.y += V * cos(th);
+        velocity.x += V * (float)sin(th);
+        velocity.y += V * (float)cos(th);
 
         velocity_integrate(&position, &velocity, dt*interval);
         position = translate_position(position);

@@ -341,9 +341,9 @@ void noise_init()
     {
         //tiling_gradients[i].x = cos(i * 2.0f * (PI / ((float)TILING_SIZE)));
         //tiling_gradients[i].y = sin(i * 2.0f * (PI / ((float)TILING_SIZE)));
-        tiling_gradients[i].x = cos(i * 2.0f * PI / TILING_SIZE);
-        tiling_gradients[i].y = sin(i * 2.0f * PI / TILING_SIZE);
-        tiling_gradients[i].z = 0; // ?
+        tiling_gradients[i].x = (float)cos(i * 2.0f * PI / TILING_SIZE);
+        tiling_gradients[i].y = (float)sin(i * 2.0f * PI / TILING_SIZE);
+        tiling_gradients[i].z = 0.0f; // ?
         //printf("%f, %f\n", tiling_gradients[i].x, tiling_gradients[i].y);
     }
 

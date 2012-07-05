@@ -51,7 +51,7 @@ unsigned int sanitize_player_name(char* name)
     // remove non-approved chars
     // can't be all whitespace
 
-    int len = strlen(name);
+    int len = (int)strlen(name);
     if (len == 0) return 0;
     char* new_name = (char*)calloc(len+1, sizeof(char));
 

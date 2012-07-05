@@ -187,30 +187,30 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     if(forward)
     {
-            CS_vx += speed*cos( _cs.theta * pi);
-            CS_vy += speed*sin( _cs.theta * pi);
+            CS_vx += speed*(float)cos( _cs.theta * pi);
+            CS_vy += speed*(float)sin( _cs.theta * pi);
     }
     if(backwards)
     {
-            CS_vx += -speed*cos( _cs.theta * pi);
-            CS_vy += -speed*sin( _cs.theta * pi);
+            CS_vx += -speed*(float)cos( _cs.theta * pi);
+            CS_vy += -speed*(float)sin( _cs.theta * pi);
     }
     if(left) 
     {
-            CS_vx += speed*cos( _cs.theta * pi + pi/2);
-            CS_vy += speed*sin( _cs.theta * pi + pi/2);
+            CS_vx += speed*(float)cos( _cs.theta * pi + pi/2);
+            CS_vy += speed*(float)sin( _cs.theta * pi + pi/2);
     }
     if(right) 
     {
-            CS_vx += -speed*cos( _cs.theta * pi + pi/2);
-            CS_vy += -speed*sin( _cs.theta * pi + pi/2);
+            CS_vx += -speed*(float)cos( _cs.theta * pi + pi/2);
+            CS_vy += -speed*(float)sin( _cs.theta * pi + pi/2);
     }
 
     const float precision = 0.000001f;
     // normalize diagonal motion
     if (CS_vx < -precision || CS_vx > precision || CS_vy < -precision || CS_vy > precision)
     {
-        float len = sqrt(CS_vx*CS_vx + CS_vy*CS_vy);
+        float len = (float)sqrt(CS_vx*CS_vx + CS_vy*CS_vy);
         CS_vx *= speed/len;
         CS_vy *= speed/len;
     }
@@ -308,7 +308,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         //printf("z\n");
         new_z = as.z;
         if (top)
-            new_z = floor(as.z) + ceil(height) - height;
+            new_z = (float)floor(as.z) + (float)ceil(height) - height;
         as.vz = 0.0f;
     }       
 

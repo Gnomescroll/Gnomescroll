@@ -97,7 +97,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
     do {
         //UNPACK_uint8_t(&message_id, buff, n);
         unpack_message_id(&message_id, buff, n);
-        GS_ASSERT(message_id >= 0 && message_id < 255);
+        //GS_ASSERT(message_id >= 0 && message_id < 255); // always true due to data type value range
         
         //if(IS_CLIENT) printf("pop message: n= %i, message_id= %i \n", _n, message_id);
 

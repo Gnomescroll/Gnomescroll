@@ -52,7 +52,7 @@ namespace ServerState
 			DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
 			GS_ASSERT(dims != NULL);
 			int h = 1;
-			if (dims != NULL) h = ceil(dims->get_height());
+			if (dims != NULL) h = (int)ceil(dims->get_height());
 			float x = randrange(0, map_dim.x-1);
 			float y = randrange(0, map_dim.y-1);
 			float z = t_map::get_highest_open_block(x,y, h);
@@ -116,7 +116,7 @@ namespace ServerState
         agent_list->objects_within_sphere(x,y,z,radius);
         Agent_state* a;
         const float blast_mean = 0;
-        const float blast_stddev = 0.5;
+        const float blast_stddev = 0.5f;
         for (int i=0; i<agent_list->n_filtered; i++)
         {
             a = agent_list->filtered_objects[i];

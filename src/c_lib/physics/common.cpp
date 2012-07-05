@@ -33,29 +33,29 @@ bool point_in_rect(float px, float py, float rx, float ry, float w, float h)
 
 float distancef(float x, float y, float a, float b)
 {
-    return sqrt((a-x)*(a-x) + (b-y)*(b-y));
+    return (float)sqrt((a-x)*(a-x) + (b-y)*(b-y));
 }
 
 float distancef(float x, float y, float z, float a, float b, float c)
 {
-    return sqrt((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
+    return (float)sqrt((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
 }
 
 float distancef_squared(float x, float y, float z, float a, float b, float c)
 {
-    return ((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
+    return (float)((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
 }
 
 float gaussian_value(const float mean, const float stddev, const float x)
 {
-    const float sqrt_2pi = sqrt(2*kPI);
-    return pow(kE, -((x - mean)*(x - mean))/(2 * stddev * stddev)) / (sqrt_2pi * stddev);
+    const float sqrt_2pi = (float)sqrt(2*kPI);
+    return (float)pow(kE, -((x - mean)*(x - mean))/(2 * stddev * stddev)) / (sqrt_2pi * stddev);
 }
 
 void rotate_point(float x, float y, float theta, float *x1, float *y1)
 {
-    *x1 = x*cos(theta) - y*sin(theta);
-    *y1 = x*sin(theta) + y*cos(theta);
+    *x1 = x*(float)cos(theta) - y*(float)sin(theta);
+    *y1 = x*(float)sin(theta) + y*(float)cos(theta);
 }
 
 bool position_is_equal(Vec3 p, float x, float y, float z)

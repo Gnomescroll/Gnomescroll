@@ -18,7 +18,7 @@
 //set offset and rotation
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
-    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0,0.0);
+    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0f,0.0f);
 }
 void Voxel_model::set_skeleton_root(float *data)
 {

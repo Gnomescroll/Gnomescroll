@@ -102,9 +102,9 @@ class PerlinField2D
     #if 1
         for(int i=0; i<grad_max; i++)
         {
-            float t = 6.28318531*i* (1.0 / ((float) grad_max));
-            float x = sin(t);
-            float y = cos(t);
+            float t = 6.28318531f*i* (1.0f / ((float) grad_max));
+            float x = (float)sin(t);
+            float y = (float)cos(t);
 
             grad[2*i+0] = x;
             grad[2*i+1] = y;
@@ -198,7 +198,7 @@ class PerlinOctave2D
     PerlinOctave2D(int _octaves)
     {
         cache = NULL;
-        cache_persistance = 0.0;
+        cache_persistance = 0.0f;
         cache_seed = 0;
 
         octaves = _octaves;
@@ -270,8 +270,8 @@ class PerlinOctave2D
         for(int i=0; i<XMAX; i++)
         for(int j=0; j<YMAX; j++)
         {
-            x = i*(4.0/512.0);
-            y = j*(4.0/512.0);
+            x = i*(4.0f/512.0f);
+            y = j*(4.0f/512.0f);
 
             cache[j*XMAX + i] = sample(x,y, persistance);
         }
@@ -280,8 +280,8 @@ class PerlinOctave2D
     __attribute((always_inline, optimize("-O3")))
     float sample(float x, float y, float persistance)
     {   
-        float p = 1.0;
-        float tmp = 0.0;
+        float p = 1.0f;
+        float tmp = 0.0f;
         for(int i=0; i<octaves; i++)
         {
         #if 1
@@ -298,8 +298,8 @@ class PerlinOctave2D
 //    __attribute((always_inline, optimize("-O3")))
     float sample2(float x, float y, float persistance)
     {   
-        float p = 1.0;
-        float tmp = 0.0;
+        float p = 1.0f;
+        float tmp = 0.0f;
         for(int i=0; i<octaves; i++)
         {
             printf("octave %i: %f \n", i, octave_array[i].base(x,y));
@@ -317,8 +317,8 @@ class PerlinOctave2D
         const int xres = 512;
         const int yres = 512;
 
-        const float xresf = 1.0 / ((float) xres);
-        const float yresf = 1.0 / ((float) yres);
+        const float xresf = 1.0f / ((float) xres);
+        const float yresf = 1.0f / ((float) yres);
 
         float* out = new float[xres*yres*octaves];
 
@@ -343,7 +343,7 @@ class PerlinOctave2D
         for(int i=0; i<xres; i++)
         for(int j=0; j<yres; j++)
         {
-            out[i+j*yres+k*xres*yres] = 0.0;
+            out[i+j*yres+k*xres*yres] = 0.0f;
         }
 
         for(int k=0; k<octaves; k++)
@@ -352,7 +352,7 @@ class PerlinOctave2D
             for(int k2=0; k2< k; k2++)
             {
                 m = &octave_array[k2];
-                float p = 1.0;
+                float p = 1.0f;
                 int zoff = k*xres*yres;
 
                 for(int i=0; i<xres; i++)
@@ -364,7 +364,7 @@ class PerlinOctave2D
                     out[i+j*yres+zoff] += p*m->base(x,y);
                 }
 
-                p *= 0.50;
+                p *= 0.50f;
             }
         }
 
@@ -381,15 +381,15 @@ class PerlinOctave2D
         const int xres = 128;
         const int yres = 128;
 
-        const float xresf = 1.0 / ((float) xres);
-        const float yresf = 1.0 / ((float) yres);
+        const float xresf = 1.0f / ((float) xres);
+        const float yresf = 1.0f / ((float) yres);
 
         //(i + xres*DEGREE*n)+ (j*xres*yres*DEGREE)
         float* out = new float[xres*yres*octaves*DEGREE];
 
         int line_width = xres*DEGREE;
 
-        for(int i=0; i<xres*yres*octaves*DEGREE; i++) out[i] = 0.0;
+        for(int i=0; i<xres*yres*octaves*DEGREE; i++) out[i] = 0.0f;
 
         class PerlinField2D* m;
 
@@ -411,14 +411,14 @@ class PerlinOctave2D
 
         for(int n=1; n<DEGREE; n++)
         {
-            float PERSISTANCE = (n+1)*(1.0/( (float) DEGREE ));
+            float PERSISTANCE = (n+1)*(1.0f/( (float) DEGREE ));
 
             int xoff = n*xres;
 
             for(int k=0; k<octaves; k++)
             {
                 int yoff = k*yres*line_width;
-                float p = 1.0;
+                float p = 1.0f;
 
                 for(int k2=0; k2 <= k; k2++)
                 {
@@ -465,8 +465,8 @@ void test_octave_2d_map_gen(int tile)
     const int xres = 512;
     const int yres = 512;
 
-    const float xresf = 1.0 / ((float) xres);
-    const float yresf = 1.0 / ((float) yres);
+    const float xresf = 1.0f / ((float) xres);
+    const float yresf = 1.0f / ((float) yres);
 
     float* values = (float*)malloc(512*512*sizeof(float));
 
@@ -481,11 +481,11 @@ void test_octave_2d_map_gen(int tile)
         float y = j*yresf;
 
         //value += 32*m.sample(x,y, 0.75);
-        float roughness = m2.sample(x,y, 0.125);
+        float roughness = m2.sample(x,y, 0.125f);
         //if(roughness < 0) roughness = 0.0;
-        if(roughness < 0) roughness *= -1.0/32.0;
+        if(roughness < 0) roughness *= -1.0f/32.0f;
 
-        float value = 32 + 32.0f*roughness*m1.sample(x,y, 0.125);
+        float value = 32 + 32.0f*roughness*m1.sample(x,y, 0.125f);
         if (value < min_value_generated) min_value_generated = value;
         if (value > max_value_generated) max_value_generated = value;
         values[i+512*j] = value;

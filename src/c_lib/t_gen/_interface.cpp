@@ -23,12 +23,12 @@ void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float p
     class PerlinOctave2D p2d(1);
     //p2d.set_param(0.50, 1337);
 
-    float sum = 0.0;
+    float sum = 0.0f;
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)  
     {
-        float _x = i*(1.0/512.0); // + (0.5/512.0);
-        float _y = j*(1.0/512.0); // + (0.5/512.0);
+        float _x = i*(1.0f/512.0f); // + (0.5/512.0);
+        float _y = j*(1.0f/512.0f); // + (0.5/512.0);
 
         _2d_noise_array[512*j + i] = p2d.sample(_x,_y,persistance);
 
@@ -36,7 +36,7 @@ void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float p
         sum += abs( p2d.sample(_x,_y, persistance) );
     }
 
-    printf("average= %f \n", sum/ (512.0*512.0));
+    printf("average= %f \n", sum/ (512.0f*512.0f));
 }
 
 void save_png(const char* filename, float* in, int xres, int yres)
@@ -135,7 +135,7 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
     for(int i=0; i< 256; i++)
     {
         float intensity = ((float) i) / 255;
-        intensity = pow(intensity, 1.0/2.2)*255;
+        intensity = (float)pow(intensity, 1.0f/2.2f)*255;
         gamma_correction[i] = (unsigned char)((int) intensity);
     }
 
@@ -146,11 +146,11 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
 
         float _v = in[j*xres+i];
 
-        if( _v < 0.0)
+        if( _v < 0.0f)
         {
             _v *= -1;
-            if( _v > 1.0) _v = 1.0;
-            unsigned char v = ((int) 255.0*_v );
+            if( _v > 1.0f) _v = 1.0f;
+            unsigned char v = ((int) 255.0f*_v );
             unsigned char v2 = gamma_correction[v];
 
             PBUFFER[index+0] = 0;
@@ -160,8 +160,8 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
         }
         else
         {
-            if( _v > 1.0) _v = 1.0;
-            unsigned char v = ((int) 255.0*_v );
+            if( _v > 1.0f) _v = 1.0f;
+            unsigned char v = ((int) 255.0f*_v );
             unsigned char v2 = gamma_correction[v];
 
             PBUFFER[index+0] = 0;

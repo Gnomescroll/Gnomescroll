@@ -80,7 +80,7 @@ void set_cube_name(int id, char* name, int length)
 
 void set_cube_name(int id, char* name)
 {
-    int length = strlen(name);
+    int length = (int)strlen(name);
     set_cube_name(id, name, length);
 }
 

@@ -130,9 +130,9 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	GS_ASSERT(sender_name[0] != '\0');
 	
 	const char msg_fmt[] = "Channel: %d, Sender: %d %s; %s\n";
-	int msg_len = strlen(msg_fmt) + strlen(payload)
+	int msg_len = (int) (strlen(msg_fmt) + strlen(payload)
 		+ count_digits(channel) + count_digits(sender)
-		+ strlen(sender_name) + 1 - 8;
+		+ strlen(sender_name) + 1 - 8);
 	char* msg = (char*)malloc(msg_len * sizeof(char));
 	
 	msg_len = sprintf(msg, msg_fmt, channel, sender, sender_name, payload);

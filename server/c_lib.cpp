@@ -163,7 +163,7 @@ int init_c_lib()
     
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
 
     Components::init();
     Objects::init_net_interfaces();
