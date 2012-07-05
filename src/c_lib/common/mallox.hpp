@@ -11,10 +11,13 @@ return; \
 
 //char *a = (char *)_alloca(n);
 
-#ifndef __MSVC__
+#ifdef __GNUC__
 //#define MALLOX(type, array_name, size) type array_name[size];
 #define MALLOX(type, array_name, size) type* array_name = (type*) alloca(size);
-#else
+#endif
+
+#ifdef __MSVC__
+#include <malloc.h>
 #define MALLOX(type, array_name, size) type* array_name = (type*) _alloca(size);
 #endif
 

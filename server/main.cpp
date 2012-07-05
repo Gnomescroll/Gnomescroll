@@ -136,7 +136,13 @@ int run()
         }
         NetServer::dispatch_network_events();
 
+    #ifdef __GNUC__
         usleep(1000);
+    #endif
+    
+    #ifdef __MSVC__
+        Sleep(1);
+    #endif
     }
     close_c_lib();
     return 0;

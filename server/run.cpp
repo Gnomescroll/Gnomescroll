@@ -1,11 +1,13 @@
 #ifdef __GNUC__
 #endif
 
-#if __MSVC__
+#define __MSVC__
+
+#ifdef __MSVC__
     #define __attribute__(x)
     #define __attribute(x)
     #define __WIN32__
-    #define __MSVC__
+    //#define __MSVC__
 
     #pragma warning(disable: 4244) // possible loss of data
 
@@ -14,6 +16,10 @@
 
     #define _CRT_SECURE_NO_DEPRECATE
     #define _CRT_SECURE_NO_WARNINGS
+
+    #include <windows.h> 
+    #include <winbase.h> // usleep function
+
 #endif
 
 #include "c_lib.cpp"

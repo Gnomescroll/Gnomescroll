@@ -12,6 +12,10 @@ dont_include_this_file_in_client
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __GNUC__
+    #include <unistd.h>
+#endif
+
 #include <common/version.h>
 #include <common/defines.h>
 #include <common/compression/miniz.c>
@@ -124,7 +128,7 @@ dont_include_this_file_in_client
 //#include <main.cpp>
   
 //page size
-#include <unistd.h>
+//#include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
 
 #ifdef linux
