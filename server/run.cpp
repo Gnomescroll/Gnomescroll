@@ -1,7 +1,7 @@
 #ifdef __GNUC__
 #endif
 
-#define __MSVC__
+//#define __MSVC__
 
 #ifdef __MSVC__
     #define __attribute__(x)
