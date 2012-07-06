@@ -23,10 +23,10 @@ inline void object_create_StoC::handle()
     using Objects::Object;
     using Components::PhysicsComponent;
 
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return;
-    if (id < 0 || id >= GAME_OBJECTS_MAX) return;
+    //GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);  // always false
+    //GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX);  // always false
+    //if (type < 0 || type >= MAX_OBJECT_TYPES) return; // always false
+    //if (id < 0 || id >= GAME_OBJECTS_MAX) return;   // always false
 
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
@@ -42,10 +42,10 @@ inline void object_create_owner_StoC::handle()
     using Components::PhysicsComponent;
     using Components::OwnerComponent;
 
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return;
-    if (id < 0 || id >= GAME_OBJECTS_MAX) return;
+    //GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES); // always false
+    //GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX); // always false
+    //if (type < 0 || type >= MAX_OBJECT_TYPES) return; // always false
+    //if (id < 0 || id >= GAME_OBJECTS_MAX) return; // always false
 
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;

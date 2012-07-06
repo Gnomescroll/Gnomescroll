@@ -357,7 +357,7 @@ void blit_block_item_sheet()
         unsigned int color_tex, fb, depth_rb;
         const int xres = 1024;
         const int yres = 1024;
-        const float scale = 64.0;
+        const float scale = 64.0f;
 
         //RGBA8 2D texture, 24 bit depth texture, 256x256
         glGenTextures(1, &color_tex);
@@ -397,14 +397,14 @@ void blit_block_item_sheet()
         //-------------------------
         //and now you can render to GL_TEXTURE_2D
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //-------------------------
         glViewport(0, 0, xres, yres);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
+        glOrtho(0.0f, (float) xres, 0.0f, (float) yres, -1.0f, 1.0f); 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -515,14 +515,14 @@ void blit_block_item_sheet()
         //-------------------------
         //and now you can render to GL_TEXTURE_2D
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //-------------------------
         glViewport(0, 0, xres, yres);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
+        glOrtho(0.0f, (float) xres, 0.0f, (float) yres, -1.0f, 1.0f); 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -558,7 +558,7 @@ void blit_block_item_sheet()
 
         //glBegin(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, block_item_64_texture);
-        draw_bound_texture(0.0, 0.0, xres, yres);
+        draw_bound_texture(0.0f, 0.0f, xres, yres);
         //glDisable(GL_TEXTURE_2D);
 
         block_item_16_surface = create_surface_from_nothing(xres, yres);

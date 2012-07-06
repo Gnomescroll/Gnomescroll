@@ -145,7 +145,7 @@ class FrameGraph
 
         for(int i=0; i< STAGES-1; i++)
         {
-            t[i] = timer[index][i+1] - timer[index][i]; 
+            t[i] = (int) (timer[index][i+1] - timer[index][i]); 
             if(t[i] < 0) printf("frame_graph timer: WTF temporal error on index %i \n", i);
             //if(t[i] == 1) t[i] = 0;
             if(t[i] == 0) t[i] = 1;

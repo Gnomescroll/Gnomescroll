@@ -84,26 +84,26 @@ void generate_sky()
     {
         STAR s;
 
-        float z = 2.0*randf()-1.0;
-        float t = randf()*(3.14159265*2.0);
+        float z = 2.0f*randf()-1.0f;
+        float t = randf()*(3.14159265f*2.0f);
 
-        float _r = sqrt(1- z*z);
+        float _r = sqrtf(1- z*z);
 
-        float x = _r * cos(t);
-        float y = _r * sin(t);
+        float x = _r * cosf(t);
+        float y = _r * sinf(t);
 
         s.x = r*x;
         s.y = r*y;
         s.z = r*z;
         
-        s.brightness = 0.2 + (0.8)*randf();
+        s.brightness = 0.2f + (0.8f)*randf();
         s.size = 1 + 3*randf();
         
 		s.type = rand()%16;
-		s.tx_min = (float)(s.type%4) * (1.0/4.0);
-		s.tx_max = s.tx_min + (1.0/4.0);
-		s.ty_min = (float)(s.type/4) * (1.0/4.0) * 0.5f;
-		s.ty_max = s.ty_min + (1.0/4.0) * 0.5f;
+		s.tx_min = (float)(s.type%4) * (1.0f/4.0f);
+		s.tx_max = s.tx_min + (1.0f/4.0f);
+		s.ty_min = (float)(s.type/4) * (1.0f/4.0f) * 0.5f;
+		s.ty_max = s.ty_min + (1.0f/4.0f) * 0.5f;
 		
         star_list[i] = s;
     }
@@ -112,9 +112,9 @@ void generate_sky()
 	STAR s;
 	float t = 1.5f;
 	float z = 0.75f;
-	float _r = sqrt(1.0f - z*z);
-	float x = _r * cos(t);
-	float y = _r * sin(t);
+	float _r = sqrtf(1.0f - z*z);
+	float x = _r * cosf(t);
+	float y = _r * sinf(t);
 	s.size = 12.0f;
 	s.x = r * x;
 	s.y = r * y;
@@ -166,7 +166,7 @@ void pack_vertex_list()
 
         if (point_fulstrum_test2(v.x, v.y, v.z) == false) continue;
 
-        float scale = star_list[i].size / 2.0;
+        float scale = star_list[i].size / 2.0f;
 
         Vec3 up = vec3_init(
             model_view_matrix[0]*scale,

@@ -18,7 +18,7 @@ int node = 0;
 
 float lateral_speed = 0.05f;
 const int ROT_STEPS = 16;   // key presses for a full cycle
-float rotation_speed = 2.0 / ROT_STEPS;
+float rotation_speed = 2.0f / ROT_STEPS;
 
 void move_in_x(float s)
 {

@@ -25,13 +25,13 @@ class VoxelComponent: public DrawComponent
             float phi = this->phi;
             float size = this->size;
             
-            forward.x = cos(theta * PI) * cos(phi * PI);
-            forward.y = sin(theta * PI) * cos(phi * PI);
-            forward.z = sin(phi);
+            forward.x = cosf(theta * PI) * cosf(phi * PI);
+            forward.y = sinf(theta * PI) * cosf(phi * PI);
+            forward.z = sinf(phi);
             normalize_vector(&forward);
 
-            right.x = cos(theta*PI + PI/2.0f);
-            right.y = sin(theta*PI + PI/2.0f);
+            right.x = cosf(theta*PI + PI/2.0f);
+            right.y = sinf(theta*PI + PI/2.0f);
             right.z = 0.0f;
             normalize_vector(&right);
 

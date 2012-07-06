@@ -284,7 +284,7 @@ void ChatInput::history_newer()
         o = o->prev;
     }
     strcpy(buffer, o->m);
-    buffer_len = strlen(buffer);
+    buffer_len = (int)strlen(buffer);
     cursor = buffer_len;
 }
 
@@ -302,7 +302,7 @@ void ChatInput::history_older()
         o = o->prev;
     }
     strcpy(buffer, o->m);
-    buffer_len = strlen(buffer);
+    buffer_len = (int)strlen(buffer);
     cursor = buffer_len;
 }
 

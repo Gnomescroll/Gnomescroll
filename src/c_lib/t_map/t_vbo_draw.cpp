@@ -80,7 +80,7 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
     for(int i=0; i<=8; i++)
     {
         //point_fulstrum_test(
-        if(sphere_fulstrum_test(x,y,16*i, 0.0) == true)
+        if(sphere_fulstrum_test(x,y,16*i, 0.0f) == true)
         {
             b = i;
             break;
@@ -89,7 +89,7 @@ void set_frustrum_column_min(int _i, int _j, float x, float y)
 
     for(int i=8; i>= 0; i--)
     {
-        if(sphere_fulstrum_test(x,y,16*i, 0.0) == true)
+        if(sphere_fulstrum_test(x,y,16*i, 0.0f) == true)
         {
             t = i;
             break;
@@ -229,7 +229,7 @@ bool chunk_render_check( float x, float y)
     //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
     //static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
 
-    static const float dist2 = (CAMERA_VIEW_DISTANCE+11.4)*(CAMERA_VIEW_DISTANCE+11.4);
+    static const float dist2 = (CAMERA_VIEW_DISTANCE+11.4f)*(CAMERA_VIEW_DISTANCE+11.4f);
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
@@ -267,8 +267,8 @@ void Vbo_map::prep_draw()
 
         if(col == NULL || col->vnum == 0) continue;
 
-        col->wxoff = quadrant_translate_f(cx, col->xoff+8.0);
-        col->wyoff = quadrant_translate_f(cy, col->yoff+8.0);
+        col->wxoff = quadrant_translate_f(cx, col->xoff+8.0f);
+        col->wyoff = quadrant_translate_f(cy, col->yoff+8.0f);
 /*
         xy_circle_fulstrum_test( col->wxoff, col->wyoff, 11.4)
 
@@ -405,7 +405,7 @@ void Vbo_map::draw_map()
 
 
         glLoadMatrixf(modelview);
-        glTranslatef(vbo->wxoff-8.0, vbo->wyoff-8.0, 0.0f);
+        glTranslatef(vbo->wxoff-8.0f, vbo->wyoff-8.0f, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
@@ -595,7 +595,7 @@ void Vbo_map::draw_map_compatibility()
         } 
 
         glLoadMatrixf(modelview);
-        glTranslatef(vbo->wxoff-8.0, vbo->wyoff-8.0, 0.0f);
+        glTranslatef(vbo->wxoff-8.0f, vbo->wyoff-8.0f, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 

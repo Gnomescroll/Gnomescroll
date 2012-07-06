@@ -210,10 +210,10 @@ void CraftingUI::draw()
     float x = xoff;
     float y = yoff;
 
-    float tx_min = 0.0;
-    float ty_min = 0.0;
-    float tx_max = texture_width/512.0;
-    float ty_max = texture_height/512.0;
+    float tx_min = 0.0f;
+    float ty_min = 0.0f;
+    float tx_max = texture_width/512.0f;
+    float ty_max = texture_height/512.0f;
 
     //draw background
     glBegin(GL_QUADS);
@@ -286,10 +286,10 @@ void CraftingUI::draw()
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
 
-        const float tx_min = (1.0/iw)*(tex_id % iiw);
-        const float ty_min = (1.0/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
+        const float tx_min = (1.0f/iw)*(tex_id % iiw);
+        const float ty_min = (1.0f/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0f/iw;
+        const float ty_max = ty_min + 1.0f/iw;
 
         glTexCoord2f( tx_min, ty_min );
         glVertex2f(x, y);
@@ -329,10 +329,10 @@ void CraftingUI::draw()
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
 
-        tx_min = (1.0/iw)*(tex_id % iiw);
-        ty_min = (1.0/iw)*(tex_id / iiw);
-        tx_max = tx_min + 1.0/iw;
-        ty_max = ty_min + 1.0/iw;
+        tx_min = (1.0f/iw)*(tex_id % iiw);
+        ty_min = (1.0f/iw)*(tex_id / iiw);
+        tx_max = tx_min + 1.0f/iw;
+        ty_max = ty_min + 1.0f/iw;
 
         glBegin(GL_QUADS);
         glTexCoord2f( tx_min, ty_min );
@@ -375,10 +375,10 @@ void CraftingUI::draw()
             const float iw = 16.0f; // icon_width
             const int iiw = 16; // integer icon width
 
-            tx_min = (1.0/iw)*(tex_id % iiw);
-            ty_min = (1.0/iw)*(tex_id / iiw);
-            tx_max = tx_min + 1.0/iw;
-            ty_max = ty_min + 1.0/iw;
+            tx_min = (1.0f/iw)*(tex_id % iiw);
+            ty_min = (1.0f/iw)*(tex_id / iiw);
+            tx_max = tx_min + 1.0f/iw;
+            ty_max = ty_min + 1.0f/iw;
 
             glBegin(GL_QUADS);
             glTexCoord2f( tx_min, ty_min );

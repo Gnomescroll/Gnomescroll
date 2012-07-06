@@ -76,8 +76,8 @@ void HitscanEffect::add_plane_bias()
     //printf("dxy=%0.2f dz=%0.2f\n", dxy, dz);
 
      //fixed in the bottom right corner
-    const float dxy = 0.14;
-    const float dz = -0.13;
+    const float dxy = 0.14f;
+    const float dz = -0.13f;
     this->x += dxy * right.x;
     this->y += dxy * right.y;
     this->z += dz;
@@ -97,8 +97,8 @@ void HitscanEffect::tick()
 
 void HitscanEffect::draw(float delta, Vec3 camera)
 {
-    const float width = 0.50;
-    const float height = 1.0/4.0;   //length per velocity
+    const float width = 0.50f;
+    const float height = 1.0f/4.0f;   //length per velocity
 
     float x = quadrant_translate_f(camera.x, this->x);
     float y = quadrant_translate_f(camera.y, this->y);
@@ -124,10 +124,10 @@ void HitscanEffect::draw(float delta, Vec3 camera)
     u1 = vec3_scalar_mult(u1, width);
     u2 = vec3_scalar_mult(u2, width);   
 
-    static const float tx_min = 0.0;
-    static const float tx_max = 1.0;
-    static const float ty_min = 0.0;
-    static const float ty_max = 1.0;
+    static const float tx_min = 0.0f;
+    static const float tx_max = 1.0f;
+    static const float ty_min = 0.0f;
+    static const float ty_max = 1.0f;
 
     glTexCoord2f(tx_max,ty_max);
     glVertex3f( x2.x + u2.x, x2.y + u2.y, x2.z + u2.z );  // Bottom left
@@ -163,7 +163,7 @@ void HitscanEffect_list::draw()
     
     const float tick_rate = 30.0f;
 
-    int last_tick = _LAST_TICK();
+    int last_tick = (int)_LAST_TICK();
     int _t = _GET_MS_TIME();
     float delta = ((float)(_t - last_tick)) / (100.0f*(1.0f / tick_rate));
     if(delta > 1.0f)
@@ -205,12 +205,12 @@ void HitscanEffect_list::tick()
 
         if(frame % 8 == 0 )
         {
-            const float vm = 16.0;
+            const float vm = 16.0f;
             float vx = vm*(float)rand()/(float)RAND_MAX;
-            float vy = 160.0;
+            float vy = 160.0f;
             float vz = vm*(float)rand()/(float)RAND_MAX;
             he = hitscan_effect_list->create();
-            he->set_state(32.0, 32.0, 64.0, vx, vy, vz);
+            he->set_state(32.0f, 32.0f, 64.0f, vx, vy, vz);
         }
 
     }

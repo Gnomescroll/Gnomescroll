@@ -537,11 +537,11 @@ void Voxel_volume::update_vertex_list()
     {
         compute_gamma_chart = 1;
 
-        static const float gamma_correction = 2.2;
+        static const float gamma_correction = 2.2f;
         for(int i=0; i< 255; i++)
         {
             float intensity = (float) i;
-            intensity = pow(intensity/255, gamma_correction)*255;
+            intensity = powf(intensity/255, gamma_correction)*255;
             _gamma_correction[i] = (unsigned char)((int) intensity);
         }
     }

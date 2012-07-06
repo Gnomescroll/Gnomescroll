@@ -107,8 +107,8 @@ bool set_soundfile(int snd_id, char* fn, char* file)
     if (function_registered(fn))
         return false;
     
-    int fn_len = strlen(fn);
-    int file_len = strlen(file);
+    int fn_len = (int)strlen(fn);
+    int file_len = (int)strlen(file);
     struct Soundfile* snd = &sound_file_functions[snd_id];
     snd->fn = (char*)malloc(sizeof(char) * (fn_len + 1));
     strcpy(snd->fn, fn);

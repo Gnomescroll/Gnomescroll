@@ -92,9 +92,9 @@ void draw_mining_laser_effect()
 }
 
 
-float x13 = 0.0;
-float y13 = 0.0;
-float z13 = 0.0;
+float x13 = 0.0f;
+float y13 = 0.0f;
+float z13 = 0.0f;
 
 void spawn_insect_mob(float x, float y, float z)
 {
@@ -106,7 +106,7 @@ void spawn_insect_mob(float x, float y, float z)
     InsectMob* im = insect_mob_list->create();
     if(im == NULL) return;
 
-    im->init(x,y,z+2.5);
+    im->init(x,y,z+2.5f);
 
     //printf("insect at: %f %f %f \n", x,y,z);
 }
@@ -131,7 +131,7 @@ void mining_laser_beam(Vec3 position, Vec3 orientation, float length)
 {
     const float speed = 6.0f;
     const int n = 5;
-    const float spread = 0.05;
+    const float spread = 0.05f;
     Vec3 step = vec3_scalar_mult(orientation, spread);
     for (int i=0; i<n; i++)
     {

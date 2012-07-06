@@ -116,7 +116,7 @@ void Voxel_model::draw_skeleton()
 
     struct Vec3 v;
 
-    const float len = 0.25;
+    const float len = 0.25f;
 
     // node matrix orientation
     for(int i=0; i<n_skeleton_nodes; i++)

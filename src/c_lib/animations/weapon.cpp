@@ -166,7 +166,7 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 	GL_ASSERT(GL_DEPTH_TEST, false);
 
     glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.5);
+    glAlphaFunc(GL_GREATER, 0.5f);
     glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 
 	// vertex calls

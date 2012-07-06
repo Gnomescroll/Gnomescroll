@@ -36,13 +36,13 @@ size(MINIVOX_SIZE)
 // recalculates orientation vectors from angular parameter
 void ColoredMinivox::orient_vectors()
 {
-    vec_x.x = cos(theta * PI) * cos(phi * PI);
-    vec_x.y = sin(theta * PI) * cos(phi * PI);
-    vec_x.z = sin(phi);
+    vec_x.x = cosf(theta * PI) * cosf(phi * PI);
+    vec_x.y = sinf(theta * PI) * cosf(phi * PI);
+    vec_x.z = sinf(phi);
     normalize_vector(&vec_x);
 
-    vec_y.x = cos(theta*PI + PI/2.0f);
-    vec_y.y = sin(theta*PI + PI/2.0f);
+    vec_y.x = cosf(theta*PI + PI/2.0f);
+    vec_y.y = sinf(theta*PI + PI/2.0f);
     vec_y.z = 0.0f;
     normalize_vector(&vec_y);
 

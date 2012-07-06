@@ -170,7 +170,7 @@ void TextureSheetLoader::generate_grey_scale()
     for(int i=0; i< 256; i++)
     {
         float intensity = ((float) i) / 255;
-        gamma_correction[i] = pow(intensity, 1.0/2.2);
+        gamma_correction[i] = powf(intensity, 1.0f/2.2f);
     }
 
     int c_lock = SDL_MUSTLOCK( texture_sheet);
@@ -188,8 +188,8 @@ void TextureSheetLoader::generate_grey_scale()
         Uint32 pix = ((Uint32*)texture_sheet->pixels)[index];
         SDL_GetRGBA(pix, texture_sheet->format, &r, &g, &b, &a);
 
-        float avg = (gamma_correction[r] + gamma_correction[g] + gamma_correction[b]) / 3.0;
-        avg = pow(avg, 2.2);
+        float avg = (gamma_correction[r] + gamma_correction[g] + gamma_correction[b]) / 3.0f;
+        avg = powf(avg, 2.2f);
 
         if(avg > 1.0 || avg < 0.0) printf("ERROR TextureSheetLoader::generate_grey_scale: %f \n", avg);
 

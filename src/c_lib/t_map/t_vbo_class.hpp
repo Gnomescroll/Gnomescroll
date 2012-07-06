@@ -60,8 +60,8 @@ class Map_vbo
 
         //flags.flags = 0; //zero all flags
 
-        xpos = m->xpos + 8.0;
-        ypos = m->ypos + 8.0;
+        xpos = m->xpos + 8.0f;
+        ypos = m->ypos + 8.0f;
 
         xoff = m->xpos;
         yoff = m->ypos;

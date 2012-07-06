@@ -119,7 +119,7 @@ class Texture_surface
 
         glBindTexture(GL_TEXTURE_2D, tex[0]);
 
-        const float z = -0.4;
+        const float z = -0.4f;
 
         float x0 = x;
         float x1 = x+scale*xdim;
@@ -128,16 +128,16 @@ class Texture_surface
 
         glBegin(GL_QUADS);
 
-        glTexCoord2f(0.0,0.0);
+        glTexCoord2f(0.0f,0.0f);
         glVertex3f(x0,y0, z);  // Top left
 
-        glTexCoord2f(1.0,0.0);
+        glTexCoord2f(1.0f,0.0f);
         glVertex3f(x1, y0, z);  // Top right
 
-        glTexCoord2f(1.0,1.0);
+        glTexCoord2f(1.0f,1.0f);
         glVertex3f(x1, y1, z);  // Bottom right
 
-        glTexCoord2f(0.0,1.0);
+        glTexCoord2f(0.0f,1.0f);
         glVertex3f(x0, y1, z);  // Bottom left
 
         glEnd();

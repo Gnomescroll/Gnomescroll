@@ -86,7 +86,7 @@ public:
 void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _farD) 
 {
     //printf("set camera\n");
-    static const float ANG2RAD = 3.14159265358979323846/180.0;
+    static const float ANG2RAD = 3.14159265358979323846f/180.0f;
     // store the information
     this->aspect = _aspect;
     this->fov = _fov;
@@ -94,7 +94,7 @@ void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _f
     this->farD  = _farD;
 
     // compute width and height of the near and far plane sections
-    tang = (float)tan(ANG2RAD * fov * 0.5) ;
+    tang = (float)tan(ANG2RAD * fov * 0.5f) ;
     nh = nearD * tang;
     nw = nh * aspect;
     fh = farD  * tang;

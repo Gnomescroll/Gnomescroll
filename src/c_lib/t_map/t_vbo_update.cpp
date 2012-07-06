@@ -208,8 +208,8 @@ void init_pallete()
         float g = _pallet[3*i+1];
         float b = _pallet[3*i+2];
 
-        float avg = ((r+g+b) / 3.0);
-        avg /= 255.0;
+        float avg = ((r+g+b) / 3.0f);
+        avg /= 255.0f;
 
         _palletn[3*i+0] = (unsigned char) (r / avg);
         _palletn[3*i+1] = (unsigned char) (g / avg);

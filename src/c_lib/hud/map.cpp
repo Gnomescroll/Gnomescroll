@@ -104,7 +104,7 @@ void init_text_icons()
         
     char* spawner_max_string = (char*)malloc(sizeof(char) * (10+1));
     sprintf(spawner_max_string, "%d", Components::MAX_AGENT_SPAWNER_COMPONENTS);
-    int len = strlen(spawner_max_string);
+    int len = (int)strlen(spawner_max_string);
     for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
     {
         spawner[i] = HudText::text_list->create();
@@ -411,11 +411,11 @@ void draw_text_icons(float z)
     );
     you_star->set_position(x,y);
     you_star->set_depth(z);
-    you_star->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5);
+    you_star->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5f);
 
     you_A->set_position(x,y);
     you_A->set_depth(z);
-    you_A->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5);
+    you_A->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5f);
 
     if (free_camera == NULL) return;
     if (free_camera->is_current())
@@ -432,7 +432,7 @@ void draw_text_icons(float z)
 
 void draw_text()
 {
-    const float z = -0.1;
+    const float z = -0.1f;
     draw_text_icons(z);
     draw_text_icons(z);
 }

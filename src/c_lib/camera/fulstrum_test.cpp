@@ -26,19 +26,19 @@ static struct
 
 void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
 {
-    const float pi = 3.14159265;
-    fovy *= (pi/180);
+    const float pi = 3.14159265f;
+    fovy *= (pi/180.0f);
 
     fulstrum.zfar = zfar;
 
-    double angle = fovy / 2.0;
+    double angle = fovy / 2.0f;
     double tang = tan(angle);
-    float anglex = atan(tang*aspect);
-    fulstrum.hy = tan(fovy/2);
+    float anglex = (float)atan(tang*aspect);
+    fulstrum.hy = tanf(fovy/2);
     fulstrum.hx = fulstrum.hy*aspect;
 
-    fulstrum.hy_sphere = 1.0/cos(angle);
-    fulstrum.hx_sphere = 1.0/cos(anglex);
+    fulstrum.hy_sphere = (float)(1.0/cos(angle));
+    fulstrum.hx_sphere = (float)(1.0/cosf(anglex));
     
     fulstrum.c = camera;
     fulstrum.f = forward;
@@ -46,11 +46,11 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
     fulstrum.r = right;
 
     fulstrum.f_2d = forward;
-    fulstrum.f_2d.z = 0.0;
+    fulstrum.f_2d.z = 0.0f;
     fulstrum.f_2d = vec3_normalize(fulstrum.f_2d);
 
     fulstrum.r_2d = right;
-    fulstrum.r_2d.z = 0.0;
+    fulstrum.r_2d.z = 0.0f;
     fulstrum.r_2d = vec3_normalize(fulstrum.r_2d);
 }
 

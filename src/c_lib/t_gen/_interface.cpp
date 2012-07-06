@@ -48,10 +48,10 @@ void save_png(const char* filename, float* in, int xres, int yres)
 
     static unsigned char gamma_correction[256];
 
-    for(int i=0; i< 256; i++)
+    for(int i=0; i < 256; i++)
     {
         float intensity = ((float) i) / 255;
-        intensity = pow(intensity, 1.0/2.2)*255;
+        intensity = powf(intensity, 1.0f/2.2f)*255;
         gamma_correction[i] = (unsigned char)((int) intensity);
     }
 
@@ -62,9 +62,9 @@ void save_png(const char* filename, float* in, int xres, int yres)
 
         float _v = in[j*xres+i];
 
-        if( _v < 0.0) _v = 0.0;
-        if( _v > 1.0) _v = 1.0;
-        unsigned char v = ((int) 255.0*_v );
+        if( _v < 0.0) _v = 0.0f;
+        if( _v > 1.0) _v = 1.0f;
+        unsigned char v = ((int) 255.0f*_v );
         unsigned char v2 = gamma_correction[v];
 
         PBUFFER[index+0] = v2;

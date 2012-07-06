@@ -15,7 +15,7 @@ typedef enum
 
 typedef enum
 {
-    NULL_ITEM = 0xffff,
+    NULL_ITEM = 0xffff
 } ItemID;
 
 typedef enum

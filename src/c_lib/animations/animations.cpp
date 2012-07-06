@@ -251,7 +251,7 @@ void terrain_sparks(float x, float y, float z)
         s = Particle::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
         if (s==NULL) return;
         s->ttl = randrange(8,15);
-        s->scale = 0.05;
+        s->scale = 0.05f;
         s->texture_index = 54;
     }
 }
@@ -340,7 +340,7 @@ void agent_bleed(float x, float y, float z)
 void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // pos, incident vector
 {
     if (!Options::animations) return;
-    float len = sqrt(ix*ix + iy*iy + iz*iz);
+    float len = sqrtf(ix*ix + iy*iy + iz*iz);
     ix /= len;
     iy /= len;
     iz /= len;
@@ -357,13 +357,13 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     int ttl;
     for (int i=0; i<n; i++)
     {
-        theta = randf() * 3.14159 * 2;
-        phi = randf() * 3.14159 * 2;
-        gamma = randf() * 3.14159 * 2;
+        theta = randf() * 3.14159f * 2;
+        phi = randf() * 3.14159f * 2;
+        gamma = randf() * 3.14159f * 2;
 
         v = vec3_euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
 
-        speed = (randf() + 0.5) * randrange(0,2);
+        speed = (randf() + 0.5f) * randrange(0,2);
         speed *= base_speed;
         b = Particle::blood_list->create();
         if (b == NULL) return;

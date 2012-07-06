@@ -78,10 +78,10 @@ static const int v_index[72] =
 
 static const float t_index[8] =
 {
-    0.0, 0.0,
-    0.0, 1.0,
-    1.0, 1.0,
-    1.0, 0.0
+    0.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 0.0f
 };
 
 

@@ -355,10 +355,10 @@ void SmelterUI::draw()
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
 
-        const float tx_min = (1.0/iw)*(tex_id % iiw);
-        const float ty_min = (1.0/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
+        const float tx_min = (1.0f/iw)*(tex_id % iiw);
+        const float ty_min = (1.0f/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0f/iw;
+        const float ty_max = ty_min + 1.0f/iw;
 
         glTexCoord2f( tx_min, ty_min );
         glVertex2f(x, y);

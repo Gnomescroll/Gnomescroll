@@ -120,8 +120,9 @@ namespace ItemParticle
 {
 
 const int ITEM_PARTICLE_MAX = 1024;
+const int ITEM_PARTICLE_HARD_MAX = 0xffff - 1;
 
-class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MAX>
+class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MAX, ITEM_PARTICLE_HARD_MAX>
 {
     private:
         const char* name() { return "ItemParticle"; }
@@ -147,7 +148,7 @@ void ItemParticle_list::draw()
 
     glEnable(GL_ALPHA_TEST);
 
-    glAlphaFunc ( GL_GREATER, 0.5);
+    glAlphaFunc ( GL_GREATER, 0.5f);
 
     glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 

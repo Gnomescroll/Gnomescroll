@@ -56,8 +56,8 @@ void PlayerAgent_action::hitscan_laser()
 
     // magic offset numbers found by rotating the laser to the right spot
     // fixed in the bottom right corner
-    const float dxy = 0.14;
-    const float dz = -0.13;
+    const float dxy = 0.14f;
+    const float dz = -0.13f;
 
     // animation origin
     float origin[3];
