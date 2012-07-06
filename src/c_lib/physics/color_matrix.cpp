@@ -419,8 +419,8 @@ float rot )
     yrotatemat(mat,yrs,yrc);
 
 /* rotate the hue */
-    zrs = sinf(rot*M_PI/180.0f);
-    zrc = cosf(rot*M_PI/180.0f);
+    zrs = (float)sin(rot*M_PI/180.0f);
+    zrc = (float)cos(rot*M_PI/180.0f);
     zrotatemat(mat,zrs,zrc);
 
 /* rotate the grey vector back into place */
@@ -462,8 +462,8 @@ float rot )
     zshearmat(mmat,zsx,zsy);
 
 /* rotate the hue */
-    zrs = sinf(rot*2*M_PI);
-    zrc = cosf(rot*2*M_PI);
+    zrs = (float)sin(rot*2*M_PI);
+    zrc = (float)cos(rot*2*M_PI);
     zrotatemat(mmat,zrs,zrc);
 
 /* unshear the space to put the luminance plane back */

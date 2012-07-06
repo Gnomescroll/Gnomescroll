@@ -146,7 +146,7 @@ float perlin2_tiling(float x, float y, int period)
     assert(_oct == 1);
     float total = 0.0f;
     for (int i=0; i<_oct; i++)  
-        total += powf(0.5, i) * pnoise2_tiling(x * powf(2,i), y * powf(2,i), period*powf(2,i));
+        total += powf(0.5f, i) * pnoise2_tiling(x * powf(2,i), y * powf(2,i), period*powf(2,i));
     return total;
 }
 
