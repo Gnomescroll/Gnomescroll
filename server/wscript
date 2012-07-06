@@ -73,6 +73,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     extra_options = [
         '-Wall',
+        '-Wempty-body',
         '-DDC_SERVER=1',
         '-fno-exceptions',
         '-Winline',

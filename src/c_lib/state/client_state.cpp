@@ -109,7 +109,7 @@ namespace ClientState {
 
     void send_identify_packet(char* name)
     {
-        unsigned int len = strlen(name);
+        unsigned int len = (unsigned int)strlen(name);
         if (len >= PLAYER_NAME_MAX_LENGTH)
             name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 

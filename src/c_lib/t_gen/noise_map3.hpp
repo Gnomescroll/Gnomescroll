@@ -141,7 +141,7 @@ float base(float x, float y, float z)
     // Interpolate the two last results along z
     float nxyz = mix(nxy0, nxy1, w);
 
-    return nxyz * 0.707106781;   //-1 to 1 
+    return nxyz * 0.707106781f;   //-1 to 1 
 }
 
 };
@@ -158,7 +158,7 @@ class PerlinOctave3D
 
     PerlinOctave3D(int _octaves)
     {
-        cache_persistance = 0.0;
+        cache_persistance = 0.0f;
         cache_seed = 0;
 
         octaves = _octaves;
@@ -183,8 +183,8 @@ class PerlinOctave3D
     __attribute__((optimize("-O3")))
     float sample(float x, float y, float z, float persistance)
     {   
-        float p = 1.0;
-        float tmp = 0.0;
+        float p = 1.0f;
+        float tmp = 0.0f;
         for(int i=0; i<octaves; i++)
         {
 		#if 1
@@ -247,9 +247,9 @@ class PerlinOctave3D
         for(int i=0; i<XMAX; i++)
         for(int j=0; j<YMAX; j++)
         {
-            x = i*(4.0/512.0);
-            y = j*(4.0/512.0);
-            z = k*(8.0/512.0);
+            x = i*(4.0f/512.0f);
+            y = j*(4.0f/512.0f);
+            z = k*(8.0f/512.0f);
 
             cache[k*XMAX*YMAX + j*XMAX + i] = sample(x,y,z, persistance);
         }
@@ -266,7 +266,7 @@ float sigmoid(float t, float mean, float reaction)
 {
     t = t -mean;
     t *= reaction;
-    return (1.0 / (1+exp(-t)));
+    return (1.0f / (1+(float)exp(-t)));
 }
 
 //-1 to 1
@@ -275,7 +275,7 @@ float sigmoid2(float t, float mean, float reaction)
 {
     t = t -mean;
     t *= reaction;
-    return (2.0 / (1+exp(-t))) - 1;
+    return (2.0f / (1+(float)exp(-t))) - 1;
 }
 
 
@@ -361,7 +361,7 @@ class MapGenerator1
         //float y = j*4;
         float z = k*8;
 
-        float v = 0.0; //value;
+        float v = 0.0f; //value;
 
         int index2 = j*XMAX + i;
         int index3 = k*XYMAX + j*XMAX + i;
@@ -385,7 +385,7 @@ class MapGenerator1
 
         ri2 = ((int)(ri2 * 5));
 
-        ri2 *= .20;
+        ri2 *= 0.20f;
 
         ri2 *= 40;
 
@@ -393,7 +393,7 @@ class MapGenerator1
         
         //v += 0.25*sigmoid(z, hmin+ri2, 0.50);
         //v += 0.25*sigmoid2(z, hmin+ri2, 0.125);
-        if( z < hmin + ri2) v -= 0.25; //0,25  //hard threshold
+        if( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
@@ -401,7 +401,7 @@ class MapGenerator1
 #if 1
         //v += e3*(e2*e2);
         //v += 0.60*e3*e3;   more extreme //only erodes in this form
-        v += 0.40*e3*e3;   //only erodes in this form
+        v += 0.40f*e3*e3;   //only erodes in this form
         //v -= 0.40*e3*e3;   //only adds in this form
         //v += 0.40*e3;
         //v += 0.40*abs(e3 + .40);
@@ -417,12 +417,12 @@ class MapGenerator1
 #endif
         //return v;
 
-        static const float hrange = 4.0;   //half of range (can perturb this with another map)
+        static const float hrange = 4.0f;   //half of range (can perturb this with another map)
 
-        static const float _hmin = -1.0;
-        static const float _hmax = 1.0;
+        static const float _hmin = -1.0f;
+        static const float _hmax = 1.0f;
 
-        static const float _hmix = 0.01; //0.125;
+        static const float _hmix = 0.01f; //0.125;
 
         //if(k == 5) printf("h2= %f \n", h2);
 
@@ -433,7 +433,7 @@ class MapGenerator1
         //if(r2 > 1) r2 = 1.0;
         //if(r2 < 0.50) r2 = 0.50;
 
-        if(r2 < 0.125) r2 = 0.0125; 
+        if(r2 < 0.125f) r2 = 0.0125f; 
         float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
         if(tmp1 < _hmin) tmp1 = _hmin;
@@ -527,7 +527,7 @@ class MapGenerator1
             //map volume lerp: 962 ms 
             for(int i0=0; i0<4; i0++)
             {
-                float u = 0.25 * i0;    //x interpolation
+                float u = 0.25f * i0;    //x interpolation
                 float nx00 = mix(n000, n100, u);
                 float nx01 = mix(n001, n101, u);
                 float nx10 = mix(n010, n110, u);
@@ -535,13 +535,13 @@ class MapGenerator1
 
                 for(int j0=0; j0<4; j0++)
                 {
-                    float v = 0.25 * j0;    //y interpolation
+                    float v = 0.25f * j0;    //y interpolation
                     float nxy0 = mix(nx00, nx10, v);
                     float nxy1 = mix(nx01, nx11, v);
 
                     for(int k0=0; k0<8; k0++)
                     {
-                        float w = 0.125 * k0;   //z interpolation
+                        float w = 0.125f * k0;   //z interpolation
                         float nxyz = mix(nxy0, nxy1, w);
 
                         if(nxyz < 0.0)
@@ -662,11 +662,11 @@ void test_octave_3d_map_gen(int tile_id)
     ti[i++] = _GET_MS_TIME();
 
     //set seeds for each of the noise maps
-    map_generator->erosion3D->set_param(0.6, rand() );
-    map_generator->erosion2D->set_param(0.8, rand() );
-    map_generator->height2D->set_param(0.8, rand() );
-    map_generator->ridge2D->set_param(0.5, rand() );
-    map_generator->roughness2D->set_param(0.85, rand() );
+    map_generator->erosion3D->set_param(0.6f, rand() );
+    map_generator->erosion2D->set_param(0.8f, rand() );
+    map_generator->height2D->set_param(0.8f, rand() );
+    map_generator->ridge2D->set_param(0.5f, rand() );
+    map_generator->roughness2D->set_param(0.85f, rand() );
 
     ti[i++] = _GET_MS_TIME();
 

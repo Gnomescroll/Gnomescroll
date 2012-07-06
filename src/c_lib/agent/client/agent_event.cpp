@@ -65,7 +65,7 @@ void Agent_event::name_changed(char* old_name)
 
 void Agent_event::update_hud_name()
 {
-    const float z_margin = 0.4;
+    const float z_margin = 0.4f;
     Vec3 p = this->a->get_position();
     this->bb.set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
     

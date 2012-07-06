@@ -144,8 +144,8 @@ void map_element_update::handle()
 
 void block_set_StoC::handle() 
 {
-    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y && z >= 0 && z < map_dim.z);
-    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+    GS_ASSERT(x < map_dim.x && y < map_dim.y && z < map_dim.z);
+    if (x >= map_dim.x || y >= map_dim.y || z >= map_dim.z) return;
     main_map->set_block(x,y,z, block);
 }
 
@@ -189,8 +189,8 @@ void container_block_chunk_reset_StoC::handle()
 
 void container_block_create_StoC::handle()
 {
-    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y <= map_dim.y);
-    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y) return;
+    //GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y <= map_dim.y); // always true
+    //if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y) return; // always false
     int chunk_index = (y/16)*(MAP_WIDTH/16) + (x/16);
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
     if (main_map->chunk[chunk_index] == NULL) return;

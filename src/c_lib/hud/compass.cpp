@@ -45,7 +45,7 @@ void update()
 
     Vec3 north = vec3_init(0,1,0);
 
-    float t = acos(vec3_dot(forward, north)) / kPI;
+    float t = acosf(vec3_dot(forward, north)) / kPI;
     if ((forward.x*north.y - forward.y*north.x) > 0)
         t = -t;
     theta = t;

@@ -7,15 +7,14 @@
 void print_trace()
 {
     void *array[PRINT_TRACE_STACK_SIZE];
-    size_t size;
+    int size;
     char **strings;
-    size_t i;
 
     size = backtrace(array, PRINT_TRACE_STACK_SIZE);
     strings = backtrace_symbols(array, size);
 
     //printf ("Obtained %zd stack frames.\n", size);
-    for (i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
         printf("%s\n", strings[i]);
 
     free(strings);

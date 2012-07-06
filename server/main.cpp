@@ -43,7 +43,7 @@ void init()
         //Dragon::flat_veins();
     }   
 
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     
     //t_gen::gen_map();
 

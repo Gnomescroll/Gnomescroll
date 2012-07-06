@@ -89,7 +89,7 @@ struct Mat4 mat4_mult(Mat4 a, Mat4 b)
 /*
     for(int i = 0; i < 4; i++){
     for(int j = 0; j < 4; j++){
-        c._f[4*i+j] = 0.0;
+        c._f[4*i+j] = 0.0f;
     }}
 
     for(int i = 0; i < 4; i++){
@@ -113,10 +113,10 @@ struct Mat4 mat4_identity()
 {   
     struct Mat4 m;
 
-    m.v[0] = vec4_init(1.0, 0.0, 0.0, 0.0);
-    m.v[1] = vec4_init(0.0, 1.0, 0.0, 0.0);
-    m.v[2] = vec4_init(0.0, 0.0, 1.0, 0.0);
-    m.v[3] = vec4_init(0.0, 0.0, 0.0, 1.0);
+    m.v[0] = vec4_init(1.0f, 0.0f, 0.0f, 0.0f);
+    m.v[1] = vec4_init(0.0f, 1.0f, 0.0f, 0.0f);
+    m.v[2] = vec4_init(0.0f, 0.0f, 1.0f, 0.0f);
+    m.v[3] = vec4_init(0.0f, 0.0f, 0.0f, 1.0f);
 
     return m;
 }
@@ -138,25 +138,25 @@ struct Mat4 mat4_euler_rotation(float x, float y, float z)
     
     struct Mat4 m;
 
-    m.v[0].x = (cy*cx); 
-    m.v[0].y = (cy*sx);
-    m.v[0].z = (-sy);
-    m.v[0].w = 0.0;
+    m.v[0].x = (float)(cy*cx); 
+    m.v[0].y = (float)(cy*sx);
+    m.v[0].z = (float)(-sy);
+    m.v[0].w = 0.0f;
 
     double szsy = sz*sy;
     double czsy = cz*sy;
     
-    m.v[1].x = (szsy*cx-cz*sx);
-    m.v[1].y = (szsy*sx+cz*cx);
-    m.v[1].z = (sz*cy);
-    m.v[1].w = 0.0;
+    m.v[1].x = (float)(szsy*cx-cz*sx);
+    m.v[1].y = (float)(szsy*sx+cz*cx);
+    m.v[1].z = (float)(sz*cy);
+    m.v[1].w = 0.0f;
 
-    m.v[2].x = (czsy*cx+sz*sx);
-    m.v[2].y = (czsy*sx-sz*cx);
-    m.v[2].z = (cz*cy);
-    m.v[2].w = 0.0;
+    m.v[2].x = (float)(czsy*cx+sz*sx);
+    m.v[2].y = (float)(czsy*sx-sz*cx);
+    m.v[2].z = (float)(cz*cy);
+    m.v[2].w = 0.0f;
 
-    m.v[3] = vec4_init(0.0, 0.0, 0.0, 1.0);
+    m.v[3] = vec4_init(0.0f, 0.0f, 0.0f, 1.0f);
 
     return m;
 }
@@ -178,25 +178,25 @@ struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, fl
     
     struct Mat4 m;
 
-    m.v[0].x = (cy*cx); 
-    m.v[0].y = (cy*sx);
-    m.v[0].z = (-sy);
-    m.v[0].w = 0.0;
+    m.v[0].x = (float)(cy*cx); 
+    m.v[0].y = (float)(cy*sx);
+    m.v[0].z = (float)(-sy);
+    m.v[0].w = 0.0f;
 
     double szsy = sz*sy;
     double czsy = cz*sy;
     
-    m.v[1].x = (szsy*cx-cz*sx);
-    m.v[1].y = (szsy*sx+cz*cx);
-    m.v[1].z = (sz*cy);
-    m.v[1].w = 0.0;
+    m.v[1].x = (float)(szsy*cx-cz*sx);
+    m.v[1].y = (float)(szsy*sx+cz*cx);
+    m.v[1].z = (float)(sz*cy);
+    m.v[1].w = 0.0f;
 
-    m.v[2].x = (czsy*cx+sz*sx);
-    m.v[2].y = (czsy*sx-sz*cx);
-    m.v[2].z = (cz*cy);
-    m.v[2].w = 0.0;
+    m.v[2].x = (float)(czsy*cx+sz*sx);
+    m.v[2].y = (float)(czsy*sx-sz*cx);
+    m.v[2].z = (float)(cz*cy);
+    m.v[2].w = 0.0f;
 
-    m.v[3] = vec4_init(_x, _y, _z, 1.0);
+    m.v[3] = vec4_init(_x, _y, _z, 1.0f);
 
     return m;
 }

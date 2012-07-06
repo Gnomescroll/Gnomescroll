@@ -70,8 +70,8 @@ inline void assign_item_container_StoC::handle()
 
 inline void insert_item_in_container_StoC::handle()
 {
-    GS_ASSERT(item_id >= 0 && item_id != NULL_ITEM);
-    if (item_id < 0 || item_id == NULL_ITEM) return;
+    GS_ASSERT(item_id != NULL_ITEM);
+    if (item_id == NULL_ITEM) return;
 
     ItemContainerInterface* container = get_container(container_id);
     ASSERT_NOT_NULL(container);
@@ -98,8 +98,8 @@ inline void remove_item_from_container_StoC::handle()
 
 inline void insert_item_in_hand_StoC::handle()
 {
-    GS_ASSERT(item_id >= 0 && item_id != NULL_ITEM);
-    if (item_id < 0 || item_id == NULL_ITEM) return;
+    GS_ASSERT(item_id != NULL_ITEM);
+    if (item_id == NULL_ITEM) return;
     Item::Item* item = Item::get_item((ItemID)item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return;

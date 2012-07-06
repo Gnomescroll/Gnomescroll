@@ -171,7 +171,7 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
     float ip;
     float arc;
 
-    float len = sqrt(vx*vx + vy*vy + vz*vz);
+    float len = sqrtf(vx*vx + vy*vy + vz*vz);
     vx /= len;
     vy /= len;
     vz /= len;
@@ -187,13 +187,13 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
         ay = p.y - y;
         az = p.z - z;
 
-        len = sqrt(ax*ax + ay*ay + az*az);
+        len = sqrtf(ax*ax + ay*ay + az*az);
         ax /= len;
         ay /= len;
         az /= len;
 
         ip = ax*vx + ay*vy + az*vz;
-        arc = abs(acos(ip));
+        arc = abs(acosf(ip));
 
         if (arc < theta)
             filtered_objects[ct++] = a;

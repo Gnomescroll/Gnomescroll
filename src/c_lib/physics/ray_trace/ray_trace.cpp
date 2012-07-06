@@ -283,7 +283,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 
 void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out)
 {
-    float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = (float)sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x,y,z;
     x = x0; //truncating conversion
@@ -313,9 +313,9 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    max_i = fmin(raycast_tick_max, max_i);
+    max_i = (max_i > raycast_tick_max) ? raycast_tick_max : max_i;
 
-    for(i =0; i < max_i; i++) {
+    for(i = 0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
@@ -326,10 +326,10 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 if(collision_check(x,y,z)) {
                     if(cdx == 1)
                     {
-                        *v_out = vec3_init(1.0,0.0,0.0);
+                        *v_out = vec3_init(1.0f,0.0f,0.0f);
                     } else 
                     {
-                        *v_out = vec3_init(-1.0,0.0,0.0);
+                        *v_out = vec3_init(-1.0f,0.0f,0.0f);
                     }
                     ri4[0] = cdx;
                     break;
@@ -341,10 +341,10 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 if(collision_check(x,y,z)) {
                     if(cdy == 1)
                     {
-                        *v_out = vec3_init(0.0,1.0,0.0);
+                        *v_out = vec3_init(0.0f,1.0f,0.0f);
                     } else 
                     {
-                        *v_out = vec3_init(0.0,-1.0,0.0);
+                        *v_out = vec3_init(0.0f,-1.0f,0.0f);
                     }
                     break;
                 }
@@ -355,10 +355,10 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 if(collision_check(x,y,z)) {
                     if(cdz == 1)
                     {
-                        *v_out = vec3_init(0.0,0.0,1.0);
+                        *v_out = vec3_init(0.0f,0.0f,1.0f);
                     } else 
                     {
-                        *v_out = vec3_init(0.0,0.0,-1.0);
+                        *v_out = vec3_init(0.0f,0.0f,-1.0f);
                     }
                     break;
                 }
@@ -370,7 +370,7 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
-    float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = (float)sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
         y = (int)y0,
@@ -627,7 +627,7 @@ void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 #endif
 
 int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile, struct Vec3* v_out) {
-    float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = (float)sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
         y = (int)y0,
@@ -680,10 +680,10 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
                 ri4[0] = cdx;
                 if(cdx == 1)
                 {
-                    *v_out = vec3_init(1.0,0.0,0.0);
+                    *v_out = vec3_init(1.0f,0.0f,0.0f);
                 } else 
                 {
-                    *v_out = vec3_init(-1.0,0.0,0.0);
+                    *v_out = vec3_init(-1.0f,0.0f,0.0f);
                 }
             }
         }
@@ -695,10 +695,10 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
                 ri4[1] = cdy;
                 if(cdy == 1)
                 {
-                    *v_out = vec3_init(0.0,1.0,0.0);
+                    *v_out = vec3_init(0.0f,1.0f,0.0f);
                 } else 
                 {
-                    *v_out = vec3_init(0.0,-1.0,0.0);
+                    *v_out = vec3_init(0.0f,-1.0f,0.0f);
                 }
             }
         }
@@ -710,10 +710,10 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
                 ri4[2] = cdz;
                 if(cdz == 1)
                 {
-                    *v_out = vec3_init(0.0,0.0,1.0);
+                    *v_out = vec3_init(0.0f,0.0f,1.0f);
                 } else 
                 {
-                    *v_out = vec3_init(0.0,0.0,-1.0);
+                    *v_out = vec3_init(0.0f,0.0f,-1.0f);
                 }
             }
         }
@@ -730,7 +730,7 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
     // normalize direction
-    float len2 = sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
+    float len2 = (float)sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;
     _dfy /= len2;
     _dfz /= len2;
@@ -841,7 +841,7 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
 {
 
     const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
-    float xy_inc = sqrt(vx*vx + vy*vy);
+    float xy_inc = (float)sqrt(vx*vx + vy*vy);
 
     int z_max;
     float z_inc;
@@ -895,7 +895,7 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
 int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high) {
 
     const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
-    float xy_inc = sqrt(vx*vx + vy*vy);
+    float xy_inc = (float)sqrt(vx*vx + vy*vy);
 
     int z_max;
     float z_inc;

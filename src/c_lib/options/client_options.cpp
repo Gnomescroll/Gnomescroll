@@ -23,7 +23,7 @@ OPT_FLOAT(fov, 85.0f)
 
 /* Controls */
 OPT_FLOAT(sensitivity, 70.0f)
-OPT_FLOAT(camera_speed, 0.6)
+OPT_FLOAT(camera_speed, 0.6f)
 OPT_BOOL(invert_mouse, false)
 
 /* HUD / Info */

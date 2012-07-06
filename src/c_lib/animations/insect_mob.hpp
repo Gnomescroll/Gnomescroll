@@ -7,7 +7,7 @@
 namespace Animations 
 {
 
-static float insect_mob_t = 0.0;
+static float insect_mob_t = 0.0f;
 
 ///struct vertexElement2* insect_mob_vlist = NULL;
 //int insect_mob_vlist_index = 0;
@@ -129,13 +129,13 @@ class InsectMob
 
     void init(float _x, float _y, float _z)
     {
-        for(int i=0; i<max_sides; i++ ) speed[i] = 1.0+ (0.4*randf() - 0.1);
+        for(int i=0; i<max_sides; i++ ) speed[i] = 1.0f + (0.4f*randf() - 0.1f);
 
         sides = 3 + (rand() % 4);
         //tw = 1.0 + (randf()*.5 - 0.25);
         //th = 1.0 + (randf()*.5 - 0.25);
-        tw = 1.0;
-        th = 1.0;
+        tw = 1.0f;
+        th = 1.0f;
 
         x = _x;
         y = _y;
@@ -154,33 +154,33 @@ class InsectMob
 
         const float t = insect_mob_t;
 
-        const float h = 0.8;
-        const float li = 0.1;
+        const float h = 0.8f;
+        const float li = 0.1f;
 
-        const float txh = 0.2; //texture slice height for claw
+        const float txh = 0.2f; //texture slice height for claw
 
 
-        const float f1 = (1.0 /(float)(sides))*2*3.14159;
-        const float f2 = (1.0 / 3.0)*2*3.14159;
+        const float f1 = (1.0f /(float)(sides))*2*3.14159f;
+        const float f2 = (1.0f / 3.0f)*2*3.14159f;
 
         struct Vec3 v1,v2,v3;
 
         for(int i=0; i<sides; i++)
         {
-            float _x = x+(tw-0.15)*sin(f1*i);
-            float _y = y+(th-0.15)*cos(f1*i);
+            float _x = x+(tw-0.15f)*sinf(f1*i);
+            float _y = y+(th-0.15f)*cosf(f1*i);
             float _z = z;
 
             for(int j=0; j<3; j++)
             {
                 
-                v1 = vec3_init( _x + 0.3*sin(speed[i]*t), _y, _z-h );
-                v2 = vec3_init( _x+li*sin(f2*j), _y+li*cos(f2*j), _z );
-                v3 = vec3_init( _x+li*sin(f2*(j+1)), _y+li*cos(f2*(j+1)), _z );
+                v1 = vec3_init( _x + 0.3f*sinf(speed[i]*t), _y, _z-h );
+                v2 = vec3_init( _x+li*sinf(f2*j), _y+li*cosf(f2*j), _z );
+                v3 = vec3_init( _x+li*sinf(f2*(j+1)), _y+li*cosf(f2*(j+1)), _z );
 
-                insect_mob_vlist->push_vertex(v1, 0.5, 0.5);
-                insect_mob_vlist->push_vertex(v2, 0.0, 0.5+txh);
-                insect_mob_vlist->push_vertex(v3, 0.0, 0.5-txh);
+                insect_mob_vlist->push_vertex(v1, 0.5f, 0.5f);
+                insect_mob_vlist->push_vertex(v2, 0.0f, 0.5f+txh);
+                insect_mob_vlist->push_vertex(v3, 0.0f, 0.5f-txh);
             }
         }
 
@@ -194,11 +194,11 @@ class InsectMob
         float y = quadrant_translate_f(current_camera_position.y, this->y);
         float z = this->z;
 
-        const float z0 = 0;
-        const float z1 = 0.3;
-        const float z2 = -0.3;
+        const float z0 = 0.0f;
+        const float z1 = 0.3f;
+        const float z2 = -0.3f;
 
-        const float f1 = (1 / (float)(sides))*2*3.14159;
+        const float f1 = (1.0f / (float)(sides))*2*3.14159f;
 
         struct Vec3 v1,v2,v3;
 
@@ -206,12 +206,12 @@ class InsectMob
         {
 
             v1 = vec3_init( x, y, z1+z );
-            v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
-            v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
+            v2 = vec3_init( x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z );
+            v3 = vec3_init( x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z );
 
-            insect_mob_vlist->push_vertex(v1, 0.5, 0.5);
-            insect_mob_vlist->push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
-            insect_mob_vlist->push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
+            insect_mob_vlist->push_vertex(v1, 0.5f, 0.5f);
+            insect_mob_vlist->push_vertex(v2, sinf(f1*i)/2 + 0.5f,  cosf(f1*i)/2 + 0.5f);
+            insect_mob_vlist->push_vertex(v3, sinf(f1*(i+1))/2 + 0.5f,  cosf(f1*(i+1))/2 + 0.5f);
 
         }
 
@@ -219,12 +219,12 @@ class InsectMob
         {
 
             v1 = vec3_init( x, y, z2+z );
-            v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
-            v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
+            v2 = vec3_init( x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z );
+            v3 = vec3_init( x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z );
 
-            insect_mob_vlist->push_vertex(v1, 0.5, 0.5);
-            insect_mob_vlist->push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
-            insect_mob_vlist->push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
+            insect_mob_vlist->push_vertex(v1, 0.5f, 0.5f);
+            insect_mob_vlist->push_vertex(v2, sinf(f1*i)/2 + 0.5f,  cosf(f1*i)/2 + 0.5f);
+            insect_mob_vlist->push_vertex(v3, sinf(f1*(i+1))/2 + 0.5f,  cosf(f1*(i+1))/2 + 0.5f);
         }
     }
 /* 
@@ -275,7 +275,7 @@ void Insect_mob_list::prep()
     #if DC_CLIENT
 
     if( needs_update == false) return;
-    insect_mob_t += 0.04;
+    insect_mob_t += 0.04f;
 
     for (int i=0; i<this->n_max; i++)
     {

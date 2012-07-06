@@ -11,7 +11,7 @@ off_t fsize(const char *filename)
 // free the returned char* buffer after use
 char* read_file_to_buffer(char* file_name, int* size)
 {
-    int expected_size = fsize(file_name);
+    int expected_size = (int)fsize(file_name);
     char *source = NULL;
     FILE *fp = fopen(file_name, "r");
     if (fp != NULL)

@@ -8,13 +8,13 @@ const float gravity = -9.8f;
 
 static inline void velocity_integrate(Vec3* p, Vec3* v, Vec3 a, float dt)
 {
-    *p = vec3_add(*p, vec3_add(vec3_scalar_mult(*v, dt), vec3_scalar_mult(a, 0.5*dt*dt)));  // r(t) + v(t)dt + (1/2)gravity(t)dtdt
+    *p = vec3_add(*p, vec3_add(vec3_scalar_mult(*v, dt), vec3_scalar_mult(a, 0.5f*dt*dt)));  // r(t) + v(t)dt + (1/2)gravity(t)dtdt
     /* the following block is for nonconstant gravity (spring forces) */
     //v5 = vec3_scalar_add(vv, 0.5*gravity*dt);
     // gravity(t+dt) = gravity [constant]
     //v = vec3_scalar_add(v5, 0.5*gravity*dt);
     /* end block */
-    *v = vec3_add(*v, vec3_scalar_mult(a, 0.5*dt));
+    *v = vec3_add(*v, vec3_scalar_mult(a, 0.5f*dt));
 }
 
 static inline void velocity_integrate(Vec3* p, Vec3* v, float dt)

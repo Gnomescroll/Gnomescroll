@@ -12,8 +12,10 @@ inline void block_CtoS::handle() {}
 #if DC_SERVER
 inline void block_CtoS::handle() 
 {
-    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
-    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+    // the data type for the packet values is guaranteed to be within this range
+    // re-enable these warnings if the data type for the packet values increases in byte size
+    //GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
+    //if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
 
     broadcast_set_block(x,y,z, val);
 }

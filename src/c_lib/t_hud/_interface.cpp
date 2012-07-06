@@ -344,10 +344,10 @@ static void draw_grabbed_icon()
     const float iw = 16.0f; // icon_width
     const int iiw = 16; // integer icon width
     
-    const float tx_min = (1.0/iw)*(tex_id % iiw);
-    const float ty_min = (1.0/iw)*(tex_id / iiw);
-    const float tx_max = tx_min + 1.0/iw;
-    const float ty_max = ty_min + 1.0/iw;
+    const float tx_min = (1.0f/iw)*(tex_id % iiw);
+    const float ty_min = (1.0f/iw)*(tex_id / iiw);
+    const float tx_max = tx_min + 1.0f/iw;
+    const float ty_max = ty_min + 1.0f/iw;
 
     glTexCoord2f( tx_min, ty_min );
     glVertex2f(x,y+w);
@@ -489,27 +489,27 @@ void init()
     nanite_container = new AgentNaniteUI;
     nanite_container->type = UI_ELEMENT_NANITE_CONTAINER;
     nanite_container->xoff = (_xresf - nanite_container->width())/2;
-    nanite_container->yoff = 150.0 + (_yresf + nanite_container->height())/2;
+    nanite_container->yoff = 150.0f + (_yresf + nanite_container->height())/2;
     nanite_container->init();
 
     crafting_container = new CraftingUI;
     crafting_container->type = UI_ELEMENT_CRAFTING_CONTAINER;
     crafting_container->xoff = (_xresf - crafting_container->width())/2 + 1;
-    crafting_container->yoff = -150.0 + (_yresf + crafting_container->height())/2;
+    crafting_container->yoff = -150.0f + (_yresf + crafting_container->height())/2;
     crafting_container->init();
 
     storage_block = new StorageBlockUI;
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
     storage_block->set_container_type(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     storage_block->centered = true;
-    storage_block->yoff = -150.0 + (_yresf + storage_block->height())/2;
+    storage_block->yoff = -150.0f + (_yresf + storage_block->height())/2;
     storage_block->init();
 
     smelter = new SmelterUI;
     smelter->type = UI_ELEMENT_SMELTER;
     smelter->set_container_type(CONTAINER_TYPE_SMELTER_ONE);
     smelter->centered = true;
-    smelter->yoff = -150.0 + (_yresf + smelter->height())/2;
+    smelter->yoff = -150.0f + (_yresf + smelter->height())/2;
     smelter->init();
 
     grabbed_icon_stack_text = new HudText::Text;

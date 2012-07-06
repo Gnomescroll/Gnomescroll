@@ -36,8 +36,9 @@ def _grab_output(*cmd):
 
 
 def get_version():
+    print "Warning: get_version() is deprecated"
     try:
-        fn = '../VERSIONX'
+        fn = '../VERSIONX.old'
         with open(fn) as f:
             version = f.read()
     except Exception, e:
@@ -114,6 +115,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     extra_options = [
         '-Wall',
+        '-Wempty-body',
         '-DDC_CLIENT=1',
         '-fno-exceptions',
         '-Winline',

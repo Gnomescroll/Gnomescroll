@@ -114,7 +114,7 @@ void set_item_name(int id, char* name, int length)
 
 void set_item_name(int id, char* name)
 {
-    int length = strlen(name);
+    int length = (int)strlen(name);
     set_item_name(id, name, length);
 }
 

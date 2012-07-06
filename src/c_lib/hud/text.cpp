@@ -118,7 +118,7 @@ void Text::draw_centered()
 // however, char buffer will never contract
 char* Text::set_string(char* text, char* this_text, unsigned int* this_len)
 {
-    unsigned int len = strlen(text);
+    unsigned int len = (unsigned int)strlen(text);
     if (this_text == NULL)
     {   // first time adding
         this_text = (char*)malloc(sizeof(char) * (len+1));
@@ -264,7 +264,7 @@ int Text::charcount()
 {
     if (this->text == NULL)
         return 0;
-    return strlen(this->text);
+    return (int)strlen(this->text);
 }
 
 void Text::reset_alignment()

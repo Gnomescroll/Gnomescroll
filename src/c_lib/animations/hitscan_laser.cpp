@@ -47,7 +47,7 @@ void HitscanLaserEffect::tick()
 
 void HitscanLaserEffect::draw1(float delta, Vec3 camera)
 {
-    const float width = 0.5;
+    const float width = 0.5f;
 
     float x = quadrant_translate_f(camera.x, this->x);
     float y = quadrant_translate_f(camera.y, this->y);
@@ -69,8 +69,8 @@ void HitscanLaserEffect::draw1(float delta, Vec3 camera)
     Vec3 u1 = vec3_cross(l1, r);
     normalize_vector(&u1);
 
-    float ratio = ((float) (HITSCAN_LASER_TTL - ttl))/15.0;
-    if(ratio > 1.0) ratio = 1.0;
+    float ratio = ((float) (HITSCAN_LASER_TTL - ttl))/15.0f;
+    if(ratio > 1.0f) ratio = 1.0f;
     float _fx = x + (fx-x)*ratio;
     float _fy = y + (fy-y)*ratio;
     float _fz = z + (fz-z)*ratio;
@@ -85,10 +85,10 @@ void HitscanLaserEffect::draw1(float delta, Vec3 camera)
     u1 = vec3_scalar_mult(u1, width);
     u2 = vec3_scalar_mult(u2, width);  
 
-    const float tx_min = 0.0;
-    const float tx_max = 1.0;
-    const float ty_min = 0.0;
-    const float ty_max = 1.0;
+    const float tx_min = 0.0f;
+    const float tx_max = 1.0f;
+    const float ty_min = 0.0f;
+    const float ty_max = 1.0f;
 
     glTexCoord2f(tx_max,ty_max );
     glVertex3f( x2.x + u2.x, x2.y + u2.y, x2.z + u2.z );  // Bottom left
@@ -106,8 +106,8 @@ void HitscanLaserEffect::draw1(float delta, Vec3 camera)
 
 void HitscanLaserEffect::draw2(float delta, Vec3 camera)
 {
-    const float width = 0.5;
-    const float height = 12.0;
+    const float width = 0.5f;
+    const float height = 12.0f;
 
     float x = quadrant_translate_f(camera.x, this->x);
     float y = quadrant_translate_f(camera.y, this->y);
@@ -123,8 +123,8 @@ void HitscanLaserEffect::draw2(float delta, Vec3 camera)
     Vec3 r = vec3_init(fx-x, fy-y, fz-z);
     normalize_vector( &r );
 
-    float ratio = ((float) (HITSCAN_LASER_TTL - ttl))/30.0;
-    if(ratio > 1.0) ratio = 1.0;
+    float ratio = ((float) (HITSCAN_LASER_TTL - ttl))/30.0f;
+    if(ratio > 1.0f) ratio = 1.0f;
     float _fx = x + (fx-x)*ratio;
     float _fy = y + (fy-y)*ratio;
     float _fz = z + (fz-z)*ratio;
@@ -147,10 +147,10 @@ void HitscanLaserEffect::draw2(float delta, Vec3 camera)
     u1 = vec3_scalar_mult(u1, width);
     u2 = vec3_scalar_mult(u2, width);  
 
-    const float tx_min = 0.0;
-    const float tx_max = 1.0;
-    const float ty_min = 0.0;
-    const float ty_max = 1.0;
+    const float tx_min = 0.0f;
+    const float tx_max = 1.0f;
+    const float ty_min = 0.0f;
+    const float ty_max = 1.0f;
 
     glTexCoord2f(tx_max,ty_max );
     glVertex3f( x2.x + u2.x, x2.y + u2.y, x2.z + u2.z );  // Bottom left
@@ -171,8 +171,8 @@ void HitscanLaserEffect_list::draw()
 {
     //printf("draw \n");
 
-    int last_tick = _LAST_TICK();
-    int _t = _GET_MS_TIME();
+    int last_tick = (int)_LAST_TICK();
+    int _t = (int)_GET_MS_TIME();
     //printf("ms since last update= %i \n", _t - last_tick);
     float delta = ((float)(_t - last_tick)) / 33.3f;
     if (delta > 1.0f) delta = 1.0f;

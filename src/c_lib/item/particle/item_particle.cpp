@@ -53,8 +53,8 @@ void ItemParticle::draw()
     Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
     if (point_fulstrum_test(position.x, position.y, position.z) == false) return;
 
-    const float scale = 0.25;
-    const float h = 0.35;
+    const float scale = 0.25f;
+    const float h = 0.35f;
 
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,
@@ -68,10 +68,10 @@ void ItemParticle::draw()
     );
 
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->sprite_index%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(this->sprite_index/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
+    tx_min = (float)(this->sprite_index%16)* (1.0f/16.0f);
+    tx_max = tx_min + (1.0f/16.0f);
+    ty_min = (float)(this->sprite_index/16)* (1.0f/16.0f);
+    ty_max = ty_min + (1.0f/16.0f);
 
     Vec3 p = vec3_sub(position, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);

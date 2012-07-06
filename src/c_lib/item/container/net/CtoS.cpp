@@ -386,7 +386,7 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
-    if (z < 0 || z >= map_dim.z) return;
+    //if (z < 0 || z >= map_dim.z) return;  // this comparison is not needed, because of value range for the data type
     if (z == 0) return; // no floor
 
     Agent_state* a = NetServer::agents[client_id];
@@ -402,8 +402,9 @@ void create_container_block_CtoS::handle()
     ItemContainerType container_type = Item::get_container_type_for_block(val);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
-    GS_ASSERT(orientation >= 0 && orientation <= 3);
-    if (orientation < 0 || orientation > 3) orientation = 0;
+    // these comparisons not needed due to value range of data type
+    //GS_ASSERT(orientation >= 0 && orientation <= 3);
+    //if (orientation < 0 || orientation > 3) orientation = 0;
     x = translate_point(x);
     y = translate_point(y);
 
@@ -450,7 +451,8 @@ void create_container_block_CtoS::handle()
 
 void admin_create_container_block_CtoS::handle()
 {
-    if (z < 0 || z >= map_dim.z) return;
+    // comparison not needed due to value range of data type
+    //if (z < 0 || z >= map_dim.z) return;
  
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
@@ -459,8 +461,9 @@ void admin_create_container_block_CtoS::handle()
     ItemContainerType container_type = Item::get_container_type_for_block(val);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
-    GS_ASSERT(orientation >= 0 && orientation <= 3);
-    if (orientation < 0 || orientation > 3) orientation = 0;
+    // comparison not needed due to value range of data type
+    //GS_ASSERT(orientation >= 0 && orientation <= 3);
+    //if (orientation < 0 || orientation > 3) orientation = 0;
     x = translate_point(x);
     y = translate_point(y);
 

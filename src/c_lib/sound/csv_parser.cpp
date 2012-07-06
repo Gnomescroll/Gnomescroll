@@ -230,13 +230,13 @@ void parse_sound_triggers(char *fn)
                 if (set_soundfile(snd_id, function_name, filename))
                 {   // set properties
                     n_sounds++;
-                    pitch_value = (pitch_index) ? atof(pitch) : GS_DEFAULT_PITCH;
-                    gain_value = (gain_index) ? atof(gain) : GS_DEFAULT_GAIN;
-                    max_distance_value = (max_distance_index) ? atof(max_distance) : GS_DEFAULT_MAX_DISTANCE;
-                    reference_distance_value = (reference_distance_index) ? atof(reference_distance) : GS_DEFAULT_REFERENCE_DISTANCE;
-                    minimum_gain_value = (minimum_gain_index) ? atof(minimum_gain) : GS_DEFAULT_MINIMUM_GAIN;
-                    maximum_gain_value = (maximum_gain_index) ? atof(maximum_gain) : GS_DEFAULT_MAXIMUM_GAIN;
-                    rolloff_factor_value = (rolloff_factor_index) ? atof(rolloff_factor) : GS_DEFAULT_ROLLOFF_FACTOR;
+                    pitch_value = (pitch_index) ? (float)atof(pitch) : GS_DEFAULT_PITCH;
+                    gain_value = (gain_index) ? (float)atof(gain) : GS_DEFAULT_GAIN;
+                    max_distance_value = (max_distance_index) ? (float)atof(max_distance) : GS_DEFAULT_MAX_DISTANCE;
+                    reference_distance_value = (reference_distance_index) ? (float)atof(reference_distance) : GS_DEFAULT_REFERENCE_DISTANCE;
+                    minimum_gain_value = (minimum_gain_index) ? (float)atof(minimum_gain) : GS_DEFAULT_MINIMUM_GAIN;
+                    maximum_gain_value = (maximum_gain_index) ? (float)atof(maximum_gain) : GS_DEFAULT_MAXIMUM_GAIN;
+                    rolloff_factor_value = (rolloff_factor_index) ? (float)atof(rolloff_factor) : GS_DEFAULT_ROLLOFF_FACTOR;
                     loop_value = (loop_index) ? (bool)atoi(loop) : GS_DEFAULT_LOOP;
                     set_soundfile_properties(snd_id, pitch_value, gain_value, max_distance_value, reference_distance_value, minimum_gain_value, maximum_gain_value, rolloff_factor_value, loop_value);
                 }

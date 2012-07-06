@@ -107,7 +107,7 @@ void VoxPart::set_dimension(int x, int y, int z)
 
 void VoxPart::set_filename(char *filename)
 {
-    int len = strlen(filename);
+    int len = (int)strlen(filename);
     this->filename = (char*)realloc(this->filename, sizeof(char) * (len+1));
     strcpy(this->filename, filename);
 }
@@ -130,7 +130,7 @@ biaxial(biaxial)
     //#if DC_CLIENT
     colors.init(dimension_x, dimension_y, dimension_z);
     //#endif
-    int len = strlen(filename);
+    int len = (int)strlen(filename);
     this->filename = (char*)malloc(sizeof(char) * (len + 1));
     strcpy(this->filename, filename);
 }

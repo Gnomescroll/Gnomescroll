@@ -98,7 +98,7 @@ int skip_extra(FILE* f, char* buffer, int buffer_size, int skip_amount)
     {
         remaining = skip_amount - skipped;
         read_amt = (remaining < buffer_size) ? remaining : buffer_size;
-        read = fread(buffer, sizeof(char), read_amt, f);
+        read = (int)fread(buffer, sizeof(char), read_amt, f);
         skipped += read;
         if (read != buffer_size) break;
     }
@@ -112,48 +112,48 @@ bool read_wav_fmt_subchunk(FILE* f, WavData* data)
     int read;
     int total_read = 0;
 
-    read = fread(metadata.buffer, sizeof(char), 4, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     if (strcmp(metadata.buffer, "fmt ") != 0)
         return false;
         
-    read = fread(metadata.buffer, sizeof(char), 4, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     int chunk_size = metadata.four_bytes;
     
-    read = fread(metadata.buffer, sizeof(char), 2, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
     data->format = metadata.two_bytes;
 
-    read = fread(metadata.buffer, sizeof(char), 2, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
     data->channels = metadata.two_bytes;
 
-    read = fread(metadata.buffer, sizeof(char), 4, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     total_read += read;
     data->sample_rate = metadata.four_bytes;
 
-    read = fread(metadata.buffer, sizeof(char), 4, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     total_read += read;
     data->byte_rate = metadata.four_bytes;
 
-    read = fread(metadata.buffer, sizeof(char), 2, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
     // blockAlignment, dont care
 
-    read = fread(metadata.buffer, sizeof(char), 2, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
@@ -181,7 +181,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
     // skip any chunks that are not "data"
     while (1)
     {   // read subchunk label
-        int read = fread(metadata.buffer, sizeof(char), 4, f);
+        int read = (int)fread(metadata.buffer, sizeof(char), 4, f);
         if (read != 4)
             return false;
 
@@ -191,7 +191,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
             break;
             
         // read subchunk size
-        read = fread(metadata.buffer, sizeof(char), 4, f);
+        read = (int)fread(metadata.buffer, sizeof(char), 4, f);
         if (read != 4)
             return false;
 
@@ -207,7 +207,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
     }
 
     // get size of wav data
-    read = fread(metadata.buffer, sizeof(char), 4, f);
+    read = (int)fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     data->size = metadata.four_bytes;
@@ -221,7 +221,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
 
     // load pcm data to buffer
     *buffer = (unsigned char*)malloc(sizeof(unsigned char) * data->size);
-    read = fread(*buffer, sizeof(char), data->size, f);
+    read = (int)fread(*buffer, sizeof(char), data->size, f);
     if (read != data->size)
     {
         printf("Failed to read PCM data of size %d\n", data->size);

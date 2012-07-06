@@ -34,7 +34,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     const static int _ssize = 256;
     const static int _bsize = 65536;
     // normalize direction
-    float len2 = sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
+    float len2 = sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;
     _dfy /= len2;
     _dfz /= len2;
@@ -156,8 +156,8 @@ int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, fl
 
 
 #if HITSCAN_TEST_FAST
-    const float s = this->radius - sqrt(r2); // Sagitta
-    const float l = 0.01 + sqrt( s*(this->radius*2 - s) ) ;
+    const float s = this->radius - sqrtf(r2); // Sagitta
+    const float l = 0.01f + sqrtf( s*(this->radius*2.0f - s) ) ;
 
     v.x = ((v.x - l*u.x) / scale) + xdim/2;
     v.y = ((v.y - l*u.y) / scale) + ydim/2;
@@ -278,7 +278,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale)
     this->index_max = powx*powy*powz;
 
     //update radius if changing scale
-    this->radius = sqrt((hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
+    this->radius = sqrtf((hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
     this->voxel = (union Voxel*)malloc(sizeof(union Voxel) * powx * powy * powz);
     needs_vbo_update = true;
@@ -537,11 +537,11 @@ void Voxel_volume::update_vertex_list()
     {
         compute_gamma_chart = 1;
 
-        static const float gamma_correction = 2.2;
+        static const float gamma_correction = 2.2f;
         for(int i=0; i< 255; i++)
         {
             float intensity = (float) i;
-            intensity = pow(intensity/255, gamma_correction)*255;
+            intensity = powf(intensity/255, gamma_correction)*255;
             _gamma_correction[i] = (unsigned char)((int) intensity);
         }
     }

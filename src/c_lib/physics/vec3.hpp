@@ -7,7 +7,7 @@
 
 #include <physics/constants.hpp>
 
-#define PI 3.14159265
+#define PI 3.14159265f
 
 struct Vec3 
 {
@@ -32,7 +32,7 @@ static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline
 
 static void normalize_vector(struct Vec3* v)
 {
-    float len = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
+    float len = sqrtf(v->x*v->x + v->y*v->y + v->z*v->z);
     v->x /= len;
     v->y /= len;
     v->z /= len;
@@ -75,7 +75,7 @@ static struct Vec3 vec3_normalize(struct Vec3 v) __attribute((always_inline));
 
 struct Vec3 vec3_normalize(struct Vec3 v) 
 {
-    float l = 1.0/sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    float l = (float)(1.0/sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
     v.x *= l; 
     v.y *= l;
     v.z *= l;
@@ -195,20 +195,20 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     
     struct Vec3 m[3];
 
-    m[0].x = (cy*cx); 
-    m[0].y = (cy*sx);
-    m[0].z = (-sy);
+    m[0].x = (float)(cy*cx); 
+    m[0].y = (float)(cy*sx);
+    m[0].z = (float)(-sy);
 
     double szsy = sz*sy;
     double czsy = cz*sy;
     
-    m[1].x = (szsy*cx-cz*sx);
-    m[1].y = (szsy*sx+cz*cx);
-    m[1].z = (sz*cy);
+    m[1].x = (float)(szsy*cx-cz*sx);
+    m[1].y = (float)(szsy*sx+cz*cx);
+    m[1].z = (float)(sz*cy);
 
-    m[2].x = (czsy*cx+sz*sx);
-    m[2].y = (czsy*sx-sz*cx);
-    m[2].z = (cz*cy);
+    m[2].x = (float)(czsy*cx+sz*sx);
+    m[2].y = (float)(czsy*sx-sz*cx);
+    m[2].z = (float)(cz*cy);
 
     struct Vec3 u;
 
@@ -262,7 +262,7 @@ static float vec3_length(struct Vec3 v) __attribute((always_inline));
 
 float vec3_length(struct Vec3 v) 
 {
-    return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    return sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
 static float vec3_length_squared(struct Vec3 v) __attribute((always_inline));
@@ -275,7 +275,7 @@ float vec3_length_squared(struct Vec3 v)
 static float vec3_distance(struct Vec3 v) __attribute((always_inline));
 float vec3_distance(struct Vec3 v1, struct Vec3 v2)
 {
-    return sqrt((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
+    return sqrtf((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
 }
 
 static float vec3_distance_squared(struct Vec3 v) __attribute((always_inline));
@@ -292,7 +292,7 @@ float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
     pt2 = vec3_sub(pt2, pt);
     normalize_vector(&pt2);
     float x = vec3_dot(look, pt2);
-    x = acos(x);
+    x = acosf(x);
     return x;
 }
 
@@ -301,7 +301,7 @@ static float vec3_to_theta(Vec3 direction)
 {
     direction.z = 0;
     normalize_vector(&direction);
-    float t = acos(direction.x) / PI;
+    float t = acosf(direction.x) / PI;
     if (direction.y < 0) t = -t;
     return t;
 }
@@ -315,11 +315,11 @@ static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
     direction.z = 0;
     normalize_vector(&direction);
 
-    float t = acos(direction.x) / PI;
+    float t = acosf(direction.x) / PI;
     if (direction.y < 0) t = -t;
     *theta = t;
 
-    t = asin(z) / PI;
+    t = asinf(z) / PI;
     t += 0.5f;
     *phi = t;
 }
@@ -347,7 +347,7 @@ void vec3_print(struct Vec3 v)
 
 void vec3_print_length(struct Vec3 v) 
 {
-    float l = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
     printf("Vec3_length= %fs \n", l);
 }
 

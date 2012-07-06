@@ -57,10 +57,10 @@ struct Affine affine_identity()
 {   
     struct Affine m;
 
-    m.v[0] = vec3_init(1.0, 0.0, 0.0);
-    m.v[1] = vec3_init(0.0, 1.0, 0.0);
-    m.v[2] = vec3_init(0.0, 0.0, 1.0);
-    m.v[3] = vec3_init(0.0, 0.0, 0.0);
+    m.v[0] = vec3_init(1.0f, 0.0f, 0.0f);
+    m.v[1] = vec3_init(0.0f, 1.0f, 0.0f);
+    m.v[2] = vec3_init(0.0f, 0.0f, 1.0f);
+    m.v[3] = vec3_init(0.0f, 0.0f, 0.0f);
 
     return m;
 }
@@ -82,20 +82,20 @@ struct Affine affine_euler_rotation_and_translation(float _x, float _y, float _z
     
     struct Affine m;
 
-    m.v[0].x = (cy*cx); 
-    m.v[0].y = (cy*sx);
-    m.v[0].z = (-sy);
+    m.v[0].x = (float)(cy*cx); 
+    m.v[0].y = (float)(cy*sx);
+    m.v[0].z = (float)(-sy);
 
     double szsy = sz*sy;
     double czsy = cz*sy;
     
-    m.v[1].x = (szsy*cx-cz*sx);
-    m.v[1].y = (szsy*sx+cz*cx);
-    m.v[1].z = (sz*cy);
+    m.v[1].x = (float)(szsy*cx-cz*sx);
+    m.v[1].y = (float)(szsy*sx+cz*cx);
+    m.v[1].z = (float)(sz*cy);
 
-    m.v[2].x = (czsy*cx+sz*sx);
-    m.v[2].y = (czsy*sx-sz*cx);
-    m.v[2].z = (cz*cy);
+    m.v[2].x = (float)(czsy*cx+sz*sx);
+    m.v[2].y = (float)(czsy*sx-sz*cx);
+    m.v[2].z = (float)(cz*cy);
 
     m.v[3] = vec3_init(_x, _y, _z);
 

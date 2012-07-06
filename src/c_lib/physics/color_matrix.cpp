@@ -93,22 +93,22 @@ void identmat( float matrix2[4][4] )
 {
     float* matrix = (float *)matrix2;
 
-    *matrix++ = 1.0;    /* row 1        */
-    *matrix++ = 0.0;
-    *matrix++ = 0.0;
-    *matrix++ = 0.0;
-    *matrix++ = 0.0;    /* row 2        */
-    *matrix++ = 1.0;
-    *matrix++ = 0.0;
-    *matrix++ = 0.0;
-    *matrix++ = 0.0;    /* row 3        */
-    *matrix++ = 0.0;
-    *matrix++ = 1.0;
-    *matrix++ = 0.0;
-    *matrix++ = 0.0;    /* row 4        */
-    *matrix++ = 0.0;
-    *matrix++ = 0.0;
-    *matrix++ = 1.0;
+    *matrix++ = 1.0f;    /* row 1        */
+    *matrix++ = 0.0f;
+    *matrix++ = 0.0f;
+    *matrix++ = 0.0f;
+    *matrix++ = 0.0f;    /* row 2        */
+    *matrix++ = 1.0f;
+    *matrix++ = 0.0f;
+    *matrix++ = 0.0f;
+    *matrix++ = 0.0f;    /* row 3        */
+    *matrix++ = 0.0f;
+    *matrix++ = 1.0f;
+    *matrix++ = 0.0f;
+    *matrix++ = 0.0f;    /* row 4        */
+    *matrix++ = 0.0f;
+    *matrix++ = 0.0f;
+    *matrix++ = 1.0f;
 }
 
 /*
@@ -133,25 +133,25 @@ void cscalemat( float mat[4][4], float rscale, float gscale, float bscale )
     float mmat[4][4];
 
     mmat[0][0] = rscale;
-    mmat[0][1] = 0.0;
-    mmat[0][2] = 0.0;
-    mmat[0][3] = 0.0;
+    mmat[0][1] = 0.0f;
+    mmat[0][2] = 0.0f;
+    mmat[0][3] = 0.0f;
 
-    mmat[1][0] = 0.0;
+    mmat[1][0] = 0.0f;
     mmat[1][1] = gscale;
-    mmat[1][2] = 0.0;
-    mmat[1][3] = 0.0;
+    mmat[1][2] = 0.0f;
+    mmat[1][3] = 0.0f;
 
 
-    mmat[2][0] = 0.0;
-    mmat[2][1] = 0.0;
+    mmat[2][0] = 0.0f;
+    mmat[2][1] = 0.0f;
     mmat[2][2] = bscale;
-    mmat[2][3] = 0.0;
+    mmat[2][3] = 0.0f;
 
-    mmat[3][0] = 0.0;
-    mmat[3][1] = 0.0;
-    mmat[3][2] = 0.0;
-    mmat[3][3] = 1.0;
+    mmat[3][0] = 0.0f;
+    mmat[3][1] = 0.0f;
+    mmat[3][2] = 0.0f;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -164,28 +164,28 @@ void lummat( float mat[4][4] )
     float mmat[4][4];
     float rwgt, gwgt, bwgt;
 
-    rwgt = RLUM;
-    gwgt = GLUM;
-    bwgt = BLUM;
+    rwgt = (float)RLUM;
+    gwgt = (float)GLUM;
+    bwgt = (float)BLUM;
     mmat[0][0] = rwgt;
     mmat[0][1] = rwgt;
     mmat[0][2] = rwgt;
-    mmat[0][3] = 0.0;
+    mmat[0][3] = 0.0f;
 
     mmat[1][0] = gwgt;
     mmat[1][1] = gwgt;
     mmat[1][2] = gwgt;
-    mmat[1][3] = 0.0;
+    mmat[1][3] = 0.0f;
 
     mmat[2][0] = bwgt;
     mmat[2][1] = bwgt;
     mmat[2][2] = bwgt;
-    mmat[2][3] = 0.0;
+    mmat[2][3] = 0.0f;
 
-    mmat[3][0] = 0.0;
-    mmat[3][1] = 0.0;
-    mmat[3][2] = 0.0;
-    mmat[3][3] = 1.0;
+    mmat[3][0] = 0.0f;
+    mmat[3][1] = 0.0f;
+    mmat[3][2] = 0.0f;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -203,38 +203,38 @@ float sat
     float a, b, c, d, e, f, g, h, i;
     float rwgt, gwgt, bwgt;
 
-    rwgt = RLUM;
-    gwgt = GLUM;
-    bwgt = BLUM;
+    rwgt = (float)RLUM;
+    gwgt = (float)GLUM;
+    bwgt = (float)BLUM;
 
-    a = (1.0-sat)*rwgt + sat;
-    b = (1.0-sat)*rwgt;
-    c = (1.0-sat)*rwgt;
-    d = (1.0-sat)*gwgt;
-    e = (1.0-sat)*gwgt + sat;
-    f = (1.0-sat)*gwgt;
-    g = (1.0-sat)*bwgt;
-    h = (1.0-sat)*bwgt;
-    i = (1.0-sat)*bwgt + sat;
+    a = (1.0f-sat)*rwgt + sat;
+    b = (1.0f-sat)*rwgt;
+    c = (1.0f-sat)*rwgt;
+    d = (1.0f-sat)*gwgt;
+    e = (1.0f-sat)*gwgt + sat;
+    f = (1.0f-sat)*gwgt;
+    g = (1.0f-sat)*bwgt;
+    h = (1.0f-sat)*bwgt;
+    i = (1.0f-sat)*bwgt + sat;
     mmat[0][0] = a;
     mmat[0][1] = b;
     mmat[0][2] = c;
-    mmat[0][3] = 0.0;
+    mmat[0][3] = 0.0f;
 
     mmat[1][0] = d;
     mmat[1][1] = e;
     mmat[1][2] = f;
-    mmat[1][3] = 0.0;
+    mmat[1][3] = 0.0f;
 
     mmat[2][0] = g;
     mmat[2][1] = h;
     mmat[2][2] = i;
-    mmat[2][3] = 0.0;
+    mmat[2][3] = 0.0f;
 
-    mmat[3][0] = 0.0;
-    mmat[3][1] = 0.0;
-    mmat[3][2] = 0.0;
-    mmat[3][3] = 1.0;
+    mmat[3][0] = 0.0f;
+    mmat[3][1] = 0.0f;
+    mmat[3][2] = 0.0f;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -248,25 +248,25 @@ float roffset, float goffset, float boffset)
 {
     float mmat[4][4];
 
-    mmat[0][0] = 1.0;
-    mmat[0][1] = 0.0;
-    mmat[0][2] = 0.0;
-    mmat[0][3] = 0.0;
+    mmat[0][0] = 1.0f;
+    mmat[0][1] = 0.0f;
+    mmat[0][2] = 0.0f;
+    mmat[0][3] = 0.0f;
 
-    mmat[1][0] = 0.0;
-    mmat[1][1] = 1.0;
-    mmat[1][2] = 0.0;
-    mmat[1][3] = 0.0;
+    mmat[1][0] = 0.0f;
+    mmat[1][1] = 1.0f;
+    mmat[1][2] = 0.0f;
+    mmat[1][3] = 0.0f;
 
-    mmat[2][0] = 0.0;
-    mmat[2][1] = 0.0;
-    mmat[2][2] = 1.0;
-    mmat[2][3] = 0.0;
+    mmat[2][0] = 0.0f;
+    mmat[2][1] = 0.0f;
+    mmat[2][2] = 1.0f;
+    mmat[2][3] = 0.0f;
 
     mmat[3][0] = roffset;
     mmat[3][1] = goffset;
     mmat[3][2] = boffset;
-    mmat[3][3] = 1.0;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -279,25 +279,25 @@ float rs, float rc )
 {
     float mmat[4][4];
 
-    mmat[0][0] = 1.0;
-    mmat[0][1] = 0.0;
-    mmat[0][2] = 0.0;
-    mmat[0][3] = 0.0;
+    mmat[0][0] = 1.0f;
+    mmat[0][1] = 0.0f;
+    mmat[0][2] = 0.0f;
+    mmat[0][3] = 0.0f;
 
-    mmat[1][0] = 0.0;
+    mmat[1][0] = 0.0f;
     mmat[1][1] = rc;
     mmat[1][2] = rs;
-    mmat[1][3] = 0.0;
+    mmat[1][3] = 0.0f;
 
-    mmat[2][0] = 0.0;
+    mmat[2][0] = 0.0f;
     mmat[2][1] = -rs;
     mmat[2][2] = rc;
-    mmat[2][3] = 0.0;
+    mmat[2][3] = 0.0f;
 
-    mmat[3][0] = 0.0;
-    mmat[3][1] = 0.0;
-    mmat[3][2] = 0.0;
-    mmat[3][3] = 1.0;
+    mmat[3][0] = 0.0f;
+    mmat[3][1] = 0.0f;
+    mmat[3][2] = 0.0f;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -311,24 +311,24 @@ float rs, float rc )
     float mmat[4][4];
 
     mmat[0][0] = rc;
-    mmat[0][1] = 0.0;
+    mmat[0][1] = 0.0f;
     mmat[0][2] = -rs;
-    mmat[0][3] = 0.0;
+    mmat[0][3] = 0.0f;
 
-    mmat[1][0] = 0.0;
-    mmat[1][1] = 1.0;
-    mmat[1][2] = 0.0;
-    mmat[1][3] = 0.0;
+    mmat[1][0] = 0.0f;
+    mmat[1][1] = 1.0f;
+    mmat[1][2] = 0.0f;
+    mmat[1][3] = 0.0f;
 
     mmat[2][0] = rs;
-    mmat[2][1] = 0.0;
+    mmat[2][1] = 0.0f;
     mmat[2][2] = rc;
-    mmat[2][3] = 0.0;
+    mmat[2][3] = 0.0f;
 
-    mmat[3][0] = 0.0;
-    mmat[3][1] = 0.0;
-    mmat[3][2] = 0.0;
-    mmat[3][3] = 1.0;
+    mmat[3][0] = 0.0f;
+    mmat[3][1] = 0.0f;
+    mmat[3][2] = 0.0f;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -344,23 +344,23 @@ float rs, float rc )
 
     mmat[0][0] = rc;
     mmat[0][1] = rs;
-    mmat[0][2] = 0.0;
-    mmat[0][3] = 0.0;
+    mmat[0][2] = 0.0f;
+    mmat[0][3] = 0.0f;
 
     mmat[1][0] = -rs;
     mmat[1][1] = rc;
-    mmat[1][2] = 0.0;
-    mmat[1][3] = 0.0;
+    mmat[1][2] = 0.0f;
+    mmat[1][3] = 0.0f;
 
-    mmat[2][0] = 0.0;
-    mmat[2][1] = 0.0;
-    mmat[2][2] = 1.0;
-    mmat[2][3] = 0.0;
+    mmat[2][0] = 0.0f;
+    mmat[2][1] = 0.0f;
+    mmat[2][2] = 1.0f;
+    mmat[2][3] = 0.0f;
 
-    mmat[3][0] = 0.0;
-    mmat[3][1] = 0.0;
-    mmat[3][2] = 0.0;
-    mmat[3][3] = 1.0;
+    mmat[3][0] = 0.0f;
+    mmat[3][1] = 0.0f;
+    mmat[3][2] = 0.0f;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -373,25 +373,25 @@ float dx, float dy )
 {
     float mmat[4][4];
 
-    mmat[0][0] = 1.0;
-    mmat[0][1] = 0.0;
+    mmat[0][0] = 1.0f;
+    mmat[0][1] = 0.0f;
     mmat[0][2] = dx;
-    mmat[0][3] = 0.0;
+    mmat[0][3] = 0.0f;
 
-    mmat[1][0] = 0.0;
-    mmat[1][1] = 1.0;
+    mmat[1][0] = 0.0f;
+    mmat[1][1] = 1.0f;
     mmat[1][2] = dy;
-    mmat[1][3] = 0.0;
+    mmat[1][3] = 0.0f;
 
-    mmat[2][0] = 0.0;
-    mmat[2][1] = 0.0;
-    mmat[2][2] = 1.0;
-    mmat[2][3] = 0.0;
+    mmat[2][0] = 0.0f;
+    mmat[2][1] = 0.0f;
+    mmat[2][2] = 1.0f;
+    mmat[2][3] = 0.0f;
 
-    mmat[3][0] = 0.0;
-    mmat[3][1] = 0.0;
-    mmat[3][2] = 0.0;
-    mmat[3][3] = 1.0;
+    mmat[3][0] = 0.0f;
+    mmat[3][1] = 0.0f;
+    mmat[3][2] = 0.0f;
+    mmat[3][3] = 1.0f;
     matrixmult(mmat,mat,mat);
 }
 
@@ -408,19 +408,19 @@ float rot )
     float zrs, zrc;
 
 /* rotate the grey vector into positive Z */
-    mag = sqrt(2.0);
-    xrs = 1.0/mag;
-    xrc = 1.0/mag;
+    mag = sqrtf(2.0f);
+    xrs = 1.0f/mag;
+    xrc = 1.0f/mag;
     xrotatemat(mat,xrs,xrc);
 
-    mag = sqrt(3.0);
-    yrs = -1.0/mag;
-    yrc = sqrt(2.0)/mag;
+    mag = sqrtf(3.0f);
+    yrs = -1.0f/mag;
+    yrc = sqrtf(2.0f)/mag;
     yrotatemat(mat,yrs,yrc);
 
 /* rotate the hue */
-    zrs = sin(rot*M_PI/180.0);
-    zrc = cos(rot*M_PI/180.0);
+    zrs = (float)sin(rot*M_PI/180.0f);
+    zrc = (float)cos(rot*M_PI/180.0f);
     zrotatemat(mat,zrs,zrc);
 
 /* rotate the grey vector back into place */
@@ -446,24 +446,24 @@ float rot )
     identmat(mmat);
 
 /* rotate the grey vector into positive Z */
-    mag = sqrt(2.0);
-    xrs = 1.0/mag;
-    xrc = 1.0/mag;
+    mag = sqrtf(2.0f);
+    xrs = 1.0f/mag;
+    xrc = 1.0f/mag;
     xrotatemat(mmat,xrs,xrc);
-    mag = sqrt(3.0);
-    yrs = -1.0/mag;
-    yrc = sqrt(2.0)/mag;
+    mag = sqrtf(3.0f);
+    yrs = -1.0f/mag;
+    yrc = sqrtf(2.0f)/mag;
     yrotatemat(mmat,yrs,yrc);
 
 /* shear the space to make the luminance plane horizontal */
-    xformpnt(mmat,RLUM,GLUM,BLUM,&lx,&ly,&lz);
+    xformpnt(mmat,(float)RLUM,(float)GLUM,(float)BLUM,&lx,&ly,&lz);
     zsx = lx/lz;
     zsy = ly/lz;
     zshearmat(mmat,zsx,zsy);
 
 /* rotate the hue */
-    zrs = sin(rot*2*M_PI);
-    zrc = cos(rot*2*M_PI);
+    zrs = (float)sin(rot*2*M_PI);
+    zrc = (float)cos(rot*2*M_PI);
     zrotatemat(mmat,zrs,zrc);
 
 /* unshear the space to put the luminance plane back */

@@ -64,7 +64,7 @@ void init_mining_laser_shader()
 
 
 const int MINING_LASER_TTL = 120; // 10 seconds
-const float MINING_LASER_DAMPENING = 0.20;
+const float MINING_LASER_DAMPENING = 0.20f;
 
 class MiningLaser
 {
@@ -107,7 +107,7 @@ class MiningLaser
 
     void prep(Vec3 cam)
     {
-        const float scale = 0.25;
+        const float scale = 0.25f;
         const float _h = scale / 2;
 
         Vec3 up = vec3_init(
@@ -125,10 +125,10 @@ class MiningLaser
         //int texture_index = 4;
 
         float tx_min, tx_max, ty_min, ty_max;
-        tx_min = (float)(texture_index%4)* (1.0/4.0);
-        tx_max = tx_min + (1.0/4.0);
-        ty_min = (float)(texture_index/4)* (1.0/4.0);
-        ty_max = ty_min + (1.0/4.0);
+        tx_min = (float)(texture_index%4)* (1.0f/4.0f);
+        tx_max = tx_min + (1.0f/4.0f);
+        ty_min = (float)(texture_index/4)* (1.0f/4.0f);
+        ty_max = ty_min + (1.0f/4.0f);
 
         Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
         position.z += _h;

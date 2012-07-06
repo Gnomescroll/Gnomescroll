@@ -47,12 +47,8 @@ void init_globals()
     const char* time_str = get_time_str();
 
     // open sessions log file
-    const char sessions_fmt[] = "./log/sessions.log";
-    //char fn_str[sizeof(sessions_fmt) + count_digits(DC_VERSION) + sizeof(time_str) + 1];
-    MALLOX(char, fn_str, sizeof(sessions_fmt) + count_digits(DC_VERSION) + sizeof(time_str) + 1); //type, name, size
-
-    sprintf(fn_str, sessions_fmt, DC_VERSION, time_str);
-    session_log_file = fopen(fn_str, "a");
+    const char sessions_fn[] = "./log/sessions.log";
+    session_log_file = fopen(sessions_fn, "a");
     setvbuf(session_log_file, NULL, _IOLBF, 256);
 
     // open population log file

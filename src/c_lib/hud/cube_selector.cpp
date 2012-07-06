@@ -95,9 +95,9 @@ void CubeSelector::draw()
 
     const float _ssize = 16;
     const float sborder = 1;
-    const float z_ = -0.5;
+    const float z_ = -0.5f;
 
-    const float txmargin = 0.001;
+    const float txmargin = 0.001f;
 
     glColor3ub(255,255,255);
 
@@ -118,10 +118,10 @@ void CubeSelector::draw()
         ti = tex_id % 16;
         tj = tex_id / 16;
 
-        tx_min = ti*0.0625 + txmargin;
-        ty_min = tj*0.0625 + txmargin;
-        tx_max = ti*0.0625 + 0.0625 - txmargin;
-        ty_max = tj*0.0625 + 0.0625 - txmargin;
+        tx_min = ti*0.0625f + txmargin;
+        ty_min = tj*0.0625f + txmargin;
+        tx_max = ti*0.0625f + 0.0625f - txmargin;
+        ty_max = tj*0.0625f + 0.0625f - txmargin;
 
         glTexCoord2f(tx_min,ty_max);
         glVertex3f(x0, y0, z_);  // Top left
@@ -140,7 +140,7 @@ void CubeSelector::draw()
     glDisable(GL_TEXTURE_2D);
 
     // draw selected cube outline
-    const float s_margin = 1.0; //selector margin
+    const float s_margin = 1.0f; //selector margin
     i = this->pos_x;
     j = this->pos_y;
     //printf("i= %i, j= %i\n",i,j);
@@ -155,7 +155,7 @@ void CubeSelector::draw()
     y0 = y - j*(_ssize+sborder) + sborder/2;
     y1 = y0 + _ssize - sborder;
     
-    glLineWidth(1.0);
+    glLineWidth(1.0f);
     glColor4ub(0,0,255,0);  // blue
     glBegin(GL_LINE_STRIP);
 
@@ -169,7 +169,7 @@ void CubeSelector::draw()
     glVertex3f(x0, y0, z_);
 
     glEnd();
-    glLineWidth(1.0);
+    glLineWidth(1.0f);
     glColor3ub(255,255,255);
 }
 
