@@ -665,6 +665,10 @@ DONE
 disable buffering on chat log
 DONE
 
+clean up implicit 64-32 conversion warning in xcode
+DONE
+
+
 ----------------------
 
 == BUILD ==
