@@ -34,8 +34,8 @@ void init()
         t_gen::noise_map_generate_map();
         
         t_map::map_post_processing(); //regolith stuff
-        t_gen::start_cave_generator();
         t_gen::populate_ore();
+        t_gen::start_cave_generator();
 
         //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         map_gen::rough_floor(512,512,0,3, t_map::get_cube_id((char*)"bedrock"));

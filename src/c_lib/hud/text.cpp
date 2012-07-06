@@ -305,7 +305,7 @@ void Text::bottom()
     this->alignment.bottom = true;
 }
 
-void Text::Text::draw()
+void Text::draw()
 {
     if (this->text == NULL || this->text_len == 0)
         return;
