@@ -226,7 +226,7 @@ int init_c_lib()
     AgentHudName::verify_configuration();
 
     LUA::load_options(); //load game options
-    srand(time(NULL));   // seed the RNG
+    srand((unsigned int)time(NULL));   // seed the RNG
 
     Components::init();
     Objects::init_net_interfaces();
