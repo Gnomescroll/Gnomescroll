@@ -1327,7 +1327,7 @@ void update_smelters()
 				}
 				
 				// clear fuel info
-				fuel_item_type == NULL_ITEM_TYPE;
+				fuel_item_type = NULL_ITEM_TYPE;
 				fuel_item = NULL_ITEM;
 			}
 
