@@ -1,3 +1,7 @@
+ws2_32.lib
+lua51.lib
+winmm.lib
+
 <HaltingState> I have a GCC project/game with a hierarchy of folders and need to get it imported into MSVC which seems to be hellish, any ideas?
 <Domiiii> HaltingState write a simple program that writes your vcprojx file and filters
 <HaltingState> Domiiii, its xml; oh boy

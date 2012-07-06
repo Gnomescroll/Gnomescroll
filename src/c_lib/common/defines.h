@@ -62,6 +62,14 @@ typedef unsigned int GLuint;
   #define GNOMESCROLL_LOCAL
 #endif
 
+#if __GNUC__
+#define LUA_EXPORT GNOMESCROLL_API
+#endif
+
+#if __MSVC__
+#define LUA_EXPORT DllExport 
+#endif
+
 const int GAME_OBJECTS_MAX = 4096 * 4;
 const float TICK_DURATION = 30.0f;
 const int PLAYERS_MAX = 64;
