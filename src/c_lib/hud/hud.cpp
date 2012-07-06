@@ -46,7 +46,7 @@ static const char fps_format[] = "%3.2ffps";
 static const char ping_format[] = "%dms";
 
 static const char no_agent_text[] = "No Agent Assigned";
-static const char health_format[] = "HP %d";
+static const char health_format[] = "ENERGY %d";
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
@@ -251,7 +251,20 @@ void draw_hud_text()
         hud->help->draw();
 
     if (hud_draw_settings.press_help)
+    {	// blinks red/white
+		static unsigned int press_help_tick = 0;
+		const int press_help_anim_len = 60;
+		const struct Color white = {255,255,255};
+		const struct Color red = {255,10,10};
+		float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
+		t -= 1.0f;
+		if (t < 0.0f)
+			hud->press_help->set_color(interpolate_color(red, white, 1.0f+t));
+		else
+			hud->press_help->set_color(interpolate_color(white, red, t));
         hud->press_help->draw();
+        press_help_tick++;
+	}
 
     if (hud->chat->inited)
     {
@@ -272,6 +285,10 @@ void draw_hud_text()
         return;
     }
 
+	#if PRODUCTION
+	if (input_state.debug) {
+	#endif
+	
     if (hud_draw_settings.fps)
     {
         float fps_val = 0.0f;
@@ -288,6 +305,10 @@ void draw_hud_text()
         //hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
         //hud->reliable_ping->draw();
     }
+
+	#if PRODUCTION
+	}	// if (input_state.debug)
+	#endif
 
     if (hud_draw_settings.agent_status)
     {
@@ -344,6 +365,7 @@ void HUD::init()
     if (help == NULL) return;
     help->set_text((char*) help_text);
     int help_width = help->get_width();
+    help->set_color(255,255,255,255);
     help->set_position(_xres - help_width - 5, _yresf - 5);
 
     disconnected = HudText::text_list->create();
@@ -397,8 +419,9 @@ void HUD::init()
     health->set_text((char*) "");
     health->set_format((char*) health_format);
     health->set_format_extra_length((3 - 2));
-    health->set_color(255,10,10,255);
-    health->set_position(2, _yresf + 2);
+    health->update_formatted_string(1, 100);
+    health->set_color(255,255,255,255);
+    health->set_position((_xresf - health->get_width())/2.0f, health->get_height() + 40);
 
     confirm_quit = HudText::text_list->create();
     GS_ASSERT(confirm_quit != NULL);
@@ -411,7 +434,7 @@ void HUD::init()
     GS_ASSERT(press_help != NULL);
     if (press_help == NULL) return;
     press_help->set_text((char*)press_help_text);
-    press_help->set_color(255,10,10,255);
+    press_help->set_color(255,255,255,255);
     press_help->set_position((_xresf - press_help->get_width()) / 2.0f, _yresf);
 
     scoreboard = new Scoreboard();
@@ -596,7 +619,7 @@ void ChatRender::update(bool timeout)
             name = m->name;
         }
         t->update_formatted_string(3, name, separator, m->payload);
-        t->set_color(m->r, m->g, m->b, 255);
+        t->set_color(m->color);
     }
 
     for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text((char*)""));

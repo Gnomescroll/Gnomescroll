@@ -23,42 +23,22 @@ void ChatMessage::set_name()
 
 void ChatMessage::set_color()
 {
-    if (sender == CHAT_SENDER_SYSTEM)
-    {   // system msg
-        r = CHAT_SYSTEM_COLOR_R;
-        g = CHAT_SYSTEM_COLOR_G;
-        b = CHAT_SYSTEM_COLOR_B;
-        return;
-    }
+    if (sender == CHAT_SENDER_SYSTEM) // system msg
+		this->color = CHAT_SYSTEM_COLOR;
     else if (
-        ClientState::playerAgent_state.you != NULL
+        ClientState::playerAgent_state.agent_id >= 0
      && ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
-    )
-    {   // PM
-        r = CHAT_PM_COLOR_R;
-        g = CHAT_PM_COLOR_G;
-        b = CHAT_PM_COLOR_B;
-        return;
-    }
-    else
-    {   // global
-        r = CHAT_GLOBAL_COLOR_R;
-        g = CHAT_GLOBAL_COLOR_G;
-        b = CHAT_GLOBAL_COLOR_B;
-        return;
-    }
-
-    r = CHAT_UNKNOWN_COLOR_R;
-    g = CHAT_UNKNOWN_COLOR_G;
-    b = CHAT_UNKNOWN_COLOR_B;
-
+    )	 // pm
+		this->color = CHAT_PM_COLOR;
+    else // global
+		this->color = CHAT_GLOBAL_COLOR;
 }
 
 ChatMessage::ChatMessage(int id)
 :
 id(id),
 timestamp(0),
-r(255),g(255),b(255)
+color(CHAT_UNKNOWN_COLOR)
 {}
 
 /* ChatMessageHistoryObject */

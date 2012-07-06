@@ -57,7 +57,7 @@ options.sfx = 50
 options.music = 100
 
 -- help --
-options.show_tips = false;
+options.show_tips = true;
 
 ffi = require("ffi")
 ffi.cdef[[

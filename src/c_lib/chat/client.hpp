@@ -11,6 +11,7 @@ const int CHAT_CLIENT_CHANNELS_MAX = 3; // pm, global, system
 class ChatMessage
 {
     public:
+    
     int id; // only used by object list
 
     char payload[CHAT_MESSAGE_SIZE_MAX+1];
@@ -19,7 +20,7 @@ class ChatMessage
 
     int timestamp;
 
-    unsigned char r,g,b;
+    struct Color color;
     char name[PLAYER_NAME_MAX_LENGTH+1];
 
     void set_color();
@@ -49,6 +50,7 @@ typedef enum ChannelTypes
 class ChatClientChannel
 {
     public:
+    
     int id;
     int type;
     
@@ -67,6 +69,7 @@ class ChatClientChannel
 class ChatInputHistoryObject
 {
     public:
+    
     char* m;
     ChatInputHistoryObject *next;
     ChatInputHistoryObject *prev;
