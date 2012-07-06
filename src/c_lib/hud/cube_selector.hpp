@@ -33,7 +33,7 @@ class CubeSelector
 
         void init();
         void set_position(float x, float y);
-        void set_block_selector(int pos, int cube_id, int tex_id) GNOMESCROLL_API;
+        void set_block_selector(int pos, int cube_id, int tex_id);
         void set_active_pos(int pos);
         void set_active_id(int id);
         int get_active_pos();
