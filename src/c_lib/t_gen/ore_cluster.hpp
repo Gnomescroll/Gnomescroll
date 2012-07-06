@@ -79,16 +79,18 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 		y = cy;
 		z = cz;
 
-		// we need this, because x,y are exceeding twice the bounds
-		// of the map
-		x = translate_point(x);
-		y = translate_point(y);
-
 		if (ctile == tile_id)
 		{
 			tries++;
 			continue;
 		}
+
+		// we need this, because x,y are exceeding twice the bounds
+		// of the map
+		x %= 512;
+		y %= 512;
+		if (x < 0) x += 512;
+		if (y < 0) y += 512;
 
 		t_map::set(x,y,z,tile_id);
 

@@ -17,11 +17,11 @@ class SmelterUI : public UIElement
     float render_width;
     float render_height;
 
-    static const float slot_size = 32;
-    static const float cell_offset_x = 3;
-    static const float cell_offset_y = 3;
-    static const float cell_offset_x_right = 2;
-    static const float cell_offset_y_bottom = 2;
+    static const float slot_size = 32.0f;
+    static const float cell_offset_x = 3.0f;
+    static const float cell_offset_y = 3.0f;
+    static const float cell_offset_x_right = 2.0f;
+    static const float cell_offset_y_bottom = 2.0f;
 
     float texture_offset_x;
     float texture_offset_y;
