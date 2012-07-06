@@ -144,8 +144,8 @@ void map_element_update::handle()
 
 void block_set_StoC::handle() 
 {
-    //GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y && z >= 0 && z < map_dim.z); // always true
-    //if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;  // always false
+    GS_ASSERT(x < map_dim.x && y < map_dim.y && z < map_dim.z);
+    if (x >= map_dim.x || y >= map_dim.y || z >= map_dim.z) return;
     main_map->set_block(x,y,z, block);
 }
 

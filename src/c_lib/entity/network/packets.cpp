@@ -23,10 +23,10 @@ inline void object_create_StoC::handle()
     using Objects::Object;
     using Components::PhysicsComponent;
 
-    //GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);  // always false
-    //GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX);  // always false
-    //if (type < 0 || type >= MAX_OBJECT_TYPES) return; // always false
-    //if (id < 0 || id >= GAME_OBJECTS_MAX) return;   // always false
+    GS_ASSERT(type < MAX_OBJECT_TYPES);
+    GS_ASSERT(id < GAME_OBJECTS_MAX);
+    if (type >= MAX_OBJECT_TYPES) return;
+    if (id >= GAME_OBJECTS_MAX) return;
 
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
@@ -42,10 +42,10 @@ inline void object_create_owner_StoC::handle()
     using Components::PhysicsComponent;
     using Components::OwnerComponent;
 
-    //GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES); // always false
-    //GS_ASSERT(id >= 0 && id < GAME_OBJECTS_MAX); // always false
-    //if (type < 0 || type >= MAX_OBJECT_TYPES) return; // always false
-    //if (id < 0 || id >= GAME_OBJECTS_MAX) return; // always false
+    GS_ASSERT(type < MAX_OBJECT_TYPES);
+    GS_ASSERT(id < GAME_OBJECTS_MAX);
+    if (type >= MAX_OBJECT_TYPES) return;
+    if (id >= GAME_OBJECTS_MAX) return;
 
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
@@ -237,18 +237,6 @@ inline void object_shot_object_StoC::handle()
         position.x, position.y, position.z,
         v.x, v.y, v.z
     );
-
-    // destroy model
-    //using Components::WeaponTargetingComponent;
-    //WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
-    //if (weapon != NULL)
-    //{
-        //int voxel[3] = { this->voxel_x, this->voxel_y, this->voxel_z };
-        //destroy_object_voxel(
-            //this->target_id, this->target_type, this->target_part,
-            //voxel, weapon->attacker_properties.voxel_damage_radius
-        //);
-    //}
 
     // todo -- sound event
     Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
