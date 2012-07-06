@@ -103,8 +103,8 @@ class PerlinField2D
         for(int i=0; i<grad_max; i++)
         {
             float t = 6.28318531f*i* (1.0f / ((float) grad_max));
-            float x = (float)sin(t);
-            float y = (float)cos(t);
+            float x = sinf(t);
+            float y = cosf(t);
 
             grad[2*i+0] = x;
             grad[2*i+1] = y;

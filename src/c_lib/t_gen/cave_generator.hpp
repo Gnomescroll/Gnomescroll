@@ -49,7 +49,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 
 	float dx = (float)(sin(_phi)*cos(_theta));
 	float dy = (float)(sin(_phi)*sin(_theta));
-	float dz = (float)cos(_phi);
+	float dz = cosf(_phi);
 
 	float xm = abs(dx) + cave_size;
 	float ym = abs(dy) + cave_size;

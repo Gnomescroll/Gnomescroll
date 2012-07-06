@@ -187,23 +187,23 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     if(forward)
     {
-            CS_vx += speed*(float)cos( _cs.theta * pi);
-            CS_vy += speed*(float)sin( _cs.theta * pi);
+            CS_vx += speed*cosf( _cs.theta * pi);
+            CS_vy += speed*sinf( _cs.theta * pi);
     }
     if(backwards)
     {
-            CS_vx += -speed*(float)cos( _cs.theta * pi);
-            CS_vy += -speed*(float)sin( _cs.theta * pi);
+            CS_vx += -speed*cosf( _cs.theta * pi);
+            CS_vy += -speed*sinf( _cs.theta * pi);
     }
     if(left) 
     {
-            CS_vx += speed*(float)cos( _cs.theta * pi + pi/2);
-            CS_vy += speed*(float)sin( _cs.theta * pi + pi/2);
+            CS_vx += speed*cosf( _cs.theta * pi + pi/2);
+            CS_vy += speed*sinf( _cs.theta * pi + pi/2);
     }
     if(right) 
     {
-            CS_vx += -speed*(float)cos( _cs.theta * pi + pi/2);
-            CS_vy += -speed*(float)sin( _cs.theta * pi + pi/2);
+            CS_vx += -speed*cosf( _cs.theta * pi + pi/2);
+            CS_vy += -speed*sinf( _cs.theta * pi + pi/2);
     }
 
     const float precision = 0.000001f;

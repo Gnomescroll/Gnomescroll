@@ -193,8 +193,8 @@ void VerletParticle::bounce_box_no_gravity(float radius)
         const float th = 2.0f*3.14159f * randf();
         const float V = 5.0f*randf();
 
-        velocity.x += V * (float)sin(th);
-        velocity.y += V * (float)cos(th);
+        velocity.x += V * sinf(th);
+        velocity.y += V * cosf(th);
 
         velocity_integrate(&position, &velocity, dt*interval);
         position = translate_position(position);
@@ -242,8 +242,8 @@ void VerletParticle::radial(float xr, float yr)
         const float th = 2.0f*3.14159f * randf();
         const float V = 5.0f*randf();
 
-        velocity.x += V * (float)sin(th);
-        velocity.y += V * (float)cos(th);
+        velocity.x += V * sinf(th);
+        velocity.y += V * cosf(th);
 
         velocity_integrate(&position, &velocity, dt*interval);
         position = translate_position(position);
@@ -284,8 +284,8 @@ bool VerletParticle::bounce_no_gravity()
         const float th = 2.0f*3.14159f * randf();
         const float V = 5.0f*randf();
 
-        velocity.x += V * (float)sin(th);
-        velocity.y += V * (float)cos(th);
+        velocity.x += V * sinf(th);
+        velocity.y += V * cosf(th);
 
         velocity_integrate(&position, &velocity, dt*interval);
         position = translate_position(position);

@@ -193,7 +193,7 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
         az /= len;
 
         ip = ax*vx + ay*vy + az*vz;
-        arc = abs((float)acos(ip));
+        arc = abs(acosf(ip));
 
         if (arc < theta)
             filtered_objects[ct++] = a;

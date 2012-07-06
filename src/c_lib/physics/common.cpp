@@ -49,13 +49,13 @@ float distancef_squared(float x, float y, float z, float a, float b, float c)
 float gaussian_value(const float mean, const float stddev, const float x)
 {
     const float sqrt_2pi = sqrtf(2*kPI);
-    return (float)pow(kE, -((x - mean)*(x - mean))/(2 * stddev * stddev)) / (sqrt_2pi * stddev);
+    return powf(kE, -((x - mean)*(x - mean))/(2 * stddev * stddev)) / (sqrt_2pi * stddev);
 }
 
 void rotate_point(float x, float y, float theta, float *x1, float *y1)
 {
-    *x1 = x*(float)cos(theta) - y*(float)sin(theta);
-    *y1 = x*(float)sin(theta) + y*(float)cos(theta);
+    *x1 = x*cosf(theta) - y*sinf(theta);
+    *y1 = x*sinf(theta) + y*cosf(theta);
 }
 
 bool position_is_equal(Vec3 p, float x, float y, float z)

@@ -135,7 +135,7 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
     for(int i=0; i< 256; i++)
     {
         float intensity = ((float) i) / 255;
-        intensity = (float)pow(intensity, 1.0f/2.2f)*255;
+        intensity = powf(intensity, 1.0f/2.2f)*255;
         gamma_correction[i] = (unsigned char)((int) intensity);
     }
 

@@ -292,7 +292,7 @@ float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
     pt2 = vec3_sub(pt2, pt);
     normalize_vector(&pt2);
     float x = vec3_dot(look, pt2);
-    x = (float)acos(x);
+    x = acosf(x);
     return x;
 }
 
@@ -301,7 +301,7 @@ static float vec3_to_theta(Vec3 direction)
 {
     direction.z = 0;
     normalize_vector(&direction);
-    float t = (float)acos(direction.x) / PI;
+    float t = acosf(direction.x) / PI;
     if (direction.y < 0) t = -t;
     return t;
 }
@@ -315,11 +315,11 @@ static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
     direction.z = 0;
     normalize_vector(&direction);
 
-    float t = (float)acos(direction.x) / PI;
+    float t = acosf(direction.x) / PI;
     if (direction.y < 0) t = -t;
     *theta = t;
 
-    t = (float)asin(z) / PI;
+    t = asinf(z) / PI;
     t += 0.5f;
     *phi = t;
 }
