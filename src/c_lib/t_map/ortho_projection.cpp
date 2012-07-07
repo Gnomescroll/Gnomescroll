@@ -42,8 +42,8 @@ void render_ortho()
 
     GL_ASSERT(GL_DEPTH_TEST, true);
 
-    //glShadeModel(GL_FLAT);
-    glShadeModel(GL_SMOOTH);
+    
+    //;
 
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -96,7 +96,7 @@ void render_ortho()
 
     //glEnable(GL_TEXTURE_2D);
 
-    glShadeModel(GL_FLAT);
+    //;
     glDisable(GL_CULL_FACE);
 }
 
@@ -150,7 +150,7 @@ void save_map_ortho_projection(const char* filename)
     //-------------------------
     //and now you can render to GL_TEXTURE_2D
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //-------------------------
@@ -203,20 +203,20 @@ void save_map_ortho_projection(const char* filename)
     );
 #else
 
-    float z_near = 1.0;
+    float z_near = 1.0f;
     float z_far = 1024;
     glOrtho(-256, 256, -256, 256, z_near, z_far);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-	double dist = sqrt(1 / 3.0);
+	double dist = sqrtf(1.0f / 3.0f);
 
-	float f1 = 128.0;
-	float f2 = 128.0;
+	float f1 = 128.0f;
+	float f2 = 128.0f;
 	gluLookAt(f1*dist, f1*dist, f1*dist + f2,  /* position of camera */
-	          256.0,  256.0,  f2,   /* where camera is pointing at */
-	          0.0,  0.0,  1.0);  /* which direction is up */
+	          256.0f,  256.0f,  f2,   /* where camera is pointing at */
+	          0.0f,  0.0f,  1.0f);  /* which direction is up */
 
 
 #endif
@@ -267,7 +267,7 @@ void save_map_ortho_projection(const char* filename)
         int pitch = xres * 4;
         int h = yres;
 
-        height_div_2 = (int) (yres * .5);
+        height_div_2 = (int) (yres * 0.5f);
         for(index = 0; index < height_div_2; index++)    
         {
             memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);

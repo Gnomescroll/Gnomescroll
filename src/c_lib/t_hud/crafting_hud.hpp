@@ -28,22 +28,22 @@ class CraftingUI : public UIElement
     static const int ydim = (input_ydim > output_ydim) ? input_ydim : output_ydim;
 
     // size of render area (texture + clickable area (will render highlights there still)
-    static const float render_width = cell_size * xdim;
-    static const float render_height = cell_size * ydim;
+    static const float render_width;
+    static const float render_height;
 
     // texture area
-    static const float texture_width = cell_size * 6;
-    static const float texture_height = cell_size;
+    static const float texture_width;
+    static const float texture_height;
 
-    static const float slot_size = 32;
-    static const float cell_offset_x = 3;
-    static const float cell_offset_y = 3;
-    static const float cell_offset_x_right = 2;
-    static const float cell_offset_y_bottom = 2;
-    static const float input_offset_x = 0;
-    static const float input_offset_y = 0;
-    static const float output_offset_x = cell_size * (input_xdim + input_output_gap);
-    static const float output_offset_y = 0;
+    static const float slot_size;
+    static const float cell_offset_x;
+    static const float cell_offset_y;
+    static const float cell_offset_x_right;
+    static const float cell_offset_y_bottom;
+    static const float input_offset_x;
+    static const float input_offset_y;
+    static const float output_offset_x;
+    static const float output_offset_y;
 
     HudText::Text* stacks;
     HudText::Text* output_stacks;
@@ -115,6 +115,24 @@ class CraftingUI : public UIElement
         if (this->output_stacks != NULL) delete[] this->output_stacks;
     }
 };
+
+    // size of render area (texture + clickable area (will render highlights there still)
+    const float CraftingUI::render_width = CraftingUI::cell_size * CraftingUI::xdim;
+    const float CraftingUI::render_height = CraftingUI::cell_size * CraftingUI::ydim;
+
+    // texture area
+    const float CraftingUI::texture_width = CraftingUI::cell_size * 6;
+    const float CraftingUI::texture_height = CraftingUI::cell_size;
+
+    const float CraftingUI::slot_size = 32;
+    const float CraftingUI::cell_offset_x = 3;
+    const float CraftingUI::cell_offset_y = 3;
+    const float CraftingUI::cell_offset_x_right = 2;
+    const float CraftingUI::cell_offset_y_bottom = 2;
+    const float CraftingUI::input_offset_x = 0;
+    const float CraftingUI::input_offset_y = 0;
+    const float CraftingUI::output_offset_x = CraftingUI::cell_size * (CraftingUI::input_xdim + CraftingUI::input_output_gap);
+    const float CraftingUI::output_offset_y = 0;
 
 int CraftingUI::get_grid_at(int px, int py)
 {  
@@ -210,10 +228,10 @@ void CraftingUI::draw()
     float x = xoff;
     float y = yoff;
 
-    float tx_min = 0.0;
-    float ty_min = 0.0;
-    float tx_max = texture_width/512.0;
-    float ty_max = texture_height/512.0;
+    float tx_min = 0.0f;
+    float ty_min = 0.0f;
+    float tx_max = texture_width/512.0f;
+    float ty_max = texture_height/512.0f;
 
     //draw background
     glBegin(GL_QUADS);
@@ -286,10 +304,10 @@ void CraftingUI::draw()
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
 
-        const float tx_min = (1.0/iw)*(tex_id % iiw);
-        const float ty_min = (1.0/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
+        const float tx_min = (1.0f/iw)*(tex_id % iiw);
+        const float ty_min = (1.0f/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0f/iw;
+        const float ty_max = ty_min + 1.0f/iw;
 
         glTexCoord2f( tx_min, ty_min );
         glVertex2f(x, y);
@@ -329,10 +347,10 @@ void CraftingUI::draw()
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
 
-        tx_min = (1.0/iw)*(tex_id % iiw);
-        ty_min = (1.0/iw)*(tex_id / iiw);
-        tx_max = tx_min + 1.0/iw;
-        ty_max = ty_min + 1.0/iw;
+        tx_min = (1.0f/iw)*(tex_id % iiw);
+        ty_min = (1.0f/iw)*(tex_id / iiw);
+        tx_max = tx_min + 1.0f/iw;
+        ty_max = ty_min + 1.0f/iw;
 
         glBegin(GL_QUADS);
         glTexCoord2f( tx_min, ty_min );
@@ -375,10 +393,10 @@ void CraftingUI::draw()
             const float iw = 16.0f; // icon_width
             const int iiw = 16; // integer icon width
 
-            tx_min = (1.0/iw)*(tex_id % iiw);
-            ty_min = (1.0/iw)*(tex_id / iiw);
-            tx_max = tx_min + 1.0/iw;
-            ty_max = ty_min + 1.0/iw;
+            tx_min = (1.0f/iw)*(tex_id % iiw);
+            ty_min = (1.0f/iw)*(tex_id / iiw);
+            tx_max = tx_min + 1.0f/iw;
+            ty_max = ty_min + 1.0f/iw;
 
             glBegin(GL_QUADS);
             glTexCoord2f( tx_min, ty_min );

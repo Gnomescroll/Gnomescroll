@@ -356,9 +356,9 @@ class L_System
         void set_tokens(char* tokens)
         {
             this->tokens = (char*)malloc((strlen(tokens)+1) * sizeof(char));
-            this->n_tokens = strlen(tokens);
+            this->n_tokens = (int)strlen(tokens);
             strcpy(this->tokens, tokens);
-            set_n_rules(strlen(this->tokens));
+            set_n_rules((int)strlen(this->tokens));
         }
 
         char* parse_rule(char* rule, int* token_id)
@@ -398,7 +398,7 @@ class L_System
             assert(this->rules[token_id] == NULL);
             assert(this->rule_lengths[token_id] == 0);
             this->rules[token_id] = new_rule;
-            this->rule_lengths[token_id] = strlen(new_rule);    // Invalid read of size 4
+            this->rule_lengths[token_id] = (int)strlen(new_rule);    // Invalid read of size 4
         }
 
         //returns length of next rule
@@ -856,7 +856,9 @@ struct iPoint*  remove_all_stranded_points(struct iPoint* points, int n_points, 
 void surface_veins()
 {
     int n_tiles = 1;
-    int tiles[n_tiles];
+    //int tiles[n_tiles];
+    MALLOX(int, tiles, n_tiles); //type, name, size
+
     tiles[0] = t_map::get_cube_id((char*)"methane_ice");
     //tiles[0] = t_map::get_cube_id((char*)"methane_1");
     //tiles[1] = t_map::get_cube_id((char*)"methane_2");
@@ -904,7 +906,9 @@ void surface_veins()
 void flat_veins()
 {
     int n_tiles = 1;
-    int tiles[n_tiles];
+    //int tiles[n_tiles];
+    MALLOX(int, tiles, n_tiles); //type, name, size
+
     tiles[0] = t_map::get_cube_id((char*)"methane_ice");
     
     const int n = 200;

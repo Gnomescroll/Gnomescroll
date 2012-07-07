@@ -11,6 +11,8 @@
 //#include <common/common.hpp>
 //#include <physics/common.hpp>
 
+#include <common/macros.hpp>
+
 #define OBJECT_LIST_DEBUG 0
 
 template <class Object_state, int max_n=1024, int HARD_MAX=0>   // 0 means unlimited

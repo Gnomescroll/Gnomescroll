@@ -24,7 +24,9 @@ Agent_state* lock_agent_target(
 
     //printf("found %d agents in range\n", agent_list->n_filtered);
 
-    int chosen[agent_list->n_filtered];
+    //int chosen[agent_list->n_filtered];
+    MALLOX(int, chosen, agent_list->n_filtered); //type, name, size
+
     if (random)
     {
         for (int i=0; i<agent_list->n_filtered; i++)
@@ -76,7 +78,7 @@ HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, ObjectType type,
     Agent_state* agent, const float range
 ) { // hitscan vector against world
-    struct Voxel_hitscan_target target;
+    class Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -116,6 +118,7 @@ HitscanTarget shoot_at_agent(
             }
             target_information.collision_point = vec3_add(source,
                         vec3_scalar_mult(firing_direction, block_distance));
+            target_information.collision_point = translate_position(target_information.collision_point);
             target_information.cube = tile;
             target_information.side = get_cube_side_from_side_array(side);
             break;
@@ -161,10 +164,6 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
                     agent->status.apply_damage(
                         dmg, p.id, p.type, t.part
                     );
-                    //destroy_object_voxel(
-                        //t.id, t.type, t.part, t.voxel,
-                        //p.voxel_damage_radius
-                    //);
                 }
             }
             break;

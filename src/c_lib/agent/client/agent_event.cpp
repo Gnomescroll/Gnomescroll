@@ -19,6 +19,8 @@ dont_include_this_file_in_server
 
 #include <item/properties.hpp>
 
+#include <common/color.hpp>
+
 void Agent_event::name_changed(char* old_name)
 {
 	GS_ASSERT(this->a->status.name != NULL);
@@ -61,19 +63,37 @@ void Agent_event::name_changed(char* old_name)
     this->a->status.identified = true;
 }
 
-void Agent_event::hide_name()
+void Agent_event::update_hud_name()
 {
-    this->bb.set_draw(false);
-}
-
-void Agent_event::display_name()
-{
-    if (this->a->status.dead) return;
-
-    const float z_margin = 0.4;
+    const float z_margin = 0.4f;
     Vec3 p = this->a->get_position();
     this->bb.set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
-    this->bb.set_draw(true);
+    
+	// determine color based on health
+
+	using namespace AgentHudName;
+
+	struct Color color = HEALTH_TEXT_DEAD_COLOR;	// default, dead color
+	
+	if (this->a->status.health > 0)
+	{	// calculate interpolated color from health ratio and color control points
+		GS_ASSERT(this->a->status.health_max > 0);
+		float h = ((float)this->a->status.health)
+				/ ((float)this->a->status.health_max);
+		
+		if (h >= points[0])
+			color = colors[0];	// degenerate case, out of range
+		else
+			for (unsigned int i=0; i<COLOR_COUNT-1; i++)
+				if (h < points[i] && h >= points[i+1])
+				{
+					color = interpolate_color(colors[i], colors[i+1],
+						(points[i] - h) / (points[i] - points[i+1]));
+					break;
+				}
+	}
+
+	this->bb.set_color(color);
 }
 
 // side effects of taking damage. dont modify health/death here
@@ -398,5 +418,5 @@ model_was_changed(true)
 	if (this->a->status.name != NULL)
 		this->bb.set_text(this->a->status.name);
 	this->bb.set_color(255,10,10,255); // TODO -- use health level
-	this->bb.set_scale(AGENT_HUD_NAME_SIZE);	
+	this->bb.set_scale(AgentHudName::SIZE);	
 }

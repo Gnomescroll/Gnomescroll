@@ -36,8 +36,8 @@ void PlayerAgent_state::was_identified()
 #define SKIP_INTERPOLATION_THRESHOLD 128.0f // travel distance above which we dont bother interpolating to
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
-    int last_tick = _LAST_TICK();
-    int _t = _GET_MS_TIME();
+    int last_tick = (int)_LAST_TICK();
+    int _t = (int)_GET_MS_TIME();
 
     // calculate interpolation delta
     // if the distance travelled is extreme, dont interpolate (delta=1)

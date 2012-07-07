@@ -12,7 +12,7 @@ namespace Objects
 
 using Components::Component;
 
-void Object::add_component(int slot, Component* component)
+void Object::add_component(int slot, class Component* component)
 {
     GS_ASSERT(slot >= 0);
     if (slot < 0) return;
@@ -24,7 +24,7 @@ void Object::add_component(int slot, Component* component)
 
 // returns component of type if available
 // must cast to desired component manually
-Component* Object::get_component(ComponentType type)
+class Component* Object::get_component(ComponentType type)
 {
     int slot = object_data->get_component_slot(this->type, type);
     if (slot < 0) return NULL;
@@ -32,7 +32,7 @@ Component* Object::get_component(ComponentType type)
     return this->components[slot];
 }
 
-Component* Object::get_component_interface(ComponentInterfaceType interface)
+class Component* Object::get_component_interface(ComponentInterfaceType interface)
 {
     int slot = object_data->get_component_interface_slot(this->type, interface);
     if (slot < 0) return NULL;
@@ -56,7 +56,7 @@ void Object::init(int n_components)
     if (n_components < 0) n_components = 0;
     this->n_components = n_components;
     if (n_components <= 0) return;
-    this->components = (Component**)calloc(n_components, sizeof(Component*));
+    this->components = (class Component**)calloc(n_components, sizeof(class Component*));
 }
 
 Object::~Object()

@@ -60,11 +60,18 @@ class MapGraph
 
 		if(FRAME_RATE_THOTTLE_ENABLED)
 		{
-			int wait = FRAME_RATE_THOTTLE_TARGET - (_frame_wait_start[index] - _frame_start[index]);
+			int wait = (int) (FRAME_RATE_THOTTLE_TARGET - (_frame_wait_start[index] - _frame_start[index]));
 			if( wait <= 0) return;
 
-			usleep(1000*wait);
-		}
+
+            #ifdef __GNUC__
+			  usleep(1000*wait);
+            #endif
+            
+            #ifdef __MSVC__
+              Sleep(wait); //ms
+            #endif
+        }
 
 	}
 
@@ -82,9 +89,9 @@ class MapGraph
 
 		//int total = _frame_end[index] - _frame_start[index];
 
-		int t1 = _frame_flip_start[index] - _frame_start[index];
-		int t2 = _frame_wait_start[index] - _frame_flip_start[index];
-		int t3 = _frame_end[index] - _frame_wait_start[index];
+		int t1 = (int) (_frame_flip_start[index] - _frame_start[index]);
+		int t2 = (int) (_frame_wait_start[index] - _frame_flip_start[index]);
+		int t3 = (int) (_frame_end[index] - _frame_wait_start[index]);
 
 		if(t2 <= 1 ) t2 = 0;
 

@@ -60,8 +60,8 @@ class Map_vbo
 
         //flags.flags = 0; //zero all flags
 
-        xpos = m->xpos + 8.0;
-        ypos = m->ypos + 8.0;
+        xpos = m->xpos + 8.0f;
+        ypos = m->ypos + 8.0f;
 
         xoff = m->xpos;
         yoff = m->ypos;
@@ -180,7 +180,7 @@ class Vbo_map
             }
             else
             {
-                update_vbo_comptability(_i, _j);
+                update_vbo_compatibility(_i, _j);
             }
             return;
         }
@@ -206,13 +206,13 @@ class Vbo_map
 
 
     void update_vbo(int i, int j);
-    void update_vbo_comptability(int i, int j);
+    void update_vbo_compatibility(int i, int j);
 
     void prep_draw();
     void sort_draw();
 
     void draw_map();
-    void draw_map_comptability();
+    void draw_map_compatibility();
 
     void prep_frustrum();
     void prep_frustrum_vertices();

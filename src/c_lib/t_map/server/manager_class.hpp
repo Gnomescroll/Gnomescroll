@@ -79,7 +79,7 @@ class Map_manager
     int xchunk_dim;
     int ychunk_dim;
     
-    struct MAP_MANAGER_ELEMENT* version_list;
+    class MAP_MANAGER_ELEMENT* version_list;
     
     int subed_chunks;
     int alias_list[ MAP_MANAGER_ALIAS_LIST_SIZE ];  //aliases are ints

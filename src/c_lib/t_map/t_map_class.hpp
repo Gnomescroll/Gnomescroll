@@ -46,10 +46,10 @@ class MAP_CHUNK
 
     MAP_CHUNK(int _xpos, int _ypos);
 
-    inline int get_block(int x, int y, int z); __attribute((always_inline)); //for VBO generator
-    inline struct MAP_ELEMENT get_element(int x, int y, int z); __attribute((always_inline)); //for VBO generator
+    inline int get_block(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
+    inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
 
-    inline void set_element(int x, int y, int z, struct MAP_ELEMENT e); __attribute((always_inline)); //for VBO generator
+    inline void set_element(int x, int y, int z, struct MAP_ELEMENT e) __attribute__((always_inline)); //for VBO generator
 
 };
 

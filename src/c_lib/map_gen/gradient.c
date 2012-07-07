@@ -3,14 +3,14 @@
 static float _pb_falloff_size_sqrt = 0.0f;
 void conf_pb_falloff(int size)
 {
-    _pb_falloff_size_sqrt = 0.5 * sqrt((float)size);
+    _pb_falloff_size_sqrt = 0.5f * sqrtf((float)size);
 }
 float parabolic_falloff(int size, int n)
 {
     float fsize = (float)size;
     float fn = (float)n;
     //float res = 0.5*(sqrt(fsize-fn)-0.5*sqrt(fsize));
-    float res = 0.5*(sqrt(fsize-fn)- _pb_falloff_size_sqrt);
+    float res = 0.5f*(sqrtf(fsize-fn)- _pb_falloff_size_sqrt);
     // y = 0.5 * (sqrt(size - n) - 0.5 * sqrt(size));
     // y=0, y=3s/4
     // x=0, sqrt(s)/4

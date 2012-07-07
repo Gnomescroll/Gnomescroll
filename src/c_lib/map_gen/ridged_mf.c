@@ -11,12 +11,11 @@
 #define RMFX_BODY(pnoise) do {\
     float amplitude = _amp, \
            frequency = _freq;   \
-    int i;  \
     float max = 0.0f;   \
     float total = 0.0f; \
-    for (i = 0; i < _oct; i++)  \
+    for (int i = 0; i < _oct; i++)  \
     {   \
-        total += 1.0f - fabs(pnoise);    \
+        total += 1.0f - fabsf(pnoise);    \
         max += amplitude;   \
         frequency *= _lac;  \
         amplitude *= _per;  \

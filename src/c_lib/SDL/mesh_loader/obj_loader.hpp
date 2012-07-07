@@ -169,7 +169,7 @@ void load_model()
             v.z = model->VertexArray[iv].z;
 
             v.u = model->TexCoordArray[itx].u;
-            v.v = 1.0 - model->TexCoordArray[itx].v;
+            v.v = 1.0f - model->TexCoordArray[itx].v;
             
             v.n[0] = model->NormalArray[in].x;
             v.n[1] = model->NormalArray[in].y;
@@ -256,7 +256,7 @@ void draw_model(float x, float y, float z)
     x = ClientState::location_pointer.x;
     y = ClientState::location_pointer.y;
     z = ClientState::location_pointer.z;
-    z+= 2.0;
+    z+= 2.0f;
 
     const static unsigned int stride = sizeof(struct Vertex);
 
@@ -280,7 +280,7 @@ void draw_model(float x, float y, float z)
     glVertexAttribPointer(monster_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
     glNormalPointer(GL_FLOAT, stride, (GLvoid*)20);
     
-    glUniform4f(monster_InPosition, x,y,z,0.0);
+    glUniform4f(monster_InPosition, x,y,z,0.0f);
 
     glDrawArrays(GL_TRIANGLES,0, v_num);
 

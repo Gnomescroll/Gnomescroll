@@ -18,7 +18,7 @@
 //set offset and rotation
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
-    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0,0.0);
+    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0f,0.0f);
 }
 void Voxel_model::set_skeleton_root(float *data)
 {
@@ -106,7 +106,7 @@ void Voxel_model::draw_skeleton()
 {
     #if DC_CLIENT
     glDisable(GL_TEXTURE_2D);
-    glShadeModel(GL_SMOOTH);
+    //;
 
     glLineWidth(3.0f);
 
@@ -116,7 +116,7 @@ void Voxel_model::draw_skeleton()
 
     struct Vec3 v;
 
-    const float len = 0.25;
+    const float len = 0.25f;
 
     // node matrix orientation
     for(int i=0; i<n_skeleton_nodes; i++)
@@ -205,7 +205,7 @@ void Voxel_model::draw_skeleton()
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
 
-    glShadeModel(GL_FLAT);
+    //;
     #endif
 }
 
@@ -326,16 +326,19 @@ void Voxel_model::set_part_color(int part_num)
     unsigned char r,g,b,a;
     int ix,iy,iz;
     if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
-    for (int j=0; j < vp->colors.n; j++) {
-        ix = vp->colors.index[j][0];
-        iy = vp->colors.index[j][1];
-        iz = vp->colors.index[j][2];
+    for (int j=0; j < vp->colors.n; j++)
+    {
+		int k = j * 3;
+        ix = vp->colors.index[k+0];
+        iy = vp->colors.index[k+1];
+        iz = vp->colors.index[k+2];
         if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
 
-        r = vp->colors.rgba[j][0];
-        g = vp->colors.rgba[j][1];
-        b = vp->colors.rgba[j][2];
-        a = vp->colors.rgba[j][3];
+		k = j * 4;
+        r = vp->colors.rgba[k+0];
+        g = vp->colors.rgba[k+1];
+        b = vp->colors.rgba[k+2];
+        a = vp->colors.rgba[k+3];
         vv->set_color(ix, iy, iz, r,g,b,a);
     }
     //#endif
@@ -525,7 +528,9 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability)
 {   // ray cast from source to each body part center (shuffled)
-    int part_numbers[this->n_parts];
+    //int part_numbers[this->n_parts];
+    MALLOX(int, part_numbers, this->n_parts); //type, name, size
+
     for (int i=0; i<this->n_parts; i++)
         part_numbers[i] = i;
     shuffle_int_array(part_numbers, this->n_parts);

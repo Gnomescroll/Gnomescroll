@@ -2,7 +2,15 @@
 
 #include <stdio.h>
 #include <time.h>
+
+#ifdef __GNUC__
 #include <unistd.h>
+#endif
+
+#ifdef __MSVC__
+#include <Windows.h>
+#include <WinBase.h>
+#endif
 
 #ifdef __MACH__
 #include <mach/clock.h>
@@ -13,7 +21,7 @@
 //    #include <Windows.h>
 //#endif
 
-int c_tick = 0;
+long c_tick = 0;
 
 void _START_CLOCK() {
 /*
@@ -43,7 +51,7 @@ void _START_CLOCK() {
 
 #define TICK_MS 33.3333
 
-int _last_tick;
+long _last_tick;
 
 int _GET_TICK() {
     //long s_sec, n_sec;
@@ -85,7 +93,7 @@ int _GET_TICK() {
 		cs_sec = s_sec - s_sec_start;
 		cn_sec = n_sec - n_sec_start;
 
-		int t = cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS;
+		long t = cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS;
         _ti = cs_sec*1000 + cn_sec/(1000*1000);
 	#else
         static const long GetTickCount_start = GetTickCount();
@@ -97,17 +105,21 @@ int _GET_TICK() {
     if(c_tick < t) {
         if(c_tick+5 < t)
         {
-            printf("Timer error: c_tick < t is %i < %i \n", c_tick,t);
+			#if DC_SERVER || !PRODUCTION
+            printf("Timer error: c_tick < t is %ld < %ld \n", c_tick,t);
+            #endif
             c_tick = t;
             return 1;
         }
         c_tick++;
         _last_tick = _ti;
         return 1;
-    } else {
-
+    } else 
+    {
         return 0;
     }
+
+    return 0;
 }
 
 int _GET_MS_TIME() 
@@ -199,7 +211,7 @@ long _GET_MICROSECOND_TIME()
     #endif
 }
 
-int _LAST_TICK()
+long _LAST_TICK()
 {
     return _last_tick;
 }

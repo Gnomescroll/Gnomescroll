@@ -31,7 +31,7 @@ struct Vec3 AgentSpawnerComponent::get_spawn_point(float spawned_object_height, 
     sy = translate_point(sy);
     spawn_point.y = sy;
 
-    int h = ceil(spawned_object_height);
+    int h = (int)ceil(spawned_object_height);
     GS_ASSERT(h >= 1);
     if (h < 1) h = 1;
     spawn_point.z = t_map::get_highest_open_block(sx, sy, h);

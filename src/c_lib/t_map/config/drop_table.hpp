@@ -68,7 +68,7 @@ void save_drop_dat_to_file()
 
             fprintf(fp,"\tavg= %2.4f \n", average);
 
-            float cdrop = 0.0;
+            float cdrop = 0.0f;
             for(int k=0; k<cidt->drop_entries; k++)
             {
                 cdrop += cidt->item_drop_num[k]*cidt->drop_probabilities[k];
@@ -105,24 +105,24 @@ void end_drop_dat()
 
             float total;
 
-            total = 0.0;
+            total = 0.0f;
             for(int k=1; k<cidt->drop_entries; k++)
             {
                 total += cidt->drop_probabilities[k];
             }
 
-            if(total > 1.0)
+            if(total > 1.0f)
             {
                 printf("Block Drop Dat Error: Item total probabilities exceed 1.0 \n");
                 GS_ABORT();
             }
 
-            cidt->drop_probabilities[0] = 1.0 - total;
+            cidt->drop_probabilities[0] = 1.0f - total;
 
 
             //float fa[cidt->drop_entries];
 
-            total = 0.0;
+            total = 0.0f;
             for(int k=0; k<cidt->drop_entries; k++)
             {
                 total += cidt->drop_probabilities[k];
@@ -171,8 +171,8 @@ void handle_block_drop(int x, int y, int z, int block_type)
                 for (int k=0; k<cidt->item_drop_num[j]; k++)
                 {
                     const float mom = 2.0f;
-                    x = (float)x + 0.5f + randf()*0.33;
-                    y = (float)y + 0.5f + randf()*0.33;
+                    x = (float)x + 0.5f + randf()*0.33f;
+                    y = (float)y + 0.5f + randf()*0.33f;
                     z = (float)z + 0.05f;
                     ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
                         (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom); 
@@ -224,7 +224,7 @@ void add_drop(const char* item_name, int drop_entries)
 
     for (int i=0; i<drop_entries; i++)
     {
-        cide->drop_probabilities[i] = 1.0;
+        cide->drop_probabilities[i] = 1.0f;
         cide->item_drop_num[i] = 0;
     }
 
@@ -252,7 +252,7 @@ void set_drop(float drop_probability, int drops)
 void drop_always(const char* item_name, int drops)
 {
     add_drop(item_name, 1);
-    set_drop(1.0, drops);
+    set_drop(1.0f, drops);
 }
 void drop_always(const char* item_name) { drop_always(item_name, 1); }
 

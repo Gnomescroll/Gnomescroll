@@ -145,7 +145,7 @@ static struct MouseMotionAverage mm = {0.0f, 0.0f};
 
 static inline float _mouse_weight(float t)
 {
-    return INITIAL_MOUSE_WEIGHT * pow(MOUSE_BUFFER_DECAY, t/TICK_DURATION);
+    return INITIAL_MOUSE_WEIGHT * powf(MOUSE_BUFFER_DECAY, t/TICK_DURATION);
 }
 
 static inline float mouse_axis_average(int* buffer)
@@ -220,8 +220,8 @@ struct MouseMotionAverage* get_mouse_render_state(int t)
     return &mm;
 }
 
-static float vx = 0.0;
-static float vy = 0.0;
+static float vx = 0.0f;
+static float vy = 0.0f;
 
 struct MOUSE_MOVEMENT
 {
@@ -239,10 +239,10 @@ static const float DEFAULT_Y_SENSITIVITY_COEFFICIENT = 10000;   // higher is les
 static const float ZOOM_SENSITIVITY_SCALE_FACTOR = 0.50f;
 /* end modification warning */
 
-static float x_sensitivity = 1 / (2*3.1415*DEFAULT_X_SENSITIVITY_COEFFICIENT);
-static float y_sensitivity = 1 / (2*3.1415*DEFAULT_Y_SENSITIVITY_COEFFICIENT);
+static float x_sensitivity = 1 / (2*3.1415f*DEFAULT_X_SENSITIVITY_COEFFICIENT);
+static float y_sensitivity = 1 / (2*3.1415f*DEFAULT_Y_SENSITIVITY_COEFFICIENT);
 static const float dampening = DEFAULT_DAMPENING;
-static float linear_sensitivity = 1 / (2 * 3.14159 * DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT* DEFAULT_SENSITIVITY_OPTION);
+static float linear_sensitivity = 1 / (2 * 3.14159f * DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT* DEFAULT_SENSITIVITY_OPTION);
 
 static const int MOUSE_MOVEMENT_ARRAY_INDEX_MAX = 1000;
 static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX_MAX];
@@ -270,8 +270,8 @@ void apply_camera_physics()
 
     //long _start_time = LAST_MOUSE_MOVEMENT_TIME; //debug
     
-    const float cfactor = 1.0/33.3333;
-    float _dampening = pow(dampening, cfactor); // dampening per frame
+    const float cfactor = 1.0f/33.3333f;
+    float _dampening = powf(dampening, cfactor); // dampening per frame
 
     int index = 0;
    

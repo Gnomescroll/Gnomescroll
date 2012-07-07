@@ -25,13 +25,10 @@ void load_crafting_dat()
     
     def_crafting_recipe("steel_block_2", 4);
     set_crafting_reagent("iron_bar", 1);
-    set_crafting_reagent("iron_bar", 1);
     end_crafting_recipe();
     
     def_crafting_recipe("steel_block_3", 4);
     set_crafting_reagent("iron_bar", 1);
-    set_crafting_reagent("iron_bar", 1);
-    set_crafting_reagent("graphite", 1);
     end_crafting_recipe();
 
     // Shovel

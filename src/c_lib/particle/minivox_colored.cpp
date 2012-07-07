@@ -36,13 +36,13 @@ size(MINIVOX_SIZE)
 // recalculates orientation vectors from angular parameter
 void ColoredMinivox::orient_vectors()
 {
-    vec_x.x = cos(theta * PI) * cos(phi * PI);
-    vec_x.y = sin(theta * PI) * cos(phi * PI);
-    vec_x.z = sin(phi);
+    vec_x.x = cosf(theta * PI) * cosf(phi * PI);
+    vec_x.y = sinf(theta * PI) * cosf(phi * PI);
+    vec_x.z = sinf(phi);
     normalize_vector(&vec_x);
 
-    vec_y.x = cos(theta*PI + PI/2.0f);
-    vec_y.y = sin(theta*PI + PI/2.0f);
+    vec_y.x = cosf(theta*PI + PI/2.0f);
+    vec_y.y = sinf(theta*PI + PI/2.0f);
     vec_y.z = 0.0f;
     normalize_vector(&vec_y);
 
@@ -111,7 +111,7 @@ void ColoredMinivox::tick()
 
 void ColoredMinivox_list::tick()
 {
-    for (int i=0; i<num; i++)
+    for (unsigned int i=0; i<num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) this->destroy(i);
@@ -121,7 +121,7 @@ void ColoredMinivox_list::tick()
 void ColoredMinivox_list::draw()
 {
     #if DC_CLIENT
-    for (int i=0; i<num; a[i++].draw());
+    for (unsigned int i=0; i<num; a[i++].draw());
     #endif
 }
 

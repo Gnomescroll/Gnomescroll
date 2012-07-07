@@ -21,11 +21,11 @@ void register_string_option(const char* name, char** var);
 
 extern "C"
 {
-    void LUA_set_int_option(int option_id, int value)  GNOMESCROLL_API;
-    void LUA_set_uint_option(int option_id, unsigned int value)  GNOMESCROLL_API;
-    void LUA_set_bool_option(int option_id, int value)  GNOMESCROLL_API;
-    void LUA_set_float_option(int option_id, float value)  GNOMESCROLL_API;
-    void LUA_set_string_option(int option_id, char* value)  GNOMESCROLL_API;
+    LUA_EXPORT void LUA_set_int_option(int option_id, int value);
+    LUA_EXPORT void LUA_set_uint_option(int option_id, unsigned int value);
+    LUA_EXPORT void LUA_set_bool_option(int option_id, int value);
+    LUA_EXPORT void LUA_set_float_option(int option_id, float value);
+    LUA_EXPORT void LUA_set_string_option(int option_id, char* value);
 }
 
 

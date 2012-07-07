@@ -6,8 +6,40 @@
 
 #include <physics/verlet_particle.hpp>
 
+/*
+ *
+    instead of getting picked up directly:
+	assign target agent
+	* the ttl should be reset to a fixed max lifespan here
+
+	will need to do item splits in the check_item_pickups method
+	
+	the "picked_up" packet will be sent when the target is decided
+	* client sets target
+	
+	both client and server will apply the same tick method
+	and advance the item towards the player
+	
+	in the server, if close enough to the target, or ttl=0,
+	die
+	
+	the client will play the sound for picking up when it
+	receives a destroy() packet for an item that is 
+	targeting the player's agent
+* 
+*/
+
 namespace ItemParticle
 {
+
+// after pickup initiated, max ttl before being considered picked up
+const int ITEM_PARTICLE_PICKED_UP_TTL = 30 * 3;
+// momentum for flying at agent
+const int ITEM_PARTICLE_PICKUP_MOMENTUM = 2.0f;
+// distance where pickup initiates
+const float ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE = 1.5f;
+// distance where initiated pickup will become final
+const float ITEM_PARTICLE_PICKUP_END_DISTANCE = 0.05f;
 
 #if DC_CLIENT
 extern GLuint ItemSheetTexture;
@@ -16,14 +48,6 @@ void init_item_particle();
 void teardown_item_particle();
 #endif
 
-const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
-const float ITEM_PARTICLE_DAMPENING = 0.50;
-const float ITEM_PARTICLE_RADIUS = 0.35;
-
-const int PICKUP_PREVENTION_DELAY = 30 * 4; // 4 seconds
-
-const int ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE = 30 * 10;    // 10 seconds
-
 class ItemParticle //: public VerletComponent
 {
     public:
@@ -31,10 +55,8 @@ class ItemParticle //: public VerletComponent
 
         int id;
         int item_type;
-        #if DC_SERVER
-        ItemID item_id;
-        int broadcast_tick;
-        #endif
+        
+        int target_agent; // when being picked up
         
         // render stuff
         #if DC_CLIENT
@@ -45,32 +67,28 @@ class ItemParticle //: public VerletComponent
         void draw();
         #endif
 
-        // pickup stuff
         #if DC_SERVER
-        int pickup_prevention;
-        bool was_picked_up;
+        int ttl;
+        ItemID item_id;
+        int broadcast_tick;
+
+        int pickup_prevention;	// timer lock against auto pickup
+        bool get_picked_up;
         
-        void picked_up(int agent_id);
         bool can_be_picked_up()
         {
-            return (this->pickup_prevention <= 0);
+            return (this->pickup_prevention <= 0 && this->target_agent == NO_AGENT);
         }
         void lock_pickup()
         {
-            this->pickup_prevention = PICKUP_PREVENTION_DELAY;
+            this->pickup_prevention = ITEM_PICKUP_PREVENTION_DELAY;
         }
         #endif
 
-        int ttl;
-        void tick()
-        {
-            verlet.bounce_box(ITEM_PARTICLE_RADIUS);
-            this->ttl--;
-            if (this->verlet.position.z < OBJECT_DEPTH_MAX) this->ttl = 0;
-            #if DC_SERVER
-            this->pickup_prevention--;
-            #endif
-        }
+        void picked_up(int agent_id);
+		void pickup_cancelled();
+		
+        void tick();
 
         void set_state(float x, float y, float z, float mx, float my, float mz)
         {
@@ -102,8 +120,9 @@ namespace ItemParticle
 {
 
 const int ITEM_PARTICLE_MAX = 1024;
+const int ITEM_PARTICLE_HARD_MAX = 0xffff - 1;
 
-class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MAX>
+class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MAX, ITEM_PARTICLE_HARD_MAX>
 {
     private:
         const char* name() { return "ItemParticle"; }
@@ -129,7 +148,7 @@ void ItemParticle_list::draw()
 
     glEnable(GL_ALPHA_TEST);
 
-    glAlphaFunc ( GL_GREATER, 0.5);
+    glAlphaFunc ( GL_GREATER, 0.5f);
 
     glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 
@@ -155,25 +174,6 @@ void ItemParticle_list::draw()
         }
     glEnd();
     #endif
-}
-
-void ItemParticle_list::tick()
-{
-    ItemParticle* ip;
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        ip = this->a[i];
-
-        ip->tick();
-        #if DC_SERVER
-        if (ip->ttl <= 0)
-        {
-            ip->die();
-            this->destroy(ip->id);
-        }
-        #endif
-    }
 }
 
 }

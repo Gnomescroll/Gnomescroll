@@ -81,7 +81,7 @@ static struct HudDrawSettings
 void set_hud_fps_display(float fps_val)
 {
     // sanitize
-    fps_val = (fps_val >= 1000.0f) ? 999.99 : fps_val;
+    fps_val = (fps_val >= 1000.0f) ? 999.99f : fps_val;
     fps_val = (fps_val < 0.0f) ? 0.0f : fps_val;
     hud_draw_settings.fps_val = fps_val;
 }
@@ -313,6 +313,8 @@ void draw_hud()
     // so i moved the list draw call out
     
     start_font_draw();
+    HudFont::reset_default();
+    HudFont::set_texture();
     Particle::billboard_text_hud_list->draw();
     ClientState::agent_list->draw_names();
     end_font_draw();
@@ -516,7 +518,7 @@ void ChatRender::set_cursor(char* text, float x, float y)
     int h = 0;
     const int w = 8;
 
-    int s_len = strlen(text);
+    int s_len = (int)strlen(text);
     char* tmp_text = (char*)malloc(sizeof(char) * (s_len + 1));
     strcpy(tmp_text, text);
     if (chat_client->input->cursor <= s_len)    // truncate text buffer to cursor position

@@ -114,9 +114,9 @@ int print(LogType type, LogLevel level, const char* file, int line, const char* 
     FILE* f = get_file_descriptor(type, level);
     if (f == NULL) return -1;
 
-    int len = strlen(file) + 10 + strlen(function) + strlen(LOG_MSG_FMT) - 8;
+    int len = (int) (strlen(file) + 10 + strlen(function) + strlen(LOG_MSG_FMT) - 8);
     int remain = LOG_MSG_MAX_LEN - len - 1;
-    len = strlen(fmt);
+    len = (int)strlen(fmt);
     if (len > remain)
         fmt[remain] = '\0';
     sprintf(log_buffer, LOG_MSG_FMT, file, line, function, fmt);

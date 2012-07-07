@@ -295,7 +295,7 @@ void Voxel_render_list_manager::draw()
     GL_ASSERT(GL_BLEND, false);
     glColor3ub(255,255,255);
 
-    glShadeModel(GL_FLAT);
+    //;
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
 

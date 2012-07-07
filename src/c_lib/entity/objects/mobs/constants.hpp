@@ -67,7 +67,7 @@ const float MONSTER_BOX_CAMERA_HEIGHT = 2.5f;
 // targeting
 const float MONSTER_BOX_TARGET_ACQUISITION_PROBABILITY = 0.9f;
 const int MONSTER_BOX_FIRE_RATE_LIMIT = 45;
-const float MONSTER_BOX_USES_BIAS = false;
+const bool MONSTER_BOX_USES_BIAS = false;
 const float MONSTER_BOX_ACCURACY_BIAS = 0.0f;
 const float MONSTER_BOX_FIRING_SIGHT_RANGE = 15.0f;
 const bool MONSTER_BOX_ATTACK_AT_RANDOM = false;

@@ -18,7 +18,6 @@ class ChatServerChannel
     ~ChatServerChannel();
 };
 
-const int CHAT_SERVER_CHANNELS_MAX = 1+1+PLAYERS_MAX;
 class ChatServer
 {
     public:

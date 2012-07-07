@@ -14,8 +14,6 @@ extern "C"
 
 int run_lua_test()
 {
-
-
     int status, result;
     //int i;
     //double sum;
@@ -30,7 +28,7 @@ int run_lua_test()
     luaL_openlibs(L); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(L, "lua/test.lua");
+    status = luaL_loadfile(L, "settings/test.lua");
     if (status) 
     {
         /* If something went wrong, error message is at the top of */
@@ -114,13 +112,13 @@ lua_State* LUA_options_table = NULL;
 
 #if DC_CLIENT
     #if PRODUCTION
-        const char* default_options_file = "./lua/settings.lua";
+        const char* default_options_file = "./settings/settings.lua";
     #else
-        const char* default_options_file = "./lua/settings_dev.lua";
+        const char* default_options_file = "./settings/settings_dev.lua";
     #endif
 #endif
 #if DC_SERVER
-const char* default_options_file = "./lua/settings_server.lua";
+const char* default_options_file = "./settings/settings_server.lua";
 #endif
 
 char* options_file = NULL;
@@ -157,7 +155,7 @@ void load_options()
 
         luaL_openlibs(L); /* Load Lua libraries */
 
-        //if (luaL_loadfile(L, "lua/settings.lua")) 
+        //if (luaL_loadfile(L, "settings/settings.lua")) 
         if (luaL_loadfile(L, options_path)) 
         {
             fprintf(stderr, "%s:%d -- Couldn't load file: %s\n", __FUNCTION__, __LINE__, lua_tostring(L, -1));
@@ -186,7 +184,7 @@ void load_options()
         printf("Reloading Settings\n");
         lua_State *L = LUA_options_table;
 
-        //if (luaL_loadfile(L, "lua/settings.lua")) 
+        //if (luaL_loadfile(L, "settings/settings.lua")) 
         if (luaL_loadfile(L, options_path)) 
         {
             fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));

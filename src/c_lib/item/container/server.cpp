@@ -252,25 +252,25 @@ void transfer_free_item_to_hand(ItemID item_id, int agent_id)
         send_hand_insert(hand_owner->client_id, item_id);
 }
 
-void transfer_particle_to_container(ItemID item_id, int particle_id, int container_id, int slot)
+bool transfer_particle_to_container(ItemID item_id, int particle_id, int container_id, int slot)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(slot != NULL_SLOT);
     GS_ASSERT(particle_id != NULL_PARTICLE);
 
-    if (item_id == NULL_ITEM) return;
-    if (container_id == NULL_CONTAINER) return;
-    if (slot == NULL_SLOT) return;
-    if (particle_id == NULL_PARTICLE) return;
+    if (item_id == NULL_ITEM) return false;
+    if (container_id == NULL_CONTAINER) return false;
+    if (slot == NULL_SLOT) return false;
+    if (particle_id == NULL_PARTICLE) return false;
 
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    if (item == NULL) return false;
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    if (container == NULL) return false;
 
     GS_ASSERT(container->is_valid_slot(slot));
     GS_ASSERT(container->get_item(slot) == NULL_ITEM);
@@ -296,6 +296,8 @@ void transfer_particle_to_container(ItemID item_id, int particle_id, int contain
     }
     if (owner != NULL)
         send_container_insert(owner->client_id, item->id, container->id, slot);
+        
+    return true;
 }
 
 void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id)
@@ -632,6 +634,7 @@ void agent_close_container(int agent_id, int container_id)
 
     bool did_unlock = container->unlock(agent_id);
     GS_ASSERT(did_unlock);
+    if (!did_unlock) return;
     broadcast_container_unlock(container->id, agent_id);
 
     unsubscribe_agent_from_container_contents(agent_id, container_id);
@@ -641,7 +644,7 @@ void unsubscribe_agent_from_container_contents(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
     
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);

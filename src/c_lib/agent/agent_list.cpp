@@ -35,8 +35,9 @@ void Agent_list::draw_names()
 	{
 		if (this->a[i] == NULL) continue;
 		Agent_state* a = this->a[i];
-		if (a->id == agent_id) a->event.hide_name();
-        else a->event.display_name();
+		if (a->id == agent_id && current_camera == agent_camera)
+			continue;
+		a->event.update_hud_name();
 		a->event.bb.draw();
 	}
 }
@@ -170,7 +171,7 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
     float ip;
     float arc;
 
-    float len = sqrt(vx*vx + vy*vy + vz*vz);
+    float len = sqrtf(vx*vx + vy*vy + vz*vz);
     vx /= len;
     vy /= len;
     vz /= len;
@@ -186,13 +187,13 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
         ay = p.y - y;
         az = p.z - z;
 
-        len = sqrt(ax*ax + ay*ay + az*az);
+        len = sqrtf(ax*ax + ay*ay + az*az);
         ax /= len;
         ay /= len;
         az /= len;
 
         ip = ax*vx + ay*vy + az*vz;
-        arc = abs(acos(ip));
+        arc = abs(acosf(ip));
 
         if (arc < theta)
             filtered_objects[ct++] = a;
@@ -289,7 +290,9 @@ Agent_state* random_agent_in_range(const Vec3 position, const float radius)
     if (n == 0) return NULL;
     
     // target random nearby player
-    int chosen[n];
+    //int chosen[n];
+    MALLOX(int, chosen, n); //type, name, size
+
     for (int i=0; i<n; i++)
         chosen[i] = i;
     shuffle_int_array(chosen, n);  // randomize

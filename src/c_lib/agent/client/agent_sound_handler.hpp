@@ -13,13 +13,13 @@ dont_include_this_file_in_server
 
 void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentState s1, bool on_ground)
 {
-    static const float distance_per_step = 1.5;
-    static float total_distance = 0.0;
+    static const float distance_per_step = 1.5f;
+    static float total_distance = 0.0f;
 
     float dx = (s1.x - s0.x);
     float dy = (s1.y - s0.y);
 
-    float d = sqrt(dx*dx + dy*dy);
+    float d = sqrtf(dx*dx + dy*dy);
 
     total_distance += d;
 
@@ -66,7 +66,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
         //play sound
         //printf("play agent sound !!! \n");
         //total_distance -= distance_per_step;
-        total_distance = fmod(total_distance, distance_per_step);
+        total_distance = fmodf(total_distance, distance_per_step);
         //Sound::walking();
         #if RANDOM_STEPS
         footsteps[randrange(0,n_footsteps-1)]();

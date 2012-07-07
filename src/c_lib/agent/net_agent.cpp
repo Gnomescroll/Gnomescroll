@@ -238,11 +238,8 @@ inline void agent_create_StoC::handle()
 inline void agent_name_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        //printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);
-        return;
-    }
+    if (a == NULL) return;
+    
     char* old_name = (char*)calloc(strlen(a->status.name) + 1, sizeof(char));
     strcpy(old_name, a->status.name);
     bool new_name = a->status.set_name(name);
@@ -574,8 +571,9 @@ inline void Agent_cs_CtoS::handle()
 // agent hit block action
 inline void hit_block_CtoS::handle()
 {
-    if (z < 0 || z >= map_dim.z) return;
-    if (z == 0) return;
+    // comparisons not needed due to value range of data type
+    //if (z < 0 || z >= map_dim.z) return;
+    //if (z == 0) return;
     
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
@@ -843,8 +841,9 @@ inline void ThrowGrenade_CtoS::handle()
 
 inline void agent_set_block_CtoS::handle()
 {
-    if (z < 0 || z >= map_dim.z) return;
-    if (z == 0) return;     // dont set bottom layer
+    // comparisons not needed due to value range of data type
+    //if (z < 0 || z >= map_dim.z) return;
+    //if (z == 0) return;     // dont set bottom layer
 
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
@@ -901,7 +900,8 @@ inline void agent_set_block_CtoS::handle()
 //#if !PRODUCTION
 inline void admin_set_block_CtoS::handle()
 {
-    if (z < 0 || z >= map_dim.z) return;
+    // comparisons not needed due to value range of data type
+    //if (z < 0 || z >= map_dim.z) return;
 
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)

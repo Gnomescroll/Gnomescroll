@@ -57,15 +57,15 @@ void rock_layer_post_processing()
 	int* regolith_depth_array = new int[512*512]; 
 
 	const int seed = 58412;
-	const float persistance = 0.85;
-	const float octaves = 4;
+	const float persistance = 0.85f;
+	const float octaves = 4.0f;
 
 	t_gen::populate_2d_noise_array(_2d_noise_array, seed, persistance, octaves);
 
 	for(int i=0; i<512; i++)
 	for(int j=0; j<512; j++)
 	{
-		regolith_depth_array[512*j+i] = 1.0 + 3.0*abs(_2d_noise_array[ 512*j+i]);
+		regolith_depth_array[512*j+i] = 1.0f + 3.0f*abs(_2d_noise_array[ 512*j+i]);
 
 		//printf("depth= %i \n", regolith_depth_array[512*j+i] );
 	}

@@ -82,7 +82,7 @@ namespace Particle
 
 void Grenade_shrapnel_list::tick()
 {
-    for (int i=0; i<this->num; i++)
+    for (unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);

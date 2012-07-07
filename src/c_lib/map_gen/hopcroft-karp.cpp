@@ -365,7 +365,7 @@ class Diagonal {
     int length(HKPoint* pts) {
         HKPoint* _p = &pts[this->p];
         HKPoint* _q = &pts[this->q];
-        return sqrt((_q->x - _p->x)*(_q->x - _p->x) + (_q->y - _p->y)*(_q->y - _p->y));
+        return (int)sqrtf((_q->x - _p->x)*(_q->x - _p->x) + (_q->y - _p->y)*(_q->y - _p->y));
     }
 };
 

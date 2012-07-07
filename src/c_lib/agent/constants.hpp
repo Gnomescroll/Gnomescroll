@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/color.hpp>
+
 /*
     Agent #defines, constants
 */
@@ -73,5 +75,30 @@ const int AGENT_STATE_HISTORY_SIZE = 64;
 const float AGENT_INTERPOLATION_DECAY  = 0.8f;
 const int JETPACK_TICKS_MAX = 30 * 10 * 2;
 const int JETPACK_DECAY_TICKS = 30 * 10;
-const float AGENT_HUD_NAME_SIZE = 0.7f;
+
+namespace AgentHudName
+{
+// setup const config data for coloring
+const struct Color green = {0, 206, 0};
+const struct Color yellow = {228, 222, 20};
+const struct Color orange = {244, 161, 35};
+const struct Color orange_red = {244, 88, 35};
+const struct Color red = {219, 29, 20};
+const struct Color black = {0,0,0};
+const unsigned int COLOR_COUNT = 5;
+const struct Color colors[COLOR_COUNT] = { green, yellow, orange, orange_red, red };
+const float points[COLOR_COUNT] = { 1.0f, 0.6f, 0.4f, 0.3f, 0.0f };	// anchor points
+
+const struct Color HEALTH_TEXT_DEAD_COLOR = black;
+const float SIZE = 0.7f;
+
+void verify_configuration()
+{
+	// validate config state
+	GS_ASSERT(COLOR_COUNT > 0);
+	for (unsigned int i=1; i<COLOR_COUNT; i++)
+		GS_ASSERT(points[i] < points[i-1]); // must be descending order
+}
+
+}	// AgentHealthColor
 #endif

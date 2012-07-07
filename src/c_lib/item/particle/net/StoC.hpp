@@ -73,5 +73,16 @@ class item_particle_picked_up_StoC: public FixedSizeReliableNetPacketToClient<it
         inline void handle();
 };
 
+class item_particle_pickup_cancelled_StoC: public FixedSizeReliableNetPacketToClient<item_particle_pickup_cancelled_StoC>
+{
+    public:
+        uint16_t id;
 
-}
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+}	// ItemParticle

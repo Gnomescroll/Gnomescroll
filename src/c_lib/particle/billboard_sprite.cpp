@@ -23,10 +23,10 @@ void BillboardSprite::draw(Vec3 v)
     );
 
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->texture_index%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(this->texture_index/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
+    tx_min = (float)(this->texture_index%16)* (1.0f/16.0f);
+    tx_max = tx_min + (1.0f/16.0f);
+    ty_min = (float)(this->texture_index/16)* (1.0f/16.0f);
+    ty_max = ty_min + (1.0f/16.0f);
 
     Vec3 p = vec3_sub(v, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
@@ -68,10 +68,10 @@ void BillboardSprite::draw_from_bottom(Vec3 v)
     );
 
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->texture_index%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(this->texture_index/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
+    tx_min = (float)(this->texture_index%16)* (1.0f/16.0f);
+    tx_max = tx_min + (1.0f/16.0f);
+    ty_min = (float)(this->texture_index/16)* (1.0f/16.0f);
+    ty_max = ty_min + (1.0f/16.0f);
 
     Vec3 p = vec3_sub(v, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);

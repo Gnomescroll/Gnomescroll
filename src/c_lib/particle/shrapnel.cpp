@@ -82,10 +82,10 @@ void Shrapnel::prep()
     );
 
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->texture_index%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(this->texture_index/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
+    tx_min = (float)(this->texture_index%16)* (1.0f/16.0f);
+    tx_max = tx_min + (1.0f/16.0f);
+    ty_min = (float)(this->texture_index/16)* (1.0f/16.0f);
+    ty_max = ty_min + (1.0f/16.0f);
 
     position.z += this->scale / 2.0f;
 
@@ -106,7 +106,7 @@ void Shrapnel::prep()
 
 void Shrapnel_list::tick()
 {
-    for(int i=0; i<this->num; i++)
+    for(unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);
@@ -116,7 +116,7 @@ void Shrapnel_list::tick()
 void Shrapnel_list::prep()
 {
     #if DC_CLIENT
-    for(int i=0; i<this->num; a[i++].prep());
+    for(unsigned int i=0; i<this->num; a[i++].prep());
     shrapnel_vlist->buffer();
     #endif
 }

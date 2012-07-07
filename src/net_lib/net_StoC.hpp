@@ -6,6 +6,7 @@
 #include <net_lib/common/packet_buffer.hpp> //REMOVE THIS FROM INCLUDE!!!
 
 #include <net_lib/common/packet_id_counter.hpp>
+#include <net_lib/common/message_handler.h>
 
 //#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
 /*

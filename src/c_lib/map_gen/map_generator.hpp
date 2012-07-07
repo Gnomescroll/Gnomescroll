@@ -440,7 +440,7 @@ class Generator
     base_tile(2),
     use_interpolate(false), interpolate_x(1), interpolate_y(1), interpolate_z(1),
     use_gradient(false), gx0(0.0f), gx1(0.0f), gy0(0.0f), gy1(0.0f), gz0(0.0f), gz1(0.0f),
-    use_gradient2(false), gx(0.0f), gy(0.0f), gz(0.0),
+    use_gradient2(false), gx(0.0f), gy(0.0f), gz(0.0f),
     octaves(1), persistence(0.5f), frequency(1.0f), amplitude(1.0f), lacunarity(2.0f),
     repeat_x(1024), repeat_y(1024), repeat_z(1024),
     dimensions(2),

@@ -10,11 +10,11 @@ class AgentToolbeltUI : public UIElement
     public:
 
     //static const float border = 16;       // border around entire panel
-    static const float border = 0;       // border around entire panel
-    static const float inc1 = 8; // spacing between slot icons
-    static const float inc2 = 2;  // border around a slot icon
+    static const int border = 0;       // border around entire panel
+    static const int inc1 = 8; // spacing between slot icons
+    static const int inc2 = 2;  // border around a slot icon
 
-    static const float slot_size = 32;    // pixel dimension
+    static const int slot_size = 32;    // pixel dimension
 
     static const int xdim = 9;    // slot dimensions
     static const int ydim = 1;
@@ -202,10 +202,10 @@ void AgentToolbeltUI::draw()
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
         
-        const float tx_min = (1.0/iw)*(tex_id % iiw);
-        const float ty_min = (1.0/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
+        const float tx_min = (1.0f/iw)*(tex_id % iiw);
+        const float ty_min = (1.0f/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0f/iw;
+        const float ty_max = ty_min + 1.0f/iw;
 
         glTexCoord2f( tx_min, ty_min );
         glVertex2f(x,y+w);
@@ -238,7 +238,7 @@ void AgentToolbeltUI::draw()
         const float b = inc2;
 
         glColor4ub(0, 0, 128+64, 255);
-        glLineWidth(2.0);
+        glLineWidth(2.0f);
 
         glBegin(GL_LINES);
 
@@ -256,7 +256,7 @@ void AgentToolbeltUI::draw()
 
         glEnd();
 
-        glLineWidth(1.0);
+        glLineWidth(1.0f);
     }
 
     glColor4ub(255, 255, 255, 255);

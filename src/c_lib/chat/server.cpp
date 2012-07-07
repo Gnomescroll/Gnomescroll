@@ -110,6 +110,9 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	GS_ASSERT(Options::log_chat);
 	if (!Options::log_chat) return;
 	
+	GS_ASSERT(this->log != NULL);
+	if (log == NULL) return;
+
 	GS_ASSERT(payload != NULL);
 	if (payload == NULL) return;
 	
@@ -117,10 +120,7 @@ void ChatServer::log_message(int channel, int sender, char* payload)
     if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
 
     if (!is_valid_chat_message(payload)) return;
-	
-	GS_ASSERT(this->log != NULL);
-	if (log == NULL) return;
-	
+		
 	Agent_state* a = ServerState::agent_list->get(sender);
 	GS_ASSERT(a != NULL); 
 	if (a == NULL) return;
@@ -130,12 +130,12 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	GS_ASSERT(sender_name[0] != '\0');
 	
 	const char msg_fmt[] = "Channel: %d, Sender: %d %s; %s\n";
-	int msg_len = strlen(msg_fmt) + strlen(payload)
+	int msg_len = (int) (strlen(msg_fmt) + strlen(payload)
 		+ count_digits(channel) + count_digits(sender)
-		+ strlen(sender_name) + 1 - 8;
+		+ strlen(sender_name) + 1 - 8);
 	char* msg = (char*)malloc(msg_len * sizeof(char));
 	
-	sprintf(msg, msg_fmt, channel, sender, sender_name, payload);
+	msg_len = sprintf(msg, msg_fmt, channel, sender, sender_name, payload);
 	fwrite(msg, sizeof(char), msg_len, this->log);
 }
 
@@ -160,8 +160,10 @@ ChatServer::ChatServer()
     
     if (Options::log_chat)
     {
-		this->log = fopen("./log/chat", "a");
+		this->log = fopen("./log/chat.log", "a");
 		GS_ASSERT(this->log != NULL);
+        if (this->log != NULL)
+            setvbuf(this->log, NULL, _IOLBF, 256);
 	}
 	else
 		this->log = NULL;

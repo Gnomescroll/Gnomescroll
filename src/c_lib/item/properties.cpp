@@ -114,7 +114,7 @@ void set_item_name(int id, char* name, int length)
 
 void set_item_name(int id, char* name)
 {
-    int length = strlen(name);
+    int length = (int)strlen(name);
     set_item_name(id, name, length);
 }
 
@@ -501,12 +501,16 @@ class SmeltingRecipe* get_selected_smelting_recipe(int container_id)
     unsigned int max_inputs = smelter->get_max_input_slots();
     GS_ASSERT(max_inputs > 0);
     if (max_inputs <= 0) return NULL;
-    ItemID inputs[max_inputs];
+    //ItemID inputs[max_inputs];
+    MALLOX(ItemID, inputs, max_inputs); //type, name, size
+
     int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);
     if (n_inputs <= 0) return NULL;
 
-    int input_types[n_inputs];
-    int input_stacks[n_inputs];
+    //int input_types[n_inputs];
+    //int input_stacks[n_inputs];
+    MALLOX(int, input_types, n_inputs); //type, name, size
+    MALLOX(int, input_stacks, n_inputs); //type, name, size
 
     for (int i=0; i<n_inputs; i++)
     {

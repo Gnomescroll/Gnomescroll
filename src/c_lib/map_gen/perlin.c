@@ -122,8 +122,8 @@ float p2_surflet(float x, float y, int gx, int gy, int period)
     float dx = abs(x-gx);
     float dy = abs(y-gy);
     // interpolated
-    float px = 1.0f - 6.0f*pow(dx,5.0f) + 15.0f*pow(dx,4.0f) - 10.0f*pow(dx,3.0f);
-    float py = 1.0f - 6.0f*pow(dy,5.0f) + 15.0f*pow(dy,4.0f) - 10.0f*pow(dy,3.0f);
+    float px = 1.0f - 6.0f*powf(dx,5.0f) + 15.0f*powf(dx,4.0f) - 10.0f*powf(dx,3.0f);
+    float py = 1.0f - 6.0f*powf(dy,5.0f) + 15.0f*powf(dy,4.0f) - 10.0f*powf(dy,3.0f);
     // gradient index
     int hash = tiling_indexes[tiling_indexes[gx%period] + gy%period];
     float g = (x-gx)*tiling_gradients[hash].x + (y-gy)*tiling_gradients[hash].y;
@@ -146,7 +146,7 @@ float perlin2_tiling(float x, float y, int period)
     assert(_oct == 1);
     float total = 0.0f;
     for (int i=0; i<_oct; i++)  
-        total += pow(0.5, i) * pnoise2_tiling(x * pow(2,i), y * pow(2,i), period*pow(2,i));
+        total += powf(0.5f, i) * pnoise2_tiling(x * powf(2,i), y * powf(2,i), period*powf(2,i));
     return total;
 }
 

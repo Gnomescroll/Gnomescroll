@@ -995,8 +995,10 @@ bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     // assemble sorted bench inputs
     // we need them sorted so we can correctly decrement from each item
     int input_count = 0;
-    ItemID inputs[bench->slot_max];
-    int input_types[bench->slot_max];
+    //ItemID inputs[bench->slot_max];
+    //int input_types[bench->slot_max];
+    MALLOX(ItemID, inputs, bench->slot_max); //type, name, size
+    MALLOX(int, input_types, bench->slot_max); //type, name, size
 
     // clear initial state
     for (int i=0; i<bench->slot_max; inputs[i++] = NULL_ITEM);
@@ -1118,6 +1120,7 @@ bool agent_in_container_range(int agent_id, int container_id)
     // get container position, if applicable
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
+    if (container == NULL) return false;
     if (!Item::container_type_is_block(container->type)) return false;
 
     int position[3];
@@ -1286,6 +1289,48 @@ void update_smelters()
             }
             GS_ASSERT(fuel_item_type == NULL_ITEM_TYPE || is_fuel);
 
+			// ERROR STATE -- throw item out of here
+			if (fuel_item_type != NULL_ITEM_TYPE && !is_fuel)
+			{
+				Item::Item* fuel = Item::get_item(fuel_item);
+				GS_ASSERT(fuel != NULL);
+				if (fuel == NULL)
+				{	// we have an erroneous value in here
+					// maybe a buffer overwrite
+					// just get rid of it
+					smelter->remove_fuel();
+				}
+				else
+				{	// an existing item was placed in here somehow
+					// still could be buffer overwrite
+					// look where the item is located
+					// if its located here, throw() it
+					// else, just unset it
+					bool is_here =
+						(fuel->location == IL_CONTAINER
+					  && fuel->location_id == smelter->id
+					  && fuel->container_slot == smelter->fuel_slot);
+					GS_ASSERT(is_here);
+					if (is_here)
+					{	// throw it out
+						int p[3];
+						t_map::get_container_location(smelter->id, p);
+						Vec3 pos = vec3_init(p[0], p[1], p[2]);
+						pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 1.05f));
+						ItemParticle::dump_container_item(fuel_item,
+							pos.x, pos.y, pos.z);
+					}
+					else
+					{	// erroneous state
+						smelter->remove_fuel();
+					}
+				}
+				
+				// clear fuel info
+				fuel_item_type == NULL_ITEM_TYPE;
+				fuel_item = NULL_ITEM;
+			}
+
             if (fuel_item_type == NULL_ITEM_TYPE || !is_fuel)
             {   // reset progress
                 smelter->reset_smelting();
@@ -1329,7 +1374,9 @@ void update_smelters()
             if (recipe == NULL) continue;
             // consume recipe inputs
             unsigned int max_inputs = smelter->get_max_input_slots();
-            ItemID inputs[max_inputs];
+            //ItemID inputs[max_inputs];
+            MALLOX(ItemID, inputs, max_inputs); //type, name, size
+            
             int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);    // sorted by type
 
             GS_ASSERT(recipe->reagent_num <= n_inputs);

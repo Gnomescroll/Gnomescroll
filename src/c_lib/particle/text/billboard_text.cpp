@@ -15,10 +15,7 @@ namespace Particle
 inline void BillboardText::init()
 {
     this->bounce_count = 0;
-    this->r = 100;
-    this->g = 100;
-    this->b = 100;
-    this->a = 255;
+    this->color = color4_init(100, 100, 100, 255);
     this->gravity = true;
     this->should_draw = true;
     this->scale = BILLBOARD_TEXT_TEXTURE_SCALE;
@@ -70,7 +67,7 @@ void BillboardText::draw()
     if (point_fulstrum_test(position.x, position.y, position.z) == false)
         return;
 
-    glColor4ub(r,g,b,a);
+    glColor4ub(color.r,color.g,color.b,color.a);
 
     float up[3] = {
         0.0f,
@@ -83,7 +80,7 @@ void BillboardText::draw()
     look[0] = p.x - position.x;
     look[1] = p.y - position.y;
     look[2] = p.z - position.z;
-    norm = sqrt(look[0]*look[0] + look[1]*look[1] + look[2]*look[2]);
+    norm = sqrtf(look[0]*look[0] + look[1]*look[1] + look[2]*look[2]);
     look[0] /= -norm;
     look[1] /= -norm;
     look[2] /= -norm;
@@ -92,7 +89,7 @@ void BillboardText::draw()
     right[0] = -up[2]*look[1];
     right[1] =  up[2]*look[0];
     right[2] = 0.0f;
-    norm = sqrt(right[0]*right[0] + right[1]*right[1]);
+    norm = sqrtf(right[0]*right[0] + right[1]*right[1]);
     right[0] /= norm;
     right[1] /= norm;
 
@@ -106,14 +103,14 @@ void BillboardText::draw()
     
     // calcalute half length pixel offset to center the text
     const float scale = 1.0f/16.0f * this->scale; // pixels to meters
-    float start = -(0.5 * len * scale);
+    float start = -(0.5f * len * scale);
     float cursor = 0.0f;
     float xoff, xw;
     float ax, ay, bx, by;
     float az, bz;
 
     // letters draw a bit into the ground, this offset fixes that
-    const float ground_offset = 0.05;
+    const float ground_offset = 0.05f;
     position = vec3_scalar_add(position, ground_offset);
     float x,y,z;
     x=position.x; y=position.y; z=position.z;
@@ -168,7 +165,7 @@ namespace Particle
 
 void BillboardText_list::tick()
 {
-    for (int i=0; i<this->num; i++)
+    for (unsigned int i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);
@@ -185,7 +182,7 @@ void BillboardText_list::draw()
     HudFont::reset_default();
     HudFont::start_world_font_draw(); // gl calls
     HudFont::set_texture();
-    for(int i=0; i<this->num; i++)
+    for(unsigned int i=0; i<this->num; i++)
     {
         if (!a[i].should_draw) continue;
         a[i].draw();

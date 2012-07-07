@@ -17,8 +17,7 @@ void tick();
 void update();
 void harvest();
 
-class Component;
-Component* add_component_to_object(Object* object, ComponentType type);
+class Component* add_component_to_object(class Object* object, ComponentType type);
 void release_object_components(Object* object);
 
 Object* create(ObjectType type);

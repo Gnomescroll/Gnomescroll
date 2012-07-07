@@ -97,7 +97,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
     do {
         //UNPACK_uint8_t(&message_id, buff, n);
         unpack_message_id(&message_id, buff, n);
-        GS_ASSERT(message_id >= 0 && message_id < 255);
+        //GS_ASSERT(message_id >= 0 && message_id < 255); // always true due to data type value range
         
         //if(IS_CLIENT) printf("pop message: n= %i, message_id= %i \n", _n, message_id);
 
@@ -118,7 +118,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
             printf("ERROR! message processor would read past end of packet!\n");
 
             printf("n= %i, max_n= %i, message_id= %i message_size= %i \n", *n, max_n, message_id, size);
-            return 0;
+            return -3;
         }
 
         
@@ -145,7 +145,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
         if(read_bytes+1 != size) 
         {
             printf("ERROR!: message_id= %i, bytes expected= %i, bytes read=%i\n", message_id, size, read_bytes);
-            return 0;
+            return -2;
         }
 
         *n += read_bytes; //works for non fixed sized
@@ -165,7 +165,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
         return -1; 
     }
 
-    return 0; //should not happen
+    return -6; //should not happen
 }
 
 
@@ -175,6 +175,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
 int process_client_map_messages(char* buff, int *n, int max_n, int client_id) 
 {
     #if DC_SERVER
+    GS_ASSERT(0);
     printf("process_client_map_messages Error: this should never be called on server\n");
     #endif
     //printf("*n= %i, max_n= %i \n", *n, max_n);

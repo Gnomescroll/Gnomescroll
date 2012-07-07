@@ -13,11 +13,8 @@ namespace Toolbelt
 void turn_fire_on(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-
     agent_fire_tick[agent_id] = 0;
-
     if (agent_fire_on[agent_id]) return;
-
     agent_fire_on[agent_id] = true;
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
@@ -31,11 +28,8 @@ void turn_fire_on(int agent_id)
 void turn_fire_off(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-
     agent_fire_tick[agent_id] = 0;
-
     if (!agent_fire_on[agent_id]) return;
-
     agent_fire_on[agent_id] = false;
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
@@ -58,6 +52,7 @@ void turn_fire_off(int agent_id)
 	}
 }
 
+// returns true if an event was or should be triggered
 bool toolbelt_item_begin_alpha_action()
 {
     int agent_id = ClientState::playerAgent_state.agent_id;
@@ -67,28 +62,26 @@ bool toolbelt_item_begin_alpha_action()
     if (agent_fire_on[agent_id]) return false;
     turn_fire_on(agent_id);
     
-    if (agent_id == ClientState::playerAgent_state.agent_id)
-    {
-		ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-		int item_type = Item::get_item_type(item_id);
-		int item_group = IG_NONE;
-		if (item_type == NULL_ITEM_TYPE) item_group = IG_MELEE_WEAPON;
-		else item_group = Item::get_item_group_for_type(item_type);
-		bool continuous = false; // TODO -- load from dat
-		if (item_group == IG_MINING_LASER ||
-			item_group == IG_MELEE_WEAPON ||
-			item_group == IG_NONE ||
-			item_group == IG_SHOVEL ||
-			item_group == IG_NANITE_COIN || 
-			item_group == IG_RESOURCE ||
-			item_group == IG_ERROR)
-			continuous = true;
-		Animations::begin_equipped_item_animation(item_type, continuous);
-	}
+	ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+	int item_type = Item::get_item_type(item_id);
+	int item_group = IG_NONE;
+	if (item_type == NULL_ITEM_TYPE) item_group = IG_MELEE_WEAPON;
+	else item_group = Item::get_item_group_for_type(item_type);
+	bool continuous = false; // TODO -- load from dat
+	if (item_group == IG_MINING_LASER ||
+		item_group == IG_MELEE_WEAPON ||
+		item_group == IG_NONE ||
+		item_group == IG_SHOVEL ||
+		item_group == IG_NANITE_COIN || 
+		item_group == IG_RESOURCE ||
+		item_group == IG_ERROR)
+		continuous = true;
+	Animations::begin_equipped_item_animation(item_type, continuous);
 	
     return true;
 }
 
+// returns true if an event was or should be triggered
 bool toolbelt_item_end_alpha_action()
 {    
     // stop advancing fire tick
@@ -104,11 +97,7 @@ bool toolbelt_item_end_alpha_action()
     if (item_id == NULL_ITEM) item_group = IG_NONE;
     else item_group = Item::get_item_group(item_id);
     
-    if (agent_id == ClientState::playerAgent_state.agent_id)
-    {
-		//int item_type = Item::get_item_type(item_id);
-		Animations::stop_equipped_item_animation();
-	}
+	Animations::stop_equipped_item_animation();
 
     switch (item_group)
     {
@@ -182,11 +171,45 @@ void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group)
     }
 }
 
+// returns true if an event was or should be triggered
 bool toolbelt_item_beta_action()
 {
-    // open any inventories in range
-
     using ClientState::playerAgent_state;
+
+    int agent_id = playerAgent_state.agent_id;
+    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    if (agent_fire_on[agent_id]) return false;
+
+	int item_type = agent_selected_type[agent_id];
+	if (item_type == NULL_ITEM_TYPE)
+		item_type = Item::get_item_type((char*)"fist");
+	int item_group = Item::get_item_group_for_type(item_type);
+	
+	static int repair_kit = Item::get_item_type((char*)"repair_kit");
+	switch (item_group)
+	{
+		case IG_CONSUMABLE:
+			if (item_type == repair_kit) return true;
+			break;
+		
+        case IG_MINING_LASER:
+        case IG_ERROR:
+        case IG_RESOURCE:
+        case IG_MELEE_WEAPON:
+        case IG_NANITE_COIN:
+        case IG_SHOVEL:
+        case IG_NONE:
+        case IG_HITSCAN_WEAPON:
+        case IG_GRENADE_LAUNCHER:
+        default:
+            break;		
+	}
+	
+	// If equipped item did not have right click action:
+	
+    // open any inventories in range
     int container_id = playerAgent_state.facing_container();
     if (container_id == NULL_CONTAINER) return false;
 

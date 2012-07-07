@@ -14,7 +14,9 @@ Font* font = NULL;
 void Font::load_font_png()
 {
 
-    char path[strlen(font_path) + strlen(data.png) + 1];
+    //char path[strlen(font_path) + strlen(data.png) + 1];
+    MALLOX(char, path, strlen(font_path) + strlen(data.png) + 1); //type, name, size
+
     sprintf(path, "%s%s", font_path, data.png);
 
     SDL_Surface *surface = IMG_Load(path);
@@ -60,7 +62,9 @@ void Font::load_font_png()
 void Font::parse_font_file()
 {
     int size = 0;
-    char path[strlen(font_path) + strlen(data.file) + 1];
+    //char path[strlen(font_path) + strlen(data.file) + 1];
+    MALLOX(char, path, strlen(font_path) + strlen(data.file) + 1); //type, name, size
+
     sprintf(path, "%s%s", font_path, data.file);
     char* buff = read_file_to_buffer(path, &size);
 

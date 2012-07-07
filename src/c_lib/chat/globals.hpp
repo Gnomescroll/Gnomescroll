@@ -1,5 +1,7 @@
 #pragma once
 
+const int CHAT_SERVER_CHANNELS_MAX = 1+1+PLAYERS_MAX;
+
 const int CHAT_MESSAGE_SIZE_MAX = 90;
 const int CHAT_MESSAGE_RENDER_TIMEOUT = 1000*10; // 10 seconds
 
@@ -36,10 +38,8 @@ bool is_valid_chat_message(char* msg)
 	GS_ASSERT(msg != NULL);
 	if (msg == NULL) return false;
 	
-    int len = strlen(msg);
-    if (!len) return false;
-    if (msg[0] == '/')
-        return false;
+	if (msg[0] == '\0') return false;	// empty
+    if (msg[0] == '/') return false;	// chat command
 
     char c;
     int i=0;

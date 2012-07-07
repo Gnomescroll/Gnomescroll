@@ -317,6 +317,7 @@ class ItemContainerSmelter: public ItemContainerInterface
         static const int product_xdim = 1;
         static const int product_ydim = 2;
         static const int input_xdim = 2;
+        static const int fuel_slot = 0;
         
         float fuel;       // 0.0f - 1.0f
         int fuel_type;  // item type
@@ -334,14 +335,14 @@ class ItemContainerSmelter: public ItemContainerInterface
 
         bool is_fuel_slot(int slot)
         {
-            return (slot == 0);
+            return (slot == this->fuel_slot);
         }
 
         ItemID get_fuel()
         {
             GS_ASSERT(this->slot_max > 0);
             if (this->slot_max <= 0) return NULL_ITEM;
-            return this->slot[0];
+            return this->slot[this->fuel_slot];
         }
 
         #if DC_SERVER
@@ -374,7 +375,9 @@ class ItemContainerSmelter: public ItemContainerInterface
             GS_ASSERT(max_inputs == this->get_max_input_slots());
 
             int n_inputs = 0;
-            int input_types[max_inputs];
+            //int input_types[max_inputs];
+            MALLOX(int, input_types, max_inputs); //type, name, size
+
             for (unsigned int i=0; i<max_inputs; i++)
             {
                 int slot = this->convert_input_slot(i);
@@ -453,7 +456,7 @@ class ItemContainerSmelter: public ItemContainerInterface
             if (item_id == NULL_ITEM) return false;
 
             // check fuel slot
-            if (slot == 0)
+            if (slot == this->fuel_slot)
                 return Item::is_fuel(Item::get_item_type(item_id));
             else if (this->is_smelter_output(slot))
                 // last row of x is a fuel slot
@@ -476,6 +479,8 @@ class ItemContainerSmelter: public ItemContainerInterface
 
         void insert_item(int slot, ItemID item_id);
         void remove_item(int slot);
+
+		void remove_fuel() { this->remove_item(this->fuel_slot); }
 
         void init(int xdim, int ydim)
         {
