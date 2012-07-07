@@ -37,7 +37,7 @@ __MACOSX
 ___MACOSX
 *.pyc.orig
 .DS_Store
-
+*.app
 */build/*
 
 *.old
