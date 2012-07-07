@@ -15,6 +15,10 @@ dont_include_this_file_in_server
 #include <string.h>
 #include <math.h>
 
+#ifdef __MINGW32__
+    #include <malloc.h> //alloca function
+#endif
+
 #ifdef _WIN32
     #include "windows.h"
     #undef interface

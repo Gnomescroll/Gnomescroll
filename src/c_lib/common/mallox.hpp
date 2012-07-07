@@ -12,7 +12,7 @@ return; \
 //char *a = (char *)_alloca(n);
 
 #ifdef __MINGW32__
-	#include <malloc.h> //allpca function
+	#include <malloc.h> //alloca function
 #endif
 
 #ifdef __GNUC__
