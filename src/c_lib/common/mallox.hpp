@@ -27,7 +27,6 @@ return; \
 // static array_name##__max int = 0;\
 // static array_name##__index int = 0; \
 */
-#endif
 
 /*
 // define MALLOX(type, array_name, size) \

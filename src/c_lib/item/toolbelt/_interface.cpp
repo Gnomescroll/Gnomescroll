@@ -699,30 +699,6 @@ void update_toolbelt_items()
             broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
             broadcast_agent_set_active_item_packet(agent_id, item_type);
         }
-void update_toolbelt_items()
-{
-    GS_ASSERT(agent_selected_type != NULL);
-    GS_ASSERT(agent_selected_item != NULL);
-    GS_ASSERT(agent_selected_slot != NULL);
-    if (agent_selected_type == NULL) return;
-    if (agent_selected_item == NULL) return;
-    if (agent_selected_slot == NULL) return;
-    // make sure agent_selected_item is current
-    // if any discrepancies exist, send a set_selected_item packet
-    for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
-    {
-        int slot = agent_selected_slot[agent_id];
-        ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
-        agent_selected_item[agent_id] = item_id;
-        int item_type = Item::get_item_type(item_id);
-        if (item_type != agent_selected_type[agent_id])
-        {
-            agent_selected_type[agent_id] = item_type;
-            agent_fire_on[agent_id] = false;
-            agent_fire_tick[agent_id] = 0;
-            broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
-            broadcast_agent_set_active_item_packet(agent_id, item_type);
-        }
     }
 }
 
