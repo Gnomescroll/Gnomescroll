@@ -126,7 +126,13 @@ class FrameGraph
             while( (FRAME_RATE_THOTTLE_TARGET - (_GET_MS_TIME() - timer[index][0])) > 0 )
             {
                 poll_mouse();
+            #ifdef __GNUC
                 usleep(1000); //one millisecond
+            #endif
+
+            #ifdef __MSVC__
+              Sleep(3); //ms
+            #endif
             }
         }
     }

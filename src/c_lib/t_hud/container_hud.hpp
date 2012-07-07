@@ -11,15 +11,15 @@ class AgentContainerUI : public UIElement
 {
     public:
 
-    //static const float border = 16;       // border around entire panel
-    static const float border = 0;       // border around entire panel
-    static const float inc1 = 5; // spacing between slot icons
-    static const float inc2 = 2;  // border around a slot icon
-
-    static const float slot_size = 32;    // pixel dimension
-
     static const int xdim = 6;    // slot dimensions
     static const int ydim = 3;
+
+    //static const float border = 16;       // border around entire panel
+    static const float border;       // border around entire panel
+    static const float inc1; // spacing between slot icons
+    static const float inc2;  // border around a slot icon
+
+    static const float slot_size;    // pixel dimension
 
     HudText::Text* stack_numbers;
 
@@ -66,6 +66,10 @@ class AgentContainerUI : public UIElement
     }
 };
 
+    const float AgentContainerUI::border = 0;       // border around entire panel
+    const float AgentContainerUI::inc1 = 5; // spacing between slot icons
+    const float AgentContainerUI::inc2 = 2;  // border around a slot icon
+    const float AgentContainerUI::slot_size = 32;    // pixel dimension
 
 int AgentContainerUI::get_slot_at(int px, int py)
 {

@@ -17,11 +17,11 @@ class StorageBlockUI : public UIElement
     float render_width;
     float render_height;
 
-    static const float slot_size = 32;
-    static const float cell_offset_x = 3;
-    static const float cell_offset_y = 3;
-    static const float cell_offset_x_right = 2;
-    static const float cell_offset_y_bottom = 2;
+    static const int slot_size = 32;
+    static const int cell_offset_x = 3;
+    static const int cell_offset_y = 3;
+    static const int cell_offset_x_right = 2;
+    static const int cell_offset_y_bottom = 2;
 
     float texture_offset_x;
     float texture_offset_y;

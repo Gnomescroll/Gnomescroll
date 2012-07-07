@@ -22,7 +22,7 @@ void init_quad_cache_vertex_cordinates_compatibility();
 
 void init_cache()
 {
-    static int init = 0; if(init ==0 ) {init == 1; } else { printf("Error: init_cache() called twice!"); return;}
+    static int init = 0; if(init ==0 ) {init = 1; } else { printf("Error: init_cache() called twice!"); return;}
     
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
     memset(quad_cache, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));

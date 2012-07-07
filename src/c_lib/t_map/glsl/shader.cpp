@@ -86,7 +86,7 @@ namespace t_map
         {
             printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
             
-            init_map_3d_texture_compatibility();
+            init_map_3d_texture_comptability();
             set_map_shader_0_compatibility(0);
 
             if(shader_error_occured(map_shader[0]) == true )
@@ -316,6 +316,16 @@ namespace t_map
     }
 
     void set_map_shader_0_compatibility(int level) 
+    {
+        const int index = 0;    //shader index
+        const int DEBUG1 = 1;
+
+        map_shader[index] = glCreateProgramObjectARB();
+        map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+        map_frag_shader[index] = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+        char *vs, *fs;
+
     {
         const int index = 0;    //shader index
         const int DEBUG1 = 1;

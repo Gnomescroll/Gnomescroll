@@ -12,13 +12,16 @@ exit(1);\
 #define GS_ASSERT(conditition) \
 if(! (conditition) ) { print_trace(); printf("GS_ASSERT error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__); }
 
+#if defined ( __MSVC__ )
+#define __func__ __FUNCTION__
+#endif
+
 #define ASSERT_NOT_NULL(p) \
 if(p == NULL) \
 { \
 fprintf (stderr, "ASSERT_NOT_NULL: %s error: %s, line %d \n", __func__, __FILE__, __LINE__); \
 return; \
 }
-
 
 
 // __GNUG__
@@ -61,6 +64,7 @@ return; \
 #define LIKELY(x) __builtin_expect((x), 1)
 #else
 #define LIKELY(x) (x)
+#endif
 #endif
 #endif
 */

@@ -27,17 +27,17 @@ class AgentNaniteUI : public UIElement
     static const int level = 0;    //nanite level
 
     // size of texture/render area
-    static const float render_width = cell_size * xdim;
-    static const float render_height = cell_size * ydim;
+    static const float render_width;
+    static const float render_height;
 
-    static const float slot_size = 32;
-    static const float cell_offset_x = 3;
-    static const float cell_offset_y = 3;
-    static const float cell_offset_x_right = 2;
-    static const float cell_offset_y_bottom = 2;
+    static const float slot_size;
+    static const float cell_offset_x;
+    static const float cell_offset_y;
+    static const float cell_offset_x_right;
+    static const float cell_offset_y_bottom;
 
-    static const float nanite_slot_render_offset_x = 58.0f;
-    static const float nanite_slot_render_offset_y = 114.0f;
+    static const float nanite_slot_render_offset_x;
+    static const float nanite_slot_render_offset_y;
 
     HudText::Text* prices;
     HudText::Text* stacks;
@@ -108,6 +108,18 @@ class AgentNaniteUI : public UIElement
         if (this->stacks != NULL) delete[] this->stacks;
     }
 };
+
+    const float AgentNaniteUI::render_width = AgentNaniteUI::cell_size * AgentNaniteUI::xdim;
+    const float AgentNaniteUI::render_height = AgentNaniteUI::cell_size * AgentNaniteUI::ydim;
+
+    const float AgentNaniteUI::slot_size = 32;
+    const float AgentNaniteUI::cell_offset_x = 3;
+    const float AgentNaniteUI::cell_offset_y = 3;
+    const float AgentNaniteUI::cell_offset_x_right = 2;
+    const float AgentNaniteUI::cell_offset_y_bottom = 2;
+
+    const float AgentNaniteUI::nanite_slot_render_offset_x = 58.0f;
+    const float AgentNaniteUI::nanite_slot_render_offset_y = 114.0f;
 
 bool AgentNaniteUI::in_nanite_region(int px, int py)
 {

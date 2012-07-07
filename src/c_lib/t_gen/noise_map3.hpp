@@ -742,7 +742,7 @@ extern "C"
                 break;
              default:
                 printf("LUA_set_noisemap_param Error: noisemap %i does not exist \n", noise_map);
-                abort();
+                //abort();
           }
     }
 
@@ -768,7 +768,7 @@ extern "C"
                 break;
              default:
                 printf("LUA_get_noisemap_map_cache Error: noisemap %i does not exist \n", noise_map);
-                abort();
+                //abort();
           }
         return NULL;
     }

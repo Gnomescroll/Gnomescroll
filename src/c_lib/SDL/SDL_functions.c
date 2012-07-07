@@ -49,6 +49,10 @@ void setupwindow(SDL_WindowID *window, SDL_GLContext *context)
 int DisplayBox()
 {
     #ifdef _WIN32
+
+#ifdef __MSVC__
+
+#else
     int msgboxID = MessageBox(
         NULL,
         (LPCSTR)L"Error: check console log",
@@ -64,6 +68,7 @@ int DisplayBox()
     }
 
     return msgboxID;
+#endif
     #endif
     return 0;
 }
@@ -71,6 +76,9 @@ int DisplayBox()
 int VersionMismatchBox(int local_version, int server_version)
 {
     #ifdef _WIN32
+    #ifdef __MSVC__
+
+    #else
     char message_fmt[] = "Version out of date!\nYour version: %d\nServer version: %d\nInstall new version from \nhttp://gnomescroll.com";
     char* message = (char*)malloc((sizeof(message_fmt) + 1 + 20 - 4) * sizeof(char));
     sprintf(message, message_fmt, local_version, server_version);
@@ -94,6 +102,7 @@ int VersionMismatchBox(int local_version, int server_version)
     free(message);
 
     return msgboxID;
+    #endif
     #endif
     return 0;
 }
@@ -257,12 +266,15 @@ int init_video() {
         close_SDL();
         return 1;
     }
+
+#ifdef __GNUC__
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
     if(value) {
         //printf("Harware Acceleration Enabled \n");
     } else {
         printf("Warning: Hardware Acceleration Not Enabled!\n");
     }
+#endif
 
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
     if(value) {

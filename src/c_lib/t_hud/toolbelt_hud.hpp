@@ -10,11 +10,11 @@ class AgentToolbeltUI : public UIElement
     public:
 
     //static const float border = 16;       // border around entire panel
-    static const float border = 0;       // border around entire panel
-    static const float inc1 = 8; // spacing between slot icons
-    static const float inc2 = 2;  // border around a slot icon
+    static const int border = 0;       // border around entire panel
+    static const int inc1 = 8; // spacing between slot icons
+    static const int inc2 = 2;  // border around a slot icon
 
-    static const float slot_size = 32;    // pixel dimension
+    static const int slot_size = 32;    // pixel dimension
 
     static const int xdim = 9;    // slot dimensions
     static const int ydim = 1;

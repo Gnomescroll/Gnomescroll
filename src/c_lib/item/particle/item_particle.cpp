@@ -125,7 +125,6 @@ void ItemParticle::tick()
 		if (a != NULL)
 		{
 			Vec3 p = a->get_center();
-            p.z -= 0.1f;    // move point down a bit to get away from camera
 
 			// die if very close
 			if (vec3_distance_squared(p, this->verlet.position) < 
@@ -152,6 +151,7 @@ void ItemParticle::tick()
 	this->pickup_prevention--;
 	#endif
 }
+
 
 
 #if DC_CLIENT

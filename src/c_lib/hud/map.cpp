@@ -149,7 +149,9 @@ void init_surface()
     // load gradient surface
     const int grad_num = 11;
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
-    char grad_str[strlen(grad_fmt) -2 +1];
+    //char grad_str[strlen(grad_fmt) -2 +1];
+    MALLOX(char, grad_str, strlen(grad_fmt) -2 +1);
+
     sprintf(grad_str, grad_fmt, grad_num);
     //printf("Loading gradient %s\n", grad_str);
     

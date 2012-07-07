@@ -147,10 +147,7 @@ void start_cave_generator()
 		float theta = (float)genrand_real1()*2*3.14159f;
 
 		generate_node(x,y,z, theta, phi, cave_size);
-
 	}
-
-
 }
 
 

@@ -63,8 +63,15 @@ class MapGraph
 			int wait = (int) (FRAME_RATE_THOTTLE_TARGET - (_frame_wait_start[index] - _frame_start[index]));
 			if( wait <= 0) return;
 
-			usleep(1000*wait);
-		}
+
+            #ifdef __GNUC__
+			  usleep(1000*wait);
+            #endif
+            
+            #ifdef __MSVC__
+              Sleep(wait); //ms
+            #endif
+        }
 
 	}
 

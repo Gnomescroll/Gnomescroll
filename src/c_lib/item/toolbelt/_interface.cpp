@@ -621,16 +621,15 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
 	Agent_state* a = ServerState::agent_list->get(agent_id);
 	GS_ASSERT(a != NULL);
 	
+	Item::Item* item = NULL;
     ItemGroup group = IG_NONE;    // empty hand
     int item_type = NULL_ITEM_TYPE;
-    if (item_id == NULL_ITEM)
+    if (item_id != NULL_ITEM)
     {
-        item_type = Item::get_item_type((char*)"fist");
-        group = Item::get_item_group_for_type(item_type);
-    }
-    else
-    {
-        item_type = Item::get_item_type(item_id);
+        item = Item::get_item(item_id);
+        GS_ASSERT(item != NULL);
+        if (item == NULL) return;
+        item_type = item->type;
         group = Item::get_item_group_for_type(item_type);
     }
     
@@ -641,13 +640,14 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
 	{
 		case IG_CONSUMABLE:
             if (item_type == Item::get_item_type((char*)"repair_kit") &&
-				a != NULL && a->status.consume_item(item_id))
+				a != NULL && a->status.consume_item(item->id))
             {	// players apply health kits to themselves with right click
-                remaining_stack_size = Item::consume_stack_item(item_id);
+                remaining_stack_size = Item::consume_stack_item(item->id);
                 if (remaining_stack_size <= 0)
                 {   // item was destroyed, remove from hand
                     agent_selected_type[agent_id] = NULL_ITEM_TYPE;
                     agent_selected_item[agent_id] = NULL_ITEM;
+                    item = NULL;
                 }
             }
 			break;
@@ -667,6 +667,7 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
 			GS_ASSERT(false);
             break;		
 	}
+
 }
 
 void trigger_agent_selected_item_reload_action(int agent_id, ItemID item_id)
@@ -674,6 +675,30 @@ void trigger_agent_selected_item_reload_action(int agent_id, ItemID item_id)
 
 }
 
+void update_toolbelt_items()
+{
+    GS_ASSERT(agent_selected_type != NULL);
+    GS_ASSERT(agent_selected_item != NULL);
+    GS_ASSERT(agent_selected_slot != NULL);
+    if (agent_selected_type == NULL) return;
+    if (agent_selected_item == NULL) return;
+    if (agent_selected_slot == NULL) return;
+    // make sure agent_selected_item is current
+    // if any discrepancies exist, send a set_selected_item packet
+    for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
+    {
+        int slot = agent_selected_slot[agent_id];
+        ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
+        agent_selected_item[agent_id] = item_id;
+        int item_type = Item::get_item_type(item_id);
+        if (item_type != agent_selected_type[agent_id])
+        {
+            agent_selected_type[agent_id] = item_type;
+            agent_fire_on[agent_id] = false;
+            agent_fire_tick[agent_id] = 0;
+            broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
+            broadcast_agent_set_active_item_packet(agent_id, item_type);
+        }
 void update_toolbelt_items()
 {
     GS_ASSERT(agent_selected_type != NULL);
