@@ -93,7 +93,7 @@ void transfer_item_between_containers(ItemID item_id, int container_id_a, int sl
     // if container owners don't match,
     // unsubscribe owner a from item
     // (replace with containers' subscription list complement intersection 
-    if (owner_a != owner_b)
+    if (owner_a != owner_b && owner_a != NULL)
         Item::unsubscribe_agent_from_item(owner_a->id, item_id);
 }
 
@@ -140,7 +140,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
     // if container owners don't match,
     // unsubscribe container owner from item
     // (replace with containers' subscription list complement intersection 
-    if (owner != hand_owner)
+    if (owner != hand_owner && owner != NULL)
         Item::unsubscribe_agent_from_item(owner->id, item_id);
 }
 
@@ -188,7 +188,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
     // if container owners don't match,
     // unsubscribe owner from item
     // (replace with containers' subscription list complement intersection 
-    if (owner != hand_owner)
+    if (owner != hand_owner && hand_owner != NULL)
         Item::unsubscribe_agent_from_item(hand_owner->id, item_id);
 }
 
