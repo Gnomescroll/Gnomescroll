@@ -68,15 +68,15 @@ namespace t_map
             if(shader_error_occured(map_shader[0]) == true )
             {
                 T_MAP_BACKUP_SHADER = 1;
-                printf("!!! Default map shader failed. Using backup shader level 1 \n");
-                set_map_shader_0_compatibility(0);
+                printf("!!! Default map shader failed. Using backup shader level 0 \n");
                 init_map_3d_texture_compatibility();
+                set_map_shader_0_compatibility(0);
+
 
                 if(shader_error_occured(map_shader[0]) == true )
                 {
+                    printf("!!! Backup map shader failed.  Using backup shader level 1 \n");
                     set_map_shader_0_compatibility(1);
-                    printf("!!! Backup map shader failed.  Using backup shader level 2 \n");
-                    //implement backup level 2
                 }
             }
 
@@ -84,9 +84,16 @@ namespace t_map
         }
         else if(T_MAP_BACKUP_SHADER == 1)
         {
-            printf("!!! Warning: Using Intel GPU Compatability mode shader\n");
-            set_map_shader_0_compatibility(0);
+            printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
+            
             init_map_3d_texture_compatibility();
+            set_map_shader_0_compatibility(0);
+
+            if(shader_error_occured(map_shader[0]) == true )
+            {
+                printf("!!! shader failed.  Using backup shader level 1 \n");
+                set_map_shader_0_compatibility(1);
+            }
         }
 
 
