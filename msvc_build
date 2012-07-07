@@ -1,3 +1,15 @@
+Client:
+ws2_32.lib
+lua51.lib
+winmm.lib
+glew32.lib
+SDL.lib
+SDLmain.lib
+SDL_image.lib
+opengl32.lib
+glu32.lib
+
+Server:
 ws2_32.lib
 lua51.lib
 winmm.lib

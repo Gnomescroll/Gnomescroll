@@ -12,8 +12,12 @@ return; \
 //char *a = (char *)_alloca(n);
 
 #ifdef __GNUC__
-//#define MALLOX(type, array_name, size) type array_name[size];
-#define MALLOX(type, array_name, size) type* array_name = (type*) alloca(size);
+	#if _WIN32
+		define MALLOX(type, array_name, size) type array_name[size];
+	#else
+		//#define MALLOX(type, array_name, size) type array_name[size];
+		#define MALLOX(type, array_name, size) type* array_name = (type*) alloca(size);
+	#endif
 #endif
 
 #ifdef __MSVC__
