@@ -328,8 +328,8 @@ namespace t_map
         }
         else
         {
-            vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
-            fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh"); 
+            vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
+            fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh"); 
         }
 
         glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
