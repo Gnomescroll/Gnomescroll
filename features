@@ -1,3 +1,19 @@
+
+In order to mix a potion, you will need at least a Mortar and Pestle, and two ingredients which share at least 1 effect. You can use up to four ingredients in a potion. Any effects shared by two or more of these ingredients will be applied to the potion. 
+
+for a minecraft game the relevent effects are: 
+"see in dark/night vision" 
+"increased luck" <-- more drops when mining
+"inceased health regen"
+"increased mele damage"
+"resist damage"
+"increase speed"
+"detect chests"
+"detect players/animals"
+
+>Skill Based:
+At first, you will only be able to see one or two effects listed in the stats of any given ingredient, depending on your starting skill. Each ingredient can have up to four effects. (See the charts listed in the links below for more specific information.) The number of effects you can see will depend on your skill, based on the following values:
+
 Malloy
 just do minecraft shit
 if detects a wall
