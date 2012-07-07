@@ -13,7 +13,7 @@ return; \
 
 #ifdef __GNUC__
 	#if _WIN32
-		define MALLOX(type, array_name, size) type array_name[size];
+		#define MALLOX(type, array_name, size) type array_name[size];
 	#else
 		//#define MALLOX(type, array_name, size) type array_name[size];
 		#define MALLOX(type, array_name, size) type* array_name = (type*) alloca(size);
