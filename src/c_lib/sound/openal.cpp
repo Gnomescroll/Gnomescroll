@@ -101,16 +101,14 @@ bool checkError()
 
 void set_volume(float vol)
 {
-    if (!enabled)
-        return;
+    if (!enabled) return;
     alListenerf(AL_GAIN, vol);
     checkError();
 }
 
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
 {
-    if (!enabled)
-        return;
+    if (!enabled) return;
     alListener3f(AL_POSITION, x,z,y);
     alListener3f(AL_VELOCITY, vx,vz,vy);
     float o[6];
