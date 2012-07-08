@@ -67,7 +67,7 @@ struct GS_SoundSource
     int source_id;
     bool two_dimensional;
 };
-static GS_SoundSource active_sources[MAX_SOURCES] = {{-1, false}};
+static GS_SoundSource* active_sources = NULL;
 
 bool checkError()
 {
@@ -128,7 +128,6 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 void init()
 {
     GS_ASSERT(!inited);
-    inited = true;
 
     enabled = Options::sound;
     if (!enabled) return;
@@ -224,6 +223,14 @@ void init()
         return;
     }
     
+    // init active sources buffer
+    active_sources = (struct GS_SoundSource*)malloc(sizeof(struct GS_SoundSource) * MAX_SOURCES);
+    for (int i=0; i<MAX_SOURCES; i++)
+    {
+		active_sources[i].source_id = -1;
+		active_sources[i].two_dimensional = false;
+	}	
+    
     enabled = true;
     inited = true;
     printf("OpenAL inited\n");
@@ -258,16 +265,28 @@ void close()
 
     // deallocate memory
     if (sources != NULL)
+    {
         free(sources);
+        sources = NULL;
+	}
     if (buffers != NULL)
+    {
         free(buffers);
+        buffers = NULL;
+	}
     if (sound_buffers != NULL)
     {
         for (int i=0; i<MAX_SOUNDS; i++)
             if (sound_buffers[i] != NULL)
                 delete sound_buffers[i];
         free(sound_buffers);
+        sound_buffers = NULL;
     }
+	if (active_sources != NULL)
+	{
+		free(active_sources);
+		active_sources = NULL;
+	}
 
     Sound::teardown_wav_buffers();
     enabled = false;
@@ -544,6 +563,16 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
 void update()
 {
     if (!enabled) return;
+    
+    GS_ASSERT(inited);
+    GS_ASSERT(active_sources != NULL);
+    GS_ASSERT(sound_buffers != NULL);
+    GS_ASSERT(sources != NULL);
+    if (!inited) return;
+    if (active_sources == NULL) return;
+    if (sound_buffers == NULL) return;
+    if (sources == NULL) return;
+    
     // get listener state
     ALfloat x,y,z;
     ALfloat vx,vy,vz;
@@ -590,6 +619,9 @@ void stop_sound(int sound_id)
 {
     GS_ASSERT(sound_id >= 0);
     if (sound_id < 0) return;
+    GS_ASSERT(sources != NULL);
+    if (sources == NULL) return;
+    
     alSourceStop(sources[sound_id]);
     checkError();
 }
