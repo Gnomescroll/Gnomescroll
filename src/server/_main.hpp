@@ -1,11 +1,15 @@
 #pragma once
 
+#include "stdafx.h" 
+
 #include <common/time/physics_timer.hpp>
 #include <map_gen/map_generator.hpp>
 #include <map_gen/recipes.hpp>
 
 #include <t_gen/_interface.hpp>
 #include <t_map/_interface.hpp>
+
+#include "_c_lib.hpp"
 
 namespace Main
 {

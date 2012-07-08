@@ -9,8 +9,8 @@
 #ifdef __MSVC__
 #endif
 
-#include "_c_lib.cpp"
-#include "_main.cpp"
+#include "_c_lib.hpp"
+#include "_main.hpp"
 #include <common/lua/lua.hpp>
 
 #include <SDL.h>

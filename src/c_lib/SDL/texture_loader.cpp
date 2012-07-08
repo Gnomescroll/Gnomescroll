@@ -38,6 +38,7 @@ SDL_Surface* create_surface_from_file(char* file)
     return _load_image(file);
 }
 
+/*
 struct Texture _load_image_create_texture(char *file)
 {
     SDL_Surface *image = _load_image(file);
@@ -63,6 +64,7 @@ struct Texture _load_image_create_texture(char *file)
     
     return texture;
 }
+*/
 
 void _load_image_create_texture(char *file, struct Texture *tex)
 {
