@@ -111,6 +111,7 @@ void NetPeerManager::ready()
     a->status.set_fresh_state();
 
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
+    t_map::send_client_map_special(this->client_id); //send special blocks to client
 }
 
 /*

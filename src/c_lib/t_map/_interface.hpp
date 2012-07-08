@@ -23,5 +23,8 @@ void destroy_item_container_block(int x, int y, int z);
 void get_container_location(int container_id, int position[3]);
 //server/env_process.hpp
 void map_post_processing();
+
+//on connect
+void send_client_map_special(int client_id);
 #endif
 }

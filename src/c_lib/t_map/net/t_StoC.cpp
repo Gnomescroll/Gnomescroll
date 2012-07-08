@@ -179,6 +179,10 @@ void map_metadata_StoC::handle()
     map_dim.z = z;
 }
 
+/*
+    Container block
+*/
+
 void container_block_chunk_reset_StoC::handle()
 {
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
@@ -204,6 +208,24 @@ void container_block_delete_StoC::handle()
     main_map->chunk[chunk_index]->chunk_item_container.remove(container_id);
 }
 
+
+/*
+    Control Points
+*/
+
+//    uint16_t x,y,z;
+void control_point_create_StoC::handle()
+{
+
+};
+
+//    uint16_t x,y,z;
+void control_point_delete_StoC::handle()
+{
+
+};
+
+
 #endif
 
 
@@ -224,6 +246,10 @@ void map_metadata_StoC::handle() {}
 void container_block_chunk_reset_StoC::handle() {}
 void container_block_create_StoC::handle() {}
 void container_block_delete_StoC::handle() {}
+
+void control_point_create_StoC::handle() {}
+void control_point_delete_StoC::handle() {}
+
 #endif
 
 }   // t_map

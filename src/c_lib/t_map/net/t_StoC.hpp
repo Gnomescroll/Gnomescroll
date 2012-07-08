@@ -224,5 +224,39 @@ class container_block_delete_StoC: public MapMessagePacketToClient<container_blo
     inline void handle() __attribute((always_inline));
 };
 
+/*
+    Control Points
+*/
 
-}   // t_map
+class control_point_create_StoC: public MapMessagePacketToClient<control_point_create_StoC>
+{
+    public:
+    uint16_t x,y,z;
+    
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&x, buff, buff_n, pack);
+        pack_u16(&y, buff, buff_n, pack);
+        pack_u16(&z, buff, buff_n, pack);
+    }
+    
+    inline void handle() __attribute((always_inline));
+};
+
+class control_point_delete_StoC: public MapMessagePacketToClient<control_point_create_StoC>
+{
+    public:
+    uint16_t x,y,z;
+    
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&x, buff, buff_n, pack);
+        pack_u16(&y, buff, buff_n, pack);
+        pack_u16(&z, buff, buff_n, pack);
+    }
+    
+    inline void handle() __attribute((always_inline));
+};
+
+
+}
