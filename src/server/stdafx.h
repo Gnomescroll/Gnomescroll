@@ -36,3 +36,15 @@
  
 #include <string.h>
 #include <math.h>
+
+/*
+#ifdef __MSVC__
+    #include <direct.h>
+    #define getcwd _getcwd
+    #define chdir _chdir
+#else
+    #include <unistd.h>
+#endif
+
+#define mkdir(x) _mkdir(x)
+*/

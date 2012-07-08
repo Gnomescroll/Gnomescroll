@@ -22,6 +22,11 @@ __attribute((always_inline, optimize("-O3"))) static float mix(float a, float b,
 __attribute((always_inline, optimize("-O3"))) static float fade(float t);
 
 
+int fastfloor(float x) 
+{
+    return ( x>=0 ? (int)x : (int)x-1 );
+}
+
 static float dot(float* g, float x, float y)
 {
     return g[0]*x + g[1]*y;
@@ -127,11 +132,6 @@ class PerlinField2D
 
 // This method is a *lot* faster than using (int)Math.floor(x)
 //__attribute((always_inline, optimize("-O3")))
-
-static int fastfloor(float x) 
-{
-return ( x>=0 ? (int)x : (int)x-1 );
-}
 
 //__attribute((always_inline, optimize("-O3")))
 inline int get_gradient(int x, int y)

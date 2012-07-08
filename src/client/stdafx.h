@@ -53,27 +53,4 @@ extern "C"
     #include <unistd.h>
 #endif
 
-
-#ifdef PRECOMPILED_HEADERS
-
-/* Common headers */
-#include <common/version.h>
-#include <common/defines.h>
-#include <common/compat_gl.h>
-#include <common/compat_al.h>
-//#include <common/macros.hpp>
-//#include <common/crash_report/stack_trace.hpp>
-#include <common/mallox.hpp>
-
-/* Compression */
-//#include <common/compression/miniz.c>
-
-/* Templates */
-//#include <common/template/object_list.hpp>
-#include <common/template/dynamic_object_list.hpp>
-#include <common/template/multi_object_list.hpp>
-#include <common/template/dynamic_multi_object_list.hpp>
-//#include <common/template/simple_object_list.hpp>
-#include <common/template/object_pool.hpp>
-
-#endif
+#define mkdir(x) _mkdir(x)

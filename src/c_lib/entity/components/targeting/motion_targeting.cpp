@@ -180,7 +180,7 @@ void MotionTargetingComponent::call()
     this->ticks_locked++;
     if (this->max_lock_ticks && this->ticks_locked > this->max_lock_ticks)
     {   // reset
-        this->target_type == OBJECT_NONE;
+        this->target_type = OBJECT_NONE;
         this->target_id = NO_AGENT;
         this->ticks_locked = 0;
         this->broadcast_remove_target();
