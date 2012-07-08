@@ -1,4 +1,3 @@
-
 syntax: glob
 *.pyc
 *.pxd
@@ -36,6 +35,12 @@ screenshot.png
 
 __MACOSX
 ___MACOSX
+*.app
+*.zip
+*.rar
+*.tar
+*.tar.*
+*.7z
 *.pyc.orig
 .DS_Store
 
@@ -134,3 +139,4 @@ _ReSharper*/
 [Bb]uild[Ll]og.*
 *.[Pp]ublish.xml
 *.resharper
+>>>>>>> other
