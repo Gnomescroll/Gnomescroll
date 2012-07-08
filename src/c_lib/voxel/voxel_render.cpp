@@ -333,12 +333,12 @@ void Voxel_render_list_manager::draw()
 
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
-        glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
+        glVertexPointer(3, GL_FLOAT, sizeof(class Voxel_vertex), (GLvoid*)0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(class Voxel_vertex), (GLvoid*)12);
         
-        glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
-        glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
-        glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
+        glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(class Voxel_vertex), (GLvoid*)16);
+        glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(class Voxel_vertex), (GLvoid*)20);
+        glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(class Voxel_vertex), (GLvoid*)24);
 
         for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
