@@ -43,6 +43,8 @@ namespace t_map
             printf("!!! Warning: EXT_texture_sRGB not supported. \n");
         }
 
+        ANISOTROPIC_FILTERING = 0;
+
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
         {
             glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
@@ -55,9 +57,7 @@ namespace t_map
         }
 
 
-        //T_MAP_BACKUP_SHADER = 1;
-
-        // || true
+        T_MAP_BACKUP_SHADER = 1;
 
         if(T_MAP_BACKUP_SHADER == 0 )
         {
@@ -67,38 +67,26 @@ namespace t_map
             //true on error
             if(shader_error_occured(map_shader[0]) == true )
             {
+                printf("!!! Default map shader failed. Setting backup shader \n");
                 T_MAP_BACKUP_SHADER = 1;
-                printf("!!! Default map shader failed. Using backup shader level 0 \n");
-                init_map_3d_texture_compatibility();
-                set_map_shader_0_compatibility(0);
-
-
-                if(shader_error_occured(map_shader[0]) == true )
-                {
-                    printf("!!! Backup map shader failed.  Using backup shader level 1 \n");
-                    set_map_shader_0_compatibility(1);
-                }
             }
-
-
         }
-        else if(T_MAP_BACKUP_SHADER == 1)
+
+        if(T_MAP_BACKUP_SHADER == 1)
         {
+            ANISOTROPIC_FILTERING = 0;  //disable anisotropic filtering
+            init_map_3d_texture_compatibility();
+
             printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
             
-            init_map_3d_texture_compatibility();
             set_map_shader_0_compatibility(0);
 
             if(shader_error_occured(map_shader[0]) == true )
             {
-                printf("!!! shader failed.  Using backup shader level 1 \n");
+                printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
                 set_map_shader_0_compatibility(1);
             }
         }
-
-
-
-
 
         init_block_texture_normal();
     }
@@ -393,9 +381,9 @@ namespace t_map
 
         // Set the texture's stretching properties
 
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-
+        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
