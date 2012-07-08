@@ -3,8 +3,6 @@
 
 //#define __MSVC__
 
-#include "stdafx.h" //precompiled headers
-
 /*
 #define __MSVC__
 
@@ -32,6 +30,8 @@
 
 #endif
 */
+
+#include "stdafx.h" //precompiled headers
 
 #include "_c_lib.cpp"
 #include "_main.cpp"

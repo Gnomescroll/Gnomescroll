@@ -1,11 +1,8 @@
+#pragma once
 // stdafx.h : include file for standard system include files,
 // or project specific include files that are used frequently, but
 // are changed infrequently
 //
-
-#pragma once
-
-#pragma once
 
 #define DC_CLIENT 1
 
@@ -15,6 +12,7 @@
 #define __MSVC__
 
 #pragma warning(disable: 4244) // possible loss of data
+#pragma warning(disable: 4309) // truncation of constant value
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -54,6 +52,7 @@ extern "C"
 #endif
 
 
+#ifdef PRECOMPILED_HEADERS
 
 /* Common headers */
 #include <common/version.h>
@@ -74,3 +73,5 @@ extern "C"
 #include <common/template/dynamic_multi_object_list.hpp>
 //#include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
+
+#endif
