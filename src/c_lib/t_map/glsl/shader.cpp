@@ -57,7 +57,7 @@ namespace t_map
         }
 
 
-        T_MAP_BACKUP_SHADER = 1;
+        //T_MAP_BACKUP_SHADER = 1;
 
         if(T_MAP_BACKUP_SHADER == 0 )
         {

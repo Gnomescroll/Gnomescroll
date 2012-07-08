@@ -237,6 +237,13 @@ void load_block_dat()
     push_texture();
     set_max_dmg(255);
 
+
+    cube_def(32, SolidBlock, "control_node");
+    iso_texture(t1, 9,4);
+    push_texture();
+    set_max_dmg(255);
+    hud_def(6,5, t1,1,11);
+
     end_block_dat();
 
 }
