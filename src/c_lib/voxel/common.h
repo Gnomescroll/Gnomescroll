@@ -40,8 +40,10 @@ struct Voxel_tex
     };
 };
 
-struct Voxel_vertex
+class Voxel_vertex
 {
+    public:
+    
     float x,y,z;
     union
     {

@@ -38,7 +38,7 @@ class ClassicNoise
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-static int fastfloor(double x) 
+static int fast_floor(double x) 
 {
 return x>0 ? (int)x : (int)x-1;
 }
@@ -64,9 +64,9 @@ public:
 static double noise(double x, double y, double z) 
 {
     // Find unit grid cell containing point
-    int X = fastfloor(x);
-    int Y = fastfloor(y);
-    int Z = fastfloor(z);
+    int X = fast_floor(x);
+    int Y = fast_floor(y);
+    int Z = fast_floor(z);
     // Get relative xyz coordinates of point within that cell
     x = x - X;
     y = y - Y;

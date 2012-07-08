@@ -1,11 +1,16 @@
 #pragma once
-#pragma GCC diagnostic ignored "-Wunused-function"
+
+#ifdef __GNUC__
+    #pragma GCC diagnostic ignored "-Wunused-function"
+#endif
 
 #include <math.h>
 #include <common/random.h>
 #include <physics/common.hpp>
 
 #include <physics/constants.hpp>
+
+#include <common/macros.hpp>
 
 #define PI 3.14159265f
 

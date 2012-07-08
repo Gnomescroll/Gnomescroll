@@ -14,13 +14,20 @@ int primes[20] = {
     53,59,61,67,71
 };
 
-
+#if __GNUC__
 __attribute((always_inline, optimize("-O3"))) static float dot(float* g, float x, float y);
 __attribute((always_inline, optimize("-O3"))) static float dot(int gi, float x, float y, float z);
 
 __attribute((always_inline, optimize("-O3"))) static float mix(float a, float b, float t);
 __attribute((always_inline, optimize("-O3"))) static float fade(float t);
+#endif
 
+int fast_floor(float value);
+
+int fast_floor(float value) 
+{
+    return (int)( value>=0 ? (int)value : (int)value-1 );
+}
 
 static float dot(float* g, float x, float y)
 {
@@ -127,10 +134,6 @@ class PerlinField2D
 
 // This method is a *lot* faster than using (int)Math.floor(x)
 //__attribute((always_inline, optimize("-O3")))
-static inline int fastfloor(float x) 
-{
-return x>=0 ? (int)x : (int)x-1;
-}
 
 //__attribute((always_inline, optimize("-O3")))
 inline int get_gradient(int x, int y)
@@ -150,8 +153,8 @@ float base(float x, float y)
     x *= xsize;  //replace with multiplication
     y *= xsize;
     //get grid point
-    int X = fastfloor(x);
-    int Y = fastfloor(y);
+    int X = fast_floor(x);
+    int Y = fast_floor(y);
 
     x = x - X;
     y = y - Y;

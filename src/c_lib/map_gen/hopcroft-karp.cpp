@@ -156,7 +156,7 @@ class HKPoint {
     x(0),y(0),bx(0),by(0)
     {}
 };
-bool point_taken(struct HKPoint* pts, int n, struct HKPoint* pt) {
+bool point_taken(class HKPoint* pts, int n, class HKPoint* pt) {
     int i;
     for (i=0; i<n; i++) {
         if (pt->x == pts[i].x && pt->y == pts[i].y) {

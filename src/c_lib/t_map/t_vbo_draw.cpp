@@ -249,7 +249,7 @@ void Vbo_map::prep_draw()
     for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
     for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
 
-    struct Map_vbo* col;
+    class Map_vbo* col;
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
@@ -355,7 +355,7 @@ void Vbo_map::draw_map()
     glEnableVertexAttribArray(map_RGB);
     glEnableVertexAttribArray(map_LightMatrix);
 
-    struct Map_vbo* vbo;
+    class Map_vbo* vbo;
 
     //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
@@ -575,7 +575,7 @@ void Vbo_map::draw_map_compatibility()
     glEnableVertexAttribArray(map_RGB);
     glEnableVertexAttribArray(map_LightMatrix);
 
-    struct Map_vbo* vbo;
+    class Map_vbo* vbo;
 
     //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 

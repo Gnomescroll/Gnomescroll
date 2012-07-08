@@ -28,7 +28,7 @@ const float GRAD3[][3] =
     {1,0,-1},{-1,0,-1},{0,-1,1},{0,1,1}
 };
 
-#define fastfloor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
+#define fast_floor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
 
 const int PERM_SIZE = 512;
 // At the possible cost of unaligned access, we use char instead of
@@ -67,7 +67,7 @@ void set_noise_parameters(int octaves, float persistence, float amplitude, float
 void set_noise_scale(float xscale, float yscale, float zscale);
 
 float* create_noisemap(int x, int y, int z);
-void destroy_noisemap();
+void destroy_noisemap(float* noisemap);
 void clear_noisemap(float* noisemap);
 
 const int TILING_SIZE = 512;

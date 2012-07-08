@@ -1,6 +1,7 @@
 #pragma once
 
 #include <item/common/enum.hpp>
+#include <common/macros.hpp>
 
 namespace t_map
 {

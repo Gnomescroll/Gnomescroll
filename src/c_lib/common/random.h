@@ -5,7 +5,6 @@
 // returns random integer with lowest value min, and highest value max
 inline int randrange(int min, int max)
 {
-    GS_ASSERT(min <= max);
     return rand() % (max - min + 1) + min;
 }
 
@@ -25,6 +24,7 @@ void randstr(char* s, int n)
    if this may not be the case, use a better random
    number generator. */
 /* source: http://benpfaff.org/writings/clc/shuffle.html */
+
 void shuffle_int_array(int *array, size_t n)
 {
     if (n > 1)

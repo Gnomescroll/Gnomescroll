@@ -43,6 +43,14 @@ return; \
 #endif
 
 /*
+#ifndef __MSVC__
+    #ifdef _MSC_VER
+        #define __MSVC__
+    #endif
+#endif
+*/
+
+/*
 #else
 #define ALWAYS_INLINE inline
 #endif

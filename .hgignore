@@ -1,3 +1,4 @@
+
 syntax: glob
 *.pyc
 *.pxd
@@ -90,14 +91,18 @@ log13*
 gnomescroll_server
 gnomescroll_client
 log-*-*
-./client
-./server
+
+netclient/client
+server/server
 
 gmon.out
 
 *.trace
 
 # MSVC exclude
+*.sdf
+*.opensdf
+ipch
 
 *.obj
 *.pdb
