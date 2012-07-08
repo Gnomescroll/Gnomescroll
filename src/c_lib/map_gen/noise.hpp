@@ -28,7 +28,7 @@ const float GRAD3[][3] =
     {1,0,-1},{-1,0,-1},{0,-1,1},{0,1,1}
 };
 
-#define fastfloor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
+#define fast_floor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
 
 const int PERM_SIZE = 512;
 // At the possible cost of unaligned access, we use char instead of

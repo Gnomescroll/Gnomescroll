@@ -66,7 +66,7 @@ class PerlinField3D
 
 // This method is a *lot* faster than using (int)Math.floor(x)
 /*
-    static inline int fastfloor(float x) 
+    static inline int fast_floor(float x) 
     {
         return (x >= 0 ? (int)(x) : (int)(x-1) );
     }
@@ -93,9 +93,9 @@ float base(float x, float y, float z)
     z *= zsize;
 
     //get grid point
-    int X = fastfloor(x);
-    int Y = fastfloor(y);
-    int Z = fastfloor(z);
+    int X = fast_floor(x);
+    int Y = fast_floor(y);
+    int Z = fast_floor(z);
 
     x = x - X;
     y = y - Y;

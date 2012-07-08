@@ -41,7 +41,7 @@ class PerlinField3D
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-static inline int fastfloor(float x) 
+static inline int fast_floor(float x) 
 {
 return x>=0 ? (int)x : (int)x-1;
 }
@@ -80,9 +80,9 @@ float base(float x, float y, float z)
 {
 /*
     // Find unit grid cell containing point
-    int X = fastfloor(x);
-    int Y = fastfloor(y);
-    int Z = fastfloor(z);
+    int X = fast_floor(x);
+    int Y = fast_floor(y);
+    int Z = fast_floor(z);
     // Get relative xyz coordinates of point within that cell
     x = x - X;
     y = y - Y;
@@ -96,9 +96,9 @@ float base(float x, float y, float z)
     y /= 8.0;
     z /= 4.0;
     //get grid point
-    int X = fastfloor(x);
-    int Y = fastfloor(y);
-    int Z = fastfloor(z);
+    int X = fast_floor(x);
+    int Y = fast_floor(y);
+    int Z = fast_floor(z);
 
     //get interpolation ratio
 
@@ -257,7 +257,7 @@ class PerlinField2D
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-static inline int fastfloor(float x) 
+static inline int fast_floor(float x) 
 {
 return x>=0 ? (int)x : (int)x-1;
 }
@@ -297,8 +297,8 @@ float base(float x, float y)
     x *= xscale;  //replace with multiplication
     y *= xscale;
     //get grid point
-    int X = fastfloor(x);
-    int Y = fastfloor(y);
+    int X = fast_floor(x);
+    int Y = fast_floor(y);
 
     x = x - X;
     y = y - Y;

@@ -22,7 +22,7 @@ __attribute((always_inline, optimize("-O3"))) static float mix(float a, float b,
 __attribute((always_inline, optimize("-O3"))) static float fade(float t);
 
 
-int fastfloor(float x) 
+int fast_floor(float x) 
 {
     return ( x>=0 ? (int)x : (int)x-1 );
 }
@@ -151,8 +151,8 @@ float base(float x, float y)
     x *= xsize;  //replace with multiplication
     y *= xsize;
     //get grid point
-    int X = fastfloor(x);
-    int Y = fastfloor(y);
+    int X = fast_floor(x);
+    int Y = fast_floor(y);
 
     x = x - X;
     y = y - Y;
