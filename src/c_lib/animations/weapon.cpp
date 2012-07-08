@@ -1,5 +1,6 @@
 #include "weapon.hpp"
 
+#include <common/compat_gl.h>
 #include <item/_interface.hpp>
 #include <item/particle/_interface.hpp>
 #include <SDL/texture_sheet_loader.hpp>
@@ -202,8 +203,17 @@ static void draw_voxel(int item_type,
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_BLEND, false);
 	GL_ASSERT(GL_ALPHA_TEST, false);
+	GL_ASSERT(GL_DEPTH_TEST, false);
 
-	glEnable(GL_DEPTH_TEST);
+	// save culling state
+	const GLboolean cull_face_enabled = glIsEnabled(GL_CULL_FACE);
+	GLint cull_face_mode = GL_BACK;
+	glGetIntegerv(GL_CULL_FACE_MODE, &cull_face_mode);
+	
+	// enable backface culling
+	if (!cull_face_enabled)
+		glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);	// backface culling
 	
     // draw textured voxels
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
@@ -223,7 +233,12 @@ static void draw_voxel(int item_type,
 		sprite_id, tx, ty, sprite_width);
 		
     glEnd();
-    glDisable(GL_DEPTH_TEST);
+
+    // restore culling state
+    if (cull_face_mode != GL_INVALID_ENUM)
+		glCullFace(cull_face_mode);
+    if (!cull_face_enabled)
+		glDisable(GL_CULL_FACE);
 }
 
 void draw_equipped_item(int item_type)
