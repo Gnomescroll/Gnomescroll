@@ -5,7 +5,9 @@
 
 #pragma once
 
-#define DC_SERVER 1
+#pragma once
+
+#define DC_CLIENT 1
 
 #define __attribute__(x)
 #define __attribute(x)
@@ -52,19 +54,23 @@ extern "C"
 #endif
 
 
+
+/* Common headers */
 #include <common/version.h>
 #include <common/defines.h>
+#include <common/compat_gl.h>
+#include <common/compat_al.h>
 //#include <common/macros.hpp>
 //#include <common/crash_report/stack_trace.hpp>
 #include <common/mallox.hpp>
 
-//compression
+/* Compression */
 //#include <common/compression/miniz.c>
 
-//template
+/* Templates */
 //#include <common/template/object_list.hpp>
-#include <common/template/multi_object_list.hpp>
 #include <common/template/dynamic_object_list.hpp>
+#include <common/template/multi_object_list.hpp>
 #include <common/template/dynamic_multi_object_list.hpp>
-#include <common/template/simple_object_list.hpp>
+//#include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>

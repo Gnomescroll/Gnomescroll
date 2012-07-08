@@ -102,6 +102,7 @@ gmon.out
 # MSVC exclude
 *.sdf
 *.opensdf
+ipch
 
 *.obj
 *.pdb
