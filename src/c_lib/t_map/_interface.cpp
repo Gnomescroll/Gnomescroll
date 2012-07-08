@@ -108,6 +108,14 @@ void get_container_location(int container_id, int position[3])
     c->chunk_item_container.get_container_location(container_id, position);
 }
 
+/*
+    Do on client connect
+*/
+void send_client_map_special(int client_id)
+{
+    main_map->control_point_list.send_control_points_to_client(client_id);
+}
+
 #endif
 
 

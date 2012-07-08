@@ -41,11 +41,12 @@ void NetPeer::push_unreliable_message(Net_message* nm)
     unreliable_message_manager.push_message(nm);
 }
 
+/*
 void NetPeer::push_python_message(class Net_message* nm)
 {
     python_message_manager.push_message(nm);
 }
-
+*/
 
 void NetPeer::flush_map_messages()
 {
@@ -90,7 +91,7 @@ void NetPeer::flush_to_net()
         unreliable_message_manager.serialize_messages( (char*)unreliable_p->data, 0);
         enet_peer_send (enet_peer, 0, unreliable_p);
     }
-
+/*
     if(python_message_manager.pending_messages != 0) 
     {
         //printf("Python Pending bytes out = %i \n", python_message_manager.pending_bytes_out);
@@ -98,7 +99,7 @@ void NetPeer::flush_to_net()
         python_message_manager.serialize_messages( (char*)python_p->data, 0); //error
         enet_peer_send (enet_peer, 2, python_p);
     }
-
+*/
 #ifdef DC_SERVER
     flush_map_messages();
 #endif
