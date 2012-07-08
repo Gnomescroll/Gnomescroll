@@ -242,7 +242,7 @@ void load_block_dat()
     iso_texture(t1, 9,4);
     push_texture();
     set_max_dmg(255);
-    hud_def(6,5, t1,1,11);
+    hud_def(2,1, t1,9,4);
 
     end_block_dat();
 
