@@ -1,5 +1,7 @@
 #pragma once
 
+namespace t_map
+{
 
 class CONTROL_POINT
 {
@@ -87,18 +89,18 @@ class CONTROL_POINT_LIST
 
 	void server_add_control_point(int x, int y, int z)
 	{
-		self->add_control_point(x,y,z);
+		this->add_control_point(x,y,z);
 
 		control_point_create_StoC p;
 		p.x = x;
 		p.y = y;
 		p.z = z;
-		p.sendToClient(client_id);
+		p.broadcast();
 	}
 
 	void server_remove_control_point(int x, int y, int z)
 	{
-		remove_control_point(int x, int y, int z)
+		remove_control_point(x,y,z);
 
 		control_point_delete_StoC p;
 		p.x = x;
@@ -110,3 +112,5 @@ class CONTROL_POINT_LIST
 #endif
 
 };
+
+}
