@@ -56,7 +56,7 @@ class CONTROL_POINT_LIST
 		}
 
 		printf("Error: tried to remove control point that does not exist!\n");
-		GS_ABBORT(); //should never reach this point
+		GS_ABORT(); //should never reach this point
 	}
 
 
