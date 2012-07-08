@@ -22,6 +22,9 @@ void load_map_drop_dat()
         set_drop(0.10f, 1);
         set_drop(0.08f, 2);
 
+        add_drop("control_node", 2);
+        set_drop(0.40f, 1);
+        set_drop(0.40f, 2);
 /*
         add_drop("copper_ore", 4);
         set_drop(0.06, 1);
@@ -60,6 +63,8 @@ void load_map_drop_dat()
     def_drop("steel_block_3");
         drop_always("steel_block_3");
 
+    def_drop("control_node");
+        drop_always("control_node");
 
     def_drop("methane_ice");
         add_drop("methane_ice", 3);
@@ -98,6 +103,7 @@ void load_map_drop_dat()
         set_drop(0.35f, 1);
         set_drop(0.20f, 2);
         set_drop(0.15f, 3);
+
 
     end_drop_dat();
     #if DC_CLIENT

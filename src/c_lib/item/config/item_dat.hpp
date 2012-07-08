@@ -290,6 +290,15 @@ void load_item_dat()
     s.container_type = CONTAINER_TYPE_SMELTER_ONE;
     container_block_def("smelter_1", CONTAINER_TYPE_SMELTER_ONE);
 
+
+    item_def(53, IG_PLACER, "control_node");
+    iso_block_sprite_def("control_node");
+    s.pretty_name = (char*)"Control Node";
+    s.placer_block_type_id = t_map::dat_get_cube_id("control_node");
+    s.max_stack_size = 8;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"control_node");
+
     end_item_dat();
 }
 
