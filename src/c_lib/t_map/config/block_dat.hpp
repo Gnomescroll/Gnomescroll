@@ -101,7 +101,7 @@ void load_block_dat()
     side_texture(N, t1, 13,5);
     push_oriented_texture();
 
-    hud_def(2,1,t1,13,5);
+    //hud_def(2,1,t1,13,5);
     set_max_dmg(128);
 
 
@@ -112,7 +112,7 @@ void load_block_dat()
     side_texture(N, t1, 3,5);
     push_oriented_texture();
 
-    hud_def(2,2,t1,3,5);
+    //hud_def(2,2,t1,3,5);
     set_max_dmg(128);
 
 
@@ -123,7 +123,7 @@ void load_block_dat()
     side_texture(N, t1, 14,1);
     push_oriented_texture();
 
-    hud_def(2,3,t1,14,1);
+    //hud_def(2,3,t1,14,1);
     set_max_dmg(128);
 
 
@@ -134,7 +134,7 @@ void load_block_dat()
     side_texture(N, t1, 14,4);
     push_oriented_texture();
 
-    hud_def(2,5,t1,14,6);
+    //hud_def(2,5,t1,14,6);
     set_max_dmg(128);
 
 /*
@@ -203,8 +203,9 @@ void load_block_dat()
     cube_def(26, SolidBlock, "graphite");
     iso_texture(t1,10,6);
     push_texture();
-    hud_def(4,2, t1,10,6);
     set_max_dmg(16);
+
+    //hud_def(4,2, t1,10,6);
 
     cube_def(27, SolidBlock, "iron_ore");
     iso_texture(t1,8,3);
@@ -227,8 +228,9 @@ void load_block_dat()
     cube_def(30, SolidBlock, "iridium_ore");
     iso_texture(t1,1,11);
     push_texture();
-    hud_def(6,5, t1,1,11);
     set_max_dmg(16);
+
+    //hud_def(6,5, t1,1,11);
 
     cube_def(31, SolidBlock, "bedrock");
     iso_texture(t1, 10,7);

@@ -1,2 +1,2 @@
-./osx_config.sh
+./shell/osx_config.sh
 ./waf

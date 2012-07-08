@@ -12,21 +12,10 @@ const int CHANNEL_ID_AGENT_OFFSET = 16;
 const int CHAT_SENDER_SYSTEM = 255;
 const int CHAT_CHANNEL_SYSTEM = 0;
 
-const unsigned char CHAT_SYSTEM_COLOR_R = 255;
-const unsigned char CHAT_SYSTEM_COLOR_G = 0;
-const unsigned char CHAT_SYSTEM_COLOR_B = 0;
-
-const unsigned char CHAT_PM_COLOR_R = 0;
-const unsigned char CHAT_PM_COLOR_G = 0;
-const unsigned char CHAT_PM_COLOR_B = 255;
-
-const unsigned char CHAT_UNKNOWN_COLOR_R = 0;
-const unsigned char CHAT_UNKNOWN_COLOR_G = 0;
-const unsigned char CHAT_UNKNOWN_COLOR_B = 0;
-
-const unsigned char CHAT_GLOBAL_COLOR_R = 20;
-const unsigned char CHAT_GLOBAL_COLOR_G = 210;
-const unsigned char CHAT_GLOBAL_COLOR_B = 20;
+const struct Color CHAT_SYSTEM_COLOR = {255,10,50};
+const struct Color CHAT_PM_COLOR = {10,10,255};
+const struct Color CHAT_GLOBAL_COLOR = {255,255,255};
+const struct Color CHAT_UNKNOWN_COLOR = {50,50,50};
 
 bool is_valid_chat_character(char c)
 {

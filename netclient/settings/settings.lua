@@ -1,6 +1,6 @@
 
 
-package.path = "lua/?.lua;lua/block/?.lua;?.lua"
+package.path = "settings/?.lua;?.lua"
 
 require("lua_library");
 
@@ -11,7 +11,7 @@ options.name = "flarb"
 
 -- server --
 
-options.server = "174.37.26.118"
+options.server = "174.37.26.119"
 options.port = 0
 
 -- display options -- 

@@ -1,6 +1,6 @@
 
 
-package.path = "lua/?.lua;lua/block/?.lua;?.lua"
+package.path = "settings/?.lua;?.lua"
 
 require("lua_library");
 
@@ -22,12 +22,12 @@ options = {}
 options.server_name = "server_one"
 
 -- server --
-options.ip_address = "174.37.26.118"
+options.ip_address = "174.37.26.119"
 options.port = 0
 
 -- map --
 options.map = 'natural_terrain'
-options.seed = 800752
+options.seed = 80075112
 
 -- logger --
 options.logger = true

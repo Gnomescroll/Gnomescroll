@@ -55,7 +55,7 @@ namespace t_map
         }
 
 
-        //T_MAP_BACKUP_SHADER = 1;
+        T_MAP_BACKUP_SHADER = 0;
 
         // || true
 
@@ -68,14 +68,15 @@ namespace t_map
             if(shader_error_occured(map_shader[0]) == true )
             {
                 T_MAP_BACKUP_SHADER = 1;
-                printf("!!! Default map shader failed. Using backup shader level 1 \n");
-                set_map_shader_0();
-                init_map_3d_texture();
+                printf("!!! Default map shader failed. Using backup shader level 0 \n");
+                init_map_3d_texture_compatibility();
+                set_map_shader_0_compatibility(0);
+
 
                 if(shader_error_occured(map_shader[0]) == true )
                 {
-                    printf("!!! Backup map shader failed.  Using backup shader level 2 \n");
-                    //implement backup level 2
+                    printf("!!! Backup map shader failed.  Using backup shader level 1 \n");
+                    set_map_shader_0_compatibility(1);
                 }
             }
 
@@ -83,9 +84,16 @@ namespace t_map
         }
         else if(T_MAP_BACKUP_SHADER == 1)
         {
-            printf("!!! Warning: Using Intel GPU Compatability mode shader\n");
-            set_map_shader_0_compatibility();
+            printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
+            
             init_map_3d_texture_compatibility();
+            set_map_shader_0_compatibility(0);
+
+            if(shader_error_occured(map_shader[0]) == true )
+            {
+                printf("!!! shader failed.  Using backup shader level 1 \n");
+                set_map_shader_0_compatibility(1);
+            }
         }
 
 
@@ -307,7 +315,7 @@ namespace t_map
             SDL_FreeSurface(terrain_map_surface);
     }
 
-    void set_map_shader_0_compatibility() 
+    void set_map_shader_0_compatibility(int level) 
     {
         const int index = 0;    //shader index
         const int DEBUG1 = 1;
@@ -318,10 +326,18 @@ namespace t_map
 
         char *vs, *fs;
 
-        if(DEBUG1) printf("set_map_shader_0: \n");
+        if(DEBUG1) printf("set_map_shader_0_compatibility: level %i \n", level);
 
-        vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
-        fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+        if(level == 0)
+        {
+            vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
+            fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+        }
+        else
+        {
+            vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
+            fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh"); 
+        }
 
         glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
@@ -353,9 +369,7 @@ namespace t_map
 
         free(vs);
         free(fs);
-
     }
-
 
     void init_map_3d_texture_compatibility()
     {

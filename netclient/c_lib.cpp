@@ -15,6 +15,10 @@ dont_include_this_file_in_server
 #include <string.h>
 #include <math.h>
 
+#ifdef __MINGW32__
+    #include <malloc.h> //alloca function
+#endif
+
 #ifdef _WIN32
     #include "windows.h"
     #undef interface
@@ -31,12 +35,12 @@ dont_include_this_file_in_server
 #include <common/compat_al.h>
 #include <common/macros.hpp>
 #include <common/crash_report/stack_trace.hpp>
+#include <common/mallox.hpp>
 
 /* Compression */
 #include <common/compression/miniz.c>
 
 /* Templates */
- 
 #include <common/template/object_list.hpp>
 #include <common/template/dynamic_object_list.hpp>
 #include <common/template/multi_object_list.hpp>
@@ -55,6 +59,7 @@ dont_include_this_file_in_server
 #include <common/gl_assert.hpp>
 #include <common/macros.hpp>
 #include <common/common.cpp>
+#include <common/color.hpp>
 #include <common/files.cpp>
 
 // logging
@@ -89,7 +94,7 @@ dont_include_this_file_in_server
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
-#include <SDL/md5_loader/_include.hpp>
+//#include <SDL/md5_loader/_include.hpp>
 //#include <SDL/md5_loader/md5_test.cpp>
 
 /* Draw lists */
@@ -221,9 +226,11 @@ int init_c_lib()
 
     Log::init();
     printf("init c_lib\n");
+    
+    AgentHudName::verify_configuration();
 
     LUA::load_options(); //load game options
-    srand(time(NULL));   // seed the RNG
+    srand((unsigned int)time(NULL));   // seed the RNG
 
     Components::init();
     Objects::init_net_interfaces();

@@ -36,8 +36,9 @@ def _grab_output(*cmd):
 
 
 def get_version():
+    print "Warning: get_version() is deprecated"
     try:
-        fn = '../VERSIONX'
+        fn = '../VERSIONX.old'
         with open(fn) as f:
             version = f.read()
     except Exception, e:
@@ -114,9 +115,11 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     extra_options = [
         '-Wall',
+        '-Wempty-body',
         '-DDC_CLIENT=1',
         '-fno-exceptions',
         '-Winline',
+        '-Wvla', #warns variable array
         '-Wno-switch-enum',
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
@@ -219,8 +222,10 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.check(header_name='lua.h',
                    lib='luajit-5.1', #'lua5.1',
                    use='luajit-5.1', #'lua5.1',
-                   libpath= '/usr/local/Cellar/luajit/2.0.0-beta9/include/luajit-2.0',
-                   includes= '/usr/local/Cellar/luajit/2.0.0-beta9/include/luajit-2.0',
+                   #libpath= '/usr/local/Cellar/luajit/2.0.0-beta10/include/luajit-2.0',
+                   #includes= '/usr/local/Cellar/luajit/2.0.0-beta10/include/luajit-2.0',
+                   includes = lua_include_path,
+                   libpath = lua_include_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)

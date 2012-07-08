@@ -617,7 +617,57 @@ DONE
 ==============
 
 refactor text particles
-DONE (almost)
+DONE
+
+(possibly) Fixed group crash, (possibly) due to player hud text
+DONE
+
+Color agent name based on health
+DONE
+
+fix base spawning
+DONE
+
+decrease pickup delay time after throwing to 3 seconds from 4
+DONE
+
+add fist sprite to weapon hud animation
+DONE
+
+fix server crash in container module (missing NULL check) [did not fix root cause]
+DONE
+
+fix analytics session lookup
+DONE
+
+add special error handling for when non-fuel ends up in fuel slot
+--should never occur, i think its a buffer overwrite
+DONE
+
+add possible fixes for remaining asserts in build 22 logs
+DONE
+
+fix chat logging (no NUL byte written)
+DONE
+
+players heal teammates; agent health is now broadcast
+DONE
+
+rename lua/ to settings/
+DONE
+
+server forces client disconnect if received invalid packet data
+DONE
+
+item pickup flies to player
+DONE
+
+disable buffering on chat log
+DONE
+
+clean up implicit 64-32 conversion warning in xcode
+DONE
+
 
 ----------------------
 
@@ -639,8 +689,9 @@ some boxes arent getting destination correctly -- just jumping around with state
 glsl colored/textured voxels -- add normal lighting
 texture color problem in OSX -- for blocks and for items
 Improve Hud Weapon sprites animations
-make item pickup fly to player
 textured voxels / isometric blocks should use full palette info, instead of only one side
+better font
+use backface culling on hud item rendered voxels and re-enable the depth test
 
 == SOUND ==
 improve digging sounds
@@ -656,7 +707,7 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
 --detect duplicate recipes
 --detect recursive recipes (input types == output types)
 
-== UI/UX ==
+== CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
 alt tab doesnt work in fullscreen (on linux at least)
@@ -666,7 +717,7 @@ alt tab doesnt work in fullscreen (on linux at least)
 palette for smelter on/off
 
 == ITEMS ==
-decrease pickup delay time after throwing
+Binoculars
 
 == BLOCKS/TERRAIN ==
 send block health on request from agent
@@ -674,30 +725,64 @@ send block health on request from agent
 
 == ANALYTICS ==
 
+== UI/UX ==
+add labels to the hud widgets
+
 == GENERAL ==
-put spawners back in
-    -- needs better UI
-    -- needs crafting path
-
-use durability coloring to teammate health
-add right click to heal teammate with health pack
-
+get screenshots working in osx
 option to hide name
 
-rename lua/ to settings/
+== MECHANISMS ==
+Spawner/Control Points
+    -- User builds them like the old spawners
+    -- Requires:
+        Craft path
+        Entity modifications
+        
+All control points draw png border around them.
+Control point colors all cubes in radius a certain hue, for player's own 
+control point.
 
+Inside control zone, nobody except player can:
+Add block
+Damage/remove block
+Open chests
+Destroy the control point
+
+Any player can choose to use the control point as their spawn zone.
+When the player creates his control point he is automatically assigned to it. [change this once players are familiar with the mechanism / we have better UI feedback?]
+The player right-clicks to set his control point spawner.
+On the map, B is drawn where his spawner is assigned.
+
+The starting base is an unowned control point. Nobody can own this.
+
+A player can destroy the control point he owns.  The control point drops
+a control point when destroyed.  The color tint must be reset, and the border must not draw.
+
+Q: Should control points be another block type, or should it be a model?
+A: we can make it 1x1 but treat it as an object/model. it will render at its location
+    as a block, it will be set to invisible so no texture is rendered.
+    Solid must also be false, so hitscan can pass through.
+ 
+----------
 get rid of nanite feeding
-drop chips from enemies
+drop chips from enemies, blocks
 chips go directly into nanite chip slot
 change nanite texture to remove graphic
-add labels to the widgets
+
+----------
+Health system
+
+Use super metroid's, minus the Reserve tanks (they are awkward and only existed in this game of the series)
+ENERGY 99 [] [] [] [] []
+Max N reserve tanks (5 for now maybe?)
+Reserve tanks are craftable?
+    -- Nanite chips somehow
+
+All players start with ENERGY 99
 
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
 
-group crash when players disconnect -- source is in strlen in BillboardHudText::draw (i think)
-some deallocation out of order
---switch to agent->event.bb as integer with lookup
---except they are simple object lists now
---so create the object outside of the list
+in free camera, when agent is shot, model flickers

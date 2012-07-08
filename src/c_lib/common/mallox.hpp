@@ -27,3 +27,10 @@ return; \
 // static array_name##__max int = 0;\
 // static array_name##__index int = 0; \
 */
+
+/*
+// define MALLOX(type, array_name, size) \
+// static type* array_name = NULL\
+// static array_name##__max int = 0;\
+// static array_name##__index int = 0; \
+*/

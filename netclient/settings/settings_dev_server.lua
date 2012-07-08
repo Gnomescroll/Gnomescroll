@@ -1,6 +1,6 @@
 
 
-package.path = "lua/?.lua;lua/block/?.lua;?.lua"
+package.path = "settings/?.lua;?.lua"
 
 require("lua_library");
 
@@ -11,14 +11,14 @@ options.name = "flarb"
 
 -- server --
 
-options.server = "174.37.26.119"
+options.server = "174.37.26.118"
 options.port = 0
 
 -- display options -- 
 options.fullscreen = false
 options.width = 1280
 options.height = 720
-options.fov = 90 -85
+options.fov = 85
 
 
 --1280x720
