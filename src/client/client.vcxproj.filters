@@ -23,13 +23,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="_server.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="_c_lib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="_main.cpp">
+    <ClCompile Include="client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
