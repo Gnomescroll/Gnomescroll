@@ -91,8 +91,9 @@ log13*
 gnomescroll_server
 gnomescroll_client
 log-*-*
-./client
-./server
+
+netclient/client
+server/server
 
 gmon.out
 
