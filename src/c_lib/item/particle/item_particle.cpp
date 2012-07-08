@@ -50,6 +50,8 @@ void teardown_item_particle()
 
 void ItemParticle::draw()
 {
+    if (!this->should_draw) return;
+    
     Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
     if (point_fulstrum_test(position.x, position.y, position.z) == false) return;
 
@@ -134,6 +136,9 @@ void ItemParticle::tick()
 				this->get_picked_up = true;
 				this->ttl = 0;
 				#endif
+                #if DC_CLIENT
+                this->should_draw = false;
+                #endif
 			}
 			else
 			{	// orient towards agent
@@ -141,6 +146,9 @@ void ItemParticle::tick()
 				normalize_vector(&direction);
 				direction = vec3_scalar_mult(direction, ITEM_PARTICLE_PICKUP_MOMENTUM);
 				this->verlet.velocity = direction;
+                #if DC_CLIENT
+                this->should_draw = true;
+                #endif
 			}
 		}
 	}
@@ -172,6 +180,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
         this->voxel.texture_index = Item::get_particle_voxel_texture(item_type);
         this->voxel.init();
     }
+    this->should_draw = true;
     #endif    
     #if DC_SERVER
     this->item_id = item_id;
@@ -215,7 +224,8 @@ ItemParticle::ItemParticle(int id) :
     #endif
     #if DC_CLIENT
     is_voxel(false),
-    sprite_index(ERROR_SPRITE)
+    sprite_index(ERROR_SPRITE),
+    should_draw(true)
     #endif
 {
     verlet.dampening = ITEM_PARTICLE_DAMPENING;

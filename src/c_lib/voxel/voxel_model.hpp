@@ -26,9 +26,10 @@ class Voxel_model
         struct Affine* vox_skeleton_local_matrix;
         struct Affine* vox_skeleton_world_matrix;
         bool* biaxial_nodes;
-        //parts voxel volume parst
+
+        // lifecycle / update state
         bool vox_inited;
-        bool was_updated;
+        bool was_updated;   // NOTE: This should be reset to false every frame. TODO: change was_updated to was_updated_this_frame
         bool frozen;    // if true, refuse to update no matter what
         void freeze();
         void thaw();

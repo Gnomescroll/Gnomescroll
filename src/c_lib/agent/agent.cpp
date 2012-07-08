@@ -846,22 +846,20 @@ void Agent_state::update_model()
         return;
     }
 
-    Vec3 center;
-    if (this->vox->was_updated)         
-        center = this->get_center();    // model is fresh, use model center for more accurate culling
-    else
-        center = this->get_position();  // model is stale, must use agent position
+    Vec3 center = this->get_center();    // model is fresh, use model center for more accurate culling
         
     this->vox->was_updated = false;
     // other agents
     VoxDat* vox_dat = &VoxDats::agent;
     float radius = this->vox->get_part(0)->radius;
+   
     if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);
         return;
     }
+    
     if (this->crouched())
     {
         vox_dat = &VoxDats::agent_crouched;

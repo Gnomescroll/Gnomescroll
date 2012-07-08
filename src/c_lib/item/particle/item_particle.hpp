@@ -32,15 +32,6 @@
 namespace ItemParticle
 {
 
-// after pickup initiated, max ttl before being considered picked up
-const int ITEM_PARTICLE_PICKED_UP_TTL = 30 * 3;
-// momentum for flying at agent
-const int ITEM_PARTICLE_PICKUP_MOMENTUM = 2.0f;
-// distance where pickup initiates
-const float ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE = 1.5f;
-// distance where initiated pickup will become final
-const float ITEM_PARTICLE_PICKUP_END_DISTANCE = 0.05f;
-
 #if DC_CLIENT
 extern GLuint ItemSheetTexture;
 
@@ -64,6 +55,7 @@ class ItemParticle //: public VerletComponent
         bool is_voxel;
         Components::TexturedVoxelComponent voxel;
         int sprite_index;
+        bool should_draw;
         void draw();
         #endif
 
@@ -119,9 +111,6 @@ class ItemParticle //: public VerletComponent
 namespace ItemParticle
 {
 
-const int ITEM_PARTICLE_MAX = 1024;
-const int ITEM_PARTICLE_HARD_MAX = 0xffff - 1;
-
 class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MAX, ITEM_PARTICLE_HARD_MAX>
 {
     private:
@@ -166,7 +155,7 @@ void ItemParticle_list::draw()
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
     glBegin(GL_QUADS);
     for (int i=0; i<this->n_max; i++)
-        if (this->a[i] != NULL && this->a[i]->is_voxel)
+        if (this->a[i] != NULL && this->a[i]->is_voxel && !this->a[i]->should_draw)
         {
             ItemParticle* p = this->a[i];
             p->voxel.delta_rotation(0.01f, 0.0f);

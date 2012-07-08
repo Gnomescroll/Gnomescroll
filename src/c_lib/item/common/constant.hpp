@@ -65,11 +65,24 @@ const int ITEM_GAS_LIFETIME = 20 * 30; // 60 seconds
 
 const int AGENT_HAND = NULL_CONTAINER - 1;
 
+const int ITEM_PARTICLE_MAX = 1024;
+const int ITEM_PARTICLE_HARD_MAX = 0xffff - 1;
+
 const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
 const float ITEM_PARTICLE_DAMPENING = 0.50f;
 const float ITEM_PARTICLE_RADIUS = 0.35f;
 
+// how long to wait before allowing item to be picked up after being thrown by agent
 const int ITEM_PICKUP_PREVENTION_DELAY = 30 * 3; // 4 seconds
 
+// frequency of state update broadcasts for an item particle
 const int ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE = 30 * 10;    // 10 seconds
 
+// after pickup initiated, max ttl before being considered picked up
+const int ITEM_PARTICLE_PICKED_UP_TTL = 30 * 3;
+// momentum for flying at agent
+const int ITEM_PARTICLE_PICKUP_MOMENTUM = 2.0f;
+// distance where pickup initiates
+const float ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE = 1.5f;
+// distance where initiated pickup will become final
+const float ITEM_PARTICLE_PICKUP_END_DISTANCE = 0.1f;

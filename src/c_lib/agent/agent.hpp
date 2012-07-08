@@ -118,7 +118,12 @@ class Agent_state
         Vec3 get_camera_position() { Vec3 p = this->get_position(); p.z += this->camera_height(); return p; }
         Vec3 get_center()
         {
-            if (this->vox == NULL) return this->get_position();
+            if (this->vox == NULL || !this->vox->was_updated)
+            {   // use approximate center of model
+                Vec3 p = this->get_position();
+                p.z += this->box.b_height/2.0f;
+                return p;
+            }
             return this->vox->get_part(AGENT_PART_TORSO)->get_center();
         }
 
