@@ -4,6 +4,8 @@
 #include <t_map/chunk_special.hpp>
 #include <t_map/common/map_element.hpp>
 
+#include <t_map/map_special.hpp>
+
 namespace t_map
 {
 
@@ -64,6 +66,8 @@ class Terrain_map
     int ychunk_dim;
     
     class MAP_CHUNK** chunk;
+
+    class CONTROL_POINT_LIST control_point_list; //special
 
     #if DC_CLIENT
     bool height_changed;
