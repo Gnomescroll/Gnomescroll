@@ -13,6 +13,8 @@
 
 #pragma warning(disable: 4244) // possible loss of data
 #pragma warning(disable: 4309) // truncation of constant value
+#pragma warning(disable: 4146) // unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable: 4800) // forcing value to bool 'true' or 'false' (performance warning)
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX

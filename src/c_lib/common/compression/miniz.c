@@ -1,8 +1,12 @@
 #pragma once
 
-#pragma GCC diagnostic ignored "-Wunused-value"
+#ifdef __GNUC__
+    #pragma GCC diagnostic ignored "-Wunused-value"
+#endif
 
 #define __forceinline __attribute__((always_inline))
+
+#include <common/macros.hpp>
 
 /*
  Hack 

@@ -1,5 +1,8 @@
 #pragma once
-#pragma GCC diagnostic ignored "-Wunused-function"
+
+#ifdef __GNUC
+    #pragma GCC diagnostic ignored "-Wunused-function"
+#endif
 
 #include <math.h>
 

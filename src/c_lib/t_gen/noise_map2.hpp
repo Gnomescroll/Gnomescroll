@@ -127,9 +127,10 @@ class PerlinField2D
 
 // This method is a *lot* faster than using (int)Math.floor(x)
 //__attribute((always_inline, optimize("-O3")))
-static inline int fastfloor(float x) 
+
+static int fastfloor(float x) 
 {
-return x>=0 ? (int)x : (int)x-1;
+return ( x>=0 ? (int)x : (int)x-1 );
 }
 
 //__attribute((always_inline, optimize("-O3")))

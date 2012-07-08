@@ -1,5 +1,8 @@
 #pragma once
-#pragma GCC diagnostic ignored "-Wunused-function"
+
+#ifdef __GNUC
+    #pragma GCC diagnostic ignored "-Wunused-function"
+#endif
 
 
 #include <physics/vec3.hpp>
@@ -201,6 +204,7 @@ struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, fl
     return m;
 }
 
+/*
 static struct Mat4 mat4_apply_rotation(struct Mat3 m)  __attribute((always_inline));
 
 struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
@@ -209,7 +213,7 @@ struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
     //not used/implemented yet
     return m;
 }
-
+*/
 
 static struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m) __attribute((always_inline));
 
