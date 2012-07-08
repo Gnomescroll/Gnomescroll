@@ -37,6 +37,13 @@
 #include <string.h>
 #include <math.h>
 
+extern "C"
+{
+    #include <lua.h>
+    #include <lualib.h> // ok this ony means u maybe fixed the release one but not teh debug one
+    #include <lauxlib.h> //wtf!?
+}
+
 /*
 #ifdef __MSVC__
     #include <direct.h>

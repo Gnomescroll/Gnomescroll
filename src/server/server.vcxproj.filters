@@ -26,10 +26,10 @@
     <ClCompile Include="_server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="_main.hpp">
+    <ClCompile Include="_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="_c_lib.hpp">
+    <ClCompile Include="_c_lib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -14,17 +14,19 @@ int primes[20] = {
     53,59,61,67,71
 };
 
-
+#if __GNUC__
 __attribute((always_inline, optimize("-O3"))) static float dot(float* g, float x, float y);
 __attribute((always_inline, optimize("-O3"))) static float dot(int gi, float x, float y, float z);
 
 __attribute((always_inline, optimize("-O3"))) static float mix(float a, float b, float t);
 __attribute((always_inline, optimize("-O3"))) static float fade(float t);
+#endif
 
+int fast_floor(float value);
 
-int fast_floor(float x) 
+int fast_floor(float value) 
 {
-    return ( x>=0 ? (int)x : (int)x-1 );
+    return (int)( value>=0 ? (int)value : (int)value-1 );
 }
 
 static float dot(float* g, float x, float y)

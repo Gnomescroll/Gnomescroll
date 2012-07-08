@@ -33,30 +33,12 @@
     #include <math.h>
 #endif
 
-/*
-    extern "C"
-    {
-        #include <lua.h>
-        #include <lualib.h> // ok this ony means u maybe fixed the release one but not teh debug one
-        #include <lauxlib.h> //wtf!?
-    }
-
-    #include <common/version.h>
-    #include <common/defines.h>
-    #include <common/macros.hpp>
-    //#include <common/crash_report/stack_trace.hpp>
-    #include <common/mallox.hpp>
-*/
-//#endif
-
 #ifdef __GNUC__
 #endif
 
-#include "_c_lib.hpp"
-#include "_main.hpp"
+#include "_c_lib.cpp"
+#include "_main.cpp"
 #include <common/lua/lua.hpp>
-
-#include <stdio.h>
 
 //int main(int argc, char** argv)
 int _tmain(int argc, _TCHAR* argv[])
