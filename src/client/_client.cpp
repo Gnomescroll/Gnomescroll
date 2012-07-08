@@ -29,7 +29,7 @@ int _tmain(int argc, _TCHAR* argv[])
     #endif
 
     #ifdef __MSVC__
-    chdir("C:/msvc/client");
+    chdir("C:/dc_mmo/netclient");
     #endif
     
     // program accepts one option: path to lua settings file
