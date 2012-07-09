@@ -18,32 +18,12 @@ void load_map_drop_dat()
         set_drop(0.35f, 1);
         set_drop(0.20f, 2);
 
-        add_drop("food_rock-0", 2);
-        set_drop(0.10f, 1);
-        set_drop(0.08f, 2);
-
+		add_drop("synthesizer_coin", 1);
+		set_drop(0.04f, 1);
         add_drop("control_node", 2);
         set_drop(0.40f, 1);
         set_drop(0.40f, 2);
-/*
-        add_drop("copper_ore", 4);
-        set_drop(0.06, 1);
-        set_drop(0.02, 2);
-        set_drop(0.01, 3);
-        set_drop(0.01, 5);
-
-        add_drop("gallium_ore", 1);
-        set_drop(0.10, 1);
-
-        add_drop("iron_ore", 2);
-        set_drop(0.03, 1);
-        set_drop(0.01, 2);
-
-        add_drop("iridium_ore", 2);
-        set_drop(0.03, 1);
-        set_drop(0.01, 2);
-*/
-    ////////////////////
+			
     def_drop("small_storage");
         drop_always("small_storage");
 

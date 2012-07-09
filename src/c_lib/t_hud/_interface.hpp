@@ -6,7 +6,7 @@ namespace t_hud
 // UI State
 extern class AgentContainerUI* agent_container;
 extern class AgentToolbeltUI* agent_toolbelt;
-extern class AgentNaniteUI* nanite_container;
+extern class AgentSynthesizerUI* synthesizer_container;
 extern class CraftingUI* crafting_container;
 extern class StorageBlockUI* storage_block;
 
@@ -20,7 +20,7 @@ typedef struct
 {
     int container_id;
     int slot;
-    bool nanite_shopping;
+    bool synthesizer_shopping;
     bool craft_output;
 } ContainerInputEvent;
 

@@ -74,7 +74,7 @@ class container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<cont
         inline void handle();
 };
 
-class nanite_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<nanite_container_action_alpha_CtoS>
+class synthesizer_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<synthesizer_container_action_alpha_CtoS>
 {
     public:
         uint16_t event_id;
@@ -109,7 +109,7 @@ class nanite_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToSer
         inline void handle();
 };
 
-class nanite_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<nanite_container_action_beta_CtoS>
+class synthesizer_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<synthesizer_container_action_beta_CtoS>
 {
     public:
         uint16_t event_id;
@@ -144,7 +144,7 @@ class nanite_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServ
         inline void handle();
 };
 
-class purchase_item_from_nanite_action_CtoS: public FixedSizeReliableNetPacketToServer<purchase_item_from_nanite_action_CtoS>
+class purchase_item_from_synthesizer_action_CtoS: public FixedSizeReliableNetPacketToServer<purchase_item_from_synthesizer_action_CtoS>
 {
     public:
         uint16_t event_id;

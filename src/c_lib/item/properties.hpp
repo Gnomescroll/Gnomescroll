@@ -10,7 +10,7 @@ extern int type_array[MAX_ITEMS];
 extern ItemGroup group_array[MAX_ITEMS];
 extern class ItemAttribute* item_attribute_array;
 
-extern class NaniteStoreItem* nanite_store_item_array;
+extern class SynthesizerItem* synthesizer_item_array;
 
 extern class CraftingRecipe* crafting_recipe_array;
 extern class SmeltingRecipe* smelting_recipe_array;
@@ -58,10 +58,8 @@ float get_weapon_range(int weapon_type);
 int get_item_block_damage(int weapon_type, int block_type);
 int get_item_object_damage(int weapon_type);
 
-bool get_nanite_edibility(int item_type);
-
-int get_nanite_store_item(int level, int xslot, int yslot);
-int get_nanite_store_item(int level, int xslot, int yslot, int* cost);
+int get_synthesizer_item(int xslot, int yslot);
+int get_synthesizer_item(int xslot, int yslot, int* cost);
 
 bool is_fuel(int item_type);
 bool is_smelter(ItemContainerType type);

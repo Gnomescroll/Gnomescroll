@@ -24,13 +24,13 @@ void init()
     #if DC_SERVER
     agent_container_list   = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list    = (int*)   malloc(AGENT_MAX * sizeof(int));
-    agent_nanite_list      = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_synthesizer_list      = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_hand_list        = (ItemID*) malloc(AGENT_MAX * sizeof(ItemID));
     opened_containers      = (int*)   malloc(AGENT_MAX * sizeof(int));
     
     for (int i=0; i<AGENT_MAX; i++) agent_container_list  [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list   [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list     [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list     [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_hand_list       [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) opened_containers     [i] = NULL_CONTAINER;
     #endif
@@ -43,7 +43,7 @@ void teardown()
     #if DC_CLIENT
     if (player_container_ui   != NULL) delete player_container_ui;
     if (player_toolbelt_ui    != NULL) delete player_toolbelt_ui;
-    if (player_nanite_ui      != NULL) delete player_nanite_ui;
+    if (player_synthesizer_ui      != NULL) delete player_synthesizer_ui;
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     if (storage_block_ui      != NULL) delete storage_block_ui;
     #endif
@@ -51,7 +51,7 @@ void teardown()
     #if DC_SERVER
     if (agent_container_list   != NULL) free(agent_container_list);
     if (agent_toolbelt_list    != NULL) free(agent_toolbelt_list);
-    if (agent_nanite_list      != NULL) free(agent_nanite_list);
+    if (agent_synthesizer_list      != NULL) free(agent_synthesizer_list);
     if (agent_hand_list        != NULL) free(agent_hand_list);
     if (opened_containers      != NULL) free(opened_containers);
     #endif
@@ -157,7 +157,7 @@ void update_container_ui_from_state()
 {
     if (player_container_ui   != NULL) player_container_ui   ->load_data (player_container   ->slot);
     if (player_toolbelt_ui    != NULL) player_toolbelt_ui    ->load_data (player_toolbelt    ->slot);
-    if (player_nanite_ui      != NULL) player_nanite_ui      ->load_data (player_nanite      ->slot);
+    if (player_synthesizer_ui      != NULL) player_synthesizer_ui      ->load_data (player_synthesizer      ->slot);
     if (player_craft_bench_ui != NULL) player_craft_bench_ui ->load_data (player_craft_bench ->slot);
     if (storage_block_ui      != NULL) storage_block_ui      ->load_data (storage_block      ->slot);
     if (cryofreezer_ui        != NULL) cryofreezer_ui        ->load_data (cryofreezer        ->slot);
@@ -394,7 +394,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_craft_bench_ui != NULL && player_craft_bench_ui->id == container_id) return player_craft_bench_ui;
     if (player_container_ui   != NULL && player_container_ui->id   == container_id) return player_container_ui;
     if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
-    if (player_nanite_ui      != NULL && player_nanite_ui->id      == container_id) return player_nanite_ui;
+    if (player_synthesizer_ui      != NULL && player_synthesizer_ui->id      == container_id) return player_synthesizer_ui;
     if (storage_block_ui      != NULL && storage_block_ui->id      == container_id) return storage_block_ui;
     if (cryofreezer_ui        != NULL && cryofreezer_ui->id        == container_id) return cryofreezer_ui;
     if (smelter_ui            != NULL && smelter_ui->id            == container_id) return smelter_ui;
@@ -491,6 +491,7 @@ ItemID get_agent_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(agent_hand_list != NULL);
+    if (agent_hand_list == NULL) return NULL_ITEM;
     return agent_hand_list[agent_id];
 }
     
@@ -498,6 +499,7 @@ int get_agent_container(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(agent_container_list != NULL);
+    if (agent_container_list == NULL) return NULL_CONTAINER;
     return agent_container_list[agent_id];
 }
 
@@ -505,7 +507,16 @@ int get_agent_toolbelt(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(agent_toolbelt_list != NULL);
+    if (agent_toolbelt_list == NULL) return NULL_CONTAINER;
     return agent_toolbelt_list[agent_id];
+}
+
+int get_agent_synthesizer(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(agent_synthesizer_list != NULL);
+    if (agent_synthesizer_list == NULL) return NULL_CONTAINER;
+    return agent_synthesizer_list[agent_id];
 }
 
 ItemContainerInterface* create_container(ItemContainerType type)
@@ -549,9 +560,9 @@ void assign_containers_to_agent(int agent_id, int client_id)
     }
     #endif
         
-    ItemContainerNanite* agent_nanite = (ItemContainerNanite*)item_container_list->create(AGENT_NANITE);
-    GS_ASSERT(agent_nanite != NULL);
-    assign_container_to_agent(agent_nanite, agent_nanite_list, agent_id, client_id);
+    ItemContainerSynthesizer* agent_synthesizer = (ItemContainerSynthesizer*)item_container_list->create(AGENT_SYNTHESIZER);
+    GS_ASSERT(agent_synthesizer != NULL);
+    assign_container_to_agent(agent_synthesizer, agent_synthesizer_list, agent_id, client_id);
 
     ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
     GS_ASSERT(agent_toolbelt != NULL);
@@ -834,14 +845,14 @@ void agent_quit(int agent_id)
         transfer_hand_to_particle(agent_id);    // throw
     GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
 
-    // throw all items away (inventory, toolbelt and nanite)
+    // throw all items away (inventory, toolbelt and synthesizer)
     GS_ASSERT(agent_container_list != NULL);
     if (agent_container_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
 
-    GS_ASSERT(agent_nanite_list != NULL);
-    if (agent_nanite_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_nanite_list[agent_id]);
+    GS_ASSERT(agent_synthesizer_list != NULL);
+    if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_synthesizer_list[agent_id]);
 
     GS_ASSERT(agent_toolbelt_list != NULL);
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
@@ -852,55 +863,48 @@ void agent_quit(int agent_id)
         destroy_container(agent_container_list[agent_id]);
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_toolbelt_list[agent_id]);
-    if (agent_nanite_list[agent_id] != NULL_CONTAINER)
-        destroy_container(agent_nanite_list[agent_id]);
+    if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_synthesizer_list[agent_id]);
 
     agent_container_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;
-    agent_nanite_list[agent_id] = NULL_CONTAINER;
+    agent_synthesizer_list[agent_id] = NULL_CONTAINER;
 }
 
-void digest_nanite_food()
-{
-    for (int i=0; i<AGENT_MAX; i++)
-    {
-        if (agent_nanite_list[i] == NULL_CONTAINER) continue;
-        ItemContainerNanite* nanite = (ItemContainerNanite*)get_container(agent_nanite_list[i]);
-        if (nanite == NULL) continue;
-        nanite->digest();
-    }
-}
-
-void purchase_item_from_nanite(int agent_id, int shopping_slot)
+void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-
-    GS_ASSERT(agent_nanite_list != NULL);
-
+	if (agent_id < 0 || agent_id >= AGENT_MAX) return;
+    
     // if hand is not empty there will be item leaks
     if (get_agent_hand(agent_id) != NULL_ITEM) return;
 
     // get container
-    if (agent_nanite_list[agent_id] == NULL_CONTAINER) return;
-    ItemContainerNanite* nanite = (ItemContainerNanite*)get_container(agent_nanite_list[agent_id]);
-    if (nanite == NULL) return;
+    GS_ASSERT(agent_synthesizer_list != NULL);
+    if (agent_synthesizer_list == NULL) return;
+    if (agent_synthesizer_list[agent_id] == NULL_CONTAINER) return;
+    ItemContainerSynthesizer* synthesizer = (ItemContainerSynthesizer*)get_container(agent_synthesizer_list[agent_id]);
+    if (synthesizer == NULL) return;
+    GS_ASSERT(agent_can_access_container(agent_id, synthesizer->id));
+    if (!agent_can_access_container(agent_id, synthesizer->id)) return;
 
     // get the store item
-    int xslot = shopping_slot % nanite->xdim;
-    int yslot = shopping_slot / nanite->xdim;
+    int xslot = shopping_slot % synthesizer->shopping_xdim;
+    int yslot = shopping_slot / synthesizer->shopping_xdim;
     int cost;
-    int item_type = Item::get_nanite_store_item(nanite->level, xslot, yslot, &cost);
+    int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
     GS_ASSERT(cost >= 0);
     if (item_type == NULL_ITEM_TYPE) return;
     
     // get the coins
-    ItemID coins = nanite->get_coins();
+    ItemID coins = synthesizer->get_item(0);
     int coin_stack = 0; // coin stack will return 1 for NULL_ITEM, but we want to treat that as 0
     if (coins != NULL_ITEM) coin_stack = Item::get_stack_size(coins);
     if (coin_stack < cost) return;
-
-    // get agent, for sending state to
-    Agent_state* a = ServerState::agent_list->get(nanite->owner);
+    
+	Item::Item* coin_item = Item::get_item_object(coins);
+	GS_ASSERT(coin_item != NULL);
+	if (coin_item == NULL) return;
 
     // create shopped item
     Item::Item* purchase = Item::create_item(item_type);
@@ -915,16 +919,12 @@ void purchase_item_from_nanite(int agent_id, int shopping_slot)
     {
         if (coin_stack == cost)
         {   // delete coins
-            nanite->remove_item(nanite->slot_max-1);
-            if (a != NULL) send_container_remove(a->client_id, nanite->id, nanite->slot_max-1);
             Item::destroy_item(coins);
         }
         else
         {   // decrement coin stack
-            Item::Item* coin_item = Item::get_item_object(coins);
-            GS_ASSERT(coin_item != NULL);
-            coin_item->stack_size -= cost;
-            if (a != NULL) Item::send_item_state(coins);
+			coin_item->stack_size -= cost;
+			Item::send_item_state(coins);
         }
     }
 }

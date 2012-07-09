@@ -537,10 +537,10 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
 }
 
 #if DC_CLIENT
-ContainerActionType nanite_alpha_action_decision_tree(int id, int slot)
+ContainerActionType synthesizer_alpha_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -573,7 +573,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     #endif
     GS_ASSERT(container != NULL);
     if (container == NULL) return action;
-    GS_ASSERT(container->type = AGENT_NANITE);
+    GS_ASSERT(container->type = AGENT_SYNTHESIZER);
     
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
@@ -591,7 +591,7 @@ ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_i
     int slot_item_space = Item::get_stack_space(slot_item);
     #endif
 
-    // NANITE
+    // SYNTHESIZER
     // if slot == 0
         // if hand empty
             // if slot occupied
@@ -982,10 +982,10 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
 }
 
 #if DC_CLIENT
-ContainerActionType nanite_beta_action_decision_tree(int id, int slot)
+ContainerActionType synthesizer_beta_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -998,7 +998,7 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
     ItemContainerInterface* container = get_container(id);
     #endif
     if (container == NULL) return action;
-    GS_ASSERT(container->type = AGENT_NANITE);
+    GS_ASSERT(container->type = AGENT_SYNTHESIZER);
 
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
@@ -1174,10 +1174,10 @@ ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id
 }
 
 #if DC_CLIENT
-ContainerActionType nanite_shopping_alpha_action_decision_tree(int container_id, int slot)
+ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType nanite_shopping_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
     if (slot == NULL_SLOT || container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;
@@ -1197,17 +1197,17 @@ ContainerActionType nanite_shopping_alpha_action_decision_tree(int agent_id, int
     // TODO -- Allow multiple purchasing if it stacks
     if (hand_empty)
     {   // send purchase packet
-        return PURCHASE_ITEM_FROM_NANITE;
+        return PURCHASE_ITEM_FROM_SYNTHESIZER;
     }
 
     return CONTAINER_ACTION_NONE;
 }
 
 #if DC_CLIENT
-ContainerActionType nanite_shopping_beta_action_decision_tree(int container_id, int slot)
+ContainerActionType synthesizer_shopping_beta_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType nanite_shopping_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType synthesizer_shopping_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
     return CONTAINER_ACTION_NONE;

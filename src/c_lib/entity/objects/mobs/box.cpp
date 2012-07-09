@@ -102,9 +102,14 @@ static void set_mob_robot_box_properties(Object* object)
 
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
-    item_drop->item_type = Item::get_item_type(MONSTER_BOX_ITEM_DROP_NAME);
-    item_drop->probability = MONSTER_BOX_ITEM_DROP_PROBABILITY;
-    item_drop->max_amount = MONSTER_BOX_ITEM_DROP_MAX_AMOUNT;
+    item_drop->set_max_drop_types(2);
+    item_drop->set_max_drop_amounts("synthesizer_coin", 3);
+    item_drop->add_drop("synthesizer_coin", 1, 0.2f);
+    item_drop->add_drop("synthesizer_coin", 2, 0.05f);
+    item_drop->add_drop("synthesizer_coin", 3, 0.01f);
+    
+    item_drop->set_max_drop_amounts("repair_kit", 1);
+    item_drop->add_drop("repair_kit", 1, 0.02f);
     #endif
 
     #if DC_CLIENT

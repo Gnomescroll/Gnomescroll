@@ -481,15 +481,15 @@ void container_mouse_up_handler(SDL_Event* event)
             //printf("container event: ");
             //printf("id %d ", container_event.container_id);
             //printf("slot %d ", container_event.slot);
-            //printf("nanite %d ", container_event.nanite);
+            //printf("synthesizer %d ", container_event.synthesizer);
             //printf("craft output %d ", container_event.craft_output);
             //printf("\n");
-            ItemContainer::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.nanite_shopping, container_event.craft_output);
+            ItemContainer::mouse_left_click_handler(container_event.container_id, container_event.slot, container_event.synthesizer_shopping, container_event.craft_output);
             break;
 
         case SDL_BUTTON_RIGHT:
             container_event = t_hud::right_mouse_up(x,y);
-            ItemContainer::mouse_right_click_handler(container_event.container_id, container_event.slot, container_event.nanite_shopping, container_event.craft_output);
+            ItemContainer::mouse_right_click_handler(container_event.container_id, container_event.slot, container_event.synthesizer_shopping, container_event.craft_output);
             break;
 
         default:

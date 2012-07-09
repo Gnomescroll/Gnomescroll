@@ -17,23 +17,21 @@ typedef enum
 namespace Item
 {
 
-class NaniteStoreItem
+class SynthesizerItem
 {
     public:
 
     int item_type;
-    int nanite_cost;
+    int synthesizer_cost;
 
-    int level;
     int xslot;
     int yslot;
 
-    NaniteStoreItem()
+    SynthesizerItem()
     {
         item_type = NULL_ITEM_TYPE;
-        nanite_cost = NULL_COST;
+        synthesizer_cost = NULL_COST;
         
-        level = NULL_ITEM_LEVEL;
         xslot = NULL_SLOT;
         yslot = NULL_SLOT;
     }

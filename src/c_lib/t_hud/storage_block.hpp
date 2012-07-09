@@ -279,7 +279,7 @@ void StorageBlockUI::draw()
     for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
-        // the nanite store slots in dat are indexed from 0
+        // the synthesizer store slots in dat are indexed from 0
         // it is not aware of the implementation detail we have for food
         const int slot = xdim*yslot + xslot;
 

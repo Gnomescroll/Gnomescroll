@@ -28,7 +28,7 @@ class ItemContainerInterface
         int owner;
         int chunk;  // TODO -- move to subclass
 
-        bool attached_to_agent; // true for containers permanently attached to agents (inventory, nanite)
+        bool attached_to_agent; // true for containers permanently attached to agents (inventory, synthesizer)
 
         bool is_full()
         {
@@ -186,36 +186,12 @@ class ItemContainerCryofreezer: public ItemContainer
         {}
 };
 
-class ItemContainerNanite: public ItemContainerInterface
+class ItemContainerSynthesizer: public ItemContainerInterface
 {
     public:
-
-        int level;
-
-        #if DC_SERVER
-        int digestion_tick;
-        void digest();
-        #endif
-
-        ItemID get_coins()
-        {
-            return this->get_item(1);
-        }
-
-        ItemID get_food()
-        {
-            return this->get_item(0);
-        }
-
-        void insert_coins(ItemID item_id)
-        {
-            this->insert_item(1, item_id);
-        }
-
-        void insert_food(ItemID item_id)
-        {
-            this->insert_item(0, item_id);
-        }
+    
+		int shopping_xdim;
+		int shopping_ydim;
 
         bool can_insert_item(int slot, ItemID item_id)
         {
@@ -223,24 +199,16 @@ class ItemContainerNanite: public ItemContainerInterface
             if (!this->is_valid_slot(slot)) return false;
             if (item_id == NULL_ITEM) return false;
             int item_type = Item::get_item_type(item_id);
-            if (slot == 0)
-            {   // check against nanite's food
-                return Item::get_nanite_edibility(item_type);
-            }
-            else if (slot == 1)
-            {   // nanite coins only
-                if (item_type == Item::get_item_type((char*)"nanite_coin")) return true;
-                return false;
-            }
-            return false;   // no other slots accept insertions
+            // only allow coins
+            if (item_type == Item::get_item_type((char*)"synthesizer_coin")) return true;
+            return false;
         }
 
         int get_empty_slot()
         {
-            // only food slot can be empty slot
-            GS_ASSERT(this->slot_max > 0);
-            if (this->slot_max <= 0) return NULL_SLOT;
-            if (this->slot[0] == NULL_ITEM) return 0;
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot[i] == NULL_ITEM)
+                    return i;
             return NULL_SLOT;
         }
 
@@ -248,6 +216,12 @@ class ItemContainerNanite: public ItemContainerInterface
         void remove_item(int slot);
 
         /* initializers */
+
+		void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
+		{
+            this->shopping_xdim = shopping_xdim;
+            this->shopping_ydim = shopping_ydim;
+		}
 
         void init(int xdim, int ydim)
         {
@@ -261,12 +235,9 @@ class ItemContainerNanite: public ItemContainerInterface
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
         
-        ItemContainerNanite(ItemContainerType type, int id)
+        ItemContainerSynthesizer(ItemContainerType type, int id)
         : ItemContainerInterface(type, id),
-        level(0)
-        #if DC_SERVER
-        , digestion_tick(0)
-        #endif
+        shopping_xdim(0), shopping_ydim(0)
         {}
 };
 
@@ -521,8 +492,8 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             return new ItemContainer((ItemContainerType)type, id);
 
-        case AGENT_NANITE:
-            return new ItemContainerNanite((ItemContainerType)type, id);
+        case AGENT_SYNTHESIZER:
+            return new ItemContainerSynthesizer((ItemContainerType)type, id);
 
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             return new ItemContainerCraftingBench((ItemContainerType)type, id);

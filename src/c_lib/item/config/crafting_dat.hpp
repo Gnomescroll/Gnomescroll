@@ -52,17 +52,6 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     end_crafting_recipe();
 
-    // Other
-    /*
-    def_crafting_recipe("food_rock-0");
-    set_crafting_reagent("regolith", 1);
-    set_crafting_reagent("regolith", 1);
-    end_crafting_recipe();
-*/
-    def_crafting_recipe("food_rock-0");
-    set_crafting_reagent("regolith", 4);
-    end_crafting_recipe();
-
     def_crafting_recipe("small_storage");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);

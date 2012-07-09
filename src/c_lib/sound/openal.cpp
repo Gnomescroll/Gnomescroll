@@ -1,8 +1,6 @@
 #include "openal.hpp"
 
 #include <sound/sound.hpp>
-//#include <AL/al.h>
-//#include <AL/alc.h>
 #include <common/compat_al.h>
 
 namespace OpenALSound

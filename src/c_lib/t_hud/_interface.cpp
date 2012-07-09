@@ -4,7 +4,7 @@
 #include <t_hud/constants.hpp>
 #include <t_hud/container_hud.hpp>
 #include <t_hud/toolbelt_hud.hpp>
-#include <t_hud/nanite_hud.hpp>
+#include <t_hud/synthesizer_hud.hpp>
 #include <t_hud/storage_block.hpp>
 
 namespace t_hud
@@ -12,7 +12,7 @@ namespace t_hud
 
 class AgentContainerUI* agent_container = NULL;
 class AgentToolbeltUI* agent_toolbelt = NULL;
-class AgentNaniteUI* nanite_container = NULL;
+class AgentSynthesizerUI* synthesizer_container = NULL;
 class CraftingUI* crafting_container = NULL;
 class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
@@ -27,8 +27,8 @@ void set_container_id(ItemContainerType container_type, int container_id)
         case AGENT_TOOLBELT:
             agent_toolbelt->container_id = container_id;
             break;
-        case AGENT_NANITE:
-            nanite_container->container_id = container_id;
+        case AGENT_SYNTHESIZER:
+            synthesizer_container->container_id = container_id;
             break;
             
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
@@ -54,7 +54,7 @@ void close_container(int container_id)
 {
     //if (agent_container != NULL && agent_container->container_id == container_id) agent_container->container_id = NULL_CONTAINER;
     //if (agent_toolbelt != NULL && agent_toolbelt->container_id == container_id) agent_toolbelt->container_id = NULL_CONTAINER;
-    //if (nanite_container != NULL && nanite_container->container_id == container_id) nanite_container->container_id = NULL_CONTAINER;
+    //if (synthesizer_container != NULL && synthesizer_container->container_id == container_id) synthesizer_container->container_id = NULL_CONTAINER;
     
     // unset ids for variable container UIs
     if (crafting_container != NULL && crafting_container->container_id == container_id) crafting_container->container_id = NULL_CONTAINER;
@@ -114,7 +114,7 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
     UIElement* inventories[n_inventories] = {
         agent_container,
         agent_toolbelt,
-        nanite_container,
+        synthesizer_container,
         crafting_container,
         storage_block,
         smelter,
@@ -151,9 +151,9 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     ContainerInputEvent event;
     event.container_id = container_id;
     event.slot = slot;
-    event.nanite_shopping = (container != NULL
-                 && container->type == UI_ELEMENT_NANITE_CONTAINER
-                 && ((AgentNaniteUI*)container)->in_shopping_region(x,y));
+    event.synthesizer_shopping = (container != NULL
+                 && container->type == UI_ELEMENT_SYNTHESIZER_CONTAINER
+                 && ((AgentSynthesizerUI*)container)->in_shopping_region(x,y));
     event.craft_output = (container != NULL
                         && container->type == UI_ELEMENT_CRAFTING_CONTAINER
                         && ((CraftingUI*)container)->in_craft_output_region(x,y));
@@ -174,14 +174,18 @@ static int get_item_type_at(int x, int y)
     ItemContainerUIInterface* container = ItemContainer::get_container_ui(ui->container_id);
     if (container == NULL) return NULL_ITEM_TYPE;
 
-    if (ui->type == UI_ELEMENT_NANITE_CONTAINER)
+    if (ui->type == UI_ELEMENT_SYNTHESIZER_CONTAINER)
     {
-        if (((AgentNaniteUI*)ui)->in_shopping_region(x,y))
+        if (((AgentSynthesizerUI*)ui)->in_shopping_region(x,y))
         {
-            int xslot = slot % ((AgentNaniteUI*)ui)->shopping_xdim;
-            int yslot = slot / ((AgentNaniteUI*)ui)->shopping_xdim;
-            return Item::get_nanite_store_item(((AgentNaniteUI*)ui)->level, xslot, yslot);
+            int xslot = slot % ((AgentSynthesizerUI*)ui)->shopping_xdim;
+            int yslot = slot / ((AgentSynthesizerUI*)ui)->shopping_xdim;
+            return Item::get_synthesizer_item(xslot, yslot);
         }
+        else if (((AgentSynthesizerUI*)ui)->in_coins_region(x,y))
+			return container->get_slot_type(0);
+		else
+			return NULL_ITEM_TYPE;
     }
     
     if (ui->type == UI_ELEMENT_CRAFTING_CONTAINER)
@@ -197,7 +201,7 @@ static const ContainerInputEvent NULL_EVENT =
 {
     NULL_CONTAINER,         // null container id
     NULL_SLOT,              // null slot
-    false,                 // nanite shopping click
+    false,                 // synthesizer shopping click
     false,                 // craft output
 };
 
@@ -244,7 +248,7 @@ ContainerInputEvent scroll_up()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
-    event.nanite_shopping = false;
+    event.synthesizer_shopping = false;
     event.craft_output = false;
     return event;
 }
@@ -258,7 +262,7 @@ ContainerInputEvent scroll_down()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
-    event.nanite_shopping = false;
+    event.synthesizer_shopping = false;
     event.craft_output = false;
     return event;
 }
@@ -275,7 +279,7 @@ ContainerInputEvent select_slot(int numkey)
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = slot;
-    event.nanite_shopping = false;
+    event.synthesizer_shopping = false;
     event.craft_output = false;
     return event;
 }
@@ -427,7 +431,7 @@ void draw_hud()
     if (!agent_container_enabled && !container_block_enabled) return;
 
     agent_container->draw();
-    nanite_container->draw();
+    synthesizer_container->draw();
     if (container_block_enabled)
     {
         GS_ASSERT(container_block_enabled_id != NULL_CONTAINER);
@@ -486,11 +490,11 @@ void init()
     agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
     agent_toolbelt->init();
 
-    nanite_container = new AgentNaniteUI;
-    nanite_container->type = UI_ELEMENT_NANITE_CONTAINER;
-    nanite_container->xoff = (_xresf - nanite_container->width())/2;
-    nanite_container->yoff = 150.0f + (_yresf + nanite_container->height())/2;
-    nanite_container->init();
+    synthesizer_container = new AgentSynthesizerUI;
+    synthesizer_container->type = UI_ELEMENT_SYNTHESIZER_CONTAINER;
+    synthesizer_container->xoff = (_xresf - synthesizer_container->width())/2;
+    synthesizer_container->yoff = 150.0f + (_yresf + synthesizer_container->height())/2;
+    synthesizer_container->init();
 
     crafting_container = new CraftingUI;
     crafting_container->type = UI_ELEMENT_CRAFTING_CONTAINER;
@@ -527,7 +531,7 @@ void teardown()
 {
     if (agent_container != NULL) delete agent_container;
     if (agent_toolbelt != NULL) delete agent_toolbelt;
-    if (nanite_container != NULL) delete nanite_container;
+    if (synthesizer_container != NULL) delete synthesizer_container;
     if (crafting_container != NULL) delete crafting_container;
     if (storage_block != NULL) delete storage_block;
     if (smelter != NULL) delete smelter;

@@ -100,7 +100,6 @@ void tick()
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 8);
 
-    ItemContainer::digest_nanite_food();
     ItemContainer::update_smelters();
     Item::item_list->tick();
     Item::item_list->verify_items();

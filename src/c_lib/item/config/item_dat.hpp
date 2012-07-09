@@ -62,21 +62,20 @@ void load_item_dat()
     s.pretty_name = (char*)"Plasma Grenade";
     s.max_stack_size = 100;
 
-    item_def(9, IG_RESOURCE, "food_rock-0");
-    sprite_def(i1, 1,4);
-    s.pretty_name = (char*)"Small Rock";
-    s.max_stack_size = 16;
-    s.nanite_food = true;
+    //item_def(9, IG_RESOURCE, "food_rock-0");
+    //sprite_def(i1, 1,4);
+    //s.pretty_name = (char*)"Small Rock";
+    //s.max_stack_size = 16;
 
     //item_def(10, IG_RESOURCE, "blue_crystal");
     //sprite_def(i0, 1,4);
     //s.pretty_name = (char*)"Blue Crystal";
     //s.max_stack_size = 8;
 
-    item_def(11, IG_NANITE_COIN, "nanite_coin");
+    item_def(11, IG_SYNTHESIZER_COIN, "synthesizer_coin");
     sprite_def(i1, 2, 7);
-    s.pretty_name = (char*)"Nanite Chip";
-    s.max_stack_size = 99;
+    s.pretty_name = (char*)"Synthesizer Chip";
+    s.max_stack_size = 999;
 
     item_def(12, IG_DEBUG, "location_pointer");
     sprite_def(i0, 4,2);

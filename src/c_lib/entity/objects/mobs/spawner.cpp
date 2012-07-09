@@ -16,7 +16,7 @@ void load_mob_spawner_data()
     ObjectType type = OBJECT_MONSTER_SPAWNER;
     
     #if DC_SERVER
-    const int n_components = 5;
+    const int n_components = 6;
     #endif
     #if DC_CLIENT
     const int n_components = 6;
@@ -30,6 +30,9 @@ void load_mob_spawner_data()
     object_data->attach_component(type, COMPONENT_HIT_POINTS);
     object_data->attach_component(type, COMPONENT_MONSTER_SPAWNER);
 
+	#if DC_SERVER
+	object_data->attach_component(type, COMPONENT_ITEM_DROP);
+	#endif
     #if DC_CLIENT
     object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
@@ -59,6 +62,23 @@ static void set_mob_spawner_properties(Object* object)
     spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
     spawner->max_children = MONSTER_SPAWNER_MAX_CHILDREN;
     spawner->spawn_type = OBJECT_NONE; // allows any
+
+	#if DC_SERVER
+	using Components::ItemDropComponent;
+	ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+	GS_ASSERT(item_drop != NULL);
+	item_drop->set_max_drop_types(2);
+	item_drop->set_max_drop_amounts("synthesizer_coin", 3);
+	item_drop->add_drop("synthesizer_coin", 4, 0.5f);
+	item_drop->add_drop("synthesizer_coin", 6, 0.35f);
+	item_drop->add_drop("synthesizer_coin", 8, 0.15f);
+	
+	item_drop->set_max_drop_amounts("repair_kit", 4);
+	item_drop->add_drop("repair_kit", 1, 0.50f);
+	item_drop->add_drop("repair_kit", 2, 0.25f);
+	item_drop->add_drop("repair_kit", 3, 0.15f);
+	item_drop->add_drop("repair_kit", 4, 0.05f);
+	#endif
 
     #if DC_CLIENT
     using Components::AnimationComponent;
@@ -108,6 +128,12 @@ void ready_mob_spawner(Object* object)
 void die_mob_spawner(Object* object)
 {
     #if DC_SERVER
+    // drop item
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    GS_ASSERT(item_drop != NULL);
+    item_drop->drop_item();
+
     object->broadcastDeath();
     #endif
 

@@ -244,9 +244,9 @@ static float y_sensitivity = 1 / (2*3.1415f*DEFAULT_Y_SENSITIVITY_COEFFICIENT);
 static const float dampening = DEFAULT_DAMPENING;
 static float linear_sensitivity = 1 / (2 * 3.14159f * DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT* DEFAULT_SENSITIVITY_OPTION);
 
-static const int MOUSE_MOVEMENT_ARRAY_INDEX_MAX = 1000;
+static const unsigned int MOUSE_MOVEMENT_ARRAY_INDEX_MAX = 1000;
 static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX_MAX];
-static int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
+static unsigned int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
 
 /*
     Normalize vx,vy by time since last frame!
@@ -273,7 +273,7 @@ void apply_camera_physics()
     const float cfactor = 1.0f/33.3333f;
     float _dampening = powf(dampening, cfactor); // dampening per frame
 
-    int index = 0;
+    unsigned int index = 0;
    
     float accum_dx = 0;
     float accum_dy = 0;
@@ -324,14 +324,14 @@ void apply_camera_physics()
     /*
     if(index != MOUSE_MOVEMENT_ARRAY_INDEX)
     {
-        printf("apply_camera_physics, error: index= %i MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
+        printf("apply_camera_physics, error: index= %d MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
 
         printf("start_time= %li \n ",_start_time);
         printf("end_time= %li \n ",LAST_MOUSE_MOVEMENT_TIME);
         
-        for(int i=0; i<MOUSE_MOVEMENT_ARRAY_INDEX; i++ )
+        for(unsigned int i=0; i<MOUSE_MOVEMENT_ARRAY_INDEX; i++ )
         {
-            printf("mouse move %i: at time %li \n", i, MOUSE_MOVEMENT_ARRAY[i].time);
+            printf("mouse move %d: at time %li \n", i, MOUSE_MOVEMENT_ARRAY[i].time);
         }
         printf("end error\n");
     }
@@ -385,6 +385,9 @@ void poll_mouse()
     m.time = _GET_MS_TIME();
     m.dx = dx;
     m.dy = dy;
+
+	GS_ASSERT(MOUSE_MOVEMENT_ARRAY_INDEX < MOUSE_MOVEMENT_ARRAY_INDEX_MAX);
+	if (MOUSE_MOVEMENT_ARRAY_INDEX >= MOUSE_MOVEMENT_ARRAY_INDEX_MAX) return;
 
     MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX] = m;
     MOUSE_MOVEMENT_ARRAY_INDEX++;

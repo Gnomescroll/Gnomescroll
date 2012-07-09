@@ -35,8 +35,8 @@ int get_event_container_id(int event_id);
 class ItemContainerUIInterface* get_container_ui(int container_id);
 ItemID get_toolbelt_item(int slot);
 
-void mouse_right_click_handler(int container_id, int slot, bool nanite, bool craft_output);
-void mouse_left_click_handler(int container_id, int slot, bool nanite, bool craft_output);
+void mouse_right_click_handler(int container_id, int slot, bool synthesizer, bool craft_output);
+void mouse_left_click_handler(int container_id, int slot, bool synthesizer, bool craft_output);
 
 ItemID* get_container_contents(int container_id);
 int get_sprite_index_for_id(ItemID item_id);
@@ -59,6 +59,7 @@ bool agent_can_access_container(int agent_id, int container_id);
 ItemID get_agent_hand(int agent_id);
 int get_agent_container(int agent_id);
 int get_agent_toolbelt(int agent_id);
+int get_agent_synthesizer(int agent_id);
 ItemID get_agent_toolbelt_item(int agent_id, int slot);
 
 ItemContainerInterface* create_container(ItemContainerType type);
@@ -70,8 +71,7 @@ void agent_born(int agent_id);
 void agent_died(int agent_id);
 void agent_quit(int agent_id);
 
-void digest_nanite_food();
-void purchase_item_from_nanite(int agent_id, int shopping_slot);
+void purchase_item_from_synthesizer(int agent_id, int shopping_slot);
 
 void craft_item_from_bench(int agent_id, int container_id, int craft_slot);
 bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id);

@@ -154,7 +154,7 @@ namespace ServerState
         // inventory is not in entity system, so these have no effect
         Objects::send_to_client(OBJECT_AGENT_INVENTORY, client_id);
         Objects::send_to_client(OBJECT_AGENT_TOOLBELT, client_id);
-        Objects::send_to_client(OBJECT_NANITE_INVENTORY, client_id);
+        Objects::send_to_client(OBJECT_SYNTHESIZER_INVENTORY, client_id);
         Objects::send_to_client(OBJECT_CRAFTING_BENCH, client_id);
 
         ItemParticle::send_particle_items_to_client(client_id);

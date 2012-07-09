@@ -44,12 +44,6 @@ const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 // state broadcast rate
 const int MONSTER_BOMB_BROADCAST_RATE = 30; // once every 30 ticks
 
-// item drop
-const char* MONSTER_BOMB_ITEM_DROP_NAME = "grenade_launcher";
-// avg drop size; 5.5, 5.5 * 0.8 = 4.4 grenades per slime
-const float MONSTER_BOMB_ITEM_DROP_PROBABILITY = 0.8f;
-const int MONSTER_BOMB_ITEM_DROP_MAX_AMOUNT = 10;    // TODO --  a good item drop table
-
 /* MONSTER_BOX */
 
 // health
@@ -93,12 +87,6 @@ const int MONSTER_BOX_MOTION_MAX_Z_UP = 3;
 
 // state broadcast rate
 const int MONSTER_BOX_BROADCAST_RATE = 30; // once every 30 ticks
-
-// item drop
-const char* MONSTER_BOX_ITEM_DROP_NAME = "repair_kit";
-// avg drop size; 5.5, 5.5 * 0.8 = 4.4 grenades per slime
-const float MONSTER_BOX_ITEM_DROP_PROBABILITY = 0.02f;
-const int MONSTER_BOX_ITEM_DROP_MAX_AMOUNT = 1;    // TODO --  a good item drop table
 
 /* Monster spawners */
 

@@ -172,63 +172,37 @@ class ItemContainerUI: public ItemContainerUIInterface
         {}
 };
 
-class ItemContainerNaniteUI: public ItemContainerUIInterface
+class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 {
     public:
-
-        int get_food_type()
-        {
-            return this->get_slot_type(0);
-        }
-        
-        int get_food_stack()
-        {
-            return this->get_slot_stack(0);
-        }
-
-        int get_coin_type()
-        {
-            return this->get_slot_type(1);
-        }
-        
-        int get_coin_stack()
-        {
-            return this->get_slot_stack(1);
-        }
 
         bool can_insert_item(int slot, int item_type)
         {
             GS_ASSERT(this->is_valid_slot(slot));
             if (!this->is_valid_slot(slot)) return false;
-            if (slot == 0)
-            {   // check against nanite's food
-                return Item::get_nanite_edibility(item_type);
-            }
-            else if (slot == 1)
-            {   // nanite coins only
-                if (item_type == Item::get_item_type((char*)"nanite_coin")) return true;
-                return false;
-            }
+            // synthesizer coins only
+			if (item_type == Item::get_item_type((char*)"synthesizer_coin")) return true;
             return false;   // no other slots accept insertions
         }
 
         int get_stackable_slot(int item_type, int stack_size)
         {
-            // check food slot
-            if (this->slot_type[0] == item_type
-            && (Item::get_max_stack_size(this->slot_type[0]) - this->slot_stack[0]) >= stack_size)
-                return 0;
-            // check coin slot
-            if (this->slot_type[1] == item_type
-            && (Item::get_max_stack_size(this->slot_type[1]) - this->slot_stack[1]) >= stack_size)
-                return 1;
+			if (item_type != Item::get_item_type((char*)"synthesizer_coin")) return NULL_SLOT; // coin only
+            for (int i=0; i<this->slot_max; i++)
+            {
+                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
+                if (this->slot_type[i] == item_type   // stacks
+                && (Item::get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
+                    return i;
+            }
             return NULL_SLOT;
         }
 
         int get_empty_slot()
         {
-            // only food slot can be empty slot
-            if (this->slot_type[0] == NULL_ITEM_TYPE) return 0;
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot_type[i] == NULL_ITEM_TYPE)
+                    return i;
             return NULL_SLOT;
         }
 
@@ -247,7 +221,7 @@ class ItemContainerNaniteUI: public ItemContainerUIInterface
             for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
         }
 
-        explicit ItemContainerNaniteUI(int id)
+        explicit ItemContainerSynthesizerUI(int id)
         : ItemContainerUIInterface(id)
         {}
 };

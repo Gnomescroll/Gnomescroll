@@ -8,9 +8,9 @@ namespace ItemContainer
 // dummies
 inline void container_action_alpha_CtoS::handle() {}
 inline void container_action_beta_CtoS::handle() {}
-inline void nanite_container_action_alpha_CtoS::handle() {}
-inline void nanite_container_action_beta_CtoS::handle() {}
-inline void purchase_item_from_nanite_action_CtoS::handle(){}
+inline void synthesizer_container_action_alpha_CtoS::handle() {}
+inline void synthesizer_container_action_beta_CtoS::handle() {}
+inline void purchase_item_from_synthesizer_action_CtoS::handle(){}
 inline void craft_container_action_alpha_CtoS::handle() {}
 inline void craft_container_action_beta_CtoS::handle() {}
 inline void craft_item_from_bench_action_CtoS::handle() {}
@@ -99,7 +99,7 @@ inline void container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
 }
 
-inline void nanite_container_action_alpha_CtoS::handle()
+inline void synthesizer_container_action_alpha_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
@@ -109,7 +109,7 @@ inline void nanite_container_action_alpha_CtoS::handle()
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = nanite_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = synthesizer_alpha_action_decision_tree(a->id, client_id, container_id, slot);
 
     if (this->action != action)
     {
@@ -129,7 +129,7 @@ inline void nanite_container_action_alpha_CtoS::handle()
         send_container_failed_action(client_id, event_id);
 }
 
-inline void nanite_container_action_beta_CtoS::handle()
+inline void synthesizer_container_action_beta_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
@@ -139,7 +139,7 @@ inline void nanite_container_action_beta_CtoS::handle()
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = nanite_beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = synthesizer_beta_action_decision_tree(a->id, client_id, container_id, slot);
 
     if (this->action != action)
     {
@@ -160,14 +160,14 @@ inline void nanite_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
 }
 
-inline void purchase_item_from_nanite_action_CtoS::handle()
+inline void purchase_item_from_synthesizer_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
 
-    purchase_item_from_nanite(a->id, slot);
+    purchase_item_from_synthesizer(a->id, slot);
 }
 
 inline void craft_container_action_alpha_CtoS::handle()

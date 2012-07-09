@@ -668,6 +668,18 @@ DONE
 clean up implicit 64-32 conversion warning in xcode
 DONE
 
+==============
+== BUILD 23 ==  Jul 7 2012
+==============
+
+front face culling for voxel weapon & disable depth test
+DONE
+
+get rid of nanite feeding
+drop chips from enemies, blocks
+chips go directly into nanite chip slot
+change nanite texture to remove graphic
+DONE
 
 ----------------------
 
@@ -691,7 +703,6 @@ texture color problem in OSX -- for blocks and for items
 Improve Hud Weapon sprites animations
 textured voxels / isometric blocks should use full palette info, instead of only one side
 better font
-use backface culling on hud item rendered voxels and re-enable the depth test
 
 == SOUND ==
 improve digging sounds
@@ -764,12 +775,6 @@ A: we can make it 1x1 but treat it as an object/model. it will render at its loc
     as a block, it will be set to invisible so no texture is rendered.
     Solid must also be false, so hitscan can pass through.
  
-----------
-get rid of nanite feeding
-drop chips from enemies, blocks
-chips go directly into nanite chip slot
-change nanite texture to remove graphic
-
 ----------
 Health system
 

@@ -427,7 +427,7 @@ void CraftingUI::draw()
     for (int xslot=0; xslot<input_xdim; xslot++)
     for (int yslot=0; yslot<input_ydim; yslot++)
     {
-        // the nanite store slots in dat are indexed from 0
+        // the synthesizer store slots in dat are indexed from 0
         // it is not aware of the implementation detail we have for food
         const int slot = input_xdim*yslot + xslot;
 
@@ -451,7 +451,7 @@ void CraftingUI::draw()
     for (int xslot=0; xslot<output_xdim; xslot++)
     for (int yslot=0; yslot<output_ydim; yslot++)
     {
-        // the nanite store slots in dat are indexed from 0
+        // the synthesizer store slots in dat are indexed from 0
         // it is not aware of the implementation detail we have for food
         const int slot = output_xdim*yslot + xslot;
 
