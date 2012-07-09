@@ -182,6 +182,10 @@ static int get_item_type_at(int x, int y)
             int yslot = slot / ((AgentSynthesizerUI*)ui)->shopping_xdim;
             return Item::get_synthesizer_item(xslot, yslot);
         }
+        else if (((AgentSynthesizerUI*)ui)->in_coins_region(x,y))
+			return container->get_slot_type(0);
+		else
+			return NULL_ITEM_TYPE;
     }
     
     if (ui->type == UI_ELEMENT_CRAFTING_CONTAINER)
