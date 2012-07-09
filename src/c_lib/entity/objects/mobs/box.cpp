@@ -104,9 +104,9 @@ static void set_mob_robot_box_properties(Object* object)
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
     item_drop->set_max_drop_types(2);
     item_drop->set_max_drop_amounts("synthesizer_coin", 3);
-    item_drop->add_drop("synthesizer_coin", 1, 0.3f);
-    item_drop->add_drop("synthesizer_coin", 2, 0.1f);
-    item_drop->add_drop("synthesizer_coin", 3, 0.05f);
+    item_drop->add_drop("synthesizer_coin", 1, 0.2f);
+    item_drop->add_drop("synthesizer_coin", 2, 0.05f);
+    item_drop->add_drop("synthesizer_coin", 3, 0.01f);
     
     item_drop->set_max_drop_amounts("repair_kit", 1);
     item_drop->add_drop("repair_kit", 1, 0.02f);

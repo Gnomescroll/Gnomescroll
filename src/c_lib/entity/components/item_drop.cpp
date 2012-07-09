@@ -89,12 +89,13 @@ void ItemDropEntry::drop_item(Vec3 position)
 	float p_start = 0.0f;
 	for (int i=0; i<this->n_drops; i++)
 	{
-		if (p >= p_start && p <= p_start+this->probability[i])
+		float drop_p = this->probability[i];
+		if (p >= p_start && p <= p_start+drop_p)
 		{	// drop
 			create_dropped_item(this->item_type, this->amount[i], position);
 			break;
 		}
-		p_start += this->probability[i];
+		p_start += drop_p;
 		GS_ASSERT(p_start < 1.0001f);
 	}
 }

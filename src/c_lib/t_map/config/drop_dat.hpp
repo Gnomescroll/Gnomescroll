@@ -19,7 +19,7 @@ void load_map_drop_dat()
         set_drop(0.20f, 2);
 
 		add_drop("synthesizer_coin", 1);
-		set_drop(0.05f, 1);
+		set_drop(0.02f, 1);
 			
     def_drop("small_storage");
         drop_always("small_storage");
