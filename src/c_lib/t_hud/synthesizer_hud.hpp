@@ -15,8 +15,8 @@ class AgentSynthesizerUI : public UIElement
 
     static const int cell_size = 37;    // pixel dimension
 
-    static const int shopping_xdim = 5;
-    static const int shopping_ydim = 2;
+    static const int shopping_xdim = AGENT_SYNTHESIZER_SHOPPING_X;
+    static const int shopping_ydim = AGENT_SYNTHESIZER_SHOPPING_Y;
 
     static const int xdim = shopping_xdim + 1;
     static const int ydim = shopping_ydim;
@@ -391,7 +391,7 @@ void AgentSynthesizerUI::draw()
         GS_ASSERT(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
 
         const int slot = yslot*shopping_xdim + xslot;
-        GS_ASSERT(slot < shopping_xdim*shopping_ydim-1);
+        GS_ASSERT(slot < shopping_xdim*shopping_ydim);
         HudText::Text* text = &this->prices[slot];
 		if (cost <= 0)
 			text->set_text((char*)"FREE");

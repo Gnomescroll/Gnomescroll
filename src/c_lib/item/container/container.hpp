@@ -189,6 +189,9 @@ class ItemContainerCryofreezer: public ItemContainer
 class ItemContainerSynthesizer: public ItemContainerInterface
 {
     public:
+    
+		int shopping_xdim;
+		int shopping_ydim;
 
         bool can_insert_item(int slot, ItemID item_id)
         {
@@ -214,6 +217,12 @@ class ItemContainerSynthesizer: public ItemContainerInterface
 
         /* initializers */
 
+		void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
+		{
+            this->shopping_xdim = shopping_xdim;
+            this->shopping_ydim = shopping_ydim;
+		}
+
         void init(int xdim, int ydim)
         {
             this->xdim = xdim;
@@ -227,7 +236,8 @@ class ItemContainerSynthesizer: public ItemContainerInterface
         }
         
         ItemContainerSynthesizer(ItemContainerType type, int id)
-        : ItemContainerInterface(type, id)
+        : ItemContainerInterface(type, id),
+        shopping_xdim(0), shopping_ydim(0)
         {}
 };
 

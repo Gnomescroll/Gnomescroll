@@ -34,6 +34,7 @@ void init_container(ItemContainerInterface* container)
         case AGENT_SYNTHESIZER:
             container->attached_to_agent = true;
             container->init(AGENT_SYNTHESIZER_X, AGENT_SYNTHESIZER_Y);
+            ((ItemContainerSynthesizer*)container)->set_shopping_parameters(AGENT_SYNTHESIZER_SHOPPING_X, AGENT_SYNTHESIZER_SHOPPING_Y);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             container->attached_to_agent = false;
