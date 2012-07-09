@@ -11,6 +11,7 @@
 
 //#include "_c_lib.hpp"
 
+
 namespace Main
 {
 
@@ -20,7 +21,7 @@ void init()
 {
     init_c_lib();
 
-    printf("generating map \n");
+
     if (0)
     {
         MapGen::init();
@@ -34,18 +35,20 @@ void init()
     else
     {
         srand(Options::seed);
+
         t_gen::noise_map_generate_map();
+        
         t_map::map_post_processing(); //regolith stuff
-        //t_gen::start_cave_generator();
         t_gen::populate_ore();
+        t_gen::start_cave_generator();
+
         //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         map_gen::rough_floor(512,512,0,3, t_map::get_cube_id((char*)"bedrock"));
         //Dragon::caves();
         //Dragon::flat_veins();
     }   
-    printf("done generating map \n");
 
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     
     //t_gen::gen_map();
 
@@ -102,7 +105,6 @@ void tick()
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 8);
 
-    ItemContainer::digest_nanite_food();
     ItemContainer::update_smelters();
     Item::item_list->tick();
     Item::item_list->verify_items();
@@ -145,13 +147,10 @@ int run()
     #ifdef __MSVC__
         Sleep(1);
     #endif
-
-    //static int _i = 0;
-    //_i++;
-    //printf("_i= %i \n", _i);
     }
     close_c_lib();
     return 0;
 }
 
 }
+

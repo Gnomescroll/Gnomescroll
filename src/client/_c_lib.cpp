@@ -15,8 +15,13 @@ dont_include_this_file_in_server
 #include <string.h>
 #include <math.h>
 
-#ifdef __GNUC__
-    #include <unistd.h>
+#ifdef __MINGW32__
+    #include <malloc.h> //alloca function
+#endif
+
+#ifdef _WIN32
+    #include "windows.h"
+    #undef interface
 #endif
 
 #ifdef __APPLE__
@@ -70,7 +75,6 @@ dont_include_this_file_in_server
 #include <physics/mat4.hpp>
 #include <physics/affine.hpp>
 
-//#include <physics/color_matrix.cpp>
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
 #include <physics/ray_trace/handlers.cpp>
@@ -225,7 +229,7 @@ int init_c_lib()
     AgentHudName::verify_configuration();
 
     LUA::load_options(); //load game options
-    srand(time(NULL));   // seed the RNG
+    srand((unsigned int)time(NULL));   // seed the RNG
 
     Components::init();
     Objects::init_net_interfaces();
@@ -263,7 +267,7 @@ int init_c_lib()
 
     //t_map::load_map_dat();
     Item::load_item_dat();
-    Item::load_nanite_store();
+    Item::load_synthesizer();
 
     t_map::load_map_drop_dat(); //load drop dat after items
 
