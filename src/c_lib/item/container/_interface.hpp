@@ -4,6 +4,7 @@
 
 namespace ItemContainer
 {
+
 void init();
 void teardown();
 
@@ -18,6 +19,7 @@ void container_block_destroyed(int container_id, int x, int y, int z);
 #if DC_CLIENT
 namespace ItemContainer
 {
+
 class ItemContainerInterface* create_container(ItemContainerType type, int id);
 
 void update_container_ui_from_state();

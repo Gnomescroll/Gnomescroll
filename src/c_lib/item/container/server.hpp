@@ -18,7 +18,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
 void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int slot, int agent_id);
 
 // brand new item -> container/hand
-void transfer_free_item_to_container(ItemID item_id, int container_id, int slot);
+bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot);
 void transfer_free_item_to_hand(ItemID item_id, int agent_id);
 
 // particle -> container/hand

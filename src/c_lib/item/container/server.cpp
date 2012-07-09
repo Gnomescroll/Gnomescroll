@@ -193,23 +193,23 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
 }
 
 // new unassigned item to container
-void transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
+bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(slot != NULL_SLOT);
 
-    if (item_id == NULL_ITEM) return;
-    if (container_id == NULL_CONTAINER) return;
-    if (slot == NULL_SLOT) return;
+    if (item_id == NULL_ITEM) return false;
+    if (container_id == NULL_CONTAINER) return false;
+    if (slot == NULL_SLOT) return false;
 
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    if (item == NULL) return false;
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    if (container == NULL) return false;
 
     GS_ASSERT(container->is_valid_slot(slot));
     GS_ASSERT(container->get_item(slot) == NULL_ITEM);
@@ -229,6 +229,8 @@ void transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
     }
     if (owner != NULL)
         send_container_insert(owner->client_id, item->id, container->id, slot);
+
+    return true;
 }
 
 // new unassigned item to hand
