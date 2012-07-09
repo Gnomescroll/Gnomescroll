@@ -31,9 +31,9 @@ void init_container(ItemContainerInterface* container)
             container->attached_to_agent = true;
             container->init(AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
             break;
-        case AGENT_NANITE:
+        case AGENT_SYNTHESIZER:
             container->attached_to_agent = true;
-            container->init(AGENT_NANITE_X, AGENT_NANITE_Y);
+            container->init(AGENT_SYNTHESIZER_X, AGENT_SYNTHESIZER_Y);
             break;
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             container->attached_to_agent = false;
@@ -112,9 +112,9 @@ void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
     ItemContainer::insert_item(slot, item_id);
 }
 
-/* Nanite */
+/* Synthesizer */
 
-void ItemContainerNanite::insert_item(int slot, ItemID item_id)
+void ItemContainerSynthesizer::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
@@ -131,13 +131,9 @@ void ItemContainerNanite::insert_item(int slot, ItemID item_id)
         item->location_id = this->id;
         item->container_slot = slot;
     }
-
-    #if DC_SERVER
-    if (slot == 0) this->digestion_tick = 0;
-    #endif
 }
 
-void ItemContainerNanite::remove_item(int slot)
+void ItemContainerSynthesizer::remove_item(int slot)
 {
     GS_ASSERT(this->is_valid_slot(slot));
     if (!this->is_valid_slot(slot)) return;
@@ -158,62 +154,6 @@ void ItemContainerNanite::remove_item(int slot)
     this->slot[slot] = NULL_ITEM;
     this->slot_count--;
 }
-
-#if DC_SERVER
-void ItemContainerNanite::digest()
-{
-    GS_ASSERT(this->slot_max > 0);
-    if (this->slot_max <= 0) return;
-    
-    // dont eat if coins are full
-    ItemID coins_id = this->get_coins();
-    if (coins_id != NULL_ITEM)
-    {
-        int coins_type = Item::get_item_type(coins_id);
-        if (Item::get_stack_size(coins_id) >= Item::get_max_stack_size(coins_type)) return;
-    }
-
-    // tick digestion
-    this->digestion_tick++;
-    if (this->digestion_tick % NANITE_DIGESTION_RATE != 0) return;
-    ItemID item_id = this->slot[0];
-    if (item_id == NULL_ITEM) return;
-
-    // decrement stack
-    Item::Item* item = Item::get_item_object(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
-    item->stack_size -= 1;
-    
-    Agent_state* a = STATE::agent_list->get(this->owner);
-
-    // send new food state
-    if (item->stack_size <= 0)
-    {
-        this->remove_item(0);
-        if (a != NULL) send_container_remove(a->client_id, this->id, 0);
-        Item::destroy_item(item_id);
-    }
-    else
-    {
-        if (a != NULL) Item::send_item_state(item->id);
-    }
-
-    // update coins
-    if (coins_id == NULL_ITEM)
-    {   // no coins were in coin slot, create new stack
-        Item::Item* coin = Item::create_item((char*)"nanite_coin");
-        GS_ASSERT(coin != NULL);
-        transfer_free_item_to_container(coin->id, this->id, this->slot_max-1);
-    }
-    else
-    {   // add to existing coin stack
-        Item::Item* coins = Item::get_item_object(coins_id);
-        coins->stack_size += 1;
-        if (a != NULL) Item::send_item_state(coins_id);
-    }
-}
-#endif
 
 /* Crafting Bench */
 

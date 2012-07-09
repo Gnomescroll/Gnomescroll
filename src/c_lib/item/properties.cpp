@@ -16,7 +16,7 @@ namespace Item
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 ItemGroup group_array[MAX_ITEMS];
 class ItemAttribute* item_attribute_array = NULL;
-class NaniteStoreItem* nanite_store_item_array = NULL;
+class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
 class SmeltingRecipe* smelting_recipe_array = NULL;
 
@@ -41,8 +41,8 @@ void init_properties()
 
     GS_ASSERT(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
-    GS_ASSERT(nanite_store_item_array == NULL);
-    nanite_store_item_array = new NaniteStoreItem[MAX_ITEMS];
+    GS_ASSERT(synthesizer_item_array == NULL);
+    synthesizer_item_array = new SynthesizerItem[MAX_ITEMS];
 
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
     smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
@@ -51,7 +51,7 @@ void init_properties()
 void tear_down_properties()
 {
     if (item_attribute_array    != NULL) delete[] item_attribute_array;
-    if (nanite_store_item_array != NULL) delete[] nanite_store_item_array;
+    if (synthesizer_item_array != NULL) delete[] synthesizer_item_array;
     if (crafting_recipe_array != NULL) delete[] crafting_recipe_array;
     if (smelting_recipe_array != NULL) delete[] smelting_recipe_array;
 }
@@ -240,28 +240,20 @@ int get_item_object_damage(int weapon_type)
     return randrange(attr->object_damage_min, attr->object_damage_max);
 }
 
-bool get_nanite_edibility(int item_type)
-{
-    ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
-    return attr->nanite_food;
-}
-
-int get_nanite_store_item(int level, int xslot, int yslot)
+int get_synthesizer_item(int xslot, int yslot)
 {
     int cost;
-    return get_nanite_store_item(level, xslot, yslot, &cost);
+    return get_synthesizer_item(xslot, yslot, &cost);
 }
 
-int get_nanite_store_item(int level, int xslot, int yslot, int* cost)
+int get_synthesizer_item(int xslot, int yslot, int* cost)
 {
     for(int i=0; i<MAX_ITEMS; i++)
     {
-        class NaniteStoreItem* n = &nanite_store_item_array[i];
-        if(n->level == level && n->xslot == xslot && n->yslot == yslot)
+        class SynthesizerItem* n = &synthesizer_item_array[i];
+        if(n->xslot == xslot && n->yslot == yslot)
         {
-            *cost = n->nanite_cost;
+            *cost = n->synthesizer_cost;
             return n->item_type;
         }
     }

@@ -12,7 +12,7 @@ extern int container_event[CONTAINER_EVENT_MAX];
 
 int record_container_event(int container_id);
 
-void mouse_left_click_handler(int container_id, int slot, bool nanite_shopping, bool craft_output);
-void mouse_right_click_handler(int container_id, int slot, bool nanite_shopping, bool craft_output);
+void mouse_left_click_handler(int container_id, int slot, bool synthesizer_shopping, bool craft_output);
+void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shopping, bool craft_output);
 
 }   // ItemContainer

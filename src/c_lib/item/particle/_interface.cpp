@@ -259,6 +259,9 @@ static void split_item_particle(Item::Item* item, ItemParticle* particle, int it
 // into container/etc that I was not able to write generically while ensuring correct state transition order
 void check_item_pickups()
 {
+	int coin_type = Item::get_item_type("synthesizer_coin");
+	GS_ASSERT(coin_type != NULL_ITEM_TYPE);
+	
     for (int i=0; i<item_particle_list->n_max; i++)
     {
         if (item_particle_list->a[i] == NULL) continue;
@@ -274,13 +277,66 @@ void check_item_pickups()
 			item_particle->verlet.position, ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE);
         if (agent == NULL) continue;
 
-        // try to add to toolbelt first
         bool item_remaining = true;
         bool was_picked_up = false;
         bool item_altered = false;
         ItemContainer::ItemContainerInterface* container = NULL;
+		int container_id = NULL_CONTAINER;
+		
+		// for chips/coins, try to add to synthesizer first
+		if (item->type == coin_type)
+		{
+			container_id = ItemContainer::get_agent_synthesizer(agent->id);
+			if (container_id != NULL_CONTAINER)
+				container = ItemContainer::get_container(container_id);
+				
+			if (container != NULL)
+			{
+				// empty slot
+				// full stack
+				// partial stack
+				
+				int slot = container->get_empty_slot();
+				if (slot != NULL_SLOT)
+				{
+                    was_picked_up = true;
+                    item_particle->picked_up(agent->id);
+                    item_remaining = false;
+				}
+				else
+				{
+					int slot = container->get_stackable_slot(item->type, item->stack_size);
+					if (slot != NULL_SLOT)
+					{
+						was_picked_up = true;
+						item_particle->picked_up(agent->id);
+						item_remaining = false;
+					}
+					else
+					{
+						ItemID slot_item = container->get_item(0);
+						GS_ASSERT(slot_item != NULL_ITEM);
+						int slot_item_type = Item::get_item_type(slot_item);
+						GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
+						GS_ASSERT(slot_item_type == item->type);
+						int slot_item_stack_size = Item::get_stack_size(slot_item);
+						int slot_item_max_stack = Item::get_max_stack_size(slot_item_type);
+						int stack_space = slot_item_max_stack - slot_item_stack_size;
+						if (stack_space > 0)
+						{
+							was_picked_up = true;
+							item_remaining = true;
+							item_altered = true;
+                            split_item_particle(item, item_particle, item->type, stack_space, agent->id);							
+						}
+					}
+				}
+			}
+		}
+
+        // try to add to toolbelt first
         
-        int container_id = ItemContainer::get_agent_toolbelt(agent->id);
+        container_id = ItemContainer::get_agent_toolbelt(agent->id);
         if (container_id != NULL_CONTAINER)
             container = ItemContainer::get_container(container_id);
             

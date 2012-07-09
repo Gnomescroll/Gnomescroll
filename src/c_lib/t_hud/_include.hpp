@@ -7,7 +7,7 @@
 #include <t_hud/ui_element.cpp>
 
 #include <t_hud/container_hud.cpp>
-#include <t_hud/nanite_hud.cpp>
+#include <t_hud/synthesizer_hud.cpp>
 #include <t_hud/crafting_hud.cpp>
 #include <t_hud/toolbelt_hud.cpp>
 #include <t_hud/storage_block.cpp>

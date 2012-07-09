@@ -8,18 +8,18 @@ namespace t_hud
 //SDL_Surface* ItemGridSlotSurface = NULL;
 //GLuint ItemGridSlotTexture = 0;
 
-GLuint NaniteTexture = 0;
+GLuint SynthesizerTexture = 0;
 GLuint CraftingTexture = 0;
 GLuint StorageBlockTexture = 0;
 GLuint SmelterTexture = 0;
 
-void init_nanite_texture()
+void init_synthesizer_texture()
 {
     GLuint min_filter = GL_LINEAR;
     GLuint mag_filter = GL_NEAREST;
-    int ret = create_texture_from_file((char*) "media/sprites/nanite_4.png", &NaniteTexture, min_filter, mag_filter);
+    int ret = create_texture_from_file((char*) "media/sprites/synthesizer_4.png", &SynthesizerTexture, min_filter, mag_filter);
     GS_ASSERT(ret == 0);
-    GS_ASSERT(NaniteTexture != 0);
+    GS_ASSERT(SynthesizerTexture != 0);
 }
 
 void init_crafting_texture()
@@ -51,7 +51,7 @@ void init_smelter_texture()
 
 void init_texture()
 {
-    init_nanite_texture();
+    init_synthesizer_texture();
     init_crafting_texture();
     init_storage_block_texture();
     init_smelter_texture();

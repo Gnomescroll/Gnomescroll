@@ -51,13 +51,13 @@ inline void assign_item_container_StoC::handle()
             player_toolbelt_ui->load_data(container->slot);
             Toolbelt::assign_toolbelt(container->id);
             break;
-        case AGENT_NANITE:
-            player_nanite_id = container_id;
-            player_nanite = (ItemContainerNanite*)container;
-            if (player_nanite_ui != NULL) delete player_nanite_ui;
-            player_nanite_ui = new ItemContainerNaniteUI(container->id);
-            player_nanite_ui->init(container->type, container->xdim, container->ydim);
-            player_nanite_ui->load_data(container->slot);
+        case AGENT_SYNTHESIZER:
+            player_synthesizer_id = container_id;
+            player_synthesizer = (ItemContainerSynthesizer*)container;
+            if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
+            player_synthesizer_ui = new ItemContainerSynthesizerUI(container->id);
+            player_synthesizer_ui->init(container->type, container->xdim, container->ydim);
+            player_synthesizer_ui->load_data(container->slot);
             break;
         default:
             GS_ASSERT(false);

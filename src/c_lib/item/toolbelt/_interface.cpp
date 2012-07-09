@@ -77,7 +77,7 @@ void tick()
          || item_group == IG_NONE
          || item_group == IG_ERROR
          || item_group == IG_RESOURCE
-         || item_group == IG_NANITE_COIN)
+         || item_group == IG_SYNTHESIZER_COIN)
             item_type = Item::get_item_type((char*)"fist");
 
         int fire_rate = Item::get_item_fire_rate(item_type);
@@ -204,7 +204,7 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
 
         case IG_ERROR:
         case IG_RESOURCE:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
             break;
 
         case IG_PLACER:
@@ -248,7 +248,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
         case IG_MELEE_WEAPON:
         case IG_ERROR:
         case IG_RESOURCE:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
             break;
         
         case IG_CONSUMABLE:
@@ -283,7 +283,7 @@ void tick_local_agent_selected_item_type(int item_type)
             ClientState::playerAgent_state.action.tick_mining_laser();
             break;
 
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_ERROR:
         case IG_RESOURCE:
             break;
@@ -324,7 +324,7 @@ void trigger_local_agent_selected_item_type(int item_type)
 
         case IG_MELEE_WEAPON:
         case IG_RESOURCE:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_ERROR:
         case IG_NONE:
         case IG_SHOVEL:
@@ -464,7 +464,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     {
         case IG_ERROR:
         case IG_RESOURCE:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_NONE:
             break;
 
@@ -514,7 +514,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     switch (group)
     {
         case IG_MELEE_WEAPON:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_NONE:   // hand
@@ -656,7 +656,7 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_MELEE_WEAPON:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
         case IG_HITSCAN_WEAPON:

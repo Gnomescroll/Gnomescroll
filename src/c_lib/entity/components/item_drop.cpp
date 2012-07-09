@@ -12,23 +12,8 @@ dont_include_this_file_in_client
 namespace Components
 {
 
-void ItemDropComponent::drop_item()
+static struct Vec3 get_dropped_item_position(Objects::Object* object)
 {
-    GS_ASSERT(this->item_type != NULL_ITEM_TYPE);
-    if (this->item_type == NULL_ITEM_TYPE) return;
-    GS_ASSERT(this->probability > 0.0f);
-    if (this->probability <= 0.0f) return;
-    GS_ASSERT(this->max_amount >= 1);
-    if (this->max_amount < 1) return;
-
-    // probability check
-    if (randf() > this->probability) return;
-
-    // get amount to drop
-    int amt = randrange(1, this->max_amount);
-    GS_ASSERT(amt >= 1);
-    if (amt < 1) return;
-
     // get object state
     Vec3 position;
     float radius = 1.0f;
@@ -44,7 +29,7 @@ void ItemDropComponent::drop_item()
     {   // use physics position
         PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         GS_ASSERT(physics != NULL);
-        if (physics == NULL) return;
+        if (physics == NULL) return vec3_init(0.0f, 0.0f, 0.0f);
         position = physics->get_position();
 
         // try to center it by using height dimension, if available
@@ -52,24 +37,33 @@ void ItemDropComponent::drop_item()
         if (dims != NULL) position.z += dims->get_height() / 2.0f;
     }
 
+    position.x = position.x + (randf()*2*radius) - radius;
+    position.y = position.y + (randf()*2*radius) - radius;
+
+	return position;
+}
+
+static void create_dropped_item(int item_type, int amount, Vec3 position)
+{
+	float x = position.x;
+	float y = position.y;
+	float z = position.z;
+	
     const float mom = 2.0f;
-    float x = position.x + (randf()*2*radius) - radius;
-    float y = position.y + (randf()*2*radius) - radius;
-    float z = position.z;
     float vx = (randf()-0.5f)*mom;
     float vy = (randf()-0.5f)*mom;
     float vz = mom;
 
-    // create item
-    Item::Item* item = Item::create_item(this->item_type);
+	// create item
+    Item::Item* item = Item::create_item(item_type);
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
     
     // set stack size
-    int max_stack = Item::get_max_stack_size(this->item_type);
-    GS_ASSERT(amt <= max_stack);
-    if (amt > max_stack) amt = max_stack;
-    item->stack_size = amt;
+    int max_stack = Item::get_max_stack_size(item_type);
+    GS_ASSERT(amount <= max_stack);
+    if (amount > max_stack) amount = max_stack;
+    item->stack_size = amount;
 
     // create item particle
     ItemParticle::ItemParticle* item_particle = ItemParticle::create_item_particle(
@@ -79,6 +73,46 @@ void ItemDropComponent::drop_item()
 
     // broadcast
     ItemParticle::broadcast_particle_item_create(item_particle->id);
+}
+
+void ItemDropEntry::drop_item(Vec3 position)
+{
+	GS_ASSERT(this->n_drops > 0);
+	GS_ASSERT(this->item_type != NULL_ITEM_TYPE);
+	GS_ASSERT(this->amount != NULL);
+	GS_ASSERT(this->probability != NULL);
+	if (this->item_type == NULL_ITEM_TYPE) return;
+	if (this->amount == NULL) return;
+	if (this->probability == NULL) return;
+
+	float p = randf();
+	float p_start = 0.0f;
+	for (int i=0; i<this->n_drops; i++)
+	{
+		if (p >= p_start && p <= p_start+this->probability[i])
+		{	// drop
+			create_dropped_item(this->item_type, this->amount[i], position);
+			break;
+		}
+		p_start += this->probability[i];
+		GS_ASSERT(p_start < 1.0001f);
+	}
+}
+
+void ItemDropComponent::drop_item()
+{
+	// treat each item type independently
+	// but within each item type treat cumulatively and exclusively
+	
+	GS_ASSERT(this->drop != NULL);
+	if (this->drop == NULL) return;
+	GS_ASSERT(this->max_drops > 0);
+	GS_ASSERT(this->n_drops == max_drops);
+	
+	Vec3 position = get_dropped_item_position(this->object);
+	
+	for (int i=0; i<this->max_drops; i++)
+		this->drop[i].drop_item(position);
 }
 
 }   // Components

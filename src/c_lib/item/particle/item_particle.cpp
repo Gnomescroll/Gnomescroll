@@ -264,23 +264,36 @@ static bool pickup_item_particle(int particle_id)
 	// since the particles fly and may reach out-of-order, this can fail
 	// if this fails, return false, and the particle should be reset to normal
 	
+	int coin_type = Item::get_item_type("synthesizer_coin");
+	GS_ASSERT(coin_type != NULL_ITEM_TYPE);
+	
 	// get agent toolbelt and container in array
-    ItemContainer::ItemContainerInterface* containers[2] = {NULL,NULL};
+	int n_containers = 2;
+	if (item->type == coin_type)
+		n_containers = 3;
+	int container_index = 0;
+    ItemContainer::ItemContainerInterface* containers[3] = {NULL,NULL,NULL};
+    if (item->type == coin_type)
+    {
+		int container_id = ItemContainer::get_agent_synthesizer(agent->id);
+		if (container_id != NULL_CONTAINER)
+			containers[container_index++] = ItemContainer::get_container(container_id);
+	}
 	int container_id = ItemContainer::get_agent_toolbelt(agent->id);
 	if (container_id != NULL_CONTAINER)
-		containers[0] = ItemContainer::get_container(container_id);
+		containers[container_index++] = ItemContainer::get_container(container_id);
 	container_id = ItemContainer::get_agent_container(agent->id);
 	if (container_id != NULL_CONTAINER)
-		containers[1] = ItemContainer::get_container(container_id);
+		containers[container_index++] = ItemContainer::get_container(container_id);
 
-	// For [toolbelt, inventory]
+	// For [<synthesizer>, toolbelt, inventory]
 		// A: try to stack with slot, return true
 		// B: try to add to empty slot, return true
 	// return false
 
 	ItemContainer::ItemContainerInterface* container = NULL;
 	// for toolbelt,inventory
-	for (int i=0; i<2; i++)
+	for (int i=0; i<n_containers; i++)
 	{
 		container = containers[i];
 		if (container == NULL) continue;

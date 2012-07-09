@@ -45,7 +45,7 @@ void turn_fire_off(int agent_id)
 			item_group == IG_MELEE_WEAPON ||
 			item_group == IG_NONE ||
 			item_group == IG_SHOVEL ||
-			item_group == IG_NANITE_COIN || 
+			item_group == IG_SYNTHESIZER_COIN || 
 			item_group == IG_RESOURCE ||
 			item_group == IG_ERROR)
 			Animations::stop_equipped_item_animation();
@@ -72,7 +72,7 @@ bool toolbelt_item_begin_alpha_action()
 		item_group == IG_MELEE_WEAPON ||
 		item_group == IG_NONE ||
 		item_group == IG_SHOVEL ||
-		item_group == IG_NANITE_COIN || 
+		item_group == IG_SYNTHESIZER_COIN || 
 		item_group == IG_RESOURCE ||
 		item_group == IG_ERROR)
 		continuous = true;
@@ -104,7 +104,7 @@ bool toolbelt_item_end_alpha_action()
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_MELEE_WEAPON:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
             return true;
@@ -134,7 +134,7 @@ void toolbelt_item_begin_alpha_action_event_handler(ItemGroup item_group)
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_MELEE_WEAPON:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
 
@@ -158,7 +158,7 @@ void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group)
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_MELEE_WEAPON:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
 
@@ -198,7 +198,7 @@ bool toolbelt_item_beta_action()
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_MELEE_WEAPON:
-        case IG_NANITE_COIN:
+        case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
         case IG_HITSCAN_WEAPON:

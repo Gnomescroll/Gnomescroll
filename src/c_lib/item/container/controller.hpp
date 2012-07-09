@@ -14,10 +14,10 @@ namespace ItemContainer
 ContainerActionType alpha_action_decision_tree(int id, int slot);
 ContainerActionType beta_action_decision_tree(int id, int slot);
 
-ContainerActionType nanite_alpha_action_decision_tree(int id, int slot);
-ContainerActionType nanite_beta_action_decision_tree(int id, int slot);
-ContainerActionType nanite_shopping_alpha_action_decision_tree(int id, int slot);
-ContainerActionType nanite_shopping_beta_action_decision_tree(int id, int slot);
+ContainerActionType synthesizer_alpha_action_decision_tree(int id, int slot);
+ContainerActionType synthesizer_beta_action_decision_tree(int id, int slot);
+ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int id, int slot);
+ContainerActionType synthesizer_shopping_beta_action_decision_tree(int id, int slot);
 
 ContainerActionType craft_input_alpha_action_decision_tree(int id, int slot);
 ContainerActionType craft_input_beta_action_decision_tree(int id, int slot);
@@ -36,10 +36,10 @@ ContainerActionType smelter_beta_action_decision_tree(int id, int slot);
 ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
 ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
 
-ContainerActionType nanite_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType nanite_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType nanite_shopping_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType nanite_shopping_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType synthesizer_shopping_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
 
 ContainerActionType craft_input_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
 ContainerActionType craft_input_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);

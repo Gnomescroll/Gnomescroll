@@ -5,7 +5,7 @@ typedef enum
     CONTAINER_TYPE_NONE,
     AGENT_CONTAINER,
     AGENT_TOOLBELT,
-    AGENT_NANITE,
+    AGENT_SYNTHESIZER,
     
     CONTAINER_TYPE_STORAGE_BLOCK_SMALL,
     CONTAINER_TYPE_CRAFTING_BENCH_UTILITY,
@@ -39,8 +39,8 @@ typedef enum
     // both
     FULL_HAND_SWAP_WITH_SLOT,       // swap hand with slot
 
-    // nanite shopping
-    PURCHASE_ITEM_FROM_NANITE,
+    // synthesizer shopping
+    PURCHASE_ITEM_FROM_SYNTHESIZER,
 
     // crafting
     CRAFT_ITEM_FROM_BENCH,
@@ -63,7 +63,7 @@ typedef enum
     IG_MINING_LASER,
     IG_SHOVEL,
     IG_GRENADE_LAUNCHER,
-    IG_NANITE_COIN,
+    IG_SYNTHESIZER_COIN,
     IG_DEBUG,       // debug only items
     IG_UNKNOWN,     // used by recipes
     IG_CONSUMABLE,

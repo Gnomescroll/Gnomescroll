@@ -293,37 +293,36 @@ namespace Item
 
 /*
     int item_id;
-    int nanite_cost;
+    int synthesizer_cost;
 
     int level;
     int xslot;
     int yslot;
 */
 
-int _current_nanite_item_type = 0;
-int _current_nanite_item_cost = 0;
+int _current_synthesizer_item_type = 0;
+int _current_synthesizer_item_cost = 0;
 
-void nanite_item_def(const char* item_name, int cost);
-void nanite_item_set(int level, int xslot, int yslot);
+void synthesizer_item_def(const char* item_name, int cost);
+void synthesizer_item_set(int xslot, int yslot);
 
 
-void nanite_item_def(const char* item_name, int cost)
+void synthesizer_item_def(const char* item_name, int cost)
 {
-    _current_nanite_item_type = dat_get_item_type(item_name);
-    _current_nanite_item_cost = cost;
+    _current_synthesizer_item_type = dat_get_item_type(item_name);
+    _current_synthesizer_item_cost = cost;
 }
 
-void nanite_item_set(int level, int xslot, int yslot)
+void synthesizer_item_set(int xslot, int yslot)
 {
-    class NaniteStoreItem* n = &nanite_store_item_array[_current_nanite_item_type];
+    class SynthesizerItem* n = &synthesizer_item_array[_current_synthesizer_item_type];
 
-    n->item_type = _current_nanite_item_type;
-    n->nanite_cost = _current_nanite_item_cost;
-    n->level = level;
+    n->item_type = _current_synthesizer_item_type;
+    n->synthesizer_cost = _current_synthesizer_item_cost;
     n->xslot = xslot;
     n->yslot = yslot;
 
-    _current_nanite_item_type++;
+    _current_synthesizer_item_type++;
 }
 
 }   // Item
