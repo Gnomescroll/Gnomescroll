@@ -136,9 +136,6 @@ void ItemParticle::tick()
 				this->get_picked_up = true;
 				this->ttl = 0;
 				#endif
-                #if DC_CLIENT
-                this->should_draw = false;
-                #endif
 			}
 			else
 			{	// orient towards agent
@@ -146,9 +143,6 @@ void ItemParticle::tick()
 				normalize_vector(&direction);
 				direction = vec3_scalar_mult(direction, ITEM_PARTICLE_PICKUP_MOMENTUM);
 				this->verlet.velocity = direction;
-                #if DC_CLIENT
-                this->should_draw = true;
-                #endif
 			}
 		}
 	}

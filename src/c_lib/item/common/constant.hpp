@@ -1,5 +1,7 @@
 #pragma once
 
+#include <agent/constants.hpp>
+
 const int NULL_SLOT = 0xff;           // invalid slot value
 const ItemGroup NULL_ITEM_GROUP = IG_NONE;
 const int NULL_ITEM_TYPE = 0xff;
@@ -22,6 +24,8 @@ const int AGENT_TOOLBELT_Y = 1;
 
 const int AGENT_SYNTHESIZER_X = 1;
 const int AGENT_SYNTHESIZER_Y = 1;
+const int AGENT_SYNTHESIZER_SHOPPING_X = 5;
+const int AGENT_SYNTHESIZER_SHOPPING_Y = 2;
 
 const int CRAFTING_BENCH_UTILITY_X = 4;
 const int CRAFTING_BENCH_UTILITY_Y = 1;
@@ -78,8 +82,8 @@ const int ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE = 30 * 10;    // 10 seconds
 // after pickup initiated, max ttl before being considered picked up
 const int ITEM_PARTICLE_PICKED_UP_TTL = 30 * 3;
 // momentum for flying at agent
-const int ITEM_PARTICLE_PICKUP_MOMENTUM = 2.5f;
+const int ITEM_PARTICLE_PICKUP_MOMENTUM = 5.0f;
 // distance where pickup initiates
 const float ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE = 1.5f;
 // distance where initiated pickup will become final
-const float ITEM_PARTICLE_PICKUP_END_DISTANCE = 0.125f;
+const float ITEM_PARTICLE_PICKUP_END_DISTANCE = AGENT_BOX_RADIUS;

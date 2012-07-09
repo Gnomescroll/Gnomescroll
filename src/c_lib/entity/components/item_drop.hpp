@@ -48,9 +48,14 @@ class ItemDropEntry
 	void add_drop(int amount, float probability)
 	{
 		GS_ASSERT(amount > 0);
+		if (amount <= 0) return;
 		GS_ASSERT(probability > 0.0f && probability < 1.001f);
 		
 		GS_ASSERT(this->get_cumulative_probability() + probability < 1.001f);
+		
+		// check that this drop has not been recorded
+		for (int i=0; i<this->n_drops; i++)
+			GS_ASSERT(this->amount[i] != amount);
 		
 		for (int i=0; i<this->n_drops; i++)
 			if (this->amount[i] <= 0)

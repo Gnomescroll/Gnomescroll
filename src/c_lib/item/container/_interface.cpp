@@ -874,20 +874,23 @@ void agent_quit(int agent_id)
 void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-
-    GS_ASSERT(agent_synthesizer_list != NULL);
-
+	if (agent_id < 0 || agent_id >= AGENT_MAX) return;
+    
     // if hand is not empty there will be item leaks
     if (get_agent_hand(agent_id) != NULL_ITEM) return;
 
     // get container
+    GS_ASSERT(agent_synthesizer_list != NULL);
+    if (agent_synthesizer_list == NULL) return;
     if (agent_synthesizer_list[agent_id] == NULL_CONTAINER) return;
     ItemContainerSynthesizer* synthesizer = (ItemContainerSynthesizer*)get_container(agent_synthesizer_list[agent_id]);
     if (synthesizer == NULL) return;
+    GS_ASSERT(agent_can_access_container(agent_id, synthesizer->id));
+    if (!agent_can_access_container(agent_id, synthesizer->id)) return;
 
     // get the store item
-    int xslot = shopping_slot % synthesizer->xdim;
-    int yslot = shopping_slot / synthesizer->xdim;
+    int xslot = shopping_slot % synthesizer->shopping_xdim;
+    int yslot = shopping_slot / synthesizer->shopping_xdim;
     int cost;
     int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
     GS_ASSERT(cost >= 0);
@@ -898,9 +901,10 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     int coin_stack = 0; // coin stack will return 1 for NULL_ITEM, but we want to treat that as 0
     if (coins != NULL_ITEM) coin_stack = Item::get_stack_size(coins);
     if (coin_stack < cost) return;
-
-    // get agent, for sending state to
-    Agent_state* a = ServerState::agent_list->get(synthesizer->owner);
+    
+	Item::Item* coin_item = Item::get_item_object(coins);
+	GS_ASSERT(coin_item != NULL);
+	if (coin_item == NULL) return;
 
     // create shopped item
     Item::Item* purchase = Item::create_item(item_type);
@@ -915,16 +919,12 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     {
         if (coin_stack == cost)
         {   // delete coins
-            synthesizer->remove_item(synthesizer->slot_max-1);
-            if (a != NULL) send_container_remove(a->client_id, synthesizer->id, synthesizer->slot_max-1);
             Item::destroy_item(coins);
         }
         else
         {   // decrement coin stack
-            Item::Item* coin_item = Item::get_item_object(coins);
-            GS_ASSERT(coin_item != NULL);
-            coin_item->stack_size -= cost;
-            if (a != NULL) Item::send_item_state(coins);
+			coin_item->stack_size -= cost;
+			Item::send_item_state(coins);
         }
     }
 }

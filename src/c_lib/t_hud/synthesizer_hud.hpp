@@ -15,10 +15,10 @@ class AgentSynthesizerUI : public UIElement
 
     static const int cell_size = 37;    // pixel dimension
 
-    static const int shopping_xdim = 2;
-    static const int shopping_ydim = 4;
+    static const int shopping_xdim = AGENT_SYNTHESIZER_SHOPPING_X;
+    static const int shopping_ydim = AGENT_SYNTHESIZER_SHOPPING_Y;
 
-    static const int xdim = shopping_xdim;
+    static const int xdim = shopping_xdim + 1;
     static const int ydim = shopping_ydim;
 
     // size of texture/render area
@@ -60,12 +60,12 @@ class AgentSynthesizerUI : public UIElement
     void init()
     {
         GS_ASSERT(this->prices == NULL);
-        int max = shopping_xdim * shopping_ydim - 1;    // last slot is coins
+        int max = shopping_xdim * shopping_ydim;    // last slot is coins
         this->prices = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->prices[i];
-            t->set_format((char*) "$%d");
+            t->set_format((char*) "C%d");
             t->set_format_extra_length(ITEM_PRICE_MAX_LENGTH + 1 - 2);
             t->set_color(255,255,255,255);    // some kind of red
             t->set_depth(-0.1f);
@@ -120,9 +120,8 @@ bool AgentSynthesizerUI::in_shopping_region(int px, int py)
     GS_ASSERT(xslot >= 0 && xslot < xdim);
     GS_ASSERT(yslot >= 0 && yslot < ydim);
     
-    if (xslot == xdim-1 && yslot == ydim-1) return false;  // coins slot
-    if (xslot < 0 || xslot >= xdim) return false;
-    if (yslot < 0 || yslot >= ydim) return false;
+    if (xslot < 0 || xslot >= shopping_xdim) return false;
+    if (yslot < 0 || yslot >= shopping_ydim) return false;
     return true;
 }
 
@@ -215,12 +214,13 @@ void AgentSynthesizerUI::draw()
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
-    int hover_slot = this->get_grid_at(mouse_x, mouse_y);
-    if (hover_slot != NULL_SLOT)
+    if (this->in_shopping_region(mouse_x, mouse_y)
+     || this->in_coins_region(mouse_x, mouse_y))
     {
         int w = slot_size;
         int xslot,yslot;
 
+		int hover_slot = this->get_grid_at(mouse_x, mouse_y);
 		xslot = hover_slot % this->xdim;
 		yslot = hover_slot / this->xdim;
         float x = xoff + cell_size*xslot + cell_offset_x;
@@ -240,7 +240,8 @@ void AgentSynthesizerUI::draw()
     if (container == NULL) return;
 
     int coins = 0;
-    if (container->get_slot_type(0) != NULL_ITEM_TYPE) coins = container->get_slot_stack(0);
+    if (container->get_slot_type(0) != NULL_ITEM_TYPE)
+		coins = container->get_slot_stack(0);
 
     // greyscale items
 
@@ -256,8 +257,6 @@ void AgentSynthesizerUI::draw()
     for (int xslot=0; xslot<shopping_xdim; xslot++)
     for (int yslot=0; yslot<shopping_ydim; yslot++)
     {
-        if (xslot == shopping_xdim-1 && yslot == shopping_ydim-1) continue;    // this is the last slot, put money here
-
         int cost;
         int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
         if (coins >= cost)
@@ -305,8 +304,6 @@ void AgentSynthesizerUI::draw()
         for (int xslot=0; xslot<shopping_xdim; xslot++)
         for (int yslot=0; yslot<shopping_ydim; yslot++)
         {
-            if (xslot == shopping_xdim-1 && yslot == shopping_ydim-1) continue;    // this is the last slot, put money here
-
             int cost;
             int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
             if (coins < cost) continue; // we can't afford it; move on
@@ -387,8 +384,6 @@ void AgentSynthesizerUI::draw()
     for (int xslot=0; xslot<shopping_xdim; xslot++)
     for (int yslot=0; yslot<shopping_ydim; yslot++)
     {
-        if (xslot == shopping_xdim-1 && yslot == shopping_ydim-1) continue;  // skip last slot, reserved
-
         int cost;
         int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
         if (item_type == NULL_ITEM_TYPE) continue;
@@ -396,7 +391,7 @@ void AgentSynthesizerUI::draw()
         GS_ASSERT(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
 
         const int slot = yslot*shopping_xdim + xslot;
-        GS_ASSERT(slot < shopping_xdim*shopping_ydim-1);
+        GS_ASSERT(slot < shopping_xdim*shopping_ydim);
         HudText::Text* text = &this->prices[slot];
 		if (cost <= 0)
 			text->set_text((char*)"FREE");

@@ -45,34 +45,37 @@ static struct Vec3 get_dropped_item_position(Objects::Object* object)
 
 static void create_dropped_item(int item_type, int amount, Vec3 position)
 {
+	GS_ASSERT(amount > 0);
+
 	float x = position.x;
 	float y = position.y;
 	float z = position.z;
 	
     const float mom = 2.0f;
-    float vx = (randf()-0.5f)*mom;
-    float vy = (randf()-0.5f)*mom;
-    float vz = mom;
+    float vx,vy,vz = mom;
 
-	// create item
-    Item::Item* item = Item::create_item(item_type);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
-    
-    // set stack size
-    int max_stack = Item::get_max_stack_size(item_type);
-    GS_ASSERT(amount <= max_stack);
-    if (amount > max_stack) amount = max_stack;
-    item->stack_size = amount;
+	for (int i=0; i<amount; i++)
+	{
+		// create item
+		Item::Item* item = Item::create_item(item_type);
+		GS_ASSERT(item != NULL);
+		if (item == NULL) break;
+		
+		// create item particle
+		vx = (randf()-0.5f)*mom;
+		vy = (randf()-0.5f)*mom;
+		ItemParticle::ItemParticle* item_particle = ItemParticle::create_item_particle(
+			item->id, item->type, x, y, z, vx, vy, vz);
+		GS_ASSERT(item_particle != NULL);
+		if (item_particle == NULL)
+		{
+			Item::destroy_item(item->id);
+			break;
+		}
 
-    // create item particle
-    ItemParticle::ItemParticle* item_particle = ItemParticle::create_item_particle(
-        item->id, item->type, x, y, z, vx, vy, vz);
-    //GS_ASSERT(item_particle != NULL);
-    if (item_particle == NULL) return;
-
-    // broadcast
-    ItemParticle::broadcast_particle_item_create(item_particle->id);
+		// broadcast
+		ItemParticle::broadcast_particle_item_create(item_particle->id);
+	}
 }
 
 void ItemDropEntry::drop_item(Vec3 position)
@@ -89,12 +92,13 @@ void ItemDropEntry::drop_item(Vec3 position)
 	float p_start = 0.0f;
 	for (int i=0; i<this->n_drops; i++)
 	{
-		if (p >= p_start && p <= p_start+this->probability[i])
+		float drop_p = this->probability[i];
+		if (p >= p_start && p <= p_start+drop_p)
 		{	// drop
 			create_dropped_item(this->item_type, this->amount[i], position);
 			break;
 		}
-		p_start += this->probability[i];
+		p_start += drop_p;
 		GS_ASSERT(p_start < 1.0001f);
 	}
 }

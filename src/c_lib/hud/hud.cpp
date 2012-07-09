@@ -46,7 +46,7 @@ static const char fps_format[] = "%3.2ffps";
 static const char ping_format[] = "%dms";
 
 static const char no_agent_text[] = "No Agent Assigned";
-static const char health_format[] = "ENERGY %d";
+static const char health_format[] = "ENERGY %02d";
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
