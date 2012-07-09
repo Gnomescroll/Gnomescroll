@@ -668,6 +668,13 @@ DONE
 clean up implicit 64-32 conversion warning in xcode
 DONE
 
+==============
+== BUILD 23 ==  Jul 7 2012
+==============
+
+front face culling for voxel weapon & disable depth test
+DONE
+
 
 ----------------------
 
@@ -691,7 +698,6 @@ texture color problem in OSX -- for blocks and for items
 Improve Hud Weapon sprites animations
 textured voxels / isometric blocks should use full palette info, instead of only one side
 better font
-use backface culling on hud item rendered voxels and re-enable the depth test
 
 == SOUND ==
 improve digging sounds
