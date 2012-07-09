@@ -395,6 +395,9 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("container teardown\n");
     ItemContainer::teardown();
 
+	if (TEARDOWN_DEBUG) printf("Input teardown\n");
+	teardown_input();
+
     if (TEARDOWN_DEBUG) printf("sound close\n");
     Sound::close();
     if (TEARDOWN_DEBUG) printf("SDL close\n");

@@ -13,14 +13,25 @@ struct MouseMotionAverage
     float x,y;
 };
 
+// forward decl
+void init_mouse();
+void teardown_mouse();
+
 int init_input()
 {
     static int inited = 0;
+    GS_ASSERT(inited == 0);
     if (inited) return 1;
     keystate = SDL_GetKeyState(&numkeys);
     SDL_EnableUNICODE(SDL_ENABLE);
+	init_mouse();
     inited++;
     return 0;
+}
+
+void teardown_input()
+{
+	teardown_mouse();
 }
 
 int get_key_state()
@@ -134,6 +145,9 @@ char getUnicodeValue(SDL_keysym keysym)
 }
 
 /* Separate Mouse querying for physics-independent camera */
+const int MOUSE_INPUT_BUFFER_SIZE = 32;
+const float MOUSE_BUFFER_DECAY = 0.70f;
+
 static int mouse_input_buffer_y[MOUSE_INPUT_BUFFER_SIZE];
 static int mouse_input_buffer_x[MOUSE_INPUT_BUFFER_SIZE];
 static float mouse_input_buffer_timestamps[MOUSE_INPUT_BUFFER_SIZE];
@@ -245,31 +259,36 @@ static const float dampening = DEFAULT_DAMPENING;
 static float linear_sensitivity = 1 / (2 * 3.14159f * DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT* DEFAULT_SENSITIVITY_OPTION);
 
 static const unsigned int MOUSE_MOVEMENT_ARRAY_INDEX_MAX = 1000;
-static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX_MAX];
+static struct MOUSE_MOVEMENT* MOUSE_MOVEMENT_ARRAY = NULL;
 static unsigned int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
+
+void init_mouse()
+{
+    GS_ASSERT(MOUSE_MOVEMENT_ARRAY == NULL);
+    if (MOUSE_MOVEMENT_ARRAY != NULL) return;
+    MOUSE_MOVEMENT_ARRAY = (struct MOUSE_MOVEMENT*)calloc(MOUSE_MOVEMENT_ARRAY_INDEX_MAX, sizeof(struct MOUSE_MOVEMENT));
+}
+
+void teardown_mouse()
+{
+	if (MOUSE_MOVEMENT_ARRAY != NULL) free(MOUSE_MOVEMENT_ARRAY);
+}
 
 /*
     Normalize vx,vy by time since last frame!
 */
 void apply_camera_physics()
 {
+	GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
+	if (MOUSE_MOVEMENT_ARRAY == NULL) return;
+
     static long LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
-    
     long current_time = _GET_MS_TIME();
+    if (current_time == LAST_MOUSE_MOVEMENT_TIME) return;
 
-    if (current_time == LAST_MOUSE_MOVEMENT_TIME)
-    {
-        return;
-        printf("0 apply_camera_physics: Warning: timer error\n");
-    }
-
-    if (current_time < LAST_MOUSE_MOVEMENT_TIME)
-    {
-        printf("1 apply_camera_physics: Warning: ERROR!! timer error\n");
-    }
-
-    //long _start_time = LAST_MOUSE_MOVEMENT_TIME; //debug
-    
+	GS_ASSERT(current_time > LAST_MOUSE_MOVEMENT_TIME);
+	if (current_time < LAST_MOUSE_MOVEMENT_TIME) return;
+	
     const float cfactor = 1.0f/33.3333f;
     float _dampening = powf(dampening, cfactor); // dampening per frame
 
@@ -347,6 +366,8 @@ void apply_camera_physics()
 
 void poll_mouse()
 {
+	GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
+	if (MOUSE_MOVEMENT_ARRAY == NULL) return;
     if (input_state.agent_container || input_state.container_block) return;
     if (input_state.ignore_mouse_motion)
     {
