@@ -106,6 +106,7 @@ ItemContainerType get_container_type(int container_id)
 void container_block_destroyed(int container_id, int x, int y, int z)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
@@ -140,7 +141,6 @@ void container_block_destroyed(int container_id, int x, int y, int z)
     destroy_container(container_id);
 }
 
-
 }   // ItemContainer
  
 // Client
@@ -157,7 +157,7 @@ void update_container_ui_from_state()
 {
     if (player_container_ui   != NULL) player_container_ui   ->load_data (player_container   ->slot);
     if (player_toolbelt_ui    != NULL) player_toolbelt_ui    ->load_data (player_toolbelt    ->slot);
-    if (player_synthesizer_ui      != NULL) player_synthesizer_ui      ->load_data (player_synthesizer      ->slot);
+    if (player_synthesizer_ui != NULL) player_synthesizer_ui ->load_data (player_synthesizer ->slot);
     if (player_craft_bench_ui != NULL) player_craft_bench_ui ->load_data (player_craft_bench ->slot);
     if (storage_block_ui      != NULL) storage_block_ui      ->load_data (storage_block      ->slot);
     if (cryofreezer_ui        != NULL) cryofreezer_ui        ->load_data (cryofreezer        ->slot);
@@ -306,15 +306,15 @@ bool close_container_silently(int container_id)
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
+
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container != NULL && !container->attached_to_agent)
     {   // clear the contents, for public containers
         container->clear();
     }
-
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
 
     // teardown UI widget
     // TODO -- handle multiple UI types
