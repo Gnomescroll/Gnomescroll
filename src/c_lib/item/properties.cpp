@@ -216,8 +216,8 @@ float get_weapon_range(int weapon_type)
 {
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
-    GS_ASSERT(attr->firing_range != NULL_FIRING_RANGE);
     if (attr == NULL) return 1.0f;
+    GS_ASSERT(attr->firing_range != NULL_FIRING_RANGE);
     return attr->firing_range;
 }
 
