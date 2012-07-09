@@ -679,6 +679,26 @@ get rid of nanite feeding
 drop chips from enemies, blocks
 chips go directly into nanite chip slot
 change nanite texture to remove graphic
+rename to synthesizer
+increase prices, chip availability
+DONE
+
+increase pickup fly speed, use agent's collision box radius for inner pickup distance
+DONE
+
+fix IG_CONSUMABLE failing to send state updates on use
+DONE
+
+improve item drop component to support multiple item types and drop amounts, configurable
+DONE
+
+drop items individually (stack_size=1) for monster drops
+DONE
+
+add drops to monster spawners
+DONE
+
+add labels to the hud widgets
 DONE
 
 ----------------------
@@ -718,6 +738,10 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
 --detect duplicate recipes
 --detect recursive recipes (input types == output types)
 
+add warning to the synthesizer dat
+--slot in use
+--outside of dimensions
+
 == CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
@@ -737,7 +761,6 @@ send block health on request from agent
 == ANALYTICS ==
 
 == UI/UX ==
-add labels to the hud widgets
 
 == GENERAL ==
 get screenshots working in osx
@@ -778,13 +801,31 @@ A: we can make it 1x1 but treat it as an object/model. it will render at its loc
 ----------
 Health system
 
-Use super metroid's, minus the Reserve tanks (they are awkward and only existed in this game of the series)
-ENERGY 99 [] [] [] [] []
-Max N reserve tanks (5 for now maybe?)
-Reserve tanks are craftable?
-    -- Nanite chips somehow
+Player has Energy
+If player takes any damage with Energy 00, he dies. (see: halo 2)
+ie his suit / equipment gives him all of his strength
 
-All players start with ENERGY 99
+All players have 99 energy default
+
+There are N (4 probably) Reserve Tank slots (see: super metroid. Not the tanks in the top left, but in the pause menu)
+When the player's energy reaches 0, and has a Reserve Tank loaded in a slot, the Reserve Tank is consumed and Energy goes to 99
+
+The Reserve Tank slots function the same as any slot, except only reserve tanks allowed.
+The player opens the inventory view, and drags a Reserve Tank to each slot.
+
+To indicate that these N slots are for reserve tanks, a greyscale Reserve Tank icon will be drawn in each empty Reserve Tank slot.
+Additionally, when a player picks up a reserve tank icon within the inventory GUI, the reserve tank slot region can be highlighted in some way.
+
+The energy status and the reserve tank slots will be rendered above the toolbelt slots. 
+
+If the player has no reserve tanks and takes more damage than energy remaining, his health stops at 00 no matter what.
+When energy is 00, and there are no reserve tanks, the text will blink red and white rapidly, to indicate an emergency.
+
+The current sprite for "Repair Kit" would become the "Reserve Tank" sprite.
+Cell added a medpack looking sprite, which will be a placeholder for "energy packs". "Energy packs" will function the same as "Repair kits" do now (heal yourself or teammate a small amount)
+
+Energy regen is possible, but an independent mechanism for enabling energy regen does not exist. (Minecraft has full food meter)
+Reserve tanks have a bit of cross over with regen.  The mechanisms/pathways for reserve tank acquisition are important.
 
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
