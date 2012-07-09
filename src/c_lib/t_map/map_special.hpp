@@ -20,14 +20,14 @@ class CONTROL_NODE_LIST
 	int cpm; //control point max
 	class control_node* cpa; //control point array;
 
-	control_node_LIST()
+	CONTROL_NODE_LIST()
 	{
 		cpi = 0;
 		cpm = 8;
 		cpa = (control_node*) malloc(8*sizeof(class control_node));
 	}
 
-	~control_node_LIST() {}
+	~CONTROL_NODE_LIST() {}
 
 	void add_control_node(int x, int y, int z)
 	{

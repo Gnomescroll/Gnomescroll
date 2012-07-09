@@ -899,9 +899,9 @@ inline void agent_set_block_CtoS::handle()
     /*
         Handle Special Block Placement
     */
-    static int _control_node = dat_get_cube_id("control_node");
+    static int _control_node = t_map::dat_get_cube_id("control_node");
 
-    if(val == control_node) t_map::add_control_node(x,y,z);
+    if(val == _control_node) t_map::add_control_node(x,y,z);
 }
 
 //#if !PRODUCTION
