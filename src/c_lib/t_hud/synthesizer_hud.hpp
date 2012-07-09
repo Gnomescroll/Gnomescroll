@@ -67,7 +67,7 @@ class AgentSynthesizerUI : public UIElement
             HudText::Text* t = &this->prices[i];
             t->set_format((char*) "C%d");
             t->set_format_extra_length(ITEM_PRICE_MAX_LENGTH + 1 - 2);
-            t->set_color(255,255,255,255);    // some kind of red
+            t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
 
@@ -80,9 +80,11 @@ class AgentSynthesizerUI : public UIElement
             HudText::Text* t = &this->stacks[i];
             t->set_format((char*) "%d");
             t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
-            t->set_color(255,255,255,255);    // some kind of red
+            t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
+        
+		this->name.set_text((char*)"Synthesizer");
     }
 
     void set_container_type(int container_type)
@@ -170,7 +172,10 @@ int AgentSynthesizerUI::get_slot_at(int px, int py)
 //221x147
 void AgentSynthesizerUI::draw()
 {
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+	// draw name
+	this->draw_name();
+	
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
@@ -394,7 +399,7 @@ void AgentSynthesizerUI::draw()
         GS_ASSERT(slot < shopping_xdim*shopping_ydim);
         HudText::Text* text = &this->prices[slot];
 		if (cost <= 0)
-			text->set_text((char*)"FREE");
+			text->set_text((char*)"???");
         else
 			text->update_formatted_string(1, cost);
 

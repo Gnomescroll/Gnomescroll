@@ -374,7 +374,7 @@ void poll_mouse()
     int dx, dy;
     SDL_GetRelativeMouseState(&dx, &dy);
 
-    if(dx == 0 && dy == 0) return;
+    if (dx == 0 && dy == 0) return;
     non_zero++;
 
     dx *= -1;

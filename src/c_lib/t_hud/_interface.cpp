@@ -36,8 +36,12 @@ void set_container_id(ItemContainerType container_type, int container_id)
             break;
 
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+            storage_block->container_id = container_id;
+            storage_block->name.set_text((char*)"Storage Block");
+            break;
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             storage_block->container_id = container_id;
+            storage_block->name.set_text((char*)"Cryofreezer");
             break;
 
         case CONTAINER_TYPE_SMELTER_ONE:
@@ -52,10 +56,6 @@ void set_container_id(ItemContainerType container_type, int container_id)
 
 void close_container(int container_id)
 {
-    //if (agent_container != NULL && agent_container->container_id == container_id) agent_container->container_id = NULL_CONTAINER;
-    //if (agent_toolbelt != NULL && agent_toolbelt->container_id == container_id) agent_toolbelt->container_id = NULL_CONTAINER;
-    //if (synthesizer_container != NULL && synthesizer_container->container_id == container_id) synthesizer_container->container_id = NULL_CONTAINER;
-    
     // unset ids for variable container UIs
     if (crafting_container != NULL && crafting_container->container_id == container_id) crafting_container->container_id = NULL_CONTAINER;
     if (storage_block != NULL && storage_block->container_id == container_id) storage_block->container_id = NULL_CONTAINER;
@@ -430,6 +430,7 @@ void draw_hud()
 
     if (!agent_container_enabled && !container_block_enabled) return;
 
+	agent_toolbelt->draw_name();
     agent_container->draw();
     synthesizer_container->draw();
     if (container_block_enabled)
@@ -470,11 +471,6 @@ void draw_hud()
 }
 
 /* Main init/teardown */
-
-/*
-    Init
-*/
-
 
 void init()
 {

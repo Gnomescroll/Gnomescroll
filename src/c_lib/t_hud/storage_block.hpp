@@ -54,6 +54,7 @@ class StorageBlockUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
+ 		this->name.set_text((char*)"Storage Block");
     }
 
     void init_text()
@@ -62,14 +63,14 @@ class StorageBlockUI : public UIElement
         
         int max = xdim * ydim;
         GS_ASSERT(max > 0);
-        if (max < 0) return;
+        if (max <= 0) return;
         this->stacks = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stacks[i];
             t->set_format((char*) "%d");
             t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
-            t->set_color(255,255,255,255);    // some kind of red
+            t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
     }
@@ -155,6 +156,8 @@ void StorageBlockUI::draw()
 {
     GS_ASSERT(this->texture != NULL);
     if (this->texture == NULL) return;
+ 
+	this->draw_name();
     
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);

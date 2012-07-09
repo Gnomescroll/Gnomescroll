@@ -55,6 +55,8 @@ class AgentContainerUI : public UIElement
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
+
+ 		this->name.set_text((char*)"Inventory");
     }
 
     AgentContainerUI() : stack_numbers(NULL)
@@ -92,6 +94,15 @@ int AgentContainerUI::get_slot_at(int px, int py)
 
 void AgentContainerUI::draw()
 {
+	//this->draw_name();
+	// TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
+	HudFont::start_font_draw();
+	HudFont::reset_default();
+	HudFont::set_texture();
+	this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() + 1);
+	this->name.draw();
+	HudFont::end_font_draw();
+
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere

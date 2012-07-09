@@ -98,6 +98,8 @@ class CraftingUI : public UIElement
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
+
+ 		this->name.set_text((char*)"Crafting Bench");
     }
 
     void set_container_type(int container_type)
@@ -212,6 +214,8 @@ bool CraftingUI::in_craft_output_region(int px, int py)
 
 void CraftingUI::draw()
 {
+	this->draw_name();
+	
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 

@@ -71,9 +71,11 @@ class SmelterUI : public UIElement
             HudText::Text* t = &this->stacks[i];
             t->set_format((char*) "%d");
             t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
-            t->set_color(255,255,255,255);    // some kind of red
+            t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
+
+ 		this->name.set_text((char*)"Smelter");
     }
 
     void center()
@@ -249,6 +251,8 @@ void SmelterUI::draw()
 {
     GS_ASSERT(this->texture != NULL);
     if (this->texture == NULL) return;
+
+	this->draw_name();
 
     if (this->container_id == NULL_CONTAINER) return;
     ItemContainer::ItemContainerUIInterface* container_ui = ItemContainer::get_container_ui(this->container_id);

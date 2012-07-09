@@ -2,6 +2,7 @@
 
 #include <t_hud/constants.hpp>
 #include <hud/text.hpp>
+#include <hud/font.hpp>
 
 namespace t_hud
 {
@@ -20,6 +21,8 @@ class UIElement
         int container_type;
 
         GLuint* texture;
+        
+        HudText::Text name;
 
         void set_position(float x, float y)
         {
@@ -32,6 +35,16 @@ class UIElement
         virtual void draw() = 0;
         virtual int get_slot_at(int px, int py) = 0;
         virtual bool point_inside(int px, int py) = 0;
+
+		virtual void draw_name()
+		{
+			HudFont::start_font_draw();
+			HudFont::reset_default();
+			HudFont::set_texture();
+			this->name.set_position(this->xoff, this->yoff + this->name.get_height() + 1);
+			this->name.draw();
+			HudFont::end_font_draw();
+		}
 
         virtual void set_container_type(int container_type) { this->type = type; }
 
