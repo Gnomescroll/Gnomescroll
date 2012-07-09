@@ -175,6 +175,9 @@ void AgentSynthesizerUI::draw()
 	// draw name
 	this->draw_name();
 	
+	GS_ASSERT(SynthesizerTexture != 0);
+	if (SynthesizerTexture == 0) return;
+	
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 

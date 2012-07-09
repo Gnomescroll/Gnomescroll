@@ -314,7 +314,7 @@ void end_item_dat()
 void iso_block_sprite_def(const char* block_name)
 {
 #if DC_CLIENT
-    if(_item_cube_iso_spritesheet_id == -1)
+    if (_item_cube_iso_spritesheet_id == -1)
     {
         printf("Error: iso_block_sprite_def, must call start_item_dat!!!\n");
         GS_ABORT();

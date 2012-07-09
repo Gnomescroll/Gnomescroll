@@ -62,10 +62,10 @@ void cube_def(int id, int type, const char* name)
     if (cube_list[id].in_use)
         printf("Error in function: %s:%d -- cube %d is already registered\n", __FUNCTION__, __LINE__, id);
 
-    for(int i=0; i<6; i++) _side_texture[i] = 0;
+    for (int i=0; i<6; i++) _side_texture[i] = 0;
 
 //#if DC_CLIENT
-//    if(_current_cube_id != -1) push_cube_palette();
+//    if (_current_cube_id != -1) push_cube_palette();
 //#endif
     _palette_number = 0;
     _current_cube_id = id;
@@ -117,7 +117,7 @@ void cube_def(int id, int type, const char* name)
 
 void iso_texture(int tex_id)
 {
-    for(int i=0; i<6; i++) _side_texture[i] = tex_id;
+    for (int i=0; i<6; i++) _side_texture[i] = tex_id;
 /*
 #ifdef DC_CLIENT
     set_cube_side_texture(_current_cube_id, 0, tex_id);
@@ -142,7 +142,7 @@ void iso_texture(int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
 
-    if(xpos < 1 || ypos < 1)
+    if (xpos < 1 || ypos < 1)
     {
         printf("iso_texture error: xpos= %i ypos= %i \n", xpos,ypos);
         return;
@@ -150,7 +150,7 @@ void iso_texture(int sheet_id, int ypos, int xpos)
 
     //printf("Blit 1: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
-    for(int i=0; i<6; i++) _side_texture[i] = tex_id;
+    for (int i=0; i<6; i++) _side_texture[i] = tex_id;
 /*
     //set cube side textures
     set_cube_side_texture(_current_cube_id, 0, tex_id);
@@ -182,7 +182,7 @@ void side_texture(int side, int tex_id)
 void side_texture(int side, int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
-    if(xpos < 1 || ypos < 1)
+    if (xpos < 1 || ypos < 1)
     {
         printf("side_texture error: xpos= %i ypos= %i \n", xpos,ypos);
         return;
@@ -200,8 +200,8 @@ void push_texture()
 {
 #if DC_CLIENT 
     start_cube_palette(_current_cube_id);
-    for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
+    for (int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
     push_cube_palette();
     _palette_number++;
 #endif
@@ -226,46 +226,46 @@ void push_oriented_texture()
     const int E = 5;
 
     //printf("current_block= %i \n", _current_cube_id);
-    for(int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
+    for (int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
 
     //NORTH
     start_cube_palette(_current_cube_id);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[2]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[3]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[4]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[5]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[5]);
     push_cube_palette();
 
     //WEST
     start_cube_palette(_current_cube_id);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[2]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[3]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[4]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[5]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[5]);
     push_cube_palette();
 
     //SOUTH
     start_cube_palette(_current_cube_id);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[2]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[3]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[4]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[5]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[5]);
     push_cube_palette();
 
     //EAST
     start_cube_palette(_current_cube_id);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[2]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[3]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[4]);
-    for(int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[5]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[5]);
     push_cube_palette();
 
     _palette_number += 4;
@@ -280,7 +280,7 @@ void color_type(int color_type)
 void hud_def(int hudy, int hudx, int tex_id)
 {
 #ifdef DC_CLIENT
-    if(hudy < 1 || hudx < 1)
+    if (hudy < 1 || hudx < 1)
     {
         printf("hud_def error: hudx= %i hudy= %i \n", hudx,hudy);
         return;
@@ -292,12 +292,12 @@ void hud_def(int hudy, int hudx, int tex_id)
 void hud_def(int hudy, int hudx, int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
-    if(xpos < 1 || ypos < 1)
+    if (xpos < 1 || ypos < 1)
     {
         printf("hud_def error: xpos= %i ypos= %i \n", xpos,ypos);
         return;
     }
-    if(hudy < 1 || hudx < 1)
+    if (hudy < 1 || hudx < 1)
     {
         printf("hud_def error: hudx= %i hudy= %i \n", hudx,hudy);
         return;
@@ -325,7 +325,7 @@ int sprite_alias(int sheet_id, int ypos, int xpos)
 {
 #if DC_CLIENT
 
-    if(xpos < 1 || ypos < 1)
+    if (xpos < 1 || ypos < 1)
     {
         printf("sprite_alias error: xpos= %i ypos= %i \n", xpos,ypos);
         return 0;
@@ -414,11 +414,11 @@ void blit_block_item_sheet()
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
 
-        glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+        glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
 
         glBegin(GL_QUADS);
-        for(int i=0; i<16; i++)
-        for(int j=0; j<16; j++)
+        for (int i=0; i<16; i++)
+        for (int j=0; j<16; j++)
         {
             /*
                 const int T = 0;
@@ -532,11 +532,11 @@ void blit_block_item_sheet()
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
 
-        //glBindTexture( GL_TEXTURE_2D, t_map::block_textures_normal);
+        //glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
 
         //glBegin(GL_QUADS);
-        //for(int i=0; i<16; i++)
-        //for(int j=0; j<16; j++)
+        //for (int i=0; i<16; i++)
+        //for (int j=0; j<16; j++)
         //{
             ///*
                 //const int T = 0;
@@ -585,7 +585,7 @@ void blit_block_item_sheet()
     }
   
         glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
-        glBindTexture( GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glViewport (0, 0, _xres, _yres);
 
 
@@ -600,11 +600,11 @@ void palette_def(int palette_number)
 #ifdef DC_CLIENT
     start_cube_palette(_current_cube_id);
 
-    if( cube_texture_palette_lookup[_current_cube_id] + palette_number-1 != cube_texture_palette_index)
+    if (cube_texture_palette_lookup[_current_cube_id] + palette_number-1 != cube_texture_palette_index)
     {
         printf("start_palette_def error!!! mismatch on cube %i \n", _current_cube_id);
         printf("palette_lookup= %i palette_number= %i palette_index= %i \n", 
-            cube_texture_palette_lookup[_current_cube_id],palette_number,cube_texture_palette_index  );
+            cube_texture_palette_lookup[_current_cube_id],palette_number,cube_texture_palette_index );
     }
 #endif
 }
@@ -619,7 +619,7 @@ void end_palette_def()
 void palette_side_texture(int side, int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
-    if(xpos <= 0 || ypos <= 0)
+    if (xpos <= 0 || ypos <= 0)
     {
         printf("Block Dat Error: side_texture index on block %i is less than zero! \n", _current_cube_id);
         abort();
@@ -643,7 +643,7 @@ void palette_side_texture(int side, int tex_id)
 void palette_iso_texture(int sheet_id, int ypos, int xpos)
 {
 #ifdef DC_CLIENT
-    if(xpos <= 0 || ypos <= 0)
+    if (xpos <= 0 || ypos <= 0)
     {
         printf("Error: iso_texture index on block %i is less than zero! \n", _current_cube_id);
         abort();

@@ -18,16 +18,16 @@ SDL_Surface* _load_image(char *file)
 {
     SDL_Surface *image;
     image=IMG_Load(file);
-    if(!image)
+    if (!image)
     {
         printf("IMG_Load: %s \n", IMG_GetError());
-        return 0;
+        return NULL;
     }
     GS_ASSERT(image->format->BytesPerPixel == 4);
-    if(image->format->BytesPerPixel != 4)
+    if (image->format->BytesPerPixel != 4)
     {
         printf("IMG_Load: image is missing alpha channel \n");
-        return 0;
+        return NULL;
     }
 
     return image;
@@ -37,34 +37,6 @@ SDL_Surface* create_surface_from_file(char* file)
 {
     return _load_image(file);
 }
-
-/*
-struct Texture _load_image_create_texture(char *file)
-{
-    SDL_Surface *image = _load_image(file);
-
-    Texture texture;
-
-    if (image == NULL)
-    {
-        printf("ERROR: _load_image_create_texture, surface is NULL\n");
-        return texture;
-    }
-
-    texture.w = image->w;
-    texture.h = image->h;
-    texture.tex = 0;
-    int err = create_texture_from_surface(image, &texture.tex);
-    if (err)
-    {
-        printf("_load_image_create_texture :: Texture could not be created from surface. Error code %d\n", err);
-    }
-    
-    SDL_FreeSurface(image);
-    
-    return texture;
-}
-*/
 
 void _load_image_create_texture(char *file, struct Texture *tex)
 {
@@ -95,7 +67,7 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex)
 
 int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FILTER)
 {
-    if(surface == NULL)
+    if (surface == NULL)
     {
         printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
         return 1;
@@ -109,16 +81,16 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FI
         texture_format = GL_BGRA;
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, tex );
+    glGenTextures(1, tex);
     // Bind the texture object
-    glBindTexture( GL_TEXTURE_2D, *tex );
+    glBindTexture(GL_TEXTURE_2D, *tex);
     // Set the texture's stretching properties
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MAG_FILTER );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MAG_FILTER);
     // Edit the texture object's image data using the information SDL_Surface gives us
     
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels); //2nd parameter is level
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels); //2nd parameter is level
 
     glDisable(GL_TEXTURE_2D);
     return 0;
@@ -146,12 +118,12 @@ int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLu
         return 2;
     }
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, tex );
-    glBindTexture( GL_TEXTURE_2D, *tex );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glGenTextures(1, tex);
+    glBindTexture(GL_TEXTURE_2D, *tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     GLenum texture_format;
     if (surface->format->Rmask == 0x000000ff)
@@ -160,8 +132,8 @@ int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLu
         texture_format = GL_BGRA;
 
     //GLenum texture_format = GL_BGRA;
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
 
     glDisable(GL_TEXTURE_2D);
     SDL_FreeSurface(surface);
@@ -183,12 +155,12 @@ SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex)
         return 0;
     }
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, tex );
-    glBindTexture( GL_TEXTURE_2D, *tex );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glGenTextures(1, tex);
+    glBindTexture(GL_TEXTURE_2D, *tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     GLenum texture_format;
     if (surface->format->Rmask == 0x000000ff)
@@ -197,8 +169,8 @@ SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex)
         texture_format = GL_BGRA;
 
     //GLenum texture_format = GL_BGRA;
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
 
     glDisable(GL_TEXTURE_2D);
     return surface;
@@ -225,7 +197,7 @@ SDL_Surface* create_surface_from_nothing(int w, int h)
     //surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w,h, 32, rmask, gmask, bmask, amask);
     surface = SDL_CreateRGBSurface(SDL_SRCALPHA, w,h, 32, rmask, gmask, bmask, amask);
     //surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA, w,h, 32, rmask, gmask, bmask, amask);
-    if(surface == NULL)
+    if (surface == NULL)
     {
         fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
     }
@@ -280,15 +252,15 @@ void save_surface_to_png(SDL_Surface* surface, char* filename)
     //    const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
     
     char* PNG_IMAGE;
-    if( SDL_MUSTLOCK(surface) == 0 )
+    if (SDL_MUSTLOCK(surface) == 0)
     {
-        PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) surface->pixels, surface->w, surface->h, 4, &png_size);
     }
     else
     {
         SDL_LockSurface(surface);
-        PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) surface->pixels, surface->w, surface->h, 4, &png_size);
         SDL_UnlockSurface(surface);
     }

@@ -353,16 +353,16 @@ static void draw_grabbed_icon()
     const float tx_max = tx_min + 1.0f/iw;
     const float ty_max = ty_min + 1.0f/iw;
 
-    glTexCoord2f( tx_min, ty_min );
+    glTexCoord2f(tx_min, ty_min);
     glVertex2f(x,y+w);
 
-    glTexCoord2f( tx_max, ty_min );
-    glVertex2f(x+w, y+w );
+    glTexCoord2f(tx_max, ty_min);
+    glVertex2f(x+w, y+w);
         
-    glTexCoord2f( tx_max, ty_max );
+    glTexCoord2f(tx_max, ty_max);
     glVertex2f(x+w, y);
 
-    glTexCoord2f( tx_min, ty_max );
+    glTexCoord2f(tx_min, ty_max);
     glVertex2f(x, y);
 
     glEnd();

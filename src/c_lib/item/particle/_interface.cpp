@@ -495,7 +495,7 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
         item->id, item->type,
         position.x, position.y, position.z,
         velocity.x, velocity.y, velocity.z
-    );
+   );
     if (particle == NULL) return;
     GS_ASSERT(item->location == IL_PARTICLE);
     broadcast_particle_item_create(particle->id);

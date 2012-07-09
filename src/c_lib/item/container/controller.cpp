@@ -434,7 +434,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                 container, slot,
                 &hand_item_type, &hand_item_stack, &hand_item_durability,
                 slot_item_type, slot_item_stack, slot_item_durability
-            );
+           );
             #endif
             #if DC_SERVER
             action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
@@ -451,7 +451,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             action = full_hand_to_empty_slot(
                 container, slot,
                 &hand_item_type, &hand_item_stack, &hand_item_durability
-            );
+           );
             #endif
             #if DC_SERVER
             action = full_hand_to_empty_slot(agent_id, container, slot);
@@ -471,7 +471,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                         container, slot,
                         &hand_item_type, &hand_item_stack, &hand_item_durability,
                         slot_item_type, slot_item_stack, slot_item_durability
-                    );
+                   );
                     #endif
                     #if DC_SERVER
                     action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
@@ -488,7 +488,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                             container, slot,
                             &hand_item_type, &hand_item_stack, &hand_item_durability,
                             slot_item_type, slot_item_stack, slot_item_durability
-                        );
+                       );
                         #endif
                         #if DC_SERVER
                         action = full_hand_swap_with_slot(client_id, agent_id, container, slot, slot_item);
@@ -502,7 +502,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                             container, slot,
                             &hand_item_stack,
                             slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
-                        );
+                       );
                         #endif
                         #if DC_SERVER
                         action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
@@ -518,7 +518,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     container, slot,
                     &hand_item_type, &hand_item_stack, &hand_item_durability,
                     slot_item_type, slot_item_stack, slot_item_durability
-                );
+               );
                 #endif
                 #if DC_SERVER
                 action = full_hand_swap_with_slot(client_id, agent_id, container, slot, slot_item);
@@ -634,7 +634,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                     container, slot,
                     &hand_item_type, &hand_item_stack, &hand_item_durability,
                     slot_item_type, slot_item_stack, slot_item_durability
-                );
+               );
                 #endif
                 #if DC_SERVER
                 action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
@@ -651,7 +651,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                     action = full_hand_to_empty_slot(
                         container, slot,
                         &hand_item_type, &hand_item_stack, &hand_item_durability
-                    );
+                   );
                     #endif
                     #if DC_SERVER
                     action = full_hand_to_empty_slot(agent_id, container, slot);
@@ -670,7 +670,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                             container, slot,
                             &hand_item_type, &hand_item_stack, &hand_item_durability,
                             slot_item_type, slot_item_stack, slot_item_durability
-                        );
+                       );
                         #endif
                         #if DC_SERVER
                         action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
@@ -693,7 +693,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                                 container, slot,
                                 &hand_item_stack,
                                 slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
-                            );
+                           );
                             #endif
                             #if DC_SERVER
                             action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
@@ -715,7 +715,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                     container, slot,
                     &hand_item_type, &hand_item_stack, &hand_item_durability,
                     slot_item_type, slot_item_stack, slot_item_durability
-                );
+               );
                 #endif
                 #if DC_SERVER
                 action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
@@ -732,7 +732,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                     action = full_hand_to_empty_slot(
                         container, slot,
                         &hand_item_type, &hand_item_stack, &hand_item_durability
-                    );
+                   );
                     #endif
                     #if DC_SERVER
                     action = full_hand_to_empty_slot(agent_id, container, slot);
@@ -753,7 +753,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                                 container, slot,
                                 &hand_item_type, &hand_item_stack, &hand_item_durability,
                                 slot_item_type, slot_item_stack, slot_item_durability
-                            );
+                           );
                             #endif
                             #if DC_SERVER
                             action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
@@ -773,7 +773,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                                     container, slot,
                                     &hand_item_type, &hand_item_stack, &hand_item_durability,
                                     slot_item_type, slot_item_stack, slot_item_durability
-                                );
+                               );
                                 #endif
                                 #if DC_SERVER
                                 action = full_hand_swap_with_slot(client_id, agent_id, container, slot, slot_item);
@@ -790,7 +790,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                                     container, slot,
                                     &hand_item_stack,
                                     slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
-                                );
+                               );
                                 #endif
                                 #if DC_SERVER
                                 action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
@@ -886,7 +886,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                     container, slot,
                     &hand_item_type, &hand_item_stack, &hand_item_durability,
                     slot_item_type, slot_item_stack, slot_item_durability
-                );
+               );
                 #endif
                 #if DC_SERVER
                 action = partial_slot_to_empty_hand(agent_id, slot, slot_item);
@@ -910,7 +910,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                 action = full_hand_to_empty_slot(
                     container, slot,
                     &hand_item_type, &hand_item_stack, &hand_item_durability
-                );
+               );
                 #endif
                 #if DC_SERVER
                 action = full_hand_to_empty_slot(agent_id, container, slot);
@@ -923,7 +923,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                 action = partial_hand_to_empty_slot(
                     container, slot,
                     hand_item_type, &hand_item_stack, hand_item_durability
-                );
+               );
                 #endif
                 #if DC_SERVER
                 action = partial_hand_to_empty_slot(container, slot, hand_item);
@@ -947,7 +947,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                             container, slot,
                             &hand_item_type, &hand_item_stack, &hand_item_durability,
                             slot_item_type, slot_item_stack, slot_item_durability
-                        );
+                       );
                         #endif
                         #if DC_SERVER
                         action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
@@ -961,7 +961,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                             container, slot,
                             &hand_item_stack,
                             slot_item_type, slot_item_stack, 1, slot_item_durability
-                        );
+                       );
                         #endif
                         #if DC_SERVER
                         action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, 1);
@@ -1061,7 +1061,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int clie
                     container, slot,
                     &hand_item_type, &hand_item_stack, &hand_item_durability,
                     slot_item_type, slot_item_stack, slot_item_durability
-                );
+               );
                 #endif
                 #if DC_SERVER
                 action = partial_slot_to_empty_hand(agent_id, slot, slot_item);
@@ -1092,7 +1092,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int clie
                     action = full_hand_to_empty_slot(
                         container, slot,
                         &hand_item_type, &hand_item_stack, &hand_item_durability
-                    );
+                   );
                     #endif
                     #if DC_SERVER
                     action = full_hand_to_empty_slot(agent_id, container, slot);
@@ -1105,7 +1105,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int clie
                     action = partial_hand_to_empty_slot(
                         container, slot,
                         hand_item_type, &hand_item_stack, hand_item_durability
-                    );
+                   );
                     #endif
                     #if DC_SERVER
                     action = partial_hand_to_empty_slot(container, slot, hand_item);
@@ -1138,7 +1138,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int clie
                                 container, slot,
                                 &hand_item_type, &hand_item_stack, &hand_item_durability,
                                 slot_item_type, slot_item_stack, slot_item_durability
-                            );
+                           );
                             #endif
                             #if DC_SERVER
                             action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
@@ -1152,7 +1152,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int clie
                                 container, slot,
                                 &hand_item_stack,
                                 slot_item_type, slot_item_stack, 1, slot_item_durability
-                            );
+                           );
                             #endif
                             #if DC_SERVER
                             action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, 1);

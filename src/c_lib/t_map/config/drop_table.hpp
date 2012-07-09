@@ -42,34 +42,34 @@ struct CubeItemDropTable item_drop_table[512];
 void save_drop_dat_to_file()
 {
     FILE *fp = fopen("screenshot/drop_dat","w");
-    if(!fp) GS_ABORT();
+    if (!fp) GS_ABORT();
 
-    for(int i=0; i<256; i++)
+    for (int i=0; i<256; i++)
     {
         int num_drop = meta_drop_table[i].num_drop;
-        if(num_drop == 0) continue;
+        if (num_drop == 0) continue;
 
         fprintf(fp,"Block: %s \n", get_cube_name(i));
 
         int index = meta_drop_table[i].index;
 
-        for(int j=0; j<num_drop; j++)
+        for (int j=0; j<num_drop; j++)
         {
             struct CubeItemDropTable* cidt = &item_drop_table[index+j];
 
             float average = 0;
 
-            for(int k=0; k<cidt->drop_entries; k++)
+            for (int k=0; k<cidt->drop_entries; k++)
             {
                 average += cidt->item_drop_num[k]*cidt->drop_probabilities[k];
             }
 
-            fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type) );
+            fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type));
 
             fprintf(fp,"\tavg= %2.4f \n", average);
 
             float cdrop = 0.0f;
-            for(int k=0; k<cidt->drop_entries; k++)
+            for (int k=0; k<cidt->drop_entries; k++)
             {
                 cdrop += cidt->item_drop_num[k]*cidt->drop_probabilities[k];
                 //cumulative probability, probability, drop average, cumulative drop average
@@ -92,26 +92,26 @@ void save_drop_dat_to_file()
 
 void end_drop_dat()
 {
-    for(int i=0; i<256; i++)
+    for (int i=0; i<256; i++)
     {
         int num_drop = meta_drop_table[i].num_drop;
-        if(num_drop == 0) continue;
+        if (num_drop == 0) continue;
 
         int index = meta_drop_table[i].index;
 
-        for(int j=0; j<num_drop; j++)
+        for (int j=0; j<num_drop; j++)
         {
             struct CubeItemDropTable* cidt = &item_drop_table[index+j];
 
             float total;
 
             total = 0.0f;
-            for(int k=1; k<cidt->drop_entries; k++)
+            for (int k=1; k<cidt->drop_entries; k++)
             {
                 total += cidt->drop_probabilities[k];
             }
 
-            if(total > 1.0f)
+            if (total > 1.0f)
             {
                 printf("Block Drop Dat Error: Item total probabilities exceed 1.0 \n");
                 GS_ABORT();
@@ -123,12 +123,12 @@ void end_drop_dat()
             //float fa[cidt->drop_entries];
 
             total = 0.0f;
-            for(int k=0; k<cidt->drop_entries; k++)
+            for (int k=0; k<cidt->drop_entries; k++)
             {
                 total += cidt->drop_probabilities[k];
                 cidt->drop_cumulative_probabilities[k] = total;
             }
-            //fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type) );
+            //fprintf(fp,"\t%d: %s \n", j, Item::get_item_name(cidt->item_type));
 
             //fprintf(fp,"\tavg= %2.4f max= %i \n", average , cidt->max_drops-1);
 
@@ -136,7 +136,7 @@ void end_drop_dat()
             float clast = 0;
             float dprob = 0;
             float cdrop = 0.0;
-            for(int k=0; k<cidt->drop_entries; k++)
+            for (int k=0; k<cidt->drop_entries; k++)
             {
                 float p = cidt->drop_probabilities[k];
                 dprob = p - clast;
@@ -161,7 +161,7 @@ void handle_block_drop(int x, int y, int z, int block_type)
         CubeItemDropTable* cidt = &item_drop_table[i+meta_drop_table[block_type].index];
         float p = randf();
 
-        if(p <= cidt->drop_cumulative_probabilities[0]) continue;
+        if (p <= cidt->drop_cumulative_probabilities[0]) continue;
 
         for (int j=1; j < cidt->drop_entries; j++)
         {
@@ -206,7 +206,7 @@ void add_drop(const char* item_name, int drop_entries)
 
     cube_list[block_id].item_drop = true;
 
-    if ( meta_drop_table[block_id].num_drop == 0)
+    if (meta_drop_table[block_id].num_drop == 0)
         meta_drop_table[block_id].index = item_drop_table_index;
         
     meta_drop_table[block_id].num_drop++;
@@ -236,7 +236,7 @@ void add_drop(const char* item_name, int drop_entries)
 
 void set_drop(float drop_probability, int drops)
 {
-    if(_current_drop_num == _current_cide->drop_entries)
+    if (_current_drop_num == _current_cide->drop_entries)
     {
         printf("Item Drop Dat Error: current item id exceeds drop entries \n");
         GS_ABORT();

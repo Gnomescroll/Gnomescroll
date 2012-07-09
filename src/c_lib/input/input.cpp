@@ -28,10 +28,10 @@ int get_key_state()
     SDL_PumpEvents();
 
     key_state_handler(keystate, numkeys);
-    //if(keystate['`'] != 0)
+    //if (keystate['`'] != 0)
     //{
-        //for(int x=0; x<numkeys; x++)
-            //if(keystate[x] != 0) printf("%i='%c' ", x, (char)x);
+        //for (int x=0; x<numkeys; x++)
+            //if (keystate[x] != 0) printf("%i='%c' ", x, (char)x);
 
         //printf("\n");
     //}
@@ -73,7 +73,7 @@ int process_events()
         input_state.ignore_next_right_click_event = true;
     }
 
-    while(SDL_PollEvent(&Event))
+    while (SDL_PollEvent(&Event))
     { //returns 0 if no event
         Event.user.code = SDL_EVENT_USER_NONE;
         switch (Event.type)
@@ -181,7 +181,7 @@ static inline void calculate_mouse_state(int t) // t is time since last tick
     static int otime = _GET_MS_TIME();
     static int counter = 0;
     static int non_zero = 0;
-    if( current_time -otime > 1000)
+    if (current_time -otime > 1000)
     {
         otime = _GET_MS_TIME();
         printf("%i mouse polls, %i non_zero \n", counter, non_zero);
@@ -195,7 +195,7 @@ static inline void calculate_mouse_state(int t) // t is time since last tick
     int dx, dy;
     SDL_GetRelativeMouseState(&dx, &dy);
 
-    if(dx == 0 && dy == 0) return;
+    if (dx == 0 && dy == 0) return;
     non_zero++;
 
     printf("event= %i %i \n", dx,dy);
@@ -257,13 +257,13 @@ void apply_camera_physics()
     
     long current_time = _GET_MS_TIME();
 
-    if(current_time == LAST_MOUSE_MOVEMENT_TIME)
+    if (current_time == LAST_MOUSE_MOVEMENT_TIME)
     {
         return;
         printf("0 apply_camera_physics: Warning: timer error\n");
     }
 
-    if(current_time < LAST_MOUSE_MOVEMENT_TIME)
+    if (current_time < LAST_MOUSE_MOVEMENT_TIME)
     {
         printf("1 apply_camera_physics: Warning: ERROR!! timer error\n");
     }
@@ -281,9 +281,9 @@ void apply_camera_physics()
     float accum_vx = 0;
     float accum_vy = 0;
 
-    while(LAST_MOUSE_MOVEMENT_TIME <= current_time)
+    while (LAST_MOUSE_MOVEMENT_TIME <= current_time)
     {
-        while( MOUSE_MOVEMENT_ARRAY[index].time == LAST_MOUSE_MOVEMENT_TIME &&  index < MOUSE_MOVEMENT_ARRAY_INDEX)
+        while (MOUSE_MOVEMENT_ARRAY[index].time == LAST_MOUSE_MOVEMENT_TIME &&  index < MOUSE_MOVEMENT_ARRAY_INDEX)
         {
             int dx = MOUSE_MOVEMENT_ARRAY[index].dx;
             int dy = MOUSE_MOVEMENT_ARRAY[index].dy;
@@ -322,14 +322,14 @@ void apply_camera_physics()
     LAST_MOUSE_MOVEMENT_TIME--;
 
     /*
-    if(index != MOUSE_MOVEMENT_ARRAY_INDEX)
+    if (index != MOUSE_MOVEMENT_ARRAY_INDEX)
     {
         printf("apply_camera_physics, error: index= %d MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
 
         printf("start_time= %li \n ",_start_time);
         printf("end_time= %li \n ",LAST_MOUSE_MOVEMENT_TIME);
         
-        for(unsigned int i=0; i<MOUSE_MOVEMENT_ARRAY_INDEX; i++ )
+        for (unsigned int i=0; i<MOUSE_MOVEMENT_ARRAY_INDEX; i++)
         {
             printf("mouse move %d: at time %li \n", i, MOUSE_MOVEMENT_ARRAY[i].time);
         }
@@ -362,7 +362,7 @@ void poll_mouse()
     static int otime = _GET_MS_TIME();
     static int counter = 0;
     static int non_zero = 0;
-    if( current_time - otime > 1000)
+    if (current_time - otime > 1000)
     {
         otime = _GET_MS_TIME();
         counter = 0; //reset

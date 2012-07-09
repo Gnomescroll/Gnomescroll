@@ -34,7 +34,7 @@ void init_textures()
 {
     static int init = 0;
 
-    if(init == 0)
+    if (init == 0)
     {
         memset(pixel_data, 0, MAX_TEXTURES);
         init = 1;
@@ -51,13 +51,13 @@ void set_cube_side_texture(int id, int side, int tex_id)
 {
     //printf("set_cube_side_texture: %i %i %i \n", id, side, tex_id);
 
-    if(tex_id < 0 ) return;
-    if(tex_id > MAX_TEXTURES)
+    if (tex_id < 0) return;
+    if (tex_id > MAX_TEXTURES)
     {
         printf("_set_cube_side_texture: error, tex id would exceed MAX_TEXTURES: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
         return;
     }
-    if(6*id + side > MAX_CUBES*6)
+    if (6*id + side > MAX_CUBES*6)
     {
         printf("_set_cube_side_texture: error, would overflow array: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
         return;
@@ -74,7 +74,7 @@ void set_cube_side_texture(int id, int side, int tex_id)
     */
 
     //init pixel sampler if it has not been inited
-    if(pixel_data[tex_id] == NULL) 
+    if (pixel_data[tex_id] == NULL) 
     {
         pixel_data[tex_id] = new unsigned char[4*32*32];
 
@@ -87,8 +87,8 @@ void set_cube_side_texture(int id, int side, int tex_id)
         int px, py;
         unsigned char r,b,g,a;
 
-        for(int i=0; i < 32; i++) 
-        for(int j=0; j < 32; j++) 
+        for (int i=0; i < 32; i++) 
+        for (int j=0; j < 32; j++) 
         {
             //pixel offset
             px = tx + i;

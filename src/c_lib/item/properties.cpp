@@ -248,10 +248,10 @@ int get_synthesizer_item(int xslot, int yslot)
 
 int get_synthesizer_item(int xslot, int yslot, int* cost)
 {
-    for(int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEMS; i++)
     {
         class SynthesizerItem* n = &synthesizer_item_array[i];
-        if(n->xslot == xslot && n->yslot == yslot)
+        if (n->xslot == xslot && n->yslot == yslot)
         {
             *cost = n->synthesizer_cost;
             return n->item_type;

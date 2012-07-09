@@ -138,7 +138,7 @@ void ItemParticle_list::draw()
 
     glEnable(GL_ALPHA_TEST);
 
-    glAlphaFunc ( GL_GREATER, 0.5f);
+    glAlphaFunc (GL_GREATER, 0.5f);
 
     glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 

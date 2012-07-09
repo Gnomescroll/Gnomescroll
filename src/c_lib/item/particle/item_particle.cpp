@@ -24,13 +24,13 @@ void init_item_particle()
     GS_ASSERT(s != NULL);
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &ItemSheetTexture );
+    glGenTextures(1, &ItemSheetTexture);
 
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     //GLenum internalFormat = 4;
     GLenum internalFormat = 4;
@@ -45,7 +45,7 @@ void init_item_particle()
 
 void teardown_item_particle()
 {
-    glDeleteTextures(1, &ItemSheetTexture );
+    glDeleteTextures(1, &ItemSheetTexture);
 }
 
 void ItemParticle::draw()
@@ -62,12 +62,12 @@ void ItemParticle::draw()
         model_view_matrix[0]*scale,
         model_view_matrix[4]*scale,
         model_view_matrix[8]*scale
-    );
+   );
     Vec3 right = vec3_init(
         model_view_matrix[1]*scale,
         model_view_matrix[5]*scale,
         model_view_matrix[9]*scale
-    );
+   );
 
     float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(this->sprite_index%16)* (1.0f/16.0f);

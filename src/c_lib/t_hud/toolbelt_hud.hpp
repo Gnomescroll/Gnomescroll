@@ -198,7 +198,7 @@ void AgentToolbeltUI::draw()
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
-    glBindTexture( GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture );
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
     glBegin(GL_QUADS);
 
@@ -221,16 +221,16 @@ void AgentToolbeltUI::draw()
         const float tx_max = tx_min + 1.0f/iw;
         const float ty_max = ty_min + 1.0f/iw;
 
-        glTexCoord2f( tx_min, ty_min );
+        glTexCoord2f(tx_min, ty_min);
         glVertex2f(x,y+w);
 
-        glTexCoord2f( tx_max, ty_min );
-        glVertex2f(x+w, y+w );
+        glTexCoord2f(tx_max, ty_min);
+        glVertex2f(x+w, y+w);
             
-        glTexCoord2f( tx_max, ty_max );
+        glTexCoord2f(tx_max, ty_max);
         glVertex2f(x+w, y);
 
-        glTexCoord2f( tx_min, ty_max );
+        glTexCoord2f(tx_min, ty_max);
         glVertex2f(x, y);
     }
 

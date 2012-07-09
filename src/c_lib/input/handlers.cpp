@@ -792,7 +792,7 @@ void key_down_handler(SDL_Event* event)
                         ClientState::playerAgent_state.camera_state.x,
                         ClientState::playerAgent_state.camera_state.y,
                         ClientState::playerAgent_state.camera_state.z
-                    );
+                   );
                 break;
                 
             case SDLK_g:

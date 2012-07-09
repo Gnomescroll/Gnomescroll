@@ -26,11 +26,11 @@ namespace t_map
     void init_shaders()
     {
         //determine support for anisotropic filtering
-        //if( true || !GLEW_texture_array)
+        //if (true || !GLEW_texture_array)
 
-        if(GLEW_EXT_texture_array)
+        if (GLEW_EXT_texture_array)
         {
-            if(PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
+            if (PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
         }
         else
         {
@@ -38,14 +38,14 @@ namespace t_map
             T_MAP_BACKUP_SHADER = 1;
         }
 
-        if(!GLEW_EXT_texture_sRGB)
+        if (!GLEW_EXT_texture_sRGB)
         {
             printf("!!! Warning: EXT_texture_sRGB not supported. \n");
         }
 
         ANISOTROPIC_FILTERING = 0;
 
-        if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
+        if (GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
         {
             glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
             printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
@@ -59,20 +59,20 @@ namespace t_map
 
         //T_MAP_BACKUP_SHADER = 1;
 
-        if(T_MAP_BACKUP_SHADER == 0 )
+        if (T_MAP_BACKUP_SHADER == 0)
         {
             set_map_shader_0();
             init_map_3d_texture();
 
             //true on error
-            if(shader_error_occured(map_shader[0]) == true )
+            if (shader_error_occured(map_shader[0]) == true)
             {
                 printf("!!! Default map shader failed. Setting backup shader \n");
                 T_MAP_BACKUP_SHADER = 1;
             }
         }
 
-        if(T_MAP_BACKUP_SHADER == 1)
+        if (T_MAP_BACKUP_SHADER == 1)
         {
             ANISOTROPIC_FILTERING = 0;  //disable anisotropic filtering
             init_map_3d_texture_compatibility();
@@ -81,7 +81,7 @@ namespace t_map
             
             set_map_shader_0_compatibility(0);
 
-            if(shader_error_occured(map_shader[0]) == true )
+            if (shader_error_occured(map_shader[0]) == true)
             {
                 printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
                 set_map_shader_0_compatibility(1);
@@ -102,7 +102,7 @@ namespace t_map
 
         char *vs, *fs;
 
-        if(DEBUG1) printf("set_map_shader_0: \n");
+        if (DEBUG1) printf("set_map_shader_0: \n");
 
         vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
         fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
@@ -111,17 +111,17 @@ namespace t_map
         glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
         glCompileShaderARB(map_vert_shader[index]);
 
-        if(DEBUG1) printShaderInfoLog(map_vert_shader[index]);
+        if (DEBUG1) printShaderInfoLog(map_vert_shader[index]);
 
         glCompileShaderARB(map_frag_shader[index]);
-        if(DEBUG1) printShaderInfoLog(map_frag_shader[index]);
+        if (DEBUG1) printShaderInfoLog(map_frag_shader[index]);
         
         glAttachObjectARB(map_shader[index], map_vert_shader[index]);
         glAttachObjectARB(map_shader[index], map_frag_shader[index]);
 
         glLinkProgramARB(map_shader[index]);
 
-        if(DEBUG1) printProgramInfoLog(map_shader[index]);
+        if (DEBUG1) printProgramInfoLog(map_shader[index]);
         
         //uniforms
 
@@ -136,7 +136,7 @@ namespace t_map
 
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
 
-        //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
+        //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix);
 
         free(vs);
         free(fs);
@@ -188,7 +188,7 @@ namespace t_map
     {
         //printf("init_map_3d_texture: 0 \n");
 
-        if(terrain_map_glsl != 0)
+        if (terrain_map_glsl != 0)
         {
             printf("init_map_3d_texture: attempting to delete, may cause segfault \n");
             glDeleteTextures(1,&terrain_map_glsl);
@@ -201,7 +201,7 @@ namespace t_map
         glDisable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        glGenTextures( 1, &terrain_map_glsl );
+        glGenTextures(1, &terrain_map_glsl);
         glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl);
 
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -216,14 +216,14 @@ namespace t_map
 
         //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
 
-        if(ANISOTROPIC_FILTERING)
+        if (ANISOTROPIC_FILTERING)
         {
             glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
 
         //printf("init_map_3d_texture: 2 \n");
 
-        if( T_MAP_TEXTURE_2D_ARRAY_MIPMAPS == 0)
+        if (T_MAP_TEXTURE_2D_ARRAY_MIPMAPS == 0)
         {
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, T_MAP_MAG_FILTER ? GL_NEAREST : GL_LINEAR);
@@ -249,7 +249,7 @@ namespace t_map
             //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 
-            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR );
+            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR);
             
             //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
@@ -314,9 +314,9 @@ namespace t_map
 
         char *vs, *fs;
 
-        if(DEBUG1) printf("set_map_shader_0_compatibility: level %i \n", level);
+        if (DEBUG1) printf("set_map_shader_0_compatibility: level %i \n", level);
 
-        if(level == 0)
+        if (level == 0)
         {
             vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
             fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
@@ -330,17 +330,17 @@ namespace t_map
         glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
         glCompileShaderARB(map_vert_shader[index]);
-        if(DEBUG1) printShaderInfoLog(map_vert_shader[index]);
+        if (DEBUG1) printShaderInfoLog(map_vert_shader[index]);
 
         glCompileShaderARB(map_frag_shader[index]);
-        if(DEBUG1) printShaderInfoLog(map_frag_shader[index]);
+        if (DEBUG1) printShaderInfoLog(map_frag_shader[index]);
         
         glAttachObjectARB(map_shader[index], map_vert_shader[index]);
         glAttachObjectARB(map_shader[index], map_frag_shader[index]);
 
         glLinkProgramARB(map_shader[index]);
 
-        if(DEBUG1) printProgramInfoLog(map_shader[index]);
+        if (DEBUG1) printProgramInfoLog(map_shader[index]);
         
         //uniforms
 
@@ -364,7 +364,7 @@ namespace t_map
 
         SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
-        if(s == NULL)
+        if (s == NULL)
         {
             printf("init_map_3d_texture_compatibility() error \n");
         }
@@ -372,19 +372,19 @@ namespace t_map
 
         glEnable(GL_TEXTURE_2D);
 
-        if(block_textures_compatibility == 0)
+        if (block_textures_compatibility == 0)
         {
-            glGenTextures( 1, &block_textures_compatibility );
+            glGenTextures(1, &block_textures_compatibility);
         }
 
-        glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
+        glBindTexture(GL_TEXTURE_2D, block_textures_compatibility);
 
         // Set the texture's stretching properties
 
-        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
         
@@ -392,9 +392,9 @@ namespace t_map
         //if (s->format->Rmask != 0x000000ff) format = GL_BGRA;
 
         // Edit the texture object's image data using the information SDL_Surface gives us
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels); //2nd parameter is level
         
-        if(ANISOTROPIC_FILTERING)
+        if (ANISOTROPIC_FILTERING)
         {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
@@ -405,7 +405,7 @@ namespace t_map
         else
             texture_format = GL_BGRA;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
         
         glDisable(GL_TEXTURE_2D);
 
@@ -416,27 +416,27 @@ namespace t_map
 
         SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
-        if(s == NULL)
+        if (s == NULL)
         {
             printf("init_block_texture_normal() error \n");
         }
 
         glEnable(GL_TEXTURE_2D);
 
-        if(block_textures_normal == 0)
+        if (block_textures_normal == 0)
         {
-            glGenTextures( 1, &block_textures_normal );
+            glGenTextures(1, &block_textures_normal);
         }
 
-        glBindTexture( GL_TEXTURE_2D, block_textures_normal );
+        glBindTexture(GL_TEXTURE_2D, block_textures_normal);
 
         // Set the texture's stretching properties
 
-        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         GLenum texture_format;
         if (s->format->Rmask == 0x000000ff)
@@ -444,7 +444,7 @@ namespace t_map
         else
             texture_format = GL_BGRA;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
         
         glDisable(GL_TEXTURE_2D);
 

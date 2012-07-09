@@ -62,7 +62,7 @@ class CraftingRecipe
         output = NULL_ITEM_TYPE;
         output_stack = 1;
         reagent_num = 0;
-        for(int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
+        for (int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
         {
             reagent[i] = NULL_ITEM_TYPE;
             reagent_count[i] = 1;
@@ -99,7 +99,7 @@ class SmeltingRecipe
         for (int i=0; i<SMELTER_OUTPUTS_MAX; this->output_stack[i++] = 1);
         this->output_num = 0;
         this->reagent_num = 0;
-        for(int i=0; i<SMELTER_INPUTS_MAX; i++)
+        for (int i=0; i<SMELTER_INPUTS_MAX; i++)
         {
             this->reagent[i] = NULL_ITEM_TYPE;
             this->reagent_count[i] = 1;

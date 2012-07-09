@@ -3,6 +3,8 @@
 namespace TextureSheetLoader
 {
 
+const int N_SURFACES = 32;
+
 class TextureSheetLoader
 {
     public:
@@ -13,7 +15,7 @@ class TextureSheetLoader
     int texture_num;
     int tile_num;
     
-    SDL_Surface* textures[32]; //replace with surfaces
+    SDL_Surface* surfaces[N_SURFACES]; //replace with surfaces
 
     struct TileMeta* meta;
 

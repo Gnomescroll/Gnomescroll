@@ -12,7 +12,6 @@ struct Texture
 int init_image_loader();
 
 SDL_Surface* _load_image(char *file);
-//struct Texture _load_image_create_texture(char *file);
 void _load_image_create_texture(char *file, struct Texture* tex);
 
 SDL_Surface* create_surface_from_file(char* file);

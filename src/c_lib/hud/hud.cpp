@@ -111,7 +111,7 @@ void update_hud_draw_settings()
            hud_draw_settings.connected
         && ClientState::playerAgent_state.you != NULL
         && ClientState::playerAgent_state.you->status.dead
-     );
+    );
 
     hud_draw_settings.fps = Options::fps;
     hud_draw_settings.ping  = Options::ping;

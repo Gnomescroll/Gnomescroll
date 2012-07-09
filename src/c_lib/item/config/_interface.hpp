@@ -34,13 +34,13 @@ int _current_item_id = 0;
 
 void item_def(int type, ItemGroup group, const char* name)
 {
-    if(type != 0) _set_attribute(); //assumes first type defined is 0
+    if (type != 0) _set_attribute(); //assumes first type defined is 0
 
     _current_item_id = type;
 
     s.load_defaults(group);
     
-    if(group_array[type] != IG_ERROR)
+    if (group_array[type] != IG_ERROR)
     {
         printf("ITEM CONFIG ERROR: item type conflict, type= %i \n", type);
         GS_ABORT();
@@ -74,7 +74,7 @@ int texture_alias(const char* spritesheet)
 
 void sprite_def(int spritesheet, int ypos, int xpos)
 {
-    if(xpos < 1 || ypos < 1)
+    if (xpos < 1 || ypos < 1)
     {
         printf("ITEM CONFIG ERROR: id= %i xpos,ypos less than one \n", _current_item_id);
         GS_ASSERT(false);
@@ -100,7 +100,7 @@ void sprite_def(int alias)
 
 int sprite_alias(int spritesheet, int ypos, int xpos)
 {
-    if(xpos < 1 || ypos < 1)
+    if (xpos < 1 || ypos < 1)
     {
         printf("ITEM CONFIG ERROR: sprite alias xpos,ypos less than zero \n");
         GS_ASSERT(false);

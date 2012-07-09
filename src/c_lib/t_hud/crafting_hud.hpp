@@ -216,13 +216,16 @@ void CraftingUI::draw()
 {
 	this->draw_name();
 	
+	GS_ASSERT(CraftingTexture != 0);
+	if (CraftingTexture == 0) return;
+	
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glBindTexture( GL_TEXTURE_2D, CraftingTexture );
+    glBindTexture(GL_TEXTURE_2D, CraftingTexture);
 
     glColor4ub(255, 255, 255, 255);
 
@@ -240,16 +243,16 @@ void CraftingUI::draw()
     //draw background
     glBegin(GL_QUADS);
 
-    glTexCoord2f( tx_min, ty_min );
+    glTexCoord2f(tx_min, ty_min);
     glVertex2f(x, y);
 
-    glTexCoord2f( tx_min, ty_max );
+    glTexCoord2f(tx_min, ty_max);
     glVertex2f(x,y-h);
 
-    glTexCoord2f( tx_max, ty_max );
-    glVertex2f(x+w, y-h );
+    glTexCoord2f(tx_max, ty_max);
+    glVertex2f(x+w, y-h);
 
-    glTexCoord2f( tx_max, ty_min );
+    glTexCoord2f(tx_max, ty_min);
     glVertex2f(x+w, y);
 
     glEnd();
@@ -288,7 +291,7 @@ void CraftingUI::draw()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
     glBegin(GL_QUADS);
 
@@ -313,16 +316,16 @@ void CraftingUI::draw()
         const float tx_max = tx_min + 1.0f/iw;
         const float ty_max = ty_min + 1.0f/iw;
 
-        glTexCoord2f( tx_min, ty_min );
+        glTexCoord2f(tx_min, ty_min);
         glVertex2f(x, y);
 
-        glTexCoord2f( tx_min, ty_max );
+        glTexCoord2f(tx_min, ty_max);
         glVertex2f(x,y-w);
 
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y-w );
+        glTexCoord2f(tx_max, ty_max);
+        glVertex2f(x+w, y-w);
 
-        glTexCoord2f( tx_max, ty_min );
+        glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y);
     }
     glEnd();
@@ -357,16 +360,16 @@ void CraftingUI::draw()
         ty_max = ty_min + 1.0f/iw;
 
         glBegin(GL_QUADS);
-        glTexCoord2f( tx_min, ty_min );
+        glTexCoord2f(tx_min, ty_min);
         glVertex2f(x, y);
 
-        glTexCoord2f( tx_min, ty_max );
+        glTexCoord2f(tx_min, ty_max);
         glVertex2f(x,y-w);
 
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y-w );
+        glTexCoord2f(tx_max, ty_max);
+        glVertex2f(x+w, y-w);
 
-        glTexCoord2f( tx_max, ty_min );
+        glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y);
         glEnd();
     }
@@ -403,16 +406,16 @@ void CraftingUI::draw()
             ty_max = ty_min + 1.0f/iw;
 
             glBegin(GL_QUADS);
-            glTexCoord2f( tx_min, ty_min );
+            glTexCoord2f(tx_min, ty_min);
             glVertex2f(x, y);
 
-            glTexCoord2f( tx_min, ty_max );
+            glTexCoord2f(tx_min, ty_max);
             glVertex2f(x,y-w);
 
-            glTexCoord2f( tx_max, ty_max );
-            glVertex2f(x+w, y-w );
+            glTexCoord2f(tx_max, ty_max);
+            glVertex2f(x+w, y-w);
 
-            glTexCoord2f( tx_max, ty_min );
+            glTexCoord2f(tx_max, ty_min);
             glVertex2f(x+w, y);
             glEnd();
         }
