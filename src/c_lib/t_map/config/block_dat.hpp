@@ -244,6 +244,7 @@ void load_block_dat()
     set_max_dmg(5); //255
     hud_def(2,1, t1,9,4);
 
+
     end_block_dat();
 
 }
