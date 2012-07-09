@@ -7,7 +7,6 @@ const int NULL_DURABILITY = 0xffff;
 const int NULL_ENERGY = 0xffff;
 const int NULL_CONTAINER = 0xffff;
 const int NULL_PARTICLE = 0xffff;
-const int NULL_ITEM_LEVEL = -1;
 const int NULL_COST = 0;
 const int NULL_CRAFTING_RECIPE = 0xffff;
 const int NULL_SMELTING_RECIPE = 0xffff;
