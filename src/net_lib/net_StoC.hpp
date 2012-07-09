@@ -39,7 +39,8 @@ class FixedSizeNetPacketToClient {
         //int client_id; //not used yet
 
         FixedSizeNetPacketToClient() { nm = NULL; }
-        
+        virtual ~FixedSizeNetPacketToClient() {}
+    
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
             //GS_ASSERT(Derived::message_id != 255);
@@ -172,7 +173,8 @@ class FixedSizeReliableNetPacketToClient {
         static int _in;
 
         FixedSizeReliableNetPacketToClient(){ nm = NULL; }
-
+        virtual ~FixedSizeReliableNetPacketToClient() {}
+    
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
             //GS_ASSERT(Derived::message_id != 255);

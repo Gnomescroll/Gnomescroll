@@ -16,7 +16,7 @@ class Simple_object_list
         unsigned int id_c;
 
         Simple_object_list(); //default constructor
-        ~Simple_object_list(); //default deconstructor
+        virtual ~Simple_object_list(); //default deconstructor
 
         inline Object_state* create();         //object auto id
         

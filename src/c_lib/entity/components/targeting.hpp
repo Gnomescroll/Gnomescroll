@@ -24,6 +24,8 @@ class TargetingComponent: public Component
         virtual void lock_target(Vec3 camera_position) = 0;
 
         virtual void broadcast_target_choice() = 0;
+    
+    virtual ~TargetingComponent() {}
 
     explicit TargetingComponent(ComponentType type)
     : Component(type, COMPONENT_INTERFACE_TARGETING),

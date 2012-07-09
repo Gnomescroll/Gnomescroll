@@ -36,6 +36,7 @@ class Grenade_shrapnel_list: public Simple_object_list<Grenade_shrapnel, GRENADE
         void tick();
 
         Grenade_shrapnel_list() { print_list((char*)this->name(), this); }
+        virtual ~Grenade_shrapnel_list() {}
 };
     
 }

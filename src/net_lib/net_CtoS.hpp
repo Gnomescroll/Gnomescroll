@@ -35,6 +35,9 @@ class FixedSizeNetPacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
+        FixedSizeNetPacketToServer() {}
+        virtual ~FixedSizeNetPacketToServer() {}
+    
         //flatten this
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
@@ -104,6 +107,9 @@ class FixedSizeReliableNetPacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
+        FixedSizeReliableNetPacketToServer() {}
+        virtual ~FixedSizeReliableNetPacketToServer() {}
+    
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
             //GS_ASSERT(Derived::message_id != 255);

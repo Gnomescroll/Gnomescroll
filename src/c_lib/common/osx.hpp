@@ -12,6 +12,7 @@ dont_include_this_file_in_non_OSX_builds
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
+#include <unistd.h>
 #endif
 
 // ----------------------------------------------------------------------------

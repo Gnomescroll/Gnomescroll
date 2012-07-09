@@ -45,7 +45,9 @@ class MotionTargetingComponent: public TargetingComponent
         void broadcast_remove_target();
 
         void call();
-
+    
+    virtual ~MotionTargetingComponent() {}
+    
     MotionTargetingComponent()
     : TargetingComponent(COMPONENT_MOTION_TARGETING),
     speed(1.0f), max_z_down(128), max_z_up(128),
