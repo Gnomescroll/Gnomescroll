@@ -679,6 +679,23 @@ get rid of nanite feeding
 drop chips from enemies, blocks
 chips go directly into nanite chip slot
 change nanite texture to remove graphic
+rename to synthesizer
+increase prices, chip availability
+DONE
+
+increase pickup fly speed, use agent's collision box radius for inner pickup distance
+DONE
+
+fix IG_CONSUMABLE failing to send state updates on use
+DONE
+
+improve item drop component to support multiple item types and drop amounts, configurable
+DONE
+
+drop items individually (stack_size=1) for monster drops
+DONE
+
+add drops to monster spawners
 DONE
 
 ----------------------
@@ -717,6 +734,10 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
     -- so add assert in the recipe def
 --detect duplicate recipes
 --detect recursive recipes (input types == output types)
+
+add warning to the synthesizer dat
+--slot in use
+--outside of dimensions
 
 == CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
@@ -785,6 +806,9 @@ Reserve tanks are craftable?
     -- Nanite chips somehow
 
 All players start with ENERGY 99
+
+When player takes damage with ENERGY 00 they die
+--blink fast when 00
 
 ==BUGZ==
 camera choppy when rotating laterally and phi is at max/min
