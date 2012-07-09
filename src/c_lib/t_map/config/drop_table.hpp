@@ -171,9 +171,9 @@ void handle_block_drop(int x, int y, int z, int block_type)
                 for (int k=0; k<cidt->item_drop_num[j]; k++)
                 {
                     const float mom = 2.0f;
-                    x = (float)x + 0.5f + randf()*0.33f;
-                    y = (float)y + 0.5f + randf()*0.33f;
-                    z = (float)z + 0.05f;
+                    x = (float)((float)x + 0.5f + randf()*0.33f);
+                    y = (float)((float)y + 0.5f + randf()*0.33f);
+                    z = (float)((float)z + 0.05f);
                     ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
                         (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom); 
                 }

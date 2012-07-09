@@ -46,8 +46,8 @@ class MAP_CHUNK_SUBSCRIPTION
         //check that they are not already subscribed
         for(int i=0; i < subscriber_num; i++) GS_ASSERT(subscribers[i] != client_id)
 
-        subscribers[subscriber_num] = client_id;
-        chunk_aliases[subscriber_num] = chunk_alias;
+        subscribers[subscriber_num] = (unsigned short)client_id;
+        chunk_aliases[subscriber_num] = (unsigned short)chunk_alias;
         subscriber_num++;
     }
 

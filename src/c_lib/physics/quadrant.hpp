@@ -16,7 +16,7 @@ inline int Min_i(int x, int y, int x1, int y1)
 __attribute((always_inline))
 inline float Min_f(float x, float y, float x1, float y1)
 {
-    return abs(x)<abs(y) ? x1 : y1;
+    return fabsf(x)<fabsf(y) ? x1 : y1;
 }
 
 __attribute((always_inline))
@@ -28,7 +28,7 @@ inline int Min_2i(int x, int y)
 __attribute((always_inline))
 inline float Min_2f(float x, float y)
 {
-    return abs(x)<abs(y) ? x*x : y*y;
+    return fabsf(x)<fabsf(y) ? x*x : y*y;
 }
 
 //camera x and position x

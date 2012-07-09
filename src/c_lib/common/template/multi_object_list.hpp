@@ -59,11 +59,11 @@ class MultiObject_list
 };
 
 template <class Object_interface, int max_n> 
-MultiObject_list<Object_interface, max_n>::MultiObject_list(Object_interface* (*create_interface)(int, int))
+MultiObject_list<Object_interface, max_n>::MultiObject_list(Object_interface* (*create_interface_fn)(int, int))
 :
 id_c(0),
 num(0),
-create_interface(create_interface)
+create_interface(create_interface_fn)
 {
     this->a = (Object_interface**)calloc(max_n, sizeof(Object_interface*));
     //where();

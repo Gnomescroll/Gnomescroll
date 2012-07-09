@@ -93,7 +93,7 @@ int _GET_TICK() {
 		cs_sec = s_sec - s_sec_start;
 		cn_sec = n_sec - n_sec_start;
 
-		long t = cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS;
+		long t = (long)(cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS);
         _ti = cs_sec*1000 + cn_sec/(1000*1000);
 	#else
         static const long GetTickCount_start = GetTickCount();

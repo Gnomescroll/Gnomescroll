@@ -28,6 +28,9 @@ class MapMessagePacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
+        MapMessagePacketToServer() {}
+        virtual ~MapMessagePacketToServer() {}
+        
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
             pack_message_id(Derived::message_id, buff, buff_n);
@@ -95,7 +98,8 @@ class MapMessagePacketToClient {
         static int size;
 
         MapMessagePacketToClient() { }
-
+        virtual ~MapMessagePacketToClient() {}
+    
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
             pack_message_id(Derived::message_id, buff, buff_n);
@@ -196,6 +200,7 @@ class MapMessageArrayPacketToClient {
         uint32_t byte_size;
 
         MapMessageArrayPacketToClient() {}
+        virtual ~MapMessageArrayPacketToClient() {}
 
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {

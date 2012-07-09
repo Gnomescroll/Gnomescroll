@@ -62,12 +62,12 @@ class DynamicMultiObjectList
 };
 
 template <class Object_interface, int max_n, int HARD_MAX> 
-DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::DynamicMultiObjectList(Object_interface* (*create_interface)(int, int))
+DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::DynamicMultiObjectList(Object_interface* (*create_interface_fn)(int, int))
 :
 id_c(0),
 n_max(max_n),
 num(0),
-create_interface(create_interface)
+create_interface(create_interface_fn)
 {
     this->a = (Object_interface**)calloc(max_n, sizeof(Object_interface*));
     //where();

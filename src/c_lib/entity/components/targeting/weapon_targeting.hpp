@@ -37,6 +37,8 @@ class WeaponTargetingComponent: public TargetingComponent
         void broadcast_target_choice();
         void lock_target(Vec3 camera_position);
 
+    virtual ~WeaponTargetingComponent() {}
+    
     WeaponTargetingComponent()
     : TargetingComponent(COMPONENT_WEAPON_TARGETING),
     fire_tick(0), fire_rate_limit(1), uses_bias(false), accuracy_bias(0.0f),
