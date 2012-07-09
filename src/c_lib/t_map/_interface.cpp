@@ -113,7 +113,13 @@ void get_container_location(int container_id, int position[3])
 */
 void send_client_map_special(int client_id)
 {
-    main_map->control_point_list.send_control_points_to_client(client_id);
+    main_map->control_node_list.send_control_nodes_to_client(client_id);
+}
+
+void add_control_node(int x, int y, int z)
+{
+    printf("Server adding control node at: %i %i %i \n", x,y,z);
+    main_map->control_node_list.server_add_control_node(x,y,z); 
 }
 
 #endif

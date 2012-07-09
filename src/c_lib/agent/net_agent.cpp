@@ -895,6 +895,13 @@ inline void agent_set_block_CtoS::handle()
     msg.broadcast();
 
     t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
+
+    /*
+        Handle Special Block Placement
+    */
+    static int _control_node = dat_get_cube_id("control_node");
+
+    if(val == control_node) t_map::add_control_node(x,y,z);
 }
 
 //#if !PRODUCTION

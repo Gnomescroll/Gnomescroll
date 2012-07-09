@@ -214,13 +214,13 @@ void container_block_delete_StoC::handle()
 */
 
 //    uint16_t x,y,z;
-void control_point_create_StoC::handle()
+void control_node_create_StoC::handle()
 {
 
 };
 
 //    uint16_t x,y,z;
-void control_point_delete_StoC::handle()
+void control_node_delete_StoC::handle()
 {
 
 };
@@ -247,8 +247,8 @@ void container_block_chunk_reset_StoC::handle() {}
 void container_block_create_StoC::handle() {}
 void container_block_delete_StoC::handle() {}
 
-void control_point_create_StoC::handle() {}
-void control_point_delete_StoC::handle() {}
+void control_node_create_StoC::handle() {}
+void control_node_delete_StoC::handle() {}
 
 #endif
 
