@@ -10,10 +10,7 @@ dont_include_this_file_in_client
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
- 
 #include <string.h>
-#include <math.h>
 
 #ifdef __GNUC__
     #include <unistd.h>
@@ -31,23 +28,20 @@ dont_include_this_file_in_client
 #include <common/osx.hpp>
 #endif
 
-//template
-
+//options
+#include <options/option_macros.hpp>
+#include <options/server_options.cpp>
+ 
+//utility
+#include <common/time/physics_timer.cpp>
+#include <common/common.cpp>
+#include <common/files.cpp>
 #include <common/template/object_list.hpp>
 #include <common/template/multi_object_list.hpp>
 #include <common/template/dynamic_object_list.hpp>
 #include <common/template/dynamic_multi_object_list.hpp>
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
-
-//options
-#include <options/option_macros.hpp>
-#include <options/server_options.cpp>
-
-//utility
-#include <common/time/physics_timer.cpp>
-#include <common/common.cpp>
-#include <common/files.cpp>
 #include <common/subscriber_list.hpp>
 #include <common/analytics/sessions.cpp>
  
@@ -152,7 +146,6 @@ void signal_terminate_handler(int sig)
 
 int init_c_lib()
 {
-    printf("start init_c_lib \n");
     #ifdef linux
     signal(SIGTERM, signal_terminate_handler);  // kill <pid>
     signal(SIGINT, signal_terminate_handler);   // ctrl-c
@@ -170,7 +163,7 @@ int init_c_lib()
     
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
 
     Components::init();
     Objects::init_net_interfaces();
@@ -191,7 +184,7 @@ int init_c_lib()
     t_map::load_block_dat();
 
     Item::load_item_dat();
-    Item::load_nanite_store();
+    Item::load_synthesizer();
     
     t_map::load_map_drop_dat(); //load drop dat after items
 
@@ -204,7 +197,6 @@ int init_c_lib()
     Item::load_crafting_dat();
     Item::load_smelting_dat();
     
-    printf("end init_c_lib \n");
     return 0;
 } 
  
