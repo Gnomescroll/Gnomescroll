@@ -69,7 +69,8 @@ class ItemParticle //: public VerletComponent
         
         bool can_be_picked_up()
         {
-            return (this->pickup_prevention <= 0 && this->target_agent == NO_AGENT);
+            return (this->pickup_prevention <= 0
+				 && this->target_agent == NO_AGENT);
         }
         void lock_pickup()
         {
