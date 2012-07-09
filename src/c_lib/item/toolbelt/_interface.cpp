@@ -564,6 +564,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 
         case IG_CONSUMABLE:
             // consume the item
+            stack_size = item->stack_size;
             if (a != NULL)
             {
 				if (item->type != Item::get_item_type((char*)"repair_kit"))
@@ -593,6 +594,8 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 				agent_selected_item[agent_id] = NULL_ITEM;
 				item = NULL;
 			}
+			else if (remaining_stack_size != stack_size)
+				Item::send_item_state(item->id);
             break;
 
 
@@ -633,12 +636,13 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
         group = Item::get_item_group_for_type(item_type);
     }
     
-    //int stack_size = 1;
+    int stack_size = 1;
     int remaining_stack_size = 1;
     
 	switch (group)
 	{
 		case IG_CONSUMABLE:
+			stack_size = item->stack_size;
             if (item_type == Item::get_item_type((char*)"repair_kit") &&
 				a != NULL && a->status.consume_item(item->id))
             {	// players apply health kits to themselves with right click
@@ -649,6 +653,8 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
                     agent_selected_item[agent_id] = NULL_ITEM;
                     item = NULL;
                 }
+                else if (remaining_stack_size != stack_size)
+					Item::send_item_state(item->id);
             }
 			break;
 		
