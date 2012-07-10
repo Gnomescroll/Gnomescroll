@@ -41,7 +41,7 @@ struct CubeItemDropTable item_drop_table[512];
 
 void save_drop_dat_to_file()
 {
-    FILE *fp = fopen("screenshot/drop_dat","w");
+    FILE *fp = fopen("screenshot/drop_dat.txt","w");
     if (!fp) GS_ABORT();
 
     for (int i=0; i<256; i++)
