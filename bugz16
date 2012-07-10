@@ -759,6 +759,7 @@ send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
+make sure population log is line buffered
 
 == UI/UX ==
 
