@@ -16,7 +16,7 @@ struct TileMeta
 };
 
 TextureSheetLoader::TextureSheetLoader(unsigned int tile_size)
-: tile_size(tile_size), texture_num(0), tile_num(0)
+: tile_size(tile_size), texture_num(0), tile_num(0), texture_format(GL_BGRA)
 {
     this->meta = new struct TileMeta[256];
     this->surfaces = (SDL_Surface**)calloc(N_SURFACES, sizeof(SDL_Surface*));
@@ -77,9 +77,9 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
 	GS_ASSERT(source_y > 0);
     if (source_y < 1) return 255;
 
-	// why???
-    source_y--;
+	// decrement x,y because arguments should be 1-indexed
     source_x--;
+    source_y--;
 
     //check to see if already loaded
     for (unsigned int i=0; i<this->tile_num; i++)
@@ -120,10 +120,13 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
     for (unsigned int i=0; i < tile_size; i++)
     for (unsigned int j=0; j < tile_size; j++) 
     {
-		unsigned int pix_index = s->w*(j+tile_size*source_y) + (i+tile_size*source_x);
-        Uint32 pix = ((Uint32*) s->pixels)[pix_index];
+		unsigned int pix_index = s->w*(tile_size*source_y+j) + (tile_size*source_x+i);
+        Uint32 pix = ((Uint32*)s->pixels)[pix_index];
+        unsigned char r,g,b,a;
+		SDL_GetRGBA(pix, s->format, &r, &g, &b, &a);
+        pix = SDL_MapRGBA(this->texture_sheet->format, r,g,b,a);
         
-        stack_pixels[tile_size*tile_size*index + (j*tile_size+i)] = pix;
+        stack_pixels[tile_size*tile_size*index + (j*tile_size+i)] = pix;        
         sheet_pixels[(16*tile_size)*((dest_y+j)) + (dest_x+i)] = pix;
     }
 
@@ -199,9 +202,7 @@ void init()
 	GS_ASSERT(ItemTextureSheetLoader == NULL);
 	GS_ASSERT(ItemTextureStack == NULL);
 	GS_ASSERT(ItemSurface == NULL);
-	GS_ASSERT(GreyScaleItemSurface == NULL);
 	GS_ASSERT(ItemSheetTexture == 0);
-	GS_ASSERT(GreyScaleItemTexture == 0);
 
     ItemTextureSheetLoader = new TextureSheetLoader(16);
     ItemTextureStack = ItemTextureSheetLoader->texture_stack;
@@ -216,7 +217,14 @@ void init_item_texture()
     GS_ASSERT(ItemSurface != NULL);
     if (ItemSurface == NULL) return;
 
-    save_surface_to_png(ItemSurface, (char*)"./screenshot/items.png");    
+	GS_ASSERT(ItemTextureSheetLoader != NULL);
+	if (ItemTextureSheetLoader == NULL) return;
+
+	GLenum format = GL_BGRA;
+    if (ItemSurface->format->Rmask == 0x000000ff)
+		format = GL_RGBA;
+
+	ItemTextureSheetLoader->texture_format = format;
 
     GLenum MAG_FILTER = GL_NEAREST;
 	create_texture_from_surface(ItemSurface, &ItemSheetTexture, MAG_FILTER);
@@ -224,9 +232,10 @@ void init_item_texture()
 
 void init_greyscale()
 {    
+	GS_ASSERT(GreyScaleItemSurface == NULL);
+	GS_ASSERT(GreyScaleItemTexture == 0);
     ItemTextureSheetLoader->generate_grey_scale();
     GreyScaleItemSurface = ItemTextureSheetLoader->grey_scale_texture_sheet;
-    save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
     create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture, GL_NEAREST);
 }
 
@@ -237,6 +246,10 @@ void teardown_item_texture()
 
 void teardown()
 {
+    if (ItemSurface != NULL)
+		save_surface_to_png(ItemSurface, (char*)"./screenshot/items.png");    
+    if (GreyScaleItemSurface != NULL)
+		save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
     if (CubeTextureSheetLoader != NULL) delete CubeTextureSheetLoader;
     if (ItemTextureSheetLoader != NULL) delete ItemTextureSheetLoader;
     teardown_item_texture();

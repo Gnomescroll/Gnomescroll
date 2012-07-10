@@ -11,6 +11,8 @@ class TextureSheetLoader
 		unsigned int texture_num;
 		unsigned int tile_num;
 		
+		GLenum texture_format;
+		
 		SDL_Surface** surfaces;
 		
 		struct TileMeta* meta;

@@ -20,13 +20,13 @@ SDL_Surface* _load_image(const char* file)
     image=IMG_Load(file);
     if (!image)
     {
-        printf("IMG_Load: %s \n", IMG_GetError());
+        printf("IMG_Load: %s\n", IMG_GetError());
         return NULL;
     }
     GS_ASSERT(image->format->BytesPerPixel == 4);
     if (image->format->BytesPerPixel != 4)
     {
-        printf("IMG_Load: image is missing alpha channel \n");
+        printf("IMG_Load: image is missing alpha channel\n");
         return NULL;
     }
 
@@ -76,7 +76,7 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint min_fi
     GS_ASSERT(surface->format->BytesPerPixel == 4);
     if (surface->format->BytesPerPixel != 4)
     {
-        printf("Surface is missing alpha channel \n");
+        printf("Surface is missing alpha channel\n");
         return 1;
     }
     
@@ -94,7 +94,6 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint min_fi
     else
         texture_format = GL_BGRA;
 
-    //GLenum texture_format = GL_BGRA;
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
 
     glDisable(GL_TEXTURE_2D);
@@ -130,7 +129,7 @@ SDL_Surface* create_texture_and_surface_from_file(const char* filename, GLuint* 
     GS_ASSERT(surface != NULL);
     if (surface == NULL)
     {
-        printf("Error loading texture %s, %s \n", filename, IMG_GetError());
+        printf("Error loading texture %s, %s\n", filename, IMG_GetError());
         return NULL;
     }
     
