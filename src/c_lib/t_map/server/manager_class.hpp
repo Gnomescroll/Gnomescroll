@@ -243,8 +243,8 @@ void Map_manager::update()
         unsub part
     */
 
-    printf("xpos= %i ypos= %i \n", xpos, ypos);
-    
+    printf("map manager: xpos= %i ypos= %i \n", xpos, ypos);
+
     int _xpos = xpos / 16;
     int _ypos = ypos / 16;  
 
