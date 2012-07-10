@@ -317,7 +317,7 @@ void Map_manager::update()
 
     }
 
-
+    this->sort_que();
     needs_update = false;
 }
 
@@ -359,6 +359,7 @@ void Map_manager::que_for_sub(int x, int y)
     version_list[index].version = QUED; //set subscription property, so it does not get requed
 }
 
+/*
 static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, int xpos, int ypos) 
 {
     for(unsigned int i=0; i<n; i++)
@@ -376,6 +377,24 @@ void Map_manager::sort_que()
 {
     if(chunk_que_num == 0) return;
     QUE_ELEMENT_qsort(chunk_que, chunk_que_num, xpos, ypos);
+}
+*/
+
+void Map_manager::sort_que()
+{
+    if( chunk_que_num == 0) return;
+    QUE_ELEMENT *arr = chunk_que;
+    const int n = chunk_que_num;
+
+    for(int i=0; i<chunk_que_num; i++)
+    {
+        int x = xpos - quadrant_translate_i(xpos, arr[i].xpos);
+        int y = ypos - quadrant_translate_i(ypos, arr[i].ypos);
+        arr[i].distance2 = x*x + y*y;
+    }
+
+    #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
+    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
 }
 
 void Map_manager::dispatch_que()

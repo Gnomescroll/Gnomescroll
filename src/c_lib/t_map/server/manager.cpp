@@ -58,7 +58,7 @@ void t_map_manager_update_client_position(int client_id, float _x, float _y)
     }
 
     map_manager_list[client_id]->set_position(x,y);
-
+    map_manager_list[client_id]->update();
 }
 
 void t_map_manager_update()
@@ -74,12 +74,14 @@ void t_map_manager_update()
     /*
         Use when agent has teleported
     */
+/*
 void t_map_manager_force_update(int client_id)
 {
     if(map_manager_list[client_id] == NULL) return;
     map_manager_list[client_id]->update();
     map_manager_list[client_id]->sort_que();
 }
+*/
 
 void t_map_send_map_chunks()
 {
@@ -90,6 +92,7 @@ void t_map_send_map_chunks()
     }
 }
 
+/*
 void t_map_sort_map_chunk_ques()
 {
     for(int i=0; i < NetServer::HARD_MAX_CONNECTIONS; i++)
@@ -98,5 +101,5 @@ void t_map_sort_map_chunk_ques()
         map_manager_list[i]->sort_que();
     }
 }
-
+*/
 }   // t_map

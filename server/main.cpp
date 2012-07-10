@@ -36,7 +36,7 @@ void init()
         t_map::map_post_processing(); //regolith stuff
         t_gen::start_cave_generator();
         t_gen::populate_ore();
-        
+
         //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         map_gen::rough_floor(512,512,0,3, t_map::get_cube_id((char*)"bedrock"));
         //Dragon::caves();
@@ -72,7 +72,7 @@ void tick()
     {
         ServerState::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
-        t_map::t_map_sort_map_chunk_ques();
+        //t_map::t_map_sort_map_chunk_ques();
     }
 
     Toolbelt::update_toolbelt_items();
