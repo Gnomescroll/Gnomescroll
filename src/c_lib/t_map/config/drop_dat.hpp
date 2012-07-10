@@ -19,9 +19,9 @@ void load_map_drop_dat()
         set_drop(0.20f, 2);
 
 		add_drop("synthesizer_coin", 3);
-		set_drop(0.10f, 1);
-        set_drop(0.05f, 2);
-        set_drop(0.03f, 3);
+		set_drop(0.15f, 1);
+        set_drop(0.04f, 2);
+        set_drop(0.02f, 3);
         //add_drop("control_node", 2);
         //set_drop(0.40f, 1);
         //set_drop(0.40f, 2);
