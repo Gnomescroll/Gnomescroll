@@ -69,6 +69,7 @@ int TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* surface)
 //blit to sheet or return texture id
 int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
 {
+	// sanity checks
 	GS_ASSERT(sheet_id < texture_num);
     if (sheet_id >= texture_num) return 255;
 
@@ -103,24 +104,29 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
     if (source_x*(int)tile_size >= s->w || source_y*(int)tile_size >= s->h)
         return 255;
 
-    int index = (tile_num % 16) + 16*(tile_num/16);
-
+	// lock surfaces
     int s_lock = SDL_MUSTLOCK(s);
     int c_lock = SDL_MUSTLOCK(this->texture_sheet);
 
     if (s_lock) SDL_LockSurface(s);
     if (c_lock) SDL_LockSurface(this->texture_sheet);
 
+	// alias pixel buffers
     Uint32* stack_pixels = (Uint32*) this->texture_stack;
     Uint32* sheet_pixels = (Uint32*) this->texture_sheet->pixels;
 
+	// sprite coordinate index into destination pixel buffers
+    int index = (tile_num % 16) + 16*(tile_num/16);
     int dest_x = (index % 16) * this->tile_size;
     int dest_y = (index / 16) * this->tile_size;
 
+	// copy sprite icon pixels from source pixel buffer to sheet and stack buffers
     for (unsigned int i=0; i < tile_size; i++)
     for (unsigned int j=0; j < tile_size; j++) 
     {
 		unsigned int pix_index = s->w*(tile_size*source_y+j) + (tile_size*source_x+i);
+		
+		// convert source pixel to final format
         Uint32 pix = ((Uint32*)s->pixels)[pix_index];
         unsigned char r,g,b,a;
 		SDL_GetRGBA(pix, s->format, &r, &g, &b, &a);
@@ -130,10 +136,11 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
         sheet_pixels[(16*tile_size)*((dest_y+j)) + (dest_x+i)] = pix;
     }
 
+	// unlock
     if (s_lock) SDL_UnlockSurface(s);
     if (c_lock) SDL_UnlockSurface(texture_sheet);
 
-	// increment
+	// increment sprite/icon/tile count
     return tile_num++;
 }
 
