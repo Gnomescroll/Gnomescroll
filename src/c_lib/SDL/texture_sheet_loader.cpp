@@ -6,7 +6,7 @@
 namespace TextureSheetLoader
 {
 
-const int N_SURFACES = 32;
+const unsigned int N_SURFACES = 32;
 
 struct TileMeta
 {
@@ -30,7 +30,7 @@ TextureSheetLoader::~TextureSheetLoader()
 {
 	if (this->surfaces != NULL)
 	{
-		for (int i=0; i<N_SURFACES; i++)
+		for (unsigned int i=0; i<N_SURFACES; i++)
 			if (this->surfaces[i] != NULL)
 				SDL_FreeSurface(surfaces[i]);
 		free(this->surfaces);
