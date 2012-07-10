@@ -73,7 +73,7 @@ class AgentSynthesizerUI : public UIElement
 
 		coin_stack.set_format((char*) "%d");
 		coin_stack.set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
-		coin_stack.set_color(10,10,255,255);
+		coin_stack.set_color(255,255,255,255);
 		coin_stack.set_depth(-0.1f);
     }
 

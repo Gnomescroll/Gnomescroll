@@ -14,7 +14,7 @@ int init_image_loader()
     return 0;
 }
 
-SDL_Surface* _load_image(char *file)
+SDL_Surface* _load_image(const char* file)
 {
     SDL_Surface *image;
     image=IMG_Load(file);
@@ -33,12 +33,12 @@ SDL_Surface* _load_image(char *file)
     return image;
 }
 
-SDL_Surface* create_surface_from_file(char* file)
+SDL_Surface* create_surface_from_file(const char* file)
 {
     return _load_image(file);
 }
 
-void _load_image_create_texture(char *file, struct Texture *tex)
+void _load_image_create_texture(const char* file, struct Texture *tex)
 {
     SDL_Surface *image = _load_image(file);
 
@@ -62,60 +62,24 @@ void _load_image_create_texture(char *file, struct Texture *tex)
 
 int create_texture_from_surface(SDL_Surface *surface, GLuint *tex)
 {
-    return create_texture_from_surface(surface, tex, GL_LINEAR);
+    return create_texture_from_surface(surface, tex, GL_LINEAR, GL_LINEAR);
 }
 
-int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FILTER)
+// TODO -- deprecate
+int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint mag_filter)
 {
-    if (surface == NULL)
-    {
-        printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
-        return 1;
-    }
-
-    GLenum texture_format;
-
-    if (surface->format->Rmask == 0x000000ff)
-        texture_format = GL_RGBA;
-    else
-        texture_format = GL_BGRA;
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, tex);
-    // Bind the texture object
-    glBindTexture(GL_TEXTURE_2D, *tex);
-    // Set the texture's stretching properties
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MAG_FILTER);
-    // Edit the texture object's image data using the information SDL_Surface gives us
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels); //2nd parameter is level
-
-    glDisable(GL_TEXTURE_2D);
-    return 0;
+    return create_texture_from_surface(surface, tex, GL_LINEAR, mag_filter);
 }
 
-int create_texture_from_file(char* filename, GLuint* tex)
+int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint min_filter, GLuint mag_filter)
 {
-    return create_texture_from_file(filename, tex, GL_LINEAR, GL_LINEAR);
-}
-
-int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLuint mag_filter)
-{
-    SDL_Surface *surface;
-    surface=IMG_Load(filename);
-    if (!surface)
-    {
-        *tex = 0;
-        printf("Error loading texture %s, %s \n", filename, IMG_GetError());
-        return 1;
-    }
+    GS_ASSERT(surface->format->BytesPerPixel == 4);
     if (surface->format->BytesPerPixel != 4)
     {
-        *tex = 0;
-        printf("IMG_Load: image is missing alpha channel \n");
-        return 2;
+        printf("Surface is missing alpha channel \n");
+        return 1;
     }
+    
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, tex);
     glBindTexture(GL_TEXTURE_2D, *tex);
@@ -131,47 +95,51 @@ int create_texture_from_file(char* filename, GLuint* tex, GLuint min_filter, GLu
         texture_format = GL_BGRA;
 
     //GLenum texture_format = GL_BGRA;
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
 
     glDisable(GL_TEXTURE_2D);
-    SDL_FreeSurface(surface);
+
     return 0;
 }
 
-SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex)
+int create_texture_from_file(const char* filename, GLuint* tex)
 {
-    SDL_Surface* surface;
-    surface=IMG_Load(filename);
-    if (surface==NULL)
+    return create_texture_from_file(filename, tex, GL_LINEAR, GL_LINEAR);
+}
+
+int create_texture_from_file(const char* filename, GLuint* tex, GLuint min_filter, GLuint mag_filter)
+{
+    SDL_Surface* s = create_texture_and_surface_from_file(filename, tex, min_filter, mag_filter);
+    if (s == NULL) return 1;
+	SDL_FreeSurface(s);
+	return 0;
+}
+
+SDL_Surface* create_texture_and_surface_from_file(const char* filename, GLuint* tex)
+{
+	return create_texture_and_surface_from_file(filename, tex, GL_LINEAR, GL_LINEAR);
+}
+
+SDL_Surface* create_texture_and_surface_from_file(const char* filename, GLuint* tex, GLuint min_filter, GLuint mag_filter)
+{
+	GS_ASSERT(tex != NULL);
+	if (tex == NULL) return NULL;
+    *tex = 0;
+    
+    SDL_Surface* surface = IMG_Load(filename);
+    GS_ASSERT(surface != NULL);
+    if (surface == NULL)
     {
         printf("Error loading texture %s, %s \n", filename, IMG_GetError());
-        return surface;
+        return NULL;
     }
-    if (surface->format->BytesPerPixel != 4)
+    
+    int ret = create_texture_from_surface(surface, tex, min_filter, mag_filter);
+    if (ret != 0)
     {
-        printf("IMG_Load: image is missing alpha channel \n");
-        return 0;
-    }
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, tex);
-    glBindTexture(GL_TEXTURE_2D, *tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    GLenum texture_format;
-    if (surface->format->Rmask == 0x000000ff)
-        texture_format = GL_RGBA;
-    else
-        texture_format = GL_BGRA;
-
-    //GLenum texture_format = GL_BGRA;
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
-
-    glDisable(GL_TEXTURE_2D);
+		SDL_FreeSurface(surface);
+		return NULL;
+	}
     return surface;
 }
 
@@ -193,9 +161,7 @@ SDL_Surface* create_surface_from_nothing(int w, int h)
     amask = 0xff000000;
     #endif
 
-    //surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w,h, 32, rmask, gmask, bmask, amask);
     surface = SDL_CreateRGBSurface(SDL_SRCALPHA, w,h, 32, rmask, gmask, bmask, amask);
-    //surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA, w,h, 32, rmask, gmask, bmask, amask);
     if (surface == NULL)
     {
         fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
@@ -204,7 +170,7 @@ SDL_Surface* create_surface_from_nothing(int w, int h)
 }
 
 void load_colored_texture(
-    char* path, GLuint* texture,
+    const char* path, GLuint* texture,
     unsigned char br, unsigned char bg, unsigned char bb,   // base color
     unsigned char r, unsigned char g, unsigned char b       // replace with
 )
@@ -243,30 +209,33 @@ void load_colored_texture(
 }
 
 
-void save_surface_to_png(SDL_Surface* surface, char* filename)
+void save_surface_to_png(SDL_Surface* surface, const char* filename)
 {
     size_t png_size;
 
     //void *tdefl_write_image_to_png_file_in_memory(
     //    const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
     
-    char* PNG_IMAGE;
+    char* png_data = NULL;
     if (SDL_MUSTLOCK(surface) == 0)
     {
-        PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
-        (const char*) surface->pixels, surface->w, surface->h, 4, &png_size);
+        png_data = (char*)tdefl_write_image_to_png_file_in_memory(
+        (const char*)surface->pixels, surface->w, surface->h, 4, &png_size);
     }
     else
     {
         SDL_LockSurface(surface);
-        PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
-        (const char*) surface->pixels, surface->w, surface->h, 4, &png_size);
+        png_data = (char*)tdefl_write_image_to_png_file_in_memory(
+        (const char*)surface->pixels, surface->w, surface->h, 4, &png_size);
         SDL_UnlockSurface(surface);
     }
+	
+	GS_ASSERT(png_data != NULL);
+	if (png_data == NULL) return;
 
-    FILE* pFile = fopen(filename , "wb");
-    fwrite (PNG_IMAGE, 1 , png_size, pFile);
-    fclose (pFile);
+    FILE* pFile = fopen(filename, "wb");
+    fwrite(png_data, 1, png_size, pFile);
+    fclose(pFile);
 
-    free(PNG_IMAGE);
+    free(png_data);
 } 

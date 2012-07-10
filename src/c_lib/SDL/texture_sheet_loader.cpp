@@ -111,11 +111,11 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
     if (s_lock) SDL_LockSurface(s);
     if (c_lock) SDL_LockSurface(this->texture_sheet);
 
-    Uint32* stack_pixels = (Uint32*) CubeTextureStack;
+    Uint32* stack_pixels = (Uint32*) this->texture_stack;
     Uint32* sheet_pixels = (Uint32*) this->texture_sheet->pixels;
 
-    int dest_x = index % 16;
-    int dest_y = index / 16;
+    int dest_x = (index % 16) * this->tile_size;
+    int dest_y = (index / 16) * this->tile_size;
 
     for (unsigned int i=0; i < tile_size; i++)
     for (unsigned int j=0; j < tile_size; j++) 
@@ -123,8 +123,8 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
 		unsigned int pix_index = s->w*(j+tile_size*source_y) + (i+tile_size*source_x);
         Uint32 pix = ((Uint32*) s->pixels)[pix_index];
         
-        stack_pixels[ tile_size*tile_size*index + (j*tile_size+i) ] = pix;
-        sheet_pixels[ (16*tile_size)*((dest_y*tile_size + j)) + (tile_size*dest_x + i) ] = pix;
+        stack_pixels[tile_size*tile_size*index + (j*tile_size+i)] = pix;
+        sheet_pixels[(16*tile_size)*((dest_y+j)) + (dest_x+i)] = pix;
     }
 
     if (s_lock) SDL_UnlockSurface(s);
