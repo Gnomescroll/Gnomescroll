@@ -130,5 +130,85 @@ void map_post_processing()
     rock_layer_post_processing();
 }
 
+#if __GNUC__
+	#if defined(__i386__)
+
+	static __inline__ unsigned long long rdtsc(void)
+	{
+	    unsigned long long int x;
+	    __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
+	    return x;
+	}
+
+	#elif defined(__x86_64__)
+
+	static __inline__ unsigned long long rdtsc(void)
+	{
+	    unsigned hi, lo;
+	    __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+	    return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+	}
+
+	#endif
+#endif
+
+#if DC_SERVER
+void environment_process_tick()
+{
+	static int run = 0;
+	static int _random[256];
+	static int _random_index = 0;
+	if(run % 256 == 0)
+	{
+		for(int i=0; i<256; i++) _random[i] = rand();
+		run = 0;
+	}
+	run++;
+
+
+	static int x=0; 
+	static int y=0;
+	static int z=0;
+
+	const static int regolith_id = dat_get_cube_id("regolith");
+
+	for(int i=0; i< 200000; i++)
+	{
+
+
+    	struct MAP_ELEMENT e1 = get_element(x,y,z);
+    	struct MAP_ELEMENT e2 = get_element(x,y,z+1);
+
+    	//if(e1.block == regolith_id && e2.block == 0)
+    	
+    	if(e1.block == regolith_id && e1.palette == 0 && isOccludes(e2.block) == 0)
+    	{
+    		broadcast_set_block_palette(x,y,z, e1.block, 1); //setting regolith
+    		//printf(": %i %i %i \n",x,y,z);
+    	}
+
+		x++;
+		if(x >= 512)
+		{
+			x=0;
+			y++;
+			if(y >= 512) 
+			{
+				y=0;
+				z++;
+				if(z >= 128)
+				{
+					z = 0;
+				}
+			}
+		}
+
+		if(x==0 && y==0 && z==0) printf("loop: \n");
+	}
+
+
+
+}
+#endif
 
 }

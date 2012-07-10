@@ -103,6 +103,9 @@ void tick()
     ItemContainer::update_smelters();
     Item::item_list->tick();
     Item::item_list->verify_items();
+
+
+    t_map::environment_process_tick(); //refresh regolith etc...
 }
  
 int run()
