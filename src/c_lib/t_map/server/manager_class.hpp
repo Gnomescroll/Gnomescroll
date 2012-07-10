@@ -364,7 +364,7 @@ static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, in
     for(unsigned int i=0; i<n; i++)
     {
         int x = xpos - quadrant_translate_i(xpos, arr[i].xpos);
-        int y = ypos - quadrant_translate_i(xpos, arr[i].ypos);
+        int y = ypos - quadrant_translate_i(ypos, arr[i].ypos);
         arr[i].distance2 = x*x + y*y;
     }
 
