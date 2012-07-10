@@ -32,7 +32,7 @@ inline float Min_2f(float x, float y)
 }
 
 //camera x and position x
-__attribute((always_inline))
+//__attribute((always_inline))
 inline int quadrant_translate_i(int cx, int px)
 {
     ASSERT_BOXED_POINT(cx);
@@ -67,7 +67,7 @@ inline int quadrant_translate_i(int cx, int px)
 
 
 //camera x and position x
-__attribute((always_inline))
+//__attribute((always_inline))
 inline float quadrant_translate_f(float cx, float px)
 {
     //ASSERT_BOXED_POINT(cx);
