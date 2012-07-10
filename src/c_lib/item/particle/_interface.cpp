@@ -61,15 +61,6 @@ class ItemParticle* get(int particle_id)
 }
 
 #if DC_CLIENT
-void draw_init()
-{
-    init_item_particle();
-}
-
-void draw_teardown()
-{
-    teardown_item_particle();
-}
 
 void draw()
 {

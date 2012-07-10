@@ -32,13 +32,6 @@
 namespace ItemParticle
 {
 
-#if DC_CLIENT
-extern GLuint ItemSheetTexture;
-
-void init_item_particle();
-void teardown_item_particle();
-#endif
-
 class ItemParticle //: public VerletComponent
 {
     public:
@@ -128,6 +121,7 @@ class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MA
 void ItemParticle_list::draw()
 {
     #if DC_CLIENT
+    using TextureSheetLoader::ItemSheetTexture;
     if (ItemSheetTexture == 0) return;
 
     glColor3ub(255,255,255);

@@ -89,7 +89,6 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint MAG_FI
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MAG_FILTER);
     // Edit the texture object's image data using the information SDL_Surface gives us
     
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels); //2nd parameter is level
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels); //2nd parameter is level
 
     glDisable(GL_TEXTURE_2D);
