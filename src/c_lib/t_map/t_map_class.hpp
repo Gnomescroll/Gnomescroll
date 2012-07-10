@@ -67,7 +67,7 @@ class Terrain_map
     
     class MAP_CHUNK** chunk;
 
-    class CONTROL_POINT_LIST control_point_list; //special
+    class CONTROL_NODE_LIST control_node_list; //special
 
     #if DC_CLIENT
     bool height_changed;

@@ -45,17 +45,19 @@ namespace t_map
 
         ANISOTROPIC_FILTERING = 0;
 
-        if (GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
+        if(ANISOTROPIC_FILTERING)
         {
-            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
-            printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
-        } 
-        else 
-        {
-            printf("anisotropic filtering not supported ! \n");
-            ANISOTROPIC_FILTERING = 0;
+            if(GLEW_EXT_texture_filter_anisotropic) // ANISOTROPY_EXT
+            {
+                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
+                printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
+            } 
+            else 
+            {
+                printf("anisotropic filtering not supported ! \n");
+                ANISOTROPIC_FILTERING = 0;
+            }
         }
-
 
         //T_MAP_BACKUP_SHADER = 1;
 
