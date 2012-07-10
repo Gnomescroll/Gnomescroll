@@ -177,6 +177,9 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 {
     public:
 
+		int shopping_xdim;
+		int shopping_ydim;
+
 		int get_coin_type()
 		{
 			return this->get_slot_type(0);
@@ -217,6 +220,12 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
             return NULL_SLOT;
         }
 
+		void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
+		{
+			this->shopping_xdim = shopping_xdim;
+			this->shopping_ydim = shopping_ydim;
+		}
+
         void init(ItemContainerType type, int xdim, int ydim)
         {
             this->type = type;
@@ -233,7 +242,8 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
         }
 
         explicit ItemContainerSynthesizerUI(int id)
-        : ItemContainerUIInterface(id)
+        : ItemContainerUIInterface(id),
+        shopping_xdim(0), shopping_ydim(0)
         {}
 };
 

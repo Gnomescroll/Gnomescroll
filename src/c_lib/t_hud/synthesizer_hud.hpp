@@ -51,7 +51,7 @@ class AgentSynthesizerUI : public UIElement
 
     bool point_inside(int px, int py)
     {
-        return (this->get_grid_at(px,py) != NULL_SLOT);
+        return (this->get_slot_at(px,py) != NULL_SLOT);
     }
 
     bool in_shopping_region(int px, int py);
@@ -153,7 +153,8 @@ int AgentSynthesizerUI::get_slot_at(int px, int py)
 
     int xslot = slot % xdim;
     int yslot = slot / xdim;
-    GS_ASSERT(yslot >= 0 && yslot < ydim);
+    if (xslot >= shopping_xdim) return NULL_SLOT;
+    if (yslot >= shopping_ydim) return NULL_SLOT;
     
     slot = xslot + yslot * shopping_xdim;
     return slot;
