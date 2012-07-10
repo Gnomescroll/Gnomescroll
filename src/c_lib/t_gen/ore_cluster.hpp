@@ -88,6 +88,8 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 			continue;
 		}
 
+		tries = 0; //reset
+
 		// we need this, because x,y are exceeding twice the bounds
 		// of the map
 		x %= 512;
