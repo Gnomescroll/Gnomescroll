@@ -1,9 +1,12 @@
 #include "texture_sheet_loader.hpp"
 
+#include <common/macros.hpp>
 #include <SDL/texture_loader.hpp>
 
 namespace TextureSheetLoader
 {
+
+const int N_SURFACES = 32;
 
 struct TileMeta
 {
@@ -12,152 +15,140 @@ struct TileMeta
     int ypos;
 };
 
-TextureSheetLoader::TextureSheetLoader(int tile_size)
+TextureSheetLoader::TextureSheetLoader(unsigned int tile_size)
+: tile_size(tile_size), texture_num(0), tile_num(0), texture_format(GL_BGRA)
 {
-    meta = new struct TileMeta[256];
-
-    TILE_SIZE = tile_size;
-    for (int i=0; i<N_SURFACES; i++) surfaces[i] = NULL;
-    texture_num=0;
-    tile_num=0;
-
-    texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
-    grey_scale_texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
-    texture_stack = (Uint32*) calloc(4*256*TILE_SIZE*TILE_SIZE, sizeof(char));
+    this->meta = new struct TileMeta[256];
+    this->surfaces = (SDL_Surface**)calloc(N_SURFACES, sizeof(SDL_Surface*));
+    
+    this->texture_sheet = create_surface_from_nothing(16*tile_size, 16*tile_size);
+    this->grey_scale_texture_sheet = create_surface_from_nothing(16*tile_size, 16*tile_size);
+    this->texture_stack = (Uint32*) calloc(4*256*tile_size*tile_size, sizeof(char));
 }
 
 TextureSheetLoader::~TextureSheetLoader()
 {
-    for (int i=0; i<N_SURFACES; i++)
-        if (this->surfaces[i] != NULL) SDL_FreeSurface(surfaces[i]);
-    delete[] meta;
-    if (this->texture_sheet != NULL) SDL_FreeSurface(texture_sheet);
-    if (this->grey_scale_texture_sheet != NULL) SDL_FreeSurface(grey_scale_texture_sheet);
-    if (this->texture_stack != NULL) free(texture_stack);
+	if (this->surfaces != NULL)
+	{
+		for (int i=0; i<N_SURFACES; i++)
+			if (this->surfaces[i] != NULL)
+				SDL_FreeSurface(surfaces[i]);
+		free(this->surfaces);
+	}
+    if (this->meta != NULL) delete[] this->meta;
+    if (this->texture_sheet != NULL) SDL_FreeSurface(this->texture_sheet);
+    if (this->grey_scale_texture_sheet != NULL) SDL_FreeSurface(this->grey_scale_texture_sheet);
+    if (this->texture_stack != NULL) free(this->texture_stack);
 }
 
 int TextureSheetLoader::load_texture(char* filename)
 {
-    int id = texture_num;
+	GS_ASSERT(this->texture_num < N_SURFACES);
+	if (this->texture_num >= N_SURFACES) return -1;
 
-    surfaces[texture_num] = create_surface_from_file(filename);
+	GS_ASSERT(this->surfaces[this->texture_num] == NULL);
+    this->surfaces[this->texture_num] = create_surface_from_file(filename);
 
-	GS_ASSERT(surfaces[texture_num] != NULL);
-    if (surfaces[texture_num] == NULL)
-    {
-        printf("TextureSheetLoader: loading spritesheet %s failed \n", filename);
-        return -1;
-    }
+	GS_ASSERT(this->surfaces[this->texture_num] != NULL);
+    if (surfaces[this->texture_num] == NULL) return -1;
 
-    texture_num++;
-    return id;
+    return this->texture_num++;
 }
 
 int TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* surface)
 {
-    int id = texture_num;
-    GS_ASSERT(id < N_SURFACES);
-    if (id >= N_SURFACES) return -1;
-    surfaces[texture_num]= surface;
-    texture_num++;
-    return id;
-}
-
-
-void TextureSheetLoader::reload_texture(int id, char* filename)
-{
-
+	GS_ASSERT(surface != NULL);
+	if (surface == NULL) return -1;
+	
+    GS_ASSERT(this->texture_num < N_SURFACES);
+    if (this->texture_num >= N_SURFACES) return -1;
+    surfaces[this->texture_num] = surface;
+    return texture_num++;
 }
 
 //blit to sheet or return texture id
-int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
+int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
 {
-    if (source_x < 1)
-    {
-        printf("TextureSheetLoader::blit source_x less than 1: sheet_id= %i source_y= %i source_x= %i \n", sheet_id, source_x, source_y);
-        GS_ASSERT(false);
-        return 255;
-    }
-    if (source_y < 1)
-    {
-        printf("TextureSheetLoader::blit source_y less than 1: sheet_id= %i source_y= %i source_x= %i \n", sheet_id, source_x, source_y);
-        GS_ASSERT(false);
-        return 255;
-    }
-    source_y --;
-    source_x --;
+	// sanity checks
+	GS_ASSERT(sheet_id < texture_num);
+    if (sheet_id >= texture_num) return 255;
 
-    if (sheet_id >= texture_num)
-    {
-        printf("Error: TextureSheetLoader::blit error!!! FIX \n");
-        return 255;
-    }    
+	GS_ASSERT(source_x > 0);
+    if (source_x < 1) return 255;
+	GS_ASSERT(source_y > 0);
+    if (source_y < 1) return 255;
+
+	// decrement x,y because arguments should be 1-indexed
+    source_x--;
+    source_y--;
 
     //check to see if already loaded
-    for (int i=0; i<tile_num; i++)
-    {
-        struct TileMeta m = meta[i];
-        if (m.texture_sheet == sheet_id && m.xpos == source_x && m.ypos == source_y)
+    for (unsigned int i=0; i<this->tile_num; i++)
+        if (meta[i].texture_sheet == (int)sheet_id
+         && meta[i].xpos == source_x
+         && meta[i].ypos == source_y)
             return i;
-    }
 
-    //increment and store
-    struct TileMeta m;
-    m.texture_sheet = sheet_id;
-    m.xpos = source_x;
-    m.ypos = source_y;
-
-    meta[tile_num] = m;
-    int INDEX = tile_num;
-    tile_num++;
-
+	// get surface
     SDL_Surface* s = this->surfaces[sheet_id];
     GS_ASSERT(s != NULL);
     if (s == NULL) return 255;
+
+    // record metadata
+    meta[tile_num].texture_sheet = sheet_id;
+    meta[tile_num].xpos = source_x;
+    meta[tile_num].ypos = source_y;
     
-    CubeTextureStack = (Uint32*) this->texture_stack;
-
-    if (source_x * TILE_SIZE >= s->w || source_y * TILE_SIZE >= s->h)
-    {
-        printf("Error: LUA_blit_cube_texture, texture out of bounds\n");
+	// check that tiles are in bounds
+    GS_ASSERT(source_x*(int)tile_size < s->w && source_y*(int)tile_size < s->h);
+    if (source_x*(int)tile_size >= s->w || source_y*(int)tile_size >= s->h)
         return 255;
-    }
 
-    int index = (INDEX % 16) + 16*(INDEX/16);
-    Uint32 pix; 
-
+	// lock surfaces
     int s_lock = SDL_MUSTLOCK(s);
-    int c_lock = SDL_MUSTLOCK(texture_sheet);
+    int c_lock = SDL_MUSTLOCK(this->texture_sheet);
 
     if (s_lock) SDL_LockSurface(s);
-    if (c_lock) SDL_LockSurface(texture_sheet);
+    if (c_lock) SDL_LockSurface(this->texture_sheet);
 
-    Uint32* Pixels1 = (Uint32*) CubeTextureStack;
-    Uint32* Pixels2 = (Uint32*) texture_sheet->pixels;
+	// alias pixel buffers
+    Uint32* stack_pixels = (Uint32*) this->texture_stack;
+    Uint32* sheet_pixels = (Uint32*) this->texture_sheet->pixels;
 
-    int dest_x = index % 16;
-    int dest_y = index / 16;
+	// sprite coordinate index into destination pixel buffers
+    int index = (tile_num % 16) + 16*(tile_num/16);
+    int dest_x = (index % 16) * this->tile_size;
+    int dest_y = (index / 16) * this->tile_size;
 
-    for (int i=0; i < TILE_SIZE; i++)
-    for (int j=0; j < TILE_SIZE; j++) 
+	// copy sprite icon pixels from source pixel buffer to sheet and stack buffers
+    for (unsigned int i=0; i < tile_size; i++)
+    for (unsigned int j=0; j < tile_size; j++) 
     {
-        pix = ((Uint32*) s->pixels)[ s->w*(j+TILE_SIZE*source_y) + (i+TILE_SIZE*source_x) ];
+		unsigned int pix_index = s->w*(tile_size*source_y+j) + (tile_size*source_x+i);
+		
+		// convert source pixel to final format
+        Uint32 pix = ((Uint32*)s->pixels)[pix_index];
+        unsigned char r,g,b,a;
+		SDL_GetRGBA(pix, s->format, &r, &g, &b, &a);
+        pix = SDL_MapRGBA(this->texture_sheet->format, r,g,b,a);
         
-        Pixels1[ TILE_SIZE*TILE_SIZE*index + (j*TILE_SIZE+i) ] = pix;
-        Pixels2[ (16*TILE_SIZE)*((dest_y*TILE_SIZE + j)) + (TILE_SIZE*dest_x + i) ] = pix;
+        stack_pixels[tile_size*tile_size*index + (j*tile_size+i)] = pix;        
+        sheet_pixels[(16*tile_size)*((dest_y+j)) + (dest_x+i)] = pix;
     }
 
+	// unlock
     if (s_lock) SDL_UnlockSurface(s);
     if (c_lock) SDL_UnlockSurface(texture_sheet);
 
-    return INDEX;
+	// increment sprite/icon/tile count
+    return tile_num++;
 }
 
 void TextureSheetLoader::generate_grey_scale()
 {
     float gamma_correction[256];
 
-    for (int i=0; i< 256; i++)
+    for (int i=0; i<256; i++)
     {
         float intensity = ((float) i) / 255.0f;
         gamma_correction[i] = powf(intensity, 1.0f/2.2f);
@@ -171,49 +162,55 @@ void TextureSheetLoader::generate_grey_scale()
 
     Uint8 r,g,b,a;
 
-    for (int x=0; x<16*TILE_SIZE; x++)
-    for (int y=0; y<16*TILE_SIZE; y++)
+    for (unsigned int x=0; x<16*tile_size; x++)
+    for (unsigned int y=0; y<16*tile_size; y++)
     {
-        int index = y*16*TILE_SIZE + x;
+        unsigned int index = y*16*tile_size + x;
         Uint32 pix = ((Uint32*)texture_sheet->pixels)[index];
         SDL_GetRGBA(pix, texture_sheet->format, &r, &g, &b, &a);
 
         float avg = (gamma_correction[r] + gamma_correction[g] + gamma_correction[b]) / 3.0f;
         avg = powf(avg, 2.2f);
+		GS_ASSERT(avg >= 0.0f && avg <= 1.0f);
 
-        if (avg > 1.0f || avg < 0.0f) printf("ERROR TextureSheetLoader::generate_grey_scale: %f \n", avg);
-
-        unsigned char g = (int)(255.0f*avg);
+        unsigned char g = (unsigned char)(255.0f*avg);
 
         ((Uint32*)grey_scale_texture_sheet->pixels)[index] = SDL_MapRGBA(grey_scale_texture_sheet->format, g,g,g,a);
-
     }
 
     if (c_lock) SDL_UnlockSurface(texture_sheet);
     if (s_lock) SDL_UnlockSurface(grey_scale_texture_sheet);
-
 }
 
 
 class TextureSheetLoader* CubeTextureSheetLoader = NULL;
-struct SDL_Surface* CubeSurface = NULL;
 Uint32* CubeTextureStack = NULL;
+struct SDL_Surface* CubeSurface = NULL;
 
 class TextureSheetLoader* ItemTextureSheetLoader = NULL;
-struct SDL_Surface* ItemSurface = NULL;
 Uint32* ItemTextureStack = NULL;
-GLuint ItemSheetTexture = 0;
-
+struct SDL_Surface* ItemSurface = NULL;
 struct SDL_Surface* GreyScaleItemSurface = NULL;
+GLuint ItemSheetTexture = 0;
 GLuint GreyScaleItemTexture = 0;
 
 void init()
 {
     //CubeSurfaceSheet
+	GS_ASSERT(CubeTextureSheetLoader == NULL);
+	GS_ASSERT(CubeTextureStack == NULL);
+	GS_ASSERT(CubeSurface == NULL);
+
     CubeTextureSheetLoader = new TextureSheetLoader(32);
     CubeTextureStack = CubeTextureSheetLoader->texture_stack;
     CubeSurface = CubeTextureSheetLoader->texture_sheet;
+    
     //ItemTextureSheet
+	GS_ASSERT(ItemTextureSheetLoader == NULL);
+	GS_ASSERT(ItemTextureStack == NULL);
+	GS_ASSERT(ItemSurface == NULL);
+	GS_ASSERT(ItemSheetTexture == 0);
+
     ItemTextureSheetLoader = new TextureSheetLoader(16);
     ItemTextureStack = ItemTextureSheetLoader->texture_stack;
     ItemSurface = ItemTextureSheetLoader->texture_sheet;
@@ -221,26 +218,51 @@ void init()
 
 void init_item_texture()
 {
-    create_texture_from_surface(ItemSurface, &ItemSheetTexture, GL_NEAREST);
+	GS_ASSERT(ItemSheetTexture == 0);
+	if (ItemSheetTexture != 0) return;
+	
+    GS_ASSERT(ItemSurface != NULL);
+    if (ItemSurface == NULL) return;
+
+	GS_ASSERT(ItemTextureSheetLoader != NULL);
+	if (ItemTextureSheetLoader == NULL) return;
+
+	GLenum format = GL_BGRA;
+    if (ItemSurface->format->Rmask == 0x000000ff)
+		format = GL_RGBA;
+
+	ItemTextureSheetLoader->texture_format = format;
+
+    GLenum MAG_FILTER = GL_NEAREST;
+	create_texture_from_surface(ItemSurface, &ItemSheetTexture, MAG_FILTER);
 }
 
 void init_greyscale()
 {    
+	GS_ASSERT(GreyScaleItemSurface == NULL);
+	GS_ASSERT(GreyScaleItemTexture == 0);
     ItemTextureSheetLoader->generate_grey_scale();
     GreyScaleItemSurface = ItemTextureSheetLoader->grey_scale_texture_sheet;
-    save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
-    save_surface_to_png(ItemSurface , (char*)"./screenshot/items.png");
     create_texture_from_surface(GreyScaleItemSurface, &GreyScaleItemTexture, GL_NEAREST);
+}
+
+void teardown_item_texture()
+{
+	if (ItemSheetTexture != 0) glDeleteTextures(1, &ItemSheetTexture);
 }
 
 void teardown()
 {
-    delete CubeTextureSheetLoader;
-    delete ItemTextureSheetLoader;
+    if (ItemSurface != NULL)
+		save_surface_to_png(ItemSurface, (char*)"./screenshot/items.png");    
+    if (GreyScaleItemSurface != NULL)
+		save_surface_to_png(GreyScaleItemSurface, (char*)"./screenshot/grey_scale_items.png");
+    if (CubeTextureSheetLoader != NULL) delete CubeTextureSheetLoader;
+    if (ItemTextureSheetLoader != NULL) delete ItemTextureSheetLoader;
+    teardown_item_texture();
 }
 
-
-}
+}	// TextureSheetLoader
 
 
 int LUA_load_cube_texture_sheet(char* filename)

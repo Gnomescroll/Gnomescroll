@@ -41,7 +41,7 @@ varying vec3 inColor;
 varying float fogFragDepth;
 
 void main(void) 
-{                      
+{              
     //vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
     //gl_Position = gl_ModelViewProjectionMatrix * vec4(InVertex, 1.0);
     gl_Position = gl_ModelViewProjectionMatrix * InVertex;

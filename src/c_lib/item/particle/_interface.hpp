@@ -15,8 +15,6 @@ class ItemParticle* get(int particle_id);
 
 #if DC_CLIENT
 void draw();
-void draw_init();
-void draw_teardown();
 
 class ItemParticle* create_item_particle(
     int particle_id, int item_type,

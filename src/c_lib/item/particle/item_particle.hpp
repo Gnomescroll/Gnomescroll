@@ -32,13 +32,6 @@
 namespace ItemParticle
 {
 
-#if DC_CLIENT
-extern GLuint ItemSheetTexture;
-
-void init_item_particle();
-void teardown_item_particle();
-#endif
-
 class ItemParticle //: public VerletComponent
 {
     public:
@@ -128,9 +121,10 @@ class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MA
 void ItemParticle_list::draw()
 {
     #if DC_CLIENT
+    using TextureSheetLoader::ItemSheetTexture;
     if (ItemSheetTexture == 0) return;
 
-    glColor3ub(255,255,255);
+    glColor4ub(255,255,255,255);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -138,12 +132,11 @@ void ItemParticle_list::draw()
 
     glEnable(GL_ALPHA_TEST);
 
-    glAlphaFunc (GL_GREATER, 0.5f);
+    glAlphaFunc(GL_GREATER, 0.5f);
 
     glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 
     glBegin(GL_QUADS);
-
     for (int i=0; i<this->n_max; i++)
         if (this->a[i] != NULL && !this->a[i]->is_voxel)
             this->a[i]->draw();

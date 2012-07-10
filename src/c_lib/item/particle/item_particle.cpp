@@ -10,27 +10,6 @@ namespace ItemParticle
 
 #if DC_CLIENT
 
-GLuint ItemSheetTexture = 0;
-
-void init_item_particle()
-{
-	GS_ASSERT(ItemSheetTexture == 0);
-	if (ItemSheetTexture != 0) return;
-	
-	using TextureSheetLoader::ItemSurface;
-    GS_ASSERT(ItemSurface != NULL);
-    if (ItemSurface == NULL) return;
-
-    GLenum MAG_FILTER = GL_NEAREST;
-	create_texture_from_surface(ItemSurface, &ItemSheetTexture, MAG_FILTER);
-}
-
-void teardown_item_particle()
-{
-	if (ItemSheetTexture == 0) return;
-    glDeleteTextures(1, &ItemSheetTexture);
-}
-
 void ItemParticle::draw()
 {
     if (!this->should_draw) return;
