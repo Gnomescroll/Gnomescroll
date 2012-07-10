@@ -39,7 +39,7 @@ class ItemContainerInterface
         bool is_valid_slot(int slot)
         {
             GS_ASSERT(this->slot_max > 0);
-            return (slot >= 0 && slot < this->slot_max);
+            return (slot != NULL_SLOT && slot >= 0 && slot < this->slot_max);
         }
 
         ItemID get_item(int slot)
@@ -192,6 +192,11 @@ class ItemContainerSynthesizer: public ItemContainerInterface
     
 		int shopping_xdim;
 		int shopping_ydim;
+
+		ItemID get_coins()
+		{
+			return this->get_item(0);
+		}
 
         bool can_insert_item(int slot, ItemID item_id)
         {

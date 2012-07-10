@@ -14,37 +14,20 @@ GLuint ItemSheetTexture = 0;
 
 void init_item_particle()
 {
-    SDL_Surface* s = TextureSheetLoader::ItemSurface;
+	GS_ASSERT(ItemSheetTexture == 0);
+	if (ItemSheetTexture != 0) return;
+	
+	using TextureSheetLoader::ItemSurface;
+    GS_ASSERT(ItemSurface != NULL);
+    if (ItemSurface == NULL) return;
 
-    if (s == NULL)
-    {
-        printf("ItemParticle::init_item_particle, error \n");
-        return;
-    }
-    GS_ASSERT(s != NULL);
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, &ItemSheetTexture);
-
-    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    //GLenum internalFormat = 4;
-    GLenum internalFormat = 4;
-    GLenum format = GL_BGRA;
-    if (s->format->Rmask == 0x000000ff)
-        format = GL_RGBA;
- 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-    
-    glDisable(GL_TEXTURE_2D);
+    GLenum MAG_FILTER = GL_NEAREST;
+	create_texture_from_surface(ItemSurface, &ItemSheetTexture, MAG_FILTER);
 }
 
 void teardown_item_particle()
 {
+	if (ItemSheetTexture == 0) return;
     glDeleteTextures(1, &ItemSheetTexture);
 }
 

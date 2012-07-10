@@ -369,12 +369,13 @@ void poll_mouse()
 	GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
 	if (MOUSE_MOVEMENT_ARRAY == NULL) return;
     if (input_state.agent_container || input_state.container_block) return;
+
     if (input_state.ignore_mouse_motion)
-    {
-        // flush mouse buffer
+    {	// flush mouse buffer
         MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dx = 0;
         MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dy = 0;
         MOUSE_MOVEMENT_ARRAY_INDEX++;
+		MOUSE_MOVEMENT_ARRAY_INDEX %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
         return;
     }
     
@@ -407,12 +408,7 @@ void poll_mouse()
     m.dx = dx;
     m.dy = dy;
 
-	GS_ASSERT(MOUSE_MOVEMENT_ARRAY_INDEX < MOUSE_MOVEMENT_ARRAY_INDEX_MAX);
-	if (MOUSE_MOVEMENT_ARRAY_INDEX >= MOUSE_MOVEMENT_ARRAY_INDEX_MAX) return;
-
     MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX] = m;
     MOUSE_MOVEMENT_ARRAY_INDEX++;
-
-    //_dx = ((float)(-mm->x) * input_state.sensitivity) / 40000.0f; // magic #
-    //_dy = ((float)(inv * mm->y) * input_state.sensitivity) / 40000.0f; // magic #
+    MOUSE_MOVEMENT_ARRAY_INDEX %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
 }

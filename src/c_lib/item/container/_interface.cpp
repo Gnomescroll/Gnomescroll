@@ -24,13 +24,13 @@ void init()
     #if DC_SERVER
     agent_container_list   = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list    = (int*)   malloc(AGENT_MAX * sizeof(int));
-    agent_synthesizer_list      = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_synthesizer_list = (int*)   malloc(AGENT_MAX * sizeof(int));
     agent_hand_list        = (ItemID*) malloc(AGENT_MAX * sizeof(ItemID));
     opened_containers      = (int*)   malloc(AGENT_MAX * sizeof(int));
     
     for (int i=0; i<AGENT_MAX; i++) agent_container_list  [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list   [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list     [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list[i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_hand_list       [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) opened_containers     [i] = NULL_CONTAINER;
     #endif
@@ -43,7 +43,7 @@ void teardown()
     #if DC_CLIENT
     if (player_container_ui   != NULL) delete player_container_ui;
     if (player_toolbelt_ui    != NULL) delete player_toolbelt_ui;
-    if (player_synthesizer_ui      != NULL) delete player_synthesizer_ui;
+    if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     if (storage_block_ui      != NULL) delete storage_block_ui;
     #endif
@@ -51,7 +51,7 @@ void teardown()
     #if DC_SERVER
     if (agent_container_list   != NULL) free(agent_container_list);
     if (agent_toolbelt_list    != NULL) free(agent_toolbelt_list);
-    if (agent_synthesizer_list      != NULL) free(agent_synthesizer_list);
+    if (agent_synthesizer_list != NULL) free(agent_synthesizer_list);
     if (agent_hand_list        != NULL) free(agent_hand_list);
     if (opened_containers      != NULL) free(opened_containers);
     #endif
@@ -883,7 +883,7 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     if (item_type == NULL_ITEM_TYPE) return;
     
     // get the coins
-    ItemID coins = synthesizer->get_item(0);
+    ItemID coins = synthesizer->get_coins();
     int coin_stack = 0; // coin stack will return 1 for NULL_ITEM, but we want to treat that as 0
     if (coins != NULL_ITEM) coin_stack = Item::get_stack_size(coins);
     if (coin_stack < cost) return;

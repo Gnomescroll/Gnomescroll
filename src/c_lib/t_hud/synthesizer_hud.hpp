@@ -32,7 +32,7 @@ class AgentSynthesizerUI : public UIElement
     static const float cell_offset_y_bottom;
 
     HudText::Text* prices;
-    HudText::Text* stacks;
+    HudText::Text coin_stack;
 
     void draw();
 
@@ -71,20 +71,10 @@ class AgentSynthesizerUI : public UIElement
             t->set_depth(-0.1f);
         }
 
-        // stacks only for coins
-        GS_ASSERT(this->stacks == NULL);
-        max = 1;
-        this->stacks = new HudText::Text[max];
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->stacks[i];
-            t->set_format((char*) "%d");
-            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
-            t->set_color(255,255,255,255);
-            t->set_depth(-0.1f);
-        }
-        
-		this->name.set_text((char*)"Synthesizer");
+		coin_stack.set_format((char*) "%d");
+		coin_stack.set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+		coin_stack.set_color(255,255,255,255);
+		coin_stack.set_depth(-0.1f);
     }
 
     void set_container_type(int container_type)
@@ -92,13 +82,14 @@ class AgentSynthesizerUI : public UIElement
         this->container_type = container_type;
     }
 
-    AgentSynthesizerUI() : prices(NULL), stacks(NULL)
-    {}
+    AgentSynthesizerUI() : prices(NULL)
+    {
+		this->name.set_text((char*)"Synthesizer");	
+	}
 
     ~AgentSynthesizerUI()
     {
         if (this->prices != NULL) delete[] this->prices;
-        if (this->stacks != NULL) delete[] this->stacks;
     }
 };
 
@@ -129,9 +120,8 @@ bool AgentSynthesizerUI::in_shopping_region(int px, int py)
 
 bool AgentSynthesizerUI::in_coins_region(int px, int py)
 {
-    int slot = this->get_grid_at(px,py);
-    if (slot == NULL_SLOT) return false;
-    if (slot == xdim*ydim-1) return true;
+    if (this->get_grid_at(px,py) == this->xdim*this->ydim-1)
+        return true;    // last slot
     return false;
 }
 
@@ -248,8 +238,8 @@ void AgentSynthesizerUI::draw()
     if (container == NULL) return;
 
     int coins = 0;
-    if (container->get_slot_type(0) != NULL_ITEM_TYPE)
-		coins = container->get_slot_stack(0);
+    if (container->get_coin_type() != NULL_ITEM_TYPE)
+		coins = container->get_coin_stack();
 
     // greyscale items
 
@@ -346,7 +336,7 @@ void AgentSynthesizerUI::draw()
     }
 
     // draw coins
-    int coin_item_type = container->get_slot_type(0);
+    int coin_item_type = container->get_coin_type();
     if (coin_item_type != NULL_ITEM_TYPE)
     {
         int coin_sprite_id = Item::get_sprite_index_for_type(coin_item_type);
@@ -379,9 +369,6 @@ void AgentSynthesizerUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    ////draw text for item cost in upper right
-
-    GS_ASSERT(this->stacks != NULL);
     GS_ASSERT(this->prices != NULL);
 
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
@@ -414,17 +401,17 @@ void AgentSynthesizerUI::draw()
     }
 
     // draw coin stack
-    int coin_stack_size = container->get_slot_stack(0);
+    int coin_stack_size = container->get_coin_stack();
     GS_ASSERT(count_digits(coin_stack_size) < STACK_COUNT_MAX_LENGTH);
     if (coin_stack_size > 1)
     {
-        this->stacks[0].update_formatted_string(1, coin_stack_size);
+        this->coin_stack.update_formatted_string(1, coin_stack_size);
 
-        const float x = xoff + xdim*cell_size - cell_offset_x_right - this->stacks[0].get_width();
-        const float y = yoff - (ydim*cell_size - cell_offset_y_bottom - this->stacks[0].get_height());
+        const float x = xoff + xdim*cell_size - cell_offset_x_right - this->coin_stack.get_width();
+        const float y = yoff - (ydim*cell_size - cell_offset_y_bottom - this->coin_stack.get_height());
 
-        this->stacks[0].set_position(x,y);
-        this->stacks[0].draw();
+        this->coin_stack.set_position(x,y);
+        this->coin_stack.draw();
     }
 
     HudFont::reset_default();

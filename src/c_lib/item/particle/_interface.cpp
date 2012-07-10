@@ -311,7 +311,8 @@ void check_item_pickups()
 					}
 					else
 					{
-						ItemID slot_item = container->get_item(0);
+						using ItemContainer::ItemContainerSynthesizer;
+						ItemID slot_item = ((ItemContainerSynthesizer*)container)->get_coins();
 						GS_ASSERT(slot_item != NULL_ITEM);
 						int slot_item_type = Item::get_item_type(slot_item);
 						GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);

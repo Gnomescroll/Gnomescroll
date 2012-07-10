@@ -167,7 +167,7 @@ void die_mob_robot_box(Object* object)
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
     GS_ASSERT(item_drop != NULL);
-    item_drop->drop_item();
+    if (item_drop != NULL) item_drop->drop_item();
 
     object->broadcastDeath();
 

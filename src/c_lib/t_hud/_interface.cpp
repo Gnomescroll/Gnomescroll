@@ -176,6 +176,7 @@ static int get_item_type_at(int x, int y)
 
     if (ui->type == UI_ELEMENT_SYNTHESIZER_CONTAINER)
     {
+        using ItemContainer::ItemContainerSynthesizerUI;
         if (((AgentSynthesizerUI*)ui)->in_shopping_region(x,y))
         {
             int xslot = slot % ((AgentSynthesizerUI*)ui)->shopping_xdim;
@@ -183,9 +184,8 @@ static int get_item_type_at(int x, int y)
             return Item::get_synthesizer_item(xslot, yslot);
         }
         else if (((AgentSynthesizerUI*)ui)->in_coins_region(x,y))
-			return container->get_slot_type(0);
-		else
-			return NULL_ITEM_TYPE;
+			return ((ItemContainerSynthesizerUI*)container)->get_coin_type();
+		return NULL_ITEM_TYPE;
     }
     
     if (ui->type == UI_ELEMENT_CRAFTING_CONTAINER)
@@ -433,6 +433,7 @@ void draw_hud()
 	agent_toolbelt->draw_name();
     agent_container->draw();
     synthesizer_container->draw();
+    
     if (container_block_enabled)
     {
         GS_ASSERT(container_block_enabled_id != NULL_CONTAINER);

@@ -3,7 +3,6 @@
 #include <animations/insect_mob.hpp>
 
 #include <animations/hitscan.hpp>
-#include <animations/hitscan_laser.hpp>
 #include <animations/mining_laser.hpp>
 #include <animations/weapon.hpp>
 
@@ -11,22 +10,18 @@ namespace Animations
 {
 
 class Insect_mob_list* insect_mob_list = NULL;
-
 class HitscanEffect_list* hitscan_effect_list = NULL;
-class HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 class MiningLaserEffect_list* mining_laser_effect_list = NULL;
 
 void init()
 {
 
     hitscan_effect_list = new HitscanEffect_list;
-    hitscan_laser_effect_list = new HitscanLaserEffect_list;
     mining_laser_effect_list = new MiningLaserEffect_list;
 
     insect_mob_list = new Insect_mob_list;
 
     Animations::init_hitscan();
-    Animations::init_hitscan_laser();
     Animations::init_mining_laser();
 
     Animations::init_insect_mob();
@@ -39,11 +34,9 @@ void teardown()
     delete insect_mob_list;
 
     delete hitscan_effect_list;
-    delete hitscan_laser_effect_list;
     delete mining_laser_effect_list;
 
     Animations::teardown_hitscan();
-    Animations::teardown_hitscan_laser();
 
     Animations::teardown_insect_mob();
 
@@ -52,7 +45,6 @@ void teardown()
 void animations_tick()
 {
     hitscan_effect_list->tick();
-    hitscan_laser_effect_list->tick();
     mining_laser_effect_list->tick();
     
     insect_mob_list->tick();
@@ -73,11 +65,6 @@ void draw_insect_mob()
 void draw_hitscan_effect()
 {
     hitscan_effect_list->draw();
-}
-
-void draw_hitscan_laser_effect()
-{
-    hitscan_laser_effect_list->draw();
 }
 
 void mining_laser_effect_tick()

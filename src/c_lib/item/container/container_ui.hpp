@@ -35,7 +35,8 @@ class ItemContainerUIInterface
 
         bool is_valid_slot(int slot)
         {
-            return (slot >= 0 && slot < this->slot_max);
+            GS_ASSERT(this->slot_max > 0);
+            return (slot != NULL_SLOT && slot >= 0 && slot < this->slot_max);
         }
 
         int get_slot_durability(int slot)
@@ -175,6 +176,16 @@ class ItemContainerUI: public ItemContainerUIInterface
 class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 {
     public:
+
+		int get_coin_type()
+		{
+			return this->get_slot_type(0);
+		}
+		
+		int get_coin_stack()
+		{
+			return this->get_slot_stack(0);
+		}
 
         bool can_insert_item(int slot, int item_type)
         {

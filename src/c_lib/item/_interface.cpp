@@ -293,8 +293,6 @@ void agent_quit(int agent_id)
     for (int i=0; i<item_list->n_max; i++)
         if (item_list->a[i] != NULL)
             item_list->a[i]->subscribers.remove(client_id);
-            //if (item_list->a[i]->subscribers.remove(client_id))
-                //printf("Unsubscribed %d from %d\n", client_id, item_list->a[i]->id);
 }
 
 
