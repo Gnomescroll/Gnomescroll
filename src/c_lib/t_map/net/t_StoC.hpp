@@ -228,7 +228,7 @@ class container_block_delete_StoC: public MapMessagePacketToClient<container_blo
     Control Points
 */
 
-class control_point_create_StoC: public MapMessagePacketToClient<control_point_create_StoC>
+class control_node_create_StoC: public MapMessagePacketToClient<control_node_create_StoC>
 {
     public:
     uint16_t x,y,z;
@@ -243,7 +243,7 @@ class control_point_create_StoC: public MapMessagePacketToClient<control_point_c
     inline void handle() __attribute((always_inline));
 };
 
-class control_point_delete_StoC: public MapMessagePacketToClient<control_point_create_StoC>
+class control_node_delete_StoC: public MapMessagePacketToClient<control_node_create_StoC>
 {
     public:
     uint16_t x,y,z;

@@ -26,5 +26,6 @@ void map_post_processing();
 
 //on connect
 void send_client_map_special(int client_id);
+void add_control_node(int x, int y, int z);
 #endif
 }

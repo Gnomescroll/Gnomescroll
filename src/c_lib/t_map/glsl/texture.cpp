@@ -5,7 +5,7 @@ namespace t_map
 
 unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
 
-GLuint terrain_map_glsl = 0 ; //for shader
+GLuint terrain_map_glsl = 0; //for shader
 GLuint block_textures_normal = 0; //linear scale
 
 int must_lock_block_surface = 0;
@@ -73,6 +73,8 @@ void set_cube_side_texture(int id, int side, int tex_id)
         Init Pixel Sampler
     */
 
+	/*
+
     //init pixel sampler if it has not been inited
     if (pixel_data[tex_id] == NULL) 
     {
@@ -103,10 +105,15 @@ void set_cube_side_texture(int id, int side, int tex_id)
         }
 
     }
+
+    */
 }
 
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
+	GS_ASSERT(TextureSheetLoader::CubeTextureStack != NULL);
+	if (TextureSheetLoader::CubeTextureStack == NULL) return;
+	
     int tex_id = get_cube_side_texture(cube_id, side);
     int ra = (32*32)*tex_id + (rand() % (32*32));
     unsigned int t = TextureSheetLoader::CubeTextureStack[ra];
@@ -118,7 +125,8 @@ void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g,
 /*
     Dont check locking and pull out of pixel buffer instead!!!
 */
-void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
+void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
+{
     //if (must_lock_block_surface) SDL_LockSurface(block_surface);
     //int p = px + py*block_surface_width;
     //Uint32 pixel = ((Uint32*)block_surface->pixels)[p];
@@ -128,7 +136,6 @@ void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsig
     printf("texture.cpp, get_texture_pixel(), not implemented\n");
 }
 
-
-}
+}	// t_map
 
 #endif
