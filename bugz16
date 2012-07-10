@@ -701,6 +701,15 @@ DONE
 add labels to the hud widgets
 DONE
 
+one script for building+exporting+dropbox upload osx build
+DONE
+
+fix rgb/bgr channel flip in osx
+DONE
+
+fix mouse movement buffer overwrite error
+DONE
+ 
 ----------------------
 
 == BUILD ==
@@ -719,7 +728,6 @@ some boxes arent getting destination correctly -- just jumping around with state
 
 == GFX ==
 glsl colored/textured voxels -- add normal lighting
-texture color problem in OSX -- for blocks and for items
 Improve Hud Weapon sprites animations
 textured voxels / isometric blocks should use full palette info, instead of only one side
 better font
@@ -741,6 +749,9 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
 add warning to the synthesizer dat
 --slot in use
 --outside of dimensions
+
+maintain a NetClient buffer per stage of ready-ness
+broadcast only to clients who are are in fully ready
 
 == CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
