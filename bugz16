@@ -759,6 +759,7 @@ send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
+Remove "Channel X" from chat.log, put in timestamp
 
 == UI/UX ==
 
