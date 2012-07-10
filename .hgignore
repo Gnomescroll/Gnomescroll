@@ -69,6 +69,8 @@ settings.py
 output_msgs
 .idea/
 
+*.out
+
 netclient/build
 netclient/ext
 
