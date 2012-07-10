@@ -37,14 +37,8 @@ void t_map_manager_teardown(int client_id)
 /*
     Call this to set player position for map loading
 */
-void t_map_manager_update_client_position(int client_id, float _x, float _y)
+void t_map_manager_update_client_position(int client_id, float x, float y)
 {
-
-    //printf("updated client %i to %f %f \n", client_id, _x, _y);
-    
-    int x = _x;
-    int y = _y;
-
     if(client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("ERROR: t_map_manager_update, invalid client id \n");
@@ -53,7 +47,7 @@ void t_map_manager_update_client_position(int client_id, float _x, float _y)
 
     if( map_manager_list[client_id] == NULL )
     {
-        //printf("ERROR: t_map_manager_update, client %i map manager pointer is null! \n", client_id);
+        printf("ERROR: t_map_manager_update, client %i map manager pointer is null! \n", client_id);
         return;
     }
 
