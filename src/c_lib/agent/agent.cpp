@@ -73,6 +73,7 @@ void Agent_state::teleport(float x,float y,float z)
 {
     this->set_position(x,y,z);
 
+	#if DC_SERVER
     Agent_teleport_message A;
 
     A.id = id;
@@ -86,6 +87,9 @@ void Agent_state::teleport(float x,float y,float z)
     A.theta = s.theta;
     A.phi = s.phi;
     A.broadcast();
+
+	t_map::t_map_manager_update_client_position(this->id, x,y);
+	#endif
 }
 
 void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi)
@@ -94,6 +98,7 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     s.theta = theta;
     s.phi = phi;
     
+    #if DC_SERVER
     Agent_teleport_message A;
 
     A.id = id;
@@ -107,6 +112,9 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     A.theta = s.theta;
     A.phi = s.phi;
     A.broadcast();
+    
+	t_map::t_map_manager_update_client_position(this->id, x,y);
+	#endif
 }
 
 void Agent_state::tick() 
