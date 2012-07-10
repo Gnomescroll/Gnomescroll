@@ -24,15 +24,18 @@ void populate_ore_veins(int number, const char* block_name)
 		int ctile = t_map::get(x,y,z);
 		if(ctile == 0) continue;
 
-		int s = (int)genrand_int32() % 128;
-		generate_ore_vein(x,y,z, 2*s+1, tile_id);
+		int s = (int)genrand_int32() % 64;
+
+		s = s*2 + 16;
+
+		generate_ore_vein(x,y,z, s, tile_id);
 	}
 }
 
 void populate_ore()
 {
-	populate_ore_veins(4096, "methane_ice");
-	populate_ore_veins(4096, "iron_ore");
+	populate_ore_veins(8192, "methane_ice");
+	populate_ore_veins(8192, "iron_ore");
 
 	populate_ore_veins(2048, "graphite");
 
