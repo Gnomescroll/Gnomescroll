@@ -18,8 +18,10 @@ void load_map_drop_dat()
         set_drop(0.35f, 1);
         set_drop(0.20f, 2);
 
-		add_drop("synthesizer_coin", 1);
-		set_drop(0.04f, 1);
+		add_drop("synthesizer_coin", 3);
+		set_drop(0.10f, 1);
+        set_drop(0.05f, 2);
+        set_drop(0.03f, 3);
         //add_drop("control_node", 2);
         //set_drop(0.40f, 1);
         //set_drop(0.40f, 2);
@@ -45,47 +47,49 @@ void load_map_drop_dat()
 
     def_drop("control_node");
         drop_always("control_node");
+
     def_drop("methane_ice");
-        add_drop("methane_ice", 3);
+        add_drop("methane_ice", 4);
         set_drop(0.50f, 1);
-        set_drop(0.35f, 2);
+        set_drop(0.30f, 2);
         set_drop(0.15f, 3);
-        normalize_drops_to(1.0f);
+        set_drop(0.05f, 4);
+        //normalize_drops_to(1.0f);
 
     def_drop("iron_ore");
         add_drop("iron_ore", 3);
-        set_drop(0.20f, 1);
-        set_drop(0.10f, 2);
-        set_drop(0.05f, 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
 
     def_drop("copper_ore");
         add_drop("copper_ore", 3);
-        set_drop(0.20f, 1);
-        set_drop(0.10f, 2);
-        set_drop(0.05f, 3);
-        normalize_drops_to(1.0f);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+        //normalize_drops_to(1.0f);
 
 
     def_drop("gallium_ore");
         add_drop("gallium_ore", 3);
-        set_drop(0.20f, 1);
-        set_drop(0.10f, 2);
-        set_drop(0.05f, 3);
-        normalize_drops_to(1.0f);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+        //normalize_drops_to(1.0f);
 
     def_drop("iridium_ore");
         add_drop("iridium_ore", 3);
-        set_drop(0.20f, 1);
-        set_drop(0.10f, 2);
-        set_drop(0.05f, 3);
-        normalize_drops_to(1.0f);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+        //normalize_drops_to(1.0f);
 
     def_drop("graphite");
         add_drop("graphite", 3);
-        set_drop(0.35f, 1);
+        set_drop(0.50f, 1);
         set_drop(0.20f, 2);
-        set_drop(0.15f, 3);
-        normalize_drops_to(1.0f);
+        set_drop(0.10f, 3);
+        //normalize_drops_to(1.0f);
 
     end_drop_dat();
     #if DC_CLIENT

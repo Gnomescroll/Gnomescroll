@@ -248,6 +248,7 @@ void set_drop(float drop_probability, int drops)
     _current_drop_num++;
 }
 
+/*
 void normalize_drops_to(float total_probability)
 {	// normalize all drops defined for current entry, and scale to total_probability	
 	GS_ASSERT(_current_drop_num > 0);
@@ -272,6 +273,7 @@ void normalize_drops_to(float total_probability)
 	for (int i=1; i<_current_drop_num; i++)
 		_current_cide->drop_probabilities[i] *= p;
 }
+*/
 
 void drop_always(const char* item_name, int drops)
 {
