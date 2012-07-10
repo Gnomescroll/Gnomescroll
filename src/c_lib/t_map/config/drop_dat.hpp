@@ -40,13 +40,12 @@ void load_map_drop_dat()
     def_drop("steel_block_3");
         drop_always("steel_block_3");
 
-
     def_drop("methane_ice");
         add_drop("methane_ice", 3);
         set_drop(0.50f, 1);
         set_drop(0.35f, 2);
         set_drop(0.15f, 3);
-
+        normalize_drops_to(1.0f);
 
     def_drop("iron_ore");
         add_drop("iron_ore", 3);
@@ -59,6 +58,7 @@ void load_map_drop_dat()
         set_drop(0.20f, 1);
         set_drop(0.10f, 2);
         set_drop(0.05f, 3);
+        normalize_drops_to(1.0f);
 
 
     def_drop("gallium_ore");
@@ -66,18 +66,21 @@ void load_map_drop_dat()
         set_drop(0.20f, 1);
         set_drop(0.10f, 2);
         set_drop(0.05f, 3);
+        normalize_drops_to(1.0f);
 
     def_drop("iridium_ore");
         add_drop("iridium_ore", 3);
         set_drop(0.20f, 1);
         set_drop(0.10f, 2);
         set_drop(0.05f, 3);
+        normalize_drops_to(1.0f);
 
     def_drop("graphite");
         add_drop("graphite", 3);
         set_drop(0.35f, 1);
         set_drop(0.20f, 2);
         set_drop(0.15f, 3);
+        normalize_drops_to(1.0f);
 
     end_drop_dat();
     #if DC_CLIENT

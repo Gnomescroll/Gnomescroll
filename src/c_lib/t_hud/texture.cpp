@@ -5,9 +5,6 @@
 namespace t_hud
 {
 
-//SDL_Surface* ItemGridSlotSurface = NULL;
-//GLuint ItemGridSlotTexture = 0;
-
 GLuint SynthesizerTexture = 0;
 GLuint CraftingTexture = 0;
 GLuint StorageBlockTexture = 0;

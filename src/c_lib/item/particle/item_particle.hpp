@@ -128,13 +128,13 @@ class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MA
 void ItemParticle_list::draw()
 {
     #if DC_CLIENT
+    if (ItemSheetTexture == 0) return;
+
     glColor3ub(255,255,255);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
-
-    //GS_ASSERT(ItemSheetTexture != 0);
 
     glEnable(GL_ALPHA_TEST);
 

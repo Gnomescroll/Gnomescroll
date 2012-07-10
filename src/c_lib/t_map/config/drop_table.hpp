@@ -229,7 +229,7 @@ void add_drop(const char* item_name, int drop_entries)
     }
 
     _current_cide = cide;
-    _current_drop_num= 1;
+    _current_drop_num = 1;	// 0th drop slot is reserved for "no drop" probability
 
 }
 
@@ -245,8 +245,32 @@ void set_drop(float drop_probability, int drops)
     _current_cide->drop_probabilities[_current_drop_num] = drop_probability;
     _current_cide->item_drop_num[_current_drop_num] = drops;
 
-
     _current_drop_num++;
+}
+
+void normalize_drops_to(float total_probability)
+{	// normalize all drops defined for current entry, and scale to total_probability	
+	GS_ASSERT(_current_drop_num > 0);
+	if (_current_drop_num <= 0) return;
+
+	GS_ASSERT(total_probability <= 1.0f);
+	if (total_probability > 1.0f)
+		printf("WARNING: Normalizing drops to cumulative probability %f\n", total_probability);
+
+	// get cumulative probability
+	float p = 0.0f;
+	for (int i=1; i<_current_drop_num; i++)
+		p += _current_cide->drop_probabilities[i];
+
+	GS_ASSERT(p > 0.0f);
+	if (p <= 0.0f) return;
+		
+	// calculate normalization factor
+	p = total_probability / p;
+	
+	// apply
+	for (int i=1; i<_current_drop_num; i++)
+		_current_cide->drop_probabilities[i] *= p;
 }
 
 void drop_always(const char* item_name, int drops)

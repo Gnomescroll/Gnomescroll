@@ -13,13 +13,13 @@ namespace Particle
 /* These should be pulled from a dat or something */
 const int GRENADE_MAX = 1024;
 const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;
-//const float GRENADE_DAMAGE_RADIUS = 4.5f;
 const float GRENADE_DAMAGE_RADIUS = 4.5f;
 const int GRENADE_SPLASH_DAMAGE = 100;
 const int GRENADE_BLOCK_DAMAGE = 8;
-const int GRENADE_SPAWNER_DAMAGE = 25;
-const int GRENADE_TURRET_DAMAGE = 25;
-const int GRENADE_SLIME_DAMAGE = 100;
+const int GRENADE_SPAWNER_DAMAGE() { return randrange(20,40); }
+const int GRENADE_TURRET_DAMAGE() { return randrange(20,40); }
+const int GRENADE_MONSTER_BOMB_DAMAGE() { return randrange(50,100); }
+const int GRENADE_MONSTER_BOX_DAMAGE() { return randrange(35,70); }
 
 class grenade_StoC;     // forward decl
 
@@ -70,13 +70,17 @@ int get_grenade_damage(ObjectType type)
     {
         case OBJECT_AGENT_SPAWNER:
         case OBJECT_MONSTER_SPAWNER:
-            return GRENADE_SPAWNER_DAMAGE;
+            return GRENADE_SPAWNER_DAMAGE();
+            
         case OBJECT_TURRET:
-            return GRENADE_TURRET_DAMAGE;
+            return GRENADE_TURRET_DAMAGE();
+            
         case OBJECT_MONSTER_BOMB:
-            return GRENADE_SLIME_DAMAGE;
+            return GRENADE_MONSTER_BOMB_DAMAGE();
+            
         case OBJECT_MONSTER_BOX:
-            return 1000;
+            return GRENADE_MONSTER_BOX_DAMAGE();
+            
         default: return 0;
     }
 }
