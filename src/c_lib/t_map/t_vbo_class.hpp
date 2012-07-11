@@ -85,7 +85,7 @@ const int VBO_LIST_SIZE = 1024; //max number of VBOS that can have loaded VBOs
 
 class Vbo_map
 {
-    const static int CHUNK_IGNORE_DISTANCE2 = (128+32)*(128+32);
+    const static int CHUNK_IGNORE_DISTANCE2 = (128+64)*(128+64);
     public:    
 
     class Map_vbo** vbo_array;
@@ -108,6 +108,10 @@ class Vbo_map
     #define MAP_VBO_CULLING 1
     #define MAP_VBO_CULLING_RECYCLE 1   //delete and free vbos out of range
     //update all VBOs that need updating
+
+/*
+    Dont load chunk until its neightbors are loaded!
+*/
     void update_map()
     {
     #if MAP_VBO_CULLING
@@ -145,6 +149,8 @@ class Vbo_map
                     delete vbo_array[index]; 
                     vbo_array[index] = NULL;
                     m->needs_update = true;    //so it gets recreated if in range
+
+                    //printf("deleting: %i \n", index);
                     continue;
                 }
             #endif
@@ -168,6 +174,8 @@ class Vbo_map
         if(_i != -1)
         {
             const int index = _j*MAP_CHUNK_XDIM + _i;
+            //printf("updating index: %i \n", index);
+
             m = map->chunk[index];
 
             m->needs_update = false; //reset flag

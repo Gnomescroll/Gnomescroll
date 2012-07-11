@@ -10,7 +10,6 @@ namespace t_map
 
 void regolith_post_processing()
 {
-
     int regolith_id = dat_get_cube_id("regolith");
 
     class MAP_CHUNK* c;
@@ -153,39 +152,64 @@ void map_post_processing()
 #endif
 
 #if DC_SERVER
+__attribute__((optimize("-O3")))
 void environment_process_tick()
 {
-	static int run = 0;
+	static int init = 0;
 	static int _random[256];
-	static int _random_index = 0;
-	if(run % 256 == 0)
+	static unsigned int _random_index = 0;
+
+	static int regolith_id;
+	if(init == 0)
 	{
 		for(int i=0; i<256; i++) _random[i] = rand();
-		run = 0;
+		
+		regolith_id = dat_get_cube_id("regolith");
+		init = 0;
 	}
-	run++;
-
 
 	static int x=0; 
 	static int y=0;
 	static int z=0;
 
-	const static int regolith_id = dat_get_cube_id("regolith");
-
-	for(int i=0; i< 200000; i++)
+	for(int i=0; i< 10000; i++)
 	{
 
 
     	struct MAP_ELEMENT e1 = get_element(x,y,z);
-    	struct MAP_ELEMENT e2 = get_element(x,y,z+1);
 
-    	//if(e1.block == regolith_id && e2.block == 0)
-    	
-    	if(e1.block == regolith_id && e1.palette == 0 && isOccludes(e2.block) == 0)
+    	if(e1.block == regolith_id)
     	{
-    		broadcast_set_block_palette(x,y,z, e1.block, 1); //setting regolith
-    		//printf(": %i %i %i \n",x,y,z);
-    	}
+    		//flip pallete if there is empty space above regolith
+	    	if(e1.palette == 0)
+	    	{
+		    	struct MAP_ELEMENT e2 = get_element(x,y,z+1);
+		    	
+		    	if(isOccludes(e2.block) == 0)
+		    	{
+		    		_random_index = (_random_index+1) & 255;
+		    		if(_random[_random_index] % 7 == 0) //14% chance
+		    		{
+		    			broadcast_set_block_palette(x,y,z, e1.block, 1); //setting regolith
+		    		}
+		    	}
+	    	}
+	    	//flip pallete if there is no space above regolith
+	    	else if(e1.palette == 1)
+	    	{
+		    	struct MAP_ELEMENT e2 = get_element(x,y,z+1);
+		    	
+		    	if(isOccludes(e2.block) == 1)
+		    	{
+		    		_random_index = (_random_index+1) & 255;
+		    		if(_random[_random_index] % 3 == 0)	//33% chance
+		    		{
+		    			broadcast_set_block_palette(x,y,z, e1.block, 0); //setting regolith
+		    		}
+		    	}
+	    	}
+
+	    }
 
 		x++;
 		if(x >= 512)
@@ -203,7 +227,7 @@ void environment_process_tick()
 			}
 		}
 
-		if(x==0 && y==0 && z==0) printf("loop: \n");
+		//if(x==0 && y==0 && z==0) printf("loop: \n");
 	}
 
 
