@@ -61,6 +61,16 @@ void set(int x, int y, int z, int value)
     main_map->set_block(x,y,z,value);
 }
 
+struct MAP_ELEMENT get_element(int x, int y, int z)
+{
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    if(c == NULL) return NULL_MAP_ELEMENT;
+    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
+}
+
 void set_palette(int x, int y, int z, int value)
 {
     struct MAP_ELEMENT element = main_map->get_element(x,y,z);

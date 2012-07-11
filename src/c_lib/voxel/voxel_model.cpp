@@ -413,12 +413,20 @@ Voxel_model::Voxel_model(VoxDat* vox_dat, int id, ObjectType type)
 skeleton_inited(false),
 vox_inited(false),
 was_updated(false),
-frozen(false)
+frozen(false),
+vv(NULL)
 {
     if (vox_dat == NULL) printf("WARNING: ::Voxel_model() ctor -- vox_dat is NULL\n");
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
-    this->vv = new Voxel_volume[vox_dat->n_parts];
+    GS_ASSERT(this->n_parts > 0);
+    if (this->n_parts > 0)
+    {
+        this->vv = new Voxel_volume[vox_dat->n_parts];
+        GS_ASSERT(this->vv != NULL);
+    }
+    else
+        this->n_parts = 0;  // make sure its not negative
     this->init_parts(id, type);
     this->init_skeleton();
 }
@@ -528,7 +536,9 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability)
 {   // ray cast from source to each body part center (shuffled)
-    //int part_numbers[this->n_parts];
+    GS_ASSERT(this->n_parts > 0);
+    if (this->n_parts <= 0) return false;
+    
     MALLOX(int, part_numbers, this->n_parts); //type, name, size
 
     for (int i=0; i<this->n_parts; i++)
@@ -539,6 +549,9 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probabi
     Vec3 c;
     for (int i=0; i<this->n_parts; i++)
     {
+        int pnum = part_numbers[i];
+        GS_ASSERT(pnum >= 0 && pnum < this->n_parts);
+        if (pnum < 0 || pnum >= this->n_parts) continue;
         vv = &this->vv[part_numbers[i]];
         c = vv->get_center(); // ray cast to center of volume
         c = quadrant_translate_position(source, c);

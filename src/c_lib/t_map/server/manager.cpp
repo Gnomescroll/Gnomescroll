@@ -37,14 +37,8 @@ void t_map_manager_teardown(int client_id)
 /*
     Call this to set player position for map loading
 */
-void t_map_manager_update_client_position(int client_id, float _x, float _y)
+void t_map_manager_update_client_position(int client_id, float x, float y)
 {
-
-    //printf("updated client %i to %f %f \n", client_id, _x, _y);
-    
-    int x = _x;
-    int y = _y;
-
     if(client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("ERROR: t_map_manager_update, invalid client id \n");
@@ -53,12 +47,12 @@ void t_map_manager_update_client_position(int client_id, float _x, float _y)
 
     if( map_manager_list[client_id] == NULL )
     {
-        //printf("ERROR: t_map_manager_update, client %i map manager pointer is null! \n", client_id);
+        printf("ERROR: t_map_manager_update, client %i map manager pointer is null! \n", client_id);
         return;
     }
 
     map_manager_list[client_id]->set_position(x,y);
-
+    map_manager_list[client_id]->update();
 }
 
 void t_map_manager_update()
@@ -74,12 +68,14 @@ void t_map_manager_update()
     /*
         Use when agent has teleported
     */
+/*
 void t_map_manager_force_update(int client_id)
 {
     if(map_manager_list[client_id] == NULL) return;
     map_manager_list[client_id]->update();
     map_manager_list[client_id]->sort_que();
 }
+*/
 
 void t_map_send_map_chunks()
 {
@@ -90,6 +86,7 @@ void t_map_send_map_chunks()
     }
 }
 
+/*
 void t_map_sort_map_chunk_ques()
 {
     for(int i=0; i < NetServer::HARD_MAX_CONNECTIONS; i++)
@@ -98,5 +95,5 @@ void t_map_sort_map_chunk_ques()
         map_manager_list[i]->sort_que();
     }
 }
-
+*/
 }   // t_map

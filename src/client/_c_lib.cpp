@@ -303,7 +303,6 @@ int init_c_lib()
     init_cameras();
     init_chat_client();
     Particle::draw_init();
-    ItemParticle::draw_init();
 
     Animations::init();
 
@@ -341,8 +340,6 @@ void close_c_lib()
     //t_mech::state_teardown();
     if (TEARDOWN_DEBUG) printf("particle draw teardown\n");
     Particle::draw_teardown();
-    if (TEARDOWN_DEBUG) printf("item particle draw teardown\n");
-    ItemParticle::draw_teardown();
     
     if (TEARDOWN_DEBUG) printf("item particle teardown\n");
     ItemParticle::teardown();
@@ -393,6 +390,9 @@ void close_c_lib()
     Toolbelt::teardown();
     if (TEARDOWN_DEBUG) printf("container teardown\n");
     ItemContainer::teardown();
+
+	if (TEARDOWN_DEBUG) printf("Input teardown\n");
+	teardown_input();
 
     if (TEARDOWN_DEBUG) printf("sound close\n");
     Sound::close();

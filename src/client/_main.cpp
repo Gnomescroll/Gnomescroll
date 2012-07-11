@@ -238,7 +238,7 @@ int run()
 
         glEnd();
 
-        obj_load::draw_model(0.0,0.0,0.0); //draw test model
+        //obj_load::draw_model(0.0f,0.0f,0.0f); //draw test model
         //glDisable(GL_TEXTURE_2D);
 
         GL_ASSERT(GL_BLEND, false);
@@ -257,7 +257,7 @@ int run()
 
         Particle::billboard_text_list->draw();
         
-        Animations::draw_insect_mob();
+        //Animations::draw_insect_mob();
 
         // draw animations
 
@@ -267,7 +267,7 @@ int run()
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         Animations::draw_hitscan_effect();
-        Animations::draw_hitscan_laser_effect();
+        //Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
 
 
@@ -317,27 +317,36 @@ int run()
         // update client_state
         ClientState::update();
 
-        frame_graph->frame_stage(3); //map and voxel updates
+        frame_graph->frame_stage(3); //map updates
 
         //time_since(-1);
         poll_mouse();
+
+        //int _now = _GET_MS_TIME();
         t_map::update_map();
+        //int _then = _GET_MS_TIME();
+
+        //if(_then-_now > 2)
+        //    printf("time= %i \n", _then-_now);
+
         poll_mouse();
+
+        frame_graph->frame_stage(4); //voxel updates
 
         ClientState::voxel_render_list->update();
         poll_mouse();
 
-        frame_graph->frame_stage(4); //swap buffers
+        frame_graph->frame_stage(5); //swap buffers
 
         poll_mouse();
         //check_gl_error();
         _swap_buffers();
         poll_mouse();
 
-        frame_graph->frame_wait_stage(5); //wait stage
+        frame_graph->frame_wait_stage(6); //wait stage
 
         poll_mouse();
-        frame_graph->frame_end(6); //stage 3
+        frame_graph->frame_end(7); //stage 3
 
         // do fps calculation
         if (Options::fps)

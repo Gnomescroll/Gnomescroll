@@ -44,6 +44,8 @@ extern "C"
     #include <lauxlib.h> //wtf!?
 }
 
+#include <common/macros.hpp>
+
 /*
 #ifdef __MSVC__
     #include <direct.h>

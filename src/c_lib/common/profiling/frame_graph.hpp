@@ -9,7 +9,7 @@ int FRAME_RATE_THOTTLE_TARGET = 15; //ms for 60, 33 for 30
 namespace Profiling
 {
 
-const int STAGES = 7; //includes start and end
+const int STAGES = 8; //includes start and end
 
 /*
     Stage description
@@ -63,9 +63,10 @@ class FrameGraph
         set_stage_color(0, 70, 0,0, 255);   //physics tick
         set_stage_color(1, 150, 0,0, 255);
         set_stage_color(2, 200, 0,0, 255);
-        set_stage_color(3, 255, 0,255, 100);    //map and voxel updates
-        set_stage_color(4, 0, 255,0, 50);   //swap buffers
-        set_stage_color(5, 0, 0, 75, 50);  //wait stage
+        set_stage_color(3, 255, 0,255, 100);    //map a updates
+        set_stage_color(4, 255, 255,100, 100);      //voxel updates
+        set_stage_color(5, 0, 255,0, 50);       //swap buffers
+        set_stage_color(6, 0, 0, 75, 50);       //wait stage
 
         ts = new Texture_surface(128, 64);
     }

@@ -36,86 +36,85 @@ float point_line_distance2(float vx, float vy, float vz, float wx, float wy, flo
 __attribute__((optimize("-O3")))
 void generate_node(float xs, float ys, float zs, float theta, float phi, float cave_size)
 {
-	const static float length = 2.0f;
+	while( genrand_real1() < 0.999f )
+	{
+			const static float length = 2.0f;
 
-/*
-	float dx = length*sin(phi)*cos(theta)
-	float dy = length*sin(phi)*sin(theta);
-	float dz = length*cos(phi);
-*/
+		/*
+			float dx = length*sin(phi)*cos(theta)
+			float dy = length*sin(phi)*sin(theta);
+			float dz = length*cos(phi);
+		*/
 
-	const float _theta = theta*2*3.14159f;
-	const float _phi = phi*2*3.14159f;
+			const float _theta = theta*2*3.14159f;
+			const float _phi = phi*2*3.14159f;
 
-	float dx = (float)(sin(_phi)*cos(_theta));
-	float dy = (float)(sin(_phi)*sin(_theta));
-	float dz = cosf(_phi);
+			float dx = (float)(sin(_phi)*cos(_theta));
+			float dy = (float)(sin(_phi)*sin(_theta));
+			float dz = cosf(_phi);
 
-	float xm = abs(dx) + cave_size;
-	float ym = abs(dy) + cave_size;
-	float zm = abs(dz) + cave_size;
+			float xm = abs(dx) + cave_size;
+			float ym = abs(dy) + cave_size;
+			float zm = abs(dz) + cave_size;
 
-	int xmin = xs - xm;
-	int xmax = xs + xm;
+			int xmin = xs - xm;
+			int xmax = xs + xm;
 	
-	int ymin = ys - ym;
-	int ymax = ys + ym;
+			int ymin = ys - ym;
+			int ymax = ys + ym;
 
-	int zmin = zs - zm;
-	int zmax = zs + zm;
+			int zmin = zs - zm;
+			int zmax = zs + zm;
 
 
-	bool hits_bottom = false;
-	//can speed up by 8
-	for(int i=xmin; i<=xmax; i++)
-	for(int j=ymin; j<=ymax; j++)
-	for(int k=zmin; k<=zmax; k++)
-	{
-		if(k < 4 || k > 127) 
-		{
-			hits_bottom = true;
-			continue;
-		}
+			bool hits_bottom = false;
+			//can speed up by 8
+			for(int i=xmin; i<=xmax; i++)
+			for(int j=ymin; j<=ymax; j++)
+			for(int k=zmin; k<=zmax; k++)
+			{
+				if(k < 4 || k > 127) 
+				{
+					hits_bottom = true;
+					continue;
+				}
 
-		float x = ((float)i) + 0.5f;
-		float y = ((float)j) + 0.5f;
-		float z = ((float)k) + 0.5f;
+				float x = ((float)i) + 0.5f;
+				float y = ((float)j) + 0.5f;
+				float z = ((float)k) + 0.5f;
 
-		float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
-		if(d < cave_size*cave_size) t_map::set(i%512,j%512,k, 0);
-	}
+				float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
+				if(d < cave_size*cave_size) t_map::set(i%512,j%512,k, 0);
+			}
 
-	if(hits_bottom == true) theta *= -1;
+			if(hits_bottom == true) theta *= -1;
 
-	xs += length*dx;
-	ys += length*dy;
-	zs += length*dz;
+			xs += length*dx;
+			ys += length*dy;
+			zs += length*dz;
 
-	static const float theta_adj = 0.10f;
-	static const float phi_adj = 0.10f;
+			static const float theta_adj = 0.10f;
+			static const float phi_adj = 0.10f;
 
-	theta += theta_adj*(2*(float)genrand_real1() - 1.0f);
-	phi += phi_adj*(2*(float)genrand_real1() - 1.0f);
+			theta += theta_adj*(2*(float)genrand_real1() - 1.0f);
+			phi += phi_adj*(2*(float)genrand_real1() - 1.0f);
 
-	if(phi < 0) phi += 1;
-	if(phi > 1) phi -= 1;
+			if(phi < 0) phi += 1;
+			if(phi > 1) phi -= 1;
 
-	static const float phi_target = 0.0f;
-	static const float phi_damp = 0.03f;
+			static const float phi_target = 0.0f;
+			static const float phi_damp = 0.03f;
 
-	phi -= phi_damp*(phi - phi_target);
-/*
-	if(phi < 0) phi += 1;
-	if(phi > 1) phi -= 1;
+			phi -= phi_damp*(phi - phi_target);
+		/*
+			if(phi < 0) phi += 1;
+			if(phi > 1) phi -= 1;
 
-	if(zs < 32 && genrand_real1() < 0.20)
-	{
-		if(phi > 0.25) phi -= 0.10;
-	} 
-*/
-	if( genrand_real1() < 0.999f )
-	{
-		generate_node(xs,ys,zs, theta,phi, cave_size);
+			if(zs < 32 && genrand_real1() < 0.20)
+			{
+				if(phi > 0.25) phi -= 0.10;
+			} 
+		*/
 	}
 
 }

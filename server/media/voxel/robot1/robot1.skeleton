@@ -1,0 +1,24 @@
+#skeleton nodes, voxel volumes
+3 6
+#connection matrix
+0 0
+1 0
+2 0
+#skeleton_node: anchor x,y,z rotatation x,y,z
+0 0.0 0.0 0.0  0.0 0.0 0.0
+1 0.0 -1.0 1.2  0.0 0.0 0.0
+2 0.0 1.0 1.2  0.0 0.0 0.0
+#node number, skeleton parent matrix, voxel volume
+0 0 media/voxel/robot1/torso.dcvox
+1 0 media/voxel/robot1/head.dcvox
+2 0 media/voxel/robot1/arm.dcvox
+3 0 media/voxel/robot1/arm.dcvox
+4 1 media/voxel/robot1/leg.dcvox
+5 2 media/voxel/robot1/leg.dcvox
+#voxel: anchor x,y,z rotatation x,y,z
+0 0.4 0.15 3.3  -0.5 0.0 0.0
+1 0.0 0.0 4.0  -0.5 0.0 0.0
+2 0.0 1.0 3.3  -0.5 0.0 0.0
+3 0.0 -1.0 3.3  -0.5 0.0 0.0
+4 0.0 0.75 0.8  -0.5 0.0 0.0
+5 0.0 -0.75 0.8  -0.5 0.0 0.0

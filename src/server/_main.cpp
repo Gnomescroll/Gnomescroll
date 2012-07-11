@@ -1,16 +1,11 @@
 #pragma once
 
-//#include "stdafx.h" 
-
 #include <common/time/physics_timer.hpp>
 #include <map_gen/map_generator.hpp>
 #include <map_gen/recipes.hpp>
 
 #include <t_gen/_interface.hpp>
 #include <t_map/_interface.hpp>
-
-//#include "_c_lib.hpp"
-
 
 namespace Main
 {
@@ -39,8 +34,8 @@ void init()
         t_gen::noise_map_generate_map();
         
         t_map::map_post_processing(); //regolith stuff
-        t_gen::populate_ore();
         t_gen::start_cave_generator();
+        t_gen::populate_ore();
 
         //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         map_gen::rough_floor(512,512,0,3, t_map::get_cube_id((char*)"bedrock"));
@@ -77,7 +72,7 @@ void tick()
     {
         ServerState::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
-        t_map::t_map_sort_map_chunk_ques();
+        //t_map::t_map_sort_map_chunk_ques();
     }
 
     Toolbelt::update_toolbelt_items();
@@ -108,6 +103,9 @@ void tick()
     ItemContainer::update_smelters();
     Item::item_list->tick();
     Item::item_list->verify_items();
+
+
+    t_map::environment_process_tick(); //refresh regolith etc...
 }
  
 int run()
@@ -153,4 +151,3 @@ int run()
 }
 
 }
-

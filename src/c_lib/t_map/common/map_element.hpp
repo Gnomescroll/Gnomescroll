@@ -20,4 +20,5 @@ struct MAP_ELEMENT
     };
 };
 
+const struct MAP_ELEMENT NULL_MAP_ELEMENT = {{{ 0,0,0,0 }}};
 }
