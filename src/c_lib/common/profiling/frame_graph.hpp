@@ -64,9 +64,12 @@ class FrameGraph
         set_stage_color(1, 150, 0,0, 255);
         set_stage_color(2, 200, 0,0, 255);
         set_stage_color(3, 255, 0,255, 100);    //map a updates
-        set_stage_color(4, 255, 255,100, 100);      //voxel updates
+
+        //set_stage_color(4, 255, 255,100, 100);      //voxel updates
+        set_stage_color(4, 255, 0,255, 100);      //voxel updates
+
         set_stage_color(5, 0, 255,0, 50);       //swap buffers
-        set_stage_color(6, 0, 0, 75, 50);       //wait stage
+        set_stage_color(6, 0, 0, 150, 75);    //wait stage
 
         ts = new Texture_surface(128, 64);
     }

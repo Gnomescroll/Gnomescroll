@@ -31,16 +31,28 @@ return; \
 
 
 #ifdef __GNUC__
-#define ALWAYS_INLINE inline __attribute__((__always_inline__))
-#else
-#define ALWAYS_INLINE __forceinline
+	#define OPTIMIZED __attribute__((optimize("-O3")))
+	#define STATIC_OPTIMIZED __attribute__((optimize("-O3"))) static
+
+	#define INLINE __attribute__((__always_inline__)) inline 
+	#define STATIC_INLINE __attribute__((__always_inline__)) static inline 
+
+	#define INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) inline
+	#define STATIC_INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) static inline 
 #endif
 
-#ifdef __GNUC__
-#define ALWAYS_INLINE_OPTIMIZED inline __attribute__((__always_inline__, ))
-#else
-#define ALWAYS_INLINE __forceinline
+#ifdef __MSVC__
+	#define OPTIMIZED
+	#define STATIC_OPTIMIZED static
+
+	#define INLINE_OPTIMIZED __forceinline
+	#define STATIC_INLINE_OPTIMIZED __forceinline
+
+	#define INLINE __forceinline
+	#define STATIC_INLINE __foreceinline static
+
 #endif
+
 
 /*
 #ifndef __MSVC__

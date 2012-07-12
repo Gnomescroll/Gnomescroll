@@ -1,4 +1,3 @@
-#include "t_vbo_update.hpp"
 
 #include <t_map/glsl/structs.hpp>
 #include <t_map/glsl/cache.hpp>
@@ -9,6 +8,12 @@
 #include "t_vbo_update.hpp"
 
 #include "t_properties.hpp"
+
+
+
+#ifdef __MSVC__
+    #pragma optimize( "gt", on )
+#endif
 
 namespace t_map
 {
@@ -78,8 +83,8 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 
 //const static int occ_array[3] = { 255, 177, 100 };
 
-
-static inline int calcAdj(int side_1, int side_2, int corner) 
+//STATIC_INLINE_OPTIMIZED
+int calcAdj(int side_1, int side_2, int corner) 
 {
     const static int occ_array[3] = { 255, 128, 64 };
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
@@ -96,7 +101,8 @@ const static int_fast8_t s_array[18] = {
         };
 
 //this is doing a get, but can use within chunk lookup
-static inline int _is_occluded(int x,int y,int z, int side_num)
+//STATIC_INLINE_OPTIMIZED
+int _is_occluded(int x,int y,int z, int side_num)
 {
     int i = 3*side_num;
     return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
@@ -117,8 +123,8 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
 
 #define AO_DEBUG 0
 
-__attribute((always_inline, optimize("-O3")))
-static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+//STATIC_OPTIMIZED
+void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
     int index;
@@ -313,8 +319,8 @@ static int vertex_max = 0;
 //__attribute((always_inline, optimize("-O3")))
 
 //__attribute((always_inline))
-__attribute((always_inline, optimize("-O3")))
-static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+INLINE_OPTIMIZED
+void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
     int tile_id = element.block;
 #if USE_QUAD_CACHE
@@ -396,7 +402,6 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
 }
 
 
-//__attribute((optimize("-O3")))
 void generate_vertex_list(struct Vertex* vlist)
 {
     int offset = 0;
@@ -418,7 +423,6 @@ void generate_vertex_list(struct Vertex* vlist)
     }
 }
 
-//__attribute((optimize("-O3")))
 void generate_quad_ao_values(struct Vertex* vlist)
 {
     int offset = 0;
@@ -448,7 +452,7 @@ void generate_quad_ao_values(struct Vertex* vlist)
 
 
 //for solid blocks
-__attribute((always_inline, optimize("-O3")))
+INLINE_OPTIMIZED
 void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[side][SIDE_BUFFER_INDEX[side]];
@@ -461,7 +465,7 @@ void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsig
 
 
 //for transparent blocks
-__attribute((always_inline, optimize("-O3")))
+INLINE_OPTIMIZED
 void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[6][SIDE_BUFFER_INDEX[side]];
@@ -484,7 +488,7 @@ void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsig
     int vertex_num_array[6][16];   //for each column
 */
 
-__attribute((optimize("-O3")))
+OPTIMIZED
 void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 {
     for(int zi0 = 0; zi0 < 128/16; zi0++) {
@@ -677,7 +681,7 @@ static inline void push_quad_compatibility(struct Vertex* v_list, int offset, in
             v_list[offset+i].z += z;
         }
     }
-    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+    //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 
 
     switch( t_map::cube_list[tile_id].color_type )
@@ -815,3 +819,8 @@ int update_chunks() {
 
 
 }
+
+
+#ifdef __MSVC__
+    #pragma optimize( "", off )
+#endif
