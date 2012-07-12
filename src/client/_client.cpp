@@ -5,7 +5,7 @@
 #endif
 
 #ifdef _MSC_VER
-#include "stdafx.h"
+    #include "stdafx.h"
 #endif
 
 #include "_c_lib.cpp"

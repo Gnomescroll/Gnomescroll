@@ -13,6 +13,10 @@
 
 #include <t_map/server/env_process.hpp>
 
+#ifdef __MSVC__
+    #pragma optimize( "gt", on )
+#endif
+
 namespace t_gen
 {
 
@@ -678,7 +682,7 @@ void test_octave_3d_map_gen(int tile_id)
     map_generator->generate_map(tile_id);
     ti[i++] = _GET_MS_TIME();
 
-    map_generator->save_noisemaps();
+    //map_generator->save_noisemaps();
     ti[i++] = _GET_MS_TIME();
 
     printf("Map Gen: \n");
@@ -796,3 +800,7 @@ extern "C"
 }
 
 }
+
+#ifdef __MSVC__
+    #pragma optimize( "", off )
+#endif
