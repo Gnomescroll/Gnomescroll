@@ -56,8 +56,8 @@ class Agent_status {
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
         int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
-        int die();
-        int die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
+        bool die();
+        bool die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void kill_slime();
         #if DC_SERVER

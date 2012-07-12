@@ -314,6 +314,12 @@ bool ChatInput::route_command()
         return true;
     }
     else
+    if (!strcmp(cmd, (char*)"kill") || !strcmp(cmd, (char*)"die"))
+    {
+		killme_CtoS msg;
+		msg.send();
+	}
+	else
     if (!strcmp(cmd, (char*)"spawner") || cmd[0] == 's' || cmd[0] == 'S')
     {
         char spawner[4] = {'\0'};

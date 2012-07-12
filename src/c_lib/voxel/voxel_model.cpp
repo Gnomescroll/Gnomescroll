@@ -552,10 +552,11 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probabi
         int pnum = part_numbers[i];
         GS_ASSERT(pnum >= 0 && pnum < this->n_parts);
         if (pnum < 0 || pnum >= this->n_parts) continue;
-        vv = &this->vv[part_numbers[i]];
+        vv = &this->vv[pnum];
         c = vv->get_center(); // ray cast to center of volume
+		if (randf() < acquisition_probability) continue;	// TODO -- move this to beginning of loop. leave it here while testing for bug crash
         c = quadrant_translate_position(source, c);
-        if (randf() < acquisition_probability && ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
+        if (ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
         {
             *sink = c;
             return true;

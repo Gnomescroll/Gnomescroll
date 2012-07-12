@@ -331,9 +331,10 @@ inline void agent_conflict_notification_StoC::handle()
     char *a_name = (a == NULL) ? unknown_name : a->status.name;
     char *b_name = (b == NULL) ? unknown_name : b->status.name;
 
-    char* msg = (char*)calloc(150, sizeof(char));
+    char* msg = (char*)calloc(512, sizeof(char));
     switch (method)
     {
+		case DEATH_KILLME:
         case DEATH_NORMAL:
             if (suicide)
             {
@@ -483,6 +484,7 @@ inline void request_agent_name_CtoS::handle(){}
 inline void request_remaining_state_CtoS::handle() {}
 inline void agent_camera_state_CtoS::handle() {}
 inline void version_CtoS::handle(){}
+inline void killme_CtoS::handle() {}
 #endif
 
 // Client -> Server handlers
@@ -526,6 +528,14 @@ inline void spawn_location_StoC::handle(){}
 inline void version_CtoS::handle()
 {
     NetServer::users->record_client_version(client_id, version);
+}
+
+inline void killme_CtoS::handle()
+{
+	Agent_state* a = NetServer::agents[this->client_id];
+	if (a == NULL) return;
+
+	a->status.die(a->id, a->type, DEATH_KILLME);
 }
 
 inline void Agent_cs_CtoS::handle()

@@ -214,9 +214,9 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
-int Agent_status::die()
+bool Agent_status::die()
 {
-    if (this->dead) return 0;
+    if (this->dead) return false;
     dead = true;
     deaths++;
 
@@ -235,73 +235,71 @@ int Agent_status::die()
     ItemContainer::agent_died(this->a->id);
     #endif
 
-    return 1;
+    return true;
 }
 
-int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
+bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
 {
     if (inflictor_type == OBJECT_GRENADE)
         inflictor_type = OBJECT_AGENT;
         
-    int killed = this->die();
+    bool killed = this->die();
+    if (!killed) return false;
+    
     Agent_state* attacker;
     //Turret* turret;
-    if (killed)
-    {
-        switch (inflictor_type)
-        {
-            case OBJECT_AGENT:
-                attacker = STATE::agent_list->get(inflictor_id);
-                if (attacker != NULL)
-                    attacker->status.kill(this->a->id);
-                break;
-            //case OBJECT_MONSTER_BOMB:
-                //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
-                //if (slime != NULL) {}
-                //break;
-            //case OBJECT_TURRET:
-                //turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
-                //if (turret == NULL) break;
-                //attacker = STATE::agent_list->get(turret->get_owner());
-                //if (attacker != NULL)
-                    //attacker->status.kill(this->a->id);
-                //break;
-            default:
-                //printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
-                break;
-        }
+	switch (inflictor_type)
+	{
+		case OBJECT_AGENT:
+			attacker = STATE::agent_list->get(inflictor_id);
+			if (attacker != NULL)
+				attacker->status.kill(this->a->id);
+			break;
+		//case OBJECT_MONSTER_BOMB:
+			//Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
+			//if (slime != NULL) {}
+			//break;
+		//case OBJECT_TURRET:
+			//turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
+			//if (turret == NULL) break;
+			//attacker = STATE::agent_list->get(turret->get_owner());
+			//if (attacker != NULL)
+				//attacker->status.kill(this->a->id);
+			//break;
+		default:
+			//printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
+			break;
+	}
 
-        #if DC_SERVER
-        // send conflict notification to clients
-        agent_conflict_notification_StoC msg;
-        //Turret* turret;
-        switch (inflictor_type)
-        {
-            case OBJECT_AGENT:
-                msg.victim = this->a->id;
-                msg.attacker = inflictor_id;
-                msg.method = death_method;    // put headshot, grenades here
-                msg.broadcast();
-                break;
+	#if DC_SERVER
+	// send conflict notification to clients
+	agent_conflict_notification_StoC msg;
+	//Turret* turret;
+	switch (inflictor_type)
+	{
+		case OBJECT_AGENT:
+			msg.victim = this->a->id;
+			msg.attacker = inflictor_id;
+			msg.method = death_method;    // put headshot, grenades here
+			msg.broadcast();
+			break;
 
-            //case OBJECT_TURRET:
-                //// lookup turret object, get owner, this will be the inflictor id
-                //turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
-                //if (turret == NULL) break;
-                //inflictor_id = turret->get_owner();
-                //msg.victim = this->a->id;
-                //msg.attacker = inflictor_id;
-                //msg.method = death_method;    // put headshot, grenades here
-                //msg.broadcast();
-                //break;
+		//case OBJECT_TURRET:
+			//// lookup turret object, get owner, this will be the inflictor id
+			//turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
+			//if (turret == NULL) break;
+			//inflictor_id = turret->get_owner();
+			//msg.victim = this->a->id;
+			//msg.attacker = inflictor_id;
+			//msg.method = death_method;    // put headshot, grenades here
+			//msg.broadcast();
+			//break;
 
-            default: break;
-        }
-
-        #endif
-
-    }
-    return killed;
+		default: break;
+	}
+	#endif
+	
+    return true;
 }
 
 void Agent_status::kill(int victim_id)
