@@ -709,6 +709,9 @@ DONE
 
 fix mouse movement buffer overwrite error
 DONE
+
+add /kill (alias /die) command to chat; self destructs player
+DONE
  
 ----------------------
 
@@ -752,9 +755,6 @@ add warning to the synthesizer dat
 --slot in use
 --outside of dimensions
 
-maintain a NetClient buffer per stage of ready-ness
-broadcast only to clients who are are in fully ready
-
 == CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
 -- windows only?
@@ -779,6 +779,9 @@ Remove "Channel X" from chat.log, put in timestamp
 == GENERAL ==
 get screenshots working in osx
 option to hide name
+
+maintain a NetClient buffer per stage of ready-ness
+broadcast only to clients who are are in fully ready
 
 == MECHANISMS ==
 Spawner/Control Points
@@ -846,3 +849,5 @@ camera choppy when rotating laterally and phi is at max/min
 flickering quad vertices on terrain and voxel models in osx build
 
 in free camera, when agent is shot, model flickers
+
+voxel volume in sight of invalid pointer (suspect: buffer overrun elsewhere corrupting state)
