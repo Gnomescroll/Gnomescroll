@@ -15,6 +15,13 @@
     #pragma optimize( "gt", on )
 #endif
 
+#if __GNUC__
+    #pragma GCC push_options
+    //#pragma GCC optimization_level 3
+    //#pragma GCC optimize 3
+    #pragma GCC optimize ("O3")
+#endif
+
 namespace t_map
 {
 
@@ -71,11 +78,6 @@ static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, 
 1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
 -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
 
-static inline int calcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
-static inline int _is_occluded(int x,int y,int z, int side_num) __attribute((always_inline));
-static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) __attribute((always_inline));
-static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id)  __attribute((always_inline));
-
 /*
     will be 1 if is adjacent to any side
     will be 2 only if both sides are occluded
@@ -84,7 +86,7 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 //const static int occ_array[3] = { 255, 177, 100 };
 
 //STATIC_INLINE_OPTIMIZED
-int calcAdj(int side_1, int side_2, int corner) 
+inline int calcAdj(int side_1, int side_2, int corner) 
 {
     const static int occ_array[3] = { 255, 128, 64 };
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
@@ -108,7 +110,7 @@ int _is_occluded(int x,int y,int z, int side_num)
     return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
 }
 
-static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
+inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
 {
     int i;
     i = 3*side_num;
@@ -123,7 +125,6 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
 
 #define AO_DEBUG 0
 
-//STATIC_OPTIMIZED
 void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -234,8 +235,10 @@ static inline void _set_quad_color_default(struct Vertex* v_list, int offset, in
     _ce.b = _palletn[index+2];
     _ce.a = 0;
 
-    for(int i=0 ;i <4; i++) v_list[offset+i].color = _ce.color;
-
+    v_list[offset+0].color = _ce.color;
+    v_list[offset+1].color = _ce.color;
+    v_list[offset+2].color = _ce.color;
+    v_list[offset+3].color = _ce.color;
 }
 
 static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
@@ -319,7 +322,6 @@ static int vertex_max = 0;
 //__attribute((always_inline, optimize("-O3")))
 
 //__attribute((always_inline))
-INLINE_OPTIMIZED
 void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
     int tile_id = element.block;
@@ -626,9 +628,7 @@ void Vbo_map::update_vbo(int i, int j)
  
 #define USE_QUAD_CACHE_COMPATIBABILITY 0
 
-static inline void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element)  __attribute((always_inline)); 
-
-static inline void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
 
     int tile_id = element.block;
@@ -823,4 +823,8 @@ int update_chunks() {
 
 #ifdef __MSVC__
     #pragma optimize( "", off )
+#endif
+
+#if __GNUC__
+    #pragma GCC pop_options
 #endif
