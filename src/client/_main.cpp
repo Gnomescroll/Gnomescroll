@@ -199,10 +199,10 @@ int run()
         GL_ASSERT(GL_BLEND, false);
         GL_ASSERT(GL_DEPTH_WRITEMASK, true);
         if (t_map::T_MAP_BACKUP_SHADER)
-			t_map::draw_map_compatibility();
-		else
-			t_map::draw_map();
-			
+            t_map::draw_map_compatibility();
+        else
+            t_map::draw_map();
+            
         poll_mouse();
 
 
@@ -250,7 +250,7 @@ int run()
 
         ItemParticle::draw();
         //t_mech::draw();
-		
+        
         /*
             Transparent
         */
@@ -280,7 +280,7 @@ int run()
 
         glDepthMask(GL_TRUE);
 
-		//glDisable(GL_DEPTH_TEST);
+        //glDisable(GL_DEPTH_TEST);
 
         // update mouse
         poll_mouse();

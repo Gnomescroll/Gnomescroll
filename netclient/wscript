@@ -268,7 +268,7 @@ def build(bld):
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(
         features = 'cxx cxxprogram',
-        source = ['run.cpp'],
+        source = ['../src/client/_client.cpp'],
         use = common_libraries+time_lib+SDL_libraries+['LUA'],
         lib = sound_libraries+png_libs,
         #includes = c_lib_includes,
