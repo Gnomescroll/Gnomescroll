@@ -103,7 +103,7 @@ const static int_fast8_t s_array[18] = {
         };
 
 //this is doing a get, but can use within chunk lookup
-//STATIC_INLINE_OPTIMIZED
+INLINE
 int _is_occluded(int x,int y,int z, int side_num)
 {
     int i = 3*side_num;

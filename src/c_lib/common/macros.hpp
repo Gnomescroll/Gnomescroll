@@ -50,7 +50,6 @@ return; \
 
 	#define INLINE __forceinline
 	#define STATIC_INLINE __foreceinline static
-
 #endif
 
 
