@@ -95,8 +95,9 @@ dont_include_this_file_in_server
 
 /* Awesonium */
 
-#include <SDL/awesonium/_include.hpp>
-
+#ifdef __GNUC__
+    #include <SDL/awesonium/_include.hpp>
+#endif
 /* Draw lists */
 #include <common/draw/draw.cpp>
 

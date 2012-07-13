@@ -267,9 +267,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     conf.env.RPATH = ['.', '..', '$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
 
-    #conf.env.RPATH += [ '../libraries/lin32/lib']
-    #conf.env.RPATH += [ os.path.abspath('../libraries/lin32/lib'), os.path.abspath('../libraries/lin32/lib/')]
-    conf.env.RPATH += ['$ORIGIN/../libraries/lin32/lib']
+    if OS == 'Linux':
+        conf.env.RPATH += ['$ORIGIN/../libraries/lin32/lib']
 
 def build(bld):
     OS = platform.system()
