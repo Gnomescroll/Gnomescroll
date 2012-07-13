@@ -117,10 +117,10 @@ class chrome_viewport
 	        glDisable(GL_TEXTURE_2D);
 		}
 
+
 		void update_webview()
 		{
 		    if( !awe_webview_is_dirty(webView) ) return;
-
 	        //awe_rect rect = awe_webview_get_dirty_bounds(webView);
 
 	        awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
@@ -136,7 +136,6 @@ class chrome_viewport
 	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
 	        glDisable(GL_TEXTURE_2D);
 		}
-
 
 		void draw_webview()
 		{

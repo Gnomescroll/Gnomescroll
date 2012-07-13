@@ -139,6 +139,12 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     conf.env.append_value('CXXFLAGS', cxxflags)
     
+    #conf.env.append_value('RPATH_ST', "f")
+    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../libraries/lin32/lib")
+    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../libraries/lin32/lib")
+    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % os.path.abspath('../libraries/lin32/lib') )
+
+
 
     '''
     incremental linking may reduce recompile time should not be used for release builds
@@ -232,7 +238,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         pass
     elif OS == 'Linux':
-        awesomium_lib_path = [os.path.abspath('../libraries/lin32/awesomium/lib') ] #['/home/atomos/dc_mmo/libraries/lin32/awesomium/lib']
+        awesomium_lib_path = [os.path.abspath('../libraries/lin32/lib') ] #['/home/atomos/dc_mmo/libraries/lin32/awesomium/lib']
         conf.check(
             lib=['awesomium-1.6.5'], 
             libpath= awesomium_lib_path,
@@ -242,7 +248,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.check(header_name='Awesomium/awesomium_capi.h',
                    lib= 'libawesomium-1.6.5',
                    use= 'libawesomium-1.6.5',
-                   libpath= ['../libraries/lin32/awesomium/lib'],
+                   libpath= ['../libraries/lin32/lib'],
                    includes= ['/home/atomos/dc_mmo/libraries/lin32/awesomium/include'],
                    uselib_store= 'AWESOMIUM',
                    fragment='#include <Awesomium/awesomium_capi.h>' + MAIN_TEST_CODE,
@@ -259,8 +265,12 @@ def configure(conf, add_flags=[], rm_flags=[]):
     '''
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../libraries/lin32/awesomium/include/']
 
-    conf.env.RPATH = ['.', '..', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
-    
+    conf.env.RPATH = ['.', '..', '$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
+
+    #conf.env.RPATH += [ '../libraries/lin32/lib']
+    #conf.env.RPATH += [ os.path.abspath('../libraries/lin32/lib'), os.path.abspath('../libraries/lin32/lib/')]
+    conf.env.RPATH += ['$ORIGIN/../libraries/lin32/lib']
+
 def build(bld):
     OS = platform.system()
 
@@ -289,7 +299,7 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-    bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(
         features = 'cxx cxxprogram',
         source = ['../src/client/_client.cpp'],
@@ -301,7 +311,7 @@ def build(bld):
         #linkflags = ['-rdynamic'],
         target='run'
     )
-    bld.env.CXXFLAGS.remove('-fvisibility=hidden')
+    #bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
     #if '-DPRODUCTION=1' in bld.env.CXXFLAGS and '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS:
