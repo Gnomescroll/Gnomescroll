@@ -142,7 +142,7 @@ class chrome_viewport
 		    glEnable(GL_TEXTURE_2D);
 		    glBindTexture( GL_TEXTURE_2D, TEX0 );
 
-		    float z = -0.5;
+		    float z = -0.5f;
 		    float x0,y0,x1,y1;
 
 		    x0 = xoff;
@@ -152,15 +152,15 @@ class chrome_viewport
 		    //printf("(x0,y0,x1,t1= %f,%f,%f,%f \n", x0, y0, x1, y1);
 
 		    glBegin( GL_QUADS );
-		        glTexCoord2f( 0.0, 1.0);
+		        glTexCoord2f( 0.0f, 1.0f);
 		        glVertex3f( x0, y0, z );
 
-		        glTexCoord2f( 1.0, 1.0 );
+		        glTexCoord2f( 1.0f, 1.0f );
 		        glVertex3f( x1, y0, z );
 
 		        glVertex3f( x1, y1, z );
 
-		        glTexCoord2f( 0.0, 0.0 );
+		        glTexCoord2f( 0.0f, 0.0f );
 		        glVertex3f( x0, y1, z );
 		    glEnd();
 

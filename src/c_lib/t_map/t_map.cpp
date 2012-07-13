@@ -17,7 +17,6 @@
 #if DC_SERVER
     #include <t_map/server/manager.hpp>
     #include <t_map/server/subscription_list.hpp>
-    //#include <t_map/net/t_StoC.hpp>
 
     #include <common/random.h>
 

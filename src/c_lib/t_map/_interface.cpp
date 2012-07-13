@@ -77,8 +77,11 @@ void create_item_container_block(int x, int y, int z, int container_type, int co
 
 void destroy_item_container_block(int x, int y, int z)
 {
-    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
-    if (((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0) return;
+	x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+	y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     
     int val = get(x,y,z);
     if (Item::get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
@@ -100,6 +103,8 @@ void get_container_location(int container_id, int position[3])
     if (container == NULL) return;
     GS_ASSERT(container->chunk >= 0);
     if (container->chunk < 0) return;
+    GS_ASSERT(container->chunk < main_map->xchunk_dim*main_map->ychunk_dim);
+    if (container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return;
     
     class MAP_CHUNK* c = main_map->chunk[container->chunk];
     GS_ASSERT(c != NULL);
