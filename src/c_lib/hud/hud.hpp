@@ -71,7 +71,7 @@ class HUD
     Text* fps;
     Text* ping;
     Text* reliable_ping;
-    Text* health;
+    AnimatedText* health;
     Text* confirm_quit;
     Text* press_help;
 

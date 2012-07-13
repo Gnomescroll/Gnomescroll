@@ -46,7 +46,12 @@ static const char fps_format[] = "%3.2ffps";
 static const char ping_format[] = "%dms";
 
 static const char no_agent_text[] = "No Agent Assigned";
+
 static const char health_format[] = "ENERGY %02d";
+static const char health_color_string[] = "ENERGY";
+static const struct Color HEALTH_GREEN = {10,240,10};
+static const struct Color HEALTH_GREY = {100,100,100};
+static const struct Color HEALTH_WHITE = {255,255,255};
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
@@ -101,8 +106,6 @@ void update_hud_draw_settings()
     hud_draw_settings.draw = Options::hud;
     hud_draw_settings.zoom = current_camera->zoomed;
     hud_draw_settings.cube_selector = (Toolbelt::get_selected_item_type() == Item::get_item_type((char*)"block_placer"));
-        //(ClientState::playerAgent_state.you != NULL
-      //&& ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
 
     hud_draw_settings.help = input_state.help_menu;
     if (hud_draw_settings.help) hud_draw_settings.press_help = false;   // clear this after opening help once
@@ -316,12 +319,43 @@ void draw_hud_text()
         if (a != NULL)
         {
             int health = a->status.health;
-            health = (health >= 1000) ? 999 : health;
+            health = (health > AGENT_HEALTH) ? AGENT_HEALTH : health;
             health = (health < 0) ? 0 : health;
-            hud->health->update_formatted_string(2, health);
+            hud->health->update_formatted_string(1, health);
+            
+            int len = (int)strlen(health_color_string);
+            int n = 0;
+			if (health >= AGENT_HEALTH)
+				n = len;
+			else if (health > 0)	// force to 0 in case of float point error
+				n = (((float)health/(float)AGENT_HEALTH)*(float)len);
+			if (health > 0 && n == 0) n = 1;
+
+			// update green portion of health text
+			int green_color_index = hud->health->get_color(HEALTH_GREEN);
+			int green_range = hud->health->get_color_range(green_color_index);
+			if (green_range < 0)
+			{
+				green_range = hud->health->add_char_range(n, len);
+				hud->health->set_char_range_color(green_range, green_color_index);
+			}
+			else
+				hud->health->update_char_range(green_range, 0, n);
+
+			// update grey portion of health text
+			int grey_color_index = hud->health->get_color(HEALTH_GREY);
+			int grey_range = hud->health->get_color_range(grey_color_index);
+			if (grey_range < 0)
+			{
+				grey_range = hud->health->add_char_range(n, len);
+				hud->health->set_char_range_color(grey_range, grey_color_index);
+			}
+			else
+				hud->health->update_char_range(grey_range, n, len);
         }
         else
             hud->health->set_text((char*)no_agent_text);
+            
         hud->health->draw();
     }
     end_font_draw();
@@ -329,9 +363,7 @@ void draw_hud_text()
 
 void draw_hud()
 {
-    // could not get z-depth to listen to me
-    // and hud projected names should be underneath everything,
-    // so i moved the list draw call out
+    // hud projected names should be underneath everything
     
     start_font_draw();
     HudFont::reset_default();
@@ -359,8 +391,11 @@ void HUD::init()
         printf("WARNING: initing HUD before HudFont\n");
 
     int line_height = HudFont::font->data.line_height;
+
+	using HudText::text_list;
+	using HudText::Text;
     
-    help = HudText::text_list->create();
+    help = text_list->create();
     GS_ASSERT(help != NULL);
     if (help == NULL) return;
     help->set_text((char*) help_text);
@@ -368,28 +403,28 @@ void HUD::init()
     help->set_color(255,255,255,255);
     help->set_position(_xres - help_width - 5, _yresf - 5);
 
-    disconnected = HudText::text_list->create();
+    disconnected = text_list->create();
     GS_ASSERT(disconnected != NULL);
     if (disconnected == NULL) return;
     disconnected->set_text((char*) disconnected_text);
     disconnected->set_color(255,10,10,255);
     disconnected->set_position(_xresf/2, _yresf/2);
 
-    version_mismatch = HudText::text_list->create();
+    version_mismatch = text_list->create();
     GS_ASSERT(version_mismatch != NULL);
     if (version_mismatch == NULL) return;
     version_mismatch->set_text((char*)version_mismatch_text);
     version_mismatch->set_color(255,10,10,255);
     version_mismatch->set_position(_xresf/2, _yresf/2);
     
-    dead = HudText::text_list->create();
+    dead = text_list->create();
     GS_ASSERT(dead != NULL);
     if (dead == NULL) return;
     dead->set_text((char*) dead_text);
     dead->set_color(255,10,10,255);
     dead->set_position(_xresf/2, _yresf/2);
     
-    fps = HudText::text_list->create();
+    fps = text_list->create();
     GS_ASSERT(fps != NULL);
     if (fps == NULL) return;
     fps->set_format((char*) fps_format);
@@ -397,7 +432,7 @@ void HUD::init()
     fps->set_color(255,10,10,255);
     fps->set_position(3, line_height+3);
     
-    ping = HudText::text_list->create();
+    ping = text_list->create();
     GS_ASSERT(ping != NULL);
     if (ping == NULL) return;
     ping->set_format((char*) ping_format);
@@ -405,7 +440,7 @@ void HUD::init()
     ping->set_color(255,10,10,255);
     ping->set_position(3, (line_height*2)+3);
     
-    reliable_ping = HudText::text_list->create();
+    reliable_ping = text_list->create();
     GS_ASSERT(reliable_ping != NULL);
     if (reliable_ping == NULL) return;
     reliable_ping->set_format((char*) ping_format);
@@ -413,24 +448,34 @@ void HUD::init()
     reliable_ping->set_color(255,10,10,255);
     reliable_ping->set_position(3, (line_height*3)+3);
 
-    health = HudText::text_list->create();
-    GS_ASSERT(health != NULL);
-    if (health == NULL) return;
-    health->set_text((char*) "");
-    health->set_format((char*) health_format);
-    health->set_format_extra_length((3 - 2));
-    health->update_formatted_string(1, 100);
-    health->set_color(255,255,255,255);
-    health->set_position((_xresf - health->get_width())/2.0f, health->get_height() + 40);
+    health = new AnimatedText;
 
-    confirm_quit = HudText::text_list->create();
+    health->set_format((char*) health_format);
+    health->set_format_extra_length(count_digits(AGENT_HEALTH) - 4);
+    health->update_formatted_string(1, AGENT_HEALTH);
+    health->set_position((_xresf - health->get_width())/2.0f, health->get_height() + 40);
+	health->set_color(255,255,255,255);
+
+	// add color for health text animations
+	health->set_color_count(3);
+	health->set_char_range_count(3);
+	health->add_color(HEALTH_GREY);
+	health->add_color(HEALTH_GREEN);
+	
+	int white_range_index = health->add_char_range(strlen(health_color_string), -1);
+	GS_ASSERT(white_range_index >= 0);
+	int white_color_index = health->add_color(HEALTH_WHITE);
+	GS_ASSERT(white_color_index >= 0);
+	health->set_char_range_color(white_range_index, white_color_index);
+	
+    confirm_quit = text_list->create();
     GS_ASSERT(confirm_quit != NULL);
     if (confirm_quit == NULL) return;
     confirm_quit->set_text((char*)confirm_quit_text);
     confirm_quit->set_color(255,10,10,255);
     confirm_quit->set_position(_xresf/2, _yresf/2);
 
-    press_help = HudText::text_list->create();
+    press_help = text_list->create();
     GS_ASSERT(press_help != NULL);
     if (press_help == NULL) return;
     press_help->set_text((char*)press_help_text);
@@ -464,28 +509,26 @@ chat(NULL)
 
 HUD::~HUD()
 {
+	using HudText::text_list;
     if (help != NULL)
-        HudText::text_list->destroy(help->id);
+        text_list->destroy(help->id);
     if (disconnected != NULL)
-        HudText::text_list->destroy(disconnected->id);
+        text_list->destroy(disconnected->id);
     if (dead != NULL)
-        HudText::text_list->destroy(dead->id);
+        text_list->destroy(dead->id);
     if (fps != NULL)
-        HudText::text_list->destroy(fps->id);
+        text_list->destroy(fps->id);
     if (ping != NULL)
-        HudText::text_list->destroy(ping->id);
+        text_list->destroy(ping->id);
     if (reliable_ping != NULL)
-        HudText::text_list->destroy(reliable_ping->id);
-    if (health != NULL)
-        HudText::text_list->destroy(health->id);
+        text_list->destroy(reliable_ping->id);
     if (confirm_quit != NULL)
-        HudText::text_list->destroy(confirm_quit->id);
+        text_list->destroy(confirm_quit->id);
     if (press_help != NULL)
-        HudText::text_list->destroy(press_help->id);
-    if (scoreboard != NULL)
-        delete scoreboard;
-    if (chat != NULL)
-        delete chat;
+        text_list->destroy(press_help->id);
+    if (health != NULL) delete health;
+    if (scoreboard != NULL) delete scoreboard;
+    if (chat != NULL) delete chat;
 }
 
 HUD* hud;
