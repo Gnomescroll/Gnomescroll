@@ -1,7 +1,4 @@
-#include once
-
-#include <Awesomium/awesomium_capi.h>
-#include <Awesomium/WebCore.h>
+#pragma once
 
 namespace Awesonium
 {
@@ -25,7 +22,7 @@ struct chromeDisplay {
 */
 
 
-
+#if 0
 void libChromeShutdown() 
 {
     //printf("libChrome shutdown\n");
@@ -42,7 +39,7 @@ extern "C" int _update() {
     awe_webcore_update(); //update web core; all windows
     return 0;
 }
-
+#endif 
 
 class chrome_viewport
 {
@@ -56,7 +53,7 @@ class chrome_viewport
 
 		int texture_id;
 
-		struct awe_webview* webView;
+		awe_webview* webView;
 		unsigned int TEX0;
 
 		chrome_viewport()
@@ -126,10 +123,14 @@ class chrome_viewport
 
 	        awe_rect rect = awe_webview_get_dirty_bounds(webView);
 
-	        struct awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
+	        awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
+
 	        if (renderBuffer == NULL) 
 	        {
-	        	printf("Chrome Crashed!\n"); return 0;}
+	        	printf("Chrome Crashed!\n");
+	        	return 0;
+	    	}
+
 	        glEnable(GL_TEXTURE_2D);
 	        glBindTexture( GL_TEXTURE_2D, TEX0 );
 	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, display->surface->pixels );
@@ -201,194 +202,6 @@ class chrome_viewport
 
 
 };
-
-/*
-struct chromeDisplay* windowInFocus;
-struct chromeDisplay* windowInMouseFocus;
-
-
-awe_webview* webView(chromeDisplay* display) 
-{
-    return (awe_webview*) display->webView;
-}
-
-int _set_window_focus(struct chromeDisplay* window) 
-{
-    windowInFocus = window;
-    awe_webview_focus(webView(window));
-    return 0;
-}
-
-int _defocus(void) {
-    awe_webview_unfocus(webView(windowInFocus));
-    windowInFocus = NULL;
-    return 0;
-}
-*/
-
-//_OSMExport void awe_webcore_set_base_directory    (   const awe_string *  base_dir_path   )
-//for local assets
-
-/*
-int _setHTML(struct chromeDisplay* window, char* html) {
-    awe_string* html_str = awe_string_create_from_ascii(html, strlen(html));
-    awe_webview_load_html(webView(window), html_str,awe_string_empty());
-    awe_string_destroy(html_str);
-    return 0;
-}
-
-int _setURL(struct chromeDisplay* window, char* url) {
-    awe_string* url_str = awe_string_create_from_ascii(url, strlen(url));
-
-    awe_webview_load_url(webView(window), url_str, awe_string_empty(), awe_string_empty(), awe_string_empty()); 
-
-    awe_string_destroy(url_str);
-    return 0;
-}
-*/
-
-/*
-void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event); //forward declaration
-
-void processKeyEvent(SDL_Event keyEvent) 
-{
-    if(windowInFocus == NULL) {
-        //printf("No window in focus for keyboard event");
-        return;
-    }
-    //printf("processKeyEvent: \n");
-    injectSDLKeyEvent((awe_webview*)windowInFocus->webView, keyEvent);
-}
-*/
-
-/*
-struct chromeDisplay* _create_webview(int x,int y, int width, int height)
-{
-    chromeDisplay* display = (chromeDisplay*)malloc(sizeof(chromeDisplay));
-    display->webView = (void*) awe_webcore_create_webview(width, height);
-    display->tex_id = 0;
-    display->x = x;
-    display->y = y;
-    display->width = width;
-    display->height = height;
-    //default loading
-    awe_webview_set_transparent(webView(display), 1); ///preserve transpanency of window
-    //Sets whether or not pages should be rendered with transparency preserved.
-    //(ex, for pages with style="background-color:transparent")
-
-    awe_string* url_str = awe_string_create_from_ascii(URL, strlen(URL));
-    awe_webview_load_url(webView(display), url_str, awe_string_empty(),awe_string_empty(), awe_string_empty());
-    awe_string_destroy(url_str);
-    //end default loading
-
-    awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView(display));
-
-    if(renderBuffer != NULL)
-    {
-        printf("surface created\n");
-        display->surface = SDL_CreateRGBSurfaceFrom((void *) awe_renderbuffer_get_buffer(renderBuffer),
-                                    awe_renderbuffer_get_width(renderBuffer),
-                                    awe_renderbuffer_get_height(renderBuffer),
-                                    32,
-                                    awe_renderbuffer_get_rowspan(renderBuffer),
-                                    0x0000FF00, 0x00FF0000,
-                                    0xFF000000, 0x000000FF);
-    }
-    else
-    { printf("error creating Chrome surface\n"); }
-    return display;
-}
-*/
-//on_exit()) used by shared library to establish functions that are called when the shared library is unloaded.
-//Functions registered using atexit() (and on_exit()) are not called if a process terminates abnormally because of the delivery of a signal
-
-/*
-void _delete_webview(struct chromeDisplay* display)
-{
-    awe_webview_destroy(webView(display));
-    free(display);
-}
-*/
-//Update an existing texture with glTexSubImage
-//However, to resize a texture, you need to recreate it so glTexImage is your only option.
-
-#if 0
-void _update_webview(struct chromeDisplay* display)
-{
-
-	/*
-		Create Texture
-	*/
-    if(display->tex_id == 0 )
-    {
-        awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView(display));
-        if (renderBuffer == NULL) { printf("Chrome Crashed!\n"); return 0;}
-        glEnable(GL_TEXTURE_2D);
-        //if(display->tex_id != 0) { glDeleteTextures(1, &display->tex_id); }
-        glGenTextures( 1, &display->tex_id );
-        glBindTexture( GL_TEXTURE_2D, display->tex_id );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
-        //glTexImage2D(GL_TEXTURE_2D, 0, 4, display->surface->w, display->surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, display->surface->pixels );
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, display->surface->w, display->surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, display->surface->pixels );
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    /*
-		Update Texture
-    */
-    if(awe_webview_is_dirty(webView(display)))
-    {
-        //printf("Is dirty\n");
-        awe_rect rect = awe_webview_get_dirty_bounds(webView(display));
-        awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView(display));
-        if (renderBuffer == NULL) { printf("Chrome Crashed!\n"); return 0;}
-        glEnable(GL_TEXTURE_2D);
-        //if(display->tex_id != 0) { glDeleteTextures(1, &display->tex_id); }
-        //glGenTextures( 1, &display->tex_id );
-        glBindTexture( GL_TEXTURE_2D, display->tex_id );
-        //glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x, rect.y, rect.width, rect.height, GL_BGRA,GL_UNSIGNED_BYTE, display->surface->pixels);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, display->surface->w, display->surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, display->surface->pixels );
-        glDisable(GL_TEXTURE_2D);
-    } else {
-       // printf("Is clean\n");
-    }
-    return 0;
-}
-
-int _draw_webview(struct chromeDisplay* display){
-    if(display->tex_id == 0) { printf("tex_id == 0\n"); return 0;}
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, display->tex_id );
-
-    float z = -0.5;
-    float x0,y0,x1,y1;
-
-    x0 = display->x;
-    y0 = display->y;
-    x1 = display->x + display->width;
-    y1 = display->y + display->height;
-    //printf("(x0,y0,x1,t1= %f,%f,%f,%f \n", x0, y0, x1, y1);
-
-    glBegin( GL_QUADS );
-        glTexCoord2f( 0.0, 1.0);
-        glVertex3f( x0, y0, z );
-
-        glTexCoord2f( 1.0, 1.0 );
-        glVertex3f( x1, y0, z );
-
-        glTexCoord2f( 1., 0. );
-        glVertex3f( x1, y1, z );
-
-        glTexCoord2f( 0., 0. );
-        glVertex3f( x0, y1, z );
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);
-
-return 0;
-}
-#endif
 
 /*
 _OSMExport bool awe_webview_is_dirty  (   awe_webview *   webview )

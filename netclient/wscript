@@ -233,7 +233,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     P3 = os.path.abspath('../src/net_lib')
     conf.env.INCLUDES += [P1, P2, P3,  '/usr/include']
     '''
-    conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
+    conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../libraries/lin32/awesomium/include/']
 
     conf.env.RPATH = ['.', '..', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
     

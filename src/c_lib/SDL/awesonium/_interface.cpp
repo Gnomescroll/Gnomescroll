@@ -2,6 +2,7 @@
 #include "_interface.hpp"
 
 #include <SDL/SDL_keyboard.h>
+#include <Awesomium/awesomium_capi.h>
 
 // A helper macro, used in 'getWebKeyFromSDLKey'
 #define mapKey(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
