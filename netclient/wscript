@@ -232,14 +232,22 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         pass
     elif OS == 'Linux':
+        awesomium_lib_path = [os.path.abspath('../libraries/lin32/awesomium/lib') ] #['/home/atomos/dc_mmo/libraries/lin32/awesomium/lib']
+        conf.check(
+            lib=['awesomium-1.6.5'], 
+            libpath= awesomium_lib_path,
+            uselib_store='AWESOMIUM') 
+
+        '''
         conf.check(header_name='Awesomium/awesomium_capi.h',
-                   lib= 'libawesomium-1.6.5'
-                   use= 'libawesomium-1.6.5'
+                   lib= 'libawesomium-1.6.5',
+                   use= 'libawesomium-1.6.5',
                    libpath= ['../libraries/lin32/awesomium/lib'],
-                   includes= '../libraries/lin32/awesomium/include/',
-                   uselib_store='AWESOMIUM,
+                   includes= ['/home/atomos/dc_mmo/libraries/lin32/awesomium/include'],
+                   uselib_store= 'AWESOMIUM',
                    fragment='#include <Awesomium/awesomium_capi.h>' + MAIN_TEST_CODE,
                    mandatory=True)
+        '''
     elif OS == 'Darwin':
         pass
 
@@ -285,7 +293,7 @@ def build(bld):
     bld(
         features = 'cxx cxxprogram',
         source = ['../src/client/_client.cpp'],
-        use = common_libraries+time_lib+SDL_libraries+['LUA'],
+        use = common_libraries+time_lib+SDL_libraries+['LUA', 'AWESOMIUM'],
         lib = sound_libraries+png_libs,
         #includes = c_lib_includes,
         #libpath = c_lib_libpath,
