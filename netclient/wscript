@@ -227,6 +227,22 @@ def configure(conf, add_flags=[], rm_flags=[]):
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
+
+
+    if OS == 'Windows':
+        pass
+    elif OS == 'Linux':
+        conf.check(header_name='lua.h',
+                   lib='luajit-5.1', #'lua5.1',
+                   use='luajit-5.1', #'lua5.1',
+                   libpath= [],
+                   includes= '/usr/include/luajit-2.0',
+                   uselib_store='LUA',
+                   fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
+                   mandatory=True)
+    elif OS == 'Darwin':
+        pass
+
     '''
     P1 = os.path.abspath('../src/c_lib')
     P2 = os.path.abspath('../src')

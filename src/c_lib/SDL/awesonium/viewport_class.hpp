@@ -75,7 +75,7 @@ class chrome_viewport
 
 		void init_webview()
 		{
-			webView = awe_webcore_create_webview(width, height);
+			webView = awe_webcore_create_webview(width, height, false);
 		    //default loading
 		    awe_webview_set_transparent(webView, 1); ///preserve transpanency of window
 		    //Sets whether or not pages should be rendered with transparency preserved.
@@ -87,7 +87,7 @@ class chrome_viewport
 		    awe_string_destroy(url_str);
 		#endif
 
-		    struct awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
+		    awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
 
 		    if(renderBuffer != NULL)
 		    {
@@ -112,7 +112,7 @@ class chrome_viewport
 	                                0xFF000000, 0x000000FF);
 		*/
 
-	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, texture_format, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
+	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
 
 	        glDisable(GL_TEXTURE_2D);
 		}
@@ -121,19 +121,19 @@ class chrome_viewport
 		{
 		    if( !awe_webview_is_dirty(webView) ) return;
 
-	        awe_rect rect = awe_webview_get_dirty_bounds(webView);
+	        //awe_rect rect = awe_webview_get_dirty_bounds(webView);
 
 	        awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
 
 	        if (renderBuffer == NULL) 
 	        {
 	        	printf("Chrome Crashed!\n");
-	        	return 0;
+	        	return;
 	    	}
 
 	        glEnable(GL_TEXTURE_2D);
 	        glBindTexture( GL_TEXTURE_2D, TEX0 );
-	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, display->surface->pixels );
+	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
 	        glDisable(GL_TEXTURE_2D);
 		}
 
@@ -141,7 +141,7 @@ class chrome_viewport
 		void draw_webview()
 		{
 		    glEnable(GL_TEXTURE_2D);
-		    glBindTexture( GL_TEXTURE_2D, display->tex_id );
+		    glBindTexture( GL_TEXTURE_2D, TEX0 );
 
 		    float z = -0.5;
 		    float x0,y0,x1,y1;
@@ -179,7 +179,7 @@ class chrome_viewport
 		}
 
 
-		void set_html(char* html)() 
+		void set_html(char* html)
 		{
    			awe_string* html_str = awe_string_create_from_ascii(html, strlen(html));
     		awe_webview_load_html(webView, html_str,awe_string_empty());
@@ -196,8 +196,8 @@ class chrome_viewport
 
 		void processKeyEvent(SDL_Event keyEvent) 
 		{
-		    if(windowInFocus == false)  return;
-		    injectSDLKeyEvent((awe_webview*)windowInFocus->webView, keyEvent);
+		    if(inFocus == false)  return;
+		    injectSDLKeyEvent(webView, keyEvent);
 		}
 
 
@@ -252,9 +252,10 @@ _OSMExport const unsigned char *    awe_renderbuffer_get_buffer (const awe_rende
 
 //void injectSDLKeyEvent(Awesomium::WebView* webView, const SDL_Event& event)
 //_awe_webkeyboardevent convertSDLKeyEvent(const SDL_Event& event)
-int getWebKeyFromSDLKey(SDLKey key);
 
-inline awe_webkeyboardevent convert_key_event(Awesomium::WebKeyboardEvent keyEvent) 
+//int getWebKeyFromSDLKey(SDLKey key);
+
+awe_webkeyboardevent convert_key_event(Awesomium::WebKeyboardEvent keyEvent) 
 {
     awe_webkeyboardevent ke;
 
