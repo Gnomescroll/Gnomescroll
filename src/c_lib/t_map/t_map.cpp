@@ -49,12 +49,8 @@ int get(int x, int y, int z)
 void set(int x, int y, int z, int value)
 {
     #if DC_SERVER
-    /*
-        ERROR!!
-        Check if block is container block before calling this!!!
-    */
-
-    //if (value == 0) t_map::destroy_item_container_block(x,y,z);
+    if (value != get(x,y,z))
+		t_map::destroy_item_container_block(x,y,z);
     #endif
     main_map->set_block(x,y,z,value);
 }
@@ -213,14 +209,7 @@ inline int get_highest_open_block(int x, int y, int n)
 
 inline int get_highest_open_block(int x, int y) 
 {
-    #if DC_CLIENT
-    GS_ASSERT(x>=0&&x<512&&y>=0&&y<512);
-    return main_map->column_heights[x + map_dim.y * y];
-    #endif
-
-    #if DC_SERVER
     return get_highest_solid_block(x,y) + 1;
-    #endif
 }
 
 inline int get_highest_solid_block(int x, int y)
@@ -275,15 +264,9 @@ inline int get_lowest_solid_block(int x, int y)
 
 int _get(int x, int y, int z)
 {
-    //x = translate_point(x);
-    //y = translate_point(y);
     x &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    //return t_map::main_map->get_block(x,y,z);
-    //if( ((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)
-        //| (y & t_map::TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-    //) return 0;
     if((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
     class t_map::MAP_CHUNK* c = t_map::main_map->chunk[ t_map::MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if(c == NULL) return 0;
@@ -294,22 +277,6 @@ void _set(int x, int y, int z, int value)
 {
     t_map::main_map->set_block(x,y,z,value);
 }
-
-
-/*
-void send_map_metadata(int client_id)
-{
-    t_map::map_metadata_StoC msg;
-    msg.x = map_dim.x;
-    msg.y = map_dim.y;
-    msg.z = map_dim.z;
-    msg.sendToClient(client_id);
-}
-*/
-
-/*
-    Move this somewhere
-*/
 
 int get_height_at(int x, int y)
 {

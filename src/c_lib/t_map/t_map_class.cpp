@@ -564,8 +564,8 @@ namespace t_map
     {
         x = translate_point(x);
         y = translate_point(y);
-        //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         return this->column_heights[x + y*MAP_WIDTH];
     }
 
