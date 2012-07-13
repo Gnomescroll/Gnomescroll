@@ -217,18 +217,18 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
 bool Agent_status::die()
 {
     if (this->dead) return false;
-    dead = true;
-    deaths++;
+    this->dead = true;
+    this->deaths++;
 
     #if DC_SERVER
     AgentDeaths_StoC deaths_msg;
-    deaths_msg.id = a->id;
-    deaths_msg.deaths = deaths;
+    deaths_msg.id = this->a->id;
+    deaths_msg.deaths = this->deaths;
     deaths_msg.broadcast();
     
     agent_dead_StoC dead_msg;
-    dead_msg.id = a->id;
-    dead_msg.dead = dead;
+    dead_msg.id = this->a->id;
+    dead_msg.dead = this->dead;
     dead_msg.broadcast();
 
     Toolbelt::agent_died(this->a->id);
@@ -240,9 +240,6 @@ bool Agent_status::die()
 
 bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
 {
-    if (inflictor_type == OBJECT_GRENADE)
-        inflictor_type = OBJECT_AGENT;
-        
     bool killed = this->die();
     if (!killed) return false;
     
@@ -250,6 +247,7 @@ bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMe
     //Turret* turret;
 	switch (inflictor_type)
 	{
+		case OBJECT_GRENADE:
 		case OBJECT_AGENT:
 			attacker = STATE::agent_list->get(inflictor_id);
 			if (attacker != NULL)
@@ -277,6 +275,7 @@ bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMe
 	//Turret* turret;
 	switch (inflictor_type)
 	{
+		case OBJECT_GRENADE:
 		case OBJECT_AGENT:
 			msg.victim = this->a->id;
 			msg.attacker = inflictor_id;

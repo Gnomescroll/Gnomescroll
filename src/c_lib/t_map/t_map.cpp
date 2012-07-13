@@ -38,8 +38,6 @@ class Terrain_map* main_map;
 int get(int x, int y, int z)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
-    //x = translate_point(x);
-    //y = translate_point(y);
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
@@ -216,6 +214,7 @@ inline int get_highest_open_block(int x, int y, int n)
 inline int get_highest_open_block(int x, int y) 
 {
     #if DC_CLIENT
+    GS_ASSERT(x>=0&&x<512&&y>=0&&y<512);
     return main_map->column_heights[x + map_dim.y * y];
     #endif
 
