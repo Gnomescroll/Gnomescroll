@@ -117,7 +117,7 @@ class chrome_viewport
 	        glDisable(GL_TEXTURE_2D);
 		}
 
-		void update_webview())
+		void update_webview()
 		{
 		    if( !awe_webview_is_dirty(webView) ) return;
 
