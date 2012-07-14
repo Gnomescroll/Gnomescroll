@@ -157,7 +157,7 @@ void environment_process_tick()
 {
 	static int init = 0;
 	static int* _random;
-	static unsigned int _random_index = 0;
+	static int _random_index = 0;
 
 	static int regolith_id;
 	if(init == 0)
@@ -166,7 +166,7 @@ void environment_process_tick()
 		for(int i=0; i<256; i++) _random[i] = rand();
 		
 		regolith_id = dat_get_cube_id("regolith");
-		init = 0;
+		init = 1;
 	}
 
 	static int x=0; 
