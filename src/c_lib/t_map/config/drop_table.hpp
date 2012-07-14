@@ -114,6 +114,7 @@ void end_drop_dat()
             if (total > 1.005f)
             {
                 printf("Block Drop Dat Error: Item total probabilities exceed 1.0f (p = %f)\n", total);
+                printf("Drop error for item: %s \n", Item::get_item_name(cidt->item_type) );
                 GS_ABORT();
             }
 
