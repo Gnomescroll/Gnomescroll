@@ -19,6 +19,7 @@ echo "Project dir contents: "
 /bin/ls "${PATH}"
 
 # alter link lib paths
-/usr/bin/install_name_tool -change "/usr/local/lib/libGLEW.1.7.0.dylib" "@loader_path/../Frameworks/libGLEW.1.7.0.dylib" "${PATH}"/Gnomescroll
+#/usr/bin/install_name_tool -change "/usr/local/lib/libGLEW.1.7.0.dylib" "@loader_path/../Frameworks/libGLEW.1.7.0.dylib" "${PATH}"/Gnomescroll
+/usr/bin/install_name_tool -change "/usr/lib/libGLEW.1.7.0.dylib" "@loader_path/../Frameworks/libGLEW.1.7.0.dylib" "${PATH}"/Gnomescroll
 /usr/bin/install_name_tool -change "/usr/local/lib/libluajit-51.2.dylib" "@loader_path/../Frameworks/libluajit-51.2.dylib" "${PATH}"/Gnomescroll
 

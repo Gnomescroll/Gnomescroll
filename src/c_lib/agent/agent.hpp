@@ -90,7 +90,7 @@ class Agent_state
         void tick();
 
         bool in_sight_of(Vec3 source, Vec3 *sink);
-        bool in_sight_of(Vec3 source, Vec3 *sink, float acquisition_probability);
+        bool in_sight_of(Vec3 source, Vec3 *sink, float failure_rate);
 
         #if DC_SERVER
         bool camera_ready;

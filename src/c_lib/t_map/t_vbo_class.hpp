@@ -226,4 +226,5 @@ class Vbo_map
     void prep_frustrum_vertices();
 };
 
+
 }

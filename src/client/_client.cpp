@@ -1,12 +1,11 @@
 // client.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
-
 #ifdef __GNUC__
 #endif
 
-#ifdef __MSVC__
+#ifdef _MSC_VER
+    #include "stdafx.h"
 #endif
 
 #include "_c_lib.cpp"
@@ -16,7 +15,11 @@
 #include <SDL.h>
 
 //int main(int argc, char** argv)
+#if __MSVC__
 int _tmain(int argc, _TCHAR* argv[])
+#else
+int main(int argc, char* argv[])
+#endif
 {
     #if PRODUCTION
     printf("Production build\n");

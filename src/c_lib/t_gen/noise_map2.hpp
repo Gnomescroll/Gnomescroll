@@ -4,6 +4,10 @@
 
 #include <t_gen/twister.hpp>
 
+#ifdef __MSVC__
+    #pragma optimize( "gt", on )
+#endif
+
 namespace t_gen
 {
 
@@ -541,3 +545,7 @@ void test_octave_2d_map_gen(int tile)
 }
 
 }
+
+#ifdef __MSVC__
+    #pragma optimize( "", off )
+#endif

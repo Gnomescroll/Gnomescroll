@@ -148,7 +148,7 @@ def build(bld):
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(
         features = 'cxx cxxprogram',
-        source = ['run.cpp',],
+        source = ['../src/server/_server.cpp',],
         use = common_libraries+time_lib+['LUA'],
         lib = time_lib,
         target = 'run'

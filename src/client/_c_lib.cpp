@@ -93,9 +93,11 @@ dont_include_this_file_in_server
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
-//#include <SDL/md5_loader/_include.hpp>
-//#include <SDL/md5_loader/md5_test.cpp>
+/* Awesonium */
 
+#ifdef __GNUC__
+    #include <SDL/awesonium/_include.hpp>
+#endif
 /* Draw lists */
 #include <common/draw/draw.cpp>
 
@@ -391,8 +393,8 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("container teardown\n");
     ItemContainer::teardown();
 
-	if (TEARDOWN_DEBUG) printf("Input teardown\n");
-	teardown_input();
+    if (TEARDOWN_DEBUG) printf("Input teardown\n");
+    teardown_input();
 
     if (TEARDOWN_DEBUG) printf("sound close\n");
     Sound::close();

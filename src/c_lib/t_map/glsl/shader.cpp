@@ -43,7 +43,7 @@ void init_shaders()
 		printf("!!! Warning: EXT_texture_sRGB not supported. \n");
 	}
 
-	ANISOTROPIC_FILTERING = 0;
+	//ANISOTROPIC_FILTERING = 0;
 
 	if (ANISOTROPIC_FILTERING)
 	{

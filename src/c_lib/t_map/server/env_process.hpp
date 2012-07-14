@@ -156,12 +156,13 @@ __attribute__((optimize("-O3")))
 void environment_process_tick()
 {
 	static int init = 0;
-	static int _random[256];
+	static int* _random;
 	static unsigned int _random_index = 0;
 
 	static int regolith_id;
 	if(init == 0)
 	{
+		_random = new int[256];
 		for(int i=0; i<256; i++) _random[i] = rand();
 		
 		regolith_id = dat_get_cube_id("regolith");

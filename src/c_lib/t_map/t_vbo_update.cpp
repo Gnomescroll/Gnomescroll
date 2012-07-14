@@ -1,4 +1,3 @@
-#include "t_vbo_update.hpp"
 
 #include <t_map/glsl/structs.hpp>
 #include <t_map/glsl/cache.hpp>
@@ -9,6 +8,19 @@
 #include "t_vbo_update.hpp"
 
 #include "t_properties.hpp"
+
+
+
+#ifdef __MSVC__
+    #pragma optimize( "gt", on )
+#endif
+
+#if __GNUC__
+    #pragma GCC push_options
+    //#pragma GCC optimization_level 3
+    //#pragma GCC optimize 3
+    #pragma GCC optimize ("O3")
+#endif
 
 namespace t_map
 {
@@ -66,11 +78,6 @@ static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, 
 1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
 -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
 
-static inline int calcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
-static inline int _is_occluded(int x,int y,int z, int side_num) __attribute((always_inline));
-static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) __attribute((always_inline));
-static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id)  __attribute((always_inline));
-
 /*
     will be 1 if is adjacent to any side
     will be 2 only if both sides are occluded
@@ -78,8 +85,8 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 
 //const static int occ_array[3] = { 255, 177, 100 };
 
-
-static inline int calcAdj(int side_1, int side_2, int corner) 
+//STATIC_INLINE_OPTIMIZED
+inline int calcAdj(int side_1, int side_2, int corner) 
 {
     const static int occ_array[3] = { 255, 128, 64 };
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
@@ -96,13 +103,14 @@ const static int_fast8_t s_array[18] = {
         };
 
 //this is doing a get, but can use within chunk lookup
-static inline int _is_occluded(int x,int y,int z, int side_num)
+INLINE
+int _is_occluded(int x,int y,int z, int side_num)
 {
     int i = 3*side_num;
     return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
 }
 
-static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
+inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
 {
     int i;
     i = 3*side_num;
@@ -117,8 +125,7 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
 
 #define AO_DEBUG 0
 
-__attribute((always_inline, optimize("-O3")))
-static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
     int index;
@@ -228,8 +235,10 @@ static inline void _set_quad_color_default(struct Vertex* v_list, int offset, in
     _ce.b = _palletn[index+2];
     _ce.a = 0;
 
-    for(int i=0 ;i <4; i++) v_list[offset+i].color = _ce.color;
-
+    v_list[offset+0].color = _ce.color;
+    v_list[offset+1].color = _ce.color;
+    v_list[offset+2].color = _ce.color;
+    v_list[offset+3].color = _ce.color;
 }
 
 static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
@@ -313,8 +322,7 @@ static int vertex_max = 0;
 //__attribute((always_inline, optimize("-O3")))
 
 //__attribute((always_inline))
-__attribute((always_inline, optimize("-O3")))
-static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
     int tile_id = element.block;
 #if USE_QUAD_CACHE
@@ -396,7 +404,6 @@ static inline void push_quad1(struct Vertex* v_list, int offset, int x, int y, i
 }
 
 
-//__attribute((optimize("-O3")))
 void generate_vertex_list(struct Vertex* vlist)
 {
     int offset = 0;
@@ -418,7 +425,6 @@ void generate_vertex_list(struct Vertex* vlist)
     }
 }
 
-//__attribute((optimize("-O3")))
 void generate_quad_ao_values(struct Vertex* vlist)
 {
     int offset = 0;
@@ -448,7 +454,7 @@ void generate_quad_ao_values(struct Vertex* vlist)
 
 
 //for solid blocks
-__attribute((always_inline, optimize("-O3")))
+INLINE_OPTIMIZED
 void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[side][SIDE_BUFFER_INDEX[side]];
@@ -461,7 +467,7 @@ void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsig
 
 
 //for transparent blocks
-__attribute((always_inline, optimize("-O3")))
+INLINE_OPTIMIZED
 void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[6][SIDE_BUFFER_INDEX[side]];
@@ -484,7 +490,7 @@ void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsig
     int vertex_num_array[6][16];   //for each column
 */
 
-__attribute((optimize("-O3")))
+OPTIMIZED
 void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 {
     for(int zi0 = 0; zi0 < 128/16; zi0++) {
@@ -622,9 +628,7 @@ void Vbo_map::update_vbo(int i, int j)
  
 #define USE_QUAD_CACHE_COMPATIBABILITY 0
 
-static inline void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element)  __attribute((always_inline)); 
-
-static inline void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
 
     int tile_id = element.block;
@@ -677,7 +681,7 @@ static inline void push_quad_compatibility(struct Vertex* v_list, int offset, in
             v_list[offset+i].z += z;
         }
     }
-    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+    //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 
 
     switch( t_map::cube_list[tile_id].color_type )
@@ -815,3 +819,12 @@ int update_chunks() {
 
 
 }
+
+
+#ifdef __MSVC__
+    #pragma optimize( "", off )
+#endif
+
+#if __GNUC__
+    #pragma GCC pop_options
+#endif

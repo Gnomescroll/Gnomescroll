@@ -30,7 +30,8 @@ typedef enum
     DEATH_FALL,
     DEATH_BELOW_MAP,
     DEATH_TURRET,
-    DEATH_SLIME
+    DEATH_SLIME,
+    DEATH_KILLME
 } AgentDeathMethod;
 
 enum AGENT_BODY_PARTS
@@ -62,7 +63,7 @@ const float AGENT_BOX_RADIUS = 0.38f;
 const int NO_AGENT = 255; // works as long as < AGENT_MAX 
 
 /* Status */
-const int AGENT_HEALTH = 100;
+const int AGENT_HEALTH = 99;
 const int RESPAWN_TICKS = 30 * 4; // 4 seconds
 const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;

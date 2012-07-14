@@ -12,7 +12,7 @@ class TargetingComponent: public Component
 {
     public:
         // data
-        float target_acquisition_probability;
+        float target_acquisition_failure_rate;
         float sight_range;
 
         // state
@@ -29,7 +29,7 @@ class TargetingComponent: public Component
 
     explicit TargetingComponent(ComponentType type)
     : Component(type, COMPONENT_INTERFACE_TARGETING),
-    target_acquisition_probability(1.0f), sight_range(10.0f),
+    target_acquisition_failure_rate(0.0f), sight_range(10.0f),
     target_id(-1), target_type(OBJECT_NONE), locked_on_target(false)
     {}
 };

@@ -268,6 +268,8 @@ void RegisterMessages()
     t_map::control_node_create_StoC::register_client_packet();
     t_map::control_node_delete_StoC::register_client_packet();
 
+	// suicide
+	killme_CtoS::register_server_packet();
 }
 
 }

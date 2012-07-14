@@ -531,14 +531,15 @@ Affine* Voxel_model::get_node(int node)
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
 {   // ray cast from source to each body part center (shuffled)
-    return this->in_sight_of(source, sink, 1.0f);
+    return this->in_sight_of(source, sink, 0.0f);
 }
 
-bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability)
+bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
 {   // ray cast from source to each body part center (shuffled)
+    GS_ASSERT(failure_rate >= 0.0f && failure_rate < 1.0f);
     GS_ASSERT(this->n_parts > 0);
     if (this->n_parts <= 0) return false;
-    
+
     MALLOX(int, part_numbers, this->n_parts); //type, name, size
 
     for (int i=0; i<this->n_parts; i++)
@@ -552,10 +553,11 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probabi
         int pnum = part_numbers[i];
         GS_ASSERT(pnum >= 0 && pnum < this->n_parts);
         if (pnum < 0 || pnum >= this->n_parts) continue;
-        vv = &this->vv[part_numbers[i]];
+        vv = &this->vv[pnum];
         c = vv->get_center(); // ray cast to center of volume
+		if (randf() < failure_rate) continue;	// TODO -- move this to beginning of loop. leave it here while testing for bug crash
         c = quadrant_translate_position(source, c);
-        if (randf() < acquisition_probability && ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
+        if (ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
         {
             *sink = c;
             return true;
