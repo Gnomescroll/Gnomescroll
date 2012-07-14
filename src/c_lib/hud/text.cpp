@@ -89,10 +89,7 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
     char c;
     // draw up to len, if len != 0. always stop at \0
     while ((len == 0 || i < start+len) && (c = text[i++]) != '\0')
-    {
-        glyph = HudFont::font->get_glyph(c);
-        cursor_x += glyph.xadvance;
-                		        
+    {                		        
         if (c == '\n')
         {
             cursor_x = 0.0f;
@@ -100,8 +97,13 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
             continue;
         }
 
+        glyph = HudFont::font->get_glyph(c);
+
 		if (i-1 < start)
+		{
+			cursor_x += glyph.xadvance;
 			continue;
+		}
 
         tx_max = glyph.x;
         tx_min = glyph.x + glyph.tw;
@@ -115,6 +117,8 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
 
         blit_character(tx_min, tx_max, ty_min, ty_max,
 					   sx_min, sx_max, sy_min, sy_max, depth);
+
+        cursor_x += glyph.xadvance;					
     }
 }
 
