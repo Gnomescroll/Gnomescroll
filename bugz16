@@ -712,15 +712,34 @@ DONE
 
 add /kill (alias /die) command to chat; self destructs player
 DONE
+
+fix map loading [BRANDON]
+DONE
  
+fix array OOB error for heightmap cache access by motion methods for mobs
+DONE
+
+begin AnimatedText work; make multicolored text class for ENERGY XX
+DONE
+
+energy capped at 99 instead of 100
+DONE
+
+awesomium added
+DONE
+
+copper/iron ore->bar recipes for craft bench, to avoid smelter prereq 
+DONE
+
+fix get_highest_*_block() in client
+DONE
+
 ----------------------
 
 == BUILD ==
 REMINDER:
     Update the download link on gamejolt.com every build
 Script to pack all builds into one zip
-
-configurable media/ path
 
 == PVE ==
 blue bombs should be wandering, slowly
@@ -736,6 +755,7 @@ glsl colored/textured voxels -- add normal lighting
 Improve Hud Weapon sprites animations
 textured voxels / isometric blocks should use full palette info, instead of only one side
 better font
+draw held weapon sprite in player's hand for others to see
 
 == SOUND ==
 improve digging sounds
@@ -767,6 +787,9 @@ palette for smelter on/off
 == ITEMS ==
 Binoculars
 
+== CRAFTING / RECIPES ==
+4ore->block in crafting bench
+
 == BLOCKS/TERRAIN ==
 send block health on request from agent
 --show meter in hud
@@ -775,6 +798,7 @@ send block health on request from agent
 Remove "Channel X" from chat.log, put in timestamp
 
 == UI/UX ==
+/colourme option to color player's model
 
 == GENERAL ==
 get screenshots working in osx
@@ -782,6 +806,8 @@ option to hide name
 
 maintain a NetClient buffer per stage of ready-ness
 broadcast only to clients who are are in fully ready
+
+chunk is NULL check -- dont apply physics in these areas
 
 == MECHANISMS ==
 Spawner/Control Points
@@ -844,10 +870,12 @@ Cell added a medpack looking sprite, which will be a placeholder for "energy pac
 Energy regen is possible, but an independent mechanism for enabling energy regen does not exist. (Minecraft has full food meter)
 Reserve tanks have a bit of cross over with regen.  The mechanisms/pathways for reserve tank acquisition are important.
 
+Recipes:
+Energy Tank: gallium bar+any other metal bar + 4 methane
+Energy Refill: any metal bar + 1 methane for recharge pack
+
 ==BUGZ==
-camera choppy when rotating laterally and phi is at max/min
-flickering quad vertices on terrain and voxel models in osx build
+SERVER: voxel volume in sight of invalid pointer (suspect: buffer overrun elsewhere corrupting state)
 
-in free camera, when agent is shot, model flickers
-
-voxel volume in sight of invalid pointer (suspect: buffer overrun elsewhere corrupting state)
+something is messed up with box models. client reports get_center() as even higher above its head, in the object_shot_object packet handler
+position looks normal though, as a firing position
