@@ -339,7 +339,6 @@ bool ChatInput::route_command()
 				
 				color_val[cvi] = '\0';
 				
-				printf("Color val %s\n", color_val);
 				int val = atoi(color_val);
 				if (val > 255)
 				{
@@ -376,7 +375,6 @@ bool ChatInput::route_command()
 		
 		if (valid)
 		{
-			printf("Choosing color: %d %d %d\n", color.r, color.g, color.b);
 			colorme_CtoS msg;
 			msg.r = color.r;
 			msg.g = color.g;
