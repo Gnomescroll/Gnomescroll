@@ -28,6 +28,8 @@ class ChatServer
     int channels[CHAT_SERVER_CHANNELS_MAX];
 
 	FILE* log;
+    unsigned int log_msg_buffer_len;
+    char* log_msg_buffer;
 
     void player_join(int id);
     void player_quit(int id);

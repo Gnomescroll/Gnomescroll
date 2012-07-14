@@ -113,6 +113,12 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	GS_ASSERT(this->log != NULL);
 	if (log == NULL) return;
 
+    GS_ASSERT(this->log_msg_buffer != NULL);
+    if (this->log_msg_buffer == NULL) return;
+
+    GS_ASSERT(this->log_msg_buffer_len > 0);
+    if (this->log_msg_buffer_len <= 0) return;
+
 	GS_ASSERT(payload != NULL);
 	if (payload == NULL) return;
 	
@@ -128,18 +134,19 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	GS_ASSERT(sender_name != NULL);
 	if (sender_name == NULL) return;
 	GS_ASSERT(sender_name[0] != '\0');
-	
-	const char msg_fmt[] = "<%s> (%d) %s: %s\n";
-	int msg_len = (int) (strlen(msg_fmt) + strlen(payload)
-		+ count_digits(sender)
-		+ strlen(sender_name) + 1 - 8);
-	char* msg = (char*)malloc(msg_len * sizeof(char));
-	
-	msg_len = sprintf(msg, msg_fmt, get_time_str(), sender, sender_name, payload);
-	fwrite(msg, sizeof(char), msg_len, this->log);
+
+    // add timestamp
+    char* time_str = get_time_str();
+    if (time_str == NULL) time_str = (char*)"";
+    fwrite(time_str, sizeof(char), strlen(time_str), this->log);
+
+    // log msg
+	int msg_len = snprintf(this->log_msg_buffer, this->log_msg_buffer_len, CHAT_LOG_MSG_FORMAT, sender, sender_name, payload);
+	fwrite(this->log_msg_buffer, sizeof(char), msg_len, this->log);
 }
 
 ChatServer::ChatServer()
+: log(NULL), log_msg_buffer_len(0), log_msg_buffer(NULL)
 {
     int channel_index = 0;
     system = new ChatServerChannel(PLAYERS_MAX);
@@ -164,9 +171,11 @@ ChatServer::ChatServer()
 		GS_ASSERT(this->log != NULL);
         if (this->log != NULL)
             setvbuf(this->log, NULL, _IOLBF, 256);
+
+        this->log_msg_buffer_len = count_digits(NetServer::HARD_MAX_CONNECTIONS)
+        + strlen(CHAT_LOG_MSG_FORMAT) + CHAT_MESSAGE_SIZE_MAX + PLAYER_NAME_MAX_LENGTH + 1;
+        this->log_msg_buffer = (char*)malloc(log_msg_buffer_len * sizeof(char));
 	}
-	else
-		this->log = NULL;
 }
 
 ChatServer::~ChatServer()
@@ -176,4 +185,7 @@ ChatServer::~ChatServer()
 
     for (int i=0; i<PLAYERS_MAX; delete pm[i++]);
     free(this->pm);
+
+    if (this->log_msg_buffer != NULL) free(this->log_msg_buffer);
+    if (this->log != NULL) fclose(this->log);
 }

@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_SERVER
+const char CHAT_LOG_MSG_FORMAT[] = " - [%d] %s: %s\n"; // client_id, name, msg
+#endif
+
 const int CHAT_SERVER_CHANNELS_MAX = 1+1+PLAYERS_MAX;
 
 const int CHAT_MESSAGE_SIZE_MAX = 90;
