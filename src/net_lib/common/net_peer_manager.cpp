@@ -71,7 +71,10 @@ void NetPeerManager::version_passed(int client_id)
     client_id_msg.client_id = client_id;
     client_id_msg.sendToClient(client_id);
 
+    t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
+
     Agent_state* a = ServerState::agent_list->create(client_id);
+    GS_ASSERT(a != NULL);
     NetServer::assign_agent_to_client(client_id, a);
 
     send_player_agent_id_to_client(client_id);
@@ -110,7 +113,6 @@ void NetPeerManager::ready()
 
     a->status.set_fresh_state();
 
-    t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
     t_map::send_client_map_special(this->client_id); //send special blocks to client
 }
 

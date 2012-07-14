@@ -1,6 +1,5 @@
 #include "motion.hpp"
 
-#include <physics/vec3.hpp>
 #include <t_map/t_map.hpp>
 
 int stick_to_terrain_surface(Vec3 position)

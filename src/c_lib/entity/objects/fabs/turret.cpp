@@ -67,7 +67,7 @@ static void set_turret_properties(Object* object)
     
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
-    target->target_acquisition_probability = TURRET_TARGET_ACQUISITION_PROBABILITY;
+    target->target_acquisition_failure_rate = TURRET_TARGET_ACQUISITION_PROBABILITY;
     target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
     target->uses_bias = TURRET_USES_BIAS;
     target->accuracy_bias = TURRET_ACCURACY_BIAS;

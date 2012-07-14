@@ -305,6 +305,7 @@ inline void object_shot_nothing_StoC::handle()
 
 inline void object_choose_weapon_target_StoC::handle()
 {
+	printf("Obj %d choose target %d\n", this->id, this->target_id);
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
