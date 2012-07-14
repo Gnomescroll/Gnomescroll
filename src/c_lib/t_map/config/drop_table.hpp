@@ -111,10 +111,11 @@ void end_drop_dat()
                 total += cidt->drop_probabilities[k];
             }
 
-            if (total > 1.005f)
+            if (total > 0.99f && cidt->drop_entries > 2) //means non-zero drop rate of less than 1%
             {
-                printf("Block Drop Dat Error: Item total probabilities exceed 1.0f (p = %f)\n", total);
+                printf("Block Drop Dat Error: Item total probabilities exceed 0.99 (p = %f)\n", total);
                 printf("Drop error for item: %s \n", Item::get_item_name(cidt->item_type) );
+                printf("drop entries: %i \n",cidt->drop_entries);
                 GS_ABORT();
             }
 
