@@ -208,7 +208,7 @@ inline int get_highest_open_block(int x, int y, int n)
 
 inline int get_highest_open_block(int x, int y) 
 {
-    return get_highest_solid_block(x,y) + 1;
+    return get_highest_solid_block(x,y)+1;
 }
 
 inline int get_highest_solid_block(int x, int y)
@@ -219,7 +219,7 @@ inline int get_highest_solid_block(int x, int y)
 inline int get_highest_solid_block(int x, int y, int z)
 {
     #if DC_CLIENT
-    return main_map->get_cached_height(x,y);
+    return main_map->get_cached_height(x,y)-1;
     #endif
 
     #if DC_SERVER

@@ -129,13 +129,13 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	if (sender_name == NULL) return;
 	GS_ASSERT(sender_name[0] != '\0');
 	
-	const char msg_fmt[] = "Channel: %d, Sender: %d %s; %s\n";
+	const char msg_fmt[] = "<%s> (%d) %s: %s\n";
 	int msg_len = (int) (strlen(msg_fmt) + strlen(payload)
-		+ count_digits(channel) + count_digits(sender)
+		+ count_digits(sender)
 		+ strlen(sender_name) + 1 - 8);
 	char* msg = (char*)malloc(msg_len * sizeof(char));
 	
-	msg_len = sprintf(msg, msg_fmt, channel, sender, sender_name, payload);
+	msg_len = sprintf(msg, msg_fmt, get_time_str(), sender, sender_name, payload);
 	fwrite(msg, sizeof(char), msg_len, this->log);
 }
 

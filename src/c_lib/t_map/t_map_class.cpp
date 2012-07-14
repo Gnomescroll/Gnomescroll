@@ -470,7 +470,7 @@ namespace t_map
 
     #if DC_CLIENT
     void Terrain_map::reset_heights_read()
-    {   // call when heights ar edone being read
+    {   // call when heights are done being read
         this->height_changed = false;
         for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; chunk_heights_changed[i++] = false);
     }
@@ -501,9 +501,7 @@ namespace t_map
         this->chunk_heights_changed[cx + cy*MAP_CHUNK_XDIM] = true;
         this->height_changed = true;
 
-    #if DC_CLIENT
-
-        const static int MASK = 512/16 -1 ; //chunk width
+        const static int MASK = (512/16)-1; //chunk width
 
         int CX;
         int CY;
@@ -528,7 +526,6 @@ namespace t_map
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
-    #endif
     }
     
     inline unsigned char Terrain_map::get_cached_height(int x, int y)
