@@ -135,13 +135,16 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	if (sender_name == NULL) return;
 	GS_ASSERT(sender_name[0] != '\0');
 
-    // add timestamp
+    // log timestamp
     char* time_str = get_time_str();
-    if (time_str == NULL) time_str = (char*)"";
-    fwrite(time_str, sizeof(char), strlen(time_str), this->log);
+    if (time_str != NULL)
+        fwrite(time_str, sizeof(char), strlen(time_str), this->log);
 
     // log msg
-	int msg_len = snprintf(this->log_msg_buffer, this->log_msg_buffer_len, CHAT_LOG_MSG_FORMAT, sender, sender_name, payload);
+    GS_ASSERT(strlen(CHAT_LOG_MSG_FORMAT) + strlen(payload) + strlen(sender_name) + count_digits(sender) < this->log_msg_buffer_len);
+	int msg_len = snprintf(this->log_msg_buffer, this->log_msg_buffer_len,
+                    CHAT_LOG_MSG_FORMAT, sender, sender_name, payload);
+    GS_ASSERT(msg_len < (int)this->log_msg_buffer_len);
 	fwrite(this->log_msg_buffer, sizeof(char), msg_len, this->log);
 }
 
@@ -174,7 +177,7 @@ ChatServer::ChatServer()
 
         this->log_msg_buffer_len = count_digits(NetServer::HARD_MAX_CONNECTIONS)
         + strlen(CHAT_LOG_MSG_FORMAT) + CHAT_MESSAGE_SIZE_MAX + PLAYER_NAME_MAX_LENGTH + 1;
-        this->log_msg_buffer = (char*)malloc(log_msg_buffer_len * sizeof(char));
+        this->log_msg_buffer = (char*)malloc(this->log_msg_buffer_len * sizeof(char));
 	}
 }
 
