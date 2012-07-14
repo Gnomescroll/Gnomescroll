@@ -231,11 +231,7 @@ void server_tick_mob_robot_box(Object* object)
         // look for target
         weapon->lock_target(camera_position);
         if (weapon->locked_on_target)
-        {
 			agent = STATE::agent_list->get(weapon->target_id);
-			GS_ASSERT(agent != NULL);
-			GS_ASSERT(weapon->target_is_visible(camera_position));
-		}
     }
 
     if (weapon->target_type != OBJECT_NONE)

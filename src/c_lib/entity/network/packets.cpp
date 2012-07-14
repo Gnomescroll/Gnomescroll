@@ -205,10 +205,10 @@ inline void object_shot_object_StoC::handle()
     if (obj == NULL) return;
 
     // get firing position of object
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics == NULL) return;
-    Vec3 position = physics->get_position();
+	using Components::PhysicsComponent;
+	PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+	if (physics == NULL) return;
+	Vec3 position = physics->get_position();
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
@@ -223,9 +223,7 @@ inline void object_shot_object_StoC::handle()
     a->vox->was_updated = false;
     AgentState s = a->get_state();
     a->vox->update(s.x, s.y, s.z, s.theta, s.phi);
-    Voxel_volume* vv = a->vox->get_part(this->target_part);
-    if (vv == NULL) return;
-    Vec3 dest = vv->get_center();
+    Vec3 dest = a->vox->get_center(this->target_part);
     dest = quadrant_translate_position(position, dest);
 
     // laser animation
@@ -305,7 +303,6 @@ inline void object_shot_nothing_StoC::handle()
 
 inline void object_choose_weapon_target_StoC::handle()
 {
-	printf("Obj %d choose target %d\n", this->id, this->target_id);
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
