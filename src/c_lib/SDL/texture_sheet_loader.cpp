@@ -125,7 +125,7 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
     for (unsigned int j=0; j < tile_size; j++) 
     {
 		unsigned int pix_index = s->w*(tile_size*source_y+j) + (tile_size*source_x+i);
-		GS_ASSERT(pix_index < s->w*s->h);
+		GS_ASSERT(pix_index < (unsigned int)s->w*s->h);
 		
 		// convert source pixel to final format
         Uint32 pix = ((Uint32*)s->pixels)[pix_index];
@@ -137,7 +137,7 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
         GS_ASSERT(stack_index < 256*tile_size*tile_size);
         stack_pixels[stack_index] = pix;
         unsigned int sheet_index = (16*tile_size)*((dest_y+j)) + (dest_x+i);
-        GS_ASSERT(sheet_index < this->texture_sheet->w*this->texture_sheet->h);
+        GS_ASSERT(sheet_index < (unsigned int)this->texture_sheet->w*this->texture_sheet->h);
         sheet_pixels[sheet_index] = pix;
     }
 
@@ -171,6 +171,7 @@ void TextureSheetLoader::generate_grey_scale()
     for (unsigned int y=0; y<16*tile_size; y++)
     {
         unsigned int index = y*16*tile_size + x;
+        GS_ASSERT(index < (unsigned int)grey_scale_texture_sheet->w*grey_scale_texture_sheet->h);
         Uint32 pix = ((Uint32*)texture_sheet->pixels)[index];
         SDL_GetRGBA(pix, texture_sheet->format, &r, &g, &b, &a);
 
