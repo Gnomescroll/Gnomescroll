@@ -95,7 +95,7 @@ dont_include_this_file_in_server
 
 /* Awesonium */
 
-#ifdef __WIN32__
+#ifndef __WIN32__
     #ifdef __GNUC__
         #include <SDL/awesonium/_include.hpp>
     #endif
