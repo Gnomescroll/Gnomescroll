@@ -270,6 +270,10 @@ void RegisterMessages()
 
 	// suicide
 	killme_CtoS::register_server_packet();
+	
+	// coloring
+	colorme_CtoS::register_server_packet();
+	agent_color_StoC::register_client_packet();
 }
 
 }

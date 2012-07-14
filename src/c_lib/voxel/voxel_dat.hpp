@@ -1,13 +1,14 @@
 #pragma once
 
-//#include <physics/Affine.hpp>
+#include <common/color.hpp>
 #include <physics/affine.hpp>
+
 /* Dat storage */
 
 class VoxDat; // forward decl;
 
-//#if DC_CLIENT
-class VoxColors {
+class VoxColors
+{
     public:
         unsigned char* rgba;
         int *index;
@@ -18,9 +19,9 @@ class VoxColors {
         VoxColors();
         ~VoxColors();
 };
-//#endif
 
-class VoxPartDimension {
+class VoxPartDimension
+{
     public:
         int x,y,z;
 
@@ -31,12 +32,11 @@ class VoxPartDimension {
         VoxPartDimension(int x, int y, int z);
 };
 
-class VoxPart {
+class VoxPart
+{
     public:
         VoxPartDimension dimension;
-        //#if DC_CLIENT
         VoxColors colors;
-        //#endif
         VoxDat* dat;    // parent
         
         int part_num;
@@ -48,6 +48,9 @@ class VoxPart {
         bool biaxial; // true for horizontal+vertical (head). default=false
 
         char *filename;
+
+		bool colorable;
+		struct Color base_color;
 
         void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
         void set_dimension(int x, int y, int z);
@@ -98,6 +101,9 @@ class VoxDat {
 
         //anchor x,y,z then rotation x,y,z
         void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
+
+		void set_colorable(int part, bool colorable);
+		void set_base_color(int part, unsigned char r, unsigned char g, unsigned char b);
 
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 

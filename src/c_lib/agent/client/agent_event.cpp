@@ -411,12 +411,13 @@ Agent_event::Agent_event(Agent_state* owner)
 :
 a(owner),
 vox_status(AGENT_VOX_IS_STANDING),
-model_was_changed(true)
+model_was_changed(true),
+color_changed(false)
 {
 	this->bb.init();
-	this->bb.permanent = true;          // dont die
+	this->bb.permanent = true;
 	if (this->a->status.name != NULL)
 		this->bb.set_text(this->a->status.name);
-	this->bb.set_color(255,10,10,255); // TODO -- use health level
+	this->bb.set_color(255,10,10,255);
 	this->bb.set_scale(AgentHudName::SIZE);	
 }

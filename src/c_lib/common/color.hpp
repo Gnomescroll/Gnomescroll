@@ -33,3 +33,19 @@ inline struct Color color_init(unsigned char r, unsigned char g, unsigned char b
     struct Color color = {r,g,b};
     return color;
 } 
+
+inline bool colors_equal(struct Color a, struct Color b)
+{
+	return (a.r == b.r && a.g == b.g && a.b == b.b);
+}
+
+inline bool colors_equal(struct Color4 a, struct Color4 b)
+{
+	return (a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a);
+}
+
+const struct Color4 COLOR_RED = {255,0,0,255};
+const struct Color4 COLOR_GREEN = {0,255,0,255};
+const struct Color4 COLOR_BLUE = {0,0,255,255};
+const struct Color4 COLOR_WHITE = {255,255,255,255};
+const struct Color4 COLOR_BLACK = {0,0,0,255};

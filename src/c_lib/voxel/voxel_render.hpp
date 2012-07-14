@@ -53,8 +53,6 @@ class Voxel_render_list
         void unregister_voxel_volume(class Voxel_volume* vv);
 
         bool full() { return this->num_elements >= VOXEL_RENDER_LIST_SIZE; }
-        //void draw();
-        //void update();
 
     Voxel_render_list();
     ~Voxel_render_list();
@@ -70,14 +68,6 @@ class Voxel_render_list_manager
         void unregister_voxel_volume(class Voxel_volume* vv);
 
         void draw();
-        //{
-        //    for (int i=0; i<this->max; this->lists[i++].draw());
-        //}
-        void update()
-        {
-            // UPDATE IS BEING CALLED IN DRAW NOW
-            //for (int i=0; i<this->max; this->lists[i++].update());
-        }
 
         void init(int max)
         {

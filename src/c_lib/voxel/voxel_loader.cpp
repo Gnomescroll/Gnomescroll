@@ -124,19 +124,21 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
 
     vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, file_name, (bool)biaxial);
 
-    // team
-    // TODO -- remove
-    int team;
+    // colorable
+    int colorable;
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%d %n", &team, &read);
+    sscanf (buffer+index, "%d %n", &colorable, &read);
     index += read;
 
-    // team base color
-    // TODO -- remove
-    int team_r, team_g, team_b;
+    // colorable base color
+    int cr,cg,cb;
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
+    sscanf (buffer+index, "%d %d %d %n", &cr, &cg, &cb, &read);
     index += read;
+
+	vox_dat->set_colorable(part_num, colorable);
+	vox_dat->set_base_color(part_num, cr,cg,cb);
+
 
     int ret;
     int vox_num = 0;
@@ -160,9 +162,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
         }
         index += read;
 
-        //#if DC_CLIENT
-        vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, 255);
-        //#endif
+        vox_dat->set_color(part_num, x,y,z, r,g,b, 255);
         vox_num++;
     }
 

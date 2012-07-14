@@ -125,11 +125,13 @@ dimension(dimension_x, dimension_y, dimension_z),
 dat(dat),
 part_num(part_num),
 vox_size(vox_size),
-biaxial(biaxial)
+biaxial(biaxial),
+colorable(false)
 {
-    //#if DC_CLIENT
+	this->base_color.r = 1;
+	this->base_color.g = 1;
+	this->base_color.b = 1;	// dont use 0,0,0 its reserved
     colors.init(dimension_x, dimension_y, dimension_z);
-    //#endif
     int len = (int)strlen(filename);
     this->filename = (char*)malloc(sizeof(char) * (len + 1));
     strcpy(this->filename, filename);
@@ -214,7 +216,8 @@ void VoxDat::set_skeleton_node_parent(int node, int parent)
 
 /* Body (contains parts) */
 
-void VoxDat::init_parts(int n_parts) {
+void VoxDat::init_parts(int n_parts)
+{
     if (voxel_volume_inited) 
     {
         printf("WARNING VoxDat::init_part -- called more than once\n");
@@ -282,6 +285,31 @@ void VoxDat::set_part_local_matrix( int part_num, float x, float y, float z, flo
     p->srx = rx;
     p->sry = ry;
     p->srz = rz;
+}
+
+void VoxDat::set_colorable(int part, bool colorable)
+{
+	GS_ASSERT(part >= 0 && part < this->n_parts);
+	if (part < 0 || part >= this->n_parts) return;
+	VoxPart* p = vox_part[part];
+	GS_ASSERT(p != NULL);
+	if (p == NULL) return;
+	p->colorable = colorable;
+	GS_ASSERT(!p->colorable || // dont use base color 0,0,0 and say its colorable. undesired effect
+		(p->base_color.r || p->base_color.g || p->base_color.b));
+}
+
+void VoxDat::set_base_color(int part, unsigned char r, unsigned char g, unsigned char b)
+{
+	GS_ASSERT(part >= 0 && part < this->n_parts);
+	if (part < 0 || part >= this->n_parts) return;
+	VoxPart* p = vox_part[part];
+	GS_ASSERT(p != NULL);
+	if (p == NULL) return;
+	p->base_color.r = r;
+	p->base_color.g = g;
+	p->base_color.b = b;
+	GS_ASSERT(!p->colorable || (r || g || b)); // dont use base color 0,0,0 and say its colorable. undesired effect
 }
 
 void VoxDat::set_skeleton_parent_matrix(int part, int parent)

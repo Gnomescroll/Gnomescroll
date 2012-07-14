@@ -187,7 +187,7 @@ int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, fl
 }
 
 #define DEBUG_POINT_COLLISION_TEST 1
-int Voxel_volume::point_collision_test(Vec3 p, int vxl[3]) 
+int Voxel_volume::point_collision_test(Vec3 p, unsigned int vxl[3]) 
 {
 #if DEBUG_POINT_COLLISION_TEST
         float x = p.x;
@@ -236,7 +236,7 @@ int Voxel_volume::point_collision_test(Vec3 p, int vxl[3])
     //return _test_occludes_safe(v.x,v.y,v.z, voxel);
 //}
 
-void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale)
+void Voxel_volume::set_parameters(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
 {
     this->xdim = xdim;
     this->ydim = ydim;
@@ -244,7 +244,7 @@ void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale)
     this->scale = scale;
 }
 
-void Voxel_volume::init(int xdim, int ydim, int zdim, float scale)
+void Voxel_volume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
 {
     if(this->voxel != NULL)
     {
@@ -309,7 +309,7 @@ voxel_render_list_id(-1)
     this->local_matrix.c = vec3_init(0,0,0);
 }
 
-Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
+Voxel_volume::Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
 :
 parent_world_matrix(NULL),
 id(-1),
@@ -345,17 +345,17 @@ Voxel_volume::~Voxel_volume()
 }
 
 //external methods
-void Voxel_volume::set(int x, int y, int z, Voxel* v)
+void Voxel_volume::set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
 {
-    if (x<0 || x>= xdim || y<0 || y>=ydim || z<0 || z>=zdim) return;
+    if (x >= xdim || y >= ydim || z >= zdim) return;
     _set(x,y,z,v);
     needs_vbo_update = true;
     damaged = true;
 }
 
-inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+inline void Voxel_volume::set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    if (x<0 || x>= xdim || y<0 || y>=ydim || z<0 || z>=zdim) return;
+    if (x >= xdim || y >= ydim || z >= zdim) return;
     _set(x,y,z,r,g,b,a);
     needs_vbo_update = true;
     damaged = true;
@@ -403,7 +403,7 @@ static inline int vCalcAdj(int side_1, int side_2, int corner)
         ty = 0.0
 */
 
-void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz)
+void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz)
 {
 
     static const struct Voxel_normal voxel_normal_array[6] = { 
@@ -564,9 +564,9 @@ void Voxel_volume::update_vertex_list()
 
     int index = 0;
 
-    for(int x=0; x < xdim; x++)
-    for(int y=0; y < ydim; y++)
-    for(int z=0; z < zdim; z++)
+    for(unsigned int x=0; x < xdim; x++)
+    for(unsigned int y=0; y < ydim; y++)
+    for(unsigned int z=0; z < zdim; z++)
     {
         if (get_as_int(x,y,z) == 0) continue;
 
@@ -612,15 +612,15 @@ void Voxel_volume::update_vertex_list()
 }
 #endif
 
-void Voxel_volume::set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
+void Voxel_volume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
 {
     _set(x,y,z, r,g,b,a);
     needs_vbo_update = true;
 }
 
-void Voxel_volume::set_color(int x, int y, int z, unsigned char rgba[4]) 
+void Voxel_volume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]) 
 {
-    _set(x,y,z, rgba[0], rgba[1], rgba[2], rgba[3] );
+    _set(x,y,z, rgba[0], rgba[1], rgba[2], rgba[3]);
     needs_vbo_update = true;
 }
 
@@ -699,18 +699,16 @@ inline unsigned int Voxel_volume::get_as_int(unsigned int x, unsigned int y, uns
 /*
 Tests whether a voxel is occupied, for AO
 */
-inline unsigned int Voxel_volume::_test_occludes_safe(int x, int y, int z) 
+inline unsigned int Voxel_volume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) 
 { 
-    if( x < 0 || y < 0 || z < 0 ) return 0;
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
     if(voxel[index].color == 0) return 0;
     return 1;
 }
 // fills voxel[3] with the voxel location
-inline unsigned int Voxel_volume::_test_occludes_safe(int x, int y, int z, int vxl[3]) 
+inline unsigned int Voxel_volume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3]) 
 { 
-    if( x < 0 || y < 0 || z < 0 ) return 0;
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
     if(index >= index_max) printf("Voxel_volume::_test_occludes_safe IMPOSSIBLE \n");
@@ -722,68 +720,3 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, V
 { voxel[x+(y << index1)+(z << index12)] = *v; }
 inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
-
-
-//static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
-//{
-    //using Components::VoxelModelComponent;
-    //Agent_state* agent;
-    //Objects::Object* object;
-    //VoxelModelComponent* vox_component;
-    //Voxel_volume* vv;
-    //switch (type)
-    //{
-        //case OBJECT_AGENT:
-            //agent = STATE::agent_list->get(id);
-            //if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
-            //vv = ((Agent_state*)agent)->vox->get_part(part);
-            //if (vv == NULL) return;
-            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            //break;
-            
-        //case OBJECT_MONSTER_BOMB:
-        //case OBJECT_MONSTER_BOX:
-        //case OBJECT_MONSTER_SPAWNER:
-            //object = Objects::get(OBJECT_MONSTER_BOMB, id);
-            //if (object == NULL) return;
-            //vox_component = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-            //if (vox_component == NULL || vox_component->vox == NULL) return;
-            //vv = vox_component->vox->get_part(part);
-            //if (vv == NULL) return;
-            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            //break;
-        //default: break;
-    //}
-//}
-
-//void destroy_object_voxel(int id, int type, int part, const int voxel[3], int radius)
-//{
-    //int mx = voxel[0];
-    //int my = voxel[1];
-    //int mz = voxel[2];
-
-    //int tmp[3] = {voxel[0], voxel[1], voxel[2] };
-    
-    //for (int i=0; i<radius; i++)
-    //for (int j=0; j<radius; j++)
-    //for (int k=0; k<radius; k++)
-    //{
-        //tmp[0] = mx + i;
-        //tmp[1] = my + j;
-        //tmp[2] = mz + k;
-        //destroy_object_voxel(id, type, part, tmp);
-        //tmp[0] = mx - i;
-        //destroy_object_voxel(id, type, part, tmp);
-        //tmp[1] = my - j;
-        //destroy_object_voxel(id, type, part, tmp);
-        //tmp[1] = my + j;
-        //tmp[2] = mz - k;
-        //destroy_object_voxel(id, type, part, tmp);
-        //tmp[0] = mx + i;
-        //tmp[1] = my - j;
-        //destroy_object_voxel(id, type, part, tmp);
-        //tmp[0] = mx - i;
-        //destroy_object_voxel(id, type, part, tmp);
-    //}
-//}
-

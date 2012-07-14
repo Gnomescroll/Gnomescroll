@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <voxel/common.h>
+#include <voxel/common.hpp>
 #include <physics/affine.hpp>
 #include <voxel/voxel_hitscan.hpp>
 
@@ -29,11 +29,10 @@ class Voxel_volume
     //bounding sphere
     float radius;   //update when changing scale
 
-    int xdim,ydim,zdim;
-    //int _xdim,_ydim,_zdim;
+    unsigned int xdim,ydim,zdim;
     Voxel* voxel;
-    int index1;
-    int index12;
+    unsigned int index1;
+    unsigned int index12;
     unsigned int index_max;
 
     float hdx,hdy,hdz;  //half of width, height, depth as floats
@@ -64,31 +63,31 @@ class Voxel_volume
     void update_vertex_list();
     #endif
 
-    void set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    void set_color(int x, int y, int z, unsigned char rgba[4]);
+    void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]);
 
     //hitscan registration
     Voxel_hitscan_list* voxel_hitscan_list;
 
-    void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    void set(int x, int y, int z, Voxel* v);
+    void set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set(unsigned int x, unsigned int y, unsigned int z, Voxel* v);
 
-    void set_parameters(int xdim, int ydim, int zdim, float scale);
+    void set_parameters(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
 
     void draw_bounding_box();
-    int point_collision_test(Vec3 p, int vxl[3]);
+    int point_collision_test(Vec3 p, unsigned int vxl[3]);
 
-    void init(int xdim, int ydim, int zdim, float scale);
+    void init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
     void set_hitscan_properties(short entity_id, short entity_type, short part_id);
 
-    Voxel_volume(int xdim, int ydim, int zdim, float scale);
+    Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
     Voxel_volume();
 
     ~Voxel_volume();
 
     private:
     #if DC_CLIENT
-    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
+    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
     #endif
 
     inline Voxel* get(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
@@ -98,14 +97,12 @@ class Voxel_volume
 /*
     Tests whether a voxel is occupied, for AO
 */
-    inline unsigned int _test_occludes_safe(int x, int y, int z) __attribute((always_inline));
-    inline unsigned int _test_occludes_safe(int x, int y, int z, int vxl[3]) __attribute((always_inline));
+    inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
+    inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3]) __attribute((always_inline));
     inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline));
     inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline));
 
 };
-
-//void destroy_object_voxel(int id, int type, int part, const int voxel[3], int radius);
 
 void init_voxel_volume();
 void teardown_voxel_volume();

@@ -74,7 +74,7 @@ class ChatInputHistoryObject
     ChatInputHistoryObject *next;
     ChatInputHistoryObject *prev;
 
-    explicit ChatInputHistoryObject(char* m);
+    explicit ChatInputHistoryObject(const char* m);
     ~ChatInputHistoryObject();
 };
 
@@ -92,7 +92,7 @@ class ChatInput
     int cursor;
 
     void clear_history();
-    void add_to_history(char *s);
+    void add_to_history(const char *s);
     void submit(int channel);
     void clear_buffer();
     void add(char x);
@@ -117,8 +117,8 @@ class ChatClient
     void teardown();
     void subscribe_system_channel();
     void subscribe_channels();
-    void received_message(int channel, int sender, char* payload);
-    void send_system_message(char* msg);
+    void received_message(int channel, int sender, const char* payload);
+    void send_system_message(const char* msg);
     void submit();
 
     void use_global_channel();

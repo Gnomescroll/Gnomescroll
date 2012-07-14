@@ -315,24 +315,22 @@ void Voxel_model::init_parts(int id, ObjectType type)
 
 void Voxel_model::set_part_color(int part_num)
 {
-    //#if DC_CLIENT
     VoxPart *vp = vox_dat->vox_part[part_num];
     Voxel_volume* vv = &(this->vv[part_num]);
-    int x,y,z;
-    x = vp->dimension.x;
-    y = vp->dimension.y;
-    z = vp->dimension.z;
+    int x = vp->dimension.x;
+    int y = vp->dimension.y;
+    int z = vp->dimension.z;
     
     unsigned char r,g,b,a;
     int ix,iy,iz;
-    if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
+    GS_ASSERT(vp->colors.n == x*y*z);
     for (int j=0; j < vp->colors.n; j++)
     {
 		int k = j * 3;
         ix = vp->colors.index[k+0];
         iy = vp->colors.index[k+1];
         iz = vp->colors.index[k+2];
-        if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
+        GS_ASSERT(ix < x && iy < y && iz < z);
 
 		k = j * 4;
         r = vp->colors.rgba[k+0];
@@ -341,7 +339,6 @@ void Voxel_model::set_part_color(int part_num)
         a = vp->colors.rgba[k+3];
         vv->set_color(ix, iy, iz, r,g,b,a);
     }
-    //#endif
 }
 
 void Voxel_model::set_colors()
@@ -350,7 +347,45 @@ void Voxel_model::set_colors()
         this->set_part_color(i);
 }
 
-void Voxel_model::set_draw(bool draw) {
+void Voxel_model::fill_part_color(int part_num, struct Color color)
+{
+	GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
+	GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
+	if (part_num < 0 || part_num >= this->n_parts) return;
+	
+    VoxPart *vp = vox_dat->vox_part[part_num];
+	if (!vp->colorable) return;
+	struct Color base_color = vp->base_color;
+
+    Voxel_volume* vv = &(this->vv[part_num]);
+	
+	int ix,iy,iz;
+	unsigned char r,g,b,a;
+	for (int i=0; i<vp->colors.n; i++)
+	{
+		r = vp->colors.rgba[4*i + 0];
+		g = vp->colors.rgba[4*i + 1];
+		b = vp->colors.rgba[4*i + 2];
+		a = vp->colors.rgba[4*i + 3];
+		if (base_color.r != r || base_color.b != b || base_color.g != g)
+			continue;
+
+        ix = vp->colors.index[3*i + 0];
+        iy = vp->colors.index[3*i + 1];
+        iz = vp->colors.index[3*i + 2];
+		
+		vv->set_color(ix,iy,iz, color.r, color.g, color.b, a);
+	}
+}
+
+void Voxel_model::fill_color(struct Color color)
+{
+    for (int i=0; i<this->n_parts; i++)
+        this->fill_part_color(i, color);
+}
+
+void Voxel_model::set_draw(bool draw)
+{
     for (int i=0; i<this->n_parts; this->vv[i++].draw = draw);
 }
 

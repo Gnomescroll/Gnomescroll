@@ -2,6 +2,7 @@
 
 #include <entity/constants.hpp>
 #include <agent/constants.hpp>
+#include <common/color.hpp>
 
 void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner);
 
@@ -39,9 +40,12 @@ class Agent_status {
         bool vox_crouched;
 
         int lifetime;
-
+        
         class Inventory* inventory;
         class Inventory* toolbelt;
+
+		bool color_chosen;
+        struct Color color;
 
         void tick();
 
@@ -70,6 +74,7 @@ class Agent_status {
         void send_scores(int client_id);
         void send_scores();
 
+		void set_color(struct Color color);
 
         float get_spawn_angle();
 

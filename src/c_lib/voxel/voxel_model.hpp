@@ -47,6 +47,9 @@ class Voxel_model
 
         void set_part_color(int part_num);
         void set_colors();
+        
+        void fill_part_color(int part_num, struct Color color);
+        void fill_color(struct Color color);
 
         void update(float x, float y, float z, float theta, float phi);
 
@@ -68,8 +71,6 @@ class Voxel_model
         Voxel_volume* get_part(int part);
 
         float largest_radius(); // temporary, until real body collision detection
-
-        //bool is_completely_destroyed();
 
         Voxel_model(VoxDat* vox_dat, int id, ObjectType type);
         ~Voxel_model();

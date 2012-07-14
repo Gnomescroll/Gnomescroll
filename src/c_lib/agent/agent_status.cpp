@@ -41,8 +41,10 @@ identified(false),
 vox_crouched(false),
 lifetime(0),
 inventory(NULL),
-toolbelt(NULL)
+toolbelt(NULL),
+color_chosen(false)
 {
+	color.r=color.g=color.b=255;
     strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
 
@@ -73,6 +75,36 @@ void Agent_status::set_spawner(int pt)
     msg.pt = pt;
     msg.sendToClient(this->a->id);
     #endif
+}
+
+void Agent_status::set_color(struct Color color)
+{
+	if (this->color_chosen && colors_equal(color, this->color)) return;
+	
+	// TODO -- REMOVE THIS HACK
+	// somewhere, somehow, 255 is rolling over
+	// to 0 by the time it is rendered
+	if (color.r == 255) color.r = 254;
+	if (color.g == 255) color.g = 254;
+	if (color.b == 255) color.b = 254;
+	
+	this->color = color;
+	this->color_chosen = true;
+	
+	#if DC_CLIENT
+	this->a->event.color_changed = true;
+	#endif
+
+	#if DC_SERVER
+	this->a->vox->fill_color(this->color);
+	
+	agent_color_StoC msg;
+	msg.r = this->color.r;
+	msg.g = this->color.g;
+	msg.b = this->color.b;
+	msg.agent_id = this->a->id;
+	msg.broadcast();
+	#endif
 }
 
 void Agent_status::set_spawner()

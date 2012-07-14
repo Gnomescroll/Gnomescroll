@@ -28,7 +28,7 @@ struct Voxel_hitscan_element
 class Voxel_hitscan_target: public Voxel_hitscan_element
 {
     public:
-        int voxel[3];
+        unsigned int voxel[3];
 
         void copy_vhe(Voxel_hitscan_element* vhe);
         void copy_voxel(int voxel[3]);

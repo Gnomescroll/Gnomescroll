@@ -22,6 +22,8 @@ class Agent_event {
         bool model_was_changed;
     public:
 
+		bool color_changed;
+
         class Particle::BillboardTextHud bb;
 		void update_hud_name();
 		

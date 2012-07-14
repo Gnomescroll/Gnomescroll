@@ -333,7 +333,6 @@ int run()
 
         frame_graph->frame_stage(4); //voxel updates
 
-        ClientState::voxel_render_list->update();
         poll_mouse();
 
         frame_graph->frame_stage(5); //swap buffers

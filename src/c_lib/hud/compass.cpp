@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <common/common.hpp>
+#include <common/color.hpp>
 
 namespace Compass {
 
@@ -17,7 +18,7 @@ static float x;
 static float y;
 static float theta = 0.5f; // rotation
 
-struct Color base_color = {37,247,255};
+struct Color BASE_COLOR = {37,247,255};
 
 static GLuint texture = 0;
 

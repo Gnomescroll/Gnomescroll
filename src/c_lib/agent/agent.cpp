@@ -849,6 +849,12 @@ void Agent_state::update_model()
     #if DC_CLIENT
     if (this->vox == NULL) return;
 
+	if (this->event.color_changed)
+	{	// set color of model
+		this->vox->fill_color(this->status.color);
+		this->event.color_changed = false; // reset
+	}
+
     if (this->is_you())
     {   // your agent
         ClientState::playerAgent_state.update_model();

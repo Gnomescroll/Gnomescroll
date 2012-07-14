@@ -1,7 +1,7 @@
 #pragma once
 
 #include <physics/common.hpp>
-#include <voxel/common.h>
+#include <voxel/common.hpp>
 
 #include <particle/minivox_colored.hpp>
 

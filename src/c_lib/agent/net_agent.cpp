@@ -439,8 +439,10 @@ inline void version_StoC::handle()
 inline void client_disconnected_StoC::handle()
 {
     const char fmt[] = "%s has left the game";
-    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
-    sprintf(msg, fmt, name);
+    size_t msg_len = strlen(fmt) + strlen(name) - 2 + 1;
+    char* msg = (char*)malloc(msg_len * sizeof(char));
+    int wrote = snprintf(msg, msg_len, fmt, name);
+    GS_ASSERT(wrote < (int)msg_len);
     chat_client->send_system_message(msg);
     free(msg);
 }
@@ -452,12 +454,15 @@ inline void spawn_location_StoC::handle()
     playerAgent_state.you->event.set_spawner(pt);
 }
 
-//inline void destroy_voxel_StoC::handle()
-//{
-    //int voxel[3] = { x,y,z };
-    //destroy_object_voxel(entity_id, entity_type, entity_part, voxel, radius);
-//}
-
+inline void agent_color_StoC::handle()
+{
+	Agent_state* a = ClientState::agent_list->get(this->agent_id);
+	GS_ASSERT(a != NULL);
+	if (a == NULL) return;
+	
+	struct Color color = {r,g,b};
+	a->status.set_color(color);
+}
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
@@ -482,6 +487,7 @@ inline void request_remaining_state_CtoS::handle() {}
 inline void agent_camera_state_CtoS::handle() {}
 inline void version_CtoS::handle(){}
 inline void killme_CtoS::handle() {}
+inline void colorme_CtoS::handle() {}
 #endif
 
 // Client -> Server handlers
@@ -516,7 +522,7 @@ inline void agent_conflict_notification_StoC::handle(){}
 inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
 inline void spawn_location_StoC::handle(){}
-//inline void destroy_voxel_StoC::handle(){}
+inline void agent_color_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;
@@ -525,6 +531,16 @@ inline void spawn_location_StoC::handle(){}
 inline void version_CtoS::handle()
 {
     NetServer::users->record_client_version(client_id, version);
+}
+
+inline void colorme_CtoS::handle()
+{
+	Agent_state* a = NetServer::agents[this->client_id];
+	GS_ASSERT(a != NULL);
+	if (a == NULL) return;
+	if (!r && !g && !b) { r=g=b=1; }	// dont allow 0,0,0 (interpreted as empty voxel)
+	struct Color color = {r,g,b};
+	a->status.set_color(color);
 }
 
 inline void killme_CtoS::handle()

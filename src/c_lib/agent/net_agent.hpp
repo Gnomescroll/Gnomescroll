@@ -813,3 +813,34 @@ class killme_CtoS: public FixedSizeReliableNetPacketToServer<killme_CtoS>
     }
     inline void handle();
 };
+
+class colorme_CtoS: public FixedSizeReliableNetPacketToServer<colorme_CtoS>
+{
+    public:
+		uint8_t r,g,b;
+		
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+		pack_u8(&r, buff, buff_n, pack);
+		pack_u8(&g, buff, buff_n, pack);
+		pack_u8(&b, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class agent_color_StoC: public FixedSizeReliableNetPacketToClient<agent_color_StoC>
+{
+    public:
+		uint8_t agent_id;
+		uint8_t r,g,b;
+		
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+		pack_u8(&agent_id, buff, buff_n, pack);
+		pack_u8(&r, buff, buff_n, pack);
+		pack_u8(&g, buff, buff_n, pack);
+		pack_u8(&b, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+

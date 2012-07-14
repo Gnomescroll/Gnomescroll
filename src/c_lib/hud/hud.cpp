@@ -37,6 +37,8 @@ static const char help_text[] =
 "    U, Alt          Grab & release mouse\n"
 "  Chat Commands:\n"
 "       /name <name>        Choose name\n"
+"       /kill               Suicide\n"
+"       /color R G B        Choose body color\n"
 ;
 
 static const char disconnected_text[] = "Server not connected.";

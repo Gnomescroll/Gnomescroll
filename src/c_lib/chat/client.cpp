@@ -121,7 +121,7 @@ ChatClientChannel::~ChatClientChannel()
 
 /* ChatInput */
 
-ChatInputHistoryObject::ChatInputHistoryObject(char* m)
+ChatInputHistoryObject::ChatInputHistoryObject(const char* m)
 :
 next(NULL),
 prev(NULL)
@@ -148,7 +148,7 @@ void ChatInput::clear_history()
     history_size = 0;
 }
 
-void ChatInput::add_to_history(char *s)
+void ChatInput::add_to_history(const char *s)
 {
     ChatInputHistoryObject* in = new ChatInputHistoryObject(s);
 
@@ -300,6 +300,9 @@ bool ChatInput::route_command()
 
     if (i == 2) return false;
 
+	while((c = buffer[i++]) != '\0' && isspace(c));	// advance cursor to first non-space char
+	i -= 1;
+	
     if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
     {
         if (buffer_len <= (int)(strlen((char*)"/name "))) return false;
@@ -308,9 +311,9 @@ bool ChatInput::route_command()
         while ((c = buffer[i++]) != '\0' && !isspace(c))
         {
             name[j++] = c;
-            if (j==(int)PLAYER_NAME_MAX_LENGTH) break;
+            if (j == (int)PLAYER_NAME_MAX_LENGTH) break;
         }
-        ClientState::send_identify_packet(name);
+		if (j) ClientState::send_identify_packet(name);
         return true;
     }
     else
@@ -318,6 +321,70 @@ bool ChatInput::route_command()
     {
 		killme_CtoS msg;
 		msg.send();
+	}
+	else
+	if (!strcmp(cmd, (char*)"color") || !strcmp(cmd, (char*)"colour"))
+	{
+		struct Color color = {0};
+		unsigned int ci = 0;
+		char color_val[4] = {'\0'};
+		unsigned int cvi = 0;
+		bool valid = true;
+		
+		while((c = buffer[i++]) != '\0' && (isdigit(c) || isspace(c)) && ci < 3)
+		{
+			if (isspace(c))
+			{
+				if (cvi == 0) continue;
+				
+				color_val[cvi] = '\0';
+				
+				printf("Color val %s\n", color_val);
+				int val = atoi(color_val);
+				if (val > 255)
+				{
+					valid = false;
+					break;
+				}
+				
+				if (ci == 0)
+					color.r = val;
+				else if (ci == 1)
+					color.g = val;
+				else if (ci == 2)
+				{
+					color.b = val;
+					break;
+				}
+
+				cvi = 0;
+				ci++;
+				continue;
+			}
+			
+			color_val[cvi++] = c;
+		}
+		
+		if (ci == 2 && cvi > 0)
+		{
+			int val = atoi(color_val);
+			if (val > 255) valid = false;
+			else color.b = val;
+		}
+		else
+			valid = false;
+		
+		if (valid)
+		{
+			printf("Choosing color: %d %d %d\n", color.r, color.g, color.b);
+			colorme_CtoS msg;
+			msg.r = color.r;
+			msg.g = color.g;
+			msg.b = color.b;
+			msg.send();
+		}
+		else
+			chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
 	}
 	else
     if (!strcmp(cmd, (char*)"spawner") || cmd[0] == 's' || cmd[0] == 'S')
@@ -410,7 +477,7 @@ ChatInput::~ChatInput()
 
 /* ChatClient */
 
-void ChatClient::received_message(int channel, int sender, char* payload)
+void ChatClient::received_message(int channel, int sender, const char* payload)
 {
     ChatClientChannel* chan = NULL;
 
@@ -438,9 +505,7 @@ void ChatClient::received_message(int channel, int sender, char* payload)
     m->channel = channel;
 
     // copy payload
-    if (strlen(payload) > (unsigned int)CHAT_MESSAGE_SIZE_MAX)
-        payload[CHAT_MESSAGE_SIZE_MAX] = '\0';
-    strcpy(m->payload, payload);
+    strncpy(m->payload, payload, CHAT_MESSAGE_SIZE_MAX);
 
     // set properties
     m->set_color();
@@ -450,7 +515,7 @@ void ChatClient::received_message(int channel, int sender, char* payload)
     chan->add_message(m);
 }
 
-void ChatClient::send_system_message(char* msg)
+void ChatClient::send_system_message(const char* msg)
 {
     this->received_message(CHAT_CHANNEL_SYSTEM, CHAT_SENDER_SYSTEM, msg);
 }
