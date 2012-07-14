@@ -2,7 +2,9 @@
 
 
 #include <Awesomium/awesomium_capi.h>
+
 #include <Awesomium/KeyboardCodes.h>
+#include <SDL/SDL_keyboard.h>
 
 #include <Awesomium/WebKeyboardEvent.h>
 //#include <Awesomium/WebCore.h>
