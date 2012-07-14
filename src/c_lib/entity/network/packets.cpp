@@ -218,11 +218,8 @@ inline void object_shot_object_StoC::handle()
     Agent_state* a = ClientState::agent_list->get(this->target_id);
     if (a == NULL || a->vox == NULL) return;
     // update the model, in case it is out of date.
-    // not all models are update all the time
-    // later, use the was_updated flag (make sure it is being set correctly in agent vox update) TODO
-    a->vox->was_updated = false;
-    AgentState s = a->get_state();
-    a->vox->update(s.x, s.y, s.z, s.theta, s.phi);
+    force_update_agent_vox(a);
+	
     Vec3 dest = a->vox->get_center(this->target_part);
     dest = quadrant_translate_position(position, dest);
 

@@ -953,3 +953,21 @@ bool Agent_state::near_base()
         return true;
     return false;
 }
+
+
+void force_update_agent_vox(Agent_state* a)
+{
+	GS_ASSERT(a != NULL);
+	if (a == NULL) return;
+	
+	#if DC_CLIENT
+    if (a == ClientState::playerAgent_state.you)
+		ClientState::playerAgent_state.update_model();
+	else
+	#endif
+	{
+		a->vox->was_updated = false;
+		AgentState s = a->get_state();
+		a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
+	}
+}

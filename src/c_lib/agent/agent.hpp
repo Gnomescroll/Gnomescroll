@@ -169,3 +169,4 @@ class Agent_state
 class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 bool agent_collides_terrain(Agent_state* a);
+void force_update_agent_vox(Agent_state* a);

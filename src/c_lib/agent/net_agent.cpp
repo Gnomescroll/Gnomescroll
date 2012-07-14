@@ -652,7 +652,7 @@ inline void hitscan_object_CtoS::handle()
         case OBJECT_AGENT:
             agent = ServerState::agent_list->get(id);
             if (agent == NULL || agent->vox == NULL) return;
-            agent->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
+			force_update_agent_vox(a);
             // apply damage
             agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
