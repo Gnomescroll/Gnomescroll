@@ -188,7 +188,7 @@ void environment_process_tick()
 		    	
 		    	if(isOccludes(e2.block) == 0)
 		    	{
-		    		_random_index = (_random_index+1) & 255;
+		    		_random_index = (_random_index+1) % 256;
 		    		if(_random[_random_index] % 7 == 0) //14% chance
 		    		{
 		    			broadcast_set_block_palette(x,y,z, e1.block, 1); //setting regolith
@@ -202,7 +202,7 @@ void environment_process_tick()
 		    	
 		    	if(isOccludes(e2.block) == 1)
 		    	{
-		    		_random_index = (_random_index+1) & 255;
+		    		_random_index = (_random_index+1) % 256;
 		    		if(_random[_random_index] % 3 == 0)	//33% chance
 		    		{
 		    			broadcast_set_block_palette(x,y,z, e1.block, 0); //setting regolith
