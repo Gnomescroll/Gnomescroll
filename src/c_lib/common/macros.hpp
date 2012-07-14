@@ -1,10 +1,15 @@
 #pragma once
 
 #define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT(agent_id >= 0 && agent_id < AGENT_MAX)
+#define RETURN_IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) return;
+#define RETURNX_IF_INVALID_AGENT_ID(agent_id, retval) if (agent_id < 0 || agent_id >= AGENT_MAX) return retval;
+
 #define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS)
+#define RETURN_IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) return;
+#define RETURNX_IF_INVALID_CLIENT_ID(client_id, retval) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) return retval;
 
 #define GS_ABORT() do {\
-printf("GS_ABORT error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__);\
+printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__);\
 print_trace();\
 exit(1);\
 }while(0)
