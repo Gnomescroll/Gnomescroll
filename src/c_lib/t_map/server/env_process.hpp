@@ -157,7 +157,7 @@ void environment_process_tick()
 {
 	static int init = 0;
 	static int* _random;
-	static unsigned int _random_index = 0;
+	static int _random_index = 0;
 
 	static int regolith_id;
 	if(init == 0)
@@ -166,7 +166,7 @@ void environment_process_tick()
 		for(int i=0; i<256; i++) _random[i] = rand();
 		
 		regolith_id = dat_get_cube_id("regolith");
-		init = 0;
+		init = 1;
 	}
 
 	static int x=0; 
@@ -188,7 +188,7 @@ void environment_process_tick()
 		    	
 		    	if(isOccludes(e2.block) == 0)
 		    	{
-		    		_random_index = (_random_index+1) & 255;
+		    		_random_index = (_random_index+1) % 256;
 		    		if(_random[_random_index] % 7 == 0) //14% chance
 		    		{
 		    			broadcast_set_block_palette(x,y,z, e1.block, 1); //setting regolith
@@ -202,7 +202,7 @@ void environment_process_tick()
 		    	
 		    	if(isOccludes(e2.block) == 1)
 		    	{
-		    		_random_index = (_random_index+1) & 255;
+		    		_random_index = (_random_index+1) % 256;
 		    		if(_random[_random_index] % 3 == 0)	//33% chance
 		    		{
 		    			broadcast_set_block_palette(x,y,z, e1.block, 0); //setting regolith

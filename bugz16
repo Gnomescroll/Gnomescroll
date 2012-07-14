@@ -809,6 +809,8 @@ broadcast only to clients who are are in fully ready
 
 chunk is NULL check -- dont apply physics in these areas
 
+rename settings files
+
 == MECHANISMS ==
 Spawner/Control Points
     -- User builds them like the old spawners

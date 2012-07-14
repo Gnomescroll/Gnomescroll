@@ -213,11 +213,8 @@ inline void agent_dead_StoC::handle()
 inline void agent_health_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     GS_ASSERT(a->status.health != health);
     if (health >= a->status.health)
         a->event.healed(health - a->status.health);

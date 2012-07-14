@@ -3,6 +3,17 @@
 namespace Awesonium
 {
 
+/*
+ChildProcessPath
+
+Indicates the path to the child-process that we will use to render WebViews and plugins (this will be AwesomiumProcess if you leave this empty)
+
+5. Improved Handling of Config Paths
+Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths. Embedders can now also specify a “localePath” for the location of en-US.dll on Windows and chrome.pak on Linux.
+
+Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths. Embedders can now also specify a “localePath” for the location of en-US.dll on Windows and chrome.pak on Linux.
+*/
+
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event);
 ///linux only
 //#include <unistd.h>
