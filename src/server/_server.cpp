@@ -66,6 +66,8 @@ int main(int argc, char* argv[])
 #endif
     // set output unbuffered
     setvbuf(stdout, NULL, _IONBF, 0);   // NULL,0 are ignored when _IONBF enabled
+
+    // parse args here
     
     // program accepts one option: path to lua settings file
     // will use a default value if not provided

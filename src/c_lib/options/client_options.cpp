@@ -1,8 +1,5 @@
 #include "client_options.hpp"
 
-//#include <stdlib.h>
-
-
 #include <common/lua/lua.hpp>
 
 namespace Options
