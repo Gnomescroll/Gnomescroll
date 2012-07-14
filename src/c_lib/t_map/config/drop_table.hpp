@@ -111,14 +111,15 @@ void end_drop_dat()
                 total += cidt->drop_probabilities[k];
             }
 
-            if (total > 1.0f)
+            if (total > 1.005f)
             {
-                printf("Block Drop Dat Error: Item total probabilities exceed 1.0 \n");
+                printf("Block Drop Dat Error: Item total probabilities exceed 1.0f (p = %f)\n", total);
                 GS_ABORT();
             }
 
             cidt->drop_probabilities[0] = 1.0f - total;
-
+			if (cidt->drop_probabilities[0] < 0.0f)
+				cidt->drop_probabilities[0] = 0;	// correct any negative value due to precision error
 
             //float fa[cidt->drop_entries];
 
