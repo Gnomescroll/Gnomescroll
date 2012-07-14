@@ -67,29 +67,41 @@ void blit_character_rotated(
     glVertex3f(rx+cx, ry+cy, depth);
 }
 
-void draw_string(char* text, float x, float y, float depth, float scale)
+void draw_string(const char* text, const float x, const float y,
+				 const float depth, const float scale)
 {
-    if (HudFont::font == NULL)
-        return;
-    int i = 0;
-    char c;
-    struct HudFont::Glyph glyph;
+	draw_string(text, 0, 0, x, y, depth, scale);
+}
+
+// 0 len means all
+void draw_string(const char* text, const unsigned int start, const unsigned int len,
+	const float x, const float y, const float depth, const float scale)
+{
+    if (HudFont::font == NULL) return;
 
     float tx_min, tx_max, ty_min, ty_max;
     float sx_min, sx_max, sy_min, sy_max;
     float cursor_x = 0.0f;
     float cursor_y = 0.0f;
+    struct HudFont::Glyph glyph;
 
-    while ((c = text[i++]) != '\0')
+    unsigned int i = 0;
+    char c;
+    // draw up to len, if len != 0. always stop at \0
+    while ((len == 0 || i < start+len) && (c = text[i++]) != '\0')
     {
+        glyph = HudFont::font->get_glyph(c);
+        cursor_x += glyph.xadvance;
+                		        
         if (c == '\n')
         {
-            cursor_y += HudFont::font->data.line_height;
             cursor_x = 0.0f;
+            cursor_y += HudFont::font->data.line_height;
             continue;
         }
-        
-        glyph = HudFont::font->get_glyph(c);
+
+		if (i-1 < start)
+			continue;
 
         tx_max = glyph.x;
         tx_min = glyph.x + glyph.tw;
@@ -100,9 +112,9 @@ void draw_string(char* text, float x, float y, float depth, float scale)
         sx_min = x + (cursor_x + glyph.xoff + glyph.w) * scale;
         sy_min = y - (cursor_y + glyph.yoff) * scale;
         sy_max = y - (cursor_y + glyph.yoff + glyph.h) * scale;
-        blit_character(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
 
-        cursor_x += glyph.xadvance;
+        blit_character(tx_min, tx_max, ty_min, ty_max,
+					   sx_min, sx_max, sy_min, sy_max, depth);
     }
 }
 
@@ -188,7 +200,7 @@ void Text::set_format(char* format)
     this->format = this->set_string(format, this->format, &this->format_len);
 }
 
-void Text::set_format_extra_length(unsigned int size)
+void Text::set_format_extra_length(int size)
 {
     // size large enough to fit formatted data
     // subtract format string sizes
@@ -198,8 +210,9 @@ void Text::set_format_extra_length(unsigned int size)
 
 void Text::update_formatted_string(int n_args, ...)
 {
-    unsigned int len = this->format_len + this->formatted_extra_len + 1;
-    if (len > this->text_len)
+    int len = this->format_len + this->formatted_extra_len + 1;
+    GS_ASSERT(len > 0);
+    if (len > (int)this->text_len)
     {
 		unsigned int new_len = this->text_len;
         char* new_text = grow_string(len, this->text, &new_len);

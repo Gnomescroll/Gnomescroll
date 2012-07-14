@@ -12,10 +12,9 @@ namespace Components
 
 void WeaponTargetingComponent::lock_target(Vec3 camera_position)
 {   // lock on agent
-    Agent_state* target;
-    target = Hitscan::lock_agent_target(
+    Agent_state* target = Hitscan::lock_agent_target(
         camera_position, &this->target_direction,
-        this->sight_range, this->target_acquisition_probability,
+        this->sight_range, this->target_acquisition_failure_rate,
         this->attack_at_random
     );
     if (target == NULL)
@@ -24,7 +23,7 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position)
         this->locked_on_target = false;
         return;
     }
-    this->target_type = OBJECT_AGENT;
+    this->target_type = target->type;
     this->target_id = target->id;
     this->locked_on_target = true;
     normalize_vector(&this->target_direction);
@@ -33,7 +32,7 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position)
 bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
 {    
     if (this->target_type == OBJECT_NONE) return false;
-    if (this->target_type != OBJECT_AGENT) return false;    // todo -- target all types
+    if (this->target_type != OBJECT_AGENT) return false;    // TODO -- target all types
     
     // get target
     Agent_state* target = STATE::agent_list->get(this->target_id);
@@ -68,8 +67,7 @@ bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
 {
     Agent_state* target = STATE::agent_list->get(this->target_id);
     // target exists
-    if (target == NULL)
-        return false;
+    if (target == NULL) return false;
     // target in range
     Vec3 target_position = target->vox->get_center();
     target_position = quadrant_translate_position(firing_position, target_position);
@@ -77,8 +75,7 @@ bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
         return false;
     // target visible
     Vec3 sink;
-    if (target->in_sight_of(firing_position, &sink, 1.0f))
-        return true;
+    if (target->in_sight_of(firing_position, &sink)) return true;
     return false;
 }
 

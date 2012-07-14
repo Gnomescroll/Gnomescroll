@@ -14,7 +14,7 @@ namespace Hitscan
 
 Agent_state* lock_agent_target(
     Vec3 firing_position, Vec3* firing_direction,
-    const float range, const float acquisition_probability, const bool random
+    const float range, const float failure_rate, const bool random
 )
 {
     // find agents in range
@@ -44,7 +44,7 @@ Agent_state* lock_agent_target(
         else
             agent = agent_list->filtered_objects[i];
         if (agent->status.dead || agent == NULL) continue;
-        if (agent->in_sight_of(firing_position, &sink, acquisition_probability))
+        if (agent->in_sight_of(firing_position, &sink, failure_rate))
         {
             *firing_direction = vec3_sub(sink, firing_position);
             break;

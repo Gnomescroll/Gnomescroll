@@ -72,7 +72,7 @@ static void set_mob_robot_box_properties(Object* object)
     
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
-    target->target_acquisition_probability = MONSTER_BOX_TARGET_ACQUISITION_PROBABILITY;
+    target->target_acquisition_failure_rate = MONSTER_BOX_TARGET_ACQUISITION_FAILURE_RATE;
     target->fire_rate_limit = MONSTER_BOX_FIRE_RATE_LIMIT;
     target->uses_bias = MONSTER_BOX_USES_BIAS;
     target->accuracy_bias = MONSTER_BOX_ACCURACY_BIAS;
@@ -229,7 +229,9 @@ void server_tick_mob_robot_box(Object* object)
     if (!weapon->locked_on_target)
     {   // no target found
         // look for target
-        weapon->lock_target(position);
+        weapon->lock_target(camera_position);
+        if (weapon->locked_on_target)
+			agent = STATE::agent_list->get(weapon->target_id);
     }
 
     if (weapon->target_type != OBJECT_NONE)
@@ -246,7 +248,7 @@ void server_tick_mob_robot_box(Object* object)
     if (weapon->locked_on_target)
     {   // target is locked
         // face target
-        if (agent != NULL) // TODO -- multiple target
+        if (agent != NULL) // TODO -- multiple target types
         {
             if (vec3_length(weapon->target_direction))
             {

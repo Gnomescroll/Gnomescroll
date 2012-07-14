@@ -1,6 +1,5 @@
 #include "motion.hpp"
 
-#include <physics/vec3.hpp>
 #include <t_map/t_map.hpp>
 
 int stick_to_terrain_surface(Vec3 position)
@@ -75,7 +74,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     // assumes direction is normalized
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
-    int z = t_map::get_highest_open_block(move_to.x, move_to.y);
+    int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
 
     float z_diff = ((float)z) - position.z;
     if (z_diff > max_z_up || z_diff < -max_z_down)
@@ -116,7 +115,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     // assumes direction is normalized
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
-    int z = t_map::get_highest_open_block(move_to.x, move_to.y);
+    int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
 
     move_to.z = z;
     Vec3 new_direction = vec3_sub(move_to, position);

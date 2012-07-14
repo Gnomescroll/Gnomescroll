@@ -16,21 +16,15 @@ class Terrain_map_subscription* map_history = NULL;
 
 void t_map_manager_setup(int client_id)
 {
-    if(COMPRESSION_BUFFER == NULL) COMPRESSION_BUFFER = (char*) malloc(COMPRESSION_BUFFER_SIZE);
-    /*
-        When valgrind finds this... needs to be freed at end
-    */
-
-    if(map_manager_list[client_id] != NULL ) printf("FATAL ERROR: t_map_manager_setup \n");
+    if (COMPRESSION_BUFFER == NULL) COMPRESSION_BUFFER = (char*) malloc(COMPRESSION_BUFFER_SIZE);
+	GS_ASSERT(map_manager_list[client_id] == NULL);
     map_manager_list[client_id] = new Map_manager(client_id);
 }
 
 void t_map_manager_teardown(int client_id)
 {
     if(map_manager_list[client_id] != NULL)
-    {
         delete map_manager_list[client_id];
-    }
     map_manager_list[client_id] = NULL;
 }
 
@@ -39,17 +33,11 @@ void t_map_manager_teardown(int client_id)
 */
 void t_map_manager_update_client_position(int client_id, float x, float y)
 {
-    if(client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS)
-    {
-        printf("ERROR: t_map_manager_update, invalid client id \n");
-        return;
-    }
+	GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
+    if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) return;
 
-    if( map_manager_list[client_id] == NULL )
-    {
-        printf("ERROR: t_map_manager_update, client %i map manager pointer is null! \n", client_id);
-        return;
-    }
+	GS_ASSERT(map_manager_list[client_id] != NULL);
+    if (map_manager_list[client_id] == NULL) return;
 
     map_manager_list[client_id]->set_position(x,y);
     map_manager_list[client_id]->update();
@@ -59,10 +47,8 @@ void t_map_manager_update()
 {
     //iterate through client ids
     for(int i=0; i < NetServer::HARD_MAX_CONNECTIONS; i++)
-    {
-        if(map_manager_list[i] == NULL) continue;
-        map_manager_list[i]->update();
-    }
+        if(map_manager_list[i] != NULL)
+			map_manager_list[i]->update();
 }
 
     /*
@@ -80,10 +66,8 @@ void t_map_manager_force_update(int client_id)
 void t_map_send_map_chunks()
 {
     for(int i=0; i < NetServer::HARD_MAX_CONNECTIONS; i++)
-    {
-        if(map_manager_list[i] == NULL) continue;
-        map_manager_list[i]->dispatch_que();
-    }
+        if(map_manager_list[i] != NULL)
+			map_manager_list[i]->dispatch_que();
 }
 
 /*

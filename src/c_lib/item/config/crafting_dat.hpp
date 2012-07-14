@@ -31,6 +31,20 @@ void load_crafting_dat()
     set_crafting_reagent("iron_bar", 1);
     end_crafting_recipe();
 
+	// ore -> bar recipes
+	// these take 2x as much as it would take to smelt
+	// but we need it to circumvent the smelter prerequisite introduced
+	// if ore is only made by smelting
+	def_crafting_recipe("copper_bar");
+	set_crafting_reagent("copper_ore", 1);
+	set_crafting_reagent("copper_ore", 1);
+	set_crafting_reagent("copper_ore", 1);
+
+	def_crafting_recipe("iron_bar");
+	set_crafting_reagent("iron_ore", 1);
+	set_crafting_reagent("iron_ore", 1);
+	set_crafting_reagent("iron_ore", 1);
+
     // Shovel
     def_crafting_recipe("copper_shovel");
     set_crafting_reagent("copper_bar", 1);
@@ -58,7 +72,6 @@ void load_crafting_dat()
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
     end_crafting_recipe();
-
 
     // Weapons
     //def_crafting_recipe("mining_laser");

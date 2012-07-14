@@ -39,7 +39,7 @@ struct AttackerProperties
 };
 Agent_state* lock_agent_target(
     Vec3 firing_position, Vec3 firing_direction,
-    const float range, const float acquisition_probability, const bool random=false
+    const float range, const float failure_rate, const bool random=false
 );
 
 Agent_state* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,const float range);

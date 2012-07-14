@@ -775,13 +775,14 @@ bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
 
 bool Agent_state::in_sight_of(Vec3 source, Vec3* sink)
 {
-    return this->in_sight_of(source, sink, 0.0f);
+	if (this->vox == NULL) return false;
+    return this->vox->in_sight_of(source, sink);
 }
 
-bool Agent_state::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability)
+bool Agent_state::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
 {
     if (this->vox == NULL) return false;
-    return this->vox->in_sight_of(source, sink, acquisition_probability);
+    return this->vox->in_sight_of(source, sink, failure_rate);
 }
 
 void Agent_state::update_legs()
