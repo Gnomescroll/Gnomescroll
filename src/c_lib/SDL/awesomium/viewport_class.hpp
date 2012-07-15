@@ -53,8 +53,8 @@ class chrome_viewport
 
 			xoff = 128;
 			yoff = 128;
-			width = 256;
-			height = 256;
+			width = 1024;
+			height = 1024;
 
             TEX0 = 0;
 			init_webview();
@@ -89,9 +89,9 @@ class chrome_viewport
         {
             const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
 
-            if(renderBuffer != NULL)
+            if(renderBuffer == NULL)
             {
-                printf("chrome_viewport: init_webview, error renderBuffer is null\n"); 
+                printf("chrome_viewport: init_render_surface, error renderBuffer is null\n"); 
                 return;
             }
            
@@ -111,6 +111,12 @@ class chrome_viewport
                                     0x0000FF00, 0x00FF0000,
                                     0xFF000000, 0x000000FF);
         */
+
+
+            //awe_renderbuffer_get_buffer(renderBuffer),
+            //awe_renderbuffer_get_width(renderBuffer),
+            //awe_renderbuffer_get_height(renderBuffer),
+            //awe_renderbuffer_get_rowspan(renderBuffer)
 
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
 
