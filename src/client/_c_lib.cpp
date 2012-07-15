@@ -116,6 +116,10 @@ dont_include_this_file_in_server
 */
     //#include <SDL/awesomium/_include.hpp>
 
+/* Mob */
+
+#include <t_mob/_include.hpp>
+
 /* Draw lists */
 #include <common/draw/draw.cpp>
 
