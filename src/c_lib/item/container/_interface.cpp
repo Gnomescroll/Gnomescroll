@@ -727,7 +727,7 @@ void agent_born(int agent_id)
 			if (coins != NULL)
 			{
 				coins->stack_size = Item::get_max_stack_size(coins->type);
-				synth->insert_coins(coins->id);
+				transfer_free_item_to_container(coins->id, synth->id, synth->coins_slot);
 			}		
 		}
 		else

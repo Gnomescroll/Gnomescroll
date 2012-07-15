@@ -189,18 +189,20 @@ class ItemContainerCryofreezer: public ItemContainer
 class ItemContainerSynthesizer: public ItemContainerInterface
 {
     public:
+		
+		static const int coins_slot = 0;
     
 		int shopping_xdim;
 		int shopping_ydim;
 
 		ItemID get_coins()
 		{
-			return this->get_item(0);
+			return this->get_item(this->coins_slot);
 		}
 		
 		void insert_coins(ItemID item_id)
 		{
-			this->insert_item(0, item_id);
+			this->insert_item(this->coins_slot, item_id);
 		}
 
         bool can_insert_item(int slot, ItemID item_id)
