@@ -82,8 +82,9 @@ namespace Awesomium
      custom_css                  = awe_string_empty()
 */
     //libraries/lin32/awesomium/release/locales/
-    awe_string* package_path = get_awe_string("../libraries/lin32/awesomium/release/locales");
+    awe_string* package_path = get_awe_string("../libraries/lin32/awesomium/release");
     awe_string* locale_path = get_awe_string("../libraries/lin32/awesomium/release/locales");
+
 
     //awe_webview_load_html(webView, html_str,awe_string_empty());
 
