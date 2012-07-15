@@ -39,11 +39,13 @@ void load_crafting_dat()
 	set_crafting_reagent("copper_ore", 1);
 	set_crafting_reagent("copper_ore", 1);
 	set_crafting_reagent("copper_ore", 1);
+    end_crafting_recipe();	// TODO error check if this is missing (or def_crafting_recipe overrides)
 
 	def_crafting_recipe("iron_bar");
 	set_crafting_reagent("iron_ore", 1);
 	set_crafting_reagent("iron_ore", 1);
 	set_crafting_reagent("iron_ore", 1);
+    end_crafting_recipe();
 
     // Shovel
     def_crafting_recipe("copper_shovel");
