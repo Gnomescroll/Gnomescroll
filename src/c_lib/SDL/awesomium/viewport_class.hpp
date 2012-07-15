@@ -190,7 +190,11 @@ class ChromeViewport
 
 		void processKeyEvent(SDL_Event keyEvent) 
 		{
-		    if(inFocus == false)  return;
+		    if(inFocus == false)
+            {
+                printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
+                return;
+            }
 		    injectSDLKeyEvent(webView, keyEvent);
 		}
 

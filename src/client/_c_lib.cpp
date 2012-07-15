@@ -105,6 +105,10 @@ dont_include_this_file_in_server
     #endif
 #endif
 
+#ifdef __APPLE__
+    #define AWESOMIUM
+#endif
+
 #ifdef AWESOMIUM
     #include <SDL/awesomium/_include.hpp>
 #endif
