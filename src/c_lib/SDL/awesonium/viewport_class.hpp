@@ -32,7 +32,6 @@ struct chromeDisplay {
 };
 */
 
-
 #if 0
 void libChromeShutdown() 
 {
