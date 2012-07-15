@@ -245,7 +245,14 @@ void parse_sound_triggers(char *fn)
                 {
                     printf("OPENAL: double line allocation\n");
                     n_lines *= 2;
-                    sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_lines);
+                    struct Soundfile* new_sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_lines);
+                    GS_ASSERT(new_sound_file_functions != NULL);
+                    if (new_sound_file_functions != NULL) sound_file_functions = new_sound_file_functions;
+                    else
+                    {
+                        n_lines /= 2;
+                        break;
+                    }
                 }
             }
 

@@ -372,12 +372,8 @@ class Diagonal {
 void get_vertical_diagonals(HKPoint* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
     quicksort_pts_x(pts, 0, points);
     int i;
-    int* indices = (int*)malloc(sizeof(int)*(width+1));
-    for (i=0; i<width; i++) indices[i] = 0;
-    for (i=0; i<points;i++) {
-        indices[pts[i].x/2]++;
-        //indices[pts[i].bx]++;
-    }
+    int* indices = (int*)calloc(width+1, sizeof(int));
+    for (i=0; i<points; i++) indices[pts[i].x/2] += 1;
     indices[width] = points;
 
     int dct = 0;
@@ -394,6 +390,7 @@ void get_vertical_diagonals(HKPoint* pts, int points, Diagonal* diagonals, int d
                 pt2 = &pts[k+index];
                 if (pt->is_connected_axis_aligned_x(pt2, z, tile)) {
                     if (dct > diagonals_max) {
+                        free(indices);
                         printf("get_vertical_diagonals :: Max diagonals reached\n");
                         return;
                     }
@@ -413,12 +410,8 @@ void get_vertical_diagonals(HKPoint* pts, int points, Diagonal* diagonals, int d
 void get_horizontal_diagonals(HKPoint* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
     quicksort_pts_y(pts, 0, points);
     int i;
-    int* indices = (int*)malloc(sizeof(int)*(height+1));
-    for (i=0; i<height; i++) indices[i] = 0;
-    for (i=0; i<points;i++) {
-        indices[pts[i].y/2]++;
-        //indices[pts[i].by]++;
-    }
+    int* indices = (int*)calloc(height+1, sizeof(int));
+    for (i=0; i<points; i++) indices[pts[i].y/2] += 1;
     indices[height] = points;
 
     int dct = 0;
@@ -435,6 +428,7 @@ void get_horizontal_diagonals(HKPoint* pts, int points, Diagonal* diagonals, int
                 pt2 = &pts[k+index];
                 if (pt->is_connected_axis_aligned_y(pt2, z, tile)) {
                     if (dct > diagonals_max) {
+                        free(indices);
                         printf("get_horizontal_diagonals :: Max diagonals reached\n");
                         return;
                     }

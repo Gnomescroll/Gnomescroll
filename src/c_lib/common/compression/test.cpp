@@ -109,5 +109,3 @@ static uint8 s_outbuf[BUF_SIZE];
     printf("inflate() failed with status %i!\n", status);
     return EXIT_FAILURE;
   }
-}
-  

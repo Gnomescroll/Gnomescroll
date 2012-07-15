@@ -47,11 +47,14 @@ int main(int argc, char *argv[])
   pCmp_data = (uint8 *)malloc(infile_size);
   if (!pCmp_data)
   {
+    fclose(pInfile);
     printf("Out of memory!\n");
     return EXIT_FAILURE;
   }
   if (fread(pCmp_data, 1, infile_size, pInfile) != infile_size)
   {
+    fclose(pInfile);
+    free(pCmp_data);
     printf("Failed reading input file!\n");
     return EXIT_FAILURE;
   }
@@ -60,6 +63,8 @@ int main(int argc, char *argv[])
   pOutfile = fopen(argv[2], "wb");
   if (!pOutfile)
   {
+    fclose(pInfile);
+    free(pCmp_data);
     printf("Failed opening output file!\n");
     return EXIT_FAILURE;
   }
@@ -68,8 +73,11 @@ int main(int argc, char *argv[])
     
   in_buf_size = infile_size;
   status = tinfl_decompress_mem_to_callback(pCmp_data, &in_buf_size, tinfl_put_buf_func, pOutfile, TINFL_FLAG_PARSE_ZLIB_HEADER);
+  free(pCmp_data);
   if (!status)
   {
+    fclose(pInfile);
+    fclose(pOutfile);
     printf("tinfl_decompress_mem_to_callback() failed with status %i!\n", status);
     return EXIT_FAILURE;
   }

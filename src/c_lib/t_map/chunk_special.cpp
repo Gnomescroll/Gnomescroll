@@ -74,7 +74,17 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int cont
         GS_ASSERT(iban < ibam);
         if (iban >= ibam) return;
         if (o_ibam != ibam)
-            iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
+        {
+            struct inventory_block* new_iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
+            GS_ASSERT(new_iba != NULL);
+            if (new_iba == NULL)
+            {   // error handling
+                free(iba);
+                iba = NULL;
+                ibam = 0;
+            }
+            else iba = new_iba;
+        }
         GS_ASSERT(iba != NULL);
         if (iba == NULL) return;
     }
