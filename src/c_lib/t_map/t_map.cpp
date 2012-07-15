@@ -270,15 +270,11 @@ inline bool position_is_loaded(int x, int y)
 	#endif
 	
 	#if DC_CLIENT
-	ASSERT_BOXED_POINT(x);
-	ASSERT_BOXED_POINT(y);
-	if (x < 0 || x >= map_dim.x) return false;
-	if (y < 0 || y >= map_dim.y) return false;
-
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 	int cx = x / TERRAIN_CHUNK_WIDTH;
 	int cy = y / TERRAIN_CHUNK_WIDTH;
 	int chunk = cx + cy*MAP_CHUNK_XDIM;
-	GS_ASSERT(chunk >= 0 && chunk < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM);
 	return (main_map->chunk_heights_status[chunk] != CHUNK_HEIGHT_UNSET);
 	#endif
 }
