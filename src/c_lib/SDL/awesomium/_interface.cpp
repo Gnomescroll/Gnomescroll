@@ -34,6 +34,11 @@ namespace Awesomium
         viewport_manager->handle_keyboard_event(keyEvent);
     }
 
+    void update()
+    {
+        awe_webcore_update();
+    }
+
     void _draw()
     {
         static int init = 0;
@@ -58,6 +63,8 @@ namespace Awesomium
 
     void init()
     {
+
+        printf("Awesomium::init\n");
         //awe_webcore_initialize_default();
 /*
     awe_webcore_initialize  (   bool    enable_plugins,
@@ -146,17 +153,13 @@ namespace Awesomium
 
         awe_string_destroy(package_path);
         awe_string_destroy(locale_path);
+        awe_string_destroy(log_path);
 
     }
 
     void teardown()
     {
         awe_webcore_shutdown();
-    }
-
-    void update()
-    {
-        awe_webcore_update();
     }
 
 //#include <Awesomium/awesomium_capi.h>

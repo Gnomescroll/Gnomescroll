@@ -92,17 +92,6 @@ class ChromeViewport
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        /*
-            display->surface = SDL_CreateRGBSurfaceFrom((void *) awe_renderbuffer_get_buffer(renderBuffer),
-                                    awe_renderbuffer_get_width(renderBuffer),
-                                    awe_renderbuffer_get_height(renderBuffer),
-                                    32,
-                                    awe_renderbuffer_get_rowspan(renderBuffer),
-                                    0x0000FF00, 0x00FF0000,
-                                    0xFF000000, 0x000000FF);
-        */
-
-
             //awe_renderbuffer_get_buffer(renderBuffer),
             //awe_renderbuffer_get_width(renderBuffer),
             //awe_renderbuffer_get_height(renderBuffer),
