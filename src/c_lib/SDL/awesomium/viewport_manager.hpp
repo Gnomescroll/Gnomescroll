@@ -40,6 +40,8 @@ namespace Awesomium
 			printf("Error: viewport_manager, add_viewport; max viewports reached \n");
 		}
 
+		void update_viewports();
+		void draw_viewports();
 
 		void handle_click(int x, int y, int button, int event_type) //up/down
 		{
@@ -64,6 +66,27 @@ namespace Awesomium
 
 	};
 
+	void ViewportManager::update_viewports()
+	{
+		for(int i=0; i < MAX_VIEWPORTS; i++)
+		{
+			if(vpa[i] != NULL)
+			{
+				vpa[i]->update_webview();
+			}
+		}
+	}
+
+	void ViewportManager::draw_viewports()
+	{
+		for(int i=0; i < MAX_VIEWPORTS; i++)
+		{
+			if(vpa[i] != NULL)
+			{
+				vpa[i]->draw_webview();
+			}
+		}
+	}
 
 // Awesomium::LEFT_MOUSE_BTN
 // Awesomium::MIDDLE_MOUSE_BTN

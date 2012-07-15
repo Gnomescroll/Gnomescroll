@@ -164,6 +164,13 @@ class ChromeViewport
 		    glEnd();
 
 		    glDisable(GL_TEXTURE_2D);
+
+            //draw point for debugging
+            glColor3ub(255,255,255);
+            glBegin(GL_POINTS);
+            glVertex3f(xoff, yoff, -0.6f);
+            glEnd();
+            glColor3ub(255,255,255);
 		}
 
 		void focus()
