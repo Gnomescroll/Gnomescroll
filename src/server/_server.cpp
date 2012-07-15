@@ -71,9 +71,8 @@ int main(int argc, char* argv[])
     // will use a default value if not provided
     if (argc > 1) LUA::set_options_file( (char*) argv[1] );
 
-    Main::init();
+    Main::init(argc, argv);
     int ret = Main::run();
-
 
     //Sleep(10000);
     return ret;

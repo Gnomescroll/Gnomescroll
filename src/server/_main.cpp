@@ -12,10 +12,9 @@ namespace Main
 
 
 
-void init()
+void init(int argc, char* argv[])
 {
-    init_c_lib();
-
+    init_c_lib(argc, argv);
 
     if (0)
     {

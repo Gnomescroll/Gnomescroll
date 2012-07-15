@@ -1,6 +1,9 @@
 #include "client_options.hpp"
 
+#include <options/argparse.hpp>
 #include <common/lua/lua.hpp>
+
+#include <stdlib.h>
 
 namespace Options
 {
@@ -94,4 +97,4 @@ void register_options()
     OPT_BOOL_REGISTER(show_tips);
 }
 
-}
+}   // Options

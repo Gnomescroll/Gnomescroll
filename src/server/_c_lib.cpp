@@ -30,6 +30,7 @@ dont_include_this_file_in_client
 
 //options
 #include <options/option_macros.hpp>
+#include <options/argparse.cpp>
 #include <options/server_options.cpp>
  
 //utility
@@ -144,7 +145,7 @@ void signal_terminate_handler(int sig)
  
 
 
-int init_c_lib()
+int init_c_lib(int argc, char* argv[])
 {
     #ifdef linux
     signal(SIGTERM, signal_terminate_handler);  // kill <pid>
@@ -160,6 +161,8 @@ int init_c_lib()
     Log::init();
 
     LUA::load_options(); //load game options
+
+    Options::parse_args(argc, argv);
     
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");

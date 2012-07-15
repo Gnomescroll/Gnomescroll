@@ -50,6 +50,7 @@ dont_include_this_file_in_server
 
 /* configuration options */
 #include <options/option_macros.hpp>
+#include <options/argparse.cpp>
 #include <options/client_options.cpp>
 
 /* Network */
@@ -216,7 +217,7 @@ void signal_terminate_handler(int sig)
 }
 #endif
 
-int init_c_lib() 
+int init_c_lib(int argc, char* argv[]) 
 {    
     static int inited = 0;
     GS_ASSERT(inited == 0);
@@ -233,6 +234,9 @@ int init_c_lib()
     AgentHudName::verify_configuration();
 
     LUA::load_options(); //load game options
+
+    Options::parse_args(argc, argv);
+    
     srand((unsigned int)time(NULL));   // seed the RNG
 
     Components::init();
