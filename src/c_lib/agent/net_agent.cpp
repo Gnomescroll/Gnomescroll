@@ -1108,7 +1108,7 @@ inline void identify_CtoS::handle()
     NetServer::users->add_name_to_client_id(client_id, a->status.name);
     NetServer::clients[client_id]->ready();
 
-    free(new_name);
+	if (new_name != name) free(new_name);
 }
 
 inline void ping_CtoS::handle()

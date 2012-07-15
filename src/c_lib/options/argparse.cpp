@@ -221,7 +221,7 @@ int parse_args(int argc, char* argv[])
         if (str[0] == '\0') continue;
         if (str[0] != '-')
         {
-            printf("Invalid argument style: %s", str);
+            printf("Invalid argument style: %s\n", str);
             continue;
         }
 
@@ -251,7 +251,7 @@ int parse_args(int argc, char* argv[])
             if (!strcmp(argname, (char*)"help"))
                 printf("\n\nUsage: ./run [lua settings file] --key=value\n\n\n");
             else
-                printf("Invalid argument style: %s", str);
+                printf("Invalid argument style: %s\n", str);
             continue;
         }
 
