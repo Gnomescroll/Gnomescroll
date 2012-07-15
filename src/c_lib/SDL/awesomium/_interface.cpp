@@ -23,24 +23,27 @@ namespace Awesomium
     class ChromeViewport* cv;
     class ViewportManager* viewport_manager;
 
-    void _init()
+
+    void handle_mouse_event(int x, int y, int button, int event_type)
     {
-        printf("init webviwe \n");
-        cv = new ChromeViewport;
+        viewport_manager->handle_mouse_event(x,y,button,event_type);
+    }
 
-        viewport_manager = new ViewportManager;
-
-        viewport_manager->add_viewport(cv);
+    void handle_keyboard_event(union SDL_Event* keyEvent)
+    {
+        viewport_manager->handle_keyboard_event(keyEvent);
     }
 
     void _draw()
     {
-
         static int init = 0;
         if(init == 0)
         {
+            //init
+            cv = new ChromeViewport;
+            viewport_manager = new ViewportManager;
+            viewport_manager->add_viewport(cv);
             init =1;
-            _init();
         }
         
         cv->update_webview();

@@ -43,7 +43,7 @@ namespace Awesomium
 		void update_viewports();
 		void draw_viewports();
 
-		void handle_click(int x, int y, int button, int event_type) //up/down
+		void handle_mouse_event(int x, int y, int button, int event_type) //up/down
 		{
 			if(event_type == 0)
 				printf("Mouse %i down at: %i %i \n", button,x,y);
@@ -59,7 +59,7 @@ namespace Awesomium
 			}
 		}
 
-		void handle_key()
+		void handle_keyboard_event(union SDL_Event* keyEvent)
 		{
 
 		}
