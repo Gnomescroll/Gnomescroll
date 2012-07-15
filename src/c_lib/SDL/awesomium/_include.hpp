@@ -1,7 +1,5 @@
 #pragma once
 
-//#ifndef __APPLE__
-
 #include <Awesomium/awesomium_capi.h>
 
 #include <Awesomium/KeyboardCodes.h>
@@ -12,5 +10,3 @@
 
 #include <SDL/awesomium/_interface.cpp>
 #include <SDL/awesomium/viewport_class.hpp>
-
-//#endif
