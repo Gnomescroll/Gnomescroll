@@ -46,8 +46,8 @@ const int SMELTER_ONE_Y = 2;
 const int MAX_ITEMS = 256;
 
 const int MAX_CRAFTING_RECIPE = 256;
-const int CRAFT_BENCH_INPUTS_MAX = 9;
-const int CRAFT_BENCH_OUTPUTS_MAX = 6;
+const int CRAFT_BENCH_INPUTS_MAX = 4;
+const int CRAFT_BENCH_OUTPUTS_MAX = 3;
 
 const int MAX_SMELTING_RECIPE = 256;
 const int SMELTER_INPUTS_MAX = 4;

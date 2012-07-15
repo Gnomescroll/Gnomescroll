@@ -121,12 +121,14 @@ namespace Item
 {
 
 int crafting_recipe_count = 0;
-int _current_crafting_reagent_id = 0;
 
 class CraftingRecipe _cr;
 
+void end_crafting_recipe();
+
 void def_crafting_recipe(const char* item_name, int amount)
 {
+	if (_cr.reagent_num > 0) end_crafting_recipe();
     _cr.output = dat_get_item_type(item_name);
     _cr.output_stack = amount;
 }
@@ -136,34 +138,39 @@ void def_crafting_recipe(const char* item_name)
     def_crafting_recipe(item_name, 1);
 }
 
-
 void set_crafting_reagent(const char* item_name, int quantity)
 {
-    GS_ASSERT(_current_crafting_reagent_id < CRAFT_BENCH_INPUTS_MAX);
+	GS_ASSERT(crafting_recipe_count < MAX_CRAFTING_RECIPE);
+	if (crafting_recipe_count >= MAX_CRAFTING_RECIPE) return;
+	
+    GS_ASSERT(_cr.reagent_num < CRAFT_BENCH_INPUTS_MAX);
+    if (_cr.reagent_num >= CRAFT_BENCH_INPUTS_MAX) return;
 
     int type = dat_get_item_type(item_name);
+    GS_ASSERT(type != NULL_ITEM_TYPE);
     
+	// Make sure we aren't adding two types of different stack values
+	// Why? our sorting methods for doing recipe matches do not sort by
+	// stack values per type, so there will be undefined behaviour
+	for (int i=0; i<_cr.reagent_num; i++)
+		GS_ASSERT(_cr.reagent[i] != type || _cr.reagent_count[i] == quantity);
 
-    // require specifying item,quantity at once
-    //for (int i=0; i<_current_reagent_id; i++)
-        //GS_ASSERT(_cr.reagent[i] != type);
-    
     // insert reagents sorted by type
-    if (_current_crafting_reagent_id == 0)
+    if (_cr.reagent_num == 0)
     {   // degenerate case
-        _cr.reagent[_current_crafting_reagent_id] = type;
-        _cr.reagent_count[_current_crafting_reagent_id] = quantity;
+        _cr.reagent[_cr.reagent_num] = type;
+        _cr.reagent_count[_cr.reagent_num] = quantity;
     }
     else
     {   // keep reagents sorted by type
         int i=0;
-        for (; i<_current_crafting_reagent_id; i++)
+        for (; i<_cr.reagent_num; i++)
         {
             if (_cr.reagent[i] <= type) continue;
 
             // shift forward
-            for (int j=_current_crafting_reagent_id; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
-            for (int j=_current_crafting_reagent_id; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
+            for (int j=_cr.reagent_num; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
+            for (int j=_cr.reagent_num; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
             
             // insert
             _cr.reagent[i] = type;
@@ -171,25 +178,38 @@ void set_crafting_reagent(const char* item_name, int quantity)
             break;
         }
         
-        if (i == _current_crafting_reagent_id)
+        if (i == _cr.reagent_num)
         {   // append to end
-            _cr.reagent[_current_crafting_reagent_id] = type;
-            _cr.reagent_count[_current_crafting_reagent_id] = quantity;
+            _cr.reagent[_cr.reagent_num] = type;
+            _cr.reagent_count[_cr.reagent_num] = quantity;
         }
     }
-
-    _current_crafting_reagent_id++;
+    
+    _cr.reagent_num++;
 }
 
 void end_crafting_recipe()
 {
     GS_ASSERT(crafting_recipe_count <= MAX_CRAFTING_RECIPE);
-    _cr.reagent_num = _current_crafting_reagent_id;
+    
+    // check that adding this recipe will not increase the total outputs
+    // per recipe above limit
+    int matching_recipes = 0;
+    for (int i=0; i<crafting_recipe_count; i++)
+    {
+		if (crafting_recipe_array[i].reagent_num != _cr.reagent_num) continue;
+		for (int j=0; j<crafting_recipe_array[i].reagent_num; j++)
+		{
+			if (crafting_recipe_array[i].reagent[j] != _cr.reagent[j]) break;
+			matching_recipes++;
+		}
+	}
+	GS_ASSERT(matching_recipes <= CRAFT_BENCH_OUTPUTS_MAX);
+    
     _cr.id = crafting_recipe_count;
     crafting_recipe_array[crafting_recipe_count] = _cr;
     _cr.init();
     crafting_recipe_count++;
-    _current_crafting_reagent_id = 0;
 }
 
 }   // Item
