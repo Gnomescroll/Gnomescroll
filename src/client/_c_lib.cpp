@@ -97,9 +97,14 @@ dont_include_this_file_in_server
 
 #ifndef __WIN32__
     #ifdef __GNUC__
-        #include <SDL/awesonium/_include.hpp>
+        #define AWESOMIUM
     #endif
 #endif
+
+#ifdef AWESOMIUM
+    #include <SDL/awesonium/_include.hpp>
+#endif
+
 /* Draw lists */
 #include <common/draw/draw.cpp>
 
@@ -235,6 +240,11 @@ int init_c_lib()
     LUA::load_options(); //load game options
     srand((unsigned int)time(NULL));   // seed the RNG
 
+
+    #ifdef AWESOMIUM
+        Awesomium::init();
+    #endif
+    
     Components::init();
     Objects::init_net_interfaces();
     Objects::init();    // Entity system
@@ -402,6 +412,10 @@ void close_c_lib()
     Sound::close();
     if (TEARDOWN_DEBUG) printf("SDL close\n");
     close_SDL();
+
+    #ifdef AWESOMIUM
+        Awesomium::teardown();
+    #endif
 
     #undef TEARDOWN_DEBUG
 

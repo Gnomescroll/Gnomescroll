@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Awesonium
+namespace Awesomium
 {
 
 /*
