@@ -646,7 +646,6 @@ inline void hitscan_object_CtoS::handle()
     HealthComponent* health;
     MotionTargetingComponent* motion_targeting;
 
-    AgentState s = a->get_state();
     switch (type)
     {
         case OBJECT_AGENT:
