@@ -949,7 +949,7 @@ bool Agent_state::near_base()
     float y = quadrant_translate_f(this->s.y, bp.y);
     float z = bp.z;
     using Objects::BASE_SPAWN_RADIUS;
-    if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
+    if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < 2*BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
         return true;
     return false;
 }

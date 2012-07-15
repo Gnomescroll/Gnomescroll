@@ -756,6 +756,12 @@ DONE
 fast map option
 DONE
 
+fix cppcheck warnings (except for dragon/dungeon reallocs)
+DONE
+
+base protection radius engulfs spawn radius
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -914,8 +920,6 @@ Add recipes
 
 something is messed up with box models. client reports get_center() as even higher above its head, in the object_shot_object packet handler
 position looks normal though, as a firing position
-
-base spawn area != protection area
 
 go through server asserts
 cppcheck codebase
