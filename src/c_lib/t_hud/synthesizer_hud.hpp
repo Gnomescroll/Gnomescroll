@@ -7,7 +7,7 @@ namespace t_hud
 
 //221x147
 
-const int ITEM_PRICE_MAX_LENGTH = 4;
+const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 4;
 
 class AgentSynthesizerUI : public UIElement
 {
@@ -66,7 +66,7 @@ class AgentSynthesizerUI : public UIElement
         {
             HudText::Text* t = &this->prices[i];
             t->set_format((char*) "%d");
-            t->set_format_extra_length(ITEM_PRICE_MAX_LENGTH + 1 - 2);
+            t->set_format_extra_length(SYNTHESIZER_ITEM_COST_MAX_STRLEN + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
@@ -384,7 +384,7 @@ void AgentSynthesizerUI::draw()
         int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
         if (item_type == NULL_ITEM_TYPE) continue;
 
-        GS_ASSERT(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
+        GS_ASSERT(count_digits(cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
 
         const int slot = yslot*shopping_xdim + xslot;
         GS_ASSERT(slot < shopping_xdim*shopping_ydim);

@@ -78,7 +78,10 @@ void tick()
          || item_group == IG_ERROR
          || item_group == IG_RESOURCE
          || item_group == IG_SYNTHESIZER_COIN)
+        {
             item_type = Item::get_item_type((char*)"fist");
+            item_group = Item::get_item_group_for_type(item_type);
+		}
 
         int fire_rate = Item::get_item_fire_rate(item_type);
         GS_ASSERT(fire_rate >= 1);
@@ -190,7 +193,7 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
 
     switch (group)
     {
-        case IG_NONE:
+        case IG_FIST:
             //a->event.tick_fist();
             break;
 
@@ -202,6 +205,7 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
             a->event.tick_mining_laser();
             break;
 
+        case IG_NONE:
         case IG_ERROR:
         case IG_RESOURCE:
         case IG_SYNTHESIZER_COIN:
@@ -233,7 +237,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
 
     switch (group)
     {
-        case IG_NONE:
+        case IG_FIST:
             //a->event.punch_fist();
             break;
 
@@ -245,6 +249,7 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
             a->event.fired_mining_laser();
             break;
 
+        case IG_NONE:
         case IG_MELEE_WEAPON:
         case IG_ERROR:
         case IG_RESOURCE:
@@ -275,6 +280,7 @@ void tick_local_agent_selected_item_type(int item_type)
     switch (group)
     {
         case IG_SHOVEL:
+        case IG_FIST:
         case IG_NONE:
             //ClientState::playerAgent_state.action.tick_fist();
             break;
@@ -327,6 +333,7 @@ void trigger_local_agent_selected_item_type(int item_type)
         case IG_SYNTHESIZER_COIN:
         case IG_ERROR:
         case IG_NONE:
+        case IG_FIST:
         case IG_SHOVEL:
         case IG_MINING_LASER:
             ClientState::playerAgent_state.action.fire_close_range_weapon(item_type);
@@ -466,6 +473,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
         case IG_RESOURCE:
         case IG_SYNTHESIZER_COIN:
         case IG_NONE:
+        case IG_FIST:
             break;
 
         case IG_SHOVEL:
@@ -517,7 +525,8 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
         case IG_SYNTHESIZER_COIN:
         case IG_ERROR:
         case IG_RESOURCE:
-        case IG_NONE:   // hand
+        case IG_NONE:
+        case IG_FIST:
             // unlimited durability
             break;
 
@@ -665,6 +674,7 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
         case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
+        case IG_FIST:
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:
 			break;

@@ -31,7 +31,6 @@ inline void item_state_StoC::handle()
     if (item == NULL) return;
     item->stack_size = stack_size;
     item->durability = durability;
-    item->energy = energy;
 
     // update UI
     ItemContainer::update_container_ui_from_state();

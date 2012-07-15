@@ -29,23 +29,24 @@ int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
 class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
 int craft_recipes_possible_count = 0;
 
-//int smelter_input_types[SMELTER_INPUTS_MAX];
-//int smelter_input_totals[SMELTER_INPUTS_MAX];
+const int ITEM_NAME_MAX_LENGTH = 64;
+char item_names[MAX_ITEMS*ITEM_NAME_MAX_LENGTH] = {'\0'};
+int item_name_index[MAX_ITEMS] = {-1};
 
 void init_properties()
 {
     for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
-    for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_ERROR);
+    for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_NONE);
     
     for (int i=0; i<t_map::MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
 
     GS_ASSERT(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
     GS_ASSERT(synthesizer_item_array == NULL);
-    synthesizer_item_array = new SynthesizerItem[MAX_ITEMS];
+    synthesizer_item_array = new SynthesizerItem[MAX_SYNTHESIZER_OUTPUTS];
 
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
-    smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
+    smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];\
 }
 
 void tear_down_properties()
@@ -88,12 +89,7 @@ int get_sprite_index_for_type(int type)
 Names
 */
 
-
-const int ITEM_NAME_MAX_LENGTH = 64;
-char item_names[MAX_ITEMS*ITEM_NAME_MAX_LENGTH];
-int item_name_index[MAX_ITEMS];
-
-void set_item_name(int id, char* name, int length)
+void set_item_name(int id, const char* name, int length)
 {
     GS_ASSERT(length > 0);
     GS_ASSERT(length < ITEM_NAME_MAX_LENGTH);
@@ -102,17 +98,20 @@ void set_item_name(int id, char* name, int length)
     if (length <= 0 || length >= ITEM_NAME_MAX_LENGTH) return;
     if (id < 0 || id >= MAX_ITEMS) return;
 
-    static int index = 0;
+    static int str_index = 0;
 
-    item_name_index[id] = index;
+	for (int i=0; i<MAX_ITEMS; i++)	// no duplicate names
+		if (item_name_index[i] >= 0)
+			GS_ASSERT(strcmp(item_names+item_name_index[i], name));
 
-    memcpy(item_names+index, name, length);
-    index += length;
-    item_names[index] = '\0';
-    index++;
+    item_name_index[id] = str_index;
+
+    memcpy(item_names+str_index, name, length);
+    str_index += length;
+    item_names[str_index++] = '\0';
 }
 
-void set_item_name(int id, char* name)
+void set_item_name(int id, const char* name)
 {
     int length = (int)strlen(name);
     set_item_name(id, name, length);
@@ -122,6 +121,11 @@ char* get_item_name(int type)
 {
     GS_ASSERT(type >= 0 || type < MAX_ITEMS);
     if (type < 0 || type >= MAX_ITEMS) return NULL;
+    GS_ASSERT(item_name_index[type] >= 0);
+    if (item_name_index[type] < 0) return NULL;
+    GS_ASSERT(item_name_index[type] < MAX_ITEMS*ITEM_NAME_MAX_LENGTH);
+    if (item_name_index[type] >= MAX_ITEMS*ITEM_NAME_MAX_LENGTH) return NULL;
+    
     return (item_names + item_name_index[type]);
 }
 
@@ -248,12 +252,12 @@ int get_synthesizer_item(int xslot, int yslot)
 
 int get_synthesizer_item(int xslot, int yslot, int* cost)
 {
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_SYNTHESIZER_OUTPUTS; i++)
     {
         class SynthesizerItem* n = &synthesizer_item_array[i];
         if (n->xslot == xslot && n->yslot == yslot)
         {
-            *cost = n->synthesizer_cost;
+            *cost = n->cost;
             return n->item_type;
         }
     }

@@ -107,6 +107,7 @@ bool toolbelt_item_end_alpha_action()
         case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
+        case IG_FIST:
             return true;
 
         case IG_MINING_LASER:
@@ -137,6 +138,7 @@ void toolbelt_item_begin_alpha_action_event_handler(ItemGroup item_group)
         case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
+        case IG_FIST:
 
         case IG_CONSUMABLE:
         case IG_PLACER:
@@ -161,6 +163,7 @@ void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group)
         case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
+        case IG_FIST:
 
         case IG_CONSUMABLE:
         case IG_PLACER:
@@ -201,6 +204,7 @@ bool toolbelt_item_beta_action()
         case IG_SYNTHESIZER_COIN:
         case IG_SHOVEL:
         case IG_NONE:
+        case IG_FIST:
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:
         default:

@@ -6,7 +6,9 @@ namespace Item
 	{
 		public:
 
-		int item_group_type;
+		ItemGroup group;
+
+		int item_type;
     
 		char* pretty_name;
 
@@ -16,7 +18,6 @@ namespace Item
 		//IG_HITSCAN_WEAPON
 		int hitscan_fire_cooldown;      // ms per bullet
 		int hitscan_damage;             // damage
-		int hitscan_max_ammo;           // max ammo
 		int hitscan_bullet_effect_enum; // bullet effect
 
 		//IG_MELEE_WEAPON
@@ -58,15 +59,16 @@ namespace Item
 		ItemAttribute()
 		// DONT PUT ANYTHING HERE OR BREAKS
 		{
-			load_defaults(IG_ERROR);
+			load_defaults(NULL_ITEM_TYPE, IG_NONE);
 		}
 
-		void load_defaults(int group_type)
+		void load_defaults(int item_type, ItemGroup group)
 		{
 			// PUT ALL DEFAULTS HERE
-
+			this->group = group;
+			this->item_type = item_type;
+			
 			pretty_name = NULL;
-			item_group_type = group_type;
 			max_energy = NULL_ENERGY;
 			max_durability = NULL_DURABILITY;
 			max_stack_size = 1;
