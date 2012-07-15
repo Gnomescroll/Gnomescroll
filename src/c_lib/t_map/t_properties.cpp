@@ -96,7 +96,7 @@ char* get_cube_name(int id)
     return (cube_names + cube_name_index[id]);
 }
 
-int get_cube_id(char* name)
+int get_cube_id(const char* name)
 {
     for (int i=0; i<MAX_CUBES; i++)
     {
