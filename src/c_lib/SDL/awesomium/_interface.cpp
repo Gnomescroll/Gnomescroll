@@ -120,10 +120,16 @@ namespace Awesomium
      custom_css                  = awe_string_empty()
 */
     //libraries/lin32/awesomium/release/locales/
+
+    #ifdef __APPLE__
+    
+
+    #else
     awe_string* package_path = get_awe_string("../libraries/lin32/awesomium/release");
     awe_string* locale_path = get_awe_string("../libraries/lin32/awesomium/release/locales");
     awe_string* log_path = get_awe_string("./screenshot");
 
+    #endif
     //awe_webview_load_html(webView, html_str,awe_string_empty());
 
     awe_webcore_initialize( false, //plugins
