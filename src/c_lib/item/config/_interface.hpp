@@ -193,6 +193,12 @@ void end_crafting_recipe()
 {
     GS_ASSERT(crafting_recipe_count <= MAX_CRAFTING_RECIPE);
     
+	GS_ASSERT(_cr.reagent_num > 0);
+	GS_ASSERT(_cr.output != NULL_ITEM_TYPE);
+	GS_ASSERT(_cr.output_stack >= 1);
+	for (int i=0; i<_cr.reagent_num; i++)
+		GS_ASSERT(_cr.reagent[i] != NULL_ITEM_TYPE);
+    
     // check that adding this recipe will not increase the total outputs
     // per recipe above limit
     int matching_recipes = 0;
@@ -206,7 +212,23 @@ void end_crafting_recipe()
 		}
 	}
 	GS_ASSERT(matching_recipes <= CRAFT_BENCH_OUTPUTS_MAX);
-    
+	
+	// check that this recipe's type signature (input+output)
+	// has not already been defined
+	for (int i=0; i<crafting_recipe_count; i++)
+	{
+		if (crafting_recipe_array[i].reagent_num != _cr.reagent_num) continue;
+		int j=0;
+		for (; j<crafting_recipe_array[i].reagent_num; j++)
+			if (crafting_recipe_array[i].reagent[j] != _cr.reagent[j]) break;
+		if (j < crafting_recipe_array[i].reagent_num) continue;
+		// reagents matched, check products
+		GS_ASSERT(crafting_recipe_array[i].output != _cr.output);
+	}
+	
+	// check if recursive recipe (reagents == output)
+	if (_cr.reagent_num == 1) GS_ASSERT(_cr.reagent[0] != _cr.output);
+	
     _cr.id = crafting_recipe_count;
     crafting_recipe_array[crafting_recipe_count] = _cr;
     _cr.init();
@@ -306,6 +328,9 @@ void end_smelting_recipe()
 {
     GS_ASSERT(smelting_recipe_count <= MAX_SMELTING_RECIPE);
     
+	GS_ASSERT(_sr.reagent_num > 0);
+	GS_ASSERT(_sr.output_num > 0);
+
     // make sure no other recipe has same type signature
     for (int i=0; i<smelting_recipe_count; i++)
     {
@@ -315,6 +340,15 @@ void end_smelting_recipe()
 			if (smelting_recipe_array[i].reagent[j] != _sr.reagent[j])
 				break;
 		GS_ASSERT(j < smelting_recipe_array[i].reagent_num);
+	}
+	
+	// check that inputs != outputs
+	if (_sr.reagent_num == _sr.output_num)
+	{
+		int i=0;
+		for (; i<_sr.reagent_num; i++)
+			if (_sr.reagent[i] != _sr.output[i]) break;
+		GS_ASSERT(i < _sr.reagent_num);
 	}
     
     _sr.reagent_num = _sr.reagent_num;
