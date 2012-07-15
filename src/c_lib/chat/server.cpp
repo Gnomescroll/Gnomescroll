@@ -170,7 +170,7 @@ ChatServer::ChatServer()
     
     if (Options::log_chat)
     {
-		this->logfile = fopen("./logfile/chat.logfile", "a");
+		this->logfile = fopen("./log/chat.log", "a");
 		GS_ASSERT(this->logfile != NULL);
         if (this->logfile != NULL)
             setvbuf(this->logfile, NULL, _IOLBF, 256);
