@@ -1,6 +1,7 @@
 #include "map.hpp"
 
 #include <common/common.hpp>
+#include <t_map/common/constants.hpp>
 #include <t_map/t_map.hpp>
 #include <state/client_state.hpp>
 #include <SDL/texture_loader.hpp>
@@ -278,7 +279,7 @@ void update_map_surface()
     for (int i=0; i<t_map::MAP_CHUNK_XDIM; i++)
         for (int j=0; j<t_map::MAP_CHUNK_YDIM; j++)
         {
-            if (!t_map::main_map->chunk_heights_changed[i + j*t_map::MAP_CHUNK_XDIM]) continue;
+            if (t_map::main_map->chunk_heights_status[i + j*t_map::MAP_CHUNK_XDIM] != t_map::CHUNK_HEIGHT_CHANGED) continue;
             for (int m=0; m<t_map::TERRAIN_CHUNK_WIDTH; m++)
             {
                 cx = i*t_map::TERRAIN_CHUNK_WIDTH + m;

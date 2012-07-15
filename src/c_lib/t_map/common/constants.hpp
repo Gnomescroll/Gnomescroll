@@ -24,6 +24,13 @@ const int MAP_HEIGHT = 512;
 const int MAP_CHUNK_XDIM = MAP_WIDTH/TERRAIN_CHUNK_WIDTH;
 const int MAP_CHUNK_YDIM = MAP_HEIGHT/TERRAIN_CHUNK_WIDTH;
 
+typedef enum
+{
+	CHUNK_HEIGHT_UNCHANGED = 0,
+	CHUNK_HEIGHT_CHANGED = 1,
+	CHUNK_HEIGHT_UNSET = 2
+} ChunkHeightStatus;
+
 } // t_map
 
 const float QUADRANT_DIVIDEf = 256.0f;

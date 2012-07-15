@@ -51,7 +51,8 @@ namespace t_map
 
         #if DC_CLIENT
         for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; column_heights[i++] = 0);
-        this->reset_heights_read();
+        this->height_changed = false;
+        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; chunk_heights_status[i++] = CHUNK_HEIGHT_UNSET);
         #endif
     }
 
@@ -472,7 +473,7 @@ namespace t_map
     void Terrain_map::reset_heights_read()
     {   // call when heights are done being read
         this->height_changed = false;
-        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; chunk_heights_changed[i++] = false);
+        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; chunk_heights_status[i++] = CHUNK_HEIGHT_UNCHANGED);
     }
     
     void Terrain_map::chunk_received(int cx, int cy)
@@ -498,7 +499,7 @@ namespace t_map
                 this->column_heights[x + y*MAP_WIDTH] = h;
             }
             
-        this->chunk_heights_changed[cx + cy*MAP_CHUNK_XDIM] = true;
+        this->chunk_heights_status[cx + cy*MAP_CHUNK_XDIM] = CHUNK_HEIGHT_CHANGED;
         this->height_changed = true;
 
         const static int MASK = (512/16)-1; //chunk width
@@ -556,7 +557,7 @@ namespace t_map
 
         int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
         int cy = y / TERRAIN_CHUNK_WIDTH;
-        this->chunk_heights_changed[cx + cy*MAP_CHUNK_XDIM] = true;
+        this->chunk_heights_status[cx + cy*MAP_CHUNK_XDIM] = CHUNK_HEIGHT_CHANGED;
         this->height_changed = true;
     }
     #endif
