@@ -762,6 +762,15 @@ DONE
 base protection radius engulfs spawn radius
 DONE
 
+<<<<<<< local
+fix stack size rollover for >255
+DONE
+
+fix ore->bar recipes
+DONE
+
+=======
+>>>>>>> other
 ----------------------
 
 == BUILD ==
@@ -804,6 +813,12 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
 add warning to the synthesizer dat
 --slot in use
 --outside of dimensions
+
+validate item dat settings
+    -- all values below expected data types
+
+something is messed up with box models. client reports get_center() as even higher above its head, in the object_shot_object packet handler
+position looks normal though, as a firing position
 
 == CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
@@ -917,12 +932,3 @@ Health Meter instead of "ENERGY" (or both...)
 Add recipes
 
 ==BUGZ==
-
-something is messed up with box models. client reports get_center() as even higher above its head, in the object_shot_object packet handler
-position looks normal though, as a firing position
-
-go through server asserts
-cppcheck codebase
-
- <Kaprekar> wow i think i got so many chips that it rolled over to 0
-(07/14/2012 05:53:12 PM) synthesis492: <Kaprekar> interesting... right clicked my stack of chips (after it had rolled over a couple times) and i got 2 stacks of 250
