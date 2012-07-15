@@ -15,7 +15,7 @@ namespace Awesomium
 
 		bool in_focus;
 
-		class viewport_class* vpa[MAX_VIEWPORTS]; //viewport class array
+		class ChromeViewport* vpa[MAX_VIEWPORTS]; //viewport class array
 		int vpai; //viewport class array index
 
 		ViewportManager()
@@ -25,7 +25,7 @@ namespace Awesomium
 		}
 
 
-		void add_viewport(class viewport_class* viewport)
+		void add_viewport(class ChromeViewport* viewport)
 		{
 			for(int i=0; i < MAX_VIEWPORTS; i++)
 			{

@@ -30,7 +30,7 @@ namespace Awesomium
 
         viewport_manager = new ViewportManager;
 
-        viewport_manager.add_viewport(cv);
+        viewport_manager->add_viewport(cv);
     }
 
     void _draw()
