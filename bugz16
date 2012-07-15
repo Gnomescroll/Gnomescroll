@@ -762,15 +762,30 @@ DONE
 base protection radius engulfs spawn radius
 DONE
 
-<<<<<<< local
 fix stack size rollover for >255
 DONE
 
 fix ore->bar recipes
 DONE
 
-=======
->>>>>>> other
+item/craft/synth dat error checking
+DONE
+
+assimp added to build system
+DONE
+
+synth purchasing will stack item in hand if possible
+DONE
+
+remove deprecated t_map methods
+DONE
+
+chunk height status (changed/unchanged/unset)
+DONE
+
+dont apply physics to item particles or agents, if chunk unset (client only)
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -795,6 +810,7 @@ better font
 draw held weapon sprite in player's hand for others to see
 melee on agents should draw blood
 voxel model rgb convert to 0 for 255 (255,255,254 => 0,0,254) somewhere (by the time its rendered)
+draw stack number with billboard item
 
 == SOUND ==
 improve digging sounds
@@ -802,21 +818,16 @@ falling sounds
     -- record last velocity when colliding with z. at 2 thresholds play harsher sounds
 
 == MAINTENANCE/REFACTORS ==
+png write does not work in 64bit binary
 toolbelt: turn fire on/off method for server
+toolbelt: use callback registers, per group and per type. define functions in a standard way
+
 elastic component lists
+
 craft/smelting recipes need reagents sorted by stack size in addition to type -- currently only by type
     -- is not a problem until multiple of the same type have different stack sizes
-    -- so add assert in the recipe def
---detect duplicate recipes
---detect recursive recipes (input types == output types)
-
-add warning to the synthesizer dat
---slot in use
---outside of dimensions
-
-validate item dat settings
-    -- all values below expected data types
-
+    -- assert in dat loader checks for this
+    
 something is messed up with box models. client reports get_center() as even higher above its head, in the object_shot_object packet handler
 position looks normal though, as a firing position
 
@@ -843,13 +854,10 @@ send block health on request from agent
 == UI/UX ==
 
 == GENERAL ==
-get screenshots working in osx
 option to hide name
 
 maintain a NetClient buffer per stage of ready-ness
 broadcast only to clients who are are in fully ready
-
-chunk is NULL check -- dont apply physics in these areas
 
 == MECHANISMS ==
 Spawner/Control Points
