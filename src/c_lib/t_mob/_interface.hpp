@@ -106,7 +106,7 @@ class MeshAnimation
 		bone->LocalTransform = Mat4_transpose(bone->LocalTransform);	//combine conversion and transpose?
 
 		bone->OriginalLocalTransform = bone->LocalTransform;// a copy saved
-		
+
 		CalculateBoneToWorldTransform(bone);
 
 		// continue for all child nodes and assign the created internal nodes as our children
@@ -141,11 +141,12 @@ void CalculateBoneToWorldTransform(class cBone* bone)
 }
 
 // Recursively updates the internal node transformations from the given matrix array
-void UpdateTransforms(cBone* pNode) 
+// ** calls updateTransforms on each bone in skeleton **
+void UpdateTransforms(cBone* bone) 
 {
-	CalculateBoneToWorldTransform( pNode);// update global transform as well
+	CalculateBoneToWorldTransform( bone);// update global transform as well
 
-	for(int i=0; i<pNode->bcan; i++)
-		UpdateTransforms(pNode->bca[i]);
+	for(int i=0; i<bone->bcan; i++)
+		UpdateTransforms(bone->bca[i]);
 }
 
