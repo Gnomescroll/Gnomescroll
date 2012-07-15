@@ -243,7 +243,7 @@ Item* create_item(int item_type)
     return item_list->create_type(item_type);
 }
 
-Item* create_item(char* item_name)
+Item* create_item(const char* item_name)
 {
     int item_type = get_item_type(item_name);
     GS_ASSERT(item_type != NULL_ITEM_TYPE);

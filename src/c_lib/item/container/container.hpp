@@ -197,6 +197,11 @@ class ItemContainerSynthesizer: public ItemContainerInterface
 		{
 			return this->get_item(0);
 		}
+		
+		void insert_coins(ItemID item_id)
+		{
+			this->insert_item(0, item_id);
+		}
 
         bool can_insert_item(int slot, ItemID item_id)
         {
