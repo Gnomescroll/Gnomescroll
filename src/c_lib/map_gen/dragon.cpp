@@ -252,7 +252,7 @@ class L_System
                     //ix = (int)mmx;
                     //iy = (int)mmy;
                     //if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
-                    //_set(ix, iy, this->z, this->tile);
+                    //t_map::set_fast(ix, iy, this->z, this->tile);
                 //}
                 //mx += wxstep;
                 //my += wystep;
@@ -277,7 +277,7 @@ class L_System
                 //ix = (int)mx;
                 //iy = (int)my;
                 //if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
-                //_set(ix, iy, this->z, this->tile);
+                //t_map::set_fast(ix, iy, this->z, this->tile);
             //}
         //}
 
@@ -660,25 +660,25 @@ void generate_caves() {
 }
 
 bool block_is_edge(int i, int j, int k, int limit) {
-    int tile = _get(i,j,k);
+    int tile = t_map::get(i,j,k);
     int ct = 0;
 
-    if (_get(i+1, j, k) != tile) ct++;
+    if (t_map::get(i+1, j, k) != tile) ct++;
     if (ct == limit) return true;
-    if (_get(i-1, j, k) != tile) ct++;
+    if (t_map::get(i-1, j, k) != tile) ct++;
     if (ct == limit) return true;
-    if (_get(i, j+1, k) != tile) ct++;
+    if (t_map::get(i, j+1, k) != tile) ct++;
     if (ct == limit) return true;
-    if (_get(i, j-1, k) != tile) ct++;
+    if (t_map::get(i, j-1, k) != tile) ct++;
     if (ct == limit) return true;
 
-    if (_get(i+1, j+1, k) != tile) ct++;
+    if (t_map::get(i+1, j+1, k) != tile) ct++;
     if (ct == limit) return true;
-    if (_get(i+1, j-1, k) != tile) ct++;
+    if (t_map::get(i+1, j-1, k) != tile) ct++;
     if (ct == limit) return true;
-    if (_get(i-1, j-1, k) != tile) ct++;
+    if (t_map::get(i-1, j-1, k) != tile) ct++;
     if (ct == limit) return true;
-    if (_get(i-1, j+1, k) != tile) ct++;
+    if (t_map::get(i-1, j+1, k) != tile) ct++;
     if (ct == limit) return true;
     
     return false;
@@ -697,7 +697,7 @@ void segment_caves(int z, int tile, int limit) {
     
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
-            if (_get(i,j,z) != tile) continue;
+            if (t_map::get(i,j,z) != tile) continue;
             if (block_is_edge(i,j,z, limit)) {
                 loc = &blocks[index];
                 loc->x = i;
@@ -710,7 +710,7 @@ void segment_caves(int z, int tile, int limit) {
 
     for (i=0; i<index; i++) {
         loc = &blocks[i];
-        _set(loc->x, loc->y, loc->z, new_tile);
+        t_map::set_fast(loc->x, loc->y, loc->z, new_tile);
     }
 
     free(blocks);
@@ -733,14 +733,14 @@ void generate(int z)
     // convert blue_tron to solar panel (inner caves)
     for (i=0;i<width;i++) {
         for (j=0;j<height;j++) {
-            if (_get(i,j,z) == 101) _set(i,j,z, 103);
+            if (t_map::get(i,j,z) == 101) t_map::set_fast(i,j,z, 103);
         }
     }
     // convert lava (outline) to blue_tron
     for (i=0;i<width;i++) {
         for (j=0;j<height;j++) {
-            //if (_get(i,j,z) == 7) _set(i,j,z, 101);
-            if (_get(i,j,z) == 7) _set(i,j,z, 3);
+            //if (t_map::get(i,j,z) == 7) t_map::set_fast(i,j,z, 101);
+            if (t_map::get(i,j,z) == 7) t_map::set_fast(i,j,z, 3);
         }
     }
 }

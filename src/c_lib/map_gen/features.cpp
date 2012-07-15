@@ -16,16 +16,16 @@ void grass(int x, int y, int base, int dirt, int grass)
     for (i=0; i<x; i++)
     for (j=0; j<y; j++)
     {
-        k = _get_highest_solid_block(i,j);
+        k = t_map::get_highest_solid_block(i,j);
         if (k < 0) continue;
-        _set(i,j,k, grass);
+        t_map::set_fast(i,j,k, grass);
         if (k != 0) continue;
         // dirt
         d = perlin2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale, x, y, base);
         dd = (int)(fabs(d) * 100);
         dd %= (k < 3) ? k : 3;
         dd += 1;
-        for (n=1; n <= dd; n++) _set(i,j,k-n, dirt);
+        for (n=1; n <= dd; n++) t_map::set_fast(i,j,k-n, dirt);
     }
 }
 
@@ -51,7 +51,7 @@ void caves(float* noisemap, int x, int y, int z, float threshold, int base)
         n = rmf_perlin3(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, ((float)(k+1)/fz)*znoise_scale, x, y, z, base);
         c += 1;
         ttl += n;
-        if (n > cutoff) _set(i,j,k, 2);
+        if (n > cutoff) t_map::set_fast(i,j,k, 2);
     }
 
     float avg = ttl / (float)c;
@@ -64,7 +64,7 @@ void caves(float* noisemap, int x, int y, int z, float threshold, int base)
     for (k=0; k < z; k++)
     {
         n = rmf_perlin3(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, ((float)(k+1)/fz)*znoise_scale, x, y, z, base);
-        if (n > cutoff && isSolid(_get(i,j,k))) _set(i,j,k, 3);
+        if (n > cutoff && isSolid(t_map::get(i,j,k))) t_map::set_fast(i,j,k, 3);
     }
 
     // invert
@@ -72,8 +72,8 @@ void caves(float* noisemap, int x, int y, int z, float threshold, int base)
     for (j=0; j < y; j++)
     for (k=0; k < z; k++)
     {
-        if (_get(i,j,k) != 3) _set(i,j,k, 2);
-        else                   _set(i,j,k, 0);
+        if (t_map::get(i,j,k) != 3) t_map::set_fast(i,j,k, 2);
+        else                   t_map::set_fast(i,j,k, 0);
     }
 
 }
@@ -85,7 +85,7 @@ void ceiling(int x, int y, int z, int height, int tile)
     for (i=0; i<x; i++)
     for (j=0; j<y; j++)
     for (k=z; k>z-height; k--)
-        _set(i,j,k, tile);
+        t_map::set_fast(i,j,k, tile);
 }
 
 void floor(int x, int y, int z_start, int height, int tile)
@@ -94,7 +94,7 @@ void floor(int x, int y, int z_start, int height, int tile)
     for (k=z_start; k<z_start+height; k++)
     for (i=0; i<x; i++)
     for (j=0; j<y; j++)
-        _set(i,j,k, tile);
+        t_map::set_fast(i,j,k, tile);
 }
 
 // white noise floor
@@ -108,7 +108,7 @@ void rough_floor(int x, int y, int z_start, int height, int tile)
     {
         int n = randrange(1, height);
         for (int k=0; k<n; k++)
-            _set(i,j,k+z_start, tile);
+            t_map::set_fast(i,j,k+z_start, tile);
     }
 }
 
@@ -119,12 +119,12 @@ void walls(int x, int y, int z_start, int height, int tile)
     for (i=0; i<x; i+=x-1)
     for (j=0; j<y; j++)
     for (k=z_start; k<height; k++)
-        _set(i,j,k,tile);
+        t_map::set_fast(i,j,k,tile);
     
     for (j=0; j<y; j+=y-1)
     for (i=0; i<y; i++)
     for (k=z_start; k<height; k++)
-        _set(i,j,k,tile);
+        t_map::set_fast(i,j,k,tile);
 }
 
 void box(int x, int y, int z_start, int height, int tile)

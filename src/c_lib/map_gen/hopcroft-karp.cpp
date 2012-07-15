@@ -114,8 +114,8 @@ class HKPoint {
 
         int i;
         for (i=start+1; i<end; i++) {
-            if (_get(i/2,(y-1)/2,z) != tile) return false;
-            if (_get(i/2,(y+1)/2,z) != tile) return false;
+            if (t_map::get(i/2,(y-1)/2,z) != tile) return false;
+            if (t_map::get(i/2,(y+1)/2,z) != tile) return false;
         }
 
         return true;
@@ -136,8 +136,8 @@ class HKPoint {
 
         int i;
         for (i=start+1; i<end; i+=2) {
-            if (_get((x-1)/2,i/2,z) != tile) return false;
-            if (_get((x+1)/2,i/2,z) != tile) return false;
+            if (t_map::get((x-1)/2,i/2,z) != tile) return false;
+            if (t_map::get((x+1)/2,i/2,z) != tile) return false;
         }
 
         return true;
@@ -271,16 +271,16 @@ void quicksort_pts_y(HKPoint* points, int beg, int end)
 
 inline bool get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int *q2, int *q3, int *q4) {
 
-    if (_get(x,y,z) == poly_tile) return false;
+    if (t_map::get(x,y,z) == poly_tile) return false;
 
     int dx=1,dy=0;
     int dx1=0,dy1=1;
 
     int i;
     for (i=0; i<4; i++) {
-        if (_get(x+dx, y+dy, z) == poly_tile
-         && _get(x+dx1, y+dy1, z) == poly_tile
-         && _get(x+dx+dx1, y+dy+dy1, z) == poly_tile)
+        if (t_map::get(x+dx, y+dy, z) == poly_tile
+         && t_map::get(x+dx1, y+dy1, z) == poly_tile
+         && t_map::get(x+dx+dx1, y+dy+dy1, z) == poly_tile)
         {
             switch(i) {
                 case 0:

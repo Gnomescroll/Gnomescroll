@@ -41,7 +41,7 @@ namespace Dragon {
                     //for (k=z; k<z+l; k++) {
                         //if (is_inside(i,j,k)) continue;
                         //if (is_window(i,j,k)) continue;
-                        //_set(i,j,k,tile);
+                        //t_map::set_fast(i,j,k,tile);
                     //}
                 //}
             //}
@@ -97,7 +97,7 @@ namespace Dragon {
             //for (i=x; i<w+x; i++) {
                 //for (j=y; j<h+y; j++) {
                     //for (k=z; k<z+l; k++) {
-                        //_set(i,j,k,tile);
+                        //t_map::set_fast(i,j,k,tile);
                     //}
                 //}
             //}

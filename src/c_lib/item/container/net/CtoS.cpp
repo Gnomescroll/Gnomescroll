@@ -412,7 +412,7 @@ void create_container_block_CtoS::handle()
     if (t_map::get(x,y,z) != 0) return;
 
     bool collides = false;
-    _set(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, val); // set temporarily to test against
     if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
@@ -427,7 +427,7 @@ void create_container_block_CtoS::handle()
             }
         }
     }
-    _set(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z,0);  // unset
 
     if (collides) return;
 
@@ -471,7 +471,7 @@ void admin_create_container_block_CtoS::handle()
     if (t_map::get(x,y,z) != 0) return;
 
     bool collides = false;
-    _set(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, val); // set temporarily to test against
     if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
@@ -486,7 +486,7 @@ void admin_create_container_block_CtoS::handle()
             }
         }
     }
-    _set(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z,0);  // unset
 
     if (collides) return;
 

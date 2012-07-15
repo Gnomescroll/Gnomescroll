@@ -180,7 +180,7 @@ void quicksort_int(int* points, int beg, int end)
                     //iy = (int)mmy;
                     //if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
                     //for (k=this->z_min; k<this->z_max+1;k++) {
-                        //_set(ix, iy, k, this->tile);
+                        //t_map::set_fast(ix, iy, k, this->tile);
                     //}
                 //}
                 //mx += wxstep;
@@ -222,7 +222,7 @@ void quicksort_int(int* points, int beg, int end)
                     ////ix = (int)mmx;
                     ////iy = (int)mmy;
                     ////if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
-                    ////_set(ix, iy, this->z, this->tile);
+                    ////t_map::set_fast(ix, iy, this->z, this->tile);
                 ////}
                 ////mx += wxstep;
                 ////my += wystep;
@@ -247,7 +247,7 @@ void quicksort_int(int* points, int beg, int end)
                 ////ix = (int)mx;
                 ////iy = (int)my;
                 ////if (ix < 0 || ix >= this->width || iy < 0 || iy >= this->height) continue;
-                ////_set(ix, iy, this->z, this->tile);
+                ////t_map::set_fast(ix, iy, this->z, this->tile);
             ////}
         ////}
 
@@ -578,22 +578,22 @@ void quicksort_int(int* points, int beg, int end)
 
     //// check sides
     //for (j=y; j<y+height; j++) {
-        //if (_get(x,j,z) != edge_tile) {
+        //if (t_map::get(x,j,z) != edge_tile) {
             //match = false;
             //return match;
         //}
-        //if (_get(x+width,j,z) != edge_tile) {
+        //if (t_map::get(x+width,j,z) != edge_tile) {
             //match = false;
             //return match;
         //}
     //}
 
     //for (i=x; i<x+width; i++) {
-        //if (_get(i,y,z) != edge_tile) {
+        //if (t_map::get(i,y,z) != edge_tile) {
             //match = false;
             //return match;
         //}
-        //if (_get(i,y+height,z) != edge_tile) {
+        //if (t_map::get(i,y+height,z) != edge_tile) {
             //match = false;
             //return match;
         //}
@@ -697,11 +697,11 @@ void quicksort_int(int* points, int beg, int end)
 //}
 
 //bool is_corner(int x, int y, int z, int inner_tile) {
-    //if (_get(x,y,z) == inner_tile
-     //&& _get(x-1,y,z) != inner_tile
-     //&& _get(x,y-1,z) != inner_tile
-     ////&& _get(x-1,y,z) == 2
-     ////&& _get(x,y-1,z) == 2
+    //if (t_map::get(x,y,z) == inner_tile
+     //&& t_map::get(x-1,y,z) != inner_tile
+     //&& t_map::get(x,y-1,z) != inner_tile
+     ////&& t_map::get(x-1,y,z) == 2
+     ////&& t_map::get(x,y-1,z) == 2
      //) return true;
      //return false;
 //}
@@ -724,7 +724,7 @@ void quicksort_int(int* points, int beg, int end)
             ////int i,j;
             ////for (i=x1; i<=x2; i++) {
                 ////for (j=y1; j<=y2; j++) {
-                    ////_set(i,j,z, tile);
+                    ////t_map::set_fast(i,j,z, tile);
                 ////}
             ////}
         ////}
@@ -745,7 +745,7 @@ void quicksort_int(int* points, int beg, int end)
 
     //int cx=x+1,cy=y,cz=z; // current pos, start one step ahead
 
-    //if (_get(cx,cy,cz) != inner_tile) {
+    //if (t_map::get(cx,cy,cz) != inner_tile) {
         //printf("special case at %d %d %d\n", cx,cy,cz);
         //return;
         //turn90(&dx,&dy);  // special case where corner is 1 high
@@ -758,15 +758,15 @@ void quicksort_int(int* points, int beg, int end)
         //if (cx==ox && cy==oy && cz==oz) break;
         ////printf("settings %d %d %d to %d\n", cx,cy,cz, outline_tile);
         ////_set_broadcast(cx,cy,cz, outline_tile);
-        //_set(cx,cy,cz, outline_tile);
+        //t_map::set_fast(cx,cy,cz, outline_tile);
         //turn90(&dx,&dy);
         //turn90(&dx,&dy);
         //turn90(&dx,&dy);
-        //if (_get(cx+dx, cy+dy, cz) != inner_tile) turn90(&dx,&dy);
+        //if (t_map::get(cx+dx, cy+dy, cz) != inner_tile) turn90(&dx,&dy);
         //cx += dx;
         //cy += dy;
-        //if (_get(cx,cy,cz) != inner_tile) {
-            ////if (_get(cx+1, cy,cz) == outline_tile) return;
+        //if (t_map::get(cx,cy,cz) != inner_tile) {
+            ////if (t_map::get(cx+1, cy,cz) == outline_tile) return;
             //cx -= dx;
             //cy -= dy;
             //turn90(&dx,&dy);
@@ -774,7 +774,7 @@ void quicksort_int(int* points, int beg, int end)
             //cy += dy;
         //}
     //}
-    //_set(ox,oy,oz,outline_tile);
+    //t_map::set_fast(ox,oy,oz,outline_tile);
 //}
 
 //void outline_boxes(int inner_tile, int outline_tile) {
@@ -814,55 +814,55 @@ void quicksort_int(int* points, int beg, int end)
 //}
 
 //bool block_is_edge(int i, int j, int k, int limit) {
-    //int tile = _get(i,j,k);
+    //int tile = t_map::get(i,j,k);
     //int ct = 0;
 
-    //if (_get(i+1, j, k) != tile) ct++;
+    //if (t_map::get(i+1, j, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i-1, j, k) != tile) ct++;
+    //if (t_map::get(i-1, j, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i, j+1, k) != tile) ct++;
+    //if (t_map::get(i, j+1, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i, j-1, k) != tile) ct++;
+    //if (t_map::get(i, j-1, k) != tile) ct++;
     //if (ct == limit) return true;
 
-    //if (_get(i+1, j+1, k) != tile) ct++;
+    //if (t_map::get(i+1, j+1, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i+1, j-1, k) != tile) ct++;
+    //if (t_map::get(i+1, j-1, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i-1, j-1, k) != tile) ct++;
+    //if (t_map::get(i-1, j-1, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i-1, j+1, k) != tile) ct++;
+    //if (t_map::get(i-1, j+1, k) != tile) ct++;
     //if (ct == limit) return true;
     
     //return false;
 //}
 
 //bool block_is_edge_4(int i, int j, int k, int limit) {
-    //int tile = _get(i,j,k);
+    //int tile = t_map::get(i,j,k);
     //int ct = 0;
 
-    //if (_get(i+1, j, k) != tile) ct++;
+    //if (t_map::get(i+1, j, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i-1, j, k) != tile) ct++;
+    //if (t_map::get(i-1, j, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i, j+1, k) != tile) ct++;
+    //if (t_map::get(i, j+1, k) != tile) ct++;
     //if (ct == limit) return true;
-    //if (_get(i, j-1, k) != tile) ct++;
+    //if (t_map::get(i, j-1, k) != tile) ct++;
     //if (ct == limit) return true;
 
     //return false;
 //}
 
 //bool block_is_edge_2(int i, int j, int k) {
-    //int tile = _get(i,j,k);
+    //int tile = t_map::get(i,j,k);
 
-    //if (_get(i+1, j, k) != tile
-     //&& _get(i-1, j, k) != tile)
+    //if (t_map::get(i+1, j, k) != tile
+     //&& t_map::get(i-1, j, k) != tile)
      //return true;
 
-    //if (_get(i, j+1, k) != tile
-     //&& _get(i, j-1, k) != tile)
+    //if (t_map::get(i, j+1, k) != tile
+     //&& t_map::get(i, j-1, k) != tile)
      //return true;
 
     //return false;
@@ -884,7 +884,7 @@ void quicksort_int(int* points, int beg, int end)
     
     //for (i=0; i<width; i++) {
         //for (j=0; j<height; j++) {
-            //if (_get(i,j,z) != tile) continue;
+            //if (t_map::get(i,j,z) != tile) continue;
             //if (block_is_edge(i,j,z, limit)) {
                 //loc = &blocks[index];
                 //loc->x = i;
@@ -897,7 +897,7 @@ void quicksort_int(int* points, int beg, int end)
 
     //for (i=0; i<index; i++) {
         //loc = &blocks[i];
-        //_set(loc->x, loc->y, loc->z, new_tile);
+        //t_map::set_fast(loc->x, loc->y, loc->z, new_tile);
     //}
 
     //free(blocks);
@@ -915,7 +915,7 @@ void quicksort_int(int* points, int beg, int end)
     
     //for (i=0; i<width; i++) {
         //for (j=0; j<height; j++) {
-            //if (_get(i,j,z) != tile) continue;
+            //if (t_map::get(i,j,z) != tile) continue;
             //if (block_is_edge_4(i,j,z, limit)) {
                 //loc = &blocks[index];
                 //loc->x = i;
@@ -928,7 +928,7 @@ void quicksort_int(int* points, int beg, int end)
 
     //for (i=0; i<index; i++) {
         //loc = &blocks[i];
-        //_set(loc->x, loc->y, loc->z, new_tile);
+        //t_map::set_fast(loc->x, loc->y, loc->z, new_tile);
     //}
 
     //free(blocks);
@@ -946,7 +946,7 @@ void quicksort_int(int* points, int beg, int end)
     
     //for (i=0; i<width; i++) {
         //for (j=0; j<height; j++) {
-            //if (_get(i,j,z) != tile) continue;
+            //if (t_map::get(i,j,z) != tile) continue;
             //if (block_is_edge_2(i,j,z)) {
                 //loc = &blocks[index];
                 //loc->x = i;
@@ -959,7 +959,7 @@ void quicksort_int(int* points, int beg, int end)
 
     //for (i=0; i<index; i++) {
         //loc = &blocks[i];
-        //_set(loc->x, loc->y, loc->z, new_tile);
+        //t_map::set_fast(loc->x, loc->y, loc->z, new_tile);
     //}
 
     //free(blocks);
@@ -974,7 +974,7 @@ class Hole {
         int i,j;
         for (i=x; i<x+w; i++) {
             for(j=y; j<y+h; j++) {
-                _set(i,j,z,this->tile);
+                t_map::set_fast(i,j,z,this->tile);
             }
         }
     }
@@ -993,12 +993,12 @@ void save_and_remove_holes(int z, int tile) {
     int tmp_tile;
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
-            tmp_tile = _get(i,j,z);
+            tmp_tile = t_map::get(i,j,z);
             if (tmp_tile != tile) {
-                if (_get(i+1, j,z)==tile
-                 && _get(i-1, j,z)==tile
-                 && _get(i, j+1,z)==tile
-                 && _get(i, j-1,z)==tile)
+                if (t_map::get(i+1, j,z)==tile
+                 && t_map::get(i-1, j,z)==tile
+                 && t_map::get(i, j+1,z)==tile
+                 && t_map::get(i, j-1,z)==tile)
                 {
                     h[n].w = 1;
                     h[n].h = 1;
@@ -1006,7 +1006,7 @@ void save_and_remove_holes(int z, int tile) {
                     h[n].y = j;
                     h[n].tile = tmp_tile;
                     n++;
-                    _set(i,j,z,tile);
+                    t_map::set_fast(i,j,z,tile);
                 }
             }
         }
@@ -1078,7 +1078,7 @@ Point get_nearest_endpoint(Point _p, Diagonal* loose_ends, int n_ends, Point* pt
     while(1) {
         x += dx;
         y += dy;
-        if (_get((p->x + x)/2, (p->y+1)/2, z) != tile || _get((p->x + x)/2, (p->y-1)/2, z) != tile) // another vertex
+        if (t_map::get((p->x + x)/2, (p->y+1)/2, z) != tile || t_map::get((p->x + x)/2, (p->y-1)/2, z) != tile) // another vertex
         {
             q.x = p->x+x;
             if (x>0) q.x-=1;
@@ -1091,7 +1091,7 @@ Point get_nearest_endpoint(Point _p, Diagonal* loose_ends, int n_ends, Point* pt
             q.y = p->y;
             break;
         }
-        if (_get((p->x+1)/2, (p->y+y)/2, z) != tile || _get((p->x-1)/2, (p->y+y)/2, z) != tile) // another vertex
+        if (t_map::get((p->x+1)/2, (p->y+y)/2, z) != tile || t_map::get((p->x-1)/2, (p->y+y)/2, z) != tile) // another vertex
         {
             q.x = p->x;
             q.y = p->y+y;
@@ -1190,7 +1190,7 @@ class Room {
         int i,j;
         for (i=x-w; i<x; i++) {
             for (j=y; j<y+h; j++) {
-                _set(i,j,z,tile);
+                t_map::set_fast(i,j,z,tile);
             }
         }
     }
@@ -1240,35 +1240,35 @@ class Room {
 };
 
 inline bool is_topleft_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x+1,y,z) == tile) return false;
-    if (_get(x,y-1,z) == tile) return false;
-    if (_get(x+1,y-1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x+1,y,z) == tile) return false;
+    if (t_map::get(x,y-1,z) == tile) return false;
+    if (t_map::get(x+1,y-1,z) == tile) return false;
     return true;
 }
 inline bool is_topright_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x-1,y,z) == tile) return false;
-    if (_get(x,y-1,z) == tile) return false;
-    if (_get(x-1,y-1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x-1,y,z) == tile) return false;
+    if (t_map::get(x,y-1,z) == tile) return false;
+    if (t_map::get(x-1,y-1,z) == tile) return false;
     return true;
 }
 inline bool is_bottomleft_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x+1,y,z) == tile) return false;
-    if (_get(x,y+1,z) == tile) return false;
-    if (_get(x+1,y+1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x+1,y,z) == tile) return false;
+    if (t_map::get(x,y+1,z) == tile) return false;
+    if (t_map::get(x+1,y+1,z) == tile) return false;
     return true;
 }
 inline bool is_bottomright_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x-1,y,z) == tile) return false;
-    if (_get(x,y+1,z) == tile) return false;
-    if (_get(x-1,y+1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x-1,y,z) == tile) return false;
+    if (t_map::get(x,y+1,z) == tile) return false;
+    if (t_map::get(x-1,y+1,z) == tile) return false;
     return true;
 }
 inline bool is_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
     
     if(is_topleft_corner(x,y,z,tile)) return true;
     if(is_topright_corner(x,y,z,tile)) return true;
@@ -1356,7 +1356,7 @@ void find_duplicate_corners(Point* corners, int n_corners) {
             if (p->x == q->x && p->y == q->y && p->bx == q->bx && p->by == q->by) {
                 //p->print();
                 n++;
-                _set(p->bx, p->by, 13, 1);
+                t_map::set_fast(p->bx, p->by, 13, 1);
             }
         }
     }
@@ -1633,8 +1633,8 @@ void resolve_rooms(int z, int tile) {
             p = (p->x > q->x) ? p : q;
             bx = (p->x - 1)/2;
             by = (p->y - 1)/2;
-            if (_get(bx, by+1, z) == tile
-             && _get(bx+1, by+1, z) != tile)            // corner
+            if (t_map::get(bx, by+1, z) == tile
+             && t_map::get(bx+1, by+1, z) != tile)            // corner
             {
                 q = &corners[n_corners++];
                 q->bx = bx;
@@ -1648,8 +1648,8 @@ void resolve_rooms(int z, int tile) {
             p = (p->y < q->y) ? p : q;
             bx = (p->x - 1)/2;
             by = (p->y - 1)/2;
-            if (_get(bx, by+1, z) == tile
-             && _get(bx, by, z) != tile)            // corner
+            if (t_map::get(bx, by+1, z) == tile
+             && t_map::get(bx, by, z) != tile)            // corner
             {
                 q = &corners[n_corners++];
                 q->bx = bx;
@@ -1784,7 +1784,7 @@ void resolve_rooms(int z, int tile) {
                 //printf("left edge\n");
                 qq.bx = (qq.x-1)/2;
                 qq.by = (qq.y-1)/2;
-                //_set(qq.bx, qq.by, z, 1);
+                //t_map::set_fast(qq.bx, qq.by, z, 1);
                 p = &corners[n_corners++];
                 p->x = qq.x;
                 p->y = qq.y;
@@ -1845,7 +1845,7 @@ void resolve_rooms(int z, int tile) {
     // tile patterns
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
-            if (_get(i,j,z) != tile) continue;
+            if (t_map::get(i,j,z) != tile) continue;
 
             if (is_topright_corner(i,j,z,tile)) {
                 p = &corners[n_corners++];
@@ -1885,8 +1885,8 @@ void resolve_rooms(int z, int tile) {
             //      |-
             bx = (left->x - 1)/2;
             by = (left->y - 1)/2;
-            if (_get(bx+1, by, z) == tile
-             && _get(bx, by, z) != tile)
+            if (t_map::get(bx+1, by, z) == tile
+             && t_map::get(bx, by, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -1895,8 +1895,8 @@ void resolve_rooms(int z, int tile) {
                 pp->y = left->y;
             }
 
-            if (_get(bx+1, by+1, z) == tile
-             && _get(bx, by+1, z) != tile)
+            if (t_map::get(bx+1, by+1, z) == tile
+             && t_map::get(bx, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -1908,8 +1908,8 @@ void resolve_rooms(int z, int tile) {
             //      -|
             bx = (right->x - 1)/2;
             by = (right->y - 1)/2;
-            if (_get(bx, by, z) == tile
-             && _get(bx+1, by, z) != tile)
+            if (t_map::get(bx, by, z) == tile
+             && t_map::get(bx+1, by, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx;
@@ -1925,8 +1925,8 @@ void resolve_rooms(int z, int tile) {
             //      T
             bx = (top->x - 1)/2;
             by = (top->y - 1)/2;
-            if (_get(bx, by, z) == tile
-             && _get(bx, by+1, z) != tile)
+            if (t_map::get(bx, by, z) == tile
+             && t_map::get(bx, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx;
@@ -1935,8 +1935,8 @@ void resolve_rooms(int z, int tile) {
                 pp->y = top->y;
             }
             
-            if (_get(bx+1, by, z) == tile
-             && _get(bx+1, by+1, z) != tile)
+            if (t_map::get(bx+1, by, z) == tile
+             && t_map::get(bx+1, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -1948,8 +1948,8 @@ void resolve_rooms(int z, int tile) {
             //      ⟂
             bx = (bottom->x - 1)/2;
             by = (bottom->y - 1)/2;
-            if (_get(bx+1, by+1, z) == tile
-             && _get(bx+1, by, z) != tile)
+            if (t_map::get(bx+1, by+1, z) == tile
+             && t_map::get(bx+1, by, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -2364,14 +2364,14 @@ void generate() {
     //// convert blue_tron to solar panel (inner caves)
     //for (i=0;i<width;i++) {
         //for (j=0;j<height;j++) {
-            //if (_get(i,j,13) == 101) _set(i,j,13, 103);
+            //if (t_map::get(i,j,13) == 101) t_map::set_fast(i,j,13, 103);
         //}
     //}
     //// convert lava (outline) to blue_tron
     //for (i=0;i<width;i++) {
         //for (j=0;j<height;j++) {
-            ////if (_get(i,j,13) == 7) _set(i,j,13, 101);
-            //if (_get(i,j,13) == 7) _set(i,j,13, 3);
+            ////if (t_map::get(i,j,13) == 7) t_map::set_fast(i,j,13, 101);
+            //if (t_map::get(i,j,13) == 7) t_map::set_fast(i,j,13, 3);
         //}
     //}
 
@@ -2388,7 +2388,7 @@ void generate() {
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
             for (k=0; k<depth; k++) {
-                _set(i,j,k,101);
+                t_map::set_fast(i,j,k,101);
             }
         }
     }
@@ -2412,7 +2412,7 @@ void generate() {
     //for (i=10;i<20;i++) {
         //for (j=10;j<30;j++) {
             //if (i != 10 && i != 19 && j!=10 && j!=29) continue;
-            //_set(i,j,0,101);
+            //t_map::set_fast(i,j,0,101);
         //}
     //}
 

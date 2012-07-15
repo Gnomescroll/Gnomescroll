@@ -438,7 +438,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     }
 
     collision[0]=x;collision[1]=y;collision[2]=z;
-    *tile = _get(x,y,z);
+    *tile = t_map::get(x,y,z);
     *interval = (float)(i) / max_i;
     return ri4;
 }
@@ -521,7 +521,7 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
     }
 
     collision[0]=x;collision[1]=y;collision[2]=z;
-    *tile = _get(x,y,z);
+    *tile = t_map::get(x,y,z);
     *interval = (float)(i) / max_i;
     return ri4;
 }
@@ -621,7 +621,7 @@ void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
     }
 
     collision[0]=x;collision[1]=y;collision[2]=z;
-    *tile = _get(x,y,z);
+    *tile = t_map::get(x,y,z);
     *interval = (float)(i) / max_i;
 }
 #endif
@@ -721,7 +721,7 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
     }
 
     collision[0]=x;collision[1]=y;collision[2]=z;
-    *tile = _get(x,y,z);
+    *tile = t_map::get(x,y,z);
     *interval = (float)(i) / max_i;
 
     return ri4;
@@ -824,7 +824,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
         side[2] *= -1;
         collision[0]=x;collision[1]=y;collision[2]=z;
         pre_collision[0]=_x;pre_collision[1]=_y;pre_collision[2]=_z;
-        *tile = _get(x,y,z);
+        *tile = t_map::get(x,y,z);
         *distance = len * (((float)i) / ((float)max_i));
         return 1;
     } else {

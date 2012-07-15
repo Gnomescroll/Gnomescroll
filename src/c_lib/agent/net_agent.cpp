@@ -890,7 +890,7 @@ inline void agent_set_block_CtoS::handle()
 
     // check this player first, most likely to be colliding
     bool collides = false;
-    _set(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, val); // set temporarily to test against
     if (agent_collides_terrain(a))
         collides = true;
     else
@@ -906,7 +906,7 @@ inline void agent_set_block_CtoS::handle()
             }
         }
     }
-    _set(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z,0);  // unset
 
     if (collides) return;
     
@@ -946,7 +946,7 @@ inline void admin_set_block_CtoS::handle()
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 
     // check this player first, most likely to be colliding
-    _set(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, val); // set temporarily to test against
     bool collides = agent_collides_terrain(a);
     if (!collides)
     {   // check the rest of the players
@@ -961,7 +961,7 @@ inline void admin_set_block_CtoS::handle()
             }
         }
     }
-    _set(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z,0);  // unset
 
     if (collides) return;
     

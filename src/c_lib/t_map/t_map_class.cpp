@@ -549,7 +549,7 @@ namespace t_map
         else
         {
             if (z >= h) // deleting top block
-                new_h = _get_highest_solid_block(x,y,z) + 1;
+                new_h = get_highest_solid_block(x,y,z) + 1;
         }
 
         if (new_h < 0) return; // no change in height

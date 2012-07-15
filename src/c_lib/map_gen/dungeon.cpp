@@ -19,7 +19,7 @@ class Hole {
         int i,j;
         for (i=x; i<x+w; i++) {
             for(j=y; j<y+h; j++) {
-                _set(i,j,z,this->tile);
+                t_map::set_fast(i,j,z,this->tile);
             }
         }
     }
@@ -38,12 +38,12 @@ void save_and_remove_holes(int z, int tile) {
     int tmp_tile;
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
-            tmp_tile = _get(i,j,z);
+            tmp_tile = t_map::get(i,j,z);
             if (tmp_tile != tile) {
-                if (_get(i+1, j,z)==tile
-                 && _get(i-1, j,z)==tile
-                 && _get(i, j+1,z)==tile
-                 && _get(i, j-1,z)==tile)
+                if (t_map::get(i+1, j,z)==tile
+                 && t_map::get(i-1, j,z)==tile
+                 && t_map::get(i, j+1,z)==tile
+                 && t_map::get(i, j-1,z)==tile)
                 {
                     h[n].w = 1;
                     h[n].h = 1;
@@ -51,7 +51,7 @@ void save_and_remove_holes(int z, int tile) {
                     h[n].y = j;
                     h[n].tile = tmp_tile;
                     n++;
-                    _set(i,j,z,tile);
+                    t_map::set_fast(i,j,z,tile);
                 }
             }
         }
@@ -123,7 +123,7 @@ Point get_nearest_endpoint(Point _p, Diagonal* loose_ends, int n_ends, Point* pt
     while(1) {
         x += dx;
         y += dy;
-        if (_get((p->x + x)/2, (p->y+1)/2, z) != tile || _get((p->x + x)/2, (p->y-1)/2, z) != tile) // another vertex
+        if (t_map::get((p->x + x)/2, (p->y+1)/2, z) != tile || t_map::get((p->x + x)/2, (p->y-1)/2, z) != tile) // another vertex
         {
             q.x = p->x+x;
             if (x>0) q.x-=1;
@@ -136,7 +136,7 @@ Point get_nearest_endpoint(Point _p, Diagonal* loose_ends, int n_ends, Point* pt
             q.y = p->y;
             break;
         }
-        if (_get((p->x+1)/2, (p->y+y)/2, z) != tile || _get((p->x-1)/2, (p->y+y)/2, z) != tile) // another vertex
+        if (t_map::get((p->x+1)/2, (p->y+y)/2, z) != tile || t_map::get((p->x-1)/2, (p->y+y)/2, z) != tile) // another vertex
         {
             q.x = p->x;
             q.y = p->y+y;
@@ -237,7 +237,7 @@ class Room {
         for (i=x-w; i<x; i++) {
             for (j=y; j<y+h; j++) {
                 if (z>=ZMAX) printf("Room -- clique %d\n", clique);
-                _set(i,j,z,tile);
+                t_map::set_fast(i,j,z,tile);
             }
         }
     }
@@ -287,35 +287,35 @@ class Room {
 };
 
 inline bool is_topleft_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x+1,y,z) == tile) return false;
-    if (_get(x,y-1,z) == tile) return false;
-    if (_get(x+1,y-1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x+1,y,z) == tile) return false;
+    if (t_map::get(x,y-1,z) == tile) return false;
+    if (t_map::get(x+1,y-1,z) == tile) return false;
     return true;
 }
 inline bool is_topright_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x-1,y,z) == tile) return false;
-    if (_get(x,y-1,z) == tile) return false;
-    if (_get(x-1,y-1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x-1,y,z) == tile) return false;
+    if (t_map::get(x,y-1,z) == tile) return false;
+    if (t_map::get(x-1,y-1,z) == tile) return false;
     return true;
 }
 inline bool is_bottomleft_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x+1,y,z) == tile) return false;
-    if (_get(x,y+1,z) == tile) return false;
-    if (_get(x+1,y+1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x+1,y,z) == tile) return false;
+    if (t_map::get(x,y+1,z) == tile) return false;
+    if (t_map::get(x+1,y+1,z) == tile) return false;
     return true;
 }
 inline bool is_bottomright_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
-    if (_get(x-1,y,z) == tile) return false;
-    if (_get(x,y+1,z) == tile) return false;
-    if (_get(x-1,y+1,z) == tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
+    if (t_map::get(x-1,y,z) == tile) return false;
+    if (t_map::get(x,y+1,z) == tile) return false;
+    if (t_map::get(x-1,y+1,z) == tile) return false;
     return true;
 }
 inline bool is_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
+    if (t_map::get(x,y,z) != tile) return false;
     
     if(is_topleft_corner(x,y,z,tile)) return true;
     if(is_topright_corner(x,y,z,tile)) return true;
@@ -403,7 +403,7 @@ void find_duplicate_corners(Point* corners, int n_corners) {
             if (p->x == q->x && p->y == q->y && p->bx == q->bx && p->by == q->by) {
                 //p->print();
                 n++;
-                _set(p->bx, p->by, 13, 1);
+                t_map::set_fast(p->bx, p->by, 13, 1);
             }
         }
     }
@@ -677,8 +677,8 @@ void resolve_rooms(int z, int tile) {
             p = (p->x > q->x) ? p : q;
             bx = (p->x - 1)/2;
             by = (p->y - 1)/2;
-            if (_get(bx, by+1, z) == tile
-             && _get(bx+1, by+1, z) != tile)            // corner
+            if (t_map::get(bx, by+1, z) == tile
+             && t_map::get(bx+1, by+1, z) != tile)            // corner
             {
                 q = &corners[n_corners++];
                 q->bx = bx;
@@ -692,8 +692,8 @@ void resolve_rooms(int z, int tile) {
             p = (p->y < q->y) ? p : q;
             bx = (p->x - 1)/2;
             by = (p->y - 1)/2;
-            if (_get(bx, by+1, z) == tile
-             && _get(bx, by, z) != tile)            // corner
+            if (t_map::get(bx, by+1, z) == tile
+             && t_map::get(bx, by, z) != tile)            // corner
             {
                 q = &corners[n_corners++];
                 q->bx = bx;
@@ -828,7 +828,7 @@ void resolve_rooms(int z, int tile) {
                 //printf("left edge\n");
                 qq.bx = (qq.x-1)/2;
                 qq.by = (qq.y-1)/2;
-                //_set(qq.bx, qq.by, z, 1);
+                //t_map::set_fast(qq.bx, qq.by, z, 1);
                 p = &corners[n_corners++];
                 p->x = qq.x;
                 p->y = qq.y;
@@ -889,7 +889,7 @@ void resolve_rooms(int z, int tile) {
     // tile patterns
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
-            if (_get(i,j,z) != tile) continue;
+            if (t_map::get(i,j,z) != tile) continue;
 
             if (is_topright_corner(i,j,z,tile)) {
                 p = &corners[n_corners++];
@@ -929,8 +929,8 @@ void resolve_rooms(int z, int tile) {
             //      |-
             bx = (left->x - 1)/2;
             by = (left->y - 1)/2;
-            if (_get(bx+1, by, z) == tile
-             && _get(bx, by, z) != tile)
+            if (t_map::get(bx+1, by, z) == tile
+             && t_map::get(bx, by, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -939,8 +939,8 @@ void resolve_rooms(int z, int tile) {
                 pp->y = left->y;
             }
 
-            if (_get(bx+1, by+1, z) == tile
-             && _get(bx, by+1, z) != tile)
+            if (t_map::get(bx+1, by+1, z) == tile
+             && t_map::get(bx, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -952,8 +952,8 @@ void resolve_rooms(int z, int tile) {
             //      -|
             bx = (right->x - 1)/2;
             by = (right->y - 1)/2;
-            if (_get(bx, by, z) == tile
-             && _get(bx+1, by, z) != tile)
+            if (t_map::get(bx, by, z) == tile
+             && t_map::get(bx+1, by, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx;
@@ -969,8 +969,8 @@ void resolve_rooms(int z, int tile) {
             //      T
             bx = (top->x - 1)/2;
             by = (top->y - 1)/2;
-            if (_get(bx, by, z) == tile
-             && _get(bx, by+1, z) != tile)
+            if (t_map::get(bx, by, z) == tile
+             && t_map::get(bx, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx;
@@ -979,8 +979,8 @@ void resolve_rooms(int z, int tile) {
                 pp->y = top->y;
             }
             
-            if (_get(bx+1, by, z) == tile
-             && _get(bx+1, by+1, z) != tile)
+            if (t_map::get(bx+1, by, z) == tile
+             && t_map::get(bx+1, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -992,8 +992,8 @@ void resolve_rooms(int z, int tile) {
             //      ⟂
             bx = (bottom->x - 1)/2;
             by = (bottom->y - 1)/2;
-            if (_get(bx+1, by+1, z) == tile
-             && _get(bx+1, by, z) != tile)
+            if (t_map::get(bx+1, by+1, z) == tile
+             && t_map::get(bx+1, by, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -1533,7 +1533,7 @@ void generate_dungeon(int z, int tile)
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
             for (k=0; k<depth; k++) {
-                _set(i,j,k,101);
+                t_map::set_fast(i,j,k,101);
             }
         }
     }
@@ -1603,12 +1603,12 @@ cx = lowest.center_fx();
 cy = lowest.center_fy();
 while(i >= 0) {
     i--;
-    if (_get(cx, cy, i) == 0) break;
+    if (t_map::get(cx, cy, i) == 0) break;
 }
 if (i >= 0) {
     end = i;
     for (i=lowest.z; i>end; i--) {
-        _set(cx, cy, i, 0);
+        t_map::set_fast(cx, cy, i, 0);
     }
 } else {
     //printf("FAILED\n");
@@ -1619,12 +1619,12 @@ if (i >= 0) {
     cy = highest2.center_fy();
     while(i < ZMAX) {
         i++;
-        if (_get(cx,cy, i) == 0) break;
+        if (t_map::get(cx,cy, i) == 0) break;
     }
     if (i < ZMAX) {
         end = i;
         for (i=highest2.z+highest.d; i<end; i++) {
-            _set(cx,cy, i, 0);
+            t_map::set_fast(cx,cy, i, 0);
         }
     }
     //else printf("FAILED2\n");
@@ -1638,7 +1638,7 @@ if (i >= 0) {
     if (si >= 0 && si < XMAX && sj >= 0 && sj < YMAX) {
         for (i=127; i>=highest_room_z-1; i--) {
             //printf("%d\n", i);
-            _set(si,sj,i,0);
+            t_map::set_fast(si,sj,i,0);
         }
     }
 

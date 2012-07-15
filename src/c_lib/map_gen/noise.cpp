@@ -83,7 +83,7 @@ void set_terrain_density(float* noisemap, int x, int y, int z, float threshold, 
     for (int j=0; j<y; j++)
     for (int k=0; k<z; k++)
         if (noisemap[i + x*j + x*y*k] > cutoff)
-            _set(i,j,k, tile);
+            t_map::set_fast(i,j,k, tile);
 }
 
 void set_terrain_height(float* noisemap, int x, int y, int z, int baseline, int maxheight, int tile)
@@ -135,7 +135,7 @@ void set_terrain_height(float* noisemap, int x, int y, int z, int baseline, int 
         h = (h <= -maxheight) ? -maxheight : h;
         for (int k=0; k<baseline+h; k++)
         //for (int k=0; k<h; k++)
-            _set(i,j,k, tile);
+            t_map::set_fast(i,j,k, tile);
     }
     free(heights);
 }
@@ -187,7 +187,7 @@ void reverse_heightmap(float* noisemap, int x, int y, int z, int baseline, int m
         h = (h >= maxheight) ? maxheight : h;
         h = (h <= -maxheight) ? -maxheight : h;
         for (int k=0;k<h;k++)
-            _set(i,j,baseline-k, tile);
+            t_map::set_fast(i,j,baseline-k, tile);
     }
 }
 
@@ -237,14 +237,14 @@ void set_terrain_height_over_tile(float* noisemap, int x, int y, int z, int base
     for (int i=0; i<x; i++)       // use heights, adjusted to be positive
     for (int j=0; j<y; j++)
     {
-        if (_get(i,j,_get_highest_solid_block(i,j)) != heightmap_tile) continue;
+        if (t_map::get(i,j, t_map::get_highest_solid_block(i,j)) != heightmap_tile) continue;
         float fh = noisemap[i + x*j];
         fh -= minh;
         int h = fh * scale;
         h = (h >= maxheight) ? maxheight : h;
         h = (h <= -maxheight) ? -maxheight : h;
         for (int k=0; k<baseline+h; k++)
-            _set(i,j,k, tile);
+            t_map::set_fast(i,j,k, tile);
     }
 }
 
@@ -284,14 +284,14 @@ void reverse_heightmap_over_tile(float* noisemap, int x, int y, int z, int basel
     for (int i=0; i<x; i++)
     for (int j=0; j<y; j++)
     {
-        if (_get(i,j,_get_highest_solid_block(i,j)) != heightmap_tile) continue;
+        if (t_map::get(i,j, t_map::get_highest_solid_block(i,j)) != heightmap_tile) continue;
         float fh = noisemap[i + x*j];
         fh -= minh;
         int h = fh * scale;
         h = (h > maxheight) ? maxheight : h;
         h = (h < minheight) ? minheight : h;
         for (int k=0;k<h;k++)
-            _set(i,j,baseline-k, tile);
+            t_map::set_fast(i,j,baseline-k, tile);
     }
 }
 
@@ -306,10 +306,10 @@ void invert_map(int x, int y, int z, int tile)
     for (int j=0; j < y; j++)
     for (int k=0; k < z; k++)
     {
-        if (isSolid(_get(i,j,k)))
-            _set(i,j,k, 0);
+        if (isSolid(t_map::get(i,j,k)))
+            t_map::set_fast(i,j,k, 0);
         else
-            _set(i,j,k, tile);
+            t_map::set_fast(i,j,k, tile);
     }
 }
 

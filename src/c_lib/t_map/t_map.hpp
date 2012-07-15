@@ -47,6 +47,7 @@ class Terrain_map* get_map();
 
 int get(int x, int y, int z);
 void set(int x, int y, int z, int value);
+inline void set_fast(int x, int y, int z, int value) __attribute__((always_inline));
 void set_palette(int x, int y, int z, int value);
 
 int apply_damage(int x, int y, int z, int dmg);
@@ -67,31 +68,3 @@ inline int get_highest_solid_block(int x, int y, int z);
 inline int get_lowest_solid_block(int x, int y);
 
 }   // t_map
-
-int _get(int x, int y, int z);
-void _set(int x, int y, int z, int value);
-
-#if DC_SERVER
-
-void send_map_metadata(int client_id);  //Deprecate
-#endif
-void set_map_size(int x, int y, int z); //Deprecate
-
-
-
-/*
-    Move this somewhere
-*/
-int _get_highest_open_block(int x, int y, int agent_height);
-int _get_highest_open_block(int x, int y);
-int _get_lowest_open_block(int x, int y, int n);
-int _get_highest_solid_block(int x, int y, int z=t_map::MAP_HEIGHT);
-int _get_lowest_solid_block(int x, int y);
-bool point_in_map(int x, int y, int z);
-
-
-int get_height_at(int x, int y);
-#if DC_CLIENT
-unsigned char get_cached_height(int x, int y);
-#endif
-

@@ -54,6 +54,11 @@ void set(int x, int y, int z, int value)
     main_map->set_block(x,y,z,value);
 }
 
+inline void set_fast(int x, int y, int z, int value)
+{
+	main_map->set_block(x,y,z,value);
+}
+
 struct MAP_ELEMENT get_element(int x, int y, int z)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
@@ -193,7 +198,7 @@ inline int get_highest_open_block(int x, int y, int n)
 
     for (i=ZMAX-1; i>=0; i--)
     {
-        block = _get(x,y,i);
+        block = get(x,y,i);
         if (!isSolid(block))
             open++;
         else
@@ -240,7 +245,7 @@ inline int get_lowest_open_block(int x, int y, int n)
     int open=0;
     for (i=0; i<ZMAX; i++)
     {
-        block = _get(x,y,i);
+        block = get(x,y,i);
         if (isSolid(block)) open = 0;
         else open++;
         if (open >= n) return i-open+1;
@@ -259,69 +264,3 @@ inline int get_lowest_solid_block(int x, int y)
 }
 
 }   // t_map
- 
-
-int _get(int x, int y, int z)
-{
-    x &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= t_map::TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    if((z & t_map::TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
-    class t_map::MAP_CHUNK* c = t_map::main_map->chunk[ t_map::MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    if(c == NULL) return 0;
-    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
-}
-
-void _set(int x, int y, int z, int value)
-{
-    t_map::main_map->set_block(x,y,z,value);
-}
-
-int get_height_at(int x, int y)
-{
-    for (int i=map_dim.z-1; i>=0; i--)
-        if (isSolid(x,y,i))
-            return i;
-    return 0;
-}
-
-#if DC_CLIENT
-unsigned char get_cached_height(int x, int y)
-{
-    GS_ASSERT(t_map::main_map != NULL);
-    return t_map::main_map->get_cached_height(x,y);
-}
-#endif
-
-int _get_highest_open_block(int x, int y, int n)
-{
-    return t_map::get_highest_open_block(x,y,n);
-}
-
-int _get_highest_open_block(int x, int y) 
-{
-    return t_map::get_highest_open_block(x,y,1);
-}
-
-int _get_highest_solid_block(int x, int y, int z)
-{
-    return t_map::get_highest_solid_block(x,y,z);
-}
-
-int _get_lowest_open_block(int x, int y, int n)
-{
-    return t_map::get_lowest_open_block(x,y,n);
-}
-
-int _get_lowest_solid_block(int x, int y)
-{
-    return t_map::get_lowest_solid_block(x,y);
-}
-
-inline bool point_in_map(int x, int y, int z)
-{
-    if (x<0 || x>=map_dim.x || y<0 || y>=map_dim.y || z<0 || z>map_dim.z)
-        return false;
-    return true;
-}
-
