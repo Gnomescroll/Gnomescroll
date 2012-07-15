@@ -10,5 +10,5 @@
 //#include <Awesomium/WebCore.h>
 
 
-#include <SDL/awesonium/_interface.cpp>
-#include <SDL/awesonium/viewport_class.hpp>
+#include <SDL/awesomium/_interface.cpp>
+#include <SDL/awesomium/viewport_class.hpp>

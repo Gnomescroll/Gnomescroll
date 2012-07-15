@@ -103,7 +103,7 @@ dont_include_this_file_in_server
 #endif
 
 #ifdef AWESOMIUM
-    #include <SDL/awesonium/_include.hpp>
+    #include <SDL/awesomium/_include.hpp>
 #endif
 
 /* Draw lists */
