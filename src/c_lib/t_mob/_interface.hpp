@@ -22,7 +22,7 @@ class cBone
 	Mat4 global_transform;
 	Mat4 original_local_transform;
 
-	//mat4 Offset, LocalTransform, GlobalTransform, OriginalLocalTransform;
+	//mat4 Offset, local_transform, global_transform, Originallocal_transform;
 	cBone* parent;
 
 	cBone* bca; //bone child array
@@ -50,7 +50,7 @@ class cBone
 };
 
 
-void Mat4_transpose(struct Mat4 m1)
+struct Mat4 Mat4_transpose(struct Mat4 m1)
 {
 	struct Mat4 m2;
 
@@ -58,7 +58,7 @@ void Mat4_transpose(struct Mat4 m1)
 	{
 		for(int j=0; j<4; j++)
 		{
-			m2[i][j] = m1[j][i];
+			m2.f[i][j] = m1.f[j][i];
 		}
 	}
 	return m2;
@@ -66,33 +66,36 @@ void Mat4_transpose(struct Mat4 m1)
 // there is some type of alignment issue with my mat4 and the aimatrix4x4 class, so the copy must be manually
 void ConvertMatrix(struct Mat4& out, const aiMatrix4x4& in)
 {
-	out[0][0] = in.a1;
-	out[0][1] = in.a2;
-	out[0][2] = in.a3;
-	out[0][3] = in.a4;
+	out.f[0][0] = in.a1;
+	out.f[0][1] = in.a2;
+	out.f[0][2] = in.a3;
+	out.f[0][3] = in.a4;
 
-	out[1][0] = in.b1;
-	out[1][1] = in.b2;
-	out[1][2] = in.b3;
-	out[1][3] = in.b4;
+	out.f[1][0] = in.b1;
+	out.f[1][1] = in.b2;
+	out.f[1][2] = in.b3;
+	out.f[1][3] = in.b4;
 
-	out[2][0] = in.c1;
-	out[2][1] = in.c2;
-	out[2][2] = in.c3;
-	out[2][3] = in.c4;
+	out.f[2][0] = in.c1;
+	out.f[2][1] = in.c2;
+	out.f[2][2] = in.c3;
+	out.f[2][3] = in.c4;
 
-	out[3][0] = in.d1;
-	out[3][1] = in.d2;
-	out[3][2] = in.d3;
-	out[3][3] = in.d4;
+	out.f[3][0] = in.d1;
+	out.f[3][1] = in.d2;
+	out.f[3][2] = in.d3;
+	out.f[3][3] = in.d4;
 }
+
+void CalculateBoneToWorldTransform(class cBone* bone);
+void UpdateTransforms(cBone* bone);
 
 class MeshAnimation
 {
 	public:
 // ------------------------------------------------------------------------------------------------
 // Recursively creates an internal node structure matching the current scene and animation.
-	class cBone* CreateBoneTree(class cBone* bone, aiNode* pNode, cBone* pParent)
+	void CreateBoneTree(class cBone* bone, aiNode* pNode, cBone* pParent)
 	{
 		bone->name = pNode->mName.data;// get the name of the bone
 		bone->parent = pParent; //set the parent, in the case this is the root node, it will be null
@@ -102,10 +105,10 @@ class MeshAnimation
 		//set bone name lookup
 
 
-		ConvertMatrix(bone->LocalTransform, pNode->mTransformation);
-		bone->LocalTransform = Mat4_transpose(bone->LocalTransform);	//combine conversion and transpose?
+		ConvertMatrix(bone->local_transform, pNode->mTransformation);
+		bone->local_transform = Mat4_transpose(bone->local_transform);	//combine conversion and transpose?
 
-		bone->OriginalLocalTransform = bone->LocalTransform;// a copy saved
+		bone->original_local_transform = bone->local_transform;// a copy saved
 
 		CalculateBoneToWorldTransform(bone);
 
@@ -114,9 +117,9 @@ class MeshAnimation
 
 		bone->set_children(pNode->mNumChildren);
 
-		for(int i=0; ii < pNode->mNumChildren; i++)
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
 		{
-			CreateBoneTree( &bone->bca[i], pNode->mChildren[a], bone);
+			CreateBoneTree( &bone->bca[i], pNode->mChildren[i], bone);
 		}
 	}
 
@@ -135,7 +138,7 @@ void CalculateBoneToWorldTransform(class cBone* bone)
 	// this will climb the nodes up along through the parents concentating all the matrices to get the Object to World transform, or in this case, the Bone To World transform
 	while( parent )
 	{
-		bone->GlobalTransform = mat4_mult(bone->GlobalTransform, parent->LocalTransform);
+		bone->global_transform = mat4_mult(bone->global_transform, parent->local_transform);
 		parent = parent->parent; // get the parent of the bone we are working on 
 	}
 }
@@ -144,9 +147,76 @@ void CalculateBoneToWorldTransform(class cBone* bone)
 // ** calls updateTransforms on each bone in skeleton **
 void UpdateTransforms(cBone* bone) 
 {
-	CalculateBoneToWorldTransform( bone);// update global transform as well
+	CalculateBoneToWorldTransform(bone);// update global transform as well
 
 	for(int i=0; i<bone->bcan; i++)
-		UpdateTransforms(bone->bca[i]);
+		UpdateTransforms(&bone->bca[i]);
 }
 
+
+/*
+void SceneAnimator::Init(const aiScene* pScene)
+{// this will build the skeleton based on the scene passed to it and CLEAR EVERYTHING
+	if(!pScene->HasAnimations()) 
+	{
+		printf("Error: no animation \n");
+		return;
+	}
+	
+	Skeleton = CreateBoneTree( pScene->mRootNode, NULL);
+	ExtractAnimations(pScene);
+	
+	for (unsigned int i = 0; i < pScene->mNumMeshes;++i)
+	{
+		const aiMesh* mesh = pScene->mMeshes[i];
+		
+		for (unsigned int n = 0; n < mesh->mNumBones;++n)
+		{
+			const aiBone* bone = mesh->mBones[n];
+			std::map<std::string, cBone*>::iterator found = BonesByName.find(bone->mName.data);
+			if(found != BonesByName.end())
+			{// FOUND IT!!! woohoo, make sure its not already in the bone list
+				bool skip = false;
+				for(size_t j(0); j< Bones.size(); j++)
+				{
+					std::string bname = bone->mName.data;
+					if(Bones[j]->Name == bname)
+					{
+						skip = true;// already inserted, skip this so as not to insert the same bone multiple times
+						break;
+					}
+				}
+				if(!skip)
+				{// only insert the bone if it has not already been inserted
+					std::string tes = found->second->Name;
+					TransformMatrix(found->second->Offset, bone->mOffsetMatrix);
+					found->second->Offset.Transpose();// transpoce their matrix to get in the correct format
+					Bones.push_back(found->second);
+					BonesToIndex[found->first] = Bones.size()-1;
+				}
+			} 
+		}
+	}
+	Transforms.resize( Bones.size());
+	float timestep = 1.0f/30.0f;// 30 per second
+	for(size_t i(0); i< Animations.size(); i++)
+	{// pre calculate the animations
+		SetAnimIndex(i);
+		float dt = 0;
+		for(float ticks = 0; ticks < Animations[i].Duration; ticks += Animations[i].TicksPerSecond/30.0f)
+		{
+			dt +=timestep;
+			Calculate(dt);
+			Animations[i].Transforms.push_back(std::vector<mat4>());
+			std::vector<mat4>& trans = Animations[i].Transforms.back();
+			for( size_t a = 0; a < Transforms.size(); ++a)
+			{
+				mat4 rotationmat =  Bones[a]->Offset * Bones[a]->global_transform;
+				trans.push_back(rotationmat);
+			}
+		}
+	}
+	//OUTPUT_DEBUG_MSG("Finished loading animations with "<<Bones.size()<<" bones");
+}
+
+*/
