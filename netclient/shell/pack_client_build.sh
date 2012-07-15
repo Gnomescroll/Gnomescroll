@@ -9,7 +9,7 @@ cp run $f/gnomescroll
 cp *.pyc $f/
 cp -R media $f/
 mkdir $f/settings
-cp ./settings/settings.lua $f/settings/settings.lua
+cp ./settings/production.lua $f/settings/settings.lua
 cp ./settings/lua_library.lua $f/settings/lua_library.lua
 mkdir $f/screenshot
 mkdir $f/lib

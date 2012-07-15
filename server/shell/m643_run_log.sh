@@ -1,1 +1,1 @@
-./gnomescroll_server ./settings/settings_server_production.lua 2>&1 | tee $1
+./gnomescroll_server ./settings/production.lua 2>&1 | tee $1

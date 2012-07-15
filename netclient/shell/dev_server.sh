@@ -1,1 +1,1 @@
-./run lua/settings_dev.lua
+./run lua/remote_dev.lua

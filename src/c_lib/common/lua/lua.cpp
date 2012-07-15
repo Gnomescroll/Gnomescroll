@@ -114,11 +114,11 @@ lua_State* LUA_options_table = NULL;
     #if PRODUCTION
         const char* default_options_file = "./settings/settings.lua";
     #else
-        const char* default_options_file = "./settings/settings_dev.lua";
+        const char* default_options_file = "./settings/dev.lua";
     #endif
 #endif
 #if DC_SERVER
-const char* default_options_file = "./settings/settings_server.lua";
+const char* default_options_file = "./settings/localhost.lua";
 #endif
 
 char* options_file = NULL;
