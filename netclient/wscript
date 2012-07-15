@@ -235,6 +235,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
                    mandatory=True)
 
 
+    #awesomium
     if OS == 'Windows':
         pass
     elif OS == 'Linux':
@@ -243,17 +244,20 @@ def configure(conf, add_flags=[], rm_flags=[]):
             lib=['awesomium-1.6.5'], 
             libpath= awesomium_lib_path,
             uselib_store='AWESOMIUM') 
+    elif OS == 'Darwin':
+        pass
 
-        '''
-        conf.check(header_name='Awesomium/awesomium_capi.h',
-                   lib= 'libawesomium-1.6.5',
-                   use= 'libawesomium-1.6.5',
-                   libpath= ['../libraries/lin32/lib'],
-                   includes= ['/home/atomos/dc_mmo/libraries/lin32/awesomium/include'],
-                   uselib_store= 'AWESOMIUM',
-                   fragment='#include <Awesomium/awesomium_capi.h>' + MAIN_TEST_CODE,
-                   mandatory=True)
-        '''
+    #assimp
+    if OS == 'Windows':
+        pass
+    elif OS == 'Linux':
+        assimp_lib_path = [os.path.abspath('../libraries/lin32/assimp/lib') ]
+        assimp_include_path = [os.path.abspath('../libraries/lin32/assimp/include') ]
+        conf.check(
+            lib=['assimp'], 
+            libpath= assimp_lib_path,
+            includes = assimp_include_path,
+            uselib_store='ASSIMP') 
     elif OS == 'Darwin':
         pass
 
