@@ -120,8 +120,7 @@ namespace Awesomium
 
     void teardown()
     {
-
-
+        awe_webcore_shutdown();
     }
 
     void update()
