@@ -23,11 +23,20 @@ namespace Awesomium
 
     void _init()
     {
-        cv = new chrome_viewport;
+        printf("init webviwe \n");
+        cv = new chrome_viewport;;
     }
 
     void _draw()
     {
+
+        static int init = 0;
+        if(init == 0)
+        {
+            init =1;
+            _init();
+        }
+        
         cv->update_webview();
         cv->draw_webview();
     }
@@ -129,7 +138,6 @@ namespace Awesomium
         awe_string_destroy(package_path);
         awe_string_destroy(locale_path);
 
-        _init();
     }
 
     void teardown()

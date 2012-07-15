@@ -62,12 +62,16 @@ class chrome_viewport
 		~chrome_viewport()
 		{
 			awe_webview_destroy(webView);
+            //free textures etc..
 		}
 
 		void init_webview()
 		{
 			webView = awe_webcore_create_webview(width, height, false);
 		    //default loading
+
+            if(webView == NULL)
+                printf("ERROR: webView is null!\n");
 		    awe_webview_set_transparent(webView, 1); ///preserve transpanency of window
 		    //Sets whether or not pages should be rendered with transparency preserved.
 		    //(ex, for pages with style="background-color:transparent")

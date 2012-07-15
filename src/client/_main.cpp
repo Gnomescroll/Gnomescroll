@@ -296,12 +296,7 @@ int run()
         Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
 
-
-        #ifdef AWESOMIUM
-            Awesomium::_draw();
-        #endif
     
-
         if (Options::hud)
         {
             // switch to hud  projection
@@ -312,6 +307,10 @@ int run()
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
             t_hud::draw_hud();
+
+            #ifdef AWESOMIUM
+                Awesomium::_draw();
+            #endif
         }
         
         poll_mouse();
