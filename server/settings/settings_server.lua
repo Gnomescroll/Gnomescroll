@@ -1,5 +1,3 @@
-
-
 package.path = "settings/?.lua;?.lua"
 
 require("lua_library");
@@ -31,7 +29,7 @@ options.seed = 80075112
 
 -- logger --
 options.logger = true
-options.log_chat = true
+--options.log_chat = false
 
 ffi = require("ffi")
 ffi.cdef[[

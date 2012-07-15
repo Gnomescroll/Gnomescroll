@@ -50,7 +50,7 @@ void load_map_drop_dat()
 
     def_drop("methane_ice");
         add_drop("methane_ice", 4);
-        set_drop(0.50f, 1);
+        set_drop(0.40f, 1);
         set_drop(0.30f, 2);
         set_drop(0.15f, 3);
         set_drop(0.05f, 4);
