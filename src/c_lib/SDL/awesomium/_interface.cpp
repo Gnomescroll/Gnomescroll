@@ -58,6 +58,8 @@ namespace Awesomium
 
     void init()
     {
+
+        printf("Awesomium::init\n");
         //awe_webcore_initialize_default();
 /*
     awe_webcore_initialize  (   bool    enable_plugins,
