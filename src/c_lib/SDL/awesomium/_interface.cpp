@@ -148,6 +148,7 @@ namespace Awesomium
 
         awe_string_destroy(package_path);
         awe_string_destroy(locale_path);
+        awe_string_destroy(log_path);
 
     }
 
