@@ -1,6 +1,14 @@
 
 #include "_interface.hpp"
 
+
+namespace Awesonium
+{
+
+    void init();
+    void teardown();
+
+    
 //#include <Awesomium/awesomium_capi.h>
 
 // A helper macro, used in 'getWebKeyFromSDLKey'
@@ -143,4 +151,7 @@ int getWebKeyFromSDLKey(SDLKey key)
     mapKey(SYSREQ, EXECUTE)
     default: return Awesomium::KeyCodes::AK_UNKNOWN;
     }
+}
+
+
 }
