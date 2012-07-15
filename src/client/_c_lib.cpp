@@ -96,9 +96,12 @@ dont_include_this_file_in_server
 
 /* Awesonium */
 
+
 #ifndef __WIN32__
-    #ifdef __GNUC__
-        #define AWESOMIUM
+    #ifndef __APPLE__
+        #ifdef __GNUC__
+            #define AWESOMIUM
+        #endif
     #endif
 #endif
 
