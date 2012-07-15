@@ -31,8 +31,7 @@ const int MONSTER_BOMB_MAX_TARGET_LOCK_TICKS = 30 * 10; // will lose target afte
 
 // motion
 const float MONSTER_BOMB_SPEED = 0.25f;
-const int MONSTER_BOMB_MOTION_MAX_Z_DOWN = 5;
-const int MONSTER_BOMB_MOTION_MAX_Z_UP = 5;
+const int MONSTER_BOMB_MOTION_MAX_Z_DIFF = 5;
 
 // animations
 const struct Color MONSTER_BOMB_ANIMATION_COLOR = { 31,223,223 };
@@ -78,12 +77,11 @@ const int MONSTER_BOX_ANIMATION_COUNT = 5*5*5;
 const float MONSTER_BOX_ANIMATION_SIZE = 0.2f;
 const float MONSTER_BOX_ANIMATION_FORCE = 20.0f;
 
-// motion??
+// motion
 const float MONSTER_BOX_MOTION_SIGHT_RANGE = 50.0f;
 const float MONSTER_BOX_SPEED = 0.2f;
 const int MONSTER_BOX_WALK_RANGE = 30;
-const int MONSTER_BOX_MOTION_MAX_Z_DOWN = 3;
-const int MONSTER_BOX_MOTION_MAX_Z_UP = 3;
+const int MONSTER_BOX_MOTION_MAX_Z_DIFF = 3;
 
 // state broadcast rate
 const int MONSTER_BOX_BROADCAST_RATE = 30; // once every 30 ticks

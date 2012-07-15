@@ -114,8 +114,8 @@ bool MotionTargetingComponent::move_on_surface()
     Vec3 new_momentum;
     Vec3 motion_direction = vec3_init(this->target_direction.x, this->target_direction.y, 0);
     bool moved = move_along_terrain_surface(
-        physics->get_position(), motion_direction, this->speed,
-        this->max_z_down, this->max_z_up,
+        physics->get_position(), motion_direction,
+        this->speed, this->max_z_diff,
         &new_position, &new_momentum
     );
     physics->set_position(new_position);

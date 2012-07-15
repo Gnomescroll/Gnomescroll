@@ -1,5 +1,6 @@
 #include "motion.hpp"
 
+#include <math.h>
 #include <t_map/t_map.hpp>
 
 int stick_to_terrain_surface(Vec3 position)
@@ -65,7 +66,7 @@ void orient_to_point(Vec3 dest, Vec3 origin, float* theta, float* phi)
  * returns false if position was left unchanged
  */
 #define FLOAT_ERROR_MARGIN 0.005f
-bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, float max_z_down, float max_z_up, Vec3* new_position, Vec3* new_momentum)
+bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, float max_z_diff, Vec3* new_position, Vec3* new_momentum)
 {
     // attempt to move to location defined by direction * speed
     // if z_level diff too high, set momentum 0, copy position, return
@@ -78,14 +79,14 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
-
-    float z_diff = ((float)z) - position.z;
-    if (z_diff > max_z_up || z_diff < -max_z_down)
-    {   // cant move
-        *new_position = position;
-        *new_momentum = vec3_init(0,0,0);
-        return false;
-    }
+	
+    float z_diff = position.z - ((float)z);
+    if (fabsf(z_diff) > max_z_diff)
+	{   // cant move
+		*new_position = position;
+		*new_momentum = vec3_init(0,0,0);
+		return false;
+	}
 
     move_to.z = z;
     Vec3 new_direction = vec3_sub(move_to, position);
@@ -96,7 +97,12 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
 		len = 0.0f;
 	}
     else normalize_vector(&new_direction);
-    GS_ASSERT(len < 512.0f);
+    GS_ASSERT(len < 512.0f*512.0f);
+    if (len >= 512.0f*512.0f)
+    {
+		printf("move_to: "); vec3_print(move_to);
+		printf("len: %f\n", len);
+	}
 
     *new_momentum = vec3_scalar_mult(new_direction, speed);
     position = vec3_add(position, *new_momentum);

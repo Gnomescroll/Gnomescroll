@@ -67,4 +67,6 @@ inline int get_highest_solid_block(int x, int y);
 inline int get_highest_solid_block(int x, int y, int z);
 inline int get_lowest_solid_block(int x, int y);
 
+inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
+
 }   // t_map

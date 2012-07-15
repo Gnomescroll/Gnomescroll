@@ -73,8 +73,7 @@ static void set_mob_bomb_properties(Object* object)
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
     motion->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
     motion->speed = MONSTER_BOMB_SPEED;
-    motion->max_z_down = MONSTER_BOMB_MOTION_MAX_Z_DOWN;
-    motion->max_z_up = MONSTER_BOMB_MOTION_MAX_Z_UP;
+    motion->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
     motion->max_lock_ticks = MONSTER_BOMB_MAX_TARGET_LOCK_TICKS;
 
     #if DC_SERVER

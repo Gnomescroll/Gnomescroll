@@ -473,7 +473,10 @@ namespace t_map
     void Terrain_map::reset_heights_read()
     {   // call when heights are done being read
         this->height_changed = false;
-        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; chunk_heights_status[i++] = CHUNK_HEIGHT_UNCHANGED);
+        // only toggle CHANGED chunks, we dont want to switch UNSET->UNCHANGED
+        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; i++)
+			if (chunk_heights_status[i] == CHUNK_HEIGHT_CHANGED)
+				chunk_heights_status[i] = CHUNK_HEIGHT_UNCHANGED;
     }
     
     void Terrain_map::chunk_received(int cx, int cy)

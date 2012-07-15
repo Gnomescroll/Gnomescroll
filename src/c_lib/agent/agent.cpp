@@ -176,7 +176,11 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         height = box.c_height;
     }
 
-    const float z_gravity = -3.0f / tr2;
+    float z_gravity = -3.0f / tr2;
+    #if DC_CLIENT
+    if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
+    #endif
+    
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
     #if ADVANCED_JUMP

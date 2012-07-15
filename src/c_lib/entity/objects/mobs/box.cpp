@@ -90,8 +90,7 @@ static void set_mob_robot_box_properties(Object* object)
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
     motion->speed = MONSTER_BOX_SPEED;
-    motion->max_z_down = MONSTER_BOX_MOTION_MAX_Z_DOWN;
-    motion->max_z_up = MONSTER_BOX_MOTION_MAX_Z_UP;
+    motion->max_z_diff = MONSTER_BOX_MOTION_MAX_Z_DIFF;
 
     #if DC_SERVER
     add_component_to_object(object, COMPONENT_SPAWN_CHILD);

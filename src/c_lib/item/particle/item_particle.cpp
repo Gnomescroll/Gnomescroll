@@ -109,7 +109,15 @@ void ItemParticle::tick()
 		}
 	}
 	
+	// dont apply physics if the chunk is not loaded (in client)
+	#if DC_CLIENT
+	if (t_map::position_is_loaded(this->verlet.position.x, this->verlet.position.y)) {
+	#endif
 	verlet.bounce_box(ITEM_PARTICLE_RADIUS);
+	#if DC_CLIENT
+	}
+	#endif
+	
 	#if DC_SERVER
 	if (this->verlet.position.z < OBJECT_DEPTH_MAX) this->ttl = 0;
 	this->pickup_prevention--;
