@@ -114,11 +114,11 @@ lua_State* LUA_options_table = NULL;
     #if PRODUCTION
         const char* default_options_file = "./settings/settings.lua";
     #else
-        const char* default_options_file = "./settings/settings_dev.lua";
+        const char* default_options_file = "./settings/dev.lua";
     #endif
 #endif
 #if DC_SERVER
-const char* default_options_file = "./settings/settings_server.lua";
+const char* default_options_file = "./settings/localhost.lua";
 #endif
 
 char* options_file = NULL;
@@ -136,41 +136,44 @@ void set_options_file(char* path)
 /*
     Load or reload options
 */
+
+void init_options()
+{
+    if (LUA_options_table != NULL) return;
+    
+    char* options_path = options_file;
+    if (options_path == NULL)
+        options_path = (char*)default_options_file;
+
+    LUA_options_table = luaL_newstate();
+    lua_State *L = LUA_options_table;
+
+    luaL_openlibs(L); /* Load Lua libraries */
+
+    if (luaL_loadfile(L, options_path)) 
+    {
+        fprintf(stderr, "%s:%d -- Couldn't load file: %s\n", __FUNCTION__, __LINE__, lua_tostring(L, -1));
+        GS_ABORT();
+    }
+
+    lua_newtable(L);    //create options table
+}
+
 void load_options()
 {
-    #if PRODUCTION
-    //stuff
-    #endif
-
     char* options_path = options_file;
     if (options_path == NULL)
         options_path = (char*)default_options_file;
 
     printf("Loading settings file %s\n", options_path);
 
-    if(LUA_options_table == NULL)
+    static int inited = 0;
+
+    lua_State *L = LUA_options_table;
+    GS_ASSERT(L != NULL);
+    
+    if (!inited)
     {
-        LUA_options_table = luaL_newstate();
-        lua_State *L = LUA_options_table;
-
-        luaL_openlibs(L); /* Load Lua libraries */
-
-        //if (luaL_loadfile(L, "settings/settings.lua")) 
-        if (luaL_loadfile(L, options_path)) 
-        {
-            fprintf(stderr, "%s:%d -- Couldn't load file: %s\n", __FUNCTION__, __LINE__, lua_tostring(L, -1));
-            GS_ABORT();
-        }
-
-        lua_newtable(L);    //create options table
-
-
-        Options::register_options();  
-        //int test;
-
-        //register_int_option("x_res", &test);
-        //register_int_option("y_res", &test);
-
         lua_setglobal(L, "options_table"); //name options
 
         if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
@@ -182,7 +185,6 @@ void load_options()
     else
     {
         printf("Reloading Settings\n");
-        lua_State *L = LUA_options_table;
 
         //if (luaL_loadfile(L, "settings/settings.lua")) 
         if (luaL_loadfile(L, options_path)) 
@@ -198,6 +200,7 @@ void load_options()
         }
     }
 
+    inited++;
 }
 
 /*

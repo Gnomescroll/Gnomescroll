@@ -50,4 +50,4 @@ OPT_BOOL_HEADER(show_tips);
 
 void register_options();
 
-}
+}   // Options

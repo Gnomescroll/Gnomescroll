@@ -1,1 +1,1 @@
-./run ./lua/settings_production.lua
+./run ./lua/production.lua

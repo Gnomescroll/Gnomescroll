@@ -2,8 +2,6 @@
 
 #include <options/option_macros.hpp>
 
-#include <common/lua/lua.hpp>
-
 namespace Options
 {
 
@@ -24,4 +22,4 @@ OPT_BOOL_HEADER(log_chat)
 
 void register_options();
 
-}
+}   // Options

@@ -734,6 +734,22 @@ DONE
 fix get_highest_*_block() in client
 DONE
 
+timestamp chat log messages
+DONE
+
+==============
+== BUILD 23 ==  Jul 14 2012
+==============
+
+/color (alias /colour) chat command, give R G B values to color voxel model
+DONE
+
+fix model forced model update glitch
+DONE
+
+fix text render position
+DONE
+
 ----------------------
 
 == BUILD ==
@@ -756,6 +772,8 @@ Improve Hud Weapon sprites animations
 textured voxels / isometric blocks should use full palette info, instead of only one side
 better font
 draw held weapon sprite in player's hand for others to see
+melee on agents should draw blood
+voxel model rgb convert to 0 for 255 (255,255,254 => 0,0,254) somewhere (by the time its rendered)
 
 == SOUND ==
 improve digging sounds
@@ -788,17 +806,14 @@ palette for smelter on/off
 Binoculars
 
 == CRAFTING / RECIPES ==
-4ore->block in crafting bench
 
 == BLOCKS/TERRAIN ==
 send block health on request from agent
 --show meter in hud
 
 == ANALYTICS ==
-Remove "Channel X" from chat.log, put in timestamp
 
 == UI/UX ==
-/colourme option to color player's model
 
 == GENERAL ==
 get screenshots working in osx
@@ -810,6 +825,9 @@ broadcast only to clients who are are in fully ready
 chunk is NULL check -- dont apply physics in these areas
 
 rename settings files
+
+add option to server to generate simple floor map only (faster valgrind init)
+options parser that accepts --name=value and will overwrite register options based on this
 
 == MECHANISMS ==
 Spawner/Control Points
@@ -876,8 +894,41 @@ Recipes:
 Energy Tank: gallium bar+any other metal bar + 4 methane
 Energy Refill: any metal bar + 1 methane for recharge pack
 
+HEALTH SYSTEM IMPLEMENTATION:
+Additional container
+    -- only accepts energy tanks
+Container, ContainerUI, Hud widget
+Texture for hud widget
+controller for widget
+Rendering the energy tanks above the toolbelt
+Highlight energy tank slots when energy tank picked up (or a border or something)
+
+Interaction between agent status and energy tanks
+
+Health Meter instead of "ENERGY" (or both...)
+
+Add recipes
+
 ==BUGZ==
-SERVER: voxel volume in sight of invalid pointer (suspect: buffer overrun elsewhere corrupting state)
 
 something is messed up with box models. client reports get_center() as even higher above its head, in the object_shot_object packet handler
 position looks normal though, as a firing position
+
+base spawn area != protection area
+
+go through server asserts
+cppcheck codebase
+
+ <Kaprekar> wow i think i got so many chips that it rolled over to 0
+(07/14/2012 05:53:12 PM) synthesis492: <Kaprekar> interesting... right clicked my stack of chips (after it had rolled over a couple times) and i got 2 stacks of 250
+
+0x00000000 in ?? ()
+(gdb) bt 10
+#0  0x00000000 in ?? ()
+#1  0x08133c46 in t_map::set_map_shader_0_compatibility (level=0) at /home/m3th/proj/dc_mmo/src/c_lib/t_map/glsl/shader.cpp:313
+#2  0x0813337e in t_map::init_shaders () at /home/m3th/proj/dc_mmo/src/c_lib/t_map/glsl/shader.cpp:84
+#3  0x0812cb06 in t_map::init_for_draw () at /home/m3th/proj/dc_mmo/src/c_lib/t_map/t_map.cpp:98
+#4  0x08165f51 in init_c_lib () at ../c_lib.cpp:254
+#5  0x081661af in Main::init () at ../main.cpp:50
+#6  0x08166df8 in main (argc=2, argv=0xbffff3a4) at ../run.cpp:47
+When OpenGL is not available
