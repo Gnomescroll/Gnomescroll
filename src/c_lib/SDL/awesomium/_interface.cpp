@@ -2,6 +2,7 @@
 #include "_interface.hpp"
 
 #include <SDL/awesomium/viewport_class.hpp>
+#include <SDL/awesomium/viewport_manager.hpp>
 
 /*
 ChildProcessPath
@@ -19,12 +20,17 @@ Embedders can now also specify a “localePath” for the location of en-US.dll 
 namespace Awesomium
 {
 
-    class chrome_viewport* cv;
+    class ChromeViewport* cv;
+    class ViewportManager* viewport_manager;
 
     void _init()
     {
         printf("init webviwe \n");
-        cv = new chrome_viewport;;
+        cv = new ChromeViewport;
+
+        viewport_manager = new ViewportManager;
+
+        viewport_manager.add_viewport(cv);
     }
 
     void _draw()

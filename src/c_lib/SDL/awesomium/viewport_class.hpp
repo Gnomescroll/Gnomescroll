@@ -3,16 +3,6 @@
 namespace Awesomium
 {
 
-/*
-ChildProcessPath
-
-Indicates the path to the child-process that we will use to render WebViews and plugins (this will be AwesomiumProcess if you leave this empty)
-
-5. Improved Handling of Config Paths
-Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths. Embedders can now also specify a “localePath” for the location of en-US.dll on Windows and chrome.pak on Linux.
-
-Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths. Embedders can now also specify a “localePath” for the location of en-US.dll on Windows and chrome.pak on Linux.
-*/
 int getWebKeyFromSDLKey(SDLKey key);
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event);
 ///linux only
@@ -32,7 +22,7 @@ struct chromeDisplay {
 };
 */
 
-class chrome_viewport
+class ChromeViewport
 {
 	public:	
 		int xoff;
@@ -47,20 +37,20 @@ class chrome_viewport
 		awe_webview* webView;
 		unsigned int TEX0;
 
-		chrome_viewport()
+		ChromeViewport()
 		{
 			inFocus = false;
 
 			xoff = 128;
 			yoff = 128;
-			width = 1024;
-			height = 1024;
+			width = 512;
+			height = 512;
 
             TEX0 = 0;
 			init_webview();
 		}
 
-		~chrome_viewport()
+		~ChromeViewport()
 		{
 			awe_webview_destroy(webView);
             //free textures etc..
