@@ -892,11 +892,8 @@ void agent_quit(int agent_id)
 void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-	if (agent_id < 0 || agent_id >= AGENT_MAX) return;
+    RETURN_IF_INVALID_AGENT_ID(agent_id);
     
-    // if hand is not empty there will be item leaks
-    if (get_agent_hand(agent_id) != NULL_ITEM) return;
-
     // get container
     GS_ASSERT(agent_synthesizer_list != NULL);
     if (agent_synthesizer_list == NULL) return;
@@ -914,23 +911,53 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     GS_ASSERT(cost >= 0);
     if (item_type == NULL_ITEM_TYPE) return;
     
+	// compare to hand
+    ItemID hand_item = get_agent_hand(agent_id);
+    int hand_item_type = Item::get_item_type(hand_item);
+    if (hand_item != NULL_ITEM)
+    {	
+		// can it stack
+		if (hand_item_type != item_type) return;
+		
+		// will it fit
+		int stack_space = Item::get_stack_space(hand_item);
+		if (stack_space <= 0) return;
+	}
+    
     // get the coins
     ItemID coins = synthesizer->get_coins();
     int coin_stack = 0; // coin stack will return 1 for NULL_ITEM, but we want to treat that as 0
     if (coins != NULL_ITEM) coin_stack = Item::get_stack_size(coins);
+
+	// can we afford it
     if (coin_stack < cost) return;
     
 	Item::Item* coin_item = Item::get_item_object(coins);
 	GS_ASSERT(coin_item != NULL);
 	if (coin_item == NULL) return;
 
-    // create shopped item
-    Item::Item* purchase = Item::create_item(item_type);
-    GS_ASSERT(purchase != NULL);
-    if (purchase == NULL) return;
+	if (hand_item == NULL_ITEM)
+	{
+		// create shopped item
+		Item::Item* purchase = Item::create_item(item_type);
+		GS_ASSERT(purchase != NULL);
+		if (purchase == NULL) return;
 
-    // add to hand
-    transfer_free_item_to_hand(purchase->id, agent_id);
+		// add to hand
+		transfer_free_item_to_hand(purchase->id, agent_id);
+	}
+	else
+	{
+		// get hand item pointer
+		Item::Item* hand = Item::get_item(hand_item);
+		GS_ASSERT(hand != NULL);
+		if (hand == NULL) return;
+		
+		// increase count by 1
+		hand->stack_size += 1;
+		GS_ASSERT(hand->stack_size <= Item::get_max_stack_size(hand->type));
+		Item::send_item_state(hand->id);
+	}
 
     // update coins
     if (cost)

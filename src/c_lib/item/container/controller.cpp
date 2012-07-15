@@ -1084,20 +1084,32 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id
     #if DC_CLIENT
     int hand_item_type = player_hand_type_ui;
     bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
-    //int stack_space = Item::get_max_stack_size(hand_item_type) - player_hand_stack_ui;
+    int stack_space = Item::get_max_stack_size(hand_item_type) - player_hand_stack_ui;
     #endif
     #if DC_SERVER
     ItemID hand_item = get_agent_hand(agent_id);
     int hand_item_type = Item::get_item_type(hand_item);
     bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
-    //int stack_space = Item::get_stack_space(hand_item);
+    int stack_space = Item::get_stack_space(hand_item);
     #endif
 
-    // TODO -- Allow multiple purchasing if it stacks
     if (hand_empty)
     {   // send purchase packet
         return PURCHASE_ITEM_FROM_SYNTHESIZER;
     }
+    else if (stack_space > 0)
+    {	// attempt to stack
+		// get store item
+		int xslot = slot % container->shopping_xdim;
+		int yslot = slot / container->shopping_xdim;
+		int cost;
+		int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
+		GS_ASSERT(cost >= 0);
+		if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
+		if (item_type != hand_item_type) return CONTAINER_ACTION_NONE;
+		// we can stack
+		return PURCHASE_ITEM_FROM_SYNTHESIZER;
+	}
 
     return CONTAINER_ACTION_NONE;
 }
