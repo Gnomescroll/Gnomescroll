@@ -106,7 +106,7 @@ namespace Awesomium
     //libraries/lin32/awesomium/release/locales/
     awe_string* package_path = get_awe_string("../libraries/lin32/awesomium/release");
     awe_string* locale_path = get_awe_string("../libraries/lin32/awesomium/release/locales");
-
+    awe_string* log_path = get_awe_string("./screenshot");
 
     //awe_webview_load_html(webView, html_str,awe_string_empty());
 
@@ -117,7 +117,7 @@ namespace Awesomium
         locale_path,    //local path
         awe_string_empty(), //user data path
         awe_string_empty(), //plugin path
-        awe_string_empty(), // log path
+        log_path, // log path
         AWE_LL_NORMAL, //log level
         false, //force single process
         awe_string_empty(), //child process Path,
