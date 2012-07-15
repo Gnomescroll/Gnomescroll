@@ -66,23 +66,14 @@ namespace Awesomium
 
 	};
 
-	void ViewportManager::update_viewports()
-	{
-		for(int i=0; i < MAX_VIEWPORTS; i++)
-		{
-			if(vpa[i] != NULL)
-			{
-				vpa[i]->update_webview();
-			}
-		}
-	}
-
+	//updates and draws
 	void ViewportManager::draw_viewports()
 	{
 		for(int i=0; i < MAX_VIEWPORTS; i++)
 		{
 			if(vpa[i] != NULL)
 			{
+				vpa[i]->update_webview();
 				vpa[i]->draw_webview();
 			}
 		}

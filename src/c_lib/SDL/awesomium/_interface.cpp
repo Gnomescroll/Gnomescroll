@@ -34,6 +34,11 @@ namespace Awesomium
         viewport_manager->handle_keyboard_event(keyEvent);
     }
 
+    void update()
+    {
+        awe_webcore_update();
+    }
+
     void _draw()
     {
         static int init = 0;
@@ -155,11 +160,6 @@ namespace Awesomium
     void teardown()
     {
         awe_webcore_shutdown();
-    }
-
-    void update()
-    {
-        awe_webcore_update();
     }
 
 //#include <Awesomium/awesomium_capi.h>
