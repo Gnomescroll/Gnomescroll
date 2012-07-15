@@ -56,6 +56,7 @@ class chrome_viewport
 			width = 256;
 			height = 256;
 
+            TEX0 = 0;
 			init_webview();
 		}
 
@@ -82,43 +83,48 @@ class chrome_viewport
 		    awe_string_destroy(url_str);
 		#endif
 
-		    awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
-
-		    if(renderBuffer != NULL)
-		    {
-		    	printf("chrome_viewport: init_webview, error renderBuffer is null\n"); 
-		    	return;
-		    }
-		   
-		   	glEnable(GL_TEXTURE_2D);
-		    glGenTextures(1, &TEX0);
-
-			glBindTexture(GL_TEXTURE_2D, TEX0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		/*
-	        display->surface = SDL_CreateRGBSurfaceFrom((void *) awe_renderbuffer_get_buffer(renderBuffer),
-	                                awe_renderbuffer_get_width(renderBuffer),
-	                                awe_renderbuffer_get_height(renderBuffer),
-	                                32,
-	                                awe_renderbuffer_get_rowspan(renderBuffer),
-	                                0x0000FF00, 0x00FF0000,
-	                                0xFF000000, 0x000000FF);
-		*/
-
-	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
-
-	        glDisable(GL_TEXTURE_2D);
 		}
 
+        void init_render_surface()
+        {
+            const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
+
+            if(renderBuffer != NULL)
+            {
+                printf("chrome_viewport: init_webview, error renderBuffer is null\n"); 
+                return;
+            }
+           
+            glEnable(GL_TEXTURE_2D);
+            glGenTextures(1, &TEX0);
+
+            glBindTexture(GL_TEXTURE_2D, TEX0);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        /*
+            display->surface = SDL_CreateRGBSurfaceFrom((void *) awe_renderbuffer_get_buffer(renderBuffer),
+                                    awe_renderbuffer_get_width(renderBuffer),
+                                    awe_renderbuffer_get_height(renderBuffer),
+                                    32,
+                                    awe_renderbuffer_get_rowspan(renderBuffer),
+                                    0x0000FF00, 0x00FF0000,
+                                    0xFF000000, 0x000000FF);
+        */
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
+
+            glDisable(GL_TEXTURE_2D);
+
+        }
 
 		void update_webview()
 		{
 		    if( !awe_webview_is_dirty(webView) ) return;
 	        //awe_rect rect = awe_webview_get_dirty_bounds(webView);
+            if(TEX0 == 0) init_render_surface();
 
-	        awe_renderbuffer* renderBuffer = (awe_renderbuffer*) awe_webview_render(webView);
+	        const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
 
 	        if (renderBuffer == NULL) 
 	        {
@@ -134,6 +140,8 @@ class chrome_viewport
 
 		void draw_webview()
 		{
+            if(TEX0 == 0) return;
+
 		    glEnable(GL_TEXTURE_2D);
 		    glBindTexture( GL_TEXTURE_2D, TEX0 );
 
