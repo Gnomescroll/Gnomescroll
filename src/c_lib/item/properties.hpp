@@ -33,8 +33,8 @@ int get_item_fire_rate(int item_type);
 int get_sprite_index_for_id(ItemID id);
 int get_sprite_index_for_type(int type);
 
-void set_item_name(int type, char* name, int length);
-void set_item_name(int type, char* name);
+void set_item_name(int type, const char* name, int length);
+void set_item_name(int type, const char* name);
 
 char* get_item_name(int item_type);
 int get_item_type(const char* name);

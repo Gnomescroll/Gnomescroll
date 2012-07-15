@@ -181,7 +181,7 @@ void side_texture(int side, int tex_id)
 
 void side_texture(int side, int sheet_id, int ypos, int xpos)
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     if (xpos < 1 || ypos < 1)
     {
         printf("side_texture error: xpos= %i ypos= %i \n", xpos,ypos);
@@ -193,7 +193,7 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
 
     //set_cube_side_texture(_current_cube_id, side, tex_id);
     //set_cube_palette_texture(_current_cube_id, side, tex_id);
-#endif
+    #endif
 }
 
 void push_texture()

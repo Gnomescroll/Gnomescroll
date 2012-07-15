@@ -56,6 +56,7 @@ typedef enum
 {
     IG_NONE,    // null value
     IG_ERROR,
+    IG_FIST,
     IG_RESOURCE,    //does nothing, resources, stackable
     IG_PLACER,  //consumed to create block
     IG_HITSCAN_WEAPON,

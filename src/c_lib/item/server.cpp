@@ -95,16 +95,6 @@ static bool pack_item_create(Item* item, item_create_StoC* msg)
     return true;
 }
 
-//void broadcast_item_create(ItemID item_id)
-//{
-    //Item* item = get_item(item_id);
-    //if (item == NULL) return;
-    
-    //item_create_StoC msg;
-    //if (!pack_item_create(item, &msg)) return;
-    //msg.broadcast();
-//}
-
 static void send_item_create(int client_id, ItemID item_id)
 {
     Item* item = get_item(item_id);
@@ -131,18 +121,7 @@ static void pack_item_state(Item* item, item_state_StoC* msg)
     msg->id = item->id;
     msg->stack_size = item->stack_size;
     msg->durability = item->durability;
-    msg->energy = item->energy;
 }
-
-//void send_item_state(int client_id, ItemID item_id)
-//{
-    //Item* item = get_item(item_id);
-    //if (item == NULL) return;
-
-    //item_state_StoC msg;
-    //pack_item_state(item, &msg);
-    //msg.sendToClient(client_id);
-//}
 
 void send_item_state(ItemID item_id)
 {
@@ -154,16 +133,6 @@ void send_item_state(ItemID item_id)
     pack_item_state(item, &msg);
     msg.sendToClients(item->subscribers.subscribers, item->subscribers.n);
 }
-
-//void broadcast_item_state(ItemID item_id)
-//{
-    //Item* item = get_item(item_id);
-    //if (item == NULL) return;
-
-    //item_state_StoC msg;
-    //pack_item_state(item, &msg);
-    //msg.broadcast();
-//}
 
 static void send_item_destroy(int client_id, ItemID item_id)
 {
@@ -185,15 +154,5 @@ void send_item_destroy(ItemID item_id)
     msg.id = item_id;
     msg.sendToClients(item->subscribers.subscribers, item->subscribers.n);
 }
-
-//void broadcast_item_destroy(ItemID item_id)
-//{
-    //Item* item = get_item(item_id);
-    //GS_ASSERT(item != NULL);
-
-    //item_destroy_StoC msg;
-    //msg.id = item_id;
-    //msg.broadcast();
-//}
 
 }   // Item

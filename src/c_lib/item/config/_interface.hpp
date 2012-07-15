@@ -34,20 +34,22 @@ int _current_item_id = 0;
 
 void item_def(int type, ItemGroup group, const char* name)
 {
+	GS_ASSERT(type != NULL_ITEM_TYPE);
+	GS_ASSERT(type >= 0 && type < MAX_ITEMS);
+	GS_ASSERT(group != IG_NONE);
+	GS_ASSERT(strlen(name));
+	
     if (type != 0) _set_attribute(); //assumes first type defined is 0
 
     _current_item_id = type;
 
-    s.load_defaults(group);
+    s.load_defaults(type, group);
     
-    if (group_array[type] != IG_ERROR)
-    {
-        printf("ITEM CONFIG ERROR: item type conflict, type= %i \n", type);
-        GS_ABORT();
-    }
+    GS_ASSERT(group_array[type] == IG_NONE)
+
     group_array[type] = group; //check
     
-    set_item_name(type, (char*) name);
+    set_item_name(type, name);
 }
 
 void _set_attribute()
@@ -121,12 +123,13 @@ namespace Item
 {
 
 int crafting_recipe_count = 0;
-int _current_crafting_reagent_id = 0;
-
 class CraftingRecipe _cr;
+
+void end_crafting_recipe();
 
 void def_crafting_recipe(const char* item_name, int amount)
 {
+	if (_cr.reagent_num > 0) end_crafting_recipe();
     _cr.output = dat_get_item_type(item_name);
     _cr.output_stack = amount;
 }
@@ -136,34 +139,39 @@ void def_crafting_recipe(const char* item_name)
     def_crafting_recipe(item_name, 1);
 }
 
-
 void set_crafting_reagent(const char* item_name, int quantity)
 {
-    GS_ASSERT(_current_crafting_reagent_id < CRAFT_BENCH_INPUTS_MAX);
+	GS_ASSERT(crafting_recipe_count < MAX_CRAFTING_RECIPE);
+	if (crafting_recipe_count >= MAX_CRAFTING_RECIPE) return;
+	
+    GS_ASSERT(_cr.reagent_num < CRAFT_BENCH_INPUTS_MAX);
+    if (_cr.reagent_num >= CRAFT_BENCH_INPUTS_MAX) return;
 
     int type = dat_get_item_type(item_name);
+    GS_ASSERT(type != NULL_ITEM_TYPE);
     
+	// Make sure we aren't adding two types of different stack values
+	// Why? our sorting methods for doing recipe matches do not sort by
+	// stack values per type, so there will be undefined behaviour
+	for (int i=0; i<_cr.reagent_num; i++)
+		GS_ASSERT(_cr.reagent[i] != type || _cr.reagent_count[i] == quantity);
 
-    // require specifying item,quantity at once
-    //for (int i=0; i<_current_reagent_id; i++)
-        //GS_ASSERT(_cr.reagent[i] != type);
-    
     // insert reagents sorted by type
-    if (_current_crafting_reagent_id == 0)
+    if (_cr.reagent_num == 0)
     {   // degenerate case
-        _cr.reagent[_current_crafting_reagent_id] = type;
-        _cr.reagent_count[_current_crafting_reagent_id] = quantity;
+        _cr.reagent[_cr.reagent_num] = type;
+        _cr.reagent_count[_cr.reagent_num] = quantity;
     }
     else
     {   // keep reagents sorted by type
         int i=0;
-        for (; i<_current_crafting_reagent_id; i++)
+        for (; i<_cr.reagent_num; i++)
         {
             if (_cr.reagent[i] <= type) continue;
 
             // shift forward
-            for (int j=_current_crafting_reagent_id; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
-            for (int j=_current_crafting_reagent_id; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
+            for (int j=_cr.reagent_num; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
+            for (int j=_cr.reagent_num; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
             
             // insert
             _cr.reagent[i] = type;
@@ -171,25 +179,38 @@ void set_crafting_reagent(const char* item_name, int quantity)
             break;
         }
         
-        if (i == _current_crafting_reagent_id)
+        if (i == _cr.reagent_num)
         {   // append to end
-            _cr.reagent[_current_crafting_reagent_id] = type;
-            _cr.reagent_count[_current_crafting_reagent_id] = quantity;
+            _cr.reagent[_cr.reagent_num] = type;
+            _cr.reagent_count[_cr.reagent_num] = quantity;
         }
     }
-
-    _current_crafting_reagent_id++;
+    
+    _cr.reagent_num++;
 }
 
 void end_crafting_recipe()
 {
     GS_ASSERT(crafting_recipe_count <= MAX_CRAFTING_RECIPE);
-    _cr.reagent_num = _current_crafting_reagent_id;
+    
+    // check that adding this recipe will not increase the total outputs
+    // per recipe above limit
+    int matching_recipes = 0;
+    for (int i=0; i<crafting_recipe_count; i++)
+    {
+		if (crafting_recipe_array[i].reagent_num != _cr.reagent_num) continue;
+		for (int j=0; j<crafting_recipe_array[i].reagent_num; j++)
+		{
+			if (crafting_recipe_array[i].reagent[j] != _cr.reagent[j]) break;
+			matching_recipes++;
+		}
+	}
+	GS_ASSERT(matching_recipes <= CRAFT_BENCH_OUTPUTS_MAX);
+    
     _cr.id = crafting_recipe_count;
     crafting_recipe_array[crafting_recipe_count] = _cr;
     _cr.init();
     crafting_recipe_count++;
-    _current_crafting_reagent_id = 0;
 }
 
 }   // Item
@@ -199,10 +220,9 @@ namespace Item
 {
 
 int smelting_recipe_count = 0;
-int _current_smelting_reagent_id = 0;
-int _current_smelting_recipe_creation_time = 30;
-
 class SmeltingRecipe _sr;
+
+void end_smelting_recipe();
 
 void add_smelting_product(const char* item_name, int amount)
 {
@@ -219,36 +239,46 @@ void add_smelting_product(const char* item_name)
 
 void def_smelting_recipe(const char* item_name, int amount)
 {
+	if (_sr.reagent_num > 0) end_smelting_recipe();
     add_smelting_product(item_name, amount);
 }
 
 void def_smelting_recipe(const char* item_name)
 {
+	if (_sr.reagent_num > 0) end_smelting_recipe();
     def_smelting_recipe(item_name, 1);
 }
 
 void set_smelting_reagent(const char* item_name, int quantity)
 {
-    GS_ASSERT(_current_smelting_reagent_id < SMELTER_INPUTS_MAX);
+    GS_ASSERT(_sr.reagent_num < SMELTER_INPUTS_MAX);
+    GS_ASSERT(_sr.output_num < SMELTER_OUTPUTS_MAX);
 
     int type = dat_get_item_type(item_name);
-    
+	GS_ASSERT(type != NULL_ITEM_TYPE);
+	
+	// Make sure we aren't adding two types of different stack values
+	// Why? our sorting methods for doing recipe matches do not sort by
+	// stack values per type, so there will be undefined behaviour
+	for (int i=0; i<_sr.reagent_num; i++)
+		GS_ASSERT(_sr.reagent[i] != type || _sr.reagent_count[i] == quantity);
+
     // insert reagents sorted by type
-    if (_current_smelting_reagent_id == 0)
+    if (_sr.reagent_num == 0)
     {   // degenerate case
-        _sr.reagent[_current_smelting_reagent_id] = type;
-        _sr.reagent_count[_current_smelting_reagent_id] = quantity;
+        _sr.reagent[_sr.reagent_num] = type;
+        _sr.reagent_count[_sr.reagent_num] = quantity;
     }
     else
     {   // keep reagents sorted by type
         int i=0;
-        for (; i<_current_smelting_reagent_id; i++)
+        for (; i<_sr.reagent_num; i++)
         {
             if (_sr.reagent[i] <= type) continue;
 
             // shift forward
-            for (int j=_current_smelting_reagent_id; j>i; j--) _sr.reagent[j] = _sr.reagent[j-1];
-            for (int j=_current_smelting_reagent_id; j>i; j--) _sr.reagent_count[j] = _sr.reagent_count[j-1];
+            for (int j=_sr.reagent_num; j>i; j--) _sr.reagent[j] = _sr.reagent[j-1];
+            for (int j=_sr.reagent_num; j>i; j--) _sr.reagent_count[j] = _sr.reagent_count[j-1];
             
             // insert
             _sr.reagent[i] = type;
@@ -256,33 +286,42 @@ void set_smelting_reagent(const char* item_name, int quantity)
             break;
         }
         
-        if (i == _current_smelting_reagent_id)
+        if (i == _sr.reagent_num)
         {   // append to end
-            _sr.reagent[_current_smelting_reagent_id] = type;
-            _sr.reagent_count[_current_smelting_reagent_id] = quantity;
+            _sr.reagent[_sr.reagent_num] = type;
+            _sr.reagent_count[_sr.reagent_num] = quantity;
         }
     }
 
-    _current_smelting_reagent_id++;
+    _sr.reagent_num++;
 }
 
 // in total ticks to synthesize
 void set_smelting_creation_time(int creation_time)
 {
-    _current_smelting_recipe_creation_time = creation_time;
+    _sr.creation_time = creation_time;
 }
 
 void end_smelting_recipe()
 {
     GS_ASSERT(smelting_recipe_count <= MAX_SMELTING_RECIPE);
-    _sr.reagent_num = _current_smelting_reagent_id;
+    
+    // make sure no other recipe has same type signature
+    for (int i=0; i<smelting_recipe_count; i++)
+    {
+		if (smelting_recipe_array[i].reagent_num != _sr.reagent_num) continue;
+		int j=0;
+		for(; j<smelting_recipe_array[i].reagent_num; j++)
+			if (smelting_recipe_array[i].reagent[j] != _sr.reagent[j])
+				break;
+		GS_ASSERT(j < smelting_recipe_array[i].reagent_num);
+	}
+    
+    _sr.reagent_num = _sr.reagent_num;
     _sr.id = smelting_recipe_count;
-    _sr.creation_time = _current_smelting_recipe_creation_time;
     smelting_recipe_array[smelting_recipe_count] = _sr;
     _sr.init();
     smelting_recipe_count++;
-    _current_smelting_reagent_id = 0;
-    _current_smelting_recipe_creation_time = 30;
 }
 
 }   // Item
@@ -291,17 +330,9 @@ void end_smelting_recipe()
 namespace Item
 {
 
-/*
-    int item_id;
-    int synthesizer_cost;
-
-    int level;
-    int xslot;
-    int yslot;
-*/
-
-int _current_synthesizer_item_type = 0;
-int _current_synthesizer_item_cost = 0;
+int _current_synthesizer_item = 0;
+int _current_synthesizer_item_type = NULL_ITEM_TYPE;
+int _current_synthesizer_item_cost = NULL_COST;
 
 void synthesizer_item_def(const char* item_name, int cost);
 void synthesizer_item_set(int xslot, int yslot);
@@ -309,20 +340,39 @@ void synthesizer_item_set(int xslot, int yslot);
 
 void synthesizer_item_def(const char* item_name, int cost)
 {
+	GS_ASSERT(cost != NULL_COST && cost > 0 && count_digits(cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
     _current_synthesizer_item_type = dat_get_item_type(item_name);
     _current_synthesizer_item_cost = cost;
 }
 
 void synthesizer_item_set(int xslot, int yslot)
 {
-    class SynthesizerItem* n = &synthesizer_item_array[_current_synthesizer_item_type];
+	GS_ASSERT(_current_synthesizer_item < MAX_SYNTHESIZER_OUTPUTS);
+
+    class SynthesizerItem* n = &synthesizer_item_array[_current_synthesizer_item];
+
+	GS_ASSERT(_current_synthesizer_item_type != NULL_ITEM_TYPE);
+	GS_ASSERT(xslot >= 0 && xslot < AGENT_SYNTHESIZER_SHOPPING_X);
+	GS_ASSERT(yslot >= 0 && yslot < AGENT_SYNTHESIZER_SHOPPING_Y);
+	GS_ASSERT(_current_synthesizer_item_cost > 0);
+	GS_ASSERT(count_digits(_current_synthesizer_item_cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
+
+	// make sure we are not defining a purchase twice for the same item
+	// or overwriting an existing purchase slot
+	for (int i=0; i<_current_synthesizer_item; i++)
+	{
+		GS_ASSERT(synthesizer_item_array[i].item_type != _current_synthesizer_item_type);
+		GS_ASSERT(synthesizer_item_array[i].xslot != xslot || synthesizer_item_array[i].yslot != yslot);
+	}
 
     n->item_type = _current_synthesizer_item_type;
-    n->synthesizer_cost = _current_synthesizer_item_cost;
+    n->cost = _current_synthesizer_item_cost;
     n->xslot = xslot;
     n->yslot = yslot;
 
-    _current_synthesizer_item_type++;
+    _current_synthesizer_item_type = NULL_ITEM_TYPE;
+    _current_synthesizer_item_cost = NULL_COST;
+	_current_synthesizer_item++;
 }
 
 }   // Item

@@ -7,6 +7,8 @@
 namespace Item
 {
 
+void verify_item_dat();
+
 void load_item_dat()
 {
     start_item_dat();
@@ -14,6 +16,7 @@ void load_item_dat()
     int i1 = texture_alias("media/sprites/i01.png");
 
     item_def(0, IG_ERROR, "error_item");
+    s.pretty_name = (char*)"Error";
     sprite_def(i0, 4,1);
 
     item_def(1, IG_PLACER, "regolith");
@@ -34,10 +37,8 @@ void load_item_dat()
     s.pretty_name = (char*)"Laser Rifle";
     s.hitscan_fire_cooldown = 30;
     s.hitscan_damage = 5;
-    s.hitscan_max_ammo = 30;    //WTF does this do?
     s.hitscan_bullet_effect_enum = 0;
     s.max_durability = 100;
-    s.max_energy = 50;      //WTF does this do?
     s.max_stack_size = 1;
     s.object_damage_min = 15;
     s.object_damage_max = 25;
@@ -49,7 +50,6 @@ void load_item_dat()
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
     s.max_durability = 2000; //was 200 which is 40 seconds
-    s.max_energy = 50;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 5;
@@ -212,7 +212,7 @@ void load_item_dat()
     s.object_damage_min = 30;
     s.object_damage_max = 40;
 
-    item_def(44, IG_NONE, "fist");
+    item_def(44, IG_FIST, "fist");
     sprite_def(i1, 6, 2);
     s.pretty_name = (char*)"Fist";
     s.mining_fire_cooldown = 200;
@@ -299,6 +299,35 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"control_node");
 
     end_item_dat();
+    verify_item_dat();
+}
+
+void verify_item_dat()
+{
+	for (int i=0; i<MAX_ITEMS; i++)
+	{
+		if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
+
+		// make sure group is set
+		GS_ASSERT(item_attribute_array[i].group != IG_NONE);
+	
+		GS_ASSERT(item_attribute_array[i].pretty_name != NULL);
+		if (item_attribute_array[i].pretty_name != NULL)
+			GS_ASSERT(item_attribute_array[i].pretty_name[0] != '\0');
+
+		// make sure all data types are within bounds
+		GS_ASSERT(item_attribute_array[i].max_energy > 0
+				&& item_attribute_array[i].max_energy <= 0xffff);
+				
+		GS_ASSERT(item_attribute_array[i].max_durability > 0
+				&& item_attribute_array[i].max_durability <= 0xffff);
+				
+		GS_ASSERT(item_attribute_array[i].max_stack_size > 0
+				&& item_attribute_array[i].max_stack_size <= 0xffff);
+
+		// Energy should not be in use yet.
+		GS_ASSERT(item_attribute_array[i].max_energy == NULL_ENERGY);
+	}
 }
 
 

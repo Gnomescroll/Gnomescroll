@@ -73,6 +73,9 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     // add new_momentum to position to get new_position
     // assumes direction is normalized
 
+	GS_ASSERT(speed > 0.0f);
+	GS_ASSERT(vec3_length(direction) > 0.0f);
+
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
 
@@ -87,8 +90,13 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     move_to.z = z;
     Vec3 new_direction = vec3_sub(move_to, position);
     float len = vec3_length_squared(new_direction);
-    if (len < FLOAT_ERROR_MARGIN*FLOAT_ERROR_MARGIN) new_direction = vec3_init(0,0,0);
+    if (len < FLOAT_ERROR_MARGIN)
+    {
+		new_direction = vec3_init(0,0,0);
+		len = 0.0f;
+	}
     else normalize_vector(&new_direction);
+    GS_ASSERT(len < 512.0f);
 
     *new_momentum = vec3_scalar_mult(new_direction, speed);
     position = vec3_add(position, *new_momentum);
@@ -120,8 +128,14 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     move_to.z = z;
     Vec3 new_direction = vec3_sub(move_to, position);
     float len = vec3_length(new_direction);
-    if (len < FLOAT_ERROR_MARGIN) new_direction = vec3_init(0,0,0);
+    if (len < FLOAT_ERROR_MARGIN)
+    {
+		new_direction = vec3_init(0,0,0);
+		len = 0.0f;
+	}
     else normalize_vector(&new_direction);
+    GS_ASSERT(len < 512.0f);
+
     new_direction = vec3_scalar_mult(new_direction, speed);
 
     position = vec3_add(position, new_direction);

@@ -22,7 +22,7 @@ class SynthesizerItem
     public:
 
     int item_type;
-    int synthesizer_cost;
+    int cost;
 
     int xslot;
     int yslot;
@@ -30,7 +30,7 @@ class SynthesizerItem
     SynthesizerItem()
     {
         item_type = NULL_ITEM_TYPE;
-        synthesizer_cost = NULL_COST;
+        cost = NULL_COST;
         
         xslot = NULL_SLOT;
         yslot = NULL_SLOT;
