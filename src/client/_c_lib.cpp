@@ -106,7 +106,8 @@ dont_include_this_file_in_server
 #endif
 
 #ifdef __APPLE__
-    #define AWESOMIUM
+    //#define AWESOMIUM
+    #undef AWESOMIUM
 #endif
 
 #ifdef AWESOMIUM

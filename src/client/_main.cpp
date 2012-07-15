@@ -309,7 +309,7 @@ int run()
             t_hud::draw_hud();
 
             #ifdef AWESOMIUM
-                Awesomium::_draw();
+            Awesomium::_draw();
             #endif
         }
         
