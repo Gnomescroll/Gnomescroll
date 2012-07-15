@@ -287,7 +287,7 @@ void save_map_ortho_projection(const char* filename)
 
     FILE * pFile;
     pFile = fopen ( FileName , "wb" );
-    if(pFile <= 0)
+    if(!pFile)
     {
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;

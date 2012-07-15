@@ -41,7 +41,14 @@ class CONTROL_NODE_LIST
 		if(cpi == cpm)
 		{
 			cpm *= 2;
-			cpa = (control_node*) realloc(cpa, cpm*sizeof(class control_node));
+			control_node* new_cpa = (control_node*) realloc(cpa, cpm*sizeof(class control_node));
+            if (new_cpa == NULL)
+            {
+                free(cpa);
+                cpa = NULL;
+                cpm = 0;
+            }
+            else cpa = new_cpa;
 		}
 	}
 

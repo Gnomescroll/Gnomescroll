@@ -616,13 +616,13 @@ void agent_born(int agent_id)
 
     int toolbelt_space = toolbelt->slot_max - toolbelt->slot_count;
 
-    int laser_rifle_type = Item::get_item_type((char*)"laser_rifle");
+    int laser_rifle_type = Item::get_item_type("laser_rifle");
     GS_ASSERT(laser_rifle_type != NULL_ITEM_TYPE);
     bool has_laser_rifle = false;
     Item::Item* most_durable_laser_rifle = NULL;
     int most_durable_laser_rifle_value = 0;
 
-    int mining_laser_type = Item::get_item_type((char*)"mining_laser");
+    int mining_laser_type = Item::get_item_type("mining_laser");
     GS_ASSERT(mining_laser_type != NULL_ITEM_TYPE);
     bool has_mining_laser = false;
     Item::Item* most_durable_mining_laser = NULL;
@@ -712,6 +712,38 @@ void agent_born(int agent_id)
     #if !PRODUCTION
     ContainerActionType event;
     
+    // fill coins to max
+    int synth_id = agent_synthesizer_list[agent_id];
+    GS_ASSERT(synth_id != NULL_CONTAINER);
+    ItemContainerSynthesizer* synth = (ItemContainerSynthesizer*)get_container(synth_id);
+    GS_ASSERT(synth != NULL);
+    if (synth != NULL)
+    {
+		ItemID known_coins = synth->get_coins();
+		if (known_coins == NULL_ITEM)
+		{	// create new coins				
+			Item::Item* coins = Item::create_item("synthesizer_coin");
+			GS_ASSERT(coins != NULL);
+			if (coins != NULL)
+			{
+				coins->stack_size = Item::get_max_stack_size(coins->type);
+				transfer_free_item_to_container(coins->id, synth->id, synth->coins_slot);
+			}		
+		}
+		else
+		{	// update known coins
+			Item::Item* coins = Item::get_item(known_coins);
+			GS_ASSERT(coins != NULL);
+			int stack_max = Item::get_max_stack_size(coins->type);
+			GS_ASSERT(coins->stack_size < stack_max);
+			if (coins != NULL && coins->stack_size != stack_max)
+			{
+				coins->stack_size = stack_max;
+				Item::send_item_state(coins->id);
+			}
+		}
+	}
+    
     // put a grenade launcher in the toolbelt to selt
     Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
     GS_ASSERT(grenade_launcher != NULL);
@@ -725,7 +757,7 @@ void agent_born(int agent_id)
 
     // add a few container blocks
     Item::Item* crate;
-    crate = Item::create_item(Item::get_item_type((char*)"small_crafting_bench"));
+    crate = Item::create_item(Item::get_item_type("small_crafting_bench"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
@@ -733,7 +765,7 @@ void agent_born(int agent_id)
         if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
     }
     
-    crate = Item::create_item(Item::get_item_type((char*)"cryofreezer_1"));
+    crate = Item::create_item(Item::get_item_type("cryofreezer_1"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
@@ -741,7 +773,7 @@ void agent_born(int agent_id)
         if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
     }
     
-    crate = Item::create_item(Item::get_item_type((char*)"small_storage"));
+    crate = Item::create_item(Item::get_item_type("small_storage"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
@@ -749,7 +781,7 @@ void agent_born(int agent_id)
         if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
     }
     
-    crate = Item::create_item(Item::get_item_type((char*)"smelter_1"));
+    crate = Item::create_item(Item::get_item_type("smelter_1"));
     GS_ASSERT(crate != NULL);
     if (crate != NULL)
     {
@@ -760,7 +792,7 @@ void agent_born(int agent_id)
     // debug items
     if (toolbelt->get_item(toolbelt->slot_max-1) == NULL_ITEM)
     {
-        Item::Item* block_placer = Item::create_item(Item::get_item_type((char*)"block_placer"));
+        Item::Item* block_placer = Item::create_item(Item::get_item_type("block_placer"));
         GS_ASSERT(block_placer != NULL);
         if (block_placer != NULL)
         {

@@ -1047,13 +1047,18 @@ inline void choose_spawn_location_CtoS::handle()
 
 const char DEFAULT_PLAYER_NAME[] = "Clunker";
 
-void adjust_name(char* name, unsigned int len)
+static char* adjust_player_name(char* name)
 {
+    unsigned int len = strlen(name);
     if (len >= (int)(PLAYER_NAME_MAX_LENGTH - 4))
-    {
         name[PLAYER_NAME_MAX_LENGTH-4-1] = '\0';
-    }
-    sprintf(name, "%s%04d", name, randrange(0,9999));
+
+    if (len >= (int)PLAYER_NAME_MAX_LENGTH)
+        len = PLAYER_NAME_MAX_LENGTH;
+
+    char* new_name = (char*)malloc((len + 1) * sizeof(char));
+    sprintf(new_name, "%s%04d", name, randrange(0,9999));
+    return new_name;
 }
 
 inline void identify_CtoS::handle()
@@ -1072,10 +1077,14 @@ inline void identify_CtoS::handle()
         strcpy(name, DEFAULT_PLAYER_NAME);
 
     if (len >= PLAYER_NAME_MAX_LENGTH)
+    {
+        len = PLAYER_NAME_MAX_LENGTH;
         name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
+    }
 
     int breakout = 0;   // safeguard against infinite loop
     const int breakout_limit = 100;
+    char* new_name = name;
     while (!ServerState::agent_list->name_available(name))
     {
         breakout++;
@@ -1084,18 +1093,22 @@ inline void identify_CtoS::handle()
             printf("ERROR: identify_CtoS::handle() -- failed to find a valid agent name after %d attempts\n", breakout);
             return; // bailout, something is wrong
         }
-        adjust_name(name, len);
+        new_name = adjust_player_name(name);
+        GS_ASSERT(new_name != NULL);
+        if (new_name == NULL) return;
     }
 
-    a->status.set_name(name);
+    a->status.set_name(new_name);
     a->status.identified = true;
 
     identified_StoC msg;
-    strcpy(msg.name, name);
+    strcpy(msg.name, a->status.name);
     msg.sendToClient(client_id);
 
-    NetServer::users->add_name_to_client_id(client_id, name);
+    NetServer::users->add_name_to_client_id(client_id, a->status.name);
     NetServer::clients[client_id]->ready();
+
+	if (new_name != name) free(new_name);
 }
 
 inline void ping_CtoS::handle()

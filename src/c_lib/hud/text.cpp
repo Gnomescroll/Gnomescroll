@@ -143,7 +143,16 @@ char* Text::set_string(char* text, char* this_text, unsigned int* this_len)
     else
     if (len > *this_len)
 	{   // string is greater size
-		this_text = (char*)realloc(this_text, sizeof(char)*(len+1));
+		char* new_this_text = (char*)realloc(this_text, sizeof(char)*(len+1));
+        GS_ASSERT(new_this_text != NULL);
+        if (new_this_text == NULL)
+        {
+            free(this_text);
+            this_text = NULL;
+            len = 0;
+        }
+        else this_text = new_this_text;
+        
 		*this_len = len;
 	}
 	// copy string over
@@ -181,7 +190,17 @@ char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
     if (str == NULL)
         str = (char*)malloc(sizeof(char) * (n+1));
     else
-        str = (char*)realloc(str, sizeof(char) * (n+1));
+    {
+        char* new_str = (char*)realloc(str, sizeof(char) * (n+1));
+        GS_ASSERT(new_str != NULL);
+        if (new_str == NULL)
+        {
+            free(str);
+            str = NULL;
+            n = 0;
+        }
+        else str = new_str;
+    }
     *str_len = n;
     return str;
 }

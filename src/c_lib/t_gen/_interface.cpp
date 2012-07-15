@@ -109,7 +109,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
 
     FILE * pFile;
     pFile = fopen ( FileName , "wb" );
-    if(pFile <= 0)
+    if(!pFile)
     {
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
@@ -208,7 +208,7 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
     FILE * pFile;
     pFile = fopen ( FileName , "wb" );
 
-    if(pFile <= 0)
+    if(!pFile)
     {
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;

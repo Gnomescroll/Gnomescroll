@@ -65,7 +65,6 @@ const int NO_AGENT = 255; // works as long as < AGENT_MAX
 /* Status */
 const int AGENT_HEALTH = 99;
 const int RESPAWN_TICKS = 30 * 4; // 4 seconds
-const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 const int AGENT_MAX_TURRETS = 10;    // (256/64)*2 == 8
 const int AGENT_MAX_SPAWNERS = 3;

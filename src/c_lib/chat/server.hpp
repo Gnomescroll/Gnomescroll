@@ -27,7 +27,7 @@ class ChatServer
 
     int channels[CHAT_SERVER_CHANNELS_MAX];
 
-	FILE* log;
+	FILE* logfile;
     unsigned int log_msg_buffer_len;
     char* log_msg_buffer;
 

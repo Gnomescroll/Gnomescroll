@@ -41,7 +41,7 @@ ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);
 
 class Item* create_item(int item_type);
-class Item* create_item(char* item_name);
+class Item* create_item(const char* item_name);
 
 // returns stack size
 int consume_stack_item(ItemID item_id);

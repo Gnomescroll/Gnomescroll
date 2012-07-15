@@ -10,14 +10,14 @@ class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_St
         uint16_t id;
         uint8_t type;
         uint16_t durability;
-        uint8_t stack_size;
+        uint16_t stack_size;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_u16(&durability, buff, buff_n, pack);
-            pack_u8(&stack_size, buff, buff_n, pack);
+            pack_u16(&stack_size, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -40,14 +40,14 @@ class item_state_StoC: public FixedSizeReliableNetPacketToClient<item_state_StoC
         uint16_t id;
         uint16_t durability;
         uint16_t energy;
-        uint8_t stack_size;
+        uint16_t stack_size;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u16(&durability, buff, buff_n, pack);
             pack_u16(&energy, buff, buff_n, pack);
-            pack_u8(&stack_size, buff, buff_n, pack);
+            pack_u16(&stack_size, buff, buff_n, pack);
         }
         inline void handle();
 };

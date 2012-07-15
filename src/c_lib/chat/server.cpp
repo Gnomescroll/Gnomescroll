@@ -110,8 +110,8 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	GS_ASSERT(Options::log_chat);
 	if (!Options::log_chat) return;
 	
-	GS_ASSERT(this->log != NULL);
-	if (log == NULL) return;
+	GS_ASSERT(this->logfile != NULL);
+	if (logfile == NULL) return;
 
     GS_ASSERT(this->log_msg_buffer != NULL);
     if (this->log_msg_buffer == NULL) return;
@@ -135,21 +135,21 @@ void ChatServer::log_message(int channel, int sender, char* payload)
 	if (sender_name == NULL) return;
 	GS_ASSERT(sender_name[0] != '\0');
 
-    // log timestamp
+    // logfile timestamp
     char* time_str = get_time_str();
     if (time_str != NULL)
-        fwrite(time_str, sizeof(char), strlen(time_str), this->log);
+        fwrite(time_str, sizeof(char), strlen(time_str), this->logfile);
 
-    // log msg
+    // logfile msg
     GS_ASSERT(strlen(CHAT_LOG_MSG_FORMAT) + strlen(payload) + strlen(sender_name) + count_digits(sender) < this->log_msg_buffer_len);
 	int msg_len = snprintf(this->log_msg_buffer, this->log_msg_buffer_len,
                     CHAT_LOG_MSG_FORMAT, sender, sender_name, payload);
     GS_ASSERT(msg_len < (int)this->log_msg_buffer_len);
-	fwrite(this->log_msg_buffer, sizeof(char), msg_len, this->log);
+	fwrite(this->log_msg_buffer, sizeof(char), msg_len, this->logfile);
 }
 
 ChatServer::ChatServer()
-: log(NULL), log_msg_buffer_len(0), log_msg_buffer(NULL)
+: logfile(NULL), log_msg_buffer_len(0), log_msg_buffer(NULL)
 {
     int channel_index = 0;
     system = new ChatServerChannel(PLAYERS_MAX);
@@ -170,10 +170,10 @@ ChatServer::ChatServer()
     
     if (Options::log_chat)
     {
-		this->log = fopen("./log/chat.log", "a");
-		GS_ASSERT(this->log != NULL);
-        if (this->log != NULL)
-            setvbuf(this->log, NULL, _IOLBF, 256);
+		this->logfile = fopen("./log/chat.log", "a");
+		GS_ASSERT(this->logfile != NULL);
+        if (this->logfile != NULL)
+            setvbuf(this->logfile, NULL, _IOLBF, 256);
 
         this->log_msg_buffer_len = count_digits(NetServer::HARD_MAX_CONNECTIONS)
         + strlen(CHAT_LOG_MSG_FORMAT) + CHAT_MESSAGE_SIZE_MAX + PLAYER_NAME_MAX_LENGTH + 1;
@@ -190,5 +190,5 @@ ChatServer::~ChatServer()
     free(this->pm);
 
     if (this->log_msg_buffer != NULL) free(this->log_msg_buffer);
-    if (this->log != NULL) fclose(this->log);
+    if (this->logfile != NULL) fclose(this->logfile);
 }

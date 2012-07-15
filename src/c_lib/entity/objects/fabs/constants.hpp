@@ -61,7 +61,6 @@ const int TURRET_TERRAIN_DAMAGE = 8;
 const int TURRET_AGENT_DAMAGE_MIN = 8;
 const int TURRET_AGENT_DAMAGE_MAX = 12;
 const int TURRET_AGENT_IMMUNITY_DURATION = 30 * 5;
-//const int TURRET_VOXEL_DAMAGE_RADIUS = 1;
 
 // explosion
 const float TURRET_EXPLOSION_RADIUS = 2.0f;

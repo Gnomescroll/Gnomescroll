@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
   pOutfile = fopen(pDst_filename, "wb");
   if (!pOutfile)
   {
+    fclose(pInfile);
     printf("Failed opening output file!\n");
     return EXIT_FAILURE;
   }
