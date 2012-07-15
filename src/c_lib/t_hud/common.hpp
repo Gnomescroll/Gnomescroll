@@ -5,7 +5,8 @@ void u_dot(float x, float y)
     /*
         Draw dot in upper left corner
     */
-    glDisable(GL_TEXTURE_2D);
+	GL_ASSERT(GL_TEXTURE_2D, false);
+
     glColor4ub(255, 0, 0, 255);
 
     float p = 1.0f;

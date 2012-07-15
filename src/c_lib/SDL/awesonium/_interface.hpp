@@ -1,10 +1,10 @@
 #pragma once
 
 
-namespace Awesonium
+namespace Awesomium
 {
 
 	void init();
 	void teardown();
-
+	void update();
 }

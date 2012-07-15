@@ -31,7 +31,13 @@ void ChatMessage::set_color()
     )	 // pm
 		this->color = CHAT_PM_COLOR;
     else // global
-		this->color = CHAT_GLOBAL_COLOR;
+    {
+		Agent_state *a = ClientState::agent_list->get(this->sender);
+		struct Color color = CHAT_GLOBAL_COLOR;
+		if (a != NULL && a->status.color_chosen)
+			color = a->status.color;
+		this->color = color;
+	}
 }
 
 ChatMessage::ChatMessage(int id)

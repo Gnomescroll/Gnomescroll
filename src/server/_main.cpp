@@ -16,16 +16,22 @@ void init(int argc, char* argv[])
 {
     init_c_lib(argc, argv);
 
-    if (0)
-    {
-        MapGen::init();
-        MapRecipes::simple_map();
-        MapGen::teardown();
-        Dragon::caves();
-        Dragon::surface_veins();
+    //if (0)
+    //{
+        //MapGen::init();
+        //MapRecipes::simple_map();
+        //MapGen::teardown();
+        //Dragon::caves();
+        //Dragon::surface_veins();
 
-        t_map::map_post_processing();
-    }
+        //t_map::map_post_processing();
+    //}
+    
+    if (!strcmp(Options::map, "fast"))
+    {
+		map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
+		map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
+	}
     else
     {
         srand(Options::seed);

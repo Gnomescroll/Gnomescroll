@@ -38,7 +38,7 @@ void time_since(int n)
 
 }
 
-void init()
+void init(int argc, char* argv[])
 {
 #ifdef _WIN32
     mkdir("./screenshot");
@@ -47,7 +47,7 @@ void init()
 #endif
 
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
-    init_c_lib();
+    init_c_lib(argc, argv);
     ClientState::set_desired_name(Options::name);
     _START_CLOCK(); // must start before networking
 

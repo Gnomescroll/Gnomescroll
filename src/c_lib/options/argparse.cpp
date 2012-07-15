@@ -232,6 +232,12 @@ int parse_args(int argc, char* argv[])
         while ((c = str[j++]) != '\0' && c != '=' && k < ARG_NAME_MAX)
             argname[k++] = c;
 
+		if (k == 0)
+		{
+			printf("Missing argument name. %s\n", argname);
+			continue;
+		}
+
         if (k == ARG_NAME_MAX && (c != '=' || c != '\0'))
         {
             printf("Argument name is too long. Error arg: %s\n", str);
@@ -252,6 +258,12 @@ int parse_args(int argc, char* argv[])
         while ((c = str[j++]) != '\0' && m < ARG_STRING_MAX)
             argstr[m++] = c;
 
+		if (m == 0)
+		{
+			printf("Missing argument value. %s\n", str);
+			continue;
+		}
+		
         if (m == ARG_STRING_MAX && c != '\0')
         {
             printf("Argument value is too long. Error arg: %s\n", str);
