@@ -96,7 +96,7 @@ dont_include_this_file_in_server
 
 /* Awesonium */
 
-
+/*
 #ifndef __WIN32__
     #ifndef __APPLE__
         #ifdef __GNUC__
@@ -113,7 +113,7 @@ dont_include_this_file_in_server
 #ifdef AWESOMIUM
     #include <SDL/awesomium/_include.hpp>
 #endif
-
+*/
     //#include <SDL/awesomium/_include.hpp>
 
 /* Draw lists */
