@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Awesonium
+namespace Awesomium
 {
 
 /*
@@ -31,7 +31,6 @@ struct chromeDisplay {
     void* webView;
 };
 */
-
 
 #if 0
 void libChromeShutdown() 
