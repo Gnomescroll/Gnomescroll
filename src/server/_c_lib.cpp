@@ -160,6 +160,9 @@ int init_c_lib(int argc, char* argv[])
     }
     Log::init();
 
+    Options::init_option_tables();
+    LUA::init_options();
+    Options::register_options();
     LUA::load_options(); //load game options
 
     Options::parse_args(argc, argv);
@@ -229,6 +232,8 @@ void close_c_lib()
 
     printf("Server closed\n"); 
     Log::teardown();
+
+    Options::teardown_option_tables();
 }
 
 void _set_seed(int seed)

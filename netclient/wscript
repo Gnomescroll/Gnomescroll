@@ -238,7 +238,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         pass
     elif OS == 'Linux':
-        awesomium_lib_path = [os.path.abspath('../libraries/lin32/lib') ] #['/home/atomos/dc_mmo/libraries/lin32/awesomium/lib']
+        awesomium_lib_path = [os.path.abspath('../libraries/lin32/awesomium/lib') ] #['/home/atomos/dc_mmo/libraries/lin32/awesomium/lib']
         conf.check(
             lib=['awesomium-1.6.5'], 
             libpath= awesomium_lib_path,

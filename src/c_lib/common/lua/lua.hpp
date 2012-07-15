@@ -9,6 +9,7 @@ namespace LUA
 
 void set_options_file(char* path);
 
+void init_options();
 void load_options();
 
 void register_int_option(const char* name, int* var);
@@ -27,8 +28,3 @@ extern "C"
     LUA_EXPORT void LUA_set_float_option(int option_id, float value);
     LUA_EXPORT void LUA_set_string_option(int option_id, char* value);
 }
-
-
-#if PRODUCTION
-//stuff
-#endif

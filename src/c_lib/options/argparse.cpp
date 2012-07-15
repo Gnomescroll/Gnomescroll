@@ -203,15 +203,18 @@ void register_string_option(const char* key, char** val)
 
 int parse_args(int argc, char* argv[])
 {
-    int n=0;
-
-    // TODO -- use strtok
-
+    if (argc < 2) return 0;
+    
     char argname[ARG_NAME_MAX+1] = {'\0'};
     char argstr[ARG_STRING_MAX+1] = {'\0'};
 
+    // skip the first argument if it is the settings filename
+    int start = 1;
+    if (argv[1][0] != '-') start = 2;
+
     // start at 2 -- 0 is program path, 1 is path to settings file
-    for (int i=2; i<argc; i++)
+    int n=0;
+    for (int i=start; i<argc; i++)
     {
         char* str = argv[i];
         GS_ASSERT(str[0] != '\0');
@@ -225,6 +228,7 @@ int parse_args(int argc, char* argv[])
         int j=0,k=0,m=0;
         char c;
         while ((c = str[j++]) != '\0' && c == '-'); // skip all -
+        j--;
         while ((c = str[j++]) != '\0' && c != '=' && k < ARG_NAME_MAX)
             argname[k++] = c;
 
@@ -245,8 +249,6 @@ int parse_args(int argc, char* argv[])
             continue;
         }
 
-        j++; // skip '='
-
         while ((c = str[j++]) != '\0' && m < ARG_STRING_MAX)
             argstr[m++] = c;
 
@@ -262,7 +264,7 @@ int parse_args(int argc, char* argv[])
         int ret = set_option_from_str(argname, argstr);
         if (ret < 0)
         {
-            printf("Argument %s invalid\n", str);
+            printf("Argument %s unrecognized\n", argname);
             continue;
         }
 

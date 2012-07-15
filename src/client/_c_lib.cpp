@@ -233,8 +233,12 @@ int init_c_lib(int argc, char* argv[])
     
     AgentHudName::verify_configuration();
 
+    Options::init_option_tables();
+    LUA::init_options();
+    Options::register_options();
     LUA::load_options(); //load game options
 
+    // parse any command line arguments, overriding settings files
     Options::parse_args(argc, argv);
     
     srand((unsigned int)time(NULL));   // seed the RNG
@@ -409,7 +413,8 @@ void close_c_lib()
 
     #undef TEARDOWN_DEBUG
 
-    printf("Game closed\n");
-
     Log::teardown();
+    Options::teardown_option_tables();
+
+    printf("Game closed\n");
 }
