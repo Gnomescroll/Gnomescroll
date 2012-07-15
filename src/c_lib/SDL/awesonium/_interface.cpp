@@ -1,6 +1,7 @@
 
 #include "_interface.hpp"
 
+#include <SDL/awesonium/viewport_class.hpp>
 
 /*
 ChildProcessPath
@@ -17,7 +18,18 @@ Embedders can now also specify a “localePath” for the location of en-US.dll 
 
 namespace Awesomium
 {
+    class *chrome_viewport cv;
 
+    void _init()
+    {
+        cv = new chrome_viewport;
+    }
+
+    void _draw()
+    {
+        cv->update_webview();
+        cv->draw_webviow();
+    }
 
     awe_string* get_awe_string(const char* _str)
     {
@@ -116,6 +128,7 @@ namespace Awesomium
         awe_string_destroy(package_path);
         awe_string_destroy(locale_path);
 
+        _init();
     }
 
     void teardown()

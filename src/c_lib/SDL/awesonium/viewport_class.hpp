@@ -32,25 +32,6 @@ struct chromeDisplay {
 };
 */
 
-#if 0
-void libChromeShutdown() 
-{
-    //printf("libChrome shutdown\n");
-    return;
-}
-
-extern "C" int _init2() {
-    awe_webcore_initialize_default();
-    atexit(libChromeShutdown);
-    return 0;
-}
-
-extern "C" int _update() {
-    awe_webcore_update(); //update web core; all windows
-    return 0;
-}
-#endif 
-
 class chrome_viewport
 {
 	public:	
