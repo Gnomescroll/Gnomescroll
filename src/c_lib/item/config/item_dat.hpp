@@ -303,6 +303,11 @@ void load_item_dat()
 	s.pretty_name = (char*)"Energy Tank";
 	s.max_stack_size = 1;
 
+	item_def(55, IG_AGENT_SPAWNER, "agent_spawner");
+	sprite_def(i1, 2,6);
+	s.pretty_name = (char*) "Spawner";
+	s.max_stack_size = 1;
+
     end_item_dat();
     
     verify_item_dat();

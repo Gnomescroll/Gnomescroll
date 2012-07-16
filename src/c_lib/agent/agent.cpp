@@ -483,13 +483,10 @@ void Agent_state::set_camera_state(float x, float y, float z, float theta, float
     this->camera.phi = phi;
     //printf("set camera state: %f %f \n",x ,y);
 }
-#endif
 
 void Agent_state::get_spawn_point(Vec3* spawn)
 {
     Vec3 default_spawn = vec3_init(map_dim.x/2, map_dim.y/2, map_dim.z-1);
-
-    using Components::BASE_SPAWN_ID;
 
     float fh = this->current_height();
     Components::AgentSpawnerComponent *s = NULL;
@@ -523,7 +520,6 @@ void Agent_state::get_spawn_point(Vec3* spawn)
         *spawn = s->get_spawn_point(fh, this->box.box_r);
 }
 
-#if DC_SERVER
 void Agent_state::spawn_state()
 {   // update position
     Vec3 spawn;

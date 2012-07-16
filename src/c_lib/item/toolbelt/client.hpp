@@ -4,6 +4,8 @@
 dont_include_this_file_in_server
 #endif
 
+#include <item/toolbelt/net/CtoS.hpp>
+
 namespace Toolbelt
 {
 

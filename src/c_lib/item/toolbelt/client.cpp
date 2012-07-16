@@ -13,6 +13,8 @@ namespace Toolbelt
 void turn_fire_on(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
+
     agent_fire_tick[agent_id] = 0;
     if (agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = true;
@@ -28,6 +30,11 @@ void turn_fire_on(int agent_id)
 void turn_fire_off(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
+
+	GS_ASSERT(agent_fire_tick != NULL);
+	if (agent_fire_tick == NULL) return;
+
     agent_fire_tick[agent_id] = 0;
     if (!agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = false;
@@ -59,6 +66,7 @@ bool toolbelt_item_begin_alpha_action()
     int agent_id = ClientState::playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return false;
 
     if (agent_fire_on[agent_id]) return false;
     turn_fire_on(agent_id);
@@ -90,6 +98,7 @@ bool toolbelt_item_end_alpha_action()
     int agent_id = ClientState::playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return false;
 
     if (!agent_fire_on[agent_id]) return false;
     turn_fire_off(agent_id);
@@ -187,6 +196,7 @@ bool toolbelt_item_beta_action()
     int agent_id = playerAgent_state.agent_id;
     if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return false;
 
     if (agent_fire_on[agent_id]) return false;
 

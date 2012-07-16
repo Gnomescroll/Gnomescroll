@@ -34,7 +34,6 @@ OwnerComponentList* owner_component_list = NULL;
 
 VoxelModelComponentList* voxel_model_component_list = NULL;
 
-AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 MonsterSpawnerComponentList* monster_spawner_component_list = NULL;
 
 SpawnChildComponentList* spawn_child_component_list = NULL;
@@ -53,6 +52,7 @@ AnimationComponentList* animation_component_list = NULL;
 #endif
 
 #if DC_SERVER
+AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 ExplosionComponentList* explosion_component_list = NULL;
 ItemDropComponentList* item_drop_component_list = NULL;
 #endif
@@ -93,8 +93,6 @@ Component* get_switch(ComponentType type)
         case COMPONENT_VOXEL_MODEL:
             return voxel_model_component_list->subscribe();
 
-        case COMPONENT_AGENT_SPAWNER:
-            return agent_spawner_component_list->subscribe();
         case COMPONENT_MONSTER_SPAWNER:
             return monster_spawner_component_list->subscribe();
 
@@ -125,6 +123,8 @@ Component* get_switch(ComponentType type)
         #endif
 
         #if DC_SERVER
+        case COMPONENT_AGENT_SPAWNER:
+            return agent_spawner_component_list->subscribe();
         case COMPONENT_EXPLOSION:
             return explosion_component_list->subscribe();
         case COMPONENT_ITEM_DROP:
@@ -183,9 +183,6 @@ void release_switch(Component* component)
             voxel_model_component_list->unsubscribe((VoxelModelComponent*)component);
             break;
 
-        case COMPONENT_AGENT_SPAWNER:
-            agent_spawner_component_list->unsubscribe((AgentSpawnerComponent*)component);
-            break;
         case COMPONENT_MONSTER_SPAWNER:
             monster_spawner_component_list->unsubscribe((MonsterSpawnerComponent*)component);
             break;
@@ -226,6 +223,9 @@ void release_switch(Component* component)
         #endif
 
         #if DC_SERVER
+        case COMPONENT_AGENT_SPAWNER:
+            agent_spawner_component_list->unsubscribe((AgentSpawnerComponent*)component);
+            break;
         case COMPONENT_EXPLOSION:
             explosion_component_list->unsubscribe((ExplosionComponent*)component);
             break;
@@ -259,7 +259,6 @@ void init_components()
 
     voxel_model_component_list = new VoxelModelComponentList;
 
-    agent_spawner_component_list = new AgentSpawnerComponentList;
     monster_spawner_component_list = new MonsterSpawnerComponentList;
 
     spawn_child_component_list = new SpawnChildComponentList;
@@ -280,6 +279,7 @@ void init_components()
     #endif
 
     #if DC_SERVER
+    agent_spawner_component_list = new AgentSpawnerComponentList;
     explosion_component_list = new ExplosionComponentList;
     item_drop_component_list = new ItemDropComponentList;
     #endif
@@ -304,7 +304,6 @@ void teardown_components()
 
     if (voxel_model_component_list != NULL) delete voxel_model_component_list;
 
-    if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
     if (monster_spawner_component_list != NULL) delete monster_spawner_component_list;
 
     if (spawn_child_component_list != NULL) delete spawn_child_component_list;
@@ -325,6 +324,7 @@ void teardown_components()
     #endif
 
     #if DC_SERVER
+    if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
     if (explosion_component_list != NULL) delete explosion_component_list;
     if (item_drop_component_list != NULL) delete item_drop_component_list;
     #endif

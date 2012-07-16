@@ -15,9 +15,6 @@ void init()
     agent_fire_tick = (int*)calloc(AGENT_MAX, sizeof(int));
     agent_fire_on   = (bool*)calloc(AGENT_MAX, sizeof(bool));
     
-    #if DC_CLIENT
-    #endif
-
     #if DC_SERVER
     GS_ASSERT(agent_selected_slot == NULL);
     GS_ASSERT(agent_selected_item == NULL);
@@ -36,9 +33,6 @@ void teardown()
     agent_fire_tick = NULL;
     agent_fire_on = NULL;
 
-    #if DC_CLIENT
-    #endif
-    
     #if DC_SERVER
     if (agent_selected_slot != NULL) free(agent_selected_slot);
     if (agent_selected_item != NULL) free(agent_selected_item);
@@ -53,6 +47,7 @@ void tick()
     GS_ASSERT(agent_selected_item != NULL);
     if (agent_selected_item == NULL) return;
     #endif
+    
     GS_ASSERT(agent_selected_type != NULL);
     GS_ASSERT(agent_fire_tick     != NULL);
     GS_ASSERT(agent_fire_on       != NULL);
@@ -112,23 +107,23 @@ void tick()
 void remove_agent(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
 
     #if DC_SERVER
     GS_ASSERT(agent_selected_item != NULL);
-    if (agent_selected_item == NULL) return;
     #endif
     GS_ASSERT(agent_selected_type != NULL);
     GS_ASSERT(agent_fire_tick     != NULL);
-    GS_ASSERT(agent_fire_on       != NULL);
-    if (agent_selected_type == NULL) return;
-    if (agent_fire_tick == NULL) return;
-    if (agent_fire_on == NULL) return;
 
     #if DC_SERVER
-    agent_selected_item[agent_id] = NULL_ITEM;
-    agent_selected_slot[agent_id] = 0;
+    if (agent_selected_item != NULL) 
+		agent_selected_item[agent_id] = NULL_ITEM;
+	if (agent_selected_slot != NULL)
+		agent_selected_slot[agent_id] = 0;
     #endif
-    agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+    if (agent_selected_type != NULL)
+		agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+		
     #if DC_CLIENT
     turn_fire_off(agent_id);
     #endif
@@ -137,11 +132,12 @@ void remove_agent(int agent_id)
 void agent_died(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
 
-    GS_ASSERT(agent_fire_tick     != NULL);
-    GS_ASSERT(agent_fire_on       != NULL);
+    GS_ASSERT(agent_fire_tick != NULL);
+    GS_ASSERT(agent_fire_on   != NULL);
     if (agent_fire_tick == NULL) return;
-    if (agent_fire_on == NULL) return;
+    if (agent_fire_on   == NULL) return;
     
     #if DC_CLIENT
     turn_fire_off(agent_id);
@@ -159,7 +155,7 @@ int get_selected_item_type()
     GS_ASSERT(agent_selected_type != NULL);
     if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
     int agent_id = ClientState::playerAgent_state.agent_id;
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return NULL_ITEM_TYPE;
+    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
 }
 
@@ -169,7 +165,8 @@ int get_selected_item_type()
 void update_selected_item_type()
 {
     int agent_id = ClientState::playerAgent_state.agent_id;
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return;
+    IF_INVALID_AGENT_ID(agent_id) return;
+
     int item_type = NULL_ITEM_TYPE;
     ItemContainer::ItemContainer* toolbelt = NULL;
     if (toolbelt_id != NULL_CONTAINER) toolbelt =
@@ -186,6 +183,9 @@ void update_selected_item_type()
 // will play continuous animations/sounds
 void tick_agent_selected_item_type(int agent_id, int item_type)
 {
+    ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
+	
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
 
@@ -231,6 +231,9 @@ void tick_agent_selected_item_type(int agent_id, int item_type)
 // will play animations/sounds
 void trigger_agent_selected_item_type(int agent_id, int item_type)
 {
+    ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
+
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
 
@@ -463,6 +466,9 @@ namespace Toolbelt
 // use for continuous click-and-hold weapons
 void tick_agent_selected_item(int agent_id, ItemID item_id)
 {
+	ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
+
     ItemGroup group = IG_NONE;    // empty hand
     if (item_id != NULL_ITEM)
     {
@@ -504,6 +510,9 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
 // use for fire_rate trigger events
 void trigger_agent_selected_item(int agent_id, ItemID item_id)
 {
+	ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
+
     // adjust item durability/energy
     // restrict events as needed
     //  -- this need to be integrated with the old hitscan_pick packet handlers
@@ -637,6 +646,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
 void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
 {
 	ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
 	Agent_state* a = ServerState::agent_list->get(agent_id);
 	GS_ASSERT(a != NULL);
 	
@@ -696,7 +706,8 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
 
 void trigger_agent_selected_item_reload_action(int agent_id, ItemID item_id)
 {
-
+    ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
 }
 
 void update_toolbelt_items()
@@ -729,12 +740,16 @@ void update_toolbelt_items()
 ItemID get_agent_selected_item(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
+	GS_ASSERT(agent_selected_item != NULL);
+	if (agent_selected_item == NULL) return NULL_ITEM;
     return agent_selected_item[agent_id];
 }
 
 bool set_agent_toolbelt_slot(int agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return false;
     GS_ASSERT(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
     if (slot < 0 || slot >= TOOLBELT_MAX_SLOTS || slot == NULL_SLOT) return false;
     agent_selected_slot[agent_id] = slot;
@@ -746,6 +761,8 @@ bool set_agent_toolbelt_slot(int agent_id, int slot)
 
 void use_block_placer(int agent_id, ItemID placer_id)
 {
+    ASSERT_VALID_AGENT_ID(agent_id);
+	IF_INVALID_AGENT_ID(agent_id) return;
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
     

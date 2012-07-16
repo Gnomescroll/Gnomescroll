@@ -59,11 +59,11 @@ class Agent_state
         int snapshot_seq;
         int CS_seq; // <--current counter
 
-        void get_spawn_point(Vec3* spawn);
-
         class AgentState s; //state current
         class AgentState state_snapshot;
+
         #if DC_SERVER
+        void get_spawn_point(Vec3* spawn);
         AgentState camera;    // agent's camera state, sent by client
         #endif
 

@@ -31,7 +31,7 @@ health(AGENT_HEALTH),
 should_die(false),
 dead(false),
 respawn_countdown(RESPAWN_TICKS),
-spawner(Components::BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
+spawner(BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
 kills(0),
 deaths(0),
 suicides(0),
@@ -56,8 +56,7 @@ Agent_status::~Agent_status()
 
 void Agent_status::set_spawner(int pt)
 {
-    using Components::agent_spawner_component_list;
-    using Components::BASE_SPAWN_ID;
+    //using Components::agent_spawner_component_list;
     
     if (pt != BASE_SPAWN_ID)
     {   // check new spawner exists

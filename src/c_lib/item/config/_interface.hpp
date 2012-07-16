@@ -22,8 +22,6 @@ void sprite_def(int alias);
 int sprite_alias(int spritesheet, int xpos, int ypos);
 void _set_attribute();
 
-void set_attribute();
-
 void iso_block_sprite_def(const char* block_name);
 void container_block_def(const char* block_name, ItemContainerType container_type);
 
@@ -37,17 +35,20 @@ void item_def(int type, ItemGroup group, const char* name)
 	GS_ASSERT(type != NULL_ITEM_TYPE);
 	GS_ASSERT(type >= 0 && type < MAX_ITEMS);
 	GS_ASSERT(group != IG_NONE);
-	GS_ASSERT(strlen(name));
+	GS_ASSERT(name[0] != '\0');
 	
-    if (type != 0) _set_attribute(); //assumes first type defined is 0
+    _set_attribute();
+
+	// check that this type has not been set yet
+	for (int i=0; i<MAX_ITEMS; i++)
+		GS_ASSERT(item_attribute_array[i].item_type != type);
 
     _current_item_id = type;
 
     s.load_defaults(type, group);
     
     GS_ASSERT(group_array[type] == IG_NONE)
-
-    group_array[type] = group; //check
+    group_array[type] = group;
     
     set_item_name(type, name);
 }
@@ -76,12 +77,9 @@ int texture_alias(const char* spritesheet)
 
 void sprite_def(int spritesheet, int ypos, int xpos)
 {
-    if (xpos < 1 || ypos < 1)
-    {
-        printf("ITEM CONFIG ERROR: id= %i xpos,ypos less than one \n", _current_item_id);
-        GS_ASSERT(false);
-    }
-
+	GS_ASSERT(xpos >= 1 && ypos >= 1);
+	// can't check maximums because they are unknown
+	
     // check if we have already set this sprite
     GS_ASSERT(sprite_array[_current_item_id] == ERROR_SPRITE);
 
@@ -95,25 +93,9 @@ void sprite_def(int spritesheet, int ypos, int xpos)
     sprite_array[_current_item_id] = index; //check
 }
 
-void sprite_def(int alias)
-{
-    sprite_array[_current_item_id] = alias;
-}
-
-int sprite_alias(int spritesheet, int ypos, int xpos)
-{
-    if (xpos < 1 || ypos < 1)
-    {
-        printf("ITEM CONFIG ERROR: sprite alias xpos,ypos less than zero \n");
-        GS_ASSERT(false);
-    }
-    return LUA_blit_item_texture(spritesheet, xpos, ypos);
-}
 #else
 int texture_alias(const char* spritesheet) {return 0;}
 void sprite_def(int spritesheet, int xpos, int ypos) {}
-void sprite_def(int alias) {}
-int sprite_alias(int spritesheet, int xpos, int ypos) { return 0; }
 #endif
 
 }   // Item

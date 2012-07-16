@@ -58,7 +58,7 @@ const char you_star_symbol[] = "*";
 const char you_A_symbol[] = "A";
 const char ally_symbol[] = "A";
 const char base_symbol[] = "B";
-const char spawner_symbol[] = "S%d";
+//const char spawner_symbol[] = "S%d";
 const char turret_symbol[] = "T";
 const char camera_symbol[] = "C";
 
@@ -67,7 +67,7 @@ static Text* you_star = NULL;
 static Text* you_A = NULL;
 static Text* base = NULL;
 static Text* ally[AGENT_MAX] = {NULL};
-static Text* spawner[Components::MAX_AGENT_SPAWNER_COMPONENTS] = {NULL};
+//static Text* spawner[Components::MAX_AGENT_SPAWNER_COMPONENTS] = {NULL};
 //static Text turret[MAX_TURRETS];
 static Text* camera = NULL;
 
@@ -103,18 +103,18 @@ void init_text_icons()
         ally[i]->set_text((char*)ally_symbol);
     }
         
-    char* spawner_max_string = (char*)malloc(sizeof(char) * (10+1));
-    sprintf(spawner_max_string, "%d", Components::MAX_AGENT_SPAWNER_COMPONENTS);
-    int len = (int)strlen(spawner_max_string);
-    for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
-    {
-        spawner[i] = HudText::text_list->create();
-        GS_ASSERT(spawner[i] != NULL);
-        if (spawner[i] == NULL) break;
-        spawner[i]->set_format((char*)spawner_symbol);
-        spawner[i]->set_format_extra_length(len - 1);
-    }
-    free(spawner_max_string);
+    //char* spawner_max_string = (char*)malloc(sizeof(char) * (10+1));
+    //sprintf(spawner_max_string, "%d", Components::MAX_AGENT_SPAWNER_COMPONENTS);
+    //int len = (int)strlen(spawner_max_string);
+    //for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
+    //{
+        //spawner[i] = HudText::text_list->create();
+        //GS_ASSERT(spawner[i] != NULL);
+        //if (spawner[i] == NULL) break;
+        //spawner[i]->set_format((char*)spawner_symbol);
+        //spawner[i]->set_format_extra_length(len - 1);
+    //}
+    //free(spawner_max_string);
 
     camera = HudText::text_list->create();
     GS_ASSERT(camera != NULL);
@@ -137,8 +137,8 @@ void set_icon_colors()
     base->set_color(highlight.r, highlight.g, highlight.b,a);
     for (int i=0; i<(int)AGENT_MAX; i++)
         if (ally[i] != NULL) ally[i]->set_color(highlight.r, highlight.g, highlight.b,a);
-    for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
-        if (spawner[i] != NULL) spawner[i]->set_color(highlight.r, highlight.g, highlight.b,a);
+    //for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
+        //if (spawner[i] != NULL) spawner[i]->set_color(highlight.r, highlight.g, highlight.b,a);
     camera->set_color(highlight.r, highlight.g, highlight.b, a);
 }
 
@@ -380,7 +380,6 @@ void draw_text_icons(float z)
         //j++;
     //}
     
-    using Components::BASE_SPAWN_ID;
     Objects::Object* b = Objects::get(OBJECT_BASE, 0);
     if (b != NULL)
     {

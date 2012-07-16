@@ -17,17 +17,14 @@ struct Vec3 AgentSpawnerComponent::get_spawn_point(float spawned_object_height, 
 
     Vec3 position = physics->get_position();
 
-    int x,y;
-    x = (int)position.x;
-    y = (int)position.y;
+    int x = (int)position.x;
+    int y = (int)position.y;
 
-    int sx,sy;
-
-    sx = randrange(x - this->radius, x + this->radius);
+    int sx = randrange(x - this->radius, x + this->radius);
     sx = translate_point(sx);
     spawn_point.x = sx;
 
-    sy = randrange(y - this->radius, y + this->radius);
+    int sy = randrange(y - this->radius, y + this->radius);
     sy = translate_point(sy);
     spawn_point.y = sy;
 
