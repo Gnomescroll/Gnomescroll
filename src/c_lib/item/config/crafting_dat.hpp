@@ -74,6 +74,9 @@ void load_crafting_dat()
     def_crafting_recipe("laser_rifle");
     set_crafting_reagent("copper_bar", 1);
     set_crafting_reagent("quartz_crystal", 1);
+    
+    // Energy
+    def_crafting_recipe("energy_pack");
 }
 
 }   // Item
