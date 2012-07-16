@@ -172,14 +172,25 @@ void Agent_status::heal(unsigned int amt)
 int Agent_status::apply_damage(int dmg)
 {
 	GS_ASSERT(dmg >= 0);
-    if (this->dead || this->should_die) return this->health;
-    
     if (dmg <= 0) return this->health;
+
+    if (this->dead || this->should_die) return this->health;
     
     agent_damage_StoC dmg_msg;
     dmg_msg.id = a->id;
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();
+
+	if (this->health <= 0)
+	{
+		this->should_die = true;
+		return this->health;
+	}
+
+    this->health -= dmg;
+    this->health = (this->health < 0) ? 0 : this->health;
+
+    this->send_health_msg();
 
     if (this->health <= 0)
     {	// attempt to burn energy tank
@@ -193,18 +204,10 @@ int Agent_status::apply_damage(int dmg)
 		if (container != NULL)
 			n_energy_tanks = container->consume_energy_tank();
 		
-		if (n_energy_tanks <= 0)
-			this->should_die = true;
-		else
+		if (n_energy_tanks > 0)
 			this->restore_health();
-		return this->health;
 	}
-    
-    this->health -= dmg;
-    this->health = (this->health < 0) ? 0 : this->health;
-
-    this->send_health_msg();
-    
+        
     return this->health;
 }
 
