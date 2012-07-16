@@ -44,6 +44,8 @@ const int CRYOFREEZER_SMALL_Y = 2;
 const int SMELTER_ONE_X = 3;
 const int SMELTER_ONE_Y = 2;
 
+const int ENERGY_TANK_MAX = 4;
+
 const int MAX_ITEMS = 256;
 
 const int MAX_CRAFTING_RECIPE = 256;

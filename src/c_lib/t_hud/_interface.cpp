@@ -10,12 +10,14 @@
 namespace t_hud
 {
 
+const int n_inventories = 7;
 class AgentContainerUI* agent_container = NULL;
 class AgentToolbeltUI* agent_toolbelt = NULL;
 class AgentSynthesizerUI* synthesizer_container = NULL;
 class CraftingUI* crafting_container = NULL;
 class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
+class EnergyUI* energy_tanks = NULL;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -30,6 +32,9 @@ void set_container_id(ItemContainerType container_type, int container_id)
         case AGENT_SYNTHESIZER:
             synthesizer_container->container_id = container_id;
             break;
+        case AGENT_ENERGY_TANKS:
+			energy_tanks->container_id = container_id;
+			break;
             
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             crafting_container->container_id = container_id;
@@ -47,7 +52,7 @@ void set_container_id(ItemContainerType container_type, int container_id)
         case CONTAINER_TYPE_SMELTER_ONE:
             smelter->container_id = container_id;
             break;
-            
+                        
         default:
             GS_ASSERT(false);
             return;
@@ -110,7 +115,6 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
     int closest_slot = NULL_SLOT;
 
     // set up container array
-    const int n_inventories = 6;
     UIElement* inventories[n_inventories] = {
         agent_container,
         agent_toolbelt,
@@ -118,6 +122,7 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
         crafting_container,
         storage_block,
         smelter,
+        energy_tanks,
     };
 
     // get topmost container click
@@ -427,12 +432,14 @@ static void draw_tooltip()
 void draw_hud()
 {
     agent_toolbelt->draw();
+    energy_tanks->draw();
 
     if (!agent_container_enabled && !container_block_enabled) return;
 
+    energy_tanks->draw_name();
 	agent_toolbelt->draw_name();
     agent_container->draw();
-    synthesizer_container->draw();
+    synthesizer_container->draw();    
     
     if (container_block_enabled)
     {
@@ -458,7 +465,7 @@ void draw_hud()
                 case CONTAINER_TYPE_SMELTER_ONE:
                     smelter->draw();
                     break;
-
+                    
                 default:
                     GS_ASSERT(false);
                     break;
@@ -486,6 +493,12 @@ void init()
     agent_toolbelt->xoff = (_xresf - agent_toolbelt->width())/2;
     agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
     agent_toolbelt->init();
+    
+    energy_tanks = new EnergyUI;
+    energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
+    energy_tanks->xoff = _xresf + 40;
+    energy_tanks->yoff = _yresf - (energy_tanks->height() + agent_toolbelt->height());
+    energy_tanks->init();
 
     synthesizer_container = new AgentSynthesizerUI;
     synthesizer_container->type = UI_ELEMENT_SYNTHESIZER_CONTAINER;
@@ -532,6 +545,7 @@ void teardown()
     if (crafting_container != NULL) delete crafting_container;
     if (storage_block != NULL) delete storage_block;
     if (smelter != NULL) delete smelter;
+    if (energy_tanks != NULL) delete energy_tanks;
 
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
 }
