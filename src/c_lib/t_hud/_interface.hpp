@@ -9,7 +9,7 @@ extern class AgentToolbeltUI* agent_toolbelt;
 extern class AgentSynthesizerUI* synthesizer_container;
 extern class CraftingUI* crafting_container;
 extern class StorageBlockUI* storage_block;
-extern class EnergyUI* energy_tanks;
+extern class EnergyTanksUI* energy_tanks;
 
 void set_container_id(ItemContainerType container_type, int container_id);
 

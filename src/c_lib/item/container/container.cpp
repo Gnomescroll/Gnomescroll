@@ -12,6 +12,8 @@
 #include <item/container/net/StoC.hpp>
 #endif
 
+// TODO -- make insert_item,remove_item non-pure
+
 namespace ItemContainer
 {
 
@@ -36,6 +38,10 @@ void init_container(ItemContainerInterface* container)
             container->init(AGENT_SYNTHESIZER_X, AGENT_SYNTHESIZER_Y);
             ((ItemContainerSynthesizer*)container)->set_shopping_parameters(AGENT_SYNTHESIZER_SHOPPING_X, AGENT_SYNTHESIZER_SHOPPING_Y);
             break;
+        case AGENT_ENERGY_TANKS:
+			container->attached_to_agent = true;
+			container->init(AGENT_ENERGY_TANKS_X, AGENT_ENERGY_TANKS_Y);
+			break;
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             container->attached_to_agent = false;
             container->init(CRAFTING_BENCH_UTILITY_X, CRAFTING_BENCH_UTILITY_Y);
@@ -65,8 +71,10 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
-    //GS_ASSERT(item_id != this->get_item(slot));
     if (!this->is_valid_slot(slot)) return;
+
+    GS_ASSERT(this->slot[slot] == NULL_ITEM);
+
     this->slot[slot] = item_id;
     this->slot_count++;
 
@@ -99,6 +107,55 @@ void ItemContainer::remove_item(int slot)
     this->slot[slot] = NULL_ITEM;
     this->slot_count--;
 }
+
+/* Energy Tanks */
+
+void ItemContainerEnergyTanks::insert_item(int slot, ItemID item_id)
+{
+    GS_ASSERT(item_id != NULL_ITEM);
+    GS_ASSERT(this->is_valid_slot(slot));
+    if (!this->is_valid_slot(slot)) return;
+    
+    int item_type = Item::get_item_type(item_id);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE); 
+    GS_ASSERT(item_type == this->energy_tank_type); 
+    
+    GS_ASSERT(this->slot[slot] == NULL_ITEM);
+    
+    this->slot[slot] = item_id;
+    this->slot_count++;
+
+    Item::Item* item = Item::get_item_object(item_id);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return;
+    item->location = IL_CONTAINER;
+    item->location_id = this->id;
+    item->container_slot = slot;
+}
+
+void ItemContainerEnergyTanks::remove_item(int slot)
+{
+    GS_ASSERT(this->is_valid_slot(slot));
+    if (!this->is_valid_slot(slot)) return;
+
+    ItemID item_id = this->slot[slot];
+    GS_ASSERT(item_id != NULL_ITEM);
+    if (item_id != NULL_ITEM)
+    {
+        Item::Item* item = Item::get_item_object(this->slot[slot]);
+        GS_ASSERT(item != NULL);
+        if (item != NULL)
+        {
+            item->location = IL_NOWHERE;
+            item->container_slot = NULL_SLOT;
+        }
+    }
+
+    this->slot[slot] = NULL_ITEM;
+    this->slot_count--;
+}
+
+
 
 /* Cryofreezer */
 void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)

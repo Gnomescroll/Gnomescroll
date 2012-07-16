@@ -256,9 +256,9 @@ void load_item_dat()
 
 
     item_def(49, IG_CONSUMABLE, "repair_kit");
-    sprite_def(i0, 2,8);
-    s.pretty_name = (char*)"Repair Kit";
-    s.max_stack_size = 20;
+    sprite_def(i1, 6,1);
+    s.pretty_name = (char*)"Small Charge Pack";
+    s.max_stack_size = 16;
     s.repair_agent_amount = 25;
 
     item_def(50, IG_PLACER, "cryofreezer_1");
@@ -298,7 +298,13 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"control_node");
 
+	item_def(54, IG_ENERGY_TANK, "energy_tank");
+    sprite_def(i0, 2,8);
+	s.pretty_name = (char*)"Energy Tank";
+	s.max_stack_size = 1;
+
     end_item_dat();
+    
     verify_item_dat();
 }
 

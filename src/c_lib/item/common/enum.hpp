@@ -69,6 +69,7 @@ typedef enum
     IG_DEBUG,       // debug only items
     IG_UNKNOWN,     // used by recipes
     IG_CONSUMABLE,
+    IG_ENERGY_TANK,
 } ItemGroup;
 
 typedef enum

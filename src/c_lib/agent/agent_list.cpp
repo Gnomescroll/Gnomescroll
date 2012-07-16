@@ -225,6 +225,7 @@ bool Agent_list::name_available(char* name)
     return true;
 }
 
+#if DC_CLIENT
 void Agent_list::check_missing_names()
 {
     this->check_name_interval++;
@@ -237,6 +238,7 @@ void Agent_list::check_missing_names()
         this->a[i]->status.check_missing_name();
     }
 }
+#endif
 
 Agent_list::Agent_list()
 :

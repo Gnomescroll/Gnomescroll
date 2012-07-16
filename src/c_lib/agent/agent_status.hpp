@@ -20,6 +20,7 @@ class Agent_status {
     public:
 
         int health;
+        bool should_die;
         bool dead;
         int respawn_countdown;
         int spawner;
@@ -50,26 +51,31 @@ class Agent_status {
         void tick();
 
         bool set_name(char* n); // return true if the new name is different
+        #if DC_CLIENT
         void check_missing_name();
+        #endif
 
         void set_spawner(int pt);
         void set_spawner();
 
-        void send_health_msg();
-        void heal(unsigned int amt);
-        int apply_damage(int dmg);
-        int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
-        int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
         bool die();
         bool die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void kill_slime();
+
         #if DC_SERVER
         void respawn();
         void set_fresh_state();
-        #endif
+
+        void send_health_msg();
         void restore_health();
+        void heal(unsigned int amt);
+        int apply_damage(int dmg);
+        int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
+        int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
         void at_base();
+        #endif
+
         
         void send_scores(int client_id);
         void send_scores();

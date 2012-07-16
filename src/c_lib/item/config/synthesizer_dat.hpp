@@ -17,6 +17,9 @@ void load_synthesizer()
     synthesizer_item_set(1,1);
 
     synthesizer_item_def("repair_kit", 5);
+    synthesizer_item_set(3,0);
+    
+    synthesizer_item_def("energy_tank", 25);
     synthesizer_item_set(3,1);
 
     synthesizer_item_def("block_placer", 100);
@@ -30,7 +33,7 @@ void load_synthesizer()
     synthesizer_item_set(1,0);
 
     synthesizer_item_def("cryofreezer_1", 3);
-    synthesizer_item_set(3,0);
+    synthesizer_item_set(2,0);
 
 }
 

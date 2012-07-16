@@ -17,7 +17,7 @@ class AgentSynthesizerUI* synthesizer_container = NULL;
 class CraftingUI* crafting_container = NULL;
 class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
-class EnergyUI* energy_tanks = NULL;
+class EnergyTanksUI* energy_tanks = NULL;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -494,10 +494,10 @@ void init()
     agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
     agent_toolbelt->init();
     
-    energy_tanks = new EnergyUI;
+    energy_tanks = new EnergyTanksUI;
     energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
-    energy_tanks->xoff = _xresf + 40;
-    energy_tanks->yoff = _yresf - (energy_tanks->height() + agent_toolbelt->height());
+    energy_tanks->xoff = _xresf/2 + 45;
+    energy_tanks->yoff = _yresf - (energy_tanks->height() + agent_toolbelt->height() - 6);
     energy_tanks->init();
 
     synthesizer_container = new AgentSynthesizerUI;

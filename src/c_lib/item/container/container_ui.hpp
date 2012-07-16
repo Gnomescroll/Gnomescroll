@@ -130,6 +130,10 @@ class ItemContainerUI: public ItemContainerUIInterface
 
         bool can_insert_item(int slot, int item_type)
         {
+			GS_ASSERT(this->is_valid_slot(slot));
+			if (!this->is_valid_slot(slot)) return false;
+			if (item_type == NULL_ITEM_TYPE) return false;
+
             return true;
         }
 
@@ -173,6 +177,65 @@ class ItemContainerUI: public ItemContainerUIInterface
         {}
 };
 
+class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
+{
+    public:
+
+		int energy_tank_type;
+
+        bool can_insert_item(int slot, int item_type)
+        {
+			GS_ASSERT(this->is_valid_slot(slot));
+			if (!this->is_valid_slot(slot)) return false;
+			if (item_type == NULL_ITEM_TYPE) return false;
+			
+            return (item_type == this->energy_tank_type);
+        }
+
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+			int max_stack_size = Item::get_max_stack_size(this->energy_tank_type);
+			if (max_stack_size <= 1) return NULL_SLOT; // cannot stack
+			
+			for (int i=0; i<this->slot_max; i++)
+				if (this->slot_stack[i] < max_stack_size)
+					return i;
+			return NULL_SLOT; // cannot stack energy tanks
+        }
+
+        int get_empty_slot()
+        {
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot_type[i] == NULL_ITEM_TYPE)
+                    return i;
+            return NULL_SLOT;
+        }
+
+        void init(ItemContainerType type, int xdim, int ydim)
+        {
+			this->energy_tank_type = Item::get_item_type("energy_tank");
+            GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
+
+			GS_ASSERT(type == AGENT_ENERGY_TANKS);
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim;
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            
+            this->slot_type = new int[this->slot_max];
+            this->slot_stack = new int[this->slot_max];
+            this->slot_durability = new int[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
+            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
+            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
+        }
+
+        explicit ItemContainerEnergyTanksUI(int id)
+        : ItemContainerUIInterface(id), energy_tank_type(NULL_ITEM_TYPE)
+        {}
+};
+
 class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 {
     public:
@@ -194,14 +257,20 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
         {
             GS_ASSERT(this->is_valid_slot(slot));
             if (!this->is_valid_slot(slot)) return false;
+            GS_ASSERT(item_type != NULL_ITEM_TYPE);
+            if (item_type == NULL_ITEM_TYPE) return false;
+            
             // synthesizer coins only
-			if (item_type == Item::get_item_type((char*)"synthesizer_coin")) return true;
-            return false;   // no other slots accept insertions
+            int coin_type = Item::get_item_type("synthesizer_coin");
+            GS_ASSERT(coin_type != NULL_ITEM_TYPE);
+			return (item_type == coin_type);
         }
 
         int get_stackable_slot(int item_type, int stack_size)
         {
-			if (item_type != Item::get_item_type((char*)"synthesizer_coin")) return NULL_SLOT; // coin only
+			static int coin_type = Item::get_item_type("synthesizer_coin");
+			GS_ASSERT(coin_type != NULL_ITEM_TYPE);
+			if (item_type != coin_type) return NULL_SLOT; // coin only
             for (int i=0; i<this->slot_max; i++)
             {
                 if (this->slot_type[i] == NULL_ITEM_TYPE) continue;

@@ -47,6 +47,7 @@ void turn_fire_off(int agent_id)
 			item_group == IG_SHOVEL ||
 			item_group == IG_SYNTHESIZER_COIN || 
 			item_group == IG_RESOURCE ||
+			item_group == IG_ENERGY_TANK ||
 			item_group == IG_ERROR)
 			Animations::stop_equipped_item_animation();
 	}
@@ -74,6 +75,7 @@ bool toolbelt_item_begin_alpha_action()
 		item_group == IG_SHOVEL ||
 		item_group == IG_SYNTHESIZER_COIN || 
 		item_group == IG_RESOURCE ||
+		item_group == IG_ENERGY_TANK ||
 		item_group == IG_ERROR)
 		continuous = true;
 	Animations::begin_equipped_item_animation(item_type, continuous);
@@ -108,6 +110,7 @@ bool toolbelt_item_end_alpha_action()
         case IG_SHOVEL:
         case IG_NONE:
         case IG_FIST:
+        case IG_ENERGY_TANK:
             return true;
 
         case IG_MINING_LASER:
@@ -139,6 +142,7 @@ void toolbelt_item_begin_alpha_action_event_handler(ItemGroup item_group)
         case IG_SHOVEL:
         case IG_NONE:
         case IG_FIST:
+        case IG_ENERGY_TANK:
 
         case IG_CONSUMABLE:
         case IG_PLACER:
@@ -164,6 +168,7 @@ void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group)
         case IG_SHOVEL:
         case IG_NONE:
         case IG_FIST:
+        case IG_ENERGY_TANK:
 
         case IG_CONSUMABLE:
         case IG_PLACER:
@@ -207,6 +212,7 @@ bool toolbelt_item_beta_action()
         case IG_FIST:
         case IG_HITSCAN_WEAPON:
         case IG_GRENADE_LAUNCHER:
+        case IG_ENERGY_TANK:
         default:
             break;		
 	}

@@ -28,6 +28,7 @@ inline void delete_item_container_StoC::handle()
 
 inline void assign_item_container_StoC::handle()
 {
+	GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainerInterface* container = get_container(container_id);
     ASSERT_NOT_NULL(container);
     if (container == NULL) return;
@@ -42,6 +43,7 @@ inline void assign_item_container_StoC::handle()
             player_container_ui->init(container->type, container->xdim, container->ydim);
             player_container_ui->load_data(container->slot);
             break;
+            
         case AGENT_TOOLBELT:
             player_toolbelt_id = container_id;
             player_toolbelt = (ItemContainer*)container;
@@ -51,6 +53,7 @@ inline void assign_item_container_StoC::handle()
             player_toolbelt_ui->load_data(container->slot);
             Toolbelt::assign_toolbelt(container->id);
             break;
+        
         case AGENT_SYNTHESIZER:
             player_synthesizer_id = container_id;
             player_synthesizer = (ItemContainerSynthesizer*)container;
@@ -60,6 +63,16 @@ inline void assign_item_container_StoC::handle()
             player_synthesizer_ui->set_shopping_parameters(((ItemContainerSynthesizer*)container)->shopping_xdim, ((ItemContainerSynthesizer*)container)->shopping_ydim);
             player_synthesizer_ui->load_data(container->slot);
             break;
+        
+        case AGENT_ENERGY_TANKS:
+            player_energy_tanks_id = container_id;
+            player_energy_tanks = (ItemContainerEnergyTanks*)container;
+            if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
+            player_energy_tanks_ui = new ItemContainerEnergyTanksUI(container->id);
+            player_energy_tanks_ui->init(container->type, container->xdim, container->ydim);
+            player_energy_tanks_ui->load_data(container->slot);
+            break;
+        
         default:
             GS_ASSERT(false);
             return;

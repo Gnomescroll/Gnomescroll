@@ -389,6 +389,7 @@ void mouse_left_click_handler(int container_id, int slot, bool synthesizer_shopp
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
+		case AGENT_ENERGY_TANKS:
             action = alpha_action_decision_tree(container_id, slot);
             break;
         case AGENT_SYNTHESIZER:
@@ -417,6 +418,7 @@ void mouse_left_click_handler(int container_id, int slot, bool synthesizer_shopp
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
+		case AGENT_ENERGY_TANKS:
             send_container_alpha_action(action, container_id, slot);
             break;
         case AGENT_SYNTHESIZER:
@@ -460,6 +462,7 @@ void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shop
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
+		case AGENT_ENERGY_TANKS:
             action = beta_action_decision_tree(container_id, slot);
             break;
         case AGENT_SYNTHESIZER:
@@ -489,6 +492,10 @@ void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shop
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
+
+		case AGENT_ENERGY_TANKS:	// TODO -- make sure this works
+			// the controller needs to check can_insert_item
+			// can probably re-merge some of the controllers
             send_container_beta_action(action, container_id, slot);
             break;
         case AGENT_SYNTHESIZER:

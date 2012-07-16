@@ -6,7 +6,7 @@
 namespace t_hud
 {
 
-class EnergyUI : public UIElement
+class EnergyTanksUI : public UIElement
 {
     public:
 
@@ -16,8 +16,8 @@ class EnergyUI : public UIElement
 
     static const int slot_size = 32;    // pixel dimension
 
-    static const int xdim = ENERGY_TANK_MAX;    // slot dimensions
-    static const int ydim = 1;
+    static const int xdim = AGENT_ENERGY_TANKS_X;    // slot dimensions
+    static const int ydim = AGENT_ENERGY_TANKS_Y;
 
     int selected_slot;
 
@@ -43,16 +43,16 @@ class EnergyUI : public UIElement
         this->name.set_text((char*)"Energy Tanks");
     }
 
-    EnergyUI() : selected_slot(0)
+    EnergyTanksUI() : selected_slot(0)
     {}
     
-    ~EnergyUI()
+    ~EnergyTanksUI()
     {
     }
 };
 
 
-int EnergyUI::get_slot_at(int px, int py)
+int EnergyTanksUI::get_slot_at(int px, int py)
 {
     px -= xoff - border - inc1/2;
     py -= yoff + border + inc1/2;
@@ -71,7 +71,7 @@ int EnergyUI::get_slot_at(int px, int py)
     return slot;
 }
 
-void EnergyUI::draw_name()
+void EnergyTanksUI::draw_name()
 {
 	// TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
 	HudFont::start_font_draw();
@@ -82,7 +82,7 @@ void EnergyUI::draw_name()
 	HudFont::end_font_draw();	
 }
 
-void EnergyUI::draw()
+void EnergyTanksUI::draw()
 {
     const float w = slot_size;
 
@@ -111,14 +111,9 @@ void EnergyUI::draw()
 
     if (this->container_id == NULL_CONTAINER) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
-    int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);
-    if (slot_types == NULL) return;
-    GS_ASSERT(slot_stacks != NULL);
-    GS_ASSERT(slot_durabilities != NULL);
-    if (slot_stacks == NULL) return;
-    if (slot_durabilities == NULL) return;
-
+	GS_ASSERT(slot_types != NULL);
+	if (slot_types == NULL) return;
+	
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
@@ -138,20 +133,20 @@ void EnergyUI::draw()
     }
 
     glEnd();
-
     glColor4ub(255, 255, 255, 255);
-    glEnable(GL_TEXTURE_2D);
     
-    GS_ASSERT(TextureSheetLoader::GreyScaleItemTexture != 0);
-    if (TextureSheetLoader::GreyScaleItemTexture == 0) return;
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
-
-	// draw unloaded energy tanks as greyscale
-    glBegin(GL_QUADS);
     int energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
     int energy_tank_sprite_index = Item::get_sprite_index_for_type(energy_tank_type);
     GS_ASSERT(energy_tank_sprite_index != ERROR_SPRITE);
+
+    GS_ASSERT(TextureSheetLoader::GreyScaleItemTexture != 0);
+    if (TextureSheetLoader::GreyScaleItemTexture == 0) return;
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
+
+	// draw unloaded energy tanks as greyscale
+    glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -160,8 +155,6 @@ void EnergyUI::draw()
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
-        //const float iw = 8.0f; // icon_width
-        //const int iiw = 8; // integer icon width
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
         
@@ -182,9 +175,14 @@ void EnergyUI::draw()
         glTexCoord2f(tx_min, ty_max);
         glVertex2f(x, y);
     }
+	glEnd();
 	
     GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
-    if (TextureSheetLoader::ItemSheetTexture == 0) return;
+    if (TextureSheetLoader::ItemSheetTexture == 0)
+    {
+		glDisable(GL_TEXTURE_2D);
+		return;
+	}
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
 	// draw loaded energy tanks
@@ -198,8 +196,6 @@ void EnergyUI::draw()
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
-        //const float iw = 8.0f; // icon_width
-        //const int iiw = 8; // integer icon width
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
         
@@ -226,7 +222,7 @@ void EnergyUI::draw()
     glDisable(GL_TEXTURE_2D);
 
     glColor4ub(255, 255, 255, 255);
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
 
