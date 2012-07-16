@@ -744,7 +744,7 @@ void agent_born(int agent_id)
 			Item::Item* coins = Item::get_item(known_coins);
 			GS_ASSERT(coins != NULL);
 			int stack_max = Item::get_max_stack_size(coins->type);
-			GS_ASSERT(coins->stack_size < stack_max);
+			GS_ASSERT(coins->stack_size <= stack_max);
 			if (coins != NULL && coins->stack_size != stack_max)
 			{
 				coins->stack_size = stack_max;
