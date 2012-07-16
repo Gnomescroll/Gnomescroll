@@ -16,11 +16,11 @@ void load_synthesizer()
     synthesizer_item_def("laser_rifle", 5);
     synthesizer_item_set(1,1);
 
-    synthesizer_item_def("repair_kit", 5);
-    synthesizer_item_set(3,0);
+    //synthesizer_item_def("small_charge_pack", 5);
+    //synthesizer_item_set(3,0);
     
-    synthesizer_item_def("energy_tank", 25);
-    synthesizer_item_set(3,1);
+    //synthesizer_item_def("energy_tank", 25);
+    //synthesizer_item_set(3,1);
 
     synthesizer_item_def("block_placer", 100);
     synthesizer_item_set(4,1);

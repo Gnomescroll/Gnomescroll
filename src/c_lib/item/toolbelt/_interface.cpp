@@ -80,7 +80,7 @@ void tick()
          || item_group == IG_ENERGY_TANK
          || item_group == IG_SYNTHESIZER_COIN)
         {
-            item_type = Item::get_item_type((char*)"fist");
+            item_type = Item::get_item_type("fist");
             item_group = Item::get_item_group_for_type(item_type);
 		}
 
@@ -316,7 +316,7 @@ void tick_local_agent_selected_item_type(int item_type)
 // will send hitscan packets
 void trigger_local_agent_selected_item_type(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) item_type = Item::get_item_type((char*)"fist");
+    if (item_type == NULL_ITEM_TYPE) item_type = Item::get_item_type("fist");
     ItemGroup group = Item::get_item_group_for_type(item_type);
 
     // get container state for ui prediction
@@ -583,7 +583,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
             stack_size = item->stack_size;
             if (a != NULL)
             {
-				if (item->type != Item::get_item_type((char*)"repair_kit"))
+				if (item->type != Item::get_item_type((char*)"small_charge_pack"))
 				{
 					if (a->status.consume_item(item->id))
 						remaining_stack_size = Item::consume_stack_item(item->id);
@@ -659,7 +659,7 @@ void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id)
 	{
 		case IG_CONSUMABLE:
 			stack_size = item->stack_size;
-            if (item_type == Item::get_item_type((char*)"repair_kit") &&
+            if (item_type == Item::get_item_type((char*)"small_charge_pack") &&
 				a != NULL && a->status.consume_item(item->id))
             {	// players apply health kits to themselves with right click
                 remaining_stack_size = Item::consume_stack_item(item->id);

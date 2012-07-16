@@ -255,7 +255,7 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_3");
 
 
-    item_def(49, IG_CONSUMABLE, "repair_kit");
+    item_def(49, IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
     s.pretty_name = (char*)"Small Charge Pack";
     s.max_stack_size = 16;

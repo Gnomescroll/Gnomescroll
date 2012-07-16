@@ -185,6 +185,23 @@ class AnimatedText: public Text
 					return i;
 			return -1;
 		}
+		
+		void set_color_index_color(int color_index, struct Color color)
+		{
+			struct Color4 colora;
+			colora.r = color.r;
+			colora.g = color.g;
+			colora.b = color.b;
+			colora.a = 255;
+			this->set_color_index_color(color_index, colora);
+		}
+		
+		void set_color_index_color(int color_index, struct Color4 color)
+		{
+			if (color_index < 0) return;
+			if (color_index >= (int)this->n_colors) return;
+			this->colors[color_index] = color;
+		}
 
 		void set_char_range_count(unsigned int n)
 		{

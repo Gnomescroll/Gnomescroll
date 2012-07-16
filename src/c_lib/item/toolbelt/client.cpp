@@ -192,14 +192,14 @@ bool toolbelt_item_beta_action()
 
 	int item_type = agent_selected_type[agent_id];
 	if (item_type == NULL_ITEM_TYPE)
-		item_type = Item::get_item_type((char*)"fist");
+		item_type = Item::get_item_type("fist");
 	int item_group = Item::get_item_group_for_type(item_type);
 	
-	static int repair_kit = Item::get_item_type((char*)"repair_kit");
+	static int small_charge_pack = Item::get_item_type("small_charge_pack");
 	switch (item_group)
 	{
 		case IG_CONSUMABLE:
-			if (item_type == repair_kit) return true;
+			if (item_type == small_charge_pack) return true;
 			break;
 		
         case IG_MINING_LASER:

@@ -523,9 +523,9 @@ bool Agent_status::consume_item(ItemID item_id)
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return false;
 
-    static const int repair_kit = Item::get_item_type("repair_kit");
+    static const int small_charge_pack = Item::get_item_type("small_charge_pack");
 
-    if (item_type == repair_kit)
+    if (item_type == small_charge_pack)
     {
         if (this->health >= (int)health_max) return false;
         GS_ASSERT(attr->repair_agent_amount > 0);

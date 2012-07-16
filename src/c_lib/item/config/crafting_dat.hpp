@@ -76,7 +76,43 @@ void load_crafting_dat()
     set_crafting_reagent("quartz_crystal", 1);
     
     // Energy
-    def_crafting_recipe("energy_pack");
+    def_crafting_recipe("small_charge_pack");
+    set_crafting_reagent("copper_bar", 1);
+    set_crafting_reagent("methane_ice", 1);
+    
+    def_crafting_recipe("small_charge_pack");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("methane_ice", 1);
+    
+    def_crafting_recipe("small_charge_pack");
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("methane_ice", 1);
+    
+    def_crafting_recipe("small_charge_pack");
+    set_crafting_reagent("iridium_bar", 1);
+    set_crafting_reagent("methane_ice", 1);
+
+    def_crafting_recipe("energy_tank");
+    set_crafting_reagent("copper_bar", 1);
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("methane_ice", 4);
+    
+    def_crafting_recipe("energy_tank");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("methane_ice", 4);
+    
+    def_crafting_recipe("energy_tank");
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("methane_ice", 4);
+    
+    def_crafting_recipe("energy_tank");
+    set_crafting_reagent("iridium_bar", 1);
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("methane_ice", 4);
+    
+    
 }
 
 }   // Item
