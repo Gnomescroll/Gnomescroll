@@ -46,7 +46,7 @@ inventory(NULL),
 toolbelt(NULL),
 color_chosen(false)
 {
-	color.r=color.g=color.b=255;
+    color.r=color.g=color.b=255;
     strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
 
@@ -80,32 +80,32 @@ void Agent_status::set_spawner(int pt)
 
 void Agent_status::set_color(struct Color color)
 {
-	if (this->color_chosen && colors_equal(color, this->color)) return;
-	
-	// TODO -- REMOVE THIS HACK
-	// somewhere, somehow, 255 is rolling over
-	// to 0 by the time it is rendered
-	if (color.r == 255) color.r = 254;
-	if (color.g == 255) color.g = 254;
-	if (color.b == 255) color.b = 254;
-	
-	this->color = color;
-	this->color_chosen = true;
-	
-	#if DC_CLIENT
-	this->a->event.color_changed = true;
-	#endif
+    if (this->color_chosen && colors_equal(color, this->color)) return;
+    
+    // TODO -- REMOVE THIS HACK
+    // somewhere, somehow, 255 is rolling over
+    // to 0 by the time it is rendered
+    if (color.r == 255) color.r = 254;
+    if (color.g == 255) color.g = 254;
+    if (color.b == 255) color.b = 254;
+    
+    this->color = color;
+    this->color_chosen = true;
+    
+    #if DC_CLIENT
+    this->a->event.color_changed = true;
+    #endif
 
-	#if DC_SERVER
-	this->a->vox->fill_color(this->color);
-	
-	agent_color_StoC msg;
-	msg.r = this->color.r;
-	msg.g = this->color.g;
-	msg.b = this->color.b;
-	msg.agent_id = this->a->id;
-	msg.broadcast();
-	#endif
+    #if DC_SERVER
+    this->a->vox->fill_color(this->color);
+    
+    agent_color_StoC msg;
+    msg.r = this->color.r;
+    msg.g = this->color.g;
+    msg.b = this->color.b;
+    msg.agent_id = this->a->id;
+    msg.broadcast();
+    #endif
 }
 
 void Agent_status::set_spawner()
@@ -161,7 +161,7 @@ void Agent_status::check_missing_name()
 #if DC_SERVER
 void Agent_status::heal(unsigned int amt)
 {
-	GS_ASSERT(amt > 0);
+    GS_ASSERT(amt > 0);
     if (this->dead || this->should_die) return;
     this->health += amt;
     if (this->health > (int)this->health_max)
@@ -170,7 +170,7 @@ void Agent_status::heal(unsigned int amt)
 
 int Agent_status::apply_damage(int dmg)
 {
-	GS_ASSERT(dmg >= 0);
+    GS_ASSERT(dmg >= 0);
     if (dmg <= 0) return this->health;
 
     if (this->dead || this->should_die) return this->health;
@@ -180,11 +180,11 @@ int Agent_status::apply_damage(int dmg)
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();
 
-	if (this->health <= 0)
-	{
-		this->should_die = true;
-		return this->health;
-	}
+    if (this->health <= 0)
+    {
+        this->should_die = true;
+        return this->health;
+    }
 
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
@@ -192,20 +192,20 @@ int Agent_status::apply_damage(int dmg)
     this->send_health_msg();
 
     if (this->health <= 0)
-    {	// attempt to burn energy tank
-		int energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
-		GS_ASSERT(energy_tanks_container_id != NULL_CONTAINER);
-		using ItemContainer::ItemContainerEnergyTanks;
-		ItemContainerEnergyTanks* container = (ItemContainerEnergyTanks*)
-				ItemContainer::get_container(energy_tanks_container_id);
-		GS_ASSERT(container != NULL);
-		int n_energy_tanks = 0;
-		if (container != NULL)
-			n_energy_tanks = container->consume_energy_tank();
-		
-		if (n_energy_tanks > 0)
-			this->restore_health();
-	}
+    {    // attempt to burn energy tank
+        int energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
+        GS_ASSERT(energy_tanks_container_id != NULL_CONTAINER);
+        using ItemContainer::ItemContainerEnergyTanks;
+        ItemContainerEnergyTanks* container = (ItemContainerEnergyTanks*)
+                ItemContainer::get_container(energy_tanks_container_id);
+        GS_ASSERT(container != NULL);
+        int n_energy_tanks = 0;
+        if (container != NULL)
+            n_energy_tanks = container->consume_energy_tank();
+        
+        if (n_energy_tanks > 0)
+            this->restore_health();
+    }
         
     return this->health;
 }
@@ -234,7 +234,7 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_t
         death_method = DEATH_TURRET;
         
     if (this->should_die)
-		die(inflictor_id, inflictor_type, death_method);
+        die(inflictor_id, inflictor_type, death_method);
 
     return health;
 }
@@ -315,7 +315,7 @@ void Agent_status::at_base()
 bool Agent_status::die()
 {
     if (this->dead) return false;
-	this->should_die = false;
+    this->should_die = false;
     this->dead = true;
     this->deaths++;
 
@@ -344,59 +344,59 @@ bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMe
     
     Agent_state* attacker;
     //Turret* turret;
-	switch (inflictor_type)
-	{
-		case OBJECT_GRENADE:
-		case OBJECT_AGENT:
-			attacker = STATE::agent_list->get(inflictor_id);
-			if (attacker != NULL)
-				attacker->status.kill(this->a->id);
-			break;
-		//case OBJECT_MONSTER_BOMB:
-			//Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
-			//if (slime != NULL) {}
-			//break;
-		//case OBJECT_TURRET:
-			//turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
-			//if (turret == NULL) break;
-			//attacker = STATE::agent_list->get(turret->get_owner());
-			//if (attacker != NULL)
-				//attacker->status.kill(this->a->id);
-			//break;
-		default:
-			//printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
-			break;
-	}
+    switch (inflictor_type)
+    {
+        case OBJECT_GRENADE:
+        case OBJECT_AGENT:
+            attacker = STATE::agent_list->get(inflictor_id);
+            if (attacker != NULL)
+                attacker->status.kill(this->a->id);
+            break;
+        //case OBJECT_MONSTER_BOMB:
+            //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
+            //if (slime != NULL) {}
+            //break;
+        //case OBJECT_TURRET:
+            //turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
+            //if (turret == NULL) break;
+            //attacker = STATE::agent_list->get(turret->get_owner());
+            //if (attacker != NULL)
+                //attacker->status.kill(this->a->id);
+            //break;
+        default:
+            //printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
+            break;
+    }
 
-	#if DC_SERVER
-	// send conflict notification to clients
-	agent_conflict_notification_StoC msg;
-	//Turret* turret;
-	switch (inflictor_type)
-	{
-		case OBJECT_GRENADE:
-		case OBJECT_AGENT:
-			msg.victim = this->a->id;
-			msg.attacker = inflictor_id;
-			msg.method = death_method;    // put headshot, grenades here
-			msg.broadcast();
-			break;
+    #if DC_SERVER
+    // send conflict notification to clients
+    agent_conflict_notification_StoC msg;
+    //Turret* turret;
+    switch (inflictor_type)
+    {
+        case OBJECT_GRENADE:
+        case OBJECT_AGENT:
+            msg.victim = this->a->id;
+            msg.attacker = inflictor_id;
+            msg.method = death_method;    // put headshot, grenades here
+            msg.broadcast();
+            break;
 
-		//case OBJECT_TURRET:
-			//// lookup turret object, get owner, this will be the inflictor id
-			//turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
-			//if (turret == NULL) break;
-			//inflictor_id = turret->get_owner();
-			//msg.victim = this->a->id;
-			//msg.attacker = inflictor_id;
-			//msg.method = death_method;    // put headshot, grenades here
-			//msg.broadcast();
-			//break;
+        //case OBJECT_TURRET:
+            //// lookup turret object, get owner, this will be the inflictor id
+            //turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
+            //if (turret == NULL) break;
+            //inflictor_id = turret->get_owner();
+            //msg.victim = this->a->id;
+            //msg.attacker = inflictor_id;
+            //msg.method = death_method;    // put headshot, grenades here
+            //msg.broadcast();
+            //break;
 
-		default: break;
-	}
-	#endif
-	
+        default: break;
+    }
+    #endif
+    
     return true;
 }
 

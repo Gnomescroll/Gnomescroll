@@ -100,9 +100,9 @@ void set_item_name(int id, const char* name, int length)
 
     static int str_index = 0;
 
-	for (int i=0; i<MAX_ITEMS; i++)	// no duplicate names
-		if (item_name_index[i] >= 0)
-			GS_ASSERT(strcmp(item_names+item_name_index[i], name));
+    for (int i=0; i<MAX_ITEMS; i++)    // no duplicate names
+        if (item_name_index[i] >= 0)
+            GS_ASSERT(strcmp(item_names+item_name_index[i], name));
 
     item_name_index[id] = str_index;
 
@@ -156,6 +156,7 @@ char* get_item_pretty_name(int item_type)
 
 ItemGroup get_item_group_for_type(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return IG_NONE;
     GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
     if (item_type < 0 || item_type >= MAX_ITEMS) return IG_ERROR;
     return group_array[item_type];

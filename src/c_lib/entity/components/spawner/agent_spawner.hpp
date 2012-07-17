@@ -15,7 +15,7 @@ class AgentSpawnerComponent: public SpawnerComponent
 {
     public:
         unsigned int radius;
-		SubscriberList subscribers;	// not for networking, but for who is using this as a spawner
+        SubscriberList subscribers;    // not for networking, but for who is using this as a spawner
         struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
     
     AgentSpawnerComponent()

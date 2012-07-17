@@ -540,10 +540,6 @@ void agent_key_down_handler(SDL_Event* event)
             //t_mech::rotate_mech();
             //break;
 
-        case SDLK_r:
-            Toolbelt::reload_event();
-            break;
-        
         case SDLK_LEFT:
             HudCubeSelector::cube_selector.left();
             break;

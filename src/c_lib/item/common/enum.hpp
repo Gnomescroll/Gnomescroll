@@ -70,7 +70,7 @@ typedef enum
     IG_UNKNOWN,     // used by recipes
     IG_CONSUMABLE,
     IG_ENERGY_TANK,
-	IG_AGENT_SPAWNER,
+    IG_AGENT_SPAWNER,
 } ItemGroup;
 
 typedef enum

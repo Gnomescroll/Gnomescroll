@@ -45,7 +45,7 @@ class Agent_status {
         class Inventory* inventory;
         class Inventory* toolbelt;
 
-		bool color_chosen;
+        bool color_chosen;
         struct Color color;
 
         void tick();
@@ -80,7 +80,7 @@ class Agent_status {
         void send_scores(int client_id);
         void send_scores();
 
-		void set_color(struct Color color);
+        void set_color(struct Color color);
 
         float get_spawn_angle();
 

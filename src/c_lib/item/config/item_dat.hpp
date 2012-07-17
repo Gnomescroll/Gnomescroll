@@ -298,15 +298,15 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"control_node");
 
-	item_def(54, IG_ENERGY_TANK, "energy_tank");
+    item_def(54, IG_ENERGY_TANK, "energy_tank");
     sprite_def(i0, 2,8);
-	s.pretty_name = (char*)"Energy Tank";
-	s.max_stack_size = 1;
+    s.pretty_name = (char*)"Energy Tank";
+    s.max_stack_size = 1;
 
-	item_def(55, IG_AGENT_SPAWNER, "agent_spawner");
-	sprite_def(i1, 2,6);
-	s.pretty_name = (char*) "Spawner";
-	s.max_stack_size = 1;
+    item_def(55, IG_AGENT_SPAWNER, "agent_spawner");
+    sprite_def(i1, 2,6);
+    s.pretty_name = (char*) "Spawner";
+    s.max_stack_size = 1;
 
     end_item_dat();
     
@@ -315,30 +315,30 @@ void load_item_dat()
 
 void verify_item_dat()
 {
-	for (int i=0; i<MAX_ITEMS; i++)
-	{
-		if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
+    for (int i=0; i<MAX_ITEMS; i++)
+    {
+        if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
 
-		// make sure group is set
-		GS_ASSERT(item_attribute_array[i].group != IG_NONE);
-	
-		GS_ASSERT(item_attribute_array[i].pretty_name != NULL);
-		if (item_attribute_array[i].pretty_name != NULL)
-			GS_ASSERT(item_attribute_array[i].pretty_name[0] != '\0');
+        // make sure group is set
+        GS_ASSERT(item_attribute_array[i].group != IG_NONE);
+    
+        GS_ASSERT(item_attribute_array[i].pretty_name != NULL);
+        if (item_attribute_array[i].pretty_name != NULL)
+            GS_ASSERT(item_attribute_array[i].pretty_name[0] != '\0');
 
-		// make sure all data types are within bounds
-		GS_ASSERT(item_attribute_array[i].max_energy > 0
-				&& item_attribute_array[i].max_energy <= 0xffff);
-				
-		GS_ASSERT(item_attribute_array[i].max_durability > 0
-				&& item_attribute_array[i].max_durability <= 0xffff);
-				
-		GS_ASSERT(item_attribute_array[i].max_stack_size > 0
-				&& item_attribute_array[i].max_stack_size <= 0xffff);
+        // make sure all data types are within bounds
+        GS_ASSERT(item_attribute_array[i].max_energy > 0
+                && item_attribute_array[i].max_energy <= 0xffff);
+                
+        GS_ASSERT(item_attribute_array[i].max_durability > 0
+                && item_attribute_array[i].max_durability <= 0xffff);
+                
+        GS_ASSERT(item_attribute_array[i].max_stack_size > 0
+                && item_attribute_array[i].max_stack_size <= 0xffff);
 
-		// Energy should not be in use yet.
-		GS_ASSERT(item_attribute_array[i].max_energy == NULL_ENERGY);
-	}
+        // Energy should not be in use yet.
+        GS_ASSERT(item_attribute_array[i].max_energy == NULL_ENERGY);
+    }
 }
 
 

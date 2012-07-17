@@ -49,7 +49,7 @@ static void set_base_properties(Object* object)
     vox->init_draw = BASE_INIT_WITH_DRAW;
     vox->should_hitscan = BASE_SHOULD_HITSCAN;
 
-	#if DC_SERVER
+    #if DC_SERVER
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = BASE_SPAWN_RADIUS;

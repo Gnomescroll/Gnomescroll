@@ -12,47 +12,25 @@ namespace Toolbelt
 void turn_fire_on(int agent_id);
 void turn_fire_off(int agent_id);
 
+/* Begins some animations, returns true/false if something should happen */
+/* Called when user input occurs. return value used to decide if should send packet to server */
+// only applies to local agents
 bool toolbelt_item_begin_alpha_action();
 bool toolbelt_item_end_alpha_action();
 bool toolbelt_item_beta_action();
-bool toolbelt_item_reload_action();
 
 // calls event handlers that trigger animations/sounds
-void toolbelt_item_begin_alpha_action_event_handler(ItemGroup item_group);
-void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group);
+// called whenever turn_fire_on/off happens
+// only applies to local agent
+void toolbelt_item_begin_alpha_action_event_handler(ItemID item_id);
+void toolbelt_item_end_alpha_action_event_handler(ItemID item_id);
 
-void send_set_slot_packet(int slot)
-{
-    GS_ASSERT(slot >= 0 && slot != NULL_SLOT && slot < TOOLBELT_MAX_SLOTS);
-    if (slot < 0 || slot == NULL_SLOT || slot >= TOOLBELT_MAX_SLOTS) return;
-    toolbelt_set_slot_CtoS msg;
-    msg.slot = slot;
-    msg.send();
-}
+/* Packets */
 
-void send_begin_alpha_action_packet()
-{
-    toolbelt_begin_alpha_action_CtoS msg;
-    msg.send();
-}
-
-void send_end_alpha_action_packet()
-{
-    toolbelt_end_alpha_action_CtoS msg;
-    msg.send();
-}
-
-void send_beta_action_packet()
-{
-    toolbelt_beta_action_CtoS msg;
-    msg.send();
-}
-
-void send_reload_action_packet()
-{
-    toolbelt_reload_action_CtoS msg;
-    msg.send();
-}
+void send_set_slot_packet(int slot);
+void send_begin_alpha_action_packet();
+void send_end_alpha_action_packet();
+void send_beta_action_packet();
 
 } // Toolbelt
 

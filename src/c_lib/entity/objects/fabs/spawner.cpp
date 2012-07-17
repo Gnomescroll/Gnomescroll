@@ -61,7 +61,7 @@ static void set_agent_spawner_properties(Object* object)
     health->health = AGENT_SPAWNER_MAX_HEALTH;
     health->max_health = AGENT_SPAWNER_MAX_HEALTH;
 
-	#if DC_SERVER
+    #if DC_SERVER
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;

@@ -2,9 +2,11 @@
 
 #include <agent/constants.hpp>
 
+const int MAX_ITEMS = 0xff-1;
+
+const int NULL_ITEM_TYPE = 0xff;
 const int NULL_SLOT = 0xff;           // invalid slot value
 const ItemGroup NULL_ITEM_GROUP = IG_NONE;
-const int NULL_ITEM_TYPE = 0xff;
 const int NULL_DURABILITY = 0xffff;
 const int NULL_ENERGY = 0xffff;
 const int NULL_CONTAINER = 0xffff;
@@ -21,6 +23,7 @@ const int AGENT_CONTAINER_Y = 3;
 
 const int AGENT_TOOLBELT_X = 9;
 const int AGENT_TOOLBELT_Y = 1;
+const int TOOLBELT_MAX_SLOTS = AGENT_TOOLBELT_X*AGENT_TOOLBELT_Y;
 
 const int AGENT_SYNTHESIZER_X = 1;
 const int AGENT_SYNTHESIZER_Y = 1;
@@ -46,8 +49,6 @@ const int SMELTER_ONE_Y = 2;
 
 const int AGENT_ENERGY_TANKS_X = 4;
 const int AGENT_ENERGY_TANKS_Y = 1;
-
-const int MAX_ITEMS = 256;
 
 const int MAX_CRAFTING_RECIPE = 256;
 const int CRAFT_BENCH_INPUTS_MAX = 4;

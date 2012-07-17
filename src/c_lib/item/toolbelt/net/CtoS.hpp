@@ -48,14 +48,4 @@ class toolbelt_beta_action_CtoS: public FixedSizeReliableNetPacketToServer<toolb
     inline void handle();
 };
 
-class toolbelt_reload_action_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt_reload_action_CtoS>
-{
-    public:
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-    }
-    inline void handle();
-};
-
-
 } // Toolbelt

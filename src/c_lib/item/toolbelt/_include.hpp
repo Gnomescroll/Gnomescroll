@@ -1,8 +1,12 @@
 #pragma once
 
 #include <item/toolbelt/common/constant.hpp>
-#include <item/toolbelt/common/enum.hpp>
-#include <item/toolbelt/common/struct.hpp>
+#include <item/toolbelt/common/types.hpp>
+
+#include <item/toolbelt/config/_state.cpp>
+#include <item/toolbelt/config/_interface.cpp>
+#include <item/toolbelt/config/callbacks.cpp>
+#include <item/toolbelt/config/config.cpp>
 
 #include <item/toolbelt/net/CtoS.cpp>
 #include <item/toolbelt/net/StoC.cpp>
