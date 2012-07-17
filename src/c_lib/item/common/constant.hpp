@@ -14,6 +14,7 @@ const int NULL_PARTICLE = 0xffff;
 const int NULL_COST = 0;
 const int NULL_CRAFTING_RECIPE = 0xffff;
 const int NULL_SMELTING_RECIPE = 0xffff;
+const int NULL_STACK_SIZE = 0;
 
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown

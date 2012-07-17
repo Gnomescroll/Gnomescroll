@@ -11,7 +11,9 @@ namespace Toolbelt
 void init_config()
 {
     GS_ASSERT(click_and_hold == NULL);
-    click_and_hold = (bool*)calloc(MAX_ITEMS, sizeof(bool));
+    const bool CLICK_AND_HOLD_DEFAULT = true;
+    click_and_hold = (bool*)malloc(MAX_ITEMS * sizeof(bool));
+    for (int i=0; i<MAX_ITEMS; click_and_hold[i++] = CLICK_AND_HOLD_DEFAULT);
     
     GS_ASSERT(ticks         == NULL);
     GS_ASSERT(triggers      == NULL);

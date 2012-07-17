@@ -6,7 +6,6 @@ namespace Toolbelt
 void init_config();
 void teardown_config();
 
-
 /* Getters */
 
 bool item_is_click_and_hold(int item_type);

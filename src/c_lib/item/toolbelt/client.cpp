@@ -84,9 +84,8 @@ bool toolbelt_item_begin_alpha_action()
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     int item_type = Item::get_item_type(item_id);
 
-    bool cnh = item_is_click_and_hold(item_type);
-    Animations::begin_equipped_item_animation(item_type, cnh);
-    return cnh;
+    Animations::begin_equipped_item_animation(item_type, item_is_click_and_hold(item_type));
+    return true;
 }
 
 // returns true if an event was or should be triggered
@@ -201,7 +200,8 @@ bool toolbelt_item_beta_action()
     GS_ASSERT(item_type != NULL_ITEM_TYPE)
     if (item_type < 0 || item_type >= MAX_ITEMS) return false;
     
-    if (get_trigger_local_item_beta_fn(item_id) != NULL) return true;
+    bool triggered = trigger_local_item_beta(item_id, item_type);
+    if (triggered) return true;
 
     // if no beta actions are defined,
     
