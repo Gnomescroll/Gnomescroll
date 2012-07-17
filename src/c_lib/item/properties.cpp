@@ -132,8 +132,11 @@ char* get_item_name(int type)
 int get_item_type(const char* name)
 {
     for (int i=0; i<MAX_ITEMS; i++)
-        if (strcmp(name, get_item_name(i)) == 0)
+    {
+        char* cmp_name = get_item_name(i);
+        if (cmp_name != NULL && strcmp(name, cmp_name) == 0)
             return i;
+    }
     GS_ASSERT(false);
     printf("In function %s:%d -- No item for name %s\n", __FUNCTION__, __LINE__, name);
     return NULL_ITEM_TYPE;

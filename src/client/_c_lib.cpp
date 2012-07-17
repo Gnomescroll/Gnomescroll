@@ -297,13 +297,13 @@ int init_c_lib(int argc, char* argv[])
     Item::init();
     ItemContainer::init();
 
-    Toolbelt::init();
-
-    // Load Dats
-
     //t_map::load_map_dat();
     Item::load_item_dat();
     Item::load_synthesizer();
+
+    Toolbelt::init();   // toolbelt init depends on item dat being loaded
+
+    // Load Dats
 
     t_map::load_map_drop_dat(); //load drop dat after items
 

@@ -24,7 +24,7 @@ ItemID* agent_selected_item = NULL;
 void init_state()
 {
     GS_ASSERT(fist_item_type == NULL_ITEM_TYPE);
-    fist_item_type = fist_item_type;
+    fist_item_type = Item::get_item_type("fist");
     GS_ASSERT(fist_item_type != NULL_ITEM_TYPE);
     
     GS_ASSERT(agent_selected_type == NULL);

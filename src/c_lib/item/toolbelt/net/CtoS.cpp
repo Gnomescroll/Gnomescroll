@@ -57,7 +57,7 @@ inline void toolbelt_beta_action_CtoS::handle()
 
     ItemID item_id = get_agent_selected_item(a->id);
     int item_type = Item::get_item_type(item_id);
-    trigger_agent_selected_item_beta_action(a->id, item_id, item_type);
+    trigger_item_beta(a->id, item_id, item_type);
     broadcast_agent_toolbelt_beta_action_packet(a->id, item_type);
 }
 

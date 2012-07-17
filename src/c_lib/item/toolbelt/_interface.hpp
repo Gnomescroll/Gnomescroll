@@ -22,13 +22,17 @@ namespace Toolbelt
 int get_selected_item_type();
 
 void update_selected_item_type();
-void tick_agent_selected_item_type(int agent_id, int item_type);
-void trigger_agent_selected_item_type(int agent_id, int item_type);
-void trigger_agent_selected_item_beta_action(int agent_id, int item_type);
 
-void tick_local_agent_selected_item_type(int item_type);
-void trigger_local_agent_selected_item_type(int item_type);
-void trigger_local_agent_selected_item_beta_action(int item_type);
+//void tick_agent_selected_item_type(int agent_id, int item_type);
+//void trigger_agent_selected_item_type(int agent_id, int item_type);
+//void trigger_agent_selected_item_beta_action(int agent_id, int item_type);
+
+//void tick_local_agent_selected_item_type(int item_type);
+//void trigger_local_agent_selected_item_type(int item_type);
+//void trigger_local_agent_selected_item_beta_action(int item_type);
+
+void begin_local_item(int item_type);
+void end_local_item(int item_type);
 
 // network events
 void assign_toolbelt(int container_id);
@@ -47,9 +51,11 @@ void right_trigger_up_event();
 namespace Toolbelt
 {
 
-void tick_agent_selected_item(int agent_id, ItemID item_id, int item_type);
-void trigger_agent_selected_item(int agent_id, ItemID item_id, int item_type);
-void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id, int item_type);
+//void tick_agent_selected_item(int agent_id, ItemID item_id, int item_type);
+//void trigger_agent_selected_item(int agent_id, ItemID item_id, int item_type);
+//void trigger_agent_selected_item_beta_action(int agent_id, ItemID item_id, int item_type);
+
+void trigger_item_beta(int agent_id, ItemID item_id, int item_type);
 
 void update_toolbelt_items();
 

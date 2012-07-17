@@ -64,6 +64,89 @@ void agent_died(int agent_id)
     #endif
 }
 
+/* Trigger entry points */
+
+#if DC_SERVER
+void tick_item(int agent_id, ItemID item_id, int item_type)
+{
+    tickItem tick = get_tick_item_fn(item_type);
+    if (tick == NULL) return;
+    tick(agent_id, item_id, item_type);
+}
+
+void trigger_item(int agent_id, ItemID item_id, int item_type)
+{
+    triggerItem trigger = get_trigger_item_fn(item_type);
+    if (trigger == NULL) return;
+    trigger(agent_id, item_id, item_type);
+}
+
+void trigger_item_beta(int agent_id, ItemID item_id, int item_type)
+{
+    triggerItem trigger = get_trigger_item_beta_fn(item_type);
+    if (trigger == NULL) return;
+    trigger(agent_id, item_id, item_type);
+}
+#endif
+
+#if DC_CLIENT
+void tick_item(int agent_id, int item_type)
+{
+    tickItem tick = get_tick_item_fn(item_type);
+    if (tick == NULL) return;
+    tick(agent_id, item_type);
+}
+
+void tick_local_item(int item_type)
+{
+    tickLocalItem tick = get_tick_local_item_fn(item_type);
+    if (tick == NULL) return;
+    tick(item_type);
+}
+
+void trigger_item(int agent_id, int item_type)
+{
+    triggerItem trigger = get_trigger_item_fn(item_type);
+    if (trigger == NULL) return;
+    trigger(agent_id, item_type);
+}
+
+void trigger_item_beta(int agent_id, int item_type)
+{
+    triggerItem trigger = get_trigger_item_beta_fn(item_type);
+    if (trigger == NULL) return;
+    trigger(agent_id, item_type);
+}
+
+void trigger_local_item(int item_type)
+{
+    triggerLocalItem trigger = get_trigger_local_item_fn(item_type);
+    if (trigger == NULL) return;
+    trigger(item_type);
+}
+
+void trigger_local_item_beta(int item_type)
+{
+    triggerLocalItem trigger = get_trigger_local_item_beta_fn(item_type);
+    if (trigger == NULL) return;
+    trigger(item_type);
+}
+
+void begin_local_item(int item_type)
+{
+    beginLocalItem begin = get_begin_local_item_fn(item_type);
+    if (begin == NULL) return;
+    begin(item_type);
+}
+
+void end_local_item(int item_type)
+{
+    endLocalItem end = get_end_local_item_fn(item_type);
+    if (end == NULL) return;
+    end(item_type);
+}
+#endif
+
 
 void tick()
 {
@@ -105,24 +188,24 @@ void tick()
         {
             #if DC_CLIENT
             if (local_agent_id == i)
-                trigger_local_agent_selected_item_type(item_type);
-            else trigger_agent_selected_item_type(i, item_type);
+                trigger_local_item(item_type);
+            else trigger_item(i, item_type);
             #endif
             
             #if DC_SERVER
-            trigger_agent_selected_item(i, item_id, item_type);
+            trigger_item(i, item_id, item_type);
             #endif
         }
         
         #if DC_CLIENT
         if (local_agent_id == i)
-            tick_local_agent_selected_item_type(item_type);
+            tick_local_item(item_type);
         else
-            tick_agent_selected_item_type(i, item_type);
+            tick_item(i, item_type);
         #endif
         
         #if DC_SERVER
-        tick_agent_selected_item(i, item_id, item_type);
+        tick_item(i, item_id, item_type);
         #endif
         
         agent_fire_tick[i]++;
@@ -795,99 +878,3 @@ void use_block_placer(int agent_id, ItemID placer_id)
 
 } // Toolbelt
 #endif
-
-
-/* Trigger entry points */
-
-/* TODO TODO TODO TODO */
-/* Replace the fns that look like this:
- *  trigger_agent_selected_item_beta_action
- * with these:
- */
-
-namespace Toolbelt
-{
-
-#if DC_SERVER
-void tick_item(int agent_id, ItemID item_id, int item_type)
-{
-    tickItem tick = get_tick_item_fn(item_type);
-    if (tick == NULL) return;
-    tick(agent_id, item_id, item_type);
-}
-
-void trigger_item(int agent_id, ItemID item_id, int item_type)
-{
-    triggerItem trigger = get_trigger_item_fn(item_type);
-    if (trigger == NULL) return;
-    trigger(agent_id, item_id, item_type);
-}
-
-void trigger_item_beta(int agent_id, ItemID item_id, int item_type)
-{
-    triggerItem trigger = get_trigger_item_beta_fn(item_type);
-    if (trigger == NULL) return;
-    trigger(agent_id, item_id, item_type);
-}
-#endif
-
-#if DC_CLIENT
-
-void tick_item(int agent_id, int item_type)
-{
-    tickItem tick = get_tick_item_fn(item_type);
-    if (tick == NULL) return;
-    tick(agent_id, item_type);
-}
-
-void tick_local_item(int item_type)
-{
-    tickLocalItem tick = get_tick_local_item_fn(item_type);
-    if (tick == NULL) return;
-    tick(item_type);
-}
-
-void trigger_item(int agent_id, int item_type)
-{
-    triggerItem trigger = get_trigger_item_fn(item_type);
-    if (trigger == NULL) return;
-    trigger(agent_id, item_type);
-}
-
-void trigger_item_beta(int agent_id, int item_type)
-{
-    triggerItem trigger = get_trigger_item_beta_fn(item_type);
-    if (trigger == NULL) return;
-    trigger(agent_id, item_type);
-}
-
-void trigger_local_item(int item_type)
-{
-    triggerLocalItem trigger = get_trigger_local_item_fn(item_type);
-    if (trigger == NULL) return;
-    trigger(item_type);
-}
-
-void trigger_local_item_beta(int item_type)
-{
-    triggerLocalItem trigger = get_trigger_local_item_beta_fn(item_type);
-    if (trigger == NULL) return;
-    trigger(item_type);
-}
-
-void begin_local_item(int item_type)
-{
-    beginLocalItem begin = get_begin_local_item_fn(item_type);
-    if (begin == NULL) return;
-    begin(item_type);
-}
-
-void end_local_item(int item_type)
-{
-    endLocalItem end = get_end_local_item_fn(item_type);
-    if (end == NULL) return;
-    end(item_type);
-}
-#endif
-
-}    // Toolbelt
