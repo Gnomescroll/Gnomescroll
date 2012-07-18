@@ -174,6 +174,8 @@ void SceneAnimator::Init(const aiScene* pScene)
 		{
 			const aiBone* bone = mesh->mBones[n];
 			std::map<std::string, cBone*>::iterator found = BonesByName.find(bone->mName.data);
+			
+			//found->second is a bone
 			if(found != BonesByName.end())
 			{// FOUND IT!!! woohoo, make sure its not already in the bone list
 				bool skip = false;
