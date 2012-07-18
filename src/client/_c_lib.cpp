@@ -237,7 +237,11 @@ void signal_terminate_handler(int sig)
 #endif
 
 int init_c_lib(int argc, char* argv[]) 
-{    
+{   
+
+    /*
+        Time startup functions to determine delay/slow down
+    */
     static int inited = 0;
     GS_ASSERT(inited == 0);
     inited++;

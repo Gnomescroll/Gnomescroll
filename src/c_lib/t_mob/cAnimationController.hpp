@@ -10,7 +10,8 @@
 #include <tuple>
 #include <string>
 
-class cBone {
+class cBone 
+{
 public:
 
 	std::string Name;
