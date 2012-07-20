@@ -1169,6 +1169,7 @@ ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int cl
     int hand_item_type = player_hand_type_ui;
     bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
     int stack_space = Item::get_max_stack_size(hand_item_type) - player_hand_stack_ui;
+    if (player_hand_type_ui == NULL_ITEM_TYPE) stack_space = 1; // special case
     #endif
     #if DC_SERVER
     ItemID hand_item = get_agent_hand(agent_id);

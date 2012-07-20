@@ -15,6 +15,8 @@ void begin_mining_laser(int item_type);
 void end_mining_laser(int item_type);
 
 void tick_local_mining_laser(ItemID item_id, int item_type);
+void trigger_local_mining_laser(ItemID item_id, int item_type);
+
 void trigger_local_block_placer(ItemID item_id, int item_type);
 void trigger_local_location_pointer(ItemID item_id, int item_type);
 void trigger_local_admin_block_placer(ItemID item_id, int item_type);

@@ -40,7 +40,6 @@ void tick_mining_laser(int agent_id, int item_type)
 void tick_local_mining_laser(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    fire_close_range_weapon(item_id, item_type);
     ClientState::playerAgent_state.action.tick_mining_laser();
 }
 
@@ -50,6 +49,12 @@ void trigger_mining_laser(int agent_id, int item_type)
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
     a->event.fired_mining_laser();
+}
+
+void trigger_local_mining_laser(ItemID item_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
+    fire_close_range_weapon(item_id, item_type);
 }
 
 void begin_mining_laser(int item_type)

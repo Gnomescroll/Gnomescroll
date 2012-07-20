@@ -158,6 +158,7 @@ static void register_item_group_callbacks()
     set_group(IG_MINING_LASER);
     c.tick = &tick_mining_laser;
     c.local_tick = &tick_local_mining_laser;
+    c.local_trigger = &trigger_local_mining_laser;
     c.trigger = &trigger_mining_laser;
     c.begin = &begin_mining_laser;
     c.end = &end_mining_laser;

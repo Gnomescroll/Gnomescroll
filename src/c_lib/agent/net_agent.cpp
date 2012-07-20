@@ -738,7 +738,8 @@ inline void hitscan_block_CtoS::handle()
     if (p.z <= 0) return; // dont damage floor
     int block = t_map::get(p.x, p.y, p.z);
     if (block == 0) return;
-    int weapon_block_damage = Item::get_item_block_damage(Item::get_item_type((char*)"laser_rifle"), block);
+    static int laser_rifle_type = Item::get_item_type("laser_rifle");
+    int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, block);
     if (weapon_block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
     //printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
