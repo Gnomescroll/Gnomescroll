@@ -6,6 +6,8 @@
 #include <item/container/_state.hpp>
 #include <item/particle/_interface.hpp>
 
+#include <item/container/config/_interface.hpp>
+
 #if DC_SERVER
 #include <item/container/net/StoC.hpp>
 #endif
@@ -19,6 +21,8 @@ namespace ItemContainer
 
 void init()
 {
+    init_config();
+
     item_container_list = new ItemContainerList;
 
     #if DC_SERVER
@@ -36,6 +40,12 @@ void init()
     for (int i=0; i<AGENT_MAX; i++) opened_containers      [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_hand_list        [i] = NULL_ITEM;
     #endif
+    
+    #if DC_CLIENT
+    GS_ASSERT(container_event == NULL);
+    container_event = (int*)malloc(CONTAINER_EVENT_MAX * sizeof(int));
+    for (int i=0; i<CONTAINER_EVENT_MAX; container_event[i++] = NULL_CONTAINER);
+    #endif
 }
 
 void teardown()
@@ -49,6 +59,8 @@ void teardown()
     if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
     if (player_craft_bench_ui  != NULL) delete player_craft_bench_ui;
     if (storage_block_ui       != NULL) delete storage_block_ui;
+    
+    if (container_event != NULL) free(container_event);
     #endif
 
     #if DC_SERVER
@@ -59,6 +71,8 @@ void teardown()
     if (agent_hand_list         != NULL) free(agent_hand_list);
     if (opened_containers       != NULL) free(opened_containers);
     #endif
+    
+    teardown_config();
 }
 
 
@@ -299,10 +313,13 @@ bool open_container(int container_id)
 
     // send open packet
     opened_container_event_id = record_container_event(container_id);
-    open_container_CtoS msg;
-    msg.container_id = container_id;
-    msg.event_id = opened_container_event_id;
-    msg.send();
+    if (opened_container_event_id >= 0)
+    {
+        open_container_CtoS msg;
+        msg.container_id = container_id;
+        msg.event_id = opened_container_event_id;
+        msg.send();
+    }
     return true;
 }
 
@@ -390,6 +407,8 @@ bool container_block_was_closed()
 int get_event_container_id(int event_id)
 {
     GS_ASSERT(event_id >= 0 && event_id < CONTAINER_EVENT_MAX);
+    GS_ASSERT(container_event != NULL);
+    if (container_event == NULL) return NULL_CONTAINER;
     return container_event[event_id];
 }
 
@@ -760,8 +779,7 @@ void agent_born(int agent_id)
 	GS_ASSERT(energy_tanks != NULL);
 	if (energy_tanks != NULL)
 	{
-		const int REFILL_TANKS_AMOUNT = AGENT_ENERGY_TANKS_X*AGENT_ENERGY_TANKS_Y - 1;
-		int n_energy_tanks = REFILL_TANKS_AMOUNT - energy_tanks->slot_count;
+		int n_energy_tanks = energy_tanks->slot_max - energy_tanks->slot_count - 1;
 		for (int i=0; i<n_energy_tanks; i++)
 		{
 			int energy_tank_type = Item::get_item_type("energy_tank");

@@ -448,7 +448,7 @@ void draw_hud()
         GS_ASSERT(container != NULL);
         if (container != NULL)
         {
-            int container_type = container->type;
+            ItemContainerType container_type = container->type;
             GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
             switch (container_type)
             {
@@ -484,47 +484,48 @@ void init()
 {
     agent_container = new AgentContainerUI;
     agent_container->type = UI_ELEMENT_AGENT_CONTAINER;
+    agent_container->init();
     agent_container->xoff = (_xresf - agent_container->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
     agent_container->yoff = _yresf/2 - (agent_container->height())/2;
-    agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
     agent_toolbelt->type = UI_ELEMENT_AGENT_TOOLBELT;
+    agent_toolbelt->init();
     agent_toolbelt->xoff = (_xresf - agent_toolbelt->width())/2;
     agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
-    agent_toolbelt->init();
     
     energy_tanks = new EnergyTanksUI;
     energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
+    energy_tanks->init();
     energy_tanks->xoff = _xresf/2 + 45;
     energy_tanks->yoff = _yresf - (energy_tanks->height() + agent_toolbelt->height() - 6);
-    energy_tanks->init();
 
     synthesizer_container = new AgentSynthesizerUI;
     synthesizer_container->type = UI_ELEMENT_SYNTHESIZER_CONTAINER;
+    synthesizer_container->init();
     synthesizer_container->xoff = (_xresf - synthesizer_container->width())/2;
     synthesizer_container->yoff = 150.0f + (_yresf + synthesizer_container->height())/2;
-    synthesizer_container->init();
 
     crafting_container = new CraftingUI;
     crafting_container->type = UI_ELEMENT_CRAFTING_CONTAINER;
+    crafting_container->init();
     crafting_container->xoff = (_xresf - crafting_container->width())/2 + 1;
     crafting_container->yoff = -150.0f + (_yresf + crafting_container->height())/2;
-    crafting_container->init();
 
     storage_block = new StorageBlockUI;
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
+    storage_block->init();
     storage_block->set_container_type(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     storage_block->centered = true;
     storage_block->yoff = -150.0f + (_yresf + storage_block->height())/2;
-    storage_block->init();
 
     smelter = new SmelterUI;
     smelter->type = UI_ELEMENT_SMELTER;
     smelter->set_container_type(CONTAINER_TYPE_SMELTER_ONE);
+    smelter->init();
+    smelter->set_container_type(CONTAINER_TYPE_SMELTER_ONE);
     smelter->centered = true;
     smelter->yoff = -150.0f + (_yresf + smelter->height())/2;
-    smelter->init();
 
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format((char*) "%d");

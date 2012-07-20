@@ -11,8 +11,8 @@ class AgentContainerUI : public UIElement
 {
     public:
 
-    static const int xdim = 6;    // slot dimensions
-    static const int ydim = 3;
+    int xdim;    // slot dimensions
+    int ydim;
 
     //static const float border = 16;       // border around entire panel
     static const float border;       // border around entire panel
@@ -43,8 +43,11 @@ class AgentContainerUI : public UIElement
     {
         GS_ASSERT(this->stack_numbers == NULL);
         
+        this->xdim = ItemContainer::get_container_xdim(AGENT_CONTAINER);
+        this->ydim = ItemContainer::get_container_ydim(AGENT_CONTAINER);
+        
         // create HudText objects needed for stack rendering
-        int max = xdim * ydim;
+        int max = this->xdim * this->ydim;
         this->stack_numbers = new HudText::Text[max];
 
         for (int i=0; i<max; i++)
@@ -59,7 +62,7 @@ class AgentContainerUI : public UIElement
  		this->name.set_text((char*)"Inventory");
     }
 
-    AgentContainerUI() : stack_numbers(NULL)
+    AgentContainerUI() : xdim(0), ydim(0), stack_numbers(NULL)
     {}
     
     ~AgentContainerUI()

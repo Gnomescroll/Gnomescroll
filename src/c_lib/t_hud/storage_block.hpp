@@ -89,25 +89,24 @@ class StorageBlockUI : public UIElement
         this->render_height = this->cell_size * this->ydim;
     }
 
-    void set_container_type(int container_type)
+    void set_container_type(ItemContainerType container_type)
     {
         if (this->container_type == container_type) return;
         
         this->container_type = container_type;
 
+        this->xdim = ItemContainer::get_container_xdim(container_type);
+        this->ydim = ItemContainer::get_container_ydim(container_type);
+
         switch (container_type)
         {
             case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-                this->xdim = STORAGE_BLOCK_SMALL_X;
-                this->ydim = STORAGE_BLOCK_SMALL_Y;
                 this->texture = &StorageBlockTexture;
                 this->texture_offset_x = 0.0f;
                 this->texture_offset_y = 0.0f;
                 break;
 
             case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-                this->xdim = CRYOFREEZER_SMALL_X;
-                this->ydim = CRYOFREEZER_SMALL_Y;
                 this->texture = &StorageBlockTexture;
                 this->texture_offset_x = 0.0f;
                 this->texture_offset_y = 0.0f;

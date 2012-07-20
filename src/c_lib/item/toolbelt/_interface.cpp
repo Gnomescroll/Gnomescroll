@@ -3,6 +3,7 @@
 #include <item/toolbelt/_state.hpp>
 #include <item/toolbelt/config/config.hpp>
 #include <item/toolbelt/config/_state.hpp>
+#include <item/container/config/_interface.hpp>
 
 // Common
 namespace Toolbelt
@@ -374,8 +375,11 @@ bool set_agent_toolbelt_slot(int agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
-    GS_ASSERT(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
-    if (slot < 0 || slot >= TOOLBELT_MAX_SLOTS || slot == NULL_SLOT) return false;
+    
+    int max = ItemContainer::get_container_max_slots(AGENT_TOOLBELT);
+    GS_ASSERT(max > 0);
+    GS_ASSERT(slot >= 0 && slot < max && slot != NULL_SLOT);
+    if (slot < 0 || slot >= max || slot == NULL_SLOT) return false;
     agent_selected_slot[agent_id] = slot;
     ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
     if (item_id == agent_selected_item[agent_id]) return false;

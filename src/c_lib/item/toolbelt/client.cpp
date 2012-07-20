@@ -222,8 +222,10 @@ bool toolbelt_item_beta_action()
 
 void send_set_slot_packet(int slot)
 {
-    GS_ASSERT(slot >= 0 && slot != NULL_SLOT && slot < TOOLBELT_MAX_SLOTS);
-    if (slot < 0 || slot >= TOOLBELT_MAX_SLOTS) return;
+    int max = ItemContainer::get_container_max_slots(AGENT_TOOLBELT);
+    GS_ASSERT(max > 0);
+    GS_ASSERT(slot >= 0 && slot != NULL_SLOT && slot < max);
+    if (slot < 0 || slot >= max) return;
     toolbelt_set_slot_CtoS msg;
     msg.slot = slot;
     msg.send();

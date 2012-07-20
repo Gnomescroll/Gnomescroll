@@ -16,8 +16,8 @@ class EnergyTanksUI : public UIElement
 
     static const int slot_size = 32;    // pixel dimension
 
-    static const int xdim = AGENT_ENERGY_TANKS_X;    // slot dimensions
-    static const int ydim = AGENT_ENERGY_TANKS_Y;
+    int xdim;    // slot dimensions
+    int ydim;
 
     int selected_slot;
 
@@ -40,10 +40,12 @@ class EnergyTanksUI : public UIElement
 
     void init()
     {
+        this->xdim = ItemContainer::get_container_xdim(AGENT_ENERGY_TANKS);
+        this->ydim = ItemContainer::get_container_ydim(AGENT_ENERGY_TANKS);
         this->name.set_text((char*)"Energy Tanks");
     }
 
-    EnergyTanksUI() : selected_slot(0)
+    EnergyTanksUI() : xdim(0), ydim(0), selected_slot(0)
     {}
     
     ~EnergyTanksUI()

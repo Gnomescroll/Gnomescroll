@@ -102,7 +102,7 @@ class CraftingUI : public UIElement
  		this->name.set_text((char*)"Crafting Bench");
     }
 
-    void set_container_type(int container_type)
+    void set_container_type(ItemContainerType container_type)
     {
         this->container_type = container_type;
     }

@@ -9,6 +9,10 @@
 #include <item/container/_state.cpp>
 #include <item/container/_interface.cpp>
 
+#include <item/container/config/types.hpp>
+#include <item/container/config/_state.cpp>
+#include <item/container/config/_interface.cpp>
+
 // Client
 #if DC_CLIENT
 #include <item/container/client.cpp>

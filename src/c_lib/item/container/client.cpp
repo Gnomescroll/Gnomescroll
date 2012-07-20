@@ -8,17 +8,19 @@ namespace ItemContainer
 {
 
 static uint16_t container_event_id = 0;
-int container_event[CONTAINER_EVENT_MAX];
+int* container_event = NULL;
 
 int record_container_event(int container_id)
 {
+    GS_ASSERT(container_event != NULL);
+    if (container_event == NULL) return -1;
     container_event_id += 1;
     container_event_id %= CONTAINER_EVENT_MAX;
     container_event[container_event_id] = container_id;
     return container_event_id;
 }
 
-static void send_container_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_container_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -54,7 +56,7 @@ static void send_container_alpha_action(ContainerActionType action, int containe
     msg.send();
 }
 
-static void send_container_beta_action(ContainerActionType action, int container_id, int slot)
+void send_container_beta_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
@@ -91,7 +93,7 @@ static void send_container_beta_action(ContainerActionType action, int container
     msg.send();
 }
 
-static void send_synthesizer_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_synthesizer_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (action == CONTAINER_ACTION_NONE) return;
@@ -126,7 +128,7 @@ static void send_synthesizer_alpha_action(ContainerActionType action, int contai
     msg.send();
 }
 
-static void send_synthesizer_beta_action(ContainerActionType action, int container_id, int slot)
+void send_synthesizer_beta_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
@@ -163,7 +165,7 @@ static void send_synthesizer_beta_action(ContainerActionType action, int contain
     msg.send();
 }
 
-static void send_craft_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_craft_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (action == CONTAINER_ACTION_NONE) return;
@@ -198,7 +200,7 @@ static void send_craft_alpha_action(ContainerActionType action, int container_id
     msg.send();
 }
 
-static void send_purchase_item_action(int container_id, int slot)
+void send_purchase_item_action(int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -214,7 +216,7 @@ static void send_purchase_item_action(int container_id, int slot)
     msg.send();
 }
 
-static void send_craft_beta_action(ContainerActionType action, int container_id, int slot)
+void send_craft_beta_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
@@ -251,7 +253,7 @@ static void send_craft_beta_action(ContainerActionType action, int container_id,
     msg.send();
 }
 
-static void send_craft_item_action(int container_id, int slot)
+void send_craft_item_action(int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -267,7 +269,7 @@ static void send_craft_item_action(int container_id, int slot)
     msg.send();
 }
 
-static void send_no_container_alpha_action(ContainerActionType action)
+void send_no_container_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     record_container_event(NULL_CONTAINER);
 
@@ -279,7 +281,7 @@ static void send_no_container_alpha_action(ContainerActionType action)
     msg.send();
 }
 
-static void send_no_container_beta_action(ContainerActionType action)
+void send_no_container_beta_action(ContainerActionType action, int container_id, int slot)
 {
     record_container_event(NULL_CONTAINER);
 
@@ -292,7 +294,7 @@ static void send_no_container_beta_action(ContainerActionType action)
 }
 
 
-static void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -328,7 +330,7 @@ static void send_smelter_alpha_action(ContainerActionType action, int container_
     msg.send();
 }
 
-static void send_smelter_beta_action(ContainerActionType action, int container_id, int slot)
+void send_smelter_beta_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
@@ -373,89 +375,139 @@ void mouse_left_click_handler(int container_id, int slot, bool synthesizer_shopp
     if (ClientState::playerAgent_state.you == NULL) return;
     if (ClientState::playerAgent_state.you->status.dead) return;
     
-    ContainerActionType action;
-
-    ItemContainerType container_type = CONTAINER_TYPE_NONE;
-    if (container_id != NULL_CONTAINER)
+    ItemContainerType container_type = get_container_type(container_id);
+    class ContainerAttributes* attr = get_attr(container_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return;
+    GS_ASSERT(attr->loaded);
+    
+    ContainerActionType action = CONTAINER_ACTION_NONE;
+    if (container_type == AGENT_SYNTHESIZER && synthesizer_shopping)
+        action = synthesizer_shopping_alpha_action_decision_tree(container_id, slot);
+    else
+    if (container_type == CONTAINER_TYPE_CRAFTING_BENCH_UTILITY && craft_output)
+        action = craft_output_alpha_action_decision_tree(container_id, slot);
+    else
     {
-        ItemContainerInterface* container = get_container(container_id);
-        if (container == NULL) return;
-        container_type = container->type;
+        GS_ASSERT(attr->alpha_action != NULL);
+        if (attr->alpha_action == NULL) return;
+        action = attr->alpha_action(container_id, slot);        
     }
-
-    switch (container_type)
-    {
-        case AGENT_CONTAINER:
-        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-        case AGENT_TOOLBELT:
-		case AGENT_ENERGY_TANKS:
-            action = alpha_action_decision_tree(container_id, slot);
-            break;
-        case AGENT_SYNTHESIZER:
-            if (synthesizer_shopping) action = synthesizer_shopping_alpha_action_decision_tree(container_id, slot);
-            else action = synthesizer_alpha_action_decision_tree(container_id, slot);
-            break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            if (craft_output) action = craft_output_alpha_action_decision_tree(container_id, slot);
-            else action = craft_input_alpha_action_decision_tree(container_id, slot);
-            break;
-        case CONTAINER_TYPE_SMELTER_ONE:
-            action = smelter_alpha_action_decision_tree(container_id, slot);
-            break;
-        case CONTAINER_TYPE_NONE:
-            action = no_container_alpha_action_decision_tree();
-            break;
-        default:
-            GS_ASSERT(false);
-            return;
-    }
-
+    
     if (action == CONTAINER_ACTION_NONE) return;
-    switch (container_type)
+
+    if (action == PURCHASE_ITEM_FROM_SYNTHESIZER)
+        send_purchase_item_action(container_id, slot);
+    else
+    if (action == CRAFT_ITEM_FROM_BENCH)
+        send_craft_item_action(container_id, slot);
+    else
     {
-        case AGENT_CONTAINER:
-        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-        case AGENT_TOOLBELT:
-		case AGENT_ENERGY_TANKS:
-            send_container_alpha_action(action, container_id, slot);
-            break;
-        case AGENT_SYNTHESIZER:
-            if (action == PURCHASE_ITEM_FROM_SYNTHESIZER) send_purchase_item_action(container_id, slot);
-            else send_synthesizer_alpha_action(action, container_id, slot);
-            break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
-            else send_craft_alpha_action(action, container_id, slot);
-            break;
-        case CONTAINER_TYPE_SMELTER_ONE:
-            send_smelter_alpha_action(action, container_id, slot);
-            break;
-        case CONTAINER_TYPE_NONE:
-            send_no_container_alpha_action(action);
-            break;
-        default:
-            GS_ASSERT(false);
-            return;
+        GS_ASSERT(attr->alpha_packet != NULL);
+        if (attr->alpha_packet == NULL) return;
+        attr->alpha_packet(action, container_id, slot);
     }
+
+    //switch (container_type)
+    //{
+        //case AGENT_CONTAINER:
+        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+        //case AGENT_TOOLBELT:
+		//case AGENT_ENERGY_TANKS:
+            //action = alpha_action_decision_tree(container_id, slot);
+            //break;
+        //case AGENT_SYNTHESIZER:
+            //if (synthesizer_shopping) action = synthesizer_shopping_alpha_action_decision_tree(container_id, slot);
+            //else action = synthesizer_alpha_action_decision_tree(container_id, slot);
+            //break;
+        //case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+            //if (craft_output) action = craft_output_alpha_action_decision_tree(container_id, slot);
+            //else action = craft_input_alpha_action_decision_tree(container_id, slot);
+            //break;
+        //case CONTAINER_TYPE_SMELTER_ONE:
+            //action = smelter_alpha_action_decision_tree(container_id, slot);
+            //break;
+        //case CONTAINER_TYPE_NONE:
+            //action = no_container_alpha_action_decision_tree(container_id, slot);
+            //break;
+        //default:
+            //GS_ASSERT(false);
+            //return;
+    //}
+
+    //if (action == CONTAINER_ACTION_NONE) return;
+    
+    //switch (container_type)
+    //{
+        //case AGENT_CONTAINER:
+        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+        //case AGENT_TOOLBELT:
+		//case AGENT_ENERGY_TANKS:
+            //send_container_alpha_action(action, container_id, slot);
+            //break;
+        //case AGENT_SYNTHESIZER:
+            //if (action == PURCHASE_ITEM_FROM_SYNTHESIZER) send_purchase_item_action(container_id, slot);
+            //else send_synthesizer_alpha_action(action, container_id, slot);
+            //break;
+        //case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+            //if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
+            //else send_craft_alpha_action(action, container_id, slot);
+            //break;
+        //case CONTAINER_TYPE_SMELTER_ONE:
+            //send_smelter_alpha_action(action, container_id, slot);
+            //break;
+        //case CONTAINER_TYPE_NONE:
+            //send_no_container_alpha_action(action, container_id, slot);
+            //break;
+        //default:
+            //GS_ASSERT(false);
+            //return;
+    //}
 }
 
+// TODO -- replace last args with just "alt action"
 void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shopping, bool craft_output)
 {
     if (ClientState::playerAgent_state.you == NULL) return;
     if (ClientState::playerAgent_state.you->status.dead) return;
 
-    ContainerActionType action;
+    ItemContainerType container_type = get_container_type(container_id);
+    class ContainerAttributes* attr = get_attr(container_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return;
+    GS_ASSERT(attr->loaded);
 
-    ItemContainerType container_type = CONTAINER_TYPE_NONE;
-    if (container_id != NULL_CONTAINER)
+    // TODO --
+    ContainerActionType action = CONTAINER_ACTION_NONE;
+    if (container_type == AGENT_SYNTHESIZER && synthesizer_shopping)
+        action = synthesizer_shopping_beta_action_decision_tree(container_id, slot);
+    else
+    if (container_type == CONTAINER_TYPE_CRAFTING_BENCH_UTILITY && craft_output)
+        action = craft_output_beta_action_decision_tree(container_id, slot);
+    else
     {
-        ItemContainerInterface* container = get_container(container_id);
-        if (container == NULL) return;
-        container_type = container->type;
+        GS_ASSERT(attr->beta_action != NULL);
+        if (attr->beta_action == NULL) return;
+        action = attr->beta_action(container_id, slot);
     }
 
+    if (action == CONTAINER_ACTION_NONE) return;
+
+    if (action == PURCHASE_ITEM_FROM_SYNTHESIZER)
+        send_purchase_item_action(container_id, slot);
+    else
+    if (action == CRAFT_ITEM_FROM_BENCH)
+        send_craft_item_action(container_id, slot);
+    else
+    {
+        GS_ASSERT(attr->beta_packet != NULL);
+        if (attr->beta_packet == NULL) return;
+        attr->beta_packet(action, container_id, slot);
+    }
+
+/*
     switch (container_type)
     {
         case AGENT_CONTAINER:
@@ -477,14 +529,12 @@ void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shop
             action = smelter_beta_action_decision_tree(container_id, slot);
             break;
         case CONTAINER_TYPE_NONE:
-            action = no_container_beta_action_decision_tree();
+            action = no_container_beta_action_decision_tree(container_id, slot);
             break;
         default:
             GS_ASSERT(false);
             return;
     }
-
-    if (action == CONTAINER_ACTION_NONE) return;
 
     switch (container_type)
     {
@@ -492,10 +542,7 @@ void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shop
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
         case AGENT_TOOLBELT:
-
-		case AGENT_ENERGY_TANKS:	// TODO -- make sure this works
-			// the controller needs to check can_insert_item
-			// can probably re-merge some of the controllers
+		case AGENT_ENERGY_TANKS:
             send_container_beta_action(action, container_id, slot);
             break;
         case AGENT_SYNTHESIZER:
@@ -510,12 +557,13 @@ void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shop
             send_smelter_beta_action(action, container_id, slot);
             break;
         case CONTAINER_TYPE_NONE:
-            send_no_container_beta_action(action);
+            send_no_container_beta_action(action, container_id, slot);
             break;
         default:
             GS_ASSERT(false);
             return;
     }
+    */
 }
 
 }   // ItemContainer

@@ -257,11 +257,10 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
         {
             GS_ASSERT(this->is_valid_slot(slot));
             if (!this->is_valid_slot(slot)) return false;
-            GS_ASSERT(item_type != NULL_ITEM_TYPE);
             if (item_type == NULL_ITEM_TYPE) return false;
             
             // synthesizer coins only
-            int coin_type = Item::get_item_type("synthesizer_coin");
+            static int coin_type = Item::get_item_type("synthesizer_coin");
             GS_ASSERT(coin_type != NULL_ITEM_TYPE);
 			return (item_type == coin_type);
         }

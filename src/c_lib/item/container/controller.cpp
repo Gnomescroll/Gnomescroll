@@ -1200,10 +1200,10 @@ ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int cli
 }
 
 #if DC_CLIENT
-ContainerActionType no_container_alpha_action_decision_tree()
+ContainerActionType no_container_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int client_id)
+ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -1240,10 +1240,10 @@ ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int cl
 }
 
 #if DC_CLIENT
-ContainerActionType no_container_beta_action_decision_tree()
+ContainerActionType no_container_beta_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType no_container_beta_action_decision_tree(int agent_id, int client_id)
+ContainerActionType no_container_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
