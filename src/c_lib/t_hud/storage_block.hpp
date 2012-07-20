@@ -113,7 +113,7 @@ class StorageBlockUI : public UIElement
                 break;
 
             default:
-                assert(false);
+                GS_ASSERT(false);
                 break;
         }
         this->init_text();

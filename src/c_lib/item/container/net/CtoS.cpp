@@ -379,8 +379,11 @@ inline void close_container_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
 
+    if (container_id != opened_containers[a->id]) return;
+
     if (!agent_can_access_container(a->id, container_id)) return;
 
+    const bool SUPPRESS_CLOSE_MSG = true;   // this prevents feedback loop
     agent_close_container(a->id, container_id);
 }
 

@@ -99,6 +99,7 @@ class SmelterUI : public UIElement
         this->container_type = container_type;
 
         this->xdim = ItemContainer::get_container_xdim(container_type);
+        this->xdim += 2; // +1 for fuel area, +1 for meters
         this->ydim = ItemContainer::get_container_ydim(container_type);
 
         switch (container_type)
@@ -110,7 +111,7 @@ class SmelterUI : public UIElement
                 break;
 
             default:
-                assert(false);
+                GS_ASSERT(false);
                 break;
         }
         this->init_text();

@@ -173,9 +173,9 @@ inline void container_action_failed_StoC::handle()
 
 inline void open_container_failed_StoC::handle()
 {
-    printf("open container failed\n");
+    if (container_id == NULL_CONTAINER) return;
     if (opened_container_event_id == event_id && opened_container == container_id)
-        close_container();
+        close_container(container_id);
 }
 
 inline void open_container_StoC::handle()
@@ -188,9 +188,9 @@ inline void open_container_StoC::handle()
 
 inline void close_container_StoC::handle()
 {
-    printf("Server says close container %d\n", container_id);
+    GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;    
-    close_container_silently((int)container_id); // dont broadcast a close_container back
+    close_container((int)container_id);
 }
 
 inline void lock_container_StoC::handle()

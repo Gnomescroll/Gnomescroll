@@ -85,30 +85,25 @@ ItemContainerInterface* get_container(int id)
 void destroy_container(int id)
 {
     GS_ASSERT(id != NULL_CONTAINER);
+    if (id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(id);
     if (container == NULL) return;
     
     #if DC_CLIENT
     // close it, if we had it open
-    if (opened_container == container->id) close_container();
+    close_container(container->id);
 
     // destroy contents
     for (int i=0; i<container->slot_max; i++)
-    {
-        if (container->slot[i] == NULL_ITEM) continue;
-        Item::destroy_item(container->slot[i]);
-    }
+        if (container->slot[i] != NULL_ITEM)
+            Item::destroy_item(container->slot[i]);
     #endif
 
     #if DC_SERVER
     // close container if anyone is accessing it
     for (int i=0; i<AGENT_MAX; i++)
-    {
-        int container_id = opened_containers[i];
-        if (container_id != id) continue;
-        agent_close_container(i, container_id);
-        send_container_close(i, container_id);
-    }
+        if (opened_containers[i] == id)
+            agent_close_container(i, opened_containers[i]);
     #endif
 
     item_container_list->destroy(id);
@@ -152,7 +147,7 @@ void container_block_destroyed(int container_id, int x, int y, int z)
     #endif
 
     #if DC_CLIENT
-    if (opened_container == container_id) close_container();
+    close_container(container_id);
     #endif
 
     // destroy container
@@ -323,20 +318,20 @@ bool open_container(int container_id)
     return true;
 }
 
-bool close_container_silently(int container_id)
+bool close_container(int container_id)
 {    
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
+    if (container_id != opened_container) return false;
+
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
-
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
+    // clear the contents, for public containers
     if (container != NULL && !container->attached_to_agent)
-    {   // clear the contents, for public containers
         container->clear();
-    }
 
     // teardown UI widget
     // TODO -- handle multiple UI types
@@ -359,22 +354,8 @@ bool close_container_silently(int container_id)
     // unset hud container id
     t_hud::close_container(container_id);
     
-    return true;
-}
-
-bool close_container()
-{
-    int container_id = opened_container;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
-    if (!close_container_silently(container_id)) return false;
     opened_container = NULL_CONTAINER;
     did_close_container_block = true;
-    
-    // send packet
-    close_container_CtoS msg;
-    msg.container_id = container_id;
-    msg.send();
 
     return true;
 }
@@ -871,41 +852,37 @@ void agent_born(int agent_id)
 void agent_died(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
     GS_ASSERT(a->status.dead);
 
     // throw agent inventory items
     GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list[agent_id] != NULL_CONTAINER)
+    if (agent_container_list != NULL && agent_container_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
 
     // close container
     GS_ASSERT(opened_containers != NULL);
-    if (opened_containers[agent_id] != NULL_CONTAINER)
-    {
+    if (opened_containers != NULL && opened_containers[agent_id] != NULL_CONTAINER)
         send_container_close(agent_id, opened_containers[agent_id]);
-        agent_close_container(agent_id, opened_containers[agent_id]);
-    }
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
-    if (agent_hand_list[agent_id] != NULL_ITEM)
+    if (agent_hand_list != NULL && agent_hand_list[agent_id] != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
 }
 
 void agent_quit(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     Agent_state* a = ServerState::agent_list->get(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
     // close opened free container (this will throw any items sitting in hand)
     if (opened_containers[agent_id] != NULL_CONTAINER)
-    {
         agent_close_container(agent_id, opened_containers[agent_id]);
-        send_container_close(agent_id, opened_containers[agent_id]);
-    }
 
     GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
     opened_containers[agent_id] = NULL_CONTAINER;
@@ -1250,7 +1227,6 @@ void check_agents_in_container_range()
         if (opened_containers[a->id] == NULL_CONTAINER) continue;
         if (agent_in_container_range(a->id, opened_containers[a->id])) continue;
         agent_close_container(a->id, opened_containers[a->id]);
-        send_container_close(a->id, opened_containers[a->id]);
     }
 }
 

@@ -11,13 +11,17 @@ namespace t_hud
 {
 
 const int n_inventories = 7;
+
+// private containers
 class AgentContainerUI* agent_container = NULL;
 class AgentToolbeltUI* agent_toolbelt = NULL;
 class AgentSynthesizerUI* synthesizer_container = NULL;
+class EnergyTanksUI* energy_tanks = NULL;
+
+// public containers
 class CraftingUI* crafting_container = NULL;
 class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
-class EnergyTanksUI* energy_tanks = NULL;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -42,11 +46,11 @@ void set_container_id(ItemContainerType container_type, int container_id)
 
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             storage_block->container_id = container_id;
-            storage_block->name.set_text((char*)"Storage Block");
+            storage_block->name.set_text("Storage Block");
             break;
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
             storage_block->container_id = container_id;
-            storage_block->name.set_text((char*)"Cryofreezer");
+            storage_block->name.set_text("Cryofreezer");
             break;
 
         case CONTAINER_TYPE_SMELTER_ONE:
@@ -55,7 +59,7 @@ void set_container_id(ItemContainerType container_type, int container_id)
                         
         default:
             GS_ASSERT(false);
-            return;
+            break;
     }
 }
 
@@ -514,8 +518,8 @@ void init()
 
     storage_block = new StorageBlockUI;
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
-    storage_block->init();
     storage_block->set_container_type(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    storage_block->init();
     storage_block->centered = true;
     storage_block->yoff = -150.0f + (_yresf + storage_block->height())/2;
 
@@ -523,7 +527,6 @@ void init()
     smelter->type = UI_ELEMENT_SMELTER;
     smelter->set_container_type(CONTAINER_TYPE_SMELTER_ONE);
     smelter->init();
-    smelter->set_container_type(CONTAINER_TYPE_SMELTER_ONE);
     smelter->centered = true;
     smelter->yoff = -150.0f + (_yresf + smelter->height())/2;
 

@@ -25,7 +25,7 @@ class Text
         unsigned int format_len;
         int formatted_extra_len;
         bool formatted;
-        char* set_string(char* text, char* this_text, unsigned int* this_len);
+        char* set_string(const char* text, char* this_text, unsigned int* this_len);
         char* grow_string(unsigned int n, char* str, unsigned int *str_len);
 
     public:
@@ -51,8 +51,8 @@ class Text
 
         bool is_formatted() { return this->formatted; }
 
-        void set_text(char* text);
-        void set_format(char* format);
+        void set_text(const char* text);
+        void set_format(const char* format);
         void set_format_extra_length(int size);
         void update_formatted_string(int n_args, ...);
         

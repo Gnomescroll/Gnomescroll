@@ -132,7 +132,7 @@ void Text::draw_centered()
 // internal string copy
 // if string is changed, char buffer will expand
 // however, char buffer will never contract
-char* Text::set_string(char* text, char* this_text, unsigned int* this_len)
+char* Text::set_string(const char* text, char* this_text, unsigned int* this_len)
 {
     unsigned int len = (unsigned int)strlen(text);
     if (this_text == NULL)
@@ -205,17 +205,17 @@ char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
     return str;
 }
 
-void Text::set_text(char* text)
+void Text::set_text(const char* text)
 {
-	if (text == NULL) text = (char*)"";
+	if (text == NULL) text = "";
     this->text = this->set_string(text, this->text, &this->text_len);
 }
 
-void Text::set_format(char* format)
+void Text::set_format(const char* format)
 {
     if (format == NULL)
     {
-        format = (char*)"";
+        format = "";
         this->formatted = false;
     }
     else

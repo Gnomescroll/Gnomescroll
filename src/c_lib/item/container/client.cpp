@@ -407,64 +407,6 @@ void mouse_left_click_handler(int container_id, int slot, bool synthesizer_shopp
         if (attr->alpha_packet == NULL) return;
         attr->alpha_packet(action, container_id, slot);
     }
-
-    //switch (container_type)
-    //{
-        //case AGENT_CONTAINER:
-        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-        //case AGENT_TOOLBELT:
-		//case AGENT_ENERGY_TANKS:
-            //action = alpha_action_decision_tree(container_id, slot);
-            //break;
-        //case AGENT_SYNTHESIZER:
-            //if (synthesizer_shopping) action = synthesizer_shopping_alpha_action_decision_tree(container_id, slot);
-            //else action = synthesizer_alpha_action_decision_tree(container_id, slot);
-            //break;
-        //case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            //if (craft_output) action = craft_output_alpha_action_decision_tree(container_id, slot);
-            //else action = craft_input_alpha_action_decision_tree(container_id, slot);
-            //break;
-        //case CONTAINER_TYPE_SMELTER_ONE:
-            //action = smelter_alpha_action_decision_tree(container_id, slot);
-            //break;
-        //case CONTAINER_TYPE_NONE:
-            //action = no_container_alpha_action_decision_tree(container_id, slot);
-            //break;
-        //default:
-            //GS_ASSERT(false);
-            //return;
-    //}
-
-    //if (action == CONTAINER_ACTION_NONE) return;
-    
-    //switch (container_type)
-    //{
-        //case AGENT_CONTAINER:
-        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-        //case AGENT_TOOLBELT:
-		//case AGENT_ENERGY_TANKS:
-            //send_container_alpha_action(action, container_id, slot);
-            //break;
-        //case AGENT_SYNTHESIZER:
-            //if (action == PURCHASE_ITEM_FROM_SYNTHESIZER) send_purchase_item_action(container_id, slot);
-            //else send_synthesizer_alpha_action(action, container_id, slot);
-            //break;
-        //case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            //if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
-            //else send_craft_alpha_action(action, container_id, slot);
-            //break;
-        //case CONTAINER_TYPE_SMELTER_ONE:
-            //send_smelter_alpha_action(action, container_id, slot);
-            //break;
-        //case CONTAINER_TYPE_NONE:
-            //send_no_container_alpha_action(action, container_id, slot);
-            //break;
-        //default:
-            //GS_ASSERT(false);
-            //return;
-    //}
 }
 
 // TODO -- replace last args with just "alt action"
@@ -506,64 +448,15 @@ void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shop
         if (attr->beta_packet == NULL) return;
         attr->beta_packet(action, container_id, slot);
     }
+}
 
-/*
-    switch (container_type)
-    {
-        case AGENT_CONTAINER:
-        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-        case AGENT_TOOLBELT:
-		case AGENT_ENERGY_TANKS:
-            action = beta_action_decision_tree(container_id, slot);
-            break;
-        case AGENT_SYNTHESIZER:
-            if (synthesizer_shopping) action = synthesizer_shopping_beta_action_decision_tree(container_id, slot);
-            else action = synthesizer_beta_action_decision_tree(container_id, slot);
-            break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            if (craft_output) action = craft_output_beta_action_decision_tree(container_id, slot);
-            else action = craft_input_beta_action_decision_tree(container_id, slot);
-            break;
-        case CONTAINER_TYPE_SMELTER_ONE:
-            action = smelter_beta_action_decision_tree(container_id, slot);
-            break;
-        case CONTAINER_TYPE_NONE:
-            action = no_container_beta_action_decision_tree(container_id, slot);
-            break;
-        default:
-            GS_ASSERT(false);
-            return;
-    }
-
-    switch (container_type)
-    {
-        case AGENT_CONTAINER:
-        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-        case AGENT_TOOLBELT:
-		case AGENT_ENERGY_TANKS:
-            send_container_beta_action(action, container_id, slot);
-            break;
-        case AGENT_SYNTHESIZER:
-            if (action == PURCHASE_ITEM_FROM_SYNTHESIZER) send_purchase_item_action(container_id, slot);
-            else send_synthesizer_beta_action(action, container_id, slot);
-            break;
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            if (action == CRAFT_ITEM_FROM_BENCH) send_craft_item_action(container_id, slot);
-            else send_craft_beta_action(action, container_id, slot);
-            break;
-        case CONTAINER_TYPE_SMELTER_ONE:
-            send_smelter_beta_action(action, container_id, slot);
-            break;
-        case CONTAINER_TYPE_NONE:
-            send_no_container_beta_action(action, container_id, slot);
-            break;
-        default:
-            GS_ASSERT(false);
-            return;
-    }
-    */
+void send_container_close(int container_id)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
+    close_container_CtoS msg;
+    msg.container_id = container_id;
+    msg.send();    
 }
 
 }   // ItemContainer

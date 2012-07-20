@@ -36,47 +36,6 @@ void init_container(ItemContainerInterface* container)
     // TODO -- add to config somehow
     if (container->type == AGENT_SYNTHESIZER)
         ((ItemContainerSynthesizer*)container)->set_shopping_parameters(AGENT_SYNTHESIZER_SHOPPING_X, AGENT_SYNTHESIZER_SHOPPING_Y);
-        
-    //switch (container->type)
-    //{
-        //case AGENT_CONTAINER:
-            //container->attached_to_agent = true;
-            //container->init(AGENT_CONTAINER_X, AGENT_CONTAINER_Y);
-            //break;
-        //case AGENT_TOOLBELT:
-            //container->attached_to_agent = true;
-            //container->init(AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
-            //break;
-        //case AGENT_SYNTHESIZER:
-            //container->attached_to_agent = true;
-            //container->init(AGENT_SYNTHESIZER_X, AGENT_SYNTHESIZER_Y);
-            //((ItemContainerSynthesizer*)container)->set_shopping_parameters(AGENT_SYNTHESIZER_SHOPPING_X, AGENT_SYNTHESIZER_SHOPPING_Y);
-            //break;
-        //case AGENT_ENERGY_TANKS:
-			//container->attached_to_agent = true;
-			//container->init(AGENT_ENERGY_TANKS_X, AGENT_ENERGY_TANKS_Y);
-			//break;
-        //case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            //container->attached_to_agent = false;
-            //container->init(CRAFTING_BENCH_UTILITY_X, CRAFTING_BENCH_UTILITY_Y);
-            //break;
-        //case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-            //container->attached_to_agent = false;
-            //container->init(CRYOFREEZER_SMALL_X, CRYOFREEZER_SMALL_Y);
-            //break;
-        //case CONTAINER_TYPE_SMELTER_ONE:
-            //container->attached_to_agent = false;
-            //container->init(SMELTER_ONE_X, SMELTER_ONE_Y);
-            //break;
-        //case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-            //container->attached_to_agent = false;
-            //container->init(STORAGE_BLOCK_SMALL_X, STORAGE_BLOCK_SMALL_Y);
-            //break;
-        //default:
-            //printf("%s - Unhandled container type %d\n", __FUNCTION__, container->type);
-            //GS_ASSERT(false);
-            //break;
-    //}
 }
 
 /* ItemContainer methods */
