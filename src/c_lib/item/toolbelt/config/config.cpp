@@ -126,8 +126,7 @@ static void click_and_hold_type(int type, bool cnh)
 /* Config */
 
 static void register_click_and_hold()
-{
-    // set click and hold properties
+{   // set click and hold properties
     // default is true, so we only need false setters
     click_and_hold_group(IG_HITSCAN_WEAPON, false);
     click_and_hold_group(IG_GRENADE_LAUNCHER, false);
@@ -148,12 +147,11 @@ static void register_click_and_hold_callbacks()
     apply_click_and_hold_settings_for(true);
     
     // apply any general non-click_and_hold methods here
+    //apply_click_and_hold_settings_for(false);
 }
 
 static void register_item_group_callbacks()
-{    // callback specific to an item group
-    // set callbacks
-
+{   // callback specific to an item group
     #if DC_CLIENT
     set_group(IG_MINING_LASER);
     c.tick = &tick_mining_laser;
@@ -198,9 +196,7 @@ static void register_item_group_callbacks()
 }
 
 static void register_item_type_callbacks()
-{    // callbacks specific to an item
-
-    // set callbacks    
+{   // callbacks specific to an item
     #if DC_CLIENT
     set_type("location_pointer");
     c.local_trigger = &trigger_local_location_pointer;

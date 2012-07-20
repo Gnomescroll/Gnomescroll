@@ -30,23 +30,19 @@ void remove_agent(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
 
-    #if DC_SERVER
-    GS_ASSERT(agent_selected_item != NULL);
-    #endif
+    turn_fire_off(agent_id);
+
     GS_ASSERT(agent_selected_type != NULL);
-    GS_ASSERT(agent_fire_tick     != NULL);
+    if (agent_selected_type != NULL)
+        agent_selected_type[agent_id] = NULL_ITEM_TYPE;
 
     #if DC_SERVER
+    GS_ASSERT(agent_selected_item != NULL);
+    GS_ASSERT(agent_selected_slot != NULL);
     if (agent_selected_item != NULL) 
         agent_selected_item[agent_id] = NULL_ITEM;
     if (agent_selected_slot != NULL)
         agent_selected_slot[agent_id] = 0;
-    #endif
-    if (agent_selected_type != NULL)
-        agent_selected_type[agent_id] = NULL_ITEM_TYPE;
-        
-    #if DC_CLIENT
-    turn_fire_off(agent_id);
     #endif
 }
 
@@ -55,14 +51,7 @@ void agent_died(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
 
-    GS_ASSERT(agent_fire_tick != NULL);
-    GS_ASSERT(agent_fire_on   != NULL);
-    if (agent_fire_tick == NULL) return;
-    if (agent_fire_on   == NULL) return;
-    
-    #if DC_CLIENT
     turn_fire_off(agent_id);
-    #endif
 }
 
 /* Trigger entry points */
@@ -187,17 +176,16 @@ void tick()
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (!agent_fire_on[i]) continue;
-        GS_ASSERT(STATE::agent_list->a[i] != NULL); // agent should exist
-        int item_type = agent_selected_type[i];
-        if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
 
         #if DC_SERVER
         // check that selected_item matches selected_type here
         ItemID item_id = agent_selected_item[i];
-        GS_ASSERT(item_type == Item::get_item_type(item_id));
-        if (item_type != Item::get_item_type(item_id))
-            printf("ERROR: item type/id unsynced: id's type is %d\n", Item::get_item_type(item_id));
+        GS_ASSERT(agent_selected_type[i] == Item::get_item_type(item_id));
         #endif
+
+        GS_ASSERT(STATE::agent_list->a[i] != NULL); // agent should exist, if fire is on
+        int item_type = agent_selected_type[i];
+        if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
 
         int fire_rate = Item::get_item_fire_rate(item_type);
         GS_ASSERT(fire_rate >= 1);
@@ -341,15 +329,11 @@ void update_toolbelt_items()
     {
         int slot = agent_selected_slot[agent_id];
         ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
+        if (item_id == agent_selected_item[agent_id]) continue;
+        turn_fire_off(agent_id);
         agent_selected_item[agent_id] = item_id;
-        int item_type = Item::get_item_type(item_id);
-        if (item_type != agent_selected_type[agent_id])
-        {
-            turn_fire_off(agent_id);
-            agent_selected_type[agent_id] = item_type;
-            broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
-            broadcast_agent_set_active_item_packet(agent_id, item_type);
-        }
+        agent_selected_type[agent_id] = Item::get_item_type(item_id);
+        broadcast_agent_set_active_item_packet(agent_id, agent_selected_type[agent_id]);            
     }
 }
 
@@ -384,6 +368,7 @@ bool set_agent_toolbelt_slot(int agent_id, int slot)
     ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
     if (item_id == agent_selected_item[agent_id]) return false;
     agent_selected_item[agent_id] = item_id;
+    agent_selected_type[agent_id] = Item::get_item_type(item_id);
     return true;
 }
 
@@ -394,8 +379,6 @@ void use_block_placer(int agent_id, ItemID placer_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    Agent_state* a = ServerState::agent_list->get(agent_id);
-    if (a == NULL) return;
     
     Item::Item* placer = Item::get_item(placer_id);
     if (placer == NULL) return;
@@ -403,12 +386,9 @@ void use_block_placer(int agent_id, ItemID placer_id)
     int stack_size = placer->stack_size;
     int remaining_stack_size = Item::consume_stack_item(placer->id);
     if (remaining_stack_size <= 0)
-    {
-        agent_selected_type[agent_id] = NULL_ITEM_TYPE;
-        agent_selected_item[agent_id] = NULL_ITEM;
-    }
+        force_remove_selected_item(agent_id);
     else if (stack_size != remaining_stack_size) 
-        if (a != NULL) Item::send_item_state(placer->id);        
+        Item::send_item_state(placer->id);        
 }
 
 void force_remove_selected_item(int agent_id)
@@ -416,7 +396,7 @@ void force_remove_selected_item(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
     
-    broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
+    turn_fire_off(agent_id);
     agent_selected_item[agent_id] = NULL_ITEM;
     agent_selected_type[agent_id] = NULL_ITEM_TYPE;
 }
