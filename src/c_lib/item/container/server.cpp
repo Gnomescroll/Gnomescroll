@@ -623,7 +623,7 @@ bool agent_open_container(int agent_id, int container_id)
     return true;
 }
 
-void agent_close_container(int agent_id, int container_id, bool suppress_close_msg)
+void agent_close_container(int agent_id, int container_id)
 {
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers == NULL) return;
@@ -645,8 +645,7 @@ void agent_close_container(int agent_id, int container_id, bool suppress_close_m
     if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);
     
-    if (!suppress_close_msg)
-        send_container_close(agent_id, container_id);
+    send_container_close(agent_id, container_id);
     opened_containers[agent_id] = NULL_CONTAINER;
 
     bool did_unlock = container->unlock(agent_id);
