@@ -22,7 +22,7 @@ inline void print_color(struct Color color)
 	printf("%d,%d,%d\n", color.r, color.g, color.b);
 }
 
-inline struct Color4 color4_init(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+inline struct Color4 color_init(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     struct Color4 color = {r,g,b,a};
     return color;

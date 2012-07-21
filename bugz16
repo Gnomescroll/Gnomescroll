@@ -738,7 +738,7 @@ timestamp chat log messages
 DONE
 
 ==============
-== BUILD 23 ==  Jul 14 2012
+== BUILD 24 ==  Jul 14 2012
 ==============
 
 /color (alias /colour) chat command, give R G B values to color voxel model and chat name
@@ -792,6 +792,18 @@ DONE
 health stops at 00, then you die
 DONE
 
+toolbelt cofiguration rewrite
+DONE
+
+container configuartion rewrite
+DONE
+
+de-purify container class interfaces
+DONE
+
+==============
+== BUILD 25 ==  Jul 21 2012
+==============
 
 ----------------------
 
@@ -901,3 +913,23 @@ A: we can make it 1x1 but treat it as an object/model. it will render at its loc
  
 ==BUGZ==
 frustum check on item particles is too aggresive
+
+color chat input buffer by agent color
+
+x10 methane ice decay
+
+color name health RED RED RED for 00 health
+
+rgb 200 200 50 does not work
+    replace ' ' with '\0', read tokens.
+    check isdigit(), might need to use '0' <= x <= '9' 
+
+System message "Set RGB to"
+
+Mining laser sound does not turn off when it gets used up 
+
+screenshot names rolling over
+
+crash when starting old client -- should error handle correctly!!!
+
+try using standing character model with a smaller voxel size
