@@ -24,11 +24,8 @@ void populate_ore_veins(int number, const char* block_name)
 		int ctile = t_map::get(x,y,z);
 		if(ctile == 0) continue;
 
-		int s = 4* 2*(genrand_int32() % 16);
+		int s = 4 + 4*(genrand_int32() % 4);
 
-		s = s + 16;
-
-		s = 4;
 		generate_ore_vein(x,y,z, s, tile_id);
 	}
 }
@@ -71,8 +68,9 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 		int cy = y+s_array[3*direction+1];
 		int cz = z+s_array[3*direction+2];
 
-		int ctile = t_map::get(x,y,z);
+		int ctile = t_map::get(cx,cy,cz);
 
+		//dont change position
 		if (ctile == 0)
 		{
 			tries++;
@@ -83,12 +81,14 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 		y = cy;
 		z = cz;
 
-		ctile = t_map::get(x,y,z);
-		
+		//ctile = t_map::get(x,y,z);
+
+		z %= 127;
 		x %= 512;
 		y %= 512;
 		if (x < 0) x += 512;
 		if (y < 0) y += 512;
+		if (z < 0) z++;
 
 		if (ctile == tile_id)
 		{
@@ -106,7 +106,7 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 	}
 	
 	if(tries >= 20)
-		printf("WTF ERROR: \n");
+		printf("Warning: generate_ore_vein 20 attemps made to populate ore vein\n");
 
 	return ct;
 }
