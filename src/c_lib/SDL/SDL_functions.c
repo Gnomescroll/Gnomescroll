@@ -455,30 +455,35 @@ void save_screenshot()
 
     const int LAST_FILENAME_LEN = 128;
     static char last_filename[LAST_FILENAME_LEN] = {'\0'};
-    static int ext = 0;
+    static int ext_ct = 0;
+    const char ext[] = "png";
 
     char* timestr = get_time_str();
     if (timestr == NULL) timestr = (char*)"notime";
-    const char fmt[] = "./screenshot/%s.png";
-    size_t len = strlen(timestr) + sizeof(fmt) + 3; // +3 to fit name collision extension
+    const char fmt[] = "./screenshot/%s";
+    size_t len = strlen(timestr) + sizeof(fmt) + sizeof(ext) + 3 + 1; // +3 to fit name collision extension, +1 for ext separator
     char* filename = (char*)malloc(len * sizeof(char));
     int wrote = snprintf(filename, len, fmt, timestr);
     for (int i=0; i<wrote; i++) // convert : to _
         if (filename[i] == ':') filename[i] = '_';
     if (!strcmp(last_filename, filename))
     {
-        ext++;
+        ext_ct++;
         const char ext_fmt[] = "%s.%02d";
-        GS_ASSERT(count_digits(ext) <= 2);
-        if (count_digits(ext) > 2) ext = 99;
-        wrote = snprintf(filename, len, ext_fmt, filename, ext);
+        GS_ASSERT(count_digits(ext_ct) <= 2);
+        if (count_digits(ext_ct) > 2) ext_ct = 99;
+        wrote = snprintf(filename, len, ext_fmt, filename, ext_ct);
         
         for (int i=0; i<wrote; i++) // convert : to _
             if (filename[i] == ':') filename[i] = '_';
     }
     else
-        ext = 0;
+        ext_ct = 0;
     strncpy(last_filename, filename, LAST_FILENAME_LEN);
+    GS_ASSERT(!strcmp(last_filename, filename));
+    
+    const char final_fmt[] = "%s.%s";
+    sprintf(filename, final_fmt, last_filename, ext);
     
     printf("Saving screenshot to %s\n", filename);
 
