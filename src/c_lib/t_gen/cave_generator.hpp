@@ -70,22 +70,22 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 			bool hits_bottom = false;
 			//can speed up by 8
 			for(int i=xmin; i<=xmax; i++)
-			for(int j=ymin; j<=ymax; j++)
-			for(int k=zmin; k<=zmax; k++)
-			{
-				if(k < 4 || k > 127) 
-				{
-					hits_bottom = true;
-					continue;
-				}
+				for(int j=ymin; j<=ymax; j++)
+					for(int k=zmin; k<=zmax; k++)
+					{
+						if(k < 4 || k > 127) 
+						{
+							hits_bottom = true;
+							continue;
+						}
 
-				float x = ((float)i) + 0.5f;
-				float y = ((float)j) + 0.5f;
-				float z = ((float)k) + 0.5f;
+						float x = ((float)i) + 0.5f;
+						float y = ((float)j) + 0.5f;
+						float z = ((float)k) + 0.5f;
 
-				float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
-				if(d < cave_size*cave_size) t_map::set(i%512,j%512,k, 0);
-			}
+						float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
+						if(d < cave_size*cave_size) t_map::set(i%512,j%512,k, 0);
+					}
 
 			if(hits_bottom == true) theta *= -1;
 
