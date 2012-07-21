@@ -77,11 +77,11 @@ void create_item_container_block(int x, int y, int z, int container_type, int co
 
 void destroy_item_container_block(int x, int y, int z)
 {
-	x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-	y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+
+	x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+	y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
     int val = get(x,y,z);
     if (Item::get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;

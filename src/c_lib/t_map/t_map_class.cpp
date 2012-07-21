@@ -586,6 +586,8 @@ namespace t_map
 
     void Terrain_map::set_block(int x, int y, int z, int value)
     {
+        if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
