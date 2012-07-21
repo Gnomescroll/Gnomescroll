@@ -81,14 +81,7 @@ void Agent_status::set_spawner(int pt)
 void Agent_status::set_color(struct Color color)
 {
     if (this->color_chosen && colors_equal(color, this->color)) return;
-    
-    // TODO -- REMOVE THIS HACK
-    // somewhere, somehow, 255 is rolling over
-    // to 0 by the time it is rendered
-    if (color.r == 255) color.r = 254;
-    if (color.g == 255) color.g = 254;
-    if (color.b == 255) color.b = 254;
-    
+        
     this->color = color;
     this->color_chosen = true;
     
@@ -96,15 +89,24 @@ void Agent_status::set_color(struct Color color)
     this->a->event.color_changed = true;
     #endif
 
-    #if DC_SERVER
-    this->a->vox->fill_color(this->color);
-    
+    #if DC_SERVER    
     agent_color_StoC msg;
     msg.r = this->color.r;
     msg.g = this->color.g;
     msg.b = this->color.b;
     msg.agent_id = this->a->id;
     msg.broadcast();
+    #endif
+
+    // TODO -- REMOVE THIS HACK
+    // somewhere, somehow, 255 is rolling over
+    // to 0 by the time it is rendered
+    if (color.r == 255) color.r = 254;
+    if (color.g == 255) color.g = 254;
+    if (color.b == 255) color.b = 254;
+    
+    #if DC_SERVER
+    this->a->vox->fill_color(this->color);
     #endif
 }
 

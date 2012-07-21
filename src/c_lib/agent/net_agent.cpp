@@ -462,6 +462,16 @@ inline void agent_color_StoC::handle()
 	
 	struct Color color = {r,g,b};
 	a->status.set_color(color);
+    
+    if (this->agent_id == ClientState::playerAgent_state.agent_id)
+    {
+        const char fmt[] = "Your color is now %d %d %d\n";
+        size_t len = sizeof(fmt) + 3*3 - 2*3 + 1;
+        char* msg = (char*)malloc(len * sizeof(char));
+        snprintf(msg, len, fmt, r,g,b);
+        chat_client->send_system_message(msg);
+        free(msg);
+    }
 }
 
 inline void Agent_cs_CtoS::handle() {}
@@ -471,9 +481,7 @@ inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
-//#if !PRODUCTION
 inline void admin_set_block_CtoS::handle() {}
-//#endif
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
