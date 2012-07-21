@@ -296,7 +296,6 @@ int run()
         Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
 
-    
         if (Options::hud)
         {
             // switch to hud  projection

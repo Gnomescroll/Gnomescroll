@@ -35,10 +35,8 @@ void load_crafting_dat()
     def_crafting_recipe("copper_bar");
     set_crafting_reagent("copper_ore", 1);
     set_crafting_reagent("copper_ore", 1);
-    set_crafting_reagent("copper_ore", 1);
 
     def_crafting_recipe("iron_bar");
-    set_crafting_reagent("iron_ore", 1);
     set_crafting_reagent("iron_ore", 1);
     set_crafting_reagent("iron_ore", 1);
 

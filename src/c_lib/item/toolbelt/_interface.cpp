@@ -328,6 +328,7 @@ void update_toolbelt_items()
     for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
     {
         int slot = agent_selected_slot[agent_id];
+        GS_ASSERT(slot != NULL_SLOT);
         ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
         if (item_id == agent_selected_item[agent_id]) continue;
         turn_fire_off(agent_id);

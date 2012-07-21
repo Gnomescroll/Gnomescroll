@@ -34,6 +34,8 @@ void load_smelting_dat()
     def_smelting_recipe("iridium_bar");
     set_smelting_reagent("iridium_ore", 1);
     set_smelting_creation_time(30 * 15);
+    
+    end_smelting_recipe();  // finalize
 }
 
 }   // Item
