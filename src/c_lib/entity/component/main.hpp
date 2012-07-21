@@ -37,7 +37,6 @@ extern OwnerComponentList* owner_component_list;
 
 extern VoxelModelComponentList* voxel_model_component_list;
 
-extern AgentSpawnerComponentList* agent_spawner_component_list;
 extern MonsterSpawnerComponentList* monster_spawner_component_list;
 
 extern SpawnChildComponentList* spawn_child_component_list;
@@ -58,6 +57,7 @@ extern AnimationComponentList* animation_component_list;
 #endif
 
 #if DC_SERVER
+extern AgentSpawnerComponentList* agent_spawner_component_list;
 extern ExplosionComponentList* explosion_component_list;
 extern ItemDropComponentList* item_drop_component_list;
 #endif

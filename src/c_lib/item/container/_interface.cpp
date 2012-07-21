@@ -6,6 +6,8 @@
 #include <item/container/_state.hpp>
 #include <item/particle/_interface.hpp>
 
+#include <item/container/config/_interface.hpp>
+
 #if DC_SERVER
 #include <item/container/net/StoC.hpp>
 #endif
@@ -19,20 +21,30 @@ namespace ItemContainer
 
 void init()
 {
+    init_config();
+
     item_container_list = new ItemContainerList;
 
     #if DC_SERVER
-    agent_container_list   = (int*)   malloc(AGENT_MAX * sizeof(int));
-    agent_toolbelt_list    = (int*)   malloc(AGENT_MAX * sizeof(int));
-    agent_synthesizer_list = (int*)   malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list        = (ItemID*) malloc(AGENT_MAX * sizeof(ItemID));
-    opened_containers      = (int*)   malloc(AGENT_MAX * sizeof(int));
+    agent_container_list    = (int*)    malloc(AGENT_MAX * sizeof(int));
+    agent_toolbelt_list     = (int*)    malloc(AGENT_MAX * sizeof(int));
+    agent_synthesizer_list  = (int*)    malloc(AGENT_MAX * sizeof(int));
+    agent_energy_tanks_list = (int*)    malloc(AGENT_MAX * sizeof(int));
+    opened_containers       = (int*)    malloc(AGENT_MAX * sizeof(int));
+    agent_hand_list         = (ItemID*) malloc(AGENT_MAX * sizeof(ItemID));
     
-    for (int i=0; i<AGENT_MAX; i++) agent_container_list  [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list   [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list[i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_hand_list       [i] = NULL_ITEM;
-    for (int i=0; i<AGENT_MAX; i++) opened_containers     [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_container_list   [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list    [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_energy_tanks_list[i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) opened_containers      [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_hand_list        [i] = NULL_ITEM;
+    #endif
+    
+    #if DC_CLIENT
+    GS_ASSERT(container_event == NULL);
+    container_event = (int*)malloc(CONTAINER_EVENT_MAX * sizeof(int));
+    for (int i=0; i<CONTAINER_EVENT_MAX; container_event[i++] = NULL_CONTAINER);
     #endif
 }
 
@@ -41,20 +53,26 @@ void teardown()
     if (item_container_list != NULL) delete item_container_list;
 
     #if DC_CLIENT
-    if (player_container_ui   != NULL) delete player_container_ui;
-    if (player_toolbelt_ui    != NULL) delete player_toolbelt_ui;
-    if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
-    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
-    if (storage_block_ui      != NULL) delete storage_block_ui;
+    if (player_container_ui    != NULL) delete player_container_ui;
+    if (player_toolbelt_ui     != NULL) delete player_toolbelt_ui;
+    if (player_synthesizer_ui  != NULL) delete player_synthesizer_ui;
+    if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
+    if (player_craft_bench_ui  != NULL) delete player_craft_bench_ui;
+    if (storage_block_ui       != NULL) delete storage_block_ui;
+    
+    if (container_event != NULL) free(container_event);
     #endif
 
     #if DC_SERVER
-    if (agent_container_list   != NULL) free(agent_container_list);
-    if (agent_toolbelt_list    != NULL) free(agent_toolbelt_list);
-    if (agent_synthesizer_list != NULL) free(agent_synthesizer_list);
-    if (agent_hand_list        != NULL) free(agent_hand_list);
-    if (opened_containers      != NULL) free(opened_containers);
+    if (agent_container_list    != NULL) free(agent_container_list);
+    if (agent_toolbelt_list     != NULL) free(agent_toolbelt_list);
+    if (agent_synthesizer_list  != NULL) free(agent_synthesizer_list);
+    if (agent_energy_tanks_list != NULL) free(agent_energy_tanks_list);
+    if (agent_hand_list         != NULL) free(agent_hand_list);
+    if (opened_containers       != NULL) free(opened_containers);
     #endif
+    
+    teardown_config();
 }
 
 
@@ -67,30 +85,25 @@ ItemContainerInterface* get_container(int id)
 void destroy_container(int id)
 {
     GS_ASSERT(id != NULL_CONTAINER);
+    if (id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(id);
     if (container == NULL) return;
     
     #if DC_CLIENT
     // close it, if we had it open
-    if (opened_container == container->id) close_container();
+    close_container(container->id);
 
     // destroy contents
     for (int i=0; i<container->slot_max; i++)
-    {
-        if (container->slot[i] == NULL_ITEM) continue;
-        Item::destroy_item(container->slot[i]);
-    }
+        if (container->slot[i] != NULL_ITEM)
+            Item::destroy_item(container->slot[i]);
     #endif
 
     #if DC_SERVER
     // close container if anyone is accessing it
     for (int i=0; i<AGENT_MAX; i++)
-    {
-        int container_id = opened_containers[i];
-        if (container_id != id) continue;
-        agent_close_container(i, container_id);
-        send_container_close(i, container_id);
-    }
+        if (opened_containers[i] == id)
+            agent_close_container(i, opened_containers[i]);
     #endif
 
     item_container_list->destroy(id);
@@ -134,7 +147,7 @@ void container_block_destroyed(int container_id, int x, int y, int z)
     #endif
 
     #if DC_CLIENT
-    if (opened_container == container_id) close_container();
+    close_container(container_id);
     #endif
 
     // destroy container
@@ -155,13 +168,14 @@ ItemContainerInterface* create_container(ItemContainerType type, int id)
 
 void update_container_ui_from_state()
 {
-    if (player_container_ui   != NULL) player_container_ui   ->load_data (player_container   ->slot);
-    if (player_toolbelt_ui    != NULL) player_toolbelt_ui    ->load_data (player_toolbelt    ->slot);
-    if (player_synthesizer_ui != NULL) player_synthesizer_ui ->load_data (player_synthesizer ->slot);
-    if (player_craft_bench_ui != NULL) player_craft_bench_ui ->load_data (player_craft_bench ->slot);
-    if (storage_block_ui      != NULL) storage_block_ui      ->load_data (storage_block      ->slot);
-    if (cryofreezer_ui        != NULL) cryofreezer_ui        ->load_data (cryofreezer        ->slot);
-    if (smelter_ui            != NULL) smelter_ui            ->load_data (smelter            ->slot);
+    if (player_container_ui    != NULL) player_container_ui    ->load_data (player_container    ->slot);
+    if (player_toolbelt_ui     != NULL) player_toolbelt_ui     ->load_data (player_toolbelt     ->slot);
+    if (player_synthesizer_ui  != NULL) player_synthesizer_ui  ->load_data (player_synthesizer  ->slot);
+    if (player_energy_tanks_ui != NULL) player_energy_tanks_ui ->load_data (player_energy_tanks ->slot);
+    if (player_craft_bench_ui  != NULL) player_craft_bench_ui  ->load_data (player_craft_bench  ->slot);
+    if (storage_block_ui       != NULL) storage_block_ui       ->load_data (storage_block       ->slot);
+    if (cryofreezer_ui         != NULL) cryofreezer_ui         ->load_data (cryofreezer         ->slot);
+    if (smelter_ui             != NULL) smelter_ui             ->load_data (smelter             ->slot);
     
     if (player_hand == NULL_ITEM)
     {
@@ -294,27 +308,30 @@ bool open_container(int container_id)
 
     // send open packet
     opened_container_event_id = record_container_event(container_id);
-    open_container_CtoS msg;
-    msg.container_id = container_id;
-    msg.event_id = opened_container_event_id;
-    msg.send();
+    if (opened_container_event_id >= 0)
+    {
+        open_container_CtoS msg;
+        msg.container_id = container_id;
+        msg.event_id = opened_container_event_id;
+        msg.send();
+    }
     return true;
 }
 
-bool close_container_silently(int container_id)
+bool close_container(int container_id)
 {    
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
+    if (container_id != opened_container) return false;
+
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
 
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
-
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
+    // clear the contents, for public containers
     if (container != NULL && !container->attached_to_agent)
-    {   // clear the contents, for public containers
         container->clear();
-    }
 
     // teardown UI widget
     // TODO -- handle multiple UI types
@@ -337,22 +354,8 @@ bool close_container_silently(int container_id)
     // unset hud container id
     t_hud::close_container(container_id);
     
-    return true;
-}
-
-bool close_container()
-{
-    int container_id = opened_container;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
-    if (!close_container_silently(container_id)) return false;
     opened_container = NULL_CONTAINER;
     did_close_container_block = true;
-    
-    // send packet
-    close_container_CtoS msg;
-    msg.container_id = container_id;
-    msg.send();
 
     return true;
 }
@@ -385,19 +388,22 @@ bool container_block_was_closed()
 int get_event_container_id(int event_id)
 {
     GS_ASSERT(event_id >= 0 && event_id < CONTAINER_EVENT_MAX);
+    GS_ASSERT(container_event != NULL);
+    if (container_event == NULL) return NULL_CONTAINER;
     return container_event[event_id];
 }
 
 ItemContainerUIInterface* get_container_ui(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
-    if (player_craft_bench_ui != NULL && player_craft_bench_ui->id == container_id) return player_craft_bench_ui;
-    if (player_container_ui   != NULL && player_container_ui->id   == container_id) return player_container_ui;
-    if (player_toolbelt_ui    != NULL && player_toolbelt_ui->id    == container_id) return player_toolbelt_ui;
-    if (player_synthesizer_ui      != NULL && player_synthesizer_ui->id      == container_id) return player_synthesizer_ui;
-    if (storage_block_ui      != NULL && storage_block_ui->id      == container_id) return storage_block_ui;
-    if (cryofreezer_ui        != NULL && cryofreezer_ui->id        == container_id) return cryofreezer_ui;
-    if (smelter_ui            != NULL && smelter_ui->id            == container_id) return smelter_ui;
+    if (player_craft_bench_ui  != NULL && player_craft_bench_ui->id  == container_id) return player_craft_bench_ui;
+    if (player_container_ui    != NULL && player_container_ui->id    == container_id) return player_container_ui;
+	if (player_energy_tanks_ui != NULL && player_energy_tanks_ui->id == container_id) return player_energy_tanks_ui;
+    if (player_toolbelt_ui     != NULL && player_toolbelt_ui->id     == container_id) return player_toolbelt_ui;
+    if (player_synthesizer_ui  != NULL && player_synthesizer_ui->id  == container_id) return player_synthesizer_ui;
+    if (storage_block_ui       != NULL && storage_block_ui->id       == container_id) return storage_block_ui;
+    if (cryofreezer_ui         != NULL && cryofreezer_ui->id         == container_id) return cryofreezer_ui;
+    if (smelter_ui             != NULL && smelter_ui->id             == container_id) return smelter_ui;
     GS_ASSERT(false);
     return NULL;
 }
@@ -470,6 +476,7 @@ namespace ItemContainer
 bool agent_can_access_container(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return false;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return false;
     ItemContainerInterface* container = get_container(container_id);
@@ -480,6 +487,7 @@ bool agent_can_access_container(int agent_id, int container_id)
 ItemID get_agent_toolbelt_item(int agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
     int toolbelt_id = get_agent_toolbelt(agent_id);
     if (toolbelt_id == NULL_CONTAINER) return NULL_ITEM;
     ItemContainer* toolbelt = (ItemContainer*)get_container(toolbelt_id);
@@ -490,6 +498,7 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot)
 ItemID get_agent_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
     GS_ASSERT(agent_hand_list != NULL);
     if (agent_hand_list == NULL) return NULL_ITEM;
     return agent_hand_list[agent_id];
@@ -498,6 +507,7 @@ ItemID get_agent_hand(int agent_id)
 int get_agent_container(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
     GS_ASSERT(agent_container_list != NULL);
     if (agent_container_list == NULL) return NULL_CONTAINER;
     return agent_container_list[agent_id];
@@ -506,6 +516,7 @@ int get_agent_container(int agent_id)
 int get_agent_toolbelt(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
     GS_ASSERT(agent_toolbelt_list != NULL);
     if (agent_toolbelt_list == NULL) return NULL_CONTAINER;
     return agent_toolbelt_list[agent_id];
@@ -514,9 +525,19 @@ int get_agent_toolbelt(int agent_id)
 int get_agent_synthesizer(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
     GS_ASSERT(agent_synthesizer_list != NULL);
     if (agent_synthesizer_list == NULL) return NULL_CONTAINER;
     return agent_synthesizer_list[agent_id];
+}
+
+int get_agent_energy_tanks(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
+    GS_ASSERT(agent_energy_tanks_list != NULL);
+    if (agent_energy_tanks_list == NULL) return NULL_CONTAINER;
+    return agent_energy_tanks_list[agent_id];
 }
 
 ItemContainerInterface* create_container(ItemContainerType type)
@@ -544,21 +565,9 @@ void assign_containers_to_agent(int agent_id, int client_id)
     GS_ASSERT(agent_container != NULL);
     assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
 
-    #if !PRODUCTION
-    Item::Item* crate;
-    int n_crates = 0;
-    for (int i=0; i<n_crates; i++)
-    {
-        crate = Item::create_item(Item::get_item_type((char*)"small_storage"));
-        GS_ASSERT(crate != NULL);
-        if (crate != NULL)
-        {
-            ContainerActionType event = auto_add_free_item_to_container(client_id, agent_container->id, crate->id);
-            if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT)
-                Item::destroy_item(crate->id);
-        }
-    }
-    #endif
+	ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)item_container_list->create(AGENT_ENERGY_TANKS);
+	GS_ASSERT(agent_energy_tanks != NULL);
+	assign_container_to_agent(agent_energy_tanks, agent_energy_tanks_list, agent_id, client_id);
         
     ItemContainerSynthesizer* agent_synthesizer = (ItemContainerSynthesizer*)item_container_list->create(AGENT_SYNTHESIZER);
     GS_ASSERT(agent_synthesizer != NULL);
@@ -713,7 +722,7 @@ void agent_born(int agent_id)
     ContainerActionType event;
     
     // fill coins to max
-    int synth_id = agent_synthesizer_list[agent_id];
+    int synth_id = get_agent_synthesizer(agent_id);
     GS_ASSERT(synth_id != NULL_CONTAINER);
     ItemContainerSynthesizer* synth = (ItemContainerSynthesizer*)get_container(synth_id);
     GS_ASSERT(synth != NULL);
@@ -735,7 +744,7 @@ void agent_born(int agent_id)
 			Item::Item* coins = Item::get_item(known_coins);
 			GS_ASSERT(coins != NULL);
 			int stack_max = Item::get_max_stack_size(coins->type);
-			GS_ASSERT(coins->stack_size < stack_max);
+			GS_ASSERT(coins->stack_size <= stack_max);
 			if (coins != NULL && coins->stack_size != stack_max)
 			{
 				coins->stack_size = stack_max;
@@ -743,9 +752,34 @@ void agent_born(int agent_id)
 			}
 		}
 	}
+	
+	// add energy tanks 
+	int energy_tanks_id = get_agent_energy_tanks(agent_id);
+	GS_ASSERT(energy_tanks_id != NULL_CONTAINER);
+	ItemContainerEnergyTanks* energy_tanks = (ItemContainerEnergyTanks*)get_container(energy_tanks_id);
+	GS_ASSERT(energy_tanks != NULL);
+	if (energy_tanks != NULL)
+	{
+		int n_energy_tanks = energy_tanks->slot_max - energy_tanks->slot_count - 1;
+		for (int i=0; i<n_energy_tanks; i++)
+		{
+			int energy_tank_type = Item::get_item_type("energy_tank");
+			GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
+			if (energy_tank_type == NULL_ITEM_TYPE) break;
+			Item::Item* energy_tank = Item::create_item(energy_tank_type);
+			GS_ASSERT(energy_tank != NULL);
+			if (energy_tank == NULL) break;
+			
+			int slot = energy_tanks->get_empty_slot();
+			if (slot == NULL_SLOT) break;
+			
+			bool added = transfer_free_item_to_container(energy_tank->id, energy_tanks->id, slot);
+			if (!added) break;
+		}
+	}
     
-    // put a grenade launcher in the toolbelt to selt
-    Item::Item* grenade_launcher = Item::create_item(Item::get_item_type((char*)"grenade_launcher"));
+    // put a grenade launcher in the toolbelt
+    Item::Item* grenade_launcher = Item::create_item(Item::get_item_type("grenade_launcher"));
     GS_ASSERT(grenade_launcher != NULL);
     if (grenade_launcher != NULL)
     {
@@ -818,41 +852,37 @@ void agent_born(int agent_id)
 void agent_died(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
     GS_ASSERT(a->status.dead);
 
     // throw agent inventory items
     GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list[agent_id] != NULL_CONTAINER)
+    if (agent_container_list != NULL && agent_container_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
 
     // close container
     GS_ASSERT(opened_containers != NULL);
-    if (opened_containers[agent_id] != NULL_CONTAINER)
-    {
+    if (opened_containers != NULL && opened_containers[agent_id] != NULL_CONTAINER)
         send_container_close(agent_id, opened_containers[agent_id]);
-        agent_close_container(agent_id, opened_containers[agent_id]);
-    }
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
-    if (agent_hand_list[agent_id] != NULL_ITEM)
+    if (agent_hand_list != NULL && agent_hand_list[agent_id] != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
 }
 
 void agent_quit(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     Agent_state* a = ServerState::agent_list->get(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
     // close opened free container (this will throw any items sitting in hand)
     if (opened_containers[agent_id] != NULL_CONTAINER)
-    {
         agent_close_container(agent_id, opened_containers[agent_id]);
-        send_container_close(agent_id, opened_containers[agent_id]);
-    }
 
     GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
     opened_containers[agent_id] = NULL_CONTAINER;
@@ -876,6 +906,10 @@ void agent_quit(int agent_id)
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(a->client_id, a->id, agent_toolbelt_list[agent_id]);
 
+	GS_ASSERT(agent_energy_tanks_list != NULL);
+	if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
+		throw_items_from_container(a->client_id, a->id, agent_energy_tanks_list[agent_id]);
+
     // destroy containers
     if (agent_container_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_container_list[agent_id]);
@@ -883,16 +917,19 @@ void agent_quit(int agent_id)
         destroy_container(agent_toolbelt_list[agent_id]);
     if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_synthesizer_list[agent_id]);
+    if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
+		destroy_container(agent_energy_tanks_list[agent_id]);
 
     agent_container_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;
     agent_synthesizer_list[agent_id] = NULL_CONTAINER;
+	agent_energy_tanks_list[agent_id] = NULL_CONTAINER;
 }
 
 void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    RETURN_IF_INVALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     
     // get container
     GS_ASSERT(agent_synthesizer_list != NULL);
@@ -1190,7 +1227,6 @@ void check_agents_in_container_range()
         if (opened_containers[a->id] == NULL_CONTAINER) continue;
         if (agent_in_container_range(a->id, opened_containers[a->id])) continue;
         agent_close_container(a->id, opened_containers[a->id]);
-        send_container_close(a->id, opened_containers[a->id]);
     }
 }
 

@@ -25,7 +25,7 @@ class Text
         unsigned int format_len;
         int formatted_extra_len;
         bool formatted;
-        char* set_string(char* text, char* this_text, unsigned int* this_len);
+        char* set_string(const char* text, char* this_text, unsigned int* this_len);
         char* grow_string(unsigned int n, char* str, unsigned int *str_len);
 
     public:
@@ -51,8 +51,8 @@ class Text
 
         bool is_formatted() { return this->formatted; }
 
-        void set_text(char* text);
-        void set_format(char* format);
+        void set_text(const char* text);
+        void set_format(const char* format);
         void set_format_extra_length(int size);
         void update_formatted_string(int n_args, ...);
         
@@ -184,6 +184,23 @@ class AnimatedText: public Text
 				 && this->colors[i].a == color.a)
 					return i;
 			return -1;
+		}
+		
+		void set_color_index_color(int color_index, struct Color color)
+		{
+			struct Color4 colora;
+			colora.r = color.r;
+			colora.g = color.g;
+			colora.b = color.b;
+			colora.a = 255;
+			this->set_color_index_color(color_index, colora);
+		}
+		
+		void set_color_index_color(int color_index, struct Color4 color)
+		{
+			if (color_index < 0) return;
+			if (color_index >= (int)this->n_colors) return;
+			this->colors[color_index] = color;
 		}
 
 		void set_char_range_count(unsigned int n)

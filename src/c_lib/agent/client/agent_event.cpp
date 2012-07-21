@@ -248,7 +248,7 @@ void Agent_event::reload_weapon(int type)
 
 void Agent_event::tick_mining_laser()
 {
-    int weapon_type = Item::get_item_type((char*)"mining_laser");
+    int weapon_type = Item::get_item_type("mining_laser");
     float range = Item::get_weapon_range(weapon_type);
 
     Animations::mining_laser_beam(this->a->arm_center(), this->a->forward_vector(), range);

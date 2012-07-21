@@ -2,15 +2,16 @@
 
 typedef enum
 {
-    CONTAINER_TYPE_NONE,
+    CONTAINER_TYPE_NONE = 0,
     AGENT_CONTAINER,
     AGENT_TOOLBELT,
     AGENT_SYNTHESIZER,
+    AGENT_ENERGY_TANKS,
     
     CONTAINER_TYPE_STORAGE_BLOCK_SMALL,
     CONTAINER_TYPE_CRAFTING_BENCH_UTILITY,
     CONTAINER_TYPE_CRYOFREEZER_SMALL,
-    CONTAINER_TYPE_SMELTER_ONE
+    CONTAINER_TYPE_SMELTER_ONE,
 } ItemContainerType;
 
 typedef enum
@@ -68,6 +69,8 @@ typedef enum
     IG_DEBUG,       // debug only items
     IG_UNKNOWN,     // used by recipes
     IG_CONSUMABLE,
+    IG_ENERGY_TANK,
+    IG_AGENT_SPAWNER,
 } ItemGroup;
 
 typedef enum

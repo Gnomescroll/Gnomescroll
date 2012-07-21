@@ -17,7 +17,6 @@
 #include <entity/component/component.cpp>
 #include <entity/component/component_list.cpp>
 #include <entity/component/lists.cpp>
-#include <entity/component/lists/agent_spawner_list.cpp>
 #include <entity/component/lists/owner_list.cpp>
 #include <entity/component/main.cpp>
 #include <entity/components.cpp>
@@ -25,3 +24,7 @@
 #include <entity/network/packets.cpp>
 #include <entity/network/interfaces.cpp>
 #include <entity/network/main.cpp>
+
+#if DC_SERVER
+#include <entity/component/lists/agent_spawner_list.cpp>
+#endif

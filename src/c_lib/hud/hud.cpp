@@ -54,6 +54,7 @@ static const char health_color_string[] = "ENERGY";
 static const struct Color HEALTH_GREEN = {10,240,10};
 static const struct Color HEALTH_GREY = {100,100,100};
 static const struct Color HEALTH_WHITE = {255,255,255};
+static const struct Color HEALTH_RED = {240,10,10};
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
@@ -143,7 +144,8 @@ void update_hud_draw_settings()
     hud_draw_settings.graphs = input_state.graphs;
     
     // update chat rendering
-    if (hud->inited && hud->chat != NULL && hud->chat->inited)
+    if (hud != NULL && hud->inited
+     && hud->chat != NULL && hud->chat->inited)
     {
         HudText::Text *t = hud->chat->input;
         if (t != NULL)
@@ -298,7 +300,6 @@ void draw_hud_text()
     {
         float fps_val = 0.0f;
         if (hud_draw_settings.fps_val >= 0.1f) fps_val = 1000.0f / hud_draw_settings.fps_val;
-        //hud->fps->update_formatted_string(1, hud_draw_settings.fps_val);
         hud->fps->update_formatted_string(1, fps_val);
         hud->fps->draw();
     }
@@ -354,6 +355,48 @@ void draw_hud_text()
 			}
 			else
 				hud->health->update_char_range(grey_range, n, len);
+				
+			// update numbers color
+			static int white_color_index = hud->health->get_color(HEALTH_WHITE);
+			GS_ASSERT(white_color_index >= 0);
+			int white_range = hud->health->get_color_range(white_color_index);
+			static int red_color_index = hud->health->get_color(HEALTH_RED);
+			GS_ASSERT(red_color_index >= 0);
+			int red_range = hud->health->get_color_range(red_color_index);
+			
+			static int blink_tick = 0;
+			static int blink_step = 1;
+			if (health <= 0)
+			{
+				struct Color blink_color = HEALTH_RED;
+				if (!a->status.dead)
+				{
+					const int NO_HEALTH_WARNING_TEXT_BLINK_RATE = 15;
+					blink_tick += blink_step;
+					if (blink_tick >= NO_HEALTH_WARNING_TEXT_BLINK_RATE)
+						blink_step = -1;
+					else if (blink_tick <= 0)
+						blink_step = 1;
+						
+					float t = ((float)blink_tick)/((float)NO_HEALTH_WARNING_TEXT_BLINK_RATE);
+					blink_color = interpolate_color(HEALTH_WHITE, HEALTH_RED, t);
+				}
+
+				hud->health->set_color_index_color(red_color_index, blink_color);
+					
+				int range = red_range;
+				if (range < 0) range = white_range;
+				GS_ASSERT(range >= 0);
+				hud->health->set_char_range_color(range, red_color_index);
+			}
+			else
+			{
+				blink_tick = 0;
+				int range = white_range;
+				if (range < 0) range = red_range;
+				GS_ASSERT(range >= 0);
+				hud->health->set_char_range_color(range, white_color_index);
+			}
         }
         else
             hud->health->set_text((char*)no_agent_text);
@@ -459,10 +502,11 @@ void HUD::init()
 	health->set_color(255,255,255,255);
 
 	// add color for health text animations
-	health->set_color_count(3);
-	health->set_char_range_count(3);
+	health->set_color_count(4);
+	health->set_char_range_count(4);
 	health->add_color(HEALTH_GREY);
 	health->add_color(HEALTH_GREEN);
+	health->add_color(HEALTH_RED);
 	
 	int white_range_index = health->add_char_range(strlen(health_color_string), -1);
 	GS_ASSERT(white_range_index >= 0);

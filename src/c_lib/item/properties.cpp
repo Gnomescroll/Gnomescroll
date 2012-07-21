@@ -100,9 +100,9 @@ void set_item_name(int id, const char* name, int length)
 
     static int str_index = 0;
 
-	for (int i=0; i<MAX_ITEMS; i++)	// no duplicate names
-		if (item_name_index[i] >= 0)
-			GS_ASSERT(strcmp(item_names+item_name_index[i], name));
+    for (int i=0; i<MAX_ITEMS; i++)    // no duplicate names
+        if (item_name_index[i] >= 0)
+            GS_ASSERT(strcmp(item_names+item_name_index[i], name));
 
     item_name_index[id] = str_index;
 
@@ -132,8 +132,11 @@ char* get_item_name(int type)
 int get_item_type(const char* name)
 {
     for (int i=0; i<MAX_ITEMS; i++)
-        if (strcmp(name, get_item_name(i)) == 0)
+    {
+        char* cmp_name = get_item_name(i);
+        if (cmp_name != NULL && strcmp(name, cmp_name) == 0)
             return i;
+    }
     GS_ASSERT(false);
     printf("In function %s:%d -- No item for name %s\n", __FUNCTION__, __LINE__, name);
     return NULL_ITEM_TYPE;
@@ -156,6 +159,7 @@ char* get_item_pretty_name(int item_type)
 
 ItemGroup get_item_group_for_type(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return IG_NONE;
     GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
     if (item_type < 0 || item_type >= MAX_ITEMS) return IG_ERROR;
     return group_array[item_type];
@@ -180,7 +184,7 @@ int get_max_stack_size(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 10;
+    if (attr == NULL) return 1;
     return attr->max_stack_size;
 }
 
@@ -188,7 +192,7 @@ int get_max_energy(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 100;
+    if (attr == NULL) return NULL_ENERGY;
     return attr->max_energy;
 }
 
@@ -196,7 +200,7 @@ int get_max_durability(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 100;
+    if (attr == NULL) return NULL_DURABILITY;
     return attr->max_durability;
 }
 

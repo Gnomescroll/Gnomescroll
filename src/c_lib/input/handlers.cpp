@@ -96,7 +96,6 @@ void disable_container_block()
     if (!input_state.container_block) return;
     input_state.container_block = false;
     t_hud::disable_container_block_hud();
-    ItemContainer::close_container();
     input_state.mouse_bound = rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
@@ -105,6 +104,11 @@ void close_all_containers()
 {
     disable_container_block();
     disable_agent_container();
+    // close any public containers we had open
+    if (ItemContainer::opened_container == NULL_CONTAINER) return;
+    int container_id = ItemContainer::opened_container;
+    ItemContainer::close_container(container_id);
+    ItemContainer::send_container_close(container_id);
 }
 
 void toggle_scoreboard()
@@ -540,10 +544,6 @@ void agent_key_down_handler(SDL_Event* event)
             //t_mech::rotate_mech();
             //break;
 
-        case SDLK_r:
-            Toolbelt::reload_event();
-            break;
-        
         case SDLK_LEFT:
             HudCubeSelector::cube_selector.left();
             break;

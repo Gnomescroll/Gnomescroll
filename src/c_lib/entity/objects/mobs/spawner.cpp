@@ -73,11 +73,11 @@ static void set_mob_spawner_properties(Object* object)
 	item_drop->add_drop("synthesizer_coin", 6, 0.35f);
 	item_drop->add_drop("synthesizer_coin", 8, 0.15f);
 	
-	item_drop->set_max_drop_amounts("repair_kit", 4);
-	item_drop->add_drop("repair_kit", 1, 0.50f);
-	item_drop->add_drop("repair_kit", 2, 0.25f);
-	item_drop->add_drop("repair_kit", 3, 0.15f);
-	item_drop->add_drop("repair_kit", 4, 0.05f);
+	item_drop->set_max_drop_amounts("small_charge_pack", 4);
+	item_drop->add_drop("small_charge_pack", 1, 0.50f);
+	item_drop->add_drop("small_charge_pack", 2, 0.25f);
+	item_drop->add_drop("small_charge_pack", 3, 0.15f);
+	item_drop->add_drop("small_charge_pack", 4, 0.05f);
 	#endif
 
     #if DC_CLIENT

@@ -158,11 +158,16 @@ void PlayerAgent_action::tick_mining_laser()
 {
     if (this->p->you == NULL) return;
 
-    int weapon_type = Item::get_item_type((char*)"mining_laser");
+    int weapon_type = Item::get_item_type("mining_laser");
     float range = Item::get_weapon_range(weapon_type);
+    GS_ASSERT(range > 0.0f);
 
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
-    Animations::mining_laser_beam(origin, this->target_direction, range);
+    GS_ASSERT(vec3_length(this->target_direction) > 0.005f);
+    if (agent_camera != NULL && vec3_length(this->target_direction) < 0.005f)
+        Animations::mining_laser_beam(origin, agent_camera->forward_vector(), range);
+    else
+        Animations::mining_laser_beam(origin, this->target_direction, range);
 }
 
 void PlayerAgent_action::begin_mining_laser()

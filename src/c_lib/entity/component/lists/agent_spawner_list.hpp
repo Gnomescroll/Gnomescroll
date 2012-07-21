@@ -1,18 +1,18 @@
 #pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <entity/component/component_list.hpp>
 
 namespace Components
 {
 
-const int BASE_SPAWN_ID = 255;
-
-const int MAX_AGENT_SPAWNER_COMPONENTS = 128;
+const int MAX_AGENT_SPAWNER_COMPONENTS = 1024;
 class AgentSpawnerComponentList: public ComponentList<AgentSpawnerComponent, COMPONENT_AGENT_SPAWNER, MAX_AGENT_SPAWNER_COMPONENTS>
 {
     public:
-
-        Objects::Object* get_random_spawner();
 
     AgentSpawnerComponentList()
     {}

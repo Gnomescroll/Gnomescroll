@@ -34,31 +34,31 @@ Vec3 AgentState::forward_vector()
 {
     if (theta > 1.0f)
     {
-		theta -= 2.0f;
-		GS_ASSERT(false);
-	}
+        theta -= 2.0f;
+        GS_ASSERT(false);
+    }
     if (theta < -1.0f)
     {
-		theta += 2.0f;
-		GS_ASSERT(false);
-	}
+        theta += 2.0f;
+        GS_ASSERT(false);
+    }
 
     if (phi > 0.4999f)
     {
-		phi = 0.4999f;
-		GS_ASSERT(false);
-	}
+        phi = 0.4999f;
+        GS_ASSERT(false);
+    }
     if (phi < -0.4999f)
     {
-		phi = -0.4999f;
-		GS_ASSERT(false);
-	}
+        phi = -0.4999f;
+        GS_ASSERT(false);
+    }
 
     Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
     f = vec3_euler_rotation(f, theta, phi, 0.0f);
-	normalize_vector(&f);
+    normalize_vector(&f);
 
-	return f;
+    return f;
 }
 
 #if DC_CLIENT
@@ -73,7 +73,7 @@ void Agent_state::teleport(float x,float y,float z)
 {
     this->set_position(x,y,z);
 
-	#if DC_SERVER
+    #if DC_SERVER
     Agent_teleport_message A;
 
     A.id = id;
@@ -88,8 +88,8 @@ void Agent_state::teleport(float x,float y,float z)
     A.phi = s.phi;
     A.broadcast();
 
-	t_map::t_map_manager_update_client_position(this->id, x,y);
-	#endif
+    t_map::t_map_manager_update_client_position(this->id, x,y);
+    #endif
 }
 
 void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi)
@@ -113,8 +113,8 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     A.phi = s.phi;
     A.broadcast();
     
-	t_map::t_map_manager_update_client_position(this->id, x,y);
-	#endif
+    t_map::t_map_manager_update_client_position(this->id, x,y);
+    #endif
 }
 
 void Agent_state::tick() 
@@ -483,13 +483,10 @@ void Agent_state::set_camera_state(float x, float y, float z, float theta, float
     this->camera.phi = phi;
     //printf("set camera state: %f %f \n",x ,y);
 }
-#endif
 
 void Agent_state::get_spawn_point(Vec3* spawn)
 {
     Vec3 default_spawn = vec3_init(map_dim.x/2, map_dim.y/2, map_dim.z-1);
-
-    using Components::BASE_SPAWN_ID;
 
     float fh = this->current_height();
     Components::AgentSpawnerComponent *s = NULL;
@@ -523,7 +520,6 @@ void Agent_state::get_spawn_point(Vec3* spawn)
         *spawn = s->get_spawn_point(fh, this->box.box_r);
 }
 
-#if DC_SERVER
 void Agent_state::spawn_state()
 {   // update position
     Vec3 spawn;
@@ -779,7 +775,7 @@ bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
 
 bool Agent_state::in_sight_of(Vec3 source, Vec3* sink)
 {
-	if (this->vox == NULL) return false;
+    if (this->vox == NULL) return false;
     return this->vox->in_sight_of(source, sink);
 }
 
@@ -853,11 +849,11 @@ void Agent_state::update_model()
     #if DC_CLIENT
     if (this->vox == NULL) return;
 
-	if (this->event.color_changed)
-	{	// set color of model
-		this->vox->fill_color(this->status.color);
-		this->event.color_changed = false; // reset
-	}
+    if (this->event.color_changed)
+    {    // set color of model
+        this->vox->fill_color(this->status.color);
+        this->event.color_changed = false; // reset
+    }
 
     if (this->is_you())
     {   // your agent
@@ -962,9 +958,9 @@ bool Agent_state::near_base()
 
 void force_update_agent_vox(Agent_state* a)
 {
-	GS_ASSERT(a != NULL);
-	if (a == NULL) return;
-	a->vox->was_updated = false;
-	AgentState s = a->get_state();
-	a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    a->vox->was_updated = false;
+    AgentState s = a->get_state();
+    a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
 }

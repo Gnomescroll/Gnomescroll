@@ -14,6 +14,7 @@ void load_item_dat()
     start_item_dat();
     int i0 = texture_alias("media/sprites/i00.png");
     int i1 = texture_alias("media/sprites/i01.png");
+    int i1a = texture_alias("media/sprites/i01a.png");
 
     item_def(0, IG_ERROR, "error_item");
     s.pretty_name = (char*)"Error";
@@ -49,7 +50,7 @@ void load_item_dat()
     s.pretty_name = (char*)"Mining Laser";
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
-    s.max_durability = 2000; //was 200 which is 40 seconds
+    s.max_durability = 2000;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 5;
@@ -166,7 +167,7 @@ void load_item_dat()
 
     // Iron
     item_def(38, IG_RESOURCE, "iron_ore");
-    sprite_def(i1, 1,3);
+    sprite_def(i1a, 1,3);
     s.pretty_name = (char*)"Iron Ore";
     s.max_stack_size = 64;
 
@@ -255,10 +256,10 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_3");
 
 
-    item_def(49, IG_CONSUMABLE, "repair_kit");
-    sprite_def(i0, 2,8);
-    s.pretty_name = (char*)"Repair Kit";
-    s.max_stack_size = 20;
+    item_def(49, IG_CONSUMABLE, "small_charge_pack");
+    sprite_def(i1, 6,1);
+    s.pretty_name = (char*)"Small Charge Pack";
+    s.max_stack_size = 16;
     s.repair_agent_amount = 25;
 
     item_def(50, IG_PLACER, "cryofreezer_1");
@@ -298,36 +299,47 @@ void load_item_dat()
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"control_node");
 
+    item_def(54, IG_ENERGY_TANK, "energy_tank");
+    sprite_def(i0, 2,8);
+    s.pretty_name = (char*)"Energy Tank";
+    s.max_stack_size = 1;
+
+    item_def(55, IG_AGENT_SPAWNER, "agent_spawner");
+    sprite_def(i1, 2,6);
+    s.pretty_name = (char*) "Spawner";
+    s.max_stack_size = 1;
+
     end_item_dat();
+    
     verify_item_dat();
 }
 
 void verify_item_dat()
 {
-	for (int i=0; i<MAX_ITEMS; i++)
-	{
-		if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
+    for (int i=0; i<MAX_ITEMS; i++)
+    {
+        if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
 
-		// make sure group is set
-		GS_ASSERT(item_attribute_array[i].group != IG_NONE);
-	
-		GS_ASSERT(item_attribute_array[i].pretty_name != NULL);
-		if (item_attribute_array[i].pretty_name != NULL)
-			GS_ASSERT(item_attribute_array[i].pretty_name[0] != '\0');
+        // make sure group is set
+        GS_ASSERT(item_attribute_array[i].group != IG_NONE);
+    
+        GS_ASSERT(item_attribute_array[i].pretty_name != NULL);
+        if (item_attribute_array[i].pretty_name != NULL)
+            GS_ASSERT(item_attribute_array[i].pretty_name[0] != '\0');
 
-		// make sure all data types are within bounds
-		GS_ASSERT(item_attribute_array[i].max_energy > 0
-				&& item_attribute_array[i].max_energy <= 0xffff);
-				
-		GS_ASSERT(item_attribute_array[i].max_durability > 0
-				&& item_attribute_array[i].max_durability <= 0xffff);
-				
-		GS_ASSERT(item_attribute_array[i].max_stack_size > 0
-				&& item_attribute_array[i].max_stack_size <= 0xffff);
+        // make sure all data types are within bounds
+        GS_ASSERT(item_attribute_array[i].max_energy > 0
+                && item_attribute_array[i].max_energy <= 0xffff);
+                
+        GS_ASSERT(item_attribute_array[i].max_durability > 0
+                && item_attribute_array[i].max_durability <= 0xffff);
+                
+        GS_ASSERT(item_attribute_array[i].max_stack_size > 0
+                && item_attribute_array[i].max_stack_size <= 0xffff);
 
-		// Energy should not be in use yet.
-		GS_ASSERT(item_attribute_array[i].max_energy == NULL_ENERGY);
-	}
+        // Energy should not be in use yet.
+        GS_ASSERT(item_attribute_array[i].max_energy == NULL_ENERGY);
+    }
 }
 
 

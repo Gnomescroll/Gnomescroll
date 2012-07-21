@@ -118,7 +118,9 @@ dont_include_this_file_in_server
 
 /* Mob */
 
+#ifndef __APPLE__
 #include <t_mob/_include.hpp>
+#endif
 
 /* Draw lists */
 #include <common/draw/draw.cpp>
@@ -237,7 +239,11 @@ void signal_terminate_handler(int sig)
 #endif
 
 int init_c_lib(int argc, char* argv[]) 
-{    
+{   
+
+    /*
+        Time startup functions to determine delay/slow down
+    */
     static int inited = 0;
     GS_ASSERT(inited == 0);
     inited++;
@@ -297,13 +303,13 @@ int init_c_lib(int argc, char* argv[])
     Item::init();
     ItemContainer::init();
 
-    Toolbelt::init();
-
-    // Load Dats
-
     //t_map::load_map_dat();
     Item::load_item_dat();
     Item::load_synthesizer();
+
+    Toolbelt::init();   // toolbelt init depends on item dat being loaded
+
+    // Load Dats
 
     t_map::load_map_drop_dat(); //load drop dat after items
 

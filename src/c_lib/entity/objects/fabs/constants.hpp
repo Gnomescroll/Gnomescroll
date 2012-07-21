@@ -14,7 +14,7 @@ const bool BASE_INIT_WITH_DRAW = true;
 const bool BASE_SHOULD_HITSCAN = false;
 
 // spawner
-const float BASE_SPAWN_RADIUS = 10.0f;
+const int BASE_SPAWN_RADIUS = 4;
 
 /* Agent Spawner */
 
@@ -26,7 +26,8 @@ const bool AGENT_SPAWNER_INIT_WITH_HITSCAN = true;
 const bool AGENT_SPAWNER_INIT_WITH_DRAW = true;
 
 // spawner
-const float AGENT_SPAWNER_SPAWN_RADIUS = 5.0f;
+const int AGENT_SPAWNER_SPAWN_RADIUS = 0;
+const int AGENT_SPAWNER_INITIAL_CHILDREN_SIZE = 4;
 
 // health
 const int AGENT_SPAWNER_MAX_HEALTH = 200;

@@ -247,7 +247,7 @@ inline void no_container_action_alpha_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    ContainerActionType action = no_container_alpha_action_decision_tree(a->id, client_id);
+    ContainerActionType action = no_container_alpha_action_decision_tree(a->id, client_id, NULL_CONTAINER, NULL_SLOT);
 
     if (this->action != action)
     {
@@ -269,7 +269,7 @@ inline void no_container_action_beta_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    ContainerActionType action = no_container_beta_action_decision_tree(a->id, client_id);
+    ContainerActionType action = no_container_beta_action_decision_tree(a->id, client_id, NULL_CONTAINER, NULL_SLOT);
 
     if (this->action != action)
     {
@@ -378,6 +378,8 @@ inline void close_container_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
+
+    if (container_id != opened_containers[a->id]) return;
 
     if (!agent_can_access_container(a->id, container_id)) return;
 

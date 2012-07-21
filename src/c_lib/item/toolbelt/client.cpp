@@ -4,7 +4,9 @@
 dont_include_this_file_in_server
 #endif
 
+#include <item/toolbelt/_interface.hpp>
 #include <item/toolbelt/_state.hpp>
+#include <item/toolbelt/config/_interface.hpp>
 #include <chat/interface.hpp>
 
 namespace Toolbelt
@@ -12,223 +14,239 @@ namespace Toolbelt
 
 void turn_fire_on(int agent_id)
 {
+    GS_ASSERT(agent_fire_on != NULL);
+    if (agent_fire_on == NULL) return;
+    GS_ASSERT(agent_fire_tick != NULL);
+    if (agent_fire_tick == NULL) return;
+    
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+
     agent_fire_tick[agent_id] = 0;
     if (agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = true;
 
+    if (ClientState::playerAgent_state.agent_id != agent_id) return;
+    
+    // local agent only:
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    ItemGroup item_group;
-    if (item_id == NULL_ITEM) item_group = IG_NONE;
-    else item_group = Item::get_item_group(item_id);
-    if (ClientState::playerAgent_state.agent_id == agent_id)
-        toolbelt_item_begin_alpha_action_event_handler(item_group);
+    toolbelt_item_begin_alpha_action_event_handler(item_id);
 }
 
 void turn_fire_off(int agent_id)
 {
+    GS_ASSERT(click_and_hold != NULL);
+    if (click_and_hold == NULL) return;
+    GS_ASSERT(agent_fire_on != NULL);
+    if (agent_fire_on == NULL) return;
+    GS_ASSERT(agent_fire_tick != NULL);
+    if (agent_fire_tick == NULL) return;
+    
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+
     agent_fire_tick[agent_id] = 0;
     if (!agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = false;
 
+    if (ClientState::playerAgent_state.agent_id != agent_id) return;
+    
+    // local agent only:
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    ItemGroup item_group;
-    if (item_id == NULL_ITEM) item_group = IG_NONE;
-    else item_group = Item::get_item_group(item_id);
-    if (ClientState::playerAgent_state.agent_id == agent_id)
-    {
-        toolbelt_item_end_alpha_action_event_handler(item_group);
-        // force stop any continuous animations
-        // TODO -- continuous actions from dat
-        if (item_group == IG_MINING_LASER ||
-			item_group == IG_MELEE_WEAPON ||
-			item_group == IG_NONE ||
-			item_group == IG_SHOVEL ||
-			item_group == IG_SYNTHESIZER_COIN || 
-			item_group == IG_RESOURCE ||
-			item_group == IG_ERROR)
-			Animations::stop_equipped_item_animation();
-	}
+    toolbelt_item_end_alpha_action_event_handler(item_id);
+
+    int item_type = NULL_ITEM_TYPE;
+    if (item_id == NULL_ITEM) item_type = fist_item_type;
+    else item_type = Item::get_item_type(item_id);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE);
+    if (item_type < 0 || item_type >= MAX_ITEMS) return;
+
+    if (item_is_click_and_hold(item_type))
+        Animations::stop_equipped_item_animation();
 }
 
 // returns true if an event was or should be triggered
 bool toolbelt_item_begin_alpha_action()
 {
+    GS_ASSERT(click_and_hold != NULL);
+    if (click_and_hold == NULL) return false;
+    GS_ASSERT(agent_fire_on != NULL);
+    if (agent_fire_on == NULL) return false;
+
     int agent_id = ClientState::playerAgent_state.agent_id;
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return false;
 
     if (agent_fire_on[agent_id]) return false;
+
     turn_fire_on(agent_id);
-    
-	ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-	int item_type = Item::get_item_type(item_id);
-	int item_group = IG_NONE;
-	if (item_type == NULL_ITEM_TYPE) item_group = IG_MELEE_WEAPON;
-	else item_group = Item::get_item_group_for_type(item_type);
-	bool continuous = false; // TODO -- load from dat
-	if (item_group == IG_MINING_LASER ||
-		item_group == IG_MELEE_WEAPON ||
-		item_group == IG_NONE ||
-		item_group == IG_SHOVEL ||
-		item_group == IG_SYNTHESIZER_COIN || 
-		item_group == IG_RESOURCE ||
-		item_group == IG_ERROR)
-		continuous = true;
-	Animations::begin_equipped_item_animation(item_type, continuous);
-	
+
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+    int item_type = Item::get_item_type(item_id);
+
+    Animations::begin_equipped_item_animation(item_type, item_is_click_and_hold(item_type));
     return true;
 }
 
 // returns true if an event was or should be triggered
 bool toolbelt_item_end_alpha_action()
 {    
-    // stop advancing fire tick
+    GS_ASSERT(agent_fire_on != NULL);
+    if (agent_fire_on == NULL) return false;
+    GS_ASSERT(click_and_hold != NULL);
+    if (click_and_hold == NULL) return false;
+
     int agent_id = ClientState::playerAgent_state.agent_id;
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return false;
 
     if (!agent_fire_on[agent_id]) return false;
     turn_fire_off(agent_id);
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    ItemGroup item_group;
-    if (item_id == NULL_ITEM) item_group = IG_NONE;
-    else item_group = Item::get_item_group(item_id);
+    int item_type = Item::get_item_type(item_id);
     
-	Animations::stop_equipped_item_animation();
-
-    switch (item_group)
+    if (item_is_click_and_hold(item_type))
     {
-        case IG_ERROR:
-        case IG_RESOURCE:
-        case IG_MELEE_WEAPON:
-        case IG_SYNTHESIZER_COIN:
-        case IG_SHOVEL:
-        case IG_NONE:
-        case IG_FIST:
-            return true;
-
-        case IG_MINING_LASER:
-            return true;
-
-        case IG_CONSUMABLE:
-        case IG_PLACER:
-        case IG_HITSCAN_WEAPON:
-        case IG_GRENADE_LAUNCHER:
-            return false;   // nothing happened. they arent click-and-hold
-        default:
-            return false;    // the default action is click once
+        Animations::stop_equipped_item_animation();
+        return true;
     }
-    return true;
+
+    return false;
 }
 
-void toolbelt_item_begin_alpha_action_event_handler(ItemGroup item_group)
+void toolbelt_item_begin_alpha_action_event_handler(ItemID item_id)
 {
-    switch (item_group)
-    {
-        case IG_MINING_LASER:
-            ClientState::playerAgent_state.action.begin_mining_laser();
-            break;
+    int item_type = fist_item_type;
+    if (item_id != NULL_ITEM)
+        item_type = Item::get_item_type(item_id);
+    begin_local_item(item_type);
 
-        case IG_ERROR:
-        case IG_RESOURCE:
-        case IG_MELEE_WEAPON:
-        case IG_SYNTHESIZER_COIN:
-        case IG_SHOVEL:
-        case IG_NONE:
-        case IG_FIST:
+    // TODO
+    //ItemGroup item_group = Item::get_item_group(item_id);    
+    //switch (item_group)
+    //{
+        //case IG_MINING_LASER:
+            //ClientState::playerAgent_state.action.begin_mining_laser();
+            //break;
 
-        case IG_CONSUMABLE:
-        case IG_PLACER:
-        case IG_HITSCAN_WEAPON:
-        case IG_GRENADE_LAUNCHER:
-        default:
-            break;    // the default action is click once
-    }
+        //case IG_ERROR:
+        //case IG_RESOURCE:
+        //case IG_MELEE_WEAPON:
+        //case IG_SYNTHESIZER_COIN:
+        //case IG_SHOVEL:
+        //case IG_NONE:
+        //case IG_FIST:
+        //case IG_ENERGY_TANK:
+
+        //case IG_CONSUMABLE:
+        //case IG_PLACER:
+        //case IG_HITSCAN_WEAPON:
+        //case IG_GRENADE_LAUNCHER:
+        //default:
+            //break;    // the default action is click once
+    //}
 }
 
-void toolbelt_item_end_alpha_action_event_handler(ItemGroup item_group)
+void toolbelt_item_end_alpha_action_event_handler(ItemID item_id)
 {
-    switch (item_group)
-    {
-        case IG_MINING_LASER:
-            ClientState::playerAgent_state.action.end_mining_laser();
-            break;
+    int item_type = fist_item_type;
+    if (item_id != NULL_ITEM) item_type = Item::get_item_type(item_id);
+    end_local_item(item_type);
 
-        case IG_ERROR:
-        case IG_RESOURCE:
-        case IG_MELEE_WEAPON:
-        case IG_SYNTHESIZER_COIN:
-        case IG_SHOVEL:
-        case IG_NONE:
-        case IG_FIST:
+    //ItemGroup item_group = Item::get_item_group(item_id);    
+    //switch (item_group)
+    //{
+        //case IG_MINING_LASER:
+            //ClientState::playerAgent_state.action.end_mining_laser();
+            //break;
 
-        case IG_CONSUMABLE:
-        case IG_PLACER:
-        case IG_HITSCAN_WEAPON:
-        case IG_GRENADE_LAUNCHER:
-        default:
-            break;
-    }
+        //case IG_ERROR:
+        //case IG_RESOURCE:
+        //case IG_MELEE_WEAPON:
+        //case IG_SYNTHESIZER_COIN:
+        //case IG_SHOVEL:
+        //case IG_NONE:
+        //case IG_FIST:
+        //case IG_ENERGY_TANK:
+
+        //case IG_CONSUMABLE:
+        //case IG_PLACER:
+        //case IG_HITSCAN_WEAPON:
+        //case IG_GRENADE_LAUNCHER:
+        //default:
+            //break;
+    //}
 }
 
 // returns true if an event was or should be triggered
 bool toolbelt_item_beta_action()
 {
-    using ClientState::playerAgent_state;
+    GS_ASSERT(agent_fire_on != NULL);
+    if (agent_fire_on == NULL) return false;
+    GS_ASSERT(agent_selected_type != NULL)
+    if (agent_selected_type == NULL) return false;
 
-    int agent_id = playerAgent_state.agent_id;
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
+    int agent_id = ClientState::playerAgent_state.agent_id;
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return false;
 
     if (agent_fire_on[agent_id]) return false;
 
-	int item_type = agent_selected_type[agent_id];
-	if (item_type == NULL_ITEM_TYPE)
-		item_type = Item::get_item_type((char*)"fist");
-	int item_group = Item::get_item_group_for_type(item_type);
-	
-	static int repair_kit = Item::get_item_type((char*)"repair_kit");
-	switch (item_group)
-	{
-		case IG_CONSUMABLE:
-			if (item_type == repair_kit) return true;
-			break;
-		
-        case IG_MINING_LASER:
-        case IG_ERROR:
-        case IG_RESOURCE:
-        case IG_MELEE_WEAPON:
-        case IG_SYNTHESIZER_COIN:
-        case IG_SHOVEL:
-        case IG_NONE:
-        case IG_FIST:
-        case IG_HITSCAN_WEAPON:
-        case IG_GRENADE_LAUNCHER:
-        default:
-            break;		
-	}
-	
-	// If equipped item did not have right click action:
-	
+    ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
+    int item_type = NULL_ITEM_TYPE;
+    if (item_id == NULL_ITEM) item_type = fist_item_type;
+    else item_type = Item::get_item_type(item_id);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE)
+    if (item_type < 0 || item_type >= MAX_ITEMS) return false;
+    
+    bool triggered = trigger_local_item_beta(item_id, item_type);
+    if (triggered) return true;
+
+    // if no beta actions are defined,
+    
     // open any inventories in range
-    int container_id = playerAgent_state.facing_container();
+    int container_id = ClientState::playerAgent_state.facing_container();
     if (container_id == NULL_CONTAINER) return false;
 
     bool opened = ItemContainer::open_container(container_id);
     if (!opened)
     {
         const char msg[] = "This container is locked.";
-        chat_client->send_system_message((char*)msg);
+        chat_client->send_system_message(msg);
     }
     return opened;
 }
 
-bool toolbelt_item_reload_action()
+/* Packets */
+
+void send_set_slot_packet(int slot)
 {
-    return true;
+    int max = ItemContainer::get_container_max_slots(AGENT_TOOLBELT);
+    GS_ASSERT(max > 0);
+    GS_ASSERT(slot >= 0 && slot != NULL_SLOT && slot < max);
+    if (slot < 0 || slot >= max) return;
+    toolbelt_set_slot_CtoS msg;
+    msg.slot = slot;
+    msg.send();
+}
+
+void send_begin_alpha_action_packet()
+{
+    toolbelt_begin_alpha_action_CtoS msg;
+    msg.send();
+}
+
+void send_end_alpha_action_packet()
+{
+    toolbelt_end_alpha_action_CtoS msg;
+    msg.send();
+}
+
+void send_beta_action_packet()
+{
+    toolbelt_beta_action_CtoS msg;
+    msg.send();
 }
 
 } // Toolbelt

@@ -5,6 +5,7 @@
 #if DC_SERVER
 #include <chat/server.hpp>
 #include <chat/interface.hpp>
+#include <item/container/container.hpp>
 #endif
 
 /*
@@ -27,9 +28,10 @@ Agent_status::Agent_status(Agent_state* a)
 a(a),
 voxel_model_restore_throttle(0),
 health(AGENT_HEALTH),
+should_die(false),
 dead(false),
 respawn_countdown(RESPAWN_TICKS),
-spawner(Components::BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
+spawner(BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
 kills(0),
 deaths(0),
 suicides(0),
@@ -44,7 +46,7 @@ inventory(NULL),
 toolbelt(NULL),
 color_chosen(false)
 {
-	color.r=color.g=color.b=255;
+    color.r=color.g=color.b=255;
     strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
 
@@ -54,8 +56,7 @@ Agent_status::~Agent_status()
 
 void Agent_status::set_spawner(int pt)
 {
-    using Components::agent_spawner_component_list;
-    using Components::BASE_SPAWN_ID;
+    //using Components::agent_spawner_component_list;
     
     if (pt != BASE_SPAWN_ID)
     {   // check new spawner exists
@@ -79,32 +80,32 @@ void Agent_status::set_spawner(int pt)
 
 void Agent_status::set_color(struct Color color)
 {
-	if (this->color_chosen && colors_equal(color, this->color)) return;
-	
-	// TODO -- REMOVE THIS HACK
-	// somewhere, somehow, 255 is rolling over
-	// to 0 by the time it is rendered
-	if (color.r == 255) color.r = 254;
-	if (color.g == 255) color.g = 254;
-	if (color.b == 255) color.b = 254;
-	
-	this->color = color;
-	this->color_chosen = true;
-	
-	#if DC_CLIENT
-	this->a->event.color_changed = true;
-	#endif
+    if (this->color_chosen && colors_equal(color, this->color)) return;
+    
+    // TODO -- REMOVE THIS HACK
+    // somewhere, somehow, 255 is rolling over
+    // to 0 by the time it is rendered
+    if (color.r == 255) color.r = 254;
+    if (color.g == 255) color.g = 254;
+    if (color.b == 255) color.b = 254;
+    
+    this->color = color;
+    this->color_chosen = true;
+    
+    #if DC_CLIENT
+    this->a->event.color_changed = true;
+    #endif
 
-	#if DC_SERVER
-	this->a->vox->fill_color(this->color);
-	
-	agent_color_StoC msg;
-	msg.r = this->color.r;
-	msg.g = this->color.g;
-	msg.b = this->color.b;
-	msg.agent_id = this->a->id;
-	msg.broadcast();
-	#endif
+    #if DC_SERVER
+    this->a->vox->fill_color(this->color);
+    
+    agent_color_StoC msg;
+    msg.r = this->color.r;
+    msg.g = this->color.g;
+    msg.b = this->color.b;
+    msg.agent_id = this->a->id;
+    msg.broadcast();
+    #endif
 }
 
 void Agent_status::set_spawner()
@@ -145,21 +146,23 @@ bool Agent_status::set_name(char* name)
     return new_name;
 }
 
+#if DC_CLIENT
 void Agent_status::check_missing_name()
 {
-    #if DC_CLIENT
     if (strcmp(name, AGENT_UNDEFINED_NAME) == 0)
     {
         request_agent_name_CtoS msg;
         msg.id = this->a->id;
         msg.send();
     }
-    #endif
 }
+#endif
 
+#if DC_SERVER
 void Agent_status::heal(unsigned int amt)
 {
-    if (this->dead) return;
+    GS_ASSERT(amt > 0);
+    if (this->dead || this->should_die) return;
     this->health += amt;
     if (this->health > (int)this->health_max)
         this->health = this->health_max;
@@ -167,21 +170,43 @@ void Agent_status::heal(unsigned int amt)
 
 int Agent_status::apply_damage(int dmg)
 {
-    if (this->dead) return this->health;
-    
-    if (!dmg) return this->health;
-    if (this->health <= 0) return this->health;
+    GS_ASSERT(dmg >= 0);
+    if (dmg <= 0) return this->health;
 
+    if (this->dead || this->should_die) return this->health;
+    
     agent_damage_StoC dmg_msg;
     dmg_msg.id = a->id;
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();
-    
+
+    if (this->health <= 0)
+    {
+        this->should_die = true;
+        return this->health;
+    }
+
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
 
     this->send_health_msg();
-    
+
+    if (this->health <= 0)
+    {    // attempt to burn energy tank
+        int energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
+        GS_ASSERT(energy_tanks_container_id != NULL_CONTAINER);
+        using ItemContainer::ItemContainerEnergyTanks;
+        ItemContainerEnergyTanks* container = (ItemContainerEnergyTanks*)
+                ItemContainer::get_container(energy_tanks_container_id);
+        GS_ASSERT(container != NULL);
+        int n_energy_tanks = 0;
+        if (container != NULL)
+            n_energy_tanks = container->consume_energy_tank();
+        
+        if (n_energy_tanks > 0)
+            this->restore_health();
+    }
+        
     return this->health;
 }
 
@@ -195,7 +220,6 @@ void Agent_status::send_health_msg()
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
 {
-    #if DC_SERVER
     // dont allow player kills
     if ((inflictor_type == OBJECT_AGENT || inflictor_type == OBJECT_GRENADE)
       && inflictor_id != this->a->id) return this->health;
@@ -209,8 +233,9 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_t
     else if (inflictor_type == OBJECT_TURRET)
         death_method = DEATH_TURRET;
         
-    if (!this->health) die(inflictor_id, inflictor_type, death_method);
-    #endif
+    if (this->should_die)
+        die(inflictor_id, inflictor_type, death_method);
+
     return health;
 }
 
@@ -246,9 +271,51 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
+void Agent_status::set_fresh_state()
+{
+    a->spawn_state();
+    this->lifetime = 0;
+    this->restore_health();
+    
+    // revive
+    this->dead = false;
+    this->should_die = false;
+    agent_dead_StoC dead_msg;
+    dead_msg.id = a->id;
+    dead_msg.dead = dead;
+    dead_msg.broadcast();
+
+    ItemContainer::agent_born(this->a->id);
+}
+
+void Agent_status::respawn()
+{
+    if (!this->dead) return;  // ignore if not waiting to respawn
+    
+    respawn_countdown--;                  // decrement
+    if (respawn_countdown > 0) return;  // abort if not ready
+    this->set_fresh_state();
+    respawn_countdown = RESPAWN_TICKS; // reset timer
+}
+
+void Agent_status::restore_health()
+{
+    if (this->health == AGENT_HEALTH) return;
+    this->health = AGENT_HEALTH;
+    this->send_health_msg();
+}
+
+void Agent_status::at_base()
+{
+    this->restore_health();
+}
+
+#endif
+
 bool Agent_status::die()
 {
     if (this->dead) return false;
+    this->should_die = false;
     this->dead = true;
     this->deaths++;
 
@@ -277,59 +344,59 @@ bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMe
     
     Agent_state* attacker;
     //Turret* turret;
-	switch (inflictor_type)
-	{
-		case OBJECT_GRENADE:
-		case OBJECT_AGENT:
-			attacker = STATE::agent_list->get(inflictor_id);
-			if (attacker != NULL)
-				attacker->status.kill(this->a->id);
-			break;
-		//case OBJECT_MONSTER_BOMB:
-			//Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
-			//if (slime != NULL) {}
-			//break;
-		//case OBJECT_TURRET:
-			//turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
-			//if (turret == NULL) break;
-			//attacker = STATE::agent_list->get(turret->get_owner());
-			//if (attacker != NULL)
-				//attacker->status.kill(this->a->id);
-			//break;
-		default:
-			//printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
-			break;
-	}
+    switch (inflictor_type)
+    {
+        case OBJECT_GRENADE:
+        case OBJECT_AGENT:
+            attacker = STATE::agent_list->get(inflictor_id);
+            if (attacker != NULL)
+                attacker->status.kill(this->a->id);
+            break;
+        //case OBJECT_MONSTER_BOMB:
+            //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
+            //if (slime != NULL) {}
+            //break;
+        //case OBJECT_TURRET:
+            //turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
+            //if (turret == NULL) break;
+            //attacker = STATE::agent_list->get(turret->get_owner());
+            //if (attacker != NULL)
+                //attacker->status.kill(this->a->id);
+            //break;
+        default:
+            //printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
+            break;
+    }
 
-	#if DC_SERVER
-	// send conflict notification to clients
-	agent_conflict_notification_StoC msg;
-	//Turret* turret;
-	switch (inflictor_type)
-	{
-		case OBJECT_GRENADE:
-		case OBJECT_AGENT:
-			msg.victim = this->a->id;
-			msg.attacker = inflictor_id;
-			msg.method = death_method;    // put headshot, grenades here
-			msg.broadcast();
-			break;
+    #if DC_SERVER
+    // send conflict notification to clients
+    agent_conflict_notification_StoC msg;
+    //Turret* turret;
+    switch (inflictor_type)
+    {
+        case OBJECT_GRENADE:
+        case OBJECT_AGENT:
+            msg.victim = this->a->id;
+            msg.attacker = inflictor_id;
+            msg.method = death_method;    // put headshot, grenades here
+            msg.broadcast();
+            break;
 
-		//case OBJECT_TURRET:
-			//// lookup turret object, get owner, this will be the inflictor id
-			//turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
-			//if (turret == NULL) break;
-			//inflictor_id = turret->get_owner();
-			//msg.victim = this->a->id;
-			//msg.attacker = inflictor_id;
-			//msg.method = death_method;    // put headshot, grenades here
-			//msg.broadcast();
-			//break;
+        //case OBJECT_TURRET:
+            //// lookup turret object, get owner, this will be the inflictor id
+            //turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
+            //if (turret == NULL) break;
+            //inflictor_id = turret->get_owner();
+            //msg.victim = this->a->id;
+            //msg.attacker = inflictor_id;
+            //msg.method = death_method;    // put headshot, grenades here
+            //msg.broadcast();
+            //break;
 
-		default: break;
-	}
-	#endif
-	
+        default: break;
+    }
+    #endif
+    
     return true;
 }
 
@@ -395,54 +462,14 @@ void Agent_status::send_scores()
     as.broadcast();
 }
 
-#if DC_SERVER
-void Agent_status::set_fresh_state()
-{
-    a->spawn_state();
-    this->lifetime = 0;
-    this->restore_health();
-    
-    // revive
-    dead = false;
-    agent_dead_StoC dead_msg;
-    dead_msg.id = a->id;
-    dead_msg.dead = dead;
-    dead_msg.broadcast();
-
-    ItemContainer::agent_born(this->a->id);
-}
-
-void Agent_status::respawn()
-{
-    if (!dead) return;  // ignore if not waiting to respawn
-    
-    respawn_countdown--;                  // decrement
-    if (respawn_countdown > 0) return;  // abort if not ready
-    this->set_fresh_state();
-    respawn_countdown = RESPAWN_TICKS; // reset timer
-}
-#endif
-
 float Agent_status::get_spawn_angle()
 {
     return 0.5f;
 }
 
-void Agent_status::restore_health()
-{
-    if (this->health == AGENT_HEALTH) return;
-    this->health = AGENT_HEALTH;
-    this->send_health_msg();
-}
-
-void Agent_status::at_base()
-{
-    this->restore_health();
-}
-
 const bool Agent_status::can_gain_item(ObjectType item)
 {
-    if (this->dead) return false;
+    if (this->dead || this->should_die) return false;
     //bool can;
     switch (item)
     {
@@ -498,9 +525,9 @@ bool Agent_status::consume_item(ItemID item_id)
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return false;
 
-    static const int repair_kit = Item::get_item_type("repair_kit");
+    static const int small_charge_pack = Item::get_item_type("small_charge_pack");
 
-    if (item_type == repair_kit)
+    if (item_type == small_charge_pack)
     {
         if (this->health >= (int)health_max) return false;
         GS_ASSERT(attr->repair_agent_amount > 0);
@@ -545,7 +572,7 @@ bool Agent_status::lose_item(ObjectType item)
 
 void Agent_status::tick()
 {
-    if (this->dead)
+    if (this->dead || this->should_die)
         this->lifetime = 0;
     else
         this->lifetime++;

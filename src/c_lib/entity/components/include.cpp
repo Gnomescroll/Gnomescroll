@@ -20,7 +20,6 @@
 #include <entity/components/owner.cpp>
 
 #include <entity/components/spawner.cpp>
-#include <entity/components/spawner/agent_spawner.cpp>
 #include <entity/components/spawner/monster_spawner.cpp>
 
 #include <entity/components/spawn_child.cpp>
@@ -48,4 +47,5 @@
 #if DC_SERVER
 #include <entity/components/explosion.cpp>
 #include <entity/components/item_drop.cpp>
+#include <entity/components/spawner/agent_spawner.cpp>
 #endif

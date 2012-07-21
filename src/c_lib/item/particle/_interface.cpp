@@ -89,6 +89,14 @@ ItemParticle* create_item_particle(
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return NULL;
     // transitioning to item particle, remove all subscribers
+    if (item->location == IL_CONTAINER)
+    {
+        ItemContainer::ItemContainerInterface* toolbelt = 
+            ItemContainer::get_container(item->location_id);
+        GS_ASSERT(toolbelt != NULL);
+        if (toolbelt != NULL)
+            Toolbelt::force_remove_selected_item(toolbelt->owner);
+    }
     Item::unsubscribe_all_from_item(item->id);
     
     ItemParticle* particle = item_particle_list->create();

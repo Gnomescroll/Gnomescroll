@@ -1,0 +1,20 @@
+#pragma once
+
+#include <item/container/config/types.hpp>
+
+namespace ItemContainer
+{
+
+/* Public Attribute Accessors */
+
+class ContainerAttributes* get_attr(ItemContainerType type);
+int get_container_max_slots(ItemContainerType type);
+int get_container_xdim(ItemContainerType type);
+int get_container_ydim(ItemContainerType type);
+
+/* Configuration Loader */
+
+void init_config();
+void teardown_config();
+
+}   // ItemContainer

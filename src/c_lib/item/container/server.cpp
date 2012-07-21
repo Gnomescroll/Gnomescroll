@@ -16,6 +16,7 @@ namespace ItemContainer
 void remove_item_from_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(agent_hand_list[agent_id] != NULL_ITEM);
     if (agent_hand_list[agent_id] == NULL_ITEM) return;
     Item::Item* item = Item::get_item(agent_hand_list[agent_id]);
@@ -28,6 +29,7 @@ void remove_item_from_hand(int agent_id)
 static void insert_item_in_hand(int agent_id, ItemID item_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(agent_hand_list[agent_id] == NULL_ITEM);
     if (agent_hand_list[agent_id] != NULL_ITEM) return;
@@ -104,6 +106,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
     GS_ASSERT(slot != NULL_SLOT);
 
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item == NULL_ITEM);
 
@@ -151,6 +154,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
     GS_ASSERT(slot != NULL_SLOT);
 
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item == item_id);
     if (hand_item != item_id) return;
@@ -238,6 +242,7 @@ void transfer_free_item_to_hand(ItemID item_id, int agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
 
     if (item_id == NULL_ITEM) return;
 
@@ -306,6 +311,7 @@ void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(particle_id != NULL_PARTICLE);
 
     if (item_id == NULL_ITEM) return;
@@ -337,6 +343,7 @@ void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id)
 void transfer_hand_to_particle(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
 
     ItemID hand_item = get_agent_hand(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
@@ -428,6 +435,7 @@ static bool pack_container_lock(int container_id, lock_container_StoC* msg)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
     ASSERT_VALID_AGENT_ID(container->owner);
+    IF_INVALID_AGENT_ID(container->owner) return false;
     if (container->owner == NO_AGENT) return false;
     
     msg->container_id = container->id;
@@ -486,10 +494,12 @@ void send_container_item_create(int client_id, ItemID item_id, int container_id,
 void send_container_close(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
     close_container_StoC msg;
@@ -500,6 +510,7 @@ void send_container_close(int agent_id, int container_id)
 void send_container_open(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
@@ -560,30 +571,36 @@ bool agent_open_container(int agent_id, int container_id)
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers == NULL) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return false;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return false;
 
     if (!agent_can_access_container(agent_id, container_id)) return false;
 
     ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return false;
 
     GS_ASSERT(!container->attached_to_agent);   // we shouldnt use this function for attached containers
     if (container->attached_to_agent) return false;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
     if (a == NULL) return false;
 
     // release currently opened container
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
+        GS_ASSERT(false);
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
         GS_ASSERT(opened != NULL);
-        if (opened == NULL) return false;
-        opened_containers[agent_id] = NULL_CONTAINER;
-        bool did_unlock = opened->unlock(a->id);
-        GS_ASSERT(did_unlock);
-        broadcast_container_unlock(container_id, agent_id);
+        if (opened != NULL)
+        {
+            opened_containers[agent_id] = NULL_CONTAINER;
+            bool did_unlock = opened->unlock(a->id);
+            GS_ASSERT(did_unlock);
+            broadcast_container_unlock(container_id, agent_id);
+        }
     }
 
     // place player lock on container if we want
@@ -611,27 +628,24 @@ void agent_close_container(int agent_id, int container_id)
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers == NULL) return;
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
+    GS_ASSERT(container_id == opened_containers[agent_id]);
 
     ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
 
     GS_ASSERT(!container->attached_to_agent);
     if (container->attached_to_agent) return;
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
-
     // throw anything in hand
     ItemID hand_item = get_agent_hand(agent_id);
     if (hand_item != NULL_ITEM)
-    {
-        remove_item_from_hand(agent_id);
-        if (a != NULL) send_hand_remove(a->client_id);
-        ItemParticle::throw_agent_item(agent_id, hand_item);
-    }
-    GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
+        transfer_hand_to_particle(agent_id);
     
+    send_container_close(agent_id, container_id);
     opened_containers[agent_id] = NULL_CONTAINER;
 
     bool did_unlock = container->unlock(agent_id);
@@ -645,6 +659,7 @@ void agent_close_container(int agent_id, int container_id)
 void unsubscribe_agent_from_container_contents(int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
     

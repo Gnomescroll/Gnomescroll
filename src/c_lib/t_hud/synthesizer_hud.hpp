@@ -18,12 +18,12 @@ class AgentSynthesizerUI : public UIElement
     static const int shopping_xdim = AGENT_SYNTHESIZER_SHOPPING_X;
     static const int shopping_ydim = AGENT_SYNTHESIZER_SHOPPING_Y;
 
-    static const int xdim = shopping_xdim + 1;
-    static const int ydim = shopping_ydim;
+    int xdim;
+    int ydim;
 
     // size of texture/render area
-    static const float render_width;
-    static const float render_height;
+    float render_width;
+    float render_height;
 
     static const float slot_size;
     static const float cell_offset_x;
@@ -59,6 +59,13 @@ class AgentSynthesizerUI : public UIElement
 
     void init()
     {
+        this->xdim = shopping_xdim + ItemContainer::get_container_xdim(AGENT_SYNTHESIZER);
+        this->ydim = shopping_ydim;
+        
+        this->render_width = this->cell_size * this->xdim;
+        this->render_height = this->cell_size * this->ydim;
+
+        
         GS_ASSERT(this->prices == NULL);
         int max = shopping_xdim * shopping_ydim;    // last slot is coins
         this->prices = new HudText::Text[max];
@@ -77,12 +84,13 @@ class AgentSynthesizerUI : public UIElement
 		coin_stack.set_depth(-0.1f);
     }
 
-    void set_container_type(int container_type)
+    void set_container_type(ItemContainerType container_type)
     {
         this->container_type = container_type;
     }
 
-    AgentSynthesizerUI() : prices(NULL)
+    AgentSynthesizerUI() : xdim(0), ydim(0),
+        render_width(0.0f), render_height(0.0f), prices(NULL)
     {
 		this->name.set_text((char*)"Synthesizer");	
 	}
@@ -94,9 +102,6 @@ class AgentSynthesizerUI : public UIElement
 };
 
 // constants
-const float AgentSynthesizerUI::render_width = AgentSynthesizerUI::cell_size * AgentSynthesizerUI::xdim;
-const float AgentSynthesizerUI::render_height = AgentSynthesizerUI::cell_size * AgentSynthesizerUI::ydim;
-
 const float AgentSynthesizerUI::slot_size = 32;
 const float AgentSynthesizerUI::cell_offset_x = 3;
 const float AgentSynthesizerUI::cell_offset_y = 3;
@@ -182,6 +187,7 @@ void AgentSynthesizerUI::draw()
 
     float w = render_width;
     float h = render_height;
+    if (w*h == 0.0f) return;
 
     float x = xoff;
     float y = yoff;
@@ -235,7 +241,9 @@ void AgentSynthesizerUI::draw()
     if (this->container_id == NULL_CONTAINER) return;
 
     // draw food
-    ItemContainer::ItemContainerSynthesizerUI* container = (ItemContainer::ItemContainerSynthesizerUI*)ItemContainer::get_container_ui(this->container_id);
+    using ItemContainer::ItemContainerSynthesizerUI;
+    ItemContainerSynthesizerUI* container = 
+        (ItemContainerSynthesizerUI*)ItemContainer::get_container_ui(this->container_id);
     if (container == NULL) return;
 
     int coins = 0;

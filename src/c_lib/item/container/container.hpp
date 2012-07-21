@@ -175,6 +175,69 @@ class ItemContainer: public ItemContainerInterface
         {}
 };
 
+class ItemContainerEnergyTanks: public ItemContainerInterface
+{
+    public:
+
+		int energy_tank_type;
+
+        bool can_insert_item(int slot, ItemID item_id)
+        {
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_id == NULL_ITEM) return false;
+            int item_type = Item::get_item_type(item_id);
+            return (item_type == this->energy_tank_type);
+        }
+
+        int get_empty_slot()
+        {
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot[i] == NULL_ITEM)
+                    return i;
+            return NULL_SLOT;
+        }
+
+        void insert_item(int slot, ItemID item_id);
+        void remove_item(int slot);
+
+		int consume_energy_tank()
+		{	// returns number of energy tanks before consumption
+			int n = this->slot_count;
+			GS_ASSERT(n >= 0);
+			if (n <= 0) return n;
+			
+			for (int i=this->slot_max-1; i>=0; i--)
+			{	// consume from the end of the slot array
+				if (this->slot[i] == NULL_ITEM) continue;
+				Item::destroy_item(this->slot[i]);
+				break;
+			}
+			
+			return n;
+		}
+
+        /* initializers */
+
+        void init(int xdim, int ydim)
+        {
+			this->energy_tank_type = Item::get_item_type("energy_tank");
+			GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
+			
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim;
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+            this->slot = new ItemID[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+        }
+        
+        ItemContainerEnergyTanks(ItemContainerType type, int id)
+        : ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
+        { GS_ASSERT(type == AGENT_ENERGY_TANKS); }
+};
+
 class ItemContainerCryofreezer: public ItemContainer
 {
     public:
@@ -495,26 +558,30 @@ class ItemContainerSmelter: public ItemContainerInterface
 namespace ItemContainer
 {
 
-ItemContainerInterface* create_item_container_interface(int type, int id)
+ItemContainerInterface* create_item_container_interface(int ttype, int id)
 {
+	ItemContainerType type = (ItemContainerType)ttype;
     switch (type)
     {
         case AGENT_CONTAINER:
         case AGENT_TOOLBELT:
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-            return new ItemContainer((ItemContainerType)type, id);
+            return new ItemContainer(type, id);
+
+		case AGENT_ENERGY_TANKS:
+			return new ItemContainerEnergyTanks(type, id);
 
         case AGENT_SYNTHESIZER:
-            return new ItemContainerSynthesizer((ItemContainerType)type, id);
+            return new ItemContainerSynthesizer(type, id);
 
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            return new ItemContainerCraftingBench((ItemContainerType)type, id);
+            return new ItemContainerCraftingBench(type, id);
 
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-            return new ItemContainerCryofreezer((ItemContainerType)type, id);
+            return new ItemContainerCryofreezer(type, id);
 
         case CONTAINER_TYPE_SMELTER_ONE:
-            return new ItemContainerSmelter((ItemContainerType)type, id);
+            return new ItemContainerSmelter(type, id);
 
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);

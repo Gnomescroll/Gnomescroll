@@ -8,6 +8,9 @@
 #if DC_SERVER
 #include <item/net/StoC.hpp>
 #include <item/container/_state.hpp>
+#include <item/container/_interface.hpp>
+#include <item/toolbelt/_interface.hpp>
+#include <item/toolbelt/_state.hpp>
 #endif
 
 #if DC_CLIENT
@@ -172,6 +175,8 @@ void destroy_item(ItemID id)
         ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
         if (container != NULL && slot != NULL_SLOT)
         {
+            if (container->type == AGENT_TOOLBELT && slot == Toolbelt::get_agent_selected_slot(container->owner))
+                Toolbelt::force_remove_selected_item(container->owner);
             container->remove_item(slot);
             Agent_state* a = ServerState::agent_list->get(container->owner);
             if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
@@ -252,14 +257,14 @@ Item* create_item(const char* item_name)
 }
 
 // will destroy item if fully consumed
-// returns stack size
+// returns remaining stack size
 int consume_stack_item(ItemID item_id)
 {
     return consume_stack_item(item_id, 1);
 }
 
 // will destroy item if fully consumed
-// returns stack size
+// returns remaining stack size
 int consume_stack_item(ItemID item_id, int amount)
 {
     GS_ASSERT(item_id != NULL_ITEM);
@@ -278,6 +283,29 @@ int consume_stack_item(ItemID item_id, int amount)
     GS_ASSERT(item->stack_size > 0);
     if (item->stack_size < 0) item->stack_size = 0;
     return item->stack_size;
+}
+
+// will destroy item if fully consumed
+// return remaining durability
+int consume_durability(ItemID item_id, int amount)
+{
+    if (item_id == NULL_ITEM) return 0;
+    Item* item = get_item(item_id);
+    if (item == NULL) return NULL_DURABILITY;
+    GS_ASSERT(item->durability > 0);
+    if (item->durability == NULL_DURABILITY) return NULL_DURABILITY;
+    item->durability -= amount;
+    if (item->durability <= 0)
+    {
+        destroy_item(item->id);
+        return 0;
+    }
+    return item->durability;
+}
+
+int consume_durability(ItemID item_id)
+{
+    return consume_durability(item_id, 1);
 }
 
 void agent_quit(int agent_id)

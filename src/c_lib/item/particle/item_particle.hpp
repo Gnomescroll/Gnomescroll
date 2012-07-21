@@ -32,7 +32,7 @@
 namespace ItemParticle
 {
 
-class ItemParticle //: public VerletComponent
+class ItemParticle
 {
     public:
         VerletParticle::VerletParticle verlet;

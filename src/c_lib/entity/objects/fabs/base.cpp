@@ -20,7 +20,7 @@ void load_base_data()
     int n_components = 4;
     #endif
     #if DC_CLIENT
-    int n_components = 4;
+    int n_components = 3;
     #endif
 
     object_data->set_components(type, n_components);
@@ -28,7 +28,10 @@ void load_base_data()
     object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
     object_data->attach_component(type, COMPONENT_DIMENSION);
     object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    
+    #if DC_SERVER
     object_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+    #endif
 }
 
 static void set_base_properties(Object* object)
@@ -46,9 +49,11 @@ static void set_base_properties(Object* object)
     vox->init_draw = BASE_INIT_WITH_DRAW;
     vox->should_hitscan = BASE_SHOULD_HITSCAN;
 
+    #if DC_SERVER
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = BASE_SPAWN_RADIUS;
+    #endif
 
     object->tick = &tick_base;
     object->update = &update_base;

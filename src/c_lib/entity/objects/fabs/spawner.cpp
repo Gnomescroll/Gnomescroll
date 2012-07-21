@@ -21,7 +21,7 @@ void load_agent_spawner_data()
     int n_components = 6;
     #endif
     #if DC_CLIENT
-    int n_components = 7;
+    int n_components = 6;
     #endif
 
     object_data->set_components(type, n_components);
@@ -31,7 +31,10 @@ void load_agent_spawner_data()
     object_data->attach_component(type, COMPONENT_DIMENSION);
     object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     object_data->attach_component(type, COMPONENT_HIT_POINTS);
+    
+    #if DC_SERVER
     object_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+    #endif
 
     #if DC_CLIENT
     object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
@@ -58,9 +61,11 @@ static void set_agent_spawner_properties(Object* object)
     health->health = AGENT_SPAWNER_MAX_HEALTH;
     health->max_health = AGENT_SPAWNER_MAX_HEALTH;
 
+    #if DC_SERVER
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
+    #endif
 
     #if DC_CLIENT
     using Components::AnimationComponent;
@@ -82,6 +87,7 @@ Object* create_agent_spawner()
 {
     ObjectType type = OBJECT_AGENT_SPAWNER;
     Object* obj = object_list->create(type);
+    GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;
     set_agent_spawner_properties(obj);
     return obj;
@@ -134,8 +140,7 @@ void tick_agent_spawner(Object* object)
 {
     #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
 
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
@@ -151,8 +156,7 @@ void update_agent_spawner(Object* object)
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
     
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();

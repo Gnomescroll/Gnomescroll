@@ -46,7 +46,8 @@ class UIElement
 			HudFont::end_font_draw();
 		}
 
-        virtual void set_container_type(int container_type) { this->type = type; }
+        virtual void set_container_type(ItemContainerType container_type)
+            { this->type = type; }
 
         UIElement()
         :

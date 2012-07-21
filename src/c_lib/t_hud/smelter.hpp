@@ -92,24 +92,26 @@ class SmelterUI : public UIElement
         this->render_height = this->cell_size * this->ydim;
     }
 
-    void set_container_type(int container_type)
+    void set_container_type(ItemContainerType container_type)
     {
         if (this->container_type == container_type) return;
         
         this->container_type = container_type;
 
+        this->xdim = ItemContainer::get_container_xdim(container_type);
+        this->xdim += 2; // +1 for fuel area, +1 for meters
+        this->ydim = ItemContainer::get_container_ydim(container_type);
+
         switch (container_type)
         {
             case CONTAINER_TYPE_SMELTER_ONE:
-                this->xdim = SMELTER_ONE_X + 2; // +1 for fuel area, +1 for meters
-                this->ydim = SMELTER_ONE_Y;
                 this->texture = &SmelterTexture;
                 this->texture_offset_x = 0.0f;
                 this->texture_offset_y = 0.0f;
                 break;
 
             default:
-                assert(false);
+                GS_ASSERT(false);
                 break;
         }
         this->init_text();
