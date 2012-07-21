@@ -1,5 +1,6 @@
 #pragma once
 
+#include <common/color.hpp>
 
 struct VertexDraw {
     float x,y,z;
@@ -11,11 +12,12 @@ struct Quad {
   struct VertexDraw vertex[4];
 };
 
-int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1);
-int _draw_point(int r, int g,int b, float x0, float y0, float z0);
+int _draw_line(unsigned char r, unsigned char g, unsigned char b, float x0, float y0, float z0, float x1, float y1, float z1);
+int _draw_point(unsigned char r, unsigned char g, unsigned char b, float x0, float y0, float z0);
 int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z);
-int _draw_rect(int r, int g, int b, float x, float y, float w, float h);
-int _draw_border_rect(int r, int g, int b, float x, float y, float w, float h);
+int _draw_rect(unsigned char r, unsigned char g, unsigned char b, float x, float y, float w, float h);
+int _draw_rect(struct Color color, float x, float y, float w, float h);
+int _draw_border_rect(unsigned char r, unsigned char g, unsigned char b, float x, float y, float w, float h);
 
 int _bind_VBO(struct Quad* quad_list, int v_num);
 

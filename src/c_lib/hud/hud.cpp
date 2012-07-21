@@ -622,7 +622,7 @@ void ChatRender::init()
     this->inited = true;
 }
 
-void ChatRender::set_cursor(char* text, float x, float y)
+void ChatRender::set_cursor(const char* text, float x, float y)
 {
     if (HudFont::font == NULL)
         return;
@@ -640,7 +640,7 @@ void ChatRender::set_cursor(char* text, float x, float y)
     h = HudFont::font->data.line_height;
     
     cursor_x = x + len;
-    if (chat_client->input->cursor == s_len)
+    if (s_len && chat_client->input->cursor == s_len)
         cursor_x += 4;  // margin at the end
     cursor_y = y - h;
     cursor_w = w;
@@ -649,11 +649,11 @@ void ChatRender::set_cursor(char* text, float x, float y)
 
 void ChatRender::draw_cursor()
 {
-    int r,g,b;
-    r = 100;
-    g = 150;
-    b = 100;
-    _draw_rect(r,g,b, cursor_x, cursor_y, cursor_w, cursor_h);
+    struct Color color = {100, 150, 100};
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you != NULL && playerAgent_state.you->status.color_chosen)
+        color = playerAgent_state.you->status.color;
+    _draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
 }
 
 void ChatRender::draw_messages()
@@ -665,6 +665,9 @@ void ChatRender::draw_messages()
 void ChatRender::draw_input()
 {
     if (!this->inited) return;
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you != NULL && playerAgent_state.you->status.color_chosen)
+        this->input->set_color(playerAgent_state.you->status.color);
     this->input->draw();
 }
 
