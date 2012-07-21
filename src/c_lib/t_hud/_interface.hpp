@@ -21,8 +21,7 @@ typedef struct
 {
     int container_id;
     int slot;
-    bool synthesizer_shopping;
-    bool craft_output;
+    bool alt_action;
 } ContainerInputEvent;
 
 void enable_agent_container_hud();

@@ -20,18 +20,29 @@ class ContainerAttributes
 
     ItemContainerType type;
 
-    int xdim,ydim;
-    //int xdimb,ydimb;
+    int xdim, ydim;
+    int alt_xdim, alt_ydim;
     bool attached_to_agent;
 
     decision_tree alpha_action;
     decision_tree beta_action;
     send_decision alpha_packet;
     send_decision beta_packet;
+    
+    // alt actions (synth purchase, craft output etc)
+    decision_tree alpha_action_alt;
+    decision_tree beta_action_alt;
+    send_decision alpha_packet_alt;
+    send_decision beta_packet_alt;
 
     int max_dim()
     {
         return this->xdim * this->ydim;
+    }
+    
+    int max_alt_dim()
+    {
+        return this->alt_xdim * this->alt_ydim;
     }
     
     ContainerAttributes()
@@ -45,10 +56,16 @@ class ContainerAttributes
         this->type = CONTAINER_TYPE_NONE;
         this->xdim = 0;
         this->ydim = 0;
+        this->alt_xdim = 0;
+        this->alt_ydim = 0;
         this->attached_to_agent = false;        
         this->alpha_action = NULL;
         this->beta_action = NULL;
         this->alpha_packet = NULL;
         this->beta_packet = NULL;
+        this->alpha_action_alt = NULL;
+        this->beta_action_alt = NULL;
+        this->alpha_packet_alt = NULL;
+        this->beta_packet_alt = NULL;
     }  
 };

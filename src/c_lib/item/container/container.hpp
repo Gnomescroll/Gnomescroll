@@ -20,11 +20,13 @@ class ItemContainerInterface
 
         int xdim;
         int ydim;
+        int alt_xdim;
+        int alt_ydim;
 
         int slot_max;
         int slot_count;
         ItemID* slot;
-
+        
         int owner;
         int chunk;  // TODO -- move to subclass
 
@@ -73,6 +75,13 @@ class ItemContainerInterface
             return NULL_SLOT;
         }
 
+        // Add alt actions here
+        void set_alt_parameters(int xdim, int ydim)
+        {
+            this->alt_xdim = xdim;
+            this->alt_ydim = ydim;
+        }
+
         #if DC_CLIENT
         void clear()
         {
@@ -81,7 +90,8 @@ class ItemContainerInterface
         }
         #endif
 
-        virtual void insert_item(int slot, ItemID item_id)= 0;
+        // TODO -- devirtualize these
+        virtual void insert_item(int slot, ItemID item_id) = 0;
         virtual void remove_item(int slot) = 0;
 
         virtual bool can_insert_item(int slot, ItemID item_id) = 0;
@@ -128,6 +138,7 @@ class ItemContainerInterface
         ItemContainerInterface(ItemContainerType type, int id)
         : id(id), type(type),
         xdim(0), ydim(0),
+        alt_xdim(0), alt_ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
         owner(NO_AGENT), chunk(0xffff),
         attached_to_agent(false)
@@ -255,8 +266,8 @@ class ItemContainerSynthesizer: public ItemContainerInterface
 		
 		static const int coins_slot = 0;
     
-		int shopping_xdim;
-		int shopping_ydim;
+		//int shopping_xdim;
+		//int shopping_ydim;
 
 		ItemID get_coins()
 		{
@@ -292,11 +303,11 @@ class ItemContainerSynthesizer: public ItemContainerInterface
 
         /* initializers */
 
-		void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
-		{
-            this->shopping_xdim = shopping_xdim;
-            this->shopping_ydim = shopping_ydim;
-		}
+		//void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
+		//{
+            //this->shopping_xdim = shopping_xdim;
+            //this->shopping_ydim = shopping_ydim;
+		//}
 
         void init(int xdim, int ydim)
         {
@@ -311,8 +322,8 @@ class ItemContainerSynthesizer: public ItemContainerInterface
         }
         
         ItemContainerSynthesizer(ItemContainerType type, int id)
-        : ItemContainerInterface(type, id),
-        shopping_xdim(0), shopping_ydim(0)
+        : ItemContainerInterface(type, id)//,
+        //shopping_xdim(0), shopping_ydim(0)
         {}
 };
 

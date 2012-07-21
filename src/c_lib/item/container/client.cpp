@@ -200,7 +200,7 @@ void send_craft_alpha_action(ContainerActionType action, int container_id, int s
     msg.send();
 }
 
-void send_purchase_item_action(int container_id, int slot)
+void send_purchase_item_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -253,7 +253,7 @@ void send_craft_beta_action(ContainerActionType action, int container_id, int sl
     msg.send();
 }
 
-void send_craft_item_action(int container_id, int slot)
+void send_craft_item_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -370,7 +370,7 @@ void send_smelter_beta_action(ContainerActionType action, int container_id, int 
 
 // Handlers
 
-void mouse_left_click_handler(int container_id, int slot, bool synthesizer_shopping, bool craft_output)
+void mouse_left_click_handler(int container_id, int slot, bool alt_action)
 {
     if (ClientState::playerAgent_state.you == NULL) return;
     if (ClientState::playerAgent_state.you->status.dead) return;
@@ -382,35 +382,61 @@ void mouse_left_click_handler(int container_id, int slot, bool synthesizer_shopp
     GS_ASSERT(attr->loaded);
     
     ContainerActionType action = CONTAINER_ACTION_NONE;
-    if (container_type == AGENT_SYNTHESIZER && synthesizer_shopping)
-        action = synthesizer_shopping_alpha_action_decision_tree(container_id, slot);
-    else
-    if (container_type == CONTAINER_TYPE_CRAFTING_BENCH_UTILITY && craft_output)
-        action = craft_output_alpha_action_decision_tree(container_id, slot);
+    if (alt_action)
+    {
+        GS_ASSERT(attr->alpha_action_alt != NULL);
+        if (attr->alpha_action_alt == NULL) return;
+        action = attr->alpha_action_alt(container_id, slot);        
+    }
     else
     {
         GS_ASSERT(attr->alpha_action != NULL);
         if (attr->alpha_action == NULL) return;
         action = attr->alpha_action(container_id, slot);        
     }
+        
+    //if (container_type == AGENT_SYNTHESIZER && synthesizer_shopping)
+        //action = synthesizer_shopping_alpha_action_decision_tree(container_id, slot);
+    //else
+    //if (container_type == CONTAINER_TYPE_CRAFTING_BENCH_UTILITY && craft_output)
+        //action = craft_output_alpha_action_decision_tree(container_id, slot);
+    //else
+    //{
+        //GS_ASSERT(attr->alpha_action != NULL);
+        //if (attr->alpha_action == NULL) return;
+        //action = attr->alpha_action(container_id, slot);        
+    //}
     
     if (action == CONTAINER_ACTION_NONE) return;
 
-    if (action == PURCHASE_ITEM_FROM_SYNTHESIZER)
-        send_purchase_item_action(container_id, slot);
-    else
-    if (action == CRAFT_ITEM_FROM_BENCH)
-        send_craft_item_action(container_id, slot);
+    if (alt_action)
+    {
+        GS_ASSERT(attr->alpha_packet_alt != NULL);
+        if (attr->alpha_packet_alt == NULL) return;
+        attr->alpha_packet_alt(action, container_id, slot);        
+    }
     else
     {
         GS_ASSERT(attr->alpha_packet != NULL);
         if (attr->alpha_packet == NULL) return;
-        attr->alpha_packet(action, container_id, slot);
+        attr->alpha_packet(action, container_id, slot);        
     }
+
+    //if (action == PURCHASE_ITEM_FROM_SYNTHESIZER)
+        //send_purchase_item_action(container_id, slot);
+    //else
+    //if (action == CRAFT_ITEM_FROM_BENCH)
+        //send_craft_item_action(container_id, slot);
+    //else
+    //{
+        //GS_ASSERT(attr->alpha_packet != NULL);
+        //if (attr->alpha_packet == NULL) return;
+        //attr->alpha_packet(action, container_id, slot);
+    //}
 }
 
 // TODO -- replace last args with just "alt action"
-void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shopping, bool craft_output)
+void mouse_right_click_handler(int container_id, int slot, bool alt_action)
 {
     if (ClientState::playerAgent_state.you == NULL) return;
     if (ClientState::playerAgent_state.you->status.dead) return;
@@ -421,33 +447,60 @@ void mouse_right_click_handler(int container_id, int slot, bool synthesizer_shop
     if (attr == NULL) return;
     GS_ASSERT(attr->loaded);
 
-    // TODO --
     ContainerActionType action = CONTAINER_ACTION_NONE;
-    if (container_type == AGENT_SYNTHESIZER && synthesizer_shopping)
-        action = synthesizer_shopping_beta_action_decision_tree(container_id, slot);
-    else
-    if (container_type == CONTAINER_TYPE_CRAFTING_BENCH_UTILITY && craft_output)
-        action = craft_output_beta_action_decision_tree(container_id, slot);
+    if (alt_action)
+    {
+        GS_ASSERT(attr->beta_action_alt != NULL);
+        if (attr->beta_action_alt == NULL) return;
+        action = attr->beta_action_alt(container_id, slot);        
+    }
     else
     {
         GS_ASSERT(attr->beta_action != NULL);
         if (attr->beta_action == NULL) return;
-        action = attr->beta_action(container_id, slot);
+        action = attr->beta_action(container_id, slot);        
     }
+
+    //// TODO --
+    //ContainerActionType action = CONTAINER_ACTION_NONE;
+    //if (container_type == AGENT_SYNTHESIZER && synthesizer_shopping)
+        //action = synthesizer_shopping_beta_action_decision_tree(container_id, slot);
+    //else
+    //if (container_type == CONTAINER_TYPE_CRAFTING_BENCH_UTILITY && craft_output)
+        //action = craft_output_beta_action_decision_tree(container_id, slot);
+    //else
+    //{
+        //GS_ASSERT(attr->beta_action != NULL);
+        //if (attr->beta_action == NULL) return;
+        //action = attr->beta_action(container_id, slot);
+    //}
 
     if (action == CONTAINER_ACTION_NONE) return;
 
-    if (action == PURCHASE_ITEM_FROM_SYNTHESIZER)
-        send_purchase_item_action(container_id, slot);
-    else
-    if (action == CRAFT_ITEM_FROM_BENCH)
-        send_craft_item_action(container_id, slot);
+    if (alt_action)
+    {
+        GS_ASSERT(attr->beta_packet_alt != NULL);
+        if (attr->beta_packet_alt == NULL) return;
+        attr->beta_packet_alt(action, container_id, slot);        
+    }
     else
     {
         GS_ASSERT(attr->beta_packet != NULL);
         if (attr->beta_packet == NULL) return;
-        attr->beta_packet(action, container_id, slot);
+        attr->beta_packet(action, container_id, slot);        
     }
+
+    //if (action == PURCHASE_ITEM_FROM_SYNTHESIZER)
+        //send_purchase_item_action(container_id, slot);
+    //else
+    //if (action == CRAFT_ITEM_FROM_BENCH)
+        //send_craft_item_action(container_id, slot);
+    //else
+    //{
+        //GS_ASSERT(attr->beta_packet != NULL);
+        //if (attr->beta_packet == NULL) return;
+        //attr->beta_packet(action, container_id, slot);
+    //}
 }
 
 void send_container_close(int container_id)

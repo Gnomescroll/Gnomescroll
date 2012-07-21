@@ -1075,10 +1075,10 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id
     ItemContainerSynthesizer* container = (ItemContainerSynthesizer*)get_container(container_id);
     #endif
     if (container == NULL) return CONTAINER_ACTION_NONE;
-    GS_ASSERT(container->type = AGENT_SYNTHESIZER);
+    GS_ASSERT(container->type == AGENT_SYNTHESIZER);
 
-    GS_ASSERT(slot >= 0 && slot < container->shopping_xdim*container->shopping_ydim);
-    if (slot < 0 || slot >= container->shopping_xdim*container->shopping_ydim)
+    GS_ASSERT(slot >= 0 && slot < container->alt_xdim*container->alt_ydim);
+    if (slot < 0 || slot >= container->alt_xdim*container->alt_ydim)
 		return CONTAINER_ACTION_NONE;
 
     #if DC_CLIENT
@@ -1100,8 +1100,8 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id
     else if (stack_space > 0)
     {	// attempt to stack
 		// get store item
-		int xslot = slot % container->shopping_xdim;
-		int yslot = slot / container->shopping_xdim;
+		int xslot = slot % container->alt_xdim;
+		int yslot = slot / container->alt_xdim;
 		int cost;
 		int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
 		GS_ASSERT(cost >= 0);

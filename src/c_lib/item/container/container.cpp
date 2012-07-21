@@ -34,8 +34,11 @@ void init_container(ItemContainerInterface* container)
     container->attached_to_agent = attr->attached_to_agent;
     container->init(attr->xdim, attr->ydim);
     // TODO -- add to config somehow
-    if (container->type == AGENT_SYNTHESIZER)
-        ((ItemContainerSynthesizer*)container)->set_shopping_parameters(AGENT_SYNTHESIZER_SHOPPING_X, AGENT_SYNTHESIZER_SHOPPING_Y);
+    
+    container->set_alt_parameters(attr->alt_xdim, attr->alt_ydim);
+    
+    //if (container->type == AGENT_SYNTHESIZER)
+        //((ItemContainerSynthesizer*)container)->set_shopping_parameters(AGENT_SYNTHESIZER_SHOPPING_X, AGENT_SYNTHESIZER_SHOPPING_Y);
 }
 
 /* ItemContainer methods */

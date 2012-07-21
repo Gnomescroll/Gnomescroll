@@ -19,6 +19,8 @@ class ItemContainerUIInterface
 
         int xdim;
         int ydim;
+        int alt_xdim;
+        int alt_ydim;
 
         int slot_max;
         int slot_count;
@@ -109,6 +111,12 @@ class ItemContainerUIInterface
 
         virtual void init(ItemContainerType type, int xdim, int ydim) = 0;
 
+        void set_alt_parameters(int xdim, int ydim)
+        {
+            this->alt_xdim = xdim;
+            this->alt_ydim = ydim;
+        }
+
         virtual ~ItemContainerUIInterface()
         {
            if (this->slot_type != NULL) delete[] this->slot_type;
@@ -119,6 +127,7 @@ class ItemContainerUIInterface
         explicit ItemContainerUIInterface(int id)
         : id(id), type(CONTAINER_TYPE_NONE),
         xdim(0), ydim(0),
+        alt_xdim(0), alt_ydim(0),
         slot_max(0), slot_count(0),
         slot_type(NULL), slot_stack(NULL), slot_durability(NULL)
         {}
@@ -240,9 +249,6 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 {
     public:
 
-		int shopping_xdim;
-		int shopping_ydim;
-
 		int get_coin_type()
 		{
 			return this->get_slot_type(0);
@@ -288,11 +294,11 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
             return NULL_SLOT;
         }
 
-		void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
-		{
-			this->shopping_xdim = shopping_xdim;
-			this->shopping_ydim = shopping_ydim;
-		}
+		//void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
+		//{
+			//this->shopping_xdim = shopping_xdim;
+			//this->shopping_ydim = shopping_ydim;
+		//}
 
         void init(ItemContainerType type, int xdim, int ydim)
         {
@@ -310,8 +316,8 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
         }
 
         explicit ItemContainerSynthesizerUI(int id)
-        : ItemContainerUIInterface(id),
-        shopping_xdim(0), shopping_ydim(0)
+        : ItemContainerUIInterface(id)//,
+        //shopping_xdim(0), shopping_ydim(0)
         {}
 };
 

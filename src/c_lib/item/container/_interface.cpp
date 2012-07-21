@@ -205,7 +205,7 @@ void open_inventory()
 
 void close_inventory()
 {   // attempt throw
-    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
+    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false);
 }
 
 bool open_container(int container_id)
@@ -325,7 +325,7 @@ bool close_container(int container_id)
     if (container_id != opened_container) return false;
 
     // attempt throw
-    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
+    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false);
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
@@ -941,8 +941,8 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     if (!agent_can_access_container(agent_id, synthesizer->id)) return;
 
     // get the store item
-    int xslot = shopping_slot % synthesizer->shopping_xdim;
-    int yslot = shopping_slot / synthesizer->shopping_xdim;
+    int xslot = shopping_slot % synthesizer->alt_xdim;
+    int yslot = shopping_slot / synthesizer->alt_xdim;
     int cost;
     int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
     GS_ASSERT(cost >= 0);
