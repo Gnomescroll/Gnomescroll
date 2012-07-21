@@ -44,6 +44,7 @@ int* get_container_ui_stacks(int container_id);
 
 void set_ui_slot_durability(int container_id, int slot, int durability);
 void set_ui_slot_stack_size(int container_id, int slot, int stack_size);
+
 }   // ItemContainer
 #endif 
 

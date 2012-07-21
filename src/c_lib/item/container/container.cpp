@@ -13,8 +13,6 @@
 #include <item/container/net/StoC.hpp>
 #endif
 
-// TODO -- make insert_item,remove_item non-pure
-
 namespace ItemContainer
 {
     
@@ -33,17 +31,12 @@ void init_container(ItemContainerInterface* container)
     
     container->attached_to_agent = attr->attached_to_agent;
     container->init(attr->xdim, attr->ydim);
-    // TODO -- add to config somehow
-    
     container->set_alt_parameters(attr->alt_xdim, attr->alt_ydim);
-    
-    //if (container->type == AGENT_SYNTHESIZER)
-        //((ItemContainerSynthesizer*)container)->set_shopping_parameters(AGENT_SYNTHESIZER_SHOPPING_X, AGENT_SYNTHESIZER_SHOPPING_Y);
 }
 
-/* ItemContainer methods */
+/* Interface */
 
-void ItemContainer::insert_item(int slot, ItemID item_id)
+void ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
@@ -62,7 +55,7 @@ void ItemContainer::insert_item(int slot, ItemID item_id)
     item->container_slot = slot;
 }
 
-void ItemContainer::remove_item(int slot)
+void ItemContainerInterface::remove_item(int slot)  // virtual
 {
     GS_ASSERT(this->is_valid_slot(slot));
     if (!this->is_valid_slot(slot)) return;
@@ -88,52 +81,13 @@ void ItemContainer::remove_item(int slot)
 
 void ItemContainerEnergyTanks::insert_item(int slot, ItemID item_id)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
-    
     int item_type = Item::get_item_type(item_id);
-    GS_ASSERT(item_type != NULL_ITEM_TYPE); 
-    GS_ASSERT(item_type == this->energy_tank_type); 
-    
-    GS_ASSERT(this->slot[slot] == NULL_ITEM);
-    
-    this->slot[slot] = item_id;
-    this->slot_count++;
-
-    Item::Item* item = Item::get_item_object(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
-    item->location = IL_CONTAINER;
-    item->location_id = this->id;
-    item->container_slot = slot;
+    GS_ASSERT(item_type == this->energy_tank_type);
+    ItemContainerInterface::insert_item(slot, item_id);
 }
-
-void ItemContainerEnergyTanks::remove_item(int slot)
-{
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
-
-    ItemID item_id = this->slot[slot];
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id != NULL_ITEM)
-    {
-        Item::Item* item = Item::get_item_object(this->slot[slot]);
-        GS_ASSERT(item != NULL);
-        if (item != NULL)
-        {
-            item->location = IL_NOWHERE;
-            item->container_slot = NULL_SLOT;
-        }
-    }
-
-    this->slot[slot] = NULL_ITEM;
-    this->slot_count--;
-}
-
-
 
 /* Cryofreezer */
+
 void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
@@ -146,131 +100,7 @@ void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
     ItemContainer::insert_item(slot, item_id);
 }
 
-/* Synthesizer */
-
-void ItemContainerSynthesizer::insert_item(int slot, ItemID item_id)
-{
-    GS_ASSERT(item_id != NULL_ITEM);
-    GS_ASSERT(this->is_valid_slot(slot));
-    //GS_ASSERT(item_id != this->get_item(slot));
-    if (!this->is_valid_slot(slot)) return;
-    this->slot[slot] = item_id;
-    this->slot_count++;
-
-    Item::Item* item = Item::get_item_object(item_id);
-    GS_ASSERT(item != NULL);
-    if (item != NULL)
-    {
-        item->location = IL_CONTAINER;
-        item->location_id = this->id;
-        item->container_slot = slot;
-    }
-}
-
-void ItemContainerSynthesizer::remove_item(int slot)
-{
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
-
-    ItemID item_id = this->slot[slot];
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id != NULL_ITEM)
-    {
-        Item::Item* item = Item::get_item_object(this->slot[slot]);
-        GS_ASSERT(item != NULL);
-        if (item != NULL)
-        {
-            item->location = IL_NOWHERE;
-            item->container_slot = NULL_SLOT;
-        }
-    }
-
-    this->slot[slot] = NULL_ITEM;
-    this->slot_count--;
-}
-
-/* Crafting Bench */
-
-void ItemContainerCraftingBench::insert_item(int slot, ItemID item_id)
-{
-    GS_ASSERT(item_id != NULL_ITEM);
-    GS_ASSERT(this->is_valid_slot(slot));
-    //GS_ASSERT(item_id != this->get_item(slot));
-    if (!this->is_valid_slot(slot)) return;
-    this->slot[slot] = item_id;
-    this->slot_count++;
-
-    Item::Item* item = Item::get_item_object(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
-    item->location = IL_CONTAINER;
-    item->location_id = this->id;
-    item->container_slot = slot;
-}
-
-void ItemContainerCraftingBench::remove_item(int slot)
-{
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
-
-    ItemID item_id = this->slot[slot];
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id != NULL_ITEM)
-    {
-        Item::Item* item = Item::get_item_object(this->slot[slot]);
-        GS_ASSERT(item != NULL);
-        if (item != NULL)
-        {
-            item->location = IL_NOWHERE;
-            item->container_slot = NULL_SLOT;
-        }
-    }
-
-    this->slot[slot] = NULL_ITEM;
-    this->slot_count--;
-}
-
-
 /* Smelter */
-
-void ItemContainerSmelter::insert_item(int slot, ItemID item_id)
-{
-    GS_ASSERT(item_id != NULL_ITEM);
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
-
-    this->slot[slot] = item_id;
-    this->slot_count++;
-
-    Item::Item* item = Item::get_item_object(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
-    item->location = IL_CONTAINER;
-    item->location_id = this->id;
-    item->container_slot = slot;
-}
-
-void ItemContainerSmelter::remove_item(int slot)
-{
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
-
-    ItemID item_id = this->slot[slot];
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id != NULL_ITEM)
-    {
-        Item::Item* item = Item::get_item_object(this->slot[slot]);
-        GS_ASSERT(item != NULL);
-        if (item != NULL)
-        {
-            item->location = IL_NOWHERE;
-            item->container_slot = NULL_SLOT;
-        }
-    }
-
-    this->slot[slot] = NULL_ITEM;
-    this->slot_count--;
-}
 
 #if DC_SERVER
 void ItemContainerSmelter::burn_fuel()

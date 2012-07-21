@@ -105,11 +105,49 @@ class ItemContainerUIInterface
             }
         }
 
-        virtual bool can_insert_item(int slot, int item_type) = 0;
-        virtual int get_stackable_slot(int item_type, int stack_size) = 0;
-        virtual int get_empty_slot() = 0;
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+            for (int i=0; i<this->slot_max; i++)
+            {
+                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
+                if (this->slot_type[i] == item_type   // stacks
+                && (Item::get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
+                    return i;
+            }
+            return NULL_SLOT;
+        }
 
-        virtual void init(ItemContainerType type, int xdim, int ydim) = 0;
+        virtual bool can_insert_item(int slot, int item_type)
+        {
+			GS_ASSERT(this->is_valid_slot(slot));
+			if (!this->is_valid_slot(slot)) return false;
+			if (item_type == NULL_ITEM_TYPE) return false;
+
+            return true;
+        }
+
+        virtual int get_empty_slot()
+        {
+            for (int i=0; i<this->slot_max; i++)
+                if (this->slot_type[i] == NULL_ITEM_TYPE)
+                    return i;
+            return NULL_SLOT;
+        }
+
+        virtual void init(ItemContainerType type, int xdim, int ydim)
+        {
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim;
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            this->slot_type = new int[this->slot_max];
+            this->slot_stack = new int[this->slot_max];
+            this->slot_durability = new int[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
+            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
+            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
+        }
 
         void set_alt_parameters(int xdim, int ydim)
         {
@@ -137,50 +175,6 @@ class ItemContainerUI: public ItemContainerUIInterface
 {
     public:
 
-        bool can_insert_item(int slot, int item_type)
-        {
-			GS_ASSERT(this->is_valid_slot(slot));
-			if (!this->is_valid_slot(slot)) return false;
-			if (item_type == NULL_ITEM_TYPE) return false;
-
-            return true;
-        }
-
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-            for (int i=0; i<this->slot_max; i++)
-            {
-                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
-                if (this->slot_type[i] == item_type   // stacks
-                && (Item::get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
-                    return i;
-            }
-            return NULL_SLOT;
-        }
-
-        int get_empty_slot()
-        {
-            for (int i=0; i<this->slot_max; i++)
-                if (this->slot_type[i] == NULL_ITEM_TYPE)
-                    return i;
-            return NULL_SLOT;
-        }
-
-        void init(ItemContainerType type, int xdim, int ydim)
-        {
-            this->type = type;
-            this->xdim = xdim;
-            this->ydim = ydim;
-            this->slot_max = xdim*ydim;
-            GS_ASSERT(this->slot_max < NULL_SLOT);
-            this->slot_type = new int[this->slot_max];
-            this->slot_stack = new int[this->slot_max];
-            this->slot_durability = new int[this->slot_max];
-            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
-            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
-            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
-        }
-
         explicit ItemContainerUI(int id)
         : ItemContainerUIInterface(id)
         {}
@@ -199,25 +193,6 @@ class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
 			if (item_type == NULL_ITEM_TYPE) return false;
 			
             return (item_type == this->energy_tank_type);
-        }
-
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-			int max_stack_size = Item::get_max_stack_size(this->energy_tank_type);
-			if (max_stack_size <= 1) return NULL_SLOT; // cannot stack
-			
-			for (int i=0; i<this->slot_max; i++)
-				if (this->slot_stack[i] < max_stack_size)
-					return i;
-			return NULL_SLOT; // cannot stack energy tanks
-        }
-
-        int get_empty_slot()
-        {
-            for (int i=0; i<this->slot_max; i++)
-                if (this->slot_type[i] == NULL_ITEM_TYPE)
-                    return i;
-            return NULL_SLOT;
         }
 
         void init(ItemContainerType type, int xdim, int ydim)
@@ -271,53 +246,8 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 			return (item_type == coin_type);
         }
 
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-			static int coin_type = Item::get_item_type("synthesizer_coin");
-			GS_ASSERT(coin_type != NULL_ITEM_TYPE);
-			if (item_type != coin_type) return NULL_SLOT; // coin only
-            for (int i=0; i<this->slot_max; i++)
-            {
-                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
-                if (this->slot_type[i] == item_type   // stacks
-                && (Item::get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
-                    return i;
-            }
-            return NULL_SLOT;
-        }
-
-        int get_empty_slot()
-        {
-            for (int i=0; i<this->slot_max; i++)
-                if (this->slot_type[i] == NULL_ITEM_TYPE)
-                    return i;
-            return NULL_SLOT;
-        }
-
-		//void set_shopping_parameters(int shopping_xdim, int shopping_ydim)
-		//{
-			//this->shopping_xdim = shopping_xdim;
-			//this->shopping_ydim = shopping_ydim;
-		//}
-
-        void init(ItemContainerType type, int xdim, int ydim)
-        {
-            this->type = type;
-            this->xdim = xdim;
-            this->ydim = ydim;
-            this->slot_max = xdim*ydim;
-            GS_ASSERT(this->slot_max < NULL_SLOT);
-            this->slot_type = new int[this->slot_max];
-            this->slot_stack = new int[this->slot_max];
-            this->slot_durability = new int[this->slot_max];
-            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
-            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
-            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
-        }
-
         explicit ItemContainerSynthesizerUI(int id)
-        : ItemContainerUIInterface(id)//,
-        //shopping_xdim(0), shopping_ydim(0)
+        : ItemContainerUIInterface(id)
         {}
 };
 
@@ -356,18 +286,6 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
             else if (this->is_smelter_output(slot))
                 return false;
             return true;
-        }
-
-        int get_stackable_slot(int item_type, int stack_size)
-        {
-            for (int i=0; i<this->slot_max; i++)
-            {
-                if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
-                if (this->slot_type[i] == item_type   // stacks
-                && (Item::get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
-                    return i;
-            }
-            return NULL_SLOT;
         }
 
         int get_empty_slot()
