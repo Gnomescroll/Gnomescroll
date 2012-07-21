@@ -11,6 +11,9 @@ class ContainerAttributes* get_attr(ItemContainerType type);
 int get_container_max_slots(ItemContainerType type);
 int get_container_xdim(ItemContainerType type);
 int get_container_ydim(ItemContainerType type);
+int get_container_alt_max_slots(ItemContainerType type);
+int get_container_alt_xdim(ItemContainerType type);
+int get_container_alt_ydim(ItemContainerType type);
 
 /* Configuration Loader */
 

@@ -62,6 +62,27 @@ int get_container_ydim(ItemContainerType type)
     return attr->ydim;
 }
 
+int get_container_alt_max_slots(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->max_alt_dim();
+}
+
+int get_container_alt_xdim(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->alt_xdim;
+}
+
+int get_container_alt_ydim(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->alt_ydim;
+}
+
 /* Configuration Loader */ 
     
 static int _started = 0;

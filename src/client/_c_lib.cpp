@@ -302,7 +302,8 @@ int init_c_lib(int argc, char* argv[])
 
     Item::init();
     ItemContainer::init();
-
+    Item::init_properties();
+    
     //t_map::load_map_dat();
     Item::load_item_dat();
     Item::load_synthesizer();

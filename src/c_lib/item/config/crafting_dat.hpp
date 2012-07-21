@@ -110,7 +110,7 @@ void load_crafting_dat()
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("methane_ice", 4);
     
-    
+    end_crafting_recipe(); // finalize
 }
 
 }   // Item

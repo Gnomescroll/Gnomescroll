@@ -23,7 +23,6 @@ namespace Item
 void init()
 {
     item_list = new ItemList;
-    init_properties();
 }
 
 void teardown()
