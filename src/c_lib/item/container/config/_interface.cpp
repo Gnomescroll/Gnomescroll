@@ -19,9 +19,9 @@ void send_container_beta_action(ContainerActionType action, int container_id, in
 void send_synthesizer_alpha_action(ContainerActionType action, int container_id, int slot){}
 void send_synthesizer_beta_action(ContainerActionType action, int container_id, int slot){}
 void send_craft_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_purchase_item_action(int container_id, int slot){}
+void send_purchase_item_action(ContainerActionType action, int container_id, int slot){}
 void send_craft_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_craft_item_action(int container_id, int slot){}
+void send_craft_item_action(ContainerActionType action, int container_id, int slot){}
 void send_no_container_alpha_action(ContainerActionType action, int container_id, int slot){}
 void send_no_container_beta_action(ContainerActionType action, int container_id, int slot){}
 void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot){}
@@ -114,11 +114,17 @@ static void register_settings()
     container_def(AGENT_SYNTHESIZER);
     c.xdim = 1;
     c.ydim = 1;
+    c.alt_xdim = 5;
+    c.alt_ydim = 2;
     c.attached_to_agent = true;
     c.alpha_action = &synthesizer_alpha_action_decision_tree;
     c.beta_action = &synthesizer_beta_action_decision_tree;
     c.alpha_packet = &send_synthesizer_alpha_action;
     c.beta_packet = &send_synthesizer_beta_action;
+    c.alpha_action_alt = &synthesizer_shopping_alpha_action_decision_tree;
+    c.beta_action_alt = &synthesizer_shopping_beta_action_decision_tree;
+    c.alpha_packet_alt = &send_purchase_item_action;
+    c.beta_packet_alt = &send_purchase_item_action;
 
     container_def(AGENT_ENERGY_TANKS);
     c.xdim = 4;
@@ -141,11 +147,17 @@ static void register_settings()
     container_def(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
     c.xdim = 4;
     c.ydim = 1;
+    c.alt_xdim = 1;
+    c.alt_ydim = 3;
     c.attached_to_agent = false;
     c.alpha_action = &craft_input_alpha_action_decision_tree;
     c.beta_action = &craft_input_beta_action_decision_tree;
     c.alpha_packet = &send_craft_alpha_action;
     c.beta_packet = &send_craft_beta_action;
+    c.alpha_action_alt = &craft_output_alpha_action_decision_tree;
+    c.beta_action_alt = &craft_output_beta_action_decision_tree;
+    c.alpha_packet_alt = &send_craft_item_action;
+    c.beta_packet_alt = &send_craft_item_action;
 
     container_def(CONTAINER_TYPE_CRYOFREEZER_SMALL);
     c.xdim = 2;

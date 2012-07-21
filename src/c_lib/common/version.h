@@ -1,3 +1,3 @@
 #pragma once
 
-#define DC_VERSION 24
+#define DC_VERSION 25

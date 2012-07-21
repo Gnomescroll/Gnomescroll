@@ -36,9 +36,6 @@ int get_event_container_id(int event_id);
 class ItemContainerUIInterface* get_container_ui(int container_id);
 ItemID get_toolbelt_item(int slot);
 
-void mouse_right_click_handler(int container_id, int slot, bool synthesizer, bool craft_output);
-void mouse_left_click_handler(int container_id, int slot, bool synthesizer, bool craft_output);
-
 ItemID* get_container_contents(int container_id);
 int get_sprite_index_for_id(ItemID item_id);
 int get_sprite_index_for_type(int item_type);
@@ -47,6 +44,7 @@ int* get_container_ui_stacks(int container_id);
 
 void set_ui_slot_durability(int container_id, int slot, int durability);
 void set_ui_slot_stack_size(int container_id, int slot, int stack_size);
+
 }   // ItemContainer
 #endif 
 

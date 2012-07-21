@@ -1048,8 +1048,10 @@ inline void choose_spawn_location_CtoS::handle()
 
 const char DEFAULT_PLAYER_NAME[] = "Clunker";
 
+static char _new_name[PLAYER_NAME_MAX_LENGTH+1];
 static char* adjust_player_name(char* name)
 {
+    memset(_new_name, 0, (PLAYER_NAME_MAX_LENGTH+1) * sizeof(char));
     unsigned int len = strlen(name);
     if (len >= (int)(PLAYER_NAME_MAX_LENGTH - 4))
         name[PLAYER_NAME_MAX_LENGTH-4-1] = '\0';
@@ -1057,9 +1059,8 @@ static char* adjust_player_name(char* name)
     if (len >= (int)PLAYER_NAME_MAX_LENGTH)
         len = PLAYER_NAME_MAX_LENGTH;
 
-    char* new_name = (char*)malloc((len + 1) * sizeof(char));
-    sprintf(new_name, "%s%04d", name, randrange(0,9999));
-    return new_name;
+    snprintf(_new_name, PLAYER_NAME_MAX_LENGTH+1, "%s%04d", name, randrange(0,9999));
+    return _new_name;
 }
 
 inline void identify_CtoS::handle()
@@ -1086,7 +1087,7 @@ inline void identify_CtoS::handle()
     int breakout = 0;   // safeguard against infinite loop
     const int breakout_limit = 100;
     char* new_name = name;
-    while (!ServerState::agent_list->name_available(name))
+    while (!ServerState::agent_list->name_available(new_name))
     {
         breakout++;
         if (breakout % breakout_limit == 0)
@@ -1108,8 +1109,6 @@ inline void identify_CtoS::handle()
 
     NetServer::users->add_name_to_client_id(client_id, a->status.name);
     NetServer::clients[client_id]->ready();
-
-	if (new_name != name) free(new_name);
 }
 
 inline void ping_CtoS::handle()

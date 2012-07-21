@@ -13,13 +13,11 @@ namespace Toolbelt
 
 inline void toolbelt_set_active_item_StoC::handle() 
 {
-    //if (agent_id == ClientState::playerAgent_state.agent_id) return;
-    int old_type = agent_selected_type[agent_id];
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+    if (item_type == agent_selected_type[agent_id]) return;
+    turn_fire_off(agent_id);
     agent_selected_type[agent_id] = item_type;
-    if (old_type != item_type)
-    {   // the selected item was force-changed by the server
-        turn_fire_off(agent_id);
-    }
 }
 
 inline void toolbelt_item_begin_alpha_action_StoC::handle() 

@@ -60,7 +60,7 @@ inline void assign_item_container_StoC::handle()
             if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
             player_synthesizer_ui = new ItemContainerSynthesizerUI(container->id);
             player_synthesizer_ui->init(container->type, container->xdim, container->ydim);
-            player_synthesizer_ui->set_shopping_parameters(((ItemContainerSynthesizer*)container)->shopping_xdim, ((ItemContainerSynthesizer*)container)->shopping_ydim);
+            player_synthesizer_ui->set_alt_parameters(((ItemContainerSynthesizer*)container)->alt_xdim, ((ItemContainerSynthesizer*)container)->alt_ydim);
             player_synthesizer_ui->load_data(container->slot);
             break;
         

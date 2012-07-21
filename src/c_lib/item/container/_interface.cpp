@@ -205,7 +205,7 @@ void open_inventory()
 
 void close_inventory()
 {   // attempt throw
-    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
+    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false);
 }
 
 bool open_container(int container_id)
@@ -325,7 +325,7 @@ bool close_container(int container_id)
     if (container_id != opened_container) return false;
 
     // attempt throw
-    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false, false);
+    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false);
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
@@ -717,9 +717,38 @@ void agent_born(int agent_id)
             toolbelt_space--;
         }
     }
-        
+
+	// add energy tanks 
+	int energy_tanks_id = get_agent_energy_tanks(agent_id);
+	GS_ASSERT(energy_tanks_id != NULL_CONTAINER);
+	ItemContainerEnergyTanks* energy_tanks = (ItemContainerEnergyTanks*)get_container(energy_tanks_id);
+	GS_ASSERT(energy_tanks != NULL);
+	if (energy_tanks != NULL)
+	{
+        #if PRODUCTION
+        int n_energy_tanks = 1;
+        if (energy_tanks->slot_count == energy_tanks->slot_max) n_energy_tanks = 0;
+        #else
+		int n_energy_tanks = energy_tanks->slot_max - energy_tanks->slot_count - 1;
+        #endif
+		for (int i=0; i<n_energy_tanks; i++)
+		{
+			int energy_tank_type = Item::get_item_type("energy_tank");
+			GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
+			if (energy_tank_type == NULL_ITEM_TYPE) break;
+			Item::Item* energy_tank = Item::create_item(energy_tank_type);
+			GS_ASSERT(energy_tank != NULL);
+			if (energy_tank == NULL) break;
+			
+			int slot = energy_tanks->get_empty_slot();
+			if (slot == NULL_SLOT) break;
+			
+			bool added = transfer_free_item_to_container(energy_tank->id, energy_tanks->id, slot);
+			if (!added) break;
+		}
+	}
+
     #if !PRODUCTION
-    ContainerActionType event;
     
     // fill coins to max
     int synth_id = get_agent_synthesizer(agent_id);
@@ -752,32 +781,10 @@ void agent_born(int agent_id)
 			}
 		}
 	}
-	
-	// add energy tanks 
-	int energy_tanks_id = get_agent_energy_tanks(agent_id);
-	GS_ASSERT(energy_tanks_id != NULL_CONTAINER);
-	ItemContainerEnergyTanks* energy_tanks = (ItemContainerEnergyTanks*)get_container(energy_tanks_id);
-	GS_ASSERT(energy_tanks != NULL);
-	if (energy_tanks != NULL)
-	{
-		int n_energy_tanks = energy_tanks->slot_max - energy_tanks->slot_count - 1;
-		for (int i=0; i<n_energy_tanks; i++)
-		{
-			int energy_tank_type = Item::get_item_type("energy_tank");
-			GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
-			if (energy_tank_type == NULL_ITEM_TYPE) break;
-			Item::Item* energy_tank = Item::create_item(energy_tank_type);
-			GS_ASSERT(energy_tank != NULL);
-			if (energy_tank == NULL) break;
-			
-			int slot = energy_tanks->get_empty_slot();
-			if (slot == NULL_SLOT) break;
-			
-			bool added = transfer_free_item_to_container(energy_tank->id, energy_tanks->id, slot);
-			if (!added) break;
-		}
-	}
-    
+
+
+    ContainerActionType event = CONTAINER_ACTION_NONE;
+
     // put a grenade launcher in the toolbelt
     Item::Item* grenade_launcher = Item::create_item(Item::get_item_type("grenade_launcher"));
     GS_ASSERT(grenade_launcher != NULL);
@@ -941,8 +948,8 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     if (!agent_can_access_container(agent_id, synthesizer->id)) return;
 
     // get the store item
-    int xslot = shopping_slot % synthesizer->shopping_xdim;
-    int yslot = shopping_slot / synthesizer->shopping_xdim;
+    int xslot = shopping_slot % synthesizer->alt_xdim;
+    int yslot = shopping_slot / synthesizer->alt_xdim;
     int cost;
     int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
     GS_ASSERT(cost >= 0);

@@ -160,12 +160,12 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     ContainerInputEvent event;
     event.container_id = container_id;
     event.slot = slot;
-    event.synthesizer_shopping = (container != NULL
-                 && container->type == UI_ELEMENT_SYNTHESIZER_CONTAINER
-                 && ((AgentSynthesizerUI*)container)->in_shopping_region(x,y));
-    event.craft_output = (container != NULL
-                        && container->type == UI_ELEMENT_CRAFTING_CONTAINER
-                        && ((CraftingUI*)container)->in_craft_output_region(x,y));
+    event.alt_action = (container != NULL && (
+        (container->type == UI_ELEMENT_SYNTHESIZER_CONTAINER
+     && ((AgentSynthesizerUI*)container)->in_shopping_region(x,y))
+     || (container->type == UI_ELEMENT_CRAFTING_CONTAINER
+     && ((CraftingUI*)container)->in_craft_output_region(x,y))
+    ));
 
     return event;
 }
@@ -210,8 +210,7 @@ static const ContainerInputEvent NULL_EVENT =
 {
     NULL_CONTAINER,         // null container id
     NULL_SLOT,              // null slot
-    false,                 // synthesizer shopping click
-    false,                 // craft output
+    false,                  // alt action
 };
 
 ContainerInputEvent left_mouse_down(int x, int y)
@@ -257,8 +256,7 @@ ContainerInputEvent scroll_up()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
-    event.synthesizer_shopping = false;
-    event.craft_output = false;
+    event.alt_action = false;
     return event;
 }
 
@@ -271,8 +269,7 @@ ContainerInputEvent scroll_down()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
-    event.synthesizer_shopping = false;
-    event.craft_output = false;
+    event.alt_action = false;
     return event;
 }
 
@@ -288,8 +285,7 @@ ContainerInputEvent select_slot(int numkey)
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = slot;
-    event.synthesizer_shopping = false;
-    event.craft_output = false;
+    event.alt_action = false;
     return event;
 }
 
