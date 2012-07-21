@@ -34,13 +34,14 @@
 #include <string.h>
 #include <math.h>
 
+/*
 extern "C"
 {
     #include <lua.h>
     #include <lualib.h> // ok this ony means u maybe fixed the release one but not teh debug one
     #include <lauxlib.h> //wtf!?
 }
-
+*/
 
 //_getcwd()/_wgetcwd() Gets the current working directory
 //_chdir()/_wchdir() Sets the current working directory
@@ -49,8 +50,8 @@ extern "C"
     #include <direct.h>
     #define getcwd _getcwd
     #define chdir _chdir
-#else
-    #include <unistd.h>
+	#define mkdir(x) _mkdir(x)
+
+	#define snprintf _snprintf
 #endif
 
-#define mkdir(x) _mkdir(x)

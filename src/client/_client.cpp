@@ -1,11 +1,6 @@
-// client.cpp : Defines the entry point for the console application.
-//
 
-#ifdef __GNUC__
-#endif
-
-#ifdef _MSC_VER
-    #include "stdafx.h"
+#if _MSC_VER
+    #include "stdafx.h" 
 #endif
 
 #include "_c_lib.cpp"
@@ -15,7 +10,7 @@
 #include <SDL.h>
 
 //int main(int argc, char** argv)
-#if __MSVC__
+#ifdef __MSVC__
 int _tmain(int argc, _TCHAR* argv[])
 #else
 int main(int argc, char* argv[])
