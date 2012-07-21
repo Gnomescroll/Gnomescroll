@@ -40,7 +40,7 @@ const float DEFAULT_FIRING_RANGE = 4.0f;
 
 const float OBJECT_DEPTH_MAX = -128.0f;
 
-const int ITEM_GAS_LIFETIME = 20 * 30; // 60 seconds
+const int ITEM_GAS_LIFETIME = 30 * 60 * 5;  // 5 Minutes
 
 const int AGENT_HAND = NULL_CONTAINER - 1;
 

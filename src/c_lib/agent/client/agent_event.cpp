@@ -75,20 +75,22 @@ void Agent_event::update_hud_name()
 
 	struct Color color = HEALTH_TEXT_DEAD_COLOR;	// default, dead color
 	
-	if (this->a->status.health > 0)
-	{	// calculate interpolated color from health ratio and color control points
+	if (!this->a->status.dead)
+	{	// calculate interpolated color from health ratio and color control health_color_points
+        int health = 0;
+        if (this->a->status.health > 0) health = this->a->status.health;
 		GS_ASSERT(this->a->status.health_max > 0);
-		float h = ((float)this->a->status.health)
+		float h = ((float)health)
 				/ ((float)this->a->status.health_max);
 		
-		if (h >= points[0])
-			color = colors[0];	// degenerate case, out of range
+		if (h >= health_color_points[0])
+			color = health_colors[0];	// degenerate case, out of range
 		else
 			for (unsigned int i=0; i<COLOR_COUNT-1; i++)
-				if (h < points[i] && h >= points[i+1])
+				if (h < health_color_points[i] && h >= health_color_points[i+1])
 				{
-					color = interpolate_color(colors[i], colors[i+1],
-						(points[i] - h) / (points[i] - points[i+1]));
+					color = interpolate_color(health_colors[i], health_colors[i+1],
+						(health_color_points[i] - h) / (health_color_points[i] - health_color_points[i+1]));
 					break;
 				}
 	}

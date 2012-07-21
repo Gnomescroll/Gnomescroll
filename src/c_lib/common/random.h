@@ -25,7 +25,7 @@ void randstr(char* s, int n)
    number generator. */
 /* source: http://benpfaff.org/writings/clc/shuffle.html */
 
-// WARNING -- POSSIBLE BROKEN
+// WARNING -- POSSIBLY BROKEN
 
 //void shuffle_int_array(int *array, size_t n)
 //{
