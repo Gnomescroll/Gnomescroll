@@ -24,24 +24,25 @@ void populate_ore_veins(int number, const char* block_name)
 		int ctile = t_map::get(x,y,z);
 		if(ctile == 0) continue;
 
-		int s = (int)genrand_int32() % 64;
+		int s = 4* 2*(genrand_int32() % 16);
 
-		s = s*2 + 16;
+		s = s + 16;
 
+		s = 4;
 		generate_ore_vein(x,y,z, s, tile_id);
 	}
 }
 
 void populate_ore()
 {
-	populate_ore_veins(8192, "methane_ice");
-	populate_ore_veins(8192, "iron_ore");
+	populate_ore_veins(2*8192, "methane_ice");
+	populate_ore_veins(2*8192, "iron_ore");
 
-	populate_ore_veins(2048, "graphite");
+	populate_ore_veins(2*2048, "graphite");
 
-	populate_ore_veins(2048, "copper_ore");
-	populate_ore_veins(2048, "gallium_ore");
-	populate_ore_veins(1024, "iridium_ore");
+	//populate_ore_veins(2*2048, "copper_ore");
+	populate_ore_veins(2*2048, "gallium_ore");
+	populate_ore_veins(2*1024, "iridium_ore");
 }
 
 /*
@@ -62,15 +63,15 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 	int tries = 0;
 	int ct = 0;
 
-	while (ct < size && tries < 10)
+	while (ct < size && tries < 20)
 	{
-		int direction = (int)genrand_int32() % 6;
+		int direction = (int) (genrand_int32() % 6);
 
 		int cx = x+s_array[3*direction+0];
 		int cy = y+s_array[3*direction+1];
 		int cz = z+s_array[3*direction+2];
 
-		int ctile = t_map::get(cx,cy,cz);
+		int ctile = t_map::get(x,y,z);
 
 		if (ctile == 0)
 		{
@@ -82,26 +83,31 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 		y = cy;
 		z = cz;
 
+		ctile = t_map::get(x,y,z);
+		
+		x %= 512;
+		y %= 512;
+		if (x < 0) x += 512;
+		if (y < 0) y += 512;
+
 		if (ctile == tile_id)
 		{
 			tries++;
 			continue;
 		}
 
-		tries = 0; //reset
-
 		// we need this, because x,y are exceeding twice the bounds
 		// of the map
-		x %= 512;
-		y %= 512;
-		if (x < 0) x += 512;
-		if (y < 0) y += 512;
 
 		t_map::set(x,y,z,tile_id);
 
+		tries = 0; //reset
 		ct++;
 	}
 	
+	if(tries >= 20)
+		printf("WTF ERROR: \n");
+
 	return ct;
 }
 
