@@ -99,7 +99,7 @@ static void coerce_option_float(int key, char* val)
 {
     errno = 0;
     char* end = (char*)"";
-    float opt = strtof(val, &end);
+    float opt = (float)strtod(val, &end);
     GS_ASSERT(errno == 0);
     GS_ASSERT(val[0] != '\0' && end[0] == '\0'); // valid string test
     set_option_float(key, opt);
