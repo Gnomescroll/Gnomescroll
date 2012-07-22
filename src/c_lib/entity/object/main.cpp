@@ -270,7 +270,6 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
         for (int j=0; j<height; j++)
             if (pz + j == z) return true;
     }
-    
     return false;
 }
 

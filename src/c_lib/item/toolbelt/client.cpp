@@ -8,6 +8,7 @@ dont_include_this_file_in_server
 #include <item/toolbelt/_state.hpp>
 #include <item/toolbelt/config/_interface.hpp>
 #include <chat/interface.hpp>
+#include <item/toolbelt/net/CtoS.hpp>
 
 namespace Toolbelt
 {

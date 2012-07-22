@@ -124,4 +124,4 @@ const Vec3 NULL_POSITION = vec3_init(0,0,0);
 const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
 const Vec3 NULL_ANGLES = vec3_init(0,0,0);
 const float NULL_HEIGHT = 1.0f;
-const int BASE_SPAWN_ID = 255;
+const int BASE_SPAWN_ID = -1;   // must use -1 because spawner max is unknown

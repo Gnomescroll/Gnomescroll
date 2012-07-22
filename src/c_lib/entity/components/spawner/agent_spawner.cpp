@@ -22,19 +22,20 @@ struct Vec3 AgentSpawnerComponent::get_spawn_point(float spawned_object_height, 
 
     int sx = randrange(x - this->radius, x + this->radius);
     sx = translate_point(sx);
-    spawn_point.x = sx;
+    spawn_point.x = sx + 0.5f;
 
     int sy = randrange(y - this->radius, y + this->radius);
     sy = translate_point(sy);
-    spawn_point.y = sy;
+    spawn_point.y = sy + 0.5f;
 
     int h = (int)ceil(spawned_object_height);
     GS_ASSERT(h >= 1);
     if (h < 1) h = 1;
-    spawn_point.z = t_map::get_highest_open_block(sx, sy, h);
+    spawn_point.z = t_map::get_nearest_open_block(sx, sy, position.z, h);
 
     while (object_collides_terrain(spawn_point, spawned_object_height, spawned_object_radius) && spawn_point.z < map_dim.z)
         spawn_point.z += 1;
+
 
     return spawn_point;
 }

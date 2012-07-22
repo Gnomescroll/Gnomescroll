@@ -410,12 +410,13 @@ void create_container_block_CtoS::handle()
     x = translate_point(x);
     y = translate_point(y);
 
-    // dont allow block to be set on existing block
-    if (t_map::get(x,y,z) != 0) return;
+    // dont set on existing block
+    if (!t_map::block_can_be_placed(x,y,z,val)) return;
 
     bool collides = false;
     t_map::set_fast(x,y,z, val); // set temporarily to test against
-    if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
+    if (agent_collides_terrain(a))
+        collides = true;  // test against our agent, most likely to collide
     else
     {
         for (int i=0; i<ServerState::agent_list->n_max; i++)
@@ -469,8 +470,9 @@ void admin_create_container_block_CtoS::handle()
     x = translate_point(x);
     y = translate_point(y);
 
-    // dont allow block to be set on existing block
-    if (t_map::get(x,y,z) != 0) return;
+    // TODO -- when this is a /real/ admin tool, remove this check
+    // since we're giving it to players, do this check
+    if (!t_map::block_can_be_placed(x,y,z,val)) return;
 
     bool collides = false;
     t_map::set_fast(x,y,z, val); // set temporarily to test against

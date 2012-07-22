@@ -206,6 +206,10 @@ void place_spawner(int agent_id, ItemID item_id, int item_type)
     Objects::ready(obj);
     
     decrement_stack(agent_id, item_id, item_type);
+    
+    // first spawner player has created; select it automatically
+    if (a->status.spawner == BASE_SPAWN_ID)
+        a->status.set_spawner(obj->id);
 }
 
 
