@@ -98,7 +98,7 @@ class SHADER
         glCompileShaderARB(frag_shader);
         if(glIsShader(frag_shader) == false)
         {
-            printf("fragment shader failed with error: %s \n", name;
+            printf("fragment shader failed with error: %s \n", name);
             printShaderInfoLog(frag_shader);
             shader_valid = false;
             return;
@@ -115,7 +115,7 @@ class SHADER
 
         if(glIsShader(shader) == false)
         {
-            printf("shader failed with error: %s \n", name;
+            printf("shader failed with error: %s \n", name);
             printShaderInfoLog(shader);
             shader_valid = false;
             return;
@@ -131,7 +131,7 @@ class SHADER
 
     unsigned int get_attribute(const char* attribute_name)
     {
-        if(shader_valud == false) return;
+        if(shader_valid == false) return -1;
         if(attribute_index == 16) GS_ABORT();
 
         unsigned int attribute = glGetAttribLocation(shader, attribute_name);
@@ -148,7 +148,7 @@ class SHADER
 
     unsigned int get_uniform(const char* uniform_name)
     {
-        if(shader_valud == false) return;
+        if(shader_valud == false) return -1;
         if(uniform_index == 16) GS_ABORT();
         unsigned int uniform = glGetUniformLocation(shader, uniform_name);
 

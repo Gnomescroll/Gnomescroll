@@ -474,7 +474,7 @@ void control_node_render_draw()
 	};
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, control_node_texture);
+	//glBindTexture(GL_TEXTURE_2D, control_node_texture);
 
 	glColor4ub(127,0,0,128);
 
