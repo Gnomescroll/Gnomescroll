@@ -141,6 +141,11 @@ int cnrm = 32; // max
 
 class CONTROL_NODE_LIST* cnl; //control node list
 
+void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
+{
+	cnl = _cnl;
+	cnra = (struct CONTROL_NODE_RENDER*) malloc(cnrm*sizeof(struct CONTROL_NODE_RENDER));
+}
 
 void control_node_render_teardown()
 {
@@ -284,22 +289,19 @@ class ControlNodeVertexList
         if(vi != 0)
         {
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_STATIC_DRAW);
-            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vi*stride, NULL, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vi*stride, va, GL_STATIC_DRAW);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         } 
         else
         {
-            if(vertex_number > 0) 
+            if(vi > 0) 
             {
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
             	glBindBuffer(GL_ARRAY_BUFFER, 0);
             }
         }
-
-        vertex_number = vlist_index;
-        vlist_index = 0;
     }
 
     void draw()
@@ -307,11 +309,11 @@ class ControlNodeVertexList
 	    glColor3ub(255,255,255);
 
 	    glEnable(GL_TEXTURE_2D);
-	    glBindTexture( GL_TEXTURE_2D, texture );
+	    glBindTexture( GL_TEXTURE_2D, texture1 );
 
-	    glBindBuffer(GL_ARRAY_BUFFER VBO);
+	    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	    
-	    glUseProgramObjectARB(shader.shader);
+	    glUseProgramObjectARB(shader->shader);
 
 	    glEnableClientState(GL_VERTEX_ARRAY);
 	    glEnableVertexAttribArray(TexCoord);
