@@ -183,7 +183,7 @@ class ControlNodeVertexList
         unsigned char brightness[4];
     };
 
-    const int stride = sizeof(Vertex);
+    static const int stride = sizeof(Vertex);
 
     struct Vertex* va;	//vertex array
     int vi; //vertex index
@@ -232,10 +232,9 @@ class ControlNodeVertexList
 	        "./media/shaders/effect/control_node.vsh",
 	        "./media/shaders/effect/control_node.fsh" );
 
-	    control_node_CameraPosition = 	shader->get_uniform("CameraPosition");
-	    
-	    control_node_TexCoord 	=		shader->get_attribute("InTexCoord");
-	    control_node_Brightness	=		shader->get_attribute("InBrightness");
+	    CameraPosition = 	shader->get_uniform("CameraPosition");
+	    TexCoord 	=		shader->get_attribute("InTexCoord");
+	    Brightness	=		shader->get_attribute("InBrightness");
 	}
 
 	void init_texture()
@@ -243,8 +242,8 @@ class ControlNodeVertexList
 		s = create_surface_from_file("./media/sprites/territory_00.png");
 
 		glEnable(GL_TEXTURE_2D);
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glGenTextures(1, &texture1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

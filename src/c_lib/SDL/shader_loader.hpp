@@ -129,12 +129,12 @@ class SHADER
         shader_valid = true;
     }
 
-    unsigned int get_attribute(const char* attribute_name)
+    int get_attribute(const char* attribute_name)
     {
         if(shader_valid == false) return -1;
         if(attribute_index == 16) GS_ABORT();
 
-        unsigned int attribute = glGetAttribLocation(shader, attribute_name);
+        int attribute = glGetAttribLocation(shader, attribute_name);
 
         if(attribute == -1)
         {
@@ -146,11 +146,11 @@ class SHADER
         return attribute;
     }
 
-    unsigned int get_uniform(const char* uniform_name)
+    int get_uniform(const char* uniform_name)
     {
-        if(shader_valud == false) return -1;
+        if(shader_valid == false) return -1;
         if(uniform_index == 16) GS_ABORT();
-        unsigned int uniform = glGetUniformLocation(shader, uniform_name);
+        int uniform = glGetUniformLocation(shader, uniform_name);
 
         if(uniform == -1)
         {
@@ -159,6 +159,6 @@ class SHADER
         }
         uniform_array[uniform_index] = uniform;
         uniform_index++;
-        return attribute;
+        return uniform;
     }   
 };
