@@ -255,28 +255,16 @@ void control_node_render_update()
 	
 }
 
-/*
-static const float v_index[72] = 
-{
-    1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
-    0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
-    1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
-    0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
-    1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
-    0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
-};
-*/
-
 void control_node_render_draw()
 {
 	static const float v_index[72] = 
 	{
 	    1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
 	    0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
-	    1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //west
-	    0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //east
-	    1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //north
-	    0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //south
+	    1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+	    0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+	    1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+	    0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
 	};
 
 	glPointSize(6.0);
@@ -298,8 +286,9 @@ void control_node_render_draw()
 
 		//clockwise
 
+		//x += 0.33;
 
-		int s = 2;
+		int s = 3;
 
 		glVertex3f(x+v_index[12*s+3*0+0], y+v_index[12*s+3*0+1], z+v_index[12*s+3*0+2]);
 		glVertex3f(x+v_index[12*s+3*1+0], y+v_index[12*s+3*1+1], z+v_index[12*s+3*1+2]);

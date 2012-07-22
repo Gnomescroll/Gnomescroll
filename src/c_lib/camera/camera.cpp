@@ -56,10 +56,10 @@ void init_cameras()
     r = vec3_euler_rotation(r, current_camera->theta, current_camera->phi, 0.0f );
     u = vec3_euler_rotation(u, current_camera->theta, current_camera->phi, 0.0f );
 
-    //printf("start: \n");
-    //vec3_print(f);
-    //vec3_print(r);
-    //vec3_print(u);
+    printf("start: \n");
+    vec3_print(f);
+    vec3_print(r);
+    vec3_print(u);
 
     Vec3 p = current_camera->get_position();
     setup_fulstrum(
@@ -92,7 +92,7 @@ zoom_factor(CAMERA_ZOOM_FACTOR)
 	const float Z_FAR = 320.0f;
     set_aspect(FOV, Z_NEAR, Z_FAR);
     set_dimensions();
-    set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
+    set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 #undef CAMERA_ZOOM_FACTOR
 
@@ -190,9 +190,9 @@ void Camera::world_projection()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    // DEPRECATE GLU
+
     gluPerspective(fov, ratio, z_near, z_far);
-    // DEPRECATE GLU
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -203,7 +203,6 @@ void Camera::world_projection()
     //look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
     look = vec3_euler_rotation(look, theta, phi, 0.0f);
 
-    //vec3_print(look);
 
     float x = this->position.x;
     float y = this->position.y;
@@ -224,6 +223,11 @@ void Camera::world_projection()
 
     right = vec3_euler_rotation(right, theta, phi, 0.0f);
     up = vec3_euler_rotation(up, theta, phi, 0.0f);
+
+    //printf("V: theta= %f phi= %f \n", theta, phi);
+    //vec3_print(look);
+    //vec3_print(right);
+    //vec3_print(up);
 
     setup_fulstrum(fov, ratio, z_far, this->position, look, right, up);
 

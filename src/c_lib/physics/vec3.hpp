@@ -186,7 +186,8 @@ static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
 static struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z) __attribute((always_inline));
 
 struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
-{   
+{
+
     x *= PI;
     y *= PI;
     z *= PI;
@@ -214,6 +215,11 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     m[2].x = (float)(czsy*cx+sz*sx);
     m[2].y = (float)(czsy*sx-sz*cx);
     m[2].z = (float)(cz*cy);
+
+
+    //printf("m[0]: %f %f %f \n", m[0].x,m[0].y, m[0].z);
+    //printf("m[1]: %f %f %f \n", m[2].x,m[1].y, m[1].z);
+    //printf("m[2]: %f %f %f \n", m[2].x,m[2].y, m[2].z);
 
     struct Vec3 u;
 

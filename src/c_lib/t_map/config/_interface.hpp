@@ -220,11 +220,10 @@ void push_oriented_texture()
  
     const int T = 0;
     const int B = 1;
-    const int W = 2;
-    const int E = 3;
-    const int N = 4;
-    const int S = 5;
-
+    const int N = 2;
+    const int S = 3;
+    const int W = 4;
+    const int E = 5;
 
     //printf("current_block= %i \n", _current_cube_id);
     for (int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
@@ -233,18 +232,18 @@ void push_oriented_texture()
     start_cube_palette(_current_cube_id);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[2]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[3]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[4]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[5]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[5]);
     push_cube_palette();
 
     //WEST
     start_cube_palette(_current_cube_id);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[2]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[3]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[4]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[5]);
     push_cube_palette();
@@ -253,10 +252,10 @@ void push_oriented_texture()
     start_cube_palette(_current_cube_id);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, T, _side_texture[0]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[2]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[3]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[4]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[5]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[5]);
     push_cube_palette();
 
     //EAST
@@ -265,8 +264,8 @@ void push_oriented_texture()
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, B, _side_texture[1]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, W, _side_texture[2]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, E, _side_texture[3]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[4]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[5]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, S, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, N, _side_texture[5]);
     push_cube_palette();
 
     _palette_number += 4;
