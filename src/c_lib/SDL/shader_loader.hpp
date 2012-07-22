@@ -30,6 +30,9 @@ class SHADER
 
     bool shader_valid; //is shader valid?
 
+    char *vs;
+    char *fs;
+
     SHADER()
     {
         shader = 0;
@@ -43,6 +46,15 @@ class SHADER
         uniform_index = 0;
 
         shader_valid = false;
+
+        vs = NULL;
+        fs = NULL;
+    }
+
+    ~SHADER()
+    {
+        if(vs != NULL) free(vs);
+        if(fs != NULL) free(fs);
     }
 
     void set_debug(bool value)
@@ -57,8 +69,6 @@ class SHADER
         name = new char[strlen(_name)];
         name = strcpy(name, _name);
 
-        char *vs, *fs;
-
         printf("Loading shader: %s\n", name);
 
         vs = textFileRead( (char*) vertex_shader_file );
@@ -69,6 +79,8 @@ class SHADER
         {
             if (vs != NULL) free(vs);
             if (fs != NULL) free(fs);
+            vs = NULL;
+            fs = NULL;
             return;
         }
 
@@ -78,12 +90,9 @@ class SHADER
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
-        
-        free(vs);
-        free(fs);
 
         glCompileShaderARB(vert_shader);
-        if(glIsShader(vert_shader) == false)
+        if(glIsShader(vert_shader) == false && false) //debug
         {
             printf("vertex shader failed with error: %s \n", name);
             printShaderInfoLog(vert_shader);
@@ -96,7 +105,7 @@ class SHADER
         }
 
         glCompileShaderARB(frag_shader);
-        if(glIsShader(frag_shader) == false)
+        if(glIsShader(frag_shader) == false && false) //debug
         {
             printf("fragment shader failed with error: %s \n", name);
             printShaderInfoLog(frag_shader);
@@ -113,7 +122,7 @@ class SHADER
 
         glLinkProgramARB(shader);
 
-        if(glIsShader(shader) == false)
+        if(glIsShader(shader) == false && false) //debug
         {
             printf("shader failed with error: %s \n", name);
             printShaderInfoLog(shader);
@@ -138,7 +147,7 @@ class SHADER
 
         if(attribute == -1)
         {
-            printf("SHADER: get_attribute failed. %s %s \n", name, attribute_name);
+            printf("SHADER: get_attribute failed. shader= %s attribut= %s \n", name, attribute_name);
             return -1;
         }
         attribute_array[attribute_index] = attribute;
@@ -154,7 +163,7 @@ class SHADER
 
         if(uniform == -1)
         {
-            printf("SHADER: get_uniform failed. %s %s \n", name, uniform_name);
+            printf("SHADER: get_uniform failed. shader= %s uniform= %s \n", name, uniform_name);
             return -1;
         }
         uniform_array[uniform_index] = uniform;
