@@ -141,70 +141,10 @@ int cnrm = 32; // max
 
 class CONTROL_NODE_LIST* cnl; //control node list
 
-unsigned int control_node_texture;
-
-class SHADER* control_node_shader;
-
-void init_control_node_texture()
-{
-	SDL_Surface* s = create_surface_from_file("./media/sprites/territory_00.png");
-
-	glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &control_node_texture);
-	glBindTexture(GL_TEXTURE_2D, control_node_texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	GLenum texture_format;
-	if (s->format->Rmask == 0x000000ff)
-		texture_format = GL_RGBA;
-	else
-		texture_format = GL_BGRA;
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-	
-	glDisable(GL_TEXTURE_2D);
-}
-
-//uniforms
-unsigned int control_node_CameraPosition;
-//attributes
-unsigned int control_node_TexCoord;
-unsigned int control_node_Brightness;
-
-void init_control_node_shader(class SHADER* shader)
-{
-    shader->set_debug(true);
-
-    shader->load_shader( "control_node_shader",
-        "./media/shaders/effect/control_node.vsh",
-        "./media/shaders/effect/control_node.fsh" );
-
-    control_node_CameraPosition = 	shader->get_uniform("CameraPosition");
-    
-    control_node_TexCoord = 		shader->get_attribute("InTexCoord");
-    control_node_Brightness	=		shader->get_attribute("InBrightness");
-}
-
-
-void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
-{
-	cnra = (struct CONTROL_NODE_RENDER*) malloc(cnrm*sizeof(struct CONTROL_NODE_RENDER));
-	cnl = _cnl; //
-
-	init_control_node_texture();
-
-	control_node_shader = new SHADER;
-	init_control_node_shader(control_node_shader);
-}
 
 void control_node_render_teardown()
 {
 	free(cnra);
-	delete control_node_shader;
 }
 
 void _insert_control_node_render_element(short x, short y, short z, unsigned char face)
@@ -227,7 +167,9 @@ void _insert_control_node_render_element(short x, short y, short z, unsigned cha
 
 }
 
-
+/*
+	Use this as example for other shaders
+*/
 
 class ControlNodeVertexList 
 {
@@ -241,23 +183,84 @@ class ControlNodeVertexList
         unsigned char brightness[4];
     };
 
+    const int stride = sizeof(Vertex);
+
     struct Vertex* va;	//vertex array
     int vi; //vertex index
     int vm; //vertex max
 
-    struct Vertex v;
+    struct Vertex v; //set this and then push vertex
+
+   	unsigned int VBO; //for drawing 
+   	SDL_Surface* s;
 
     ControlNodeVertexList()
     {
+
     	vm = 32;
     	vi = 0;
     	va = (struct Vertex*) malloc(vm*sizeof(struct Vertex));
+    	VBO = 0;
+
+    	init_texture();
+    	init_shader();
     }
 
     ~ControlNodeVertexList()
     {
     	free(va);
+    	delete shader;
     }
+   	
+
+
+	unsigned int texture1;
+	class SHADER* shader;
+
+	//uniforms
+	unsigned int CameraPosition;
+	//attributes
+	unsigned int TexCoord;
+	unsigned int Brightness;
+
+	void init_shader()
+	{
+		shader = new SHADER;
+	    shader->set_debug(true);
+
+	    shader->load_shader( "control_node_shader",
+	        "./media/shaders/effect/control_node.vsh",
+	        "./media/shaders/effect/control_node.fsh" );
+
+	    control_node_CameraPosition = 	shader->get_uniform("CameraPosition");
+	    
+	    control_node_TexCoord 	=		shader->get_attribute("InTexCoord");
+	    control_node_Brightness	=		shader->get_attribute("InBrightness");
+	}
+
+	void init_texture()
+	{
+		s = create_surface_from_file("./media/sprites/territory_00.png");
+
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		GLenum texture_format;
+		if (s->format->Rmask == 0x000000ff)
+			texture_format = GL_RGBA;
+		else
+			texture_format = GL_BGRA;
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
+		
+		glDisable(GL_TEXTURE_2D);
+	}
 
    	void push_vertex()
    	{
@@ -270,10 +273,64 @@ class ControlNodeVertexList
    		}
    	}
 
-   	
+   	void reset()
+   	{
+   		vi = 0;
+   	}
+
+    void buffer()
+    {
+        if(VBO == 0) glGenBuffers(1, &VBO);
+
+        if(vi != 0)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+        } 
+        else
+        {
+            if(vertex_number > 0) 
+            {
+                glBindBuffer(GL_ARRAY_BUFFER, VBO);
+                glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
+            	glBindBuffer(GL_ARRAY_BUFFER, 0);
+            }
+        }
+
+        vertex_number = vlist_index;
+        vlist_index = 0;
+    }
+
+    void draw()
+    {
+	    glColor3ub(255,255,255);
+
+	    glEnable(GL_TEXTURE_2D);
+	    glBindTexture( GL_TEXTURE_2D, texture );
+
+	    glBindBuffer(GL_ARRAY_BUFFER VBO);
+	    
+	    glUseProgramObjectARB(shader.shader);
+
+	    glEnableClientState(GL_VERTEX_ARRAY);
+	    glEnableVertexAttribArray(TexCoord);
+
+	    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
+	    glVertexAttribPointer(TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
+
+	    glDrawArrays(GL_QUADS,0, vi);
+
+	    glDisableClientState(GL_VERTEX_ARRAY);
+	    glDisableVertexAttribArray(TexCoord);
+
+	    glUseProgramObjectARB(0);
+    }
+
+
 };
 
-ControlNodeVertexList cnvl; //control node vertex list
 
 
 //int cpi; //control point index

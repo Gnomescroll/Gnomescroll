@@ -19,6 +19,15 @@ class SHADER
     unsigned int vert_shader;
 
     bool DEBUG1;
+    
+    char* name; //shader name
+
+    int attribute_array[16]; //atribute list
+    int attribute_index;
+
+    int uniform_array[16]; //uniform list
+    int uniform_index;
+
     SHADER()
     {
         shader = 0;
@@ -26,6 +35,10 @@ class SHADER
         vert_shader = 0;
         
         DEBUG1 = true;
+        name = NULL;
+
+        attribute_index = 0;
+        uniform_index = 0;
     }
 
     void set_debug(bool value)
@@ -33,8 +46,13 @@ class SHADER
         DEBUG1 = value;
     }
 
-    void load_shader(const char* name, const char* vertex_shader_file, const char* fragment_shader_file)
+    void load_shader(const char* _name, const char* vertex_shader_file, const char* fragment_shader_file)
     {
+        //set shader name
+        GS_ASSERT(name == NULL);
+        name = new char[strlen(_name)];
+        name = strcpy(name, _name);
+
         char *vs, *fs;
 
         printf("Loading shader: %s\n", name);
