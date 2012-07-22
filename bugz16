@@ -805,6 +805,25 @@ DONE
 == BUILD 25 ==  Jul 21 2012
 ==============
 
+change gas decay to 5 minutes
+
+color agent name correctly when health is 00
+color chat input buffer by agent color
+System message "Set RGB to"
+fix chat color parsing
+
+improve screenshot filenames
+
+fix toolbelt item durability/stack complete consumption bug
+
+energy tanks automatically add to energy tanks container
+
+fix MALLOX
+
+better enet packet size/etc handling -- dont allocate empty packets
+
+fix frustum culling of item particles
+
 ----------------------
 
 == BUILD ==
@@ -879,6 +898,8 @@ option to hide name
 maintain a NetClient buffer per stage of ready-ness
 broadcast only to clients who are are in fully ready
 
+***Autoupdater***
+
 == MECHANISMS ==
 Spawner/Control Points
     -- User builds them like the old spawners
@@ -910,26 +931,7 @@ Q: Should control points be another block type, or should it be a model?
 A: we can make it 1x1 but treat it as an object/model. it will render at its location
     as a block, it will be set to invisible so no texture is rendered.
     Solid must also be false, so hitscan can pass through.
+
+Spawner / Control Node / Energy Core
  
 ==BUGZ==
-frustum check on item particles is too aggresive
-
-color chat input buffer by agent color
-
-x10 methane ice decay
-
-color name health RED RED RED for 00 health
-
-rgb 200 200 50 does not work
-    replace ' ' with '\0', read tokens.
-    check isdigit(), might need to use '0' <= x <= '9' 
-
-System message "Set RGB to"
-
-Mining laser sound does not turn off when it gets used up 
-
-screenshot names rolling over
-
-crash when starting old client -- should error handle correctly!!!
-
-try using standing character model with a smaller voxel size
