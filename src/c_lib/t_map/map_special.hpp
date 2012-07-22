@@ -20,17 +20,21 @@ class CONTROL_NODE_LIST
 	int cpm; //control point max
 	class control_node* cpa; //control point array;
 
+	bool needs_update; //for drawing
+
 	CONTROL_NODE_LIST()
 	{
 		cpi = 0;
 		cpm = 8;
 		cpa = (control_node*) malloc(8*sizeof(class control_node));
+		needs_update = true;
 	}
 
 	~CONTROL_NODE_LIST() {}
 
 	void add_control_node(int x, int y, int z)
 	{
+		needs_update = true;
 
 		cpa[cpi].x = x;
 		cpa[cpi].y = y;
@@ -54,6 +58,8 @@ class CONTROL_NODE_LIST
 
 	void remove_control_node(int x, int y, int z)
 	{
+		needs_update = true;
+
 		for(int i=0; i<cpi; i++)
 		{
 			if(x==cpa[i].x && y==cpa[i].y && z==cpa[i].z)
@@ -147,10 +153,6 @@ void control_node_render_teardown()
 	free(cnrl);
 }
 
-//int cpi; //control point index
-//int cpm; //control point max
-//class control_node* cpa; //control point array;
-
 void _insert_control_node_render_element(short x, short y, short z, unsigned char face)
 {
 	struct CONTROL_NODE_RENDER cnr;
@@ -171,19 +173,27 @@ void _insert_control_node_render_element(short x, short y, short z, unsigned cha
 
 }
 
+//int cpi; //control point index
+//int cpm; //control point max
+//class control_node* cpa; //control point array;
+
 void control_node_render_update()
 {
-	const int size = 4;
+	if(cnl->needs_update == false) return;
+	cnl->needs_update = false;
+	cnrli = 0; //reset index
+
+	const int size = 4;	//size of control grid to left or right of block
 
 	for(int _i=0; _i<cnl->cpi; _i++)
 	{
 		//top
 
-		int _x = cnl->cpi[_i].x;
-		int _y = cnl->cpi[_i].y;
-		int _z = cnl->cpi[_i].z;
-
-		//top
+		int _x = cnl->cpa[_i].x;
+		int _y = cnl->cpa[_i].y;
+		int _z = cnl->cpa[_i].z;
+/*
+		//left 
 		for(int i=-size; i<size; i++)
 		for(int j=-size; j<size; j++)
 		{
@@ -191,11 +201,44 @@ void control_node_render_update()
 			int y = _y + j;
 			int z = _z + size;
 
-			if(!isSolid(x,y,z) && isSolid(x,y,z-1) )
+			if(!isSolid(x,y,z) && isSolid(x,y,z+1) )
 			{
 
 			}
 		}
+*/
+		//west
+		for(int i=-size; i<size; i++)
+		for(int j=-size; j<size; j++)
+		{
+			int x = _x - size;
+			int y = _y + i;
+			int z = _z + j;
+
+			if(!isSolid(x,y,z) && isSolid(x,y,z-1) )
+			{
+				int face = 0;	//orientation
+				_insert_control_node_render_element(x,y,z, face);
+
+				printf("CN: %i %i %i \n", x,y,z);
+			}
+		}
+
+		//top
+/*
+		for(int i=-size; i<size; i++)
+		for(int j=-size; j<size; j++)
+		{
+			int x = _x + i;
+			int y = _y + j;
+			int z = _z + size;
+
+			if(!isSolid(x,y,z) && isSolid(x,y,z+1) )
+			{
+
+			}
+		}
+*/
 		//bottom
 	/*
 		for(int i=-size; i<size; i++)
@@ -215,8 +258,12 @@ void control_node_render_draw()
 
 	glBegin(GL_QUADS) ;
 
-	for(int i=0; i<cnri; i++)
+	for(int i=0; i<cnrli; i++)
 	{
+		int x = cnrli[i].x;
+		int y = cnrli[i].y;
+		int z = cnrli[i].z;
+		int size = cnrli[i].side;
 		//glVertex3f(rx+cx, ry+cy, depth);
 
 	}
