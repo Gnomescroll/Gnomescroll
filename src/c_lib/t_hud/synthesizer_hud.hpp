@@ -15,11 +15,11 @@ class AgentSynthesizerUI : public UIElement
 
     static const int cell_size = 37;    // pixel dimension
 
-    int shopping_xdim;
-    int shopping_ydim;
-
     int xdim;
     int ydim;
+
+    int shopping_xdim;
+    int shopping_ydim;
 
     // size of texture/render area
     float render_width;
