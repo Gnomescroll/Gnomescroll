@@ -397,15 +397,20 @@ void ControlNodeRenderer::draw_intermediate()
     	0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
 	};
 
+
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+
+
+	//glDepthMask(GL_FALSE);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
 	glColor4ub(127,0,0,128);
 
-	glEnable(GL_BLEND);
-	glDepthMask(GL_FALSE);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	glBegin(GL_QUADS);
 	for(int i=0; i<cnri; i++)
@@ -446,7 +451,7 @@ void ControlNodeRenderer::draw_intermediate()
 
 	glEnd();
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+	//glDepthMask(GL_TRUE);
 
 	glDisable(GL_TEXTURE_2D);
 

@@ -203,9 +203,6 @@ int run()
         else
             t_map::draw_map();
 
-        t_map::control_node_render_update();    //move this somewhere later
-        t_map::control_node_render_draw();      //draw control node perimeter
-        
         poll_mouse();
 
 
@@ -266,6 +263,9 @@ int run()
 
         glDepthMask(GL_FALSE);
 
+        t_map::control_node_render_update();    //move this somewhere later
+        t_map::control_node_render_draw();      //draw control node perimeter
+        
         Skybox::draw();
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
