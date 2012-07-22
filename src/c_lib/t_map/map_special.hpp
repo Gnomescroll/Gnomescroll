@@ -135,22 +135,22 @@ struct CONTROL_NODE_RENDER
 	unsigned char r,g,b;	//color
 };
 
-struct CONTROL_NODE_RENDER* cnrl; // control_node_render_list array
-int cnrli = 0; // index
-int cnrlm = 32; // max
+struct CONTROL_NODE_RENDER* cnra; // control_node_render_list array
+int cnri = 0; // index
+int cnrm = 32; // max
 
 class CONTROL_NODE_LIST* cnl; //control node list
 
 void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
 {
-	cnrl = (struct CONTROL_NODE_RENDER*) malloc(cnrlm*sizeof(struct CONTROL_NODE_RENDER));
+	cnra = (struct CONTROL_NODE_RENDER*) malloc(cnrm*sizeof(struct CONTROL_NODE_RENDER));
 
 	cnl = _cnl; //
 }
 
 void control_node_render_teardown()
 {
-	free(cnrl);
+	free(cnra);
 }
 
 void _insert_control_node_render_element(short x, short y, short z, unsigned char face)
@@ -161,13 +161,13 @@ void _insert_control_node_render_element(short x, short y, short z, unsigned cha
 	cnr.z = z;
 	cnr.face = face;
 
-	cnrl[cnrli] = cnr; //insert
-	cnrli++;
+	cnra[cnri] = cnr; //insert
+	cnri++;
 
-	if(cnrli == cnrlm)
+	if(cnri == cnrm)
 	{
-		cnrlm *= 2;
-		cnrl = (struct CONTROL_NODE_RENDER*) realloc(cnrl, cnrlm*sizeof(struct CONTROL_NODE_RENDER));
+		cnrm *= 2;
+		cnra = (struct CONTROL_NODE_RENDER*) realloc(cnra, cnrm*sizeof(struct CONTROL_NODE_RENDER));
 	}
 
 
@@ -181,7 +181,7 @@ void control_node_render_update()
 {
 	if(cnl->needs_update == false) return;
 	cnl->needs_update = false;
-	cnrli = 0; //reset index
+	cnri = 0; //reset index
 
 	const int size = 4;	//size of control grid to left or right of block
 
@@ -258,12 +258,12 @@ void control_node_render_draw()
 
 	glBegin(GL_QUADS) ;
 
-	for(int i=0; i<cnrli; i++)
+	for(int i=0; i<cnri; i++)
 	{
-		float x = (float) cnrli[i].x;
-		float y = (float) cnrli[i].y;
-		float z = (float) cnrli[i].z;
-		int size = cnrli[i].side;
+		float x = (float) cnra[i].x;
+		float y = (float) cnra[i].y;
+		float z = (float) cnra[i].z;
+		int size = cnra[i].side;
 		
 		//west
 		x -= 0.66;
