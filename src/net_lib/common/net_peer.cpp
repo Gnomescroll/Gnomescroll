@@ -50,6 +50,7 @@ void NetPeer::push_python_message(class Net_message* nm)
 
 void NetPeer::flush_map_messages()
 {
+    if (enet_peer == NULL) return;
     if(map_message_buffer_index == 0) return;
     //printf("Flushing %i map bytes \n", map_message_buffer_index);
     ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
@@ -74,7 +75,8 @@ void NetPeer::flush_to_net()
 {
     if(this->connected == 0) return;
     if(reliable_message_manager.pending_bytes_out == 0) return;
-
+    if (enet_peer == NULL) return;
+    
     if(reliable_message_manager.pending_messages != 0) 
     {
         ENetPacket* reliable_p = enet_packet_create(NULL, reliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
