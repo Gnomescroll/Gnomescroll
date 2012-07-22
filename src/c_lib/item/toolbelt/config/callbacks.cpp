@@ -116,9 +116,12 @@ void decrement_durability(int agent_id, ItemID item_id, int item_type)
     int durability = Item::get_item_durability(item_id);
     if (durability == NULL_DURABILITY) return;
     GS_ASSERT(durability > 0);
-    int remaining_durability = Item::consume_durability(item_id);   // will destroy item if consumed completely
+    int remaining_durability = Item::consume_durability(item_id, 1, false);
     if (remaining_durability <= 0)
+    {
         force_remove_selected_item(agent_id);
+        Item::destroy_item(item_id);
+    }
     else if (durability != remaining_durability)
         Item::send_item_state(item_id);
 }
@@ -127,9 +130,12 @@ void decrement_stack(int agent_id, ItemID item_id, int item_type)
 {
     int stack_size = Item::get_stack_size(item_id);
     GS_ASSERT(stack_size > 0);
-    int remaining_stack_size = Item::consume_stack_item(item_id);
+    int remaining_stack_size = Item::consume_stack_item(item_id, 1, false);
     if (remaining_stack_size <= 0)
+    {
         force_remove_selected_item(agent_id);
+        Item::destroy_item(item_id);
+    }
     else if (stack_size != remaining_stack_size)
         Item::send_item_state(item_id);
 }

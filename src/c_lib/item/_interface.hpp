@@ -44,12 +44,14 @@ class Item* create_item(int item_type);
 class Item* create_item(const char* item_name);
 
 // returns remaining stack size
-int consume_stack_item(ItemID item_id);
-int consume_stack_item(ItemID item_id, int amount);
+int consume_stack_item(ItemID item_id); // automatically destroys consumed item
+int consume_stack_item(ItemID item_id, int amount); // automatically destroys consumed item
+int consume_stack_item(ItemID item_id, int amount, bool auto_destroy);
 
 // returns remaining durability
-int consume_durability(ItemID item_id, int amount);
-int consume_durability(ItemID item_id);
+int consume_durability(ItemID item_id); // automatically destroys consumed item
+int consume_durability(ItemID item_id, int amount); // automatically destroys consumed item
+int consume_durability(ItemID item_id, int amount, bool auto_destroy);
 
 void agent_quit(int agent_id);
 

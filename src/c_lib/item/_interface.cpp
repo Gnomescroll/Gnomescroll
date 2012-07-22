@@ -255,22 +255,13 @@ Item* create_item(const char* item_name)
     return create_item(item_type);
 }
 
-// will destroy item if fully consumed
-// returns remaining stack size
-int consume_stack_item(ItemID item_id)
-{
-    return consume_stack_item(item_id, 1);
-}
-
-// will destroy item if fully consumed
-// returns remaining stack size
-int consume_stack_item(ItemID item_id, int amount)
+int consume_stack_item(ItemID item_id, int amount, bool auto_destroy)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return 0;
     int stack_size = get_stack_size(item_id);
     GS_ASSERT(stack_size >= amount);
-    if (stack_size <= amount)
+    if (auto_destroy && stack_size <= amount)
     {
         destroy_item(item_id);
         return 0;
@@ -279,32 +270,59 @@ int consume_stack_item(ItemID item_id, int amount)
     GS_ASSERT(item != NULL);
     if (item == NULL) return 0;
     item->stack_size -= amount;
-    GS_ASSERT(item->stack_size > 0);
+    GS_ASSERT(item->stack_size >= 0);
     if (item->stack_size < 0) item->stack_size = 0;
     return item->stack_size;
 }
 
 // will destroy item if fully consumed
-// return remaining durability
-int consume_durability(ItemID item_id, int amount)
+// returns remaining stack size
+int consume_stack_item(ItemID item_id)
 {
+    return consume_stack_item(item_id, 1, true);
+}
+
+// will destroy item if fully consumed
+// returns remaining stack size
+int consume_stack_item(ItemID item_id, int amount)
+{
+    return consume_stack_item(item_id, amount, true);
+}
+
+// will destroy item if fully consumed
+// return remaining durability
+int consume_durability(ItemID item_id, int amount, bool auto_destroy)
+{
+    GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return 0;
-    Item* item = get_item(item_id);
-    if (item == NULL) return NULL_DURABILITY;
-    GS_ASSERT(item->durability > 0);
-    if (item->durability == NULL_DURABILITY) return NULL_DURABILITY;
-    item->durability -= amount;
-    if (item->durability <= 0)
+    int durability = get_item_durability(item_id);
+    GS_ASSERT(durability >= amount);
+    if (auto_destroy && durability <= amount)
     {
-        destroy_item(item->id);
+        destroy_item(item_id);
         return 0;
     }
+    Item* item = get_item(item_id);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return 0;
+    item->durability -= amount;
+    GS_ASSERT(item->durability >= 0);
+    if (item->durability < 0) item->durability = 0;
     return item->durability;
 }
 
+// will destroy item if fully consumed
+// returns remaining durability
 int consume_durability(ItemID item_id)
 {
-    return consume_durability(item_id, 1);
+    return consume_durability(item_id, 1, true);
+}
+
+// will destroy item if fully consumed
+// returns remaining durability
+int consume_durability(ItemID item_id, int amount)
+{
+    return consume_durability(item_id, amount, true);
 }
 
 void agent_quit(int agent_id)
