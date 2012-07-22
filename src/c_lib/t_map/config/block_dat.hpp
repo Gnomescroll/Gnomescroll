@@ -75,14 +75,14 @@ void load_block_dat()
     iso_texture(t0,1,3);
     push_texture();
 
-    hud_def(1,2, t0,1,1);
+    hud_def(1,2, t0,1,3);
     set_max_dmg(5);
 
     cube_def(2, SolidBlock, "terminal_green");
     iso_texture(t0,1,4);
     push_texture();
 
-    hud_def(1,3, t0,1,2);
+    hud_def(1,3, t0,1,4);
     set_max_dmg(5);
 
     cube_def(3, SolidBlock, "battery");

@@ -105,6 +105,8 @@ void init_for_draw()
 {
     init_cache();
     init_shaders();
+
+    control_node_render_init();
 }
 #endif
     
@@ -116,6 +118,7 @@ void end_t_map()
     #if DC_CLIENT
     end_client_compressors();
     end_t_vbo();
+    control_node_render_teardown();
     #endif
 
     #if DC_SERVER

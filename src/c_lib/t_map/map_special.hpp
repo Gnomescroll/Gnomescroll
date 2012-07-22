@@ -120,4 +120,55 @@ class CONTROL_NODE_LIST
 
 };
 
+#if DC_CLIENT
+
+struct CONTROL_NODE_RENDER
+{
+	short x,y,z;
+	unsigned char face;	//block side and edge
+	unsigned char r,g,b;	//color
+};
+
+struct CONTROL_NODE_RENDER* cnrl; // control_node_render_list array
+int cnrli; = 0; // index
+int cnrlm = 32; // max
+
+class CONTROL_NODE_LIST* cnl; //control node list
+
+void control_node_render_init()
+{
+	cnrl = (struct CONTROL_NODE_RENDER*) malloc(cnrlm*sizeof(struct CONTROL_NODE_RENDER));
+
+	nrl = main_map->control_node_list;
 }
+
+void control_node_render_teardown()
+{
+	free(cnrl);
+}
+
+void control_node_render_update()
+{
+
+	//main_map->control_node_list;
+}
+
+void control_node_render_draw()
+{
+	glColor4ub(127,0,0,128);
+
+	glBegin(GL_QUADS) 
+
+	//for(int i=0; i<)
+
+	glEnd();
+
+
+	glColor4ub(256,256,256,256);
+}
+
+#endif
+
+
+}
+

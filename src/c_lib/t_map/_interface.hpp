@@ -15,6 +15,14 @@ void end_t_vbo();
 void draw_map();
 void draw_map_compatibility();
 void update_map();
+
+
+void control_node_render_init();
+void control_node_render_teardown();
+
+void control_node_render_update();
+void control_node_render_draw();
+
 #endif
 
 #if DC_SERVER
