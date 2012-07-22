@@ -14,11 +14,13 @@ void ItemParticle::draw()
 {
     if (!this->should_draw) return;
     
-    Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
-    if (point_fulstrum_test(position.x, position.y, position.z) == false) return;
-
     const float scale = 0.25f;
     const float h = 0.35f;
+
+    Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
+    if (sphere_fulstrum_test(position.x, position.y, position.z+h, scale*2) == false) return;
+    
+    //if (point_fulstrum_test(position.x, position.y, position.z) == false) return;
 
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,

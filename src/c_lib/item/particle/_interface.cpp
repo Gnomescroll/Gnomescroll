@@ -18,12 +18,14 @@ void init()
 
 void teardown()
 {
-    delete item_particle_list;
+    if (item_particle_list != NULL) delete item_particle_list;
 }
 
 void tick()
 {
     GS_ASSERT(item_particle_list != NULL);
+    if (item_particle_list == NULL) return;
+
     item_particle_list->tick();
 
     #if DC_SERVER

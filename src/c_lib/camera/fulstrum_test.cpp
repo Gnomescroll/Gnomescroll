@@ -109,16 +109,12 @@ bool point_fulstrum_test(float x, float y, float  z)
     x = quadrant_translate_f(fulstrum.c.x, x);
     y = quadrant_translate_f(fulstrum.c.y, y);
 
-    //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
-    //    return false;
-
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;
 
     float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
     if( dz < 0 || dz > CAMERA_VIEW_DISTANCE ) return false;
-    //if( dz < 0 || dz > fulstrum.zfar ) return false;
 
     float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
     if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
@@ -131,22 +127,9 @@ bool point_fulstrum_test(float x, float y, float  z)
 
 inline bool point_fulstrum_test2(float x, float y, float  z)
 {
-    // DOES NOT TRANSLATE POINT
-
-    //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
-    //    return false;
-
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;
-
-    //vec3_normalize(vec3_init(x,y,z))
-    //printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.r) );
-    //printf("dot 2= %f \n", vec3_dot( fulstrum.f, fulstrum.u) );
-    //printf("dot 3= %f \n", vec3_dot( fulstrum.u, fulstrum.r) );
-
-    // printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.f) );
-    //printf("forward: %f %f %f = %f \n", fulstrum.f.x, fulstrum.f.y, fulstrum.f.z );
 
     float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
     if( dz < 0 || dz > fulstrum.zfar ) return false;
@@ -162,22 +145,9 @@ inline bool point_fulstrum_test2(float x, float y, float  z)
 
 inline bool point_fulstrum_test_map(float x, float y, float  z)
 {
-    // DOES NOT TRANSLATE POINT
-
-    //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
-    //    return false;
-
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;
-
-    //vec3_normalize(vec3_init(x,y,z))
-    //printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.r) );
-    //printf("dot 2= %f \n", vec3_dot( fulstrum.f, fulstrum.u) );
-    //printf("dot 3= %f \n", vec3_dot( fulstrum.u, fulstrum.r) );
-
-    // printf("dot 1= %f \n", vec3_dot( fulstrum.f, fulstrum.f) );
-    //printf("forward: %f %f %f = %f \n", fulstrum.f.x, fulstrum.f.y, fulstrum.f.z );
 
     float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
     if( dz < 0 || dz > fulstrum.zfar ) return false;
@@ -193,12 +163,6 @@ inline bool point_fulstrum_test_map(float x, float y, float  z)
 
 bool xy_circle_fulstrum_test(float x, float y, float r)
 {
-    //x = quadrant_translate_f(fulstrum.c.x, x);
-    //y = quadrant_translate_f(fulstrum.c.y, y);
-
-    //float dz = x*fulstrum.f.x + y*fulstrum.f.y;
-    //if( dz + r < 0 || dz > fulstrum.zfar - r ) return false;
-
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
 
@@ -214,26 +178,12 @@ bool xy_circle_fulstrum_test(float x, float y, float r)
 
 bool xy_point_fulstrum_test(float x, float y)
 {
-    //x = quadrant_translate_f(fulstrum.c.x, x);
-    //y = quadrant_translate_f(fulstrum.c.y, y);
-
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
 
-    //if(x*x + y*y <= 16*16) return true;
-/*
-    float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
-    if( dz < 0 || dz > fulstrum.zfar ) return false;
-
-    float dx = (x*fulstrum.r.x + y*fulstrum.r.y);
-    if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
-*/
     float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
     float dx = x*fulstrum.r_2d.x + y*fulstrum.r_2d.y;
     if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
-
-    //float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
-    //if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
 
     return true;
 }
