@@ -2,6 +2,7 @@
 
 #include <item/toolbelt/common/types.hpp>
 #include <entity/object/main.hpp>
+#include <entity/objects/fabs/constants.hpp>
 
 namespace Toolbelt
 {
@@ -114,23 +115,37 @@ void place_spawner(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
     
-    printf ("Checking to place spawner...\n");
-    
     const int max_dist = 4.0f;
     const int z_low = 4;
     const int z_high = 3;
     int* b = ClientState::playerAgent_state.nearest_open_block(max_dist, z_low, z_high);
     if (b == NULL) return;
     
+    // must be placed on solid block
+    if (b[2] <= 0) return;  // can't place on nothing
+    if (!isSolid(b[0], b[1], b[2]-1)) return;
+    
+    // make sure will fit height
+    int h = (int)ceil(Objects::AGENT_SPAWNER_HEIGHT);
+    GS_ASSERT(h > 0);
+    if (h <= 0) h = 1;
+    for (int i=0; i<h; i++)
+        if (t_map::get(b[0], b[1], b[2] + i) != 0)
+            return;
+    
     // check against all known spawners
     if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
         return;
     
-    printf("OK. Placing spawner.\n");
-    
-    // make sure will fit height
     // send placement packet
-    // server will do the same checks
+    place_object_CtoS msg;
+    msg.type = OBJECT_AGENT_SPAWNER;
+    msg.x = b[0];
+    msg.y = b[1];
+    msg.z = b[2];
+    msg.send();
+    
+    printf("Placing spawner.\n");
 }
 
 #endif

@@ -195,7 +195,7 @@ static void register_item_group_callbacks()
     c.trigger = &consume_item;
     
     set_group(IG_AGENT_SPAWNER);
-    c.trigger = &decrement_stack;
+    //c.trigger = &decrement_stack;
     #endif
 
     apply_group_settings(active_group); // finalize

@@ -101,7 +101,7 @@ void ready_agent_spawner(Object* object)
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
-    Vec3 position = physics->get_position();
+    Vec3 position = vec3_add(physics->get_position(), vec3_init(0.5f, 0.5f, 0.0f));
     Vec3 angles = physics->get_angles();
     
     vox->ready(position, angles.x, angles.y);
@@ -160,7 +160,8 @@ void update_agent_spawner(Object* object)
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
-    vox->force_update(physics->get_position(), angles.x, angles.y, physics->changed);
+    Vec3 pos = vec3_add(physics->get_position(), vec3_init(0.5f, 0.5f, 0.0f));
+    vox->force_update(pos, angles.x, angles.y, physics->changed);
     physics->changed = false;    // reset changed state
 }
 

@@ -429,6 +429,8 @@ inline void object_took_damage_StoC::handle()
     b->set_scale(1.0f);
     b->set_ttl(245);
 }
+
+inline void place_object_CtoS::handle() {}
 #endif
 
 #if DC_SERVER
@@ -451,4 +453,24 @@ inline void object_choose_weapon_target_StoC::handle() {}
 inline void object_choose_destination_StoC::handle() {}
 inline void object_took_damage_StoC::handle() {}
 inline void object_state_health_StoC::handle() {}
+
+inline void place_object_CtoS::handle()
+{
+    // TODO -- make this configurable aspect of objects
+    // Make a component, with a fptr bound?
+    
+    GS_ASSERT(type != OBJECT_NONE);
+    if (type == OBJECT_NONE) return;
+    
+    if (type != OBJECT_AGENT_SPAWNER) return;   // TODO -- decide based on component
+    
+    Objects::Object* obj = Objects::create((ObjectType)type);
+    GS_ASSERT(obj != NULL);
+    if (obj == NULL) return;
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
+    Objects::ready(obj);
+}
 #endif
