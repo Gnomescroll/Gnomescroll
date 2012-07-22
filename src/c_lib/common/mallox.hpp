@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef __GNUC__
+#include <alloca.h>
 #define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));
 #define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));
 #endif
