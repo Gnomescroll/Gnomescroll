@@ -265,6 +265,9 @@ class ControlNodeShader
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
 		GLenum texture_format;
 		if (s->format->Rmask == 0x000000ff)
 			texture_format = GL_RGBA;
@@ -433,18 +436,23 @@ void ControlNodeRenderer::draw_intermediate()
         tx_max = ti*0.25f + 0.25f - txmargin;
         ty_max = tj*0.25f + 0.25f - txmargin;
 
+        tx_min = 0.0;
+        ty_min = 0.0;
+        tx_max = 0.25;
+        ty_max = 0.25;
+
 		int s = face;
 
-		glTexCoord2f(tx_min,ty_max);
+		glTexCoord2f(tx_min,ty_min);
 		glVertex3f(x+v_index[12*s+3*0+0], y+v_index[12*s+3*0+1], z+v_index[12*s+3*0+2]);
 
-        glTexCoord2f(tx_max,ty_max);
+        glTexCoord2f(tx_min,ty_max);
 		glVertex3f(x+v_index[12*s+3*1+0], y+v_index[12*s+3*1+1], z+v_index[12*s+3*1+2]);
 
-        glTexCoord2f(tx_max,ty_min );
+        glTexCoord2f(tx_max,ty_max );
 		glVertex3f(x+v_index[12*s+3*2+0], y+v_index[12*s+3*2+1], z+v_index[12*s+3*2+2]);
 
-        glTexCoord2f(tx_min,ty_min );
+        glTexCoord2f(tx_max,ty_min );
 		glVertex3f(x+v_index[12*s+3*3+0], y+v_index[12*s+3*3+1], z+v_index[12*s+3*3+2]);
 
 	}
