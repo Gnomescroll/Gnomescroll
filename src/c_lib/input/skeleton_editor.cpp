@@ -100,8 +100,6 @@ break;
 
 void raycast_to_part()
 {
-    printf("Raycasting to part\n");
-    
     // get camera vector
     Vec3 vec = current_camera->forward_vector();
     Vec3 p = current_camera->get_position();
