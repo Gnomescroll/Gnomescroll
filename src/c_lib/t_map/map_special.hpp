@@ -34,7 +34,7 @@ class CONTROL_NODE_LIST
 
 	void add_control_node(int x, int y, int z)
 	{
-		needs_update = true;
+		//needs_update = true;
 
 		cpa[cpi].x = x;
 		cpa[cpi].y = y;
@@ -58,7 +58,7 @@ class CONTROL_NODE_LIST
 
 	void remove_control_node(int x, int y, int z)
 	{
-		needs_update = true;
+		//needs_update = true;
 
 		for(int i=0; i<cpi; i++)
 		{
@@ -179,7 +179,10 @@ void _insert_control_node_render_element(short x, short y, short z, unsigned cha
 
 void control_node_render_update()
 {
-	if(cnl->needs_update == false) return;
+	//static int counter = 0; //refresh, deals with loading before terrain map
+	//counter ++ ;
+
+	if(cnl->needs_update == false && cnri != 0) return;
 	cnl->needs_update = false;
 	cnri = 0; //reset index
 
@@ -252,10 +255,31 @@ void control_node_render_update()
 	
 }
 
+/*
+static const float v_index[72] = 
+{
+    1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+    0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+    1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+    0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+    1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+    0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
+};
+*/
+
 void control_node_render_draw()
 {
+	static const float v_index[72] = 
+	{
+	    1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+	    0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+	    1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //west
+	    0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //east
+	    1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //north
+	    0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //south
+	};
 
-	glPointSize(4.0);
+	glPointSize(6.0);
 
 	glColor4ub(127,0,0,128);
 
@@ -269,18 +293,30 @@ void control_node_render_draw()
 		int face = cnra[i].face;
 		
 		//west
-		x -= 0.66;
+		//x -= 0.66;
+		//y += 0.33;
 
 		//clockwise
+
+
+		int s = 2;
+
+		glVertex3f(x+v_index[12*s+3*0+0], y+v_index[12*s+3*0+1], z+v_index[12*s+3*0+2]);
+		glVertex3f(x+v_index[12*s+3*1+0], y+v_index[12*s+3*1+1], z+v_index[12*s+3*1+2]);
+		glVertex3f(x+v_index[12*s+3*2+0], y+v_index[12*s+3*2+1], z+v_index[12*s+3*2+2]);
+		glVertex3f(x+v_index[12*s+3*3+0], y+v_index[12*s+3*3+1], z+v_index[12*s+3*3+2]);
+
+	/*
 		glVertex3f(x, y, z+1.0);
 		glVertex3f(x, y+1.0, z+1.0);
 		glVertex3f(x, y+1.0, z);
 		glVertex3f(x, y, z);
+	*/
 	}
 
 	glEnd();
 
-	glColor4ub(0,127,0,128);
+
 
 
 	glBegin(GL_POINTS);
@@ -292,7 +328,14 @@ void control_node_render_draw()
 		int face = cnra[i].face;
 		
 		z += 1.5;
+		glColor4ub(0,127,0,128);
 		glVertex3f(x, y, z);
+		glColor4ub(0,127,127,128);
+		glVertex3f(x+0.5, y, z);
+		glColor4ub(127,0,0,128);
+		glVertex3f(x, y+0.5, z);
+
+
 	}
 
 	glEnd();

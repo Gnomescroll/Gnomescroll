@@ -218,6 +218,7 @@ void control_node_create_StoC::handle()
 {
     printf("client adding control node at: %i %i %i \n", x,y,z);
     main_map->control_node_list.add_control_node(x,y,z);
+    main_map->control_node_list.needs_update = true;
 };
 
 //    uint16_t x,y,z;
@@ -225,6 +226,7 @@ void control_node_delete_StoC::handle()
 {
     printf("client removing control node at: %i %i %i \n", x,y,z);
     main_map->control_node_list.remove_control_node(x,y,z);
+    main_map->control_node_list.needs_update = true;
 };
 
 
