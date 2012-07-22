@@ -109,45 +109,6 @@ void trigger_local_hitscan_laser(ItemID item_id, int item_type)
     ClientState::playerAgent_state.action.hitscan_laser();
 }
 
-// IG_AGENT_SPAWNER
-
-void place_spawner(ItemID item_id, int item_type)
-{
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
-    
-    const int max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
-    int* b = ClientState::playerAgent_state.nearest_open_block(max_dist, z_low, z_high);
-    if (b == NULL) return;
-    
-    // must be placed on solid block
-    if (b[2] <= 0) return;  // can't place on nothing
-    if (!isSolid(b[0], b[1], b[2]-1)) return;
-    
-    // make sure will fit height
-    int h = (int)ceil(Objects::AGENT_SPAWNER_HEIGHT);
-    GS_ASSERT(h > 0);
-    if (h <= 0) h = 1;
-    for (int i=0; i<h; i++)
-        if (t_map::get(b[0], b[1], b[2] + i) != 0)
-            return;
-    
-    // check against all known spawners
-    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
-        return;
-    
-    // send placement packet
-    place_object_CtoS msg;
-    msg.type = OBJECT_AGENT_SPAWNER;
-    msg.x = b[0];
-    msg.y = b[1];
-    msg.z = b[2];
-    msg.send();
-    
-    printf("Placing spawner.\n");
-}
-
 #endif
 
 #if DC_SERVER
@@ -202,6 +163,51 @@ void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type)
     if (teammate_id == NO_AGENT) return;
     consume_item(teammate_id, item_id, item_type);
 }
+
+// IG_AGENT_SPAWNER
+
+void place_spawner(int agent_id, ItemID item_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
+    
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    
+    const int max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* b = a->nearest_open_block(max_dist, z_low, z_high);
+    if (b == NULL) return;
+    
+    // must be placed on solid block
+    if (b[2] <= 0) return;  // can't place on nothing
+    if (!isSolid(b[0], b[1], b[2]-1)) return;
+    
+    // make sure will fit height
+    int h = (int)ceil(Objects::AGENT_SPAWNER_HEIGHT);
+    GS_ASSERT(h > 0);
+    if (h <= 0) h = 1;
+    for (int i=0; i<h; i++)
+        if (t_map::get(b[0], b[1], b[2] + i) != 0)
+            return;
+    
+    // check against all known spawners
+    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
+        return;
+    
+    Objects::Object* obj = Objects::create(OBJECT_AGENT_SPAWNER);
+    GS_ASSERT(obj != NULL);
+    if (obj == NULL) return;
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL) physics->set_position(vec3_init(b[0], b[1], b[2]));
+    Objects::ready(obj);
+    
+    decrement_stack(agent_id, item_id, item_type);
+}
+
 
 #endif
 

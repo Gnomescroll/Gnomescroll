@@ -271,9 +271,6 @@ void RegisterMessages()
 	// coloring
 	colorme_CtoS::register_server_packet();
 	agent_color_StoC::register_client_packet();
-    
-    // CtoS object packets
-    place_object_CtoS::register_server_packet();
 }
 
 }

@@ -404,22 +404,3 @@ class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_
     }
     inline void handle();
 };
-
-/* CtoS */
-
-class place_object_CtoS: public FixedSizeReliableNetPacketToServer<place_object_CtoS>
-{
-    public:
-        uint8_t type;
-        float x,y,z;    // can be uint16_t x,y; uint8_t for some things
-        
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u8(&type, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
-    }
-    
-    inline void handle();
-};

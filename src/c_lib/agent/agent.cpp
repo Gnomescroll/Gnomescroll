@@ -955,6 +955,16 @@ bool Agent_state::near_base()
     return false;
 }
 
+int* Agent_state::nearest_open_block(const float max_dist, const int z_low, const int z_high)
+{
+    Vec3 p = this->get_camera_position();
+    Vec3 f = this->forward_vector();
+    int* b = _farthest_empty_block(
+        p.x, p.y, p.z,
+        f.x, f.y, f.z,
+        max_dist, z_low, z_high);
+    return b;
+}
 
 void force_update_agent_vox(Agent_state* a)
 {

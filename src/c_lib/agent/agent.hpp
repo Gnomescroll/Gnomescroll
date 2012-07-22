@@ -26,6 +26,8 @@ class AgentState {
         AgentState();
         
         Vec3 forward_vector();
+        
+        Vec3 get_position() { return vec3_init(x,y,z); }
 };
 
 
@@ -64,7 +66,6 @@ class Agent_state
 
         #if DC_SERVER
         void get_spawn_point(Vec3* spawn);
-        AgentState camera;    // agent's camera state, sent by client
         #endif
 
     public:    
@@ -80,6 +81,7 @@ class Agent_state
         //class Agent_weapons weapons;
 
         class Voxel_model* vox;
+        
         #if DC_CLIENT
         Agent_event event;
         bool initial_teleport;  // record first teleport from server
@@ -93,6 +95,7 @@ class Agent_state
         bool in_sight_of(Vec3 source, Vec3 *sink, float failure_rate);
 
         #if DC_SERVER
+        AgentState camera;    // agent's camera state, sent by client
         bool camera_ready;
         AgentState get_camera_state() { return this->camera; }
         Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.y, this->camera.z); }
@@ -111,6 +114,8 @@ class Agent_state
         #if DC_SERVER
         void spawn_state();
         #endif
+
+        int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
 
         Vec3 forward_vector() { return this->s.forward_vector(); }
 

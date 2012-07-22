@@ -133,6 +133,7 @@ static void register_click_and_hold()
     click_and_hold_group(IG_DEBUG, false);
     click_and_hold_group(IG_PLACER, false);
     click_and_hold_group(IG_CONSUMABLE, false);
+    click_and_hold_group(IG_AGENT_SPAWNER, false);
 
     // override per-type here
     //click_and_hold_type("example");
@@ -173,9 +174,6 @@ static void register_item_group_callbacks()
     set_group(IG_CONSUMABLE);
     // assist the client in predicting what the server will do
     c.local_beta_trigger = &local_trigger_dummy;
-    
-    set_group(IG_AGENT_SPAWNER);
-    c.local_trigger = &place_spawner;
     #endif
     
     #if DC_SERVER
@@ -195,7 +193,7 @@ static void register_item_group_callbacks()
     c.trigger = &consume_item;
     
     set_group(IG_AGENT_SPAWNER);
-    //c.trigger = &decrement_stack;
+    c.trigger = &place_spawner;
     #endif
 
     apply_group_settings(active_group); // finalize
