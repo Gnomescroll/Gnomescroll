@@ -56,10 +56,10 @@ void init_cameras()
     r = vec3_euler_rotation(r, current_camera->theta, current_camera->phi, 0.0f );
     u = vec3_euler_rotation(u, current_camera->theta, current_camera->phi, 0.0f );
 
-    printf("start: \n");
-    vec3_print(f);
-    vec3_print(r);
-    vec3_print(u);
+    //printf("start: \n");
+    //vec3_print(f);
+    //vec3_print(r);
+    //vec3_print(u);
 
     Vec3 p = current_camera->get_position();
     setup_fulstrum(

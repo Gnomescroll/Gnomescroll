@@ -344,7 +344,10 @@ class ControlNodeRenderer
 		free(cnra);
 	}
 
-	void update() {};
+	void update() 
+	{
+		control_node_render_update();
+	};
 
 	void _insert_control_node_render_element(short x, short y, short z, unsigned char face);
 
