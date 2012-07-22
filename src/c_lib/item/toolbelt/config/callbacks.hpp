@@ -24,6 +24,8 @@ void trigger_local_grenade_launcher(ItemID item_id, int item_type);
 void trigger_local_hitscan_laser(ItemID item_id, int item_type);;
 void fire_close_range_weapon(ItemID item_id, int item_type);
 
+void place_spawner(ItemID item_id, int item_type);
+
 #endif
 
 #if DC_SERVER

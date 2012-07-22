@@ -173,6 +173,9 @@ static void register_item_group_callbacks()
     set_group(IG_CONSUMABLE);
     // assist the client in predicting what the server will do
     c.local_beta_trigger = &local_trigger_dummy;
+    
+    set_group(IG_AGENT_SPAWNER);
+    c.local_trigger = &place_spawner;
     #endif
     
     #if DC_SERVER
@@ -190,6 +193,9 @@ static void register_item_group_callbacks()
     
     set_group(IG_CONSUMABLE);
     c.trigger = &consume_item;
+    
+    set_group(IG_AGENT_SPAWNER);
+    c.trigger = &decrement_stack;
     #endif
 
     apply_group_settings(active_group); // finalize

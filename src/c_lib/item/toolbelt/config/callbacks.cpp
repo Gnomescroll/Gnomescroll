@@ -1,6 +1,7 @@
 #include "callbacks.hpp"
 
 #include <item/toolbelt/common/types.hpp>
+#include <entity/object/main.hpp>
 
 namespace Toolbelt
 {
@@ -105,6 +106,31 @@ void trigger_local_hitscan_laser(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_HITSCAN_WEAPON);
     ClientState::playerAgent_state.action.hitscan_laser();
+}
+
+// IG_AGENT_SPAWNER
+
+void place_spawner(ItemID item_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
+    
+    printf ("Checking to place spawner...\n");
+    
+    const int max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* b = ClientState::playerAgent_state.nearest_open_block(max_dist, z_low, z_high);
+    if (b == NULL) return;
+    
+    // check against all known spawners
+    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
+        return;
+    
+    printf("OK. Placing spawner.\n");
+    
+    // make sure will fit height
+    // send placement packet
+    // server will do the same checks
 }
 
 #endif

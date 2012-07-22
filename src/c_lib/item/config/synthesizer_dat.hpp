@@ -34,7 +34,9 @@ void load_synthesizer()
 
     synthesizer_item_def("cryofreezer_1", 3);
     synthesizer_item_set(2,0);
-
+    
+    synthesizer_item_def("agent_spawner", 1);
+    synthesizer_item_set(4,0);
 }
 
 }	// Item

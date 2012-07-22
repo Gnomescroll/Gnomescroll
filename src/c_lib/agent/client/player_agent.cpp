@@ -463,3 +463,13 @@ int PlayerAgent_state::facing_container()
     
     return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
+
+int* PlayerAgent_state::nearest_open_block(const float max_dist, const int z_low, const int z_high)
+{
+    if (agent_camera == NULL) return NULL;
+    Vec3 f = agent_camera->forward_vector();
+    return _farthest_empty_block(
+        this->camera_state.x, this->camera_state.z, this->camera_state.z,
+        f.x, f.y, f.z,
+        max_dist, z_low, z_high);
+}
