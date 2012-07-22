@@ -143,14 +143,10 @@ class CONTROL_NODE_LIST* cnl; //control node list
 
 unsigned int control_node_texture;
 
-void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
+class SHADER* control_node_shader;
+
+void init_control_node_texture()
 {
-	cnra = (struct CONTROL_NODE_RENDER*) malloc(cnrm*sizeof(struct CONTROL_NODE_RENDER));
-
-	cnl = _cnl; //
-
-
-
 	SDL_Surface* s = create_surface_from_file("./media/sprites/territory_00.png");
 
 	glEnable(GL_TEXTURE_2D);
@@ -171,8 +167,40 @@ void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
 	
 	glDisable(GL_TEXTURE_2D);
+}
+
+//uniforms
+unsigned int control_node_CameraPosition;
+//attributes
+unsigned int control_node_Vertex;
+unsigned int control_node_TexCoord;
+unsigned int control_node_Brightness;
+
+void init_control_node_shader(class SHADER* shader)
+{
+    shader->set_debug(true);
+
+    shader->load_shader( "control_node_shader",
+        "./media/shaders/effect/control_node.vsh",
+        "./media/shaders/effect/control_node.fsh" );
+
+    control_node_CameraPosition = 	shader->get_uniform("CameraPosition");
+    
+    control_node_Vertex =			shader->get_attribute("InVertex");
+    control_node_TexCoord = 		shader->get_attribute("InTexCoord");
+    control_node_Brightness	=		shader->get_attribute("InBrightness");
+}
 
 
+void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
+{
+	cnra = (struct CONTROL_NODE_RENDER*) malloc(cnrm*sizeof(struct CONTROL_NODE_RENDER));
+	cnl = _cnl; //
+
+	init_control_node_texture();
+
+	control_node_shader = new SHADER;
+	init_control_node_shader(control_node_shader);
 }
 
 void control_node_render_teardown()
@@ -230,26 +258,9 @@ if(cnl->needs_update == false && cnri != 0 ) return;
 
 	for(int _i=0; _i<cnl->cpi; _i++)
 	{
-		//top
-
 		int _x = cnl->cpa[_i].x;
 		int _y = cnl->cpa[_i].y;
 		int _z = cnl->cpa[_i].z;
-/*
-		//left 
-		for(int i=-size; i<size; i++)
-		for(int j=-size; j<size; j++)
-		{
-			int x = _x + i;
-			int y = _y + j;
-			int z = _z + size;
-
-			if(!isSolid(x,y,z) && isSolid(x,y,z+1) )
-			{
-
-			}
-		}
-*/
 
 		//top
 		for(int i=-size; i<=size; i++)
@@ -263,8 +274,6 @@ if(cnl->needs_update == false && cnri != 0 ) return;
 			{
 				int face = 0;	//orientation
 				_insert_control_node_render_element(x,y,z, face);
-
-				//printf("CN: %i %i %i \n", x,y,z);
 			}
 		}
 
@@ -280,8 +289,6 @@ if(cnl->needs_update == false && cnri != 0 ) return;
 			{
 				int face = 1;	//orientation
 				_insert_control_node_render_element(x,y,z, face);
-
-				//printf("CN: %i %i %i \n", x,y,z);
 			}
 		}
 
@@ -297,8 +304,6 @@ if(cnl->needs_update == false && cnri != 0 ) return;
 			{
 				int face = 2;	//orientation
 				_insert_control_node_render_element(x,y,z, face);
-
-				//printf("CN: %i %i %i \n", x,y,z);
 			}
 		}
 
@@ -314,8 +319,6 @@ if(cnl->needs_update == false && cnri != 0 ) return;
 			{
 				int face = 3;	//orientation
 				_insert_control_node_render_element(x,y,z, face);
-
-				//printf("CN: %i %i %i \n", x,y,z);
 			}
 		}
 
@@ -331,8 +334,6 @@ if(cnl->needs_update == false && cnri != 0 ) return;
 			{
 				int face = 4;	//orientation
 				_insert_control_node_render_element(x,y,z, face);
-
-				//printf("CN: %i %i %i \n", x,y,z);
 			}
 		}
 
@@ -348,35 +349,9 @@ if(cnl->needs_update == false && cnri != 0 ) return;
 			{
 				int face = 5;	//orientation
 				_insert_control_node_render_element(x,y,z, face);
-
-				//printf("CN: %i %i %i \n", x,y,z);
 			}
 		}
 
-
-/*
-		for(int i=-size; i<size; i++)
-		for(int j=-size; j<size; j++)
-		{
-			int x = _x + i;
-			int y = _y + j;
-			int z = _z + size;
-
-			if(!isSolid(x,y,z) && isSolid(x,y,z+1) )
-			{
-
-			}
-		}
-*/
-		//bottom
-	/*
-		for(int i=-size; i<size; i++)
-		for(int j=-size; j<size; j++)
-		{
-
-
-		}
-	*/
 	}
 	
 }
