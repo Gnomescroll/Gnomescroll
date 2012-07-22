@@ -254,16 +254,19 @@ void control_node_render_update()
 
 void control_node_render_draw()
 {
+
+	glPointSize(4.0);
+
 	glColor4ub(127,0,0,128);
 
-	glBegin(GL_QUADS) ;
-
+	glBegin(GL_QUADS);
+	//glBegin(GL_POINTS);
 	for(int i=0; i<cnri; i++)
 	{
 		float x = (float) cnra[i].x;
 		float y = (float) cnra[i].y;
 		float z = (float) cnra[i].z;
-		int size = cnra[i].side;
+		int face = cnra[i].face;
 		
 		//west
 		x -= 0.66;
@@ -277,8 +280,25 @@ void control_node_render_draw()
 
 	glEnd();
 
+	glColor4ub(0,127,0,128);
+
+
+	glBegin(GL_POINTS);
+	for(int i=0; i<cnri; i++)
+	{
+		float x = (float) cnra[i].x;
+		float y = (float) cnra[i].y;
+		float z = (float) cnra[i].z;
+		int face = cnra[i].face;
+		
+		z += 1.5;
+		glVertex3f(x, y, z);
+	}
+
+	glEnd();
 
 	glColor4ub(255,255,255,255);
+	glPointSize(1.0);
 }
 
 #endif
