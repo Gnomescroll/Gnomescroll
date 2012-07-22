@@ -37,7 +37,7 @@ void populate_ore()
 
 	populate_ore_veins(2*2048, "graphite");
 
-	//populate_ore_veins(2*2048, "copper_ore");
+	populate_ore_veins(2*4096, "copper_ore");
 	populate_ore_veins(2*2048, "gallium_ore");
 	populate_ore_veins(2*1024, "iridium_ore");
 }

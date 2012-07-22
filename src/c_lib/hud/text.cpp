@@ -180,7 +180,14 @@ void Text::draw_character_rotated(float theta)
     sh = glyph.h * this->scale;
 
     glColor4ub(color.r,color.g,color.b,color.a);
+    //blit_character_rotated(glyph.x, glyph.x+glyph.tw, glyph.y, glyph.y+glyph.th, sx,sx+sw,sy,sy+sh, this->depth, theta);
     draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
+}
+
+void Text::draw_character_rotated_centered(float theta)
+{   // draws as single character. glyph alignment offset not used
+    this->center();
+    this->draw_character_rotated(theta);
 }
 
 char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)

@@ -448,7 +448,12 @@ inline void client_disconnected_StoC::handle()
 }
 
 inline void set_spawner_StoC::handle()
-{    
+{
+    // TODO -- remove, once base is replaced with actual spawner
+    int spawner_id = this->spawner_id;
+    if (this->spawner_id == (uint16_t)-1)
+        spawner_id = BASE_SPAWN_ID;
+    
     using ClientState::playerAgent_state;
     if (playerAgent_state.you == NULL) return;
 
@@ -456,7 +461,6 @@ inline void set_spawner_StoC::handle()
     if (playerAgent_state.you->status.spawner != BASE_SPAWN_ID)
     {
         Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, playerAgent_state.you->status.spawner);
-        GS_ASSERT(obj != NULL);
         if (obj != NULL)
         {
             using Components::VoxelModelComponent;
@@ -468,15 +472,18 @@ inline void set_spawner_StoC::handle()
     }
 
     // color new spawner
-    Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, this->spawner_id);
-    GS_ASSERT(obj != NULL);
-    if (obj != NULL)
+    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check
     {
-        using Components::VoxelModelComponent;
-        VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-        GS_ASSERT(vox != NULL);
-        if (vox != NULL && vox->vox != NULL)
-            vox->vox->fill_color(Objects::ACTIVATED_SPAWNER_COLOR);
+        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, spawner_id);
+        GS_ASSERT(obj != NULL);
+        if (obj != NULL)
+        {
+            using Components::VoxelModelComponent;
+            VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            GS_ASSERT(vox != NULL);
+            if (vox != NULL && vox->vox != NULL)
+                vox->vox->fill_color(Objects::ACTIVATED_SPAWNER_COLOR);
+        }
     }
 
     playerAgent_state.you->event.set_spawner(spawner_id);

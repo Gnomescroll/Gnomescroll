@@ -448,6 +448,7 @@ void PlayerAgent_state::update_model()
     }
 }
 
+// TODO -- remove
 int PlayerAgent_state::facing_container()
 {
     if (this->you == NULL) return NULL_CONTAINER;

@@ -207,7 +207,7 @@ void place_spawner(int agent_id, ItemID item_id, int item_type)
     
     decrement_stack(agent_id, item_id, item_type);
     
-    // first spawner player has created; select it automatically
+    // select spawner automatically if spawn pt is base
     if (a->status.spawner == BASE_SPAWN_ID)
         a->status.set_spawner(obj->id);
 }

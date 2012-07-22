@@ -272,8 +272,8 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
             }
-            if (block_pos[2] > 0 && block_pos[2] < map_dim.z)
-            {   // dont hit the floor
+            if (block_pos[2] >= 0 && block_pos[2] < map_dim.z)
+            {
                 block_msg.x = block_pos[0];
                 block_msg.y = block_pos[1];
                 block_msg.z = block_pos[2];

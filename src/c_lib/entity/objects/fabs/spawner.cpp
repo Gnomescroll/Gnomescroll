@@ -18,7 +18,7 @@ void load_agent_spawner_data()
     ObjectType type = OBJECT_AGENT_SPAWNER;
 
     #if DC_SERVER
-    int n_components = 6;
+    int n_components = 7;
     #endif
     #if DC_CLIENT
     int n_components = 6;
@@ -34,6 +34,7 @@ void load_agent_spawner_data()
     
     #if DC_SERVER
     object_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+    object_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
 
     #if DC_CLIENT
@@ -65,6 +66,12 @@ static void set_agent_spawner_properties(Object* object)
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
+
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    item_drop->set_max_drop_types(1);
+    item_drop->set_max_drop_amounts("agent_spawner", 1);
+    item_drop->add_drop("agent_spawner", 1, 1.0f);
     #endif
 
     #if DC_CLIENT
@@ -74,6 +81,7 @@ static void set_agent_spawner_properties(Object* object)
     anim->count_max = AGENT_SPAWNER_ANIMATION_COUNT_MAX;
     anim->size = AGENT_SPAWNER_ANIMATION_SIZE;
     anim->force = AGENT_SPAWNER_ANIMATION_FORCE;
+    anim->color = AGENT_SPAWNER_ANIMATION_COLOR;
     #endif
 
     object->tick = &tick_agent_spawner;
@@ -115,10 +123,22 @@ void ready_agent_spawner(Object* object)
 void die_agent_spawner(Object* object)
 {    
     #if DC_SERVER
+    using Components::ItemDropComponent;
+    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    GS_ASSERT(item_drop != NULL);
+    item_drop->drop_item();
+
     using Components::OwnerComponent;
     object->broadcastDeath();    
     OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
     owner->revoke();
+    
+    // remove self from any agents using us
+    using ServerState::agent_list;
+    for (int i=0; i<agent_list->n_max; i++)
+        if (agent_list->a[i] != NULL)
+            if (agent_list->a[i]->status.spawner == object->id)
+                agent_list->a[i]->status.set_spawner(BASE_SPAWN_ID);
     #endif
 
     #if DC_CLIENT

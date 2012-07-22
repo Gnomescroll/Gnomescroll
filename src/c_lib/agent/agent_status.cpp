@@ -52,7 +52,7 @@ Agent_status::~Agent_status()
 
 void Agent_status::set_spawner(int pt)
 {
-    GS_ASSERT(pt >= 0 && pt <= 0xffff);
+    GS_ASSERT(pt == BASE_SPAWN_ID || pt >= 0 && pt <= 0xffff);
     this->spawner = pt;
     #if DC_SERVER
     set_spawner_StoC msg;
