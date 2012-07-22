@@ -260,12 +260,19 @@ void control_node_render_draw()
 
 	for(int i=0; i<cnrli; i++)
 	{
-		int x = cnrli[i].x;
-		int y = cnrli[i].y;
-		int z = cnrli[i].z;
+		float x = (float) cnrli[i].x;
+		float y = (float) cnrli[i].y;
+		float z = (float) cnrli[i].z;
 		int size = cnrli[i].side;
-		//glVertex3f(rx+cx, ry+cy, depth);
+		
+		//west
+		x -= 0.66;
 
+		//clockwise
+		glVertex3f(x, y, z+1.0);
+		glVertex3f(x, y+1.0, z+1.0);
+		glVertex3f(x, y+1.0, z);
+		glVertex3f(x, y, z);
 	}
 
 	glEnd();
