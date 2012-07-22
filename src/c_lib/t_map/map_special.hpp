@@ -335,22 +335,29 @@ class ControlNodeRenderer
 
 	    glColor3ub(255,255,255);
 
+
+	    glBindBuffer(GL_ARRAY_BUFFER, renderer.VBO);
+
 	    glEnable(GL_TEXTURE_2D);
 	    glBindTexture( GL_TEXTURE_2D, renderer.texture1 );
 
 	    glEnableClientState(GL_VERTEX_ARRAY);
 
-	    renderer.shader.enable();
+	    renderer.shader.enable_attributes();
 
 	    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
 	    glVertexAttribPointer(renderer.TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
+
+	    //glUniform4f(InTranslation, (GLfloat*) p.f );
+	    //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
 
 	    glDrawArrays(GL_QUADS, 0, vertex_list.vi);
 
 	    glDisableClientState(GL_VERTEX_ARRAY);
 
-	    renderer.shader.disable();
+	    renderer.shader.disable_attributes();
 
+	   	glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
 

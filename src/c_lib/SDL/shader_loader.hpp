@@ -160,5 +160,34 @@ class SHADER
         uniform_array[uniform_index] = uniform;
         uniform_index++;
         return uniform;
-    }   
+    }
+
+
+    void enable_attributes()  
+    {
+        GS_ASSERT(shader_valid == true);
+    
+        glUseProgramObjectARB(this->shader);
+
+        for(int i=0; i<attribute_index; i++)
+        {
+            glEnableVertexAttribArray(attribute_array[i]);
+        }
+
+
+    }
+
+    void disable_attributes()
+    {
+        GS_ASSERT(shader_valid == true);
+
+        for(int i=0; i<attribute_index; i++)
+        {
+            glDisableVertexAttribArray(attribute_array[i]);
+        }
+
+        glUseProgramObjectARB(0);
+
+    }
+
 };
