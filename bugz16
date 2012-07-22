@@ -824,6 +824,8 @@ better enet packet size/etc handling -- dont allocate empty packets
 
 fix frustum culling of item particles
 
+add spawners
+
 ----------------------
 
 == BUILD ==
@@ -899,6 +901,8 @@ maintain a NetClient buffer per stage of ready-ness
 broadcast only to clients who are are in fully ready
 
 ***Autoupdater***
+
+draw outline of object to be placed
 
 == MECHANISMS ==
 Spawner/Control Points
