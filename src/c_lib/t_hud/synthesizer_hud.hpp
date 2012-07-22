@@ -15,8 +15,8 @@ class AgentSynthesizerUI : public UIElement
 
     static const int cell_size = 37;    // pixel dimension
 
-    static const int shopping_xdim = AGENT_SYNTHESIZER_SHOPPING_X;
-    static const int shopping_ydim = AGENT_SYNTHESIZER_SHOPPING_Y;
+    int shopping_xdim;
+    int shopping_ydim;
 
     int xdim;
     int ydim;
@@ -59,6 +59,8 @@ class AgentSynthesizerUI : public UIElement
 
     void init()
     {
+        this->shopping_xdim = ItemContainer::get_container_alt_xdim(AGENT_SYNTHESIZER);
+        this->shopping_ydim = ItemContainer::get_container_alt_ydim(AGENT_SYNTHESIZER);
         this->xdim = shopping_xdim + ItemContainer::get_container_xdim(AGENT_SYNTHESIZER);
         this->ydim = shopping_ydim;
         
@@ -90,6 +92,7 @@ class AgentSynthesizerUI : public UIElement
     }
 
     AgentSynthesizerUI() : xdim(0), ydim(0),
+        shopping_xdim(0), shopping_ydim(0),
         render_width(0.0f), render_height(0.0f), prices(NULL)
     {
 		this->name.set_text((char*)"Synthesizer");	

@@ -59,6 +59,7 @@ ItemID get_agent_hand(int agent_id);
 int get_agent_container(int agent_id);
 int get_agent_toolbelt(int agent_id);
 int get_agent_synthesizer(int agent_id);
+int get_agent_energy_tanks(int agent_id);
 ItemID get_agent_toolbelt_item(int agent_id, int slot);
 
 ItemContainerInterface* create_container(ItemContainerType type);

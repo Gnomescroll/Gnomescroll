@@ -71,6 +71,7 @@ class Text
         
         void draw();
         void draw_character_rotated(float theta);   // draws as single character. glyph alignment offset not used
+        void draw_character_rotated_centered(float theta);   // draws as single character. glyph alignment offset not used
 
 		// assignment operator
 		// needed, because this object is tracked in a Simple_object_list

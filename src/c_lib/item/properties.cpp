@@ -9,6 +9,7 @@
 
 #include <item/container/_interface.hpp>
 #include <item/container/container.hpp>
+#include <item/container/config/_interface.hpp>
 
 namespace Item
 {
@@ -43,10 +44,10 @@ void init_properties()
     GS_ASSERT(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
     GS_ASSERT(synthesizer_item_array == NULL);
-    synthesizer_item_array = new SynthesizerItem[MAX_SYNTHESIZER_OUTPUTS];
+    synthesizer_item_array = new SynthesizerItem[ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER)];
 
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
-    smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];\
+    smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
 }
 
 void tear_down_properties()
@@ -256,7 +257,8 @@ int get_synthesizer_item(int xslot, int yslot)
 
 int get_synthesizer_item(int xslot, int yslot, int* cost)
 {
-    for (int i=0; i<MAX_SYNTHESIZER_OUTPUTS; i++)
+    int max = ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER);
+    for (int i=0; i<max; i++)
     {
         class SynthesizerItem* n = &synthesizer_item_array[i];
         if (n->xslot == xslot && n->yslot == yslot)

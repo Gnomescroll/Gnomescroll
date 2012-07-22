@@ -4,8 +4,6 @@
 #include <agent/constants.hpp>
 #include <common/color.hpp>
 
-void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner);
-
 // Use for:
 // All agents server side
 // All non-player agents client side.
@@ -32,9 +30,6 @@ class Agent_status {
 
         unsigned int health_max;
 
-        int owned_spawners;
-        int owned_turrets;
-
         char name[PLAYER_NAME_MAX_LENGTH + 1];
         bool identified;
 
@@ -42,9 +37,6 @@ class Agent_status {
 
         int lifetime;
         
-        class Inventory* inventory;
-        class Inventory* toolbelt;
-
         bool color_chosen;
         struct Color color;
 
@@ -56,7 +48,6 @@ class Agent_status {
         #endif
 
         void set_spawner(int pt);
-        void set_spawner();
 
         bool die();
         bool die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
@@ -84,13 +75,9 @@ class Agent_status {
 
         float get_spawn_angle();
 
-        // item stuff
-        const bool can_gain_item(ObjectType item);
-        bool gain_item(int item_id, ObjectType item);
         #if DC_SERVER
         bool consume_item(ItemID item_id);
         #endif
-        bool lose_item(ObjectType item);
 
         explicit Agent_status(Agent_state* a);
         ~Agent_status();

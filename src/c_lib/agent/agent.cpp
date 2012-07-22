@@ -489,17 +489,6 @@ void Agent_state::get_spawn_point(Vec3* spawn)
     Vec3 default_spawn = vec3_init(map_dim.x/2, map_dim.y/2, map_dim.z-1);
 
     float fh = this->current_height();
-    Components::AgentSpawnerComponent *s = NULL;
-    
-    if (this->status.spawner != BASE_SPAWN_ID)
-    {    // check that assigned spawner still exists, reassign if not
-        GS_ASSERT(false);   // TODO
-        //while ((s = Components::agent_spawner_component_list->get_by_team_index(this->status.team, this->status.spawner)) == NULL)
-        //{
-            //this->status.set_spawner();
-            //if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available
-        //}
-    }
 
     if (this->status.spawner == BASE_SPAWN_ID)
     {
@@ -517,7 +506,22 @@ void Agent_state::get_spawn_point(Vec3* spawn)
         else *spawn = spawner->get_spawn_point(fh, this->box.box_r);
     }
     else // spawner was found
-        *spawn = s->get_spawn_point(fh, this->box.box_r);
+    {
+        Objects::Object* spawner = Objects::get(OBJECT_AGENT_SPAWNER, this->status.spawner);
+        GS_ASSERT(spawner != NULL);
+        if (spawner != NULL)
+        {
+            using Components::AgentSpawnerComponent;
+            AgentSpawnerComponent* spawner_comp = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            GS_ASSERT(spawner_comp != NULL);
+            if (spawner_comp != NULL)
+                *spawn = spawner_comp->get_spawn_point(fh, this->box.box_r);
+            else
+                *spawn = default_spawn;
+        }
+        else
+            *spawn = default_spawn;
+    }
 }
 
 void Agent_state::spawn_state()
@@ -955,6 +959,16 @@ bool Agent_state::near_base()
     return false;
 }
 
+int* Agent_state::nearest_open_block(const float max_dist, const int z_low, const int z_high)
+{
+    Vec3 p = this->get_camera_position();
+    Vec3 f = this->forward_vector();
+    int* b = _farthest_empty_block(
+        p.x, p.y, p.z,
+        f.x, f.y, f.z,
+        max_dist, z_low, z_high);
+    return b;
+}
 
 void force_update_agent_vox(Agent_state* a)
 {

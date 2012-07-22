@@ -134,8 +134,6 @@ void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, i
         y0 = position.y,
         z0 = position.z;
 
-    if (point_fulstrum_test(x0,y0,z0) == false) return; //check to see if they are in viewing fulstrum
-
     float tx_min = tx;
     float tx_max = tx + sprite_width;
     float ty_min = ty;

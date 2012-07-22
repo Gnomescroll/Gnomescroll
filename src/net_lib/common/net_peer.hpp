@@ -71,11 +71,11 @@ class NetPeer
 
 
     void flush_map_messages();
-    void resize_map_message_buffer(int size_min);
+    void resize_map_message_buffer(unsigned int size_min);
 
     char* map_message_buffer;
-    int map_message_buffer_index;
-    int map_message_buffer_max; 
+    unsigned int map_message_buffer_index;
+    unsigned int map_message_buffer_max; 
     /*
         packet sequencer
     */

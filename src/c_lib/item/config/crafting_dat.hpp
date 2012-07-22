@@ -110,7 +110,13 @@ void load_crafting_dat()
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("methane_ice", 4);
     
+    def_crafting_recipe("agent_spawner");
+    set_crafting_reagent("copper_bar", 4);
+    set_crafting_reagent("iron_bar", 4);
+    set_crafting_reagent("gallium_bar", 4);
+    set_crafting_reagent("iridium_bar", 4);
     
+    end_crafting_recipe(); // finalize
 }
 
 }   // Item

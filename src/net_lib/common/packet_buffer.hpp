@@ -55,23 +55,25 @@ class Net_message {
         class Net_message_buffer* b;
         char* buff;
     #if PACKET_BUFFER_DEBUG
-        int len;
+        unsigned int len;
         int reference_count;
     #else
-        short len;
+        unsigned short len;
         short reference_count;
     #endif
         Net_message* next;
 
         OBJECT_POOL_OBJECT_MACRO
 
-    static class Net_message* acquire(int length);
+    static class Net_message* acquire(unsigned int length);
     // __attribute((always_inline));    // wont compile gcc4.4.3 (ubuntu10.04)
 
     void inline decrement();
 
-    Net_message() {
-        reference_count = 0; 
+    Net_message()
+    : len(0), reference_count(0)
+    {
+        reference_count = 0;
         //increment reference on pushing onto packet buffer
         //decrement on dispatch or completion
     }
@@ -83,7 +85,7 @@ class NetMessageManager
     public:
 
     int pending_messages;
-    int pending_bytes_out;
+    unsigned int pending_bytes_out;
 
     class NetMessageArray* nma_insert; //array for inserting
     int nma_insert_index;              //index for insertions
@@ -94,6 +96,6 @@ class NetMessageManager
     NetMessageManager();
 
     void push_message(Net_message* nm);
-    void serialize_messages(char* buff_, int index);
+    void serialize_messages(char* buff_, unsigned int index);
 
 };

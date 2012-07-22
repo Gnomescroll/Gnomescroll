@@ -19,7 +19,7 @@ void Agent_list::update_map_manager_positions()
     {
         if (this->a[i] == NULL) continue;
 		if (this->a[i]->camera_ready)
-			p = this->a[i]->get_camera_state_position();
+			p = this->a[i]->camera.get_position();
 		else
 			p = this->a[i]->get_position();
 		t_map::t_map_manager_update_client_position(i, p.x, p.y);

@@ -24,7 +24,7 @@ int _draw_point(int r, int g,int b, float x0, float y0, float z0) {
     return 0;
 }
 
-int _draw_rect(int r, int g, int b, float x, float y, float w, float h) {
+int _draw_rect(unsigned char r, unsigned char g, unsigned char b, float x, float y, float w, float h) {
 
     float x1, y1, x2, y2;
     x1 = x;
@@ -42,7 +42,12 @@ int _draw_rect(int r, int g, int b, float x, float y, float w, float h) {
     return 0;
 }
 
-int _draw_border_rect(int r, int g, int b, float x, float y, float w, float h) {
+int _draw_rect(struct Color color, float x, float y, float w, float h)
+{
+    return _draw_rect(color.r, color.g, color.b, x,y,w,h);
+}
+
+int _draw_border_rect(unsigned char r, unsigned char g, unsigned char b, float x, float y, float w, float h) {
 
     float x1, y1, x2, y2;
     x1 = x;
@@ -143,15 +148,15 @@ void draw_bound_texture_rotated(float x, float y, float w, float h, float z, flo
     rotate_point(x, y, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Top left
 
-    glTexCoord2f(1.0f,1.0f);
+    glTexCoord2f(0.0f,1.0f);
     rotate_point(x+w, y, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Top right
 
-    glTexCoord2f(1.0f,0.0f);
+    glTexCoord2f(1.0f,1.0f);
     rotate_point(x+w, y+h, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Bottom right
 
-    glTexCoord2f(0.0f,0.0f);
+    glTexCoord2f(1.0f,0.0f);
     rotate_point(x, y+h, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Bottom left
     glEnd();

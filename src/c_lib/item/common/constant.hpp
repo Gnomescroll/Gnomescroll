@@ -21,9 +21,6 @@ const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
 
 // TODO -- add meta slot to container class?
-const int AGENT_SYNTHESIZER_SHOPPING_X = 5;
-const int AGENT_SYNTHESIZER_SHOPPING_Y = 2;
-const int MAX_SYNTHESIZER_OUTPUTS = AGENT_SYNTHESIZER_SHOPPING_X*AGENT_SYNTHESIZER_SHOPPING_Y;
 const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 3;
 
 const int MAX_CRAFTING_RECIPE = 256;
@@ -43,7 +40,7 @@ const float DEFAULT_FIRING_RANGE = 4.0f;
 
 const float OBJECT_DEPTH_MAX = -128.0f;
 
-const int ITEM_GAS_LIFETIME = 20 * 30; // 60 seconds
+const int ITEM_GAS_LIFETIME = 30 * 60 * 5;  // 5 Minutes
 
 const int AGENT_HAND = NULL_CONTAINER - 1;
 

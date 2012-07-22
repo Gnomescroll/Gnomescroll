@@ -8,6 +8,7 @@
 #endif
 
 #include <item/properties.hpp>
+#include <item/container/config/_interface.hpp>
 
 namespace Item
 {
@@ -363,13 +364,13 @@ void synthesizer_item_def(const char* item_name, int cost)
 
 void synthesizer_item_set(int xslot, int yslot)
 {
-    GS_ASSERT(_current_synthesizer_item < MAX_SYNTHESIZER_OUTPUTS);
+    GS_ASSERT(_current_synthesizer_item < ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER));
 
     class SynthesizerItem* n = &synthesizer_item_array[_current_synthesizer_item];
 
     GS_ASSERT(_current_synthesizer_item_type != NULL_ITEM_TYPE);
-    GS_ASSERT(xslot >= 0 && xslot < AGENT_SYNTHESIZER_SHOPPING_X);
-    GS_ASSERT(yslot >= 0 && yslot < AGENT_SYNTHESIZER_SHOPPING_Y);
+    GS_ASSERT(xslot >= 0 && xslot < ItemContainer::get_container_alt_xdim(AGENT_SYNTHESIZER));
+    GS_ASSERT(yslot >= 0 && yslot < ItemContainer::get_container_alt_ydim(AGENT_SYNTHESIZER));
     GS_ASSERT(_current_synthesizer_item_cost > 0);
     GS_ASSERT(count_digits(_current_synthesizer_item_cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
 

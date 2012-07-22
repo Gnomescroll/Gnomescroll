@@ -2,13 +2,14 @@
 
 #include <entity/constants.hpp>
 #include <entity/object/object_list.hpp>
+#include <entity/object/filter.hpp>
 
 namespace Objects
 {
 
-extern ObjectList* object_list;
-extern ObjectDataList* object_data;
-extern ObjectListFilter* filter;
+extern class ObjectList* object_list;
+extern class ObjectDataList* object_data;
+extern class ObjectListFilter* filter;
 
 void init();
 void teardown();
@@ -20,13 +21,13 @@ void harvest();
 class Component* add_component_to_object(class Object* object, ComponentType type);
 void release_object_components(Object* object);
 
-Object* create(ObjectType type);
-Object* create(ObjectType type, int id);
-void ready_switch(Object* object);
-void destroy_switch(Object* object);
+class Object* create(ObjectType type);
+class Object* create(ObjectType type, int id);
+void ready_switch(class Object* object);
+void destroy_switch(class Object* object);
 void destroy_switch(ObjectType type, int id);
 
-Object* get_object(ObjectType type, int id);
+class Object* get_object(ObjectType type, int id);
 int count(ObjectType type);
 bool full(ObjectType type);
 void send_to_client(ObjectType type, int client_id);

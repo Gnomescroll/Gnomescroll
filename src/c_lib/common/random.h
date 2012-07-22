@@ -25,17 +25,34 @@ void randstr(char* s, int n)
    number generator. */
 /* source: http://benpfaff.org/writings/clc/shuffle.html */
 
+// WARNING -- POSSIBLY BROKEN
+
+//void shuffle_int_array(int *array, size_t n)
+//{
+    //if (n > 1)
+    //{
+        //size_t i;
+        //for (i = 0; i < n - 1; i++)
+        //{
+          //size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
+          //int t = array[j];
+          //array[j] = array[i];
+          //array[i] = t;
+        //}
+    //}
+//}
+
+// http://en.wikipedia.org/wiki/Fisher-Yates_shuffle#The_modern_algorithm
+
 void shuffle_int_array(int *array, size_t n)
 {
-    if (n > 1)
+    if (n <= 1) return;
+
+    for (size_t i = n - 1; i > 0; i--)
     {
-        size_t i;
-        for (i = 0; i < n - 1; i++)
-        {
-          size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
-          int t = array[j];
-          array[j] = array[i];
-          array[i] = t;
-        }
+        size_t j = rand() % (i+1);  // 0 <= j <= i
+        int tmp = array[i];         // swap
+        array[i] = array[j];
+        array[j] = tmp;
     }
 }

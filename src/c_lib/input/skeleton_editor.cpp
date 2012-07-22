@@ -129,7 +129,8 @@ void raycast_to_part()
         case OBJECT_AGENT:
             vox_dat = &VoxDats::agent;
             obj = ClientState::agent_list->get(id);
-            if (obj==NULL) return;
+            GS_ASSERT(obj != NULL);
+            if (obj == NULL) return;
             vox = ((Agent_state*)obj)->vox;
             break;
 
@@ -151,7 +152,7 @@ void raycast_to_part()
     vp = vox_dat->vox_part[part];
 }
 
-#undef GET_VOX_STUFF
+//#undef GET_VOX_STUFF
 
 /* Skeleton nodes */
 

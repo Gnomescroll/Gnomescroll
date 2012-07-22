@@ -16,12 +16,6 @@ void load_synthesizer()
     synthesizer_item_def("laser_rifle", 5);
     synthesizer_item_set(1,1);
 
-    //synthesizer_item_def("small_charge_pack", 5);
-    //synthesizer_item_set(3,0);
-    
-    //synthesizer_item_def("energy_tank", 25);
-    //synthesizer_item_set(3,1);
-
     synthesizer_item_def("block_placer", 100);
     synthesizer_item_set(4,1);
 
@@ -34,7 +28,17 @@ void load_synthesizer()
 
     synthesizer_item_def("cryofreezer_1", 3);
     synthesizer_item_set(2,0);
+    
+    #if !PRODUCTION
+    synthesizer_item_def("small_charge_pack", 5);
+    synthesizer_item_set(3,0);
+    
+    synthesizer_item_def("energy_tank", 25);
+    synthesizer_item_set(3,1);
 
+    synthesizer_item_def("agent_spawner", 25);
+    synthesizer_item_set(4,0);
+    #endif
 }
 
 }	// Item

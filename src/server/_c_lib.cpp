@@ -185,7 +185,8 @@ int init_c_lib(int argc, char* argv[])
 
     Item::init();
     ItemContainer::init();
-
+    Item::init_properties();
+    
     //lua_load_block_dat(); /* Load Block Dat */
     t_map::load_block_dat();
 

@@ -46,7 +46,7 @@ void init()
     
     // fabs
     object_list->set_object_max(OBJECT_BASE, 2);
-    object_list->set_object_max(OBJECT_AGENT_SPAWNER, 256);
+    object_list->set_object_max(OBJECT_AGENT_SPAWNER, 1024);
     object_list->set_object_max(OBJECT_TURRET, 512);
 
     // mobs
@@ -270,7 +270,6 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
         for (int j=0; j<height; j++)
             if (pz + j == z) return true;
     }
-    
     return false;
 }
 

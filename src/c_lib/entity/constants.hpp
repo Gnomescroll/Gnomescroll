@@ -115,13 +115,13 @@ typedef enum
  */
 
 #include <limits.h>
-#include <float.h>
+//#include <float.h>
 #include <physics/vec3.hpp>
 
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
 const int NULL_HEALTH = INT_MAX;
-const Vec3 NULL_POSITION = vec3_init(FLT_MAX,FLT_MAX,FLT_MAX);
+const Vec3 NULL_POSITION = vec3_init(0,0,0);
 const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
 const Vec3 NULL_ANGLES = vec3_init(0,0,0);
 const float NULL_HEIGHT = 1.0f;
-const int BASE_SPAWN_ID = 255;
+const int BASE_SPAWN_ID = -1;   // must use -1 because spawner max is unknown

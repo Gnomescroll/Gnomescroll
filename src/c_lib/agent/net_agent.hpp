@@ -19,7 +19,7 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
         float vx,vy,vz;
         float theta, phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
             pack_u8(&seq, buff, buff_n, pack);
@@ -47,7 +47,7 @@ class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_
     public:
         uint8_t client_id;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&client_id, buff, buff_n, pack);
         }
@@ -67,7 +67,7 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
         float theta, phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
             pack_u8(&seq, buff, buff_n, pack);
@@ -93,7 +93,7 @@ class agent_camera_state_CtoS: public FixedSizeReliableNetPacketToServer<agent_c
         float x,y,z;
         float theta, phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
             pack_float(&x, buff, buff_n, pack);
@@ -114,7 +114,7 @@ class Agent_teleport_message: public FixedSizeReliableNetPacketToClient<Agent_te
         float vx,vy,vz;
         float theta,phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
 
@@ -143,7 +143,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
         float theta;
         float phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
@@ -162,7 +162,7 @@ class agent_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_s
     public:
         uint8_t id;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
         }
@@ -178,7 +178,7 @@ class agent_shot_object_StoC: public FixedSizeReliableNetPacketToClient<agent_sh
         uint8_t target_part;
         uint8_t vx,vy,vz;   //voxel
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&target_id, buff, buff_n, pack);
@@ -200,7 +200,7 @@ class agent_shot_block_StoC: public FixedSizeReliableNetPacketToClient<agent_sho
         uint8_t side;
         float x,y,z;    // send the actual collision point
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&cube, buff, buff_n, pack);
@@ -219,7 +219,7 @@ class agent_hit_block_StoC: public FixedSizeReliableNetPacketToClient<agent_hit_
         uint8_t id;
         uint16_t x,y,z;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&x, buff, buff_n, pack);
@@ -235,7 +235,7 @@ class agent_melee_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_
     public:
         uint8_t id;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
         }
@@ -257,7 +257,7 @@ class agent_melee_object_StoC: public FixedSizeReliableNetPacketToClient<agent_m
         // animate from aiming direction
         // can also make a second array in each *list, that holds decayed state info
         // i.e. when destroy object, cache its last x,y,z,vx,vy,vz
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&target_id, buff, buff_n, pack);
@@ -277,7 +277,7 @@ class agent_threw_grenade_StoC: public FixedSizeReliableNetPacketToClient<agent_
 {
     public:
         uint8_t id;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
         }
@@ -288,7 +288,7 @@ class agent_placed_block_StoC: public FixedSizeReliableNetPacketToClient<agent_p
 {
     public:
         uint8_t id;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
         }
@@ -303,7 +303,7 @@ class agent_damage_StoC: public FixedSizeReliableNetPacketToClient<agent_damage_
         uint8_t id;
         uint16_t dmg;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&dmg, buff, buff_n, pack);
@@ -325,7 +325,7 @@ class Agent_cs_CtoS: public FixedSizeReliableNetPacketToServer<Agent_cs_CtoS>
         float theta;
         float phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&seq, buff, buff_n, pack);
             pack_u16(&cs, buff, buff_n, pack);
@@ -343,7 +343,7 @@ class hit_block_CtoS: public FixedSizeReliableNetPacketToServer<hit_block_CtoS>
         uint16_t x,y,z;
         uint16_t weapon_type;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
@@ -362,7 +362,7 @@ class hitscan_object_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_obj
         uint8_t part;
         uint8_t vx,vy,vz;   // voxel
         
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
@@ -380,7 +380,7 @@ class hitscan_block_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_bloc
     public:
         uint16_t x,y,z;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
@@ -395,7 +395,7 @@ class hitscan_block_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_bloc
 class hitscan_none_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_none_CtoS>
 {
     public:
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {}
         inline void handle();
 };
@@ -410,7 +410,7 @@ class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_
         uint8_t vx,vy,vz;
         uint16_t weapon_type;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
@@ -428,7 +428,7 @@ class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_
 class melee_none_CtoS: public FixedSizeReliableNetPacketToServer<melee_none_CtoS>
 {
     public:
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {}
         inline void handle();
 };
@@ -440,7 +440,7 @@ class agent_dead_StoC: public FixedSizeReliableNetPacketToClient<agent_dead_StoC
         uint8_t id;
         uint8_t dead;   // should be bool
         
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&dead, buff, buff_n, pack);
@@ -455,7 +455,7 @@ class agent_health_StoC: public FixedSizeReliableNetPacketToClient<agent_health_
         uint8_t id;
         uint16_t health;
         
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&health, buff, buff_n, pack);
@@ -470,7 +470,7 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
         uint8_t id;
         uint8_t client_id;
         
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&client_id, buff, buff_n, pack);
@@ -485,7 +485,7 @@ class agent_name_StoC: public FixedSizeReliableNetPacketToClient<agent_name_StoC
         uint8_t id;
         char name[PLAYER_NAME_MAX_LENGTH+1];
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
@@ -498,7 +498,7 @@ class request_agent_name_CtoS: public FixedSizeReliableNetPacketToServer<request
     public:
         uint8_t id;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
         }
@@ -510,7 +510,7 @@ class agent_destroy_StoC: public FixedSizeReliableNetPacketToClient<agent_destro
     public:
         uint8_t id;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
         }
@@ -522,7 +522,7 @@ class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent
     public:
         uint8_t id;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
         }
@@ -535,7 +535,7 @@ class ThrowGrenade_CtoS: public FixedSizeReliableNetPacketToServer<ThrowGrenade_
         float x,y,z;
         float vx,vy,vz;    // direction
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
@@ -553,7 +553,7 @@ class AgentKills_StoC: public FixedSizeReliableNetPacketToClient<AgentKills_StoC
         uint8_t id;
         uint16_t kills;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&kills, buff, buff_n, pack);
@@ -567,7 +567,7 @@ class AgentDeaths_StoC: public FixedSizeReliableNetPacketToClient<AgentDeaths_St
         uint8_t id;
         uint16_t deaths;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&deaths, buff, buff_n, pack);
@@ -581,7 +581,7 @@ class AgentSuicides_StoC: public FixedSizeReliableNetPacketToClient<AgentSuicide
         uint8_t id;
         uint16_t suicides;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&suicides, buff, buff_n, pack);
@@ -595,7 +595,7 @@ class agent_set_block_CtoS: public FixedSizeReliableNetPacketToServer<agent_set_
         uint16_t x,y,z;
         uint16_t placer_id;
         
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
@@ -612,7 +612,7 @@ class admin_set_block_CtoS: public FixedSizeReliableNetPacketToServer<admin_set_
         uint16_t x,y,z;
         uint16_t val;
         
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
@@ -630,7 +630,7 @@ class place_turret_CtoS: public FixedSizeReliableNetPacketToServer<place_turret_
     public:
         uint16_t x,y,z;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
@@ -644,7 +644,7 @@ class place_spawner_CtoS: public FixedSizeReliableNetPacketToServer<place_spawne
     public:
         uint16_t x,y,z;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
@@ -653,25 +653,25 @@ class place_spawner_CtoS: public FixedSizeReliableNetPacketToServer<place_spawne
         inline void handle();
 };
 
-class choose_spawn_location_CtoS: public FixedSizeReliableNetPacketToServer<choose_spawn_location_CtoS>
+class choose_spawner_CtoS: public FixedSizeReliableNetPacketToServer<choose_spawner_CtoS>
 {
     public:
-        uint8_t id;
+        uint16_t spawner_id;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&spawner_id, buff, buff_n, pack);
         }
         inline void handle();
 };
 
-class spawn_location_StoC: public FixedSizeReliableNetPacketToClient<spawn_location_StoC>
+class set_spawner_StoC: public FixedSizeReliableNetPacketToClient<set_spawner_StoC>
 {
     public:
-        uint8_t pt;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        uint16_t spawner_id;
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
-            pack_u8(&pt, buff, buff_n, pack);
+            pack_u16(&spawner_id, buff, buff_n, pack);
         }
     inline void handle();
 };
@@ -682,7 +682,7 @@ class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
 {
     public:
         char name[PLAYER_NAME_MAX_LENGTH+1];
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
         }
@@ -693,7 +693,7 @@ class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC
 {
     public:
         char name[PLAYER_NAME_MAX_LENGTH+1];
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
         }
@@ -704,7 +704,7 @@ class ping_StoC: public FixedSizeNetPacketToClient<ping_StoC>
 {
     public:
         uint32_t ticks;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&ticks, buff, buff_n, pack);
         }
@@ -715,7 +715,7 @@ class ping_CtoS: public FixedSizeNetPacketToServer<ping_CtoS>
 {
     public:
         uint32_t ticks;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&ticks, buff, buff_n, pack);
         }
@@ -726,7 +726,7 @@ class ping_reliable_StoC: public FixedSizeReliableNetPacketToClient<ping_reliabl
 {
     public:
         uint32_t ticks;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&ticks, buff, buff_n, pack);
         }
@@ -737,7 +737,7 @@ class ping_reliable_CtoS: public FixedSizeReliableNetPacketToServer<ping_reliabl
 {
     public:
         uint32_t ticks;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&ticks, buff, buff_n, pack);
         }
@@ -750,7 +750,7 @@ class agent_conflict_notification_StoC: public FixedSizeReliableNetPacketToClien
         uint8_t attacker;
         uint8_t victim;
         uint8_t method;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&attacker, buff, buff_n, pack);
             pack_u8(&victim, buff, buff_n, pack);
@@ -763,7 +763,7 @@ class version_StoC: public FixedSizeReliableNetPacketToClient<version_StoC>
 {
     public:
         uint32_t version;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&version, buff, buff_n, pack);
         }
@@ -774,7 +774,7 @@ class version_CtoS: public FixedSizeReliableNetPacketToServer<version_CtoS>
 {
     public:
         uint32_t version;
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&version, buff, buff_n, pack);
         }
@@ -786,7 +786,7 @@ class client_disconnected_StoC: public FixedSizeReliableNetPacketToClient<client
     public:
         uint8_t id;
         char name[PLAYER_NAME_MAX_LENGTH+1];    // send name because agent destroy might arrive first (and then we cant get name)
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
@@ -798,7 +798,7 @@ class request_remaining_state_CtoS: public FixedSizeReliableNetPacketToServer<re
 {
     public:
 
-    inline void packet(char* buff, int* buff_n, bool pack)
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
     }
     inline void handle();
@@ -808,7 +808,7 @@ class killme_CtoS: public FixedSizeReliableNetPacketToServer<killme_CtoS>
 {
     public:
 
-    inline void packet(char* buff, int* buff_n, bool pack)
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
     }
     inline void handle();
@@ -819,7 +819,7 @@ class colorme_CtoS: public FixedSizeReliableNetPacketToServer<colorme_CtoS>
     public:
 		uint8_t r,g,b;
 		
-    inline void packet(char* buff, int* buff_n, bool pack)
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
 		pack_u8(&r, buff, buff_n, pack);
 		pack_u8(&g, buff, buff_n, pack);
@@ -834,7 +834,7 @@ class agent_color_StoC: public FixedSizeReliableNetPacketToClient<agent_color_St
 		uint8_t agent_id;
 		uint8_t r,g,b;
 		
-    inline void packet(char* buff, int* buff_n, bool pack)
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
 		pack_u8(&agent_id, buff, buff_n, pack);
 		pack_u8(&r, buff, buff_n, pack);

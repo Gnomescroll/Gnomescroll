@@ -332,63 +332,60 @@ bool ChatInput::route_command()
 	if (!strcmp(cmd, (char*)"color") || !strcmp(cmd, (char*)"colour"))
 	{
 		struct Color color = {0};
-		unsigned int ci = 0;
-		char color_val[4] = {'\0'};
-		unsigned int cvi = 0;
 		bool valid = true;
-		
-		while((c = buffer[i++]) != '\0' && (isdigit(c) || isspace(c)) && ci < 3)
-		{
-			if (isspace(c))
-			{
-				if (cvi == 0) continue;
-				
-				color_val[cvi] = '\0';
-				
-				int val = atoi(color_val);
-				if (val > 255)
-				{
-					valid = false;
-					break;
-				}
-				
-				if (ci == 0)
-					color.r = val;
-				else if (ci == 1)
-					color.g = val;
-				else if (ci == 2)
-				{
-					color.b = val;
-					break;
-				}
 
-				cvi = 0;
-				ci++;
-				continue;
-			}
-			
-			color_val[cvi++] = c;
-		}
-		
-		if (ci == 2 && cvi > 0)
-		{
-			int val = atoi(color_val);
-			if (val > 255) valid = false;
-			else color.b = val;
-		}
-		else
-			valid = false;
-		
-		if (valid)
-		{
-			colorme_CtoS msg;
-			msg.r = color.r;
-			msg.g = color.g;
-			msg.b = color.b;
-			msg.send();
-		}
-		else
-			chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
+        int start = i;  // save start cursor
+
+        // split lines up
+        int n = 1;
+        const char delim = ' ';
+        while ((c = buffer[i++]) != '\0')
+        {
+            if (!isdigit(c) && c != delim)
+                break;
+            if (c == delim)
+            {
+                buffer[i-1] = '\0';
+                n++;
+            }
+        }
+        
+        if (c != '\0') valid = false;    // encountered invalid char
+        if (n != 3) valid = false;       // invalid arg count
+        
+        if (!valid)
+        {
+            chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
+            return false;
+        }
+        
+        char buf[3+1] = {'\0'};
+
+        i = start;  // reset cursor
+        
+        int j = 0;  // copy red
+        while ((c = buffer[i++]) != '\0' && j < 4)
+            buf[j++] = c;
+        buf[j] = '\0';
+        color.r = atoi(buf);
+        
+        j = 0;      // copy green
+        while ((c = buffer[i++]) != '\0' && j < 4)
+            buf[j++] = c;
+        buf[j] = '\0';
+        color.g = atoi(buf);
+        
+        j = 0;      // copy blue
+        while ((c = buffer[i++]) != '\0' && j < 4)
+            buf[j++] = c;
+        buf[j] = '\0';
+        color.b = atoi(buf);
+        
+        colorme_CtoS msg;
+        msg.r = color.r;
+        msg.g = color.g;
+        msg.b = color.b;
+        msg.send();
 	}
 	//else
     //if (!strcmp(cmd, (char*)"spawner") || cmd[0] == 's' || cmd[0] == 'S')

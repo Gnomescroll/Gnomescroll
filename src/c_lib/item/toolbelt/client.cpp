@@ -8,6 +8,7 @@ dont_include_this_file_in_server
 #include <item/toolbelt/_state.hpp>
 #include <item/toolbelt/config/_interface.hpp>
 #include <chat/interface.hpp>
+#include <item/toolbelt/net/CtoS.hpp>
 
 namespace Toolbelt
 {
@@ -118,34 +119,8 @@ bool toolbelt_item_end_alpha_action()
 void toolbelt_item_begin_alpha_action_event_handler(ItemID item_id)
 {
     int item_type = fist_item_type;
-    if (item_id != NULL_ITEM)
-        item_type = Item::get_item_type(item_id);
+    if (item_id != NULL_ITEM) item_type = Item::get_item_type(item_id);
     begin_local_item(item_type);
-
-    // TODO
-    //ItemGroup item_group = Item::get_item_group(item_id);    
-    //switch (item_group)
-    //{
-        //case IG_MINING_LASER:
-            //ClientState::playerAgent_state.action.begin_mining_laser();
-            //break;
-
-        //case IG_ERROR:
-        //case IG_RESOURCE:
-        //case IG_MELEE_WEAPON:
-        //case IG_SYNTHESIZER_COIN:
-        //case IG_SHOVEL:
-        //case IG_NONE:
-        //case IG_FIST:
-        //case IG_ENERGY_TANK:
-
-        //case IG_CONSUMABLE:
-        //case IG_PLACER:
-        //case IG_HITSCAN_WEAPON:
-        //case IG_GRENADE_LAUNCHER:
-        //default:
-            //break;    // the default action is click once
-    //}
 }
 
 void toolbelt_item_end_alpha_action_event_handler(ItemID item_id)
@@ -153,30 +128,64 @@ void toolbelt_item_end_alpha_action_event_handler(ItemID item_id)
     int item_type = fist_item_type;
     if (item_id != NULL_ITEM) item_type = Item::get_item_type(item_id);
     end_local_item(item_type);
+}
 
-    //ItemGroup item_group = Item::get_item_group(item_id);    
-    //switch (item_group)
-    //{
-        //case IG_MINING_LASER:
-            //ClientState::playerAgent_state.action.end_mining_laser();
-            //break;
+static bool beta_scan_world()
+{   // check for things in world that respond to beta action
+    using ClientState::playerAgent_state;
+    if (agent_camera == NULL) return false;
+    
+    float range = BETA_WORLD_EFFECT_RANGE;
 
-        //case IG_ERROR:
-        //case IG_RESOURCE:
-        //case IG_MELEE_WEAPON:
-        //case IG_SYNTHESIZER_COIN:
-        //case IG_SHOVEL:
-        //case IG_NONE:
-        //case IG_FIST:
-        //case IG_ENERGY_TANK:
+    Vec3 pos = playerAgent_state.camera_position();
+    Vec3 look = agent_camera->forward_vector();
 
-        //case IG_CONSUMABLE:
-        //case IG_PLACER:
-        //case IG_HITSCAN_WEAPON:
-        //case IG_GRENADE_LAUNCHER:
-        //default:
-            //break;
-    //}
+    class Voxel_hitscan_target target;
+    float vox_distance;
+    float collision_point[3];
+    int block_pos[3];
+    int side[3];
+    int tile;
+    float block_distance;
+
+    Hitscan::HitscanTargetTypes target_type =
+        Hitscan::hitscan_against_world(
+            pos, look, playerAgent_state.agent_id, OBJECT_AGENT,
+            &target, &vox_distance, collision_point,
+            block_pos, side, &tile, &block_distance
+        );
+
+    int container_id = NULL_CONTAINER;
+    switch (target_type)
+    {
+        case Hitscan::HITSCAN_TARGET_VOXEL:
+            if (vox_distance > range) return false;
+            if (target.entity_type == OBJECT_AGENT_SPAWNER)
+            {
+                choose_spawner_CtoS msg;
+                msg.spawner_id = target.entity_id;
+                msg.send();
+                return true;
+            }
+            return false;
+        
+        case Hitscan::HITSCAN_TARGET_BLOCK:
+            if (block_distance > range) return false;
+            container_id = t_map::get_block_item_container(block_pos[0], block_pos[1], block_pos[2]);
+            if (container_id != NULL_CONTAINER)
+            {
+                bool opened = ItemContainer::open_container(container_id);
+                if (opened) return true;
+                const char msg[] = "This container is locked.";
+                chat_client->send_system_message(msg);
+                return false;
+            }
+            return false;
+
+        default:
+            return false;
+    }
+    return false;
 }
 
 // returns true if an event was or should be triggered
@@ -203,19 +212,8 @@ bool toolbelt_item_beta_action()
     bool triggered = trigger_local_item_beta(item_id, item_type);
     if (triggered) return true;
 
-    // if no beta actions are defined,
-    
-    // open any inventories in range
-    int container_id = ClientState::playerAgent_state.facing_container();
-    if (container_id == NULL_CONTAINER) return false;
-
-    bool opened = ItemContainer::open_container(container_id);
-    if (!opened)
-    {
-        const char msg[] = "This container is locked.";
-        chat_client->send_system_message(msg);
-    }
-    return opened;
+    // if no beta actions are defined, check against world items
+    return beta_scan_world();
 }
 
 /* Packets */

@@ -13,7 +13,7 @@
 #include <common/time/physics_timer.hpp>
 #include <chat/client.hpp>
 #include <chat/interface.hpp>
-
+#include <entity/objects/fabs/constants.hpp>
 #include <SDL/SDL_functions.h>
 #endif
 
@@ -447,11 +447,46 @@ inline void client_disconnected_StoC::handle()
     free(msg);
 }
 
-inline void spawn_location_StoC::handle()
+inline void set_spawner_StoC::handle()
 {
+    // TODO -- remove, once base is replaced with actual spawner
+    int spawner_id = this->spawner_id;
+    if (this->spawner_id == (uint16_t)-1)
+        spawner_id = BASE_SPAWN_ID;
+    
     using ClientState::playerAgent_state;
     if (playerAgent_state.you == NULL) return;
-    playerAgent_state.you->event.set_spawner(pt);
+
+    // de-color old spawner
+    if (playerAgent_state.you->status.spawner != BASE_SPAWN_ID)
+    {
+        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, playerAgent_state.you->status.spawner);
+        if (obj != NULL)
+        {
+            using Components::VoxelModelComponent;
+            VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            GS_ASSERT(vox != NULL);
+            if (vox != NULL && vox->vox != NULL)
+                vox->vox->fill_color(Objects::DEACTIVATED_SPAWNER_COLOR);
+        }
+    }
+
+    // color new spawner
+    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check
+    {
+        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, spawner_id);
+        GS_ASSERT(obj != NULL);
+        if (obj != NULL)
+        {
+            using Components::VoxelModelComponent;
+            VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            GS_ASSERT(vox != NULL);
+            if (vox != NULL && vox->vox != NULL)
+                vox->vox->fill_color(Objects::ACTIVATED_SPAWNER_COLOR);
+        }
+    }
+
+    playerAgent_state.you->event.set_spawner(spawner_id);
 }
 
 inline void agent_color_StoC::handle()
@@ -462,6 +497,16 @@ inline void agent_color_StoC::handle()
 	
 	struct Color color = {r,g,b};
 	a->status.set_color(color);
+    
+    if (this->agent_id == ClientState::playerAgent_state.agent_id)
+    {
+        const char fmt[] = "Your color is now %d %d %d\n";
+        size_t len = sizeof(fmt) + 3*3 - 2*3 + 1;
+        char* msg = (char*)malloc(len * sizeof(char));
+        snprintf(msg, len, fmt, r,g,b);
+        chat_client->send_system_message(msg);
+        free(msg);
+    }
 }
 
 inline void Agent_cs_CtoS::handle() {}
@@ -471,9 +516,7 @@ inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
-//#if !PRODUCTION
 inline void admin_set_block_CtoS::handle() {}
-//#endif
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
@@ -481,7 +524,7 @@ inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
-inline void choose_spawn_location_CtoS::handle(){}
+inline void choose_spawner_CtoS::handle(){}
 inline void request_agent_name_CtoS::handle(){}
 inline void request_remaining_state_CtoS::handle() {}
 inline void agent_camera_state_CtoS::handle() {}
@@ -521,7 +564,7 @@ inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}
 inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
-inline void spawn_location_StoC::handle(){}
+inline void set_spawner_StoC::handle(){}
 inline void agent_color_StoC::handle() {}
 
 //for benchmarking
@@ -887,7 +930,7 @@ inline void agent_set_block_CtoS::handle()
     y = translate_point(y);
 
     // dont set on existing block
-    if (t_map::get(x,y,z) != 0) return;
+    if (!t_map::block_can_be_placed(x,y,z,val)) return;
 
     // check this player first, most likely to be colliding
     bool collides = false;
@@ -943,8 +986,9 @@ inline void admin_set_block_CtoS::handle()
     x = translate_point(x);
     y = translate_point(y);
 
-    // do block place checks here later
-    // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
+    // TODO -- when this is a /real/ admin tool, remove this check
+    // since we're giving it to players, do this check
+    if (!t_map::block_can_be_placed(x,y,z,val)) return;
 
     // check this player first, most likely to be colliding
     t_map::set_fast(x,y,z, val); // set temporarily to test against
@@ -1035,7 +1079,7 @@ inline void place_turret_CtoS::handle()
 
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 
-inline void choose_spawn_location_CtoS::handle()
+inline void choose_spawner_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
@@ -1043,7 +1087,7 @@ inline void choose_spawn_location_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    a->status.set_spawner(id);
+    a->status.set_spawner(spawner_id);
 }
 
 const char DEFAULT_PLAYER_NAME[] = "Clunker";

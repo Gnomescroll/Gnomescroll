@@ -94,7 +94,7 @@ class ItemParticle
     #endif
 };
 
-}
+}   // ItemParticle
 
 /*
     List Definition
@@ -159,4 +159,4 @@ void ItemParticle_list::draw()
     #endif
 }
 
-}
+}   // ItemParticle

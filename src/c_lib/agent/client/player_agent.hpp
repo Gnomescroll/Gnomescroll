@@ -104,6 +104,8 @@ class PlayerAgent_state
 
         void update_sound();
 
+        int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
+        
         PlayerAgent_state();
         ~PlayerAgent_state();
 };

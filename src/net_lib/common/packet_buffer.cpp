@@ -135,7 +135,7 @@ void inline Net_message::decrement()
 #endif
 }
 
-class Net_message* Net_message::acquire(int length)
+class Net_message* Net_message::acquire(unsigned int length)
 {
     if (length <= 0) return NULL;
 #if PACKET_BUFFER_MALLOC_DEBUG
@@ -193,9 +193,9 @@ void NetMessageManager::push_message(Net_message* nm)
     }
 }
 
-void NetMessageManager::serialize_messages(char* buff_, int index)
+void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
 {
-    int max = pending_bytes_out;
+    unsigned int max = pending_bytes_out;
     //printf("Starting serialization at address %i \n", buff_);
 /*
     if(pending_messages == 0)

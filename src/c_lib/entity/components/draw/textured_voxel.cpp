@@ -1,7 +1,10 @@
 #include "billboard_sprite.hpp"
 
-#if DC_CLIENT
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
+#include <camera/camera.hpp>
 #include <common/draw/draw.hpp>
 #include <entity/components/physics.hpp>
 
@@ -56,6 +59,10 @@ void TexturedVoxelComponent::set_texture()
 
 inline void TexturedVoxelComponent::draw(Vec3 position)
 {
+    position = quadrant_translate_position(current_camera_position, position);
+    Vec3 center = vec3_add(normal, vec3_add(right, vec3_add(forward, position)));
+    if (sphere_fulstrum_test(center.x, center.y, center.z, this->size) == false) return;
+
     drawTexturedMinivox(position, this->forward, this->right, this->normal,
         this->texture_index, this->tx, this->ty, this->sprite_width);
 }
@@ -68,5 +75,3 @@ void TexturedVoxelComponent::call()
 }
 
 } // Components
-
-#endif

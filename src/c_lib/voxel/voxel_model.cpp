@@ -581,16 +581,14 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
         part_numbers[i] = i;
     shuffle_int_array(part_numbers, this->n_parts);
     
-    Voxel_volume* vv;
     Vec3 c;
     for (int i=0; i<this->n_parts; i++)
     {
+		if (randf() < failure_rate) continue;
         int pnum = part_numbers[i];
         GS_ASSERT(pnum >= 0 && pnum < this->n_parts);
         if (pnum < 0 || pnum >= this->n_parts) continue;
-        vv = &this->vv[pnum];
-        c = vv->get_center(); // ray cast to center of volume
-		if (randf() < failure_rate) continue;	// TODO -- move this to beginning of loop. leave it here while testing for bug crash
+        c = this->vv[pnum].get_center(); // ray cast to center of volume
         c = quadrant_translate_position(source, c);
         if (ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
         {
