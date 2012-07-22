@@ -15,7 +15,6 @@
 
 uniform float CameraPosition;
 
-//attribute vec4 InVertex;
 attribute vec2 InTexCoord;
 attribute vec4 InBrightness;
 

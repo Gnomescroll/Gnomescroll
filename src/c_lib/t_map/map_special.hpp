@@ -172,7 +172,6 @@ void init_control_node_texture()
 //uniforms
 unsigned int control_node_CameraPosition;
 //attributes
-unsigned int control_node_Vertex;
 unsigned int control_node_TexCoord;
 unsigned int control_node_Brightness;
 
@@ -186,7 +185,6 @@ void init_control_node_shader(class SHADER* shader)
 
     control_node_CameraPosition = 	shader->get_uniform("CameraPosition");
     
-    control_node_Vertex =			shader->get_attribute("InVertex");
     control_node_TexCoord = 		shader->get_attribute("InTexCoord");
     control_node_Brightness	=		shader->get_attribute("InBrightness");
 }
@@ -206,6 +204,7 @@ void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
 void control_node_render_teardown()
 {
 	free(cnra);
+	delete control_node_shader;
 }
 
 void _insert_control_node_render_element(short x, short y, short z, unsigned char face)
@@ -227,6 +226,55 @@ void _insert_control_node_render_element(short x, short y, short z, unsigned cha
 
 
 }
+
+
+
+class ControlNodeVertexList 
+{
+    // visibility will default to private unless you specify it
+    struct Vertex
+    {
+        float x,y,z;
+        float tx,ty;
+        float btx,bty; 	//texture cordinates for bilinear interpolation
+        unsigned char color[4];
+        unsigned char brightness[4];
+    };
+
+    struct Vertex* va;	//vertex array
+    int vi; //vertex index
+    int vm; //vertex max
+
+    struct Vertex v;
+
+    ControlNodeVertexList()
+    {
+    	vm = 32;
+    	vi = 0;
+    	va = (struct Vertex*) malloc(vm*sizeof(struct Vertex));
+    }
+
+    ~ControlNodeVertexList()
+    {
+    	free(va);
+    }
+
+   	void push_vertex()
+   	{
+   		va[vi] = v;
+   		vi++;
+   		if(vi == vm)
+   		{
+   			vm *= 2;
+   			va = (struct Vertex*) realloc(va, vm*sizeof(struct Vertex));
+   		}
+   	}
+
+   	
+};
+
+ControlNodeVertexList cnvl; //control node vertex list
+
 
 //int cpi; //control point index
 //int cpm; //control point max
