@@ -334,6 +334,102 @@ class ControlNodeVertexList
 
 
 
+class ControlNodeShader
+{
+   	SDL_Surface* s;
+
+    ControlNodeShader
+    {
+    	init_texture();
+    	init_shader();
+    }
+
+    ~ControlNodeShader
+    {
+    	free(s);
+    }
+   	
+	unsigned int texture1;
+	class SHADER* shader;
+
+	//uniforms
+	unsigned int CameraPosition;
+	//attributes
+	unsigned int TexCoord;
+	unsigned int Brightness;
+
+	void init_shader()
+	{
+		shader = new SHADER;
+	    shader->set_debug(true);
+
+	    shader->load_shader( "control_node_shader",
+	        "./media/shaders/effect/control_node.vsh",
+	        "./media/shaders/effect/control_node.fsh" );
+
+	    CameraPosition = 	shader->get_uniform("CameraPosition");
+	    TexCoord 	=		shader->get_attribute("InTexCoord");
+	    Brightness	=		shader->get_attribute("InBrightness");
+	}
+
+	void init_texture()
+	{
+		s = create_surface_from_file("./media/sprites/territory_00.png");
+
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, &texture1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		GLenum texture_format;
+		if (s->format->Rmask == 0x000000ff)
+			texture_format = GL_RGBA;
+		else
+			texture_format = GL_BGRA;
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
+		
+		glDisable(GL_TEXTURE_2D);
+	}
+
+    void draw()
+    {
+	    glColor3ub(255,255,255);
+
+	    glEnable(GL_TEXTURE_2D);
+	    glBindTexture( GL_TEXTURE_2D, texture1 );
+
+	    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	    
+	    glUseProgramObjectARB(shader->shader);
+
+	    glEnableClientState(GL_VERTEX_ARRAY);
+	    glEnableVertexAttribArray(TexCoord);
+
+	    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
+	    glVertexAttribPointer(TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
+
+	    glDrawArrays(GL_QUADS,0, vi);
+
+	    glDisableClientState(GL_VERTEX_ARRAY);
+	    glDisableVertexAttribArray(TexCoord);
+
+	    glUseProgramObjectARB(0);
+    }
+
+
+};
+
+
+class ControlNodeRenderer
+{
+	class ControlNodeShader cns;
+
+
+};
+
 //int cpi; //control point index
 //int cpm; //control point max
 //class control_node* cpa; //control point array;
