@@ -202,10 +202,10 @@ int run()
             t_map::draw_map_compatibility();
         else
             t_map::draw_map();
-        
+
         t_map::control_node_render_update();    //move this somewhere later
         t_map::control_node_render_draw();      //draw control node perimeter
-
+        
         poll_mouse();
 
 
