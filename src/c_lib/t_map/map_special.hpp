@@ -135,6 +135,7 @@ class CONTROL_NODE_LIST
 
 class ControlNodeVertexList 
 {
+	public:
     // visibility will default to private unless you specify it
     struct Vertex
     {
@@ -151,26 +152,21 @@ class ControlNodeVertexList
     int vi; //vertex index
     int vm; //vertex max
 
-    struct Vertex v; //set this and then push vertex
-
    	unsigned int VBO; //for drawing 
+
+    struct Vertex v; //set this and then push vertex
 
     ControlNodeVertexList()
     {
-
     	vm = 32;
     	vi = 0;
     	va = (struct Vertex*) malloc(vm*sizeof(struct Vertex));
     	VBO = 0;
-
-    	init_texture();
-    	init_shader();
     }
 
     ~ControlNodeVertexList()
     {
     	free(va);
-    	delete shader;
     }
    	
 
@@ -218,6 +214,8 @@ class ControlNodeVertexList
 
 class ControlNodeShader
 {
+	public:
+
    	SDL_Surface* s;
 
 	unsigned int texture1;
@@ -229,17 +227,17 @@ class ControlNodeShader
 	unsigned int TexCoord;
 	unsigned int Brightness;
 
-    ControlNodeShader
+    ControlNodeShader()
     {
     	init_texture();
     	init_shader();
     }
 
-    ~ControlNodeShader
+    ~ControlNodeShader()
     {
     	free(s);
     }
-   	
+
 	void init_shader()
 	{
 		shader = new SHADER;
@@ -285,7 +283,7 @@ class ControlNodeRenderer
 {
 	public:
 
-	class ControlNodeRenderer renderer;
+	class ControlNodeShader shader;
 	class ControlNodeVertexList vertex_list;
 
     void draw()
@@ -295,17 +293,17 @@ class ControlNodeRenderer
 	    glColor3ub(255,255,255);
 
 
-	    glBindBuffer(GL_ARRAY_BUFFER, renderer.VBO);
+	    glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
 	    glEnable(GL_TEXTURE_2D);
-	    glBindTexture( GL_TEXTURE_2D, renderer.texture1 );
+	    glBindTexture( GL_TEXTURE_2D, shader.texture1 );
 
 	    glEnableClientState(GL_VERTEX_ARRAY);
 
-	    renderer.shader.enable_attributes();
+	    shader.shader->enable_attributes();
 
-	    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
-	    glVertexAttribPointer(renderer.TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
+	    glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
+	    glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
 
 	    //glUniform4f(InTranslation, (GLfloat*) p.f );
 	    //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
@@ -314,7 +312,7 @@ class ControlNodeRenderer
 
 	    glDisableClientState(GL_VERTEX_ARRAY);
 
-	    renderer.shader.disable_attributes();
+	    shader.shader->disable_attributes();
 
 	   	glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
@@ -328,22 +326,25 @@ class ControlNodeRenderer
 	};
 
 	struct CONTROL_NODE_RENDER* cnra; // control_node_render_list array
-	int cnri = 0; // index
-	int cnrm = 32; // max
+	int cnri;	//index
+	int cnrm;	//max
 
 	class CONTROL_NODE_LIST* cnl; //control node list
 
-	void ControlNodeRenderer(class CONTROL_NODE_LIST* _cnl)
+	ControlNodeRenderer(class CONTROL_NODE_LIST* _cnl)
 	{
+		cnri = 0;
+		cnrm = 32;
 		cnl = _cnl;
 		cnra = (struct CONTROL_NODE_RENDER*) malloc(cnrm*sizeof(struct CONTROL_NODE_RENDER));
 	}
 
-	void ControlNodeRenderer()
+	~ControlNodeRenderer()
 	{
 		free(cnra);
 	}
 
+	void update() {};
 
 	void _insert_control_node_render_element(short x, short y, short z, unsigned char face);
 
@@ -372,12 +373,12 @@ void control_node_render_teardown()
 
 void control_node_render_update()
 {
-	control_node_renderer.update();
+	control_node_renderer->update();
 }
 
 void control_node_render_draw()
 {
-	control_node_renderer.draw_intermediate
+	control_node_renderer->draw_intermediate();
 }
 
 
@@ -394,7 +395,7 @@ void ControlNodeRenderer::draw_intermediate()
 	};
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, renderer.texture1);
+	glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
 	glColor4ub(127,0,0,128);
 
