@@ -1,6 +1,8 @@
 #pragma once
 
-#if DC_CLIENT
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
 #include <entity/constants.hpp>
 #include <entity/components/draw/voxel.hpp>
@@ -36,5 +38,3 @@ class TexturedVoxelComponent: public VoxelComponent
 };
     
 } // Components
-
-#endif

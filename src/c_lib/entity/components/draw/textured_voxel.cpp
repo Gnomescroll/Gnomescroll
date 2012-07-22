@@ -1,6 +1,8 @@
 #include "billboard_sprite.hpp"
 
-#if DC_CLIENT
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
 #include <camera/camera.hpp>
 #include <common/draw/draw.hpp>
@@ -73,5 +75,3 @@ void TexturedVoxelComponent::call()
 }
 
 } // Components
-
-#endif
