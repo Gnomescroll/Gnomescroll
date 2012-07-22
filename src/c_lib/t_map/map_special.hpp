@@ -345,210 +345,14 @@ class ControlNodeRenderer
 	}
 
 
-	void _insert_control_node_render_element(short x, short y, short z, unsigned char face)
-	{
-		struct CONTROL_NODE_RENDER cnr;
-		cnr.x = x;
-		cnr.y = y;
-		cnr.z = z;
-		cnr.face = face;
+	void _insert_control_node_render_element(short x, short y, short z, unsigned char face);
 
-		cnra[cnri] = cnr; //insert
-		cnri++;
-
-		if(cnri == cnrm)
-		{
-			cnrm *= 2;
-			cnra = (struct CONTROL_NODE_RENDER*) realloc(cnra, cnrm*sizeof(struct CONTROL_NODE_RENDER));
-		}
-	}
-
-
-	void control_node_render_update()
-	{
-		static int counter = 0; //refresh, deals with loading before terrain map
-		counter++;
-
-		//if(cnl->needs_update == false && cnri != 0 && counter%30!=0) return;
-		if(cnl->needs_update == false && cnri != 0 ) return;
-		cnl->needs_update = false;
-		cnri = 0; //reset index
-
-		const int size = 6;	//size of control grid to left or right of block
-
-		for(int _i=0; _i<cnl->cpi; _i++)
-		{
-			int _x = cnl->cpa[_i].x;
-			int _y = cnl->cpa[_i].y;
-			int _z = cnl->cpa[_i].z;
-
-			for(int i=-size; i<=size; i++)
-			for(int j=-size; j<=size; j++)
-			{
-				//top
-				int x = _x + i;
-				int y = _y + j;
-				int z = _z + size;
-
-				if(!isSolid(x,y,z) && !isSolid(x,y,z+1) )
-				{
-					int face = 0;	//orientation
-					_insert_control_node_render_element(x,y,z, face);
-				}
-			}
-
-			//bottom
-			for(int i=-size; i<=size; i++)
-			for(int j=-size; j<=size; j++)
-			{
-				int x = _x + i;
-				int y = _y + j;
-				int z = _z - size;
-
-				if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
-				{
-					int face = 1;	//orientation
-					_insert_control_node_render_element(x,y,z, face);
-				}
-			}
-
-			//north
-			for(int i=-size; i<=size; i++)
-			for(int j=-size; j<=size; j++)
-			{
-				int x = _x + size;
-				int y = _y + i;
-				int z = _z + j;
-
-				if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
-				{
-					int face = 2;	//orientation
-					_insert_control_node_render_element(x,y,z, face);
-				}
-			}
-
-			//south
-			for(int i=-size; i<=size; i++)
-			for(int j=-size; j<=size; j++)
-			{
-				int x = _x - size;
-				int y = _y + i;
-				int z = _z + j;
-
-				if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
-				{
-					int face = 3;	//orientation
-					_insert_control_node_render_element(x,y,z, face);
-				}
-			}
-
-			//west
-			for(int i=-size; i<=size; i++)
-			for(int j=-size; j<=size; j++)
-			{
-				int x = _x + i;
-				int y = _y + size;
-				int z = _z + j;
-
-				if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
-				{
-					int face = 4;	//orientation
-					_insert_control_node_render_element(x,y,z, face);
-				}
-			}
-
-			//east
-			for(int i=-size; i<=size; i++)
-			for(int j=-size; j<=size; j++)
-			{
-				int x = _x + i;
-				int y = _y - size;
-				int z = _z + j;
-
-				if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
-				{
-					int face = 5;	//orientation
-					_insert_control_node_render_element(x,y,z, face);
-				}
-			}
-
-		}
-		
-	}
-
-
+	void control_node_render_update();
 	//int cpi; //control point index
 	//int cpm; //control point max
 	//class control_node* cpa; //control point array;
 
-	void draw_intermediate()
-	{
-		static const float v_index[72] = 
-		{
-	    	1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
-	    	0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
-	    	1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
-	    	0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
-	    	1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
-	    	0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
-		};
-
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, renderer.texture1);
-
-		glColor4ub(127,0,0,128);
-
-		glEnable(GL_BLEND);
-		glDepthMask(GL_FALSE);
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-		glBegin(GL_QUADS);
-		for(int i=0; i<cnri; i++)
-		{
-			float x = (float) cnra[i].x;
-			float y = (float) cnra[i].y;
-			float z = (float) cnra[i].z;
-			int face = cnra[i].face;
-
-			int tex_id = 0;
-
-			const float txmargin = 0.0f;
-			float tx_min, ty_min, tx_max, ty_max;
-
-	        int ti = tex_id % 4;
-	        int tj = tex_id / 4;
-
-	        tx_min = ti*0.25f + txmargin;
-	        ty_min = tj*0.25f + txmargin;
-	        tx_max = ti*0.25f + 0.25f - txmargin;
-	        ty_max = tj*0.25f + 0.25f - txmargin;
-
-			int s = face;
-
-			glTexCoord2f(tx_min,ty_max);
-			glVertex3f(x+v_index[12*s+3*0+0], y+v_index[12*s+3*0+1], z+v_index[12*s+3*0+2]);
-
-	        glTexCoord2f(tx_max,ty_max);
-			glVertex3f(x+v_index[12*s+3*1+0], y+v_index[12*s+3*1+1], z+v_index[12*s+3*1+2]);
-
-	        glTexCoord2f(tx_max,ty_min );
-			glVertex3f(x+v_index[12*s+3*2+0], y+v_index[12*s+3*2+1], z+v_index[12*s+3*2+2]);
-
-	        glTexCoord2f(tx_min,ty_min );
-			glVertex3f(x+v_index[12*s+3*3+0], y+v_index[12*s+3*3+1], z+v_index[12*s+3*3+2]);
-
-		}
-
-		glEnd();
-		glDisable(GL_BLEND);
-		glDepthMask(GL_TRUE);
-
-		glDisable(GL_TEXTURE_2D);
-
-		glColor4ub(255,255,255,255);
-
-	}
+	void draw_intermediate();
 
 };
 
@@ -574,6 +378,204 @@ void control_node_render_update()
 void control_node_render_draw()
 {
 	control_node_renderer.draw_intermediate
+}
+
+
+void ControlNodeRenderer::draw_intermediate()
+{
+	static const float v_index[72] = 
+	{
+    	1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+    	0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+    	1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+    	0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+    	1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+    	0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
+	};
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, renderer.texture1);
+
+	glColor4ub(127,0,0,128);
+
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	glBegin(GL_QUADS);
+	for(int i=0; i<cnri; i++)
+	{
+		float x = (float) cnra[i].x;
+		float y = (float) cnra[i].y;
+		float z = (float) cnra[i].z;
+		int face = cnra[i].face;
+
+		int tex_id = 0;
+
+		const float txmargin = 0.0f;
+		float tx_min, ty_min, tx_max, ty_max;
+
+        int ti = tex_id % 4;
+        int tj = tex_id / 4;
+
+        tx_min = ti*0.25f + txmargin;
+        ty_min = tj*0.25f + txmargin;
+        tx_max = ti*0.25f + 0.25f - txmargin;
+        ty_max = tj*0.25f + 0.25f - txmargin;
+
+		int s = face;
+
+		glTexCoord2f(tx_min,ty_max);
+		glVertex3f(x+v_index[12*s+3*0+0], y+v_index[12*s+3*0+1], z+v_index[12*s+3*0+2]);
+
+        glTexCoord2f(tx_max,ty_max);
+		glVertex3f(x+v_index[12*s+3*1+0], y+v_index[12*s+3*1+1], z+v_index[12*s+3*1+2]);
+
+        glTexCoord2f(tx_max,ty_min );
+		glVertex3f(x+v_index[12*s+3*2+0], y+v_index[12*s+3*2+1], z+v_index[12*s+3*2+2]);
+
+        glTexCoord2f(tx_min,ty_min );
+		glVertex3f(x+v_index[12*s+3*3+0], y+v_index[12*s+3*3+1], z+v_index[12*s+3*3+2]);
+
+	}
+
+	glEnd();
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glColor4ub(255,255,255,255);
+}
+
+//utility
+void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, short z, unsigned char face)
+{
+	struct CONTROL_NODE_RENDER cnr;
+	cnr.x = x;
+	cnr.y = y;
+	cnr.z = z;
+	cnr.face = face;
+
+	cnra[cnri] = cnr; //insert
+	cnri++;
+
+	if(cnri == cnrm)
+	{
+		cnrm *= 2;
+		cnra = (struct CONTROL_NODE_RENDER*) realloc(cnra, cnrm*sizeof(struct CONTROL_NODE_RENDER));
+	}
+}
+
+void ControlNodeRenderer::control_node_render_update()
+{
+	static int counter = 0; //refresh, deals with loading before terrain map
+	counter++;
+
+	//if(cnl->needs_update == false && cnri != 0 && counter%30!=0) return;
+	if(cnl->needs_update == false && cnri != 0 ) return;
+	cnl->needs_update = false;
+	cnri = 0; //reset index
+
+	const int size = 6;	//size of control grid to left or right of block
+
+	for(int _i=0; _i<cnl->cpi; _i++)
+	{
+		int _x = cnl->cpa[_i].x;
+		int _y = cnl->cpa[_i].y;
+		int _z = cnl->cpa[_i].z;
+
+		for(int i=-size; i<=size; i++)
+		for(int j=-size; j<=size; j++)
+		{
+			//top
+			int x = _x + i;
+			int y = _y + j;
+			int z = _z + size;
+
+			if(!isSolid(x,y,z) && !isSolid(x,y,z+1) )
+			{
+				int face = 0;	//orientation
+				_insert_control_node_render_element(x,y,z, face);
+			}
+		}
+
+		//bottom
+		for(int i=-size; i<=size; i++)
+		for(int j=-size; j<=size; j++)
+		{
+			int x = _x + i;
+			int y = _y + j;
+			int z = _z - size;
+
+			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+			{
+				int face = 1;	//orientation
+				_insert_control_node_render_element(x,y,z, face);
+			}
+		}
+
+		//north
+		for(int i=-size; i<=size; i++)
+		for(int j=-size; j<=size; j++)
+		{
+			int x = _x + size;
+			int y = _y + i;
+			int z = _z + j;
+
+			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+			{
+				int face = 2;	//orientation
+				_insert_control_node_render_element(x,y,z, face);
+			}
+		}
+
+		//south
+		for(int i=-size; i<=size; i++)
+		for(int j=-size; j<=size; j++)
+		{
+			int x = _x - size;
+			int y = _y + i;
+			int z = _z + j;
+
+			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+			{
+				int face = 3;	//orientation
+				_insert_control_node_render_element(x,y,z, face);
+			}
+		}
+
+		//west
+		for(int i=-size; i<=size; i++)
+		for(int j=-size; j<=size; j++)
+		{
+			int x = _x + i;
+			int y = _y + size;
+			int z = _z + j;
+
+			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+			{
+				int face = 4;	//orientation
+				_insert_control_node_render_element(x,y,z, face);
+			}
+		}
+
+		//east
+		for(int i=-size; i<=size; i++)
+		for(int j=-size; j<=size; j++)
+		{
+			int x = _x + i;
+			int y = _y - size;
+			int z = _z + j;
+
+			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+			{
+				int face = 5;	//orientation
+				_insert_control_node_render_element(x,y,z, face);
+			}
+		}
+	}
 }
 
 #endif
