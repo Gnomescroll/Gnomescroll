@@ -118,9 +118,11 @@ dont_include_this_file_in_server
 
 /* Mob */
 
+/*
 #ifndef __APPLE__
 #include <t_mob/_include.hpp>
 #endif
+*/
 
 /* Draw lists */
 #include <common/draw/draw.cpp>
