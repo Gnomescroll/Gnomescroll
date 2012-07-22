@@ -1,13 +1,13 @@
 #pragma once
 
 #ifdef __GNUC__
-//#define MALLOX(type, array_name, size) type array_name[size];
-#define MALLOX(type, array_name, size) type* array_name = (type*) alloca(size);
+#define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));
+#define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));
 #endif
 
 #ifdef __MSVC__
 #include <malloc.h>
-#define MALLOX(type, array_name, size) type* array_name = (type*) _alloca(size);
+#define MALLOX(type, array_name, count) type* array_name = (type*) _alloca(count * sizeof(type));
 #endif
 
 /*

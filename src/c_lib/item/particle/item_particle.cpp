@@ -228,25 +228,42 @@ static bool pickup_item_particle(int particle_id)
 	// since the particles fly and may reach out-of-order, this can fail
 	// if this fails, return false, and the particle should be reset to normal
 	
-	int coin_type = Item::get_item_type("synthesizer_coin");
+	static int coin_type = Item::get_item_type("synthesizer_coin");
 	GS_ASSERT(coin_type != NULL_ITEM_TYPE);
+    static int energy_tank_type = Item::get_item_type("energy_tank");
+    GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
 	
 	// get agent toolbelt and container in array
 	int n_containers = 2;
-	if (item->type == coin_type)
+	if (item->type == coin_type || item->type == energy_tank_type)
 		n_containers = 3;
 	int container_index = 0;
-    ItemContainer::ItemContainerInterface* containers[3] = {NULL,NULL,NULL};
+    MALLOX(ItemContainer::ItemContainerInterface*, containers, n_containers);
+    memset(containers, 0, n_containers * sizeof(ItemContainer::ItemContainerInterface*));
+    
     if (item->type == coin_type)
     {
 		int container_id = ItemContainer::get_agent_synthesizer(agent->id);
+        GS_ASSERT(container_id != NULL_CONTAINER);
 		if (container_id != NULL_CONTAINER)
 			containers[container_index++] = ItemContainer::get_container(container_id);
 	}
+    else
+    if (item->type == energy_tank_type)
+    {
+        int container_id = ItemContainer::get_agent_energy_tanks(agent->id);
+        GS_ASSERT(container_id != NULL_CONTAINER);
+        if (container_id != NULL_CONTAINER)
+            containers[container_index++] = ItemContainer::get_container(container_id);
+    }
+    
 	int container_id = ItemContainer::get_agent_toolbelt(agent->id);
-	if (container_id != NULL_CONTAINER)
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id != NULL_CONTAINER)
 		containers[container_index++] = ItemContainer::get_container(container_id);
+
 	container_id = ItemContainer::get_agent_container(agent->id);
+        GS_ASSERT(container_id != NULL_CONTAINER);
 	if (container_id != NULL_CONTAINER)
 		containers[container_index++] = ItemContainer::get_container(container_id);
 
