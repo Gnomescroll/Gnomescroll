@@ -130,16 +130,16 @@ struct CONTROL_NODE_RENDER
 };
 
 struct CONTROL_NODE_RENDER* cnrl; // control_node_render_list array
-int cnrli; = 0; // index
+int cnrli = 0; // index
 int cnrlm = 32; // max
 
 class CONTROL_NODE_LIST* cnl; //control node list
 
-void control_node_render_init()
+void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
 {
 	cnrl = (struct CONTROL_NODE_RENDER*) malloc(cnrlm*sizeof(struct CONTROL_NODE_RENDER));
 
-	nrl = main_map->control_node_list;
+	cnl = _cnl; //
 }
 
 void control_node_render_teardown()
@@ -147,24 +147,84 @@ void control_node_render_teardown()
 	free(cnrl);
 }
 
+//int cpi; //control point index
+//int cpm; //control point max
+//class control_node* cpa; //control point array;
+
+void _insert_control_node_render_element(short x, short y, short z, unsigned char face)
+{
+	struct CONTROL_NODE_RENDER cnr;
+	cnr.x = x;
+	cnr.y = y;
+	cnr.z = z;
+	cnr.face = face;
+
+	cnrl[cnrli] = cnr; //insert
+	cnrli++;
+
+	if(cnrli == cnrlm)
+	{
+		cnrlm *= 2;
+		cnrl = (struct CONTROL_NODE_RENDER*) realloc(cnrl, cnrlm*sizeof(struct CONTROL_NODE_RENDER));
+	}
+
+
+}
+
 void control_node_render_update()
 {
+	const int size = 4;
 
-	//main_map->control_node_list;
+	for(int _i=0; _i<cnl->cpi; _i++)
+	{
+		//top
+
+		int _x = cnl->cpi[_i].x;
+		int _y = cnl->cpi[_i].y;
+		int _z = cnl->cpi[_i].z;
+
+		//top
+		for(int i=-size; i<size; i++)
+		for(int j=-size; j<size; j++)
+		{
+			int x = _x + i;
+			int y = _y + j;
+			int z = _z + size;
+
+			if(!isSolid(x,y,z) && isSolid(x,y,z-1) )
+			{
+
+			}
+		}
+		//bottom
+	/*
+		for(int i=-size; i<size; i++)
+		for(int j=-size; j<size; j++)
+		{
+
+
+		}
+	*/
+	}
+	
 }
 
 void control_node_render_draw()
 {
 	glColor4ub(127,0,0,128);
 
-	glBegin(GL_QUADS) 
+	glBegin(GL_QUADS) ;
 
-	//for(int i=0; i<)
+	for(int i=0; i<cnri; i++)
+	{
+		//glVertex3f(rx+cx, ry+cy, depth);
+
+	}
 
 	glEnd();
 
 
-	glColor4ub(256,256,256,256);
+	glColor4ub(255,255,255,255);
 }
 
 #endif
