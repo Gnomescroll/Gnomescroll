@@ -30,27 +30,27 @@
 template <class Derived>
 class FixedSizeNetPacketToClient {
     private:
-        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
         class Net_message* nm;
     public:
         static uint8_t message_id;
-        static int size;
+        static unsigned int size;
         static int _in;
         //int client_id; //not used yet
 
         FixedSizeNetPacketToClient() { nm = NULL; }
         virtual ~FixedSizeNetPacketToClient() {}
     
-        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        void serialize(char* buff, unsigned int* buff_n) __attribute((always_inline))
         {
             //GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
 
-        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        inline void unserialize(char* buff, unsigned int* buff_n, unsigned int* size) __attribute((always_inline))
         {
-            int _buff_n = *buff_n;
+            unsigned int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
@@ -63,7 +63,7 @@ class FixedSizeNetPacketToClient {
             //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
 
             nm = Net_message::acquire(Derived::size);
-            int buff_n = 0;
+            unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
   
             if(NetServer::pool[client_id] == NULL)
@@ -85,7 +85,7 @@ class FixedSizeNetPacketToClient {
             if (n_clients > NetServer::number_of_clients) return;
 
             Net_message* nm = Net_message::acquire(Derived::size);
-            int buff_n = 0;
+            unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
             int client_id;
@@ -109,7 +109,7 @@ class FixedSizeNetPacketToClient {
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
             Net_message* nm = Net_message::acquire(Derived::size);
-            int buff_n = 0;
+            unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
             class NetPeer* np;
@@ -123,11 +123,11 @@ class FixedSizeNetPacketToClient {
         }
 
         //will overflow if more than 128 bytes
-        int _size()
+        unsigned int _size()
         {
             char buff[128];
-            int buff_n = 0;
-            int size = 0;
+            unsigned int buff_n = 0;
+            unsigned int size = 0;
             unserialize(buff, &buff_n, &size);
             size++; // add a byte for the message id
             GS_ASSERT(size > 0 && size < 128);
@@ -135,7 +135,7 @@ class FixedSizeNetPacketToClient {
             return size;
         }
 
-        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) 
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
@@ -153,7 +153,7 @@ class FixedSizeNetPacketToClient {
 }; 
 
 template <class Derived> uint8_t FixedSizeNetPacketToClient<Derived>::message_id(255);
-template <class Derived> int FixedSizeNetPacketToClient<Derived>::size(-1);
+template <class Derived> unsigned int FixedSizeNetPacketToClient<Derived>::size(0);
 template <class Derived> int FixedSizeNetPacketToClient<Derived>::_in(0);
 
 /*
@@ -164,26 +164,26 @@ Should onyl use one net message allocation per message
 template <class Derived>
 class FixedSizeReliableNetPacketToClient {
     private:
-        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
         class Net_message* nm;
     public:
         static uint8_t message_id;
-        static int size;
+        static unsigned int size;
 
         static int _in;
 
         FixedSizeReliableNetPacketToClient(){ nm = NULL; }
         virtual ~FixedSizeReliableNetPacketToClient() {}
     
-        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        void serialize(char* buff, unsigned int* buff_n) __attribute((always_inline))
         {
             //GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
-        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        inline void unserialize(char* buff, unsigned int* buff_n, unsigned int* size) __attribute((always_inline))
         {
-            int _buff_n = *buff_n;
+            unsigned int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
@@ -192,7 +192,7 @@ class FixedSizeReliableNetPacketToClient {
         {
             //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
             nm = Net_message::acquire(Derived::size);
-            int buff_n = 0;
+            unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
             if(NetServer::pool[client_id] == NULL)
@@ -214,7 +214,7 @@ class FixedSizeReliableNetPacketToClient {
             if (n_clients > NetServer::number_of_clients) return;
 
             Net_message* nm = Net_message::acquire(Derived::size);
-            int buff_n = 0;
+            unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
             int client_id;
@@ -236,7 +236,7 @@ class FixedSizeReliableNetPacketToClient {
             if (NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
-            int buff_n = 0;
+            unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
@@ -250,11 +250,11 @@ class FixedSizeReliableNetPacketToClient {
         }
 
         //will overflow if more than 128 bytes
-        int _size()
+        unsigned int _size()
         {
             char buff[128];
-            int buff_n = 0;
-            int size = 0;
+            unsigned int buff_n = 0;
+            unsigned int size = 0;
             unserialize(buff, &buff_n, &size);
             size++; // add a byte for the message id
             GS_ASSERT(size > 0 && size < 128);
@@ -262,7 +262,7 @@ class FixedSizeReliableNetPacketToClient {
             return size;
         }
 
-        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) 
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
@@ -273,13 +273,12 @@ class FixedSizeReliableNetPacketToClient {
         {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
-            //GS_ASSERT(Derived::message_id != 255);
             Derived::size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 };
 
 template <class Derived> uint8_t FixedSizeReliableNetPacketToClient<Derived>::message_id(255);
-template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::size(-1);
+template <class Derived> unsigned int FixedSizeReliableNetPacketToClient<Derived>::size(0);
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::_in(0);
 

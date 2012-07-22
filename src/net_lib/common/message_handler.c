@@ -5,23 +5,19 @@
 
 #include <net_lib/global.hpp>
 
-
-
-typedef void (*pt2handler)(char*, int, int* read_bytes, int client_id);
-
 #define NET_STATIC_ARRAYS 0
 
 #if NET_STATIC_ARRAYS
-static int h_client_packet_size[256]; 
-static int h_server_packet_size[256]; 
+static unsigned int h_client_packet_size[256]; 
+static unsigned int h_server_packet_size[256]; 
 
 static pt2handler handler_array[256];
 
 static pt2handler client_handler_array[256];
 static pt2handler server_handler_array[256];
 #else
-static int* h_client_packet_size;
-static int* h_server_packet_size;
+static unsigned int* h_client_packet_size;
+static unsigned int* h_server_packet_size;
 
 static pt2handler* handler_array;
 
@@ -30,14 +26,14 @@ static pt2handler* server_handler_array;
 #endif
 
 //should disconnect client
-void default_handler_function(char* buff, int n, int* read_bytes, int client_id)
+void default_handler_function(char* buff, int n, int* read_bytes, unsigned int client_id)
 {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
     *read_bytes = -1;
 }
 
-void register_server_message_handler(int message_id, int size, pt2handler fptr)
+void register_server_message_handler(int message_id, unsigned int size, pt2handler fptr)
 {
     if(message_id > 255 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
     if(server_handler_array[message_id] != NULL) {printf("register_server_message_handler: reassigning message_id %i !!!\n", message_id);}
@@ -47,7 +43,7 @@ void register_server_message_handler(int message_id, int size, pt2handler fptr)
     server_handler_array[message_id] = fptr;
 }
 
-void register_client_message_handler(int message_id, int size, pt2handler fptr)
+void register_client_message_handler(int message_id, unsigned int size, pt2handler fptr)
 {
     if(message_id >=256 || message_id <0) {printf("register_client_message_handler: message ID invalid!\n");return;}
     if(client_handler_array[message_id] != NULL) {printf("register_client_message_handler: Reassigning message_id %i !!!\n", message_id);}
@@ -62,8 +58,8 @@ void init_message_handler()
 
     #if !NET_STATIC_ARRAYS
 
-    h_client_packet_size = (int*) calloc(256, sizeof(int));
-    h_server_packet_size = (int*) calloc(256, sizeof(int));
+    h_client_packet_size = (unsigned int*) calloc(256, sizeof(unsigned int));
+    h_server_packet_size = (unsigned int*) calloc(256, sizeof(unsigned int));
 
     handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
     client_handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
@@ -76,21 +72,21 @@ void init_message_handler()
         handler_array[i] = NULL;
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
-        h_server_packet_size[i] = -1;
-        h_client_packet_size[i] = -1;
+        h_server_packet_size[i] = 0;
+        h_client_packet_size[i] = 0;
     }
 
 }
 
-int process_packet_messages(char* buff, int *n, int max_n, int client_id) 
+int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, unsigned int client_id) 
 {
 
     //printf("*n= %i, max_n= %i \n", *n, max_n);
 
-    int size;
+    unsigned int size;
     uint8_t message_id;
 
-    int read_bytes;
+    unsigned int read_bytes = 0;
 
     //static int _in = 0;
 
@@ -172,15 +168,15 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
 /*
     Client to server is safe
 */
-int process_client_map_messages(char* buff, int *n, int max_n, int client_id) 
+int process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n, unsigned int client_id) 
 {
     #if DC_SERVER
-    GS_ASSERT(0);
+    GS_ASSERT(false);
     printf("process_client_map_messages Error: this should never be called on server\n");
     #endif
     //printf("*n= %i, max_n= %i \n", *n, max_n);
     uint8_t message_id;
-    int read_bytes;
+    unsigned int read_bytes;
 
     do
     {
@@ -214,7 +210,7 @@ int process_client_map_messages(char* buff, int *n, int max_n, int client_id)
     return 0; //should not happen
 }
 
-int process_large_messages(char* buff, int *n, int max_n, int client_id)
+int process_large_messages(char* buff, unsigned int* n, unsigned int max_n, unsigned int client_id)
 {
     printf("WARNING: process_large_messages, received message on large message channel \n");
     return 0;

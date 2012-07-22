@@ -10,14 +10,14 @@
 #include <agent/net_agent.hpp>
 #include <state/packet_init.hpp>
 
-#if DC_CLIENT
-#include <state/client_state.hpp>
-#endif
-
 #include <common/common.hpp>
 #include <common/analytics/sessions.hpp>
 
 #include <options/options.hpp>
+
+#if DC_CLIENT
+#include <state/client_state.hpp>
+#endif
 
 const int DEFAULT_PORT = 4096;
 
@@ -168,7 +168,7 @@ void client_dispatch_network_events()
     
     /* Wait up to 5 milliseconds for an event. */
 
-    int index = 0;
+    unsigned int index = 0;
 
     int timeout = 1;
     while (enet_host_service (client_host, & event, timeout) > 0)
@@ -208,7 +208,7 @@ void client_dispatch_network_events()
             {
                 case 0:
                     //printf("server received channel 0 message \n");
-                    index= 0;
+                    index = 0;
                     process_packet_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -218,7 +218,7 @@ void client_dispatch_network_events()
                     break;
                 case 1:
                     printf("server received channel 1 message \n");
-                    index= 0;
+                    index = 0;
                     process_large_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -229,8 +229,8 @@ void client_dispatch_network_events()
                 case 3:
                     //printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
 
-                    index= 0;
-                    //process_client_map_messages(char* buff, int *n, int max_n, int client_id);
+                    index = 0;
+                    //process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n, int client_id);
                     process_client_map_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -318,7 +318,7 @@ void dispatch_network_events()
     
     /* Wait up to 5 milliseconds for an event. */
 
-    int index = 0;
+    unsigned int index = 0;
     int timeout = 1;
     int ret = 0;
     while (enet_host_service (server_host, &event, timeout) > 0)

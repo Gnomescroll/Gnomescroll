@@ -6,7 +6,7 @@
 
 //#include <net_lib/common/net_peer.hpp>
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <net_lib/client/pviz.h>
 #endif
 

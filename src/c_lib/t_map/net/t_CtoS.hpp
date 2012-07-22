@@ -13,7 +13,7 @@ class block_CtoS: public MapMessagePacketToServer<block_CtoS>
         uint16_t x,y,z;
         uint16_t val;
         
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);

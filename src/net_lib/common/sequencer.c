@@ -65,7 +65,7 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
                 printf("messages_n= %i\n", ps->messages_n);
             */
                 np->ack_packet(ps); //ack packet, free buffer
-                #ifdef DC_CLIENT
+                #if DC_CLIENT
                 pviz_packet_ack(index);
                 #endif
 
@@ -99,7 +99,7 @@ uint16_t get_next_sequence_number(class NetPeer* np) {
     /*
     REMOVE BELOW WHEN SERVER IS PORTED TO NETPEER SEND METHODS
     */
-    #ifdef DC_SERVER
+    #if DC_SERVER
     ps->messages_n = 0 ;
     #endif
     //printf("send packet, seq= %i \n", np->packet_sequence_number);

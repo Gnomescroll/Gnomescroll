@@ -1,16 +1,10 @@
 #include "net_peer_manager.hpp"
 
-
 #include <net_lib/global.hpp>
 #include <state/server_state.hpp>
 #include <t_map/server/manager.hpp>
-
 #include <chat/interface.hpp>
-
-//#include <agent/agent.hpp>
 #include <agent/net_agent.hpp>
-
-
 #include <item/_interface.hpp>
 #include <common/analytics/sessions.hpp>
 
@@ -41,12 +35,10 @@ void send_version_to_client(int client_id)
 void NetPeerManager::init(int client_id)
 {
     printf("NetPeerManager: init client %d\n", client_id);
-    if(client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) printf("FATAL ERROR: NetPeerManager::init, client id invalid \n");
-    if (this->inited) 
-    {
-        printf("Warning: NetPeerManager::init, double init \n");
-        return;
-    }
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+    GS_ASSERT(!this->inited);
+    if (this->inited) return;
     this->inited = true;
     this->client_id = client_id;
 
@@ -67,6 +59,9 @@ void NetPeerManager::init(int client_id)
  */
 void NetPeerManager::version_passed(int client_id)
 {
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+
     SendClientId_StoC client_id_msg;
     client_id_msg.client_id = client_id;
     client_id_msg.sendToClient(client_id);
@@ -90,7 +85,6 @@ void NetPeerManager::version_passed(int client_id)
  */
 void NetPeerManager::ready()
 {
-
     if (!this->inited)
     {
         printf("ERROR NetPeerManager::ready() -- not inited yet\n");

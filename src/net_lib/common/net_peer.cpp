@@ -11,7 +11,7 @@ connected(0),
 version_match(true),
 enet_peer(NULL)
 {
-#ifdef DC_SERVER
+#if DC_SERVER
     map_message_buffer = new char[ NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT ];
     map_message_buffer_index = 0;
     map_message_buffer_max = NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT;
@@ -58,11 +58,11 @@ void NetPeer::flush_map_messages()
 }
 
 
-void NetPeer::resize_map_message_buffer(int size_min)
+void NetPeer::resize_map_message_buffer(unsigned int size_min)
 {
     flush_map_messages();
 
-    int size = 4096*((size_min / 4096) + 1); //round up to next 4096 bytes
+    unsigned int size = 4096*((size_min / 4096) + 1); //round up to next 4096 bytes
     //printf("resize_ map message buffer from %i to %i \n", map_message_buffer_max, size);
     map_message_buffer_max = size;
     delete[] map_message_buffer;
@@ -72,11 +72,8 @@ void NetPeer::resize_map_message_buffer(int size_min)
 
 void NetPeer::flush_to_net() 
 {
-    if(this->connected == 0) 
-    {
-        //printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
-        return;
-    }
+    if(this->connected == 0) return;
+    if(reliable_message_manager.pending_bytes_out == 0) return;
 
     if(reliable_message_manager.pending_messages != 0) 
     {
@@ -100,7 +97,7 @@ void NetPeer::flush_to_net()
         enet_peer_send (enet_peer, 2, python_p);
     }
 */
-#ifdef DC_SERVER
+#if DC_SERVER
     flush_map_messages();
 #endif
 /*
@@ -116,7 +113,7 @@ void NetPeer::flush_to_net()
 */
 
 /*
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     pviz_packet_sent(seq, n1);
     #endif
 */
