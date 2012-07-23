@@ -15,6 +15,30 @@ ws2_32.lib
 lua51.lib
 winmm.lib
 
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+
+    <Filter Include="test_filter">
+    </Filter>
+
+    <Filter Include="test_filter2">
+    </Filter>
+    
+    <Filter Include="test_filter2\test_filter3">
+    </Filter>
+ 
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <ClCompile Include="c_lib\camera\fulstrum_test2.cpp">
+		<Filter>test_filter2\test_filter3</Filter>
+    </ClCompile>
+
+  </ItemGroup>
+</Project>
+
 <HaltingState> I have a GCC project/game with a hierarchy of folders and need to get it imported into MSVC which seems to be hellish, any ideas?
 <Domiiii> HaltingState write a simple program that writes your vcprojx file and filters
 <HaltingState> Domiiii, its xml; oh boy
