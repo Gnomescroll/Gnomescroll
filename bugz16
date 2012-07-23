@@ -826,6 +826,8 @@ fix frustum culling of item particles
 
 add spawners
 
+add energy core
+
 ----------------------
 
 == BUILD ==
@@ -939,3 +941,6 @@ A: we can make it 1x1 but treat it as an object/model. it will render at its loc
 Spawner / Control Node / Energy Core
  
 ==BUGZ==
+remove base?
+
+finish object config loader
