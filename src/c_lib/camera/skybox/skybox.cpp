@@ -256,8 +256,8 @@ void draw()
 
     if (star_vlist->vertex_number <= 0) return;
 
-    GS_ASSERT(star_vlist->VBO != 0);
-    if (star_vlist->VBO == 0) return;
+    GS_ASSERT(star_vlist->VBO >= 0);
+    if (star_vlist->VBO < 0) return;
     
     glBindBuffer(GL_ARRAY_BUFFER, star_vlist->VBO);
 

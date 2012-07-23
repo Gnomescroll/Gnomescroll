@@ -145,8 +145,8 @@ void draw_voxel_particles()
 
     if (voxel_particle_vlist->vertex_number <= 0) return;
 
-    GS_ASSERT(voxel_particle_vlist->VBO != 0);
-    if (voxel_particle_vlist->VBO == 0) return;
+    GS_ASSERT(voxel_particle_vlist->VBO >= 0);
+    if (voxel_particle_vlist->VBO < 0) return;
     
     glColor4ub(255,255,255,255);
 
