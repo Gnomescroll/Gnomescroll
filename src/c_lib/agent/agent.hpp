@@ -164,7 +164,12 @@ class Agent_state
 
         float camera_z();
         Vec3 camera_position();
+        
+        class Voxel_volume* get_arm();
         Vec3 arm_center();
+        Vec3 arm_forward();
+        Vec3 arm_right();
+        Vec3 arm_up();
 
         explicit Agent_state(int id); //default constructor
 

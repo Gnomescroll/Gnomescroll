@@ -18,15 +18,15 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int check_name_interval;
         
     public:
+    
         #if DC_SERVER
         void update_map_manager_positions();
+        void send_to_client(int client_id);
         #endif
 
         void update_models();
 
         int ids_in_use[AGENT_MAX];
-        
-        void send_to_client(int client_id);
 
         int get_ids();
 
@@ -46,6 +46,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 		#if DC_CLIENT
         void check_missing_names();
 		void draw_names();
+        void draw_equipped_items();
 		#endif
 
         Agent_list();

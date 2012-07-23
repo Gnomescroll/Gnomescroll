@@ -3,6 +3,7 @@
 #include <physics/common.hpp>
 #if DC_CLIENT
 #include <state/client_state.hpp>
+#include <animations/weapon.hpp>
 #endif
 #if DC_SERVER
 #include <state/server_state.hpp>
@@ -25,6 +26,26 @@ void Agent_list::update_map_manager_positions()
 		t_map::t_map_manager_update_client_position(i, p.x, p.y);
 	}
 }
+
+void Agent_list::send_to_client(int client_id)
+{
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        if (a[i] == NULL) continue;
+        agent_create_StoC msg;
+        msg.id = a[i]->id;
+        msg.client_id = a[i]->client_id;
+        msg.sendToClient(client_id);
+
+        agent_name_StoC name_msg;
+        name_msg.id = a[i]->id;
+        strcpy(name_msg.name, a[i]->status.name);
+        name_msg.sendToClient(client_id);
+        
+        int item_type = Toolbelt::get_agent_selected_item_type(i);
+        Toolbelt::send_agent_set_active_item_packet(client_id, i, item_type);
+    }
+}
 #endif
 
 #if DC_CLIENT
@@ -41,7 +62,33 @@ void Agent_list::draw_names()
 		a->event.bb.draw();
 	}
 }
+
+void Agent_list::draw_equipped_items()
+{
+	int agent_id = ClientState::playerAgent_state.agent_id;
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->id == agent_id) continue; // skip you
+        int equipped_item_type = Toolbelt::get_agent_selected_item_type(i);
+        Animations::draw_equipped_item_other_agent(i, equipped_item_type);
+    }
+}
+
+void Agent_list::check_missing_names()
+{
+    this->check_name_interval++;
+    if ((this->check_name_interval %= CHECK_MISSING_NAME_INTERVAL) != 0)
+        return;
+
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->a[i]->status.check_missing_name();
+    }
+}
 #endif
+
 
 /* Agent list */
 
@@ -119,24 +166,6 @@ void Agent_list::filter_none()
         this->filtered_objects[c++] = this->a[i];
     }
     this->n_filtered = c;
-}
-
-
-void Agent_list::send_to_client(int client_id)
-{
-    for (int i=0; i<AGENT_MAX; i++)
-    {
-        if (a[i]==NULL) continue;
-        agent_create_StoC msg;
-        msg.id = a[i]->id;
-        msg.client_id = a[i]->client_id;
-        msg.sendToClient(client_id);
-
-        agent_name_StoC name_msg;
-        name_msg.id = a[i]->id;
-        strcpy(name_msg.name, a[i]->status.name);
-        name_msg.sendToClient(client_id);
-    }
 }
 
 // have to override these because of Agent_state->s.x,y,z
@@ -224,21 +253,6 @@ bool Agent_list::name_available(char* name)
     }
     return true;
 }
-
-#if DC_CLIENT
-void Agent_list::check_missing_names()
-{
-    this->check_name_interval++;
-    if ((this->check_name_interval %= CHECK_MISSING_NAME_INTERVAL) != 0)
-        return;
-
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->status.check_missing_name();
-    }
-}
-#endif
 
 Agent_list::Agent_list()
 :

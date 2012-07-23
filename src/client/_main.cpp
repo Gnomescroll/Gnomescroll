@@ -288,9 +288,14 @@ int run()
         // update mouse
         poll_mouse();
 
+        ClientState::agent_list->draw_equipped_items();
+
         /*
             Draw Hud
         */
+
+        // update mouse
+        poll_mouse();
 
         // with depth test disable
         int equipped_item_type = Toolbelt::get_selected_item_type();

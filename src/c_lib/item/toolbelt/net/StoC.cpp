@@ -15,6 +15,8 @@ inline void toolbelt_set_active_item_StoC::handle()
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
+    GS_ASSERT(agent_selected_type != NULL);
+    if (agent_selected_type == NULL) return;
     if (item_type == agent_selected_type[agent_id]) return;
     turn_fire_off(agent_id);
     agent_selected_type[agent_id] = item_type;

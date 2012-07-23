@@ -164,7 +164,6 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 	glColor4ub(255,255,255,255);
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_BLEND, false);
-	GL_ASSERT(GL_DEPTH_TEST, false);
 
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5f);
@@ -203,7 +202,6 @@ static void draw_voxel(int item_type,
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_BLEND, false);
 	GL_ASSERT(GL_ALPHA_TEST, false);
-	GL_ASSERT(GL_DEPTH_TEST, false);
 
 	// save culling state
 	const GLboolean cull_face_enabled = glIsEnabled(GL_CULL_FACE);
@@ -300,6 +298,44 @@ void draw_equipped_item(int item_type)
 
 	forward = vec3_cross(right, up);
 	normalize_vector(&forward);
+
+	// scale to size
+	up = vec3_scalar_mult(up, sprite_scale);
+	right = vec3_scalar_mult(right, sprite_scale);
+	forward = vec3_scalar_mult(forward, sprite_scale);
+	
+    GL_ASSERT(GL_DEPTH_TEST, false);
+	if (Item::item_type_is_voxel(item_type))
+		draw_voxel(item_type, origin, forward, right, up);
+	else
+		draw_planar_sprite(item_type, origin, right, up);
+}
+
+void draw_equipped_item_other_agent(int agent_id, int item_type)
+{	// draw item in other players' hands
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+
+	if (item_type == NULL_ITEM_TYPE) return;    // dont draw a fist
+
+    Agent_state* a = ClientState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+
+    class Voxel_volume* vv = a->get_arm();
+    GS_ASSERT(vv != NULL);
+    if (vv == NULL) return;
+    
+    // HACKED UP MODEL DEPENDENT CRAP
+    struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
+    float offset = (((vv->zdim)/2) * vv->scale) + (sprite_scale / 2.0f);
+    struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
+    
+    if (sphere_fulstrum_test(origin.x, origin.y, origin.z, sprite_scale) == false)
+        return;
+
+    struct Vec3 up = a->arm_forward();
+    struct Vec3 forward = a->arm_right();
 
 	// scale to size
 	up = vec3_scalar_mult(up, sprite_scale);

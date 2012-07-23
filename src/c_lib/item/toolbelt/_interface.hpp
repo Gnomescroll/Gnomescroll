@@ -12,6 +12,7 @@ void tick();
 
 void remove_agent(int agent_id);
 void agent_died(int agent_id);
+int get_agent_selected_item_type(int agent_id);
 
 #if DC_CLIENT
 int get_selected_item_type();

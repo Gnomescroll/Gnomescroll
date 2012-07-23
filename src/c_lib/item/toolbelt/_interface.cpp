@@ -54,6 +54,17 @@ void agent_died(int agent_id)
     turn_fire_off(agent_id);
 }
 
+int get_agent_selected_item_type(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM_TYPE;
+    
+    GS_ASSERT(agent_selected_type != NULL);
+    if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
+    
+    return agent_selected_type[agent_id];
+}
+
 /* Trigger entry points */
 // Most of these do not need declarations exported in the header
 
