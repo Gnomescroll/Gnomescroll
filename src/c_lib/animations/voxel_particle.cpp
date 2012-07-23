@@ -159,17 +159,14 @@ void draw_voxel_particles()
 
     glUseProgramObjectARB(voxel_particle_shader.shader);
 
-    Vec3 pos = current_camera->get_position();
-    glUniform3f(voxel_particle_CameraPos, pos.x, pos.y, pos.z);
-
     glBindBuffer(GL_ARRAY_BUFFER, voxel_particle_vlist->VBO);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(voxel_particle_TexCoord);
     glEnableVertexAttribArray(voxel_particle_Normal);
 
-    Vec3 look = vec3_scalar_mult(current_camera->forward_vector(), -1);
-    glUniform3f(voxel_particle_Look, look.x, look.y, look.z);
+    Vec3 pos = current_camera->get_position();
+    glUniform3f(voxel_particle_CameraPos, pos.x, pos.y, pos.z);
 
     glVertexPointer(3, GL_FLOAT, voxel_particle_vlist->stride, (GLvoid*)0);    
     glVertexAttribPointer(voxel_particle_TexCoord, 2, GL_FLOAT, GL_FALSE, voxel_particle_vlist->stride, (GLvoid*) 12 );
