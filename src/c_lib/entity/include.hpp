@@ -3,7 +3,9 @@
 #include <entity/constants.hpp>
 
 #include <entity/objects/include.hpp>
+#include <entity/object/types.hpp>
 #include <entity/object/object.hpp>
+#include <entity/object/config.hpp>
 #include <entity/object/object_list.hpp>
 #include <entity/object/object_data_list.hpp>
 #include <entity/object/filter.hpp>

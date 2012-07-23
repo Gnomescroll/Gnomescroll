@@ -3,6 +3,8 @@
 #include <entity/components.hpp>
 #include <entity/object/helpers.hpp>
 #include <entity/object/filter.hpp>
+#include <entity/object/types.hpp>
+#include <entity/object/config.hpp>
 
 namespace Objects
 {
@@ -15,30 +17,29 @@ ObjectListFilter* filter = NULL;
 
 void load_object_data()
 {
-    // refills
-    //load_pickup_sprite_data(OBJECT_HEALTH_REFILL);
-    //load_pickup_sprite_data(OBJECT_LASER_REFILL);
-    //load_pickup_sprite_data(OBJECT_GRENADE_REFILL);
-    // gemstones
-
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
-        if (object_loaders[i] != NULL)
-            object_loaders[i]();
+    {
+        objectLoad load = get_object_load_method((ObjectType)i);
+        if (load != NULL) load();
+    }
 
-    // fabs
-    load_base_data();
-    load_agent_spawner_data();
-    load_energy_core_data();
-    load_turret_data();
+    //// fabs
+    //load_base_data();
+    //load_agent_spawner_data();
+    //load_energy_core_data();
+    //load_turret_data();
 
-    // mobs
-    load_mob_spawner_data();
-    load_mob_robot_box_data();
-    load_mob_bomb_data();
+    //// mobs
+    //load_mob_spawner_data();
+    //load_mob_robot_box_data();
+    //load_mob_bomb_data();
 }
 
 void init()
 {   // must specify maximum values for objects here
+
+    init_config();
+
     GS_ASSERT(object_list == NULL);
     GS_ASSERT(object_data == NULL);
     GS_ASSERT(filter == NULL);
@@ -49,16 +50,23 @@ void init()
     object_list = new ObjectList;
     object_list->init();
     
-    // fabs
-    object_list->set_object_max(OBJECT_BASE, 2);
-    object_list->set_object_max(OBJECT_AGENT_SPAWNER, 1024);
-    object_list->set_object_max(OBJECT_ENERGY_CORE, 1024);
-    object_list->set_object_max(OBJECT_TURRET, 512);
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        int max = get_object_max((ObjectType)i);
+        if (max > 0)
+            object_list->set_object_max((ObjectType)i, max);
+    }
+    
+    //// fabs
+    //object_list->set_object_max(OBJECT_BASE, 2);
+    //object_list->set_object_max(OBJECT_AGENT_SPAWNER, 1024);
+    //object_list->set_object_max(OBJECT_ENERGY_CORE, 1024);
+    //object_list->set_object_max(OBJECT_TURRET, 512);
 
-    // mobs
-    object_list->set_object_max(OBJECT_MONSTER_SPAWNER, 64);
-    object_list->set_object_max(OBJECT_MONSTER_BOX, 1024);
-    object_list->set_object_max(OBJECT_MONSTER_BOMB, 512);
+    //// mobs
+    //object_list->set_object_max(OBJECT_MONSTER_SPAWNER, 64);
+    //object_list->set_object_max(OBJECT_MONSTER_BOX, 1024);
+    //object_list->set_object_max(OBJECT_MONSTER_BOMB, 512);
 
     object_data = new ObjectDataList;
     object_data->init();
@@ -73,6 +81,7 @@ void teardown()
     if (object_list != NULL) delete object_list;
     if (object_data != NULL) delete object_data;
     if (filter != NULL) delete filter;
+    teardown_config();
 }
 
 /* Iterators */
@@ -97,8 +106,9 @@ void harvest()
 static Object* create_switch(ObjectType type)
 {
     
-    objectCreate* create = get_object_create_method(type);
-    if (ready == NULL) return NULL;
+    objectCreate create = get_object_create_method(type);
+    GS_ASSERT(create != NULL);
+    if (create == NULL) return NULL;
     return create();
 
     //switch (type)
@@ -151,9 +161,9 @@ void ready_switch(Object* object)
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
 
-    objectReady* ready = get_object_ready_method(object->type);
+    objectReady ready = get_object_ready_method(object->type);
+    GS_ASSERT(ready != NULL);
     if (ready != NULL) ready(object);
-
     
     //switch (object->type)
     //{
@@ -194,7 +204,8 @@ void destroy_switch(Object* object)
     if (object == NULL) return;
     ObjectType type = object->type;
     
-    objectDie* die = get_object_die_method(type);
+    objectDie die = get_object_die_method(type);
+    GS_ASSERT(die != NULL);
     if (die != NULL) die(object);
     
     //switch (type)

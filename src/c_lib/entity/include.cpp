@@ -6,6 +6,7 @@
 
 #include <entity/objects/include.cpp>
 #include <entity/object/object.cpp>
+#include <entity/object/config.cpp>
 #include <entity/object/object_list.cpp>
 #include <entity/object/object_data_list.cpp>
 #include <entity/object/filter.cpp>
