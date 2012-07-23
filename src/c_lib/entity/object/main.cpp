@@ -21,6 +21,10 @@ void load_object_data()
     //load_pickup_sprite_data(OBJECT_GRENADE_REFILL);
     // gemstones
 
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+        if (object_loaders[i] != NULL)
+            object_loaders[i]();
+
     // fabs
     load_base_data();
     load_agent_spawner_data();
