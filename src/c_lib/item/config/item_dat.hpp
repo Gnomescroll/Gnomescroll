@@ -309,7 +309,12 @@ void load_item_dat()
     s.pretty_name = (char*) "Spawner";
     s.max_stack_size = 1;
 
-    end_item_dat();
+    item_def(56, IG_ENERGY_CORE, "energy_core");
+    sprite_def(i1, 3,6);
+    s.pretty_name = (char*) "Energy Core";
+    s.max_stack_size = 1;
+
+    end_item_dat(); // finalize
     
     verify_item_dat();
 }

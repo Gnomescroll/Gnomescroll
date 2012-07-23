@@ -38,6 +38,9 @@ void load_synthesizer()
 
     synthesizer_item_def("agent_spawner", 25);
     synthesizer_item_set(4,0);
+    
+    synthesizer_item_def("energy_core", 25);
+    synthesizer_item_set(2,1);
     #endif
 }
 

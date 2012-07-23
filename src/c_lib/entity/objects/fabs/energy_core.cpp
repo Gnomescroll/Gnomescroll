@@ -9,12 +9,16 @@
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
 
+#if DC_SERVER
+#include <entity/components/healer.hpp>
+#endif
+
 namespace Objects
 {
 
-void load_agent_spawner_data()
+void load_energy_core_data()
 {
-    ObjectType type = OBJECT_AGENT_SPAWNER;
+    ObjectType type = OBJECT_ENERGY_CORE;
 
     #if DC_SERVER
     int n_components = 6;
@@ -31,80 +35,88 @@ void load_agent_spawner_data()
     object_data->attach_component(type, COMPONENT_HIT_POINTS);
     
     #if DC_SERVER
-    object_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+    object_data->attach_component(type, COMPONENT_HEALER);
     object_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
-
+    
     #if DC_CLIENT
     object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
 }
 
-static void set_agent_spawner_properties(Object* object)
+static void set_energy_core_properties(Object* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
+    void* ret = (void*)add_component_to_object(object, COMPONENT_POSITION_CHANGED);
+    GS_ASSERT(ret != NULL);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
-    dims->height = AGENT_SPAWNER_HEIGHT;
+    dims->height = ENERGY_CORE_HEIGHT;
     
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
-    vox->vox_dat = &VoxDats::agent_spawner;
-    vox->init_hitscan = AGENT_SPAWNER_INIT_WITH_HITSCAN;
-    vox->init_draw = AGENT_SPAWNER_INIT_WITH_DRAW;
+    vox->vox_dat = &VoxDats::energy_core;
+    vox->init_hitscan = ENERGY_CORE_INIT_WITH_HITSCAN;
+    vox->init_draw = ENERGY_CORE_INIT_WITH_DRAW;
 
     using Components::HitPointsHealthComponent;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
-    health->health = AGENT_SPAWNER_MAX_HEALTH;
-    health->max_health = AGENT_SPAWNER_MAX_HEALTH;
+    health->health = ENERGY_CORE_MAX_HEALTH;
+    health->max_health = ENERGY_CORE_MAX_HEALTH;
 
     #if DC_SERVER
-    using Components::AgentSpawnerComponent;
-    AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
-    spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
-
+    using Components::HealerComponent;
+    HealerComponent* healer = (HealerComponent*)add_component_to_object(object, COMPONENT_HEALER);
+    healer->radius = ENERGY_CORE_HEALING_RADIUS;
+    
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
-    item_drop->set_max_drop_types(1);
-    item_drop->set_max_drop_amounts("agent_spawner", 1);
-    item_drop->add_drop("agent_spawner", 1, 1.0f);
+    item_drop->set_max_drop_types(2);
+    item_drop->set_max_drop_amounts("energy_tank", 2);
+    item_drop->add_drop("energy_tank", 2, 0.5f);
+    item_drop->add_drop("energy_tank", 3, 0.5f);
+    item_drop->set_max_drop_amounts("small_charge_pack", 3);
+    item_drop->add_drop("small_charge_pack", 4, 0.5f);
+    item_drop->add_drop("small_charge_pack", 5, 0.3f);
+    item_drop->add_drop("small_charge_pack", 6, 0.2f);
     #endif
-
+    
     #if DC_CLIENT
     using Components::AnimationComponent;
     AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
-    anim->count = AGENT_SPAWNER_ANIMATION_COUNT;
-    anim->count_max = AGENT_SPAWNER_ANIMATION_COUNT_MAX;
-    anim->size = AGENT_SPAWNER_ANIMATION_SIZE;
-    anim->force = AGENT_SPAWNER_ANIMATION_FORCE;
-    anim->color = AGENT_SPAWNER_ANIMATION_COLOR;
+    anim->count = ENERGY_CORE_ANIMATION_COUNT;
+    anim->count_max = ENERGY_CORE_ANIMATION_COUNT_MAX;
+    anim->size = ENERGY_CORE_ANIMATION_SIZE;
+    anim->force = ENERGY_CORE_ANIMATION_FORCE;
+    anim->color = ENERGY_CORE_ANIMATION_COLOR;
     #endif
 
-    object->tick = &tick_agent_spawner;
-    object->update = &update_agent_spawner;
+    object->tick = &tick_energy_core;
+    object->update = &update_energy_core;
 
     object->create = create_packet;
     object->state = state_packet;
 }
 
-Object* create_agent_spawner()
+Object* create_energy_core()
 {
-    ObjectType type = OBJECT_AGENT_SPAWNER;
+    ObjectType type = OBJECT_ENERGY_CORE;
     Object* obj = object_list->create(type);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;
-    set_agent_spawner_properties(obj);
+    set_energy_core_properties(obj);
     return obj;
 }
 
-void ready_agent_spawner(Object* object)
+void ready_energy_core(Object* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
     
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(vox != NULL);
+    GS_ASSERT(physics != NULL);
 
     Vec3 position = vec3_add(physics->get_position(), vec3_init(0.5f, 0.5f, 0.0f));
     Vec3 angles = physics->get_angles();
@@ -117,45 +129,41 @@ void ready_agent_spawner(Object* object)
     #endif
 }
 
-void die_agent_spawner(Object* object)
-{    
+void die_energy_core(Object* object)
+{
+    printf("Die energy core\n");
     #if DC_SERVER
     using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    ItemDropComponent* item_drop = (ItemDropComponent*)
+        object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
     GS_ASSERT(item_drop != NULL);
     item_drop->drop_item();
-
-    // remove self from any agents using us
-    using ServerState::agent_list;
-    for (int i=0; i<agent_list->n_max; i++)
-        if (agent_list->a[i] != NULL)
-            if (agent_list->a[i]->status.spawner == object->id)
-                agent_list->a[i]->status.set_spawner(BASE_SPAWN_ID);
-                
+    
     object->broadcastDeath();
     #endif
-
+    
     #if DC_CLIENT
-    // explosion animation
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    GS_ASSERT(vox != NULL);
     if (vox != NULL && vox->vox != NULL)
     {
         using Components::AnimationComponent;
         AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        GS_ASSERT(anim != NULL);
         if (anim != NULL)
             anim->explode_random(vox->get_center());
     }
-
-    //dieChatMessage(object);
     #endif
 }
 
-void tick_agent_spawner(Object* object)
+void tick_energy_core(Object* object)
 {
     #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
 
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
@@ -166,7 +174,7 @@ void tick_agent_spawner(Object* object)
     #endif
 }
 
-void update_agent_spawner(Object* object)
+void update_energy_core(Object* object)
 {
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;

@@ -31,6 +31,7 @@ void decrement_stack(int agent_id, ItemID item_id, int item_type);
 void consume_item(int agent_id, ItemID item_id, int item_type);
 void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type);
 void place_spawner(int agent_id, ItemID item_id, int item_type);
+void place_energy_core(int agent_id, ItemID item_id, int item_type);
 #endif
 
 }    // Toolbelt

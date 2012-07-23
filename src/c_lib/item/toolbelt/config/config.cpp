@@ -134,6 +134,7 @@ static void register_click_and_hold()
     click_and_hold_group(IG_PLACER, false);
     click_and_hold_group(IG_CONSUMABLE, false);
     click_and_hold_group(IG_AGENT_SPAWNER, false);
+    click_and_hold_group(IG_ENERGY_CORE, false);
 
     // override per-type here
     //click_and_hold_type("example");
@@ -194,6 +195,9 @@ static void register_item_group_callbacks()
     
     set_group(IG_AGENT_SPAWNER);
     c.trigger = &place_spawner;
+    
+    set_group(IG_ENERGY_CORE);
+    c.trigger = &place_energy_core;
     #endif
 
     apply_group_settings(active_group); // finalize
