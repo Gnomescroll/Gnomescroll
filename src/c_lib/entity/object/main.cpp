@@ -22,17 +22,6 @@ void load_object_data()
         objectLoad load = get_object_load_method((ObjectType)i);
         if (load != NULL) load();
     }
-
-    //// fabs
-    //load_base_data();
-    //load_agent_spawner_data();
-    //load_energy_core_data();
-    //load_turret_data();
-
-    //// mobs
-    //load_mob_spawner_data();
-    //load_mob_robot_box_data();
-    //load_mob_bomb_data();
 }
 
 void init()
@@ -57,17 +46,6 @@ void init()
             object_list->set_object_max((ObjectType)i, max);
     }
     
-    //// fabs
-    //object_list->set_object_max(OBJECT_BASE, 2);
-    //object_list->set_object_max(OBJECT_AGENT_SPAWNER, 1024);
-    //object_list->set_object_max(OBJECT_ENERGY_CORE, 1024);
-    //object_list->set_object_max(OBJECT_TURRET, 512);
-
-    //// mobs
-    //object_list->set_object_max(OBJECT_MONSTER_SPAWNER, 64);
-    //object_list->set_object_max(OBJECT_MONSTER_BOX, 1024);
-    //object_list->set_object_max(OBJECT_MONSTER_BOMB, 512);
-
     object_data = new ObjectDataList;
     object_data->init();
     load_object_data();
@@ -105,38 +83,10 @@ void harvest()
 
 static Object* create_switch(ObjectType type)
 {
-    
     objectCreate create = get_object_create_method(type);
     GS_ASSERT(create != NULL);
     if (create == NULL) return NULL;
     return create();
-
-    //switch (type)
-    //{
-        //// fabs
-        //case OBJECT_BASE:
-            //return create_base();
-        //case OBJECT_AGENT_SPAWNER:
-            //return create_agent_spawner();
-        //case OBJECT_TURRET:
-            //return create_turret();
-        //case OBJECT_ENERGY_CORE:
-            //return create_energy_core();
-
-        //// mobs
-        //case OBJECT_MONSTER_SPAWNER:
-            //return create_mob_spawner();
-        //case OBJECT_MONSTER_BOX:
-            //return create_mob_robot_box();
-        //case OBJECT_MONSTER_BOMB:
-            //return create_mob_bomb();
-        
-        //default:
-            //GS_ASSERT(false);
-            //printf("WARNING: creating unknown object type %d\n", type);
-            //return NULL;
-    //}
-    return NULL;
 }
 
 Object* create(ObjectType type)
@@ -164,38 +114,6 @@ void ready_switch(Object* object)
     objectReady ready = get_object_ready_method(object->type);
     GS_ASSERT(ready != NULL);
     if (ready != NULL) ready(object);
-    
-    //switch (object->type)
-    //{
-        //// fabs
-        //case OBJECT_BASE:
-            //ready_base(object);
-            //break;
-        //case OBJECT_AGENT_SPAWNER:
-            //ready_agent_spawner(object);
-            //break;
-        //case OBJECT_TURRET:
-            //ready_turret(object);
-            //break;
-        //case OBJECT_ENERGY_CORE:
-            //ready_energy_core(object);
-            //break;
-
-        //// mobs
-        //case OBJECT_MONSTER_SPAWNER:
-            //ready_mob_spawner(object);
-            //break;
-        //case OBJECT_MONSTER_BOX:
-            //ready_mob_robot_box(object);
-            //break;
-        //case OBJECT_MONSTER_BOMB:
-            //ready_mob_bomb(object);
-            //break;
-
-        //default:
-            //printf("WARNING: birthing unknown object type %d\n", object->type);
-            //break;
-    //}
 }
 
 void destroy_switch(Object* object)
@@ -207,38 +125,6 @@ void destroy_switch(Object* object)
     objectDie die = get_object_die_method(type);
     GS_ASSERT(die != NULL);
     if (die != NULL) die(object);
-    
-    //switch (type)
-    //{
-        //// fabs
-        //case OBJECT_BASE:
-            //die_base(object);
-            //break;
-        //case OBJECT_AGENT_SPAWNER:
-            //die_agent_spawner(object);
-            //break;
-        //case OBJECT_TURRET:
-            //die_turret(object);
-            //break;
-        //case OBJECT_ENERGY_CORE:
-            //die_energy_core(object);
-            //break;
-
-        //// mobs
-        //case OBJECT_MONSTER_SPAWNER:
-            //die_mob_spawner(object);
-            //break;
-        //case OBJECT_MONSTER_BOX:
-            //die_mob_robot_box(object);
-            //break;
-        //case OBJECT_MONSTER_BOMB:
-            //die_mob_bomb(object);
-            //break;
-
-        //default:
-            //printf("WARNING: destroying unknown object type %d\n", type);
-            //break;
-    //}
     
     release_object_components(object);
     int id = object->id;
