@@ -1,5 +1,6 @@
 #pragma once
 
+#include <common/compat_gl.h>
 
 namespace Animations 
 {
@@ -24,7 +25,7 @@ class VertexElementList1
     int vlist_index;
     int vlist_max;
 
-    unsigned int VBO;
+    GLuint VBO;
     unsigned int vertex_number;
 
     VertexElementList1()
@@ -106,7 +107,7 @@ class VertexElementList2
     int vlist_index;
     int vlist_max;
 
-    unsigned int VBO;
+    GLuint VBO;
     unsigned int vertex_number;
 
     VertexElementList2()
