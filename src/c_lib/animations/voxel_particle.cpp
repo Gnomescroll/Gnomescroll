@@ -36,13 +36,13 @@ void teardown_voxel_particle()
     if (voxel_particle_vlist != NULL) delete voxel_particle_vlist;
 }
 
-static struct Vec3 tmp_normals[6] = {
+static const struct Vec3 base_normals[6] = {
     {{{1,0,0}}},
     {{{0,1,0}}},
     {{{0,0,1}}},
     {{{-1,0,0}}},
     {{{0,-1,0}}},
-    {{{0,0,-1}}}
+    {{{0,0,-1}}},
 };
 
 void prep_voxel_particles()
@@ -150,7 +150,7 @@ void prep_voxel_particles()
         // draw voxel
         for (int i=0; i<6; i++)
         {
-            Vec3 n = tmp_normals[i];
+            Vec3 n = vec3_init(0.0, 1.0, 0.0);
         
             voxel_particle_vlist->push_vertex(veb2[4*i+0], tx_min, ty_min, n);
             voxel_particle_vlist->push_vertex(veb2[4*i+1], tx_min, ty_max, n);
@@ -158,6 +158,8 @@ void prep_voxel_particles()
             voxel_particle_vlist->push_vertex(veb2[4*i+3], tx_max, ty_min, n);
         }
     }
+    
+    voxel_particle_vlist->compute_face_normals(4);
     
     voxel_particle_vlist->buffer();
 }
