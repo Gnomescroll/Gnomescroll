@@ -170,6 +170,19 @@ class ControlNodeVertexList
     }
    	
 
+    void vertex3f(float x, float y, float z)
+    {
+    	v.x = x;
+    	v.y = y;
+    	v.z = z;
+    }
+
+    void tex2f(float tx, float ty)
+    {
+    	v.tx = tx;
+    	v.ty = ty;
+    }
+
    	void push_vertex()
    	{
    		va[vi] = v;
@@ -265,6 +278,9 @@ class ControlNodeShader
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
@@ -291,19 +307,30 @@ class ControlNodeRenderer
 
     void draw()
     {
+
+    	//printf("draw: %i \n", vertex_list.vi);
+
     	if(vertex_list.vi == 0) return;
+    	if(shader.shader->shader_valid == false) return;
 
-	    glColor3ub(255,255,255);
+    	//printf("draw \n");
 
+  	    glColor3ub(255,255,255);
+
+	    GL_ASSERT(GL_DEPTH_TEST, true);
+    	GL_ASSERT(GL_DEPTH_WRITEMASK, false);
 
 	    glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
 	    glEnable(GL_TEXTURE_2D);
 	    glBindTexture( GL_TEXTURE_2D, shader.texture1 );
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	    shader.shader->enable_attributes();
 
 	    glEnableClientState(GL_VERTEX_ARRAY);
 
-	    shader.shader->enable_attributes();
 
 	    glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
 	    glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
@@ -317,7 +344,10 @@ class ControlNodeRenderer
 
 	    shader.shader->disable_attributes();
 
+	    glBindTexture( GL_TEXTURE_2D, 0);
 	   	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	   	glDisable(GL_BLEND);
+	   	glDisable(GL_TEXTURE_2D);
     }
 
 
@@ -385,12 +415,13 @@ void control_node_render_update()
 void control_node_render_draw()
 {
 	control_node_renderer->draw_intermediate();
+	control_node_renderer->draw();
 }
 
 
 void ControlNodeRenderer::draw_intermediate()
 {
-	static const float v_index[72] = 
+	static const float vin[72] = 
 	{
 	    1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
 	    0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
@@ -400,20 +431,22 @@ void ControlNodeRenderer::draw_intermediate()
 	    0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
 	};
 
-
+#if 0
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, false);
 
 
 	//glDepthMask(GL_FALSE);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, shader.texture1);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	glColor4ub(127,0,0,128);
+	glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
+
+	glColor4ub(127,0,0,127);
+
+	glColor4ub(255,255,255,255);
 
 	glBegin(GL_QUADS);
 	for(int i=0; i<cnri; i++)
@@ -443,27 +476,83 @@ void ControlNodeRenderer::draw_intermediate()
 
 		int s = face;
 
+		//glTexCoord2f(tx_min,ty_min);
+		glVertex3f(x+vin[12*s +3*0 +0], y+vin[12*s+ 3*0 +1], z+vin[12*s +3*0 +2]);
 		glTexCoord2f(tx_min,ty_min);
-		glVertex3f(x+v_index[12*s+3*0+0], y+v_index[12*s+3*0+1], z+v_index[12*s+3*0+2]);
 
+
+		glVertex3f(x+vin[12*s +3*1 +0], y+vin[12*s+ 3*1 +1], z+vin[12*s +3*1 +2]);
         glTexCoord2f(tx_min,ty_max);
-		glVertex3f(x+v_index[12*s+3*1+0], y+v_index[12*s+3*1+1], z+v_index[12*s+3*1+2]);
 
+
+		glVertex3f(x+vin[12*s +3*2 +0], y+vin[12*s+ 3*2 +1], z+vin[12*s +3*2 +2]);
         glTexCoord2f(tx_max,ty_max );
-		glVertex3f(x+v_index[12*s+3*2+0], y+v_index[12*s+3*2+1], z+v_index[12*s+3*2+2]);
 
+
+		glVertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
         glTexCoord2f(tx_max,ty_min );
-		glVertex3f(x+v_index[12*s+3*3+0], y+v_index[12*s+3*3+1], z+v_index[12*s+3*3+2]);
-
 	}
 
 	glEnd();
-	glDisable(GL_BLEND);
+
 	//glDepthMask(GL_TRUE);
 
 	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glColor4ub(255,255,255,255);
+#else
+	vertex_list.reset();
+
+	for(int i=0; i<cnri; i++)
+	{
+
+		float x = (float) cnra[i].x;
+		float y = (float) cnra[i].y;
+		float z = (float) cnra[i].z;
+		int face = cnra[i].face;
+
+		int tex_id = 0;
+
+		const float txmargin = 0.0f;
+		float tx_min, ty_min, tx_max, ty_max;
+
+        int ti = tex_id % 4;
+        int tj = tex_id / 4;
+
+        tx_min = ti*0.25f + txmargin;
+        ty_min = tj*0.25f + txmargin;
+        tx_max = ti*0.25f + 0.25f - txmargin;
+        ty_max = tj*0.25f + 0.25f - txmargin;
+
+        tx_min = 0.0;
+        ty_min = 0.0;
+        tx_max = 0.25;
+        ty_max = 0.25;
+
+		int s = face;
+
+		vertex_list.vertex3f(x+vin[12*s +3*0 +0], y+vin[12*s+ 3*0 +1], z+vin[12*s +3*0 +2]);
+		vertex_list.tex2f(tx_min,ty_min);
+		vertex_list.push_vertex();
+
+		vertex_list.vertex3f(x+vin[12*s +3*1 +0], y+vin[12*s+ 3*1 +1], z+vin[12*s +3*1 +2]);
+        vertex_list.tex2f(tx_min,ty_max);
+		vertex_list.push_vertex();
+
+		vertex_list.vertex3f(x+vin[12*s +3*2 +0], y+vin[12*s+ 3*2 +1], z+vin[12*s +3*2 +2]);
+        vertex_list.tex2f(tx_max,ty_max );
+		vertex_list.push_vertex();
+
+		vertex_list.vertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
+        vertex_list.tex2f(tx_max,ty_min );
+		vertex_list.push_vertex();
+	}
+
+	vertex_list.buffer();
+#endif
+
 }
 
 //utility
