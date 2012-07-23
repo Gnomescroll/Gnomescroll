@@ -56,7 +56,7 @@ void prep_voxel_particles()
     static float zrot = 0.0;
     yrot += 0.01;
     xrot += 0.005;
-    
+
     GS_ASSERT(voxel_particle_vlist != NULL);
     if (voxel_particle_vlist == NULL)
     {
@@ -119,7 +119,7 @@ void prep_voxel_particles()
         }
 #else
 
-        const float voxel_size = 0.5; //modify this!!
+        const float voxel_size = 0.5; //MODIFY THIS FOR EACH VOXEL
 
         struct Vec3 veb[8]; //vertex positions
         struct Vec3 vn[6];  //normals
@@ -130,7 +130,7 @@ void prep_voxel_particles()
             veb[i].z = voxel_size*v_set2[3*i+2];
         }
 
-        struct Mat3 rotation_matrix = mat3_euler_rotation(xrot, yrot, zrot);
+        struct Mat3 rotation_matrix = mat3_euler_rotation(xrot, yrot, zrot);    //SET THESE FOR EACH VOXEL
 
         for (int i=0; i<8; i++)
         {
