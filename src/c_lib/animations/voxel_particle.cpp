@@ -55,7 +55,8 @@ void prep_voxel_particles()
     static float yrot = 0.0;
     static float zrot = 0.0;
     yrot += 0.01;
-
+    xrot += 0.005;
+    
     GS_ASSERT(voxel_particle_vlist != NULL);
     if (voxel_particle_vlist == NULL)
     {
