@@ -7,10 +7,9 @@ varying float lightIntensity;
 
 void main() 
 {
-    //vec3 color = lightIntensity*(texture2D(base_texture, texCoord).rgb);      
-    //color = pow(color, vec3(1.0f / 2.2f));  // gamma correction
-    //gl_FragColor.rgb = color;
-    gl_FragColor.rgba = vec4(1.0,0,0,0);
+    vec3 color = lightIntensity*(texture2D(base_texture, texCoord).rgb);      
+    color = pow(color, vec3(1.0f / 2.2f));  // gamma correction
+    gl_FragColor.rgb = color;
 }
 
 

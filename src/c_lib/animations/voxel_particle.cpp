@@ -162,7 +162,6 @@ void draw_voxel_particles()
 
     //glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
-    glDisable(GL_CULL_FACE); //TESTING
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
