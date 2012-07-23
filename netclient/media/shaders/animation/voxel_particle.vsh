@@ -15,6 +15,8 @@ void main(void)
 
     texCoord = InTexCoord;
         
-    lightIntensity = dot(InLook, InNormal);
+    //lightIntensity = dot(InLook, InNormal);
+
+    lightIntensity = 1.0;
 }
 

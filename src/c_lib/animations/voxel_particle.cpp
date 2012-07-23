@@ -132,6 +132,16 @@ void prep_voxel_particles()
     voxel_particle_vlist->buffer();
 }
 
+/*
+struct vertexElement2
+{
+    struct Vec3 pos;
+
+    float tx,ty;
+    struct Vec3 n;
+};
+*/
+
 void draw_voxel_particles()
 {
     GS_ASSERT(current_camera != NULL);
@@ -143,7 +153,7 @@ void draw_voxel_particles()
     GS_ASSERT(voxel_particle_vlist != NULL);
     if (voxel_particle_vlist == NULL) return;
 
-    if (voxel_particle_vlist->vertex_number <= 0) return;
+    if (voxel_particle_vlist->vertex_number == 0) return;
 
     GS_ASSERT(voxel_particle_vlist->VBO >= 0);
     if (voxel_particle_vlist->VBO < 0) return;
@@ -152,6 +162,7 @@ void draw_voxel_particles()
 
     //glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
+    glDisable(GL_CULL_FACE); //TESTING
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
@@ -160,25 +171,25 @@ void draw_voxel_particles()
 
     glUseProgramObjectARB(voxel_particle_shader.shader);
 
-    Vec3 look = vec3_scalar_mult(current_camera->forward_vector(), -1);
-    glUniform3f(voxel_particle_Look, look.x, look.y, look.z);
-
     glBindBuffer(GL_ARRAY_BUFFER, voxel_particle_vlist->VBO);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(voxel_particle_TexCoord);
     glEnableVertexAttribArray(voxel_particle_Normal);
 
+    Vec3 look = vec3_scalar_mult(current_camera->forward_vector(), -1);
+    glUniform3f(voxel_particle_Look, look.x, look.y, look.z);
+
     glVertexPointer(3, GL_FLOAT, voxel_particle_vlist->stride, (GLvoid*)0);    
-    glVertexAttribPointer(voxel_particle_TexCoord, 2, GL_FLOAT, GL_FALSE, voxel_particle_vlist->stride, (GLvoid*)(sizeof(GL_FLOAT) * 3));
-    glVertexAttribPointer(voxel_particle_Normal, 3, GL_FLOAT, GL_FALSE, voxel_particle_vlist->stride, (GLvoid*)(sizeof(GL_FLOAT) * (3+2)));
+    glVertexAttribPointer(voxel_particle_TexCoord, 2, GL_FLOAT, GL_FALSE, voxel_particle_vlist->stride, (GLvoid*) 12 );
+    glVertexAttribPointer(voxel_particle_Normal, 3, GL_FLOAT, GL_FALSE, voxel_particle_vlist->stride, (GLvoid*) 20 );
     
     glDrawArrays(GL_QUADS, 0, voxel_particle_vlist->vertex_number);
+
 
     glDisableVertexAttribArray(voxel_particle_TexCoord);
     glDisableVertexAttribArray(voxel_particle_Normal);
     glDisableClientState(GL_VERTEX_ARRAY);
-    
     glUseProgramObjectARB(0);
 
     //glDisable(GL_CULL_FACE);
