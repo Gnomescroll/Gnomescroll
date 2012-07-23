@@ -147,7 +147,7 @@ class SHADER
 
         if(attribute == -1)
         {
-            printf("SHADER: get_attribute failed. shader= %s attribut= %s \n", name, attribute_name);
+            printf("SHADER: get_attribute failed. shader= %s attribute= %s \n", name, attribute_name);
             return -1;
         }
         attribute_array[attribute_index] = attribute;

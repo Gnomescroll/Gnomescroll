@@ -15,7 +15,7 @@ extern GLuint block_texture;
 
 namespace t_map
 {
-	
+    
 const int MAX_TEXTURES = MAX_CUBES*6;
 
 extern unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
@@ -36,16 +36,16 @@ void init_textures();
 void set_cube_side_texture(int id, int side, int tex_id);
 int get_cube_side_texture(int id, int side) 
 {
-	return cube_side_texture_array[6*id + side]; 
+    return cube_side_texture_array[6*id + side]; 
 }
 
 int get_cube_primary_texture_index(char* name)
 {
-	int id = get_cube_id(name);
-	const int primary_side = 0; // TODO?
-	int cube = get_cube_side_texture(id, primary_side);
-	if (cube == 0) return 255;  // use error cube
-	return cube;
+    int id = get_cube_id(name);
+    const int primary_side = 0; // TODO?
+    int cube = get_cube_side_texture(id, primary_side);
+    if (cube == 0) return 255;  // use error cube
+    return cube;
 }
 
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
@@ -55,4 +55,4 @@ void set_cube_side_texture(int id, int side, int tex_id);
 
 //static int cube_palette_index = 1;
 
-}	// t_map
+}    // t_map

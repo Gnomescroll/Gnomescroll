@@ -12,13 +12,14 @@ namespace Components
 
 class TexturedVoxelComponent: public VoxelComponent
 {
-    private:
-        float tx,ty;
-        float sprite_width;
-        
+    private:        
         void set_texture();
 
     public:
+        // Not configurable:
+        float tx,ty;
+        float sprite_width;
+
         int texture_index;
         int pixel_width;
         

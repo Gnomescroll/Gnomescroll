@@ -33,7 +33,7 @@ void pack_vertex_list();
 void prep_skybox();
 void draw();
 
-}	// Skybox
+}    // Skybox
 
 extern "C"
 {

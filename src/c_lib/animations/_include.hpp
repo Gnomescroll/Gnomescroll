@@ -7,6 +7,7 @@
 #include <animations/mining_laser.cpp>
 #include <animations/insect_mob.cpp>
 #include <animations/weapon.cpp>
+#include <animations/voxel_particle.cpp>
 #endif
 
 

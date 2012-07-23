@@ -205,10 +205,10 @@ inline void object_shot_object_StoC::handle()
     if (obj == NULL) return;
 
     // get firing position of object
-	using Components::PhysicsComponent;
-	PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-	if (physics == NULL) return;
-	Vec3 position = physics->get_position();
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
@@ -219,7 +219,7 @@ inline void object_shot_object_StoC::handle()
     if (a == NULL || a->vox == NULL) return;
     // update the model, in case it is out of date.
     force_update_agent_vox(a);
-	
+    
     Vec3 dest = a->vox->get_center(this->target_part);
     dest = quadrant_translate_position(position, dest);
 

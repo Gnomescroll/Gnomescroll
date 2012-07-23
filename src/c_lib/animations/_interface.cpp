@@ -5,6 +5,7 @@
 #include <animations/hitscan.hpp>
 #include <animations/mining_laser.hpp>
 #include <animations/weapon.hpp>
+#include <animations/voxel_particle.hpp>
 
 namespace Animations 
 {
@@ -26,7 +27,9 @@ void init()
 
     Animations::init_insect_mob();
 
-	init_weapon_sprite();
+    init_weapon_sprite();
+    
+    init_voxel_particle();
 }
 
 void teardown()
@@ -40,6 +43,7 @@ void teardown()
 
     Animations::teardown_insect_mob();
 
+    teardown_voxel_particle();
 }
 
 void animations_tick()

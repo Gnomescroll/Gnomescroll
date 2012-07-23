@@ -48,12 +48,10 @@ class VoxelComponent: public DrawComponent
             this->normal = normal;
         }
 
-    protected:
+    public:
         Vec3 forward;
         Vec3 right;
         Vec3 normal;
-
-    public:
 
         float size;
         float theta, phi;

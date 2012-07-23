@@ -85,7 +85,7 @@ class VertexElementList1
 };
 
 /*
-    Textyred vertex element with normal
+    Textured vertex element with normal
 */
 
 struct vertexElement2
@@ -125,6 +125,23 @@ class VertexElementList2
     }
 
     __attribute__((always_inline))
+    void push_vertex(struct Vec3 pos, float tx, float ty, struct Vec3 normal)
+     {
+        vlist[vlist_index].pos = pos;
+        vlist[vlist_index].tx = tx;
+        vlist[vlist_index].ty = ty;
+        vlist[vlist_index].n = normal;
+
+        vlist_index++;
+
+        if(vlist_index >= vlist_max)
+        {
+            vlist_max *= 2;
+            vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
+        }
+     }
+     
+    __attribute__((always_inline))
     void push_vertex(struct Vec3 pos, float tx, float ty)
      {
         vlist[vlist_index].pos = pos;
@@ -137,7 +154,6 @@ class VertexElementList2
         {
             vlist_max *= 2;
             vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
-            printf("1 size= %i \n", vlist_max); 
         }
      }
 

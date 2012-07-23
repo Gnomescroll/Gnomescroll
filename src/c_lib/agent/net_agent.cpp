@@ -331,7 +331,7 @@ inline void agent_conflict_notification_StoC::handle()
     char* msg = (char*)calloc(512, sizeof(char));
     switch (method)
     {
-		case DEATH_KILLME:
+        case DEATH_KILLME:
         case DEATH_NORMAL:
             if (suicide)
             {
@@ -491,12 +491,12 @@ inline void set_spawner_StoC::handle()
 
 inline void agent_color_StoC::handle()
 {
-	Agent_state* a = ClientState::agent_list->get(this->agent_id);
-	GS_ASSERT(a != NULL);
-	if (a == NULL) return;
-	
-	struct Color color = {r,g,b};
-	a->status.set_color(color);
+    Agent_state* a = ClientState::agent_list->get(this->agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    
+    struct Color color = {r,g,b};
+    a->status.set_color(color);
     
     if (this->agent_id == ClientState::playerAgent_state.agent_id)
     {
@@ -578,20 +578,20 @@ inline void version_CtoS::handle()
 
 inline void colorme_CtoS::handle()
 {
-	Agent_state* a = NetServer::agents[this->client_id];
-	GS_ASSERT(a != NULL);
-	if (a == NULL) return;
-	if (!r && !g && !b) { r=g=b=1; }	// dont allow 0,0,0 (interpreted as empty voxel)
-	struct Color color = {r,g,b};
-	a->status.set_color(color);
+    Agent_state* a = NetServer::agents[this->client_id];
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    if (!r && !g && !b) { r=g=b=1; }    // dont allow 0,0,0 (interpreted as empty voxel)
+    struct Color color = {r,g,b};
+    a->status.set_color(color);
 }
 
 inline void killme_CtoS::handle()
 {
-	Agent_state* a = NetServer::agents[this->client_id];
-	if (a == NULL) return;
+    Agent_state* a = NetServer::agents[this->client_id];
+    if (a == NULL) return;
 
-	a->status.die(a->id, a->type, DEATH_KILLME);
+    a->status.die(a->id, a->type, DEATH_KILLME);
 }
 
 inline void Agent_cs_CtoS::handle()

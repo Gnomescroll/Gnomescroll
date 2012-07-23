@@ -24,6 +24,6 @@ void main(void)
     //vec3 normal = gl_NormalMatrix * gl_Normal; //needs to rotate?
     //vec3 normal = gl_Normal;
     normal1 = gl_Normal;
-	//diffuse = abs(dot(normal, light_dir ));
+    //diffuse = abs(dot(normal, light_dir ));
     //diffuse = 0.5;
 }

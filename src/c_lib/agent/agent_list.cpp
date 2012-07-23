@@ -19,12 +19,12 @@ void Agent_list::update_map_manager_positions()
     for(int i=0; i<n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-		if (this->a[i]->camera_ready)
-			p = this->a[i]->camera.get_position();
-		else
-			p = this->a[i]->get_position();
-		t_map::t_map_manager_update_client_position(i, p.x, p.y);
-	}
+        if (this->a[i]->camera_ready)
+            p = this->a[i]->camera.get_position();
+        else
+            p = this->a[i]->get_position();
+        t_map::t_map_manager_update_client_position(i, p.x, p.y);
+    }
 }
 
 void Agent_list::send_to_client(int client_id)
@@ -51,21 +51,21 @@ void Agent_list::send_to_client(int client_id)
 #if DC_CLIENT
 void Agent_list::draw_names()
 {
-	int agent_id = ClientState::playerAgent_state.agent_id;
-	for (int i=0; i<this->n_max; i++)
-	{
-		if (this->a[i] == NULL) continue;
-		Agent_state* a = this->a[i];
-		if (a->id == agent_id && current_camera == agent_camera)
-			continue;
-		a->event.update_hud_name();
-		a->event.bb.draw();
-	}
+    int agent_id = ClientState::playerAgent_state.agent_id;
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        Agent_state* a = this->a[i];
+        if (a->id == agent_id && current_camera == agent_camera)
+            continue;
+        a->event.update_hud_name();
+        a->event.bb.draw();
+    }
 }
 
 void Agent_list::draw_equipped_items()
 {
-	int agent_id = ClientState::playerAgent_state.agent_id;
+    int agent_id = ClientState::playerAgent_state.agent_id;
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
