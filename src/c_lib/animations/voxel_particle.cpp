@@ -54,8 +54,8 @@ void prep_voxel_particles()
     static float xrot = 0.0;
     static float yrot = 0.0;
     static float zrot = 0.0;
-    yrot += 0.01;
-    xrot += 0.005;
+    //yrot += 0.01;
+    xrot += 0.010;
 
     GS_ASSERT(voxel_particle_vlist != NULL);
     if (voxel_particle_vlist == NULL)
@@ -119,7 +119,7 @@ void prep_voxel_particles()
         }
 #else
 
-        const float voxel_size = 0.25; //MODIFY THIS FOR EACH VOXEL
+        const float voxel_size = 0.15; //MODIFY THIS FOR EACH VOXEL
 
         struct Vec3 veb[8];     //vertex positions
         struct Vec3 vn[6];      //normals
