@@ -168,8 +168,6 @@ void prep_voxel_particles()
         }
     }
     
-    //voxel_particle_vlist->compute_face_normals(4);    //DEPRECATE
-    
     voxel_particle_vlist->buffer();
 }
 
