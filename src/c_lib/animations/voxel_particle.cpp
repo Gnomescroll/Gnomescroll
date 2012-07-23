@@ -47,6 +47,15 @@ static struct Vec3 tmp_normals[6] = {
 
 void prep_voxel_particles()
 {
+
+    /*
+        Temp
+    */
+    static float xrot = 0.0;
+    static float yrot = 0.0;
+    static float zrot = 0.0;
+    yrot += 0.01;
+
     GS_ASSERT(voxel_particle_vlist != NULL);
     if (voxel_particle_vlist == NULL)
     {
@@ -92,6 +101,7 @@ void prep_voxel_particles()
         Vec3 right = item->voxel.right;
 
         // fill vertex buffer
+#if 0
         for (int i=0; i<8; i++)
         {
             v_buffer[3*i+0] = v_set2[3*i+0]*forward.x + v_set2[3*i+1]*right.x + v_set2[3*i+2]*normal.x;
@@ -106,7 +116,38 @@ void prep_voxel_particles()
             s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
             s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
         }
+#else
 
+        const float voxel_size = 0.5; //modify this!!
+
+        struct Vec3 veb[8]; //vertex positions
+        struct Vec3 vn[6];  //normals
+        for (int i=0; i<8; i++)
+        {
+            veb[i].x = voxel_size*v_set2[3*i+0];
+            veb[i].y = voxel_size*v_set2[3*i+1];
+            veb[i].z = voxel_size*v_set2[3*i+2];
+        }
+
+        struct Mat3 rotation_matrix = mat3_euler_rotation(xrot, yrot, zrot);
+
+        for (int i=0; i<8; i++)
+        {
+            veb[i] = vec3_apply_rotation(veb[i], rotation_matrix)   //rotate
+            veb[i] = vec3_add(p, veb[i])                            //translate
+        }
+
+        struct Vec3 veb2[6*4];
+
+        for (int i=0; i<6; i++)
+        for (int j=0; j<4; j++)
+        {
+            veb2[12*i+3*0] = veb[3*q_set[4*i+0];
+            veb2[12*i+3*1] = veb[3*q_set[4*i+1];
+            veb2[12*i+3*2] = veb[3*q_set[4*i+2];
+            veb2[12*i+3*3] = veb[3*q_set[4*i+3];
+        }
+#endif
         // draw voxel
         for (int i=0; i<6; i++)
         {
