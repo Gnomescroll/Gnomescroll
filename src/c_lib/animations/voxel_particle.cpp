@@ -36,13 +36,13 @@ void teardown_voxel_particle()
     if (voxel_particle_vlist != NULL) delete voxel_particle_vlist;
 }
 
-static struct Vec3 tmp_normals[6] = {
+static const struct Vec3 base_normals[6] = {
     {{{1,0,0}}},
     {{{0,1,0}}},
     {{{0,0,1}}},
     {{{-1,0,0}}},
     {{{0,-1,0}}},
-    {{{0,0,-1}}}
+    {{{0,0,-1}}},
 };
 
 void prep_voxel_particles()
@@ -110,26 +110,25 @@ void prep_voxel_particles()
         // draw voxel
         for (int i=0; i<6; i++)
         {
-            // TODO -- use real normal?
-            Vec3 n = tmp_normals[i];
-            
             int index = 12*i+3*0;
             Vec3 v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(v, tx_min, ty_min, n);
+            voxel_particle_vlist->push_vertex(v, tx_min, ty_min);
 
             index = 12*i+3*1;
             v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(v, tx_min, ty_max, n);
+            voxel_particle_vlist->push_vertex(v, tx_min, ty_max);
 
             index = 12*i+3*2;
             v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(v, tx_max, ty_max, n);
+            voxel_particle_vlist->push_vertex(v, tx_max, ty_max);
 
             index = 12*i+3*3;
             v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(v, tx_max, ty_min, n);
+            voxel_particle_vlist->push_vertex(v, tx_max, ty_min);
         }
     }
+    
+    voxel_particle_vlist->compute_face_normals(4);
     
     voxel_particle_vlist->buffer();
 }
