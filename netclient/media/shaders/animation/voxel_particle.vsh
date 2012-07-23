@@ -11,10 +11,11 @@ varying float lightIntensity;
 
 void main(void) 
 {                      
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
+    vec3 look = normalize(pos.xyz - InLook);
+    lightIntensity = dot(look, InNormal);
 
+    gl_Position = pos;
     texCoord = InTexCoord;
-        
-    lightIntensity = dot(InLook, InNormal);
 }
 

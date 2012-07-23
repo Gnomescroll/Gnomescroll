@@ -77,8 +77,10 @@ void prep_voxel_particles()
         
         // do fulstrum test
         Vec3 p = quadrant_translate_position(current_camera_position, item->verlet.position);
-        //Vec3 center = vec3_add(item->voxel.normal, vec3_add(item->voxel.right, vec3_add(item->voxel.forward, p)));
-        //if (sphere_fulstrum_test(center.x, center.y, center.z, ITEM_PARTICLE_RENDER_SCALE) == false) continue;
+        Vec3 center = vec3_add(item->voxel.normal, vec3_add(item->voxel.right, vec3_add(item->voxel.forward, p)));
+        if (sphere_fulstrum_test(center.x, center.y, center.z, ITEM_PARTICLE_RENDER_SCALE) == false) continue;
+
+        p.z += ITEM_PARTICLE_RENDER_SCALE / 2.0f;   // render offset
 
         float tx_min = item->voxel.tx;
         float tx_max = item->voxel.tx + item->voxel.sprite_width;
@@ -92,9 +94,9 @@ void prep_voxel_particles()
         // fill vertex buffer
         for (int i=0; i<8; i++)
         {
-            v_buffer[3*i+0] = v_set[3*i+0]*forward.x + v_set[3*i+1]*right.x + v_set[3*i+2]*normal.x;
-            v_buffer[3*i+1] = v_set[3*i+0]*forward.y + v_set[3*i+1]*right.y + v_set[3*i+2]*normal.y;
-            v_buffer[3*i+2] = v_set[3*i+0]*forward.z + v_set[3*i+1]*right.z + v_set[3*i+2]*normal.z;
+            v_buffer[3*i+0] = v_set2[3*i+0]*forward.x + v_set2[3*i+1]*right.x + v_set2[3*i+2]*normal.x;
+            v_buffer[3*i+1] = v_set2[3*i+0]*forward.y + v_set2[3*i+1]*right.y + v_set2[3*i+2]*normal.y;
+            v_buffer[3*i+2] = v_set2[3*i+0]*forward.z + v_set2[3*i+1]*right.z + v_set2[3*i+2]*normal.z;
         }
         
         for (int i=0; i<6; i++)
@@ -144,13 +146,10 @@ void draw_voxel_particles()
     if (voxel_particle_vlist == NULL) return;
 
     if (voxel_particle_vlist->vertex_number <= 0) return;
-
-    GS_ASSERT(voxel_particle_vlist->VBO >= 0);
-    if (voxel_particle_vlist->VBO < 0) return;
     
     glColor4ub(255,255,255,255);
 
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
 
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -160,7 +159,11 @@ void draw_voxel_particles()
 
     glUseProgramObjectARB(voxel_particle_shader.shader);
 
-    Vec3 look = vec3_scalar_mult(current_camera->forward_vector(), -1);
+    //Vec3 look = vec3_scalar_mult(current_camera->forward_vector(), -1);
+    //Vec3 look = current_camera->forward_vector();
+    //Vec3 look = vec3_init(0.5f, 0.5f, -0.5f);
+    //normalize_vector(&look);
+    Vec3 look = current_camera->get_position();
     glUniform3f(voxel_particle_Look, look.x, look.y, look.z);
 
     glBindBuffer(GL_ARRAY_BUFFER, voxel_particle_vlist->VBO);
@@ -181,7 +184,7 @@ void draw_voxel_particles()
     
     glUseProgramObjectARB(0);
 
-    //glDisable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
 }
 
