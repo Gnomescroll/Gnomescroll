@@ -16,6 +16,7 @@ extern VoxDat monster_spawner;
 
 // items
 extern VoxDat base;
+extern VoxDat energy_core;
 extern VoxDat agent_spawner;
 extern VoxDat turret;
 

@@ -99,7 +99,11 @@ void tick()
 
     if (counter % 10 == 0) ItemParticle::check_item_pickups();
     if (counter % 6  == 0) ItemContainer::check_agents_in_container_range();
-    if (counter % 6  == 0) ServerState::check_agents_at_base();
+    if (counter % 6  == 0)
+    {
+        Components::healer_component_list->call();
+        ServerState::check_agents_at_base();
+    }
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);

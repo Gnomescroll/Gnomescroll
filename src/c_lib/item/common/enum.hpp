@@ -71,6 +71,7 @@ typedef enum
     IG_CONSUMABLE,
     IG_ENERGY_TANK,
     IG_AGENT_SPAWNER,
+    IG_ENERGY_CORE,
 } ItemGroup;
 
 typedef enum

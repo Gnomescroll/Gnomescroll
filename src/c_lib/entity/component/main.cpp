@@ -55,6 +55,7 @@ AnimationComponentList* animation_component_list = NULL;
 AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 ExplosionComponentList* explosion_component_list = NULL;
 ItemDropComponentList* item_drop_component_list = NULL;
+HealerComponentList* healer_component_list;
 #endif
 
 RateLimitComponentList* rate_limit_component_list = NULL;
@@ -129,6 +130,8 @@ Component* get_switch(ComponentType type)
             return explosion_component_list->subscribe();
         case COMPONENT_ITEM_DROP:
             return item_drop_component_list->subscribe();
+        case COMPONENT_HEALER:
+            return healer_component_list->subscribe();
         #endif
         
         default:
@@ -232,6 +235,9 @@ void release_switch(Component* component)
         case COMPONENT_ITEM_DROP:
             item_drop_component_list->unsubscribe((ItemDropComponent*)component);
             break;
+        case COMPONENT_HEALER:
+            healer_component_list->unsubscribe((HealerComponent*)component);
+            break;
         #endif
 
         default:
@@ -282,6 +288,7 @@ void init_components()
     agent_spawner_component_list = new AgentSpawnerComponentList;
     explosion_component_list = new ExplosionComponentList;
     item_drop_component_list = new ItemDropComponentList;
+    healer_component_list = new HealerComponentList;
     #endif
 }
 
@@ -327,6 +334,7 @@ void teardown_components()
     if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
     if (explosion_component_list != NULL) delete explosion_component_list;
     if (item_drop_component_list != NULL) delete item_drop_component_list;
+    if (healer_component_list != NULL) delete healer_component_list;
     #endif
 }
 

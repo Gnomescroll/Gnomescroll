@@ -48,4 +48,5 @@
 #include <entity/components/explosion.cpp>
 #include <entity/components/item_drop.cpp>
 #include <entity/components/spawner/agent_spawner.cpp>
+#include <entity/components/healer.cpp>
 #endif

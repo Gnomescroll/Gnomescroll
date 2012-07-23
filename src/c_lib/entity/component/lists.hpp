@@ -106,6 +106,12 @@ typedef ComponentList<ExplosionComponent, COMPONENT_EXPLOSION, EXPLOSION_COMPONE
 const int ITEM_DROP_COMPONENT_MAX = 4096;
 typedef ComponentList<ItemDropComponent, COMPONENT_ITEM_DROP, ITEM_DROP_COMPONENT_MAX>
     ItemDropComponentList;
+    
+/* Healer */
+const int HEALER_COMPONENT_MAX = 1024;
+class HealerComponentList:
+    public CallableComponentList<HealerComponent, COMPONENT_HEALER, HEALER_COMPONENT_MAX>
+{};
 #endif
 
 } // Components
