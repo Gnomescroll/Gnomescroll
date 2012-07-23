@@ -11,7 +11,7 @@ class SHADER voxel_particle_shader;
 
 GLint voxel_particle_TexCoord;
 GLint voxel_particle_Normal;
-GLint voxel_particle_Look;
+GLint voxel_particle_CameraPos;
 
 VertexElementList2* voxel_particle_vlist = NULL;
 
@@ -25,7 +25,7 @@ void init_voxel_particle()
     
     voxel_particle_TexCoord = voxel_particle_shader.get_attribute("InTexCoord");
     voxel_particle_Normal = voxel_particle_shader.get_attribute("InNormal");
-    voxel_particle_Look = voxel_particle_shader.get_uniform("InLook");
+    voxel_particle_CameraPos = voxel_particle_shader.get_uniform("InCameraPos");
 
     GS_ASSERT(voxel_particle_vlist == NULL);
     voxel_particle_vlist = new VertexElementList2;
@@ -159,12 +159,8 @@ void draw_voxel_particles()
 
     glUseProgramObjectARB(voxel_particle_shader.shader);
 
-    //Vec3 look = vec3_scalar_mult(current_camera->forward_vector(), -1);
-    //Vec3 look = current_camera->forward_vector();
-    //Vec3 look = vec3_init(0.5f, 0.5f, -0.5f);
-    //normalize_vector(&look);
-    Vec3 look = current_camera->get_position();
-    glUniform3f(voxel_particle_Look, look.x, look.y, look.z);
+    Vec3 pos = current_camera->get_position();
+    glUniform3f(voxel_particle_CameraPos, pos.x, pos.y, pos.z);
 
     glBindBuffer(GL_ARRAY_BUFFER, voxel_particle_vlist->VBO);
 

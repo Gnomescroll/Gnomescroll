@@ -1,6 +1,6 @@
 #version 120
 
-uniform vec3 InLook;
+uniform vec3 InCameraPos;
 
 attribute vec3 InNormal;
 
@@ -12,7 +12,7 @@ varying float lightIntensity;
 void main(void) 
 {                      
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
-    vec3 look = normalize(pos.xyz - InLook);
+    vec3 look = normalize(pos.xyz - InCameraPos);
     lightIntensity = dot(look, InNormal);
 
     gl_Position = pos;
