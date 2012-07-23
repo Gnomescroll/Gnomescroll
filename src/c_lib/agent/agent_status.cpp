@@ -37,13 +37,9 @@ deaths(0),
 suicides(0),
 slime_kills(0),
 health_max(AGENT_HEALTH),
-owned_spawners(0),
-owned_turrets(0),
 identified(false),
 vox_crouched(false),
 lifetime(0),
-inventory(NULL),
-toolbelt(NULL),
 color_chosen(false)
 {
     color.r=color.g=color.b=255;
@@ -56,24 +52,11 @@ Agent_status::~Agent_status()
 
 void Agent_status::set_spawner(int pt)
 {
-    //using Components::agent_spawner_component_list;
-    
-    if (pt != BASE_SPAWN_ID)
-    {   // check new spawner exists
-        GS_ASSERT(false);
-        // TODO -- reimplement spawners without teams
-        //if (!agent_spawner_component_list->spawner_exists(this->team, pt))
-        //{
-            //if (agent_spawner_component_list->spawner_exists(this->team, this->spawner))
-                //return;     // current spawner valid, leave it
-            //else
-                //pt = BASE_SPAWN_ID; // current spawner invalid, default to base
-        //}
-    }
+    GS_ASSERT(pt == BASE_SPAWN_ID || (pt >= 0 && pt <= 0xffff));
     this->spawner = pt;
     #if DC_SERVER
-    spawn_location_StoC msg;
-    msg.pt = pt;
+    set_spawner_StoC msg;
+    msg.spawner_id = pt;
     msg.sendToClient(this->a->id);
     #endif
 }
@@ -108,19 +91,6 @@ void Agent_status::set_color(struct Color color)
     #if DC_SERVER
     this->a->vox->fill_color(this->color);
     #endif
-}
-
-void Agent_status::set_spawner()
-{
-    GS_ASSERT(false);
-    // TODO -- reimplement spawners without teams
-    //int pt = Components::agent_spawner_component_list->get_random_spawner(this->team);
-    //this->spawner = pt;
-    //#if DC_SERVER
-    //spawn_location_StoC msg;
-    //msg.pt = pt;
-    //msg.sendToClient(this->a->id);
-    //#endif
 }
 
 bool Agent_status::set_name(char* name)
@@ -469,49 +439,6 @@ float Agent_status::get_spawn_angle()
     return 0.5f;
 }
 
-const bool Agent_status::can_gain_item(ObjectType item)
-{
-    if (this->dead || this->should_die) return false;
-    //bool can;
-    switch (item)
-    {
-        case OBJECT_TURRET:
-            if (owned_turrets >= AGENT_MAX_TURRETS)
-                return false;
-            break;
-            
-        case OBJECT_AGENT_SPAWNER:
-            if (owned_spawners >= AGENT_MAX_SPAWNERS)
-                return false;
-            break;
-
-        default:
-            return true;
-    }
-    return true;
-}
-
-// TODO -- duplicate interface for client side -- should go through event
-bool Agent_status::gain_item(int item_id, ObjectType item_type)
-{
-    bool can = this->can_gain_item(item_type);
-    if (!can) return false;
-    switch (item_type)
-    {
-        case OBJECT_TURRET:
-            owned_turrets++;
-            break;
-            
-        case OBJECT_AGENT_SPAWNER:
-            owned_spawners++;
-            break;
-
-        default:
-            break;
-    }
-    return can;
-}
-
 #if DC_SERVER
 bool Agent_status::consume_item(ItemID item_id)
 {
@@ -545,54 +472,10 @@ bool Agent_status::consume_item(ItemID item_id)
 }
 #endif
 
-bool Agent_status::lose_item(ObjectType item)
-{
-    switch (item)
-    {
-        case OBJECT_TURRET:
-            if (owned_turrets <= 0)
-            {
-                printf("WARNING -- Agent_status::lose_item -- no turrets to lose. id=%d\n", this->a->id);
-                return false;
-            }
-            owned_turrets--;
-            break;
-            
-        case OBJECT_AGENT_SPAWNER:
-            if (owned_spawners <= 0)
-            {
-                printf("WARNING -- Agent_status::lose_item -- no spawners to lose\n");
-                return false;
-            }
-            owned_spawners--;
-            break;
-            
-        default: break;
-    }
-    return true;
-}
-
 void Agent_status::tick()
 {
     if (this->dead || this->should_die)
         this->lifetime = 0;
     else
         this->lifetime++;
-}
-
-void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner)
-{
-    Agent_state* a;
-    if (owner != NO_AGENT)
-    {
-        a = STATE::agent_list->get(owner);
-        if (a != NULL)
-            a->status.lose_item(item_type);
-    }
-    if (new_owner != NO_AGENT)
-    {
-        a = STATE::agent_list->get(new_owner);
-        if (a != NULL)
-            a->status.gain_item(item_id, item_type);
-    }
 }

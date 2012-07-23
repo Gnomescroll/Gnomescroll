@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/color.hpp>
+
 namespace Objects
 {
 
@@ -24,6 +26,8 @@ const float AGENT_SPAWNER_HEIGHT = 1.9f;
 // voxel model
 const bool AGENT_SPAWNER_INIT_WITH_HITSCAN = true;
 const bool AGENT_SPAWNER_INIT_WITH_DRAW = true;
+const struct Color ACTIVATED_SPAWNER_COLOR = { 240, 20, 20 };
+const struct Color DEACTIVATED_SPAWNER_COLOR = { 20, 20, 20 };
 
 // spawner
 const int AGENT_SPAWNER_SPAWN_RADIUS = 0;
@@ -33,10 +37,33 @@ const int AGENT_SPAWNER_INITIAL_CHILDREN_SIZE = 4;
 const int AGENT_SPAWNER_MAX_HEALTH = 200;
 
 // animation
+const struct Color AGENT_SPAWNER_ANIMATION_COLOR = { 127,31,223 };
 const int AGENT_SPAWNER_ANIMATION_COUNT = 35;
 const int AGENT_SPAWNER_ANIMATION_COUNT_MAX = 50;
-const float AGENT_SPAWNER_ANIMATION_SIZE = 0.1f;
+const float AGENT_SPAWNER_ANIMATION_SIZE = 0.22f;
 const float AGENT_SPAWNER_ANIMATION_FORCE = 5.0f;
+
+/* Energy Core */
+
+// dimensions
+const float ENERGY_CORE_HEIGHT = 1.0f;
+
+// voxel model
+const bool ENERGY_CORE_INIT_WITH_HITSCAN = true;
+const bool ENERGY_CORE_INIT_WITH_DRAW = true;
+
+// healing
+const float ENERGY_CORE_HEALING_RADIUS = 1.0f;
+
+// health
+const int ENERGY_CORE_MAX_HEALTH = 200;
+
+// animation
+const struct Color ENERGY_CORE_ANIMATION_COLOR = { 59,99,17 };
+const int ENERGY_CORE_ANIMATION_COUNT = 35;
+const int ENERGY_CORE_ANIMATION_COUNT_MAX = 50;
+const float ENERGY_CORE_ANIMATION_SIZE = 0.22f;
+const float ENERGY_CORE_ANIMATION_FORCE = 5.0f;
 
 /* Turret */
 

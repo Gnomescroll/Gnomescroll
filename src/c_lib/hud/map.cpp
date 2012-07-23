@@ -58,7 +58,6 @@ const char you_star_symbol[] = "*";
 const char you_A_symbol[] = "A";
 const char ally_symbol[] = "A";
 const char base_symbol[] = "B";
-//const char spawner_symbol[] = "S%d";
 const char turret_symbol[] = "T";
 const char camera_symbol[] = "C";
 
@@ -67,7 +66,6 @@ static Text* you_star = NULL;
 static Text* you_A = NULL;
 static Text* base = NULL;
 static Text* ally[AGENT_MAX] = {NULL};
-//static Text* spawner[Components::MAX_AGENT_SPAWNER_COMPONENTS] = {NULL};
 //static Text turret[MAX_TURRETS];
 static Text* camera = NULL;
 
@@ -102,19 +100,6 @@ void init_text_icons()
         if (ally[i] == NULL) return;
         ally[i]->set_text((char*)ally_symbol);
     }
-        
-    //char* spawner_max_string = (char*)malloc(sizeof(char) * (10+1));
-    //sprintf(spawner_max_string, "%d", Components::MAX_AGENT_SPAWNER_COMPONENTS);
-    //int len = (int)strlen(spawner_max_string);
-    //for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
-    //{
-        //spawner[i] = HudText::text_list->create();
-        //GS_ASSERT(spawner[i] != NULL);
-        //if (spawner[i] == NULL) break;
-        //spawner[i]->set_format((char*)spawner_symbol);
-        //spawner[i]->set_format_extra_length(len - 1);
-    //}
-    //free(spawner_max_string);
 
     camera = HudText::text_list->create();
     GS_ASSERT(camera != NULL);
@@ -137,8 +122,6 @@ void set_icon_colors()
     base->set_color(highlight.r, highlight.g, highlight.b,a);
     for (int i=0; i<(int)AGENT_MAX; i++)
         if (ally[i] != NULL) ally[i]->set_color(highlight.r, highlight.g, highlight.b,a);
-    //for (int i=0; i<Components::MAX_AGENT_SPAWNER_COMPONENTS; i++)
-        //if (spawner[i] != NULL) spawner[i]->set_color(highlight.r, highlight.g, highlight.b,a);
     camera->set_color(highlight.r, highlight.g, highlight.b, a);
 }
 
@@ -150,26 +133,18 @@ void init_surface()
     // load gradient surface
     const int grad_num = 11;
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
-    //char grad_str[strlen(grad_fmt) -2 +1];
     MALLOX(char, grad_str, strlen(grad_fmt) -2 +1);
 
     sprintf(grad_str, grad_fmt, grad_num);
-    //printf("Loading gradient %s\n", grad_str);
     
     gradient_surface = create_surface_from_file(grad_str);
-    if (gradient_surface==NULL)
-    {
-        printf("HudMap gradient surface is NULL\n");
-        return;
-    }
+    GS_ASSERT(gradient_surface != NULL);
+    if (gradient_surface == NULL) return;
 
     /* Init blank map surface */
     map_surface = create_surface_from_nothing(width, height);
-    if (map_surface==NULL)
-    {
-        printf("HudMap blank surface is NULL\n");
-        return;
-    }
+    GS_ASSERT(map_surface != NULL);
+    if (map_surface == NULL) return;
 
     GLenum tex_format = GL_BGRA;
     if (map_surface->format->Rmask == 0x000000ff)
@@ -358,29 +333,17 @@ void draw_text_icons(float z)
         ally[i]->draw_centered();
     }
 
-    //SpawnerProperties* s;
-    //for (int i=0; i<spawner_list->max; i++)
-    //{
-        //s = (SpawnerProperties*)spawner_list->objects[i];
-        //if (s==NULL) continue;
-        //unsigned int team_index = s->obj->get_team_index();
-        //if (s->obj->get_team() != playerAgent_state.you->status.team) continue;
-        //if (team_index <= 0 || team_index == TEAM_INDEX_NONE || team_index == NULL_TEAM_INDEX)
-            //continue;
-        //if ((int)team_index == playerAgent_state.you->status.spawner)
-            //spawner[j]->set_color(highlight.r, highlight.g, highlight.b);
-        //else
-            //spawner[j]->set_color(current_color.r, current_color.g, current_color.b);
-        //spawner[j]->update_formatted_string(1, team_index);
-        //Vec3 p = s->obj->get_position();
-        //world_to_map_screen_coordinates(p.x, p.y, &x, &y);
-        //spawner[j]->set_position(x,y);
-        //spawner[j]->set_depth(z);
-        //spawner[j]->draw_centered();
-        //j++;
-    //}
-    
-    Objects::Object* b = Objects::get(OBJECT_BASE, 0);
+    using ClientState::playerAgent_state;
+
+    Objects::Object* b = NULL;
+    if (playerAgent_state.you != NULL)
+    {
+        if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
+            b = Objects::get(OBJECT_BASE, 0);   // TODO -- remove Base
+        else
+            b = Objects::get(OBJECT_AGENT_SPAWNER, playerAgent_state.you->status.spawner);
+    }
+
     if (b != NULL)
     {
         using Components::PhysicsComponent;
@@ -393,10 +356,7 @@ void draw_text_icons(float z)
             base->set_position(x,y);
             base->set_depth(z);
         }
-        if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
-            base->set_color(highlight.r, highlight.g, highlight.b);
-        else
-            base->set_color(current_color.r, current_color.g, current_color.b);
+        base->set_color(highlight.r, highlight.g, highlight.b);
         base->draw_centered();
     }
 
@@ -405,7 +365,6 @@ void draw_text_icons(float z)
     if (camera == NULL) return;
     
     if (!text_icons_inited) return;
-    using ClientState::playerAgent_state;
     if (playerAgent_state.you == NULL) return;
     world_to_map_screen_coordinates(
         playerAgent_state.camera_state.x, playerAgent_state.camera_state.y,
@@ -413,11 +372,11 @@ void draw_text_icons(float z)
     );
     you_star->set_position(x,y);
     you_star->set_depth(z);
-    you_star->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5f);
+    you_star->draw_character_rotated_centered(playerAgent_state.camera_state.theta - 0.5f);
 
     you_A->set_position(x,y);
     you_A->set_depth(z);
-    you_A->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5f);
+    you_A->draw_character_rotated_centered(playerAgent_state.camera_state.theta - 0.5f);
 
     if (free_camera == NULL) return;
     if (free_camera->is_current())
@@ -426,7 +385,7 @@ void draw_text_icons(float z)
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);
         camera->set_position(x,y);
         camera->set_depth(z);
-        camera->draw_character_rotated(free_camera->theta - 0.5f);
+        camera->draw_character_rotated_centered(free_camera->theta - 0.5f);
     }
     
     // -0.5 offset to orient texture properly

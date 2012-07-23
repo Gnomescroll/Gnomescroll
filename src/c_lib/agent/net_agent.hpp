@@ -653,25 +653,25 @@ class place_spawner_CtoS: public FixedSizeReliableNetPacketToServer<place_spawne
         inline void handle();
 };
 
-class choose_spawn_location_CtoS: public FixedSizeReliableNetPacketToServer<choose_spawn_location_CtoS>
+class choose_spawner_CtoS: public FixedSizeReliableNetPacketToServer<choose_spawner_CtoS>
 {
     public:
-        uint8_t id;
+        uint16_t spawner_id;
 
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&spawner_id, buff, buff_n, pack);
         }
         inline void handle();
 };
 
-class spawn_location_StoC: public FixedSizeReliableNetPacketToClient<spawn_location_StoC>
+class set_spawner_StoC: public FixedSizeReliableNetPacketToClient<set_spawner_StoC>
 {
     public:
-        uint8_t pt;
+        uint16_t spawner_id;
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
-            pack_u8(&pt, buff, buff_n, pack);
+            pack_u16(&spawner_id, buff, buff_n, pack);
         }
     inline void handle();
 };

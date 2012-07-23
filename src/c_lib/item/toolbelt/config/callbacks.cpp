@@ -1,6 +1,8 @@
 #include "callbacks.hpp"
 
 #include <item/toolbelt/common/types.hpp>
+#include <entity/object/main.hpp>
+#include <entity/objects/fabs/constants.hpp>
 
 namespace Toolbelt
 {
@@ -160,6 +162,83 @@ void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type)
         APPLY_REPAIR_KIT_MAX_DISTANCE, a->id);
     if (teammate_id == NO_AGENT) return;
     consume_item(teammate_id, item_id, item_type);
+}
+
+// simple creator for objects
+static class Objects::Object* place_object(int agent_id, ItemID item_id, int item_type, const ObjectType object_type, const float object_height)
+{
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return NULL;
+    
+    const int max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* b = a->nearest_open_block(max_dist, z_low, z_high);
+    if (b == NULL) return NULL;
+    
+    // must be placed on solid block
+    if (b[2] <= 0) return NULL;  // can't place on nothing
+    if (!isSolid(b[0], b[1], b[2]-1)) return NULL;
+    
+    // make sure will fit height
+    int h = (int)ceil(object_height);
+    GS_ASSERT(h > 0);
+    if (h <= 0) h = 1;
+    for (int i=0; i<h; i++)
+        if (t_map::get(b[0], b[1], b[2] + i) != 0)
+            return NULL;
+    
+    // check against all known spawners & energy cores
+    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
+        return NULL;
+    if (Objects::point_occupied_by_type(OBJECT_ENERGY_CORE, b[0], b[1], b[2]))
+        return NULL;
+
+    class Objects::Object* obj = Objects::create(object_type);
+    GS_ASSERT(obj != NULL);
+    if (obj == NULL) return NULL;
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics != NULL) physics->set_position(vec3_init(b[0], b[1], b[2]));
+    
+    // WARNING :: MUST CALL Objects::ready(obj);
+    return obj;    
+}
+
+// IG_AGENT_SPAWNER
+
+void place_spawner(int agent_id, ItemID item_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
+
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+
+    class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_AGENT_SPAWNER, Objects::AGENT_SPAWNER_HEIGHT);
+    if (obj == NULL) return;
+    Objects::ready(obj);
+    
+    decrement_stack(agent_id, item_id, item_type);
+    
+    // select spawner automatically if spawn pt is base
+    if (a->status.spawner == BASE_SPAWN_ID)
+        a->status.set_spawner(obj->id);
+}
+
+// IG_ENERGY_CORE
+
+void place_energy_core(int agent_id, ItemID item_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
+    
+    class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Objects::ENERGY_CORE_HEIGHT);
+    if (obj == NULL) return;
+    Objects::ready(obj);
+    
+    decrement_stack(agent_id, item_id, item_type);
 }
 
 #endif

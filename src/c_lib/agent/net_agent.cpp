@@ -13,7 +13,7 @@
 #include <common/time/physics_timer.hpp>
 #include <chat/client.hpp>
 #include <chat/interface.hpp>
-
+#include <entity/objects/fabs/constants.hpp>
 #include <SDL/SDL_functions.h>
 #endif
 
@@ -447,11 +447,46 @@ inline void client_disconnected_StoC::handle()
     free(msg);
 }
 
-inline void spawn_location_StoC::handle()
+inline void set_spawner_StoC::handle()
 {
+    // TODO -- remove, once base is replaced with actual spawner
+    int spawner_id = this->spawner_id;
+    if (this->spawner_id == (uint16_t)-1)
+        spawner_id = BASE_SPAWN_ID;
+    
     using ClientState::playerAgent_state;
     if (playerAgent_state.you == NULL) return;
-    playerAgent_state.you->event.set_spawner(pt);
+
+    // de-color old spawner
+    if (playerAgent_state.you->status.spawner != BASE_SPAWN_ID)
+    {
+        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, playerAgent_state.you->status.spawner);
+        if (obj != NULL)
+        {
+            using Components::VoxelModelComponent;
+            VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            GS_ASSERT(vox != NULL);
+            if (vox != NULL && vox->vox != NULL)
+                vox->vox->fill_color(Objects::DEACTIVATED_SPAWNER_COLOR);
+        }
+    }
+
+    // color new spawner
+    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check
+    {
+        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, spawner_id);
+        GS_ASSERT(obj != NULL);
+        if (obj != NULL)
+        {
+            using Components::VoxelModelComponent;
+            VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            GS_ASSERT(vox != NULL);
+            if (vox != NULL && vox->vox != NULL)
+                vox->vox->fill_color(Objects::ACTIVATED_SPAWNER_COLOR);
+        }
+    }
+
+    playerAgent_state.you->event.set_spawner(spawner_id);
 }
 
 inline void agent_color_StoC::handle()
@@ -489,7 +524,7 @@ inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
-inline void choose_spawn_location_CtoS::handle(){}
+inline void choose_spawner_CtoS::handle(){}
 inline void request_agent_name_CtoS::handle(){}
 inline void request_remaining_state_CtoS::handle() {}
 inline void agent_camera_state_CtoS::handle() {}
@@ -529,7 +564,7 @@ inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}
 inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
-inline void spawn_location_StoC::handle(){}
+inline void set_spawner_StoC::handle(){}
 inline void agent_color_StoC::handle() {}
 
 //for benchmarking
@@ -643,52 +678,35 @@ inline void hitscan_object_CtoS::handle()
         return;
     }
 
-    Agent_state* agent = NULL;
-    const int obj_dmg = randrange(10,25);
-
-    using Objects::Object;
-    Object* obj = NULL;
-
-    using Components::HealthComponent;
-    using Components::MotionTargetingComponent;
-    HealthComponent* health;
-    MotionTargetingComponent* motion_targeting;
-
-    switch (type)
+    if (type == OBJECT_AGENT)
     {
-        case OBJECT_AGENT:
-            agent = ServerState::agent_list->get(id);
-            if (agent == NULL || agent->vox == NULL) return;
-			force_update_agent_vox(a);
-            // apply damage
-            agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
-            break;
-
- 
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_AGENT_SPAWNER:
-        case OBJECT_TURRET:
-        case OBJECT_MONSTER_BOX:
-        case OBJECT_MONSTER_SPAWNER:
-            obj = Objects::get((ObjectType)type, id);
-            if (obj == NULL) return;
-
-            // apply damage
-            health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
-            if (health != NULL) health->take_damage(obj_dmg);
-
-            // set target on person attacking
-            motion_targeting = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
-            if (motion_targeting != NULL && motion_targeting->target_type == OBJECT_NONE)
-                motion_targeting->set_target(OBJECT_AGENT, a->id);
-            
-            break;
-
-        default:
-            printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
-            return;
+        Agent_state* agent = ServerState::agent_list->get(id);
+        if (agent == NULL || agent->vox == NULL) return;
+        force_update_agent_vox(a);
+        // apply damage
+        agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
+        //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
     }
+    else
+    {
+        class Objects::Object* obj = Objects::get((ObjectType)type, id);
+        if (obj == NULL) return;
+
+        // apply damage
+        const int obj_dmg = randrange(10,25);   // TODO -- weapon based
+        
+        using Components::HealthComponent;
+        HealthComponent* health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        if (health != NULL) health->take_damage(obj_dmg);
+
+        // set target on person attacking
+        using Components::MotionTargetingComponent;
+        MotionTargetingComponent* motion_targeting = (MotionTargetingComponent*)
+            obj->get_component(COMPONENT_MOTION_TARGETING);
+        if (motion_targeting != NULL && motion_targeting->target_type == OBJECT_NONE)
+            motion_targeting->set_target(OBJECT_AGENT, a->id);
+    }
+
     agent_shot_object_StoC msg;
     msg.id = a->id;
     msg.target_id = this->id;
@@ -770,58 +788,29 @@ inline void hitscan_none_CtoS::handle()
 inline void melee_object_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
-    Agent_state* agent = NULL;
-    const int obj_dmg = Item::get_item_object_damage(weapon_type);
-
-    using Objects::Object;
-    Object* obj = NULL;
-
-    using Components::HealthComponent;
-    HealthComponent* health;
-    bool died = true;   // assume hitting object kills it, unless object says otherwise
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     
-    switch (type)
+    if (type == OBJECT_AGENT)
     {
-        case OBJECT_AGENT:
-            agent = ServerState::agent_list->get(id);
-            if (agent==NULL) return;
-            // apply damage
-            agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);
-            break;
-
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_AGENT_SPAWNER:
-        case OBJECT_TURRET:
-        case OBJECT_MONSTER_BOX:
-        case OBJECT_MONSTER_SPAWNER:
-            obj = Objects::get((ObjectType)type, id);
-            if (obj == NULL) return;
-
-            // apply damage
-            health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
-            if (health != NULL)
-            {
-                health->take_damage(obj_dmg);
-                died = health->did_die();
-            }
-
-            if (died)
-            {
-                if (obj->type == OBJECT_MONSTER_BOMB)
-                    a->status.kill_slime(); // TODO, de-type this
-            }
-            break;
-
-        default:
-            printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
-            return;
+        class Agent_state* agent = ServerState::agent_list->get(id);
+        if (agent==NULL) return;
+        agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
     }
+    else
+    {
+        class Objects::Object* obj = Objects::get((ObjectType)type, id);
+        if (obj == NULL) return;
+
+        // apply damage
+        const int obj_dmg = Item::get_item_object_damage(weapon_type);  // TODO -- weapon based
+        using Components::HealthComponent;
+        HealthComponent* health = (HealthComponent*)
+            obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        if (health != NULL)
+            health->take_damage(obj_dmg);
+    }
+
     agent_melee_object_StoC msg;
     msg.id = a->id;
     msg.target_id = this->id;
@@ -895,7 +884,7 @@ inline void agent_set_block_CtoS::handle()
     y = translate_point(y);
 
     // dont set on existing block
-    if (t_map::get(x,y,z) != 0) return;
+    if (!t_map::block_can_be_placed(x,y,z,val)) return;
 
     // check this player first, most likely to be colliding
     bool collides = false;
@@ -951,8 +940,9 @@ inline void admin_set_block_CtoS::handle()
     x = translate_point(x);
     y = translate_point(y);
 
-    // do block place checks here later
-    // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
+    // TODO -- when this is a /real/ admin tool, remove this check
+    // since we're giving it to players, do this check
+    if (!t_map::block_can_be_placed(x,y,z,val)) return;
 
     // check this player first, most likely to be colliding
     t_map::set_fast(x,y,z, val); // set temporarily to test against
@@ -1043,7 +1033,7 @@ inline void place_turret_CtoS::handle()
 
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 
-inline void choose_spawn_location_CtoS::handle()
+inline void choose_spawner_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
@@ -1051,7 +1041,7 @@ inline void choose_spawn_location_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-    a->status.set_spawner(id);
+    a->status.set_spawner(spawner_id);
 }
 
 const char DEFAULT_PLAYER_NAME[] = "Clunker";

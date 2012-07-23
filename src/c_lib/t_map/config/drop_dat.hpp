@@ -48,6 +48,9 @@ void load_map_drop_dat()
     def_drop("control_node");
         drop_always("control_node");
 
+    def_drop("smelter_1");
+        drop_always("smelter_1");
+
     def_drop("methane_ice");
         add_drop("methane_ice", 4);
         set_drop(0.40f, 1);

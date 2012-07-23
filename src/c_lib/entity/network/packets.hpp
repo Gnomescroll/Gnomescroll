@@ -1,5 +1,7 @@
 #pragma once
 
+#include <net_lib/net_StoC.hpp>
+#include <net_lib/net_CtoS.hpp>
 
 // Position
 class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_create_StoC>
@@ -402,4 +404,3 @@ class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_
     }
     inline void handle();
 };
-

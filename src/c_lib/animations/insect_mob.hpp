@@ -217,7 +217,6 @@ class InsectMob
 
         for(int i=0; i<sides; i++)
         {
-
             v1 = vec3_init( x, y, z2+z );
             v2 = vec3_init( x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z );
             v3 = vec3_init( x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z );

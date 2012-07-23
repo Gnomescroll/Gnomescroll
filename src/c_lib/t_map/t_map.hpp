@@ -62,11 +62,15 @@ void broadcast_set_block_palette(int x, int y, int z, int block, int palette);
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
+inline int get_nearest_open_block(int x, int y, int z, int vertical_gap); 
+inline int get_nearest_open_block(int x, int y, int z); 
 inline int get_lowest_open_block(int x, int y, int n);
 inline int get_highest_solid_block(int x, int y);
 inline int get_highest_solid_block(int x, int y, int z);
 inline int get_lowest_solid_block(int x, int y);
 
 inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
+
+bool block_can_be_placed(int x, int y, int z, int value);
 
 }   // t_map

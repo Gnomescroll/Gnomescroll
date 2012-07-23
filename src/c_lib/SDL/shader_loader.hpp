@@ -19,6 +19,20 @@ class SHADER
     unsigned int vert_shader;
 
     bool DEBUG1;
+    
+    char* name; //shader name
+
+    int attribute_array[16]; //atribute list
+    int attribute_index;
+
+    int uniform_array[16]; //uniform list
+    int uniform_index;
+
+    bool shader_valid; //is shader valid?
+
+    char *vs;
+    char *fs;
+
     SHADER()
     {
         shader = 0;
@@ -26,6 +40,21 @@ class SHADER
         vert_shader = 0;
         
         DEBUG1 = true;
+        name = NULL;
+
+        attribute_index = 0;
+        uniform_index = 0;
+
+        shader_valid = false;
+
+        vs = NULL;
+        fs = NULL;
+    }
+
+    ~SHADER()
+    {
+        if(vs != NULL) free(vs);
+        if(fs != NULL) free(fs);
     }
 
     void set_debug(bool value)
@@ -33,9 +62,12 @@ class SHADER
         DEBUG1 = value;
     }
 
-    void load_shader(const char* name, const char* vertex_shader_file, const char* fragment_shader_file)
+    void load_shader(const char* _name, const char* vertex_shader_file, const char* fragment_shader_file)
     {
-        char *vs, *fs;
+        //set shader name
+        GS_ASSERT(name == NULL);
+        name = new char[strlen(_name)];
+        name = strcpy(name, _name);
 
         printf("Loading shader: %s\n", name);
 
@@ -47,6 +79,8 @@ class SHADER
         {
             if (vs != NULL) free(vs);
             if (fs != NULL) free(fs);
+            vs = NULL;
+            fs = NULL;
             return;
         }
 
@@ -56,31 +90,106 @@ class SHADER
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
-        
+
         glCompileShaderARB(vert_shader);
-        if(DEBUG1) printShaderInfoLog(vert_shader);
+        if(glIsShader(vert_shader) == false && false) //debug
+        {
+            printf("vertex shader failed with error: %s \n", name);
+            printShaderInfoLog(vert_shader);
+            shader_valid = false;
+            return;
+        }
+        else
+        {
+            if(DEBUG1) printShaderInfoLog(vert_shader);
+        }
 
         glCompileShaderARB(frag_shader);
-        if(DEBUG1) printShaderInfoLog(frag_shader);
-        
+        if(glIsShader(frag_shader) == false && false) //debug
+        {
+            printf("fragment shader failed with error: %s \n", name);
+            printShaderInfoLog(frag_shader);
+            shader_valid = false;
+            return;
+        }
+        else
+        {
+            if(DEBUG1) printShaderInfoLog(frag_shader);
+        }
+
         glAttachObjectARB(shader, vert_shader);
         glAttachObjectARB(shader, frag_shader);
 
         glLinkProgramARB(shader);
 
-        if(DEBUG1) printProgramInfoLog(shader);
+        if(glIsShader(shader) == false && false) //debug
+        {
+            printf("shader failed with error: %s \n", name);
+            printShaderInfoLog(shader);
+            shader_valid = false;
+            return;
+        }
+        else
+        {
+            if(DEBUG1) printShaderInfoLog(shader);
+        }
 
-        free(vs);
-        free(fs);
+        //if(DEBUG1) printProgramInfoLog(shader);
+        shader_valid = true;
     }
 
-    unsigned int get_attribute(const char* attribute_name)
+    int get_attribute(const char* attribute_name)
     {
-        return glGetAttribLocation(shader, attribute_name);
+        if(shader_valid == false) return -1;
+        if(attribute_index == 16) GS_ABORT();
+
+        int attribute = glGetAttribLocation(shader, attribute_name);
+
+        if(attribute == -1)
+        {
+            printf("SHADER: get_attribute failed. shader= %s attribut= %s \n", name, attribute_name);
+            return -1;
+        }
+        attribute_array[attribute_index] = attribute;
+        attribute_index++;
+        return attribute;
     }
 
-    unsigned int get_uniform(const char* uniform_name)
+    int get_uniform(const char* uniform_name)
     {
-        return glGetUniformLocation(shader, uniform_name);
-    }   
+        if(shader_valid == false) return -1;
+        if(uniform_index == 16) GS_ABORT();
+        int uniform = glGetUniformLocation(shader, uniform_name);
+
+        if(uniform == -1)
+        {
+            printf("SHADER: get_uniform failed. shader= %s uniform= %s \n", name, uniform_name);
+            return -1;
+        }
+        uniform_array[uniform_index] = uniform;
+        uniform_index++;
+        return uniform;
+    }
+
+
+    void enable_attributes()  
+    {
+        GS_ASSERT(shader_valid == true);
+        glUseProgramObjectARB(this->shader);
+        for(int i=0; i<attribute_index; i++)
+        {
+            glEnableVertexAttribArray(attribute_array[i]);
+        }
+    }
+
+    void disable_attributes()
+    {
+        GS_ASSERT(shader_valid == true);
+        for(int i=0; i<attribute_index; i++)
+        {
+            glDisableVertexAttribArray(attribute_array[i]);
+        }
+        glUseProgramObjectARB(0);
+    }
+
 };

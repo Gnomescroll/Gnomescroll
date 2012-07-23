@@ -25,6 +25,7 @@
     #include <item/_interface.hpp>
 
     #include <t_map/config/drop_table.hpp>
+    #include <entity/object/main.hpp>
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };
@@ -104,6 +105,8 @@ void init_for_draw()
 {
     init_cache();
     init_shaders();
+
+    control_node_render_init(&main_map->control_node_list);
 }
 #endif
     
@@ -115,6 +118,7 @@ void end_t_map()
     #if DC_CLIENT
     end_client_compressors();
     end_t_vbo();
+    control_node_render_teardown();
     #endif
 
     #if DC_SERVER
@@ -216,6 +220,57 @@ inline int get_highest_open_block(int x, int y)
     return get_highest_solid_block(x,y)+1;
 }
 
+inline int get_nearest_open_block(int x, int y, int z, int n)
+{
+    GS_ASSERT(n >= 1);
+    if (n < 1) return z;
+
+    int inc = 1;    // direction (+/- up/down)
+    int up = z;     // up cursor
+    int down = z-1; // down cursor
+    while (down >= 0 && up < map_dim.z)
+    {
+        // choose start pt
+        int start = up;
+        if (inc < 0)
+            start = down;
+            
+        // look for gap of height n
+        bool found = true;
+        for (int j=0; j<n; j++)
+        {
+            if (isSolid(x,y,start+j))
+            {
+                found = false;
+                break;
+            }
+        }
+        if (found) return start;
+        
+        // advance up/down cursors
+        if (inc > 0)
+            up++;
+        else
+            down--;
+        
+        // set direction
+        if (up >= map_dim.z)
+            inc = -1;
+        else if (down < 0)
+            inc = 1;
+        else
+            inc *= -1;  // flip
+    }
+    
+    return -1;
+}
+
+inline int get_nearest_open_block(int x, int y, int z)
+{
+    return get_nearest_open_block(x,y,z,1);
+}
+
+
 inline int get_highest_solid_block(int x, int y)
 {
     return get_highest_solid_block(x,y, map_dim.z);
@@ -278,5 +333,18 @@ inline bool position_is_loaded(int x, int y)
 	return (main_map->chunk_heights_status[chunk] != CHUNK_HEIGHT_UNSET);
 	#endif
 }
+
+bool block_can_be_placed(int x, int y, int z, int value)
+{   
+    GS_ASSERT(value != 0);
+    if (get(x,y,z) != 0) return false;
+    // check against all spawners
+    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x,y,z))
+        return false;
+    if (Objects::point_occupied_by_type(OBJECT_ENERGY_CORE, x,y,z))
+        return false;
+    return true;
+}
+
 
 }   // t_map

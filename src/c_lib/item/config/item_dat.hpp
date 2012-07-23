@@ -17,25 +17,25 @@ void load_item_dat()
     int i1a = texture_alias("media/sprites/i01a.png");
 
     item_def(0, IG_ERROR, "error_item");
-    s.pretty_name = (char*)"Error";
+    s.pretty_name = (char*) "Error";
     sprite_def(i0, 4,1);
 
     item_def(1, IG_PLACER, "regolith");
     iso_block_sprite_def("regolith");
     s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
-    s.pretty_name = (char*)"Regolith";
+    s.pretty_name = (char*) "Regolith";
     s.max_stack_size = 64;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"regolith");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "regolith");
 
     item_def(4, IG_RESOURCE, "quartz_crystal");
     sprite_def(i0, 1,5);
-    s.pretty_name = (char*)"Quartz Crystal";
+    s.pretty_name = (char*) "Quartz Crystal";
 
 
     item_def(5, IG_HITSCAN_WEAPON, "laser_rifle");
     sprite_def(i0, 3,7);
-    s.pretty_name = (char*)"Laser Rifle";
+    s.pretty_name = (char*) "Laser Rifle";
     s.hitscan_fire_cooldown = 30;
     s.hitscan_damage = 5;
     s.hitscan_bullet_effect_enum = 0;
@@ -47,7 +47,7 @@ void load_item_dat()
 
     item_def(7, IG_MINING_LASER, "mining_laser");
     sprite_def(i0, 3,5);
-    s.pretty_name = (char*)"Mining Laser";
+    s.pretty_name = (char*) "Mining Laser";
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
     s.max_durability = 2000;
@@ -60,35 +60,35 @@ void load_item_dat()
 
     item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
     sprite_def(i0, 1,7);
-    s.pretty_name = (char*)"Plasma Grenade";
+    s.pretty_name = (char*) "Plasma Grenade";
     s.max_stack_size = 100;
 
     //item_def(9, IG_RESOURCE, "food_rock-0");
     //sprite_def(i1, 1,4);
-    //s.pretty_name = (char*)"Small Rock";
+    //s.pretty_name = (char*) "Small Rock";
     //s.max_stack_size = 16;
 
     //item_def(10, IG_RESOURCE, "blue_crystal");
     //sprite_def(i0, 1,4);
-    //s.pretty_name = (char*)"Blue Crystal";
+    //s.pretty_name = (char*) "Blue Crystal";
     //s.max_stack_size = 8;
 
     item_def(11, IG_SYNTHESIZER_COIN, "synthesizer_coin");
     sprite_def(i1, 2, 7);
-    s.pretty_name = (char*)"Synthesizer Chip";
+    s.pretty_name = (char*) "Synthesizer Chip";
     s.max_stack_size = 999;
 
     item_def(12, IG_DEBUG, "location_pointer");
     sprite_def(i0, 4,2);
-    s.pretty_name = (char*)"Location Pointer";
+    s.pretty_name = (char*) "Location Pointer";
 
     item_def(13, IG_DEBUG, "block_placer");
     sprite_def(i0, 4,5);
-    s.pretty_name = (char*)"Block Placer";
+    s.pretty_name = (char*) "Block Placer";
 
     item_def(14, IG_UNKNOWN, "unknown");
     sprite_def(i0, 5,1);
-    s.pretty_name = (char*)"Unknown";
+    s.pretty_name = (char*) "Unknown";
 
     //item_def(15, IG_PLACER, "crate_1");
     //iso_block_sprite_def("crate_1");
@@ -99,38 +99,38 @@ void load_item_dat()
     item_def(16, IG_PLACER, "small_storage");
     iso_block_sprite_def("small_storage");
     s.placer_block_type_id = t_map::dat_get_cube_id("small_storage");
-    s.pretty_name = (char*)"Small Storage Block";
+    s.pretty_name = (char*) "Small Storage Block";
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"small_storage");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "small_storage");
     s.container_type = CONTAINER_TYPE_STORAGE_BLOCK_SMALL;
     container_block_def("small_storage", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
 
     // level 1 utility crafting block
     item_def(17, IG_PLACER, "small_crafting_bench");
     iso_block_sprite_def("small_crafting_bench");
-    s.pretty_name = (char*)"Small Crafting Bench";
+    s.pretty_name = (char*) "Small Crafting Bench";
     s.placer_block_type_id = t_map::dat_get_cube_id("small_crafting_bench");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"small_crafting_bench");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "small_crafting_bench");
     s.container_type = CONTAINER_TYPE_CRAFTING_BENCH_UTILITY;
     container_block_def("small_crafting_bench", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
 
     // Copper
     item_def(32, IG_RESOURCE, "copper_ore");
     sprite_def(i1, 3,3);
-    s.pretty_name = (char*)"Copper Ore";
+    s.pretty_name = (char*) "Copper Ore";
     s.max_stack_size = 64;
 
     item_def(33, IG_RESOURCE, "copper_bar");
     sprite_def(i1, 3,2);
-    s.pretty_name = (char*)"Copper Bar";
+    s.pretty_name = (char*) "Copper Bar";
     s.max_stack_size = 64;
 
     item_def(34, IG_SHOVEL, "copper_shovel");
     sprite_def(i1, 3,1);
-    s.pretty_name = (char*)"Copper Shovel";
+    s.pretty_name = (char*) "Copper Shovel";
     s.melee_fire_cooldown = 250;
     s.melee_damage = 2;
     s.max_durability = 400;
@@ -144,17 +144,17 @@ void load_item_dat()
     // Gallium
     item_def(35, IG_RESOURCE, "gallium_ore");
     sprite_def(i1, 2,3);
-    s.pretty_name = (char*)"Gallium Ore";
+    s.pretty_name = (char*) "Gallium Ore";
     s.max_stack_size = 64;
 
     item_def(36, IG_RESOURCE, "gallium_bar");
     sprite_def(i1, 2,2);
-    s.pretty_name = (char*)"Gallium Bar";
+    s.pretty_name = (char*) "Gallium Bar";
     s.max_stack_size = 64;
 
     item_def(37, IG_SHOVEL, "gallium_shovel");
     sprite_def(i1, 2,1);
-    s.pretty_name = (char*)"Gallium Shovel";
+    s.pretty_name = (char*) "Gallium Shovel";
     s.melee_fire_cooldown = 250;
     s.melee_damage = 4;
     s.max_durability = 400;
@@ -168,17 +168,17 @@ void load_item_dat()
     // Iron
     item_def(38, IG_RESOURCE, "iron_ore");
     sprite_def(i1a, 1,3);
-    s.pretty_name = (char*)"Iron Ore";
+    s.pretty_name = (char*) "Iron Ore";
     s.max_stack_size = 64;
 
     item_def(39, IG_RESOURCE, "iron_bar");
     sprite_def(i1, 1,2);
-    s.pretty_name = (char*)"Iron Bar";
+    s.pretty_name = (char*) "Iron Bar";
     s.max_stack_size = 64;
 
     item_def(40, IG_SHOVEL, "iron_shovel");
     sprite_def(i1, 1,1);
-    s.pretty_name = (char*)"Iron Shovel";
+    s.pretty_name = (char*) "Iron Shovel";
     s.melee_fire_cooldown = 250;
     s.melee_damage = 6;
     s.max_durability = 400;
@@ -192,17 +192,17 @@ void load_item_dat()
     // Iridium
     item_def(41, IG_RESOURCE, "iridium_ore");
     sprite_def(i1, 4,3);
-    s.pretty_name = (char*)"Iridium Ore";
+    s.pretty_name = (char*) "Iridium Ore";
     s.max_stack_size = 64;
 
     item_def(42, IG_RESOURCE, "iridium_bar");
     sprite_def(i1, 4,2);
-    s.pretty_name = (char*)"Iridium Bar";
+    s.pretty_name = (char*) "Iridium Bar";
     s.max_stack_size = 64;
 
     item_def(43, IG_SHOVEL, "iridium_shovel");
     sprite_def(i1, 4,1);
-    s.pretty_name = (char*)"Iridium Shovel";
+    s.pretty_name = (char*) "Iridium Shovel";
     s.melee_fire_cooldown = 250;
     s.melee_damage = 30;
     s.max_durability = 400;
@@ -215,7 +215,7 @@ void load_item_dat()
 
     item_def(44, IG_FIST, "fist");
     sprite_def(i1, 6, 2);
-    s.pretty_name = (char*)"Fist";
+    s.pretty_name = (char*) "Fist";
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
     s.firing_range = 4.0f;
@@ -226,55 +226,55 @@ void load_item_dat()
 
     item_def(45, IG_RESOURCE, "graphite");
     sprite_def(i0, 5,2);
-    s.pretty_name = (char*)"Graphite";
+    s.pretty_name = (char*) "Graphite";
     s.max_stack_size = 64;
     s.fuel = true;
     s.fuel_burn_rate = 30 * 30; // 30 seconds
     
     item_def(46, IG_PLACER, "steel_block_1");
     iso_block_sprite_def("steel_block_1");
-    s.pretty_name = (char*)"Steel Block #1";
+    s.pretty_name = (char*) "Steel Block #1";
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_1");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_1");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_1");
     
     item_def(47, IG_PLACER, "steel_block_2");
-    s.pretty_name = (char*)"Steel block #2";
+    s.pretty_name = (char*) "Steel block #2";
     iso_block_sprite_def("steel_block_2");
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_2");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_2");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_2");
 
     item_def(48, IG_PLACER, "steel_block_3");
-    s.pretty_name = (char*)"Steel Block #3";
+    s.pretty_name = (char*) "Steel Block #3";
     iso_block_sprite_def("steel_block_3");
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_3");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"steel_block_3");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_3");
 
 
     item_def(49, IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
-    s.pretty_name = (char*)"Small Charge Pack";
+    s.pretty_name = (char*) "Small Charge Pack";
     s.max_stack_size = 16;
     s.repair_agent_amount = 25;
 
     item_def(50, IG_PLACER, "cryofreezer_1");
     iso_block_sprite_def("cryofreezer_1");
-    s.pretty_name = (char*)"Small Cryofreezer";
+    s.pretty_name = (char*) "Small Cryofreezer";
     s.placer_block_type_id = t_map::dat_get_cube_id("cryofreezer_1");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"cryofreezer_1");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "cryofreezer_1");
     s.container_type = CONTAINER_TYPE_CRYOFREEZER_SMALL;
     container_block_def("cryofreezer_1", CONTAINER_TYPE_CRYOFREEZER_SMALL);
 
     item_def(51, IG_RESOURCE, "methane_ice");
     sprite_def(i0, 1,4);
-    s.pretty_name = (char*)"Methane Ice";
+    s.pretty_name = (char*) "Methane Ice";
     s.max_stack_size = 16;
     s.gas = true;
     s.fuel = true;
@@ -282,26 +282,26 @@ void load_item_dat()
 
     item_def(52, IG_PLACER, "smelter_1");
     iso_block_sprite_def("smelter_1");
-    s.pretty_name = (char*)"Simple Smelter";
+    s.pretty_name = (char*) "Simple Smelter";
     s.placer_block_type_id = t_map::dat_get_cube_id("smelter_1");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"smelter_1");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "smelter_1");
     s.container_type = CONTAINER_TYPE_SMELTER_ONE;
     container_block_def("smelter_1", CONTAINER_TYPE_SMELTER_ONE);
 
 
     item_def(53, IG_PLACER, "control_node");
     iso_block_sprite_def("control_node");
-    s.pretty_name = (char*)"Control Node";
+    s.pretty_name = (char*) "Control Node";
     s.placer_block_type_id = t_map::dat_get_cube_id("control_node");
     s.max_stack_size = 8;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*)"control_node");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "control_node");
 
     item_def(54, IG_ENERGY_TANK, "energy_tank");
     sprite_def(i0, 2,8);
-    s.pretty_name = (char*)"Energy Tank";
+    s.pretty_name = (char*) "Energy Tank";
     s.max_stack_size = 1;
 
     item_def(55, IG_AGENT_SPAWNER, "agent_spawner");
@@ -309,7 +309,12 @@ void load_item_dat()
     s.pretty_name = (char*) "Spawner";
     s.max_stack_size = 1;
 
-    end_item_dat();
+    item_def(56, IG_ENERGY_CORE, "energy_core");
+    sprite_def(i1, 3,6);
+    s.pretty_name = (char*) "Energy Core";
+    s.max_stack_size = 1;
+
+    end_item_dat(); // finalize
     
     verify_item_dat();
 }

@@ -28,7 +28,7 @@ void init_shader()
         "./media/shaders/skybox/stars.vsh",
         "./media/shaders/skybox/stars.fsh" );
     star_TexCoord = star_shader.get_attribute("InTexCoord");
-    star_CameraPos = star_shader.get_uniform("CameraPos");
+    //star_CameraPos = star_shader.get_uniform("CameraPos");
 }
 
 void init_texture()
@@ -276,8 +276,8 @@ void draw()
 
     glUseProgramObjectARB(star_shader.shader);
 
-    Vec3 p = current_camera->get_position();
-    glUniform3f(star_CameraPos, p.x, p.y, p.z);
+    //Vec3 p = current_camera->get_position();
+    //glUniform3f(star_CameraPos, p.x, p.y, p.z);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(star_TexCoord);

@@ -29,6 +29,7 @@
 
 #include <entity/objects/fabs/constants.hpp>
 #include <entity/objects/fabs/base.hpp>
+#include <entity/objects/fabs/energy_core.hpp>
 #include <entity/objects/fabs/spawner.hpp>
 #include <entity/objects/fabs/turret.hpp>
 

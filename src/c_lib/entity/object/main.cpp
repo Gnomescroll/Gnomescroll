@@ -24,6 +24,7 @@ void load_object_data()
     // fabs
     load_base_data();
     load_agent_spawner_data();
+    load_energy_core_data();
     load_turret_data();
 
     // mobs
@@ -46,7 +47,8 @@ void init()
     
     // fabs
     object_list->set_object_max(OBJECT_BASE, 2);
-    object_list->set_object_max(OBJECT_AGENT_SPAWNER, 256);
+    object_list->set_object_max(OBJECT_AGENT_SPAWNER, 1024);
+    object_list->set_object_max(OBJECT_ENERGY_CORE, 1024);
     object_list->set_object_max(OBJECT_TURRET, 512);
 
     // mobs
@@ -99,6 +101,8 @@ static Object* create_switch(ObjectType type)
             return create_agent_spawner();
         case OBJECT_TURRET:
             return create_turret();
+        case OBJECT_ENERGY_CORE:
+            return create_energy_core();
 
         // mobs
         case OBJECT_MONSTER_SPAWNER:
@@ -149,6 +153,9 @@ void ready_switch(Object* object)
         case OBJECT_TURRET:
             ready_turret(object);
             break;
+        case OBJECT_ENERGY_CORE:
+            ready_energy_core(object);
+            break;
 
         // mobs
         case OBJECT_MONSTER_SPAWNER:
@@ -183,6 +190,9 @@ void destroy_switch(Object* object)
             break;
         case OBJECT_TURRET:
             die_turret(object);
+            break;
+        case OBJECT_ENERGY_CORE:
+            die_energy_core(object);
             break;
 
         // mobs
@@ -270,7 +280,6 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
         for (int j=0; j<height; j++)
             if (pz + j == z) return true;
     }
-    
     return false;
 }
 

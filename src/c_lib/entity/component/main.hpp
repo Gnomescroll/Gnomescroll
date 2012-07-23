@@ -60,6 +60,7 @@ extern AnimationComponentList* animation_component_list;
 extern AgentSpawnerComponentList* agent_spawner_component_list;
 extern ExplosionComponentList* explosion_component_list;
 extern ItemDropComponentList* item_drop_component_list;
+extern HealerComponentList* healer_component_list;
 #endif
 
 /* ComponentList handler switches */

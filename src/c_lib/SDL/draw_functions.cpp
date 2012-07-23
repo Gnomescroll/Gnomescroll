@@ -148,15 +148,15 @@ void draw_bound_texture_rotated(float x, float y, float w, float h, float z, flo
     rotate_point(x, y, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Top left
 
-    glTexCoord2f(1.0f,1.0f);
+    glTexCoord2f(0.0f,1.0f);
     rotate_point(x+w, y, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Top right
 
-    glTexCoord2f(1.0f,0.0f);
+    glTexCoord2f(1.0f,1.0f);
     rotate_point(x+w, y+h, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Bottom right
 
-    glTexCoord2f(0.0f,0.0f);
+    glTexCoord2f(1.0f,0.0f);
     rotate_point(x, y+h, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, z);  // Bottom left
     glEnd();

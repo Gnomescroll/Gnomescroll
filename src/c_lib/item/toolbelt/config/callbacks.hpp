@@ -23,7 +23,6 @@ void trigger_local_admin_block_placer(ItemID item_id, int item_type);
 void trigger_local_grenade_launcher(ItemID item_id, int item_type);
 void trigger_local_hitscan_laser(ItemID item_id, int item_type);;
 void fire_close_range_weapon(ItemID item_id, int item_type);
-
 #endif
 
 #if DC_SERVER
@@ -31,6 +30,8 @@ void decrement_durability(int agent_id, ItemID item_id, int item_type);
 void decrement_stack(int agent_id, ItemID item_id, int item_type);
 void consume_item(int agent_id, ItemID item_id, int item_type);
 void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type);
+void place_spawner(int agent_id, ItemID item_id, int item_type);
+void place_energy_core(int agent_id, ItemID item_id, int item_type);
 #endif
 
 }    // Toolbelt

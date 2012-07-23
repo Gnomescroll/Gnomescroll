@@ -1,6 +1,7 @@
 #version 120
 
-uniform vec3 CameraPos;
+//uniform vec3 CameraPos;
+
 attribute vec2 InTexCoord;
 varying vec2 texCoord;
 

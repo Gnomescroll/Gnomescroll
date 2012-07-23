@@ -18,6 +18,7 @@ VoxDat monster_spawner;
 
 // items
 VoxDat base;
+VoxDat energy_core;
 VoxDat agent_spawner;
 VoxDat turret;
 
@@ -36,6 +37,7 @@ void init()
 
     // items
     read_skeleton((char*)"./media/voxel/base.skeleton", &base);
+    read_skeleton((char*)"./media/voxel/base.skeleton", &energy_core);
     read_skeleton((char*)"./media/voxel/spawner.skeleton", &agent_spawner);
     read_skeleton((char*)"./media/voxel/turret.skeleton", &turret);
 }

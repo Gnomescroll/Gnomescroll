@@ -82,6 +82,8 @@ void shutdown_net_client()
 
 static void client_connect(ENetEvent* event)
 {
+    GS_ASSERT(event != NULL);
+    if (event == NULL) return;
     NetClient::Server.enet_peer = event->peer;
     event->peer -> data = (void*) &NetClient::Server;
     NetClient::Server.connected = 1;
@@ -403,6 +405,9 @@ void dispatch_network_events()
 
 static void client_connect(ENetEvent* event)
 {
+    GS_ASSERT(event != NULL);
+    if (event == NULL) return;
+    
     NetPeer* nc = NULL;
     NetPeerManager* npm = NULL;
     

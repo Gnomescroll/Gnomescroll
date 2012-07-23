@@ -46,4 +46,5 @@
 #include <entity/components/explosion.hpp>
 #include <entity/components/item_drop.hpp>
 #include <entity/components/spawner/agent_spawner.hpp>
+#include <entity/components/healer.hpp>
 #endif

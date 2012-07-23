@@ -17,6 +17,7 @@ typedef enum
     // fabs
     OBJECT_AGENT_SPAWNER,
     OBJECT_TURRET,
+    OBJECT_ENERGY_CORE,
 
     // mobs
     OBJECT_MONSTER_BOMB,
@@ -65,6 +66,8 @@ typedef enum
 
     COMPONENT_RATE_LIMIT,
 
+    COMPONENT_HEALER,
+
     #if DC_CLIENT
     COMPONENT_BILLBOARD_SPRITE,
     COMPONENT_COLORED_VOXEL,
@@ -78,6 +81,7 @@ typedef enum
     COMPONENT_EXPLOSION,
     COMPONENT_ITEM_DROP,
     #endif
+    
 } ComponentType;
 
 int MAX_COMPONENT_INTERFACE_TYPES = 256;
@@ -97,6 +101,7 @@ typedef enum
     COMPONENT_INTERFACE_TARGETING,
     COMPONENT_INTERFACE_DIMENSION,
     COMPONENT_INTERFACE_RATE_LIMIT,
+    COMPONENT_INTERFACE_HEALING,
     
     #if DC_CLIENT
     COMPONENT_INTERFACE_DRAW,       // draw()
@@ -115,13 +120,13 @@ typedef enum
  */
 
 #include <limits.h>
-#include <float.h>
+//#include <float.h>
 #include <physics/vec3.hpp>
 
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
 const int NULL_HEALTH = INT_MAX;
-const Vec3 NULL_POSITION = vec3_init(FLT_MAX,FLT_MAX,FLT_MAX);
+const Vec3 NULL_POSITION = vec3_init(0,0,0);
 const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
 const Vec3 NULL_ANGLES = vec3_init(0,0,0);
 const float NULL_HEIGHT = 1.0f;
-const int BASE_SPAWN_ID = 255;
+const int BASE_SPAWN_ID = -1;   // must use -1 because spawner max is unknown
