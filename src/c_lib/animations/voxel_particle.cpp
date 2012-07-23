@@ -113,19 +113,19 @@ void prep_voxel_particles()
             
             int index = 12*i+3*0;
             Vec3 v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(p, tx_min, ty_min, n);
+            voxel_particle_vlist->push_vertex(v, tx_min, ty_min, n);
 
             index = 12*i+3*1;
             v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(p, tx_min, ty_max, n);
+            voxel_particle_vlist->push_vertex(v, tx_min, ty_max, n);
 
             index = 12*i+3*2;
             v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(p, tx_max, ty_max, n);
+            voxel_particle_vlist->push_vertex(v, tx_max, ty_max, n);
 
             index = 12*i+3*3;
             v = vec3_add(p, vec3_init(s_buffer[index+0], s_buffer[index+1], s_buffer[index+2]));
-            voxel_particle_vlist->push_vertex(p, tx_max, ty_min, n);
+            voxel_particle_vlist->push_vertex(v, tx_max, ty_min, n);
         }
     }
     
@@ -175,9 +175,9 @@ void draw_voxel_particles()
     
     glDrawArrays(GL_QUADS, 0, voxel_particle_vlist->vertex_number);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(voxel_particle_TexCoord);
     glDisableVertexAttribArray(voxel_particle_Normal);
+    glDisableClientState(GL_VERTEX_ARRAY);
     
     glUseProgramObjectARB(0);
 
