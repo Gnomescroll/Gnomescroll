@@ -10,7 +10,9 @@ varying float diffuse_light;
 
 void main() 
 {
-    vec3 color = texture2D(base_texture, texCoord).rgb;    
+    vec3 color = texture2D(base_texture, texCoord).rgb;  
+    //color = vec3(1.0, 1.0, 1.0);  use for testing lighting
+
     color = (diffuse_light*diffuse_p+ambient_p) *color;  
     //color = pow(color, vec3(1.0f / 2.2f));  // gamma correction
     gl_FragColor.rgb = color;

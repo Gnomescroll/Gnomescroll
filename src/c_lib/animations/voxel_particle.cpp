@@ -119,10 +119,12 @@ void prep_voxel_particles()
         }
 #else
 
-        const float voxel_size = 0.5; //MODIFY THIS FOR EACH VOXEL
+        const float voxel_size = 0.25; //MODIFY THIS FOR EACH VOXEL
 
-        struct Vec3 veb[8]; //vertex positions
-        struct Vec3 vn[6];  //normals
+        struct Vec3 veb[8];     //vertex positions
+        struct Vec3 vn[6];      //normals
+        struct Vec3 veb2[6*4];  //vertex array for rendering
+
         for (int i=0; i<8; i++)
         {
             veb[i].x = voxel_size*v_set2[3*i+0];
@@ -132,14 +134,20 @@ void prep_voxel_particles()
 
         struct Mat3 rotation_matrix = mat3_euler_rotation(xrot, yrot, zrot);    //SET THESE FOR EACH VOXEL
 
-        for (int i=0; i<8; i++)
+        //rotate normals
+        for (int i=0; i<6; i++)
         {
-            veb[i] = vec3_apply_rotation(veb[i], rotation_matrix);   //rotate
-            veb[i] = vec3_add(p, veb[i]);                          //translate
+            vn[i] = vec3_apply_rotation(v_normal_vec3[i], rotation_matrix);   //rotate
         }
 
-        struct Vec3 veb2[6*4];
+        //rotate and translate cube vertices
+        for (int i=0; i<8; i++)
+        {
+            veb[i] = vec3_apply_rotation(veb[i], rotation_matrix);  //rotate
+            veb[i] = vec3_add(p, veb[i]);                           //translate
+        }
 
+        //copy vertices into quad
         for (int i=0; i<6; i++)
         {
             veb2[4*i+0] = veb[q_set[4*i+0]];
@@ -151,7 +159,7 @@ void prep_voxel_particles()
         // draw voxel
         for (int i=0; i<6; i++)
         {
-            Vec3 n = vec3_init(0.0, 1.0, 0.0);
+            struct Vec3 n = vn[i];
         
             voxel_particle_vlist->push_vertex(veb2[4*i+0], tx_min, ty_min, n);
             voxel_particle_vlist->push_vertex(veb2[4*i+1], tx_min, ty_max, n);
@@ -160,7 +168,7 @@ void prep_voxel_particles()
         }
     }
     
-    voxel_particle_vlist->compute_face_normals(4);
+    //voxel_particle_vlist->compute_face_normals(4);    //DEPRECATE
     
     voxel_particle_vlist->buffer();
 }
