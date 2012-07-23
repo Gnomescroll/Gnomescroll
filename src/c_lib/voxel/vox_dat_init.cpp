@@ -37,7 +37,7 @@ void init()
 
     // items
     read_skeleton((char*)"./media/voxel/base.skeleton", &base);
-    read_skeleton((char*)"./media/voxel/base.skeleton", &energy_core);
+    read_skeleton((char*)"./media/voxel/energy_core.skeleton", &energy_core);
     read_skeleton((char*)"./media/voxel/spawner.skeleton", &agent_spawner);
     read_skeleton((char*)"./media/voxel/turret.skeleton", &turret);
 }
