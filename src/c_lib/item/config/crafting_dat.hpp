@@ -116,6 +116,12 @@ void load_crafting_dat()
     set_crafting_reagent("gallium_bar", 4);
     set_crafting_reagent("iridium_bar", 4);
     
+    def_crafting_recipe("energy_core");
+    set_crafting_reagent("methane_ice", 16);
+    set_crafting_reagent("graphite", 8);
+    set_crafting_reagent("iridium_bar", 4);
+    set_crafting_reagent("copper_bar", 4);
+    
     end_crafting_recipe(); // finalize
 }
 
