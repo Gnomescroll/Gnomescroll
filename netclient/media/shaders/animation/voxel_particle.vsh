@@ -7,13 +7,13 @@ attribute vec3 InNormal;
 attribute vec2 InTexCoord;
 varying vec2 texCoord;
 
-varying float lightIntensity;
+varying float diffuse_light;
 
 void main(void) 
 {                      
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
     vec3 look = normalize(pos.xyz - InCameraPos);
-    lightIntensity = dot(look, InNormal);
+    diffuse_light = dot(look, InNormal);
 
     gl_Position = pos;
     texCoord = InTexCoord;
