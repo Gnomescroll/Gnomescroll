@@ -133,8 +133,8 @@ void prep_voxel_particles()
 
         for (int i=0; i<8; i++)
         {
-            veb[i] = vec3_apply_rotation(veb[i], rotation_matrix)   //rotate
-            veb[i] = vec3_add(p, veb[i])                            //translate
+            veb[i] = vec3_apply_rotation(veb[i], rotation_matrix);   //rotate
+            veb[i] = vec3_add(p, veb[i]);                          //translate
         }
 
         struct Vec3 veb2[6*4];
