@@ -434,7 +434,9 @@ class object_in_transit_StoC: public FixedSizeReliableNetPacketToClient<object_i
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&ticks_to_destination, buff, buff_n, pack);
-        pack_vec3(&dest, buff, buff_n, pack);
+        pack_float(&dest.x, buff, buff_n, pack);
+        pack_float(&dest.y, buff, buff_n, pack);
+        pack_float(&dest.z, buff, buff_n, pack);
     }
     inline void handle();
 };

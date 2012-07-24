@@ -198,6 +198,88 @@ void die_mob_bomb(Object* object)
     #endif
 }
 
+#if DC_SERVER
+static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Object* object, class Components::DestinationTargetingComponent* dest)
+{
+    if (dest == NULL)
+        dest = (Components::DestinationTargetingComponent*)
+            object->get_component(COMPONENT_DESTINATION_TARGETING);
+
+    if (dest == NULL) return false;
+
+    msg->type = object->type;
+    msg->id = object->id;
+    msg->dest = dest->destination;
+    msg->ticks_to_destination = dest->ticks_to_destination;
+    
+    return true;
+}
+
+void broadcast_object_in_transit(class Object* object, class Components::DestinationTargetingComponent* dest)
+{
+    object_in_transit_StoC msg;
+    if (!pack_object_in_transit(&msg, object, dest)) return;
+    msg.broadcast();
+}
+
+void send_object_in_transit(int client_id, class Object* object, class Components::DestinationTargetingComponent* dest)
+{
+    object_in_transit_StoC msg;
+    if (!pack_object_in_transit(&msg, object, dest)) return;
+    msg.sendToClient(client_id);
+}
+
+static bool pack_object_chase_agent(class object_chase_agent_StoC* msg, class Object* object, class Components::AgentTargetingComponent* target)
+{
+    if (target == NULL)
+        target = (Components::AgentTargetingComponent*)
+            object->get_component(COMPONENT_AGENT_TARGETING);
+
+    if (target == NULL) return false;
+
+    msg->type = object->type;
+    msg->id = object->id;
+    msg->target_id = target->target_id;
+    
+    return true;
+}
+
+void broadcast_object_chase_agent(class Object* object, class Components::AgentTargetingComponent* target)
+{
+    object_chase_agent_StoC msg;
+    if (!pack_object_chase_agent(&msg, object, target)) return;
+    msg.broadcast();
+}
+
+void send_object_chase_agent(int client_id, class Object* object, class Components::AgentTargetingComponent* target)
+{
+    object_chase_agent_StoC msg;
+    if (!pack_object_chase_agent(&msg, object, target)) return;
+    msg.sendToClient(client_id);
+}
+
+static bool pack_object_begin_wait(class object_begin_waiting_StoC* msg, class Object* object)
+{
+    msg->type = object->type;
+    msg->id = object->id;
+    return true;
+}
+
+void broadcast_object_begin_wait(class Object* object)
+{
+    object_begin_waiting_StoC msg;
+    if (!pack_object_begin_wait(&msg, object)) return;
+    msg.broadcast();
+}
+
+void send_object_begin_wait(int client_id, class Object* object)
+{
+    object_begin_waiting_StoC msg;
+    if (!pack_object_begin_wait(&msg, object)) return;
+    msg.sendToClient(client_id);
+}
+#endif
+
 static void waiting_to_in_transit(class Object* object)
 {
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
@@ -221,12 +303,7 @@ static void waiting_to_in_transit(class Object* object)
     state->state = STATE_IN_TRANSIT;
     
     #if DC_SERVER
-    object_in_transit_StoC msg;
-    msg.type = object->type;
-    msg.id = object->id;
-    msg.dest = dest->destination;
-    msg.ticks_to_destination = dest->ticks_to_destination;
-    msg.broadcast();
+    broadcast_object_in_transit(object, dest);
     #endif
 }
 
@@ -236,16 +313,8 @@ static void waiting_to_chase_agent(class Object* object)
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_CHASE_AGENT;
 
-
     #if DC_SERVER
-    using Components::AgentTargetingComponent;
-    AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
-
-    object_chase_agent_StoC msg;
-    msg.type = object->type;
-    msg.id = object->id;
-    msg.target_id = target->target_id;
-    msg.broadcast();
+    broadcast_object_chase_agent(object, NULL);
     #endif
 }
 
@@ -260,10 +329,7 @@ static void in_transit_to_waiting(class Object* object)
     state->state = STATE_WAITING;
     
     #if DC_SERVER
-    object_begin_waiting_StoC msg;
-    msg.type = object->type;
-    msg.id = object->id;
-    msg.broadcast();
+    broadcast_object_begin_wait(object);
     #endif
 }
 
@@ -274,14 +340,7 @@ static void in_transit_to_chase_agent(class Object* object)
     state->state = STATE_CHASE_AGENT;
 
     #if DC_SERVER
-    using Components::AgentTargetingComponent;
-    AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
-
-    object_chase_agent_StoC msg;
-    msg.type = object->type;
-    msg.id = object->id;
-    msg.target_id = target->target_id;
-    msg.broadcast();
+    broadcast_object_chase_agent(object, NULL);
     #endif
 }
 
@@ -296,10 +355,7 @@ static void chase_agent_to_waiting(class Object* object)
     state->state = STATE_WAITING;
 
     #if DC_SERVER
-    object_begin_waiting_StoC msg;
-    msg.type = object->type;
-    msg.id = object->id;
-    msg.broadcast();
+    broadcast_object_begin_wait(object);
     #endif
 }
 
@@ -325,16 +381,25 @@ static void in_transit(class Object* object)
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
     
+    #if DC_CLIENT
+    if (!dest_target->at_destination)
+    {
+        dest_target->move_on_surface();
+        dest_target->check_at_destination();
+    }
+    #endif
+    
+    #if DC_SERVER
     // move towards target
     if (!dest_target->move_on_surface())
         in_transit_to_waiting(object);  // failed to move
     else
-    {
-        // check at destination
+    {   // check at destination
         dest_target->check_at_destination();
         if (dest_target->at_destination)
             in_transit_to_waiting(object);
     }
+    #endif
 }
 
 static void chase_agent(class Object* object)
@@ -411,7 +476,7 @@ void tick_mob_bomb(Object* object)
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
     if (limiter->allowed())
-        object->broadcastState();   // TODO -- restore after netowrked prediction is back
+        object->broadcastState();
     #endif
 
     using Components::StateMachineComponent;

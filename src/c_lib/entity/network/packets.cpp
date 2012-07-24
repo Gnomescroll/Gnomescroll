@@ -452,38 +452,48 @@ inline void object_in_transit_StoC::handle()
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)
         obj->get_component(COMPONENT_DESTINATION_TARGETING);
     GS_ASSERT(dest_target != NULL);
-    if (dest_target != NULL)
+    if (dest_target == NULL) return;
+    
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
+    struct Vec3 pos = physics->get_position();
+    
+    dest_target->destination = quadrant_translate_position(pos, this->dest);
+    dest_target->ticks_to_destination = this->ticks_to_destination;
+
+    Vec3 direction = vec3_sub(dest_target->destination, pos);
+    if (this->ticks_to_destination)
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)
-            obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
-        if (this->ticks_to_destination)
+        float len = vec3_length(direction);
+        dest_target->speed = len / ((float)this->ticks_to_destination);
+        if (len != 0.0f)
         {
-            struct Vec3 pos = NULL_POSITION;
-            if (physics != NULL)
-                pos = physics->get_position();
-            
-            struct Vec3 direction = vec3_sub(this->dest, pos);
-            float len = vec3_length(direction);
-            dest_target->speed = len / ((float)this->ticks_to_destination);
             dest_target->at_destination = false;
-            if (len != 0.0f)
-            {
-                normalize_vector(&direction);
-                dest_target->target_direction = direction;
-            }
+            normalize_vector(&direction);
+            dest_target->target_direction = direction;
         }
         else
-        {   // 0 ticks is teleport
-            if (physics != NULL) physics->set_position(dest);
             dest_target->at_destination = true;
-        }
+    }
+    else
+    {   // 0 ticks is teleport
+        if (physics != NULL) physics->set_position(dest_target->destination);
+        dest_target->speed = 0.0f;
+        dest_target->at_destination = true;
     }
     
+    dest_target->orient_to_target(pos);    
+    Vec3 angles = physics->get_angles();
+    angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
+    physics->set_angles(angles);
+
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    GS_ASSERT(machine != NULL);
     if (machine == NULL) return;
     if (machine->router != NULL)
         machine->router(obj, STATE_IN_TRANSIT);
