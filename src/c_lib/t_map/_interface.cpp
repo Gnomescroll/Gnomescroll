@@ -60,6 +60,74 @@ int get_block_item_container(int x, int y, int z)
     {
         vbo_map->update_map();
     }
+    
+    
+static const unsigned int REQUEST_DMG_ID_MAX = 0xff;
+static unsigned int request_id = 0;
+
+static struct { int x,y,z; } last_requested_block = {-1};
+static unsigned int last_request_id = 0;
+static int requested_block_type = 0;
+static int requested_block_health = 0;
+
+unsigned int requested_block_damage = 0;
+
+bool is_last_requested_block(int x, int y, int z)
+{
+    return (
+        last_requested_block.x == x
+     && last_requested_block.y == y
+     && last_requested_block.z == z);
+}
+
+void request_block_damage(int x, int y, int z)
+{
+    GS_ASSERT(request_id < REQUEST_DMG_ID_MAX);
+    
+    // ignore if we already requested this block
+    if (is_last_requested_block(x,y,z)) return;
+    
+    // set last request id & block
+    last_request_id = request_id;
+    last_requested_block.x = x;
+    last_requested_block.y = y;
+    last_requested_block.z = z;
+    
+    requested_block_type = t_map::get(x,y,z);
+    requested_block_health = maxDamage(requested_block_type);
+    
+    // send packet
+    request_block_damage_CtoS msg;
+    msg.x = x;
+    msg.y = y;
+    msg.z = z;
+    msg.request_id = request_id;
+    msg.send();
+    
+    // increment index
+    request_id++;
+    request_id %= REQUEST_DMG_ID_MAX;
+    
+    // reset dmg request
+    requested_block_damage = 0;
+}
+
+int get_requested_block_remaining_health()
+{
+    int health = requested_block_health - requested_block_damage;
+    GS_ASSERT(health >= 0);
+    if (health < 0) health = 0;
+    return health;
+}
+
+void received_block_damage_response(unsigned int request_id, unsigned int dmg)
+{
+    GS_ASSERT(request_id < REQUEST_DMG_ID_MAX);
+    if (request_id >= REQUEST_DMG_ID_MAX) return;
+    // if request_id matches last request id,
+    if (request_id == last_request_id)
+        requested_block_damage = dmg;   // set current dmg
+}
 #endif
 
 #if DC_SERVER

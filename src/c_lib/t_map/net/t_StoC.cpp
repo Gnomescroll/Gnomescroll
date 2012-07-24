@@ -185,6 +185,7 @@ void map_metadata_StoC::handle()
 
 void container_block_chunk_reset_StoC::handle()
 {
+    if (chunk_index >= xchunk_dim*ychunk_dim) return;
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
     if (main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container._reset();
@@ -193,8 +194,9 @@ void container_block_chunk_reset_StoC::handle()
 
 void container_block_create_StoC::handle()
 {
-    //GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y <= map_dim.y); // always true
-    //if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y) return; // always false
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     int chunk_index = (y/16)*(MAP_WIDTH/16) + (x/16);
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
     if (main_map->chunk[chunk_index] == NULL) return;
@@ -203,6 +205,7 @@ void container_block_create_StoC::handle()
 
 void container_block_delete_StoC::handle()
 {
+    if (chunk_index >= xchunk_dim*ychunk_dim) return;
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
     if (main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container.remove(container_id);
@@ -229,6 +232,12 @@ void control_node_delete_StoC::handle()
     main_map->control_node_list.needs_update = true;
 };
 
+/* block damage */
+
+void block_damage_StoC::handle()
+{
+    received_block_damage_response(request_id, dmg);
+}
 
 #endif
 
@@ -254,6 +263,7 @@ void container_block_delete_StoC::handle() {}
 void control_node_create_StoC::handle() {}
 void control_node_delete_StoC::handle() {}
 
+void block_damage_StoC::handle() {}
 #endif
 
 }   // t_map

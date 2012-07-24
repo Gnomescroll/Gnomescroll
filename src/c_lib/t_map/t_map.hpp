@@ -50,7 +50,9 @@ void set(int x, int y, int z, int value);
 inline void set_fast(int x, int y, int z, int value) __attribute__((always_inline));
 void set_palette(int x, int y, int z, int value);
 
+int get_block_damage(int x, int y, int z);
 int apply_damage(int x, int y, int z, int dmg);
+
 #if DC_SERVER
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
 

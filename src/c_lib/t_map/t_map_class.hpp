@@ -99,6 +99,7 @@ class Terrain_map
     void set_block(int x, int y, int z, int value);
 #endif
 
+    int get_damage(int x, int y, int z);
 
     int apply_damage(int x, int y, int z, int dmg);
     int apply_damage(int x, int y, int z, int dmg, int* block_type);

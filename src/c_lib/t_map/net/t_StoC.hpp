@@ -258,5 +258,21 @@ class control_node_delete_StoC: public MapMessagePacketToClient<control_node_cre
     inline void handle() __attribute((always_inline));
 };
 
+/* block damage */
+
+class block_damage_StoC: public MapMessagePacketToClient<block_damage_StoC>
+{
+    public:
+        uint8_t request_id;
+        uint8_t dmg;
+        
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u8(&request_id, buff, buff_n, pack);
+        pack_u8(&dmg, buff, buff_n, pack);
+    }
+    
+    inline void handle() __attribute__((always_inline));
+};
 
 }
