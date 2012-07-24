@@ -29,9 +29,9 @@ void init(int argc, char* argv[])
     
     if (!strcmp(Options::map, "fast"))
     {
-		map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
-		map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
-	}
+        map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
+        map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
+    }
     else
     {
         srand(Options::seed);
@@ -96,6 +96,7 @@ void tick()
 
     Components::rate_limit_component_list->call(); // advance rate limiter ticks
     Components::motion_targeting_component_list->call(); // update target lock ticks
+    Components::agent_targeting_component_list->call(); // update target lock ticks
 
     if (counter % 10 == 0) ItemParticle::check_item_pickups();
     if (counter % 6  == 0) ItemContainer::check_agents_in_container_range();
@@ -106,8 +107,9 @@ void tick()
     }
 
     //ServerState::spawn_items(2);
-    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);
-    ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 8);
+    //ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
+    ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
+    //ServerState::spawn_monsters(OBJECT_MONSTER_BOX, 1);
 
     ItemContainer::update_smelters();
     Item::item_list->tick();

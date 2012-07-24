@@ -344,6 +344,66 @@ namespace t_map
 
     #endif
     }
+    
+    int Terrain_map::get_damage(int x, int y, int z)
+    {
+        //printf("set: %i %i %i %i \n", x,y,element.block);
+    #if T_MAP_SET_OPTIMIZED
+        /*
+        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
+            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+            ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+        ) return -2; //an error
+        */
+
+/*
+        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+            | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
+        ) return -2; // an error
+*/
+
+        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
+
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+        class MAP_CHUNK* c;
+        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+        if( c != NULL ) return -3;
+
+        struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
+
+        return e->damage;
+
+    #else
+        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
+
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+        //printf("set %i, %i, %i \n", x,y,z);
+        class MAP_CHUNK* c;
+        {
+            int xchunk = (x >> 4);
+            int ychunk = (y >> 4);
+            //printf("chunk= %i, %i \n", xchunk, ychunk);
+    
+            c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
+            //printf("chunk index= %i \n", x & ~15, y & ~15, MAP_CHUNK_XDIM*ychunk + xchunk );
+
+            if( c == NULL ) return -3;
+        }
+
+        int xi = x & 15; //bit mask
+        int yi = y & 15; //bit mask
+        //printf("xi= %i, yi= %i, z= %i \n", xi,yi,z );
+        //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
+
+        struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
+        
+        return e->damage;
+    #endif
+    }
 
     int Terrain_map::apply_damage(int x, int y, int z, int dmg, int* block_type)
     {

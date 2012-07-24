@@ -372,14 +372,14 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
     public:
         uint16_t id;
         uint8_t type;
-        uint16_t ticks;
+        uint16_t ticks_to_destination;
         float x,y,z;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
-        pack_u16(&ticks, buff, buff_n, pack);
+        pack_u16(&ticks_to_destination, buff, buff_n, pack);
         pack_float(&x, buff, buff_n, pack);
         pack_float(&y, buff, buff_n, pack);
         pack_float(&z, buff, buff_n, pack);

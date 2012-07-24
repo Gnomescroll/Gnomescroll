@@ -51,6 +51,20 @@ typedef ComponentList<WeaponTargetingComponent, COMPONENT_WEAPON_TARGETING, MAX_
     WeaponTargetingComponentList;
 typedef CallableComponentList<MotionTargetingComponent, COMPONENT_MOTION_TARGETING, MAX_TARGETING_COMPONENTS>
     MotionTargetingComponentList;
+typedef ComponentList<DestinationTargetingComponent, COMPONENT_DESTINATION_TARGETING, MAX_TARGETING_COMPONENTS>
+    DestinationTargetingComponentList;
+typedef CallableComponentList<AgentTargetingComponent, COMPONENT_AGENT_TARGETING, MAX_TARGETING_COMPONENTS>
+    AgentTargetingComponentList;
+
+/* state Machines */
+const int MAX_STATE_MACHINE_COMPONENTS = 2048;
+typedef ComponentList<StateMachineComponent, COMPONENT_STATE_MACHINE, MAX_STATE_MACHINE_COMPONENTS>
+    StateMachineComponentList;
+
+/* Waiting State */
+const int MAX_WAITING_COMPONENTS = 2048;
+typedef ComponentList<WaitingComponent, COMPONENT_WAITING, MAX_WAITING_COMPONENTS>
+    WaitingComponentList;
 
 /* Spawner */
 

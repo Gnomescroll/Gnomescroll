@@ -359,14 +359,14 @@ inline void object_choose_destination_StoC::handle()
     
     Vec3 destination = vec3_init(this->x, this->y, this->z);
     motion->destination = quadrant_translate_position(position, destination);
-    motion->ticks_to_destination = this->ticks;
-
+    motion->ticks_to_destination = this->ticks_to_destination;
+    
     // set momentum from destination :: TODO MOVE
     Vec3 direction = vec3_sub(motion->destination, position);
-    if (this->ticks)
+    if (this->ticks_to_destination)
     {
         float len = vec3_length(direction);
-        float speed = len / ((float)this->ticks);
+        float speed = len / ((float)this->ticks_to_destination);
         motion->speed = speed;
         motion->at_destination = false;
         motion->en_route = true;

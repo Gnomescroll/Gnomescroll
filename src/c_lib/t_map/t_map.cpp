@@ -126,6 +126,14 @@ void end_t_map()
     #endif
 }
 
+int get_block_damage(int x, int y, int z)
+{
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+    return main_map->get_damage(x,y,z);
+}
 
 int apply_damage(int x, int y, int z, int dmg)
 {
@@ -138,13 +146,15 @@ int apply_damage(int x, int y, int z, int dmg)
 }
 
 #if DC_SERVER
+
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
     GS_ASSERT(dmg > 0);
     if (dmg <= 0) return;
-    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
-    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     int block_type;
     int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
@@ -160,16 +170,18 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 
 void broadcast_set_block_action(int x, int y, int z, int block, int action)
 {
-    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
-    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     map_history->send_block_action(x,y,z,block,action);
 }
 
 void broadcast_set_block(int x, int y, int z, int block)
 {
-    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
-    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     main_map->set_block(x,y,z,block);
     map_history->send_set_block(x,y,z,block);
@@ -177,8 +189,9 @@ void broadcast_set_block(int x, int y, int z, int block)
 
 void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
 {
-    GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
-    if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     struct MAP_ELEMENT e = {{{0}}};
     e.block = block;

@@ -74,6 +74,7 @@ class HUD
     AnimatedText* health;
     Text* confirm_quit;
     Text* press_help;
+    Text* block_health;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects
@@ -90,6 +91,9 @@ class HUD
 extern HUD* hud;
 
 void init();
+
+void add_predicted_block_damage(int block_dmg);
+void set_predicted_block_damage(int block_dmg);
 
 void set_hud_fps_display(float fps_val);
 void init_hud_draw_settings();

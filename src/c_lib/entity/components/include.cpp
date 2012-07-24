@@ -31,6 +31,11 @@
 #include <entity/components/targeting.cpp>
 #include <entity/components/targeting/motion_targeting.cpp>
 #include <entity/components/targeting/weapon_targeting.cpp>
+#include <entity/components/targeting/destination_targeting.cpp>
+#include <entity/components/targeting/agent_targeting.cpp>
+
+#include <entity/components/state_machine.cpp>
+#include <entity/components/waiting.cpp>
 
 #include <entity/components/rate_limit.cpp>
 
