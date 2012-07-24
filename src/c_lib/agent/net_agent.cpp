@@ -720,7 +720,7 @@ inline void hitscan_object_CtoS::handle()
 
                 using Components::StateMachineComponent;
                 StateMachineComponent* state_machine = (StateMachineComponent*)
-                    obj->get_component(COMPONENT_STATE_MACHINE);
+                    obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
                 if (state_machine != NULL)
                     state_machine->next_state = STATE_CHASE_AGENT;
             }

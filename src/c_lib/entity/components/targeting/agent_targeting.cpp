@@ -156,7 +156,12 @@ void AgentTargetingComponent::call()
         this->target_type = OBJECT_NONE;
         this->target_id = NO_AGENT;
         this->ticks_locked = 0;
-        //this->broadcast_remove_target();
+
+        using Components::StateMachineComponent;
+        StateMachineComponent* state_machine = (StateMachineComponent*)
+            this->object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+        if (state_machine != NULL)
+            state_machine->next_state = STATE_WAITING;
     }
 }
 

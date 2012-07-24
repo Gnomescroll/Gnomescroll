@@ -323,7 +323,6 @@ static void chase_agent(class Object* object)
 
 void tick_mob_bomb(Object* object)
 {
-    //return;
     #if DC_SERVER
      //die if near agent
     using Components::ExplosionComponent;
@@ -461,8 +460,7 @@ void update_mob_bomb(Object* object)
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
-    //vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
-    vox->update(physics->get_position(), angles.x, angles.y, true);
+    vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
     physics->changed = false;    // reset changed state
 }
 
