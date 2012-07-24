@@ -21,16 +21,26 @@ void DestinationTargetingComponent::choose_destination()
 
     float x = (randf()-0.5f)*2 * this->destination_choice_x;
     float y = (randf()-0.5f)*2 * this->destination_choice_y;
+    float r = this->stop_proximity * this->stop_proximity;
+    if (x == 0.0f && y == 0.0f) x = this->destination_choice_x;
+    float len = sqrtf(x*x + y*y);
+    if (len < r)
+    {
+        x = this->stop_proximity;
+        y = this->stop_proximity;
+        len = sqrtf(2.0f) * this->stop_proximity;
+    }
+    
+    this->ticks_to_destination = (int)ceil(len / this->speed);
 
     Vec3 position = physics->get_position();
     position.x += x;
     position.y += y;
     position.z = t_map::get_highest_solid_block(position.x, position.y);
+        
     this->destination = translate_position(position);
     this->at_destination = false;
     this->target_type = OBJECT_DESTINATION;
-
-    this->broadcast_destination();
 }
 
 void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
@@ -87,18 +97,6 @@ void DestinationTargetingComponent::check_at_destination()
         this->at_destination = true;
     else
         this->at_destination = false;
-}
-
-void DestinationTargetingComponent::broadcast_destination()
-{
-    object_choose_destination_StoC msg;
-    msg.x = this->destination.x;
-    msg.y = this->destination.y;
-    msg.z = this->destination.z;
-    ASSERT_BOXED_POSITION(this->destination);
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.broadcast();
 }
 
 } // Objects

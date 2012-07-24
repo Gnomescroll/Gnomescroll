@@ -31,8 +31,6 @@ void AgentTargetingComponent::set_target(int agent_id)
     this->target_type = OBJECT_AGENT;
     this->target_id = agent_id;
     this->locked_on_target = true;
-
-    //this->broadcast_target_choice();
 }
 
 void AgentTargetingComponent::check_target_alive()
@@ -43,14 +41,13 @@ void AgentTargetingComponent::check_target_alive()
     {
         this->target_id = NO_AGENT;
         this->target_type = OBJECT_NONE;
-        //this->broadcast_remove_target();
     }
 }
 
 void AgentTargetingComponent::lock_target(Vec3 camera_position)
 {
-    Agent_state* target;
-    target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
+    class Agent_state* target = Hitscan::lock_agent_target
+        (camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
         this->target_type = OBJECT_NONE;
@@ -58,7 +55,6 @@ void AgentTargetingComponent::lock_target(Vec3 camera_position)
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    this->broadcast_target_choice();
 }
 
 void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
@@ -105,28 +101,6 @@ bool AgentTargetingComponent::move_on_surface()
     return moved;
 }
 
-void AgentTargetingComponent::broadcast_target_choice()
-{
-    GS_ASSERT(this->object != NULL);
-    if (this->object == NULL) return;
-    object_choose_motion_target_StoC msg;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.target_id = this->target_id;
-    msg.target_type = this->target_type;
-    msg.broadcast();
-}
-
-void AgentTargetingComponent::broadcast_remove_target()
-{
-    GS_ASSERT(this->object != NULL);
-    if (this->object == NULL) return;
-    object_remove_motion_target_StoC msg;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.broadcast();
-}
-
 void AgentTargetingComponent::call()
 {
     if (this->target_type == OBJECT_NONE)
@@ -141,13 +115,11 @@ void AgentTargetingComponent::call()
         this->target_id = NO_AGENT;
         this->ticks_locked = 0;
 
-        this->broadcast_remove_target();
-
         using Components::StateMachineComponent;
         StateMachineComponent* state_machine = (StateMachineComponent*)
             this->object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-        if (state_machine != NULL)
-            state_machine->next_state = STATE_WAITING;
+        if (state_machine != NULL && state_machine->router != NULL)
+            state_machine->router(this->object, STATE_WAITING);
     }
 }
 

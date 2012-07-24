@@ -18,7 +18,7 @@ class DestinationTargetingComponent: public TargetingComponent
 
         Vec3 destination;
         bool at_destination;
-        bool en_route;
+        int ticks_to_destination;
 
         void check_target_alive();
 
@@ -30,8 +30,6 @@ class DestinationTargetingComponent: public TargetingComponent
         
         bool move_on_surface();
 
-        void broadcast_destination();
-
     virtual ~DestinationTargetingComponent() {}
     
     DestinationTargetingComponent()
@@ -39,7 +37,8 @@ class DestinationTargetingComponent: public TargetingComponent
     stop_proximity(1.5f),
     speed(1.0f), max_z_diff(128),
     destination_choice_x(1.0f), destination_choice_y(1.0f), 
-    destination(vec3_init(0,0,0)), at_destination(false)
+    destination(vec3_init(0,0,0)), at_destination(false),
+    ticks_to_destination(1)
     {}
 };
 

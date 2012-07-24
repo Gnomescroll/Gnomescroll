@@ -161,6 +161,11 @@ void RegisterMessages()
     // damage
     object_took_damage_StoC::register_client_packet();
 
+    // bomb state machine
+    object_begin_waiting_StoC::register_client_packet();
+    object_in_transit_StoC::register_client_packet();
+    object_chase_agent_StoC::register_client_packet();
+
     /* init phase */
 
     request_remaining_state_CtoS::register_server_packet();

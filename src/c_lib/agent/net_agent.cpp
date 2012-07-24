@@ -721,8 +721,8 @@ inline void hitscan_object_CtoS::handle()
                 using Components::StateMachineComponent;
                 StateMachineComponent* state_machine = (StateMachineComponent*)
                     obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-                if (state_machine != NULL)
-                    state_machine->next_state = STATE_CHASE_AGENT;
+                if (state_machine != NULL && state_machine->router != NULL)
+                    state_machine->router(obj, STATE_CHASE_AGENT);
             }
         }
     }

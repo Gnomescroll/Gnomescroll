@@ -2,9 +2,6 @@
 
 #include <entity/component/component.hpp>
 
-// forward decl
-class Agent_state;
-
 namespace Components
 {
 

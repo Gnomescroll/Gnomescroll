@@ -404,3 +404,54 @@ class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_
     }
     inline void handle();
 };
+
+/* State machine */
+
+class object_begin_waiting_StoC: public FixedSizeReliableNetPacketToClient<object_begin_waiting_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class object_in_transit_StoC: public FixedSizeReliableNetPacketToClient<object_in_transit_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint16_t ticks_to_destination;
+        struct Vec3 dest;
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&ticks_to_destination, buff, buff_n, pack);
+        pack_vec3(&dest, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class object_chase_agent_StoC: public FixedSizeReliableNetPacketToClient<object_chase_agent_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint8_t target_id;
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u8(&target_id, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+

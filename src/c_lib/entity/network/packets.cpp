@@ -429,6 +429,92 @@ inline void object_took_damage_StoC::handle()
     b->set_scale(1.0f);
     b->set_ttl(245);
 }
+
+inline void object_begin_waiting_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+    
+    using Components::StateMachineComponent;
+    StateMachineComponent* machine = (StateMachineComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    if (machine == NULL) return;
+    if (machine->router != NULL)
+        machine->router(obj, STATE_WAITING);
+}
+
+inline void object_in_transit_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+
+    using Components::DestinationTargetingComponent;
+    DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)
+        obj->get_component(COMPONENT_DESTINATION_TARGETING);
+    GS_ASSERT(dest_target != NULL);
+    if (dest_target != NULL)
+    {
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)
+            obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (this->ticks_to_destination)
+        {
+            struct Vec3 pos = NULL_POSITION;
+            if (physics != NULL)
+                pos = physics->get_position();
+            
+            struct Vec3 direction = vec3_sub(this->dest, pos);
+            float len = vec3_length(direction);
+            dest_target->speed = len / ((float)this->ticks_to_destination);
+            dest_target->at_destination = false;
+            if (len != 0.0f)
+            {
+                normalize_vector(&direction);
+                dest_target->target_direction = direction;
+            }
+        }
+        else
+        {   // 0 ticks is teleport
+            if (physics != NULL) physics->set_position(dest);
+            dest_target->at_destination = true;
+        }
+    }
+    
+    using Components::StateMachineComponent;
+    StateMachineComponent* machine = (StateMachineComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    if (machine == NULL) return;
+    if (machine->router != NULL)
+        machine->router(obj, STATE_IN_TRANSIT);
+}
+
+inline void object_chase_agent_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+    
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+
+    using Components::AgentTargetingComponent;
+    AgentTargetingComponent* target = (AgentTargetingComponent*)
+        obj->get_component(COMPONENT_AGENT_TARGETING);
+    if (target == NULL) return;
+    target->target_id = this->target_id;
+    target->target_type = OBJECT_AGENT;
+    if (physics != NULL)
+        target->orient_to_target(physics->get_position());
+    
+    using Components::StateMachineComponent;
+    StateMachineComponent* machine = (StateMachineComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    if (machine == NULL) return;
+    if (machine->router != NULL)
+        machine->router(obj, STATE_CHASE_AGENT);
+}
+
 #endif
 
 #if DC_SERVER
@@ -451,4 +537,7 @@ inline void object_choose_weapon_target_StoC::handle() {}
 inline void object_choose_destination_StoC::handle() {}
 inline void object_took_damage_StoC::handle() {}
 inline void object_state_health_StoC::handle() {}
+inline void object_begin_waiting_StoC::handle() {}
+inline void object_in_transit_StoC::handle() {}
+inline void object_chase_agent_StoC::handle() {}
 #endif

@@ -13,6 +13,8 @@
 
 namespace Objects
 {
+    
+static void bomb_state_router(class Object*, EntityState state);
 
 void load_mob_bomb_data()
 {
@@ -90,6 +92,7 @@ static void set_mob_bomb_properties(Object* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)add_component_to_object(object, COMPONENT_STATE_MACHINE);
     state->state = STATE_WAITING;
+    state->router = &bomb_state_router;
     
     using Components::WaitingComponent;
     WaitingComponent* waiting = (WaitingComponent*)add_component_to_object(object, COMPONENT_WAITING);
@@ -216,15 +219,34 @@ static void waiting_to_in_transit(class Object* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_IN_TRANSIT;
+    
+    #if DC_SERVER
+    object_in_transit_StoC msg;
+    msg.type = object->type;
+    msg.id = object->id;
+    msg.dest = dest->destination;
+    msg.ticks_to_destination = dest->ticks_to_destination;
+    msg.broadcast();
+    #endif
 }
 
 static void waiting_to_chase_agent(class Object* object)
-{
-    // assumes target already locked
-    
+{   // assumes target already locked
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_CHASE_AGENT;
+
+
+    #if DC_SERVER
+    using Components::AgentTargetingComponent;
+    AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
+
+    object_chase_agent_StoC msg;
+    msg.type = object->type;
+    msg.id = object->id;
+    msg.target_id = target->target_id;
+    msg.broadcast();
+    #endif
 }
 
 static void in_transit_to_waiting(class Object* object)
@@ -236,15 +258,31 @@ static void in_transit_to_waiting(class Object* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_WAITING;
+    
+    #if DC_SERVER
+    object_begin_waiting_StoC msg;
+    msg.type = object->type;
+    msg.id = object->id;
+    msg.broadcast();
+    #endif
 }
 
 static void in_transit_to_chase_agent(class Object* object)
-{
-    // assumes target already locked
-    
+{   // assumes target already locked
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_CHASE_AGENT;
+
+    #if DC_SERVER
+    using Components::AgentTargetingComponent;
+    AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
+
+    object_chase_agent_StoC msg;
+    msg.type = object->type;
+    msg.id = object->id;
+    msg.target_id = target->target_id;
+    msg.broadcast();
+    #endif
 }
 
 static void chase_agent_to_waiting(class Object* object)
@@ -256,6 +294,13 @@ static void chase_agent_to_waiting(class Object* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_WAITING;
+
+    #if DC_SERVER
+    object_begin_waiting_StoC msg;
+    msg.type = object->type;
+    msg.id = object->id;
+    msg.broadcast();
+    #endif
 }
 
 static void chase_agent_to_in_transit(class Object* object)
@@ -294,8 +339,9 @@ static void in_transit(class Object* object)
 
 static void chase_agent(class Object* object)
 {
-    typedef Components::PositionMomentumChangedPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)
+        object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
 
     using Components::AgentTargetingComponent;
@@ -320,6 +366,40 @@ static void chase_agent(class Object* object)
     target->move_on_surface();
 }
 
+static void bomb_state_router(class Object* object, EntityState state)
+{
+    using Components::StateMachineComponent;
+    StateMachineComponent* machine = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+
+    switch (state)
+    {
+        case STATE_CHASE_AGENT:
+            if (machine->state == STATE_WAITING)
+                waiting_to_chase_agent(object);
+            else if (machine->state == STATE_IN_TRANSIT)
+                in_transit_to_chase_agent(object);
+            break;
+        
+        case STATE_IN_TRANSIT:
+            if (machine->state == STATE_WAITING)
+                waiting_to_in_transit(object);
+            else if (machine->state == STATE_CHASE_AGENT)
+                chase_agent_to_in_transit(object);
+            break;
+        
+        case STATE_WAITING:
+            if (machine->state == STATE_CHASE_AGENT)
+                chase_agent_to_waiting(object);
+            else if (machine->state == STATE_IN_TRANSIT)
+                in_transit_to_waiting(object);
+            break;
+            
+        default:
+            GS_ASSERT(false);
+            break;
+    }
+}
+
 void tick_mob_bomb(Object* object)
 {
     #if DC_SERVER
@@ -335,44 +415,10 @@ void tick_mob_bomb(Object* object)
     #endif
 
     using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-
-    // handle state transitions triggered elsewhere
-    if (state->next_state != STATE_NONE)
-    {
-        EntityState next_state = state->next_state;
-        state->next_state = STATE_NONE;
-        switch (next_state)
-        {
-            case STATE_CHASE_AGENT:
-                if (state->state == STATE_WAITING)
-                    waiting_to_chase_agent(object);
-                else if (state->state == STATE_IN_TRANSIT)
-                    in_transit_to_chase_agent(object);
-                break;
-            
-            case STATE_IN_TRANSIT:
-                if (state->state == STATE_WAITING)
-                    waiting_to_in_transit(object);
-                else if (state->state == STATE_CHASE_AGENT)
-                    chase_agent_to_in_transit(object);
-                break;
-            
-            case STATE_WAITING:
-                if (state->state == STATE_CHASE_AGENT)
-                    chase_agent_to_waiting(object);
-                else if (state->state == STATE_IN_TRANSIT)
-                    in_transit_to_waiting(object);
-                break;
-                
-            default:
-                GS_ASSERT(false);
-                break;
-        }
-    }
+    StateMachineComponent* machine = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
 
     // increment state
-    switch (state->state)
+    switch (machine->state)
     {
         case STATE_WAITING:
             waiting(object);
@@ -393,10 +439,11 @@ void tick_mob_bomb(Object* object)
     
     #if DC_SERVER
     // aggro nearby agent
-    if (state->state != STATE_CHASE_AGENT)
+    if (machine->state != STATE_CHASE_AGENT)
     {
-        typedef Components::PositionMomentumChangedPhysicsComponent PCP;
-        PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)
+            object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         Vec3 position = physics->get_position();
 
         using Components::AgentTargetingComponent;
@@ -404,50 +451,9 @@ void tick_mob_bomb(Object* object)
         target->lock_target(position);
 
         if (target->target_type == OBJECT_AGENT)
-            switch (state->state)
-            {
-                case STATE_WAITING:
-                    waiting_to_chase_agent(object);
-                    break;
-
-                case STATE_IN_TRANSIT:
-                    in_transit_to_chase_agent(object);
-                    break;
-
-                default:
-                    GS_ASSERT(false);
-                    break;
-            }
+            machine->router(object, STATE_CHASE_AGENT);
     }
     #endif
-        
-    //typedef Components::PositionMomentumChangedPhysicsComponent PCP;
-    //PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
-    //Vec3 position = physics->get_position();
-    
-    //using Components::MotionTargetingComponent;
-    //MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
-    //GS_ASSERT(motion != NULL);
-    //motion->check_target_alive();
-
-    //// acquire target
-    //if (motion->target_type == OBJECT_NONE) motion->lock_target(position);
-    //if (motion->target_type == OBJECT_NONE) return;
-    ////if (motion->target_type == OBJECT_NONE && motion->at_destination)
-    ////{   // choose new destination
-        ////motion->choose_destination();
-    ////}
-
-    //// face the target
-    //motion->orient_to_target(position);    
-    //Vec3 angles = physics->get_angles();
-    //angles.x = vec3_to_theta(motion->target_direction); // only rotate in x
-    //physics->set_angles(angles);
-
-    //// move towards target
-    ////position = vec3_add(position, vec3_scalar_mult(motion->target_direction, motion->speed));
-    ////physics->set_position(position); // move slime position by velocity
-    //motion->move_on_surface();
 }
 
 void update_mob_bomb(Object* object)
@@ -463,6 +469,4 @@ void update_mob_bomb(Object* object)
     physics->changed = false;    // reset changed state
 }
 
-
 } // Objects
-
