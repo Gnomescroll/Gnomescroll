@@ -32,21 +32,15 @@ class DestinationTargetingComponent: public TargetingComponent
 
         void orient_to_target(Vec3 camera_position);
         
-        void lock_target(Vec3 camera_position){}    // TODO -- change targeting interface to not require this
-
         bool move_on_surface();
 
-        void broadcast_target_choice();
         void broadcast_destination();
-        void broadcast_remove_target();
 
-        void call();
-    
     virtual ~DestinationTargetingComponent() {}
     
     DestinationTargetingComponent()
     : TargetingComponent(COMPONENT_DESTINATION_TARGETING),
-    stop_proximity(3.0f),
+    stop_proximity(1.5f),
     speed(1.0f), max_z_diff(128),
     destination_choice_x(1.0f), destination_choice_y(1.0f), 
     destination(vec3_init(0,0,0)), at_destination(false), en_route(false),

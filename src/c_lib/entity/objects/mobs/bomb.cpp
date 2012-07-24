@@ -329,10 +329,11 @@ void tick_mob_bomb(Object* object)
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
     explode->proximity_check();
 
-    //using Components::RateLimitComponent;
-    //RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
-    //if (limiter->allowed())
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed())
         object->broadcastState();   // TODO -- restore after netowrked prediction is back
+    #endif
 
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -391,6 +392,7 @@ void tick_mob_bomb(Object* object)
             break;
     }
     
+    #if DC_SERVER
     // aggro nearby agent
     if (state->state != STATE_CHASE_AGENT)
     {
@@ -418,9 +420,7 @@ void tick_mob_bomb(Object* object)
                     break;
             }
     }
-     
     #endif
-
         
     //typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     //PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);

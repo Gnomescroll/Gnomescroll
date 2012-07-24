@@ -58,7 +58,7 @@ void AgentTargetingComponent::lock_target(Vec3 camera_position)
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    //this->broadcast_target_choice();
+    this->broadcast_target_choice();
 }
 
 void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
@@ -130,19 +130,6 @@ void AgentTargetingComponent::broadcast_remove_target()
     msg.broadcast();
 }
 
-void AgentTargetingComponent::broadcast_destination()
-{
-    object_choose_destination_StoC msg;
-    msg.x = this->destination.x;
-    msg.y = this->destination.y;
-    msg.z = this->destination.z;
-    ASSERT_BOXED_POSITION(this->destination);
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.ticks = this->ticks_to_destination;
-    msg.broadcast();
-}
-
 void AgentTargetingComponent::call()
 {
     if (this->target_type == OBJECT_NONE)
@@ -156,6 +143,8 @@ void AgentTargetingComponent::call()
         this->target_type = OBJECT_NONE;
         this->target_id = NO_AGENT;
         this->ticks_locked = 0;
+
+        this->broadcast_remove_target();
 
         using Components::StateMachineComponent;
         StateMachineComponent* state_machine = (StateMachineComponent*)

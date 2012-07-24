@@ -51,7 +51,7 @@ typedef ComponentList<WeaponTargetingComponent, COMPONENT_WEAPON_TARGETING, MAX_
     WeaponTargetingComponentList;
 typedef CallableComponentList<MotionTargetingComponent, COMPONENT_MOTION_TARGETING, MAX_TARGETING_COMPONENTS>
     MotionTargetingComponentList;
-typedef CallableComponentList<DestinationTargetingComponent, COMPONENT_DESTINATION_TARGETING, MAX_TARGETING_COMPONENTS>
+typedef ComponentList<DestinationTargetingComponent, COMPONENT_DESTINATION_TARGETING, MAX_TARGETING_COMPONENTS>
     DestinationTargetingComponentList;
 typedef CallableComponentList<AgentTargetingComponent, COMPONENT_AGENT_TARGETING, MAX_TARGETING_COMPONENTS>
     AgentTargetingComponentList;

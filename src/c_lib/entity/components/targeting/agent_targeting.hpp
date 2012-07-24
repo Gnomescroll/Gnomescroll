@@ -32,7 +32,6 @@ class AgentTargetingComponent: public TargetingComponent
         bool move_on_surface();
 
         void broadcast_target_choice();
-        void broadcast_destination();
         void broadcast_remove_target();
 
         void call();

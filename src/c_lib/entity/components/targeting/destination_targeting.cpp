@@ -14,13 +14,13 @@ namespace Components
 
 void DestinationTargetingComponent::choose_destination()
 {
-    float x = (randf()-0.5f)*2 * this->destination_choice_x;
-    float y = (randf()-0.5f)*2 * this->destination_choice_y;
-
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return;
+
+    float x = (randf()-0.5f)*2 * this->destination_choice_x;
+    float y = (randf()-0.5f)*2 * this->destination_choice_y;
 
     Vec3 position = physics->get_position();
     position.x += x;
@@ -30,6 +30,8 @@ void DestinationTargetingComponent::choose_destination()
     this->at_destination = false;
     this->en_route = true;
     this->ticks_to_destination = vec3_length(vec3_init(x,y,0)) / this->speed;
+    
+    this->broadcast_destination();
 }
 
 void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
@@ -90,32 +92,10 @@ void DestinationTargetingComponent::check_at_destination()
     }
     Vec3 pos = physics->get_position();
     Vec3 dest = quadrant_translate_position(pos, this->destination);
-    if (vec3_distance_squared(pos, dest) <= this->stop_proximity)
+    if (vec3_distance_squared(pos, dest) <= this->stop_proximity*this->stop_proximity)
         this->at_destination = true;
     else
         this->at_destination = false;
-}
-
-void DestinationTargetingComponent::broadcast_target_choice()
-{
-    GS_ASSERT(this->object != NULL);
-    if (this->object == NULL) return;
-    object_choose_motion_target_StoC msg;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.target_id = this->target_id;
-    msg.target_type = this->target_type;
-    msg.broadcast();
-}
-
-void DestinationTargetingComponent::broadcast_remove_target()
-{
-    GS_ASSERT(this->object != NULL);
-    if (this->object == NULL) return;
-    object_remove_motion_target_StoC msg;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.broadcast();
 }
 
 void DestinationTargetingComponent::broadcast_destination()
@@ -129,23 +109,6 @@ void DestinationTargetingComponent::broadcast_destination()
     msg.type = this->object->type;
     msg.ticks = this->ticks_to_destination;
     msg.broadcast();
-}
-
-void DestinationTargetingComponent::call()
-{
-    if (this->target_type == OBJECT_NONE)
-    {
-        this->ticks_locked = 0;
-        return;
-    }
-    this->ticks_locked++;
-    if (this->max_lock_ticks && this->ticks_locked > this->max_lock_ticks)
-    {   // reset
-        this->target_type = OBJECT_NONE;
-        this->target_id = NO_AGENT;
-        this->ticks_locked = 0;
-        //this->broadcast_remove_target();
-    }
 }
 
 } // Objects
