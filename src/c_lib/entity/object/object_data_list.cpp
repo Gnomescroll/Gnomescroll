@@ -24,6 +24,7 @@ void ObjectDataList::attach_component(ObjectType type, ComponentType component)
     int index = this->component_sizes[type];
     this->component_types[type][index] = component;
     ComponentInterfaceType interface = Components::get_interface_for_component(component);
+    GS_ASSERT(interface != COMPONENT_INTERFACE_NONE);
     this->interface_types[type][index] = interface;
     this->component_sizes[type] += 1;
 }

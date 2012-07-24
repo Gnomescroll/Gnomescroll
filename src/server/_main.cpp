@@ -29,9 +29,9 @@ void init(int argc, char* argv[])
     
     if (!strcmp(Options::map, "fast"))
     {
-		map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
-		map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
-	}
+        map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
+        map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
+    }
     else
     {
         srand(Options::seed);
@@ -106,8 +106,8 @@ void tick()
     }
 
     //ServerState::spawn_items(2);
-    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 100);
-    ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 8);
+    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
+    ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
 
     ItemContainer::update_smelters();
     Item::item_list->tick();

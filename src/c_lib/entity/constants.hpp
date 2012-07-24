@@ -4,6 +4,7 @@ int MAX_OBJECT_TYPES = 256;
 typedef enum
 {
     OBJECT_NONE,    // null
+    OBJECT_DESTINATION,     // abstract object
 
     OBJECT_AGENT,   // agent
 
@@ -61,7 +62,12 @@ typedef enum
     
     COMPONENT_MOTION_TARGETING,
     COMPONENT_WEAPON_TARGETING,
-
+    COMPONENT_DESTINATION_TARGETING,
+    COMPONENT_AGENT_TARGETING,
+    
+    COMPONENT_STATE_MACHINE,
+    COMPONENT_WAITING,
+    
     COMPONENT_DIMENSION,
 
     COMPONENT_RATE_LIMIT,
@@ -87,7 +93,7 @@ typedef enum
 int MAX_COMPONENT_INTERFACE_TYPES = 256;
 typedef enum
 {
-    COMPONENT_INTERFACE_NONE,
+    COMPONENT_INTERFACE_NONE = 0,
     COMPONENT_INTERFACE_PHYSICS,    // physics state setters/getters
     COMPONENT_INTERFACE_STACKABLE,  // stackable setters/getters
     COMPONENT_INTERFACE_UPDATE,     // update()
@@ -102,6 +108,8 @@ typedef enum
     COMPONENT_INTERFACE_DIMENSION,
     COMPONENT_INTERFACE_RATE_LIMIT,
     COMPONENT_INTERFACE_HEALING,
+    COMPONENT_INTERFACE_STATE_MACHINE,
+    COMPONENT_INTERFACE_WAITING,
     
     #if DC_CLIENT
     COMPONENT_INTERFACE_DRAW,       // draw()
@@ -114,13 +122,16 @@ typedef enum
     #endif
 } ComponentInterfaceType;
 
+typedef enum
+{
+    STATE_NONE,
+    STATE_WAITING,
+    STATE_IN_TRANSIT,
+    STATE_CHASE_AGENT,
+} EntityState;
 
-/* NULL values
- * TODO -- move
- */
 
 #include <limits.h>
-//#include <float.h>
 #include <physics/vec3.hpp>
 
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX

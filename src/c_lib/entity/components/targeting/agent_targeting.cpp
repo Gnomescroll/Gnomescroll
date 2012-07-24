@@ -12,12 +12,9 @@ namespace Components
 
 /* Targeting */
 
-void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
+void AgentTargetingComponent::set_target(int agent_id)
 {
-    GS_ASSERT(target_type == OBJECT_AGENT);
-    if (target_type != OBJECT_AGENT) return;
-
-    Agent_state* a = STATE::agent_list->get(target_id);
+    Agent_state* a = STATE::agent_list->get(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -31,14 +28,14 @@ void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
     this->target_direction = quadrant_translate_position(position, dest);
     normalize_vector(&this->target_direction);
     
-    this->target_type = target_type;
-    this->target_id = target_id;
+    this->target_type = OBJECT_AGENT;
+    this->target_id = agent_id;
     this->locked_on_target = true;
 
-    this->broadcast_target_choice();
+    //this->broadcast_target_choice();
 }
 
-void MotionTargetingComponent::check_target_alive()
+void AgentTargetingComponent::check_target_alive()
 {
     if (this->target_type != OBJECT_AGENT) return;
     Agent_state* target = STATE::agent_list->get(this->target_id);
@@ -46,11 +43,11 @@ void MotionTargetingComponent::check_target_alive()
     {
         this->target_id = NO_AGENT;
         this->target_type = OBJECT_NONE;
-        this->broadcast_remove_target();
+        //this->broadcast_remove_target();
     }
 }
 
-void MotionTargetingComponent::lock_target(Vec3 camera_position)
+void AgentTargetingComponent::lock_target(Vec3 camera_position)
 {
     Agent_state* target;
     target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
@@ -61,30 +58,10 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    this->broadcast_target_choice();
+    //this->broadcast_target_choice();
 }
 
-void MotionTargetingComponent::choose_destination()
-{
-    float x = (randf()-0.5f)*2 * this->destination_choice_x;
-    float y = (randf()-0.5f)*2 * this->destination_choice_y;
-
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
-
-    Vec3 position = physics->get_position();
-    position.x += x;
-    position.y += y;
-    position.z = t_map::get_highest_solid_block(position.x, position.y);
-    this->destination = translate_position(position);
-    this->at_destination = false;
-    this->en_route = true;
-    this->target_type = OBJECT_DESTINATION;
-}
-
-void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
+void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
 {
     if (this->target_type == OBJECT_NONE) return;
     if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
@@ -96,13 +73,8 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
     normalize_vector(&this->target_direction);
 }
 
-//void MotionTargetingComponent::lock_target_destination(Vec3 camera_position)
-//{
-    
-//}
-
 // adjusts position & momentum by moving over the terrain surface
-bool MotionTargetingComponent::move_on_surface()
+bool AgentTargetingComponent::move_on_surface()
 {
     // get physics data
     using Components::PhysicsComponent;
@@ -113,7 +85,8 @@ bool MotionTargetingComponent::move_on_surface()
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
     Vec3 new_momentum;
-    Vec3 motion_direction = vec3_init(this->target_direction.x, this->target_direction.y, 0);
+    Vec3 motion_direction = this->target_direction;
+    motion_direction.z = 0.0f;
     bool moved = move_along_terrain_surface(
         physics->get_position(), motion_direction,
         this->speed, this->max_z_diff,
@@ -135,7 +108,7 @@ bool MotionTargetingComponent::move_on_surface()
     return moved;
 }
 
-void MotionTargetingComponent::broadcast_target_choice()
+void AgentTargetingComponent::broadcast_target_choice()
 {
     GS_ASSERT(this->object != NULL);
     if (this->object == NULL) return;
@@ -147,7 +120,7 @@ void MotionTargetingComponent::broadcast_target_choice()
     msg.broadcast();
 }
 
-void MotionTargetingComponent::broadcast_remove_target()
+void AgentTargetingComponent::broadcast_remove_target()
 {
     GS_ASSERT(this->object != NULL);
     if (this->object == NULL) return;
@@ -157,7 +130,7 @@ void MotionTargetingComponent::broadcast_remove_target()
     msg.broadcast();
 }
 
-void MotionTargetingComponent::broadcast_destination()
+void AgentTargetingComponent::broadcast_destination()
 {
     object_choose_destination_StoC msg;
     msg.x = this->destination.x;
@@ -170,7 +143,7 @@ void MotionTargetingComponent::broadcast_destination()
     msg.broadcast();
 }
 
-void MotionTargetingComponent::call()
+void AgentTargetingComponent::call()
 {
     if (this->target_type == OBJECT_NONE)
     {
@@ -183,7 +156,7 @@ void MotionTargetingComponent::call()
         this->target_type = OBJECT_NONE;
         this->target_id = NO_AGENT;
         this->ticks_locked = 0;
-        this->broadcast_remove_target();
+        //this->broadcast_remove_target();
     }
 }
 

@@ -73,7 +73,8 @@ void prep_voxel_particles()
         class ItemParticle::ItemParticle* item = list->a[i];
         if (item == NULL) continue;
         if (!item->is_voxel || !item->should_draw) continue;
-        item->voxel.delta_rotation(0.01f, 0.0f);
+        if (Options::animations)
+            item->voxel.delta_rotation(0.01f, 0.0f);
         
         // do fulstrum test
         Vec3 p = quadrant_translate_position(current_camera_position, item->verlet.position);

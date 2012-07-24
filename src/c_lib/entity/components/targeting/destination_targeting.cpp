@@ -1,4 +1,4 @@
-#include "motion_targeting.hpp"
+#include "destination_targeting.hpp"
 
 #include <physics/vec3.hpp>
 #include <physics/motion.hpp>
@@ -12,59 +12,7 @@ namespace Components
 
 /* Targeting */
 
-void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
-{
-    GS_ASSERT(target_type == OBJECT_AGENT);
-    if (target_type != OBJECT_AGENT) return;
-
-    Agent_state* a = STATE::agent_list->get(target_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
-
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
-    Vec3 position = physics->get_position();
-
-    Vec3 dest = a->get_position();
-    this->target_direction = quadrant_translate_position(position, dest);
-    normalize_vector(&this->target_direction);
-    
-    this->target_type = target_type;
-    this->target_id = target_id;
-    this->locked_on_target = true;
-
-    this->broadcast_target_choice();
-}
-
-void MotionTargetingComponent::check_target_alive()
-{
-    if (this->target_type != OBJECT_AGENT) return;
-    Agent_state* target = STATE::agent_list->get(this->target_id);
-    if (target == NULL || target->status.dead)
-    {
-        this->target_id = NO_AGENT;
-        this->target_type = OBJECT_NONE;
-        this->broadcast_remove_target();
-    }
-}
-
-void MotionTargetingComponent::lock_target(Vec3 camera_position)
-{
-    Agent_state* target;
-    target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
-    if (target == NULL)
-    {
-        this->target_type = OBJECT_NONE;
-        return;
-    }
-    this->target_type = OBJECT_AGENT;
-    this->target_id = target->id;
-    this->broadcast_target_choice();
-}
-
-void MotionTargetingComponent::choose_destination()
+void DestinationTargetingComponent::choose_destination()
 {
     float x = (randf()-0.5f)*2 * this->destination_choice_x;
     float y = (randf()-0.5f)*2 * this->destination_choice_y;
@@ -81,28 +29,18 @@ void MotionTargetingComponent::choose_destination()
     this->destination = translate_position(position);
     this->at_destination = false;
     this->en_route = true;
-    this->target_type = OBJECT_DESTINATION;
+    this->ticks_to_destination = vec3_length(vec3_init(x,y,0)) / this->speed;
 }
 
-void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
+void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
 {
-    if (this->target_type == OBJECT_NONE) return;
-    if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
-    Agent_state* target = STATE::agent_list->get(this->target_id);
-    if (target == NULL) return;
-    Vec3 target_position = target->get_position();
-    target_position = quadrant_translate_position(camera_position, target_position);
+    Vec3 target_position = quadrant_translate_position(camera_position, this->destination);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);
 }
 
-//void MotionTargetingComponent::lock_target_destination(Vec3 camera_position)
-//{
-    
-//}
-
 // adjusts position & momentum by moving over the terrain surface
-bool MotionTargetingComponent::move_on_surface()
+bool DestinationTargetingComponent::move_on_surface()
 {
     // get physics data
     using Components::PhysicsComponent;
@@ -113,9 +51,9 @@ bool MotionTargetingComponent::move_on_surface()
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
     Vec3 new_momentum;
-    Vec3 motion_direction = vec3_init(this->target_direction.x, this->target_direction.y, 0);
+
     bool moved = move_along_terrain_surface(
-        physics->get_position(), motion_direction,
+        physics->get_position(), this->target_direction,
         this->speed, this->max_z_diff,
         &new_position, &new_momentum
     );
@@ -135,7 +73,30 @@ bool MotionTargetingComponent::move_on_surface()
     return moved;
 }
 
-void MotionTargetingComponent::broadcast_target_choice()
+void DestinationTargetingComponent::check_at_destination()
+{
+    if (!this->en_route)
+    {   // TODO -- remove this hack. says we are at destination if we are not moving
+        this->at_destination = true;
+        return;
+    }
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL)
+    {
+        this->at_destination = false;
+        return;
+    }
+    Vec3 pos = physics->get_position();
+    Vec3 dest = quadrant_translate_position(pos, this->destination);
+    if (vec3_distance_squared(pos, dest) <= this->stop_proximity)
+        this->at_destination = true;
+    else
+        this->at_destination = false;
+}
+
+void DestinationTargetingComponent::broadcast_target_choice()
 {
     GS_ASSERT(this->object != NULL);
     if (this->object == NULL) return;
@@ -147,7 +108,7 @@ void MotionTargetingComponent::broadcast_target_choice()
     msg.broadcast();
 }
 
-void MotionTargetingComponent::broadcast_remove_target()
+void DestinationTargetingComponent::broadcast_remove_target()
 {
     GS_ASSERT(this->object != NULL);
     if (this->object == NULL) return;
@@ -157,7 +118,7 @@ void MotionTargetingComponent::broadcast_remove_target()
     msg.broadcast();
 }
 
-void MotionTargetingComponent::broadcast_destination()
+void DestinationTargetingComponent::broadcast_destination()
 {
     object_choose_destination_StoC msg;
     msg.x = this->destination.x;
@@ -170,7 +131,7 @@ void MotionTargetingComponent::broadcast_destination()
     msg.broadcast();
 }
 
-void MotionTargetingComponent::call()
+void DestinationTargetingComponent::call()
 {
     if (this->target_type == OBJECT_NONE)
     {
@@ -183,7 +144,7 @@ void MotionTargetingComponent::call()
         this->target_type = OBJECT_NONE;
         this->target_id = NO_AGENT;
         this->ticks_locked = 0;
-        this->broadcast_remove_target();
+        //this->broadcast_remove_target();
     }
 }
 

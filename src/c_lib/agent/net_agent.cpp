@@ -703,8 +703,28 @@ inline void hitscan_object_CtoS::handle()
         using Components::MotionTargetingComponent;
         MotionTargetingComponent* motion_targeting = (MotionTargetingComponent*)
             obj->get_component(COMPONENT_MOTION_TARGETING);
-        if (motion_targeting != NULL && motion_targeting->target_type == OBJECT_NONE)
-            motion_targeting->set_target(OBJECT_AGENT, a->id);
+        if (motion_targeting != NULL)
+        {
+            if (motion_targeting->target_type == OBJECT_NONE)
+                motion_targeting->set_target(OBJECT_AGENT, a->id);
+        }
+        else
+        {
+            using Components::AgentTargetingComponent;
+            AgentTargetingComponent* agent_targeting = (AgentTargetingComponent*)
+                obj->get_component(COMPONENT_AGENT_TARGETING);
+            if (agent_targeting != NULL)
+            {
+                if (agent_targeting->target_type == OBJECT_NONE)
+                    agent_targeting->set_target(a->id);
+
+                using Components::StateMachineComponent;
+                StateMachineComponent* state_machine = (StateMachineComponent*)
+                    obj->get_component(COMPONENT_STATE_MACHINE);
+                if (state_machine != NULL)
+                    state_machine->next_state = STATE_CHASE_AGENT;
+            }
+        }
     }
 
     agent_shot_object_StoC msg;
