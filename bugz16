@@ -828,6 +828,18 @@ add spawners
 
 add energy core
 
+add config loader for entity object handlers
+
+change base color to orange
+
+equipped item sprite rendered for other agents
+
+disable frustum culling for hitscan lasers, too inaccurate
+
+item particle voxels moved to shader; centered rotation, lighting almost working
+
+networked & ui predicted block damage (TODO -- needs good rendering)
+
 ----------------------
 
 == BUILD ==
@@ -844,13 +856,14 @@ this will let players "dodge"
 some boxes arent getting destination correctly -- just jumping around with state updates
 --especially when cross boundaries
 
+ankle biter mobs
+
 == GFX ==
-glsl colored/textured voxels -- add normal lighting
+glsl colored/textured voxels, fix normal lighting
 Improve Hud Weapon sprites animations
 textured voxels / isometric blocks should use full palette info, instead of only one side
 better font
-draw held weapon sprite in player's hand for others to see
-melee on agents should draw blood
+melee on agents should draw blood -- does it already? (make sure it does for you->others and others->others)
 voxel model rgb rolls over to 0 for 255 (e.g. 255,255,254 => 0,0,254), somewhere (by the time its rendered)
 draw stack number with billboard item
 
@@ -859,11 +872,10 @@ improve digging sounds
 falling sounds
     -- record last velocity when colliding with z. at 2 thresholds play harsher sounds
 
+create more sfx with gargoyle2, add for simple actions
+
 == MAINTENANCE/REFACTORS ==
 png write does not work in 64bit binary
-
-toolbelt: turn fire on/off method for server
-toolbelt: use callback registers, per group and per type. define functions in a standard way
 
 elastic component lists
 
@@ -873,6 +885,15 @@ craft/smelting recipes need reagents sorted by stack size in addition to type --
     
 something is messed up with box models. client reports get_center() as even higher above its head, in the object_shot_object packet handler
 position looks normal though, as a firing position
+
+animation level options
+0,1,2,3,4
+0 - None
+1 - Low counts, no rotations
+2 - Medium counts, no rotations on anim vox partciels
+4 - Full, rotations
+
+Linearize mouse sensitivity
 
 == CONTROLS/INPUT ==
 <Kaprekar> ahhh, pressing alt+space causes you to jump and move in one direction constantly until you alt-tab out
@@ -889,12 +910,11 @@ Binoculars
 == CRAFTING / RECIPES ==
 
 == BLOCKS/TERRAIN ==
-send block health on request from agent
---show meter in hud
 
 == ANALYTICS ==
 
 == UI/UX ==
+graphical indicator for block damage (meter, voxel texture overlay etc)
 
 == GENERAL ==
 option to hide name
@@ -903,6 +923,8 @@ maintain a NetClient buffer per stage of ready-ness
 broadcast only to clients who are are in fully ready
 
 ***Autoupdater***
+
+Breakpad crash report integration
 
 draw outline of object to be placed
 
@@ -941,6 +963,3 @@ A: we can make it 1x1 but treat it as an object/model. it will render at its loc
 Spawner / Control Node / Energy Core
  
 ==BUGZ==
-remove base?
-
-finish object config loader
