@@ -98,11 +98,6 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     }
     else normalize_vector(&new_direction);
     GS_ASSERT(len < 512.0f*512.0f);
-    if (len >= 512.0f*512.0f)
-    {
-        printf("move_to: "); vec3_print(move_to);
-        printf("len: %f\n", len);
-    }
 
     *new_momentum = vec3_scalar_mult(new_direction, speed);
     position = vec3_add(position, *new_momentum);

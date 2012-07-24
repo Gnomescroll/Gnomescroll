@@ -28,9 +28,8 @@ void DestinationTargetingComponent::choose_destination()
     position.z = t_map::get_highest_solid_block(position.x, position.y);
     this->destination = translate_position(position);
     this->at_destination = false;
-    this->en_route = true;
-    this->ticks_to_destination = vec3_length(vec3_init(x,y,0)) / this->speed;
-    
+    this->target_type = OBJECT_DESTINATION;
+
     this->broadcast_destination();
 }
 
@@ -68,20 +67,12 @@ bool DestinationTargetingComponent::move_on_surface()
         normalize_vector(&new_momentum);
         this->target_direction = new_momentum;
     }
-
-    // set en_route if we are in motion
-    this->en_route = moved;
     
     return moved;
 }
 
 void DestinationTargetingComponent::check_at_destination()
 {
-    if (!this->en_route)
-    {   // TODO -- remove this hack. says we are at destination if we are not moving
-        this->at_destination = true;
-        return;
-    }
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -107,7 +98,6 @@ void DestinationTargetingComponent::broadcast_destination()
     ASSERT_BOXED_POSITION(this->destination);
     msg.id = this->object->id;
     msg.type = this->object->type;
-    msg.ticks = this->ticks_to_destination;
     msg.broadcast();
 }
 

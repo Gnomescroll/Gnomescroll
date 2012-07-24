@@ -107,8 +107,9 @@ void tick()
     }
 
     //ServerState::spawn_items(2);
-    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
+    //ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
+    //ServerState::spawn_monsters(OBJECT_MONSTER_BOX, 1);
 
     ItemContainer::update_smelters();
     Item::item_list->tick();

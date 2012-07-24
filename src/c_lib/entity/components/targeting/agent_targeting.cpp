@@ -102,9 +102,6 @@ bool AgentTargetingComponent::move_on_surface()
         this->target_direction = new_momentum;
     }
 
-    // set en_route if we are in motion
-    this->en_route = moved;
-    
     return moved;
 }
 

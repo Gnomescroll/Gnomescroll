@@ -13,8 +13,6 @@ class AgentTargetingComponent: public TargetingComponent
 
         Vec3 destination;
         bool at_destination;
-        bool en_route;
-        int ticks_to_destination;
 
         int max_lock_ticks;
         int ticks_locked;
@@ -41,7 +39,7 @@ class AgentTargetingComponent: public TargetingComponent
     AgentTargetingComponent()
     : TargetingComponent(COMPONENT_AGENT_TARGETING),
     speed(1.0f), max_z_diff(128),
-    destination(vec3_init(0,0,0)), at_destination(false), en_route(false), ticks_to_destination(1),
+    destination(vec3_init(0,0,0)), at_destination(false),
     max_lock_ticks(0), ticks_locked(0)
     {}
 };

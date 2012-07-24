@@ -81,7 +81,6 @@ void MotionTargetingComponent::choose_destination()
     this->destination = translate_position(position);
     this->at_destination = false;
     this->en_route = true;
-    this->target_type = OBJECT_DESTINATION;
 }
 
 void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
@@ -95,11 +94,6 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);
 }
-
-//void MotionTargetingComponent::lock_target_destination(Vec3 camera_position)
-//{
-    
-//}
 
 // adjusts position & momentum by moving over the terrain surface
 bool MotionTargetingComponent::move_on_surface()
@@ -166,7 +160,7 @@ void MotionTargetingComponent::broadcast_destination()
     ASSERT_BOXED_POSITION(this->destination);
     msg.id = this->object->id;
     msg.type = this->object->type;
-    msg.ticks = this->ticks_to_destination;
+    msg.ticks_to_destination = this->ticks_to_destination;
     msg.broadcast();
 }
 

@@ -79,7 +79,6 @@ static void set_mob_bomb_properties(Object* object)
     dest->destination_choice_y = MONSTER_BOMB_WALK_RANGE;
     dest->speed = MONSTER_BOMB_WALK_SPEED;
     dest->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
-    dest->max_lock_ticks = MONSTER_BOMB_MAX_TARGET_LOCK_TICKS;
     
     using Components::AgentTargetingComponent;
     AgentTargetingComponent* agent = (AgentTargetingComponent*)add_component_to_object(object, COMPONENT_AGENT_TARGETING);
