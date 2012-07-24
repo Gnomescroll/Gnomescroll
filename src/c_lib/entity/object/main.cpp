@@ -242,4 +242,25 @@ void spawn_mobs()
     }
 }
 
+#if DC_SERVER
+void send_object_state_machines(const ObjectType type, const int client_id)
+{
+    GS_ASSERT(type == OBJECT_MONSTER_BOMB);
+    if (type != OBJECT_MONSTER_BOMB) return;    // TODO
+    
+    if (object_list->empty(type)) return;
+
+    Object** objects = object_list->get_objects(type);
+    GS_ASSERT(objects != NULL);
+    char* used = object_list->get_used(type);
+    GS_ASSERT(used != NULL);
+    int max = object_list->max(type);
+    GS_ASSERT(max > 0);
+
+    for (int i=0; i<max; i++)
+        if (used[i])
+            send_mob_bomb_state_machine_to_client(client_id, objects[i]);
+}
+#endif
+
 } // Objects

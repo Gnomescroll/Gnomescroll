@@ -146,6 +146,9 @@ namespace ServerState
         Objects::send_to_client(OBJECT_AGENT_SPAWNER, client_id);
         Objects::send_to_client(OBJECT_ENERGY_CORE, client_id);
         Objects::send_to_client(OBJECT_MONSTER_BOMB, client_id);
+        
+        // DOESNT WORK RIGHT:
+        Objects::send_object_state_machines(OBJECT_MONSTER_BOMB, client_id);
         Objects::send_to_client(OBJECT_MONSTER_BOX, client_id);
         Objects::send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
     }

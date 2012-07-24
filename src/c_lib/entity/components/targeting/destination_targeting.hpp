@@ -24,7 +24,7 @@ class DestinationTargetingComponent: public TargetingComponent
 
         void choose_destination();
 
-        void check_at_destination();
+        bool check_at_destination();
 
         void orient_to_target(Vec3 camera_position);
         

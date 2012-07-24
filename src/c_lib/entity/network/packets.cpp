@@ -446,6 +446,7 @@ inline void object_begin_waiting_StoC::handle()
 inline void object_in_transit_StoC::handle()
 {
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    GS_ASSERT(obj != NULL);
     if (obj == NULL) return;
 
     using Components::DestinationTargetingComponent;
@@ -461,10 +462,17 @@ inline void object_in_transit_StoC::handle()
     if (physics == NULL) return;
     struct Vec3 pos = physics->get_position();
     
-    dest_target->destination = quadrant_translate_position(pos, this->dest);
     dest_target->ticks_to_destination = this->ticks_to_destination;
 
-    Vec3 direction = vec3_sub(dest_target->destination, pos);
+    Vec3 destination = vec3_init(x,y,z);
+    destination = quadrant_translate_position(pos, destination);
+
+    Vec3 direction = vec3_sub(destination, pos);
+    
+    //int est_ttd = ceil(vec3_length(direction) / Objects::MONSTER_BOMB_WALK_SPEED);
+    //if (est_ttd != this->ticks_to_destination)
+        //printf("est,actual %d,%d\n", est_ttd, this->ticks_to_destination);
+    
     if (this->ticks_to_destination)
     {
         float len = vec3_length(direction);
@@ -474,22 +482,25 @@ inline void object_in_transit_StoC::handle()
             dest_target->at_destination = false;
             normalize_vector(&direction);
             dest_target->target_direction = direction;
+            //dest_target->target_direction = this->dir;
+            dest_target->target_type = OBJECT_DESTINATION;
+
+            Vec3 angles = physics->get_angles();
+            angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
+            physics->set_angles(angles);
         }
         else
             dest_target->at_destination = true;
     }
     else
     {   // 0 ticks is teleport
-        if (physics != NULL) physics->set_position(dest_target->destination);
+        if (physics != NULL) physics->set_position(destination);
         dest_target->speed = 0.0f;
         dest_target->at_destination = true;
     }
     
-    dest_target->orient_to_target(pos);    
-    Vec3 angles = physics->get_angles();
-    angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
-    physics->set_angles(angles);
-
+    dest_target->destination = translate_position(destination);
+    
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);

@@ -685,7 +685,6 @@ inline void hitscan_object_CtoS::handle()
         force_update_agent_vox(a);
         // apply damage
         agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-        //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
     }
     else
     {

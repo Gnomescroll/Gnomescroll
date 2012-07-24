@@ -205,12 +205,24 @@ static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Obje
         dest = (Components::DestinationTargetingComponent*)
             object->get_component(COMPONENT_DESTINATION_TARGETING);
 
+    GS_ASSERT(dest != NULL);
     if (dest == NULL) return false;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)
+        object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return false;
 
     msg->type = object->type;
     msg->id = object->id;
-    msg->dest = dest->destination;
-    msg->ticks_to_destination = dest->ticks_to_destination;
+    msg->x = dest->destination.x;
+    msg->y = dest->destination.y;
+    msg->z = dest->destination.z;
+    msg->dir = dest->target_direction;
+    int ticks = ceil(vec3_length(vec3_sub(dest->destination, physics->get_position())) / dest->speed);
+    msg->ticks_to_destination = ticks;
     
     return true;
 }
@@ -278,19 +290,38 @@ void send_object_begin_wait(int client_id, class Object* object)
     if (!pack_object_begin_wait(&msg, object)) return;
     msg.sendToClient(client_id);
 }
+
+inline void send_mob_bomb_state_machine_to_client(int client_id, class Object* object)
+{
+    using Components::StateMachineComponent;
+    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+
+    if (state->state == STATE_WAITING)
+        send_object_begin_wait(client_id, object);
+    else
+    if (state->state == STATE_IN_TRANSIT)
+        send_object_in_transit(client_id, object, NULL);
+    else
+    if (state->state == STATE_CHASE_AGENT)
+        send_object_chase_agent(client_id, object, NULL);
+}
 #endif
 
 static void waiting_to_in_transit(class Object* object)
 {
-    typedef Components::PositionMomentumChangedPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
 
     // choose new position destination
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest = (DestinationTargetingComponent*)
         object->get_component(COMPONENT_DESTINATION_TARGETING);
+        
+    #if DC_SERVER
     dest->choose_destination();
+    broadcast_object_in_transit(object, dest);
+    #endif
 
     // face the target
     dest->orient_to_target(position);    
@@ -301,10 +332,6 @@ static void waiting_to_in_transit(class Object* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_IN_TRANSIT;
-    
-    #if DC_SERVER
-    broadcast_object_in_transit(object, dest);
-    #endif
 }
 
 static void waiting_to_chase_agent(class Object* object)
@@ -368,22 +395,33 @@ static void chase_agent_to_in_transit(class Object* object)
 
 static void waiting(class Object* object)
 {
-
+    #if DC_SERVER
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
     wait->tick++;
     if (wait->ready())
         waiting_to_in_transit(object);
+    #endif
 }
 
 static void in_transit(class Object* object)
 {
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    Vec3 position = physics->get_position();
+
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
-    
+
     #if DC_CLIENT
     if (!dest_target->at_destination)
     {
+        // face the target
+        dest_target->orient_to_target(position);    
+        Vec3 angles = physics->get_angles();
+        angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
+        physics->set_angles(angles);
+
         dest_target->move_on_surface();
         dest_target->check_at_destination();
     }
@@ -395,8 +433,7 @@ static void in_transit(class Object* object)
         in_transit_to_waiting(object);  // failed to move
     else
     {   // check at destination
-        dest_target->check_at_destination();
-        if (dest_target->at_destination)
+        if (dest_target->check_at_destination())
             in_transit_to_waiting(object);
     }
     #endif

@@ -63,8 +63,13 @@ bool DestinationTargetingComponent::move_on_surface()
     Vec3 new_position;
     Vec3 new_momentum;
 
+    Vec3 motion_direction = this->target_direction;
+    motion_direction.z = 0.0f;
+
+    GS_ASSERT(vec3_length(this->target_direction) != 0.0f);
+
     bool moved = move_along_terrain_surface(
-        physics->get_position(), this->target_direction,
+        physics->get_position(), motion_direction,
         this->speed, this->max_z_diff,
         &new_position, &new_momentum
     );
@@ -81,15 +86,15 @@ bool DestinationTargetingComponent::move_on_surface()
     return moved;
 }
 
-void DestinationTargetingComponent::check_at_destination()
+bool DestinationTargetingComponent::check_at_destination()
 {
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics == NULL)
     {
-        this->at_destination = false;
-        return;
+        this->at_destination = true;
+        return true;
     }
     Vec3 pos = physics->get_position();
     Vec3 dest = quadrant_translate_position(pos, this->destination);
@@ -97,6 +102,8 @@ void DestinationTargetingComponent::check_at_destination()
         this->at_destination = true;
     else
         this->at_destination = false;
+        
+    return this->at_destination;
 }
 
 } // Objects

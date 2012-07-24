@@ -37,4 +37,9 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z);
 void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage);
 void spawn_mobs();
 
+#if DC_SERVER
+// TODO -- generalize/remove
+void send_object_state_machines(const ObjectType type, const int client_id);
+#endif
+
 } // Objects
