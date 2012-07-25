@@ -12,6 +12,8 @@ bool damaging_block = false;
 const int BLOCK_DAMAGE_LEVELS = 6;
 
 static GLuint block_damage_texture = 0;
+static const int texture_width = 256;
+static const int sprite_width = 32;
 
 static struct Vec3 veb[8];     //vertex positions
 static struct Vec3 veb2[6*4];  //vertex array for rendering
@@ -54,10 +56,10 @@ static void render(int sprite_index, int x, int y, int z)
     const float MARGIN = 0.005f;
     const float size = (1.0f + MARGIN) / 2.0f;
     
-    const float inc = 32.0f/512.0f;
-    float tx_min = (sprite_index % 16) * inc;
+    const float inc = ((float)sprite_width)/((float)texture_width);
+    float tx_min = (sprite_index % (texture_width/sprite_index)) * inc;
     float tx_max = tx_min + inc;
-    float ty_min = (sprite_index / 16) * inc;
+    float ty_min = (sprite_index / (texture_width/sprite_index)) * inc;
     float ty_max = ty_min + inc;
 
     // scale & translate vertices
