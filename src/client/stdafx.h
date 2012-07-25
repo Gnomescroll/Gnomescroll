@@ -26,13 +26,13 @@
 #include <winbase.h> // usleep function
 #include <tchar.h>
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
  
 #include <string.h>
 #include <math.h>
+
 
 extern "C"
 {
@@ -49,8 +49,8 @@ extern "C"
     #include <direct.h>
     #define getcwd _getcwd
     #define chdir _chdir
-#else
-    #include <unistd.h>
+	#define mkdir(x) _mkdir(x)
+
+	#define snprintf _snprintf
 #endif
 
-#define mkdir(x) _mkdir(x)

@@ -45,7 +45,7 @@
 #include "_main.cpp"
 #include <common/lua/lua.hpp>
 
-#if __MSVC__
+#ifdef __MSVC__
 int _tmain(int argc, _TCHAR* argv[])
 #else
 int main(int argc, char* argv[])
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     // will use a default value if not provided
     if (argc > 1 && argv[1][0] != '-') LUA::set_options_file((char*) argv[1]);
 
-    Main::init(argc, argv);
+    Main::init(argc, (char**) argv);
     int ret = Main::run();
 
     //Sleep(10000);
