@@ -9,6 +9,8 @@
 #include <hud/font.hpp>
 #include <hud/text.hpp>
 
+#include <common/color.hpp>
+
 namespace Particle
 {
 

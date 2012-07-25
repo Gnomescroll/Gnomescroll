@@ -47,15 +47,12 @@ extern "C"
 #include <common/macros.hpp>
 
 #ifdef __MSVC__
-	#define snprintf _snprintf
-#endif
-
-
-#ifdef __MSVC__
     #include <direct.h>
     #define getcwd _getcwd
     #define chdir _chdir
 	#define mkdir(x) _mkdir(x)
+
+	#define snprintf _snprintf
 #endif
 
 
