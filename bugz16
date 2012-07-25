@@ -963,3 +963,6 @@ A: we can make it 1x1 but treat it as an object/model. it will render at its loc
 Spawner / Control Node / Energy Core
  
 ==BUGZ==
+might be bug with entity system object ids or something
+
+take care of intellisense warnings
