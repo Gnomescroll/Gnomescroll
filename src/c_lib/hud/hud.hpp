@@ -74,7 +74,6 @@ class HUD
     AnimatedText* health;
     Text* confirm_quit;
     Text* press_help;
-    Text* block_health;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects

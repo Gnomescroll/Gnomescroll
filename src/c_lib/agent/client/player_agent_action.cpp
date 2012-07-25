@@ -108,7 +108,7 @@ void PlayerAgent_action::hitscan_laser()
             }
             break;
 
-        case Hitscan::HITSCAN_TARGET_BLOCK:            
+        case Hitscan::HITSCAN_TARGET_BLOCK:    
             block_msg.x = block_pos[0];
             block_msg.y = block_pos[1];
             block_msg.z = block_pos[2];
@@ -291,13 +291,11 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 int weapon_dmg = Item::get_item_block_damage(weapon_type, block_type);
                 if (t_map::is_last_requested_block(x,y,z))
                 {
-                    Hud::add_predicted_block_damage(weapon_dmg);
                     Animations::predicted_block_damage += weapon_dmg;
                     Animations::damaging_block = true;
                 }
                 else
                 {
-                    Hud::set_predicted_block_damage(weapon_dmg);
                     Animations::predicted_block_damage = weapon_dmg;
                     Animations::damaging_block = true;
                 }

@@ -61,8 +61,6 @@ static const char confirm_quit_text[] = "Really quit? Y/N";
 
 static const char press_help_text[] = "Press H for help";
 
-static const char block_dmg_fmt[] = "BLOCK HEALTH: %d\n";
-
 static struct HudDrawSettings
 {
     bool zoom;
@@ -87,8 +85,6 @@ static struct HudDrawSettings
     bool draw;
     bool confirm_quit;
     bool press_help;
-    bool block_health;
-    int predicted_block_damage;
 } hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -99,21 +95,10 @@ void set_hud_fps_display(float fps_val)
     hud_draw_settings.fps_val = fps_val;
 }
 
-void add_predicted_block_damage(int block_dmg)
-{
-    hud_draw_settings.predicted_block_damage += block_dmg;
-}
-
-void set_predicted_block_damage(int block_dmg)
-{
-    hud_draw_settings.predicted_block_damage = block_dmg;
-}
-
 void init_hud_draw_settings()
 {
     update_hud_draw_settings();
     hud_draw_settings.press_help = Options::show_tips;
-    hud_draw_settings.predicted_block_damage = 0;
 }
 
 // read game state to decide what to draw
@@ -124,7 +109,9 @@ void update_hud_draw_settings()
     
     hud_draw_settings.draw = Options::hud;
     hud_draw_settings.zoom = current_camera->zoomed;
-    hud_draw_settings.cube_selector = (Toolbelt::get_selected_item_type() == Item::get_item_type((char*)"block_placer"));
+    static int block_placer_type = Item::get_item_type("block_placer");
+    GS_ASSERT(block_placer_type != NULL_ITEM_TYPE);
+    hud_draw_settings.cube_selector = (Toolbelt::get_selected_item_type() == block_placer_type);
 
     hud_draw_settings.help = input_state.help_menu;
     if (hud_draw_settings.help) hud_draw_settings.press_help = false;   // clear this after opening help once
@@ -179,8 +166,6 @@ void update_hud_draw_settings()
     }
 
     hud_draw_settings.confirm_quit = input_state.confirm_quit;
-    
-    hud_draw_settings.block_health = true;
 }
 
 /* Draw routines */
@@ -271,16 +256,6 @@ void draw_hud_text()
 
     HudFont::reset_default();
     set_texture();
-
-    if (hud_draw_settings.block_health)
-    {
-        int health = t_map::get_requested_block_remaining_health();
-        GS_ASSERT(health >= 0);
-        health -= hud_draw_settings.predicted_block_damage;
-        if (health < 0) health = 0;
-        hud->block_health->update_formatted_string(1, health);
-        hud->block_health->draw();
-    }
 
     if (hud_draw_settings.help)
         hud->help->draw();
@@ -555,15 +530,6 @@ void HUD::init()
     press_help->set_text((char*)press_help_text);
     press_help->set_color(255,255,255,255);
     press_help->set_position((_xresf - press_help->get_width()) / 2.0f, _yresf);
-
-    block_health = text_list->create();
-    GS_ASSERT(block_health != NULL);
-    if (block_health == NULL) return;
-    block_health->set_format(block_dmg_fmt);
-    block_health->update_formatted_string(1, 0);
-    block_health->set_format_extra_length(10 - 2);
-    block_health->set_color(10,255,10,255);
-    block_health->set_position((_xresf - block_health->get_width()) / 2.0f, _yresf * 0.75f);
 
     scoreboard = new Scoreboard();
     scoreboard->init();

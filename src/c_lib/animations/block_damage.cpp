@@ -57,9 +57,9 @@ static void render(int sprite_index, int x, int y, int z)
     const float size = (1.0f + MARGIN) / 2.0f;
     
     const float inc = ((float)sprite_width)/((float)texture_width);
-    float tx_min = (sprite_index % (texture_width/sprite_index)) * inc;
+    float tx_min = (sprite_index % (texture_width/sprite_width)) * inc;
     float tx_max = tx_min + inc;
-    float ty_min = (sprite_index / (texture_width/sprite_index)) * inc;
+    float ty_min = (sprite_index / (texture_width/sprite_width)) * inc;
     float ty_max = ty_min + inc;
 
     // scale & translate vertices
@@ -79,8 +79,7 @@ static void render(int sprite_index, int x, int y, int z)
         veb2[4*i+3] = veb[q_set[4*i+3]];
     }
 
-    unsigned char alpha = 256;
-    
+    unsigned char alpha = 255;
     float t = tick_since_last_damage_change - ticks_begin_fade;
     t = ((float)ticks_end_fade - t)/(float)ticks_end_fade;
     if (tick_since_last_damage_change > ticks_begin_fade)
