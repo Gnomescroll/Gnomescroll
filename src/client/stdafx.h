@@ -26,7 +26,6 @@
 #include <winbase.h> // usleep function
 #include <tchar.h>
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -34,14 +33,14 @@
 #include <string.h>
 #include <math.h>
 
-/*
+
 extern "C"
 {
     #include <lua.h>
     #include <lualib.h> // ok this ony means u maybe fixed the release one but not teh debug one
     #include <lauxlib.h> //wtf!?
 }
-*/
+
 
 //_getcwd()/_wgetcwd() Gets the current working directory
 //_chdir()/_wchdir() Sets the current working directory
