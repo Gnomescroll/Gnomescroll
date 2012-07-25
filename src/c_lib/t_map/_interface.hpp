@@ -27,8 +27,10 @@ void control_node_render_draw();
 void request_block_damage(int x, int y, int z);
 void received_block_damage_response(unsigned int request_id, unsigned int dmg);
 int get_requested_block_remaining_health();
+void get_requested_block_position(int* x, int* y, int* z);
 bool is_last_requested_block(int x, int y, int z);
 extern unsigned int requested_block_damage;
+extern int requested_block_type;
 #endif
 
 #if DC_SERVER

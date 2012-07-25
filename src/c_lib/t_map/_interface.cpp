@@ -67,9 +67,9 @@ static unsigned int request_id = 0;
 
 static struct { int x,y,z; } last_requested_block = {-1};
 static unsigned int last_request_id = 0;
-static int requested_block_type = 0;
 static int requested_block_health = 0;
 
+int requested_block_type = 0;
 unsigned int requested_block_damage = 0;
 
 bool is_last_requested_block(int x, int y, int z)
@@ -118,6 +118,13 @@ int get_requested_block_remaining_health()
     GS_ASSERT(health >= 0);
     if (health < 0) health = 0;
     return health;
+}
+
+void get_requested_block_position(int* x, int* y, int* z)
+{
+    *x = last_requested_block.x;
+    *y = last_requested_block.y;
+    *z = last_requested_block.z;
 }
 
 void received_block_damage_response(unsigned int request_id, unsigned int dmg)
