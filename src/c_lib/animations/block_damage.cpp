@@ -34,46 +34,33 @@ static int get_sprite_index(int dmg, int max_dmg)
     return level;
 }
 
-static void render(int dmg, int max_dmg, int x, int y, int z)
+static void render(int sprite_index, int x, int y, int z)
 {
     GS_ASSERT(block_damage_texture != 0);
     if (block_damage_texture == 0) return;
     
-    int sprite_index = get_sprite_index(dmg, max_dmg);
     if (sprite_index < 0) return;
-    
-    float fx = x;
-    float fy = y;
-    float fz = z;
-    fx += 0.5f;
-    fy += 0.5f;
-    fz += 0.5f;
-    
+    GS_ASSERT(sprite_index < BLOCK_DAMAGE_LEVELS);
+
+    Vec3 pos = vec3_init(x,y,z);
+    pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 0.5f));   // center
+    pos = quadrant_translate_position(current_camera_position, pos);
+
     const float MARGIN = 0.01f;
     const float size = (1.0f + MARGIN) / 2.0f;
     
-    glColor4ub(255,255,255,255);
-
-    GL_ASSERT(GL_TEXTURE_2D, true);
-    GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_BLEND, false);
-
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.5f);
-    
-    glBindTexture(GL_TEXTURE_2D, block_damage_texture);
-        
     const float inc = 32.0f/512.0f;
     float tx_min = (sprite_index % 16) * inc;
     float tx_max = tx_min + inc;
     float ty_min = (sprite_index / 16) * inc;
     float ty_max = ty_min + inc;
 
+    // scale & translate vertices
     for (int i=0; i<8; i++)
     {
-        veb[i].x = size*v_set2[3*i+0];
-        veb[i].y = size*v_set2[3*i+1];
-        veb[i].z = size*v_set2[3*i+2];
+        veb[i].x = size*v_set2[3*i+0] + pos.x;
+        veb[i].y = size*v_set2[3*i+1] + pos.y;
+        veb[i].z = size*v_set2[3*i+2] + pos.z;
     }
 
     //copy vertices into quad
@@ -85,6 +72,17 @@ static void render(int dmg, int max_dmg, int x, int y, int z)
         veb2[4*i+3] = veb[q_set[4*i+3]];
     }
 
+    glColor4ub(255,255,255,128);
+
+    GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.2f);
+    
+    glBindTexture(GL_TEXTURE_2D, block_damage_texture);
+        
     // draw block damage overlay
     glBegin(GL_QUADS);
     for (int i=0; i<6; i++)
@@ -112,10 +110,14 @@ void render_block_damage()
     int max_dmg = maxDamage(t_map::requested_block_type);
     dmg += predicted_block_damage;
     if (dmg < 0) dmg = 0;
-    if (dmg > max_dmg) dmg = max_dmg;
+    if (dmg >= max_dmg) return;
+
+    int sprite_index = get_sprite_index(dmg, max_dmg);
+
     int x=0,y=0,z=0;
     t_map::get_requested_block_position(&x, &y, &z);
-    render(dmg, max_dmg, x,y,z);
+
+    render(sprite_index, x,y,z);
 }
 
 }   // Animations
