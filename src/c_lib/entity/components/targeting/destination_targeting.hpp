@@ -7,6 +7,9 @@ namespace Components
 
 class DestinationTargetingComponent: public TargetingComponent
 {
+    private:
+        Vec3 destination;
+
     public:
         float stop_proximity;
     
@@ -16,7 +19,6 @@ class DestinationTargetingComponent: public TargetingComponent
         float destination_choice_x;
         float destination_choice_y;
 
-        Vec3 destination;
         bool at_destination;
         int ticks_to_destination;
 
@@ -29,6 +31,17 @@ class DestinationTargetingComponent: public TargetingComponent
         void orient_to_target(Vec3 camera_position);
         
         bool move_on_surface();
+
+        void set_destination(Vec3 dest);
+        struct Vec3 get_destination() { return this->destination; }
+        
+        int get_ticks_to_destination(Vec3 position)
+        {
+            float len = vec3_length(vec3_sub(this->destination, position));
+            int ttd = (int)(ceil(len / this->speed));
+            return ttd;
+        }
+
 
     virtual ~DestinationTargetingComponent() {}
     

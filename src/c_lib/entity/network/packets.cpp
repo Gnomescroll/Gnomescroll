@@ -464,33 +464,15 @@ inline void object_in_transit_StoC::handle()
     
     dest_target->ticks_to_destination = this->ticks_to_destination;
 
-    Vec3 destination = vec3_init(x,y,z);
-    destination = quadrant_translate_position(pos, destination);
-
-    Vec3 direction = vec3_sub(destination, pos);
-    
-    //int est_ttd = ceil(vec3_length(direction) / Objects::MONSTER_BOMB_WALK_SPEED);
-    //if (est_ttd != this->ticks_to_destination)
-        //printf("est,actual %d,%d\n", est_ttd, this->ticks_to_destination);
+    dest_target->set_destination(destination);
+    dest_target->orient_to_target(pos);
     
     if (this->ticks_to_destination)
     {
+        destination = quadrant_translate_position(pos, destination);
+        Vec3 direction = vec3_sub(destination, pos);
         float len = vec3_length(direction);
         dest_target->speed = len / ((float)this->ticks_to_destination);
-        if (len != 0.0f)
-        {
-            dest_target->at_destination = false;
-            normalize_vector(&direction);
-            dest_target->target_direction = direction;
-            //dest_target->target_direction = this->dir;
-            dest_target->target_type = OBJECT_DESTINATION;
-
-            Vec3 angles = physics->get_angles();
-            angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
-            physics->set_angles(angles);
-        }
-        else
-            dest_target->at_destination = true;
     }
     else
     {   // 0 ticks is teleport
@@ -498,8 +480,6 @@ inline void object_in_transit_StoC::handle()
         dest_target->speed = 0.0f;
         dest_target->at_destination = true;
     }
-    
-    dest_target->destination = translate_position(destination);
     
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)

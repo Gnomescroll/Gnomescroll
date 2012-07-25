@@ -12,6 +12,13 @@ namespace Components
 
 /* Targeting */
 
+void DestinationTargetingComponent::set_destination(Vec3 dest)
+{
+    this->destination = translate_position(dest);
+    this->at_destination = false;
+    this->target_type = OBJECT_DESTINATION;    
+}
+
 void DestinationTargetingComponent::choose_destination()
 {
     using Components::PhysicsComponent;
@@ -31,20 +38,29 @@ void DestinationTargetingComponent::choose_destination()
         len = sqrtf(2.0f) * this->stop_proximity;
     }
     
-    this->ticks_to_destination = (int)ceil(len / this->speed);
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)
+        this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    int h = 1;
+    if (dims != NULL)
+        h = dims->get_integer_height();
+    GS_ASSERT(h > 0);
+    if (h < 1) h = 1;
 
     Vec3 position = physics->get_position();
     position.x += x;
     position.y += y;
-    position.z = t_map::get_highest_solid_block(position.x, position.y);
+    position.z = t_map::get_nearest_open_block(position.x, position.y, position.z, h);
         
-    this->destination = translate_position(position);
-    this->at_destination = false;
-    this->target_type = OBJECT_DESTINATION;
+    this->set_destination(position);
+
+    this->ticks_to_destination = this->get_ticks_to_destination(physics->get_position());
 }
 
 void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
 {
+    ASSERT_BOXED_POSITION(this->destination);
     Vec3 target_position = quadrant_translate_position(camera_position, this->destination);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);

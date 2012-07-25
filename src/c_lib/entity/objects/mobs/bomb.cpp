@@ -217,11 +217,10 @@ static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Obje
 
     msg->type = object->type;
     msg->id = object->id;
-    msg->x = dest->destination.x;
-    msg->y = dest->destination.y;
-    msg->z = dest->destination.z;
+    Vec3 destination = dest->get_destination();
+    msg->destination = destination;
     msg->dir = dest->target_direction;
-    int ticks = ceil(vec3_length(vec3_sub(dest->destination, physics->get_position())) / dest->speed);
+    int ticks = dest->get_ticks_to_destination(physics->get_position());
     msg->ticks_to_destination = ticks;
     
     return true;
@@ -309,6 +308,7 @@ inline void send_mob_bomb_state_machine_to_client(int client_id, class Object* o
 
 static void waiting_to_in_transit(class Object* object)
 {
+    #if DC_SERVER
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
@@ -318,16 +318,15 @@ static void waiting_to_in_transit(class Object* object)
     DestinationTargetingComponent* dest = (DestinationTargetingComponent*)
         object->get_component(COMPONENT_DESTINATION_TARGETING);
         
-    #if DC_SERVER
     dest->choose_destination();
     broadcast_object_in_transit(object, dest);
-    #endif
 
     // face the target
     dest->orient_to_target(position);    
     Vec3 angles = physics->get_angles();
     angles.x = vec3_to_theta(dest->target_direction); // only rotate in x
     physics->set_angles(angles);
+    #endif
 
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -415,12 +414,11 @@ static void in_transit(class Object* object)
 
     #if DC_CLIENT
     if (!dest_target->at_destination)
-    {
-        // face the target
-        dest_target->orient_to_target(position);    
-        Vec3 angles = physics->get_angles();
-        angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
-        physics->set_angles(angles);
+    {   // DONT UNCOMMENT THIS: BAD: MYSTERY ERROR:
+        //dest_target->orient_to_target(position);    
+        //Vec3 angles = physics->get_angles();
+        //angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
+        //physics->set_angles(angles);
 
         dest_target->move_on_surface();
         dest_target->check_at_destination();

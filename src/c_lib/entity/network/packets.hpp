@@ -427,7 +427,7 @@ class object_in_transit_StoC: public FixedSizeReliableNetPacketToClient<object_i
         uint16_t id;
         uint8_t type;
         uint16_t ticks_to_destination;
-        float x,y,z;
+        struct Vec3 destination;
         struct Vec3 dir;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
@@ -435,9 +435,7 @@ class object_in_transit_StoC: public FixedSizeReliableNetPacketToClient<object_i
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&ticks_to_destination, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
+        pack_vec3(&destination, buff, buff_n, pack);
         pack_vec3(&dir, buff, buff_n, pack);
     }
     inline void handle();
