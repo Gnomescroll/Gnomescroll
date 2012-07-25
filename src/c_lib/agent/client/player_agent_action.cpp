@@ -293,11 +293,13 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 {
                     Hud::add_predicted_block_damage(weapon_dmg);
                     Animations::predicted_block_damage += weapon_dmg;
+                    Animations::damaging_block = true;
                 }
                 else
                 {
                     Hud::set_predicted_block_damage(weapon_dmg);
                     Animations::predicted_block_damage = weapon_dmg;
+                    Animations::damaging_block = true;
                 }
                 
                 // make & record dmg request

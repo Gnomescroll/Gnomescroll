@@ -7,6 +7,7 @@ namespace Animations
 {
     
 int predicted_block_damage = 0;
+bool damaging_block = false;
 
 const int BLOCK_DAMAGE_LEVELS = 6;
 
@@ -14,6 +15,10 @@ static GLuint block_damage_texture = 0;
 
 static struct Vec3 veb[8];     //vertex positions
 static struct Vec3 veb2[6*4];  //vertex array for rendering
+
+static int tick_since_last_damage_change = 0;
+static int ticks_begin_fade = 30;
+static int ticks_end_fade = 60;
 
 // load texture
 void init_block_damage()
@@ -72,15 +77,21 @@ static void render(int sprite_index, int x, int y, int z)
         veb2[4*i+3] = veb[q_set[4*i+3]];
     }
 
-    glColor4ub(255,255,255,128);
+    unsigned char alpha = 256;
+    
+    float t = tick_since_last_damage_change - ticks_begin_fade;
+    t = ((float)ticks_end_fade - t)/(float)ticks_end_fade;
+    if (tick_since_last_damage_change > ticks_begin_fade)
+        alpha = (unsigned char)((float)alpha) * t;
+    glColor4ub(255,255,255,alpha);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
 
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.2f);
-    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glBindTexture(GL_TEXTURE_2D, block_damage_texture);
         
     // draw block damage overlay
@@ -101,11 +112,21 @@ static void render(int sprite_index, int x, int y, int z)
     }
     glEnd();
     
-    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_BLEND);
 }
 
 void render_block_damage()
 {
+    if (damaging_block)
+        tick_since_last_damage_change = 0;
+    else
+        tick_since_last_damage_change++;
+    
+    damaging_block = false;
+    
+    if (tick_since_last_damage_change > ticks_begin_fade+ticks_end_fade)
+        return;
+    
     int dmg = t_map::requested_block_damage;
     int max_dmg = maxDamage(t_map::requested_block_type);
     dmg += predicted_block_damage;
