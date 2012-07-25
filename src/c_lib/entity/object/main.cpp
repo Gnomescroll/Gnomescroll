@@ -3,6 +3,8 @@
 #include <entity/components.hpp>
 #include <entity/object/helpers.hpp>
 #include <entity/object/filter.hpp>
+#include <entity/object/types.hpp>
+#include <entity/object/config.hpp>
 
 namespace Objects
 {
@@ -15,26 +17,18 @@ ObjectListFilter* filter = NULL;
 
 void load_object_data()
 {
-    // refills
-    //load_pickup_sprite_data(OBJECT_HEALTH_REFILL);
-    //load_pickup_sprite_data(OBJECT_LASER_REFILL);
-    //load_pickup_sprite_data(OBJECT_GRENADE_REFILL);
-    // gemstones
-
-    // fabs
-    load_base_data();
-    load_agent_spawner_data();
-    load_energy_core_data();
-    load_turret_data();
-
-    // mobs
-    load_mob_spawner_data();
-    load_mob_robot_box_data();
-    load_mob_bomb_data();
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        objectLoad load = get_object_load_method((ObjectType)i);
+        if (load != NULL) load();
+    }
 }
 
 void init()
 {   // must specify maximum values for objects here
+
+    init_config();
+
     GS_ASSERT(object_list == NULL);
     GS_ASSERT(object_data == NULL);
     GS_ASSERT(filter == NULL);
@@ -45,17 +39,13 @@ void init()
     object_list = new ObjectList;
     object_list->init();
     
-    // fabs
-    object_list->set_object_max(OBJECT_BASE, 2);
-    object_list->set_object_max(OBJECT_AGENT_SPAWNER, 1024);
-    object_list->set_object_max(OBJECT_ENERGY_CORE, 1024);
-    object_list->set_object_max(OBJECT_TURRET, 512);
-
-    // mobs
-    object_list->set_object_max(OBJECT_MONSTER_SPAWNER, 64);
-    object_list->set_object_max(OBJECT_MONSTER_BOX, 1024);
-    object_list->set_object_max(OBJECT_MONSTER_BOMB, 512);
-
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        int max = get_object_max((ObjectType)i);
+        if (max > 0)
+            object_list->set_object_max((ObjectType)i, max);
+    }
+    
     object_data = new ObjectDataList;
     object_data->init();
     load_object_data();
@@ -69,6 +59,7 @@ void teardown()
     if (object_list != NULL) delete object_list;
     if (object_data != NULL) delete object_data;
     if (filter != NULL) delete filter;
+    teardown_config();
 }
 
 /* Iterators */
@@ -92,32 +83,10 @@ void harvest()
 
 static Object* create_switch(ObjectType type)
 {
-    switch (type)
-    {
-        // fabs
-        case OBJECT_BASE:
-            return create_base();
-        case OBJECT_AGENT_SPAWNER:
-            return create_agent_spawner();
-        case OBJECT_TURRET:
-            return create_turret();
-        case OBJECT_ENERGY_CORE:
-            return create_energy_core();
-
-        // mobs
-        case OBJECT_MONSTER_SPAWNER:
-            return create_mob_spawner();
-        case OBJECT_MONSTER_BOX:
-            return create_mob_robot_box();
-        case OBJECT_MONSTER_BOMB:
-            return create_mob_bomb();
-        
-        default:
-            GS_ASSERT(false);
-            printf("WARNING: creating unknown object type %d\n", type);
-            return NULL;
-    }
-    return NULL;
+    objectCreate create = get_object_create_method(type);
+    GS_ASSERT(create != NULL);
+    if (create == NULL) return NULL;
+    return create();
 }
 
 Object* create(ObjectType type)
@@ -141,37 +110,10 @@ void ready_switch(Object* object)
 {
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
-    switch (object->type)
-    {
-        // fabs
-        case OBJECT_BASE:
-            ready_base(object);
-            break;
-        case OBJECT_AGENT_SPAWNER:
-            ready_agent_spawner(object);
-            break;
-        case OBJECT_TURRET:
-            ready_turret(object);
-            break;
-        case OBJECT_ENERGY_CORE:
-            ready_energy_core(object);
-            break;
 
-        // mobs
-        case OBJECT_MONSTER_SPAWNER:
-            ready_mob_spawner(object);
-            break;
-        case OBJECT_MONSTER_BOX:
-            ready_mob_robot_box(object);
-            break;
-        case OBJECT_MONSTER_BOMB:
-            ready_mob_bomb(object);
-            break;
-
-        default:
-            printf("WARNING: birthing unknown object type %d\n", object->type);
-            break;
-    }
+    objectReady ready = get_object_ready_method(object->type);
+    GS_ASSERT(ready != NULL);
+    if (ready != NULL) ready(object);
 }
 
 void destroy_switch(Object* object)
@@ -179,37 +121,11 @@ void destroy_switch(Object* object)
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
     ObjectType type = object->type;
-    switch (type)
-    {
-        // fabs
-        case OBJECT_BASE:
-            die_base(object);
-            break;
-        case OBJECT_AGENT_SPAWNER:
-            die_agent_spawner(object);
-            break;
-        case OBJECT_TURRET:
-            die_turret(object);
-            break;
-        case OBJECT_ENERGY_CORE:
-            die_energy_core(object);
-            break;
-
-        // mobs
-        case OBJECT_MONSTER_SPAWNER:
-            die_mob_spawner(object);
-            break;
-        case OBJECT_MONSTER_BOX:
-            die_mob_robot_box(object);
-            break;
-        case OBJECT_MONSTER_BOMB:
-            die_mob_bomb(object);
-            break;
-
-        default:
-            printf("WARNING: destroying unknown object type %d\n", type);
-            break;
-    }
+    
+    objectDie die = get_object_die_method(type);
+    GS_ASSERT(die != NULL);
+    if (die != NULL) die(object);
+    
     release_object_components(object);
     int id = object->id;
     object_list->destroy(type, id);
@@ -325,5 +241,26 @@ void spawn_mobs()
         if (child != NULL) Objects::ready(child);
     }
 }
+
+#if DC_SERVER
+void send_object_state_machines(const ObjectType type, const int client_id)
+{
+    GS_ASSERT(type == OBJECT_MONSTER_BOMB);
+    if (type != OBJECT_MONSTER_BOMB) return;    // TODO
+    
+    if (object_list->empty(type)) return;
+
+    Object** objects = object_list->get_objects(type);
+    GS_ASSERT(objects != NULL);
+    char* used = object_list->get_used(type);
+    GS_ASSERT(used != NULL);
+    int max = object_list->max(type);
+    GS_ASSERT(max > 0);
+
+    for (int i=0; i<max; i++)
+        if (used[i])
+            send_mob_bomb_state_machine_to_client(client_id, objects[i]);
+}
+#endif
 
 } // Objects

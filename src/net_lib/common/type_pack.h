@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include <c_lib/physics/vec3.hpp>
+
 //always inline
 
 /*
@@ -10,6 +12,8 @@ static inline void pack_message_id(uint8_t message_id, char* buff, unsigned int*
 static inline void unpack_message_id(uint8_t* message_id, char* buff, unsigned int* buff_n)  __attribute__((always_inline));
 
 static inline void pack_float(float* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
+
+static inline void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 
 static inline void pack_32(int32_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 static inline void pack_u32_t(uint32_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
@@ -21,6 +25,7 @@ static inline void pack_8(int8_t* x, char* buff, unsigned int* buff_n, bool pack
 static inline void pack_u8(uint8_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 
 static inline void pack_string(char* str, unsigned int len, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
+
 //use pack_string
 
 
@@ -42,6 +47,13 @@ static inline void pack_float(float* x, char* buff, unsigned int* buff_n, bool p
     if(pack == true) *((float*)(buff+*buff_n)) = *x;
     if(pack == false) *x = *((float*)(buff+*buff_n));
     *buff_n += (int)sizeof(float);
+}
+
+static inline void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, bool pack)
+{
+    pack_float(&(x->x), buff, buff_n, pack);
+    pack_float(&(x->y), buff, buff_n, pack);
+    pack_float(&(x->z), buff, buff_n, pack);
 }
 
 static inline void pack_32(int32_t* x, char* buff, unsigned int* buff_n, bool pack)

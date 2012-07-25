@@ -126,7 +126,7 @@ void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Co
     }
 }
 
-void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, int sprite_index, float tx, float ty, float sprite_width)
+void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, float tx, float ty, float sprite_width)
 {
     position = quadrant_translate_position(current_camera_position, position);
     const float

@@ -188,6 +188,7 @@ int run()
         Animations::prep_insect_mob();
         Particle::prep_shrapnel();
         Skybox::prep_skybox();
+        Animations::prep_voxel_particles();
 
         /*
             Map
@@ -272,7 +273,7 @@ int run()
         Animations::draw_hitscan_effect();
         //Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
-
+        Animations::draw_voxel_particles();
 
         poll_mouse();
 
@@ -288,9 +289,14 @@ int run()
         // update mouse
         poll_mouse();
 
+        ClientState::agent_list->draw_equipped_items();
+
         /*
             Draw Hud
         */
+
+        // update mouse
+        poll_mouse();
 
         // with depth test disable
         int equipped_item_type = Toolbelt::get_selected_item_type();

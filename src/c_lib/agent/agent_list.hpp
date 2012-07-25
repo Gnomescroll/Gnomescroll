@@ -18,16 +18,16 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int check_name_interval;
         
     public:
+    
         #if DC_SERVER
         void update_map_manager_positions();
+        void send_to_client(int client_id);
         #endif
 
         void update_models();
 
         int ids_in_use[AGENT_MAX];
-        
-        void send_to_client(int client_id);
-
+    
         int get_ids();
 
         bool name_available(char* name);
@@ -43,10 +43,11 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int objects_within_sphere(float x, float y, float z, float radius);
         void objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
 
-		#if DC_CLIENT
+        #if DC_CLIENT
         void check_missing_names();
-		void draw_names();
-		#endif
+        void draw_names();
+        void draw_equipped_items();
+        #endif
 
         Agent_list();
         ~Agent_list()

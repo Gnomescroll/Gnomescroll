@@ -43,22 +43,22 @@ namespace ServerState
         Objects::Object* base = Objects::create(OBJECT_BASE);
         GS_ASSERT(base != NULL);
         if (base == NULL) return;
-		using Components::PhysicsComponent;
-		PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-		GS_ASSERT(physics != NULL);
-		if (physics != NULL)
-		{
-			using Components::DimensionComponent;
-			DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-			GS_ASSERT(dims != NULL);
-			int h = 1;
-			if (dims != NULL) h = (int)ceil(dims->get_height());
-			float x = randrange(0, map_dim.x-1);
-			float y = randrange(0, map_dim.y-1);
-			float z = t_map::get_highest_open_block(x,y, h);
-			physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
-		}
-		Objects::ready(base);
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (physics != NULL)
+        {
+            using Components::DimensionComponent;
+            DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+            GS_ASSERT(dims != NULL);
+            int h = 1;
+            if (dims != NULL) h = (int)ceil(dims->get_height());
+            float x = randrange(0, map_dim.x-1);
+            float y = randrange(0, map_dim.y-1);
+            float z = t_map::get_highest_open_block(x,y, h);
+            physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
+        }
+        Objects::ready(base);
     }
 
     void check_agents_at_base()
@@ -146,6 +146,9 @@ namespace ServerState
         Objects::send_to_client(OBJECT_AGENT_SPAWNER, client_id);
         Objects::send_to_client(OBJECT_ENERGY_CORE, client_id);
         Objects::send_to_client(OBJECT_MONSTER_BOMB, client_id);
+        
+        // DOESNT WORK RIGHT:
+        Objects::send_object_state_machines(OBJECT_MONSTER_BOMB, client_id);
         Objects::send_to_client(OBJECT_MONSTER_BOX, client_id);
         Objects::send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
     }

@@ -104,7 +104,8 @@ void HitscanEffect::draw(float delta, Vec3 camera)
     float y = quadrant_translate_f(camera.y, this->y);
     float z = this->z;
 
-    if (point_fulstrum_test(x,y,z) == false) return;
+    // Disabled for lasers, point test too inaccurate
+    //if (point_fulstrum_test(x,y,z) == false) return;
 
     Vec3 v = vec3_init(vx,vy,vz);
     normalize_vector(&v);

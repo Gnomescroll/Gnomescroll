@@ -205,10 +205,10 @@ inline void object_shot_object_StoC::handle()
     if (obj == NULL) return;
 
     // get firing position of object
-	using Components::PhysicsComponent;
-	PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-	if (physics == NULL) return;
-	Vec3 position = physics->get_position();
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
@@ -219,7 +219,7 @@ inline void object_shot_object_StoC::handle()
     if (a == NULL || a->vox == NULL) return;
     // update the model, in case it is out of date.
     force_update_agent_vox(a);
-	
+    
     Vec3 dest = a->vox->get_center(this->target_part);
     dest = quadrant_translate_position(position, dest);
 
@@ -359,14 +359,14 @@ inline void object_choose_destination_StoC::handle()
     
     Vec3 destination = vec3_init(this->x, this->y, this->z);
     motion->destination = quadrant_translate_position(position, destination);
-    motion->ticks_to_destination = this->ticks;
-
+    motion->ticks_to_destination = this->ticks_to_destination;
+    
     // set momentum from destination :: TODO MOVE
     Vec3 direction = vec3_sub(motion->destination, position);
-    if (this->ticks)
+    if (this->ticks_to_destination)
     {
         float len = vec3_length(direction);
-        float speed = len / ((float)this->ticks);
+        float speed = len / ((float)this->ticks_to_destination);
         motion->speed = speed;
         motion->at_destination = false;
         motion->en_route = true;
@@ -429,6 +429,93 @@ inline void object_took_damage_StoC::handle()
     b->set_scale(1.0f);
     b->set_ttl(245);
 }
+
+inline void object_begin_waiting_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+    
+    using Components::StateMachineComponent;
+    StateMachineComponent* machine = (StateMachineComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    if (machine == NULL) return;
+    if (machine->router != NULL)
+        machine->router(obj, STATE_WAITING);
+}
+
+inline void object_in_transit_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    GS_ASSERT(obj != NULL);
+    if (obj == NULL) return;
+
+    using Components::DestinationTargetingComponent;
+    DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)
+        obj->get_component(COMPONENT_DESTINATION_TARGETING);
+    GS_ASSERT(dest_target != NULL);
+    if (dest_target == NULL) return;
+    
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    GS_ASSERT(physics != NULL);
+    if (physics == NULL) return;
+    struct Vec3 pos = physics->get_position();
+    
+    dest_target->ticks_to_destination = this->ticks_to_destination;
+
+    dest_target->set_destination(destination);
+    dest_target->orient_to_target(pos);
+    
+    if (this->ticks_to_destination)
+    {
+        destination = quadrant_translate_position(pos, destination);
+        Vec3 direction = vec3_sub(destination, pos);
+        float len = vec3_length(direction);
+        dest_target->speed = len / ((float)this->ticks_to_destination);
+    }
+    else
+    {   // 0 ticks is teleport
+        if (physics != NULL) physics->set_position(destination);
+        dest_target->speed = 0.0f;
+        dest_target->at_destination = true;
+    }
+    
+    using Components::StateMachineComponent;
+    StateMachineComponent* machine = (StateMachineComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    GS_ASSERT(machine != NULL);
+    if (machine == NULL) return;
+    if (machine->router != NULL)
+        machine->router(obj, STATE_IN_TRANSIT);
+}
+
+inline void object_chase_agent_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+    
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+
+    using Components::AgentTargetingComponent;
+    AgentTargetingComponent* target = (AgentTargetingComponent*)
+        obj->get_component(COMPONENT_AGENT_TARGETING);
+    if (target == NULL) return;
+    target->target_id = this->target_id;
+    target->target_type = OBJECT_AGENT;
+    if (physics != NULL)
+        target->orient_to_target(physics->get_position());
+    
+    using Components::StateMachineComponent;
+    StateMachineComponent* machine = (StateMachineComponent*)
+        obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    if (machine == NULL) return;
+    if (machine->router != NULL)
+        machine->router(obj, STATE_CHASE_AGENT);
+}
+
 #endif
 
 #if DC_SERVER
@@ -451,4 +538,7 @@ inline void object_choose_weapon_target_StoC::handle() {}
 inline void object_choose_destination_StoC::handle() {}
 inline void object_took_damage_StoC::handle() {}
 inline void object_state_health_StoC::handle() {}
+inline void object_begin_waiting_StoC::handle() {}
+inline void object_in_transit_StoC::handle() {}
+inline void object_chase_agent_StoC::handle() {}
 #endif

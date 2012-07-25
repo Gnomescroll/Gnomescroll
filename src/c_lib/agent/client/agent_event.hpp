@@ -22,11 +22,11 @@ class Agent_event {
         bool model_was_changed;
     public:
 
-		bool color_changed;
+        bool color_changed;
 
         class Particle::BillboardTextHud bb;
-		void update_hud_name();
-		
+        void update_hud_name();
+        
         // side effects of taking damage. dont modify health/death here
         void took_damage(int dmg);
         void healed(int health);

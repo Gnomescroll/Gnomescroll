@@ -23,6 +23,12 @@ void control_node_render_teardown();	//internal method
 void control_node_render_update();
 void control_node_render_draw();
 
+// block damage info
+void request_block_damage(int x, int y, int z);
+void received_block_damage_response(unsigned int request_id, unsigned int dmg);
+int get_requested_block_remaining_health();
+bool is_last_requested_block(int x, int y, int z);
+extern unsigned int requested_block_damage;
 #endif
 
 #if DC_SERVER

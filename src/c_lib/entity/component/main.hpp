@@ -45,6 +45,12 @@ extern DimensionComponentList* dimension_component_list;
 
 extern WeaponTargetingComponentList* weapon_targeting_component_list;
 extern MotionTargetingComponentList* motion_targeting_component_list;
+extern DestinationTargetingComponentList* destination_targeting_component_list;
+extern AgentTargetingComponentList* agent_targeting_component_list;
+
+extern StateMachineComponentList* state_machine_component_list;
+
+extern WaitingComponentList* waiting_component_list;
 
 extern RateLimitComponentList* rate_limit_component_list;
 

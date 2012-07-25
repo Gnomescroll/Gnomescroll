@@ -51,11 +51,11 @@ class Voxel_volume
     
     inline void get_center(float *v)
     {
-        v[0] = world_matrix.v[3].f[0];
-        v[1] = world_matrix.v[3].f[1];
-        v[2] = world_matrix.v[3].f[2];
+        v[0] = world_matrix.c.x;
+        v[1] = world_matrix.c.y;
+        v[2] = world_matrix.c.z;
     }
-    inline struct Vec3 get_center(){ return world_matrix.v[3]; }
+    inline struct Vec3 get_center(){ return world_matrix.c; }
 
     #if DC_CLIENT
     class Voxel_render_list* voxel_render_list;

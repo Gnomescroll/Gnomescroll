@@ -23,6 +23,8 @@ dont_include_this_file_in_server
 #include <item/properties.hpp>
 #include <item/config/item_attribute.hpp>
 
+#include <hud/hud.hpp>
+
 void PlayerAgent_action::hitscan_laser()
 {
     if (p->you == NULL) return;
@@ -274,9 +276,29 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             }
             if (block_pos[2] >= 0 && block_pos[2] < map_dim.z)
             {
-                block_msg.x = block_pos[0];
-                block_msg.y = block_pos[1];
-                block_msg.z = block_pos[2];
+                int x = block_pos[0];
+                int y = block_pos[1];
+                int z = block_pos[2];
+                
+                // update predicted dmg
+                // TODO -- all of this should be in the toolbelt callback probably
+                // get block dmg for selected weapon
+                // if block pos matched last requested block pos
+                // add it to hud draw settings predicted
+                // else, set it to hud draw settings predicted
+                int block_type = t_map::get(x,y,z);
+                int weapon_dmg = Item::get_item_block_damage(weapon_type, block_type);
+                if (t_map::is_last_requested_block(x,y,z))
+                    Hud::add_predicted_block_damage(weapon_dmg);
+                else
+                    Hud::set_predicted_block_damage(weapon_dmg);
+                
+                // make & record dmg request
+                t_map::request_block_damage(x,y,z);
+
+                block_msg.x = x;
+                block_msg.y = y;
+                block_msg.z = z;
                 block_msg.weapon_type = weapon_type;
                 block_msg.send();
             }

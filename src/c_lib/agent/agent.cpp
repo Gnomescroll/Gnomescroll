@@ -676,10 +676,34 @@ Vec3 Agent_state::camera_position()
     return vec3_init(this->s.x, this->s.y, this->camera_z());
 }
 
+class Voxel_volume* Agent_state::get_arm()
+{
+    if (this->vox == NULL) return NULL;
+    return this->vox->get_part(AGENT_PART_RARM);
+}
+
 Vec3 Agent_state::arm_center()
 {
     if (this->vox == NULL) return vec3_init(0,0,0);
-    return this->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    return this->vox->get_part(AGENT_PART_RARM)->get_center();
+}
+
+Vec3 Agent_state::arm_forward()
+{
+    if (this->vox == NULL) return vec3_init(1,0,0);
+    return this->vox->get_part(AGENT_PART_RARM)->world_matrix.vx;
+}
+
+Vec3 Agent_state::arm_right()
+{
+    if (this->vox == NULL) return vec3_init(0,1,0);
+    return this->vox->get_part(AGENT_PART_RARM)->world_matrix.vy;
+}
+
+Vec3 Agent_state::arm_up()
+{
+    if (this->vox == NULL) return vec3_init(0,0,1);
+    return this->vox->get_part(AGENT_PART_RARM)->world_matrix.vz;
 }
 
 int Agent_state::get_facing_block_type()

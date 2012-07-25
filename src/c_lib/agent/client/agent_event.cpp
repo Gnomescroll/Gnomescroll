@@ -23,11 +23,11 @@ dont_include_this_file_in_server
 
 void Agent_event::name_changed(char* old_name)
 {
-	GS_ASSERT(this->a->status.name != NULL);
-	GS_ASSERT(old_name != NULL);
-	if (this->a->status.name == NULL || old_name == NULL) return;
-	
-	this->bb.set_text(this->a->status.name);
+    GS_ASSERT(this->a->status.name != NULL);
+    GS_ASSERT(old_name != NULL);
+    if (this->a->status.name == NULL || old_name == NULL) return;
+    
+    this->bb.set_text(this->a->status.name);
 
     if (a->is_you())
     {
@@ -69,33 +69,33 @@ void Agent_event::update_hud_name()
     Vec3 p = this->a->get_position();
     this->bb.set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
     
-	// determine color based on health
+    // determine color based on health
 
-	using namespace AgentHudName;
+    using namespace AgentHudName;
 
-	struct Color color = HEALTH_TEXT_DEAD_COLOR;	// default, dead color
-	
-	if (!this->a->status.dead)
-	{	// calculate interpolated color from health ratio and color control health_color_points
+    struct Color color = HEALTH_TEXT_DEAD_COLOR;    // default, dead color
+    
+    if (!this->a->status.dead)
+    {    // calculate interpolated color from health ratio and color control health_color_points
         int health = 0;
         if (this->a->status.health > 0) health = this->a->status.health;
-		GS_ASSERT(this->a->status.health_max > 0);
-		float h = ((float)health)
-				/ ((float)this->a->status.health_max);
-		
-		if (h >= health_color_points[0])
-			color = health_colors[0];	// degenerate case, out of range
-		else
-			for (unsigned int i=0; i<COLOR_COUNT-1; i++)
-				if (h < health_color_points[i] && h >= health_color_points[i+1])
-				{
-					color = interpolate_color(health_colors[i], health_colors[i+1],
-						(health_color_points[i] - h) / (health_color_points[i] - health_color_points[i+1]));
-					break;
-				}
-	}
+        GS_ASSERT(this->a->status.health_max > 0);
+        float h = ((float)health)
+                / ((float)this->a->status.health_max);
+        
+        if (h >= health_color_points[0])
+            color = health_colors[0];    // degenerate case, out of range
+        else
+            for (unsigned int i=0; i<COLOR_COUNT-1; i++)
+                if (h < health_color_points[i] && h >= health_color_points[i+1])
+                {
+                    color = interpolate_color(health_colors[i], health_colors[i+1],
+                        (health_color_points[i] - h) / (health_color_points[i] - health_color_points[i+1]));
+                    break;
+                }
+    }
 
-	this->bb.set_color(color);
+    this->bb.set_color(color);
 }
 
 // side effects of taking damage. dont modify health/death here
@@ -293,7 +293,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     const float hitscan_speed = 200.0f;
     Vec3 arm_center = this->a->arm_center();
 
-	f = vec3_scalar_mult(f, hitscan_speed);
+    f = vec3_scalar_mult(f, hitscan_speed);
     
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
@@ -349,7 +349,7 @@ void Agent_event::fired_weapon_at_nothing()
     
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
-	f = vec3_scalar_mult(f, hitscan_speed);
+    f = vec3_scalar_mult(f, hitscan_speed);
     Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
@@ -415,10 +415,10 @@ vox_status(AGENT_VOX_IS_STANDING),
 model_was_changed(true),
 color_changed(false)
 {
-	this->bb.init();
-	this->bb.permanent = true;
-	if (this->a->status.name != NULL)
-		this->bb.set_text(this->a->status.name);
-	this->bb.set_color(255,10,10,255);
-	this->bb.set_scale(AgentHudName::SIZE);	
+    this->bb.init();
+    this->bb.permanent = true;
+    if (this->a->status.name != NULL)
+        this->bb.set_text(this->a->status.name);
+    this->bb.set_color(255,10,10,255);
+    this->bb.set_scale(AgentHudName::SIZE);    
 }

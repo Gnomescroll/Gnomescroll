@@ -46,14 +46,17 @@ class VoxelComponent: public DrawComponent
             this->forward = forward;
             this->right = right;
             this->normal = normal;
+            
+            this->rotation_matrix = mat3_euler_rotation(theta, phi, 0.0f);
         }
 
-    protected:
+    public:
+        // TODO - deprecate vectors
         Vec3 forward;
         Vec3 right;
         Vec3 normal;
 
-    public:
+        struct Mat3 rotation_matrix;    
 
         float size;
         float theta, phi;

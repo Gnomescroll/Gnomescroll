@@ -30,8 +30,13 @@ const float MONSTER_BOMB_MOTION_PROXIMITY_RADIUS = 15.0f;
 const int MONSTER_BOMB_MAX_TARGET_LOCK_TICKS = 30 * 10; // will lose target after 10 seconds
 
 // motion
-const float MONSTER_BOMB_SPEED = 0.25f;
+const float MONSTER_BOMB_WALK_SPEED = 0.125f;
+const float MONSTER_BOMB_CHASE_SPEED = 0.25f;
 const int MONSTER_BOMB_MOTION_MAX_Z_DIFF = 5;
+const int MONSTER_BOMB_WALK_RANGE = 10;
+
+// waiting
+const unsigned int MONSTER_BOMB_IDLE_TIME = 30 * 6;
 
 // animations
 const struct Color MONSTER_BOMB_ANIMATION_COLOR = { 31,223,223 };

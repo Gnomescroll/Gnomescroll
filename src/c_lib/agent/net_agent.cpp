@@ -331,7 +331,7 @@ inline void agent_conflict_notification_StoC::handle()
     char* msg = (char*)calloc(512, sizeof(char));
     switch (method)
     {
-		case DEATH_KILLME:
+        case DEATH_KILLME:
         case DEATH_NORMAL:
             if (suicide)
             {
@@ -491,12 +491,12 @@ inline void set_spawner_StoC::handle()
 
 inline void agent_color_StoC::handle()
 {
-	Agent_state* a = ClientState::agent_list->get(this->agent_id);
-	GS_ASSERT(a != NULL);
-	if (a == NULL) return;
-	
-	struct Color color = {r,g,b};
-	a->status.set_color(color);
+    Agent_state* a = ClientState::agent_list->get(this->agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    
+    struct Color color = {r,g,b};
+    a->status.set_color(color);
     
     if (this->agent_id == ClientState::playerAgent_state.agent_id)
     {
@@ -578,20 +578,20 @@ inline void version_CtoS::handle()
 
 inline void colorme_CtoS::handle()
 {
-	Agent_state* a = NetServer::agents[this->client_id];
-	GS_ASSERT(a != NULL);
-	if (a == NULL) return;
-	if (!r && !g && !b) { r=g=b=1; }	// dont allow 0,0,0 (interpreted as empty voxel)
-	struct Color color = {r,g,b};
-	a->status.set_color(color);
+    Agent_state* a = NetServer::agents[this->client_id];
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    if (!r && !g && !b) { r=g=b=1; }    // dont allow 0,0,0 (interpreted as empty voxel)
+    struct Color color = {r,g,b};
+    a->status.set_color(color);
 }
 
 inline void killme_CtoS::handle()
 {
-	Agent_state* a = NetServer::agents[this->client_id];
-	if (a == NULL) return;
+    Agent_state* a = NetServer::agents[this->client_id];
+    if (a == NULL) return;
 
-	a->status.die(a->id, a->type, DEATH_KILLME);
+    a->status.die(a->id, a->type, DEATH_KILLME);
 }
 
 inline void Agent_cs_CtoS::handle()
@@ -685,7 +685,6 @@ inline void hitscan_object_CtoS::handle()
         force_update_agent_vox(a);
         // apply damage
         agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-        //destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
     }
     else
     {
@@ -703,8 +702,28 @@ inline void hitscan_object_CtoS::handle()
         using Components::MotionTargetingComponent;
         MotionTargetingComponent* motion_targeting = (MotionTargetingComponent*)
             obj->get_component(COMPONENT_MOTION_TARGETING);
-        if (motion_targeting != NULL && motion_targeting->target_type == OBJECT_NONE)
-            motion_targeting->set_target(OBJECT_AGENT, a->id);
+        if (motion_targeting != NULL)
+        {
+            if (motion_targeting->target_type == OBJECT_NONE)
+                motion_targeting->set_target(OBJECT_AGENT, a->id);
+        }
+        else
+        {
+            using Components::AgentTargetingComponent;
+            AgentTargetingComponent* agent_targeting = (AgentTargetingComponent*)
+                obj->get_component(COMPONENT_AGENT_TARGETING);
+            if (agent_targeting != NULL)
+            {
+                if (agent_targeting->target_type == OBJECT_NONE)
+                    agent_targeting->set_target(a->id);
+
+                using Components::StateMachineComponent;
+                StateMachineComponent* state_machine = (StateMachineComponent*)
+                    obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+                if (state_machine != NULL && state_machine->router != NULL)
+                    state_machine->router(obj, STATE_CHASE_AGENT);
+            }
+        }
     }
 
     agent_shot_object_StoC msg;

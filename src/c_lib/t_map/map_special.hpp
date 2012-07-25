@@ -355,6 +355,7 @@ class ControlNodeRenderer
 	{
 		short x,y,z;
 		unsigned char face;	//block side and edge
+		unsigned char tex;
 		unsigned char r,g,b;	//color
 	};
 
@@ -382,7 +383,7 @@ class ControlNodeRenderer
 		control_node_render_update();
 	};
 
-	void _insert_control_node_render_element(short x, short y, short z, unsigned char face);
+	void _insert_control_node_render_element(short x, short y, short z, unsigned char face, unsigned char tex);
 
 	void control_node_render_update();
 	//int cpi; //control point index
@@ -513,23 +514,20 @@ void ControlNodeRenderer::draw_intermediate()
 		float z = (float) cnra[i].z;
 		int face = cnra[i].face;
 
-		int tex_id = 0;
+		int tex_id = cnra[i].tex;
 
 		const float txmargin = 0.0f;
 		float tx_min, ty_min, tx_max, ty_max;
 
-        int ti = tex_id % 4;
-        int tj = tex_id / 4;
+        int ti = tex_id % 16;
+        int tj = tex_id / 16;
 
-        tx_min = ti*0.25f + txmargin;
-        ty_min = tj*0.25f + txmargin;
-        tx_max = ti*0.25f + 0.25f - txmargin;
-        ty_max = tj*0.25f + 0.25f - txmargin;
+        const float h = 0.0625f;
 
-        tx_min = 0.0;
-        ty_min = 0.0;
-        tx_max = 0.25;
-        ty_max = 0.25;
+        tx_min = ti*h + txmargin;
+        ty_min = tj*h + txmargin;
+        tx_max = ti*h + h - txmargin;
+        ty_max = tj*h + h - txmargin;
 
 		int s = face;
 
@@ -556,13 +554,14 @@ void ControlNodeRenderer::draw_intermediate()
 }
 
 //utility
-void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, short z, unsigned char face)
+void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, short z, unsigned char face, unsigned char tex)
 {
 	struct CONTROL_NODE_RENDER cnr;
 	cnr.x = x;
 	cnr.y = y;
 	cnr.z = z;
 	cnr.face = face;
+	cnr.tex = tex;
 
 	cnra[cnri] = cnr; //insert
 	cnri++;
@@ -572,6 +571,51 @@ void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, 
 		cnrm *= 2;
 		cnra = (struct CONTROL_NODE_RENDER*) realloc(cnra, cnrm*sizeof(struct CONTROL_NODE_RENDER));
 	}
+}
+
+
+
+int calculate_tex(int face, int tex, int i, int j)
+{
+	const int UL = 17;
+	const int UM = 18;
+	const int UR = 19;
+
+	const int ML = 33;
+	const int MM = 34;
+	const int MR = 35;
+
+	const int BL = 49;
+	const int BM = 50;
+	const int BR = 51;
+
+	const int size = 6;
+
+	if(i == -size)
+	{
+		if(j == -size) return BL;
+		if(j == size) return UL;
+		return ML;
+	}
+
+	if(i == size)
+	{
+		if(j == -size) return BR;
+		if(j == size) return UR;
+		return MR;
+	}
+
+	if(j == -size)
+	{
+		return BM;
+	}
+
+	if(j == size)
+	{
+		return UM;
+	}
+	return MM;
+
 }
 
 void ControlNodeRenderer::control_node_render_update()
@@ -603,7 +647,8 @@ void ControlNodeRenderer::control_node_render_update()
 			if(!isSolid(x,y,z) && !isSolid(x,y,z+1) )
 			{
 				int face = 0;	//orientation
-				_insert_control_node_render_element(x,y,z, face);
+				int tex = calculate_tex(face, tex, i,j);
+				_insert_control_node_render_element(x,y,z, face, tex);
 			}
 		}
 
@@ -618,7 +663,8 @@ void ControlNodeRenderer::control_node_render_update()
 			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
 			{
 				int face = 1;	//orientation
-				_insert_control_node_render_element(x,y,z, face);
+				int tex = calculate_tex(face, tex, i,j);
+				_insert_control_node_render_element(x,y,z, face, tex);
 			}
 		}
 
@@ -633,7 +679,8 @@ void ControlNodeRenderer::control_node_render_update()
 			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
 			{
 				int face = 2;	//orientation
-				_insert_control_node_render_element(x,y,z, face);
+				int tex = calculate_tex(face, tex, i,j);
+				_insert_control_node_render_element(x,y,z, face, tex);
 			}
 		}
 
@@ -648,7 +695,8 @@ void ControlNodeRenderer::control_node_render_update()
 			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
 			{
 				int face = 3;	//orientation
-				_insert_control_node_render_element(x,y,z, face);
+				int tex = calculate_tex(face, tex, i,j);
+				_insert_control_node_render_element(x,y,z, face, tex);
 			}
 		}
 
@@ -663,7 +711,8 @@ void ControlNodeRenderer::control_node_render_update()
 			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
 			{
 				int face = 4;	//orientation
-				_insert_control_node_render_element(x,y,z, face);
+				int tex = calculate_tex(face, tex, i,j);
+				_insert_control_node_render_element(x,y,z, face, tex);
 			}
 		}
 
@@ -678,7 +727,8 @@ void ControlNodeRenderer::control_node_render_update()
 			if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
 			{
 				int face = 5;	//orientation
-				_insert_control_node_render_element(x,y,z, face);
+				int tex = calculate_tex(face, tex, i,j);
+				_insert_control_node_render_element(x,y,z, face, tex);
 			}
 		}
 	}

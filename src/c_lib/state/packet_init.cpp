@@ -161,6 +161,11 @@ void RegisterMessages()
     // damage
     object_took_damage_StoC::register_client_packet();
 
+    // bomb state machine
+    object_begin_waiting_StoC::register_client_packet();
+    object_in_transit_StoC::register_client_packet();
+    object_chase_agent_StoC::register_client_packet();
+
     /* init phase */
 
     request_remaining_state_CtoS::register_server_packet();
@@ -251,12 +256,15 @@ void RegisterMessages()
     t_map::clear_alias_StoC::register_client_packet();
 
     // block value change
-    t_map::block_CtoS::register_server_packet();
     t_map::block_set_StoC::register_client_packet();
     t_map::block_set_palette_StoC::register_client_packet();
 
     t_map::block_action_StoC::register_client_packet();
     t_map::map_metadata_StoC::register_client_packet();
+    
+    // block damage
+    t_map::request_block_damage_CtoS::register_server_packet();
+    t_map::block_damage_StoC::register_client_packet();
     
     t_map::container_block_chunk_reset_StoC::register_client_packet();
     t_map::container_block_create_StoC::register_client_packet();

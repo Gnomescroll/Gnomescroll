@@ -42,6 +42,12 @@ DimensionComponentList* dimension_component_list = NULL;
 
 WeaponTargetingComponentList* weapon_targeting_component_list = NULL;
 MotionTargetingComponentList* motion_targeting_component_list = NULL;
+DestinationTargetingComponentList* destination_targeting_component_list = NULL;
+AgentTargetingComponentList* agent_targeting_component_list = NULL;
+
+StateMachineComponentList* state_machine_component_list = NULL;
+
+WaitingComponentList* waiting_component_list = NULL;
 
 #if DC_CLIENT
 BillboardSpriteComponentList* billboard_sprite_component_list = NULL;
@@ -107,6 +113,16 @@ Component* get_switch(ComponentType type)
             return weapon_targeting_component_list->subscribe();
         case COMPONENT_MOTION_TARGETING:
             return motion_targeting_component_list->subscribe();
+        case COMPONENT_DESTINATION_TARGETING:
+            return destination_targeting_component_list->subscribe();
+        case COMPONENT_AGENT_TARGETING:
+            return agent_targeting_component_list->subscribe();
+
+        case COMPONENT_STATE_MACHINE:
+            return state_machine_component_list->subscribe();
+        
+        case COMPONENT_WAITING:
+            return waiting_component_list->subscribe();
 
         case COMPONENT_RATE_LIMIT:
             return rate_limit_component_list->subscribe();
@@ -204,6 +220,20 @@ void release_switch(Component* component)
         case COMPONENT_MOTION_TARGETING:
             motion_targeting_component_list->unsubscribe((MotionTargetingComponent*)component);
             break;
+        case COMPONENT_DESTINATION_TARGETING:
+            destination_targeting_component_list->unsubscribe((DestinationTargetingComponent*)component);
+            break;
+        case COMPONENT_AGENT_TARGETING:
+            agent_targeting_component_list->unsubscribe((AgentTargetingComponent*)component);
+            break;
+
+        case COMPONENT_STATE_MACHINE:
+            state_machine_component_list->unsubscribe((StateMachineComponent*)component);
+            break;
+            
+        case COMPONENT_WAITING:
+            waiting_component_list->unsubscribe((WaitingComponent*)component);
+            break;
 
         case COMPONENT_RATE_LIMIT:
             rate_limit_component_list->unsubscribe((RateLimitComponent*)component);
@@ -273,6 +303,12 @@ void init_components()
 
     weapon_targeting_component_list = new WeaponTargetingComponentList;
     motion_targeting_component_list = new MotionTargetingComponentList;
+    destination_targeting_component_list = new DestinationTargetingComponentList;
+    agent_targeting_component_list = new AgentTargetingComponentList;
+
+    state_machine_component_list = new StateMachineComponentList;
+    
+    waiting_component_list = new WaitingComponentList;
 
     rate_limit_component_list = new RateLimitComponentList;
 
@@ -319,6 +355,12 @@ void teardown_components()
 
     if (weapon_targeting_component_list != NULL) delete weapon_targeting_component_list;
     if (motion_targeting_component_list != NULL) delete motion_targeting_component_list;
+    if (destination_targeting_component_list != NULL) delete destination_targeting_component_list;
+    if (agent_targeting_component_list != NULL) delete agent_targeting_component_list;
+    
+    if (state_machine_component_list != NULL) delete state_machine_component_list;
+    
+    if (waiting_component_list != NULL) delete waiting_component_list;
 
     if (rate_limit_component_list != NULL) delete rate_limit_component_list;
 

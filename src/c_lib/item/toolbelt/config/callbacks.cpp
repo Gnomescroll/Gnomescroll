@@ -201,7 +201,11 @@ static class Objects::Object* place_object(int agent_id, ItemID item_id, int ite
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
-    if (physics != NULL) physics->set_position(vec3_init(b[0], b[1], b[2]));
+    if (physics != NULL)
+    {
+        Vec3 pos = vec3_init(b[0] + 0.5f, b[1] + 0.5f, b[2]);
+        physics->set_position(pos);
+    }
     
     // WARNING :: MUST CALL Objects::ready(obj);
     return obj;    

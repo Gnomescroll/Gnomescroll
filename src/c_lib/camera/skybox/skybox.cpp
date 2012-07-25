@@ -34,7 +34,7 @@ void init_shader()
 void init_texture()
 {
     SDL_Surface* surface = create_surface_from_file((char*)
-		"./media/texture/skybox/stars_and_north.png");
+        "./media/texture/skybox/stars_and_north.png");
 
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;
@@ -74,8 +74,8 @@ void init_texture()
 
 void generate_sky()
 {
-	GS_ASSERT(star_num > 0);
-	if (star_num <= 0) return;
+    GS_ASSERT(star_num > 0);
+    if (star_num <= 0) return;
     star_list = new STAR[star_num];
 
     float r = 256.0f;
@@ -99,33 +99,33 @@ void generate_sky()
         s.brightness = 0.2f + (0.8f)*randf();
         s.size = 1 + 3*randf();
         
-		s.type = rand()%16;
-		s.tx_min = (float)(s.type%4) * (1.0f/4.0f);
-		s.tx_max = s.tx_min + (1.0f/4.0f);
-		s.ty_min = (float)(s.type/4) * (1.0f/4.0f) * 0.5f;
-		s.ty_max = s.ty_min + (1.0f/4.0f) * 0.5f;
-		
+        s.type = rand()%16;
+        s.tx_min = (float)(s.type%4) * (1.0f/4.0f);
+        s.tx_max = s.tx_min + (1.0f/4.0f);
+        s.ty_min = (float)(s.type/4) * (1.0f/4.0f) * 0.5f;
+        s.ty_max = s.ty_min + (1.0f/4.0f) * 0.5f;
+        
         star_list[i] = s;
     }
 
-	// add north star
-	STAR s;
-	float t = 1.5f;
-	float z = 0.75f;
-	float _r = sqrtf(1.0f - z*z);
-	float x = _r * cosf(t);
-	float y = _r * sinf(t);
-	s.size = 12.0f;
-	s.x = r * x;
-	s.y = r * y;
-	s.z = r * z;
-	s.brightness = 1.0f;
-	s.type = NORTH_STAR_TYPE;
-	s.tx_min = 0.0f;
-	s.tx_max = 1.0f;
-	s.ty_min = 0.5f;
-	s.ty_max = 1.0f;
-	star_list[star_num-1] = s;
+    // add north star
+    STAR s;
+    float t = 1.5f;
+    float z = 0.75f;
+    float _r = sqrtf(1.0f - z*z);
+    float x = _r * cosf(t);
+    float y = _r * sinf(t);
+    s.size = 12.0f;
+    s.x = r * x;
+    s.y = r * y;
+    s.z = r * z;
+    s.brightness = 1.0f;
+    s.type = NORTH_STAR_TYPE;
+    s.tx_min = 0.0f;
+    s.tx_max = 1.0f;
+    s.ty_min = 0.5f;
+    s.ty_max = 1.0f;
+    star_list[star_num-1] = s;
 
     star_num = star_num;
 }
@@ -135,12 +135,13 @@ void init()
     init_texture();
     generate_sky();
     init_shader();
+    GS_ASSERT(star_vlist == NULL);
     star_vlist = new Animations::VertexElementList1;
 }
 
 void teardown()
 {
-    delete star_vlist;
+    if (star_vlist != NULL) delete star_vlist;
 }
 
 void pack_vertex_list()
@@ -201,37 +202,37 @@ void pack_vertex_list()
     
     float scale = s.size / 2.0f;
 
-	Vec3 up = vec3_init(
-		model_view_matrix[0]*scale,
-		model_view_matrix[4]*scale,
-		model_view_matrix[8]*scale
-	);
-	Vec3 right = vec3_init(
-		model_view_matrix[1]*scale,
-		model_view_matrix[5]*scale,
-		model_view_matrix[9]*scale
-	);
+    Vec3 up = vec3_init(
+        model_view_matrix[0]*scale,
+        model_view_matrix[4]*scale,
+        model_view_matrix[8]*scale
+    );
+    Vec3 right = vec3_init(
+        model_view_matrix[1]*scale,
+        model_view_matrix[5]*scale,
+        model_view_matrix[9]*scale
+    );
 
-	// align the star to the point that it was created at
-	v = vec3_sub(v, up);
-	v = vec3_sub(v, right);
+    // align the star to the point that it was created at
+    v = vec3_sub(v, up);
+    v = vec3_sub(v, right);
 
-	Vec3 pt1 = vec3_sub(v, vec3_add(right, up));
-	Vec3 pt2 = vec3_add(v, vec3_sub(up, right));
-	Vec3 pt3 = vec3_add(v, vec3_add(up, right));
-	Vec3 pt4 = vec3_add(v, vec3_sub(right, up));
-	
+    Vec3 pt1 = vec3_sub(v, vec3_add(right, up));
+    Vec3 pt2 = vec3_add(v, vec3_sub(up, right));
+    Vec3 pt3 = vec3_add(v, vec3_add(up, right));
+    Vec3 pt4 = vec3_add(v, vec3_sub(right, up));
+    
     if (
-		!point_fulstrum_test2(pt1.x, pt1.y, pt1.z) &&
-		!point_fulstrum_test2(pt2.x, pt2.y, pt2.z) &&
-		!point_fulstrum_test2(pt3.x, pt3.y, pt3.z) &&
-		!point_fulstrum_test2(pt4.x, pt4.y, pt4.z)
-	) return;
+        !point_fulstrum_test2(pt1.x, pt1.y, pt1.z) &&
+        !point_fulstrum_test2(pt2.x, pt2.y, pt2.z) &&
+        !point_fulstrum_test2(pt3.x, pt3.y, pt3.z) &&
+        !point_fulstrum_test2(pt4.x, pt4.y, pt4.z)
+    ) return;
 
-	star_vlist->push_vertex(pt1, s.tx_min,s.ty_max);
-	star_vlist->push_vertex(pt2, s.tx_max,s.ty_max);
-	star_vlist->push_vertex(pt3, s.tx_max,s.ty_min);
-	star_vlist->push_vertex(pt4, s.tx_min,s.ty_min);
+    star_vlist->push_vertex(pt1, s.tx_min,s.ty_max);
+    star_vlist->push_vertex(pt2, s.tx_max,s.ty_max);
+    star_vlist->push_vertex(pt3, s.tx_max,s.ty_min);
+    star_vlist->push_vertex(pt4, s.tx_min,s.ty_min);
 }
 
 void prep_skybox()
@@ -254,14 +255,10 @@ void draw()
     if (star_vlist == NULL) return;
 
     if (star_vlist->vertex_number <= 0) return;
-
-    GS_ASSERT(star_vlist->VBO != 0);
-    if (star_vlist->VBO == 0) return;
     
     glBindBuffer(GL_ARRAY_BUFFER, star_vlist->VBO);
 
     glColor3ub(255,255,255);
-
 
     glEnable(GL_TEXTURE_2D);
 
@@ -295,4 +292,4 @@ void draw()
 
 }
 
-}	// Skybox
+}    // Skybox

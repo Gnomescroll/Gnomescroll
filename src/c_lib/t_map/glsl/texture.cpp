@@ -73,7 +73,7 @@ void set_cube_side_texture(int id, int side, int tex_id)
         Init Pixel Sampler
     */
 
-	/*
+    /*
 
     //init pixel sampler if it has not been inited
     if (pixel_data[tex_id] == NULL) 
@@ -111,9 +111,9 @@ void set_cube_side_texture(int id, int side, int tex_id)
 
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
-	GS_ASSERT(TextureSheetLoader::CubeTextureStack != NULL);
-	if (TextureSheetLoader::CubeTextureStack == NULL) return;
-	
+    GS_ASSERT(TextureSheetLoader::CubeTextureStack != NULL);
+    if (TextureSheetLoader::CubeTextureStack == NULL) return;
+    
     int tex_id = get_cube_side_texture(cube_id, side);
     int ra = (32*32)*tex_id + (rand() % (32*32));
     unsigned int t = TextureSheetLoader::CubeTextureStack[ra];
@@ -136,6 +136,6 @@ void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsig
     printf("texture.cpp, get_texture_pixel(), not implemented\n");
 }
 
-}	// t_map
+}    // t_map
 
 #endif

@@ -32,9 +32,6 @@ class MotionTargetingComponent: public TargetingComponent
 
         void choose_destination();
 
-        // lock to location
-        //void lock_target_destination(Vec3 camera_position);
-
         void orient_to_target(Vec3 camera_position);
 
         bool move_on_surface();
@@ -51,7 +48,8 @@ class MotionTargetingComponent: public TargetingComponent
     : TargetingComponent(COMPONENT_MOTION_TARGETING),
     speed(1.0f), max_z_diff(128),
     destination_choice_x(1.0f), destination_choice_y(1.0f), 
-    destination(vec3_init(0,0,0)), at_destination(false), en_route(false), ticks_to_destination(1),
+    destination(vec3_init(0,0,0)), at_destination(false), en_route(false),
+    ticks_to_destination(1),
     max_lock_ticks(0), ticks_locked(0)
     {}
 };

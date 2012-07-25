@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/compat_gl.h>
+#include <physics/vec3.hpp>
 
 namespace Animations 
 {
@@ -24,7 +26,7 @@ class VertexElementList1
     int vlist_index;
     int vlist_max;
 
-    unsigned int VBO;
+    GLuint VBO;
     unsigned int vertex_number;
 
     VertexElementList1()
@@ -85,7 +87,7 @@ class VertexElementList1
 };
 
 /*
-    Textyred vertex element with normal
+    Textured vertex element with normal
 */
 
 struct vertexElement2
@@ -106,7 +108,7 @@ class VertexElementList2
     int vlist_index;
     int vlist_max;
 
-    unsigned int VBO;
+    GLuint VBO;
     unsigned int vertex_number;
 
     VertexElementList2()
@@ -125,6 +127,23 @@ class VertexElementList2
     }
 
     __attribute__((always_inline))
+    void push_vertex(struct Vec3 pos, float tx, float ty, struct Vec3 normal)
+     {
+        vlist[vlist_index].pos = pos;
+        vlist[vlist_index].tx = tx;
+        vlist[vlist_index].ty = ty;
+        vlist[vlist_index].n = normal;
+
+        vlist_index++;
+
+        if(vlist_index >= vlist_max)
+        {
+            vlist_max *= 2;
+            vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
+        }
+     }
+     
+    __attribute__((always_inline))
     void push_vertex(struct Vec3 pos, float tx, float ty)
      {
         vlist[vlist_index].pos = pos;
@@ -137,9 +156,25 @@ class VertexElementList2
         {
             vlist_max *= 2;
             vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
-            printf("1 size= %i \n", vlist_max); 
         }
      }
+     
+    void compute_face_normals(unsigned int vertex_stride)
+    {
+        GS_ASSERT(vertex_stride == 3 || vertex_stride == 4);
+        GS_ASSERT(this->vlist_index % vertex_stride == 0);
+        for (int i=0; i<this->vlist_index; i+=vertex_stride)
+        {
+            struct Vec3 a = vec3_sub(this->vlist[i+1].pos, this->vlist[i].pos);
+            normalize_vector(&a);
+            struct Vec3 b = vec3_sub(this->vlist[i+vertex_stride-1].pos, this->vlist[i].pos);
+            normalize_vector(&b);
+            struct Vec3 n = vec3_cross(a,b);
+            normalize_vector(&n);
+            for (unsigned int j=0; j<vertex_stride; j++)
+                this->vlist[i+j].n = n;
+        }
+    }
 
     //upload data to card for drawing
     void buffer()
