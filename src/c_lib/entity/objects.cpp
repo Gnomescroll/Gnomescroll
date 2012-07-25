@@ -43,8 +43,8 @@ void stress_test()
         }
         //printf("Maxed out %d to %d\n", type, n);
         //printf("Destroy %d of %d\n", n, type);
-        for (int i=0; i<n; i++)
-            destroy(type, i);
+        for (int j=0; j<n; j++)
+            destroy(type, j);
         //printf("Destroyed %d\n", n);
         ttl += n;
     }
