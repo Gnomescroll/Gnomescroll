@@ -117,6 +117,8 @@ static void render(int sprite_index, int x, int y, int z, float margin)
 
 void render_block_damage()
 {
+    if (!Options::animations) return;
+    
     if (damaging_block)
         tick_since_last_damage_change = 0;
     else
