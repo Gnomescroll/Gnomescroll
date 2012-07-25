@@ -26,7 +26,7 @@ dont_include_this_file_in_server
 
 #include <hud/hud.hpp>
 
-void PlayerAgent_action::hitscan_laser()
+void PlayerAgent_action::hitscan_laser(int weapon_type)
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
@@ -74,7 +74,10 @@ void PlayerAgent_action::hitscan_laser()
     hitscan_object_CtoS obj_msg;
 
     Agent_state* agent;
-    //int voxel_blast_radius = 1;
+    
+    int x,y,z;
+    int block_type;
+    int weapon_dmg;
     
     switch (target_type)
     {
@@ -108,10 +111,37 @@ void PlayerAgent_action::hitscan_laser()
             }
             break;
 
-        case Hitscan::HITSCAN_TARGET_BLOCK:    
-            block_msg.x = block_pos[0];
-            block_msg.y = block_pos[1];
-            block_msg.z = block_pos[2];
+        case Hitscan::HITSCAN_TARGET_BLOCK:
+            x = block_pos[0];
+            y = block_pos[1];
+            z = block_pos[2];
+            
+            // update predicted dmg
+            // TODO -- all of this should be in the toolbelt callback probably
+            // get block dmg for selected weapon
+            // if block pos matched last requested block pos
+            // add it to hud draw settings predicted
+            // else, set it to hud draw settings predicted
+            block_type = t_map::get(x,y,z);
+            GS_ASSERT(block_type != 0);
+            weapon_dmg = Item::get_item_block_damage(weapon_type, block_type);
+            if (t_map::is_last_requested_block(x,y,z))
+            {
+                Animations::predicted_block_damage += weapon_dmg;
+                Animations::damaging_block = true;
+            }
+            else
+            {
+                Animations::predicted_block_damage = weapon_dmg;
+                Animations::damaging_block = true;
+            }
+            
+            // make & record dmg request
+            t_map::request_block_damage(x,y,z);
+
+            block_msg.x = x;
+            block_msg.y = y;
+            block_msg.z = z;
             block_msg.send();
 
             // multiply look vector by distance to collision
@@ -288,6 +318,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 // add it to hud draw settings predicted
                 // else, set it to hud draw settings predicted
                 int block_type = t_map::get(x,y,z);
+                GS_ASSERT(block_type != 0);
                 int weapon_dmg = Item::get_item_block_damage(weapon_type, block_type);
                 if (t_map::is_last_requested_block(x,y,z))
                 {

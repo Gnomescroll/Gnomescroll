@@ -26,7 +26,7 @@ class PlayerAgent_action
         // compute this vector whenever a htiscan target is acquired
         Vec3 target_direction;
     
-        void hitscan_laser();
+        void hitscan_laser(int weapon_type);
 
         // mining laser
         int mining_laser_sound_id;

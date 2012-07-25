@@ -106,7 +106,7 @@ void trigger_local_grenade_launcher(ItemID item_id, int item_type)
 void trigger_local_hitscan_laser(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_HITSCAN_WEAPON);
-    ClientState::playerAgent_state.action.hitscan_laser();
+    ClientState::playerAgent_state.action.hitscan_laser(item_type);
 }
 
 #endif

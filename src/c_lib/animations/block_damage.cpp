@@ -41,7 +41,7 @@ static int get_sprite_index(int dmg, int max_dmg)
     return level;
 }
 
-static void render(int sprite_index, int x, int y, int z)
+static void render(int sprite_index, int x, int y, int z, float margin)
 {
     GS_ASSERT(block_damage_texture != 0);
     if (block_damage_texture == 0) return;
@@ -53,8 +53,7 @@ static void render(int sprite_index, int x, int y, int z)
     pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 0.5f));   // center
     pos = quadrant_translate_position(current_camera_position, pos);
 
-    const float MARGIN = 0.005f;
-    const float size = (1.0f + MARGIN) / 2.0f;
+    const float size = (1.0f + margin) / 2.0f;
     
     const float inc = ((float)sprite_width)/((float)texture_width);
     float tx_min = (sprite_index % (texture_width/sprite_width)) * inc;
@@ -128,20 +127,28 @@ void render_block_damage()
     if (tick_since_last_damage_change > ticks_begin_fade+ticks_end_fade)
         return;
     
+    int x=0,y=0,z=0;
+    t_map::get_requested_block_position(&x, &y, &z);
+    if (x < 0 || y < 0 || z < 0) return;
+    if (t_map::get(x,y,z) <= 0) return;
+    
+    Vec3 dest = vec3_add(vec3_init(x,y,z), vec3_init(0.5f, 0.5f, 0.5f));
+    float dist = vec3_length(vec3_sub(dest, current_camera_position));
+    float margin = 0.005f;
+    if (dist > 4.0f) margin *= 2;
+    if (dist < 8.0f) margin *= 2;
+    if (dist > 16.0f) margin *= 2;
+    if (dist > 32.0f) margin *= 2;
+
     int dmg = t_map::requested_block_damage;
     int max_dmg = maxDamage(t_map::requested_block_type);
     dmg += predicted_block_damage;
     if (dmg < 0) dmg = 0;
-    if (dmg >= max_dmg) return;
-
-    int x=0,y=0,z=0;
-    t_map::get_requested_block_position(&x, &y, &z);
-    if (x < 0 || y < 0 || z < 0) return;
-    if (t_map::get(x,y,z) == 0) return;
+    if (dmg >= max_dmg) dmg = max_dmg;
 
     int sprite_index = get_sprite_index(dmg, max_dmg);
 
-    render(sprite_index, x,y,z);
+    render(sprite_index, x,y,z, margin);
 }
 
 }   // Animations
