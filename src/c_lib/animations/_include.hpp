@@ -8,6 +8,7 @@
 #include <animations/insect_mob.cpp>
 #include <animations/weapon.cpp>
 #include <animations/voxel_particle.cpp>
+#include <animations/block_damage.cpp>
 #endif
 
 

@@ -9,6 +9,7 @@
 #include <camera/camera.hpp>
 #include <camera/skybox/skybox.hpp>
 #include <animations/animations.hpp>
+#include <animations/block_damage.hpp>
 #include <net_lib/host.hpp>
 #include <common/time/physics_timer.hpp>
 #include <t_map/_interface.hpp>
@@ -248,7 +249,8 @@ int run()
         /* 
             Alpha tested non-transparent
         */
-
+        
+        Animations::render_block_damage();
         ItemParticle::draw();
         //t_mech::draw();
         

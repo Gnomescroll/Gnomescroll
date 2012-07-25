@@ -28,8 +28,8 @@ void init()
     Animations::init_insect_mob();
 
     init_weapon_sprite();
-    
     init_voxel_particle();
+    init_block_damage();
 }
 
 void teardown()

@@ -47,8 +47,6 @@ static const struct Vec3 base_normals[6] = {
 
 void prep_voxel_particles()
 {
-    static const float VOXEL_SIZE = 0.15f; //MODIFY THIS FOR EACH VOXEL
-
     GS_ASSERT(voxel_particle_vlist != NULL);
     if (voxel_particle_vlist == NULL)
     {
@@ -96,9 +94,9 @@ void prep_voxel_particles()
 
         for (int i=0; i<8; i++)
         {
-            veb[i].x = VOXEL_SIZE*v_set2[3*i+0];
-            veb[i].y = VOXEL_SIZE*v_set2[3*i+1];
-            veb[i].z = VOXEL_SIZE*v_set2[3*i+2];
+            veb[i].x = ITEM_PARTICLE_RENDER_SCALE*v_set2[3*i+0];
+            veb[i].y = ITEM_PARTICLE_RENDER_SCALE*v_set2[3*i+1];
+            veb[i].z = ITEM_PARTICLE_RENDER_SCALE*v_set2[3*i+2];
         }
 
         //rotate normals

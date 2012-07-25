@@ -43,7 +43,7 @@ void Reticle::draw()
     const float z = -0.1f;
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, this->tex_data.tex );
+    glBindTexture(GL_TEXTURE_2D, this->tex_data.tex );
     
     glEnable(GL_BLEND);
     

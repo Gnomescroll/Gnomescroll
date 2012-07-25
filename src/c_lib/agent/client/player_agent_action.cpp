@@ -13,6 +13,7 @@ dont_include_this_file_in_server
 #include <particle/grenade.hpp>
 
 #include <animations/_interface.hpp>
+#include <animations/block_damage.hpp>
 
 #include <hud/cube_selector.hpp>
 #include <t_map/net/t_CtoS.hpp>
@@ -289,9 +290,17 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 int block_type = t_map::get(x,y,z);
                 int weapon_dmg = Item::get_item_block_damage(weapon_type, block_type);
                 if (t_map::is_last_requested_block(x,y,z))
+                {
                     Hud::add_predicted_block_damage(weapon_dmg);
+                    Animations::predicted_block_damage += weapon_dmg;
+                    Animations::damaging_block = true;
+                }
                 else
+                {
                     Hud::set_predicted_block_damage(weapon_dmg);
+                    Animations::predicted_block_damage = weapon_dmg;
+                    Animations::damaging_block = true;
+                }
                 
                 // make & record dmg request
                 t_map::request_block_damage(x,y,z);
