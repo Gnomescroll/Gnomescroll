@@ -5,7 +5,9 @@ syntax: glob
 *.pyo
 *.dylib
 
+.DS_STORE
 *.so
+*.so.*
 *.o
 
 .DS_Store

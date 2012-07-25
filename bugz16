@@ -809,7 +809,7 @@ change gas decay to 5 minutes
 
 color agent name correctly when health is 00
 color chat input buffer by agent color
-System message "Set RGB to"
+System message "Set RGB to X Y Z"
 fix chat color parsing
 
 improve screenshot filenames
@@ -820,7 +820,7 @@ energy tanks automatically add to energy tanks container
 
 fix MALLOX
 
-better enet packet size/etc handling -- dont allocate empty packets
+better enet packet size/etc handling -- dont allocate empty packets. prevent NULL enet_peer crash
 
 fix frustum culling of item particles
 
@@ -838,7 +838,12 @@ disable frustum culling for hitscan lasers, too inaccurate
 
 item particle voxels moved to shader; centered rotation, lighting almost working
 
-networked & ui predicted block damage (TODO -- needs good rendering)
+networked & ui predicted block damage, rendering damage overlay & fade out
+
+blue bombs wander -- experiment with new state machine style
+
+small tick delay from firing point decision to triggering for weapon targeting component (used by robot box)
+--gives player a window to dodge
 
 ----------------------
 
@@ -848,10 +853,6 @@ REMINDER:
 Script to pack all builds into one zip
 
 == PVE ==
-blue bombs should be wandering, slowly
-
-red bots should have a small random tick delay (0-5 maybe) between acquiring agent as a target and firing
-this will let players "dodge"
 
 some boxes arent getting destination correctly -- just jumping around with state updates
 --especially when cross boundaries
@@ -922,11 +923,14 @@ option to hide name
 maintain a NetClient buffer per stage of ready-ness
 broadcast only to clients who are are in fully ready
 
-***Autoupdater***
-
 Breakpad crash report integration
 
 draw outline of object to be placed
+
+== AUTOUPDATER ==
+Convert paths to windows paths
+Handle timeouts, 404s
+Fork off run.exe
 
 == MECHANISMS ==
 Spawner/Control Points
@@ -968,3 +972,7 @@ might be bug with entity system object ids or something
 take care of intellisense warnings
 
 change map seed
+
+help text : press TAB to see other players
+
+add chat commands to FAQ 
