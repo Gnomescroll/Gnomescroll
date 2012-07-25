@@ -395,11 +395,11 @@ static void chase_agent_to_in_transit(class Object* object)
 static void waiting(class Object* object)
 {
     #if DC_SERVER
-    using Components::WaitingComponent;
-    WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
-    wait->tick++;
-    if (wait->ready())
-        waiting_to_in_transit(object);
+    //using Components::WaitingComponent;
+    //WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
+    //wait->tick++;
+    //if (wait->ready())
+        //waiting_to_in_transit(object);
     #endif
 }
 
