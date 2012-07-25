@@ -112,10 +112,12 @@ void render_block_damage()
     if (dmg < 0) dmg = 0;
     if (dmg >= max_dmg) return;
 
-    int sprite_index = get_sprite_index(dmg, max_dmg);
-
     int x=0,y=0,z=0;
     t_map::get_requested_block_position(&x, &y, &z);
+    if (x < 0 || y < 0 || z < 0) return;
+    if (t_map::get(x,y,z) == 0) return;
+
+    int sprite_index = get_sprite_index(dmg, max_dmg);
 
     render(sprite_index, x,y,z);
 }
