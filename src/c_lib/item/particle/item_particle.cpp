@@ -12,7 +12,7 @@ namespace ItemParticle
 
 void ItemParticle::draw()
 {    
-    const float scale = ITEM_PARTICLE_RENDER_SCALE;
+    const float scale = ITEM_PARTICLE_SPRITE_RENDER_SCALE;
     const float h = 0.35f;
 
     Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
@@ -139,7 +139,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     this->is_voxel = Item::item_type_is_voxel(item_type);
     if (this->is_voxel)
     {
-        this->voxel.size = ITEM_PARTICLE_RENDER_SCALE / 2.0f;   // cut in half because v_set2(centered) is [-1,1](2x)
+        this->voxel.size = ITEM_PARTICLE_VOXEL_RENDER_SCALE / 2.0f;   // cut in half because v_set2(centered) is [-1,1](2x)
         this->voxel.pixel_width = 32;
         this->voxel.texture_index = Item::get_particle_voxel_texture(item_type);
         this->voxel.init();

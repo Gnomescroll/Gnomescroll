@@ -77,11 +77,12 @@ void prep_voxel_particles()
             item->voxel.delta_rotation(0.01f, 0.0f);
         
         // do fulstrum test
+        float size = item->voxel.size;
         Vec3 p = quadrant_translate_position(current_camera_position, item->verlet.position);
         Vec3 center = vec3_add(item->voxel.normal, vec3_add(item->voxel.right, vec3_add(item->voxel.forward, p)));
-        if (sphere_fulstrum_test(center.x, center.y, center.z, ITEM_PARTICLE_RENDER_SCALE) == false) continue;
+        if (sphere_fulstrum_test(center.x, center.y, center.z, size) == false) continue;
 
-        p.z += ITEM_PARTICLE_RENDER_SCALE / 2.0f;   // render offset
+        p.z += size;   // render offset
 
         float tx_min = item->voxel.tx;
         float tx_max = item->voxel.tx + item->voxel.sprite_width;
@@ -94,9 +95,9 @@ void prep_voxel_particles()
 
         for (int i=0; i<8; i++)
         {
-            veb[i].x = ITEM_PARTICLE_RENDER_SCALE*v_set2[3*i+0];
-            veb[i].y = ITEM_PARTICLE_RENDER_SCALE*v_set2[3*i+1];
-            veb[i].z = ITEM_PARTICLE_RENDER_SCALE*v_set2[3*i+2];
+            veb[i].x = size*v_set2[3*i+0];
+            veb[i].y = size*v_set2[3*i+1];
+            veb[i].z = size*v_set2[3*i+2];
         }
 
         //rotate normals

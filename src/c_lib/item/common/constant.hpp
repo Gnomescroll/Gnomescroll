@@ -50,7 +50,8 @@ const int ITEM_PARTICLE_HARD_MAX = 0xffff - 1;
 const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
 const float ITEM_PARTICLE_DAMPENING = 0.50f;
 const float ITEM_PARTICLE_RADIUS = 0.35f;
-const float ITEM_PARTICLE_RENDER_SCALE = 0.25f;
+const float ITEM_PARTICLE_SPRITE_RENDER_SCALE = 0.25f;
+const float ITEM_PARTICLE_VOXEL_RENDER_SCALE = 0.20f;
 
 // how long to wait before allowing item to be picked up after being thrown by agent
 const int ITEM_PICKUP_PREVENTION_DELAY = 30 * 3; // 4 seconds
