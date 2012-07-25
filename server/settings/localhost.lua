@@ -27,7 +27,7 @@ options.port = 0
 
 -- map --
 options.map = 'natural_terrain'
-options.seed = 80075112
+options.seed = 805112
 
 -- logger --
 options.logger = true
