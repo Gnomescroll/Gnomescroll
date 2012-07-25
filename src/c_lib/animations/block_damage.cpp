@@ -46,7 +46,7 @@ static void render(int sprite_index, int x, int y, int z)
     pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 0.5f));   // center
     pos = quadrant_translate_position(current_camera_position, pos);
 
-    const float MARGIN = 0.01f;
+    const float MARGIN = 0.005f;
     const float size = (1.0f + MARGIN) / 2.0f;
     
     const float inc = 32.0f/512.0f;
