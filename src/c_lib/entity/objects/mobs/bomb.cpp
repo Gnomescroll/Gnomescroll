@@ -319,13 +319,14 @@ static void waiting_to_in_transit(class Object* object)
         object->get_component(COMPONENT_DESTINATION_TARGETING);
         
     dest->choose_destination();
-    broadcast_object_in_transit(object, dest);
 
     // face the target
     dest->orient_to_target(position);    
     Vec3 angles = physics->get_angles();
     angles.x = vec3_to_theta(dest->target_direction); // only rotate in x
     physics->set_angles(angles);
+
+    broadcast_object_in_transit(object, dest);
     #endif
 
     using Components::StateMachineComponent;

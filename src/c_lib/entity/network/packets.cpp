@@ -466,6 +466,7 @@ inline void object_in_transit_StoC::handle()
 
     dest_target->set_destination(destination);
     dest_target->orient_to_target(pos);
+    dest_target->target_direction = this->dir;
     
     if (this->ticks_to_destination)
     {
