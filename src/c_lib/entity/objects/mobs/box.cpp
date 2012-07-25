@@ -86,6 +86,7 @@ static void set_mob_robot_box_properties(Object* object)
     //target->attacker_properties.voxel_damage_radius = MONSTER_BOX_VOXEL_DAMAGE_RADIUS;
     target->attacker_properties.agent_protection_duration = MONSTER_BOX_AGENT_IMMUNITY_DURATION;
     target->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
+    target->fire_delay_max = MONSTER_BOX_FIRE_DELAY_MAX;
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
@@ -254,6 +255,12 @@ void server_tick_mob_robot_box(Object* object)
                 float theta,phi;
                 vec3_to_angles(weapon->target_direction, &theta, &phi);
                 physics->set_angles(vec3_init(theta, phi, 0));
+            }
+            weapon->tick();
+            if (weapon->can_lock_part())
+            {
+                weapon->lock_target_part(camera_position);
+                weapon->add_random_fire_delay();
             }
             if (weapon->can_fire())
                 weapon->fire_on_target(camera_position);

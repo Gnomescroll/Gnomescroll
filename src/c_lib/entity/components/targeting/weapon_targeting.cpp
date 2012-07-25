@@ -29,23 +29,40 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position)
     normalize_vector(&this->target_direction);
 }
 
-bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
-{    
-    if (this->target_type == OBJECT_NONE) return false;
-    if (this->target_type != OBJECT_AGENT) return false;    // TODO -- target all types
-    
+void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
+{
+    this->firing_direction_set = false;
+
+    if (this->target_type == OBJECT_NONE) return;
+    if (this->target_type != OBJECT_AGENT) return;    // TODO -- target all types
+
     // get target
     Agent_state* target = STATE::agent_list->get(this->target_id);
-    if (target == NULL) return false;
+    if (target == NULL) return;
 
     // aim at target
     this->orient_to_random_target_part(camera_position);
     Vec3 direction = this->target_direction;
     if (this->uses_bias)    // apply bias
         direction = vec3_bias_random(this->target_direction, this->accuracy_bias);
+    
+    this->firing_direction = direction;
+    this->firing_direction_set = true;
+}
 
+bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
+{    
+    if (this->target_type == OBJECT_NONE) return false;
+    if (this->target_type != OBJECT_AGENT) return false;    // TODO -- target all types
+    
+    if (!this->firing_direction_set) return false;
+    
+    // get target
+    Agent_state* target = STATE::agent_list->get(this->target_id);
+    if (target == NULL) return false;
+    
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
-        camera_position, direction, this->object->id, this->object->type,
+        camera_position, this->firing_direction, this->object->id, this->object->type,
         target, this->sight_range
     );
 
