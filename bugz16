@@ -845,6 +845,10 @@ blue bombs wander -- experiment with new state machine style
 small tick delay from firing point decision to triggering for weapon targeting component (used by robot box)
 --gives player a window to dodge
 
+command line autoupdater works
+
+change server seed
+
 ----------------------
 
 == BUILD ==
@@ -928,9 +932,10 @@ Breakpad crash report integration
 draw outline of object to be placed
 
 == AUTOUPDATER ==
-Convert paths to windows paths
-Handle timeouts, 404s
-Fork off run.exe
+--get windows working
+--setup server staging process etc
+--sdl+opengl
+--render progress bar + text
 
 == MECHANISMS ==
 Spawner/Control Points
