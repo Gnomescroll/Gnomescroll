@@ -41,6 +41,7 @@ void load_block_dat()
 
     int t0 = texture_alias("media/sprites/t00.png");
     int t1 = texture_alias("media/sprites/t01.png");
+    int t2 = texture_alias("media/sprites/t02.png");
 
     const int T = 0;
     const int B = 1;
@@ -244,6 +245,17 @@ void load_block_dat()
     set_max_dmg(5); //255
     hud_def(2,1, t1,9,4);
 
+    cube_def(33, SolidBlock, "space_tree_trunk");
+    iso_texture(t2, 1,1);
+    push_texture();
+    set_max_dmg(32); //255
+    hud_def(2,2, t2,1,1);
+
+    cube_def(34, SolidBlock, "space_tree_trunk2");
+    iso_texture(t2, 2,1);
+    push_texture();
+    set_max_dmg(32); //255
+    hud_def(2,3, t2,1,2);
 
     end_block_dat();
 

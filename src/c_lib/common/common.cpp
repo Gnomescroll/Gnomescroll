@@ -68,7 +68,9 @@ unsigned int sanitize_player_name(char* name)
     return j;
 }
 
-static const char time_fmt[] = "%m-%d-%Y-%H:%M:%S";
+//static const char time_fmt[] = "%m-%d-%Y-%H:%M:%S";
+static const char time_fmt[] = "%Y%m%d_%H:%M%S";
+
 static const int TIME_STR_LEN = 2 + 2 + 2 + 2 + 2 + 4 + 5 + 1;    // H,M,S,m,d,Y,-,\0
 static char time_str[TIME_STR_LEN+1];
 char* get_time_str()
