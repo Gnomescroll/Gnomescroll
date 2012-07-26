@@ -1,9 +1,15 @@
 #pragma once
 
 #ifdef __GNUC__
-#include <alloca.h>
+
+#ifdef __WIN32__
+	#include <malloc.h>	//alloca for mingw gcc
+#else
+	#include <alloca.h>	//normal alloca
+#endif
+
 #define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));
-#define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));
+//#define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));
 #endif
 
 #ifdef __MSVC__
