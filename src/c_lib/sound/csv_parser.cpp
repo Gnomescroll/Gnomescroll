@@ -34,7 +34,7 @@ const float GS_DEFAULT_MAXIMUM_GAIN = 1.0f;
 const float GS_DEFAULT_ROLLOFF_FACTOR = 1.0f;
 const bool GS_DEFAULT_LOOP = false;
 
-void parse_sound_triggers(char *fn)
+void parse_sound_triggers(const char *fn)
 {
     int size = 0;
     char *buff = read_file_to_buffer(fn, &size);

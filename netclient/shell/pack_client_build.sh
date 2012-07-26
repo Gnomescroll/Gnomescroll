@@ -14,7 +14,7 @@ cp ./settings/lua_library.lua $f/settings/lua_library.lua
 mkdir $f/screenshot
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
-cp ../README_linux_client $f/
+cp ../notes/README_linux_client $f/
 rm $f.tar.gz
 tar cvzf $f.tar.gz $f
 mv $f.tar.gz ~/Dropbox/Public
