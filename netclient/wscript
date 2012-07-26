@@ -34,27 +34,6 @@ os_libpth = ''
 def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
 
-
-def get_version():
-    print "Warning: get_version() is deprecated"
-    try:
-        fn = '../VERSIONX.old'
-        with open(fn) as f:
-            version = f.read()
-    except Exception, e:
-        print "Could not get version number from VERSIONX file. Abort"
-        print Exception, e
-        raise Exception, e
-
-    try:
-        version = int(version.strip())
-    except ValueError:
-        print "ERROR: Version %s invalid" % (version,)
-        raise ValueError
-
-    print "Gnomescroll Version: %d" % (version,)
-    return version
-
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
@@ -111,8 +90,6 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
     
-    #version = get_version()
-
     extra_options = [
         '-Wall',
         '-Wempty-body',
@@ -124,7 +101,6 @@ def configure(conf, add_flags=[], rm_flags=[]):
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
-        #'-DDC_VERSION=%d' % (version,),
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
@@ -239,9 +215,12 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         pass
     elif OS == 'Linux':
-        awesomium_lib_path = [os.path.abspath('../libraries/lin32/awesomium/release') ]
+        awesomium_lib_path = os.path.abspath('../libraries/lin32/awesomium/release/')
+        awesomium_include_path = os.path.abspath('../libraries/lin32/awesomium/include/')
         conf.check(
-            lib=['awesomium-1.6.5'], 
+            lib='awesomium-1.6.5', 
+            use='awesomium-1.6.5', 
+            includes=awesomium_include_path,
             libpath= awesomium_lib_path,
             uselib_store='AWESOMIUM') 
     elif OS == 'Darwin':

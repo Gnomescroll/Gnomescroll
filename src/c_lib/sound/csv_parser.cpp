@@ -37,7 +37,7 @@ const bool GS_DEFAULT_LOOP = false;
 void parse_sound_triggers(const char *fn)
 {
     int size = 0;
-    char *buff = read_file_to_buffer(fn, &size);
+    char *buff = read_file_to_buffer((char*)fn, &size);
     if (buff == NULL)
     {
         printf("Error opening sound conf: %s\n", fn);
