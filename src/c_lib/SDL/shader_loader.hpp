@@ -66,7 +66,7 @@ class SHADER
     {
         //set shader name
         GS_ASSERT(name == NULL);
-        name = new char[strlen(_name)];
+        name = new char[strlen(_name)+1];
         name = strcpy(name, _name);
 
         printf("Loading shader: %s\n", name);
