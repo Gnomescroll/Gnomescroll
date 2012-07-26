@@ -248,7 +248,7 @@ void load_block_dat()
     cube_def(33, SolidBlock, "space_tree_trunk");
     iso_texture(t2, 1,1);
     push_texture();
-    set_max_dmg(32); //255
+    set_max_dmg(64); //255
     hud_def(2,2, t2,1,1);
 
     cube_def(34, SolidBlock, "space_tree_trunk2");
