@@ -850,6 +850,10 @@ command line autoupdater works, launches program. works on linux & osx. opengl/s
 
 change server seed
 
+clean project root
+
+reduce laser sound gain
+
 ----------------------
 
 == BUILD ==
