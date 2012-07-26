@@ -300,7 +300,7 @@ def build(bld):
     bld(
         features = 'cxx cxxprogram',
         source = ['../src/client/_client.cpp'],
-        use = common_libraries+time_lib+SDL_libraries+['LUA'],
+        use = common_libraries+time_lib+SDL_libraries+['LUA', 'ASSIMP'],
         lib = sound_libraries+png_libs,
         #includes = c_lib_includes,
         #libpath = c_lib_libpath,
