@@ -312,6 +312,19 @@ void init()
 
 	}
 
+
+	for(unsigned int i=0; i < pScene->mNumMeshes; i++)
+	{
+		printf("Mesh %2d: %s \n", i, pScene->mMeshes[i]->mName.data);
+
+		for(unsigned int j=0; j < pScene->mMeshes[i]->mNumBones; j++)
+		{
+
+			printf("Bone %2d: %s \n", j, pScene->mMeshes[i]->mBones[j]->mName.data);
+		}
+
+	}
+
 	printf("Succes\n");
 
 	abort();
