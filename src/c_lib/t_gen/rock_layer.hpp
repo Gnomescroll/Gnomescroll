@@ -1,5 +1,10 @@
 #pragma once
 
+using namespace t_map;
+
+namespace t_gen
+{
+
 void generate_rock_layer()
 {
 	float* _2d_noise_array = new float [512*512];
@@ -22,7 +27,8 @@ void generate_rock_layer()
 	}
 
     int regolith = dat_get_cube_id("regolith");
-    int rock_layer = dat_get_cube_id("rock_layer");
+    //int rock_layer = dat_get_cube_id("rock_layer");
+    int rock_layer = dat_get_cube_id("space_tree_trunk");
 
     class MAP_CHUNK* c;
         for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
@@ -69,4 +75,6 @@ void generate_rock_layer()
     //main_map->chunk[]
     delete[] regolith_depth_array;
     delete[] _2d_noise_array;
+}
+
 }

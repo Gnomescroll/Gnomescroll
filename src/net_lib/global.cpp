@@ -55,7 +55,7 @@ void init_globals()
     const char pop_fn[] = "./log/population.log";
     population_log_file = fopen(pop_fn, "a");
     // print startup time
-    fprintf(population_log_file, "%s Server started (build %d)\n", time_str, DC_VERSION);
+    fprintf(population_log_file, "%s Server started (build %4d)\n", time_str, DC_VERSION);
     setvbuf(population_log_file, NULL, _IOLBF, 256);
 }
 
@@ -76,12 +76,12 @@ class Session* begin_session(uint32_t ip_addr, int client_id)
     session_count++;
     session->id = session_count;
     session->login();
-    printf("Client %d connected. %d clients connected\n", client_id, number_of_clients);
+    printf("Client %2d connected. %2d clients connected\n", client_id, number_of_clients);
     GS_ASSERT(population_log_file != NULL);
     if (population_log_file != NULL)
     {
         const char* time_str = get_time_str();
-        fprintf(population_log_file, "%s : Client %d connected. %d clients connected\n", time_str, client_id, number_of_clients);
+        fprintf(population_log_file, "%s : Client %2d connected. %2d clients connected\n", time_str, client_id, number_of_clients);
         if (feof(population_log_file))
         {
             GS_ASSERT(false);
@@ -109,12 +109,12 @@ void end_session(class Session* session)
         }
     }
     session->print(NULL);   // print to stdout
-    printf("Client %d disconnected. %d clients connected\n", session->client_id, number_of_clients);
+    printf("Client %2d disconnected. %2d clients connected\n", session->client_id, number_of_clients);
     GS_ASSERT(population_log_file != NULL);
     if (population_log_file != NULL)
     {
         const char* time_str = get_time_str();
-        fprintf(population_log_file, "%s : Client %d disconnected. %d clients connected\n", time_str, session->client_id, number_of_clients);
+        fprintf(population_log_file, "%s : Client %2d disconnected. %2d clients connected\n", time_str, session->client_id, number_of_clients);
         if (feof(population_log_file))
         {
             GS_ASSERT(false);
