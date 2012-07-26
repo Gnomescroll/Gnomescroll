@@ -263,23 +263,56 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 	unsigned int pFlags,
 	const char* pHint);
 */
+
+void PrintBoneTree(int num, aiNode* pNode)
+{
+	printf("num: %2d bone name= %s \n", num, pNode->mName.data);
+
+	for(unsigned int i=0; i < pNode->mNumChildren; i++)
+	{
+		PrintBoneTree(num+1, pNode->mChildren[i]);
+	}
+}
+
 void init()
 {
 	int bsize;
-	char* buffer = read_file_to_buffer( (char*) "media/mesh/collada_test.dae", &bsize);
+	//char* buffer = read_file_to_buffer( (char*) "media/mesh/collada_test.dae", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
+
 
 	int aFlag = 0;
 	char* aHint = NULL;
-	const struct aiScene* scene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+	const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
 
 
-	if(scene == NULL)
+	if(pScene == NULL)
 	{
 		printf("Assimp Scene Load Error: %s \n", aiGetErrorString() );
 
 		abort();
 	}
+/*
+	if(!pScene->HasAnimations() )
+	{
+		printf("Error: scene has no animation \n";
+	}
+*/
 
+	//aiString.data is char*
+	printf("Scene animations: %d \n", pScene->mNumAnimations);
+
+	PrintBoneTree(0, pScene->mRootNode);	//these are actually meshes
+	//pScene->mRootNode
+
+
+	for(unsigned int i=0; i < pScene->mNumMeshes; i++)
+	{
+		printf("Mesh %2d: %s \n", i, pScene->mMeshes[i]->mName.data);
+
+	}
+
+	printf("Succes\n");
 
 	abort();
 /*
