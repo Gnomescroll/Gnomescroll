@@ -845,7 +845,8 @@ blue bombs wander -- experiment with new state machine style
 small tick delay from firing point decision to triggering for weapon targeting component (used by robot box)
 --gives player a window to dodge
 
-command line autoupdater works
+command line autoupdater works, launches program. works on linux & osx. opengl/sdl set up.
+    -- needs font, and hooks to get progress, and rendering of progress
 
 change server seed
 
@@ -979,5 +980,3 @@ take care of intellisense warnings
 help text : press TAB to see other players
 
 add chat commands to FAQ 
-
-clean up root directory
