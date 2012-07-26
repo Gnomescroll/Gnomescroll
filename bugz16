@@ -976,8 +976,8 @@ might be bug with entity system object ids or something
 
 take care of intellisense warnings
 
-change map seed
-
 help text : press TAB to see other players
 
 add chat commands to FAQ 
+
+clean up root directory

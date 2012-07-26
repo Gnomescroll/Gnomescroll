@@ -1,9 +1,0 @@
-pitch AL_PITCH
-gain AL_GAIN
-max distance (distance at which attenuation stops; whatever the gain is at this distance is the gain for all distances greater [inverse clamped model only]) AL_MAX_DISTANCE
-rolloff factor AL_ROLLOFF_FACTOR
-reference distance (distance for volume *=0.5) AL_REFERENCE_DISTANCE
-minimum gain AL_MIN_GAIN
-maximum gain AL_MAX_GAIN
-
-

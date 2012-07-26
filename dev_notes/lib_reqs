@@ -1,8 +1,0 @@
-libsdl-image-dev
-libsdl-ttf-dev
-libsdl-dev
-
-cython
-
-pip install --upgrade cython
-if this fails, apt-get install python-dev

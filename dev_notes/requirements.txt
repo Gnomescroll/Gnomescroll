@@ -1,6 +1,0 @@
-#pyglet
-#cython
-simplejson
-noise
-pypng
-pil
