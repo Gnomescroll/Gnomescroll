@@ -115,6 +115,8 @@ Object* ObjectList::create(ObjectType type, int id)
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
     GS_ASSERT(id >= 0 && id < this->maximums[type]);
     if (id < 0 || id >= this->maximums[type]) return NULL;
+    GS_ASSERT(this->used[type] != NULL);
+    GS_ASSERT(this->used[type][id] == 0);
     if (this->used[type] == NULL || this->used[type][id] == 1) return NULL;
     return this->staging_objects[type];
 }

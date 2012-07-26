@@ -151,6 +151,9 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     // add new_momentum to position to get new_position
     // assumes direction is normalized
 
+    GS_ASSERT(speed > 0.0f);
+    GS_ASSERT(vec3_length(direction) > 0.0f);
+
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
     move_to.z = z;
@@ -165,6 +168,9 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     // else calculate new destination, reorient direction, multiply by speed, and set to new_momentum
     // add new_momentum to position to get new_position
     // assumes direction is normalized
+
+    GS_ASSERT(speed > 0.0f);
+    GS_ASSERT(vec3_length(direction) > 0.0f);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_nearest_open_block(translate_point(move_to.x), translate_point(move_to.y), move_to.z, object_height);

@@ -57,8 +57,6 @@ void init(int argc, char* argv[])
     address_from_string(Options::server, address);
     NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 
-    //GS_ASSERT(quadrant_distance2i(500,30) == 542);
-    //GS_ASSERT(quadrant_distance2i(10,500) == -12);
     GS_ASSERT(quadrant_translate_f(500,30) == 542);
     GS_ASSERT(quadrant_translate_f(10,500) == -12);
 }

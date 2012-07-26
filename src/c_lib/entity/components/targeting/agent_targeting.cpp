@@ -83,7 +83,9 @@ bool AgentTargetingComponent::move_on_surface()
     Vec3 new_momentum;
     Vec3 motion_direction = this->target_direction;
     motion_direction.z = 0.0f;
-        
+
+    normalize_vector(&motion_direction);
+
     bool moved = move_along_terrain_surface(
         physics->get_position(), motion_direction,
         this->speed, this->max_z_diff,
