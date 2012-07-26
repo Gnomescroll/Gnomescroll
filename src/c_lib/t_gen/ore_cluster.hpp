@@ -4,6 +4,12 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+/*
+	Add Geods
+	-- add a very hard outer shell
+	-- add internal shiny mineral layers
+*/
+
 namespace t_gen
 {
 
