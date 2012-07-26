@@ -12,10 +12,15 @@ if platform.system() != "Linux":
 
 subprocess.Popen('ulimit -c unlimited', shell=True)
 
-with open('../VERSIONX.old') as f:
-    version = f.read().strip()
+with open('../src/c_lib/common/version.h') as f:
+    r = f.readlines()
+    r = [g for g in r if 'DC_VERSION' in g]
+    assert len(r) == 1
+    v = r[0].strip()
+    version = v.split(' ')[-1]
+    version = int(version)
 
-print "Server version is ", version
+print "Server version is", version
 print "Starting eternal server"
 MAX_DUMPS = 100
 ct = 0
