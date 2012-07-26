@@ -33,7 +33,7 @@ static const char help_text[] =
 "    T, Enter        Chat\n"
 "    `               Show chat log\n"
 "    H               Toggle help\n"
-"    Tab             Toggle scoreboard\n"
+"    Tab             See who is playing\n"
 "    M               Map\n"
 "    U, Alt          Grab & release mouse\n"
 "  Chat Commands:\n"

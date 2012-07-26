@@ -13,7 +13,7 @@ struct Vec3 listener_position;
 void init()
 {
     OpenALSound::init();
-    parse_sound_triggers((char*)"./media/sound/sounds.csv");
+    parse_sound_triggers("./media/sound/sounds.csv");
 }
 
 void update()
