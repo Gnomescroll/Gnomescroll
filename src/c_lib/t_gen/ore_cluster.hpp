@@ -4,6 +4,12 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+/*
+	Add Geods
+	-- add a very hard outer shell
+	-- add internal shiny mineral layers
+*/
+
 namespace t_gen
 {
 
@@ -32,14 +38,14 @@ void populate_ore_veins(int number, const char* block_name)
 
 void populate_ore()
 {
-	populate_ore_veins(2*8192, "methane_ice");
-	populate_ore_veins(2*8192, "iron_ore");
+	populate_ore_veins(4*8192, "methane_ice");
+	populate_ore_veins(4*8192, "iron_ore");
 
-	populate_ore_veins(2*2048, "graphite");
+	populate_ore_veins(4*2048, "graphite");
 
-	populate_ore_veins(2*4096, "copper_ore");
-	populate_ore_veins(2*2048, "gallium_ore");
-	populate_ore_veins(2*1024, "iridium_ore");
+	populate_ore_veins(4*4096, "copper_ore");
+	populate_ore_veins(4*2048, "gallium_ore");
+	populate_ore_veins(4*1024, "iridium_ore");
 }
 
 /*

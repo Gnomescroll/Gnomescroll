@@ -14,9 +14,8 @@ void load_map_drop_dat()
     ////////////////////
     def_drop("regolith");
 
-        add_drop("regolith", 2);
-        set_drop(0.35f, 1);
-        set_drop(0.20f, 2);
+        add_drop("regolith", 1);
+        set_drop(0.99f, 1);
 
 		add_drop("synthesizer_coin", 3);
 		set_drop(0.15f, 1);

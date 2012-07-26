@@ -153,7 +153,7 @@ void teardown_config()
 unsigned int get_object_max(ObjectType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
+    if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return object_conf[type].max;
 }
 
