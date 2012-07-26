@@ -70,7 +70,7 @@ int count_lines(char* buffer)
 
 int count_lines(char* buffer, int* longest)
 {
-    int lines = 1;
+    int lines = 0;
     int length = 0;
     int i = 0;
     char c;
