@@ -13,7 +13,10 @@ void set_crafting_reagent(const char* item_name, int quantity);
 void end_crafting_recipe();
 
 }   // Item
-
+/*
+    Add Steel bar -> Chain Link
+    Add Chainlink armor
+*/
 namespace Item
 {
 
