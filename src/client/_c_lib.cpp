@@ -365,9 +365,8 @@ int init_c_lib(int argc, char* argv[])
 
     Hud::init_hud_draw_settings();
 
-    t_mob::init();
-
     t_gen::generate_random_tile();
+    //t_mob::init();
     //check_gl_error();
     return 0;
 }
