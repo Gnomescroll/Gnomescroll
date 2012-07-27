@@ -278,8 +278,8 @@ void init()
 {
 	int bsize;
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/collada_test.dae", &bsize);
-	char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
-
+	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/blend_test.blend", &bsize);
 
 	int aFlag = 0;
 	char* aHint = NULL;
