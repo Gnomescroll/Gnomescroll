@@ -10,7 +10,7 @@ def expand_path(path):
 chars = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
 fontpath = ''
 fontsize = 10
-image_size = (300,300)
+image_size = (256,256)
 cfile = ''
 
 def get_args():
@@ -29,6 +29,8 @@ def get_args():
 class CharData:
     x = 0
     y = 0
+    tx = 0
+    ty = 0
     char = ''
     index = 0
     
@@ -39,7 +41,7 @@ class CharData:
         char = self.char
         if char in ["'", "\\"]:
             char = "\\" + char
-        return "{%d,%d,'%s',%d}" % (self.x, self.y, char, self.index,)
+        return "{%d,%d,%d,%d,'%s',%d}" % (self.x, self.y, self.tx, self.ty, char, self.index,)
     
 def process_conf():
     global fontpath
@@ -50,6 +52,7 @@ def write_char_data(data):
     struct_name = """struct CharData
 {
     unsigned int x,y;
+    unsigned int tx,ty;
     char c;
     int index;
 };
@@ -132,6 +135,34 @@ def write_pixel_data(chars, data, pixels):
         f.write('\n')
         f.write('\n')
 
+def write_bmp_data(image):
+    
+    w = image_size[0]
+    h = image_size[1]
+    
+    pixels = []
+    for i in range(w):
+        for j in range(h):
+            pixels += map(str, list(image.getpixel((i,j))) + [255])
+    
+    wstr = 'const unsigned int bmp_w = %d;' % w
+    hstr = 'const unsigned int bmp_h = %d;' % h
+    prefix = 'const unsigned char bmp_data[%d] = {' % (w*h*4)
+    suffix = '};'
+    
+    with open(cfile, 'a') as f:
+        f.write(wstr)
+        f.write('\n')
+        f.write(hstr)
+        f.write('\n')
+        f.write(prefix)
+        f.write('\n')
+        f.write(','.join(pixels))
+        f.write('\n')
+        f.write(suffix)
+        f.write('\n')
+        f.write('\n')
+
 def main():
 
     image = Image.new("RGB", image_size)
@@ -161,6 +192,8 @@ def main():
         d = CharData()
         d.x = fsize[0]
         d.y = fsize[1]
+        d.tx = cursor_x
+        d.ty = cursor_y
         d.char = c
         d.index = i
         data.append(d)
@@ -187,8 +220,11 @@ def main():
     with open(cfile, 'w') as f:
         pass
     write_char_data(data)
-    write_pixel_data(chars, data, char_pixels)
-
+    #write_pixel_data(chars, data, char_pixels)
+    write_bmp_data(image)
+    
+    image.save('test.bmp')
+    
 if __name__ == '__main__':
     get_args()
     process_conf()
