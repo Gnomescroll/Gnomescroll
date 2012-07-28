@@ -55,7 +55,7 @@ def write_char_data(data):
 };
 """
 
-    charset_pre = 'const unsigned int char_lookup_table[128] = {'
+    charset_pre = 'const int char_lookup_table[128] = {'
     charset_suf = '};'
     
     n_chars = 'const unsigned int n_font_chars = %d;' % len(data)
