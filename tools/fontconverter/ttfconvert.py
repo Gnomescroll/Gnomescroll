@@ -55,14 +55,36 @@ def write_char_data(data):
 };
 """
 
-    n_chars = 'const unsigned int n_chars = %d;' % len(data)
+    charset_pre = 'const unsigned int char_lookup_table[128] = {'
+    charset_suf = '};'
+    
+    n_chars = 'const unsigned int n_font_chars = %d;' % len(data)
 
-    array_start = "struct CharData char_data[%d] = {" % len(data)
+    array_start = "const struct CharData char_data[%d] = {" % len(data)
     array_end = "};"
 
     str_data = [repr(d) for d in data] 
         
     with open(cfile, 'a') as f:
+        f.write(charset_pre)
+        f.write('\n')
+
+        data_chars = [d.char for d in data]
+        data_ords = [ord(c) for c in data_chars]
+        data_indices = [d.index for d in data]
+        mapping = []
+        for i in range(128):
+            if i in data_ords:
+                index = data_ords.index(i)
+                mapping.append(data_indices[index])
+            else:
+                mapping.append(-1)
+                
+        f.write(','.join(map(str,mapping)))
+
+        f.write(charset_suf)
+        f.write('\n')
+
         f.write(struct_name)
         f.write('\n')
         f.write(n_chars)
@@ -80,8 +102,8 @@ def write_pixel_data(chars, data, pixels):
     assert len(chars) == len(data)
      
     longest = max(map(lambda d: d.x*d.y, data))
-    arr_len = 'const unsigned int n_pixels = %d;' % longest
-    prefix = 'unsigned char pixels[%d][%d] = {' % (len(chars), longest,)
+    arr_len = 'const unsigned int n_font_pixels = %d;' % longest
+    prefix = 'const unsigned char font_pixels[%d][%d] = {' % (len(chars), longest,)
     suffix = "};"
     
     init = """
