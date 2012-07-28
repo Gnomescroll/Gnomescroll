@@ -171,7 +171,7 @@ def main():
         pixels = []
         for j in range(size):
             x = j % d.x
-            y = j // d.y
+            y = j // d.x
             x += cursor_x
             y += cursor_y
             pix = image.getpixel((x,y))
