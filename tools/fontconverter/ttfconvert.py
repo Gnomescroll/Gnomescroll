@@ -72,14 +72,15 @@ def write_char_data(data):
         f.write(charset_pre)
         f.write('\n')
 
+        data = sorted(data[:], lambda a,b: ord(a.char) > ord(b.char))
         data_chars = [d.char for d in data]
         data_ords = [ord(c) for c in data_chars]
-        data_indices = [d.index for d in data]
+        assert len(data_ords) == len(chars)
         mapping = []
         for i in range(128):
             if i in data_ords:
                 index = data_ords.index(i)
-                mapping.append(data_indices[index])
+                mapping.append(data[index].index)
             else:
                 mapping.append(-1)
                 
@@ -223,7 +224,8 @@ def main():
     #write_pixel_data(chars, data, char_pixels)
     write_bmp_data(image)
     
-    image.save('test.bmp')
+    fontname = os.path.basename(fontpath).split('.')[0]
+    image.save(fontname + '.bmp')
     
 if __name__ == '__main__':
     get_args()
