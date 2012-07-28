@@ -119,9 +119,12 @@ def main():
     # use a truetype font
     font = ImageFont.truetype(fontpath, fontsize)
 
+    char_pixels = []
+    data = []
+
     cursor_x = 0
     cursor_y = 0
-    for c in chars:
+    for i, c in enumerate(chars):
         fsize = font.getsize(c)
         if cursor_x + fsize[0] > image_size[0]:
             cursor_y += fsize[1]
@@ -131,33 +134,24 @@ def main():
         assert cursor_y + fsize[1] < image_size[1]
         
         draw.text((cursor_x,cursor_y), c, font=font)
-        cursor_x += fsize[0]
 
-    #image.save(outfile, outfile.split('.')[-1])
-
-    char_pixels = []
-    data = []
-
-    # dump coordinate data to struct
-    for i, c in enumerate(chars):
+        # dump coordinate data to struct
         d = CharData()
         d.x = fsize[0]
         d.y = fsize[1]
         d.char = c
         d.index = i
         data.append(d)
-        
-    # dump pixel data to unsigned char array
-    for i, c in enumerate(chars):
-        # iterate pixels within sheet
-        d = data[i]
+
+        # copy pixel data
         size = d.x * d.y
         assert size > 0
         pixels = []
         for j in range(size):
             x = j % d.x
             y = j // d.y
-
+            x += cursor_x
+            y += cursor_y
             pix = image.getpixel((x,y))
             if sum(pix) > 0:
                 pix = 1
@@ -166,6 +160,8 @@ def main():
             pixels.append(pix)
         char_pixels.append(pixels)
         
+        cursor_x += fsize[0]
+
     with open(cfile, 'w') as f:
         pass
     write_char_data(data)
