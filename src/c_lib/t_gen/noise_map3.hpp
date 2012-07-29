@@ -236,7 +236,7 @@ class PerlinOctave3D
 
         const int XMAX = 512/4;
         const int YMAX = 512/4;
-        const int ZMAX = 128/8;
+        const int ZMAX = 128/4;
 
         float x,y,z;
 
@@ -246,7 +246,7 @@ class PerlinOctave3D
         {
             x = i*(4.0f/512.0f);
             y = j*(4.0f/512.0f);
-            z = k*(8.0f/512.0f);
+            z = k*(4.0f/512.0f);
 
             cache[k*XMAX*YMAX + j*XMAX + i] = sample(x,y,z, persistance);
         }
@@ -290,7 +290,7 @@ class MapGenerator1
 
     static const int XMAX = 512/4;
     static const int YMAX = 512/4;
-    static const int ZMAX = 128/8;
+    static const int ZMAX = 128/4;
     static const int XYMAX = 128*128;
 
 /*
@@ -339,7 +339,7 @@ class MapGenerator1
     }
 
 
-    __attribute__((optimize("-O3")))
+    OPTIMIZED
     void populate_cache()
     {
         for(int k=0; k<ZMAX; k++)
@@ -351,8 +351,8 @@ class MapGenerator1
     }
 
     //ROCK if less than zero
-    __attribute((always_inline, optimize("-O3")))
-    inline float calc(int i, int j, int k)
+    INLINE_OPTIMIZED
+    float calc(int i, int j, int k)
     {        
         //float x = i*4;
         //float y = j*4;
@@ -458,16 +458,16 @@ class MapGenerator1
     }
 
 
-    __attribute__((optimize("-O3")))
-    inline float get_cache(int i, int j, int k)
+    INLINE_OPTIMIZED
+    float get_cache(int i, int j, int k)
     {
         i &= 127;
         j &= 127;
-        k &= 15;
+        k &= 31;
         return cache[k*XYMAX + j*XMAX + i];
     }
 
-    __attribute__((optimize("-O3")))
+    OPTIMIZED
     void generate_map(int tile_id)
     {
 
@@ -485,37 +485,7 @@ class MapGenerator1
             float n101= get_cache(i+1,j+0,k+1);
             float n011= get_cache(i+0,j+1,k+1);
             float n111= get_cache(i+1,j+1,k+1);
-            // Compute the fade curve value for each of x, y, z
 
-        #if 0
-            for(int i0=0; i0<4; i0++)
-            {
-                for(int j0=0; j0<4; j0++)
-
-                {
-                    for(int k0=0; k0<8; k0++)
-                    {
-                        float u = 0.25 * i0;
-                        float v = 0.25 * j0;
-                        float w = 0.125 * k0; 
-
-                        float nx00 = mix(n000, n100, u);
-                        float nx01 = mix(n001, n101, u);
-                        float nx10 = mix(n010, n110, u);
-                        float nx11 = mix(n011, n111, u);
-                        // Interpolate the four results along y
-                        float nxy0 = mix(nx00, nx10, v);
-                        float nxy1 = mix(nx01, nx11, v);
-                        // Interpolate the two last results along z
-                        float nxyz = mix(nxy0, nxy1, w);
-
-                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
-                    }
-                }
-            }
-        #endif
-
-        #if 1
             //map volume lerp: 962 ms 
             for(int i0=0; i0<4; i0++)
             {
@@ -531,94 +501,24 @@ class MapGenerator1
                     float nxy0 = mix(nx00, nx10, v);
                     float nxy1 = mix(nx01, nx11, v);
 
-                    for(int k0=0; k0<8; k0++)
+                    for(int k0=0; k0<4; k0++)
                     {
-                        float w = 0.125f * k0;   //z interpolation
+                        float w = 0.25f * k0;   //z interpolation
                         float nxyz = mix(nxy0, nxy1, w);
 
                         if(nxyz < 0.0)
                         {
 
-                            t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
+                            t_map::set_fast(4*i+i0, 4*j+j0, 4*k+k0, tile_id);
                         }
                         else
                         {
-                            t_map::set(4*i+i0, 4*j+j0, 8*k+k0, 0);
+                            t_map::set_fast(4*i+i0, 4*j+j0, 4*k+k0, 0);
                         }
                     }
                 }
             }
-        #endif
 
-        #if 0
-            // map volume lerp: 1746 ms
-            //float u,v,w;
-
-            float u=0;
-            for(int i0=0; i0<4; i0++)
-            {
-                //float u = 0.25 * i0;    //x interpolation
-                u += 0.25;
-                float nx00 = mix(n000, n100, u);
-                float nx01 = mix(n001, n101, u);
-                float nx10 = mix(n010, n110, u);
-                float nx11 = mix(n011, n111, u);
-
-                float v=0;
-                for(int j0=0; j0<4; j0++)
-                {
-                    //float v = 0.25 * j0;    //y interpolation
-                    v += 0.25;
-                    float nxy0 = mix(nx00, nx10, v);
-                    float nxy1 = mix(nx01, nx11, v);
-
-                    float w = 0;
-                    for(int k0=0; k0<8; k0++)
-                    {
-                        //float w = 0.125 * k0;   //z interpolation
-                        w += 0.125;
-                        float nxyz = mix(nxy0, nxy1, w);
-
-                        if(nxyz < 0.0)  t_map::set(4*i+i0, 4*j+j0, 8*k+k0, tile_id);
-                    }
-                }
-            }
-        #endif
-
-        #if 0
-            /*
-                Optimize so it uses no multiplications
-            */
-
-
-            float bx = n000;
-            float inc_x = 0.25*(n100-n000)
-
-            float by = n010;
-            float inc_x = 0.25*(n010-n010)
-
-            for(int k0=0; k0<8; k0++)
-            {
-                float w = 0.125 * k0;   //z interpolation
-
-
-                for(int i0=0; i0<4; i0++)
-                {
-                    float u = 0.25 * i0;    //x interpolation
-                    float nx00 = mix(n000, n100, u);
-                    float nx01 = mix(n001, n101, u);
-                    float nx10 = mix(n010, n110, u);
-                    float nx11 = mix(n011, n111, u);
-
-                    for(int j0=0; j0<4; j0++)
-                    {
-                        float v = 0.25 * j0;    //y interpolation
-                        float nxy0 = mix(nx00, nx10, v);
-                        float nxy1 = mix(nx01, nx11, v);
-                    }
-                }
-            }
-        #endif
         }
     }
 
