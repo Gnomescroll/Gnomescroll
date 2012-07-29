@@ -10,16 +10,16 @@ void generate_rock_layer()
 	float* _2d_noise_array = new float [512*512];
 	int* regolith_depth_array = new int[512*512]; 
 
-	const int seed = 58412;
-	const float persistance = 0.90f;
-	const int octaves = 4;
-W
+	const int seed = 5812;
+	const float persistance = 0.99f;
+	const int octaves = 8;
+
 	t_gen::populate_2d_noise_array(_2d_noise_array, seed, persistance, octaves);
 
 	for(int i=0; i<512; i++)
 	for(int j=0; j<512; j++)
 	{
-		regolith_depth_array[512*j+i] = 9.0f + 9.0f*_2d_noise_array[512*j+i];
+		regolith_depth_array[512*j+i] = 9.0f + 9.0f*(0.5+_2d_noise_array[512*j+i]);
 	}
 
     int regolith = dat_get_cube_id("regolith");
