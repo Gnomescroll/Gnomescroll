@@ -67,15 +67,6 @@ class PerlinField3D
         for(int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
     }
 
-
-// This method is a *lot* faster than using (int)Math.floor(x)
-/*
-    static inline int fast_floor(float x) 
-    {
-        return (x >= 0 ? (int)(x) : (int)(x-1) );
-    }
-*/
-
 __attribute__((optimize("-O3")))
 inline int get_gradient(int x, int y, int z)
 {
@@ -174,7 +165,7 @@ class PerlinOctave3D
         //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
         //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
 
-        cache = new float[(512/4)*(512/4)*(128/8)];
+        cache = new float[(512/4)*(512/4)*(128/4)];
 
         for(int i=0; i<octaves; i++) octave_array[i].init(
             primes[i+1], primes[i+1]);
@@ -359,13 +350,13 @@ class MapGenerator1
         }
     }
 
-
+    //ROCK if less than zero
     __attribute((always_inline, optimize("-O3")))
     inline float calc(int i, int j, int k)
     {        
         //float x = i*4;
         //float y = j*4;
-        float z = k*8;
+        float z = k*4;
 
         float v = 0.0f; //value;
 
@@ -382,16 +373,42 @@ class MapGenerator1
         float e3 = erosion3D->cache[index3];
 
 
-#if 0
-        //if (noise3d(x,y,z) > z * multiplier) { return ground; } else { return empty; }
+#if 1
+        static const float hmin = 64;
 
-        const float h0 = 32;
-        const float h1 = 32;
+    /*
+        if(ri2 < 0) ri2 *= -1;
+        ri2 = ((int)(ri2 * 5));
+        ri2 *= 0.20f;
+        ri2 *= 40;
+        if( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
+        if(v < -1) v = -1;
+        if(v > 1) v = 1;
+    */
+
+        v += 0.40f*e3*e3;   //only erodes in this form
+
+        static const float hrange = 1.0f;   //half of range (can perturb this with another map)
+
+        static const float _hmin = -1.0f;
+        static const float _hmax = 1.0f;
+
+        static const float _hmix = 0.005f; //0.125;
+
+        //if(r2 < 0.125f) r2 = 0.0125f; 
+        //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
+
+        //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
         
-        return 0.5 - k*0.02 + e3;
+        float tmp1 = _hmix*(z - hmin - h2*hrange);
 
-        //0.5
+        //if(tmp1 < _hmin) tmp1 = _hmin;
+        //if(tmp1 > _hmax) tmp1 = _hmax;
 
+
+        v += tmp1;
+
+        return v;
 #else 
         /*
             Threshold height
@@ -637,11 +654,11 @@ void test_octave_3d_map_gen(int tile_id)
     ti[i++] = _GET_MS_TIME();
 
     //set seeds for each of the noise maps
-    map_generator->erosion3D->set_param(0.6f, rand() );
-    map_generator->erosion2D->set_param(0.8f, rand() );
-    map_generator->height2D->set_param(0.8f, rand() );
+    map_generator->erosion3D->set_param(0.1f, rand() );
+    map_generator->erosion2D->set_param(0.7f, rand() );
+    map_generator->height2D->set_param(0.2f, rand() );
     map_generator->ridge2D->set_param(0.5f, rand() );
-    map_generator->roughness2D->set_param(0.85f, rand() );
+    map_generator->roughness2D->set_param(0.9f, rand() );
 
     ti[i++] = _GET_MS_TIME();
 
@@ -651,7 +668,7 @@ void test_octave_3d_map_gen(int tile_id)
     map_generator->generate_map(tile_id);
     ti[i++] = _GET_MS_TIME();
 
-    //map_generator->save_noisemaps();
+    map_generator->save_noisemaps();
     ti[i++] = _GET_MS_TIME();
 
     printf("Map Gen: \n");
