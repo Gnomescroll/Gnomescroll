@@ -76,12 +76,12 @@ class Session* begin_session(uint32_t ip_addr, int client_id)
     session_count++;
     session->id = session_count;
     session->login();
-    printf("Client %2d connected. %2d clients connected\n", client_id, number_of_clients);
+    printf("Client %3d connected. %3d clients connected\n", client_id, number_of_clients);
     GS_ASSERT(population_log_file != NULL);
     if (population_log_file != NULL)
     {
         const char* time_str = get_time_str();
-        fprintf(population_log_file, "%s : Client %2d connected. %2d clients connected\n", time_str, client_id, number_of_clients);
+        fprintf(population_log_file, "%s : Client %3d connected. %3d clients connected\n", time_str, client_id, number_of_clients);
         if (feof(population_log_file))
         {
             GS_ASSERT(false);

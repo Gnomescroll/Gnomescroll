@@ -15,7 +15,7 @@
 #include <t_gen/cave_generator.hpp>
 #include <t_gen/rock_layer.hpp>
 
-#include <t_gen/tile_generator.hpp>
+//#include <t_gen/tile_generator.hpp>
 
 //#if DC_CLIENT
 //#include <t_gen/perlin.hpp>

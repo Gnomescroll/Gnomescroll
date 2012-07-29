@@ -381,6 +381,18 @@ class MapGenerator1
         //float e2 = erosion2D->cache[index2];
         float e3 = erosion3D->cache[index3];
 
+
+#if 0
+        //if (noise3d(x,y,z) > z * multiplier) { return ground; } else { return empty; }
+
+        const float h0 = 32;
+        const float h1 = 32;
+        
+        return 0.5 - k*0.02 + e3;
+
+        //0.5
+
+#else 
         /*
             Threshold height
         */
@@ -395,28 +407,13 @@ class MapGenerator1
 
         ri2 *= 40;
 
-        //v += 0.0625*(z - (hmin + ri2) );
-        
-        //v += 0.25*sigmoid(z, hmin+ri2, 0.50);
-        //v += 0.25*sigmoid2(z, hmin+ri2, 0.125);
         if( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
 
 #if 1
-        //v += e3*(e2*e2);
-        //v += 0.60*e3*e3;   more extreme //only erodes in this form
         v += 0.40f*e3*e3;   //only erodes in this form
-        //v -= 0.40*e3*e3;   //only adds in this form
-        //v += 0.40*e3;
-        //v += 0.40*abs(e3 + .40);
-
-        //e3 = 3*e3;
-        //if(e3 < 0) e3= 0;
-        //if(e3 > 1) e3 = 1;
-
-        //v += 0.40*e3;
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
@@ -430,15 +427,6 @@ class MapGenerator1
 
         static const float _hmix = 0.01f; //0.125;
 
-        //if(k == 5) printf("h2= %f \n", h2);
-
-        //static const float rmix = 0.8;
-
-
-        //r2 = 5*r2 -2;
-        //if(r2 > 1) r2 = 1.0;
-        //if(r2 < 0.50) r2 = 0.50;
-
         if(r2 < 0.125f) r2 = 0.0125f; 
         float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
@@ -448,27 +436,8 @@ class MapGenerator1
 
         v += tmp1;
 
-        //roughness
-        //r2 = 3*r2 -2;
-
-
-        //v += tmp1 * r2;
-        //v += r2;
-        //ridge
-
-    /*
-        static const float errosion_factor = 0.4;
-        if(e2 > 0.0)
-        {
-
-            v += errosion_factor*e3;
-        }
-    */
-        //
-
-        //v = floor(v*8.0)*0.125;
-
         return v;
+#endif
     }
 
 
