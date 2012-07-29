@@ -299,6 +299,9 @@ class MapGenerator1
   
     float* cache;
 
+    /*
+        Octaves
+    */
     MapGenerator1()
     {
         cache = new float[XMAX*YMAX*ZMAX];
@@ -307,7 +310,7 @@ class MapGenerator1
         erosion3D = new PerlinOctave3D(4);
         erosion2D = new PerlinOctave2D(4);
 
-        height2D = new PerlinOctave2D(4);
+        height2D = new PerlinOctave2D(6);
         ridge2D = new PerlinOctave2D(4);
 
         roughness2D = new PerlinOctave2D(4);
@@ -389,7 +392,7 @@ class MapGenerator1
 
         //v += 0.40f*e3*e3;   //only erodes in this form
 
-        static const float hrange = 1.0f;   //half of range (can perturb this with another map)
+        static const float hrange = 4.0f;   //half of range (can perturb this with another map)
 
         static const float _hmin = -1.0f;
         static const float _hmax = 1.0f;
