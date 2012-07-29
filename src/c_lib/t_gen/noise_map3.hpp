@@ -386,7 +386,8 @@ class MapGenerator1
         if(v > 1) v = 1;
     */
 
-        v += 0.40f*e3*e3;   //only erodes in this form
+
+        //v += 0.40f*e3*e3;   //only erodes in this form
 
         static const float hrange = 1.0f;   //half of range (can perturb this with another map)
 
