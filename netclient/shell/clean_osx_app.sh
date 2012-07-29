@@ -34,4 +34,4 @@ echo "Project dir contents: "
 /usr/bin/install_name_tool -change "/usr/lib/libGLEW.1.7.0.dylib" "@loader_path/../Frameworks/libGLEW.1.7.0.dylib" "${PATH}/${BIN}"
 /usr/bin/install_name_tool -change "/usr/local/lib/libluajit-51.2.dylib" "@loader_path/../Frameworks/libluajit-51.2.dylib" "${PATH}/${BIN}"
 /usr/bin/install_name_tool -change "/Users/maslow/src/assimp--3.0.1270-source-only/lib/RelWithDebInfo/libassimp.dylib" "@loader_path/../Frameworks/libassimp.dylib" "${PATH}/${BIN}"
-
+/usr/bin/install_name_tool -change "/Users/maslow/src/curl-7.26.0/lib/Release/libcurl.dylib" "@loader_path/../Frameworks/libcurl.dylib" "${PATH}/${BIN}"

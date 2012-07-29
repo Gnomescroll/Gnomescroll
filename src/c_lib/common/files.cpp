@@ -127,3 +127,32 @@ char** read_lines(char* buffer, int* lines)
     }
     return arr;
 }
+
+void create_path_to_file(const char* fn)
+{
+    // walk down the path, create folders as needed
+    int len = strlen(fn);
+    char* path = (char*)malloc((len+1) * sizeof(char));
+    strcpy(path, fn);
+
+    struct stat file_stat;
+
+    #ifdef _WIN32
+    char sep = '\\';
+    #else
+    char sep = '/';
+    #endif
+    
+    char c;
+    int i=0;
+    while ((c = path[i++]) != '\0')
+    {
+        if (c != sep) continue;
+        path[i-1] = '\0';
+        if (stat(path, &file_stat) != 0)
+            mkdir(path, 0777);
+        path[i-1] = sep;
+    }
+
+    free(path);
+}
