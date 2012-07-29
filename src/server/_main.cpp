@@ -29,8 +29,8 @@ void init(int argc, char* argv[])
     
     if (!strcmp(Options::map, "fast"))
     {
-        map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
-        map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
+        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
+        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
     }
     else
     {
@@ -47,7 +47,7 @@ void init(int argc, char* argv[])
 
 
         //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
-        map_gen::rough_floor(512,512,0,3, t_map::get_cube_id("bedrock"));
+        map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));
         //Dragon::caves();
         //Dragon::flat_veins();
     }   
