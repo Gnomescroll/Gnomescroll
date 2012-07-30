@@ -343,9 +343,10 @@ void init()
 		aiAnimation* anim = pScene->mAnimations[i];
 
 
-		printf("anime %02d: name= %s duration= %f channels= %d mesh_channels= %d \n", i,
+		printf("anime %02d: name= %s duration= %f ticks_per_second= %f channels= %d mesh_channels= %d \n", i,
 			anim->mName.data,
 			anim->mDuration,
+			anim->mTicksPerSecond,
 			anim->mNumChannels,
 			anim->mNumMeshChannels
 			);
@@ -355,10 +356,21 @@ void init()
 		{
 			aiNodeAnim* node_anim = anim->mChannels[j];
 
-			printf("\tnode_anim: %02d name= %s \n", j,
-			node_anim->mNodeName.data
+			printf("\tnode_anim: %02d name= %s position_keys= %d rotation_keys= %d \n", j,
+			node_anim->mNodeName.data,
+			node_anim->mNumPositionKeys,	//aiVectorKey* mPositionKeys;
+			node_anim->mNumRotationKeys		//aiQuatKey* mRotationKeys;
 			);
 
+			//struct aiVectorKey
+			//double mTime; //The time of this key
+			//C_STRUCT aiVector3D mValue;  //The value of this key
+
+			//struct aiQuatKey
+			//double mTime;     //The time of this key 
+			//C_STRUCT aiQuaternion mValue;  //The value of this key
+
+		}
 
 		}
 
