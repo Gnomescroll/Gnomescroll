@@ -343,7 +343,40 @@ void init()
 		aiAnimation* anim = pScene->mAnimations[i];
 
 
+		printf("anime %02d: name= %s duration= %d channels= %d mesh_channels= %d \n", i,
+			anim->mName.data,
+			anim->mDuration,
+			anim->mTicksPerSecond,
+			anim->mNumChannels
+			);
 	}
+
+#if 0
+	 *  name is usually empty (length is zero). */
+	C_STRUCT aiString mName;
+
+	/** Duration of the animation in ticks.  */
+	double mDuration;
+
+	/** Ticks per second. 0 if not specified in the imported file */
+	double mTicksPerSecond;
+
+	/** The number of bone animation channels. Each channel affects
+	 *  a single node. */
+	unsigned int mNumChannels;
+
+	/** The node animation channels. Each channel affects a single node. 
+	 *  The array is mNumChannels in size. */
+	C_STRUCT aiNodeAnim** mChannels;
+
+
+	/** The number of mesh animation channels. Each channel affects
+	 *  a single mesh and defines vertex-based animation. */
+	unsigned int mNumMeshChannels;
+
+	/** The mesh animation channels. Each channel affects a single mesh. 
+	 *  The array is mNumMeshChannels in size. */
+	C_STRUCT aiMeshAnim** mMeshChannels;
 
 	/** The array of animations. 
 	*
@@ -351,7 +384,7 @@ void init()
 	* The array is mNumAnimations in size.
 	*/
 	//C_STRUCT aiAnimation** mAnimations;
-
+#endif
 
 
 /*
