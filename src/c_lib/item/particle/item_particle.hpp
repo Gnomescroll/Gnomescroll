@@ -78,6 +78,8 @@ class ItemParticle
 
         void set_state(float x, float y, float z, float mx, float my, float mz)
         {
+            ASSERT_BOXED_POINTf(x);
+            ASSERT_BOXED_POINTf(y);
             this->verlet.position = vec3_init(x,y,z);
             this->verlet.velocity = vec3_init(mx,my,mz);
         }

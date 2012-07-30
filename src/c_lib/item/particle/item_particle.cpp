@@ -124,8 +124,6 @@ void ItemParticle::tick()
     #endif
 }
 
-
-
 #if DC_CLIENT
 void ItemParticle::init(int item_type, float x, float y, float z, float mx, float my, float mz)
 #endif
@@ -152,6 +150,8 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     #if DC_SERVER
     this->item_id = item_id;
     #endif
+    ASSERT_BOXED_POINTf(x);
+    ASSERT_BOXED_POINTf(y);
     verlet.position = vec3_init(x,y,z);
     verlet.velocity = vec3_init(mx,my,mz);
     verlet.dampening = ITEM_PARTICLE_DAMPENING;

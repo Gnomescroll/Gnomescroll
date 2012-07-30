@@ -40,29 +40,28 @@ bool bounce(Vec3* position, Vec3* velocity, float damp)
     
     Vec3 old_position = *position;
     Vec3 old_velocity = *velocity;
-    velocity_integrate(position, velocity, dt);
+    Vec3 p = *position;
+    velocity_integrate(&p, velocity, dt);
 
     float interval = 0.0f;
 
     Vec3 norm;
     _ray_cast4(
         old_position.x, old_position.y, old_position.z,
-        position->x, position->y, position->z,
+        p.x, p.y, p.z,
         &interval, &norm
     );
 
     if (interval < 1.0f)
     {   // collision
         bounced = true;
-        *position = old_position;
-        *velocity = old_velocity;
-        velocity_integrate(position, velocity, dt*interval);
-        *position = translate_position(*position);
-        *velocity = vec3_reflect(*velocity, norm);
-        *velocity = vec3_scalar_mult(*velocity, damp);
+        velocity_integrate(&old_position, &old_velocity, dt*interval);
+        old_velocity = vec3_reflect(old_velocity, norm);
+        *velocity = vec3_scalar_mult(old_velocity, damp);
+        *position = translate_position(old_position);
     }
     else
-        *position = translate_position(*position);
+        *position = translate_position(p);
 
     return bounced;
 }
@@ -71,28 +70,27 @@ int* bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* til
 {   // same as simple bounce, but gets extra metadata on the bounce
     Vec3 old_position = *position;
     Vec3 old_velocity = *velocity;
-    velocity_integrate(position, velocity, dt);
+    Vec3 p = *position;
+    velocity_integrate(&p, velocity, dt);
     
     float interval = 0.0f;
 
     Vec3 norm;
     int *s = _ray_cast5_capped(
         old_position.x, old_position.y, old_position.z,
-        (*position).x, (*position).y, (*position).z,
+        p.x, p.y, p.z,
         &interval, collision, tile, &norm
     );
 
     if (interval < 1.0f)
     {   // collision
-        *position = old_position;
-        *velocity = old_velocity;
-        velocity_integrate(position, velocity, dt*interval);
-        *position = translate_position(*position);
-        *velocity = vec3_reflect(*velocity, norm);
-        *velocity = vec3_scalar_mult(*velocity, damp);
+        velocity_integrate(&old_position, &old_velocity, dt*interval);
+        old_velocity = vec3_reflect(old_velocity, norm);
+        *velocity = vec3_scalar_mult(old_velocity, damp);
+        *position = translate_position(old_position);
     }
     else
-        *position = translate_position(*position);
+        *position = translate_position(p);
 
     return s;
 }
@@ -109,14 +107,15 @@ bool bounce_box(Vec3* position, Vec3* velocity, float damp, float radius)
     if (isSolid(old_position.x,          old_position.y + radius, old_position.z)) a.y += gravity;
     if (isSolid(old_position.x,          old_position.y - radius, old_position.z)) a.y -= gravity;
 
-    velocity_integrate(position, velocity, a, dt);
+    Vec3 p = *position;
+    velocity_integrate(&p, velocity, a, dt);
 
     float interval = 0.0f;
 
     Vec3 norm;
     _ray_cast4(
         old_position.x, old_position.y, old_position.z,
-        position->x, position->y, position->z,
+        p.x, p.y, p.z,
         &interval, &norm
     );
 
@@ -125,12 +124,11 @@ bool bounce_box(Vec3* position, Vec3* velocity, float damp, float radius)
         bounced = true;
         velocity_integrate(&old_position, &old_velocity, dt*interval);
         old_velocity = vec3_reflect(old_velocity, norm);
-        old_velocity = vec3_scalar_mult(old_velocity, damp);
-        *velocity = old_velocity;
+        *velocity = vec3_scalar_mult(old_velocity, damp);
         *position = translate_position(old_position);
     }
     else
-        *position = translate_position(*position);
+        *position = translate_position(p);
         
     return bounced;
 }
