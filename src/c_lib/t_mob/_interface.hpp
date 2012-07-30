@@ -299,14 +299,15 @@ class BoneTree
 	{
 		pScene = _pScene;
 
-		nli = 0
+		nli = 0;
 		count_nodes(pScene->mRootNode); //count the nodes with meshes
-		node_list = new *aiNode[nli];
-		node_parent = new int[nli];
-		mesh_list new *aiMesh[nli];
+		nl = new *aiNode[nli];
+		npl = new int[nli];
+		ml new *aiMesh[nli];
 
+		for(int i=0; i<nli; i++) node_list[i] = NULL;
 		for(int i=0; i<nli; i++) node_parent[i] = -1;
-		for(int i=0; i<nli; i++) node_parent[i] = -1;
+		for(int i=0; i<nli; i++) mesh_list[i] = NULL;
 
 		nli = 0;
 		set_node_parents(pScene->mRootNode, 0);
@@ -327,14 +328,14 @@ class BoneTree
 				pScene->mMeshes[index]->mNumFaces);
 
 			aiMesh* mesh = pScene->mMeshes[index];
-			for(unsigned int j=0; j < mesh->mNumBones; j++)
-			{
-
+			//for(unsigned int j=0; j < mesh->mNumBones; j++)
+			//{
+		}
 
 	}
 
 
-	void void count_nodes(aiNode* pNode)
+	void count_nodes(aiNode* pNode)
 	{
 		GS_ASSERT(pNode->mNumMeshes < 2); //assume only one mesh per node for now
 		for(unsigned int i=0; i < pNode->mNumMeshes; i++)
@@ -391,14 +392,14 @@ aiMesh
 
 	}
 
-	void set_vertices
+	void set_vertices()
 	{
 		int count = 0;
 		for(int i=0; i<nli; i++)
 		{
-			aiMesh* mesh = ml[i]
+			aiMesh* mesh = ml[i];
 			vll[i] = count;
-			vln[i] = mesh->mNumVertices
+			vln[i] = mesh->mNumVertices;
 
 			GS_ASSERT(mesh->mPrimitiveTypes == 3);
 			for(int j=0; j<mesh->mNumVertices; j++)
@@ -427,6 +428,7 @@ aiMesh
 		GS_ASSERT(count == vli);
 	}
 };
+
 void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 {
 	printf("aiNode: %02d pNode name= %s \n", num, pNode->mName.data);
