@@ -36,9 +36,8 @@ void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float p
         //printf("x,y= %f %f noise= %f \n", _x,_y, tmp );
     }
 
-    printf("populate_2d_noise_array: average= %f \n", sum/ (512.0f*512.0f));
-
-    p2d.save_octaves2(8, "regolith_depth_map");
+    //printf("populate_2d_noise_array: average= %f \n", sum/ (512.0f*512.0f));
+    //p2d.save_octaves2(8, "regolith_depth_map");
 }
 
 void save_png(const char* filename, float* in, int xres, int yres)

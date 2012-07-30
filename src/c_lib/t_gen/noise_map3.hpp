@@ -375,7 +375,7 @@ class MapGenerator1
         //float e2 = erosion2D->cache[index2];
         float e3 = erosion3D->cache[index3];
 
-
+        //printf("e3= %f \n", e3);
 #if 1
         static const float hmin = 64;
 
@@ -390,25 +390,24 @@ class MapGenerator1
     */
 
 
-        //v += 0.40f*e3*e3;   //only erodes in this form
+        v += 2.40f*e3*e3;   //only erodes in this form
 
         static const float hrange = 4.0f;   //half of range (can perturb this with another map)
 
         static const float _hmin = -1.0f;
         static const float _hmax = 1.0f;
 
-        static const float _hmix = 0.005f; //0.125;
+        static const float _hmix = 0.050f; //0.25;
 
         //if(r2 < 0.125f) r2 = 0.0125f; 
         //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
         //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
-        
+
         float tmp1 = _hmix*(z - hmin - h2*hrange);
 
         //if(tmp1 < _hmin) tmp1 = _hmin;
         //if(tmp1 > _hmax) tmp1 = _hmax;
-
 
         v += tmp1;
 
@@ -558,9 +557,9 @@ void test_octave_3d_map_gen(int tile_id)
     ti[i++] = _GET_MS_TIME();
 
     //set seeds for each of the noise maps
-    map_generator->erosion3D->set_param(0.1f, rand() );
+    map_generator->erosion3D->set_param(0.9f, rand() );
     map_generator->erosion2D->set_param(0.7f, rand() );
-    map_generator->height2D->set_param(0.2f, rand() );
+    map_generator->height2D->set_param(0.8f, rand() );
     map_generator->ridge2D->set_param(0.5f, rand() );
     map_generator->roughness2D->set_param(0.9f, rand() );
 
