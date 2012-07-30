@@ -43,6 +43,9 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         vy = momentum*(randf() -0.5f);
         vz = momentum*(randf() -0.5f);
 
+        nx = translate_point(nx);
+        ny = translate_point(ny);
+
         theta = randf() * PI * 2;
         phi = randf() * PI * 2;
 
@@ -153,6 +156,9 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         theta = randf() * PI * 2;
         phi = randf() * PI * 2;
         
+        nx = translate_point(nx);
+        ny = translate_point(ny);
+        
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
         minivox->init();
@@ -221,6 +227,10 @@ void grenade_explode(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
+
+        cx = translate_point(cx);
+        cy = translate_point(cy);
+
         s = Particle::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
         if (s == NULL) return;
         s->ttl = randrange(15,25);
@@ -248,6 +258,10 @@ void terrain_sparks(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
+
+        cx = translate_point(cx);
+        cy = translate_point(cy);
+
         s = Particle::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
         if (s==NULL) return;
         s->ttl = randrange(8,15);
@@ -281,6 +295,9 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
         phi = randf() * PI * 2;
         dtheta = randf() * 0.01f;
         dphi = randf() * 0.01f;
+
+        cx = translate_point(cx);
+        cy = translate_point(cy);
 
         minivox = Particle::colored_minivox_list->create();
         if (minivox == NULL) return;
@@ -327,6 +344,9 @@ void agent_bleed(float x, float y, float z)
         vx = _vx*(randf() -0.5f);
         vy = _vy*(randf() -0.5f);
         vz = _vz*(randf() -0.5f);
+
+        nx = translate_point(nx);
+        ny = translate_point(ny);
 
         b = Particle::blood_list->create();
         if (b==NULL) return;

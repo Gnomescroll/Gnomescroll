@@ -143,19 +143,6 @@ void ItemParticle_list::draw()
     glEnd();
 
     glDisable(GL_ALPHA_TEST);
-
-    //// draw textured voxels
-    //glColor4ub(255,255,255,255);
-    //glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
-    //glBegin(GL_QUADS);
-    //for (int i=0; i<this->n_max; i++)
-        //if (this->a[i] != NULL && this->a[i]->is_voxel && this->a[i]->should_draw)
-        //{
-            //ItemParticle* p = this->a[i];
-            //p->voxel.delta_rotation(0.01f, 0.0f);
-            //p->voxel.draw(p->verlet.position);
-        //}
-    //glEnd();
     #endif
 }
 

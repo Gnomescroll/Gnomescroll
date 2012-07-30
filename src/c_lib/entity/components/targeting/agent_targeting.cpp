@@ -59,11 +59,26 @@ void AgentTargetingComponent::lock_target(Vec3 camera_position)
 
 void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
 {
-    if (this->target_type == OBJECT_NONE) return;
-    if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
+    if (this->target_type == OBJECT_NONE)
+    {
+        this->target_direction = vec3_init(1,0,0);
+        return;
+    }
+    if (this->target_type != OBJECT_AGENT)
+    {
+        this->target_direction = vec3_init(1,0,0);
+        return;
+    }
+
     Agent_state* target = STATE::agent_list->get(this->target_id);
-    if (target == NULL) return;
+    if (target == NULL)
+    {
+        this->target_direction = vec3_init(1,0,0);
+        return;
+    }
+
     Vec3 target_position = target->get_position();
+    ASSERT_BOXED_POSITION(target_position);
     target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);
@@ -85,6 +100,7 @@ bool AgentTargetingComponent::move_on_surface()
     motion_direction.z = 0.0f;
 
     normalize_vector(&motion_direction);
+    if (vec3_length(motion_direction) == 0.0f) return false;
 
     bool moved = move_along_terrain_surface(
         physics->get_position(), motion_direction,

@@ -357,12 +357,12 @@ inline void object_choose_destination_StoC::handle()
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
     
-    Vec3 destination = vec3_init(this->x, this->y, this->z);
-    motion->destination = quadrant_translate_position(position, destination);
+    motion->destination = vec3_init(this->x, this->y, this->z);
+    Vec3 destination = quadrant_translate_position(position, motion->destination);
     motion->ticks_to_destination = this->ticks_to_destination;
     
     // set momentum from destination :: TODO MOVE
-    Vec3 direction = vec3_sub(motion->destination, position);
+    Vec3 direction = vec3_sub(destination, position);
     if (this->ticks_to_destination)
     {
         float len = vec3_length(direction);
@@ -466,7 +466,7 @@ inline void object_in_transit_StoC::handle()
 
     dest_target->set_destination(destination);
     dest_target->orient_to_target(pos);
-    dest_target->target_direction = this->dir;
+    //dest_target->target_direction = this->dir;
     
     if (this->ticks_to_destination)
     {

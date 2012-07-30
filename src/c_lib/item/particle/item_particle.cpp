@@ -101,7 +101,8 @@ void ItemParticle::tick()
             }
             else
             {    // orient towards agent
-                Vec3 direction = vec3_sub(p, this->verlet.position);
+                Vec3 pos = quadrant_translate_position(p, this->verlet.position);
+                Vec3 direction = vec3_sub(p, pos);
                 normalize_vector(&direction);
                 direction = vec3_scalar_mult(direction, ITEM_PARTICLE_PICKUP_MOMENTUM);
                 this->verlet.velocity = direction;
@@ -111,14 +112,13 @@ void ItemParticle::tick()
     
     // dont apply physics if the chunk is not loaded (in client)
     #if DC_CLIENT
-    if (t_map::position_is_loaded(this->verlet.position.x, this->verlet.position.y)) {
+    if (t_map::position_is_loaded(this->verlet.position.x, this->verlet.position.y))
+        this->verlet.bounce_box(ITEM_PARTICLE_RADIUS);
     #endif
-    verlet.bounce_box(ITEM_PARTICLE_RADIUS);
-    #if DC_CLIENT
-    }
-    #endif
-    
+
     #if DC_SERVER
+    this->verlet.bounce_box(ITEM_PARTICLE_RADIUS);
+
     if (this->verlet.position.z < OBJECT_DEPTH_MAX) this->ttl = 0;
     this->pickup_prevention--;
     #endif

@@ -285,8 +285,6 @@ void server_tick_mob_robot_box(Object* object)
         destination.z = (float)t_map::get_highest_open_block(destination.x,destination.y);
         if (destination.z < 0) destination.z = 0;
 
-        destination = quadrant_translate_position(camera_position, destination);
-
         Vec3 direction = vec3_sub(destination, position);
         float len = vec3_length(direction);
 

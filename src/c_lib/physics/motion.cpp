@@ -69,8 +69,8 @@ void orient_to_point(Vec3 dest, Vec3 origin, float* theta, float* phi)
 #define FLOAT_ERROR_MARGIN 0.005f
 static bool advance_move(Vec3 position, Vec3 move_to, int z, float speed, Vec3* new_position, Vec3* new_momentum)
 {
-    move_to = translate_position(move_to);
-    move_to = quadrant_translate_position(position, move_to);//TODO -- move_to should already be translated
+    //move_to = translate_position(move_to);
+    //move_to = quadrant_translate_position(position, move_to);
     Vec3 new_direction = vec3_sub(move_to, position);
     float len = vec3_length_squared(new_direction);
     if (len < FLOAT_ERROR_MARGIN)
@@ -79,7 +79,7 @@ static bool advance_move(Vec3 position, Vec3 move_to, int z, float speed, Vec3* 
         len = 0.0f;
     }
     else normalize_vector(&new_direction);
-    //GS_ASSERT(len < 512.0f*512.0f); // TODO -- re-enable this assert
+    GS_ASSERT(len < 512.0f*512.0f);
 
     *new_momentum = vec3_scalar_mult(new_direction, speed);
     position = vec3_add(position, *new_momentum);
@@ -115,7 +115,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     // assumes direction is normalized
 
     GS_ASSERT(speed > 0.0f);
-    //GS_ASSERT(vec3_length(direction) > 0.0f);
+    GS_ASSERT(vec3_length(direction) > 0.0f);
     if (vec3_length(direction) == 0.0f) return false;
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));

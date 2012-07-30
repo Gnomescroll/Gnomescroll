@@ -23,7 +23,6 @@ static inline void velocity_integrate(Vec3* p, Vec3* v, float dt)
     velocity_integrate(p, v, a, dt);
 }
 
-
 bool bounce(Vec3* position, Vec3* velocity, float damp)
 {
     // save current state
@@ -59,11 +58,12 @@ bool bounce(Vec3* position, Vec3* velocity, float damp)
         *velocity = old_velocity;
         velocity_integrate(position, velocity, dt*interval);
         *position = translate_position(*position);
-        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
         *velocity = vec3_reflect(*velocity, norm);
         *velocity = vec3_scalar_mult(*velocity, damp);
     }
-    
+    else
+        *position = translate_position(*position);
+
     return bounced;
 }
 
@@ -88,14 +88,14 @@ int* bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* til
         *velocity = old_velocity;
         velocity_integrate(position, velocity, dt*interval);
         *position = translate_position(*position);
-        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
         *velocity = vec3_reflect(*velocity, norm);
         *velocity = vec3_scalar_mult(*velocity, damp);
     }
-    
+    else
+        *position = translate_position(*position);
+
     return s;
 }
-
 
 bool bounce_box(Vec3* position, Vec3* velocity, float damp, float radius)
 {
@@ -129,8 +129,10 @@ bool bounce_box(Vec3* position, Vec3* velocity, float damp, float radius)
         *velocity = old_velocity;
         *position = translate_position(old_position);
     }
+    else
+        *position = translate_position(*position);
+        
     return bounced;
 }
 
-
-}
+}   // Verlet
