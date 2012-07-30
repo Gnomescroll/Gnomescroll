@@ -496,7 +496,7 @@ void init()
 	printf("BT: start bone tree: \n");
 	BoneTree bt;
 
-	bt.init(pScene);
+	bt.init( (aiScene*) pScene);
 	printf("BT: bone tree finished\n");
 	
 
