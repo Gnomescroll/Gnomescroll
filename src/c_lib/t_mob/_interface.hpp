@@ -286,12 +286,30 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 		aiMesh* mesh = pScene->mMeshes[index];
 		for(unsigned int j=0; j < mesh->mNumBones; j++)
 		{
+			aiBone* bone = mesh->mBones[j];
+
 			printf("\t\tBone %02d: %s affects %d vertices \n", j, 
 				mesh->mBones[j]->mName.data,
 				mesh->mBones[j]->mNumWeights
 				);
-		}
+			//C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
+			//C_STRUCT aiMatrix4x4 mOffsetMatrix; //! Matrix that transforms from mesh space to bone space in bind pose
+		
+			for(unsigned int k=0; k < mesh->mBones[j]->mNumWeights; k++)
+			{
+				//aiVertexWeight* vertex_weight = bone->mWeights[k];
+				//printf("vertex index: %d weight: %f \n", vertex_weight->)
 
+				//bone->mWeights[k].mVertexId;
+				//bone->mWeights[k].mWeight;
+		
+				//struct aiVertexWeight 
+				//unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
+				//! The strength of the influence in the range (0...1).
+				//! The influence from all bones at one vertex amounts to 1.
+				//float mWeight;
+			}
+		}
 	}
 
 	for(unsigned int i=0; i < pNode->mNumChildren; i++)
@@ -362,6 +380,11 @@ void init()
 			node_anim->mNumRotationKeys		//aiQuatKey* mRotationKeys;
 			);
 
+
+			for(unsigned int k=0; k<node_anim->mNumPositionKeys; k++)
+			{
+				printf("aiVector %i: time %f \n", k, node_anim->mPositionKeys[k].mTime );
+			}
 			//struct aiVectorKey
 			//double mTime; //The time of this key
 			//C_STRUCT aiVector3D mValue;  //The value of this key
@@ -369,9 +392,6 @@ void init()
 			//struct aiQuatKey
 			//double mTime;     //The time of this key 
 			//C_STRUCT aiQuaternion mValue;  //The value of this key
-
-		}
-
 		}
 
 	}
