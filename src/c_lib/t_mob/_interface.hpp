@@ -286,7 +286,10 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 		aiMesh* mesh = pScene->mMeshes[index];
 		for(unsigned int j=0; j < mesh->mNumBones; j++)
 		{
-			printf("\t\tBone %02d: %s \n", j, mesh->mBones[j]->mName.data);
+			printf("\t\tBone %02d: %s affects %d vertices \n", j, 
+				mesh->mBones[j]->mName.data,
+				mesh->mBones[j]->mNumWeights
+				);
 		}
 
 	}
@@ -323,11 +326,33 @@ void init()
 */
 
 	//aiString.data is char*
-	printf("Scene animations: %d \n", pScene->mNumAnimations);
+
 
 	printf("Bone tree: \n");
 	PrintBoneTree(pScene, 0, pScene->mRootNode);	//these are actually meshes
 	//pScene->mRootNode
+
+
+	printf("Animations: \n")l
+
+	printf("Scene animations: %d \n", pScene->mNumAnimations);
+
+
+	for(unsigned int i=0; i<pScene->mNumAnimations; i++)
+	{
+		aiAnimation* anim = pScene->mAnimations[i];
+
+
+	}
+
+	/** The array of animations. 
+	*
+	* All animations imported from the given file are listed here.
+	* The array is mNumAnimations in size.
+	*/
+	//C_STRUCT aiAnimation** mAnimations;
+
+
 
 /*
 	printf("pScene->mMeshes: \n");
