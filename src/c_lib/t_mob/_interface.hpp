@@ -301,13 +301,13 @@ class BoneTree
 
 		nli = 0;
 		count_nodes(pScene->mRootNode); //count the nodes with meshes
-		nl = new *aiNode[nli];
+		nl = new aiNode*[nli];
 		npl = new int[nli];
-		ml new *aiMesh[nli];
+		ml = new aiMesh*[nli];
 
-		for(int i=0; i<nli; i++) node_list[i] = NULL;
-		for(int i=0; i<nli; i++) node_parent[i] = -1;
-		for(int i=0; i<nli; i++) mesh_list[i] = NULL;
+		for(int i=0; i<nli; i++) nl[i] = NULL;
+		for(int i=0; i<nli; i++) npl[i] = -1;
+		for(int i=0; i<nli; i++) ml[i] = NULL;
 
 		nli = 0;
 		set_node_parents(pScene->mRootNode, 0);
