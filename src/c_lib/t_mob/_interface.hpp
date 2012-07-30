@@ -265,20 +265,27 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 */
 
 //unsigned int mNumMeshes;
-//unsigned int* mMeshes;
+//unsigned int* mMeshes;	<---index into aiScene mesh array!
 
-void PrintBoneTree(int num, aiNode* pNode)
+
+//struct aiScene
+//C_STRUCT aiMesh** mMeshes;
+
+void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 {
 	printf("num: %02d bone name= %s \n", num, pNode->mName.data);
 
 	for(unsigned int i=0; i < pNode->mNumMeshes; i++)
 	{
-		printf("\tMesh %02d: %s \n", i, pNode->mMeshes[i]->mName.data);
+		unsigned int index = pNode->mMeshes[i];
+		printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index, pScene->mMeshes[index]->mName.data,
+			pScene->mMeshes[index]->mNumVertices,
+			pScene->mMeshes[index]->mNumFaces);
 	}
 
 	for(unsigned int i=0; i < pNode->mNumChildren; i++)
 	{
-		PrintBoneTree(num+1, pNode->mChildren[i]);
+		PrintBoneTree(pScene, num+1, pNode->mChildren[i]);
 	}
 }
 
@@ -311,7 +318,7 @@ void init()
 	printf("Scene animations: %d \n", pScene->mNumAnimations);
 
 	printf("Bone tree: \n");
-	PrintBoneTree(0, pScene->mRootNode);	//these are actually meshes
+	PrintBoneTree(pScene, 0, pScene->mRootNode);	//these are actually meshes
 	//pScene->mRootNode
 
 	printf("pScene->mMeshes: \n");
