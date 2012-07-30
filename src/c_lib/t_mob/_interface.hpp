@@ -333,7 +333,7 @@ void init()
 	//pScene->mRootNode
 
 
-	printf("Animations: \n")l
+	printf("Animations: \n");
 
 	printf("Scene animations: %d \n", pScene->mNumAnimations);
 
@@ -343,11 +343,11 @@ void init()
 		aiAnimation* anim = pScene->mAnimations[i];
 
 
-		printf("anime %02d: name= %s duration= %d channels= %d mesh_channels= %d \n", i,
+		printf("anime %02d: name= %s duration= %f channels= %d mesh_channels= %d \n", i,
 			anim->mName.data,
 			anim->mDuration,
-			anim->mTicksPerSecond,
-			anim->mNumChannels
+			anim->mNumChannels,
+			anim->mNumMeshChannels
 			);
 	}
 
