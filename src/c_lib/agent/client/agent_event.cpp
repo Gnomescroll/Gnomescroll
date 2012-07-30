@@ -277,11 +277,10 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
             Voxel_volume* vv = agent->vox->get_part(part);
             if (vv != NULL)
             {
-                float c[3];
-                vv->get_center(c);
-                Animations::blood_spray(c[0], c[1], c[2], f.x, f.y, f.z);
-                Sound::pick_hit_agent(  // TODO: switch (weapon) {}
-                    c[0], c[1], c[2],
+                Vec3 c = vv->get_center();
+                Animations::blood_spray(c.x, c.y, c.z, f.x, f.y, f.z);
+                Sound::pick_hit_agent(  // TODO: play weapon sound from a config
+                    c.x, c.y, c.z, 
                     0,0,0
                 );
             }

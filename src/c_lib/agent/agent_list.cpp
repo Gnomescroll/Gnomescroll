@@ -274,16 +274,8 @@ Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
     using STATE::agent_list;
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
     if (n <= 0) return NULL;
-    Agent_state* agent = NULL;
-    int i=0;
-    while (i < n)
-    {   // skip all viewing agents
-        agent = agent_list->filtered_objects[i];
-        GS_ASSERT(agent != NULL);
-        i++;
-    }
-    if (i >= n) agent = NULL;
-    return agent;
+    agent_list->sort_filtered_objects_by_distance();
+    return agent_list->filtered_objects[0];
 }
 
 Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radius)
@@ -291,10 +283,11 @@ Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radi
     using STATE::agent_list;
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
     if (n <= 0) return NULL;
+    agent_list->sort_filtered_objects_by_distance();
     Agent_state* agent = NULL;
     int i=0;
     while (i < n)
-    {   // skip all viewing agents
+    {   // skip all dead agents
         agent = agent_list->filtered_objects[i];
         GS_ASSERT(agent != NULL);
         if (agent != NULL && !agent->status.dead) break;

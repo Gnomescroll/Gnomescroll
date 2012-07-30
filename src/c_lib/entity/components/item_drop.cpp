@@ -40,6 +40,8 @@ static struct Vec3 get_dropped_item_position(Objects::Object* object)
     position.x = position.x + (randf()*2*radius) - radius;
     position.y = position.y + (randf()*2*radius) - radius;
 
+    position = translate_position(position);
+
     return position;
 }
 

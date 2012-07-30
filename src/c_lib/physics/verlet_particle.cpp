@@ -65,6 +65,9 @@ bool VerletParticle::bool_bounce()
         velocity = vec3_reflect(velocity, norm);
         velocity = vec3_scalar_mult(velocity, dampening);
     }
+    else
+        position = translate_position(position);
+
     return bounced;
 }
 
@@ -97,6 +100,9 @@ void VerletParticle::bounce()
         velocity = vec3_reflect(velocity, norm);
         velocity = vec3_scalar_mult(velocity, dampening);
     }
+    else
+        position = translate_position(position);
+
     //return bounced;
 }
 
@@ -146,6 +152,9 @@ void VerletParticle::bounce_box(float radius)
         velocity = vec3_reflect(velocity, norm);
         velocity = vec3_scalar_mult(velocity, dampening);
     }
+    else
+        position = translate_position(position);
+    
     //return bounced;
 }
 
@@ -202,6 +211,9 @@ void VerletParticle::bounce_box_no_gravity(float radius)
         velocity = vec3_reflect(velocity, norm);
         velocity = vec3_scalar_mult(velocity, dampening);
     }
+    else
+        position = translate_position(position);
+
     //return bounced;
 }
 
@@ -251,6 +263,9 @@ void VerletParticle::radial(float xr, float yr)
         velocity = vec3_reflect(velocity, norm);
         velocity = vec3_scalar_mult(velocity, dampening);
     }
+    else
+        position = translate_position(position);
+
 }
 
 bool VerletParticle::bounce_no_gravity()
@@ -293,6 +308,8 @@ bool VerletParticle::bounce_no_gravity()
         velocity = vec3_reflect(velocity, norm);
         velocity = vec3_scalar_mult(velocity, dampening);
     } 
+    else
+        position = translate_position(position);
 
     return bounced;
 }

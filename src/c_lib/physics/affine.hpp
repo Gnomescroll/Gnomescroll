@@ -4,6 +4,7 @@
 #endif
 
 #include <physics/vec3.hpp>
+#include <physics/quadrant.hpp>
 #include <physics/mat3.hpp>
 
 struct Affine {
@@ -99,7 +100,7 @@ struct Affine affine_euler_rotation_and_translation(float _x, float _y, float _z
     m.v[2].y = (float)(czsy*sx-sz*cx);
     m.v[2].z = (float)(cz*cy);
 
-    m.v[3] = vec3_init(_x, _y, _z);
+    m.c = vec3_init(_x, _y, _z);
 
     return m;
 }

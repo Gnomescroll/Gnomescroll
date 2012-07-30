@@ -69,6 +69,8 @@ void orient_to_point(Vec3 dest, Vec3 origin, float* theta, float* phi)
 #define FLOAT_ERROR_MARGIN 0.005f
 static bool advance_move(Vec3 position, Vec3 move_to, int z, float speed, Vec3* new_position, Vec3* new_momentum)
 {
+    //move_to = translate_position(move_to);
+    //move_to = quadrant_translate_position(position, move_to);
     Vec3 new_direction = vec3_sub(move_to, position);
     float len = vec3_length_squared(new_direction);
     if (len < FLOAT_ERROR_MARGIN)
@@ -114,6 +116,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
 
     GS_ASSERT(speed > 0.0f);
     GS_ASSERT(vec3_length(direction) > 0.0f);
+    if (vec3_length(direction) == 0.0f) return false;
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));

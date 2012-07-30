@@ -446,7 +446,6 @@ static void chase_agent(class Object* object)
     
     // check target
     target->check_target_alive();
-    if (target->target_type == OBJECT_NONE) target->lock_target(position);
     if (target->target_type == OBJECT_NONE)
     {
         chase_agent_to_waiting(object);

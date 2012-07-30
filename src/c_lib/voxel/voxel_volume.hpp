@@ -49,12 +49,6 @@ class Voxel_volume
 
     inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision);
     
-    inline void get_center(float *v)
-    {
-        v[0] = world_matrix.c.x;
-        v[1] = world_matrix.c.y;
-        v[2] = world_matrix.c.z;
-    }
     inline struct Vec3 get_center(){ return world_matrix.c; }
 
     #if DC_CLIENT

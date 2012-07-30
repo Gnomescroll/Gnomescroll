@@ -38,7 +38,6 @@ void DestinationTargetingComponent::choose_destination()
         len = sqrtf(2.0f) * this->stop_proximity;
     }
     
-
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)
         this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
@@ -68,12 +67,18 @@ void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
 
 // adjusts position & momentum by moving over the terrain surface
 bool DestinationTargetingComponent::move_on_surface()
-{    
+{        
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return false;
+
+    if (this->speed == 0.0f)
+    {
+        physics->set_momentum(vec3_init(0,0,0));
+        return false;
+    }
 
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
