@@ -374,7 +374,8 @@ aiMesh
 				unsigned int index = pNode->mMeshes[i];
 				aiMesh* mesh = pScene->mMeshes[index];
 				ml[i] = mesh;
-				vli += mesh->mNumVertices;
+				//vli += mesh->mNumVertices;
+				vli += 3*mesh->mNumFaces;
 			}
 		}
 
@@ -398,7 +399,8 @@ aiMesh
 
 			}
 
-			count += mesh->mNumVertices;
+			count += 3*mesh->mNumFaces;
+			//count += mesh->mNumVertices;
 		}
 			//ml[i]->mMeshes[index]->mName.data,
 			//ml[i]->mMeshes[index]->mNumVertices,
@@ -432,7 +434,7 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 		aiMesh* mesh = pScene->mMeshes[index];
 		for(unsigned int j=0; j < mesh->mNumBones; j++)
 		{
-			aiBone* bone = mesh->mBones[j];
+			//aiBone* bone = mesh->mBones[j];
 
 			printf("\t\tBone %02d: %s affects %d vertices \n", j, 
 				mesh->mBones[j]->mName.data,
