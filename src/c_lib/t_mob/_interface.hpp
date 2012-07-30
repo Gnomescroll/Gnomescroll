@@ -319,18 +319,6 @@ class BoneTree
 
 		set_vertices();
 
-		for(unsigned int i=0; i < pNode->mNumMeshes; i++)
-		{
-			unsigned int index = pNode->mMeshes[i];
-			printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index, 
-				pScene->mMeshes[index]->mName.data,
-				pScene->mMeshes[index]->mNumVertices,
-				pScene->mMeshes[index]->mNumFaces);
-
-			aiMesh* mesh = pScene->mMeshes[index];
-			//for(unsigned int j=0; j < mesh->mNumBones; j++)
-			//{
-		}
 
 	}
 
@@ -352,7 +340,7 @@ class BoneTree
 		nli++;
 		for(unsigned int i=0; i < pNode->mNumChildren; i++)
 		{
-			count_nodes(set_node_parents, nli);
+			set_node_parents(pNode->mChildren[i], index);
 		}
 	}
 
