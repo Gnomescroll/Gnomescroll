@@ -403,7 +403,9 @@ aiMesh
 			GS_ASSERT(mesh->mPrimitiveTypes == 3);
 			for(int j=0; j<mesh->mNumVertices; j++)
 			{
-				
+				struct Vertex v; 
+
+
 
 			}
 
@@ -413,7 +415,15 @@ aiMesh
 			//ml[i]->mMeshes[index]->mNumVertices,
 			//ml[i]->mMeshes[index]->mNumFaces);s
 
-
+		/*
+			unsigned int mNumVertices;
+			unsigned int mNumFaces;
+			C_STRUCT aiVector3D* mVertices; //the vertices
+			C_STRUCT aiVector3D* mNormals;
+			C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+			unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+			C_STRUCT aiFace* mFaces;
+		*/
 		GS_ASSERT(count == vli);
 	}
 };
@@ -471,7 +481,7 @@ void init()
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
 	char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
 
-	int aFlag = 0;
+	int aFlag = aiProcess_Triangulate;
 	char* aHint = NULL;
 	const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
 
