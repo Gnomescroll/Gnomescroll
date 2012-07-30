@@ -277,22 +277,46 @@ class BoneTree
 	BoneTree() {}
 
 
-	aiNode** node_list;
-	int* node_parent;
+	aiNode** nl; 	//node list
+	int* npl;		//node parent list
+	int nli; 		//node list index
 
-	static int index;
+	aiMesh** ml;	//mesh list, the mesh for node i
+	aiScene* pScene;
 
-	void init(aiScene* pScene )
+	struct Vertex
 	{
+		float x,y,z;
+		float ux,uy;
+	};
 
-		int mesh_count =0;
+	struct Vertex* vl;	//vertex list
+	int vli;			//vertex list index
+	int* vll;			//vertex list loop
+	int* vln;			//number of vertices in mesh
+
+	void init(aiScene* _pScene)
+	{
+		pScene = _pScene;
+
+		nli = 0
 		count_nodes(pScene->mRootNode); //count the nodes with meshes
-		node_list = new aiNode[mesh_count];
-		node_parent = new int[mesh_count];
+		node_list = new *aiNode[nli];
+		node_parent = new int[nli];
+		mesh_list new *aiMesh[nli];
 
-		for(int i=0; i<mesh_count; i++) node_parent[i] = -1;
-		index = 0;
-		set_node_parents(pScene->mRootNode, parent_index);
+		for(int i=0; i<nli; i++) node_parent[i] = -1;
+		for(int i=0; i<nli; i++) node_parent[i] = -1;
+
+		nli = 0;
+		set_node_parents(pScene->mRootNode, 0);
+
+		count_vertices();
+		vl = new Vertex[vli];
+		vll = new int[vli];
+		vln = new int[vli];
+
+		set_vertices();
 
 		for(unsigned int i=0; i < pNode->mNumMeshes; i++)
 		{
@@ -310,32 +334,88 @@ class BoneTree
 	}
 
 
-	void count_nodes(aiNode* pNode)
+	void void count_nodes(aiNode* pNode)
 	{
 		GS_ASSERT(pNode->mNumMeshes < 2); //assume only one mesh per node for now
 		for(unsigned int i=0; i < pNode->mNumMeshes; i++)
-		{
-			mesh_count++;
-		}
-
+			nli++;
 		for(unsigned int i=0; i < pNode->mNumChildren; i++)
-		{
 			count_nodes(pNode->mChildren[i]);
-		}
 	}
 
-	set_node_parents(aiNode* pNode, int parent_index)
+	void set_node_parents(aiNode* pNode, int parent_index)
 	{
-		node_list[index] = pNode;
-		node_parent[index] = parent_index; 
-		index++;
+		int index = nli;
+		nl[nli] = pNode;
+		npl[nli] = parent_index; 
+		nli++;
 		for(unsigned int i=0; i < pNode->mNumChildren; i++)
 		{
-			count_nodes(pNode->mChildren[i]);
+			count_nodes(set_node_parents, nli);
 		}
 	}
 
+/*
+aiMesh
+	unsigned int mPrimitiveTypes;
+	unsigned int mNumVertices;
+	unsigned int mNumFaces;
 
+	C_STRUCT aiVector3D* mVertices; //the vertices
+	C_STRUCT aiVector3D* mNormals;
+
+	C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+	unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+
+	C_STRUCT aiFace* mFaces;
+
+	unsigned int mNumBones;
+	C_STRUCT aiBone** mBones;
+*/
+
+	void count_vertices()
+	{
+		vli = 0;
+
+		for(int i=0; i<nli; i++)
+		{
+			struct aiNode* pNode = nl[i];
+			for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+			{
+				unsigned int index = pNode->mMeshes[i];
+				aiMesh* mesh = pScene->mMeshes[index];
+				ml[i] = mesh;
+				vli += mesh->mNumVertices;
+			}
+		}
+
+	}
+
+	void set_vertices
+	{
+		int count = 0;
+		for(int i=0; i<nli; i++)
+		{
+			aiMesh* mesh = ml[i]
+			vll[i] = count;
+			vln[i] = mesh->mNumVertices
+
+			GS_ASSERT(mesh->mPrimitiveTypes == 3);
+			for(int j=0; j<mesh->mNumVertices; j++)
+			{
+				
+
+			}
+
+			count += mesh->mNumVertices;
+		}
+			//ml[i]->mMeshes[index]->mName.data,
+			//ml[i]->mMeshes[index]->mNumVertices,
+			//ml[i]->mMeshes[index]->mNumFaces);s
+
+
+		GS_ASSERT(count == vli);
+	}
 };
 void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 {
