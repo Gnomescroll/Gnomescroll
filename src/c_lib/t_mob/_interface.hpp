@@ -277,6 +277,7 @@ class BoneTree
 	BoneTree() {}
 
 
+	int nlm;  		//node list max
 	aiNode** nl; 	//node list
 	int* npl;		//node parent list
 	int nli; 		//node list index
@@ -284,13 +285,14 @@ class BoneTree
 	aiMesh** ml;	//mesh list, the mesh for node i
 	aiScene* pScene;
 
-	struct Vertex
+	struct _Vertex
 	{
 		float x,y,z;
 		float ux,uy;
 	};
 
-	struct Vertex* vl;	//vertex list
+	int vlm; 			//vertex list max
+	struct _Vertex* vl;	//vertex list
 	int vli;			//vertex list index
 	int* vll;			//vertex list loop
 	int* vln;			//number of vertices in mesh
@@ -301,6 +303,7 @@ class BoneTree
 
 		nli = 0;
 		count_nodes(pScene->mRootNode); //count the nodes with meshes
+		nlm = nli;
 		nl = new aiNode*[nli];
 		npl = new int[nli];
 		ml = new aiMesh*[nli];
@@ -313,15 +316,12 @@ class BoneTree
 		set_node_parents(pScene->mRootNode, 0);
 
 		count_vertices();
-		vl = new Vertex[vli];
+		vl = new _Vertex[vli];
 		vll = new int[vli];
 		vln = new int[vli];
 
 		set_vertices();
-
-
 	}
-
 
 	void count_nodes(aiNode* pNode)
 	{
@@ -334,6 +334,9 @@ class BoneTree
 
 	void set_node_parents(aiNode* pNode, int parent_index)
 	{
+		if(pNode->mNumMeshes == 0) return;
+
+		GS_ASSERT(nli < nlm);
 		int index = nli;
 		nl[nli] = pNode;
 		npl[nli] = parent_index; 
@@ -391,15 +394,34 @@ aiMesh
 			vln[i] = mesh->mNumVertices;
 
 			GS_ASSERT(mesh->mPrimitiveTypes == 3);
-			for(unsigned int j=0; j<mesh->mNumVertices; j++)
+
+			for(unsigned int j=0; j<mesh->mNumFaces; j++)
 			{
-				struct Vertex v; 
+				GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
+				GS_ASSERT(mesh->mNumUVComponents[j] == 2);
 
+				for(int k=0; k<3; k++)
+				{
 
+					int index = mesh->mFaces[j].mIndices[k];
+					aiVector3D pos = mesh->mVertices[index];
+					aiVector3D tex = *mesh->mTextureCoords[index];
+
+					struct _Vertex v; 
+					v.x = pos.x;
+					v.y = pos.y;
+					v.z = pos.z;
+
+					ux = tex.x;
+					uy = tex.y;
+
+					vl[count] = v;
+					count++;
+				}
 
 			}
 
-			count += 3*mesh->mNumFaces;
+			//count += 3*mesh->mNumFaces;
 			//count += mesh->mNumVertices;
 		}
 			//ml[i]->mMeshes[index]->mName.data,
@@ -498,7 +520,7 @@ void init()
 
 	bt.init( (aiScene*) pScene);
 	printf("BT: bone tree finished\n");
-	
+	abort(); //debug
 
 	printf("Bone tree: \n");
 	PrintBoneTree(pScene, 0, pScene->mRootNode);	//these are actually meshes
