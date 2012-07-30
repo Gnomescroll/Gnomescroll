@@ -493,6 +493,12 @@ void init()
 
 	//aiString.data is char*
 
+	printf("BT: start bone tree: \n");
+	BoneTree bt;
+
+	bt.init(pScene);
+	printf("BT: bone tree finished\n");
+	
 
 	printf("Bone tree: \n");
 	PrintBoneTree(pScene, 0, pScene->mRootNode);	//these are actually meshes
@@ -509,7 +515,7 @@ void init()
 		aiAnimation* anim = pScene->mAnimations[i];
 
 
-		printf("anime %02d: name= %s duration= %f ticks_per_second= %f channels= %d mesh_channels= %d \n", i,
+		printf("anim %02d: name= %s duration= %f ticks_per_second= %f channels= %d mesh_channels= %d \n", i,
 			anim->mName.data,
 			anim->mDuration,
 			anim->mTicksPerSecond,
@@ -602,7 +608,7 @@ void init()
 #endif
 	printf("Succes\n");
 
-	abort();
+	exit(0);
 /*
 	if(!pScene->HasAnimations()) return;
 	Release();
