@@ -264,9 +264,17 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 	const char* pHint);
 */
 
+//unsigned int mNumMeshes;
+//unsigned int* mMeshes;
+
 void PrintBoneTree(int num, aiNode* pNode)
 {
 	printf("num: %02d bone name= %s \n", num, pNode->mName.data);
+
+	for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+	{
+		printf("\tMesh %02d: %s \n", i, pNode->mMeshes[i]->mName.data);
+	}
 
 	for(unsigned int i=0; i < pNode->mNumChildren; i++)
 	{
