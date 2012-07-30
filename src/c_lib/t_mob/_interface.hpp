@@ -349,6 +349,19 @@ void init()
 			anim->mNumChannels,
 			anim->mNumMeshChannels
 			);
+
+
+		for(unsigned int j=0; j<anim->mNumChannels; j++)
+		{
+			aiNodeAnim* node_anim = anim->mChannels[j];
+
+			printf("\tnode_anim: %02d name= %s \n", j,
+			node_anim->mNodeName.data
+			);
+
+
+		}
+
 	}
 
 #if 0
