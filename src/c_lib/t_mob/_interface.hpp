@@ -271,6 +271,72 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 //struct aiScene
 //C_STRUCT aiMesh** mMeshes;
 
+class BoneTree
+{
+	public:
+	BoneTree() {}
+
+
+	aiNode** node_list;
+	int* node_parent;
+
+	static int index;
+
+	void init(aiScene* pScene )
+	{
+
+		int mesh_count =0;
+		count_nodes(pScene->mRootNode); //count the nodes with meshes
+		node_list = new aiNode[mesh_count];
+		node_parent = new int[mesh_count];
+
+		for(int i=0; i<mesh_count; i++) node_parent[i] = -1;
+		index = 0;
+		set_node_parents(pScene->mRootNode, parent_index);
+
+		for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+		{
+			unsigned int index = pNode->mMeshes[i];
+			printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index, 
+				pScene->mMeshes[index]->mName.data,
+				pScene->mMeshes[index]->mNumVertices,
+				pScene->mMeshes[index]->mNumFaces);
+
+			aiMesh* mesh = pScene->mMeshes[index];
+			for(unsigned int j=0; j < mesh->mNumBones; j++)
+			{
+
+
+	}
+
+
+	void count_nodes(aiNode* pNode)
+	{
+		GS_ASSERT(pNode->mNumMeshes < 2); //assume only one mesh per node for now
+		for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+		{
+			mesh_count++;
+		}
+
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+		{
+			count_nodes(pNode->mChildren[i]);
+		}
+	}
+
+	set_node_parents(aiNode* pNode, int parent_index)
+	{
+		node_list[index] = pNode;
+		node_parent[index] = parent_index; 
+		index++;
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+		{
+			count_nodes(pNode->mChildren[i]);
+		}
+	}
+
+
+};
 void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 {
 	printf("aiNode: %02d pNode name= %s \n", num, pNode->mName.data);
@@ -302,7 +368,7 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 
 				//bone->mWeights[k].mVertexId;
 				//bone->mWeights[k].mWeight;
-		
+
 				//struct aiVertexWeight 
 				//unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
 				//! The strength of the influence in the range (0...1).
