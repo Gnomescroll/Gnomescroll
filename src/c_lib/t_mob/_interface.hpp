@@ -412,8 +412,8 @@ aiMesh
 					v.y = pos.y;
 					v.z = pos.z;
 
-					ux = tex.x;
-					uy = tex.y;
+					v.ux = tex.x;
+					v.uy = tex.y;
 
 					vl[count] = v;
 					count++;
