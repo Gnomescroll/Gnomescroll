@@ -52,13 +52,13 @@ class Session
     {
         if (f == NULL) f = stdout;
         
-        fprintf(f, "Session %d; ", this->id);
+        fprintf(f, "Session %04d; ", this->id);
 
         // version
-        fprintf(f, "Version %d; ", this->version);
+        fprintf(f, "Version %04d; ", this->version);
         
         // time
-        fprintf(f, "%ld seconds; ", this->logout_time - this->login_time);
+        fprintf(f, "%04ld seconds; ", this->logout_time - this->login_time);
 
         // addr
         uint8_t address[4];
@@ -66,10 +66,10 @@ class Session
         fprintf(f, "IP %d.%d.%d.%d; ", address[0], address[1], address[2], address[3]);
 
         // count
-        fprintf(f, "Login %d; ", this->number+1);
+        fprintf(f, "Login %02d; ", this->number+1);
 
         //client id
-        fprintf(f, "Client id %d; ", this->client_id);
+        fprintf(f, "Client id %03d; ", this->client_id);
 
         // names
         fprintf(f, "Names: ");

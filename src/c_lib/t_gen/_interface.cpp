@@ -20,8 +20,8 @@ void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float p
     //p2d.setup_octaves();
     //p2d.set_param(persistance, seed);
 
-    class PerlinOctave2D p2d(1);
-    //p2d.set_param(0.50, 1337);
+    class PerlinOctave2D p2d(octaves);
+    //pd2.set_persistance(persistance);
 
     float sum = 0.0f;
     for(int i=0; i<512; i++)
@@ -30,13 +30,15 @@ void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float p
         float _x = i*(1.0f/512.0f); // + (0.5/512.0);
         float _y = j*(1.0f/512.0f); // + (0.5/512.0);
 
-        _2d_noise_array[512*j + i] = p2d.sample(_x,_y,persistance);
-
-        //printf("x,y= %f %f noise= %f \n", _x,_y, p2d.sample(_x,_y,persistance) );
-        sum += abs( p2d.sample(_x,_y, persistance) );
+        float tmp = p2d.sample(_x,_y,persistance);
+        _2d_noise_array[512*j + i] = tmp;
+        sum += tmp;
+        //printf("x,y= %f %f noise= %f \n", _x,_y, tmp );
     }
 
-    printf("average= %f \n", sum/ (512.0f*512.0f));
+    printf("populate_2d_noise_array: average= %f \n", sum/ (512.0f*512.0f));
+
+    p2d.save_octaves2(8, "regolith_depth_map");
 }
 
 void save_png(const char* filename, float* in, int xres, int yres)
