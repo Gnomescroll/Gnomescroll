@@ -367,9 +367,8 @@ class MapGenerator1
         int index3 = k*XYMAX + j*XMAX + i;
 
         float h2 = height2D->cache[index2];
-        float r2 = roughness2D->cache[index2];
-
-        float ri2 = ridge2D->cache[index2];
+        //float r2 = roughness2D->cache[index2];
+        //float ri2 = ridge2D->cache[index2];
 
         //printf("ri2= %f \n", ri2);
         //float e2 = erosion2D->cache[index2];
@@ -394,8 +393,8 @@ class MapGenerator1
 
         static const float hrange = 4.0f;   //half of range (can perturb this with another map)
 
-        static const float _hmin = -1.0f;
-        static const float _hmax = 1.0f;
+        //static const float _hmin = -1.0f;
+        //static const float _hmax = 1.0f;
 
         static const float _hmix = 0.050f; //0.25;
 

@@ -266,7 +266,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 
 void PrintBoneTree(int num, aiNode* pNode)
 {
-	printf("num: %2d bone name= %s \n", num, pNode->mName.data);
+	printf("num: %02d bone name= %s \n", num, pNode->mName.data);
 
 	for(unsigned int i=0; i < pNode->mNumChildren; i++)
 	{
@@ -279,7 +279,7 @@ void init()
 	int bsize;
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/collada_test.dae", &bsize);
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
-	char* buffer = read_file_to_buffer( (char*) "media/mesh/blend_test.blend", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
 
 	int aFlag = 0;
 	char* aHint = NULL;
@@ -302,25 +302,27 @@ void init()
 	//aiString.data is char*
 	printf("Scene animations: %d \n", pScene->mNumAnimations);
 
+	printf("Bone tree: \n");
 	PrintBoneTree(0, pScene->mRootNode);	//these are actually meshes
 	//pScene->mRootNode
 
+	printf("pScene->mMeshes: \n");
 
 	for(unsigned int i=0; i < pScene->mNumMeshes; i++)
 	{
-		printf("Mesh %2d: %s \n", i, pScene->mMeshes[i]->mName.data);
+		printf("Mesh %02d: %s \n", i, pScene->mMeshes[i]->mName.data);
 
 	}
 
 
 	for(unsigned int i=0; i < pScene->mNumMeshes; i++)
 	{
-		printf("Mesh %2d: name= %s numBones= %d \n", i, pScene->mMeshes[i]->mName.data, pScene->mMeshes[i]->mNumBones);
+		printf("Mesh %02d: name= %s numBones= %d \n", i, pScene->mMeshes[i]->mName.data, pScene->mMeshes[i]->mNumBones);
 
 		for(unsigned int j=0; j < pScene->mMeshes[i]->mNumBones; j++)
 		{
 
-			printf("Bone %2d: %s \n", j, pScene->mMeshes[i]->mBones[j]->mName.data);
+			printf("\tBone %02d: %s \n", j, pScene->mMeshes[i]->mBones[j]->mName.data);
 		}
 
 	}
