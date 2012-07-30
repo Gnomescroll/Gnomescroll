@@ -7,7 +7,7 @@ extern "C"
 {
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
-//#include <assimp/aiPostProcess.h>
+#include <assimp/postprocess.h> //defines for postprocessor
 }
 #define __cplusplus
 
@@ -390,7 +390,7 @@ aiMesh
 			vln[i] = mesh->mNumVertices;
 
 			GS_ASSERT(mesh->mPrimitiveTypes == 3);
-			for(int j=0; j<mesh->mNumVertices; j++)
+			for(unsigned int j=0; j<mesh->mNumVertices; j++)
 			{
 				struct Vertex v; 
 
