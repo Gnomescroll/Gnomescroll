@@ -463,20 +463,7 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 	}
 }
 
-/*
-	Flag reference
-	http://assimp.sourceforge.net/lib_html/postprocess_8h.html
 
-
-	aiProcess_ImproveCacheLocality  Reorders triangles for better vertex cache locality.
-	aiProcess_ValidateDataStructure 
-
-	aiProcess_JoinIdenticalVertices  
-	If this flag is not specified, no vertices are referenced by more than one face and no index buffer is required for rendering.
-
-
-
-*/
 
 /*
 	Documentation on removal step
@@ -489,6 +476,20 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 	aiComponent_TEXTURES //remove embedded textures
 	aiComponent_MATERIALS 
 */
+
+/*
+	Flag reference
+	http://assimp.sourceforge.net/lib_html/postprocess_8h.html
+
+	aiProcess_ImproveCacheLocality  Reorders triangles for better vertex cache locality.
+	aiProcess_ValidateDataStructure 
+
+	aiProcess_JoinIdenticalVertices  
+	If this flag is not specified, no vertices are referenced by more than one face and no index buffer is required for rendering.
+
+	Add cache locality and join identical values even if not using index buffers
+*/
+
 void init()
 {
 	int bsize;
@@ -499,9 +500,10 @@ void init()
 
 
 
-	int aFlag = aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_ValidateDataStructure ;
-
-	aFlag |= aiProcess_RemoveComponent;	//strip components on
+	int aFlag = aiProcess_Triangulate | 
+	aiProcess_GenUVCoords | 
+	aiProcess_ValidateDataStructure |
+	aiProcess_RemoveComponent;	//strip components on
 
 	char* aHint = NULL;
 	aiPropertyStore* property_store = aiCreatePropertyStore();
