@@ -353,7 +353,7 @@ int init_c_lib(int argc, char* argv[])
 
     Animations::init();
 
-    obj_load::init_draw_model();
+    //obj_load::init_draw_model();
 
     //t_map::init_block_item_sheet();
     Item::load_crafting_dat();
@@ -366,7 +366,7 @@ int init_c_lib(int argc, char* argv[])
     Hud::init_hud_draw_settings();
 
     //t_gen::generate_random_tile();
-    t_mob::init();
+    //t_mob::init();
     //check_gl_error();
     return 0;
 }
