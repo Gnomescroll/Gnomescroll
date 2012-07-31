@@ -305,7 +305,7 @@ aiMesh
 			vln[i] = mesh->mNumVertices;
 
 			GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
-			GS_ASSERT(mesh->mTextureCoords != NULL);
+			GS_ASSERT(mesh->mTextureCoords[0] != NULL);
 
 			for(unsigned int j=0; j<mesh->mNumFaces; j++)
 			{
@@ -318,7 +318,7 @@ aiMesh
 
 					int index = mesh->mFaces[j].mIndices[k];
 					aiVector3D pos = mesh->mVertices[index];
-					aiVector3D tex = mesh->mTextureCoords[index][0];
+					aiVector3D tex = mesh->mTextureCoords[0][index];
 
 					struct _Vertex v; 
 					v.v.x = pos.x;
@@ -412,6 +412,9 @@ aiMesh
 				print_mat4(mat);
 			}
 		}
+
+		//mesh->mTextureCoords[0]
+
 	}
 
 };
