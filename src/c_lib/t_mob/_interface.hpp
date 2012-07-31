@@ -402,7 +402,7 @@ aiMesh
 
 	unsigned int texture1;
 	SDL_Surface* s;
-	
+
 	void init_texture()
 	{
 		s = create_surface_from_file("./media/sprites/territory_00.png");
@@ -431,7 +431,7 @@ aiMesh
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	void draw()
+	void draw(float x, float y, float z)
 	{
 		printf("nlm= %d vlm= %d \n", nlm, vlm);
 
@@ -442,6 +442,13 @@ aiMesh
 			tvl[i].v.x = 0.0f;
 			tvl[i].v.y = 0.0f;
 			tvl[i].v.z = 0.0f;
+		}
+
+		for(int i=0; i<vlm; i++)
+		{
+			tvl[i].v.x += x;
+			tvl[i].v.y += y;
+			tvl[i].v.z += z;
 		}
 
 		//printf("nli= %i \n", nli);
@@ -500,6 +507,31 @@ aiMesh
 				}
 			}
 		}
+
+		//glEnable(GL_TEXTURE_2D);
+		GL_ASSERT(GL_TEXTURE_2D, true);
+
+		glBindTexture(GL_TEXTURE_2D, texture1);
+
+		glBegin(GL_TRIANGLES);
+		for(int i=0; i<vlm; i++)
+		{
+			struct _Vertex v = tvl[i];
+
+
+
+			glVertex3f(v.v.x, v.v.y, v.v.z);
+        	glTexCoord2f(v.ux, v.uy );
+        /*
+			tvl[i].ux = vl[i].ux;
+			tvl[i].uy = vl[i].uy;
+			tvl[i].v.x = 0.0f;
+			tvl[i].v.y = 0.0f;
+			tvl[i].v.z = 0.0f;
+		*/
+		}
+
+		glEnd();
 
 		printf("count: %d vml= %d \n", count, vlm);
 		//mesh->mTextureCoords[0]
@@ -790,8 +822,11 @@ void init()
 
 void draw()
 {
-	bt->draw();
+	if(ClientState::location_pointer_set == false)
+		return;
 
+	Vec3 loc = ClientState::location_pointer;
+	bt->draw(loc.x, loc.y, loc.z);
 }
 
 
