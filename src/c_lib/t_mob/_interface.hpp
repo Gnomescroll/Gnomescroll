@@ -246,6 +246,10 @@ class BoneTree
 			GS_ASSERT(nli < nlm);
 			index = nli;
 			nl[nli] = pNode;
+
+			int mesh_index = pNode->mMeshes[nli];
+			ml[nli] = pScene->mMeshes[mesh_index];
+
 			//npl[nli] = parent_index; 
 			nli++;
 		}
@@ -303,6 +307,13 @@ aiMesh
 		{
 			aiMesh* mesh = ml[i];
 			GS_ASSERT(mesh != NULL);
+
+			if(mesh == NULL)
+			{
+				printf("mesh %d is null\n", i);
+				continue;
+			}
+
 			vll[i] = count;
 			vln[i] = mesh->mNumVertices;
 
