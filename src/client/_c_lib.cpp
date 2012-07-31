@@ -441,7 +441,7 @@ void close_c_lib()
     ItemContainer::teardown();
 
     if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
-    t_mob::teardown();
+    //t_mob::teardown();
 
     if (TEARDOWN_DEBUG) printf("Input teardown\n");
     teardown_input();
