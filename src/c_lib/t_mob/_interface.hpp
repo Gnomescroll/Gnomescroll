@@ -180,7 +180,7 @@ class BoneTree
 
 	int nlm;  		//node list max
 	aiNode** nl; 	//node list
-	int* npl;		//node parent list
+	//int* npl;		//node parent list
 	int nli; 		//node list index
 
 	aiMesh** ml;	//mesh list, the mesh for node i
@@ -207,11 +207,11 @@ class BoneTree
 		count_nodes(pScene->mRootNode); //count the nodes with meshes
 		nlm = nli;
 		nl = new aiNode*[nli];
-		npl = new int[nli];
+		//npl = new int[nli];
 		ml = new aiMesh*[nli];
 
 		for(int i=0; i<nli; i++) nl[i] = NULL;
-		for(int i=0; i<nli; i++) npl[i] = -1;
+		//for(int i=0; i<nli; i++) npl[i] = -1;
 		for(int i=0; i<nli; i++) ml[i] = NULL;
 
 		nli = 0;
@@ -224,6 +224,8 @@ class BoneTree
 		vln = new int[vli];
 
 		set_vertices();
+
+		draw();
 	}
 
 	void count_nodes(aiNode* pNode)
@@ -237,13 +239,16 @@ class BoneTree
 
 	void set_node_parents(aiNode* pNode, int parent_index)
 	{
-		if(pNode->mNumMeshes == 0) return;
-
-		GS_ASSERT(nli < nlm);
-		int index = nli;
-		nl[nli] = pNode;
-		npl[nli] = parent_index; 
-		nli++;
+		int index = -1;
+		if(pNode->mNumMeshes != 0)
+		{
+			//GS_ASSERT(parent_index != -1);
+			GS_ASSERT(nli < nlm);
+			index = nli;
+			nl[nli] = pNode;
+			//npl[nli] = parent_index; 
+			nli++;
+		}
 		for(unsigned int i=0; i < pNode->mNumChildren; i++)
 		{
 			set_node_parents(pNode->mChildren[i], index);
@@ -289,6 +294,8 @@ aiMesh
 
 	void set_vertices()
 	{
+		GS_ASSERT(nli == nlm);
+
 		int count = 0;
 		for(int i=0; i<nli; i++)
 		{
@@ -296,19 +303,21 @@ aiMesh
 			vll[i] = count;
 			vln[i] = mesh->mNumVertices;
 
-			GS_ASSERT(mesh->mPrimitiveTypes == 3);
+			GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
+			GS_ASSERT(mesh->mTextureCoords != NULL);
 
 			for(unsigned int j=0; j<mesh->mNumFaces; j++)
 			{
 				GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
 				GS_ASSERT(mesh->mNumUVComponents[j] == 2);
+				//printf("max tex= %d \n", AI_MAX_NUMBER_OF_TEXTURECOORDS);
 
 				for(int k=0; k<3; k++)
 				{
 
 					int index = mesh->mFaces[j].mIndices[k];
 					aiVector3D pos = mesh->mVertices[index];
-					aiVector3D tex = *mesh->mTextureCoords[index];
+					aiVector3D tex = mesh->mTextureCoords[index][0];
 
 					struct _Vertex v; 
 					v.v.x = pos.x;
@@ -384,21 +393,26 @@ aiMesh
 			tvl[i].v.z = 0.0f;
 		}
 
+		printf("nli= %i \n", nli);
 		for(int i=0; i<nli; i++)
 		{
 			aiMesh* mesh = ml[i];
 
-			for(int j=0; j<mesh->mNumBones; j++)
+			printf("%i: num bones= %i \n", i, mesh->mNumBones);
+			for(unsigned int j=0; j<mesh->mNumBones; j++)
 			{
 				aiBone* bone = mesh->mBones[j];
 				aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
 
 				struct Mat4 mat;
+				printf("=== \n");
 				_ConvertMatrix(mat, offset_matrix);
-
+				//printf("%f %f %f %f \n". mat[0][0])
+				print_mat4(mat);
 			}
 		}
 	}
+
 };
 
 void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
@@ -448,6 +462,32 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 	}
 }
 
+/*
+	Flag reference
+	http://assimp.sourceforge.net/lib_html/postprocess_8h.html
+
+
+	aiProcess_ImproveCacheLocality  Reorders triangles for better vertex cache locality.
+	aiProcess_ValidateDataStructure 
+
+	aiProcess_JoinIdenticalVertices  
+	If this flag is not specified, no vertices are referenced by more than one face and no index buffer is required for rendering.
+
+
+
+*/
+
+/*
+	Documentation on removal step
+	http://assimp.sourceforge.net/lib_html/config_8h.html#a97ac2ef7a3967402a223f3da2640b2b3
+
+	aiComponent_TANGENTS_AND_BITANGENTS
+	aiComponent_COLORS
+	aiComponent_LIGHTS 
+	aiComponent_CAMERAS 
+	aiComponent_TEXTURES //remove embedded textures
+	aiComponent_MATERIALS 
+*/
 void init()
 {
 	int bsize;
@@ -455,9 +495,20 @@ void init()
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
 	char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
 
-	int aFlag = aiProcess_Triangulate;
+
+
+
+	int aFlag = aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_ValidateDataStructure ;
+
+	aFlag |= aiProcess_RemoveComponent;	//strip components on
+
 	char* aHint = NULL;
-	const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+	aiPropertyStore* property_store;
+	int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS);
+
+	aiSetPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
+	//const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+	const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
 
 
 	if(pScene == NULL)
@@ -466,14 +517,6 @@ void init()
 
 		abort();
 	}
-/*
-	if(!pScene->HasAnimations() )
-	{
-		printf("Error: scene has no animation \n";
-	}
-*/
-
-	//aiString.data is char*
 
 	printf("BT: start bone tree: \n");
 	BoneTree bt;
