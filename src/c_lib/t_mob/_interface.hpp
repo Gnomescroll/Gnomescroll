@@ -433,7 +433,7 @@ aiMesh
 
 	void draw(float x, float y, float z)
 	{
-		printf("nlm= %d vlm= %d \n", nlm, vlm);
+		//printf("nlm= %d vlm= %d \n", nlm, vlm);
 
 		for(int i=0; i<vlm; i++)
 		{
@@ -508,8 +508,8 @@ aiMesh
 			}
 		}
 
-		//glEnable(GL_TEXTURE_2D);
-		GL_ASSERT(GL_TEXTURE_2D, true);
+		glEnable(GL_TEXTURE_2D);
+		//GL_ASSERT(GL_TEXTURE_2D, true);
 
 		glBindTexture(GL_TEXTURE_2D, texture1);
 
@@ -518,7 +518,7 @@ aiMesh
 		{
 			struct _Vertex v = tvl[i];
 
-
+			//vec3_print(v.v);
 
 			glVertex3f(v.v.x, v.v.y, v.v.z);
         	glTexCoord2f(v.ux, v.uy );
@@ -826,7 +826,7 @@ void draw()
 		return;
 
 	Vec3 loc = ClientState::location_pointer;
-	bt->draw(loc.x, loc.y, loc.z);
+	bt->draw(loc.x, loc.y, loc.z+ 4.0);
 }
 
 

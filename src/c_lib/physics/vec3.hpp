@@ -356,8 +356,6 @@ static bool vec3_equal(Vec3 v1, Vec3 v2)
 void vec3_print_dot(struct Vec3 v1, struct Vec3 v2);
 void vec3_print_length(struct Vec3 v);
 
-void vec3_print(struct Vec3 v);
-
 void vec3_print(struct Vec3 v)
 {
     printf("Vec3: %0.2f %0.2f %0.2f\n", v.x, v.y, v.z);

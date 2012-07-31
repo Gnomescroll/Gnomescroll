@@ -211,7 +211,7 @@ int run()
         */
 
         t_mob::draw();
-        
+
         glDisable(GL_TEXTURE_2D);
         GL_ASSERT(GL_TEXTURE_2D, false);
         GL_ASSERT(GL_DEPTH_TEST, true);
