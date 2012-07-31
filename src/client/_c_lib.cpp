@@ -124,7 +124,7 @@ dont_include_this_file_in_server
 #endif
 */
 
-#include <t_mob/_include.hpp>
+//#include <t_mob/_include.hpp>
 
 /* Draw lists */
 #include <common/draw/draw.cpp>
@@ -353,7 +353,7 @@ int init_c_lib(int argc, char* argv[])
 
     Animations::init();
 
-    obj_load::init_draw_model();
+    //obj_load::init_draw_model();
 
     //t_map::init_block_item_sheet();
     Item::load_crafting_dat();
