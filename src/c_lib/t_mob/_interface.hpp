@@ -225,7 +225,8 @@ class BoneTree
 
 		set_vertices();
 
-		draw();
+		init_texture();
+		//draw();
 	}
 
 	void count_nodes(aiNode* pNode)
@@ -399,6 +400,37 @@ aiMesh
 		out.f[3][3] = in.d4;
 	}
 
+	unsigned int texture1;
+	SDL_Surface* s;
+	
+	void init_texture()
+	{
+		s = create_surface_from_file("./media/sprites/territory_00.png");
+
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, &texture1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		GLenum texture_format;
+		if (s->format->Rmask == 0x000000ff)
+			texture_format = GL_RGBA;
+		else
+			texture_format = GL_BGRA;
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
+		
+		glDisable(GL_TEXTURE_2D);
+	}
+
 	void draw()
 	{
 		printf("nlm= %d vlm= %d \n", nlm, vlm);
@@ -550,6 +582,8 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 	Add cache locality and join identical values even if not using index buffers
 */
 
+	class BoneTree* bt;
+
 void init()
 {
 	int bsize;
@@ -582,10 +616,12 @@ void init()
 	}
 
 	printf("BT: start bone tree: \n");
-	BoneTree bt;
-
-	bt.init( (aiScene*) pScene);
+	//BoneTree bt;
+	bt = new BoneTree;
+	bt->init( (aiScene*) pScene);
 	printf("BT: bone tree finished\n");
+
+	return;
 	abort(); //debug
 
 	printf("Bone tree: \n");
@@ -753,16 +789,15 @@ void init()
 
 
 void draw()
-
 {
-
+	bt->draw();
 
 }
 
 
 void teardown()
 {
-
+	delete bt;
 }
 
 }

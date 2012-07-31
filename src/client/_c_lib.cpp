@@ -124,7 +124,7 @@ dont_include_this_file_in_server
 #endif
 */
 
-//#include <t_mob/_include.hpp>
+#include <t_mob/_include.hpp>
 
 /* Draw lists */
 #include <common/draw/draw.cpp>
@@ -366,7 +366,7 @@ int init_c_lib(int argc, char* argv[])
     Hud::init_hud_draw_settings();
 
     //t_gen::generate_random_tile();
-    //t_mob::init();
+    t_mob::init();
     //check_gl_error();
     return 0;
 }
@@ -441,7 +441,7 @@ void close_c_lib()
     ItemContainer::teardown();
 
     if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
-    //t_mob::teardown();
+    t_mob::teardown();
 
     if (TEARDOWN_DEBUG) printf("Input teardown\n");
     teardown_input();
