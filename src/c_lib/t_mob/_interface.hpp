@@ -442,8 +442,8 @@ aiMesh
 
 					GS_ASSERT(index >= offset);
 					GS_ASSERT(index < offset+num);
-					if(k==0) count++;
-					
+					if(j==0) count++;
+
 				#if 0
 					//SIMD version
 					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
@@ -469,6 +469,7 @@ aiMesh
 			}
 		}
 
+		printf("count: %d vml= %d \n", count, vlm);
 		//mesh->mTextureCoords[0]
 
 	}
