@@ -191,11 +191,19 @@ class BoneTree
 		struct Vec3 v;
 		float ux,uy;
 	};
+/*
+	struct _VertexWeight
+	{
+		int index;
+		float weight;
+	};
+*/
 
-	int vli;			//vertex list index
-	int vlm; 			//vertex list max
-	struct _Vertex* vl;	//vertex list
-	struct _Vertex* tvl; //temporary vertex list, for drawing
+	int vli;				//vertex list index
+	int vlm; 				//vertex list max
+	//struct _Vertex* vl;		//vertex list
+	struct _Vertex* tvl;	//temporary vertex list, for drawing
+	//struct _VertexWeight* vwl;	//vertex weight list
 
 	int* vll;			//offset of vertices in list for each mesth
 	int* vln;			//number of vertices in each mech
@@ -217,11 +225,15 @@ class BoneTree
 		set_node_parents(pScene->mRootNode, 0);
 
 		count_vertices();
-		vl = new _Vertex[vlm];
+		//vl = new _Vertex[vlm];
 		tvl = new _Vertex[vlm];
+		//vwl =  new _VertexWeight[vlm];
 
 		vll = new int[nlm];
 		vln = new int[nlm];
+
+
+		init_base_vertex_list();
 
 		set_vertices();
 
@@ -321,6 +333,7 @@ aiMesh
 			GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
 			GS_ASSERT(mesh->mTextureCoords[0] != NULL);
 
+			//printf("%02d: mNumFaces= %d mNumVertices= %d \n", i, mesh->mNumFaces, mesh->mNumVertices);
 			for(unsigned int j=0; j<mesh->mNumFaces; j++)
 			{
 				GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
@@ -329,27 +342,10 @@ aiMesh
 
 				for(int k=0; k<3; k++)
 				{
-
-					int index = mesh->mFaces[j].mIndices[k];
-					aiVector3D pos = mesh->mVertices[index];
-					aiVector3D tex = mesh->mTextureCoords[0][index];
-
-					struct _Vertex v; 
-					v.v.x = pos.x;
-					v.v.y = pos.y;
-					v.v.z = pos.z;
-
-					v.ux = tex.x;
-					v.uy = tex.y;
-
-					vl[count] = v;
 					count++;
 				}
-
 			}
 		}
-			//count += 3*mesh->mNumFaces;
-			//count += mesh->mNumVertices;
 
 			//ml[i]->mMeshes[index]->mName.data,
 			//ml[i]->mMeshes[index]->mNumVertices,
@@ -369,6 +365,88 @@ aiMesh
 			printf("Set_vertices Warning: vertex count= %d vli= %d vlm= %d \n", count, vli, vlm);
 		}
 	}
+
+	int bvlm;				//base vertex list max;
+	struct _Vertex* bvl;	//base vertex list
+	struct _Vertex* tbvl;	//base vertex list for matrix transforms/drawing
+
+	int* bvlo;				//offset for vertices in base list
+	int* bvln;				//number of vertices in base vertex list
+
+	int bvllm;				//max index for vertex lookup table
+	int* bvll;				//base vertex lookup
+	
+	void init_base_vertex_list()
+	{
+		bvlo = new int[nlm];
+		bvln = new int[nlm];
+
+		//count number of faces and vertices total
+		int vcount = 0;
+		int fcount = 0;
+		for(int i=0; i<nlm; i++)
+		{
+			aiMesh* mesh = ml[i];
+
+			bvlo[i] = vcount;				//base vertex offset
+			bvln[i] = mesh->mNumVertices;	//number of base vertex for mesh
+
+			vcount += mesh->mNumVertices;
+			fcount += mesh->mNumFaces;
+		}
+
+		bvlm = vcount;
+		bvl = new _Vertex[bvlm];
+
+		bvllm = 3*fcount;
+		bvll = new int[bvllm];
+		GS_ASSERT(bvllm = vlm);
+
+
+		//save array of base vertices
+		vcount = 0;
+		for(int i=0; i<nlm; i++)
+		{
+			aiMesh* mesh = ml[i];
+			//int index1 = bvlo[i];
+			GS_ASSERT(vcount == bvlo[i]);
+			for(unsigned int j=0; j<mesh->mNumVertices; j++)
+			{
+				aiVector3D pos = mesh->mVertices[j];
+				aiVector3D tex = mesh->mTextureCoords[0][j];
+
+				struct _Vertex v; 
+				v.v.x = pos.x;
+				v.v.y = pos.y;
+				v.v.z = pos.z;
+
+				v.ux = tex.x;
+				v.uy = tex.y;
+
+				GS_ASSERT(bvlo[i] + (int)(j) == vcount);
+				bvl[bvlo[i] + j] = v;
+				vcount++;
+			}
+		}
+
+		//save mapping from vertex index to base vertex
+		vcount = 0;
+		for(int i=0; i<nlm; i++)
+		{
+			aiMesh* mesh = ml[i];
+			//int index1 = bvlo[i];
+			for(unsigned int j=0; j<mesh->mNumFaces; j++)
+			{
+				for(int k=0; k<3; k++)
+				{
+					bvll[vcount] = bvlo[i] + mesh->mFaces[j].mIndices[k];
+					vcount++;
+				}
+			}
+		}
+
+	}
+
 
 	//int vlm; 			//vertex list max
 	//struct _Vertex* vl;	//vertex list
@@ -475,7 +553,6 @@ aiMesh
 
 				for(unsigned int k=0; k<bone->mNumWeights; k++)
 				{
-
 					int index = offset + bone->mWeights[k].mVertexId;
 					float weight = bone->mWeights[k].mWeight;
 
