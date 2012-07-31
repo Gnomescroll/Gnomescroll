@@ -300,7 +300,7 @@ aiMesh
 	{
 		GS_ASSERT(nli == nlm);
 
-		printf("nlm= %d nli= %d \n", nlm, nli);
+		//printf("nlm= %d nli= %d \n", nlm, nli);
 
 		int count = 0;
 		for(int i=0; i<nlm; i++)
@@ -310,7 +310,7 @@ aiMesh
 
 			if(mesh == NULL)
 			{
-				printf("mesh %d is null\n", i);
+				printf("set_vertices error: mesh %d is null\n", i);
 				continue;
 			}
 
@@ -320,7 +320,6 @@ aiMesh
 			GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
 			GS_ASSERT(mesh->mTextureCoords[0] != NULL);
 
-			continue;
 			for(unsigned int j=0; j<mesh->mNumFaces; j++)
 			{
 				GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
@@ -364,7 +363,10 @@ aiMesh
 			unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 			C_STRUCT aiFace* mFaces;
 		*/
-		GS_ASSERT(count == vli);
+		if(count != vli || count != vlm)
+		{
+			printf("Set_vertices Warning: vertex count= %d vli= %d vlm= %d \n", count, vli, vlm);
+		}
 	}
 
 	//int vlm; 			//vertex list max
@@ -399,6 +401,8 @@ aiMesh
 
 	void draw()
 	{
+		printf("nlm= %d vlm= %d \n", nlm, vlm);
+
 		for(int i=0; i<vlm; i++)
 		{
 			tvl[i].ux = vl[i].ux;
@@ -408,22 +412,59 @@ aiMesh
 			tvl[i].v.z = 0.0f;
 		}
 
-		printf("nli= %i \n", nli);
+		//printf("nli= %i \n", nli);
+		int count = 0;
+
 		for(int i=0; i<nli; i++)
 		{
 			aiMesh* mesh = ml[i];
 
-			printf("%i: num bones= %i \n", i, mesh->mNumBones);
+			//printf("%i: num bones= %i \n", i, mesh->mNumBones);
+
+			int offset = vll[i];
+			int num = vln[i];
+
 			for(unsigned int j=0; j<mesh->mNumBones; j++)
 			{
 				aiBone* bone = mesh->mBones[j];
 				aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
 
 				struct Mat4 mat;
-				printf("=== \n");
 				_ConvertMatrix(mat, offset_matrix);
-				//printf("%f %f %f %f \n". mat[0][0])
+				printf("=== \n");
 				print_mat4(mat);
+
+				for(k=0; k<bone->mNumWeights; k++)
+				{
+					int index = offset + bone->mWeights[k].mVertexId;
+					GS_ASSERT(index >= offset);
+					GS_ASSERT(index < offset+num);
+					float weight = bone->mWeights[k].mWeight;
+
+
+				#if 0
+					//SIMD version
+					Vec3 v = vec3_mat3_apply(vl[index], mat);
+					v = vec3_scalar_mult(v, weight);
+					tvl[index] = vec3_add(tvl[index], v);
+				#else
+					Vec3 v = vec3_mat3_apply(vl[index], mat);
+					tvl[index].x += weight*v.x;
+					tvl[index].y += weight*v.x;
+					tvl[index].z += weight*v.x;
+				#endif
+
+
+					//unsigned int mNumWeights; //number of vertices affected by this bone
+					//C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
+
+					//struct aiVertexWeight 
+					//unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
+					//! The strength of the influence in the range (0...1).
+					//! The influence from all bones at one vertex amounts to 1.
+					//float mWeight;
+
+				}
 			}
 		}
 
