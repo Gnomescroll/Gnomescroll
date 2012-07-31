@@ -413,8 +413,8 @@ aiMesh
 		}
 
 		//printf("nli= %i \n", nli);
-		int count = 0;
 
+		int count = 0;
 		for(int i=0; i<nli; i++)
 		{
 			aiMesh* mesh = ml[i];
@@ -431,17 +431,19 @@ aiMesh
 
 				struct Mat4 mat;
 				_ConvertMatrix(mat, offset_matrix);
-				printf("=== \n");
-				print_mat4(mat);
+				//printf("=== \n");
+				//print_mat4(mat);
 
 				for(unsigned int k=0; k<bone->mNumWeights; k++)
 				{
+
 					int index = offset + bone->mWeights[k].mVertexId;
-					GS_ASSERT(index >= offset);
-					GS_ASSERT(index < offset+num);
 					float weight = bone->mWeights[k].mWeight;
 
-
+					GS_ASSERT(index >= offset);
+					GS_ASSERT(index < offset+num);
+					if(k==0) count++;
+					
 				#if 0
 					//SIMD version
 					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
@@ -453,7 +455,6 @@ aiMesh
 					tvl[index].v.y += weight*v.x;
 					tvl[index].v.z += weight*v.x;
 				#endif
-
 
 					//unsigned int mNumWeights; //number of vertices affected by this bone
 					//C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
