@@ -287,12 +287,13 @@ class BoneTree
 
 	struct _Vertex
 	{
-		float x,y,z;
+		struct Vec3 v;
 		float ux,uy;
 	};
 
 	int vlm; 			//vertex list max
 	struct _Vertex* vl;	//vertex list
+	struct _Vertex* tvl; //temporary vertex list, for drawing
 	int vli;			//vertex list index
 	int* vll;			//vertex list loop
 	int* vln;			//number of vertices in mesh
@@ -317,6 +318,7 @@ class BoneTree
 
 		count_vertices();
 		vl = new _Vertex[vli];
+		tvl = new _Vertex[vli];
 		vll = new int[vli];
 		vln = new int[vli];
 
@@ -408,9 +410,9 @@ aiMesh
 					aiVector3D tex = *mesh->mTextureCoords[index];
 
 					struct _Vertex v; 
-					v.x = pos.x;
-					v.y = pos.y;
-					v.z = pos.z;
+					v.v.x = pos.x;
+					v.v.y = pos.y;
+					v.v.z = pos.z;
 
 					v.ux = tex.x;
 					v.uy = tex.y;
@@ -420,10 +422,10 @@ aiMesh
 				}
 
 			}
-
+		}
 			//count += 3*mesh->mNumFaces;
 			//count += mesh->mNumVertices;
-		}
+
 			//ml[i]->mMeshes[index]->mName.data,
 			//ml[i]->mMeshes[index]->mNumVertices,
 			//ml[i]->mMeshes[index]->mNumFaces);s
@@ -438,6 +440,38 @@ aiMesh
 			C_STRUCT aiFace* mFaces;
 		*/
 		GS_ASSERT(count == vli);
+	}
+
+	//int vlm; 			//vertex list max
+	//struct _Vertex* vl;	//vertex list
+	//struct _Vertex* tvl; //temporary vertex list, for drawing
+	//int vli;			//vertex list index
+	//int* vll;			//vertex list loop
+	//int* vln;			//number of vertices in mesh
+
+	void draw()
+	{
+		static const struct Vec3 zero = vec3_init(0.0, 0.0, 0.0);
+		for(int i=0; i<vli; i++)
+		{
+			tvi[i].ux = vl[i].ux;
+			tvi[i].uy = vl[i].uy;
+			tvi[i].v = zero;
+
+		}
+
+		for(int i=0; i<nli; i++)
+		{
+			aiMesh* mesh = ml[i];
+
+			for(int j=0; j<mNumBones; j++)
+			{
+				aiBone* bone = mesh->mbones[j];
+				aiMatrix4x4 offset_matrix = bone->offset_matrix;
+
+
+			}
+		}
 	}
 };
 
