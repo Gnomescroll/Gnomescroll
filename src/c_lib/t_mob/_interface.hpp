@@ -8,6 +8,7 @@ extern "C"
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h> //defines for postprocessor
+#include <assimp/config.h>
 }
 #define __cplusplus
 
@@ -503,10 +504,10 @@ void init()
 	aFlag |= aiProcess_RemoveComponent;	//strip components on
 
 	char* aHint = NULL;
-	aiPropertyStore* property_store;
-	int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS);
+	aiPropertyStore* property_store = aiCreatePropertyStore();
+	int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS;
 
-	aiSetPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
+	aiSetImportPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
 	//const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
 	const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
 
