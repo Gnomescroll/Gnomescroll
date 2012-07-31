@@ -247,7 +247,7 @@ class BoneTree
 			index = nli;
 			nl[nli] = pNode;
 
-			int mesh_index = pNode->mMeshes[nli];
+			int mesh_index = pNode->mMeshes[0];
 			ml[nli] = pScene->mMeshes[mesh_index];
 
 			//npl[nli] = parent_index; 
