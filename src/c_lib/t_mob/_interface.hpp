@@ -434,7 +434,7 @@ aiMesh
 				printf("=== \n");
 				print_mat4(mat);
 
-				for(k=0; k<bone->mNumWeights; k++)
+				for(unsigned int k=0; k<bone->mNumWeights; k++)
 				{
 					int index = offset + bone->mWeights[k].mVertexId;
 					GS_ASSERT(index >= offset);
@@ -444,14 +444,14 @@ aiMesh
 
 				#if 0
 					//SIMD version
-					Vec3 v = vec3_mat3_apply(vl[index], mat);
+					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
 					v = vec3_scalar_mult(v, weight);
-					tvl[index] = vec3_add(tvl[index], v);
+					tvl[index] = vec3_add(tvl[index].v, v);
 				#else
-					Vec3 v = vec3_mat3_apply(vl[index], mat);
-					tvl[index].x += weight*v.x;
-					tvl[index].y += weight*v.x;
-					tvl[index].z += weight*v.x;
+					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
+					tvl[index].v.x += weight*v.x;
+					tvl[index].v.y += weight*v.x;
+					tvl[index].v.z += weight*v.x;
 				#endif
 
 

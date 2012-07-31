@@ -152,7 +152,7 @@ struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2)
 #else
     v1.x += v2.x;
     v1.y += v2.y;
-    v1.z += v3.z;
+    v1.z += v2.z;
     return v1;
 #endif
 }
