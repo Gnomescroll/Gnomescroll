@@ -181,7 +181,6 @@ class BoneTree
 
 	int nlm;  		//node list max
 	aiNode** nl; 	//node list
-	//int* npl;		//node parent list
 	int nli; 		//node list index
 
 	aiMesh** ml;	//mesh list, the mesh for node i
@@ -193,12 +192,13 @@ class BoneTree
 		float ux,uy;
 	};
 
+	int vli;			//vertex list index
 	int vlm; 			//vertex list max
 	struct _Vertex* vl;	//vertex list
 	struct _Vertex* tvl; //temporary vertex list, for drawing
-	int vli;			//vertex list index
-	int* vll;			//vertex list loop
-	int* vln;			//number of vertices in mesh
+
+	int* vll;			//offset of vertices in list for each mesth
+	int* vln;			//number of vertices in each mech
 
 	void init(aiScene* _pScene)
 	{
@@ -207,22 +207,21 @@ class BoneTree
 		nli = 0;
 		count_nodes(pScene->mRootNode); //count the nodes with meshes
 		nlm = nli;
-		nl = new aiNode*[nli];
-		//npl = new int[nli];
-		ml = new aiMesh*[nli];
+		nl = new aiNode*[nlm];
+		ml = new aiMesh*[nlm];
 
-		for(int i=0; i<nli; i++) nl[i] = NULL;
-		//for(int i=0; i<nli; i++) npl[i] = -1;
-		for(int i=0; i<nli; i++) ml[i] = NULL;
+		for(int i=0; i<nlm; i++) nl[i] = NULL;
+		for(int i=0; i<nlm; i++) ml[i] = NULL;
 
 		nli = 0;
 		set_node_parents(pScene->mRootNode, 0);
 
 		count_vertices();
-		vl = new _Vertex[vli];
-		tvl = new _Vertex[vli];
-		vll = new int[vli];
-		vln = new int[vli];
+		vl = new _Vertex[vlm];
+		tvl = new _Vertex[vlm];
+
+		vll = new int[nlm];
+		vln = new int[nlm];
 
 		set_vertices();
 
@@ -290,27 +289,31 @@ aiMesh
 				vli += 3*mesh->mNumFaces;
 			}
 		}
-
+		vlm = vli;
 	}
 
 	void set_vertices()
 	{
 		GS_ASSERT(nli == nlm);
 
+		printf("nlm= %d nli= %d \n", nlm, nli);
+
 		int count = 0;
-		for(int i=0; i<nli; i++)
+		for(int i=0; i<nlm; i++)
 		{
 			aiMesh* mesh = ml[i];
+			GS_ASSERT(mesh != NULL);
 			vll[i] = count;
 			vln[i] = mesh->mNumVertices;
 
 			GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
 			GS_ASSERT(mesh->mTextureCoords[0] != NULL);
 
+			continue;
 			for(unsigned int j=0; j<mesh->mNumFaces; j++)
 			{
 				GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
-				GS_ASSERT(mesh->mNumUVComponents[j] == 2);
+				GS_ASSERT(mesh->mNumUVComponents[0] == 2);
 				//printf("max tex= %d \n", AI_MAX_NUMBER_OF_TEXTURECOORDS);
 
 				for(int k=0; k<3; k++)
@@ -385,7 +388,7 @@ aiMesh
 
 	void draw()
 	{
-		for(int i=0; i<vli; i++)
+		for(int i=0; i<vlm; i++)
 		{
 			tvl[i].ux = vl[i].ux;
 			tvl[i].uy = vl[i].uy;
