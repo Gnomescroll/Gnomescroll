@@ -401,6 +401,7 @@ aiMesh
 
 		bvllm = 3*fcount;
 		bvll = new int[bvllm];
+		for(int i=0; i<bvllm; i++) bvll[i] = -1;
 		GS_ASSERT(bvllm = vlm);
 
 
@@ -422,14 +423,15 @@ aiMesh
 				v.v.z = pos.z;
 
 				v.ux = tex.x;
-				v.uy = tex.y;
+				v.uy = 1.0 -tex.y;
 
+				//printf("tex: x,y= %f %f \n", tex.x, tex.y);
 				GS_ASSERT(bvlo[i] + (int)(j) == vcount);
 				bvl[bvlo[i] + j] = v;
 				vcount++;
 			}
 		}
-
+		GS_ASSERT(vcount == bvlm);
 		//save mapping from vertex index to base vertex
 		vcount = 0;
 		for(int i=0; i<nlm; i++)
@@ -445,7 +447,8 @@ aiMesh
 				}
 			}
 		}
-
+		GS_ASSERT(vcount == vlm);
+		GS_ASSERT(bvlm == vlm);
 	}
 
 
@@ -484,7 +487,8 @@ aiMesh
 
 	void init_texture()
 	{
-		s = create_surface_from_file("./media/sprites/territory_00.png");
+		//s = create_surface_from_file("./media/mesh/body_template.png");
+		s = create_surface_from_file("./media/mesh/test.png");
 
 		glEnable(GL_TEXTURE_2D);
 		glGenTextures(1, &texture1);
@@ -579,6 +583,26 @@ aiMesh
 			}
 		}
 
+		for(int i=0; i<vlm; i++)
+		{
+			int index = bvll[i];
+			if(index < 0 || index >= bvlm)
+			{
+				printf("%d: index= %d \n", i, index);
+			}
+			tvl[i] = tbvl[index];
+		}
+
+		for(int i=0; i<vlm; i++)
+		{
+			int index = bvll[i];
+			tvl[i] = bvl[index];
+			tvl[i].v.x += x;
+			tvl[i].v.y += y;
+			tvl[i].v.z += z;
+		}
+
+		glColor4ub(255,255,255,255);
 		glEnable(GL_TEXTURE_2D);
 		//GL_ASSERT(GL_TEXTURE_2D, true);
 
@@ -587,6 +611,9 @@ aiMesh
 		glBegin(GL_TRIANGLES);
 		for(int i=0; i<vlm; i++)
 		{
+
+			if(i >= vll[1]) continue;
+
 			struct _Vertex v = tvl[i];
 
 			//vec3_print(v.v);
@@ -597,11 +624,11 @@ aiMesh
 
 		glEnd();
 
-		printf("count: %d vml= %d \n", count, vlm);
+		//printf("count: %d vlm= %d \n", count, vlm);
 		//mesh->mTextureCoords[0]
 
 	}
-
+#if 0
 	void _DEPRECATED_draw(float x, float y, float z)
 	{
 		//printf("nlm= %d vlm= %d \n", nlm, vlm);
@@ -694,11 +721,11 @@ aiMesh
 
 		glEnd();
 
-		printf("count: %d vml= %d \n", count, vlm);
+		printf("count: %d vlm= %d \n", count, vlm);
 		//mesh->mTextureCoords[0]
 
 	}
-
+#endif
 };
 
 void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
@@ -782,9 +809,9 @@ void init()
 	int bsize;
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/collada_test.dae", &bsize);
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
-	char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
-
-
+	
+	//char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/test2.dae", &bsize);
 
 
 	int aFlag = aiProcess_Triangulate | 
@@ -987,7 +1014,7 @@ void draw()
 		return;
 
 	Vec3 loc = ClientState::location_pointer;
-	bt->draw(loc.x, loc.y, loc.z+ 4.0);
+	bt->draw(loc.x, loc.y, loc.z+ 1.0);
 }
 
 
