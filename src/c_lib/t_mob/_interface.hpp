@@ -448,7 +448,6 @@ aiMesh
 			}
 		}
 		GS_ASSERT(vcount == vlm);
-		GS_ASSERT(bvlm == vlm);
 	}
 
 
