@@ -515,8 +515,8 @@ aiMesh
 
 		for(int i=0; i<vlm; i++)
 		{
-			tvl[i].ux = vl[i].ux;
-			tvl[i].uy = vl[i].uy;
+			//tvl[i].ux = vl[i].ux;
+			//tvl[i].uy = vl[i].uy;
 			tvl[i].v.x = 0.0f;
 			tvl[i].v.y = 0.0f;
 			tvl[i].v.z = 0.0f;
