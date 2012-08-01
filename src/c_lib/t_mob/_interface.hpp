@@ -422,8 +422,8 @@ aiMesh
 				v.v.y = pos.y;
 				v.v.z = pos.z;
 
-				v.ux = tex.x;
-				v.uy = 1.0 -tex.y;
+				v.ux =  tex.x;
+				v.uy =  tex.y;
 
 				//printf("tex: x,y= %f %f \n", tex.x, tex.y);
 				GS_ASSERT(bvlo[i] + (int)(j) == vcount);
@@ -448,6 +448,8 @@ aiMesh
 			}
 		}
 		GS_ASSERT(vcount == vlm);
+
+		printf("vcount= %d bvlm= %d \n", vcount, bvlm);
 	}
 
 
@@ -611,7 +613,7 @@ aiMesh
 		for(int i=0; i<vlm; i++)
 		{
 
-			if(i >= vll[1]) continue;
+			//if(i >= vll[1]) continue;
 
 			struct _Vertex v = tvl[i];
 
@@ -627,104 +629,7 @@ aiMesh
 		//mesh->mTextureCoords[0]
 
 	}
-#if 0
-	void _DEPRECATED_draw(float x, float y, float z)
-	{
-		//printf("nlm= %d vlm= %d \n", nlm, vlm);
 
-		for(int i=0; i<vlm; i++)
-		{
-			//tvl[i].ux = vl[i].ux;
-			//tvl[i].uy = vl[i].uy;
-			tvl[i].v.x = 0.0f;
-			tvl[i].v.y = 0.0f;
-			tvl[i].v.z = 0.0f;
-		}
-
-		for(int i=0; i<vlm; i++)
-		{
-			tvl[i].v.x += x;
-			tvl[i].v.y += y;
-			tvl[i].v.z += z;
-		}
-
-		//printf("nli= %i \n", nli);
-
-		int count = 0;
-		for(int i=0; i<nli; i++)
-		{
-			aiMesh* mesh = ml[i];
-
-			//printf("%i: num bones= %i \n", i, mesh->mNumBones);
-
-			int offset = vll[i];
-			int num = vln[i];
-
-			for(unsigned int j=0; j<mesh->mNumBones; j++)
-			{
-				aiBone* bone = mesh->mBones[j];
-				aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
-
-				struct Mat4 mat;
-				_ConvertMatrix(mat, offset_matrix);
-				//printf("=== \n");
-				//print_mat4(mat);
-
-				for(unsigned int k=0; k<bone->mNumWeights; k++)
-				{
-					int index = offset + bone->mWeights[k].mVertexId;
-					float weight = bone->mWeights[k].mWeight;
-
-					GS_ASSERT(index >= offset);
-					GS_ASSERT(index < offset+num);
-					if(j==0) count++;
-
-				#if 0
-					//SIMD version
-					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
-					v = vec3_scalar_mult(v, weight);
-					tvl[index] = vec3_add(tvl[index].v, v);
-				#else
-					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
-					tvl[index].v.x += weight*v.x;
-					tvl[index].v.y += weight*v.y;
-					tvl[index].v.z += weight*v.z;
-				#endif
-
-					//unsigned int mNumWeights; //number of vertices affected by this bone
-					//C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
-
-					//struct aiVertexWeight 
-					//unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
-					//! The strength of the influence in the range (0...1).
-					//! The influence from all bones at one vertex amounts to 1.
-					//float mWeight;
-
-				}
-			}
-		}
-
-		glEnable(GL_TEXTURE_2D);
-		//GL_ASSERT(GL_TEXTURE_2D, true);
-
-		glBindTexture(GL_TEXTURE_2D, texture1);
-
-		glBegin(GL_TRIANGLES);
-		for(int i=0; i<vlm; i++)
-		{
-			struct _Vertex v = tvl[i];
-			//vec3_print(v.v);
-			glVertex3f(v.v.x, v.v.y, v.v.z);
-        	glTexCoord2f(v.ux, v.uy );
-		}
-
-		glEnd();
-
-		printf("count: %d vlm= %d \n", count, vlm);
-		//mesh->mTextureCoords[0]
-
-	}
-#endif
 };
 
 void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
@@ -799,6 +704,9 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 	If this flag is not specified, no vertices are referenced by more than one face and no index buffer is required for rendering.
 
 	Add cache locality and join identical values even if not using index buffers
+
+	aiProcess_TransformUVCoords 
+
 */
 
 	class BoneTree* bt;
@@ -810,13 +718,15 @@ void init()
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
 	
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
-	char* buffer = read_file_to_buffer( (char*) "media/mesh/test2.dae", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/test3.dae", &bsize);
 
 
 	int aFlag = aiProcess_Triangulate | 
 	aiProcess_GenUVCoords | 
 	aiProcess_ValidateDataStructure |
-	aiProcess_RemoveComponent;	//strip components on
+	aiProcess_RemoveComponent;// | //strip components on
+	//aiProcess_TransformUVCoords |
+	//aiProcess_GenUVCoords ;
 
 	char* aHint = NULL;
 	aiPropertyStore* property_store = aiCreatePropertyStore();
