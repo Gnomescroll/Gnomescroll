@@ -425,7 +425,7 @@ aiMesh
 				v.ux =  tex.x;
 				v.uy =  tex.y;
 
-				//printf("tex: x,y= %f %f \n", tex.x, tex.y);
+				printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
 				GS_ASSERT(bvlo[i] + (int)(j) == vcount);
 				bvl[bvlo[i] + j] = v;
 				vcount++;
@@ -501,8 +501,8 @@ aiMesh
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		GLenum texture_format;
 		if (s->format->Rmask == 0x000000ff)
@@ -608,7 +608,7 @@ aiMesh
 		//GL_ASSERT(GL_TEXTURE_2D, true);
 
 		glBindTexture(GL_TEXTURE_2D, texture1);
-
+#if 0
 		glBegin(GL_TRIANGLES);
 		for(int i=0; i<vlm; i++)
 		{
@@ -624,7 +624,79 @@ aiMesh
 		}
 
 		glEnd();
+#else
+		check_gl_error();
+		glBegin(GL_TRIANGLES);
 
+		//printf("=== \n");
+
+		for(int i=0; i<nlm; i++)
+		{
+			aiMesh* mesh = ml[i];
+			//int index1 = bvlo[i];
+			for(unsigned int j=0; j<mesh->mNumFaces; j++)
+			{
+
+				if(j != 0) continue;
+
+				for(int k=0; k<3; k++)
+				{
+					GS_ASSERT( mesh->mFaces[j].mNumIndices == 3);
+					GS_ASSERT( mesh->mNumUVComponents[0] == 2);
+
+					int index1 = mesh->mFaces[j].mIndices[k];
+					int index2 = mesh->mFaces[j].mIndices[(k+1)%3];
+
+					aiVector3D pos = mesh->mVertices[index1];
+					aiVector3D tex = mesh->mTextureCoords[0][index1];
+
+					struct _Vertex v; 
+					v.v.x = pos.x ;
+					v.v.y =  pos.y ;
+					v.v.z = pos.z ;
+
+					v.ux =  tex.x;
+					v.uy =  tex.y;
+
+					//printf("pos= %f %f %f tex= %f %f \n", v.v.x,v.v.y,v.v.z, v.ux,v.uy);
+					glVertex3f(v.v.x +x, v.v.y+y, v.v.z+z);
+        			glTexCoord2f(v.ux, v.uy );
+				}
+
+			}
+		}
+
+		glEnd();
+
+
+
+		glBegin(GL_QUADS);
+
+		float xmin = x + 0.0;
+		float xmax = x + 1.0;
+
+		float ymin = y + 0.0;
+		float ymax = y + 1.0;
+
+		//upper left, counter clockwise
+		glVertex3f(xmax, ymax, z+2.0);
+		glTexCoord2f(0,1 );
+
+		glVertex3f(xmax, ymin, z+2.0);
+		glTexCoord2f(0,0);
+
+		glVertex3f(xmin, ymin, z+2.0);
+		glTexCoord2f(1,0);
+
+		glVertex3f(xmin, ymax, z+2.0);
+		glTexCoord2f(1,1);
+
+		glEnd();
+
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+		check_gl_error();
+#endif
 		//printf("count: %d vlm= %d \n", count, vlm);
 		//mesh->mTextureCoords[0]
 
@@ -718,23 +790,23 @@ void init()
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
 	
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
-	char* buffer = read_file_to_buffer( (char*) "media/mesh/test3.dae", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/test4.dae", &bsize);
 
 
-	int aFlag = aiProcess_Triangulate | 
-	aiProcess_GenUVCoords | 
-	aiProcess_ValidateDataStructure |
-	aiProcess_RemoveComponent;// | //strip components on
+	int aFlag = //aiProcess_Triangulate | 
+	//aiProcess_GenUVCoords | 
 	//aiProcess_TransformUVCoords |
-	//aiProcess_GenUVCoords ;
+	aiProcess_ValidateDataStructure;// |
+	//aiProcess_RemoveComponent; //strip components on
+
 
 	char* aHint = NULL;
 	aiPropertyStore* property_store = aiCreatePropertyStore();
 	int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS;
 
 	aiSetImportPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
-	//const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
-	const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
+	const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+	//const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
 
 
 	if(pScene == NULL)
