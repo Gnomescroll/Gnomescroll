@@ -509,16 +509,44 @@ aiMesh
 	{
 		
 		//aiNode* pNode = pScene->mRootNode;
-		aiNode* pNode == NULL;
+		aiNode* pNode = NULL;
 
 		for(unsigned int i=0; i < pScene->mRootNode->mNumChildren; i++)
 		{
-			pScene->mRootNode->mChildren[i].
-
-			pNode = pNode->mChildren[i];
-
+			if( strcmp("Armature", pScene->mRootNode->mChildren[i]->mName.data) == 0)
+			{
+				pNode = pNode->mChildren[i];
+				break;
+			}
+		}
+		if(pNode == NULL)
+		{
+			printf("DAE LOAD ERROR: There is no 'Armature' node under root node \n");
+			abort();
 		}
 
+		aiNode* _pNode = NULL;
+
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+		{
+			if( strcmp("Armature", pNode->mChildren[i]->mName.data) == 0)
+			{
+				_pNode = pNode->mChildren[i];
+				break;
+			}
+		}
+		if(_pNode == NULL)
+		{
+			printf("DAE LOAD ERROR: There is no 'root_bone' under 'Armature' node \n");
+			abort();
+		}
+
+		pNode = _pNode;
+
+		int bone_count = 0;
+		count_bones(&bone_count, pNode);
+
+		printf("DAE LOADER: %d bones \n", bone_count);
 	}	
 
 
