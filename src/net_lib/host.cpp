@@ -500,6 +500,8 @@ static void client_disconnect(ENetEvent* event)
 {
     NetServer::number_of_clients--;
     NetPeer* nc = (NetPeer*) event->peer -> data;
+    GS_ASSERT(nc != NULL);
+    if (nc == NULL) return;
     
     int client_id = nc->client_id;
     GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
