@@ -488,8 +488,8 @@ aiMesh
 
 	void init_texture()
 	{
-		//s = create_surface_from_file("./media/mesh/body_template.png");
-		s = create_surface_from_file("./media/mesh/test.png");
+		s = create_surface_from_file("./media/mesh/body_template.png");
+		//s = create_surface_from_file("./media/mesh/test.png");
 
 		glEnable(GL_TEXTURE_2D);
 		glGenTextures(1, &texture1);
@@ -656,7 +656,7 @@ aiMesh
 					v.v.z = pos.z ;
 
 					v.ux =  tex.x;
-					v.uy =  tex.y;
+					v.uy =  1.0 -tex.y;
 
 					//printf("pos= %f %f %f tex= %f %f \n", v.v.x,v.v.y,v.v.z, v.ux,v.uy);
         			glTexCoord2f(v.ux, v.uy );
@@ -669,7 +669,7 @@ aiMesh
 		glEnd();
 
 
-
+/*
 		glBegin(GL_QUADS);
 
 		float xmin = x + 0.0;
@@ -692,7 +692,7 @@ aiMesh
 		glVertex3f(xmin, ymax, z+2.0);
 
 		glEnd();
-
+*/
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		check_gl_error();
@@ -789,11 +789,11 @@ void init()
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/collada_test.dae", &bsize);
 	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
 	
-	//char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
-	char* buffer = read_file_to_buffer( (char*) "media/mesh/test4.dae", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
+	//char* buffer = read_file_to_buffer( (char*) "media/mesh/test4.dae", &bsize);
 
 
-	int aFlag = //aiProcess_Triangulate | 
+	int aFlag = aiProcess_Triangulate | 
 	//aiProcess_GenUVCoords | 
 	//aiProcess_TransformUVCoords |
 	aiProcess_ValidateDataStructure;// |
@@ -805,8 +805,8 @@ void init()
 	int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS;
 
 	aiSetImportPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
-	const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
-	//const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
+	//const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+	const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
 
 
 	if(pScene == NULL)
