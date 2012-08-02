@@ -223,9 +223,9 @@ void init()
     active_sources = (struct GS_SoundSource*)malloc(sizeof(struct GS_SoundSource) * MAX_SOURCES);
     for (int i=0; i<MAX_SOURCES; i++)
     {
-		active_sources[i].source_id = -1;
-		active_sources[i].two_dimensional = false;
-	}	
+        active_sources[i].source_id = -1;
+        active_sources[i].two_dimensional = false;
+    }   
     
     enabled = true;
     inited = true;
@@ -264,12 +264,12 @@ void close()
     {
         free(sources);
         sources = NULL;
-	}
+    }
     if (buffers != NULL)
     {
         free(buffers);
         buffers = NULL;
-	}
+    }
     if (sound_buffers != NULL)
     {
         for (int i=0; i<MAX_SOUNDS; i++)
@@ -278,11 +278,11 @@ void close()
         free(sound_buffers);
         sound_buffers = NULL;
     }
-	if (active_sources != NULL)
-	{
-		free(active_sources);
-		active_sources = NULL;
-	}
+    if (active_sources != NULL)
+    {
+        free(active_sources);
+        active_sources = NULL;
+    }
 
     Sound::teardown_wav_buffers();
     enabled = false;
@@ -602,9 +602,13 @@ void update()
         for (int j=0; j<current_sources; j++)
         {
             int gs_source_id = b->sources[j];
+            GS_ASSERT(gs_source_id >= 0 && gs_source_id < MAX_SOURCES);
+            if (gs_source_id < 0 || gs_source_id >= MAX_SOURCES) continue;
             if (active_sources[gs_source_id].source_id < 0)
             {   // expired
                 b->current_sources--;
+                GS_ASSERT(b->current_sources >= 0 && b->current_sources < b->max_sources);
+                if (b->current_sources < 0 || b->current_sources >= b->max_sources) continue;
                 b->sources[b->current_sources] = -1;
             }
         }
