@@ -307,6 +307,8 @@ int run()
         Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
 
+        check_gl_error();   //check error before hud
+
         if (Options::hud)
         {
             // switch to hud  projection
@@ -353,7 +355,8 @@ int run()
         frame_graph->frame_stage(5); //swap buffers
 
         poll_mouse();
-        //check_gl_error();
+
+        check_gl_error();  //check error after hud rendering
         _swap_buffers();
         poll_mouse();
 
