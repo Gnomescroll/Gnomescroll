@@ -316,6 +316,9 @@ void init_server(int a, int b, int c, int d, int port)
 //server
 void dispatch_network_events()
 {
+    GS_ASSERT(server_host != NULL);
+    if (server_host == NULL) return;
+    
     ENetEvent event;
     
     /* Wait up to 5 milliseconds for an event. */
@@ -359,22 +362,30 @@ void dispatch_network_events()
                 case 0:
                     //printf("server received channel 0 message \n");
                     index = 0;
-                    ret = process_packet_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        ((class NetPeer*)event.peer->data)->client_id 
-                        ); 
+                    GS_ASSERT(event.peer->data != NULL);
+                    if (event.peer->data != NULL)
+                    {
+                        ret = process_packet_messages(
+                            (char*) event.packet -> data, 
+                            &index, 
+                            event.packet->dataLength, 
+                            ((class NetPeer*)event.peer->data)->client_id 
+                            );
+                    }
                     break;
                 case 1:
                     printf("server received channel 1 message \n");
                     index= 0;
-                    process_large_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        ((class NetPeer*)event.peer->data)->client_id 
-                        ); 
+                    GS_ASSERT(event.peer->data != NULL);
+                    if (event.peer->data != NULL)
+                    {
+                        process_large_messages(
+                            (char*) event.packet -> data, 
+                            &index, 
+                            event.packet->dataLength, 
+                            ((class NetPeer*)event.peer->data)->client_id 
+                            );
+                    }
                     break;
                 case 2:
                     printf("server received channel 2 message \n");
@@ -396,11 +407,14 @@ void dispatch_network_events()
     }
     
     if (ret == -2 || ret == -3)
-    {	// invalid data in packets, disconnect client
-		int client_id = ((class NetPeer*)event.peer->data)->client_id;
-		printf("Force disconnecting client %d for sending bad packets.\n", client_id);
-		kill_client(event.peer);
-	}
+    {   // invalid data in packets, disconnect client
+        GS_ASSERT(event.peer->data != NULL);
+        int client_id = -1;
+        if (event.peer->data != NULL)
+            client_id = ((class NetPeer*)event.peer->data)->client_id;
+        printf("Force disconnecting client %d for sending bad packets.\n", client_id);
+        kill_client(event.peer);
+    }
 }
 
 static void client_connect(ENetEvent* event)
@@ -538,13 +552,17 @@ static void client_disconnect(ENetEvent* event)
 
 void kill_client(ENetPeer* peer)
 {
-	GS_ASSERT(peer != NULL);
-	if (peer == NULL) return;
-	enet_peer_disconnect(peer, 1);
-	
-	// log it
-	int client_id = ((class NetPeer*)peer->data)->client_id;
-	NetServer::users->record_client_force_disconnect(client_id);
+    GS_ASSERT(peer != NULL);
+    if (peer == NULL) return;
+    enet_peer_disconnect(peer, 1);
+    
+    // log it
+    GS_ASSERT(peer->data != NULL);
+    if (peer->data != NULL)
+    {
+        int client_id = ((class NetPeer*)peer->data)->client_id;
+        NetServer::users->record_client_force_disconnect(client_id);
+    }
 }
 
 void flush_to_net()
