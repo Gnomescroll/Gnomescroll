@@ -494,6 +494,34 @@ aiMesh
 	struct Mat4* bbma;		//bone base matrix array
 	struct Mat4* bma;		//bone matrix array
 
+
+	void count_bones(int* count, aiNode* pNode)
+	{
+		GS_ASSERT(pNode->mNumMeshes == 0);	//RECOVER FROM THIS
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+		{
+			*count++;
+			count_bones(count, pNode);
+		}
+	}
+
+	void count_bones()
+	{
+		
+		//aiNode* pNode = pScene->mRootNode;
+		aiNode* pNode == NULL;
+
+		for(unsigned int i=0; i < pScene->mRootNode->mNumChildren; i++)
+		{
+			pScene->mRootNode->mChildren[i].
+
+			pNode = pNode->mChildren[i];
+
+		}
+
+	}	
+
+
 	void init_bone_list()
 	{
 		//count bones
@@ -516,13 +544,14 @@ aiMesh
 				{
 					for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
 					{
-						if(_i == i && _j >= j ) break;
+						if(_i == i && _j == j) break;
 						//if(bone == ml[_i]->mBones[_j])
 						//printf("cmp: %d %d : %d %d \n", i,j, _i,_j);
 						if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
 						{
-							printf("bone %d,%d matches bone %d,%d \n", i,j, _i,_j);
+							//printf("bone %d,%d matches bone %d,%d \n", i,j, _i,_j);
 							new_bone = false;
+							break;
 						}
 					}
 				}
@@ -886,13 +915,10 @@ void init()
 	bt->init( (aiScene*) pScene);
 	printf("BT: bone tree finished\n");
 
-	return;
-	abort(); //debug
-
 	printf("Bone tree: \n");
 	PrintBoneTree(pScene, 0, pScene->mRootNode);	//these are actually meshes
 	//pScene->mRootNode
-
+	return; //debug
 
 	printf("Animations: \n");
 
@@ -956,7 +982,6 @@ void init()
 	/** The node animation channels. Each channel affects a single node. 
 	 *  The array is mNumChannels in size. */
 	C_STRUCT aiNodeAnim** mChannels;
-
 
 	/** The number of mesh animation channels. Each channel affects
 	 *  a single mesh and defines vertex-based animation. */
