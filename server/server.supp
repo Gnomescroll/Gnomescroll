@@ -11,7 +11,8 @@
    fun:sendmsg
    fun:_ZL36enet_protocol_send_outgoing_commandsP9_ENetHostP10_ENetEventi
    fun:enet_host_service
-   fun:_ZN9NetClient30client_dispatch_network_eventsEv
+   fun:_ZN9NetServer23dispatch_network_eventsEv
    fun:_ZN4Main3runEv
    fun:main
 }
+
