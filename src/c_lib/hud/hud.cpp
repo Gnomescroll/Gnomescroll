@@ -1,5 +1,7 @@
 #include "hud.hpp"
 
+#include <float.h>
+
 #include <hud/reticle.hpp>
 #include <hud/cube_selector.hpp>
 #include <hud/font.hpp>
@@ -47,6 +49,7 @@ static const char version_mismatch_text[] = "Your game version is\nout of date.\
 static const char dead_text[] = "You died.";
 static const char fps_format[] = "%3.2ffps";
 static const char ping_format[] = "%dms";
+static const char location_format[] = "x: %f\ny: %f\nz: %f";
 
 static const char no_agent_text[] = "No Agent Assigned";
 
@@ -85,6 +88,7 @@ static struct HudDrawSettings
     bool draw;
     bool confirm_quit;
     bool press_help;
+    bool location;
 } hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -124,6 +128,8 @@ void update_hud_draw_settings()
 
     hud_draw_settings.fps = Options::fps;
     hud_draw_settings.ping  = Options::ping;
+
+    hud_draw_settings.location = true;
 
     // sanitize
     int ping_val = ClientState::last_ping_time;
@@ -261,20 +267,20 @@ void draw_hud_text()
         hud->help->draw();
 
     if (hud_draw_settings.press_help)
-    {	// blinks red/white
-		static unsigned int press_help_tick = 0;
-		const int press_help_anim_len = 60;
-		const struct Color white = {255,255,255};
-		const struct Color red = {255,10,10};
-		float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
-		t -= 1.0f;
-		if (t < 0.0f)
-			hud->press_help->set_color(interpolate_color(red, white, 1.0f+t));
-		else
-			hud->press_help->set_color(interpolate_color(white, red, t));
+    {   // blinks red/white
+        static unsigned int press_help_tick = 0;
+        const int press_help_anim_len = 60;
+        const struct Color white = {255,255,255};
+        const struct Color red = {255,10,10};
+        float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
+        t -= 1.0f;
+        if (t < 0.0f)
+            hud->press_help->set_color(interpolate_color(red, white, 1.0f+t));
+        else
+            hud->press_help->set_color(interpolate_color(white, red, t));
         hud->press_help->draw();
         press_help_tick++;
-	}
+    }
 
     if (hud->chat->inited)
     {
@@ -295,10 +301,10 @@ void draw_hud_text()
         return;
     }
 
-	#if PRODUCTION
-	if (input_state.debug) {
-	#endif
-	
+    #if PRODUCTION
+    if (input_state.debug) {
+    #endif
+    
     if (hud_draw_settings.fps)
     {
         float fps_val = 0.0f;
@@ -315,9 +321,15 @@ void draw_hud_text()
         //hud->reliable_ping->draw();
     }
 
-	#if PRODUCTION
-	}	// if (input_state.debug)
-	#endif
+    if (hud_draw_settings.location)
+    {
+        hud->location->update_formatted_string(3, current_camera_position.x, current_camera_position.y, current_camera_position.z);
+        hud->location->draw();
+    }
+
+    #if PRODUCTION
+    }   // if (input_state.debug)
+    #endif
 
     if (hud_draw_settings.agent_status)
     {
@@ -331,78 +343,78 @@ void draw_hud_text()
             
             int len = (int)strlen(health_color_string);
             int n = 0;
-			if (health >= AGENT_HEALTH)
-				n = len;
-			else if (health > 0)	// force to 0 in case of float point error
-				n = (((float)health/(float)AGENT_HEALTH)*(float)len);
-			if (health > 0 && n == 0) n = 1;
+            if (health >= AGENT_HEALTH)
+                n = len;
+            else if (health > 0)    // force to 0 in case of float point error
+                n = (((float)health/(float)AGENT_HEALTH)*(float)len);
+            if (health > 0 && n == 0) n = 1;
 
-			// update green portion of health text
-			int green_color_index = hud->health->get_color(HEALTH_GREEN);
-			int green_range = hud->health->get_color_range(green_color_index);
-			if (green_range < 0)
-			{
-				green_range = hud->health->add_char_range(n, len);
-				hud->health->set_char_range_color(green_range, green_color_index);
-			}
-			else
-				hud->health->update_char_range(green_range, 0, n);
+            // update green portion of health text
+            int green_color_index = hud->health->get_color(HEALTH_GREEN);
+            int green_range = hud->health->get_color_range(green_color_index);
+            if (green_range < 0)
+            {
+                green_range = hud->health->add_char_range(n, len);
+                hud->health->set_char_range_color(green_range, green_color_index);
+            }
+            else
+                hud->health->update_char_range(green_range, 0, n);
 
-			// update grey portion of health text
-			int grey_color_index = hud->health->get_color(HEALTH_GREY);
-			int grey_range = hud->health->get_color_range(grey_color_index);
-			if (grey_range < 0)
-			{
-				grey_range = hud->health->add_char_range(n, len);
-				hud->health->set_char_range_color(grey_range, grey_color_index);
-			}
-			else
-				hud->health->update_char_range(grey_range, n, len);
-				
-			// update numbers color
-			static int white_color_index = hud->health->get_color(HEALTH_WHITE);
-			GS_ASSERT(white_color_index >= 0);
-			int white_range = hud->health->get_color_range(white_color_index);
-			static int red_color_index = hud->health->get_color(HEALTH_RED);
-			GS_ASSERT(red_color_index >= 0);
-			int red_range = hud->health->get_color_range(red_color_index);
-			
-			static int blink_tick = 0;
-			static int blink_step = 1;
-			if (health <= 0)
-			{
-				struct Color blink_color = HEALTH_RED;
-				if (!a->status.dead)
-				{
-					const int NO_HEALTH_WARNING_TEXT_BLINK_RATE = 15;
-					blink_tick += blink_step;
-					if (blink_tick >= NO_HEALTH_WARNING_TEXT_BLINK_RATE)
-						blink_step = -1;
-					else if (blink_tick <= 0)
-						blink_step = 1;
-						
-					float t = ((float)blink_tick)/((float)NO_HEALTH_WARNING_TEXT_BLINK_RATE);
-					blink_color = interpolate_color(HEALTH_WHITE, HEALTH_RED, t);
-				}
+            // update grey portion of health text
+            int grey_color_index = hud->health->get_color(HEALTH_GREY);
+            int grey_range = hud->health->get_color_range(grey_color_index);
+            if (grey_range < 0)
+            {
+                grey_range = hud->health->add_char_range(n, len);
+                hud->health->set_char_range_color(grey_range, grey_color_index);
+            }
+            else
+                hud->health->update_char_range(grey_range, n, len);
+                
+            // update numbers color
+            static int white_color_index = hud->health->get_color(HEALTH_WHITE);
+            GS_ASSERT(white_color_index >= 0);
+            int white_range = hud->health->get_color_range(white_color_index);
+            static int red_color_index = hud->health->get_color(HEALTH_RED);
+            GS_ASSERT(red_color_index >= 0);
+            int red_range = hud->health->get_color_range(red_color_index);
+            
+            static int blink_tick = 0;
+            static int blink_step = 1;
+            if (health <= 0)
+            {
+                struct Color blink_color = HEALTH_RED;
+                if (!a->status.dead)
+                {
+                    const int NO_HEALTH_WARNING_TEXT_BLINK_RATE = 15;
+                    blink_tick += blink_step;
+                    if (blink_tick >= NO_HEALTH_WARNING_TEXT_BLINK_RATE)
+                        blink_step = -1;
+                    else if (blink_tick <= 0)
+                        blink_step = 1;
+                        
+                    float t = ((float)blink_tick)/((float)NO_HEALTH_WARNING_TEXT_BLINK_RATE);
+                    blink_color = interpolate_color(HEALTH_WHITE, HEALTH_RED, t);
+                }
 
-				hud->health->set_color_index_color(red_color_index, blink_color);
-					
-				int range = red_range;
-				if (range < 0) range = white_range;
-				GS_ASSERT(range >= 0);
-				hud->health->set_char_range_color(range, red_color_index);
-			}
-			else
-			{
-				blink_tick = 0;
-				int range = white_range;
-				if (range < 0) range = red_range;
-				GS_ASSERT(range >= 0);
-				hud->health->set_char_range_color(range, white_color_index);
-			}
+                hud->health->set_color_index_color(red_color_index, blink_color);
+                    
+                int range = red_range;
+                if (range < 0) range = white_range;
+                GS_ASSERT(range >= 0);
+                hud->health->set_char_range_color(range, red_color_index);
+            }
+            else
+            {
+                blink_tick = 0;
+                int range = white_range;
+                if (range < 0) range = red_range;
+                GS_ASSERT(range >= 0);
+                hud->health->set_char_range_color(range, white_color_index);
+            }
         }
         else
-            hud->health->set_text((char*)no_agent_text);
+            hud->health->set_text(no_agent_text);
             
         hud->health->draw();
     }
@@ -440,13 +452,13 @@ void HUD::init()
 
     int line_height = HudFont::font->data.line_height;
 
-	using HudText::text_list;
-	using HudText::Text;
+    using HudText::text_list;
+    using HudText::Text;
     
     help = text_list->create();
     GS_ASSERT(help != NULL);
     if (help == NULL) return;
-    help->set_text((char*) help_text);
+    help->set_text(help_text);
     int help_width = help->get_width();
     help->set_color(255,255,255,255);
     help->set_position(_xres - help_width - 5, _yresf - 5);
@@ -454,28 +466,28 @@ void HUD::init()
     disconnected = text_list->create();
     GS_ASSERT(disconnected != NULL);
     if (disconnected == NULL) return;
-    disconnected->set_text((char*) disconnected_text);
+    disconnected->set_text(disconnected_text);
     disconnected->set_color(255,10,10,255);
     disconnected->set_position(_xresf/2, _yresf/2);
 
     version_mismatch = text_list->create();
     GS_ASSERT(version_mismatch != NULL);
     if (version_mismatch == NULL) return;
-    version_mismatch->set_text((char*)version_mismatch_text);
+    version_mismatch->set_text(version_mismatch_text);
     version_mismatch->set_color(255,10,10,255);
     version_mismatch->set_position(_xresf/2, _yresf/2);
     
     dead = text_list->create();
     GS_ASSERT(dead != NULL);
     if (dead == NULL) return;
-    dead->set_text((char*) dead_text);
+    dead->set_text(dead_text);
     dead->set_color(255,10,10,255);
     dead->set_position(_xresf/2, _yresf/2);
     
     fps = text_list->create();
     GS_ASSERT(fps != NULL);
     if (fps == NULL) return;
-    fps->set_format((char*) fps_format);
+    fps->set_format(fps_format);
     fps->set_format_extra_length(6 - 5);
     fps->set_color(255,10,10,255);
     fps->set_position(3, line_height+3);
@@ -483,7 +495,7 @@ void HUD::init()
     ping = text_list->create();
     GS_ASSERT(ping != NULL);
     if (ping == NULL) return;
-    ping->set_format((char*) ping_format);
+    ping->set_format(ping_format);
     ping->set_format_extra_length(3 - 2);
     ping->set_color(255,10,10,255);
     ping->set_position(3, (line_height*2)+3);
@@ -491,43 +503,51 @@ void HUD::init()
     reliable_ping = text_list->create();
     GS_ASSERT(reliable_ping != NULL);
     if (reliable_ping == NULL) return;
-    reliable_ping->set_format((char*) ping_format);
+    reliable_ping->set_format(ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
     reliable_ping->set_color(255,10,10,255);
     reliable_ping->set_position(3, (line_height*3)+3);
 
+    location = text_list->create();
+    GS_ASSERT(location != NULL);
+    if (location == NULL) return;
+    location->set_format(location_format);
+    location->set_format_extra_length((count_digits(FLT_MAX_10_EXP) + count_digits(FLT_DIG) - 2) * 3);
+    location->set_color(255,10,10,255);
+    location->set_position(3, _yresf-3);
+
     health = new AnimatedText;
 
-    health->set_format((char*) health_format);
+    health->set_format(health_format);
     health->set_format_extra_length(count_digits(AGENT_HEALTH) - 4);
     health->update_formatted_string(1, AGENT_HEALTH);
     health->set_position((_xresf - health->get_width())/2.0f, health->get_height() + 40);
-	health->set_color(255,255,255,255);
+    health->set_color(255,255,255,255);
 
-	// add color for health text animations
-	health->set_color_count(4);
-	health->set_char_range_count(4);
-	health->add_color(HEALTH_GREY);
-	health->add_color(HEALTH_GREEN);
-	health->add_color(HEALTH_RED);
-	
-	int white_range_index = health->add_char_range(strlen(health_color_string), -1);
-	GS_ASSERT(white_range_index >= 0);
-	int white_color_index = health->add_color(HEALTH_WHITE);
-	GS_ASSERT(white_color_index >= 0);
-	health->set_char_range_color(white_range_index, white_color_index);
-	
+    // add color for health text animations
+    health->set_color_count(4);
+    health->set_char_range_count(4);
+    health->add_color(HEALTH_GREY);
+    health->add_color(HEALTH_GREEN);
+    health->add_color(HEALTH_RED);
+    
+    int white_range_index = health->add_char_range(strlen(health_color_string), -1);
+    GS_ASSERT(white_range_index >= 0);
+    int white_color_index = health->add_color(HEALTH_WHITE);
+    GS_ASSERT(white_color_index >= 0);
+    health->set_char_range_color(white_range_index, white_color_index);
+    
     confirm_quit = text_list->create();
     GS_ASSERT(confirm_quit != NULL);
     if (confirm_quit == NULL) return;
-    confirm_quit->set_text((char*)confirm_quit_text);
+    confirm_quit->set_text(confirm_quit_text);
     confirm_quit->set_color(255,10,10,255);
     confirm_quit->set_position(_xresf/2, _yresf/2);
 
     press_help = text_list->create();
     GS_ASSERT(press_help != NULL);
     if (press_help == NULL) return;
-    press_help->set_text((char*)press_help_text);
+    press_help->set_text(press_help_text);
     press_help->set_color(255,255,255,255);
     press_help->set_position((_xresf - press_help->get_width()) / 2.0f, _yresf);
 
@@ -549,6 +569,7 @@ dead(NULL),
 fps(NULL),
 ping(NULL),
 reliable_ping(NULL),
+location(NULL),
 health(NULL),
 confirm_quit(NULL),
 press_help(NULL),
@@ -558,7 +579,7 @@ chat(NULL)
 
 HUD::~HUD()
 {
-	using HudText::text_list;
+    using HudText::text_list;
     if (help != NULL)
         text_list->destroy(help->id);
     if (disconnected != NULL)
@@ -571,6 +592,8 @@ HUD::~HUD()
         text_list->destroy(ping->id);
     if (reliable_ping != NULL)
         text_list->destroy(reliable_ping->id);
+    if (location != NULL)
+        text_list->destroy(location->id);
     if (confirm_quit != NULL)
         text_list->destroy(confirm_quit->id);
     if (press_help != NULL)
@@ -608,8 +631,8 @@ void ChatRender::init()
         GS_ASSERT(t != NULL);
         if (t == NULL) return;
         t->set_position(x_offset, _yresf - (y_offset + (line_height + 2)*i));
-        t->set_text((char*) "");
-        t->set_format((char*) "%s%s%s");
+        t->set_text("");
+        t->set_format("%s%s%s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
         t->set_color(255,255,255,255);
         messages[i] = t;
@@ -618,7 +641,7 @@ void ChatRender::init()
     input = HudText::text_list->create();
     GS_ASSERT(input != NULL);
     if (input == NULL) return;
-    input->set_text((char*)"");
+    input->set_text("");
     input->set_color(255,10,10,255);
     input->set_position(x_offset, _yresf - (y_offset + (line_height + 2)*i));
     
@@ -717,7 +740,7 @@ void ChatRender::update(bool timeout)
         t->set_color(m->color);
     }
 
-    for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text((char*)""));
+    for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text(""));
 }
 
 //void ChatRender::page_up()
@@ -772,8 +795,8 @@ void Scoreboard::init()
         tags[i]->set_color(r,g,b,a);
         tags[i]->set_position(start_x + i*col_width, _yresf - start_y);
     }
-    tags[0]->set_text((char*) "ID");
-    tags[1]->set_text((char*) "Name");
+    tags[0]->set_text("ID");
+    tags[1]->set_text("Name");
 
     const char id_fmt[] = "%d";
     const char name_fmt[] = "%s";
@@ -782,13 +805,13 @@ void Scoreboard::init()
         ids[i] = HudText::text_list->create();
         GS_ASSERT(ids[i] != NULL);
         if (ids[i] == NULL) return;
-        ids[i]->set_format((char*)id_fmt);
+        ids[i]->set_format(id_fmt);
         ids[i]->set_format_extra_length(3 - 2);
 
         names[i] = HudText::text_list->create();
         GS_ASSERT(names[i] != NULL);
         if (names[i] == NULL) return;
-        names[i]->set_format((char*)name_fmt);
+        names[i]->set_format(name_fmt);
         names[i]->set_format_extra_length(PLAYER_NAME_MAX_LENGTH - 2);
     }
     this->inited = true;
@@ -816,8 +839,8 @@ void Scoreboard::update()
         Agent_state* agent = ClientState::agent_list->filtered_objects[i];
         if (i >= ClientState::agent_list->n_filtered || agent==NULL)
         {
-            ids[i]->set_text((char*)"");
-            names[i]->set_text((char*)"");
+            ids[i]->set_text("");
+            names[i]->set_text("");
             continue;
         }
         float y = start_y + HudFont::font->data.line_height*(j+2);
@@ -870,4 +893,4 @@ Scoreboard::~Scoreboard()
     }    
 }
 
-}
+}   // Hud
