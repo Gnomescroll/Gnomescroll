@@ -239,6 +239,7 @@ class BoneTree
 
 		init_texture();
 		//draw();
+		init_bone_list();
 	}
 
 	void count_nodes(aiNode* pNode)
@@ -495,7 +496,33 @@ aiMesh
 
 	void init_bone_list()
 	{
+		//count bones
+		int bone_count = 0;
+		int _bone_count = 0;
 
+		for(int i=0; i<nli; i++)
+		{
+			aiMesh* mesh = ml[i];
+			for(unsigned int j=0; j<mesh->mNumBones; j++)
+			{
+				aiBone* bone = mesh->mBones[j];
+
+				bool new_bone = true;
+
+				for(int _i=0; _i<i; _i++) 
+				{
+					for(unsigned int _j=0; _j<j; _j++) 
+					{
+						if(bone == ml[_i]->mBones[_j]) new_bone = false;
+					}
+				}
+
+				if(new_bone == true) bone_count++;
+				_bone_count++;
+			}
+		}
+
+		printf("bone_count= %d _bone_count= %d nli= %d \n", bone_count, _bone_count, nli);
 
 	}
 
