@@ -71,6 +71,7 @@ class HUD
     Text* fps;
     Text* ping;
     Text* reliable_ping;
+    Text* location;
     AnimatedText* health;
     Text* confirm_quit;
     Text* press_help;
@@ -99,4 +100,4 @@ void init_hud_draw_settings();
 void update_hud_draw_settings();
 void draw_hud();
 
-}
+}   // Hud
