@@ -44,3 +44,185 @@
    obj:/usr/lib/libSDL-1.2.so.0.11.3
    obj:*
 }
+{
+   Enet
+   Memcheck:Param
+   socketcall.sendmsg(msg.msg_iov[i])
+   fun:sendmsg
+   fun:_ZL36enet_protocol_send_outgoing_commandsP9_ENetHostP10_ENetEventi
+   fun:enet_host_service
+   fun:_ZN9NetClient30client_dispatch_network_eventsEv
+   fun:_ZN4Main3runEv
+   fun:main
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XlcDefaultMapModifiers
+   fun:XSetLocaleModifiers
+   obj:/usr/lib/libSDL-1.2.so.0.11.3
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:_Z10init_c_libiPPc
+   fun:_ZN4Main4initEiPPc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:strdup
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/i386-linux-gnu/libX11.so.6.3.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:gallivm_register_garbage_collector_callback
+   fun:draw_llvm_create
+   fun:draw_create_gallivm
+   fun:draw_create
+   fun:st_init_draw
+   fun:st_create_context
+   fun:st_api_create_context
+   fun:dri_create_context
+   fun:dri2_create_context
+   fun:dri2CreateNewContextForAPI
+   fun:dri2CreateNewContext
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNSs4_Rep9_S_createEjjRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC1EPKcjRKSaIcE
+   fun:_ZN4llvm6ModuleC1ENS_9StringRefERNS_11LLVMContextE
+   fun:LLVMModuleCreateWithNameInContext
+   fun:init_gallivm_state
+   fun:gallivm_create
+   fun:draw_create_gallivm
+   fun:draw_create
+   fun:st_init_draw
+   fun:st_create_context
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNSs4_Rep9_S_createEjjRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC1EPKcjRKSaIcE
+   fun:_ZNK4llvm5Twine3strEv
+   fun:_ZN4llvm6Triple9setTripleERKNS_5TwineE
+   fun:_ZN4llvm3JIT12selectTargetEPNS_6ModuleENS_9StringRefES3_RKNS_15SmallVectorImplISsEEPSs
+   fun:_ZN4llvm3JIT9createJITEPNS_6ModuleEPSsPNS_16JITMemoryManagerENS_10CodeGenOpt5LevelEbNS_9CodeModel5ModelENS_9StringRefESA_RKNS_15SmallVectorImplISsEE
+   fun:_ZN4llvm13EngineBuilder6createEv
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNSs4_Rep9_S_createEjjRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC1EPKcjRKSaIcE
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/i386-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/i386-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/i386-linux-gnu/libX11.so.6.3.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   obj:/usr/lib/libSDL-1.2.so.0.11.3
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:_Z10init_c_libiPPc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   fun:xcb_connect_to_display_with_auth_info
+   fun:xcb_connect
+   fun:_XConnectXCB
+   fun:XOpenDisplay
+   obj:/usr/lib/libSDL-1.2.so.0.11.3
+   obj:/usr/lib/libSDL-1.2.so.0.11.3
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:_Z10init_c_libiPPc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   fun:xcb_connect_to_display_with_auth_info
+   fun:xcb_connect
+   fun:pa_client_conf_from_x11
+   fun:pa_context_new_with_proplist
+   fun:pa_context_new
+   obj:/usr/lib/libopenal.so.1.13.0
+   obj:/usr/lib/libopenal.so.1.13.0
+   obj:/usr/lib/libopenal.so.1.13.0
+   fun:alcOpenDevice
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   fun:xcb_connect_to_display_with_auth_info
+   fun:xcb_connect
+   fun:pa_client_conf_from_x11
+   fun:pa_context_new_with_proplist
+   fun:pa_context_new
+   obj:/usr/lib/libopenal.so.1.13.0
+   obj:/usr/lib/libopenal.so.1.13.0
+   obj:/usr/lib/libopenal.so.1.13.0
+   fun:alcOpenDevice
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:XGetVisualInfo
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/i386-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/i386-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/i386-linux-gnu/libX11.so.6.3.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   obj:/usr/lib/libSDL-1.2.so.0.11.3
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:_Z10init_c_libiPPc
+}

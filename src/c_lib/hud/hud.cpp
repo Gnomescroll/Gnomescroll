@@ -512,7 +512,7 @@ void HUD::init()
     GS_ASSERT(location != NULL);
     if (location == NULL) return;
     location->set_format(location_format);
-    location->set_format_extra_length((count_digits(FLT_MAX_10_EXP) + count_digits(FLT_DIG) - 2) * 3);
+    location->set_format_extra_length((40 + 20 + 1 - 2) * 3);
     location->set_color(255,10,10,255);
     location->set_position(3, _yresf-3);
 

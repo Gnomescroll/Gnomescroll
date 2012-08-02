@@ -55,6 +55,7 @@ class SHADER
     {
         if(vs != NULL) free(vs);
         if(fs != NULL) free(fs);
+        if (name != NULL) delete[] name;
     }
 
     void set_debug(bool value)
