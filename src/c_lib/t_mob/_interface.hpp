@@ -423,7 +423,7 @@ aiMesh
 				v.v.z = pos.z;
 
 				v.ux =  tex.x;
-				v.uy =  tex.y;
+				v.uy =  1.0-tex.y;
 
 				//printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
 				GS_ASSERT(bvlo[i] + (int)(j) == vcount);
@@ -483,6 +483,23 @@ aiMesh
 		out.f[3][3] = in.d4;
 	}
 
+
+
+	int bam;		//bone array max
+	aiBone** ba; 	//bone array
+	int* bal;		//bone array lookup: maps mesh to starting offset in ball
+	int* ball;		// ball[bal[mesh_num] + bone_num] is matrix index
+
+	struct Mat4* bbma;		//bone base matrix array
+	struct Mat4* bma;		//bone matrix array
+
+	void init_bone_list()
+	{
+
+
+	}
+
+
 	unsigned int texture1;
 	SDL_Surface* s;
 
@@ -540,6 +557,8 @@ aiMesh
 			int offset = bvlo[i];
 			int num = bvln[i];
 
+			GS_ASSERT(mesh->mNumBones != 0);
+
 			for(unsigned int j=0; j<mesh->mNumBones; j++)
 			{
 				aiBone* bone = mesh->mBones[j];
@@ -547,13 +566,15 @@ aiMesh
 
 				struct Mat4 mat;
 				_ConvertMatrix(mat, offset_matrix);
-				//printf("=== \n");
+				//printf("%d === \n", i);
 				//print_mat4(mat);
 
 				for(unsigned int k=0; k<bone->mNumWeights; k++)
 				{
 					int index = offset + bone->mWeights[k].mVertexId;
 					float weight = bone->mWeights[k].mWeight;
+
+					//printf("weight= %f \n", weight);
 
 					GS_ASSERT(index >= offset);
 					GS_ASSERT(index < offset+num);
@@ -583,7 +604,7 @@ aiMesh
 				}
 			}
 		}
-
+	/*
 		for(int i=0; i<vlm; i++)
 		{
 			int index = bvll[i];
@@ -593,11 +614,11 @@ aiMesh
 			}
 			tvl[i] = tbvl[index];
 		}
-
+	*/
 		for(int i=0; i<vlm; i++)
 		{
 			int index = bvll[i];
-			tvl[i] = bvl[index];
+			tvl[i] = tbvl[index];
 			tvl[i].v.x += x;
 			tvl[i].v.y += y;
 			tvl[i].v.z += z;
@@ -608,7 +629,7 @@ aiMesh
 		//GL_ASSERT(GL_TEXTURE_2D, true);
 
 		glBindTexture(GL_TEXTURE_2D, texture1);
-#if 0
+#if 1
 		glBegin(GL_TRIANGLES);
 		for(int i=0; i<vlm; i++)
 		{
@@ -618,12 +639,15 @@ aiMesh
 			struct _Vertex v = tvl[i];
 
 			//vec3_print(v.v);
-
-			glVertex3f(v.v.x, v.v.y, v.v.z);
         	glTexCoord2f(v.ux, v.uy );
+			glVertex3f(v.v.x, v.v.y, v.v.z);
 		}
 
 		glEnd();
+		
+		glBindTexture(GL_TEXTURE_2D, 0);
+		check_gl_error();
+
 #else
 
 
