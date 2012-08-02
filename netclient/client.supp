@@ -1,0 +1,46 @@
+{
+   luajit
+   Memcheck:Cond
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.0
+   obj:*
+}
+{
+   XOpenDisplay
+   Memcheck:Param
+   writev(vector[...])
+   fun:writev
+   obj:*
+}
+{
+   mesa
+   Memcheck:Addr4
+   fun:_mesa_make_extension_string
+   fun:_mesa_make_current
+   fun:st_api_make_current
+   fun:dri_make_current
+   fun:driBindContext
+   obj:/usr/lib/i386-linux-gnu/mesa/libGL.so.1.2
+}
+{
+   png
+   Memcheck:Cond
+   fun:inflateReset2
+   fun:inflateInit2_
+   fun:inflateInit_
+   fun:png_create_read_struct_2
+   fun:png_create_read_struct
+   fun:IMG_LoadPNG_RW
+   fun:IMG_LoadTyped_RW
+   fun:IMG_Load
+   fun:_Z24create_surface_from_filePKc
+   fun:_ZN18TextureSheetLoader18TextureSheetLoader12load_textureEPc
+   fun:_Z27LUA_load_cube_texture_sheetPc
+   fun:_ZN5t_map13texture_aliasEPKc
+}
+{
+   SDL
+   Memcheck:Cond
+   obj:/usr/lib/libSDL-1.2.so.0.11.3
+   obj:/usr/lib/libSDL-1.2.so.0.11.3
+   obj:*
+}

@@ -1,0 +1,6 @@
+{
+   luajit
+   Memcheck:Cond
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.0
+   obj:*
+}

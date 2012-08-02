@@ -235,7 +235,7 @@ void init_config()
 
 void teardown_config()
 {
-    if (container_attributes != NULL) free(container_attributes);
+    if (container_attributes != NULL) delete[] container_attributes;
 }
 
     
