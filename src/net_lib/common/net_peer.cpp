@@ -51,7 +51,7 @@ void NetPeer::push_python_message(class Net_message* nm)
 void NetPeer::flush_map_messages()
 {
     if (enet_peer == NULL) return;
-    if(map_message_buffer_index == 0) return;
+    if (map_message_buffer_index == 0) return;
     //printf("Flushing %i map bytes \n", map_message_buffer_index);
     ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send (enet_peer, 3, map_p);
@@ -73,25 +73,25 @@ void NetPeer::resize_map_message_buffer(unsigned int size_min)
 
 void NetPeer::flush_to_net() 
 {
-    if(this->connected == 0) return;
-    if(reliable_message_manager.pending_bytes_out == 0) return;
+    if (this->connected == 0) return;
+    if (reliable_message_manager.pending_bytes_out == 0) return;
     if (enet_peer == NULL) return;
     
-    if(reliable_message_manager.pending_messages != 0) 
+    if (reliable_message_manager.pending_messages != 0) 
     {
         ENetPacket* reliable_p = enet_packet_create(NULL, reliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
         reliable_message_manager.serialize_messages( (char*) reliable_p->data, 0); //error
         enet_peer_send (enet_peer, 0, reliable_p);
     }
 
-    if(unreliable_message_manager.pending_messages != 0) 
+    if (unreliable_message_manager.pending_messages != 0) 
     {
         ENetPacket* unreliable_p = enet_packet_create(NULL, unreliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
         unreliable_message_manager.serialize_messages( (char*)unreliable_p->data, 0);
         enet_peer_send (enet_peer, 0, unreliable_p);
     }
 /*
-    if(python_message_manager.pending_messages != 0) 
+    if (python_message_manager.pending_messages != 0) 
     {
         //printf("Python Pending bytes out = %i \n", python_message_manager.pending_bytes_out);
         ENetPacket* python_p = enet_packet_create(NULL, python_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);

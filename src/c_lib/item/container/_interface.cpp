@@ -398,7 +398,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (player_craft_bench_ui  != NULL && player_craft_bench_ui->id  == container_id) return player_craft_bench_ui;
     if (player_container_ui    != NULL && player_container_ui->id    == container_id) return player_container_ui;
-	if (player_energy_tanks_ui != NULL && player_energy_tanks_ui->id == container_id) return player_energy_tanks_ui;
+    if (player_energy_tanks_ui != NULL && player_energy_tanks_ui->id == container_id) return player_energy_tanks_ui;
     if (player_toolbelt_ui     != NULL && player_toolbelt_ui->id     == container_id) return player_toolbelt_ui;
     if (player_synthesizer_ui  != NULL && player_synthesizer_ui->id  == container_id) return player_synthesizer_ui;
     if (storage_block_ui       != NULL && storage_block_ui->id       == container_id) return storage_block_ui;
@@ -565,9 +565,9 @@ void assign_containers_to_agent(int agent_id, int client_id)
     GS_ASSERT(agent_container != NULL);
     assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
 
-	ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)item_container_list->create(AGENT_ENERGY_TANKS);
-	GS_ASSERT(agent_energy_tanks != NULL);
-	assign_container_to_agent(agent_energy_tanks, agent_energy_tanks_list, agent_id, client_id);
+    ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)item_container_list->create(AGENT_ENERGY_TANKS);
+    GS_ASSERT(agent_energy_tanks != NULL);
+    assign_container_to_agent(agent_energy_tanks, agent_energy_tanks_list, agent_id, client_id);
         
     ItemContainerSynthesizer* agent_synthesizer = (ItemContainerSynthesizer*)item_container_list->create(AGENT_SYNTHESIZER);
     GS_ASSERT(agent_synthesizer != NULL);
@@ -718,35 +718,35 @@ void agent_born(int agent_id)
         }
     }
 
-	// add energy tanks 
-	int energy_tanks_id = get_agent_energy_tanks(agent_id);
-	GS_ASSERT(energy_tanks_id != NULL_CONTAINER);
-	ItemContainerEnergyTanks* energy_tanks = (ItemContainerEnergyTanks*)get_container(energy_tanks_id);
-	GS_ASSERT(energy_tanks != NULL);
-	if (energy_tanks != NULL)
-	{
+    // add energy tanks 
+    int energy_tanks_id = get_agent_energy_tanks(agent_id);
+    GS_ASSERT(energy_tanks_id != NULL_CONTAINER);
+    ItemContainerEnergyTanks* energy_tanks = (ItemContainerEnergyTanks*)get_container(energy_tanks_id);
+    GS_ASSERT(energy_tanks != NULL);
+    if (energy_tanks != NULL)
+    {
         #if PRODUCTION
         int n_energy_tanks = 1;
         if (energy_tanks->slot_count == energy_tanks->slot_max) n_energy_tanks = 0;
         #else
-		int n_energy_tanks = energy_tanks->slot_max - energy_tanks->slot_count - 1;
+        int n_energy_tanks = energy_tanks->slot_max - energy_tanks->slot_count - 1;
         #endif
-		for (int i=0; i<n_energy_tanks; i++)
-		{
-			int energy_tank_type = Item::get_item_type("energy_tank");
-			GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
-			if (energy_tank_type == NULL_ITEM_TYPE) break;
-			Item::Item* energy_tank = Item::create_item(energy_tank_type);
-			GS_ASSERT(energy_tank != NULL);
-			if (energy_tank == NULL) break;
-			
-			int slot = energy_tanks->get_empty_slot();
-			if (slot == NULL_SLOT) break;
-			
-			bool added = transfer_free_item_to_container(energy_tank->id, energy_tanks->id, slot);
-			if (!added) break;
-		}
-	}
+        for (int i=0; i<n_energy_tanks; i++)
+        {
+            int energy_tank_type = Item::get_item_type("energy_tank");
+            GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
+            if (energy_tank_type == NULL_ITEM_TYPE) break;
+            Item::Item* energy_tank = Item::create_item(energy_tank_type);
+            GS_ASSERT(energy_tank != NULL);
+            if (energy_tank == NULL) break;
+            
+            int slot = energy_tanks->get_empty_slot();
+            if (slot == NULL_SLOT) break;
+            
+            bool added = transfer_free_item_to_container(energy_tank->id, energy_tanks->id, slot);
+            if (!added) break;
+        }
+    }
 
     #if !PRODUCTION
     
@@ -757,30 +757,30 @@ void agent_born(int agent_id)
     GS_ASSERT(synth != NULL);
     if (synth != NULL)
     {
-		ItemID known_coins = synth->get_coins();
-		if (known_coins == NULL_ITEM)
-		{	// create new coins				
-			Item::Item* coins = Item::create_item("synthesizer_coin");
-			GS_ASSERT(coins != NULL);
-			if (coins != NULL)
-			{
-				coins->stack_size = Item::get_max_stack_size(coins->type);
-				transfer_free_item_to_container(coins->id, synth->id, synth->coins_slot);
-			}		
-		}
-		else
-		{	// update known coins
-			Item::Item* coins = Item::get_item(known_coins);
-			GS_ASSERT(coins != NULL);
-			int stack_max = Item::get_max_stack_size(coins->type);
-			GS_ASSERT(coins->stack_size <= stack_max);
-			if (coins != NULL && coins->stack_size != stack_max)
-			{
-				coins->stack_size = stack_max;
-				Item::send_item_state(coins->id);
-			}
-		}
-	}
+        ItemID known_coins = synth->get_coins();
+        if (known_coins == NULL_ITEM)
+        {   // create new coins             
+            Item::Item* coins = Item::create_item("synthesizer_coin");
+            GS_ASSERT(coins != NULL);
+            if (coins != NULL)
+            {
+                coins->stack_size = Item::get_max_stack_size(coins->type);
+                transfer_free_item_to_container(coins->id, synth->id, synth->coins_slot);
+            }       
+        }
+        else
+        {   // update known coins
+            Item::Item* coins = Item::get_item(known_coins);
+            GS_ASSERT(coins != NULL);
+            int stack_max = Item::get_max_stack_size(coins->type);
+            GS_ASSERT(coins->stack_size <= stack_max);
+            if (coins != NULL && coins->stack_size != stack_max)
+            {
+                coins->stack_size = stack_max;
+                Item::send_item_state(coins->id);
+            }
+        }
+    }
 
 
     ContainerActionType event = CONTAINER_ACTION_NONE;
@@ -913,9 +913,9 @@ void agent_quit(int agent_id)
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(a->client_id, a->id, agent_toolbelt_list[agent_id]);
 
-	GS_ASSERT(agent_energy_tanks_list != NULL);
-	if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
-		throw_items_from_container(a->client_id, a->id, agent_energy_tanks_list[agent_id]);
+    GS_ASSERT(agent_energy_tanks_list != NULL);
+    if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_energy_tanks_list[agent_id]);
 
     // destroy containers
     if (agent_container_list[agent_id] != NULL_CONTAINER)
@@ -925,12 +925,12 @@ void agent_quit(int agent_id)
     if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_synthesizer_list[agent_id]);
     if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
-		destroy_container(agent_energy_tanks_list[agent_id]);
+        destroy_container(agent_energy_tanks_list[agent_id]);
 
     agent_container_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;
     agent_synthesizer_list[agent_id] = NULL_CONTAINER;
-	agent_energy_tanks_list[agent_id] = NULL_CONTAINER;
+    agent_energy_tanks_list[agent_id] = NULL_CONTAINER;
 }
 
 void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
@@ -955,53 +955,53 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     GS_ASSERT(cost >= 0);
     if (item_type == NULL_ITEM_TYPE) return;
     
-	// compare to hand
+    // compare to hand
     ItemID hand_item = get_agent_hand(agent_id);
     int hand_item_type = Item::get_item_type(hand_item);
     if (hand_item != NULL_ITEM)
-    {	
-		// can it stack
-		if (hand_item_type != item_type) return;
-		
-		// will it fit
-		int stack_space = Item::get_stack_space(hand_item);
-		if (stack_space <= 0) return;
-	}
+    {   
+        // can it stack
+        if (hand_item_type != item_type) return;
+        
+        // will it fit
+        int stack_space = Item::get_stack_space(hand_item);
+        if (stack_space <= 0) return;
+    }
     
     // get the coins
     ItemID coins = synthesizer->get_coins();
     int coin_stack = 0; // coin stack will return 1 for NULL_ITEM, but we want to treat that as 0
     if (coins != NULL_ITEM) coin_stack = Item::get_stack_size(coins);
 
-	// can we afford it
+    // can we afford it
     if (coin_stack < cost) return;
     
-	Item::Item* coin_item = Item::get_item_object(coins);
-	GS_ASSERT(coin_item != NULL);
-	if (coin_item == NULL) return;
+    Item::Item* coin_item = Item::get_item_object(coins);
+    GS_ASSERT(coin_item != NULL);
+    if (coin_item == NULL) return;
 
-	if (hand_item == NULL_ITEM)
-	{
-		// create shopped item
-		Item::Item* purchase = Item::create_item(item_type);
-		GS_ASSERT(purchase != NULL);
-		if (purchase == NULL) return;
+    if (hand_item == NULL_ITEM)
+    {
+        // create shopped item
+        Item::Item* purchase = Item::create_item(item_type);
+        GS_ASSERT(purchase != NULL);
+        if (purchase == NULL) return;
 
-		// add to hand
-		transfer_free_item_to_hand(purchase->id, agent_id);
-	}
-	else
-	{
-		// get hand item pointer
-		Item::Item* hand = Item::get_item(hand_item);
-		GS_ASSERT(hand != NULL);
-		if (hand == NULL) return;
-		
-		// increase count by 1
-		hand->stack_size += 1;
-		GS_ASSERT(hand->stack_size <= Item::get_max_stack_size(hand->type));
-		Item::send_item_state(hand->id);
-	}
+        // add to hand
+        transfer_free_item_to_hand(purchase->id, agent_id);
+    }
+    else
+    {
+        // get hand item pointer
+        Item::Item* hand = Item::get_item(hand_item);
+        GS_ASSERT(hand != NULL);
+        if (hand == NULL) return;
+        
+        // increase count by 1
+        hand->stack_size += 1;
+        GS_ASSERT(hand->stack_size <= Item::get_max_stack_size(hand->type));
+        Item::send_item_state(hand->id);
+    }
 
     // update coins
     if (cost)
@@ -1012,8 +1012,8 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
         }
         else
         {   // decrement coin stack
-			coin_item->stack_size -= cost;
-			Item::send_item_state(coins);
+            coin_item->stack_size -= cost;
+            Item::send_item_state(coins);
         }
     }
 }
@@ -1376,47 +1376,52 @@ void update_smelters()
             }
             GS_ASSERT(fuel_item_type == NULL_ITEM_TYPE || is_fuel);
 
-			// ERROR STATE -- throw item out of here
-			if (fuel_item_type != NULL_ITEM_TYPE && !is_fuel)
-			{
-				Item::Item* fuel = Item::get_item(fuel_item);
-				GS_ASSERT(fuel != NULL);
-				if (fuel == NULL)
-				{	// we have an erroneous value in here
-					// maybe a buffer overwrite
-					// just get rid of it
-					smelter->remove_fuel();
-				}
-				else
-				{	// an existing item was placed in here somehow
-					// still could be buffer overwrite
-					// look where the item is located
-					// if its located here, throw() it
-					// else, just unset it
-					bool is_here =
-						(fuel->location == IL_CONTAINER
-					  && fuel->location_id == smelter->id
-					  && fuel->container_slot == smelter->fuel_slot);
-					GS_ASSERT(is_here);
-					if (is_here)
-					{	// throw it out
-						int p[3];
-						t_map::get_container_location(smelter->id, p);
-						Vec3 pos = vec3_init(p[0], p[1], p[2]);
-						pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 1.05f));
-						ItemParticle::dump_container_item(fuel_item,
-							pos.x, pos.y, pos.z);
-					}
-					else
-					{	// erroneous state
-						smelter->remove_fuel();
-					}
-				}
-				
-				// clear fuel info
-				fuel_item_type = NULL_ITEM_TYPE;
-				fuel_item = NULL_ITEM;
-			}
+            // ERROR STATE -- throw item out of here
+            if (fuel_item_type != NULL_ITEM_TYPE && !is_fuel)
+            {
+                Item::Item* fuel = Item::get_item(fuel_item);
+                GS_ASSERT(fuel != NULL);
+                if (fuel == NULL)
+                {   // we have an erroneous value in here
+                    // maybe a buffer overwrite
+                    // just get rid of it
+                    smelter->remove_fuel();
+                }
+                else
+                {   // an existing item was placed in here somehow
+                    // still could be buffer overwrite
+                    // look where the item is located
+                    // if its located here, throw() it
+                    // else, just unset it
+                    bool is_here =
+                        (fuel->location == IL_CONTAINER
+                      && fuel->location_id == smelter->id
+                      && fuel->container_slot == smelter->fuel_slot);
+                    GS_ASSERT(is_here);
+                    if (is_here)
+                    {   // throw it out
+                        int p[3];
+                        t_map::get_container_location(smelter->id, p);
+                        Vec3 pos = vec3_init(p[0], p[1], p[2]);
+                        pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 1.05f));
+                        ItemParticle::dump_container_item(fuel_item,
+                            pos.x, pos.y, pos.z);
+                    }
+                    else
+                    {   // erroneous state
+                        //smelter->remove_fuel();   // Can't use this, because it modifies the item's state on the way out. the item probably isnt here
+                        if (smelter->is_valid_slot(smelter->fuel_slot)
+                        {
+                            smelter->slot[smelter->fuel_slot] = NULL_ITEM;
+                            smelter->slot_count--;
+                        }
+                    }
+                }
+                
+                // clear fuel info
+                fuel_item_type = NULL_ITEM_TYPE;
+                fuel_item = NULL_ITEM;
+            }
 
             if (fuel_item_type == NULL_ITEM_TYPE || !is_fuel)
             {   // reset progress

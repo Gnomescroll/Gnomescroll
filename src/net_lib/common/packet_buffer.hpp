@@ -26,7 +26,7 @@ class NetMessageArray {
     NetMessageArray()
     {
         #if PACKET_BUFFER_DEBUG
-            for(int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
+            for (int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
         #endif
         reference_count = 0;
         next = NULL;

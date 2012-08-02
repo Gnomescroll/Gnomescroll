@@ -127,7 +127,7 @@ void NetPeerManager::send_remaining_state()
     }
     if (!this->loaded)
     {
-        printf("ERROR NetPeerManager::send_remaining_state() -- not loaded yet (agent has not been sent)\n");
+        printf("ERROR NetPeerManager::send_remaining_state() -- not loaded yet\n");
         return;
     }
     if (this->received_initial_state)

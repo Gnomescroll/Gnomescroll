@@ -66,7 +66,7 @@ class FixedSizeNetPacketToClient {
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
   
-            if(NetServer::pool[client_id] == NULL)
+            if (NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
@@ -90,7 +90,7 @@ class FixedSizeNetPacketToClient {
 
             int client_id;
             class NetPeer* np;
-            for(unsigned int i=0; i<n_clients; i++) 
+            for (unsigned int i=0; i<n_clients; i++) 
             {
                 client_id = client_ids[i];
                 GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
@@ -104,7 +104,7 @@ class FixedSizeNetPacketToClient {
 
         void broadcast() 
         {
-            if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
+            if ( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
@@ -114,10 +114,10 @@ class FixedSizeNetPacketToClient {
 
             class NetPeer* np;
 
-            for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
             {
                 np = NetServer::pool[i]; //use better iterator
-                if(np == NULL) continue;
+                if (np == NULL) continue;
                 np->push_unreliable_message(nm);
             }
         }
@@ -195,7 +195,7 @@ class FixedSizeReliableNetPacketToClient {
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
-            if(NetServer::pool[client_id] == NULL)
+            if (NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
@@ -219,7 +219,7 @@ class FixedSizeReliableNetPacketToClient {
 
             int client_id;
             class NetPeer* np;
-            for(unsigned int i=0; i<n_clients; i++) 
+            for (unsigned int i=0; i<n_clients; i++) 
             {
                 client_id = client_ids[i];
                 GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
@@ -241,10 +241,10 @@ class FixedSizeReliableNetPacketToClient {
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
-            for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
             {
                 class NetPeer* np = NetServer::pool[i]; //use better iterator
-                if(np == NULL) continue;
+                if (np == NULL) continue;
                 np->push_reliable_message(nm);
             }
         }

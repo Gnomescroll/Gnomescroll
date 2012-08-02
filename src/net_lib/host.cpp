@@ -67,7 +67,7 @@ void init_net_client()
 
 void shutdown_net_client()
 {
-    if(NetClient::Server.enet_peer != NULL)
+    if (NetClient::Server.enet_peer != NULL)
     {
         enet_peer_disconnect(NetClient::Server.enet_peer, 1);   //graceful shutdown
         enet_host_flush(client_host);   //flush packets
@@ -97,7 +97,7 @@ static void client_connect(ENetEvent* event)
 //client disconnect event
 static void client_disconnect(ENetEvent* event)
 {
-    if( event->data == 0)
+    if ( event->data == 0)
     {
         printf("Client timeout from server\n");
     } 
@@ -105,7 +105,7 @@ static void client_disconnect(ENetEvent* event)
     {
         printf("Client was disconnected by server \n");
 
-        if(event->data == 2) 
+        if (event->data == 2) 
             printf("Server is full\n");
     }
 
@@ -131,7 +131,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
         exit (EXIT_FAILURE);
     }
 
-    if(port == 0)
+    if (port == 0)
     {
         address.port = (Options::port) ? Options::port : DEFAULT_PORT;
     }
@@ -141,7 +141,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     }
 
     //use local host if 0,0,0,0
-    if(a==0 && b==0 && c==0 && d== 0)
+    if (a==0 && b==0 && c==0 && d== 0)
     {
         a=127;b=0;c=0;d=1;
     }
@@ -278,7 +278,7 @@ void init_server(int a, int b, int c, int d, int port)
     /* A specific host address can be specified by   */
     /* enet_address_set_host (& address, "x.x.x.x"); */
 
-    if(a==0 && b==0 && c==0 && d== 0)
+    if (a==0 && b==0 && c==0 && d== 0)
     {
         address.host = ENET_HOST_ANY;
     } 
@@ -290,7 +290,7 @@ void init_server(int a, int b, int c, int d, int port)
 
     /* Bind the server to port 1234. */
 
-    if(port == 0)
+    if (port == 0)
     {
         address.port = (Options::port) ? Options::port : DEFAULT_PORT;
     }
@@ -425,7 +425,7 @@ static void client_connect(ENetEvent* event)
     NetPeer* nc = NULL;
     NetPeerManager* npm = NULL;
     
-    if((int)NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
+    if ((int)NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
         //send a disconnect reason packet
@@ -438,7 +438,7 @@ static void client_connect(ENetEvent* event)
     int client_id = client_id_offset;
     client_id_offset++;
 
-    for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
+    for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
     {   // find free peer slot
         client_id = (client_id+1) % NetServer::HARD_MAX_CONNECTIONS;
         if (NetServer::pool[client_id] != NULL) continue;
@@ -446,8 +446,9 @@ static void client_connect(ENetEvent* event)
         nc->enet_peer = event->peer;
         nc->client_id = client_id;
         nc->connected = 1;
-        NetServer::pool[client_id]= nc;
-        event->peer->data = (NetPeer*) nc;
+        NetServer::pool[client_id] = nc;
+        if (event->peer != NULL)
+            event->peer->data = (NetPeer*) nc;
 
         npm = new NetPeerManager();
         npm->init(client_id);
@@ -455,43 +456,25 @@ static void client_connect(ENetEvent* event)
         break;
     }
 
-    uint8_t address[4];
-    address_from_uint32(event->peer->address.host, address);
+    if (event->peer != NULL)
+    {
+        uint8_t address[4];
+        address_from_uint32(event->peer->address.host, address);
 
-    printf(
-        "client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
-        client_id,
-        address[0], address[1], address[2], address[3],
-        event->peer -> address.port, 
-        NetServer::number_of_clients
-    );
+        printf(
+            "client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
+            client_id,
+            address[0], address[1], address[2], address[3],
+            event->peer->address.port, 
+            NetServer::number_of_clients
+        );
     
-    //log_simple( 
-        //Log::ANALYTICS,
-        //Log::Always,
-        //"client %d connected from %d.%d.%d.%d:%d\n", 
-        //client_id,
-        //address[0], address[1], address[2], address[3],
-        //event->peer -> address.port
-    //);
-
-    //log_simple(
-        //Log::ANALYTICS,
-        //Log::Always,
-        //"%d clients connected\n",
-        //NetServer::number_of_clients
-    //);
-
-    Session* session = begin_session(event->peer->address.host, client_id);
-    users->assign_session_to_user(session);
+        Session* session = begin_session(event->peer->address.host, client_id);
+        users->assign_session_to_user(session);
+    }
     
-    //startup sequence
-
-    /*
-        Send client id, flush netclient, then flush enet packet que
-    */
-
-    nc->flush_to_net();
+    if (nc != NULL)
+        nc->flush_to_net();
     //enet_host_flush(server_host);
     //client_dispatch_network_events();
 }
@@ -508,13 +491,13 @@ static void client_disconnect(ENetEvent* event)
     if (client_id < 0 || client_id >= HARD_MAX_CONNECTIONS) return;
     
     //figure out client disconnection code
-    if(event->data == 0)
+    if (event->data == 0)
     {
         printf("Client %i timed out \n", client_id);
     }
     else
     {
-        if(event->data == 1)
+        if (event->data == 1)
         {
             printf("Client %i disconnected gracefully\n", client_id);
         }
@@ -570,9 +553,9 @@ void kill_client(ENetPeer* peer)
 void flush_to_net()
 {
 
-    for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
+    for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
     {
-        if(NetServer::pool[i] == NULL) continue;
+        if (NetServer::pool[i] == NULL) continue;
         NetServer::pool[i]->flush_to_net();
     }
 

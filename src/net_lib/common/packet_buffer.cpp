@@ -64,10 +64,10 @@ class Net_message_buffer_pool: public Object_pool<Net_message_buffer_pool, Net_m
 
     inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
     {
-        if(remaining < length) 
+        if (remaining < length) 
         {
             current->reference_count--;
-            if(current->reference_count == 0) this->retire(current);
+            if (current->reference_count == 0) this->retire(current);
 
             current = this->acquire();
             current->reference_count = 1; //hold reference until done
@@ -105,7 +105,7 @@ void inline Net_message::decrement()
 
 #if PACKET_BUFFER_MALLOC_DEBUG
     reference_count--;
-    if(reference_count == 0) 
+    if (reference_count == 0) 
     {
         delete[] buff;
         delete this;
@@ -118,10 +118,10 @@ void inline Net_message::decrement()
 
     //printf("net message decrement: object=%lx ref count= %i, b->refcount= %i \n", (long)this, reference_count, b->reference_count);
     reference_count--;
-    if(reference_count == 0) 
+    if (reference_count == 0) 
     {
         b->reference_count--;
-        if(b->reference_count == 0) 
+        if (b->reference_count == 0) 
         {
             //printf("net message reference count == 0\n");
             //printf("alloc= %i \n", allocated);
@@ -170,7 +170,7 @@ NetMessageManager::NetMessageManager()
 
 void NetMessageManager::push_message(Net_message* nm) 
 {
-    //if(nm->len == 0) {printf("NETMESSAGEERROR!!!!\n");}
+    //if (nm->len == 0) {printf("NETMESSAGEERROR!!!!\n");}
 
     pending_bytes_out += nm->len;
     pending_messages++;
@@ -182,7 +182,7 @@ void NetMessageManager::push_message(Net_message* nm)
 
     //insert 
     nma_insert_index++;
-    if(nma_insert_index == NET_MESSAGE_ARRAY_SIZE)
+    if (nma_insert_index == NET_MESSAGE_ARRAY_SIZE)
     {
         //printf("NetMessageManager::push_message, rare condition \n");
         //DEBUG?
@@ -198,7 +198,7 @@ void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
     unsigned int max = pending_bytes_out;
     //printf("Starting serialization at address %i \n", buff_);
 /*
-    if(pending_messages == 0)
+    if (pending_messages == 0)
     {
         printf("impossible error \n");
         return;
@@ -210,7 +210,7 @@ void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
 
     class Net_message* nm;
 
-    for(int i=0; i < pending_messages; i++)
+    for (int i=0; i < pending_messages; i++)
     {
         nm = nma_read->net_message_array[nma_read_index];
 
@@ -218,7 +218,7 @@ void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
         index += nm->len;
 
 /*
-        if(index > max)
+        if (index > max)
         {
             printf("BLOODY HELL: %i, %i \n", index, max);
         }
@@ -226,7 +226,7 @@ void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
         nm->decrement(); //reference count on packet
 
         nma_read_index++;
-        if(nma_read_index == NET_MESSAGE_ARRAY_SIZE)
+        if (nma_read_index == NET_MESSAGE_ARRAY_SIZE)
         {
             //printf("NetMessageManager::serialize_messages, rare condition \n");
             NetMessageArray* tmp = nma_read;
@@ -236,7 +236,7 @@ void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
         }
     }      
 
-    if(max != index)
+    if (max != index)
     {
         printf("NetMessageManager, ERROR, index exceeds bytes to be wrrite: index= %i, max= %i \n", index, max);
     }
