@@ -684,7 +684,8 @@ class Voxel_volume* Agent_state::get_arm()
 
 Vec3 Agent_state::arm_center()
 {
-    if (this->vox == NULL) return vec3_init(0,0,0);
+    if (this->vox == NULL || !this->vox->was_updated)
+        return this->get_center();
     return this->vox->get_part(AGENT_PART_RARM)->get_center();
 }
 
