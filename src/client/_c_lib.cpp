@@ -124,6 +124,8 @@ dont_include_this_file_in_server
 #endif
 */
 
+//#include <t_mob/_include.hpp>
+
 /* Draw lists */
 #include <common/draw/draw.cpp>
 
@@ -351,7 +353,7 @@ int init_c_lib(int argc, char* argv[])
 
     Animations::init();
 
-    obj_load::init_draw_model();
+    //obj_load::init_draw_model();
 
     //t_map::init_block_item_sheet();
     Item::load_crafting_dat();
@@ -359,10 +361,12 @@ int init_c_lib(int argc, char* argv[])
 
     //init_voronoi_noise_maps();
     
-    t_gen::noise_map_test();
+    //t_gen::noise_map_test();
 
     Hud::init_hud_draw_settings();
 
+    //t_gen::generate_random_tile();
+    //t_mob::init();
     //check_gl_error();
     return 0;
 }
@@ -435,6 +439,9 @@ void close_c_lib()
     Toolbelt::teardown();
     if (TEARDOWN_DEBUG) printf("container teardown\n");
     ItemContainer::teardown();
+
+    if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
+    //t_mob::teardown();
 
     if (TEARDOWN_DEBUG) printf("Input teardown\n");
     teardown_input();

@@ -105,7 +105,7 @@ inline float translate_point(float pt)
 {
     if(pt <  0.0f) pt += 512.0f;
     if(pt >= 512.0f) pt -= 512.0f;
-    //ASSERT_BOXED_POINTf(pt);
+    ASSERT_BOXED_POINTf(pt);
     return pt;
 }
 
@@ -124,9 +124,6 @@ inline struct Vec3 translate_position(struct Vec3 pos)
     pos.x = translate_point(pos.x);
     pos.y = translate_point(pos.y);
 
-    //pos.x = quadrant_translate_f(current_camera_position.x, pos.x);
-    //pos.y = quadrant_translate_f(current_camera_position.y, pos.y);
-
     ASSERT_BOXED_POSITION(pos);
 
     return pos;
@@ -135,8 +132,8 @@ inline struct Vec3 translate_position(struct Vec3 pos)
 __attribute((always_inline))
 inline struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos2)
 {
-    //ASSERT_BOXED_POSITION(pos1);
-    //ASSERT_BOXED_POSITION(pos2);
+    ASSERT_BOXED_POSITION(pos1);
+    ASSERT_BOXED_POSITION(pos2);
     
     pos2.x = quadrant_translate_f(pos1.x, pos2.x);
     pos2.y = quadrant_translate_f(pos1.y, pos2.y);

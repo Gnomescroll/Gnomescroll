@@ -70,6 +70,12 @@ void Agent_list::draw_equipped_items()
     {
         if (this->a[i] == NULL) continue;
         if (this->a[i]->id == agent_id) continue; // skip you
+        if (this->a[i]->vox == NULL) continue;
+        float radius = this->a[i]->vox->get_part(0)->radius;
+        Vec3 center = this->a[i]->vox->get_center();
+        if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
+            continue;
+
         int equipped_item_type = Toolbelt::get_agent_selected_item_type(i);
         Animations::draw_equipped_item_other_agent(i, equipped_item_type);
     }
@@ -268,16 +274,8 @@ Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
     using STATE::agent_list;
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
     if (n <= 0) return NULL;
-    Agent_state* agent = NULL;
-    int i=0;
-    while (i < n)
-    {   // skip all viewing agents
-        agent = agent_list->filtered_objects[i];
-        GS_ASSERT(agent != NULL);
-        i++;
-    }
-    if (i >= n) agent = NULL;
-    return agent;
+    agent_list->sort_filtered_objects_by_distance();
+    return agent_list->filtered_objects[0];
 }
 
 Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radius)
@@ -285,10 +283,11 @@ Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radi
     using STATE::agent_list;
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
     if (n <= 0) return NULL;
+    agent_list->sort_filtered_objects_by_distance();
     Agent_state* agent = NULL;
     int i=0;
     while (i < n)
-    {   // skip all viewing agents
+    {   // skip all dead agents
         agent = agent_list->filtered_objects[i];
         GS_ASSERT(agent != NULL);
         if (agent != NULL && !agent->status.dead) break;
@@ -306,7 +305,6 @@ Agent_state* random_agent_in_range(const Vec3 position, const float radius)
     if (n == 0) return NULL;
     
     // target random nearby player
-    //int chosen[n];
     MALLOX(int, chosen, n); //type, name, size
 
     for (int i=0; i<n; i++)

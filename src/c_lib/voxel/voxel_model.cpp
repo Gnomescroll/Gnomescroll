@@ -19,13 +19,16 @@
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0f,0.0f);
+    vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
+
 void Voxel_model::set_skeleton_root(float *data)
 {
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(
         data[0], data[1], data[2],
         data[3], data[4], data[5]
     );
+    vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
 int Voxel_model::get_parent_node_index(int part)
@@ -93,12 +96,14 @@ void Voxel_model::update_skeleton()
             vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
             vox_skeleton_local_matrix[i]
         );
+        vox_skeleton_world_matrix[i].c = translate_position(vox_skeleton_world_matrix[i].c);
     }
 
     for(int i=0; i<this->n_parts; i++)
     {
         Voxel_volume* vv = &this->vv[i];
         vv->world_matrix = affine_mult(*vv->parent_world_matrix, vv->local_matrix);
+        vv->world_matrix.c = translate_position(vv->world_matrix.c);
     }
 }
 
@@ -420,6 +425,10 @@ void Voxel_model::update(float x, float y, float z, float theta, float phi)
 {
     if (this->frozen) return;
     if (this->was_updated) return;
+ 
+    ASSERT_BOXED_POINTf(x);
+    ASSERT_BOXED_POINTf(y);
+
     this->set_skeleton_root(x,y,z, theta);
 
     #if DC_CLIENT && !PRODUCTION

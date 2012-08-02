@@ -5,11 +5,16 @@
 #undef __cplusplus
 extern "C"
 {
-#include <assimp.h>
-#include <aiScene.h>
-#include <aiPostProcess.h>
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h> //defines for postprocessor
+#include <assimp/config.h>
 }
 #define __cplusplus
+
+
+namespace t_mob
+{
 
 class cBone 
 {
@@ -153,43 +158,568 @@ void UpdateTransforms(cBone* bone)
 		UpdateTransforms(&bone->bca[i]);
 }
 
+/*
+ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory( 
+	const char* pBuffer,
+	unsigned int pLength,
+	unsigned int pFlags,
+	const char* pHint);
+*/
+
+//unsigned int mNumMeshes;
+//unsigned int* mMeshes;	<---index into aiScene mesh array!
+
+
+//struct aiScene
+//C_STRUCT aiMesh** mMeshes;
+
+class BoneTree
+{
+	public:
+	BoneTree() {}
+
+
+	int nlm;  		//node list max
+	aiNode** nl; 	//node list
+	int nli; 		//node list index
+
+	aiMesh** ml;	//mesh list, the mesh for node i
+	aiScene* pScene;
+
+	struct _Vertex
+	{
+		struct Vec3 v;
+		float ux,uy;
+	};
+
+	int vli;			//vertex list index
+	int vlm; 			//vertex list max
+	struct _Vertex* vl;	//vertex list
+	struct _Vertex* tvl; //temporary vertex list, for drawing
+
+	int* vll;			//offset of vertices in list for each mesth
+	int* vln;			//number of vertices in each mech
+
+	void init(aiScene* _pScene)
+	{
+		pScene = _pScene;
+
+		nli = 0;
+		count_nodes(pScene->mRootNode); //count the nodes with meshes
+		nlm = nli;
+		nl = new aiNode*[nlm];
+		ml = new aiMesh*[nlm];
+
+		for(int i=0; i<nlm; i++) nl[i] = NULL;
+		for(int i=0; i<nlm; i++) ml[i] = NULL;
+
+		nli = 0;
+		set_node_parents(pScene->mRootNode, 0);
+
+		count_vertices();
+		vl = new _Vertex[vlm];
+		tvl = new _Vertex[vlm];
+
+		vll = new int[nlm];
+		vln = new int[nlm];
+
+		set_vertices();
+
+		draw();
+	}
+
+	void count_nodes(aiNode* pNode)
+	{
+		GS_ASSERT(pNode->mNumMeshes < 2); //assume only one mesh per node for now
+		for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+			nli++;
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+			count_nodes(pNode->mChildren[i]);
+	}
+
+	void set_node_parents(aiNode* pNode, int parent_index)
+	{
+		int index = -1;
+		if(pNode->mNumMeshes != 0)
+		{
+			//GS_ASSERT(parent_index != -1);
+			GS_ASSERT(nli < nlm);
+			index = nli;
+			nl[nli] = pNode;
+
+			int mesh_index = pNode->mMeshes[0];
+			ml[nli] = pScene->mMeshes[mesh_index];
+
+			//npl[nli] = parent_index; 
+			nli++;
+		}
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+		{
+			set_node_parents(pNode->mChildren[i], index);
+		}
+	}
 
 /*
-void SceneAnimator::Init(const aiScene* pScene)
-{// this will build the skeleton based on the scene passed to it and CLEAR EVERYTHING
-	if(!pScene->HasAnimations()) 
+aiMesh
+	unsigned int mPrimitiveTypes;
+	unsigned int mNumVertices;
+	unsigned int mNumFaces;
+
+	C_STRUCT aiVector3D* mVertices; //the vertices
+	C_STRUCT aiVector3D* mNormals;
+
+	C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+	unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+
+	C_STRUCT aiFace* mFaces;
+
+	unsigned int mNumBones;
+	C_STRUCT aiBone** mBones;
+*/
+
+	void count_vertices()
 	{
-		printf("Error: no animation \n");
-		return;
+		vli = 0;
+
+		for(int i=0; i<nli; i++)
+		{
+			struct aiNode* pNode = nl[i];
+			for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+			{
+				unsigned int index = pNode->mMeshes[i];
+				aiMesh* mesh = pScene->mMeshes[index];
+				ml[i] = mesh;
+				//vli += mesh->mNumVertices;
+				vli += 3*mesh->mNumFaces;
+			}
+		}
+		vlm = vli;
 	}
+
+	void set_vertices()
+	{
+		GS_ASSERT(nli == nlm);
+
+		//printf("nlm= %d nli= %d \n", nlm, nli);
+
+		int count = 0;
+		for(int i=0; i<nlm; i++)
+		{
+			aiMesh* mesh = ml[i];
+			GS_ASSERT(mesh != NULL);
+
+			if(mesh == NULL)
+			{
+				printf("set_vertices error: mesh %d is null\n", i);
+				continue;
+			}
+
+			vll[i] = count;
+			vln[i] = mesh->mNumVertices;
+
+			GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
+			GS_ASSERT(mesh->mTextureCoords[0] != NULL);
+
+			for(unsigned int j=0; j<mesh->mNumFaces; j++)
+			{
+				GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
+				GS_ASSERT(mesh->mNumUVComponents[0] == 2);
+				//printf("max tex= %d \n", AI_MAX_NUMBER_OF_TEXTURECOORDS);
+
+				for(int k=0; k<3; k++)
+				{
+
+					int index = mesh->mFaces[j].mIndices[k];
+					aiVector3D pos = mesh->mVertices[index];
+					aiVector3D tex = mesh->mTextureCoords[0][index];
+
+					struct _Vertex v; 
+					v.v.x = pos.x;
+					v.v.y = pos.y;
+					v.v.z = pos.z;
+
+					v.ux = tex.x;
+					v.uy = tex.y;
+
+					vl[count] = v;
+					count++;
+				}
+
+			}
+		}
+			//count += 3*mesh->mNumFaces;
+			//count += mesh->mNumVertices;
+
+			//ml[i]->mMeshes[index]->mName.data,
+			//ml[i]->mMeshes[index]->mNumVertices,
+			//ml[i]->mMeshes[index]->mNumFaces);s
+
+		/*
+			unsigned int mNumVertices;
+			unsigned int mNumFaces;
+			C_STRUCT aiVector3D* mVertices; //the vertices
+			C_STRUCT aiVector3D* mNormals;
+			C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+			unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+			C_STRUCT aiFace* mFaces;
+		*/
+		if(count != vli || count != vlm)
+		{
+			printf("Set_vertices Warning: vertex count= %d vli= %d vlm= %d \n", count, vli, vlm);
+		}
+	}
+
+	//int vlm; 			//vertex list max
+	//struct _Vertex* vl;	//vertex list
+	//struct _Vertex* tvl; //temporary vertex list, for drawing
+	//int vli;			//vertex list index
+	//int* vll;			//vertex list loop
+	//int* vln;			//number of vertices in mesh
+
+	static void _ConvertMatrix(struct Mat4& out, const aiMatrix4x4& in)
+	{
+		out.f[0][0] = in.a1;
+		out.f[0][1] = in.a2;
+		out.f[0][2] = in.a3;
+		out.f[0][3] = in.a4;
+
+		out.f[1][0] = in.b1;
+		out.f[1][1] = in.b2;
+		out.f[1][2] = in.b3;
+		out.f[1][3] = in.b4;
+
+		out.f[2][0] = in.c1;
+		out.f[2][1] = in.c2;
+		out.f[2][2] = in.c3;
+		out.f[2][3] = in.c4;
+
+		out.f[3][0] = in.d1;
+		out.f[3][1] = in.d2;
+		out.f[3][2] = in.d3;
+		out.f[3][3] = in.d4;
+	}
+
+	void draw()
+	{
+		printf("nlm= %d vlm= %d \n", nlm, vlm);
+
+		for(int i=0; i<vlm; i++)
+		{
+			tvl[i].ux = vl[i].ux;
+			tvl[i].uy = vl[i].uy;
+			tvl[i].v.x = 0.0f;
+			tvl[i].v.y = 0.0f;
+			tvl[i].v.z = 0.0f;
+		}
+
+		//printf("nli= %i \n", nli);
+
+		int count = 0;
+		for(int i=0; i<nli; i++)
+		{
+			aiMesh* mesh = ml[i];
+
+			//printf("%i: num bones= %i \n", i, mesh->mNumBones);
+
+			int offset = vll[i];
+			int num = vln[i];
+
+			for(unsigned int j=0; j<mesh->mNumBones; j++)
+			{
+				aiBone* bone = mesh->mBones[j];
+				aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
+
+				struct Mat4 mat;
+				_ConvertMatrix(mat, offset_matrix);
+				//printf("=== \n");
+				//print_mat4(mat);
+
+				for(unsigned int k=0; k<bone->mNumWeights; k++)
+				{
+
+					int index = offset + bone->mWeights[k].mVertexId;
+					float weight = bone->mWeights[k].mWeight;
+
+					GS_ASSERT(index >= offset);
+					GS_ASSERT(index < offset+num);
+					if(j==0) count++;
+
+				#if 0
+					//SIMD version
+					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
+					v = vec3_scalar_mult(v, weight);
+					tvl[index] = vec3_add(tvl[index].v, v);
+				#else
+					Vec3 v = vec3_mat3_apply(vl[index].v, mat);
+					tvl[index].v.x += weight*v.x;
+					tvl[index].v.y += weight*v.x;
+					tvl[index].v.z += weight*v.x;
+				#endif
+
+					//unsigned int mNumWeights; //number of vertices affected by this bone
+					//C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
+
+					//struct aiVertexWeight 
+					//unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
+					//! The strength of the influence in the range (0...1).
+					//! The influence from all bones at one vertex amounts to 1.
+					//float mWeight;
+
+				}
+			}
+		}
+
+		printf("count: %d vml= %d \n", count, vlm);
+		//mesh->mTextureCoords[0]
+
+	}
+
+};
+
+void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
+{
+	printf("aiNode: %02d pNode name= %s \n", num, pNode->mName.data);
+
+	for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+	{
+		unsigned int index = pNode->mMeshes[i];
+		printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index, 
+			pScene->mMeshes[index]->mName.data,
+			pScene->mMeshes[index]->mNumVertices,
+			pScene->mMeshes[index]->mNumFaces);
+
+		aiMesh* mesh = pScene->mMeshes[index];
+		for(unsigned int j=0; j < mesh->mNumBones; j++)
+		{
+			//aiBone* bone = mesh->mBones[j];
+
+			printf("\t\tBone %02d: %s affects %d vertices \n", j, 
+				mesh->mBones[j]->mName.data,
+				mesh->mBones[j]->mNumWeights
+				);
+			//C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
+			//C_STRUCT aiMatrix4x4 mOffsetMatrix; //! Matrix that transforms from mesh space to bone space in bind pose
+		
+			for(unsigned int k=0; k < mesh->mBones[j]->mNumWeights; k++)
+			{
+				//aiVertexWeight* vertex_weight = bone->mWeights[k];
+				//printf("vertex index: %d weight: %f \n", vertex_weight->)
+
+				//bone->mWeights[k].mVertexId;
+				//bone->mWeights[k].mWeight;
+
+				//struct aiVertexWeight 
+				//unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
+				//! The strength of the influence in the range (0...1).
+				//! The influence from all bones at one vertex amounts to 1.
+				//float mWeight;
+			}
+		}
+	}
+
+	for(unsigned int i=0; i < pNode->mNumChildren; i++)
+	{
+		PrintBoneTree(pScene, num+1, pNode->mChildren[i]);
+	}
+}
+
+
+
+/*
+	Documentation on removal step
+	http://assimp.sourceforge.net/lib_html/config_8h.html#a97ac2ef7a3967402a223f3da2640b2b3
+
+	aiComponent_TANGENTS_AND_BITANGENTS
+	aiComponent_COLORS
+	aiComponent_LIGHTS 
+	aiComponent_CAMERAS 
+	aiComponent_TEXTURES //remove embedded textures
+	aiComponent_MATERIALS 
+*/
+
+/*
+	Flag reference
+	http://assimp.sourceforge.net/lib_html/postprocess_8h.html
+
+	aiProcess_ImproveCacheLocality  Reorders triangles for better vertex cache locality.
+	aiProcess_ValidateDataStructure 
+
+	aiProcess_JoinIdenticalVertices  
+	If this flag is not specified, no vertices are referenced by more than one face and no index buffer is required for rendering.
+
+	Add cache locality and join identical values even if not using index buffers
+*/
+
+void init()
+{
+	int bsize;
+	//char* buffer = read_file_to_buffer( (char*) "media/mesh/collada_test.dae", &bsize);
+	//char* buffer = read_file_to_buffer( (char*) "media/mesh/3d_max_test.3ds", &bsize);
+	char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
+
+
+
+
+	int aFlag = aiProcess_Triangulate | 
+	aiProcess_GenUVCoords | 
+	aiProcess_ValidateDataStructure |
+	aiProcess_RemoveComponent;	//strip components on
+
+	char* aHint = NULL;
+	aiPropertyStore* property_store = aiCreatePropertyStore();
+	int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS;
+
+	aiSetImportPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
+	//const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+	const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
+
+
+	if(pScene == NULL)
+	{
+		printf("Assimp Scene Load Error: %s \n", aiGetErrorString() );
+
+		abort();
+	}
+
+	printf("BT: start bone tree: \n");
+	BoneTree bt;
+
+	bt.init( (aiScene*) pScene);
+	printf("BT: bone tree finished\n");
+	abort(); //debug
+
+	printf("Bone tree: \n");
+	PrintBoneTree(pScene, 0, pScene->mRootNode);	//these are actually meshes
+	//pScene->mRootNode
+
+
+	printf("Animations: \n");
+
+	printf("Scene animations: %d \n", pScene->mNumAnimations);
+
+
+	for(unsigned int i=0; i<pScene->mNumAnimations; i++)
+	{
+		aiAnimation* anim = pScene->mAnimations[i];
+
+
+		printf("anim %02d: name= %s duration= %f ticks_per_second= %f channels= %d mesh_channels= %d \n", i,
+			anim->mName.data,
+			anim->mDuration,
+			anim->mTicksPerSecond,
+			anim->mNumChannels,
+			anim->mNumMeshChannels
+			);
+
+
+		for(unsigned int j=0; j<anim->mNumChannels; j++)
+		{
+			aiNodeAnim* node_anim = anim->mChannels[j];
+
+			printf("\tnode_anim: %02d name= %s position_keys= %d rotation_keys= %d \n", j,
+			node_anim->mNodeName.data,
+			node_anim->mNumPositionKeys,	//aiVectorKey* mPositionKeys;
+			node_anim->mNumRotationKeys		//aiQuatKey* mRotationKeys;
+			);
+
+
+			for(unsigned int k=0; k<node_anim->mNumPositionKeys; k++)
+			{
+				printf("aiVector %i: time %f \n", k, node_anim->mPositionKeys[k].mTime );
+			}
+			//struct aiVectorKey
+			//double mTime; //The time of this key
+			//C_STRUCT aiVector3D mValue;  //The value of this key
+
+			//struct aiQuatKey
+			//double mTime;     //The time of this key 
+			//C_STRUCT aiQuaternion mValue;  //The value of this key
+		}
+
+	}
+
+#if 0
+	 *  name is usually empty (length is zero). */
+	C_STRUCT aiString mName;
+
+	/** Duration of the animation in ticks.  */
+	double mDuration;
+
+	/** Ticks per second. 0 if not specified in the imported file */
+	double mTicksPerSecond;
+
+	/** The number of bone animation channels. Each channel affects
+	 *  a single node. */
+	unsigned int mNumChannels;
+
+	/** The node animation channels. Each channel affects a single node. 
+	 *  The array is mNumChannels in size. */
+	C_STRUCT aiNodeAnim** mChannels;
+
+
+	/** The number of mesh animation channels. Each channel affects
+	 *  a single mesh and defines vertex-based animation. */
+	unsigned int mNumMeshChannels;
+
+	/** The mesh animation channels. Each channel affects a single mesh. 
+	 *  The array is mNumMeshChannels in size. */
+	C_STRUCT aiMeshAnim** mMeshChannels;
+
+	/** The array of animations. 
+	*
+	* All animations imported from the given file are listed here.
+	* The array is mNumAnimations in size.
+	*/
+	//C_STRUCT aiAnimation** mAnimations;
+#endif
+
+
+/*
+	printf("pScene->mMeshes: \n");
+
+	for(unsigned int i=0; i < pScene->mNumMeshes; i++)
+	{
+		printf("Mesh %02d: %s \n", i, pScene->mMeshes[i]->mName.data);
+
+	}
+*/
+#if 0
+	for(unsigned int i=0; i < pScene->mNumMeshes; i++)
+	{
+		printf("Mesh %02d: name= %s numBones= %d \n", i, pScene->mMeshes[i]->mName.data, pScene->mMeshes[i]->mNumBones);
+
+		for(unsigned int j=0; j < pScene->mMeshes[i]->mNumBones; j++)
+		{
+			printf("\tBone %02d: %s \n", j, pScene->mMeshes[i]->mBones[j]->mName.data);
+		}
+	}
+#endif
+	printf("Succes\n");
+
+	exit(0);
+/*
+	if(!pScene->HasAnimations()) return;
+	Release();
 	
 	Skeleton = CreateBoneTree( pScene->mRootNode, NULL);
 	ExtractAnimations(pScene);
 	
-	for (unsigned int i = 0; i < pScene->mNumMeshes;++i)
-	{
+	for (unsigned int i = 0; i < pScene->mNumMeshes;++i){
 		const aiMesh* mesh = pScene->mMeshes[i];
 		
-		for (unsigned int n = 0; n < mesh->mNumBones;++n)
-		{
+		for (unsigned int n = 0; n < mesh->mNumBones;++n){
 			const aiBone* bone = mesh->mBones[n];
 			std::map<std::string, cBone*>::iterator found = BonesByName.find(bone->mName.data);
-			
-			//found->second is a bone
-			if(found != BonesByName.end())
-			{// FOUND IT!!! woohoo, make sure its not already in the bone list
+			if(found != BonesByName.end()){// FOUND IT!!! woohoo, make sure its not already in the bone list
 				bool skip = false;
-				for(size_t j(0); j< Bones.size(); j++)
-				{
+				for(size_t j(0); j< Bones.size(); j++){
 					std::string bname = bone->mName.data;
-					if(Bones[j]->Name == bname)
-					{
+					if(Bones[j]->Name == bname) {
 						skip = true;// already inserted, skip this so as not to insert the same bone multiple times
 						break;
 					}
 				}
-				if(!skip)
-				{// only insert the bone if it has not already been inserted
+				if(!skip){// only insert the bone if it has not already been inserted
 					std::string tes = found->second->Name;
 					TransformMatrix(found->second->Offset, bone->mOffsetMatrix);
 					found->second->Offset.Transpose();// transpoce their matrix to get in the correct format
@@ -201,24 +731,38 @@ void SceneAnimator::Init(const aiScene* pScene)
 	}
 	Transforms.resize( Bones.size());
 	float timestep = 1.0f/30.0f;// 30 per second
-	for(size_t i(0); i< Animations.size(); i++)
-	{// pre calculate the animations
+	for(size_t i(0); i< Animations.size(); i++){// pre calculate the animations
 		SetAnimIndex(i);
 		float dt = 0;
-		for(float ticks = 0; ticks < Animations[i].Duration; ticks += Animations[i].TicksPerSecond/30.0f)
-		{
+		for(float ticks = 0; ticks < Animations[i].Duration; ticks += Animations[i].TicksPerSecond/30.0f){
 			dt +=timestep;
 			Calculate(dt);
 			Animations[i].Transforms.push_back(std::vector<mat4>());
 			std::vector<mat4>& trans = Animations[i].Transforms.back();
-			for( size_t a = 0; a < Transforms.size(); ++a)
-			{
-				mat4 rotationmat =  Bones[a]->Offset * Bones[a]->global_transform;
+			for( size_t a = 0; a < Transforms.size(); ++a){
+				mat4 rotationmat =  Bones[a]->Offset * Bones[a]->GlobalTransform;
 				trans.push_back(rotationmat);
 			}
 		}
 	}
-	//OUTPUT_DEBUG_MSG("Finished loading animations with "<<Bones.size()<<" bones");
+	OUTPUT_DEBUG_MSG("Finished loading animations with "<<Bones.size()<<" bones");
+*/
+
+
 }
 
-*/
+
+void draw()
+
+{
+
+
+}
+
+
+void teardown()
+{
+
+}
+
+}

@@ -267,8 +267,6 @@ class PerlinOctave2D
     __attribute((optimize("-O3")))
     void populate_cache(float persistance)
     {
-        //if(cache == NULL) cache = new float[(512/4)*(512/4)];
-
         const int XMAX = 512/4;
         const int YMAX = 512/4;
 

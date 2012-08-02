@@ -55,7 +55,8 @@ void set(int x, int y, int z, int value)
     main_map->set_block(x,y,z,value);
 }
 
-inline void set_fast(int x, int y, int z, int value)
+OPTIMIZED
+void set_fast(int x, int y, int z, int value)
 {
 	main_map->set_block(x,y,z,value);
 }
