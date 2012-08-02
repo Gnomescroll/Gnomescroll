@@ -625,7 +625,9 @@ aiMesh
 
 		glEnd();
 #else
-		check_gl_error();
+
+
+		//check_gl_error();
 		glBegin(GL_TRIANGLES);
 
 		//printf("=== \n");
@@ -637,15 +639,13 @@ aiMesh
 			for(unsigned int j=0; j<mesh->mNumFaces; j++)
 			{
 
-				if(j != 0) continue;
-
 				for(int k=0; k<3; k++)
 				{
 					GS_ASSERT( mesh->mFaces[j].mNumIndices == 3);
 					GS_ASSERT( mesh->mNumUVComponents[0] == 2);
 
 					int index1 = mesh->mFaces[j].mIndices[k];
-					int index2 = mesh->mFaces[j].mIndices[(k+1)%3];
+					//int index2 = mesh->mFaces[j].mIndices[(k+1)%3];
 
 					aiVector3D pos = mesh->mVertices[index1];
 					aiVector3D tex = mesh->mTextureCoords[0][index1];
@@ -659,8 +659,8 @@ aiMesh
 					v.uy =  tex.y;
 
 					//printf("pos= %f %f %f tex= %f %f \n", v.v.x,v.v.y,v.v.z, v.ux,v.uy);
-					glVertex3f(v.v.x +x, v.v.y+y, v.v.z+z);
         			glTexCoord2f(v.ux, v.uy );
+					glVertex3f(v.v.x +x, v.v.y+y, v.v.z+z);
 				}
 
 			}
@@ -679,17 +679,17 @@ aiMesh
 		float ymax = y + 1.0;
 
 		//upper left, counter clockwise
-		glVertex3f(xmax, ymax, z+2.0);
 		glTexCoord2f(0,1 );
+		glVertex3f(xmax, ymax, z+2.0);
 
-		glVertex3f(xmax, ymin, z+2.0);
 		glTexCoord2f(0,0);
+		glVertex3f(xmax, ymin, z+2.0);
 
-		glVertex3f(xmin, ymin, z+2.0);
 		glTexCoord2f(1,0);
+		glVertex3f(xmin, ymin, z+2.0);
 
-		glVertex3f(xmin, ymax, z+2.0);
 		glTexCoord2f(1,1);
+		glVertex3f(xmin, ymax, z+2.0);
 
 		glEnd();
 

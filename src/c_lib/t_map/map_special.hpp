@@ -479,20 +479,20 @@ void ControlNodeRenderer::draw_intermediate()
 		int s = face;
 
 		//glTexCoord2f(tx_min,ty_min);
-		glVertex3f(x+vin[12*s +3*0 +0], y+vin[12*s+ 3*0 +1], z+vin[12*s +3*0 +2]);
 		glTexCoord2f(tx_min,ty_min);
+		glVertex3f(x+vin[12*s +3*0 +0], y+vin[12*s+ 3*0 +1], z+vin[12*s +3*0 +2]);
 
 
-		glVertex3f(x+vin[12*s +3*1 +0], y+vin[12*s+ 3*1 +1], z+vin[12*s +3*1 +2]);
         glTexCoord2f(tx_min,ty_max);
+		glVertex3f(x+vin[12*s +3*1 +0], y+vin[12*s+ 3*1 +1], z+vin[12*s +3*1 +2]);
 
 
-		glVertex3f(x+vin[12*s +3*2 +0], y+vin[12*s+ 3*2 +1], z+vin[12*s +3*2 +2]);
         glTexCoord2f(tx_max,ty_max );
+		glVertex3f(x+vin[12*s +3*2 +0], y+vin[12*s+ 3*2 +1], z+vin[12*s +3*2 +2]);
 
-
-		glVertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
         glTexCoord2f(tx_max,ty_min );
+		glVertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
+
 	}
 
 	glEnd();
