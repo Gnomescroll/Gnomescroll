@@ -507,13 +507,23 @@ aiMesh
 			{
 				aiBone* bone = mesh->mBones[j];
 
+
+				printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
+
 				bool new_bone = true;
 
-				for(int _i=0; _i<i; _i++) 
+				for(int _i=0; _i<=i; _i++) 
 				{
-					for(unsigned int _j=0; _j<j; _j++) 
+					for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
 					{
-						if(bone == ml[_i]->mBones[_j]) new_bone = false;
+						if(_i == i && _j >= j ) break;
+						//if(bone == ml[_i]->mBones[_j])
+						//printf("cmp: %d %d : %d %d \n", i,j, _i,_j);
+						if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
+						{
+							printf("bone %d,%d matches bone %d,%d \n", i,j, _i,_j);
+							new_bone = false;
+						}
 					}
 				}
 
@@ -522,8 +532,11 @@ aiMesh
 			}
 		}
 
+		//printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
+
 		printf("bone_count= %d _bone_count= %d nli= %d \n", bone_count, _bone_count, nli);
 
+		printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
 	}
 
 
