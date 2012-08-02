@@ -351,7 +351,7 @@ int run()
         frame_graph->frame_stage(5); //swap buffers
 
         poll_mouse();
-        //check_gl_error();
+        check_gl_error();
         _swap_buffers();
         poll_mouse();
 

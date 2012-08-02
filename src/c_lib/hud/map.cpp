@@ -14,9 +14,6 @@ static Color current_color;
 static Color current_enemy_color;
 static Color highlight;
 
-//static int num_cells = 0;
-//static unsigned char* cells = NULL;
-
 // for texture init
 static const int width = 512;
 static const int height = 512;
@@ -25,9 +22,6 @@ static const int screen_y_offset = 50;   // from bottom;
 
 static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2];
-
-//static SDL_Surface* overlay_surface = NULL;
-//static GLuint overlay_textures[2];
 
 static SDL_Surface* gradient_surface = NULL;
 
@@ -50,15 +44,12 @@ void load_colored_icon(
  * You: * and A on top of each other
  * Agent: A
  * Base:    B
- * Spawner  S#
- * Turret   T
  */
 
 const char you_star_symbol[] = "*";
 const char you_A_symbol[] = "A";
 const char ally_symbol[] = "A";
 const char base_symbol[] = "B";
-const char turret_symbol[] = "T";
 const char camera_symbol[] = "C";
 
 using HudText::Text;
@@ -66,18 +57,15 @@ static Text* you_star = NULL;
 static Text* you_A = NULL;
 static Text* base = NULL;
 static Text* ally[AGENT_MAX] = {NULL};
-//static Text turret[MAX_TURRETS];
 static Text* camera = NULL;
 
 static bool text_icons_inited = false;
 
 void init_text_icons()
 {
-    if (HudText::text_list == NULL)
-    {
-        printf("ERROR: HudMap::init_text_icons() -- HudText::text_list is NULL\n");
-        return;
-    }
+    GS_ASSERT(HudText::text_list != NULL);
+    if (HudText::text_list == NULL) return;
+
     you_star = HudText::text_list->create();
     GS_ASSERT(you_star != NULL);
     if (you_star == NULL) return;
@@ -128,8 +116,6 @@ void set_icon_colors()
 // create blank surface
 void init_surface()
 {
-    printf("init: hud_map \n");
-
     // load gradient surface
     const int grad_num = 11;
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
@@ -167,58 +153,12 @@ void init_surface()
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels);
     }
     glDisable(GL_TEXTURE_2D);
-
-    ///* Init blank indicator overlay surface */
-    //overlay_surface = create_surface_from_nothing(width, height);
-    //if (overlay_surface==NULL)
-    //{
-        //printf("Hud indicator overlay blank surface is NULL\n");
-        //return;
-    //}
-
-    //tex_format = GL_BGRA;
-    //if (overlay_surface->format->Rmask == 0x000000ff)
-        //tex_format = GL_RGBA;
-
-    //// texture
-    //glEnable(GL_TEXTURE_2D);
-    //for (int i=0; i<2; i++)
-    //{
-        //glGenTextures(1, &overlay_textures[i]);
-        //glBindTexture(GL_TEXTURE_2D, overlay_textures[i]);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        ////GL_BGRA
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, overlay_surface->w, overlay_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, overlay_surface->pixels );
-    //}
-    //glDisable(GL_TEXTURE_2D);
 }
-
-//void init_cells()
-//{
-    //int n_cells = map_dim.x * map_dim.y;
-    //if (n_cells == num_cells) return;   // size same, dont change
-
-    //num_cells = n_cells;
-
-    //if (!n_cells)
-    //{ // no cells, free/null cells
-        //free(cells);
-        //cells = NULL;
-        //return;
-    //}
-
-    //if (cells != NULL)
-        //cells = (unsigned char*)realloc(cells, num_cells*sizeof(unsigned char));
-    //else
-        //cells = (unsigned char*)calloc(num_cells, sizeof(unsigned char));
-//}
 
 void init()
 {
     init_surface();
     init_text_icons();
-    //init_cells();
     current_color.r = 255;
     current_color.g = 255;
     current_color.b = 255;
@@ -236,9 +176,7 @@ void init()
 
 
 static int strip = 0;
-//const int strips = 16*16*2;
 const int strips = 16*8;
-
 
 void update_map_surface()
 {
@@ -252,21 +190,21 @@ void update_map_surface()
 
     int cx,cy;
     for (int i=0; i<t_map::MAP_CHUNK_XDIM; i++)
-        for (int j=0; j<t_map::MAP_CHUNK_YDIM; j++)
+    for (int j=0; j<t_map::MAP_CHUNK_YDIM; j++)
+    {
+        if (t_map::main_map->chunk_heights_status[i + j*t_map::MAP_CHUNK_XDIM] != t_map::CHUNK_HEIGHT_CHANGED) continue;
+        for (int m=0; m<t_map::TERRAIN_CHUNK_WIDTH; m++)
         {
-            if (t_map::main_map->chunk_heights_status[i + j*t_map::MAP_CHUNK_XDIM] != t_map::CHUNK_HEIGHT_CHANGED) continue;
-            for (int m=0; m<t_map::TERRAIN_CHUNK_WIDTH; m++)
+            cx = i*t_map::TERRAIN_CHUNK_WIDTH + m;
+            for (int n=0; n<t_map::TERRAIN_CHUNK_WIDTH; n++)
             {
-                cx = i*t_map::TERRAIN_CHUNK_WIDTH + m;
-                for (int n=0; n<t_map::TERRAIN_CHUNK_WIDTH; n++)
-                {
-                    cy = j*t_map::TERRAIN_CHUNK_WIDTH + n;
-                    pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + t_map::MAP_WIDTH*cy]];
-                    SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-                    ((Uint32*)map_surface->pixels)[cx + t_map::MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
-                }
+                cy = j*t_map::TERRAIN_CHUNK_WIDTH + n;
+                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + t_map::MAP_WIDTH*cy]];
+                SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
+                ((Uint32*)map_surface->pixels)[cx + t_map::MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
             }
         }
+    }
 
     t_map::main_map->reset_heights_read();
 
@@ -275,6 +213,11 @@ void update_map_surface()
 
 void update_texture(GLuint texture, SDL_Surface* surface)
 {
+    GS_ASSERT(texture != 0);
+    if (texture == 0) return;
+    GS_ASSERT(surface != NULL);
+    if (surface == NULL) return;
+    
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -400,6 +343,7 @@ void draw_text()
 
 void draw()
 {   //  double buffered texture swap indices
+
     static int draw_map_texture_index = 0;
     static int update_map_texture_index = 1;
     
@@ -417,9 +361,12 @@ void draw()
 
     update_counter++;
 
+    GS_ASSERT(map_textures[draw_map_texture_index] != 0);
+    if (map_textures[draw_map_texture_index] != 0) return;
+
     static const float z = -0.03f;
 
-    glColor3ub(255,255,255);
+    glColor4ub(255,255,255,255);
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
@@ -441,4 +388,4 @@ void teardown()
         SDL_FreeSurface(gradient_surface);
 }
 
-}
+}   // HudMap
