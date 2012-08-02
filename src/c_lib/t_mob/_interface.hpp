@@ -425,7 +425,7 @@ aiMesh
 				v.ux =  tex.x;
 				v.uy =  tex.y;
 
-				printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
+				//printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
 				GS_ASSERT(bvlo[i] + (int)(j) == vcount);
 				bvl[bvlo[i] + j] = v;
 				vcount++;
