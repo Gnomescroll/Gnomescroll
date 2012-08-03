@@ -28,9 +28,9 @@ OPT_BOOL(invert_mouse, false)
 
 /* HUD / Info */
 OPT_BOOL(hud, true)
-OPT_BOOL(diagnostic_hud, true)
-OPT_BOOL(fps, true)
-OPT_BOOL(ping, true)
+OPT_BOOL(diagnostic_hud, false)
+OPT_BOOL(fps, false)
+OPT_BOOL(ping, false)
 OPT_INT(ping_update_interval, 500)
 
 /* Font */
@@ -38,8 +38,8 @@ OPT_STRING(font, "inc_18_b.fnt")
 
 /* Sound */
 OPT_BOOL(sound, true)
-OPT_INT(sfx, 50)
-OPT_INT(music, 50)
+OPT_INT(sfx, 100)
+OPT_INT(music, 100)
 OPT_STRING(sound_device, "")
 
 /* Graphics */

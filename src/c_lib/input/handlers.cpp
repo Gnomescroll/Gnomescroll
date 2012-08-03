@@ -811,7 +811,9 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_m:
+                #if PRODUCTION
                 if (input_state.debug)
+                #endif
                     toggle_map();
                 break;
 

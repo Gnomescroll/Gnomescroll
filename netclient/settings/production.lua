@@ -30,10 +30,6 @@ options.invert_mouse = false
 
 -- hud setting --
 options.hud = true
-options.diagnostic_hud = false
-options.fps = true
-options.ping = true
-options.ping_update_interval = 500
 
 -- sound settings --
 options.sound = true
