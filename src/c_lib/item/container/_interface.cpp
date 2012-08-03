@@ -920,10 +920,13 @@ void agent_quit(int agent_id)
     // destroy containers
     if (agent_container_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_container_list[agent_id]);
+
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_toolbelt_list[agent_id]);
+        
     if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_synthesizer_list[agent_id]);
+
     if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_energy_tanks_list[agent_id]);
 
