@@ -501,7 +501,7 @@ aiMesh
 		for(unsigned int i=0; i < pNode->mNumChildren; i++)
 		{
 			*count++;
-			count_bones(count, pNode);
+			count_bones(count, pNode->mChildren[i]);
 		}
 	}
 
@@ -515,10 +515,11 @@ aiMesh
 		{
 			if( strcmp("Armature", pScene->mRootNode->mChildren[i]->mName.data) == 0)
 			{
-				pNode = pNode->mChildren[i];
+				pNode = pScene->mRootNode->mChildren[i];
 				break;
 			}
 		}
+
 		if(pNode == NULL)
 		{
 			printf("DAE LOAD ERROR: There is no 'Armature' node under root node \n");
@@ -529,7 +530,7 @@ aiMesh
 
 		for(unsigned int i=0; i < pNode->mNumChildren; i++)
 		{
-			if( strcmp("Armature", pNode->mChildren[i]->mName.data) == 0)
+			if( strcmp("root_bone", pNode->mChildren[i]->mName.data) == 0)
 			{
 				_pNode = pNode->mChildren[i];
 				break;
@@ -547,6 +548,9 @@ aiMesh
 		count_bones(&bone_count, pNode);
 
 		printf("DAE LOADER: %d bones \n", bone_count);
+
+
+		bam = bone_count;
 	}	
 
 
@@ -594,6 +598,8 @@ aiMesh
 		printf("bone_count= %d _bone_count= %d nli= %d \n", bone_count, _bone_count, nli);
 
 		printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
+
+		count_bones();
 	}
 
 
@@ -944,6 +950,7 @@ void init()
 	printf("BT: bone tree finished\n");
 
 	printf("Bone tree: \n");
+	return;
 	PrintBoneTree(pScene, 0, pScene->mRootNode);	//these are actually meshes
 	//pScene->mRootNode
 	return; //debug
