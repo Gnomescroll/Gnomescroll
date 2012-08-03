@@ -25,6 +25,7 @@ extern unsigned int number_of_clients;
 extern unsigned int session_count;
 
 extern class NetPeer** pool;
+extern class NetPeer** staging_pool;
 extern class NetPeerManager** clients;
 
 extern class Agent_state** agents;

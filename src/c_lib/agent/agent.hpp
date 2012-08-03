@@ -65,7 +65,7 @@ class Agent_state
         class AgentState state_snapshot;
 
         #if DC_SERVER
-        void get_spawn_point(Vec3* spawn);
+        void get_spawn_point(struct Vec3* spawn);
         #endif
 
     public:    

@@ -41,8 +41,11 @@ identified(false),
 vox_crouched(false),
 lifetime(0),
 color_chosen(false)
+#if DC_SERVER
+, net_peer_ready(false)
+#endif
 {
-    color.r=color.g=color.b=255;
+    color.r=color.g=color.b=48;
     strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
 
@@ -61,6 +64,28 @@ void Agent_status::set_spawner(int pt)
     #endif
 }
 
+#if DC_SERVER
+void Agent_status::broadcast_color()
+{
+    agent_color_StoC msg;
+    msg.r = this->color.r;
+    msg.g = this->color.g;
+    msg.b = this->color.b;
+    msg.agent_id = this->a->id;
+    msg.broadcast();
+}
+
+void Agent_status::send_color(int client_id)
+{
+    agent_color_StoC msg;
+    msg.r = this->color.r;
+    msg.g = this->color.g;
+    msg.b = this->color.b;
+    msg.agent_id = this->a->id;
+    msg.sendToClient(client_id);
+}
+#endif
+
 void Agent_status::set_color(struct Color color)
 {
     if (this->color_chosen && colors_equal(color, this->color)) return;
@@ -72,13 +97,8 @@ void Agent_status::set_color(struct Color color)
     this->a->event.color_changed = true;
     #endif
 
-    #if DC_SERVER    
-    agent_color_StoC msg;
-    msg.r = this->color.r;
-    msg.g = this->color.g;
-    msg.b = this->color.b;
-    msg.agent_id = this->a->id;
-    msg.broadcast();
+    #if DC_SERVER
+    this->broadcast_color();
     #endif
 
     // TODO -- REMOVE THIS HACK
@@ -190,6 +210,14 @@ void Agent_status::send_health_msg()
     health_msg.broadcast();
 }
 
+void Agent_status::send_health_msg(int client_id)
+{
+    agent_health_StoC health_msg;
+    health_msg.id = a->id;
+    health_msg.health = this->health;
+    health_msg.sendToClient(client_id);
+}
+
 int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
 {
     // dont allow player kills
@@ -256,6 +284,8 @@ void Agent_status::set_fresh_state()
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();
+    if (!this->net_peer_ready)
+        dead_msg.sendToClient(this->a->client_id);
 
     ItemContainer::agent_born(this->a->id);
 }

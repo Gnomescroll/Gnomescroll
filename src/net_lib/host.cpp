@@ -429,10 +429,7 @@ static void client_connect(ENetEvent* event)
 {
     GS_ASSERT(event != NULL);
     if (event == NULL) return;
-    
-    NetPeer* nc = NULL;
-    NetPeerManager* npm = NULL;
-    
+        
     if ((int)NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
@@ -443,18 +440,22 @@ static void client_connect(ENetEvent* event)
     }
     NetServer::number_of_clients++;
 
+    NetPeer* nc = NULL;
+    NetPeerManager* npm = NULL;
+
     int client_id = client_id_offset;
     client_id_offset++;
 
     for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
     {   // find free peer slot
         client_id = (client_id+1) % NetServer::HARD_MAX_CONNECTIONS;
-        if (NetServer::pool[client_id] != NULL) continue;
+        if (NetServer::staging_pool[client_id] != NULL || NetServer::pool[client_id] != NULL) continue;
         nc = new NetPeer;
         nc->enet_peer = event->peer;
         nc->client_id = client_id;
         nc->connected = 1;
-        NetServer::pool[client_id] = nc;
+        NetServer::staging_pool[client_id] = nc;
+        GS_ASSERT(event->peer != NULL);
         if (event->peer != NULL)
             event->peer->data = (NetPeer*) nc;
 
@@ -519,8 +520,6 @@ static void client_disconnect(ENetEvent* event)
     GS_ASSERT(npm != NULL);
     if (npm != NULL) npm->teardown();
 
-    //printf("Client %d disconnected, %d clients connected\n", client_id, NetServer::number_of_clients);
-
     class User* user = users->get_user(event->peer->address.host);
     GS_ASSERT(user != NULL);
     if (user != NULL)
@@ -530,17 +529,16 @@ static void client_disconnect(ENetEvent* event)
         if (session != NULL) end_session(session);
     }
 
-    //enet_peer_reset(event->peer); //TEST
-    event->peer -> data = NULL;
+    event->peer->data = NULL;
 
+    GS_ASSERT(!(NetServer::pool[client_id] != NULL && NetServer::staging_pool[client_id] != NULL));
     NetServer::pool[client_id] = NULL;
+    NetServer::staging_pool[client_id] = NULL;
     NetServer::agents[client_id] = NULL;
     NetServer::clients[client_id] = NULL;
-
+    
     delete nc;
     delete npm;
-    //printf ("%s disconected.\n", (char*) event->peer -> data);
-    /* Reset the peer's client information. */
 }
 
 void kill_client(ENetPeer* peer)
@@ -563,8 +561,10 @@ void flush_to_net()
 
     for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
     {
-        if (NetServer::pool[i] == NULL) continue;
-        NetServer::pool[i]->flush_to_net();
+        if (NetServer::staging_pool[i] != NULL)
+            NetServer::staging_pool[i]->flush_to_net();
+        if (NetServer::pool[i] != NULL)
+            NetServer::pool[i]->flush_to_net();
     }
 
 }

@@ -135,7 +135,8 @@ class MapMessagePacketToClient {
 
         void sendToClient(int client_id) 
         {
-            NetPeer* np = NetServer::pool[client_id];
+            NetPeer* np = NetServer::staging_pool[client_id];
+            if (np == NULL) np = NetServer::pool[client_id];
             if(np == NULL)  //remove in debug
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d \n", client_id, message_id);
@@ -219,8 +220,8 @@ class MapMessageArrayPacketToClient {
 
         void sendToClient(int client_id, char* buff, int len) 
         {
-
-            NetPeer* np = NetServer::pool[client_id];
+            NetPeer* np = NetServer::staging_pool[client_id];
+            if (np == NULL) np = NetServer::pool[client_id];
             if(np == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);

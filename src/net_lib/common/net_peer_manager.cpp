@@ -72,9 +72,10 @@ void NetPeerManager::version_passed(int client_id)
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     NetServer::assign_agent_to_client(client_id, a);
-    ItemContainer::assign_containers_to_agent(a->id, this->client_id);
-
     send_player_agent_id_to_client(client_id);
+    ItemContainer::assign_containers_to_agent(a->id, this->client_id);
+    a->status.set_fresh_state();
+
     add_player_to_chat(client_id);
 }
 
@@ -106,9 +107,13 @@ void NetPeerManager::ready()
     this->loaded = true;
     ServerState::send_initial_game_state_to_client(this->client_id);
 
-    a->status.set_fresh_state();
-
     t_map::send_client_map_special(this->client_id); //send special blocks to client
+    ServerState::send_remainining_game_state_to_client(this->client_id);
+
+    // move peer from staging to active pool
+    NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
+    NetServer::staging_pool[this->client_id] = NULL;
+    a->status.net_peer_ready = true;
 }
 
 /*
@@ -118,6 +123,7 @@ void NetPeerManager::ready()
  * Sent upon client request
  * Client sends request after being identified
  */
+ // DEPRECATED
 void NetPeerManager::send_remaining_state()
 {
     printf("NPM::send_remaining_state\n");
@@ -135,7 +141,6 @@ void NetPeerManager::send_remaining_state()
         return;
  
     this->received_initial_state = true;
-    ServerState::send_remainining_game_state_to_client(this->client_id);
 }
 
 void NetPeerManager::teardown()

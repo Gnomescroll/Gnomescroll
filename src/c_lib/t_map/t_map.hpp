@@ -17,8 +17,6 @@ struct MapDimension
 
 extern struct MapDimension map_dim;
 
-
-
 namespace t_map
 {
 
@@ -38,6 +36,7 @@ typedef enum TerrainModificationAction
 } TerrainModificationAction;
  
 void init_t_map();
+void end_t_map();
 
 #if DC_CLIENT
 void init_for_draw();

@@ -30,7 +30,7 @@
 #include <t_map/server/manager.cpp>
 #include <t_map/server/manager_class.hpp>
 #include <t_map/server/subscription_list.hpp>
-#include <t_map/server/env_process.hpp>
+#include <t_map/server/env_process.cpp>
 #endif
 
 #include <t_map/config/_interface.hpp>

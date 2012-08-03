@@ -66,12 +66,15 @@ class FixedSizeNetPacketToClient {
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
   
-            if (NetServer::pool[client_id] == NULL)
+            if (NetServer::staging_pool[client_id] == NULL && NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
             }
-            NetServer::pool[client_id]->push_unreliable_message(nm);
+            if (NetServer::staging_pool[client_id] != NULL)
+                NetServer::staging_pool[client_id]->push_unreliable_message(nm);
+            else
+                NetServer::pool[client_id]->push_unreliable_message(nm);
         }
 
         void sendToClients(int* client_ids, unsigned int n_clients)
@@ -195,12 +198,15 @@ class FixedSizeReliableNetPacketToClient {
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
-            if (NetServer::pool[client_id] == NULL)
+            if (NetServer::staging_pool[client_id] == NULL && NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
             }
-            NetServer::pool[client_id]->push_reliable_message(nm);
+            if (NetServer::staging_pool[client_id] != NULL)
+                NetServer::staging_pool[client_id]->push_reliable_message(nm);
+            else
+                NetServer::pool[client_id]->push_reliable_message(nm);
         }
 
         void sendToClients(int* client_ids, unsigned int n_clients)

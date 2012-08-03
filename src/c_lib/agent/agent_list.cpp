@@ -32,6 +32,8 @@ void Agent_list::send_to_client(int client_id)
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (a[i] == NULL) continue;
+        if (a[i]->client_id == client_id) continue;
+        
         agent_create_StoC msg;
         msg.id = a[i]->id;
         msg.client_id = a[i]->client_id;
@@ -41,6 +43,16 @@ void Agent_list::send_to_client(int client_id)
         name_msg.id = a[i]->id;
         strcpy(name_msg.name, a[i]->status.name);
         name_msg.sendToClient(client_id);
+
+        if (a[i]->status.color_chosen)
+            a[i]->status.send_color(client_id);
+
+        agent_dead_StoC dead_msg;
+        dead_msg.dead = a[i]->status.dead;
+        dead_msg.id = a[i]->id;
+        dead_msg.sendToClient(client_id);
+
+        a[i]->status.send_health_msg(client_id);
         
         int item_type = Toolbelt::get_agent_selected_item_type(i);
         Toolbelt::send_agent_set_active_item_packet(client_id, i, item_type);

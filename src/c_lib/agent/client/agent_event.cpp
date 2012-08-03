@@ -187,19 +187,17 @@ void Agent_event::died()
 
 void Agent_event::born()
 {
-    if (this->a->status.dead)
-    {
-        if (a->is_you())
-            Sound::respawned();
-        //else
-            //Sound::respawned(a->s.x, a->s.y, a->s.z, 0,0,0);
-        this->a->status.dead = false;
+    if (!this->a->status.dead) return;
+    if (a->is_you())
+        Sound::respawned();
+    //else
+        //Sound::respawned(a->s.x, a->s.y, a->s.z, 0,0,0);
+    this->a->status.dead = false;
 
-        // reset skeleton
-        VoxDat* vd = (this->a->crouched()) ? &VoxDats::agent_crouched : &VoxDats::agent;
-        this->a->vox->set_vox_dat(vd);
-        this->a->vox->reset_skeleton();
-    }
+    // reset skeleton
+    VoxDat* vd = (this->a->crouched()) ? &VoxDats::agent_crouched : &VoxDats::agent;
+    this->a->vox->set_vox_dat(vd);
+    this->a->vox->reset_skeleton();
 }
 
 void Agent_event::life_changing(bool dead)

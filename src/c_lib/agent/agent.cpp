@@ -567,6 +567,8 @@ id (id), type(OBJECT_AGENT), status(this)
     msg.id = id;
     msg.client_id = this->client_id;
     msg.broadcast();
+    if (!this->status.net_peer_ready)
+        msg.sendToClient(this->client_id);
 
     this->spawn_state();
     #endif

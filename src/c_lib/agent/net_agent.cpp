@@ -215,8 +215,7 @@ inline void agent_health_StoC::handle()
     Agent_state* a = ClientState::agent_list->get(id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    GS_ASSERT(a->status.health != health);
-    if (health >= a->status.health)
+    if (health > a->status.health)
         a->event.healed(health - a->status.health);
     a->status.health = health;
 }

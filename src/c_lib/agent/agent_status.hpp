@@ -40,6 +40,10 @@ class Agent_status {
         bool color_chosen;
         struct Color color;
 
+        #if DC_SERVER
+        bool net_peer_ready;
+        #endif
+        
         void tick();
 
         bool set_name(char* n); // return true if the new name is different
@@ -59,12 +63,16 @@ class Agent_status {
         void set_fresh_state();
 
         void send_health_msg();
+        void send_health_msg(int client_id);
         void restore_health();
         void heal(unsigned int amt);
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
         int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
         void at_base();
+
+        void send_color(int client_id);
+        void broadcast_color();
         #endif
 
         

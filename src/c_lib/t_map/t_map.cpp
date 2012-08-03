@@ -17,6 +17,7 @@
 #if DC_SERVER
     #include <t_map/server/manager.hpp>
     #include <t_map/server/subscription_list.hpp>
+    #include <t_map/server/env_process.hpp>
 
     #include <common/random.h>
 
@@ -104,6 +105,7 @@ void init_t_map()
 
     #if DC_SERVER
     map_history = new Terrain_map_subscription(MAP_WIDTH, MAP_HEIGHT);
+    init_env_process();
     #endif
 }
 
@@ -128,7 +130,8 @@ void end_t_map()
     #endif
 
     #if DC_SERVER
-    delete map_history;
+    if (map_history != NULL) delete map_history;
+    teardown_env_process();
     #endif
 }
 

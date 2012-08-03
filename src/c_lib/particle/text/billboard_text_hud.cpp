@@ -52,10 +52,10 @@ void BillboardTextHud::draw()
     if(!this->charcount()) return;
 
     Vec3 position = this->get_position();
+    if (vec3_equal(current_camera_position, position)) return;
     position = quadrant_translate_position(current_camera_position, position);
     GLdouble sx,sy,sz;
     GLint res = gluProject(position.x, position.y, position.z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
-    GS_ASSERT(res != GLU_FALSE);
     if (res == GLU_FALSE) return;
 
     this->set_position((float)sx, (float)sy);

@@ -18,7 +18,8 @@ unsigned int number_of_clients = 0;
 unsigned int session_count = 0;
     
 NetPeer** pool = NULL;
-NetPeerManager** clients = NULL;
+NetPeer** staging_pool = NULL;
+class NetPeerManager** clients = NULL;
 
 Agent_state** agents = NULL;
 
@@ -36,10 +37,12 @@ void assign_agent_to_client(int client_id, Agent_state* a)
 void init_globals()
 {
     GS_ASSERT(pool == NULL);
+    GS_ASSERT(staging_pool == NULL);
     GS_ASSERT(clients == NULL);
     GS_ASSERT(agents == NULL);
     GS_ASSERT(users == NULL);
     pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
+    staging_pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
     clients = (NetPeerManager**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeerManager*));
     agents = (Agent_state**)calloc(HARD_MAX_CONNECTIONS, sizeof(Agent_state*));
     users = new UserRecorder;
@@ -65,6 +68,7 @@ void teardown_globals()
     if (session_log_file != NULL) fclose(session_log_file);
     if (population_log_file != NULL) fclose(population_log_file);
     if (pool != NULL) free(pool);
+    if (staging_pool != NULL) free(staging_pool);
     if (clients != NULL) free(clients);
     if (agents != NULL) free(agents);
 }
