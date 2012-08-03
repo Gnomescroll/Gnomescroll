@@ -13,6 +13,8 @@ syntax: glob
 .DS_Store
 
 tools/autoupdate/netclient
+tools/autoupdate/manifest.txt
+tools/autoupdate/autoupdate
 
 *~
 
@@ -21,8 +23,6 @@ tools/autoupdate/netclient
 gmon.out
 
 run
-
-tools/autoupdate/autoupdate
 
 .pch
 
