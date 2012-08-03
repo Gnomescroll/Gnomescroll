@@ -143,6 +143,7 @@ void BillboardText::draw()
 
         cursor += glyph.xadvance;
 
+        glBegin(GL_QUADS);
         glTexCoord2f(tx_max,ty_max);
         glVertex3f(ax, ay, az);
         
@@ -154,6 +155,7 @@ void BillboardText::draw()
 
         glTexCoord2f(tx_min,ty_max);
         glVertex3f(bx, by, az);
+        glEnd();
     }
     #endif
 }
