@@ -143,7 +143,8 @@ static Vec3 compute_point_offset(
 }
 
 static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
-{    
+{
+    origin = quadrant_translate_position(current_camera_position, origin);
     int item_sprite = Item::get_sprite_index_for_type(item_type);
     if (item_sprite == ERROR_SPRITE) return;
 
@@ -303,6 +304,8 @@ void draw_equipped_item(int item_type)
     up = vec3_scalar_mult(up, sprite_scale);
     right = vec3_scalar_mult(right, sprite_scale);
     forward = vec3_scalar_mult(forward, sprite_scale);
+
+    origin = translate_position(origin);
     
     GL_ASSERT(GL_DEPTH_TEST, false);
     if (Item::item_type_is_voxel(item_type))
