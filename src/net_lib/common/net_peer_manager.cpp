@@ -70,7 +70,9 @@ void NetPeerManager::version_passed(int client_id)
 
     Agent_state* a = ServerState::agent_list->create(client_id);
     GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     NetServer::assign_agent_to_client(client_id, a);
+    ItemContainer::assign_containers_to_agent(a->id, this->client_id);
 
     send_player_agent_id_to_client(client_id);
     add_player_to_chat(client_id);
@@ -102,7 +104,6 @@ void NetPeerManager::ready()
     if (!a->status.identified) return;
 
     this->loaded = true;
-    ItemContainer::assign_containers_to_agent(a->id, this->client_id);
     ServerState::send_initial_game_state_to_client(this->client_id);
 
     a->status.set_fresh_state();
