@@ -11,13 +11,13 @@ int* _random = NULL;
 void init_env_process()
 {
     GS_ASSERT(_random == NULL);
-    _random = new int[RAS];
+    _random = (int*) malloc(RAS*sizeof(int));
     for (int i=0; i<RAS; i++) _random[i] = rand();
 }
 
 void teardown_env_process()
 {
-    if (_random != NULL) delete[] _random;
+    if (_random != NULL) free(_random);
 }
 
 __attribute__((optimize("-O3")))
