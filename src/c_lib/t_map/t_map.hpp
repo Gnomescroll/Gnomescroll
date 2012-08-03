@@ -59,6 +59,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 void broadcast_set_block_action(int x, int y, int z, int block, int action);
 void broadcast_set_block(int x, int y, int z, int block);
 void broadcast_set_block_palette(int x, int y, int z, int block, int palette);
+void broadcast_set_palette(int x, int y, int z, int palette);
 
 #endif
 

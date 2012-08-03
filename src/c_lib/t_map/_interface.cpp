@@ -53,8 +53,8 @@ int get_block_item_container(int x, int y, int z)
     
     void draw_map_compatibility()
     {
-		vbo_map->draw_map_compatibility();
-	}
+        vbo_map->draw_map_compatibility();
+    }
 
     void update_map()
     {
@@ -155,8 +155,8 @@ void destroy_item_container_block(int x, int y, int z)
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
-	x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-	y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
     int val = get(x,y,z);
     if (Item::get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
@@ -168,24 +168,53 @@ void destroy_item_container_block(int x, int y, int z)
     c->chunk_item_container.remove(x,y,z);
 }
 
-void get_container_location(int container_id, int position[3])
+bool get_container_location(int container_id, int position[3])
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    if (container_id == NULL_CONTAINER) return false;
     
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    if (container == NULL) return false;
     GS_ASSERT(container->chunk >= 0);
-    if (container->chunk < 0) return;
+    if (container->chunk < 0) return false;
     GS_ASSERT(container->chunk < main_map->xchunk_dim*main_map->ychunk_dim);
-    if (container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return;
+    if (container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return false;
     
     class MAP_CHUNK* c = main_map->chunk[container->chunk];
     GS_ASSERT(c != NULL);
-    if (c == NULL) return;
+    if (c == NULL) return false;
 
     c->chunk_item_container.get_container_location(container_id, position);
+    return true;
+}
+
+void smelter_on(int container_id)
+{
+    int p[3] = {0};
+    bool success = get_container_location(container_id, p);
+    if (!success) return;
+    int x = p[0];
+    int y = p[1];
+    int z = p[2];
+    int palette = get_palette(x,y,z);
+    if (palette >= 4) return;
+    palette += 4;
+    broadcast_set_palette(x,y,z, palette);
+}
+
+void smelter_off(int container_id)
+{
+    int p[3] = {0};
+    bool success = get_container_location(container_id, p);
+    if (!success) return;
+    int x = p[0];
+    int y = p[1];
+    int z = p[2];
+    int palette = get_palette(x,y,z);
+    if (palette < 4) return;
+    palette -= 4;
+    broadcast_set_palette(x,y,z, palette);
 }
 
 /*
@@ -198,13 +227,11 @@ void send_client_map_special(int client_id)
 
 void add_control_node(int x, int y, int z)
 {
-    printf("Server adding control node at: %i %i %i \n", x,y,z);
+    //printf("Server adding control node at: %i %i %i \n", x,y,z);
     main_map->control_node_list.server_add_control_node(x,y,z); 
 }
 
 #endif
 
-
-
-}
+}   // t_map
 

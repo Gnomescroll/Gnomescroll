@@ -122,16 +122,20 @@ void ItemContainerSmelter::fill_fuel(int fuel_type)
     GS_ASSERT(this->burn_rate > 0.0f);
     if (this->burn_rate <= 0.0f) this->burn_rate = 1.0f/30.0f;
     send_smelter_fuel(this->id);
+
+    t_map::smelter_on(this->id);
 }
 
 void ItemContainerSmelter::reset_fuel()
 {
     this->fuel_type = NULL_ITEM_TYPE;
     this->burn_rate = 1.0f/30.0f;
-    if (this->fuel < 0.0f) this->fuel = 0.0f;
     if (this->fuel == 0.0f) return;
     this->fuel = 0.0f;
     send_smelter_fuel(this->id);
+    int fuel_type = Item::get_item_type(this->get_fuel());
+    if (!Item::is_fuel(fuel_type))   // only send turn off if we wont be burning any more fuel
+        t_map::smelter_off(this->id);
 }
 
 void ItemContainerSmelter::begin_smelting(int recipe_id)

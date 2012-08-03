@@ -52,7 +52,7 @@ inline struct cubeProperties* _get_cube(int id) __attribute((always_inline)) GNO
 void set_cube_name(int id, char* name, int length);
 void set_cube_name(int id, char* name);
 
-char* get_cube_name(int id);
+const char* get_cube_name(int id);
 int get_cube_id(const char* name);
 
 int dat_get_cube_id(const char* name);  //use for dat files

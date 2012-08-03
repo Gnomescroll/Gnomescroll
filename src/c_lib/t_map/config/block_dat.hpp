@@ -123,6 +123,8 @@ void load_block_dat()
     side_texture(B, t1, 14,2);
     side_texture(N, t1, 14,1);
     push_oriented_texture();
+    side_texture(N, t1, 14,3);
+    push_oriented_texture();
 
     //hud_def(2,3,t1,14,1);
     set_max_dmg(128);

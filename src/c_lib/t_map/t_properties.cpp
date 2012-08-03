@@ -84,7 +84,7 @@ void set_cube_name(int id, char* name)
     set_cube_name(id, name, length);
 }
 
-char* get_cube_name(int id)
+const char* get_cube_name(int id)
 {
     GS_ASSERT(id >= 0 && id < MAX_CUBES);
     if (id < 0 || id >= MAX_CUBES)

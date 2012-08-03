@@ -179,7 +179,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
 {
     public:
 
-		int energy_tank_type;
+        int energy_tank_type;
 
         void insert_item(int slot, ItemID item_id);
 
@@ -190,26 +190,26 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
             return ItemContainerInterface::can_insert_item(slot, item_id);
         }
 
-		int consume_energy_tank()
-		{	// returns number of energy tanks before consumption
-			int n = this->slot_count;
-			GS_ASSERT(n >= 0);
-			if (n <= 0) return n;
-			
-			for (int i=this->slot_max-1; i>=0; i--)
-			{	// consume from the end of the slot array
-				if (this->slot[i] == NULL_ITEM) continue;
-				Item::destroy_item(this->slot[i]);
-				break;
-			}
-			
-			return n;
-		}
+        int consume_energy_tank()
+        {   // returns number of energy tanks before consumption
+            int n = this->slot_count;
+            GS_ASSERT(n >= 0);
+            if (n <= 0) return n;
+            
+            for (int i=this->slot_max-1; i>=0; i--)
+            {   // consume from the end of the slot array
+                if (this->slot[i] == NULL_ITEM) continue;
+                Item::destroy_item(this->slot[i]);
+                break;
+            }
+            
+            return n;
+        }
 
         void init(int xdim, int ydim)
         {
-			this->energy_tank_type = Item::get_item_type("energy_tank");
-			GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
+            this->energy_tank_type = Item::get_item_type("energy_tank");
+            GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
             ItemContainerInterface::init(xdim, ydim);
         }
         
@@ -232,20 +232,20 @@ class ItemContainerCryofreezer: public ItemContainer
 class ItemContainerSynthesizer: public ItemContainerInterface
 {
     public:
-		
-		static const int coins_slot = 0;
+        
+        static const int coins_slot = 0;
         int coins_type;
     
-		ItemID get_coins()
-		{
-			return this->get_item(this->coins_slot);
-		}
-		
-		void insert_coins(ItemID item_id)
-		{
+        ItemID get_coins()
+        {
+            return this->get_item(this->coins_slot);
+        }
+        
+        void insert_coins(ItemID item_id)
+        {
             GS_ASSERT(Item::get_item_type(item_id) == this->coins_type);
-			this->insert_item(this->coins_slot, item_id);
-		}
+            this->insert_item(this->coins_slot, item_id);
+        }
 
         bool can_insert_item(int slot, ItemID item_id)
         {
@@ -308,6 +308,8 @@ class ItemContainerSmelter: public ItemContainerInterface
         {
             GS_ASSERT(this->slot_max > 0);
             if (this->slot_max <= 0) return NULL_ITEM;
+            GS_ASSERT(this->is_valid_slot(this->fuel_slot));
+            if (!this->is_valid_slot(this->fuel_slot)) return NULL_ITEM;
             return this->slot[this->fuel_slot];
         }
 
@@ -443,7 +445,7 @@ class ItemContainerSmelter: public ItemContainerInterface
             return NULL_SLOT;
         }
 
-		void remove_fuel() { this->remove_item(this->fuel_slot); }
+        void remove_fuel() { this->remove_item(this->fuel_slot); }
 
         void init(int xdim, int ydim)
         {
@@ -477,7 +479,7 @@ namespace ItemContainer
 
 ItemContainerInterface* create_item_container_interface(int ttype, int id)
 {
-	ItemContainerType type = (ItemContainerType)ttype;
+    ItemContainerType type = (ItemContainerType)ttype;
     switch (type)
     {
         case AGENT_CONTAINER:
@@ -485,8 +487,8 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             return new ItemContainer(type, id);
 
-		case AGENT_ENERGY_TANKS:
-			return new ItemContainerEnergyTanks(type, id);
+        case AGENT_ENERGY_TANKS:
+            return new ItemContainerEnergyTanks(type, id);
 
         case AGENT_SYNTHESIZER:
             return new ItemContainerSynthesizer(type, id);

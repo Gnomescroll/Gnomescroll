@@ -60,12 +60,14 @@ void tear_down_properties()
 
 class ItemAttribute* get_item_attributes(int item_type)
 {
+    GS_ASSERT(item_type == NULL_ITEM_TYPE || (item_type >= 0 && item_type < MAX_ITEMS));
+    if (item_type < 0 || item_type >= MAX_ITEMS) return NULL;
     return &item_attribute_array[item_type];
 }
 
 int get_item_fire_rate(int item_type)
 {
-    // TODO
+    if (item_type == NULL_ITEM_TYPE) return 8;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     return attr->firing_rate;
@@ -86,9 +88,7 @@ int get_sprite_index_for_type(int type)
     return sprite_array[type];
 }
 
-/*
-Names
-*/
+//Names
 
 void set_item_name(int id, const char* name, int length)
 {
@@ -168,13 +168,14 @@ ItemGroup get_item_group_for_type(int item_type)
 
 int dat_get_item_type(const char* name)
 {
-    int type = get_item_type((char*) name);
+    int type = get_item_type(name);
     GS_ASSERT(type != NULL_ITEM_TYPE);
     return type;
 }
 
 bool item_type_is_voxel(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return false;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return false;
@@ -183,6 +184,7 @@ bool item_type_is_voxel(int item_type)
 
 int get_max_stack_size(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return 1;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 1;
@@ -191,6 +193,7 @@ int get_max_stack_size(int item_type)
 
 int get_max_energy(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return NULL_ENERGY;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return NULL_ENERGY;
@@ -199,6 +202,7 @@ int get_max_energy(int item_type)
 
 int get_max_durability(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return NULL_DURABILITY;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return NULL_DURABILITY;
@@ -207,6 +211,7 @@ int get_max_durability(int item_type)
 
 int get_placer_block_type_id(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
@@ -215,14 +220,16 @@ int get_placer_block_type_id(int item_type)
 
 int get_particle_voxel_texture(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
+    if (attr == NULL) return 0;
     return attr->particle_voxel_texture;
 }
 
 float get_weapon_range(int weapon_type)
 {
+    if (weapon_type == NULL_ITEM_TYPE) return 1.0f;
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 1.0f;
@@ -232,6 +239,7 @@ float get_weapon_range(int weapon_type)
 
 int get_item_block_damage(int weapon_type, int block_type)
 {
+    if (weapon_type == NULL_ITEM_TYPE) return 0;
     // TODO -- block damage dependent on (weapon,block)
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
@@ -241,6 +249,7 @@ int get_item_block_damage(int weapon_type, int block_type)
 
 int get_item_object_damage(int weapon_type)
 {
+    if (weapon_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
@@ -273,6 +282,7 @@ int get_synthesizer_item(int xslot, int yslot, int* cost)
 
 bool is_fuel(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return false;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return false;
@@ -288,6 +298,7 @@ bool is_smelter(ItemContainerType type)
 // total ticks to burn
 int get_fuel_burn_rate(int item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return 30;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 30;

@@ -78,6 +78,12 @@ void set_palette(int x, int y, int z, int value)
     main_map->set_element(x,y,z,element);
 }
 
+int get_palette(int x, int y, int z)
+{
+    struct MAP_ELEMENT element = main_map->get_element(x,y,z);
+    return element.palette;
+}
+
 
 class Terrain_map* get_map()
 {
@@ -199,6 +205,19 @@ void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
 
     main_map->set_element(x,y,z,e);
     map_history->send_set_block_palette(x,y,z,block,palette);
+}
+
+void broadcast_set_palette(int x, int y, int z, int palette)
+{
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+    struct MAP_ELEMENT e = get_element(x,y,z);
+    e.palette = palette;
+
+    main_map->set_element(x,y,z,e);
+    map_history->send_set_block_palette(x,y,z, e.block, e.palette);
 }
 
 #endif

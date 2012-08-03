@@ -17,8 +17,8 @@ void draw_map_compatibility();
 void update_map();
 
 
-void control_node_render_init(class CONTROL_NODE_LIST* _cnl);	//internal method
-void control_node_render_teardown();	//internal method
+void control_node_render_init(class CONTROL_NODE_LIST* _cnl);   //internal method
+void control_node_render_teardown();    //internal method
 
 void control_node_render_update();
 void control_node_render_draw();
@@ -36,7 +36,11 @@ extern int requested_block_type;
 #if DC_SERVER
 void create_item_container_block(int x, int y, int z, int container_type, int container_id);
 void destroy_item_container_block(int x, int y, int z);
-void get_container_location(int container_id, int position[3]);
+bool get_container_location(int container_id, int position[3]);
+
+void smelter_on(int container_id);
+void smelter_off(int container_id);
+
 //server/env_process.hpp
 void map_post_processing();
 
@@ -44,4 +48,4 @@ void map_post_processing();
 void send_client_map_special(int client_id);
 void add_control_node(int x, int y, int z);
 #endif
-}
+}   // t_map
