@@ -133,7 +133,8 @@ void close_SDL()
     _del_video();
 }
 
-int _set_resolution(int xres, int yres, int fullscreen) {
+int _set_resolution(int xres, int yres, int fullscreen)
+{
     _xres = xres;
     _yres = yres;
     _xresf = (float)_xres;
@@ -256,7 +257,15 @@ int init_video() {
     // Create our rendering surface
     ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
     //pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
+
+    #ifdef linux
+    if (_fullscreen != 0)
+        _set_resolution(pSDLVideoInfo->current_w, pSDLVideoInfo->current_h, _fullscreen);
     pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
+    #else
+    pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
+    #endif
+    
     //printf("SDL_SetVideoMode: %s\n", SDL_GetError());
 
     if( !pSDLSurface )
@@ -290,8 +299,6 @@ int init_video() {
         glDisable(GL_MULTISAMPLE);
     }
     SDL_ShowCursor(SDL_DISABLE);
-
-    //atexit(_del_video);
 
     //printf("SDL: %s\n", SDL_GetError());
 

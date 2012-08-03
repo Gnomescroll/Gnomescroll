@@ -454,6 +454,9 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("SDL close\n");
     close_SDL();
 
+    if (TEARDOWN_DEBUG) printf("enet teardown\n");
+    teardown_network();
+
     #ifdef AWESOMIUM
         Awesomium::teardown();
     #endif

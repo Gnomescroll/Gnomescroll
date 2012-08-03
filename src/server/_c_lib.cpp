@@ -231,6 +231,8 @@ void close_c_lib()
 
     NetServer::teardown_globals();
 
+    teardown_network();
+
     printf("Server closed\n"); 
     Log::teardown();
 

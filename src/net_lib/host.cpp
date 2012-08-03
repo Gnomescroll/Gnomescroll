@@ -24,6 +24,8 @@ const int DEFAULT_PORT = 4096;
 struct _ENetHost* server_host;
 struct _ENetHost* client_host;
 
+static bool enet_inited = false;
+
 void init_network()
 {
     init_message_handler();
@@ -32,9 +34,15 @@ void init_network()
     if (enet_initialize () != 0)
     {
         fprintf (stderr, "An error occurred while initializing ENet.\n");
+        enet_inited = false;
         return;
     }
-    atexit (enet_deinitialize);
+    enet_inited = true;
+}
+
+void teardown_network()
+{
+    if (enet_inited) enet_deinitialize();
 }
 
 ENetAddress address;

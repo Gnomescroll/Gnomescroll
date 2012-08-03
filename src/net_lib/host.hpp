@@ -1,6 +1,7 @@
 #pragma once
 
 void init_network();
+void teardown_network();
 
 struct _ENetHost;
 
