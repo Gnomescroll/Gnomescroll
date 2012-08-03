@@ -28,7 +28,7 @@ void environment_process_tick()
     
     static int regolith_id = dat_get_cube_id("regolith");
 
-    static int _random_index = 0;
+    static int _random_index = rand();
     _random_index = (_random_index+rand() ) % RAS;
 
     static int x=0; 
