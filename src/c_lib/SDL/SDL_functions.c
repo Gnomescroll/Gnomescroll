@@ -379,7 +379,8 @@ const int _SDL_SWAP_DEBUG = 0;
     Measure the time since last frame and if there is extra time before next flip, do map processing
 
 */
-int _swap_buffers() {
+int _swap_buffers()
+{
     int _time1;
 
     if(_SDL_SWAP_DEBUG)
