@@ -623,7 +623,6 @@ void ChatRender::init()
     if (this->inited) return;
     int i=0;
     int line_height = HudFont::font->data.line_height;
-    const int y_offset = 50 + line_height;   // from the bottom
     const int x_offset = 2;   // from the left
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {

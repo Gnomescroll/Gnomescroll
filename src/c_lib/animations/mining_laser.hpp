@@ -97,7 +97,7 @@ class MiningLaser
         //verlet.bounce_box(0.125);
         
         
-        if (verlet.bounce_no_gravity()) ttl = 0;
+        if (verlet.collide_no_gravity()) ttl = 0;
         
         //verlet.bounce_box_no_gravity(0.125)
         //verlet.radial(rx, ry);

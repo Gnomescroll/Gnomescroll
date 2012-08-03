@@ -1410,7 +1410,7 @@ void update_smelters()
                     else
                     {   // erroneous state
                         //smelter->remove_fuel();   // Can't use this, because it modifies the item's state on the way out. the item probably isnt here
-                        if (smelter->is_valid_slot(smelter->fuel_slot)
+                        if (smelter->is_valid_slot(smelter->fuel_slot))
                         {
                             smelter->slot[smelter->fuel_slot] = NULL_ITEM;
                             smelter->slot_count--;

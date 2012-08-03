@@ -126,7 +126,7 @@ void mining_laser_beam(Vec3 position, Vec3 orientation, float length)
     Vec3 step = vec3_scalar_mult(orientation, spread);
     for (int i=0; i<n; i++)
     {
-        Animations::create_mining_laser_particle(position, orientation, speed, length);
+        Animations::create_mining_laser_particle(translate_position(position), orientation, speed, length);
         // move the particle a little bit ahead of the last
         // to get an even distribution
         position = vec3_add(position, step);

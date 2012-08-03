@@ -15,7 +15,8 @@ typedef enum
     AGENT_VOX_IS_DEAD,
 } AgentVoxStatus;
 
-class Agent_event {
+class Agent_event
+{
     private:
         Agent_state* a;
         AgentVoxStatus vox_status;

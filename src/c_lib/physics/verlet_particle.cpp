@@ -259,7 +259,6 @@ void VerletParticle::radial(float xr, float yr)
 
         velocity_integrate(&position, &velocity, dt*interval);
         position = translate_position(position);
-        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
         velocity = vec3_reflect(velocity, norm);
         velocity = vec3_scalar_mult(velocity, dampening);
     }
@@ -268,21 +267,18 @@ void VerletParticle::radial(float xr, float yr)
 
 }
 
-bool VerletParticle::bounce_no_gravity()
+bool VerletParticle::collide_no_gravity()
 {
-    bool bounced = false;
+    bool collision = false;
     
     Vec3 old_position = position;
     Vec3 old_velocity = velocity;
     
-    //const float ac = 9.8;
-
     Vec3 a = vec3_init(0.0f,0.0f,0.0f);
 
     velocity_integrate(&position, &velocity, &a, dt);
 
     float interval = 0.0f;
-
     Vec3 norm;
     _ray_cast4(
         old_position.x, old_position.y, old_position.z,
@@ -292,26 +288,15 @@ bool VerletParticle::bounce_no_gravity()
 
     if (interval < 1.0f)
     {   // collision
-        bounced = true;
-        position = old_position;
-        velocity = old_velocity;
-
-        const float th = 2.0f*3.14159f * randf();
-        const float V = 5.0f*randf();
-
-        velocity.x += V * sinf(th);
-        velocity.y += V * cosf(th);
-
-        velocity_integrate(&position, &velocity, dt*interval);
+        collision = true;
+        position = vec3_add(old_position, vec3_scalar_mult(old_velocity, interval*dt));
         position = translate_position(position);
-        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
-        velocity = vec3_reflect(velocity, norm);
-        velocity = vec3_scalar_mult(velocity, dampening);
+        velocity = vec3_init(0,0,0);
     } 
     else
         position = translate_position(position);
 
-    return bounced;
+    return collision;
 }
 
-}
+}   // VerletParticle

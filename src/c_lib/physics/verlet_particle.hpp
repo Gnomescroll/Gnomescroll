@@ -8,16 +8,10 @@ namespace VerletParticle
 const float dt = 1/30.0f;
 const float gravity = -9.8f;
 
-
-
-
 class VerletParticle
-
 {
     public:
 
-    //struct Vec3 old_position;
-    //struct Vec3 old_velocity;
     struct Vec3 position;
     struct Vec3 velocity;
 
@@ -28,10 +22,9 @@ class VerletParticle
 
     void bounce_box(float radius);
     void bounce_box_no_gravity(float radius);
-    bool bounce_no_gravity();
+    bool collide_no_gravity();
 
     void radial(float xr, float yr);
 };
 
-
-}
+}   // VerletParticle
