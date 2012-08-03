@@ -12,6 +12,8 @@ syntax: glob
 
 .DS_Store
 
+tools/autoupdate/netclient
+
 *~
 
 *.plist
