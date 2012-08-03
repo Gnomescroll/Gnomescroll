@@ -267,6 +267,7 @@ class BoneTree
 
         init_texture();
         //draw();
+		init_bone_list();
     }
 
     void count_nodes(aiNode* pNode)
@@ -451,7 +452,7 @@ aiMesh
                 v.v.z = pos.z;
 
                 v.ux =  tex.x;
-                v.uy =  tex.y;
+				v.uy =  1.0-tex.y;
 
                 //printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
                 GS_ASSERT(bvlo[i] + (int)(j) == vcount);
@@ -511,6 +512,125 @@ aiMesh
         out.f[3][3] = in.d4;
     }
 
+
+
+	int bam;		//bone array max
+	aiBone** ba; 	//bone array
+	int* bal;		//bone array lookup: maps mesh to starting offset in ball
+	int* ball;		// ball[bal[mesh_num] + bone_num] is matrix index
+
+	struct Mat4* bbma;		//bone base matrix array
+	struct Mat4* bma;		//bone matrix array
+
+
+	void count_bones(int* count, aiNode* pNode)
+	{
+		GS_ASSERT(pNode->mNumMeshes == 0);	//RECOVER FROM THIS
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+		{
+			*count++;
+			count_bones(count, pNode->mChildren[i]);
+		}
+	}
+
+	void count_bones()
+	{
+		
+		//aiNode* pNode = pScene->mRootNode;
+		aiNode* pNode = NULL;
+
+		for(unsigned int i=0; i < pScene->mRootNode->mNumChildren; i++)
+		{
+			if( strcmp("Armature", pScene->mRootNode->mChildren[i]->mName.data) == 0)
+			{
+				pNode = pScene->mRootNode->mChildren[i];
+				break;
+			}
+		}
+
+		if(pNode == NULL)
+		{
+			printf("DAE LOAD ERROR: There is no 'Armature' node under root node \n");
+			abort();
+		}
+
+		aiNode* _pNode = NULL;
+
+		for(unsigned int i=0; i < pNode->mNumChildren; i++)
+		{
+			if( strcmp("root_bone", pNode->mChildren[i]->mName.data) == 0)
+			{
+				_pNode = pNode->mChildren[i];
+				break;
+			}
+		}
+		if(_pNode == NULL)
+		{
+			printf("DAE LOAD ERROR: There is no 'root_bone' under 'Armature' node \n");
+			abort();
+		}
+
+		pNode = _pNode;
+
+		int bone_count = 0;
+		count_bones(&bone_count, pNode);
+
+		printf("DAE LOADER: %d bones \n", bone_count);
+
+
+		bam = bone_count;
+	}	
+
+
+	void init_bone_list()
+	{
+		//count bones
+		int bone_count = 0;
+		int _bone_count = 0;
+
+		for(int i=0; i<nli; i++)
+		{
+			aiMesh* mesh = ml[i];
+			for(unsigned int j=0; j<mesh->mNumBones; j++)
+			{
+				aiBone* bone = mesh->mBones[j];
+
+
+				printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
+
+				bool new_bone = true;
+
+				for(int _i=0; _i<=i; _i++) 
+				{
+					for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
+					{
+						if(_i == i && _j == j) break;
+						//if(bone == ml[_i]->mBones[_j])
+						//printf("cmp: %d %d : %d %d \n", i,j, _i,_j);
+						if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
+						{
+							//printf("bone %d,%d matches bone %d,%d \n", i,j, _i,_j);
+							new_bone = false;
+							break;
+						}
+					}
+				}
+
+				if(new_bone == true) bone_count++;
+				_bone_count++;
+			}
+		}
+
+		//printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
+
+		printf("bone_count= %d _bone_count= %d nli= %d \n", bone_count, _bone_count, nli);
+
+		printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
+
+		count_bones();
+	}
+
+
     unsigned int texture1;
     SDL_Surface* s;
 
@@ -569,6 +689,8 @@ aiMesh
             int offset = bvlo[i];
             int num = bvln[i];
 
+			GS_ASSERT(mesh->mNumBones != 0);
+
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
@@ -576,13 +698,15 @@ aiMesh
 
                 struct Mat4 mat;
                 _ConvertMatrix(mat, offset_matrix);
-                //printf("=== \n");
+				//printf("%d === \n", i);
                 //print_mat4(mat);
 
                 for(unsigned int k=0; k<bone->mNumWeights; k++)
                 {
                     int index = offset + bone->mWeights[k].mVertexId;
                     float weight = bone->mWeights[k].mWeight;
+
+					//printf("weight= %f \n", weight);
 
                     GS_ASSERT(index >= offset);
                     GS_ASSERT(index < offset+num);
@@ -612,7 +736,7 @@ aiMesh
                 }
             }
         }
-
+	/*
         for(int i=0; i<vlm; i++)
         {
             int index = bvll[i];
@@ -622,11 +746,11 @@ aiMesh
             }
             tvl[i] = tbvl[index];
         }
-
+	*/
         for(int i=0; i<vlm; i++)
         {
             int index = bvll[i];
-            tvl[i] = bvl[index];
+			tvl[i] = tbvl[index];
             tvl[i].v.x += x;
             tvl[i].v.y += y;
             tvl[i].v.z += z;
@@ -637,7 +761,7 @@ aiMesh
         //GL_ASSERT(GL_TEXTURE_2D, true);
 
         glBindTexture(GL_TEXTURE_2D, texture1);
-#if 0
+#if 1
         glBegin(GL_TRIANGLES);
         for(int i=0; i<vlm; i++)
         {
@@ -647,12 +771,15 @@ aiMesh
             struct _Vertex v = tvl[i];
 
             //vec3_print(v.v);
-
-            glVertex3f(v.v.x, v.v.y, v.v.z);
             glTexCoord2f(v.ux, v.uy );
+			glVertex3f(v.v.x, v.v.y, v.v.z);
         }
 
         glEnd();
+		
+		glBindTexture(GL_TEXTURE_2D, 0);
+		check_gl_error();
+
 #else
 
 
@@ -855,13 +982,11 @@ void init()
     bt->init( (aiScene*) pScene);
     printf("BT: bone tree finished\n");
     
-    return;
-    abort(); //debug
-
     printf("Bone tree: \n");
+	return;
     PrintBoneTree(pScene, 0, pScene->mRootNode);    //these are actually meshes
     //pScene->mRootNode
-
+	return; //debug
 
     printf("Animations: \n");
 
@@ -925,7 +1050,6 @@ void init()
     /** The node animation channels. Each channel affects a single node. 
      *  The array is mNumChannels in size. */
     C_STRUCT aiNodeAnim** mChannels;
-
 
     /** The number of mesh animation channels. Each channel affects
      *  a single mesh and defines vertex-based animation. */
