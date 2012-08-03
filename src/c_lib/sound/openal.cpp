@@ -7,6 +7,9 @@ namespace OpenALSound
 {
 
 const int MAX_SOURCES_PER_SAMPLE = 6;
+static const int MAX_SOUNDS = Sound::MAX_WAV_BUFFERS;
+static const ALsizei MAX_BUFFERS = Sound::MAX_WAV_BUFFERS;
+static const ALsizei MAX_SOURCES = 16;
 
 // lookup table
 class GS_SoundBuffer
@@ -23,9 +26,34 @@ class GS_SoundBuffer
 
     bool add_source(int source_id)
     {
+        GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
+        if (source_id < 0 || source_id >= MAX_SOURCES) return false;
+        for (int i=0; i<this->current_sources; i++)
+            if (this->sources[i] == source_id) return false;
+        GS_ASSERT(this->current_sources >= 0);
+        if (this->current_sources < 0) this->current_sources = 0;
         if (this->current_sources >= this->max_sources) return false;
-        this->sources[this->current_sources++] = source_id;
+        this->sources[this->current_sources] = source_id;
+        this->current_sources++;
         return true;
+    }
+
+    void remove_source(int index)
+    {
+        GS_ASSERT(index >= 0 && index < this->max_sources);
+        if (index < 0 || index >= this->max_sources) return;
+
+        GS_ASSERT(this->current_sources > 0);
+        if (this->current_sources <= 0)
+        {
+            this->current_sources = 0;
+            return;
+        }
+
+        int max = (this->current_sources < this->max_sources-1) ? this->current_sources : this->max_sources - 2;
+        for (int i=index; i<max; i++)
+            this->sources[i] = this->sources[i+1];
+        this->current_sources--;
     }
 
     GS_SoundBuffer():
@@ -35,6 +63,7 @@ class GS_SoundBuffer
         current_sources(0)
         {
             this->sources = (int*)malloc(sizeof(int) * this->max_sources);
+            for (int i=0; i<this->max_sources; this->sources[i++] = -1);
         }
 
     ~GS_SoundBuffer()
@@ -42,7 +71,7 @@ class GS_SoundBuffer
         free(this->sources);
     }
 };
-static const int MAX_SOUNDS = Sound::MAX_WAV_BUFFERS;
+
 static GS_SoundBuffer** sound_buffers = NULL;
 static int soundfile_index = 0;
 
@@ -53,11 +82,9 @@ static bool sources_inited = false;
 static ALCdevice *device = NULL;
 static ALCcontext *context = NULL;
 
-static const ALsizei MAX_BUFFERS = Sound::MAX_WAV_BUFFERS;
 static ALuint* buffers = NULL;
 static int buffer_index = 0;
 
-static const ALsizei MAX_SOURCES = 16;
 static ALuint* sources = NULL;
 
 struct GS_SoundSource
@@ -451,6 +478,9 @@ void get_listener_state(float *x, float *y, float *z, float *vx, float *vy, floa
 
 static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional)
 {
+    GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
+    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
+    
     // add sound to active sources
     for (int i=0; i<MAX_SOURCES; i++)
         if (active_sources[i].source_id < 0)
@@ -598,19 +628,14 @@ void update()
     {
         GS_SoundBuffer* b = sound_buffers[i];
         if (b == NULL) continue;
-        const int current_sources = b->current_sources;
-        for (int j=0; j<current_sources; j++)
+        for (int j=0; j<b->current_sources; j++)
         {
             int gs_source_id = b->sources[j];
             GS_ASSERT(gs_source_id >= 0 && gs_source_id < MAX_SOURCES);
+            if (gs_source_id < 0 || gs_source_id >= MAX_SOURCES) printf("gs_source_id: %d\n", gs_source_id);
             if (gs_source_id < 0 || gs_source_id >= MAX_SOURCES) continue;
             if (active_sources[gs_source_id].source_id < 0)
-            {   // expired
-                b->current_sources--;
-                GS_ASSERT(b->current_sources >= 0 && b->current_sources < b->max_sources);
-                if (b->current_sources < 0 || b->current_sources >= b->max_sources) continue;
-                b->sources[b->current_sources] = -1;
-            }
+                b->remove_source(j);
         }
     }
 }
