@@ -122,7 +122,7 @@ void Agent_state::tick()
     int _tc =0;
     struct Agent_control_state _cs;
 
-    while(cs[CS_seq].seq == CS_seq )
+    while (cs[CS_seq].seq == CS_seq )
     {
         _cs = cs[CS_seq];
         s = _agent_tick(_cs, box, s);
@@ -143,7 +143,6 @@ void Agent_state::tick()
 
 
 #define ADVANCED_JUMP 0
-//#define ADVANCED_JETPACK 0
 
 //takes an agent state and control state and returns new agent state
 class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
@@ -197,22 +196,22 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     float CS_vx = 0;
     float CS_vy = 0;
 
-    if(forward)
+    if (forward)
     {
             CS_vx += speed*cosf( _cs.theta * pi);
             CS_vy += speed*sinf( _cs.theta * pi);
     }
-    if(backwards)
+    if (backwards)
     {
             CS_vx += -speed*cosf( _cs.theta * pi);
             CS_vy += -speed*sinf( _cs.theta * pi);
     }
-    if(left) 
+    if (left) 
     {
             CS_vx += speed*cosf( _cs.theta * pi + pi/2);
             CS_vy += speed*sinf( _cs.theta * pi + pi/2);
     }
-    if(right) 
+    if (right) 
     {
             CS_vx += -speed*cosf( _cs.theta * pi + pi/2);
             CS_vy += -speed*sinf( _cs.theta * pi + pi/2);
@@ -231,10 +230,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     as.vy = CS_vy;
 
     // need distance from ground
-    //const float max_jetpack_height = 2.2f;
     const float max_jetpack_height = 8.0f;
     const float jetpack_velocity_max = z_jetpack * 10;
-    float dist_from_ground = as.z - (t_map::get_highest_open_block(as.x, as.y)-1); //TODO: use a function like this that takes a starting z point
+    float dist_from_ground = as.z - (t_map::get_solid_block_below(as.x, as.y, as.z));
     if (jetpack)
     {
         if (dist_from_ground < max_jetpack_height)
@@ -247,51 +245,39 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         else if (dist_from_ground < max_jetpack_height + 0.3f)
             as.vz = -z_gravity;
     }
+    as.vz += z_gravity;
 
-    //jet pack and gravity
-    //if(as.z > 0)
-    //{
-        as.vz += z_gravity;
-    //} 
-    //else // under the map, go back up
-    //{
-        //as.vz -= z_gravity;
-    //}    
-
-#if ADVANCED_JUMP
+    #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
     if (jump)
     {
         as.vz = 0;
         new_jump_pow = JUMP_POWINITIAL;
     }
-    if (new_jump_pow >= 0) {
+    if (new_jump_pow >= 0)
+    {
         as.vz += new_jump_pow;
         new_jump_pow -= JUMP_POWDEC;
     }
-#else
+    #else
     if (jump)
     {
         as.vz = 0.0f;
         as.vz += JUMP_POW;
     }
-#endif
+    #endif
 
-    float new_x, new_y, new_z;
-    new_x = as.x + as.vx + CS_vx;
-    new_y = as.y + as.vy + CS_vy;
-    new_z = as.z + as.vz;
+    float new_x = as.x + as.vx + CS_vx;
+    float new_y = as.y + as.vy + CS_vy;
+    float new_z = as.z + as.vz;
     //collision
     bool current_collision = collision_check_final_current(box.box_r, height, as.x,as.y,as.z);
-    if(current_collision)
+    if (current_collision)
     {
-        // nudge the player upward
-        //printf("current\n");
         as.x = new_x;
         as.y = new_y;
         as.z += 0.02f; //nudge factor
-        if(as.vz < 0.0f) as.vz = 0.0f;
-
+        if (as.vz < 0.0f) as.vz = 0.0f;
         return as;
     }
 
@@ -300,14 +286,14 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         Collision Order: as.x,as.y,as.z
     */
     bool collision_x = collision_check_final_xy(box.box_r, height, new_x,as.y,as.z);
-    if(collision_x) {
+    if (collision_x) {
         //printf("x\n");
         new_x = as.x;
         as.vx = 0.0f;
     }
 
     bool collision_y = collision_check_final_xy(box.box_r, height, new_x,new_y,as.z);
-    if(collision_y) {
+    if (collision_y) {
         //printf("y\n");
         new_y = as.y;
         as.vy = 0.0f;
@@ -316,7 +302,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     //top and bottom matter
     bool top=false;
     bool collision_z = collision_check_final_z(box.box_r, height, new_x, new_y, new_z, &top);
-    if(collision_z) {
+    if (collision_z) {
         //printf("z\n");
         new_z = as.z;
         if (top)
@@ -404,7 +390,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi)
         A.broadcast();
 
         //clean out old control state
-        for(int i=16; i<96; i++)
+        for (int i=16; i<96; i++)
         {
             int index = (seq + i)%256;
             this->cs[index].seq = -1;
@@ -421,7 +407,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
     state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
 
-    for(int i=16; i<96; i++)
+    for (int i=16; i<96; i++)
     {
         int index = (seq + i)%256;
         cs[index].seq = -1;
@@ -561,7 +547,7 @@ id (id), type(OBJECT_AGENT), status(this)
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
-    for(int i=0; i<256; i++)
+    for (int i=0; i<256; i++)
     {
         cs[i].seq = -1;
         cs[i].cs = 0;

@@ -302,6 +302,12 @@ inline int get_nearest_open_block(int x, int y, int z)
     return get_nearest_open_block(x,y,z,1);
 }
 
+inline int get_solid_block_below(int x, int y, int z)
+{
+    for (int i=z-1; i>=0; i--)
+        if (get(x,y,i) != 0) return i;
+    return -1;
+}
 
 inline int get_highest_solid_block(int x, int y)
 {
