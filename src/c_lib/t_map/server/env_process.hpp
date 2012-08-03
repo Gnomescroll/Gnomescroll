@@ -8,10 +8,6 @@
 namespace t_map
 {
 
-extern unsigned int* _random;
-void init_env_process();
-void teardown_env_process();
-
 void regolith_post_processing()
 {
     int regolith_id = dat_get_cube_id("regolith");
@@ -81,8 +77,11 @@ void map_post_processing()
     #endif
 #endif
 
+
+
 #if DC_SERVER
-__attribute__((optimize("-O3")))
+void init_env_process();
+void teardown_env_process();
 void environment_process_tick();
 #endif
 

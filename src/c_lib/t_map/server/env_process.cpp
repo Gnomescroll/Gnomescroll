@@ -3,22 +3,23 @@
 namespace t_map
 {
 
+#if DC_SERVER
+
 static const int RAS = 571; //random array size
-unsigned int* _random = NULL;
+int* _random = NULL;
 
 void init_env_process()
 {
     GS_ASSERT(_random == NULL);
-    _random = (unsigned int*)malloc(256 * sizeof(unsigned int));
-    for (int i=0; i<256; i++) _random[i] = (unsigned int)rand();
+    _random = new int[RAS];
+    for (int i=0; i<RAS; i++) _random[i] = rand();
 }
 
 void teardown_env_process()
 {
-    if (_random != NULL) free(_random);
+    if (_random != NULL) delete[] _random;
 }
 
-#if DC_SERVER
 __attribute__((optimize("-O3")))
 void environment_process_tick()
 {
