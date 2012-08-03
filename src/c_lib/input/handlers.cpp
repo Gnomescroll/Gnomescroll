@@ -173,23 +173,23 @@ void toggle_skeleton_editor()
     #else
     input_state.skeleton_editor = (!input_state.skeleton_editor);
     if (input_state.skeleton_editor)
-		printf("Skeleton editor enabled\n");
+        printf("Skeleton editor enabled\n");
     else
-		printf("Skeleton editor disabled\n");
+        printf("Skeleton editor disabled\n");
     #endif
 }
 
 void toggle_equipped_sprite_adjuster()
 {
-	#if PRODUCTION
-	input_state.equipped_sprite_adjuster = false;
-	#else
-	input_state.equipped_sprite_adjuster = (!input_state.equipped_sprite_adjuster);
-	if (input_state.equipped_sprite_adjuster)
-		printf("Equipped sprite adjuster enabled\n");
-	else
-		printf("Equipped sprite adjuster disable\n");
-	#endif
+    #if PRODUCTION
+    input_state.equipped_sprite_adjuster = false;
+    #else
+    input_state.equipped_sprite_adjuster = (!input_state.equipped_sprite_adjuster);
+    if (input_state.equipped_sprite_adjuster)
+        printf("Equipped sprite adjuster enabled\n");
+    else
+        printf("Equipped sprite adjuster disable\n");
+    #endif
 }
 
 void toggle_input_mode()
@@ -397,6 +397,12 @@ void container_key_down_handler(SDL_Event* event)
         case SDLK_e:
         case SDLK_ESCAPE:
             close_all_containers();
+            break;
+
+        case SDLK_t:
+        case SDLK_RETURN:
+            toggle_chat();
+            chat_client->use_global_channel();
             break;
 
         default: break;
@@ -755,26 +761,26 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-	if (input_state.equipped_sprite_adjuster)
-	{
-		switch (event->key.keysym.sym)
-		{
-			case SDLK_ESCAPE:
-			case SDLK_l:
-				toggle_equipped_sprite_adjuster();
-				return;
-			default:
-				break;
-		}
+    if (input_state.equipped_sprite_adjuster)
+    {
+        switch (event->key.keysym.sym)
+        {
+            case SDLK_ESCAPE:
+            case SDLK_l:
+                toggle_equipped_sprite_adjuster();
+                return;
+            default:
+                break;
+        }
 
-		EquippedSpriteAdjuster::key_down_handler(event);
-		return;
-	}
+        EquippedSpriteAdjuster::key_down_handler(event);
+        return;
+    }
 
-    if (input_state.agent_container || input_state.container_block)
-        container_key_down_handler(event);
-    else if (input_state.chat)
+    if (input_state.chat)
         chat_key_down_handler(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_key_down_handler(event);
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -805,7 +811,8 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_m:
-                toggle_map();
+                if (input_state.debug)
+                    toggle_map();
                 break;
 
             case SDLK_n:
@@ -814,14 +821,14 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_o:
-				if (input_state.debug)
-					toggle_skeleton_editor();
+                if (input_state.debug)
+                    toggle_skeleton_editor();
                 break;
                 
             case SDLK_l:
-				if (input_state.debug)
-					toggle_equipped_sprite_adjuster();
-				break;
+                if (input_state.debug)
+                    toggle_equipped_sprite_adjuster();
+                break;
             
             case SDLK_t:
                 if (input_state.debug)
@@ -834,15 +841,15 @@ void key_down_handler(SDL_Event* event)
                 break;
                 
             case SDLK_u:
-                toggle_mouse_bind();
+                #if PRODUCTION
+                if (input_state.debug)
+                #endif
+                    toggle_mouse_bind();
                 break;
 
             case SDLK_y:
                 if (input_state.confirm_quit)
-                {
                     enable_quit();
-                    break;
-                }
                 break;
 
             case SDLK_TAB:
@@ -900,7 +907,8 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_LALT:
         case SDLK_RALT:
-            input_state.mouse_bound = false;
+            if (input_state.debug)
+                input_state.mouse_bound = false;
             break;
 
         case SDLK_BACKQUOTE:
@@ -930,16 +938,6 @@ void key_down_handler(SDL_Event* event)
             
         default: break;
     }
-
-
-    //for Dany0 (azerty testing)
-    //while holding n, will show key struct info
-    //if (keystate['r'] != 0)
-    //{
-        //printf("scancode = %d\n", (int)event->key.keysym.scancode);
-        //printf("keysym = %d\n", (int)event->key.keysym.sym);
-        //printf("\n");
-    //}
 }
 
 // key up
@@ -952,16 +950,16 @@ void key_up_handler(SDL_Event* event)
         return;
     }
 
-	if (input_state.equipped_sprite_adjuster)
-	{
-		EquippedSpriteAdjuster::key_up_handler(event);
-		return;
-	}
+    if (input_state.equipped_sprite_adjuster)
+    {
+        EquippedSpriteAdjuster::key_up_handler(event);
+        return;
+    }
 
-    if (input_state.agent_container || input_state.container_block)
-        container_key_up_handler(event);
-    else if (input_state.chat)
+    if (input_state.chat)
         chat_key_up_handler(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_key_up_handler(event);
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -977,11 +975,6 @@ void key_up_handler(SDL_Event* event)
 
     switch (event->key.keysym.sym)
     {
-        //case SDLK_LALT:
-        //case SDLK_RALT:
-            //input_state.mouse_bound = true;
-            //break;
-
         case SDLK_BACKSPACE:
             keys_held_down[kBACKSPACE].pressed = false;
             break;

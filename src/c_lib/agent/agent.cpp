@@ -314,9 +314,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     as.y = translate_point(new_y);
     as.z = new_z;
 
-#if ADVANCED_JUMP
+    #if ADVANCED_JUMP
     as.jump_pow = new_jump_pow;
-#endif
+    #endif
 
     as.theta = _cs.theta;
     as.phi = _cs.phi;
