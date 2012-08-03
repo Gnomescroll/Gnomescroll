@@ -417,9 +417,63 @@ void stop_equipped_item_animation()
     equipped_item_animation_tick_nudge = 1;
 }
     
+void draw_placement_outline(int item_type)
+{
+    GL_ASSERT(GL_TEXTURE_2D, false);
+    
+    int cube_height = Item::get_item_cube_height(item_type);
+    if (cube_height <= 0) return;
+
+    // get open block
+    const int max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* b = ClientState::playerAgent_state.nearest_open_block(max_dist, z_low, z_high);
+    if (b == NULL) return;
+
+    // center it
+
+    glColor4ub(255,255,255,255);
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    for (int z=0; z<cube_height; z++)
+    {
+        float size;
+        struct Vec3 p = vec3_init(b[0], b[1], b[2]+z);
+        if (t_map::get(b[0], b[1], b[2]+z) == 0)
+        {
+            size = 0.995f;
+            glColor3ub(1,1,1);
+        }
+        else
+        {
+            size = 1.005f;
+            glColor3ub(180,20,20);
+        }
+            
+        p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
+
+        // render
+        Vec3 q;
+        int k;
+        for (int i=0; i<12; i++)
+        for (int j=0; j<2; j++)
+        {
+            k = 3 * vertex_index2[2*i+j];
+            q.x = p.x + v_set2[k+0]*size*0.5f;
+            q.y = p.y + v_set2[k+1]*size*0.5f;
+            q.z = p.z + v_set2[k+2]*size*0.5f;
+            glVertex3f(q.x, q.y, q.z);
+        }
+    }
+    glEnd();
+    CHECK_GL_ERROR();
+}
+
 void init_weapon_sprite()
 {
     parse_equipment_sprite_alignment_config();
 }
+
 
 }   // Animations

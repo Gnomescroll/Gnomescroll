@@ -20,9 +20,6 @@ options.width = 1280
 options.height = 720
 options.fov = 85
 
-
---1280x720
-
 -- mouse --
 options.sensitivity = 1000
 options.camera_speed = 0.6
@@ -39,6 +36,10 @@ options.ping_update_interval = 500
 options.sound = true
 options.sfx = 100
 options.music = 100
+
+-- graphics --
+options.animations = true;
+options.placement_outline = false;
 
 -- help --
 options.show_tips = true;

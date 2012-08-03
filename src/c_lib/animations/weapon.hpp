@@ -10,6 +10,8 @@ void begin_equipped_item_animation(int item_type, bool continuous);
 void tick_equipped_item_animation();
 void stop_equipped_item_animation();
 
+void draw_placement_outline(int item_type);
+
 // controls for adjusting the sprite
 void move_focal_depth(float delta);            // distance from agent plane
 void move_focal_vertical(float delta);        // vertical distance

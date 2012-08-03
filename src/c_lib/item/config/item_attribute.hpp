@@ -56,6 +56,8 @@ namespace Item
     
         ItemContainerType container_type;
 
+        int cube_height;
+
         ItemAttribute()
         // DONT PUT ANYTHING HERE OR BREAKS
         {
@@ -85,6 +87,7 @@ namespace Item
             gas = false;
             fuel = false;
             fuel_burn_rate = 30;
+            cube_height = 0;
         }
     };
 

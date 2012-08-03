@@ -10,7 +10,6 @@ options = {}
 options.name = "flarb"
 
 -- server --
-
 options.server = "174.37.26.119"
 options.port = 0
 
@@ -19,9 +18,6 @@ options.fullscreen = false
 options.width = 1280
 options.height = 720
 options.fov = 85
-
-
---1280x720
 
 -- mouse --
 options.sensitivity = 1000
@@ -35,6 +31,10 @@ options.hud = true
 options.sound = true
 options.sfx = 100
 options.music = 100
+
+-- graphics --
+options.animations = true;
+options.placement_outline = false;
 
 -- help --
 options.show_tips = true;

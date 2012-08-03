@@ -27,6 +27,7 @@ void load_item_dat()
     s.max_stack_size = 64;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "regolith");
+    s.cube_height = 1;
 
     item_def(4, IG_RESOURCE, "quartz_crystal");
     sprite_def(i0, 1,5);
@@ -85,7 +86,8 @@ void load_item_dat()
     item_def(13, IG_DEBUG, "block_placer");
     sprite_def(i0, 4,5);
     s.pretty_name = (char*) "Block Placer";
-
+    s.cube_height = 1;
+    
     item_def(14, IG_UNKNOWN, "unknown");
     sprite_def(i0, 5,1);
     s.pretty_name = (char*) "Unknown";
@@ -105,6 +107,7 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "small_storage");
     s.container_type = CONTAINER_TYPE_STORAGE_BLOCK_SMALL;
     container_block_def("small_storage", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    s.cube_height = 1;
 
     // level 1 utility crafting block
     item_def(17, IG_PLACER, "small_crafting_bench");
@@ -116,6 +119,7 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "small_crafting_bench");
     s.container_type = CONTAINER_TYPE_CRAFTING_BENCH_UTILITY;
     container_block_def("small_crafting_bench", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
+    s.cube_height = 1;
 
     // Copper
     item_def(32, IG_RESOURCE, "copper_ore");
@@ -238,7 +242,8 @@ void load_item_dat()
     s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_1");
-    
+    s.cube_height = 1;
+
     item_def(47, IG_PLACER, "steel_block_2");
     s.pretty_name = (char*) "Steel block #2";
     iso_block_sprite_def("steel_block_2");
@@ -246,6 +251,7 @@ void load_item_dat()
     s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_2");
+    s.cube_height = 1;
 
     item_def(48, IG_PLACER, "steel_block_3");
     s.pretty_name = (char*) "Steel Block #3";
@@ -254,7 +260,7 @@ void load_item_dat()
     s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_3");
-
+    s.cube_height = 1;
 
     item_def(49, IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
@@ -271,6 +277,7 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "cryofreezer_1");
     s.container_type = CONTAINER_TYPE_CRYOFREEZER_SMALL;
     container_block_def("cryofreezer_1", CONTAINER_TYPE_CRYOFREEZER_SMALL);
+    s.cube_height = 1;
 
     item_def(51, IG_RESOURCE, "methane_ice");
     sprite_def(i0, 1,4);
@@ -290,7 +297,7 @@ void load_item_dat()
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "smelter_1");
     s.container_type = CONTAINER_TYPE_SMELTER_ONE;
     container_block_def("smelter_1", CONTAINER_TYPE_SMELTER_ONE);
-
+    s.cube_height = 1;
 
     item_def(53, IG_PLACER, "control_node");
     iso_block_sprite_def("control_node");
@@ -299,6 +306,7 @@ void load_item_dat()
     s.max_stack_size = 8;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "control_node");
+    s.cube_height = 1;
 
     item_def(54, IG_ENERGY_TANK, "energy_tank");
     sprite_def(i0, 2,8);
@@ -309,11 +317,13 @@ void load_item_dat()
     sprite_def(i1, 2,6);
     s.pretty_name = (char*) "Spawner";
     s.max_stack_size = 1;
+    s.cube_height = 2;
 
     item_def(56, IG_ENERGY_CORE, "energy_core");
     sprite_def(i1, 3,6);
     s.pretty_name = (char*) "Energy Core";
     s.max_stack_size = 1;
+    s.cube_height = 1;
 
     end_item_dat(); // finalize
     
@@ -348,6 +358,8 @@ void verify_item_dat()
 
         // particle voxel texture shouldn't be set if its not a particle voxel -- likely mistake
         GS_ASSERT(item_attribute_array[i].particle_voxel || (!item_attribute_array[i].particle_voxel && item_attribute_array[i].particle_voxel_texture == 0));
+        // particle voxel should have a cube height of 1
+        GS_ASSERT(!item_attribute_array[i].particle_voxel || item_attribute_array[i].cube_height == 1);
     }
 }
 
@@ -372,7 +384,7 @@ void end_item_dat()
 
 void iso_block_sprite_def(const char* block_name)
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     if (_item_cube_iso_spritesheet_id == -1)
     {
         printf("Error: iso_block_sprite_def, must call start_item_dat!!!\n");
@@ -386,7 +398,7 @@ void iso_block_sprite_def(const char* block_name)
 
     int index = LUA_blit_item_texture(_item_cube_iso_spritesheet_id, xpos+1, ypos+1);
     sprite_array[_current_item_id] = index; //check
-#endif
+    #endif
 }
 
 

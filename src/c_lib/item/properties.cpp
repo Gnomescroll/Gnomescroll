@@ -227,6 +227,15 @@ int get_particle_voxel_texture(int item_type)
     return attr->particle_voxel_texture;
 }
 
+int get_item_cube_height(int item_type)
+{
+    if (item_type == NULL_ITEM_TYPE) return 0;
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 0;
+    return attr->cube_height;
+}
+
 float get_weapon_range(int weapon_type)
 {
     if (weapon_type == NULL_ITEM_TYPE) return 1.0f;

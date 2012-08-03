@@ -332,6 +332,14 @@ int run()
         Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
 
+        if (Options::placement_outline)
+        {
+            // draw outline of facing block
+            glDisable(GL_TEXTURE_2D);
+            Animations::draw_placement_outline(equipped_item_type);
+            glEnable(GL_TEXTURE_2D);
+        }
+
         CHECK_GL_ERROR();   //check error before hud
 
         if (Options::hud)

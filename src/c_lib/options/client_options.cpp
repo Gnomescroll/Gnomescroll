@@ -44,6 +44,7 @@ OPT_STRING(sound_device, "")
 
 /* Graphics */
 OPT_BOOL(animations, true)
+OPT_BOOL(placement_outline, false);
 
 /* Logging */
 OPT_BOOL(logger, false)
@@ -89,6 +90,7 @@ void register_options()
 
     /* Graphics */
     OPT_BOOL_REGISTER(animations)
+    OPT_BOOL_REGISTER(placement_outline)
 
     /* Logging */
     OPT_BOOL_REGISTER(logger)
