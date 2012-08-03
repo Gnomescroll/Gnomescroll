@@ -9,8 +9,8 @@ unsigned int* _random = NULL;
 void init_env_process()
 {
     GS_ASSERT(_random == NULL);
-    _random = (unsigned int*)malloc(256 * sizeof(unsigned int));
-    for (int i=0; i<256; i++) _random[i] = (unsigned int)rand();
+    _random = (unsigned int*)malloc(RAS * sizeof(unsigned int));
+    for (int i=0; i<RAS; i++) _random[i] = (unsigned int)rand();
 }
 
 void teardown_env_process()
@@ -27,7 +27,7 @@ void environment_process_tick()
     
     static int regolith_id = dat_get_cube_id("regolith");
 
-    static int _random_index = 0;
+    static int _random_index = rand();
     _random_index = (_random_index+rand() ) % RAS;
 
     static int x=0; 
