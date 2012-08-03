@@ -7,7 +7,8 @@
 namespace HudFont
 {
 
-struct Glyph {
+struct Glyph
+{
     float x;
     float y;
     float xoff;
@@ -84,4 +85,4 @@ void end_world_font_draw();
 void set_texture();
 
 
-}
+}   // HudFont

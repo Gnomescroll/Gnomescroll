@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL/SDL_functions.h>
+
 char *textFileRead(char *fn);
 
 //info log print
@@ -134,9 +136,11 @@ class SHADER
         {
             if(DEBUG1) printShaderInfoLog(shader);
         }
-
         //if(DEBUG1) printProgramInfoLog(shader);
-        shader_valid = true;
+
+        if (shader_error_occured(shader)) shader_valid = false;
+        else shader_valid = true;
+        CHECK_GL_ERROR();
     }
 
     int get_attribute(const char* attribute_name)
@@ -145,12 +149,13 @@ class SHADER
         if(attribute_index == 16) GS_ABORT();
 
         int attribute = glGetAttribLocation(shader, attribute_name);
-
         if(attribute == -1)
         {
             printf("SHADER: get_attribute failed. shader= %s attribute= %s \n", name, attribute_name);
             return -1;
         }
+        CHECK_GL_ERROR();
+
         attribute_array[attribute_index] = attribute;
         attribute_index++;
         return attribute;
@@ -167,6 +172,8 @@ class SHADER
             printf("SHADER: get_uniform failed. shader= %s uniform= %s \n", name, uniform_name);
             return -1;
         }
+        CHECK_GL_ERROR();
+
         uniform_array[uniform_index] = uniform;
         uniform_index++;
         return uniform;

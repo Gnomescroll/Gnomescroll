@@ -67,6 +67,8 @@ void BillboardTextHud::draw()
 
     this->set_depth((float)sz);
     this->draw_centered();
+
+    CHECK_GL_ERROR();
 }
 
 }   // Particle

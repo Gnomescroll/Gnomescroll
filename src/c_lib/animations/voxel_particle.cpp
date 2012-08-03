@@ -137,6 +137,8 @@ void prep_voxel_particles()
 
 void draw_voxel_particles()
 {
+    if (!voxel_particle_shader.shader_valid) return;
+    
     GS_ASSERT(current_camera != NULL);
     if (current_camera == NULL) return;
 
@@ -182,6 +184,8 @@ void draw_voxel_particles()
 
     glDisable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
+
+    CHECK_GL_ERROR();
 }
 
 }   // Animations

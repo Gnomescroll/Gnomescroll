@@ -392,8 +392,7 @@ void init()
 
 void teardown()
 {
-    if (fonts == NULL)
-        return;
+    if (fonts == NULL) return;
         
     for (int i=0; i<n_fonts; i++)
         if (fonts[i] != NULL)
@@ -409,10 +408,9 @@ void set_texture()
 {
     if (font == NULL) return;
     if (bound_gl_font == font) return; // no need to rebind
-    if (bound_gl_font != NULL) glEnd();
-    glBindTexture(GL_TEXTURE_2D, font->texture);
-    glBegin(GL_QUADS);
     bound_gl_font = font;
+    glBindTexture(GL_TEXTURE_2D, font->texture);
+    CHECK_GL_ERROR();
 }
 
 // call this once for all hud text
@@ -423,6 +421,7 @@ void start_font_draw(GLenum blend_func)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,blend_func);
     glEnable(GL_TEXTURE_2D);
+    CHECK_GL_ERROR();
 }
 
 void start_font_draw()
@@ -433,10 +432,12 @@ void start_font_draw()
 // call this when done with all hud text
 void end_font_draw()
 {
-    if (bound_gl_font != NULL) glEnd();
+    GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_BLEND, true);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
     bound_gl_font = NULL;
+    CHECK_GL_ERROR();
 }
 
 // call this once for all world space text
@@ -447,15 +448,17 @@ void start_world_font_draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
+    CHECK_GL_ERROR();
 }
 
 // call this when done with all text
 void end_world_font_draw()
 {
-    if (bound_gl_font != NULL) glEnd();
+    GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_BLEND, true);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-    bound_gl_font = NULL;
+    CHECK_GL_ERROR();
 }
 
-}
+}   // HudFont

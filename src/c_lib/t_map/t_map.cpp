@@ -50,7 +50,7 @@ void set(int x, int y, int z, int value)
 {
     #if DC_SERVER
     if (value != get(x,y,z))
-		t_map::destroy_item_container_block(x,y,z);
+        t_map::destroy_item_container_block(x,y,z);
     #endif
     main_map->set_block(x,y,z,value);
 }
@@ -58,7 +58,7 @@ void set(int x, int y, int z, int value)
 OPTIMIZED
 void set_fast(int x, int y, int z, int value)
 {
-	main_map->set_block(x,y,z,value);
+    main_map->set_block(x,y,z,value);
 }
 
 struct MAP_ELEMENT get_element(int x, int y, int z)
@@ -106,7 +106,6 @@ void init_for_draw()
 {
     init_cache();
     init_shaders();
-
     control_node_render_init(&main_map->control_node_list);
 }
 #endif
@@ -334,18 +333,18 @@ inline int get_lowest_solid_block(int x, int y)
 
 inline bool position_is_loaded(int x, int y)
 {
-	#if DC_SERVER
-	return true;
-	#endif
-	
-	#if DC_CLIENT
+    #if DC_SERVER
+    return true;
+    #endif
+    
+    #if DC_CLIENT
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-	int cx = x / TERRAIN_CHUNK_WIDTH;
-	int cy = y / TERRAIN_CHUNK_WIDTH;
-	int chunk = cx + cy*MAP_CHUNK_XDIM;
-	return (main_map->chunk_heights_status[chunk] != CHUNK_HEIGHT_UNSET);
-	#endif
+    int cx = x / TERRAIN_CHUNK_WIDTH;
+    int cy = y / TERRAIN_CHUNK_WIDTH;
+    int chunk = cx + cy*MAP_CHUNK_XDIM;
+    return (main_map->chunk_heights_status[chunk] != CHUNK_HEIGHT_UNSET);
+    #endif
 }
 
 bool block_can_be_placed(int x, int y, int z, int value)

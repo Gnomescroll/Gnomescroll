@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <common/template/simple_object_list.hpp>
 #include <physics/verlet_particle.hpp>
 

@@ -203,6 +203,8 @@ int run()
         else
             t_map::draw_map();
 
+        CHECK_GL_ERROR();
+
         poll_mouse();
 
 
@@ -212,12 +214,16 @@ int run()
 
         t_mob::draw();
 
+        CHECK_GL_ERROR();
+
         glDisable(GL_TEXTURE_2D);
         GL_ASSERT(GL_TEXTURE_2D, false);
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
         GL_ASSERT(GL_DEPTH_WRITEMASK, true);
         ClientState::voxel_render_list->draw();
+
+        CHECK_GL_ERROR();
 
         // quads
         GL_ASSERT(GL_DEPTH_TEST, true);
@@ -227,6 +233,8 @@ int run()
         Particle::colored_minivox_list->draw();
         Components::colored_voxel_component_list->call();
         glEnd();
+
+        CHECK_GL_ERROR();
 
         GL_ASSERT(GL_BLEND, false);
 
@@ -239,6 +247,9 @@ int run()
         Components::textured_voxel_component_list->call();
 
         glEnd();
+
+        CHECK_GL_ERROR();
+
 
         //obj_load::draw_model(0.0f,0.0f,0.0f); //draw test model
         //glDisable(GL_TEXTURE_2D);
@@ -254,12 +265,16 @@ int run()
         ItemParticle::draw();
         //t_mech::draw();
         
+        CHECK_GL_ERROR();
+
         /*
             Transparent
         */
 
         Particle::billboard_text_list->draw();
         
+        CHECK_GL_ERROR();
+
         //Animations::draw_insect_mob();
 
         // draw animations
@@ -269,7 +284,11 @@ int run()
         t_map::control_node_render_update();    //move this somewhere later
         t_map::control_node_render_draw();      //draw control node perimeter
         
+        CHECK_GL_ERROR();
+
         Skybox::draw();
+
+        CHECK_GL_ERROR();
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         Animations::draw_hitscan_effect();
@@ -277,12 +296,16 @@ int run()
         Animations::draw_mining_laser_effect();
         Animations::draw_voxel_particles();
 
+        CHECK_GL_ERROR();
+
         poll_mouse();
 
         Particle::begin_particle_draw();
         Particle::grenade_list->draw();
         Particle::blood_list->draw();
         Particle::end_particle_draw();
+
+        CHECK_GL_ERROR();
 
         glDepthMask(GL_TRUE);
 
@@ -292,6 +315,8 @@ int run()
         poll_mouse();
 
         ClientState::agent_list->draw_equipped_items();
+
+        CHECK_GL_ERROR();
 
         /*
             Draw Hud
@@ -307,7 +332,7 @@ int run()
         Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
 
-        check_gl_error();   //check error before hud
+        CHECK_GL_ERROR();   //check error before hud
 
         if (Options::hud)
         {
@@ -323,8 +348,10 @@ int run()
             #ifdef AWESOMIUM
             Awesomium::_draw();
             #endif
+
+            CHECK_GL_ERROR();  //check error after hud rendering
         }
-        
+
         poll_mouse();
         // update sound
         Sound::update();
@@ -356,7 +383,6 @@ int run()
 
         poll_mouse();
 
-        check_gl_error();  //check error after hud rendering
         _swap_buffers();
         poll_mouse();
 

@@ -245,6 +245,8 @@ void prep_skybox()
 
 void draw()
 {
+    if (!star_shader.shader_valid) return;
+    
     GS_ASSERT(current_camera != NULL);
     if (current_camera == NULL) return;
 

@@ -1,10 +1,10 @@
 #include "shader_loader.hpp"
 
-#include <common/compat_gl.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <common/compat_gl.h>
 
 char *textFileRead(char *fn)
 {
@@ -118,8 +118,15 @@ void load_shaders(char *vert, char* frag, GLuint* prog)
 //returns true if error
 bool shader_error_occured(int shader) 
 {
+    if (shader == 0)
+    {
+        printf("shader_error_check: shader creation failed\n");
+        return true;
+    }
+    
     GLint status = -1;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);  // this function does not assign any value to &status if a shader was not compiled
+    glGetError();   // clear error
     if (status == GL_FALSE)
     {
         printf("shader_error_check: Shader compilation failed! \n");
@@ -127,11 +134,12 @@ bool shader_error_occured(int shader)
     }
 
     glGetProgramiv(shader, GL_LINK_STATUS, &status);
+    glGetError();   // clear error
     if(status == GL_FALSE)
     {
         printf("shader_error_check: Shader linking failed! \n");
         return true;
-     }
-
-  return false;
+    }
+    
+    return false;
 }

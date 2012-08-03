@@ -288,6 +288,7 @@ int init_c_lib(int argc, char* argv[])
     init_image_loader();
     TextureSheetLoader::init();
     //printf("Checkpoint 1 \n");
+
     t_map::init_t_map();
     //printf("Checkpoint 2 \n");
     HudCubeSelector::init();
@@ -297,12 +298,14 @@ int init_c_lib(int argc, char* argv[])
 
     //printf("Checkpoint 4 \n");
     t_map::init_for_draw();
+
     t_map::blit_block_item_sheet();
     //printf("Checkpoint 5 \n");
 
     HudText::init();
     HudFont::init();
     HudMap::init();
+    //exit(0);
 
     Item::init();
     ItemContainer::init();
@@ -367,7 +370,7 @@ int init_c_lib(int argc, char* argv[])
 
     //t_gen::generate_random_tile();
     t_mob::init();
-    //check_gl_error();
+    //CHECK_GL_ERROR();
     return 0;
 }
 

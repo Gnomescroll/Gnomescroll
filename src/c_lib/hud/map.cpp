@@ -21,7 +21,7 @@ static const int screen_x_offset = 50;  // from left
 static const int screen_y_offset = 50;   // from bottom;
 
 static SDL_Surface* map_surface = NULL;
-static GLuint map_textures[2];
+static GLuint map_textures[2] = {0};
 
 static SDL_Surface* gradient_surface = NULL;
 
@@ -143,9 +143,11 @@ void init_surface()
     
     // texture
     glEnable(GL_TEXTURE_2D);
+    glGenTextures(2, map_textures);
     for (int i=0; i<2; i++)
     {
-        glGenTextures(1, &map_textures[i]);
+        GS_ASSERT(map_textures[i] != 0);
+        if (map_textures[i] == 0) continue;
         glBindTexture(GL_TEXTURE_2D, map_textures[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -153,6 +155,7 @@ void init_surface()
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels);
     }
     glDisable(GL_TEXTURE_2D);
+    CHECK_GL_ERROR();
 }
 
 void init()
@@ -217,13 +220,16 @@ void update_texture(GLuint texture, SDL_Surface* surface)
     if (texture == 0) return;
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;
+
+    GS_ASSERT(map_dim.x != 0 && map_dim.y != 0);
+    if (map_dim.x == 0 || map_dim.y == 0) return;
     
     glEnable(GL_TEXTURE_2D);
-
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, map_dim.x, map_dim.y, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
-
     glDisable(GL_TEXTURE_2D);
+
+    CHECK_GL_ERROR();
 }
 
 void draw_2x2_pixel(SDL_Surface* surface, Uint32 pix, int x, int y)
@@ -338,7 +344,7 @@ void draw_text()
 {
     const float z = -0.1f;
     draw_text_icons(z);
-    draw_text_icons(z);
+    CHECK_GL_ERROR();
 }
 
 void draw()
@@ -362,7 +368,7 @@ void draw()
     update_counter++;
 
     GS_ASSERT(map_textures[draw_map_texture_index] != 0);
-    if (map_textures[draw_map_texture_index] != 0) return;
+    if (map_textures[draw_map_texture_index] == 0) return;
 
     static const float z = -0.03f;
 
@@ -377,6 +383,8 @@ void draw()
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
+
+    CHECK_GL_ERROR();
 }
 
 void teardown()

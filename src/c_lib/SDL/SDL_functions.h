@@ -14,7 +14,9 @@ void close_SDL();
 
 void save_screenshot();
 
-void check_gl_error();
+int check_gl_error();
+int check_gl_error(const char* filename, const int line_no);
+#define CHECK_GL_ERROR() check_gl_error(__FILE__, __LINE__)
 
 extern int _xres;
 extern int _yres;

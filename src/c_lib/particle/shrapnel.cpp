@@ -1,5 +1,9 @@
 #include "shrapnel.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <physics/vec3.hpp>
 #include <animations/common.hpp>
 
@@ -34,13 +38,14 @@ void init_shrapnel_shader()
 
 void init_shrapnel()
 {
+    GS_ASSERT(shrapnel_vlist == NULL);
     shrapnel_vlist = new VertexElementList1;
     init_shrapnel_shader();
 }
 
 void teardown_shrapnel()
 {
-    delete shrapnel_vlist;
+    if (shrapnel_vlist != NULL) delete shrapnel_vlist;
 }
 
 /* Shrapnel */
@@ -115,16 +120,15 @@ void Shrapnel_list::tick()
 
 void Shrapnel_list::prep()
 {
-    #if DC_CLIENT
     for(unsigned int i=0; i<this->num; a[i++].prep());
     shrapnel_vlist->buffer();
-    #endif
 }
  
 
 void Shrapnel_list::draw()
 {
-    #if DC_CLIENT
+    if (!shrapnel_shader.shader_valid) return;
+    
     if(shrapnel_vlist->vertex_number == 0) return;
 
     GS_ASSERT(particle_texture != 0);
@@ -166,7 +170,6 @@ void Shrapnel_list::draw()
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
-    #endif
 }
 
 }

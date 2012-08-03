@@ -373,10 +373,10 @@ class ControlNodeRenderer
 
     ControlNodeRenderer(class CONTROL_NODE_LIST* _cnl)
     {
-        cnri = 0;
-        cnrm = 32;
-        cnl = _cnl;
-        cnra = (struct CONTROL_NODE_RENDER*) malloc(cnrm*sizeof(struct CONTROL_NODE_RENDER));
+        this->cnri = 0;
+        this->cnrm = 32;
+        this->cnl = _cnl;
+        this->cnra = (struct CONTROL_NODE_RENDER*) malloc(this->cnrm*sizeof(struct CONTROL_NODE_RENDER));
     }
 
     ~ControlNodeRenderer()
@@ -401,17 +401,18 @@ class ControlNodeRenderer
 };
 
 
-class ControlNodeRenderer* control_node_renderer;
+class ControlNodeRenderer* control_node_renderer = NULL;
 
 
 void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
 {
+    GS_ASSERT(control_node_renderer == NULL);
     control_node_renderer = new ControlNodeRenderer(_cnl);
 }
 
 void control_node_render_teardown()
 {
-    delete control_node_renderer;
+    if (control_node_renderer != NULL) delete control_node_renderer;
 }
 
 void control_node_render_update()

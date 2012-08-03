@@ -189,6 +189,7 @@ void MiningLaserEffect_list::prep()
 
 void MiningLaserEffect_list::draw()
 {
+    if (!mining_laser_shader.shader_valid) return;
 
     if(mining_laser_vlist->vertex_number == 0) return;
     const static unsigned int stride = sizeof(struct vertexElement1);

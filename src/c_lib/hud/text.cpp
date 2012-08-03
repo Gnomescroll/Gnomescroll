@@ -10,13 +10,12 @@ Text_list* text_list = NULL;
 
 void init()
 {
-    if (text_list == NULL)
+    GS_ASSERT(text_list == NULL);
     text_list = new Text_list;
 }
 void teardown()
 {
-    if (text_list != NULL)
-        delete text_list;
+    if (text_list != NULL) delete text_list;
 }
 
 void blit_character(
@@ -26,6 +25,7 @@ void blit_character(
     float screen_y_min, float screen_y_max,
     float depth)
 {
+    glBegin(GL_QUADS);
     glTexCoord2f(tex_x_min, tex_y_max);
     glVertex3f(screen_x_min, screen_y_max, depth);
     glTexCoord2f(tex_x_min, tex_y_min);
@@ -34,6 +34,7 @@ void blit_character(
     glVertex3f(screen_x_max, screen_y_min, depth);
     glTexCoord2f(tex_x_max, tex_y_max);
     glVertex3f(screen_x_max, screen_y_max, depth);
+    glEnd();
 }
 
 void blit_character_rotated(
@@ -49,7 +50,8 @@ void blit_character_rotated(
     cy = (screen_y_max - screen_y_min) / 2 + screen_y_min;
 
     float rx,ry;
-    
+
+    glBegin(GL_QUADS);
     glTexCoord2f(tex_x_min+cx, tex_y_max);
     rotate_point(screen_x_min-cx, screen_y_max-cy, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, depth);
@@ -65,17 +67,18 @@ void blit_character_rotated(
     glTexCoord2f(tex_x_max, tex_y_max);
     rotate_point(screen_x_max-cx, screen_y_max-cy, theta, &rx, &ry);
     glVertex3f(rx+cx, ry+cy, depth);
+    glEnd();
 }
 
 void draw_string(const char* text, const float x, const float y,
-				 const float depth, const float scale)
+                 const float depth, const float scale)
 {
-	draw_string(text, 0, 0, x, y, depth, scale);
+    draw_string(text, 0, 0, x, y, depth, scale);
 }
 
 // 0 len means all
 void draw_string(const char* text, const unsigned int start, const unsigned int len,
-	const float x, const float y, const float depth, const float scale)
+    const float x, const float y, const float depth, const float scale)
 {
     if (HudFont::font == NULL) return;
 
@@ -89,7 +92,7 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
     char c;
     // draw up to len, if len != 0. always stop at \0
     while ((len == 0 || i < start+len) && (c = text[i++]) != '\0')
-    {                		        
+    {                               
         if (c == '\n')
         {
             cursor_x = 0.0f;
@@ -99,11 +102,11 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
 
         glyph = HudFont::font->get_glyph(c);
 
-		if (i-1 < start)
-		{
-			cursor_x += glyph.xadvance;
-			continue;
-		}
+        if (i-1 < start)
+        {
+            cursor_x += glyph.xadvance;
+            continue;
+        }
 
         tx_max = glyph.x;
         tx_min = glyph.x + glyph.tw;
@@ -116,9 +119,9 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
         sy_max = y - (cursor_y + glyph.yoff + glyph.h) * scale;
 
         blit_character(tx_min, tx_max, ty_min, ty_max,
-					   sx_min, sx_max, sy_min, sy_max, depth);
+                       sx_min, sx_max, sy_min, sy_max, depth);
 
-        cursor_x += glyph.xadvance;					
+        cursor_x += glyph.xadvance;                 
     }
 }
 
@@ -142,8 +145,8 @@ char* Text::set_string(const char* text, char* this_text, unsigned int* this_len
     }
     else
     if (len > *this_len)
-	{   // string is greater size
-		char* new_this_text = (char*)realloc(this_text, sizeof(char)*(len+1));
+    {   // string is greater size
+        char* new_this_text = (char*)realloc(this_text, sizeof(char)*(len+1));
         GS_ASSERT(new_this_text != NULL);
         if (new_this_text == NULL)
         {
@@ -153,9 +156,9 @@ char* Text::set_string(const char* text, char* this_text, unsigned int* this_len
         }
         else this_text = new_this_text;
         
-		*this_len = len;
-	}
-	// copy string over
+        *this_len = len;
+    }
+    // copy string over
     strcpy(this_text, text);
     return this_text;
 }
@@ -192,8 +195,8 @@ void Text::draw_character_rotated_centered(float theta)
 
 char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
 {
-	GS_ASSERT(*str_len < n);
-	if (*str_len >= n) return str;
+    GS_ASSERT(*str_len < n);
+    if (*str_len >= n) return str;
     if (str == NULL)
         str = (char*)malloc(sizeof(char) * (n+1));
     else
@@ -214,7 +217,7 @@ char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
 
 void Text::set_text(const char* text)
 {
-	if (text == NULL) text = "";
+    if (text == NULL) text = "";
     this->text = this->set_string(text, this->text, &this->text_len);
 }
 
@@ -244,14 +247,14 @@ void Text::update_formatted_string(int n_args, ...)
     GS_ASSERT(len > 0);
     if (len > (int)this->text_len)
     {
-		unsigned int new_len = this->text_len;
+        unsigned int new_len = this->text_len;
         char* new_text = grow_string(len, this->text, &new_len);
         if (new_text != NULL)
         {
-			this->text = new_text;
-			this->text_len = new_len;
-		}
-	}
+            this->text = new_text;
+            this->text_len = new_len;
+        }
+    }
     va_list args;
     va_start(args, n_args);
     vsprintf(this->text, this->format, args);
@@ -463,4 +466,4 @@ Text::~Text()
         free(this->format);
 }
 
-}	// HudText
+}   // HudText
