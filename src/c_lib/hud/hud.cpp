@@ -25,7 +25,7 @@ static const char help_text[] =
 "    Esc             Quit\n"
 "    WASD            Move\n"
 "    Space           Jump\n"
-"    Z               Jetpack\n"
+"    Left Shift      Jetpack\n"
 "    E               Open inventory\n"
 "    Num keys        Select weapon\n"
 "    Scrollwheel     Select weapon\n"
@@ -439,9 +439,7 @@ void draw_hud()
 
     CHECK_GL_ERROR();
 
-    //start_font_draw();
     draw_hud_text();
-    //end_font_draw();
 
     CHECK_GL_ERROR();
 
@@ -528,7 +526,9 @@ void HUD::init()
     health->set_format(health_format);
     health->set_format_extra_length(count_digits(AGENT_HEALTH) - 4);
     health->update_formatted_string(1, AGENT_HEALTH);
-    health->set_position((_xresf - health->get_width())/2.0f, health->get_height() + 40);
+    GS_ASSERT(t_hud::energy_tanks != NULL);
+    float health_x = t_hud::energy_tanks->xoff + t_hud::energy_tanks->width() + 1;
+    health->set_position(health_x, _yresf - t_hud::energy_tanks->yoff - health->get_height());
     health->set_color(255,255,255,255);
 
     // add color for health text animations
@@ -629,14 +629,15 @@ void ChatRender::init()
     GS_ASSERT(!this->inited);
     if (this->inited) return;
     int i=0;
-    int line_height = HudFont::font->data.line_height;
+    int line_height = HudFont::font->data.line_height + 2;
+    const int lines_offset = 5;
     const int x_offset = 2;   // from the left
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
         HudText::Text* t = HudText::text_list->create();
         GS_ASSERT(t != NULL);
         if (t == NULL) return;
-        t->set_position(x_offset, ((CHAT_MESSAGE_RENDER_MAX+3)*(line_height + 2)) - (line_height + 2) * i);
+        t->set_position(x_offset, line_height * (CHAT_MESSAGE_RENDER_MAX+lines_offset - i));
         t->set_text("");
         t->set_format("%s%s%s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
@@ -649,7 +650,7 @@ void ChatRender::init()
     if (input == NULL) return;
     input->set_text("");
     input->set_color(255,10,10,255);
-    input->set_position(x_offset, (line_height + 2)*3);
+    input->set_position(x_offset, line_height*lines_offset);
     
     this->inited = true;
 }

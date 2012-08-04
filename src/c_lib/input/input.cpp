@@ -22,30 +22,26 @@ int init_input()
     static int inited = 0;
     GS_ASSERT(inited == 0);
     if (inited) return 1;
-    keystate = SDL_GetKeyState(&numkeys);
+    keystate = SDL_GetKeyState(&numkeys);    
     SDL_EnableUNICODE(SDL_ENABLE);
-	init_mouse();
+    init_mouse();
     inited++;
     return 0;
 }
 
 void teardown_input()
 {
-	teardown_mouse();
+    teardown_mouse();
 }
 
 int get_key_state()
 {
     SDL_PumpEvents();
 
-    key_state_handler(keystate, numkeys);
-    //if (keystate['`'] != 0)
-    //{
-        //for (int x=0; x<numkeys; x++)
-            //if (keystate[x] != 0) printf("%i='%c' ", x, (char)x);
+    //for (int i=0; i<numkeys; i++) if (keystate[i]) printf("%d ", i);
+    //for (int i=0; i<numkeys; i++) if (keystate[i]) { printf("\n"); break; }
 
-        //printf("\n");
-    //}
+    key_state_handler(keystate, numkeys);
 
     return 0;
 }
@@ -271,7 +267,7 @@ void init_mouse()
 
 void teardown_mouse()
 {
-	if (MOUSE_MOVEMENT_ARRAY != NULL) free(MOUSE_MOVEMENT_ARRAY);
+    if (MOUSE_MOVEMENT_ARRAY != NULL) free(MOUSE_MOVEMENT_ARRAY);
 }
 
 /*
@@ -279,16 +275,16 @@ void teardown_mouse()
 */
 void apply_camera_physics()
 {
-	GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
-	if (MOUSE_MOVEMENT_ARRAY == NULL) return;
+    GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
+    if (MOUSE_MOVEMENT_ARRAY == NULL) return;
 
     static long LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
     long current_time = _GET_MS_TIME();
     if (current_time == LAST_MOUSE_MOVEMENT_TIME) return;
 
-	GS_ASSERT(current_time > LAST_MOUSE_MOVEMENT_TIME);
-	if (current_time < LAST_MOUSE_MOVEMENT_TIME) return;
-	
+    GS_ASSERT(current_time > LAST_MOUSE_MOVEMENT_TIME);
+    if (current_time < LAST_MOUSE_MOVEMENT_TIME) return;
+    
     const float cfactor = 1.0f/33.3333f;
     float _dampening = powf(dampening, cfactor); // dampening per frame
 
@@ -366,16 +362,16 @@ void apply_camera_physics()
 
 void poll_mouse()
 {
-	GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
-	if (MOUSE_MOVEMENT_ARRAY == NULL) return;
+    GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
+    if (MOUSE_MOVEMENT_ARRAY == NULL) return;
     if (input_state.agent_container || input_state.container_block) return;
 
     if (input_state.ignore_mouse_motion)
-    {	// flush mouse buffer
+    {   // flush mouse buffer
         MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dx = 0;
         MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dy = 0;
         MOUSE_MOVEMENT_ARRAY_INDEX++;
-		MOUSE_MOVEMENT_ARRAY_INDEX %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
+        MOUSE_MOVEMENT_ARRAY_INDEX %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
         return;
     }
     

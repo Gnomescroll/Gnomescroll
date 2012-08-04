@@ -518,8 +518,13 @@ void Agent_state::spawn_state()
 {   // update position
     Vec3 spawn;
     this->get_spawn_point(&spawn);
+    this->spawn_state(spawn);
+}
+
+void Agent_state::spawn_state(Vec3 p)
+{   // update position
     float theta = this->status.get_spawn_angle();
-    teleport(spawn.x, spawn.y, spawn.z, 0, 0, 0, theta, 0.0f);
+    teleport(p.x, p.y, p.z, 0, 0, 0, theta, 0.0f);
 }
 #endif
 
@@ -574,7 +579,7 @@ id (id), type(OBJECT_AGENT), status(this)
     if (!this->status.net_peer_ready)
         msg.sendToClient(this->client_id);
 
-    this->spawn_state();
+    this->spawn_state(vec3_init(0,0,-256));
     #endif
 }
 

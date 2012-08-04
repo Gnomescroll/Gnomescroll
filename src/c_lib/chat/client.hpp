@@ -14,19 +14,25 @@ class ChatMessage
     
     int id; // only used by object list
 
-    char payload[CHAT_MESSAGE_SIZE_MAX+1];
+    char* payload;
     int sender;
     int channel;
 
     int timestamp;
 
     struct Color color;
-    char name[PLAYER_NAME_MAX_LENGTH+1];
+    char* name;
 
     void set_color();
     void set_name();
     
     explicit ChatMessage(int id);
+
+    ~ChatMessage()
+    {
+        free(this->name);
+        free(this->payload);
+    }
 };
 
 class ChatMessageHistoryObject

@@ -24,20 +24,20 @@ void ChatMessage::set_name()
 void ChatMessage::set_color()
 {
     if (sender == CHAT_SENDER_SYSTEM) // system msg
-		this->color = CHAT_SYSTEM_COLOR;
+        this->color = CHAT_SYSTEM_COLOR;
     else if (
         ClientState::playerAgent_state.agent_id >= 0
      && ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
-    )	 // pm
-		this->color = CHAT_PM_COLOR;
+    )    // pm
+        this->color = CHAT_PM_COLOR;
     else // global
     {
-		Agent_state *a = ClientState::agent_list->get(this->sender);
-		struct Color color = CHAT_GLOBAL_COLOR;
-		if (a != NULL && a->status.color_chosen)
-			color = a->status.color;
-		this->color = color;
-	}
+        Agent_state *a = ClientState::agent_list->get(this->sender);
+        struct Color color = CHAT_GLOBAL_COLOR;
+        if (a != NULL && a->status.color_chosen)
+            color = a->status.color;
+        this->color = color;
+    }
 }
 
 ChatMessage::ChatMessage(int id)
@@ -45,7 +45,10 @@ ChatMessage::ChatMessage(int id)
 id(id),
 timestamp(0),
 color(CHAT_UNKNOWN_COLOR)
-{}
+{
+    this->payload = (char*)calloc(CHAT_MESSAGE_SIZE_MAX+1, sizeof(char));
+    this->name = (char*)calloc(PLAYER_NAME_MAX_LENGTH+1, sizeof(char));
+}
 
 /* ChatMessageHistoryObject */
 
@@ -217,14 +220,25 @@ void ChatInput::clear_buffer()
 
 void ChatInput::add(char x)
 {
-    if (cursor == CHAT_BUFFER_SIZE) return;
-    if (buffer_len == CHAT_BUFFER_SIZE) return;
+    int n_chars = 1;
+    if (x == '\t')
+    {
+        n_chars = 4;
+        x = ' ';
+    }
 
-    for (int i=buffer_len; i>=cursor; i--)
-        buffer[i+1] = buffer[i];
+    for (int i=0; i<n_chars; i++)
+    {
+        if (cursor >= CHAT_BUFFER_SIZE) break;
+        if (buffer_len >= CHAT_BUFFER_SIZE) break;
 
-    buffer[cursor++] = x;
-    buffer[++buffer_len] = '\0';
+       for (int j=buffer_len; j>=cursor; j--)
+            buffer[j+1] = buffer[j];
+
+        buffer[cursor++] = x;
+        buffer[++buffer_len] = '\0';
+    }
+    buffer[buffer_len] = '\0';
 }
 
 void ChatInput::remove()
@@ -306,9 +320,9 @@ bool ChatInput::route_command()
 
     if (i == 2) return false;
 
-	while((c = buffer[i++]) != '\0' && isspace(c));	// advance cursor to first non-space char
-	i -= 1;
-	
+    while((c = buffer[i++]) != '\0' && isspace(c)); // advance cursor to first non-space char
+    i -= 1;
+    
     if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
     {
         if (buffer_len <= (int)(strlen((char*)"/name "))) return false;
@@ -319,20 +333,20 @@ bool ChatInput::route_command()
             name[j++] = c;
             if (j == (int)PLAYER_NAME_MAX_LENGTH) break;
         }
-		if (j) ClientState::send_identify_packet(name);
+        if (j) ClientState::send_identify_packet(name);
         return true;
     }
     else
     if (!strcmp(cmd, (char*)"kill") || !strcmp(cmd, (char*)"die"))
     {
-		killme_CtoS msg;
-		msg.send();
-	}
-	else
-	if (!strcmp(cmd, (char*)"color") || !strcmp(cmd, (char*)"colour"))
-	{
-		struct Color color = {0};
-		bool valid = true;
+        killme_CtoS msg;
+        msg.send();
+    }
+    else
+    if (!strcmp(cmd, (char*)"color") || !strcmp(cmd, (char*)"colour"))
+    {
+        struct Color color = {0};
+        bool valid = true;
 
         int start = i;  // save start cursor
 
@@ -386,8 +400,8 @@ bool ChatInput::route_command()
         msg.g = color.g;
         msg.b = color.b;
         msg.send();
-	}
-	//else
+    }
+    //else
     //if (!strcmp(cmd, (char*)"spawner") || cmd[0] == 's' || cmd[0] == 'S')
     //{
         //char spawner[4] = {'\0'};

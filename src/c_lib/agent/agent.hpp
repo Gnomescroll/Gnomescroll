@@ -113,6 +113,7 @@ class Agent_state
 
         #if DC_SERVER
         void spawn_state();
+        void spawn_state(Vec3 p);
         #endif
 
         int* nearest_open_block(const float max_dist, const int z_low, const int z_high);

@@ -37,8 +37,8 @@ void set_container_id(ItemContainerType container_type, int container_id)
             synthesizer_container->container_id = container_id;
             break;
         case AGENT_ENERGY_TANKS:
-			energy_tanks->container_id = container_id;
-			break;
+            energy_tanks->container_id = container_id;
+            break;
             
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             crafting_container->container_id = container_id;
@@ -193,8 +193,8 @@ static int get_item_type_at(int x, int y)
             return Item::get_synthesizer_item(xslot, yslot);
         }
         else if (((AgentSynthesizerUI*)ui)->in_coins_region(x,y))
-			return ((ItemContainerSynthesizerUI*)container)->get_coin_type();
-		return NULL_ITEM_TYPE;
+            return ((ItemContainerSynthesizerUI*)container)->get_coin_type();
+        return NULL_ITEM_TYPE;
     }
     
     if (ui->type == UI_ELEMENT_CRAFTING_CONTAINER)
@@ -437,7 +437,7 @@ void draw_hud()
     if (!agent_container_enabled && !container_block_enabled) return;
 
     energy_tanks->draw_name();
-	agent_toolbelt->draw_name();
+    agent_toolbelt->draw_name();
     agent_container->draw();
     synthesizer_container->draw();    
     
@@ -497,7 +497,7 @@ void init()
     energy_tanks = new EnergyTanksUI;
     energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
     energy_tanks->init();
-    energy_tanks->xoff = _xresf/2 + 45;
+    energy_tanks->xoff = ((_xresf - agent_toolbelt->width())/2);
     energy_tanks->yoff = _yresf - (energy_tanks->height() + agent_toolbelt->height() - 6);
 
     synthesizer_container = new AgentSynthesizerUI;

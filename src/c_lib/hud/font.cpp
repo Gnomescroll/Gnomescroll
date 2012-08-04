@@ -406,6 +406,7 @@ static Font* bound_gl_font = NULL;
 // every time you want to change the font texture, call this
 void set_texture()
 {
+    GS_ASSERT(font != NULL);
     if (font == NULL) return;
     if (bound_gl_font == font) return; // no need to rebind
     bound_gl_font = font;
@@ -458,6 +459,7 @@ void end_world_font_draw()
     GL_ASSERT(GL_BLEND, true);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
+    bound_gl_font = NULL;
     CHECK_GL_ERROR();
 }
 
