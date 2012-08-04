@@ -8,6 +8,8 @@ namespace Toolbelt
 
 void init();
 void teardown();
+void init_packets();
+
 void tick();
 
 void remove_agent(int agent_id);

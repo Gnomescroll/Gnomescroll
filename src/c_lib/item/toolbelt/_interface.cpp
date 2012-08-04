@@ -23,6 +23,21 @@ void teardown()
     teardown_config();
 }
 
+void init_packets()
+{
+    // toolbelt actions (to server)
+    Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();
+    Toolbelt::toolbelt_begin_alpha_action_CtoS::register_server_packet();
+    Toolbelt::toolbelt_end_alpha_action_CtoS::register_server_packet();
+    Toolbelt::toolbelt_beta_action_CtoS::register_server_packet();
+
+    // toolbelt actions (to client)
+    Toolbelt::toolbelt_set_active_item_StoC::register_client_packet();
+    Toolbelt::toolbelt_item_beta_action_StoC::register_client_packet();
+    Toolbelt::toolbelt_item_begin_alpha_action_StoC::register_client_packet();
+    Toolbelt::toolbelt_item_end_alpha_action_StoC::register_client_packet();
+}
+
 /* Miscellaneous Events */
 
 void remove_agent(int agent_id)

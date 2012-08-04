@@ -16,6 +16,10 @@
 #include <item/container/client.hpp>
 #endif
 
+#include <item/container/net/StoC.hpp>
+#include <item/container/net/CtoS.hpp>
+
+
 namespace ItemContainer
 {
 
@@ -73,6 +77,60 @@ void teardown()
     #endif
     
     teardown_config();
+}
+
+void init_packets()
+{
+    // container state
+    create_item_container_StoC::register_client_packet();
+    delete_item_container_StoC::register_client_packet();
+    assign_item_container_StoC::register_client_packet();
+
+    // container actions to server
+    open_container_CtoS::register_server_packet();
+    close_container_CtoS::register_server_packet();
+
+    // container actions to client
+    open_container_failed_StoC::register_client_packet();
+    close_container_StoC::register_client_packet();
+    open_container_StoC::register_client_packet();
+
+    // container transactions to server
+    container_action_alpha_CtoS::register_server_packet();
+    container_action_beta_CtoS::register_server_packet();
+
+    synthesizer_container_action_alpha_CtoS::register_server_packet();
+    synthesizer_container_action_beta_CtoS::register_server_packet();
+    purchase_item_from_synthesizer_action_CtoS::register_server_packet();
+    
+    craft_container_action_alpha_CtoS::register_server_packet();
+    craft_container_action_beta_CtoS::register_server_packet();
+    craft_item_from_bench_action_CtoS::register_server_packet();
+
+    no_container_action_alpha_CtoS::register_server_packet();
+    no_container_action_beta_CtoS::register_server_packet();
+
+    smelter_container_action_alpha_CtoS::register_server_packet();
+    smelter_container_action_beta_CtoS::register_server_packet();
+
+    // container transactions to client
+    container_action_failed_StoC::register_client_packet();
+    insert_item_in_container_StoC::register_client_packet();
+    remove_item_from_container_StoC::register_client_packet();
+    insert_item_in_hand_StoC::register_client_packet();
+    remove_item_from_hand_StoC::register_client_packet();
+
+    // locks
+    lock_container_StoC::register_client_packet();
+    unlock_container_StoC::register_client_packet();
+
+    // container blocks
+    create_container_block_CtoS::register_server_packet();
+    admin_create_container_block_CtoS::register_server_packet();
+
+    // smelter
+    smelter_fuel_StoC::register_client_packet();
+    smelter_progress_StoC::register_client_packet();
 }
 
 

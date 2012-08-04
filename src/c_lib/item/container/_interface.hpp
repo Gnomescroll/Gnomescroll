@@ -8,6 +8,8 @@ namespace ItemContainer
 void init();
 void teardown();
 
+void init_packets();
+
 class ItemContainerInterface* get_container(int id);
 ItemContainerType get_container_type(int container_id);
 void destroy_container(int container_id);

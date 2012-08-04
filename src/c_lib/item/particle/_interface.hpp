@@ -7,6 +7,7 @@ extern class ItemParticle_list* item_particle_list;
 
 void init();
 void teardown();
+void init_packets();
 
 void tick();
 void destroy(int particle_id);
