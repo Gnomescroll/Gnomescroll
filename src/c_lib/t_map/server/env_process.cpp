@@ -29,13 +29,13 @@ void environment_process_tick()
     static int regolith_id = dat_get_cube_id("regolith");
 
     static int _random_index = rand();
-    _random_index = (_random_index+rand() ) % RAS;
+    _random_index = (_random_index+rand()) % RAS;
 
     static int x=0; 
     static int y=0;
     static int z=0;
 
-    for(int i=0; i< 10000; i++)
+    for(int i=0; i<7919; i++)
     {
         struct MAP_ELEMENT e1 = get_element(x,y,z);
 

@@ -1174,7 +1174,6 @@ inline void agent_camera_state_CtoS::handle()
     if (a->id != id) return;
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
-    //printf("Camera state received: %0.2f,%0.2f,%0.2f\n", x,y,z);
 }
 
 

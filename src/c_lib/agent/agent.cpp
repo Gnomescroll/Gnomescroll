@@ -74,19 +74,21 @@ void Agent_state::teleport(float x,float y,float z)
     this->set_position(x,y,z);
 
     #if DC_SERVER
-    Agent_teleport_message A;
+    Agent_teleport_message msg;
 
-    A.id = id;
+    msg.id = id;
 
-    A.x = s.x;
-    A.y = s.y;
-    A.z = s.z;
-    A.vx = s.vx;
-    A.vy = s.vy;
-    A.vz = s.vz;
-    A.theta = s.theta;
-    A.phi = s.phi;
-    A.broadcast();
+    msg.x = s.x;
+    msg.y = s.y;
+    msg.z = s.z;
+    msg.vx = s.vx;
+    msg.vy = s.vy;
+    msg.vz = s.vz;
+    msg.theta = s.theta;
+    msg.phi = s.phi;
+    msg.broadcast();
+    if (!this->status.net_peer_ready)
+        msg.sendToClient(this->client_id);
 
     t_map::t_map_manager_update_client_position(this->id, x,y);
     #endif
@@ -99,20 +101,22 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     s.phi = phi;
     
     #if DC_SERVER
-    Agent_teleport_message A;
+    Agent_teleport_message msg;
 
-    A.id = id;
+    msg.id = id;
 
-    A.x = s.x;
-    A.y = s.y;
-    A.z = s.z;
-    A.vx = s.vx;
-    A.vy = s.vy;
-    A.vz = s.vz;
-    A.theta = s.theta;
-    A.phi = s.phi;
-    A.broadcast();
-    
+    msg.x = s.x;
+    msg.y = s.y;
+    msg.z = s.z;
+    msg.vx = s.vx;
+    msg.vy = s.vy;
+    msg.vz = s.vz;
+    msg.theta = s.theta;
+    msg.phi = s.phi;
+    msg.broadcast();
+    if (!this->status.net_peer_ready)
+        msg.sendToClient(this->client_id);
+
     t_map::t_map_manager_update_client_position(this->id, x,y);
     #endif
 }
