@@ -1,5 +1,13 @@
 #pragma once
 
+//#if DC_SERVER
+//#include <t_mech/net/StoC.hpp>
+//#endif
+
+namespace t_mech 
+{
+
+
 class MECH
 {
     public:
@@ -94,7 +102,7 @@ class MECH_LIST
         return; //PRODUCTION
         this->add_mech(x,y,z);
 
-        mech_create_create_StoC p;
+        mech_create_StoC p;
         p.x = x;
         p.y = y;
         p.z = z;
@@ -105,7 +113,7 @@ class MECH_LIST
     {
         remove_mech(x,y,z);
 
-        mech_create_delete_StoC p;
+        mech_delete_StoC p;
         p.x = x;
         p.y = y;
         p.z = z;

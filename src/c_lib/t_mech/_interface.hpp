@@ -16,7 +16,7 @@ enum MECH_TYPE
 	MECH_SWITCH
 };
 
-struct MECH
+struct _MECH
 {
     int x,y,z; //position
     int type;  //type
