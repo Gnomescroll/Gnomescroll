@@ -21,46 +21,46 @@ class MECH_LIST
 {
     public:
 
-    int cpi; //control point index
-    int cpm; //control point max
-    class MECH* cpa; //control point array;
+    int mli; //control point index
+    int mlm; //control point max
+    class MECH* mla; //control point array;
 
     bool needs_update; //for drawing
 
     MECH_LIST()
     {
-        cpi = 0;
-        cpm = 8;
-        cpa = (MECH*) malloc(8*sizeof(class MECH));
+        mli = 0;
+        mlm = 8;
+        mla = (MECH*) malloc(8*sizeof(class MECH));
         needs_update = true;
     }
 
     ~MECH_LIST()
     {
-        free(cpa);
+        free(mla);
     }
 
     void add_mech(int x, int y, int z)
     {
         //needs_update = true;
 
-        cpa[cpi].x = x;
-        cpa[cpi].y = y;
-        cpa[cpi].z = z;
+        mla[mli].x = x;
+        mla[mli].y = y;
+        mla[mli].z = z;
 
-        cpi++;
+        mli++;
 
-        if(cpi == cpm)
+        if(mli == mlm)
         {
-            cpm *= 2;
-            MECH* new_cpa = (MECH*) realloc(cpa, cpm*sizeof(class MECH));
-            if (new_cpa == NULL)
+            mlm *= 2;
+            MECH* new_mla = (MECH*) realloc(mla, mlm*sizeof(class MECH));
+            if (new_mla == NULL)
             {
-                free(cpa);
-                cpa = NULL;
-                cpm = 0;
+                free(mla);
+                mla = NULL;
+                mlm = 0;
             }
-            else cpa = new_cpa;
+            else mla = new_mla;
         }
     }
 
@@ -68,13 +68,13 @@ class MECH_LIST
     {
         //needs_update = true;
 
-        for(int i=0; i<cpi; i++)
+        for(int i=0; i<mli; i++)
         {
-            if(x==cpa[i].x && y==cpa[i].y && z==cpa[i].z)
+            if(x==mla[i].x && y==mla[i].y && z==mla[i].z)
             {
-                cpa[i] = cpa[cpi-1];
-                cpi--;
-                GS_ASSERT(cpi >= 0);
+                mla[i] = mla[mli-1];
+                mli--;
+                GS_ASSERT(mli >= 0);
             }
         }
 
@@ -87,12 +87,12 @@ class MECH_LIST
 
     void send_mech_list_to_client(int client_id)
     {
-        for(int i=0; i<cpi; i++)
+        for(int i=0; i<mli; i++)
         {
             mech_create_StoC p;
-            p.x = cpa[i].x;
-            p.y = cpa[i].y;
-            p.z = cpa[i].z;
+            p.x = mla[i].x;
+            p.y = mla[i].y;
+            p.z = mla[i].z;
             p.sendToClient(client_id);
         }
     }
