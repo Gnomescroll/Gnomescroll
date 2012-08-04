@@ -530,8 +530,6 @@ void container_mouse_motion_handler(SDL_Event* event)
 #include <common/lua/lua.hpp>
 //lua_load_map_tiles();
 
-#include <t_mech/state.hpp>
-
 void agent_key_down_handler(SDL_Event* event)
 {
     t_hud::ContainerInputEvent container_event;

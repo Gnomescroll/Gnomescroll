@@ -31,6 +31,13 @@ void teardown()
     tear_down_properties();
 }
 
+void init_packets()
+{
+    item_create_StoC::register_client_packet();
+    item_state_StoC::register_client_packet();
+    item_destroy_StoC::register_client_packet();
+}
+
 Item* get_item(ItemID id)
 {
     return item_list->get(id);

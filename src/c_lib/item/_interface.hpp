@@ -8,6 +8,8 @@ namespace Item
 void init();
 void teardown();
 
+void init_packets();
+
 class Item* get_item(ItemID id);
 class Item* get_item_object(ItemID id); // alias for get_item
 

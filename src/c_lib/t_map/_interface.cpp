@@ -13,7 +13,35 @@
 
 namespace t_map
 {
+
+void init_packets()
+{
+    t_map::map_chunk_compressed_StoC::register_client_packet();
+    t_map::map_chunk_uncompressed_StoC::register_client_packet();
+
+    t_map::set_map_alias_StoC::register_client_packet();
+    t_map::clear_alias_StoC::register_client_packet();
+
+    // block value change
+    t_map::block_set_StoC::register_client_packet();
+    t_map::block_set_palette_StoC::register_client_packet();
+
+    t_map::block_action_StoC::register_client_packet();
+    t_map::map_metadata_StoC::register_client_packet();
     
+    // block damage
+    t_map::request_block_damage_CtoS::register_server_packet();
+    t_map::block_damage_StoC::register_client_packet();
+    
+    t_map::container_block_chunk_reset_StoC::register_client_packet();
+    t_map::container_block_create_StoC::register_client_packet();
+    t_map::container_block_delete_StoC::register_client_packet();
+
+    t_map::control_node_create_StoC::register_client_packet();
+    t_map::control_node_delete_StoC::register_client_packet();
+}
+
+
 int get_block_item_container(int x, int y, int z)
 {
     if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
@@ -39,7 +67,7 @@ int get_block_item_container(int x, int y, int z)
 
     }
 
-    void end_t_vbo()
+    void teardown_t_vbo()
     {
         delete vbo_map;
         t_vbo_update_end();

@@ -116,9 +116,9 @@ def configure(conf, add_flags=[], rm_flags=[]):
     conf.env.append_value('CXXFLAGS', cxxflags)
     
     #conf.env.append_value('RPATH_ST', "f")
-    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../libraries/lin32/lib")
-    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../libraries/lin32/lib")
-    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % os.path.abspath('../libraries/lin32/lib') )
+    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../lib/lin32/lib")
+    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../lib/lin32/lib")
+    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % os.path.abspath('../lib/lin32/lib') )
 
 
 
@@ -215,8 +215,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         pass
     elif OS == 'Linux':
-        awesomium_lib_path = os.path.abspath('../libraries/lin32/awesomium/release/')
-        awesomium_include_path = os.path.abspath('../libraries/lin32/awesomium/include/')
+        awesomium_lib_path = os.path.abspath('../lib/lin32/awesomium/release/')
+        awesomium_include_path = os.path.abspath('../lib/lin32/awesomium/include/')
         conf.check(
             lib='awesomium-1.6.5', 
             use='awesomium-1.6.5', 
@@ -230,8 +230,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         pass
     elif OS == 'Linux':
-        assimp_lib_path = [os.path.abspath('../libraries/lin32/assimp/lib') ]
-        assimp_include_path = [os.path.abspath('../libraries/lin32/assimp/include') ]
+        assimp_lib_path = [os.path.abspath('../lib/lin32/assimp/lib') ]
+        assimp_include_path = [os.path.abspath('../lib/lin32/assimp/include') ]
         conf.check(
             lib=['assimp'], 
             libpath= assimp_lib_path,
@@ -246,14 +246,14 @@ def configure(conf, add_flags=[], rm_flags=[]):
     P3 = os.path.abspath('../src/net_lib')
     conf.env.INCLUDES += [P1, P2, P3,  '/usr/include']
     '''
-    conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../libraries/lin32/awesomium/include/']
+    conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../lib/lin32/awesomium/include/']
 
     conf.env.RPATH = ['.', '..', '$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
 
     if OS == 'Linux':
-        conf.env.RPATH += ['$ORIGIN/../libraries/lin32/lib']
-        conf.env.RPATH += ['$ORIGIN/../libraries/lin32/awesomium/release'] #awesonium lib
-        conf.env.RPATH += ['$ORIGIN/../libraries/lin32/assimp/lib'] #assimp lib
+        conf.env.RPATH += ['$ORIGIN/../lib/lin32/lib']
+        conf.env.RPATH += ['$ORIGIN/../lib/lin32/awesomium/release'] #awesonium lib
+        conf.env.RPATH += ['$ORIGIN/../lib/lin32/assimp/lib'] #assimp lib
 
 def build(bld):
     OS = platform.system()

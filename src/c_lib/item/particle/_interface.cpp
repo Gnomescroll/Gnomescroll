@@ -21,6 +21,15 @@ void teardown()
     if (item_particle_list != NULL) delete item_particle_list;
 }
 
+void init_packets()
+{
+    item_particle_create_StoC::register_client_packet();
+    item_particle_destroy_StoC::register_client_packet();
+    item_particle_state_StoC::register_client_packet();
+    item_particle_picked_up_StoC::register_client_packet();
+    item_particle_pickup_cancelled_StoC::register_client_packet();
+}
+
 void tick()
 {
     GS_ASSERT(item_particle_list != NULL);
