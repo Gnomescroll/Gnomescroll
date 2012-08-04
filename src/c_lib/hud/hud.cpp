@@ -439,9 +439,7 @@ void draw_hud()
 
     CHECK_GL_ERROR();
 
-    //start_font_draw();
     draw_hud_text();
-    //end_font_draw();
 
     CHECK_GL_ERROR();
 
