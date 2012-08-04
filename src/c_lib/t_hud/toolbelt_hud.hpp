@@ -34,7 +34,7 @@ class AgentToolbeltUI : public UIElement
     }
 
     void draw();
-	void draw_name(); // TODO: fix rendering so we dont need to override UIElement's draw_name
+    void draw_name(); // TODO: fix rendering so we dont need to override UIElement's draw_name
 
     int get_slot_at(int px, int py);
 
@@ -92,13 +92,13 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
 
 void AgentToolbeltUI::draw_name()
 {
-	// TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
-	HudFont::start_font_draw();
-	HudFont::reset_default();
-	HudFont::set_texture();
-	this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
-	this->name.draw();
-	HudFont::end_font_draw();	
+    // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
+    HudFont::start_font_draw();
+    HudFont::reset_default();
+    HudFont::set_texture();
+    this->name.set_position(this->xoff + this->width() - this->name.get_width() - this->inc1/2, _yresf - this->yoff + this->name.get_height() - 3);
+    this->name.draw();
+    HudFont::end_font_draw();   
 }
 
 void AgentToolbeltUI::draw()
