@@ -177,7 +177,7 @@ void RegisterMessages()
     */
     
     t_map::init_packets();
-
+    t_mech::init_packets();
 	// suicide
 	killme_CtoS::register_server_packet();
 	

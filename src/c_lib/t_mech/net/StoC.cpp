@@ -2,6 +2,8 @@
 
 #include <t_mech/_interface.hpp>
 
+#include <t_mech/mech_state.hpp>
+
 namespace t_mech
 {
 
@@ -12,16 +14,16 @@ namespace t_mech
 void mech_create_StoC::handle()
 {
     printf("client adding mech node at: %i %i %i \n", x,y,z);
-    mech_list.add_mech(x,y,z);
-    mech_list.needs_update = true;
+    mech_list->add_mech(x,y,z);
+    mech_list->needs_update = true;
 };
 
 //    uint16_t x,y,z;
 void mech_delete_StoC::handle()
 {
     printf("client removing mech node at: %i %i %i \n", x,y,z);
-    mech_list.remove_mech(x,y,z);
-    mech_list.needs_update = true;
+    mech_list->remove_mech(x,y,z);
+    mech_list->needs_update = true;
 };
 
 

@@ -256,13 +256,7 @@ class MechListRenderer
         free(mlra);
     }
 
-    void update() 
-    {
-        MECH_LIST_RENDER_update();
-    };
-
     void prep_vbo();
-    void draw();
 
 };
 
@@ -328,6 +322,7 @@ void MechListRenderer::prep_vbo()
 
 }
 
+/*
 void MechListRenderer::MECH_LIST_RENDER_update()
 {
     static int counter = 0; //refresh, deals with loading before terrain map
@@ -338,9 +333,9 @@ void MechListRenderer::MECH_LIST_RENDER_update()
     ml->needs_update = false;
     mlri = 0; //reset index
 }
+*/
 
-
-
+/*
 void mech_list_render_init(class MECH_LIST* _ml)
 {
     GS_ASSERT(MECH_LIST_RENDERer == NULL);
@@ -362,6 +357,6 @@ void mech_list_render_draw()
 {
     MECH_LIST_RENDERer->draw();
 }
-
+*/
 
 }

@@ -8,6 +8,8 @@
 namespace t_mech
 {
 
+class MECH_LIST* mech_list;
+
 enum MECH_TYPE
 {
 	MECH_CRYSTAL,
@@ -29,10 +31,12 @@ struct _MECH
 void init() {}
 void teardown() {}
 
+void init_packets();
 
 #if DC_CLIENT
 
-class ControlNodeRenderer* mech_list_renderer = NULL;
+//class ControlNodeRenderer* mech_list_renderer = NULL;
+class MechListRenderer* mech_list_renderer = NULL;
 
 void prep()
 {
