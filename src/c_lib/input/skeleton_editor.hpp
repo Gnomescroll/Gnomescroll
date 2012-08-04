@@ -11,4 +11,4 @@ void key_state_handler(Uint8 *keystate, int numkeys);
 
 void save();
 
-}
+}   // SkeletonEditor

@@ -678,19 +678,19 @@ void agent_key_state_handler(Uint8 *keystate, int numkeys,
     char *m1, char *m2, char *m3
 )
 {
-    if (keystate['w'])
+    if (keystate[SDLK_w])
         *f = 1;
-    if (keystate['s'])
+    if (keystate[SDLK_s])
         *b = 1;
-    if (keystate['a'])
+    if (keystate[SDLK_a])
         *l = 1;
-    if (keystate['d'])
+    if (keystate[SDLK_d])
         *r = 1;
-    if (keystate['z'])
+    if (keystate[SDLK_LSHIFT])  // LSHIFT
         *jet = 1;
-    if (keystate[' '])
+    if (keystate[SDLK_SPACE])
         *jump = 1;
-    if (keystate[306])  // LCTRL
+    if (keystate[SDLK_LCTRL])  // LCTRL
         *crouch = 1;
 }
 
@@ -728,17 +728,17 @@ void camera_key_state_handler(Uint8 *keystate, int numkeys)
 {
     const float speed = 0.8f;
     
-    if (keystate['w'])
+    if (keystate[SDLK_w])
         free_camera->move(speed, 0,0);
-    if (keystate['s'])
+    if (keystate[SDLK_s])
         free_camera->move(-speed,0,0);
-    if (keystate['a'])
+    if (keystate[SDLK_a])
         free_camera->move(0, speed, 0);
-    if (keystate['d'])
+    if (keystate[SDLK_d])
         free_camera->move(0,-speed,0);
-    if (keystate['r'])
+    if (keystate[SDLK_r])
         free_camera->move(0,0,speed);
-    if (keystate['f'])
+    if (keystate[SDLK_f])
         free_camera->move(0,0,-speed);
 }
 

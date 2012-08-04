@@ -413,4 +413,4 @@ void save()
     vox_dat->save(fn);
 }
 
-}
+}   // SkeletonEditor
