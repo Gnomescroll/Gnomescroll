@@ -228,64 +228,25 @@ class MechListRenderer
         glDisable(GL_TEXTURE_2D);
     }
 
-
-    struct MECH_LIST_RENDER
-    {
-        short x,y,z;
-        unsigned char face; //block side and edge
-        unsigned char tex;
-        unsigned char r,g,b;    //color
-    };
-
-    struct MECH_LIST_RENDER* mlra; // MECH_LIST_RENDER_list array
-    int mlri;   //index
-    int mlrm;   //max
-
-    class MECH_LIST* ml; //control node list
-
-    MechListRenderer(class MECH_LIST* _ml)
-    {
-        this->mlri = 0;
-        this->mlrm = 32;
-        this->ml = _ml;
-        this->mlra = (struct MECH_LIST_RENDER*) malloc(this->mlrm*sizeof(struct MECH_LIST_RENDER));
-    }
+    MechListRenderer()
+    {}
 
     ~MechListRenderer()
-    {
-        free(mlra);
-    }
+    {}
 
     void prep_vbo();
 
-};
-
-
-void MechListRenderer::prep_vbo()
-{
-    static const float vin[72] = 
-    {
-        1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
-        0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
-        1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
-        0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
-        1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
-        0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
-    };
-
-
-    vertex_list.reset();
-
-    for(int i=0; i<mlri; i++)
-    {
-
+	void push_crystal_vertex(int i)
+	{
+	/*
         float x = (float) mlra[i].x;
         float y = (float) mlra[i].y;
         float z = (float) mlra[i].z;
         int face = mlra[i].face;
 
-        int tex_id = mlra[i].tex;
-
+        int tex_id = 0;
+        //mlra[i].tex;
+        //tex_id = 0;
         const float txmargin = 0.0f;
         float tx_min, ty_min, tx_max, ty_max;
 
@@ -316,7 +277,29 @@ void MechListRenderer::prep_vbo()
         vertex_list.vertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
         vertex_list.tex2f(tx_max,ty_min );
         vertex_list.push_vertex();
-    }
+      */
+	}
+
+
+};
+
+void MechListRenderer::prep_vbo()
+{
+/*
+    static const float vin[72] = 
+    {
+        1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
+        0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
+        1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
+        0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
+        1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
+        0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
+    };
+*/
+
+    vertex_list.reset();
+
+    //for(int i=0; i<mlri; i++) { }
 
     vertex_list.buffer();
 

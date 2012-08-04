@@ -1,8 +1,10 @@
 #pragma once
 
-//#if DC_SERVER
-//#include <t_mech/net/StoC.hpp>
-//#endif
+
+//#include <t_mech/net/CtoS.hpp>
+#if DC_SERVER
+#include <t_mech/net/StoC.hpp>
+#endif
 
 namespace t_mech 
 {
@@ -11,10 +13,16 @@ namespace t_mech
 class MECH
 {
     public:
-    
+    int id;
+
     int x;
     int y;
     int z;
+
+    float radius;
+    int type;
+    int offset;
+    int rotation;
 };
 
 class MECH_LIST
@@ -40,7 +48,7 @@ class MECH_LIST
         free(mla);
     }
 
-    void add_mech(int x, int y, int z)
+    void add_mech(int x, int y, int z, int type)
     {
         //needs_update = true;
 
@@ -64,13 +72,13 @@ class MECH_LIST
         }
     }
 
-    void remove_mech(int x, int y, int z)
+    void remove_mech(int x, int y, int z, int type)
     {
         //needs_update = true;
 
         for(int i=0; i<mli; i++)
         {
-            if(x==mla[i].x && y==mla[i].y && z==mla[i].z)
+            if(x==mla[i].x && y==mla[i].y && z==mla[i].z && type==mla[i].type)
             {
                 mla[i] = mla[mli-1];
                 mli--;
@@ -100,7 +108,7 @@ class MECH_LIST
     void server_add_mech(int x, int y, int z)
     {
         return; //PRODUCTION
-        this->add_mech(x,y,z);
+        this->add_mech(x,y,z,0);
 
         mech_create_StoC p;
         p.x = x;
@@ -111,7 +119,7 @@ class MECH_LIST
 
     void server_remove_mech(int x, int y, int z)
     {
-        remove_mech(x,y,z);
+        remove_mech(x,y,z,0);
 
         mech_delete_StoC p;
         p.x = x;
