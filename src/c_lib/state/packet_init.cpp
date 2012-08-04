@@ -5,17 +5,6 @@
 #include <agent/client/player_agent.hpp>
 #endif
 
-//#include <t_map/net/t_CtoS.hpp>
-//#include <t_map/net/t_StoC.hpp>
-
-//#include <item/net/CtoS.hpp>
-//#include <item/net/StoC.hpp>
-//#include <item/toolbelt/net/CtoS.hpp>
-//#include <item/toolbelt/net/StoC.hpp>
-//#include <item/particle/net/CtoS.hpp>
-//#include <item/particle/net/StoC.hpp>
-//#include <item/container/net/StoC.hpp>
-//#include <item/container/net/StoC.hpp>
 
 #include <t_map/_interface.hpp>
 

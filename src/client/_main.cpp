@@ -21,7 +21,7 @@
 #include <common/profiling/frame_graph.hpp>
 #include <physics/quadrant.hpp>
 
-//#include <t_mech/draw.hpp>
+#include <t_mech/_interface.hpp>
  
 bool _quit = false;
  
