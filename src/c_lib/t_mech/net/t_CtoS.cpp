@@ -1,11 +1,10 @@
-#include "t_CtoS.hpp"
+#include "CtoS.hpp"
 
-#include <t_map/t_map.hpp>
-#include <t_map/net/t_StoC.hpp>
+#include <t_mech/_interface.hpp>
 
 namespace t_map
 {
-
+/*
 #if DC_CLIENT
 inline void request_block_damage_CtoS::handle() {}
 #endif
@@ -22,5 +21,5 @@ inline void request_block_damage_CtoS::handle()
     msg.sendToClient(client_id);
 }
 #endif
-
-}   // t_map
+*/
+} 
