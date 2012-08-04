@@ -327,7 +327,7 @@ int init_c_lib(int argc, char* argv[])
     t_hud::init();
     t_hud::draw_init();
 
-    t_mech::draw_init();
+    t_mech::init();
     //t_mech::state_init();
 
     Particle::init_particles();
@@ -387,8 +387,8 @@ void close_c_lib()
     t_hud::draw_teardown();
     if (TEARDOWN_DEBUG) printf("t_hud teardown\n");
     t_hud::teardown();
-    if (TEARDOWN_DEBUG) printf("t_mech draw teardown\n");
-    t_mech::draw_teardown();
+    if (TEARDOWN_DEBUG) printf("t_mech teardown\n");
+    t_mech::teardown();
     //t_mech::state_teardown();
     if (TEARDOWN_DEBUG) printf("particle draw teardown\n");
     Particle::draw_teardown();
