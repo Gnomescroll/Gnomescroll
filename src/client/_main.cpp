@@ -21,7 +21,7 @@
 #include <common/profiling/frame_graph.hpp>
 #include <physics/quadrant.hpp>
 
-//#include <t_mech/draw.hpp>
+#include <t_mech/_interface.hpp>
  
 bool _quit = false;
  
@@ -189,6 +189,8 @@ int run()
         Skybox::prep_skybox();
         Animations::prep_voxel_particles();
 
+        t_mech::prep();
+
         /*
             Map
         */
@@ -213,6 +215,7 @@ int run()
         */
 
         t_mob::draw();
+        t_mech::draw();
 
         CHECK_GL_ERROR();
 
@@ -263,7 +266,7 @@ int run()
         
         Animations::render_block_damage();
         ItemParticle::draw();
-        //t_mech::draw();
+
         
         CHECK_GL_ERROR();
 

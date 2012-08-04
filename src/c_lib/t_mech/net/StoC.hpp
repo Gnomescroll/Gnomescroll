@@ -1,0 +1,40 @@
+#pragma once
+
+namespace t_mech
+{
+
+/*
+    Control Points
+*/
+
+class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
+{
+    public:
+    uint16_t x,y,z;
+    
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&x, buff, buff_n, pack);
+        pack_u16(&y, buff, buff_n, pack);
+        pack_u16(&z, buff, buff_n, pack);
+    }
+    
+    inline void handle() __attribute((always_inline));
+};
+
+class mech_delete_StoC: public MapMessagePacketToClient<mech_create_StoC>
+{
+    public:
+    uint16_t x,y,z;
+    
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&x, buff, buff_n, pack);
+        pack_u16(&y, buff, buff_n, pack);
+        pack_u16(&z, buff, buff_n, pack);
+    }
+    
+    inline void handle() __attribute((always_inline));
+};
+
+}

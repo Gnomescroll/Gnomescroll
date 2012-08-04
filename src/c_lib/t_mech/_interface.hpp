@@ -1,25 +1,34 @@
 #pragma once
 
-#if DC_CLIENT
-    #include <camera/camera.hpp>
-    #include <physics/ray_trace/hitscan.hpp>
-#endif
-
 namespace t_mech
 {
 
+extern class MECH_LIST* mech_list;
 
-struct MECH
-{
-    int x,y,z; //position
-    int type;  //type
-    int direction; //direction
+void init();
+void teardown();
 
-    bool active;
-};
+void init_packets();
+
+#if DC_CLIENT
+
+void prep();
+
+void draw();
+
+#endif
+
+void create_crystal(int x, int y, int z);
 
 
-void init() {}
-void teardown() {}
+
+
+void tick(int x, int y, int z);
+
+
+
+#if DC_SERVER
+#endif
+
 
 }

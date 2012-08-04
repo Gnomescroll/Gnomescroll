@@ -1,12 +1,11 @@
 #pragma once
 
-#include "t_net.hpp"
 
-
-namespace t_map
+namespace t_mech
 {
     
-class request_block_damage_CtoS: public MapMessagePacketToServer<request_block_damage_CtoS>
+/*
+class request_block_damage_CtoS: public FixedSizeReliableNetPacketToServer<request_block_damage_CtoS>
 {
     public:
         uint16_t x,y;
@@ -23,5 +22,6 @@ class request_block_damage_CtoS: public MapMessagePacketToServer<request_block_d
     
     inline void handle();
 };
+*/
 
-}   // t_map
+}

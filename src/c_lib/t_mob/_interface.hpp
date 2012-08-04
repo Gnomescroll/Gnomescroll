@@ -1148,11 +1148,9 @@ void init()
 
 void draw()
 {
-    if(ClientState::location_pointer_set == false)
-        return;
+    return;  //DEBUG
 
-    Vec3 loc = ClientState::location_pointer;
-    bt->draw(loc.x, loc.y, loc.z+ 1.0);
+
 }
 
 
