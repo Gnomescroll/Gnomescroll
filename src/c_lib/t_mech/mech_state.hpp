@@ -1,6 +1,6 @@
 #pragma once
 
-class control_node
+class MECH
 {
     public:
     
@@ -81,7 +81,7 @@ class MECH_LIST
     {
         for(int i=0; i<cpi; i++)
         {
-            control_node_create_StoC p;
+            mech_create_StoC p;
             p.x = cpa[i].x;
             p.y = cpa[i].y;
             p.z = cpa[i].z;
@@ -94,7 +94,7 @@ class MECH_LIST
         return; //PRODUCTION
         this->add_mech(x,y,z);
 
-        control_node_create_StoC p;
+        mech_create_create_StoC p;
         p.x = x;
         p.y = y;
         p.z = z;
@@ -105,7 +105,7 @@ class MECH_LIST
     {
         remove_mech(x,y,z);
 
-        control_node_delete_StoC p;
+        mech_create_delete_StoC p;
         p.x = x;
         p.y = y;
         p.z = z;
