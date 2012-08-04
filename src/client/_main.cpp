@@ -188,6 +188,7 @@ int run()
         Particle::prep_shrapnel();
         Skybox::prep_skybox();
         Animations::prep_voxel_particles();
+        t_mech::prep();
 
         /*
             Map
@@ -213,6 +214,7 @@ int run()
         */
 
         t_mob::draw();
+        t_mech::draw();
 
         CHECK_GL_ERROR();
 
@@ -263,7 +265,7 @@ int run()
         
         Animations::render_block_damage();
         ItemParticle::draw();
-        //t_mech::draw();
+
         
         CHECK_GL_ERROR();
 

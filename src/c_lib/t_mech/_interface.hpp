@@ -29,4 +29,28 @@ struct MECH
 void init() {}
 void teardown() {}
 
+
+#if DC_CLIENT
+
+class ControlNodeRenderer* mech_list_renderer = NULL;
+
+void prep()
+{
+
+}
+
+void draw()
+{
+
+
+}
+
+#endif
+
+#if DC_SERVER
+
+
+#endif
+
+
 }
