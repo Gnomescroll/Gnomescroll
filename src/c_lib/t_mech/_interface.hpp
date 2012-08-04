@@ -8,6 +8,13 @@
 namespace t_mech
 {
 
+enum MECH_TYPE
+{
+	MECH_CRYSTAL,
+	MECH_CROP,
+	MECH_WIRE,
+	MECH_SWITCH
+};
 
 struct MECH
 {
