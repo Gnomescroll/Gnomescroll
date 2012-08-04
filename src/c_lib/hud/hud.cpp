@@ -25,7 +25,7 @@ static const char help_text[] =
 "    Esc             Quit\n"
 "    WASD            Move\n"
 "    Space           Jump\n"
-"    Shift           Jetpack\n"
+"    Left Shift      Jetpack\n"
 "    E               Open inventory\n"
 "    Num keys        Select weapon\n"
 "    Scrollwheel     Select weapon\n"
