@@ -61,21 +61,25 @@ class SmelterUI : public UIElement
     void init_text()
     {
         if (this->stacks != NULL) delete[] this->stacks;
+
+        int input_ct = ItemContainer::get_container_xdim(this->container_type) * ItemContainer::get_container_ydim(this->container_type);
+        int output_ct = ItemContainer::get_container_alt_xdim(this->container_type) * ItemContainer::get_container_alt_ydim(this->container_type);
+        int fuel_ct = 1;
         
-        int max = (this->xdim-2) * ydim + 1;
+        int max = input_ct + output_ct + fuel_ct;
         GS_ASSERT(max > 0);
         if (max < 0) return;
         this->stacks = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stacks[i];
-            t->set_format((char*) "%d");
+            t->set_format("%d");
             t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
 
- 		this->name.set_text((char*)"Smelter");
+        this->name.set_text("Smelter");
     }
 
     void center()
@@ -98,16 +102,14 @@ class SmelterUI : public UIElement
         
         this->container_type = container_type;
 
-        this->xdim = ItemContainer::get_container_xdim(container_type);
-        this->xdim += 2; // +1 for fuel area, +1 for meters
-        this->ydim = ItemContainer::get_container_ydim(container_type);
-
         switch (container_type)
         {
             case CONTAINER_TYPE_SMELTER_ONE:
                 this->texture = &SmelterTexture;
                 this->texture_offset_x = 0.0f;
                 this->texture_offset_y = 0.0f;
+                this->xdim = 3;
+                this->ydim = 2;
                 break;
 
             default:
@@ -124,21 +126,27 @@ class SmelterUI : public UIElement
         int slot = this->get_grid_at(px,py);
         int xslot = slot % this->xdim;
         int yslot = slot / this->xdim;
-        return (xslot == 0 && yslot == 1);
+        return (xslot == 1 && yslot == 1);
     }
 
     bool in_input_region(int px, int py)
     {
         int slot = this->get_grid_at(px,py);
         int xslot = slot % this->xdim;
-        return (xslot >= 2 && xslot <= this->xdim - 2);
+        int x = ItemContainer::get_container_xdim(this->container_type);
+        int xoff = 1;
+        return (xslot >= xoff && xslot < x + xoff);
     }
 
     bool in_output_region(int px, int py)
     {
-        int slot = this->get_grid_at(px,py);
-        int xslot = slot % this->xdim;
-        return (xslot >= this->xdim - 1);
+        int x = this->cell_size * 2;
+        int y = 18; // hardcoded values
+
+        x += xoff;
+        y += _yres - yoff;
+
+        return (px >= x && px < x + cell_size && py >= y && py < y + cell_size);
     }
 
     bool in_inactive_region(int px, int py)
@@ -180,18 +188,10 @@ int SmelterUI::get_grid_at(int px, int py)
 
 int SmelterUI::get_slot_at(int px, int py)
 {
-    int slot = this->get_grid_at(px,py);
-    int xslot = slot % this->xdim;
-    int yslot = slot / this->xdim;
-
-    if (this->in_inactive_region(px,py)) return NULL_SLOT;
     if (this->in_fuel_region(px,py)) return 0;
-
-    // convert to normal slot regions
-    xslot -= 2;
-    slot = yslot * (this->xdim - 2) + xslot;
-    slot += 1;
-    return slot;
+    if (this->in_input_region(px,py)) return 1;
+    if (this->in_output_region(px,py)) return 2;
+    return NULL_SLOT;
 }
 
 int SmelterUI::get_grid_for_slot(int slot)
@@ -199,16 +199,13 @@ int SmelterUI::get_grid_for_slot(int slot)
     GS_ASSERT(slot != NULL_SLOT);
     if (slot == NULL_SLOT) return NULL_SLOT;
 
-    if (slot == 0) return this->xdim;   // fuel slot
+    if (slot == 0) return (this->xdim * 1) + 1; // fuel slot
 
-    slot -= 1;  // offset the fuel
-    int xslot = slot % (this->xdim - 2);  // container_ui's xslot
-    int yslot = slot / (this->xdim - 2);  // container_ui's yslot
+    if (slot == 1) return 1;    // input slot
 
-    // reconstruct into UI grid
-    xslot += 2; // shift to right
-    slot = yslot * this->xdim + xslot;
-    return slot;
+    if (slot == 2) return 2;    // WARNING -- output slot is not grid aligned
+
+    return NULL_SLOT;
 }
 
 // x,y is the offset of the meter
@@ -254,7 +251,7 @@ void SmelterUI::draw()
     GS_ASSERT(this->texture != NULL);
     if (this->texture == NULL) return;
 
-	this->draw_name();
+    this->draw_name();
 
     if (this->container_id == NULL_CONTAINER) return;
     ItemContainer::ItemContainerUIInterface* container_ui = ItemContainer::get_container_ui(this->container_id);
@@ -303,8 +300,9 @@ void SmelterUI::draw()
 
     if (smelter != NULL)
     {
-        this->draw_meter(xoff + 43.0f, yoff - 2.0f, 195.0f, 0.0f, 9.0f, 70.0f, smelter->fuel); // fuel
-        this->draw_meter(xoff + 60.0f, yoff - 2.0f, 205.0f, 0.0f, 9.0f, 70.0f, smelter->progress); // progress
+        int grid_xoff = 0;
+        this->draw_meter(xoff + 37.0f*grid_xoff + 6.0f, yoff - 2.0f, 195.0f, 0.0f, 9.0f, 70.0f, smelter->fuel); // fuel
+        this->draw_meter(xoff + 37.0f*grid_xoff + 23.0f, yoff - 2.0f, 205.0f, 0.0f, 9.0f, 70.0f, smelter->progress); // progress
     }
 
     glDisable(GL_TEXTURE_2D);
@@ -320,8 +318,14 @@ void SmelterUI::draw()
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;
 
-        const float x = xoff + cell_size*xslot + cell_offset_x;
-        const float y = yoff - (cell_size*yslot + cell_offset_y);
+        if (this->in_output_region(mouse_x, mouse_y))
+            yslot = 0;
+
+        float x = xoff + cell_size*xslot + cell_offset_x;
+        float y = yoff - (cell_size*yslot + cell_offset_y);
+
+        if (this->in_output_region(mouse_x, mouse_y))
+            y -= 18;
         
         glVertex2f(x,y);
         glVertex2f(x, y-w);
@@ -354,8 +358,14 @@ void SmelterUI::draw()
         int xslot = grid % this->xdim;
         int yslot = grid / this->xdim;
 
-        const float x = xoff + cell_offset_x + cell_size*xslot;
-        const float y = yoff - (cell_offset_y + cell_size*yslot);
+        if (slot == smelter->slot_max-1)
+            yslot = 0;
+
+        float x = xoff + cell_offset_x + cell_size*xslot;
+        float y = yoff - (cell_offset_y + cell_size*yslot);
+
+        if (slot == smelter->slot_max-1)
+            y -= 18;
 
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -403,9 +413,14 @@ void SmelterUI::draw()
         text = &this->stacks[slot];
         text->update_formatted_string(1, stack);
 
-        const float x = xoff + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
-        const float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
+        if (slot == smelter->slot_max-1)
+            yslot = 0;
 
+        float x = xoff + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
+        float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
+        if (slot == smelter->slot_max-1)
+            y -= 18;
+            
         text->set_position(x,y);
         text->draw();
     }

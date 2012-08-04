@@ -18,7 +18,7 @@ class UIElement
         float yoff;
 
         int container_id;
-        int container_type;
+        ItemContainerType container_type;
 
         GLuint* texture;
         
@@ -36,15 +36,15 @@ class UIElement
         virtual int get_slot_at(int px, int py) = 0;
         virtual bool point_inside(int px, int py) = 0;
 
-		virtual void draw_name()
-		{
-			HudFont::start_font_draw();
-			HudFont::reset_default();
-			HudFont::set_texture();
-			this->name.set_position(this->xoff, this->yoff + this->name.get_height() + 1);
-			this->name.draw();
-			HudFont::end_font_draw();
-		}
+        virtual void draw_name()
+        {
+            HudFont::start_font_draw();
+            HudFont::reset_default();
+            HudFont::set_texture();
+            this->name.set_position(this->xoff, this->yoff + this->name.get_height() + 1);
+            this->name.draw();
+            HudFont::end_font_draw();
+        }
 
         virtual void set_container_type(ItemContainerType container_type)
             { this->type = type; }

@@ -466,60 +466,6 @@ class SmeltingRecipe* get_selected_smelting_recipe(int container_id)
     if (!is_smelter(container->type)) return NULL;
     ItemContainer::ItemContainerSmelter* smelter = (ItemContainer::ItemContainerSmelter*)container;
 
-    // clear input buffers
-    //for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_types[i++] = NULL_ITEM_TYPE);
-    //for (int i=0; i<SMELTER_INPUTS_MAX; smelter_input_totals[i++] = 0);
-
-    //// condense smelter contents to unique types/counts
-    //int unique_inputs = 0;
-    //for (int i=0; i<smelter->slot_max; i++)
-    //{
-        //if (smelter->is_fuel_slot(i) || smelter->is_output_slot(i)) continue;
-        
-        //// get slot content data
-        //ItemID item_id = smelter->get_item(i);
-        //if (item_id == NULL_ITEM) continue;
-        //int item_type = get_item_type(item_id);
-        //GS_ASSERT(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
-        //int stack_size = get_stack_size(item_id);
-        //GS_ASSERT(stack_size >= 1);
-
-        //// insert into type buffer
-        //if (unique_inputs == 0)
-        //{   // degenerate case
-            //smelter_input_types[unique_inputs] = item_type;
-            //smelter_input_totals[unique_inputs] = stack_size;
-        //}
-        //else
-        //{   // keep buffer sorted
-            //int i=0;
-            //for (; i<unique_inputs; i++)
-            //{
-                //if (smelter_input_types[i] <= item_type) continue;
-
-                //// shift forward
-                //for (int j=unique_inputs; j>i; j--) smelter_input_types[j] = smelter_input_types[j-1];
-                //for (int j=unique_inputs; j>i; j--) smelter_input_totals[j] = smelter_input_totals[j-1];
-
-                //// insert
-                //smelter_input_types[i] = item_type;
-                //smelter_input_totals[i] = stack_size;
-                //break;
-            //}
-            //if (i == unique_inputs)
-            //{   // append to end
-                //smelter_input_types[unique_inputs] = item_type;
-                //smelter_input_totals[unique_inputs] = stack_size;
-            //}
-        //}
-        //unique_inputs++;
-    //}
-
-    // Use get_sorted_inputs() ?
-
-    // no inputs
-    //if (unique_inputs == 0) return NULL;
-
     unsigned int max_inputs = smelter->get_max_input_slots();
     GS_ASSERT(max_inputs > 0);
     if (max_inputs <= 0) return NULL;

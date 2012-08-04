@@ -281,8 +281,8 @@ class ItemContainerSmelter: public ItemContainerInterface
     public:
 
         static const int product_xdim = 1;
-        static const int product_ydim = 2;
-        static const int input_xdim = 2;
+        static const int product_ydim = 1;
+        static const int input_xdim = 1;
         static const int fuel_slot = 0;
         
         float fuel;       // 0.0f - 1.0f
@@ -326,10 +326,9 @@ class ItemContainerSmelter: public ItemContainerInterface
         unsigned int get_max_input_slots()
         {
             if (this->slot_max <= 0) return 0;
-            unsigned int max = this->slot_max - 1;    // remove fuel #
-            GS_ASSERT(ydim * this->product_xdim <= (int)max);
-            max -= ydim * this->product_xdim; // remove product slot
-            return max;
+            int max  = this->slot_max - this->alt_xdim*this->alt_ydim - 1;
+            if (max <= 0) return 0;
+            return (unsigned int)max;
         }
 
         // fills *inputs with input items, sorted by type, up to max_inputs
@@ -398,23 +397,17 @@ class ItemContainerSmelter: public ItemContainerInterface
 
         int convert_input_slot(int input_slot)
         {
-            int yslot = input_slot /  this->input_xdim;
-            int slot = input_slot + (yslot * this->product_xdim) + 1;
-            return slot;
+            return 1;
         }
 
         int convert_product_slot(int product_slot)
         {   // translate product_slot to native slot
-            // calculate yslot with xdim = 1
-            int yslot = product_slot / this->product_xdim;
-            int slot = xdim * (yslot + 1);
-            return slot;
+            return 2;
         }
 
         bool is_smelter_output(int slot)
         {
-            int xslot = (slot-1) % this->xdim;  // -1 to offset fuel slot
-            return (xslot == this->xdim - 1);   // in last column
+            return (slot == 2);
         }
 
         bool can_insert_item(int slot, ItemID item_id)
@@ -451,7 +444,9 @@ class ItemContainerSmelter: public ItemContainerInterface
         {
             this->xdim = xdim;
             this->ydim = ydim;
-            this->slot_max = xdim*ydim + 1; // +1 for fuel
+            GS_ASSERT(alt_xdim * alt_ydim > 0);
+            GS_ASSERT(xdim * ydim > 0);
+            this->slot_max = xdim*ydim + alt_xdim*alt_ydim + 1; // +1 for fuel
             GS_ASSERT(this->slot_max > 0);
             GS_ASSERT(this->slot_max < NULL_SLOT);
             if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;

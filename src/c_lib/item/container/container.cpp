@@ -30,8 +30,8 @@ void init_container(ItemContainerInterface* container)
     GS_ASSERT(attr->loaded);
     
     container->attached_to_agent = attr->attached_to_agent;
-    container->init(attr->xdim, attr->ydim);
     container->set_alt_parameters(attr->alt_xdim, attr->alt_ydim);
+    container->init(attr->xdim, attr->ydim);
 }
 
 /* Interface */

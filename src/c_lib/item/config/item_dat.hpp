@@ -285,8 +285,7 @@ void load_item_dat()
     s.max_stack_size = 16;
     s.gas = true;
     s.fuel = true;
-    //s.fuel_burn_rate = 30 * 30; // 30 seconds
-    s.fuel_burn_rate = 30 * 3;
+    s.fuel_burn_rate = 30 * 30; // 30 seconds
 
     item_def(52, IG_PLACER, "smelter_1");
     iso_block_sprite_def("smelter_1");

@@ -294,6 +294,7 @@ bool open_container(int container_id)
             // setup ui
             if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
             player_craft_bench_ui = new ItemContainerUI(container_id);
+            player_craft_bench_ui->set_alt_parameters(player_craft_bench->alt_xdim, player_craft_bench->alt_ydim);
             player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
             player_craft_bench_ui->load_data(player_craft_bench->slot);
             t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
@@ -313,6 +314,7 @@ bool open_container(int container_id)
             // setup ui
             if (storage_block_ui == NULL) delete storage_block_ui;
             storage_block_ui = new ItemContainerUI(container_id);
+            storage_block_ui->set_alt_parameters(storage_block->alt_xdim, storage_block->alt_ydim);
             storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
             storage_block_ui->load_data(storage_block->slot);
             t_hud::set_container_id(storage_block->type, storage_block->id);
@@ -332,6 +334,7 @@ bool open_container(int container_id)
             // setup ui
             if (cryofreezer_ui == NULL) delete cryofreezer_ui;
             cryofreezer_ui = new ItemContainerUI(container_id);
+            cryofreezer_ui->set_alt_parameters(cryofreezer->alt_xdim, cryofreezer->alt_ydim);
             cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
             cryofreezer_ui->load_data(cryofreezer->slot);
             t_hud::set_container_id(cryofreezer->type, cryofreezer->id);
@@ -351,6 +354,7 @@ bool open_container(int container_id)
             // setup ui
             if (smelter_ui == NULL) delete smelter_ui;
             smelter_ui = new ItemContainerSmelterUI(container_id);
+            smelter_ui->set_alt_parameters(smelter->alt_xdim, smelter->alt_ydim);
             smelter_ui->init(smelter->type, smelter->xdim, smelter->ydim);
             smelter_ui->load_data(smelter->slot);
             t_hud::set_container_id(smelter->type, smelter->id);

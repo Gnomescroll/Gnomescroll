@@ -32,57 +32,6 @@ void send_smelter_beta_action(ContainerActionType action, int container_id, int 
 namespace ItemContainer
 {
 
-/* Public Attribute Accessors */
-
-class ContainerAttributes* get_attr(ItemContainerType type)
-{
-    GS_ASSERT(type >= 0 && type < MAX_CONTAINER_TYPES);
-    if (type < 0 || type >= MAX_CONTAINER_TYPES) return NULL;
-    return &container_attributes[type];
-}
-
-int get_container_max_slots(ItemContainerType type)
-{
-    class ContainerAttributes* attr = get_attr(type);
-    if (attr == NULL) return 0;
-    return attr->max_dim();
-}
-
-int get_container_xdim(ItemContainerType type)
-{
-    class ContainerAttributes* attr = get_attr(type);
-    if (attr == NULL) return 0;
-    return attr->xdim;
-}
-
-int get_container_ydim(ItemContainerType type)
-{
-    class ContainerAttributes* attr = get_attr(type);
-    if (attr == NULL) return 0;
-    return attr->ydim;
-}
-
-int get_container_alt_max_slots(ItemContainerType type)
-{
-    class ContainerAttributes* attr = get_attr(type);
-    if (attr == NULL) return 0;
-    return attr->max_alt_dim();
-}
-
-int get_container_alt_xdim(ItemContainerType type)
-{
-    class ContainerAttributes* attr = get_attr(type);
-    if (attr == NULL) return 0;
-    return attr->alt_xdim;
-}
-
-int get_container_alt_ydim(ItemContainerType type)
-{
-    class ContainerAttributes* attr = get_attr(type);
-    if (attr == NULL) return 0;
-    return attr->alt_ydim;
-}
-
 /* Configuration Loader */ 
     
 static int _started = 0;
@@ -190,8 +139,10 @@ static void register_settings()
     c.beta_packet = &send_container_beta_action;
 
     container_def(CONTAINER_TYPE_SMELTER_ONE);
-    c.xdim = 3;
-    c.ydim = 2;
+    c.xdim = 1;
+    c.ydim = 1;
+    c.alt_xdim = 1;
+    c.alt_ydim = 1;
     c.attached_to_agent = false;
     c.alpha_action = &smelter_alpha_action_decision_tree;
     c.beta_action = &smelter_beta_action_decision_tree;
@@ -236,6 +187,57 @@ void init_config()
 void teardown_config()
 {
     if (container_attributes != NULL) delete[] container_attributes;
+}
+
+/* Public Attribute Accessors */
+
+class ContainerAttributes* get_attr(ItemContainerType type)
+{
+    GS_ASSERT(type >= 0 && type < MAX_CONTAINER_TYPES);
+    if (type < 0 || type >= MAX_CONTAINER_TYPES) return NULL;
+    return &container_attributes[type];
+}
+
+int get_container_max_slots(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->max_dim();
+}
+
+int get_container_xdim(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->xdim;
+}
+
+int get_container_ydim(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->ydim;
+}
+
+int get_container_alt_max_slots(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->max_alt_dim();
+}
+
+int get_container_alt_xdim(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->alt_xdim;
+}
+
+int get_container_alt_ydim(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return 0;
+    return attr->alt_ydim;
 }
 
     

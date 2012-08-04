@@ -119,9 +119,9 @@ class ItemContainerUIInterface
 
         virtual bool can_insert_item(int slot, int item_type)
         {
-			GS_ASSERT(this->is_valid_slot(slot));
-			if (!this->is_valid_slot(slot)) return false;
-			if (item_type == NULL_ITEM_TYPE) return false;
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_type == NULL_ITEM_TYPE) return false;
 
             return true;
         }
@@ -184,23 +184,23 @@ class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
 {
     public:
 
-		int energy_tank_type;
+        int energy_tank_type;
 
         bool can_insert_item(int slot, int item_type)
         {
-			GS_ASSERT(this->is_valid_slot(slot));
-			if (!this->is_valid_slot(slot)) return false;
-			if (item_type == NULL_ITEM_TYPE) return false;
-			
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_type == NULL_ITEM_TYPE) return false;
+            
             return (item_type == this->energy_tank_type);
         }
 
         void init(ItemContainerType type, int xdim, int ydim)
         {
-			this->energy_tank_type = Item::get_item_type("energy_tank");
+            this->energy_tank_type = Item::get_item_type("energy_tank");
             GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
 
-			GS_ASSERT(type == AGENT_ENERGY_TANKS);
+            GS_ASSERT(type == AGENT_ENERGY_TANKS);
             this->type = type;
             this->xdim = xdim;
             this->ydim = ydim;
@@ -224,15 +224,15 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 {
     public:
 
-		int get_coin_type()
-		{
-			return this->get_slot_type(0);
-		}
-		
-		int get_coin_stack()
-		{
-			return this->get_slot_stack(0);
-		}
+        int get_coin_type()
+        {
+            return this->get_slot_type(0);
+        }
+        
+        int get_coin_stack()
+        {
+            return this->get_slot_stack(0);
+        }
 
         bool can_insert_item(int slot, int item_type)
         {
@@ -243,7 +243,7 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
             // synthesizer coins only
             static int coin_type = Item::get_item_type("synthesizer_coin");
             GS_ASSERT(coin_type != NULL_ITEM_TYPE);
-			return (item_type == coin_type);
+            return (item_type == coin_type);
         }
 
         explicit ItemContainerSynthesizerUI(int id)
@@ -264,8 +264,8 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
 
         bool is_smelter_output(int slot)
         {
-            int xslot = (slot-1) % this->xdim;  // -1 to offset fuel slot
-            return (xslot == this->xdim - 1);   // in last column
+            if (slot >= this->slot_max-(this->alt_xdim*this->alt_ydim)) return true;
+            return false;
         }
 
         int get_fuel()
@@ -304,7 +304,9 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
             this->type = type;
             this->xdim = xdim;
             this->ydim = ydim;
-            this->slot_max = xdim*ydim + 1; // +1 for Fuel
+            this->slot_max = xdim*ydim + this->alt_xdim*this->alt_ydim + 1; // +1 for fuel
+            GS_ASSERT(xdim*ydim > 0);
+            GS_ASSERT(this->alt_xdim * this->alt_ydim > 0);
             GS_ASSERT(this->slot_max > 0);
             GS_ASSERT(this->slot_max < NULL_SLOT);
             if (this->slot_max <= 0) return;
