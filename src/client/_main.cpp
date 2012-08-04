@@ -189,7 +189,6 @@ int run()
         Skybox::prep_skybox();
         Animations::prep_voxel_particles();
 
-        t_mech::tick();
         t_mech::prep();
 
         /*

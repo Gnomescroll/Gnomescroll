@@ -1,5 +1,8 @@
 #pragma once 
 
+#include <t_mech/mech_state.hpp>
+#include <t_mech/_interface.hpp>
+
 namespace t_mech 
 {
 
@@ -154,14 +157,14 @@ class MechListShader
         glGenTextures(1, &texture1);
         glBindTexture(GL_TEXTURE_2D, texture1);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         GLenum texture_format;
         if (s->format->Rmask == 0x000000ff)
@@ -197,14 +200,18 @@ class MechListRenderer
         glColor3ub(255,255,255);
 
         GL_ASSERT(GL_DEPTH_TEST, true);
-        GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+        GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
+		glAlphaFunc(GL_GREATER, 0.1);
+
         glEnable(GL_TEXTURE_2D);
+        glEnable(GL_ALPHA_TEST);
+
         glBindTexture( GL_TEXTURE_2D, shader.texture1 );
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
         shader.shader->enable_attributes();
 
@@ -224,7 +231,10 @@ class MechListRenderer
 
         glBindTexture( GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDisable(GL_BLEND);
+        //glDisable(GL_BLEND);
+        
+        glDisable(GL_ALPHA_TEST);
+
         glDisable(GL_TEXTURE_2D);
     }
 
@@ -236,13 +246,22 @@ class MechListRenderer
 
     void prep_vbo();
 
-	void push_crystal_vertex(int i)
+	void push_crystal_vertex(MECH m)
 	{
-	/*
-        float x = (float) mlra[i].x;
-        float y = (float) mlra[i].y;
-        float z = (float) mlra[i].z;
-        int face = mlra[i].face;
+	    static const float vin[72] = 
+	    {
+	        1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
+	        0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
+	        1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
+	        0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
+	        1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
+	        0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
+	    };
+
+        float x = (float) m.x;
+        float y = (float) m.y;
+        float z = (float) m.z;
+        //int face = m.face;
 
         int tex_id = 0;
         //mlra[i].tex;
@@ -260,7 +279,7 @@ class MechListRenderer
         tx_max = ti*h + h - txmargin;
         ty_max = tj*h + h - txmargin;
 
-        int s = face;
+        int s = 2;
 
         vertex_list.vertex3f(x+vin[12*s +3*0 +0], y+vin[12*s+ 3*0 +1], z+vin[12*s +3*0 +2]);
         vertex_list.tex2f(tx_min,ty_min);
@@ -277,11 +296,36 @@ class MechListRenderer
         vertex_list.vertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
         vertex_list.tex2f(tx_max,ty_min );
         vertex_list.push_vertex();
-      */
+      
 	}
 
 
 };
+
+/*
+class MECH
+{
+    public:
+    int id;
+
+    int x;
+    int y;
+    int z;
+
+    float radius;
+    int type;
+    int offset;
+    int rotation;
+};
+
+enum MECH_TYPE
+{
+	CRYSTAL,
+	CROP,
+	WIRE,
+	SWITCH
+};
+*/
 
 void MechListRenderer::prep_vbo()
 {
@@ -299,7 +343,15 @@ void MechListRenderer::prep_vbo()
 
     vertex_list.reset();
 
-    //for(int i=0; i<mlri; i++) { }
+    const int mli = mech_list->mli;
+    const struct MECH* mla = mech_list->mla;
+
+    for(int i=0; i<mli; i++)
+    {
+    	if( mla[i].type == 0 )
+    		push_crystal_vertex(mla[i]);
+    }
+    //mech_list
 
     vertex_list.buffer();
 

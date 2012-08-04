@@ -195,6 +195,8 @@ namespace ClientState {
         location_pointer_set = true;
 
         printf("Locator: %2.2f %2.2f %2.2f \n", loc.x, loc.y, loc.z);
+
+        t_mech::tick(loc.x, loc.y, loc.z+0.2);
     }
 
 }

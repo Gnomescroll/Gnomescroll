@@ -25,6 +25,14 @@ class MECH
     int rotation;
 };
 
+enum MECH_TYPE
+{
+	CRYSTAL,
+	CROP,
+	WIRE,
+	SWITCH
+};
+
 class MECH_LIST
 {
     public:
@@ -48,6 +56,7 @@ class MECH_LIST
         free(mla);
     }
 
+    //accept in an MLA struct!!
     void add_mech(int x, int y, int z, int type)
     {
         //needs_update = true;
@@ -55,6 +64,10 @@ class MECH_LIST
         mla[mli].x = x;
         mla[mli].y = y;
         mla[mli].z = z;
+
+    	mla[mli].radius = 1.0;
+    	mla[mli].offset = 0;
+    	type = 0;	//Crystal;
 
         mli++;
 
