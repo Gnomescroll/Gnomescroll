@@ -125,7 +125,7 @@ void end_t_map()
 
     #if DC_CLIENT
     end_client_compressors();
-    end_t_vbo();
+    teardown_t_vbo();
     control_node_render_teardown();
     #endif
 

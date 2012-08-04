@@ -6,11 +6,13 @@ void end_t_map();
 
 int get_block_item_container(int x, int y, int z);
 
+void init_packets();
+
 #if DC_CLIENT
 extern class Vbo_map* vbo_map;
 
 void init_t_vbo();
-void end_t_vbo();
+void teardown_t_vbo();
 
 void draw_map();
 void draw_map_compatibility();

@@ -249,30 +249,9 @@ void RegisterMessages()
         Map Messages
     */
     
-    t_map::map_chunk_compressed_StoC::register_client_packet();
-    t_map::map_chunk_uncompressed_StoC::register_client_packet();
 
-    t_map::set_map_alias_StoC::register_client_packet();
-    t_map::clear_alias_StoC::register_client_packet();
-
-    // block value change
-    t_map::block_set_StoC::register_client_packet();
-    t_map::block_set_palette_StoC::register_client_packet();
-
-    t_map::block_action_StoC::register_client_packet();
-    t_map::map_metadata_StoC::register_client_packet();
+    t_map::init_packets();
     
-    // block damage
-    t_map::request_block_damage_CtoS::register_server_packet();
-    t_map::block_damage_StoC::register_client_packet();
-    
-    t_map::container_block_chunk_reset_StoC::register_client_packet();
-    t_map::container_block_create_StoC::register_client_packet();
-    t_map::container_block_delete_StoC::register_client_packet();
-
-    t_map::control_node_create_StoC::register_client_packet();
-    t_map::control_node_delete_StoC::register_client_packet();
-
 	// suicide
 	killme_CtoS::register_server_packet();
 	
