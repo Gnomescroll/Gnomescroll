@@ -32,6 +32,10 @@ struct _MECH
     int type;  //type
     int direction; //direction
 
+    float size;
+    float rotation;
+    int offset;
+
     bool active;
 };
 
@@ -86,6 +90,7 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 {
 #if DC_SERVER
     p.id = m.id;
+    p.type = m.type;
     p.x = m.x;
     p.y = m.y;
     p.z = m.z;
@@ -107,6 +112,7 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 {
 #if DC_CLIENT
     m.id = p.id;
+    m.type = p.type;
     m.x = p.x;
     m.y = p.y;
     m.z = p.z;
@@ -115,6 +121,14 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
     {
     case MECH_CRYSTAL:
         //do something
+
+    	m.size = 0.25;	//radius
+    	m.rotation = 0.25 + randf();
+    	m.offset = rand()%255;
+
+    	m.offset_x = 2.0f*(randf()-0.5f)* (0.5f-m.size);
+       	m.offset_y = 2.0f*(randf()-0.5f)* (0.5f-m.size);
+
         break;
     default:
         printf("pack_mech error: unhandled mech type\n");

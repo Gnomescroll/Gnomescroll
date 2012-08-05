@@ -266,38 +266,51 @@ int run()
         
         Animations::render_block_damage();
         ItemParticle::draw();
-
+        Animations::draw_voxel_particles(); //moved out of transparent
         
         CHECK_GL_ERROR();
+
+
 
         /*
             Transparent
         */
 
+        glEnable(GL_BLEND);
+        glDepthMask(GL_FALSE);
+
         Particle::billboard_text_list->draw();
-        
+
+        GL_ASSERT(GL_BLEND, true);
+
+
         CHECK_GL_ERROR();
 
         //Animations::draw_insect_mob();
 
         // draw animations
 
-        glDepthMask(GL_FALSE);
-
         t_map::control_node_render_update();    //move this somewhere later
         t_map::control_node_render_draw();      //draw control node perimeter
         
+        GL_ASSERT(GL_BLEND, true);
+
         CHECK_GL_ERROR();
 
         Skybox::draw();
 
+        GL_ASSERT(GL_BLEND, true);
+
         CHECK_GL_ERROR();
+
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         Animations::draw_hitscan_effect();
         //Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
-        Animations::draw_voxel_particles();
+
+
+        GL_ASSERT(GL_BLEND, true);
 
         CHECK_GL_ERROR();
 
@@ -307,6 +320,8 @@ int run()
         Particle::grenade_list->draw();
         Particle::blood_list->draw();
         Particle::end_particle_draw();
+
+        GL_ASSERT(GL_BLEND, true);
 
         CHECK_GL_ERROR();
 

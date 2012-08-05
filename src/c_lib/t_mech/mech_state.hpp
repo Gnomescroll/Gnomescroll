@@ -20,10 +20,13 @@ class MECH
     int y;
     int z;
 
-    float radius;
+    float size;
     int type;
     int offset;
-    int rotation;
+    float rotation;
+
+    float offset_x;
+    float offset_y;
 };
 
 static void pack_mech(struct MECH &m, class mech_create_StoC &p);
@@ -70,7 +73,8 @@ class MECH_LIST
     {
         while(id >= mlm)
         {
-            mla = (MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
+            printf("add_mech: expand array id= %i mlm= %i \n", id, mlm);
+            mla = (class MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
             for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;
         }
@@ -78,15 +82,17 @@ class MECH_LIST
         GS_ASSERT(mla[id].id == -1);
         GS_ASSERT(id < MECH_HARD_MAX);
 
-        mla[mli] = m; //store mech
-        mla[mli].id = id;
+        mla[id] = m; //store mech
+        mla[id].id = id;
         mln++;
+    
+        printf("create mech %i at: %i %i %i \n", m.id, m.x,m.y,m.z);
     }
 
 #endif
 
 #if DC_SERVER
-    //returns id
+    //negative 1 on failure
     int add_mech(struct MECH &m)
     {
         //needs_update = true;
@@ -106,11 +112,11 @@ class MECH_LIST
             GS_ASSERT(mli != _mli);
         }
 
-        m.id = mli;
+        m.id = mli;   //set id
         mla[mli] = m; //store mech
         mln++;
 
-        return mli; //return id
+        return mli;
     }
 #endif
 

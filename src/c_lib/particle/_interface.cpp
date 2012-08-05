@@ -107,18 +107,20 @@ void begin_particle_draw()
     glColor4ub(255,255,255,255);
     
     GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+    GL_ASSERT(GL_BLEND, true);
 
-    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
+    
+
     glBegin(GL_QUADS);
 }
 
 void end_particle_draw()
 {
     glEnd();
-    glDisable(GL_BLEND);
+    //glDisable(GL_BLEND);
 }
 
 

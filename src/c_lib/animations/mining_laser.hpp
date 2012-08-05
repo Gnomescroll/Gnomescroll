@@ -205,10 +205,11 @@ void MiningLaserEffect_list::draw()
 
 
     GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+    GL_ASSERT(GL_BLEND, true);
 
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vlist->VBO);
 
-    glEnable(GL_BLEND);
+    //glEnable(GL_BLEND);
 
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -236,7 +237,6 @@ void MiningLaserEffect_list::draw()
     glDisableVertexAttribArray(mining_laser_TexCoord);
     glUseProgramObjectARB(0);
 
-    glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 }
 

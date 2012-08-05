@@ -141,9 +141,8 @@ void Shrapnel_list::draw()
     glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
 
     GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+    GL_ASSERT(GL_BLEND, true);
 
-    glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glColor3ub(255,255,255);
@@ -168,7 +167,6 @@ void Shrapnel_list::draw()
     glDisableVertexAttribArray(shrapnel_TexCoord);
     glUseProgramObjectARB(0);
 
-    glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 }
 
