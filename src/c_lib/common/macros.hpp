@@ -30,6 +30,12 @@ if(! (conditition) ) { \
 	{  print_trace();printf("GS_ASSERT_TRANSLATE error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__); } \
 }
 
+#define GS_ASSERT_ONCE(COND, LIMIT) \
+if(! (COND) ) { \
+	static int ct = 0; \
+	if (ct++ < LIMIT) \
+		print_trace();printf("GS_ASSERT_TRANSLATE error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__); \
+}
 
 
 #if defined ( __MSVC__ )

@@ -70,8 +70,8 @@ inline int quadrant_translate_i(int cx, int px)
 //__attribute((always_inline))
 inline float quadrant_translate_f(float cx, float px)
 {
-    //ASSERT_BOXED_POINT(cx);
-    //ASSERT_BOXED_POINT(px);
+    ASSERT_BOXED_POINT(cx);
+    ASSERT_BOXED_POINT(px);
 
     if(cx < QUADRANT_DIVIDEf)
     {
@@ -123,9 +123,6 @@ inline struct Vec3 translate_position(struct Vec3 pos)
 {
     pos.x = translate_point(pos.x);
     pos.y = translate_point(pos.y);
-
-    ASSERT_BOXED_POSITION(pos);
-
     return pos;
 }
 
