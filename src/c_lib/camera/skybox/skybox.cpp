@@ -266,8 +266,8 @@ void draw()
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+    GL_ASSERT(GL_BLEND, true);
 
-    glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc(GL_ONE, GL_ONE);
     
@@ -289,7 +289,6 @@ void draw()
     glDisableVertexAttribArray(star_TexCoord);
     glUseProgramObjectARB(0);
 
-    glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 
 }
