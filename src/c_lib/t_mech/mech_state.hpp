@@ -26,6 +26,9 @@ class MECH
     int rotation;
 };
 
+static void pack_mech(struct MECH &m, class mech_create_StoC &p);
+static void unpack_mech(struct MECH &m, class mech_create_StoC &p);
+
 enum MECH_TYPE
 {
 	MECH_CRYSTAL,
@@ -41,7 +44,7 @@ class MECH_LIST
     int mli; //mech index
     int mlm; //mech max
     int mln; //number of mech
-    int 
+
     class MECH* mla; //mech array;
 
     bool needs_update; //for drawing
@@ -78,7 +81,6 @@ class MECH_LIST
         mla[mli] = m; //store mech
         mla[mli].id = id;
         mln++;
-        return mli;
     }
 
 #endif
@@ -90,7 +92,7 @@ class MECH_LIST
         //needs_update = true;
         if(mlm == MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
 
-        is(mln == mlm)
+        if(mln == mlm)
         {
             mla = (MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
             for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
@@ -98,7 +100,7 @@ class MECH_LIST
         }
 
         int _mli = mli;
-        while(mla[mli].index != -1)
+        while(mla[mli].id != -1)
         {
             mli = (mli + 1) % mlm;
             GS_ASSERT(mli != _mli);
@@ -125,54 +127,12 @@ class MECH_LIST
 
 
 #if DC_SERVER
-
-/*
-    MECH_CRYSTAL,
-    MECH_CROP,
-    MECH_WIRE,
-    MECH_SWITCH
-*/
-    //pack mech data into packet
-    static void pack_mech(const struct MECH &m, class mech_create_StoC &p)
-    {
-        p.id = m.id;
-        p.x = m.x;
-        p.y = m.y;
-        p.z = m.z;
-
-        switch ( m.type )
-        {
-        case MECH_CRYSTAL:
-            //do something
-            break;
-        default:
-            printf("pack_mech error: unhandled mech type\n");
-        }
-    }
-
-    //handles unpacking
-    static void unpack_mech(const struct MECH &m, class mech_create_StoC &p)
-    {
-        m.id = p.id;
-        m.x = p.x;
-        m.y = p.y;
-        m.z = p.z;
-
-        switch ( p.type )
-        {
-        case MECH_CRYSTAL:
-            //do something
-            break;
-        default:
-            printf("pack_mech error: unhandled mech type\n");
-        } 
-    }
-
     void send_mech_list_to_client(int client_id)
     {
         for(int i=0; i<mlm; i++)
         {
-            if(mla[i],id == -1) continue;
+            if(mla[i].id == -1) continue;
+            mech_create_StoC p;
             pack_mech(mla[i], p);
             p.sendToClient(client_id);
         }

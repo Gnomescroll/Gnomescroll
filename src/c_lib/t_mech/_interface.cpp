@@ -73,6 +73,56 @@ void draw()
     MECH_SWITCH
 */
 
+/*
+    MECH_CRYSTAL,
+    MECH_CROP,
+    MECH_WIRE,
+    MECH_SWITCH
+*/
+    
+
+//pack mech data into packet
+static void pack_mech(struct MECH &m, class mech_create_StoC &p)
+{
+#if DC_SERVER
+    p.id = m.id;
+    p.x = m.x;
+    p.y = m.y;
+    p.z = m.z;
+
+    switch ( m.type )
+    {
+    case MECH_CRYSTAL:
+        //do something
+        break;
+    default:
+        printf("pack_mech error: unhandled mech type\n");
+    }
+#endif
+}
+
+
+//handles unpacking
+static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
+{
+#if DC_CLIENT
+    m.id = p.id;
+    m.x = p.x;
+    m.y = p.y;
+    m.z = p.z;
+
+    switch ( p.type )
+    {
+    case MECH_CRYSTAL:
+        //do something
+        break;
+    default:
+        printf("pack_mech error: unhandled mech type\n");
+    } 
+#endif
+}
+
+
 void create_crystal(int x, int y, int z)
 {
 #if DC_SERVER
