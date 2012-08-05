@@ -20,6 +20,7 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {
+            ASSERT_BOXED_POSITION(position);
             position = translate_position(position);
             if (vec3_equal(this->position, position)) return false;
             this->position = position;

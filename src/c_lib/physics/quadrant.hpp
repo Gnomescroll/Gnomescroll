@@ -3,9 +3,9 @@
 #include <t_map/common/constants.hpp>
 #include <physics/vec3.hpp>
 
-#define ASSERT_BOXED_POINT(p) GS_ASSERT(p >= 0 && p < 512)
-#define ASSERT_BOXED_POINTf(p) GS_ASSERT(p >= 0.0f && p < 512.0f)
-#define ASSERT_BOXED_POSITION(p) GS_ASSERT(p.x >= 0.0f && p.x < 512.0f && p.y >= 0.0f && p.y < 512.0f)
+#define ASSERT_BOXED_POINT(p) GS_ASSERT_TRANSLATE(p >= 0 && p < 512)
+#define ASSERT_BOXED_POINTf(p) GS_ASSERT_TRANSLATE(p >= 0.0f && p < 512.0f)
+#define ASSERT_BOXED_POSITION(p) GS_ASSERT_TRANSLATE(p.x >= 0.0f && p.x < 512.0f && p.y >= 0.0f && p.y < 512.0f)
 
 __attribute((always_inline))
 inline int Min_i(int x, int y, int x1, int y1)

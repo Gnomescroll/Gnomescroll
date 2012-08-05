@@ -19,6 +19,19 @@ exit(1);\
 #define GS_ASSERT(conditition) \
 if(! (conditition) ) { print_trace(); printf("GS_ASSERT error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__); }
 
+
+int GS_ASSERT_TRANSLATE_COUNT = 0;
+#define GS_ASSERT_TRANSLATE_LIMIT 60
+
+#define GS_ASSERT_TRANSLATE(conditition) \
+if(! (conditition) ) { \
+	GS_ASSERT_TRANSLATE_COUNT++; \
+	if(GS_ASSERT_TRANSLATE_COUNT < GS_ASSERT_TRANSLATE_LIMIT) \
+	{  print_trace();printf("GS_ASSERT_TRANSLATE error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__); } \
+}
+
+
+
 #if defined ( __MSVC__ )
 #define __func__ __FUNCTION__
 #endif

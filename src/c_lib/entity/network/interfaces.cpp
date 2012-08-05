@@ -190,6 +190,10 @@ void StatePacketMomentumAngles::message(Object* object, object_state_momentum_an
     Vec3 angles = physics->get_angles();
     msg->theta = angles.x;
     msg->phi = angles.y;
+
+    ASSERT_BOXED_POSITION(position);
+    ASSERT_BOXED_POSITION(momentum);
+    
 }
 
 
