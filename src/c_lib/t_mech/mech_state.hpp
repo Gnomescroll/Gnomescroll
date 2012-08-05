@@ -63,7 +63,7 @@ class MECH_LIST
     }
 
 #if DC_CLIENT
-    void add_mech(int id, struct MECH &m)
+    void add_mech(int id, const struct MECH &m)
     {
         while(id >= mlm)
         {
@@ -75,9 +75,10 @@ class MECH_LIST
         GS_ASSERT(mla[id].id == -1);
         GS_ASSERT(id < MECH_HARD_MAX);
 
-        m.id = id;
         mla[mli] = m; //store mech
+        mla[mli].id = id;
         mln++;
+        return mli;
     }
 
 #endif
@@ -182,14 +183,13 @@ class MECH_LIST
         this->add_mech(m);
 
         mech_create_StoC p;
-        pack_mech(mla[i], p);
+        pack_mech(m, p);
         p.broadcast();
     }
 
     void server_remove_mech(int id)
     {
-        remove_mech(x,y,z,0);
-
+        this->remove_mech(id);
         mech_delete_StoC p;
         p.id = id;
         p.broadcast();

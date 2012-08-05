@@ -66,18 +66,32 @@ void draw()
 
 #endif
 
+/*
+    MECH_CRYSTAL,
+    MECH_CROP,
+    MECH_WIRE,
+    MECH_SWITCH
+*/
+
 void create_crystal(int x, int y, int z)
 {
 #if DC_SERVER
-	mech_list->server_add_mech(x,y,z, 0);
+
+	struct MECH m;
+	m.type = MECH_CRYSTAL;
+	m.x = x;
+	m.y = y;
+	m.z = z;
+
+	mech_list->server_add_mech(m);
 #endif
 }
 
 void tick(int x, int y, int z)
 {
 #ifdef DC_CLIENT
-    printf("create crystal: %d %d %d \n", x,y,z);
-    create_crystal(x,y,z);
+    //printf("create crystal: %d %d %d \n", x,y,z);
+    //create_crystal(x,y,z);
 #endif
 }
 
