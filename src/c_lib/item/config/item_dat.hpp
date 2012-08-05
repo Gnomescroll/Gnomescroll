@@ -325,6 +325,11 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.cube_height = 1;
 
+    item_def(57, IG_RESOURCE, "crystal_seed");
+    sprite_def(i1, 5,1);
+    s.pretty_name = (char*) "Crystal Seed";
+    s.max_stack_size = 8;
+
     end_item_dat(); // finalize
     
     verify_item_dat();

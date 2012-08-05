@@ -30,7 +30,7 @@ void load_synthesizer()
     synthesizer_item_set(2,0);
     
     #if !PRODUCTION
-    synthesizer_item_def("small_charge_pack", 5);
+    synthesizer_item_def("crystal_seed", 5);
     synthesizer_item_set(3,0);
     
     synthesizer_item_def("energy_tank", 25);
