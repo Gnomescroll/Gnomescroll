@@ -64,8 +64,8 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
 
     // animation origin
     float origin[3];
-    origin[0] = pos.x + dxy * right.x;
-    origin[1] = pos.y + dxy * right.y;
+    origin[0] = translate_point(pos.x + dxy * right.x);
+    origin[1] = translate_point(pos.y + dxy * right.y);
     origin[2] = pos.z + dz;
 
     // send packet
@@ -149,8 +149,8 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
             // add agent position, now we have collision point
             look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
-            collision_point[0] = quadrant_translate_f(current_camera_position.x, look.x);
-            collision_point[1] = quadrant_translate_f(current_camera_position.y, look.y);
+            collision_point[0] = quadrant_translate_f(current_camera_position.x, translate_point(look.x));
+            collision_point[1] = quadrant_translate_f(current_camera_position.y, translate_point(look.y));
             collision_point[2] = look.z;
             // subtract translated animation origin from collision point (vec) to get new vector
             look.x -= origin[0];
@@ -348,8 +348,8 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             // add agent position, now we have collision point
             look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
-            collision_point[0] = quadrant_translate_f(current_camera_position.x, look.x);
-            collision_point[1] = quadrant_translate_f(current_camera_position.y, look.y);
+            collision_point[0] = quadrant_translate_f(current_camera_position.x, translate_point(look.x));
+            collision_point[1] = quadrant_translate_f(current_camera_position.y, translate_point(look.y));
             collision_point[2] = look.z;
             
             // subtract translated animation origin from collision point (look) to get new vector

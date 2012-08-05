@@ -894,7 +894,7 @@ void Agent_state::update_model()
     VoxDat* vox_dat = &VoxDats::agent;
     float radius = this->vox->get_part(0)->radius;
    
-    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
+    if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);

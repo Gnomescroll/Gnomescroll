@@ -124,6 +124,7 @@ void ItemParticle_list::draw()
 {
     #if DC_CLIENT
     using TextureSheetLoader::ItemSheetTexture;
+    GS_ASSERT(ItemSheetTexture != 0);
     if (ItemSheetTexture == 0) return;
 
     glColor4ub(255,255,255,255);

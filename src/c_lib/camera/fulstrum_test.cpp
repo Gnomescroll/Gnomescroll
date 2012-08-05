@@ -57,11 +57,15 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
 #define SPHERE_FULSTRUM_DEBUG 0
 #define SPHERE_FULSTRUM_DEBUG2 0 //use planes based point fulstrum test
 
-bool sphere_fulstrum_test(float x, float y, float  z, float r)
+bool sphere_fulstrum_test_translate(float x, float y, float z, float r)
 {
     x = quadrant_translate_f(fulstrum.c.x, x);
     y = quadrant_translate_f(fulstrum.c.y, y);
-    
+    return sphere_fulstrum_test(x,y,z,r);
+}
+
+bool sphere_fulstrum_test(float x, float y, float z, float r)
+{
     if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
         return false;
     
@@ -104,11 +108,15 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 #endif
 }
 
-bool point_fulstrum_test(float x, float y, float  z)
+bool point_fulstrum_test_translate(float x, float y, float z)
 {
     x = quadrant_translate_f(fulstrum.c.x, x);
     y = quadrant_translate_f(fulstrum.c.y, y);
+    return point_fulstrum_test(x,y,z);
+}
 
+bool point_fulstrum_test(float x, float y, float z)
+{
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;
@@ -125,7 +133,7 @@ bool point_fulstrum_test(float x, float y, float  z)
     return true;
 }
 
-inline bool point_fulstrum_test2(float x, float y, float  z)
+inline bool point_fulstrum_test2(float x, float y, float z)
 {
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
@@ -143,7 +151,7 @@ inline bool point_fulstrum_test2(float x, float y, float  z)
     return true;
 }
 
-inline bool point_fulstrum_test_map(float x, float y, float  z)
+inline bool point_fulstrum_test_map(float x, float y, float z)
 {
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;

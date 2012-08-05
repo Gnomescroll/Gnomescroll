@@ -14,7 +14,7 @@ void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool sta
     this->vox->was_updated = false;   // Reset was_updated flag (Voxel_model::update will restore if it does update)
     Vec3 center = this->get_center();
     float radius = this->get_radius();
-    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
+    if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
     {
         vox->set_draw(false);
         vox->set_hitscan(false);
@@ -43,7 +43,7 @@ void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bo
     vox->was_updated = false;   // Reset updated flag (Voxel_model::update will restore if it did)
     Vec3 center = this->get_center();
     float radius = this->get_radius();
-    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
+    if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
     {
         vox->set_draw(false);
         vox->set_hitscan(false);

@@ -398,7 +398,7 @@ void PlayerAgent_state::update_model()
     // other agents
     VoxDat* vox_dat = &VoxDats::agent;
     float radius = a->vox->get_part(0)->radius;
-    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
+    if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
         a->vox->set_draw(false);
         a->vox->set_hitscan(false);

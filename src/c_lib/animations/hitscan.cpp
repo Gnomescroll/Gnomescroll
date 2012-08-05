@@ -91,6 +91,9 @@ void HitscanEffect::tick()
     y += vy / tick_rate;
     z += vz / tick_rate;    
 
+    x = translate_point(x);
+    y = translate_point(y);
+
     //check for collision with terrain/players
     //play animations for terrain/player collision
 }

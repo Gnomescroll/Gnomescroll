@@ -257,40 +257,8 @@ void Voxel_render_list_manager::unregister_voxel_volume(class Voxel_volume* vv)
     this->lists[id].unregister_voxel_volume(vv);
 }
 
-
-
 void Voxel_render_list_manager::draw()
 {
-
-/*
-    #if !PRODUCTION
-    if (input_state.skeleton_editor)
-    {
-        for (int k=0; k < this->max; k++)
-        {
-            Voxel_render_list* vrl = &this->lists[k];
-
-            for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-            {
-                if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw ) continue;
-                Voxel_volume* vv = vrl->render_list[i];
-
-                if (vv->vvl.vnum == 0) continue;
-                if (!sphere_fulstrum_test(
-                    vv->world_matrix.v[3].x,
-                    vv->world_matrix.v[3].y,
-                    vv->world_matrix.v[3].z,
-                    vv->radius
-                )) continue;
-
-                vv->draw_bounding_box();
-            }
-        }
-    }
-      #endif
-//*/
-
-
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
     glColor3ub(255,255,255);
@@ -315,21 +283,10 @@ void Voxel_render_list_manager::draw()
 
         vrl->update_vertex_buffer_object(); 
 
-        if (_vbo->vnum == 0)
-        {
-            //if (VOXEL_RENDER_DEBUG)
-            //    printf("Voxel_render_list::draw, vnum equals zero \n");
-            continue;
-        }
+        if (_vbo->vnum == 0) continue;
 
-        if (_vbo->id == 0)
-        {
-            //if (VOXEL_RENDER_DEBUG)
-                printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
-            continue;
-        }
-
-        //float UN[3];
+        GS_ASSERT(_vbo->id != 0);
+        if (_vbo->id == 0) continue;
 
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
