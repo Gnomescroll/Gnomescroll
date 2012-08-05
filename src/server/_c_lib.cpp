@@ -56,6 +56,9 @@ dont_include_this_file_in_client
  
 #include <t_map/_include.hpp>
  
+ /* mechanisms */
+ #include <t_mech/_include.hpp>
+
 //ray tracing
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
@@ -88,9 +91,6 @@ dont_include_this_file_in_client
 
 /* Particles */
 #include <particle/_include.hpp>
-
-/* mechanisms */
-#include <t_mech/_include.hpp>
 
 /* Terrain Generator */
 
@@ -187,6 +187,8 @@ int init_c_lib(int argc, char* argv[])
     ItemContainer::init();
     Item::init_properties();
     
+    t_mech::init();
+
     //lua_load_block_dat(); /* Load Block Dat */
     t_map::load_block_dat();
 
@@ -226,6 +228,8 @@ void close_c_lib()
     Toolbelt::teardown();
     Item::teardown();
     ItemContainer::teardown();
+
+    t_mech::teardown();
 
     t_gen::teardown_map_generator();
 

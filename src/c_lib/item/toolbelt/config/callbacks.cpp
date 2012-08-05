@@ -4,6 +4,8 @@
 #include <entity/object/main.hpp>
 #include <entity/objects/fabs/constants.hpp>
 
+#include <t_mech/_interface.hpp>
+
 namespace Toolbelt
 {
 
@@ -243,6 +245,35 @@ void place_energy_core(int agent_id, ItemID item_id, int item_type)
     Objects::ready(obj);
     
     decrement_stack(agent_id, item_id, item_type);
+}
+
+
+void place_mech(int agent_id, ItemID item_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH);
+    
+
+    //class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Objects::ENERGY_CORE_HEIGHT);
+    //if (obj == NULL) return;
+    //Objects::ready(obj);
+
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    
+    const int max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* b = a->nearest_open_block(max_dist, z_low, z_high);
+    if (b == NULL) return;
+    
+    // must be placed on solid block
+    if (b[2] <= 0) return;  // can't place on nothing
+    if (!isSolid(b[0], b[1], b[2]-1)) return;
+
+    printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
+    t_mech::create_crystal(b[0],b[1],b[2] );
+    //decrement_stack(agent_id, item_id, item_type);
 }
 
 #endif
