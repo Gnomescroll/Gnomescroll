@@ -280,8 +280,6 @@ class ItemContainerSmelter: public ItemContainerInterface
 {
     public:
 
-        static const int product_xdim = 1;
-        static const int product_ydim = 1;
         static const int input_xdim = 1;
         static const int fuel_slot = 0;
         

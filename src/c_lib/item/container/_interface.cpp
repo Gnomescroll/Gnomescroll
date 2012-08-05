@@ -1509,19 +1509,16 @@ void update_smelters()
             recipe_id = NULL_SMELTING_RECIPE;
             if (recipe != NULL && recipe->available) recipe_id = recipe->id;
 
-            if (smelter->progress <= 0)
+            if (recipe_id != NULL_SMELTING_RECIPE
+             && smelter->can_insert_outputs(recipe->output, recipe->output_stack, recipe->output_num))
             {
-                if (recipe_id != NULL_SMELTING_RECIPE)
+                if (smelter->progress <= 0)
                     smelter->begin_smelting(recipe_id);
+                else if (recipe_id == smelter->recipe_id)
+                    smelter->tick_smelting();
             }
             else
-            {
-                if (recipe_id != NULL_SMELTING_RECIPE && recipe_id == smelter->recipe_id
-                && smelter->can_insert_outputs(recipe->output, recipe->output_stack, recipe->output_num))
-                    smelter->tick_smelting();
-                else
-                    smelter->reset_smelting();
-            }
+                smelter->reset_smelting();
             GS_ASSERT(smelter->progress <= 0 || recipe != NULL);
         }
 
