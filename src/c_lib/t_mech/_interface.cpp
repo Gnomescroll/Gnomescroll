@@ -68,7 +68,9 @@ void draw()
 
 void create_crystal(int x, int y, int z)
 {
-	mech_list->add_mech(x,y,z, 0);
+#if DC_SERVER
+	mech_list->server_add_mech(x,y,z, 0);
+#endif
 }
 
 void tick(int x, int y, int z)
