@@ -41,11 +41,11 @@ struct SIDE_BUFFER
 const int SIDE_BUFFER_ARRAY_SIZE = 7;
 //int SIDE_BUFFER_INDEX[SIDE_BUFFER_ARRAY_SIZE];   //index
 //struct SIDE_BUFFER* SIDE_BUFFER_ARRAY[SIDE_BUFFER_ARRAY_SIZE];
-int* SIDE_BUFFER_INDEX;   //index
-struct SIDE_BUFFER** SIDE_BUFFER_ARRAY;
+int* SIDE_BUFFER_INDEX = NULL;   //index
+struct SIDE_BUFFER** SIDE_BUFFER_ARRAY = NULL;
 
-struct Vertex* vlist_scratch_0;
-struct Vertex* vlist_scratch_1;
+struct Vertex* vlist_scratch_0 = NULL;
+struct Vertex* vlist_scratch_1 = NULL;
 
 void t_vbo_update_init()
 {
@@ -67,7 +67,16 @@ void t_vbo_update_end()
     free(vlist_scratch_0);
     free(vlist_scratch_1);
 
-    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) free(SIDE_BUFFER_ARRAY[i]);
+    if (SIDE_BUFFER_ARRAY != NULL)
+    {
+        for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
+            if (SIDE_BUFFER_ARRAY[i] != NULL)
+                free(SIDE_BUFFER_ARRAY[i]);
+        free(SIDE_BUFFER_ARRAY);
+    }
+
+    if (SIDE_BUFFER_INDEX != NULL)
+        free(SIDE_BUFFER_INDEX);
 }
 
 //cache line optimization; minimize size
@@ -818,7 +827,7 @@ int update_chunks() {
 }
 
 
-}
+}   // t_map
 
 
 #ifdef __MSVC__
