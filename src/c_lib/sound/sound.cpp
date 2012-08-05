@@ -55,6 +55,8 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
 {
     if (!Options::sound) return -1;
 
+    x = translate_point(x);
+    y = translate_point(y);
     x = quadrant_translate_f(listener_position.x, x);
     y = quadrant_translate_f(listener_position.y, y);
 

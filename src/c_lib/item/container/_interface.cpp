@@ -1504,12 +1504,12 @@ void update_smelters()
             }
         }
         else
-        {   // burn fuel, only if we can produce output
+        {   // burn fuel, advance smelting
+            smelter->burn_fuel();
             if (smelter->can_produce_output(&recipe, &recipe_id))
             {
                 GS_ASSERT(recipe != NULL);
                 GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
-                smelter->burn_fuel();
                 if (recipe_id != smelter->recipe_id)
                     smelter->reset_smelting();
                 if (smelter->progress <= 0)

@@ -333,8 +333,9 @@ void draw_equipped_item_other_agent(int agent_id, int item_type)
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
     float offset = (((vv->zdim)/2) * vv->scale) + (sprite_scale / 2.0f);
     struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
+    origin = translate_position(origin);
     
-    if (sphere_fulstrum_test(origin.x, origin.y, origin.z, sprite_scale) == false)
+    if (sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, sprite_scale) == false)
         return;
 
     struct Vec3 up = a->arm_forward();

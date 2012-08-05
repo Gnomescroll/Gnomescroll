@@ -85,7 +85,7 @@ void Agent_list::draw_equipped_items()
         if (this->a[i]->vox == NULL) continue;
         float radius = this->a[i]->vox->get_part(0)->radius;
         Vec3 center = this->a[i]->vox->get_center();
-        if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
+        if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
             continue;
 
         int equipped_item_type = Toolbelt::get_agent_selected_item_type(i);
@@ -189,6 +189,8 @@ void Agent_list::filter_none()
 // have to override these because of Agent_state->s.x,y,z
 int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
 {
+    x = translate_point(x);
+    y = translate_point(y);
     int ct = 0;
     float dist;
     const float radius_squared = radius*radius;
@@ -213,6 +215,8 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
 // origin, direction, cone threshold
 void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta)
 {
+    x = translate_point(x);
+    y = translate_point(y);
     int ct = 0;
     float ax,ay,az;
     float ip;

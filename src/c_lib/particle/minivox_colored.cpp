@@ -131,14 +131,9 @@ void ColoredMinivox::draw()
     // Quit if voxel is completely transparent
     if (this->a == 0) return;
 
-    Vec3 position = this->get_position();
-    position = quadrant_translate_position(current_camera_position, position);
-    const float
-        x0 = position.x,
-        y0 = position.y,
-        z0 = position.z;
-
-    if (point_fulstrum_test(x0, y0, z0) == false) return;
+    Vec3 p = this->get_position();
+    p = quadrant_translate_position(current_camera_position, p);
+    if (point_fulstrum_test(p.x,p.y,p.z) == false) return;
 
     glColor4ub(this->r, this->g, this->b, 255);
 
@@ -159,10 +154,10 @@ void ColoredMinivox::draw()
 
     // draw voxel
     for (i=0; i<6; i++) {
-        glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
-        glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
-        glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
-        glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
+        glVertex3f(p.x + s_buffer[12*i+3*0+0], p.y + s_buffer[12*i+3*0+1], p.z + s_buffer[12*i+3*0+2]);
+        glVertex3f(p.x + s_buffer[12*i+3*1+0], p.y + s_buffer[12*i+3*1+1], p.z + s_buffer[12*i+3*1+2]);
+        glVertex3f(p.x + s_buffer[12*i+3*2+0], p.y + s_buffer[12*i+3*2+1], p.z + s_buffer[12*i+3*2+2]);
+        glVertex3f(p.x + s_buffer[12*i+3*3+0], p.y + s_buffer[12*i+3*3+1], p.z + s_buffer[12*i+3*3+2]);
     }
     #endif
 }

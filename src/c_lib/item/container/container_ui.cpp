@@ -11,11 +11,6 @@ void ItemContainerSmelterUI::tick_fuel()
 {
     if (fuel <= 0.0f) return;
 
-    ItemContainerSmelter* smelter = (ItemContainerSmelter*)get_container(this->id);
-    GS_ASSERT(smelter != NULL);
-    if (smelter == NULL) return;
-    if (!smelter->can_produce_output()) return;
-    
     float burn_rate;
     if (this->fuel_type == NULL_ITEM_TYPE) burn_rate = 1.0f/30.0f;
     else burn_rate = 1.0f / ((float)Item::get_fuel_burn_rate(this->fuel_type));
