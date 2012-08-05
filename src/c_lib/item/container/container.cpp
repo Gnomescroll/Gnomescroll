@@ -102,6 +102,49 @@ void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
 
 /* Smelter */
 
+bool ItemContainerSmelter::can_produce_output()
+{
+    int recipe_id;
+    Item::SmeltingRecipe* recipe;
+    return this->can_produce_output(&recipe, &recipe_id);
+}
+
+bool ItemContainerSmelter::can_produce_output(Item::SmeltingRecipe** pRecipe, int* pRecipe_id)
+{
+    class Item::SmeltingRecipe* recipe = Item::get_selected_smelting_recipe(this->id);
+    int recipe_id = NULL_SMELTING_RECIPE;
+    if (recipe != NULL && recipe->available)
+    {
+        recipe_id = recipe->id;
+        GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+    }
+    *pRecipe = recipe;
+    *pRecipe_id = recipe_id;
+    return (recipe != NULL && recipe->available && recipe->id != NULL_SMELTING_RECIPE
+          && this->can_insert_outputs(recipe->output, recipe->output_stack, recipe->output_num));
+}
+
+bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, int n_outputs)
+{
+    GS_ASSERT(n_outputs > 0);
+    if (n_outputs <= 0) return false;
+    GS_ASSERT(n_outputs <= alt_xdim*alt_ydim);
+    if (n_outputs > alt_xdim*alt_ydim) return false;
+
+    for (int i=0; i<n_outputs; i++)
+    {
+        GS_ASSERT(outputs[i] != NULL_ITEM_TYPE);
+        GS_ASSERT(output_stacks[i] >= 1);
+        int slot = this->convert_product_slot(i);
+        ItemID slot_item = this->get_item(slot);
+        if (slot_item == NULL_ITEM) continue;
+        int slot_item_type = Item::get_item_type(slot_item);
+        if (outputs[i] != slot_item_type) return false;   // items won't stack
+        if (output_stacks[i] >= Item::get_stack_space(slot_item)) return false; // no room to stack
+    }
+    return true;
+}
+
 #if DC_SERVER
 void ItemContainerSmelter::burn_fuel()
 {
@@ -122,8 +165,6 @@ void ItemContainerSmelter::fill_fuel(int fuel_type)
     GS_ASSERT(this->burn_rate > 0.0f);
     if (this->burn_rate <= 0.0f) this->burn_rate = 1.0f/30.0f;
     send_smelter_fuel(this->id);
-
-    t_map::smelter_on(this->id);
 }
 
 void ItemContainerSmelter::reset_fuel()
@@ -133,9 +174,6 @@ void ItemContainerSmelter::reset_fuel()
     if (this->fuel == 0.0f) return;
     this->fuel = 0.0f;
     send_smelter_fuel(this->id);
-    int fuel_type = Item::get_item_type(this->get_fuel());
-    if (!Item::is_fuel(fuel_type))   // only send turn off if we wont be burning any more fuel
-        t_map::smelter_off(this->id);
 }
 
 void ItemContainerSmelter::begin_smelting(int recipe_id)
@@ -149,6 +187,7 @@ void ItemContainerSmelter::begin_smelting(int recipe_id)
     if (this->progress_rate <= 0.0f) this->progress_rate = 1.0f/30.0f;
     this->progress += this->progress_rate;
     send_smelter_progress(this->id);
+    t_map::smelter_on(this->id);
 }
 
 void ItemContainerSmelter::tick_smelting()
@@ -167,27 +206,10 @@ void ItemContainerSmelter::reset_smelting()
     if (this->progress == 0.0f) return;
     this->progress = 0.0f;
     send_smelter_progress(this->id);
-}
 
-bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, int n_outputs)
-{
-    GS_ASSERT(n_outputs > 0);
-    if (n_outputs <= 0) return false;
-    GS_ASSERT(n_outputs <= product_xdim*product_ydim);
-    if (n_outputs > product_xdim*product_ydim) return false;
-
-    for (int i=0; i<n_outputs; i++)
-    {
-        GS_ASSERT(outputs[i] != NULL_ITEM_TYPE);
-        GS_ASSERT(output_stacks[i] >= 1);
-        int slot = this->convert_product_slot(i);
-        ItemID slot_item = this->get_item(slot);
-        if (slot_item == NULL_ITEM) continue;
-        int slot_item_type = Item::get_item_type(slot_item);
-        if (outputs[i] != slot_item_type) return false;   // items won't stack
-        if (output_stacks[i] >= Item::get_stack_space(slot_item)) return false; // no room to stack
-    }
-    return true;
+    // send smelter off only if we dont expect the recipe to burn another one
+    if (this->fuel <= 0.0f || !this->can_produce_output())
+        t_map::smelter_off(this->id);
 }
 #endif
 

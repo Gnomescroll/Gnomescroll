@@ -1431,6 +1431,7 @@ void update_smelters()
         
         if (smelter->fuel <= 0)
         {
+            smelter->fuel = 0;
             ItemID fuel_item = smelter->get_fuel();
             int fuel_item_type = NULL_ITEM_TYPE;
             bool is_fuel = false;
@@ -1494,34 +1495,30 @@ void update_smelters()
             }
             else
             {   // consume fuel item stack
-                int remaining = Item::consume_stack_item(fuel_item);
-                if (remaining > 0) Item::send_item_state(fuel_item);
-                smelter->fill_fuel(fuel_item_type);
+                if (smelter->can_produce_output())
+                {
+                    int remaining = Item::consume_stack_item(fuel_item);
+                    if (remaining > 0) Item::send_item_state(fuel_item);
+                    smelter->fill_fuel(fuel_item_type);
+                }
             }
         }
         else
-        {
-            // burn fuel
-            smelter->burn_fuel();
-            
-            // look up recipe
-            recipe = Item::get_selected_smelting_recipe(smelter->id);
-            recipe_id = NULL_SMELTING_RECIPE;
-            if (recipe != NULL && recipe->available) recipe_id = recipe->id;
-
-            if (smelter->progress <= 0)
+        {   // burn fuel, only if we can produce output
+            if (smelter->can_produce_output(&recipe, &recipe_id))
             {
-                if (recipe_id != NULL_SMELTING_RECIPE)
+                GS_ASSERT(recipe != NULL);
+                GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
+                smelter->burn_fuel();
+                if (recipe_id != smelter->recipe_id)
+                    smelter->reset_smelting();
+                if (smelter->progress <= 0)
                     smelter->begin_smelting(recipe_id);
+                else if (recipe_id == smelter->recipe_id)
+                    smelter->tick_smelting();
             }
             else
-            {
-                if (recipe_id != NULL_SMELTING_RECIPE && recipe_id == smelter->recipe_id
-                && smelter->can_insert_outputs(recipe->output, recipe->output_stack, recipe->output_num))
-                    smelter->tick_smelting();
-                else
-                    smelter->reset_smelting();
-            }
+                smelter->reset_smelting();
             GS_ASSERT(smelter->progress <= 0 || recipe != NULL);
         }
 
@@ -1531,7 +1528,6 @@ void update_smelters()
             if (recipe == NULL) continue;
             // consume recipe inputs
             unsigned int max_inputs = smelter->get_max_input_slots();
-            //ItemID inputs[max_inputs];
             MALLOX(ItemID, inputs, max_inputs); //type, name, size
             
             int n_inputs = smelter->get_sorted_inputs(inputs, max_inputs);    // sorted by type

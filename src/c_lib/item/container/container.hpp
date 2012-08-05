@@ -280,8 +280,6 @@ class ItemContainerSmelter: public ItemContainerInterface
 {
     public:
 
-        static const int product_xdim = 1;
-        static const int product_ydim = 1;
         static const int input_xdim = 1;
         static const int fuel_slot = 0;
         
@@ -320,8 +318,11 @@ class ItemContainerSmelter: public ItemContainerInterface
         void begin_smelting(int recipe_id);
         void tick_smelting();
         void reset_smelting();
-        bool can_insert_outputs(int* outputs, int* output_stacks, int n_outputs);
         #endif
+
+        bool can_produce_output();
+        bool can_produce_output(class Item::SmeltingRecipe** pRecipe, int* pRecipe_id);
+        bool can_insert_outputs(int* outputs, int* output_stacks, int n_outputs);
 
         unsigned int get_max_input_slots()
         {
