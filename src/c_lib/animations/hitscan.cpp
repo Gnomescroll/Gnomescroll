@@ -175,12 +175,12 @@ void HitscanEffect_list::draw()
 
     glColor3ub(255,255,255);
 
-    glEnable(GL_TEXTURE_2D);
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+    GL_ASSERT(GL_BLEND, true);
 
+    glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, hitscan_texture_id );
-    glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
     glBegin( GL_QUADS );
@@ -190,7 +190,6 @@ void HitscanEffect_list::draw()
     
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
 
 }
 
