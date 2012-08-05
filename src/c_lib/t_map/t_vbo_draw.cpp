@@ -333,8 +333,9 @@ void Vbo_map::draw_map()
 {
     prep_draw();
     sort_draw();
-    prep_frustrum();
-    prep_frustrum_vertices();
+    
+    //prep_frustrum();
+    //prep_frustrum_vertices();
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
@@ -551,8 +552,9 @@ void Vbo_map::draw_map_compatibility()
 
     prep_draw();
     sort_draw();
-    prep_frustrum();
-    prep_frustrum_vertices();
+    
+    //prep_frustrum();
+    //prep_frustrum_vertices();
 
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);

@@ -20,6 +20,8 @@ void CreatePacket::message(Object* object, object_create_StoC* msg)
     msg->x = position.x;
     msg->y = position.y;
     msg->z = position.z;
+
+    ASSERT_BOXED_POSITION(position);
 }
 
 void CreatePacketOwner::message(Object* object, object_create_owner_StoC* msg)
@@ -41,6 +43,8 @@ void CreatePacketOwner::message(Object* object, object_create_owner_StoC* msg)
     if (owner != NULL)
         msg->owner = owner->get_owner();
     else msg->owner = NO_AGENT;
+
+    ASSERT_BOXED_POSITION(position);
 }
 
 void CreatePacketMomentum::message(Object* object, object_create_momentum_StoC* msg)
@@ -60,6 +64,8 @@ void CreatePacketMomentum::message(Object* object, object_create_momentum_StoC* 
     msg->mx = momentum.x;
     msg->my = momentum.y;
     msg->mz = momentum.z;
+
+    ASSERT_BOXED_POSITION(position);
 }
 
 void CreatePacketMomentumAngles::message(Object* object, object_create_momentum_angles_StoC* msg)
@@ -83,6 +89,8 @@ void CreatePacketMomentumAngles::message(Object* object, object_create_momentum_
     Vec3 angles = physics->get_angles();
     msg->theta = angles.x;
     msg->phi = angles.y;
+    
+    ASSERT_BOXED_POSITION(position);
 }
 
 void CreatePacketMomentumAnglesHealth::message(Object* object, object_create_momentum_angles_health_StoC* msg)
@@ -115,6 +123,8 @@ void CreatePacketMomentumAnglesHealth::message(Object* object, object_create_mom
     if (health == NULL) return;
     GS_ASSERT(health->max_health >= 0); // should be dead
     msg->max_health = health->max_health;
+
+    ASSERT_BOXED_POSITION(position);
 }
 
 void CreatePacketMomentumAnglesHealth::health_message(Object* object, object_state_health_StoC* msg)
@@ -148,6 +158,8 @@ void StatePacket::message(Object* object, object_state_StoC* msg)
     msg->x = position.x;
     msg->y = position.y;
     msg->z = position.z;
+
+    ASSERT_BOXED_POSITION(position);
 }
 
 void StatePacketMomentum::message(Object* object, object_state_momentum_StoC* msg)
@@ -167,6 +179,8 @@ void StatePacketMomentum::message(Object* object, object_state_momentum_StoC* ms
     msg->mx = momentum.x;
     msg->my = momentum.y;
     msg->mz = momentum.z;
+
+    ASSERT_BOXED_POSITION(position);
 }
 
 void StatePacketMomentumAngles::message(Object* object, object_state_momentum_angles_StoC* msg)
@@ -192,8 +206,6 @@ void StatePacketMomentumAngles::message(Object* object, object_state_momentum_an
     msg->phi = angles.y;
 
     ASSERT_BOXED_POSITION(position);
-    ASSERT_BOXED_POSITION(momentum);
-    
 }
 
 
