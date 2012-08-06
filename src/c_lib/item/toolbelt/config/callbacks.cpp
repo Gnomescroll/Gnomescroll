@@ -306,7 +306,7 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
             return;
         }
         int side = get_cube_side_from_side_array(_side);
-
+        
         printf("block: %i %i %i open: %i %i %i side: %i \n", 
             solid_pos[0],solid_pos[1],solid_pos[2], 
             open_pos[0],open_pos[1],open_pos[2],

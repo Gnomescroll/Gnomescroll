@@ -11,36 +11,8 @@ namespace t_mech
 
 const int MECH_HARD_MAX = 0xff;
 
-class MECH
-{
-    public:
-    int id; //-1 if not in use
-
-    int x;
-    int y;
-    int z;
-
-    int type;
-    int subtype;
-    
-    float size;
-    int offset;
-    float rotation;
-
-    float offset_x;
-    float offset_y;
-};
-
 static void pack_mech(struct MECH &m, class mech_create_StoC &p);
 static void unpack_mech(struct MECH &m, class mech_create_StoC &p);
-
-enum MECH_TYPE
-{
-	MECH_CRYSTAL,
-	MECH_CROP,
-	MECH_WIRE,
-	MECH_SWITCH
-};
 
 class MECH_LIST
 {

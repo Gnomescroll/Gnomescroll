@@ -1,5 +1,7 @@
 #pragma once
 
+#include <t_mech/common/common.hpp>
+
 #include "_interface.hpp"
 
 #include <t_mech/net/CtoS.cpp>
