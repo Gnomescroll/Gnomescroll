@@ -40,11 +40,13 @@ void init()
 
 void teardown() 
 {
-    delete mech_list;
-#if DC_CLIENT
-    delete MechListRenderer;
-#endif
     tear_down_properties();
+    delete mech_list;
+    
+#if DC_CLIENT
+    delete mech_list_renderer;
+#endif
+
 }
 
 #if DC_CLIENT
@@ -63,8 +65,6 @@ void draw_transparent()
 {
 	mech_list_renderer->draw_transparent();
 }
-
-
 #endif
 
 /*

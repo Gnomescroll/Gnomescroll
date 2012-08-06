@@ -16,7 +16,7 @@ namespace t_mech
 		for(int i=0; i<MAX_MECHS; i++) mech_attribute[i].mech_type = -1;
 	}
 
-	void tear_down_properties();
+	void tear_down_properties()
 	{
 		free(mech_attribute);
 	}
