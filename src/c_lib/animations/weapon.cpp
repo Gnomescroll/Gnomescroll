@@ -142,6 +142,39 @@ static Vec3 compute_point_offset(
     return final;
 }
 
+void draw_sprite_gl_begin()
+{
+    // setup texture
+    using TextureSheetLoader::ItemSheetTexture;
+    GS_ASSERT(ItemSheetTexture != 0);
+    if (ItemSheetTexture == 0) return;
+
+    // set up opengl state
+    glColor4ub(255,255,255,255);
+    
+    GL_ASSERT(GL_BLEND, false);
+
+    glEnable(GL_TEXTURE_2D);
+
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.5f);
+    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
+
+    // vertex calls
+    glBegin(GL_QUADS);
+}
+
+void draw_sprite_gl_end()
+{
+    glEnd();
+    
+    // cleanup
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_TEXTURE_2D);
+
+    CHECK_GL_ERROR();
+}
+
 static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 {
     origin = quadrant_translate_position(current_camera_position, origin);
@@ -156,26 +189,6 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
     float ty_min = (item_sprite / TEXTURE_SPRITE_WIDTH) * SPRITE_WIDTH;
     float ty_max = ty_min + SPRITE_WIDTH;
 
-    // setup texture
-    using TextureSheetLoader::ItemSheetTexture;
-    GS_ASSERT(ItemSheetTexture != 0);
-    if (ItemSheetTexture == 0) return;
-
-    // set up opengl state
-    glColor4ub(255,255,255,255);
-    //GL_ASSERT(GL_TEXTURE_2D, true);
-    
-    GL_ASSERT(GL_BLEND, false);
-
-    glEnable(GL_TEXTURE_2D);
-
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.5f);
-    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
-
-    // vertex calls
-    glBegin(GL_QUADS);
-    
     Vec3 p = vec3_sub(origin, vec3_add(right, up));
     glTexCoord2f(tx_max, ty_max);
     glVertex3f(p.x, p.y, p.z);
@@ -191,16 +204,13 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
     p = vec3_add(origin, vec3_sub(right, up));
     glTexCoord2f(tx_min, ty_max);
     glVertex3f(p.x, p.y, p.z);
-
-    glEnd();
-    
-    // cleanup
-    glDisable(GL_ALPHA_TEST);
-    glDisable(GL_TEXTURE_2D);
 }
 
-static void draw_voxel(int item_type,
-    Vec3 origin, Vec3 forward, Vec3 right, Vec3 up)
+// used for restoring cull face state
+static GLboolean cull_face_enabled = false;
+static GLint cull_face_mode = GL_BACK;
+
+void draw_voxel_gl_begin(GLint cull_mode)
 {
     glColor4ub(255,255,255,255);
 
@@ -208,19 +218,37 @@ static void draw_voxel(int item_type,
     GL_ASSERT(GL_ALPHA_TEST, false);
 
     // save culling state
-    const GLboolean cull_face_enabled = glIsEnabled(GL_CULL_FACE);
-    GLint cull_face_mode = GL_BACK;
+    cull_face_enabled = glIsEnabled(GL_CULL_FACE);
     glGetIntegerv(GL_CULL_FACE_MODE, &cull_face_mode);
     
     // enable backface culling
     if (!cull_face_enabled)
         glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);    // backface culling
+    if (cull_face_mode != cull_mode && cull_mode != GL_INVALID_ENUM)
+        glCullFace(cull_mode);    // backface culling
     
     // draw textured voxels
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
 
+    glBegin(GL_QUADS);
+}
+
+void draw_voxel_gl_end()
+{
+    glEnd();
+
+    // restore culling state
+    if (cull_face_mode != GL_INVALID_ENUM)
+        glCullFace(cull_face_mode);
+    if (!cull_face_enabled)
+        glDisable(GL_CULL_FACE);
+
+    CHECK_GL_ERROR();
+}
+
+static void draw_voxel(int item_type, Vec3 origin, Vec3 forward, Vec3 right, Vec3 up)
+{
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     const int sprite_id = Item::get_particle_voxel_texture(item_type);
     GS_ASSERT(sprite_id != ERROR_SPRITE);
@@ -229,19 +257,9 @@ static void draw_voxel(int item_type,
     float tx = (2.0f / 32.0f) * (sprite_id % (512/32));
     float ty = (2.0f / 32.0f) * (sprite_id / (512/32));
     
-    glBegin(GL_QUADS);
-
     drawTexturedMinivox(
         origin, right, forward, up,
         tx, ty, sprite_width);
-        
-    glEnd();
-
-    // restore culling state
-    if (cull_face_mode != GL_INVALID_ENUM)
-        glCullFace(cull_face_mode);
-    if (!cull_face_enabled)
-        glDisable(GL_CULL_FACE);
 }
 
 void draw_equipped_item(int item_type)
@@ -313,25 +331,31 @@ void draw_equipped_item(int item_type)
     
     GL_ASSERT(GL_DEPTH_TEST, false);
     if (Item::item_type_is_voxel(item_type))
+    {
+        draw_voxel_gl_begin(GL_FRONT);
         draw_voxel(item_type, origin, forward, right, up);
+        draw_voxel_gl_end();
+    }
     else
+    {
+        draw_sprite_gl_begin();
         draw_planar_sprite(item_type, origin, right, up);
+        draw_sprite_gl_end();
+    }
 }
 
-void draw_equipped_item_other_agent(int agent_id, int item_type)
+static bool get_other_agent_render_params(int agent_id, Vec3* pOrigin, Vec3* pForward, Vec3* pRight, Vec3* pUp)
 {    // draw item in other players' hands
     ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
-
-    if (item_type == NULL_ITEM_TYPE) return;    // dont draw a fist
+    IF_INVALID_AGENT_ID(agent_id) return false;
 
     Agent_state* a = ClientState::agent_list->get(agent_id);
     GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    if (a == NULL) return false;
 
     class Voxel_volume* vv = a->get_arm();
     GS_ASSERT(vv != NULL);
-    if (vv == NULL) return;
+    if (vv == NULL) return false;
     
     // HACKED UP MODEL DEPENDENT CRAP
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
@@ -340,20 +364,39 @@ void draw_equipped_item_other_agent(int agent_id, int item_type)
     origin = translate_position(origin);
     
     if (sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, sprite_scale) == false)
-        return;
+        return false;
 
     struct Vec3 up = a->arm_forward();
     struct Vec3 forward = a->arm_right();
 
     // scale to size
-    up = vec3_scalar_mult(up, sprite_scale);
-    right = vec3_scalar_mult(right, sprite_scale);
-    forward = vec3_scalar_mult(forward, sprite_scale);
+    *pUp = vec3_scalar_mult(up, sprite_scale);
+    *pRight = vec3_scalar_mult(right, sprite_scale);
+    *pForward = vec3_scalar_mult(forward, sprite_scale);
+
+    *pOrigin = origin;
     
-    if (Item::item_type_is_voxel(item_type))
-        draw_voxel(item_type, origin, forward, right, up);
-    else
-        draw_planar_sprite(item_type, origin, right, up);
+    return true;
+}
+
+void draw_equipped_voxel_item_other_agent(int agent_id, int item_type)
+{
+    static int fist = Item::get_item_type("fist");
+    if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
+    Vec3 origin, forward, right, up;
+    bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
+    if (!valid) return;
+    draw_voxel(item_type, origin, forward, right, up);
+}
+
+void draw_equipped_sprite_item_other_agent(int agent_id, int item_type)
+{
+    static int fist = Item::get_item_type("fist");
+    if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
+    Vec3 origin, forward, right, up;
+    bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
+    if (!valid) return;
+    draw_planar_sprite(item_type, origin, right, up);
 }
 
 void begin_equipped_item_animation(int item_type, bool continuous)
