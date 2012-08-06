@@ -4,6 +4,8 @@
 #include <entity/object/main.hpp>
 #include <entity/objects/fabs/constants.hpp>
 
+#include <physics/ray_trace/ray_trace.hpp>
+
 #include <t_mech/_interface.hpp>
 
 namespace Toolbelt
@@ -257,23 +259,63 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
     //if (obj == NULL) return;
     //Objects::ready(obj);
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
-    
-    const int max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
-    int* b = a->nearest_open_block(max_dist, z_low, z_high);
-    if (b == NULL) return;
-    
-    // must be placed on solid block
-    if (b[2] <= 0) return;  // can't place on nothing
-    if (!isSolid(b[0], b[1], b[2]-1)) return;
+    if(item_id = dat_get_item_type("crystal_placer") )
+    {
+        Agent_state* a = ServerState::agent_list->get(agent_id);
+        GS_ASSERT(a != NULL);
+        if (a == NULL) return;
+        
+        const int max_dist = 4.0f;
+        const int z_low = 4;
+        const int z_high = 3;
+        int* b = a->nearest_open_block(max_dist, z_low, z_high);
+        if (b == NULL) return;
+        
+        // must be placed on solid block
+        if (b[2] <= 0) return;  // can't place on nothing
+        if (!isSolid(b[0], b[1], b[2]-1)) return;
 
-    printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
-    t_mech::create_crystal(b[0],b[1],b[2] );
-    //decrement_stack(agent_id, item_id, item_type);
+        printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
+        t_mech::create_crystal(b[0],b[1],b[2] );
+        //decrement_stack(agent_id, item_id, item_type);
+    }
+
+    if(item_id = dat_get_item_type("crystal_placer2") )
+    {
+        //int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
+
+        Agent_state* a = ServerState::agent_list->get(agent_id);
+        GS_ASSERT(a != NULL);
+        if (a == NULL) return;
+        
+        const int max_dist = 4.0f;
+        const int z_low = 4;
+        const int z_high = 3;
+        
+        int solid_pos[3];
+        int open_position[3];
+        int _side[3];
+        float distance;
+
+        int ret = a->get_facing_side(solid_pos, open_pos, _side, &distance);
+        if(ret == 0) return;
+
+
+        int side = get_cube_side_from_side_array(_side);
+
+        int* b = a->nearest_open_block(max_dist, z_low, z_high);
+        if (b == NULL) return;
+        
+        // must be placed on solid block
+        if (b[2] <= 0) return;  // can't place on nothing
+        if (!isSolid(b[0], b[1], b[2]-1)) return;
+
+        printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
+        t_mech::create_crystal(b[0],b[1],b[2] );
+        //decrement_stack(agent_id, item_id, item_type);
+    }
+
+
 }
 
 #endif
