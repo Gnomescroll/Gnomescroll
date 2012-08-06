@@ -10,7 +10,8 @@ namespace STATE
     extern Voxel_hitscan_list* voxel_hitscan_list;
 }
 
-namespace Hitscan {
+namespace Hitscan
+{
 
 static HitscanBlock dummy_hitscan_block;
 
@@ -68,27 +69,27 @@ HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float 
 // returns NO_AGENT if none found
 int against_agents(Vec3 position, Vec3 direction, float max_distance, int firing_agent_id)
 {
-	float vox_distance = 1000000.0f;
-	class Voxel_hitscan_target target;
-	float collision_point[3];
-	
-	// TODO -- keep agents in their own hitscan list
-	bool hit = STATE::voxel_hitscan_list->hitscan(
-		position.x, position.y, position.z,
-		direction.x, direction.y, direction.z,
-		firing_agent_id, OBJECT_AGENT,
-		collision_point, &vox_distance,
-		&target);
-	
-	if (!hit) return NO_AGENT;	
-	if (target.entity_type != OBJECT_AGENT) return NO_AGENT;
-	if (vox_distance > max_distance) return NO_AGENT;
-	return target.entity_id;
+    float vox_distance = 1000000.0f;
+    class Voxel_hitscan_target target;
+    float collision_point[3];
+    
+    // TODO -- keep agents in their own hitscan list
+    bool hit = STATE::voxel_hitscan_list->hitscan(
+        position.x, position.y, position.z,
+        direction.x, direction.y, direction.z,
+        firing_agent_id, OBJECT_AGENT,
+        collision_point, &vox_distance,
+        &target);
+    
+    if (!hit) return NO_AGENT;  
+    if (target.entity_type != OBJECT_AGENT) return NO_AGENT;
+    if (vox_distance > max_distance) return NO_AGENT;
+    return target.entity_id;
 }
 
 int against_agents(Vec3 position, Vec3 direction, float max_distance)
 {
-	return against_agents(position, direction, max_distance, NO_AGENT);
+    return against_agents(position, direction, max_distance, NO_AGENT);
 }
 
 HitscanTargetTypes hitscan_against_world(
