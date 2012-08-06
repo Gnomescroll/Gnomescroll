@@ -579,11 +579,11 @@ void Voxel_volume::update_vertex_list()
         push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #else
         if(z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
-        if(z == 0 || get_as_int(x,y,z-1) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
+        if(z == 0 || get_as_int(x,y,z-1) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
         if(x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
-        if(x == 0 || get_as_int(x-1,y,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
-        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
-        if(y == 0 || get_as_int(x,y-1,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
+        if(x == 0 || get_as_int(x-1,y,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
+        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0)  push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
+        if(y == 0 || get_as_int(x,y-1,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #endif
     }
 
