@@ -1000,3 +1000,19 @@ void force_update_agent_vox(Agent_state* a)
     AgentState s = a->get_state();
     a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
 }
+
+int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
+{
+    Vec3 p = this->get_position();
+    Vec3 v = this->forward_vector();
+    int tile = 0;
+    Hitscan::HitscanTargetTypes target = Hitscan::terrain(p.x, p.y, p.z, v.x, v.y, v.z, solid_pos, distance, side, &tile);
+    if (target != Hitscan::HITSCAN_TARGET_BLOCK) return 0;
+    open_pos[0] = translate_point(solid_pos[0] + side[0]);
+    open_pos[1] = translate_point(solid_pos[1] + side[1]);
+    open_pos[2] = solid_pos[2] + side[2];
+    GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
+    GS_ASSERT(tile > 0);
+    return tile;
+}
+

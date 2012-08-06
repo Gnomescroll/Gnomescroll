@@ -105,6 +105,7 @@ class PlayerAgent_state
         void update_sound();
 
         int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
+        int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
         
         PlayerAgent_state();
         ~PlayerAgent_state();
