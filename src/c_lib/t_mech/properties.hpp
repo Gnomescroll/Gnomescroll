@@ -2,7 +2,7 @@
 
 namespace t_mech
 {
-	extern struct* MECH_ATTRIBUTE mech_attribute;	//index from type to attributes
+	extern struct MECH_ATTRIBUTE* mech_attribute;	//index from type to attributes
 
 	void init_properties();
 	void tear_down_properties();
