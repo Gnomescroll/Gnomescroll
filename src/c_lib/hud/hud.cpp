@@ -8,7 +8,6 @@
 #include <input/handlers.hpp>
 #include <options/options.hpp>
 #include <common/profiling/frame_graph.hpp>
-//#include <draw/transparent.hpp>
 
 #include <item/_interface.hpp>
 #include <item/toolbelt/_interface.hpp>
@@ -36,8 +35,6 @@ static const char help_text[] =
 "    `               Show chat log\n"
 "    H               Toggle help\n"
 "    Tab             See who is playing\n"
-//"    M               Map\n"
-//"    U, Alt          Grab & release mouse\n"
 "  Chat Commands:\n"
 "       /name <name>        Choose name\n"
 "       /kill               Suicide\n"
