@@ -329,6 +329,11 @@ void load_item_dat()
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
+    item_def(58, IG_MECH, "crystal_seed2");
+    sprite_def(i1, 5,2);
+    s.pretty_name = (char*) "Crystal Seed";
+    s.max_stack_size = 8;
+
     end_item_dat(); // finalize
     
     verify_item_dat();

@@ -163,6 +163,13 @@ bool can_place_crystal(int x, int y, int z, int side)
 	return true;
 }
 
+void place_vine(int x, int y, int z, int side)
+{
+
+
+}
+
+
 void tick(int x, int y, int z)
 {
 #ifdef DC_CLIENT
