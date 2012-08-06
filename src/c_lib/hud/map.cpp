@@ -17,8 +17,8 @@ static Color highlight;
 // for texture init
 static const int width = 512;
 static const int height = 512;
-static const int screen_x_offset = 50;  // from left
-static const int screen_y_offset = 50;   // from bottom;
+static const int screen_x_offset = 0;  // from left
+//static const int screen_y_offset = 0;   // from top
 
 static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2] = {0};
@@ -258,8 +258,8 @@ void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
     float y_scale = ((float)height)/((float)map_dim.y);
     *sx = x * x_scale;
     *sy = y * y_scale;
-    *sx += screen_x_offset;
-    *sy += screen_y_offset;
+    *sx += _xresf-screen_x_offset-width;
+    *sy += _yresf-height;
 }
 
 void draw_text_icons(float z)
@@ -379,7 +379,8 @@ void draw()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
-    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z);
+
+    draw_bound_texture(_xresf-screen_x_offset-width, _yresf-height, width, height, z);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
