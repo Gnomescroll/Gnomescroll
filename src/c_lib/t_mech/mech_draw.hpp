@@ -232,7 +232,7 @@ class MechListRenderer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         
         glDisable(GL_TEXTURE_2D);
-        glDisable(GL_ALPHA_TEST)
+        glDisable(GL_ALPHA_TEST);
     }
 
     void draw_transparent()
