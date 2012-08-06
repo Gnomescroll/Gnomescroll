@@ -280,9 +280,14 @@ void check_item_pickups()
         if (item_particle_list->a[i] == NULL) continue;
         ItemParticle* item_particle = item_particle_list->a[i];
         if (!item_particle->can_be_picked_up()) continue;
+        GS_ASSERT(item_particle->item_id != NULL_ITEM);
         Item::Item* item = Item::get_item(item_particle->item_id);
         GS_ASSERT(item != NULL);
-        if (item == NULL) continue;
+        if (item == NULL)
+        {   // BAD ERROR -- source item is missing. just die
+            destroy(item_particle->id);
+            continue;
+        }
         GS_ASSERT(item->stack_size > 0);
         GS_ASSERT(item->type != NULL_ITEM_TYPE);
 
@@ -574,6 +579,8 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
     item->location = IL_NOWHERE;
+
+    position = translate_position(position);
 
     // create particle
     ItemParticle* particle = create_item_particle(
