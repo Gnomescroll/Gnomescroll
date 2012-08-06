@@ -12,6 +12,8 @@ void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool sta
     if (this->vox == NULL) return;
     #if DC_CLIENT
     this->vox->was_updated = false;   // Reset was_updated flag (Voxel_model::update will restore if it does update)
+    if (state_changed || input_state.skeleton_editor)
+        vox->update(position.x, position.y, position.z, theta, phi);
     Vec3 center = this->get_center();
     float radius = this->get_radius();
     if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
@@ -24,8 +26,6 @@ void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool sta
         vox->set_draw(this->should_draw);
         vox->set_hitscan(this->should_hitscan);
     }
-    if (state_changed || input_state.skeleton_editor)
-        vox->update(position.x, position.y, position.z, theta, phi);
     #endif
 
     #if DC_SERVER
@@ -41,6 +41,12 @@ void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bo
     if (this->vox == NULL) return;
     #if DC_CLIENT
     vox->was_updated = false;   // Reset updated flag (Voxel_model::update will restore if it did)
+    if (state_changed || input_state.skeleton_editor)
+    {
+        vox->thaw();
+        vox->update(position.x, position.y, position.z, theta, phi);
+        vox->freeze();
+    }
     Vec3 center = this->get_center();
     float radius = this->get_radius();
     if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
@@ -52,12 +58,6 @@ void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bo
     {
         vox->set_draw(this->should_draw);
         vox->set_hitscan(this->should_hitscan);
-    }
-    if (state_changed || input_state.skeleton_editor)
-    {
-        vox->thaw();
-        vox->update(position.x, position.y, position.z, theta, phi);
-        vox->freeze();
     }
     #endif
 

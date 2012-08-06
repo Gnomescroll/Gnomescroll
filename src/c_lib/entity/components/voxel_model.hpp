@@ -43,7 +43,7 @@ class VoxelModelComponent: public Component
         struct Vec3 get_center()
         {
             if (this->vox == NULL) return vec3_init(0,0,0);
-            return this->vox->get_part(0)->get_center();
+            return this->vox->get_center();
         }
         
         struct Vec3 get_center(int part)
@@ -71,8 +71,6 @@ class VoxelModelComponent: public Component
 
         void update(Vec3 position, float theta, float phi, bool state_changed);
         void force_update(Vec3 position, float theta, float phi, bool state_changed);
-
-        
 
     ~VoxelModelComponent()
     {

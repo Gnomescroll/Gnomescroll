@@ -3,7 +3,8 @@
 namespace Animations
 {
 
-void draw_equipped_item_other_agent(int agent_id, int item_type);
+void draw_equipped_voxel_item_other_agent(int agent_id, int item_type);
+void draw_equipped_sprite_item_other_agent(int agent_id, int item_type);
 
 void draw_equipped_item(int item_type);
 void begin_equipped_item_animation(int item_type, bool continuous);
@@ -26,5 +27,11 @@ void print_sprite_alignment_config();
 void dilate_equipped_sprite(float delta);
 
 void init_weapon_sprite();
+
+// gl wrappers
+void draw_voxel_gl_begin(GLint cull_mode);
+void draw_voxel_gl_end();
+void draw_sprite_gl_begin();
+void draw_sprite_gl_end();
 
 }   // Animations

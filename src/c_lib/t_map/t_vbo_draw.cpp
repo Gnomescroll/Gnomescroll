@@ -224,12 +224,12 @@ void Vbo_map::prep_frustrum_vertices()
 /*
     Do distance check
 */
-bool chunk_render_check( float x, float y)
+bool chunk_distance_check( float x, float y)
 {
     //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
     //static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
 
-    static const float dist2 = (CAMERA_VIEW_DISTANCE+11.4f)*(CAMERA_VIEW_DISTANCE+11.4f);
+    static const float dist2 = (CAMERA_VIEW_DISTANCE+(sqrt(2)*16))*(CAMERA_VIEW_DISTANCE+(sqrt(2)*16));
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
@@ -255,6 +255,8 @@ void Vbo_map::prep_draw()
     const float cy = current_camera_position.y;
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(cy);
+
+    static float chunk_radius = sqrtf(2)*8;
     
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
@@ -274,8 +276,9 @@ void Vbo_map::prep_draw()
 
         This function is fatally bugged!
 */
-        if( chunk_render_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test( col->wxoff, col->wyoff, 32) )
-        //if( chunk_render_check( col->wxoff, col->wyoff) )
+        if (chunk_distance_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test(col->wxoff, col->wyoff, chunk_radius))
+        //if (xy_circle_fulstrum_test(col->wxoff, col->wyoff, chunk_radius))
+        //if (chunk_distance_check(col->wxoff, col->wyoff))
         {
             c_drawn++; 
             /*
@@ -292,6 +295,7 @@ void Vbo_map::prep_draw()
                 printf("Vbo_map::prep_draw(), ERROR, draw_vbo == MAX_DRAWN_VBO \n");
                 return;
             }
+            //printf("drew %0.2f, %0.2f, \n");
         }
         else
         {
@@ -299,6 +303,7 @@ void Vbo_map::prep_draw()
         }
     }}
     //printf("drawn: %i pruned: %i \n",  c_drawn, c_pruned);
+    //printf("\n");
 }
 
 void Vbo_map::sort_draw()
