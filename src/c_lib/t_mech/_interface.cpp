@@ -35,11 +35,17 @@ void init()
 #if DC_CLIENT
 	mech_list_renderer = new MechListRenderer;
 #endif
+    init_properties();
 }
 
-void teardown() {}
-
-void init_packets();
+void teardown() 
+{
+    delete mech_list;
+#if DC_CLIENT
+    delete MechListRenderer;
+#endif
+    tear_down_properties();
+}
 
 #if DC_CLIENT
 

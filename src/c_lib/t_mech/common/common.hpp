@@ -1,5 +1,6 @@
 #pragma once
 
+//instance
 class MECH
 {
     public:
@@ -21,7 +22,15 @@ class MECH
     float offset_y;
 };
 
-enum MECH_TYPE
+struct MECH_ATTRIBUTE
+{
+    int mech_type;
+    int mech_type_class;
+    int render_type;
+    int sprite_index;
+};
+
+enum MECH_CLASS
 {
 	MECH_CRYSTAL,
 	MECH_CROP,
