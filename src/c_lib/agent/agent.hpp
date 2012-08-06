@@ -117,7 +117,7 @@ class Agent_state
         #endif
 
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
-
+        int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
         int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
 
         Vec3 forward_vector() { return this->s.forward_vector(); }
