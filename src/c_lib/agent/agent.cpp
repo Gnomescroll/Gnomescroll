@@ -1001,9 +1001,10 @@ void force_update_agent_vox(Agent_state* a)
     a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
 }
 
+// returns block type
 int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
 {
-    Vec3 p = this->get_position();
+    Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
     int tile = 0;
     Hitscan::HitscanTargetTypes target = Hitscan::terrain(p.x, p.y, p.z, v.x, v.y, v.z, solid_pos, distance, side, &tile);
@@ -1016,11 +1017,11 @@ int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3],
     return tile;
 }
 
+// returns side as int
 int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)
 {
     int s[3];
     int block = this->get_facing_side(solid_pos, open_pos, s, distance);
-    if (block <= 0)
-        return -1;
+    if (block <= 0) return -1;
     return get_cube_side_from_side_array(s);
 }
