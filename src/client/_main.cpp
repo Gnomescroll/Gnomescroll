@@ -306,8 +306,10 @@ int run()
 
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
+        GL_ASSERT(GL_BLEND, true);
+
         Animations::draw_hitscan_effect();
-        //Animations::draw_hitscan_laser_effect();
+        GL_ASSERT(GL_BLEND, true);
         Animations::draw_mining_laser_effect();
 
 
@@ -328,9 +330,6 @@ int run()
 
         glDepthMask(GL_TRUE);
 
-        //glDisable(GL_DEPTH_TEST);
-
-        // update mouse
         poll_mouse();
 
         ClientState::agent_list->draw_equipped_items();
