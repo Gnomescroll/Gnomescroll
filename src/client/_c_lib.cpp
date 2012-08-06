@@ -314,6 +314,7 @@ int init_c_lib(int argc, char* argv[])
     Item::load_item_dat();
     Item::load_synthesizer();
 
+    t_mech::init();
     t_mech::load_mech_dat();
 
     Toolbelt::init();   // toolbelt init depends on item dat being loaded
@@ -328,7 +329,6 @@ int init_c_lib(int argc, char* argv[])
     t_hud::init();
     t_hud::draw_init();
 
-    t_mech::init();
     //t_mech::state_init();
 
     Particle::init_particles();
