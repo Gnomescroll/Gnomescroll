@@ -639,6 +639,7 @@ void ChatRender::init()
         t->set_format("%s%s%s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
         t->set_color(255,255,255,255);
+        t->shadowed = true;
         messages[i] = t;
     }
 
@@ -648,6 +649,7 @@ void ChatRender::init()
     input->set_text("");
     input->set_color(255,10,10,255);
     input->set_position(x_offset, line_height*lines_offset);
+    input->shadowed = true;
     
     this->inited = true;
 }

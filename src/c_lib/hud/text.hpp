@@ -41,6 +41,8 @@ class Text
         float x,y;  // active x,y
         float refx, refy; // reference x,y
 
+        bool shadowed;
+
         TextAlignment alignment;
         void reset_alignment();
         void center();
@@ -94,6 +96,7 @@ class Text
             refx = t.refx;
             refy = t.refy;
             alignment = t.alignment;
+            shadowed = t.shadowed;
         }
 
     explicit Text(int id);

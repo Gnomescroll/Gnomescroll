@@ -6,6 +6,9 @@
 namespace HudText
 {
 
+static const int SHADOW_MARGIN_X = 1;
+static const int SHADOW_MARGIN_Y = 1;
+
 Text_list* text_list = NULL;
 
 void init()
@@ -128,6 +131,13 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
 void Text::draw_centered()
 {
     center();
+
+    if (this->shadowed)
+    {
+        glColor4ub(0,0,0,color.a);
+        draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
+    }
+    
     glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
@@ -355,8 +365,16 @@ void Text::draw()
 {
     if (this->text == NULL || this->text_len == 0)
         return;
+
+    if (this->shadowed)
+    {
+        glColor4ub(0,0,0,color.a);
+        draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
+    }
+    
     glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
+
     this->reset_alignment();
 }
 
@@ -434,8 +452,8 @@ color(color_init(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),
-refx(0.0f),refy(0.0f)
-
+refx(0.0f),refy(0.0f),
+shadowed(false)
 {
     this->reset_alignment();
 }
@@ -453,7 +471,8 @@ color(color_init(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),
-refx(0.0f),refy(0.0f)
+refx(0.0f),refy(0.0f),
+shadowed(false)
 {
     this->reset_alignment();
 }
