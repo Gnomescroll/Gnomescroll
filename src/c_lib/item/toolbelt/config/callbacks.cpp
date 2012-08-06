@@ -259,7 +259,9 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
     //if (obj == NULL) return;
     //Objects::ready(obj);
 
-    if(item_id == Item::dat_get_item_type("crystal_placer") )
+    printf("fuck: %d \n", Item::dat_get_item_type("crystal_seed") );
+    
+    if(item_id == Item::dat_get_item_type("crystal_seed") )
     {
         Agent_state* a = ServerState::agent_list->get(agent_id);
         GS_ASSERT(a != NULL);
@@ -280,7 +282,7 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         //decrement_stack(agent_id, item_id, item_type);
     }
 
-    if(item_id == Item::dat_get_item_type("crystal_placer2") )
+    if(item_id == Item::dat_get_item_type("crystal_seed2") )
     {
         //int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
 
@@ -298,8 +300,11 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         float distance;
 
         int ret = a->get_facing_side(solid_pos, open_pos, _side, &distance);
-        if(ret == 0) return;
-
+        if(ret == 0)
+        {
+            printf("WTF\n");
+            return;
+        }
         int side = get_cube_side_from_side_array(_side);
 
         printf("block: %i %i %i open: %i %i %i side: %i \n", 
