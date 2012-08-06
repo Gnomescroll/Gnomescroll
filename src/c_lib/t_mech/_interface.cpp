@@ -81,7 +81,7 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 {
 #if DC_SERVER
     p.id = m.id;
-    p.type = m.type;
+    p.mech_type = m.mech_type;
     p.subtype = m.subtype;
     p.x = m.x;
     p.y = m.y;
@@ -104,7 +104,7 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 {
 #if DC_CLIENT
     m.id = p.id;
-    m.type = p.type;
+    m.mech_type = p.mech_type;
     m.subtype = p.subtype;
     m.x = p.x;
     m.y = p.y;
@@ -141,7 +141,7 @@ void create_crystal(int x, int y, int z)
 #if DC_SERVER
 
 	struct MECH m;
-	m.type = MECH_CRYSTAL;
+	m.mech_type = MECH_CRYSTAL;
 	m.x = x;
 	m.y = y;
 	m.z = z;

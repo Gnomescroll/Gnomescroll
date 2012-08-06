@@ -15,4 +15,8 @@
 #include <t_mech/mech_draw.hpp>
 #endif
 
+#include <t_mech/properties.cpp>
+#include <t_mech/config/_interface.hpp>
+#include <t_mech/config/mech_dat.hpp>
+
 #include "_interface.cpp"

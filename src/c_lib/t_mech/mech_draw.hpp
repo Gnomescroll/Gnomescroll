@@ -515,55 +515,10 @@ void MechListRenderer::prep_vbo()
     		push_crystal_vertex(mla[i]);
         num++;
     }
-    //mech_list
-/*
-    for(int i=0; i<mech_list->mln; i++)
-    {
-        //if( mla[i].id == -1) continue;
-        
-        printf("c: %i %d \n", i, mla[i].id);
-    }
-*/
-    //printf("drawing: %i crystals \n", num);
+
     vertex_list.buffer();
 
 }
 
-/*
-void MechListRenderer::MECH_LIST_RENDER_update()
-{
-    static int counter = 0; //refresh, deals with loading before terrain map
-    counter++;
-
-    //if(ml->needs_update == false && mlri != 0 && counter%30!=0) return;
-    if(ml->needs_update == false && mlri != 0 ) return;
-    ml->needs_update = false;
-    mlri = 0; //reset index
-}
-*/
-
-/*
-void mech_list_render_init(class MECH_LIST* _ml)
-{
-    GS_ASSERT(MECH_LIST_RENDERer == NULL);
-    MECH_LIST_RENDERer = new MechListRenderer(_ml);
-}
-
-void mech_list_render_teardown()
-{
-    if (MECH_LIST_RENDERer != NULL) delete MECH_LIST_RENDERer;
-}
-
-void mech_list_render_prep()
-{
-    MECH_LIST_RENDERer->update();
-    MECH_LIST_RENDERer->prep_vbo();
-}
-
-void mech_list_render_draw()
-{
-    MECH_LIST_RENDERer->draw();
-}
-*/
 
 }
