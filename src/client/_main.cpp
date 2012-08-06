@@ -264,10 +264,11 @@ int run()
             Alpha tested non-transparent
         */
         
-        Animations::render_block_damage();
+        Animations::render_block_damage(); //GL blend with depth test on
         ItemParticle::draw();
         Animations::draw_voxel_particles(); //moved out of transparent
-        
+        GL_ASSERT(GL_BLEND, false);
+
         CHECK_GL_ERROR();
 
 

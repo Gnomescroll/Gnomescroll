@@ -87,7 +87,7 @@ static void render(int sprite_index, int x, int y, int z, float margin)
 
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_BLEND, false);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -411,7 +411,7 @@ void blit_block_item_sheet()
         //-------------------------
         //glDisable(GL_TEXTURE_2D);
         glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
+        GL_ASSERT(GL_BLEND, false);
         glDisable(GL_DEPTH_TEST);
 
         glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
@@ -529,7 +529,7 @@ void blit_block_item_sheet()
         //-------------------------
         //glDisable(GL_TEXTURE_2D);
         glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
+        GL_ASSERT(GL_BLEND, false);
         glDisable(GL_DEPTH_TEST);
 
         //glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
