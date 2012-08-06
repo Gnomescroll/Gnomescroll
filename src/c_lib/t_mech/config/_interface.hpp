@@ -31,12 +31,13 @@ enum MECH_RENDER_TYPE
 
 namespace t_mech
 {
-	int _current_mech_index -1;
+	int _current_mech_index = -1;
 	struct MECH_ATTRIBUTE s;
 
 	void start_mech_dat()
 	{
-		_current_mech_index = -1;
+		GS_ASSERT(_current_mech_index == -1);
+
 		s.mech_type = -1;
 		s.mech_type_class = -1;
 		s.render_type != -1;
@@ -65,6 +66,7 @@ namespace t_mech
 		s.mech_type = mech_type;
 		s.mech_type_class = mech_type_class;
 
+		set_mech_name(mech_type, name);
 		_current_mech_index = mech_type;
 	}
 
