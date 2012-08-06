@@ -968,14 +968,27 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
 
 int get_cube_side_from_side_array(int* side)
 {
+/*
     int cube_side = -1;
-          if (side[0] ==  1) cube_side = 2;
+    if (side[0] ==  1) cube_side = 2;
     else if (side[0] == -1) cube_side = 3;
     else if (side[1] ==  1) cube_side = 4;
     else if (side[1] == -1) cube_side = 5;
     else if (side[2] ==  1) cube_side = 0;
     else if (side[2] == -1) cube_side = 1;
+
+    GS_ASSERT(cube_side != -1);
     return cube_side;
+*/
+    if (side[0] ==  1) return 2;
+    if (side[0] == -1) return 3;
+    if (side[1] ==  1) return 4;
+    if (side[1] == -1) return 5;
+    if (side[2] ==  1) return 0;
+    if (side[2] == -1) return 1;
+
+    GS_ASSERT(false);
+    return 0;
 }
 
 void get_side_array_from_cube_side(int cube_id, int *side)

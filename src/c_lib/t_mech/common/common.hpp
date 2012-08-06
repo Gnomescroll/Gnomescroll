@@ -9,7 +9,7 @@ class MECH
     int y;
     int z;
 
-    int type;           //mech type
+    int mech_type;           //mech type
     int render_type;    //lookup from array
     int subtype;        //sprite
     

@@ -11,7 +11,7 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
 {
     public:
     uint16_t id;
-    uint8_t type;
+    uint8_t mech_type;
     uint8_t subtype;
     uint16_t x,y,z;
     
