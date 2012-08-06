@@ -369,7 +369,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
     struct Vec3 iv = vec3_init(ix,iy,iz);
     struct Vec3 v;
-    int n = randrange(200,250);
+    int n = randrange(140,170);
     const float base_speed = 1.0f;
     float speed;
     const float arc = 48.0f;
@@ -382,8 +382,9 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
         gamma = randf() * 3.14159f * 2;
 
         v = vec3_euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
+        normalize_vector(&v);
 
-        speed = (randf() + 0.5f) * randrange(0,2);
+        speed = (randf() + 0.5f) * randrange(1,2);
         speed *= base_speed;
         b = Particle::blood_list->create();
         if (b == NULL) return;
