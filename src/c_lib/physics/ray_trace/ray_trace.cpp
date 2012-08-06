@@ -968,7 +968,7 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
 
 int get_cube_side_from_side_array(int* side)
 {
-    int cube_side = 0;
+    int cube_side = -1;
           if (side[0] ==  1) cube_side = 2;
     else if (side[0] == -1) cube_side = 3;
     else if (side[1] ==  1) cube_side = 4;
