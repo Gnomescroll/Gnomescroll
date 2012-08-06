@@ -2,6 +2,12 @@
 
 #include "macros.hpp"
 
+#ifdef __WIN32__
+#ifdef __GNUC__
+    #include <io.h>
+#endif
+#endif
+
 off_t fsize(const char *filename)
 {
     struct stat st; 
