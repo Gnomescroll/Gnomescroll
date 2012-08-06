@@ -25,6 +25,11 @@ class HitscanEffect
 
     void set_state(float x, float y, float z, float vx, float vy, float vz)
     {
+        ASSERT_BOXED_POINTf(x);
+        ASSERT_BOXED_POINTf(y);
+        GS_ASSERT(fabsf(vx)/30.0f < 128.0f);
+        GS_ASSERT(fabsf(vy)/30.0f < 128.0f);
+        GS_ASSERT(fabsf(vz)/30.0f < 128.0f);
         this->x = x; this->y = y; this->z = z;
         this->vx = vx; this->vy = vy; this->vz = vz;
     }

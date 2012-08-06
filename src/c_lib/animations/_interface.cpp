@@ -115,6 +115,8 @@ void create_hitscan_effect(float x, float y, float z, float vx, float vy, float 
     HitscanEffect* he = hitscan_effect_list->create();
     if (he == NULL) return;
     he->init();
+    x = translate_point(x);
+    y = translate_point(y);
     he->set_state(x,y,z,vx,vy,vz);
 }
 
