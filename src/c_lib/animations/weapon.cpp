@@ -204,7 +204,6 @@ static void draw_voxel(int item_type,
 {
     glColor4ub(255,255,255,255);
 
-    GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_BLEND, false);
     GL_ASSERT(GL_ALPHA_TEST, false);
 
@@ -219,6 +218,7 @@ static void draw_voxel(int item_type,
     glCullFace(GL_FRONT);    // backface culling
     
     // draw textured voxels
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
 
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
