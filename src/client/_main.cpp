@@ -278,14 +278,11 @@ int run()
         */
 
         glEnable(GL_BLEND);
-        glDepthMask(GL_FALSE);
+        glDepthMask(GL_FALSE);  //START
 
-        Particle::billboard_text_list->draw();
+        Particle::billboard_text_list->draw();  //enables and disables GL_BLEND
+        glEnable(GL_BLEND);
 
-        GL_ASSERT(GL_BLEND, true);
-
-
-        CHECK_GL_ERROR();
 
         //Animations::draw_insect_mob();
 
@@ -293,29 +290,15 @@ int run()
 
         t_map::control_node_render_update();    //move this somewhere later
         t_map::control_node_render_draw();      //draw control node perimeter
-        
         GL_ASSERT(GL_BLEND, true);
-
-        CHECK_GL_ERROR();
-
         Skybox::draw();
-
         GL_ASSERT(GL_BLEND, true);
-
-        CHECK_GL_ERROR();
-
-
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         GL_ASSERT(GL_BLEND, true);
-
         Animations::draw_hitscan_effect();
         GL_ASSERT(GL_BLEND, true);
         Animations::draw_mining_laser_effect();
-
-
         GL_ASSERT(GL_BLEND, true);
-
-        CHECK_GL_ERROR();
 
         poll_mouse();
 
@@ -326,9 +309,8 @@ int run()
 
         GL_ASSERT(GL_BLEND, true);
 
-        CHECK_GL_ERROR();
 
-        glDepthMask(GL_TRUE);
+        glDepthMask(GL_TRUE);   //END
 
         poll_mouse();
 
