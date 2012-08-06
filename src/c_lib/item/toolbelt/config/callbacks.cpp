@@ -300,9 +300,13 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         int ret = a->get_facing_side(solid_pos, open_pos, _side, &distance);
         if(ret == 0) return;
 
-
         int side = get_cube_side_from_side_array(_side);
 
+        printf("block: %i %i %i open: %i %i %i side: %i \n", 
+            solid_pos[0],solid_pos[1],solid_pos[2], 
+            open_position[0],open_position[1],open_position[2],
+            side);
+    /*
         int* b = a->nearest_open_block(max_dist, z_low, z_high);
         if (b == NULL) return;
         
@@ -313,6 +317,7 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
         t_mech::create_crystal(b[0],b[1],b[2] );
         //decrement_stack(agent_id, item_id, item_type);
+    */
     }
 
 
