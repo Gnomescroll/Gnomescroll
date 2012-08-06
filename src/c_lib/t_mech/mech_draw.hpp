@@ -204,7 +204,8 @@ class MechListRenderer
         GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
         glEnable(GL_TEXTURE_2D);
-        
+        glEnable(GL_CULL_FACE);
+
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.1);
 
@@ -233,6 +234,8 @@ class MechListRenderer
         
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_ALPHA_TEST);
+        glDisable(GL_CULL_FACE);
+
     }
 
     void draw_transparent()
@@ -246,6 +249,8 @@ class MechListRenderer
         GL_ASSERT(GL_DEPTH_WRITEMASK, false);
 
         glEnable(GL_TEXTURE_2D);
+        glEnable(GL_CULL_FACE);
+
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
@@ -273,6 +278,8 @@ class MechListRenderer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDisable(GL_TEXTURE_2D);
+        glDisable(GL_CULL_FACE);
+
     }
 
     MechListRenderer()
@@ -339,6 +346,21 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     //int s = 2;
 
     float vn[3*4];
+/*
+    float tx[8];
+
+    tx[2*0+0] = tx_min;
+    tx[2*0+1] = ty_min;
+
+    tx[2*1+0] = tx_min;
+    tx[2*1+1] = ty_max;
+
+    tx[2*2+0] = tx_max;
+    tx[2*2+1] = ty_max;
+
+    tx[2*3+0] = tx_max;
+    tx[2*3+1] = ty_min;
+*/
 
     const float size = m.size/2.0f;
     const float size2 = m.size;
@@ -383,6 +405,22 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     vertex_list.push_vertex();
 
 
+    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
+    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
+    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
+    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.push_vertex();
+
     dx = sin( (m.rotation+0.5) * PI );
     dy = cos( (m.rotation+0.5) * PI );
 
@@ -415,6 +453,23 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.push_vertex();
+
+
+    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
+    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
+    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_max,ty_min );
     vertex_list.push_vertex();
 

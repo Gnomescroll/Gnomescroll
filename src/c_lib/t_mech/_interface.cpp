@@ -145,7 +145,7 @@ void create_crystal(int x, int y, int z)
 	m.x = x;
 	m.y = y;
 	m.z = z;
-	m.subtype = rand()%8;
+	m.subtype = rand()%9;
 
 	mech_list->server_add_mech(m);
 #endif
