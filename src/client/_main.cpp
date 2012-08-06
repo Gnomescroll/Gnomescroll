@@ -310,6 +310,7 @@ int run()
         GL_ASSERT(GL_BLEND, true);
 
 
+        glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);   //END
 
         poll_mouse();
