@@ -87,7 +87,7 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
     p.y = m.y;
     p.z = m.z;
 
-    switch ( m.type )
+    switch ( m.mech_type )
     {
     case MECH_CRYSTAL:
         //do something
@@ -110,7 +110,7 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
     m.y = p.y;
     m.z = p.z;
 
-    switch ( p.type )
+    switch ( p.mech_type )
     {
     case MECH_CRYSTAL:
         //do something

@@ -511,7 +511,7 @@ void MechListRenderer::prep_vbo()
     {
         if( mla[i].id == -1) continue;
 
-    	if( mla[i].type == MECH_CRYSTAL )
+    	if( mla[i].mech_type == MECH_CRYSTAL )
     		push_crystal_vertex(mla[i]);
         num++;
     }
