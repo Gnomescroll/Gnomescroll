@@ -98,7 +98,7 @@ int _GET_TICK() {
 	#else
         static const long GetTickCount_start = GetTickCount();
 		long cs_ms = GetTickCount() - GetTickCount_start;  
-		int t = cs_ms / TICK_MS;		
+		long t = cs_ms / TICK_MS;		
         _ti = cs_ms;
 	#endif
 	
