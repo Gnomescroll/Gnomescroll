@@ -165,7 +165,7 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
     glColor4ub(255,255,255,255);
     //GL_ASSERT(GL_TEXTURE_2D, true);
     
-    GL_ASSERT(GL_BLEND, true);
+    GL_ASSERT(GL_BLEND, false);
 
     glEnable(GL_TEXTURE_2D);
 
