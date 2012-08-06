@@ -247,77 +247,142 @@ class MechListRenderer
 
     void prep_vbo();
 
-	void push_crystal_vertex(MECH m)
-	{
-	    static const float vin[72] = 
-	    {
-	        1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
-	        0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
-	        1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
-	        0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
-	        1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
-	        0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
-	    };
-
-        float x = (float) m.x;
-        float y = (float) m.y;
-        float z = (float) m.z;
-        //int face = m.face;
-
-        int tex_id = 0;
-        //mlra[i].tex;
-        //tex_id = 0;
-        const float txmargin = 0.0f;
-        float tx_min, ty_min, tx_max, ty_max;
-
-        int ti = tex_id % 16;
-        int tj = tex_id / 16;
-
-        const float h = 0.0625f;
-
-        tx_min = ti*h + txmargin;
-        ty_min = tj*h + txmargin;
-        tx_max = ti*h + h - txmargin;
-        ty_max = tj*h + h - txmargin;
-
-        int s = 2;
-
-        vertex_list.vertex3f(x+vin[12*s +3*0 +0], y+vin[12*s+ 3*0 +1], z+vin[12*s +3*0 +2]);
-        vertex_list.tex2f(tx_min,ty_min);
-        vertex_list.push_vertex();
-
-        vertex_list.vertex3f(x+vin[12*s +3*1 +0], y+vin[12*s+ 3*1 +1], z+vin[12*s +3*1 +2]);
-        vertex_list.tex2f(tx_min,ty_max);
-        vertex_list.push_vertex();
-
-        vertex_list.vertex3f(x+vin[12*s +3*2 +0], y+vin[12*s+ 3*2 +1], z+vin[12*s +3*2 +2]);
-        vertex_list.tex2f(tx_max,ty_max );
-        vertex_list.push_vertex();
-
-        vertex_list.vertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
-        vertex_list.tex2f(tx_max,ty_min );
-        vertex_list.push_vertex();
-      
-	}
-
+	void push_crystal_vertex(const class MECH &m);
 
 };
 
 /*
-class MECH
+struct _MECH
 {
-    public:
-    int id;
+    int x,y,z; //position
+    int type;  //type
+    int direction; //direction
 
-    int x;
-    int y;
-    int z;
-
-    float radius;
-    int type;
+    float size;
+    float rotation;
     int offset;
-    int rotation;
+
+    bool active;
 };
+*/
+
+void MechListRenderer::push_crystal_vertex(const class MECH &m)
+{
+/*
+    static const float vin[72] = 
+    {
+        1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
+        0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
+        1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
+        0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
+        1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
+        0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
+    };
+*/
+    float x = (float) (m.x) + 0.5 + m.offset_x;
+    float y = (float) (m.y) + 0.5 + m.offset_y;
+    float z = (float) m.z;
+    //int face = m.face;
+
+    int tex_id = 0;
+    //mlra[i].tex;
+    //tex_id = 0;
+    const float txmargin = 0.0f;
+    float tx_min, ty_min, tx_max, ty_max;
+
+    int ti = tex_id % 16;
+    int tj = tex_id / 16;
+
+    const float h = 0.0625f;
+
+    tx_min = ti*h + txmargin;
+    ty_min = tj*h + txmargin;
+    tx_max = ti*h + h - txmargin;
+    ty_max = tj*h + h - txmargin;
+
+    //int s = 2;
+
+    float vn[3*4];
+
+    const float size = m.size;
+    float dx,dy;
+
+    //printf("rot= %f \n", m.rotation);
+
+    dx = sin(m.rotation * PI);
+    dy = cos(m.rotation * PI);
+
+    vn[3*0+0] = x - size*dx;
+    vn[3*0+1] = y - size*dy;
+    vn[3*0+2] = z + size;
+
+    vn[3*1+0] = x - size*dx;
+    vn[3*1+1] = y - size*dy;
+    vn[3*1+2] = z;
+
+    vn[3*2+0] = x + size*dx;
+    vn[3*2+1] = y + size*dy;
+    vn[3*2+2] = z;
+
+    vn[3*3+0] = x + size*dx;
+    vn[3*3+1] = y + size*dy;
+    vn[3*3+2] = z + size;
+
+    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
+    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
+    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
+    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.push_vertex();
+
+
+    dx = sin( (m.rotation+0.5) * PI );
+    dy = cos( (m.rotation+0.5) * PI );
+
+    vn[3*0+0] = x - size*dx;
+    vn[3*0+1] = y - size*dy;
+    vn[3*0+2] = z + size;
+
+    vn[3*1+0] = x - size*dx;
+    vn[3*1+1] = y - size*dy;
+    vn[3*1+2] = z;
+
+    vn[3*2+0] = x + size*dx;
+    vn[3*2+1] = y + size*dy;
+    vn[3*2+2] = z;
+
+    vn[3*3+0] = x + size*dx;
+    vn[3*3+1] = y + size*dy;
+    vn[3*3+2] = z + size;
+
+    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
+    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
+    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
+    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.push_vertex();
+
+}
+
+/*
 
 enum MECH_TYPE
 {
@@ -344,16 +409,29 @@ void MechListRenderer::prep_vbo()
 
     vertex_list.reset();
 
-    const int mli = mech_list->mli;
+    const int mlm = mech_list->mlm;
     const struct MECH* mla = mech_list->mla;
+    
+    int num =0;
 
-    for(int i=0; i<mli; i++)
+    for(int i=0; i<mlm; i++)
     {
-    	if( mla[i].type == 0 )
+        if( mla[i].id == -1) continue;
+
+    	if( mla[i].type == MECH_CRYSTAL )
     		push_crystal_vertex(mla[i]);
+        num++;
     }
     //mech_list
-
+/*
+    for(int i=0; i<mech_list->mln; i++)
+    {
+        //if( mla[i].id == -1) continue;
+        
+        printf("c: %i %d \n", i, mla[i].id);
+    }
+*/
+    //printf("drawing: %i crystals \n", num);
     vertex_list.buffer();
 
 }

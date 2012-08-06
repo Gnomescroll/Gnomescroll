@@ -9,37 +9,46 @@
 namespace t_mech 
 {
 
+const int MECH_HARD_MAX = 0xff;
 
 class MECH
 {
     public:
-    int id;
+    int id; //-1 if not in use
 
     int x;
     int y;
     int z;
 
-    float radius;
+    float size;
     int type;
     int offset;
-    int rotation;
+    float rotation;
+
+    float offset_x;
+    float offset_y;
 };
+
+static void pack_mech(struct MECH &m, class mech_create_StoC &p);
+static void unpack_mech(struct MECH &m, class mech_create_StoC &p);
 
 enum MECH_TYPE
 {
-	CRYSTAL,
-	CROP,
-	WIRE,
-	SWITCH
+	MECH_CRYSTAL,
+	MECH_CROP,
+	MECH_WIRE,
+	MECH_SWITCH
 };
 
 class MECH_LIST
 {
     public:
 
-    int mli; //control point index
-    int mlm; //control point max
-    class MECH* mla; //control point array;
+    int mli; //mech index
+    int mlm; //mech max
+    int mln; //number of mech
+
+    class MECH* mla; //mech array;
 
     bool needs_update; //for drawing
 
@@ -47,7 +56,10 @@ class MECH_LIST
     {
         mli = 0;
         mlm = 8;
+        mln = 0;
         mla = (MECH*) malloc(8*sizeof(class MECH));
+        for(int i=0; i<mlm; i++) mla[i].id = -1;
+
         needs_update = true;
     }
 
@@ -56,88 +68,96 @@ class MECH_LIST
         free(mla);
     }
 
-    //accept in an MLA struct!!
-    void add_mech(int x, int y, int z, int type)
+#if DC_CLIENT
+    void add_mech(int id, const struct MECH &m)
     {
-        //needs_update = true;
-
-        mla[mli].x = x;
-        mla[mli].y = y;
-        mla[mli].z = z;
-
-    	mla[mli].radius = 1.0;
-    	mla[mli].offset = 0;
-    	type = 0;	//Crystal;
-
-        mli++;
-
-        if(mli == mlm)
+        while(id >= mlm)
         {
+            printf("add_mech: expand array id= %i mlm= %i \n", id, mlm);
+            mla = (class MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
+            for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;
-            MECH* new_mla = (MECH*) realloc(mla, mlm*sizeof(class MECH));
-            if (new_mla == NULL)
-            {
-                free(mla);
-                mla = NULL;
-                mlm = 0;
-            }
-            else mla = new_mla;
         }
+
+        GS_ASSERT(mla[id].id == -1);
+        GS_ASSERT(id < MECH_HARD_MAX);
+
+        mla[id] = m; //store mech
+        mla[id].id = id;
+        mln++;
+    
+        printf("create mech %i at: %i %i %i \n", m.id, m.x,m.y,m.z);
     }
 
-    void remove_mech(int x, int y, int z, int type)
+#endif
+
+#if DC_SERVER
+    //negative 1 on failure
+    int add_mech(struct MECH &m)
     {
         //needs_update = true;
+        if(mlm == MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
 
-        for(int i=0; i<mli; i++)
+        if(mln == mlm)
         {
-            if(x==mla[i].x && y==mla[i].y && z==mla[i].z && type==mla[i].type)
-            {
-                mla[i] = mla[mli-1];
-                mli--;
-                GS_ASSERT(mli >= 0);
-            }
+            mla = (MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
+            for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
+            mlm *= 2;
         }
 
-        printf("Error: tried to remove control point that does not exist!\n");
-        GS_ABORT(); //should never reach this point
+        int _mli = mli;
+        while(mla[mli].id != -1)
+        {
+            mli = (mli + 1) % mlm;
+            GS_ASSERT(mli != _mli);
+        }
+
+        m.id = mli;   //set id
+        mla[mli] = m; //store mech
+        mln++;
+
+        return mli;
+    }
+#endif
+
+    void remove_mech(int id)
+    {
+        GS_ASSERT(mla[id].id != -1);
+        GS_ASSERT(id < mlm);
+        mla[id].id = -1;
+        mln--;
+        GS_ASSERT(mln >= 0);
+
+        printf("Error: tried to remove mech that does not exist!\n");
     }
 
 
 #if DC_SERVER
-
     void send_mech_list_to_client(int client_id)
     {
-        for(int i=0; i<mli; i++)
+        for(int i=0; i<mlm; i++)
         {
+            if(mla[i].id == -1) continue;
             mech_create_StoC p;
-            p.x = mla[i].x;
-            p.y = mla[i].y;
-            p.z = mla[i].z;
+            pack_mech(mla[i], p);
             p.sendToClient(client_id);
         }
     }
 
-    void server_add_mech(int x, int y, int z)
+    void server_add_mech(struct MECH &m)
     {
-        return; //PRODUCTION
-        this->add_mech(x,y,z,0);
+        this->add_mech(m);
 
         mech_create_StoC p;
-        p.x = x;
-        p.y = y;
-        p.z = z;
+        pack_mech(m, p);
         p.broadcast();
     }
 
-    void server_remove_mech(int x, int y, int z)
+    void server_remove_mech(int id)
     {
-        remove_mech(x,y,z,0);
-
+        this->remove_mech(id);
         mech_delete_StoC p;
-        p.x = x;
-        p.y = y;
-        p.z = z;
+        p.id = id;
         p.broadcast();
     }
 
