@@ -528,7 +528,7 @@ l = [
 */
 
 
-#define VOXEL_RENDER_DEBUG_02 1
+#define VOXEL_RENDER_DEBUG_02 0
 
 void Voxel_volume::update_vertex_list()
 {
