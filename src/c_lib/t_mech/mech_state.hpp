@@ -20,8 +20,10 @@ class MECH
     int y;
     int z;
 
-    float size;
     int type;
+    int subtype;
+    
+    float size;
     int offset;
     float rotation;
 

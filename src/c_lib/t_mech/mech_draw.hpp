@@ -198,21 +198,19 @@ class MechListRenderer
 
         //printf("draw \n");
 
-        glColor3ub(255,255,255);
+        glColor4ub(255,255,255,255);
 
-        GL_ASSERT(GL_DEPTH_TEST, true);
+        GL_ASSERT(GL_BLEND, false);
         GL_ASSERT(GL_DEPTH_WRITEMASK, true);
+
+        glEnable(GL_TEXTURE_2D);
+        
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.1);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
-		glAlphaFunc(GL_GREATER, 0.1);
-
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_ALPHA_TEST);
-
         glBindTexture( GL_TEXTURE_2D, shader.texture1 );
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
         shader.shader->enable_attributes();
 
@@ -232,9 +230,47 @@ class MechListRenderer
 
         glBindTexture( GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        //glDisable(GL_BLEND);
         
-        glDisable(GL_ALPHA_TEST);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_ALPHA_TEST)
+    }
+
+    void draw_transparent()
+    {
+        if(vertex_list.vi == 0) return;
+        if(shader.shader->shader_valid == false) return;
+
+        glColor4ub(255,255,255,255);
+
+        GL_ASSERT(GL_BLEND, true);
+        GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+
+        glEnable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
+
+
+        glBindTexture( GL_TEXTURE_2D, shader.texture1 );
+
+        shader.shader->enable_attributes();
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
+        glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
+
+        //glUniform4f(InTranslation, (GLfloat*) p.f );
+        //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
+
+        glDrawArrays(GL_QUADS, 0, vertex_list.vi);
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+
+        shader.shader->disable_attributes();
+
+        glBindTexture( GL_TEXTURE_2D, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDisable(GL_TEXTURE_2D);
     }
@@ -284,7 +320,7 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     float z = (float) m.z;
     //int face = m.face;
 
-    int tex_id = 0;
+    int tex_id = m.subtype;
     //mlra[i].tex;
     //tex_id = 0;
     const float txmargin = 0.0f;
@@ -304,7 +340,9 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
 
     float vn[3*4];
 
-    const float size = m.size;
+    const float size = m.size/2.0f;
+    const float size2 = m.size;
+
     float dx,dy;
 
     //printf("rot= %f \n", m.rotation);
@@ -314,7 +352,7 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
 
     vn[3*0+0] = x - size*dx;
     vn[3*0+1] = y - size*dy;
-    vn[3*0+2] = z + size;
+    vn[3*0+2] = z + size2;
 
     vn[3*1+0] = x - size*dx;
     vn[3*1+1] = y - size*dy;
@@ -326,7 +364,7 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
 
     vn[3*3+0] = x + size*dx;
     vn[3*3+1] = y + size*dy;
-    vn[3*3+2] = z + size;
+    vn[3*3+2] = z + size2;
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);
@@ -350,7 +388,7 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
 
     vn[3*0+0] = x - size*dx;
     vn[3*0+1] = y - size*dy;
-    vn[3*0+2] = z + size;
+    vn[3*0+2] = z + size2;
 
     vn[3*1+0] = x - size*dx;
     vn[3*1+1] = y - size*dy;
@@ -362,7 +400,7 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
 
     vn[3*3+0] = x + size*dx;
     vn[3*3+1] = y + size*dy;
-    vn[3*3+2] = z + size;
+    vn[3*3+2] = z + size2;
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);

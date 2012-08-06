@@ -214,8 +214,8 @@ int run()
             Non-transparent
         */
 
-        //t_mob::draw();
-        t_mech::draw();
+        t_mob::draw();
+        //t_mech::draw();
 
         CHECK_GL_ERROR();
 
@@ -283,6 +283,7 @@ int run()
         Particle::billboard_text_list->draw();  //enables and disables GL_BLEND
         glEnable(GL_BLEND);
 
+        t_mech::draw_transparent();
 
         //Animations::draw_insect_mob();
 

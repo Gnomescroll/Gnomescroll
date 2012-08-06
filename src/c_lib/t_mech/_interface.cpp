@@ -25,21 +25,6 @@ void init_packets()
 
 
 
-
-struct _MECH
-{
-    int x,y,z; //position
-    int type;  //type
-    int direction; //direction
-
-    float size;
-    float rotation;
-    int offset;
-
-    bool active;
-};
-
-
 #if DC_CLIENT
 class MechListRenderer* mech_list_renderer = NULL;
 #endif
@@ -68,6 +53,12 @@ void draw()
 	mech_list_renderer->draw();
 }
 
+void draw_transparent()
+{
+	mech_list_renderer->draw_transparent();
+}
+
+
 #endif
 
 /*
@@ -91,6 +82,7 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 #if DC_SERVER
     p.id = m.id;
     p.type = m.type;
+    p.subtype = m.subtype;
     p.x = m.x;
     p.y = m.y;
     p.z = m.z;
@@ -113,6 +105,7 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 #if DC_CLIENT
     m.id = p.id;
     m.type = p.type;
+    m.subtype = p.subtype;
     m.x = p.x;
     m.y = p.y;
     m.z = p.z;
@@ -122,12 +115,13 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
     case MECH_CRYSTAL:
         //do something
 
-    	m.size = 0.25;	//radius
-    	m.rotation = 0.25 + randf();
+    	m.size = 0.80;	//radius
+    	m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
     	m.offset = rand()%255;
+    	//m.subtype = rand()%6;
 
-    	m.offset_x = 2.0f*(randf()-0.5f)* (0.5f-m.size);
-       	m.offset_y = 2.0f*(randf()-0.5f)* (0.5f-m.size);
+    	m.offset_x = (randf()-0.5f)* (1.0f-m.size);
+       	m.offset_y = (randf()-0.5f)* (1.0f-m.size);
 
         break;
     default:
@@ -136,6 +130,11 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 #endif
 }
 
+void handle_block_removal(int x, int y, int z)
+{
+
+
+}
 
 void create_crystal(int x, int y, int z)
 {
@@ -146,9 +145,22 @@ void create_crystal(int x, int y, int z)
 	m.x = x;
 	m.y = y;
 	m.z = z;
+	m.subtype = rand()%8;
 
 	mech_list->server_add_mech(m);
 #endif
+}
+
+bool can_place_crystal(int x, int y, int z, int side)
+{
+	if( isSolid(x,y,z) == true)
+		return false;
+
+	if(side != 0)
+		return false;
+
+	//check if there is another one on this square
+	return true;
 }
 
 void tick(int x, int y, int z)

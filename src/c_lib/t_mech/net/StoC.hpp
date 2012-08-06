@@ -12,12 +12,14 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
     public:
     uint16_t id;
     uint8_t type;
+    uint8_t subtype;
     uint16_t x,y,z;
     
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
+        pack_u8(&subtype, buff, buff_n, pack);
 
         pack_u16(&x, buff, buff_n, pack);
         pack_u16(&y, buff, buff_n, pack);
