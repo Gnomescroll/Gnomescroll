@@ -150,7 +150,16 @@ void create_path_to_file(const char* fn)
         if (c != sep) continue;
         path[i-1] = '\0';
         if (stat(path, &file_stat) != 0)
-            mkdir(path, 0777);
+        {
+        
+        #ifdef _WIN32
+            mkdir(path);
+        #else
+            mkdir(path, S_IRWXU );
+        #endif
+
+            //mkdir(path, 0777);
+        }
         path[i-1] = sep;
     }
 
