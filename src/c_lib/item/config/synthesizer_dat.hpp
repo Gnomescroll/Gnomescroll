@@ -11,10 +11,10 @@ namespace Item
 void load_synthesizer()
 {
     synthesizer_item_def("mining_laser", 1);
-    synthesizer_item_set(0,1);
+    synthesizer_item_set(0,2);
 
     synthesizer_item_def("laser_rifle", 5);
-    synthesizer_item_set(1,1);
+    synthesizer_item_set(1,2);
 
     synthesizer_item_def("block_placer", 100);
     synthesizer_item_set(4,1);
@@ -44,4 +44,4 @@ void load_synthesizer()
     #endif
 }
 
-}	// Item
+}   // Item

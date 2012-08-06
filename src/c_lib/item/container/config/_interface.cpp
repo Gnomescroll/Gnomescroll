@@ -85,7 +85,7 @@ static void register_settings()
     c.xdim = 1;
     c.ydim = 1;
     c.alt_xdim = 5;
-    c.alt_ydim = 2;
+    c.alt_ydim = 3;
     c.attached_to_agent = true;
     c.alpha_action = &synthesizer_alpha_action_decision_tree;
     c.beta_action = &synthesizer_beta_action_decision_tree;
