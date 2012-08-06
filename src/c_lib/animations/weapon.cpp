@@ -163,8 +163,11 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 
     // set up opengl state
     glColor4ub(255,255,255,255);
-    GL_ASSERT(GL_TEXTURE_2D, true);
-    GL_ASSERT(GL_BLEND, false);
+    //GL_ASSERT(GL_TEXTURE_2D, true);
+    
+    GL_ASSERT(GL_BLEND, true);
+
+    glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5f);
@@ -193,6 +196,7 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
     
     // cleanup
     glDisable(GL_ALPHA_TEST);
+    glDisable(GL_TEXTURE_2D);
 }
 
 static void draw_voxel(int item_type,
