@@ -11,4 +11,4 @@ void draw();
 void draw_text();
 void set_icon_colors();
 
-}
+}   // HudMap

@@ -327,8 +327,7 @@ void draw_text_icons(float z)
     you_A->set_depth(z);
     you_A->draw_character_rotated_centered(playerAgent_state.camera_state.theta - 0.5f);
 
-    if (free_camera == NULL) return;
-    if (free_camera->is_current())
+    if (free_camera != NULL)
     {
         Vec3 p = free_camera->get_position();
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);
