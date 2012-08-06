@@ -387,11 +387,11 @@ void blit_block_item_sheet()
         switch(status)
         {
             case GL_FRAMEBUFFER_COMPLETE_EXT:
-            printf("FBO works\n");
+            //printf("FBO works\n");
             break;
 
             default:
-            printf("FBO error\n");
+            printf("blit_block_item_sheet: FBO error\n");
             break;
         }
         //-------------------------
@@ -505,11 +505,11 @@ void blit_block_item_sheet()
         switch(status)
         {
             case GL_FRAMEBUFFER_COMPLETE_EXT:
-            printf("FBO works\n");
+            //printf("FBO works\n");
             break;
 
             default:
-            printf("FBO error\n");
+            printf("blit_block_item_sheet: FBO error\n");
             break;
         }
         //-------------------------
