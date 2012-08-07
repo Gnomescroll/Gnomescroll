@@ -86,8 +86,6 @@ int run()
  
     while (!input_state.quit)
     {
-        GS_ASSERT(false);
-        
         if(_quit) break;
 
         frame_graph->frame_start();
