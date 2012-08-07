@@ -38,6 +38,7 @@ static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline
 static void normalize_vector(struct Vec3* v)
 {
     float len = sqrtf(v->x*v->x + v->y*v->y + v->z*v->z);
+    GS_ASSERT_LIMIT(len != 0.0f, 50);
     v->x /= len;
     v->y /= len;
     v->z /= len;
@@ -347,6 +348,15 @@ static bool vec3_equal(Vec3 v1, Vec3 v2) __attribute((always_inline));
 static bool vec3_equal(Vec3 v1, Vec3 v2)
 {
     if (v1.x == v2.x && v1.y == v2.y && v1.z == v2.z) return true;
+    return false;
+}
+
+static bool vec3_isnan(Vec3 v) __attribute__((always_inline));
+static bool vec3_isnan(Vec3 v)
+{
+    #ifdef NAN
+    if (isnan(v.x) || isnan(v.y) || isnan(v.z)) return true;
+    #endif
     return false;
 }
 

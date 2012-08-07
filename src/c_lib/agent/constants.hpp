@@ -87,18 +87,18 @@ const struct Color red = {219, 29, 20};
 const struct Color black = {0,0,0};
 const unsigned int COLOR_COUNT = 5;
 const struct Color health_colors[COLOR_COUNT] = { green, yellow, orange, orange_red, red };
-const float health_color_points[COLOR_COUNT] = { 1.0f, 0.6f, 0.4f, 0.3f, 0.0f };	// anchor health_color_points
+const float health_color_points[COLOR_COUNT] = { 1.0f, 0.6f, 0.4f, 0.3f, 0.0f };    // anchor health_color_points
 
 const struct Color HEALTH_TEXT_DEAD_COLOR = black;
 const float SIZE = 0.7f;
 
 void verify_configuration()
 {
-	// validate config state
-	GS_ASSERT(COLOR_COUNT > 0);
-	for (unsigned int i=1; i<COLOR_COUNT; i++)
-		GS_ASSERT(health_color_points[i] < health_color_points[i-1]); // must be descending order
+    // validate config state
+    GS_ASSERT(COLOR_COUNT > 0);
+    for (unsigned int i=1; i<COLOR_COUNT; i++)
+        GS_ASSERT(health_color_points[i] < health_color_points[i-1]); // must be descending order
 }
 
-}	// AgentHealthColor
+}   // AgentHealthColor
 #endif

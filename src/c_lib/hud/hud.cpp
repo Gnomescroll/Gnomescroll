@@ -302,35 +302,35 @@ void draw_hud_text()
     if (input_state.debug) {
     #endif
     
-    if (hud_draw_settings.fps)
-    {
-        float fps_val = 0.0f;
-        if (hud_draw_settings.fps_val >= 0.1f) fps_val = 1000.0f / hud_draw_settings.fps_val;
-        hud->fps->update_formatted_string(1, fps_val);
-        hud->fps->draw();
-    }
-
-    if (hud_draw_settings.ping)
-    {
-        hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
-        hud->ping->draw();
-        //hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
-        //hud->reliable_ping->draw();
-    }
-
-    if (hud_draw_settings.agent_state)
-    {
-        hud->location->update_formatted_string(3, current_camera_position.x, current_camera_position.y, current_camera_position.z);
-        hud->location->draw();
-
-        if (current_camera != NULL)
+        if (hud_draw_settings.fps)
         {
-            Vec3 f = current_camera->forward_vector();
-            hud->look->update_formatted_string(3, f.x, f.y, f.z);
-            hud->look->set_position(hud->look->x, _yresf - hud->location->get_height() - HudFont::font->data.line_height);
-            hud->look->draw();
+            float fps_val = 0.0f;
+            if (hud_draw_settings.fps_val >= 0.1f) fps_val = 1000.0f / hud_draw_settings.fps_val;
+            hud->fps->update_formatted_string(1, fps_val);
+            hud->fps->draw();
         }
-    }
+
+        if (hud_draw_settings.ping)
+        {
+            hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
+            hud->ping->draw();
+            //hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
+            //hud->reliable_ping->draw();
+        }
+
+        if (hud_draw_settings.agent_state)
+        {
+            hud->location->update_formatted_string(3, current_camera_position.x, current_camera_position.y, current_camera_position.z);
+            hud->location->draw();
+
+            if (current_camera != NULL)
+            {
+                Vec3 f = current_camera->forward_vector();
+                hud->look->update_formatted_string(3, f.x, f.y, f.z);
+                hud->look->set_position(hud->look->x, _yresf - hud->location->get_height() - HudFont::font->data.line_height);
+                hud->look->draw();
+            }
+        }
 
     #if PRODUCTION
     }   // if (input_state.debug)

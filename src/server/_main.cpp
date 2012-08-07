@@ -31,6 +31,8 @@ void init(int argc, char* argv[])
     {
         map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
         map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
+
+        map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
     }
     else
     {
@@ -69,6 +71,12 @@ void init(int argc, char* argv[])
     ServerState::init_base();
 
     printf("Game starting\n");
+
+    #ifdef NAN
+    printf("NaN enabled\n");
+    #endif
+    
+    printf("%0.2f\n", sqrtf(0.0f));
 }
    
 void tick()
@@ -111,7 +119,8 @@ void tick()
     }
 
     //ServerState::spawn_items(2);
-    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
+    //ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
+    ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 500);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
 
     ItemContainer::update_smelters();

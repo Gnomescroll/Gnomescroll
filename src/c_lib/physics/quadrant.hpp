@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 #include <t_map/common/constants.hpp>
 #include <physics/vec3.hpp>
 
@@ -70,6 +72,12 @@ inline int quadrant_translate_i(int cx, int px)
 //__attribute((always_inline))
 inline float quadrant_translate_f(float cx, float px)
 {
+    #ifdef NAN
+    GS_ASSERT_LIMIT(!isnan(cx), 50);
+    GS_ASSERT_LIMIT(!isnan(px), 50);
+    #endif
+
+
     ASSERT_BOXED_POINTf(cx);
     ASSERT_BOXED_POINTf(px);
 
@@ -103,6 +111,9 @@ inline float quadrant_translate_f(float cx, float px)
 __attribute((always_inline))
 inline float translate_point(float pt)
 {
+    #ifdef NAN
+    GS_ASSERT_LIMIT(!isnan(pt), 50);
+    #endif
     if(pt <  0.0f) pt += 512.0f;
     if(pt >= 512.0f) pt -= 512.0f;
     ASSERT_BOXED_POINTf(pt);

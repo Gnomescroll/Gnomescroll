@@ -39,6 +39,7 @@ int stick_to_terrain_surface(Vec3 position)
 Vec3 move_to_point(Vec3 dest, Vec3 origin, Vec3 momentum)
 {   // moves vector from origin to dest by momentum amount
     dest = quadrant_translate_position(origin, dest);
+    if (vec3_equal(dest, origin)) return origin;
     Vec3 direction = vec3_sub(dest, origin);
     normalize_vector(&direction);
     direction = vec3_mult(direction, momentum);             //  apply magnitude to velocity
@@ -69,26 +70,29 @@ void orient_to_point(Vec3 dest, Vec3 origin, float* theta, float* phi)
 #define FLOAT_ERROR_MARGIN 0.005f
 static bool advance_move(Vec3 position, Vec3 move_to, int z, float speed, Vec3* new_position, Vec3* new_momentum)
 {
-    //move_to = translate_position(move_to);
-    //move_to = quadrant_translate_position(position, move_to);
-    Vec3 new_direction = vec3_sub(move_to, position);
-    float len = vec3_length_squared(new_direction);
-    if (len < FLOAT_ERROR_MARGIN)
+    Vec3 new_direction = vec3_init(0,0,0);
+    if (vec3_equal(position, move_to))
     {
-        new_direction = vec3_init(0,0,0);
-        len = 0.0f;
+        *new_momentum = new_direction;
+        if (position.z != (float)z)
+        {
+            position.z = z;
+            *new_position = translate_position(position);
+            return true;
+        }
+        *new_position = translate_position(position);
+        return false;
     }
-    else normalize_vector(&new_direction);
-    GS_ASSERT_LIMIT(len < 512.0f*512.0f, 50);
 
-    *new_momentum = vec3_scalar_mult(new_direction, speed);
-    position = vec3_add(position, *new_momentum);
-
+    new_direction = vec3_sub(move_to, position);
+    normalize_vector(&new_direction);
+    Vec3 m = vec3_scalar_mult(new_direction, speed);
+    position = vec3_add(position, m);
+    *new_momentum = m;
     new_direction.z = 0;
     float xy_len = vec3_length_squared(new_direction);
     if (xy_len < (speed*speed)/2) position.z = z;
     *new_position = translate_position(position);
-    
     return true;    
 }
  
@@ -115,8 +119,8 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     // assumes direction is normalized
 
     GS_ASSERT_LIMIT(speed > 0.0f, 50);
-    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
-    if (vec3_length(direction) == 0.0f) return false;
+    GS_ASSERT_LIMIT(vec3_length_squared(direction) > 0.0f, 50);
+    if (vec3_length_squared(direction) == 0.0f) return false;
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
@@ -133,7 +137,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     // assumes direction is normalized
 
     GS_ASSERT_LIMIT(speed > 0.0f, 50);
-    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length_squared(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_nearest_open_block(translate_point(move_to.x), translate_point(move_to.y), move_to.z, object_height);
@@ -155,7 +159,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     // assumes direction is normalized
 
     GS_ASSERT_LIMIT(speed > 0.0f, 50);
-    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length_squared(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
@@ -173,7 +177,7 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     // assumes direction is normalized
 
     GS_ASSERT_LIMIT(speed > 0.0f, 50);
-    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length_squared(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_nearest_open_block(translate_point(move_to.x), translate_point(move_to.y), move_to.z, object_height);

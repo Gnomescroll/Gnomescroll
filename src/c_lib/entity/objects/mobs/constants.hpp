@@ -26,7 +26,8 @@ const float MONSTER_BOMB_BLOCK_DESTRUCTION_RADIUS = 3.0f;
 const int MONSTER_BOMB_BLOCK_DAMAGE = 16;
 
 // targeting
-const float MONSTER_BOMB_MOTION_PROXIMITY_RADIUS = 15.0f;
+//const float MONSTER_BOMB_MOTION_PROXIMITY_RADIUS = 15.0f;
+const float MONSTER_BOMB_MOTION_PROXIMITY_RADIUS = 100.0f;
 const int MONSTER_BOMB_MAX_TARGET_LOCK_TICKS = 30 * 10; // will lose target after 10 seconds
 
 // motion
