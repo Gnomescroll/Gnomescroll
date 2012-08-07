@@ -268,7 +268,7 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
         //-aa,0.5, 0.0,0.0, 0.0,-1.0, -aa,-0.5,
         //0.0,0.0, aa,0.5, aa,-0.5, 0.0,-1.0
     //};
-    const float b[8*3] =
+    static const float b[8*3] =
     {
         0.0f,0.0f, -aa,0.5f, 0.0f,1.0f, aa,0.5f,
         -aa,0.5f, 0.0f,0.0f, 0.0f,-1.0f, -aa,-0.5f,
