@@ -156,6 +156,7 @@ Object_state* Object_list<Object_state, max_n>::create()
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(int id) {
     //where();
+    GS_ASSERT(a[id] == NULL);
     if(a[id] == NULL)
     {
         a[id] = new Object_state(id);

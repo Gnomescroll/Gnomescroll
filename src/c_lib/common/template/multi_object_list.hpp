@@ -166,6 +166,7 @@ Object_interface* MultiObject_list<Object_interface, max_n>::create(int type, in
     GS_ASSERT(create_interface != NULL);
     if (create_interface == NULL) return NULL;
     //where();
+    GS_ASSERT(a[id] == NULL);
     if(a[id] == NULL)
     {
         a[id] = this->create_interface(type, id);

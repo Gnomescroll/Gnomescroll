@@ -193,6 +193,7 @@ Object_interface* DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::cre
     }
     GS_ASSERT(create_interface != NULL);
     //where();
+    GS_ASSERT(a[id] == NULL);
     if(a[id] == NULL)
     {
         a[id] = this->create_interface(type, id);

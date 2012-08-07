@@ -185,6 +185,7 @@ Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create(int id)
         int new_size = ((id/this->n_max_base) + 1) * this->n_max_base;
         this->resize(new_size);
     }
+    GS_ASSERT(a[id] == NULL);
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
         num++;
