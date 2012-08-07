@@ -17,7 +17,7 @@ void _push_str(char* tstr, int* index, char* istr)
 	*index += len;
 }
 
-void _push_const_str(char* tstr, int* index, const char* const_str)
+void _push_str(char* tstr, int* index, const char* const_str)
 {	
 	int len = strlen(const_str);
 	strncpy(tstr+*index, const_str, len);
@@ -66,9 +66,9 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 	t[len1+len2+len3+len4+2] = '\n';
 	t[len1+len2+len3+len4+3] = 0x00;
 #else
-	_push_const_str(t,&index, "GS_ASSERT: ");
+	_push_str(t,&index, "GS_ASSERT: ");
 	_push_str(t,&index, FILE);
-	_push_char(t,&index, '' '');
+	_push_char(t,&index, ' ');
 	_push_str(t,&index, FUNC);
 	_push_char(t,&index, ':');
 	_push_str(t,&index, LINE_STR);
