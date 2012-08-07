@@ -1,7 +1,7 @@
 #pragma once
 
 
-char* _internal_itoa(int val, int base)
+char* _gs_internal_itoa(int val, int base)
 {	
 	static char buf[32] = {0};	
 	int i = 30;
@@ -10,21 +10,21 @@ char* _internal_itoa(int val, int base)
 	return &buf[i+1];
 }
 
-void _push_str(char* tstr, int* index, char* istr)
+void _gs_push_str(char* tstr, int* index, char* istr)
 {
 	int len = strlen(istr);
 	strncpy(tstr+*index, istr, len);
 	*index += len;
 }
 
-void _push_str(char* tstr, int* index, const char* const_str)
+void _gs_push_str(char* tstr, int* index, const char* const_str)
 {	
 	int len = strlen(const_str);
 	strncpy(tstr+*index, const_str, len);
 	*index += len;
 }
 
-void _push_char(char* tstr, int* index, char c)
+void _gs_push_char(char* tstr, int* index, char c)
 {
 	tstr[*index] = c;
 	(*index)++;
@@ -41,15 +41,15 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 	static char t[256];
 
 	int index = 0;
-	char* LINE_STR = _internal_itoa(LINE, 10);
+	char* LINE_STR = _gs_internal_itoa(LINE, 10);
 
-	_push_str(t,&index, "GS_ASSERT: ");
-	_push_str(t,&index, FILE);
-	_push_str(t,&index, " ");
-	_push_str(t,&index, FUNC);
-	_push_str(t,&index, " ");
-	_push_str(t,&index, LINE_STR);
-	_push_char(t,&index, 0x00);
+	_gs_push_str(t,&index, "GS_ASSERT: ");
+	_gs_push_str(t,&index, FILE);
+	_gs_push_str(t,&index, " ");
+	_gs_push_str(t,&index, FUNC);
+	_gs_push_str(t,&index, " ");
+	_gs_push_str(t,&index, LINE_STR);
+	_gs_push_char(t,&index, 0x00);
 
 	int i=0;
 
