@@ -460,6 +460,7 @@ void close_c_lib()
 
     Log::teardown();
     Options::teardown_option_tables();
+    _GS_ASSERT_TEARDOWN();
 
     printf("Game closed\n");
 }
