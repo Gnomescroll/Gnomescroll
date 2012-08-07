@@ -68,9 +68,9 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 #else
 	_push_str(t,&index, "GS_ASSERT: ");
 	_push_str(t,&index, FILE);
-	_push_char(t,&index, ' ');
+	_push_str(t,&index, " ");
 	_push_str(t,&index, FUNC);
-	_push_char(t,&index, ':');
+	_push_str(t,&index, " ");
 	_push_str(t,&index, LINE_STR);
 	_push_char(t,&index, '\n');
 #endif
