@@ -54,12 +54,16 @@ class StorageBlockUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
- 		this->name.set_text((char*)"Storage Block");
+        this->name.set_text((char*)"Storage Block");
     }
 
     void init_text()
     {
-        if (this->stacks != NULL) delete[] this->stacks;
+        if (this->stacks != NULL)
+        {
+            delete[] this->stacks;
+            this->stacks = NULL;
+        }
         
         int max = xdim * ydim;
         GS_ASSERT(max > 0);
@@ -158,7 +162,7 @@ void StorageBlockUI::draw()
     GS_ASSERT(*this->texture != 0);
     if (*this->texture == 0) return;
  
-	this->draw_name();
+    this->draw_name();
     
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);

@@ -529,6 +529,13 @@ ItemID* get_container_contents(int container_id)
     return container->slot;
 }
 
+int get_container_ui_slot_max(int container_id)
+{
+    ItemContainerUIInterface* container = get_container_ui(container_id);
+    if (container == NULL) return 0;
+    return container->slot_max;
+}
+
 int* get_container_ui_types(int container_id)
 {
     ItemContainerUIInterface* container = get_container_ui(container_id);

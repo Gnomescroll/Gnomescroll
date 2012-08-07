@@ -12,6 +12,8 @@ class RecyclerUI : public UIElement
     static const int cell_size = 37;
     int xdim;    // grid cell size
     int ydim;
+    int alt_xdim;
+    int alt_ydim;
 
     // size of texture/render area
     float render_width;
@@ -23,6 +25,32 @@ class RecyclerUI : public UIElement
     static const int cell_offset_x_right = 2;
     static const int cell_offset_y_bottom = 2;
 
+    // hardcoded sprite indices. multiply by cell size to get pixel index
+    static const int input_sprite_x = 0;
+    static const int input_sprite_y = 0;
+    static const int output_sprite_x = 1;
+    static const int output_sprite_y = 0;
+    static const int input_overlay_x = 2;
+    static const int input_overlay_y = 0;
+    static const int output_overlay_x = 3;
+    static const int output_overlay_y = 0;
+    static const int button_inactive_x = 0;
+    static const int button_inactive_y = 1;
+    static const int button_inactive_hover_x = 0;
+    static const int button_inactive_hover_y = 2;
+    static const int button_available_x = 1;
+    static const int button_available_y = 1;
+    static const int button_available_hover_x = 1;
+    static const int button_available_hover_y = 2;
+    static const int button_unavailable_x = 2;
+    static const int button_unavailable_y = 1;
+    static const int button_unavailable_hover_x = 2;
+    static const int button_unavailable_hover_y = 2;
+    static const int button_overlay_x = 3;
+    static const int button_overlay_y = 1;
+    static const int button_overlay_pressed_x = 3;
+    static const int button_overlay_pressed_y = 2;
+    
     float texture_offset_x;
     float texture_offset_y;
 
@@ -42,11 +70,38 @@ class RecyclerUI : public UIElement
         return render_height;
     }
 
-    int get_slot_at(int px, int py);
+    int get_grid_at(int px, int py)
+    {  
+        //pixels from upper left
+        px -= xoff;
+        py -= _yresf - yoff;
+
+        if (px < 0 || px >= render_width)  return NULL_SLOT;
+        if (py < 0 || py >= render_height) return NULL_SLOT;
+
+        int xslot = px / cell_size;
+        int yslot = py / cell_size;
+        int slot = xslot + yslot * xdim;
+
+        return slot;
+    }
+
+    bool in_button_region(int px, int py)
+    {
+        return (this->get_grid_at(px,py) == 1);
+    }
+
+    int get_slot_at(int px, int py)
+    {
+        int slot = this->get_grid_at(px,py);
+        if (slot == 0) return 0;
+        if (slot == 2) return 1;
+        return NULL_SLOT;
+    }
 
     bool point_inside(int px, int py)
     {
-        return (this->get_slot_at(px,py) != NULL_SLOT);
+        return (this->get_grid_at(px,py) != NULL_SLOT);
     }
 
     void init()
@@ -54,21 +109,26 @@ class RecyclerUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
-        this->name.set_text((char*)"Recycler");
+        this->name.set_text("Recycler");
+        this->texture = &RecyclerTexture;
     }
 
     void init_text()
     {
-        if (this->stacks != NULL) delete[] this->stacks;
+        if (this->stacks != NULL)
+        {
+            delete[] this->stacks;
+            this->stacks = NULL;
+        }
         
-        int max = xdim * ydim;
+        int max = xdim * ydim + alt_ydim*alt_xdim;
         GS_ASSERT(max > 0);
         if (max <= 0) return;
         this->stacks = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stacks[i];
-            t->set_format((char*) "%d");
+            t->set_format("%d");
             t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
@@ -97,33 +157,16 @@ class RecyclerUI : public UIElement
 
         this->xdim = ItemContainer::get_container_xdim(container_type);
         this->ydim = ItemContainer::get_container_ydim(container_type);
+        this->alt_xdim = ItemContainer::get_container_alt_xdim(container_type);
+        this->alt_ydim = ItemContainer::get_container_alt_ydim(container_type);
 
-        switch (container_type)
-        {
-            case CONTAINER_TYPE_RECYCLER:
-            case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-                this->texture = &StorageBlockTexture;
-                this->texture_offset_x = 0.0f;
-                this->texture_offset_y = 0.0f;
-                break;
-
-            case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-                this->texture = &StorageBlockTexture;
-                this->texture_offset_x = 0.0f;
-                this->texture_offset_y = 0.0f;
-                break;
-
-            default:
-                GS_ASSERT(false);
-                break;
-        }
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
     }
 
     RecyclerUI()
-    : xdim(1), ydim(1),
+    : xdim(1), ydim(1), alt_xdim(1), alt_ydim(1),
     render_width(1.0f), render_height(1.0f),
     texture_offset_x(0.0f), texture_offset_y(0.0f),
     stacks(NULL),
@@ -136,21 +179,6 @@ class RecyclerUI : public UIElement
     }
 };
 
-int RecyclerUI::get_slot_at(int px, int py)
-{  
-    //pixels from upper left
-    px -= xoff;
-    py -= _yresf - yoff;
-
-    if (px < 0 || px >= render_width)  return NULL_SLOT;
-    if (py < 0 || py >= render_height) return NULL_SLOT;
-
-    int xslot = px / cell_size;
-    int yslot = py / cell_size;
-    int slot = xslot + yslot * xdim;
-
-    return slot;
-}
 
 void RecyclerUI::draw()
 {
@@ -171,42 +199,41 @@ void RecyclerUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    float w = render_width;
-    float h = render_height;
+    float sw = cell_size;
+    float sh = cell_size;
+    float tw = ((float)cell_size)/256.0f;
+    float th = ((float)cell_size)/256.0f;
 
     float x = xoff;
     float y = yoff;
+    float z = -0.1f;
+    
+    // draw input slot
+    draw_bound_texture_sprite2(x,y, sw,sh, z, input_sprite_x*tw, input_sprite_y*th, tw, th);
 
-    float tx_min = texture_offset_x;
-    float ty_min = texture_offset_y;
-    float tx_max = render_width/256.0f;
-    float ty_max = render_height/256.0f;
-
-    //draw background
-    glBegin(GL_QUADS);
-
-    glTexCoord2f(tx_min, ty_min);
-    glVertex2f(x, y);
-
-    glTexCoord2f(tx_min, ty_max);
-    glVertex2f(x,y-h);
-
-    glTexCoord2f(tx_max, ty_max);
-    glVertex2f(x+w, y-h);
-
-    glTexCoord2f(tx_max, ty_min);
-    glVertex2f(x+w, y);
-
-    glEnd();
+    // draw output slot
+    y -= 2 * cell_size;
+    draw_bound_texture_sprite2(x,y, sw,sh, z, output_sprite_x*tw, output_sprite_y*th, tw, th);
+    
+    // draw button
+    y += 1 * cell_size;
+    if (this->in_button_region(mouse_x, mouse_y))
+    {   // draw hover sprite
+        draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_hover_x*tw, button_inactive_hover_y*th, tw, th);
+    }
+    else
+    {
+        draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_x*tw, button_inactive_y*th, tw, th);
+    }
 
     glDisable(GL_TEXTURE_2D);
 
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
-    int hover_slot = this->get_slot_at(mouse_x, mouse_y);
+    int hover_slot = this->get_grid_at(mouse_x, mouse_y);
     
-    if (hover_slot != NULL_SLOT)
+    if (hover_slot != NULL_SLOT && !this->in_button_region(mouse_x, mouse_y))
     {
         int w = slot_size;
         int xslot = hover_slot % this->xdim;
@@ -222,11 +249,18 @@ void RecyclerUI::draw()
     }
     glEnd();
 
+    // draw input overlay
+
+    // draw output overlay (if no item in slot)
+
     if (this->container_id == NULL_CONTAINER) return;
 
     // get data for rendering items
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
+    int slot_max = ItemContainer::get_container_ui_slot_max(this->container_id);
+    GS_ASSERT(slot_max > 0);
+    if (slot_max <= 0) return;
     if (slot_types == NULL) return;
     GS_ASSERT(slot_stacks != NULL);
     if (slot_stacks == NULL) return;
@@ -238,11 +272,14 @@ void RecyclerUI::draw()
     glBegin(GL_QUADS);
 
     //draw items
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    for (int slot=0; slot<slot_max; slot++)
     {
-        int slot = xdim*yslot + xslot;
+        int xslot = 0;
+        int yslot = slot;
+        if (yslot == slot_max-1) yslot += 1;
+
         int item_type = slot_types[slot];
+
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
@@ -281,12 +318,13 @@ void RecyclerUI::draw()
     HudFont::set_texture();
 
     HudText::Text* text;
-    for (int xslot=0; xslot<xdim; xslot++)
-    for (int yslot=0; yslot<ydim; yslot++)
+    
+    //draw items
+    for (int slot=0; slot<slot_max; slot++)
     {
-        // the synthesizer store slots in dat are indexed from 0
-        // it is not aware of the implementation detail we have for food
-        const int slot = xdim*yslot + xslot;
+        int xslot = 0;
+        int yslot = slot;
+        if (yslot == slot_max-1) yslot += 1;
 
         int stack = slot_stacks[slot];
         if (stack <= 1) continue;
