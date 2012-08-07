@@ -35,11 +35,19 @@ void init()
 #if DC_CLIENT
 	mech_list_renderer = new MechListRenderer;
 #endif
+    init_properties();
 }
 
-void teardown() {}
+void teardown() 
+{
+    tear_down_properties();
+    delete mech_list;
+    
+#if DC_CLIENT
+    delete mech_list_renderer;
+#endif
 
-void init_packets();
+}
 
 #if DC_CLIENT
 
@@ -57,8 +65,6 @@ void draw_transparent()
 {
 	mech_list_renderer->draw_transparent();
 }
-
-
 #endif
 
 /*
