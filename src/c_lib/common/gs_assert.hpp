@@ -35,7 +35,7 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 	static char t[256];
 
 	int index = 0;
-
+	char* LINE_STR = _internal_itoa(LINE, 10);
 #if 0
 	static const char prefix[] = "GS_ASSERT: ";
 
@@ -67,9 +67,12 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 	t[len1+len2+len3+len4+3] = 0x00;
 #else
 	_push_const_str(t,&index, "GS_ASSERT: ");
-	_push_str(
-	_push_char(t,&index, )
-
+	_push_str(t,&index, FILE);
+	_push_char(t,&index, '' '');
+	_push_str(t,&index, FUNC);
+	_push_char(t,&index, ':');
+	_push_str(t,&index, LINE_STR);
+	_push_char(t,&index, '\n');
 #endif
 
 	printf("%s", t);
