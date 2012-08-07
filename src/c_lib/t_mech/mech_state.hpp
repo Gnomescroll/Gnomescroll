@@ -47,7 +47,7 @@ class MECH_LIST
     {
         while(id >= mlm)
         {
-            printf("add_mech: expand array id= %i mlm= %i \n", id, mlm);
+            printf("add_mech: expand array id= %i mlm= %i from %i \n", id, 2*mlm, mlm);
             mla = (class MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
             for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;

@@ -146,7 +146,6 @@ namespace t_map
 
         class MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        //c = chunk[ (y | ~15) + (x >> 4)];
         if( c != NULL )
         {
             c = new MAP_CHUNK( x & ~15, y & ~15);
@@ -179,7 +178,6 @@ namespace t_map
             {
                 c = new MAP_CHUNK( x & ~15, y & ~15);
                 chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ] = c;
-                
             }
         }
 

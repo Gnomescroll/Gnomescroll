@@ -322,14 +322,20 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
         0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
     };
 */
-    float x = (float) (m.x) + 0.5 + m.offset_x;
-    float y = (float) (m.y) + 0.5 + m.offset_y;
-    float z = (float) m.z;
+
+    float wx = (float) (m.x) + 0.5f + m.offset_x;
+    float wy = (float) (m.y) + 0.5f + m.offset_y;
+    float wz = (float) m.z;
     //int face = m.face;
 
+    const float cx = current_camera_position.x;
+    const float cy = current_camera_position.y;
+
+    wx = quadrant_translate_f(cx, wx);
+    wy = quadrant_translate_f(cy, wy);
+
     int tex_id = m.subtype;
-    //mlra[i].tex;
-    //tex_id = 0;
+
     const float txmargin = 0.0f;
     float tx_min, ty_min, tx_max, ty_max;
 
@@ -372,21 +378,21 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     dx = sin(m.rotation * PI);
     dy = cos(m.rotation * PI);
 
-    vn[3*0+0] = x - size*dx;
-    vn[3*0+1] = y - size*dy;
-    vn[3*0+2] = z + size2;
+    vn[3*0+0] = wx - size*dx;
+    vn[3*0+1] = wy - size*dy;
+    vn[3*0+2] = wz + size2;
 
-    vn[3*1+0] = x - size*dx;
-    vn[3*1+1] = y - size*dy;
-    vn[3*1+2] = z;
+    vn[3*1+0] = wx - size*dx;
+    vn[3*1+1] = wy - size*dy;
+    vn[3*1+2] = wz;
 
-    vn[3*2+0] = x + size*dx;
-    vn[3*2+1] = y + size*dy;
-    vn[3*2+2] = z;
+    vn[3*2+0] = wx + size*dx;
+    vn[3*2+1] = wy + size*dy;
+    vn[3*2+2] = wz;
 
-    vn[3*3+0] = x + size*dx;
-    vn[3*3+1] = y + size*dy;
-    vn[3*3+2] = z + size2;
+    vn[3*3+0] = wx + size*dx;
+    vn[3*3+1] = wy + size*dy;
+    vn[3*3+2] = wz + size2;
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);
@@ -424,21 +430,21 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     dx = sin( (m.rotation+0.5) * PI );
     dy = cos( (m.rotation+0.5) * PI );
 
-    vn[3*0+0] = x - size*dx;
-    vn[3*0+1] = y - size*dy;
-    vn[3*0+2] = z + size2;
+    vn[3*0+0] = wx - size*dx;
+    vn[3*0+1] = wy - size*dy;
+    vn[3*0+2] = wz + size2;
 
-    vn[3*1+0] = x - size*dx;
-    vn[3*1+1] = y - size*dy;
-    vn[3*1+2] = z;
+    vn[3*1+0] = wx - size*dx;
+    vn[3*1+1] = wy - size*dy;
+    vn[3*1+2] = wz;
 
-    vn[3*2+0] = x + size*dx;
-    vn[3*2+1] = y + size*dy;
-    vn[3*2+2] = z;
+    vn[3*2+0] = wx + size*dx;
+    vn[3*2+1] = wy + size*dy;
+    vn[3*2+2] = wz;
 
-    vn[3*3+0] = x + size*dx;
-    vn[3*3+1] = y + size*dy;
-    vn[3*3+2] = z + size2;
+    vn[3*3+0] = wx + size*dx;
+    vn[3*3+1] = wy + size*dy;
+    vn[3*3+2] = wz + size2;
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);
@@ -516,6 +522,10 @@ void MechListRenderer::prep_vbo()
         num++;
     }
 
+    if(num != mech_list->mln)
+    {
+        printf("num= %i mln= %i \n", num, mech_list->mln);
+    }
     vertex_list.buffer();
 
 }
