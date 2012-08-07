@@ -85,9 +85,7 @@ int run()
     poll_mouse();
  
     while (!input_state.quit)
-    {
-        GS_ASSERT(false);
-        
+    {   
         if(_quit) break;
 
         frame_graph->frame_start();
