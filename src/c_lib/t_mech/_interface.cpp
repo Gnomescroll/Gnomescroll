@@ -184,7 +184,8 @@ void tick(int x, int y, int z)
 #endif
 }
 
-STATIC_INLINE
+#if DC_CLIENT
+
 bool ray_cast_render_type_0(const class MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
 {
     const float size2 = m.size/2.0f;
@@ -195,8 +196,8 @@ bool ray_cast_render_type_0(const class MECH &m, float x, float y, float z, floa
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
 
-    dx = sin(m.rotation * PI);
-    dy = cos(m.rotation * PI);
+    float dx = sin(m.rotation * PI);
+    float dy = cos(m.rotation * PI);
 
     //translate into origin of plane
     x -= wx;
@@ -213,13 +214,10 @@ bool ray_cast_render_type_0(const class MECH &m, float x, float y, float z, floa
 */
 }
 
-bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* distance)
+bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* _distance)
 {
     int nearest_mech = -1;
     float distance = 1000.0;
-
-    const float cx = current_camera_position.x;
-    const float cy = current_camera_position.y;
 
     const int mlm = mech_list->mlm;
     const struct MECH* mla = mech_list->mla;
@@ -234,15 +232,15 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
             //do something
             float d;
             bool ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
-            if(red == true)
-                printf("mech raycast hit: %i \n");
+            if(ret == true)
+                printf("mech raycast hit: %i \n", i);
             break;
         default:
             printf("pack_mech error: unhandled mech type\n");
+        }
     }
 
-
 }
-
+#endif
 
 }
