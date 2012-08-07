@@ -226,10 +226,10 @@ void Voxel_model::init_skeleton()
     n_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
     int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
-
-    vox_skeleton_transveral_list = new int[num_skeleton_nodes];
-    vox_skeleton_local_matrix = new Affine[num_skeleton_nodes];
-    vox_skeleton_world_matrix = new Affine[num_skeleton_nodes];
+    vox_skeleton_transveral_list = (int*)calloc(num_skeleton_nodes, sizeof(int));
+    vox_skeleton_local_matrix = (struct Affine*)calloc(num_skeleton_nodes, sizeof(struct Affine));
+    vox_skeleton_world_matrix = (struct Affine*)calloc(num_skeleton_nodes, sizeof(struct Affine));
+    
     biaxial_nodes = (bool*)calloc(num_skeleton_nodes, sizeof(bool));
     for (int i=0; i<vox_dat->n_parts; i++)
     {
@@ -331,13 +331,13 @@ void Voxel_model::set_part_color(int part_num)
     GS_ASSERT(vp->colors.n == x*y*z);
     for (int j=0; j < vp->colors.n; j++)
     {
-		int k = j * 3;
+        int k = j * 3;
         ix = vp->colors.index[k+0];
         iy = vp->colors.index[k+1];
         iz = vp->colors.index[k+2];
         GS_ASSERT(ix < x && iy < y && iz < z);
 
-		k = j * 4;
+        k = j * 4;
         r = vp->colors.rgba[k+0];
         g = vp->colors.rgba[k+1];
         b = vp->colors.rgba[k+2];
@@ -354,33 +354,33 @@ void Voxel_model::set_colors()
 
 void Voxel_model::fill_part_color(int part_num, struct Color color)
 {
-	GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
-	GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
-	if (part_num < 0 || part_num >= this->n_parts) return;
-	
+    GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
+    GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
+    if (part_num < 0 || part_num >= this->n_parts) return;
+    
     VoxPart *vp = vox_dat->vox_part[part_num];
-	if (!vp->colorable) return;
-	struct Color base_color = vp->base_color;
+    if (!vp->colorable) return;
+    struct Color base_color = vp->base_color;
 
     Voxel_volume* vv = &(this->vv[part_num]);
-	
-	int ix,iy,iz;
-	unsigned char r,g,b,a;
-	for (int i=0; i<vp->colors.n; i++)
-	{
-		r = vp->colors.rgba[4*i + 0];
-		g = vp->colors.rgba[4*i + 1];
-		b = vp->colors.rgba[4*i + 2];
-		a = vp->colors.rgba[4*i + 3];
-		if (base_color.r != r || base_color.b != b || base_color.g != g)
-			continue;
+    
+    int ix,iy,iz;
+    unsigned char r,g,b,a;
+    for (int i=0; i<vp->colors.n; i++)
+    {
+        r = vp->colors.rgba[4*i + 0];
+        g = vp->colors.rgba[4*i + 1];
+        b = vp->colors.rgba[4*i + 2];
+        a = vp->colors.rgba[4*i + 3];
+        if (base_color.r != r || base_color.b != b || base_color.g != g)
+            continue;
 
         ix = vp->colors.index[3*i + 0];
         iy = vp->colors.index[3*i + 1];
         iz = vp->colors.index[3*i + 2];
-		
-		vv->set_color(ix,iy,iz, color.r, color.g, color.b, a);
-	}
+        
+        vv->set_color(ix,iy,iz, color.r, color.g, color.b, a);
+    }
 }
 
 void Voxel_model::fill_color(struct Color color)
@@ -489,11 +489,11 @@ Voxel_model::~Voxel_model()
         delete[] this->vv;
     }
 
-    if(skeleton_inited == true)
+    if (skeleton_inited)
     {
-        delete[] vox_skeleton_transveral_list;
-        delete[] vox_skeleton_local_matrix;
-        delete[] vox_skeleton_world_matrix;
+        free(vox_skeleton_transveral_list);
+        free(vox_skeleton_local_matrix);
+        free(vox_skeleton_world_matrix);
         free(biaxial_nodes);
     }
     else
@@ -593,7 +593,7 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
     Vec3 c;
     for (int i=0; i<this->n_parts; i++)
     {
-		if (randf() < failure_rate) continue;
+        if (randf() < failure_rate) continue;
         int pnum = part_numbers[i];
         GS_ASSERT(pnum >= 0 && pnum < this->n_parts);
         if (pnum < 0 || pnum >= this->n_parts) continue;

@@ -41,7 +41,9 @@ void HitscanEffect::add_plane_bias()
     // assume vx,vy,vz to be the look vector
 
     Vec3 look = vec3_init(vx,vy,vz);
-    normalize_vector(&look);
+    GS_ASSERT(vec3_length_squared(look) != 0.0f);
+    if (vec3_length_squared(look) == 0.0f) look = vec3_init(1,0,0);
+    else normalize_vector(&look);
     Vec3 up = vec3_init(0,0,1);
     Vec3 right = vec3_cross(look, up);
     normalize_vector(&right);

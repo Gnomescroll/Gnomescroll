@@ -169,7 +169,7 @@ void broadcast_particle_item_create(ItemParticleID particle_id)
     msg.broadcast();
 }
 
-void send_particle_item_create_to_client(ItemParticleID particle_id, int client_id)
+static void send_particle_item_create_to_client(ItemParticleID particle_id, int client_id)
 {
     item_particle_create_StoC msg;
     if (!pack_particle_item_create(particle_id, &msg)) return;
@@ -273,7 +273,6 @@ static void split_item_particle(Item::Item* item, ItemParticle* particle, int it
     ItemParticle* split_particle = get((ItemParticleID)split_item->location_id);
     GS_ASSERT(split_particle != NULL);
     if (split_particle == NULL) return;
-    broadcast_particle_item_create(split_particle->id);
     split_particle->picked_up(target_agent);
 }
 
@@ -634,6 +633,7 @@ void throw_agent_item(int agent_id, ItemID item_id)
     const float mom = 2.0f;
     Vec3 force = a->forward_vector();
     force.z = 0;
+    if (vec3_length_squared(force) == 0.0f) force.x = 1.0f;
     normalize_vector(&force);
     force = vec3_scalar_mult(force, mom);
     force = vec3_bias(force, (randf()-0.5f) * 30);
@@ -650,6 +650,7 @@ void dump_container_item(ItemID item_id, float x, float y, float z)
 
     const float mom = 2.0f;
     Vec3 force = vec3_init(randf()-0.5f, randf()-0.5f, randf()-0.5f);
+    if (vec3_length_squared(force) == 0.0f) force.x = 0.2f;
     normalize_vector(&force);
     force = vec3_scalar_mult(force, mom);
 

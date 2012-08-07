@@ -54,11 +54,7 @@ inline void SendClientId_StoC::handle()
 inline void Agent_state_message::handle()
 {
     Agent_state* a = STATE::agent_list->get(id);
-    if(a == NULL)
-    {
-        //printf("Agent_state_message -- Agent %d does not exist\n", id);
-        return;
-    }
+    if (a == NULL) return;
     a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 
@@ -74,6 +70,9 @@ inline void Agent_teleport_message::handle()
     }
     a->set_state(x,y,z, vx,vy,vz);
     a->set_angles(theta, phi);
+    // force update vox
+    if (a->vox != NULL)
+        a->vox->update(x,y,z,theta,phi);
 }
 
 //Agent control state, server to client

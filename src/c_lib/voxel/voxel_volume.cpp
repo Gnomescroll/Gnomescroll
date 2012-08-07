@@ -305,8 +305,8 @@ voxel_render_list(NULL),
 voxel_render_list_id(-1)
 #endif
 {
-    this->world_matrix.c = vec3_init(0,0,0);
-    this->local_matrix.c = vec3_init(0,0,0);
+    memset(&this->world_matrix, 0, sizeof(struct Affine));
+    memset(&this->local_matrix, 0, sizeof(struct Affine));
 }
 
 Voxel_volume::Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
@@ -329,8 +329,8 @@ voxel_render_list(NULL),
 voxel_render_list_id(-1)
 #endif
 {
-    this->world_matrix.c = vec3_init(0,0,0);
-    this->local_matrix.c = vec3_init(0,0,0);
+    memset(&this->world_matrix, 0, sizeof(struct Affine));
+    memset(&this->local_matrix, 0, sizeof(struct Affine));
     this->init(xdim, ydim, zdim, scale);
 }
 
