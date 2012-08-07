@@ -377,9 +377,9 @@ int get_agent_selected_slot(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_SLOT;
-    GS_ASSERT(agent_selected_item != NULL);
-    if (agent_selected_item == NULL) return NULL_SLOT;
-    return agent_selected_item[agent_id];
+    GS_ASSERT(agent_selected_slot != NULL);
+    if (agent_selected_slot == NULL) return NULL_SLOT;
+    return agent_selected_slot[agent_id];
 }
 
 bool set_agent_toolbelt_slot(int agent_id, int slot)
@@ -412,9 +412,8 @@ void use_block_placer(int agent_id, ItemID placer_id)
 
     int stack_size = placer->stack_size;
     int remaining_stack_size = Item::consume_stack_item(placer->id);
-    if (remaining_stack_size <= 0)
-        force_remove_selected_item(agent_id);
-    else if (stack_size != remaining_stack_size) 
+    // force removal is already handled if the item gets destroyed
+    if (stack_size != remaining_stack_size) 
         Item::send_item_state(placer->id);        
 }
 
