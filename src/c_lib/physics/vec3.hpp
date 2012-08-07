@@ -87,7 +87,7 @@ struct Vec3 vec3_normalize(struct Vec3 v)
 
     if (l == 0.0f) 
     {
-        GS_ASSERT_ONCE(l != 0.0f);
+        GS_ASSERT_LIMIT(l != 0.0f, 50);
         return v;
     }
 
@@ -97,6 +97,7 @@ struct Vec3 vec3_normalize(struct Vec3 v)
     v.z *= l;
     return v;
 }
+
 
 static struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
