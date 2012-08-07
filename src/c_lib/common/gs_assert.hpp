@@ -1,10 +1,45 @@
 #pragma once
 
 
+char* _internal_itoa(int val, int base)
+{	
+	static char buf[32] = {0};	
+	int i = 30;
+	for(; val && i ; --i, val /= base)
+		buf[i] = "0123456789abcdef"[val % base];
+	return &buf[i+1];
+}
+
+void _push_str(char* tstr, int* index, char* istr, int len);
+{
+	strncpy(tstr+*index, istr, len);
+	*index += len;
+}
+
+void _push_const_str(char* tstr, int* index, const char* const_str);
+{	
+	int n = strlen(const_str);
+	strncpy(tstr+*index, const_str, n);
+	*index += n;
+}
+
+void _push_char(char* tstr, int* index, char c)
+{
+	tstr[*index] = c;
+	*index++;
+}
+
 void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
 	static char t[256];
-	static const char* prefix = "GS_ASSERT: ";
+	static const char prefix[] = "GS_ASSERT: ";
+
+	//static char t2[32];
+
+	//char *  itoa ( int value, char * str, int base );
+	//itoa(LINE, t2, 10);
+
+	char* line_str = _internal_itoa(LINE, 10);
 
 	//print_trace(); 
 	//printf("GS_ASSERT: %s\n", assert_str);
@@ -12,13 +47,20 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 	static const int len1 = strlen(prefix); //use size of
 	int len2 = strlen(FILE);
 	int len3 = strlen(FUNC);
+	int len4 = strlen(line_str);
 
 	strncpy(t, prefix, len1);
+
 	strncpy(t+len1, FILE, len2);
-	t[t+len1+len2] = '\n';
-	strncpy(t+len1+len2+1, FILE, len3);
-	t[t+len1+len2+len3+1] = '\n';
-	t[t+len1+len2+len3+2] = 0x00;
+	t[len1+len2] = ' ';
+	strncpy(t+len1+len2+1, FUNC, len3);
+
+	t[len1+len2+len3+1] = ' ';
+	strncpy(t+len1+len2+len3+2, line_str, len4);
+
+	t[len1+len2+len3+len4+2] = '\n';
+	t[len1+len2+len3+len4+3] = 0x00;
+
 
 	printf("%s", t);
 }
