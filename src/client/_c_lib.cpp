@@ -35,6 +35,7 @@ dont_include_this_file_in_server
 #include <common/compat_al.h>
 #include <common/macros.hpp>
 #include <common/crash_report/stack_trace.hpp>
+#include <common/gs_assert.hpp>
 #include <common/mallox.hpp>
 
 /* Compression */
@@ -459,6 +460,7 @@ void close_c_lib()
 
     Log::teardown();
     Options::teardown_option_tables();
+    _GS_ASSERT_TEARDOWN();
 
     printf("Game closed\n");
 }

@@ -12,6 +12,9 @@ dont_include_this_file_in_client
 #include <stdlib.h>
 #include <string.h>
 
+//#include <stdio.h>
+//#include <stdlib.h>
+
 #ifdef __GNUC__
     #include <unistd.h>
 #endif
@@ -21,6 +24,7 @@ dont_include_this_file_in_client
 #include <common/compression/miniz.c>
 #include <common/macros.hpp>
 #include <common/crash_report/stack_trace.hpp>
+#include <common/gs_assert.hpp>
 #include <common/mallox.hpp>
 
 // osx tools
@@ -240,6 +244,7 @@ void close_c_lib()
 
     printf("Server closed\n"); 
     Log::teardown();
+    _GS_ASSERT_TEARDOWN();
 
     Options::teardown_option_tables();
 }
