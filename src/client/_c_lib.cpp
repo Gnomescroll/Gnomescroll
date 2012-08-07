@@ -34,6 +34,7 @@ dont_include_this_file_in_server
 #include <common/compat_gl.h>
 #include <common/compat_al.h>
 #include <common/macros.hpp>
+#include <common/gs_assert.hpp>
 #include <common/crash_report/stack_trace.hpp>
 #include <common/mallox.hpp>
 

@@ -10,28 +10,33 @@ char* _internal_itoa(int val, int base)
 	return &buf[i+1];
 }
 
-void _push_str(char* tstr, int* index, char* istr, int len);
+void _push_str(char* tstr, int* index, char* istr)
 {
+	int len = strlen(istr);
 	strncpy(tstr+*index, istr, len);
 	*index += len;
 }
 
-void _push_const_str(char* tstr, int* index, const char* const_str);
+void _push_const_str(char* tstr, int* index, const char* const_str)
 {	
-	int n = strlen(const_str);
-	strncpy(tstr+*index, const_str, n);
-	*index += n;
+	int len = strlen(const_str);
+	strncpy(tstr+*index, const_str, len);
+	*index += len;
 }
 
 void _push_char(char* tstr, int* index, char c)
 {
 	tstr[*index] = c;
-	*index++;
+	(*index)++;
 }
 
 void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
 	static char t[256];
+
+	int index = 0;
+
+#if 0
 	static const char prefix[] = "GS_ASSERT: ";
 
 	//static char t2[32];
@@ -60,7 +65,12 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 
 	t[len1+len2+len3+len4+2] = '\n';
 	t[len1+len2+len3+len4+3] = 0x00;
+#else
+	_push_const_str(t,&index, "GS_ASSERT: ");
+	_push_str(
+	_push_char(t,&index, )
 
+#endif
 
 	printf("%s", t);
 }
