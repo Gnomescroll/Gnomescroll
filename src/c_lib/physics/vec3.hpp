@@ -381,8 +381,8 @@ static bool vec3_isfinite(Vec3 v)
     return false;
 }
 
-static bool vec3_is_invalid(Vec3 v) __attribute__((always_inline));
-static bool vec3_is_invalid(Vec3 v)
+static bool vec3_is_valid(Vec3 v) __attribute__((always_inline));
+static bool vec3_is_valid(Vec3 v)
 {
     return (vec3_isfinite(v) && !vec3_isnan(v));
 }
