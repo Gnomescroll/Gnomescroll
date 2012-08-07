@@ -296,35 +296,20 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         const int z_low = 4;
         const int z_high = 3;
         
-        int solid_pos[3] = {88,88,88};
-        int open_pos[3] = {99,99,99};
-        int _side[3] = {100,100,100};
-        float distance;
-
-        int side = a->get_facing_side(solid_pos, open_pos, &distance);
+        int solid_pos[3];
+        int open_pos[3];
+        int side = a->get_facing_side(solid_pos, open_pos, max_dist, z_low, z_high);
         
-        printf("block: %i %i %i open: %i %i %i side: %i \n", 
+        printf("block: %i %i %i open: %i %i %i side: %i\n", 
             solid_pos[0],solid_pos[1],solid_pos[2], 
             open_pos[0],open_pos[1],open_pos[2],
             side);
 
         if (side < 0) return;
 
-    /*
-        int* b = a->nearest_open_block(max_dist, z_low, z_high);
-        if (b == NULL) return;
-        
-        // must be placed on solid block
-        if (b[2] <= 0) return;  // can't place on nothing
-        if (!isSolid(b[0], b[1], b[2]-1)) return;
-
-        printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
-        t_mech::create_crystal(b[0],b[1],b[2] );
+        //t_mech::create_crystal(b[0],b[1],b[2] );
         //decrement_stack(agent_id, item_id, item_type);
-    */
     }
-
-
 }
 
 #endif

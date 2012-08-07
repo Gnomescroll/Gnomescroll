@@ -1025,3 +1025,26 @@ int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], float* dista
     if (block <= 0) return -1;
     return get_cube_side_from_side_array(s);
 }
+
+// returns side as int
+int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance, const int z_low, const int z_high)
+{
+    Vec3 p = this->get_camera_position();
+    Vec3 v = this->forward_vector();
+
+    int s[3];   
+    int* b = _farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, s, max_distance, z_low, z_high);
+    if (b == NULL) return -1;
+
+    open_pos[0] = b[0];
+    open_pos[1] = b[1];
+    open_pos[2] = b[2];
+    
+    solid_pos[0] = translate_point(open_pos[0] - s[0]);
+    solid_pos[1] = translate_point(open_pos[1] - s[1]);
+    solid_pos[2] = open_pos[2] - s[2];
+    GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
+    GS_ASSERT(solid_pos[2] >= 0); // agent should never be shooting from underground
+
+    return get_cube_side_from_side_array(s);
+}

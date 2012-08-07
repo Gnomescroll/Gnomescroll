@@ -79,7 +79,7 @@ static bool advance_move(Vec3 position, Vec3 move_to, int z, float speed, Vec3* 
         len = 0.0f;
     }
     else normalize_vector(&new_direction);
-    GS_ASSERT(len < 512.0f*512.0f);
+    GS_ASSERT_LIMIT(len < 512.0f*512.0f, 50);
 
     *new_momentum = vec3_scalar_mult(new_direction, speed);
     position = vec3_add(position, *new_momentum);
@@ -114,8 +114,8 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     // add new_momentum to position to get new_position
     // assumes direction is normalized
 
-    GS_ASSERT(speed > 0.0f);
-    GS_ASSERT(vec3_length(direction) > 0.0f);
+    GS_ASSERT_LIMIT(speed > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
     if (vec3_length(direction) == 0.0f) return false;
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
@@ -132,8 +132,8 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
     // add new_momentum to position to get new_position
     // assumes direction is normalized
 
-    GS_ASSERT(speed > 0.0f);
-    GS_ASSERT(vec3_length(direction) > 0.0f);
+    GS_ASSERT_LIMIT(speed > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_nearest_open_block(translate_point(move_to.x), translate_point(move_to.y), move_to.z, object_height);
@@ -154,8 +154,8 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     // add new_momentum to position to get new_position
     // assumes direction is normalized
 
-    GS_ASSERT(speed > 0.0f);
-    GS_ASSERT(vec3_length(direction) > 0.0f);
+    GS_ASSERT_LIMIT(speed > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_highest_open_block(translate_point(move_to.x), translate_point(move_to.y));
@@ -172,8 +172,8 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
     // add new_momentum to position to get new_position
     // assumes direction is normalized
 
-    GS_ASSERT(speed > 0.0f);
-    GS_ASSERT(vec3_length(direction) > 0.0f);
+    GS_ASSERT_LIMIT(speed > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_nearest_open_block(translate_point(move_to.x), translate_point(move_to.y), move_to.z, object_height);
