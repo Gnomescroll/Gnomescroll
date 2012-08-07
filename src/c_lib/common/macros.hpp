@@ -54,9 +54,6 @@ return; \
 #endif
 
 
-#include "gs_assert.hpp"
-
-
 /*
 #ifndef __MSVC__
     #ifdef _MSC_VER

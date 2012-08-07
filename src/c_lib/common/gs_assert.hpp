@@ -1,17 +1,33 @@
-//#pragma once
+#pragma once
 
 
 void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
-	print_trace(); 
-	printf("GS_ASSERT: %s\n", assert_str);
+	static char t[256];
+	static const char* prefix = "GS_ASSERT: ";
+
+	//print_trace(); 
+	//printf("GS_ASSERT: %s\n", assert_str);
+
+	static const int len1 = strlen(prefix); //use size of
+	int len2 = strlen(FILE);
+	int len3 = strlen(FUNC);
+
+	strncpy(t, prefix, len1);
+	strncpy(t+len1, FILE, len2);
+	t[t+len1+len2] = '\n';
+	strncpy(t+len1+len2+1, FILE, len3);
+	t[t+len1+len2+len3+1] = '\n';
+	t[t+len1+len2+len3+2] = 0x00;
+
+	printf("%s", t);
 }
 
 
 
    
 
-#define GS_ASSERT(condition) _GS_ASSERT_INTERNAL( __FILE__, __FUNCTION__, __LINE__);
+#define GS_ASSERT(condition) if(!(condition)) _GS_ASSERT_INTERNAL( __FILE__, __FUNCTION__, __LINE__);
 
 
 //printf( __FILE__  );
