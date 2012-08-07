@@ -43,9 +43,13 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 	_push_str(t,&index, FUNC);
 	_push_str(t,&index, " ");
 	_push_str(t,&index, LINE_STR);
-	_push_char(t,&index, '\n');
+	_push_char(t,&index, 0x00);
 
-	printf("%s", t);
+	//printf("%s", t);
+
+	print_trace();
+
+	puts(t);
 }
 
 
