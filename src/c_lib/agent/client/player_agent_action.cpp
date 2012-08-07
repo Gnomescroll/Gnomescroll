@@ -208,7 +208,6 @@ void PlayerAgent_action::begin_mining_laser()
     GS_ASSERT(this->mining_laser_sound_id < 0);
     if (this->mining_laser_sound_id >= 0) return;
     this->mining_laser_sound_id = Sound::mining_laser(true, 0);
-    GS_ASSERT(!Options::sound || this->mining_laser_sound_id >= 0);
 }
 
 void PlayerAgent_action::end_mining_laser()
