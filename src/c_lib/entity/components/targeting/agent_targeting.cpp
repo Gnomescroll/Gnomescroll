@@ -99,11 +99,11 @@ bool AgentTargetingComponent::move_on_surface()
     Vec3 motion_direction = this->target_direction;
     motion_direction.z = 0.0f;
 
-    Vec3 _d = vec3_copy(motion_direction);
-    normalize_vector(&_d);
-    if (vec3_isnan(_d)) printf("WOULD HAVE CAUSED NAN ERROR\n");
-
-    if (vec3_length_squared(motion_direction) == 0.0f) return false;
+    if (vec3_length_squared(motion_direction) == 0.0f)
+    {
+        physics->set_momentum(vec3_init(0,0,0));
+        return false;
+    }
     normalize_vector(&motion_direction);
 
     bool moved = move_along_terrain_surface(
@@ -114,9 +114,9 @@ bool AgentTargetingComponent::move_on_surface()
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
-    if (vec3_length(new_momentum))
+    new_momentum.z = 0;
+    if (vec3_length_squared(new_momentum))
     {   // update target direction
-        new_momentum.z = 0;
         normalize_vector(&new_momentum);
         this->target_direction = new_momentum;
     }

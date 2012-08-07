@@ -250,7 +250,7 @@ void server_tick_mob_robot_box(Object* object)
         // face target
         if (agent != NULL) // TODO -- multiple target types
         {
-            if (vec3_length(weapon->target_direction))
+            if (vec3_length_squared(weapon->target_direction))
             {
                 float theta,phi;
                 vec3_to_angles(weapon->target_direction, &theta, &phi);
@@ -296,7 +296,8 @@ void server_tick_mob_robot_box(Object* object)
         if (len)
         {
             direction.z = 0;
-            normalize_vector(&direction);
+            if (vec3_length_squared(direction))
+                normalize_vector(&direction);
             motion->target_direction = direction;
         }
         motion->broadcast_destination();
@@ -356,7 +357,7 @@ void client_tick_mob_robot_box(Object* object)
         
         // face target
         Vec3 direction = vec3_sub(agent_position, position);
-        if (vec3_length(direction))
+        if (vec3_length_squared(direction))
         {
             float theta,phi;
             normalize_vector(&direction);

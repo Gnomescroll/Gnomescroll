@@ -71,7 +71,7 @@ void orient_to_point(Vec3 dest, Vec3 origin, float* theta, float* phi)
 static bool advance_move(Vec3 position, Vec3 move_to, int z, float speed, Vec3* new_position, Vec3* new_momentum)
 {
     Vec3 new_direction = vec3_init(0,0,0);
-    if (vec3_equal(position, move_to))
+    if (vec3_equal(position, move_to) || speed == 0.0f)
     {
         *new_momentum = new_direction;
         if (position.z != (float)z)

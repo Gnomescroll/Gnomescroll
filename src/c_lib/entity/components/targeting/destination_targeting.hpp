@@ -37,7 +37,7 @@ class DestinationTargetingComponent: public TargetingComponent
         
         int get_ticks_to_destination(Vec3 position)
         {
-            float len = vec3_length(vec3_sub(this->destination, position));
+            float len = vec3_length_squared(vec3_sub(this->destination, position));
             int ttd = (int)(ceil(len / this->speed));
             return ttd;
         }

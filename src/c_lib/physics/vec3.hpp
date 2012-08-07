@@ -319,6 +319,7 @@ static float vec3_to_theta(Vec3 direction) __attribute((always_inline));
 static float vec3_to_theta(Vec3 direction)
 {
     direction.z = 0;
+    if (vec3_length_squared(direction) == 0.0f) return 0.0f;
     normalize_vector(&direction);
     float t = acosf(direction.x) / PI;
     if (direction.y < 0) t = -t;
@@ -332,6 +333,12 @@ static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
     normalize_vector(&direction);
     float z = direction.z;
     direction.z = 0;
+    if (vec3_length_squared(direction) == 0.0f)
+    {
+        *theta = 0.0f;
+        *phi = 0.0f;
+        return;
+    }
     normalize_vector(&direction);
 
     float t = acosf(direction.x) / PI;

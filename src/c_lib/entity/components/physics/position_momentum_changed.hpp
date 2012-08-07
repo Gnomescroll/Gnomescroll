@@ -22,7 +22,7 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {
-            GS_ASSERT(!vec3_isnan(position));
+            GS_ASSERT_LIMIT(!vec3_isnan(position), 50);
             if (vec3_isnan(position)) return false;
             position = translate_position(position);
             if (vec3_equal(this->position, position)) return false;
@@ -34,7 +34,7 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
         Vec3 get_momentum() { return this->momentum; }
         bool set_momentum(Vec3 momentum)
         {
-            GS_ASSERT(!vec3_isnan(momentum));
+            GS_ASSERT_LIMIT(!vec3_isnan(momentum), 50);
             if (vec3_isnan(momentum)) return false;
             if (vec3_equal(this->momentum, momentum)) return false;
             this->momentum = momentum;

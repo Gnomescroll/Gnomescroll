@@ -116,9 +116,9 @@ bool MotionTargetingComponent::move_on_surface()
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
-    if (vec3_length(new_momentum))
+    new_momentum.z = 0;
+    if (vec3_length_squared(new_momentum))
     {   // update target direction
-        new_momentum.z = 0;
         normalize_vector(&new_momentum);
         this->target_direction = new_momentum;
     }
