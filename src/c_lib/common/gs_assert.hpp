@@ -36,36 +36,7 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 
 	int index = 0;
 	char* LINE_STR = _internal_itoa(LINE, 10);
-#if 0
-	static const char prefix[] = "GS_ASSERT: ";
 
-	//static char t2[32];
-
-	//char *  itoa ( int value, char * str, int base );
-	//itoa(LINE, t2, 10);
-
-	char* line_str = _internal_itoa(LINE, 10);
-
-	//print_trace(); 
-	//printf("GS_ASSERT: %s\n", assert_str);
-
-	static const int len1 = strlen(prefix); //use size of
-	int len2 = strlen(FILE);
-	int len3 = strlen(FUNC);
-	int len4 = strlen(line_str);
-
-	strncpy(t, prefix, len1);
-
-	strncpy(t+len1, FILE, len2);
-	t[len1+len2] = ' ';
-	strncpy(t+len1+len2+1, FUNC, len3);
-
-	t[len1+len2+len3+1] = ' ';
-	strncpy(t+len1+len2+len3+2, line_str, len4);
-
-	t[len1+len2+len3+len4+2] = '\n';
-	t[len1+len2+len3+len4+3] = 0x00;
-#else
 	_push_str(t,&index, "GS_ASSERT: ");
 	_push_str(t,&index, FILE);
 	_push_str(t,&index, " ");
@@ -73,7 +44,6 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 	_push_str(t,&index, " ");
 	_push_str(t,&index, LINE_STR);
 	_push_char(t,&index, '\n');
-#endif
 
 	printf("%s", t);
 }
