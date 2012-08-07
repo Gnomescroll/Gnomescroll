@@ -49,7 +49,7 @@ void tick()
     #endif
 }
 
-void destroy(int particle_id)
+void destroy(ItemParticleID particle_id)
 {
     #if DC_SERVER
     GS_ASSERT(particle_id != NULL_PARTICLE);
@@ -61,10 +61,11 @@ void destroy(int particle_id)
 
     broadcast_particle_item_destroy(particle->id);
     #endif
+    
     item_particle_list->destroy(particle_id);
 }
 
-class ItemParticle* get(int particle_id)
+class ItemParticle* get(ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
     if (particle_id == NULL_PARTICLE) return NULL;
@@ -80,7 +81,7 @@ void draw()
 }
 
 ItemParticle* create_item_particle(
-    int particle_id, int item_type,
+    ItemParticleID particle_id, int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
@@ -139,7 +140,7 @@ class Item::Item* create_item_particle(int item_type, Vec3 position, Vec3 moment
     return create_item_particle(item_type, position.x, position.y, position.z, momentum.x, momentum.y, momentum.z);
 }
 
-static bool pack_particle_item_create(int particle_id, item_particle_create_StoC* msg)
+static bool pack_particle_item_create(ItemParticleID particle_id, item_particle_create_StoC* msg)
 {
     ItemParticle* particle = item_particle_list->get(particle_id);
     GS_ASSERT(particle != NULL);
@@ -156,14 +157,14 @@ static bool pack_particle_item_create(int particle_id, item_particle_create_StoC
     return true;
 }
 
-void broadcast_particle_item_create(int particle_id)
+void broadcast_particle_item_create(ItemParticleID particle_id)
 {
     item_particle_create_StoC msg;
     if (!pack_particle_item_create(particle_id, &msg)) return;
     msg.broadcast();
 }
 
-void send_particle_item_create_to_client(int particle_id, int client_id)
+void send_particle_item_create_to_client(ItemParticleID particle_id, int client_id)
 {
     item_particle_create_StoC msg;
     if (!pack_particle_item_create(particle_id, &msg)) return;
@@ -177,7 +178,7 @@ void send_particle_items_to_client(int client_id)
             send_particle_item_create_to_client(item_particle_list->a[i]->id, client_id);
 }
 
-void broadcast_particle_item_state(int particle_id)
+void broadcast_particle_item_state(ItemParticleID particle_id)
 {
     ItemParticle* particle = item_particle_list->get(particle_id);
     if (particle == NULL) return;
@@ -192,7 +193,7 @@ void broadcast_particle_item_state(int particle_id)
     msg.broadcast();
 }
 
-void broadcast_particle_item_destroy(int particle_id)
+void broadcast_particle_item_destroy(ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
     if (particle_id == NULL_PARTICLE) return;
@@ -201,7 +202,7 @@ void broadcast_particle_item_destroy(int particle_id)
     msg.broadcast();
 }
 
-void broadcast_particle_item_picked_up(int agent_id, int particle_id)
+void broadcast_particle_item_picked_up(int agent_id, ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -211,7 +212,7 @@ void broadcast_particle_item_picked_up(int agent_id, int particle_id)
     msg.broadcast();
 }
 
-void broadcast_particle_item_pickup_cancelled(int particle_id)
+void broadcast_particle_item_pickup_cancelled(ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
     item_particle_pickup_cancelled_StoC msg;
@@ -249,7 +250,7 @@ static void split_item_particle(Item::Item* item, ItemParticle* particle, int it
     split_item->stack_size = stack_size;
     
     // set new particle as picked_up
-    ItemParticle* split_particle = get(split_item->location_id);
+    ItemParticle* split_particle = get((ItemParticleID)split_item->location_id);
     GS_ASSERT(split_particle != NULL);
     if (split_particle == NULL) return;
     broadcast_particle_item_create(split_particle->id);

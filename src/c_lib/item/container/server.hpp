@@ -22,8 +22,8 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
 void transfer_free_item_to_hand(ItemID item_id, int agent_id);
 
 // particle -> container/hand
-bool transfer_particle_to_container(ItemID item_id, int particle_id, int container_id, int slot);
-void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id);
+bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, int container_id, int slot);
+void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, int agent_id);
 
 // hand -> particle (throw)
 void transfer_hand_to_particle(int agent_id);

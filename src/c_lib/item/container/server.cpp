@@ -259,7 +259,7 @@ void transfer_free_item_to_hand(ItemID item_id, int agent_id)
         send_hand_insert(hand_owner->client_id, item_id);
 }
 
-bool transfer_particle_to_container(ItemID item_id, int particle_id, int container_id, int slot)
+bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, int container_id, int slot)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -307,7 +307,7 @@ bool transfer_particle_to_container(ItemID item_id, int particle_id, int contain
     return true;
 }
 
-void transfer_particle_to_hand(ItemID item_id, int particle_id, int agent_id)
+void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, int agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     ASSERT_VALID_AGENT_ID(agent_id);

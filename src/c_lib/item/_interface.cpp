@@ -195,10 +195,7 @@ void destroy_item(ItemID id)
         if (a != NULL) ItemContainer::send_hand_remove(a->client_id);
     }
     else if (item->location == IL_PARTICLE)
-        ItemParticle::destroy(item->location_id);
-
-    // destroy source particle
-    if (item->location == IL_PARTICLE) ItemParticle::destroy(item->location_id);
+        ItemParticle::destroy((ItemParticleID)item->location_id);
 
     //for (unsigned int i=0; i<item->subscribers.n; i++)
         //printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], id);

@@ -178,7 +178,7 @@ void ItemParticle::pickup_cancelled()
 }
 
 ItemParticle::ItemParticle(int id) :
-    id(id),
+    id((ItemParticleID)id),
     item_type(NULL_ITEM_TYPE),
     target_agent(NO_AGENT),
     #if DC_SERVER
@@ -203,7 +203,7 @@ ItemParticle::ItemParticle(int id) :
 // ItemParticle_list
 
 #if DC_SERVER
-static bool pickup_item_particle(int particle_id)
+static bool pickup_item_particle(ItemParticleID particle_id)
 {    // this method takes care of all state updates, including particle destruction
     
     GS_ASSERT(particle_id != NULL_PARTICLE);
@@ -318,6 +318,7 @@ void ItemParticle_list::tick()
         ip = this->a[i];
 
         ip->tick();
+        
         #if DC_SERVER
         if (ip->get_picked_up)
         {    // attempt to transfer to container

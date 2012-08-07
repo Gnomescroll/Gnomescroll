@@ -21,6 +21,11 @@ typedef enum
 
 typedef enum
 {
+    NULL_PARTICLE = 0xffff
+} ItemParticleID;
+
+typedef enum
+{
     CONTAINER_ACTION_NONE = 0,      // null
     
     FULL_HAND_TO_WORLD,             // remove

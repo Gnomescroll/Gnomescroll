@@ -16,7 +16,7 @@ inline void item_particle_create_StoC::handle()
     if (id == NULL_PARTICLE) return;
     ASSERT_BOXED_POINTf(x);
     ASSERT_BOXED_POINTf(y);
-    create_item_particle(id, item_type, x,y,z,mx,my,mz);
+    create_item_particle((ItemParticleID)id, item_type, x,y,z,mx,my,mz);
 }
 
 inline void item_particle_destroy_StoC::handle()
@@ -24,9 +24,9 @@ inline void item_particle_destroy_StoC::handle()
     GS_ASSERT(id != NULL_PARTICLE);
     if (id == NULL_PARTICLE) return;
     
-	// if particle destroyed while targeting agent (i.e. it is being
-	// picked up by agent) then assume agent picked it up
-    ItemParticle* particle = get(id);
+    // if particle destroyed while targeting agent (i.e. it is being
+    // picked up by agent) then assume agent picked it up
+    ItemParticle* particle = get((ItemParticleID)id);
     GS_ASSERT(particle != NULL);
     if (particle == NULL) return;
     if (particle->target_agent != NO_AGENT
@@ -38,14 +38,14 @@ inline void item_particle_destroy_StoC::handle()
             pickup_sound_frame = ClientState::frame_id;
             Sound::pickup_item();
         }
-	}
-	
-    destroy(id);
+    }
+    
+    destroy((ItemParticleID)id);
 }
 
 inline void item_particle_state_StoC::handle()
 {
-    ItemParticle* particle = get(id);
+    ItemParticle* particle = get((ItemParticleID)id);
     if (particle == NULL) return;
     ASSERT_BOXED_POINTf(x);
     ASSERT_BOXED_POINTf(y);
@@ -54,23 +54,23 @@ inline void item_particle_state_StoC::handle()
 
 inline void item_particle_picked_up_StoC::handle()
 {
-	GS_ASSERT(id != NULL_PARTICLE);
-	if (id == NULL_PARTICLE) return;
-	ItemParticle* particle = get(id);
-	GS_ASSERT(particle != NULL);
-	if (particle == NULL) return;
-	
-	particle->picked_up(agent_id);
+    GS_ASSERT(id != NULL_PARTICLE);
+    if (id == NULL_PARTICLE) return;
+    ItemParticle* particle = get((ItemParticleID)id);
+    GS_ASSERT(particle != NULL);
+    if (particle == NULL) return;
+    
+    particle->picked_up(agent_id);
 }
 
 inline void item_particle_pickup_cancelled_StoC::handle()
 {
-	GS_ASSERT(id != NULL_PARTICLE);
-	if (id == NULL_PARTICLE) return;
-	ItemParticle* particle = get(id);
-	GS_ASSERT(particle != NULL);
-	if (particle == NULL) return;
-	particle->pickup_cancelled();
+    GS_ASSERT(id != NULL_PARTICLE);
+    if (id == NULL_PARTICLE) return;
+    ItemParticle* particle = get((ItemParticleID)id);
+    GS_ASSERT(particle != NULL);
+    if (particle == NULL) return;
+    particle->pickup_cancelled();
 }
 
 #endif
@@ -83,4 +83,4 @@ inline void item_particle_picked_up_StoC::handle() {}
 inline void item_particle_pickup_cancelled_StoC::handle() {}
 #endif
 
-}	// ItemParticle
+}   // ItemParticle

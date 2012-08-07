@@ -37,7 +37,7 @@ class ItemParticle
     public:
         VerletParticle::VerletParticle verlet;
 
-        int id;
+        ItemParticleID id;
         int item_type;
         
         int target_agent; // when being picked up

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <agent/constants.hpp>
+#include <item/common/enum.hpp>
 
 const int MAX_ITEMS = 0xff-1;
 const int MAX_CONTAINER_TYPES = 16;
@@ -11,7 +12,6 @@ const ItemGroup NULL_ITEM_GROUP = IG_NONE;
 const int NULL_DURABILITY = 0xffff;
 const int NULL_ENERGY = 0xffff;
 const int NULL_CONTAINER = 0xffff;
-const int NULL_PARTICLE = 0xffff;
 const int NULL_COST = 0;
 const int NULL_CRAFTING_RECIPE = 0xffff;
 const int NULL_SMELTING_RECIPE = 0xffff;
@@ -45,7 +45,7 @@ const int ITEM_GAS_LIFETIME = 30 * 60 * 5;  // 5 Minutes
 const int AGENT_HAND = NULL_CONTAINER - 1;
 
 const int ITEM_PARTICLE_MAX = 1024;
-const int ITEM_PARTICLE_HARD_MAX = 0xffff - 1;
+const int ITEM_PARTICLE_HARD_MAX = NULL_PARTICLE - 1;
 
 const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
 const float ITEM_PARTICLE_DAMPENING = 0.50f;
