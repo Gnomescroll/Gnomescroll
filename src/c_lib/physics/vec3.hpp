@@ -374,6 +374,19 @@ static bool vec3_isnan(Vec3 v)
     return false;
 }
 
+static bool vec3_isfinite(Vec3 v) __attribute__((always_inline));
+static bool vec3_isfinite(Vec3 v)
+{
+    if (isfinite(v.x) || isfinite(v.y) || isfinite(v.z)) return true;
+    return false;
+}
+
+static bool vec3_is_invalid(Vec3 v) __attribute__((always_inline));
+static bool vec3_is_invalid(Vec3 v)
+{
+    return (vec3_isfinite(v) && !vec3_isnan(v));
+}
+
 /*
     diagnostic
 */
