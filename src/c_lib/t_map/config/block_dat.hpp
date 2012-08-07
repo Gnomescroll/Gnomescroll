@@ -123,7 +123,7 @@ void load_block_dat()
     side_texture(B, t1, 14,2);
     side_texture(N, t1, 14,1);
     push_oriented_texture();
-    side_texture(N, t1, 14,3);
+    side_texture(N, t1, 14,3);  // smelter face on
     push_oriented_texture();
 
     //hud_def(2,3,t1,14,1);
@@ -140,22 +140,15 @@ void load_block_dat()
     //hud_def(2,5,t1,14,6);
     set_max_dmg(128);
 
-/*
-    cube_def(7, ItemContainerBlock, "small_crafting_bench");
-    iso_texture(t1,12,4);
-    side_texture(T, t1, 12,6);
-    side_texture(B, t1, 12,6);
-    side_texture(N, t1, 12,5);
-    hud_def(2,2,t1,12,2);
-*/
-/*
-    cube_def(7, ItemContainerBlock, "small_crafting_bench");
-    iso_texture(t1,13,1);
-    side_texture(T, t1, 13,3);
-    side_texture(B, t1, 13,3);
-    side_texture(N, t1, 13,2);
-    hud_def(2,2,t1,13,2);
-*/
+    cube_def(10, ItemContainerBlock, "recycler");
+    iso_texture(t1, 11,7);
+    side_texture(T, t1, 11,5);
+    side_texture(B, t1, 11,5);
+    side_texture(N, t1, 11,6);
+    push_oriented_texture();
+
+    //hud_def(2,5,t1,14,6);
+    set_max_dmg(128);
 
     cube_def(16, SolidBlock, "steel_block_1");
     iso_texture(t1, 1,3);

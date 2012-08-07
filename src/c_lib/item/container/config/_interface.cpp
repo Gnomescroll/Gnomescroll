@@ -26,6 +26,9 @@ void send_no_container_alpha_action(ContainerActionType action, int container_id
 void send_no_container_beta_action(ContainerActionType action, int container_id, int slot){}
 void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot){}
 void send_smelter_beta_action(ContainerActionType action, int container_id, int slot){}
+void send_recycler_alpha_action(ContainerActionType action, int container_id, int slot){}
+void send_recycler_beta_action(ContainerActionType action, int container_id, int slot){}
+void send_recycler_crush_action(ContainerActionType action, int container_id){}
 
 #endif
 
@@ -148,7 +151,18 @@ static void register_settings()
     c.beta_action = &smelter_beta_action_decision_tree;
     c.alpha_packet = &send_smelter_alpha_action;
     c.beta_packet = &send_smelter_beta_action;
-    
+
+    container_def(CONTAINER_TYPE_RECYCLER);
+    c.xdim = 1;
+    c.ydim = 1;
+    c.alt_xdim = 1;
+    c.alt_ydim = 1;
+    c.attached_to_agent = false;
+    c.alpha_action = &recycler_alpha_action_decision_tree;
+    c.beta_action = &recycler_beta_action_decision_tree;
+    c.alpha_packet = &send_recycler_alpha_action;
+    c.beta_packet = &send_recycler_beta_action;
+  
     add_container(c);   // finalize
 }
     
@@ -240,5 +254,18 @@ int get_container_alt_ydim(ItemContainerType type)
     return attr->alt_ydim;
 }
 
+bool container_type_is_attached_to_agent(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return false;
+    return !attr->attached_to_agent;
+}
+
+bool container_type_is_block(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return false;
+    return !attr->attached_to_agent;
+}
     
 }   // ItemContainer

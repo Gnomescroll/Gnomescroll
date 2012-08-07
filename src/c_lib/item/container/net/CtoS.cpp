@@ -19,6 +19,10 @@ inline void no_container_action_beta_CtoS::handle(){}
 inline void smelter_container_action_alpha_CtoS::handle(){}
 inline void smelter_container_action_beta_CtoS::handle(){}
 
+inline void recycler_container_action_alpha_CtoS::handle(){}
+inline void recycler_container_action_beta_CtoS::handle(){}
+inline void recycler_crush_item_CtoS::handle(){}
+
 inline void open_container_CtoS::handle() {}
 inline void close_container_CtoS::handle() {}
 
@@ -346,8 +350,75 @@ inline void smelter_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
 }
 
+inline void recycler_container_action_alpha_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action = recycler_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+
+    if (this->action != action)
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID hand_item = get_agent_hand(a->id);
+    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID slot_item = container->get_item(slot);
+    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+        send_container_failed_action(client_id, event_id);
+}
+
+inline void recycler_container_action_beta_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action = recycler_beta_action_decision_tree(a->id, client_id, container_id, slot);
+
+    if (this->action != action)
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+    
+    ItemID hand_item = get_agent_hand(a->id);
+
+    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID slot_item = container->get_item(slot);
+    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+        send_container_failed_action(client_id, event_id);
+}
+
+inline void recycler_crush_item_CtoS::handle()
+{
+    printf("Recycler activated\n");
+}
+
 inline void open_container_CtoS::handle()
 {
+    if (container_id == NULL_CONTAINER) printf("nul container id\n");
     if (container_id == NULL_CONTAINER) return;
     
     Agent_state* a = NetServer::agents[client_id];
@@ -357,6 +428,7 @@ inline void open_container_CtoS::handle()
     bool in_reach = agent_in_container_range(a->id, container_id);
     if (!in_reach)
     {
+        printf("not in reach\n");
         send_open_container_failed(a->client_id, container_id, event_id);
         return;
     }
@@ -364,6 +436,7 @@ inline void open_container_CtoS::handle()
     bool opened = agent_open_container(a->id, container_id);
     if (!opened)
     {
+        printf("open failed\n");
         send_open_container_failed(a->client_id, container_id, event_id);
         return;
     }

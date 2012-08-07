@@ -17,14 +17,14 @@ void load_map_drop_dat()
         add_drop("regolith", 1);
         set_drop(0.99f, 1);
 
-		add_drop("synthesizer_coin", 3);
-		set_drop(0.15f, 1);
+        add_drop("synthesizer_coin", 3);
+        set_drop(0.15f, 1);
         set_drop(0.04f, 2);
         set_drop(0.02f, 3);
         //add_drop("control_node", 2);
         //set_drop(0.40f, 1);
         //set_drop(0.40f, 2);
-			
+            
     def_drop("small_storage");
         drop_always("small_storage");
 
@@ -49,6 +49,9 @@ void load_map_drop_dat()
 
     def_drop("smelter_1");
         drop_always("smelter_1");
+
+    def_drop("recycler");
+        drop_always("recycler");
 
     def_drop("methane_ice");
         add_drop("methane_ice", 4);

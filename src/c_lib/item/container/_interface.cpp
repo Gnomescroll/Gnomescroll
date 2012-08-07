@@ -113,6 +113,10 @@ void init_packets()
     smelter_container_action_alpha_CtoS::register_server_packet();
     smelter_container_action_beta_CtoS::register_server_packet();
 
+    recycler_container_action_alpha_CtoS::register_server_packet();
+    recycler_container_action_beta_CtoS::register_server_packet();
+    recycler_crush_item_CtoS::register_server_packet();
+
     // container transactions to client
     container_action_failed_StoC::register_client_packet();
     insert_item_in_container_StoC::register_client_packet();
@@ -242,6 +246,7 @@ void update_container_ui_from_state()
     if (player_craft_bench_ui  != NULL) player_craft_bench_ui  ->load_data (player_craft_bench  ->slot);
     if (storage_block_ui       != NULL) storage_block_ui       ->load_data (storage_block       ->slot);
     if (cryofreezer_ui         != NULL) cryofreezer_ui         ->load_data (cryofreezer         ->slot);
+    if (recycler_ui            != NULL) recycler_ui            ->load_data (recycler            ->slot);
     if (smelter_ui             != NULL) smelter_ui             ->load_data (smelter             ->slot);
     
     if (player_hand == NULL_ITEM)
@@ -297,6 +302,7 @@ bool open_container(int container_id)
             GS_ASSERT(cryofreezer_ui == NULL);
             GS_ASSERT(smelter == NULL);
             GS_ASSERT(smelter_ui == NULL);
+            GS_ASSERT(recycler_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
             if (player_craft_bench == NULL) return false;
@@ -317,6 +323,7 @@ bool open_container(int container_id)
             GS_ASSERT(cryofreezer_ui == NULL);
             GS_ASSERT(smelter == NULL);
             GS_ASSERT(smelter_ui == NULL);
+            GS_ASSERT(recycler_ui == NULL);
 
             storage_block = (ItemContainer*)container;
             if (storage_block == NULL) return false;
@@ -337,6 +344,7 @@ bool open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
             GS_ASSERT(smelter == NULL);
             GS_ASSERT(smelter_ui == NULL);
+            GS_ASSERT(recycler_ui == NULL);
             
             cryofreezer = (ItemContainerCryofreezer*)container;
             if (cryofreezer == NULL) return false;
@@ -357,6 +365,7 @@ bool open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
             GS_ASSERT(cryofreezer == NULL);
             GS_ASSERT(cryofreezer_ui == NULL);
+            GS_ASSERT(recycler_ui == NULL);
             
             smelter = (ItemContainerSmelter*)container;
             if (smelter == NULL) return false;
@@ -369,6 +378,27 @@ bool open_container(int container_id)
             t_hud::set_container_id(smelter->type, smelter->id);
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
+
+        case CONTAINER_TYPE_RECYCLER:
+            GS_ASSERT(player_craft_bench == NULL);
+            GS_ASSERT(player_craft_bench_ui == NULL);
+            GS_ASSERT(storage_block == NULL);
+            GS_ASSERT(storage_block_ui == NULL);
+            GS_ASSERT(cryofreezer == NULL);
+            GS_ASSERT(cryofreezer_ui == NULL);
+            GS_ASSERT(smelter_ui == NULL);
+
+            recycler =(ItemContainerRecycler*)container;
+            if (recycler == NULL) return false;
+            if (recycler_ui != NULL) delete recycler_ui;
+            recycler_ui = new ItemContainerRecyclerUI(container_id);
+            recycler_ui->set_alt_parameters(recycler->alt_xdim, recycler->alt_ydim);
+            recycler_ui->init(recycler->type, recycler->xdim, recycler->ydim);
+            recycler_ui->load_data(recycler->slot);
+            t_hud::set_container_id(recycler->type, recycler->id);
+            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            break;
+
 
         default:
             GS_ASSERT(false);
@@ -422,6 +452,10 @@ bool close_container(int container_id)
     if (smelter_ui != NULL) delete smelter_ui;
     smelter_ui = NULL;
 
+    recycler = NULL;
+    if (recycler_ui != NULL) delete recycler_ui;
+    recycler_ui = NULL;
+
     // unset hud container id
     t_hud::close_container(container_id);
     
@@ -474,6 +508,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_synthesizer_ui  != NULL && player_synthesizer_ui->id  == container_id) return player_synthesizer_ui;
     if (storage_block_ui       != NULL && storage_block_ui->id       == container_id) return storage_block_ui;
     if (cryofreezer_ui         != NULL && cryofreezer_ui->id         == container_id) return cryofreezer_ui;
+    if (recycler_ui            != NULL && recycler_ui->id            == container_id) return recycler_ui;
     if (smelter_ui             != NULL && smelter_ui->id             == container_id) return smelter_ui;
     GS_ASSERT(false);
     return NULL;
@@ -1231,6 +1266,7 @@ bool agent_in_container_range(int agent_id, int container_id)
     // get agent position
     ASSERT_VALID_AGENT_ID(agent_id);
     Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
     if (a == NULL) return false;
 
     Vec3 agent_position = a->get_camera_position();
@@ -1239,7 +1275,8 @@ bool agent_in_container_range(int agent_id, int container_id)
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return false;
-    if (!Item::container_type_is_block(container->type)) return false;
+    GS_ASSERT(container_type_is_block(container->type));
+    if (!container_type_is_block(container->type)) return false;
 
     int block[3];
     t_map::get_container_location(container->id, block);

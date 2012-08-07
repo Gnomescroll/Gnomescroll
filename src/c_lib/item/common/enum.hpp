@@ -12,6 +12,7 @@ typedef enum
     CONTAINER_TYPE_CRAFTING_BENCH_UTILITY,
     CONTAINER_TYPE_CRYOFREEZER_SMALL,
     CONTAINER_TYPE_SMELTER_ONE,
+    CONTAINER_TYPE_RECYCLER,
 } ItemContainerType;
 
 typedef enum
@@ -50,6 +51,9 @@ typedef enum
 
     // crafting
     CRAFT_ITEM_FROM_BENCH,
+
+    // recycling
+    RECYCLER_CRUSH_ITEM,
 
     // pickup
     FULL_WORLD_TO_EMPTY_SLOT,

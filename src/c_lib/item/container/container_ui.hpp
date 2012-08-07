@@ -324,4 +324,30 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
     {}
 };
 
+class ItemContainerRecyclerUI: public ItemContainerUIInterface
+{
+    public:
+
+        bool can_insert_item(int slot, int item_type)
+        {
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_type == NULL_ITEM_TYPE) return false;
+
+            if (slot == 0) return true;
+            return false;
+        }
+
+        int get_empty_slot()
+        {
+            if (this->slot_max <= 0) return NULL_SLOT;
+            if (this->slot_type[0] == NULL_ITEM_TYPE) return 0;
+            return NULL_SLOT;
+        }
+
+        explicit ItemContainerRecyclerUI(int id)
+        : ItemContainerUIInterface(id)
+        {}
+};
+
 } // Item
