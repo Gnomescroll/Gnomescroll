@@ -186,7 +186,7 @@ void tick(int x, int y, int z)
 
 #if DC_CLIENT
 
-bool ray_cast_render_type_0(const class MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
+bool ray_cast_mech_render_type_0(const class MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
 {
     const float size2 = m.size/2.0f;
     float wx = (float) (m.x) + 0.5f + m.offset_x;
@@ -226,12 +226,14 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
     {
         if( mla[i].id == -1) continue;
 
+        float d;
+        bool ret;
+
         switch ( mla[i].render_type )
         {
         case MECH_RENDER_TYPE_0: //MECH_CRYSTAL:
             //do something
-            float d;
-            bool ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
+            ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
             if(ret == true)
                 printf("mech raycast hit: %i \n", i);
             break;
@@ -240,6 +242,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
         }
     }
 
+    return false;
 }
 #endif
 

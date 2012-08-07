@@ -291,7 +291,7 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         Agent_state* a = ServerState::agent_list->get(agent_id);
         GS_ASSERT(a != NULL);
         if (a == NULL) return;
-    #if 0 
+    #if 1
         const int max_dist = 4.0f;
         const int z_low = 4;
         const int z_high = 3;
