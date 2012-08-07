@@ -235,7 +235,10 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
             //do something
             ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
             if(ret == true)
+            {
                 printf("mech raycast hit: %i \n", i);
+                return true;
+            }
             break;
         default:
             printf("pack_mech error: unhandled mech type\n");
