@@ -28,10 +28,8 @@ void place_vine(int x, int y, int z, int side);
 
 void tick(int x, int y, int z);
 
-
-
-#if DC_SERVER
+#if DC_CLIENT
+bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* _distance);
 #endif
-
 
 }

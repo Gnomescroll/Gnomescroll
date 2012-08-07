@@ -184,4 +184,66 @@ void tick(int x, int y, int z)
 #endif
 }
 
+#if DC_CLIENT
+
+bool ray_cast_mech_render_type_0(const class MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
+{
+    const float size2 = m.size/2.0f;
+    float wx = (float) (m.x) + 0.5f + m.offset_x;
+    float wy = (float) (m.y) + 0.5f + m.offset_y;
+    float wz = (float) m.z + size2;
+
+    wx = quadrant_translate_f(current_camera_position.x, wx);
+    wy = quadrant_translate_f(current_camera_position.y, wy);
+
+    float dx = sin(m.rotation * PI);
+    float dy = cos(m.rotation * PI);
+
+    //translate into origin of plane
+    x -= wx;
+    y -= wy;
+    z -= wx;
+
+    return true;
+/*
+    float _x 
+    m.size
+    m.rotation
+    m.offset_x
+    m.offset_y
+*/
+}
+
+bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* _distance)
+{
+    int nearest_mech = -1;
+    float distance = 1000.0;
+
+    const int mlm = mech_list->mlm;
+    const struct MECH* mla = mech_list->mla;
+
+    for(int i=0; i<mlm; i++)
+    {
+        if( mla[i].id == -1) continue;
+
+        float d;
+        bool ret;
+
+        switch ( mla[i].render_type )
+        {
+        case MECH_RENDER_TYPE_0: //MECH_CRYSTAL:
+            //do something
+            ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
+            if(ret == true)
+                printf("mech raycast hit: %i \n", i);
+            break;
+        default:
+            printf("pack_mech error: unhandled mech type\n");
+        }
+    }
+
+    return false;
+}
+#endif
+
 }

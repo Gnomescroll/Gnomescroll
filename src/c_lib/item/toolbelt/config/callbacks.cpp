@@ -291,7 +291,7 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         Agent_state* a = ServerState::agent_list->get(agent_id);
         GS_ASSERT(a != NULL);
         if (a == NULL) return;
-        
+    #if 1
         const int max_dist = 4.0f;
         const int z_low = 4;
         const int z_high = 3;
@@ -306,7 +306,17 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
             side);
 
         if (side < 0) return;
+    #else
 
+        Vec3 pos = a->camera_position();
+        Vec3 dir = a->forward_vector();
+
+        float d;
+
+        t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &d)
+
+
+    #endif
         //t_mech::create_crystal(b[0],b[1],b[2] );
         //decrement_stack(agent_id, item_id, item_type);
     }
