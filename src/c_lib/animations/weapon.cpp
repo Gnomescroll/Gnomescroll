@@ -323,7 +323,11 @@ void draw_equipped_item(int item_type)
     }
 
     // use focal and origin points to calculate right vector
-    Vec3 right = vec3_sub(focal, origin);
+
+    Vec3 right = vec3_init(1,0,0);
+    GS_ASSERT(!vec3_equal(focal, origin));
+    if (!vec3_equal(focal, origin))
+        right = vec3_sub(focal, origin);
     normalize_vector(&right);
 
     forward = vec3_cross(right, up);

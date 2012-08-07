@@ -301,6 +301,10 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
 
 void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
 {
+    ASSERT_BOXED_POINTf(x);
+    ASSERT_BOXED_POINTf(y);
+    GS_ASSERT(side >= 0 && side <= 6);
+    
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
 
@@ -314,10 +318,12 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     const float hitscan_speed = 200.0f;
     //Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     Vec3 arm_center = this->a->vox->get_node(5)->c;
+    ASSERT_BOXED_POSITION(arm_center);
     
-    // vector from arm center to collision point
+    // vector from camera to collision point
     Vec3 p = vec3_init(x,y,z);
-    p = quadrant_translate_position(this->a->get_position(), p);
+    p = quadrant_translate_position(this->a->get_camera_position(), p);
+    if (vec3_equal(p, arm_center)) return;
     Vec3 f = vec3_sub(p, arm_center);
     normalize_vector(&f);
 
