@@ -21,21 +21,16 @@ namespace t_map
     */
     MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
     {
-        //GS_ASSERT( (_xpos % 16) == 0 && (_ypos % 16) == 0 );
+        GS_ASSERT( (_xpos % 16) == 0 && (_ypos % 16) == 0 );
         #if DC_CLIENT
             needs_update = false;
         #endif
         xpos = _xpos;
         ypos = _ypos;
-        //for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
         for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;i++) top_block[i] = 0;
-
         chunk_index = (ypos / 16)*(MAP_WIDTH/16) + (xpos / 16);
-        //printf("xpos,ypos = %i, %i  chunk_index= %i \n", xpos, ypos, chunk_index);
         chunk_item_container.chunk_index = chunk_index;
-
         memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
-
     }
 
 
@@ -94,10 +89,7 @@ namespace t_map
         class MAP_CHUNK* c;
 
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        //c = chunk[ (y | ~15) + (x >> 4)];
         if(c == NULL) return NO_MAP_ELEMENT;
-        //return c->e[(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH)*z+ TERRAIN_CHUNK_WIDTH*(y | 15) + (x | 15)];
-
         return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
     #else
 
@@ -144,16 +136,9 @@ namespace t_map
 
     void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
-        //printf("set element: %i %i %i \n", x,y,z);
-        //printf("set: %i %i %i %i \n", x,y,element.block);
-    #if T_MAP_SET_OPTIMIZED
-    /*
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
-            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-            || ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-        ) return;
-    */
+        //printf("set_element: %i %i %i %i \n", x,y,element.block);
 
+    #if T_MAP_SET_OPTIMIZED
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -167,7 +152,6 @@ namespace t_map
             c = new MAP_CHUNK( x & ~15, y & ~15);
             chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ] = c;
         }
-        //c->e[(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH)*z+ TERRAIN_CHUNK_WIDTH*(y | 15) + (x | 15)] = element;
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
         #if DC_CLIENT
@@ -179,26 +163,20 @@ namespace t_map
             if((y & 15) == 15) set_update(x,y+1);
         #endif
     #else
-        //printf("set: %i %i %i \n",  x,y,z);
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        //printf("set %i, %i, %i \n", x,y,z);
         class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
-            //printf("chunk= %i, %i \n", xchunk, ychunk);
     
             c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-            //printf("chunk index= %i \n", x & ~15, y & ~15, MAP_CHUNK_XDIM*ychunk + xchunk );
-
             if( c == NULL )
             {
-                //printf("new map chunk= %i %i \n", x & ~15, y & ~15 );
                 c = new MAP_CHUNK( x & ~15, y & ~15);
                 chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ] = c;
                 
@@ -207,8 +185,6 @@ namespace t_map
 
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
-        //printf("xi= %i, yi= %i, z= %i \n", xi,yi,z );
-        //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
 
         c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
@@ -224,23 +200,52 @@ namespace t_map
     #endif
     }
 
+    int Terrain_map::get_damage(int x, int y, int z)
+    {
+    #if T_MAP_SET_OPTIMIZED
+
+        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
+
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+        class MAP_CHUNK* c;
+        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+        if( c != NULL ) return -3;
+
+        struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
+
+        return e->damage;
+
+    #else
+        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
+
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+        class MAP_CHUNK* c;
+        {
+            int xchunk = (x >> 4);
+            int ychunk = (y >> 4);
+
+            c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
+
+            if( c == NULL ) return -3;
+        }
+
+        int xi = x & 15; //bit mask
+        int yi = y & 15; //bit mask
+        struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
+        
+        return e->damage;
+    #endif
+    }
+
     int Terrain_map::apply_damage(int x, int y, int z, int dmg)
     {
         //printf("set: %i %i %i %i \n", x,y,element.block);
     #if T_MAP_SET_OPTIMIZED
         if (dmg <= 0) return -4;
-        /*
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
-            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-            ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-        ) return -2; //an error
-        */
-
-/*
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
-            | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-        ) return -2; // an error
-*/
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
 
@@ -259,10 +264,8 @@ namespace t_map
         if(e->damage >= maxDamage(e->block) ) 
         {
             #if DC_SERVER
-            /*
-                Check if block is container block before calling this!!!
-            */
-            destroy_item_container_block(x,y,z);
+            if(isItemContainer(e->block))
+                destroy_item_container_block(x,y,z);
             #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
@@ -291,23 +294,17 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        //printf("set %i, %i, %i \n", x,y,z);
         class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
-            //printf("chunk= %i, %i \n", xchunk, ychunk);
-    
             c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-            //printf("chunk index= %i \n", x & ~15, y & ~15, MAP_CHUNK_XDIM*ychunk + xchunk );
 
             if( c == NULL ) return -3;
         }
 
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
-        //printf("xi= %i, yi= %i, z= %i \n", xi,yi,z );
-        //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
 
         struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
@@ -317,11 +314,8 @@ namespace t_map
         if(e->damage >= maxDamage(e->block) ) 
         {
             #if DC_SERVER
-            /*
-                ERROR!!
-                Check if block is container block before calling this!!!
-            */
-            destroy_item_container_block(x,y,z);
+            if(isItemContainer(e->block))
+                destroy_item_container_block(x,y,z);
             #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
@@ -342,66 +336,6 @@ namespace t_map
             return e->damage;
         }
 
-    #endif
-    }
-    
-    int Terrain_map::get_damage(int x, int y, int z)
-    {
-        //printf("set: %i %i %i %i \n", x,y,element.block);
-    #if T_MAP_SET_OPTIMIZED
-        /*
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
-            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-            ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-        ) return -2; //an error
-        */
-
-/*
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
-            | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-        ) return -2; // an error
-*/
-
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
-
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-        class MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if( c != NULL ) return -3;
-
-        struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
-
-        return e->damage;
-
-    #else
-        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
-
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-        //printf("set %i, %i, %i \n", x,y,z);
-        class MAP_CHUNK* c;
-        {
-            int xchunk = (x >> 4);
-            int ychunk = (y >> 4);
-            //printf("chunk= %i, %i \n", xchunk, ychunk);
-    
-            c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-            //printf("chunk index= %i \n", x & ~15, y & ~15, MAP_CHUNK_XDIM*ychunk + xchunk );
-
-            if( c == NULL ) return -3;
-        }
-
-        int xi = x & 15; //bit mask
-        int yi = y & 15; //bit mask
-        //printf("xi= %i, yi= %i, z= %i \n", xi,yi,z );
-        //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
-
-        struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
-        
-        return e->damage;
     #endif
     }
 
@@ -411,18 +345,6 @@ namespace t_map
     #if T_MAP_SET_OPTIMIZED
         if (dmg <= 0) return -4;
 
-        /*
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
-            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-            ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
-        ) return -2; //an error
-        */
-/*
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
-            | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-        ) return -2; // an error
-*/
-
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
         
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -440,11 +362,8 @@ namespace t_map
         if(e->damage >= maxDamage(e->block) ) 
         {
             #if DC_SERVER
-            /*
-                ERROR!!
-                Check if block is container block before calling this!!!
-            */
-            destroy_item_container_block(x,y,z);
+            if(isItemContainer(e->block))
+                destroy_item_container_block(x,y,z);
             #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
@@ -471,28 +390,19 @@ namespace t_map
         if (dmg <= 0) return -4;
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
-        //if( x >= 512 || x < 0 ) return -2 ;
-        //if( y >= 512 || y < 0 ) return -2;
 
-
-
-        //printf("set %i, %i, %i \n", x,y,z);
         class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
-            //printf("chunk= %i, %i \n", xchunk, ychunk);
     
             c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-            //printf("chunk index= %i \n", x & ~15, y & ~15, MAP_CHUNK_XDIM*ychunk + xchunk );
 
             if( c == NULL ) return -3;
         }
 
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
-        //printf("xi= %i, yi= %i, z= %i \n", xi,yi,z );
-        //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
 
         struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
@@ -504,7 +414,8 @@ namespace t_map
         if(e->damage >= maxDamage(e->block) ) 
         {
             #if DC_SERVER
-            destroy_item_container_block(x,y,z);
+            if(isItemContainer(e->block))
+                destroy_item_container_block(x,y,z);
             #endif
             // destroy block
             *e = NO_MAP_ELEMENT; 
@@ -630,7 +541,6 @@ namespace t_map
 */
     int Terrain_map::get_block(int x, int y, int z)
     {
-        //return get_element(x,y,z).block;
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
 
@@ -639,8 +549,6 @@ namespace t_map
 
         class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         if(c == NULL) return 0;
-        //return c->e[(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH)*z+ TERRAIN_CHUNK_WIDTH*(y | 15) + (x | 15)];
-
         return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
     }
 
@@ -658,13 +566,4 @@ namespace t_map
         #endif
     }
 
-
-/*
-    void Terrain_map::reset_chunk_container_blocks(int chunk_index)
-    {
-        class MAP_CHUNK* c=chunk[chunk_index];
-        if(c == NULL) GS_ABORT();
-        c->chunk_item_container._reset();
-    }
-*/
 }

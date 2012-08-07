@@ -60,9 +60,14 @@ namespace t_mech
 
 	void mech_def(int mech_type, int mech_type_class, const char* name)
 	{
+		if(mech_type)
 		if(_current_mech_index != -1) 
 			_push_mech();
-		GS_ASSERT(mech_attribute[mech_type].mech_type == -1);
+		if(mech_attribute[mech_type].mech_type != -1)
+		{
+			printf("mech_def error, id used twiced: name=%s id=%i \n", name, mech_type);
+			GS_ABORT();
+		}
 		s.mech_type = mech_type;
 		s.mech_type_class = mech_type_class;
 

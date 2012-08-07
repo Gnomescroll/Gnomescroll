@@ -47,7 +47,7 @@ void load_mech_dat()
     s.sprite_index = 16*1 + 0;
     s.render_type = MECH_RENDER_TYPE_2;
 
-    mech_def(2, MECH_CRYSTAL, "mycelium_flower");
+    mech_def(3, MECH_CRYSTAL, "mycelium_flower");
     s.sprite_index = 16*1 + 1;
     s.render_type = MECH_RENDER_TYPE_0;
 

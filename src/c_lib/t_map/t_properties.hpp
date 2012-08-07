@@ -85,6 +85,8 @@ bool isSolid(int id);
 inline bool isOccludes(int id) __attribute((always_inline));
 inline bool isTransparent(int id) __attribute((always_inline));
 
+inline bool isItemContainer(int id) __attribute((always_inline));
+
 /*
     Properties by coordinates
 */
@@ -93,6 +95,7 @@ inline bool isActive(int x, int y, int z) __attribute((always_inline));
 inline bool isSolid(int x, int y, int z) __attribute((always_inline));
 inline bool isOccludes(int x, int y, int z) __attribute((always_inline));
 
+inline bool isItemContainer(int x, int y, int z) __attribute((always_inline));
 
 /*
     Map Damage
