@@ -7,7 +7,8 @@
 namespace Item
 {
 
-const int ITEM_SUBSCRIBER_LIST_INITIAL_SIZE = 4;
+const int ITEM_SUBSCRIBER_LIST_INITIAL_SIZE = 1;
+const int ITEM_SUBSCRIBER_LIST_HARD_MAX = 1;
 
 class Item
 {
@@ -64,7 +65,7 @@ class Item
         container_slot(NULL_SLOT),
         gas_decay(NULL_GAS_LIFETIME)
         #if DC_SERVER
-        , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE)
+        , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
         #endif
     {}
 

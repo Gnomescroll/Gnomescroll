@@ -37,7 +37,6 @@ class Item::Item* create_item_particle(int item_type, float x, float y, float z,
 class Item::Item* create_item_particle(int item_type, Vec3 position, Vec3 momentum);
 
 void broadcast_particle_item_create(ItemParticleID particle_id);
-void send_particle_item_create_to_client(ItemParticleID particle_id, int client_id);
 void send_particle_items_to_client(int client_id);
 void broadcast_particle_item_state(ItemParticleID particle_id);
 void broadcast_particle_item_destroy(ItemParticleID particle_id);

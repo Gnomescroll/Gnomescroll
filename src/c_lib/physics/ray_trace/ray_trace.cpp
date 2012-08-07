@@ -1003,7 +1003,8 @@ int get_cube_side_from_side_array(int* side)
 
 void get_side_array_from_cube_side(int cube_id, int *side)
 {
-    side[0]=side[1]=side[2]=0;
+    side[0]=side[1]=0;
+    side[2]=1;
     switch (cube_id)
     {
         case 2:
@@ -1025,7 +1026,7 @@ void get_side_array_from_cube_side(int cube_id, int *side)
             side[2] = -1;
             break;
         default:
-            printf("ERROR get_side_array_from_cube_id -- invalid cube_id %d\n", cube_id);
+            GS_ASSERT(false);
             return;
     }
 }

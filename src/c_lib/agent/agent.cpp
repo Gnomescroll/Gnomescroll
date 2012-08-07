@@ -567,7 +567,7 @@ id (id), type(OBJECT_AGENT), status(this)
     client_id = id;
 
     set_angles(0.5f, 0.0f);
-    set_position(256,256,128);
+    set_position(0,0,-256);
 
     this->init_vox();
 
@@ -578,8 +578,6 @@ id (id), type(OBJECT_AGENT), status(this)
     msg.broadcast();
     if (!this->status.net_peer_ready)
         msg.sendToClient(this->client_id);
-
-    this->spawn_state(vec3_init(0,0,-256));
     #endif
 }
 

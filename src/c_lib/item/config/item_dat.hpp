@@ -284,8 +284,7 @@ void load_item_dat()
     s.pretty_name = (char*) "Methane Ice";
     s.max_stack_size = 16;
     s.gas = true;
-    //s.gas_lifetime = 30 * 60 * 5;   // 5 minutes
-    s.gas_lifetime = 30 * 5;   // 5 minutes
+    s.gas_lifetime = 30 * 60 * 5;   // 5 minutes
     s.fuel = true;
     s.fuel_burn_rate = 30 * 30; // 30 seconds
 
