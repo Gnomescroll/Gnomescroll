@@ -858,59 +858,13 @@ void agent_born(int agent_id)
         else if (grenade_launcher->stack_size <= 0) Item::destroy_item(grenade_launcher->id);
     }
 
-    // add a few container blocks
-    Item::Item* crate;
-    crate = Item::create_item(Item::get_item_type("small_crafting_bench"));
-    GS_ASSERT(crate != NULL);
-    if (crate != NULL)
-    {
-        event = auto_add_free_item_to_container(client_id, toolbelt->id, crate->id);
-        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
-    }
-    
-    crate = Item::create_item(Item::get_item_type("cryofreezer_1"));
-    GS_ASSERT(crate != NULL);
-    if (crate != NULL)
-    {
-        event = auto_add_free_item_to_container(client_id, toolbelt->id, crate->id);
-        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
-    }
-    
-    crate = Item::create_item(Item::get_item_type("small_storage"));
-    GS_ASSERT(crate != NULL);
-    if (crate != NULL)
-    {
-        event = auto_add_free_item_to_container(client_id, toolbelt->id, crate->id);
-        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
-    }
-    
-    crate = Item::create_item(Item::get_item_type("smelter_1"));
-    GS_ASSERT(crate != NULL);
-    if (crate != NULL)
-    {
-        event = auto_add_free_item_to_container(client_id, toolbelt->id, crate->id);
-        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(crate->id);
-    }
-
-    // debug items
-    if (toolbelt->get_item(toolbelt->slot_max-1) == NULL_ITEM)
-    {
-        Item::Item* block_placer = Item::create_item(Item::get_item_type("block_placer"));
-        GS_ASSERT(block_placer != NULL);
-        if (block_placer != NULL)
-        {
-            bool added = transfer_free_item_to_container(block_placer->id, toolbelt->id, toolbelt->slot_max - 1);
-            if (!added) Item::destroy_item(block_placer->id);
-        }
-    }
-
     if (toolbelt->get_item(toolbelt->slot_max-2) == NULL_ITEM)
     {
         Item::Item* location_pointer = Item::create_item(Item::get_item_type((char*)"location_pointer"));
         GS_ASSERT(location_pointer != NULL);
         if (location_pointer != NULL)
         {
-            bool added = transfer_free_item_to_container(location_pointer->id, toolbelt->id, toolbelt->slot_max - 2);
+            bool added = transfer_free_item_to_container(location_pointer->id, toolbelt->id, toolbelt->slot_max - 1);
             if (!added) Item::destroy_item(location_pointer->id);
         }
     }

@@ -85,7 +85,7 @@ static struct HudDrawSettings
     bool draw;
     bool confirm_quit;
     bool press_help;
-    bool location;
+    bool agent_state;
 } hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -126,7 +126,7 @@ void update_hud_draw_settings()
     hud_draw_settings.fps = Options::fps;
     hud_draw_settings.ping  = Options::ping;
 
-    hud_draw_settings.location = true;
+    hud_draw_settings.agent_state = true;
 
     // sanitize
     int ping_val = ClientState::last_ping_time;
@@ -318,10 +318,18 @@ void draw_hud_text()
         //hud->reliable_ping->draw();
     }
 
-    if (hud_draw_settings.location)
+    if (hud_draw_settings.agent_state)
     {
         hud->location->update_formatted_string(3, current_camera_position.x, current_camera_position.y, current_camera_position.z);
         hud->location->draw();
+
+        if (current_camera != NULL)
+        {
+            Vec3 f = current_camera->forward_vector();
+            hud->look->update_formatted_string(3, f.x, f.y, f.z);
+            hud->look->set_position(hud->look->x, _yresf - hud->location->get_height() - HudFont::font->data.line_height);
+            hud->look->draw();
+        }
     }
 
     #if PRODUCTION
@@ -517,6 +525,14 @@ void HUD::init()
     location->set_format_extra_length((40 + 20 + 1 - 2) * 3);
     location->set_color(255,10,10,255);
     location->set_position(3, _yresf-3);
+    
+    look = text_list->create();
+    GS_ASSERT(look != NULL);
+    if (look == NULL) return;
+    look->set_format(location_format);
+    look->set_format_extra_length((40 + 20 + 1 - 2) * 3);
+    look->set_color(255,10,10,255);
+    look->set_position(3, _yresf-3);
 
     health = new AnimatedText;
 
@@ -574,6 +590,7 @@ fps(NULL),
 ping(NULL),
 reliable_ping(NULL),
 location(NULL),
+look(NULL),
 health(NULL),
 confirm_quit(NULL),
 press_help(NULL),
@@ -598,6 +615,8 @@ HUD::~HUD()
         text_list->destroy(reliable_ping->id);
     if (location != NULL)
         text_list->destroy(location->id);
+    if (look != NULL)
+        text_list->destroy(look->id);
     if (confirm_quit != NULL)
         text_list->destroy(confirm_quit->id);
     if (press_help != NULL)
