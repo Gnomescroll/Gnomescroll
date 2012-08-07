@@ -85,8 +85,11 @@ struct Vec3 vec3_normalize(struct Vec3 v)
 {
     float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
 
-    GS_ASSERT_LIMIT(l != 0.0f, 50);
-    if (l == 0.0f) return v;
+    if (l == 0.0f) 
+    {
+        GS_ASSERT_ONCE(l != 0.0f);
+        return v;
+    }
 
     l = 1.0f/l;
     v.x *= l; 
