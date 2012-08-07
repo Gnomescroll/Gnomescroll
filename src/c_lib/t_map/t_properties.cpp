@@ -173,22 +173,35 @@ bool isTransparent(int id)
     return t_map::cube_list[id].transparent;
 }
 
+bool isItemContainer(int id)
+{
+    return t_map::cube_list[id].item_container;
+}
+
 /*
     Properties by cordinates
 */
 bool isActive(int x, int y, int z)
 {
-    return isActive(t_map::get(x,y,z));
+    return t_map::cube_list[t_map::get(x,y,z)].active;
+    //return isActive(t_map::get(x,y,z));
 }
 
 bool isSolid(int x, int y, int z)
 {
-    return isSolid(t_map::get(x,y,z));
+    return t_map::cube_list[t_map::get(x,y,z)].solid;
+    //return isSolid(t_map::get(x,y,z));
 }
 
 bool isOccludes(int x, int y, int z)
 {
-    return isOccludes(t_map::get(x,y,z));
+    return t_map::cube_list[t_map::get(x,y,z)].occludes;
+    //return isOccludes(t_map::get(x,y,z));
+}
+
+bool isItemContainer(int x, int y, int z)
+{
+    return t_map::cube_list[t_map::get(x,y,z)].item_container;
 }
 
 /*
