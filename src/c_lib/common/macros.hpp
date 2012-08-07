@@ -16,8 +16,11 @@ print_trace();\
 exit(1);\
 }while(0)
 
-#define GS_ASSERT(condition) GS_ASSERT_LIMIT(condition, 50)
-//if(! (condition) ) { print_trace(); printf("GS_ASSERT error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__); }
+#if PRODUCTION
+#define GS_ASSERT(condition) GS_ASSERT_LIMIT(condition, 15)
+#else
+#define GS_ASSERT(condition) if(! (condition) ) { print_trace(); printf("GS_ASSERT error: %s, line %d function: %s \n", __FILE__, __LINE__, __FUNCTION__); }
+#endif
 
 #define GS_ASSERT_LIMIT(COND, LIMIT) \
 if(!(COND)) { \
