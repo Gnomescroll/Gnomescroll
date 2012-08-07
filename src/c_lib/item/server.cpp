@@ -110,6 +110,7 @@ void send_item_create(ItemID item_id)
     Item* item = get_item(item_id);
     if (item == NULL) return;
     if (item->subscribers.n <= 0) return;
+    GS_ASSERT_LIMIT(item->subscribers.n == 1, 60);
 
     item_create_StoC msg;
     if (!pack_item_create(item, &msg)) return;
@@ -128,7 +129,8 @@ void send_item_state(ItemID item_id)
     Item* item = get_item(item_id);
     if (item == NULL) return;
     if (item->subscribers.n <= 0) return;
-    
+    GS_ASSERT_LIMIT(item->subscribers.n == 1, 60);
+
     item_state_StoC msg;
     pack_item_state(item, &msg);
     msg.sendToClients(item->subscribers.subscribers, item->subscribers.n);
@@ -149,6 +151,7 @@ void send_item_destroy(ItemID item_id)
     Item* item = get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item->subscribers.n <= 0) return;
+    GS_ASSERT_LIMIT(item->subscribers.n == 1, 60);
     
     item_destroy_StoC msg;
     msg.id = item_id;

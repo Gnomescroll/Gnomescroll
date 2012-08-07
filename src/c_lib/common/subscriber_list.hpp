@@ -7,16 +7,14 @@ dont include this file in client
 #include <net_lib/global.hpp>
 
 class SubscriberList
-{
-    static const unsigned int SUBSCRIBER_LIST_HARD_MAX = NetServer::HARD_MAX_CONNECTIONS;
-    
+{    
     private:
         // grow by doubling max, capped at HARD_MAX
         bool grow()
         {
-            if (this->max >= SUBSCRIBER_LIST_HARD_MAX) return false;
+            if (this->max >= hard_max) return false;
             this->max *= 2;
-            if (this->max > SUBSCRIBER_LIST_HARD_MAX) this->max = SUBSCRIBER_LIST_HARD_MAX;
+            if (this->max > hard_max) this->max = hard_max;
             this->subscribers = (int*)realloc(this->subscribers, this->max * sizeof(int));
             return true;
         }
@@ -26,8 +24,8 @@ class SubscriberList
         {
             GS_ASSERT(new_max > this->max);
             if (new_max <= this->max) return false;
-            GS_ASSERT(new_max <= SUBSCRIBER_LIST_HARD_MAX);
-            if (new_max > SUBSCRIBER_LIST_HARD_MAX) return false;
+            GS_ASSERT(new_max <= hard_max);
+            if (new_max > hard_max) return false;
             
             this->max = new_max;
             this->subscribers = (int*)realloc(this->subscribers, this->max * sizeof(int));
@@ -38,7 +36,8 @@ class SubscriberList
         int* subscribers;
         unsigned int n;
         unsigned int max;
-
+        unsigned int hard_max;
+        
     // returns true is subscriber is added to the list
     // if subscriber was already in the list, or if the list is maxed out, returns false
     bool add(int client_id)
@@ -59,7 +58,7 @@ class SubscriberList
     // fills the subscriber list with all possible values
     void add_all()
     {
-        if (this->max < SUBSCRIBER_LIST_HARD_MAX) this->grow(SUBSCRIBER_LIST_HARD_MAX);
+        if (this->max < hard_max) this->grow(hard_max);
 
         this->n = this->max;
         // no duplicates
@@ -89,6 +88,14 @@ class SubscriberList
     : n(0), max(initial_size)
     {
         this->subscribers = (int*)malloc(initial_size * sizeof(int));
+        this->hard_max = NetServer::HARD_MAX_CONNECTIONS;
+    }
+
+    SubscriberList(unsigned int initial_size, unsigned int hard_max)
+    : n(0), max(initial_size)
+    {
+        this->subscribers = (int*)malloc(initial_size * sizeof(int));
+        this->hard_max = hard_max;
     }
 
     ~SubscriberList()
