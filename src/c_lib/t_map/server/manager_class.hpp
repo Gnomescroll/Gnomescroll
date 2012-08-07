@@ -236,6 +236,7 @@ static inline int MY_MAX(int x, int y)
 
 void Map_manager::update()
 {
+    GS_ASSERT(xpos != 0xffff && ypos != 0xffff);
     //printf("xpos= %i ypos= %i \n", xpos, ypos);
     if(needs_update == false) return;
 
