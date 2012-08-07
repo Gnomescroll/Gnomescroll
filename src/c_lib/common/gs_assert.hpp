@@ -97,6 +97,7 @@ void _GS_ASSERT_TEARDOWN()
 
 #define GS_ASSERT(condition) if(!(condition)) _GS_ASSERT_INTERNAL( __FILE__, __FUNCTION__, __LINE__);
 
+#define GS_ASSERT_LIMIT(CONDITION, LIMIT) GS_ASSERT(CONDITION)
 
 //printf( __FILE__  );
 
@@ -122,7 +123,7 @@ if(!(COND)) { \
 #endif
 */
 
-#define GS_ASSERT_LIMIT(CONDITION, LIMIT) GS_ASSERT(CONDITION)
+
 
 //#define GS_ASSERT(condition) if(! (condition) )  
 //_GS_ASSERT_INTERNAL(__FILE__, __LINE__, __FUNCTION__); }
