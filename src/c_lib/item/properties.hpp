@@ -84,8 +84,6 @@ int* get_selected_smelting_recipe_types(int container_id, int* recipe_count);
 int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available);
 int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count);
 
-bool container_type_is_block(ItemContainerType type);
-
 ItemContainerType get_container_type_for_block(int block_value);
 
 }   // Item

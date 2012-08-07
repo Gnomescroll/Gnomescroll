@@ -28,13 +28,16 @@ void load_synthesizer()
 
     synthesizer_item_def("cryofreezer_1", 3);
     synthesizer_item_set(2,0);
+
+    synthesizer_item_def("recycler", 25);
+    synthesizer_item_set(3,0);
     
     #if !PRODUCTION
     synthesizer_item_def("crystal_seed", 5);
-    synthesizer_item_set(3,0);
+    synthesizer_item_set(3,1);
 
     synthesizer_item_def("crystal_seed2", 5);
-    synthesizer_item_set(3,1);
+    synthesizer_item_set(3,2);
 
     //synthesizer_item_def("energy_tank", 25);
     //synthesizer_item_set(3,1);

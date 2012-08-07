@@ -466,6 +466,31 @@ class ItemContainerSmelter: public ItemContainerInterface
     {}
 };
 
+class ItemContainerRecycler: public ItemContainerInterface
+{
+    public:
+
+        int get_empty_slot()
+        {
+            if (this->slot_max <= 0) return NULL_SLOT;
+            if (this->slot[0] == NULL_ITEM) return 0;
+            return NULL_SLOT;
+        }
+
+        bool can_insert_item(int slot, ItemID item_id)
+        {
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_id == NULL_ITEM) return false;
+            if (slot == 0) return true;
+            return false;
+        }
+
+        ItemContainerRecycler(ItemContainerType type, int id)
+        : ItemContainerInterface(type, id)
+        {}
+};
+
 }   // ItemContainer
 
 #include <common/template/dynamic_multi_object_list.hpp>
@@ -497,6 +522,9 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
 
         case CONTAINER_TYPE_SMELTER_ONE:
             return new ItemContainerSmelter(type, id);
+
+        case CONTAINER_TYPE_RECYCLER:
+            return new ItemContainerRecycler(type, id);
 
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);

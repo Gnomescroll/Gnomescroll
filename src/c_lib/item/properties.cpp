@@ -575,22 +575,6 @@ int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count)
     return recipe->output_stack;
 }
 
-
-bool container_type_is_block(ItemContainerType type)
-{
-    switch (type)
-    {
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-        case CONTAINER_TYPE_SMELTER_ONE:
-            return true;
-        default:
-            return false;
-    }
-    return false;
-}
-
 ItemContainerType get_container_type_for_block(int block_value)
 {
     GS_ASSERT(block_value >= 0 && block_value < t_map::MAX_CUBES);

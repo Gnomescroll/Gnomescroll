@@ -2,32 +2,32 @@
 
 
 char* _gs_internal_itoa(int val, int base)
-{	
-	static char buf[32] = {0};	
-	int i = 30;
-	for(; val && i ; --i, val /= base)
-		buf[i] = "0123456789abcdef"[val % base];
-	return &buf[i+1];
+{   
+    static char buf[32] = {0};  
+    int i = 30;
+    for(; val && i ; --i, val /= base)
+        buf[i] = "0123456789abcdef"[val % base];
+    return &buf[i+1];
 }
 
 void _gs_push_str(char* tstr, int* index, char* istr)
 {
-	int len = strlen(istr);
-	strncpy(tstr+*index, istr, len);
-	*index += len;
+    int len = strlen(istr);
+    strncpy(tstr+*index, istr, len);
+    *index += len;
 }
 
 void _gs_push_str(char* tstr, int* index, const char* const_str)
-{	
-	int len = strlen(const_str);
-	strncpy(tstr+*index, const_str, len);
-	*index += len;
+{   
+    int len = strlen(const_str);
+    strncpy(tstr+*index, const_str, len);
+    *index += len;
 }
 
 void _gs_push_char(char* tstr, int* index, char c)
 {
-	tstr[*index] = c;
-	(*index)++;
+    tstr[*index] = c;
+    (*index)++;
 }
 
 const int GS_ASSERT_PRINT_LIMIT = 20;
@@ -38,60 +38,60 @@ int   _GS_ASSERT_COUNT[GS_ASSERT_MAX];
 
 void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
-	static char t[256];
+    static char t[256];
 
-	int index = 0;
-	char* LINE_STR = _gs_internal_itoa(LINE, 10);
+    int index = 0;
+    char* LINE_STR = _gs_internal_itoa(LINE, 10);
 
-	_gs_push_str(t,&index, "GS_ASSERT: ");
-	_gs_push_str(t,&index, FILE);
-	_gs_push_str(t,&index, " ");
-	_gs_push_str(t,&index, FUNC);
-	_gs_push_str(t,&index, " ");
-	_gs_push_str(t,&index, LINE_STR);
-	_gs_push_char(t,&index, 0x00);
+    _gs_push_str(t,&index, "GS_ASSERT: ");
+    _gs_push_str(t,&index, FILE);
+    _gs_push_str(t,&index, ":");
+    _gs_push_str(t,&index, LINE_STR);
+    _gs_push_str(t,&index, " ");
+    _gs_push_str(t,&index, FUNC);
+    _gs_push_char(t,&index, 0x00);
 
-	int i=0;
+    int i=0;
 
-	while(_GS_ASSERT_ARRAY[i] != NULL && i<GS_ASSERT_MAX)
-	{
-		if(strcmp(t, _GS_ASSERT_ARRAY[i]) == 0)	//match
-		{
-			_GS_ASSERT_COUNT[i]++;
-			if(_GS_ASSERT_COUNT[i] > GS_ASSERT_PRINT_LIMIT)
-			{
-				return;
-			}
-			else
-			{
-				//print and return;
-				print_trace();
-				puts(t);
-				return;
-			}
-		}
-		i++;
-	}
+    while(_GS_ASSERT_ARRAY[i] != NULL && i<GS_ASSERT_MAX)
+    {
+        if(strcmp(t, _GS_ASSERT_ARRAY[i]) == 0) //match
+        {
+            _GS_ASSERT_COUNT[i]++;
+            if(_GS_ASSERT_COUNT[i] > GS_ASSERT_PRINT_LIMIT)
+            {
+                return;
+            }
+            else
+            {
+                //print and return;
+                print_trace();
+                puts(t);
+                return;
+            }
+        }
+        i++;
+    }
 
-	if(i == GS_ASSERT_MAX) return;
+    if(i == GS_ASSERT_MAX) return;
 
-	//insert into array
-	_GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
-	strcpy(_GS_ASSERT_ARRAY[i], t);
+    //insert into array
+    _GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
+    strcpy(_GS_ASSERT_ARRAY[i], t);
 
-	print_trace();
-	puts(t);
+    print_trace();
+    puts(t);
 }
 
 void _GS_ASSERT_TEARDOWN()
 {
-	for(int i=0; i<GS_ASSERT_MAX; i++) 
-		if(_GS_ASSERT_ARRAY[i] != NULL)
-			printf("%s triggered %d times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]);
+    for(int i=0; i<GS_ASSERT_MAX; i++) 
+        if(_GS_ASSERT_ARRAY[i] != NULL)
+            printf("%s triggered %d times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]);
 
-	for(int i=0; i<GS_ASSERT_MAX; i++) 
-		if(_GS_ASSERT_ARRAY[i] != NULL)
-			free(_GS_ASSERT_ARRAY[i]);
+    for(int i=0; i<GS_ASSERT_MAX; i++) 
+        if(_GS_ASSERT_ARRAY[i] != NULL)
+            free(_GS_ASSERT_ARRAY[i]);
 }
    
 
