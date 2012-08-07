@@ -75,8 +75,6 @@ void init(int argc, char* argv[])
 
 void tick()
 {
-    GS_ASSERT(false);
-    
     static int counter = 0; counter ++;
 
     t_map::t_map_send_map_chunks();  //every tick

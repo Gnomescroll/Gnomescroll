@@ -87,7 +87,7 @@ void _GS_ASSERT_TEARDOWN()
 {
 	for(int i=0; i<GS_ASSERT_MAX; i++) 
 		if(_GS_ASSERT_ARRAY[i] != NULL)
-			printf("%s triggered %n times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]);
+			printf("%s triggered %d times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]);
 
 	for(int i=0; i<GS_ASSERT_MAX; i++) 
 		if(_GS_ASSERT_ARRAY[i] != NULL)

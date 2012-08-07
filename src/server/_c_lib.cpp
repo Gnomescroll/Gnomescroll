@@ -244,6 +244,7 @@ void close_c_lib()
 
     printf("Server closed\n"); 
     Log::teardown();
+    _GS_ASSERT_TEARDOWN();
 
     Options::teardown_option_tables();
 }
