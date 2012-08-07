@@ -72,9 +72,10 @@ void init(int argc, char* argv[])
 
     printf("Game starting\n");
 }
-   
+
 void tick()
 {
+
     static int counter = 0; counter ++;
 
     t_map::t_map_send_map_chunks();  //every tick
