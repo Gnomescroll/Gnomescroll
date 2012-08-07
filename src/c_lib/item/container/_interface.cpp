@@ -212,6 +212,15 @@ void container_block_destroyed(int container_id, int x, int y, int z)
     destroy_container(container_id);
 }
 
+bool container_block_in_range_of(Vec3 pos, int block[3])
+{
+    Vec3 container_position = vec3_init(block[0], block[1], block[2]);
+    container_position = vec3_add(container_position, vec3_init(0.5f, 0.5f, 0.5f));
+    if (vec3_distance_squared(pos, container_position)
+        <= AGENT_CONTAINER_REACH*AGENT_CONTAINER_REACH) return true;
+    return false;
+}
+
 }   // ItemContainer
  
 // Client
@@ -1224,7 +1233,7 @@ bool agent_in_container_range(int agent_id, int container_id)
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return false;
 
-    Vec3 agent_position = a->get_center();
+    Vec3 agent_position = a->get_camera_position();
 
     // get container position, if applicable
     ItemContainerInterface* container = get_container(container_id);
@@ -1232,15 +1241,10 @@ bool agent_in_container_range(int agent_id, int container_id)
     if (container == NULL) return false;
     if (!Item::container_type_is_block(container->type)) return false;
 
-    int position[3];
-    t_map::get_container_location(container->id, position);
-    Vec3 container_position = vec3_init(position[0], position[1], position[2]);
-    container_position = vec3_add(container_position, vec3_init(0.5f, 0.5f, 0.5f));
+    int block[3];
+    t_map::get_container_location(container->id, block);
     
-    // do radius check
-    if (vec3_distance_squared(agent_position, container_position)
-        <= AGENT_CONTAINER_REACH*AGENT_CONTAINER_REACH) return true;
-    return false;
+    return container_block_in_range_of(agent_position, block);
 }
 
 // check that agents are still in range of containers they are accessing

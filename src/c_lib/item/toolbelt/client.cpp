@@ -135,7 +135,8 @@ static bool beta_scan_world()
     using ClientState::playerAgent_state;
     if (agent_camera == NULL) return false;
     
-    float range = BETA_WORLD_EFFECT_RANGE;
+    float range = BETA_WORLD_EFFECT_RANGE - 0.2f;   // reduce margin to correct for discrepancy btwn client and server camera position
+    //float range = BETA_WORLD_EFFECT_RANGE;   // reduce margin to correct for discrepancy btwn client and server camera position
 
     Vec3 pos = playerAgent_state.camera_position();
     Vec3 look = agent_camera->forward_vector();
@@ -170,7 +171,7 @@ static bool beta_scan_world()
             return false;
         
         case Hitscan::HITSCAN_TARGET_BLOCK:
-            if (block_distance > range) return false;
+            if (!ItemContainer::container_block_in_range_of(pos, block_pos)) return false; 
             container_id = t_map::get_block_item_container(block_pos[0], block_pos[1], block_pos[2]);
             if (container_id != NULL_CONTAINER)
             {
