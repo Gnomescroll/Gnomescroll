@@ -75,8 +75,6 @@ void init(int argc, char* argv[])
     #ifdef NAN
     printf("NaN enabled\n");
     #endif
-    
-    printf("%0.2f\n", sqrtf(0.0f));
 }
    
 void tick()

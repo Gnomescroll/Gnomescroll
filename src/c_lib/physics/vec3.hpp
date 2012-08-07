@@ -39,9 +39,11 @@ static void normalize_vector(struct Vec3* v)
 {
     float len = sqrtf(v->x*v->x + v->y*v->y + v->z*v->z);
     GS_ASSERT_LIMIT(len != 0.0f, 50);
-    v->x /= len;
-    v->y /= len;
-    v->z /= len;
+    if (len == 0.0f) return;
+    len = 1.0f/len;
+    v->x *= len;
+    v->y *= len;
+    v->z *= len;
 }
 
 static struct Vec3 vec3_init(float x, float y, float z) __attribute((always_inline)); 
@@ -81,7 +83,12 @@ static struct Vec3 vec3_normalize(struct Vec3 v) __attribute((always_inline));
 
 struct Vec3 vec3_normalize(struct Vec3 v) 
 {
-    float l = (float)(1.0/sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
+    float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
+
+    GS_ASSERT_LIMIT(l != 0.0f, 50);
+    if (l == 0.0f) return v;
+
+    l = 1.0f/l;
     v.x *= l; 
     v.y *= l;
     v.z *= l;
