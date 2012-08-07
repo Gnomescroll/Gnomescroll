@@ -16,11 +16,12 @@ void Item::init(int item_type)
     if (attr == NULL) return;
     this->energy = attr->max_energy;
     this->durability = attr->max_durability;
+    this->gas_decay = attr->gas_lifetime;
 }
 
-void ItemList::tick()
+#if DC_SERVER
+void ItemList::decay_gas()
 {
-    #if DC_SERVER
     gas_tick++;
     if (gas_tick % GAS_TICK_INTERVAL != 0) return;
     
@@ -51,7 +52,7 @@ void ItemList::tick()
             if (item->gas_decay <= 0)
             {
                 int final_stack = consume_stack_item(item->id);
-                if (final_stack > 0) item->gas_decay = ITEM_GAS_LIFETIME;
+                if (final_stack > 0) item->gas_decay = attr->gas_lifetime;
             }
         }
         else if (item->location == IL_CONTAINER)
@@ -66,7 +67,7 @@ void ItemList::tick()
             // ignore cryofreezer items
             if (container->type == CONTAINER_TYPE_CRYOFREEZER_SMALL)
             {
-                item->gas_decay = ITEM_GAS_LIFETIME;    // reset decay
+                item->gas_decay = attr->gas_lifetime;    // reset decay
                 continue;
             }
             // dont decrement if sitting in fuel slot
@@ -82,7 +83,7 @@ void ItemList::tick()
                 int final_stack = consume_stack_item(item->id);
                 if (final_stack > 0)
                 {
-                    item->gas_decay = ITEM_GAS_LIFETIME;
+                    item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
                         int agent_id = container->owner;
@@ -102,7 +103,7 @@ void ItemList::tick()
                 int final_stack = consume_stack_item(item->id);
                 if (final_stack > 0)
                 {
-                    item->gas_decay = ITEM_GAS_LIFETIME;
+                    item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
                         int agent_id = item->location_id;
@@ -115,12 +116,10 @@ void ItemList::tick()
         }
         else GS_ASSERT(false);
     }
-    #endif
 }
 
 void ItemList::verify_items()
 {
-    #if DC_SERVER
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
@@ -149,8 +148,7 @@ void ItemList::verify_items()
         if (this->a[i]->stack_size <= 0)
             printf("Item %d has no stack size\n", this->a[i]->id);
     }
-    #endif
 }
-
+#endif
 
 }   // Item

@@ -29,9 +29,9 @@ void dilate_equipped_sprite(float delta);
 void init_weapon_sprite();
 
 // gl wrappers
-void draw_voxel_gl_begin(GLint cull_mode);
+bool draw_voxel_gl_begin(GLint cull_mode);
 void draw_voxel_gl_end();
-void draw_sprite_gl_begin();
+bool draw_sprite_gl_begin();
 void draw_sprite_gl_end();
 
 }   // Animations

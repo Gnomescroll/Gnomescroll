@@ -71,10 +71,6 @@ void init(int argc, char* argv[])
     ServerState::init_base();
 
     printf("Game starting\n");
-
-    #ifdef NAN
-    printf("NaN enabled\n");
-    #endif
 }
    
 void tick()
@@ -121,8 +117,7 @@ void tick()
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
 
     ItemContainer::update_smelters();
-    Item::item_list->tick();
-    Item::item_list->verify_items();
+    Item::tick();
 
     t_map::environment_process_tick(); //refresh regolith etc...
 }

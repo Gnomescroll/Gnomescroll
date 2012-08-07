@@ -284,6 +284,8 @@ void load_item_dat()
     s.pretty_name = (char*) "Methane Ice";
     s.max_stack_size = 16;
     s.gas = true;
+    //s.gas_lifetime = 30 * 60 * 5;   // 5 minutes
+    s.gas_lifetime = 30 * 5;   // 5 minutes
     s.fuel = true;
     s.fuel_burn_rate = 30 * 30; // 30 seconds
 
@@ -369,6 +371,9 @@ void verify_item_dat()
         GS_ASSERT(item_attribute_array[i].particle_voxel || (!item_attribute_array[i].particle_voxel && item_attribute_array[i].particle_voxel_texture == 0));
         // particle voxel should have a cube height of 1
         GS_ASSERT(!item_attribute_array[i].particle_voxel || item_attribute_array[i].cube_height == 1);
+
+        // gas lifetime should be set, if it is a gas
+        GS_ASSERT(!item_attribute_array[i].gas || item_attribute_array[i].gas_lifetime != NULL_GAS_LIFETIME);
     }
 }
 

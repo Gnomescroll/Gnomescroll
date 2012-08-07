@@ -142,12 +142,12 @@ static Vec3 compute_point_offset(
     return final;
 }
 
-void draw_sprite_gl_begin()
+bool draw_sprite_gl_begin()
 {
     // setup texture
     using TextureSheetLoader::ItemSheetTexture;
     GS_ASSERT(ItemSheetTexture != 0);
-    if (ItemSheetTexture == 0) return;
+    if (ItemSheetTexture == 0) return false;
 
     // set up opengl state
     glColor4ub(255,255,255,255);
@@ -162,6 +162,8 @@ void draw_sprite_gl_begin()
 
     // vertex calls
     glBegin(GL_QUADS);
+
+    return true;
 }
 
 void draw_sprite_gl_end()
@@ -210,8 +212,11 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 static GLboolean cull_face_enabled = false;
 static GLint cull_face_mode = GL_BACK;
 
-void draw_voxel_gl_begin(GLint cull_mode)
+bool draw_voxel_gl_begin(GLint cull_mode)
 {
+    GS_ASSERT(t_map::block_textures_normal != 0);
+    if (t_map::block_textures_normal == 0) return false;
+    
     glColor4ub(255,255,255,255);
 
     GL_ASSERT(GL_BLEND, false);
@@ -232,6 +237,8 @@ void draw_voxel_gl_begin(GLint cull_mode)
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
 
     glBegin(GL_QUADS);
+
+    return true;
 }
 
 void draw_voxel_gl_end()
@@ -332,15 +339,21 @@ void draw_equipped_item(int item_type)
     GL_ASSERT(GL_DEPTH_TEST, false);
     if (Item::item_type_is_voxel(item_type))
     {
-        draw_voxel_gl_begin(GL_FRONT);
-        draw_voxel(item_type, origin, forward, right, up);
-        draw_voxel_gl_end();
+        bool works = draw_voxel_gl_begin(GL_FRONT);
+        if (works)
+        {
+            draw_voxel(item_type, origin, forward, right, up);
+            draw_voxel_gl_end();
+        }
     }
     else
     {
-        draw_sprite_gl_begin();
-        draw_planar_sprite(item_type, origin, right, up);
-        draw_sprite_gl_end();
+        bool works = draw_sprite_gl_begin();
+        if (works)
+        {
+            draw_planar_sprite(item_type, origin, right, up);
+            draw_sprite_gl_end();
+        }
     }
 }
 

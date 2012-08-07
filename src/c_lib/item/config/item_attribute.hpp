@@ -51,6 +51,8 @@ namespace Item
         unsigned int repair_agent_amount;
 
         bool gas;
+        int gas_lifetime;
+        
         bool fuel;
         int fuel_burn_rate; // in ticks
     
@@ -85,6 +87,7 @@ namespace Item
             repair_agent_amount = 0;
             container_type = CONTAINER_TYPE_NONE;
             gas = false;
+            gas_lifetime = NULL_GAS_LIFETIME;
             fuel = false;
             fuel_burn_rate = 30;
             cube_height = 0;

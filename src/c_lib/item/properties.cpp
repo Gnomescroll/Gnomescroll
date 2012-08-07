@@ -289,6 +289,15 @@ int get_synthesizer_item(int xslot, int yslot, int* cost)
     return NULL_ITEM_TYPE;
 }
 
+int get_gas_lifetime(int item_type)
+{
+    if (item_type == NULL_ITEM_TYPE) return NULL_GAS_LIFETIME;
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return NULL_GAS_LIFETIME;
+    return attr->gas_lifetime;
+}
+
 bool is_fuel(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return false;

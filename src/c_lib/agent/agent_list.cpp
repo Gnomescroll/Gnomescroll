@@ -82,46 +82,52 @@ void Agent_list::draw_equipped_items()
     if (this->num <= 0) return;
 
     int ct = 0;
-    Animations::draw_voxel_gl_begin(GL_BACK);
-    for (int i=0; i<this->n_max; i++)
+    bool works = Animations::draw_voxel_gl_begin(GL_BACK);
+    if (works)
     {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->id == agent_id) continue; // skip you
-        if (this->a[i]->vox == NULL) continue;
-        int equipped_item_type = Toolbelt::get_agent_selected_item_type(i);
-        if (!Item::item_type_is_voxel(equipped_item_type)) continue;
+        for (int i=0; i<this->n_max; i++)
+        {
+            if (this->a[i] == NULL) continue;
+            if (this->a[i]->id == agent_id) continue; // skip you
+            if (this->a[i]->vox == NULL) continue;
+            int equipped_item_type = Toolbelt::get_agent_selected_item_type(i);
+            if (!Item::item_type_is_voxel(equipped_item_type)) continue;
 
-        float radius = this->a[i]->vox->get_part(0)->radius;
-        Vec3 center = this->a[i]->vox->get_center();
-        if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
-            continue;
+            float radius = this->a[i]->vox->get_part(0)->radius;
+            Vec3 center = this->a[i]->vox->get_center();
+            if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
+                continue;
 
-        Animations::draw_equipped_voxel_item_other_agent(i, equipped_item_type);
+            Animations::draw_equipped_voxel_item_other_agent(i, equipped_item_type);
 
-        ct++;
+            ct++;
+        }
+        Animations::draw_voxel_gl_end();
     }
-    Animations::draw_voxel_gl_end();
 
     GS_ASSERT(this->num-ct >= 0);
     if (this->num - ct <= 0) return;
 
-    Animations::draw_sprite_gl_begin();
-    for (int i=0; i<this->n_max; i++)
+    works = Animations::draw_sprite_gl_begin();
+    if (works)
     {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->id == agent_id) continue; // skip you
-        if (this->a[i]->vox == NULL) continue;
-        int equipped_item_type = Toolbelt::get_agent_selected_item_type(i);
-        if (Item::item_type_is_voxel(equipped_item_type)) continue;
+        for (int i=0; i<this->n_max; i++)
+        {
+            if (this->a[i] == NULL) continue;
+            if (this->a[i]->id == agent_id) continue; // skip you
+            if (this->a[i]->vox == NULL) continue;
+            int equipped_item_type = Toolbelt::get_agent_selected_item_type(i);
+            if (Item::item_type_is_voxel(equipped_item_type)) continue;
 
-        float radius = this->a[i]->vox->get_part(0)->radius;
-        Vec3 center = this->a[i]->vox->get_center();
-        if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
-            continue;
+            float radius = this->a[i]->vox->get_part(0)->radius;
+            Vec3 center = this->a[i]->vox->get_center();
+            if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
+                continue;
 
-        Animations::draw_equipped_sprite_item_other_agent(i, equipped_item_type);
+            Animations::draw_equipped_sprite_item_other_agent(i, equipped_item_type);
+        }
+        Animations::draw_sprite_gl_end();
     }
-    Animations::draw_sprite_gl_end();
 }
 
 void Agent_list::check_missing_names()

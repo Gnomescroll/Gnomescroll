@@ -181,8 +181,12 @@ void destroy_item(ItemID id)
         ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
         if (container != NULL && slot != NULL_SLOT)
         {
-            if (container->type == AGENT_TOOLBELT && slot == Toolbelt::get_agent_selected_slot(container->owner))
+            if (container->id == ItemContainer::get_agent_toolbelt(container->owner)
+             && item->id == Toolbelt::get_agent_selected_item(container->owner))
+            {
+                GS_ASSERT(slot == Toolbelt::get_agent_selected_slot(container->owner));
                 Toolbelt::force_remove_selected_item(container->owner);
+            }
             container->remove_item(slot);
             Agent_state* a = ServerState::agent_list->get(container->owner);
             if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
@@ -351,6 +355,14 @@ void test_item_list_capacity()
     printf("Testing item list capacity\n");
     for (int i=0; i<ITEM_LIST_MAX*2; i++)
         item_list->create_type(0);
+}
+
+void tick()
+{
+    GS_ASSERT(item_list != NULL);
+    if (item_list == NULL) return;
+    item_list->decay_gas();
+    item_list->verify_items();
 }
 
 }   // Item

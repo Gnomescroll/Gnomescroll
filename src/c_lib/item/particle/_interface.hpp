@@ -41,6 +41,7 @@ void send_particle_item_create_to_client(ItemParticleID particle_id, int client_
 void send_particle_items_to_client(int client_id);
 void broadcast_particle_item_state(ItemParticleID particle_id);
 void broadcast_particle_item_destroy(ItemParticleID particle_id);
+void send_particle_item_picked_up(int client_id, int agent_id, ItemParticleID particle_id);
 void broadcast_particle_item_picked_up(int agent_id, ItemParticleID particle_id);
 void broadcast_particle_item_pickup_cancelled(ItemParticleID particle_id);
 

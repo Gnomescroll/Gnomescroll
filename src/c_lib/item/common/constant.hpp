@@ -16,6 +16,7 @@ const int NULL_COST = 0;
 const int NULL_CRAFTING_RECIPE = 0xffff;
 const int NULL_SMELTING_RECIPE = 0xffff;
 const int NULL_STACK_SIZE = 0;
+const int NULL_GAS_LIFETIME = 1;
 
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
@@ -39,8 +40,6 @@ const float NULL_FIRING_RANGE = 0.0f;
 const float DEFAULT_FIRING_RANGE = 4.0f;
 
 const float OBJECT_DEPTH_MAX = -128.0f;
-
-const int ITEM_GAS_LIFETIME = 30 * 60 * 5;  // 5 Minutes
 
 const int AGENT_HAND = NULL_CONTAINER - 1;
 

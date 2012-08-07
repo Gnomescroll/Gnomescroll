@@ -62,7 +62,7 @@ class Item
         location(IL_NOWHERE),
         location_id(-1),
         container_slot(NULL_SLOT),
-        gas_decay(ITEM_GAS_LIFETIME)
+        gas_decay(NULL_GAS_LIFETIME)
         #if DC_SERVER
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE)
         #endif
@@ -133,11 +133,13 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX
 
     private:
         unsigned int gas_tick;
-        static const int GAS_TICK_INTERVAL = 30;
+        //static const int GAS_TICK_INTERVAL = 30;
+        static const int GAS_TICK_INTERVAL = 10;
     public:
-        void draw() {}
-        void tick();
+        #if DC_SERVER
+        void decay_gas();
         void verify_items();
+        #endif
 };
 
 }   // Item

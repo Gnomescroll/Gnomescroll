@@ -63,6 +63,8 @@ int get_item_object_damage(int weapon_type);
 int get_synthesizer_item(int xslot, int yslot);
 int get_synthesizer_item(int xslot, int yslot, int* cost);
 
+int get_gas_lifetime(int item_type);
+
 bool is_fuel(int item_type);
 bool is_smelter(ItemContainerType type);
 

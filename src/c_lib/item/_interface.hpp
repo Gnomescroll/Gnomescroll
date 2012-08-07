@@ -60,6 +60,8 @@ void agent_quit(int agent_id);
 // tests
 void test_item_list_capacity();
 
+void tick();
+
 }   // Item
 #endif
 

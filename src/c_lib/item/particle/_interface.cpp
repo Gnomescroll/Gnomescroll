@@ -103,11 +103,16 @@ ItemParticle* create_item_particle(
     // transitioning to item particle, remove all subscribers
     if (item->location == IL_CONTAINER)
     {
-        ItemContainer::ItemContainerInterface* toolbelt = 
+        ItemContainer::ItemContainerInterface* container =
             ItemContainer::get_container(item->location_id);
-        GS_ASSERT(toolbelt != NULL);
-        if (toolbelt != NULL)
-            Toolbelt::force_remove_selected_item(toolbelt->owner);
+        GS_ASSERT(container != NULL);
+        if (container != NULL
+         && ItemContainer::get_agent_toolbelt(container->owner) == container->id
+         && Toolbelt::get_agent_selected_item(container->owner) == item->id)
+        {
+            GS_ASSERT(Toolbelt::get_agent_selected_slot(container->owner) == item->container_slot);
+            Toolbelt::force_remove_selected_item(container->owner);
+        }
     }
     Item::unsubscribe_all_from_item(item->id);
     
@@ -174,8 +179,13 @@ void send_particle_item_create_to_client(ItemParticleID particle_id, int client_
 void send_particle_items_to_client(int client_id)
 {
     for (int i=0; i<item_particle_list->n_max; i++)
-        if (item_particle_list->a[i] != NULL)
-            send_particle_item_create_to_client(item_particle_list->a[i]->id, client_id);
+    {
+        ItemParticle* p = item_particle_list->a[i];
+        if (p == NULL) continue;
+        send_particle_item_create_to_client(p->id, client_id);
+        if (p->target_agent != NO_AGENT)
+            send_particle_item_picked_up(client_id, p->target_agent, p->id);
+    }
 }
 
 void broadcast_particle_item_state(ItemParticleID particle_id)
@@ -200,6 +210,16 @@ void broadcast_particle_item_destroy(ItemParticleID particle_id)
     class item_particle_destroy_StoC msg;
     msg.id = particle_id;
     msg.broadcast();
+}
+
+void send_particle_item_picked_up(int client_id, int agent_id, ItemParticleID particle_id)
+{
+    GS_ASSERT(particle_id != NULL_PARTICLE);
+    ASSERT_VALID_AGENT_ID(agent_id);
+    item_particle_picked_up_StoC msg;
+    msg.agent_id = agent_id;
+    msg.id = particle_id;
+    msg.sendToClient(client_id);
 }
 
 void broadcast_particle_item_picked_up(int agent_id, ItemParticleID particle_id)

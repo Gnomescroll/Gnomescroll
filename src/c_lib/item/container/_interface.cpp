@@ -804,7 +804,7 @@ void agent_born(int agent_id)
             
             int slot = energy_tanks->get_empty_slot();
             if (slot == NULL_SLOT) break;
-            
+
             bool added = transfer_free_item_to_container(energy_tank->id, energy_tanks->id, slot);
             if (!added) break;
         }
@@ -858,13 +858,14 @@ void agent_born(int agent_id)
         else if (grenade_launcher->stack_size <= 0) Item::destroy_item(grenade_launcher->id);
     }
 
-    if (toolbelt->get_item(toolbelt->slot_max-2) == NULL_ITEM)
+    int location_pointer_slot = toolbelt->slot_max-1;
+    if (toolbelt->get_item(location_pointer_slot) == NULL_ITEM)
     {
         Item::Item* location_pointer = Item::create_item(Item::get_item_type((char*)"location_pointer"));
         GS_ASSERT(location_pointer != NULL);
         if (location_pointer != NULL)
         {
-            bool added = transfer_free_item_to_container(location_pointer->id, toolbelt->id, toolbelt->slot_max - 1);
+            bool added = transfer_free_item_to_container(location_pointer->id, toolbelt->id, location_pointer_slot);
             if (!added) Item::destroy_item(location_pointer->id);
         }
     }

@@ -43,7 +43,9 @@ void ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
     if (!this->is_valid_slot(slot)) return;
 
     GS_ASSERT(this->slot[slot] == NULL_ITEM);
-
+    if (this->slot[slot] != NULL_ITEM)
+        printf("Slot %d occupied by item %d but inserting %d in it\n", slot, this->slot[slot], item_id);
+    
     this->slot[slot] = item_id;
     this->slot_count++;
 
@@ -95,7 +97,7 @@ void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
     // reset gas decay
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
-    if (item != NULL) item->gas_decay = ITEM_GAS_LIFETIME;
+    if (item != NULL) item->gas_decay = Item::get_gas_lifetime(item->type);
     #endif
     ItemContainer::insert_item(slot, item_id);
 }
