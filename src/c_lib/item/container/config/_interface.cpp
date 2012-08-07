@@ -28,8 +28,7 @@ void send_smelter_alpha_action(ContainerActionType action, int container_id, int
 void send_smelter_beta_action(ContainerActionType action, int container_id, int slot){}
 void send_recycler_alpha_action(ContainerActionType action, int container_id, int slot){}
 void send_recycler_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_recycler_crush_action(ContainerActionType action, int container_id){}
-
+void send_recycler_crush_action(ContainerActionType action, int container_id, int slot){}
 #endif
 
 namespace ItemContainer
@@ -162,6 +161,8 @@ static void register_settings()
     c.beta_action = &recycler_beta_action_decision_tree;
     c.alpha_packet = &send_recycler_alpha_action;
     c.beta_packet = &send_recycler_beta_action;
+    c.alpha_action_alt = &recycler_crush_alpha_action_decision_tree;
+    c.alpha_packet_alt = &send_recycler_crush_action;
   
     add_container(c);   // finalize
 }

@@ -1354,4 +1354,14 @@ ContainerActionType recycler_beta_action_decision_tree(int agent_id, int client_
     #endif
 }
 
+#if DC_CLIENT
+ContainerActionType recycler_crush_alpha_action_decision_tree(int id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType recycler_crush_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+#endif
+{
+    return RECYCLER_CRUSH_ITEM; // TODO
+}
+
 }   // ItemContainer

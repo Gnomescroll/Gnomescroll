@@ -345,6 +345,21 @@ class ItemContainerRecyclerUI: public ItemContainerUIInterface
             return NULL_SLOT;
         }
 
+        void init(ItemContainerType type, int xdim, int ydim)
+        {
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + this->alt_xdim * this->alt_ydim;
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            this->slot_type = new int[this->slot_max];
+            this->slot_stack = new int[this->slot_max];
+            this->slot_durability = new int[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
+            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
+            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
+        }
+
         explicit ItemContainerRecyclerUI(int id)
         : ItemContainerUIInterface(id)
         {}

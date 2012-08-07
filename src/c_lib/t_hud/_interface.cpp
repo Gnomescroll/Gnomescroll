@@ -87,6 +87,7 @@ static bool container_block_enabled = false;
 static int container_block_enabled_id = NULL_CONTAINER;
 float mouse_x = -1;
 float mouse_y = -1;
+bool lm_down = false;
 
 void enable_agent_container_hud()
 {
@@ -173,6 +174,8 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
      && ((AgentSynthesizerUI*)container)->in_shopping_region(x,y))
      || (container->type == UI_ELEMENT_CRAFTING_CONTAINER
      && ((CraftingUI*)container)->in_craft_output_region(x,y))
+     || (container->type == UI_ELEMENT_RECYCLER
+     && ((RecyclerUI*)container)->in_button_region(x,y))
     ));
 
     return event;
@@ -223,11 +226,13 @@ static const ContainerInputEvent NULL_EVENT =
 
 ContainerInputEvent left_mouse_down(int x, int y)
 {
+    lm_down = true;
     return NULL_EVENT;
 }
 
 ContainerInputEvent left_mouse_up(int x, int y)
 {
+    lm_down = false;
     return get_container_hud_ui_event(x,y);
 }
 

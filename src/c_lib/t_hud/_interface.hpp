@@ -16,6 +16,7 @@ void set_container_id(ItemContainerType container_type, int container_id);
 
 extern float mouse_x;
 extern float mouse_y;
+extern bool lm_down;    // left mouse down
 
 // Input Handling
 typedef struct

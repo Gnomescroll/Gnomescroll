@@ -470,6 +470,15 @@ class ItemContainerRecycler: public ItemContainerInterface
 {
     public:
 
+        static const int output_slot = 1;
+
+        ItemID get_output_slot()
+        {
+            GS_ASSERT(this->is_valid_slot(this->output_slot));
+            if (!this->is_valid_slot(this->output_slot)) return NULL_ITEM;
+            return this->slot[this->output_slot];
+        }
+
         int get_empty_slot()
         {
             if (this->slot_max <= 0) return NULL_SLOT;
@@ -484,6 +493,18 @@ class ItemContainerRecycler: public ItemContainerInterface
             if (item_id == NULL_ITEM) return false;
             if (slot == 0) return true;
             return false;
+        }
+
+        void init(int xdim, int ydim)
+        {
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + this->alt_xdim*this->alt_ydim;
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+            this->slot = new ItemID[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
 
         ItemContainerRecycler(ItemContainerType type, int id)

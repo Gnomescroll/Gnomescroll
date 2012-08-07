@@ -146,7 +146,7 @@ class RecyclerUI : public UIElement
     void refresh_render_size()
     {
         this->render_width = this->cell_size * this->xdim;
-        this->render_height = this->cell_size * this->ydim;
+        this->render_height = this->cell_size * (this->ydim + this->alt_ydim + 1);
     }
 
     void set_container_type(ItemContainerType container_type)
@@ -163,6 +163,16 @@ class RecyclerUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
+    }
+
+    virtual void draw_name()
+    {
+        HudFont::start_font_draw();
+        HudFont::reset_default();
+        HudFont::set_texture();
+        this->name.set_position(this->xoff + (this->width() - this->name.get_width())/2, this->yoff + this->name.get_height() + 2);
+        this->name.draw();
+        HudFont::end_font_draw();
     }
 
     RecyclerUI()
@@ -188,7 +198,19 @@ void RecyclerUI::draw()
     if (*this->texture == 0) return;
  
     this->draw_name();
-    
+
+    if (this->container_id == NULL_CONTAINER) return;
+
+    // get data for rendering items
+    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
+    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
+    int slot_max = ItemContainer::get_container_ui_slot_max(this->container_id);
+    GS_ASSERT(slot_max > 0);
+    if (slot_max <= 0) return;
+    if (slot_types == NULL) return;
+    GS_ASSERT(slot_stacks != NULL);
+    if (slot_stacks == NULL) return;
+
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -205,7 +227,7 @@ void RecyclerUI::draw()
     float th = ((float)cell_size)/256.0f;
 
     float x = xoff;
-    float y = yoff;
+    float y = yoff - sh;    // -sh because draw_bound_texture_sprite2 draws bottom up
     float z = -0.1f;
     
     // draw input slot
@@ -219,52 +241,61 @@ void RecyclerUI::draw()
     y += 1 * cell_size;
     if (this->in_button_region(mouse_x, mouse_y))
     {   // draw hover sprite
-        draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_hover_x*tw, button_inactive_hover_y*th, tw, th);
+        if (slot_types[0] != NULL_ITEM_TYPE)
+        {
+            if (slot_types[slot_max-1] != NULL_ITEM_TYPE)
+                draw_bound_texture_sprite2(x,y, sw,sh, z, button_unavailable_hover_x*tw, button_unavailable_hover_y*th, tw, th);
+            else
+                draw_bound_texture_sprite2(x,y, sw,sh, z, button_available_hover_x*tw, button_available_hover_y*th, tw, th);
+        }
+        else
+            draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_hover_x*tw, button_inactive_hover_y*th, tw, th);
+        if (lm_down)
+        {   // draw button
+            draw_bound_texture_sprite2(x,y, sw,sh, z, button_overlay_pressed_x*tw, button_overlay_pressed_y*th, tw,th);
+        }
+        else
+            draw_bound_texture_sprite2(x,y, sw,sh, z, button_overlay_x*tw, button_overlay_y*th, tw,th);
     }
     else
     {
-        draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_x*tw, button_inactive_y*th, tw, th);
+        if (slot_types[0] != NULL_ITEM_TYPE)
+        {
+            if (slot_types[slot_max-1] != NULL_ITEM_TYPE)
+                draw_bound_texture_sprite2(x,y, sw,sh, z, button_unavailable_x*tw, button_unavailable_y*th, tw, th);
+            else
+                draw_bound_texture_sprite2(x,y, sw,sh, z, button_available_x*tw, button_available_y*th, tw, th);
+        }
+        else
+            draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_x*tw, button_inactive_y*th, tw, th);
+        draw_bound_texture_sprite2(x,y, sw,sh, z, button_overlay_x*tw, button_overlay_y*th, tw,th);
     }
 
     glDisable(GL_TEXTURE_2D);
 
     // draw hover highlight
-    glBegin(GL_QUADS);
-    glColor4ub(160, 160, 160, 128);
-    int hover_slot = this->get_grid_at(mouse_x, mouse_y);
-    
-    if (hover_slot != NULL_SLOT && !this->in_button_region(mouse_x, mouse_y))
+    if (!this->in_button_region(mouse_x, mouse_y))
     {
-        int w = slot_size;
-        int xslot = hover_slot % this->xdim;
-        int yslot = hover_slot / this->xdim;
+        int hover_slot = this->get_grid_at(mouse_x, mouse_y);
+        if (hover_slot != NULL_SLOT)
+        {
+            int w = slot_size;
+            int xslot = hover_slot % this->xdim;
+            int yslot = hover_slot / this->xdim;
 
-        const float x = xoff + cell_size*xslot + cell_offset_x;
-        const float y = yoff - (cell_size*yslot + cell_offset_y);
-        
-        glVertex2f(x,y);
-        glVertex2f(x, y-w);
-        glVertex2f(x+w, y-w);
-        glVertex2f(x+w, y);
+            const float x = xoff + cell_size*xslot + cell_offset_x;
+            const float y = yoff - (cell_size*yslot + cell_offset_y);
+            
+            glColor4ub(160, 160, 160, 128);
+            glBegin(GL_QUADS);
+            glVertex2f(x,y);
+            glVertex2f(x, y-w);
+            glVertex2f(x+w, y-w);
+            glVertex2f(x+w, y);
+            glEnd();
+        }
     }
-    glEnd();
-
-    // draw input overlay
-
-    // draw output overlay (if no item in slot)
-
-    if (this->container_id == NULL_CONTAINER) return;
-
-    // get data for rendering items
-    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
-    int slot_max = ItemContainer::get_container_ui_slot_max(this->container_id);
-    GS_ASSERT(slot_max > 0);
-    if (slot_max <= 0) return;
-    if (slot_types == NULL) return;
-    GS_ASSERT(slot_stacks != NULL);
-    if (slot_stacks == NULL) return;
-
+    
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
@@ -276,7 +307,7 @@ void RecyclerUI::draw()
     {
         int xslot = 0;
         int yslot = slot;
-        if (yslot == slot_max-1) yslot += 1;
+        if (slot == slot_max-1) yslot += 1;
 
         int item_type = slot_types[slot];
 
@@ -309,6 +340,15 @@ void RecyclerUI::draw()
     }
     glEnd();
 
+    glBindTexture(GL_TEXTURE_2D, RecyclerTexture);
+
+    // draw input overlay
+    draw_bound_texture_sprite2(xoff, yoff-sw, sw, sh, -0.1f, input_overlay_x*tw, input_overlay_y*th, tw, th);
+
+    // draw output overlay (if no item in slot)
+    if (slot_types[0] != NULL_ITEM_TYPE && slot_types[slot_max-1] == NULL_ITEM_TYPE)
+        draw_bound_texture_sprite2(xoff, yoff-sw*3, sw, sh, -0.1f, output_overlay_x*tw, output_overlay_y*th, tw, th);
+
     glDisable(GL_TEXTURE_2D);
 
     // draw stacks
@@ -324,7 +364,7 @@ void RecyclerUI::draw()
     {
         int xslot = 0;
         int yslot = slot;
-        if (yslot == slot_max-1) yslot += 1;
+        if (slot == slot_max-1) yslot += 1;
 
         int stack = slot_stacks[slot];
         if (stack <= 1) continue;

@@ -441,7 +441,7 @@ void send_recycler_beta_action(ContainerActionType action, int container_id, int
     msg.send();
 }
 
-void send_recycler_crush_action(ContainerActionType action, int container_id)
+void send_recycler_crush_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action == RECYCLER_CRUSH_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);

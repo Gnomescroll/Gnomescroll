@@ -413,12 +413,34 @@ inline void recycler_container_action_beta_CtoS::handle()
 
 inline void recycler_crush_item_CtoS::handle()
 {
-    printf("Recycler activated\n");
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    
+    if (!recycler_crush_alpha_action_decision_tree(a->id, client_id, container_id, NULL_SLOT)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    GS_ASSERT(container->type == CONTAINER_TYPE_RECYCLER);
+    if (container->type != CONTAINER_TYPE_RECYCLER) return;
+
+    ItemContainerRecycler* recycler = (ItemContainerRecycler*)container;
+    GS_ASSERT(recycler->get_output_slot() == NULL_ITEM);
+    if (recycler->get_output_slot() != NULL_ITEM) return;
+
+    int type = Item::get_item_type("regolith");
+    GS_ASSERT(type != NULL_ITEM_TYPE);
+    Item::Item* item = Item::create_item(type);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return;
+    item->stack_size = Item::get_max_stack_size(type);
+    transfer_free_item_to_container(item->id, container->id, recycler->output_slot); 
 }
 
 inline void open_container_CtoS::handle()
 {
-    if (container_id == NULL_CONTAINER) printf("nul container id\n");
     if (container_id == NULL_CONTAINER) return;
     
     Agent_state* a = NetServer::agents[client_id];
@@ -428,7 +450,6 @@ inline void open_container_CtoS::handle()
     bool in_reach = agent_in_container_range(a->id, container_id);
     if (!in_reach)
     {
-        printf("not in reach\n");
         send_open_container_failed(a->client_id, container_id, event_id);
         return;
     }
@@ -436,7 +457,6 @@ inline void open_container_CtoS::handle()
     bool opened = agent_open_container(a->id, container_id);
     if (!opened)
     {
-        printf("open failed\n");
         send_open_container_failed(a->client_id, container_id, event_id);
         return;
     }

@@ -419,37 +419,24 @@ void container_mouse_down_handler(SDL_Event* event)
 {
     if (ClientState::playerAgent_state.you == NULL) return;
     if (ClientState::playerAgent_state.you->status.dead) return;
-    //// check intersection with any slots
 
-    ////SDL_MouseButtonEvent e = event->button;
-    ////printf("Button type: %d\n", e.type);
-    ////printf("Button which: %d\n", e.which);
-    ////printf("Button button: %d\n", e.button);
-    ////printf("Button state: %d\n", e.state);
-    ////printf("Button x,y: %d,%d\n", e.x, e.y);  // reports 0,0 no matter what the mouse grab state is
+    // gets correct mouse pixels
+    int x,y;
+    SDL_GetMouseState(&x, &y);
 
-    //// gets correct mouse pixels
-    //int x,y;
-    //SDL_GetMouseState(&x, &y);
-    ////printf("GetMouseState x,y: %d,%d\n", x,y);
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_LEFT:
+            t_hud::left_mouse_down(x,y);
+            break;
 
-    //t_hud::ContainerInputEvent container_event;
+        case SDL_BUTTON_RIGHT:
+            t_hud::right_mouse_down(x,y);
+            break;
 
-    //switch (event->button.button)
-    //{
-        //case SDL_BUTTON_LEFT:
-            //container_event = t_hud::left_mouse_down(x,y);
-            //ItemContainer::mouse_left_click_handler(container_event.container_id, container_event.slot);
-            //break;
-
-        //case SDL_BUTTON_RIGHT:
-            //container_event = t_hud::right_mouse_down(x,y);
-            //ItemContainer::mouse_right_click_handler(container_event.container_id, container_event.slot);
-            //break;
-
-        //default:
-            //return;
-    //}
+        default:
+            return;
+    }
 }
 
 void container_mouse_up_handler(SDL_Event* event)
