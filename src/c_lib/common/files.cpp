@@ -168,6 +168,15 @@ char** read_lines(char* buffer, int* lines)
     return arr;
 }
 
+void create_directory(const char* directory)
+{
+#ifdef _WIN32
+    mkdir(directory);
+#else
+    mkdir(directory, S_IRWXU );
+#endif
+}
+
 void create_path_to_file(const char* fn)
 {
     // walk down the path, create folders as needed

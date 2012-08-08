@@ -15,4 +15,5 @@ int count_lines(char* buffer, int* longest);
 void free_read_lines(char** readlines, int lines);
 char** read_lines(char* buffer);
 
+void create_directory(const char* directory);
 void create_path_to_file(const char* fn);
