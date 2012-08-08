@@ -31,7 +31,7 @@ while True:
 
     logname = 'log-%s-%d' % (version, time.time(),)
     corename = 'core-%s-%d' % (version, time.time())
-    mapname = './media/maps/map-%d.map' % (version,)
+    mapname = './maps/map-%d.map' % (version,)
     if not os.path.exists(mapname):
         mapname = ''
     cmd = './shell/m643_run_log.sh %s %s' % (logname, mapname,)

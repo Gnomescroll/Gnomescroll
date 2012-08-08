@@ -267,6 +267,14 @@ int init_c_lib(int argc, char* argv[])
     // SIGINT ctrl-C
     ret = sigaction(SIGINT, &sa_term, NULL);
     GS_ASSERT(ret == 0);
+
+    // SIGUSR1 ignore
+    struct sigaction sa_usr1;
+    sa_usr1.sa_handler = SIG_IGN;
+    sa_usr1.sa_flags = 0;
+    sigemptyset(&sa_usr1.sa_mask);
+    ret = sigaction(SIGUSR1, &sa_usr1, NULL);
+    GS_ASSERT(ret == 0);
     #endif
 
     Log::init();
