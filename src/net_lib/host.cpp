@@ -512,7 +512,7 @@ static void client_disconnect(ENetEvent* event)
         }
         else
         {
-            printf("Client %i disconnected with unknown code.  code= %i !!!\n", client_id, event->data);
+            printf("Client %i disconnected with unknown code. code= %i !!!\n", client_id, event->data);
         }
     }
 

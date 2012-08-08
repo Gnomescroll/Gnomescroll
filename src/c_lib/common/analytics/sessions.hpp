@@ -66,10 +66,10 @@ class Session
         fprintf(f, "IP %d.%d.%d.%d; ", address[0], address[1], address[2], address[3]);
 
         // count
-        fprintf(f, "Login %02d; ", this->number+1);
+        fprintf(f, "Login %d; ", this->number+1);
 
         //client id
-        fprintf(f, "Client id %03d; ", this->client_id);
+        fprintf(f, "Client id %d; ", this->client_id);
 
         // names
         fprintf(f, "Names: ");
