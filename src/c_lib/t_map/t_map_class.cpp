@@ -521,19 +521,18 @@ namespace t_map
     {
         z += 1; // heights are not 0 indexed;
         int new_h = -1;
-        unsigned char h = this->column_heights[x + y*MAP_WIDTH];
+        int h = this->column_heights[x + y*MAP_WIDTH];
         if (val != 0)
         {   // setting higher block
             if (z > h)
                 new_h = z;
         }
-        else
-        {
-            if (z >= h) // deleting top block
+        if (z >= h) // deleting top block
                 new_h = get_highest_solid_block(x,y,z) + 1;
         }
 
-        if (new_h < 0) return; // no change in height
+        if (new_h == -1) return; // no change in height
+
         this->column_heights[x + y*MAP_WIDTH] = new_h;
 
         int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
