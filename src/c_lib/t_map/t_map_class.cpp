@@ -48,9 +48,10 @@ namespace t_map
         #endif
 
         #if DC_SERVER
-        for(int i=0; i<xchunk_dim; i++) 
-        for(int j=0; j<ychunk_dim; j++)
+        for(int i=0; i<xchunk_dim; i++) {
+        for(int j=0; j<ychunk_dim; j++) {
             chunk[i] = new MAP_CHUNK(16*i, 16*j);
+        }}
         #endif
 
         #if DC_CLIENT
