@@ -235,11 +235,12 @@ dont_include_this_file_in_server
 #ifdef linux
 #include <signal.h>
 
+bool signal_exit = false;
+
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    close_c_lib();
-    exit(1);
+    signal_exit = true;
 }
 #endif
 
@@ -253,8 +254,19 @@ int init_c_lib(int argc, char* argv[])
     inited++;
 
     #ifdef linux
-    signal(SIGTERM, signal_terminate_handler);  // kill <pid>
-    signal(SIGINT, signal_terminate_handler);   // ctrl-c
+    // Set signal handlers
+
+    // SIGTERM  kill `pidof gnomescroll_server`
+    struct sigaction sa_term;
+    sa_term.sa_handler = &signal_terminate_handler;
+    sa_term.sa_flags = 0;
+    sigemptyset(&sa_term.sa_mask);
+    int ret = sigaction(SIGTERM, &sa_term, NULL);
+    GS_ASSERT(ret == 0);
+    
+    // SIGINT ctrl-C
+    ret = sigaction(SIGINT, &sa_term, NULL);
+    GS_ASSERT(ret == 0);
     #endif
 
     Log::init();

@@ -141,4 +141,14 @@ class BlockSerializer
     }
 };
 
+void save_map()
+{
+    printf("Saving map...\n");
+    const char fn[] = "./media/maps/map-" STR(DC_VERSION) ".map";
+    BlockSerializer* BS = new BlockSerializer;
+    BS->save(fn);
+    delete BS;
+    printf("Map saved to %s\n", fn);
+}
+
 }   // t_map

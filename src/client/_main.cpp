@@ -85,7 +85,8 @@ int run()
     poll_mouse();
  
     while (!input_state.quit)
-    {   
+    {
+        if (signal_exit) break;
         if(_quit) break;
 
         frame_graph->frame_start();

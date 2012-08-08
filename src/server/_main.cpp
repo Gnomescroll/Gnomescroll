@@ -16,17 +16,6 @@ void init(int argc, char* argv[])
 {
     init_c_lib(argc, argv);
 
-    //if (0)
-    //{
-        //MapGen::init();
-        //MapRecipes::simple_map();
-        //MapGen::teardown();
-        //Dragon::caves();
-        //Dragon::surface_veins();
-
-        //t_map::map_post_processing();
-    //}
-
     if (Options::map[0] == '\0')
     {   // use map gen
         srand(Options::seed);
@@ -61,8 +50,6 @@ void init(int argc, char* argv[])
 
     srand((unsigned int)time(NULL));
     
-    //t_gen::gen_map();
-
     int address[4];
     address_from_string(Options::ip_address, address);
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
@@ -132,7 +119,7 @@ int run()
     //int tick = 0;
     int tc;
 
-    while (1)
+    while (!signal_exit)
     {
         tc = 0;
         while(1)
@@ -157,13 +144,19 @@ int run()
         }
         NetServer::dispatch_network_events();
 
-    #ifdef __GNUC__
+        if (should_save_map)
+        {
+            t_map::save_map();
+            should_save_map = false;
+        }
+
+        #ifdef __GNUC__
         usleep(1000);
-    #endif
+        #endif
     
-    #ifdef __MSVC__
+        #ifdef __MSVC__
         Sleep(1);
-    #endif
+        #endif
     }
     close_c_lib();
     return 0;

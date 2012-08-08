@@ -139,27 +139,31 @@ dont_include_this_file_in_client
 #ifdef linux
 #include <signal.h>
 
+bool signal_exit = false;
+bool should_save_map = false;
+
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    close_c_lib();
-    exit(1);
+    signal_exit = true;
 }
 
 void sigusr1_handler(int sig)
 {
-    printf("Saving map...\n");
-    const char fn[] = "./media/maps/map-" STR(DC_VERSION) ".map";
-    BlockSerializer* BS = new BlockSerializer;
-    BS->save(fn);
-    delete BS;
-    printf("Map saved to %s\n", fn);
+    should_save_map = true;
 }
 #endif
 
 
 int init_c_lib(int argc, char* argv[])
 {
+    static int inited = 0;
+    if (inited++)
+    {
+        printf("WARNING: Attempt to call init_c_lib more than once\n");
+        return 1;
+    }
+
     #ifdef linux
     // Set signal handlers
 
@@ -184,12 +188,6 @@ int init_c_lib(int argc, char* argv[])
     GS_ASSERT(ret == 0);
     #endif
     
-    static int inited = 0;
-    if (inited++)
-    {
-        printf("WARNING: Attempt to call init_c_lib more than once\n");
-        return 1;
-    }
     Log::init();
 
     Options::init_option_tables();

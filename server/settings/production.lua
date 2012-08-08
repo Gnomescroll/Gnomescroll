@@ -26,7 +26,7 @@ options.ip_address = "174.37.26.119"
 options.port = 0
 
 -- map --
-options.map = 'natural_terrain'
+options.map = ''
 options.seed = 805112
 
 -- logger --
