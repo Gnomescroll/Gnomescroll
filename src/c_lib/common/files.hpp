@@ -5,6 +5,8 @@
 #include <stdlib.h>
 
 char* read_file_to_buffer(char* file_name, int* size);
+char* fast_read_file_to_buffer(char* file_name, int* size);
+
 off_t fsize(const char *filename);
 
 int count_lines(char* buffer);

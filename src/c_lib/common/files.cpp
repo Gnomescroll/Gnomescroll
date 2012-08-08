@@ -19,7 +19,6 @@ off_t fsize(const char *filename)
 // free the returned char* buffer after use
 char* read_file_to_buffer(char* file_name, int* size)
 {
-
     int expected_size = (int)fsize(file_name);
     char *source = NULL;
     FILE *fp = fopen(file_name, "r");
@@ -60,6 +59,41 @@ char* read_file_to_buffer(char* file_name, int* size)
     }
     //free(source); /* Don't forget to call free() later! */
 
+    return source;
+}
+
+//possible unsafe, free buffer after use
+char* fast_read_file_to_buffer(char* file_name, int* size)
+{
+    long bufsize = (int)fsize(file_name);
+    char *source = NULL;
+    FILE *fp = fopen(file_name, "r");
+    if (fp != NULL)
+    {
+        *size = (int)bufsize;
+        /* Allocate our buffer to that size. */
+        source = (char*) calloc(bufsize+2, sizeof(char));
+        /* Read the entire file into memory. */
+        size_t newLen = fread(source, sizeof(char), bufsize, fp);
+        if (newLen == 0) 
+        {
+            free(source);
+            printf("read_file_to_buffer: error reading file %s", file_name);
+            return NULL;
+        } 
+        else 
+        {
+            source[++newLen] = '\0'; /* Just to be safe. */
+        }
+
+        if(fp == NULL) printf("WTF\n");
+        fclose(fp);
+    }
+    else
+    {
+        printf("read_file_to_buffer: error, could not open %s \n", file_name);
+        GS_ABORT();
+    }
     return source;
 }
 
