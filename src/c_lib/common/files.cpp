@@ -168,7 +168,13 @@ char** read_lines(char* buffer, int* lines)
     return arr;
 }
 
-void create_path_to_file(const char* fn)
+#ifdef _WIN32
+static const char SEPARATOR = '\\';
+#else
+static const char SEPARATOR = '/';
+#endif
+
+void create_path(const char* fn)
 {
     // walk down the path, create folders as needed
     int len = strlen(fn);
@@ -176,32 +182,37 @@ void create_path_to_file(const char* fn)
     strcpy(path, fn);
 
     struct stat file_stat;
-
-    #ifdef _WIN32
-    char sep = '\\';
-    #else
-    char sep = '/';
-    #endif
     
     char c;
     int i=0;
     while ((c = path[i++]) != '\0')
     {
-        if (c != sep) continue;
+        if (c != SEPARATOR) continue;
         path[i-1] = '\0';
         if (stat(path, &file_stat) != 0)
-        {
-        
-        #ifdef _WIN32
-            mkdir(path);
-        #else
-            mkdir(path, S_IRWXU );
-        #endif
-
-            //mkdir(path, 0777);
-        }
-        path[i-1] = sep;
+            mkdir(path, 0777);
+        path[i-1] = SEPARATOR;
     }
 
+    if (stat(path, &file_stat) != 0)
+        mkdir(path, 0777);
+
+    free(path);
+}
+
+void create_path_to_file(const char* fn)
+{
+    int i = ((int)strlen(fn)) - 1;
+    for (; i>=0; i--)
+        if (fn[i] == SEPARATOR)
+            break;
+    GS_ASSERT(i >= 0);
+    if (i < 0) return;
+
+    char* path = (char*)malloc((i+1) * sizeof(char));
+    int j=0;
+    for (; j<i; j++) path[j] = fn[j];
+    path[j] = '\0';
+    create_path(path);
     free(path);
 }
