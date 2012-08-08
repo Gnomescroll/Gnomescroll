@@ -345,6 +345,11 @@ void load_item_dat()
     s.container_type = CONTAINER_TYPE_RECYCLER;
     container_block_def("recycler", CONTAINER_TYPE_RECYCLER);
     s.cube_height = 1;
+
+    item_def(60, IG_RESOURCE, "regolith_dust");
+    sprite_def(i0, 4,6);
+    s.pretty_name = (char*) "Regolith Dust";
+    s.max_stack_size = 64;
     
     end_item_dat(); // finalize
     

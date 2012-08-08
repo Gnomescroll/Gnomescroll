@@ -9,6 +9,7 @@
 #endif
 
 #if DC_SERVER
+#include <item/container/config/recycler_dat.hpp>
 #include <item/container/server.hpp>
 
 // packet send stubs
@@ -154,8 +155,8 @@ static void register_settings()
     container_def(CONTAINER_TYPE_RECYCLER);
     c.xdim = 1;
     c.ydim = 1;
-    c.alt_xdim = 1;
-    c.alt_ydim = 1;
+    c.alt_xdim = 0;
+    c.alt_ydim = 0;
     c.attached_to_agent = false;
     c.alpha_action = &recycler_alpha_action_decision_tree;
     c.beta_action = &recycler_beta_action_decision_tree;
@@ -197,11 +198,19 @@ void init_config()
     container_attributes = new ContainerAttributes[MAX_CONTAINER_TYPES];
     register_settings();
     validate_settings();
+
+    #if DC_SERVER
+    init_recycler_dat();
+    #endif
 }
 
 void teardown_config()
 {
     if (container_attributes != NULL) delete[] container_attributes;
+
+    #if DC_SERVER
+    teardown_recycler_dat();
+    #endif
 }
 
 /* Public Attribute Accessors */

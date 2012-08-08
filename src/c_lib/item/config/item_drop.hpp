@@ -4,6 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
+#include <common/random.h>
 #include <item/common/constant.hpp>
 #include <item/common/struct.hpp>
 
@@ -61,7 +62,8 @@ class ItemDropEntry
         GS_ASSERT(false);
     }
     
-    void drop_item(struct Vec3 position);
+    void drop_item(struct Vec3 position, float vx,  float vy, float vz, randFloat vx_func, randFloat vy_func, randFloat vz_func);
+    class Item* drop_item();
     
     ItemDropEntry() :
     n_drops(0), item_type(NULL_ITEM_TYPE), amount(NULL), probability(NULL)
@@ -129,7 +131,16 @@ class ItemDrop
         }
         
     public:
-        
+
+        class Item** dropped_items;
+        int n_dropped_items;
+
+        // creation state configuration
+        randFloat vx_func;
+        randFloat vy_func;
+        randFloat vz_func;
+        float vx,vy,vz;
+
         // config
         void set_max_drop_types(int n)
         {
@@ -139,6 +150,7 @@ class ItemDrop
             GS_ASSERT(this->max_drops == 0)
             this->max_drops = n;
             this->drop = new ItemDropEntry[n];
+            this->dropped_items = (class Item**)calloc(n, sizeof(class Item*));
         }
         
         void set_max_drop_amounts(const char* item_name, int n)
@@ -175,14 +187,24 @@ class ItemDrop
 
         void drop_item(Vec3 position);
 
+        bool is_loaded()
+        {
+            return (n_drops >= 0 && max_drops >= 0 && drop != NULL); 
+        }
+
     ItemDrop() :
-    n_drops(0), max_drops(0), drop(NULL)
+    n_drops(0), max_drops(0), drop(NULL),
+    dropped_items(NULL), n_dropped_items(0),
+    vx_func(NULL), vy_func(NULL), vz_func(NULL),
+    vx(0.0f), vy(0.0f), vz(0.0f)
     {}
     
     ~ItemDrop()
     {
         if (this->drop != NULL) delete[] this->drop;
+        if (this->dropped_items != NULL) free(this->dropped_items);
     }
+    
 };
 
 }   // Item

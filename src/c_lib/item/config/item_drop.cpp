@@ -12,7 +12,7 @@ dont_include_this_file_in_client
 namespace Item
 {
 
-static void create_dropped_item(int item_type, int amount, Vec3 position)
+static void create_dropped_item(int item_type, int amount, Vec3 position, float vx, float vy, float vz, randFloat vx_func, randFloat vy_func, randFloat vz_func)
 {
     GS_ASSERT(amount > 0);
 
@@ -20,9 +20,6 @@ static void create_dropped_item(int item_type, int amount, Vec3 position)
     float y = position.y;
     float z = position.z;
     
-    const float mom = 2.0f;
-    float vx,vy,vz = mom;
-
     for (int i=0; i<amount; i++)
     {
         // create item
@@ -31,8 +28,9 @@ static void create_dropped_item(int item_type, int amount, Vec3 position)
         if (item == NULL) break;
         
         // create item particle
-        vx = (randf()-0.5f)*mom;
-        vy = (randf()-0.5f)*mom;
+        if (vx_func != NULL) vx = vx_func();
+        if (vy_func != NULL) vy = vy_func();
+        if (vz_func != NULL) vz = vz_func();
         ItemParticle::ItemParticle* item_particle = ItemParticle::create_item_particle(
             item->id, item->type, x, y, z, vx, vy, vz);
         GS_ASSERT(item_particle != NULL);
@@ -47,7 +45,8 @@ static void create_dropped_item(int item_type, int amount, Vec3 position)
     }
 }
 
-void ItemDropEntry::drop_item(Vec3 position)
+
+void ItemDropEntry::drop_item(Vec3 position, float vx, float vy, float vz, randFloat vx_func, randFloat vy_func, randFloat vz_func)
 {
     GS_ASSERT(this->n_drops > 0);
     GS_ASSERT(this->item_type != NULL_ITEM_TYPE);
@@ -64,7 +63,7 @@ void ItemDropEntry::drop_item(Vec3 position)
         float drop_p = this->probability[i];
         if (p >= p_start && p <= p_start+drop_p)
         {    // drop
-            create_dropped_item(this->item_type, this->amount[i], position);
+            create_dropped_item(this->item_type, this->amount[i], position, vx, vy, vz, vx_func, vy_func, vz_func);
             break;
         }
         p_start += drop_p;
@@ -83,7 +82,7 @@ void ItemDrop::drop_item(Vec3 position)
     GS_ASSERT(this->n_drops == max_drops);
         
     for (int i=0; i<this->max_drops; i++)
-        this->drop[i].drop_item(position);
+        this->drop[i].drop_item(position, vx, vy, vz, vx_func, vy_func, vz_func);
 }
 
 }   // Item

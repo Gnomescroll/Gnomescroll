@@ -11,6 +11,12 @@ dont_include_this_file_in_client
 namespace Components
 {
 
+float default_random_velocity()
+{
+    static const float mom = 2.0f;
+    return (randf()-0.5f)*mom;
+}
+
 class ItemDropComponent: public Component
 {
     public:
@@ -20,7 +26,10 @@ class ItemDropComponent: public Component
 
     ItemDropComponent()
     : Component(COMPONENT_ITEM_DROP, COMPONENT_INTERFACE_ITEM_DROP)
-    {}
+    {
+        this->drop.vx_func = &default_random_velocity;
+        this->drop.vy_func = &default_random_velocity;
+    }
 
 };
 

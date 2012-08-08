@@ -19,6 +19,7 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
 int* _nearest_block(Vec3 position, Vec3 direction, float max_distance, int z_low, int z_high) { return _nearest_block(position.x, position.y, position.z, direction.x, direction.y, direction.z, max_distance, z_low, z_high); }
 int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
 int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, int side[3], float max_distance, int z_low, int z_high);
+int* _farthest_empty_block(Vec3 p, Vec3 v, int side[3], float max_distance, int z_low, int z_high) { return _farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, side, max_distance, z_low, z_high); }
 
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2);
 

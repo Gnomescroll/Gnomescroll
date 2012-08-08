@@ -28,12 +28,12 @@ class RecyclerUI : public UIElement
     // hardcoded sprite indices. multiply by cell size to get pixel index
     static const int input_sprite_x = 0;
     static const int input_sprite_y = 0;
-    static const int output_sprite_x = 1;
-    static const int output_sprite_y = 0;
     static const int input_overlay_x = 2;
     static const int input_overlay_y = 0;
-    static const int output_overlay_x = 3;
-    static const int output_overlay_y = 0;
+    //static const int output_sprite_x = 1;
+    //static const int output_sprite_y = 0;
+    //static const int output_overlay_x = 3;
+    //static const int output_overlay_y = 0;
     static const int button_inactive_x = 0;
     static const int button_inactive_y = 1;
     static const int button_inactive_hover_x = 0;
@@ -95,7 +95,6 @@ class RecyclerUI : public UIElement
     {
         int slot = this->get_grid_at(px,py);
         if (slot == 0) return 0;
-        if (slot == 2) return 1;
         return NULL_SLOT;
     }
 
@@ -176,7 +175,7 @@ class RecyclerUI : public UIElement
     }
 
     RecyclerUI()
-    : xdim(1), ydim(1), alt_xdim(1), alt_ydim(1),
+    : xdim(1), ydim(1), alt_xdim(0), alt_ydim(0),
     render_width(1.0f), render_height(1.0f),
     texture_offset_x(0.0f), texture_offset_y(0.0f),
     stacks(NULL),
@@ -211,7 +210,7 @@ void RecyclerUI::draw()
     GS_ASSERT(slot_stacks != NULL);
     if (slot_stacks == NULL) return;
 
-    bool output_blocked = (slot_types[slot_max-1] != NULL_ITEM_TYPE);
+    bool output_blocked = false;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
@@ -235,12 +234,12 @@ void RecyclerUI::draw()
     // draw input slot
     draw_bound_texture_sprite2(x,y, sw,sh, z, input_sprite_x*tw, input_sprite_y*th, tw, th);
 
-    // draw output slot
-    y -= 2 * cell_size;
-    draw_bound_texture_sprite2(x,y, sw,sh, z, output_sprite_x*tw, output_sprite_y*th, tw, th);
+    //// draw output slot
+    //y -= 2 * cell_size;
+    //draw_bound_texture_sprite2(x,y, sw,sh, z, output_sprite_x*tw, output_sprite_y*th, tw, th);
     
     // draw button
-    y += 1 * cell_size;
+    y -= cell_size;
     if (this->in_button_region(mouse_x, mouse_y))
     {   // draw hover sprite
         if (slot_types[0] != NULL_ITEM_TYPE)
@@ -309,7 +308,6 @@ void RecyclerUI::draw()
     {
         int xslot = 0;
         int yslot = slot;
-        if (slot == slot_max-1) yslot += 1;
 
         int item_type = slot_types[slot];
 
@@ -347,9 +345,9 @@ void RecyclerUI::draw()
     // draw input overlay
     draw_bound_texture_sprite2(xoff, yoff-sw, sw, sh, -0.1f, input_overlay_x*tw, input_overlay_y*th, tw, th);
 
-    // draw output overlay (if no item in slot)
-    if (slot_types[0] != NULL_ITEM_TYPE && slot_types[slot_max-1] == NULL_ITEM_TYPE)
-        draw_bound_texture_sprite2(xoff, yoff-sw*3, sw, sh, -0.1f, output_overlay_x*tw, output_overlay_y*th, tw, th);
+    //// draw output overlay (if no item in slot)
+    //if (slot_types[0] != NULL_ITEM_TYPE && slot_types[slot_max-1] == NULL_ITEM_TYPE)
+        //draw_bound_texture_sprite2(xoff, yoff-sw*3, sw, sh, -0.1f, output_overlay_x*tw, output_overlay_y*th, tw, th);
 
     glDisable(GL_TEXTURE_2D);
 
@@ -366,7 +364,6 @@ void RecyclerUI::draw()
     {
         int xslot = 0;
         int yslot = slot;
-        if (slot == slot_max-1) yslot += 1;
 
         int stack = slot_stacks[slot];
         if (stack <= 1) continue;
