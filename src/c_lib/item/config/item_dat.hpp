@@ -350,7 +350,59 @@ void load_item_dat()
     sprite_def(i0, 4,6);
     s.pretty_name = (char*) "Regolith Dust";
     s.max_stack_size = 64;
-    
+
+/*
+iron_rod 6 7
+iron_star 4 7
+copper_wire 1 6
+
+iron_helmet 5 3
+gallium_helmet 5 4
+copper_helmet 5 5
+iridium_helmet 5 6
+*/
+
+
+    item_def(61, IG_RESOURCE, "iron_rod");
+    sprite_def(i0, 6,7);
+    s.pretty_name = (char*) "Iron Rod";
+    s.max_stack_size = 1;
+
+    item_def(62, IG_RESOURCE, "iron_star");
+    sprite_def(i0, 4,7);
+    s.pretty_name = (char*) "Iron Star";
+    s.max_stack_size = 1;
+
+    item_def(63, IG_RESOURCE, "copper_wire");
+    sprite_def(i0, 1,6);
+    s.pretty_name = (char*) "Copper Wire";
+    s.max_stack_size = 1;
+
+
+    item_def(64, IG_RESOURCE, "iron_helmet");
+    sprite_def(i0, 5,3);
+    s.pretty_name = (char*) "Iron Helmet";
+    s.max_stack_size = 1;
+
+    item_def(65, IG_RESOURCE, "gallium_helmet");
+    sprite_def(i0, 5,4);
+    s.pretty_name = (char*) "Gallium Helmet";
+    s.max_stack_size = 1;
+
+    item_def(66, IG_RESOURCE, "copper_helmet");
+    sprite_def(i0, 5,5);
+    s.pretty_name = (char*) "Copper Helmet";
+    s.max_stack_size = 1;
+
+    item_def(67, IG_RESOURCE, "iridium_helmet");
+    sprite_def(i0, 5,6);
+    s.pretty_name = (char*) "Iridium Helmet";
+    s.max_stack_size = 1;
+
+
+
+
+
     end_item_dat(); // finalize
     
     verify_item_dat();
