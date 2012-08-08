@@ -168,8 +168,10 @@ char** read_lines(char* buffer, int* lines)
     return arr;
 }
 
-void create_directory(const char* directory)
+void create_directory_if_not_exists(const char* directory)
 {
+
+
 #ifdef _WIN32
     mkdir(directory);
 #else
