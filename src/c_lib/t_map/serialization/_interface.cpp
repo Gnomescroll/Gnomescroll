@@ -107,23 +107,16 @@ class BlockSerializer
 
 		FILE *file; 
 		file = fopen(filename, "w+"); /* apend file (add text to  a file or create a file if it does not exist.*/ 
-		//fprintf(file,"%s","This is just an example :)"); /*writes*/ 
-		
-		int windex = 0;
-
 		//size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
 		int ret = fwrite (buffer, file_size, 1, file);
-
 		GS_ASSERT(ret == 1);
+		fclose(file); /*done!*/ 
 /*
 		while(windex < file_size)
 		{
 			windex += fwrite(file, )
-
 		}
 */
-		fclose(file); /*done!*/ 
-
 
 	}
 };
