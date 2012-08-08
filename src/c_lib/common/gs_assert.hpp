@@ -38,6 +38,14 @@ int   _GS_ASSERT_COUNT[GS_ASSERT_MAX];
 
 void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
+    static int _init = 0;
+    if (!_init++)
+        for (int i=0; i<GS_ASSERT_MAX; i++)
+        {
+            _GS_ASSERT_ARRAY[i] = NULL;
+            _GS_ASSERT_COUNT[i] = 1;
+        }
+    
     static char t[256];
 
     int index = 0;
@@ -65,7 +73,7 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
             else
             {
                 //print and return;
-                print_trace();
+                print_trace(2);
                 puts(t);
                 return;
             }
@@ -79,7 +87,7 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
     _GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
     strcpy(_GS_ASSERT_ARRAY[i], t);
 
-    print_trace();
+    print_trace(2);
     puts(t);
 }
 

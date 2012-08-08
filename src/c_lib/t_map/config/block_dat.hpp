@@ -42,6 +42,7 @@ void load_block_dat()
     int t0 = texture_alias("media/sprites/t00.png");
     int t1 = texture_alias("media/sprites/t01.png");
     int t2 = texture_alias("media/sprites/t02.png");
+    int t3 = texture_alias("media/sprites/t03.png");
 
     const int T = 0;
     const int B = 1;
@@ -91,9 +92,7 @@ void load_block_dat()
     side_texture(T, t0, 2,2);
     side_texture(B, t0, 2,4);
     push_texture();
-
-    hud_def(1,4, t0,1,3);
-
+    hud_def(1,4, t0,2,3);
 
     cube_def(6, ItemContainerBlock, "small_storage");
     iso_texture(t1, 13,4);
@@ -212,7 +211,7 @@ void load_block_dat()
     cube_def(28, SolidBlock, "copper_ore");
     iso_texture(t1,1,9);
     push_texture();
-    hud_def(6,3, t1,1,9);
+    //hud_def(6,3, t1,1,9);
     set_max_dmg(16);
 
     cube_def(29, SolidBlock, "gallium_ore");
@@ -250,10 +249,22 @@ void load_block_dat()
     iso_texture(t2, 2,1);
     push_texture();
     set_max_dmg(32); //255
-    hud_def(2,3, t2,1,2);
+    hud_def(2,3, t2,2,1);
+
+
+    // random textures from cell to fill the block placer
+    cube_def(255-1, SolidBlock, "cell1");
+    iso_texture(t3, 1,1);
+    push_texture();
+    //hud_def();
+    
+    cube_def(255-2, SolidBlock, "cell2");
+    cube_def(255-3, SolidBlock, "cell3");
+    cube_def(255-4, SolidBlock, "cell4");
+
+    
 
     end_block_dat();
-
 }
 
 

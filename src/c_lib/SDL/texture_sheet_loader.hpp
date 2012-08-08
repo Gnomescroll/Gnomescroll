@@ -7,27 +7,28 @@ class TextureSheetLoader
 {
     public:
 
-		unsigned int tile_size;	// pixel dimension of each sprite/tile in sheet
-		unsigned int texture_num;
-		unsigned int tile_num;
-		
-		GLenum texture_format;
-		
-		SDL_Surface** surfaces;
-		
-		struct TileMeta* meta;
+        unsigned int tile_size; // pixel dimension of each sprite/tile in sheet
+        unsigned int texture_num;
+        unsigned int tile_num;
+        
+        GLenum texture_format;
 
-		struct SDL_Surface* texture_sheet;  //for 2d array
-		struct SDL_Surface* grey_scale_texture_sheet;  //for 2d array
-		Uint32* texture_stack; //for 3d arrays
+        char** filenames;
+        SDL_Surface** surfaces;
+        
+        struct TileMeta* meta;
 
-		int load_texture(char* filename);
-		int load_texture_from_surface(struct SDL_Surface* surface);
+        struct SDL_Surface* texture_sheet;  //for 2d array
+        struct SDL_Surface* grey_scale_texture_sheet;  //for 2d array
+        Uint32* texture_stack; //for 3d arrays
 
-		// blit to sheet and return texture id
-		int blit(unsigned int sheet_id, int source_x, int source_y);
+        int load_texture(const char* filename);
+        int load_texture_from_surface(struct SDL_Surface* surface);
 
-		void generate_grey_scale();
+        // blit to sheet and return texture id
+        int blit(unsigned int sheet_id, int source_x, int source_y);
+
+        void generate_grey_scale();
 
     explicit TextureSheetLoader(unsigned int tile_size);
     ~TextureSheetLoader();
@@ -51,15 +52,15 @@ void teardown_item_texture();
 
 void teardown();
 
-}	// TextureSheetLoader
+}   // TextureSheetLoader
 
 //cube texture sheet api
-int LUA_load_cube_texture_sheet(char* filename);
+int LUA_load_cube_texture_sheet(const char* filename);
 int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y);
 void LUA_save_cube_texture();
 
 //item texture sheet api
-int LUA_load_item_texture_sheet(char* filename);
+int LUA_load_item_texture_sheet(const char* filename);
 int LUA_load_item_texture_sheet(struct SDL_Surface* surface);
 int LUA_blit_item_texture(int sheet_id, int source_x, int source_y);
 void LUA_save_item_texture();
