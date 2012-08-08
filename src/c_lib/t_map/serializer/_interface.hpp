@@ -155,15 +155,34 @@ class BlockSerializer
     }
 };
 
-void save_map()
+void save_map(char* filename)
 {
     printf("Saving map...\n");
-    const char fn[] = "./world/map-" STR(DC_VERSION) ".map";
-    create_path_to_file(fn);
+    create_path_to_file(filename);
     BlockSerializer* BS = new BlockSerializer;
-    BS->save(fn);
+    BS->save(filename);
     delete BS;
-    printf("Map saved to %s\n", fn);
+    printf("Map saved to %s\n", filename);
+}
+
+
+void load_map(char* filename)
+{
+    BlockSerializer* bs = new BlockSerializer;
+    bs->load(filename);
+    delete bs;  
+}
+
+const char default_map_file[] = "./world/map-" STR(DC_VERSION) ".map";
+
+void save_map()
+{
+	save_map((char*)default_map_file );
+}
+
+void load_map()
+{
+	load_map((char*)default_map_file );
 }
 
 }   // t_map

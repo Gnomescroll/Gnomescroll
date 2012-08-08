@@ -43,9 +43,7 @@ void init(int argc, char* argv[])
     }
     else
     {   // use map file
-        BlockSerializer* bs = new BlockSerializer;
-        bs->load(Options::map);
-        delete bs;
+        t_map::load_map(Options::map);
     }   
 
     srand((unsigned int)time(NULL));
