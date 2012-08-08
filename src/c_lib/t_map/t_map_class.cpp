@@ -42,7 +42,16 @@ namespace t_map
         ychunk_dim = MAP_CHUNK_YDIM;
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
+
+        #if DC_CLIENT
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
+        #endif
+
+        #if DC_SERVER
+        for(int i=0; i<xchunk_dim; i++) 
+        for(int j=0; j<ychunk_dim; j++)
+            chunk[i] = new MAP_CHUNK(16*i, 16*j);
+        #endif
 
         #if DC_CLIENT
         for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; column_heights[i++] = 0);

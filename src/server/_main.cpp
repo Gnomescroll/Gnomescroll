@@ -127,7 +127,7 @@ int run()
 
     BlockSerializer* BS = new BlockSerializer;
     //BS->save("test.map");
-    BS->load("test.map");
+    //BS->load("test.map");
     delete BS;
 
     //int tick = 0;
