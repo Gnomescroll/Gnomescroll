@@ -151,7 +151,7 @@ class BlockSerializer
 void save_map()
 {
     printf("Saving map...\n");
-    const char fn[] = "./maps/map-" STR(DC_VERSION) ".map";
+    const char fn[] = "./world/map-" STR(DC_VERSION) ".map";
     create_path_to_file(fn);
     BlockSerializer* BS = new BlockSerializer;
     BS->save(fn);
