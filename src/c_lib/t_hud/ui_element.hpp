@@ -41,7 +41,7 @@ class UIElement
             HudFont::start_font_draw();
             HudFont::reset_default();
             HudFont::set_texture();
-            this->name.set_position(this->xoff, this->yoff + this->name.get_height() + 1);
+            this->name.set_position(this->xoff, this->yoff + this->name.get_height() + 2);
             this->name.draw();
             HudFont::end_font_draw();
         }

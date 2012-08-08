@@ -71,14 +71,14 @@ static void set_energy_core_properties(Object* object)
     
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
-    item_drop->set_max_drop_types(2);
-    item_drop->set_max_drop_amounts("energy_tank", 2);
-    item_drop->add_drop("energy_tank", 2, 0.5f);
-    item_drop->add_drop("energy_tank", 3, 0.5f);
-    item_drop->set_max_drop_amounts("small_charge_pack", 3);
-    item_drop->add_drop("small_charge_pack", 4, 0.5f);
-    item_drop->add_drop("small_charge_pack", 5, 0.3f);
-    item_drop->add_drop("small_charge_pack", 6, 0.2f);
+    item_drop->drop.set_max_drop_types(2);
+    item_drop->drop.set_max_drop_amounts("energy_tank", 2);
+    item_drop->drop.add_drop("energy_tank", 2, 0.5f);
+    item_drop->drop.add_drop("energy_tank", 3, 0.5f);
+    item_drop->drop.set_max_drop_amounts("small_charge_pack", 3);
+    item_drop->drop.add_drop("small_charge_pack", 4, 0.5f);
+    item_drop->drop.add_drop("small_charge_pack", 5, 0.3f);
+    item_drop->drop.add_drop("small_charge_pack", 6, 0.2f);
     #endif
     
     #if DC_CLIENT

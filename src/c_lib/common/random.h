@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+typedef float (*randFloat)();
+
 // returns random integer with lowest value min, and highest value max
 inline int randrange(int min, int max)
 {

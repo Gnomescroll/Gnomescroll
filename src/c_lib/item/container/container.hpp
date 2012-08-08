@@ -466,6 +466,51 @@ class ItemContainerSmelter: public ItemContainerInterface
     {}
 };
 
+class ItemContainerRecycler: public ItemContainerInterface
+{
+    public:
+
+        static const int input_slot = 0;
+
+        ItemID get_input_slot()
+        {
+            GS_ASSERT(this->is_valid_slot(this->input_slot));
+            if (!this->is_valid_slot(this->input_slot)) return NULL_ITEM;
+            return this->slot[this->input_slot];
+        }
+
+        int get_empty_slot()
+        {
+            if (this->get_input_slot() == NULL_ITEM) return this->input_slot;
+            return NULL_SLOT;
+        }
+
+        bool can_insert_item(int slot, ItemID item_id)
+        {
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_id == NULL_ITEM) return false;
+            if (slot == this->input_slot) return true;
+            return false;
+        }
+
+        void init(int xdim, int ydim)
+        {
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + this->alt_xdim*this->alt_ydim;
+            GS_ASSERT(this->slot_max > 0);
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+            this->slot = new ItemID[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+        }
+
+        ItemContainerRecycler(ItemContainerType type, int id)
+        : ItemContainerInterface(type, id)
+        {}
+};
+
 }   // ItemContainer
 
 #include <common/template/dynamic_multi_object_list.hpp>
@@ -497,6 +542,9 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
 
         case CONTAINER_TYPE_SMELTER_ONE:
             return new ItemContainerSmelter(type, id);
+
+        case CONTAINER_TYPE_RECYCLER:
+            return new ItemContainerRecycler(type, id);
 
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);

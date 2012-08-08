@@ -9,6 +9,7 @@
 #endif
 
 #if DC_SERVER
+#include <item/container/config/recycler_dat.hpp>
 #include <item/container/server.hpp>
 
 // packet send stubs
@@ -26,7 +27,9 @@ void send_no_container_alpha_action(ContainerActionType action, int container_id
 void send_no_container_beta_action(ContainerActionType action, int container_id, int slot){}
 void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot){}
 void send_smelter_beta_action(ContainerActionType action, int container_id, int slot){}
-
+void send_recycler_alpha_action(ContainerActionType action, int container_id, int slot){}
+void send_recycler_beta_action(ContainerActionType action, int container_id, int slot){}
+void send_recycler_crush_action(ContainerActionType action, int container_id, int slot){}
 #endif
 
 namespace ItemContainer
@@ -148,7 +151,20 @@ static void register_settings()
     c.beta_action = &smelter_beta_action_decision_tree;
     c.alpha_packet = &send_smelter_alpha_action;
     c.beta_packet = &send_smelter_beta_action;
-    
+
+    container_def(CONTAINER_TYPE_RECYCLER);
+    c.xdim = 1;
+    c.ydim = 1;
+    c.alt_xdim = 0;
+    c.alt_ydim = 0;
+    c.attached_to_agent = false;
+    c.alpha_action = &recycler_alpha_action_decision_tree;
+    c.beta_action = &recycler_beta_action_decision_tree;
+    c.alpha_packet = &send_recycler_alpha_action;
+    c.beta_packet = &send_recycler_beta_action;
+    c.alpha_action_alt = &recycler_crush_alpha_action_decision_tree;
+    c.alpha_packet_alt = &send_recycler_crush_action;
+  
     add_container(c);   // finalize
 }
     
@@ -182,11 +198,19 @@ void init_config()
     container_attributes = new ContainerAttributes[MAX_CONTAINER_TYPES];
     register_settings();
     validate_settings();
+
+    #if DC_SERVER
+    init_recycler_dat();
+    #endif
 }
 
 void teardown_config()
 {
     if (container_attributes != NULL) delete[] container_attributes;
+
+    #if DC_SERVER
+    teardown_recycler_dat();
+    #endif
 }
 
 /* Public Attribute Accessors */
@@ -240,5 +264,18 @@ int get_container_alt_ydim(ItemContainerType type)
     return attr->alt_ydim;
 }
 
+bool container_type_is_attached_to_agent(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return false;
+    return !attr->attached_to_agent;
+}
+
+bool container_type_is_block(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return false;
+    return !attr->attached_to_agent;
+}
     
 }   // ItemContainer

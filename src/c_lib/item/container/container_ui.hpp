@@ -324,4 +324,54 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
     {}
 };
 
+class ItemContainerRecyclerUI: public ItemContainerUIInterface
+{
+    public:
+
+        static const int input_slot = 0;
+
+        int get_input_slot_type()
+        {
+            GS_ASSERT(this->is_valid_slot(this->input_slot));
+            if (!this->is_valid_slot(this->input_slot)) return false;
+            return this->slot_type[this->input_slot];
+        }
+
+        bool can_insert_item(int slot, int item_type)
+        {
+            GS_ASSERT(this->is_valid_slot(slot));
+            if (!this->is_valid_slot(slot)) return false;
+            if (item_type == NULL_ITEM_TYPE) return false;
+
+            if (slot == 0) return true;
+            return false;
+        }
+
+        int get_empty_slot()
+        {
+            if (this->slot_max <= 0) return NULL_SLOT;
+            if (this->slot_type[0] == NULL_ITEM_TYPE) return 0;
+            return NULL_SLOT;
+        }
+
+        void init(ItemContainerType type, int xdim, int ydim)
+        {
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + this->alt_xdim * this->alt_ydim;
+            GS_ASSERT(this->slot_max < NULL_SLOT);
+            this->slot_type = new int[this->slot_max];
+            this->slot_stack = new int[this->slot_max];
+            this->slot_durability = new int[this->slot_max];
+            for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
+            for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
+            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
+        }
+
+        explicit ItemContainerRecyclerUI(int id)
+        : ItemContainerUIInterface(id)
+        {}
+};
+
 } // Item

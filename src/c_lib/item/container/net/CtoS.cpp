@@ -19,6 +19,10 @@ inline void no_container_action_beta_CtoS::handle(){}
 inline void smelter_container_action_alpha_CtoS::handle(){}
 inline void smelter_container_action_beta_CtoS::handle(){}
 
+inline void recycler_container_action_alpha_CtoS::handle(){}
+inline void recycler_container_action_beta_CtoS::handle(){}
+inline void recycler_crush_item_CtoS::handle(){}
+
 inline void open_container_CtoS::handle() {}
 inline void close_container_CtoS::handle() {}
 
@@ -34,6 +38,7 @@ inline void admin_create_container_block_CtoS::handle() {}
 #include <state/server_state.hpp>
 #include <item/container/_interface.hpp>
 #include <item/container/server.hpp>
+#include <item/container/config/recycler_dat.hpp>
 
 namespace ItemContainer
 {
@@ -344,6 +349,168 @@ inline void smelter_container_action_beta_CtoS::handle()
     ItemID slot_item = container->get_item(slot);
     if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
+}
+
+inline void recycler_container_action_alpha_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action = recycler_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+
+    if (this->action != action)
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID hand_item = get_agent_hand(a->id);
+    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID slot_item = container->get_item(slot);
+    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+        send_container_failed_action(client_id, event_id);
+}
+
+inline void recycler_container_action_beta_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return;
+
+    ContainerActionType action = recycler_beta_action_decision_tree(a->id, client_id, container_id, slot);
+
+    if (this->action != action)
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+    
+    ItemID hand_item = get_agent_hand(a->id);
+
+    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    {
+        send_container_failed_action(client_id, event_id);
+        return;
+    }
+
+    ItemID slot_item = container->get_item(slot);
+    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+        send_container_failed_action(client_id, event_id);
+}
+
+static const int sq_normals[6][3] =
+{
+    {1,0,0},
+    {-1,0,0},
+    {0,1,0},
+    {0,-1,0},
+    {0,0,1},
+    {0,0,-1}
+};
+
+inline void recycler_crush_item_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    
+    if (!recycler_crush_alpha_action_decision_tree(a->id, client_id, container_id, NULL_SLOT)) return;
+
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    GS_ASSERT(container->type == CONTAINER_TYPE_RECYCLER);
+    if (container->type != CONTAINER_TYPE_RECYCLER) return;
+
+    ItemContainerRecycler* recycler = (ItemContainerRecycler*)container;
+    
+    ItemID item_id = recycler->get_input_slot();
+    GS_ASSERT(item_id != NULL_ITEM);
+    if (item_id == NULL_ITEM) return;
+    int type = Item::get_item_type(item_id);
+    GS_ASSERT(type != NULL_ITEM_TYPE);
+    if (type == NULL_ITEM_TYPE) return;
+
+    class Item::ItemDrop* drop = get_recycler_drop(type);
+    if (drop == NULL) return;   // TOOD -- send "failed" packet
+
+    // unset any velocity state
+    drop->vx = 0.0f;
+    drop->vy = 0.0f;
+    drop->vz = 0.0f;
+
+    int b[3];
+    t_map::get_container_location(recycler->id, b);
+    Vec3 p = vec3_add(vec3_init(b[0], b[1], b[2]), vec3_init(0.5f, 0.5f, 0.5f));
+    if (t_map::get(b[0], b[1], b[2]+1) == 0)
+    {   // pop out of the top
+        p.x += randf() - 0.5f; 
+        p.y += randf() - 0.5f; 
+        p.z += 0.51f;
+        drop->vz = recycler_item_jump_out_velocity();
+    }
+    else
+    {   // calculate face nearest agent
+        int side[3];
+        int* c = _farthest_empty_block(a->get_camera_position(), a->forward_vector(), side, AGENT_CONTAINER_REACH, 4, 3);
+        GS_ASSERT(c != NULL);
+        if (c == NULL
+         || (c[0] != b[0] || c[1] != b[1] || c[2] != b[2])
+         || t_map::get(b[0]+side[0], b[1]+side[1], b[2]+side[2]) != 0)
+        {   // use any open face
+            int i=0;
+            for (; i<6; i++)
+            {
+                if (t_map::get(b[0] + sq_normals[i][0], b[1] + sq_normals[i][1], b[2] + sq_normals[i][2]) == 0)
+                {   // velocity in this direction
+                    float v = recycler_item_jump_out_velocity();
+                    drop->vx = v * side[0];
+                    drop->vy = v * side[1];
+                    drop->vz = v * side[2];                
+                    p.x += 0.51f * side[0] + (abs(side[0])-1) * (randf()-0.5f);
+                    p.y += 0.51f * side[1] + (abs(side[1])-1) * (randf()-0.5f);
+                    p.z += 0.51f * side[2] + (abs(side[2])-1) * (randf()-0.5f);
+                    break;
+                }
+            }
+            if (i == 6)
+            {   // no open blocks, give up
+                // TODO -- send error message
+                return;
+            }
+        }
+        else
+        {   // use the side
+            float v = recycler_item_jump_out_velocity();
+            drop->vx = v * side[0];
+            drop->vy = v * side[1];
+            drop->vz = v * side[2];
+            p.x += 0.51f * side[0] + (abs(side[0])-1) * (randf()-0.5f);
+            p.y += 0.51f * side[1] + (abs(side[1])-1) * (randf()-0.5f);
+            p.z += 0.51f * side[2] + (abs(side[2])-1) * (randf()-0.5f);
+        }
+    }
+
+    int stack = Item::get_stack_size(item_id);
+    int remaining_stack = Item::consume_stack_item(item_id);
+    if (stack > 0 && stack != remaining_stack) Item::send_item_state(item_id);
+
+    drop->drop_item(p);
 }
 
 inline void open_container_CtoS::handle()

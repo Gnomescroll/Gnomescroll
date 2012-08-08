@@ -43,6 +43,7 @@ ItemID get_toolbelt_item(int slot);
 ItemID* get_container_contents(int container_id);
 int get_sprite_index_for_id(ItemID item_id);
 int get_sprite_index_for_type(int item_type);
+int get_container_ui_slot_max(int container_id);
 int* get_container_ui_types(int container_id);
 int* get_container_ui_stacks(int container_id);
 

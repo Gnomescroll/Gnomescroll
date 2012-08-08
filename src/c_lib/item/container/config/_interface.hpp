@@ -14,6 +14,8 @@ int get_container_ydim(ItemContainerType type);
 int get_container_alt_max_slots(ItemContainerType type);
 int get_container_alt_xdim(ItemContainerType type);
 int get_container_alt_ydim(ItemContainerType type);
+bool container_type_is_attached_to_agent(ItemContainerType type);
+bool container_type_is_block(ItemContainerType type);
 
 /* Configuration Loader */
 

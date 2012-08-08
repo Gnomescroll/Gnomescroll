@@ -66,9 +66,9 @@ static void set_agent_spawner_properties(Object* object)
 
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
-    item_drop->set_max_drop_types(1);
-    item_drop->set_max_drop_amounts("agent_spawner", 1);
-    item_drop->add_drop("agent_spawner", 1, 1.0f);
+    item_drop->drop.set_max_drop_types(1);
+    item_drop->drop.set_max_drop_amounts("agent_spawner", 1);
+    item_drop->drop.add_drop("agent_spawner", 1, 1.0f);
     #endif
 
     #if DC_CLIENT

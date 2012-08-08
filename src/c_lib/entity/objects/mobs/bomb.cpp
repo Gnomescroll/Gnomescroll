@@ -114,14 +114,14 @@ static void set_mob_bomb_properties(Object* object)
 
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
-    item_drop->set_max_drop_types(2);
-    item_drop->set_max_drop_amounts("synthesizer_coin", 3);
-    item_drop->add_drop("synthesizer_coin", 1, 0.3f);
-    item_drop->add_drop("synthesizer_coin", 2, 0.1f);
-    item_drop->add_drop("synthesizer_coin", 3, 0.05f);
+    item_drop->drop.set_max_drop_types(2);
+    item_drop->drop.set_max_drop_amounts("synthesizer_coin", 3);
+    item_drop->drop.add_drop("synthesizer_coin", 1, 0.3f);
+    item_drop->drop.add_drop("synthesizer_coin", 2, 0.1f);
+    item_drop->drop.add_drop("synthesizer_coin", 3, 0.05f);
     
-    item_drop->set_max_drop_amounts("grenade_launcher", 10);
-    item_drop->add_drop_range("grenade_launcher", 1, 10, 0.8f);
+    item_drop->drop.set_max_drop_amounts("grenade_launcher", 10);
+    item_drop->drop.add_drop_range("grenade_launcher", 1, 10, 0.8f);
     #endif
 
     #if DC_CLIENT

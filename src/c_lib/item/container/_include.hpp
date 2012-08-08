@@ -12,6 +12,9 @@
 #include <item/container/config/types.hpp>
 #include <item/container/config/_state.cpp>
 #include <item/container/config/_interface.cpp>
+#if DC_SERVER
+#include <item/container/config/recycler_dat.cpp>
+#endif
 
 // Client
 #if DC_CLIENT

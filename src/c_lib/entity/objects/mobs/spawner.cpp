@@ -67,17 +67,17 @@ static void set_mob_spawner_properties(Object* object)
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
     GS_ASSERT(item_drop != NULL);
-    item_drop->set_max_drop_types(2);
-    item_drop->set_max_drop_amounts("synthesizer_coin", 3);
-    item_drop->add_drop("synthesizer_coin", 4, 0.5f);
-    item_drop->add_drop("synthesizer_coin", 6, 0.35f);
-    item_drop->add_drop("synthesizer_coin", 8, 0.15f);
+    item_drop->drop.set_max_drop_types(2);
+    item_drop->drop.set_max_drop_amounts("synthesizer_coin", 3);
+    item_drop->drop.add_drop("synthesizer_coin", 4, 0.5f);
+    item_drop->drop.add_drop("synthesizer_coin", 6, 0.35f);
+    item_drop->drop.add_drop("synthesizer_coin", 8, 0.15f);
     
-    item_drop->set_max_drop_amounts("small_charge_pack", 4);
-    item_drop->add_drop("small_charge_pack", 1, 0.50f);
-    item_drop->add_drop("small_charge_pack", 2, 0.25f);
-    item_drop->add_drop("small_charge_pack", 3, 0.15f);
-    item_drop->add_drop("small_charge_pack", 4, 0.05f);
+    item_drop->drop.set_max_drop_amounts("small_charge_pack", 4);
+    item_drop->drop.add_drop("small_charge_pack", 1, 0.50f);
+    item_drop->drop.add_drop("small_charge_pack", 2, 0.25f);
+    item_drop->drop.add_drop("small_charge_pack", 3, 0.15f);
+    item_drop->drop.add_drop("small_charge_pack", 4, 0.05f);
     #endif
 
     #if DC_CLIENT

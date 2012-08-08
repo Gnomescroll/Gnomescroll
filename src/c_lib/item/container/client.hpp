@@ -27,6 +27,9 @@ void send_no_container_alpha_action(ContainerActionType action, int container_id
 void send_no_container_beta_action(ContainerActionType action, int container_id, int slot);
 void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot);
 void send_smelter_beta_action(ContainerActionType action, int container_id, int slot);
+void send_recycler_alpha_action(ContainerActionType action, int container_id, int slot);
+void send_recycler_beta_action(ContainerActionType action, int container_id, int slot);
+void send_recycler_crush_action(ContainerActionType action, int container_id, int slot);
 
 void send_container_close(int container_id);
 

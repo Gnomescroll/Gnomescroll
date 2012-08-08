@@ -210,10 +210,11 @@ int init_c_lib(int argc, char* argv[])
 
     Item::load_crafting_dat();
     Item::load_smelting_dat();
+    ItemContainer::load_recycler_dat();
     
     return 0;
 } 
- 
+
 void close_c_lib()
 {
     printf("Server closing...\n");

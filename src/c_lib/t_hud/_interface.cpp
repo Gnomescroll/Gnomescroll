@@ -6,11 +6,12 @@
 #include <t_hud/toolbelt_hud.hpp>
 #include <t_hud/synthesizer_hud.hpp>
 #include <t_hud/storage_block.hpp>
+#include <t_hud/recycler.hpp>
 
 namespace t_hud
 {
 
-const int n_inventories = 7;
+const int n_inventories = 8;
 
 // private containers
 class AgentContainerUI* agent_container = NULL;
@@ -22,6 +23,7 @@ class EnergyTanksUI* energy_tanks = NULL;
 class CraftingUI* crafting_container = NULL;
 class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
+class RecyclerUI* recycler = NULL;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -56,6 +58,10 @@ void set_container_id(ItemContainerType container_type, int container_id)
         case CONTAINER_TYPE_SMELTER_ONE:
             smelter->container_id = container_id;
             break;
+
+        case CONTAINER_TYPE_RECYCLER:
+            recycler->container_id = container_id;
+            break;
                         
         default:
             GS_ASSERT(false);
@@ -68,6 +74,7 @@ void close_container(int container_id)
     // unset ids for variable container UIs
     if (crafting_container != NULL && crafting_container->container_id == container_id) crafting_container->container_id = NULL_CONTAINER;
     if (storage_block != NULL && storage_block->container_id == container_id) storage_block->container_id = NULL_CONTAINER;
+    if (recycler != NULL && recycler->container_id == container_id) recycler->container_id = NULL_CONTAINER;
     if (smelter != NULL && smelter->container_id == container_id) smelter->container_id = NULL_CONTAINER;
 }
 
@@ -80,6 +87,7 @@ static bool container_block_enabled = false;
 static int container_block_enabled_id = NULL_CONTAINER;
 float mouse_x = -1;
 float mouse_y = -1;
+bool lm_down = false;
 
 void enable_agent_container_hud()
 {
@@ -127,6 +135,7 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
         storage_block,
         smelter,
         energy_tanks,
+        recycler,
     };
 
     // get topmost container click
@@ -165,6 +174,8 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
      && ((AgentSynthesizerUI*)container)->in_shopping_region(x,y))
      || (container->type == UI_ELEMENT_CRAFTING_CONTAINER
      && ((CraftingUI*)container)->in_craft_output_region(x,y))
+     || (container->type == UI_ELEMENT_RECYCLER
+     && ((RecyclerUI*)container)->in_button_region(x,y))
     ));
 
     return event;
@@ -215,11 +226,13 @@ static const ContainerInputEvent NULL_EVENT =
 
 ContainerInputEvent left_mouse_down(int x, int y)
 {
+    lm_down = true;
     return NULL_EVENT;
 }
 
 ContainerInputEvent left_mouse_up(int x, int y)
 {
+    lm_down = false;
     return get_container_hud_ui_event(x,y);
 }
 
@@ -465,6 +478,10 @@ void draw_hud()
                 case CONTAINER_TYPE_SMELTER_ONE:
                     smelter->draw();
                     break;
+
+                case CONTAINER_TYPE_RECYCLER:
+                    recycler->draw();
+                    break;
                     
                 default:
                     GS_ASSERT(false);
@@ -526,6 +543,13 @@ void init()
     smelter->centered = true;
     smelter->yoff = -150.0f + (_yresf + smelter->height())/2;
 
+    recycler = new RecyclerUI;
+    recycler->type = UI_ELEMENT_RECYCLER;
+    recycler->set_container_type(CONTAINER_TYPE_RECYCLER);
+    recycler->init();
+    recycler->centered = true;
+    recycler->yoff = -150.0f + (_yresf + recycler->height())/2;
+
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format((char*) "%d");
     grabbed_icon_stack_text->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
@@ -546,6 +570,7 @@ void teardown()
     if (storage_block != NULL) delete storage_block;
     if (smelter != NULL) delete smelter;
     if (energy_tanks != NULL) delete energy_tanks;
+    if (recycler != NULL) delete recycler;
 
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
 }

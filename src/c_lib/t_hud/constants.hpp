@@ -15,6 +15,7 @@ typedef enum
     UI_ELEMENT_STORAGE_BLOCK,
     UI_ELEMENT_SMELTER,
     UI_ELEMENT_ENERGY_TANKS,
+    UI_ELEMENT_RECYCLER,
 } UIElementType;
 
 } // t_hud

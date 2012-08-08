@@ -600,63 +600,63 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
     bool can_insert = container->can_insert_item(slot, hand_item);
     #endif
 
-	if (hand_empty)
-	{
-		if (!slot_empty)
-		{   // pick up coin
-			#if DC_CLIENT
-			action = full_slot_to_empty_hand(
-				container, slot,
-				&hand_item_type, &hand_item_stack, &hand_item_durability,
-				slot_item_type, slot_item_stack, slot_item_durability
-		    );
-			#endif
-			#if DC_SERVER
-			action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
-			#endif
-		}
-	}
-	else
-	{
-		if (slot_empty)
-		{   // place coin
-			if (can_insert)
-			{
-				#if DC_CLIENT
-				action = full_hand_to_empty_slot(
-					container, slot,
-					&hand_item_type, &hand_item_stack, &hand_item_durability
-			    );
-				#endif
-				#if DC_SERVER
-				action = full_hand_to_empty_slot(agent_id, container, slot);
-				#endif
-			}
-		}
-		else
-		{   // see if we can merge some
-			if (can_insert)
-			{
-				// hand stack will fit entirely in slot
-				if (hand_item_stack <= slot_item_space)
-				{   // FULL STACK MERGE
-					#if DC_CLIENT
-					action = full_hand_to_occupied_slot(
-						container, slot,
-						&hand_item_type, &hand_item_stack, &hand_item_durability,
-						slot_item_type, slot_item_stack, slot_item_durability
-				    );
-					#endif
-					#if DC_SERVER
-					action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
-					#endif
-				}
-				else
-				// stacks will not completely merge
-				{
-					if (slot_item_space == 0)
-					// the stack is full
-					{
+    if (hand_empty)
+    {
+        if (!slot_empty)
+        {   // pick up coin
+            #if DC_CLIENT
+            action = full_slot_to_empty_hand(
+                container, slot,
+                &hand_item_type, &hand_item_stack, &hand_item_durability,
+                slot_item_type, slot_item_stack, slot_item_durability
+            );
+            #endif
+            #if DC_SERVER
+            action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);
+            #endif
+        }
+    }
+    else
+    {
+        if (slot_empty)
+        {   // place coin
+            if (can_insert)
+            {
+                #if DC_CLIENT
+                action = full_hand_to_empty_slot(
+                    container, slot,
+                    &hand_item_type, &hand_item_stack, &hand_item_durability
+                );
+                #endif
+                #if DC_SERVER
+                action = full_hand_to_empty_slot(agent_id, container, slot);
+                #endif
+            }
+        }
+        else
+        {   // see if we can merge some
+            if (can_insert)
+            {
+                // hand stack will fit entirely in slot
+                if (hand_item_stack <= slot_item_space)
+                {   // FULL STACK MERGE
+                    #if DC_CLIENT
+                    action = full_hand_to_occupied_slot(
+                        container, slot,
+                        &hand_item_type, &hand_item_stack, &hand_item_durability,
+                        slot_item_type, slot_item_stack, slot_item_durability
+                    );
+                    #endif
+                    #if DC_SERVER
+                    action = full_hand_to_occupied_slot(agent_id, slot, slot_item);
+                    #endif
+                }
+                else
+                // stacks will not completely merge
+                {
+                    if (slot_item_space == 0)
+                    // the stack is full
+                    {
                         #if DC_CLIENT
                         action = full_hand_swap_with_slot(
                             container, slot,
@@ -667,25 +667,25 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
                         #if DC_SERVER
                         action = full_hand_swap_with_slot(client_id, agent_id, container, slot, slot_item);
                         #endif
-					}
-					else
-					// some of the hand stack will fit in the slot
-					{   // PARTIAL STACK MERGE
-						#if DC_CLIENT
-						action = partial_hand_to_occupied_slot(
-							container, slot,
-							&hand_item_stack,
-							slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
-					    );
-						#endif
-						#if DC_SERVER
-						action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
-						#endif
-					}
-				}                    
-			}
-		}
-	}
+                    }
+                    else
+                    // some of the hand stack will fit in the slot
+                    {   // PARTIAL STACK MERGE
+                        #if DC_CLIENT
+                        action = partial_hand_to_occupied_slot(
+                            container, slot,
+                            &hand_item_stack,
+                            slot_item_type, slot_item_stack, slot_item_space, slot_item_durability
+                        );
+                        #endif
+                        #if DC_SERVER
+                        action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
+                        #endif
+                    }
+                }                    
+            }
+        }
+    }
 
     #if DC_CLIENT
     player_hand_type_ui = hand_item_type;
@@ -1079,7 +1079,7 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id
 
     GS_ASSERT(slot >= 0 && slot < container->alt_xdim*container->alt_ydim);
     if (slot < 0 || slot >= container->alt_xdim*container->alt_ydim)
-		return CONTAINER_ACTION_NONE;
+        return CONTAINER_ACTION_NONE;
 
     #if DC_CLIENT
     int hand_item_type = player_hand_type_ui;
@@ -1098,18 +1098,18 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id
         return PURCHASE_ITEM_FROM_SYNTHESIZER;
     }
     else if (stack_space > 0)
-    {	// attempt to stack
-		// get store item
-		int xslot = slot % container->alt_xdim;
-		int yslot = slot / container->alt_xdim;
-		int cost;
-		int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
-		GS_ASSERT(cost >= 0);
-		if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
-		if (item_type != hand_item_type) return CONTAINER_ACTION_NONE;
-		// we can stack
-		return PURCHASE_ITEM_FROM_SYNTHESIZER;
-	}
+    {   // attempt to stack
+        // get store item
+        int xslot = slot % container->alt_xdim;
+        int yslot = slot / container->alt_xdim;
+        int cost;
+        int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
+        GS_ASSERT(cost >= 0);
+        if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
+        if (item_type != hand_item_type) return CONTAINER_ACTION_NONE;
+        // we can stack
+        return PURCHASE_ITEM_FROM_SYNTHESIZER;
+    }
 
     return CONTAINER_ACTION_NONE;
 }
@@ -1322,6 +1322,66 @@ ContainerActionType smelter_beta_action_decision_tree(int agent_id, int client_i
     #if DC_SERVER
     return beta_action_decision_tree(agent_id, client_id, id, slot);
     #endif
+}
+
+#if DC_CLIENT
+ContainerActionType recycler_alpha_action_decision_tree(int id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType recycler_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+#endif
+{
+    #if DC_CLIENT
+    return alpha_action_decision_tree(id, slot);
+    #endif
+    #if DC_SERVER
+    return alpha_action_decision_tree(agent_id, client_id, id, slot);
+    #endif
+}
+
+#if DC_CLIENT
+ContainerActionType recycler_beta_action_decision_tree(int id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType recycler_beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
+#endif
+{
+    #if DC_CLIENT
+    return beta_action_decision_tree(id, slot);
+    #endif
+    #if DC_SERVER
+    return beta_action_decision_tree(agent_id, client_id, id, slot);
+    #endif
+}
+
+#if DC_CLIENT
+ContainerActionType recycler_crush_alpha_action_decision_tree(int container_id, int slot)
+#endif
+#if DC_SERVER
+ContainerActionType recycler_crush_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+#endif
+{
+    if (container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;
+
+    #if DC_CLIENT
+    ItemContainerUIInterface* container = get_container_ui(container_id);
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+    if (!container->type == CONTAINER_TYPE_RECYCLER) return CONTAINER_ACTION_NONE;
+    ItemContainerRecyclerUI* recycler = (ItemContainerRecyclerUI*)container;
+    int item_type = recycler->get_input_slot_type();
+    if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
+    #endif
+
+    #if DC_SERVER
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+    if (!container->type == CONTAINER_TYPE_RECYCLER) return CONTAINER_ACTION_NONE;
+    ItemContainerRecycler* recycler = (ItemContainerRecycler*)container;
+    ItemID item_id = recycler->get_input_slot();
+    if (item_id == NULL_ITEM) return CONTAINER_ACTION_NONE;
+    #endif
+
+    return RECYCLER_CRUSH_ITEM;
 }
 
 }   // ItemContainer

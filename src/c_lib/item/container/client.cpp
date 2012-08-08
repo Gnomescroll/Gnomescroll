@@ -295,7 +295,6 @@ void send_no_container_beta_action(ContainerActionType action, int container_id,
     msg.send();
 }
 
-
 void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
@@ -369,6 +368,94 @@ void send_smelter_beta_action(ContainerActionType action, int container_id, int 
     msg.send();
 }
 
+void send_recycler_alpha_action(ContainerActionType action, int container_id, int slot)
+{
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
+    if (container_id == NULL_CONTAINER) return;
+    if (action == CONTAINER_ACTION_NONE) return;
+
+    record_container_event(container_id);
+    
+    recycler_container_action_alpha_CtoS msg;
+    msg.event_id = container_event_id;
+    msg.action = action;
+
+    msg.container_id = container_id;
+    msg.slot = slot;
+
+    msg.hand_type = player_hand_type_ui;
+    msg.hand_stack = player_hand_stack_ui;
+
+    if (action == FULL_HAND_TO_WORLD)
+    {
+        msg.slot_type = NULL_ITEM_TYPE;
+        msg.slot_stack = 1;
+    }
+    else
+    {
+        ItemContainerUIInterface* container = get_container_ui(container_id);
+        GS_ASSERT(container != NULL);
+        if (container == NULL) return;
+
+        msg.slot_type = container->get_slot_type(slot);
+        msg.slot_stack = container->get_slot_stack(slot);    
+    }
+
+    msg.send();
+}
+
+void send_recycler_beta_action(ContainerActionType action, int container_id, int slot)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(action != CONTAINER_ACTION_NONE);
+    if (container_id == NULL_CONTAINER) return;
+    if (action == CONTAINER_ACTION_NONE) return;
+
+    record_container_event(container_id);
+
+    recycler_container_action_beta_CtoS msg;
+    msg.event_id = container_event_id;
+    msg.action = action;
+
+    msg.container_id = container_id;
+    msg.slot = slot;
+    
+    msg.hand_type = player_hand_type_ui;
+    msg.hand_stack = player_hand_stack_ui;
+
+    if (action == FULL_HAND_TO_WORLD)
+    {
+        msg.slot_type = NULL_ITEM_TYPE;
+        msg.slot_stack = 1;
+    }
+    else
+    {
+        ItemContainerUIInterface* container = get_container_ui(container_id);
+        GS_ASSERT(container != NULL);
+        if (container == NULL) return;
+        
+        msg.slot_type = container->get_slot_type(slot);
+        msg.slot_stack = container->get_slot_stack(slot);    
+    }
+    
+    msg.send();
+}
+
+void send_recycler_crush_action(ContainerActionType action, int container_id, int slot)
+{
+    GS_ASSERT(action == RECYCLER_CRUSH_ITEM);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return;
+    if (action == CONTAINER_ACTION_NONE) return;
+    
+    record_container_event(container_id);
+    
+    recycler_crush_item_CtoS msg;
+    msg.event_id = container_event_id;
+    
+    msg.container_id = container_id;
+    msg.send();
+}
 
 // Handlers
 
