@@ -23,6 +23,9 @@ fprintf (stderr, "ASSERT_NOT_NULL: %s error: %s, line %d \n", __func__, __FILE__
 return; \
 }
 
+// macro stringification
+#define STR2(x) #x
+#define STR(x) STR2(x)
 
 
 // __GNUG__

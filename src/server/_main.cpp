@@ -26,16 +26,9 @@ void init(int argc, char* argv[])
 
         //t_map::map_post_processing();
     //}
-    
-    if (!strcmp(Options::map, "fast"))
-    {
-        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
-        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
 
-        map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
-    }
-    else
-    {
+    if (Options::map[0] == '\0')
+    {   // use map gen
         srand(Options::seed);
 
         t_gen::noise_map_generate_map();
@@ -47,11 +40,23 @@ void init(int argc, char* argv[])
 
         //t_gen::gen_rivers(60, "terminal_blue");
 
-
         //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
         map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));
         //Dragon::caves();
         //Dragon::flat_veins();
+    }
+    else if (!strcmp(Options::map, "fast"))
+    {
+        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
+        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
+
+        map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+    }
+    else
+    {   // use map file
+        BlockSerializer* bs = new BlockSerializer;
+        bs->load(Options::map);
+        delete bs;
     }   
 
     srand((unsigned int)time(NULL));
@@ -124,12 +129,6 @@ void tick()
  
 int run()
 {
-
-    BlockSerializer* BS = new BlockSerializer;
-    //BS->save("test.map");
-    //BS->load("test.map");
-    delete BS;
-
     //int tick = 0;
     int tc;
 

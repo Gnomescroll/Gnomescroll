@@ -24,18 +24,28 @@ print "Server version is", version
 print "Starting eternal server"
 MAX_DUMPS = 100
 ct = 0
+
 while True:
+
     print '%d-th server run' % ct
+
     logname = 'log-%s-%d' % (version, time.time(),)
-    subprocess.call(['./shell/m643_run_log.sh %s %d' % (logname, int(time.time()),)], shell=True)
+    corename = 'core-%s-%d' % (version, time.time())
+    mapname = './media/maps/map-%d.map' % (version,)
+    if not os.path.exists(mapname):
+        mapname = ''
+    cmd = './shell/m643_run_log.sh %s %s' % (logname, mapname,)
+    subprocess.call([cmd], shell=True)
+
     print "Server died"
+
     ct += 1
     if ct >= MAX_DUMPS:
         print "Reached max core dumps."
         break
     if os.path.exists('./core'):
         print "Core dumped; saving"
-        os.rename("./core", "%s/coredumps/core%d" % (os.path.expanduser('~'), time.time(),))
+        os.rename("./core", "%s/coredumps/%s" % (os.path.expanduser('~'), corename,))
     if os.path.exists('./%s' % (logname,)):
         print "Saving %s" % (logname,)
         os.rename('./%s' % (logname,), '%s/coredumps/%s' % (os.path.expanduser('~'), logname,))

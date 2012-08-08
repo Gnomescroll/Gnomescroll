@@ -145,15 +145,43 @@ void signal_terminate_handler(int sig)
     close_c_lib();
     exit(1);
 }
+
+void sigusr1_handler(int sig)
+{
+    printf("Saving map...\n");
+    const char fn[] = "./media/maps/map-" STR(DC_VERSION) ".map";
+    BlockSerializer* BS = new BlockSerializer;
+    BS->save(fn);
+    delete BS;
+    printf("Map saved to %s\n", fn);
+}
 #endif
- 
 
 
 int init_c_lib(int argc, char* argv[])
 {
     #ifdef linux
-    signal(SIGTERM, signal_terminate_handler);  // kill <pid>
-    signal(SIGINT, signal_terminate_handler);   // ctrl-c
+    // Set signal handlers
+
+    // SIGTERM  kill `pidof gnomescroll_server`
+    struct sigaction sa_term;
+    sa_term.sa_handler = &signal_terminate_handler;
+    sa_term.sa_flags = 0;
+    sigemptyset(&sa_term.sa_mask);
+    int ret = sigaction(SIGTERM, &sa_term, NULL);
+    GS_ASSERT(ret == 0);
+    
+    // SIGINT ctrl-C
+    ret = sigaction(SIGINT, &sa_term, NULL);
+    GS_ASSERT(ret == 0);
+
+    // SIGUSR1  kill -s SIGUSR1 `pidof gnomescroll_server`
+    struct sigaction sa_usr1;
+    sa_usr1.sa_handler = sigusr1_handler;
+    sa_usr1.sa_flags = 0;
+    sigemptyset(&sa_usr1.sa_mask);
+    ret = sigaction(SIGUSR1, &sa_usr1, NULL);
+    GS_ASSERT(ret == 0);
     #endif
     
     static int inited = 0;

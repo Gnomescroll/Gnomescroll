@@ -17,7 +17,7 @@ off_t fsize(const char *filename)
 }
 
 // free the returned char* buffer after use
-char* read_file_to_buffer(char* file_name, int* size)
+char* read_file_to_buffer(const char* file_name, int* size)
 {
     int expected_size = (int)fsize(file_name);
     char *source = NULL;
@@ -63,7 +63,7 @@ char* read_file_to_buffer(char* file_name, int* size)
 }
 
 //possible unsafe, free buffer after use
-char* fast_read_file_to_buffer(char* file_name, int* size)
+char* fast_read_file_to_buffer(const char* file_name, int* size)
 {
     long bufsize = (int)fsize(file_name);
     char *source = NULL;
