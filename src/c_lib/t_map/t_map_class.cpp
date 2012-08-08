@@ -527,8 +527,10 @@ namespace t_map
             if (z > h)
                 new_h = z;
         }
-        if (z >= h) // deleting top block
-                new_h = get_highest_solid_block(x,y,z) + 1;
+        else
+        {
+            if (z >= h) // deleting top block
+                    new_h = get_highest_solid_block(x,y,z) + 1;
         }
 
         if (new_h == -1) return; // no change in height
