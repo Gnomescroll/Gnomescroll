@@ -62,7 +62,7 @@ class BlockSerializer
 
 		int file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
 
-		char* buffer = new char[file_size];
+		char* buffer = (char*) malloc(file_size);
 		int index = 0;
 
 		push_int(buffer, index, version);
@@ -87,6 +87,8 @@ class BlockSerializer
 
 		printf("BlockSerializer save: populate buffer took %i ms \n", ti2-ti1);
 		printf("BlockSerializer save: writing file %s took %i ms \n", filename, ti3-ti2);
+
+		free(buffer);
 	}
 
 
@@ -134,6 +136,8 @@ class BlockSerializer
 
 		printf("BlockSerializer load: reading map file %s took %i ms \n", filename, ti2-ti1);
 		printf("BlockSerializer load: loading map file %i ms \n", ti3-ti2);
+
+		free(buffer);
 	}
 };
 
