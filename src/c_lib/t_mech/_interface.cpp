@@ -6,7 +6,7 @@
 #if DC_CLIENT
     #include <camera/camera.hpp>
     #include <physics/ray_trace/hitscan.hpp>
-	#include <t_mech/mech_draw.hpp>
+    #include <t_mech/mech_draw.hpp>
 #endif
 
 #include <t_mech/mech_state.hpp>
@@ -19,8 +19,8 @@ class MECH_LIST* mech_list;
 
 void init_packets()
 {
-	mech_create_StoC::register_client_packet();
-	mech_delete_StoC::register_client_packet();
+    mech_create_StoC::register_client_packet();
+    mech_delete_StoC::register_client_packet();
 }
 
 
@@ -31,9 +31,9 @@ class MechListRenderer* mech_list_renderer = NULL;
 
 void init() 
 {
-	mech_list = new MECH_LIST;
+    mech_list = new MECH_LIST;
 #if DC_CLIENT
-	mech_list_renderer = new MechListRenderer;
+    mech_list_renderer = new MechListRenderer;
 #endif
     init_properties();
 }
@@ -53,17 +53,17 @@ void teardown()
 
 void prep()
 {
-	mech_list_renderer->prep_vbo();
+    mech_list_renderer->prep_vbo();
 }
 
 void draw()
 {
-	mech_list_renderer->draw();
+    mech_list_renderer->draw();
 }
 
 void draw_transparent()
 {
-	mech_list_renderer->draw_transparent();
+    mech_list_renderer->draw_transparent();
 }
 #endif
 
@@ -121,13 +121,13 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
     case MECH_CRYSTAL:
         //do something
 
-    	m.size = 0.80;	//radius
-    	m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
-    	m.offset = rand()%255;
-    	//m.subtype = rand()%6;
+        m.size = 0.80;  //radius
+        m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
+        m.offset = rand()%255;
+        //m.subtype = rand()%6;
 
-    	m.offset_x = (randf()-0.5f)* (1.0f-m.size);
-       	m.offset_y = (randf()-0.5f)* (1.0f-m.size);
+        m.offset_x = (randf()-0.5f)* (1.0f-m.size);
+        m.offset_y = (randf()-0.5f)* (1.0f-m.size);
 
         break;
     default:
@@ -146,27 +146,27 @@ void create_crystal(int x, int y, int z)
 {
 #if DC_SERVER
 
-	struct MECH m;
-	m.mech_type = MECH_CRYSTAL;
-	m.x = x;
-	m.y = y;
-	m.z = z;
-	m.subtype = rand()%9;
+    struct MECH m;
+    m.mech_type = MECH_CRYSTAL;
+    m.x = x;
+    m.y = y;
+    m.z = z;
+    m.subtype = rand()%9;
 
-	mech_list->server_add_mech(m);
+    mech_list->server_add_mech(m);
 #endif
 }
 
 bool can_place_crystal(int x, int y, int z, int side)
 {
-	if( isSolid(x,y,z) == true)
-		return false;
+    if( isSolid(x,y,z) == true)
+        return false;
 
-	if(side != 0)
-		return false;
+    if(side != 0)
+        return false;
 
-	//check if there is another one on this square
-	return true;
+    //check if there is another one on this square
+    return true;
 }
 
 void place_vine(int x, int y, int z, int side)
@@ -196,13 +196,13 @@ bool ray_cast_mech_render_type_0(const class MECH &m, float x, float y, float z,
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
 
-    float dx = sin(m.rotation * PI);
-    float dy = cos(m.rotation * PI);
+    //float dx = sin(m.rotation * PI);
+    //float dy = cos(m.rotation * PI);
 
     //translate into origin of plane
     x -= wx;
     y -= wy;
-    z -= wx;
+    z -= wz;
 
     return true;
 /*
@@ -216,8 +216,8 @@ bool ray_cast_mech_render_type_0(const class MECH &m, float x, float y, float z,
 
 bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* _distance)
 {
-    int nearest_mech = -1;
-    float distance = 1000.0;
+    //int nearest_mech = -1;
+    //float distance = 1000.0;
 
     const int mlm = mech_list->mlm;
     const struct MECH* mla = mech_list->mla;

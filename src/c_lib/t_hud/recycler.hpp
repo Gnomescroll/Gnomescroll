@@ -211,6 +211,8 @@ void RecyclerUI::draw()
     GS_ASSERT(slot_stacks != NULL);
     if (slot_stacks == NULL) return;
 
+    bool output_blocked = (slot_types[slot_max-1] != NULL_ITEM_TYPE);
+
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -243,14 +245,14 @@ void RecyclerUI::draw()
     {   // draw hover sprite
         if (slot_types[0] != NULL_ITEM_TYPE)
         {
-            if (slot_types[slot_max-1] != NULL_ITEM_TYPE)
+            if (output_blocked)
                 draw_bound_texture_sprite2(x,y, sw,sh, z, button_unavailable_hover_x*tw, button_unavailable_hover_y*th, tw, th);
             else
                 draw_bound_texture_sprite2(x,y, sw,sh, z, button_available_hover_x*tw, button_available_hover_y*th, tw, th);
         }
         else
             draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_hover_x*tw, button_inactive_hover_y*th, tw, th);
-        if (lm_down)
+        if (lm_down && !output_blocked)
         {   // draw button
             draw_bound_texture_sprite2(x,y, sw,sh, z, button_overlay_pressed_x*tw, button_overlay_pressed_y*th, tw,th);
         }
@@ -261,7 +263,7 @@ void RecyclerUI::draw()
     {
         if (slot_types[0] != NULL_ITEM_TYPE)
         {
-            if (slot_types[slot_max-1] != NULL_ITEM_TYPE)
+            if (output_blocked)
                 draw_bound_texture_sprite2(x,y, sw,sh, z, button_unavailable_x*tw, button_unavailable_y*th, tw, th);
             else
                 draw_bound_texture_sprite2(x,y, sw,sh, z, button_available_x*tw, button_available_y*th, tw, th);
