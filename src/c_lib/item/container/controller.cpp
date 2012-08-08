@@ -1355,13 +1355,33 @@ ContainerActionType recycler_beta_action_decision_tree(int agent_id, int client_
 }
 
 #if DC_CLIENT
-ContainerActionType recycler_crush_alpha_action_decision_tree(int id, int slot)
+ContainerActionType recycler_crush_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType recycler_crush_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType recycler_crush_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
 #endif
 {
-    return RECYCLER_CRUSH_ITEM; // TODO
+    if (container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;
+
+    #if DC_CLIENT
+    ItemContainerUIInterface* container = get_container_ui(container_id);
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+    if (!container->type == CONTAINER_TYPE_RECYCLER) return CONTAINER_ACTION_NONE;
+    ItemContainerRecyclerUI* recycler = (ItemContainerRecyclerUI*)container;
+    int item_type = recycler->get_input_slot_type();
+    if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
+    #endif
+
+    #if DC_SERVER
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return CONTAINER_ACTION_NONE;
+    if (!container->type == CONTAINER_TYPE_RECYCLER) return CONTAINER_ACTION_NONE;
+    ItemContainerRecycler* recycler = (ItemContainerRecycler*)container;
+    ItemID item_id = recycler->get_input_slot();
+    if (item_id == NULL_ITEM) return CONTAINER_ACTION_NONE;
+    #endif
+
+    return RECYCLER_CRUSH_ITEM;
 }
 
 }   // ItemContainer

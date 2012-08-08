@@ -446,7 +446,8 @@ void send_recycler_crush_action(ContainerActionType action, int container_id, in
     GS_ASSERT(action == RECYCLER_CRUSH_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
-
+    if (action == CONTAINER_ACTION_NONE) return;
+    
     record_container_event(container_id);
     
     recycler_crush_item_CtoS msg;

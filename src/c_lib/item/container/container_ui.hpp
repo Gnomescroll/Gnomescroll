@@ -328,6 +328,15 @@ class ItemContainerRecyclerUI: public ItemContainerUIInterface
 {
     public:
 
+        static const int input_slot = 0;
+
+        int get_input_slot_type()
+        {
+            GS_ASSERT(this->is_valid_slot(this->input_slot));
+            if (!this->is_valid_slot(this->input_slot)) return false;
+            return this->slot_type[this->input_slot];
+        }
+
         bool can_insert_item(int slot, int item_type)
         {
             GS_ASSERT(this->is_valid_slot(slot));
