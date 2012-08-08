@@ -103,7 +103,7 @@ class BlockSerializer
         int _version; 
 		pop_int(buffer, index, _version);
 
-		printf("Map Loader: map_version= %i filesiz %i \n", _version, filesize);
+		printf("Map Loader: map_version= %i filesize= %i bytes \n", _version, filesize);
 		if(_version != version)
 		{
 			printf("Error: cannot load map, saved map is version %i and map loader expects %i \n", _version, version);

@@ -113,7 +113,7 @@ void end_session(class Session* session)
         }
     }
     session->print(NULL);   // print to stdout
-    printf("Client %3d disconnected. %2d clients connected\n", session->client_id, number_of_clients);
+    printf("Client %sd disconnected. %d clients connected\n", session->client_id, number_of_clients);
     GS_ASSERT(population_log_file != NULL);
     if (population_log_file != NULL)
     {
