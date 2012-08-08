@@ -47,10 +47,11 @@ namespace t_map
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
         #endif
 
+        printf("xchunkdim= %i ychunkdim= %i \n", xchunk_dim, ychunk_dim);
         #if DC_SERVER
         for(int i=0; i<xchunk_dim; i++) {
         for(int j=0; j<ychunk_dim; j++) {
-            chunk[i] = new MAP_CHUNK(16*i, 16*j);
+            chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
         }}
         #endif
 
