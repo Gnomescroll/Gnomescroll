@@ -78,6 +78,13 @@ class BlockSerializer
         FILE *file; 
         file = fopen(filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
         //size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
+        
+        if(file == 0)
+        {
+        	printf("ERROR: cannot open map file %s \n", filename);
+        	return;
+        }
+
         int ret = fwrite (buffer, file_size, 1, file);
         GS_ASSERT(ret == 1);
         fclose(file); /*done!*/ 
