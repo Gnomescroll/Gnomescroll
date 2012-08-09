@@ -54,10 +54,10 @@ void send_client_map_special(int client_id);
 void add_control_node(int x, int y, int z);
 
 void save_map();
-void save_map(char* filename);
+void save_map(const char* filename);
 
 void load_map();
-void load_map(char* filename);
+void load_map(const char* filename);
 
 #endif
 }   // t_map

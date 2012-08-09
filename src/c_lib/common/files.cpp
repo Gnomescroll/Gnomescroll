@@ -1,6 +1,8 @@
 #include "files.hpp"
 
-#include "macros.hpp"
+#include <sys/stat.h>
+
+#include <common/macros.hpp>
 
 #ifdef __WIN32__
 #ifdef __GNUC__
@@ -215,4 +217,10 @@ void create_path_to_file(const char* fn)
     path[j] = '\0';
     create_path(path);
     free(path);
+}
+
+bool file_exists(const char* filename)
+{
+    struct stat file_stat;
+    return (stat(filename, &file_stat) == 0);
 }

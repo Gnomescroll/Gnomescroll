@@ -149,6 +149,8 @@ int run()
             should_save_map = false;
         }
 
+        t_map::check_save_state();
+
         #ifdef __GNUC__
         usleep(1000);
         #endif

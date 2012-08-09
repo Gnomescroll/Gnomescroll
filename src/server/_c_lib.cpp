@@ -254,6 +254,7 @@ void close_c_lib()
 {
     printf("Waiting for threads to finish...\n");
     wait_for_threads();
+    t_map::check_save_state();
 
     printf("Server closing...\n");
 

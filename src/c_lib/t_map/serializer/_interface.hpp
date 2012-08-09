@@ -4,20 +4,24 @@
 #include <common/files.hpp>
 
 #if __GNUC__
-	#include <pthread.h>
+    #include <pthread.h>
 #endif
 
 namespace t_map
 {
+
+bool map_save_completed = false;
+char* map_tmp_name = NULL;
+char* map_final_name = NULL;
 
 //threaded IO
 bool _THREADED_WRITE_ACTIVE;
 
 struct THREADED_WRITE_STRUCT
 {
-	char filename[256];
-	char* buffer;
-	int buffer_size;
+    char filename[256];
+    char* buffer;
+    int buffer_size;
 
 };
 
@@ -31,17 +35,17 @@ void *_threaded_write(void *vptr)
     int ti1 = _GET_MS_TIME();
 
 
-	char filename[256]; 
-	strcpy(filename, threaded_write_struct_param.filename);
-	char* buffer = threaded_write_struct_param.buffer;
-	int buffer_size = threaded_write_struct_param.buffer_size;
+    char filename[256]; 
+    strcpy(filename, threaded_write_struct_param.filename);
+    char* buffer = threaded_write_struct_param.buffer;
+    int buffer_size = threaded_write_struct_param.buffer_size;
 
 
-	if(buffer == NULL)
-	{
-		printf("ERROR _threaded_write: t->buffer is NULL!\n");
-		return NULL;
-	}
+    if(buffer == NULL)
+    {
+        printf("ERROR _threaded_write: t->buffer is NULL!\n");
+        return NULL;
+    }
 
     FILE *file; 
     file = fopen(filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
@@ -64,36 +68,37 @@ void *_threaded_write(void *vptr)
 
     int ti2 = _GET_MS_TIME();
 
-	printf("_threaded_write: map saved to %s in %i ms \n", filename, ti2-ti1);
+    printf("_threaded_write: map saved to %s in %i ms \n", filename, ti2-ti1);
 
-	_threaded_write_running = 0;
+    map_save_completed = true;
+    _threaded_write_running = 0;
 
-	threaded_write_struct_param.filename[0] = 0x00;
-	threaded_write_struct_param.buffer = NULL;
-	threaded_write_struct_param.buffer_size = 0;
+    threaded_write_struct_param.filename[0] = 0x00;
+    threaded_write_struct_param.buffer = NULL;
+    threaded_write_struct_param.buffer_size = 0;
 
     return NULL;
 }
 
 static
-void threaded_write(char* filename, char* buffer, int buffer_len)
+void threaded_write(const char* filename, char* buffer, int buffer_len)
 {
 
-	#if !__GNUC__
-	sdfsdfjsdkjflsdkjf
-	#endif
+    #if !__GNUC__
+    sdfsdfjsdkjflsdkjf
+    #endif
 
-	if(_threaded_write_running != 0)
-	{
-		printf("threaded_write failed: previous thread has not finished \n");
-		return;
-	}
+    if(_threaded_write_running != 0)
+    {
+        printf("threaded_write failed: previous thread has not finished \n");
+        return;
+    }
 
-	strcpy(threaded_write_struct_param.filename, filename);
-	threaded_write_struct_param.buffer = buffer;
-	threaded_write_struct_param.buffer_size = buffer_len;
+    strcpy(threaded_write_struct_param.filename, filename);
+    threaded_write_struct_param.buffer = buffer;
+    threaded_write_struct_param.buffer_size = buffer_len;
 
-	//pthread_join( _threaded_write_thread, NULL);
+    //pthread_join( _threaded_write_thread, NULL);
     /* Create independent threads each of which will execute function */
 
     _threaded_write_running = 1;
@@ -101,31 +106,31 @@ void threaded_write(char* filename, char* buffer, int buffer_len)
     int ret = pthread_create( &_threaded_write_thread, NULL, _threaded_write, (void*)NULL);
     if(ret != 0)
     {
-    	printf("threaded_write error: pthread_create returned %i \n", ret);
-    	_threaded_write_running = 0;
+        printf("threaded_write error: pthread_create returned %i \n", ret);
+        _threaded_write_running = 0;
     }
 /*
     #if __GNUC__
-	else
-		printf("threaded write: __GNUC__ not defined, saving without thread \n");
-		_threaded_write(NULL);
-	#endif
+    else
+        printf("threaded write: __GNUC__ not defined, saving without thread \n");
+        _threaded_write(NULL);
+    #endif
 /*/
 }
 
 
 void wait_for_threads()
 {
-	while(_threaded_write_running != 0)
-	{
-	    #ifdef __GNUC__
+    while(_threaded_write_running != 0)
+    {
+        #ifdef __GNUC__
         usleep(100);
         #endif
     
         #ifdef __MSVC__
         Sleep(0.1);
         #endif
-	}	
+    }   
 }
 
 struct SerializedChunk
@@ -233,16 +238,13 @@ class BlockSerializer
         free(buffer);
 
         #else
-        threaded_write((char*) filename, buffer, file_size);
+        threaded_write(filename, buffer, file_size);
         #endif
 
         int ti3 = _GET_MS_TIME();
         printf("BlockSerializer save: populate buffer took %i ms \n", ti2-ti1);
         printf("BlockSerializer save: writing file %s took %i ms \n", filename, ti3-ti2);
-}
-
-
-        
+    }
 
 
     void load(const char* filename)
@@ -303,18 +305,30 @@ class BlockSerializer
     }
 };
 
-void save_map(char* filename)
+void save_map(const char* filename)
 {
-    //printf("Saving map...\n");
     create_path_to_file(filename);
     BlockSerializer* BS = new BlockSerializer;
-    BS->save(filename);
+
+    map_final_name = (char*)malloc((strlen(filename)+1)*sizeof(char));
+    strcpy(map_final_name, filename);
+    
+    if (file_exists(filename))
+    {
+        const char ext[] = ".tmp";
+        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(ext))*sizeof(char));
+        sprintf(tmp_filename, "%s%s", filename, ext);
+        map_tmp_name = tmp_filename;
+        BS->save(tmp_filename);        
+    }
+    else
+        BS->save(filename);
+
     delete BS;
-    //printf("Map saved to %s\n", filename);
 }
 
 
-void load_map(char* filename)
+void load_map(const char* filename)
 {
     BlockSerializer* bs = new BlockSerializer;
     bs->load(filename);
@@ -325,12 +339,34 @@ const char default_map_file[] = "./world/map-" STR(DC_VERSION) ".map";
 
 void save_map()
 {
-    save_map((char*)default_map_file );
+    save_map(default_map_file);
 }
 
 void load_map()
 {
-    load_map((char*)default_map_file );
+    load_map(default_map_file);
+}
+
+void check_save_state()
+{
+    if (map_save_completed)
+    {
+        if (map_tmp_name != NULL)
+        {
+            GS_ASSERT(map_final_name != NULL);
+            if (map_final_name != NULL)
+            {
+                int ret = rename(map_tmp_name, map_final_name);
+                GS_ASSERT(ret == 0);
+            }
+            free(map_tmp_name);
+            map_tmp_name = NULL;
+        }
+        if (map_final_name != NULL)
+            free(map_final_name);
+        map_final_name = NULL;
+        map_save_completed = false;
+    }
 }
 
 }   // t_map
