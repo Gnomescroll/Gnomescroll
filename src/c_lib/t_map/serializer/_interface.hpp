@@ -21,37 +21,56 @@ struct THREADED_WRITE_STRUCT
 
 };
 
-volatile int _threaded_write_running = 0;
+static int _threaded_write_running = 0;
 static struct THREADED_WRITE_STRUCT threaded_write_struct_param;
 static pthread_t _threaded_write_thread;
 
-static
 void *_threaded_write(void *vptr)
 {
-	struct THREADED_WRITE_STRUCT* t = &threaded_write_struct_param;
+
+    int ti1 = _GET_MS_TIME();
+
+
+	char filename[256]; 
+	strcpy(filename, threaded_write_struct_param.filename);
+	char* buffer = threaded_write_struct_param.buffer;
+	int buffer_size = threaded_write_struct_param.buffer_size;
+
+
+	if(buffer == NULL)
+	{
+		printf("ERROR _threaded_write: t->buffer is NULL!\n");
+		return NULL;
+	}
 
     FILE *file; 
-    file = fopen(t->filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
+    file = fopen(filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
     //size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
     
     if(file == 0)
     {
-        printf("THREAD WRITE ERROR: cannot open map file %s \n", t->filename);
+        printf("THREAD WRITE ERROR: cannot open map file %s \n", filename);
         return NULL;
     }
 
-    int ret = fwrite (t->buffer, t->buffer_size, 1, file);
+    int ret = fwrite (buffer, buffer_size, 1, file);
     if(ret != 1)
     {
         printf("THREAD WRITE ERROR: fwrite return value != 1\n");
     }
     fclose(file); /*done!*/ 
 
-    free(t->buffer);
+    free(buffer);
 
-	printf("Map saved to %s\n", t->filename);
+    int ti2 = _GET_MS_TIME();
+
+	printf("Map saved to %s, took %i ms \n", filename, ti2-ti1);
 
 	_threaded_write_running = 0;
+
+	threaded_write_struct_param.filename[0] = 0x00;
+	threaded_write_struct_param.buffer = NULL;
+	threaded_write_struct_param.buffer_size = 0;
 
     return NULL;
 }
@@ -59,6 +78,11 @@ void *_threaded_write(void *vptr)
 static
 void threaded_write(char* filename, char* buffer, int buffer_len)
 {
+
+	#if !__GNUC__
+	sdfsdfjsdkjflsdkjf
+	#endif
+
 	if(_threaded_write_running != 0)
 	{
 		printf("threaded_write failed: previous thread has not finished \n");
@@ -74,16 +98,19 @@ void threaded_write(char* filename, char* buffer, int buffer_len)
 
     _threaded_write_running = 1;
 
+    int ret = pthread_create( &_threaded_write_thread, NULL, _threaded_write, (void*)NULL);
+    if(ret != 0)
+    {
+    	printf("threaded_write error: pthread_create returned %i \n", ret);
+    	_threaded_write_running = 0;
+    }
+/*
     #if __GNUC__
-	    int ret = pthread_create( &_threaded_write_thread, NULL, _threaded_write, (void*)NULL);
-	    if(ret != 0)
-	    {
-	    	printf("threaded_write error: pthread_create returned %i \n", ret);
-	    	_threaded_write_running = 0;
-	    }
 	else
+		printf("threaded write: __GNUC__ not defined, saving without thread \n");
 		_threaded_write(NULL);
 	#endif
+/*/
 }
 
 
