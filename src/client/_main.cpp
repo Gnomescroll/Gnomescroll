@@ -41,11 +41,14 @@ void time_since(int n)
 
 void init(int argc, char* argv[])
 {
+/*
     #ifdef _WIN32
     mkdir("./screenshot");
     #else
     mkdir("./screenshot", S_IRWXU);
     #endif
+*/
+    GS_MKDIR("./screenshot", S_IRWXU);
 
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib(argc, argv);
