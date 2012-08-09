@@ -478,7 +478,7 @@ history_index(-1),
 buffer_len(0),
 cursor(0)
 {
-    this->buffer = (char*)malloc(sizeof(char)*(CHAT_BUFFER_SIZE+1));
+    this->buffer = (char*)calloc(CHAT_BUFFER_SIZE+1, sizeof(char));
     this->buffer[CHAT_BUFFER_SIZE] = '\0';
     this->buffer[0] = '\0';
 }
