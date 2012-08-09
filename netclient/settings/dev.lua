@@ -50,6 +50,9 @@ options.diagnostic_hud = true
 options.fps = true
 options.ping = true
 options.ping_update_interval = 500
+options.system_message_r = 255
+options.system_message_g = 255
+options.system_message_b = 50
 
 -- sound settings --
 options.sound = true

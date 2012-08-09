@@ -26,6 +26,9 @@ options.invert_mouse = false
 
 -- hud setting --
 options.hud = true
+options.system_message_r = 255
+options.system_message_g = 255
+options.system_message_b = 50
 
 -- sound settings --
 options.sound = true

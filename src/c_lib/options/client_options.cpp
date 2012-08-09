@@ -32,6 +32,9 @@ OPT_BOOL(diagnostic_hud, false)
 OPT_BOOL(fps, false)
 OPT_BOOL(ping, false)
 OPT_INT(ping_update_interval, 500)
+OPT_INT(system_message_r, 255)
+OPT_INT(system_message_g, 255)
+OPT_INT(system_message_b, 50)
 
 /* Font */
 OPT_STRING(font, "inc_18_b.fnt")
@@ -78,6 +81,9 @@ void register_options()
     OPT_BOOL_REGISTER(fps)
     OPT_BOOL_REGISTER(ping)
     OPT_INT_REGISTER(ping_update_interval)
+    OPT_INT_REGISTER(system_message_r)
+    OPT_INT_REGISTER(system_message_g)
+    OPT_INT_REGISTER(system_message_b)
 
     /* Font */
     OPT_STRING_REGISTER(font)

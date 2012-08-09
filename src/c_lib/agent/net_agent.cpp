@@ -431,7 +431,10 @@ inline void version_StoC::handle()
         #endif
     }
     else
+    {
         NetClient::Server.version_match = true;
+        chat_client->send_system_message("Connected to server");
+    }
 }
 
 inline void client_disconnected_StoC::handle()

@@ -235,7 +235,7 @@ void draw_hud_text()
         return;
     }
 
-    if (hud_draw_settings.confirm_quit)
+    if (hud_draw_settings.confirm_quit && hud_draw_settings.version_match)
         hud->confirm_quit->draw_centered();
     else
     {
@@ -562,7 +562,7 @@ void HUD::init()
     if (confirm_quit == NULL) return;
     confirm_quit->set_text(confirm_quit_text);
     confirm_quit->set_color(255,10,10,255);
-    confirm_quit->set_position(_xresf/2, _yresf/2);
+    confirm_quit->set_position(_xresf/2, (3*_yresf)/4);
 
     press_help = text_list->create();
     GS_ASSERT(press_help != NULL);

@@ -29,6 +29,9 @@ OPT_BOOL_HEADER(diagnostic_hud)
 OPT_BOOL_HEADER(fps)
 OPT_BOOL_HEADER(ping)
 OPT_INT_HEADER(ping_update_interval)
+OPT_INT_HEADER(system_message_r)
+OPT_INT_HEADER(system_message_g)
+OPT_INT_HEADER(system_message_b)
 
 /* Font */
 OPT_STRING_HEADER(font)
