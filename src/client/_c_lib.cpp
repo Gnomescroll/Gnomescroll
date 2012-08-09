@@ -263,7 +263,8 @@ int init_c_lib(int argc, char* argv[])
     // print working directory
     const int DIR_SIZE = 100;
     char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
-    getcwd(wd, DIR_SIZE);
+    char* wdr = getcwd(wd, DIR_SIZE);
+    GS_ASSERT(wdr == wd);
     printf("Working directory is: %s", wd);
     free(wd);
     
