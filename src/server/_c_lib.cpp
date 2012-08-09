@@ -252,6 +252,9 @@ int init_c_lib(int argc, char* argv[])
 
 void close_c_lib()
 {
+    printf("Waiting for threads to finish...\n");
+    wait_for_threads();
+
     printf("Server closing...\n");
 
     t_map::end_t_map();
