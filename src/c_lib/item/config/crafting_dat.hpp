@@ -125,6 +125,50 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 4);
     set_crafting_reagent("copper_bar", 4);
     
+    def_crafting_recipe("iron_rod", 2);
+    set_crafting_reagent("iron_bar", 1);
+
+    def_crafting_recipe("iron_star");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
+
+    def_crafting_recipe("iron_blade");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
+
+    def_crafting_recipe("copper_wire");
+    set_crafting_reagent("copper_bar", 1);
+
+    def_crafting_recipe("iron_helmet");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
+
+    def_crafting_recipe("gallium_helmet");
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("gallium_bar", 1);
+
+    def_crafting_recipe("copper_helmet");
+    set_crafting_reagent("copper_bar", 1);
+    set_crafting_reagent("copper_bar", 1);
+
+    def_crafting_recipe("iridium_helmet");
+    set_crafting_reagent("iridium_bar", 1);
+    set_crafting_reagent("iridium_bar", 1);
+/*
+    iron_rod 6 7
+    iron_star 4 7
+    iron_blade 4 6
+    copper_wire 1 6
+
+
+    iron_helmet 5 3
+    gallium_helmet 5 4
+    copper_helmet 5 5
+    iridium_helmet 5 6
+*/
+
     end_crafting_recipe(); // finalize
 }
 

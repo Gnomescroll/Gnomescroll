@@ -195,7 +195,10 @@ void end_crafting_recipe()
         }
     }
     GS_ASSERT(matching_recipes <= CRAFT_BENCH_OUTPUTS_MAX);
-    
+    if(matching_recipes > CRAFT_BENCH_OUTPUTS_MAX)
+    {
+        printf("ERROR: number of resultant crafting recipes exceeds CRAFT_BENCH_OUTPUTS_MAX for %s \n", get_item_name(_cr.output) );
+    }
     // check that this recipe's type signature (input+output)
     // has not already been defined
     for (int i=0; i<crafting_recipe_count; i++)

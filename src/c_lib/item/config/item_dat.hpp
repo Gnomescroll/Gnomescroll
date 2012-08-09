@@ -355,6 +355,7 @@ void load_item_dat()
 iron_rod 6 7
 iron_star 4 7
 copper_wire 1 6
+iron_blade 4 6
 
 iron_helmet 5 3
 gallium_helmet 5 4
@@ -373,7 +374,7 @@ iridium_helmet 5 6
     s.pretty_name = (char*) "Iron Star";
     s.max_stack_size = 1;
 
-    item_def(62, IG_RESOURCE, "iron_blade");
+    item_def(63, IG_RESOURCE, "iron_blade");
     sprite_def(i0, 4,6);
     s.pretty_name = (char*) "Iron Blade";
     s.max_stack_size = 1;

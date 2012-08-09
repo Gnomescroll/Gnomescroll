@@ -170,6 +170,10 @@ int dat_get_item_type(const char* name)
 {
     int type = get_item_type(name);
     GS_ASSERT(type != NULL_ITEM_TYPE);
+    if(type == NULL_ITEM_TYPE)
+    {
+        printf("ERROR: dat_get_item_type, item %s does not exist \n", name);
+    }
     return type;
 }
 
