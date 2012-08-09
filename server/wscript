@@ -102,7 +102,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.env.append_value("LINKFLAGS", "-lwinmm")
 
     if OS == 'Linux':
-        conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
+        conf.env.append_value("LINKFLAGS", "-lrt", "-lpthread") #64 bit support
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
 

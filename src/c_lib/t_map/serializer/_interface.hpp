@@ -3,9 +3,103 @@
 
 #include <common/files.hpp>
 
+#if __GNUC__
+	#include <pthread.h>
+#endif
+
 namespace t_map
 {
 
+//threaded IO
+bool _THREADED_WRITE_ACTIVE;
+
+struct THREADED_WRITE_STRUCT
+{
+	char filename[256];
+	char* buffer;
+	int buffer_size;
+
+};
+
+volatile int _threaded_write_running = 0;
+static struct THREADED_WRITE_STRUCT threaded_write_struct_param;
+static pthread_t _threaded_write_thread;
+
+static
+void *_threaded_write(void *vptr)
+{
+	struct THREADED_WRITE_STRUCT* t = &threaded_write_struct_param;
+
+    FILE *file; 
+    file = fopen(t->filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
+    //size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
+    
+    if(file == 0)
+    {
+        printf("THREAD WRITE ERROR: cannot open map file %s \n", t->filename);
+        return NULL;
+    }
+
+    int ret = fwrite (t->buffer, t->buffer_size, 1, file);
+    if(ret != 1)
+    {
+        printf("THREAD WRITE ERROR: fwrite return value != 1\n");
+    }
+    fclose(file); /*done!*/ 
+
+    free(t->buffer);
+
+	printf("Map saved to %s\n", t->filename);
+
+	_threaded_write_running = 0;
+
+    return NULL;
+}
+
+static
+void threaded_write(char* filename, char* buffer, int buffer_len)
+{
+	if(_threaded_write_running != 0)
+	{
+		printf("threaded_write failed: previous thread has not finished \n");
+		return;
+	}
+
+	strcpy(threaded_write_struct_param.filename, filename);
+	threaded_write_struct_param.buffer = buffer;
+	threaded_write_struct_param.buffer_size = buffer_len;
+
+	//pthread_join( _threaded_write_thread, NULL);
+    /* Create independent threads each of which will execute function */
+
+    _threaded_write_running = 1;
+
+    #if __GNUC__
+	    int ret = pthread_create( &_threaded_write_thread, NULL, _threaded_write, (void*)NULL);
+	    if(ret != 0)
+	    {
+	    	printf("threaded_write error: pthread_create returned %i \n", ret);
+	    	_threaded_write_running = 0;
+	    }
+	else
+		_threaded_write(NULL);
+	#endif
+}
+
+
+void wait_for_threads()
+{
+	while(_threaded_write_running != 0)
+	{
+	    #ifdef __GNUC__
+        usleep(100);
+        #endif
+    
+        #ifdef __MSVC__
+        Sleep(0.1);
+        #endif
+	}	
+}
 
 struct SerializedChunk
 {
@@ -92,10 +186,10 @@ class BlockSerializer
 
         int ti2 = _GET_MS_TIME();
 
+#if 0
         FILE *file; 
-        file = fopen(filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
-        //size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
-        
+        file = fopen(filename, "w+"); 
+
         if(file == 0)
         {
             printf("ERROR: cannot open map file %s \n", filename);
@@ -104,15 +198,20 @@ class BlockSerializer
 
         int ret = fwrite (buffer, file_size, 1, file);
         GS_ASSERT(ret == 1);
-        fclose(file); /*done!*/ 
+        fclose(file); /*done!*/
 
+        free(buffer);
+
+#else
+        threaded_write((char*) filename, buffer, file_size);
+#endif
 
         int ti3 = _GET_MS_TIME();
 
         printf("BlockSerializer save: populate buffer took %i ms \n", ti2-ti1);
         printf("BlockSerializer save: writing file %s took %i ms \n", filename, ti3-ti2);
 
-        free(buffer);
+
     }
 
 
@@ -176,12 +275,12 @@ class BlockSerializer
 
 void save_map(char* filename)
 {
-    printf("Saving map...\n");
+    //printf("Saving map...\n");
     create_path_to_file(filename);
     BlockSerializer* BS = new BlockSerializer;
     BS->save(filename);
     delete BS;
-    printf("Map saved to %s\n", filename);
+    //printf("Map saved to %s\n", filename);
 }
 
 
