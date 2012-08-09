@@ -230,9 +230,9 @@ dont_include_this_file_in_server
 #include <state/client_state.cpp>
 #include <state/packet_init.cpp>
 
-//#include <unistd.h>
 
 #ifdef linux
+#include <unistd.h>
 #include <signal.h>
 
 bool main_inited = false;
@@ -260,6 +260,13 @@ int init_c_lib(int argc, char* argv[])
     inited++;
 
     #ifdef linux
+    // print working directory
+    const int DIR_SIZE = 100;
+    char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
+    getcwd(wd, DIR_SIZE);
+    printf("Working directory is: %s", wd);
+    free(wd);
+    
     // Set signal handlers
 
     // SIGTERM  kill `pidof gnomescroll_server`

@@ -133,10 +133,10 @@ dont_include_this_file_in_client
 //#include <main.cpp>
   
 //page size
-//#include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
 
 #ifdef linux
+#include <unistd.h>
 #include <signal.h>
 
 bool main_inited = false;
@@ -174,8 +174,13 @@ int init_c_lib(int argc, char* argv[])
     }
 
     #ifdef linux
+    const int DIR_SIZE = 100;
+    char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
+    getcwd(wd, DIR_SIZE);
+    printf("Working directory is: %s\n", wd);
+    free(wd);
+    
     // Set signal handlers
-
     // SIGTERM  kill `pidof gnomescroll_server`
     struct sigaction sa_term;
     sa_term.sa_handler = &signal_terminate_handler;
