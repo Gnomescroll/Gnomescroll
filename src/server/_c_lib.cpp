@@ -196,7 +196,8 @@ int init_c_lib(int argc, char* argv[])
     ret = sigaction(SIGUSR1, &sa_usr1, NULL);
     GS_ASSERT(ret == 0);
     #endif
-    
+
+    create_path("./screenshot/");
     Log::init();
 
     Options::init_option_tables();

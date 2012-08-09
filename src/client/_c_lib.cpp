@@ -283,6 +283,7 @@ int init_c_lib(int argc, char* argv[])
     GS_ASSERT(ret == 0);
     #endif
 
+    create_path("./screenshot/");
     Log::init();
     printf("init c_lib\n");
     
