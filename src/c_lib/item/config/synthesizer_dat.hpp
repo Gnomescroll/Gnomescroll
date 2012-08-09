@@ -29,7 +29,7 @@ void load_synthesizer()
     synthesizer_item_def("cryofreezer_1", 3);
     synthesizer_item_set(2,0);
 
-    synthesizer_item_def("recycler", 25);
+    synthesizer_item_def("crusher", 25);
     synthesizer_item_set(3,0);
     
     #if !PRODUCTION

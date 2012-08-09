@@ -139,12 +139,18 @@ dont_include_this_file_in_client
 #ifdef linux
 #include <signal.h>
 
+bool main_inited = false;
 bool signal_exit = false;
 bool should_save_map = false;
 
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
+    if (!main_inited)
+    {
+        close_c_lib();
+        exit(0);
+    }
     signal_exit = true;
 }
 
@@ -236,7 +242,7 @@ int init_c_lib(int argc, char* argv[])
 
     Item::load_crafting_dat();
     Item::load_smelting_dat();
-    ItemContainer::load_recycler_dat();
+    ItemContainer::load_crusher_dat();
     
     return 0;
 } 

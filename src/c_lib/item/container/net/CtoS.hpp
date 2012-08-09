@@ -363,7 +363,7 @@ class smelter_container_action_beta_CtoS: public FixedSizeReliableNetPacketToSer
         inline void handle();
 };
 
-class recycler_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<container_action_alpha_CtoS>
+class crusher_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<container_action_alpha_CtoS>
 {
     public:
         uint16_t event_id;
@@ -398,7 +398,7 @@ class recycler_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToS
         inline void handle();
 };
 
-class recycler_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<container_action_beta_CtoS>
+class crusher_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<container_action_beta_CtoS>
 {
     public:
         uint16_t event_id;
@@ -434,7 +434,7 @@ class recycler_container_action_beta_CtoS: public FixedSizeReliableNetPacketToSe
 };
 
 
-class recycler_crush_item_CtoS: public FixedSizeReliableNetPacketToServer<recycler_crush_item_CtoS>
+class crusher_crush_item_CtoS: public FixedSizeReliableNetPacketToServer<crusher_crush_item_CtoS>
 {
     public:
         uint16_t event_id;

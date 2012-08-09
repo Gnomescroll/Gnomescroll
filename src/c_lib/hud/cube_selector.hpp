@@ -16,7 +16,7 @@ class CubeSelector
     private:
         void horizontal(bool left);
         void vertical(bool up);
-        void update_block_applier();
+
     public:
         bool inited;
         float x,y;

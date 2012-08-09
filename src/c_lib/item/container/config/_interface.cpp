@@ -9,7 +9,7 @@
 #endif
 
 #if DC_SERVER
-#include <item/container/config/recycler_dat.hpp>
+#include <item/container/config/crusher_dat.hpp>
 #include <item/container/server.hpp>
 
 // packet send stubs
@@ -27,9 +27,9 @@ void send_no_container_alpha_action(ContainerActionType action, int container_id
 void send_no_container_beta_action(ContainerActionType action, int container_id, int slot){}
 void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot){}
 void send_smelter_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_recycler_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_recycler_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_recycler_crush_action(ContainerActionType action, int container_id, int slot){}
+void send_crusher_alpha_action(ContainerActionType action, int container_id, int slot){}
+void send_crusher_beta_action(ContainerActionType action, int container_id, int slot){}
+void send_crusher_crush_action(ContainerActionType action, int container_id, int slot){}
 #endif
 
 namespace ItemContainer
@@ -158,12 +158,12 @@ static void register_settings()
     c.alt_xdim = 0;
     c.alt_ydim = 0;
     c.attached_to_agent = false;
-    c.alpha_action = &recycler_alpha_action_decision_tree;
-    c.beta_action = &recycler_beta_action_decision_tree;
-    c.alpha_packet = &send_recycler_alpha_action;
-    c.beta_packet = &send_recycler_beta_action;
-    c.alpha_action_alt = &recycler_crush_alpha_action_decision_tree;
-    c.alpha_packet_alt = &send_recycler_crush_action;
+    c.alpha_action = &crusher_alpha_action_decision_tree;
+    c.beta_action = &crusher_beta_action_decision_tree;
+    c.alpha_packet = &send_crusher_alpha_action;
+    c.beta_packet = &send_crusher_beta_action;
+    c.alpha_action_alt = &crusher_crush_alpha_action_decision_tree;
+    c.alpha_packet_alt = &send_crusher_crush_action;
   
     add_container(c);   // finalize
 }
@@ -200,7 +200,7 @@ void init_config()
     validate_settings();
 
     #if DC_SERVER
-    init_recycler_dat();
+    init_crusher_dat();
     #endif
 }
 
@@ -209,7 +209,7 @@ void teardown_config()
     if (container_attributes != NULL) delete[] container_attributes;
 
     #if DC_SERVER
-    teardown_recycler_dat();
+    teardown_crusher_dat();
     #endif
 }
 

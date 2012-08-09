@@ -1,4 +1,4 @@
-#include "recycler_dat.hpp"
+#include "crusher_dat.hpp"
 
 #if DC_CLIENT
 dont_include_this_file_in_client
@@ -9,7 +9,7 @@ dont_include_this_file_in_client
 namespace ItemContainer
 {
 
-float recycler_item_jump_out_velocity()
+float crusher_item_jump_out_velocity()
 {
     static const float m = 1.5f;
     return ((randf()/2) + 1.0f) * m;
@@ -21,7 +21,7 @@ static class Item::ItemDrop** drops = NULL;
     
 static class Item::ItemDrop* d = NULL;
 
-static void set_recycler_drop(int item_type)
+static void set_crusher_drop(int item_type)
 {
     GS_ASSERT(drops != NULL);
     if (drops == NULL) return;
@@ -36,16 +36,16 @@ static void set_recycler_drop(int item_type)
     d = drops[item_type];
 }
 
-static void recycler_def(const char* name)
+static void crusher_def(const char* name)
 {
     int item_type = Item::get_item_type(name);
     GS_ASSERT(item_type != NULL_ITEM);
-    set_recycler_drop(item_type);
+    set_crusher_drop(item_type);
 }
 
-static void register_recycler_settings()
+static void register_crusher_settings()
 {
-    recycler_def("regolith");
+    crusher_def("regolith");
     d->set_max_drop_types(6);
     
     d->set_max_drop_amounts("regolith_dust", 3);
@@ -70,29 +70,29 @@ static void register_recycler_settings()
     
 }
 
-void validate_recycler_settings()
+void validate_crusher_settings()
 {
     for (int i=0; i<MAX_ITEMS; i++)
         GS_ASSERT(drops[i] == NULL || drops[i]->is_loaded() != 0);
 }
 
-void load_recycler_dat()
+void load_crusher_dat()
 {
     _started = 0;
-    register_recycler_settings();
-    validate_recycler_settings();
+    register_crusher_settings();
+    validate_crusher_settings();
 }
 
 
 /* Public Interface */
 
-void init_recycler_dat()
+void init_crusher_dat()
 {
     GS_ASSERT(drops == NULL);
     drops = (class Item::ItemDrop**)calloc(MAX_ITEMS, sizeof(class Item::ItemDrop*));
 }
 
-void teardown_recycler_dat()
+void teardown_crusher_dat()
 {
     if (drops != NULL)
     {
@@ -102,7 +102,7 @@ void teardown_recycler_dat()
     }
 }
 
-class Item::ItemDrop* get_recycler_drop(int item_type)
+class Item::ItemDrop* get_crusher_drop(int item_type)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);

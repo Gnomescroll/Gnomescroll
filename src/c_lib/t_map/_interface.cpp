@@ -166,7 +166,7 @@ void received_block_damage_response(unsigned int request_id, unsigned int dmg)
 #endif
 
 #if DC_SERVER
-void create_item_container_block(int x, int y, int z, int container_type, int container_id)
+void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
     if (((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0) return;
@@ -215,6 +215,18 @@ bool get_container_location(int container_id, int position[3])
 
     c->chunk_item_container.get_container_location(container_id, position);
     return true;
+}
+
+void load_item_container_block(int x, int y, int z, int block_type)
+{
+    ItemContainerType container_type = Item::get_container_type_for_block(block_type);
+    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+    if (container_type == CONTAINER_TYPE_NONE) return;
+    ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;
+    
+    create_item_container_block(x,y,z, container->type, container->id);
 }
 
 void smelter_on(int container_id)

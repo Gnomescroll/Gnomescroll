@@ -41,11 +41,11 @@ void time_since(int n)
 
 void init(int argc, char* argv[])
 {
-#ifdef _WIN32
+    #ifdef _WIN32
     mkdir("./screenshot");
-#else
-    mkdir("./screenshot", S_IRWXU );
-#endif
+    #else
+    mkdir("./screenshot", S_IRWXU);
+    #endif
 
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib(argc, argv);
@@ -59,6 +59,8 @@ void init(int argc, char* argv[])
 
     GS_ASSERT(quadrant_translate_f(500,30) == 542);
     GS_ASSERT(quadrant_translate_f(10,500) == -12);
+
+    main_inited = true;
 }
 
 

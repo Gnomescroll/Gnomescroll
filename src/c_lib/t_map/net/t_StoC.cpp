@@ -200,7 +200,7 @@ void container_block_create_StoC::handle()
     int chunk_index = (y/16)*(MAP_WIDTH/16) + (x/16);
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
     if (main_map->chunk[chunk_index] == NULL) return;
-    main_map->chunk[chunk_index]->chunk_item_container.add(x,y,z, container_type, container_id);
+    main_map->chunk[chunk_index]->chunk_item_container.add(x,y,z, (ItemContainerType)container_type, container_id);
 }
 
 void container_block_delete_StoC::handle()

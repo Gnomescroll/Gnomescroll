@@ -54,7 +54,7 @@ void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
     this->remove_index(i);
 }
 
-void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, int container_type, int container_id)
+void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_type, int container_id)
 {
     x = translate_point(x);
     y = translate_point(y);

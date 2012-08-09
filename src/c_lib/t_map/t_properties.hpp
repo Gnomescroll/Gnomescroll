@@ -30,7 +30,6 @@ const int MAX_CUBES = 256;
 
 extern struct cubeProperties* cube_list; //[MAX_CUBES];
 
-
 void init_t_properties();
 
 void end_t_properties();
@@ -41,16 +40,8 @@ using namespace t_map;
 
 inline struct cubeProperties* _get_cube(int id) __attribute((always_inline)) GNOMESCROLL_API;
 
-//struct cubeProperties* _get_cube(int id)
-//{
-    //return &cube_list[id];
-//}
-
-//extern char cube_names[MAX_CUBES*64];
-//extern int cube_name_index[MAX_CUBES];
-
-void set_cube_name(int id, char* name, int length);
-void set_cube_name(int id, char* name);
+void set_cube_name(int id, const  char* name, int length);
+void set_cube_name(int id, const char* name);
 
 const char* get_cube_name(int id);
 int get_cube_id(const char* name);
@@ -64,7 +55,7 @@ int dat_get_cube_id(const char* name);  //use for dat files
     LUA interface
 */
 
-void LUA_set_block_name(int id, char* name, int length);
+void LUA_set_block_name(int id, const char* name, int length);
 
 void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
 void LUA_set_block_max_damage(int id, int max_damage);

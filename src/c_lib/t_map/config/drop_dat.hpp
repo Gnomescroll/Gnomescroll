@@ -50,8 +50,8 @@ void load_map_drop_dat()
     def_drop("smelter_1");
         drop_always("smelter_1");
 
-    def_drop("recycler");
-        drop_always("recycler");
+    def_drop("crusher");
+        drop_always("crusher");
 
     def_drop("methane_ice");
         add_drop("methane_ice", 4);

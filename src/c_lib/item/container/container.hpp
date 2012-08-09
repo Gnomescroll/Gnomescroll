@@ -466,7 +466,7 @@ class ItemContainerSmelter: public ItemContainerInterface
     {}
 };
 
-class ItemContainerRecycler: public ItemContainerInterface
+class ItemContainerCrusher: public ItemContainerInterface
 {
     public:
 
@@ -506,7 +506,7 @@ class ItemContainerRecycler: public ItemContainerInterface
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
 
-        ItemContainerRecycler(ItemContainerType type, int id)
+        ItemContainerCrusher(ItemContainerType type, int id)
         : ItemContainerInterface(type, id)
         {}
 };
@@ -544,7 +544,7 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
             return new ItemContainerSmelter(type, id);
 
         case CONTAINER_TYPE_RECYCLER:
-            return new ItemContainerRecycler(type, id);
+            return new ItemContainerCrusher(type, id);
 
         default:
             printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);

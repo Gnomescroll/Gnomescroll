@@ -60,6 +60,7 @@ void init(int argc, char* argv[])
 
     ServerState::init_base();
 
+    main_inited = true;
     printf("Game starting\n");
 }
 

@@ -5,7 +5,7 @@
 namespace t_hud
 {
 
-class RecyclerUI : public UIElement
+class CrusherUI : public UIElement
 {
     public:
           
@@ -104,8 +104,8 @@ class RecyclerUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
-        this->name.set_text("Recycler");
-        this->texture = &RecyclerTexture;
+        this->name.set_text("Crusher");
+        this->texture = &CrusherTexture;
     }
 
     void init_text()
@@ -170,7 +170,7 @@ class RecyclerUI : public UIElement
         HudFont::end_font_draw();
     }
 
-    RecyclerUI()
+    CrusherUI()
     : xdim(1), ydim(1), alt_xdim(0), alt_ydim(0),
     render_width(1.0f), render_height(1.0f),
     texture_offset_x(0.0f), texture_offset_y(0.0f),
@@ -178,14 +178,14 @@ class RecyclerUI : public UIElement
     centered(true)
     {}
 
-    ~RecyclerUI()
+    ~CrusherUI()
     {
         if (this->stacks != NULL) delete[] this->stacks;
     }
 };
 
 
-void RecyclerUI::draw()
+void CrusherUI::draw()
 {
     GS_ASSERT(this->texture != NULL);
     if (this->texture == NULL) return;
@@ -318,7 +318,7 @@ void RecyclerUI::draw()
     }
     glEnd();
 
-    glBindTexture(GL_TEXTURE_2D, RecyclerTexture);
+    glBindTexture(GL_TEXTURE_2D, CrusherTexture);
 
     // draw input overlay
     draw_bound_texture_sprite2(xoff, yoff-sw, sw, sh, -0.1f, input_overlay_x*tw, input_overlay_y*th, tw, th);

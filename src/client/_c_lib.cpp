@@ -235,11 +235,17 @@ dont_include_this_file_in_server
 #ifdef linux
 #include <signal.h>
 
+bool main_inited = false;
 bool signal_exit = false;
 
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
+    if (!main_inited)
+    {
+        close_c_lib();
+        exit(0);
+    }
     signal_exit = true;
 }
 #endif
