@@ -157,6 +157,13 @@ int run()
         Sleep(1);
         #endif
     }
+
+    if (should_save_map)
+    {
+        t_map::save_map();
+        should_save_map = false;
+    }
+    
     close_c_lib();
     return 0;
 }

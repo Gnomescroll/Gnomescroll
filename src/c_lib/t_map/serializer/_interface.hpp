@@ -132,7 +132,7 @@ struct SerializedChunk
 {
     uint32_t xchunk;
     uint32_t ychunk;
-    struct MAP_ELEMENT data[4*16*16*128];
+    struct MAP_ELEMENT data[sizeof(struct MAP_ELEMENT)*16*16*128];
 };
 
 static void load_map_restore_containers()
@@ -143,12 +143,12 @@ static void load_map_restore_containers()
         class MAP_CHUNK* mp = main_map->chunk[32*cj+ci];
         for(int k=0; k<128; k++)
         for(int i=0; i<16; i++)
-       	for(int j=0; j<16; j++)
-       	{
-       		int block = mp->e[16*16*k + 16*j + i].block;
-       		if(isItemContainer(block) == true)
-       			load_item_container_block(ci*16+i, cj*16+j, k, block);
-       	}
+        for(int j=0; j<16; j++)
+        {
+            int block = mp->e[16*16*k + 16*j + i].block;
+            if(isItemContainer(block) == true)
+                load_item_container_block(ci*16+i, cj*16+j, k, block);
+        }
     }
 }
 
@@ -156,15 +156,15 @@ class BlockSerializer
 {
     public:
 
-    static const int prefix_length = 4;
-    static const int version = 0;
+    static const int prefix_length = sizeof(uint32_t);
+    static const int version = DC_VERSION;
     static const int chunk_number = 32*32;
     //int blockdata_size;
     struct SerializedChunk s[chunk_number];
 
     BlockSerializer()
     {
-
+        memset(s, 0, chunk_number*sizeof(struct SerializedChunk));
     }
 
     void serialize()
@@ -175,13 +175,13 @@ class BlockSerializer
     static void push_int(char* buffer, int &index, uint32_t value)
     {
         *((uint32_t*)(buffer+index)) = value;
-        index += 4;
+        index += sizeof(uint32_t);
     }
 
     static void pop_int(char* buffer, int &index, int &value)
     {
         value = *((uint32_t*)(buffer+index));
-        index += 4;
+        index += sizeof(uint32_t);
     }
 
     void save(const char* filename)
@@ -194,52 +194,55 @@ class BlockSerializer
         {
             class MAP_CHUNK* mp = main_map->chunk[i];
             GS_ASSERT(mp != NULL);
+            s[i].xchunk = chunk_number % 16;
+            s[i].ychunk = chunk_number / 16;
             memcpy((void*) &s[i].data, &mp->e, 128*16*16*sizeof(struct MAP_ELEMENT));
         }
         //prepare buffer for saving
 
-        int file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
+        size_t file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
 
-        char* buffer = (char*) malloc(file_size);
+        char* buffer = (char*) malloc(file_size*sizeof(char));
         int index = 0;
 
         push_int(buffer, index, version);
 
         for(int i=0; i<chunk_number; i++)
         {
-            memcpy( buffer+index, (char*) &s[i], sizeof(SerializedChunk) );
-            index += sizeof(SerializedChunk);
+            memcpy(&buffer[index], (char*) &s[i], sizeof(struct SerializedChunk) );
+            index += sizeof(struct SerializedChunk);
         }
+        GS_ASSERT(file_size == (size_t)index);
 
         int ti2 = _GET_MS_TIME();
 
-#if 0
-        FILE *file; 
-        file = fopen(filename, "w+"); 
-
-        if(file == 0)
+        #if 0
+        FILE* file = fopen(filename, "w");
+        if(file == NULL)
         {
             printf("ERROR: cannot open map file %s \n", filename);
             return;
         }
 
-        int ret = fwrite (buffer, file_size, 1, file);
-        GS_ASSERT(ret == 1);
-        fclose(file); /*done!*/
-
+        size_t ret = fwrite (buffer, sizeof(char), index, file);
+        if (ferror(file))
+            perror("Error with map save file: ");
+        GS_ASSERT(ret == (size_t)index);
+        fclose(file); /*done!*/ 
+        
         free(buffer);
 
-#else
+        #else
         threaded_write((char*) filename, buffer, file_size);
-#endif
+        #endif
 
         int ti3 = _GET_MS_TIME();
-
         printf("BlockSerializer save: populate buffer took %i ms \n", ti2-ti1);
         printf("BlockSerializer save: writing file %s took %i ms \n", filename, ti3-ti2);
+}
 
 
-    }
+        
 
 
     void load(const char* filename)
@@ -276,8 +279,8 @@ class BlockSerializer
 
         for(int i=0; i<chunk_number; i++)
         {
-            memcpy((char*) &s[i], buffer+index, sizeof(SerializedChunk) );
-            index += sizeof(SerializedChunk);
+            memcpy((char*) &s[i], buffer+index, sizeof(struct SerializedChunk) );
+            index += sizeof(struct SerializedChunk);
         }
 
         //serialize
@@ -296,7 +299,7 @@ class BlockSerializer
 
         free(buffer);
 
-        load_map_restore_containers();	//setup containers
+        load_map_restore_containers();  //setup containers
     }
 };
 

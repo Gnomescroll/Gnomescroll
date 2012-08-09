@@ -178,12 +178,12 @@ namespace ClientState {
         version_CtoS msg;
         msg.version = DC_VERSION;
         msg.send();
-        chat_client->send_system_message((char*)"Connected to server");   
+        // connect message is printed after version match
     }
     
     void on_disconnect()
     {
-        chat_client->send_system_message((char*)"Disconnected from server");
+        chat_client->send_system_message("Disconnected from server");
     }
 
     void set_location_pointer()

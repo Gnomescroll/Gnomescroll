@@ -225,7 +225,8 @@ void load_item_container_block(int x, int y, int z, int block_type)
     ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    
+    init_container(container);
+
     create_item_container_block(x,y,z, container->type, container->id);
 }
 

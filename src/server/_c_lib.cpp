@@ -152,6 +152,9 @@ void signal_terminate_handler(int sig)
         exit(0);
     }
     signal_exit = true;
+    #if PRODUCTION
+    should_save_map = true;
+    #endif
 }
 
 void sigusr1_handler(int sig)

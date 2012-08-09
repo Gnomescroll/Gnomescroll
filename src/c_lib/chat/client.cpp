@@ -24,7 +24,7 @@ void ChatMessage::set_name()
 void ChatMessage::set_color()
 {
     if (sender == CHAT_SENDER_SYSTEM) // system msg
-        this->color = CHAT_SYSTEM_COLOR;
+        this->color = color_init(Options::system_message_r, Options::system_message_g, Options::system_message_b);
     else if (
         ClientState::playerAgent_state.agent_id >= 0
      && ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
@@ -478,7 +478,7 @@ history_index(-1),
 buffer_len(0),
 cursor(0)
 {
-    this->buffer = (char*)malloc(sizeof(char)*(CHAT_BUFFER_SIZE+1));
+    this->buffer = (char*)calloc(CHAT_BUFFER_SIZE+1, sizeof(char));
     this->buffer[CHAT_BUFFER_SIZE] = '\0';
     this->buffer[0] = '\0';
 }
