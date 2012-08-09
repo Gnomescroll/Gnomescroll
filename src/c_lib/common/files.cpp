@@ -10,6 +10,19 @@
 #endif
 #endif
 
+int GS_MKDIR(const char* dir, int permissions)
+{
+#ifdef _WIN32
+    #ifdef __MSVC__
+        return _mkdir(dir);
+    #else
+        return mkdir(dir);
+    #endif
+#else
+    return mkdir(dir, S_IRWXU);
+#endif
+}
+
 off_t fsize(const char *filename)
 {
     struct stat st; 
@@ -192,12 +205,14 @@ void create_path(const char* fn)
         if (c != SEPARATOR) continue;
         path[i-1] = '\0';
         if (stat(path, &file_stat) != 0)
-            mkdir(path, 0777);
+        { 
+            GS_MKDIR(path, 0777);
+        }
         path[i-1] = SEPARATOR;
     }
 
     if (stat(path, &file_stat) != 0)
-        mkdir(path, 0777);
+        GS_MKDIR(path, 0777);
 
     free(path);
 }

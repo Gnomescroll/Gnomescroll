@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int GS_MKDIR(const char* dir, int permissions);
+
 char* read_file_to_buffer(const char* file_name, int* size);
 char* fast_read_file_to_buffer(const char* file_name, int* size);
 
