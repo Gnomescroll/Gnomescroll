@@ -254,9 +254,6 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/lib']
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/awesomium/release'] #awesonium lib
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/assimp/lib'] #assimp lib
-        #conf.env.RPATH += ['$ORIGIN/../lib/lin32/lib']
-        #conf.env.RPATH += ['$ORIGIN/../lib/lin32/awesomium/release'] #awesonium lib
-        #conf.env.RPATH += ['$ORIGIN/../lib/lin32/assimp/lib'] #assimp lib
 
 def build(bld):
     OS = platform.system()
