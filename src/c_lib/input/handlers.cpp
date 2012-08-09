@@ -160,7 +160,10 @@ void enable_quit()
 void toggle_confirm_quit()
 {
     #if PRODUCTION
-    input_state.confirm_quit = (!input_state.confirm_quit);
+    if (!NetClient::Server.version_match)
+        enable_quit();
+    else
+        input_state.confirm_quit = (!input_state.confirm_quit);
     #else
     enable_quit();
     #endif

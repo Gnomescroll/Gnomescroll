@@ -324,7 +324,7 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
     {}
 };
 
-class ItemContainerRecyclerUI: public ItemContainerUIInterface
+class ItemContainerCrusherUI: public ItemContainerUIInterface
 {
     public:
 
@@ -369,7 +369,7 @@ class ItemContainerRecyclerUI: public ItemContainerUIInterface
             for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
         }
 
-        explicit ItemContainerRecyclerUI(int id)
+        explicit ItemContainerCrusherUI(int id)
         : ItemContainerUIInterface(id)
         {}
 };

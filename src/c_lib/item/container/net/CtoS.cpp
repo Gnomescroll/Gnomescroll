@@ -19,9 +19,9 @@ inline void no_container_action_beta_CtoS::handle(){}
 inline void smelter_container_action_alpha_CtoS::handle(){}
 inline void smelter_container_action_beta_CtoS::handle(){}
 
-inline void recycler_container_action_alpha_CtoS::handle(){}
-inline void recycler_container_action_beta_CtoS::handle(){}
-inline void recycler_crush_item_CtoS::handle(){}
+inline void crusher_container_action_alpha_CtoS::handle(){}
+inline void crusher_container_action_beta_CtoS::handle(){}
+inline void crusher_crush_item_CtoS::handle(){}
 
 inline void open_container_CtoS::handle() {}
 inline void close_container_CtoS::handle() {}
@@ -38,7 +38,7 @@ inline void admin_create_container_block_CtoS::handle() {}
 #include <state/server_state.hpp>
 #include <item/container/_interface.hpp>
 #include <item/container/server.hpp>
-#include <item/container/config/recycler_dat.hpp>
+#include <item/container/config/crusher_dat.hpp>
 
 namespace ItemContainer
 {
@@ -351,7 +351,7 @@ inline void smelter_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
 }
 
-inline void recycler_container_action_alpha_CtoS::handle()
+inline void crusher_container_action_alpha_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
@@ -361,7 +361,7 @@ inline void recycler_container_action_alpha_CtoS::handle()
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = recycler_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = crusher_alpha_action_decision_tree(a->id, client_id, container_id, slot);
 
     if (this->action != action)
     {
@@ -381,7 +381,7 @@ inline void recycler_container_action_alpha_CtoS::handle()
         send_container_failed_action(client_id, event_id);
 }
 
-inline void recycler_container_action_beta_CtoS::handle()
+inline void crusher_container_action_beta_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
@@ -391,7 +391,7 @@ inline void recycler_container_action_beta_CtoS::handle()
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = recycler_beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = crusher_beta_action_decision_tree(a->id, client_id, container_id, slot);
 
     if (this->action != action)
     {
@@ -422,14 +422,14 @@ static const int sq_normals[6][3] =
     {0,0,-1}
 };
 
-inline void recycler_crush_item_CtoS::handle()
+inline void crusher_crush_item_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
     
-    if (!recycler_crush_alpha_action_decision_tree(a->id, client_id, container_id, NULL_SLOT)) return;
+    if (!crusher_crush_alpha_action_decision_tree(a->id, client_id, container_id, NULL_SLOT)) return;
 
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
@@ -437,16 +437,16 @@ inline void recycler_crush_item_CtoS::handle()
     GS_ASSERT(container->type == CONTAINER_TYPE_RECYCLER);
     if (container->type != CONTAINER_TYPE_RECYCLER) return;
 
-    ItemContainerRecycler* recycler = (ItemContainerRecycler*)container;
+    ItemContainerCrusher* crusher = (ItemContainerCrusher*)container;
     
-    ItemID item_id = recycler->get_input_slot();
+    ItemID item_id = crusher->get_input_slot();
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return;
     int type = Item::get_item_type(item_id);
     GS_ASSERT(type != NULL_ITEM_TYPE);
     if (type == NULL_ITEM_TYPE) return;
 
-    class Item::ItemDrop* drop = get_recycler_drop(type);
+    class Item::ItemDrop* drop = get_crusher_drop(type);
     if (drop == NULL) return;   // TOOD -- send "failed" packet
 
     // unset any velocity state
@@ -455,14 +455,14 @@ inline void recycler_crush_item_CtoS::handle()
     drop->vz = 0.0f;
 
     int b[3];
-    t_map::get_container_location(recycler->id, b);
+    t_map::get_container_location(crusher->id, b);
     Vec3 p = vec3_add(vec3_init(b[0], b[1], b[2]), vec3_init(0.5f, 0.5f, 0.5f));
     if (t_map::get(b[0], b[1], b[2]+1) == 0)
     {   // pop out of the top
         p.x += randf() - 0.5f; 
         p.y += randf() - 0.5f; 
         p.z += 0.51f;
-        drop->vz = recycler_item_jump_out_velocity();
+        drop->vz = crusher_item_jump_out_velocity();
     }
     else
     {   // calculate face nearest agent
@@ -478,7 +478,7 @@ inline void recycler_crush_item_CtoS::handle()
             {
                 if (t_map::get(b[0] + sq_normals[i][0], b[1] + sq_normals[i][1], b[2] + sq_normals[i][2]) == 0)
                 {   // velocity in this direction
-                    float v = recycler_item_jump_out_velocity();
+                    float v = crusher_item_jump_out_velocity();
                     drop->vx = v * side[0];
                     drop->vy = v * side[1];
                     drop->vz = v * side[2];                
@@ -496,7 +496,7 @@ inline void recycler_crush_item_CtoS::handle()
         }
         else
         {   // use the side
-            float v = recycler_item_jump_out_velocity();
+            float v = crusher_item_jump_out_velocity();
             drop->vx = v * side[0];
             drop->vy = v * side[1];
             drop->vz = v * side[2];

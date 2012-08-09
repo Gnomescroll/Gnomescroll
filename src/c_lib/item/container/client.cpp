@@ -368,7 +368,7 @@ void send_smelter_beta_action(ContainerActionType action, int container_id, int 
     msg.send();
 }
 
-void send_recycler_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_crusher_alpha_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -376,7 +376,7 @@ void send_recycler_alpha_action(ContainerActionType action, int container_id, in
 
     record_container_event(container_id);
     
-    recycler_container_action_alpha_CtoS msg;
+    crusher_container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
 
@@ -404,7 +404,7 @@ void send_recycler_alpha_action(ContainerActionType action, int container_id, in
     msg.send();
 }
 
-void send_recycler_beta_action(ContainerActionType action, int container_id, int slot)
+void send_crusher_beta_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
@@ -413,7 +413,7 @@ void send_recycler_beta_action(ContainerActionType action, int container_id, int
 
     record_container_event(container_id);
 
-    recycler_container_action_beta_CtoS msg;
+    crusher_container_action_beta_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
 
@@ -441,7 +441,7 @@ void send_recycler_beta_action(ContainerActionType action, int container_id, int
     msg.send();
 }
 
-void send_recycler_crush_action(ContainerActionType action, int container_id, int slot)
+void send_crusher_crush_action(ContainerActionType action, int container_id, int slot)
 {
     GS_ASSERT(action == RECYCLER_CRUSH_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -450,7 +450,7 @@ void send_recycler_crush_action(ContainerActionType action, int container_id, in
     
     record_container_event(container_id);
     
-    recycler_crush_item_CtoS msg;
+    crusher_crush_item_CtoS msg;
     msg.event_id = container_event_id;
     
     msg.container_id = container_id;

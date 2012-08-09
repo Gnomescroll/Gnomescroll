@@ -113,9 +113,9 @@ void init_packets()
     smelter_container_action_alpha_CtoS::register_server_packet();
     smelter_container_action_beta_CtoS::register_server_packet();
 
-    recycler_container_action_alpha_CtoS::register_server_packet();
-    recycler_container_action_beta_CtoS::register_server_packet();
-    recycler_crush_item_CtoS::register_server_packet();
+    crusher_container_action_alpha_CtoS::register_server_packet();
+    crusher_container_action_beta_CtoS::register_server_packet();
+    crusher_crush_item_CtoS::register_server_packet();
 
     // container transactions to client
     container_action_failed_StoC::register_client_packet();
@@ -246,7 +246,7 @@ void update_container_ui_from_state()
     if (player_craft_bench_ui  != NULL) player_craft_bench_ui  ->load_data (player_craft_bench  ->slot);
     if (storage_block_ui       != NULL) storage_block_ui       ->load_data (storage_block       ->slot);
     if (cryofreezer_ui         != NULL) cryofreezer_ui         ->load_data (cryofreezer         ->slot);
-    if (recycler_ui            != NULL) recycler_ui            ->load_data (recycler            ->slot);
+    if (crusher_ui            != NULL) crusher_ui            ->load_data (crusher            ->slot);
     if (smelter_ui             != NULL) smelter_ui             ->load_data (smelter             ->slot);
     
     if (player_hand == NULL_ITEM)
@@ -302,7 +302,7 @@ bool open_container(int container_id)
             GS_ASSERT(cryofreezer_ui == NULL);
             GS_ASSERT(smelter == NULL);
             GS_ASSERT(smelter_ui == NULL);
-            GS_ASSERT(recycler_ui == NULL);
+            GS_ASSERT(crusher_ui == NULL);
 
             player_craft_bench = (ItemContainerCraftingBench*)container;
             if (player_craft_bench == NULL) return false;
@@ -323,7 +323,7 @@ bool open_container(int container_id)
             GS_ASSERT(cryofreezer_ui == NULL);
             GS_ASSERT(smelter == NULL);
             GS_ASSERT(smelter_ui == NULL);
-            GS_ASSERT(recycler_ui == NULL);
+            GS_ASSERT(crusher_ui == NULL);
 
             storage_block = (ItemContainer*)container;
             if (storage_block == NULL) return false;
@@ -344,7 +344,7 @@ bool open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
             GS_ASSERT(smelter == NULL);
             GS_ASSERT(smelter_ui == NULL);
-            GS_ASSERT(recycler_ui == NULL);
+            GS_ASSERT(crusher_ui == NULL);
             
             cryofreezer = (ItemContainerCryofreezer*)container;
             if (cryofreezer == NULL) return false;
@@ -365,7 +365,7 @@ bool open_container(int container_id)
             GS_ASSERT(storage_block_ui == NULL);
             GS_ASSERT(cryofreezer == NULL);
             GS_ASSERT(cryofreezer_ui == NULL);
-            GS_ASSERT(recycler_ui == NULL);
+            GS_ASSERT(crusher_ui == NULL);
             
             smelter = (ItemContainerSmelter*)container;
             if (smelter == NULL) return false;
@@ -388,14 +388,14 @@ bool open_container(int container_id)
             GS_ASSERT(cryofreezer_ui == NULL);
             GS_ASSERT(smelter_ui == NULL);
 
-            recycler =(ItemContainerRecycler*)container;
-            if (recycler == NULL) return false;
-            if (recycler_ui != NULL) delete recycler_ui;
-            recycler_ui = new ItemContainerRecyclerUI(container_id);
-            recycler_ui->set_alt_parameters(recycler->alt_xdim, recycler->alt_ydim);
-            recycler_ui->init(recycler->type, recycler->xdim, recycler->ydim);
-            recycler_ui->load_data(recycler->slot);
-            t_hud::set_container_id(recycler->type, recycler->id);
+            crusher =(ItemContainerCrusher*)container;
+            if (crusher == NULL) return false;
+            if (crusher_ui != NULL) delete crusher_ui;
+            crusher_ui = new ItemContainerCrusherUI(container_id);
+            crusher_ui->set_alt_parameters(crusher->alt_xdim, crusher->alt_ydim);
+            crusher_ui->init(crusher->type, crusher->xdim, crusher->ydim);
+            crusher_ui->load_data(crusher->slot);
+            t_hud::set_container_id(crusher->type, crusher->id);
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
@@ -452,9 +452,9 @@ bool close_container(int container_id)
     if (smelter_ui != NULL) delete smelter_ui;
     smelter_ui = NULL;
 
-    recycler = NULL;
-    if (recycler_ui != NULL) delete recycler_ui;
-    recycler_ui = NULL;
+    crusher = NULL;
+    if (crusher_ui != NULL) delete crusher_ui;
+    crusher_ui = NULL;
 
     // unset hud container id
     t_hud::close_container(container_id);
@@ -508,7 +508,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_synthesizer_ui  != NULL && player_synthesizer_ui->id  == container_id) return player_synthesizer_ui;
     if (storage_block_ui       != NULL && storage_block_ui->id       == container_id) return storage_block_ui;
     if (cryofreezer_ui         != NULL && cryofreezer_ui->id         == container_id) return cryofreezer_ui;
-    if (recycler_ui            != NULL && recycler_ui->id            == container_id) return recycler_ui;
+    if (crusher_ui            != NULL && crusher_ui->id            == container_id) return crusher_ui;
     if (smelter_ui             != NULL && smelter_ui->id             == container_id) return smelter_ui;
     GS_ASSERT(false);
     return NULL;

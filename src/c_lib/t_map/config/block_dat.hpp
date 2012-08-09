@@ -139,7 +139,7 @@ void load_block_dat()
     //hud_def(2,5,t1,14,6);
     set_max_dmg(128);
 
-    cube_def(10, ItemContainerBlock, "recycler");
+    cube_def(10, ItemContainerBlock, "crusher");
     iso_texture(t1, 11,7);
     side_texture(T, t1, 11,5);
     side_texture(B, t1, 11,5);

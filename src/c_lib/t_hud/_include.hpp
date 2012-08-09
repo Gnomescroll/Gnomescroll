@@ -13,6 +13,6 @@
 #include <t_hud/storage_block.cpp>
 #include <t_hud/smelter.cpp>
 #include <t_hud/energy_tanks.cpp>
-#include <t_hud/recycler.cpp>
+#include <t_hud/crusher.cpp>
 
 #include <t_hud/_interface.cpp>

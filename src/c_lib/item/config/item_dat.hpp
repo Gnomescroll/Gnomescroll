@@ -335,15 +335,15 @@ void load_item_dat()
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
-    item_def(59, IG_PLACER, "recycler");
-    iso_block_sprite_def("recycler");
-    s.pretty_name = (char*) "Recycler";
-    s.placer_block_type_id = t_map::dat_get_cube_id("recycler");
+    item_def(59, IG_PLACER, "crusher");
+    iso_block_sprite_def("crusher");
+    s.pretty_name = (char*) "Crusher";
+    s.placer_block_type_id = t_map::dat_get_cube_id("crusher");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "recycler");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "crusher");
     s.container_type = CONTAINER_TYPE_RECYCLER;
-    container_block_def("recycler", CONTAINER_TYPE_RECYCLER);
+    container_block_def("crusher", CONTAINER_TYPE_RECYCLER);
     s.cube_height = 1;
 
     item_def(60, IG_RESOURCE, "regolith_dust");

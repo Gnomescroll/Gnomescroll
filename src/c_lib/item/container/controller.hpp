@@ -30,9 +30,9 @@ ContainerActionType no_container_beta_action_decision_tree(int id, int slot);
 ContainerActionType smelter_alpha_action_decision_tree(int id, int slot);
 ContainerActionType smelter_beta_action_decision_tree(int id, int slot);
 
-ContainerActionType recycler_alpha_action_decision_tree(int id, int slot);
-ContainerActionType recycler_beta_action_decision_tree(int id, int slot);
-ContainerActionType recycler_crush_alpha_action_decision_tree(int id, int slot);
+ContainerActionType crusher_alpha_action_decision_tree(int id, int slot);
+ContainerActionType crusher_beta_action_decision_tree(int id, int slot);
+ContainerActionType crusher_crush_alpha_action_decision_tree(int id, int slot);
 #endif
 
 #if DC_SERVER
@@ -56,9 +56,9 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
 ContainerActionType smelter_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
 ContainerActionType smelter_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
 
-ContainerActionType recycler_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType recycler_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
-ContainerActionType recycler_crush_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType crusher_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType crusher_beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType crusher_crush_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
 #endif
 
 }

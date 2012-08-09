@@ -9,7 +9,7 @@ GLuint SynthesizerTexture = 0;
 GLuint CraftingTexture = 0;
 GLuint StorageBlockTexture = 0;
 GLuint SmelterTexture = 0;
-GLuint RecyclerTexture = 0;
+GLuint CrusherTexture = 0;
 
 static void init_synthesizer_texture()
 {
@@ -47,13 +47,13 @@ static void init_smelter_texture()
     GS_ASSERT(SmelterTexture != 0);
 }
 
-static void init_recycler_texture()
+static void init_crusher_texture()
 {
     GLuint min_filter = GL_LINEAR;
     GLuint mag_filter = GL_NEAREST;
-    int ret = create_texture_from_file("media/sprites/recycler.png", &RecyclerTexture, min_filter, mag_filter);
+    int ret = create_texture_from_file("media/sprites/crusher.png", &CrusherTexture, min_filter, mag_filter);
     GS_ASSERT(ret == 0);
-    GS_ASSERT(RecyclerTexture != 0);
+    GS_ASSERT(CrusherTexture != 0);
 }
 
 void init_texture()
@@ -62,7 +62,7 @@ void init_texture()
     init_crafting_texture();
     init_storage_block_texture();
     init_smelter_texture();
-    init_recycler_texture();
+    init_crusher_texture();
 }
 
 void teardown_texture()
