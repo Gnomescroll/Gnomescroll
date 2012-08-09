@@ -2,5 +2,12 @@
 
 cd $1
 
-rm -rf ./Contents/Frameworks/Awesomium.framework/Versions/Current
+cd ./Contents/Frameworks/Awesomium.framework/
+
+rm -rf Versions/Current
+rm Awesomium
+rm Resources
+
+ln -s Versions/A/Awesomium Awesomium
+ln -s Versions/A/Resources Resources
 
