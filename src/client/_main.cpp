@@ -213,7 +213,7 @@ int run()
             Non-transparent
         */
 
-        t_mob::draw();
+        //t_mob::draw();
         t_mech::draw();
 
         CHECK_GL_ERROR();
