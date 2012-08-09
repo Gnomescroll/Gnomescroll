@@ -356,6 +356,14 @@ void check_save_state()
             GS_ASSERT(map_final_name != NULL);
             if (map_final_name != NULL)
             {
+                if (file_exists(map_final_name))
+                {
+                    const char ext[] = ".bak";
+                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(ext))*sizeof(char));
+                    sprintf(map_final_name_bak, "%s%s", map_final_name, ext);
+                    rename(map_final_name, map_final_name_bak);
+                    free(map_final_name_bak);
+                }
                 int ret = rename(map_tmp_name, map_final_name);
                 GS_ASSERT(ret == 0);
             }
