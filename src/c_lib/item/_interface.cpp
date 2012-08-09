@@ -181,15 +181,18 @@ void destroy_item(ItemID id)
         ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
         if (container != NULL && slot != NULL_SLOT)
         {
-            if (container->id == ItemContainer::get_agent_toolbelt(container->owner)
-             && item->id == Toolbelt::get_agent_selected_item(container->owner))
-            {
-                GS_ASSERT(slot == Toolbelt::get_agent_selected_slot(container->owner));
-                Toolbelt::force_remove_selected_item(container->owner);
-            }
             container->remove_item(slot);
-            Agent_state* a = ServerState::agent_list->get(container->owner);
-            if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
+            if (container->owner != NO_AGENT)
+            {
+                if (container->id == ItemContainer::get_agent_toolbelt(container->owner)
+                 && item->id == Toolbelt::get_agent_selected_item(container->owner))
+                {
+                    GS_ASSERT(slot == Toolbelt::get_agent_selected_slot(container->owner));
+                    Toolbelt::force_remove_selected_item(container->owner);
+                }
+                Agent_state* a = ServerState::agent_list->get(container->owner);
+                if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
+            }
         }
     }
     else if (item->location == IL_HAND)
