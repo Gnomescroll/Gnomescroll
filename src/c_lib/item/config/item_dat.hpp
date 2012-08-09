@@ -365,43 +365,43 @@ iridium_helmet 5 6
 
 
     item_def(61, IG_RESOURCE, "iron_rod");
-    sprite_def(i0, 6,7);
+    sprite_def(i1, 6,7);
     s.pretty_name = (char*) "Iron Rod";
     s.max_stack_size = 1;
 
     item_def(62, IG_RESOURCE, "iron_star");
-    sprite_def(i0, 4,7);
+    sprite_def(i1, 4,7);
     s.pretty_name = (char*) "Iron Star";
     s.max_stack_size = 1;
 
     item_def(63, IG_RESOURCE, "iron_blade");
-    sprite_def(i0, 4,6);
+    sprite_def(i1, 4,6);
     s.pretty_name = (char*) "Iron Blade";
     s.max_stack_size = 1;
 
     item_def(64, IG_RESOURCE, "copper_wire");
-    sprite_def(i0, 1,6);
+    sprite_def(i1, 1,6);
     s.pretty_name = (char*) "Copper Wire";
     s.max_stack_size = 1;
 
 
     item_def(65, IG_RESOURCE, "iron_helmet");
-    sprite_def(i0, 5,3);
+    sprite_def(i1, 5,3);
     s.pretty_name = (char*) "Iron Helmet";
     s.max_stack_size = 1;
 
     item_def(66, IG_RESOURCE, "gallium_helmet");
-    sprite_def(i0, 5,4);
+    sprite_def(i1, 5,4);
     s.pretty_name = (char*) "Gallium Helmet";
     s.max_stack_size = 1;
 
     item_def(67, IG_RESOURCE, "copper_helmet");
-    sprite_def(i0, 5,5);
+    sprite_def(i1, 5,5);
     s.pretty_name = (char*) "Copper Helmet";
     s.max_stack_size = 1;
 
     item_def(68, IG_RESOURCE, "iridium_helmet");
-    sprite_def(i0, 5,6);
+    sprite_def(i1, 5,6);
     s.pretty_name = (char*) "Iridium Helmet";
     s.max_stack_size = 1;
 
