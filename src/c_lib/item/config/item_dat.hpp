@@ -430,7 +430,4 @@ void iso_block_sprite_def(const char* block_name)
     #endif
 }
 
-
-
-
-}
+}   // Item

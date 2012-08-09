@@ -48,7 +48,7 @@ struct cubeProperties* get_cube(int id)
 }
 
 
-void set_cube_name(int id, char* name, int length)
+void set_cube_name(int id, const char* name, int length)
 {
     static int index = 0;
 
@@ -78,7 +78,7 @@ void set_cube_name(int id, char* name, int length)
     index++;
 }
 
-void set_cube_name(int id, char* name)
+void set_cube_name(int id, const char* name)
 {
     int length = (int)strlen(name);
     set_cube_name(id, name, length);
@@ -143,7 +143,7 @@ void LUA_set_block_color_type(int id, int color_type)
     t_map::cube_list[id].color_type = color_type;
 }
 
-void LUA_set_block_name(int id, char* name, int length)
+void LUA_set_block_name(int id, const char* name, int length)
 {
     t_map::set_cube_name(id, name, length);
 }

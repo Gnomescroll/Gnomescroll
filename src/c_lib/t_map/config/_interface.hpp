@@ -4,7 +4,6 @@
 #if DC_CLIENT
 #include <SDL/texture_sheet_loader.hpp>
 #include <t_map/glsl/palette.hpp>
-
 #endif
 
 /*
@@ -56,21 +55,21 @@ int _palette_number = 0;
 
 int _side_texture[6];
 
+int DEFAULT_MAX_DAMAGE = 32;
+
 void cube_def(int id, int type, const char* name)
-{ 
+{
+    GS_ASSERT(id >= 0 && id < MAX_CUBES);
+    if (id < 0 || id >= MAX_CUBES) return;
     GS_ASSERT(!cube_list[id].in_use); // dont overwrite anything
     if (cube_list[id].in_use)
         printf("Error in function: %s:%d -- cube %d is already registered\n", __FUNCTION__, __LINE__, id);
 
     for (int i=0; i<6; i++) _side_texture[i] = 0;
 
-//#if DC_CLIENT
-//    if (_current_cube_id != -1) push_cube_palette();
-//#endif
     _palette_number = 0;
     _current_cube_id = id;
-    set_cube_name(id, (char*) name);
-
+    set_cube_name(id, name);
 
     struct cubeProperties p;
     p.active = true;
@@ -82,7 +81,7 @@ void cube_def(int id, int type, const char* name)
     p.reserved7 = false;
     p.reserved8 = false;
 
-    p.max_damage = 32;
+    p.max_damage = DEFAULT_MAX_DAMAGE;
     p.color_type = 0;
 
     switch(type)
@@ -119,7 +118,7 @@ void iso_texture(int tex_id)
 {
     for (int i=0; i<6; i++) _side_texture[i] = tex_id;
 /*
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     set_cube_side_texture(_current_cube_id, 0, tex_id);
     set_cube_side_texture(_current_cube_id, 1, tex_id);
     set_cube_side_texture(_current_cube_id, 2, tex_id);
@@ -133,14 +132,14 @@ void iso_texture(int tex_id)
     set_cube_palette_texture(_current_cube_id, 3, tex_id);
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
-#endif
+    #endif
 */
 }
 
 
 void iso_texture(int sheet_id, int ypos, int xpos)
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
 
     if (xpos < 1 || ypos < 1)
     {
@@ -167,16 +166,16 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     set_cube_palette_texture(_current_cube_id, 4, tex_id);
     set_cube_palette_texture(_current_cube_id, 5, tex_id);
 */
-#endif
+    #endif
 }
 
 void side_texture(int side, int tex_id)
 {
-#ifdef DC_CLIENT 
+    #if DC_CLIENT 
     _side_texture[side] = tex_id;
     //set_cube_side_texture(_current_cube_id, side, tex_id);
     //set_cube_palette_texture(_current_cube_id, side, tex_id);
-#endif
+    #endif
 }
 
 void side_texture(int side, int sheet_id, int ypos, int xpos)
@@ -198,13 +197,13 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
 
 void push_texture()
 {
-#if DC_CLIENT 
+    #if DC_CLIENT 
     start_cube_palette(_current_cube_id);
     for (int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
     for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
     push_cube_palette();
     _palette_number++;
-#endif
+    #endif
 }
 
 /*
@@ -216,7 +215,7 @@ void push_texture()
 
 void push_oriented_texture()
 {
-#if DC_CLIENT 
+    #if DC_CLIENT 
  
     const int T = 0;
     const int B = 1;
@@ -269,7 +268,7 @@ void push_oriented_texture()
     push_cube_palette();
 
     _palette_number += 4;
-#endif
+    #endif
 }
 
 void color_type(int color_type)
@@ -279,19 +278,23 @@ void color_type(int color_type)
 
 void hud_def(int hudy, int hudx, int tex_id)
 {
-#ifdef DC_CLIENT
-    if (hudy < 1 || hudx < 1)
+    #if DC_CLIENT
+    if (hudy < 1 || hudx < 1 || hudy > 8 || hudx > 8)
     {
         printf("hud_def error: hudx= %i hudy= %i \n", hudx,hudy);
         return;
     }
+
+    for (int i=0; i<6; i++)
+        GS_ASSERT(_side_texture[i] == 0 || _side_texture[i] == tex_id);
+
     set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
-#endif
+    #endif
 }
 
 void hud_def(int hudy, int hudx, int sheet_id, int ypos, int xpos)
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     if (xpos < 1 || ypos < 1)
     {
         printf("hud_def error: xpos= %i ypos= %i \n", xpos,ypos);
@@ -302,9 +305,20 @@ void hud_def(int hudy, int hudx, int sheet_id, int ypos, int xpos)
         printf("hud_def error: hudx= %i hudy= %i \n", hudx,hudy);
         return;
     }
+
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
+    int i=0;
+    for (;i<6; i++)
+    {
+        if (_side_texture[i] == 0) continue;
+        if (_side_texture[i] == tex_id) break;
+    }
+    GS_ASSERT(i != 6);
+    if (i == 6)
+        printf("%s failed for sheet,y,x %d,%d,%d\n", __FUNCTION__, sheet_id, ypos, xpos);
+
     set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
-#endif
+    #endif
 }
 
 void set_max_dmg(int dmg)
@@ -314,16 +328,16 @@ void set_max_dmg(int dmg)
 
 int texture_alias(const char* spritesheet) 
 { 
-#if DC_CLIENT
-    return LUA_load_cube_texture_sheet((char*) spritesheet); 
-#else
+    #if DC_CLIENT
+    return LUA_load_cube_texture_sheet(spritesheet); 
+    #else
     return 0;
-#endif
+    #endif
 }
 
 int sprite_alias(int sheet_id, int ypos, int xpos)
 {
-#if DC_CLIENT
+    #if DC_CLIENT
 
     if (xpos < 1 || ypos < 1)
     {
@@ -331,17 +345,17 @@ int sprite_alias(int sheet_id, int ypos, int xpos)
         return 0;
     }
     return LUA_blit_cube_texture(sheet_id, xpos, ypos); 
-#else
+    #else
     return 0;
-#endif
+    #endif
 }
 
 void end_block_dat()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     LUA_save_cube_texture();
     //print_palette();
-#endif
+    #endif
 }
 
 
@@ -350,7 +364,7 @@ void end_block_dat()
 */
 void blit_block_item_sheet()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
 
     GLuint block_item_64_texture = 0;
     {
@@ -451,7 +465,7 @@ void blit_block_item_sheet()
 
         SDL_UnlockSurface(block_item_64_surface);
 
-        save_surface_to_png(block_item_64_surface, (char*)"screenshot/fbo_test_64.png");
+        save_surface_to_png(block_item_64_surface, "screenshot/fbo_test_64.png");
 
         //Delete resources
         glDeleteTextures(1, &color_tex);
@@ -574,7 +588,7 @@ void blit_block_item_sheet()
         
         SDL_UnlockSurface(block_item_16_surface);
 
-        save_surface_to_png(block_item_16_surface, (char*)"screenshot/fbo_test_16.png");
+        save_surface_to_png(block_item_16_surface, "screenshot/fbo_test_16.png");
 
         //Delete resources
         glDeleteTextures(1, &color_tex);
@@ -589,7 +603,7 @@ void blit_block_item_sheet()
         glViewport (0, 0, _xres, _yres);
 
 
-#endif
+    #endif
 }
 
 }
@@ -597,7 +611,7 @@ void blit_block_item_sheet()
 /*
 void palette_def(int palette_number)
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     start_cube_palette(_current_cube_id);
 
     if (cube_texture_palette_lookup[_current_cube_id] + palette_number-1 != cube_texture_palette_index)
@@ -606,19 +620,19 @@ void palette_def(int palette_number)
         printf("palette_lookup= %i palette_number= %i palette_index= %i \n", 
             cube_texture_palette_lookup[_current_cube_id],palette_number,cube_texture_palette_index );
     }
-#endif
+    #endif
 }
 
 void end_palette_def()
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     push_cube_palette();
-#endif
+    #endif
 }
 
 void palette_side_texture(int side, int sheet_id, int ypos, int xpos)
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     if (xpos <= 0 || ypos <= 0)
     {
         printf("Block Dat Error: side_texture index on block %i is less than zero! \n", _current_cube_id);
@@ -630,19 +644,19 @@ void palette_side_texture(int side, int sheet_id, int ypos, int xpos)
     //printf("Blit 2: %i %i %i \n", sheet_id, xpos, ypos);
     int tex_id = LUA_blit_cube_texture(sheet_id, xpos, ypos);
     set_cube_palette_texture(_current_cube_id, side, tex_id);
-#endif
+    #endif
 }
 
 void palette_side_texture(int side, int tex_id)
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     set_cube_palette_texture(_current_cube_id, side, tex_id);
-#endif
+    #endif
 }
 
 void palette_iso_texture(int sheet_id, int ypos, int xpos)
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     if (xpos <= 0 || ypos <= 0)
     {
         printf("Error: iso_texture index on block %i is less than zero! \n", _current_cube_id);
@@ -659,7 +673,7 @@ void palette_iso_texture(int sheet_id, int ypos, int xpos)
     palette_side_texture(3, tex_id);
     palette_side_texture(4, tex_id);
     palette_side_texture(5, tex_id);
-#endif 
+    #endif 
 }
 */
 

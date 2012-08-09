@@ -29,14 +29,19 @@ void CubeSelector::init()
 
 void CubeSelector::set_block_selector(int pos, int cube_id, int tex_id)
 {
-    //printf("set block selector: %d %d %d\n", pos, cube_id, tex_id);
-    if(pos < 0 || tex_id < 0) return;
-    if(pos < 0 || pos >= 64)
-    {
-        printf("CubeSelector::load_cube_property error!\n");
-        return;
-    }
+    GS_ASSERT(tex_id >= 0);
+    GS_ASSERT(pos >= 0 && pos < 64);
+    if (tex_id < 0) return;
+    if (pos < 0 || pos >= 64) return;
+    
+    GS_ASSERT(cubes[pos].cube_id == 255);
     cubes[pos].cube_id = cube_id;
+
+    if (cube_id != 255)
+        for (int i=0; i<64; i++)
+            if (cubes[i].tex_id != 1)
+                GS_ASSERT(cubes[i].tex_id != tex_id); 
+    
     cubes[pos].tex_id = tex_id;
 }
 
@@ -61,25 +66,18 @@ void CubeSelector::set_active_pos(int pos)
     this->pos = pos;
     this->pos_x = pos % 8;
     this->pos_y = pos / 8;
-
-    this->update_block_applier();
 }
 
 void CubeSelector::set_active_id(int id)
 {
-    if (id != 255)
-        for (int i=0; i<256; i++)
-            if (cubes[i].cube_id == id)
-            {
-                this->set_active_pos(i);
-                break;
-            }
-}
+    if (id == 255) return;
 
-void CubeSelector::update_block_applier()
-{
-    if (ClientState::playerAgent_state.you == NULL) return;
-    //ClientState::playerAgent_state.you->weapons.blocks.set_block(this->get_active_id());
+    for (int i=0; i<256; i++)
+        if (cubes[i].cube_id == id)
+        {
+            this->set_active_pos(i);
+            break;
+        }
 }
 
 void CubeSelector::draw()
@@ -244,7 +242,7 @@ void init()
 
 void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id)
 {
-    if(hudx < 1 || hudy < 1)
+    if(hudx < 1 || hudy < 1 || hudx > 8 || hudy > 8)
     {
         printf("set_cube_hud error! hux= %i hudy= %i \n", hudx,hudy);
         return;
