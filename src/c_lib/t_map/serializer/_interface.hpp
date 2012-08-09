@@ -14,6 +14,23 @@ struct SerializedChunk
     struct MAP_ELEMENT data[4*16*16*128];
 };
 
+static void load_map_restore_containers()
+{
+    for(int ci=0; ci < 32; ci++)
+    for(int cj=0; cj < 32; cj++)
+    {
+        class MAP_CHUNK* mp = main_map->chunk[i];
+        for(int k=0; k<128; k++)
+        for(int i=0; i<16; i++)
+       	for(int j=0; j<16; j++)
+       	{
+       		int block = mp.e[16*16*k + 16*j + i].block;
+       		if(isItemContainer(block) == true)
+       			load_item_container_block(ci*16+i, cj*16+j, k, block);
+       	}
+    }
+}
+
 class BlockSerializer
 {
     public:
@@ -152,6 +169,8 @@ class BlockSerializer
         printf("BlockSerializer load: loading map file %i ms \n", ti3-ti2);
 
         free(buffer);
+
+        load_map_restore_containers();	//setup containers
     }
 };
 
