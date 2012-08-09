@@ -231,12 +231,12 @@ dont_include_this_file_in_server
 #include <state/packet_init.cpp>
 
 
+bool main_inited = false;
+bool signal_exit = false;
+
 #ifdef linux
 #include <unistd.h>
 #include <signal.h>
-
-bool main_inited = false;
-bool signal_exit = false;
 
 void close_c_lib();
 void signal_terminate_handler(int sig)

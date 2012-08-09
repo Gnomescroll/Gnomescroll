@@ -6,6 +6,7 @@ dont_include_this_file_in_non_OSX_builds
 
 #include <common/crash_report/stack_trace.hpp>
 #include <common/macros.hpp>
+#include <common/gs_assert.hpp>
 
 // copied from
 // http://stackoverflow.com/questions/516200/relative-paths-not-working-in-xcode-c
