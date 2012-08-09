@@ -11,7 +11,7 @@ struct SerializedChunk
 {
     uint32_t xchunk;
     uint32_t ychunk;
-    struct MAP_ELEMENT data[4*16*16*128];
+    struct MAP_ELEMENT data[sizeof(struct MAP_ELEMENT)*16*16*128];
 };
 
 static void load_map_restore_containers()
@@ -43,7 +43,7 @@ class BlockSerializer
 
     BlockSerializer()
     {
-
+        memset(s, 0, chunk_number*sizeof(struct SerializedChunk));
     }
 
     void serialize()
@@ -73,6 +73,8 @@ class BlockSerializer
         {
             class MAP_CHUNK* mp = main_map->chunk[i];
             GS_ASSERT(mp != NULL);
+            s[i].xchunk = chunk_number % 16;
+            s[i].ychunk = chunk_number / 16;
             memcpy((void*) &s[i].data, &mp->e, 128*16*16*sizeof(struct MAP_ELEMENT));
         }
         //prepare buffer for saving
@@ -86,26 +88,25 @@ class BlockSerializer
 
         for(int i=0; i<chunk_number; i++)
         {
-            memcpy( buffer+index, (char*) &s[i], sizeof(struct SerializedChunk) );
+            memcpy(&buffer[index], (char*) &s[i], sizeof(struct SerializedChunk) );
             index += sizeof(struct SerializedChunk);
         }
+        GS_ASSERT(file_size == (size_t)index);
 
         int ti2 = _GET_MS_TIME();
 
-        FILE *file; 
-        file = fopen(filename, "w"); // apend file (add text to  a file or create a file if it does not exist. 
-        //size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
-        
-        if(file == 0)
+        FILE* file = fopen(filename, "w");
+        if(file == NULL)
         {
             printf("ERROR: cannot open map file %s \n", filename);
             return;
         }
 
-        size_t ret = fwrite (buffer, sizeof(char), file_size, file);
-        GS_ASSERT(ret == file_size);
+        size_t ret = fwrite (buffer, sizeof(char), index, file);
+        if (ferror(file))
+            perror("Error with map save file: ");
+        GS_ASSERT(ret == (size_t)index);
         fclose(file); /*done!*/ 
-
 
         int ti3 = _GET_MS_TIME();
 

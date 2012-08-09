@@ -23,7 +23,7 @@ namespace t_map
     {
         GS_ASSERT( (_xpos % 16) == 0 && (_ypos % 16) == 0 );
         #if DC_CLIENT
-            needs_update = false;
+        needs_update = false;
         #endif
         xpos = _xpos;
         ypos = _ypos;
@@ -47,12 +47,10 @@ namespace t_map
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
         #endif
 
-        printf("xchunkdim= %i ychunkdim= %i \n", xchunk_dim, ychunk_dim);
         #if DC_SERVER
-        for(int i=0; i<xchunk_dim; i++) {
-        for(int j=0; j<ychunk_dim; j++) {
+        for(int i=0; i<xchunk_dim; i++)
+        for(int j=0; j<ychunk_dim; j++)
             chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
-        }}
         #endif
 
         #if DC_CLIENT
@@ -455,8 +453,8 @@ namespace t_map
         this->height_changed = false;
         // only toggle CHANGED chunks, we dont want to switch UNSET->UNCHANGED
         for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; i++)
-			if (chunk_heights_status[i] == CHUNK_HEIGHT_CHANGED)
-				chunk_heights_status[i] = CHUNK_HEIGHT_UNCHANGED;
+            if (chunk_heights_status[i] == CHUNK_HEIGHT_CHANGED)
+                chunk_heights_status[i] = CHUNK_HEIGHT_UNCHANGED;
     }
     
     void Terrain_map::chunk_received(int cx, int cy)
