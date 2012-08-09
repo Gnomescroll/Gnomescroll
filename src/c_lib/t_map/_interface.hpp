@@ -36,9 +36,12 @@ extern int requested_block_type;
 #endif
 
 #if DC_SERVER
-void create_item_container_block(int x, int y, int z, int container_type, int container_id);
+void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id);
 void destroy_item_container_block(int x, int y, int z);
 bool get_container_location(int container_id, int position[3]);
+
+// creates container
+void load_item_container_block(int x, int y, int z, int block_type);
 
 void smelter_on(int container_id);
 void smelter_off(int container_id);

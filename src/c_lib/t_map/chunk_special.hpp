@@ -16,7 +16,7 @@ namespace t_map
 struct inventory_block
 {
     int x,y,z;
-    int container_type;
+    ItemContainerType container_type;
     int container_id;
 };
 
@@ -87,7 +87,7 @@ class CHUNK_ITEM_CONTAINER
         GS_ASSERT(false);
     }
     
-    void add(int x, int y, int z, int container_type, int container_id);
+    void add(int x, int y, int z, ItemContainerType container_type, int container_id);
 
     int get(int x, int y, int z)
     {

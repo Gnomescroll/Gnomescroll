@@ -81,8 +81,8 @@ class BlockSerializer
         
         if(file == 0)
         {
-        	printf("ERROR: cannot open map file %s \n", filename);
-        	return;
+            printf("ERROR: cannot open map file %s \n", filename);
+            return;
         }
 
         int ret = fwrite (buffer, file_size, 1, file);
@@ -102,11 +102,11 @@ class BlockSerializer
     void load(const char* filename)
     {
 
- 		if(main_map == NULL)
- 		{
- 			printf("ERROR: Attempting to load map before t_map init \n");
- 			GS_ABORT();
- 		}
+        if(main_map == NULL)
+        {
+            printf("ERROR: Attempting to load map before t_map init \n");
+            GS_ABORT();
+        }
 
         int ti1 = _GET_MS_TIME();
         int index=0 ;
@@ -177,12 +177,12 @@ const char default_map_file[] = "./world/map-" STR(DC_VERSION) ".map";
 
 void save_map()
 {
-	save_map((char*)default_map_file );
+    save_map((char*)default_map_file );
 }
 
 void load_map()
 {
-	load_map((char*)default_map_file );
+    load_map((char*)default_map_file );
 }
 
 }   // t_map
