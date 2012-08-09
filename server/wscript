@@ -156,17 +156,8 @@ def build(bld):
     )
     bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
-    #bld.add_post_fun(install_bin)
-    #if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
-        #bld.add_post_fun(strip_symbols)
+    bld.add_post_fun(install_bin)
 
-
-def strip_symbols(ctx):
-    OS = platform.system()
-    if OS == 'Linux':
-        print 'Stripping symbols'
-        #subprocess.Popen(['strip', '-s', './ext/init_c_lib.so'])
-        
 
 def install_bin(ctx):
     global out
