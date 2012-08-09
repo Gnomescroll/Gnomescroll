@@ -55,6 +55,8 @@ int _palette_number = 0;
 
 int _side_texture[6];
 
+int DEFAULT_MAX_DAMAGE = 32;
+
 void cube_def(int id, int type, const char* name)
 {
     GS_ASSERT(id >= 0 && id < MAX_CUBES);
@@ -65,13 +67,9 @@ void cube_def(int id, int type, const char* name)
 
     for (int i=0; i<6; i++) _side_texture[i] = 0;
 
-//#if DC_CLIENT
-//    if (_current_cube_id != -1) push_cube_palette();
-//#endif
     _palette_number = 0;
     _current_cube_id = id;
     set_cube_name(id, name);
-
 
     struct cubeProperties p;
     p.active = true;
@@ -83,7 +81,7 @@ void cube_def(int id, int type, const char* name)
     p.reserved7 = false;
     p.reserved8 = false;
 
-    p.max_damage = 32;
+    p.max_damage = DEFAULT_MAX_DAMAGE;
     p.color_type = 0;
 
     switch(type)
