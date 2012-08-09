@@ -1,16 +1,28 @@
 #!/bin/bash
 
-p=`pidof run`
-
-if [ -z "$p" ]
-then
-  p=`pidof gnomescroll_server`
+function send_save_map
+{
+  local p=`pidof "$1"`
   if [ -z "$p" ]
   then
-    echo "No server process found"
+    return 1
   else
-    kill -s SIGUSR1 `pidof gnomescroll_server`
+    kill -s SIGUSR1 "$p"
+  fi
+  return 0
+}
+
+if [ -z "$1" ]
+then
+  send_save_map "run"
+  if [ $? -ne 0 ]
+  then
+    send_save_map "gnomescroll_server"
+    if [ $? -ne 0 ]
+    then
+      echo "No server process found"
+    fi
   fi
 else
-  kill -s SIGUSR1 `pidof run`
+  send_save_map "$1"
 fi

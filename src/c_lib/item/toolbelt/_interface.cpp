@@ -413,7 +413,7 @@ void use_block_placer(int agent_id, ItemID placer_id)
     int stack_size = placer->stack_size;
     int remaining_stack_size = Item::consume_stack_item(placer->id);
     // force removal is already handled if the item gets destroyed
-    if (stack_size != remaining_stack_size) 
+    if (remaining_stack_size > 0 && stack_size != remaining_stack_size) 
         Item::send_item_state(placer->id);        
 }
 

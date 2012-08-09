@@ -70,6 +70,12 @@ class SubscriberList
     bool remove(int client_id)
     {
         ASSERT_VALID_CLIENT_ID(client_id);
+        if (this->n == 1)
+        {
+            this->n = 0;
+            return true;
+        }
+        
         for (unsigned int i=0; i<this->n; i++)
             if (this->subscribers[i] == client_id)
             {   // swap with highest, decrement n
@@ -87,13 +93,18 @@ class SubscriberList
     SubscriberList(unsigned int initial_size)
     : n(0), max(initial_size)
     {
+        GS_ASSERT(initial_size > 0);
         this->subscribers = (int*)malloc(initial_size * sizeof(int));
         this->hard_max = NetServer::HARD_MAX_CONNECTIONS;
+        GS_ASSERT(initial_size < this->hard_max);
     }
 
     SubscriberList(unsigned int initial_size, unsigned int hard_max)
     : n(0), max(initial_size)
     {
+        GS_ASSERT(initial_size > 0);
+        GS_ASSERT(hard_max > 0);
+        GS_ASSERT(hard_max >= initial_size);
         this->subscribers = (int*)malloc(initial_size * sizeof(int));
         this->hard_max = hard_max;
     }
