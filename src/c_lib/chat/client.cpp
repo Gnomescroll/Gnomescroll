@@ -24,7 +24,7 @@ void ChatMessage::set_name()
 void ChatMessage::set_color()
 {
     if (sender == CHAT_SENDER_SYSTEM) // system msg
-        this->color = CHAT_SYSTEM_COLOR;
+        this->color = color_init(Options::system_message_r, Options::system_message_g, Options::system_message_b);
     else if (
         ClientState::playerAgent_state.agent_id >= 0
      && ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET == channel

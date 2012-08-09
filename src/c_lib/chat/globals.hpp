@@ -16,7 +16,7 @@ const int CHANNEL_ID_AGENT_OFFSET = 16;
 const int CHAT_SENDER_SYSTEM = 255;
 const int CHAT_CHANNEL_SYSTEM = 0;
 
-const struct Color CHAT_SYSTEM_COLOR = {255,10,50};
+//const struct Color CHAT_SYSTEM_COLOR = {255,255,50};  // moved to options
 const struct Color CHAT_PM_COLOR = {10,10,255};
 const struct Color CHAT_GLOBAL_COLOR = {255,255,255};
 const struct Color CHAT_UNKNOWN_COLOR = {50,50,50};
@@ -28,11 +28,11 @@ bool is_valid_chat_character(char c)
 
 bool is_valid_chat_message(char* msg)
 {
-	GS_ASSERT(msg != NULL);
-	if (msg == NULL) return false;
-	
-	if (msg[0] == '\0') return false;	// empty
-    if (msg[0] == '/') return false;	// chat command
+    GS_ASSERT(msg != NULL);
+    if (msg == NULL) return false;
+    
+    if (msg[0] == '\0') return false;   // empty
+    if (msg[0] == '/') return false;    // chat command
 
     char c;
     int i=0;
