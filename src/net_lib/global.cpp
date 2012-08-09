@@ -52,14 +52,20 @@ void init_globals()
     // open sessions log file
     const char sessions_fn[] = "./log/sessions.log";
     session_log_file = fopen(sessions_fn, "a");
-    setvbuf(session_log_file, NULL, _IOLBF, 256);
+    GS_ASSERT(session_log_file != NULL);
+    if (session_log_file != NULL)
+        setvbuf(session_log_file, NULL, _IOLBF, 256);
 
     // open population log file
     const char pop_fn[] = "./log/population.log";
     population_log_file = fopen(pop_fn, "a");
+    GS_ASSERT(population_log_file != NULL);
     // print startup time
-    fprintf(population_log_file, "%s Server started (build %d)\n", time_str, DC_VERSION);
-    setvbuf(population_log_file, NULL, _IOLBF, 256);
+    if (population_log_file != NULL)
+    {
+        setvbuf(population_log_file, NULL, _IOLBF, 256);
+        fprintf(population_log_file, "%s Server started (build %d)\n", time_str, DC_VERSION);
+    }
 }
 
 void teardown_globals()

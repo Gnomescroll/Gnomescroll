@@ -232,6 +232,7 @@ void close_files()
 
 void init()
 {
+    create_path(LOG_DIR);
     if (!Options::logger) return;
     generate_filenames();
     log_buffer = (char*)malloc(sizeof(char) * LOG_MSG_MAX_LEN);
