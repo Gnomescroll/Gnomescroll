@@ -64,7 +64,7 @@ void *_threaded_write(void *vptr)
 
     int ti2 = _GET_MS_TIME();
 
-	printf("Map saved to %s, took %i ms \n", filename, ti2-ti1);
+	printf("_threaded_write: map saved to %s in %i ms \n", filename, ti2-ti1);
 
 	_threaded_write_running = 0;
 
