@@ -163,28 +163,28 @@ def install_bin(ctx):
     global out
     OS = platform.system()
 
-    try:    # installs binary to ./run and ./client
-        run_target = 'run'
-        if OS == 'Windows':
-            run_dest = 'run.exe'
-        else:
-            run_dest = 'run'
-        try:
-            src = os.path.join(out, run_target)
-            dest = './' + run_dest
-            shutil.copy2(src,dest)
-            print "Copied %s to %s" % (src,dest,)
+    dests = ['run']
+    if OS == "Linux":
+        dests.append('gnomescroll_server')
+    for run_dest in dests: 
+        try:    # installs binary to ./run and ./client
+            run_target = 'run'
+            try:
+                src = os.path.join(out, run_target)
+                dest = './' + run_dest
+                shutil.copy2(src,dest)
+                print "Copied %s to %s" % (src,dest,)
+            except Exception, e:
+                pass
+            #if OS == 'Linux':
+                #try:
+                    #shutil.copy2('./run', './gs_server')
+                #except Exception, e:
+                    #pass
         except Exception, e:
+            print "error copying binaries to ./"
+            print e
             pass
-        #if OS == 'Linux':
-            #try:
-                #shutil.copy2('./run', './gs_server')
-            #except Exception, e:
-                #pass
-    except Exception, e:
-        print "error copying binaries to ./"
-        print e
-        pass
         
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
