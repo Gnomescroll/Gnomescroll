@@ -567,9 +567,8 @@ void create_container_block_CtoS::handle()
     if (attr == NULL) return;
     int val = attr->placer_block_type_id;
 
-    GS_ASSERT(isItemContainer(val) == true); //container must be a container block
-
     ItemContainerType container_type = Item::get_container_type_for_block(val);
+    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
     // these comparisons not needed due to value range of data type
@@ -630,6 +629,7 @@ void admin_create_container_block_CtoS::handle()
     if (a->status.dead) return;
 
     ItemContainerType container_type = Item::get_container_type_for_block(val);
+    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
     // comparison not needed due to value range of data type
@@ -643,8 +643,6 @@ void admin_create_container_block_CtoS::handle()
     if (!t_map::block_can_be_placed(x,y,z,val)) return;
 
     bool collides = false;
-    GS_ASSERT(isItemContainer(val) == true); //container must be a container block
-
     t_map::set_fast(x,y,z, val); // set temporarily to test against
     if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else

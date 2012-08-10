@@ -74,7 +74,7 @@ class SubscriberList
         for (unsigned int i=0; i<this->n; i++)
             if (this->subscribers[i] == client_id)
             {
-                if (this->n < this->max) // swap with highest, decrement n
+                if (i < this->n-1) // swap with highest, decrement n
                     this->subscribers[i] = this->subscribers[this->n];
                 this->n--;
                 return true;

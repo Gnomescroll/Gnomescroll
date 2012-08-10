@@ -120,7 +120,7 @@ void ItemList::decay_gas()
 
 void ItemList::verify_items()
 {
-    const int LIMIT = 30;
+    const int LIMIT = 1;
     for (int k=0; k<this->n_max; k++)
     {
         if (this->a[k] == NULL) continue;
@@ -153,7 +153,6 @@ void ItemList::verify_items()
             int owner = ItemContainer::get_container_owner(i->location_id);
             if (ItemContainer::container_type_is_attached_to_agent(type))
             {
-                if(i->subscribers.n != 1) printf("Item %d, subscribers %d\n", i->id, i->subscribers.n);
                 GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
                 GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }

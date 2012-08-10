@@ -1280,6 +1280,7 @@ bool agent_in_container_range(int agent_id, int container_id)
 {
     // get agent position
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return false;
     Agent_state* a = ServerState::agent_list->get(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return false;
