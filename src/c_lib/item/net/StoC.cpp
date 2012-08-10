@@ -12,16 +12,20 @@ namespace Item
 
 inline void item_create_StoC::handle()
 {
-    Item* item = item_list->get_or_create_type(type, (ItemID)id);
+    Item* item = get_item((ItemID)this->id);
+    GS_ASSERT(item == NULL);
+    if (item != NULL) destroy_item((ItemID)this->id);
+    item = create_item(this->type, (ItemID)this->id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
+    item->type = type;
     item->durability = durability;
     item->stack_size = stack_size;
 }
 
 inline void item_destroy_StoC::handle()
 {
-    item_list->destroy(id);
+    destroy_item((ItemID)id);
 }
 
 inline void item_state_StoC::handle()

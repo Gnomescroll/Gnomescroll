@@ -120,33 +120,49 @@ void ItemList::decay_gas()
 
 void ItemList::verify_items()
 {
-    for (int i=0; i<this->n_max; i++)
+    const int LIMIT = 30;
+    for (int k=0; k<this->n_max; k++)
     {
-        if (this->a[i] == NULL) continue;
+        if (this->a[k] == NULL) continue;
+        Item* i = this->a[k];
 
-        if (this->a[i]->location == IL_NOWHERE)
-            printf("Item %d is lost\n", this->a[i]->id);
+        GS_ASSERT_LIMIT(i->location != IL_NOWHERE, LIMIT);
+        GS_ASSERT_LIMIT(i->stack_size > 0, LIMIT);
+        GS_ASSERT_LIMIT(i->subscribers.n >= 0, LIMIT);
 
-        if (this->a[i]->location == IL_CONTAINER && this->a[i]->location_id == NULL_CONTAINER)
-            printf("Item %d is located in container but has NULL_CONTAINER location_id\n", this->a[i]->id);
-
-        if (this->a[i]->location == IL_CONTAINER && this->a[i]->location_id != NULL_CONTAINER && this->a[i]->container_slot == NULL_SLOT)
-            printf("Item %d is in container %d but has NULL_SLOT\n", this->a[i]->id, this->a[i]->location_id);
-
-        if (this->a[i]->location == IL_PARTICLE && this->a[i]->location_id == NULL_PARTICLE)
-            printf("Item %d is located in particle but has NULL_PARTICLE location_id\n", this->a[i]->id);
-            
-        if (this->a[i]->location == IL_HAND && (this->a[i]->location_id < 0 || this->a[i]->location_id >= AGENT_MAX))
-            printf("Item %d is located in agent hand but has invalid agent location_id %d\n", this->a[i]->id, this->a[i]->location_id);
-            
-        if (this->a[i]->location == IL_HAND && this->a[i]->location_id >= 0 && this->a[i]->location_id < AGENT_MAX && ItemContainer::agent_hand_list[this->a[i]->location_id] == NULL_ITEM)
-            printf("Item %d is located in agent hand but agent %d hand is empty\n", this->a[i]->id, this->a[i]->location_id);
-            
-        if (this->a[i]->location == IL_HAND && this->a[i]->location_id >= 0 && this->a[i]->location_id < AGENT_MAX && ItemContainer::agent_hand_list[this->a[i]->location_id] != this->a[i]->id)
-            printf("Item %d is located in agent hand but agent %d hand is a different item, %d\n", this->a[i]->id, this->a[i]->location_id, ItemContainer::agent_hand_list[this->a[i]->location_id]);
-
-        if (this->a[i]->stack_size <= 0)
-            printf("Item %d has no stack size\n", this->a[i]->id);
+        if (i->location == IL_PARTICLE)
+        {
+            GS_ASSERT_LIMIT(i->location != IL_PARTICLE || i->location_id != NULL_PARTICLE, LIMIT);
+        }
+        else
+        if (i->location == IL_HAND)
+        {
+            GS_ASSERT_LIMIT(i->location_id >= 0 && i->location_id < AGENT_MAX, LIMIT);
+            GS_ASSERT_LIMIT(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::agent_hand_list[i->location_id] == i->id, LIMIT);
+            GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+            GS_ASSERT_LIMIT(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
+        }
+        else
+        if (i->location == IL_CONTAINER)
+        {
+            GS_ASSERT_LIMIT(i->location_id != NULL_CONTAINER, LIMIT);
+            GS_ASSERT_LIMIT(i->container_slot != NULL_SLOT, LIMIT);
+            GS_ASSERT_LIMIT(ItemContainer::get_container_type(i->location_id) != CONTAINER_TYPE_NONE, LIMIT);
+    
+            ItemContainerType type = ItemContainer::get_container_type(i->location_id);
+            int owner = ItemContainer::get_container_owner(i->location_id);
+            if (ItemContainer::container_type_is_attached_to_agent(type))
+            {
+                if(i->subscribers.n != 1) printf("Item %d, subscribers %d\n", i->id, i->subscribers.n);
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
+            }
+            else if (owner != NO_AGENT)
+            {
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
+            }
+        }
     }
 }
 #endif

@@ -105,21 +105,6 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX
             item->init(item_type);
             return item;
         }
-        
-        Item* get_or_create_type(int item_type, ItemID item_id)
-        {
-            Item* item = this->get(item_id);
-            if (item != NULL)
-            {
-                GS_ASSERT(item_type == item->type);
-                return item;
-            }
-            
-            item = DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>::create(item_id);
-            if (item == NULL) return NULL;
-            item->init(item_type);
-            return item;
-        }
         #endif
 
         #if DC_SERVER

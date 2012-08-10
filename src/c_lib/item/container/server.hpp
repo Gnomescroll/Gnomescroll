@@ -16,6 +16,7 @@ void remove_item_from_hand(int agent_id);
 void transfer_item_between_containers(ItemID item_id, int container_id_a, int slot_a, int container_id_b, int slot_b);
 void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int slot, int agent_id);
 void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int slot, int agent_id);
+bool swap_item_between_hand_and_container(int agent_id, int container_id, int slot);
 
 // brand new item -> container/hand
 bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot);

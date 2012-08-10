@@ -152,7 +152,7 @@ static void register_settings()
     c.alpha_packet = &send_smelter_alpha_action;
     c.beta_packet = &send_smelter_beta_action;
 
-    container_def(CONTAINER_TYPE_RECYCLER);
+    container_def(CONTAINER_TYPE_CRUSHER);
     c.xdim = 1;
     c.ydim = 1;
     c.alt_xdim = 0;
@@ -268,7 +268,7 @@ bool container_type_is_attached_to_agent(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
     if (attr == NULL) return false;
-    return !attr->attached_to_agent;
+    return attr->attached_to_agent;
 }
 
 bool container_type_is_block(ItemContainerType type)

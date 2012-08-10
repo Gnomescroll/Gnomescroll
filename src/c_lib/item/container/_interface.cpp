@@ -159,6 +159,8 @@ void destroy_container(int id)
     for (int i=0; i<container->slot_max; i++)
         if (container->slot[i] != NULL_ITEM)
             Item::destroy_item(container->slot[i]);
+
+    printf("Destroyed container\n");
     #endif
 
     #if DC_SERVER
@@ -176,6 +178,13 @@ ItemContainerType get_container_type(int container_id)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return CONTAINER_TYPE_NONE;
     return container->type;
+}
+
+int get_container_owner(int container_id)
+{
+    ItemContainerInterface* container = get_container(container_id);
+    if (container == NULL) return NO_AGENT;
+    return container->owner;
 }
 
 void container_block_destroyed(int container_id, int x, int y, int z)
@@ -379,7 +388,7 @@ bool open_container(int container_id)
             if (opened_container == NULL_CONTAINER) did_open_container_block = true;
             break;
 
-        case CONTAINER_TYPE_RECYCLER:
+        case CONTAINER_TYPE_CRUSHER:
             GS_ASSERT(player_craft_bench == NULL);
             GS_ASSERT(player_craft_bench_ui == NULL);
             GS_ASSERT(storage_block == NULL);
@@ -1263,7 +1272,6 @@ void send_container_contents(int agent_id, int client_id, int container_id)
     {
         if (container->slot[i] == NULL_ITEM) continue;
         Item::subscribe_agent_to_item(agent_id, container->slot[i]);
-        Item::send_item_create(client_id, container->slot[i]);
         send_container_insert(client_id, container->slot[i], container->id, i);
     }
 }

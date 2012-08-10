@@ -196,6 +196,80 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
         Item::unsubscribe_agent_from_item(hand_owner->id, item_id);
 }
 
+bool swap_item_between_hand_and_container(int agent_id, int container_id, int slot)
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    GS_ASSERT(slot != NULL_SLOT);
+    ASSERT_VALID_AGENT_ID(agent_id);
+    
+    if (container_id == NULL_CONTAINER) return false;
+    if (slot == NULL_SLOT) return false;
+    IF_INVALID_AGENT_ID(agent_id) return false;
+
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return false;
+
+    Agent_state* container_owner = NULL;
+    if (container->owner != NO_AGENT)
+    {
+        container_owner = ServerState::agent_list->get(container->owner);
+        GS_ASSERT(container_owner != NULL);
+    }
+
+    Agent_state* hand_owner = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(hand_owner != NULL);
+
+    ItemID container_item_id = container->get_item(slot);
+    GS_ASSERT(container_item_id != NULL_ITEM);
+    if (container_item_id == NULL_ITEM) return false;
+    Item::Item* container_item = Item::get_item(container_item_id);
+    GS_ASSERT(container_item != NULL);
+    if (container_item == NULL) return false;
+
+    ItemID hand_item_id = get_agent_hand(agent_id);
+    GS_ASSERT(hand_item_id != NULL_ITEM);
+    if (hand_item_id == NULL_ITEM) return false;
+    Item::Item* hand_item = Item::get_item(hand_item_id);
+    GS_ASSERT(hand_item != NULL);
+    if (hand_item == NULL) return false;
+    
+    GS_ASSERT(container_item_id != hand_item_id);
+    if (container_item_id == hand_item_id) return false;
+    
+    container->remove_item(slot);
+    if (container_owner != NULL)
+        send_container_remove(container_owner->client_id, container->id, slot); 
+
+    remove_item_from_hand(agent_id);
+    if (hand_owner != NULL)
+        send_hand_remove(hand_owner->client_id);
+
+    container->insert_item(slot, hand_item->id);
+    if (container_owner != NULL)
+        send_container_insert(container_owner->client_id, hand_item->id, container->id, slot);
+        
+    insert_item_in_hand(agent_id, container_item->id);
+    if (hand_owner != NULL)
+        send_hand_insert(hand_owner->client_id, container_item->id);
+
+    if (hand_owner != container_owner)
+    {
+        if (hand_owner != NULL)
+        {
+            Item::unsubscribe_agent_from_item(agent_id, hand_item->id);
+            Item::subscribe_agent_to_item(agent_id, container_item->id);
+        }
+        if (container_owner != NULL)
+        {
+            Item::unsubscribe_agent_from_item(agent_id, container_item->id);
+            Item::subscribe_agent_to_item(agent_id, hand_item->id);
+        }
+    }
+
+    return true;
+}
+
 // new unassigned item to container
 bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
 {
@@ -668,10 +742,8 @@ void unsubscribe_agent_from_container_contents(int agent_id, int container_id)
     if (container == NULL) return;
 
     for (int i=0; i<container->slot_max; i++)
-    {
-        if (container->slot[i] == NULL_ITEM) continue;
-        Item::unsubscribe_agent_from_item(agent_id, container->slot[i]);
-    }
+        if (container->slot[i] != NULL_ITEM)
+            Item::unsubscribe_agent_from_item(agent_id, container->slot[i]);
 }
 
 }   // ItemContainer

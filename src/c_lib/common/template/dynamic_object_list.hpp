@@ -191,7 +191,7 @@ Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create(int id)
         num++;
         return a[id];
     } else {
-        printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
+        GS_ASSERT(a[id] != NULL);
         return NULL;
     }
 }
@@ -223,11 +223,10 @@ template <class Object_state, int max_n, int HARD_MAX>
 void DynamicObjectList<Object_state, max_n, HARD_MAX>::destroy(int id)
 {
     //where();
-    if(id >= this->n_max || a[id]==NULL)
+    if(id >= this->n_max || a[id] == NULL)
     {
-        #if DC_SERVER || (!PRODUCTION || PRODUCTION_DEV)
-        printf("%s_list: Cannot delete object %d: object is null\n", name(), id);
-        #endif
+        GS_ASSERT(id < this->n_max);
+        GS_ASSERT(a[id] != NULL);
         return;
     }
     delete a[id];

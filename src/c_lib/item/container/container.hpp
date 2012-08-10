@@ -185,6 +185,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
 
         bool can_insert_item(int slot, ItemID item_id)
         {
+            GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
             if (Item::get_item_type(item_id) != this->energy_tank_type)
                 return false;
             return ItemContainerInterface::can_insert_item(slot, item_id);
@@ -543,7 +544,7 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
         case CONTAINER_TYPE_SMELTER_ONE:
             return new ItemContainerSmelter(type, id);
 
-        case CONTAINER_TYPE_RECYCLER:
+        case CONTAINER_TYPE_CRUSHER:
             return new ItemContainerCrusher(type, id);
 
         default:

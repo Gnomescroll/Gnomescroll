@@ -30,22 +30,15 @@ void _gs_push_char(char* tstr, int* index, char c)
     (*index)++;
 }
 
-const int GS_ASSERT_PRINT_LIMIT = 20;
+const int GS_ASSERT_DEFAULT_PRINT_LIMIT = 20;
 const int GS_ASSERT_MAX = 4096;
 
 char* _GS_ASSERT_ARRAY[GS_ASSERT_MAX];
 int   _GS_ASSERT_COUNT[GS_ASSERT_MAX];
+int   _GS_ASSERT_LIMIT[GS_ASSERT_MAX];
 
-void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
+void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE, int LIMIT)
 {
-    static int _init = 0;
-    if (!_init++)
-        for (int i=0; i<GS_ASSERT_MAX; i++)
-        {
-            _GS_ASSERT_ARRAY[i] = NULL;
-            _GS_ASSERT_COUNT[i] = 1;
-        }
-    
     static char t[256];
 
     int index = 0;
@@ -57,31 +50,26 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
     _gs_push_str(t,&index, LINE_STR);
     _gs_push_str(t,&index, " ");
     _gs_push_str(t,&index, FUNC);
-    _gs_push_char(t,&index, 0x00);
-
+    _gs_push_char(t,&index, '\0');
+    if (index > 256) printf("ERROR: _GS_ASSERT_INTERNAL string overflow\n");
+            
     int i=0;
 
-    while(_GS_ASSERT_ARRAY[i] != NULL && i<GS_ASSERT_MAX)
+    while (_GS_ASSERT_ARRAY[i] != NULL && i < GS_ASSERT_MAX)
     {
-        if(strcmp(t, _GS_ASSERT_ARRAY[i]) == 0) //match
-        {
+        if (strcmp(t, _GS_ASSERT_ARRAY[i]) == 0)
+        {   //match
+            if(_GS_ASSERT_COUNT[i] >= LIMIT) return;
             _GS_ASSERT_COUNT[i]++;
-            if(_GS_ASSERT_COUNT[i] > GS_ASSERT_PRINT_LIMIT)
-            {
-                return;
-            }
-            else
-            {
-                //print and return;
-                print_trace(2);
-                puts(t);
-                return;
-            }
+            //print and return;
+            print_trace(2);
+            puts(t);
+            return;
         }
         i++;
     }
 
-    if(i == GS_ASSERT_MAX) return;
+    if (i >= GS_ASSERT_MAX) return;
 
     //insert into array
     _GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
@@ -91,11 +79,16 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
     puts(t);
 }
 
+void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
+{
+    _GS_ASSERT_INTERNAL(FILE, FUNC, LINE, GS_ASSERT_DEFAULT_PRINT_LIMIT);
+}
+
 void _GS_ASSERT_TEARDOWN()
 {
     for(int i=0; i<GS_ASSERT_MAX; i++) 
         if(_GS_ASSERT_ARRAY[i] != NULL)
-            printf("%s triggered %d times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]);
+            printf("%s triggered %d times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]+1);
 
     for(int i=0; i<GS_ASSERT_MAX; i++) 
         if(_GS_ASSERT_ARRAY[i] != NULL)
@@ -103,9 +96,9 @@ void _GS_ASSERT_TEARDOWN()
 }
    
 
-#define GS_ASSERT(condition) if(!(condition)) _GS_ASSERT_INTERNAL( __FILE__, __FUNCTION__, __LINE__);
+#define GS_ASSERT(CONDITION) if(!(CONDITION)) _GS_ASSERT_INTERNAL( __FILE__, __FUNCTION__, __LINE__);
 
-#define GS_ASSERT_LIMIT(CONDITION, LIMIT) GS_ASSERT(CONDITION)
+#define GS_ASSERT_LIMIT(CONDITION, LIMIT) if(!(CONDITION)) _GS_ASSERT_INTERNAL( __FILE__, __FUNCTION__, __LINE__, (LIMIT));
 
 //printf( __FILE__  );
 

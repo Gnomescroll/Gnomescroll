@@ -26,13 +26,11 @@ void subscribe_agent_to_item(int agent_id, ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
 
-    if (!item->subscribers.add(a->client_id)) return;
-
-    // TODO - remove
-    // only one person subscribed at a time right now
+    GS_ASSERT(item->subscribers.n == 0);
+    bool add = item->subscribers.add(a->client_id);
+    GS_ASSERT(add);
+    if (!add) return;
     GS_ASSERT(item->subscribers.n == 1);
-
-    //printf("Subscribed %d to %d\n", a->client_id, item->id);
 
     send_item_create(a->client_id, item->id);
 }
@@ -51,7 +49,11 @@ void unsubscribe_agent_from_item(int agent_id, ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
 
-    if (!item->subscribers.remove(a->client_id)) return;
+    GS_ASSERT(item->subscribers.n == 1);
+    bool rm = item->subscribers.remove(a->client_id);
+    GS_ASSERT(rm);
+    if (!rm) return;
+    GS_ASSERT(item->subscribers.n == 0);
 
     //printf("Unsubscribed %d from %d\n", a->client_id, item->id);
 
@@ -68,9 +70,12 @@ void unsubscribe_all_from_item(ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
 
+    if (item->subscribers.n == 0) return;
+
     //for (unsigned int i=0; i<item->subscribers.n; i++)
         //printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], item->id);
-    
+
+    GS_ASSERT(item->subscribers.n == 1);
     send_item_destroy(item->id);    // sends to all subscribers
     item->subscribers.remove_all();
 }

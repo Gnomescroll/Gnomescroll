@@ -342,8 +342,8 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "crusher");
-    s.container_type = CONTAINER_TYPE_RECYCLER;
-    container_block_def("crusher", CONTAINER_TYPE_RECYCLER);
+    s.container_type = CONTAINER_TYPE_CRUSHER;
+    container_block_def("crusher", CONTAINER_TYPE_CRUSHER);
     s.cube_height = 1;
 
     item_def(60, IG_RESOURCE, "regolith_dust");

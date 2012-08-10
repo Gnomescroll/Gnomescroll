@@ -59,7 +59,7 @@ void set_container_id(ItemContainerType container_type, int container_id)
             smelter->container_id = container_id;
             break;
 
-        case CONTAINER_TYPE_RECYCLER:
+        case CONTAINER_TYPE_CRUSHER:
             crusher->container_id = container_id;
             break;
                         
@@ -174,7 +174,7 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
      && ((AgentSynthesizerUI*)container)->in_shopping_region(x,y))
      || (container->type == UI_ELEMENT_CRAFTING_CONTAINER
      && ((CraftingUI*)container)->in_craft_output_region(x,y))
-     || (container->type == UI_ELEMENT_RECYCLER
+     || (container->type == UI_ELEMENT_CRUSHER
      && ((CrusherUI*)container)->in_button_region(x,y))
     ));
 
@@ -479,7 +479,7 @@ void draw_hud()
                     smelter->draw();
                     break;
 
-                case CONTAINER_TYPE_RECYCLER:
+                case CONTAINER_TYPE_CRUSHER:
                     crusher->draw();
                     break;
                     
@@ -544,8 +544,8 @@ void init()
     smelter->yoff = -150.0f + (_yresf + smelter->height())/2;
 
     crusher = new CrusherUI;
-    crusher->type = UI_ELEMENT_RECYCLER;
-    crusher->set_container_type(CONTAINER_TYPE_RECYCLER);
+    crusher->type = UI_ELEMENT_CRUSHER;
+    crusher->set_container_type(CONTAINER_TYPE_CRUSHER);
     crusher->init();
     crusher->centered = true;
     crusher->yoff = -150.0f + (_yresf + crusher->height())/2;

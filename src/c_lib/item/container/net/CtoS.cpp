@@ -434,8 +434,8 @@ inline void crusher_crush_item_CtoS::handle()
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    GS_ASSERT(container->type == CONTAINER_TYPE_RECYCLER);
-    if (container->type != CONTAINER_TYPE_RECYCLER) return;
+    GS_ASSERT(container->type == CONTAINER_TYPE_CRUSHER);
+    if (container->type != CONTAINER_TYPE_CRUSHER) return;
 
     ItemContainerCrusher* crusher = (ItemContainerCrusher*)container;
     
@@ -468,7 +468,6 @@ inline void crusher_crush_item_CtoS::handle()
     {   // calculate face nearest agent
         int side[3];
         int* c = _farthest_empty_block(a->get_camera_position(), a->forward_vector(), side, AGENT_CONTAINER_REACH, 4, 3);
-        GS_ASSERT(c != NULL);
         if (c == NULL
          || (c[0] != b[0] || c[1] != b[1] || c[2] != b[2])
          || t_map::get(b[0]+side[0], b[1]+side[1], b[2]+side[2]) != 0)

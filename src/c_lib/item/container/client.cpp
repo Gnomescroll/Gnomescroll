@@ -443,7 +443,7 @@ void send_crusher_beta_action(ContainerActionType action, int container_id, int 
 
 void send_crusher_crush_action(ContainerActionType action, int container_id, int slot)
 {
-    GS_ASSERT(action == RECYCLER_CRUSH_ITEM);
+    GS_ASSERT(action == CRUSHER_CRUSH_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
     if (action == CONTAINER_ACTION_NONE) return;

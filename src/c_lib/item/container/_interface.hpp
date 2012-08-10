@@ -12,10 +12,12 @@ void init_packets();
 
 class ItemContainerInterface* get_container(int id);
 ItemContainerType get_container_type(int container_id);
+int get_container_owner(int container_id);
 void destroy_container(int container_id);
 void container_block_destroyed(int container_id, int x, int y, int z);
 
 bool container_block_in_range_of(Vec3 pos, int block[3]);
+
 
 }   // ItemContainer
 
