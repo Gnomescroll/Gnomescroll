@@ -346,9 +346,9 @@ void load_item_dat()
     container_block_def("crusher", CONTAINER_TYPE_CRUSHER);
     s.cube_height = 1;
 
-    item_def(60, IG_RESOURCE, "regolith_dust");
+    item_def(60, IG_RESOURCE, "powdered_regolith");
     sprite_def(i0, 4,6);
-    s.pretty_name = (char*) "Regolith Dust";
+    s.pretty_name = (char*) "Powdered Regolith";
     s.max_stack_size = 64;
 
 /*

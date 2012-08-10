@@ -48,10 +48,10 @@ static void register_crusher_settings()
     crusher_def("regolith");
     d->set_max_drop_types(6);
     
-    d->set_max_drop_amounts("regolith_dust", 3);
-    d->add_drop("regolith_dust", 1, 0.85f);
-    d->add_drop("regolith_dust", 2, 0.12f);
-    d->add_drop("regolith_dust", 3, 0.03f);
+    d->set_max_drop_amounts("powdered_regolith", 3);
+    d->add_drop("powdered_regolith", 1, 0.85f);
+    d->add_drop("powdered_regolith", 2, 0.12f);
+    d->add_drop("powdered_regolith", 3, 0.03f);
 
     d->set_max_drop_amounts("copper_ore", 1);
     d->add_drop("copper_ore", 1, 0.005f);
