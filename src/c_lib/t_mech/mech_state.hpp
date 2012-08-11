@@ -104,11 +104,16 @@ class MECH_LIST
     {
         GS_ASSERT(mla[id].id != -1);
         GS_ASSERT(id < mlm);
+
+
+        if( mla[id].id == -1)
+            printf("Error t_mech::remove_mech, tried to remove mech that does not exist!\n");)
+
         mla[id].id = -1;
         mln--;
         GS_ASSERT(mln >= 0);
 
-        printf("Error: tried to remove mech that does not exist!\n");
+
     }
 
 
