@@ -14,6 +14,9 @@ inline bool point_fulstrum_test(float x, float y, float  z) __attribute((always_
 
 //distance check with camera
 inline bool point_fulstrum_test2(float x, float y, float  z) __attribute((always_inline));
+
+inline bool point_fulstrum_test_debug(float x, float y, float z);
+
 inline bool point_fulstrum_test_map(float x, float y, float  z) __attribute((always_inline));
 
 inline bool xy_circle_fulstrum_test(float x, float y, float r) __attribute((always_inline));

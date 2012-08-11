@@ -42,14 +42,12 @@ public:
 class FrustumG
 {
 
-private:
+public:
 
     enum {
         TOP = 0, BOTTOM, LEFT,
         RIGHT, NEARP, FARP
     };
-
-public:
 
     //static enum {OUTSIDE, INTERSECT, INSIDE};
     //Vec3 pln[6]; //plane normal
@@ -394,7 +392,7 @@ bool point_fulstrum_test_2(struct Vec3 p)
 
 float top_z_projection(float x, float y)
 {
-    struct Vec3 n = _FrustrumG.pl[0].normal;
+    struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
     float d = _FrustrumG.pl[0].d;
     d = 0;
     return (x*n.x + y*n.y + d)/(-n.z);
@@ -402,7 +400,7 @@ float top_z_projection(float x, float y)
 
 float bottom_z_projection(float x, float y)
 {
-    struct Vec3 n = _FrustrumG.pl[1].normal;
+    struct Vec3 n = _FrustrumG.pl[FrustumG::BOTTOM].normal;
     float d = _FrustrumG.pl[1].d;
     d = 0;
     return (x*n.x + y*n.y + d)/(-n.z);
