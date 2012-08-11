@@ -293,7 +293,9 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
         
         static int crystal_id = t_mech::get_mech_type("blue_crystal");
-        t_mech::create_crystal(b[0],b[1],b[2], crystal_id);
+
+        if( t_mech::can_place_crystal(b[0],b[1],b[2], 0) == true)
+            t_mech::create_crystal(b[0],b[1],b[2], crystal_id);
         //decrement_stack(agent_id, item_id, item_type);
     }
 
