@@ -173,7 +173,7 @@ void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
     
     //printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
 
-    Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15));
+    Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15)); //15 units in front of camera
 
     if( pl[TOP].distance(f2) < 0 ) printf("Top\n");
     if( pl[BOTTOM].distance(f2) < 0 ) printf("Bottom\n");
