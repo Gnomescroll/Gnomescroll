@@ -42,6 +42,8 @@ class MECH_LIST
         free(mla);
     }
 
+    bool is_occupied(int x, int y, int z); //check if there is a t_mech on the square already
+
 #if DC_CLIENT
     void add_mech(int id, const struct MECH &m)
     {
@@ -140,8 +142,17 @@ class MECH_LIST
 };
 
 
+bool MECH_LIST::is_occupied(int x, int y, int z);
+{
+    for(int i=0; i<mlm; i++)
+    {
+        if( mla[i].id == -1) continue;
+        if( mla[id].x == x && mla[id].y == y && mla[id].z == z) return true;
 
+    }
 
+    return false;
+}
 
 }
 

@@ -173,7 +173,7 @@ void create_crystal(int x, int y, int z, int mech_type)
     m.z = z;
     //m.subtype = rand()%9;
 
-    
+
     mech_list->server_add_mech(m);
 #endif
 }
@@ -201,6 +201,11 @@ bool can_place_crystal(int x, int y, int z, int side)
     if(side != 0)
         return false;
 
+    if( isSolid(x,y,z-1) != true)
+        return false;
+
+
+    
     //check if there is another one on this square
     return true;
 }
