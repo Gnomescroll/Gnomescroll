@@ -519,8 +519,19 @@ void MechListRenderer::prep_vbo()
     {
         if( mla[i].id == -1) continue;
 
-    	if( mla[i].mech_type == MECH_CRYSTAL )
-    		push_crystal_vertex(mla[i]);
+        switch ( mech_attribute[mla[i].mech_type].mech_type_class)
+        {
+        case MECH_RENDER_TYPE_0:
+            push_crystal_vertex(mla[i]);
+            break;
+        case MECH_RENDER_TYPE_1:
+            break;
+        case MECH_RENDER_TYPE_2:
+            break;
+        default:
+            printf("Error MechListRenderer::prep_vbo: unhandled mech render type\n");
+        }
+
         num++;
     }
 
