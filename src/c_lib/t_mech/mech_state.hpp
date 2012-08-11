@@ -107,7 +107,7 @@ class MECH_LIST
 
 
         if( mla[id].id == -1)
-            printf("Error t_mech::remove_mech, tried to remove mech that does not exist!\n");)
+            printf("Error t_mech::remove_mech, tried to remove mech that does not exist!\n");
 
         mla[id].id = -1;
         mln--;
