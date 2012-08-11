@@ -249,4 +249,13 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
 }
 #endif
 
+#if DC_SERVER
+
+void send_client_mech_list(int client_id)
+{
+    mech_list->send_mech_list_to_client(client_id);
+}
+
+#endif
+
 }

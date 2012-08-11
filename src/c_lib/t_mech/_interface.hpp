@@ -32,4 +32,9 @@ void tick(int x, int y, int z);
 bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* _distance);
 #endif
 
+#if DC_SERVER
+
+void send_client_mech_list(int client_id);
+
+#endif
 }

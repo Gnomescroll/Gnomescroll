@@ -92,13 +92,14 @@ void trigger_local_location_pointer(ItemID item_id, int item_type)
     */
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
     ClientState::set_location_pointer();
-/*
-    Vec3 pos = a->camera_position();
-    Vec3 dir = a->forward_vector();
+
+
+    Vec3 pos = agent_camera->get_position();
+    Vec3 dir = agent_camera->forward_vector();
 
     float d;
-    t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &d)
-*/
+    t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &d);
+
 }
 
 void trigger_local_admin_block_placer(ItemID item_id, int item_type)

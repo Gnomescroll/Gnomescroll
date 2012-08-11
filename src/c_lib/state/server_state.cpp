@@ -139,7 +139,6 @@ namespace ServerState
         
     void send_initial_game_state_to_client(int client_id)
     {
-        agent_list->send_to_client(client_id);
         // TODO -- make these one function call
         Objects::send_to_client(OBJECT_BASE, client_id);
         Objects::send_to_client(OBJECT_TURRET, client_id);
@@ -160,8 +159,6 @@ namespace ServerState
         Objects::send_to_client(OBJECT_AGENT_TOOLBELT, client_id);
         Objects::send_to_client(OBJECT_SYNTHESIZER_INVENTORY, client_id);
         Objects::send_to_client(OBJECT_CRAFTING_BENCH, client_id);
-
-        ItemParticle::send_particle_items_to_client(client_id);
     }
 
     //move somewhere
