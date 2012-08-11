@@ -42,6 +42,8 @@ struct InputState
     bool agent_container;
     bool container_block;
     int container_block_id;
+
+    bool frustum;
 };
 
 extern InputState input_state;

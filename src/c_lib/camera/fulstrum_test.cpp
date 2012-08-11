@@ -4,6 +4,7 @@
 
 #include <physics/vec3.hpp>
 #include <camera/fulstrum_test2.hpp>
+#include <input/handlers.hpp>
 
 static struct
 {
@@ -26,6 +27,8 @@ static struct
 
 void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
 {
+    if (!input_state.frustum) return;
+
     const float pi = 3.14159265f;
     fovy *= (pi/180.0f);
 
@@ -33,12 +36,12 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
 
     double angle = fovy / 2.0f;
     double tang = tan(angle);
-    float anglex = (float)atan(tang*aspect);
-    fulstrum.hy = tanf(fovy/2);
-    fulstrum.hx = fulstrum.hy*aspect;
+    double anglex = atan(tang*aspect);
+    fulstrum.hy = (float)tan(angle);
+    fulstrum.hx = (float)fulstrum.hy*aspect;
 
     fulstrum.hy_sphere = (float)(1.0/cos(angle));
-    fulstrum.hx_sphere = (float)(1.0/cosf(anglex));
+    fulstrum.hx_sphere = (float)(1.0/cos(anglex));
     
     fulstrum.c = camera;
     fulstrum.f = forward;
@@ -176,13 +179,13 @@ bool xy_circle_fulstrum_test(float x, float y, float r)
 
     float rx = fulstrum.hx_sphere*r;
 
-    float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
     float dx = x*fulstrum.r_2d.x + y*fulstrum.r_2d.y;
-    if( dx < -dz*fulstrum.hx - rx || dx > dz*fulstrum.hx + rx ) return false;
+    float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
+    float view = dz*fulstrum.hx + rx;
+    if (dx < -view || dx > view) return false;
 
     return true;
 }
-
 
 bool xy_point_fulstrum_test(float x, float y)
 {
@@ -191,11 +194,10 @@ bool xy_point_fulstrum_test(float x, float y)
 
     float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
     float dx = x*fulstrum.r_2d.x + y*fulstrum.r_2d.y;
-    if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;
+    if (dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx) return false;
 
     return true;
 }
-
 
 void draw_fulstrum()
 {

@@ -265,6 +265,9 @@ void init_handlers()
     // options
     input_state.invert_mouse = false;
     input_state.sensitivity = 100.0f;
+
+    // debug
+    input_state.frustum = true;
 }
 
 // keys that can be held down
@@ -525,11 +528,6 @@ void agent_key_down_handler(SDL_Event* event)
     t_hud::ContainerInputEvent container_event;
     switch (event->key.keysym.sym)
     {
-        #if !PRODUCTION
-        case SDLK_k:
-            run_lua_test();
-            break;
-        #endif
         //case SDLK_9:
             //t_mech::add_mech();
             //break;
@@ -796,6 +794,10 @@ void key_down_handler(SDL_Event* event)
                 
             case SDLK_h:
                 toggle_help_menu();
+                break;
+
+            case SDLK_k:
+                input_state.frustum = (!input_state.frustum);
                 break;
 
             case SDLK_m:
