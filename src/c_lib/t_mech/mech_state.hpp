@@ -147,7 +147,7 @@ bool MECH_LIST::is_occupied(int x, int y, int z)
     for(int i=0; i<mlm; i++)
     {
         if( mla[i].id == -1) continue;
-        if( mla[id].x == x && mla[id].y == y && mla[id].z == z) return true;
+        if( mla[i].x == x && mla[i].y == y && mla[i].z == z) return true;
     }
     return false;
 }

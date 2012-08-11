@@ -205,7 +205,7 @@ bool can_place_crystal(int x, int y, int z, int side)
         return false;
 
 
-    if( is_occupied(int x, int y, int z) == true) return false;
+    if( mech_list->is_occupied(x,y,z) == true) return false;
     //check if there is another one on this square
     return true;
 }
