@@ -243,13 +243,13 @@ void load_block_dat()
     iso_texture(t2, 1,1);
     push_texture();
     set_max_dmg(64); //255
-    //hud_def(2,2, t2,1,1);
+    hud_def(6,5, t2,1,1);
 
     cube_def(34, SolidBlock, "space_tree_trunk2");
     iso_texture(t2, 2,1);
     push_texture();
     set_max_dmg(32); //255
-    //hud_def(2,3, t2,2,1);
+    hud_def(6,6, t2,2,1);
 
 
     // random textures from cell to fill the block placer
