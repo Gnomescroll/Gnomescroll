@@ -87,9 +87,9 @@ Camera::Camera()
 zoomed(false),
 zoom_factor(CAMERA_ZOOM_FACTOR)
 {
-	const float FOV = 75.0f;
-	const float Z_NEAR = 0.1f;
-	const float Z_FAR = 320.0f;
+    const float FOV = 75.0f;
+    const float Z_NEAR = 0.1f;
+    const float Z_FAR = 320.0f;
     set_aspect(FOV, Z_NEAR, Z_FAR);
     set_dimensions();
     set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -268,8 +268,8 @@ Vec3 Camera::forward_vector()
 {
     Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
     f = vec3_euler_rotation(f, this->theta, this->phi, 0.0f);
-	normalize_vector(&f);
-	return f;
+    normalize_vector(&f);
+    return f;
 }
 
 void Camera::copy_state_from(Camera* c)
@@ -326,4 +326,14 @@ void update_agent_camera()
     // set agent_camera from state
     Vec3 pos = ClientState::playerAgent_state.camera_position();
     agent_camera->set_position(pos);
+}
+
+void update_camera_settings(float view_distance)
+{
+    static const float min_vd = 32.0f;
+    static const float max_vd = 128.0f;
+    if (view_distance < min_vd) view_distance = min_vd;
+    if (view_distance > max_vd) view_distance = max_vd;
+    CAMERA_VIEW_DISTANCE = view_distance;
+    CAMERA_VIEW_DISTANCE_SQUARED = view_distance*view_distance;
 }

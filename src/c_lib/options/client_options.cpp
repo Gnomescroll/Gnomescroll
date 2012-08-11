@@ -46,7 +46,8 @@ OPT_INT(music, 100)
 OPT_STRING(sound_device, "")
 
 /* Graphics */
-OPT_BOOL(animations, true)
+OPT_INT(animation_level, 3)
+OPT_INT(view_distance, 128)
 OPT_BOOL(placement_outline, false);
 
 /* Logging */
@@ -95,7 +96,8 @@ void register_options()
     OPT_STRING_REGISTER(sound_device)
 
     /* Graphics */
-    OPT_BOOL_REGISTER(animations)
+    OPT_INT_REGISTER(animation_level)
+    OPT_INT_REGISTER(view_distance)
     OPT_BOOL_REGISTER(placement_outline)
 
     /* Logging */

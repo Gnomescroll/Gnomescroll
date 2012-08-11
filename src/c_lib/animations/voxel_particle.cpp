@@ -73,7 +73,7 @@ void prep_voxel_particles()
         class ItemParticle::ItemParticle* item = list->a[i];
         if (item == NULL) continue;
         if (!item->is_voxel || !item->should_draw) continue;
-        if (Options::animations)
+        if (Options::animation_level <= 0)
             item->voxel.delta_rotation(0.01f, 0.0f);
         
         // do fulstrum test

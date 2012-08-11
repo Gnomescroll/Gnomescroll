@@ -35,6 +35,7 @@ static const char help_text[] =
 "    `               Show chat log\n"
 "    H               Toggle help\n"
 "    Tab             See who is playing\n"
+"    Home            Take Screenshot\n"
 "  Chat Commands:\n"
 "       /name <name>        Choose name\n"
 "       /kill               Suicide\n"

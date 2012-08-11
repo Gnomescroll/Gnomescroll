@@ -27,6 +27,9 @@ int map_Vertex;
 int map_TexCoord;
 int map_RGB;
 int map_Normal;
+int map_FogColor;
+int map_FogStart;
+int map_FogDepth;
 
 int map_ChunkPosition;   //uniform
 int map_NormalArray;     //uniform
@@ -41,4 +44,4 @@ extern GLuint block_textures_compatibility; //use for intel mode
 
 void teardown_shader(); // frees surface
 
-}	// t_map
+}   // t_map
