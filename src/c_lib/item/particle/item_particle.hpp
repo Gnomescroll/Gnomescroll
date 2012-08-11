@@ -4,7 +4,7 @@
 #include <common/gl_assert.hpp>
 #endif
 
-#include <physics/verlet_particle.hpp>
+#include <physics/verlet.hpp>
 
 /*
  *
@@ -35,7 +35,7 @@ namespace ItemParticle
 class ItemParticle
 {
     public:
-        VerletParticle::VerletParticle verlet;
+        Verlet::VerletComponent verlet;
 
         ItemParticleID id;
         int item_type;
@@ -82,6 +82,8 @@ class ItemParticle
             ASSERT_BOXED_POINTf(y);
             this->verlet.position = vec3_init(x,y,z);
             this->verlet.velocity = vec3_init(mx,my,mz);
+            GS_ASSERT(vec3_is_valid(this->verlet.position));
+            GS_ASSERT(vec3_is_valid(this->verlet.velocity));
         }
 
         void die();

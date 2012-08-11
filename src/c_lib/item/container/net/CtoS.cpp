@@ -509,6 +509,7 @@ inline void crusher_crush_item_CtoS::handle()
     int remaining_stack = Item::consume_stack_item(item_id);
     if (stack > 0 && stack != remaining_stack) Item::send_item_state(item_id);
 
+    p = translate_position(p);
     drop->drop_item(p);
 }
 

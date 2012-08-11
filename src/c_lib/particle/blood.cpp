@@ -13,6 +13,7 @@ inline void Blood::init()
     this->type = BLOOD_TYPE;
     this->texture_index = BLOOD_TEXTURE_ID;
     this->scale = BLOOD_TEXTURE_SCALE;
+    this->verlet.dampening = BLOOD_DAMP;
 }
 
 Blood::Blood()
@@ -25,7 +26,7 @@ BillboardSprite()
 
 void Blood::tick()
 {
-    this->verlet_bounce(BLOOD_DAMP);
+    this->verlet.bounce();
     this->ttl--;
 }
 

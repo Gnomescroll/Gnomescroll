@@ -25,6 +25,8 @@ inline void BillboardText::init()
 
     this->ttl = BILLBOARD_TEXT_TTL;
     this->type = BILLBOARD_TEXT_TYPE;
+    
+    this->verlet.dampening = BILLBOARD_TEXT_DAMP;
 }
 
 BillboardText::BillboardText()
@@ -36,7 +38,7 @@ void BillboardText::tick()
 {
     if (this->gravity)
     {
-        bool bounced = this->verlet_bounce(BILLBOARD_TEXT_DAMP);
+        bool bounced = this->verlet.bounce();
         if (bounced) this->bounce_count++;
     }
     if (this->bounce_count >= BILLBOARD_TEXT_BOUNCE_EXPLODE_LIMIT)

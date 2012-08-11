@@ -12,7 +12,7 @@ namespace ItemContainer
 float crusher_item_jump_out_velocity()
 {
     static const float m = 1.5f;
-    return ((randf()/2) + 1.0f) * m;
+    return ((randf()*0.5f) + 1.0f) * m;
 }
 
 static class Item::ItemDrop** drops = NULL;

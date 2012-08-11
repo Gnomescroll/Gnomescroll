@@ -82,7 +82,6 @@ dont_include_this_file_in_server
 #include <physics/ray_trace/handlers.cpp>
 #include <physics/common.cpp>
 #include <physics/verlet.cpp>
-#include <physics/verlet_particle.cpp>
 #include <physics/motion.cpp>
 #include <physics/quadrant.cpp>
 /* SDL */

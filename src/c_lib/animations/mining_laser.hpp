@@ -7,13 +7,10 @@
 #include <physics/vec3.hpp>
 #include <animations/common.hpp>
 
-#include <physics/verlet_particle.hpp>
+#include <physics/verlet.hpp>
 
 namespace Animations 
 {
-
-using VerletParticle::VerletParticle;
-
 
 VertexElementList1* mining_laser_vlist = NULL;
 
@@ -71,7 +68,7 @@ class MiningLaser
     public:
 
     public:
-        VerletParticle verlet;
+        Verlet::VerletComponent verlet;
 
         int id;
         int type;

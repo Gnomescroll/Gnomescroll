@@ -146,7 +146,6 @@ namespace Item
 void destroy_item(ItemID id)
 {
     item_list->destroy(id);
-    printf("destroyed %d\n", id);
 }
     
 Item* create_item(int item_type, ItemID item_id)

@@ -4,6 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
+#include <physics/quadrant.hpp>
 #include <item/_interface.hpp>
 #include <item/item.hpp>
 #include <item/particle/_interface.hpp>
@@ -16,6 +17,7 @@ static void create_dropped_item(int item_type, int amount, Vec3 position, float 
 {
     GS_ASSERT(amount > 0);
 
+    position = translate_position(position);
     float x = position.x;
     float y = position.y;
     float z = position.z;

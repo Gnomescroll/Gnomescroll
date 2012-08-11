@@ -2,7 +2,6 @@
 
 #include <physics/common.hpp>
 #include <physics/verlet.hpp>
-#include <physics/verlet_particle.hpp>
 
 namespace Particle
 {
@@ -48,11 +47,6 @@ class ParticleMotionCore
         Vec3 get_momentum()
         {
             return this->verlet.get_momentum();
-        }
-
-        bool verlet_bounce(float damp)
-        {
-            return this->verlet.verlet_bounce(damp);
         }
 
         void set_ttl(int ttl);

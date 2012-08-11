@@ -79,7 +79,8 @@ void Grenade::init()
     this->ttl_max = GRENADE_TTL;
     this->type = GRENADE_TYPE;
     this->texture_index = GRENADE_TEXTURE_ID;
-    this->scale = GRENADE_TEXTURE_SCALE;    
+    this->scale = GRENADE_TEXTURE_SCALE;
+    this->verlet.dampening = GRENADE_DAMP;
 }
 
 Grenade::Grenade(int id)
@@ -125,7 +126,7 @@ void Grenade::broadcast()
 void Grenade::tick()
 {
 
-    bool bounced = this->verlet_bounce(GRENADE_DAMP);
+    bool bounced = this->verlet.bounce();
     if (bounced)
     {
         this->bounce_count++;
@@ -240,41 +241,41 @@ void Grenade::damage_blocks()
     int my = (int)position.y;
     int mz = (int)position.z;
     
-	int ir = GRENADE_BLOCK_DESTROY_RADIUS;
-	int bx,by,bz;
-	int dmg = 0;
+    int ir = GRENADE_BLOCK_DESTROY_RADIUS;
+    int bx,by,bz;
+    int dmg = 0;
 
-	for (int i=0; i<ir; i++)
-	for (int j=0; j<ir; j++)
-	for (int k=0; k<ir; k++)
-	{
-		bx = mx + i;
-		by = my + j;
-		bz = mz + k;
-		if (bz <= 0) continue;  // dont damage floor
-		if (bz >= map_dim.z) continue;  // dont damage floor
+    for (int i=0; i<ir; i++)
+    for (int j=0; j<ir; j++)
+    for (int k=0; k<ir; k++)
+    {
+        bx = mx + i;
+        by = my + j;
+        bz = mz + k;
+        if (bz <= 0) continue;  // dont damage floor
+        if (bz >= map_dim.z) continue;  // dont damage floor
 
-		bx = translate_point(bx);
-		by = translate_point(by);
-		
-		dmg = block_damage(i+j+k);
-		if (dmg <= 0) continue;
-		
-		apply_damage_broadcast(bx,by,bz, dmg, action);
-		bx = translate_point(mx - i);
-		apply_damage_broadcast(bx,by,bz, dmg, action);
-		by = translate_point(my - j);
-		apply_damage_broadcast(bx,by,bz, dmg, action);
-		by = translate_point(my + j);
-		bz = mz - k;
-		if (bz > 0 && bz < map_dim.z)
-			apply_damage_broadcast(bx,by,bz, dmg, action);
-		bx = translate_point(mx + i);
-		by = translate_point(my - j);
-		apply_damage_broadcast(bx,by,bz, dmg, action);
-		bx = translate_point(mx - i);
-		apply_damage_broadcast(bx,by,bz, dmg, action);
-	}
+        bx = translate_point(bx);
+        by = translate_point(by);
+        
+        dmg = block_damage(i+j+k);
+        if (dmg <= 0) continue;
+        
+        apply_damage_broadcast(bx,by,bz, dmg, action);
+        bx = translate_point(mx - i);
+        apply_damage_broadcast(bx,by,bz, dmg, action);
+        by = translate_point(my - j);
+        apply_damage_broadcast(bx,by,bz, dmg, action);
+        by = translate_point(my + j);
+        bz = mz - k;
+        if (bz > 0 && bz < map_dim.z)
+            apply_damage_broadcast(bx,by,bz, dmg, action);
+        bx = translate_point(mx + i);
+        by = translate_point(my - j);
+        apply_damage_broadcast(bx,by,bz, dmg, action);
+        bx = translate_point(mx - i);
+        apply_damage_broadcast(bx,by,bz, dmg, action);
+    }
     #endif
 }
 

@@ -16,4 +16,4 @@ ParticleMotionCore::ParticleMotionCore(float x, float y, float z, float mx, floa
     this->set_momentum(mx,my,mz);
 }
 
-}
+}   // Particle

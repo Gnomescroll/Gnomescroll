@@ -16,7 +16,7 @@ static struct Vec3 get_dropped_item_position(Objects::Object* object)
 {
     // get object state
     Vec3 position;
-    float radius = 1.0f;
+    float radius = 0.95f;
 
     // try to use center of voxel model
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
@@ -37,8 +37,9 @@ static struct Vec3 get_dropped_item_position(Objects::Object* object)
         if (dims != NULL) position.z += dims->get_height() / 2.0f;
     }
 
-    position.x = position.x + (randf()*2*radius) - radius;
-    position.y = position.y + (randf()*2*radius) - radius;
+    // assume item is centered
+    position.x = position.x + radius*(randf() - 0.5f);
+    position.y = position.y + radius*(randf() - 0.5f);
 
     position = translate_position(position);
 

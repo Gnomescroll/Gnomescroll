@@ -114,11 +114,11 @@ void ItemParticle::tick()
     // dont apply physics if the chunk is not loaded (in client)
     #if DC_CLIENT
     if (t_map::position_is_loaded(this->verlet.position.x, this->verlet.position.y))
-        this->verlet.bounce_box(ITEM_PARTICLE_RADIUS);
+        this->verlet.bounce_box();
     #endif
 
     #if DC_SERVER
-    this->verlet.bounce_box(ITEM_PARTICLE_RADIUS);
+    this->verlet.bounce_box();
 
     if (this->verlet.position.z < OBJECT_DEPTH_MAX) this->ttl = 0;
     this->pickup_prevention--;
@@ -132,6 +132,7 @@ void ItemParticle::init(int item_type, float x, float y, float z, float mx, floa
 void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z, float mx, float my, float mz)
 #endif
 {
+    this->verlet.box_radius = ITEM_PARTICLE_RADIUS;
     this->item_type = item_type;
     #if DC_CLIENT
     this->sprite_index = Item::get_sprite_index_for_type(item_type);
@@ -155,6 +156,10 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     ASSERT_BOXED_POINTf(y);
     verlet.position = vec3_init(x,y,z);
     verlet.velocity = vec3_init(mx,my,mz);
+
+    GS_ASSERT(vec3_is_valid(verlet.position));
+    GS_ASSERT(vec3_is_valid(verlet.velocity));
+    
     verlet.dampening = ITEM_PARTICLE_DAMPENING;
 }
 

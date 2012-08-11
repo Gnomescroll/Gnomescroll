@@ -5,7 +5,7 @@ dont_include_this_file_in_server
 #endif
 
 #include <common/template/simple_object_list.hpp>
-#include <physics/verlet_particle.hpp>
+#include <physics/verlet.hpp>
 
 namespace Particle
 {
@@ -20,7 +20,7 @@ class Shrapnel
         int id;
         int ttl;
 
-        VerletParticle::VerletParticle verlet;
+        Verlet::VerletComponent verlet;
 
         float scale;
         int texture_index;

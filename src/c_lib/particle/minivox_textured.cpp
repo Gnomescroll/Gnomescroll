@@ -20,6 +20,8 @@ inline void TexturedMinivox::init()
     this->dphi = 0.0f;
     this->ttl = MINIVOX_TTL;
     this->type = MINIVOX_TYPE;
+    this->verlet.dampening = MINIVOX_DAMP;
+    
     orient_vectors();
 }
 
@@ -131,7 +133,7 @@ void TexturedMinivox::set_texture(int tex_id, int pixels_wide)
 
 void TexturedMinivox::tick()
 {
-    this->verlet_bounce(MINIVOX_DAMP);
+    this->verlet.bounce();
     this->spin();
     this->ttl--;
 }

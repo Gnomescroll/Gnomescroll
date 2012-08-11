@@ -13,6 +13,7 @@ inline void Grenade_shrapnel::init()
 {
     this->ttl = GRENADE_SHRAPNEL_TTL;
     this->type = GRENADE_SHRAPNEL_TYPE;
+    this->verlet.dampening = GRENADE_SHRAPNEL_DAMP;
 }
 
 Grenade_shrapnel::Grenade_shrapnel()
@@ -38,7 +39,7 @@ void Grenade_shrapnel::tick()
         }
         j++;
         voxel_hit = ServerState::voxel_hitscan_list->point_collision(this->get_position(), &target);
-        this->verlet_bounce(GRENADE_SHRAPNEL_DAMP);
+        this->verlet.bounce();
 
         if (!voxel_hit) continue;
         if (target.entity_type != OBJECT_AGENT)
