@@ -102,17 +102,16 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
     p.y = m.y;
     p.z = m.z;
 
-    GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
+    GS_ASSERT(mech_attribute[m.mech_type].mech_type != -1);
 
-    switch ( mech_attribute[mech_type].mech_type_class)
+    switch ( mech_attribute[m.mech_type].mech_type_class)
     {
     case MECH_CRYSTAL:
         break;
     case MECH_CROP:
         break;
-    case MECH_MYCELIUM
+    case MECH_MYCELIUM:
         break;
-
     default:
         printf("pack_mech error: unhandled mech type\n");
     }
@@ -151,7 +150,7 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         break;
     case MECH_CROP:
         break;
-    case MECH_MYCELIUM
+    case MECH_MYCELIUM:
         break;
     default:
         printf("pack_mech error: unhandled mech type\n");
