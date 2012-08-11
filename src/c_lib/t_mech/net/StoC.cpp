@@ -13,7 +13,7 @@ namespace t_mech
 //    uint16_t x,y,z;
 void mech_create_StoC::handle()
 {
-    printf("client adding mech node at: %i %i %i \n", x,y,z);
+    //printf("client adding mech node at: %i %i %i \n", x,y,z);
     
     struct MECH m;
     unpack_mech(m, *this);
@@ -24,7 +24,7 @@ void mech_create_StoC::handle()
 //    uint16_t x,y,z;
 void mech_delete_StoC::handle()
 {
-    printf("client removing mech %i \n", id);
+    //printf("client removing mech %i \n", id);
     mech_list->remove_mech(id);
     //mech_list->needs_update = true;
 };

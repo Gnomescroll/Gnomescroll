@@ -20,6 +20,8 @@ void draw_transparent();
 #endif
 
 void handle_block_removal(int x, int y, int z);
+
+void create_crystal(int x, int y, int z, int mech_type);
 void create_crystal(int x, int y, int z, int subtype);
 
 bool can_place_crystal(int x, int y, int z, int side);

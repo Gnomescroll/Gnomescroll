@@ -154,6 +154,30 @@ void handle_block_removal(int x, int y, int z)
 
 }
 
+
+void create_crystal(int x, int y, int z, int mech_type)
+{
+#if DC_SERVER
+
+    if(mech_attribute[mech_type].mech_type == -1)
+    {
+        GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
+        printf("t_mech::create_crystal fail: mech_type %i does not exist \n",  mech_type);
+        return;
+    }
+
+    struct MECH m;
+    m.mech_type = MECH_CRYSTAL;
+    m.x = x;
+    m.y = y;
+    m.z = z;
+    //m.subtype = rand()%9;
+
+    
+    mech_list->server_add_mech(m);
+#endif
+}
+
 void create_crystal(int x, int y, int z)
 {
 #if DC_SERVER

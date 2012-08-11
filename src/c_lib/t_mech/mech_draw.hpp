@@ -336,7 +336,7 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
 
     int tex_id = mech_attribute[m.mech_type].sprite_index;
 
-    GS_ASSERT(mech_attribute[m.mech_type] == m.mech_type);
+    GS_ASSERT(mech_attribute[m.mech_type].mech_type != -1);
 
     const float txmargin = 0.0f;
     float tx_min, ty_min, tx_max, ty_max;

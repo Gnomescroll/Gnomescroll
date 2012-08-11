@@ -83,7 +83,7 @@ namespace t_mech
 
 	struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type)
 	{
-		GS_ASSERT(mech_type = mech_attribute[mech_type].mech_type);
+		GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
 		return &mech_attribute[mech_type];
 	}
 
