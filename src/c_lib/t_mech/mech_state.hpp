@@ -43,6 +43,10 @@ class MECH_LIST
     }
 
     bool is_occupied(int x, int y, int z); //check if there is a t_mech on the square already
+    
+#if DC_SERVER
+    void handle_block_removal(int x, int y, int z);
+#endif
 
 #if DC_CLIENT
     void add_mech(int id, const struct MECH &m)
@@ -151,6 +155,21 @@ bool MECH_LIST::is_occupied(int x, int y, int z)
     }
     return false;
 }
+
+#if DC_SERVER
+void MECH_LIST::handle_block_removal(int x, int y, int z)
+{
+    for(int i=0; i<mlm; i++)
+    {
+        if( mla[i].id == -1) continue;
+        if( mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
+        {
+            server_remove_mech(i);
+            return;
+        }
+    }
+}
+#endif
 
 }
 

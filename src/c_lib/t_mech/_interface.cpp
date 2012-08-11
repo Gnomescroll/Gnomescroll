@@ -102,14 +102,21 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
     p.y = m.y;
     p.z = m.z;
 
-    switch ( m.mech_type )
+    GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
+
+    switch ( mech_attribute[mech_type].mech_type_class)
     {
     case MECH_CRYSTAL:
-        //do something
         break;
+    case MECH_CROP:
+        break;
+    case MECH_MYCELIUM
+        break;
+
     default:
         printf("pack_mech error: unhandled mech type\n");
     }
+
 #endif
 }
 
@@ -127,7 +134,7 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 
     struct MECH_ATTRIBUTE* ma = get_mech_attribute(p.mech_type); 
 
-    switch ( p.mech_type )
+    switch ( ma->mech_type_class )
     {
     case MECH_CRYSTAL:
         //do something
@@ -142,17 +149,17 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         m.offset_y = (randf()-0.5f)* (1.0f-m.size);
 
         break;
+    case MECH_CROP:
+        break;
+    case MECH_MYCELIUM
+        break;
     default:
         printf("pack_mech error: unhandled mech type\n");
     } 
 #endif
 }
 
-void handle_block_removal(int x, int y, int z)
-{
 
-
-}
 
 
 void create_crystal(int x, int y, int z, int mech_type)
@@ -296,6 +303,12 @@ void send_client_mech_list(int client_id)
 {
     mech_list->send_mech_list_to_client(client_id);
 }
+
+void handle_block_removal(int x, int y, int z)
+{
+    mech_list->handle_block_removal(x,y,z);
+}
+
 
 #endif
 

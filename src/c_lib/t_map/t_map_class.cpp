@@ -6,6 +6,8 @@
 #include <t_map/common/constants.hpp>
 #include <physics/quadrant.hpp>
 
+#include <t_mech/_interface.hpp>
+
 namespace t_map
 {
 
@@ -377,12 +379,14 @@ namespace t_map
             
             #if DC_CLIENT
                 c->needs_update = true; 
-
                 if((x & 15) == 0)  set_update(x-1,y);
                 if((x & 15) == 15) set_update(x+1,y);
                 if((y & 15) == 0)  set_update(x,y-1);
                 if((y & 15) == 15) set_update(x,y+1);
+            #endif
 
+            #if DC_SERVER
+                t_mech::handle_block_removal(x,y,z);
             #endif
 
             return 0;
@@ -434,6 +438,10 @@ namespace t_map
                 if((x & 15) == 15) set_update(x+1,y);
                 if((y & 15) == 0)  set_update(x,y-1);
                 if((y & 15) == 15) set_update(x,y+1);
+            #endif
+
+            #if DC_SERVER
+                t_mech::handle_block_removal(x,y,z);
             #endif
 
             return 0;
