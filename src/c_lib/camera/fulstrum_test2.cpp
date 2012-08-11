@@ -165,7 +165,8 @@ void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
     
     //printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
 
-    Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15)); //15 units in front of camera
+    //Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15)); //15 units in front of camera
+    Vec3 f2 = vec3_scalar_mult(f, 15); //15 units in front of camera
 
     if( pl[TOP].distance(f2) < 0 ) printf("Top\n");
     if( pl[BOTTOM].distance(f2) < 0 ) printf("Bottom\n");
@@ -348,7 +349,7 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
 
 bool point_fulstrum_test_2(float x, float y, float z)
 {
-    printf("d= %f \n", _FrustrumG.pl[FrustumG::TOP].d );
+    //printf("d= %f \n", _FrustrumG.pl[FrustumG::TOP].d );
 
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
