@@ -80,7 +80,16 @@ void draw_transparent()
     MECH_WIRE,
     MECH_SWITCH
 */
-    
+
+/*
+struct MECH_ATTRIBUTE
+{
+    int mech_type;
+    int mech_type_class;
+    int render_type;
+    int sprite_index;
+};
+*/
 
 //pack mech data into packet
 static void pack_mech(struct MECH &m, class mech_create_StoC &p)
@@ -116,10 +125,13 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
     m.y = p.y;
     m.z = p.z;
 
+    struct MECH_ATTRIBUTE* ma = get_mech_attribute(p.mech_type); 
+
     switch ( p.mech_type )
     {
     case MECH_CRYSTAL:
         //do something
+        m.render_type = ma->render_type;
 
         m.size = 0.80;  //radius
         m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;

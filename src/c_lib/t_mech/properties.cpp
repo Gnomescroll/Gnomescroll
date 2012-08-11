@@ -1,5 +1,15 @@
 #include "properties.hpp"
 
+/*
+struct MECH_ATTRIBUTE
+{
+    int mech_type;
+    int mech_type_class;
+    int render_type;
+    int sprite_index;
+};
+*/
+
 namespace t_mech
 {
 	struct MECH_ATTRIBUTE* mech_attribute;	//index from type to attributes
@@ -71,5 +81,10 @@ namespace t_mech
 	    return -1;
 	}
 
-	
+	struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type)
+	{
+		GS_ASSERT(mech_type = mech_attribute[mech_type].mech_type);
+		return &mech_attribute[mech_type];
+	}
+
 }
