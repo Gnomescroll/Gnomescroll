@@ -229,6 +229,8 @@ bool container_block_in_range_of(Vec3 pos, int block[3])
 {
     Vec3 container_position = vec3_init(block[0], block[1], block[2]);
     container_position = vec3_add(container_position, vec3_init(0.5f, 0.5f, 0.5f));
+    container_position = translate_position(container_position);
+    container_position = quadrant_translate_position(pos, container_position);
     if (vec3_distance_squared(pos, container_position)
         <= AGENT_CONTAINER_REACH*AGENT_CONTAINER_REACH) return true;
     return false;

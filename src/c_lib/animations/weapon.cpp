@@ -505,6 +505,7 @@ void draw_placement_outline(int item_type)
     {
         float size;
         struct Vec3 p = vec3_init(b[0], b[1], b[2]+z);
+        p = quadrant_translate_position(current_camera_position, p);
         if (t_map::get(b[0], b[1], b[2]+z) == 0)
         {
             size = 0.995f;

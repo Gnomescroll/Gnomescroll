@@ -469,6 +469,7 @@ int* PlayerAgent_state::nearest_open_block(const float max_dist, const int z_low
 {
     if (agent_camera == NULL) return NULL;
     Vec3 f = agent_camera->forward_vector();
+    ASSERT_BOXED_POSITION(this->camera_state);
     int* b = _farthest_empty_block(
         this->camera_state.x, this->camera_state.y, this->camera_z(),
         f.x, f.y, f.z,
