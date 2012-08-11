@@ -891,11 +891,15 @@ inline void agent_set_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+
     // fire block applier
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
     int val = attr->placer_block_type_id;
+
+    if (!t_map::isValidID(val)) return;
+    if (!t_map::isInUse(val)) return;
     
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure

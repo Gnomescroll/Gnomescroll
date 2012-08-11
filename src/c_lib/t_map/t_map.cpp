@@ -380,6 +380,7 @@ inline bool position_is_loaded(int x, int y)
 bool block_can_be_placed(int x, int y, int z, int value)
 {   
     GS_ASSERT(value != 0);
+    
     if (get(x,y,z) != 0) return false;
     // check against all spawners
     if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x,y,z))

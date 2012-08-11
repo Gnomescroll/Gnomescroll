@@ -48,6 +48,9 @@ int get_cube_id(const char* name);
 
 int dat_get_cube_id(const char* name);  //use for dat files
 
+inline bool isValidID(int id) __attribute((always_inline));
+inline bool isInUse(int id) __attribute((always_inline));
+
 }   // t_map
 
 

@@ -153,6 +153,23 @@ void LUA_set_block_name(int id, const char* name, int length)
     Properties by cube id
 */
 
+namespace t_map
+{
+
+bool isValidID(int id)
+{
+    return (id >=0 && id < MAX_CUBES);
+}
+
+bool isInUse(int id)
+{
+    return cube_list[id].in_use;
+}
+
+}   // t_map
+
+// TODO -- put in t_map namespace
+
 bool isActive(int id) 
 {
     return t_map::cube_list[id].active;
