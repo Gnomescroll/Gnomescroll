@@ -4,6 +4,9 @@
 
 #include <physics/vec3.hpp>
 
+//Hessian Normal Form
+//http://mathworld.wolfram.com/HessianNormalForm.html
+
 class PlaneG  
 {
 
@@ -53,6 +56,7 @@ public:
     //Vec3 pln[6]; //plane normal
     //Vec3 plp[6]; //plane position
 
+    Vec3 c; //camera position
     PlaneG pl[6];
     Vec3 ntl,ntr,nbl,nbr,ftl,ftr,fbl,fbr;
     float nearD, farD, aspect, fov,tang;
@@ -101,31 +105,21 @@ void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _f
     //printf("width= %f height= %f \n", fw, fh);
 }
 
-void FrustumG::setCamDef(Vec3 c, Vec3 f, Vec3 r, Vec3 u)
-//void FrustumG::setCamDef(Vec3 p, Vec3 l, Vec3 u) 
+void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
 {
-/*
-    float f1,f2, f3;
-
-    f1 = vec3_dot(f,r);
-    f2 = vec3_dot(f,u);
-    f3 = vec3_dot(r,u);   
-
-    printf("0: %f %f %f \n", f1,f2,f3);
-
-    f1 = vec3_dot(f,f);
-    f2 = vec3_dot(r,r);
-    f3 = vec3_dot(u,u);   
-
-    printf("1: %f %f %f \n", f1,f2,f3);
-*/
+    c = _c;
 #if 1
 
     struct Vec3 nc,fc;
     //struct Vec3 X,Y,Z;
 
-    nc = vec3_add(c, vec3_scalar_mult(f, nearD));
-    fc = vec3_add(c, vec3_scalar_mult(f, farD) );
+    //nc = vec3_add(c, vec3_scalar_mult(f, nearD));
+    //fc = vec3_add(c, vec3_scalar_mult(f, farD) );
+    //ASSUME C = (0, 0, 0)
+    nc = vec3_scalar_mult(f, nearD);
+    fc = vec3_scalar_mult(f, farD);
+
+
     // compute the 4 corners of the frustum on the near plane
     
 /*
@@ -354,6 +348,12 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
 
 bool point_fulstrum_test_2(float x, float y, float z)
 {
+    printf("d= %f \n", _FrustrumG.pl[FrustumG::TOP].d );
+
+    x -= _FrustrumG.c.x;
+    y -= _FrustrumG.c.y;
+    z -= _FrustrumG.c.z;
+
     Vec3 p = vec3_init(x,y,z);
     for(int i=0; i < 6; i++) 
     {
@@ -374,6 +374,9 @@ bool point_fulstrum_test_2(float x, float y, float z)
 
 bool point_fulstrum_test_2(struct Vec3 p)
 {
+    p = vec3_sub(p, _FrustrumG.c);
+    //printf("d= %f \n", _FrustrumG.pl[FrustumG::TOP].d );
+
     for(int i=0; i < 6; i++) 
     {
         if (_FrustrumG.pl[i].distance(p) < 0)
@@ -392,16 +395,22 @@ bool point_fulstrum_test_2(struct Vec3 p)
 
 float top_z_projection(float x, float y)
 {
+    x -= _FrustrumG.c.x;
+    y -= _FrustrumG.c.y;
+
     struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
-    float d = _FrustrumG.pl[0].d;
+    float d = _FrustrumG.pl[FrustumG::TOP].d;
     d = 0;
     return (x*n.x + y*n.y + d)/(-n.z);
 }
 
 float bottom_z_projection(float x, float y)
 {
+    x -= _FrustrumG.c.x;
+    y -= _FrustrumG.c.y;
+
     struct Vec3 n = _FrustrumG.pl[FrustumG::BOTTOM].normal;
-    float d = _FrustrumG.pl[1].d;
+    float d = _FrustrumG.pl[FrustumG::BOTTOM].d;
     d = 0;
     return (x*n.x + y*n.y + d)/(-n.z);
 }
