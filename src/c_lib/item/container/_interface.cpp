@@ -159,8 +159,6 @@ void destroy_container(int id)
     for (int i=0; i<container->slot_max; i++)
         if (container->slot[i] != NULL_ITEM)
             Item::destroy_item(container->slot[i]);
-
-    printf("Destroyed container\n");
     #endif
 
     #if DC_SERVER

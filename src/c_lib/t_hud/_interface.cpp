@@ -11,6 +11,13 @@
 namespace t_hud
 {
 
+static bool agent_container_enabled = false;
+static bool container_block_enabled = false;
+static int container_block_enabled_id = NULL_CONTAINER;
+float mouse_x = -1;
+float mouse_y = -1;
+bool lm_down = false;
+
 const int n_inventories = 8;
 
 // private containers
@@ -72,22 +79,35 @@ void set_container_id(ItemContainerType container_type, int container_id)
 void close_container(int container_id)
 {
     // unset ids for variable container UIs
-    if (crafting_container != NULL && crafting_container->container_id == container_id) crafting_container->container_id = NULL_CONTAINER;
-    if (storage_block != NULL && storage_block->container_id == container_id) storage_block->container_id = NULL_CONTAINER;
-    if (crusher != NULL && crusher->container_id == container_id) crusher->container_id = NULL_CONTAINER;
-    if (smelter != NULL && smelter->container_id == container_id) smelter->container_id = NULL_CONTAINER;
+    bool closed = false;
+    if (crafting_container != NULL && crafting_container->container_id == container_id)
+    {
+        crafting_container->container_id = NULL_CONTAINER;
+        closed = true;
+    }
+    if (storage_block != NULL && storage_block->container_id == container_id)
+    {
+        storage_block->container_id = NULL_CONTAINER;
+        closed = true;
+    }
+    if (crusher != NULL && crusher->container_id == container_id)
+    {
+        crusher->container_id = NULL_CONTAINER;
+        closed = true;
+    }
+    if (smelter != NULL && smelter->container_id == container_id)
+    {
+        smelter->container_id = NULL_CONTAINER;
+        closed = true;
+    }
+
+    if (container_block_enabled && closed)
+        disable_container_block_hud();
 }
 
 /*
     Input Handling
 */
-
-static bool agent_container_enabled = false;
-static bool container_block_enabled = false;
-static int container_block_enabled_id = NULL_CONTAINER;
-float mouse_x = -1;
-float mouse_y = -1;
-bool lm_down = false;
 
 void enable_agent_container_hud()
 {
