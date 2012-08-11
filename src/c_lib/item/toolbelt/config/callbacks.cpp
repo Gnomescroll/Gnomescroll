@@ -92,13 +92,14 @@ void trigger_local_location_pointer(ItemID item_id, int item_type)
     */
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
     ClientState::set_location_pointer();
-/*
-    Vec3 pos = a->camera_position();
-    Vec3 dir = a->forward_vector();
+
+
+    Vec3 pos = agent_camera->get_position();
+    Vec3 dir = agent_camera->forward_vector();
 
     float d;
-    t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &d)
-*/
+    t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &d);
+
 }
 
 void trigger_local_admin_block_placer(ItemID item_id, int item_type)
@@ -289,8 +290,19 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         if (b[2] <= 0) return;  // can't place on nothing
         if (!isSolid(b[0], b[1], b[2]-1)) return;
 
-        printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
-        t_mech::create_crystal(b[0],b[1],b[2] );
+        
+        static int crystal_id = t_mech::get_mech_type("blue_crystal");
+
+        if( t_mech::can_place_crystal(b[0],b[1],b[2], 0) == true)
+        {
+            printf("place crystal: at %d %d %d \n", b[0],b[1],b[2] );
+            t_mech::create_crystal(b[0],b[1],b[2], crystal_id);
+        
+        }
+        else
+        {
+
+        }
         //decrement_stack(agent_id, item_id, item_type);
     }
 

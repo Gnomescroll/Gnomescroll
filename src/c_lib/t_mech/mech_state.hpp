@@ -42,6 +42,12 @@ class MECH_LIST
         free(mla);
     }
 
+    bool is_occupied(int x, int y, int z); //check if there is a t_mech on the square already
+    
+#if DC_SERVER
+    void handle_block_removal(int x, int y, int z);
+#endif
+
 #if DC_CLIENT
     void add_mech(int id, const struct MECH &m)
     {
@@ -98,11 +104,16 @@ class MECH_LIST
     {
         GS_ASSERT(mla[id].id != -1);
         GS_ASSERT(id < mlm);
+
+
+        if( mla[id].id == -1)
+            printf("Error t_mech::remove_mech, tried to remove mech that does not exist!\n");
+
         mla[id].id = -1;
         mln--;
         GS_ASSERT(mln >= 0);
 
-        printf("Error: tried to remove mech that does not exist!\n");
+
     }
 
 
@@ -140,8 +151,30 @@ class MECH_LIST
 };
 
 
+bool MECH_LIST::is_occupied(int x, int y, int z)
+{
+    for(int i=0; i<mlm; i++)
+    {
+        if( mla[i].id == -1) continue;
+        if( mla[i].x == x && mla[i].y == y && mla[i].z == z) return true;
+    }
+    return false;
+}
 
-
+#if DC_SERVER
+void MECH_LIST::handle_block_removal(int x, int y, int z)
+{
+    for(int i=0; i<mlm; i++)
+    {
+        if( mla[i].id == -1) continue;
+        if( mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
+        {
+            server_remove_mech(i);
+            return;
+        }
+    }
+}
+#endif
 
 }
 

@@ -8,6 +8,7 @@
 #include <item/_interface.hpp>
 #include <common/analytics/sessions.hpp>
 
+#include <t_mech/_interface.hpp>
 /*
     Utility Functions
 */
@@ -105,10 +106,16 @@ void NetPeerManager::ready()
     if (!a->status.identified) return;
 
     this->loaded = true;
+
+    ServerState::agent_list->send_to_client(client_id);
+    t_mech::send_client_mech_list(this->client_id);  //send t_mech to client
+
     ServerState::send_initial_game_state_to_client(this->client_id);
 
     t_map::send_client_map_special(this->client_id); //send special blocks to client
+
     ServerState::send_remainining_game_state_to_client(this->client_id);
+    ItemParticle::send_particle_items_to_client(client_id);
 
     // move peer from staging to active pool
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];

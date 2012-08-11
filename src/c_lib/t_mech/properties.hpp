@@ -14,4 +14,6 @@ namespace t_mech
 	int get_mech_type(const char* name);
 	int dat_get_mech_type(const char* name);
 
+	struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type);
+
 }

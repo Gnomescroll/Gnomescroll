@@ -29,7 +29,7 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
     inline void handle() __attribute((always_inline));
 };
 
-class mech_delete_StoC: public MapMessagePacketToClient<mech_create_StoC>
+class mech_delete_StoC: public MapMessagePacketToClient<mech_delete_StoC>
 {
     public:
     

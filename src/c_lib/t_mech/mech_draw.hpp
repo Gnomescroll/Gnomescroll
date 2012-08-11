@@ -334,7 +334,9 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     wx = quadrant_translate_f(cx, wx);
     wy = quadrant_translate_f(cy, wy);
 
-    int tex_id = m.subtype;
+    int tex_id = mech_attribute[m.mech_type].sprite_index;
+
+    GS_ASSERT(mech_attribute[m.mech_type].mech_type != -1);
 
     const float txmargin = 0.0f;
     float tx_min, ty_min, tx_max, ty_max;
@@ -517,8 +519,19 @@ void MechListRenderer::prep_vbo()
     {
         if( mla[i].id == -1) continue;
 
-    	if( mla[i].mech_type == MECH_CRYSTAL )
-    		push_crystal_vertex(mla[i]);
+        switch ( mech_attribute[mla[i].mech_type].mech_type_class)
+        {
+        case MECH_RENDER_TYPE_0:
+            push_crystal_vertex(mla[i]);
+            break;
+        case MECH_RENDER_TYPE_1:
+            break;
+        case MECH_RENDER_TYPE_2:
+            break;
+        default:
+            printf("Error MechListRenderer::prep_vbo: unhandled mech render type\n");
+        }
+
         num++;
     }
 

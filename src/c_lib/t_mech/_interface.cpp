@@ -80,7 +80,16 @@ void draw_transparent()
     MECH_WIRE,
     MECH_SWITCH
 */
-    
+
+/*
+struct MECH_ATTRIBUTE
+{
+    int mech_type;
+    int mech_type_class;
+    int render_type;
+    int sprite_index;
+};
+*/
 
 //pack mech data into packet
 static void pack_mech(struct MECH &m, class mech_create_StoC &p)
@@ -93,14 +102,20 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
     p.y = m.y;
     p.z = m.z;
 
-    switch ( m.mech_type )
+    GS_ASSERT(mech_attribute[m.mech_type].mech_type != -1);
+
+    switch ( mech_attribute[m.mech_type].mech_type_class)
     {
     case MECH_CRYSTAL:
-        //do something
+        break;
+    case MECH_CROP:
+        break;
+    case MECH_MYCELIUM:
         break;
     default:
         printf("pack_mech error: unhandled mech type\n");
     }
+
 #endif
 }
 
@@ -116,10 +131,13 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
     m.y = p.y;
     m.z = p.z;
 
-    switch ( p.mech_type )
+    struct MECH_ATTRIBUTE* ma = get_mech_attribute(p.mech_type); 
+
+    switch ( ma->mech_type_class )
     {
     case MECH_CRYSTAL:
         //do something
+        m.render_type = ma->render_type;
 
         m.size = 0.80;  //radius
         m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
@@ -130,16 +148,40 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         m.offset_y = (randf()-0.5f)* (1.0f-m.size);
 
         break;
+    case MECH_CROP:
+        break;
+    case MECH_MYCELIUM:
+        break;
     default:
         printf("pack_mech error: unhandled mech type\n");
     } 
 #endif
 }
 
-void handle_block_removal(int x, int y, int z)
+
+
+
+void create_crystal(int x, int y, int z, int mech_type)
 {
+#if DC_SERVER
+
+    if(mech_attribute[mech_type].mech_type == -1)
+    {
+        GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
+        printf("t_mech::create_crystal fail: mech_type %i does not exist \n",  mech_type);
+        return;
+    }
+
+    struct MECH m;
+    m.mech_type = MECH_CRYSTAL;
+    m.x = x;
+    m.y = y;
+    m.z = z;
+    //m.subtype = rand()%9;
 
 
+    mech_list->server_add_mech(m);
+#endif
 }
 
 void create_crystal(int x, int y, int z)
@@ -165,6 +207,11 @@ bool can_place_crystal(int x, int y, int z, int side)
     if(side != 0)
         return false;
 
+    if( isSolid(x,y,z-1) != true)
+        return false;
+
+
+    if( mech_list->is_occupied(x,y,z) == true) return false;
     //check if there is another one on this square
     return true;
 }
@@ -247,6 +294,21 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
 
     return false;
 }
+#endif
+
+#if DC_SERVER
+
+void send_client_mech_list(int client_id)
+{
+    mech_list->send_mech_list_to_client(client_id);
+}
+
+void handle_block_removal(int x, int y, int z)
+{
+    mech_list->handle_block_removal(x,y,z);
+}
+
+
 #endif
 
 }
