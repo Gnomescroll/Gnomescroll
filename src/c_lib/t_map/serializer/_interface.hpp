@@ -234,6 +234,10 @@ class BlockSerializer
 
         write_buffer = (char*) malloc(file_size);
 
+        //push header
+        int index = 0;
+        push_int(buffer, index, version);
+
         if(write_buffer == NULL)
         {
             printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n");
@@ -318,9 +322,8 @@ class BlockSerializer
             }
         }
 
-        printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i calls, chunks per call= %i total_chunks= %i memcpy_count= %i \n", 
-            _GET_MS_TIME()-_start_ms, _calls, chunk_number/_calls, chunk_number, _memcpy_count);
-
+        printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i, ms_per_call= %i, chunks_per_call= %i total_chunks= %i memcpy_count= %i \n", 
+            _GET_MS_TIME()-_start_ms, _calls, max_ms, chunk_number/_calls, chunk_number, _memcpy_count);
 
         threaded_write(this->file_name, write_buffer, file_size);
 
@@ -332,8 +335,6 @@ class BlockSerializer
         write_buffer == NULL;
         file_name[0] = 0x00;
         file_size = 0;
-        //free(s);
-        //s = NULL;
     }
 
     void load(const char* filename)
