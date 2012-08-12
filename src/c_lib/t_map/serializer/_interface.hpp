@@ -180,8 +180,9 @@ class BlockSerializer
 
     BlockSerializer()
     {
-        //memset(s, 0, chunk_number*sizeof(struct SerializedChunk));
-        _s = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
+        printf("BlockSerializer ctor\n");
+        this->_s = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
+        GS_ASSERT(this->_s != NULL);
         version_array = (int*) malloc(chunk_number*sizeof(int));
         file_name[0] = 0x00;
         write_buffer = NULL;
@@ -246,7 +247,8 @@ class BlockSerializer
 
 
         int ti1 = _GET_MS_TIME();
-#if 0
+
+        #if 0
         //serialize
         for(int i=0; i < chunk_number; i++)
         {
@@ -271,10 +273,12 @@ class BlockSerializer
             index += sizeof(struct SerializedChunk);
         }
         GS_ASSERT(file_size == (size_t)index);
-#else
+
+        #else
         while(map_save_memcpy_in_progress == true)
             this->save_iter(2);   //2 ms per iteration
-#endif
+        #endif
+
         int ti2 = _GET_MS_TIME();
 
         //int ti3 = _GET_MS_TIME();
@@ -339,6 +343,9 @@ class BlockSerializer
 
     void load(const char* filename)
     {
+        GS_ASSERT(filename != NULL);
+        if (filename == NULL) return;
+        
         if(main_map == NULL)
         {
             printf("ERROR: Attempting to load map before t_map init \n");
@@ -364,9 +371,7 @@ class BlockSerializer
         }
 
         if(filesize != prefix_length + chunk_number*sizeof(struct SerializedChunk))
-        {
             printf("Map Loader error: file sizes do not match!\n");
-        }
 
         for(int i=0; i<chunk_number; i++)
         {
@@ -391,12 +396,14 @@ class BlockSerializer
     }
 };
 
-BlockSerializer block_serializer;
+extern BlockSerializer* block_serializer;
 
 void save_map(const char* filename)
 {
+    GS_ASSERT(block_serializer != NULL);
+    if (block_serializer == NULL) return;
+    
     create_path_to_file(filename);
-    //BlockSerializer* BS = new BlockSerializer;
 
     map_final_name = (char*)malloc((strlen(filename)+1)*sizeof(char));
     strcpy(map_final_name, filename);
@@ -407,20 +414,18 @@ void save_map(const char* filename)
         char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(ext))*sizeof(char));
         sprintf(tmp_filename, "%s%s", filename, ext);
         map_tmp_name = tmp_filename;
-        block_serializer.save(tmp_filename);        
+        block_serializer->save(tmp_filename);        
     }
     else
-        block_serializer.save(filename);
-
-    //delete BS;
+        block_serializer->save(filename);
 }
 
 
 void load_map(const char* filename)
 {
-    //BlockSerializer* bs = new BlockSerializer;
-    block_serializer.load(filename);
-    //delete bs;  
+    GS_ASSERT(block_serializer != NULL);
+    if (block_serializer == NULL) return;
+    block_serializer->load(filename);
 }
 
 const char default_map_file[] = "./world/map-" STR(DC_VERSION) ".map";
@@ -464,5 +469,8 @@ void check_save_state()
         map_save_completed = false;
     }
 }
+
+void init_map_serializer();
+void teardown_map_serializer();
 
 }   // t_map
