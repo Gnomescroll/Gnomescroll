@@ -57,7 +57,7 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
     fulstrum.r_2d = vec3_normalize(fulstrum.r_2d);
 }
 
-#define FULSTRUM_DEBUG_VERIFY 1 //verify results against fulstrum_test_2
+#define FULSTRUM_DEBUG_VERIFY 0 //verify results against fulstrum_test_2
 
 #define SPHERE_FULSTRUM_DEBUG 0
 #define SPHERE_FULSTRUM_DEBUG2 0 //use planes based point fulstrum test

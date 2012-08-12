@@ -361,9 +361,7 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
     unsigned int result = 1; // Assume that the aabb will be Inside the frustum
     for(int i=0; i<6;i++)
     {
-
-
-        Vec3 n = FrustrumG.pl[i].normal;
+        Vec3 n = _FrustrumG.pl[i].normal;
 
         //const _Plane& frustumPlane = frustumPlanes[iPlane];
 
@@ -378,19 +376,18 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
         float d_p_r = d + r;
         float d_m_r = d - r;
 
-        if(d_p_r < -frustumPlane.d)
+        //if(d_p_r < -frustumPlane.d)
+        if(d_p_r < 0.0f)
         {
             result = 0; // Outside
             break;
         }
-        else if(d_m_r < -frustumPlane.d)
+        else if(d_m_r < 0.0f)         //else if(d_m_r < -frustumPlane.d)
+        {
             result = 2; // Intersect
+        }
     }
 
-    aabbState[iAABB] = result;
-
+    return result;
 }
 
-
-
-}
