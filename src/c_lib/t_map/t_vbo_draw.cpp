@@ -355,10 +355,6 @@ void Vbo_map::draw_map()
 
     glUseProgramObjectARB(map_shader[0]);
 
-    glUniform3f(map_FogColor, 0,0,0);
-    glUniform1f(map_FogDepth, CAMERA_VIEW_DISTANCE);
-    glUniform1f(map_FogStart, CAMERA_VIEW_DISTANCE * 0.25f);
-
     glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
     glEnableVertexAttribArray(map_Vertex);
@@ -581,10 +577,6 @@ void Vbo_map::draw_map_compatibility()
     glColor3ub(255,255,255);
 
     glUseProgramObjectARB(map_shader[0]);
-
-    glUniform3f(map_FogColor, 0,0,0);
-    glUniform1f(map_FogDepth, CAMERA_VIEW_DISTANCE);
-    glUniform1f(map_FogStart, CAMERA_VIEW_DISTANCE * 0.25f);
 
     glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
 

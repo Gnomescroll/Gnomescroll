@@ -71,6 +71,13 @@ void init_cameras()
         current_camera->fov, current_camera->ratio, current_camera->z_near,current_camera->z_far,
         p,f,r,u
     );
+
+    // custom fog shaders use EXP4
+    glFogf(GL_FOG_DENSITY, 0.0115f);
+    unsigned char fog_color[4] = {0,0,0,0};
+    float fc[4];
+    for (int i=0; i<4; i++) fc[i] = ((float)fog_color[i]/256.0f);
+    glFogfv(GL_FOG_COLOR, fc);
 }
 
 void teardown_cameras()

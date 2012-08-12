@@ -136,10 +136,6 @@ void set_map_shader_0()
     map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
     //map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
-    map_FogColor = glGetUniformLocation(map_shader[index], "InFogColor");
-    map_FogStart = glGetUniformLocation(map_shader[index], "InFogStart");
-    map_FogDepth = glGetUniformLocation(map_shader[index], "InFogDepth");
-
     map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
 
     //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix);
@@ -358,10 +354,6 @@ void set_map_shader_0_compatibility(int level)
     map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
     map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
     map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
-
-    map_FogColor = glGetUniformLocation(map_shader[index], "InFogColor");
-    map_FogStart = glGetUniformLocation(map_shader[index], "InFogStart");
-    map_FogDepth = glGetUniformLocation(map_shader[index], "InFogDepth");
 
     map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
 
