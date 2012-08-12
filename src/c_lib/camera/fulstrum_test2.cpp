@@ -389,7 +389,7 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
 
-    _z = _FrustrumG.c.z;
+    float _z = _FrustrumG.c.z;
 
     static const float zmax = 128.0;
     static const float zmin = 0.0f;
@@ -399,7 +399,7 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     while(!_FrustrumG.pointInFulstum_fast(x,y,z-_z) ||
         !_FrustrumG.pointInFulstum_fast(x,y+16.0,z-_z) ||
         !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z) ||
-        !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z)
+        !_FrustrumG.pointInFulstum_fast(x+16.0,y,z-_z)
 
         )
     {
@@ -415,15 +415,16 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     while(!_FrustrumG.pointInFulstum_fast(x,y,z-_z) ||
         !_FrustrumG.pointInFulstum_fast(x,y+16.0,z-_z) ||
         !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z) ||
-        !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z)
+        !_FrustrumG.pointInFulstum_fast(x+16.0,y,z-_z)
         )
     {
         z -= 1.0;
-        if(z < _bottom) break;
+        //if(z < _bottom) break;
+        if(z < zmin) break;
     }  
 
 
     *bottom = _bottom;
-    *top = z;
+    *top = z + 1.0;;
 
 }

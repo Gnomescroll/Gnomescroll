@@ -220,9 +220,9 @@ int run()
 
         //printf("top= %03.02f bottom= %03.02f \n", top_z_projection(0.0f,0.0f), bottom_z_projection(0.0f,0.0f) );
 
-        float _zmin, _zmax;
-        chunk_top_z_projection(0.0, 0.0, &_zmin, &_zmax);
-        printf("%f %f \n", _zmin, _zmax);
+        //float _zmin, _zmax;
+        //chunk_top_z_projection(0.0, 0.0, &_zmin, &_zmax);
+        //printf("%f %f \n", _zmin, _zmax);
 
         CHECK_GL_ERROR();
 
