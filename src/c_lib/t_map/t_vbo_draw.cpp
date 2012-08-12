@@ -114,8 +114,12 @@ void Vbo_map::prep_frustrum_vertices()
                 continue;
             }
 
+
+
             int vs = vbo->voff_array[side][min];
             int ve = vbo->voff_array[side][max];
+
+            if(min==0 ) printf("vs=%i \n", vs);
 
             int voff = vs;
             int vnum = ve - vs;

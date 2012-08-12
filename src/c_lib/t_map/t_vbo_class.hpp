@@ -49,8 +49,8 @@ class Map_vbo
 
     int vertex_num[6];
     int vertex_offset[6];
-    int vertex_num_array[6][16];   //for each column, every 8 z
-    
+
+    //int vertex_num_array[7][16];   //for each column, every 8 z
     int voff_array[6][8+1]; //levels
 
     GLuint vbo_id;
