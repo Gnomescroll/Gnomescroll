@@ -179,8 +179,6 @@ void Vbo_map::prep_draw()
     for(int i=0; i<32*32; i++)
         map_vbo_draw_state[i] = -1;
 
-    class Map_vbo* col;
-
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
     ASSERT_BOXED_POINT(cx);
@@ -192,7 +190,7 @@ void Vbo_map::prep_draw()
 
     for(int i=0; i<MAP_CHUNK_XDIM; i++) {
     for(int j=0; j<MAP_CHUNK_YDIM; j++) {
-        col = vbo_array[j*MAP_CHUNK_XDIM + i ];
+        class Map_vbo* col = vbo_array[j*MAP_CHUNK_XDIM + i ];
 
         if(col == NULL || col->vnum == 0) continue;
 
@@ -558,9 +556,15 @@ void Vbo_map::draw_map_compatibility()
 
 void draw_vbo_debug(int x, int y)
 {
-    static float psize = 4.0;
+    static float psize = 8.0;
     static float off = 0.5;
-    static float sep = 1.0;
+    static float sep = 2.0;
+
+    int cx = current_camera_position.x;
+    int cy = current_camera_position.y;
+
+    cx = cx / 16;
+    cy = cy / 16;
 
     glPointSize(psize);
 
@@ -570,16 +574,16 @@ void draw_vbo_debug(int x, int y)
     for(int j=0; j<32; j++)
     {
 
-        glColor3ub(255, 0, 0);
-
         int index = 32*j +i;
         int v = map_vbo_draw_state[index];
-
 
         if(v==-1) glColor3ub(255, 255, 255);
         if(v==0) glColor3ub(255, 0, 0);
         if(v==1) glColor3ub(0, 255, 0);
         if(v==2) glColor3ub(0, 0, 255);
+
+        if(i==cx && j == cy) 
+            glColor3ub(255, 255, 0);
 
         glVertex3f(x+(psize+sep)*i+off, y+(psize+sep)*j+off, -0.1);
 
@@ -587,9 +591,59 @@ void draw_vbo_debug(int x, int y)
 
     glEnd();
 
+    //loaded/not loaded
+
     glColor3ub(255, 255, 255);
 
-    //map_vbo_draw_state[32*j+i]
+    glBegin(GL_POINTS);
+
+    for(int i=0; i<32; i++)
+    for(int j=0; j<32; j++)
+    {
+
+        int index = 32*j +i;
+        int v = map_vbo_draw_state[index];
+
+        if(v==-1) glColor3ub(255, 255, 255);
+        if(v==0) glColor3ub(255, 0, 0);
+        if(v==1) glColor3ub(0, 255, 0);
+        if(v==2) glColor3ub(0, 0, 255);
+
+        if(i==cx && j == cy) 
+            glColor3ub(255, 255, 0);
+
+        glVertex3f(x+(psize+sep)*i+off, y+(psize+sep)*j+off, -0.1);
+
+    }
+
+    glEnd();
+
+    const float yoff1 = 32*(psize+sep) + 16;
+
+    for(int i=0; i<MAP_CHUNK_XDIM; i++)
+    for(int j=0; j<MAP_CHUNK_YDIM; j++)
+    {
+
+
+        class Map_vbo* col = vbo_map->vbo_array[j*MAP_CHUNK_XDIM + i ];
+
+        glColor3ub(0, 255, 0); // everything find/loaded
+
+        if(col == NULL)
+        {
+            glColor3ub(255, 0, 0);
+        }
+        else if(col->vnum == 0) 
+        {
+            glColor3ub(0,0,255);
+        }
+        if(i==cx && j == cy) 
+            glColor3ub(255, 255, 0);
+
+
+        glVertex3f(x+(psize+sep)*i+off, yoff1+y+(psize+sep)*j+off, -0.1);
+
+    }
 
     glPointSize(1.0);
 }
