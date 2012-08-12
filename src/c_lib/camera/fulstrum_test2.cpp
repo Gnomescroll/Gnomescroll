@@ -7,6 +7,14 @@
 //Hessian Normal Form
 //http://mathworld.wolfram.com/HessianNormalForm.html
 
+
+/* 
+    d == 0, except for near and far plane
+*/
+
+/*
+    If p is 0, d is zero
+*/
 class PlaneG  
 {
 
@@ -14,7 +22,7 @@ public:
 
     struct Vec3 normal;
     struct Vec3 point;
-    float d;
+    float p;    //hessian form
 
     //3 points define a plane
     void set3Points( Vec3 v1,  Vec3 v2,  Vec3 v3)
@@ -25,19 +33,19 @@ public:
         normal = vec3_normalize(vec3_cross(aux1, aux2));
 
         point = v2;
-        d = -vec3_dot(normal,point);
+        p = -vec3_dot(normal,point);
     }
 
     void setNormalAndPoint(struct Vec3 _normal, struct Vec3 _point)
     {
         this->normal = vec3_normalize(_normal);
         this->point  = _point;
-        d = -vec3_dot(normal, point);
+        p = -vec3_dot(normal, point);
     }
 
-    float distance(struct Vec3 p)
+    float distance(struct Vec3 x)
     {
-        return d + vec3_dot(normal,p);
+        return p + vec3_dot(normal,x);
     }
 
 };
@@ -349,7 +357,7 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
 
 bool point_fulstrum_test_2(float x, float y, float z)
 {
-    //printf("d= %f \n", _FrustrumG.pl[FrustumG::TOP].d );
+    printf("p= %f \n", _FrustrumG.pl[FrustumG::TOP].p );
 
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
@@ -400,9 +408,30 @@ float top_z_projection(float x, float y)
     y -= _FrustrumG.c.y;
 
     struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
-    float d = _FrustrumG.pl[FrustumG::TOP].d;
-    d = 0;
-    return (x*n.x + y*n.y + d)/(-n.z);
+
+    float dt = -(x*n.x + y*n.y);    // negative dot product of starting point and n
+    float db = n.z;                 //dot product of direction and normal
+
+    if(db == 0)
+    {
+        printf("top_z_projection: the normal is parrallel to line \n");
+        return 256.0f;
+    }
+
+    if(dt == 0)
+    {
+        printf("top_z_projection: intersects everywhere \n");
+        return 256.0f;  
+    }
+    float p = _FrustrumG.pl[FrustumG::TOP].p;
+    GS_ASSERT(p == 0.0f);
+
+    float t = dt/db;
+
+    Vec3 pos = Vec3_init(x,y, t*1.0); //intersection point with the plane
+
+
+    return t;
 }
 
 float bottom_z_projection(float x, float y)
@@ -410,8 +439,29 @@ float bottom_z_projection(float x, float y)
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
 
-    struct Vec3 n = _FrustrumG.pl[FrustumG::BOTTOM].normal;
-    float d = _FrustrumG.pl[FrustumG::BOTTOM].d;
-    d = 0;
-    return (x*n.x + y*n.y + d)/(-n.z);
+    struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
+
+    float dt = -(x*n.x + y*n.y);    // negative dot product of starting point and n
+    float db = -n.z;                 //dot product of direction and normal
+
+    if(db == 0)
+    {
+        printf("bottom_z_projection: the normal is parrallel to line \n");
+        return 0.0f;
+    }
+
+    if(dt == 0)
+    {
+        printf("bottom_z_projection: intersects everywhere \n");
+        return 0.0f;  
+    }
+    float p = _FrustrumG.pl[FrustumG::TOP].p;
+    GS_ASSERT(p == 0.0f);
+
+    float t = dt/db;
+
+    Vec3 pos = Vec3_init(x,y, t*-1.0); //intersection point with the plane
+
+
+    return t;
 }
