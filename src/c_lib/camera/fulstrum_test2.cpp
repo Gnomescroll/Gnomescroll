@@ -48,6 +48,10 @@ public:
         return p + vec3_dot(normal,x);
     }
 
+    float fast_distance(float x, float y, float z)
+    {
+        return x*normal.x + y*normal.y + z*normal.z;
+    }
 };
 
 class FrustumG
@@ -76,6 +80,15 @@ public:
         {
             if (pl[i].distance(p) < 0)
                 return false;
+        }
+        return true;
+    }
+
+    bool pointInFulstum_fast(float x, float y, float z)
+    {
+        for(int i=0; i < 4; i++) 
+        {
+            if (pl[i].fast_distance(x,y,z) < 0) return false;
         }
         return true;
     }
@@ -257,7 +270,7 @@ float top_z_projection(float x, float y)
 
     float k2 = x*n.x + y*n.y + k* n.z;
 
-    //printf("top= %03.02f normal: %f %f %f k= %f k2= %f \n", k + _FrustrumG.c.z, n.x,n.y,n.z, k, k2);
+    printf("top= %03.02f normal: %f %f %f k= %f k2= %f \n", k + _FrustrumG.c.z, n.x,n.y,n.z, k, k2);
 
 #if 0
     struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
@@ -325,4 +338,92 @@ float bottom_z_projection(float x, float y)
 
 
     return t + _FrustrumG.c.z;;
+}
+
+
+//find the highest z level where all points are in fulstrum
+float chunk_top_z_projection(float x, float y)
+{
+    //use binary search
+    float z = 128.0f;
+
+    while(_FrustrumG.pointInFulstum_fast(x-8.0,y-8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x-8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z)
+        )
+    {
+
+        z-=1.0;
+
+        if(z < 0.0) break;
+    }
+
+    return z +1.0;
+}
+
+//find the highest z level where all points are in fulstrum
+float chunk_bottom_z_projection(float x, float y)
+{
+    //use binary search
+    float z = 0.0f;
+
+    while(_FrustrumG.pointInFulstum_fast(x-8.0,y-8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x-8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z)
+        )
+    {
+
+        z += 1.0;
+
+        if(z < 0.0) break;
+    }
+
+    return z +1.0;
+}
+
+
+void chunk_top_z_projection(float x, float y, float* bottom, float *top)
+{
+    x -= _FrustrumG.c.x;
+    y -= _FrustrumG.c.y;
+
+    _z = _FrustrumG.c.z;
+
+    static const float zmax = 128.0;
+    static const float zmin = 0.0f;
+    float z = 0.0f;
+
+
+    while(!_FrustrumG.pointInFulstum_fast(x,y,z-_z) ||
+        !_FrustrumG.pointInFulstum_fast(x,y+16.0,z-_z) ||
+        !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z) ||
+        !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z)
+
+        )
+    {
+        z += 1.0;
+        if(z > zmax) return;
+    }
+
+    float _bottom = z;
+
+
+    z = 128.0f;
+
+    while(!_FrustrumG.pointInFulstum_fast(x,y,z-_z) ||
+        !_FrustrumG.pointInFulstum_fast(x,y+16.0,z-_z) ||
+        !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z) ||
+        !_FrustrumG.pointInFulstum_fast(x+16.0,y+16.0,z-_z)
+        )
+    {
+        z -= 1.0;
+        if(z < _bottom) break;
+    }  
+
+
+    *bottom = _bottom;
+    *top = z;
+
 }
