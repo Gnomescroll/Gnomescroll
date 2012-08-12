@@ -177,7 +177,7 @@ inline bool point_fulstrum_test_debug(float x, float y, float z)
         return false;
 
     //get return value from the other fulstrum method
-    bool tmp = point_fulstrum_test2(x,y,z);
+    bool tmp = point_fulstrum_test_2(x,y,z);
 
     bool tmp1 = true;
 
