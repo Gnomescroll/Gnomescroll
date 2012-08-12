@@ -327,10 +327,6 @@ int run()
 
         CHECK_GL_ERROR();
 
-        /*
-            Draw Hud
-        */
-
         // update mouse
         poll_mouse();
 
@@ -351,6 +347,10 @@ int run()
 
         CHECK_GL_ERROR();   //check error before hud
 
+        /*
+            Draw Hud
+        */
+
         if (Options::hud)
         {
             // switch to hud  projection
@@ -366,6 +366,7 @@ int run()
             Awesomium::_draw();
             #endif
 
+            t_map::draw_vbo_debug(400, 400);
             CHECK_GL_ERROR();  //check error after hud rendering
         }
 

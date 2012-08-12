@@ -293,9 +293,7 @@ float chunk_bottom_z_projection(float x, float y)
         _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z)
         )
     {
-
         z += 1.0;
-
         if(z < 0.0) break;
     }
 
@@ -331,7 +329,6 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 
     float _bottom = z;
 
-
     z = 128.0f;
 
     while(!_FrustrumG.pointInFulstum_fast2(x,y,z-_z) &&
@@ -351,10 +348,8 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 
     float _top = _z;
 
-
     *bottom = _bottom;
     *top = _top;
-
 }
 
 //1 is inside, 0 is outside, 2 is intersect

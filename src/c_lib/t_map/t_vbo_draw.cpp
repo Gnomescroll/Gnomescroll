@@ -25,6 +25,7 @@ static int draw_vbo_n;
 
 //int vbo_frustrum[32*32*2];  //start and end chunk index
 
+int map_vbo_draw_state[32*32];
 
 int vbo_frustrum_voff[32*32][7];
 int vbo_frustrum_vnum[32*32][7];
@@ -175,6 +176,8 @@ bool chunk_distance_check( float x, float y)
 
 void Vbo_map::prep_draw()
 {
+    for(int i=0; i<32*32; i++)
+        map_vbo_draw_state[i] = -1;
 
     class Map_vbo* col;
 
@@ -202,6 +205,18 @@ void Vbo_map::prep_draw()
             Add bounding box check
         */
         // plain chunk distance check has errors in corners
+
+
+        if(AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0)
+         {
+            map_vbo_draw_state[32*j+i] = 1; //failed AABB test
+        }
+        else if(!(chunk_distance_check( col->wxoff+8.0f, col->wyoff+8.0f) &&
+            AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0))
+        {
+            map_vbo_draw_state[32*j+i] = 0; //failed distance test
+        }
+
         if (chunk_distance_check( col->wxoff+8.0f, col->wyoff+8.0f) &&
             AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0
         )
@@ -539,4 +554,43 @@ void Vbo_map::draw_map_compatibility()
 
 }
 
+
+
+void draw_vbo_debug(int x, int y)
+{
+    static float psize = 4.0;
+    static float off = 0.5;
+    static float sep = 1.0;
+
+    glPointSize(psize);
+
+    glBegin(GL_POINTS);
+
+    for(int i=0; i<32; i++)
+    for(int j=0; j<32; j++)
+    {
+
+        glColor3ub(255, 0, 0);
+
+        int index = 32*j +i;
+        int v = map_vbo_draw_state[index];
+
+
+        if(v==-1) glColor3ub(255, 255, 255);
+        if(v==0) glColor3ub(255, 0, 0);
+        if(v==1) glColor3ub(0, 255, 0);
+        if(v==2) glColor3ub(0, 0, 255);
+
+        glVertex3f(x+(psize+sep)*i+off, y+(psize+sep)*j+off, -0.1);
+
+    }
+
+    glEnd();
+
+    glColor3ub(255, 255, 255);
+
+    //map_vbo_draw_state[32*j+i]
+
+    glPointSize(1.0);
+}
 }
