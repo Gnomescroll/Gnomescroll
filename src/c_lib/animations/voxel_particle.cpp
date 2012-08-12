@@ -67,14 +67,13 @@ void prep_voxel_particles()
         voxel_particle_vlist->vertex_number = 0;
         return;
     }
-    
+
     for (int i=0; i<list->n_max; i++)
     {
         class ItemParticle::ItemParticle* item = list->a[i];
         if (item == NULL) continue;
         if (!item->is_voxel || !item->should_draw) continue;
-        if (Options::animation_level <= 0)
-            item->voxel.delta_rotation(0.01f, 0.0f);
+        item->voxel.delta_rotation(0.01f, 0.0f);
         
         // do fulstrum test
         float size = item->voxel.size;

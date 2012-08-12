@@ -22,6 +22,9 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
     if (Options::animation_level <= 0) return;
     const float crumble_size = 0.17f;
 
+    float scale = ((float)Options::animation_level)/3.0f;
+    n = scale*((float)n);
+
     //unsigned char r,g,b,a;
     int side;
     int ttl;
@@ -113,6 +116,11 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side)
 {
     if (Options::animation_level <= 0) return;
+
+    int n = randrange(10,15);
+    float scale = ((float)Options::animation_level)/3.0f;
+    n = scale*((float)n);
+
     int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
 
     float theta,phi;
@@ -137,7 +145,6 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     float nx,ny,nz;
 
     const float vox_size = 0.05f;
-    int n = randrange(10,15);
     int ttl;
     for (int i=0; i<n; i++)
     {
@@ -211,6 +218,9 @@ void grenade_explode(float x, float y, float z)
 {
     if (Options::animation_level <= 0) return;
     int n = randrange(25,35);
+    float scale = ((float)Options::animation_level)/3.0f;
+    n = scale*((float)n);
+
     float vx = 20.0f;
     float vy = 20.0f;
     float vz = 20.0f;
@@ -241,6 +251,8 @@ void terrain_sparks(float x, float y, float z)
 {
     if (Options::animation_level <= 0) return;
     int n = randrange(15,20);
+    float scale = ((float)Options::animation_level)/3.0f;
+    n = scale*((float)n);
 
     float vx = 3.5f;
     float vy = 3.5f;
@@ -273,6 +285,9 @@ void terrain_sparks(float x, float y, float z)
 void voxel_explode(Vec3 position, int count, float size, float force, struct Color color)
 {
     if (Options::animation_level <= 0) return;
+
+    float scale = ((float)Options::animation_level)/3.0f;
+    count = scale*((float)count);
     
     float cx,cy,cz;
     float cvx,cvy,cvz;
@@ -314,8 +329,6 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
 // will generate random count between count_min and count_max
 void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, struct Color color)
 {
-    if (Options::animation_level <= 0) return;
-    
     int count = randrange(count_min, count_max);
     voxel_explode(position, count, size, force, color);
 }
@@ -323,6 +336,11 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, floa
 void agent_bleed(float x, float y, float z)
 {
     if (Options::animation_level <= 0) return;
+
+    int n = randrange(50,70);
+    float scale = ((float)Options::animation_level)/3.0f;
+    n = scale*((float)n);
+
     const float momentum = 1.0f;
     const float _vx = momentum,
                   _vy = momentum,
@@ -331,12 +349,10 @@ void agent_bleed(float x, float y, float z)
     float nx,ny,nz;
     float vx,vy,vz;
 
-    int n = randrange(50,70);
     int ttl;
     Particle::Blood *b;
     for (int i=0; i<n; i++)
     {
-
         nx = x + randf() -0.5f;
         ny = y + randf() -0.5f;
         nz = z + randf() -0.5f;
@@ -360,6 +376,11 @@ void agent_bleed(float x, float y, float z)
 void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // pos, incident vector
 {
     if (Options::animation_level <= 0) return;
+
+    int n = randrange(140,170);
+    float scale = ((float)Options::animation_level)/3.0f;
+    n = scale*((float)n);
+    
     float len = sqrtf(ix*ix + iy*iy + iz*iz);
     ix /= len;
     iy /= len;
@@ -369,7 +390,6 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
     struct Vec3 iv = vec3_init(ix,iy,iz);
     struct Vec3 v;
-    int n = randrange(140,170);
     const float base_speed = 1.0f;
     float speed;
     const float arc = 48.0f;

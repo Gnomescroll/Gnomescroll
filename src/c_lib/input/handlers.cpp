@@ -797,7 +797,28 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_k:
-                input_state.frustum = (!input_state.frustum);
+                #if !PRODUCTION
+                if (input_state.debug)
+                    input_state.frustum = (!input_state.frustum);
+                #endif
+                break;
+
+            case SDLK_l:
+                #if !PRODUCTION
+                if (input_state.debug)
+                    toggle_equipped_sprite_adjuster();
+                #endif
+                break;
+
+            case SDLK_SEMICOLON:
+                #if !PRODUCTION
+                if (input_state.debug)
+                {
+                    Options::animation_level %= 3;
+                    Options::animation_level += 1;
+                    printf("Animation level: %d\n", Options::animation_level);
+                }
+                #endif
                 break;
 
             case SDLK_m:
@@ -817,10 +838,6 @@ void key_down_handler(SDL_Event* event)
                     toggle_skeleton_editor();
                 break;
                 
-            case SDLK_l:
-                if (input_state.debug)
-                    toggle_equipped_sprite_adjuster();
-                break;
             
             case SDLK_t:
                 if (input_state.debug)
