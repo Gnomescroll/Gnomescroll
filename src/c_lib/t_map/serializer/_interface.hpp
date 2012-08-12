@@ -220,9 +220,11 @@ class BlockSerializer
             return; 
         }
 
+        map_save_memcpy_in_progress = true;
+
         GS_ASSERT(write_buffer == NULL);
-        GS_ASSERT(strlen(file_name) == 0);
-        GS_ASSERT(file_size = 0);
+        GS_ASSERT(file_name[0] == 0x00);
+        GS_ASSERT(file_size == 0);
         for(int i=0; i<chunk_number; i++) version_array[i] = -1;
 
         strcpy(file_name, filename);
@@ -267,7 +269,7 @@ class BlockSerializer
         GS_ASSERT(file_size == (size_t)index);
 #else
         while(map_save_memcpy_in_progress == true)
-            save_iter(2);   //2 ms per iteration
+            this->save_iter(2);   //2 ms per iteration
 #endif
         int ti2 = _GET_MS_TIME();
 
@@ -279,7 +281,16 @@ class BlockSerializer
     //will memcpy map and yield after ms milliseconds
     void save_iter(int max_ms)
     {
+
+        static int _start_ms = 0;
+        static int _calls = 0;
+        static int _memcpy_count = 0;
+
+        _calls++;
+        if(_start_ms == 0)
+           _start_ms = _GET_MS_TIME();
         int start_ms = _GET_MS_TIME();
+
 
         static int index = 0;
 
@@ -296,8 +307,10 @@ class BlockSerializer
 
             int write_index = prefix_length+index*sizeof(struct SerializedChunk);
             memcpy(write_buffer+write_index, (void*) _s, 128*16*16*sizeof(struct MAP_ELEMENT));
+            _memcpy_count++;
 
             int _ctime = _GET_MS_TIME();
+
             if( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
             {
                 printf("chunk_memcpy: max_ms= %i memcpy= %i \n", max_ms, j);
@@ -305,10 +318,15 @@ class BlockSerializer
             }
         }
 
-        printf("save_itr: completed, sending to write thread\n");
+        printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i calls, chunks per call= %i total_chunks= %i memcpy_count= %i \n", 
+            _GET_MS_TIME()-_start_ms, _calls, chunk_number/_calls, chunk_number, _memcpy_count);
 
 
         threaded_write(this->file_name, write_buffer, file_size);
+
+        _start_ms = 0;
+        _calls = 0;
+        _memcpy_count=0;
 
         map_save_memcpy_in_progress = false;
         write_buffer == NULL;
