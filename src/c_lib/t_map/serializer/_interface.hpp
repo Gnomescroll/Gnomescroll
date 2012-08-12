@@ -25,6 +25,8 @@ struct THREADED_WRITE_STRUCT
 
 };
 
+static bool map_save_memcpy_in_progress = 0;
+
 static int _threaded_write_running = 0;
 static struct THREADED_WRITE_STRUCT threaded_write_struct_param;
 static pthread_t _threaded_write_thread;
@@ -165,11 +167,22 @@ class BlockSerializer
     static const int version = DC_VERSION;
     static const int chunk_number = 32*32;
     //int blockdata_size;
-    struct SerializedChunk s[chunk_number];
+    struct SerializedChunk* s; //[chunk_number]; only use for load
+
+    struct scratch_chunk* _s;
+    char* write_buffer;
+
+    int version_array[chunk_number];
 
     BlockSerializer()
     {
         memset(s, 0, chunk_number*sizeof(struct SerializedChunk));
+        _s = (struct scratch_chunk*) malloc(sizeof(struct scratch_chunk));
+    }
+
+    ~BlockSerializer()
+    {
+        free(_s);
     }
 
     void serialize()
@@ -192,8 +205,30 @@ class BlockSerializer
     void save(const char* filename)
     {
 
-        int ti1 = _GET_MS_TIME();
+        if(map_save_memcpy_in_progress == true)
+        {
+            printf("BlockSerializer::save call failed, map memcpy already in progress \n");
+            return; 
+        }
 
+        for(int i=0; i<chunk_number; i++) version_array[i] = -1;
+
+        GS_ASSERT(s == NULL);
+        //s = (struct SerializedChunk*) malloc(chunk_number* sizeof(struct SerializedChunk) ); //[chunk_number]
+
+        size_t file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
+
+        write_buffer = (char*) malloc(file_size);
+
+        if(write_buffer == NULL)
+        {
+            printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n")
+            return;
+        }
+
+
+        int ti1 = _GET_MS_TIME();
+#if 0
         //serialize
         for(int i=0; i < chunk_number; i++)
         {
@@ -218,37 +253,63 @@ class BlockSerializer
             index += sizeof(struct SerializedChunk);
         }
         GS_ASSERT(file_size == (size_t)index);
-
+#else
+        while(map_save_memcpy_in_progress == true)
+            save_iter(2);   //2 ms per iteration
+#endif
         int ti2 = _GET_MS_TIME();
 
-        #if 0
-        FILE* file = fopen(filename, "w");
-        if(file == NULL)
-        {
-            printf("ERROR: cannot open map file %s \n", filename);
-            return;
-        }
-
-        size_t ret = fwrite (buffer, sizeof(char), index, file);
-        if (ferror(file))
-            perror("Error with map save file: ");
-        GS_ASSERT(ret == (size_t)index);
-        fclose(file); /*done!*/ 
-        
-        free(buffer);
-
-        #else
-        threaded_write(filename, buffer, file_size);
-        #endif
-
-        int ti3 = _GET_MS_TIME();
-        printf("BlockSerializer save: populate buffer took %i ms \n", ti2-ti1);
-        printf("BlockSerializer save: writing file %s took %i ms \n", filename, ti3-ti2);
+        //int ti3 = _GET_MS_TIME();
+        printf("BlockSerializer save: memcpy buffer for %s  took %i ms \n", filename, ti2-ti1);
     }
 
+    //this is called until map is done saving
+    //will memcpy map and yield after ms milliseconds
+    void save_iter(int max_ms)
+    {
+        int start_ms = _GET_MS_TIME();
+
+        static int index = 0;
+
+        for(int j=0; j < chunk_number; j++)
+        {
+            index = (index+1)%chunk_number;
+            class MAP_CHUNK* mp = main_map->chunk[index];
+            if(mp->version == version_array[i]) continue;
+            GS_ASSERT(mp != NULL);
+            _s->xchunk = chunk_number % 16;
+            _s->ychunk = chunk_number / 16;
+            memcpy((void*) &s->data, &mp->e, 128*16*16*sizeof(struct MAP_ELEMENT));
+            version_array[i] = mp->version;
+
+            int write_index = prefix_length+index*sizeof(struct SerializedChunk);
+            memcpy(write_buffer+write_index, (void*) _s, 128*16*16*sizeof(struct MAP_ELEMENT));
+
+            int _ctime = _GET_MS_TIME();
+            if( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
+            {
+                printf("chunk_memcpy: max_ms= %i memcpy= %i \n", max_ms, j);
+                return; //yield after n ms
+            }
+        }
+
+        printf("save_itr: completed, sending to write thread\n");
+
+
+        //free(s);
+        //s = NULL;
+    }
 
     void load(const char* filename)
     {
+        GS_ASSERT(s == NULL);
+        s = (struct SerializedChunk*) malloc(chunk_number* sizeof(struct SerializedChunk) ); //[chunk_number]
+
+        if(s == NULL)
+        {
+            printf("BlockSerializer: cannot load map.  malloc failed, out of memory? \n")
+            return;
+        }
 
         if(main_map == NULL)
         {
@@ -302,13 +363,18 @@ class BlockSerializer
         free(buffer);
 
         load_map_restore_containers();  //setup containers
+
+        free(s);
+        s = NULL;
     }
 };
+
+BlockSerializer block_serializer;
 
 void save_map(const char* filename)
 {
     create_path_to_file(filename);
-    BlockSerializer* BS = new BlockSerializer;
+    //BlockSerializer* BS = new BlockSerializer;
 
     map_final_name = (char*)malloc((strlen(filename)+1)*sizeof(char));
     strcpy(map_final_name, filename);
@@ -319,20 +385,20 @@ void save_map(const char* filename)
         char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(ext))*sizeof(char));
         sprintf(tmp_filename, "%s%s", filename, ext);
         map_tmp_name = tmp_filename;
-        BS->save(tmp_filename);        
+        block_serializer.save(tmp_filename);        
     }
     else
-        BS->save(filename);
+        block_serializer.save(filename);
 
-    delete BS;
+    //delete BS;
 }
 
 
 void load_map(const char* filename)
 {
-    BlockSerializer* bs = new BlockSerializer;
-    bs->load(filename);
-    delete bs;  
+    //BlockSerializer* bs = new BlockSerializer;
+    block_serializer.load(filename);
+    //delete bs;  
 }
 
 const char default_map_file[] = "./world/map-" STR(DC_VERSION) ".map";
