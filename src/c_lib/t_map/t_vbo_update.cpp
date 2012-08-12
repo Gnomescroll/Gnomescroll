@@ -502,7 +502,14 @@ void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsig
 OPTIMIZED
 void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 {
-    for(int zi0 = 0; zi0 < 128/16; zi0++) {
+
+    int varray[6][9];
+
+    for(int zi0 = 0; zi0 < 128/16; zi0++) 
+    {
+
+        for(int side=0; side<6; side++)
+            varray[side][zi0] = 4*SIDE_BUFFER_INDEX[side];
 
         for(int zi1 = 0; zi1 < 16; zi1++) 
         {
@@ -545,9 +552,33 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
             }}
         }
 
-        for(int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = 4*SIDE_BUFFER_INDEX[i];
+        //for(int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = 4*SIDE_BUFFER_INDEX[i];
     }
 
+        for(int side=0; side<6; side++)
+            varray[side][8] = 4*SIDE_BUFFER_INDEX[side];
+
+
+        //set index for each side
+        for(int side=0; side<6; side++)
+        {
+            vbo->vertex_offset[side] = 0;
+            for(int j=0; j<side; j++) 
+                vbo->vertex_offset[side] += 4*SIDE_BUFFER_INDEX[j];
+        }
+
+        //set voff array
+
+        for(int side=0; side<6; side++)
+        {
+            for(int j=0; j<9; j++) 
+                vbo->voff_array[side][j] = vbo->vertex_offset[side] + varray[side][j];
+        }
+        //set vertex number
+        for(int i=0; i<6; i++) vbo->vertex_num[i] = 4*SIDE_BUFFER_INDEX[i];
+
+
+/*
     for(int i=0; i<6; i++) vbo->vertex_num[i] = 4*SIDE_BUFFER_INDEX[i];
 
     for(int i=0; i<6; i++)
@@ -576,6 +607,10 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
             vbo->voff_array[side][i] += vnum[j];
         }
     }
+*/
+
+
+
 }
 
 void Vbo_map::update_vbo(int i, int j)

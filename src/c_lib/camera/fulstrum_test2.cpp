@@ -48,6 +48,10 @@ public:
         return p + vec3_dot(normal,x);
     }
 
+    float fast_distance(float x, float y, float z)
+    {
+        return x*normal.x + y*normal.y + z*normal.z;
+    }
 };
 
 class FrustumG
@@ -77,6 +81,24 @@ public:
             if (pl[i].distance(p) < 0)
                 return false;
         }
+        return true;
+    }
+
+    bool pointInFulstum_fast(float x, float y, float z)
+    {
+        for(int i=0; i < 4; i++) 
+        {
+            if (pl[i].fast_distance(x,y,z) < 0) return false;
+        }
+        return true;
+    }
+
+    bool pointInFulstum_fast2(float x, float y, float z)
+    {
+
+        if (pl[TOP].fast_distance(x,y,z) < 0) return false;
+        if (pl[BOTTOM].fast_distance(x,y,z) < 0) return false;
+
         return true;
     }
 };
@@ -237,66 +259,145 @@ bool point_fulstrum_test_2(struct Vec3 p)
     };
 */
 
-float top_z_projection(float x, float y)
+
+//find the highest z level where all points are in fulstrum
+float chunk_top_z_projection(float x, float y)
+{
+    //use binary search
+    float z = 128.0f;
+
+    while(_FrustrumG.pointInFulstum_fast(x-8.0,y-8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x-8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z)
+        )
+    {
+
+        z-=1.0;
+
+        if(z < 0.0) break;
+    }
+
+    return z +1.0;
+}
+
+//find the highest z level where all points are in fulstrum
+float chunk_bottom_z_projection(float x, float y)
+{
+    //use binary search
+    float z = 0.0f;
+
+    while(_FrustrumG.pointInFulstum_fast(x-8.0,y-8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x-8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z) &&
+        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z)
+        )
+    {
+        z += 1.0;
+        if(z < 0.0) break;
+    }
+
+    return z +1.0;
+}
+
+// if z < -16  then fucks up?
+void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 {
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
 
-    struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
+    float _z = _FrustrumG.c.z;
 
-    float dt = -(x*n.x + y*n.y);    // negative dot product of starting point and n
-    float db = n.z;                 //dot product of direction and normal
+    static const float zmax = 128.0;
+    static const float zmin = 0.0f;
+    float z = 0.0f;
 
-    if(db == 0)
+
+    while(!_FrustrumG.pointInFulstum_fast2(x,y,z-_z) &&
+        !_FrustrumG.pointInFulstum_fast2(x,y+16.0,z-_z) &&
+        !_FrustrumG.pointInFulstum_fast2(x+16.0,y+16.0,z-_z) &&
+        !_FrustrumG.pointInFulstum_fast2(x+16.0,y,z-_z)
+        )
     {
-        printf("top_z_projection: the normal is parrallel to line \n");
-        return 256.0f;
+        z += 1.0;
+        if(z >= zmax)
+        {
+            z = zmax;
+            break;
+        }
     }
 
-    if(dt == 0)
+    float _bottom = z;
+
+    z = 128.0f;
+
+    while(!_FrustrumG.pointInFulstum_fast2(x,y,z-_z) &&
+        !_FrustrumG.pointInFulstum_fast2(x,y+16.0,z-_z) &&
+        !_FrustrumG.pointInFulstum_fast2(x+16.0,y+16.0,z-_z) &&
+        !_FrustrumG.pointInFulstum_fast2(x+16.0,y,z-_z)
+        )
     {
-        printf("top_z_projection: intersects everywhere \n");
-        return 256.0f;  
-    }
-    float p = _FrustrumG.pl[FrustumG::TOP].p;
-    GS_ASSERT(p == 0.0f);
+        z -= 1.0;
+        //if(z < _bottom) break;
+        if(z < zmin)
+        {   
+            z = zmin;
+            break;
+        }
+    }  
 
-    float t = dt/db;
+    float _top = _z;
 
-    //Vec3 pos = vec3_init(x,y, t*1.0); //intersection point with the plane
-
-
-    return t + _FrustrumG.c.z;
+    *bottom = _bottom;
+    *top = _top;
 }
 
-float bottom_z_projection(float x, float y)
+//1 is inside, 0 is outside, 2 is intersect
+int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
 {
-    x -= _FrustrumG.c.x;
-    y -= _FrustrumG.c.y;
+    cx -= _FrustrumG.c.x;
+    cy -= _FrustrumG.c.y;
+    cz -= _FrustrumG.c.z;
 
-    struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
+    const Vec3 aabbCenter = vec3_init(cx,cy,cz);
+    const Vec3 aabbSize = vec3_init(sx,sy,sz);
 
-    float dt = -(x*n.x + y*n.y);    // negative dot product of starting point and n
-    float db = -n.z;                 //dot product of direction and normal
+    //const _Vector3f& aabbCenter = aabbList[iAABB].m_Center;
+    //const _Vector3f& aabbSize = aabbList[iAABB].m_Extent;
 
-    if(db == 0)
+    unsigned int result = 1; // Assume that the aabb will be Inside the frustum
+
+    //ignore near and far plane
+    for(int i=0; i<4;i++)
     {
-        printf("bottom_z_projection: the normal is parrallel to line \n");
-        return 0.0f;
+        Vec3 n = _FrustrumG.pl[i].normal;
+
+        //const _Plane& frustumPlane = frustumPlanes[iPlane];
+
+        float d = aabbCenter.x * n.x + 
+              aabbCenter.y * n.y + 
+              aabbCenter.z * n.z;
+
+        float r = aabbSize.x *  fabs(n.x) + 
+                  aabbSize.y *  fabs(n.y) + 
+                  aabbSize.z *  fabs(n.z);
+
+        float d_p_r = d + r;
+        float d_m_r = d - r;
+
+        //if(d_p_r < -frustumPlane.d)
+
+        if(d_p_r < 0.0f)
+        {
+            result = 0; // Outside
+            break;
+        }
+        else if(d_m_r < 0.0f)         //else if(d_m_r < -frustumPlane.d)
+        {
+            result = 2; // Intersect
+        }
     }
 
-    if(dt == 0)
-    {
-        printf("bottom_z_projection: intersects everywhere \n");
-        return 0.0f;  
-    }
-    float p = _FrustrumG.pl[FrustumG::TOP].p;
-    GS_ASSERT(p == 0.0f);
-
-    float t = dt/db;
-
-    //Vec3 pos = vec3_init(x,y, t*-1.0); //intersection point with the plane
-
-
-    return t + _FrustrumG.c.z;;
+    return result;
 }
+
