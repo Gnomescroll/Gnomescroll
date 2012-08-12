@@ -320,7 +320,7 @@ class BlockSerializer
 
             if( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
             {
-                printf("chunk_memcpy: max_ms= %i memcpy= %i \n", max_ms, j);
+                printf("chunk_memcpy: max_ms= %i memcpy_total= %i \n", max_ms, j);
                 return; //yield after n ms
             }
         }
@@ -378,11 +378,10 @@ class BlockSerializer
             class MAP_CHUNK* mp = main_map->chunk[i];
             GS_ASSERT(mp != NULL);
             if(mp == NULL) continue;
+            GS_ASSERT(index = prefix_length + i*sizeof(struct SerializedChunk));
 
             memcpy((char*) &_s, buffer+index, sizeof(struct SerializedChunk) );
             index += sizeof(struct SerializedChunk);
-
-            GS_ASSERT(index == prefix_length + i*sizeof(struct SerializedChunk));
             memcpy(&mp->e, (void*) &_s->data, 128*16*16*sizeof(struct MAP_ELEMENT));
         }
 
