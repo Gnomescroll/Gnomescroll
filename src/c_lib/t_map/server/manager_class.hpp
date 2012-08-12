@@ -18,7 +18,7 @@ const int COMPRESSION_BUFFER_SIZE = 1024*512;
 extern char* COMPRESSION_BUFFER;
 
 const int DEFAULT_SUB_RADIUS = 128 + 8;
-const int DEFAULT_UNSUB_RADIUS = 128 +32;
+const int DEFAULT_UNSUB_RADIUS = 1024; //128 +32; //why so low?
 const int DEFAULT_UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS*DEFAULT_UNSUB_RADIUS;
 
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;
@@ -478,6 +478,12 @@ void Map_manager::unsub(int alias)
 
     alias_list[alias] = NO_ALIAS;
     subed_chunks--;
+
+    //notify client that they are no longer receiving chunk updates
+    class clear_alias_StoC p;
+    p.chunk_alias = alias;
+    p.sendToClient(client_id);
+
 
     //send unsubscribe message
 }

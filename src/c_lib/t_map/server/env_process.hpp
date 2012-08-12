@@ -83,6 +83,7 @@ void map_post_processing()
 void init_env_process();
 void teardown_env_process();
 void environment_process_tick();
+void environment_process_startup();
 #endif
 
 

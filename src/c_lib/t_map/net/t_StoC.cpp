@@ -125,10 +125,14 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 //unsigned short chunk_alias;//
 void clear_alias_StoC::handle()
 {
+    int chunk_index = client_chunk_alias_list[chunk_alias];
     int _x = client_chunk_alias_list[chunk_alias]%32;
     int _y = client_chunk_alias_list[chunk_alias]/32;
     printf("cleared chunk alias: %i %i \n", _x,_y);
 
+
+    delete main_map->chunk[chunk_index];
+    main_map->chunk[chunk_index] = NULL;
     /*
         Dump map chunk
     */

@@ -107,6 +107,9 @@ class Vbo_map
 
     #define MAP_VBO_CULLING 1
     #define MAP_VBO_CULLING_RECYCLE 1   //delete and free vbos out of range
+
+    #define MAP_VBO_CULLING_MAP_CHUNK_NULL 1
+
     //update all VBOs that need updating
 
 /*
@@ -130,7 +133,17 @@ class Vbo_map
         {
             const int index = j*MAP_CHUNK_XDIM + i;
             m = map->chunk[index];
+
+        #if MAP_VBO_CULLING_MAP_CHUNK_NULL
+            if( m == NULL ) 
+            {
+                if(vbo_array[index] != NULL )
+                    delete vbo_array[index];
+                continue;
+            }
+        #else
             if( m == NULL ) continue; //can speed up by maintain list of chunks
+        #endif
 
             int x = cx - quadrant_translate_i(cx, 16*i+8 );
             int y = cy - quadrant_translate_i(cy, 16*j+8 );
