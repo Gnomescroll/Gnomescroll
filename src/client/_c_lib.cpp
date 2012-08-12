@@ -264,7 +264,7 @@ int init_c_lib(int argc, char* argv[])
     char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
     char* wdr = getcwd(wd, DIR_SIZE);
     GS_ASSERT(wdr == wd);
-    printf("Working directory is: %s", wd);
+    printf("Working directory is: %s\n", wd);
     free(wd);
     
     // Set signal handlers
@@ -303,6 +303,8 @@ int init_c_lib(int argc, char* argv[])
 
     // parse any command line arguments, overriding settings files
     Options::parse_args(argc, argv);
+
+    update_camera_settings(Options::view_distance);
     
     srand((unsigned int)time(NULL));   // seed the RNG
 

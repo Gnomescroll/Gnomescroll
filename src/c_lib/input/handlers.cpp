@@ -265,6 +265,9 @@ void init_handlers()
     // options
     input_state.invert_mouse = false;
     input_state.sensitivity = 100.0f;
+
+    // debug
+    input_state.frustum = true;
 }
 
 // keys that can be held down
@@ -525,11 +528,6 @@ void agent_key_down_handler(SDL_Event* event)
     t_hud::ContainerInputEvent container_event;
     switch (event->key.keysym.sym)
     {
-        #if !PRODUCTION
-        case SDLK_k:
-            run_lua_test();
-            break;
-        #endif
         //case SDLK_9:
             //t_mech::add_mech();
             //break;
@@ -798,6 +796,31 @@ void key_down_handler(SDL_Event* event)
                 toggle_help_menu();
                 break;
 
+            case SDLK_k:
+                #if !PRODUCTION
+                if (input_state.debug)
+                    input_state.frustum = (!input_state.frustum);
+                #endif
+                break;
+
+            case SDLK_l:
+                #if !PRODUCTION
+                if (input_state.debug)
+                    toggle_equipped_sprite_adjuster();
+                #endif
+                break;
+
+            case SDLK_SEMICOLON:
+                #if !PRODUCTION
+                if (input_state.debug)
+                {
+                    Options::animation_level %= 3;
+                    Options::animation_level += 1;
+                    printf("Animation level: %d\n", Options::animation_level);
+                }
+                #endif
+                break;
+
             case SDLK_m:
                 #if PRODUCTION
                 if (input_state.debug)
@@ -815,10 +838,6 @@ void key_down_handler(SDL_Event* event)
                     toggle_skeleton_editor();
                 break;
                 
-            case SDLK_l:
-                if (input_state.debug)
-                    toggle_equipped_sprite_adjuster();
-                break;
             
             case SDLK_t:
                 if (input_state.debug)

@@ -43,7 +43,8 @@ OPT_INT_HEADER(music)
 OPT_STRING_HEADER(sound_device)
 
 /* Graphics */
-OPT_BOOL_HEADER(animations)
+OPT_INT_HEADER(animation_level)
+OPT_INT_HEADER(view_distance)
 OPT_BOOL_HEADER(placement_outline);
 
 /* Logging */

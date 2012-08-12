@@ -4,7 +4,11 @@
 #extension GL_EXT_gpu_shader4 : enable
 #endif
 
-varying mat2 lightMatrix;
+#ifdef GL_EXT_gpu_shader4
+    flat varying mat2 lightMatrix;
+#else
+    varying mat2 lightMatrix;
+#endif
 
 varying vec2 texCoord;
 varying vec2 texCoord3;
@@ -12,6 +16,8 @@ varying vec2 texCoord3;
 varying vec3 inColor;
  
 uniform sampler2D base_texture;
+
+varying float fogFragDepth;
 
 void main() 
 {
@@ -23,6 +29,13 @@ void main()
     vec3 color = tmp*inColor.rgb;
     color = color*(texture2D(base_texture, texCoord3).rgb);      
 
+    float f = gl_Fog.density * fogFragDepth;
+    f = f*f; 
+    float fogFactor = exp(-(f*f));
+    fogFactor = clamp(fogFactor, 0.0f, 1.0f);
+    color = mix(color, gl_Fog.color.xyz, 1.0f-fogFactor); 
+
     color = pow(color, vec3(1.0f / 2.2f));
     gl_FragColor.rgb = color;
+
 }

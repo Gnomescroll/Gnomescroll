@@ -457,6 +457,7 @@ void PlayerAgent_action::admin_set_block()
 
     // get block value from somewhere
     int val = HudCubeSelector::cube_selector.get_active_id();
+    if (t_map::isErrorBlock(val) || !t_map::isInUse(val)) return;
 
     if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {

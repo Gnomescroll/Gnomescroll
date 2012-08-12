@@ -4,12 +4,13 @@
 #include <math.h>
 
 const int N_CAMERAS = 2;
-const float CAMERA_VIEW_DISTANCE = 128.0f; // 16.0 for fog
-const float CAMERA_VIEW_DISTANCE_SQUARED = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
-
+float CAMERA_VIEW_DISTANCE = Options::view_distance;    // use default view_distance specified in client_options
+float CAMERA_VIEW_DISTANCE_SQUARED = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 
 //For chunks use
-////(CAMERA_VIEW_DISTANCE+11.4)*(CAMERA_VIEW_DISTANCE+11.4);
+////(CAMERA_VIEW_DISTANCE+sqrt(2)*8)*(CAMERA_VIEW_DISTANCE+sqrt(2)*8);
+//sqrt(2)*8 = 11.4;
+
 enum CAMERA_TYPES
 {
     UNKNOWN_CAM,
@@ -53,19 +54,19 @@ class Camera
         
         struct Vec3 right_vector()
         {
-			Vec3 right = vec3_init(0.0f, 1.0f, 0.0f);
-			right = vec3_euler_rotation(right, this->theta, this->phi, 0.0f);
-			normalize_vector(&right);
-			return right;
-		}
+            Vec3 right = vec3_init(0.0f, 1.0f, 0.0f);
+            right = vec3_euler_rotation(right, this->theta, this->phi, 0.0f);
+            normalize_vector(&right);
+            return right;
+        }
         
         struct Vec3 up_vector()
         {
-			Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
-			up = vec3_euler_rotation(up, this->theta, this->phi, 0.0f);
-			normalize_vector(&up);
-			return up;
-		}
+            Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
+            up = vec3_euler_rotation(up, this->theta, this->phi, 0.0f);
+            normalize_vector(&up);
+            return up;
+        }
         
         void hud_projection();
         void world_projection();
@@ -95,6 +96,8 @@ extern float model_view_matrix[16];
 extern double model_view_matrix_dbl[16];
 extern double projection_matrix[16];
 extern GLint viewport[4];
+
+void update_camera_settings(float view_distance);
 
 Camera* get_agent_camera();
 Camera* get_free_camera();

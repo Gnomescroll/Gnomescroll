@@ -41,8 +41,9 @@ options.sfx = 100
 options.music = 100
 
 -- graphics --
-options.animations = true;
-options.placement_outline = false;
+options.view_distance = 128;    -- capped at 128
+options.animation_level = 3;    -- valid values are 0,1,2,3,4; 0 is none, 1 is low, 2 is medium, 3 is high
+options.placement_outline = false;  -- outline for placing blocks etc
 
 -- help --
 options.show_tips = true;

@@ -22,8 +22,7 @@ void init_t_properties()
     
     if(cube_list != NULL) printf("ERROR: init_t_properties called twice\n");
 
-    cube_list = (cubeProperties*) malloc(sizeof(struct cubeProperties) * MAX_CUBES);
-    memset(cube_list, 0, sizeof(struct cubeProperties) * MAX_CUBES);
+    cube_list = (cubeProperties*) calloc(MAX_CUBES, sizeof(struct cubeProperties));
     for (int i=0; i<MAX_CUBES; cube_list[i++].in_use = false);
 
     memset(cube_names, 0, 64* MAX_CUBES);
@@ -74,7 +73,7 @@ void set_cube_name(int id, const char* name, int length)
 
     memcpy(cube_names+index, name, length);
     index += length;
-    cube_names[index] = 0x00;
+    cube_names[index] = '\0';
     index++;
 }
 
@@ -152,6 +151,28 @@ void LUA_set_block_name(int id, const char* name, int length)
 /*
     Properties by cube id
 */
+
+namespace t_map
+{
+
+bool isErrorBlock(int id)
+{
+    return (id == 255);
+}
+
+bool isValidID(int id)
+{
+    return (id >=0 && id < MAX_CUBES);
+}
+
+bool isInUse(int id)
+{
+    return cube_list[id].in_use;
+}
+
+}   // t_map
+
+// TODO -- put in t_map namespace
 
 bool isActive(int id) 
 {

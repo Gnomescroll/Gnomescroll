@@ -6,7 +6,7 @@
 
 #include <common/compat_gl.h>
 
-char *textFileRead(char *fn)
+char *textFileRead(const char *fn)
 {
     FILE *fp;
     char *content = NULL;
@@ -87,7 +87,7 @@ void printProgramInfoLog(GLuint obj)
 }
 
 // loads a vertex and fragment shader into a program
-void load_shaders(char *vert, char* frag, GLuint* prog)
+void load_shaders(const char *vert, const char* frag, GLuint* prog)
 {
     GLuint v = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
     GLuint f = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);

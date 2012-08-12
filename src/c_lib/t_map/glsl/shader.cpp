@@ -106,8 +106,8 @@ void set_map_shader_0()
 
     if (DEBUG1) printf("set_map_shader_0: \n");
 
-    vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
-    fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
+    vs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
+    fs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
 
     glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
@@ -318,15 +318,32 @@ void set_map_shader_0_compatibility(int level)
 
     if (DEBUG1) printf("set_map_shader_0_compatibility: level %i \n", level);
 
+    bool mesa = false;
+    const char* gl_v = (const char*)glGetString(GL_VERSION);
+    if (strstr(gl_v, "Mesa") != NULL)
+    {
+        printf("%s: using Mesa driver shader\n", __FUNCTION__);
+        mesa = true;
+    }
+
+
     if (level == 0)
     {
-        vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
-        fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+        if (mesa)
+        {
+            vs = textFileRead("./media/shaders/terrain/terrain_map_mesa.vsh");
+            fs = textFileRead("./media/shaders/terrain/terrain_map_mesa.fsh");
+        }
+        else
+        {
+            vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
+            fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+        }
     }
     else
     {
-        vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
-        fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh"); 
+        vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
+        fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh"); 
     }
 
     glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
@@ -359,6 +376,8 @@ void set_map_shader_0_compatibility(int level)
 
     free(vs);
     free(fs);
+
+    CHECK_GL_ERROR();
 }
 
 void init_map_3d_texture_compatibility()

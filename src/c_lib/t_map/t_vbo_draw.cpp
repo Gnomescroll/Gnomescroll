@@ -229,7 +229,7 @@ bool chunk_distance_check( float x, float y)
     //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
     //static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
 
-    static const float dist2 = (CAMERA_VIEW_DISTANCE+(sqrt(2)*16))*(CAMERA_VIEW_DISTANCE+(sqrt(2)*16));
+    static const float dist2 = (CAMERA_VIEW_DISTANCE+(sqrt(2)*8))*(CAMERA_VIEW_DISTANCE+(sqrt(2)*8));
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
@@ -256,7 +256,7 @@ void Vbo_map::prep_draw()
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(cy);
 
-    static float chunk_radius = sqrtf(2)*8;
+    //static float chunk_radius = sqrtf(2)*8;
     
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
@@ -269,16 +269,19 @@ void Vbo_map::prep_draw()
 
         if(col == NULL || col->vnum == 0) continue;
 
-        col->wxoff = quadrant_translate_f(cx, col->xoff+8.0f);
-        col->wyoff = quadrant_translate_f(cy, col->yoff+8.0f);
-/*
-        xy_circle_fulstrum_test( col->wxoff, col->wyoff, 11.4)
+        //col->wxoff = quadrant_translate_f(cx, col->xoff+8.0f);
+        //col->wyoff = quadrant_translate_f(cy, col->yoff+8.0f);
+        //col->wxoff = quadrant_translate_f(cx, col->xoff) + 8.0f;
+        //col->wyoff = quadrant_translate_f(cy, col->yoff) + 8.0f;
+        float x = translate_point(col->xoff + 8.0f);
+        float y = translate_point(col->yoff + 8.0f);
+        col->wxoff = quadrant_translate_f(cx, x);
+        col->wyoff = quadrant_translate_f(cy, y);
 
-        This function is fatally bugged!
-*/
-        if (chunk_distance_check( col->wxoff, col->wyoff) && xy_circle_fulstrum_test(col->wxoff, col->wyoff, chunk_radius))
-        //if (xy_circle_fulstrum_test(col->wxoff, col->wyoff, chunk_radius))
-        //if (chunk_distance_check(col->wxoff, col->wyoff))
+        // plain chunk distance check has errors in corners
+        if (chunk_distance_check( col->wxoff, col->wyoff))
+        //if (true)
+        //)// && xy_circle_fulstrum_test(col->wxoff, col->wyoff, chunk_radius))
         {
             c_drawn++; 
             /*
@@ -348,13 +351,11 @@ void Vbo_map::draw_map()
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
 
-    glUseProgramObjectARB(map_shader[0]);
-
-
     glColor3ub(255,255,255);
 
-    glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
+    glUseProgramObjectARB(map_shader[0]);
 
+    glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
     glEnableVertexAttribArray(map_Vertex);
     glEnableVertexAttribArray(map_TexCoord);
@@ -550,6 +551,8 @@ void Vbo_map::draw_map()
 
     glColor3ub(255, 255, 255);
 #endif
+
+    CHECK_GL_ERROR();
 }
 
 void Vbo_map::draw_map_compatibility()

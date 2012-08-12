@@ -41,4 +41,4 @@ extern GLuint block_textures_compatibility; //use for intel mode
 
 void teardown_shader(); // frees surface
 
-}	// t_map
+}   // t_map

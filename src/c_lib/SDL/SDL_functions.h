@@ -8,8 +8,6 @@ int init_video();
 void _del_video();
 int _swap_buffers();
 
-//int _get_ticks();  // use _GET_MS_TIME()
-
 void close_SDL();
 
 void save_screenshot();

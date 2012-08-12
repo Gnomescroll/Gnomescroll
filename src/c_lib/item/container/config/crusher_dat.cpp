@@ -67,7 +67,41 @@ static void register_crusher_settings()
 
     d->set_max_drop_amounts("graphite", 1);
     d->add_drop("graphite", 1, 0.005f);
+
+    crusher_def("iron_rod");
+    d->set_max_drop_types(1);
+    d->set_max_drop_amounts("iron_bar", 1);
+    d->add_drop("iron_bar", 1, 1.0f);
+
+    crusher_def("iron_star");
+    d->set_max_drop_types(1);
+    d->set_max_drop_amounts("iron_bar", 1);
+    d->add_drop("iron_bar", 1, 1.0f);
     
+    crusher_def("iron_blade");
+    d->set_max_drop_types(1);
+    d->set_max_drop_amounts("iron_bar", 1);
+    d->add_drop("iron_bar", 1, 1.0f);
+
+    crusher_def("copper_helmet");
+    d->set_max_drop_types(1);
+    d->set_max_drop_amounts("copper_bar", 1);
+    d->add_drop("copper_bar", 1, 1.0f);
+
+    crusher_def("iron_helmet");
+    d->set_max_drop_types(1);
+    d->set_max_drop_amounts("iron_bar", 1);
+    d->add_drop("iron_bar", 1, 1.0f);
+
+    crusher_def("gallium_helmet");
+    d->set_max_drop_types(1);
+    d->set_max_drop_amounts("gallium_bar", 1);
+    d->add_drop("gallium_bar", 1, 1.0f);
+
+    crusher_def("iridium_helmet");
+    d->set_max_drop_types(1);
+    d->set_max_drop_amounts("iridium_bar", 1);
+    d->add_drop("iridium_bar", 1, 1.0f);    
 }
 
 void validate_crusher_settings()
