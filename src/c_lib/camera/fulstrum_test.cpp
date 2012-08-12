@@ -73,7 +73,7 @@ bool sphere_fulstrum_test(float x, float y, float z, float r)
 {
 
 #if FULSTRUM_DEBUG_VERIFY
-    point_fulstrum_test_debug(x,y,z);
+    return point_fulstrum_test_debug(x,y,z);
 #endif
 
     if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
@@ -128,7 +128,7 @@ bool point_fulstrum_test_translate(float x, float y, float z)
 bool point_fulstrum_test(float x, float y, float z)
 {
 #if FULSTRUM_DEBUG_VERIFY
-    point_fulstrum_test_debug(x,y,z);
+    return point_fulstrum_test_debug(x,y,z);
 #endif
 
     x -= fulstrum.c.x;

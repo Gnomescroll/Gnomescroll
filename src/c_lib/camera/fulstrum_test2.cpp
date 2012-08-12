@@ -249,15 +249,15 @@ float top_z_projection(float x, float y)
 
     float p = _FrustrumG.pl[FrustumG::TOP].p;
 
-    if(p != 0.0f)
-        printf("p= %f \n", p);
+    //if(p != 0.0f)
+    //    printf("p= %f \n", p);
 
     float k = -1.0*(n.x*x + n.y*y)/n.z;
 
 
     float k2 = x*n.x + y*n.y + k* n.z;
 
-    printf("top= %03.02f normal: %f %f %f k= %f k2= %f \n", k + _FrustrumG.c.z, n.x,n.y,n.z, k, k2);
+    //printf("top= %03.02f normal: %f %f %f k= %f k2= %f \n", k + _FrustrumG.c.z, n.x,n.y,n.z, k, k2);
 
 #if 0
     struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
