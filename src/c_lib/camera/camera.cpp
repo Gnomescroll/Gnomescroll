@@ -343,4 +343,6 @@ void update_camera_settings(float view_distance)
     if (view_distance > max_vd) view_distance = max_vd;
     CAMERA_VIEW_DISTANCE = view_distance;
     CAMERA_VIEW_DISTANCE_SQUARED = view_distance*view_distance;
+
+    printf("VIEW_DISTANCE: %0.2f\n", view_distance);
 }

@@ -300,10 +300,11 @@ int init_c_lib(int argc, char* argv[])
     LUA::init_options();
     Options::register_options();
     LUA::load_options(); //load game options
-    update_camera_settings(Options::view_distance);
 
     // parse any command line arguments, overriding settings files
     Options::parse_args(argc, argv);
+
+    update_camera_settings(Options::view_distance);
     
     srand((unsigned int)time(NULL));   // seed the RNG
 
