@@ -222,7 +222,6 @@ class Vbo_map
     void draw_map();
     void draw_map_compatibility();
 
-    void prep_frustrum();
     void prep_frustrum_vertices();
 };
 

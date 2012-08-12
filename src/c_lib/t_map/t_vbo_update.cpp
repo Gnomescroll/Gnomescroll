@@ -508,10 +508,11 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
     for(int zi0 = 0; zi0 < 128/16; zi0++) 
     {
 
+        for(int side=0; side<6; side++)
+            varray[side][zi0] = 4*SIDE_BUFFER_INDEX[side];
+
         for(int zi1 = 0; zi1 < 16; zi1++) 
         {
-            for(int side=0; side<6; side++)
-                varray[side][zi0] = 4*SIDE_BUFFER_INDEX[side];
 
             const int _z = 16*zi0 + zi1;
 
@@ -574,7 +575,7 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                 vbo->voff_array[side][j] = vbo->vertex_offset[side] + varray[side][j];
         }
 
-        
+
 /*
     for(int i=0; i<6; i++) vbo->vertex_num[i] = 4*SIDE_BUFFER_INDEX[i];
 

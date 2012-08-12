@@ -52,10 +52,6 @@ void vbo_draw_end()
     free(draw_vbo_array);
 }
 
-void Vbo_map::prep_frustrum()
-{
-
-}
 
 void Vbo_map::prep_frustrum_vertices()
 {
@@ -119,7 +115,9 @@ void Vbo_map::prep_frustrum_vertices()
             int vs = vbo->voff_array[side][min];
             int ve = vbo->voff_array[side][max];
 
-            if(min==0 ) printf("vs=%i \n", vs);
+            //if(min==0 ) printf("vs=%i \n", vs);
+
+            if(min ==0) GS_ASSERT(vbo->voff_array[side][min] == vbo->vertex_offset[side]);
 
             int voff = vs;
             int vnum = ve - vs;
@@ -127,6 +125,7 @@ void Vbo_map::prep_frustrum_vertices()
             vbo_frustrum_voff[index][side] = voff;
             vbo_frustrum_vnum[index][side] = vnum;
 
+        /*
             if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
             {
                 printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
@@ -135,7 +134,7 @@ void Vbo_map::prep_frustrum_vertices()
                 printf("min= %i max= %i \n", min, max);
                 GS_ABORT();
             }
-
+        */
         }
 
 
@@ -336,35 +335,15 @@ void Vbo_map::draw_map()
         v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
-
             int voff = vbo_frustrum_voff[index][side];
             int vnum = vbo_frustrum_vnum[index][side];
 
             GS_ASSERT(voff != -1);
             GS_ASSERT(vnum != -1);
 
-            //vbo_vertex_frustrum[index][2*side+0] = voff;
-            //vbo_vertex_frustrum[index][2*side+1] = vnum;
-            //printf("side %i offset: %i vertices: %i \n", side, vbo->vertex_offset[side], vbo->vertex_num[side]);
-            //vbo->vertex_offset[side], vbo->vertex_num[side]
-            //GS_ASSERT(voff >= vbo->vertex_offset[side] )
-
-            if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
-            {
-                printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
-                printf("voff= %i vnum= %i \n", voff, vnum);
-                printf("vbo->vertex_offset[sid]= %i vbo->vertex_num[side]= %i \n", vbo->vertex_offset[side], vbo->vertex_num[side]);
-
-                GS_ABORT();
-            }
-            //printf("drawing: offset %i vertices: %i\n", voff, vnum);
-            //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
-            //glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
-
             if(vnum == 0) continue;
             v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
-
         }
         #else 
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);

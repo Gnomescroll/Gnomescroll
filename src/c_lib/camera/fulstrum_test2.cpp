@@ -323,7 +323,7 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
         )
     {
         z += 1.0;
-        if(z > zmax) return;
+        if(z >= zmax) break;
     }
 
     float _bottom = z;
@@ -339,11 +339,13 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     {
         z -= 1.0;
         //if(z < _bottom) break;
-        if(z < zmin) break;
+        if(z <= zmin) break;
     }  
+
+    float _top = _z;
 
 
     *bottom = _bottom;
-    *top = z;
+    *top = _top;
 
 }
