@@ -446,6 +446,32 @@ inline void crusher_crush_item_CtoS::handle()
     GS_ASSERT(type != NULL_ITEM_TYPE);
     if (type == NULL_ITEM_TYPE) return;
 
+    int b[3];
+    t_map::get_container_location(crusher->id, b);
+    Vec3 p = vec3_add(vec3_init(b[0], b[1], b[2]), vec3_init(0.5f, 0.5f, 0.5f));
+
+    int plasma_grenade_type = Item::get_item_type("plasma_grenade");
+    GS_ASSERT(plasma_grenade_type != NULL_ITEM_TYPE);
+    if (type == plasma_grenade_type)
+    {   // explde
+        GS_ASSERT(Particle::grenade_list != NULL);
+        if (Particle::grenade_list == NULL) return;
+        Particle::Grenade* g = Particle::grenade_list->create();
+        GS_ASSERT(g != NULL);
+        if (g == NULL) return;
+        g->set_position(p);
+        g->owner = a->id;
+        g->broadcast();
+        int stack_size = Item::get_stack_size(item_id);
+        GS_ASSERT(stack_size >= 1);
+        if (stack_size < 1) return;
+        g->explode(stack_size);
+        // TODO -- sound and animation packet. need to short circuit here, because client plays grenade client side
+        Particle::grenade_list->destroy(g->id);
+        Item::destroy_item(item_id);
+        return;
+    }
+
     class Item::ItemDrop* drop = get_crusher_drop(type);
     if (drop == NULL) return;   // TOOD -- send "failed" packet
 
@@ -454,9 +480,6 @@ inline void crusher_crush_item_CtoS::handle()
     drop->vy = 0.0f;
     drop->vz = 0.0f;
 
-    int b[3];
-    t_map::get_container_location(crusher->id, b);
-    Vec3 p = vec3_add(vec3_init(b[0], b[1], b[2]), vec3_init(0.5f, 0.5f, 0.5f));
     if (t_map::get(b[0], b[1], b[2]+1) == 0)
     {   // pop out of the top
         p.x += randf() - 0.5f; 

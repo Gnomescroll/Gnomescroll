@@ -34,9 +34,11 @@ class Grenade: public ParticleMotion, public BillboardSprite
 
         void tick();
         void explode();
+        void explode(int multiplier);
 
         int block_damage(int dist);
         void damage_blocks();
+        void damage_blocks(int multiplier);
 
         #if DC_SERVER
         void broadcast();

@@ -167,7 +167,7 @@ static void register_item_group_callbacks()
     c.local_trigger = &trigger_local_block_placer;
     
     set_group(IG_GRENADE_LAUNCHER);
-    c.local_trigger = &trigger_local_grenade_launcher;
+    c.local_trigger = &trigger_local_plasma_grenade;
     
     set_group(IG_HITSCAN_WEAPON);
     c.local_trigger = &trigger_local_hitscan_laser;

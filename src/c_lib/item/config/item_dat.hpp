@@ -59,7 +59,7 @@ void load_item_dat()
     s.object_damage_min = 25;
     s.object_damage_max = 50;
 
-    item_def(8, IG_GRENADE_LAUNCHER, "grenade_launcher");
+    item_def(8, IG_GRENADE_LAUNCHER, "plasma_grenade");
     sprite_def(i0, 1,7);
     s.pretty_name = (char*) "Plasma Grenade";
     s.max_stack_size = 100;
