@@ -57,7 +57,7 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
     fulstrum.r_2d = vec3_normalize(fulstrum.r_2d);
 }
 
-#define FULSTRUM_DEBUG_VERIFY 0//verify results against fulstrum_test_2
+#define FULSTRUM_DEBUG_VERIFY 1 //verify results against fulstrum_test_2
 
 #define SPHERE_FULSTRUM_DEBUG 0
 #define SPHERE_FULSTRUM_DEBUG2 0 //use planes based point fulstrum test
@@ -150,9 +150,9 @@ bool point_fulstrum_test(float x, float y, float z)
 //for skybox?
 bool point_fulstrum_test2(float x, float y, float z)
 {
-#if FULSTRUM_DEBUG_VERIFY
-    point_fulstrum_test_debug(x,y,z);
-#endif
+//#if FULSTRUM_DEBUG_VERIFY
+//    point_fulstrum_test_debug(x,y,z);
+//#endif
 
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
@@ -177,7 +177,7 @@ inline bool point_fulstrum_test_debug(float x, float y, float z)
         return false;
 
     //get return value from the other fulstrum method
-    bool tmp = point_fulstrum_test_2(x,y,z);
+    bool tmp = point_fulstrum_test2(x,y,z);
 
     bool tmp1 = true;
 

@@ -241,10 +241,28 @@ float top_z_projection(float x, float y)
 {
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
+    float z = 0.0f;
+
 
     struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
 
-    float dt = -(x*n.x + y*n.y);    // negative dot product of starting point and n
+
+    float p = _FrustrumG.pl[FrustumG::TOP].p;
+
+    if(p != 0.0f)
+        printf("p= %f \n", p);
+
+    float k = -1.0*(n.x*x + n.y*y)/n.z;
+
+
+    float k2 = x*n.x + y*n.y + k* n.z;
+
+    printf("top= %03.02f normal: %f %f %f k= %f k2= %f \n", k + _FrustrumG.c.z, n.x,n.y,n.z, k, k2);
+
+#if 0
+    struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
+
+    float dt = -(x*n.x + y*n.y + z*n.z);    // negative dot product of starting point and n
     float db = n.z;                 //dot product of direction and normal
 
     if(db == 0)
@@ -258,6 +276,7 @@ float top_z_projection(float x, float y)
         printf("top_z_projection: intersects everywhere \n");
         return 256.0f;  
     }
+    
     float p = _FrustrumG.pl[FrustumG::TOP].p;
     GS_ASSERT(p == 0.0f);
 
@@ -265,19 +284,26 @@ float top_z_projection(float x, float y)
 
     //Vec3 pos = vec3_init(x,y, t*1.0); //intersection point with the plane
 
+    float k = n.x*x +n.y+y + n.z*t;
 
-    return t + _FrustrumG.c.z;
+    printf("top= %03.02f normal: %f %f %f k= %f \n", t + _FrustrumG.c.z, n.x,n.y,n.z, k);
+
+#endif
+    return k + _FrustrumG.c.z;
+
+
 }
 
 float bottom_z_projection(float x, float y)
 {
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
+    float z = 0.0f;
 
-    struct Vec3 n = _FrustrumG.pl[FrustumG::TOP].normal;
+    struct Vec3 n = _FrustrumG.pl[FrustumG::BOTTOM].normal;
 
-    float dt = -(x*n.x + y*n.y);    // negative dot product of starting point and n
-    float db = -n.z;                 //dot product of direction and normal
+    float dt = -(x*n.x + y*n.y + z*n.z);    // negative dot product of starting point and n
+    float db = n.z;                 //dot product of direction and normal
 
     if(db == 0)
     {
@@ -290,7 +316,7 @@ float bottom_z_projection(float x, float y)
         printf("bottom_z_projection: intersects everywhere \n");
         return 0.0f;  
     }
-    float p = _FrustrumG.pl[FrustumG::TOP].p;
+    float p = _FrustrumG.pl[FrustumG::BOTTOM].p;
     GS_ASSERT(p == 0.0f);
 
     float t = dt/db;

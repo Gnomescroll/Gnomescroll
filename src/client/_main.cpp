@@ -216,6 +216,7 @@ int run()
         //t_mob::draw();
         t_mech::draw();
 
+        top_z_projection(0.0f,0.0f);
 
         //printf("top= %03.02f bottom= %03.02f \n", top_z_projection(0.0f,0.0f), bottom_z_projection(0.0f,0.0f) );
         CHECK_GL_ERROR();
