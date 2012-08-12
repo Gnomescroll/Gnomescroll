@@ -171,17 +171,18 @@ class BlockSerializer
     char file_name[256];
     size_t file_size;
     //int blockdata_size;
-    struct SerializedChunk* s; //[chunk_number]; only use for load
+    //struct SerializedChunk* s; //[chunk_number]; only use for load
 
-    struct scratch_chunk* _s;
+    struct SerializedChunk* _s;
     char* write_buffer;
 
-    int version_array[chunk_number];
+    int* version_array; // [chunk_number];
 
     BlockSerializer()
     {
-        memset(s, 0, chunk_number*sizeof(struct SerializedChunk));
-        _s = (struct scratch_chunk*) malloc(sizeof(struct scratch_chunk));
+        //memset(s, 0, chunk_number*sizeof(struct SerializedChunk));
+        _s = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
+        version_array = (int*) malloc(chunk_number*sizeof(int));
         file_name[0] = 0x00;
         write_buffer = NULL;
         file_size = 0;
@@ -190,6 +191,7 @@ class BlockSerializer
     ~BlockSerializer()
     {
         free(_s);
+        free(version_array);
     }
 
     void serialize()
@@ -219,7 +221,6 @@ class BlockSerializer
         }
 
         GS_ASSERT(write_buffer == NULL);
-        GS_ASSERT(s == NULL);
         GS_ASSERT(strlen(file_name) == 0);
         GS_ASSERT(file_size = 0);
         for(int i=0; i<chunk_number; i++) version_array[i] = -1;
@@ -233,7 +234,7 @@ class BlockSerializer
 
         if(write_buffer == NULL)
         {
-            printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n")
+            printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n");
             return;
         }
 
@@ -286,12 +287,12 @@ class BlockSerializer
         {
             index = (index+1)%chunk_number;
             class MAP_CHUNK* mp = main_map->chunk[index];
-            if(mp->version == version_array[i]) continue;
+            if(mp->version == version_array[index]) continue;
             GS_ASSERT(mp != NULL);
             _s->xchunk = chunk_number % 16;
             _s->ychunk = chunk_number / 16;
-            memcpy((void*) &s->data, &mp->e, 128*16*16*sizeof(struct MAP_ELEMENT));
-            version_array[i] = mp->version;
+            memcpy((void*) &_s->data, &mp->e, 128*16*16*sizeof(struct MAP_ELEMENT));
+            version_array[index] = mp->version;
 
             int write_index = prefix_length+index*sizeof(struct SerializedChunk);
             memcpy(write_buffer+write_index, (void*) _s, 128*16*16*sizeof(struct MAP_ELEMENT));
@@ -319,7 +320,6 @@ class BlockSerializer
 
     void load(const char* filename)
     {
-
         if(main_map == NULL)
         {
             printf("ERROR: Attempting to load map before t_map init \n");
@@ -369,9 +369,6 @@ class BlockSerializer
         free(buffer);
 
         load_map_restore_containers();  //setup containers
-
-        free(s);
-        s = NULL;
     }
 };
 
