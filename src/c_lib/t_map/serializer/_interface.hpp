@@ -236,7 +236,7 @@ class BlockSerializer
 
         //push header
         int index = 0;
-        push_int(buffer, index, version);
+        push_int(write_buffer, index, version);
 
         if(write_buffer == NULL)
         {

@@ -107,7 +107,6 @@ void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _f
 void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
 {
     c = _c;
-#if 1
 
     struct Vec3 nc,fc;
     //struct Vec3 X,Y,Z;
@@ -267,7 +266,7 @@ float top_z_projection(float x, float y)
     //Vec3 pos = vec3_init(x,y, t*1.0); //intersection point with the plane
 
 
-    return t;
+    return t + _FrustrumG.c.z;
 }
 
 float bottom_z_projection(float x, float y)
@@ -299,5 +298,5 @@ float bottom_z_projection(float x, float y)
     //Vec3 pos = vec3_init(x,y, t*-1.0); //intersection point with the plane
 
 
-    return t;
+    return t + _FrustrumG.c.z;;
 }
