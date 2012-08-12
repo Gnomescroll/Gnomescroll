@@ -60,10 +60,6 @@ public:
         RIGHT, NEARP, FARP
     };
 
-    //static enum {OUTSIDE, INTERSECT, INSIDE};
-    //Vec3 pln[6]; //plane normal
-    //Vec3 plp[6]; //plane position
-
     Vec3 c; //camera position
     PlaneG pl[6];
     Vec3 ntl,ntr,nbl,nbr,ftl,ftr,fbl,fbr;
@@ -73,11 +69,6 @@ public:
     void setCamInternals(float fov, float aspect, float nearD, float farD);
     
     void setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up);
-    //void setCamDef(Vec3 p, Vec3 l, Vec3 u);
-    
-    //bool pointInFrustum(Vec3 v);
-    //int sphereInFrustum(Vec3 &p, float raio);
-    //int boxInFrustum(AABox &b);
 
     bool pointInFrustum(struct Vec3 p) 
     {
@@ -166,13 +157,10 @@ void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
     pl[NEARP].set3Points(ntl,ntr,nbr);
     pl[FARP].set3Points(ftr,ftl,fbl);
 
-//debugging
-#if 1
 
     if(u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
     
     //printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
-
     //Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15)); //15 units in front of camera
     Vec3 f2 = vec3_scalar_mult(f, 15); //15 units in front of camera
 
@@ -182,161 +170,9 @@ void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
     if( pl[RIGHT].distance(f2) < 0 ) printf("Right\n");
     if( pl[NEARP].distance(f2) < 0 ) printf("NearP\n");
     if( pl[FARP].distance(f2) < 0 ) printf("FarP\n");
-#endif
 
-#else
-    nc = vec3_add(c, vec3_scalar_mult(f, nearD));
-    fc = vec3_add(c, vec3_scalar_mult(f, farD) );
-
-    pl[NEARP].setNormalAndPoint(vec3_scalar_mult(f, -1), nc);
-    pl[FARP].setNormalAndPoint(f,fc);
-
-    Vec3 aux,normal;
-/*
-    aux = (nc + Y*nh) - p;
-    aux.normalize();
-    normal = aux * X;
-    pl[TOP].setNormalAndPoint(normal,nc+Y*nh);
-
-    aux = (nc - Y*nh) - p;
-    aux.normalize();
-    normal = X * aux;
-    pl[BOTTOM].setNormalAndPoint(normal,nc-Y*nh);
-
-    aux = (nc - X*nw) - p;
-    aux.normalize();
-    normal = aux * Y;
-    pl[LEFT].setNormalAndPoint(normal,nc-X*nw);
-
-    aux = (nc + X*nw) - p;
-    aux.normalize();
-    normal = Y * aux;
-    pl[RIGHT].setNormalAndPoint(normal,nc+X*nw);
-*/
-
-    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
-    aux = vec3_normalize(aux);
-    normal = vec3_cross(aux, r);
-    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
-
-    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
-    aux = vec3_normalize(aux);
-    normal = vec3_cross(aux, r);
-    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
-
-    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
-    aux = vec3_normalize(aux);
-    normal = vec3_cross(aux, r);
-    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
-
-    aux = vec3_sub(vec3_add(nc, vec3_scalar_mult(u, nh)), c);
-    aux = vec3_normalize(aux);
-    normal = vec3_cross(aux, r);
-    pl[TOP].setNormalAndPoint(normal, vec3_add(nc, vec3_scalar_mult(u, nh)));
-
-#endif
 }
 
-#if 0
-    struct Vec3 nc,fc;
-    struct Vec3 X,Y,Z;
-
-    // compute the Z axis of camera
-    // this axis points in the opposite direction from
-    // the looking direction
-   
-    //Z = p - l;
-    //Z.normalize();
-    Z = vec3_normalize(vec3_sub(p, l));
-
-
-    X = vec3_normalize(vec3_cross(u, Z));
-
-    Y = vec3_cross(Z,X);
-
-    nc = vec3_sub(p, vec3_scalar_mult(Z, nearD));
-    fc = vec3_sub(p, vec3_scalar_mult(Z, farD) );
-    // compute the 4 corners of the frustum on the near plane
-    
-/*
-    ntl = nc + Y * nh - X * nw;
-    ntr = nc + Y * nh + X * nw;
-    nbl = nc - Y * nh - X * nw;
-    nbr = nc - Y * nh + X * nw;
-*/
-
-    ntl = vec3_add3( nc, vec3_scalar_mult(Y,nh),  vec3_scalar_mult(X,-nw) );
-    ntr = vec3_add3( nc, vec3_scalar_mult(Y,nh),  vec3_scalar_mult(X,nw)  );
-    nbl = vec3_add3( nc, vec3_scalar_mult(Y,-nh), vec3_scalar_mult(X,-nw) );
-    nbr = vec3_add3( nc, vec3_scalar_mult(Y,-nh), vec3_scalar_mult(X,nw)  );
-    // compute the 4 corners of the frustum on the far plane
-
-/*
-    ftl = fc + Y * fh - X * fw;
-    ftr = fc + Y * fh + X * fw;
-    fbl = fc - Y * fh - X * fw;
-    fbr = fc - Y * fh + X * fw;
-*/
-    ftl = vec3_add3( fc, vec3_scalar_mult(Y,fh), vec3_scalar_mult(X,-fw)  );
-    ftr = vec3_add3( fc, vec3_scalar_mult(Y,fh), vec3_scalar_mult(X,fw)   );
-    fbl = vec3_add3( fc, vec3_scalar_mult(Y,-fh), vec3_scalar_mult(X,-fw) );
-    fbr = vec3_add3( fc, vec3_scalar_mult(Y,-fh), vec3_scalar_mult(X,fw)  );
-
-    // compute the six planes
-    // the function set3Points assumes that the points
-    // are given in counter clockwise order
-
-    pl[TOP].set3Points(ntr,ntl,ftl);
-    pl[BOTTOM].set3Points(nbl,nbr,fbr);
-    pl[LEFT].set3Points(ntl,nbl,fbl);
-    pl[RIGHT].set3Points(nbr,ntr,fbr);
-    pl[NEARP].set3Points(ntl,ntr,nbr);
-    pl[FARP].set3Points(ftr,ftl,fbl);
-#endif
-
-/*
-int FrustumG::sphereInFrustum(Vec3 &p, float radius) {
-
-    float distance;
-    int result = INSIDE;
-
-    for(int i=0; i < 6; i++) {
-        distance = pl[i].distance(p);
-        if (distance < -radius)
-            return OUTSIDE;
-        else if (distance < radius)
-            result =  INTERSECT;
-    }
-    return(result);
-}
-*/
-
-/*
-pl[NEARP].setNormalAndPoint(-Z,nc);
-    pl[FARP].setNormalAndPoint(Z,fc);
-
-    Vec3 aux,normal;
-
-    aux = (nc + Y*nh) - p;
-    aux.normalize();
-    normal = aux * X;
-    pl[TOP].setNormalAndPoint(normal,nc+Y*nh);
-
-    aux = (nc - Y*nh) - p;
-    aux.normalize();
-    normal = X * aux;
-    pl[BOTTOM].setNormalAndPoint(normal,nc-Y*nh);
-
-    aux = (nc - X*nw) - p;
-    aux.normalize();
-    normal = aux * Y;
-    pl[LEFT].setNormalAndPoint(normal,nc-X*nw);
-
-    aux = (nc + X*nw) - p;
-    aux.normalize();
-    normal = Y * aux;
-    pl[RIGHT].setNormalAndPoint(normal,nc+X*nw);
-*/
 
 class FrustumG _FrustrumG;
 
