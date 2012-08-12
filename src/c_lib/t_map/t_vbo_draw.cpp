@@ -79,7 +79,7 @@ void Vbo_map::prep_frustrum_vertices()
 
         //printf("zmin, zmaz= %f %f \n", zmin, zmax);
 
-        min = floor(floor((zmin / 16.0)-1.0) );
+        min = floor((zmin / 16.0)-1.0);
         if(min < 0) min = 0;
 
         max = ceil((zmax / 16.0) +1.0) ;
@@ -90,9 +90,9 @@ void Vbo_map::prep_frustrum_vertices()
         GS_ASSERT(min >= 0);
         GS_ASSERT(max >= 0);
 
-        GS_ASSERT(min <= max);
+        GS_ASSERT(min <= max);  //will be true after AABB test?
         
-        //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
+        //if(min < max) printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
         
         //min = 0;
         //max = 8;
@@ -121,8 +121,6 @@ void Vbo_map::prep_frustrum_vertices()
                 continue;
             }
 
-
-
             int vs = vbo->voff_array[side][min];
             int ve = vbo->voff_array[side][max];
 
@@ -136,7 +134,7 @@ void Vbo_map::prep_frustrum_vertices()
             vbo_frustrum_voff[index][side] = voff;
             vbo_frustrum_vnum[index][side] = vnum;
 
-        /*
+
             if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
             {
                 printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
@@ -145,7 +143,7 @@ void Vbo_map::prep_frustrum_vertices()
                 printf("min= %i max= %i \n", min, max);
                 GS_ABORT();
             }
-        */
+
         }
 
 

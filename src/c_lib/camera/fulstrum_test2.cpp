@@ -302,7 +302,7 @@ float chunk_bottom_z_projection(float x, float y)
     return z +1.0;
 }
 
-
+// if z < -16  then fucks up?
 void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 {
     x -= _FrustrumG.c.x;
@@ -319,7 +319,6 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
         !_FrustrumG.pointInFulstum_fast2(x,y+16.0,z-_z) &&
         !_FrustrumG.pointInFulstum_fast2(x+16.0,y+16.0,z-_z) &&
         !_FrustrumG.pointInFulstum_fast2(x+16.0,y,z-_z)
-
         )
     {
         z += 1.0;

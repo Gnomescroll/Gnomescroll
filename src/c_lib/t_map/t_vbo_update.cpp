@@ -574,6 +574,8 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
             for(int j=0; j<9; j++) 
                 vbo->voff_array[side][j] = vbo->vertex_offset[side] + varray[side][j];
         }
+        //set vertex number
+        for(int i=0; i<6; i++) vbo->vertex_num[i] = 4*SIDE_BUFFER_INDEX[i];
 
 
 /*
