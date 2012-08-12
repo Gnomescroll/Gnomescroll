@@ -357,7 +357,7 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
 
 bool point_fulstrum_test_2(float x, float y, float z)
 {
-    printf("p= %f \n", _FrustrumG.pl[FrustumG::TOP].p );
+    //printf("p= %f \n", _FrustrumG.pl[FrustumG::TOP].p );
 
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
@@ -428,7 +428,7 @@ float top_z_projection(float x, float y)
 
     float t = dt/db;
 
-    Vec3 pos = Vec3_init(x,y, t*1.0); //intersection point with the plane
+    //Vec3 pos = vec3_init(x,y, t*1.0); //intersection point with the plane
 
 
     return t;
@@ -460,7 +460,7 @@ float bottom_z_projection(float x, float y)
 
     float t = dt/db;
 
-    Vec3 pos = Vec3_init(x,y, t*-1.0); //intersection point with the plane
+    //Vec3 pos = vec3_init(x,y, t*-1.0); //intersection point with the plane
 
 
     return t;

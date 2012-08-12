@@ -42,6 +42,8 @@ class MAP_CHUNK
     bool needs_update;
     #endif
 
+    int version; //increment on map changes
+
     unsigned char top_block[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];
 
     struct MAP_ELEMENT e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT];
