@@ -110,7 +110,7 @@ void trigger_local_admin_block_placer(ItemID item_id, int item_type)
 
 // IG_GRENADE_LAUNCHER
 
-void trigger_local_grenade_launcher(ItemID item_id, int item_type)
+void trigger_local_plasma_grenade(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_GRENADE_LAUNCHER);
     ClientState::playerAgent_state.action.throw_grenade();

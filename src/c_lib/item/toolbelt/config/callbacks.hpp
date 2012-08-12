@@ -20,7 +20,7 @@ void trigger_local_mining_laser(ItemID item_id, int item_type);
 void trigger_local_block_placer(ItemID item_id, int item_type);
 void trigger_local_location_pointer(ItemID item_id, int item_type);
 void trigger_local_admin_block_placer(ItemID item_id, int item_type);
-void trigger_local_grenade_launcher(ItemID item_id, int item_type);
+void trigger_local_plasma_grenade(ItemID item_id, int item_type);
 void trigger_local_hitscan_laser(ItemID item_id, int item_type);;
 void fire_close_range_weapon(ItemID item_id, int item_type);
 #endif
