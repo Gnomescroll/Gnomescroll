@@ -348,3 +348,49 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     *top = _top;
 
 }
+
+//1 is inside, 0 is outside, 2 is intersect
+int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
+{
+    const Vec3 aabbCenter = vec3_init(cx,cy,cz);
+    const Vec3 aabbSize = vec3_init(sx,sy,sz);
+
+    //const _Vector3f& aabbCenter = aabbList[iAABB].m_Center;
+    //const _Vector3f& aabbSize = aabbList[iAABB].m_Extent;
+
+    unsigned int result = 1; // Assume that the aabb will be Inside the frustum
+    for(int i=0; i<6;i++)
+    {
+
+
+        Vec3 n = FrustrumG.pl[i].normal;
+
+        //const _Plane& frustumPlane = frustumPlanes[iPlane];
+
+        float d = aabbCenter.x * n.x + 
+              aabbCenter.y * n.y + 
+              aabbCenter.z * n.z;
+
+        float r = aabbSize.x *  fabs(n.x) + 
+                  aabbSize.y *  fabs(n.y) + 
+                  aabbSize.z *  fabs(n.z);
+
+        float d_p_r = d + r;
+        float d_m_r = d - r;
+
+        if(d_p_r < -frustumPlane.d)
+        {
+            result = 0; // Outside
+            break;
+        }
+        else if(d_m_r < -frustumPlane.d)
+            result = 2; // Intersect
+    }
+
+    aabbState[iAABB] = result;
+
+}
+
+
+
+}

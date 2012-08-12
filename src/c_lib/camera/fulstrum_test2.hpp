@@ -10,3 +10,6 @@ float top_z_projection(float x, float y);
 float bottom_z_projection(float x, float y);
 
 void chunk_top_z_projection(float x, float y, float* bottom, float *top);
+
+//takes in center and size of box
+int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz);
