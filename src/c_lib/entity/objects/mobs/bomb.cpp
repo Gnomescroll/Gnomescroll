@@ -120,8 +120,8 @@ static void set_mob_bomb_properties(Object* object)
     item_drop->drop.add_drop("synthesizer_coin", 2, 0.1f);
     item_drop->drop.add_drop("synthesizer_coin", 3, 0.05f);
     
-    item_drop->drop.set_max_drop_amounts("grenade_launcher", 10);
-    item_drop->drop.add_drop_range("grenade_launcher", 1, 10, 0.8f);
+    item_drop->drop.set_max_drop_amounts("plasma_grenade", 10);
+    item_drop->drop.add_drop_range("plasma_grenade", 1, 10, 0.8f);
     #endif
 
     #if DC_CLIENT

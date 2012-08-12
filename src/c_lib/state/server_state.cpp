@@ -111,8 +111,7 @@ namespace ServerState
         ObjectType inflictor_type, int inflictor_id,
         bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
    )
-    {
-        // agents
+    {   // agents
         agent_list->objects_within_sphere(x,y,z,radius);
         Agent_state* a;
         const float blast_mean = 0;

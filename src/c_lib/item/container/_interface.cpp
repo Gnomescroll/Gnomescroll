@@ -908,14 +908,14 @@ void agent_born(int agent_id)
     ContainerActionType event = CONTAINER_ACTION_NONE;
 
     // put a grenade launcher in the toolbelt
-    Item::Item* grenade_launcher = Item::create_item(Item::get_item_type("grenade_launcher"));
-    GS_ASSERT(grenade_launcher != NULL);
-    if (grenade_launcher != NULL)
+    Item::Item* plasma_grenade = Item::create_item(Item::get_item_type("plasma_grenade"));
+    GS_ASSERT(plasma_grenade != NULL);
+    if (plasma_grenade != NULL)
     {
-        grenade_launcher->stack_size = 100;
-        event = auto_add_free_item_to_container(client_id, toolbelt->id, grenade_launcher->id);    // this will send the item create
-        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(grenade_launcher->id);
-        else if (grenade_launcher->stack_size <= 0) Item::destroy_item(grenade_launcher->id);
+        plasma_grenade->stack_size = 100;
+        event = auto_add_free_item_to_container(client_id, toolbelt->id, plasma_grenade->id);    // this will send the item create
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(plasma_grenade->id);
+        else if (plasma_grenade->stack_size <= 0) Item::destroy_item(plasma_grenade->id);
     }
 
     int location_pointer_slot = toolbelt->slot_max-1;

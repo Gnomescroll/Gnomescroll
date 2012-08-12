@@ -182,19 +182,27 @@ void Grenade::tick()
 
 void Grenade::explode()
 {
+    this->explode(1);
+}
+
+void Grenade::explode(int multiplier)
+{
     Vec3 position = this->get_position();
     #if DC_CLIENT
-    Animations::grenade_explode(position.x, position.y, position.z);
+    if (multiplier > 3) multiplier = 3;
+    for (int i=0; i<multiplier; i++)
+        Animations::grenade_explode(position.x, position.y, position.z);
     #endif
 
     #if DC_SERVER
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
 
     // leave this for other objects, but agents are damaged by shrapnel now
+
     ServerState::damage_objects_within_sphere(
         position.x, position.y, position.z,
         GRENADE_DAMAGE_RADIUS,
-        GRENADE_SPLASH_DAMAGE, this->owner, OBJECT_GRENADE, this->id
+        GRENADE_SPLASH_DAMAGE*multiplier, this->owner, OBJECT_GRENADE, this->id
     );
 
     // create a bunch of grenade shrapnel particles
@@ -216,7 +224,7 @@ void Grenade::explode()
     //}
     
     // apply block damage
-    damage_blocks();
+    damage_blocks(multiplier);
     #endif
 }
 
@@ -231,6 +239,11 @@ inline int Grenade::block_damage(int dist)
 }
 
 void Grenade::damage_blocks()
+{
+    this->damage_blocks(1);
+}
+
+void Grenade::damage_blocks(int multiplier)
 {
     #if DC_SERVER
     using t_map::apply_damage_broadcast;
@@ -258,7 +271,7 @@ void Grenade::damage_blocks()
         bx = translate_point(bx);
         by = translate_point(by);
         
-        dmg = block_damage(i+j+k);
+        dmg = block_damage(i+j+k)*multiplier;
         if (dmg <= 0) continue;
         
         apply_damage_broadcast(bx,by,bz, dmg, action);
