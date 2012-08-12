@@ -99,6 +99,17 @@ void Vbo_map::prep_frustrum_vertices()
 
         for(int side=0; side<6; side++)
         {
+            //means no points in box are inside frustrum? error?
+            if(min > max)
+            {
+                int voff = vbo->vertex_offset[side];
+                int vnum = 0;
+
+                vbo_frustrum_voff[index][side] = voff;
+                vbo_frustrum_vnum[index][side] = vnum;
+                continue;
+            }
+
             if(min == max)
             {
                 //dont draw anything, prune
