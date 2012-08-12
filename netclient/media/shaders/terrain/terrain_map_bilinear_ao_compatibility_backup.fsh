@@ -13,8 +13,6 @@ varying vec3 inColor;
  
 uniform sampler2D base_texture;
 
-const float LOG2 = 1.442695f;
-
 void main() 
 {
     vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
@@ -26,8 +24,7 @@ void main()
     color = color*(texture2D(base_texture, texCoord3).rgb);      
 
     float f = gl_Fog.density * fogFragDepth;
-    f = f*f*LOG2; 
-    float fogFactor = exp(-(f*f));
+    float fogFactor = exp(-(f*f*f*f));
     fogFactor = clamp(fogFactor, 0.0f, 1.0f);
     color = mix(color, gl_Fog.color.xyz, 1.0f-fogFactor); 
 

@@ -19,7 +19,7 @@ namespace Animations
 
 void block_crumble(float x, float y, float z, int n, int cube_id, float momentum)
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     const float crumble_size = 0.17f;
 
     //unsigned char r,g,b,a;
@@ -112,7 +112,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side)
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
 
     float theta,phi;
@@ -209,7 +209,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
 void grenade_explode(float x, float y, float z)
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     int n = randrange(25,35);
     float vx = 20.0f;
     float vy = 20.0f;
@@ -239,7 +239,7 @@ void grenade_explode(float x, float y, float z)
 
 void terrain_sparks(float x, float y, float z)
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     int n = randrange(15,20);
 
     float vx = 3.5f;
@@ -272,7 +272,7 @@ void terrain_sparks(float x, float y, float z)
 
 void voxel_explode(Vec3 position, int count, float size, float force, struct Color color)
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     
     float cx,cy,cz;
     float cvx,cvy,cvz;
@@ -314,7 +314,7 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
 // will generate random count between count_min and count_max
 void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, struct Color color)
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     
     int count = randrange(count_min, count_max);
     voxel_explode(position, count, size, force, color);
@@ -322,7 +322,7 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, floa
 
 void agent_bleed(float x, float y, float z)
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     const float momentum = 1.0f;
     const float _vx = momentum,
                   _vy = momentum,
@@ -359,7 +359,7 @@ void agent_bleed(float x, float y, float z)
 
 void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // pos, incident vector
 {
-    if (!Options::animation_level <= 0) return;
+    if (Options::animation_level <= 0) return;
     float len = sqrtf(ix*ix + iy*iy + iz*iz);
     ix /= len;
     iy /= len;

@@ -73,7 +73,7 @@ void init_cameras()
     );
 
     // custom fog shaders use EXP4
-    glFogf(GL_FOG_DENSITY, 0.0115f);
+    glFogf(GL_FOG_DENSITY, 0.0125f);
     unsigned char fog_color[4] = {0,0,0,0};
     float fc[4];
     for (int i=0; i<4; i++) fc[i] = ((float)fog_color[i]/256.0f);
@@ -94,7 +94,7 @@ Camera::Camera()
 zoomed(false),
 zoom_factor(CAMERA_ZOOM_FACTOR)
 {
-    const float FOV = 75.0f;
+    const float FOV = 70.0f;
     const float Z_NEAR = 0.1f;
     const float Z_FAR = 320.0f;
     set_aspect(FOV, Z_NEAR, Z_FAR);
