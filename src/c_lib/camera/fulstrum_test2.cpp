@@ -352,6 +352,10 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 //1 is inside, 0 is outside, 2 is intersect
 int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
 {
+    cx -= _FrustrumG.c.x;
+    cy -= _FrustrumG.c.y;
+    cz -= _FrustrumG.c.z;
+
     const Vec3 aabbCenter = vec3_init(cx,cy,cz);
     const Vec3 aabbSize = vec3_init(sx,sy,sz);
 
@@ -359,7 +363,9 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
     //const _Vector3f& aabbSize = aabbList[iAABB].m_Extent;
 
     unsigned int result = 1; // Assume that the aabb will be Inside the frustum
-    for(int i=0; i<6;i++)
+
+    //ignore near and far plane
+    for(int i=0; i<4;i++)
     {
         Vec3 n = _FrustrumG.pl[i].normal;
 
@@ -377,6 +383,7 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
         float d_m_r = d - r;
 
         //if(d_p_r < -frustumPlane.d)
+
         if(d_p_r < 0.0f)
         {
             result = 0; // Outside

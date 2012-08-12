@@ -202,7 +202,9 @@ void Vbo_map::prep_draw()
             Add bounding box check
         */
         // plain chunk distance check has errors in corners
-        if (chunk_distance_check( col->wxoff+8.0f, col->wyoff+8.0f))
+        if (chunk_distance_check( col->wxoff+8.0f, col->wyoff+8.0f) &&
+            AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0
+        )
         {
             c_drawn++; 
             /*
@@ -362,7 +364,7 @@ void Vbo_map::draw_map()
         //glPushMatrix();
     }
 
-    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
