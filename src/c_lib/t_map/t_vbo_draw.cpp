@@ -79,14 +79,14 @@ void Vbo_map::prep_frustrum_vertices()
         int max;
 
         float zmin, zmax;
-        chunk_top_z_projection(vbo->wxoff-8.0, vbo->wyoff-8.0, &zmin, &zmax);
+        chunk_top_z_projection(vbo->wxoff, vbo->wyoff, &zmin, &zmax);
 
-        printf("zmin, zmaz= %f %f \n", zmin, zmax);
+        //printf("zmin, zmaz= %f %f \n", zmin, zmax);
 
-        min = floor((zmin / 16.0)) -1;
+        min = floor(floor((zmin / 16.0)-1.0) );
         if(min < 0) min = 0;
 
-        max = ceil((zmax / 16.0)) + 1;
+        max = ceil((zmax / 16.0) +1.0) ;
         if(max > 8) max = 8;
 
         GS_ASSERT(min <= 8);
@@ -181,8 +181,8 @@ void Vbo_map::prep_draw()
 
         if(col == NULL || col->vnum == 0) continue;
 
-        float x = translate_point(col->xoff + 8.0f);
-        float y = translate_point(col->yoff + 8.0f);
+        float x = translate_point(col->xoff);
+        float y = translate_point(col->yoff);
         col->wxoff = quadrant_translate_f(cx, x);
         col->wyoff = quadrant_translate_f(cy, y);
 
@@ -190,7 +190,7 @@ void Vbo_map::prep_draw()
             Add bounding box check
         */
         // plain chunk distance check has errors in corners
-        if (chunk_distance_check( col->wxoff, col->wyoff))
+        if (chunk_distance_check( col->wxoff+8.0f, col->wyoff+8.0f))
         {
             c_drawn++; 
             /*
@@ -314,7 +314,7 @@ void Vbo_map::draw_map()
         } 
 
         glLoadMatrixf(modelview);
-        glTranslatef(vbo->wxoff-8.0f, vbo->wyoff-8.0f, 0.0f);
+        glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
@@ -341,13 +341,10 @@ void Vbo_map::draw_map()
 
             //vbo_vertex_frustrum[index][2*side+0] = voff;
             //vbo_vertex_frustrum[index][2*side+1] = vnum;
-
             //printf("side %i offset: %i vertices: %i \n", side, vbo->vertex_offset[side], vbo->vertex_num[side]);
-            
-
             //vbo->vertex_offset[side], vbo->vertex_num[side]
-
             //GS_ASSERT(voff >= vbo->vertex_offset[side] )
+
             if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
             {
                 printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
@@ -505,7 +502,7 @@ void Vbo_map::draw_map_compatibility()
         } 
 
         glLoadMatrixf(modelview);
-        glTranslatef(vbo->wxoff-8.0f, vbo->wyoff-8.0f, 0.0f);
+        glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 

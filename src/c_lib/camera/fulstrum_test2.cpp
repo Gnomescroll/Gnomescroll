@@ -98,7 +98,7 @@ public:
 
         if (pl[TOP].fast_distance(x,y,z) < 0) return false;
         if (pl[BOTTOM].fast_distance(x,y,z) < 0) return false;
-        
+
         return true;
     }
 };
@@ -344,6 +344,6 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 
 
     *bottom = _bottom;
-    *top = z + 1.0;;
+    *top = z;
 
 }
