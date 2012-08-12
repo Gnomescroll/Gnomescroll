@@ -21,16 +21,13 @@ namespace t_map
 static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will piss someone off
 
 static int draw_vbo_n;
-//static struct Map_vbo* draw_vbo_array[MAX_DRAWN_VBO];
-
-int vbo_frustrum[32*32*2];  //start and end chunk index
 
 
-int vbo_frustrum_min[32*32];    //min on frustrum for column
-int vbo_frustrum_max[32*32];    //max on frustrum for column
+//int vbo_frustrum[32*32*2];  //start and end chunk index
 
-//int vbo_frustrum_bottom[32*32];
-int vbo_vertex_frustrum[32*32][12]; //start vertex and end vertex
+
+int vbo_frustrum_voff[32*32][7];
+int vbo_frustrum_vnum[32*32][7];
 
 struct _VBO_DRAW_STRUCT
 {
@@ -55,103 +52,19 @@ void vbo_draw_end()
     free(draw_vbo_array);
 }
 
-void set_frustrum_column_min(int _i, int _j, float x, float y)
-{   
-    _j %= 32;
-    _i %= 32;
-    const int index = 32*_j + _i;
-
-    //float cx = x - current_camera_position.x;
-    //float cy = y - current_camera_position.y;
-
-/*
-    float top =     top_z_projection(cx,cy);
-    float bottom =  bottom_z_projection(cx,cy);
-
-    int t = ceil(top / 16);
-    int b = floor(bottom / 16);
-*/
-
-    int t,b;
-
-    b = -1;
-    t = -1;
-
-    for(int i=0; i<=8; i++)
-    {
-        //point_fulstrum_test(
-        if(sphere_fulstrum_test(x,y,16*i, 0.0f) == true)
-        {
-            b = i;
-            break;
-        }
-    }
-
-    for(int i=8; i>= 0; i--)
-    {
-        if(sphere_fulstrum_test(x,y,16*i, 0.0f) == true)
-        {
-            t = i;
-            break;
-        }
-    }
-
-
-    GS_ASSERT(t >= b);
-
-    if(b == -1 || t == -1)
-    {
-        if(b == -1 && t == -1)
-        {
-            b = -1;
-            t = -1;
-        }
-        else
-        {
-            printf("set_frustrum_column_min error: b= %i t= %i \n", b, t);
-        }
-
-    }
-
-    //printf("top= %f bottom= %f t= %i b= %i \n", top, bottom, t, b);
-
-    //if(b < 0) b = 0;
-    //if(t > 8) t = 8;
-    //b = 0;x
-    //t = 8;
-
-    vbo_frustrum_min[index] = b;
-    vbo_frustrum_max[index] = t;
-
-
-}
-
-
-
 void Vbo_map::prep_frustrum()
 {
-    //memset(vbo_frustrum, -1, 32*32*2);
-    //for(int i=0; i <32*32*2; i++) vbo_frustrum[i] = -1;
-    //for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
-    //for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
 
-
-    for(int ix=0;ix<draw_vbo_n;ix++)
-    {
-        class Map_vbo* col = draw_vbo_array[ix].map_vbo;
-        int i = draw_vbo_array[ix].i;
-        int j = draw_vbo_array[ix].j;
-
-        set_frustrum_column_min(i,j,     col->wxoff, col->wyoff);
-    }
 }
 
 void Vbo_map::prep_frustrum_vertices()
 {
+
     for(int i=0; i<32*32; i++)
-    for(int j=0; j<12; j++)
+    for(int j=0; j<7; j++)
     {
-        vbo_vertex_frustrum[i][j] = 0;
+        vbo_frustrum_voff[i][j] = -1;
+        vbo_frustrum_vnum[i][j] = -1;
     }
 
     for(int i=0;i<draw_vbo_n;i++)
@@ -162,36 +75,42 @@ void Vbo_map::prep_frustrum_vertices()
 
         int index = 32*xj +xi;
 
-        int min = vbo_frustrum_min[index];
-        int max = vbo_frustrum_max[index];
+        int min;
+        int max;
 
-        if(min == -1 && max == -1)
-        {
-            //prune!!!
-            min = 0;
-            max = 0;
-        }
-        else
-        {
-            GS_ASSERT(min <= 8);
-            GS_ASSERT(max <= 8);
-            GS_ASSERT(min >= 0);
-            GS_ASSERT(max >= 0);
-        }
-        //int xoff,dnum;
+        float zmin, zmax;
+        chunk_top_z_projection(vbo->wxoff-8.0, vbo->wyoff-8.0, &zmin, &zmax);
+
+        printf("zmin, zmaz= %f %f \n", zmin, zmax);
+
+        min = floor((zmin / 16.0)) -1;
+        if(min < 0) min = 0;
+
+        max = ceil((zmax / 16.0)) + 1;
+        if(max > 8) max = 8;
+
+        GS_ASSERT(min <= 8);
+        GS_ASSERT(max <= 8);
         GS_ASSERT(min >= 0);
         GS_ASSERT(max >= 0);
+
+        GS_ASSERT(min <= max);
+        
         //printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
+        
+        //min = 0;
+        //max = 8;
+
         for(int side=0; side<6; side++)
         {
-            if(min >= max)
+            if(min == max)
             {
                 //dont draw anything, prune
                 int voff = vbo->vertex_offset[side];
                 int vnum = 0;
-                vbo_vertex_frustrum[index][2*side+0] = voff;
-                vbo_vertex_frustrum[index][2*side+1] = vnum;
 
+                vbo_frustrum_voff[index][side] = voff;
+                vbo_frustrum_vnum[index][side] = vnum;
                 continue;
             }
 
@@ -201,9 +120,8 @@ void Vbo_map::prep_frustrum_vertices()
             int voff = vs;
             int vnum = ve - vs;
 
-            vbo_vertex_frustrum[index][2*side+0] = voff;
-            vbo_vertex_frustrum[index][2*side+1] = vnum;
-
+            vbo_frustrum_voff[index][side] = voff;
+            vbo_frustrum_vnum[index][side] = vnum;
 
             if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
             {
@@ -246,9 +164,6 @@ bool chunk_distance_check( float x, float y)
 void Vbo_map::prep_draw()
 {
 
-    for(int i=0; i <32*32; i++) vbo_frustrum_min[i] = -1;
-    for(int i=0; i <32*32; i++) vbo_frustrum_max[i] = -1;
-
     class Map_vbo* col;
 
     const float cx = current_camera_position.x;
@@ -256,32 +171,26 @@ void Vbo_map::prep_draw()
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(cy);
 
-    //static float chunk_radius = sqrtf(2)*8;
-    
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
-    //start_vbo_draw();
     draw_vbo_n = 0;
-    //printf("Start Map Draw\n");
+
     for(int i=0; i<MAP_CHUNK_XDIM; i++) {
     for(int j=0; j<MAP_CHUNK_YDIM; j++) {
         col = vbo_array[j*MAP_CHUNK_XDIM + i ];
 
         if(col == NULL || col->vnum == 0) continue;
 
-        //col->wxoff = quadrant_translate_f(cx, col->xoff+8.0f);
-        //col->wyoff = quadrant_translate_f(cy, col->yoff+8.0f);
-        //col->wxoff = quadrant_translate_f(cx, col->xoff) + 8.0f;
-        //col->wyoff = quadrant_translate_f(cy, col->yoff) + 8.0f;
         float x = translate_point(col->xoff + 8.0f);
         float y = translate_point(col->yoff + 8.0f);
         col->wxoff = quadrant_translate_f(cx, x);
         col->wyoff = quadrant_translate_f(cy, y);
 
+        /*
+            Add bounding box check
+        */
         // plain chunk distance check has errors in corners
         if (chunk_distance_check( col->wxoff, col->wyoff))
-        //if (true)
-        //)// && xy_circle_fulstrum_test(col->wxoff, col->wyoff, chunk_radius))
         {
             c_drawn++; 
             /*
@@ -323,9 +232,6 @@ void Vbo_map::sort_draw()
         float dx = (v->wxoff - cx);
         float dy = (v->wyoff - cy);
 
-        //dx = quadrant_translate_f(cx, dx);
-        //dy = quadrant_translate_f(cx, dy);
-
         draw_vbo_array[i].distance = dx*dx + dy*dy; //set this
     }
 
@@ -335,7 +241,7 @@ void Vbo_map::sort_draw()
   //if(draw_vbo_n > 10) draw_vbo_n = 10;
 }
 
-#define ADV_PRUNE 0
+#define ADV_PRUNE 1
 
 void Vbo_map::draw_map() 
 {
@@ -343,7 +249,7 @@ void Vbo_map::draw_map()
     sort_draw();
     
     //prep_frustrum();
-    //prep_frustrum_vertices();
+    prep_frustrum_vertices();
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
@@ -364,13 +270,10 @@ void Vbo_map::draw_map()
 
     class Map_vbo* vbo;
 
-    //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
-
     float modelview[16];
     glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
 
-    glPushMatrix(); //save matrix
-    //glPushMatrix();
+    glPushMatrix();
 
 #if ADV_PRUNE
     int v_total = 0;
@@ -410,12 +313,10 @@ void Vbo_map::draw_map()
             continue; 
         } 
 
-
         glLoadMatrixf(modelview);
         glTranslatef(vbo->wxoff-8.0f, vbo->wyoff-8.0f, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
         glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
@@ -432,14 +333,14 @@ void Vbo_map::draw_map()
         for(int side=0; side<6; side++)
         {
 
-            int min = vbo_frustrum_min[index];
-            int max = vbo_frustrum_max[index];
+            int voff = vbo_frustrum_voff[index][side];
+            int vnum = vbo_frustrum_vnum[index][side];
 
-            if(min == -1 && max == -1)
-                break;
+            GS_ASSERT(voff != -1);
+            GS_ASSERT(vnum != -1);
 
-            int voff = vbo_vertex_frustrum[index][2*side+0];
-            int vnum = vbo_vertex_frustrum[index][2*side+1];
+            //vbo_vertex_frustrum[index][2*side+0] = voff;
+            //vbo_vertex_frustrum[index][2*side+1] = vnum;
 
             //printf("side %i offset: %i vertices: %i \n", side, vbo->vertex_offset[side], vbo->vertex_num[side]);
             
@@ -459,8 +360,7 @@ void Vbo_map::draw_map()
             //glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
             //glDrawArrays(GL_QUADS, vbo->vertex_offset[side], vbo->vertex_num[side]);
 
-            //if(abs(voff) > 1000*1000) continue; //wtf
-            if(vnum <= 0) continue;
+            if(vnum == 0) continue;
             v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
 
@@ -473,7 +373,7 @@ void Vbo_map::draw_map()
         //glPushMatrix();
     }
 
-    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
