@@ -75,7 +75,7 @@ void *_threaded_write(void *vptr)
     map_save_completed = true;
     _threaded_write_running = 0;
 
-    threaded_write_struct_param.filename[0] = 0x00;
+    threaded_write_struct_param.filename[0] = '\0';
     threaded_write_struct_param.buffer = NULL;
     threaded_write_struct_param.buffer_size = 0;
 
@@ -183,7 +183,7 @@ class BlockSerializer
         this->_s = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
         GS_ASSERT(this->_s != NULL);
         version_array = (int*) malloc(chunk_number*sizeof(int));
-        file_name[0] = 0x00;
+        file_name[0] = '\0';
         write_buffer = NULL;
         file_size = 0;
     }
@@ -223,12 +223,11 @@ class BlockSerializer
         map_save_memcpy_in_progress = true;
 
         GS_ASSERT(write_buffer == NULL);
-        GS_ASSERT(file_name[0] == 0x00);
+        GS_ASSERT(file_name[0] == '\0');
         GS_ASSERT(file_size == 0);
         for(int i=0; i<chunk_number; i++) version_array[i] = -1;
 
         strcpy(file_name, filename);
-        //s = (struct SerializedChunk*) malloc(chunk_number* sizeof(struct SerializedChunk) ); //[chunk_number]
 
         file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
 
@@ -319,10 +318,7 @@ class BlockSerializer
             int _ctime = _GET_MS_TIME();
 
             if( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
-            {
-                printf("chunk_memcpy: max_ms= %i memcpy= %i \n", max_ms, j);
                 return; //yield after n ms
-            }
         }
 
         printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i, ms_per_call= %i, chunks_per_call= %i total_chunks= %i memcpy_count= %i \n", 
@@ -335,8 +331,8 @@ class BlockSerializer
         _memcpy_count=0;
 
         map_save_memcpy_in_progress = false;
-        write_buffer == NULL;
-        file_name[0] = 0x00;
+        write_buffer = NULL;
+        file_name[0] = '\0';
         file_size = 0;
     }
 
@@ -352,14 +348,14 @@ class BlockSerializer
         }
 
         int ti1 = _GET_MS_TIME();
-        int index=0 ;
         int filesize;
         char* buffer = fast_read_file_to_buffer(filename, &filesize);
         if(buffer == NULL) GS_ABORT();
 
         int ti2 = _GET_MS_TIME();
 
-        int _version; 
+        int _version = 0; 
+        int index = 0;
         pop_int(buffer, index, _version);
 
         printf("Map Loader: map_version= %i filesize= %i bytes \n", _version, filesize);
@@ -370,8 +366,10 @@ class BlockSerializer
         }
 
         if(filesize != prefix_length + chunk_number*sizeof(struct SerializedChunk))
+        {
             printf("Map Loader error: file sizes do not match!\n");
             return;
+        }
 
         for(int i=0; i<chunk_number; i++)
         {
@@ -379,10 +377,10 @@ class BlockSerializer
             GS_ASSERT(mp != NULL);
             if(mp == NULL) continue;
 
-            memcpy((char*) &_s, buffer+index, sizeof(struct SerializedChunk) );
+            memcpy((char*) _s, buffer+index, sizeof(struct SerializedChunk) );
             index += sizeof(struct SerializedChunk);
 
-            GS_ASSERT(index == prefix_length + i*sizeof(struct SerializedChunk));
+            GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
             memcpy(&mp->e, (void*) &_s->data, 128*16*16*sizeof(struct MAP_ELEMENT));
         }
 

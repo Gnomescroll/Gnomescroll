@@ -79,7 +79,8 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE, int LIMIT
     puts(t);
 }
 
-void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
+inline void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)   __attribute((always_inline));
+inline void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
     _GS_ASSERT_INTERNAL(FILE, FUNC, LINE, GS_ASSERT_DEFAULT_PRINT_LIMIT);
 }
