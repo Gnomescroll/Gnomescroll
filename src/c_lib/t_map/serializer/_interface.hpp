@@ -366,6 +366,7 @@ class BlockSerializer
         if(filesize != prefix_length + chunk_number*sizeof(struct SerializedChunk))
         {
             printf("Map Loader error: file sizes do not match!\n");
+            return;
         }
 
         for(int i=0; i<chunk_number; i++)
@@ -377,6 +378,7 @@ class BlockSerializer
             memcpy((char*) &_s, buffer+index, sizeof(struct SerializedChunk) );
             index += sizeof(struct SerializedChunk);
 
+            GS_ASSERT(index = prefix_length + i*sizeof(struct SerializedChunk);
             memcpy(&mp->e, (void*) &_s->data, 128*16*16*sizeof(struct MAP_ELEMENT));
         }
 
