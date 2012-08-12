@@ -87,22 +87,24 @@ void cube_def(int id, int type, const char* name)
     switch(type)
     {
         case ErrorBlock:
-        break;
+            break;
+
+        case SolidBlock:
+            break;
 
         case EmptyBlock:
         p.active = false;
         p.solid = false;
         p.occludes = false;
-        break;
-        case SolidBlock:
-        break;
+            break;
 
         case ItemContainerBlock:
         p.item_container = true;
-        break;
+            break;
 
         default:
-        GS_ABORT();
+            GS_ABORT();
+            break;
     }
 
 

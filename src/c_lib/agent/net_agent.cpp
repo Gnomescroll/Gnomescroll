@@ -898,6 +898,7 @@ inline void agent_set_block_CtoS::handle()
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
     int val = attr->placer_block_type_id;
 
+    if (t_map::isErrorBlock(val)) return;
     if (!t_map::isValidID(val)) return;
     if (!t_map::isInUse(val)) return;
     
@@ -960,6 +961,10 @@ inline void admin_set_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+
+    if (t_map::isErrorBlock(val)) return;
+    if (!t_map::isValidID(val)) return;
+    if (!t_map::isInUse(val)) return;
 
     x = translate_point(x);
     y = translate_point(y);

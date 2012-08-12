@@ -63,7 +63,7 @@ void load_block_dat()
     side_texture(E, error_block);
     push_texture();
 
-    hud_def(1,1, error_block);
+    //hud_def(1,1, error_block);
 /*
     side_texture(T, error_block);
     side_texture(T, t0, 0,0);
@@ -243,13 +243,13 @@ void load_block_dat()
     iso_texture(t2, 1,1);
     push_texture();
     set_max_dmg(64); //255
-    hud_def(6,5, t2,1,1);
+    hud_def(6,4, t2,1,1);
 
     cube_def(34, SolidBlock, "space_tree_trunk2");
     iso_texture(t2, 2,1);
     push_texture();
     set_max_dmg(32); //255
-    hud_def(6,6, t2,2,1);
+    hud_def(6,5, t2,2,1);
 
 
     // random textures from cell to fill the block placer
@@ -413,7 +413,7 @@ void load_block_dat()
     cube_def(255-31, SolidBlock, "cell31");
     iso_texture(t3, 7,4);
     push_texture();
-    hud_def(6,4, t3,7,4);
+    hud_def(1,1, t3,7,4);
 
     cube_def(255-32, SolidBlock, "cell32");
     iso_texture(t3, 8,4);
