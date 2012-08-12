@@ -37,6 +37,8 @@ Varying
 varying vec2 texCoord;
 varying vec2 texCoord3;
 
+varying float fogFragDepth;
+
 varying vec3 inColor;
 
 void main(void) 
@@ -52,6 +54,8 @@ void main(void)
     texCoord3 = 0.0625f*tmp +InTexCoord.zw;
 
     lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
+
+    fogFragDepth = distance(InVertex.xy, gl_ModelViewMatrixInverse[3].xy);
 }
 
     /* (InTexCoord.xy - vec2(0.5,0.5)) * .94 */

@@ -2,13 +2,13 @@
 
 #include <SDL/SDL_functions.h>
 
-char *textFileRead(char *fn);
+char *textFileRead(const char *fn);
 
 //info log print
 void printShaderInfoLog(GLuint obj);
 void printProgramInfoLog(GLuint obj);
 
-void load_shaders(char *vert, char* frag, GLuint* prog);
+void load_shaders(const char *vert, const char* frag, GLuint* prog);
 
 //returns true on error
 bool shader_error_occured(int shader);
@@ -74,8 +74,8 @@ class SHADER
 
         printf("Loading shader: %s\n", name);
 
-        vs = textFileRead( (char*) vertex_shader_file );
-        fs = textFileRead( (char*) fragment_shader_file );
+        vs = textFileRead(vertex_shader_file );
+        fs = textFileRead(fragment_shader_file );
         GS_ASSERT(vs != NULL);
         GS_ASSERT(fs != NULL);
         if (vs == NULL || fs == NULL)
