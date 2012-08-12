@@ -23,6 +23,9 @@ uniform vec3 InFogColor;
 uniform float InFogStart;
 uniform float InFogDepth;
 
+const float density = 0.0115f;
+const float LOG2 = 1.442695f;
+
 void main() 
 {
     vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
@@ -33,30 +36,13 @@ void main()
     vec3 color = tmp*inColor.rgb;
     color = color*(texture2D(base_texture, texCoord3).rgb);      
 
-    //if (InFogDepth > InFogStart)
-    //{
-        //float fogFactor = (InFogDepth - InFogStart) / InFogDepth;
-        //if (fogFactor >= 1.0f) discard;
-        //color = mix(color, InFogColor, fogFactor);
-    //}
+    float f = density * fogFragDepth;
+    f = f*f*LOG2; 
+    float fogFactor = exp(-(f*f));
+    fogFactor = clamp(fogFactor, 0.0f, 1.0f);
+    color = mix(color, InFogColor, 1.0f-fogFactor); 
 
-    //color = pow(color, vec3(1.0f / 2.2f));
-    //gl_FragColor.rgb = color;
-
-    if (fogFragDepth <= InFogStart)
-    {
-        color = pow(color, vec3(1.0f / 2.2f));
-        gl_FragColor.rgb = color;
-    }
-    else
-    {
-        float fogFactor = (fogFragDepth - InFogStart) / InFogDepth;
-
-        if (fogFactor >= 1.0) discard;
-        
-        color = mix(color, InFogColor, fogFactor);
-        color = pow(color, vec3(1.0f / 2.2f));
-        gl_FragColor.rgb = color;
-    }
+    color = pow(color, vec3(1.0f / 2.2f));
+    gl_FragColor.rgb = color;
 
 }

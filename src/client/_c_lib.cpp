@@ -264,7 +264,7 @@ int init_c_lib(int argc, char* argv[])
     char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
     char* wdr = getcwd(wd, DIR_SIZE);
     GS_ASSERT(wdr == wd);
-    printf("Working directory is: %s", wd);
+    printf("Working directory is: %s\n", wd);
     free(wd);
     
     // Set signal handlers

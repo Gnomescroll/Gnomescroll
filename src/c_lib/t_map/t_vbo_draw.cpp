@@ -280,6 +280,7 @@ void Vbo_map::prep_draw()
 
         // plain chunk distance check has errors in corners
         if (chunk_distance_check( col->wxoff, col->wyoff))
+        //if (true)
         //)// && xy_circle_fulstrum_test(col->wxoff, col->wyoff, chunk_radius))
         {
             c_drawn++; 
@@ -356,7 +357,7 @@ void Vbo_map::draw_map()
 
     glUniform3f(map_FogColor, 0,0,0);
     glUniform1f(map_FogDepth, CAMERA_VIEW_DISTANCE);
-    glUniform1f(map_FogStart, CAMERA_VIEW_DISTANCE * 0.75f);
+    glUniform1f(map_FogStart, CAMERA_VIEW_DISTANCE * 0.25f);
 
     glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
@@ -554,6 +555,8 @@ void Vbo_map::draw_map()
 
     glColor3ub(255, 255, 255);
 #endif
+
+    CHECK_GL_ERROR();
 }
 
 void Vbo_map::draw_map_compatibility()
@@ -578,6 +581,10 @@ void Vbo_map::draw_map_compatibility()
     glColor3ub(255,255,255);
 
     glUseProgramObjectARB(map_shader[0]);
+
+    glUniform3f(map_FogColor, 0,0,0);
+    glUniform1f(map_FogDepth, CAMERA_VIEW_DISTANCE);
+    glUniform1f(map_FogStart, CAMERA_VIEW_DISTANCE * 0.25f);
 
     glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
 

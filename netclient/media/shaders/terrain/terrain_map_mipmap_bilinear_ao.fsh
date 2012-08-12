@@ -33,6 +33,10 @@ varying float fogFragDepth;
 
 //const float LOG2 = 1.442695;
 
+//const vec3 fog_color = vec3(0.0, 0.0, 0.0);
+//const float fog_start = 96.0;
+//const float fog_depth = 128.0 - fog_start;
+
 uniform vec3 InFogColor;
 uniform float InFogStart;
 uniform float InFogDepth;
