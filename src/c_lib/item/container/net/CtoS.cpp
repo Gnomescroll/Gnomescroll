@@ -468,7 +468,7 @@ inline void crusher_crush_item_CtoS::handle()
         if (stack_size < 1) return;
         g->explode(stack_size);
 
-        Sound::broadcast_play_3d_sound("grenade_explode", a->client_id, p);
+        Sound::broadcast_play_3d_sound("grenade_explode", p);
         // TODO -- play animation packet
         
         Particle::grenade_list->destroy(g->id);
