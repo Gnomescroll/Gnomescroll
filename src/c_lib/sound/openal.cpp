@@ -2,6 +2,7 @@
 
 #include <sound/sound.hpp>
 #include <common/compat_al.h>
+#include <physics/vec3.hpp>
 
 namespace OpenALSound
 {
@@ -435,6 +436,15 @@ GS_SoundBuffer* get_sound_buffer_from_function_name(char *fn)
     return NULL;
 }
 
+GS_SoundBuffer* get_sound_buffer_from_soundfile_id(int soundfile_id)
+{
+    GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
+    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return NULL;
+    if (sound_buffers[soundfile_id] == NULL) return NULL;
+    if (!sound_buffers[soundfile_id]->loaded) return NULL;
+    return sound_buffers[soundfile_id];
+}
+
 int set_source_properties(int source_id, Soundfile* snd)
 {
     if (source_id < 0 || source_id >= MAX_SOURCES)
@@ -527,23 +537,13 @@ static int play_sound(GS_SoundBuffer* sound_buffer, float x, float y, float z, f
     return source_id;
 }
 
-int play_2d_sound(char* fn)
+
+
+int play_2d_sound(class GS_SoundBuffer* sound_buffer)
 {
     if (!enabled)
         return -1;
 
-    // lookup buffer from file
-    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
-    //printf("function name %s\n", fn);
-
-    if (sound_buffer == NULL)
-        return -1;
-    if (sound_buffer->buffer_id < 0)
-        return -1;
-
-    if (sound_buffer->current_sources >= sound_buffer->max_sources)
-        return -1;
-        
     // get listener state
     ALfloat x,y,z;
     ALfloat vx,vy,vz;
@@ -560,30 +560,71 @@ int play_2d_sound(char* fn)
     return source_id;
 }
 
-int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+int play_2d_sound(char* fn)
 {
-    if (!enabled)
+    if (!enabled) return -1;
+    
+    // lookup buffer from file
+    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+
+    if (sound_buffer == NULL) return -1;
+    if (sound_buffer->buffer_id < 0) return -1;
+    if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
+
+    return play_2d_sound(sound_buffer);
+}
+
+int play_2d_sound(int soundfile_id)
+{
+    if (!enabled) return -1;
+
+    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_soundfile_id(soundfile_id);
+    if (sound_buffer == NULL
+     || sound_buffer->buffer_id < 0
+     || sound_buffer->current_sources >= sound_buffer->max_sources)
         return -1;
+
+    return play_2d_sound(sound_buffer);
+}
+
+int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3 v)
+{
+    if (!enabled) return -1;
+
+    static const struct Vec3 o = vec3_init(0,0,-1);
+    int source_id = play_sound(sound_buffer, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
+    if (source_id < 0) return source_id;
+    // add sound to active sources
+    if (!add_to_sources(sound_buffer->buffer_id, source_id, false)) return -1;
+
+    return source_id;
+}
+
+int play_3d_sound(char* fn, struct Vec3 p, struct Vec3 v)
+{
+    if (!enabled) return -1;
 
     // lookup buffer from file
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
-    //printf("function name %s\n", fn);
 
-    if (sound_buffer == NULL)
-        return -1;
-    if (sound_buffer->buffer_id < 0)
-        return -1;
-
-    if (sound_buffer->current_sources >= sound_buffer->max_sources)
-        return -1;
+    if (sound_buffer == NULL) return -1;
+    if (sound_buffer->buffer_id < 0) return -1;
+    if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
         
-    int source_id = play_sound(sound_buffer, x,y,z, vx,vy,vz, ox,oy,oz);
-    if (source_id < 0) return source_id;
-    // add sound to active sources
-    if (!add_to_sources(sound_buffer->buffer_id, source_id, false))
+    return play_3d_sound(sound_buffer, p, v);
+}
+
+int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
+{
+    if (!enabled) return -1;
+
+    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_soundfile_id(soundfile_id);
+    if (sound_buffer == NULL
+     || sound_buffer->buffer_id < 0
+     || sound_buffer->current_sources >= sound_buffer->max_sources)
         return -1;
 
-    return source_id;
+    return play_3d_sound(sound_buffer, p, v);
 }
 
 void update()

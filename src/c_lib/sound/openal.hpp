@@ -13,7 +13,10 @@ void set_volume(float vol);
 void load_sound(Soundfile* snd);
 
 int play_2d_sound(char* file);
-int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz, float ox=0, float oy=0, float oz=-1);
+int play_3d_sound(char* file, struct Vec3 p, struct Vec3 v);
+
+int play_2d_sound(int soundfile_id);
+int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
 
 void stop_sound(int sound_id);
 

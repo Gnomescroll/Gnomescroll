@@ -3,8 +3,8 @@
 #include <net_lib/net_StoC.hpp>
 #include <net_lib/net_CtoS.hpp>
 
+#include <agent/constants.hpp>
 
-#include <agent/agent_status.hpp>
 /*
  *  Player Agent Packets
 */

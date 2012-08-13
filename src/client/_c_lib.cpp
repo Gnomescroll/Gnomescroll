@@ -210,11 +210,7 @@ dont_include_this_file_in_server
 #include <input/equipped_sprite_adjuster.cpp>
 
 /* sound */
-#include <sound/wav.cpp>
-#include <sound/triggers.cpp>
-#include <sound/csv_parser.cpp>
-#include <sound/openal.cpp>
-#include <sound/sound.cpp>
+#include <sound/_include.hpp>
 
 /* chat */
 #include <chat/packets.cpp>
@@ -319,7 +315,6 @@ int init_c_lib(int argc, char* argv[])
 
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
-    Sound::init();
 
     init_image_loader();
     TextureSheetLoader::init();
@@ -386,6 +381,7 @@ int init_c_lib(int argc, char* argv[])
     init_network();
     NetClient::init_net_client();
     
+    Sound::init();
     init_input();
     init_handlers();
     init_cameras();

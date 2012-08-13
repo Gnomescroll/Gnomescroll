@@ -3,7 +3,8 @@
 #include <common/defines.h>
 #include <sound/triggers.hpp>
 
-namespace Sound {
+namespace Sound
+{
 
 void init();
 void close();
@@ -14,6 +15,10 @@ void load_sound(Soundfile* snd);
 
 int play_2d_sound(char* file);
 int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz);
+int play_3d_sound(char* file, struct Vec3 p, struct Vec3 v);
+
+int play_2d_sound(int soundfile_id);
+int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
 
 void stop_sound(int sound_id);
 
@@ -22,6 +27,6 @@ void update();
 
 int test();
 
-//CYTHON
-void enumerate_sound_devices() GNOMESCROLL_API;
-}
+void enumerate_sound_devices();
+
+}   // Sound

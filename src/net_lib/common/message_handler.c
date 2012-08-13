@@ -36,7 +36,14 @@ void default_handler_function(char* buff, int n, int* read_bytes, unsigned int c
 void register_server_message_handler(int message_id, unsigned int size, pt2handler fptr)
 {
     if (message_id > 255 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
+    GS_ASSERT(server_handler_array != NULL);
+    if (server_handler_array == NULL) return;
     if (server_handler_array[message_id] != NULL) {printf("register_server_message_handler: reassigning message_id %i !!!\n", message_id);}
+
+    GS_ASSERT(h_server_packet_size != NULL);
+    if (h_server_packet_size == NULL) return;
+    GS_ASSERT(server_handler_array != NULL);
+    if (server_handler_array == NULL) return;
 
     h_server_packet_size[message_id] = size;
     //printf("CtoS: id,size %d,%d\n", message_id, size);
@@ -46,7 +53,14 @@ void register_server_message_handler(int message_id, unsigned int size, pt2handl
 void register_client_message_handler(int message_id, unsigned int size, pt2handler fptr)
 {
     if (message_id >=256 || message_id <0) {printf("register_client_message_handler: message ID invalid!\n");return;}
+    GS_ASSERT(client_handler_array != NULL);
+    if (client_handler_array == NULL) return;
     if (client_handler_array[message_id] != NULL) {printf("register_client_message_handler: Reassigning message_id %i !!!\n", message_id);}
+
+    GS_ASSERT(h_client_packet_size != NULL);
+    if (h_client_packet_size == NULL) return;
+    GS_ASSERT(client_handler_array != NULL);
+    if (client_handler_array == NULL) return;
 
     h_client_packet_size[message_id] = size;
     //printf("StoC: id,size %d,%d\n", message_id, size);

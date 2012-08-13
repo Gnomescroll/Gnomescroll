@@ -3,6 +3,7 @@
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 #include <t_map/t_map.hpp>
+#include <sound/packets.hpp>
 
 namespace Sound
 {
@@ -14,6 +15,9 @@ void init()
 {
     OpenALSound::init();
     parse_sound_triggers("./media/sound/sounds.csv");
+
+    play_2d_sound_StoC::register_client_packet();
+    play_3d_sound_StoC::register_client_packet();
 }
 
 void update()
@@ -50,21 +54,47 @@ int play_2d_sound(char* fn)
     return OpenALSound::play_2d_sound(fn);
 }
 
+int play_2d_sound(int soundfile_id)
+{
+    if (!Options::sound) return -1;
+    return OpenALSound::play_2d_sound(soundfile_id);
+}
+
 //Public
+
+// deprecated, use Vec3
 int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz)
 {
     if (!Options::sound) return -1;
+    return play_3d_sound(fn, vec3_init(x,y,z), vec3_init(vx,vy,vz));
+}
 
-    x = translate_point(x);
-    y = translate_point(y);
-    x = quadrant_translate_f(listener_position.x, x);
-    y = quadrant_translate_f(listener_position.y, y);
+int play_3d_sound(char* file, struct Vec3 p, struct Vec3 v)
+{
+    if (!Options::sound) return -1;
 
-    float dist = vec3_distance_squared(listener_position, vec3_init(x,y,z));
+    p = translate_position(p);
+    p = quadrant_translate_position(listener_position, p);
+
+    float dist = vec3_distance_squared(listener_position, p);
     if (dist > GS_SOUND_DISTANCE_CUTOFF*GS_SOUND_DISTANCE_CUTOFF)
         return -1;
 
-    return OpenALSound::play_3d_sound(fn, x,y,z, vx,vy,vz);
+    return OpenALSound::play_3d_sound(file, p, v);
+}
+
+int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
+{
+    if (!Options::sound) return -1;
+
+    p = translate_position(p);
+    p = quadrant_translate_position(listener_position, p);
+
+    float dist = vec3_distance_squared(listener_position, p);
+    if (dist > GS_SOUND_DISTANCE_CUTOFF*GS_SOUND_DISTANCE_CUTOFF)
+        return -1;
+
+    return OpenALSound::play_3d_sound(soundfile_id, p, v);
 }
 
 void stop_sound(int sound_id)
@@ -85,10 +115,9 @@ int test()
     return OpenALSound::test();
 }
 
-//CYTHON
 void enumerate_sound_devices()
 {
     OpenALSound::enumerate_devices();
 }
 
-}
+}   // Sound
