@@ -214,6 +214,7 @@ static void register_item_type_callbacks()
 
     set_type("block_placer");
     c.local_trigger = &trigger_local_admin_block_placer;
+    c.local_beta_trigger = &select_facing_block;
     #endif
     
     #if DC_SERVER

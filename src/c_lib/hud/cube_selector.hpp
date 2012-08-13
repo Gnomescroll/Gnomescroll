@@ -18,7 +18,6 @@ class CubeSelector
         void vertical(bool up);
 
     public:
-        bool inited;
         float x,y;
         float size;
         int mode;
@@ -45,12 +44,16 @@ class CubeSelector
         void left();
         void right();
 
+        bool set_block_type(int block_type);
+
         CubeSelector();
 };
 
 extern CubeSelector cube_selector;
 
 void init();
-}
+
+
+}   // HudCubeSelector
 
 void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id);

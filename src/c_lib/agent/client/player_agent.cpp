@@ -448,11 +448,10 @@ void PlayerAgent_state::update_model()
     }
 }
 
-// TODO -- remove
-int PlayerAgent_state::facing_container()
+int* PlayerAgent_state::facing_block()
 {
-    if (this->you == NULL) return NULL_CONTAINER;
-    if (current_camera == NULL) return NULL_CONTAINER;
+    if (this->you == NULL) return NULL;
+    if (current_camera == NULL) return NULL;
 
     const float max_distance = 4.0f;
     const int z_low = 4;
@@ -460,8 +459,14 @@ int PlayerAgent_state::facing_container()
 
     Vec3 direction = current_camera->forward_vector();
     int* pos = _nearest_block(current_camera_position, direction, max_distance, z_low, z_high);
+    return pos;
+}
+
+int PlayerAgent_state::facing_container()
+{
+    int* pos = this->facing_block();
     if (pos == NULL) return NULL_CONTAINER;
-    
+
     return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
 

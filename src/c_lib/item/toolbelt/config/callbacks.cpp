@@ -8,6 +8,10 @@
 
 #include <t_mech/_interface.hpp>
 
+#if DC_CLIENT
+#include <hud/cube_selector.hpp>
+#endif
+
 namespace Toolbelt
 {
 
@@ -122,6 +126,20 @@ void trigger_local_hitscan_laser(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_HITSCAN_WEAPON);
     ClientState::playerAgent_state.action.hitscan_laser(item_type);
+}
+
+// block placer
+
+void select_facing_block(ItemID item_id, int item_type)
+{
+    static int block_placer_type = Item::get_item_type("block_placer");
+    GS_ASSERT(block_placer_type != NULL_ITEM_TYPE);
+    GS_ASSERT(item_type == block_placer_type);
+
+    int* b = ClientState::playerAgent_state.facing_block();
+    if (b == NULL) return;
+    int block_type = t_map::get(b[0], b[1], b[2]);
+    HudCubeSelector::cube_selector.set_block_type(block_type);
 }
 
 #endif

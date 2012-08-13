@@ -219,6 +219,27 @@ void CubeSelector::vertical(bool up)
     this->set_active_pos(n);
 }
 
+bool CubeSelector::set_block_type(int block_type)
+{
+    GS_ASSERT(this->cubes != NULL);
+    if (this->cubes == NULL) return false;
+    
+    GS_ASSERT(t_map::isValidID(block_type));
+    GS_ASSERT(t_map::isInUse(block_type));
+    GS_ASSERT(!t_map::isErrorBlock(block_type));
+    if (!t_map::isValidID(block_type) || !t_map::isInUse(block_type) || t_map::isErrorBlock(block_type)) return false;
+
+    for (int i=0; i<this->n_x*this->n_y; i++)
+    {
+        if (this->cubes[i].cube_id == block_type)
+        {
+            this->set_active_pos(i);
+            return true;
+        } 
+    }
+    return false;
+}
+
 CubeSelector::CubeSelector()
 :
 x(0),y(0),

@@ -100,8 +100,9 @@ class PlayerAgent_state
 
         void was_identified();
 
+        int* facing_block();
         int facing_container();
-
+        
         void update_sound();
 
         int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
