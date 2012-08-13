@@ -130,6 +130,7 @@ dont_include_this_file_in_client
 #include <state/server_state.cpp>
 
 #include <sound/_include.hpp>
+#include <animations/_include.hpp>
 
 //#include <main.cpp>
   
@@ -229,6 +230,7 @@ int init_c_lib(int argc, char* argv[])
     init_network();
 
     Sound::init();
+    Animations::init();
     
     t_map::init_t_map();
 
@@ -297,7 +299,8 @@ void close_c_lib()
     teardown_network();
 
     Sound::close();
-
+    Animations::teardown();
+    
     printf("Server closed\n"); 
     Log::teardown();
     _GS_ASSERT_TEARDOWN();

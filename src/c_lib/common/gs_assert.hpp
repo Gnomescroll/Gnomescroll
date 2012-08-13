@@ -59,8 +59,8 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE, int LIMIT
     {
         if (strcmp(t, _GS_ASSERT_ARRAY[i]) == 0)
         {   //match
-            if(_GS_ASSERT_COUNT[i] >= LIMIT) return;
             _GS_ASSERT_COUNT[i]++;
+            if(_GS_ASSERT_COUNT[i] >= LIMIT) return;
             //print and return;
             print_trace(2);
             puts(t);
@@ -75,6 +75,7 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE, int LIMIT
     _GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
     strcpy(_GS_ASSERT_ARRAY[i], t);
 
+    _GS_ASSERT_COUNT[i]++;
     print_trace(2);
     puts(t);
 }
@@ -89,7 +90,7 @@ void _GS_ASSERT_TEARDOWN()
 {
     for(int i=0; i<GS_ASSERT_MAX; i++) 
         if(_GS_ASSERT_ARRAY[i] != NULL)
-            printf("%s triggered %d times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]+1);
+            printf("%s triggered %d times \n", _GS_ASSERT_ARRAY[i], _GS_ASSERT_COUNT[i]);
 
     for(int i=0; i<GS_ASSERT_MAX; i++) 
         if(_GS_ASSERT_ARRAY[i] != NULL)

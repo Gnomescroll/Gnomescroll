@@ -1,10 +1,11 @@
 #include "animations.hpp"
 
-//#include <particle/particle_lib.hpp>
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <common/random.h>
 #include <state/client_state.hpp>
-
-//#include <physics/matrix.hpp>
 
 #include <physics/vec3.hpp>
 #include <physics/mat3.hpp>
@@ -13,6 +14,7 @@
 #include <particle/shrapnel.hpp>
 #include <particle/blood.hpp>
 
+#include <animations/config/_interface.hpp>
 
 namespace Animations
 {
@@ -413,6 +415,53 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
         ttl = randrange(0,10) - 5;
         b->set_ttl(b->ttl + ttl);
     }
+}
+
+// new style callback
+
+void create_shrapnel(int animation_id, void* metadata)
+{
+    if (Options::animation_level <= 0) return;
+
+    GS_ASSERT(metadata != NULL);
+    if (metadata == NULL) return;
+    class AnimationStateMetadata* data = (class AnimationStateMetadata*)metadata;
+
+    class AnimationData* anim_data = get_animation_data(animation_id);
+    GS_ASSERT(anim_data != NULL);
+
+    int n = anim_data->count;
+    if (anim_data->use_rand_range)
+        n = randrange(anim_data->count, anim_data->max_count);
+        
+    const float scale = ((float)Options::animation_level)/3.0f;
+    n = scale*((float)n);
+
+    struct Vec3 p = data->position;
+    struct Vec3 v = data->velocity;
+
+    const float jitter = anim_data->jitter_scale;
+
+    float cx,cy,cz;
+    float cvx,cvy,cvz;
+    Particle::Shrapnel *s;
+    for (int i=0; i<n; i++)
+    {
+        cx = p.x + ((randf() - 0.5f) * jitter);
+        cy = p.y + ((randf() - 0.5f) * jitter);
+        cz = p.z + ((randf() - 0.5f) * jitter);
+        cvx = v.x * (randf() - 0.5f);
+        cvy = v.y * (randf() - 0.5f);
+        cvz = v.z * (randf() - 0.5f);
+
+        cx = translate_point(cx);
+        cy = translate_point(cy);
+
+        s = Particle::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
+        if (s == NULL) return;
+        s->ttl = randrange(anim_data->ttl_min, anim_data->ttl_max);
+    }
+
 }
 
 }   // Animations

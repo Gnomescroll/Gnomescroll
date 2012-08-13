@@ -1,51 +1,26 @@
 #include "_interface.hpp"
 
+#if DC_CLIENT
 #include <animations/insect_mob.hpp>
-
 #include <animations/hitscan.hpp>
 #include <animations/mining_laser.hpp>
 #include <animations/weapon.hpp>
 #include <animations/voxel_particle.hpp>
+#endif
+
+#include <animations/packets.hpp>
+#include <animations/config/_interface.hpp>
 
 namespace Animations 
 {
 
+#if DC_CLIENT
 class Insect_mob_list* insect_mob_list = NULL;
 class HitscanEffect_list* hitscan_effect_list = NULL;
 class MiningLaserEffect_list* mining_laser_effect_list = NULL;
+#endif
 
-void init()
-{
-
-    hitscan_effect_list = new HitscanEffect_list;
-    mining_laser_effect_list = new MiningLaserEffect_list;
-
-    insect_mob_list = new Insect_mob_list;
-
-    Animations::init_hitscan();
-    Animations::init_mining_laser();
-
-    Animations::init_insect_mob();
-
-    init_weapon_sprite();
-    init_voxel_particle();
-    init_block_damage();
-}
-
-void teardown()
-{
-    delete insect_mob_list;
-
-    delete hitscan_effect_list;
-    delete mining_laser_effect_list;
-
-    Animations::teardown_hitscan();
-
-    Animations::teardown_insect_mob();
-
-    teardown_voxel_particle();
-}
-
+#if DC_CLIENT
 void animations_tick()
 {
     hitscan_effect_list->tick();
@@ -136,6 +111,73 @@ void mining_laser_beam(Vec3 position, Vec3 orientation, float length)
         // to get an even distribution
         position = vec3_add(position, step);
     }
+}
+#endif
+
+#if DC_SERVER
+void send_play_animation(const char* name, int client_id, struct Vec3 position)
+{
+    ASSERT_BOXED_POSITION(position);
+    int animation_id = get_animation_id(name);
+    GS_ASSERT(animation_id >= 0);
+    if (animation_id < 0) return;
+    play_animation_StoC msg;
+    msg.animation_id = animation_id;
+    msg.position = position;
+    msg.sendToClient(client_id);
+}
+
+void broadcast_play_animation(const char* name, struct Vec3 position)
+{
+    ASSERT_BOXED_POSITION(position);
+    int animation_id = get_animation_id(name);
+    GS_ASSERT(animation_id >= 0);
+    if (animation_id < 0) return;
+    play_animation_StoC msg;
+    msg.animation_id = animation_id;
+    msg.position = position;
+    msg.broadcast();
+}
+#endif
+
+// Common
+
+void init()
+{
+    #if DC_CLIENT
+    hitscan_effect_list = new HitscanEffect_list;
+    mining_laser_effect_list = new MiningLaserEffect_list;
+
+    insect_mob_list = new Insect_mob_list;
+
+    Animations::init_hitscan();
+    Animations::init_mining_laser();
+
+    Animations::init_insect_mob();
+
+    init_weapon_sprite();
+    init_voxel_particle();
+    init_block_damage();
+    #endif
+
+    init_config();
+    play_animation_StoC::register_client_packet();
+}
+
+void teardown()
+{
+    #if DC_CLIENT
+    delete insect_mob_list;
+
+    delete hitscan_effect_list;
+    delete mining_laser_effect_list;
+
+    Animations::teardown_hitscan();
+
+    Animations::teardown_insect_mob();
+
+    teardown_voxel_particle();
+    #endif
 }
 
 }   // Animations

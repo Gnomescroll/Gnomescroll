@@ -1,7 +1,6 @@
 #pragma once
 
 #if DC_CLIENT
-#include <animations/_interface.cpp>
 #include <animations/animations.cpp>
 #include <animations/hitscan.cpp>
 #include <animations/mining_laser.cpp>
@@ -11,6 +10,7 @@
 #include <animations/block_damage.cpp>
 #endif
 
-
-#if DC_SERVER
-#endif
+#include <animations/_interface.cpp>
+#include <animations/packets.cpp>
+#include <animations/config/_state.cpp>
+#include <animations/config/_interface.cpp>

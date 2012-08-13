@@ -40,6 +40,7 @@ inline void admin_create_container_block_CtoS::handle() {}
 #include <item/container/server.hpp>
 #include <item/container/config/crusher_dat.hpp>
 #include <sound/sound.hpp>
+#include <animations/_interface.hpp>
 
 namespace ItemContainer
 {
@@ -468,8 +469,9 @@ inline void crusher_crush_item_CtoS::handle()
         if (stack_size < 1) return;
         g->explode(stack_size);
 
-        Sound::broadcast_play_3d_sound("grenade_explode", p);
-        // TODO -- play animation packet
+        Sound::broadcast_play_3d_sound("plasma_grenade_explode", p);
+        if (t_map::get(b[0], b[1], b[2]) == 0)  // only play anim if block got destroyed
+            Animations::broadcast_play_animation("plasma_grenade_explode", p);
         
         Particle::grenade_list->destroy(g->id);
         Item::destroy_item(item_id);
