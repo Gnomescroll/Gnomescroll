@@ -24,10 +24,6 @@ OPT_FLOAT_HEADER(camera_speed)
 OPT_BOOL_HEADER(invert_mouse)
 
 /* HUD / Info */
-OPT_BOOL_HEADER(hud)
-OPT_BOOL_HEADER(diagnostic_hud)
-OPT_BOOL_HEADER(fps)
-OPT_BOOL_HEADER(ping)
 OPT_INT_HEADER(ping_update_interval)
 OPT_INT_HEADER(system_message_r)
 OPT_INT_HEADER(system_message_g)

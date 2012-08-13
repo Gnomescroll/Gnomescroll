@@ -27,10 +27,6 @@ OPT_FLOAT(camera_speed, 0.6f)
 OPT_BOOL(invert_mouse, false)
 
 /* HUD / Info */
-OPT_BOOL(hud, true)
-OPT_BOOL(diagnostic_hud, false)
-OPT_BOOL(fps, false)
-OPT_BOOL(ping, false)
 OPT_INT(ping_update_interval, 500)
 OPT_INT(system_message_r, 255)
 OPT_INT(system_message_g, 255)
@@ -77,10 +73,6 @@ void register_options()
     OPT_BOOL_REGISTER(invert_mouse)
 
     /* HUD / Info */
-    OPT_BOOL_REGISTER(hud)
-    OPT_BOOL_REGISTER(diagnostic_hud)
-    OPT_BOOL_REGISTER(fps)
-    OPT_BOOL_REGISTER(ping)
     OPT_INT_REGISTER(ping_update_interval)
     OPT_INT_REGISTER(system_message_r)
     OPT_INT_REGISTER(system_message_g)

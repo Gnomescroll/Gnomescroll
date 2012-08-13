@@ -17,7 +17,6 @@ struct InputState
     bool map;
     bool chat;
     bool full_chat;
-    bool debug;
     bool skeleton_editor;
     bool graphs;
     bool equipped_sprite_adjuster;
@@ -42,6 +41,12 @@ struct InputState
     bool agent_container;
     bool container_block;
     int container_block_id;
+
+    // views
+    bool draw_hud;
+    bool vbo_debug;
+    bool diagnostics;
+    bool admin_controls;
 
     bool frustum;
 };

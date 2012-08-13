@@ -351,7 +351,7 @@ int run()
             Draw Hud
         */
 
-        if (Options::hud)
+        if (input_state.draw_hud)
         {
             // switch to hud  projection
             hud_projection();
@@ -366,7 +366,8 @@ int run()
             Awesomium::_draw();
             #endif
 
-            t_map::draw_vbo_debug(400, 400);
+            if (input_state.vbo_debug)
+                t_map::draw_vbo_debug(400, 400);
             CHECK_GL_ERROR();  //check error after hud rendering
         }
 
@@ -414,24 +415,21 @@ int run()
         #endif
 
         // do fps calculation
-        if (Options::fps)
+        int fps_current_tick = _GET_MS_TIME();
+        fps_average[fps_average_index++] = fps_current_tick - fps_last_tick;
+        fps_last_tick = fps_current_tick;
+        if (fps_average_index > 30)
         {
-            int fps_current_tick = _GET_MS_TIME();
-            fps_average[fps_average_index++] = fps_current_tick - fps_last_tick;
-            fps_last_tick = fps_current_tick;
-            if (fps_average_index > 30)
-            {
-                int sum = 0;
-                for (int i=0; i<fps_average_index; i++)
-                    sum += fps_average[i];
+            int sum = 0;
+            for (int i=0; i<fps_average_index; i++)
+                sum += fps_average[i];
 
-                fps_value = ((float)sum) / ((float)fps_average_index);
-                fps_average_index = 0;
-            }
+            fps_value = ((float)sum) / ((float)fps_average_index);
+            fps_average_index = 0;
         }
 
         // check ping throttle
-        if (Options::ping)
+        if (input_state.diagnostics)
         {
             int ping_now = _GET_MS_TIME();
             if (ping_now - ping_ticks > Options::ping_update_interval)

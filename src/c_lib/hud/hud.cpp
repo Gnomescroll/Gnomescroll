@@ -70,9 +70,7 @@ static struct HudDrawSettings
     bool connected;
     bool version_match;
     bool dead;
-    bool fps;
     float fps_val;
-    bool ping;
     int ping_val;
     int reliable_ping_val;
     bool agent_status;
@@ -80,13 +78,12 @@ static struct HudDrawSettings
     bool chat_input;    // draw chat input area
     bool full_chat;     // draw chat messages (ignoring timeouts)
     bool scoreboard;
-    bool compass;
     bool map;
-    bool graphs;
     bool draw;
     bool confirm_quit;
     bool press_help;
-    bool agent_state;
+    bool diagnostics;
+    bool vbo_debug;
 } hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -106,10 +103,11 @@ void init_hud_draw_settings()
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
+    hud_draw_settings.draw = input_state.draw_hud;
+    
     hud_draw_settings.connected = NetClient::Server.connected;
     hud_draw_settings.version_match = NetClient::Server.version_match;
     
-    hud_draw_settings.draw = Options::hud;
     hud_draw_settings.zoom = current_camera->zoomed;
     static int block_placer_type = Item::get_item_type("block_placer");
     GS_ASSERT(block_placer_type != NULL_ITEM_TYPE);
@@ -123,11 +121,6 @@ void update_hud_draw_settings()
         && ClientState::playerAgent_state.you != NULL
         && ClientState::playerAgent_state.you->status.dead
     );
-
-    hud_draw_settings.fps = Options::fps;
-    hud_draw_settings.ping  = Options::ping;
-
-    hud_draw_settings.agent_state = true;
 
     // sanitize
     int ping_val = ClientState::last_ping_time;
@@ -146,9 +139,10 @@ void update_hud_draw_settings()
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
-    hud_draw_settings.compass = false;
     hud_draw_settings.map = input_state.map;
-    hud_draw_settings.graphs = input_state.graphs;
+
+    hud_draw_settings.diagnostics = input_state.diagnostics;
+    hud_draw_settings.vbo_debug = input_state.vbo_debug;
     
     // update chat rendering
     if (hud != NULL && hud->inited
@@ -202,9 +196,6 @@ void draw_hud_textures()
     if (hud_draw_settings.cube_selector)
         HudCubeSelector::cube_selector.draw();
 
-    if (hud_draw_settings.compass)
-        Compass::draw();
-
     if (hud_draw_settings.map)
         HudMap::draw();
 
@@ -212,9 +203,11 @@ void draw_hud_textures()
      && hud->inited && hud->chat != NULL && hud->chat->inited)
         hud->chat->draw_cursor();
 
-    using Profiling::frame_graph;
-    if (hud_draw_settings.graphs)
+    if (hud_draw_settings.diagnostics)
+    {
+        using Profiling::frame_graph;
         frame_graph->draw(_xresf - frame_graph->ts->screen_width(), 0);
+    }
 }
 
 void draw_hud_text()
@@ -246,16 +239,11 @@ void draw_hud_text()
             hud->version_mismatch->draw_centered();
     }
 
-    //end_font_draw();
-
-    if (!hud_draw_settings.zoom)
+    if (hud_draw_settings.map)
     {
-        if (hud_draw_settings.map)
-        {
-            HudFont::set_properties(HudMap::text_icon_size);
-            set_texture();
-            HudMap::draw_text();
-        }
+        HudFont::set_properties(HudMap::text_icon_size);
+        set_texture();
+        HudMap::draw_text();
     }
 
     HudFont::reset_default();
@@ -299,43 +287,35 @@ void draw_hud_text()
         return;
     }
 
-    #if PRODUCTION
-    if (input_state.debug) {
-    #endif
+    //#if PRODUCTION
+    if (hud_draw_settings.diagnostics)
+    {
+    //#endif
     
-        if (hud_draw_settings.fps)
+        float fps_val = 0.0f;
+        if (hud_draw_settings.fps_val >= 0.1f) fps_val = 1000.0f / hud_draw_settings.fps_val;
+        hud->fps->update_formatted_string(1, fps_val);
+        hud->fps->draw();
+
+        hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
+        hud->ping->draw();
+        //hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
+        //hud->reliable_ping->draw();
+
+        hud->location->update_formatted_string(3, current_camera_position.x, current_camera_position.y, current_camera_position.z);
+        hud->location->draw();
+
+        if (current_camera != NULL)
         {
-            float fps_val = 0.0f;
-            if (hud_draw_settings.fps_val >= 0.1f) fps_val = 1000.0f / hud_draw_settings.fps_val;
-            hud->fps->update_formatted_string(1, fps_val);
-            hud->fps->draw();
+            Vec3 f = current_camera->forward_vector();
+            hud->look->update_formatted_string(3, f.x, f.y, f.z);
+            hud->look->set_position(hud->look->x, _yresf - hud->location->get_height() - HudFont::font->data.line_height);
+            hud->look->draw();
         }
 
-        if (hud_draw_settings.ping)
-        {
-            hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
-            hud->ping->draw();
-            //hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
-            //hud->reliable_ping->draw();
-        }
-
-        if (hud_draw_settings.agent_state)
-        {
-            hud->location->update_formatted_string(3, current_camera_position.x, current_camera_position.y, current_camera_position.z);
-            hud->location->draw();
-
-            if (current_camera != NULL)
-            {
-                Vec3 f = current_camera->forward_vector();
-                hud->look->update_formatted_string(3, f.x, f.y, f.z);
-                hud->look->set_position(hud->look->x, _yresf - hud->location->get_height() - HudFont::font->data.line_height);
-                hud->look->draw();
-            }
-        }
-
-    #if PRODUCTION
-    }   // if (input_state.debug)
-    #endif
+    //#if PRODUCTION
+    }   // if (input_state.diagnostics)
+    //#endif
 
     if (hud_draw_settings.agent_status)
     {
@@ -424,6 +404,7 @@ void draw_hud_text()
             
         hud->health->draw();
     }
+    
     end_font_draw();
 }
 

@@ -133,12 +133,12 @@ void toggle_full_chat()
 
 void toggle_hud()
 {
-    Options::hud = (!Options::hud);
+    input_state.draw_hud = (!input_state.draw_hud);
 }
 
-void toggle_debug()
+void toggle_admin_controls()
 {
-    input_state.debug = (!input_state.debug);
+    input_state.admin_controls = (!input_state.admin_controls);
 }
 
 void toggle_graphs()
@@ -230,17 +230,18 @@ void init_handlers()
 
     input_state.mouse_bound = true;
     #if PRODUCTION
-    input_state.debug = false;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
-    input_state.graphs = false;
     #else
     input_state.mouse_bound = false;
-    input_state.debug = false;
     input_state.input_mode = INPUT_STATE_CAMERA;
     input_state.camera_mode = INPUT_STATE_CAMERA;
-    input_state.graphs = true;
     #endif
+
+    input_state.draw_hud = true;
+    input_state.vbo_debug = false;
+    input_state.diagnostics = false;
+    input_state.admin_controls = false;
 
     input_state.help_menu = false;
     input_state.scoreboard = false;
@@ -779,7 +780,7 @@ void key_down_handler(SDL_Event* event)
         switch (event->key.keysym.sym)
         {
             case SDLK_b:
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     Animations::agent_bleed(
                         ClientState::playerAgent_state.camera_state.x,
                         ClientState::playerAgent_state.camera_state.y,
@@ -788,7 +789,7 @@ void key_down_handler(SDL_Event* event)
                 break;
                 
             case SDLK_g:
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     toggle_camera_mode();
                 break;
                 
@@ -798,33 +799,29 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_k:
                 #if !PRODUCTION
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     input_state.frustum = (!input_state.frustum);
                 #endif
                 break;
 
             case SDLK_l:
                 #if !PRODUCTION
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     toggle_equipped_sprite_adjuster();
                 #endif
                 break;
 
             case SDLK_SEMICOLON:
-                #if !PRODUCTION
-                if (input_state.debug)
+                if (input_state.admin_controls)
                 {
                     Options::animation_level %= 3;
                     Options::animation_level += 1;
                     printf("Animation level: %d\n", Options::animation_level);
                 }
-                #endif
                 break;
 
             case SDLK_m:
-                #if PRODUCTION
-                if (input_state.debug)
-                #endif
+                if (input_state.admin_controls)
                     toggle_map();
                 break;
 
@@ -834,13 +831,13 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_o:
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     toggle_skeleton_editor();
                 break;
                 
             
             case SDLK_t:
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     toggle_input_mode();
                 else
                 {
@@ -851,7 +848,7 @@ void key_down_handler(SDL_Event* event)
                 
             case SDLK_u:
                 #if PRODUCTION
-                if (input_state.debug)
+                if (input_state.admin_controls)
                 #endif
                     toggle_mouse_bind();
                 break;
@@ -871,12 +868,12 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_SLASH:
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     toggle_hud();
                 break;
 
             case SDLK_LEFTBRACKET:
-                if (input_state.debug)
+                if (input_state.admin_controls)
                     ClientState::playerAgent_state.toggle_camera_mode();
                 break;
 
@@ -907,16 +904,24 @@ void key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_F10:
-            if (input_state.debug) t_map::toggle_3d_texture_settings();
+            if (input_state.admin_controls) t_map::toggle_3d_texture_settings();
+            break;
+
+        case SDLK_F2:
+            input_state.diagnostics = (!input_state.diagnostics);
+            break;
+
+        case SDLK_F3:
+            input_state.vbo_debug = (!input_state.vbo_debug);
             break;
 
         case SDLK_F12:
-            toggle_debug();
+            toggle_admin_controls();
             break;
 
         case SDLK_LALT:
         case SDLK_RALT:
-            if (input_state.debug)
+            if (input_state.admin_controls)
                 input_state.mouse_bound = false;
             break;
 

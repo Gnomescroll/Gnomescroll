@@ -25,15 +25,9 @@ options.camera_speed = 0.6
 options.invert_mouse = false
 
 -- hud setting --
-options.hud = true
 options.system_message_r = 255
 options.system_message_g = 255
 options.system_message_b = 50
-
-options.diagnostic_hud = false
-options.fps = true
-options.ping = true
-options.ping_update_interval = 250
 
 -- sound settings --
 options.sound = true
