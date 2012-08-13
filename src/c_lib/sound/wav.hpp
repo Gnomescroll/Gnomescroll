@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <common/compat_al.h>
 
 namespace Sound

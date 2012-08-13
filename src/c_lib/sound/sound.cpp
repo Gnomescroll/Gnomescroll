@@ -1,24 +1,42 @@
 #include "sound.hpp"
 
+#include <sound/packets.hpp>
+#include <sound/triggers.hpp>
+
+#if DC_CLIENT
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 #include <t_map/t_map.hpp>
-#include <sound/packets.hpp>
+#endif
 
 namespace Sound
 {
 
-const float GS_SOUND_DISTANCE_CUTOFF = 128.0f;
-struct Vec3 listener_position;
-
 void init()
 {
+    #if DC_CLIENT
     OpenALSound::init();
+    #endif
+    
     parse_sound_triggers("./media/sound/sounds.csv");
+    validate_sound_config();
 
     play_2d_sound_StoC::register_client_packet();
     play_3d_sound_StoC::register_client_packet();
 }
+
+void close()
+{
+    teardown_triggers();
+    #if DC_CLIENT
+    OpenALSound::close();
+    #endif
+}
+
+
+#if DC_CLIENT
+static const float GS_SOUND_DISTANCE_CUTOFF = 128.0f;
+static struct Vec3 listener_position;
 
 void update()
 {
@@ -48,7 +66,7 @@ void load_sound(Soundfile* snd)
 }
 
 // Public
-int play_2d_sound(char* fn)
+int play_2d_sound(const char* fn)
 {
     if (!Options::sound) return -1;
     return OpenALSound::play_2d_sound(fn);
@@ -63,13 +81,13 @@ int play_2d_sound(int soundfile_id)
 //Public
 
 // deprecated, use Vec3
-int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz)
+int play_3d_sound(const char* fn, float x, float y, float z, float vx, float vy, float vz)
 {
     if (!Options::sound) return -1;
     return play_3d_sound(fn, vec3_init(x,y,z), vec3_init(vx,vy,vz));
 }
 
-int play_3d_sound(char* file, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v)
 {
     if (!Options::sound) return -1;
 
@@ -102,11 +120,6 @@ void stop_sound(int sound_id)
     OpenALSound::stop_sound(sound_id);
 }
 
-void close()
-{
-    return OpenALSound::close();
-}
-
 /*
     UTILITIES
                 */
@@ -119,5 +132,51 @@ void enumerate_sound_devices()
 {
     OpenALSound::enumerate_devices();
 }
+
+#endif
+
+#if DC_SERVER
+void send_play_2d_sound(const char* name, int client_id)
+{
+    int sound_id = get_soundfile_id_for_name(name);
+    GS_ASSERT(sound_id >= 0);
+    if (sound_id < 0) return;
+    play_2d_sound_StoC msg;
+    msg.sound_id = sound_id;
+    msg.sendToClient(client_id);
+}
+
+void broadcast_play_2d_sound(const char* name)
+{
+    int sound_id = get_soundfile_id_for_name(name);
+    GS_ASSERT(sound_id >= 0);
+    if (sound_id < 0) return;
+    play_2d_sound_StoC msg;
+    msg.sound_id = sound_id;
+    msg.broadcast();
+}
+
+void send_play_3d_sound(const char* name, int client_id, struct Vec3 p)
+{
+    int sound_id = get_soundfile_id_for_name(name);
+    GS_ASSERT(sound_id >= 0);
+    if (sound_id < 0) return;
+    play_3d_sound_StoC msg;
+    msg.sound_id = sound_id;
+    msg.position = p;
+    msg.sendToClient(client_id);
+}
+
+void broadcast_play_3d_sound(const char* name, struct Vec3 p)
+{
+    int sound_id = get_soundfile_id_for_name(name);
+    GS_ASSERT(sound_id >= 0);
+    if (sound_id < 0) return;
+    play_3d_sound_StoC msg;
+    msg.sound_id = sound_id;
+    msg.position = p;
+    msg.broadcast();
+}
+#endif
 
 }   // Sound

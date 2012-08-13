@@ -3,6 +3,8 @@
 namespace Sound
 {
 
+#if DC_CLIENT
+
 #define SOUND_TRIGGER_HEADER(NAME)\
 void NAME();\
 void NAME(float x, float y, float z, float vx, float vy, float vz);
@@ -59,25 +61,39 @@ SOUND_TRIGGER_HEADER(hard_landing_4)
 // on/off loops
 SOUND_LOOP_TRIGGER_HEADER(mining_laser);
 
-struct Soundfile
+#endif
+
+class Soundfile
 {
-    char* fn;
-    char* file;
-    // properties
-    float pitch;
-    float gain;
-    float max_distance;
-    float reference_distance;
-    float minimum_gain;
-    float maximum_gain;
-    float rolloff_factor;
-    bool loop;
+    public:
+        unsigned int hash;  // hash of fn
+        char* fn;
+        char* file;
+        // properties
+        float pitch;
+        float gain;
+        float max_distance;
+        float reference_distance;
+        float minimum_gain;
+        float maximum_gain;
+        float rolloff_factor;
+        bool loop;
+
+    Soundfile()
+    : hash(0), fn(NULL), file(NULL)
+    {}
+
+    ~Soundfile()
+    {
+        free(this->fn);
+        free(this->file);
+    }
 };
 
 extern struct Soundfile* sound_file_functions;
 extern int n_sounds;
 
-bool set_soundfile(int snd_id, char* fn, char* file);
+bool set_soundfile(int snd_id, const char* fn, const char* file);
 void set_soundfile_properties(
     int snd_id,
     float pitch,
@@ -90,6 +106,10 @@ void set_soundfile_properties(
     bool loop
 );
 
+int get_soundfile_id_for_name(const char* name);
+
+void validate_sound_config();
+
 void teardown_triggers();
 
-}
+}   // Sound

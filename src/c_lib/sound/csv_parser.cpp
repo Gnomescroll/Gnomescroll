@@ -37,7 +37,7 @@ const bool GS_DEFAULT_LOOP = false;
 void parse_sound_triggers(const char *fn)
 {
     int size = 0;
-    char *buff = read_file_to_buffer((char*)fn, &size);
+    char *buff = read_file_to_buffer(fn, &size);
     if (buff == NULL)
     {
         printf("Error opening sound conf: %s\n", fn);
@@ -247,7 +247,8 @@ void parse_sound_triggers(const char *fn)
                     n_lines *= 2;
                     struct Soundfile* new_sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_lines);
                     GS_ASSERT(new_sound_file_functions != NULL);
-                    if (new_sound_file_functions != NULL) sound_file_functions = new_sound_file_functions;
+                    if (new_sound_file_functions != NULL)
+                        sound_file_functions = new_sound_file_functions;
                     else
                     {
                         n_lines /= 2;

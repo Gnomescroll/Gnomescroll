@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 namespace OpenALSound
 {
 
@@ -12,8 +16,8 @@ void set_volume(float vol);
 
 void load_sound(Soundfile* snd);
 
-int play_2d_sound(char* file);
-int play_3d_sound(char* file, struct Vec3 p, struct Vec3 v);
+int play_2d_sound(const char* file);
+int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v);
 
 int play_2d_sound(int soundfile_id);
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
@@ -27,4 +31,4 @@ int test();
 
 void enumerate_devices();
 
-}
+}   // OpenALSound

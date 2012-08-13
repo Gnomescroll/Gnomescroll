@@ -1,5 +1,9 @@
 #include "openal.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <sound/sound.hpp>
 #include <common/compat_al.h>
 #include <physics/vec3.hpp>
@@ -18,6 +22,7 @@ class GS_SoundBuffer
     public:
         int id;
         unsigned int hash;
+        char* fn;
         int buffer_id;
         bool loaded;
         Soundfile* metadata;
@@ -59,7 +64,7 @@ class GS_SoundBuffer
 
     GS_SoundBuffer():
         id(-1),
-        hash(0), buffer_id(-1), loaded(false), metadata(NULL),
+        hash(0), fn(NULL), buffer_id(-1), loaded(false), metadata(NULL),
         max_sources(MAX_SOURCES_PER_SAMPLE),
         current_sources(0)
         {
@@ -70,6 +75,7 @@ class GS_SoundBuffer
     ~GS_SoundBuffer()
     {
         free(this->sources);
+        free(this->fn);
     }
 };
 
@@ -317,24 +323,6 @@ void close()
     if (inited) printf("OpenAL sound closed.\n");
 }
 
-static unsigned int hash(char* s)
-{
-    unsigned int highorder;
-    unsigned int h = 0;
-    int i;
-    for (i=0; s[i] != '\0'; i++) {
-         highorder = h & 0xf8000000;    // extract high-order 5 bits from h
-                                        // 0xf8000000 is the hexadecimal representation
-                                        //   for the 32-bit number with the first five 
-                                        //   bits = 1 and the other bits = 0   
-         h = h << 5;                    // shift h left by 5 bits
-         h = h ^ (highorder >> 27);     // move the highorder 5 bits to the low-order
-                                        //   end and XOR into h
-         h = h ^ (unsigned int)s[i];                  // XOR h and ki
-    }
-    return h;
-}
-
 void load_sound(Soundfile* snd)
 {
     if (!enabled)
@@ -350,7 +338,9 @@ void load_sound(Soundfile* snd)
         {   // already loaded this sound file
             GS_SoundBuffer* new_s = new GS_SoundBuffer;
             new_s->id = soundfile_index;
-            new_s->hash = hash(snd->fn);
+            new_s->hash = snd->hash;
+            new_s->fn = (char*)malloc((strlen(snd->fn)+1)*sizeof(char));
+            strcpy(new_s->fn, snd->fn);
             new_s->buffer_id = s->buffer_id;
             new_s->loaded = true;
             new_s->metadata = snd;
@@ -403,7 +393,9 @@ void load_sound(Soundfile* snd)
     // put in lookup table for playback
     s = new GS_SoundBuffer;
     s->id = soundfile_index;
-    s->hash = hash(snd->fn);
+    s->hash = snd->hash;
+    s->fn = (char*)malloc((strlen(snd->fn)+1) * sizeof(char));
+    strcpy(s->fn, snd->fn);
     s->buffer_id = buffer_index;
     s->loaded = true;
     s->metadata = snd;
@@ -424,9 +416,9 @@ int get_free_source()
     return -1;
 }
 
-GS_SoundBuffer* get_sound_buffer_from_function_name(char *fn)
+GS_SoundBuffer* get_sound_buffer_from_function_name(const char* fn)
 {
-    unsigned int h = hash(fn);
+    unsigned int h = strhash(fn);
     for (int i=0; i<MAX_SOUNDS; i++)
     {
         if (sound_buffers[i] == NULL) continue;
@@ -560,12 +552,12 @@ int play_2d_sound(class GS_SoundBuffer* sound_buffer)
     return source_id;
 }
 
-int play_2d_sound(char* fn)
+int play_2d_sound(const char* fn)
 {
     if (!enabled) return -1;
     
     // lookup buffer from file
-    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+    class GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
 
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
@@ -600,7 +592,7 @@ int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3
     return source_id;
 }
 
-int play_3d_sound(char* fn, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v)
 {
     if (!enabled) return -1;
 
@@ -823,4 +815,4 @@ void enumerate_devices()
 
 }
 
-}
+}   // OpenALSound

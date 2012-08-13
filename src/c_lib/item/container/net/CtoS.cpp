@@ -39,6 +39,7 @@ inline void admin_create_container_block_CtoS::handle() {}
 #include <item/container/_interface.hpp>
 #include <item/container/server.hpp>
 #include <item/container/config/crusher_dat.hpp>
+#include <sound/sound.hpp>
 
 namespace ItemContainer
 {
@@ -466,7 +467,10 @@ inline void crusher_crush_item_CtoS::handle()
         GS_ASSERT(stack_size >= 1);
         if (stack_size < 1) return;
         g->explode(stack_size);
-        // TODO -- sound and animation packet. need to short circuit here, because client plays grenade client side
+
+        Sound::broadcast_play_3d_sound("grenade_explode", a->client_id, p);
+        // TODO -- play animation packet
+        
         Particle::grenade_list->destroy(g->id);
         Item::destroy_item(item_id);
         return;

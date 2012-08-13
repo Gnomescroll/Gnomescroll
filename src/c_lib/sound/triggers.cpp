@@ -6,20 +6,21 @@
 namespace Sound
 {
 
+#if DC_CLIENT
 #define SOUND_TRIGGER(NAME)\
 void NAME()\
 {\
-    play_2d_sound((char*)#NAME);\
+    play_2d_sound(#NAME);\
 }\
 void NAME(float x, float y, float z, float vx, float vy, float vz)\
 {\
-    play_3d_sound((char*)#NAME, x,y,z,vx,vy,vz);\
+    play_3d_sound(#NAME, x,y,z,vx,vy,vz);\
 }
 
 #define SOUND_LOOP_TRIGGER(NAME)\
 int NAME(bool start, int source_id)\
 {\
-    if (start) return play_2d_sound((char*)#NAME);\
+    if (start) return play_2d_sound(#NAME);\
     else\
     {\
         stop_sound(source_id);\
@@ -28,7 +29,7 @@ int NAME(bool start, int source_id)\
 }\
 int NAME(bool start, int source_id, float x, float y, float z, float vx, float vy, float vz)\
 {\
-    if (start) return play_3d_sound((char*)#NAME, x,y,z,vx,vy,vz);\
+    if (start) return play_3d_sound(#NAME, x,y,z,vx,vy,vz);\
     else\
     {\
         stop_sound(source_id);\
@@ -86,12 +87,14 @@ SOUND_TRIGGER(hard_landing_4)
 // on/off loops
 SOUND_LOOP_TRIGGER(mining_laser);
 
+#endif
+
 /* function -> filename mapping */
 
 struct Soundfile* sound_file_functions = NULL;  // allocated by csv_parser
 int n_sounds = 0;
 
-static bool function_registered(char *fn)
+static bool function_registered(const char *fn)
 {
     if (sound_file_functions == NULL)
         return NULL;
@@ -101,7 +104,7 @@ static bool function_registered(char *fn)
     return false;
 }
 
-bool set_soundfile(int snd_id, char* fn, char* file)
+bool set_soundfile(int snd_id, const char* fn, const char* file)
 {
     // check if function mapped already
     if (function_registered(fn))
@@ -112,12 +115,13 @@ bool set_soundfile(int snd_id, char* fn, char* file)
     struct Soundfile* snd = &sound_file_functions[snd_id];
     snd->fn = (char*)malloc(sizeof(char) * (fn_len + 1));
     strcpy(snd->fn, fn);
+    snd->hash = strhash(fn);
     snd->file = (char*)malloc(sizeof(char) * (file_len + 1));
     strcpy(snd->file, file);
 
+    #if DC_CLIENT
     load_sound(snd);
-
-    //printf("Set sound trigger: %s -> %s\n", fn, file);
+    #endif
 
     return true;
 }
@@ -131,8 +135,7 @@ void set_soundfile_properties(
     float minimum_gain,
     float maximum_gain,
     float rolloff_factor,
-    bool loop
-)
+    bool loop)
 {
     if (snd_id < 0 || snd_id >= n_sounds)
     {
@@ -148,8 +151,34 @@ void set_soundfile_properties(
     s->maximum_gain = maximum_gain;
     s->rolloff_factor = rolloff_factor;
     s->loop = loop;
-    //printf("set properties: ");
-    //printf("%0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f\n", pitch, gain, max_distance, reference_distance, minimum_gain, maximum_gain);
+}
+
+void validate_sound_config()
+{
+    GS_ASSERT(sound_file_functions != NULL);
+    if (sound_file_functions == NULL) return;
+    for (int i=0; i<n_sounds; i++)
+    {
+        unsigned int hash = sound_file_functions[i].hash;
+        char* fn = sound_file_functions[i].fn;
+        for (int j=0; j<n_sounds; j++)
+        {
+            if (i==j) continue;
+            GS_ASSERT(hash != sound_file_functions[j].hash || strcmp(fn, sound_file_functions[j].fn) == 0);
+        }
+    }
+}
+
+int get_soundfile_id_for_name(const char* name)
+{
+    GS_ASSERT(sound_file_functions != NULL);
+    if (sound_file_functions == NULL) return -1;
+
+    unsigned int hash = strhash(name); 
+    for (int i=0; i<n_sounds; i++)
+        if (hash == sound_file_functions[i].hash)
+            return i;
+    return -1;
 }
 
 void teardown_triggers()
@@ -165,4 +194,4 @@ void teardown_triggers()
     free(sound_file_functions);
 }
 
-}
+}   // Sound

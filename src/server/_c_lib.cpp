@@ -129,6 +129,8 @@ dont_include_this_file_in_client
 #include <state/packet_init.cpp>
 #include <state/server_state.cpp>
 
+#include <sound/_include.hpp>
+
 //#include <main.cpp>
   
 //page size
@@ -226,6 +228,8 @@ int init_c_lib(int argc, char* argv[])
     NetServer::init_globals();
     init_network();
 
+    Sound::init();
+    
     t_map::init_t_map();
 
     Item::init();
@@ -291,6 +295,8 @@ void close_c_lib()
     NetServer::teardown_globals();
 
     teardown_network();
+
+    Sound::close();
 
     printf("Server closed\n"); 
     Log::teardown();

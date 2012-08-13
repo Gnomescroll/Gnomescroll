@@ -1,7 +1,6 @@
 #pragma once
 
 #include <common/defines.h>
-#include <sound/triggers.hpp>
 
 namespace Sound
 {
@@ -9,13 +8,14 @@ namespace Sound
 void init();
 void close();
 
+#if DC_CLIENT
 void set_volume(float vol);
 
-void load_sound(Soundfile* snd);
+void load_sound(class Soundfile* snd);
 
-int play_2d_sound(char* file);
-int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz);
-int play_3d_sound(char* file, struct Vec3 p, struct Vec3 v);
+int play_2d_sound(const char* file);
+int play_3d_sound(const char* file, float x, float y, float z, float vx, float vy, float vz);
+int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v);
 
 int play_2d_sound(int soundfile_id);
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
@@ -28,5 +28,13 @@ void update();
 int test();
 
 void enumerate_sound_devices();
+#endif
+
+#if DC_SERVER
+void send_play_2d_sound(const char* name, int client_id);
+void broadcast_play_2d_sound(const char* name);
+void send_play_3d_sound(const char* name, int client_id, struct Vec3 p);
+void broadcast_play_3d_sound(const char* name, struct Vec3 p);
+#endif
 
 }   // Sound

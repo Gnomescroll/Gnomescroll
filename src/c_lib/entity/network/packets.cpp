@@ -3,6 +3,7 @@
 #if DC_CLIENT
 
 #include <sound/sound.hpp>
+#include <sound/triggers.hpp>
 #include <animations/_interface.hpp>
 #include <animations/animations.hpp>
 
