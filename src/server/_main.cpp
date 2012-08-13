@@ -28,6 +28,7 @@ void default_map_gen()
     map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));
     //Dragon::caves();
     //Dragon::flat_veins();
+    t_map::environment_process_startup();
 }
 
 

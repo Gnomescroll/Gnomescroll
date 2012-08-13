@@ -618,32 +618,73 @@ void draw_vbo_debug(int x, int y)
 
     glEnd();
 
-    const float yoff1 = 32*(psize+sep) + 16;
+    const float yoff_1 = -32*(psize+sep) - 16;
 
+    glBegin(GL_POINTS);
     for(int i=0; i<MAP_CHUNK_XDIM; i++)
     for(int j=0; j<MAP_CHUNK_YDIM; j++)
     {
-
-
-        class Map_vbo* col = vbo_map->vbo_array[j*MAP_CHUNK_XDIM + i ];
+        int index = 32*j +i;
+        class Map_vbo* col = vbo_map->vbo_array[index];
 
         glColor3ub(0, 255, 0); // everything find/loaded
 
-        if(col == NULL)
+        if(main_map->chunk[index] == NULL)
         {
             glColor3ub(255, 0, 0);
         }
-        else if(col->vnum == 0) 
+        else 
         {
-            glColor3ub(0,0,255);
+            if(col == NULL)
+            {
+                glColor3ub(127, 0, 0);
+            }
+            else if(col->vnum == 0)
+            {
+                glColor3ub(0,255,255);
+            }
         }
         if(i==cx && j == cy) 
             glColor3ub(255, 255, 0);
 
-
-        glVertex3f(x+(psize+sep)*i+off, yoff1+y+(psize+sep)*j+off, -0.1);
-
+        glVertex3f(x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1);
     }
+    glEnd();
+
+
+    const float xoff_1 = 32*(psize+sep) + 16;
+
+    glBegin(GL_POINTS);
+    for(int i=0; i<MAP_CHUNK_XDIM; i++)
+    for(int j=0; j<MAP_CHUNK_YDIM; j++)
+    {
+        int index = 32*j +i;
+        //class Map_vbo* col = vbo_map->vbo_array[index];
+
+        glColor3ub(0, 255, 0); // everything find/loaded
+
+        if(main_map->chunk[index] == NULL)
+        {
+            glColor3ub(255, 0, 0);
+        }
+        else 
+        {
+            if(main_map->chunk[index]->needs_update == true)
+            {
+                glColor3ub(0, 0, 255);
+            }
+            else
+            {
+                glColor3ub(0, 255, 255);
+            }
+        }
+        if(i==cx && j == cy) 
+            glColor3ub(255, 255, 0);
+
+        glVertex3f(xoff_1+x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1);
+    }
+    glEnd();
+
 
     glPointSize(1.0);
 }

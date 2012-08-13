@@ -89,6 +89,52 @@ void environment_process_tick()
         }
     }
 }
+
+//run at startup
+__attribute__((optimize("-O3")))
+void environment_process_startup()
+{
+    int regolith_id = dat_get_cube_id("regolith");
+    int s_time = _GET_MS_TIME();
+
+    for(int z=0; z<128; z++)
+    for(int x=0; x<512; x++)
+    for(int y=0; y<512; y++)
+    {
+        struct MAP_ELEMENT e1 = get_element(x,y,z);
+
+        if(e1.block == regolith_id)
+        {
+            //flip pallete if there is empty space above regolith
+            if(e1.palette == 0)
+            {
+                struct MAP_ELEMENT e2 = get_element(x,y,z+1);
+                
+                if(isOccludes(e2.block) == 0)
+                {
+                    broadcast_set_block_palette(x,y,z, e1.block, 1); //setting regolith
+                }
+            }
+            //flip pallete if there is no space above regolith
+            else if(e1.palette == 1)
+            {
+                struct MAP_ELEMENT e2 = get_element(x,y,z+1);
+                
+                if(isOccludes(e2.block) == 1)
+                {
+                    broadcast_set_block_palette(x,y,z, e1.block, 0); //setting regolith
+                }
+            }
+
+        }
+    }
+
+
+
+    printf("t_map::environment_process_startup took %i ms\n", _GET_MS_TIME()-s_time);
+
+}
+
 #endif
 
 

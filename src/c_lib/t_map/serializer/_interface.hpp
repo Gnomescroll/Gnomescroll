@@ -379,7 +379,6 @@ class BlockSerializer
 
             memcpy((char*) _s, buffer+index, sizeof(struct SerializedChunk) );
             index += sizeof(struct SerializedChunk);
-
             GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
             memcpy(&mp->e, (void*) &_s->data, 128*16*16*sizeof(struct MAP_ELEMENT));
         }
