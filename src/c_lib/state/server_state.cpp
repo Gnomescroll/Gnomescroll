@@ -109,21 +109,20 @@ namespace ServerState
         float x, float y, float z, float radius,
         int damage, int owner,
         ObjectType inflictor_type, int inflictor_id,
-        bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
-   )
+        bool suicidal)   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     {   // agents
         agent_list->objects_within_sphere(x,y,z,radius);
         Agent_state* a;
         const float blast_mean = 0;
-        const float blast_stddev = 0.5f;
+        const float blast_stddev = 1.0f;
         for (int i=0; i<agent_list->n_filtered; i++)
         {
             a = agent_list->filtered_objects[i];
             if (a == NULL) continue;
             if (!suicidal && a->id == owner) continue;
             if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
-            damage *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
-            a->status.apply_damage(damage, owner, inflictor_type);
+            int dmg = ((float)damage)*gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
+            a->status.apply_damage((int)dmg, owner, inflictor_type);
         }
 
         Vec3 position = vec3_init(x,y,z);

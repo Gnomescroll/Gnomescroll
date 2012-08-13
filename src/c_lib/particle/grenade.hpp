@@ -13,7 +13,7 @@ namespace Particle
 /* These should be pulled from a dat or something */
 const int GRENADE_MAX = 1024;
 const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;
-const float GRENADE_DAMAGE_RADIUS = 4.5f;
+const float GRENADE_DAMAGE_RADIUS = 5.0f;
 const int GRENADE_SPLASH_DAMAGE = 100;
 const int GRENADE_BLOCK_DAMAGE = 8;
 const int GRENADE_SPAWNER_DAMAGE() { return randrange(20,40); }
