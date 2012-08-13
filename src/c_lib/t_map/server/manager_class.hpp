@@ -17,11 +17,11 @@ char* COMPRESSION_BUFFER = NULL;
 const int COMPRESSION_BUFFER_SIZE = 1024*512;
 extern char* COMPRESSION_BUFFER;
 
-const int DEFAULT_SUB_RADIUS = 128 + 8;
-const int DEFAULT_UNSUB_RADIUS = 1024; //128 +32; //why so low?
+const int DEFAULT_SUB_RADIUS = 128 + 32;
+const int DEFAULT_UNSUB_RADIUS = 128 + 64; //128 +32; //why so low?
 const int DEFAULT_UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS*DEFAULT_UNSUB_RADIUS;
 
-const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;
+const int MAP_MANAGER_ALIAS_LIST_SIZE = 1024;
 
 const int MAP_CHUNK_QUE_SIZE = 512; //que for loading map chunks
 

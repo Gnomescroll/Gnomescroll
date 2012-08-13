@@ -108,7 +108,7 @@ class Vbo_map
     #define MAP_VBO_CULLING 1
     #define MAP_VBO_CULLING_RECYCLE 1   //delete and free vbos out of range
 
-    #define MAP_VBO_CULLING_MAP_CHUNK_NULL 1
+    #define MAP_VBO_CULLING_MAP_CHUNK_NULL 1 //delete vbo if map chunk is null
 
     //update all VBOs that need updating
 
@@ -138,7 +138,10 @@ class Vbo_map
             if( m == NULL ) 
             {
                 if(vbo_array[index] != NULL )
+                {
                     delete vbo_array[index];
+                    vbo_array[index] = NULL;
+                }
                 continue;
             }
         #else
