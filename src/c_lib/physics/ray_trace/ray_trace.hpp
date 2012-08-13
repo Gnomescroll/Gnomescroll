@@ -8,6 +8,12 @@ const int raycast_tick_max = 1024;
 //int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
 void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out);
 
+void ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval)
+{
+    struct Vec3 out;
+    _ray_cast4(p.x, p.y, p.z, f.x, f.y, f.z, interval, &out);
+}
+
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);
 //int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);
 int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile, struct Vec3* v_out);

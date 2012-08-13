@@ -96,6 +96,7 @@ class VerletComponent
         bool bounce_box_no_gravity();
         bool radial(float xy, float yr);
         bool collide_no_gravity();
+        void move_no_gravity();
 
     VerletComponent()
     : position(NULL_POSITION), velocity(NULL_MOMENTUM),

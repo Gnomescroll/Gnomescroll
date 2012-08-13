@@ -25,11 +25,17 @@ class Shrapnel
         float scale;
         int texture_index;
 
-        inline void init();
+        inline void reset();
         void prep();
         void tick();
 
-        void init(float x, float y, float z, float mx, float my, float mz);
+        void set_state(float x, float y, float z, float mx, float my, float mz)
+        {
+            this->verlet.position = vec3_init(x,y,z);
+            this->verlet.velocity = vec3_init(mx,my,mz);
+        }
+
+        Shrapnel() { this->reset(); }
 };
 
 const int SHRAPNEL_MAX = 4096;

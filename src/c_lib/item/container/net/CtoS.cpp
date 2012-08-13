@@ -41,6 +41,7 @@ inline void admin_create_container_block_CtoS::handle() {}
 #include <item/container/config/crusher_dat.hpp>
 #include <sound/sound.hpp>
 #include <animations/_interface.hpp>
+#include <agent/net_agent.hpp>
 
 namespace ItemContainer
 {

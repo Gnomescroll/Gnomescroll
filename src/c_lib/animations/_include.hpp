@@ -8,6 +8,7 @@
 #include <animations/weapon.cpp>
 #include <animations/voxel_particle.cpp>
 #include <animations/block_damage.cpp>
+#include <animations/emitter.cpp>
 #endif
 
 #include <animations/_interface.cpp>

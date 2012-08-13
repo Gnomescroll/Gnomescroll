@@ -44,7 +44,7 @@ class ColoredMinivox: public ParticleMotion
         void draw();
         void tick();
 
-        inline void init();
+        inline void reset();
         ColoredMinivox();
 };
 

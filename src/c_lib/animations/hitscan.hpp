@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <common/template/object_list.hpp>
 
 namespace Animations
@@ -34,7 +38,7 @@ class HitscanEffect
         this->vx = vx; this->vy = vy; this->vz = vz;
     }
 
-    void init();
+    void reset();
 };
 
 class HitscanEffect_list: public Simple_object_list<HitscanEffect>

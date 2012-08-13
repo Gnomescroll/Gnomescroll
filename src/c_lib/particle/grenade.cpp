@@ -74,7 +74,7 @@ inline void grenade_StoC::handle()
     #endif
 }
 
-void Grenade::init()
+void Grenade::reset()
 {
     this->ttl_max = GRENADE_TTL;
     this->type = GRENADE_TYPE;
@@ -90,14 +90,14 @@ BillboardSprite(),
 bounce_count(0),
 owner(-1)
 {
-    this->init();
+    this->reset();
 }
 
 Grenade::~Grenade()
 {
     #if DC_CLIENT
     Vec3 position = this->get_position();
-    Sound::grenade_explode(
+    Sound::plasma_grenade_explode(
         position.x, position.y, position.z,
         0,0,0
     );
@@ -145,41 +145,6 @@ void Grenade::tick()
     this->ttl++;
 }
 
-// vectors in a cube
-//const Vec3 gvset[26] =
-//{
-    //{{  0.57735, 0.57735, 0.57735 }},
-    //{{  0.57735, 0.57735,-0.57735 }},
-    //{{  0.57735,-0.57735, 0.57735 }},
-    //{{ -0.57735, 0.57735, 0.57735 }},
-    //{{  0.57735,-0.57735,-0.57735 }},
-    //{{ -0.57735, 0.57735,-0.57735 }},
-    //{{ -0.57735,-0.57735, 0.57735 }},
-    //{{ -0.57735,-0.57735,-0.57735 }},   //8
-
-    //{{ 0,0,1 }},
-    //{{ 0,1,0 }},
-    //{{ 1,0,0 }},
-    //{{ 0,0,-1 }},
-    //{{ 0,-1,0 }},
-    //{{ -1,0,0 }}, // 6
-
-    //{{ 0,0.70711,0.70711 }},
-    //{{ 0,-0.70711,0.70711 }},
-    //{{ 0,0.70711,-0.70711 }},
-    //{{ 0,-0.70711,-0.70711 }},    // 4
-    
-    //{{ 0.70711,0,0.70711 }},
-    //{{ -0.70711,0,0.70711 }},
-    //{{ 0.70711,0,-0.70711 }},
-    //{{ -0.70711,0,-0.70711 }},    // 4
-
-    //{{ 0.70711,0.70711,0 }},
-    //{{ -0.70711,0.70711,0 }},
-    //{{ 0.70711,-0.70711,0 }},
-    //{{ -0.70711,-0.70711,0 }},    // 4
-//};
-
 void Grenade::explode()
 {
     this->explode(1);
@@ -196,7 +161,6 @@ void Grenade::explode(int multiplier)
 
     #if DC_SERVER
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
-
     // leave this for other objects, but agents are damaged by shrapnel now
 
     ServerState::damage_objects_within_sphere(
@@ -205,24 +169,6 @@ void Grenade::explode(int multiplier)
         GRENADE_SPLASH_DAMAGE*multiplier, this->owner, OBJECT_GRENADE, this->id
     );
 
-    // create a bunch of grenade shrapnel particles
-    // copied/modified from Animations::grenade_explode
-
-    //const float vel = 15.0f;
-
-    //Grenade_shrapnel* g;
-    //Vec3 cv;
-    //for (int i=0; i<26; i++)
-    //{
-        //cv = vec3_scalar_mult(gvset[i], vel);
-        //g = ServerState::grenade_shrapnel_list->create(
-            //position.x, position.y, position.z,
-            //cv.x, cv.y, cv.z
-        //);
-        //if (g == NULL) break;
-        //g->owner = this->owner;
-    //}
-    
     // apply block damage
     damage_blocks(multiplier);
     #endif

@@ -1,5 +1,9 @@
 #include "weapon.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <common/compat_gl.h>
 #include <item/_interface.hpp>
 #include <item/particle/_interface.hpp>

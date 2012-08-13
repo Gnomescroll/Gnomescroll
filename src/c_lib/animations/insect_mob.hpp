@@ -1,7 +1,10 @@
 #pragma once
 
-#include <physics/vec3.hpp>
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
+#include <physics/vec3.hpp>
 #include <animations/common.hpp>
 
 namespace Animations 

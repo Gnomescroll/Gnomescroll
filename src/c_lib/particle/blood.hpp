@@ -14,7 +14,7 @@ const float BLOOD_TEXTURE_SCALE = 0.1f;
 class Blood: public ParticleMotion, public BillboardSprite
 {
     public:
-        inline void init();
+        inline void reset();
         void tick();
         Blood();
 };

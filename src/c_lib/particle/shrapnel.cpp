@@ -50,17 +50,12 @@ void teardown_shrapnel()
 
 /* Shrapnel */
 
-inline void Shrapnel::init(float x, float y, float z, float mx, float my, float mz)
+inline void Shrapnel::reset()
 {
-    verlet.dampening = SHRAPNEL_DAMP;
-
-    verlet.position = vec3_init(x,y,z);
-    verlet.velocity = vec3_init(mx,my,mz);
-
     this->ttl = SHRAPNEL_TTL;
     this->scale = SHRAPNEL_TEXTURE_SCALE;
     this->texture_index = SHRAPNEL_TEXTURE_ID;
-
+    this->verlet.dampening = SHRAPNEL_DAMP;
 }
 
 void Shrapnel::tick()

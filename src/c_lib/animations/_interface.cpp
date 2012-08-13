@@ -82,14 +82,13 @@ void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float s
 {
     MiningLaser* effect = mining_laser_effect_list->create();
     if (effect == NULL) return;
-    effect->init(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, speed, length);
+    effect->set_state(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, speed, length);
 }
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)
 {
     HitscanEffect* he = hitscan_effect_list->create();
     if (he == NULL) return;
-    he->init();
     x = translate_point(x);
     y = translate_point(y);
     he->set_state(x,y,z,vx,vy,vz);

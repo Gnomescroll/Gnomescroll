@@ -5,6 +5,7 @@
 #include <state/client_state.hpp>
 #include <animations/weapon.hpp>
 #include <item/properties.hpp>
+#include <animations/emitter.hpp>
 #endif
 #if DC_SERVER
 #include <state/server_state.hpp>
@@ -141,6 +142,13 @@ void Agent_list::check_missing_names()
         if (this->a[i] == NULL) continue;
         this->a[i]->status.check_missing_name();
     }
+}
+
+void Agent_list::update_mining_lasers()
+{
+    for (int i=0; i<this->n_max; i++)
+        if (this->a[i] != NULL && i != ClientState::playerAgent_state.agent_id)
+            this->a[i]->event.update_mining_laser();
 }
 #endif
 

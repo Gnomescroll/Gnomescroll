@@ -13,15 +13,7 @@
 
 #include <common/compat_gl.h>
 #include <SDL/texture_loader.hpp>
-//#include <camera/camera.hpp>
-
-//#include <SDL/draw_functions.hpp>
 #endif 
-
-#if DC_SERVER
-#include <particle/grenade_shrapnel.hpp>
-#endif
-
 
 namespace Particle
 {
@@ -35,10 +27,6 @@ class ColoredMinivox_list* colored_minivox_list = NULL;
 class TexturedMinivox_list* textured_minivox_list = NULL;
 class BillboardText_list* billboard_text_list = NULL;
 class BillboardTextHud_list* billboard_text_hud_list = NULL;
-#endif
-
-#if DC_SERVER
-class Grenade_shrapnel_list* grenade_shrapnel_list = NULL;
 #endif
 
 void init_particles()
@@ -56,12 +44,6 @@ void init_particles()
 
     Particle::init_shrapnel();
     #endif
-
-    #if DC_SERVER
-    grenade_shrapnel_list = new Grenade_shrapnel_list;
-    #endif
-
-
 }
 
 void teardown_particles()
@@ -77,10 +59,6 @@ void teardown_particles()
     if (billboard_text_hud_list != NULL) delete billboard_text_hud_list;
 
     Particle::teardown_shrapnel();
-    #endif
-
-    #if DC_SERVER
-    if (grenade_shrapnel_list != NULL) delete grenade_shrapnel_list;
     #endif
 }
 
@@ -139,7 +117,7 @@ Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float v
 {
     Shrapnel* s = shrapnel_list->create();
     if(s == NULL) return NULL;
-    s->init(x,y,z, vx,vy,vz);
+    s->set_state(x,y,z, vx,vy,vz);
     return s;
 }
 #endif

@@ -16,7 +16,6 @@ namespace ServerState
     Agent_list* agent_list = NULL;
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
-    //Grenade_shrapnel_list* grenade_shrapnel_list;
 
 /*
     Map update function called from here
@@ -28,12 +27,10 @@ namespace ServerState
     {
         voxel_hitscan_list = new Voxel_hitscan_list;
         agent_list = new Agent_list;
-        //grenade_shrapnel_list = new Grenade_shrapnel_list;
     }
 
     void teardown_lists()
     {
-        //delete grenade_shrapnel_list;;
         delete agent_list;
         delete voxel_hitscan_list; // must go last
     }

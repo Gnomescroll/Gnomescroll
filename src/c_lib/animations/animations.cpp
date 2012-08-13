@@ -58,7 +58,6 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         tex_id = t_map::get_cube_side_texture(cube_id, side);
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->init();
         ttl = randrange(60,95);
         minivox->set_ttl(ttl);
         minivox->set_texture(tex_id);
@@ -170,7 +169,6 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->init();
         minivox->set_texture(tex_id);
         ttl = randrange(75,85);
         minivox->set_ttl(ttl);
@@ -318,7 +316,6 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
 
         minivox = Particle::colored_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->init();
         minivox->set_color(color.r, color.g, color.b);//sky blue
         minivox->set_ttl(ttl);
         minivox->set_spin(dtheta, dphi);
@@ -368,7 +365,6 @@ void agent_bleed(float x, float y, float z)
 
         b = Particle::blood_list->create();
         if (b==NULL) return;
-        b->init();
         b->set_state(nx,ny,nz, vx,vy,vz);
         ttl = randrange(0,10) - 5;
         b->set_ttl(b->ttl + ttl);
@@ -410,7 +406,6 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
         speed *= base_speed;
         b = Particle::blood_list->create();
         if (b == NULL) return;
-        b->init();
         b->set_state(x,y,z, v.x*speed, v.y*speed, v.z*speed);
         ttl = randrange(0,10) - 5;
         b->set_ttl(b->ttl + ttl);

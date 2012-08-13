@@ -15,7 +15,6 @@ namespace ServerState
         
     // property lists
     extern Voxel_hitscan_list* voxel_hitscan_list;
-    //extern Grenade_shrapnel_list* grenade_shrapnel_list;
 
     void init();
     void init_lists();

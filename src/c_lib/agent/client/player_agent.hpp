@@ -83,12 +83,16 @@ class PlayerAgent_state
 
         float camera_z();
         float camera_height();
-        Vec3 camera_position();
+        struct Vec3 camera_position();
 
-        Vec3 get_weapon_fire_animation_origin()
+        struct Vec3 get_weapon_fire_animation_origin()
         {
-            Vec3 origin = this->camera_position();
-            origin.z -= 0.4f;
+            struct Vec3 origin;
+            if (agent_camera != NULL)
+                origin = agent_camera->get_position();
+            else
+                origin = this->camera_position();
+            origin.z -= 0.40f;
             return origin;
         }
 

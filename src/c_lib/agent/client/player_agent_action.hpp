@@ -4,8 +4,6 @@
 dont_include_this_file_in_server
 #endif
 
-#include <item/_interface.hpp>
-
 /*
  * All client agent input triggers should be implemented here
  */
@@ -33,6 +31,7 @@ class PlayerAgent_action
         void tick_mining_laser();
         void begin_mining_laser();
         void end_mining_laser();
+        void update_mining_laser();
         
         void fire_close_range_weapon(int weapon_type);
 

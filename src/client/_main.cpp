@@ -305,6 +305,8 @@ int run()
         GL_ASSERT(GL_BLEND, true);
         Animations::draw_hitscan_effect();
         GL_ASSERT(GL_BLEND, true);
+        ClientState::agent_list->update_mining_lasers();
+        ClientState::playerAgent_state.action.update_mining_laser();
         Animations::draw_mining_laser_effect();
         GL_ASSERT(GL_BLEND, true);
 

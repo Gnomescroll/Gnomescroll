@@ -17,9 +17,6 @@ extern class  TexturedMinivox_list* textured_minivox_list;
 extern class  BillboardText_list* billboard_text_list;
 extern class  BillboardTextHud_list* billboard_text_hud_list;
 #endif
-#if DC_SERVER
-extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
-#endif
 
 void destroy(int particle_id);
 

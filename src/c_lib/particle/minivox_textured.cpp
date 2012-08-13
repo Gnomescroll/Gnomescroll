@@ -12,7 +12,7 @@
 namespace Particle
 {
 
-inline void TexturedMinivox::init()
+inline void TexturedMinivox::reset()
 {
     this->theta = 0.0f;
     this->phi = 0.0f;
@@ -30,7 +30,7 @@ TexturedMinivox::TexturedMinivox()
 ParticleMotion(-1, 0,0,0,0,0,0, MINIVOX_MASS*MINIVOX_SIZE),
 size(MINIVOX_SIZE), texture_pixel_width(2)
 {
-    this->init();
+    this->reset();
 }
 
 // recalculates orientation vectors from angular parameter

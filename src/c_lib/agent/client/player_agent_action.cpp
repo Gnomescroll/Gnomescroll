@@ -187,20 +187,62 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     );
 }
 
+void PlayerAgent_action::update_mining_laser()
+{
+    if (this->p->you == NULL) return;
+    if (!this->p->you->event.mining_laser_emitter.on) return;
+    if (agent_camera == NULL) return;
+    
+    static int weapon_type = Item::get_item_type("mining_laser");
+    GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
+    float range = Item::get_weapon_range(weapon_type);
+    GS_ASSERT(range > 0.0f);
+
+    //Vec3 direction = this->target_direction;
+
+    Vec3 origin = this->p->get_weapon_fire_animation_origin();
+
+    struct Vec3 focal_point = vec3_add(this->p->camera_position(), vec3_scalar_mult(agent_camera->forward_vector(), 50.0f));
+    struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
+    
+    //GS_ASSERT(vec3_length(this->target_direction) > 0.005f);
+    //if (agent_camera != NULL)
+        //direction = agent_camera->forward_vector();
+        //Animations::mining_laser_beam(origin, agent_camera->forward_vector(), range);
+    //else
+        //direction = this->target_direction;
+        //Animations::mining_laser_beam(origin, this->target_direction, range);
+
+    this->p->you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
+    this->p->you->event.mining_laser_emitter.set_base_length(range);
+    this->p->you->event.mining_laser_emitter.set_state(origin, direction);
+    this->p->you->event.mining_laser_emitter.tick();
+    this->p->you->event.mining_laser_emitter.prep_draw();
+}
+
 void PlayerAgent_action::tick_mining_laser()
 {
     if (this->p->you == NULL) return;
 
-    int weapon_type = Item::get_item_type("mining_laser");
-    float range = Item::get_weapon_range(weapon_type);
-    GS_ASSERT(range > 0.0f);
+    //int weapon_type = Item::get_item_type("mining_laser");
+    //float range = Item::get_weapon_range(weapon_type);
+    //GS_ASSERT(range > 0.0f);
 
-    Vec3 origin = this->p->get_weapon_fire_animation_origin();
-    GS_ASSERT(vec3_length(this->target_direction) > 0.005f);
-    if (agent_camera != NULL && vec3_length(this->target_direction) < 0.005f)
-        Animations::mining_laser_beam(origin, agent_camera->forward_vector(), range);
-    else
-        Animations::mining_laser_beam(origin, this->target_direction, range);
+    //Vec3 direction = this->target_direction;
+
+    //Vec3 origin = this->p->get_weapon_fire_animation_origin();
+    //GS_ASSERT(vec3_length(this->target_direction) > 0.005f);
+    //if (agent_camera != NULL && vec3_length(this->target_direction) < 0.005f)
+        //direction = agent_camera->forward_vector();
+        ////Animations::mining_laser_beam(origin, agent_camera->forward_vector(), range);
+    ////else
+        ////direction = this->target_direction;
+        ////Animations::mining_laser_beam(origin, this->target_direction, range);
+
+    //GS_ASSERT(this->p->you->event.mining_laser_emitter.on);
+    //this->p->you->event.mining_laser_emitter.set_base_length(range);
+    //this->p->you->event.mining_laser_emitter.set_state(origin, direction);
+    //this->p->you->event.mining_laser_emitter.tick();
 }
 
 void PlayerAgent_action::begin_mining_laser()
@@ -208,6 +250,8 @@ void PlayerAgent_action::begin_mining_laser()
     GS_ASSERT(this->mining_laser_sound_id < 0);
     if (this->mining_laser_sound_id >= 0) return;
     this->mining_laser_sound_id = Sound::mining_laser(true, 0);
+
+    this->p->you->event.mining_laser_emitter.turn_on();
 }
 
 void PlayerAgent_action::end_mining_laser()
@@ -215,6 +259,8 @@ void PlayerAgent_action::end_mining_laser()
     if (this->mining_laser_sound_id < 0) return;
     Sound::mining_laser(false, this->mining_laser_sound_id);
     this->mining_laser_sound_id = -1;
+
+    this->p->you->event.mining_laser_emitter.turn_off();
 }
 
 void PlayerAgent_action::fire_close_range_weapon(int weapon_type)

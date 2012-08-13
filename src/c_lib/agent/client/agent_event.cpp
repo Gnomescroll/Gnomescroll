@@ -16,6 +16,7 @@ dont_include_this_file_in_server
 
 #include <animations/_interface.hpp>
 #include <animations/animations.hpp>
+#include <animations/emitter.hpp>
 
 #include <item/properties.hpp>
 
@@ -106,7 +107,7 @@ void Agent_event::took_damage(int dmg)
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     GS_ASSERT(b != NULL);
     if (b==NULL) return;
-    b->init();
+    b->reset();
 
     Vec3 p = this->a->get_position();
     b->set_state(
@@ -147,7 +148,7 @@ void Agent_event::healed(int amount)
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     GS_ASSERT(b != NULL);
     if (b==NULL) return;
-    b->init();
+    b->reset();
 
     Vec3 p = this->a->get_position();
     b->set_state(
@@ -245,12 +246,25 @@ void Agent_event::reload_weapon(int type)
     // play reload animation/sound for the weapon
 }
 
-void Agent_event::tick_mining_laser()
+void Agent_event::update_mining_laser()
 {
-    int weapon_type = Item::get_item_type("mining_laser");
+    this->mining_laser_emitter.on = true;   // TODO TODO
+    if (!this->mining_laser_emitter.on) return;
+    static int weapon_type = Item::get_item_type("mining_laser");
+    GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
     float range = Item::get_weapon_range(weapon_type);
 
-    Animations::mining_laser_beam(this->a->arm_center(), this->a->forward_vector(), range);
+    this->mining_laser_emitter.set_base_length(range);
+    this->mining_laser_emitter.set_state(this->a->arm_center(), this->a->forward_vector());
+    this->mining_laser_emitter.tick();
+    this->mining_laser_emitter.prep_draw();
+}
+
+void Agent_event::tick_mining_laser()
+{
+    // TODO -- need on/off switch instead. tick runs in physics loop, we need to run in draw loop
+
+    //Animations::mining_laser_beam(this->a->arm_center(), this->a->forward_vector(), range);
 }
 
 void Agent_event::fired_mining_laser()
@@ -418,7 +432,7 @@ vox_status(AGENT_VOX_IS_STANDING),
 model_was_changed(true),
 color_changed(false)
 {
-    this->bb.init();
+    this->bb.reset();
     this->bb.permanent = true;
     if (this->a->status.name != NULL)
         this->bb.set_text(this->a->status.name);

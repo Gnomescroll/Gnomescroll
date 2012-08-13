@@ -416,7 +416,6 @@ inline void object_took_damage_StoC::handle()
     // create billboard text at position
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     if (b == NULL) return;
-    b->init();
     b->set_state(
         position.x + (radius * (2*randf() - 1)),
         position.y + (radius * (2*randf() - 1)),

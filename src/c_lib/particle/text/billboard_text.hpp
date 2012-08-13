@@ -33,7 +33,7 @@ class BillboardText: public TextParticle
         void draw();
         void tick();
 
-        inline void init();
+        inline void reset();
 
         BillboardText();
 };

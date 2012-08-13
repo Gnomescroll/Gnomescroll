@@ -27,7 +27,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
 {
     private:
         int bounce_count;
-        void init();
+        void reset();
     public:
         int owner;  // agent_id
         int ttl_max;

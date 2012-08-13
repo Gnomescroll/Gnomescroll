@@ -12,7 +12,7 @@
 namespace Particle
 {
 
-inline void ColoredMinivox::init()
+inline void ColoredMinivox::reset()
 {
     this->theta = 0.0f;
     this->phi = 0.0f;
@@ -31,7 +31,7 @@ ParticleMotion(-1, 0,0,0,0,0,0, MINIVOX_MASS*MINIVOX_SIZE),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
 size(MINIVOX_SIZE)
 {
-    this->init();
+    this->reset();
 }
 
 // recalculates orientation vectors from angular parameter

@@ -14,7 +14,7 @@
 namespace Particle
 {
 
-inline void BillboardText::init()
+inline void BillboardText::reset()
 {
     this->bounce_count = 0;
     this->color = color_init(100, 100, 100, 255);
@@ -31,7 +31,7 @@ inline void BillboardText::init()
 
 BillboardText::BillboardText()
 {
-    this->init();
+    this->reset();
 }
 
 void BillboardText::tick()

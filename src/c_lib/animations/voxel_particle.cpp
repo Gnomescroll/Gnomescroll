@@ -1,5 +1,9 @@
 #include "voxel_particle.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <animations/common.hpp>
 #include <item/particle/item_particle.hpp>
 #include <voxel/common_data.h>

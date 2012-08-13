@@ -7,7 +7,7 @@ namespace Particle
 
 const float BLOOD_MASS = 0.1f;
 
-inline void Blood::init()
+inline void Blood::reset()
 {
     this->ttl = BLOOD_TTL;
     this->type = BLOOD_TYPE;
@@ -21,7 +21,7 @@ Blood::Blood()
 ParticleMotion(-1, 0,0,0,0,0,0, BLOOD_MASS),
 BillboardSprite()
 {
-    this->init();
+    this->reset();
 }
 
 void Blood::tick()

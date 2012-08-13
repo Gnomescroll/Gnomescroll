@@ -25,7 +25,7 @@ inline void BillboardTextHud::init_properties()
     this->scale = BILLBOARD_TEXT_HUD_TEXTURE_SCALE;
 }
 
-inline void BillboardTextHud::init()
+inline void BillboardTextHud::reset()
 {
     this->init_properties();
 }

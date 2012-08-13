@@ -5,6 +5,7 @@ dont_include_this_file_in_server
 #endif
 
 #include <particle/text/billboard_text_hud.hpp>
+#include <animations/emitter.hpp>
 
 class Agent_state;
 
@@ -25,6 +26,8 @@ class Agent_event
 
         bool color_changed;
 
+        class Animations::MiningLaserEmitter mining_laser_emitter;
+
         class Particle::BillboardTextHud bb;
         void update_hud_name();
         
@@ -44,6 +47,10 @@ class Agent_event
 
         // new style weapon trigger events
         // only triggers agent specific animations/sounds
+
+        // TODO -- on/off
+
+        void update_mining_laser();
         void tick_mining_laser();   // continuous, while "on"
         void fired_mining_laser();  // when fire rate tick triggers
 

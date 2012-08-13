@@ -35,7 +35,7 @@ class BillboardTextHud: public TextParticle
         void draw();
         void tick();
 
-        inline void init();
+        inline void reset();
 
         BillboardTextHud();
 };

@@ -47,6 +47,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void check_missing_names();
         void draw_names();
         void draw_equipped_items();
+        void update_mining_lasers();
         #endif
 
         Agent_list();

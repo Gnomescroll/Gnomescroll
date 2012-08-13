@@ -1,5 +1,9 @@
 #include "hitscan.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <state/client_state.hpp>
 #include <stdlib.h>
 
@@ -27,7 +31,7 @@ void teardown_hitscan()
 
 }
 
-inline void HitscanEffect::init()
+inline void HitscanEffect::reset()
 {
     this->ttl = HITSCAN_TTL;
 }

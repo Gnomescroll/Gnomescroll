@@ -1,13 +1,15 @@
 #pragma once
 
-#ifdef DC_CLIENT
-#include <common/gl_assert.hpp>
+#if DC_SERVER
+dont_include_this_file_in_server
 #endif
 
+#include <common/gl_assert.hpp>
 #include <physics/vec3.hpp>
 #include <animations/common.hpp>
-
 #include <physics/verlet.hpp>
+#include <SDL/texture_loader.hpp>
+#include <camera/camera.hpp>
 
 namespace Animations 
 {
@@ -43,8 +45,7 @@ void teardown_mining_laser()
 
 void init_mining_laser_texture()
 {
-    //int ret = create_texture_from_file((char*) "./media/sprites/mining_laser2.png", &mining_laser_texture);
-    int ret = create_texture_from_file((char*) "./media/sprites/mining_laser4.png", &mining_laser_texture);
+    int ret = create_texture_from_file("./media/sprites/mining_laser4.png", &mining_laser_texture);
     GS_ASSERT(ret == 0);
 }
 
@@ -74,38 +75,45 @@ class MiningLaser
         int type;
 
         int ttl;
-
-        float damp;
-
-    inline void init(float x, float y, float z, float mx, float my, float mz, const float speed, const float length)
+        
+    void reset()
     {
-        type = 0+rand()%4;
-        verlet.dampening = MINING_LASER_DAMPENING;
+        this->verlet.dampening = MINING_LASER_DAMPENING;
+        this->ttl = 0;
+    }
 
+    inline void update_type()
+    {
+        this->type = 0+rand()%4;
+    }
+        
+    inline void set_state(float x, float y, float z, float mx, float my, float mz, const float speed, const float length)
+    {
+        this->update_type();
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
 
         verlet.velocity = vec3_scalar_mult(verlet.velocity, speed);
-        this->ttl = (length / speed) * 30;
     }
 
     void tick()
     {
-        //verlet.bounce_box(0.125);
-        
-        
-        if (verlet.collide_no_gravity()) ttl = 0;
-        
-        //verlet.bounce_box_no_gravity(0.125)
-        //verlet.radial(rx, ry);
-
-        this->ttl--;
+        //if (verlet.collide_no_gravity()) ttl = this->ttl_max;
+        this->verlet.move_no_gravity();
+        this->ttl++;
     }
 
-    void prep(Vec3 cam)
+    void prep()
     {
-        const float scale = 0.25f;
-        const float _h = scale / 2;
+        this->prep(0.5f);
+    }
+
+    void prep(const float h_mult)
+    {
+        struct Vec3 position = quadrant_translate_position(current_camera_position, this->verlet.position);
+
+        const float scale = 0.22f;
+        const float h = scale * h_mult;
 
         Vec3 up = vec3_init(
             model_view_matrix[0]*scale,
@@ -118,17 +126,13 @@ class MiningLaser
             model_view_matrix[9]*scale
         );
 
-        int texture_index = this->type;
-        //int texture_index = 4;
-
         float tx_min, tx_max, ty_min, ty_max;
-        tx_min = (float)(texture_index%4)* (1.0f/4.0f);
+        tx_min = (float)(this->type%4)* (1.0f/4.0f);
         tx_max = tx_min + (1.0f/4.0f);
-        ty_min = (float)(texture_index/4)* (1.0f/4.0f);
+        ty_min = (float)(this->type/4)* (1.0f/4.0f);
         ty_max = ty_min + (1.0f/4.0f);
 
-        Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
-        position.z += _h;
+        position.z += h;
 
         Vec3 p = vec3_sub(position, vec3_add(right, up));
         mining_laser_vlist->push_vertex(p, tx_min,ty_max);
@@ -144,7 +148,8 @@ class MiningLaser
 
     }
 
-    MiningLaser() : ttl(MINING_LASER_TTL) {}
+    MiningLaser() : ttl(0)
+    {}
 
 };
 
@@ -174,11 +179,11 @@ class MiningLaserEffect_list: public Simple_object_list<MiningLaser, MINING_LASE
 
 void MiningLaserEffect_list::prep()
 {
-    //mining_laser_vlist->reset_index();
-
-    Vec3 cam = current_camera->get_position();
+    GS_ASSERT(mining_laser_vlist != NULL);
+    if (mining_laser_vlist == NULL) return;
+    
     for (unsigned int i=0; i<this->num; i++)
-        this->a[i].prep(cam);
+        this->a[i].prep();
 
     mining_laser_vlist->buffer(); //upload data to GPU and reset list
 }
@@ -186,6 +191,9 @@ void MiningLaserEffect_list::prep()
 
 void MiningLaserEffect_list::draw()
 {
+    GS_ASSERT(mining_laser_vlist != NULL);
+    if (mining_laser_vlist == NULL) return;
+    
     if (!mining_laser_shader.shader_valid) return;
 
     if(mining_laser_vlist->vertex_number == 0) return;
@@ -203,7 +211,6 @@ void MiningLaserEffect_list::draw()
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vlist->VBO);
 
     glBindTexture( GL_TEXTURE_2D, mining_laser_texture );
-
 
     glUseProgramObjectARB(mining_laser_shader.shader);
 
