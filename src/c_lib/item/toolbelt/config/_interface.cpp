@@ -24,12 +24,16 @@ void init_config()
     beta_triggers = (triggerItem*) calloc(MAX_ITEMS, sizeof(triggerItem));
     
     #if DC_CLIENT
+    GS_ASSERT(begin_triggers       == NULL);
+    GS_ASSERT(end_triggers         == NULL);
     GS_ASSERT(local_ticks          == NULL);
     GS_ASSERT(local_triggers       == NULL);
     GS_ASSERT(local_beta_triggers  == NULL);
     GS_ASSERT(local_begin_triggers == NULL);
     GS_ASSERT(local_end_triggers   == NULL);
-    
+
+    begin_triggers       = (beginItem*)         calloc(MAX_ITEMS, sizeof(beginItem));
+    end_triggers         = (endItem*)           calloc(MAX_ITEMS, sizeof(endItem));
     local_ticks          = (tickLocalItem*)    calloc(MAX_ITEMS, sizeof(tickLocalItem));
     local_triggers       = (triggerLocalItem*) calloc(MAX_ITEMS, sizeof(triggerLocalItem));
     local_beta_triggers  = (triggerLocalItem*) calloc(MAX_ITEMS, sizeof(triggerLocalItem));
@@ -38,6 +42,7 @@ void init_config()
     #endif
 
     register_callbacks();
+    validate_callbacks();
 }
 
 void teardown_config()
@@ -49,6 +54,8 @@ void teardown_config()
     if (beta_triggers != NULL) free(beta_triggers);
     
     #if DC_CLIENT
+    if (begin_triggers       != NULL) free(begin_triggers);
+    if (end_triggers         != NULL) free(end_triggers);
     if (local_ticks          != NULL) free(local_ticks);
     if (local_triggers       != NULL) free(local_triggers);
     if (local_beta_triggers  != NULL) free(local_beta_triggers);
@@ -128,6 +135,18 @@ triggerLocalItem get_trigger_local_item_beta_fn(int item_type)
 {
     VALIDATE_ITEM_TYPE(item_type);
     return local_beta_triggers[item_type];
+}
+
+beginItem get_begin_item_fn(int item_type)
+{
+    VALIDATE_ITEM_TYPE(item_type);
+    return begin_triggers[item_type];
+}
+
+endItem get_end_item_fn(int item_type)
+{
+    VALIDATE_ITEM_TYPE(item_type);
+    return end_triggers[item_type];
 }
 
 beginLocalItem get_begin_local_item_fn(int item_type)

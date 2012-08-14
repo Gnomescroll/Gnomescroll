@@ -8,18 +8,40 @@
 namespace Toolbelt
 {
 
+/*
+ *
+ * Tick is called every tick of a click-and-hold item
+ * Trigger is called on activation of one-shot item, and on the tick rate interval of a click-and-hold item
+ * Beta trigger is assumed to be one-shot only. This is the trigger for activation of the right mouse button
+ *
+ * begin/End are to denote begin and end of click-and-hold item
+ * It is needed separate from tick, because it turns animations on&off.
+ * Animations need to run in the draw loop, not the physics loop, where tick will be called
+ *
+ * -- tick[Local]Item is deprecated for the client.  may become deprecated in server
+ * -- things that would go in tick[Local]Item for client-side should really be activated by begin/end
+ * -- and the main loop can call a function that advances/renders the animations for everyone, outside of the toolbelt module  
+ */
+
+
 struct CallbackConfig
 {
+    // use for all agents in server, or non-self agents in client
     tickItem tick;
     triggerItem trigger;
     triggerItem beta_trigger;
     
     #if DC_CLIENT
+    // use for non-self agents
+    beginItem begin;
+    endItem end;
+
+    // local counterparts
     tickLocalItem local_tick;
     triggerLocalItem local_trigger;
     triggerLocalItem local_beta_trigger;
-    beginLocalItem begin;
-    endLocalItem end;
+    beginLocalItem local_begin;
+    endLocalItem local_end;
     #endif
     
     #if DC_SERVER
@@ -53,11 +75,14 @@ static void apply_type_settings(int type)
     beta_triggers[type] = c.beta_trigger;
     
     #if DC_CLIENT
+    begin_triggers[type] = c.begin;
+    end_triggers[type] = c.end;
+    
     local_ticks[type] = c.local_tick;
     local_triggers[type] = c.local_trigger;
     local_beta_triggers[type] = c.local_beta_trigger;
-    local_begin_triggers[type] = c.begin;
-    local_end_triggers[type] = c.end;
+    local_begin_triggers[type] = c.local_begin;
+    local_end_triggers[type] = c.local_end;
     #endif
 }
 
@@ -162,6 +187,8 @@ static void register_item_group_callbacks()
     c.trigger = &trigger_mining_laser;
     c.begin = &begin_mining_laser;
     c.end = &end_mining_laser;
+    c.local_begin = &begin_local_mining_laser;
+    c.local_end = &end_local_mining_laser;
 
     set_group(IG_PLACER);
     c.local_trigger = &trigger_local_block_placer;
@@ -236,6 +263,49 @@ void register_callbacks()
     register_item_group_callbacks();
     // overwrite with type-specific callbacks
     register_item_type_callbacks();
+}
+
+void validate_callbacks()
+{
+    GS_ASSERT(click_and_hold != NULL);
+    GS_ASSERT(ticks          != NULL);
+    GS_ASSERT(triggers       != NULL);
+    GS_ASSERT(beta_triggers  != NULL);
+    #if DC_CLIENT
+    GS_ASSERT(begin_triggers       != NULL);
+    GS_ASSERT(end_triggers         != NULL);
+    GS_ASSERT(local_ticks          != NULL);
+    GS_ASSERT(local_triggers       != NULL);
+    GS_ASSERT(local_beta_triggers  != NULL);
+    GS_ASSERT(local_begin_triggers != NULL);
+    GS_ASSERT(local_end_triggers   != NULL);
+    #endif
+
+    if (click_and_hold == NULL) return;
+    if (ticks          == NULL) return;
+    if (triggers       == NULL) return;
+    if (beta_triggers  == NULL) return;
+    #if DC_CLIENT
+    if (begin_triggers       == NULL) return;
+    if (end_triggers         == NULL) return;
+    if (local_ticks          == NULL) return;
+    if (local_triggers       == NULL) return;
+    if (local_beta_triggers  == NULL) return;
+    if (local_begin_triggers == NULL) return;
+    if (local_end_triggers   == NULL) return;
+    #endif
+    
+    for (int i=0; i<MAX_ITEMS; i++)
+    {
+        GS_ASSERT(click_and_hold[i] || !ticks[i]);
+        #if DC_CLIENT
+        GS_ASSERT(click_and_hold[i] || !local_ticks[i]);
+        GS_ASSERT(click_and_hold[i] || !begin_triggers[i]); // no begin triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] || !local_begin_triggers[i]); // no begin triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] || !end_triggers[i]); // no end triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] || !local_end_triggers[i]); // no end triggers should be defined if not click and hold
+        #endif
+    }
 }
 
 }    // Toolbelt

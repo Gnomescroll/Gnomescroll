@@ -153,6 +153,7 @@ class MiningLaserEmitter
 
     void turn_on()
     {
+        if (this->on) return;
         this->on = true;
         this->set_count();
     }

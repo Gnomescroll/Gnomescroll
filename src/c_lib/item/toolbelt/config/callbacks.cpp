@@ -67,16 +67,32 @@ void trigger_local_mining_laser(ItemID item_id, int item_type)
     fire_close_range_weapon(item_id, item_type);
 }
 
-void begin_mining_laser(int item_type)
+void begin_local_mining_laser(int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     ClientState::playerAgent_state.action.begin_mining_laser();
 }
 
-void end_mining_laser(int item_type)
+void end_local_mining_laser(int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     ClientState::playerAgent_state.action.end_mining_laser();
+}
+
+void begin_mining_laser(int agent_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
+    Agent_state* a = ClientState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    a->event.begin_mining_laser();
+}
+
+void end_mining_laser(int agent_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
+    Agent_state* a = ClientState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    a->event.end_mining_laser();
 }
 
 // IG_PLACER

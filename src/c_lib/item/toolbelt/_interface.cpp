@@ -175,6 +175,20 @@ void end_local_item(int item_type)
     if (end == NULL) return;
     end(item_type);
 }
+
+void begin_item(int agent_id, int item_type)
+{
+    beginItem begin = get_begin_item_fn(item_type);
+    if (begin == NULL) return;
+    begin(agent_id, item_type);
+}
+
+void end_item(int agent_id, int item_type)
+{
+    endItem end = get_end_item_fn(item_type);
+    if (end == NULL) return;
+    end(agent_id, item_type);
+}
 #endif
 
 

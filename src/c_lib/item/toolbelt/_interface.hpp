@@ -21,8 +21,11 @@ int get_selected_item_type();
 
 void update_selected_item_type();
 
+// animation begin/ends for click-and-hold
 void begin_local_item(int item_type);
 void end_local_item(int item_type);
+void begin_item(int agent_id, int item_type);
+void end_item(int agent_id, int item_type);
 
 // triggers
 bool trigger_local_item_beta(ItemID item_id, int item_type);

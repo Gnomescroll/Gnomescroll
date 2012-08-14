@@ -248,7 +248,6 @@ void Agent_event::reload_weapon(int type)
 
 void Agent_event::update_mining_laser()
 {
-    this->mining_laser_emitter.on = true;   // TODO TODO
     if (!this->mining_laser_emitter.on) return;
     static int weapon_type = Item::get_item_type("mining_laser");
     GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
@@ -259,6 +258,17 @@ void Agent_event::update_mining_laser()
     this->mining_laser_emitter.tick();
     this->mining_laser_emitter.prep_draw();
 }
+
+void Agent_event::begin_mining_laser()
+{
+    this->mining_laser_emitter.turn_on();
+}
+
+void Agent_event::end_mining_laser()
+{
+    this->mining_laser_emitter.turn_off();
+}
+
 
 void Agent_event::tick_mining_laser()
 {
