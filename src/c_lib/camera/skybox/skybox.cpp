@@ -165,7 +165,7 @@ void pack_vertex_list()
         v.y = star_list[i].y + cy;
         v.z = star_list[i].z + cz;
 
-        if (point_fulstrum_test2(v.x, v.y, v.z) == false) continue;
+        if (!point_fulstrum_test_no_view_distance(v.x, v.y, v.z)) continue;
 
         float scale = star_list[i].size / 2.0f;
 
@@ -223,10 +223,10 @@ void pack_vertex_list()
     Vec3 pt4 = vec3_add(v, vec3_sub(right, up));
     
     if (
-        !point_fulstrum_test2(pt1.x, pt1.y, pt1.z) &&
-        !point_fulstrum_test2(pt2.x, pt2.y, pt2.z) &&
-        !point_fulstrum_test2(pt3.x, pt3.y, pt3.z) &&
-        !point_fulstrum_test2(pt4.x, pt4.y, pt4.z)
+        !point_fulstrum_test_no_view_distance(pt1.x, pt1.y, pt1.z) &&
+        !point_fulstrum_test_no_view_distance(pt2.x, pt2.y, pt2.z) &&
+        !point_fulstrum_test_no_view_distance(pt3.x, pt3.y, pt3.z) &&
+        !point_fulstrum_test_no_view_distance(pt4.x, pt4.y, pt4.z)
     ) return;
 
     star_vlist->push_vertex(pt1, s.tx_min,s.ty_max);

@@ -148,18 +148,13 @@ bool point_fulstrum_test(float x, float y, float z)
 }
 
 //for skybox?
-bool point_fulstrum_test2(float x, float y, float z)
+bool point_fulstrum_test_no_view_distance(float x, float y, float z)
 {
-//#if FULSTRUM_DEBUG_VERIFY
-//    point_fulstrum_test_debug(x,y,z);
-//#endif
-
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;
 
     float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
-    if( dz < 0 || dz > CAMERA_VIEW_DISTANCE ) return false;
 
     float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
     if( dx < -dz*fulstrum.hx || dx > dz*fulstrum.hx ) return false;

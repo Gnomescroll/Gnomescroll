@@ -13,7 +13,7 @@ inline bool sphere_fulstrum_test(float x, float y, float  z, float r) __attribut
 inline bool point_fulstrum_test(float x, float y, float  z) __attribute((always_inline));
 
 //distance check with camera
-inline bool point_fulstrum_test2(float x, float y, float  z) __attribute((always_inline));
+inline bool point_fulstrum_test_no_view_distance(float x, float y, float  z) __attribute((always_inline));
 
 inline bool point_fulstrum_test_debug(float x, float y, float z);
 
