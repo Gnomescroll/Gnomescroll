@@ -362,10 +362,8 @@ void Vbo_map::draw_map()
             int voff = vbo_frustrum_voff[index][side];
             int vnum = vbo_frustrum_vnum[index][side];
 
-            GS_ASSERT(voff != -1);
-            GS_ASSERT(vnum != -1);
-
             if(vnum == 0) continue;
+            
             v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
@@ -377,7 +375,7 @@ void Vbo_map::draw_map()
         //glPushMatrix();
     }
 
-    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
@@ -498,6 +496,11 @@ void Vbo_map::draw_map_compatibility()
 
     glPushMatrix(); //save matrix
 
+#if ADV_PRUNE
+    int v_total = 0;
+    int v_drawn = 0;
+#endif
+
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
@@ -518,22 +521,30 @@ void Vbo_map::draw_map_compatibility()
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
-/*
+        #if ADV_PRUNE
+
         int xi = draw_vbo_array[i].i;
         int xj = draw_vbo_array[i].j;
         int index = 32*xj +xi;
 
+        v_total += vbo->_v_num[0];
         for(int side=0; side<6; side++)
         {
-            int voff = vbo_vertex_frustrum[index][2*side+0];
-            int vnum = vbo_vertex_frustrum[index][2*side+1];
+            int voff = vbo_frustrum_voff[index][side];
+            int vnum = vbo_frustrum_vnum[index][side];
 
-            if(vnum <= 0) continue;
+            if(vnum == 0) continue;
+
+            v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
-*/
+        #else 
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+        #endif
+
     }
+
+    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
