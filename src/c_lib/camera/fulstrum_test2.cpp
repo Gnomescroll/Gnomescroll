@@ -415,16 +415,16 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     static const float aabbSize_y = 16.0f;
     static const float aabbSize_z = 16.0f;
 
-    const float aabCenter_x = x - _FrustrumG.c.x;
-    const float aabCenter_y = y - _FrustrumG.c.y;
-    float aabCenter_z; // = z - _FrustrumG.c.z;
+    const float aabbCenter_x = x - _FrustrumG.c.x;
+    const float aabbCenter_y = y - _FrustrumG.c.y;
+    //float aabbCenter_z; // = z - _FrustrumG.c.z;
     //const _Vector3f& aabbCenter = aabbList[iAABB].m_Center;
     //const _Vector3f& aabbSize = aabbList[iAABB].m_Extent;
 
     z = 128.0f;
     while(1)
     {
-        float aabCenter_z = z - _FrustrumG.c.z;
+        float aabbCenter_z = z - _FrustrumG.c.z;
         int result = 1; // Assume that the aabb will be Inside the frustum
         for(int i=0; i<4;i++)        //ignore near and far plane
         {
@@ -463,7 +463,7 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     z = 0.0f;
     while(1)
     {
-        float aabCenter_z = z - _FrustrumG.c.z;
+        float aabbCenter_z = z - _FrustrumG.c.z;
         int result = 1; // Assume that the aabb will be Inside the frustum
         for(int i=0; i<4;i++)        //ignore near and far plane
         {
@@ -494,7 +494,7 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
         if(result != 0)
             break;
         z += 16.0f;
-        if(z == zmin)
+        if(z == zmax)
             return;
     }
     *bottom = z;

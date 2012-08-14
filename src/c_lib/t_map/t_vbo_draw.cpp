@@ -80,10 +80,10 @@ void Vbo_map::prep_frustrum_vertices()
 
         //printf("zmin, zmaz= %f %f \n", zmin, zmax);
 
-        min = floor((zmin / 16.0)-1.0);
+        min = floor(zmin / 16.0);
         if(min < 0) min = 0;
 
-        max = ceil((zmax / 16.0) +1.0) ;
+        max = ceil(zmax / 16.0);
         if(max > 8) max = 8;
 
         GS_ASSERT(min <= 8);
@@ -377,7 +377,7 @@ void Vbo_map::draw_map()
         //glPushMatrix();
     }
 
-    //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
+    printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
     glPopMatrix(); //restore matrix
 
