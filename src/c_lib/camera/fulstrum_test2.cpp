@@ -301,6 +301,8 @@ float chunk_bottom_z_projection(float x, float y)
 }
 
 // if z < -16  then fucks up?
+
+/*
 void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 {
     x -= _FrustrumG.c.x;
@@ -351,7 +353,7 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     *bottom = _bottom;
     *top = _top;
 }
-
+*/
 //1 is inside, 0 is outside, 2 is intersect
 int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
 {
@@ -365,7 +367,7 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
     //const _Vector3f& aabbCenter = aabbList[iAABB].m_Center;
     //const _Vector3f& aabbSize = aabbList[iAABB].m_Extent;
 
-    unsigned int result = 1; // Assume that the aabb will be Inside the frustum
+    int result = 1; // Assume that the aabb will be Inside the frustum
 
     //ignore near and far plane
     for(int i=0; i<4;i++)
@@ -401,3 +403,100 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
     return result;
 }
 
+
+void chunk_top_z_projection(float x, float y, float* bottom, float *top)
+{
+
+    static const float zmax = 128.0;
+    static const float zmin = 0.0f;
+    float z = 0.0f;
+
+    static const float aabbSize_x = 16.0f;
+    static const float aabbSize_y = 16.0f;
+    static const float aabbSize_z = 16.0f;
+
+    const float aabCenter_x = x - _FrustrumG.c.x;
+    const float aabCenter_y = y - _FrustrumG.c.y;
+    float aabCenter_z; // = z - _FrustrumG.c.z;
+    //const _Vector3f& aabbCenter = aabbList[iAABB].m_Center;
+    //const _Vector3f& aabbSize = aabbList[iAABB].m_Extent;
+
+    z = 128.0f;
+    while(1)
+    {
+        float aabCenter_z = z - _FrustrumG.c.z;
+        int result = 1; // Assume that the aabb will be Inside the frustum
+        for(int i=0; i<4;i++)        //ignore near and far plane
+        {
+            Vec3 n = _FrustrumG.pl[i].normal;
+
+            float d =   aabbCenter_x * n.x + 
+                        aabbCenter_y * n.y + 
+                        aabbCenter_z * n.z;
+
+            float r =   aabbSize_x * fabs(n.x) + 
+                        aabbSize_y * fabs(n.y) + 
+                        aabbSize_z * fabs(n.z);
+
+            float d_p_r = d + r;
+            float d_m_r = d - r;
+
+            if(d_p_r < 0.0f)
+            {
+                result = 0; // Outside
+                break;
+            }
+            else if(d_m_r < 0.0f)         //else if(d_m_r < -frustumPlane.d)
+            {
+                result = 2; // Intersect
+            }
+        }
+
+        if(result != 0)
+            break;
+        z -= 16.0f;
+        if(z == zmin)
+            return;
+    }
+    *top = z;
+
+    z = 0.0f;
+    while(1)
+    {
+        float aabCenter_z = z - _FrustrumG.c.z;
+        int result = 1; // Assume that the aabb will be Inside the frustum
+        for(int i=0; i<4;i++)        //ignore near and far plane
+        {
+            Vec3 n = _FrustrumG.pl[i].normal;
+
+            float d =   aabbCenter_x * n.x + 
+                        aabbCenter_y * n.y + 
+                        aabbCenter_z * n.z;
+
+            float r =   aabbSize_x * fabs(n.x) + 
+                        aabbSize_y * fabs(n.y) + 
+                        aabbSize_z * fabs(n.z);
+
+            float d_p_r = d + r;
+            float d_m_r = d - r;
+
+            if(d_p_r < 0.0f)
+            {
+                result = 0; // Outside
+                break;
+            }
+            else if(d_m_r < 0.0f)         //else if(d_m_r < -frustumPlane.d)
+            {
+                result = 2; // Intersect
+            }
+        }
+
+        if(result != 0)
+            break;
+        z += 16.0f;
+        if(z == zmin)
+            return;
+    }
+    *bottom = z;
+
+}
