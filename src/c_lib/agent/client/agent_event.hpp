@@ -47,10 +47,9 @@ class Agent_event
 
         // new style weapon trigger events
         // only triggers agent specific animations/sounds
-
-        // TODO -- on/off
-
         void update_mining_laser();
+        void begin_mining_laser();
+        void end_mining_laser();
         void tick_mining_laser();   // continuous, while "on"
         void fired_mining_laser();  // when fire rate tick triggers
 

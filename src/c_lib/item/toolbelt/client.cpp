@@ -27,11 +27,11 @@ void turn_fire_on(int agent_id)
     if (agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = true;
 
-    if (ClientState::playerAgent_state.agent_id != agent_id) return;
-    
-    // local agent only:
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    toolbelt_item_begin_alpha_action_event_handler(item_id);
+    if (ClientState::playerAgent_state.agent_id == agent_id)
+        toolbelt_item_begin_local_alpha_action_event_handler(item_id);
+    else
+        toolbelt_item_begin_alpha_action_event_handler(agent_id, item_id);
 }
 
 void turn_fire_off(int agent_id)
@@ -50,11 +50,15 @@ void turn_fire_off(int agent_id)
     if (!agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = false;
 
-    if (ClientState::playerAgent_state.agent_id != agent_id) return;
-    
-    // local agent only:
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    toolbelt_item_end_alpha_action_event_handler(item_id);
+    if (ClientState::playerAgent_state.agent_id == agent_id)
+        toolbelt_item_end_local_alpha_action_event_handler(item_id);
+    else
+    {
+        toolbelt_item_end_alpha_action_event_handler(agent_id, item_id);
+        return; // dont do weapon animations for other agents yet
+    }
+
 
     int item_type = NULL_ITEM_TYPE;
     if (item_id == NULL_ITEM) item_type = fist_item_type;
@@ -116,18 +120,36 @@ bool toolbelt_item_end_alpha_action()
     return false;
 }
 
-void toolbelt_item_begin_alpha_action_event_handler(ItemID item_id)
+void toolbelt_item_begin_local_alpha_action_event_handler(ItemID item_id)
 {
     int item_type = fist_item_type;
     if (item_id != NULL_ITEM) item_type = Item::get_item_type(item_id);
     begin_local_item(item_type);
 }
 
-void toolbelt_item_end_alpha_action_event_handler(ItemID item_id)
+void toolbelt_item_end_local_alpha_action_event_handler(ItemID item_id)
 {
     int item_type = fist_item_type;
     if (item_id != NULL_ITEM) item_type = Item::get_item_type(item_id);
     end_local_item(item_type);
+}
+
+void toolbelt_item_begin_alpha_action_event_handler(int agent_id, ItemID item_id)
+{
+    GS_ASSERT(agent_id != ClientState::playerAgent_state.agent_id); // use local
+
+    int item_type = fist_item_type;
+    if (item_id != NULL_ITEM) item_type = Item::get_item_type(item_id);
+    begin_item(agent_id, item_type);
+}
+
+void toolbelt_item_end_alpha_action_event_handler(int agent_id, ItemID item_id)
+{
+    GS_ASSERT(agent_id != ClientState::playerAgent_state.agent_id); // use local
+
+    int item_type = fist_item_type;
+    if (item_id != NULL_ITEM) item_type = Item::get_item_type(item_id);
+    end_item(agent_id, item_type);
 }
 
 static bool beta_scan_world()

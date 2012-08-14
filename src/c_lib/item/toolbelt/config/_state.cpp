@@ -17,6 +17,9 @@ triggerItem* triggers = NULL;
 triggerItem* beta_triggers = NULL;
 
 #if DC_CLIENT
+beginItem* begin_triggers = NULL;
+endItem* end_triggers = NULL;
+
 tickLocalItem* local_ticks = NULL;
 triggerLocalItem* local_triggers = NULL;
 triggerLocalItem* local_beta_triggers = NULL;
