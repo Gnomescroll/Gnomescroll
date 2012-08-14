@@ -274,8 +274,6 @@ void Vbo_map::draw_map()
 {
     prep_draw();
     sort_draw();
-    
-    //prep_frustrum();
     prep_frustrum_vertices();
 
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -363,7 +361,7 @@ void Vbo_map::draw_map()
             int vnum = vbo_frustrum_vnum[index][side];
 
             if(vnum == 0) continue;
-            
+
             v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
@@ -462,9 +460,7 @@ void Vbo_map::draw_map_compatibility()
 
     prep_draw();
     sort_draw();
-    
-    //prep_frustrum();
-    //prep_frustrum_vertices();
+    prep_frustrum_vertices();
 
     //GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
