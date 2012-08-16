@@ -96,7 +96,7 @@ class MapShader
 
 };
 
-class main_shader MapShader;
+class MapShader main_shader;
 
 class MapCompatibilityShader
 {
@@ -157,7 +157,7 @@ class MapCompatibilityShader
 
 };
 
-class main_compatibility_shader MapCompatibilityShader;
+class MapCompatibilityShader main_compatibility_shader;
 
 
 }   // t_map
