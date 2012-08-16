@@ -22,6 +22,7 @@ OPT_BOOL_HEADER(log_chat)
 
 /* Game */
 OPT_BOOL_HEADER(pvp)
+OPT_UINT_HEADER(base_move_rate);
 
 void register_options();
 

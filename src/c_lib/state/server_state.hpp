@@ -21,6 +21,10 @@ namespace ServerState
     void teardown();
     void teardown_lists();
 
+    extern class Objects::Object* base;
+
+    struct Vec3 get_base_spawn_position();
+    void init_base();
     void check_agents_at_base();
 
     void damage_objects_within_sphere(

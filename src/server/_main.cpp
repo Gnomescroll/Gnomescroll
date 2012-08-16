@@ -106,6 +106,8 @@ void tick()
 
     Objects::spawn_mobs();
 
+    ServerState::move_base();
+
     Components::rate_limit_component_list->call(); // advance rate limiter ticks
     Components::motion_targeting_component_list->call(); // update target lock ticks
     Components::agent_targeting_component_list->call(); // update target lock ticks

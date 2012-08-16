@@ -107,7 +107,6 @@ void tick_base(Object* object)
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     bool changed = physics->set_position(position);
-    physics->changed = changed;
 
     if (changed) object->broadcastState();
     #endif

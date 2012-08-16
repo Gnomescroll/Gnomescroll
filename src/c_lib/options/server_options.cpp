@@ -25,6 +25,7 @@ OPT_BOOL(log_chat, true)
 
 /* Game */
 OPT_BOOL(pvp, false)
+OPT_UINT(base_move_rate, 30*60*60 /*1hr*/);
 
 void register_options()
 {
@@ -45,6 +46,7 @@ void register_options()
 
     /* Game */
     OPT_BOOL_REGISTER(pvp)
+    OPT_UINT_REGISTER(base_move_rate);
 }
 
 }   // Options
