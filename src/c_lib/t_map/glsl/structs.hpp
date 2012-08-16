@@ -108,11 +108,7 @@ namespace t_map
             unsigned int AO;
         };
 
-        union
-        {
-            unsigned char light_value[4]; 
-            unsigned int lighting;
-        };
+        float lighting[2];      //sun and manmade
 
     };
     

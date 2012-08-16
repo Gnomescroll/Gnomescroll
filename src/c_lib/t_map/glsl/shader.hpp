@@ -33,6 +33,7 @@ int map_NormalArray;     //uniform
 
 int map_LightMatrix;
 
+int map_Light;
 //texture
 extern SDL_Surface *terrain_map_surface;
 extern GLuint terrain_map_texture;

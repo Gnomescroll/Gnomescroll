@@ -137,6 +137,7 @@ void set_map_shader_0()
     //map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
     map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
+    map_Light = glGetAttribLocation(map_shader[index], "InLight"); 
 
     //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix);
 
@@ -373,6 +374,7 @@ void set_map_shader_0_compatibility(int level)
     map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
     map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
+    map_Light = glGetAttribLocation(map_shader[index], "InLight");
 
     free(vs);
     free(fs);
