@@ -348,7 +348,7 @@ void Vbo_map::draw_map()
         glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
-        glVertexAttribPointer(map_Light, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)14);
+        glVertexAttribPointer(map_Light, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)16);
 
         #if ADV_PRUNE
 
@@ -386,8 +386,8 @@ void Vbo_map::draw_map()
     glDisableVertexAttribArray(map_LightMatrix);
     glDisableVertexAttribArray(map_Light);
 
-    printf("%d \n", map_Light);
-    
+    //printf("%d \n", map_Light);
+
     glUseProgramObjectARB(0);
 
     //glEnable(GL_TEXTURE_2D);

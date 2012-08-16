@@ -250,6 +250,7 @@ static inline void _set_quad_color_default(struct Vertex* v_list, int offset, in
     v_list[offset+3].color = _ce.color;
 }
 
+
 static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     
@@ -381,6 +382,11 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
 
+    v_list[offset+0].lighting[0] = 1.0f;
+    v_list[offset+1].lighting[0] = 1.0f;
+    v_list[offset+2].lighting[0] = 1.0f;
+    v_list[offset+3].lighting[0] = 1.0f;
+
     {
         int _x = x & 15;
         int _y = y & 15;
@@ -395,6 +401,8 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
     //_set_quad_color(v_list, offset, x, y, z, side);
 
+    _set_quad_color_flat(v_list, offset, x, y, z, side);
+/*
     switch( t_map::cube_list[tile_id].color_type )
     {
         case 0:
@@ -409,7 +417,7 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
         default:
             break;
     }  
-
+*/
 }
 
 
@@ -714,8 +722,14 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
     v_list[offset+1].pos = _v_index[4*side+1].pos;
     v_list[offset+2].pos = _v_index[4*side+2].pos;
     v_list[offset+3].pos = _v_index[4*side+3].pos;
+
 #endif
 
+    v_list[offset+0].lighting[0] = 0.0f;
+    v_list[offset+1].lighting[0] = 0.0f;
+    v_list[offset+2].lighting[0] = 0.0f;
+    v_list[offset+3].lighting[0] = 0.0f;
+    
     {
         int _x = x & 15;
         int _y = y & 15;
@@ -729,7 +743,8 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
     }
     //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 
-
+    _set_quad_color_flat(v_list, offset, x, y, z, side);
+/*
     switch( t_map::cube_list[tile_id].color_type )
     {
         case 0:
@@ -744,7 +759,9 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
         default:
             break;
     }   
+*/
 }
+
 
 void generate_vertex_list_compatibility(struct Vertex* vlist)
 {
