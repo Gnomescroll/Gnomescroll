@@ -6,19 +6,22 @@
 
 #extension GL_EXT_texture_array : enable
 
-varying vec3 texCoord;
-
 #ifdef GL_EXT_gpu_shader4
     flat varying mat2 lightMatrix;
+    flat varying float skyLight;
+    flat varying float playerLight;
 #else
     varying mat2 lightMatrix;
+    varying float skyLight;
+    varying float playerLight;
 #endif
 
+varying vec3 texCoord;
 varying vec3 inColor;
- 
-uniform sampler2DArray base_texture;
 
 varying float fogFragDepth;
+
+uniform sampler2DArray base_texture;
 
 void main() 
 {

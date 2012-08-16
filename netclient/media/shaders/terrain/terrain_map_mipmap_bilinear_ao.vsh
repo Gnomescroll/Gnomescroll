@@ -13,6 +13,7 @@ Attributes
 attribute vec4 InVertex;
 attribute vec3 InTexCoord;
 attribute vec3 InRGB;
+attribute vec2 inLight;
 
 //attribute int InNormal;
 
@@ -27,23 +28,24 @@ uniform vec3 ChunkPosition;
 /*
 Varying
 */
-varying vec3 texCoord;
 
 #ifdef GL_EXT_gpu_shader4
     flat varying mat2 lightMatrix;
+    flat varying float skyLight;
+    flat varying float playerLight;
 #else
     varying mat2 lightMatrix;
+    varying float skyLight;
+    varying float playerLight;
 #endif
 
-
+varying vec3 texCoord;
 varying vec3 inColor;
-
 varying float fogFragDepth;
+
 
 void main(void) 
 {              
-    //vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
-    //gl_Position = gl_ModelViewProjectionMatrix * vec4(InVertex, 1.0);
     gl_Position = gl_ModelViewProjectionMatrix * InVertex;
 
     //fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
@@ -54,6 +56,6 @@ void main(void)
     texCoord = InTexCoord;
 
     lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
-
-    //_lightMatrix = InLightMatrix;
+    skyLight = inLight[0];
+    playerLight = inLight[1];
 }
