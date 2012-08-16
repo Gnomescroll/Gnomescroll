@@ -14,6 +14,8 @@
 #include <t_map/chunk_special.cpp>
 #include <t_map/map_special.cpp>
 
+#include <t_map/lighting.hpp>
+
 #if DC_CLIENT
 #include <t_map/t_vbo_draw.cpp>
 #include <t_map/t_vbo_update.cpp>
