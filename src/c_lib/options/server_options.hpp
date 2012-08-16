@@ -20,6 +20,9 @@ OPT_UINT_HEADER(seed)
 OPT_BOOL_HEADER(logger)
 OPT_BOOL_HEADER(log_chat)
 
+/* Game */
+OPT_BOOL_HEADER(pvp)
+
 void register_options();
 
 }   // Options

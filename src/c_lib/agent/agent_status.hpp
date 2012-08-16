@@ -69,6 +69,7 @@ class Agent_status {
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
         int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
+        int apply_mining_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
         void at_base();
 
         void send_color(int client_id);

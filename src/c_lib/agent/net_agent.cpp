@@ -815,7 +815,7 @@ inline void melee_object_CtoS::handle()
     {
         class Agent_state* agent = ServerState::agent_list->get(id);
         if (agent==NULL) return;
-        agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
+        agent->status.apply_mining_laser_damage_to_part(part, a->id, a->type);
     }
     else
     {

@@ -23,6 +23,9 @@ OPT_UINT(seed, 8007513)
 OPT_BOOL(logger, true)
 OPT_BOOL(log_chat, true)
 
+/* Game */
+OPT_BOOL(pvp, false)
+
 void register_options()
 {
     /* General */
@@ -39,6 +42,9 @@ void register_options()
     /* Logging */
     OPT_BOOL_REGISTER(logger)
     OPT_BOOL_REGISTER(log_chat)
+
+    /* Game */
+    OPT_BOOL_REGISTER(pvp)
 }
 
 }   // Options

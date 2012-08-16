@@ -220,9 +220,11 @@ void Agent_status::send_health_msg(int client_id)
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
 {
-    // dont allow player kills
-    if ((inflictor_type == OBJECT_AGENT || inflictor_type == OBJECT_GRENADE)
-      && inflictor_id != this->a->id) return this->health;
+    if (!Options::pvp)
+    {   // dont allow player kills
+        if ((inflictor_type == OBJECT_AGENT || inflictor_type == OBJECT_GRENADE)
+          && inflictor_id != this->a->id) return this->health;
+    }
     
     int health = this->apply_damage(dmg);
     AgentDeathMethod death_method = DEATH_NORMAL;
@@ -264,10 +266,42 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
             dmg = randrange(5,10);
             break;
         default:
-            printf("WARNING Agent_status::apply_hitscan_laser_damage_to_part -- unknown part %d\n", part_id);
+            GS_ASSERT(false);
             break;
     }
-    
+    return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
+}
+
+int Agent_status::apply_mining_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type)
+{
+    int dmg = 0;
+
+    switch (part_id)
+    {
+        case AGENT_PART_HEAD:
+            dmg = randrange(15,25);
+            break;
+        case AGENT_PART_TORSO:
+            dmg = randrange(10,15);
+            break;
+        case AGENT_PART_LARM:
+            dmg = randrange(5,10);
+            break;
+        case AGENT_PART_RARM:
+            dmg = randrange(5,10);
+            break;
+        case AGENT_PART_LLEG:
+            dmg = randrange(5,10);
+            break;
+        case AGENT_PART_RLEG:
+            dmg = randrange(5,10);
+            break;
+        default:
+            GS_ASSERT(false);
+            break;
+    }
+    dmg = ((float)dmg) * (1.0f/3.0f);
+    if (dmg <= 0) dmg = 1;
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 

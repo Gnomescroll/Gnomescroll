@@ -12,11 +12,7 @@ end
 
 print(table.val_to_str(options_table))
 
-
-
-
 options = {}
-
 
 -- server name --
 options.server_name = "server_one"
@@ -31,7 +27,10 @@ options.seed = 805112
 
 -- logger --
 options.logger = true
---options.log_chat = false
+options.log_chat = false
+
+-- game --
+options.pvp = false
 
 ffi = require("ffi")
 ffi.cdef[[
