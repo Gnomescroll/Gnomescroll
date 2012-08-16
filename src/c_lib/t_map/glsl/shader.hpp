@@ -20,20 +20,7 @@ const int num_map_shaders = 1;
 
 GLenum map_vert_shader[num_map_shaders] = {0};
 GLenum map_frag_shader[num_map_shaders] = {0};
-GLenum map_shader[num_map_shaders] = {0};
 
-//shader 0
-int map_Vertex;
-int map_TexCoord;
-int map_RGB;
-int map_Normal;
-
-int map_ChunkPosition;   //uniform
-int map_NormalArray;     //uniform
-
-int map_LightMatrix;
-
-int map_Light;
 //texture
 extern SDL_Surface *terrain_map_surface;
 extern GLuint terrain_map_texture;
@@ -46,7 +33,7 @@ void teardown_shader(); // frees surface
 class MapShader
 {
     public:
-    int terrain_map_glsl;
+    GLuint terrain_map_glsl;
     class SHADER* shader;
 
     //uniforms
@@ -96,7 +83,7 @@ class MapShader
 
 };
 
-class MapShader main_shader;
+class MapShader map_shader;
 
 class MapCompatibilityShader
 {
@@ -110,13 +97,14 @@ class MapCompatibilityShader
     class SHADER* shader;
 
     //uniforms
+    int InOffset;
 
     //attributes
-    int Vertex;
-    int TexCoord;
-    int RGB;
-    int map_LightMatrix;
-    int map_Light;
+    int InVertex;
+    int InTexCoord;
+    int InRGB;
+    int InLightMatrix;
+    int InLight;
     //int Normal;
 
     MapCompatibilityShader()
@@ -128,7 +116,6 @@ class MapCompatibilityShader
 
     ~MapCompatibilityShader()
     {
-        if (s != NULL) SDL_FreeSurface(s);
         if (shader != NULL) delete shader;
     }
 
@@ -140,9 +127,6 @@ class MapCompatibilityShader
         shader->load_shader( "map_shader",
             "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",
             "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh" );
-
-        TexCoord    =       shader->get_attribute("InTexCoord");
-        Brightness  =       shader->get_attribute("InBrightness");
 
         InVertex =     shader->get_attribute("InVertex");
         InTexCoord =   shader->get_attribute("InTexCoord");

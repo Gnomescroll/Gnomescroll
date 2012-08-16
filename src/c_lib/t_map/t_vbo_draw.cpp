@@ -10,6 +10,7 @@
 #include <camera/fulstrum_test2.hpp>
 
 #include <t_map/glsl/settings.hpp>
+#include <t_map/glsl/shader.hpp>
 
 #include <common/qsort.h>
 
