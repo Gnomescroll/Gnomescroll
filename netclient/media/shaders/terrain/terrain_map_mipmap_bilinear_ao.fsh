@@ -39,7 +39,8 @@ void main()
     vec3 color = tmp*inColor.rgb;
     color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
 
-    if(skyLight > 0.0ff)
+
+    if(skyLight > 0.5f)
     {
         color = vec3(1.0, 0.0, 0.0);
     }

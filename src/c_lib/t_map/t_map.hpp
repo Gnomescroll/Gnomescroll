@@ -40,6 +40,7 @@ void end_t_map();
 
 #if DC_CLIENT
 void init_for_draw();
+void init_shaders();
 #endif
 
 class Terrain_map* get_map();

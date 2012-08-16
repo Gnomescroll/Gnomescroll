@@ -316,25 +316,6 @@ void Vbo_map::draw_map()
 #endif
 
     /*
-        Test Sorting
-    */
-    float distance = -1;
-    for(int i=0;i<draw_vbo_n;i++)
-    {
-        if(draw_vbo_array[i].distance >= distance)
-        {
-            //printf("0 i= %d distance= %f \n", i, sqrt(draw_vbo_array[i].distance)) ;
-            distance = draw_vbo_array[i].distance;
-        }
-        else
-        {
-            distance = draw_vbo_array[i].distance;
-            printf("1 i= %d distance= %f \n", i, sqrt(draw_vbo_array[i].distance));
-            //GS_ABORT();
-        }
-    }
-
-    /*
         Draw
     */
     for(int i=0;i<draw_vbo_n;i++)
@@ -494,7 +475,7 @@ void Vbo_map::draw_map_compatibility()
     glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
 
     glEnableVertexAttribArray(map_shader.InVertex);
-    glEnableVertexAttribArray(map_shader.Inshader.InTexCoord);
+    glEnableVertexAttribArray(map_shader.InTexCoord);
     glEnableVertexAttribArray(map_shader.InRGB);
     glEnableVertexAttribArray(map_shader.InLightMatrix);
 

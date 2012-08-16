@@ -382,10 +382,10 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
 
-    v_list[offset+0].lighting[0] = 1.0f;
-    v_list[offset+1].lighting[0] = 1.0f;
-    v_list[offset+2].lighting[0] = 1.0f;
-    v_list[offset+3].lighting[0] = 1.0f;
+    v_list[offset+0].lighting[0] = 0.0f;
+    v_list[offset+1].lighting[0] = 0.0f;
+    v_list[offset+2].lighting[0] = 0.0f;
+    v_list[offset+3].lighting[0] = 0.0f;
 
     {
         int _x = x & 15;

@@ -13,7 +13,7 @@ Attributes
 attribute vec4 InVertex;
 attribute vec3 InTexCoord;
 attribute vec3 InRGB;
-attribute vec2 inLight;
+attribute vec2 InLight;
 
 //attribute int InNormal;
 
@@ -45,8 +45,9 @@ varying float fogFragDepth;
 
 
 void main(void) 
-{              
-    gl_Position = gl_ModelViewProjectionMatrix * (InVertex + Vec4(inOffset.xy, 0.0, 1.0));
+{   
+    InVertex.xy += InOffset.xy;
+    gl_Position = gl_ModelViewProjectionMatrix * InVertex;
 
     //fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
     fogFragDepth = distance(InVertex.xy, gl_ModelViewMatrixInverse[3].xy);
@@ -56,6 +57,6 @@ void main(void)
     texCoord = InTexCoord;
 
     lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
-    skyLight = inLight[0];
-    playerLight = inLight[1];
+    skyLight = InLight[0];
+    playerLight = InLight[1];
 }

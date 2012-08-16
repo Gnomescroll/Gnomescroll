@@ -188,7 +188,7 @@ void init_shaders()
         //true on error
         //if (shader_error_occured(map_shader.shader->shader) == true)
         
-        if( map_shader.shader->shader_valid) == false)
+        if( map_shader.shader->shader_valid == false)
         {
             printf("!!! Default map shader failed. Setting backup shader \n");
             T_MAP_BACKUP_SHADER = 1;
@@ -202,12 +202,11 @@ void init_shaders()
 
         printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
         
-        set_map_shader_0_compatibility(0);
+        map_compatibility_shader.init();
 
-        if (shader_error_occured( map_compatibility_shader.shader->shader_valid == true)
+        if (  map_compatibility_shader.shader->shader_valid == true)
         {
             printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
-            set_map_shader_0_compatibility(1);
         }
     }
 

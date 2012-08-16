@@ -114,10 +114,15 @@ class MapCompatibilityShader
     MapCompatibilityShader()
     : terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)
     {
+
+    }
+
+    void init()
+    {
         init_texture();
         init_shader();
     }
-
+    
     ~MapCompatibilityShader()
     {
         if (shader != NULL) delete shader;
@@ -145,7 +150,7 @@ class MapCompatibilityShader
 
 };
 
-class MapCompatibilityShader main_compatibility_shader;
+class MapCompatibilityShader map_compatibility_shader;
 
 
 }   // t_map

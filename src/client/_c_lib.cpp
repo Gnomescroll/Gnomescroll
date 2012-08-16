@@ -396,6 +396,9 @@ int init_c_lib(int argc, char* argv[])
 
     Hud::init_hud_draw_settings();
 
+    //init shaders
+    
+    t_map::init_shaders();
     //t_mob::init();
     //CHECK_GL_ERROR();
     return 0;
