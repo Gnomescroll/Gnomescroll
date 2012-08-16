@@ -42,4 +42,121 @@ extern GLuint block_textures_compatibility; //use for intel mode
 
 void teardown_shader(); // frees surface
 
+
+class MapShader
+{
+    public:
+    int terrain_map_glsl;
+    class SHADER* shader;
+
+    //uniforms
+
+    //attributes
+    int Vertex;
+    int TexCoord;
+    int RGB;
+    int map_LightMatrix;
+    int map_Light;
+    //int Normal;
+
+    MechListShader()
+    : terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)
+    {
+        init_texture();
+        init_shader();
+    }
+
+    ~MechListShader()
+    {
+        if (s != NULL) SDL_FreeSurface(s);
+        if (shader != NULL) delete shader;
+    }
+
+    void init_shader()
+    {
+        shader = new SHADER;
+        shader->set_debug(true);
+
+        shader->load_shader( "map_shader",
+            "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",
+            "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh" );
+
+        TexCoord    =       shader->get_attribute("InTexCoord");
+        Brightness  =       shader->get_attribute("InBrightness");
+
+        InVertex =     shader->get_attribute("InVertex");
+        InTexCoord =   shader->get_attribute("InTexCoord");
+        InRGB =        shader->get_attribute("InRGB");
+        InLightMatrix= shader->get_attribute("InLightMatrix");
+        InLight=       shader->get_attribute("InLight");
+
+        //int Normal=      shader->get_attribute("InTexCoord");
+    }
+
+    void init_texture();
+
+};
+
+
+class MapCompatibilityShader
+{
+    public:
+
+    SDL_Surface* terrain_map_surface;
+    int terrain_map_texture;
+
+    int terrain_map_glsl;
+    //unsigned int texture1;
+    class SHADER* shader;
+
+    //uniforms
+
+    //attributes
+    int Vertex;
+    int TexCoord;
+    int RGB;
+    int map_LightMatrix;
+    int map_Light;
+    //int Normal;
+
+    MechListShader()
+    : terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)
+    {
+        init_texture();
+        init_shader();
+    }
+
+    ~MechListShader()
+    {
+        if (s != NULL) SDL_FreeSurface(s);
+        if (shader != NULL) delete shader;
+    }
+
+    void init_shader()
+    {
+        shader = new SHADER;
+        shader->set_debug(true);
+
+        shader->load_shader( "map_shader",
+            "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",
+            "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh" );
+
+        TexCoord    =       shader->get_attribute("InTexCoord");
+        Brightness  =       shader->get_attribute("InBrightness");
+
+        InVertex =     shader->get_attribute("InVertex");
+        InTexCoord =   shader->get_attribute("InTexCoord");
+        InRGB =        shader->get_attribute("InRGB");
+        InLightMatrix= shader->get_attribute("InLightMatrix");
+        InLight=       shader->get_attribute("InLight");
+
+        //int Normal=      shader->get_attribute("InTexCoord");
+    }
+
+    void init_texture();
+
+};
+
+
+
 }   // t_map
