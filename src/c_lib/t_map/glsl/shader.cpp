@@ -323,6 +323,7 @@ void teardown_shader()
 
 void set_map_shader_0_compatibility(int level) 
 {
+#if 0
     const int index = 0;    //shader index
     const int DEBUG1 = 1;
 
@@ -395,11 +396,12 @@ void set_map_shader_0_compatibility(int level)
     free(fs);
 
     CHECK_GL_ERROR();
+#endif
 }
 
 void init_map_3d_texture_compatibility()
 {
-
+#if 0
     SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
     if (s == NULL)
@@ -447,7 +449,7 @@ void init_map_3d_texture_compatibility()
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
 
     glDisable(GL_TEXTURE_2D);
-
+#endif
 }
 
 void init_block_texture_normal()

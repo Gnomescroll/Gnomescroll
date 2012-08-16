@@ -49,6 +49,10 @@ class MapShader
 
     MapShader()
     : terrain_map_glsl(0), shader(NULL)
+    {}
+
+
+    void init()
     {
         init_texture();
         init_shader();
