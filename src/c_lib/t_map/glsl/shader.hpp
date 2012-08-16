@@ -50,25 +50,25 @@ class MapShader
     class SHADER* shader;
 
     //uniforms
+    int InOffset;
 
     //attributes
-    int Vertex;
-    int TexCoord;
-    int RGB;
-    int map_LightMatrix;
-    int map_Light;
+    int InVertex;
+    int InTexCoord;
+    int InRGB;
+    int InLightMatrix;
+    int InLight;
     //int Normal;
 
-    MechListShader()
-    : terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)
+    MapShader()
+    : terrain_map_glsl(0), shader(NULL)
     {
         init_texture();
         init_shader();
     }
 
-    ~MechListShader()
+    ~MapShader()
     {
-        if (s != NULL) SDL_FreeSurface(s);
         if (shader != NULL) delete shader;
     }
 
@@ -80,10 +80,9 @@ class MapShader
         shader->load_shader( "map_shader",
             "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",
             "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh" );
-
-        TexCoord    =       shader->get_attribute("InTexCoord");
-        Brightness  =       shader->get_attribute("InBrightness");
-
+        //uniform
+        InOffset  =	shader->get_uniform("InOffset");
+        //attribute
         InVertex =     shader->get_attribute("InVertex");
         InTexCoord =   shader->get_attribute("InTexCoord");
         InRGB =        shader->get_attribute("InRGB");
@@ -97,6 +96,7 @@ class MapShader
 
 };
 
+class main_shader MapShader;
 
 class MapCompatibilityShader
 {
@@ -119,14 +119,14 @@ class MapCompatibilityShader
     int map_Light;
     //int Normal;
 
-    MechListShader()
+    MapCompatibilityShader()
     : terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)
     {
         init_texture();
         init_shader();
     }
 
-    ~MechListShader()
+    ~MapCompatibilityShader()
     {
         if (s != NULL) SDL_FreeSurface(s);
         if (shader != NULL) delete shader;
@@ -157,6 +157,7 @@ class MapCompatibilityShader
 
 };
 
+class main_compatibility_shader MapCompatibilityShader;
 
 
 }   // t_map

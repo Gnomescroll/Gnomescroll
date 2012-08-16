@@ -23,6 +23,7 @@
 #include <t_map/glsl/cache.cpp>
 #include <t_map/glsl/shader.cpp>
 #include <t_map/glsl/palette.hpp>
+#include <t_map/glsl/_interface.cpp>
 
 #include <t_map/ortho_projection.cpp>
 
