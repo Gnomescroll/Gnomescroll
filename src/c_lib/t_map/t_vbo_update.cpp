@@ -616,6 +616,8 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 void Vbo_map::update_vbo(int i, int j)
 {
 
+    update_skylight(i,j); //update skylights
+
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
 
