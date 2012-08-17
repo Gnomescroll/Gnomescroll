@@ -63,6 +63,8 @@ void broadcast_set_palette(int x, int y, int z, int palette);
 
 #endif
 
+void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
+
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
 inline int get_nearest_open_block(int x, int y, int z, int vertical_gap); 

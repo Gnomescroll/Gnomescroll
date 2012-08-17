@@ -32,7 +32,7 @@ void update_skylight(int chunk_i, int chunk_j)
 			if(e.block != 0)	//iterate until we hit top block
 				break;
 
-			e.light  |= 0xf0; //upper bits for skylight
+			e.light  |= 0xff; //upper bits for skylight
 			mc->set_element(i,j,k,e);
 			k--;
 		}
@@ -43,7 +43,7 @@ void update_skylight(int chunk_i, int chunk_j)
 			e = mc->get_element(i,j,k);
 			if(e.block != 0)
 				continue;
-			e.light  |= 16*(15-_k); //clear upper bits
+			e.light  |= 16*(15-_k)+ 0x0f; //clear upper bits
 			mc->set_element(i,j,k,e);
 		}
 

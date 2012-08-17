@@ -47,6 +47,10 @@ struct SIDE_BUFFER** SIDE_BUFFER_ARRAY = NULL;
 struct Vertex* vlist_scratch_0 = NULL;
 struct Vertex* vlist_scratch_1 = NULL;
 
+
+float light_lookup[16]; //how fast light decays
+
+
 void t_vbo_update_init()
 {
     vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
@@ -60,6 +64,12 @@ void t_vbo_update_init()
     for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
 
     init_pallete();
+
+    for(int i=0; i<16; i++)
+    {
+        light_lookup[i] = 0.10 + 0.90f* ((float)(i))/15.0;
+    }
+
 }
 
 void t_vbo_update_end()
@@ -117,6 +127,13 @@ int _is_occluded(int x,int y,int z, int side_num)
 {
     int i = 3*side_num;
     return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
+}
+
+INLINE
+int get_lighting(int x,int y,int z, int side)
+{
+    int i = 3*side;
+    return main_map->get_element(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]).light;
 }
 
 inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
@@ -382,10 +399,12 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
 
-    v_list[offset+0].lighting[0] = 0.0f;
-    v_list[offset+1].lighting[0] = 0.0f;
-    v_list[offset+2].lighting[0] = 0.0f;
-    v_list[offset+3].lighting[0] = 0.0f;
+    float light = light_lookup[get_lighting(x,y,z,side) / 16];
+
+    v_list[offset+0].lighting[0] = light;
+    v_list[offset+1].lighting[0] = light;
+    v_list[offset+2].lighting[0] = light;
+    v_list[offset+3].lighting[0] = light;
 
     {
         int _x = x & 15;

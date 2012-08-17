@@ -518,6 +518,11 @@ namespace t_map
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
+        /*
+            Update Lighting
+        */
+
+        update_skylight(cx, cy);        
     }
     
     inline unsigned char Terrain_map::get_cached_height(int x, int y)

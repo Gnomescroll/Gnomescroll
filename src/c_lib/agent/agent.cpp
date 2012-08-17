@@ -225,9 +225,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     // normalize diagonal motion
     if (CS_vx < -precision || CS_vx > precision || CS_vy < -precision || CS_vy > precision)
     {
-        float len = sqrtf(CS_vx*CS_vx + CS_vy*CS_vy);
-        CS_vx *= speed/len;
-        CS_vy *= speed/len;
+        float len = 1.0/sqrtf(CS_vx*CS_vx + CS_vy*CS_vy);
+        CS_vx *= speed*len;
+        CS_vy *= speed*len;
     }
 
     as.vx = CS_vx;
@@ -249,7 +249,16 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         else if (dist_from_ground < max_jetpack_height + 0.3f)
             as.vz = -z_gravity;
     }
-    as.vz += z_gravity;
+
+    if(dist_from_ground >= 0.025)
+    {
+        as.vz += z_gravity;
+    }
+    else
+    {
+        as.vz = 0.0;
+        as.z = floorf(as.z);
+    }
 
     #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
