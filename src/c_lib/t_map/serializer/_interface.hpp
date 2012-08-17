@@ -174,31 +174,42 @@ class BlockSerializer
     static const int version = DC_VERSION;
     static const int chunk_number = 32*32;
 
-
     char file_name[256];
     size_t file_size;
-    //int blockdata_size;
-    //struct SerializedChunk* s; //[chunk_number]; only use for load
 
-    struct SerializedChunk* _s;
     char* write_buffer;
 
+    #if PTHREADS_ENABLED
+    struct SerializedChunk* _s;
     int* version_array; // [chunk_number];
+    #else
+    struct SerializedChunk* s; //[chunk_number];
+    #endif
+    
 
     BlockSerializer()
     {
-        this->_s = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
-        GS_ASSERT(this->_s != NULL);
         this->version_array = (int*) malloc(chunk_number*sizeof(int));
         this->file_name[0] = '\0';
         this->write_buffer = NULL;
         this->file_size = 0;
+
+        #if PTHREADS_ENABLED
+        this->_s = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
+        GS_ASSERT(this->_s != NULL);
+        #else
+        this->s = (struct SerializedChunk*)malloc(chunk_number * sizeof(struct SerializedChunk));
+        #endif 
     }
 
     ~BlockSerializer()
     {
+        #if PTHREADS_ENABLED
         free(this->_s);
         free(this->version_array);
+        #else
+        free(this->s);
+        #endif
     }
 
     void serialize()
@@ -220,7 +231,6 @@ class BlockSerializer
 
     void save(const char* filename)
     {
-
         if(map_save_memcpy_in_progress == true)
         {
             printf("BlockSerializer::save call failed, map memcpy already in progress \n");
@@ -232,7 +242,6 @@ class BlockSerializer
         GS_ASSERT(write_buffer == NULL);
         GS_ASSERT(file_name[0] == '\0');
         GS_ASSERT(file_size == 0);
-        for(int i=0; i<chunk_number; i++) version_array[i] = -1;
 
         strcpy(file_name, filename);
 
@@ -255,6 +264,7 @@ class BlockSerializer
 
         //serialize
         #if PTHREADS_ENABLED
+        for(int i=0; i<chunk_number; i++) version_array[i] = -1;
         while (map_save_memcpy_in_progress)
             this->save_iter(2);   //2 ms per iteration
         #else
