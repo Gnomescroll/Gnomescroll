@@ -24,8 +24,6 @@ void toggle_help_menu()
     input_state.help_menu = (!input_state.help_menu);
 }
 
-static bool rebind_mouse = false;
-
 void enable_agent_container()
 {
     if (input_state.agent_container) return;
@@ -40,7 +38,7 @@ void enable_agent_container()
 
     t_hud::enable_agent_container_hud();
     ItemContainer::open_inventory();
-    rebind_mouse = input_state.mouse_bound;
+    input_state.rebind_mouse = input_state.mouse_bound;
     input_state.mouse_bound = false;
 }
 
@@ -57,7 +55,7 @@ void disable_agent_container()
     
     t_hud::disable_agent_container_hud();
     ItemContainer::close_inventory();
-    input_state.mouse_bound = rebind_mouse;
+    input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
 
@@ -87,7 +85,7 @@ void enable_container_block(int container_id)
     input_state.container_block = true;
     input_state.container_block_id = container_id;
     t_hud::enable_container_block_hud(container_id);
-    rebind_mouse = input_state.mouse_bound;
+    input_state.rebind_mouse = input_state.mouse_bound;
     input_state.mouse_bound = false;
 }
 
@@ -96,7 +94,7 @@ void disable_container_block()
     if (!input_state.container_block) return;
     input_state.container_block = false;
     t_hud::disable_container_block_hud();
-    input_state.mouse_bound = rebind_mouse;
+    input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
 
@@ -227,9 +225,8 @@ void toggle_camera_mode()
 
 void init_input_state()
 {   // set input_state defaults
-
-    input_state.mouse_bound = true;
     #if PRODUCTION
+    input_state.mouse_bound = true;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
     #else
@@ -237,6 +234,8 @@ void init_input_state()
     input_state.input_mode = INPUT_STATE_CAMERA;
     input_state.camera_mode = INPUT_STATE_CAMERA;
     #endif
+
+    input_state.rebind_mouse = input_state.mouse_bound;
 
     input_state.draw_hud = true;
     input_state.vbo_debug = false;
@@ -1136,7 +1135,7 @@ void active_event_handler(SDL_Event* event)
     if (event->active.state & SDL_APPINPUTFOCUS)
     {
         if (event->active.gain)
-            input_state.mouse_bound = rebind_mouse;
+            input_state.mouse_bound = input_state.rebind_mouse;
         else
         {
             input_state.rebind_mouse = input_state.mouse_bound;

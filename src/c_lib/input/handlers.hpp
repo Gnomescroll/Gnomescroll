@@ -12,6 +12,7 @@ typedef enum InputStateMode
 struct InputState
 {
     bool mouse_bound;
+    bool rebind_mouse;
     bool help_menu;
     bool scoreboard;
     bool map;
