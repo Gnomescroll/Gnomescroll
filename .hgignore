@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+*.exe
+
 zi*
 
 *.map
