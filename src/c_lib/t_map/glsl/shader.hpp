@@ -132,19 +132,22 @@ class MapCompatibilityShader
         {
             if (mesa)
             {
-                vs = textFileRead("./media/shaders/terrain/terrain_map_mesa.vsh");
-                fs = textFileRead("./media/shaders/terrain/terrain_map_mesa.fsh");
+                shader->load_shader( "mesa map_compatibility_shader",
+                    "./media/shaders/terrain/terrain_map_mesa.vsh",
+                    "./media/shaders/terrain/terrain_map_mesa.fsh" );
             }
             else
             {
-                vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
-                fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+                shader->load_shader( "map_compatibility_shader level 0",
+                    "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh",
+                    "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh" );
             }
         }
-        else
+        else if(level ==1)
         {
-            vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
-            fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh"); 
+            shader->load_shader( "map_compatibility_shader level 1",
+                "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh",
+                "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh" );
         }
 
         shader->load_shader( "map_shader",
