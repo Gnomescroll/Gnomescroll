@@ -51,12 +51,12 @@ dont_include_this_file_in_client
 #include <common/osx.hpp>
 #endif
 
-//options
+// options
 #include <options/option_macros.hpp>
 #include <options/argparse.cpp>
 #include <options/server_options.cpp>
  
-//utility
+// utility
 #include <common/time/physics_timer.cpp>
 #include <common/common.cpp>
 #include <common/files.cpp>
@@ -75,19 +75,18 @@ dont_include_this_file_in_client
 // LUA 
 #include <common/lua/lua.cpp>
 
-//map 
- 
+// map 
 #include <t_map/_include.hpp>
  
 /* mechanisms */
 #include <t_mech/_include.hpp>
 
-//ray tracing
+// ray tracing
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
 #include <physics/ray_trace/handlers.cpp>
  
-//physics
+// physics
 #include <physics/verlet.cpp>
 #include <physics/motion.cpp>
 
@@ -115,9 +114,7 @@ dont_include_this_file_in_client
 #include <particle/_include.hpp>
 
 /* Terrain Generator */
-
 #include <t_gen/_include.hpp>
-
 
 /* item */
 #include <item/_include.hpp>

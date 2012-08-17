@@ -1122,6 +1122,20 @@ void key_state_handler(Uint8 *keystate, int numkeys)
 // active event (window / input focus)
 void active_event_handler(SDL_Event* event)
 {
+    GS_ASSERT(event->active.type == SDL_ACTIVEEVENT);
+    if (event->active.gain) printf("Gained ");
+    else printf("Lost   ");
+
+    if (event->active.state & SDL_APPMOUSEFOCUS)
+        printf("mouse focus\n");
+    else
+    if (event->active.state & SDL_APPINPUTFOCUS)
+        printf("input focus\n");
+    else
+    if (event->active.state & SDL_APPACTIVE)
+        printf("app active\n");
+    else GS_ASSERT(false)
+
     //Uint8 app_state = SDL_GetAppState();
 
     //if (app_state & SDL_APPACTIVE)
