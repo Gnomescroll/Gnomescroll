@@ -466,18 +466,18 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
     Particle::teardown_particles(); // teardown after ClientState::agent_list, because of billboard particle
 
+    //if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
+    //t_mob::teardown();
+
+    if (TEARDOWN_DEBUG) printf("client state list teardown\n");
+    ClientState::teardown_lists();
+
     if (TEARDOWN_DEBUG) printf("item teardown\n");
     Item::teardown();
     if (TEARDOWN_DEBUG) printf("toolbelt teardown\n");
     Toolbelt::teardown();
     if (TEARDOWN_DEBUG) printf("container teardown\n");
     ItemContainer::teardown();
-
-    //if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
-    //t_mob::teardown();
-
-    if (TEARDOWN_DEBUG) printf("client state list teardown\n");
-    ClientState::teardown_lists();
 
     if (TEARDOWN_DEBUG) printf("Input teardown\n");
     teardown_input();
