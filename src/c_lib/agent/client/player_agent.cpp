@@ -89,13 +89,17 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     lz = c.z;
     lz0 = s0.z;
 
-#if 0
+#if 1
     if (this->you == NULL) return;
     AgentState s = this->you->get_state();
     c.theta = s.theta;
     c.phi = s.phi;
 #else
-    AgentState s = this->you->get_state();
+    //AgentState s = this->you->get_state();
+
+    /*
+        This may introduce errors if this is used
+    */
     c.theta = 0.0f;
     c.phi   = 0.0f;
 #endif
@@ -415,7 +419,7 @@ void PlayerAgent_state::pump_camera()
             camera_state = state_snapshot;
             break;
         default:
-            GS_ASSERT(false);
+            GS_ABORT();
             break;
     }
 }
