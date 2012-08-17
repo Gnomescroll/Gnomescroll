@@ -11,6 +11,11 @@ dont_include_this_file_in_client
 
 namespace ServerState
 {
+
+    extern bool main_inited;
+    extern bool signal_exit;
+    extern bool should_save_map;
+
     extern Agent_list* agent_list;
         
     // property lists

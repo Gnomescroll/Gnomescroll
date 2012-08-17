@@ -150,27 +150,23 @@ dont_include_this_file_in_client
 #include <unistd.h>
 #include <signal.h>
 
-bool main_inited = false;
-bool signal_exit = false;
-bool should_save_map = false;
-
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    if (!main_inited)
+    if (!ServerState::main_inited)
     {
         close_c_lib();
         exit(0);
     }
-    signal_exit = true;
+    ServerState::signal_exit = true;
     #if PRODUCTION
-    should_save_map = true;
+    ServerState::should_save_map = true;
     #endif
 }
 
 void sigusr1_handler(int sig)
 {
-    should_save_map = true;
+    ServerState::should_save_map = true;
 }
 #endif
 

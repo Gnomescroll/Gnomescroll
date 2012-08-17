@@ -75,7 +75,7 @@ void init(int argc, char* argv[])
 
     ServerState::init_base();
 
-    main_inited = true;
+   ServerState:: main_inited = true;
     printf("Game starting\n");
 }
 
@@ -135,7 +135,7 @@ int run()
     //int tick = 0;
     int tc;
 
-    while (!signal_exit)
+    while (!ServerState::signal_exit)
     {
         tc = 0;
         while(1)
@@ -160,10 +160,10 @@ int run()
         }
         NetServer::dispatch_network_events();
 
-        if (should_save_map)
+        if (ServerState::should_save_map)
         {
             t_map::save_map();
-            should_save_map = false;
+            ServerState::should_save_map = false;
         }
 
         t_map::check_save_state();
@@ -177,10 +177,10 @@ int run()
         #endif
     }
 
-    if (should_save_map)
+    if (ServerState::should_save_map)
     {
         t_map::save_map();
-        should_save_map = false;
+        ServerState::should_save_map = false;
     }
     
     close_c_lib();

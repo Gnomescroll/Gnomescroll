@@ -13,6 +13,11 @@ dont_include_this_file_in_client
 
 namespace ServerState
 {
+
+    bool main_inited = false;
+    bool signal_exit = false;
+    bool should_save_map = false;
+    
     Agent_list* agent_list = NULL;
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
