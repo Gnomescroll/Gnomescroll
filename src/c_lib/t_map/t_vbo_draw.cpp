@@ -387,67 +387,6 @@ void Vbo_map::draw_map()
     //;
     glDisable(GL_CULL_FACE);
 
-/*
-    TEST
-*/
-
-
-    //set_frustrum_column_min(i, j, )
-#if 0
-    const float cx = current_camera_position.x;
-    const float cy = current_camera_position.y;
-
-    for(int i=0; i<32; i++)
-    for(int j=0; j<32; j++)
-    {
-        float x = i*16.0 + 8.0;
-        float y = j*16.0 + 8.0;
-
-
-        x = quadrant_translate_f(cx, x);
-        y = quadrant_translate_f(cy, y);
-
-        //set_frustrum_column_min
-    }
-
-    glColor3ub(255, 0, 0);
-
-    glBegin(GL_POINTS);
-    for(int i=0; i<32; i++)
-    {
-    for(int j=0; j<32; j++)
-    {
-    for(int k=0; k<=128; k+=16)
-    {
-        int index = 32*i +j;
-
-        int min = vbo_frustrum_min[index];
-        int max = vbo_frustrum_max[index];
-        
-        if(min == -1 && max == -1)
-            continue;
-        if(k <= min*16)
-        {
-            glColor3ub(255, 0, 0);
-        } 
-        else if(k >= max*16)
-        {
-            glColor3ub(0, 255, 0);
-        }
-        else
-        {
-            glColor3ub(0, 0, 255);
-        }
-
-        glVertex3f(16*i+8.0, 16*j+8.0 ,k);
-    }
-
-    }}
-
-    glEnd();
-
-    glColor3ub(255, 255, 255);
-#endif
 
     CHECK_GL_ERROR();
 }
