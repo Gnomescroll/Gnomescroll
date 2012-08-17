@@ -48,6 +48,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     // the player will suddenly jump ~512 meters, with a noticable interpolation flicker in between
     float dist;
     {
+#if 0 
         float x0 = quadrant_translate_f(current_camera_position.x, s0.x);
         float y0 = quadrant_translate_f(current_camera_position.y, s0.y);
         float z0 = s0.z;
@@ -57,14 +58,29 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
         float z1 = s1.z;
 
         dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
+
+#else
+        float x0 = s0.x;
+        float y0 = s0.y;
+        float z0 = s0.z;
+
+        float x1 = s1.x;
+        float y1 = s1.y;
+        float z1 = s1.z;
+
+        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
+
+#endif
+        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
+        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
     }
 
     float delta = 1.0f;
     if (dist < SKIP_INTERPOLATION_THRESHOLD)
     {
         delta = ((float)(_t - last_tick)) / 33.0;
-        if(delta > 1.0f) delta = 1.0f;
-
+        if(delta > 1.0f)
+            delta = 1.0f;
     }
     else
     {
@@ -73,9 +89,17 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
 
     GS_ASSERT(delta >= 0.0f);
 
-    c.x = s0.x*(1-delta) + s1.x*delta;
-    c.y = s0.y*(1-delta) + s1.y*delta;
-    c.z = s0.z*(1-delta) + s1.z*delta;  
+    float x0 = quadrant_translate_f(current_camera_position.x, s0.x);
+    float y0 = quadrant_translate_f(current_camera_position.y, s0.y);
+    float z0 = s0.z;
+
+    float x1 = quadrant_translate_f(current_camera_position.x, s1.x);
+    float y1 = quadrant_translate_f(current_camera_position.y, s1.y);
+    float z1 = s1.z;
+
+    c.x = x0*(1-delta) + x1*delta;
+    c.y = y0*(1-delta) + y1*delta;
+    c.z = z0*(1-delta) + z1*delta;  
 
 #if 0
     int _tl0 = _GET_MS_TIME() -_tl;
