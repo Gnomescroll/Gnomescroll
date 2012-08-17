@@ -1133,6 +1133,17 @@ void active_event_handler(SDL_Event* event)
         printf("app active\n");
     else GS_ASSERT(false)
 
+    if (event->active.state & SDL_APPINPUTFOCUS)
+    {
+        if (event->active.gain)
+            input_state.mouse_bound = rebind_mouse;
+        else
+        {
+            input_state.rebind_mouse = input_state.mouse_bound;
+            input_state.mouse_bound = false;
+        }
+    }
+    
     //Uint8 app_state = SDL_GetAppState();
 
     //if (app_state & SDL_APPACTIVE)
