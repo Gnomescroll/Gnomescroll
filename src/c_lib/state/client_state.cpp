@@ -60,22 +60,6 @@ namespace ClientState {
         if (voxel_hitscan_list != NULL) delete voxel_hitscan_list;
     }
 
-    void init()
-    {
-        static int inited = 0;
-        if (inited++)
-        {
-            printf("WARNING: ClientState::init -- attempt to call more than once\n");
-            return;
-        }
-        init_lists();
-        init_voxel_render_list_shader1();
-    }
-
-    void teardown()
-    {
-        teardown_lists();
-    }
 
     void update()
     {
