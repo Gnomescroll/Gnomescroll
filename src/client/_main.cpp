@@ -121,9 +121,13 @@ int physics_tick()
         ClientState::tick_id += 1;
 
         // input
-        process_events();
-        get_key_state();
-        trigger_keys_held_down();
+
+        /*
+            Make names clealer
+        */
+        process_events();           //RENAME THIS
+        get_key_state();            //RENAME THIS
+        trigger_keys_held_down();   //RENAME THIS
 
         Toolbelt::tick();
 
@@ -216,7 +220,7 @@ int run()
         poll_mouse();
 
 
-        update_input_state();
+        update_input_state();   //WARNING: DOES NOT UPDATE MOUSE OR KEYBOARD
 
         physics_tick();
 

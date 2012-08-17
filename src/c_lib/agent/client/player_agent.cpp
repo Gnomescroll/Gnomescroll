@@ -38,7 +38,9 @@ void PlayerAgent_state::was_identified()
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
     static const float SKIP_INTERPOLATION_THRESHOLD = 1.0f;
-    static int _tl;
+    
+    int _t = (int)_GET_MS_TIME();
+    int last_tick = (int)_LAST_TICK();
 
     // calculate interpolation delta
     // if the distance travelled is extreme, dont interpolate (delta=1)
@@ -77,9 +79,8 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
 
 #if 0
     int _tl0 = _GET_MS_TIME() -_tl;
+    static int _tl;
     _tl = _GET_MS_TIME();
-    int last_tick = (int)_LAST_TICK();
-    int _t = (int)_GET_MS_TIME();
 
     static float lz;
     static float lz0;
