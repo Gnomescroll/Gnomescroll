@@ -155,7 +155,6 @@ class MapCompatibilityShader
         InRGB =        shader->get_attribute("InRGB");
         InLightMatrix= shader->get_attribute("InLightMatrix");
         InLight=       shader->get_attribute("InLight");
-
         //int Normal=      shader->get_attribute("InTexCoord");
     }
 

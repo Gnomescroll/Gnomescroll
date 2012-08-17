@@ -57,6 +57,6 @@ void main(void)
     texCoord = InTexCoord;
 
     lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
-    skyLight = InLight[0];
-    playerLight = InLight[1];
+    skyLight = InLight.x;
+    playerLight = InLight.y;
 }

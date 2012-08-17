@@ -387,67 +387,6 @@ void Vbo_map::draw_map()
     //;
     glDisable(GL_CULL_FACE);
 
-/*
-    TEST
-*/
-
-
-    //set_frustrum_column_min(i, j, )
-#if 0
-    const float cx = current_camera_position.x;
-    const float cy = current_camera_position.y;
-
-    for(int i=0; i<32; i++)
-    for(int j=0; j<32; j++)
-    {
-        float x = i*16.0 + 8.0;
-        float y = j*16.0 + 8.0;
-
-
-        x = quadrant_translate_f(cx, x);
-        y = quadrant_translate_f(cy, y);
-
-        //set_frustrum_column_min
-    }
-
-    glColor3ub(255, 0, 0);
-
-    glBegin(GL_POINTS);
-    for(int i=0; i<32; i++)
-    {
-    for(int j=0; j<32; j++)
-    {
-    for(int k=0; k<=128; k+=16)
-    {
-        int index = 32*i +j;
-
-        int min = vbo_frustrum_min[index];
-        int max = vbo_frustrum_max[index];
-        
-        if(min == -1 && max == -1)
-            continue;
-        if(k <= min*16)
-        {
-            glColor3ub(255, 0, 0);
-        } 
-        else if(k >= max*16)
-        {
-            glColor3ub(0, 255, 0);
-        }
-        else
-        {
-            glColor3ub(0, 0, 255);
-        }
-
-        glVertex3f(16*i+8.0, 16*j+8.0 ,k);
-    }
-
-    }}
-
-    glEnd();
-
-    glColor3ub(255, 255, 255);
-#endif
 
     CHECK_GL_ERROR();
 }
@@ -479,6 +418,7 @@ void Vbo_map::draw_map_compatibility()
     glEnableVertexAttribArray(map_compatibility_shader.InTexCoord);
     glEnableVertexAttribArray(map_compatibility_shader.InRGB);
     glEnableVertexAttribArray(map_compatibility_shader.InLightMatrix);
+    glEnableVertexAttribArray(map_compatibility_shader.InLight);
 
     class Map_vbo* vbo;
 
@@ -511,6 +451,7 @@ void Vbo_map::draw_map_compatibility()
         glVertexAttribPointer(map_compatibility_shader.InTexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
         glVertexAttribPointer(map_compatibility_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_compatibility_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(map_compatibility_shader.InLight, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)16);
 
         #if ADV_PRUNE
 
@@ -543,7 +484,7 @@ void Vbo_map::draw_map_compatibility()
     glDisableVertexAttribArray(map_compatibility_shader.InTexCoord);
     glDisableVertexAttribArray(map_compatibility_shader.InRGB);
     glDisableVertexAttribArray(map_compatibility_shader.InLightMatrix);
-
+    glDisableVertexAttribArray(map_compatibility_shader.InLight);
 
     glUseProgramObjectARB(0);
 
