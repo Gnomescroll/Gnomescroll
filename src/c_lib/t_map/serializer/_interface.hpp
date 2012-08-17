@@ -3,15 +3,6 @@
 
 #include <common/files.hpp>
 
-#ifdef linux
-    #ifdef __GNUC__
-        #include <pthread.h>
-        #define PTHREADS_ENABLED 1
-    #endif
-#else
-    #define PTHREADS_ENABLED 0
-#endif
-
 namespace t_map
 {
 
@@ -124,7 +115,6 @@ void threaded_write(const char* filename, char* buffer, int buffer_len)
     #endif
 /*/
 }
-
 
 void wait_for_threads()
 {
@@ -280,7 +270,7 @@ class BlockSerializer
 
         for(int i=0; i<chunk_number; i++)
         {
-            memcpy(&buffer[index], (char*) &s[i], sizeof(struct SerializedChunk));
+            memcpy(&this->write_buffer[index], (char*) &s[i], sizeof(struct SerializedChunk));
             index += sizeof(struct SerializedChunk);
         }
         GS_ASSERT(file_size == (size_t)index);

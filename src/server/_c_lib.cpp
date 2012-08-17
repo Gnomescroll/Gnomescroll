@@ -28,6 +28,16 @@ dont_include_this_file_in_client
     #undef rad2
 #endif
 
+// threads
+#ifdef linux
+    #ifdef __GNUC__
+        #include <pthread.h>
+        #define PTHREADS_ENABLED 1
+    #endif
+#else
+    #define PTHREADS_ENABLED 0
+#endif
+
 #include <common/version.h>
 #include <common/defines.h>
 #include <common/compression/miniz.c>
@@ -69,8 +79,8 @@ dont_include_this_file_in_client
  
 #include <t_map/_include.hpp>
  
- /* mechanisms */
- #include <t_mech/_include.hpp>
+/* mechanisms */
+#include <t_mech/_include.hpp>
 
 //ray tracing
 #include <physics/ray_trace/ray_trace.cpp>
@@ -140,11 +150,6 @@ dont_include_this_file_in_client
 
 #include <sound/_include.hpp>
 #include <animations/_include.hpp>
-
-//#include <main.cpp>
-  
-//page size
-//(size_t) sysconf(_SC_PAGESIZE);
 
 #ifdef linux
 #include <unistd.h>
@@ -271,8 +276,11 @@ int init_c_lib(int argc, char* argv[])
 
 void close_c_lib()
 {
+    #if PTHREADS_ENABLED
     printf("Waiting for threads to finish...\n");
     wait_for_threads();
+    #endif
+    
     t_map::check_save_state();
 
     printf("Server closing...\n");
