@@ -15,7 +15,7 @@ void HealerComponent::heal_agents_in_range()
 
     GS_ASSERT(this->radius > 0.0f);
     if (this->radius <= 0.0f) return;
-    float r2 = this->radius * this->radius;
+    float rad2 = this->radius * this->radius;
     
     Vec3 pos;
     using Components::VoxelModelComponent;
@@ -39,7 +39,7 @@ void HealerComponent::heal_agents_in_range()
         if (a == NULL) continue;
         if (a->status.dead) continue;
         if (a->status.health == AGENT_HEALTH) continue;
-        if (vec3_distance_squared(a->get_position(), pos) > r2) continue;
+        if (vec3_distance_squared(a->get_position(), pos) > rad2) continue;
         a->status.restore_health();
     }
 }

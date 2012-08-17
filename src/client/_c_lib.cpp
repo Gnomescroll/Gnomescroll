@@ -22,6 +22,7 @@ dont_include_this_file_in_server
 #ifdef _WIN32
     #include "windows.h"
     #undef interface
+    #undef rad2
 #endif
 
 #ifdef __APPLE__

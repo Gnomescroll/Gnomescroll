@@ -25,6 +25,7 @@ dont_include_this_file_in_client
 #ifdef _WIN32
     #include "windows.h"
     #undef interface
+    #undef rad2
 #endif
 
 #include <common/version.h>
