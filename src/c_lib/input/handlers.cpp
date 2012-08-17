@@ -225,7 +225,7 @@ void toggle_camera_mode()
     }
 }
 
-void init_handlers()
+void init_input_state()
 {   // set input_state defaults
 
     input_state.mouse_bound = true;
@@ -269,6 +269,16 @@ void init_handlers()
 
     // debug
     input_state.frustum = true;
+}
+
+// options
+const float ZOOM_SENSITIVITY_SCALE = 0.7f;
+void update_input_state()
+{
+    input_state.invert_mouse = Options::invert_mouse;
+    input_state.sensitivity = Options::sensitivity;
+    if (Hud::hud_draw_settings.zoom)
+        input_state.sensitivity *= ZOOM_SENSITIVITY_SCALE;
 }
 
 // keys that can be held down
@@ -323,19 +333,6 @@ void trigger_keys_held_down()
             key_down_handler(&event);
         }
     }
-}
-
-// options
-const float ZOOM_SENSITIVITY_SCALE = 0.7f;
-void set_input_options(
-    bool invert_mouse,
-    float sensitivity
-)
-{
-    input_state.invert_mouse = invert_mouse;
-    input_state.sensitivity = sensitivity;
-    if (Hud::hud_draw_settings.zoom)
-        input_state.sensitivity *= ZOOM_SENSITIVITY_SCALE;
 }
 
 /* Chat buffer */

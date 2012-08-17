@@ -384,7 +384,6 @@ int init_c_lib(int argc, char* argv[])
     
     Sound::init();
     init_input();
-    init_handlers();
     init_cameras();
     init_chat_client();
     Particle::draw_init();
@@ -393,7 +392,6 @@ int init_c_lib(int argc, char* argv[])
 
     Item::load_crafting_dat();
     Item::load_smelting_dat();
-
 
     Hud::init_hud_draw_settings();
 

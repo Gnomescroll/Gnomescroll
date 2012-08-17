@@ -53,7 +53,8 @@ struct InputState
 
 extern InputState input_state;
 
-void init_handlers();
+void init_input_state();
+void update_input_state();
 
 // handlers
 void key_down_handler(SDL_Event* event);
@@ -89,11 +90,5 @@ void enable_container_block(int container_id);
 void disable_container_block();
 
 void close_all_containers();
-
-// options
-void set_input_options(
-    bool invert_mouse,
-    float sensitivity
-);
 
 void trigger_keys_held_down();

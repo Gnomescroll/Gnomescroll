@@ -21,11 +21,13 @@ int init_input()
 {
     static int inited = 0;
     GS_ASSERT(inited == 0);
-    if (inited) return 1;
+    if (inited++) return 1;
+
     keystate = SDL_GetKeyState(&numkeys);    
     SDL_EnableUNICODE(SDL_ENABLE);
     init_mouse();
-    inited++;
+    init_input_state();
+
     return 0;
 }
 
