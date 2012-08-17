@@ -53,12 +53,12 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     float dist;
     {
 
-        float x0 = quadrant_translate_f(current_camera.x, s0.x)
-        float y0 = quadrant_translate_f(current_camera.y, s0.y)
+        float x0 = quadrant_translate_f(current_camera_position.x, s0.x);
+        float y0 = quadrant_translate_f(current_camera_position.y, s0.y);
         float z0 = s0.z;
 
-        float x1 = quadrant_translate_f(current_camera.x, s1.x)
-        float x1 = quadrant_translate_f(current_camera.y, s1.y)
+        float x1 = quadrant_translate_f(current_camera_position.x, s1.x);
+        float y1 = quadrant_translate_f(current_camera_position.y, s1.y);
         float z1 = s1.z;
 
         dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
@@ -84,17 +84,22 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
 
     static float lz;
     static float lz0;
-    printf("z= %0.02f delta= %0.02f s0.z= %0.02f s0_delta= %0.02f   tdelta= %0.02f dist2= %f tickd= %d time= %d ctime= %d last_tick= %d\n", 
-        c.z, lz - c.z, s0.z, lz0-s0.z, delta, dist2, _t - last_tick, _tl0, _GET_MS_TIME(), _LAST_TICK());
+    printf("z= %0.02f delta= %0.02f s0.z= %0.02f s0_delta= %0.02f   tdelta= %0.02f dist= %f tickd= %d time= %d ctime= %d last_tick= %d\n", 
+        c.z, lz - c.z, s0.z, lz0-s0.z, delta, dist, _t - last_tick, _tl0, _GET_MS_TIME(), _LAST_TICK());
     lz = c.z;
     lz0 = s0.z;
 
+#if 0
     if (this->you == NULL) return;
     AgentState s = this->you->get_state();
     c.theta = s.theta;
     c.phi = s.phi;
+#else
+    AgentState s = this->you->get_state();
+    c.theta = 0.0f;
+    c.phi   = 0.0f;
+#endif
 }
-#undef SKIP_INTERPOLATION_THRESHOLD
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
 {
