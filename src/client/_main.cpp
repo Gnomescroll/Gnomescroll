@@ -66,6 +66,7 @@ void init(int argc, char* argv[])
 }
 
 //GAFFER LOOP
+//http://gafferongames.com/game-physics/fix-your-timestep/
 /*
     double t = 0.0;
     const double dt = 0.01;
