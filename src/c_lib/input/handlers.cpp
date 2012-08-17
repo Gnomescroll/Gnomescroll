@@ -1135,10 +1135,14 @@ void active_event_handler(SDL_Event* event)
     if (event->active.state & SDL_APPINPUTFOCUS)
     {
         if (event->active.gain)
+        {
             input_state.mouse_bound = input_state.rebind_mouse;
+            input_state.rebind_mouse = false;
+        }
         else
         {
             input_state.rebind_mouse = input_state.mouse_bound;
+            if ("Losing input, rebind mouse (aka mouse was bound)? %d\n", input_state.rebind_mouse);
             input_state.mouse_bound = false;
         }
     }
