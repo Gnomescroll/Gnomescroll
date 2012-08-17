@@ -10,13 +10,21 @@ dont_include_this_file_in_client
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stding.h>
 #include <string.h>
-
-//#include <stdio.h>
-//#include <stdlib.h>
+#include <math.h>
 
 #ifdef __GNUC__
     #include <unistd.h>
+#endif
+
+#ifdef __MINGW32__
+    #include <malloc.h> //alloca function
+#endif
+
+#ifdef _WIN32
+    #include "windows.h"
+    #undef interface
 #endif
 
 #include <common/version.h>
