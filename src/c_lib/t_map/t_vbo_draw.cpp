@@ -143,7 +143,9 @@ void Vbo_map::prep_frustrum_vertices()
                 printf("voff= %i vnum= %i \n", voff, vnum);
                 printf("vbo->vertex_offset[sid]= %i vbo->vertex_num[side]= %i \n", vbo->vertex_offset[side], vbo->vertex_num[side]);
                 printf("min= %i max= %i \n", min, max);
-                GS_ABORT();
+
+                vbo_frustrum_voff[index][side] = 0;
+                vbo_frustrum_vnum[index][side] = 0;
             }
 
         }

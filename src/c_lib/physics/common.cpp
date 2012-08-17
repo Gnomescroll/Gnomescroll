@@ -43,7 +43,7 @@ float distancef(float x, float y, float z, float a, float b, float c)
 
 float distancef_squared(float x, float y, float z, float a, float b, float c)
 {
-    return (float)((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
+    return (a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z);
 }
 
 float gaussian_value(const float mean, const float stddev, const float x)

@@ -33,9 +33,16 @@ void PlayerAgent_state::was_identified()
     msg.send();    
 }
 
-#define SKIP_INTERPOLATION_THRESHOLD 128.0f // travel distance above which we dont bother interpolating to
+//#define SKIP_INTERPOLATION_THRESHOLD 0.5f // travel distance above which we dont bother interpolating to
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
+    static const float SKIP_INTERPOLATION_THRESHOLD = 1.0f;
+    static int _tl;
+
+    int _tl0 = _GET_MS_TIME() -_tl;
+    _tl = _GET_MS_TIME();
+
+
     int last_tick = (int)_LAST_TICK();
     int _t = (int)_GET_MS_TIME();
 
@@ -43,17 +50,44 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     // if the distance travelled is extreme, dont interpolate (delta=1)
     // this is because of the teleport in map wrapping
     // the player will suddenly jump ~512 meters, with a noticable interpolation flicker in between
-    float delta = 1.0f;
-    float dist2 = distancef_squared(s0.x, s0.y, s0.z, s1.x, s1.y, s1.z);
-    if (dist2 < SKIP_INTERPOLATION_THRESHOLD*SKIP_INTERPOLATION_THRESHOLD)
-        delta = ((float)(_t - last_tick)) / 33.3f;
+    float dist;
+    {
 
-    if(delta > 1.0f) delta = 1.0f;
+        float x0 = quadrant_translate_f(current_camera.x, s0.x)
+        float y0 = quadrant_translate_f(current_camera.y, s0.y)
+        float z0 = s0.z;
+
+        float x1 = quadrant_translate_f(current_camera.x, s1.x)
+        float x1 = quadrant_translate_f(current_camera.y, s1.y)
+        float z1 = s1.z;
+
+        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
+    }
+
+    float delta = 1.0f;
+    if (dist < SKIP_INTERPOLATION_THRESHOLD)
+    {
+        delta = ((float)(_t - last_tick)) / 33.3f;
+        if(delta > 1.0f) delta = 1.0f;
+
+    }
+    else
+    {
+        delta = 1.0f;
+    }
+
     GS_ASSERT(delta >= 0.0f);
 
     c.x = s0.x*(1-delta) + s1.x*delta;
     c.y = s0.y*(1-delta) + s1.y*delta;
     c.z = s0.z*(1-delta) + s1.z*delta;  
+
+    static float lz;
+    static float lz0;
+    printf("z= %0.02f delta= %0.02f s0.z= %0.02f s0_delta= %0.02f   tdelta= %0.02f dist2= %f tickd= %d time= %d ctime= %d last_tick= %d\n", 
+        c.z, lz - c.z, s0.z, lz0-s0.z, delta, dist2, _t - last_tick, _tl0, _GET_MS_TIME(), _LAST_TICK());
+    lz = c.z;
+    lz0 = s0.z;
 
     if (this->you == NULL) return;
     AgentState s = this->you->get_state();
