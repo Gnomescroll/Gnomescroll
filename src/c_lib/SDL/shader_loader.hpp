@@ -68,7 +68,11 @@ class SHADER
     void load_shader(const char* _name, const char* vertex_shader_file, const char* fragment_shader_file)
     {
         //set shader name
-        GS_ASSERT(name == NULL);
+        if(name != NULL)
+        {
+            delete[] name;
+            name = NULL;
+        }
         name = new char[strlen(_name)+1];
         name = strcpy(name, _name);
 
