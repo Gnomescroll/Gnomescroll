@@ -18,181 +18,13 @@ GL_GENERATE_MIPMAP is supported for 1.4 and over
 namespace t_map
 { 
 
-SDL_Surface *terrain_map_surface = NULL;
-GLuint terrain_map_texture = 0;
 
-GLuint block_textures_compatibility = 0; //use for intel model
-
-void init_shaders()
+void MapShader::init_texture()
 {
-    //determine support for anisotropic filtering
-    //if (true || !GLEW_texture_array)
-
-    if (GLEW_EXT_texture_array)
-    {
-        if (PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
-    }
-    else
-    {
-        printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
-        T_MAP_BACKUP_SHADER = 1;
-    }
-
-    if (!GLEW_EXT_texture_sRGB)
-    {
-        printf("!!! Warning: EXT_texture_sRGB not supported. \n");
-    }
-
-    //ANISOTROPIC_FILTERING = 0;
-
-    if (ANISOTROPIC_FILTERING)
-    {
-        if (GLEW_EXT_texture_filter_anisotropic) // ANISOTROPY_EXT
-        {
-            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
-            printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
-        } 
-        else 
-        {
-            printf("anisotropic filtering not supported ! \n");
-            ANISOTROPIC_FILTERING = 0;
-        }
-    }
-
-    //T_MAP_BACKUP_SHADER = 1;
-
-    if (T_MAP_BACKUP_SHADER == 0)
-    {
-        set_map_shader_0();
-        init_map_3d_texture();
-
-        //true on error
-        if (shader_error_occured(map_shader[0]) == true)
-        {
-            printf("!!! Default map shader failed. Setting backup shader \n");
-            T_MAP_BACKUP_SHADER = 1;
-        }
-    }
-
-    if (T_MAP_BACKUP_SHADER == 1)
-    {
-        ANISOTROPIC_FILTERING = 0;  //disable anisotropic filtering
-        init_map_3d_texture_compatibility();
-
-        printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
-        
-        set_map_shader_0_compatibility(0);
-
-        if (shader_error_occured(map_shader[0]) == true)
-        {
-            printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
-            set_map_shader_0_compatibility(1);
-        }
-    }
-
-    init_block_texture_normal();
-}
-
-void set_map_shader_0() 
-{
-    const int index = 0;    //shader index
-    const int DEBUG1 = 1;
-
-    map_shader[index] = glCreateProgramObjectARB();
-    map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    map_frag_shader[index] = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    char *vs, *fs;
-
-    if (DEBUG1) printf("set_map_shader_0: \n");
-
-    vs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
-    fs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
-
-    glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
-    glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
-    glCompileShaderARB(map_vert_shader[index]);
-
-    if (DEBUG1) printShaderInfoLog(map_vert_shader[index]);
-
-    glCompileShaderARB(map_frag_shader[index]);
-    if (DEBUG1) printShaderInfoLog(map_frag_shader[index]);
-    
-    glAttachObjectARB(map_shader[index], map_vert_shader[index]);
-    glAttachObjectARB(map_shader[index], map_frag_shader[index]);
-
-    glLinkProgramARB(map_shader[index]);
-
-    if (DEBUG1) printProgramInfoLog(map_shader[index]);
-    
-    //uniforms
-
-    map_ChunkPosition = glGetUniformLocation(map_shader[index], "ChunkPosition");
-    //map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
-
-    //attributes
-    map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
-    map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
-    map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
-    //map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
-
-    map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
-
-    //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix);
-
-    free(vs);
-    free(fs);
-
-}
-
-void toggle_3d_texture_settings()
-{
-    static int s = 0;
-    s = (s+1) % 6;
-
-    switch (s)
-    {
-        case 0:
-            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 0;
-            T_MAP_MAG_FILTER  = 0;
-            break;
-        case 1:
-            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 0;
-            T_MAP_MAG_FILTER  = 1;
-            break;
-        case 2:
-            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
-            T_MAP_MAG_FILTER  = 0;
-            break;
-        case 3:
-            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
-            T_MAP_MAG_FILTER  = 1;
-            break;
-        case 4:
-            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
-            T_MAP_MAG_FILTER  = 2;
-            break;
-        case 5:
-            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
-            T_MAP_MAG_FILTER  = 3;
-            break;
-        default:
-            printf("toggle_3d_texture_settings: error \n");
-            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
-            T_MAP_MAG_FILTER  = 0;
-    }
-    printf("TEXTURE_SETTING: T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = %i T_MAP_MAG_FILTER = %i \n", T_MAP_TEXTURE_2D_ARRAY_MIPMAPS,T_MAP_MAG_FILTER);
-    init_map_3d_texture();
-}
-
-//warning: random segfault on start in graphics driver
-void init_map_3d_texture()
-{
-    //printf("init_map_3d_texture: 0 \n");
 
     if (terrain_map_glsl != 0)
     {
-        printf("init_map_3d_texture: attempting to delete, may cause segfault \n");
+        printf("map_shader init_texture: attempting to delete, may cause segfault \n");
         glDeleteTextures(1,&terrain_map_glsl);
         terrain_map_glsl = 0;
     }
@@ -222,8 +54,6 @@ void init_map_3d_texture()
     {
         glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
     }
-
-    //printf("init_map_3d_texture: 2 \n");
 
     if (T_MAP_TEXTURE_2D_ARRAY_MIPMAPS == 0)
     {
@@ -299,6 +129,191 @@ void init_map_3d_texture()
     glDisable(GL_TEXTURE_2D);
 }
 
+void MapCompatibilityShader::init_texture()
+{
+
+
+}
+
+
+SDL_Surface *terrain_map_surface = NULL;
+GLuint terrain_map_texture = 0;
+
+GLuint block_textures_compatibility = 0; //use for intel model
+
+void init_shaders()
+{
+    //determine support for anisotropic filtering
+    //if (true || !GLEW_texture_array)
+
+    if (GLEW_EXT_texture_array)
+    {
+        if (PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
+    }
+    else
+    {
+        printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
+        T_MAP_BACKUP_SHADER = 1;
+    }
+
+    if (!GLEW_EXT_texture_sRGB)
+    {
+        printf("!!! Warning: EXT_texture_sRGB not supported. \n");
+    }
+
+    //ANISOTROPIC_FILTERING = 0;
+
+    if (ANISOTROPIC_FILTERING)
+    {
+        if (GLEW_EXT_texture_filter_anisotropic) // ANISOTROPY_EXT
+        {
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
+            printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
+        } 
+        else 
+        {
+            printf("anisotropic filtering not supported ! \n");
+            ANISOTROPIC_FILTERING = 0;
+        }
+    }
+
+    //T_MAP_BACKUP_SHADER = 1;
+
+    if (T_MAP_BACKUP_SHADER == 0)
+    {
+        //set_map_shader_0();
+        //init_map_3d_texture();
+
+        map_shader.init();
+        //true on error
+        //if (shader_error_occured(map_shader.shader->shader) == true)
+        
+        if( map_shader.shader->shader_valid == false)
+        {
+            printf("!!! Default map shader failed. Setting backup shader \n");
+            T_MAP_BACKUP_SHADER = 1;
+        }
+    }
+
+    if (T_MAP_BACKUP_SHADER == 1)
+    {
+        ANISOTROPIC_FILTERING = 0;  //disable anisotropic filtering
+        init_map_3d_texture_compatibility();
+
+        printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
+        
+        map_compatibility_shader.init();
+
+        if (  map_compatibility_shader.shader->shader_valid == true)
+        {
+            printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
+        }
+    }
+
+    init_block_texture_normal();
+}
+
+/*
+void set_map_shader_0() 
+{
+    const int index = 0;    //shader index
+    const int DEBUG1 = 1;
+
+    map_shader[index] = glCreateProgramObjectARB();
+    map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    map_frag_shader[index] = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    char *vs, *fs;
+
+    if (DEBUG1) printf("set_map_shader_0: \n");
+
+    vs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
+    fs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
+
+    glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
+    glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
+    glCompileShaderARB(map_vert_shader[index]);
+
+    if (DEBUG1) printShaderInfoLog(map_vert_shader[index]);
+
+    glCompileShaderARB(map_frag_shader[index]);
+    if (DEBUG1) printShaderInfoLog(map_frag_shader[index]);
+    
+    glAttachObjectARB(map_shader[index], map_vert_shader[index]);
+    glAttachObjectARB(map_shader[index], map_frag_shader[index]);
+
+    glLinkProgramARB(map_shader[index]);
+
+    if (DEBUG1) printProgramInfoLog(map_shader[index]);
+    
+    //uniforms
+
+    map_ChunkPosition = glGetUniformLocation(map_shader[index], "ChunkPosition");
+    //map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
+
+    //attributes
+    map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
+    map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
+    map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
+    //map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
+
+    map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
+    map_Light = glGetAttribLocation(map_shader[index], "InLight"); 
+
+    //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix);
+
+    free(vs);
+    free(fs);
+}
+*/
+
+void toggle_3d_texture_settings()
+{
+    static int s = 0;
+    s = (s+1) % 6;
+
+    switch (s)
+    {
+        case 0:
+            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 0;
+            T_MAP_MAG_FILTER  = 0;
+            break;
+        case 1:
+            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 0;
+            T_MAP_MAG_FILTER  = 1;
+            break;
+        case 2:
+            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
+            T_MAP_MAG_FILTER  = 0;
+            break;
+        case 3:
+            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
+            T_MAP_MAG_FILTER  = 1;
+            break;
+        case 4:
+            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
+            T_MAP_MAG_FILTER  = 2;
+            break;
+        case 5:
+            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
+            T_MAP_MAG_FILTER  = 3;
+            break;
+        default:
+            printf("toggle_3d_texture_settings: error \n");
+            T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
+            T_MAP_MAG_FILTER  = 0;
+    }
+    printf("TEXTURE_SETTING: T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = %i T_MAP_MAG_FILTER = %i \n", T_MAP_TEXTURE_2D_ARRAY_MIPMAPS,T_MAP_MAG_FILTER);
+    init_map_3d_texture();
+}
+
+//warning: random segfault on start in graphics driver
+void init_map_3d_texture()
+{
+    //printf("init_map_3d_texture: 0 \n");
+
+}
+
 void teardown_shader()
 {
     if (terrain_map_surface != NULL)
@@ -307,6 +322,7 @@ void teardown_shader()
 
 void set_map_shader_0_compatibility(int level) 
 {
+#if 0
     const int index = 0;    //shader index
     const int DEBUG1 = 1;
 
@@ -373,16 +389,18 @@ void set_map_shader_0_compatibility(int level)
     map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
 
     map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
+    map_Light = glGetAttribLocation(map_shader[index], "InLight");
 
     free(vs);
     free(fs);
 
     CHECK_GL_ERROR();
+#endif
 }
 
 void init_map_3d_texture_compatibility()
 {
-
+#if 0
     SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
     if (s == NULL)
@@ -430,7 +448,7 @@ void init_map_3d_texture_compatibility()
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
 
     glDisable(GL_TEXTURE_2D);
-
+#endif
 }
 
 void init_block_texture_normal()

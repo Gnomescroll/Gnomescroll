@@ -117,10 +117,10 @@ class MechListShader
     class SHADER* shader;
 
     //uniforms
-    unsigned int CameraPosition;
+    int CameraPosition;
     //attributes
-    unsigned int TexCoord;
-    unsigned int Brightness;
+    int TexCoord;
+    int Brightness;
 
     MechListShader()
     : s(NULL), shader(NULL)

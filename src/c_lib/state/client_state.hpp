@@ -38,9 +38,8 @@ namespace ClientState {
 
     void update();
     void update_for_draw();
-    void init();
+
     void init_lists();
-    void teardown();
     void teardown_lists();
 
     // connect callback

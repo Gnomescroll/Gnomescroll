@@ -38,6 +38,7 @@ void end_t_map();
 
 #if DC_CLIENT
 void init_for_draw();
+void init_shaders();
 #endif
 
 class Terrain_map* get_map();
@@ -59,6 +60,8 @@ void broadcast_set_block_palette(int x, int y, int z, int block, int palette);
 void broadcast_set_palette(int x, int y, int z, int palette);
 
 #endif
+
+void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);

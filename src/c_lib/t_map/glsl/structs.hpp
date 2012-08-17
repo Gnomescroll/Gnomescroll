@@ -72,7 +72,7 @@ namespace t_map
     */
     struct Vertex 
     {
-        union
+        union   //0
         {
             struct
             {
@@ -82,7 +82,7 @@ namespace t_map
             unsigned int pos;
         };
 
-        union
+        union   //4
         {
             struct
             {
@@ -93,7 +93,7 @@ namespace t_map
             unsigned int tex;
         };
 
-        union
+        union   //8
         {
             struct
             {
@@ -102,17 +102,14 @@ namespace t_map
             unsigned int color;
         };
 
-        union
+        union   //12
         {
             unsigned char ao[4]; 
             unsigned int AO;
         };
 
-        union
-        {
-            unsigned char light_value[4]; 
-            unsigned int lighting;
-        };
+        //16
+        float lighting[2];      //sun and manmade
 
     };
     

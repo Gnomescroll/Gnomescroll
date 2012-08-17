@@ -310,6 +310,8 @@ int init_c_lib(int argc, char* argv[])
         Awesomium::init();
     #endif
     
+    ClientState::init_lists();
+
     Components::init();
     Objects::init_net_interfaces();
     Objects::init();    // Entity system
@@ -374,8 +376,6 @@ int init_c_lib(int argc, char* argv[])
     Hud::init();
     //vn::init();
 
-    ClientState::init();
-
     VoxDats::init();
     init_voxel_volume();
     
@@ -395,6 +395,13 @@ int init_c_lib(int argc, char* argv[])
 
     Hud::init_hud_draw_settings();
 
+
+
+    init_voxel_render_list_shader1();   //used to be called from ClientState::init
+
+    //init shaders
+    
+    //t_map::init_shaders();
     //t_mob::init();
     //CHECK_GL_ERROR();
     return 0;
@@ -456,9 +463,6 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("hud map teardown\n");
     HudMap::teardown();
 
-    if (TEARDOWN_DEBUG) printf("client state teardown\n");
-    ClientState::teardown();
-
     if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
     Particle::teardown_particles(); // teardown after ClientState::agent_list, because of billboard particle
 
@@ -471,6 +475,9 @@ void close_c_lib()
 
     //if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
     //t_mob::teardown();
+
+    if (TEARDOWN_DEBUG) printf("client state list teardown\n");
+    ClientState::teardown_lists();
 
     if (TEARDOWN_DEBUG) printf("Input teardown\n");
     teardown_input();

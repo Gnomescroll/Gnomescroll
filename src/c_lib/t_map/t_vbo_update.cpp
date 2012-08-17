@@ -47,6 +47,10 @@ struct SIDE_BUFFER** SIDE_BUFFER_ARRAY = NULL;
 struct Vertex* vlist_scratch_0 = NULL;
 struct Vertex* vlist_scratch_1 = NULL;
 
+
+float light_lookup[16]; //how fast light decays
+
+
 void t_vbo_update_init()
 {
     vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
@@ -60,6 +64,12 @@ void t_vbo_update_init()
     for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
 
     init_pallete();
+
+    for(int i=0; i<16; i++)
+    {
+        light_lookup[i] = 0.10 + 0.90f* ((float)(i))/15.0;
+    }
+
 }
 
 void t_vbo_update_end()
@@ -117,6 +127,13 @@ int _is_occluded(int x,int y,int z, int side_num)
 {
     int i = 3*side_num;
     return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
+}
+
+INLINE
+int get_lighting(int x,int y,int z, int side)
+{
+    int i = 3*side;
+    return main_map->get_element(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]).light;
 }
 
 inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
@@ -250,6 +267,7 @@ static inline void _set_quad_color_default(struct Vertex* v_list, int offset, in
     v_list[offset+3].color = _ce.color;
 }
 
+
 static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     
@@ -381,6 +399,13 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
 
+    float light = light_lookup[get_lighting(x,y,z,side) / 16];
+
+    v_list[offset+0].lighting[0] = light;
+    v_list[offset+1].lighting[0] = light;
+    v_list[offset+2].lighting[0] = light;
+    v_list[offset+3].lighting[0] = light;
+
     {
         int _x = x & 15;
         int _y = y & 15;
@@ -395,6 +420,8 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
     //_set_quad_color(v_list, offset, x, y, z, side);
 
+    _set_quad_color_flat(v_list, offset, x, y, z, side);
+/*
     switch( t_map::cube_list[tile_id].color_type )
     {
         case 0:
@@ -409,7 +436,7 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
         default:
             break;
     }  
-
+*/
 }
 
 
@@ -616,6 +643,8 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 void Vbo_map::update_vbo(int i, int j)
 {
 
+    update_skylight(i,j); //update skylights
+
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
 
@@ -712,8 +741,14 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
     v_list[offset+1].pos = _v_index[4*side+1].pos;
     v_list[offset+2].pos = _v_index[4*side+2].pos;
     v_list[offset+3].pos = _v_index[4*side+3].pos;
+
 #endif
 
+    v_list[offset+0].lighting[0] = 0.0f;
+    v_list[offset+1].lighting[0] = 0.0f;
+    v_list[offset+2].lighting[0] = 0.0f;
+    v_list[offset+3].lighting[0] = 0.0f;
+    
     {
         int _x = x & 15;
         int _y = y & 15;
@@ -727,7 +762,8 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
     }
     //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 
-
+    _set_quad_color_flat(v_list, offset, x, y, z, side);
+/*
     switch( t_map::cube_list[tile_id].color_type )
     {
         case 0:
@@ -742,7 +778,9 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
         default:
             break;
     }   
+*/
 }
+
 
 void generate_vertex_list_compatibility(struct Vertex* vlist)
 {

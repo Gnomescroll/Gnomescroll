@@ -12,7 +12,7 @@ struct MAP_ELEMENT
         {
             unsigned char block;
             unsigned char palette;
-            unsigned char color;
+            unsigned char light;
             unsigned char damage;
             //unsigned char lighting;  //goes in another array
         };

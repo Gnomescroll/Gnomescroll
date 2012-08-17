@@ -10,6 +10,7 @@
 #include <camera/fulstrum_test2.hpp>
 
 #include <t_map/glsl/settings.hpp>
+#include <t_map/glsl/shader.hpp>
 
 #include <common/qsort.h>
 
@@ -142,7 +143,8 @@ void Vbo_map::prep_frustrum_vertices()
                 printf("voff= %i vnum= %i \n", voff, vnum);
                 printf("vbo->vertex_offset[sid]= %i vbo->vertex_num[side]= %i \n", vbo->vertex_offset[side], vbo->vertex_num[side]);
                 printf("min= %i max= %i \n", min, max);
-                GS_ABORT();
+
+                vbo_frustrum_vnum[index][side] = 0;
             }
 
         }
@@ -270,6 +272,13 @@ void Vbo_map::sort_draw()
 
 #define ADV_PRUNE 1
 
+/*
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+GL_MODELVIEW_MATRIX or GL_PROJECTION_MATRIX 
+
+Compute matrix by hand and pass in uniform
+*/
+
 void Vbo_map::draw_map() 
 {
     prep_draw();
@@ -284,46 +293,28 @@ void Vbo_map::draw_map()
 
     glColor3ub(255,255,255);
 
-    glUseProgramObjectARB(map_shader[0]);
+    glUseProgramObjectARB(map_shader.shader->shader);
 
-    glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
+    glBindTexture( GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
 
-    glEnableVertexAttribArray(map_Vertex);
-    glEnableVertexAttribArray(map_TexCoord);
-    glEnableVertexAttribArray(map_RGB);
-    glEnableVertexAttribArray(map_LightMatrix);
+    glEnableVertexAttribArray(map_shader.InVertex);
+    glEnableVertexAttribArray(map_shader.InTexCoord);
+    glEnableVertexAttribArray(map_shader.InRGB);
+    glEnableVertexAttribArray(map_shader.InLightMatrix);
+    glEnableVertexAttribArray(map_shader.InLight);
 
     class Map_vbo* vbo;
 
-    float modelview[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+    //float modelview[16];
+    //glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
 
-    glPushMatrix();
+    //glPushMatrix();
 
 #if ADV_PRUNE
     int v_total = 0;
     int v_drawn = 0;
     //int v_pruned = 0;
 #endif
-
-    /*
-        Test Sorting
-    */
-    float distance = -1;
-    for(int i=0;i<draw_vbo_n;i++)
-    {
-        if(draw_vbo_array[i].distance >= distance)
-        {
-            //printf("0 i= %d distance= %f \n", i, sqrt(draw_vbo_array[i].distance)) ;
-            distance = draw_vbo_array[i].distance;
-        }
-        else
-        {
-            distance = draw_vbo_array[i].distance;
-            printf("1 i= %d distance= %f \n", i, sqrt(draw_vbo_array[i].distance));
-            //GS_ABORT();
-        }
-    }
 
     /*
         Draw
@@ -338,16 +329,19 @@ void Vbo_map::draw_map()
             continue; 
         } 
 
-        glLoadMatrixf(modelview);
-        glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
+        //glLoadMatrixf(modelview);
+        //glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
-        glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
-        glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
-        glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
-        
+        glUniform2f(map_shader.InOffset, vbo->wxoff, vbo->wyoff);
+
+        glVertexAttribPointer(map_shader.InVertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
+        glVertexAttribPointer(map_shader.InTexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
+        glVertexAttribPointer(map_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
+        glVertexAttribPointer(map_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(map_shader.InLight, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)16);
+
         #if ADV_PRUNE
 
         int xi = draw_vbo_array[i].i;
@@ -375,14 +369,17 @@ void Vbo_map::draw_map()
 
     //printf("v_total= %i v_drawn= %i \n", v_total, v_drawn);
 
-    glPopMatrix(); //restore matrix
+    //glPopMatrix(); //restore matrix
 
 
-    glDisableVertexAttribArray(map_Vertex);
-    glDisableVertexAttribArray(map_TexCoord);
-    glDisableVertexAttribArray(map_RGB);
-    glDisableVertexAttribArray(map_LightMatrix);
-    
+    glDisableVertexAttribArray(map_shader.InVertex);
+    glDisableVertexAttribArray(map_shader.InTexCoord);
+    glDisableVertexAttribArray(map_shader.InRGB);
+    glDisableVertexAttribArray(map_shader.InLightMatrix);
+    glDisableVertexAttribArray(map_shader.InLight);
+
+    //printf("%d \n", map_shader.InLight);
+
     glUseProgramObjectARB(0);
 
     //glEnable(GL_TEXTURE_2D);
@@ -474,18 +471,16 @@ void Vbo_map::draw_map_compatibility()
 
     glColor3ub(255,255,255);
 
-    glUseProgramObjectARB(map_shader[0]);
+    glUseProgramObjectARB(map_compatibility_shader.shader->shader);
 
     glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
 
-    glEnableVertexAttribArray(map_Vertex);
-    glEnableVertexAttribArray(map_TexCoord);
-    glEnableVertexAttribArray(map_RGB);
-    glEnableVertexAttribArray(map_LightMatrix);
+    glEnableVertexAttribArray(map_compatibility_shader.InVertex);
+    glEnableVertexAttribArray(map_compatibility_shader.InTexCoord);
+    glEnableVertexAttribArray(map_compatibility_shader.InRGB);
+    glEnableVertexAttribArray(map_compatibility_shader.InLightMatrix);
 
     class Map_vbo* vbo;
-
-    //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
     float modelview[16];
     glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
@@ -512,10 +507,10 @@ void Vbo_map::draw_map_compatibility()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
-        glVertexAttribPointer(map_TexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
-        glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
-        glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(map_compatibility_shader.InVertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
+        glVertexAttribPointer(map_compatibility_shader.InTexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
+        glVertexAttribPointer(map_compatibility_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
+        glVertexAttribPointer(map_compatibility_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
         #if ADV_PRUNE
 
@@ -544,10 +539,10 @@ void Vbo_map::draw_map_compatibility()
 
     glPopMatrix(); //restore matrix
 
-    glDisableVertexAttribArray(map_Vertex);
-    glDisableVertexAttribArray(map_TexCoord);
-    glDisableVertexAttribArray(map_RGB);
-    glDisableVertexAttribArray(map_LightMatrix);
+    glDisableVertexAttribArray(map_compatibility_shader.InVertex);
+    glDisableVertexAttribArray(map_compatibility_shader.InTexCoord);
+    glDisableVertexAttribArray(map_compatibility_shader.InRGB);
+    glDisableVertexAttribArray(map_compatibility_shader.InLightMatrix);
 
 
     glUseProgramObjectARB(0);

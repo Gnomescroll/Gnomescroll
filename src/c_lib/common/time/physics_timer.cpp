@@ -211,6 +211,12 @@ long _GET_MICROSECOND_TIME()
     #endif
 }
 
+
+void _SET_LAST_TICK()
+{
+    _last_tick = _GET_MS_TIME();
+}
+
 long _LAST_TICK()
 {
     return _last_tick;
