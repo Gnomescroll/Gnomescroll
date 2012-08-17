@@ -51,13 +51,6 @@ class MapShader
     : terrain_map_glsl(0), shader(NULL)
     {}
 
-
-    void init()
-    {
-        init_texture();
-        init_shader();
-    }
-
     ~MapShader()
     {
         if (shader != NULL) delete shader;
@@ -116,22 +109,43 @@ class MapCompatibilityShader
     {
 
     }
-
-    void init()
-    {
-        init_texture();
-        init_shader();
-    }
     
     ~MapCompatibilityShader()
     {
         if (shader != NULL) delete shader;
     }
 
-    void init_shader()
+    void init_shader(int level)
     {
         shader = new SHADER;
         shader->set_debug(true);
+
+        bool mesa = false;
+        const char* gl_v = (const char*)glGetString(GL_VERSION);
+        if (strstr(gl_v, "Mesa") != NULL)
+        {
+            printf("%s: using Mesa driver shader\n", __FUNCTION__);
+            mesa = true;
+        }
+
+        if (level == 0)
+        {
+            if (mesa)
+            {
+                vs = textFileRead("./media/shaders/terrain/terrain_map_mesa.vsh");
+                fs = textFileRead("./media/shaders/terrain/terrain_map_mesa.fsh");
+            }
+            else
+            {
+                vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
+                fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+            }
+        }
+        else
+        {
+            vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
+            fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh"); 
+        }
 
         shader->load_shader( "map_shader",
             "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",

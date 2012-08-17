@@ -177,14 +177,15 @@ void init_shaders()
         }
     }
 
-    //T_MAP_BACKUP_SHADER = 1;
+    T_MAP_BACKUP_SHADER = 1;
 
     if (T_MAP_BACKUP_SHADER == 0)
     {
         //set_map_shader_0();
         //init_map_3d_texture();
 
-        map_shader.init();
+        map_shader.init_texture();
+        map_shader.init_shader();
         //true on error
         //if (shader_error_occured(map_shader.shader->shader) == true)
         
@@ -202,10 +203,13 @@ void init_shaders()
 
         printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
         
-        map_compatibility_shader.init();
+        map_compatibility_shader.init_texture();
+        map_compatibility_shader.init_shader(0);
 
         if (  map_compatibility_shader.shader->shader_valid == true)
         {
+            map_compatibility_shader.init_shader(1);
+
             printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
         }
     }
