@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+zi*
+
 *.map
 
 .DS_STORE

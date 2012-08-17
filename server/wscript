@@ -100,6 +100,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
         conf.env.append_value("LINKFLAGS", "-lwinmm")
+        conf.env.append_value("CXXFLAGS", "-DNOMINMAX")
 
     if OS == 'Linux':
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
@@ -112,19 +113,36 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.env.append_value("CXXFLAGS", "-Xlinker -pagezero_size -Xlinker 10000")
         conf.env.append_value("CXXFLAGS", "-Xlinker -image_base -Xlinker 100000000")
 
-    lua_path = '/usr/include/luajit-2.0'
+    if OS == 'Windows':
+        libpath = os.path.abspath('../lib/win32')
+        
+    lua_lib_path = []
+    lua_inc_path = '/usr/include/luajit-2.0'
     if OS == 'Darwin':
-        lua_path = '/usr/local/include/luajit-2.0'
+        lua_inc_path = '/usr/local/include/luajit-2.0'
+    elif OS == 'Windows':
+        lua_inc_path = os.path.join(libpath, 'LuaJIT-2.0.0-beta10')
+        lua_lib_path.append(os.path.join(libpath, 'lib'))
+        
 
-    print lua_path
-
-    conf.check(header_name='lua.h',
-           lib='luajit-5.1', #'lua5.1',
-           use='luajit-5.1', #'lua5.1',
-           uselib_store='LUA',
-           fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-           includes=lua_path,
-           mandatory=True)
+    if OS == 'Windows':
+        conf.check(header_name='lua.hpp',
+                   lib='lua51', #'lua5.1',
+                   use='lua51', #'lua5.1',
+                   libpath=[os.path.join(libpath, 'lib'),],
+                   includes=[os.path.join(libpath, 'LuaJIT-2.0.0-beta10'),],
+                   uselib_store='LUA',
+                   fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
+                   mandatory=True)
+    else:
+        conf.check(header_name='lua.h',
+               lib='luajit-5.1', #'lua5.1',
+               use='luajit-5.1', #'lua5.1',
+               uselib_store='LUA',
+               fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
+               includes=lua_inc_path,
+               libpath=lua_lib_path,
+               mandatory=True)
 
     #conf.check(header_name="noise/noise.h",
                 #lib="noise",
