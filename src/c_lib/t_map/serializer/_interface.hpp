@@ -178,9 +178,9 @@ class BlockSerializer
     size_t file_size;
 
     char* write_buffer;
+    struct SerializedChunk* _s;
 
     #if PTHREADS_ENABLED
-    struct SerializedChunk* _s;
     int* version_array; // [chunk_number];
     #else
     struct SerializedChunk* s; //[chunk_number];
@@ -189,14 +189,14 @@ class BlockSerializer
 
     BlockSerializer()
     {
-        this->version_array = (int*) malloc(chunk_number*sizeof(int));
         this->file_name[0] = '\0';
         this->write_buffer = NULL;
         this->file_size = 0;
 
-        #if PTHREADS_ENABLED
         this->_s = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
-        GS_ASSERT(this->_s != NULL);
+
+        #if PTHREADS_ENABLED
+        this->version_array = (int*) malloc(chunk_number*sizeof(int));
         #else
         this->s = (struct SerializedChunk*)malloc(chunk_number * sizeof(struct SerializedChunk));
         #endif 
@@ -204,8 +204,9 @@ class BlockSerializer
 
     ~BlockSerializer()
     {
-        #if PTHREADS_ENABLED
         free(this->_s);
+
+        #if PTHREADS_ENABLED
         free(this->version_array);
         #else
         free(this->s);
@@ -245,9 +246,8 @@ class BlockSerializer
 
         strcpy(file_name, filename);
 
-        file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
-
-        write_buffer = (char*) malloc(file_size);
+        this->file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
+        this->write_buffer = (char*) malloc(file_size);
 
         //push header
         int index = 0;
@@ -278,16 +278,9 @@ class BlockSerializer
         }
         //prepare buffer for saving
 
-        size_t file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
-
-        char* buffer = (char*) malloc(file_size*sizeof(char));
-        int index = 0;
-
-        push_int(buffer, index, version);
-
         for(int i=0; i<chunk_number; i++)
         {
-            memcpy(&buffer[index], (char*) &s[i], sizeof(struct SerializedChunk) );
+            memcpy(&buffer[index], (char*) &s[i], sizeof(struct SerializedChunk));
             index += sizeof(struct SerializedChunk);
         }
         GS_ASSERT(file_size == (size_t)index);
