@@ -34,17 +34,11 @@ void PlayerAgent_state::was_identified()
 }
 
 //#define SKIP_INTERPOLATION_THRESHOLD 0.5f // travel distance above which we dont bother interpolating to
+
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
     static const float SKIP_INTERPOLATION_THRESHOLD = 1.0f;
     static int _tl;
-
-    int _tl0 = _GET_MS_TIME() -_tl;
-    _tl = _GET_MS_TIME();
-
-
-    int last_tick = (int)_LAST_TICK();
-    int _t = (int)_GET_MS_TIME();
 
     // calculate interpolation delta
     // if the distance travelled is extreme, dont interpolate (delta=1)
@@ -52,7 +46,6 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     // the player will suddenly jump ~512 meters, with a noticable interpolation flicker in between
     float dist;
     {
-
         float x0 = quadrant_translate_f(current_camera_position.x, s0.x);
         float y0 = quadrant_translate_f(current_camera_position.y, s0.y);
         float z0 = s0.z;
@@ -67,7 +60,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     float delta = 1.0f;
     if (dist < SKIP_INTERPOLATION_THRESHOLD)
     {
-        delta = ((float)(_t - last_tick)) / 33.3f;
+        delta = ((float)(_t - last_tick)) / 33.0;
         if(delta > 1.0f) delta = 1.0f;
 
     }
@@ -82,12 +75,19 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     c.y = s0.y*(1-delta) + s1.y*delta;
     c.z = s0.z*(1-delta) + s1.z*delta;  
 
+#if 0
+    int _tl0 = _GET_MS_TIME() -_tl;
+    _tl = _GET_MS_TIME();
+    int last_tick = (int)_LAST_TICK();
+    int _t = (int)_GET_MS_TIME();
+
     static float lz;
     static float lz0;
     printf("z= %0.02f delta= %0.02f s0.z= %0.02f s0_delta= %0.02f   tdelta= %0.02f dist= %f tickd= %d time= %d ctime= %d last_tick= %d\n", 
         c.z, lz - c.z, s0.z, lz0-s0.z, delta, dist, _t - last_tick, _tl0, _GET_MS_TIME(), _LAST_TICK());
     lz = c.z;
     lz0 = s0.z;
+#endif
 
 #if 1
     if (this->you == NULL) return;

@@ -56,7 +56,130 @@ void init(int argc, char* argv[])
     GS_ASSERT(quadrant_translate_f(500,30) == 542);
     GS_ASSERT(quadrant_translate_f(10,500) == -12);
 
+
+/*
+    GET RID OF THIS
+*/
+    // set input options (set these in an options struct at load)   TODO
+
     main_inited = true;
+}
+
+//GAFFER LOOP
+/*
+    double t = 0.0;
+    const double dt = 0.01;
+
+    double currentTime = hires_time_in_seconds();
+    double accumulator = 0.0;
+
+    State previous;
+    State current;
+
+    while ( !quit )
+    {
+         double newTime = time();
+         double frameTime = newTime - currentTime;
+         if ( frameTime > 0.25 )
+              frameTime = 0.25;   // note: max frame time to avoid spiral of death
+         currentTime = newTime;
+
+         accumulator += frameTime;
+
+         while ( accumulator >= dt )
+         {
+              previousState = currentState;
+              integrate( currentState, t, dt );
+              t += dt;
+              accumulator -= dt;
+         }
+
+         const double alpha = accumulator / dt;
+
+         State state = currentState*alpha + previousState * ( 1.0 - alpha );
+
+         render( state );
+    }
+*/
+
+int physics_tick();
+void network_tick();
+void prep_draw();
+void render();
+
+int physics_tick()
+{
+    poll_mouse();
+    // physics loop
+    int physics_ticks = 0;
+    while (1)
+    {
+        int tick_count = _GET_TICK();
+        if (tick_count == 0 || physics_ticks > 1)   //2 physics loko per tix max
+            break;
+        physics_ticks++;
+        ClientState::tick_id += 1;
+
+        // input
+        process_events();
+        get_key_state();
+        trigger_keys_held_down();
+
+        Toolbelt::tick();
+
+        // tick animations
+        Animations::animations_tick();
+        // tick client state
+        ClientState::tick(); 
+        // update sound listener
+        ClientState::playerAgent_state.update_sound();
+        // update mouse
+        poll_mouse();
+
+        Objects::tick();    // update physics state
+
+        if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
+
+        ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
+
+        _SET_LAST_TICK();
+    }
+
+    if( physics_ticks > 0)
+        _SET_LAST_TICK();
+
+    //if (physics_ticks >= 2)
+        //printf("Physics: %d ticks this frame\n", physics_ticks);
+
+    poll_mouse();
+    return physics_ticks;
+}
+
+
+void network_tick()
+{
+        /*
+            Networking
+        */
+        poll_mouse();
+
+        NetClient::client_dispatch_network_events();
+        NetClient::flush_to_net();
+
+        if (!NetClient::Server.version_match)
+            NetClient::shutdown_net_client();
+
+        poll_mouse();
+}
+
+void prep_draw()
+{
+    poll_mouse();
+
+
+    poll_mouse();
+
+
 }
 
 
@@ -91,58 +214,31 @@ int run()
 
         // update mouse
         poll_mouse();
-        
-        // physics loop
-        int physics_ticks = 0;
-        while (1)
-        {
-            int tick_count = _GET_TICK();
-            if (tick_count == 0 || physics_ticks > 0)
-                break;
-            physics_ticks++;
-            ClientState::tick_id += 1;
 
-            // input
-            process_events();
-            get_key_state();
-            trigger_keys_held_down();
 
-            Toolbelt::tick();
+        update_input_state();
 
-            // tick animations
-            Animations::animations_tick();
-            // tick client state
-            ClientState::tick(); 
-            // update sound listener
-            ClientState::playerAgent_state.update_sound();
-            // update mouse
-            poll_mouse();
+        physics_tick();
 
-            Objects::tick();    // update physics state
 
-            if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
 
-            ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
-        }
+        frame_graph->frame_stage(1); // misc stuff and network
+
+        network_tick();
+
+        apply_camera_physics();         //apply velocity
+        ClientState::update_camera();   //update camera state
+        world_projection();             //set fulstrum crap
+
+        frame_graph->frame_stage(2); // call draw functions
+
+
         Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
         ClientState::update_for_draw();
 
-        //if (physics_ticks >= 2)
-            //printf("Physics: %d ticks this frame\n", physics_ticks);
 
-        frame_graph->frame_stage(1); // misc stuff and network
 
-        /*
-            Networking
-        */
-        poll_mouse();
-
-        NetClient::client_dispatch_network_events();
-        NetClient::flush_to_net();
-
-        if (!NetClient::Server.version_match)
-            NetClient::shutdown_net_client();
 
 
         //-- TESTING --//
@@ -150,26 +246,18 @@ int run()
             //Animations::create_mining_laser_particle(ClientState::playerAgent_state.you->get_center(), ClientState::playerAgent_state.you->s.forward_vector());
         //-- TESTING --//
 
-        poll_mouse();
-
-        // set input options (set these in an options struct at load)   TODO
-        set_input_options(
-            Options::invert_mouse,
-            Options::sensitivity
-        );
         
-        apply_camera_physics(); //apply velocity
-        // update camera state
-        ClientState::update_camera();
+
+
 
         poll_mouse();
 
-        frame_graph->frame_stage(2); // call draw functions
+
 
         /*
             Start World Projetion
         */
-        world_projection();
+
         
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
