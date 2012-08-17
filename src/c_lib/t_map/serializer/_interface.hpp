@@ -3,9 +3,11 @@
 
 #include <common/files.hpp>
 
-#if __GNUC__
-    #include <pthread.h>
-    #define PTHREADS_ENABLED 1
+#ifdef linux
+    #ifdef __GNUC__
+        #include <pthread.h>
+        #define PTHREADS_ENABLED 1
+    #endif
 #else
     #define PTHREADS_ENABLED 0
 #endif
