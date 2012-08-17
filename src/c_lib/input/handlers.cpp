@@ -1142,7 +1142,7 @@ void active_event_handler(SDL_Event* event)
         else
         {
             input_state.rebind_mouse = input_state.mouse_bound;
-            if ("Losing input, rebind mouse (aka mouse was bound)? %d\n", input_state.rebind_mouse);
+            printf("Losing input, rebind mouse (aka mouse was bound)? %d\n", input_state.rebind_mouse);
             input_state.mouse_bound = false;
         }
     }
