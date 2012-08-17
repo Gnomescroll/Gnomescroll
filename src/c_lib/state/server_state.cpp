@@ -13,6 +13,11 @@ dont_include_this_file_in_client
 
 namespace ServerState
 {
+
+    bool main_inited = false;
+    bool signal_exit = false;
+    bool should_save_map = false;
+    
     Agent_list* agent_list = NULL;
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
@@ -35,27 +40,58 @@ namespace ServerState
         delete voxel_hitscan_list; // must go last
     }
 
+    class Objects::Object* base;
+
+    struct Vec3 get_base_spawn_position()
+    {
+        GS_ASSERT(base != NULL);
+        if (base == NULL) return vec3_init(0,0,0);
+        
+        using Components::DimensionComponent;
+        DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        GS_ASSERT(dims != NULL);
+        int h = 1;
+        if (dims != NULL) h = (int)ceil(dims->get_height());
+        float x = randrange(0, map_dim.x-1);
+        float y = randrange(0, map_dim.y-1);
+        float z = t_map::get_highest_open_block(x,y, h);
+        struct Vec3 p = vec3_init(x+0.5f,y+0.5f,z);
+        return p;
+    }
+
     void init_base()
     {
-        Objects::Object* base = Objects::create(OBJECT_BASE);
+        base = Objects::create(OBJECT_BASE);
         GS_ASSERT(base != NULL);
         if (base == NULL) return;
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         GS_ASSERT(physics != NULL);
         if (physics != NULL)
-        {
-            using Components::DimensionComponent;
-            DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-            GS_ASSERT(dims != NULL);
-            int h = 1;
-            if (dims != NULL) h = (int)ceil(dims->get_height());
-            float x = randrange(0, map_dim.x-1);
-            float y = randrange(0, map_dim.y-1);
-            float z = t_map::get_highest_open_block(x,y, h);
-            physics->set_position(vec3_init(x+0.5f,y+0.5f,z));
-        }
+            physics->set_position(get_base_spawn_position());
         Objects::ready(base);
+    }
+
+    void move_base()
+    {
+        static int tick = 0;
+        if (base == NULL) return;
+        tick++;
+        if (tick % Options::base_move_rate != 0) return;
+        typedef Components::PositionChangedPhysicsComponent PCP;
+        PCP* physics = (PCP*)base->get_component(COMPONENT_POSITION_CHANGED);
+        GS_ASSERT(physics != NULL);
+        if (physics == NULL) return;
+
+        int tries = 0;
+        static const int MAX_TRIES = 100;
+        do
+        {
+            tries++;
+            struct Vec3 new_pos = get_base_spawn_position();
+            physics->set_position(new_pos);
+        } while (!physics->changed && tries < MAX_TRIES);
+        base->broadcastState();
     }
 
     void check_agents_at_base()

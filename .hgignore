@@ -5,6 +5,10 @@ syntax: glob
 *.pyo
 *.dylib
 
+*.exe
+
+zi*
+
 *.map
 
 .DS_STORE

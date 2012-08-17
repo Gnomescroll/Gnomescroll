@@ -22,6 +22,7 @@ dont_include_this_file_in_server
 #ifdef _WIN32
     #include "windows.h"
     #undef interface
+    #undef rad2
 #endif
 
 #ifdef __APPLE__
@@ -383,7 +384,6 @@ int init_c_lib(int argc, char* argv[])
     
     Sound::init();
     init_input();
-    init_handlers();
     init_cameras();
     init_chat_client();
     Particle::draw_init();
@@ -392,7 +392,6 @@ int init_c_lib(int argc, char* argv[])
 
     Item::load_crafting_dat();
     Item::load_smelting_dat();
-
 
     Hud::init_hud_draw_settings();
 

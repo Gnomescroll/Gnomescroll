@@ -120,17 +120,25 @@ def configure(conf, add_flags=[], rm_flags=[]):
     #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../lib/lin32/lib")
     #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % os.path.abspath('../lib/lin32/lib') )
 
-
-
     '''
     incremental linking may reduce recompile time should not be used for release builds
     #conf.env.append_value("LINKFLAGS", "--incremental")
     ''' 
-    conf.check(header_name='GL/glew.h', mandatory=True, includes='/usr/local/cuda/extras/CUPTI/include')
+    #glew_inc_path = ['/usr/local/cuda/extras/CUPTI/include']
+    glew_inc_path = ['../../../lib/win32/glew']
+    conf.check(header_name='GL/glew.h', mandatory=True, includes=glew_inc_path)
 
     if OS == 'Windows':
-        glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
-        conf.check(lib=['opengl32', 'glu32', 'glew32'], libpath=glew_lib_path, uselib_store='GL') 
+        print "Current directory:", os.path.abspath(os.curdir)
+        path = os.path.abspath('..')
+        libpath = os.path.join(path, 'lib/win32')
+    
+    if OS == 'Windows':
+        #glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
+        glew_lib_path = [os.path.join(libpath, 'lib')]
+        conf.check(lib=['opengl32'], uselib_store='GL') 
+        conf.check(lib=['glu32'], uselib_store='GL') 
+        conf.check(lib=['glew32'], libpath=glew_lib_path, uselib_store='GL') 
     elif OS == 'Linux':
         conf.check(lib=['GL',], uselib_store='GL')
         conf.check(lib=['GLU'], uselib_store='GL')
@@ -141,10 +149,18 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
     if OS == 'Windows':
-        conf.check_cfg(path='bash.exe', args='/c/lib/SDL/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')        
+        sdl_config_path = os.path.join(libpath, 'SDL/bin/sdl-config')
+        sdl_inc_path = libpath
+        sdl_lib_path = libpath
+        sdl_config_cmd = '%s --prefix=%s --exec-prefix=%s --cflags --libs' % (sdl_config_path, sdl_inc_path, sdl_lib_path,)
+        #subprocess.call('bash.exe ' + sdl_config_cmd, shell=True)
+        conf.check_cfg(path='bash.exe',
+                        args=sdl_config_cmd,
+                        package='', uselib_store='SDL')        
 
     conf.env.INCLUDES = []
 
+        
     conf.check(header_name='SDL.h',
                use='SDL',
                fragment='#include <SDL.h>' + MAIN_TEST_CODE,
@@ -159,16 +175,17 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     if OS == 'Darwin':
         conf.check(
-            lib=[],
-            framework=['OpenAL'],
-            uselib_store='openal',
-            mandatory=True
-        )
+                   lib=[],
+                   framework=['OpenAL'],
+                   uselib_store='openal',
+                   mandatory=True)
     elif OS == 'Windows':
         conf.check(header_name='AL/al.h',
                    lib='OpenAL32',
                    use='openal',
                    uselib_store='openal',
+                   includes=[os.path.join(libpath, 'openal'),],
+                   libpath=[os.path.join(libpath, 'lib'),],
                    fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
                    mandatory=True)
     else:
@@ -184,8 +201,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.check(header_name='lua.hpp',
                    lib='lua51', #'lua5.1',
                    use='lua51', #'lua5.1',
-                   libpath= ['/c/lib/luajit/etc/'],
-                   includes= '/c/lib/luajit/src/',
+                   libpath=[os.path.join(libpath, 'lib'),],
+                   includes=[os.path.join(libpath, 'LuaJIT-2.0.0-beta10'),],
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
@@ -249,7 +266,10 @@ def configure(conf, add_flags=[], rm_flags=[]):
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../lib/lin32/awesomium/include/']
 
     conf.env.RPATH = ['.', '..', '$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
-
+    if OS == 'Windows':
+        conf.env.RPATH.append('$ORIGIN/./lib')
+    	conf.env.RPATH.append('./lib')
+    	
     if OS == 'Linux':
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/lib']
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/awesomium/release'] #awesonium lib
@@ -283,27 +303,21 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
+    includes = []
+    libs = []
+    if OS == 'Windows':
+        libpath = os.path.abspath('../lib/win32')
+        includes = [os.path.join(libpath, path) for path in os.listdir(libpath)]
+        libs = [os.path.join(libpath, 'lib'), os.path.join(libpath, 'dll'),]
+        
     #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    '''
-    bld(
-        features = 'cxx cxxprogram',
-        source = ['../src/client/_client.cpp'],
-        use = common_libraries+time_lib+SDL_libraries+['LUA', 'AWESOMIUM', 'ASSIMP'],
-        lib = sound_libraries+png_libs,
-        #includes = c_lib_includes,
-        #libpath = c_lib_libpath,
-        framework = sound_framework,
-        #linkflags = ['-rdynamic'],
-        target='run'
-    )
-    '''
     bld(
         features = 'cxx cxxprogram',
         source = ['../src/client/_client.cpp'],
         use = common_libraries+time_lib+SDL_libraries+['LUA', 'ASSIMP'],
         lib = sound_libraries+png_libs,
-        #includes = c_lib_includes,
-        #libpath = c_lib_libpath,
+        includes = includes,
+        libpath = libs,
         framework = sound_framework,
         #linkflags = ['-rdynamic'],
         target='run'

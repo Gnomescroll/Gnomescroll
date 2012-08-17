@@ -8,8 +8,6 @@
 
 #include "t_properties.hpp"
 
-//#include <t_map/t_map_class.hpp>
-
 struct MapDimension
 {
     int x,y,z;

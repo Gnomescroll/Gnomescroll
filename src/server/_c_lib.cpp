@@ -10,13 +10,32 @@ dont_include_this_file_in_client
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
-
-//#include <stdio.h>
-//#include <stdlib.h>
+#include <math.h>
 
 #ifdef __GNUC__
     #include <unistd.h>
+#endif
+
+#ifdef __MINGW32__
+    #include <malloc.h> //alloca function
+#endif
+
+#ifdef _WIN32
+    #include "windows.h"
+    #undef interface
+    #undef rad2
+#endif
+
+// threads
+#ifdef linux
+    #ifdef __GNUC__
+        #include <pthread.h>
+        #define PTHREADS_ENABLED 1
+    #endif
+#else
+    #define PTHREADS_ENABLED 0
 #endif
 
 #include <common/version.h>
@@ -32,12 +51,12 @@ dont_include_this_file_in_client
 #include <common/osx.hpp>
 #endif
 
-//options
+// options
 #include <options/option_macros.hpp>
 #include <options/argparse.cpp>
 #include <options/server_options.cpp>
  
-//utility
+// utility
 #include <common/time/physics_timer.cpp>
 #include <common/common.cpp>
 #include <common/files.cpp>
@@ -56,19 +75,18 @@ dont_include_this_file_in_client
 // LUA 
 #include <common/lua/lua.cpp>
 
-//map 
- 
+// map 
 #include <t_map/_include.hpp>
  
- /* mechanisms */
- #include <t_mech/_include.hpp>
+/* mechanisms */
+#include <t_mech/_include.hpp>
 
-//ray tracing
+// ray tracing
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
 #include <physics/ray_trace/handlers.cpp>
  
-//physics
+// physics
 #include <physics/verlet.cpp>
 #include <physics/motion.cpp>
 
@@ -96,9 +114,7 @@ dont_include_this_file_in_client
 #include <particle/_include.hpp>
 
 /* Terrain Generator */
-
 #include <t_gen/_include.hpp>
-
 
 /* item */
 #include <item/_include.hpp>
@@ -132,36 +148,27 @@ dont_include_this_file_in_client
 #include <sound/_include.hpp>
 #include <animations/_include.hpp>
 
-//#include <main.cpp>
-  
-//page size
-//(size_t) sysconf(_SC_PAGESIZE);
-
 #ifdef linux
 #include <unistd.h>
 #include <signal.h>
 
-bool main_inited = false;
-bool signal_exit = false;
-bool should_save_map = false;
-
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    if (!main_inited)
+    if (!ServerState::main_inited)
     {
         close_c_lib();
         exit(0);
     }
-    signal_exit = true;
+    ServerState::signal_exit = true;
     #if PRODUCTION
-    should_save_map = true;
+    ServerState::should_save_map = true;
     #endif
 }
 
 void sigusr1_handler(int sig)
 {
-    should_save_map = true;
+    ServerState::should_save_map = true;
 }
 #endif
 
@@ -266,8 +273,11 @@ int init_c_lib(int argc, char* argv[])
 
 void close_c_lib()
 {
+    #if PTHREADS_ENABLED
     printf("Waiting for threads to finish...\n");
     wait_for_threads();
+    #endif
+    
     t_map::check_save_state();
 
     printf("Server closing...\n");
