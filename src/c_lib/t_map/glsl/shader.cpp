@@ -82,7 +82,6 @@ void init_shaders()
     if (T_MAP_BACKUP_SHADER == 1)
     {
         ANISOTROPIC_FILTERING = 0;  //disable anisotropic filtering
-        init_map_3d_texture_compatibility();
 
         printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
         
@@ -158,12 +157,8 @@ void MapShader::init_texture()
         //GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, and GL_NEAREST_MIPMAP_NEAREST
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        
         //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-
-
         //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR);
-        
         //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
         switch(T_MAP_MAG_FILTER)

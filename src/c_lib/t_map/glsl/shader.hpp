@@ -150,10 +150,6 @@ class MapCompatibilityShader
                 "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh" );
         }
 
-        shader->load_shader( "map_shader",
-            "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",
-            "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh" );
-
         InVertex =     shader->get_attribute("InVertex");
         InTexCoord =   shader->get_attribute("InTexCoord");
         InRGB =        shader->get_attribute("InRGB");
