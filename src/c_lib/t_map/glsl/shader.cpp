@@ -177,14 +177,15 @@ void init_shaders()
         }
     }
 
-    //T_MAP_BACKUP_SHADER = 1;
+    T_MAP_BACKUP_SHADER = 1;
 
     if (T_MAP_BACKUP_SHADER == 0)
     {
         //set_map_shader_0();
         //init_map_3d_texture();
 
-        map_shader.init();
+        map_shader.init_texture();
+        map_shader.init_shader();
         //true on error
         //if (shader_error_occured(map_shader.shader->shader) == true)
         
@@ -202,70 +203,19 @@ void init_shaders()
 
         printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
         
-        map_compatibility_shader.init();
+        map_compatibility_shader.init_texture();
+        map_compatibility_shader.init_shader(0);
 
         if (  map_compatibility_shader.shader->shader_valid == true)
         {
+            map_compatibility_shader.init_shader(1);
+
             printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
         }
     }
 
     init_block_texture_normal();
 }
-
-/*
-void set_map_shader_0() 
-{
-    const int index = 0;    //shader index
-    const int DEBUG1 = 1;
-
-    map_shader[index] = glCreateProgramObjectARB();
-    map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    map_frag_shader[index] = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    char *vs, *fs;
-
-    if (DEBUG1) printf("set_map_shader_0: \n");
-
-    vs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
-    fs = textFileRead("./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
-
-    glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
-    glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
-    glCompileShaderARB(map_vert_shader[index]);
-
-    if (DEBUG1) printShaderInfoLog(map_vert_shader[index]);
-
-    glCompileShaderARB(map_frag_shader[index]);
-    if (DEBUG1) printShaderInfoLog(map_frag_shader[index]);
-    
-    glAttachObjectARB(map_shader[index], map_vert_shader[index]);
-    glAttachObjectARB(map_shader[index], map_frag_shader[index]);
-
-    glLinkProgramARB(map_shader[index]);
-
-    if (DEBUG1) printProgramInfoLog(map_shader[index]);
-    
-    //uniforms
-
-    map_ChunkPosition = glGetUniformLocation(map_shader[index], "ChunkPosition");
-    //map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
-
-    //attributes
-    map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
-    map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
-    map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
-    //map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
-
-    map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
-    map_Light = glGetAttribLocation(map_shader[index], "InLight"); 
-
-    //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix);
-
-    free(vs);
-    free(fs);
-}
-*/
 
 void toggle_3d_texture_settings()
 {
