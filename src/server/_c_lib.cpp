@@ -10,7 +10,7 @@ dont_include_this_file_in_client
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stding.h>
+#include <stdint.h>
 #include <string.h>
 #include <math.h>
 
