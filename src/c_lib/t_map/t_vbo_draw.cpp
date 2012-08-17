@@ -471,18 +471,16 @@ void Vbo_map::draw_map_compatibility()
 
     glColor3ub(255,255,255);
 
-    glUseProgramObjectARB(map_shader.shader->shader);
+    glUseProgramObjectARB(map_compatibility_shader.shader->shader);
 
     glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
 
-    glEnableVertexAttribArray(map_shader.InVertex);
-    glEnableVertexAttribArray(map_shader.InTexCoord);
-    glEnableVertexAttribArray(map_shader.InRGB);
-    glEnableVertexAttribArray(map_shader.InLightMatrix);
+    glEnableVertexAttribArray(map_compatibility_shader.InVertex);
+    glEnableVertexAttribArray(map_compatibility_shader.InTexCoord);
+    glEnableVertexAttribArray(map_compatibility_shader.InRGB);
+    glEnableVertexAttribArray(map_compatibility_shader.InLightMatrix);
 
     class Map_vbo* vbo;
-
-    //glUniform3fv(map_shader.InNormalArray , 6, (GLfloat*) _normal_array );
 
     float modelview[16];
     glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
@@ -509,10 +507,10 @@ void Vbo_map::draw_map_compatibility()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glVertexAttribPointer(map_shader.InVertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
-        glVertexAttribPointer(map_shader.InTexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
-        glVertexAttribPointer(map_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
-        glVertexAttribPointer(map_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(map_compatibility_shader.InVertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
+        glVertexAttribPointer(map_compatibility_shader.InTexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
+        glVertexAttribPointer(map_compatibility_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
+        glVertexAttribPointer(map_compatibility_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
 
         #if ADV_PRUNE
 
@@ -541,10 +539,10 @@ void Vbo_map::draw_map_compatibility()
 
     glPopMatrix(); //restore matrix
 
-    glDisableVertexAttribArray(map_shader.InVertex);
-    glDisableVertexAttribArray(map_shader.InTexCoord);
-    glDisableVertexAttribArray(map_shader.InRGB);
-    glDisableVertexAttribArray(map_shader.InLightMatrix);
+    glDisableVertexAttribArray(map_compatibility_shader.InVertex);
+    glDisableVertexAttribArray(map_compatibility_shader.InTexCoord);
+    glDisableVertexAttribArray(map_compatibility_shader.InRGB);
+    glDisableVertexAttribArray(map_compatibility_shader.InLightMatrix);
 
 
     glUseProgramObjectARB(0);
