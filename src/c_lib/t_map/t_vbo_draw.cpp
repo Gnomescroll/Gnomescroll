@@ -479,6 +479,7 @@ void Vbo_map::draw_map_compatibility()
     glEnableVertexAttribArray(map_compatibility_shader.InTexCoord);
     glEnableVertexAttribArray(map_compatibility_shader.InRGB);
     glEnableVertexAttribArray(map_compatibility_shader.InLightMatrix);
+    glEnableVertexAttribArray(map_compatibility_shader.InLight);
 
     class Map_vbo* vbo;
 
@@ -511,6 +512,7 @@ void Vbo_map::draw_map_compatibility()
         glVertexAttribPointer(map_compatibility_shader.InTexCoord, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)4);
         glVertexAttribPointer(map_compatibility_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_compatibility_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(map_compatibility_shader.InLight, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)16);
 
         #if ADV_PRUNE
 
@@ -543,7 +545,7 @@ void Vbo_map::draw_map_compatibility()
     glDisableVertexAttribArray(map_compatibility_shader.InTexCoord);
     glDisableVertexAttribArray(map_compatibility_shader.InRGB);
     glDisableVertexAttribArray(map_compatibility_shader.InLightMatrix);
-
+    glDisableVertexAttribArray(map_compatibility_shader.InLight);
 
     glUseProgramObjectARB(0);
 

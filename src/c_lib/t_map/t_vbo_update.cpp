@@ -744,10 +744,12 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
 
 #endif
 
-    v_list[offset+0].lighting[0] = 0.0f;
-    v_list[offset+1].lighting[0] = 0.0f;
-    v_list[offset+2].lighting[0] = 0.0f;
-    v_list[offset+3].lighting[0] = 0.0f;
+    float light = light_lookup[get_lighting(x,y,z,side) / 16];
+
+    v_list[offset+0].lighting[0] = light;
+    v_list[offset+1].lighting[0] = light;
+    v_list[offset+2].lighting[0] = light;
+    v_list[offset+3].lighting[0] = light;
     
     {
         int _x = x & 15;
