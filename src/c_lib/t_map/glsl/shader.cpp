@@ -19,6 +19,87 @@ namespace t_map
 { 
 
 
+SDL_Surface *terrain_map_surface = NULL;
+GLuint terrain_map_texture = 0;
+
+GLuint block_textures_compatibility = 0; //use for intel mode
+
+void init_shaders()
+{
+    //determine support for anisotropic filtering
+    //if (true || !GLEW_texture_array)
+
+    if (GLEW_EXT_texture_array)
+    {
+        if (PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
+    }
+    else
+    {
+        printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
+        T_MAP_BACKUP_SHADER = 1;
+    }
+
+    if (!GLEW_EXT_texture_sRGB)
+    {
+        printf("!!! Warning: EXT_texture_sRGB not supported. \n");
+    }
+
+    //ANISOTROPIC_FILTERING = 0;
+
+    if (ANISOTROPIC_FILTERING)
+    {
+        if (GLEW_EXT_texture_filter_anisotropic) // ANISOTROPY_EXT
+        {
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
+            printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
+        } 
+        else 
+        {
+            printf("anisotropic filtering not supported ! \n");
+            ANISOTROPIC_FILTERING = 0;
+        }
+    }
+
+    T_MAP_BACKUP_SHADER = 1;
+
+    if (T_MAP_BACKUP_SHADER == 0)
+    {
+        //set_map_shader_0();
+        //init_map_3d_texture();
+
+        map_shader.init_texture();
+        map_shader.init_shader();
+        //true on error
+        //if (shader_error_occured(map_shader.shader->shader) == true)
+        
+        if( map_shader.shader->shader_valid == false)
+        {
+            printf("!!! Default map shader failed. Setting backup shader \n");
+            T_MAP_BACKUP_SHADER = 1;
+        }
+    }
+
+    if (T_MAP_BACKUP_SHADER == 1)
+    {
+        ANISOTROPIC_FILTERING = 0;  //disable anisotropic filtering
+        init_map_3d_texture_compatibility();
+
+        printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
+        
+        map_compatibility_shader.init_texture();
+        map_compatibility_shader.init_shader(0);
+
+        if (  map_compatibility_shader.shader->shader_valid == true)
+        {
+            map_compatibility_shader.init_shader(1);
+
+            printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
+        }
+    }
+
+    init_block_texture_normal();
+}
+
 void MapShader::init_texture()
 {
 
@@ -131,90 +212,53 @@ void MapShader::init_texture()
 
 void MapCompatibilityShader::init_texture()
 {
+    SDL_Surface* s = TextureSheetLoader::CubeSurface;
 
-
-}
-
-
-SDL_Surface *terrain_map_surface = NULL;
-GLuint terrain_map_texture = 0;
-
-GLuint block_textures_compatibility = 0; //use for intel model
-
-void init_shaders()
-{
-    //determine support for anisotropic filtering
-    //if (true || !GLEW_texture_array)
-
-    if (GLEW_EXT_texture_array)
+    if (s == NULL)
     {
-        if (PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
-    }
-    else
-    {
-        printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
-        T_MAP_BACKUP_SHADER = 1;
+        printf("init_map_3d_texture_compatibility() error \n");
+        return;
     }
 
-    if (!GLEW_EXT_texture_sRGB)
+
+    glEnable(GL_TEXTURE_2D);
+
+    if (block_textures_compatibility == 0)
     {
-        printf("!!! Warning: EXT_texture_sRGB not supported. \n");
+        glGenTextures(1, &block_textures_compatibility);
     }
 
-    //ANISOTROPIC_FILTERING = 0;
+    glBindTexture(GL_TEXTURE_2D, block_textures_compatibility);
 
+    // Set the texture's stretching properties
+
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
+    
+    //if (s->format->Rmask == 0x000000ff) format = GL_RGBA;
+    //if (s->format->Rmask != 0x000000ff) format = GL_BGRA;
+
+    // Edit the texture object's image data using the information SDL_Surface gives us
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels); //2nd parameter is level
+    
     if (ANISOTROPIC_FILTERING)
     {
-        if (GLEW_EXT_texture_filter_anisotropic) // ANISOTROPY_EXT
-        {
-            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
-            printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
-        } 
-        else 
-        {
-            printf("anisotropic filtering not supported ! \n");
-            ANISOTROPIC_FILTERING = 0;
-        }
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
     }
 
-    T_MAP_BACKUP_SHADER = 1;
+    GLenum texture_format;
+    if (s->format->Rmask == 0x000000ff)
+        texture_format = GL_RGBA;
+    else
+        texture_format = GL_BGRA;
 
-    if (T_MAP_BACKUP_SHADER == 0)
-    {
-        //set_map_shader_0();
-        //init_map_3d_texture();
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
 
-        map_shader.init_texture();
-        map_shader.init_shader();
-        //true on error
-        //if (shader_error_occured(map_shader.shader->shader) == true)
-        
-        if( map_shader.shader->shader_valid == false)
-        {
-            printf("!!! Default map shader failed. Setting backup shader \n");
-            T_MAP_BACKUP_SHADER = 1;
-        }
-    }
-
-    if (T_MAP_BACKUP_SHADER == 1)
-    {
-        ANISOTROPIC_FILTERING = 0;  //disable anisotropic filtering
-        init_map_3d_texture_compatibility();
-
-        printf("!!! Warning: Using Intel GPU Compatability mode shader level 0\n");
-        
-        map_compatibility_shader.init_texture();
-        map_compatibility_shader.init_shader(0);
-
-        if (  map_compatibility_shader.shader->shader_valid == true)
-        {
-            map_compatibility_shader.init_shader(1);
-
-            printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
-        }
-    }
-
-    init_block_texture_normal();
+    glDisable(GL_TEXTURE_2D);
 }
 
 void toggle_3d_texture_settings()
@@ -266,8 +310,6 @@ void init_map_3d_texture()
 
 void teardown_shader()
 {
-    if (terrain_map_surface != NULL)
-        SDL_FreeSurface(terrain_map_surface);
 }
 
 void set_map_shader_0_compatibility(int level) 
