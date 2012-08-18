@@ -55,7 +55,8 @@ void disable_agent_container()
     
     t_hud::disable_agent_container_hud();
     ItemContainer::close_inventory();
-    input_state.mouse_bound = input_state.rebind_mouse;
+    if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
+        input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
 
@@ -94,7 +95,8 @@ void disable_container_block()
     if (!input_state.container_block) return;
     input_state.container_block = false;
     t_hud::disable_container_block_hud();
-    input_state.mouse_bound = input_state.rebind_mouse;
+    if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
+        input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
 
@@ -268,6 +270,12 @@ void init_input_state()
 
     // debug
     input_state.frustum = true;
+
+    // SDL state
+    Uint8 app_state = SDL_GetAppState();
+    input_state.input_focus = (app_state & SDL_APPMOUSEFOCUS);
+    input_state.mouse_focus = (app_state & SDL_APPINPUTFOCUS);
+    input_state.app_active   = (app_state & SDL_APPACTIVE);
 }
 
 // options
@@ -1121,6 +1129,18 @@ void active_event_handler(SDL_Event* event)
     //SDL_APPMOUSEFOCUS -- mouse moves past visible portion of window
     //SDL_APPINPUTFOCUS -- window is selected. use this for detecting alt-tab
     //SDL_APPACTIVE     -- worthless, cannot trigger it
+
+    bool gained = event->active.gain;
+
+    // set input_state struct
+    if (event->active.state & SDL_APPMOUSEFOCUS)
+        input_state.mouse_focus = gained;
+    else
+    if (event->active.state & SDL_APPINPUTFOCUS)
+        input_state.input_focus = gained;
+    else
+    if (event->active.state & SDL_APPACTIVE)
+        input_state.app_active = gained;
     
     // handle alt tab
     if (event->active.state & SDL_APPINPUTFOCUS)
@@ -1132,7 +1152,9 @@ void active_event_handler(SDL_Event* event)
         }
         else
         {
-            input_state.rebind_mouse = input_state.mouse_bound;
+            // only write the rebind_mouse state if it wasnt set by a container opening
+            if (!input_state.container_block && !input_state.agent_container)
+                input_state.rebind_mouse = input_state.mouse_bound;
             input_state.mouse_bound = false;
         }
     }

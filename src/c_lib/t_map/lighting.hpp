@@ -23,6 +23,7 @@ void update_skylight(int chunk_i, int chunk_j)
     {
         int k=127;
 
+        // get highest block
         for (; k>=0; k--)
         {
             e = mc->get_element(i,j,k);
@@ -34,6 +35,7 @@ void update_skylight(int chunk_i, int chunk_j)
         }
         if (k < 0) return;
 
+        // render gradient down from top block
         for (int _k=0; k>=0 && _k<16; k--, _k++)
         {
             e = mc->get_element(i,j,k);
@@ -43,6 +45,7 @@ void update_skylight(int chunk_i, int chunk_j)
             mc->set_element(i,j,k,e);
         }
 
+        // black out everything below
         for (; k>=0; k--)
         {
             e = mc->get_element(i,j,k);

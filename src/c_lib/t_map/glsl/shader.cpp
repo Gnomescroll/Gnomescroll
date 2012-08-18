@@ -90,7 +90,7 @@ void init_shaders()
         map_compatibility_shader.init_texture();
         map_compatibility_shader.init_shader(0);
 
-        if (  map_compatibility_shader.shader->shader_valid == true)
+        if (!map_compatibility_shader.shader->shader_valid)
         {
             map_compatibility_shader.init_shader(1);
 

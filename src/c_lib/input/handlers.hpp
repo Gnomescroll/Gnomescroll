@@ -49,6 +49,11 @@ struct InputState
     bool diagnostics;
     bool admin_controls;
 
+    // SDL input state
+    bool mouse_focus;  // mouse
+    bool input_focus;  // keyboard
+    bool app_active;    // useless/does not trigger. supposedly minimizing/maximizing window
+    
     bool frustum;
 };
 

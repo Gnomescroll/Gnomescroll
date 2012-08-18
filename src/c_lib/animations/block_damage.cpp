@@ -136,7 +136,9 @@ void render_block_damage()
     int x=0,y=0,z=0;
     t_map::get_requested_block_position(&x, &y, &z);
     if (x < 0 || y < 0 || z < 0) return;
-    if (t_map::get(x,y,z) <= 0) return;
+    int b = t_map::get(x,y,z);
+    if (b <= 0) return;
+    if (maxDamage(b) == 0xff) return;   // dont render damage for invincible blocks
     
     Vec3 dest = vec3_add(vec3_init(x,y,z), vec3_init(0.5f, 0.5f, 0.5f));
     float dist = vec3_length(vec3_sub(dest, current_camera_position));
