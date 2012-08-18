@@ -8,15 +8,10 @@ namespace Toolbelt
 // use as a non-null placeholder
 void local_trigger_dummy(ItemID item_id, int item_type) {}
 
-void tick_mining_laser(int agent_id, int item_type);
-void trigger_mining_laser(int agent_id, int item_type);
-
 void begin_local_mining_laser(int item_type);
 void end_local_mining_laser(int item_type);
 void begin_mining_laser(int agent_id, int item_type);
 void end_mining_laser(int agent_id, int item_type);
-
-void tick_local_mining_laser(ItemID item_id, int item_type);
 void trigger_local_mining_laser(ItemID item_id, int item_type);
 
 void trigger_local_block_placer(ItemID item_id, int item_type);

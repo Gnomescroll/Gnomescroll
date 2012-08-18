@@ -181,10 +181,7 @@ static void register_item_group_callbacks()
 {   // callback specific to an item group
     #if DC_CLIENT
     set_group(IG_MINING_LASER);
-    c.tick = &tick_mining_laser;
-    c.local_tick = &tick_local_mining_laser;
     c.local_trigger = &trigger_local_mining_laser;
-    c.trigger = &trigger_mining_laser;
     c.begin = &begin_mining_laser;
     c.end = &end_mining_laser;
     c.local_begin = &begin_local_mining_laser;

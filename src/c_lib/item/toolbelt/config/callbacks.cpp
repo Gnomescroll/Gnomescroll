@@ -39,28 +39,6 @@ void fire_close_range_weapon(ItemID item_id, int item_type)
 
 // IG_MINING_LASER
 
-void tick_mining_laser(int agent_id, int item_type)
-{
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent_state* a = ClientState::agent_list->get(agent_id);
-    if (a == NULL) return;
-    a->event.tick_mining_laser();
-}
-
-void tick_local_mining_laser(ItemID item_id, int item_type)
-{
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    ClientState::playerAgent_state.action.tick_mining_laser();
-}
-
-void trigger_mining_laser(int agent_id, int item_type)
-{
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent_state* a = ClientState::agent_list->get(agent_id);
-    if (a == NULL) return;
-    a->event.fired_mining_laser();
-}
-
 void trigger_local_mining_laser(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);

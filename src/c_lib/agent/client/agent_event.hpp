@@ -50,8 +50,6 @@ class Agent_event
         void update_mining_laser();
         void begin_mining_laser();
         void end_mining_laser();
-        void tick_mining_laser();   // continuous, while "on"
-        void fired_mining_laser();  // when fire rate tick triggers
 
         // old style packet handler events
         // still used; triggers target specific animations/sounds

@@ -28,7 +28,6 @@ class PlayerAgent_action
 
         // mining laser
         int mining_laser_sound_id;
-        void tick_mining_laser();
         void begin_mining_laser();
         void end_mining_laser();
         void update_mining_laser();

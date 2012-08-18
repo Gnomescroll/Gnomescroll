@@ -269,19 +269,6 @@ void Agent_event::end_mining_laser()
     this->mining_laser_emitter.turn_off();
 }
 
-
-void Agent_event::tick_mining_laser()
-{
-    // TODO -- need on/off switch instead. tick runs in physics loop, we need to run in draw loop
-
-    //Animations::mining_laser_beam(this->a->arm_center(), this->a->forward_vector(), range);
-}
-
-void Agent_event::fired_mining_laser()
-{
-    //Sound::fire_mining_laser();
-}
-
 void Agent_event::fired_weapon_at_object(int id, int type, int part)
 {
     AgentState s = this->a->get_state();
