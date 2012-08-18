@@ -23,43 +23,43 @@ void update_skylight(int chunk_i, int chunk_j)
 	for(int i=0; i<16; i++)
 	for(int j=0; j<16; j++)
 	{
-		int k = 127;
+		int k = 128;
 
 
-		while(k > 0)
+		while(1)
 		{
+			k--;
 			e = mc->get_element(i,j,k);
 			if(e.block != 0)	//iterate until we hit top block
 				break;
 
 			e.light  |= 0xff; //upper bits for skylight
 			mc->set_element(i,j,k,e);
-			k--;
+			if(k == 0) break;
 		}
 
 		for(int _k=0; _k<16; _k++)
 		{
 			k--;
-			if(k == 0) break;
 
 			e = mc->get_element(i,j,k);
 			if(e.block != 0)
 				continue;
 			e.light  |= 16*(15-_k)+ 0x0f; //clear upper bits
 			mc->set_element(i,j,k,e);
-
+			if(k == 0) break;
 		}
 
 		while(1)
 		{
 			k--;
-			if(k == 0) break;
 
 			e = mc->get_element(i,j,k);
 			if(e.block != 0)
 				continue;
 			e.light  |= 0x0f; //clear upper bits
 			mc->set_element(i,j,k,e);
+			if(k == 0) break;
 		}
 	}
 
