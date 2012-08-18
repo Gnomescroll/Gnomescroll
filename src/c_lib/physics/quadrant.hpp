@@ -123,7 +123,7 @@ inline float translate_point(float pt)
 __attribute((always_inline))
 inline int translate_point(int pt)
 {
-    if(pt <  0) pt += 512;
+    if(pt < 0) pt += 512;
     if(pt >= 512) pt -= 512;
     ASSERT_BOXED_POINT(pt);
     return pt;
@@ -147,4 +147,23 @@ inline struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos
     pos2.y = quadrant_translate_f(pos1.y, pos2.y);
 
     return pos2;
+}
+
+// not really quadrant related but similar to the rest of these methods
+// intended for use as a packet data sanitizer
+
+inline float clamp_z(float z)   __attribute__((always_inline));
+inline float clamp_z(float z)
+{
+    if (z < 0) return 0.0f;
+    if (z >= 128.0f) return 127.9f;
+    return z;
+}
+
+inline int clamp_z(int z)   __attribute__((always_inline));
+inline int clamp_z(int z)
+{
+    if (z < 0) return 0;
+    if (z > 127) return 127;
+    return z;
 }
