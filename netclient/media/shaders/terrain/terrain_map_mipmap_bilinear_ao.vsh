@@ -23,7 +23,7 @@ attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
 Uniform
 */
 
-uniform vec2 InOffset;
+uniform vec4 InOffset;
 
 /*
 Varying
@@ -45,13 +45,19 @@ varying float fogFragDepth;
 
 
 void main(void) 
-{   
-    //vec4 v = InVertex;
-    //v.xy += InOffset;
-    gl_Position = gl_ModelViewProjectionMatrix * (InVertex + Vec4(InOffset.xy, 0.0, 0.0));
+{
+
+    //InVertex.xy += InOffset.xy;
+    //gl_Position = gl_ModelViewProjectionMatrix * InVertex;
+
+    vec4 Vertex0 = InVertex;
+    Vertex0.xy += InOffset.xy;
+    gl_Position = gl_ModelViewProjectionMatrix * Vertex0;
+
+    //gl_Position = gl_ModelViewProjectionMatrix * (InVertex + InOffset);
 
     //fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
-    fogFragDepth = distance(InVertex.xy, gl_ModelViewMatrixInverse[3].xy);
+    fogFragDepth = distance(Vertex0.xy, gl_ModelViewMatrixInverse[3].xy);
 
     inColor = InRGB;
 

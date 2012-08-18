@@ -74,7 +74,7 @@ void init_shaders()
         //true on error
         //if (shader_error_occured(map_shader.shader->shader) == true)
         
-        if(!map_shader.shader->shader_valid)
+        if(map_shader.shader->shader_valid == false)
         {
             printf("!!! Default map shader failed. Setting backup shader \n");
             T_MAP_BACKUP_SHADER = 1;
@@ -90,7 +90,7 @@ void init_shaders()
         map_compatibility_shader.init_texture();
         map_compatibility_shader.init_shader(0);
 
-        if (!map_compatibility_shader.shader->shader_valid)
+        if (map_compatibility_shader.shader->shader_valid == false)
         {
             map_compatibility_shader.init_shader(1);
 

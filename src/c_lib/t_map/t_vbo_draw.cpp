@@ -334,7 +334,7 @@ void Vbo_map::draw_map()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glUniform2f(map_shader.InOffset, vbo->wxoff, vbo->wyoff);
+        glUniform4f(map_shader.InOffset, vbo->wxoff, vbo->wyoff, 0.0f, 0.0f);
 
         glVertexAttribPointer(map_shader.InVertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
         glVertexAttribPointer(map_shader.InTexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
