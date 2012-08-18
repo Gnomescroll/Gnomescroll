@@ -45,6 +45,7 @@ void init_insect_mob_shader();
 
 void init_insect_mob()
 {
+    GS_ASSERT(false);
     //insect_mob_vlist = new vertexElement2[4096];
     //insect_mob_vlist_index = 0;
 
@@ -58,6 +59,7 @@ void init_insect_mob()
 
 void teardown_insect_mob()
 {
+    GS_ASSERT(false);
     delete insect_mob_vlist;
 }
 

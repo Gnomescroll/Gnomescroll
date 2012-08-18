@@ -26,7 +26,7 @@ void animations_tick()
     hitscan_effect_list->tick();
     mining_laser_effect_list->tick();
     
-    insect_mob_list->tick();
+    //insect_mob_list->tick();
     
     tick_equipped_item_animation();
 }
@@ -147,12 +147,12 @@ void init()
     hitscan_effect_list = new HitscanEffect_list;
     mining_laser_effect_list = new MiningLaserEffect_list;
 
-    insect_mob_list = new Insect_mob_list;
+    //insect_mob_list = new Insect_mob_list;
 
     Animations::init_hitscan();
     Animations::init_mining_laser();
 
-    Animations::init_insect_mob();
+    //aAnimations::init_insect_mob();
 
     init_weapon_sprite();
     init_voxel_particle();
@@ -166,14 +166,14 @@ void init()
 void teardown()
 {
     #if DC_CLIENT
-    delete insect_mob_list;
+    //delete insect_mob_list;
 
     delete hitscan_effect_list;
     delete mining_laser_effect_list;
 
     Animations::teardown_hitscan();
 
-    Animations::teardown_insect_mob();
+    //Animations::teardown_insect_mob();
 
     teardown_voxel_particle();
     #endif
