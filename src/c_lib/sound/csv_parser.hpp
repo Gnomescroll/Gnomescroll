@@ -5,4 +5,4 @@ namespace Sound
     
 void parse_sound_triggers(char *fn);
 
-}
+}   // Sound

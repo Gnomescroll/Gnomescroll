@@ -235,6 +235,7 @@ void parse_sound_triggers(const char *fn)
                 maximum_gain[maximum_gain_index] = '\0';
                 rolloff_factor[rolloff_factor_index] = '\0';
                 loop[loop_index] = '\0';
+                max_playable_distance[max_playable_distance_index] = '\0';
 
                 // set strings
                 int snd_id = n_sounds;
