@@ -257,6 +257,32 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
     return ct;
 }
 
+// have to override these because of Agent_state->s.x,y,z
+int Agent_list::object_models_within_sphere(float x, float y, float z, float radius)
+{
+    x = translate_point(x);
+    y = translate_point(y);
+    int ct = 0;
+    float dist;
+    const float radius_squared = radius*radius;
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        if (a[i] == NULL || a[i]->vox == NULL) continue;
+        Vec3 p = this->a[i]->vox->get_center();
+        p.x = quadrant_translate_f(x, p.x);
+        p.y = quadrant_translate_f(y, p.y);
+        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
+        if (dist < radius_squared)
+        {   // agent in sphere
+            filtered_objects[ct] = a[i];
+            filtered_object_distances[ct] = dist;
+            ct++;            
+        }
+    }
+    this->n_filtered = ct;
+    return ct;
+}
+
 // origin, direction, cone threshold
 void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta)
 {
@@ -343,6 +369,25 @@ Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radi
 {
     using STATE::agent_list;
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    if (n <= 0) return NULL;
+    agent_list->sort_filtered_objects_by_distance();
+    Agent_state* agent = NULL;
+    int i=0;
+    while (i < n)
+    {   // skip all dead agents
+        agent = agent_list->filtered_objects[i];
+        GS_ASSERT(agent != NULL);
+        if (agent != NULL && !agent->status.dead) break;
+        i++;
+    }
+    if (i >= n) agent = NULL;
+    return agent;
+}
+
+Agent_state* nearest_living_agent_model_in_range(const Vec3 position, const float radius)
+{
+    using STATE::agent_list;
+    int n = agent_list->object_models_within_sphere(position.x, position.y, position.z, radius);
     if (n <= 0) return NULL;
     agent_list->sort_filtered_objects_by_distance();
     Agent_state* agent = NULL;

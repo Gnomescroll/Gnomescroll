@@ -100,11 +100,21 @@ void ExplosionComponent::explode()
 // returns true if within proximity explosion range
 bool ExplosionComponent::proximity_check()
 {
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    Vec3 position = physics->get_position();
+    struct Vec3 position;
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    if (vox != NULL)
+        position = vox->get_center();
+    else
+    {
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (physics == NULL) return false;
+        position = physics->get_position();
+    }
     
-    Agent_state* agent = nearest_living_agent_in_range(position, this->proximity_radius);
+    Agent_state* agent = nearest_living_agent_model_in_range(position, this->proximity_radius);
     if (agent != NULL)
     {
         using Components::HealthComponent;

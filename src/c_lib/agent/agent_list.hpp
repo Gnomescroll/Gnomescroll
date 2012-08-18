@@ -41,6 +41,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void sort_filtered_objects_by_distance(bool ascending=true);
 
         int objects_within_sphere(float x, float y, float z, float radius);
+        int object_models_within_sphere(float x, float y, float z, float radius);
         void objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
 
         #if DC_CLIENT
@@ -62,4 +63,5 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 
 Agent_state* nearest_agent_in_range(const Vec3 position, const float radius);
 Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radius);
+Agent_state* nearest_living_agent_model_in_range(const Vec3 position, const float radius);
 Agent_state* random_agent_in_range(const Vec3 position, const float radius);
