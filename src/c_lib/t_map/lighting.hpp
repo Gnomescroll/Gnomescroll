@@ -40,16 +40,21 @@ void update_skylight(int chunk_i, int chunk_j)
 		for(int _k=0; _k<16; _k++)
 		{
 			k--;
+			if(k == 0) break;
+
 			e = mc->get_element(i,j,k);
 			if(e.block != 0)
 				continue;
 			e.light  |= 16*(15-_k)+ 0x0f; //clear upper bits
 			mc->set_element(i,j,k,e);
+
 		}
 
-		while(k > 0)
+		while(1)
 		{
 			k--;
+			if(k == 0) break;
+
 			e = mc->get_element(i,j,k);
 			if(e.block != 0)
 				continue;

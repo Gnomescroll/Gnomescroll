@@ -33,6 +33,9 @@ void PlayerAgent_state::was_identified()
     msg.send();    
 }
 
+/*
+    ERROR INTERPOLATION IS STILL WRONG: TIME DELTA IS INVALID
+*/
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {    
     int _t = (int)_GET_MS_TIME();
