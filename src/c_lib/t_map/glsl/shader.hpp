@@ -58,14 +58,16 @@ class MapShader
 
     void init_shader()
     {
-        shader = new SHADER;
-        shader->set_debug(true);
+        GS_ASSERT(this->shader == NULL);
+        if (this->shader != NULL) delete this->shader;
+        this->shader = new SHADER;
+        this->shader->set_debug(true);
 
-        shader->load_shader( "map_shader",
+        this->shader->load_shader( "map_shader",
             "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",
             "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh" );
         //uniform
-        InOffset  =	shader->get_uniform("InOffset");
+        InOffset  = shader->get_uniform("InOffset");
         //attribute
         InVertex =     shader->get_attribute("InVertex");
         InTexCoord =   shader->get_attribute("InTexCoord");
@@ -80,7 +82,7 @@ class MapShader
 
 };
 
-class MapShader map_shader;
+extern class MapShader map_shader;
 
 class MapCompatibilityShader
 {
@@ -117,8 +119,9 @@ class MapCompatibilityShader
 
     void init_shader(int level)
     {
-        shader = new SHADER;
-        shader->set_debug(true);
+        if (this->shader != NULL) delete this->shader;
+        this->shader = new SHADER;
+        this->shader->set_debug(true);
 
         bool mesa = false;
         const char* gl_v = (const char*)glGetString(GL_VERSION);
@@ -162,7 +165,7 @@ class MapCompatibilityShader
 
 };
 
-class MapCompatibilityShader map_compatibility_shader;
+extern class MapCompatibilityShader map_compatibility_shader;
 
 
 }   // t_map

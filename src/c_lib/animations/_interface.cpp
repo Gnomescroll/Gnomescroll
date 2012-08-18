@@ -177,6 +177,8 @@ void teardown()
 
     teardown_voxel_particle();
     #endif
+
+    teardown_config();
 }
 
 }   // Animations

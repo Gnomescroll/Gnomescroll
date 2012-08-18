@@ -18,6 +18,8 @@ GL_GENERATE_MIPMAP is supported for 1.4 and over
 namespace t_map
 { 
 
+class MapShader map_shader;
+class MapCompatibilityShader map_compatibility_shader;
 
 SDL_Surface *terrain_map_surface = NULL;
 GLuint terrain_map_texture = 0;
@@ -97,6 +99,11 @@ void init_shaders()
     }
 
     init_block_texture_normal();
+
+    //GS_ASSERT(map_shader == NULL);
+    //GS_ASSERT(map_compatibility_shader == NULL);
+    //map_shader = new MapShader;
+    //map_compatibility_shader = new MapCompatibilityShader;
 }
 
 void MapShader::init_texture()
@@ -305,6 +312,8 @@ void init_map_3d_texture()
 
 void teardown_shader()
 {
+    //if (map_shader != NULL) delete map_shader;
+    //if (map_compatibility_shader != NULL) delete map_compatibility_shader;
 }
 
 void set_map_shader_0_compatibility(int level) 

@@ -19,10 +19,10 @@ class HitscanEffect
     void add_plane_bias();   // for player agent, so laser isnt in the eyes
     
     public:
-    int id;
-    float x,y,z;
-    float vx,vy,vz;
-    int ttl;
+        int id;
+        float x,y,z;
+        float vx,vy,vz;
+        int ttl;
 
     inline void draw(float delta, Vec3 camera) __attribute((always_inline));
     inline void tick();
@@ -39,6 +39,11 @@ class HitscanEffect
     }
 
     void reset();
+
+    HitscanEffect()
+    {
+        this->reset();
+    }
 };
 
 class HitscanEffect_list: public Simple_object_list<HitscanEffect>

@@ -69,7 +69,8 @@ inline void Simple_object_list<Object_state, max_n>::destroy(int index)
     unsigned int uindex = index;
     GS_ASSERT(index >= 0 && uindex < max_n);
     num--;
-    this->a[uindex].reset();
-    this->a[uindex] = this->a[num]; // swap last good object with dead object
+    if (uindex != num)
+        this->a[uindex] = this->a[num]; // swap last good object with dead object
     this->a[uindex].id = index; // update id of swapped object
+    this->a[num].reset();   // reset dead object
 }

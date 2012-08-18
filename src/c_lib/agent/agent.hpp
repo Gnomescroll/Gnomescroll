@@ -14,7 +14,8 @@
 
 //store last network messsage
 
-class AgentState {
+class AgentState
+{
     public:
         int seq;
         float theta;
@@ -25,16 +26,22 @@ class AgentState {
         
         AgentState();
         
-        Vec3 forward_vector();
+        struct Vec3 forward_vector();
         
-        Vec3 get_position() { return vec3_init(x,y,z); }
+        struct Vec3 get_position() { return vec3_init(x,y,z); }
+        
+        void set_position(struct Vec3 p)
+        {
+            ASSERT_BOXED_POSITION(p);
+            this->x = p.x;
+            this->y = p.y;
+            this->z = p.z;
+        }
 };
 
 
-#ifndef AGENT_CONTROL_STATE
-#define AGENT_CONTROL_STATE
-struct Agent_control_state {
-    
+struct Agent_control_state
+{
     //int id;
     int seq;
     float theta;
@@ -42,7 +49,6 @@ struct Agent_control_state {
     uint32_t cs;
 
 };
-#endif
 
 struct Agent_collision_box
 {

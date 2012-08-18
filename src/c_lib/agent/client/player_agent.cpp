@@ -33,101 +33,43 @@ void PlayerAgent_state::was_identified()
     msg.send();    
 }
 
-//#define SKIP_INTERPOLATION_THRESHOLD 0.5f // travel distance above which we dont bother interpolating to
-
 void PlayerAgent_state::update_client_side_prediction_interpolated()
-{
-    static const float SKIP_INTERPOLATION_THRESHOLD = 1.0f;
-    
+{    
     int _t = (int)_GET_MS_TIME();
     int last_tick = (int)_LAST_TICK();
+
+    struct Vec3 vs0 = s0.get_position();
+    struct Vec3 vs1 = s1.get_position();
+
+    vs0 = quadrant_translate_position(current_camera_position, vs0);
+    vs1 = quadrant_translate_position(current_camera_position, vs1);
+
+    float dist = vec3_distance(vs0, vs1);
 
     // calculate interpolation delta
     // if the distance travelled is extreme, dont interpolate (delta=1)
     // this is because of the teleport in map wrapping
     // the player will suddenly jump ~512 meters, with a noticable interpolation flicker in between
-    float dist;
-    {
-#if 0 
-        float x0 = quadrant_translate_f(current_camera_position.x, s0.x);
-        float y0 = quadrant_translate_f(current_camera_position.y, s0.y);
-        float z0 = s0.z;
-
-        float x1 = quadrant_translate_f(current_camera_position.x, s1.x);
-        float y1 = quadrant_translate_f(current_camera_position.y, s1.y);
-        float z1 = s1.z;
-
-        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
-
-#else
-        float x0 = s0.x;
-        float y0 = s0.y;
-        float z0 = s0.z;
-
-        float x1 = s1.x;
-        float y1 = s1.y;
-        float z1 = s1.z;
-
-        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
-
-#endif
-        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
-        dist = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
-    }
-
+    static const float SKIP_INTERPOLATION_THRESHOLD = 1.0f;
     float delta = 1.0f;
     if (dist < SKIP_INTERPOLATION_THRESHOLD)
     {
-        delta = ((float)(_t - last_tick)) / 33.0;
-        if(delta > 1.0f)
-            delta = 1.0f;
-    }
-    else
-    {
-        delta = 1.0f;
+        delta = ((float)(_t - last_tick)) / 33.0f;
+        if(delta > 1.0f) delta = 1.0f;
+        GS_ASSERT(delta >= 0.0f);
+        if (delta < 0.0f) delta = 0.0f;
     }
 
-    GS_ASSERT(delta >= 0.0f);
+    vs0 = vec3_scalar_mult(vs0, 1.0f-delta);
+    vs1 = vec3_scalar_mult(vs1, delta);
+    struct Vec3 v = vec3_add(vs0, vs1);
+    v = translate_position(v);
+    c.set_position(v);
 
-    float x0 = quadrant_translate_f(current_camera_position.x, s0.x);
-    float y0 = quadrant_translate_f(current_camera_position.y, s0.y);
-    float z0 = s0.z;
-
-    float x1 = quadrant_translate_f(current_camera_position.x, s1.x);
-    float y1 = quadrant_translate_f(current_camera_position.y, s1.y);
-    float z1 = s1.z;
-
-    c.x = x0*(1-delta) + x1*delta;
-    c.y = y0*(1-delta) + y1*delta;
-    c.z = z0*(1-delta) + z1*delta;  
-
-#if 0
-    int _tl0 = _GET_MS_TIME() -_tl;
-    static int _tl;
-    _tl = _GET_MS_TIME();
-
-    static float lz;
-    static float lz0;
-    printf("z= %0.02f delta= %0.02f s0.z= %0.02f s0_delta= %0.02f   tdelta= %0.02f dist= %f tickd= %d time= %d ctime= %d last_tick= %d\n", 
-        c.z, lz - c.z, s0.z, lz0-s0.z, delta, dist, _t - last_tick, _tl0, _GET_MS_TIME(), _LAST_TICK());
-    lz = c.z;
-    lz0 = s0.z;
-#endif
-
-#if 1
     if (this->you == NULL) return;
     AgentState s = this->you->get_state();
     c.theta = s.theta;
     c.phi = s.phi;
-#else
-    //AgentState s = this->you->get_state();
-
-    /*
-        This may introduce errors if this is used
-    */
-    c.theta = 0.0f;
-    c.phi   = 0.0f;
-#endif
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
@@ -402,9 +344,11 @@ PlayerAgent_state::~PlayerAgent_state()
         delete[] this->state_history;
 }
 
-void PlayerAgent_state::toggle_camera_mode() {
+void PlayerAgent_state::toggle_camera_mode()
+{
     camera_mode = (camera_mode + 1) % CameraStatesEnd;
-    switch (camera_mode) {
+    switch (camera_mode)
+    {
         case net_agent:
             printf("Camera Mode: net_agent\n");
             break;

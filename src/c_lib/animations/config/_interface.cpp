@@ -144,12 +144,10 @@ anim_callback get_animation_callback(const char* name)
 
 int get_animation_id(const char* name)
 {
-    printf("Getting animation id for %s\n", name);
     GS_ASSERT(animation_data != NULL);
     if (animation_data == NULL) return -1;
     
     unsigned int hash = strhash(name);
-    for (int i=0; i<MAX_ANIMATIONS; i++) if (animation_data[i].name != NULL) printf("name: %s\n", animation_data[i].name);
     for (int i=0; i<MAX_ANIMATIONS; i++)
         if (animation_data[i].loaded && animation_data[i].hash == hash)
             return i;

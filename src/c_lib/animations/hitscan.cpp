@@ -15,19 +15,17 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-const int HITSCAN_TTL = 10;
-
-static GLuint hitscan_texture_id;
+const int HITSCAN_TTL = 15;
+static GLuint hitscan_texture_id = 0;
 
 void init_hitscan()
 {
-    int i = create_texture_from_file( (char*) "./media/texture/hitscan/hitscan_01.png", &hitscan_texture_id);
-    if (i) { printf("init_hitscan failed with code %d\n", i); }
+    int ret = create_texture_from_file("./media/texture/hitscan/hitscan_01.png", &hitscan_texture_id);
+    GS_ASSERT(ret == 0);
 }
 
 void teardown_hitscan()
 {
-
 
 }
 
@@ -227,7 +225,8 @@ void HitscanEffect_list::tick()
     {
         a[i].tick();
         a[i].ttl--;
-        if(a[i].ttl <= 0) destroy(i);
+        if (a[i].ttl <= 0)
+            destroy(i);
     }
 }
 
