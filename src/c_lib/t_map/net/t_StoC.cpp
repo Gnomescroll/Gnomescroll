@@ -77,16 +77,17 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
     //printf("received chunk: index = %i compressed \n", chunk_index);
+    
+    
+    GS_ASSERT( main_map->chunk[chunk_index] == NULL);
 
-    int x = chunk_index % MAP_CHUNK_XDIM;
-    int y = chunk_index / MAP_CHUNK_XDIM;
+    int cx = chunk_index % MAP_CHUNK_XDIM;
+    int cy = chunk_index / MAP_CHUNK_XDIM;
+
+    if(m == NULL)
+        main_map->load_chunk(cx, cy);
     
     class MAP_CHUNK* m = main_map->chunk[chunk_index];
-    if(m == NULL)
-    {
-        main_map->set_block(16*x+8,16*y+8,0, 0); //create chunk    
-        m = main_map->chunk[chunk_index];
-    }
 
     int _size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
 
@@ -107,10 +108,15 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
-    int x = chunk_index % MAP_CHUNK_XDIM;
-    int y = chunk_index / MAP_CHUNK_XDIM;
-    
-    main_map->set_block(16*x,16*y,0, 1); //create chunk
+
+
+    int cx = chunk_index % MAP_CHUNK_XDIM;
+    int cy = chunk_index / MAP_CHUNK_XDIM;
+
+    GS_ASSERT( main_map->chunk[chunk_index] == NULL);
+    if(m == NULL)
+        main_map->load_chunk(cx, cy);
+    class MAP_CHUNK* m = main_map->chunk[chunk_index];
 
 /*
     This is evil, dont do this
@@ -133,8 +139,13 @@ void clear_alias_StoC::handle()
     printf("cleared chunk alias: %i %i \n", _x,_y);
 #endif
 
-    delete main_map->chunk[chunk_index];
-    main_map->chunk[chunk_index] = NULL;
+    GS_ASSERT( main_map->chunk[chunk_index] != NULL);
+
+    int cx = chunk_index % MAP_CHUNK_XDIM;
+    int cy = chunk_index / MAP_CHUNK_XDIM;
+
+    main_map->unload_chunk(cx, cy);
+
     /*
         Dump map chunk
     */
