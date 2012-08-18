@@ -480,7 +480,6 @@ void Agent_state::set_camera_state(float x, float y, float z, float theta, float
     this->camera.z = z;
     this->camera.theta = theta;
     this->camera.phi = phi;
-    //printf("set camera state: %f %f \n",x ,y);
 }
 
 void Agent_state::get_spawn_point(Vec3* spawn)

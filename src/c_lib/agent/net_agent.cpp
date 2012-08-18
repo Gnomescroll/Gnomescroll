@@ -32,9 +32,6 @@ inline void PlayerAgent_Snapshot::handle()
     #if DC_CLIENT
     ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
     #endif
-    //printf("Received Agent_state_message packet: agent_id= %i \n", id);
-    //printf("seq= %i \n", seq);
-    return;
 }
 
 // Server -> Client handlers
@@ -55,6 +52,9 @@ inline void Agent_state_message::handle()
 {
     Agent_state* a = STATE::agent_list->get(id);
     if (a == NULL) return;
+    #if DC_SERVER
+    z = clamp_z(z);
+    #endif
     a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 
@@ -63,10 +63,11 @@ inline void Agent_teleport_message::handle()
     Agent_state* a = STATE::agent_list->get(id);
     if (a == NULL) return;
     // reset camera angle
-    if (a->is_you() && agent_camera != NULL)
+    if (a->is_you())
     {
         a->initial_teleport = true;
-        agent_camera->set_angles(theta, phi);
+        if (agent_camera != NULL)
+            agent_camera->set_angles(theta, phi);
     }
     a->set_state(x,y,z, vx,vy,vz);
     a->set_angles(theta, phi);
@@ -651,7 +652,8 @@ inline void hit_block_CtoS::handle()
 
     x = translate_point(x);
     y = translate_point(y);
-    
+    z = clamp_z(z);
+
     agent_hit_block_StoC msg;
     msg.id = a->id;
     msg.x = x;
@@ -747,6 +749,8 @@ inline void hitscan_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+
+    z = clamp_z(z);
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
@@ -867,6 +871,8 @@ inline void ThrowGrenade_CtoS::handle()
     msg.id = a->id;
     msg.broadcast();
 
+    z = clamp_z(z);
+
     Vec3 n = vec3_init(vx,vy,vz);
     normalize_vector(&n);
     static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
@@ -907,6 +913,7 @@ inline void agent_set_block_CtoS::handle()
 
     x = translate_point(x);
     y = translate_point(y);
+    z = clamp_z(z);
 
     // dont set on existing block
     if (!t_map::block_can_be_placed(x,y,z,val)) return;
@@ -968,6 +975,7 @@ inline void admin_set_block_CtoS::handle()
 
     x = translate_point(x);
     y = translate_point(y);
+    z = clamp_z(z);
 
     // TODO -- when this is a /real/ admin tool, remove this check
     // since we're giving it to players, do this check
@@ -1039,6 +1047,7 @@ inline void place_spawner_CtoS::handle()
         printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+    z = clamp_z(z);
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     // TODO -- handle spawners without teams
@@ -1055,6 +1064,7 @@ inline void place_turret_CtoS::handle()
         printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+    z = clamp_z(z);
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     Objects::ready(obj);
@@ -1183,6 +1193,7 @@ inline void agent_camera_state_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->id != id) return;
+    z = clamp_z(z);
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
 }
