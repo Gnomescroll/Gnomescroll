@@ -15,6 +15,14 @@ void NAME()\
 void NAME(float x, float y, float z, float vx, float vy, float vz)\
 {\
     play_3d_sound(#NAME, x,y,z,vx,vy,vz);\
+}\
+void NAME(struct Vec3 p)\
+{\
+    play_3d_sound(#NAME, p);\
+}\
+void NAME(struct Vec3 p, struct Vec3 v)\
+{\
+    play_3d_sound(#NAME, p, v);\
 }
 
 #define SOUND_LOOP_TRIGGER(NAME)\
@@ -65,6 +73,7 @@ SOUND_TRIGGER(player_joined_server)
 SOUND_TRIGGER(player_left_server)
 SOUND_TRIGGER(turret_shoot)
 SOUND_TRIGGER(pickup_item)
+SOUND_TRIGGER(smelter_on)
 
 // motion
 SOUND_TRIGGER(soft_step_1)
@@ -135,7 +144,8 @@ void set_soundfile_properties(
     float minimum_gain,
     float maximum_gain,
     float rolloff_factor,
-    bool loop)
+    bool loop,
+    float max_playable_distance)
 {
     if (snd_id < 0 || snd_id >= n_sounds)
     {
@@ -151,6 +161,7 @@ void set_soundfile_properties(
     s->maximum_gain = maximum_gain;
     s->rolloff_factor = rolloff_factor;
     s->loop = loop;
+    s->max_playable_distance = max_playable_distance;
 }
 
 void validate_sound_config()

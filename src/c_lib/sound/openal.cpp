@@ -583,6 +583,10 @@ int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3
 {
     if (!enabled) return -1;
 
+    // TODO -- move this to the sound module
+    // Need better organization of Soundfile metadata vs GS_SoundBuffer
+    if (vec3_distance(Sound::listener_position, p) > sound_buffer->metadata->max_playable_distance) return -1;
+
     static const struct Vec3 o = vec3_init(0,0,-1);
     int source_id = play_sound(sound_buffer, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
     if (source_id < 0) return source_id;

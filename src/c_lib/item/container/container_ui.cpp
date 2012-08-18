@@ -26,7 +26,7 @@ void ItemContainerSmelterUI::tick_progress()
     if (progress == 0.0f) return;
 
     class Item::SmeltingRecipe* recipe = Item::get_selected_smelting_recipe(this->id);
-    GS_ASSERT(recipe != NULL);
+    GS_ASSERT_LIMIT(recipe != NULL, 1);
     if (recipe == NULL) return;
     float progress_rate = 1.0f / ((float)Item::get_smelting_recipe_creation_time(recipe->id));
     GS_ASSERT(progress_rate > 0.0f);

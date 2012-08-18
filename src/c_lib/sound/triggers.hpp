@@ -7,7 +7,9 @@ namespace Sound
 
 #define SOUND_TRIGGER_HEADER(NAME)\
 void NAME();\
-void NAME(float x, float y, float z, float vx, float vy, float vz);
+void NAME(float x, float y, float z, float vx, float vy, float vz);\
+void NAME(struct Vec3 p);
+void NAME(struct Vec3 p, struct Vec3 v);
 
 #define SOUND_LOOP_TRIGGER_HEADER(NAME)\
 int NAME(bool start, int source_id);\
@@ -39,6 +41,7 @@ SOUND_TRIGGER_HEADER(player_joined_server)
 SOUND_TRIGGER_HEADER(player_left_server)
 SOUND_TRIGGER_HEADER(turret_shoot)
 SOUND_TRIGGER_HEADER(pickup_item)
+SOUND_TRIGGER_HEADER(smelter_on)
 
 // motion
 SOUND_TRIGGER_HEADER(soft_step_1)
@@ -78,6 +81,7 @@ class Soundfile
         float maximum_gain;
         float rolloff_factor;
         bool loop;
+        float max_playable_distance;
 
     Soundfile()
     : hash(0), fn(NULL), file(NULL)
@@ -103,7 +107,8 @@ void set_soundfile_properties(
     float minimum_gain,
     float maximum_gain,
     float rolloff_factor,
-    bool loop
+    bool loop,
+    float max_playable_distance
 );
 
 int get_soundfile_id_for_name(const char* name);

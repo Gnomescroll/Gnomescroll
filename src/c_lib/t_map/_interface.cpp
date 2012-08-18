@@ -54,6 +54,28 @@ int get_block_item_container(int x, int y, int z)
     return c->chunk_item_container.get(x,y,z); 
 }
 
+bool get_container_location(int container_id, int position[3])
+{
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id == NULL_CONTAINER) return false;
+    
+    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return false;
+    GS_ASSERT(container->chunk >= 0);
+    if (container->chunk < 0) return false;
+    GS_ASSERT(container->chunk < main_map->xchunk_dim*main_map->ychunk_dim);
+    if (container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return false;
+    
+    class MAP_CHUNK* c = main_map->chunk[container->chunk];
+    GS_ASSERT(c != NULL);
+    if (c == NULL) return false;
+
+    c->chunk_item_container.get_container_location(container_id, position);
+    return true;
+}
+
+
 #if DC_CLIENT
     class Vbo_map* vbo_map;
 
@@ -194,27 +216,6 @@ void destroy_item_container_block(int x, int y, int z)
     if (c == NULL) return;
 
     c->chunk_item_container.remove(x,y,z);
-}
-
-bool get_container_location(int container_id, int position[3])
-{
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
-    
-    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return false;
-    GS_ASSERT(container->chunk >= 0);
-    if (container->chunk < 0) return false;
-    GS_ASSERT(container->chunk < main_map->xchunk_dim*main_map->ychunk_dim);
-    if (container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return false;
-    
-    class MAP_CHUNK* c = main_map->chunk[container->chunk];
-    GS_ASSERT(c != NULL);
-    if (c == NULL) return false;
-
-    c->chunk_item_container.get_container_location(container_id, position);
-    return true;
 }
 
 void load_item_container_block(int x, int y, int z, int block_type)

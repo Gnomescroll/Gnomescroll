@@ -1,5 +1,7 @@
 #include "container.hpp"
 
+#include <sound/sound.hpp>
+
 #include <item/container/_interface.hpp>
 #include <item/container/_state.hpp>
 #include <item/container/config/_interface.hpp>
@@ -189,7 +191,21 @@ void ItemContainerSmelter::begin_smelting(int recipe_id)
     if (this->progress_rate <= 0.0f) this->progress_rate = 1.0f/30.0f;
     this->progress += this->progress_rate;
     send_smelter_progress(this->id);
-    t_map::smelter_on(this->id);
+
+    if (!this->on)
+    {
+        int b[3];
+        bool found = t_map::get_container_location(this->id, b);
+        GS_ASSERT(found);
+        if (!found) return;
+        struct Vec3 p = vec3_init(b[0], b[1], b[2]);
+        p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
+        Sound::broadcast_play_3d_sound("smelter_on", p);
+
+        t_map::smelter_on(this->id);
+
+        this->on = true;
+    }
 }
 
 void ItemContainerSmelter::tick_smelting()
@@ -211,7 +227,10 @@ void ItemContainerSmelter::reset_smelting()
 
     // send smelter off only if we dont expect the recipe to burn another one
     if (this->fuel <= 0.0f || !this->can_produce_output())
+    {
+        this->on = false;
         t_map::smelter_off(this->id);
+    }
 }
 #endif
 

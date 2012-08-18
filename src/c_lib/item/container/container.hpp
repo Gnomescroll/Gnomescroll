@@ -283,6 +283,10 @@ class ItemContainerSmelter: public ItemContainerInterface
 
         static const int input_xdim = 1;
         static const int fuel_slot = 0;
+
+        #if DC_SERVER
+        bool on;
+        #endif
         
         float fuel;       // 0.0f - 1.0f
         int fuel_type;  // item type
@@ -458,6 +462,9 @@ class ItemContainerSmelter: public ItemContainerInterface
 
     ItemContainerSmelter(ItemContainerType type, int id)
     : ItemContainerInterface(type, id),
+    #if DC_SERVER
+    on(false),
+    #endif
     fuel(0.0f),
     fuel_type(NULL_ITEM_TYPE),
     burn_rate(1.0f/30.0f),

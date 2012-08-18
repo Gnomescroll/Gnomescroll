@@ -35,8 +35,8 @@ void close()
 
 
 #if DC_CLIENT
-static const float GS_SOUND_DISTANCE_CUTOFF = 128.0f;
-static struct Vec3 listener_position;
+const float GS_SOUND_DISTANCE_CUTOFF = 128.0f;
+struct Vec3 listener_position;
 
 void update()
 {

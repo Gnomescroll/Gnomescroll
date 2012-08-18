@@ -21,6 +21,7 @@ typedef enum
     MAXIMUM_GAIN,
     ROLLOFF_FACTOR,
     LOOP,
+    MAX_PLAYABLE_DISTANCE,
     NOTES           // not code
 } ColumnName;
 
@@ -33,6 +34,7 @@ const float GS_DEFAULT_MINIMUM_GAIN = 0.0f;
 const float GS_DEFAULT_MAXIMUM_GAIN = 1.0f;
 const float GS_DEFAULT_ROLLOFF_FACTOR = 1.0f;
 const bool GS_DEFAULT_LOOP = false;
+const float GS_DEFAULT_MAX_PLAYABLE_DISTANCE = 128.0f;
 
 void parse_sound_triggers(const char *fn)
 {
@@ -86,6 +88,7 @@ void parse_sound_triggers(const char *fn)
     char maximum_gain[MAX_FLOAT_BUFFER_INDEX+1];
     char rolloff_factor[MAX_FLOAT_BUFFER_INDEX+1];
     char loop[MAX_BOOL_BUFFER_INDEX+1];
+    char max_playable_distance[MAX_FLOAT_BUFFER_INDEX+1];
     
     int pitch_index = 0;
     int gain_index = 0;
@@ -95,6 +98,7 @@ void parse_sound_triggers(const char *fn)
     int maximum_gain_index = 0;
     int rolloff_factor_index = 0;
     int loop_index = 0;
+    int max_playable_distance_index = 0;
     
     float pitch_value;
     float gain_value;
@@ -104,6 +108,7 @@ void parse_sound_triggers(const char *fn)
     float maximum_gain_value;
     float rolloff_factor_value;
     bool loop_value;
+    float max_playable_distance_value;
 
     // filename is stored in the 2nd column (1-indexed),
     // function name is stored in the 3rd column
@@ -197,6 +202,12 @@ void parse_sound_triggers(const char *fn)
                         break;
                     loop[loop_index++] = c;
                     break;
+
+                case MAX_PLAYABLE_DISTANCE:
+                    if (max_playable_distance_index >= MAX_FLOAT_BUFFER_INDEX || !(isdigit(c) || c == '.' || c == '-'))
+                        break;
+                    max_playable_distance[max_playable_distance_index++] = c;
+                    break;
                 
                 // unused by code 
                 case IN_USE:
@@ -238,7 +249,8 @@ void parse_sound_triggers(const char *fn)
                     maximum_gain_value = (maximum_gain_index) ? (float)atof(maximum_gain) : GS_DEFAULT_MAXIMUM_GAIN;
                     rolloff_factor_value = (rolloff_factor_index) ? (float)atof(rolloff_factor) : GS_DEFAULT_ROLLOFF_FACTOR;
                     loop_value = (loop_index) ? (bool)atoi(loop) : GS_DEFAULT_LOOP;
-                    set_soundfile_properties(snd_id, pitch_value, gain_value, max_distance_value, reference_distance_value, minimum_gain_value, maximum_gain_value, rolloff_factor_value, loop_value);
+                    max_playable_distance_value = (max_playable_distance_index) ? (float)atof(max_playable_distance) : GS_DEFAULT_MAX_PLAYABLE_DISTANCE;
+                    set_soundfile_properties(snd_id, pitch_value, gain_value, max_distance_value, reference_distance_value, minimum_gain_value, maximum_gain_value, rolloff_factor_value, loop_value, max_playable_distance_value);
                 }
 
                 if (n_sounds > n_lines)
@@ -267,6 +279,7 @@ void parse_sound_triggers(const char *fn)
             maximum_gain_index = 0;
             rolloff_factor_index = 0;
             loop_index = 0;
+            max_playable_distance_index = 0;
             column = 0;
         }
     }

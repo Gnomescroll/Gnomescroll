@@ -5,6 +5,7 @@ namespace t_map
 void end_t_map();
 
 int get_block_item_container(int x, int y, int z);
+bool get_container_location(int container_id, int position[3]);
 
 void init_packets();
 
@@ -38,7 +39,6 @@ extern int requested_block_type;
 #if DC_SERVER
 void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id);
 void destroy_item_container_block(int x, int y, int z);
-bool get_container_location(int container_id, int position[3]);
 
 // creates container
 void load_item_container_block(int x, int y, int z, int block_type);

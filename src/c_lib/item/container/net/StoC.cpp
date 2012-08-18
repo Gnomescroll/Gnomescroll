@@ -241,7 +241,19 @@ inline void smelter_progress_StoC::handle()
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
     GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
-    if (!Item::is_smelter(container->type)) return ;
+    if (!Item::is_smelter(container->type)) return;
+
+    //if (progress > 0 && container->progress <= 0)
+    //{
+        //int b[3];
+        //bool found = t_map::get_container_location(container->id, b);
+        //GS_ASSERT(found);
+        //if (!found) return;
+        //struct Vec3 p = vec3_init(b[0], b[1], b[2]);
+        //p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
+        //Sound::smelter_on(p);
+    //}
+    
     container->progress = progress;
 
     // update UI

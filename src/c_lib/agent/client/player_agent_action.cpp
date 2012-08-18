@@ -247,20 +247,20 @@ void PlayerAgent_action::tick_mining_laser()
 
 void PlayerAgent_action::begin_mining_laser()
 {
+    this->p->you->event.mining_laser_emitter.turn_on();
+
     GS_ASSERT(this->mining_laser_sound_id < 0);
     if (this->mining_laser_sound_id >= 0) return;
     this->mining_laser_sound_id = Sound::mining_laser(true, 0);
-
-    this->p->you->event.mining_laser_emitter.turn_on();
 }
 
 void PlayerAgent_action::end_mining_laser()
 {
+    this->p->you->event.mining_laser_emitter.turn_off();
+
     if (this->mining_laser_sound_id < 0) return;
     Sound::mining_laser(false, this->mining_laser_sound_id);
     this->mining_laser_sound_id = -1;
-
-    this->p->you->event.mining_laser_emitter.turn_off();
 }
 
 void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
