@@ -46,18 +46,11 @@ varying float fogFragDepth;
 
 void main(void) 
 {
+    vec4 v = vec4(InVertex);
+    v.xy += InOffset.xy;
+    gl_Position = gl_ModelViewProjectionMatrix * InVertex;
 
-    //InVertex.xy += InOffset.xy;
-    //gl_Position = gl_ModelViewProjectionMatrix * InVertex;
-
-    vec4 Vertex0 = InVertex;
-    Vertex0.xy += InOffset.xy;
-    gl_Position = gl_ModelViewProjectionMatrix * Vertex0;
-
-    //gl_Position = gl_ModelViewProjectionMatrix * (InVertex + InOffset);
-
-    //fogFragDepth = distance(vertex.xyz, gl_ModelViewMatrixInverse[3].xyz);
-    fogFragDepth = distance(Vertex0.xy, gl_ModelViewMatrixInverse[3].xy);
+    fogFragDepth = distance(v, gl_ModelViewMatrixInverse[3].xy);
 
     inColor = InRGB;
 
