@@ -39,6 +39,11 @@ void t_map_manager_update_client_position(int client_id, float x, float y)
 	GS_ASSERT(map_manager_list[client_id] != NULL);
     if (map_manager_list[client_id] == NULL) return;
 
+
+    GS_ASSERT(x >= 0 && x <= 512 && y >= 0 && y <= 512);
+    x = translate_point(x); //box the position
+    y = translate_point(y);
+
     map_manager_list[client_id]->set_position(x,y);
     map_manager_list[client_id]->update();
 }
