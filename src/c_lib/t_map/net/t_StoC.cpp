@@ -84,9 +84,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     int cx = chunk_index % MAP_CHUNK_XDIM;
     int cy = chunk_index / MAP_CHUNK_XDIM;
 
-    if(m == NULL)
-        main_map->load_chunk(cx, cy);
-    
+    main_map->load_chunk(cx, cy);
     class MAP_CHUNK* m = main_map->chunk[chunk_index];
 
     int _size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
@@ -94,7 +92,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     if(size != _size) printf("map_chunk_compressed_StoC::handle, warning: invalid size!\n");
 
     memcpy( (char *) m->e, DECOMPRESSION_BUFFER, _size);
-    main_map->chunk_received(x,y);
+    main_map->chunk_received(cx,cy);
 
 }
 
@@ -114,14 +112,12 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
     int cy = chunk_index / MAP_CHUNK_XDIM;
 
     GS_ASSERT( main_map->chunk[chunk_index] == NULL);
-    if(m == NULL)
-        main_map->load_chunk(cx, cy);
+    main_map->load_chunk(cx, cy);
     class MAP_CHUNK* m = main_map->chunk[chunk_index];
 
 /*
     This is evil, dont do this
 */
-    class MAP_CHUNK* m = main_map->chunk[chunk_index];
 
     memcpy( (char *) m->e, buff, byte_num);
 
