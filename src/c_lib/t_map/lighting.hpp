@@ -55,5 +55,4 @@ void update_skylight(int chunk_i, int chunk_j)
 
 }
 
-
 }   // t_map

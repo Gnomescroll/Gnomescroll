@@ -321,16 +321,17 @@ inline int get_highest_solid_block(int x, int y)
 
 inline int get_highest_solid_block(int x, int y, int z)
 {
-    #if DC_CLIENT
-    return main_map->get_cached_height(x,y)-1;
-    #endif
+    //#if DC_CLIENT
+    // HEIGHTMAP CACHE IS INVALID
+    //return main_map->get_cached_height(x,y)-1;
+    //#endif
 
-    #if DC_SERVER
+    //#if DC_SERVER
     int i = z-1;
     for (; i>=0; i--)
         if (isSolid(x,y,i)) break;
     return i;
-    #endif
+    //#endif
 }
 
 inline int get_lowest_open_block(int x, int y, int n)
