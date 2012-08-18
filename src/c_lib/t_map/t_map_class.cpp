@@ -47,9 +47,7 @@ namespace t_map
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
 
-        #if DC_CLIENT
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
-        #endif
 
         #if DC_SERVER
         for(int i=0; i<xchunk_dim; i++)
@@ -624,6 +622,7 @@ namespace t_map
     //only entry point for loading chunks
     void Terrain_map::load_chunk(int i, int j)
     {
+        //printf("load chunk: %d %d \n", i, j);
         GS_ASSERT(this->chunk[ MAP_CHUNK_XDIM*j + i ] == NULL);
         this->chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
     }      

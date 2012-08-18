@@ -38,18 +38,19 @@ void init_client_compressors()
         printf("map_chunk_compressed_StoC::handle, inflateInit() failed!\n");
     }
 
+    for(int i=0; i<1024; i++)
+        client_chunk_alias_list[i] == -1;
     return;
 }
 
 void end_client_compressors()
 {
     free(DECOMPRESSION_BUFFER);
-
 }
 
 void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 {
-
+    GS_ASSERT(client_chunk_alias_list[chunk_alias] == -1);
 
     stream.next_in = (unsigned char*) buff;
     stream.avail_in = byte_num;
@@ -103,7 +104,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 #if MAP_NET_DEBUG
     printf("map chunk is %i bytes \n", byte_size);
 #endif
-
+    GS_ASSERT(client_chunk_alias_list[chunk_alias] == -1);
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
 
