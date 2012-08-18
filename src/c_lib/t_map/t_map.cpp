@@ -367,7 +367,21 @@ inline bool position_is_loaded(int x, int y)
     #if DC_SERVER
     return true;
     #endif
-    
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    int cx = x / TERRAIN_CHUNK_WIDTH;
+    int cy = y / TERRAIN_CHUNK_WIDTH;
+
+    if(main_map->chunks[TERRAIN_CHUNK_WIDTH*cy+cx] == NULL)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+/*
     #if DC_CLIENT
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -376,6 +390,7 @@ inline bool position_is_loaded(int x, int y)
     int chunk = cx + cy*MAP_CHUNK_XDIM;
     return (main_map->chunk_heights_status[chunk] != CHUNK_HEIGHT_UNSET);
     #endif
+*/
 }
 
 bool block_can_be_placed(int x, int y, int z, int value)

@@ -54,7 +54,7 @@ namespace t_map
         #if DC_SERVER
         for(int i=0; i<xchunk_dim; i++)
         for(int j=0; j<ychunk_dim; j++)
-            chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
+            chunk[ychunk_dim*j+i] = load_chunk(i,j);
         #endif
 
         #if DC_CLIENT
@@ -157,6 +157,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+    #if 0
         class MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         if( c != NULL )
@@ -164,6 +165,18 @@ namespace t_map
             c = new MAP_CHUNK( x & ~15, y & ~15);
             chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ] = c;
         }
+    #endif
+
+    #if DC_CLIENT
+        class MAP_CHUNK* c;
+        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+        if(c == NULL)
+        {
+            GS_ASSERT(false);
+            return;
+        }
+    #endif
+
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
         #if DC_CLIENT
@@ -181,6 +194,9 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+
+
+    #if 0
         class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
@@ -193,6 +209,22 @@ namespace t_map
                 chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ] = c;
             }
         }
+    #endif
+
+
+        class MAP_CHUNK* c;
+        
+        int xchunk = (x >> 4);
+        int ychunk = (y >> 4);
+    
+        c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
+    #if DC_CLIENT
+        if(c == NULL)
+        {
+            GS_ASSERT(false);
+            return;
+        }
+    #endif
 
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
@@ -587,6 +619,26 @@ namespace t_map
         #if DC_CLIENT
         update_heights(x,y,z,value);
         #endif
+    }
+
+    //only entry point for loading chunks
+    void Terrain_map::load_chunk(int i, int j)
+    {
+        GS_ASSERT(this->chunk[ MAP_CHUNK_XDIM*j + i ] == NULL);
+        this->chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
+    }      
+
+
+    //only entry point for unloading chunks
+    void Terrain_map::unload_chunk(int i, int j)
+    {
+        GS_ASSERT(this->chunk[ MAP_CHUNK_XDIM*j + i ] != NULL);
+
+        if(chunk[MAP_CHUNK_XDIM*j + i] != NULL) 
+        {
+           delete this->chunk[MAP_CHUNK_XDIM*j + i];
+           this->chunk[MAP_CHUNK_XDIM*j + i] == NULL;
+        }
     }
 
 }
