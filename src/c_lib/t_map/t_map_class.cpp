@@ -157,6 +157,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+    #if 0
         class MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
         if( c != NULL )
@@ -164,6 +165,18 @@ namespace t_map
             c = new MAP_CHUNK( x & ~15, y & ~15);
             chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ] = c;
         }
+    #endif
+
+    #if DC_CLIENT
+        class MAP_CHUNK* c;
+        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+        if(c == NULL)
+        {
+            GS_ASSERT(false);
+            return;
+        }
+    #endif
+
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
         #if DC_CLIENT
@@ -181,6 +194,9 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+
+
+    #if 0
         class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
@@ -193,6 +209,22 @@ namespace t_map
                 chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ] = c;
             }
         }
+    #endif
+
+    #if DC_CLIENT
+        class MAP_CHUNK* c;
+        
+        int xchunk = (x >> 4);
+        int ychunk = (y >> 4);
+    
+        c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
+
+        if(c == NULL)
+        {
+            GS_ASSERT(false);
+            return;
+        }
+    #endif
 
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
