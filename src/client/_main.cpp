@@ -276,7 +276,6 @@ int run()
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
 
-        Animations::prep_insect_mob();
         Particle::prep_shrapnel();
         Skybox::prep_skybox();
         Animations::prep_voxel_particles();
@@ -384,8 +383,6 @@ int run()
         glEnable(GL_BLEND);
 
         //t_mech::draw_transparent();
-
-        //Animations::draw_insect_mob();
 
         // draw animations
 
