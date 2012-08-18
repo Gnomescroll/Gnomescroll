@@ -54,7 +54,7 @@ namespace t_map
         #if DC_SERVER
         for(int i=0; i<xchunk_dim; i++)
         for(int j=0; j<ychunk_dim; j++)
-            chunk[ychunk_dim*j+i] = load_chunk(i,j);
+            load_chunk(i,j);
         #endif
 
         #if DC_CLIENT

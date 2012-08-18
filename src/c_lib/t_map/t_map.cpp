@@ -373,14 +373,12 @@ inline bool position_is_loaded(int x, int y)
     int cx = x / TERRAIN_CHUNK_WIDTH;
     int cy = y / TERRAIN_CHUNK_WIDTH;
 
-    if(main_map->chunks[TERRAIN_CHUNK_WIDTH*cy+cx] == NULL)
-    {
+    //if map chunk is null, it is not loaded
+    if(main_map->chunk[TERRAIN_CHUNK_WIDTH*cy+cx] == NULL)
         return false;
-    }
-    else
-    {
-        return true;
-    }
+
+    return true;
+
 /*
     #if DC_CLIENT
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
