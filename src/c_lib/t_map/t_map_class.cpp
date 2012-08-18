@@ -54,7 +54,7 @@ namespace t_map
         #if DC_SERVER
         for(int i=0; i<xchunk_dim; i++)
         for(int j=0; j<ychunk_dim; j++)
-            chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
+            chunk[ychunk_dim*j+i] = load_chunk(i,j);
         #endif
 
         #if DC_CLIENT
@@ -211,14 +211,14 @@ namespace t_map
         }
     #endif
 
-    #if DC_CLIENT
+
         class MAP_CHUNK* c;
         
         int xchunk = (x >> 4);
         int ychunk = (y >> 4);
     
         c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-
+    #if DC_CLIENT
         if(c == NULL)
         {
             GS_ASSERT(false);
@@ -619,6 +619,22 @@ namespace t_map
         #if DC_CLIENT
         update_heights(x,y,z,value);
         #endif
+    }
+
+    //only entry point for loading chunks
+    void Terrain_map::load_chunk(int i, int j)
+    {
+        chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
+
+    }      
+
+
+    //only entry point for unloading chunks
+    void Terrain_map::unload_chunk(int i, int j)
+    {
+
+
+
     }
 
 }
