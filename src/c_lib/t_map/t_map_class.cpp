@@ -47,7 +47,8 @@ namespace t_map
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
 
-        for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
+        for(int i=0; i<xchunk_dim*ychunk_dim; i++) 
+            chunk[i] = NULL;
 
         #if DC_SERVER
         for(int i=0; i<xchunk_dim; i++)
@@ -56,9 +57,9 @@ namespace t_map
         #endif
 
         #if DC_CLIENT
-        for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; column_heights[i++] = 0);
-            this->height_changed = false;
-        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; chunk_heights_status[i++] = CHUNK_HEIGHT_UNSET);
+        this->height_changed = false;
+        for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; i++) column_heights[i] = 0;
+        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; i++) chunk_heights_status[i] = CHUNK_HEIGHT_UNSET;
         #endif
     }
 
