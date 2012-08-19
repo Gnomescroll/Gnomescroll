@@ -11,10 +11,11 @@ dont_include_this_file_in_server
 // TODO: detect the type of block the player is walking on
 // TODO: random plus-minue variation in footstep
 
-void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentState s1, bool on_ground)
+void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentState s1, bool s1_on_ground, bool camera_on_ground)
 {
-    static const float SOFT_FALL_VELOCITY_THRESHOLD = 0.5f;
-    static const float HARD_FALL_VELOCITY_THRESHOLD = 0.75f;
+    static const float SOFT_FALL_VELOCITY_THRESHOLD   = 0.05f;
+    static const float MEDIUM_FALL_VELOCITY_THRESHOLD = 0.50f;
+    static const float HARD_FALL_VELOCITY_THRESHOLD   = 0.75f;
     
     static const float distance_per_step = 1.5f;
     static float total_distance = 0.0f;
@@ -27,18 +28,40 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     total_distance += d;
 
-    float dvz = s1.vz-s0.vz;
-    if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
-    {
-        GS_ASSERT(Sound::play_2d_sound("hard_fall") >= 0);
-    }
-    else
-    if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
-    {
-        GS_ASSERT(Sound::play_2d_sound("soft_fall") >= 0);
-    }
+    //printf("s1_on_ground: %d; camera_on_ground: %d\n", s1_on_ground, camera_on_ground);
 
-    if (!on_ground) return;
+    //float dvz = s1.vz - s0.vz;
+    //float dz  = s1.z  - s0.z;
+    //if (dvz || dz)
+    //{
+        //printf("dvz: %0.2f", dvz);
+        //printf(", s1.vz %0.2f, s0.vz %0.2f", s1.vz, s0.vz);
+        //printf(", ");
+        //printf("dz: %0.2f\n", dz);
+    //}
+
+    //static float last_z = agent_camera->get_position().z;
+    //float z = agent_camera->get_position().z;
+    //float dz = z - last_z;
+    //float dvz = -dz;
+    //last_z = z;
+    //printf("dz %0.2f\n", dz);
+    //if (dz < 0 && camera_on_ground) // was falling & hit ground
+    //{
+        //// TODO -- multiply dvz by base gain to get playable gain for fall range
+        //int snd_id = 0;
+        //if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
+            //snd_id = Sound::play_2d_sound("hard_fall");
+        //else
+        //if (dvz > MEDIUM_FALL_VELOCITY_THRESHOLD)
+            //snd_id = Sound::play_2d_sound("medium_fall");
+        //else
+        //if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
+            //snd_id = Sound::play_2d_sound("soft_fall");
+        //GS_ASSERT(snd_id >= 0);
+    //}
+
+    if (!camera_on_ground) return;
 
     const int n_footsteps = 16;
     void (*footsteps[n_footsteps])(void) =

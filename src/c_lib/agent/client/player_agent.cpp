@@ -280,8 +280,9 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
     s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp);
 
     // tick sound motion
-    bool is_on_ground = on_ground(this->you->box.box_r, camera_state.x, camera_state.y, camera_state.z);
-    player_agent_sound_ground_movement_event(s0, s1, is_on_ground);
+    bool s1_on_ground = on_ground(this->you->box.box_r, s1.x, s1.y, s1.z);
+    bool camera_on_ground = on_ground(this->you->box.box_r, camera_state.x, camera_state.y, camera_state.z);
+    player_agent_sound_ground_movement_event(s0, s1, s1_on_ground, camera_on_ground);
 }
 
 float PlayerAgent_state::camera_height()
