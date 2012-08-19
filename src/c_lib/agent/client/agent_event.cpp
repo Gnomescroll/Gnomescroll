@@ -189,8 +189,8 @@ void Agent_event::died()
 void Agent_event::born()
 {
     if (!this->a->status.dead) return;
-    if (a->is_you())
-        Sound::respawned();
+    //if (a->is_you())
+        //Sound::respawned();
     //else
         //Sound::respawned(a->s.x, a->s.y, a->s.z, 0,0,0);
     this->a->status.dead = false;

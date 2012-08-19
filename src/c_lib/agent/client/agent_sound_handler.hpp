@@ -13,20 +13,12 @@ dont_include_this_file_in_server
 
 void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentState s1, bool on_ground)
 {
-    static const float SOFT_FALL_VELOCITY_THRESHOLD = 1.0f;
-    static const float HARD_FALL_VELOCITY_THRESHOLD = 2.0f;
+    static const float SOFT_FALL_VELOCITY_THRESHOLD = 0.5f;
+    static const float HARD_FALL_VELOCITY_THRESHOLD = 0.75f;
     
     static const float distance_per_step = 1.5f;
     static float total_distance = 0.0f;
 
-    printf("dvz: %0.2f\n", s1.vz - s0.vz); 
-
-    static bool was_on_ground = on_ground;
-
-    if (!was_on_ground && on_ground)
-        printf("Landing with magnitude %0.2f\n", s0.vz);
-
-    was_on_ground = on_ground;
 
     float dx = (s1.x - s0.x);
     float dy = (s1.y - s0.y);
@@ -35,14 +27,15 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     total_distance += d;
 
-    if (on_ground && s0.vz < 0.0f)
+    float dvz = s1.vz-s0.vz;
+    if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
     {
-        float dvz = s1.vz - s0.vz;
-        if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
-            Sound::play_2d_sound("hard_fall.wav");
-        else
-        if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
-            Sound::play_2d_sound("soft_fall.wav");
+        GS_ASSERT(Sound::play_2d_sound("hard_fall") >= 0);
+    }
+    else
+    if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
+    {
+        GS_ASSERT(Sound::play_2d_sound("soft_fall") >= 0);
     }
 
     if (!on_ground) return;

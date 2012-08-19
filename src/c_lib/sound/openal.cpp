@@ -558,7 +558,8 @@ int play_2d_sound(const char* fn)
     
     // lookup buffer from file
     class GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
-
+    GS_ASSERT(sound_buffer != NULL);
+    
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
     if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
