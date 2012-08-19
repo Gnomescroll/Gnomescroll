@@ -123,9 +123,7 @@ int physics_tick()
 
         // input
 
-        /*
-            Make names clealer
-        */
+        // Make names clealer
         process_events();           //RENAME THIS
         get_key_state();            //RENAME THIS
         trigger_keys_held_down();   //RENAME THIS
@@ -153,7 +151,7 @@ int physics_tick()
     if( physics_ticks > 0)
         _SET_LAST_TICK();
 
-    //if (physics_ticks >= 2)
+        //if (physics_ticks >= 2)
         //printf("Physics: %d ticks this frame\n", physics_ticks);
 
     poll_mouse();
@@ -171,9 +169,9 @@ void network_tick()
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
+
         if (!NetClient::Server.version_match)
             NetClient::shutdown_net_client();
-
         poll_mouse();
 }
 

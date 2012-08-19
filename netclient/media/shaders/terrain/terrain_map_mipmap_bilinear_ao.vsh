@@ -48,9 +48,9 @@ void main(void)
 {
     vec4 v = vec4(InVertex);
     v.xy += InOffset.xy;
-    gl_Position = gl_ModelViewProjectionMatrix * InVertex;
+    gl_Position = gl_ModelViewProjectionMatrix * v;
 
-    fogFragDepth = distance(v, gl_ModelViewMatrixInverse[3].xy);
+    fogFragDepth = distance(v.xy, gl_ModelViewMatrixInverse[3].xy);
 
     inColor = InRGB;
 
