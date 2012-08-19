@@ -47,7 +47,8 @@ namespace t_map
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
 
-        for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
+        for(int i=0; i<xchunk_dim*ychunk_dim; i++) 
+            chunk[i] = NULL;
 
         #if DC_SERVER
         for(int i=0; i<xchunk_dim; i++)
@@ -56,9 +57,9 @@ namespace t_map
         #endif
 
         #if DC_CLIENT
-        for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; column_heights[i++] = 0);
         this->height_changed = false;
-        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; chunk_heights_status[i++] = CHUNK_HEIGHT_UNSET);
+        for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; i++) column_heights[i] = 0;
+        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; i++) chunk_heights_status[i] = CHUNK_HEIGHT_UNSET;
         #endif
     }
 
@@ -142,6 +143,10 @@ namespace t_map
     void MAP_CHUNK::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
         e[ (z<<8)+((y&15)<<4)+(x&15) ] = element;
+
+    #if DC_CLIENT
+        this->needs_update = true;
+    #endif
     }
 
 
@@ -154,16 +159,6 @@ namespace t_map
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    #if 0
-        class MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if( c != NULL )
-        {
-            c = new MAP_CHUNK( x & ~15, y & ~15);
-            chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ] = c;
-        }
-    #endif
 
     #if DC_CLIENT
         class MAP_CHUNK* c;
@@ -191,24 +186,6 @@ namespace t_map
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-
-
-    #if 0
-        class MAP_CHUNK* c;
-        {
-            int xchunk = (x >> 4);
-            int ychunk = (y >> 4);
-    
-            c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-            if( c == NULL )
-            {
-                c = new MAP_CHUNK( x & ~15, y & ~15);
-                chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ] = c;
-            }
-        }
-    #endif
-
 
         class MAP_CHUNK* c;
         
@@ -607,7 +584,11 @@ namespace t_map
 
     void Terrain_map::set_block(int x, int y, int z, int value)
     {
-        if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+        if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
+        {
+            GS_ASSERT(false);
+            return;
+        }
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -622,6 +603,10 @@ namespace t_map
     //only entry point for loading chunks
     void Terrain_map::load_chunk(int i, int j)
     {
+        GS_ASSERT(i < 32 && i >= 0);
+        GS_ASSERT(j < 32 && j >= 0);
+        if(i<0 || i >= 32 || j<0 || j>=32)
+            GS_ABORT();
         //printf("load chunk: %d %d \n", i, j);
         GS_ASSERT(this->chunk[ MAP_CHUNK_XDIM*j + i ] == NULL);
         this->chunk[ychunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
@@ -633,10 +618,10 @@ namespace t_map
     {
         GS_ASSERT(this->chunk[ MAP_CHUNK_XDIM*j + i ] != NULL);
 
-        if(chunk[MAP_CHUNK_XDIM*j + i] != NULL) 
+        if(chunk[MAP_CHUNK_XDIM*j + i] != NULL)
         {
            delete this->chunk[MAP_CHUNK_XDIM*j + i];
-           this->chunk[MAP_CHUNK_XDIM*j + i] == NULL;
+           this->chunk[MAP_CHUNK_XDIM*j + i] = NULL;
         }
     }
 
