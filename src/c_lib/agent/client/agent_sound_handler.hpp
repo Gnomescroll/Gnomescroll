@@ -19,6 +19,8 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
     static const float distance_per_step = 1.5f;
     static float total_distance = 0.0f;
 
+    printf("dvz: %0.2f\n", s1.vz - s0.vz); 
+
     static bool was_on_ground = on_ground;
 
     if (!was_on_ground && on_ground)
