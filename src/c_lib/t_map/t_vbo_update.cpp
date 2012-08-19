@@ -399,7 +399,7 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
 
-    float light = light_lookup[get_lighting(x,y,z,side) / 16];
+    float light = light_lookup[get_lighting(x,y,z,side)];
 
     v_list[offset+0].lighting[0] = light;
     v_list[offset+1].lighting[0] = light;
@@ -644,7 +644,8 @@ void Vbo_map::update_vbo(int i, int j)
 {
 
     update_skylight(i,j); //update skylights
-
+    update_skylight2(i,j);
+    
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
 
@@ -744,7 +745,7 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
 
 #endif
 
-    float light = light_lookup[get_lighting(x,y,z,side) / 16];
+    float light = light_lookup[get_lighting(x,y,z,side)];
 
     v_list[offset+0].lighting[0] = light;
     v_list[offset+1].lighting[0] = light;
