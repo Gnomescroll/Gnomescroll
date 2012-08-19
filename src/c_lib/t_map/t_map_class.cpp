@@ -507,30 +507,34 @@ namespace t_map
         this->height_changed = true;
 
         const static int MASK = (512/16)-1; //chunk width
+        const static int CW = 32;
+        const static int CW1 = 32-1; //add 32-1 instead of subtracting 1
 
         int CX;
         int CY;
 
-        CX = (cx+1) & MASK;
+        CX = (cx+1) % CW;
         CY = cy;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
-        CX = (cx-1) & MASK;
+        CX = (cx+CW1) % CW;
         CY = cy;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
         CX = cx;
-        CY = (cy+1) & MASK;
+        CY = (cy+1) % CW;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
         CX = cx;
-        CY = (cy-1) & MASK;
+        CY = (cy+CW1) % CW;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
+        //DEBUG
+        GS_ASSERT( ((cy+CW1) % CW) == ((cy-1) & MASK) );
         /*
             Update Lighting
         */
