@@ -131,7 +131,8 @@ namespace t_map
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if( c != NULL ) c->needs_update = true;
+        if( c != NULL ) 
+            c->needs_update = true;
     }
 #endif
 
@@ -144,9 +145,12 @@ namespace t_map
     {
         e[ (z<<8)+((y&15)<<4)+(x&15) ] = element;
 
-    #if DC_CLIENT
-        this->needs_update = true;
-    #endif
+    /*
+        Causes horrible error on client
+    */
+    //#if DC_CLIENT
+    //    this->needs_update = true;
+    //#endif
     }
 
 
@@ -160,15 +164,15 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    #if DC_CLIENT
-        class MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if(c == NULL)
-        {
-            GS_ASSERT(false);
-            return;
-        }
-    #endif
+        #if DC_CLIENT
+            class MAP_CHUNK* c;
+            c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+            if(c == NULL)
+            {
+                GS_ASSERT(false);
+                return;
+            }
+        #endif
 
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
@@ -180,6 +184,7 @@ namespace t_map
             if((y & 15) == 0)  set_update(x,y-1);
             if((y & 15) == 15) set_update(x,y+1);
         #endif
+
     #else
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
@@ -188,18 +193,19 @@ namespace t_map
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         class MAP_CHUNK* c;
-        
+
         int xchunk = (x >> 4);
         int ychunk = (y >> 4);
-    
+
         c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-    #if DC_CLIENT
-        if(c == NULL)
-        {
-            GS_ASSERT(false);
-            return;
-        }
-    #endif
+
+        #if DC_CLIENT
+            if(c == NULL)
+            {
+                GS_ASSERT(false);
+                return;
+            }
+        #endif
 
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
@@ -501,30 +507,34 @@ namespace t_map
         this->height_changed = true;
 
         const static int MASK = (512/16)-1; //chunk width
+        const static int CW = 32;
+        const static int CW1 = 32-1; //add 32-1 instead of subtracting 1
 
         int CX;
         int CY;
 
-        CX = (cx+1) & MASK;
+        CX = (cx+1) % CW;
         CY = cy;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
-        CX = (cx-1) & MASK;
+        CX = (cx+CW1) % CW;
         CY = cy;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
         CX = cx;
-        CY = (cy+1) & MASK;
+        CY = (cy+1) % CW;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
         CX = cx;
-        CY = (cy-1) & MASK;
+        CY = (cy+CW1) % CW;
         if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
             chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
+        //DEBUG
+        GS_ASSERT( ((cy+CW1) % CW) == ((cy-1) & MASK) );
         /*
             Update Lighting
         */
