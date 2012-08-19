@@ -47,7 +47,6 @@ inline void SendClientId_StoC::handle()
     ClientState::client_id_received(client_id);
 }
 
-
 inline void Agent_state_message::handle()
 {
     Agent_state* a = STATE::agent_list->get(id);
