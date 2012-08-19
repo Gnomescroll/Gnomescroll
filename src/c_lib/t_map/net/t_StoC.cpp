@@ -82,6 +82,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     
     GS_ASSERT( main_map->chunk[chunk_index] == NULL);
 
+    GS_ASSERT(MAP_CHUNK_XDIM == 32 && MAP_CHUNK_YDIM == 32);
     int cx = chunk_index % MAP_CHUNK_XDIM;
     int cy = chunk_index / MAP_CHUNK_XDIM;
 
