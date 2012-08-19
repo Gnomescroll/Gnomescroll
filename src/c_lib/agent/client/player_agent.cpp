@@ -223,7 +223,8 @@ void PlayerAgent_state::set_control_state(int f, int b, int l, int r, int jet, i
 }
 
 //set actually sends
-void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
+void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
+{
     if(this->you == NULL) return;  //player agent not set
 
     cs = this->sanitize_control_state(cs);

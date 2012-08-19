@@ -1,15 +1,10 @@
 #include "net_agent.hpp"
 
 #include <agent/agent.hpp>
-#if DC_CLIENT
-#include <state/client_state.hpp>
-#endif
-#if DC_SERVER
-#include <state/server_state.hpp>
-#endif
 #include <common/defines.h>
 
 #if DC_CLIENT
+#include <state/client_state.hpp>
 #include <common/time/physics_timer.hpp>
 #include <chat/client.hpp>
 #include <chat/interface.hpp>
@@ -18,6 +13,7 @@
 #endif
 
 #if DC_SERVER
+#include <state/server_state.hpp>
 #include <t_map/t_map.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #endif
