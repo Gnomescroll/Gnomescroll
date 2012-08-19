@@ -193,11 +193,12 @@ namespace t_map
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         class MAP_CHUNK* c;
-        
-        int xi = x & 15; //bit mask
-        int yi = y & 15; //bit mask
 
-        c = chunk[ MAP_CHUNK_XDIM*yi + xi];
+        int xchunk = (x >> 4);
+        int ychunk = (y >> 4);
+
+        c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
+
         #if DC_CLIENT
             if(c == NULL)
             {
@@ -205,6 +206,9 @@ namespace t_map
                 return;
             }
         #endif
+
+        int xi = x & 15; //bit mask
+        int yi = y & 15; //bit mask
 
         c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
