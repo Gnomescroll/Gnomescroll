@@ -131,7 +131,8 @@ namespace t_map
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if( c != NULL ) c->needs_update = true;
+        if( c != NULL ) 
+            c->needs_update = true;
     }
 #endif
 
@@ -144,9 +145,12 @@ namespace t_map
     {
         e[ (z<<8)+((y&15)<<4)+(x&15) ] = element;
 
-    #if DC_CLIENT
-        this->needs_update = true;
-    #endif
+    /*
+        Causes horrible error on client
+    */
+    //#if DC_CLIENT
+    //    this->needs_update = true;
+    //#endif
     }
 
 
@@ -160,15 +164,15 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    #if DC_CLIENT
-        class MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if(c == NULL)
-        {
-            GS_ASSERT(false);
-            return;
-        }
-    #endif
+        #if DC_CLIENT
+            class MAP_CHUNK* c;
+            c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+            if(c == NULL)
+            {
+                GS_ASSERT(false);
+                return;
+            }
+        #endif
 
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
@@ -180,6 +184,7 @@ namespace t_map
             if((y & 15) == 0)  set_update(x,y-1);
             if((y & 15) == 15) set_update(x,y+1);
         #endif
+
     #else
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
@@ -189,20 +194,17 @@ namespace t_map
 
         class MAP_CHUNK* c;
         
-        int xchunk = (x >> 4);
-        int ychunk = (y >> 4);
-    
-        c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-    #if DC_CLIENT
-        if(c == NULL)
-        {
-            GS_ASSERT(false);
-            return;
-        }
-    #endif
-
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
+
+        c = chunk[ MAP_CHUNK_XDIM*yi + xi];
+        #if DC_CLIENT
+            if(c == NULL)
+            {
+                GS_ASSERT(false);
+                return;
+            }
+        #endif
 
         c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
