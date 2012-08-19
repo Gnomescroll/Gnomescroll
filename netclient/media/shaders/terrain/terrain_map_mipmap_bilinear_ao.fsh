@@ -23,7 +23,7 @@ varying float fogFragDepth;
 
 uniform sampler2DArray base_texture;
 
-const float fog_start = 96.0;
+const float fog_start = 64.0;
 
 const float gamma_factor = 1.0f / 2.2f;
 const vec3 gamma_factor3 = vec3(gamma_factor);

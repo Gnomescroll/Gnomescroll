@@ -88,6 +88,8 @@ class Terrain_map
     void set_update(int x, int y);
     #endif
 
+    void load_chunk(int i, int j);      //only entry point for loading
+    void unload_chunk(int i, int j);    //only entry point for unloading
 #if TERRAIN_MAP_FORCE_INLINE
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
@@ -111,6 +113,8 @@ class Terrain_map
 } //
 
 //too complicated for now
+
+/*
 struct CHUNKSLICE
 {
     union
@@ -129,3 +133,4 @@ struct CHUNKSLICE
         unsigned char flags;
     };
 };
+*/
