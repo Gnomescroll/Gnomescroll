@@ -177,6 +177,17 @@ void broadcast_play_3d_sound(const char* name, struct Vec3 p)
     msg.position = p;
     msg.broadcast();
 }
+
+void broadcast_exclude_play_3d_sound(const char* name, struct Vec3 p, int ignore_client_id)
+{
+    int sound_id = get_soundfile_id_for_name(name);
+    GS_ASSERT(sound_id >= 0);
+    if (sound_id < 0) return;
+    play_3d_sound_StoC msg;
+    msg.sound_id = sound_id;
+    msg.position = p;
+    msg.broadcast_exclude(ignore_client_id);
+}
 #endif
 
 }   // Sound

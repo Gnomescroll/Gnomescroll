@@ -182,7 +182,6 @@ void prep_draw()
 
     poll_mouse();
 
-
 }
 
 

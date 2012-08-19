@@ -225,7 +225,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     // normalize diagonal motion
     if (CS_vx < -precision || CS_vx > precision || CS_vy < -precision || CS_vy > precision)
     {
-        float len = 1.0/sqrtf(CS_vx*CS_vx + CS_vy*CS_vy);
+        float len = 1.0f/sqrtf(CS_vx*CS_vx + CS_vy*CS_vy);
         CS_vx *= speed*len;
         CS_vy *= speed*len;
     }
@@ -235,7 +235,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     // need distance from ground
     const float max_jetpack_height = 8.0f;
-    const float jetpack_velocity_max = z_jetpack * 10;
+    const float jetpack_velocity_max = z_jetpack * 5;
     float dist_from_ground = as.z - (t_map::get_solid_block_below(as.x, as.y, as.z));
     if (jetpack)
     {
@@ -243,21 +243,25 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         {   // cap jetpack velocity
             if (as.vz <= jetpack_velocity_max)
                 as.vz += z_jetpack;
-            else
-                as.vz = -z_gravity;
         }
-        else if (dist_from_ground < max_jetpack_height + 0.3f)
+        else
+        if (dist_from_ground < max_jetpack_height + 0.3f)
             as.vz = -z_gravity;
     }
 
-    if(dist_from_ground >= 0.025)
+    //as.vz += z_gravity;
+
+    if(dist_from_ground >= 0.03)
     {
         as.vz += z_gravity;
     }
     else
     {
         as.vz = 0.0;
-        as.z = floorf(as.z);
+        if (dist_from_ground < 0)
+            as.z = ceilf(as.z);
+        else
+            as.z = floorf(as.z);
     }
 
     #if ADVANCED_JUMP

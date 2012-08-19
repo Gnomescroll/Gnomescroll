@@ -135,13 +135,13 @@ void Agent_event::healed(int amount)
     GS_ASSERT(amount >= 0);
     if (a->is_you())
     {
-        Sound::restore_health();
+        //Sound::restore_health();
         chat_client->send_system_message((char*) "You healed.");
     }
     else
     {
-        Vec3 p = this->a->get_position();
-        Sound::restore_health(p.x, p.y, p.z, 0,0,0);
+        //Vec3 p = this->a->get_position();
+        //Sound::restore_health(p.x, p.y, p.z, 0,0,0);
     }
 
     // show billboard text particle
@@ -189,8 +189,8 @@ void Agent_event::died()
 void Agent_event::born()
 {
     if (!this->a->status.dead) return;
-    if (a->is_you())
-        Sound::respawned();
+    //if (a->is_you())
+        //Sound::respawned();
     //else
         //Sound::respawned(a->s.x, a->s.y, a->s.z, 0,0,0);
     this->a->status.dead = false;

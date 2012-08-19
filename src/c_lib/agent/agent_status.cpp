@@ -56,11 +56,39 @@ Agent_status::~Agent_status()
 void Agent_status::set_spawner(int pt)
 {
     GS_ASSERT(pt == BASE_SPAWN_ID || (pt >= 0 && pt <= 0xffff));
+    if (pt == this->spawner) return;
     this->spawner = pt;
     #if DC_SERVER
     set_spawner_StoC msg;
     msg.spawner_id = pt;
     msg.sendToClient(this->a->id);
+
+    // play sound
+    
+    if (pt == BASE_SPAWN_ID) return;    // dont play sound for base
+
+    class Objects::Object* spawner = Objects::get(OBJECT_AGENT_SPAWNER, pt);
+    GS_ASSERT(spawner != NULL);
+    if (spawner == NULL) return;
+
+    // only send the sound if its not the base spawner set
+    struct Vec3 pos;
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    GS_ASSERT(vox != NULL);
+    if (vox == NULL)
+    {
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        if (physics == NULL) return;
+        pos = physics->get_position();
+    }
+    else
+        pos = vox->get_center();
+        
+    Sound::send_play_2d_sound("spawner_activate", this->a->client_id); // play sound as 2d for client
+    Sound::broadcast_exclude_play_3d_sound("spawner_activate", pos, this->a->client_id);    // play 3d sound for everyone else
     #endif
 }
 

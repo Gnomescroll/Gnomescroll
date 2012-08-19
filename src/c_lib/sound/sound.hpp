@@ -39,6 +39,7 @@ void send_play_2d_sound(const char* name, int client_id);
 void broadcast_play_2d_sound(const char* name);
 void send_play_3d_sound(const char* name, int client_id, struct Vec3 p);
 void broadcast_play_3d_sound(const char* name, struct Vec3 p);
+void broadcast_exclude_play_3d_sound(const char* name, struct Vec3 p, int ignore_client_id);
 #endif
 
 }   // Sound

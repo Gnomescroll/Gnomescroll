@@ -33,11 +33,11 @@ inline bool on_ground(float box_r, float x, float y, float z)
 
     int zz = z - GROUND_MARGIN;
 
-    if( isSolid(x_max,y_max,zz) || //north, west
-        isSolid(x_max,y_min,zz) || //north, east
-        isSolid(x_min,y_min,zz) || //south, east
-        isSolid(x_min,y_max,zz) )  //south, west
-    return true;
+    if (isSolid(x_max,y_max,zz) || //north, west
+         isSolid(x_max,y_min,zz) || //north, east
+         isSolid(x_min,y_min,zz) || //south, east
+         isSolid(x_min,y_max,zz))   //south, west
+        return true;
     return false;
 }
 #undef GROUND_MARGIN
