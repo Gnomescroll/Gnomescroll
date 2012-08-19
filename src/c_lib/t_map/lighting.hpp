@@ -72,10 +72,10 @@ int get_light(int x, int y, int z)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
 
-    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].light / 16;
+    return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light / 16;
 }
 
-int set_light(int x, int y, int z, int value)
+void set_light(int x, int y, int z, int value)
 {
     class MAP_CHUNK* mc = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
@@ -86,13 +86,13 @@ int set_light(int x, int y, int z, int value)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
 
-    c->e[ (z<<8)+((y&15)<<4)+(x&15) ].light |= value*16;
+    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light |= value*16;
 }
 
 
 void skylight_update(int x, int y, int z)
 {
-    int li = get_light_value(x,y,z);
+    int li = get_light(x,y,z);
 
     GS_ASSERT(! isSolid(x,y,z));
     if(li-1 == 0) return;
@@ -103,7 +103,7 @@ void skylight_update(int x, int y, int z)
     _y = y;
     _z = z;
     //x
-    if(!isSolid(_x,_y,_z) && get_light_value(_x,_y,_z) < li+1 )
+    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li+1 )
     {
         set_light(_x,_y,_z, li-1);
         skylight_update(_x,_y,_z);
@@ -113,7 +113,7 @@ void skylight_update(int x, int y, int z)
     _y = y;
     _z = z;
     //x
-    if(!isSolid(_x,_y,_z) && get_light_value(_x,_y,_z) < li+1 )
+    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li+1 )
     {
         set_light(_x,_y,_z, li-1);
         skylight_update(_x,_y,_z);
@@ -123,7 +123,7 @@ void skylight_update(int x, int y, int z)
     _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _z = z;
     //x
-    if(!isSolid(_x,_y,_z) && get_light_value(_x,_y,_z) < li+1 )
+    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li+1 )
     {
         set_light(_x,_y,_z, li-1);
         skylight_update(_x,_y,_z);
@@ -133,7 +133,7 @@ void skylight_update(int x, int y, int z)
     _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _z = z;
     //x
-    if(!isSolid(_x,_y,_z) && get_light_value(_x,_y,_z) < li+1 )
+    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li+1 )
     {
         set_light(_x,_y,_z, li-1);
         skylight_update(_x,_y,_z);
@@ -144,18 +144,18 @@ void skylight_update(int x, int y, int z)
     _y = y;
     _z = (z+1) % 128;
     //x
-    if(!isSolid(_x,_y,_z) && get_light_value(_x,_y,_z) < li+1 )
+    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li+1 )
     {
         set_light(_x,_y,_z, li-1);
         skylight_update(_x,_y,_z);
     }
 
 
-    _x = x
+    _x = x;
     _y = y;
     _z = (z+127)%128; //z -1
     //x
-    if(!isSolid(_x,_y,_z) && get_light_value(_x,_y,_z) < li+1 )
+    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li+1 )
     {
         set_light(_x,_y,_z, li-1);
         skylight_update(_x,_y,_z);
