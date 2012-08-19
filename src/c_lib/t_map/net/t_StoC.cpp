@@ -39,7 +39,7 @@ void init_client_compressors()
     }
 
     for(int i=0; i<1024; i++)
-        client_chunk_alias_list[i] == -1;
+        client_chunk_alias_list[i] = -1;
     return;
 }
 
