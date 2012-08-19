@@ -72,6 +72,25 @@ namespace t_map
         delete[] chunk;
     }
 
+/*
+    Height Cache
+*/
+
+    void MAP_CHUNK::refresh_height_cache()
+    {
+        for(int i=0; i<16; i++)
+        for(int j=0; j<16; j++)
+        for(int k=127; k>=0; k--)
+        {
+            if( isSolid(e[ (k<<8)+(j<<4)+i ].block) == true)
+            {
+                this->height_cache[16*j+i] = j+1; //first block above the firs solid block
+                break;
+            }
+
+        }
+
+    }
 
 /*
     Get Methods

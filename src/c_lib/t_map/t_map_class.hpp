@@ -38,6 +38,8 @@ class MAP_CHUNK
 
     class CHUNK_ITEM_CONTAINER chunk_item_container;
 
+    unsigned char height_cache[256];
+
     #if DC_CLIENT
     bool needs_update;
     #endif
@@ -54,6 +56,8 @@ class MAP_CHUNK
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
 
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT e) __attribute__((always_inline)); //for VBO generator
+
+    void refresh_height_cache();
 
 };
 
