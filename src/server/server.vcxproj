@@ -49,14 +49,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\dc_mmo\src;..\..\libraries\win32\LuaJIT-2.0.0-beta10;..\net_lib;..\c_lib;..\..\src;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dc_mmo\src;..\..\lib\win32\LuaJIT-2.0.0-beta10;..\net_lib;..\c_lib;..\..\src;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>ws2_32.lib;lua51.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../libraries/win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -96,8 +96,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
-  
-  
   <ItemGroup>
     <ClInclude Include="..\c_lib\agent\agent.cpp" />
     <ClInclude Include="..\c_lib\agent\agent_list.cpp" />
@@ -111,12 +109,17 @@
     <ClInclude Include="..\c_lib\agent\client\player_agent_action.cpp" />
     <ClInclude Include="..\c_lib\animations\animations.cpp" />
     <ClInclude Include="..\c_lib\animations\block_damage.cpp" />
+    <ClInclude Include="..\c_lib\animations\confetti.cpp" />
+    <ClInclude Include="..\c_lib\animations\emitter.cpp" />
     <ClInclude Include="..\c_lib\animations\hitscan.cpp" />
     <ClInclude Include="..\c_lib\animations\insect_mob.cpp" />
     <ClInclude Include="..\c_lib\animations\mining_laser.cpp" />
+    <ClInclude Include="..\c_lib\animations\packets.cpp" />
     <ClInclude Include="..\c_lib\animations\voxel_particle.cpp" />
     <ClInclude Include="..\c_lib\animations\weapon.cpp" />
     <ClInclude Include="..\c_lib\animations\_interface.cpp" />
+    <ClInclude Include="..\c_lib\animations\config\_interface.cpp" />
+    <ClInclude Include="..\c_lib\animations\config\_state.cpp" />
     <ClInclude Include="..\c_lib\camera\camera.cpp" />
     <ClInclude Include="..\c_lib\camera\fulstrum_test.cpp" />
     <ClInclude Include="..\c_lib\camera\fulstrum_test2.cpp" />
@@ -224,6 +227,7 @@
     <ClInclude Include="..\c_lib\item\server.cpp" />
     <ClInclude Include="..\c_lib\item\_interface.cpp" />
     <ClInclude Include="..\c_lib\item\_state.cpp" />
+    <ClInclude Include="..\c_lib\item\config\item_drop.cpp" />
     <ClInclude Include="..\c_lib\item\container\client.cpp" />
     <ClInclude Include="..\c_lib\item\container\container.cpp" />
     <ClInclude Include="..\c_lib\item\container\container_ui.cpp" />
@@ -231,6 +235,7 @@
     <ClInclude Include="..\c_lib\item\container\server.cpp" />
     <ClInclude Include="..\c_lib\item\container\_interface.cpp" />
     <ClInclude Include="..\c_lib\item\container\_state.cpp" />
+    <ClInclude Include="..\c_lib\item\container\config\crusher_dat.cpp" />
     <ClInclude Include="..\c_lib\item\container\config\_interface.cpp" />
     <ClInclude Include="..\c_lib\item\container\config\_state.cpp" />
     <ClInclude Include="..\c_lib\item\container\net\CtoS.cpp" />
@@ -275,7 +280,6 @@
     <ClInclude Include="..\c_lib\particle\billboard_sprite.cpp" />
     <ClInclude Include="..\c_lib\particle\blood.cpp" />
     <ClInclude Include="..\c_lib\particle\grenade.cpp" />
-    <ClInclude Include="..\c_lib\particle\grenade_shrapnel.cpp" />
     <ClInclude Include="..\c_lib\particle\minivox_colored.cpp" />
     <ClInclude Include="..\c_lib\particle\minivox_textured.cpp" />
     <ClInclude Include="..\c_lib\particle\particles.cpp" />
@@ -289,7 +293,6 @@
     <ClInclude Include="..\c_lib\physics\motion.cpp" />
     <ClInclude Include="..\c_lib\physics\quadrant.cpp" />
     <ClInclude Include="..\c_lib\physics\verlet.cpp" />
-    <ClInclude Include="..\c_lib\physics\verlet_particle.cpp" />
     <ClInclude Include="..\c_lib\physics\ray_trace\handlers.cpp" />
     <ClInclude Include="..\c_lib\physics\ray_trace\hitscan.cpp" />
     <ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.cpp" />
@@ -306,7 +309,9 @@
     <ClInclude Include="..\c_lib\SDL\unused\pngfuncs.c" />
     <ClInclude Include="..\c_lib\SDL\unused\v.cpp" />
     <ClInclude Include="..\c_lib\sound\csv_parser.cpp" />
+    <ClInclude Include="..\c_lib\sound\net_event.cpp" />
     <ClInclude Include="..\c_lib\sound\openal.cpp" />
+    <ClInclude Include="..\c_lib\sound\packets.cpp" />
     <ClInclude Include="..\c_lib\sound\sound.cpp" />
     <ClInclude Include="..\c_lib\sound\triggers.cpp" />
     <ClInclude Include="..\c_lib\sound\wav.cpp" />
@@ -320,6 +325,7 @@
     <ClInclude Include="..\c_lib\t_gen\lib\voronoi2.cpp" />
     <ClInclude Include="..\c_lib\t_hud\container_hud.cpp" />
     <ClInclude Include="..\c_lib\t_hud\crafting_hud.cpp" />
+    <ClInclude Include="..\c_lib\t_hud\crusher.cpp" />
     <ClInclude Include="..\c_lib\t_hud\energy_tanks.cpp" />
     <ClInclude Include="..\c_lib\t_hud\smelter.cpp" />
     <ClInclude Include="..\c_lib\t_hud\storage_block.cpp" />
@@ -341,12 +347,16 @@
     <ClInclude Include="..\c_lib\t_map\glsl\cache.cpp" />
     <ClInclude Include="..\c_lib\t_map\glsl\shader.cpp" />
     <ClInclude Include="..\c_lib\t_map\glsl\texture.cpp" />
+    <ClInclude Include="..\c_lib\t_map\glsl\_interface.cpp" />
     <ClInclude Include="..\c_lib\t_map\net\t_CtoS.cpp" />
     <ClInclude Include="..\c_lib\t_map\net\t_StoC.cpp" />
+    <ClInclude Include="..\c_lib\t_map\serializer\_interface.cpp" />
+    <ClInclude Include="..\c_lib\t_map\server\env_process.cpp" />
     <ClInclude Include="..\c_lib\t_map\server\manager.cpp" />
-    <ClInclude Include="..\c_lib\t_mech\draw.cpp" />
-    <ClInclude Include="..\c_lib\t_mech\state.cpp" />
+    <ClInclude Include="..\c_lib\t_mech\properties.cpp" />
     <ClInclude Include="..\c_lib\t_mech\_interface.cpp" />
+    <ClInclude Include="..\c_lib\t_mech\net\CtoS.cpp" />
+    <ClInclude Include="..\c_lib\t_mech\net\StoC.cpp" />
     <ClInclude Include="..\c_lib\t_mob\cAnimationController.cpp" />
     <ClInclude Include="..\c_lib\t_mob\_interface.cpp" />
     <ClInclude Include="..\c_lib\voxel\voxel_dat.cpp" />
@@ -378,7 +388,6 @@
     <ClInclude Include="..\net_lib\enet\unix.c" />
     <ClInclude Include="..\net_lib\enet\win32.c" />
   </ItemGroup>
-
   <ItemGroup>
     <ClInclude Include="..\c_lib\agent\agent.hpp" />
     <ClInclude Include="..\c_lib\agent\agent_list.hpp" />
@@ -394,13 +403,18 @@
     <ClInclude Include="..\c_lib\animations\animations.hpp" />
     <ClInclude Include="..\c_lib\animations\block_damage.hpp" />
     <ClInclude Include="..\c_lib\animations\common.hpp" />
+    <ClInclude Include="..\c_lib\animations\confetti.hpp" />
+    <ClInclude Include="..\c_lib\animations\emitter.hpp" />
     <ClInclude Include="..\c_lib\animations\hitscan.hpp" />
     <ClInclude Include="..\c_lib\animations\insect_mob.hpp" />
     <ClInclude Include="..\c_lib\animations\mining_laser.hpp" />
+    <ClInclude Include="..\c_lib\animations\packets.hpp" />
     <ClInclude Include="..\c_lib\animations\voxel_particle.hpp" />
     <ClInclude Include="..\c_lib\animations\weapon.hpp" />
     <ClInclude Include="..\c_lib\animations\_include.hpp" />
     <ClInclude Include="..\c_lib\animations\_interface.hpp" />
+    <ClInclude Include="..\c_lib\animations\config\_interface.hpp" />
+    <ClInclude Include="..\c_lib\animations\config\_state.hpp" />
     <ClInclude Include="..\c_lib\camera\camera.hpp" />
     <ClInclude Include="..\c_lib\camera\fulstrum_test.hpp" />
     <ClInclude Include="..\c_lib\camera\fulstrum_test2.hpp" />
@@ -414,6 +428,7 @@
     <ClInclude Include="..\c_lib\common\common.hpp" />
     <ClInclude Include="..\c_lib\common\files.hpp" />
     <ClInclude Include="..\c_lib\common\gl_assert.hpp" />
+    <ClInclude Include="..\c_lib\common\gs_assert.hpp" />
     <ClInclude Include="..\c_lib\common\logger.hpp" />
     <ClInclude Include="..\c_lib\common\macros.hpp" />
     <ClInclude Include="..\c_lib\common\mallox.hpp" />
@@ -526,6 +541,7 @@
     <ClInclude Include="..\c_lib\item\config\crafting_dat.hpp" />
     <ClInclude Include="..\c_lib\item\config\item_attribute.hpp" />
     <ClInclude Include="..\c_lib\item\config\item_dat.hpp" />
+    <ClInclude Include="..\c_lib\item\config\item_drop.hpp" />
     <ClInclude Include="..\c_lib\item\config\smelting_dat.hpp" />
     <ClInclude Include="..\c_lib\item\config\synthesizer_dat.hpp" />
     <ClInclude Include="..\c_lib\item\config\_interface.hpp" />
@@ -537,6 +553,7 @@
     <ClInclude Include="..\c_lib\item\container\_include.hpp" />
     <ClInclude Include="..\c_lib\item\container\_interface.hpp" />
     <ClInclude Include="..\c_lib\item\container\_state.hpp" />
+    <ClInclude Include="..\c_lib\item\container\config\crusher_dat.hpp" />
     <ClInclude Include="..\c_lib\item\container\config\types.hpp" />
     <ClInclude Include="..\c_lib\item\container\config\_interface.hpp" />
     <ClInclude Include="..\c_lib\item\container\config\_state.hpp" />
@@ -581,7 +598,6 @@
     <ClInclude Include="..\c_lib\particle\blood.hpp" />
     <ClInclude Include="..\c_lib\particle\constants.hpp" />
     <ClInclude Include="..\c_lib\particle\grenade.hpp" />
-    <ClInclude Include="..\c_lib\particle\grenade_shrapnel.hpp" />
     <ClInclude Include="..\c_lib\particle\minivox_colored.hpp" />
     <ClInclude Include="..\c_lib\particle\minivox_textured.hpp" />
     <ClInclude Include="..\c_lib\particle\particles.hpp" />
@@ -603,10 +619,10 @@
     <ClInclude Include="..\c_lib\physics\vec3.hpp" />
     <ClInclude Include="..\c_lib\physics\vec4.hpp" />
     <ClInclude Include="..\c_lib\physics\verlet.hpp" />
-    <ClInclude Include="..\c_lib\physics\verlet_particle.hpp" />
     <ClInclude Include="..\c_lib\physics\ray_trace\handlers.hpp" />
     <ClInclude Include="..\c_lib\physics\ray_trace\hitscan.hpp" />
     <ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.hpp" />
+    <ClInclude Include="..\c_lib\physics\reference\matrix.hpp" />
     <ClInclude Include="..\c_lib\SDL\draw_functions.hpp" />
     <ClInclude Include="..\c_lib\SDL\shader_loader.hpp" />
     <ClInclude Include="..\c_lib\SDL\texture_loader.hpp" />
@@ -618,10 +634,13 @@
     <ClInclude Include="..\c_lib\SDL\mesh_loader\obj_loader.hpp" />
     <ClInclude Include="..\c_lib\SDL\unused\v.hpp" />
     <ClInclude Include="..\c_lib\sound\csv_parser.hpp" />
+    <ClInclude Include="..\c_lib\sound\net_event.hpp" />
     <ClInclude Include="..\c_lib\sound\openal.hpp" />
+    <ClInclude Include="..\c_lib\sound\packets.hpp" />
     <ClInclude Include="..\c_lib\sound\sound.hpp" />
     <ClInclude Include="..\c_lib\sound\triggers.hpp" />
     <ClInclude Include="..\c_lib\sound\wav.hpp" />
+    <ClInclude Include="..\c_lib\sound\_include.hpp" />
     <ClInclude Include="..\c_lib\state\client_state.hpp" />
     <ClInclude Include="..\c_lib\state\packet_init.hpp" />
     <ClInclude Include="..\c_lib\state\server_state.hpp" />
@@ -632,6 +651,9 @@
     <ClInclude Include="..\c_lib\t_gen\ore_cluster.hpp" />
     <ClInclude Include="..\c_lib\t_gen\perlin.hpp" />
     <ClInclude Include="..\c_lib\t_gen\perlin_extra.hpp" />
+    <ClInclude Include="..\c_lib\t_gen\river.hpp" />
+    <ClInclude Include="..\c_lib\t_gen\rock_layer.hpp" />
+    <ClInclude Include="..\c_lib\t_gen\tile_generator.hpp" />
     <ClInclude Include="..\c_lib\t_gen\twister.hpp" />
     <ClInclude Include="..\c_lib\t_gen\_include.hpp" />
     <ClInclude Include="..\c_lib\t_gen\_interface.hpp" />
@@ -644,6 +666,7 @@
     <ClInclude Include="..\c_lib\t_hud\constants.hpp" />
     <ClInclude Include="..\c_lib\t_hud\container_hud.hpp" />
     <ClInclude Include="..\c_lib\t_hud\crafting_hud.hpp" />
+    <ClInclude Include="..\c_lib\t_hud\crusher.hpp" />
     <ClInclude Include="..\c_lib\t_hud\energy_tanks.hpp" />
     <ClInclude Include="..\c_lib\t_hud\smelter.hpp" />
     <ClInclude Include="..\c_lib\t_hud\storage_block.hpp" />
@@ -654,6 +677,7 @@
     <ClInclude Include="..\c_lib\t_hud\_include.hpp" />
     <ClInclude Include="..\c_lib\t_hud\_interface.hpp" />
     <ClInclude Include="..\c_lib\t_map\chunk_special.hpp" />
+    <ClInclude Include="..\c_lib\t_map\lighting.hpp" />
     <ClInclude Include="..\c_lib\t_map\map_special.hpp" />
     <ClInclude Include="..\c_lib\t_map\ortho_projection.hpp" />
     <ClInclude Include="..\c_lib\t_map\t_map.hpp" />
@@ -678,17 +702,26 @@
     <ClInclude Include="..\c_lib\t_map\glsl\shader.hpp" />
     <ClInclude Include="..\c_lib\t_map\glsl\structs.hpp" />
     <ClInclude Include="..\c_lib\t_map\glsl\texture.hpp" />
+    <ClInclude Include="..\c_lib\t_map\glsl\_interface.hpp" />
     <ClInclude Include="..\c_lib\t_map\net\t_CtoS.hpp" />
     <ClInclude Include="..\c_lib\t_map\net\t_net.hpp" />
     <ClInclude Include="..\c_lib\t_map\net\t_StoC.hpp" />
+    <ClInclude Include="..\c_lib\t_map\serializer\blocks.hpp" />
+    <ClInclude Include="..\c_lib\t_map\serializer\_interface.hpp" />
     <ClInclude Include="..\c_lib\t_map\server\env_process.hpp" />
     <ClInclude Include="..\c_lib\t_map\server\manager.hpp" />
     <ClInclude Include="..\c_lib\t_map\server\manager_class.hpp" />
     <ClInclude Include="..\c_lib\t_map\server\subscription_list.hpp" />
-    <ClInclude Include="..\c_lib\t_mech\draw.hpp" />
-    <ClInclude Include="..\c_lib\t_mech\state.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\mech_draw.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\mech_state.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\properties.hpp" />
     <ClInclude Include="..\c_lib\t_mech\_include.hpp" />
     <ClInclude Include="..\c_lib\t_mech\_interface.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\common\common.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\config\mech_dat.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\config\_interface.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\net\CtoS.hpp" />
+    <ClInclude Include="..\c_lib\t_mech\net\StoC.hpp" />
     <ClInclude Include="..\c_lib\t_mob\cAnimationController.hpp" />
     <ClInclude Include="..\c_lib\t_mob\mesh_loader.hpp" />
     <ClInclude Include="..\c_lib\t_mob\_include.hpp" />
@@ -713,7 +746,6 @@
     <ClInclude Include="..\net_lib\common\packet_buffer.hpp" />
     <ClInclude Include="..\net_lib\common\packet_id_counter.hpp" />
   </ItemGroup>
-
   <ItemGroup>
     <ClInclude Include="..\c_lib\agent\agent_include.h" />
     <ClInclude Include="..\c_lib\common\compat_al.h" />
@@ -748,12 +780,7 @@
     <ClInclude Include="..\net_lib\enet\unix.h" />
     <ClInclude Include="..\net_lib\enet\utility.h" />
     <ClInclude Include="..\net_lib\enet\win32.h" />
-    <ClInclude Include="..\ipch\server-cb9620c\server-2e75de63.ipch" />
-    <ClInclude Include="..\ipch\src-a8a0c52a\src-a29f3c34.ipch" />
   </ItemGroup>
-
-
-  
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
