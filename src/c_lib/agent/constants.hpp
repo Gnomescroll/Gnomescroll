@@ -73,7 +73,8 @@ const int AGENT_MAX_SPAWNERS = 3;
 #if DC_CLIENT
 const int AGENT_STATE_HISTORY_SIZE = 64;
 const float AGENT_INTERPOLATION_DECAY  = 0.8f;
-const int JETPACK_TICKS_MAX = 30 * 10 * 2;
+//const int JETPACK_TICKS_MAX = 30 * 10 * 2;
+const int JETPACK_TICKS_MAX = 30 * 10 * 2 * 10000;
 const int JETPACK_DECAY_TICKS = 30 * 10;
 
 namespace AgentHudName

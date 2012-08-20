@@ -28,38 +28,22 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     total_distance += d;
 
-    //printf("s1_on_ground: %d; camera_on_ground: %d\n", s1_on_ground, camera_on_ground);
-
-    //float dvz = s1.vz - s0.vz;
-    //float dz  = s1.z  - s0.z;
-    //if (dvz || dz)
-    //{
-        //printf("dvz: %0.2f", dvz);
-        //printf(", s1.vz %0.2f, s0.vz %0.2f", s1.vz, s0.vz);
-        //printf(", ");
-        //printf("dz: %0.2f\n", dz);
-    //}
-
-    //static float last_z = agent_camera->get_position().z;
-    //float z = agent_camera->get_position().z;
-    //float dz = z - last_z;
-    //float dvz = -dz;
-    //last_z = z;
-    //printf("dz %0.2f\n", dz);
-    //if (dz < 0 && camera_on_ground) // was falling & hit ground
-    //{
-        //// TODO -- multiply dvz by base gain to get playable gain for fall range
-        //int snd_id = 0;
-        //if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
-            //snd_id = Sound::play_2d_sound("hard_fall");
-        //else
-        //if (dvz > MEDIUM_FALL_VELOCITY_THRESHOLD)
-            //snd_id = Sound::play_2d_sound("medium_fall");
-        //else
-        //if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
-            //snd_id = Sound::play_2d_sound("soft_fall");
-        //GS_ASSERT(snd_id >= 0);
-    //}
+    float dvz = s1.vz - s0.vz;
+    float dz  = s1.z  - s0.z;
+    if (dz < 0) // was falling & hit ground
+    {
+        // TODO -- multiply dvz by base gain to get playable gain for fall range
+        int snd_id = 0;
+        if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
+            snd_id = Sound::play_2d_sound("hard_fall");
+        else
+        if (dvz > MEDIUM_FALL_VELOCITY_THRESHOLD)
+            snd_id = Sound::play_2d_sound("medium_fall");
+        else
+        if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
+            snd_id = Sound::play_2d_sound("soft_fall");
+        GS_ASSERT(snd_id >= 0);
+    }
 
     if (!camera_on_ground) return;
 

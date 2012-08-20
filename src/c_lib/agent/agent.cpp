@@ -179,16 +179,16 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         height = box.c_height;
     }
 
-    float z_gravity = -3.0f / tr2;
+    float z_gravity = -3.0f * (1.0f / tr2);
     #if DC_CLIENT
     if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
     #endif
-    
+
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
     #if ADVANCED_JUMP
-    const float JUMP_POWINITIAL = 1 * 0.17;
-    const float JUMP_POWDEC = 0.2 * 0.24;
+    const float JUMP_POWINITIAL = 1.0f * 0.17f;
+    const float JUMP_POWDEC = 0.2f * 0.24f;
     #else
     const float JUMP_POW = AGENT_JUMP_POWER;
     #endif
@@ -197,28 +197,28 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     const float pi = 3.14159265f;
 
-    float CS_vx = 0;
-    float CS_vy = 0;
+    float CS_vx = 0.0f;
+    float CS_vy = 0.0f;
 
     if (forward)
     {
-            CS_vx += speed*cosf( _cs.theta * pi);
-            CS_vy += speed*sinf( _cs.theta * pi);
+        CS_vx += speed*cosf( _cs.theta * pi);
+        CS_vy += speed*sinf( _cs.theta * pi);
     }
     if (backwards)
     {
-            CS_vx += -speed*cosf( _cs.theta * pi);
-            CS_vy += -speed*sinf( _cs.theta * pi);
+        CS_vx += -speed*cosf( _cs.theta * pi);
+        CS_vy += -speed*sinf( _cs.theta * pi);
     }
     if (left) 
     {
-            CS_vx += speed*cosf( _cs.theta * pi + pi/2);
-            CS_vy += speed*sinf( _cs.theta * pi + pi/2);
+        CS_vx += speed*cosf( _cs.theta * pi + pi/2);
+        CS_vy += speed*sinf( _cs.theta * pi + pi/2);
     }
     if (right) 
     {
-            CS_vx += -speed*cosf( _cs.theta * pi + pi/2);
-            CS_vy += -speed*sinf( _cs.theta * pi + pi/2);
+        CS_vx += -speed*cosf( _cs.theta * pi + pi/2);
+        CS_vy += -speed*sinf( _cs.theta * pi + pi/2);
     }
 
     const float precision = 0.000001f;
@@ -236,7 +236,8 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     // need distance from ground
     const float max_jetpack_height = 8.0f;
     const float jetpack_velocity_max = z_jetpack * 5;
-    float dist_from_ground = as.z - (t_map::get_solid_block_below(as.x, as.y, as.z));
+    float solid_z = (float)t_map::get_solid_block_below(as.x, as.y, as.z);
+    float dist_from_ground = as.z - solid_z;
     if (jetpack)
     {
         if (dist_from_ground < max_jetpack_height)
@@ -251,19 +252,11 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     //as.vz += z_gravity;
 
-    if(dist_from_ground >= 0.03)
-    {
-        as.vz += z_gravity;
-    }
+    if (dist_from_ground < 0.025f)
+        as.vz -= (as.z - solid_z);
     else
-    {
-        as.vz = 0.0;
-        if (dist_from_ground < 0)
-            as.z = ceilf(as.z);
-        else
-            as.z = floorf(as.z);
-    }
-
+        as.vz += z_gravity;
+        
     #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
     if (jump)
@@ -303,25 +296,25 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         Collision Order: as.x,as.y,as.z
     */
     bool collision_x = collision_check_final_xy(box.box_r, height, new_x,as.y,as.z);
-    if (collision_x) {
-        //printf("x\n");
+    if (collision_x)
+    {
         new_x = as.x;
         as.vx = 0.0f;
     }
 
     bool collision_y = collision_check_final_xy(box.box_r, height, new_x,new_y,as.z);
-    if (collision_y) {
-        //printf("y\n");
+    if (collision_y)
+    {
         new_y = as.y;
         as.vy = 0.0f;
     }
 
     //top and bottom matter
-    bool top=false;
+    bool top = false;
     bool collision_z = collision_check_final_z(box.box_r, height, new_x, new_y, new_z, &top);
-    if (collision_z) {
-        //printf("z\n");
-        new_z = as.z;
+    if (collision_z)
+    {
+        new_z = (int)as.z;  // clamp to the floor
         if (top)
             new_z = (float)floor(as.z) + (float)ceil(height) - height;
         as.vz = 0.0f;
@@ -329,6 +322,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     as.x = translate_point(new_x);
     as.y = translate_point(new_y);
+    if (new_z < solid_z) new_z = solid_z;
     as.z = new_z;
 
     #if ADVANCED_JUMP
