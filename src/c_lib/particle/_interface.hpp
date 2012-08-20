@@ -36,4 +36,5 @@ void end_particle_draw();
 void prep_shrapnel();
 void draw_shrapnel();
 #endif
-}
+
+}   // Particle

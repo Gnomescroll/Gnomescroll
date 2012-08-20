@@ -318,8 +318,8 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
         if (minivox == NULL) return;
         minivox->set_color(color.r, color.g, color.b);//sky blue
         minivox->set_ttl(ttl);
-        minivox->set_spin(dtheta, dphi);
-        minivox->set_angles(theta, phi);
+        minivox->voxel.set_rotation_delta(dtheta, dphi);
+        minivox->voxel.set_rotation(theta, phi);
         minivox->set_size(size);
         minivox->set_state(cx,cy,cz, cvx,cvy,cvz);
     }
@@ -409,6 +409,29 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
         b->set_state(x,y,z, v.x*speed, v.y*speed, v.z*speed);
         ttl = randrange(0,10) - 5;
         b->set_ttl(b->ttl + ttl);
+    }
+}
+
+// DEBUG
+void confetti_stream()
+{
+    if (agent_camera == NULL) return;
+    struct Vec3 p = agent_camera->get_position();
+    struct Vec3 f = agent_camera->forward_vector();
+    f = vec3_scalar_mult(f, (randf()+1.0f)*3.0f);
+
+    static const int n = 1;
+    for (int i=0; i<n; i++)
+    {
+        Particle::ColoredMinivox* minivox = Particle::colored_minivox_list->create();
+        if (minivox == NULL) return;
+        minivox->set_color(color_init(randrange(0,255), randrange(0,255), randrange(0,255)));
+        minivox->set_ttl(100);
+        minivox->voxel.set_rotation_delta(0.1f, 0.0f);
+        minivox->voxel.set_rotation(randf(), randf());
+        minivox->set_size(0.1f);
+        minivox->set_state(p.x, p.y, p.z, f.x, f.y, f.z);
+
     }
 }
 

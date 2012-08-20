@@ -297,10 +297,7 @@ int run()
 
         poll_mouse();
 
-
-        /*
-            Non-transparent
-        */
+        // Non-transparent
 
         //t_mob::draw();
         t_mech::draw();
@@ -328,10 +325,11 @@ int run()
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
         GL_ASSERT(GL_TEXTURE_2D, false);
-        glBegin(GL_QUADS);
-        Particle::colored_minivox_list->draw();
-        Components::colored_voxel_component_list->call();
-        glEnd();
+        //glBegin(GL_QUADS);
+        //Particle::colored_minivox_list->draw();
+        //Components::colored_voxel_component_list->call();   // TODO -- remove this component
+        Animations::draw_colored_voxel_particles();
+        //glEnd();
 
         CHECK_GL_ERROR();
 
@@ -349,7 +347,6 @@ int run()
 
         CHECK_GL_ERROR();
 
-
         //obj_load::draw_model(0.0f,0.0f,0.0f); //draw test model
         //glDisable(GL_TEXTURE_2D);
 
@@ -362,7 +359,7 @@ int run()
         
         Animations::render_block_damage(); //GL blend with depth test on
         ItemParticle::draw();
-        Animations::draw_voxel_particles(); //moved out of transparent
+        Animations::draw_textured_voxel_particles(); //moved out of transparent
         GL_ASSERT(GL_BLEND, false);
 
         CHECK_GL_ERROR();

@@ -201,4 +201,4 @@ void TexturedMinivox::draw()
     #endif
 }
 
-}
+}   // Particle

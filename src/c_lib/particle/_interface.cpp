@@ -122,4 +122,4 @@ Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float v
 }
 #endif
 
-}
+}   // Particle

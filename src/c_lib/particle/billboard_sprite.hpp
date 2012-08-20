@@ -3,29 +3,18 @@
 namespace Particle
 {
 
-#if DC_CLIENT
 class BillboardSprite
 {
     public:
         float scale;
-        int texture_index;
 
+        #if DC_CLIENT
+        int texture_index;
         void draw(Vec3 v);
         void draw_from_bottom(Vec3 v);
+        #endif
 
         BillboardSprite();
 };
-#else
-class BillboardSprite
-{
-    public:
-        float scale;
-        int texture_index;
 
-        void draw(Vec3 v) {};
-        void draw_from_bottom(Vec3 v) {};
-
-        BillboardSprite() {};
-};
-#endif
-}
+}   // Particle

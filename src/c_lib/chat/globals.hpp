@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/color.hpp>
+
 #if DC_SERVER
 const char CHAT_LOG_MSG_FORMAT[] = " - [%d] %s: %s\n"; // client_id, name, msg
 #endif
@@ -17,9 +19,9 @@ const int CHAT_SENDER_SYSTEM = 255;
 const int CHAT_CHANNEL_SYSTEM = 0;
 
 //const struct Color CHAT_SYSTEM_COLOR = {255,255,50};  // moved to options
-const struct Color CHAT_PM_COLOR = {10,10,255};
-const struct Color CHAT_GLOBAL_COLOR = {255,255,255};
-const struct Color CHAT_UNKNOWN_COLOR = {50,50,50};
+const struct Color CHAT_PM_COLOR = color_init(10,10,255);
+const struct Color CHAT_GLOBAL_COLOR = color_init(255,255,255);
+const struct Color CHAT_UNKNOWN_COLOR = color_init(50,50,50);
 
 bool is_valid_chat_character(char c)
 {

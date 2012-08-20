@@ -545,5 +545,4 @@ void init_weapon_sprite()
     parse_equipment_sprite_alignment_config();
 }
 
-
 }   // Animations

@@ -34,6 +34,9 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
 // will generate random count between count_min and count_max
 void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, struct Color color);
 
+// DEBUG
+void confetti_stream();
+
 // new style callbacks
 void create_shrapnel(int animation_id, void* metadata);
 

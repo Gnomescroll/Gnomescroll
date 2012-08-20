@@ -37,4 +37,4 @@ class Blood_list: public Simple_object_list<Blood, BLOOD_MAX>
     Blood_list() { print_list((char*)this->name(), this); }
 };
     
-}
+}   // Particle

@@ -6,6 +6,7 @@
 
 #include <particle/particles.hpp>
 #include <particle/billboard_sprite.hpp>
+
 namespace Particle
 {
 

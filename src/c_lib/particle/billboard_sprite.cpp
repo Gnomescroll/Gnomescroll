@@ -1,12 +1,11 @@
-
 #include "billboard_sprite.hpp"
 
 namespace Particle
 {
 
+#if DC_CLIENT
 void BillboardSprite::draw(Vec3 v)
 {
-    #if DC_CLIENT
     v = quadrant_translate_position(current_camera_position, v);
     if (point_fulstrum_test(v.x, v.y, v.z) == false)
         return;
@@ -43,12 +42,12 @@ void BillboardSprite::draw(Vec3 v)
     p = vec3_add(v, vec3_sub(right, up));
     glTexCoord2f(tx_min,ty_min);
     glVertex3f(p.x, p.y, p.z);
-    #endif
 }
+#endif
 
+#if DC_CLIENT
 void BillboardSprite::draw_from_bottom(Vec3 v)
 {
-    #if DC_CLIENT
     v = quadrant_translate_position(current_camera_position, v);
     //v.z += this->scale / 2;
     v.z += this->scale;
@@ -88,13 +87,15 @@ void BillboardSprite::draw_from_bottom(Vec3 v)
     p = vec3_add(v, vec3_sub(right, up));
     glTexCoord2f(tx_min,ty_min);
     glVertex3f(p.x, p.y, p.z);
-    #endif
 }
+#endif
 
 BillboardSprite::BillboardSprite()
 :
-scale(1.0f),
-texture_index(0)
+scale(1.0f)
+#if DC_CLIENT
+,texture_index(0)
+#endif
 {}
 
-}
+}   // Particle

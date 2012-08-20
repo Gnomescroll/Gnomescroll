@@ -9,7 +9,7 @@ varying vec2 texCoord;
 
 varying float diffuse_light;
 
-const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));	//fixed light source?
+const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));   //fixed light source?
 
 void main(void) 
 {                      
@@ -19,10 +19,9 @@ void main(void)
 
     //diffuse_light = dot(look, InNormal);
     
-    diffuse_light = abs(dot(look, InNormal));			//use camera position
-    //diffuse_light = abs(dot(light_dir, InNormal));	//use fixed light source
+    diffuse_light = abs(dot(look, InNormal));           //use camera position
+    //diffuse_light = abs(dot(light_dir, InNormal));    //use fixed light source
 
     gl_Position = pos;
     texCoord = InTexCoord;
 }
-

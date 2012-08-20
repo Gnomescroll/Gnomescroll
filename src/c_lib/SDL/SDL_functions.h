@@ -14,7 +14,12 @@ void save_screenshot();
 
 int check_gl_error();
 int check_gl_error(const char* filename, const int line_no);
+
+#if PRODUCTION
+#define CHECK_GL_ERROR()
+#else
 #define CHECK_GL_ERROR() check_gl_error(__FILE__, __LINE__)
+#endif
 
 extern int _xres;
 extern int _yres;
