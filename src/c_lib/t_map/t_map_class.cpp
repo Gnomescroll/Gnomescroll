@@ -627,6 +627,35 @@ namespace t_map
         #endif
     }
 
+
+#if DC_CLIENT
+    bool Terrain_map::chunk_loaded(int x, int y, int z)
+    {
+        GS_ASSERT(z >= 0 && z < 128);
+
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+        class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+        if(c == NULL)
+            return false
+        return true;
+    }
+
+
+#endif
+/*
+    Height Map
+*/
+
+    inline int Terrain_map::get_height(int x, int y)
+    {
+
+
+
+    }
+
+
     //only entry point for loading chunks
     void Terrain_map::load_chunk(int i, int j)
     {

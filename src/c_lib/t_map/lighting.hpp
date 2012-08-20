@@ -196,7 +196,8 @@ void update_skylight_in(int x, int y, int z)
     //technically, if top block of height map
     if( get_skylight(x,y,z+1) == 15 )
     {
-
+        //GS_ASSERT(map_height == z+1);
+        
         /*
             BUG:
             Fails on removing block capping a column?

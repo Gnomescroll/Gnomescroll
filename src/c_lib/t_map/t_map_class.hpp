@@ -94,6 +94,11 @@ class Terrain_map
 
     void load_chunk(int i, int j);      //only entry point for loading
     void unload_chunk(int i, int j);    //only entry point for unloading
+    
+#if DC_CLIENT
+    bool chunk_loaded(int x, int y, int z); //checks if chunk is non null
+#endif
+    
 #if TERRAIN_MAP_FORCE_INLINE
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
@@ -112,6 +117,7 @@ class Terrain_map
     int apply_damage(int x, int y, int z, int dmg);
     int apply_damage(int x, int y, int z, int dmg, int* block_type);
 
+    inline int get_height(int x, int y);
 };
 
 } //
