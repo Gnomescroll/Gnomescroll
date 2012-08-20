@@ -62,7 +62,7 @@ void update_skylight(int chunk_i, int chunk_j)
 }
 
 //for comparision purpose
-int get_light(int x, int y, int z)
+int get_skylight(int x, int y, int z)
 {
 
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
@@ -78,7 +78,7 @@ int get_light(int x, int y, int z)
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
 }
 
-void set_light(int x, int y, int z, int value)
+void set_skylight(int x, int y, int z, int value)
 {
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
 
@@ -97,13 +97,23 @@ void set_light(int x, int y, int z, int value)
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = value;
 }
 
-
-void skylight_update(int x, int y, int z)
+//proprogate out
+void update_skylight_out(int x, int y, int z)
 {
-    int li = get_light(x,y,z);
+    int li = get_skylight(x,y,z);
 
     GS_ASSERT(! isSolid(x,y,z));
     if(li-1 <= 0) return;
+
+/*
+    !isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 ) {
+        set_skylight(_x,_y,_z, li-1);
+    These can be combined into a single function
+*/
+
+/*
+    Recursion can be replaced by poping onto a circular buffer
+*/
 
     int _x,_y,_z;
 
@@ -111,66 +121,140 @@ void skylight_update(int x, int y, int z)
     _y = y;
     _z = z;
     //x
-    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li-1 )   //do a single get block for this!!
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )   //do a single get block for this!!
     {
-        set_light(_x,_y,_z, li-1);
-        skylight_update(_x,_y,_z);
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
     }
+
+
+    GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+512-1) % 512);
 
     _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _y = y;
     _z = z;
-    //x
-    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li-1 )
+
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
-        set_light(_x,_y,_z, li-1);
-        skylight_update(_x,_y,_z);
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
     }
 
+    //y
     _x = x;
     _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _z = z;
     //x
-    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li-1 )
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
-        set_light(_x,_y,_z, li-1);
-        skylight_update(_x,_y,_z);
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
     }
 
     _x = x;
     _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _z = z;
-    //x
-    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li-1 )
+
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
-        set_light(_x,_y,_z, li-1);
-        skylight_update(_x,_y,_z);
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
     }
 
-
+    //y
     _x = x;
     _y = y;
     _z = (z+1) % 128;
-    //x
-    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li-1 )
-    {
-        set_light(_x,_y,_z, li-1);
-        skylight_update(_x,_y,_z);
-    }
 
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
+    {
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
+    }
 
     _x = x;
     _y = y;
     _z = (z+127)%128; //z -1
-    //x
-    if(!isSolid(_x,_y,_z) && get_light(_x,_y,_z) < li-1 )
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
-        set_light(_x,_y,_z, li-1);
-        skylight_update(_x,_y,_z);
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
     }
 
+}
+
+void update_skylight_in(int x, int y, int z)
+{
+    //int li = get_skylight(x,y,z);
+
+    //technically, if top block of height map
+    if( get_skylight(x,y,z+1) == 15 )
+    {
+        set_skylight(x,y,z+1);
+        update_skylight_out(x,y,z);
+        return;
+    }
+    int li = 0;
+
+    int _x,_y,_z, tl;
+
+    //x
+    _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+
+    tl = get_skylight(_x,_y,_z);
+    if(ti > li )   //do a single get block for this!!
+        li = ti;
+
+    _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+
+    tl = get_skylight(_x,_y,_z);
+    if(ti > li )   //do a single get block for this!!
+        li = ti;
+
+    //y
+    _x = x;
+    _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+
+    tl = get_skylight(_x,_y,_z);
+    if(ti > li )   //do a single get block for this!!
+        li = ti;
+
+    _x = x;
+    _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+
+    tl = get_skylight(_x,_y,_z);
+    if(ti > li )   //do a single get block for this!!
+        li = ti;
+
+    //z
+    _x = x;
+    _y = y;
+    _z = (z+1) % 128;
+
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
+    {
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
+    }
+
+    _x = x;
+    _y = y;
+    _z = (z+127)%128;
+
+    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
+    {
+        set_skylight(_x,_y,_z, li-1);
+        update_skylight_out(_x,_y,_z);
+    }
 
 }
+
 
 
 void update_skylight2(int ci, int cj)
@@ -184,10 +268,10 @@ void update_skylight2(int ci, int cj)
     for(int j=0; j<16; j++)
     for(int k=0; k<128; k++)
     {
-        if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_light(16*ci+i,16*cj+j,k) != 15) // || get_light(i,j,k) < 16)
+        if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
             continue;
 
-        skylight_update(16*ci+i,16*cj+j,k);
+        update_skylight_out(16*ci+i,16*cj+j,k);
 
     }
 
