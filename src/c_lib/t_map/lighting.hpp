@@ -237,22 +237,24 @@ void update_skylight_in(int x, int y, int z)
     _y = y;
     _z = (z+1) % 128;
 
-    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
-    {
-        set_skylight(_x,_y,_z, li-1);
-        update_skylight_out(_x,_y,_z);
-    }
+    tl = get_skylight(_x,_y,_z);
+    if(ti > li )   //do a single get block for this!!
+        li = ti;
 
     _x = x;
     _y = y;
     _z = (z+127)%128;
 
-    if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
-    {
-        set_skylight(_x,_y,_z, li-1);
-        update_skylight_out(_x,_y,_z);
-    }
+    tl = get_skylight(_x,_y,_z);
+    if(ti > li )   //do a single get block for this!!
+        li = ti;
 
+
+    if(li != 0)
+    {
+        set_skylight(x,y,z, li);
+        update_skylight_out(x,y,z);
+    }
 }
 
 
