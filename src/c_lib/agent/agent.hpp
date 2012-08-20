@@ -22,7 +22,7 @@ class AgentState
         float phi;        
         float x,y,z;
         float vx,vy,vz;
-        float jump_pow;
+        //float jump_pow;
         
         AgentState();
         
@@ -36,6 +36,11 @@ class AgentState
             this->x = p.x;
             this->y = p.y;
             this->z = p.z;
+        }
+
+        void print()
+        {
+            printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f\n", x,y,z,vx,vy,vz);
         }
 };
 

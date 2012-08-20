@@ -26,8 +26,8 @@ AgentState::AgentState()
 seq(-1),
 theta(0), phi(0),
 x(0), y(0), z(0),
-vx(0), vy(0), vz(0),
-jump_pow(0)
+vx(0), vy(0), vz(0)
+//,jump_pow(0)
 {}
 
 Vec3 AgentState::forward_vector()

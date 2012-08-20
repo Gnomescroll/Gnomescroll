@@ -76,7 +76,8 @@ void Vbo_map::prep_frustrum_vertices()
         int min;
         int max;
 
-        float zmin, zmax;
+        float zmin = 0.0f;
+        float zmax = 128.0f;
         chunk_top_z_projection(vbo->wxoff, vbo->wyoff, &zmin, &zmax);
 
         //printf("zmin, zmaz= %f %f \n", zmin, zmax);
@@ -631,4 +632,5 @@ void draw_vbo_debug(int x, int y)
 
     glPointSize(1.0);
 }
-}
+
+}   // t_map

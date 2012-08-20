@@ -406,7 +406,6 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
 
 void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 {
-
     static const float zmax = 128.0;
     static const float zmin = 0.0f;
     float z = 0.0f;
