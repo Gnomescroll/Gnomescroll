@@ -196,7 +196,7 @@ void update_skylight_in(int x, int y, int z)
     //technically, if top block of height map
     if( get_skylight(x,y,z+1) == 15 )
     {
-        //GS_ASSERT(map_height == z+1);
+        GS_ASSERT( z+1 == main_map->get_height(x,y) );
         
         /*
             BUG:

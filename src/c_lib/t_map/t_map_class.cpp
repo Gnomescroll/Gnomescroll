@@ -488,15 +488,7 @@ namespace t_map
 
 
     #if DC_CLIENT
-    void Terrain_map::reset_heights_read()
-    {   // call when heights are done being read
-        this->height_changed = false;
-        // only toggle CHANGED chunks, we dont want to switch UNSET->UNCHANGED
-        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; i++)
-            if (chunk_heights_status[i] == CHUNK_HEIGHT_CHANGED)
-                chunk_heights_status[i] = CHUNK_HEIGHT_UNCHANGED;
-    }
-    
+
     void Terrain_map::chunk_received(int cx, int cy)
     {   // update chunk/column heights based on this chunk
         int highest = -1;
@@ -558,7 +550,23 @@ namespace t_map
 
         update_skylight(cx, cy);        
     }
-    
+
+/*
+    DEPRECATE
+*/
+
+    void Terrain_map::reset_heights_read()
+    {   // call when heights are done being read
+        this->height_changed = false;
+        // only toggle CHANGED chunks, we dont want to switch UNSET->UNCHANGED
+        for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; i++)
+            if (chunk_heights_status[i] == CHUNK_HEIGHT_CHANGED)
+                chunk_heights_status[i] = CHUNK_HEIGHT_UNCHANGED;
+    }
+
+/*
+    DEPRECATE
+*/
     inline unsigned char Terrain_map::get_cached_height(int x, int y)
     {
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -566,6 +574,9 @@ namespace t_map
         return this->column_heights[x + y*MAP_WIDTH];
     }
 
+/*
+    DEPRECATE
+*/
     void Terrain_map::update_heights(int x, int y, int z, int val)
     {
         z += 1; // heights are not 0 indexed;
