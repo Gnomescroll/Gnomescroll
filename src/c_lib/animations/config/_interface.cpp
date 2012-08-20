@@ -62,12 +62,12 @@ static void register_settings()
 {
     animation_def("plasma_grenade_explode", AnimDataSimple);
     d->callback = &create_shrapnel;
-    d->count = 25;
-    d->max_count = 35;
+    d->count = 45;
+    d->max_count = 60;
     d->use_rand_range = true;
     d->jitter_scale = 1.0f/20.0f;   // applied to starting position
-    d->ttl_min = 15;
-    d->ttl_max = 25;
+    d->ttl_min = 25;
+    d->ttl_max = 35;
     d->momentum = 20.0f;
 
     add_animation(d);    // finalize
