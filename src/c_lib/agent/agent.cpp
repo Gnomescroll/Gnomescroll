@@ -251,19 +251,11 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     //as.vz += z_gravity;
 
-    if(dist_from_ground >= 0.03)
-    {
+    //if (dist_from_ground < 0.025f)
+        //as.vz -= (as.z - (int)as.z);
+    //else
         as.vz += z_gravity;
-    }
-    else
-    {
-        as.vz = 0.0;
-        if (dist_from_ground < 0)
-            as.z = ceilf(as.z);
-        else
-            as.z = floorf(as.z);
-    }
-
+        
     #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
     if (jump)
@@ -303,29 +295,34 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         Collision Order: as.x,as.y,as.z
     */
     bool collision_x = collision_check_final_xy(box.box_r, height, new_x,as.y,as.z);
-    if (collision_x) {
-        //printf("x\n");
+    if (collision_x)
+    {
         new_x = as.x;
         as.vx = 0.0f;
     }
 
     bool collision_y = collision_check_final_xy(box.box_r, height, new_x,new_y,as.z);
-    if (collision_y) {
-        //printf("y\n");
+    if (collision_y)
+    {
         new_y = as.y;
         as.vy = 0.0f;
     }
 
     //top and bottom matter
-    bool top=false;
+    bool top = false;
     bool collision_z = collision_check_final_z(box.box_r, height, new_x, new_y, new_z, &top);
-    if (collision_z) {
-        //printf("z\n");
+    if (collision_z)
+    {
         new_z = as.z;
         if (top)
             new_z = (float)floor(as.z) + (float)ceil(height) - height;
         as.vz = 0.0f;
+        printf("on ground\n");
     }       
+    else
+    {
+        printf("in the air\n");
+    }
 
     as.x = translate_point(new_x);
     as.y = translate_point(new_y);
