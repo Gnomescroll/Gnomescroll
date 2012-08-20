@@ -1,0 +1,1 @@
+SrcXML.exe is meant to be opened from within the BIN folder at C:\dc_mmo\src\SrcXML\bin

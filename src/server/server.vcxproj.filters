@@ -45,6 +45,11 @@
 	
 	
 	
+	
+
+
+
+
 	<ItemGroup>
 		<Filter Include="c_lib\agent">
 		</Filter>
@@ -53,6 +58,8 @@
 		<Filter Include="c_lib\agent\client">
 		</Filter>
 		<Filter Include="c_lib\animations">
+		</Filter>
+		<Filter Include="c_lib\animations\config">
 		</Filter>
 		<Filter Include="c_lib\camera">
 		</Filter>
@@ -107,6 +114,8 @@
 		<Filter Include="c_lib\input">
 		</Filter>
 		<Filter Include="c_lib\item">
+		</Filter>
+		<Filter Include="c_lib\item\config">
 		</Filter>
 		<Filter Include="c_lib\item\container">
 		</Filter>
@@ -164,9 +173,13 @@
 		</Filter>
 		<Filter Include="c_lib\t_map\net">
 		</Filter>
+		<Filter Include="c_lib\t_map\serializer">
+		</Filter>
 		<Filter Include="c_lib\t_map\server">
 		</Filter>
 		<Filter Include="c_lib\t_mech">
+		</Filter>
+		<Filter Include="c_lib\t_mech\net">
 		</Filter>
 		<Filter Include="c_lib\t_mob">
 		</Filter>
@@ -186,13 +199,17 @@
 		</Filter>
 		<Filter Include="c_lib\item\common">
 		</Filter>
-		<Filter Include="c_lib\item\config">
-		</Filter>
 		<Filter Include="c_lib\item\toolbelt\common">
+		</Filter>
+		<Filter Include="c_lib\physics\reference">
 		</Filter>
 		<Filter Include="c_lib\t_map\common">
 		</Filter>
 		<Filter Include="c_lib\t_map\config">
+		</Filter>
+		<Filter Include="c_lib\t_mech\common">
+		</Filter>
+		<Filter Include="c_lib\t_mech\config">
 		</Filter>
 	</ItemGroup>
 
@@ -233,6 +250,12 @@
 	<ClInclude Include="..\c_lib\animations\block_damage.cpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\confetti.cpp">
+		<Filter>c_lib\animations</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\emitter.cpp">
+		<Filter>c_lib\animations</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\hitscan.cpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
@@ -240,6 +263,9 @@
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\mining_laser.cpp">
+		<Filter>c_lib\animations</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\packets.cpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\voxel_particle.cpp">
@@ -250,6 +276,12 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\_interface.cpp">
 		<Filter>c_lib\animations</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\config\_interface.cpp">
+		<Filter>c_lib\animations\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\config\_state.cpp">
+		<Filter>c_lib\animations\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\camera\camera.cpp">
 		<Filter>c_lib\camera</Filter>
@@ -572,6 +604,9 @@
 	<ClInclude Include="..\c_lib\item\_state.cpp">
 		<Filter>c_lib\item</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\item\config\item_drop.cpp">
+		<Filter>c_lib\item\config</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\item\container\client.cpp">
 		<Filter>c_lib\item\container</Filter>
 	</ClInclude>
@@ -592,6 +627,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\container\_state.cpp">
 		<Filter>c_lib\item\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\item\container\config\crusher_dat.cpp">
+		<Filter>c_lib\item\container\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\container\config\_interface.cpp">
 		<Filter>c_lib\item\container\config</Filter>
@@ -725,9 +763,6 @@
 	<ClInclude Include="..\c_lib\particle\grenade.cpp">
 		<Filter>c_lib\particle</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\grenade_shrapnel.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\particle\minivox_colored.cpp">
 		<Filter>c_lib\particle</Filter>
 	</ClInclude>
@@ -765,9 +800,6 @@
 		<Filter>c_lib\physics</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\physics\verlet.cpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\verlet_particle.cpp">
 		<Filter>c_lib\physics</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\physics\ray_trace\handlers.cpp">
@@ -818,7 +850,13 @@
 	<ClInclude Include="..\c_lib\sound\csv_parser.cpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\sound\net_event.cpp">
+		<Filter>c_lib\sound</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\openal.cpp">
+		<Filter>c_lib\sound</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\sound\packets.cpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\sound.cpp">
@@ -858,6 +896,9 @@
 		<Filter>c_lib\t_hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_hud\crafting_hud.cpp">
+		<Filter>c_lib\t_hud</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_hud\crusher.cpp">
 		<Filter>c_lib\t_hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_hud\energy_tanks.cpp">
@@ -923,23 +964,35 @@
 	<ClInclude Include="..\c_lib\t_map\glsl\texture.cpp">
 		<Filter>c_lib\t_map\glsl</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\glsl\_interface.cpp">
+		<Filter>c_lib\t_map\glsl</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\net\t_CtoS.cpp">
 		<Filter>c_lib\t_map\net</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\net\t_StoC.cpp">
 		<Filter>c_lib\t_map\net</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\serializer\_interface.cpp">
+		<Filter>c_lib\t_map\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\server\env_process.cpp">
+		<Filter>c_lib\t_map\server</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\server\manager.cpp">
 		<Filter>c_lib\t_map\server</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\draw.cpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\state.cpp">
+	<ClInclude Include="..\c_lib\t_mech\properties.cpp">
 		<Filter>c_lib\t_mech</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mech\_interface.cpp">
 		<Filter>c_lib\t_mech</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\net\CtoS.cpp">
+		<Filter>c_lib\t_mech\net</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\net\StoC.cpp">
+		<Filter>c_lib\t_mech\net</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mob\cAnimationController.cpp">
 		<Filter>c_lib\t_mob</Filter>
@@ -1073,6 +1126,12 @@
 	<ClInclude Include="..\c_lib\animations\common.hpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\confetti.hpp">
+		<Filter>c_lib\animations</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\emitter.hpp">
+		<Filter>c_lib\animations</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\hitscan.hpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
@@ -1080,6 +1139,9 @@
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\mining_laser.hpp">
+		<Filter>c_lib\animations</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\packets.hpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\voxel_particle.hpp">
@@ -1093,6 +1155,12 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\_interface.hpp">
 		<Filter>c_lib\animations</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\config\_interface.hpp">
+		<Filter>c_lib\animations\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\animations\config\_state.hpp">
+		<Filter>c_lib\animations\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\camera\camera.hpp">
 		<Filter>c_lib\camera</Filter>
@@ -1131,6 +1199,9 @@
 		<Filter>c_lib\common</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\gl_assert.hpp">
+		<Filter>c_lib\common</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\common\gs_assert.hpp">
 		<Filter>c_lib\common</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\logger.hpp">
@@ -1469,6 +1540,9 @@
 	<ClInclude Include="..\c_lib\item\config\item_dat.hpp">
 		<Filter>c_lib\item\config</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\item\config\item_drop.hpp">
+		<Filter>c_lib\item\config</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\item\config\smelting_dat.hpp">
 		<Filter>c_lib\item\config</Filter>
 	</ClInclude>
@@ -1501,6 +1575,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\container\_state.hpp">
 		<Filter>c_lib\item\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\item\container\config\crusher_dat.hpp">
+		<Filter>c_lib\item\container\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\container\config\types.hpp">
 		<Filter>c_lib\item\container\config</Filter>
@@ -1634,9 +1711,6 @@
 	<ClInclude Include="..\c_lib\particle\grenade.hpp">
 		<Filter>c_lib\particle</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\grenade_shrapnel.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\particle\minivox_colored.hpp">
 		<Filter>c_lib\particle</Filter>
 	</ClInclude>
@@ -1700,9 +1774,6 @@
 	<ClInclude Include="..\c_lib\physics\verlet.hpp">
 		<Filter>c_lib\physics</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\verlet_particle.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\physics\ray_trace\handlers.hpp">
 		<Filter>c_lib\physics\ray_trace</Filter>
 	</ClInclude>
@@ -1711,6 +1782,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.hpp">
 		<Filter>c_lib\physics\ray_trace</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\physics\reference\matrix.hpp">
+		<Filter>c_lib\physics\reference</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\draw_functions.hpp">
 		<Filter>c_lib\SDL</Filter>
@@ -1745,7 +1819,13 @@
 	<ClInclude Include="..\c_lib\sound\csv_parser.hpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\sound\net_event.hpp">
+		<Filter>c_lib\sound</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\openal.hpp">
+		<Filter>c_lib\sound</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\sound\packets.hpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\sound.hpp">
@@ -1755,6 +1835,9 @@
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\wav.hpp">
+		<Filter>c_lib\sound</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\sound\_include.hpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\state\client_state.hpp">
@@ -1785,6 +1868,15 @@
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\perlin_extra.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\river.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\rock_layer.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\tile_generator.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\twister.hpp">
@@ -1823,6 +1915,9 @@
 	<ClInclude Include="..\c_lib\t_hud\crafting_hud.hpp">
 		<Filter>c_lib\t_hud</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_hud\crusher.hpp">
+		<Filter>c_lib\t_hud</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_hud\energy_tanks.hpp">
 		<Filter>c_lib\t_hud</Filter>
 	</ClInclude>
@@ -1851,6 +1946,9 @@
 		<Filter>c_lib\t_hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\chunk_special.hpp">
+		<Filter>c_lib\t_map</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\lighting.hpp">
 		<Filter>c_lib\t_map</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\map_special.hpp">
@@ -1925,6 +2023,9 @@
 	<ClInclude Include="..\c_lib\t_map\glsl\texture.hpp">
 		<Filter>c_lib\t_map\glsl</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\glsl\_interface.hpp">
+		<Filter>c_lib\t_map\glsl</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\net\t_CtoS.hpp">
 		<Filter>c_lib\t_map\net</Filter>
 	</ClInclude>
@@ -1933,6 +2034,12 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\net\t_StoC.hpp">
 		<Filter>c_lib\t_map\net</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\serializer\blocks.hpp">
+		<Filter>c_lib\t_map\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\serializer\_interface.hpp">
+		<Filter>c_lib\t_map\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\server\env_process.hpp">
 		<Filter>c_lib\t_map\server</Filter>
@@ -1946,10 +2053,13 @@
 	<ClInclude Include="..\c_lib\t_map\server\subscription_list.hpp">
 		<Filter>c_lib\t_map\server</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\draw.hpp">
+	<ClInclude Include="..\c_lib\t_mech\mech_draw.hpp">
 		<Filter>c_lib\t_mech</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\state.hpp">
+	<ClInclude Include="..\c_lib\t_mech\mech_state.hpp">
+		<Filter>c_lib\t_mech</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\properties.hpp">
 		<Filter>c_lib\t_mech</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mech\_include.hpp">
@@ -1957,6 +2067,21 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mech\_interface.hpp">
 		<Filter>c_lib\t_mech</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\common\common.hpp">
+		<Filter>c_lib\t_mech\common</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\config\mech_dat.hpp">
+		<Filter>c_lib\t_mech\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\config\_interface.hpp">
+		<Filter>c_lib\t_mech\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\net\CtoS.hpp">
+		<Filter>c_lib\t_mech\net</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\net\StoC.hpp">
+		<Filter>c_lib\t_mech\net</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mob\cAnimationController.hpp">
 		<Filter>c_lib\t_mob</Filter>
