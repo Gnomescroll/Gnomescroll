@@ -26,8 +26,8 @@ AgentState::AgentState()
 seq(-1),
 theta(0), phi(0),
 x(0), y(0), z(0),
-vx(0), vy(0), vz(0),
-jump_pow(0)
+vx(0), vy(0), vz(0)
+//,jump_pow(0)
 {}
 
 Vec3 AgentState::forward_vector()
@@ -182,7 +182,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     float z_gravity = -3.0f / tr2;
     #if DC_CLIENT
     if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
+    //if (!t_map::position_is_loaded(as.x, as.y)) printf("NOT LOADED\n");
     #endif
+    //printf("gravity: %0.2f\n", z_gravity);
     
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 

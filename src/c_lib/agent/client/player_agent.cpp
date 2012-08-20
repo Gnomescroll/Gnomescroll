@@ -258,11 +258,10 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
     cs_local[(index+1)%128].seq = -1;
     //client side tick forward
 
-    struct Agent_control_state acs;
-    acs = cs_local[index];
+    struct Agent_control_state acs = cs_local[index];
 
     int cs_index = (state_history_seq) % 256;
-    class AgentState tmp = state_history[ state_history_index ];
+    class AgentState tmp = state_history[state_history_index];
 
     int stop_index = cs_seq_local;
 
@@ -277,11 +276,17 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
     }
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
-    s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp);
+    s1 = _agent_tick(acs, you->box, s0);
 
     // tick sound motion
     bool s1_on_ground = on_ground(this->you->box.box_r, s1.x, s1.y, s1.z);
     bool camera_on_ground = on_ground(this->you->box.box_r, camera_state.x, camera_state.y, camera_state.z);
+    if (s0.vx || s0.vy || s0.vz || s1.vx || s1.vy || s1.vz)
+    {
+        printf("s0 ");s0.print();
+        printf("s1 ");s1.print();
+        printf("--------------------------\n");
+    }
     player_agent_sound_ground_movement_event(s0, s1, s1_on_ground, camera_on_ground);
 }
 
