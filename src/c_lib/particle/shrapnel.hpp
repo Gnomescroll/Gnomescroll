@@ -52,4 +52,4 @@ class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
         Shrapnel_list() { print_list((char*)this->name(), this); }
 };
     
-}
+}   // Particle

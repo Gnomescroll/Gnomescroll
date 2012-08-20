@@ -80,12 +80,12 @@ const int JETPACK_DECAY_TICKS = 30 * 10;
 namespace AgentHudName
 {
 // setup const config data for coloring
-const struct Color green = {0, 206, 0};
-const struct Color yellow = {228, 222, 20};
-const struct Color orange = {244, 161, 35};
-const struct Color orange_red = {244, 88, 35};
-const struct Color red = {219, 29, 20};
-const struct Color black = {0,0,0};
+const struct Color green = color_init(0, 206, 0);
+const struct Color yellow = color_init(228, 222, 20);
+const struct Color orange = color_init(244, 161, 35);
+const struct Color orange_red = color_init(244, 88, 35);
+const struct Color red = color_init(219, 29, 20);
+const struct Color black = color_init(0,0,0);
 const unsigned int COLOR_COUNT = 5;
 const struct Color health_colors[COLOR_COUNT] = { green, yellow, orange, orange_red, red };
 const float health_color_points[COLOR_COUNT] = { 1.0f, 0.6f, 0.4f, 0.3f, 0.0f };    // anchor health_color_points

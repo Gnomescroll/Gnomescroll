@@ -66,4 +66,4 @@ class ParticleMotion: public ParticleMotionCore
         id(id) {}
 };
 
-}
+}   // Particle

@@ -492,7 +492,7 @@ inline void agent_color_StoC::handle()
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
-    struct Color color = {r,g,b};
+    struct Color color = color_init(r,g,b);
     a->status.set_color(color);
     
     if (this->agent_id == ClientState::playerAgent_state.agent_id)
@@ -579,7 +579,7 @@ inline void colorme_CtoS::handle()
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     if (!r && !g && !b) { r=g=b=1; }    // dont allow 0,0,0 (interpreted as empty voxel)
-    struct Color color = {r,g,b};
+    struct Color color = color_init(r,g,b);
     a->status.set_color(color);
 }
 

@@ -78,15 +78,15 @@ void Grenade::reset()
 {
     this->ttl_max = GRENADE_TTL;
     this->type = GRENADE_TYPE;
-    this->texture_index = GRENADE_TEXTURE_ID;
-    this->scale = GRENADE_TEXTURE_SCALE;
     this->verlet.dampening = GRENADE_DAMP;
+    this->scale = GRENADE_TEXTURE_SCALE;
+    #if DC_CLIENT
+    this->texture_index = GRENADE_TEXTURE_ID;
+    #endif
 }
 
-Grenade::Grenade(int id)
-:
+Grenade::Grenade(int id) :
 ParticleMotion(id, 0,0,0,0,0,0, GRENADE_MASS),
-BillboardSprite(),
 bounce_count(0),
 owner(-1)
 {
@@ -264,4 +264,4 @@ void Grenade_list::draw()
     #endif
 }
 
-}
+}   // Particle

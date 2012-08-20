@@ -114,9 +114,9 @@ void Agent_event::took_damage(int dmg)
         p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
         p.z + a->current_height(),
-        0.0f,0.0f, BB_PARTICLE_DMG_VELOCITY_Z
+        0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z
     );
-    b->set_color(BB_PARTICLE_DMG_COLOR);   // red
+    b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", dmg);
     b->set_text(txt);
@@ -155,9 +155,9 @@ void Agent_event::healed(int amount)
         p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
         p.z + a->current_height(),
-        0.0f,0.0f, BB_PARTICLE_HEAL_VELOCITY_Z
+        0.0f,0.0f, Particle::BB_PARTICLE_HEAL_VELOCITY_Z
     );
-    b->set_color(BB_PARTICLE_HEAL_COLOR);   // red
+    b->set_color(Particle::BB_PARTICLE_HEAL_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", amount);
     b->set_text(txt);

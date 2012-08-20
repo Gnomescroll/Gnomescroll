@@ -61,4 +61,4 @@ class TexturedMinivox_list: public Simple_object_list<TexturedMinivox, MINIVOX_M
         TexturedMinivox_list() { print_list((char*)this->name(), this); }
 };
     
-}
+}   // Particle

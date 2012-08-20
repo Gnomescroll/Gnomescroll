@@ -53,10 +53,10 @@ static const char no_agent_text[] = "No Agent Assigned";
 
 static const char health_format[] = "ENERGY %02d";
 static const char health_color_string[] = "ENERGY";
-static const struct Color HEALTH_GREEN = {10,240,10};
-static const struct Color HEALTH_GREY = {100,100,100};
-static const struct Color HEALTH_WHITE = {255,255,255};
-static const struct Color HEALTH_RED = {240,10,10};
+static const struct Color HEALTH_GREEN = color_init(10,240,10);
+static const struct Color HEALTH_GREY = color_init(100,100,100);
+static const struct Color HEALTH_WHITE = color_init(255,255,255);
+static const struct Color HEALTH_RED = color_init(240,10,10);
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
@@ -256,8 +256,8 @@ void draw_hud_text()
     {   // blinks red/white
         static unsigned int press_help_tick = 0;
         const int press_help_anim_len = 60;
-        const struct Color white = {255,255,255};
-        const struct Color red = {255,10,10};
+        const struct Color white = color_init(255,255,255);
+        const struct Color red = color_init(255,10,10);
         float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
         t -= 1.0f;
         if (t < 0.0f)
@@ -682,7 +682,7 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 
 void ChatRender::draw_cursor()
 {
-    struct Color color = {100, 150, 100};
+    struct Color color = color_init(100, 150, 100);
     using ClientState::playerAgent_state;
     if (playerAgent_state.you != NULL && playerAgent_state.you->status.color_chosen)
         color = playerAgent_state.you->status.color;

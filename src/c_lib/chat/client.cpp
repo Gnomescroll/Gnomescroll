@@ -345,7 +345,7 @@ bool ChatInput::route_command()
     else
     if (!strcmp(cmd, (char*)"color") || !strcmp(cmd, (char*)"colour"))
     {
-        struct Color color = {0};
+        struct Color color = color_init(0,0,0);
         bool valid = true;
 
         int start = i;  // save start cursor

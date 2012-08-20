@@ -165,4 +165,4 @@ void Shrapnel_list::draw()
     glDisable(GL_TEXTURE_2D);
 }
 
-}
+}   // Particle

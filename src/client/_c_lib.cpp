@@ -201,7 +201,6 @@ dont_include_this_file_in_server
 
 #include <hud/text.cpp>
 #include <hud/map.cpp>
-#include <hud/compass.cpp>
 #include <hud/hud.cpp>
 
 /* input */
@@ -372,9 +371,7 @@ int init_c_lib(int argc, char* argv[])
     Skybox::init();
  
     HudReticle::init();
-    Compass::init();
     Hud::init();
-    //vn::init();
 
     VoxDats::init();
     init_voxel_volume();

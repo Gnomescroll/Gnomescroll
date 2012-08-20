@@ -420,9 +420,9 @@ inline void object_took_damage_StoC::handle()
         position.x + (radius * (2*randf() - 1)),
         position.y + (radius * (2*randf() - 1)),
         position.z,
-        0.0f,0.0f, BB_PARTICLE_DMG_VELOCITY_Z
+        0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z
     );
-    b->set_color(BB_PARTICLE_DMG_COLOR);   // red
+    b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", this->damage);
     b->set_text(txt);

@@ -10,9 +10,10 @@ namespace Components
 
 void ColoredVoxelComponent::call()
 {
-    PhysicsComponent* state = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (state == NULL) return;
-    drawColoredMinivox(state->get_position(), this->forward, this->right, this->normal, this->color);
+    GS_ASSERT_LIMIT(false, 1);
+    //PhysicsComponent* state = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    //if (state == NULL) return;
+    //drawColoredMinivox(state->get_position(), this->forward, this->right, this->normal, this->color);
 }
 
 } // Components

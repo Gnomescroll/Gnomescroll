@@ -12,7 +12,8 @@
 //note that c uses row major order
 //glsl uses column major order
 
-struct Mat3 {
+struct Mat3
+{
     union
     {
         float f[3][3];

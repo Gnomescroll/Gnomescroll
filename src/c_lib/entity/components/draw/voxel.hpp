@@ -16,45 +16,13 @@ namespace Components
 class VoxelComponent: public DrawComponent
 {
     private:
-        // TODO -- use euler matrix
+
         void orient_vectors()
         {   // recalculates orientation vectors from angular parameter
-            Vec3 forward, right, normal;
-
-            float theta = this->theta;
-            float phi = this->phi;
-            float size = this->size;
-            
-            forward.x = cosf(theta * PI) * cosf(phi * PI);
-            forward.y = sinf(theta * PI) * cosf(phi * PI);
-            forward.z = sinf(phi);
-            normalize_vector(&forward);
-
-            right.x = cosf(theta*PI + PI/2.0f);
-            right.y = sinf(theta*PI + PI/2.0f);
-            right.z = 0.0f;
-            normalize_vector(&right);
-
-            normal = vec3_cross(forward, right);
-            normalize_vector(&normal);
-            //right = vec3_cross(forward, normal);
-
-            forward = vec3_scalar_mult(forward, size);
-            right = vec3_scalar_mult(right, size);
-            normal = vec3_scalar_mult(normal, size);
-
-            this->forward = forward;
-            this->right = right;
-            this->normal = normal;
-            
-            this->rotation_matrix = mat3_euler_rotation(theta, phi, 0.0f);
+            this->rotation_matrix = mat3_euler_rotation(this->theta, this->phi, 0.0f);
         }
 
     public:
-        // TODO - deprecate vectors
-        Vec3 forward;
-        Vec3 right;
-        Vec3 normal;
 
         struct Mat3 rotation_matrix;    
 
@@ -79,6 +47,12 @@ class VoxelComponent: public DrawComponent
             this->orient_vectors();
         }
 
+        void set_rotation_delta(float dtheta, float dphi)
+        {
+            this->dtheta_speed = dtheta;
+            this->dphi_speed = dphi;
+        }
+
         void delta_rotation(float dtheta_speed, float dphi_speed)
         {
             this->theta += dtheta_speed;
@@ -88,18 +62,8 @@ class VoxelComponent: public DrawComponent
 
         void delta_rotation()
         {
-            this->theta += this->dtheta_speed;
-            this->phi += this->dphi_speed;
-            this->orient_vectors();
-        }
-
-        Vec3 get_center(Vec3 position)
-        {   // takes a positon vector and offsets it by half size in each dimension
-            Vec3 center = position;
-            float offset = this->size * 0.5f;
-            center.x -= offset;
-            center.y -= offset;
-            return center;
+            if (!this->dtheta_speed && !this->dphi_speed) return;
+            this->set_rotation(this->theta + this->dtheta_speed, this->phi + this->dphi_speed);
         }
 
         void init()

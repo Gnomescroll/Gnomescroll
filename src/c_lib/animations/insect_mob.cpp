@@ -7,5 +7,4 @@ dont_include_this_file_in_server
 namespace Animations 
 {
 
-
 }   // Animations

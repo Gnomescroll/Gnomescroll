@@ -6,6 +6,7 @@ dont_include_this_file_in_server
 
 #include <common/compat_gl.h>
 #include <physics/vec3.hpp>
+#include <common/color.hpp>
 
 namespace Animations 
 {
@@ -90,120 +91,130 @@ class VertexElementList1
 
 };
 
-/*
-    Textured vertex element with normal
-*/
-
-struct vertexElement2
-{
-    struct Vec3 pos;
-
-    float tx,ty;
-    struct Vec3 n;
-};
-
-class VertexElementList2
+template <class VertexElement>
+class VertexElementList
 {
     public:
 
-    const static unsigned int stride = sizeof(struct vertexElement2);
+    const static unsigned int stride = sizeof(VertexElement);
 
-    struct vertexElement2* vlist;
+    VertexElement* vlist;
     int vlist_index;
     int vlist_max;
 
     GLuint VBO;
     unsigned int vertex_number;
 
-    VertexElementList2()
+    VertexElementList() :
+    vlist_index(0), vlist_max(1024),
+    VBO(0), vertex_number(0)
     {
-        VBO = 0;
-        vertex_number = 0;
-
-        vlist_index = 0;
-        vlist_max = 1024;
-        vlist = (vertexElement2*) malloc(vlist_max*sizeof(struct vertexElement2));
+        this->vlist = (VertexElement*) malloc(this->vlist_max*sizeof(VertexElement));
     }
 
-    ~VertexElementList2()
+    ~VertexElementList()
     {
         if (this->vlist != NULL) free(this->vlist);
     }
 
     __attribute__((always_inline))
-    void push_vertex(struct Vec3 pos, float tx, float ty, struct Vec3 normal)
-     {
-        vlist[vlist_index].pos = pos;
-        vlist[vlist_index].tx = tx;
-        vlist[vlist_index].ty = ty;
-        vlist[vlist_index].n = normal;
+    void push_vertex(struct Vec3 position, struct Vec3 normal, float tx, float ty)
+    {
+        this->vlist[this->vlist_index].position = position;
+        this->vlist[this->vlist_index].normal   = normal;
+        this->vlist[this->vlist_index].tx       = tx;
+        this->vlist[this->vlist_index].ty       = ty;
 
-        vlist_index++;
+        this->vlist_index++;
 
-        if(vlist_index >= vlist_max)
+        if(this->vlist_index >= this->vlist_max)
         {
-            vlist_max *= 2;
-            vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
+            this->vlist_max *= 2;
+            this->vlist = (VertexElement*) realloc(this->vlist, this->vlist_max*sizeof(VertexElement));
         }
-     }
+    }
      
     __attribute__((always_inline))
-    void push_vertex(struct Vec3 pos, float tx, float ty)
-     {
-        vlist[vlist_index].pos = pos;
-        vlist[vlist_index].tx = tx;
-        vlist[vlist_index].ty = ty;
-
-        vlist_index++;
-
-        if(vlist_index >= vlist_max)
-        {
-            vlist_max *= 2;
-            vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
-        }
-     }
-     
-    void compute_face_normals(unsigned int vertex_stride)
+    void push_vertex(struct Vec3 position, float tx, float ty)
     {
-        GS_ASSERT(vertex_stride == 3 || vertex_stride == 4);
-        GS_ASSERT(this->vlist_index % vertex_stride == 0);
-        for (int i=0; i<this->vlist_index; i+=vertex_stride)
+        this->vlist[this->vlist_index].position = position;
+        this->vlist[this->vlist_index].tx       = tx;
+        this->vlist[this->vlist_index].ty       = ty;
+
+        this->vlist_index++;
+
+        if(this->vlist_index >= this->vlist_max)
         {
-            struct Vec3 a = vec3_sub(this->vlist[i+1].pos, this->vlist[i].pos);
-            normalize_vector(&a);
-            struct Vec3 b = vec3_sub(this->vlist[i+vertex_stride-1].pos, this->vlist[i].pos);
-            normalize_vector(&b);
-            struct Vec3 n = vec3_cross(a,b);
-            normalize_vector(&n);
-            for (unsigned int j=0; j<vertex_stride; j++)
-                this->vlist[i+j].n = n;
+            this->vlist_max *= 2;
+            this->vlist = (VertexElement*) realloc(this->vlist, this->vlist_max*sizeof(VertexElement));
         }
     }
 
-    //upload data to card for drawing
-    void buffer()
+    __attribute__((always_inline))
+    void push_vertex(struct Vec3 position, struct Vec3 normal, struct Color color)
     {
-        if(VBO == 0) glGenBuffers(1, &VBO);
+        this->vlist[this->vlist_index].position = position;
+        this->vlist[this->vlist_index].normal   = normal;
+        this->vlist[this->vlist_index].color    = color;
 
-        if(vlist_index != 0)
+        this->vlist_index++;
+
+        if (this->vlist_index >= this->vlist_max)
         {
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
-            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
-        } 
-        else
+            this->vlist_max *= 2;
+            this->vlist = (VertexElement*) realloc(this->vlist, this->vlist_max*sizeof(VertexElement));
+        }
+    }
+
+    void buffer()
+    {   // upload data to card for drawing
+        if (this->VBO == 0) glGenBuffers(1, &this->VBO);
+
+        if (this->VBO != 0)
         {
-            if(vertex_number > 0) 
+            if (this->vlist_index != 0)
             {
-                glBindBuffer(GL_ARRAY_BUFFER, VBO);
-                glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+                glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+                glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, NULL, GL_DYNAMIC_DRAW);   // clears data or something
+                glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, vlist, GL_DYNAMIC_DRAW);
+            } 
+            else
+            {
+                if (this->vertex_number > 0) 
+                {
+                    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+                    glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+                }
             }
         }
-
-        vertex_number = vlist_index;
-        vlist_index = 0;
+        
+        this->vertex_number = this->vlist_index;
+        this->vlist_index = 0;
     }
-
 };
+
+struct VertexElementTexture
+{
+    struct Vec3 position;
+    float tx,ty;
+};
+
+struct VertexElementTextureNormal
+{
+    struct Vec3 position;
+    struct Vec3 normal;
+    float tx,ty;
+};
+
+struct VertexElementColorNormal
+{
+    struct Vec3 position;
+    struct Vec3 normal;
+    struct Color color;
+};
+
+typedef class VertexElementList<struct VertexElementTexture> VertexElementListTexture;
+typedef class VertexElementList<struct VertexElementTextureNormal> VertexElementListTextureNormal;
+typedef class VertexElementList<struct VertexElementColorNormal> VertexElementListColor;
 
 }   // Animations

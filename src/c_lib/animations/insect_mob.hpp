@@ -25,7 +25,7 @@ class SHADER insect_mob_shader;
 //unsigned int insect_mob_Vertex;
 unsigned int insect_mob_TexCoord;
 
-VertexElementList2* insect_mob_vlist = NULL;
+VertexElementListTexture* insect_mob_vlist = NULL;
 
 /*
 static inline void im_push_vertex(struct Vec3 pos, float tx, float ty)
@@ -49,7 +49,7 @@ void init_insect_mob()
     //insect_mob_vlist = new vertexElement2[4096];
     //insect_mob_vlist_index = 0;
 
-    insect_mob_vlist = new VertexElementList2;
+    insect_mob_vlist = new VertexElementListTexture;
 
     //glGenBuffers(1, &insect_mob_vbo);
 
@@ -60,7 +60,7 @@ void init_insect_mob()
 void teardown_insect_mob()
 {
     GS_ASSERT(false);
-    delete insect_mob_vlist;
+    if (insect_mob_vlist != NULL) delete insect_mob_vlist;
 }
 
 void init_insect_mob_texture()
@@ -303,8 +303,6 @@ void Insect_mob_list::draw()
     GS_ASSERT(insect_mob_vlist->VBO != 0);
     if (insect_mob_vlist->VBO == 0) return;
 
-    const static unsigned int stride = sizeof(struct vertexElement2);
-
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
@@ -317,8 +315,10 @@ void Insect_mob_list::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(insect_mob_TexCoord);
 
-    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
-    glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
+    int offset = 0;
+    glVertexPointer(3, GL_FLOAT, insect_mob_vlist->stride, (GLvoid*)offset);
+    offset += 3 * sizeof(GL_FLOAT);
+    glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, insect_mob_vlist->stride, (GLvoid*)offset);
 
     glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist->vertex_number);
 
