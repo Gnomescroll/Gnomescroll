@@ -147,7 +147,7 @@ inline bool collision_check_final_z(float box_r, float box_h, float x, float y, 
     const float step_size = 0.9f;
     int steps = (int)ceil(box_h/step_size);
 
-    *top=false;
+    *top = false;
     for (int i=0; i<=steps; i++)
     {
         int zz = (int)(z + i*step_size);
@@ -158,12 +158,12 @@ inline bool collision_check_final_z(float box_r, float box_h, float x, float y, 
         if (zz > (z+box_h))
             zz = (int)(z + box_h);
 
-        if( isSolid(x_max,y_max,zz) || //north, west
+        if(isSolid(x_max,y_max,zz) || //north, west
             isSolid(x_max,y_min,zz) || //north, east
             isSolid(x_min,y_min,zz) || //south, east
-            isSolid(x_min,y_max,zz) )  //south, west
-        return true;
-
+            isSolid(x_min,y_max,zz))  //south, west
+            return true;
     }
+
     return false;
 }
