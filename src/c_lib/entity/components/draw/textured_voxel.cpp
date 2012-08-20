@@ -21,7 +21,7 @@ void TexturedVoxelComponent::set_texture()
 
     const float pixel_w = 1.0f/((float)cube_surface_w);
 
-    this->sprite_width = pixel_w*pix;
+    this->sprite_width = pixel_w*(float)pix;
 
     int itx,ity;
     float ftx,fty;
@@ -37,15 +37,9 @@ void TexturedVoxelComponent::set_texture()
     int margin = cube_w - pix;
     GS_ASSERT(margin >= 0);
 
-    //0 0 randrange(1,1) - 1;
-    //1 0, 1,-1 randrange(1,3) - 2;
-    //2 0, 1, 2, -1, -2 randrange(1, 5) - 3;
-    //3 0, 1, 2, 3, -1, -2, -3 randrange(1, 7) - 4;
+    int mx = randrange(0, margin);// - (margin+1);
+    int my = randrange(0, margin);// - (margin+1);
 
-    // random offset in x,y within texture quad to sample
-    int mx = randrange(1, (margin*2)+1) - (margin+1);
-    int my = randrange(1, (margin*2)+1) - (margin+1);
-    
     // ...scaled to texture
     float fx = ((float)mx) * pixel_w;
     float fy = ((float)my) * pixel_w;

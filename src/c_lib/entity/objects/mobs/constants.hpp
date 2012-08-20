@@ -81,7 +81,7 @@ const struct Color MONSTER_BOX_ANIMATION_COLOR = color_init(223,31,31);
 const int MONSTER_BOX_ANIMATION_COUNT = 5*5*5;
 //const int MONSTER_BOX_ANIMATION_COUNT_MAX = 5*5*5;
 const float MONSTER_BOX_ANIMATION_SIZE = 0.2f;
-const float MONSTER_BOX_ANIMATION_FORCE = 20.0f;
+const float MONSTER_BOX_ANIMATION_FORCE = 10.0f;
 
 // motion
 const float MONSTER_BOX_MOTION_SIGHT_RANGE = 50.0f;

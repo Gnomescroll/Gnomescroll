@@ -36,7 +36,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
 
     float theta,phi;
 
-    Particle::TexturedMinivox* minivox;
+    class Particle::TexturedMinivox* minivox;
     
     for (int i=0; i < n; i++)
     {
@@ -60,9 +60,12 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         if (minivox == NULL) return;
         ttl = randrange(60,95);
         minivox->set_ttl(ttl);
-        minivox->set_texture(tex_id);
-        minivox->set_angles(theta, phi);
+        minivox->voxel.texture_index = tex_id;
+        minivox->voxel.pixel_width = 2;
+        minivox->voxel.set_texture();
         minivox->set_size(crumble_size);
+        minivox->voxel.set_rotation_delta((randf()* 0.04f) - 0.02f, (randf()* 0.04f) - 0.02f);
+        minivox->voxel.set_rotation(theta, phi);
         minivox->set_state(nx,ny,nz, vx,vy,vz);
     }
 }
@@ -140,7 +143,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     side[1] = (side[1]) ? 0 : 1;
     side[2] = (side[2]) ? 0 : 1;
 
-    Particle::TexturedMinivox* minivox;
+    class Particle::TexturedMinivox* minivox;
 
     float vx,vy,vz;
     float nx,ny,nz;
@@ -169,11 +172,14 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->set_texture(tex_id);
         ttl = randrange(75,85);
         minivox->set_ttl(ttl);
+        minivox->voxel.texture_index = tex_id;
+        minivox->voxel.pixel_width = 2;
+        minivox->voxel.set_texture();
         minivox->set_size(vox_size);
-        minivox->set_angles(theta, phi);
+        minivox->voxel.set_rotation_delta((randf()* 0.04f) - 0.02f, (randf()* 0.04f) - 0.02f);
+        minivox->voxel.set_rotation(theta, phi);
         minivox->set_state(nx,ny,nz, vx,vy,vz);
     }
 }

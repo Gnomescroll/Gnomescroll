@@ -72,21 +72,21 @@ static void prep_textured_voxel_particles()
 {
     GS_ASSERT(textured_voxel_particle_vlist != NULL);
     if (textured_voxel_particle_vlist == NULL)
-    {
-        textured_voxel_particle_vlist->vertex_number = 0;
         return;
-    }
 
-    // TODO -- read other lists
-    class ItemParticle::ItemParticle_list* list = ItemParticle::item_particle_list;
-    GS_ASSERT(list != NULL);
-    if (list == NULL)
+    class ItemParticle::ItemParticle_list* item_list = ItemParticle::item_particle_list;
+    GS_ASSERT(item_list != NULL);
+
+    class Particle::TexturedMinivox_list* particle_list = Particle::textured_minivox_list;
+    GS_ASSERT(particle_list != NULL);
+    
+    if (item_list == NULL && particle_list == NULL)
     {
         textured_voxel_particle_vlist->vertex_number = 0;
         return;
     }
     
-    if (list->n_max <= 0 || list->num <= 0)
+    if ((item_list->n_max <= 0 || item_list->num <= 0) && (particle_list->n_max <= 0 || particle_list->num <= 0))
     {
         textured_voxel_particle_vlist->vertex_number = 0;
         return;
@@ -96,9 +96,9 @@ static void prep_textured_voxel_particles()
     static struct Vec3 vn[6];      //normals
     static struct Vec3 veb2[6*4];  //vertex array for rendering
 
-    for (int i=0; i<list->n_max; i++)
+    for (int i=0; i<item_list->n_max; i++)
     {
-        class ItemParticle::ItemParticle* item = list->a[i];
+        class ItemParticle::ItemParticle* item = item_list->a[i];
         if (item == NULL) continue;
         if (!item->is_voxel || !item->should_draw) continue;
         item->voxel.delta_rotation(0.01f, 0.0f);
@@ -156,6 +156,66 @@ static void prep_textured_voxel_particles()
             textured_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], tx_max, ty_min);
         }
     }
+
+    // iterate particle animations
+    for (unsigned int i=0; i<particle_list->num; i++)
+    {
+        class Particle::TexturedMinivox* particle = &particle_list->a[i];
+        particle->voxel.delta_rotation();
+        
+        // frustum test
+        float size = particle->voxel.size;
+        struct Vec3 p = quadrant_translate_position(current_camera_position, particle->verlet.position);
+        struct Vec3 center = p;
+        center.x += size;
+        center.y += size;
+        if (sphere_fulstrum_test(center.x, center.y, center.z, size) == false) continue;
+
+        p.z += size;   // render offset
+
+        float tx_min = particle->voxel.tx;
+        float tx_max = particle->voxel.tx + particle->voxel.sprite_width;
+        float ty_min = particle->voxel.ty;
+        float ty_max = particle->voxel.ty + particle->voxel.sprite_width;
+
+        for (int i=0; i<8; i++)
+        {
+            veb[i].x = size*v_set2[3*i+0];
+            veb[i].y = size*v_set2[3*i+1];
+            veb[i].z = size*v_set2[3*i+2];
+        }
+
+        //rotate normals
+        for (int i=0; i<6; i++)
+        {
+            vn[i] = vec3_apply_rotation(v_normal_vec3[i], particle->voxel.rotation_matrix);   //rotate
+        }
+
+        //rotate and translate cube vertices
+        for (int i=0; i<8; i++)
+        {
+            veb[i] = vec3_apply_rotation(veb[i], particle->voxel.rotation_matrix);  //rotate
+            veb[i] = vec3_add(p, veb[i]);                           //translate
+        }
+
+        //copy vertices into quad
+        for (int i=0; i<6; i++)
+        {
+            veb2[4*i+0] = veb[q_set[4*i+0]];
+            veb2[4*i+1] = veb[q_set[4*i+1]];
+            veb2[4*i+2] = veb[q_set[4*i+2]];
+            veb2[4*i+3] = veb[q_set[4*i+3]];
+        }
+
+        // draw voxel
+        for (int i=0; i<6; i++)
+        {
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], tx_min, ty_min);
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], tx_min, ty_max);
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+2], vn[i], tx_max, ty_max);
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], tx_max, ty_min);
+        }
+    }
     
     textured_voxel_particle_vlist->buffer();
 }
@@ -164,10 +224,7 @@ static void prep_colored_voxel_particles()
 {
     GS_ASSERT(colored_voxel_particle_vlist != NULL);
     if (colored_voxel_particle_vlist == NULL)
-    {
-        colored_voxel_particle_vlist->vertex_number = 0;
         return;
-    }
     
     class Particle::ColoredMinivox_list* list = Particle::colored_minivox_list;
     GS_ASSERT(list != NULL);

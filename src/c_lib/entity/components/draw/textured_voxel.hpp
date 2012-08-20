@@ -12,22 +12,23 @@ namespace Components
 
 class TexturedVoxelComponent: public VoxelComponent
 {
-    private:        
-        void set_texture();
-
     public:
         // Not configurable:
         float tx,ty;
         float sprite_width;
 
+        // Must configure
         int texture_index;
         int pixel_width;
         
+        void set_texture();
+
         void init()
         {
             VoxelComponent::init();
             this->set_texture();
         }
+
         void call();
         inline void draw(Vec3 position) __attribute__((always_inline));
 

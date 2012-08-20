@@ -335,15 +335,15 @@ int run()
 
         GL_ASSERT(GL_BLEND, false);
 
-        glColor3ub(255,255,255);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
-        glBegin(GL_QUADS);
+        //glColor3ub(255,255,255);
+        //glEnable(GL_TEXTURE_2D);
+        //glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
+        //glBegin(GL_QUADS);
 
-        Particle::textured_minivox_list->draw();
-        Components::textured_voxel_component_list->call();
+        //Particle::textured_minivox_list->draw();
+        //Components::textured_voxel_component_list->call();    // TODO -- remove this component
 
-        glEnd();
+        //glEnd();
 
         CHECK_GL_ERROR();
 
@@ -353,18 +353,17 @@ int run()
         GL_ASSERT(GL_BLEND, false);
 
         glColor3ub(255,255,255);
+        glEnable(GL_TEXTURE_2D);
         /* 
             Alpha tested non-transparent
         */
-        
+
         Animations::render_block_damage(); //GL blend with depth test on
         ItemParticle::draw();
         Animations::draw_textured_voxel_particles(); //moved out of transparent
         GL_ASSERT(GL_BLEND, false);
 
         CHECK_GL_ERROR();
-
-
 
         /*
             Transparent
