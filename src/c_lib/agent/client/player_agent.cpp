@@ -281,12 +281,12 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
     // tick sound motion
     bool s1_on_ground = on_ground(this->you->box.box_r, s1.x, s1.y, s1.z);
     bool camera_on_ground = on_ground(this->you->box.box_r, camera_state.x, camera_state.y, camera_state.z);
-    if (s0.vx || s0.vy || s0.vz || s1.vx || s1.vy || s1.vz)
-    {
-        printf("s0 ");s0.print();
-        printf("s1 ");s1.print();
-        printf("--------------------------\n");
-    }
+    //if (s0.vx || s0.vy || s0.vz || s1.vx || s1.vy || s1.vz)
+    //{
+        //printf("s0 ");s0.print();
+        //printf("s1 ");s1.print();
+        //printf("--------------------------\n");
+    //}
     player_agent_sound_ground_movement_event(s0, s1, s1_on_ground, camera_on_ground);
 }
 

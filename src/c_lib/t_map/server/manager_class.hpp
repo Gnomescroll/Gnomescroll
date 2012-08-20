@@ -326,7 +326,7 @@ void Map_manager::update()
 void Map_manager::que_for_sub(int x, int y)
 {
 
-    if( chunk_que_num == MAP_CHUNK_QUE_SIZE)
+    if (chunk_que_num == MAP_CHUNK_QUE_SIZE)
     {
         printf("Map_manager::que_for_sub: Warning chunk_que_num == MAP_CHUNK_QUE_SIZEs \n" );
         return;
@@ -343,15 +343,9 @@ void Map_manager::que_for_sub(int x, int y)
     struct QUE_ELEMENT q; 
 
     q.version = version_list[index].version;   //save version
-    //printf("version = %hx \n", q.version);
 
-    {
-        //int _x = xpos - (x*16 + 8);
-        //int _y = ypos - (y*16 + 8);
-        //q.distance2 = _x*_x + _y*_y;
-        q.xpos = 16*x + 8;
-        q.ypos = 16*y + 8;
-    }
+    q.xpos = 16*x + 8;
+    q.ypos = 16*y + 8;
     q.index = index;
 
     chunk_que[chunk_que_num] = q;
