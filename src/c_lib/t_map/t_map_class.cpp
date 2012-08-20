@@ -669,9 +669,9 @@ namespace t_map
         GS_ASSERT(c != NULL);
 
         if(c == NULL)
-            return 0
+            return 0;
 
-        return c->height_cache[ ((y&15)<<4) + (x&15) ]
+        return c->height_cache[ ((y&15)<<4) + (x&15) ];
     }
 
 

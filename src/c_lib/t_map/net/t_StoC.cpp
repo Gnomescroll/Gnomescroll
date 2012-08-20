@@ -95,7 +95,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     memcpy( (char *) m->e, DECOMPRESSION_BUFFER, _size);
 
-    refresh_height_cache(cx,cy); //refesh height cache after memcpy
+    m->refresh_height_cache(); //refesh height cache after memcpy
     main_map->chunk_received(cx,cy);
 }
 
@@ -123,7 +123,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 */
 
     memcpy( (char *) m->e, buff, byte_num);
-    refresh_height_cache(cx,cy); //refesh height cache after memcpy
+    m->refresh_height_cache(); //refesh height cache after memcpy
 
 
     main_map->chunk_received(cx,cy);
