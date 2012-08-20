@@ -183,71 +183,94 @@ void update_skylight_out(int x, int y, int z)
 
 }
 
+//call this when removing a block
 void update_skylight_in(int x, int y, int z)
 {
     //int li = get_skylight(x,y,z);
 
+    if(isSolid(x,y,z))
+    {
+        GS_ASSERT(false);
+        return;
+    }
     //technically, if top block of height map
     if( get_skylight(x,y,z+1) == 15 )
     {
-        set_skylight(x,y,z+1);
-        update_skylight_out(x,y,z);
+
+        /*
+            BUG:
+            Fails on removing block capping a column?
+        */
+
+        int _z = z;
+        //assume first element is not solid
+        while(1)
+        {
+            set_skylight(x,y,_z,15);
+            if(isSolid(x,y,_z-1) || _z==0)
+                break;
+            _z--;
+        }
+
+        for(int tz=_z; tz <= z; tz++)
+            update_skylight_out(x,y,tz);
+
         return;
     }
     int li = 0;
 
-    int _x,_y,_z, tl;
+    int _x,_y,_z, tli;
 
     //x
     _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _y = y;
     _z = z;
 
-    tl = get_skylight(_x,_y,_z);
-    if(ti > li )   //do a single get block for this!!
-        li = ti;
+    tli = get_skylight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
 
     _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _y = y;
     _z = z;
 
-    tl = get_skylight(_x,_y,_z);
-    if(ti > li )   //do a single get block for this!!
-        li = ti;
+    tli = get_skylight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
 
     //y
     _x = x;
     _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _z = z;
 
-    tl = get_skylight(_x,_y,_z);
-    if(ti > li )   //do a single get block for this!!
-        li = ti;
+    tli = get_skylight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
 
     _x = x;
     _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _z = z;
 
-    tl = get_skylight(_x,_y,_z);
-    if(ti > li )   //do a single get block for this!!
-        li = ti;
+    tli = get_skylight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
 
     //z
     _x = x;
     _y = y;
     _z = (z+1) % 128;
 
-    tl = get_skylight(_x,_y,_z);
-    if(ti > li )   //do a single get block for this!!
-        li = ti;
+    tli = get_skylight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
 
     _x = x;
     _y = y;
     _z = (z+127)%128;
 
-    tl = get_skylight(_x,_y,_z);
-    if(ti > li )   //do a single get block for this!!
-        li = ti;
+    tli = get_skylight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
 
 
     if(li != 0)
