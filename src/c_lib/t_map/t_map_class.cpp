@@ -650,8 +650,6 @@ namespace t_map
 
     inline int Terrain_map::get_height(int x, int y)
     {
-        GS_ASSERT(z >= 0 && z < 128);
-
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -659,7 +657,10 @@ namespace t_map
 
         GS_ASSERT(c != NULL);
 
-        
+        if(c == NULL)
+            return 0
+
+        return c->height_cache[ ((y&15)<<4) + (x&15) ]
     }
 
 
