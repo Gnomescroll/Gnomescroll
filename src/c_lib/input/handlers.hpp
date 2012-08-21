@@ -1,8 +1,5 @@
 #pragma once
 
-#define PRODUCTION 1
-
-
 const int SDL_EVENT_USER_NONE = 0;
 const int SDL_EVENT_USER_TRIGGER = 1;
 

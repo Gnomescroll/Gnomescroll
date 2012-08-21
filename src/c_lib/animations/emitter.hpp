@@ -81,6 +81,7 @@ class MiningLaserEmitter
                 this->particles[i].update_type();
                 float jitter = randf() * 0.1f;
                 this->particles[i].verlet.position = vec3_add(this->position, vec3_scalar_mult(this->direction, jitter));
+                this->particles[i].verlet.position = translate_position(this->particles[i].verlet.position);
             }
             if (this->start < 0 && this->particles[i].ttl == 0) this->start = i;
         }
@@ -104,6 +105,7 @@ class MiningLaserEmitter
             float len = this->base_length * dv;
             this->particles[i].verlet.position = vec3_add(this->position, vec3_scalar_mult(this->direction, len));
             this->particles[i].verlet.position = vec3_add(this->particles[i].verlet.position, vec3_scalar_mult(this->direction, ddv*j));
+            this->particles[i].verlet.position = translate_position(this->particles[i].verlet.position);
             this->particles[i].verlet.velocity = this->velocity;
             if (last == this->particles[i].ttl) j++;
             else j = 0;

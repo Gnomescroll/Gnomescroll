@@ -208,6 +208,7 @@ bool VerletComponent::collide_no_gravity()
 void VerletComponent::move_no_gravity()
 {
     this->position = vec3_add(this->position, vec3_scalar_mult(this->velocity, dt));
+    this->position = translate_position(this->position);
 }
 
 

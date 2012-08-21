@@ -1,7 +1,5 @@
 #pragma once
 
-#define PRODUCTION 1
-
 struct MouseMotionAverage* get_mouse_render_state(int t);
 
 int init_input();
