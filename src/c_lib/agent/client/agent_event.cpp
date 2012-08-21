@@ -175,11 +175,11 @@ void Agent_event::died()
             close_all_containers();
             //Sound::died();
         }
-        else
-        {
-            Vec3 p = this->a->get_position();
+        //else
+        //{
+            //Vec3 p = this->a->get_position();
             //Sound::died(p.x, p.y, p.z, 0,0,0);
-        }
+        //}
         this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
     }
@@ -241,7 +241,7 @@ void Agent_event::set_agent_vox_status(AgentVoxStatus status)
 
 void Agent_event::reload_weapon(int type)
 {
-    Vec3 p = this->a->get_position();
+    //Vec3 p = this->a->get_position();
     //Sound::reload(p.x, p.y, p.z, 0,0,0);
     // play reload animation/sound for the weapon
 }

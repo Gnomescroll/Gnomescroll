@@ -57,6 +57,8 @@ int main(int argc, char* argv[])
     printf("Debug build\n");
     #endif
 
+    printf("Server version: %d\n", DC_VERSION);
+
     #ifdef __APPLE__
     set_working_directory_to_Resources();
     #endif
