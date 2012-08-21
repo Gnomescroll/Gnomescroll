@@ -172,7 +172,10 @@ void network_tick()
         NetClient::flush_to_net();
 
         if (!NetClient::Server.version_match())
+        {
+            printf("Shutdown net client\n");
             NetClient::shutdown_net_client();
+        }
         poll_mouse();
 }
 

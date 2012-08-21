@@ -111,7 +111,7 @@ void update_hud_draw_settings()
     hud_draw_settings.connected = Server.connected;
     // if version has been set and mismatch, show version mismatch
     // if force disconnected and version has not been set, show version mismatch
-    hud_draw_settings.version_mismatch = ((Server.version && !Server.version_match()) || (Server.force_disconnected() && !Server.version));
+    hud_draw_settings.version_mismatch = (!Server.version_match() || (Server.force_disconnected() && !Server.version));
     
     hud_draw_settings.server_full = Server.full();
     

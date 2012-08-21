@@ -73,8 +73,8 @@ class NetPeer
     //void push_python_message(class Net_message* nm);
 
     bool version_match()
-    {
-        return (this->version && this->version == DC_VERSION);
+    {   // will return true if version has not been set yet
+        return (this->version == 0 || this->version == DC_VERSION);
     }
 
     bool force_disconnected()
