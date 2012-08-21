@@ -7,6 +7,15 @@
 
 extern NetMessageArray_pool net_message_array_pool;
 
+typedef enum
+{
+    DISCONNECT_NONE = 0,    // enet sets it as 0 for its internal disconnects
+    DISCONNECT_TIMEOUT,
+    DISCONNECT_GRACEFULLY,
+    DISCONNECT_FULL,
+    DISCONNECT_FORCED
+}   DisconnectType;
+
 namespace NetClient
 {
 

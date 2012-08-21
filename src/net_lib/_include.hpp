@@ -33,10 +33,10 @@
 #include <net_lib/net_StoC.cpp>
 #include <net_lib/net_CtoS.cpp>
 
-#ifdef DC_SERVER
+#if DC_SERVER
 #include <net_lib/common/net_peer_manager.cpp>
 #endif
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 //#include <net_lib/benchmark/pviz.c>
 #endif

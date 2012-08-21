@@ -48,6 +48,7 @@ class NetPeer
     int connected;
     bool version_match;
     bool kill;
+    int disconnect_code;
     
     ENetPeer *  enet_peer;
 

@@ -10,15 +10,16 @@ client_id(-1),
 connected(0),
 version_match(true),
 kill(false),
+disconnect_code(DISCONNECT_TIMEOUT),
 enet_peer(NULL)
 {
-#if DC_SERVER
+    #if DC_SERVER
     map_message_buffer = new char[ NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT ];
     map_message_buffer_index = 0;
     map_message_buffer_max = NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT;
-#else
+    #else
     map_message_buffer = NULL;
-#endif
+    #endif
 }
 
 NetPeer::~NetPeer()
@@ -51,11 +52,14 @@ void NetPeer::push_python_message(class Net_message* nm)
 
 void NetPeer::flush_map_messages()
 {
+    // TODO -- check if (this->kill)
     if (enet_peer == NULL) return;
     if (map_message_buffer_index == 0) return;
     //printf("Flushing %i map bytes \n", map_message_buffer_index);
     ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send (enet_peer, 3, map_p);
+    int ret = enet_peer_send (enet_peer, 3, map_p);
+    if (ret < 0)
+        enet_packet_destroy(map_p);
     map_message_buffer_index = 0;
 }
 
@@ -82,27 +86,23 @@ void NetPeer::flush_to_net()
     {
         ENetPacket* reliable_p = enet_packet_create(NULL, reliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
         reliable_message_manager.serialize_messages( (char*) reliable_p->data, 0); //error
-        enet_peer_send (enet_peer, 0, reliable_p);
+        int ret = enet_peer_send (enet_peer, 0, reliable_p);
+        if (ret < 0)
+            enet_packet_destroy(reliable_p);
     }
 
     if (unreliable_message_manager.pending_messages != 0) 
     {
         ENetPacket* unreliable_p = enet_packet_create(NULL, unreliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
         unreliable_message_manager.serialize_messages( (char*)unreliable_p->data, 0);
-        enet_peer_send (enet_peer, 0, unreliable_p);
+        int ret = enet_peer_send (enet_peer, 0, unreliable_p);
+        if (ret < 0)
+            enet_packet_destroy(unreliable_p);
     }
-/*
-    if (python_message_manager.pending_messages != 0) 
-    {
-        //printf("Python Pending bytes out = %i \n", python_message_manager.pending_bytes_out);
-        ENetPacket* python_p = enet_packet_create(NULL, python_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
-        python_message_manager.serialize_messages( (char*)python_p->data, 0); //error
-        enet_peer_send (enet_peer, 2, python_p);
-    }
-*/
-#if DC_SERVER
+
+    #if DC_SERVER
     flush_map_messages();
-#endif
+    #endif
 /*
     int n1 = 0;
     int seq = get_next_sequence_number(this);
