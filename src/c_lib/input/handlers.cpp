@@ -55,7 +55,8 @@ void disable_agent_container()
     
     t_hud::disable_agent_container_hud();
     ItemContainer::close_inventory();
-    if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
+    //if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
+    if (SDL_GetAppState() & SDL_APPINPUTFOCUS)    // dont change mouse state if we're not in focus. it grabs the window
         input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
@@ -1133,24 +1134,27 @@ void active_event_handler(SDL_Event* event)
     else
     if (event->active.state & SDL_APPACTIVE)
         input_state.app_active = gained;
-    
-    // handle alt tab
-    if (event->active.state & SDL_APPINPUTFOCUS || event->active.state & SDL_APPMOUSEFOCUS)
-    {
-        if (event->active.gain)
+
+    if (!input_state.container_block && !input_state.agent_container)
+    {   // only do this if container/inventory not open 
+        // handle alt tab
+        if (event->active.state & SDL_APPINPUTFOCUS)
         {
-            if (!input_state.container_block && !input_state.agent_container)
+            if (event->active.gain)
             {
                 input_state.mouse_bound = input_state.rebind_mouse;
                 input_state.rebind_mouse = false;
             }
-        }
-        else
-        {
-            // only write the rebind_mouse state if it wasnt set by a container opening
-            if (!input_state.container_block && !input_state.agent_container)
+            else
+            {
                 input_state.rebind_mouse = input_state.mouse_bound;
-            input_state.mouse_bound = false;
+                input_state.mouse_bound = false;
+            }
         }
     }
+
+    //if (event->active.state & SDL_APPINPUTFOCUS || event->active.state & SDL_APPMOUSEFOCUS)
+        //if (event->active.gain)
+            //input_state.mouse_bound = input_state.rebind_mouse;
+
 }
