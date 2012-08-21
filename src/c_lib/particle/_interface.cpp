@@ -88,6 +88,7 @@ void begin_particle_draw()
     GL_ASSERT(GL_BLEND, true);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     
