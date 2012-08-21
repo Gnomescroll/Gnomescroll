@@ -343,38 +343,33 @@ def install_bin(ctx):
     global out
     OS = platform.system()
 
-    try:    # installs binary to ./run and ./client
+    if OS == 'Windows':
+        run_target = 'run.exe'
+        run_dest = 'run.exe'
+    else:
         run_target = 'run'
-        if OS == 'Windows':
-            run_dest = 'run.exe'
-        else:
-            run_dest = 'run'
-        try:
-            src = os.path.join(out, run_target)
-            dest = './' + run_dest
-            shutil.copy2(src,dest)
-            print "Copied %s to %s" % (src,dest,)
-        except Exception, e:
-            pass
-        #if OS == 'Linux':
-            #try:
-                #shutil.copy2('./run', './client')
-            #except Exception, e:
-                #pass
+        run_dest = 'run'
+    try:
+        src = os.path.join(out, run_target)
+        dest = os.path.join('./', run_dest)
+        shutil.copy2(src, dest)
+        print "Copied %s to %s" % (src, dest,)
     except Exception, e:
-        print "error copying binaries to ./"
-        print e
-        pass
+        print "Failed to copy %s to %s. Reason: %s" % (src, dest, e,)
         
     try:
-        c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
-        src = os.path.join(out, c_lib_target)
-        dest = './' + c_lib_target
-        shutil.copy2(src,dest)
-        print "Copied %s to %s" % (src,dest,)
+        if OS == 'Windows': # copy dlls into directory, so Cell can run the exe from the folder.
+            dll_path = '../lib/win32/dll/'
+            dlls = os.listdir(dll_path)
+            dlls = [dll for dll in dlls if dll.endswith('dll')]
+            for dll in dlls:
+                src_dll = os.path.join(dll_path, dll)
+                dst_dll = os.path.join('./', dll)
+                shutil.copy2(src_dll, dst_dll)
+            print "Copied dlls to current directory"
     except Exception, e:
-        pass
-
+        print "Error copying dlls from %s to current directory. Reason: %s" % (dll_path, e,)
+                
 #def ensure_dir(path):
     #try:
         #os.makedirs(path)
