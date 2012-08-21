@@ -410,19 +410,50 @@ void dispatch_network_events()
             /* Clean up the packet now that we're done using it. */
             enet_packet_destroy (event.packet);
             break;
-           
         }
+
+        if (ret != 0)
+        {   // invalid data in packets, disconnect client
+            if (event.peer != NULL)
+            {
+                GS_ASSERT(event.peer->data != NULL);
+                int client_id = -1;
+                if (event.peer->data != NULL)
+                {
+                    client_id = ((class NetPeer*)event.peer->data)->client_id;
+                    ((class NetPeer*)event.peer->data)->kill = true;
+                }
+                printf("Force disconnecting client %d for sending bad packets.\n", client_id);
+            }
+        }
+
+        ret = 0;
+    }
+
+    for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+    {
+        NetPeer* peer = NetServer::staging_pool[i];
+        if (peer == NULL)
+            peer = NetServer::pool[i];
+        if (peer != NULL && peer->kill)
+            kill_client(peer);
     }
     
-    if (ret == -2 || ret == -3)
-    {   // invalid data in packets, disconnect client
-        GS_ASSERT(event.peer->data != NULL);
-        int client_id = -1;
-        if (event.peer->data != NULL)
-            client_id = ((class NetPeer*)event.peer->data)->client_id;
-        printf("Force disconnecting client %d for sending bad packets.\n", client_id);
-        kill_client(event.peer);
-    }
+    //if (ret == -2 || ret == -3)
+    //{   // invalid data in packets, disconnect client
+        //printf("enet peer: %p\n", event.peer);
+        //GS_ASSERT(event.peer == NULL);
+        //GS_ASSERT(event.peer != NULL);
+        //if (event.peer != NULL)
+        //{
+            //GS_ASSERT(event.peer->data != NULL);
+            //int client_id = -1;
+            //if (event.peer->data != NULL)
+                //client_id = ((class NetPeer*)event.peer->data)->client_id;
+            //printf("Force disconnecting client %d for sending bad packets.\n", client_id);
+            //kill_client(event.peer);
+        //}
+    //}
 }
 
 static void client_connect(ENetEvent* event)
@@ -541,19 +572,17 @@ static void client_disconnect(ENetEvent* event)
     delete npm;
 }
 
-void kill_client(ENetPeer* peer)
+void kill_client(class NetPeer* peer)
 {
     GS_ASSERT(peer != NULL);
     if (peer == NULL) return;
-    enet_peer_disconnect(peer, 1);
+    GS_ASSERT(peer->enet_peer != NULL);
+    if (peer->enet_peer != NULL)
+        enet_peer_disconnect(peer->enet_peer, 1);
     
     // log it
-    GS_ASSERT(peer->data != NULL);
-    if (peer->data != NULL)
-    {
-        int client_id = ((class NetPeer*)peer->data)->client_id;
-        NetServer::users->record_client_force_disconnect(client_id);
-    }
+    int client_id = peer->client_id;
+    NetServer::users->record_client_force_disconnect(client_id);
 }
 
 void flush_to_net()

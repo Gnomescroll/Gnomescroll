@@ -166,6 +166,8 @@ void network_tick()
         */
         poll_mouse();
 
+        send_bullshit_data();
+
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 

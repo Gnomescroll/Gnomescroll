@@ -9,6 +9,7 @@ NetPeer::NetPeer()
 client_id(-1),
 connected(0),
 version_match(true),
+kill(false),
 enet_peer(NULL)
 {
 #if DC_SERVER

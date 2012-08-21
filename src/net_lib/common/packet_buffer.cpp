@@ -153,6 +153,16 @@ class Net_message* Net_message::acquire(unsigned int length)
 #endif
 }
 
+class Net_message* arbitrary_acquire(unsigned int size)
+{
+    if (size == 0) return NULL;
+    class Net_message* nm = net_message_pool.acquire();
+    nm->len = size;
+    net_message_buffer_pool.get_char_buffer(size, &nm->buff, &nm->b); //set buffer and set char pool
+    nm->reference_count = 0;
+    return nm;
+}
+
 /* NetMessageManager */
 
 NetMessageManager::NetMessageManager()

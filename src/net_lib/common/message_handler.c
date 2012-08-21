@@ -123,7 +123,7 @@ int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, uns
 
         //printf("%d Receiving packet %d,%d\n", _in++, message_id, size);
 
-        if (*n+size-1 > max_n) 
+        if ((*n)+size-1 > max_n) 
         { // > or >= ?
             printf("ERROR! message processor would read past end of packet!\n");
 
@@ -147,7 +147,7 @@ int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, uns
         if (server_handler_array[message_id] == NULL) 
         {
             printf("message_handler error: no handler for message_id=%i\n", message_id);
-            return -5;
+            return -4;
         }
         server_handler_array[message_id](buff, *n, &read_bytes, client_id);
         #endif
@@ -175,7 +175,7 @@ int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, uns
         return -1; 
     }
 
-    return -6; //should not happen
+    return -5; //should not happen
 }
 
 

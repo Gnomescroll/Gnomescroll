@@ -27,6 +27,27 @@
     have a "start" and "fast send" function for server to client packets sent to multiple clients
 */
 
+void send_bullshit_data()
+{
+    
+    unsigned int size = 0;
+    do
+    {
+        size = rand()&0xff;
+    } while (size == 0);
+
+    class Net_message* nm = arbitrary_acquire(size);
+    GS_ASSERT(nm != NULL);
+    if (nm == NULL) return;
+    
+    unsigned int buff_n = 0;
+    unsigned int message_id = rand()&0xff;
+    pack_message_id(message_id, nm->buff, &buff_n);
+    for (unsigned int i=buff_n; i<size; i++)
+        nm->buff[i] = rand()&0xff;
+    NetClient::Server.push_unreliable_message(nm);
+}
+
 template <class Derived>
 class FixedSizeNetPacketToServer {
     private:

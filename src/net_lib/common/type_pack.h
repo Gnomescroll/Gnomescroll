@@ -32,21 +32,23 @@ static inline void pack_string(char* str, unsigned int len, char* buff, unsigned
 //combined pack/unpack
 
 
-static inline void pack_message_id(uint8_t message_id, char* buff, unsigned int* buff_n) {
+static inline void pack_message_id(uint8_t message_id, char* buff, unsigned int* buff_n)
+{
     *((uint8_t*)(buff+*buff_n)) = message_id;
-    *buff_n += (int)sizeof(uint8_t);
+    *buff_n += (unsigned int)sizeof(uint8_t);
 }
 
-static inline void unpack_message_id(uint8_t* message_id, char* buff, unsigned int* buff_n) {
+static inline void unpack_message_id(uint8_t* message_id, char* buff, unsigned int* buff_n)
+{
     *message_id = *((uint8_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(uint8_t);
+    *buff_n += (unsigned int)sizeof(uint8_t);
 }
 
 static inline void pack_float(float* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true) *((float*)(buff+*buff_n)) = *x;
     if (pack == false) *x = *((float*)(buff+*buff_n));
-    *buff_n += (int)sizeof(float);
+    *buff_n += (unsigned int)sizeof(float);
 }
 
 static inline void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, bool pack)
@@ -60,49 +62,49 @@ static inline void pack_32(int32_t* x, char* buff, unsigned int* buff_n, bool pa
 {
     if (pack == true)    *((int32_t*)(buff+*buff_n)) = *x;
     if (pack == false)   *x = *((int32_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(int32_t);
+    *buff_n += (unsigned int)sizeof(int32_t);
 }
 
 static inline void pack_u32(uint32_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((uint32_t*)(buff+*buff_n)) = *x;
     if (pack == false)   *x = *((uint32_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(uint32_t);
+    *buff_n += (unsigned int)sizeof(uint32_t);
 }
 
 static inline void pack_u32_t(uint32_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((uint32_t*)(buff+*buff_n)) = *x;
     if (pack == false)   *x = *((uint32_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(uint32_t);
+    *buff_n += (unsigned int)sizeof(uint32_t);
 }
 
 static inline void pack_16(int16_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((int16_t*)(buff+*buff_n)) = *x; 
     if (pack == false)   *x = *((int16_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(int16_t);
+    *buff_n += (unsigned int)sizeof(int16_t);
 }
 
 static inline void pack_u16(uint16_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((uint16_t*)(buff+*buff_n)) = *x; 
     if (pack == false)   *x = *((uint16_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(uint16_t);
+    *buff_n += (unsigned int)sizeof(uint16_t);
 }
 
 static inline void pack_8(int8_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((int8_t*)(buff+*buff_n)) = *x; 
     if (pack == false)   *x = *((int8_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(int8_t);
+    *buff_n += (unsigned int)sizeof(int8_t);
 }
 
 static inline void pack_u8(uint8_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((uint8_t*)(buff+*buff_n)) = *x; 
     if (pack == false)   *x = *((uint8_t*)(buff+*buff_n));
-    *buff_n += (int)sizeof(uint8_t);
+    *buff_n += (unsigned int)sizeof(uint8_t);
 }
 
 static inline void pack_string(char* str, unsigned int len, char* buff, unsigned int* buff_n, bool pack)

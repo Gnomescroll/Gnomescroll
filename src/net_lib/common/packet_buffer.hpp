@@ -99,3 +99,5 @@ class NetMessageManager
     void serialize_messages(char* buff_, unsigned int index);
 
 };
+
+class Net_message* arbitrary_acquire(unsigned int size);

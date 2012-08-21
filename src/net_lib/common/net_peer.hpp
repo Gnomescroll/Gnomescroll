@@ -47,7 +47,8 @@ class NetPeer
     int client_id;
     int connected;
     bool version_match;
-
+    bool kill;
+    
     ENetPeer *  enet_peer;
 
     //uint32_t ip;
