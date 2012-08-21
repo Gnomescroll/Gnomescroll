@@ -7,6 +7,9 @@ syntax: glob
 
 *.exe
 
+stdout.txt
+stderr.txt
+
 netclient/*.dll
 server/*.dll
 
