@@ -279,6 +279,11 @@ void update_input_state()
     input_state.sensitivity = Options::sensitivity;
     if (Hud::hud_draw_settings.zoom)
         input_state.sensitivity *= ZOOM_SENSITIVITY_SCALE;
+
+    Uint8 app_state = SDL_GetAppState();
+    input_state.input_focus = (app_state & SDL_APPMOUSEFOCUS);
+    input_state.mouse_focus = (app_state & SDL_APPINPUTFOCUS);
+    input_state.app_active   = (app_state & SDL_APPACTIVE);
 }
 
 // keys that can be held down
