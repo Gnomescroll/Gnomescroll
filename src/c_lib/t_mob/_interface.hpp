@@ -16,6 +16,20 @@ extern "C"
 namespace t_mob
 {
 
+//mesh, vertices and bone weights
+class MeshList
+{
+
+
+};
+
+
+//bone positions, apply to MeshList to render
+class Pose
+{
+
+
+};
 
 
 class BoneTree
