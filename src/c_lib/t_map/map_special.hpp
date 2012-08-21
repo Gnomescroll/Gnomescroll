@@ -582,7 +582,7 @@ void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, 
 
 
 
-int calculate_tex(int face, int tex, int i, int j)
+int calculate_tex(int face, int i, int j)
 {
     const int UL = 17;
     const int UM = 18;
@@ -654,7 +654,7 @@ void ControlNodeRenderer::control_node_render_update()
             if(!isSolid(x,y,z) && !isSolid(x,y,z+1) )
             {
                 int face = 0;   //orientation
-                int tex = calculate_tex(face, tex, i,j);
+                int tex = calculate_tex(face, i,j);
                 _insert_control_node_render_element(x,y,z, face, tex);
             }
         }
@@ -670,7 +670,7 @@ void ControlNodeRenderer::control_node_render_update()
             if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
             {
                 int face = 1;   //orientation
-                int tex = calculate_tex(face, tex, i,j);
+                int tex = calculate_tex(face, i,j);
                 _insert_control_node_render_element(x,y,z, face, tex);
             }
         }
@@ -686,7 +686,7 @@ void ControlNodeRenderer::control_node_render_update()
             if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
             {
                 int face = 2;   //orientation
-                int tex = calculate_tex(face, tex, i,j);
+                int tex = calculate_tex(face, i,j);
                 _insert_control_node_render_element(x,y,z, face, tex);
             }
         }
@@ -702,7 +702,7 @@ void ControlNodeRenderer::control_node_render_update()
             if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
             {
                 int face = 3;   //orientation
-                int tex = calculate_tex(face, tex, i,j);
+                int tex = calculate_tex(face, i,j);
                 _insert_control_node_render_element(x,y,z, face, tex);
             }
         }
@@ -718,7 +718,7 @@ void ControlNodeRenderer::control_node_render_update()
             if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
             {
                 int face = 4;   //orientation
-                int tex = calculate_tex(face, tex, i,j);
+                int tex = calculate_tex(face, i,j);
                 _insert_control_node_render_element(x,y,z, face, tex);
             }
         }
@@ -734,7 +734,7 @@ void ControlNodeRenderer::control_node_render_update()
             if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
             {
                 int face = 5;   //orientation
-                int tex = calculate_tex(face, tex, i,j);
+                int tex = calculate_tex(face, i,j);
                 _insert_control_node_render_element(x,y,z, face, tex);
             }
         }

@@ -631,7 +631,7 @@ namespace t_map
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_ELEMENT element = {{{value, 0,0,0}}};
+        struct MAP_ELEMENT element = {{{(unsigned char)value, 0,0,0}}};
         set_element(x,y,z, element);
         #if DC_CLIENT
         update_heights(x,y,z,value);

@@ -85,7 +85,7 @@ class FixedSizeNetPacketToServer {
         //will overflow if more than 128 bytes
         unsigned int _size()
         {
-            char buff[128];
+            char buff[128] = {0};
             unsigned int buff_n = 0;
             unsigned int size = 0;
             unserialize(buff, &buff_n, &size);
@@ -153,7 +153,7 @@ class FixedSizeReliableNetPacketToServer {
         //will overflow if more than 128 bytes
         unsigned int _size()
         {
-            char buff[128];
+            char buff[128] = {0};
             unsigned int buff_n = 0;
             unsigned int size = 0;
             unserialize(buff, &buff_n, &size);

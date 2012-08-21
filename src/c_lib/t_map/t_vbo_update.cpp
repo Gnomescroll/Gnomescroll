@@ -215,7 +215,7 @@ const char _pallet[ 3*(_pallet_num) ] =
 const int _pallet_num = 1;
 const char _pallet[ 3*(_pallet_num) ] = 
 {
-    0xff, 0xff,0xff
+    (char)0xff, (char)0xff, (char)0xff
 /*
     0x3d, 0x52,0x5e,
     0xa0, 0xa0,0xa0,
