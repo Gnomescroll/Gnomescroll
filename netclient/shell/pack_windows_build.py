@@ -74,11 +74,15 @@ def run(conf):
         'zlib1.dll',
         'SDL.dll',
         'SDL_image.dll',
-        'libpng12-0.dll'
+        'libpng12-0.dll',
+        'libgcc_s_dw2-1.dll',
+        'libstdc++-6.dll'
         ]
         
     for dll in dlls:
-        copyfile(os.path.join('../lib/win32/dll/', dll), os.path.join(build_path, dll))
+    	dll_src_path = os.path.join('../lib/win32/dll/', dll)
+    	assert os.path.exists(dll_src_path)
+        copyfile(dll_src_path, os.path.join(build_path, dll))
     
     # only zip and copy for production builds
     if conf != 'production':
@@ -94,8 +98,13 @@ def run(conf):
     zip_path = os.path.join(dropbox_path, build_name + '.zip')
     if os.path.exists(zip_path):
         os.remove(zip_path)
-    subprocess.call('zip -r %s %s' % (pipes.quote(zip_path), pipes.quote(build_path),), shell=True)
-
+    
+    # set working directory to where the build folder is
+    curdir = os.path.abspath(os.curdir)
+    os.chdir(build_path)
+    # execute zip
+    subprocess.call('zip -r %s *' % (pipes.quote(zip_path),), shell=True)
+    os.chdir(curdir)
         
 if __name__ == '__main__':
     conf = 'production'
