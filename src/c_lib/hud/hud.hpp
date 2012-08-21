@@ -67,6 +67,7 @@ class HUD
     Text* help;
     Text* disconnected;
     Text* version_mismatch;
+    Text* server_full;
     Text* dead;
     Text* fps;
     Text* ping;

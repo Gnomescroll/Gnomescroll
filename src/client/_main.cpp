@@ -166,13 +166,12 @@ void network_tick()
         */
         poll_mouse();
 
-        send_bullshit_data();
+        //send_bullshit_data();
 
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
-
-        if (!NetClient::Server.version_match)
+        if (!NetClient::Server.version_match())
             NetClient::shutdown_net_client();
         poll_mouse();
 }
@@ -180,10 +179,7 @@ void network_tick()
 void prep_draw()
 {
     poll_mouse();
-
-
     poll_mouse();
-
 }
 
 
@@ -212,19 +208,16 @@ int run()
     while (!input_state.quit)
     {
         if (signal_exit) break;
-        if(_quit) break;
+        if (_quit) break;
 
         frame_graph->frame_start();
 
         // update mouse
         poll_mouse();
 
-
         update_input_state();   //WARNING: DOES NOT UPDATE MOUSE OR KEYBOARD
 
         physics_tick();
-
-
 
         frame_graph->frame_stage(1); // misc stuff and network
 
@@ -236,32 +229,13 @@ int run()
 
         frame_graph->frame_stage(2); // call draw functions
 
-
         Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
         ClientState::update_for_draw();
 
-
-
-
-
-        //-- TESTING --//
-        //if (ClientState::playerAgent_state.you != NULL)
-            //Animations::create_mining_laser_particle(ClientState::playerAgent_state.you->get_center(), ClientState::playerAgent_state.you->s.forward_vector());
-        //-- TESTING --//
-
-        
-
-
-
         poll_mouse();
 
-
-
-        /*
-            Start World Projetion
-        */
-
+        // Start World Projetion
         
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
@@ -269,9 +243,8 @@ int run()
 
         poll_mouse();
 
-        /*
-            Prep for draw
-        */
+        // Prep for draw
+
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
 
@@ -281,9 +254,7 @@ int run()
 
         t_mech::prep();
 
-        /*
-            Map
-        */
+        // Map
 
         poll_mouse();
         

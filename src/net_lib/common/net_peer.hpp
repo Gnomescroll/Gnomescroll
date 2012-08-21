@@ -5,6 +5,7 @@
 //#include <net_lib/common/sequencer.h>
 //#include <net_lib/common/python_channel.hpp>
 
+#include <net_lib/common/types.hpp>
 #include <net_lib/common/packet_buffer.hpp>
 
 #include <net_lib/enet/enet.h>
@@ -46,9 +47,9 @@ class NetPeer
     public:
     int client_id;
     int connected;
-    bool version_match;
+    int version;
     bool kill;
-    int disconnect_code;
+    DisconnectType disconnect_code;
     
     ENetPeer *  enet_peer;
 
@@ -71,6 +72,20 @@ class NetPeer
     void push_reliable_message(class Net_message* nm);
     //void push_python_message(class Net_message* nm);
 
+    bool version_match()
+    {
+        return (this->version && this->version == 2);
+    }
+
+    bool force_disconnected()
+    {
+        return (this->disconnect_code == DISCONNECT_FORCED);
+    }
+
+    bool full()
+    {
+        return (this->disconnect_code == DISCONNECT_FULL);
+    }
 
     void flush_map_messages();
     void resize_map_message_buffer(unsigned int size_min);

@@ -21,14 +21,14 @@ NetPeer** pool = NULL;
 NetPeer** staging_pool = NULL;
 class NetPeerManager** clients = NULL;
 
-Agent_state** agents = NULL;
+class Agent_state** agents = NULL;
 
 class UserRecorder* users = NULL;
 
 FILE* session_log_file = NULL;
 FILE* population_log_file = NULL;
 
-void assign_agent_to_client(int client_id, Agent_state* a)
+void assign_agent_to_client(int client_id, class Agent_state* a)
 {
     GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
     agents[client_id] = a;
@@ -44,7 +44,7 @@ void init_globals()
     pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
     staging_pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
     clients = (NetPeerManager**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeerManager*));
-    agents = (Agent_state**)calloc(HARD_MAX_CONNECTIONS, sizeof(Agent_state*));
+    agents = (class Agent_state**)calloc(HARD_MAX_CONNECTIONS, sizeof(class Agent_state*));
     users = new UserRecorder;
 
     const char* time_str = get_time_str();

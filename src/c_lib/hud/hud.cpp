@@ -43,6 +43,7 @@ static const char help_text[] =
 ;
 
 static const char disconnected_text[] = "Server not connected.";
+static const char server_full_text[] = "Server is full.";
 static const char version_mismatch_text[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
 static const char dead_text[] = "You died.";
 static const char fps_format[] = "%3.2ffps";
@@ -68,7 +69,8 @@ static struct HudDrawSettings
     bool cube_selector;
     bool help;
     bool connected;
-    bool version_match;
+    bool version_mismatch;
+    bool server_full;
     bool dead;
     float fps_val;
     int ping_val;
@@ -104,9 +106,14 @@ void init_hud_draw_settings()
 void update_hud_draw_settings()
 {
     hud_draw_settings.draw = input_state.draw_hud;
+
+    using NetClient::Server;
+    hud_draw_settings.connected = Server.connected;
+    // if version has been set and mismatch, show version mismatch
+    // if force disconnected and version has not been set, show version mismatch
+    hud_draw_settings.version_mismatch = ((Server.version && !Server.version_match()) || (Server.force_disconnected() && !Server.version));
     
-    hud_draw_settings.connected = NetClient::Server.connected;
-    hud_draw_settings.version_match = NetClient::Server.version_match;
+    hud_draw_settings.server_full = Server.full();
     
     hud_draw_settings.zoom = current_camera->zoomed;
     static int block_placer_type = Item::get_item_type("block_placer");
@@ -222,21 +229,24 @@ void draw_hud_text()
     HudFont::set_properties(large_text_size);
     set_texture();
 
-    if (!hud_draw_settings.connected && hud_draw_settings.version_match)
+    if (!hud_draw_settings.connected && !hud_draw_settings.version_mismatch && !hud_draw_settings.server_full)
     {
         hud->disconnected->draw_centered();
         end_font_draw();
         return;
     }
 
-    if (hud_draw_settings.confirm_quit && hud_draw_settings.version_match)
+    if (hud_draw_settings.confirm_quit && !hud_draw_settings.version_mismatch && !hud_draw_settings.server_full)
         hud->confirm_quit->draw_centered();
     else
     {
         if (hud_draw_settings.dead)
             hud->dead->draw_centered();
-        if (!hud_draw_settings.version_match)
+        if (hud_draw_settings.version_mismatch)
             hud->version_mismatch->draw_centered();
+        else
+        if (hud_draw_settings.server_full)
+            hud->server_full->draw_centered();
     }
 
     if (hud_draw_settings.map)
@@ -468,6 +478,13 @@ void HUD::init()
     version_mismatch->set_text(version_mismatch_text);
     version_mismatch->set_color(255,10,10,255);
     version_mismatch->set_position(_xresf/2, _yresf/2);
+
+    server_full = text_list->create();
+    GS_ASSERT(server_full != NULL);
+    if (server_full == NULL) return;
+    server_full->set_text(server_full_text);
+    server_full->set_color(255,10,10,255);
+    server_full->set_position(_xresf/2, _yresf/2);
     
     dead = text_list->create();
     GS_ASSERT(dead != NULL);
@@ -567,6 +584,8 @@ HUD::HUD()
 inited(false),
 help(NULL),
 disconnected(NULL),
+version_mismatch(NULL),
+server_full(NULL),
 dead(NULL),
 fps(NULL),
 ping(NULL),
@@ -587,6 +606,10 @@ HUD::~HUD()
         text_list->destroy(help->id);
     if (disconnected != NULL)
         text_list->destroy(disconnected->id);
+    if (version_mismatch != NULL)
+        text_list->destroy(version_mismatch->id);
+    if (server_full != NULL)
+        text_list->destroy(server_full->id);
     if (dead != NULL)
         text_list->destroy(dead->id);
     if (fps != NULL)

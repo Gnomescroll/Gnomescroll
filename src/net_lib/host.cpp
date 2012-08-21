@@ -112,20 +112,17 @@ static void client_disconnect(ENetEvent* event)
         printf("Client disconnected from server\n");
     else
     if (event->data == DISCONNECT_FORCED)
-    {
         printf("Client was force disconnected by server\n");
-
-        // show version mismatch here if we didnt get a version confirmation TODO
-    }
     else
     if (event->data == DISCONNECT_FULL)
         printf("Could not connect to server: server full\n");
     else
         printf("Client disconnected from server\n");
 
-    event->peer -> data = NULL;
+    event->peer->data = NULL;
     //enet_peer_reset(event->peer); //TEST
     
+    NetClient::Server.disconnect_code = (DisconnectType)event->data;
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
 

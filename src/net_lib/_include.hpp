@@ -21,6 +21,8 @@
     #include <enet/unix.c>
 #endif
 
+#include <net_lib/common/types.hpp>
+
 #include <net_lib/host.cpp>
 #include <net_lib/global.cpp>
 

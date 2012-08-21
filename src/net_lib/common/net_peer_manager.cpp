@@ -69,7 +69,7 @@ void NetPeerManager::version_passed(int client_id)
 
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
 
-    Agent_state* a = ServerState::agent_list->create(client_id);
+    class Agent_state* a = ServerState::agent_list->create(client_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     NetServer::assign_agent_to_client(client_id, a);
@@ -97,7 +97,7 @@ void NetPeerManager::ready()
     if (this->loaded)
         return;
     
-    Agent_state* a = NetServer::agents[this->client_id];
+    class Agent_state* a = NetServer::agents[this->client_id];
     if (a==NULL)
     {
         printf("ERROR NetPeerManager::ready() -- Agent %d UNKNOWN!!\n", this->client_id);
@@ -152,7 +152,7 @@ void NetPeerManager::send_remaining_state()
 
 void NetPeerManager::teardown()
 {
-    Agent_state* a = NetServer::agents[this->client_id];
+    class Agent_state* a = NetServer::agents[this->client_id];
     GS_ASSERT(a != NULL);
     if (a != NULL)
     {
