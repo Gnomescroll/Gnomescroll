@@ -74,7 +74,7 @@ class NetPeer
 
     bool version_match()
     {
-        return (this->version && this->version == 2);
+        return (this->version && this->version == DC_VERSION);
     }
 
     bool force_disconnected()
