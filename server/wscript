@@ -217,6 +217,9 @@ def install_bin(ctx):
     global out
     OS = platform.system()
 
+    if OS == "Linux":
+        return
+
     dests = []
     if OS == "Windows":
         dests = ['run.exe']
