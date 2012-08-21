@@ -213,6 +213,44 @@ def install_bin(ctx):
     except Exception, e:
         pass
 
+def install_bin(ctx):
+    global out
+    OS = platform.system()
+
+    dests = []
+    if OS == "Windows":
+        dests = ['run.exe']
+    else:
+        dests = ['run']
+    if OS == "Linux":
+        dests.append('gnomescroll_server')
+        
+    run_target = 'run'
+    if OS == 'Windows':
+        run_target = 'run.exe'
+        
+    for run_dest in dests:
+        try:
+            src = os.path.join(out, run_target)
+            dest = os.path.join('./', run_dest)
+            shutil.copy2(src, dest)
+            print "Copied %s to %s" % (src, dest,)
+        except Exception, e:
+            print "Failed to copy %s to %s. Reason: %s" % (src, dest, e,)
+        
+    try:
+        if OS == 'Windows': # copy dlls into directory, so Cell can run the exe from the folder.
+            dll_path = '../lib/win32/dll/'
+            dlls = os.listdir(dll_path)
+            dlls = [dll for dll in dlls if dll.endswith('dll')]
+            for dll in dlls:
+                src_dll = os.path.join(dll_path, dll)
+                dst_dll = os.path.join('./', dll)
+                shutil.copy2(src_dll, dst_dll)
+            print "Copied dlls to current directory"
+    except Exception, e:
+        print "Error copying dlls from %s to current directory. Reason: %s" % (dll_path, e,)
+        
 #def ensure_dir(path):
     #try:
         #os.makedirs(path)
