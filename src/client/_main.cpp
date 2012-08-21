@@ -161,22 +161,19 @@ int physics_tick()
 
 void network_tick()
 {
-        /*
-            Networking
-        */
-        poll_mouse();
+    /*
+        Networking
+    */
+    poll_mouse();
 
-        //send_bullshit_data();
+    //send_bullshit_data();
 
-        NetClient::client_dispatch_network_events();
-        NetClient::flush_to_net();
+    NetClient::client_dispatch_network_events();
+    NetClient::flush_to_net();
 
-        if (!NetClient::Server.version_match())
-        {
-            printf("Shutdown net client\n");
-            NetClient::shutdown_net_client();
-        }
-        poll_mouse();
+    if (!NetClient::Server.version_match())
+        NetClient::shutdown_net_client();
+    poll_mouse();
 }
 
 void prep_draw()

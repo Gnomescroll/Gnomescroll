@@ -160,7 +160,7 @@ void enable_quit()
 void toggle_confirm_quit()
 {
     #if PRODUCTION
-    if (!NetClient::Server.version_match)
+    if (!NetClient::Server.version_match())
         enable_quit();
     else
         input_state.confirm_quit = (!input_state.confirm_quit);
@@ -171,28 +171,20 @@ void toggle_confirm_quit()
 
 void toggle_skeleton_editor()
 {
-    #if PRODUCTION
-    input_state.skeleton_editor = false;
-    #else
     input_state.skeleton_editor = (!input_state.skeleton_editor);
     if (input_state.skeleton_editor)
         printf("Skeleton editor enabled\n");
     else
         printf("Skeleton editor disabled\n");
-    #endif
 }
 
 void toggle_equipped_sprite_adjuster()
 {
-    #if PRODUCTION
-    input_state.equipped_sprite_adjuster = false;
-    #else
     input_state.equipped_sprite_adjuster = (!input_state.equipped_sprite_adjuster);
     if (input_state.equipped_sprite_adjuster)
         printf("Equipped sprite adjuster enabled\n");
     else
         printf("Equipped sprite adjuster disable\n");
-    #endif
 }
 
 void toggle_input_mode()
@@ -802,10 +794,8 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_k:
-                #if !PRODUCTION
                 if (input_state.admin_controls)
                     input_state.frustum = (!input_state.frustum);
-                #endif
                 break;
 
             case SDLK_l:
@@ -835,8 +825,10 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_o:
+                #if !PRODUCTION
                 if (input_state.admin_controls)
                     toggle_skeleton_editor();
+                #endif
                 break;
                 
             
@@ -1143,12 +1135,15 @@ void active_event_handler(SDL_Event* event)
         input_state.app_active = gained;
     
     // handle alt tab
-    if (event->active.state & SDL_APPINPUTFOCUS)
+    if (event->active.state & SDL_APPINPUTFOCUS || event->active.state & SDL_APPMOUSEFOCUS)
     {
         if (event->active.gain)
         {
-            input_state.mouse_bound = input_state.rebind_mouse;
-            input_state.rebind_mouse = false;
+            if (!input_state.container_block && !input_state.agent_container)
+            {
+                input_state.mouse_bound = input_state.rebind_mouse;
+                input_state.rebind_mouse = false;
+            }
         }
         else
         {

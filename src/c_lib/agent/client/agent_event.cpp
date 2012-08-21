@@ -173,12 +173,12 @@ void Agent_event::died()
         if (a->is_you())
         {
             close_all_containers();
-            Sound::died();
+            //Sound::died();
         }
         else
         {
             Vec3 p = this->a->get_position();
-            Sound::died(p.x, p.y, p.z, 0,0,0);
+            //Sound::died(p.x, p.y, p.z, 0,0,0);
         }
         this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
@@ -242,7 +242,7 @@ void Agent_event::set_agent_vox_status(AgentVoxStatus status)
 void Agent_event::reload_weapon(int type)
 {
     Vec3 p = this->a->get_position();
-    Sound::reload(p.x, p.y, p.z, 0,0,0);
+    //Sound::reload(p.x, p.y, p.z, 0,0,0);
     // play reload animation/sound for the weapon
 }
 
@@ -288,10 +288,10 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
             {
                 Vec3 c = vv->get_center();
                 Animations::blood_spray(c.x, c.y, c.z, f.x, f.y, f.z);
-                Sound::pick_hit_agent(  // TODO: play weapon sound from a config
-                    c.x, c.y, c.z, 
-                    0,0,0
-                );
+                //Sound::pick_hit_agent(  // TODO: play weapon sound from a config
+                    //c.x, c.y, c.z, 
+                    //0,0,0
+                //);
             }
         }
     }
