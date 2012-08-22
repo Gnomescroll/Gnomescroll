@@ -596,7 +596,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
     aiNode* FindNodeRecursivelyByName(aiNode* pNode, char* node_name)
     {
 
-
+        return NULL;
     }
 
     void draw(float x, float y, float z)
@@ -637,7 +637,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 //print_mat4(mat);
 
 
-                aiNode* node = FindNodeRecursivelyByName( scene->mRootNode, bone->mName);
+                aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName);
                 // start with the mesh-to-bone matrix 
                 Mat4 boneMatrix = bone->mOffsetMatrix;
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
