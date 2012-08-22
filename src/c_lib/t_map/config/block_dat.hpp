@@ -191,13 +191,9 @@ void load_block_dat()
     push_texture();
 
     cube_def(25, SolidBlock, "rock_layer");
-    //iso_texture(t1,7,8);
     iso_texture(t1,8,8);
-    //iso_texture(t1,9,8);
-    //iso_texture(t1,8,9);
-    //iso_texture(t1,9,9);
     push_texture();
-    hud_def(6,1, t1,1,8);
+    hud_def(6,1, t1,8,8);
 
     cube_def(26, SolidBlock, "graphite");
     iso_texture(t1,10,6);
