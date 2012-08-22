@@ -2,6 +2,7 @@
 
 #include <animations/mining_laser.hpp>
 #include <camera/fulstrum_test.hpp>
+#include <item/common/constant.hpp>
 
 namespace Animations
 {
@@ -46,6 +47,8 @@ class MiningLaserEmitter
         int ttl_max;
         int start;
         float h_mult;   // height adjustment for sprite
+        int texture_row;
+        int laser_type;
 
     bool in_frustum()
     {
@@ -78,7 +81,7 @@ class MiningLaserEmitter
             if (this->particles[i].ttl >= this->ttl_max)
             {
                 this->particles[i].ttl = 0;
-                this->particles[i].update_type();
+                this->particles[i].update_type(this->texture_row);
                 float jitter = randf() * 0.1f;
                 this->particles[i].verlet.position = vec3_add(this->position, vec3_scalar_mult(this->direction, jitter));
                 this->particles[i].verlet.position = translate_position(this->particles[i].verlet.position);
@@ -165,10 +168,13 @@ class MiningLaserEmitter
         this->on = false;
     }
 
+    void set_laser_type(int type);
+
     MiningLaserEmitter()
     : on(false), position(vec3_init(0,0,0)), direction(vec3_init(1,0,0)),
     count(MINING_LASER_EMITTER_PARTICLE_COUNT), speed(MINING_LASER_PARTICLE_SPEED),
-    base_length(4.0f), length(4.0f), ttl_max((base_length/speed)*30), start(0), h_mult(0.0f)
+    base_length(4.0f), length(4.0f), ttl_max((base_length/speed)*30), start(0), h_mult(0.0f),
+    texture_row(0), laser_type(NULL_ITEM_TYPE)
     {
         this->set_count();
         this->set_base_length(4.0f);

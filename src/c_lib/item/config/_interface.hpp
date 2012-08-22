@@ -189,7 +189,7 @@ void set_crafting_reagent(const char* item_name, int quantity)
 
 void end_crafting_recipe()
 {
-    GS_ASSERT(crafting_recipe_count <= MAX_CRAFTING_RECIPE);
+    GS_ASSERT(crafting_recipe_count < MAX_CRAFTING_RECIPE);
     
     GS_ASSERT(_cr.reagent_num > 0);
     GS_ASSERT(_cr.output != NULL_ITEM_TYPE);
@@ -203,17 +203,16 @@ void end_crafting_recipe()
     for (int i=0; i<crafting_recipe_count; i++)
     {
         if (crafting_recipe_array[i].reagent_num != _cr.reagent_num) continue;
-        for (int j=0; j<crafting_recipe_array[i].reagent_num; j++)
-        {
+        int j=0;
+        for (; j<crafting_recipe_array[i].reagent_num; j++)
             if (crafting_recipe_array[i].reagent[j] != _cr.reagent[j]) break;
+        if (j == crafting_recipe_array[i].reagent_num)
             matching_recipes++;
-        }
     }
-    GS_ASSERT(matching_recipes <= CRAFT_BENCH_OUTPUTS_MAX);
-    if(matching_recipes > CRAFT_BENCH_OUTPUTS_MAX)
-    {
+    GS_ASSERT(matching_recipes < CRAFT_BENCH_OUTPUTS_MAX);
+    if (matching_recipes >= CRAFT_BENCH_OUTPUTS_MAX)
         printf("ERROR: number of resultant crafting recipes exceeds CRAFT_BENCH_OUTPUTS_MAX for %s \n", get_item_name(_cr.output) );
-    }
+
     // check that this recipe's type signature (input+output)
     // has not already been defined
     for (int i=0; i<crafting_recipe_count; i++)

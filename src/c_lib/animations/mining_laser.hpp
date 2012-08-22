@@ -82,17 +82,15 @@ class MiningLaser
         this->ttl = 0;
     }
 
-    inline void update_type()
+    inline void update_type(int row_index)
     {
-        this->type = 0+rand()%4;
+        this->type = (row_index*4)+(randrange(0,3));
     }
         
     inline void set_state(float x, float y, float z, float mx, float my, float mz, const float speed, const float length)
     {
-        this->update_type();
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
-
         verlet.velocity = vec3_scalar_mult(verlet.velocity, speed);
     }
 

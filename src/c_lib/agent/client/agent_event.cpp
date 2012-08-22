@@ -249,11 +249,6 @@ void Agent_event::reload_weapon(int type)
 void Agent_event::update_mining_laser()
 {
     if (!this->mining_laser_emitter.on) return;
-    static int weapon_type = Item::get_item_type("mining_laser");
-    GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
-    float range = Item::get_weapon_range(weapon_type);
-
-    this->mining_laser_emitter.set_base_length(range);
     this->mining_laser_emitter.set_state(this->a->arm_center(), this->a->forward_vector());
     this->mining_laser_emitter.tick();
     this->mining_laser_emitter.prep_draw();
@@ -261,6 +256,12 @@ void Agent_event::update_mining_laser()
 
 void Agent_event::begin_mining_laser()
 {
+    int laser_type = Toolbelt::get_agent_selected_item_type(this->a->id);
+    GS_ASSERT(laser_type != NULL_ITEM_TYPE);
+    GS_ASSERT(Item::get_item_group_for_type(laser_type) == IG_MINING_LASER);
+    float range = Item::get_weapon_range(laser_type);
+    this->mining_laser_emitter.set_base_length(range);
+    this->mining_laser_emitter.set_laser_type(laser_type);
     this->mining_laser_emitter.turn_on();
 }
 

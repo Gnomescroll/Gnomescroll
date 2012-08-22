@@ -68,6 +68,8 @@ int get_gas_lifetime(int item_type);
 bool is_fuel(int item_type);
 bool is_smelter(ItemContainerType type);
 
+int get_animation_id(int item_type);
+
 int get_fuel_burn_rate(int item_type);
 int get_smelting_recipe_creation_time(int recipe_id);
 

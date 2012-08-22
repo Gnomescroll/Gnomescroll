@@ -20,10 +20,10 @@ bool toolbelt_item_beta_action();
 // calls event handlers that trigger animations/sounds
 // called whenever turn_fire_on/off happens
 // only applies to local agent
-void toolbelt_item_begin_local_alpha_action_event_handler(ItemID item_id);
-void toolbelt_item_end_local_alpha_action_event_handler(ItemID item_id);
-void toolbelt_item_begin_alpha_action_event_handler(int agent_id, ItemID item_id);
-void toolbelt_item_end_alpha_action_event_handler(int agent_id, ItemID item_id);
+void toolbelt_item_begin_local_alpha_action_event_handler(int item_type);
+void toolbelt_item_end_local_alpha_action_event_handler(int item_type);
+void toolbelt_item_begin_alpha_action_event_handler(int agent_id, int item_type);
+void toolbelt_item_end_alpha_action_event_handler(int agent_id, int item_type);
 
 /* Packets */
 

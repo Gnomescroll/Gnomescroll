@@ -35,7 +35,7 @@ void load_item_dat()
 
 
     item_def(5, IG_HITSCAN_WEAPON, "laser_rifle");
-    sprite_def(i0, 3,7);
+    sprite_def(i1, 5,8);
     s.pretty_name = (char*) "Laser Rifle";
     s.hitscan_fire_cooldown = 30;
     s.hitscan_damage = 5;
@@ -44,38 +44,56 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.object_damage_min = 15;
     s.object_damage_max = 25;
-    block_damage_def(4);
+    block_damage_def(2);
+    block_damage_def(CUBE_MATERIAL_DIRT, 4);
+    block_damage_def(CUBE_MATERIAL_STONE, 0);
 
-    // TODO -- 3 mining lasers
-    item_def(7, IG_MINING_LASER, "mining_laser");
+    item_def(7, IG_MINING_LASER, "turquoise_mining_laser");
     sprite_def(i0, 3,5);
-    s.pretty_name = (char*) "Mining Laser";
-    s.mining_fire_cooldown = 200;
-    s.mining_damage = 1;
-    s.max_durability = 2000;
+    s.pretty_name = (char*) "Turquoise Mining Laser";
+    s.max_durability = 1200;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 6;
     block_damage_def(6);
     block_damage_def(CUBE_MATERIAL_DIRT, 2);
     block_damage_def(CUBE_MATERIAL_STONE, 6);
-    s.object_damage_min = 25;
-    s.object_damage_max = 50;
+    s.object_damage_min = 15;
+    s.object_damage_max = 20;
+    s.animation_id = 0;
 
-    item_def(8, IG_GRENADE_LAUNCHER, "plasma_grenade");
+    item_def(8, IG_MINING_LASER, "ruby_mining_laser");
+    sprite_def(i0, 3,7);
+    s.pretty_name = (char*) "Ruby Mining Laser";
+    s.max_durability = 1200;
+    s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 6;
+    block_damage_def(6);
+    block_damage_def(CUBE_MATERIAL_DIRT, 2);
+    block_damage_def(CUBE_MATERIAL_STONE, 8);
+    s.object_damage_min = 20;
+    s.object_damage_max = 25;
+    s.animation_id = 1;
+
+    item_def(9, IG_MINING_LASER, "malachite_mining_laser");
+    sprite_def(i0, 4,7);
+    s.pretty_name = (char*) "Malachite Mining Laser";
+    s.max_durability = 1200;
+    s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 6;
+    block_damage_def(6);
+    block_damage_def(CUBE_MATERIAL_DIRT, 3);
+    block_damage_def(CUBE_MATERIAL_STONE, 10);
+    s.object_damage_min = 25;
+    s.object_damage_max = 30;
+    s.animation_id = 2;
+
+    item_def(10, IG_GRENADE_LAUNCHER, "plasma_grenade");
     sprite_def(i0, 1,7);
     s.pretty_name = (char*) "Plasma Grenade";
     s.max_stack_size = 100;
-
-    //item_def(9, IG_RESOURCE, "food_rock-0");
-    //sprite_def(i1, 1,4);
-    //s.pretty_name = (char*) "Small Rock";
-    //s.max_stack_size = 16;
-
-    //item_def(10, IG_RESOURCE, "blue_crystal");
-    //sprite_def(i0, 1,4);
-    //s.pretty_name = (char*) "Blue Crystal";
-    //s.max_stack_size = 8;
 
     item_def(11, IG_SYNTHESIZER_COIN, "synthesizer_coin");
     sprite_def(i1, 2, 7);
@@ -231,8 +249,6 @@ void load_item_dat()
     item_def(44, IG_FIST, "fist");
     sprite_def(i1, 6, 2);
     s.pretty_name = (char*) "Fist";
-    s.mining_fire_cooldown = 200;
-    s.mining_damage = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 8;
     block_damage_def(2);
@@ -362,18 +378,6 @@ void load_item_dat()
     s.pretty_name = (char*) "Powdered Regolith";
     s.max_stack_size = 64;
 
-/*
-iron_rod 6 7
-iron_star 4 7
-copper_wire 1 6
-iron_blade 4 6
-
-iron_helmet 5 3
-gallium_helmet 5 4
-copper_helmet 5 5
-iridium_helmet 5 6
-*/
-
 
     item_def(61, IG_RESOURCE, "iron_rod");
     sprite_def(i1, 6,7);
@@ -418,17 +422,17 @@ iridium_helmet 5 6
 
     item_def(69, IG_RESOURCE, "ruby");
     sprite_def(i0, 1,3);
-    s.pretty_name = (char*)"Ruby";
+    s.pretty_name = (char*) "Ruby";
     s.max_stack_size = 16;
 
     item_def(70, IG_RESOURCE, "turquoise");
     sprite_def(i1, 3,4);
-    s.pretty_name = (char*)"Turquoise";
+    s.pretty_name = (char*) "Turquoise";
     s.max_stack_size = 16;
 
     item_def(71, IG_RESOURCE, "malachite");
     sprite_def(i0, 2,4);
-    s.pretty_name = (char*)"Malachite";
+    s.pretty_name = (char*) "Malachite";
     s.max_stack_size = 16;
 
     end_item_dat(); // finalize

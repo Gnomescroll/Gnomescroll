@@ -66,16 +66,6 @@ void load_crafting_dat()
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
 
-    // Weapons
-    //def_crafting_recipe("mining_laser");
-    //set_crafting_reagent("copper_bar", 1);
-    //set_crafting_reagent("blue_crystal", 1);
-    //end_crafting_recipe();
-
-    def_crafting_recipe("laser_rifle");
-    set_crafting_reagent("copper_bar", 1);
-    set_crafting_reagent("quartz_crystal", 1);
-    
     // Energy
     def_crafting_recipe("small_charge_pack");
     set_crafting_reagent("copper_bar", 1);
@@ -127,6 +117,7 @@ void load_crafting_dat()
     
     def_crafting_recipe("iron_rod", 2);
     set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
 
     def_crafting_recipe("iron_star");
     set_crafting_reagent("iron_bar", 1);
@@ -156,18 +147,57 @@ void load_crafting_dat()
     def_crafting_recipe("iridium_helmet");
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("iridium_bar", 1);
-/*
-    iron_rod 6 7
-    iron_star 4 7
-    iron_blade 4 6
-    copper_wire 1 6
 
+    // Turquoise mining laser. any bar + turquoise
+    def_crafting_recipe("turquoise_mining_laser");
+    set_crafting_reagent("copper_bar", 1);
+    set_crafting_reagent("turquoise", 1);
+    
+    def_crafting_recipe("turquoise_mining_laser");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("turquoise", 1);
+    
+    def_crafting_recipe("turquoise_mining_laser");
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("turquoise", 1);
+    
+    def_crafting_recipe("turquoise_mining_laser");
+    set_crafting_reagent("iridium_bar", 1);
+    set_crafting_reagent("turquoise", 1);
 
-    iron_helmet 5 3
-    gallium_helmet 5 4
-    copper_helmet 5 5
-    iridium_helmet 5 6
-*/
+    // Ruby mining laser. any bar + ruby
+    def_crafting_recipe("ruby_mining_laser");
+    set_crafting_reagent("copper_bar", 1);
+    set_crafting_reagent("ruby", 1);
+    
+    def_crafting_recipe("ruby_mining_laser");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("ruby", 1);
+    
+    def_crafting_recipe("ruby_mining_laser");
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("ruby", 1);
+    
+    def_crafting_recipe("ruby_mining_laser");
+    set_crafting_reagent("iridium_bar", 1);
+    set_crafting_reagent("ruby", 1);
+
+    // Malachite mining laser. any bar + malachite
+    def_crafting_recipe("malachite_mining_laser");
+    set_crafting_reagent("copper_bar", 1);
+    set_crafting_reagent("malachite", 1);
+    
+    def_crafting_recipe("malachite_mining_laser");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("malachite", 1);
+    
+    def_crafting_recipe("malachite_mining_laser");
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("malachite", 1);
+    
+    def_crafting_recipe("malachite_mining_laser");
+    set_crafting_reagent("iridium_bar", 1);
+    set_crafting_reagent("malachite", 1);
 
     end_crafting_recipe(); // finalize
 }

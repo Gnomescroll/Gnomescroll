@@ -26,10 +26,6 @@ namespace Item
         int melee_fire_cooldown;
         int melee_damage;
 
-        //IG_MINING_LASER
-        int mining_fire_cooldown;
-        int mining_damage;
-
         // weapons
         float firing_range;
         int firing_rate;
@@ -62,6 +58,9 @@ namespace Item
 
         int cube_height;
 
+        // animation
+        int animation_id;
+
         ItemAttribute()
         {
             load_defaults(NULL_ITEM_TYPE, IG_NONE);
@@ -92,6 +91,7 @@ namespace Item
             fuel = false;
             fuel_burn_rate = 30;
             cube_height = 0;
+            animation_id = 0;
         }
     };
 

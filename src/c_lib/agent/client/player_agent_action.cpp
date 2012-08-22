@@ -193,11 +193,6 @@ void PlayerAgent_action::update_mining_laser()
     if (!this->p->you->event.mining_laser_emitter.on) return;
     if (agent_camera == NULL) return;
     
-    static int weapon_type = Item::get_item_type("mining_laser");
-    GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
-    float range = Item::get_weapon_range(weapon_type);
-    GS_ASSERT(range > 0.0f);
-
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
     ASSERT_BOXED_POSITION(origin);
 
@@ -205,7 +200,6 @@ void PlayerAgent_action::update_mining_laser()
     struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
     
     this->p->you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
-    this->p->you->event.mining_laser_emitter.set_base_length(range);
     this->p->you->event.mining_laser_emitter.set_state(origin, direction);
     this->p->you->event.mining_laser_emitter.tick();
     this->p->you->event.mining_laser_emitter.prep_draw();
@@ -213,6 +207,14 @@ void PlayerAgent_action::update_mining_laser()
 
 void PlayerAgent_action::begin_mining_laser()
 {
+    int laser_type = Toolbelt::get_agent_selected_item_type(this->p->you->id);
+    GS_ASSERT(laser_type != NULL_ITEM_TYPE);
+    GS_ASSERT(Item::get_item_group_for_type(laser_type) == IG_MINING_LASER);
+    float range = Item::get_weapon_range(laser_type);
+
+    this->p->you->event.mining_laser_emitter.set_base_length(range);
+    this->p->you->event.mining_laser_emitter.set_laser_type(laser_type);
+    
     this->p->you->event.mining_laser_emitter.turn_on();
 
     GS_ASSERT(this->mining_laser_sound_id < 0);

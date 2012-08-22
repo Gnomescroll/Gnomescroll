@@ -61,6 +61,7 @@ void begin_mining_laser(int agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     Agent_state* a = ClientState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.begin_mining_laser();
 }

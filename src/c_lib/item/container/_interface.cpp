@@ -753,11 +753,11 @@ void agent_born(int agent_id)
     Item::Item* most_durable_laser_rifle = NULL;
     int most_durable_laser_rifle_value = 0;
 
-    int mining_laser_type = Item::get_item_type("mining_laser");
-    GS_ASSERT(mining_laser_type != NULL_ITEM_TYPE);
-    bool has_mining_laser = false;
-    Item::Item* most_durable_mining_laser = NULL;
-    int most_durable_mining_laser_value = 0;
+    int shovel_type = Item::get_item_type("copper_shovel");
+    GS_ASSERT(shovel_type != NULL_ITEM_TYPE);
+    bool has_shovel = false;
+    Item::Item* most_durable_shovel = NULL;
+    int most_durable_shovel_value = 0;
 
     GS_ASSERT(toolbelt->slot_max > 0);
     if (toolbelt->slot_max <= 0) return;
@@ -780,14 +780,14 @@ void agent_born(int agent_id)
             }
         }
 
-        if (item->type == mining_laser_type)
+        if (item->type == shovel_type)
         {
-            has_mining_laser = true;
+            has_shovel = true;
             GS_ASSERT(item->durability > 0 && item->durability != NULL_DURABILITY);
-            if (item->durability >= most_durable_mining_laser_value)
+            if (item->durability >= most_durable_shovel_value)
             {
-                most_durable_mining_laser = item;
-                most_durable_mining_laser_value = item->durability;
+                most_durable_shovel = item;
+                most_durable_shovel_value = item->durability;
             }
         }
     }
@@ -817,24 +817,24 @@ void agent_born(int agent_id)
         }
     }
 
-    if (has_mining_laser)
+    if (has_shovel)
     {   // max out the durability
-        GS_ASSERT(most_durable_mining_laser != NULL);
-        if (most_durable_mining_laser != NULL)
+        GS_ASSERT(most_durable_shovel != NULL);
+        if (most_durable_shovel != NULL)
         {
-            most_durable_mining_laser->durability = Item::get_max_durability(mining_laser_type);
-            Item::send_item_state(most_durable_mining_laser->id);
+            most_durable_shovel->durability = Item::get_max_durability(shovel_type);
+            Item::send_item_state(most_durable_shovel->id);
         }
     }
     else
-    {   // add a mining_laser
+    {   // add a shovel
         if (toolbelt_space > 0)
         {
-            Item::Item* mining_laser = Item::create_item(mining_laser_type);
-            GS_ASSERT(mining_laser != NULL);
+            Item::Item* shovel = Item::create_item(shovel_type);
+            GS_ASSERT(shovel != NULL);
             ContainerActionType event = CONTAINER_ACTION_NONE;
-            if (mining_laser != NULL)
-                event = auto_add_free_item_to_container(client_id, toolbelt->id, mining_laser->id);    // this will send the item create
+            if (shovel != NULL)
+                event = auto_add_free_item_to_container(client_id, toolbelt->id, shovel->id);    // this will send the item create
             GS_ASSERT(event != CONTAINER_ACTION_NONE && event != PARTIAL_WORLD_TO_OCCUPIED_SLOT);
             toolbelt_space--;
         }

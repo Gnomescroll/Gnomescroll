@@ -192,6 +192,7 @@ void load_block_dat()
     iso_texture(t1,8,8);
     push_texture();
     hud_def(6,1, t1,8,8);
+    set_max_dmg(48);
 
     cube_def(26, SolidBlock, "coal", CUBE_MATERIAL_DIRT);
     iso_texture(t1,10,6);

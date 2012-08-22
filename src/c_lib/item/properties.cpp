@@ -318,6 +318,15 @@ bool is_smelter(ItemContainerType type)
     return false;
 }
 
+int get_animation_id(int item_type)
+{
+    if (item_type == NULL_ITEM_TYPE) return 0;
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 0;
+    return attr->animation_id;
+}
+
 // total ticks to burn
 int get_fuel_burn_rate(int item_type)
 {

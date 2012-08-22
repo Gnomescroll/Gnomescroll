@@ -56,6 +56,26 @@ class CraftingRecipe
         }
         available = true;
     }
+
+    //CraftingRecipe& operator=(const CraftingRecipe& other)
+    //{
+        //if (this != &other) // protect against invalid self-assignment
+        //{
+            //this->id = other.id;
+            //this->output = other.output;
+            //this->output_stack = other.output_stack;
+            //this->reagent_num = other.reagent_num;
+            //this->available = other.available;
+            
+            //for (int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
+            //{
+                //this->reagent[i] = other.reagent[i];
+                //this->reagent_count[i] = other.reagent_count[i];
+            //}
+        //}
+        //// by convention, always return *this
+        //return *this;
+    //}
 };
 
 
