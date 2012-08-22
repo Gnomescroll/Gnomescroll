@@ -524,7 +524,7 @@ aiMesh
 
 		printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
 
-		printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
+		//printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
 
 		count_bones();
 	}
@@ -618,6 +618,10 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 */
 
 
+/*
+ Debug things separately. 
+ First try to visualize the bone structure itsself and verify that it's movement looks fine before using the pose to transform vertices.
+*/
 
     aiNode* FindNodeRecursivelyByName(aiNode* pNode, char* node_name)
     {
@@ -633,6 +637,65 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         }
 
         return NULL;
+    }
+
+
+    void draw_skeleton(float x, float y, float z)
+    {
+#if 0
+        int count = 0;
+        for(int i=0; i<nli; i++)
+        {
+            aiMesh* mesh = ml[i];
+
+            for(unsigned int j=0; j<mesh->mNumBones; j++)
+            {
+                aiBone* bone = mesh->mBones[j];
+                aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
+
+                struct Mat4 mat;
+                _ConvertMatrix(mat, offset_matrix);
+
+                aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                GS_ASSERT(node != NULL)
+                // start with the mesh-to-bone matrix 
+                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                 // and now append all node transformations down the parent chain until we're back at mesh coordinates again
+                aiNode* tempNode = node;
+                while( tempNode)
+                {
+                    //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+                    
+                    boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
+                    //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
+
+                    tempNode = tempNode->mParent;
+                }
+
+                 Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
+
+            }
+        }
+
+        glColor4ub(255,255,255,255);
+        glDisable(GL_TEXTURE_2D);
+
+        glBegin(GL_POINTS);
+        for(int i=0; i<vlm; i++)
+        {
+            //glVertex3f(v.v.x, v.v.y, v.v.z);
+        }
+        glEnd();
+
+        glBegin(GL_LINES);
+        for(int i=0; i<vlm; i++)
+        {
+            //glVertex3f(v.v.x, v.v.y, v.v.z);
+        }
+        glEnd();
+
+        check_gl_error();
+#endif
     }
 
     void draw(float x, float y, float z)
@@ -895,6 +958,68 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
     for(unsigned int i=0; i < pNode->mNumChildren; i++)
     {
         PrintBoneTree(pScene, num+1, pNode->mChildren[i]);
+    }
+}
+
+
+
+void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int* total)
+{
+    printf("aiNode: %02d pNode name= %s \n", num, pNode->mName.data);
+
+
+    for(int _i=0; _i<depth; _i++)
+        printf("\t");
+
+    printf("node %02d: mName= %s depth= %d mNumMeshes= %d \n", *total, pNode->mName.data, depth, pNode->mNumMeshes);
+
+    for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+    {
+        unsigned int index = pNode->mMeshes[i];
+        for(int _i=0; _i<depth; _i++)
+            printf("\t");
+
+        printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index, 
+            pScene->mMeshes[index]->mName.data,
+            pScene->mMeshes[index]->mNumVertices,
+            pScene->mMeshes[index]->mNumFaces);
+
+        aiMesh* mesh = pScene->mMeshes[index];
+        for(unsigned int j=0; j < mesh->mNumBones; j++)
+        {
+            //aiBone* bone = mesh->mBones[j];
+
+            for(int _i=0; _i<depth; _i++)
+                printf("\t");
+
+            printf("\t\tBone %02d of %02d : %s affects %d vertices \n", j,
+                mesh->mNumBones,
+                mesh->mBones[j]->mName.data,
+                mesh->mBones[j]->mNumWeights
+                );
+            //C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
+            //C_STRUCT aiMatrix4x4 mOffsetMatrix; //! Matrix that transforms from mesh space to bone space in bind pose
+        
+            for(unsigned int k=0; k < mesh->mBones[j]->mNumWeights; k++)
+            {
+                //aiVertexWeight* vertex_weight = bone->mWeights[k];
+                //printf("vertex index: %d weight: %f \n", vertex_weight->)
+
+                //bone->mWeights[k].mVertexId;
+                //bone->mWeights[k].mWeight;
+
+                //struct aiVertexWeight 
+                //unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
+                //! The strength of the influence in the range (0...1).
+                //! The influence from all bones at one vertex amounts to 1.
+                //float mWeight;
+            }
+        }
+    }
+
+    for(unsigned int i=0; i < pNode->mNumChildren; i++)
+    {
+        PrintNodeTree(pScene, pNode->mChildren[i], i, depth, total);
     }
 }
 
