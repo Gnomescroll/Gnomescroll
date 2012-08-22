@@ -354,9 +354,9 @@ def strip_symbols(ctx):
 def install_bin(ctx):
     OS = platform.system()
 
-    run_target = 'run'
-    run_dest = 'run'
-    out = ''
+    if OS == "Linux":
+        return
+
     if OS == 'Windows':
         run_target = 'run.exe'
         run_dest = 'run.exe'

@@ -177,6 +177,9 @@ def install_bin(ctx):
     if OS == "Windows":
         out = 'build'
 
+    if OS == "Linux":
+        return
+
     dests = []
     if OS == "Windows":
         dests = ['run.exe']
