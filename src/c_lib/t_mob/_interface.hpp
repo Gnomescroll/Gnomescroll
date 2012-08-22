@@ -372,12 +372,13 @@ aiMesh
 
 	int bam;		//bone array max
 	aiBone** ba; 	//bone array
+
 	int* bal;		//bone array lookup: maps mesh to starting offset in ball
 	int* ball;		// ball[bal[mesh_num] + bone_num] is matrix index
+    int  ballm;
 
 	struct Mat4* bbma;		//bone base matrix array
 	struct Mat4* bma;		//bone matrix array
-
 
 	void count_bones(int* count, aiNode* pNode)
 	{
@@ -412,6 +413,7 @@ aiMesh
 
 		aiNode* _pNode = NULL;
 
+        //get the root_bone as child of the Amature
 		for(unsigned int i=0; i < pNode->mNumChildren; i++)
 		{
 			if( strcmp("root_bone", pNode->mChildren[i]->mName.data) == 0)
@@ -428,13 +430,27 @@ aiMesh
 
 		pNode = _pNode;
 
+
+        printf("root_bone: has %d children \n", pNode->mNumChildren);
+        //recursively count the children of the root node
 		int bone_count = 0;
 		count_bones(&bone_count, pNode);
 
 		printf("DAE LOADER: %d bones \n", bone_count);
 
-
+/*
 		bam = bone_count;
+
+        //ALLOCATE
+        ba = new AiBone*[bam];
+
+
+
+        for(unsigned int j=0; j<mesh->mNumBones; j++)
+        {
+            aiBone* bone = mesh->mBones[j];
+            aiMatrix4x4 offset_matrix = bone->mOffsetMatrix
+*/
 	}	
 
 
@@ -444,6 +460,7 @@ aiMesh
 		int bone_count = 0;
 		int _bone_count = 0;
 
+        //count number of times bone appears
 		for(int i=0; i<nli; i++)
 		{
 			aiMesh* mesh = ml[i];
@@ -479,7 +496,7 @@ aiMesh
 
 		//printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
 
-		printf("bone_count= %d _bone_count= %d nli= %d \n", bone_count, _bone_count, nli);
+		printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
 
 		printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
 
@@ -520,6 +537,68 @@ aiMesh
         glDisable(GL_TEXTURE_2D);
     }
 
+/*
+To Get a nodes Global transformation:
+// ------------------------------------------------------------------------------------------------
+// Calculates the global transformation matrix for the given internal node
+void Animator::CalculateBoneToWorldTransform(cBone* child)
+{
+    child->GlobalTransform = child->LocalTransform;
+    cBone* parent = child->Parent;
+    while( parent )
+    {// this will climb the nodes up along through the parents concentating all the matrices to get the Object to World transform, or in this case, the Bone To World transform
+        child->GlobalTransform *= parent->LocalTransform;
+        parent  = parent->Parent;// get the parent of the bone we are working on 
+    }
+}
+
+
+To get the actual Transformation matrix:
+mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
+
+*/
+
+/*
+    Just replaced 
+    mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
+
+    with
+    mat = affineInverse(Bones[a]->Offset * Bones[a]->GlobalTransform);
+*/
+
+/*
+
+    const aiMesh* mesh = theMeshYouWantToRender();
+
+    // calculate bone matrices
+    std::vector<aiMatrix4x4> boneMatrices( mesh->mNumBones);
+    for( size_t a = 0; a < mesh->mNumBones; ++a)
+    {
+      const aiBone* bone = mesh->mBones[a];
+      
+      // find the corresponding node by again looking recursively through the node hierarchy for the same name
+      aiNode* node = FindNodeRecursivelyByName( scene->mRootNode, bone->mName);
+      
+      // start with the mesh-to-bone matrix 
+      boneMatrices[a] = bone->mOffsetMatrix;
+      // and now append all node transformations down the parent chain until we're back at mesh coordinates again
+      const aiNode* tempNode = node;
+      while( tempNode)
+      {
+        boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+        tempNode = tempNode->mParent;
+      }
+    }
+*/
+
+
+
+    aiNode* FindNodeRecursivelyByName(aiNode* pNode, char* node_name)
+    {
+
+
+    }
+
     void draw(float x, float y, float z)
     {
         //printf("nlm= %d vlm= %d \n", nlm, vlm);
@@ -557,6 +636,18 @@ aiMesh
 				//printf("%d === \n", i);
                 //print_mat4(mat);
 
+
+                aiNode* node = FindNodeRecursivelyByName( scene->mRootNode, bone->mName);
+                // start with the mesh-to-bone matrix 
+                Mat4 boneMatrix = bone->mOffsetMatrix;
+                 // and now append all node transformations down the parent chain until we're back at mesh coordinates again
+                aiNode* tempNode = node;
+                while( tempNode)
+                {
+                    boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+                    tempNode = tempNode->mParent;
+                }
+
                 for(unsigned int k=0; k<bone->mNumWeights; k++)
                 {
                     int index = offset + bone->mWeights[k].mVertexId;
@@ -575,6 +666,7 @@ aiMesh
                     tvl[index] = vec3_add(tvl[index].v, v);
                 #else
                     Vec3 v = vec3_mat3_apply(bvl[index].v, mat);
+                    //Vec3 v = bvl[index].v;
                     tbvl[index].v.x += weight*v.x;
                     tbvl[index].v.y += weight*v.y;
                     tbvl[index].v.z += weight*v.z;
