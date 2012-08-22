@@ -290,7 +290,7 @@ class MechListRenderer
 
     void prep_vbo();
 
-	void push_crystal_vertex(const class MECH &m);
+    void push_crystal_vertex(const class MECH &m);
 
 };
 
@@ -487,10 +487,10 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
 
 enum MECH_TYPE
 {
-	CRYSTAL,
-	CROP,
-	WIRE,
-	SWITCH
+    CRYSTAL,
+    CROP,
+    WIRE,
+    SWITCH
 };
 */
 
@@ -543,5 +543,4 @@ void MechListRenderer::prep_vbo()
 
 }
 
-
-}
+}   // t_mech

@@ -317,7 +317,7 @@ void hud_def(int hudy, int hudx, int sheet_id, int ypos, int xpos)
     }
     GS_ASSERT(i != 6);
     if (i == 6)
-        printf("%s failed for sheet,y,x %d,%d,%d\n", __FUNCTION__, sheet_id, ypos, xpos);
+        printf("%s failed for sheet,y,x %d,%d,%d. No matching texture found for def (check iso_texture)\n", __FUNCTION__, sheet_id, ypos, xpos);
 
     set_cube_hud(hudx, hudy, _current_cube_id, tex_id);
     #endif

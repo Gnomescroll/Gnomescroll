@@ -1,8 +1,7 @@
-APPNAME = 'dc_client'
-VERSION = '0.1'
+APPNAME = 'gs_client'
+VERSION = None
 
 top = '.'
-out = 'build'
 
 import errno
 import os
@@ -33,6 +32,19 @@ os_libpth = ''
 
 def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+
+def get_version():
+    with open('../src/c_lib/common/version.h') as f:
+        r = f.readlines()
+        r = [line.strip() for line in r if 'DC_VERSION' in line]
+        assert len(r) == 1
+        r = r[0]
+        pieces = r.split(' ')
+        assert len(pieces) == 3
+        version = int(pieces[-1])
+        return version
+
+VERSION = str(get_version())
 
 def options(opt):
     opt.load('compiler_c compiler_cxx')
@@ -340,7 +352,6 @@ def strip_symbols(ctx):
 '''
 
 def install_bin(ctx):
-    global out
     OS = platform.system()
 
     if OS == "Linux":
@@ -349,14 +360,14 @@ def install_bin(ctx):
     if OS == 'Windows':
         run_target = 'run.exe'
         run_dest = 'run.exe'
-    else:
-        run_target = 'run'
-        run_dest = 'run'
+        out = 'build'
+
     try:
         src = os.path.join(out, run_target)
         dest = os.path.join('./', run_dest)
-        shutil.copy2(src, dest)
-        print "Copied %s to %s" % (src, dest,)
+        if os.path.exists(src) and os.path.abspath(src) != os.path.abspath(dest):
+            shutil.copy2(src, dest)
+            print "Copied %s to %s" % (src, dest,)
     except Exception, e:
         print "Failed to copy %s to %s. Reason: %s" % (src, dest, e,)
         

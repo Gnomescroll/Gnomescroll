@@ -14,7 +14,6 @@ void load_item_dat()
     start_item_dat();
     int i0 = texture_alias("media/sprites/i00.png");
     int i1 = texture_alias("media/sprites/i01.png");
-    int i1a = texture_alias("media/sprites/i01a.png");
 
     item_def(0, IG_ERROR, "error_item");
     s.pretty_name = (char*) "Error";
@@ -171,7 +170,7 @@ void load_item_dat()
 
     // Iron
     item_def(38, IG_RESOURCE, "iron_ore");
-    sprite_def(i1a, 1,3);
+    sprite_def(i0, 5,7);
     s.pretty_name = (char*) "Iron Ore";
     s.max_stack_size = 64;
 

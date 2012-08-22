@@ -35,7 +35,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
 #if DC_SERVER
 
 void send_client_mech_list(int client_id);
-void handle_block_removal(int x, int y, int z);	//react to block destruction
+void handle_block_removal(int x, int y, int z); //react to block destruction
 
 #endif
-}
+}   // t_mech

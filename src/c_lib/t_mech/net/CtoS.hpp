@@ -24,4 +24,5 @@ class request_block_damage_CtoS: public FixedSizeReliableNetPacketToServer<reque
 };
 */
 
-}
+}   // t_mech
+

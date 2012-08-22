@@ -23,4 +23,5 @@ inline void request_block_damage_CtoS::handle()
 }
 #endif
 */
-} 
+
+}   // t_mech

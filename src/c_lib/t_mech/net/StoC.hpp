@@ -43,4 +43,4 @@ class mech_delete_StoC: public MapMessagePacketToClient<mech_delete_StoC>
     inline void handle() __attribute((always_inline));
 };
 
-}
+}   // t_mech

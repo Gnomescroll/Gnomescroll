@@ -311,4 +311,4 @@ void handle_block_removal(int x, int y, int z)
 
 #endif
 
-}
+}   // t_mech
