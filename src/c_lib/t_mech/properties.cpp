@@ -87,8 +87,18 @@ int get_mech_type(const char* name)
 
 struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type)
 {
+    ASSERT_VALID_MECH_TYPE(mech_type);
+    IF_INVALID_MECH_TYPE(mech_type) return NULL;
     GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
     return &mech_attribute[mech_type];
+}
+
+int get_mech_class(int mech_type)
+{
+    struct MECH_ATTRIBUTE* attr = get_mech_attribute(mech_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return MECH_NONE;
+    return attr->mech_type_class;
 }
 
 }   // t_mech

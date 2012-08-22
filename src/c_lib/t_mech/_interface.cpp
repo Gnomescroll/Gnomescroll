@@ -123,7 +123,7 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 //handles unpacking
 static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     m.id = p.id;
     m.mech_type = p.mech_type;
     m.subtype = p.subtype;
@@ -146,48 +146,48 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 
         m.offset_x = (randf()-0.5f)* (1.0f-m.size);
         m.offset_y = (randf()-0.5f)* (1.0f-m.size);
-
         break;
     case MECH_CROP:
         break;
     case MECH_MYCELIUM:
         break;
     default:
+        GS_ASSERT(false);
         printf("pack_mech error: unhandled mech type\n");
+        break;
     } 
-#endif
+    #endif
 }
-
-
 
 
 void create_crystal(int x, int y, int z, int mech_type)
 {
-#if DC_SERVER
-
-    if(mech_attribute[mech_type].mech_type == -1)
+    #if DC_SERVER
+    ASSERT_VALID_MECH_TYPE(mech_type);
+    IF_INVALID_MECH_TYPE(mech_type) return;
+    GS_ASSERT(get_mech_class(mech_type) == MECH_CRYSTAL);
+    
+    GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
+    if (mech_attribute[mech_type].mech_type == -1)
     {
-        GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
         printf("t_mech::create_crystal fail: mech_type %i does not exist \n",  mech_type);
         return;
     }
 
     struct MECH m;
-    m.mech_type = MECH_CRYSTAL;
+    m.mech_type = mech_type;
     m.x = x;
     m.y = y;
     m.z = z;
     //m.subtype = rand()%9;
 
-
     mech_list->server_add_mech(m);
-#endif
+    #endif
 }
 
 void create_crystal(int x, int y, int z)
 {
-#if DC_SERVER
-
+    #if DC_SERVER
     struct MECH m;
     m.mech_type = MECH_CRYSTAL;
     m.x = x;
@@ -196,7 +196,7 @@ void create_crystal(int x, int y, int z)
     m.subtype = rand()%9;
 
     mech_list->server_add_mech(m);
-#endif
+    #endif
 }
 
 bool can_place_crystal(int x, int y, int z, int side)
@@ -306,10 +306,7 @@ void send_client_mech_list(int client_id)
 void handle_block_removal(int x, int y, int z)
 {
     int mech_type = mech_list->handle_block_removal(x,y,z);
-    printf("%s -- mech_type %d\n", __FUNCTION__, mech_type);
     IF_INVALID_MECH_TYPE(mech_type) return;
-
-    printf("Item drop? %d\n", mech_attribute[mech_type].item_drop);
 
     // drop item from mech
     if(mech_attribute[mech_type].item_drop) 

@@ -36,15 +36,15 @@ void load_mech_dat()
     start_mech_dat();
 
     mech_def(0, MECH_CRYSTAL, "red_crystal");
-    s.sprite_index = 16*0 + 0;
+    s.sprite_index = 16*3 + 2;
     s.render_type = MECH_RENDER_TYPE_0;
 
     mech_def(1, MECH_CRYSTAL, "blue_crystal");
-    s.sprite_index = 16*0 + 0;
+    s.sprite_index = 16*3 + 0;
     s.render_type = MECH_RENDER_TYPE_0;
 
     mech_def(2, MECH_CRYSTAL, "green_crystal");
-    s.sprite_index = 16*0 + 0;
+    s.sprite_index = 16*3 + 1;
     s.render_type = MECH_RENDER_TYPE_0;
 
     mech_def(3, MECH_MYCELIUM, "mycelium");

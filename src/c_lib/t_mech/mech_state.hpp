@@ -64,7 +64,7 @@ class MECH_LIST
         mla[id].id = id;
         mln++;
     
-        printf("create mech %i at: %i %i %i \n", m.id, m.x,m.y,m.z);
+        printf("create mech %i type %d at: %i %i %i \n", m.id, m.mech_type, m.x,m.y,m.z);
     }
     #endif
 
@@ -114,9 +114,9 @@ class MECH_LIST
     #if DC_SERVER
     void send_mech_list_to_client(int client_id)
     {
-        for(int i=0; i<mlm; i++)
+        for (int i=0; i<mlm; i++)
         {
-            if(mla[i].id == -1) continue;
+            if (mla[i].id == -1) continue;
             mech_create_StoC p;
             pack_mech(mla[i], p);
             p.sendToClient(client_id);
@@ -152,8 +152,8 @@ bool MECH_LIST::is_occupied(int x, int y, int z)
 {
     for(int i=0; i<mlm; i++)
     {
-        if( mla[i].id == -1) continue;
-        if( mla[i].x == x && mla[i].y == y && mla[i].z == z) return true;
+        if (mla[i].id == -1) continue;
+        if (mla[i].x == x && mla[i].y == y && mla[i].z == z) return true;
     }
     return false;
 }
@@ -162,8 +162,8 @@ bool MECH_LIST::is_occupied(int x, int y, int z)
 int MECH_LIST::handle_block_removal(int x, int y, int z)
 {
     int mech_type = -1;
-    for(int i=0; i<mlm; i++)
-        if(mla[i].id != -1 && mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
+    for (int i=0; i<mlm; i++)
+        if (mla[i].id != -1 && mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
         {
             mech_type = mla[i].mech_type;
             bool removed = server_remove_mech(i);
