@@ -621,6 +621,16 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
     aiNode* FindNodeRecursivelyByName(aiNode* pNode, char* node_name)
     {
+        if( strcmp(node_name, pNode->mName.data) == 0 )
+            return pNode;
+
+        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        {
+            aiNode* tmp = FindNodeRecursivelyByName(pNode->mChildren[i], node_name);
+
+            if(tmp != NULL)
+                return tmp;
+        }
 
         return NULL;
     }
@@ -664,6 +674,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
 
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
                 Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
@@ -673,6 +684,8 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
                     
                     boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
+                    //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
+
                     tempNode = tempNode->mParent;
                 }
 
@@ -696,7 +709,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     //Vec3 v = vec3_mat3_apply(bvl[index].v, mat);
                     //Vec3 v = bvl[index].v;
 
-                    Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrices);
+                    Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
                     tbvl[index].v.x += weight*v.x;
                     tbvl[index].v.y += weight*v.y;
                     tbvl[index].v.z += weight*v.z;

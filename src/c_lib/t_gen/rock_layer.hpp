@@ -27,6 +27,8 @@ void generate_rock_layer()
     //int rock_layer = dat_get_cube_id("space_tree_trunk");
     int rock_layer = dat_get_cube_id("regolith");
 
+    struct MAP_ELEMENT rock_layer_element = {{{(unsigned char)rock_layer, 0,0,0}}};
+
     class MAP_CHUNK* c;
     for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
     {
@@ -69,8 +71,7 @@ void generate_rock_layer()
                 if(run > regolith_depth && e1.block == regolith)
                 //if(run > depth && e1.block == regolith)
                 {
-                    e1.block = rock_layer;
-                    c->set_element(x,y,z, e1);
+                    c->set_element(x,y,z, rock_layer_element);
                 }
             }
         }
