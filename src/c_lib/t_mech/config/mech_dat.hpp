@@ -16,11 +16,11 @@ struct MECH_ATTRIBUTE
 
 enum MECH_CLASS
 {
-	MECH_CRYSTAL,
-	MECH_CROP,
+    MECH_CRYSTAL,
+    MECH_CROP,
     MECH_MYCELIUM,
-	MECH_WIRE,
-	MECH_SWITCH
+    MECH_WIRE,
+    MECH_SWITCH
 };
 
 enum MECH_RENDER_TYPE
@@ -56,4 +56,4 @@ void load_mech_dat()
 }
 
 
-}
+}   // t_mech

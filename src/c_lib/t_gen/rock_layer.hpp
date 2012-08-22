@@ -25,7 +25,7 @@ void generate_rock_layer()
     int regolith = dat_get_cube_id("regolith");
     //int rock_layer = dat_get_cube_id("rock_layer");
     //int rock_layer = dat_get_cube_id("space_tree_trunk");
-    int rock_layer = dat_get_cube_id("regolith");
+    int rock_layer = dat_get_cube_id("rock_layer");
 
     class MAP_CHUNK* c;
     for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)

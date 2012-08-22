@@ -40,4 +40,4 @@ void mech_delete_StoC::handle() {}
 
 #endif
 
-}   // t_map
+}   // t_mech
