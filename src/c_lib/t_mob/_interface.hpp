@@ -369,6 +369,32 @@ aiMesh
     }
 
 
+    static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
+    {
+        Mat4 out;
+
+        out.f[0][0] = in.a1;
+        out.f[0][1] = in.a2;
+        out.f[0][2] = in.a3;
+        out.f[0][3] = in.a4;
+
+        out.f[1][0] = in.b1;
+        out.f[1][1] = in.b2;
+        out.f[1][2] = in.b3;
+        out.f[1][3] = in.b4;
+
+        out.f[2][0] = in.c1;
+        out.f[2][1] = in.c2;
+        out.f[2][2] = in.c3;
+        out.f[2][3] = in.c4;
+
+        out.f[3][0] = in.d1;
+        out.f[3][1] = in.d2;
+        out.f[3][2] = in.d3;
+        out.f[3][3] = in.d4;
+
+        return out;
+    }
 
 	int bam;		//bone array max
 	aiBone** ba; 	//bone array
@@ -637,14 +663,16 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 //print_mat4(mat);
 
 
-                aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName);
+                aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 // start with the mesh-to-bone matrix 
-                Mat4 boneMatrix = bone->mOffsetMatrix;
+                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
                 aiNode* tempNode = node;
                 while( tempNode)
                 {
-                    boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+                    //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+                    
+                    boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
                     tempNode = tempNode->mParent;
                 }
 
@@ -665,8 +693,10 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     v = vec3_scalar_mult(v, weight);
                     tvl[index] = vec3_add(tvl[index].v, v);
                 #else
-                    Vec3 v = vec3_mat3_apply(bvl[index].v, mat);
+                    //Vec3 v = vec3_mat3_apply(bvl[index].v, mat);
                     //Vec3 v = bvl[index].v;
+
+                    Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrices);
                     tbvl[index].v.x += weight*v.x;
                     tbvl[index].v.y += weight*v.y;
                     tbvl[index].v.z += weight*v.z;
