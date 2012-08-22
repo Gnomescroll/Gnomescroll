@@ -1,8 +1,7 @@
-APPNAME = 'dc_server'
-VERSION = '0.1'
+APPNAME = 'gs_server'
+VERSION = None
 
 top = '.'
-out = 'build'
 target = 'run'
 
 import errno
@@ -15,6 +14,7 @@ import subprocess
 from waflib import Tools;
 Tools.c_preproc.go_absolute = True
 
+
 MAIN_TEST_CODE = """
 int main(int argc, char *argv[]) {
     return 0;
@@ -26,24 +26,17 @@ def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
 
 def get_version():
-    try:
-        fn = '../VERSIONX'
-        with open(fn) as f:
-            version = f.read()
-    except Exception, e:
-        print "Could not get version number from VERSIONX file. Abort"
-        print Exception, e
-        raise Exception, e
+    with open('../src/c_lib/common/version.h') as f:
+        r = f.readlines()
+        r = [line.strip() for line in r if 'DC_VERSION' in line]
+        assert len(r) == 1
+        r = r[0]
+        pieces = r.split(' ')
+        assert len(pieces) == 3
+        version = int(pieces[-1])
+        return version
 
-    try:
-        version = int(version.strip())
-    except ValueError:
-        print "ERROR: Version %s invalid" % (version,)
-        raise ValueError
-
-    print "Gnomescroll Version: %d" % (version,)
-    return version
-
+VERSION = str(get_version())
 
 def options(opt):
     opt.load('compiler_c compiler_cxx')
@@ -178,44 +171,11 @@ def build(bld):
 
 
 def install_bin(ctx):
-    global out
     OS = platform.system()
 
-    dests = ['run']
-    if OS == "Linux":
-        dests.append('gnomescroll_server')
-    for run_dest in dests: 
-        try:    # installs binary to ./run and ./client
-            run_target = 'run'
-            try:
-                src = os.path.join(out, run_target)
-                dest = './' + run_dest
-                shutil.copy2(src,dest)
-                print "Copied %s to %s" % (src,dest,)
-            except Exception, e:
-                pass
-            #if OS == 'Linux':
-                #try:
-                    #shutil.copy2('./run', './gs_server')
-                #except Exception, e:
-                    #pass
-        except Exception, e:
-            print "error copying binaries to ./"
-            print e
-            pass
-        
-    try:
-        c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
-        src = os.path.join(out, c_lib_target)
-        dest = './' + c_lib_target
-        shutil.copy2(src,dest)
-        print "Copied %s to %s" % (src,dest,)
-    except Exception, e:
-        pass
-
-def install_bin(ctx):
-    global out
-    OS = platform.system()
+    out = ''
+    if OS == "Windows":
+        out = 'build'
 
     dests = []
     if OS == "Windows":
@@ -233,8 +193,11 @@ def install_bin(ctx):
         try:
             src = os.path.join(out, run_target)
             dest = os.path.join('./', run_dest)
-            shutil.copy2(src, dest)
-            print "Copied %s to %s" % (src, dest,)
+            if os.path.abspath(src) == os.path.abspath(dest):
+                continue
+            if os.path.exists(src):
+                shutil.copy2(src, dest)
+                print "Copied %s to %s" % (src, dest,)
         except Exception, e:
             print "Failed to copy %s to %s. Reason: %s" % (src, dest, e,)
         
