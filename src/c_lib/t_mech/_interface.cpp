@@ -305,7 +305,15 @@ void send_client_mech_list(int client_id)
 
 void handle_block_removal(int x, int y, int z)
 {
-    mech_list->handle_block_removal(x,y,z);
+    int mech_type = mech_list->handle_block_removal(x,y,z);
+    printf("%s -- mech_type %d\n", __FUNCTION__, mech_type);
+    IF_INVALID_MECH_TYPE(mech_type) return;
+
+    printf("Item drop? %d\n", mech_attribute[mech_type].item_drop);
+
+    // drop item from mech
+    if(mech_attribute[mech_type].item_drop) 
+        handle_drop(x,y,z, mech_type);
 }
 
 

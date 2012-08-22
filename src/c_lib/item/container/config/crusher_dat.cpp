@@ -65,8 +65,8 @@ static void register_crusher_settings()
     d->set_max_drop_amounts("iridium_ore", 1);
     d->add_drop("iridium_ore", 1, 0.0025f);
 
-    d->set_max_drop_amounts("graphite", 1);
-    d->add_drop("graphite", 1, 0.005f);
+    d->set_max_drop_amounts("coal", 1);
+    d->add_drop("coal", 1, 0.005f);
 
     crusher_def("iron_rod");
     d->set_max_drop_types(1);

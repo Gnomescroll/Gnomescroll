@@ -20,6 +20,7 @@
 #include <item/config/smelting_dat.hpp>
 #if DC_SERVER
 #include <item/config/item_drop.cpp>
+#include <item/config/item_drop_alt.cpp>
 #endif
 
 

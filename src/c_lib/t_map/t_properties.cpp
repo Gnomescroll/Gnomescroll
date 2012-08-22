@@ -6,12 +6,8 @@
 
 namespace t_map
 {
-    struct cubeProperties* cube_list = NULL;
-}
 
-
-namespace t_map
-{
+struct cubeProperties* cube_list = NULL;
 
 char cube_names[MAX_CUBES*64];
 int cube_name_index[MAX_CUBES];
@@ -29,8 +25,6 @@ void init_t_properties()
     memset(cube_name_index, 0, sizeof(int) * MAX_CUBES);
     //for(int i=0; i<MAX_CUBES*64; i++) cube_names = NULL;
     //for(int i=0; i<MAX_CUBES; i++) cube_name_index = 0s;
-
-    return;
 }
 
 void end_t_properties()
@@ -110,12 +104,22 @@ int get_cube_id(const char* name)
 int dat_get_cube_id(const char* name)
 {
     int id = get_cube_id((char*) name);
-    if(id == -1)
+    GS_ASSERT(id >= 0);
+    if(id < 0)
     {
         printf("Dat Loading Failure:cube_id, dat failure, cube %s does not exist! \n", name);
-        GS_ABORT();
-    }   
+        return -1;
+    }
     return id; 
+}
+
+CubeMaterial get_cube_material(int cube_id)
+{
+    GS_ASSERT(cube_list != NULL);
+    if (cube_list == NULL) return CUBE_MATERIAL_NONE;
+    ASSERT_VALID_BLOCK(cube_id);
+    IF_INVALID_BLOCK(cube_id) return CUBE_MATERIAL_NONE;
+    return cube_list[cube_id].material;
 }
 
 }   // t_map

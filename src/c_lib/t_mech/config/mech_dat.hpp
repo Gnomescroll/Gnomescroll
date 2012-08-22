@@ -35,25 +35,27 @@ void load_mech_dat()
 {
     start_mech_dat();
 
-    mech_def(0, MECH_CRYSTAL, "blue_crystal");
+    mech_def(0, MECH_CRYSTAL, "red_crystal");
     s.sprite_index = 16*0 + 0;
     s.render_type = MECH_RENDER_TYPE_0;
 
-    mech_def(1, MECH_CRYSTAL, "red_crystal");
+    mech_def(1, MECH_CRYSTAL, "blue_crystal");
     s.sprite_index = 16*0 + 0;
     s.render_type = MECH_RENDER_TYPE_0;
 
-    mech_def(2, MECH_MYCELIUM, "mycelium");
+    mech_def(2, MECH_CRYSTAL, "green_crystal");
+    s.sprite_index = 16*0 + 0;
+    s.render_type = MECH_RENDER_TYPE_0;
+
+    mech_def(3, MECH_MYCELIUM, "mycelium");
     s.sprite_index = 16*1 + 0;
     s.render_type = MECH_RENDER_TYPE_2;
 
-    mech_def(3, MECH_CRYSTAL, "mycelium_flower");
+    mech_def(4, MECH_CRYSTAL, "mycelium_flower");
     s.sprite_index = 16*1 + 1;
     s.render_type = MECH_RENDER_TYPE_0;
 
     end_mech_dat(); // finalize
-
 }
-
 
 }   // t_mech

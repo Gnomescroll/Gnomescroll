@@ -252,9 +252,13 @@ int init_c_lib(int argc, char* argv[])
 
     Item::load_item_dat();
     Item::load_synthesizer();
+
     t_mech::load_mech_dat();
-    
-    t_map::load_map_drop_dat(); //load drop dat after items
+    t_mech::init_drop_dat();
+    t_mech::load_drop_dat();
+
+    t_map::init_block_drop_dat();
+    t_map::load_block_drop_dat(); //load drop dat after items
 
     Toolbelt::init();
 
@@ -285,7 +289,8 @@ void close_c_lib()
     t_map::teardown_map_serializer();
 
     t_map::end_t_map();
-    
+    t_map::teardown_block_drop_dat();
+
     teardown_chat_server();
 
     Particle::teardown_particles();
@@ -300,6 +305,7 @@ void close_c_lib()
     Item::teardown();
     ItemContainer::teardown();
 
+    t_mech::teardown_drop_dat();
     t_mech::teardown();
 
     t_gen::teardown_map_generator();

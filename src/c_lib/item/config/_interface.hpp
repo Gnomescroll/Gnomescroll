@@ -69,6 +69,21 @@ void container_block_def(const char* block_name, ItemContainerType container_typ
     container_block_types[val] = container_type;
 }
 
+void block_damage_def(CubeMaterial group, int damage)
+{
+    GS_ASSERT(damage >= 0);
+    for (int i=0; i<t_map::MAX_CUBES; i++)
+        if (t_map::get_cube_material(i) == group)
+            s.block_damage[i] = damage;
+}
+
+void block_damage_def(int damage)
+{   // apply to all groups
+    GS_ASSERT(damage >= 0);
+    for (int i=0; i<t_map::MAX_CUBES; i++)
+        s.block_damage[i] = damage;
+}
+
 #if DC_CLIENT
 
 int texture_alias(const char* spritesheet)

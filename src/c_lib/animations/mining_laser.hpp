@@ -45,7 +45,7 @@ void teardown_mining_laser()
 
 void init_mining_laser_texture()
 {
-    int ret = create_texture_from_file("./media/sprites/mining_laser4.png", &mining_laser_texture);
+    int ret = create_texture_from_file("./media/sprites/mining_laser.png", &mining_laser_texture);
     GS_ASSERT(ret == 0);
 }
 

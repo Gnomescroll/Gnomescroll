@@ -2,13 +2,15 @@
 
 #define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT(agent_id >= 0 && agent_id < AGENT_MAX)
 #define IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) 
-//#define RETURN_IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) return
-//#define RETURNX_IF_INVALID_AGENT_ID(agent_id, retval) if (agent_id < 0 || agent_id >= AGENT_MAX) return retval;
 
 #define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS)
 #define IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) 
-//#define RETURN_IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) return;
-//#define RETURNX_IF_INVALID_CLIENT_ID(client_id, retval) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) return retval;
+
+#define ASSERT_VALID_BLOCK(block_type) GS_ASSERT(block_type >= 0 && block_type < t_map::MAX_CUBES)
+#define IF_INVALID_BLOCK(block_type) if (block_type < 0 || block_type >= t_map::MAX_CUBES) 
+
+#define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT(mech_type >= 0 && mech_type < t_mech::MAX_MECHS)
+#define IF_INVALID_MECH_TYPE(mech_type) if (mech_type < 0 || mech_type >= t_mech::MAX_MECHS) 
 
 #define GS_ABORT() do {\
 printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__);\

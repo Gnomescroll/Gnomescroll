@@ -355,7 +355,8 @@ int init_c_lib(int argc, char* argv[])
 
     // Load Dats
 
-    t_map::load_map_drop_dat(); //load drop dat after items
+    // Dont do this in the client. server only
+    //t_map::load_block_drop_dat(); //load drop dat after items
 
     TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
     TextureSheetLoader::init_item_texture();

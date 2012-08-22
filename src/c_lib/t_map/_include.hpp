@@ -1,6 +1,8 @@
 #pragma once
 
 #include <t_map/common/constants.hpp>
+#include <t_map/common/types.hpp>
+#include <t_map/common/map_element.hpp>
 #include <t_map/t_map_class.cpp>
 #include <t_map/t_map.cpp>
 #include <t_map/t_properties.cpp>
@@ -37,12 +39,11 @@
 
 //map serialization
 #include <t_map/serializer/_interface.cpp>
+
+#include <t_map/config/drop_dat.cpp>
 #endif
 
 #include <t_map/config/_interface.hpp>
-#include <t_map/config/drop_table.hpp>
 #include <t_map/config/block_dat.hpp>
-#include <t_map/config/drop_dat.hpp>
-
 
 #include <t_map/_interface.cpp>

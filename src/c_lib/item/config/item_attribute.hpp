@@ -1,5 +1,7 @@
 #pragma once
 
+#include <t_map/common/constants.hpp>
+
 namespace Item
 {
     class ItemAttribute
@@ -31,7 +33,7 @@ namespace Item
         // weapons
         float firing_range;
         int firing_rate;
-        int block_damage;
+        int block_damage[t_map::MAX_CUBES];
 
         int object_damage;       // if this is nonzero it will be used, otherwise randrange will be used
         int object_damage_min;  // for randrange(min,max);
@@ -61,7 +63,6 @@ namespace Item
         int cube_height;
 
         ItemAttribute()
-        // DONT PUT ANYTHING HERE OR BREAKS
         {
             load_defaults(NULL_ITEM_TYPE, IG_NONE);
         }
@@ -71,7 +72,7 @@ namespace Item
             // PUT ALL DEFAULTS HERE
             this->group = group;
             this->item_type = item_type;
-            
+
             pretty_name = NULL;
             max_energy = NULL_ENERGY;
             max_durability = NULL_DURABILITY;
@@ -80,7 +81,7 @@ namespace Item
             particle_voxel_texture = 0;
             firing_range = DEFAULT_FIRING_RANGE;
             firing_rate = 8;
-            block_damage = 4;
+            for (int i=0; i<t_map::MAX_CUBES; this->block_damage[i++] = 1);
             object_damage = 0;
             object_damage_min = 5;
             object_damage_max = 10;

@@ -252,12 +252,13 @@ float get_weapon_range(int weapon_type)
 
 int get_item_block_damage(int weapon_type, int block_type)
 {
+    ASSERT_VALID_BLOCK(block_type);
+    IF_INVALID_BLOCK(block_type) return 0;
     if (weapon_type == NULL_ITEM_TYPE) return 0;
-    // TODO -- block damage dependent on (weapon,block)
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
-    return attr->block_damage;
+    return attr->block_damage[block_type];
 }
 
 int get_item_object_damage(int weapon_type)

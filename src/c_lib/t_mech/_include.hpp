@@ -18,5 +18,8 @@
 
 #include <t_mech/config/_interface.hpp>
 #include <t_mech/config/mech_dat.hpp>
+#if DC_SERVER
+#include <t_mech/config/drop_dat.cpp>
+#endif
 
 #include "_interface.cpp"

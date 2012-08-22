@@ -304,6 +304,7 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
 
         
         static int crystal_id = t_mech::get_mech_type("blue_crystal");
+        ASSERT_VALID_MECH_TYPE(crystal_id);
 
         if( t_mech::can_place_crystal(b[0],b[1],b[2], 0) == true)
         {

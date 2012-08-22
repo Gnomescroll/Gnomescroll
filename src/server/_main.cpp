@@ -22,12 +22,8 @@ void default_map_gen()
     t_gen::start_cave_generator();
     t_gen::populate_ore();
 
-    //t_gen::gen_rivers(60, "terminal_blue");
-
-    //map_gen::floor(512,512,0,1, t_map::get_cube_id((char*)"regolith"));
     map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));
-    //Dragon::caves();
-    //Dragon::flat_veins();
+
     t_map::environment_process_startup();
 }
 

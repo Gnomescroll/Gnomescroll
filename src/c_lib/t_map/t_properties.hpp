@@ -2,6 +2,8 @@
 
 #include <item/common/enum.hpp>
 #include <common/macros.hpp>
+#include <t_map/common/constants.hpp>
+#include <t_map/common/types.hpp>
 
 namespace t_map
 {
@@ -17,6 +19,8 @@ struct cubeProperties
     bool reserved7;
     bool reserved8;
 
+    CubeMaterial material;
+
     unsigned char max_damage;
     unsigned char color_type; //flat, discrete and perlin
     //bool solid;
@@ -25,8 +29,6 @@ struct cubeProperties
     //for dat debug assistance
     bool in_use;
 };
-
-const int MAX_CUBES = 256;
 
 extern struct cubeProperties* cube_list; //[MAX_CUBES];
 
@@ -38,10 +40,10 @@ struct cubeProperties* get_cube(int id) GNOMESCROLL_API;
 
 using namespace t_map;
 
-inline struct cubeProperties* _get_cube(int id) __attribute((always_inline)) GNOMESCROLL_API;
-
 void set_cube_name(int id, const  char* name, int length);
 void set_cube_name(int id, const char* name);
+
+CubeMaterial get_cube_material(int cube_id);
 
 const char* get_cube_name(int id);
 int get_cube_id(const char* name);

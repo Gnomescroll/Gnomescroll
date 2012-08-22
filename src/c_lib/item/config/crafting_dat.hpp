@@ -121,7 +121,7 @@ void load_crafting_dat()
     
     def_crafting_recipe("energy_core");
     set_crafting_reagent("methane_ice", 16);
-    set_crafting_reagent("graphite", 8);
+    set_crafting_reagent("coal", 8);
     set_crafting_reagent("iridium_bar", 4);
     set_crafting_reagent("copper_bar", 4);
     

@@ -25,7 +25,7 @@
 
     #include <item/_interface.hpp>
 
-    #include <t_map/config/drop_table.hpp>
+    #include <t_map/config/drop_dat.hpp>
     #include <entity/object/main.hpp>
 #endif
 

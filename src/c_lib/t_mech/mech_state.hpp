@@ -1,7 +1,5 @@
 #pragma once
 
-
-//#include <t_mech/net/CtoS.hpp>
 #if DC_SERVER
 #include <t_mech/net/StoC.hpp>
 #endif
@@ -44,11 +42,11 @@ class MECH_LIST
 
     bool is_occupied(int x, int y, int z); //check if there is a t_mech on the square already
     
-#if DC_SERVER
-    void handle_block_removal(int x, int y, int z);
-#endif
+    #if DC_SERVER
+    int handle_block_removal(int x, int y, int z);
+    #endif
 
-#if DC_CLIENT
+    #if DC_CLIENT
     void add_mech(int id, const struct MECH &m)
     {
         while(id >= mlm)
@@ -68,10 +66,9 @@ class MECH_LIST
     
         printf("create mech %i at: %i %i %i \n", m.id, m.x,m.y,m.z);
     }
+    #endif
 
-#endif
-
-#if DC_SERVER
+    #if DC_SERVER
     //negative 1 on failure
     int add_mech(struct MECH &m)
     {
@@ -98,26 +95,23 @@ class MECH_LIST
 
         return mli;
     }
-#endif
+    #endif
 
-    void remove_mech(int id)
+    bool remove_mech(int id)
     {
         GS_ASSERT(mla[id].id != -1);
-        GS_ASSERT(id < mlm);
-
-
-        if( mla[id].id == -1)
-            printf("Error t_mech::remove_mech, tried to remove mech that does not exist!\n");
+        GS_ASSERT(id >= 0 && id < mlm);
+        if (id < 0 || id >= this->mlm) return false;
+        if (mla[id].id == -1) return false;
 
         mla[id].id = -1;
         mln--;
         GS_ASSERT(mln >= 0);
-
-
+        return true;
     }
 
 
-#if DC_SERVER
+    #if DC_SERVER
     void send_mech_list_to_client(int client_id)
     {
         for(int i=0; i<mlm; i++)
@@ -138,15 +132,18 @@ class MECH_LIST
         p.broadcast();
     }
 
-    void server_remove_mech(int id)
+    bool server_remove_mech(int id)
     {
-        this->remove_mech(id);
-        mech_delete_StoC p;
-        p.id = id;
-        p.broadcast();
+        bool removed = this->remove_mech(id);
+        if (removed)
+        {
+            mech_delete_StoC p;
+            p.id = id;
+            p.broadcast();
+        }
+        return removed;
     }
-
-#endif
+    #endif
 
 };
 
@@ -162,17 +159,17 @@ bool MECH_LIST::is_occupied(int x, int y, int z)
 }
 
 #if DC_SERVER
-void MECH_LIST::handle_block_removal(int x, int y, int z)
+int MECH_LIST::handle_block_removal(int x, int y, int z)
 {
+    int mech_type = -1;
     for(int i=0; i<mlm; i++)
-    {
-        if( mla[i].id == -1) continue;
-        if( mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
+        if(mla[i].id != -1 && mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
         {
-            server_remove_mech(i);
-            return;
+            mech_type = mla[i].mech_type;
+            bool removed = server_remove_mech(i);
+            GS_ASSERT(removed);
         }
-    }
+    return mech_type;
 }
 #endif
 

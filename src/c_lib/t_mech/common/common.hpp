@@ -28,15 +28,16 @@ struct MECH_ATTRIBUTE
     int mech_type_class;
     int render_type;
     int sprite_index;
+    bool item_drop; // indicates whether has an item drop set
 };
 
 enum MECH_CLASS
 {
-	MECH_CRYSTAL,
-	MECH_CROP,
+    MECH_CRYSTAL,
+    MECH_CROP,
     MECH_MYCELIUM,
-	MECH_WIRE,
-	MECH_SWITCH
+    MECH_WIRE,
+    MECH_SWITCH
 };
 
 enum MECH_RENDER_TYPE

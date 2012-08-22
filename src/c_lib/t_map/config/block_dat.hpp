@@ -178,49 +178,47 @@ void load_block_dat()
     //hud_def(3,6, t1, 5,4);
     set_max_dmg(5);
 
-    cube_def(24, SolidBlock, "regolith");
-    
-    //pallete 0
+    cube_def(24, SolidBlock, "regolith", CUBE_MATERIAL_DIRT);
+    // palette 0
     iso_texture(t1,10,5);
     push_texture();
-
-    //pallete 1
+    //palette 1
     iso_texture(t1,10,4);
     side_texture(T, t1,10,3);
     side_texture(B, t1,10,5);
     push_texture();
 
-    cube_def(25, SolidBlock, "rock_layer");
+    cube_def(25, SolidBlock, "rock_layer", CUBE_MATERIAL_STONE);
     iso_texture(t1,8,8);
     push_texture();
     hud_def(6,1, t1,8,8);
 
-    cube_def(26, SolidBlock, "graphite");
+    cube_def(26, SolidBlock, "coal", CUBE_MATERIAL_DIRT);
     iso_texture(t1,10,6);
     push_texture();
     set_max_dmg(16);
 
     //hud_def(4,2, t1,10,6);
 
-    cube_def(27, SolidBlock, "iron_ore");
+    cube_def(27, SolidBlock, "iron_ore", CUBE_MATERIAL_STONE);
     iso_texture(t1,8,3);
     push_texture();
     //hud_def(6,2, t1,8,3);
     set_max_dmg(16);
 
-    cube_def(28, SolidBlock, "copper_ore");
+    cube_def(28, SolidBlock, "copper_ore", CUBE_MATERIAL_STONE);
     iso_texture(t1,1,9);
     push_texture();
     //hud_def(6,3, t1,1,9);
     set_max_dmg(16);
 
-    cube_def(29, SolidBlock, "gallium_ore");
+    cube_def(29, SolidBlock, "gallium_ore", CUBE_MATERIAL_STONE);
     iso_texture(t1,2,4);
     push_texture();
     //hud_def(6,4, t1,2,4);
     set_max_dmg(16);
 
-    cube_def(30, SolidBlock, "iridium_ore");
+    cube_def(30, SolidBlock, "iridium_ore", CUBE_MATERIAL_STONE);
     iso_texture(t1,1,11);
     push_texture();
     set_max_dmg(16);

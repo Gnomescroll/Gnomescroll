@@ -57,10 +57,11 @@ int _side_texture[6];
 
 int DEFAULT_MAX_DAMAGE = 32;
 
-void cube_def(int id, int type, const char* name)
+void cube_def(int id, int type, const char* name, CubeMaterial material)
 {
-    GS_ASSERT(id >= 0 && id < MAX_CUBES);
-    if (id < 0 || id >= MAX_CUBES) return;
+    ASSERT_VALID_BLOCK(id);
+    IF_INVALID_BLOCK(id) return;
+
     GS_ASSERT(!cube_list[id].in_use); // dont overwrite anything
     if (cube_list[id].in_use)
         printf("Error in function: %s:%d -- cube %d is already registered\n", __FUNCTION__, __LINE__, id);
@@ -80,6 +81,7 @@ void cube_def(int id, int type, const char* name)
     p.item_container = false;
     p.reserved7 = false;
     p.reserved8 = false;
+    p.material = material;
 
     p.max_damage = DEFAULT_MAX_DAMAGE;
     p.color_type = 0;
@@ -114,6 +116,11 @@ void cube_def(int id, int type, const char* name)
 //#if DC_CLIENT
 //    start_cube_palette(id);
 //#endif
+}
+
+void cube_def(int id, int type, const char* name)
+{
+    cube_def(id, type, name, CUBE_MATERIAL_NONE);
 }
 
 void iso_texture(int tex_id)

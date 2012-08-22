@@ -3,6 +3,7 @@
 #include <item/config/_interface.hpp>
 
 #include <t_map/t_properties.hpp>
+#include <t_map/common/types.hpp>
 
 namespace Item
 {
@@ -43,8 +44,9 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.object_damage_min = 15;
     s.object_damage_max = 25;
-    s.block_damage = 4;
+    block_damage_def(4);
 
+    // TODO -- 3 mining lasers
     item_def(7, IG_MINING_LASER, "mining_laser");
     sprite_def(i0, 3,5);
     s.pretty_name = (char*) "Mining Laser";
@@ -53,8 +55,10 @@ void load_item_dat()
     s.max_durability = 2000;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
-    s.firing_rate = 5;
-    s.block_damage = 6;
+    s.firing_rate = 6;
+    block_damage_def(6);
+    block_damage_def(CUBE_MATERIAL_DIRT, 2);
+    block_damage_def(CUBE_MATERIAL_STONE, 6);
     s.object_damage_min = 25;
     s.object_damage_max = 50;
 
@@ -139,34 +143,12 @@ void load_item_dat()
     s.max_durability = 400;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
-    s.firing_rate = 7;
-    s.block_damage = 4;
+    s.firing_rate = 6;
+    block_damage_def(1);
+    block_damage_def(CUBE_MATERIAL_DIRT, 4);
+    block_damage_def(CUBE_MATERIAL_STONE, 1);
     s.object_damage_min = 15;
     s.object_damage_max = 25;
-
-    // Gallium
-    item_def(35, IG_RESOURCE, "gallium_ore");
-    sprite_def(i1, 2,3);
-    s.pretty_name = (char*) "Gallium Ore";
-    s.max_stack_size = 64;
-
-    item_def(36, IG_RESOURCE, "gallium_bar");
-    sprite_def(i1, 2,2);
-    s.pretty_name = (char*) "Gallium Bar";
-    s.max_stack_size = 64;
-
-    item_def(37, IG_SHOVEL, "gallium_shovel");
-    sprite_def(i1, 2,1);
-    s.pretty_name = (char*) "Gallium Shovel";
-    s.melee_fire_cooldown = 250;
-    s.melee_damage = 4;
-    s.max_durability = 400;
-    s.max_stack_size = 1;
-    s.firing_range = 4.0f;
-    s.firing_rate = 7;
-    s.block_damage = 5;
-    s.object_damage_min = 20;
-    s.object_damage_max = 30;
 
     // Iron
     item_def(38, IG_RESOURCE, "iron_ore");
@@ -187,10 +169,38 @@ void load_item_dat()
     s.max_durability = 400;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
-    s.firing_rate = 7;
-    s.block_damage = 6;
+    s.firing_rate = 6;
+    block_damage_def(2);
+    block_damage_def(CUBE_MATERIAL_DIRT, 5);
+    block_damage_def(CUBE_MATERIAL_STONE, 1);
     s.object_damage_min = 25;
     s.object_damage_max = 35;
+
+    // Gallium
+    item_def(35, IG_RESOURCE, "gallium_ore");
+    sprite_def(i1, 2,3);
+    s.pretty_name = (char*) "Gallium Ore";
+    s.max_stack_size = 64;
+
+    item_def(36, IG_RESOURCE, "gallium_bar");
+    sprite_def(i1, 2,2);
+    s.pretty_name = (char*) "Gallium Bar";
+    s.max_stack_size = 64;
+
+    item_def(37, IG_SHOVEL, "gallium_shovel");
+    sprite_def(i1, 2,1);
+    s.pretty_name = (char*) "Gallium Shovel";
+    s.melee_fire_cooldown = 250;
+    s.melee_damage = 4;
+    s.max_durability = 400;
+    s.max_stack_size = 1;
+    s.firing_range = 4.0f;
+    s.firing_rate = 6;
+    block_damage_def(3);
+    block_damage_def(CUBE_MATERIAL_DIRT, 6);
+    block_damage_def(CUBE_MATERIAL_STONE, 1);
+    s.object_damage_min = 20;
+    s.object_damage_max = 30;
 
     // Iridium
     item_def(41, IG_RESOURCE, "iridium_ore");
@@ -211,8 +221,10 @@ void load_item_dat()
     s.max_durability = 400;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
-    s.firing_rate = 7;
-    s.block_damage = 8;
+    s.firing_rate = 6;
+    block_damage_def(3);
+    block_damage_def(CUBE_MATERIAL_DIRT, 8);
+    block_damage_def(CUBE_MATERIAL_STONE, 2);
     s.object_damage_min = 30;
     s.object_damage_max = 40;
 
@@ -223,13 +235,13 @@ void load_item_dat()
     s.mining_damage = 1;
     s.firing_range = 4.0f;
     s.firing_rate = 8;
-    s.block_damage = 4;
+    block_damage_def(2);
     s.object_damage_min = 5;
     s.object_damage_max = 10;
 
-    item_def(45, IG_RESOURCE, "graphite");
+    item_def(45, IG_RESOURCE, "coal");
     sprite_def(i0, 5,2);
-    s.pretty_name = (char*) "Graphite";
+    s.pretty_name = (char*) "Coal";
     s.max_stack_size = 64;
     s.fuel = true;
     s.fuel_burn_rate = 30 * 30; // 30 seconds
@@ -404,9 +416,20 @@ iridium_helmet 5 6
     s.pretty_name = (char*) "Iridium Helmet";
     s.max_stack_size = 1;
 
+    item_def(69, IG_RESOURCE, "ruby");
+    sprite_def(i0, 1,3);
+    s.pretty_name = (char*)"Ruby";
+    s.max_stack_size = 16;
 
+    item_def(70, IG_RESOURCE, "turquoise");
+    sprite_def(i1, 3,4);
+    s.pretty_name = (char*)"Turquoise";
+    s.max_stack_size = 16;
 
-
+    item_def(71, IG_RESOURCE, "malachite");
+    sprite_def(i0, 2,4);
+    s.pretty_name = (char*)"Malachite";
+    s.max_stack_size = 16;
 
     end_item_dat(); // finalize
     
