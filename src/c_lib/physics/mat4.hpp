@@ -109,6 +109,18 @@ struct Mat4 mat4_mult(Mat4 a, Mat4 b)
     return c;
 }
 
+struct Mat4 mat4_transpose(Mat4 a) __attribute((always_inline));
+
+struct Mat4 mat4_transpose(Mat4 a)
+{
+    struct Mat4 b;
+    
+    for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+        b._f[4*i+j] = a._f[4*j+i];
+    }}
+    return b;
+}
 
 static struct Mat4 mat4_identity()  __attribute((always_inline));
 

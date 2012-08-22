@@ -702,6 +702,8 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
     {
         //printf("nlm= %d vlm= %d \n", nlm, vlm);
 
+        bool _print  = false;
+
         for(int i=0; i<bvlm; i++)
         {
             tbvl[i].ux = bvl[i].ux;
@@ -725,8 +727,14 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
 			GS_ASSERT(mesh->mNumBones != 0);
 
+
+            if(_print)
+                printf("mesh: %02d mesh name= %s \n", i, mesh->mName.data);
+
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
+
+
                 aiBone* bone = mesh->mBones[j];
                 aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
 
@@ -742,14 +750,33 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
                 aiNode* tempNode = node;
-                while( tempNode)
+
+                //tempNode = NULL;
+
+                int _index = 0;
+                while( tempNode )
                 {
+                    _index++;
+
+                    if(_print)
+                        printf("\tbone: %02d %02d mesh name= %s \n", j, _index, tempNode->mName.data);
                     //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
                     
                     boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
                     //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
 
+                    //armature is the last node that gets multiplied in
+                    if( strcmp(tempNode->mName.data, "Armature") == 0 )
+                        break;
+
                     tempNode = tempNode->mParent;
+                    if(tempNode == NULL)
+                    {
+                        GS_ASSERT(tempNode != NULL);
+                        break;
+                    }
+
+
                 }
 
                 for(unsigned int k=0; k<bone->mNumWeights; k++)
@@ -965,7 +992,8 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 
 void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int* total)
 {
-    printf("aiNode: %02d pNode name= %s \n", num, pNode->mName.data);
+    (*total)++;
+    //printf("aiNode: %02d pNode name= %s \n", num, pNode->mName.data);
 
 
     for(int _i=0; _i<depth; _i++)
@@ -1019,7 +1047,7 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
 
     for(unsigned int i=0; i < pNode->mNumChildren; i++)
     {
-        PrintNodeTree(pScene, pNode->mChildren[i], i, depth, total);
+        PrintNodeTree(pScene, pNode->mChildren[i], i, depth+1, total);
     }
 }
 
@@ -1092,6 +1120,12 @@ void init()
     printf("BT: bone tree finished\n");
     
     printf("Bone tree: \n");
+
+    int _total = 0;
+    int _num = 0;
+    int _depth = 0;
+    PrintNodeTree(pScene, pScene->mRootNode, _num, _depth, &_total);
+
 	return;
     PrintBoneTree(pScene, 0, pScene->mRootNode);    //these are actually meshes
     //pScene->mRootNode
