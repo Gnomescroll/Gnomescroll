@@ -518,10 +518,10 @@ void tick_mob_bomb(Object* object)
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
     explode->proximity_check();
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
-    if (limiter->allowed())
-        object->broadcastState();
+    //using Components::RateLimitComponent;
+    //RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    //if (limiter->allowed())
+        //object->broadcastState();
     #endif
 
     using Components::StateMachineComponent;
