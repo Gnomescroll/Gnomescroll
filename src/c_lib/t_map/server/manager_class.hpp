@@ -21,6 +21,7 @@ const int DEFAULT_SUB_RADIUS = 128 + 32;
 const int DEFAULT_UNSUB_RADIUS = 128 + 64; //128 +32; //why so low?
 const int DEFAULT_UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS*DEFAULT_UNSUB_RADIUS;
 
+
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 1024;
 
 const int MAP_CHUNK_QUE_SIZE = 1024; //que for loading map chunks
@@ -74,6 +75,8 @@ class Map_manager
     int ypos;
 
     int SUB_RADIUS;
+    int SUB_RADIUS2;
+
     int UNSUB_RADIUS2;
 
     int xchunk_dim;
@@ -102,7 +105,9 @@ class Map_manager
         chunk_que_num = 0;
 
         SUB_RADIUS = DEFAULT_SUB_RADIUS;
-        UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS2;
+        SUB_RADIUS2 = DEFAULT_SUB_RADIUS*DEFAULT_SUB_RADIUS;;
+
+        UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS*DEFAULT_UNSUB_RADIUS;
 
         subed_chunks = 0;
         xpos = 0xffff;
@@ -286,8 +291,6 @@ void Map_manager::update()
 
     //printf("xpos= %i ypos= %i \t imin= %i imax= %i jmin= %i jmax= %i \n", xpos, ypos, imin,imax, jmin,jmax);
 
-    int SUB_RADIUS2 = SUB_RADIUS*SUB_RADIUS;
-
     //printf("imin, imax = %i %i jmin jmax = %i %i \n", imin,imax, jmin,jmax);
     for(int i=imin; i != imax; i= (i+1)& CHUNK_BIT_MASK )
     for(int j=jmin; j != jmax; j= (j+1)& CHUNK_BIT_MASK )
@@ -395,10 +398,34 @@ void Map_manager::sort_que()
 
 void Map_manager::dispatch_que()
 {
+/*
+    Future: Check if player is in radius and if not, then skip
+*/
     if( chunk_que_num == 0) return;
-    struct QUE_ELEMENT* q = &chunk_que[chunk_que_num-1];
-    sub(q->index, q->version);
-    chunk_que_num--;
+
+
+    while(chunk_que_num > 0)
+    {
+        struct QUE_ELEMENT* q = &chunk_que[chunk_que_num-1];
+
+        int dx = xpos - quadrant_translate_i(xpos, q->xpos);
+        int dy = ypos - quadrant_translate_i(ypos, q->ypos);
+        int distance2 = dx*dx + dy*dy;
+        if(distance2 <= SUB_RADIUS2)
+        {
+            sub(q->index, q->version);
+            chunk_que_num--;
+            break;
+        }
+        else
+        {
+            //skip because its out of range
+            version_list[q->index].version = q->index;
+            chunk_que_num--;
+        }
+    }
+
+
 }
 
 
