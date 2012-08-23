@@ -480,6 +480,7 @@ inline void object_in_transit_StoC::handle()
     {
         destination = quadrant_translate_position(pos, destination);
         Vec3 direction = vec3_sub(destination, pos);
+        direction.z = 0.0f;        
         float len = vec3_length(direction);
         dest_target->speed = len / ((float)this->ticks_to_destination);
     }
