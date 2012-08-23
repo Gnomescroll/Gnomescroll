@@ -23,7 +23,7 @@ const int DEFAULT_UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS*DEFAULT_UNSUB_RADIUS;
 
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 1024;
 
-const int MAP_CHUNK_QUE_SIZE = 512; //que for loading map chunks
+const int MAP_CHUNK_QUE_SIZE = 1024; //que for loading map chunks
 
 //alias constants
 const unsigned short NO_ALIAS = 0xffff;
@@ -333,7 +333,7 @@ void Map_manager::que_for_sub(int x, int y)
         printf("Error: Map_manager::que_for_sub, adding to que twice!\n");
         return;
     }
-    
+
     if (chunk_que_num == MAP_CHUNK_QUE_SIZE)
     {
         printf("Map_manager::que_for_sub: Warning chunk_que_num == MAP_CHUNK_QUE_SIZEs \n" );
