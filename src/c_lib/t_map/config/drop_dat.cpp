@@ -55,9 +55,16 @@ void load_block_drop_dat()
         b->set_drop(0.15f, 1);
         b->set_drop(0.04f, 2);
         b->set_drop(0.02f, 3);
-        //b->add_drop("control_node", 2);
-        //b->set_drop(0.40f, 1);
-        //b->set_drop(0.40f, 2);
+            
+    b->def_drop("rock");
+
+        b->add_drop("rock", 1);
+        b->set_drop(0.99f, 1);
+
+        b->add_drop("synthesizer_coin", 3);
+        b->set_drop(0.15f, 1);
+        b->set_drop(0.05f, 2);
+        b->set_drop(0.03f, 3);
             
     b->def_drop("small_storage");
         b->drop_always("small_storage");

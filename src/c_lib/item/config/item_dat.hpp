@@ -26,9 +26,18 @@ void load_item_dat()
     s.pretty_name = (char*) "Regolith";
     s.max_stack_size = 64;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "regolith");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("regolith");
     s.cube_height = 1;
 
+    item_def(2, IG_PLACER, "rock");
+    iso_block_sprite_def("rock");
+    s.placer_block_type_id = t_map::dat_get_cube_id("rock");
+    s.pretty_name = (char*) "Rock";
+    s.max_stack_size = 64;
+    s.particle_voxel = true;
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("rock");
+    s.cube_height = 1;
+    
     item_def(4, IG_RESOURCE, "quartz_crystal");
     sprite_def(i0, 1,5);
     s.pretty_name = (char*) "Quartz Crystal";
@@ -125,7 +134,7 @@ void load_item_dat()
     s.pretty_name = (char*) "Small Storage Block";
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "small_storage");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("small_storage");
     s.container_type = CONTAINER_TYPE_STORAGE_BLOCK_SMALL;
     container_block_def("small_storage", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     s.cube_height = 1;
@@ -137,7 +146,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("small_crafting_bench");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "small_crafting_bench");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("small_crafting_bench");
     s.container_type = CONTAINER_TYPE_CRAFTING_BENCH_UTILITY;
     container_block_def("small_crafting_bench", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
     s.cube_height = 1;
@@ -250,8 +259,9 @@ void load_item_dat()
     sprite_def(i1, 6, 2);
     s.pretty_name = (char*) "Fist";
     s.firing_range = 4.0f;
-    s.firing_rate = 8;
-    block_damage_def(2);
+    s.firing_rate = 5;
+    block_damage_def(1);
+    block_damage_def(CUBE_MATERIAL_DIRT, 2);
     s.object_damage_min = 5;
     s.object_damage_max = 10;
 
@@ -268,7 +278,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_1");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_1");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_1");
     s.cube_height = 1;
 
     item_def(47, IG_PLACER, "steel_block_2");
@@ -277,7 +287,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_2");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_2");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_2");
     s.cube_height = 1;
 
     item_def(48, IG_PLACER, "steel_block_3");
@@ -286,7 +296,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_3");
     s.max_stack_size = 16;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "steel_block_3");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_3");
     s.cube_height = 1;
 
     item_def(49, IG_CONSUMABLE, "small_charge_pack");
@@ -301,7 +311,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("cryofreezer_1");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "cryofreezer_1");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("cryofreezer_1");
     s.container_type = CONTAINER_TYPE_CRYOFREEZER_SMALL;
     container_block_def("cryofreezer_1", CONTAINER_TYPE_CRYOFREEZER_SMALL);
     s.cube_height = 1;
@@ -321,7 +331,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("smelter_1");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "smelter_1");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("smelter_1");
     s.container_type = CONTAINER_TYPE_SMELTER_ONE;
     container_block_def("smelter_1", CONTAINER_TYPE_SMELTER_ONE);
     s.cube_height = 1;
@@ -332,7 +342,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("control_node");
     s.max_stack_size = 8;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "control_node");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("control_node");
     s.cube_height = 1;
 
     item_def(54, IG_ENERGY_TANK, "energy_tank");
@@ -368,7 +378,7 @@ void load_item_dat()
     s.placer_block_type_id = t_map::dat_get_cube_id("crusher");
     s.max_stack_size = 1;
     s.particle_voxel = true;
-    s.particle_voxel_texture = t_map::get_cube_primary_texture_index((char*) "crusher");
+    s.particle_voxel_texture = t_map::get_cube_primary_texture_index("crusher");
     s.container_type = CONTAINER_TYPE_CRUSHER;
     container_block_def("crusher", CONTAINER_TYPE_CRUSHER);
     s.cube_height = 1;

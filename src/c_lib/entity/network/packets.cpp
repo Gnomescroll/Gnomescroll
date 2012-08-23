@@ -164,6 +164,13 @@ inline void object_state_momentum_angles_StoC::handle()
         physics->set_position(vec3_init(x,y,z));
         physics->set_momentum(vec3_init(mx,my,mz));
         physics->set_angles(vec3_init(theta, phi, 0));
+        //using Components::DestinationTargetingComponent;
+        //DestinationTargetingComponent* dest = (DestinationTargetingComponent*)obj->get_component(COMPONENT_DESTINATION_TARGETING);
+        //if (dest != NULL)
+        //{
+            //struct Vec3 target_direction = vec3_init_from_angles(theta, phi, 0);
+            //dest->target_direction = vec3_normalize(target_direction);
+        //}
     }
 }
 
@@ -467,6 +474,8 @@ inline void object_in_transit_StoC::handle()
     dest_target->set_destination(destination);
     dest_target->orient_to_target(pos);
     //dest_target->target_direction = this->dir;
+
+    ASSERT_BOXED_POSITION(destination);
     
     if (this->ticks_to_destination)
     {

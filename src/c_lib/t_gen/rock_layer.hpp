@@ -23,9 +23,9 @@ void generate_rock_layer()
     }
 
     int regolith = dat_get_cube_id("regolith");
-    //int rock_layer = dat_get_cube_id("rock_layer");
+    //int rock_layer = dat_get_cube_id("rock");
     //int rock_layer = dat_get_cube_id("space_tree_trunk");
-    int rock_layer = dat_get_cube_id("rock_layer");
+    int rock_layer = dat_get_cube_id("rock");
 
     struct MAP_ELEMENT rock_layer_element = {{{(unsigned char)rock_layer, 0,0,0}}};
 

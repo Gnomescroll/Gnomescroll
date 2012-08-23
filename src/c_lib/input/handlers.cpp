@@ -699,11 +699,41 @@ void camera_key_down_handler(SDL_Event* event)
     }
 }
 
+void print_mob_id()
+{
+    // hitscan against mobs
+    GS_ASSERT(current_camera != NULL);
+    if (current_camera == NULL) return;
+    
+    struct Vec3 p = current_camera->get_position();
+    struct Vec3 v = current_camera->forward_vector();
+    int ignore_id = -1;
+    ObjectType ignore_type = OBJECT_NONE;
+
+    class Voxel_hitscan_target target;
+    float vox_distance = 0.0f;
+    float collision_point[3] = {0.0f};
+    bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
+        p.x, p.y, p.z,
+        v.x, v.y, v.z,
+        ignore_id, ignore_type,
+        collision_point, &vox_distance,
+        &target
+    );
+    if (!voxel_hit) return;
+
+    printf("mob id: %d\n", target.entity_id);
+}
+
 void camera_key_up_handler(SDL_Event* event){}
 void camera_mouse_down_handler(SDL_Event* event)
 {
     switch (event->button.button)
     {
+        case SDL_BUTTON_LEFT:
+            print_mob_id();
+            break;
+            
         case SDL_BUTTON_RIGHT:
             free_camera->toggle_zoom();
             break;

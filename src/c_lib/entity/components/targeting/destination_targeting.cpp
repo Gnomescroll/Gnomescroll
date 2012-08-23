@@ -59,9 +59,16 @@ void DestinationTargetingComponent::choose_destination()
 
 void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
 {
+    ASSERT_BOXED_POSITION(camera_position);
     ASSERT_BOXED_POSITION(this->destination);
     Vec3 target_position = quadrant_translate_position(camera_position, this->destination);
     this->target_direction = vec3_sub(target_position, camera_position);
+    this->target_direction.z = 0.0f;
+    if (vec3_length_squared(this->target_direction) == 0.0f)
+    {
+        this->target_direction = vec3_init(1,0,0);
+        return;
+    }
     normalize_vector(&this->target_direction);
 }
 
@@ -117,11 +124,7 @@ bool DestinationTargetingComponent::check_at_destination()
     }
     Vec3 pos = physics->get_position();
     Vec3 dest = quadrant_translate_position(pos, this->destination);
-    if (vec3_distance_squared(pos, dest) <= this->stop_proximity*this->stop_proximity)
-        this->at_destination = true;
-    else
-        this->at_destination = false;
-        
+    this->at_destination = (vec3_distance_squared(pos, dest) <= this->stop_proximity*this->stop_proximity);
     return this->at_destination;
 }
 

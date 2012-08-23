@@ -218,8 +218,9 @@ static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Obje
     msg->type = object->type;
     msg->id = object->id;
     Vec3 destination = dest->get_destination();
+    ASSERT_BOXED_POSITION(destination);
     msg->destination = destination;
-    msg->dir = dest->target_direction;
+    //msg->dir = dest->target_direction;
     int ticks = dest->get_ticks_to_destination(physics->get_position());
     msg->ticks_to_destination = ticks;
     
@@ -297,12 +298,12 @@ inline void send_mob_bomb_state_machine_to_client(int client_id, class Object* o
 
     if (state->state == STATE_WAITING)
         send_object_begin_wait(client_id, object);
-    else
-    if (state->state == STATE_IN_TRANSIT)
-        send_object_in_transit(client_id, object, NULL);
-    else
-    if (state->state == STATE_CHASE_AGENT)
-        send_object_chase_agent(client_id, object, NULL);
+    //else
+    //if (state->state == STATE_IN_TRANSIT)
+        //send_object_in_transit(client_id, object, NULL);
+    //else
+    //if (state->state == STATE_CHASE_AGENT)
+        //send_object_chase_agent(client_id, object, NULL);
 }
 #endif
 
@@ -430,6 +431,13 @@ static void in_transit(class Object* object)
     {   // check at destination
         if (dest_target->check_at_destination())
             in_transit_to_waiting(object);
+        //else
+        //{
+            //using Components::PhysicsComponent;
+            //PhysicsComponent* physics = (PhysicsComponent*)
+                //object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            //dest_target->orient_to_target(physics->get_position());
+        //}
     }
     #endif
 }
