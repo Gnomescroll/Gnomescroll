@@ -702,7 +702,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
     {
         //printf("nlm= %d vlm= %d \n", nlm, vlm);
 
-        bool _print  = false;
+        bool _print  = true;
 
         for(int i=0; i<bvlm; i++)
         {
@@ -729,19 +729,20 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
 
             if(_print)
-                printf("mesh: %02d mesh name= %s \n", i, mesh->mName.data);
+                printf("mesh: %02d mesh name= %s \n", i, nl[i]->mName.data);
 
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
 
 
                 aiBone* bone = mesh->mBones[j];
-                aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
-
-                struct Mat4 mat;
-                _ConvertMatrix(mat, offset_matrix);
-				//printf("%d === \n", i);
-                //print_mat4(mat);
+                
+                //aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
+                //struct Mat4 mat;
+                //_ConvertMatrix(mat, offset_matrix);
+				
+                //printf("%d === \n", i);
+                //mat4_print(mat);
 
 
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
@@ -759,26 +760,31 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     _index++;
 
                     if(_print)
-                        printf("\tbone: %02d %02d mesh name= %s \n", j, _index, tempNode->mName.data);
+                    {
+                        printf("\tbone: %02d %02d bone name= %s \n", j, _index, tempNode->mName.data);
                     //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
-                    
+                        //mat4_print( _ConvertMatrix(tempNode->mTransformation) ) ;
+                    }
                     boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
                     //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
-
                     //armature is the last node that gets multiplied in
                     if( strcmp(tempNode->mName.data, "Armature") == 0 )
                         break;
-
                     tempNode = tempNode->mParent;
                     if(tempNode == NULL)
                     {
                         GS_ASSERT(tempNode != NULL);
                         break;
                     }
-
-
                 }
 
+                if(_print)
+                {
+                    printf("final matrix: mesh: %02d %02d mesh name= %s \n", i,j, nl[i]->mName.data);
+                    mat4_print(boneMatrix) ;
+                }
+
+                printf("bone:\n");
                 for(unsigned int k=0; k<bone->mNumWeights; k++)
                 {
                     int index = offset + bone->mWeights[k].mVertexId;
@@ -799,10 +805,13 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     //Vec3 v = vec3_mat3_apply(bvl[index].v, mat);
                     //Vec3 v = bvl[index].v;
 
+                    vec3_print(bvl[index].v);
                     Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
                     tbvl[index].v.x += weight*v.x;
                     tbvl[index].v.y += weight*v.y;
                     tbvl[index].v.z += weight*v.z;
+
+                    vec3_print( v );
                 #endif
 
                     //unsigned int mNumWeights; //number of vertices affected by this bone
@@ -817,6 +826,24 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 }
             }
         }
+
+        //offset each element in temp vertex list
+        for(int i=0; i<bvlm; i++)
+        {
+            print... 
+
+            .begin(), 
+
+            .end()
+        }
+
+        for(int i=0; i<bvlm; i++)
+        {
+            tbvl[i].v.x += x;
+            tbvl[i].v.y += y;
+            tbvl[i].v.z += z;
+        }
+
 	/*
         for(int i=0; i<vlm; i++)
         {
@@ -832,9 +859,6 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         {
             int index = bvll[i];
 			tvl[i] = tbvl[index];
-            tvl[i].v.x += x;
-            tvl[i].v.y += y;
-            tvl[i].v.z += z;
         }
 
         glColor4ub(255,255,255,255);

@@ -30,7 +30,7 @@ struct Mat4 {
     };
 };
 
-void print_mat4(struct Mat4 m)
+void mat4_print(struct Mat4 m)
 {
     printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[0].y,m.v[0].z,m.v[0].w );
     printf("%.2f %.2f %.2f %.2f \n", m.v[1].x,m.v[1].y,m.v[1].z,m.v[1].w );
