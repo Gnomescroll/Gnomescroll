@@ -30,8 +30,8 @@ static int ticks_end_fade = 60;
 void init_block_damage()
 {
     GS_ASSERT(block_damage_texture == 0);
-    //int ret = create_texture_from_file("./media/sprites/block_damage.png", &block_damage_texture, GL_NEAREST, GL_NEAREST);
-    int ret = create_texture_from_file("./media/sprites/block_damage.png", &block_damage_texture, GL_LINEAR, GL_LINEAR);
+    //int ret = create_texture_from_file("./media/sprites/animation/block_damage.png", &block_damage_texture, GL_NEAREST, GL_NEAREST);
+    int ret = create_texture_from_file("./media/sprites/animation/block_damage.png", &block_damage_texture, GL_LINEAR, GL_LINEAR);
 
     GS_ASSERT(ret == 0);
 }

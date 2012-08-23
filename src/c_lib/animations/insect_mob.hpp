@@ -65,7 +65,7 @@ void teardown_insect_mob()
 
 void init_insect_mob_texture()
 {
-    SDL_Surface* s = create_surface_from_file((char*) "./media/sprites/AlienTex3.png");
+    SDL_Surface* s = create_surface_from_file("./media/sprites/mob/AlienTex3.png");
 
     if(s == NULL)
     {

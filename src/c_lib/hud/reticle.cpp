@@ -12,7 +12,7 @@ inited(false),
 x0(0), y0(0), x1(0), y1(0)
 {}
 
-void Reticle::init(char* filename)
+void Reticle::init(const char* filename)
 {
     if (this->inited) return;
     _load_image_create_texture(filename, &this->tex_data);
@@ -92,8 +92,8 @@ void Reticle::draw()
 
 void init()
 {
-    reticle.init((char*)"./media/texture/reticle/reticle_02.png"); //target.png");
-    scope_reticle.init((char*)"./media/texture/target-zoom.png");
+    reticle.init("./media/sprites/reticle/reticle_02.png"); //target.png");
+    scope_reticle.init("./media/sprites/reticle/target-zoom.png");
 }
 
 

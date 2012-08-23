@@ -36,7 +36,7 @@ static SDL_Surface* gradient_surface;
 void init() {
 
     // load gradient surface
-    const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
+    const char grad_fmt[] = "media/sprites/gradient/heightmap_gradient_%02d.png";
     char grad_str[strlen(grad_fmt) -2 +1];
     sprintf(grad_str, grad_fmt, grad_num);
     gradient_surface = create_surface_from_file(grad_str);

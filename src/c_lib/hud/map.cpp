@@ -32,7 +32,7 @@ void load_colored_icon(
 )
 {
     // format path
-    const char icon_path_fmt[] = "./media/texture/icons/%s";
+    const char icon_path_fmt[] = "./media/sprites/icons/%s";
     char* path = (char*)calloc(strlen(icon_path_fmt) + strlen(fn) - 2 + 1, sizeof(char));
     sprintf(path, icon_path_fmt, fn);
     load_colored_texture(path, texture, br,bg,bb, r,g,b);
@@ -69,30 +69,30 @@ void init_text_icons()
     you_star = HudText::text_list->create();
     GS_ASSERT(you_star != NULL);
     if (you_star == NULL) return;
-    you_star->set_text((char*)you_star_symbol);
+    you_star->set_text(you_star_symbol);
 
     you_A = HudText::text_list->create();
     GS_ASSERT(you_A != NULL);
     if (you_A == NULL) return;
-    you_A->set_text((char*)you_A_symbol);
+    you_A->set_text(you_A_symbol);
 
     base = HudText::text_list->create();
     GS_ASSERT(base != NULL);
     if (base == NULL) return;
-    base->set_text((char*)base_symbol);
+    base->set_text(base_symbol);
 
     for (int i=0; i<(int)AGENT_MAX; i++)
     {
         ally[i] = HudText::text_list->create();
         GS_ASSERT(ally[i] != NULL);
         if (ally[i] == NULL) return;
-        ally[i]->set_text((char*)ally_symbol);
+        ally[i]->set_text(ally_symbol);
     }
 
     camera = HudText::text_list->create();
     GS_ASSERT(camera != NULL);
     if (camera == NULL) return;
-    camera->set_text((char*)camera_symbol);
+    camera->set_text(camera_symbol);
 
     text_icons_inited = true;
 }
@@ -118,7 +118,7 @@ void init_surface()
 {
     // load gradient surface
     const int grad_num = 11;
-    const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
+    const char grad_fmt[] = "media/sprites/gradient/heightmap_gradient_%02d.png";
     MALLOX(char, grad_str, strlen(grad_fmt) -2 +1);
 
     sprintf(grad_str, grad_fmt, grad_num);

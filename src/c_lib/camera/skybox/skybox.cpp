@@ -33,8 +33,7 @@ void init_shader()
 
 void init_texture()
 {
-    SDL_Surface* surface = create_surface_from_file((char*)
-        "./media/texture/skybox/stars_and_north.png");
+    SDL_Surface* surface = create_surface_from_file("./media/sprites/skybox/stars_and_north.png");
 
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;

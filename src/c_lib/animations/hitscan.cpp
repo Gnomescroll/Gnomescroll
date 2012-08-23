@@ -20,7 +20,7 @@ static GLuint hitscan_texture_id = 0;
 
 void init_hitscan()
 {
-    int ret = create_texture_from_file("./media/texture/hitscan/hitscan_01.png", &hitscan_texture_id);
+    int ret = create_texture_from_file("./media/sprites/hitscan/hitscan_01.png", &hitscan_texture_id);
     GS_ASSERT(ret == 0);
 }
 

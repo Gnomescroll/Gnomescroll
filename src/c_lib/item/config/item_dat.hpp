@@ -13,8 +13,8 @@ void verify_item_dat();
 void load_item_dat()
 {
     start_item_dat();
-    int i0 = texture_alias("media/sprites/i00.png");
-    int i1 = texture_alias("media/sprites/i01.png");
+    int i0 = texture_alias("media/sprites/item/i00.png");
+    int i1 = texture_alias("media/sprites/item/i01.png");
 
     item_def(0, IG_ERROR, "error_item");
     s.pretty_name = (char*) "Error";

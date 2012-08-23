@@ -39,10 +39,10 @@ e east
 void load_block_dat()
 {
 
-    int t0 = texture_alias("media/sprites/t00.png");
-    int t1 = texture_alias("media/sprites/t01.png");
-    int t2 = texture_alias("media/sprites/t02.png");
-    int t3 = texture_alias("media/sprites/t03.png");
+    int t0 = texture_alias("media/sprites/terrain/t00.png");
+    int t1 = texture_alias("media/sprites/terrain/t01.png");
+    int t2 = texture_alias("media/sprites/terrain/t02.png");
+    int t3 = texture_alias("media/sprites/terrain/t03.png");
 
     const int T = 0;
     const int B = 1;
