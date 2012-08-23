@@ -253,7 +253,6 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     for(unsigned int i=0; i < pScene->mNumMeshes; i++)
     {
         printf("Mesh %02d: %s \n", i, pScene->mMeshes[i]->mName.data);
-
     }
 */
 #if 0

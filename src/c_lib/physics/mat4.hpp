@@ -30,7 +30,7 @@ struct Mat4 {
     };
 };
 
-void print_mat4(struct Mat4 m)
+void mat4_print(struct Mat4 m)
 {
     printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[0].y,m.v[0].z,m.v[0].w );
     printf("%.2f %.2f %.2f %.2f \n", m.v[1].x,m.v[1].y,m.v[1].z,m.v[1].w );
@@ -109,6 +109,18 @@ struct Mat4 mat4_mult(Mat4 a, Mat4 b)
     return c;
 }
 
+struct Mat4 mat4_transpose(Mat4 a) __attribute((always_inline));
+
+struct Mat4 mat4_transpose(Mat4 a)
+{
+    struct Mat4 b;
+    
+    for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+        b._f[4*i+j] = a._f[4*j+i];
+    }}
+    return b;
+}
 
 static struct Mat4 mat4_identity()  __attribute((always_inline));
 
