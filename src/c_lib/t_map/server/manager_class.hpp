@@ -30,7 +30,6 @@ const int MAP_CHUNK_QUE_SIZE = 1024; //que for loading map chunks
 const unsigned short NO_ALIAS = 0xffff;
 
 const unsigned short SUBSCRIBED = 0;
-const unsigned UNSUBSCRIBED_NO_DATA = 0xffff;
 const unsigned QUED = 0xffff-1;
 
 /*
@@ -50,7 +49,7 @@ class MAP_MANAGER_ELEMENT
 
     MAP_MANAGER_ELEMENT()
     {
-        version = UNSUBSCRIBED_NO_DATA;    
+        version = NO_ALIAS;    
     }
 };
 
@@ -156,9 +155,6 @@ class Map_manager
 
     void init_compressor();
     void end_compressor();
-
-    void send_subscribe_chunk(int chunk_index, int alias);  //implement
-    void send_unsubscribe_chunk(int chunk_index, int alias);//implement
 
     void send_chunk_item_containers(int chunk_index);
     void send_chunk_item_container_reset(int chunk_index);
@@ -428,12 +424,6 @@ void Map_manager::dispatch_que()
 
 }
 
-
-void Map_manager::send_subscribe_chunk(int chunk_index, int alias)
-{}
-
-void Map_manager::send_unsubscribe_chunk(int chunk_index, int alias)
-{}
 
 void Map_manager::send_chunk_item_containers(int chunk_index)
 {

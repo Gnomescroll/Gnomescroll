@@ -263,10 +263,19 @@ INLINE
 struct Vec3 vec3_mat3_apply(struct Vec3 v, struct Mat4 m)
 {   
     struct Vec3 u;
-
+/*
     u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x + m.v[3].x, 
     u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y + m.v[3].y, 
     u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z + m.v[3].z;
+*/
+
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
+
+    u.x += m.v[3].x;
+    u.y += m.v[3].y;
+    u.z += m.v[3].z;
 
     return u;
 }

@@ -804,14 +804,18 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 #else
                     //Vec3 v = vec3_mat3_apply(bvl[index].v, mat);
                     //Vec3 v = bvl[index].v;
+                    if(_print)
+                        vec3_print(bvl[index].v);
 
+                    printf("Vertex %02d \n", index)
                     vec3_print(bvl[index].v);
                     Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
                     tbvl[index].v.x += weight*v.x;
                     tbvl[index].v.y += weight*v.y;
                     tbvl[index].v.z += weight*v.z;
 
-                    vec3_print( v );
+                    vec3_print(c);
+                    mat4_print(boneMatrix);
                 #endif
 
                     //unsigned int mNumWeights; //number of vertices affected by this bone
@@ -828,14 +832,15 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         }
 
         //offset each element in temp vertex list
+
+/*
         for(int i=0; i<bvlm; i++)
         {
             printf("Vertix %02d \n", i);
             vec3_print(bvl[i].v);
             vec3_print(tbvl[i].v);
-
         }
-
+*/
         for(int i=0; i<bvlm; i++)
         {
             tbvl[i].v.x += x;
