@@ -30,13 +30,21 @@ struct Mat4 {
     };
 };
 
+//9.005 Are OpenGL matrices column-major or row-major?
+// http://www.opengl.org/archives/resources/faq/technical/transformations.htm
 void mat4_print(struct Mat4 m)
 {
+/*
     printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[0].y,m.v[0].z,m.v[0].w );
     printf("%.2f %.2f %.2f %.2f \n", m.v[1].x,m.v[1].y,m.v[1].z,m.v[1].w );
     printf("%.2f %.2f %.2f %.2f \n", m.v[2].x,m.v[2].y,m.v[2].z,m.v[2].w );
     printf("%.2f %.2f %.2f %.2f \n", m.v[3].x,m.v[3].y,m.v[3].z,m.v[3].w );
+*/
 
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[1].x,m.v[2].x,m.v[3].x );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].y,m.v[1].y,m.v[2].y,m.v[3].y );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].z,m.v[1].z,m.v[2].z,m.v[3].z );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].w,m.v[1].w,m.v[2].w,m.v[3].w );
 /*
     printf("\n");
 

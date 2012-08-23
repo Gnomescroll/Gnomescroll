@@ -778,13 +778,13 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     }
                 }
 
+                boneMatrix = mat4_transpose(boneMatrix); //transpose it because its wrong
                 if(_print)
                 {
                     printf("final matrix: mesh: %02d %02d mesh name= %s \n", i,j, nl[i]->mName.data);
                     mat4_print(boneMatrix) ;
                 }
 
-                printf("bone:\n");
                 for(unsigned int k=0; k<bone->mNumWeights; k++)
                 {
                     int index = offset + bone->mWeights[k].mVertexId;
@@ -807,15 +807,24 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     if(_print)
                         vec3_print(bvl[index].v);
 
-                    printf("Vertex %02d \n", index)
-                    vec3_print(bvl[index].v);
+
+
                     Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
+
+                    if(_print)
+                    {
+                        printf("Vertex %02d \n", index);
+                        vec3_print(bvl[index].v);
+
+                        vec3_print(v);
+                        mat4_print(boneMatrix);
+                    }
+
                     tbvl[index].v.x += weight*v.x;
                     tbvl[index].v.y += weight*v.y;
                     tbvl[index].v.z += weight*v.z;
 
-                    vec3_print(c);
-                    mat4_print(boneMatrix);
+
                 #endif
 
                     //unsigned int mNumWeights; //number of vertices affected by this bone
@@ -844,8 +853,8 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         for(int i=0; i<bvlm; i++)
         {
             tbvl[i].v.x += x;
-            tbvl[i].v.y += y;
-            tbvl[i].v.z += z;
+            tbvl[i].v.y += z;
+            tbvl[i].v.z += y;
         }
 
 	/*
@@ -881,7 +890,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
             //vec3_print(v.v);
             glTexCoord2f(v.ux, v.uy );
-			glVertex3f(v.v.x, v.v.y, v.v.z);
+			glVertex3f(v.v.x, v.v.z, v.v.y); //swap y and z
         }
 
         glEnd();
