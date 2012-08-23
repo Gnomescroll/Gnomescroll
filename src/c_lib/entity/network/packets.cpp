@@ -164,13 +164,6 @@ inline void object_state_momentum_angles_StoC::handle()
         physics->set_position(vec3_init(x,y,z));
         physics->set_momentum(vec3_init(mx,my,mz));
         physics->set_angles(vec3_init(theta, phi, 0));
-        //using Components::DestinationTargetingComponent;
-        //DestinationTargetingComponent* dest = (DestinationTargetingComponent*)obj->get_component(COMPONENT_DESTINATION_TARGETING);
-        //if (dest != NULL)
-        //{
-            //struct Vec3 target_direction = vec3_init_from_angles(theta, phi, 0);
-            //dest->target_direction = vec3_normalize(target_direction);
-        //}
     }
 }
 
@@ -371,17 +364,23 @@ inline void object_choose_destination_StoC::handle()
     
     // set momentum from destination :: TODO MOVE
     Vec3 direction = vec3_sub(destination, position);
+    direction.z = 0;
     if (this->ticks_to_destination)
     {
         float len = vec3_length(direction);
         float speed = len / ((float)this->ticks_to_destination);
         motion->speed = speed;
-        motion->at_destination = false;
-        motion->en_route = true;
         if (len)
         {
+            motion->at_destination = false;
+            motion->en_route = true;
             normalize_vector(&direction);
             motion->target_direction = direction;
+        }
+        else
+        {
+            motion->at_destination = true;
+            motion->en_route = false;
         }
     }
     else

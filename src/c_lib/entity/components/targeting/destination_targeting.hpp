@@ -50,7 +50,7 @@ class DestinationTargetingComponent: public TargetingComponent
     DestinationTargetingComponent()
     : TargetingComponent(COMPONENT_DESTINATION_TARGETING),
     destination(vec3_init(0,0,0)),
-    stop_proximity(0.5f),
+    stop_proximity(0.1f),
     speed(1.0f), max_z_diff(128),
     destination_choice_x(1.0f), destination_choice_y(1.0f), 
     at_destination(false),
