@@ -298,12 +298,12 @@ inline void send_mob_bomb_state_machine_to_client(int client_id, class Object* o
 
     if (state->state == STATE_WAITING)
         send_object_begin_wait(client_id, object);
-    //else
-    //if (state->state == STATE_IN_TRANSIT)
-        //send_object_in_transit(client_id, object, NULL);
-    //else
-    //if (state->state == STATE_CHASE_AGENT)
-        //send_object_chase_agent(client_id, object, NULL);
+    else
+    if (state->state == STATE_IN_TRANSIT)
+        send_object_in_transit(client_id, object, NULL);
+    else
+    if (state->state == STATE_CHASE_AGENT)
+        send_object_chase_agent(client_id, object, NULL);
 }
 #endif
 
@@ -412,11 +412,14 @@ static void in_transit(class Object* object)
 
     #if DC_CLIENT
     if (!dest_target->at_destination)
-    {   // DONT UNCOMMENT THIS: BAD: MYSTERY ERROR:
-        //dest_target->orient_to_target(position);    
-        //Vec3 angles = physics->get_angles();
-        //angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
-        //physics->set_angles(angles);
+    {
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+
+        dest_target->orient_to_target(physics->get_position());    
+        Vec3 angles = physics->get_angles();
+        angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
+        physics->set_angles(angles);
 
         dest_target->move_on_surface();
         dest_target->check_at_destination();
@@ -426,18 +429,21 @@ static void in_transit(class Object* object)
     #if DC_SERVER
     // move towards target
     if (!dest_target->move_on_surface())
+    {
         in_transit_to_waiting(object);  // failed to move
+    }
     else
     {   // check at destination
         if (dest_target->check_at_destination())
+        {
             in_transit_to_waiting(object);
-        //else
-        //{
-            //using Components::PhysicsComponent;
-            //PhysicsComponent* physics = (PhysicsComponent*)
-                //object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            //dest_target->orient_to_target(physics->get_position());
-        //}
+        }
+        else
+        {
+            using Components::PhysicsComponent;
+            PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            dest_target->orient_to_target(physics->get_position());
+        }
     }
     #endif
 }

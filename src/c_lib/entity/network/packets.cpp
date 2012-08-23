@@ -371,17 +371,23 @@ inline void object_choose_destination_StoC::handle()
     
     // set momentum from destination :: TODO MOVE
     Vec3 direction = vec3_sub(destination, position);
+    direction.z = 0;
     if (this->ticks_to_destination)
     {
         float len = vec3_length(direction);
         float speed = len / ((float)this->ticks_to_destination);
         motion->speed = speed;
-        motion->at_destination = false;
-        motion->en_route = true;
         if (len)
         {
+            motion->at_destination = false;
+            motion->en_route = true;
             normalize_vector(&direction);
             motion->target_direction = direction;
+        }
+        else
+        {
+            motion->at_destination = true;
+            motion->en_route = false;
         }
     }
     else
