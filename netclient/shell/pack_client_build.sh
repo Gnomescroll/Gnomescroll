@@ -14,7 +14,7 @@ cp ./settings/lua_library.lua $f/settings/lua_library.lua
 mkdir $f/screenshot
 mkdir $f/lib
 cp -R ../lib/lin32 $f/lib/
-cp ../notes/README_linux_client $f/README
+#cp ../notes/README_linux_client $f/README
 rm $f.tar.gz
 tar cvzf $f.tar.gz $f
 mv $f.tar.gz ~/Dropbox/Public
