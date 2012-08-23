@@ -326,12 +326,6 @@ void Map_manager::update()
 void Map_manager::que_for_sub(int x, int y)
 {
 
-    if (chunk_que_num == MAP_CHUNK_QUE_SIZE)
-    {
-        printf("Map_manager::que_for_sub: Warning chunk_que_num == MAP_CHUNK_QUE_SIZEs \n" );
-        return;
-    }
-
     int index = y*xchunk_dim + x;
 
     if(version_list[index].version == QUED)
@@ -339,6 +333,13 @@ void Map_manager::que_for_sub(int x, int y)
         printf("Error: Map_manager::que_for_sub, adding to que twice!\n");
         return;
     }
+    
+    if (chunk_que_num == MAP_CHUNK_QUE_SIZE)
+    {
+        printf("Map_manager::que_for_sub: Warning chunk_que_num == MAP_CHUNK_QUE_SIZEs \n" );
+        return;
+    }
+
 
     struct QUE_ELEMENT q; 
 
