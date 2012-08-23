@@ -702,7 +702,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
     {
         //printf("nlm= %d vlm= %d \n", nlm, vlm);
 
-        bool _print  = true;
+        bool _print  = false;
 
         for(int i=0; i<bvlm; i++)
         {
@@ -830,11 +830,10 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         //offset each element in temp vertex list
         for(int i=0; i<bvlm; i++)
         {
-            print... 
+            printf("Vertix %02d \n", i);
+            vec3_print(bvl[i].v);
+            vec3_print(tbvl[i].v);
 
-            .begin(), 
-
-            .end()
         }
 
         for(int i=0; i<bvlm; i++)
