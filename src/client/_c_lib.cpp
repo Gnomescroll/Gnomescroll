@@ -125,7 +125,7 @@ dont_include_this_file_in_server
 #endif
 */
 
-//#include <t_mob/_include.hpp>
+#include <t_mob/_include.hpp>
 
 /* Draw utils */
 #include <common/draw/draw.cpp>
@@ -403,7 +403,7 @@ int init_c_lib(int argc, char* argv[])
     //init shaders
     
     //t_map::init_shaders();
-    //t_mob::init();
+    t_mob::init();
     //CHECK_GL_ERROR();
     return 0;
 }
@@ -468,7 +468,7 @@ void close_c_lib()
     Particle::teardown_particles(); // teardown after ClientState::agent_list, because of billboard particle
 
     if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
-    //t_mob::teardown();
+    t_mob::teardown();
 
     if (TEARDOWN_DEBUG) printf("client state list teardown\n");
     ClientState::teardown_lists();
