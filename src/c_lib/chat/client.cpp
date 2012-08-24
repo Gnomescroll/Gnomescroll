@@ -378,22 +378,46 @@ bool ChatInput::route_command()
         i = start;  // reset cursor
         
         int j = 0;  // copy red
-        while ((c = buffer[i++]) != '\0' && j < 4)
+        while ((c = buffer[i++]) != '\0' && j < 3)
             buf[j++] = c;
         buf[j] = '\0';
-        color.r = atoi(buf);
+        if (buffer[i-1] != '\0') valid = false;
+        else
+        {
+            int r = atoi(buf);
+            if (r > 0xff) valid = false;
+            else color.r = r;
+        }
         
         j = 0;      // copy green
-        while ((c = buffer[i++]) != '\0' && j < 4)
+        while ((c = buffer[i++]) != '\0' && j < 3)
             buf[j++] = c;
         buf[j] = '\0';
-        color.g = atoi(buf);
-        
+        if (buffer[i-1] != '\0') valid = false;
+        else
+        {
+            int g = atoi(buf);
+            if (g > 0xff) valid = false;
+            else color.g = g;
+        }
+                
         j = 0;      // copy blue
-        while ((c = buffer[i++]) != '\0' && j < 4)
+        while ((c = buffer[i++]) != '\0' && j < 3)
             buf[j++] = c;
         buf[j] = '\0';
-        color.b = atoi(buf);
+        if (buffer[i-1] != '\0') valid = false;
+        else
+        {
+            int b = atoi(buf);
+            if (b > 0xff) valid = false;
+            else color.b = b;
+        }
+        
+        if (!valid)
+        {
+            chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
+            return false;
+        }
         
         colorme_CtoS msg;
         msg.r = color.r;
