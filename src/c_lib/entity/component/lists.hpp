@@ -90,20 +90,6 @@ class RateLimitComponentList:
 {};
 
 #if DC_CLIENT
-/* Drawing */
-const int MAX_RENDERABLE_COMPONENTS = 4096;
-//typedef ComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
-    //BillboardSpriteComponentList;
-class BillboardSpriteComponentList:
-    public CallableComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
-{};
-class ColoredVoxelComponentList:
-    public CallableComponentList<ColoredVoxelComponent, COMPONENT_COLORED_VOXEL, MAX_RENDERABLE_COMPONENTS>
-{};
-class TexturedVoxelComponentList:
-    public CallableComponentList<TexturedVoxelComponent, COMPONENT_TEXTURED_VOXEL, MAX_RENDERABLE_COMPONENTS>
-{};
-
 /* Animations */
 const int MAX_ANIMATION_COMPONENTS = 1024;
 typedef ComponentList<AnimationComponent, COMPONENT_VOXEL_ANIMATION, MAX_ANIMATION_COMPONENTS>

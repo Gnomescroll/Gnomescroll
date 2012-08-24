@@ -127,8 +127,11 @@ dont_include_this_file_in_server
 
 //#include <t_mob/_include.hpp>
 
-/* Draw lists */
+/* Draw utils */
 #include <common/draw/draw.cpp>
+#include <common/draw/voxel.cpp>
+#include <common/draw/colored_voxel.cpp>
+#include <common/draw/textured_voxel.cpp>
 
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>

@@ -38,12 +38,6 @@
 #include <entity/components/rate_limit.hpp>
 
 #if DC_CLIENT
-#include <entity/components/draw.hpp>
-#include <entity/components/draw/billboard_sprite.hpp>
-#include <entity/components/draw/voxel.hpp>
-#include <entity/components/draw/colored_voxel.hpp>
-#include <entity/components/draw/textured_voxel.hpp>
-
 #include <entity/components/animation.hpp>
 #endif
 

@@ -96,13 +96,18 @@ static void prep_textured_voxel_particles()
     static struct Vec3 vn[6];      //normals
     static struct Vec3 veb2[6*4];  //vertex array for rendering
 
+    static const float tp = 1.0f/512.0f;    // pixel width
+    static const float tw = tp * 32.0f;     // sprite width
+    static const float th = tw;             // sprite height
+    
     for (int i=0; i<item_list->n_max; i++)
     {
         class ItemParticle::ItemParticle* item = item_list->a[i];
         if (item == NULL) continue;
         if (!item->is_voxel || !item->should_draw) continue;
         item->voxel.delta_rotation(0.01f, 0.0f);
-        
+        GS_ASSERT(item->voxel.cube_id != 255);
+
         // frustum test
         float size = item->voxel.size;
         struct Vec3 p = quadrant_translate_position(current_camera_position, item->verlet.position);
@@ -112,11 +117,6 @@ static void prep_textured_voxel_particles()
         if (sphere_fulstrum_test(center.x, center.y, center.z, size) == false) continue;
 
         p.z += size;   // render offset
-
-        float tx_min = item->voxel.tx;
-        float tx_max = item->voxel.tx + item->voxel.sprite_width;
-        float ty_min = item->voxel.ty;
-        float ty_max = item->voxel.ty + item->voxel.sprite_width;
 
         for (int i=0; i<8; i++)
         {
@@ -150,10 +150,20 @@ static void prep_textured_voxel_particles()
         // draw voxel
         for (int i=0; i<6; i++)
         {
-            textured_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], tx_min, ty_min);
-            textured_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], tx_min, ty_max);
-            textured_voxel_particle_vlist->push_vertex(veb2[4*i+2], vn[i], tx_max, ty_max);
-            textured_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], tx_max, ty_min);
+            int tex_id = t_map::get_cube_side_texture(item->voxel.cube_id, i);
+
+            float tx = (tex_id % 16) * tw;
+            float ty = (tex_id / 16) * th;
+            
+            float tx_min = tx;
+            float tx_max = tx + tw;
+            float ty_min = ty;
+            float ty_max = ty + th;
+            
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], tx_min, ty_min);
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], tx_min, ty_max);
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], tx_max, ty_max);
+            textured_voxel_particle_vlist->push_vertex(veb2[4*i+2], vn[i], tx_max, ty_min);
         }
     }
 

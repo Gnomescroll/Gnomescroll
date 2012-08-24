@@ -1,19 +1,13 @@
 #pragma once
 
-#if DC_CLIENT
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
-#include <entity/constants.hpp>
-#include <entity/components/draw.hpp>
-
-namespace Components
+namespace Draw
 {
 
-/*
- * Dont attach this component  (no type is defined)
- * Only hold common minivox stuff
- */
-
-class VoxelComponent: public DrawComponent
+class Voxel
 {
     private:
 
@@ -71,12 +65,9 @@ class VoxelComponent: public DrawComponent
             this->orient_vectors();
         }
 
-    explicit VoxelComponent(ComponentType type)
-    : DrawComponent(type),
+    Voxel() :
     size(1.0f), theta(0.0f), phi(0.0f), dtheta_speed(0.0f), dphi_speed(0.0f)
     {}
 };
 
-} // Components
-
-#endif
+} // Draw

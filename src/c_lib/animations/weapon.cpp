@@ -268,7 +268,7 @@ static void draw_voxel(int item_type, Vec3 origin, Vec3 forward, Vec3 right, Vec
     float tx = (2.0f / 32.0f) * (sprite_id % (512/32));
     float ty = (2.0f / 32.0f) * (sprite_id / (512/32));
     
-    drawTexturedMinivox(
+    Draw::drawTexturedMinivox(
         origin, right, forward, up,
         tx, ty, sprite_width);
 }

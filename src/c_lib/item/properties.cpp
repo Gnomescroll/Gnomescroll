@@ -213,13 +213,13 @@ int get_max_durability(int item_type)
     return attr->max_durability;
 }
 
-int get_placer_block_type_id(int item_type)
+int get_block_type_id(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
-    return attr->placer_block_type_id;
+    return attr->block_type_id;
 }
 
 int get_particle_voxel_texture(int item_type)

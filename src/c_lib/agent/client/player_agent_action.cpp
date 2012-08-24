@@ -200,6 +200,8 @@ void PlayerAgent_action::update_mining_laser()
     struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
     
     this->p->you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
+    this->p->you->event.mining_laser_emitter.length_position = agent_camera->get_position();
+    this->p->you->event.mining_laser_emitter.length_direction = agent_camera->forward_vector();
     this->p->you->event.mining_laser_emitter.set_state(origin, direction);
     this->p->you->event.mining_laser_emitter.tick();
     this->p->you->event.mining_laser_emitter.prep_draw();
@@ -422,7 +424,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return true;
-    int val = attr->placer_block_type_id;
+    int val = attr->block_type_id;
     if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
         ItemContainer::create_container_block_CtoS msg;

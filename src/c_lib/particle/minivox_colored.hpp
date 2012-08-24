@@ -7,7 +7,7 @@ dont_include_this_file_in_server
 #include <common/color.hpp>
 #include <physics/common.hpp>
 #include <voxel/common.hpp>
-#include <entity/components/draw/textured_voxel.hpp>
+#include <common/draw/textured_voxel.hpp>
 #include <common/template/object_list.hpp>
 
 namespace Particle
@@ -27,7 +27,7 @@ class ColoredMinivox: public ParticleMotion
 {
     public:
 
-        Components::TexturedVoxelComponent voxel;
+        Draw::TexturedVoxel voxel;
     
         struct Color color;
 

@@ -596,7 +596,7 @@ void create_container_block_CtoS::handle()
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
     if (attr == NULL) return;
-    int val = attr->placer_block_type_id;
+    int val = attr->block_type_id;
 
     ItemContainerType container_type = Item::get_container_type_for_block(val);
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);

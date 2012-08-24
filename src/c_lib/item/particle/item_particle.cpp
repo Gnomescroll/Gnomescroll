@@ -142,7 +142,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
         this->voxel.size = ITEM_PARTICLE_VOXEL_RENDER_SCALE / 2.0f;   // cut in half because v_set2(centered) is [-1,1](2x)
         this->voxel.pixel_width = 32;
         this->voxel.texture_index = Item::get_particle_voxel_texture(item_type);
-
+        this->voxel.cube_id = Item::get_block_type_id(item_type);
         this->voxel.theta = randf();
         this->voxel.init();
     }

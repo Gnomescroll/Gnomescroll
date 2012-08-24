@@ -2,8 +2,7 @@
 
 #include <physics/common.hpp>
 #include <voxel/common.hpp>
-
-#include <particle/minivox_colored.hpp>
+#include <common/draw/textured_voxel.hpp>
 
 namespace Particle
 {
@@ -12,7 +11,7 @@ class TexturedMinivox: public ParticleMotion
 {
     public:
 
-        Components::TexturedVoxelComponent voxel;
+        Draw::TexturedVoxel voxel;
 
         void set_size(float size);
 

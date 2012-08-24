@@ -22,7 +22,7 @@ void load_item_dat()
 
     item_def(1, IG_PLACER, "regolith");
     iso_block_sprite_def("regolith");
-    s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
+    s.block_type_id = t_map::dat_get_cube_id("regolith");
     s.pretty_name = (char*) "Regolith";
     s.max_stack_size = 64;
     s.particle_voxel = true;
@@ -31,7 +31,7 @@ void load_item_dat()
 
     item_def(2, IG_PLACER, "rock");
     iso_block_sprite_def("rock");
-    s.placer_block_type_id = t_map::dat_get_cube_id("rock");
+    s.block_type_id = t_map::dat_get_cube_id("rock");
     s.pretty_name = (char*) "Rock";
     s.max_stack_size = 64;
     s.particle_voxel = true;
@@ -124,13 +124,13 @@ void load_item_dat()
 
     //item_def(15, IG_PLACER, "crate_1");
     //iso_block_sprite_def("crate_1");
-    //s.placer_block_type_id = t_map::dat_get_cube_id("crate_1");
+    //s.block_type_id = t_map::dat_get_cube_id("crate_1");
     //s.max_stack_size = 1;
 
     // small storage container
     item_def(16, IG_PLACER, "small_storage");
     iso_block_sprite_def("small_storage");
-    s.placer_block_type_id = t_map::dat_get_cube_id("small_storage");
+    s.block_type_id = t_map::dat_get_cube_id("small_storage");
     s.pretty_name = (char*) "Small Storage Block";
     s.max_stack_size = 1;
     s.particle_voxel = true;
@@ -143,7 +143,7 @@ void load_item_dat()
     item_def(17, IG_PLACER, "small_crafting_bench");
     iso_block_sprite_def("small_crafting_bench");
     s.pretty_name = (char*) "Small Crafting Bench";
-    s.placer_block_type_id = t_map::dat_get_cube_id("small_crafting_bench");
+    s.block_type_id = t_map::dat_get_cube_id("small_crafting_bench");
     s.max_stack_size = 1;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("small_crafting_bench");
@@ -275,7 +275,7 @@ void load_item_dat()
     item_def(46, IG_PLACER, "steel_block_1");
     iso_block_sprite_def("steel_block_1");
     s.pretty_name = (char*) "Steel Block #1";
-    s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_1");
+    s.block_type_id = t_map::dat_get_cube_id("steel_block_1");
     s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_1");
@@ -284,7 +284,7 @@ void load_item_dat()
     item_def(47, IG_PLACER, "steel_block_2");
     s.pretty_name = (char*) "Steel block #2";
     iso_block_sprite_def("steel_block_2");
-    s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_2");
+    s.block_type_id = t_map::dat_get_cube_id("steel_block_2");
     s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_2");
@@ -293,7 +293,7 @@ void load_item_dat()
     item_def(48, IG_PLACER, "steel_block_3");
     s.pretty_name = (char*) "Steel Block #3";
     iso_block_sprite_def("steel_block_3");
-    s.placer_block_type_id = t_map::dat_get_cube_id("steel_block_3");
+    s.block_type_id = t_map::dat_get_cube_id("steel_block_3");
     s.max_stack_size = 16;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_3");
@@ -308,7 +308,7 @@ void load_item_dat()
     item_def(50, IG_PLACER, "cryofreezer_1");
     iso_block_sprite_def("cryofreezer_1");
     s.pretty_name = (char*) "Small Cryofreezer";
-    s.placer_block_type_id = t_map::dat_get_cube_id("cryofreezer_1");
+    s.block_type_id = t_map::dat_get_cube_id("cryofreezer_1");
     s.max_stack_size = 1;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("cryofreezer_1");
@@ -328,7 +328,7 @@ void load_item_dat()
     item_def(52, IG_PLACER, "smelter_1");
     iso_block_sprite_def("smelter_1");
     s.pretty_name = (char*) "Simple Smelter";
-    s.placer_block_type_id = t_map::dat_get_cube_id("smelter_1");
+    s.block_type_id = t_map::dat_get_cube_id("smelter_1");
     s.max_stack_size = 1;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("smelter_1");
@@ -339,7 +339,7 @@ void load_item_dat()
     item_def(53, IG_PLACER, "control_node");
     iso_block_sprite_def("control_node");
     s.pretty_name = (char*) "Control Node";
-    s.placer_block_type_id = t_map::dat_get_cube_id("control_node");
+    s.block_type_id = t_map::dat_get_cube_id("control_node");
     s.max_stack_size = 8;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("control_node");
@@ -375,7 +375,7 @@ void load_item_dat()
     item_def(59, IG_PLACER, "crusher");
     iso_block_sprite_def("crusher");
     s.pretty_name = (char*) "Crusher";
-    s.placer_block_type_id = t_map::dat_get_cube_id("crusher");
+    s.block_type_id = t_map::dat_get_cube_id("crusher");
     s.max_stack_size = 1;
     s.particle_voxel = true;
     s.particle_voxel_texture = t_map::get_cube_primary_texture_index("crusher");

@@ -249,7 +249,11 @@ void Agent_event::reload_weapon(int type)
 void Agent_event::update_mining_laser()
 {
     if (!this->mining_laser_emitter.on) return;
-    this->mining_laser_emitter.set_state(this->a->arm_center(), this->a->forward_vector());
+    struct Vec3 p = this->a->arm_center();
+    struct Vec3 v = this->a->forward_vector();
+    this->mining_laser_emitter.length_position = p;
+    this->mining_laser_emitter.length_direction = v;
+    this->mining_laser_emitter.set_state(p, v);
     this->mining_laser_emitter.tick();
     this->mining_laser_emitter.prep_draw();
 }

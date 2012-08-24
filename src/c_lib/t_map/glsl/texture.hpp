@@ -42,9 +42,15 @@ int get_cube_side_texture(int id, int side)
 int get_cube_primary_texture_index(const char* name)
 {
     int id = get_cube_id(name);
-    const int primary_side = 0; // TODO?
+    const int primary_side = 0;
     int cube = get_cube_side_texture(id, primary_side);
-    if (cube == 0) return 255;  // use error cube
+    return cube;
+}
+
+int get_cube_primary_texture_index(int id)
+{
+    const int primary_side = 0;
+    int cube = get_cube_side_texture(id, primary_side);
     return cube;
 }
 

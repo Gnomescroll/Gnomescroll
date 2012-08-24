@@ -50,10 +50,6 @@ StateMachineComponentList* state_machine_component_list = NULL;
 WaitingComponentList* waiting_component_list = NULL;
 
 #if DC_CLIENT
-BillboardSpriteComponentList* billboard_sprite_component_list = NULL;
-ColoredVoxelComponentList* colored_voxel_component_list = NULL;
-TexturedVoxelComponentList* textured_voxel_component_list = NULL;
-
 AnimationComponentList* animation_component_list = NULL;
 #endif
 
@@ -128,13 +124,6 @@ Component* get_switch(ComponentType type)
             return rate_limit_component_list->subscribe();
 
         #if DC_CLIENT
-        case COMPONENT_BILLBOARD_SPRITE:
-            return billboard_sprite_component_list->subscribe();
-        case COMPONENT_COLORED_VOXEL:
-            return colored_voxel_component_list->subscribe();
-        case COMPONENT_TEXTURED_VOXEL:
-            return textured_voxel_component_list->subscribe();
-
         case COMPONENT_VOXEL_ANIMATION:
             return animation_component_list->subscribe();
         #endif
@@ -240,16 +229,6 @@ void release_switch(Component* component)
             break;
 
         #if DC_CLIENT
-        case COMPONENT_BILLBOARD_SPRITE:
-            billboard_sprite_component_list->unsubscribe((BillboardSpriteComponent*)component);
-            break;
-        case COMPONENT_COLORED_VOXEL:
-            colored_voxel_component_list->unsubscribe((ColoredVoxelComponent*)component);
-            break;
-        case COMPONENT_TEXTURED_VOXEL:
-            textured_voxel_component_list->unsubscribe((TexturedVoxelComponent*)component);
-            break;
-
         case COMPONENT_VOXEL_ANIMATION:
             animation_component_list->unsubscribe((AnimationComponent*)component);
             break;
@@ -313,10 +292,6 @@ void init_components()
     rate_limit_component_list = new RateLimitComponentList;
 
     #if DC_CLIENT
-    billboard_sprite_component_list = new BillboardSpriteComponentList;
-    colored_voxel_component_list = new ColoredVoxelComponentList;
-    textured_voxel_component_list = new TexturedVoxelComponentList;
-
     animation_component_list = new AnimationComponentList;
     #endif
 
@@ -365,10 +340,6 @@ void teardown_components()
     if (rate_limit_component_list != NULL) delete rate_limit_component_list;
 
     #if DC_CLIENT
-    if (billboard_sprite_component_list != NULL) delete billboard_sprite_component_list;
-    if (colored_voxel_component_list != NULL) delete colored_voxel_component_list;
-    if (textured_voxel_component_list != NULL) delete textured_voxel_component_list;
-
     if (animation_component_list != NULL) delete animation_component_list;
     #endif
 

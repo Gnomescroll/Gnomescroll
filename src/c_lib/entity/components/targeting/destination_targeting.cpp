@@ -16,7 +16,7 @@ void DestinationTargetingComponent::set_destination(Vec3 dest)
 {
     this->destination = translate_position(dest);
     this->at_destination = false;
-    this->target_type = OBJECT_DESTINATION;    
+    this->target_type = OBJECT_DESTINATION;
 }
 
 void DestinationTargetingComponent::choose_destination()
@@ -26,31 +26,18 @@ void DestinationTargetingComponent::choose_destination()
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return;
 
-    float x = (randf()-0.5f)*2 * this->destination_choice_x;
-    float y = (randf()-0.5f)*2 * this->destination_choice_y;
-    float r = this->stop_proximity * this->stop_proximity;
-    if (x == 0.0f && y == 0.0f) x = this->destination_choice_x;
-    float len = sqrtf(x*x + y*y);
-    if (len < r)
+    float x,y;
+    const float r2 = this->stop_proximity * this->stop_proximity;
+    do
     {
-        x = this->stop_proximity;
-        y = this->stop_proximity;
-        len = sqrtf(2.0f) * this->stop_proximity;
-    }
-    
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)
-        this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-    int h = 1;
-    if (dims != NULL)
-        h = dims->get_integer_height();
-    GS_ASSERT(h > 0);
-    if (h < 1) h = 1;
+        x = 2*(randf()-0.5f) * this->destination_choice_x;
+        y = 2*(randf()-0.5f) * this->destination_choice_y;
+    } while ((x*x + y*y) < r2);
 
     Vec3 position = physics->get_position();
     position.x += x;
     position.y += y;
-    position.z = t_map::get_nearest_open_block(position.x, position.y, position.z, h);
+    position.z = t_map::get_highest_open_block(position.x, position.y, position.z);
         
     this->set_destination(position);
 
@@ -66,21 +53,25 @@ void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
     this->target_direction.z = 0.0f;
     if (vec3_length_squared(this->target_direction) == 0.0f)
     {
+        //GS_ASSERT(false);
+        this->at_destination = true;
         this->target_direction = vec3_init(1,0,0);
         return;
     }
     normalize_vector(&this->target_direction);
+    //printf("target direction: "); vec3_print(this->target_direction);
 }
 
 // adjusts position & momentum by moving over the terrain surface
 bool DestinationTargetingComponent::move_on_surface()
-{        
+{
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return false;
 
+    GS_ASSERT(this->speed != 0.0f);
     if (this->speed == 0.0f)
     {
         physics->set_momentum(vec3_init(0,0,0));
@@ -96,6 +87,7 @@ bool DestinationTargetingComponent::move_on_surface()
 
     if (vec3_length_squared(motion_direction) == 0.0f)
     {
+        GS_ASSERT(false);
         physics->set_momentum(vec3_init(0,0,0));
         return false;
     }
@@ -109,11 +101,16 @@ bool DestinationTargetingComponent::move_on_surface()
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
+    if (moved && this->ticks_to_destination > 0)
+        this->ticks_to_destination--;
+
     return moved;
 }
 
 bool DestinationTargetingComponent::check_at_destination()
 {
+    if (this->at_destination) return true;
+    
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -124,6 +121,8 @@ bool DestinationTargetingComponent::check_at_destination()
     }
     Vec3 pos = physics->get_position();
     Vec3 dest = quadrant_translate_position(pos, this->destination);
+    pos.z = 0;
+    dest.z = 0;
     this->at_destination = (vec3_distance_squared(pos, dest) <= this->stop_proximity*this->stop_proximity);
     return this->at_destination;
 }
