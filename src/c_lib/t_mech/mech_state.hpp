@@ -20,6 +20,8 @@ class MECH_LIST
     int mlm; //mech max
     int mln; //number of mech
 
+    //const static HARD_MAX = 0xffff-1;
+
     class MECH* mla; //mech array;
 
     bool needs_update; //for drawing
@@ -49,6 +51,8 @@ class MECH_LIST
     #if DC_CLIENT
     void add_mech(int id, const struct MECH &m)
     {
+        GS_ASSERT( mln < MECH_HARD_MAX );
+
         while(id >= mlm)
         {
             //printf("add_mech: expand array id= %i mlm= %i from %i \n", id, 2*mlm, mlm);
@@ -73,7 +77,9 @@ class MECH_LIST
     int add_mech(struct MECH &m)
     {
         //needs_update = true;
-        if(mlm == MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
+        if(mln == MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
+
+        GS_ASSERT( mln < MECH_HARD_MAX );
 
         if(mln == mlm)
         {
@@ -125,6 +131,13 @@ class MECH_LIST
 
     void server_add_mech(struct MECH &m)
     {
+
+        if(mln == MECH_HARD_MAX)
+        {
+            printf("MECH_LIST::server_add_mech error: t_mech limit reached \n");
+            return;
+        }
+
         this->add_mech(m);
 
         mech_create_StoC p;
