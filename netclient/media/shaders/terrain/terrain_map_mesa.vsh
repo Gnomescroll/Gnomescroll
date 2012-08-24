@@ -44,6 +44,7 @@ varying vec3 inColor;
 varying float skyLight;
 varying float playerLight;
 
+
 void main(void) 
 {              
     //InVertex.w = 1.0;

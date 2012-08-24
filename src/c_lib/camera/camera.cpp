@@ -73,11 +73,12 @@ void init_cameras()
     );
 
     // custom fog shaders use EXP4
-    glFogf(GL_FOG_DENSITY, 0.0125f);
+    glFogf(GL_FOG_DENSITY, 0.0625f);
     unsigned char fog_color[4] = {0,0,0,0};
     float fc[4];
     for (int i=0; i<4; i++) fc[i] = ((float)fog_color[i]/256.0f);
     glFogfv(GL_FOG_COLOR, fc);
+    glFogf(GL_FOG_START, Options::view_distance - 24);  // 24 is magic number calibrated for exp4 inflection with 0.0625 density
 }
 
 void teardown_cameras()

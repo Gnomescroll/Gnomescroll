@@ -23,8 +23,6 @@ varying float fogFragDepth;
 
 uniform sampler2DArray base_texture;
 
-const float fog_start = 64.0;
-
 const float gamma_factor = 1.0f / 2.2f;
 const vec3 gamma_factor3 = vec3(gamma_factor);
 
@@ -48,9 +46,9 @@ void main()
     }
 */
 
-    if(fogFragDepth > fog_start)
+    if(fogFragDepth > gl_Fog.start)
     {
-        float f = gl_Fog.density * fogFragDepth;
+        float f = gl_Fog.density * (fogFragDepth - gl_Fog.start);
         float fogFactor = exp(-(f*f*f*f));
         fogFactor = clamp(fogFactor, 0.0f, 1.0f);
         color = mix(color, gl_Fog.color.xyz, 1.0f-fogFactor); 

@@ -22,6 +22,7 @@ varying float fogFragDepth;
 varying float skyLight;
 varying float playerLight;
 
+
 const float gamma_factor = 1.0f / 2.2f;
 const vec3 gamma_factor3 = vec3(gamma_factor);
 
@@ -35,11 +36,13 @@ void main()
     vec3 color = tmp*inColor.rgb;
     color = color*(texture2D(base_texture, texCoord3).rgb);      
 
-    float f = gl_Fog.density * fogFragDepth;
-    f = f*f; 
-    float fogFactor = exp(-(f*f));
-    fogFactor = clamp(fogFactor, 0.0f, 1.0f);
-    color = mix(color, gl_Fog.color.xyz, 1.0f-fogFactor); 
+    if (fogFragDepth > gl_Fog.start)
+    {
+        float f = gl_Fog.density * (fogFragDepth-gl_Fog.start);
+        float fogFactor = exp(-(f*f*f*f));
+        fogFactor = clamp(fogFactor, 0.0f, 1.0f);
+        color = mix(color, gl_Fog.color.xyz, 1.0f-fogFactor);
+    }
 
     color = pow(color, gamma_factor3);
     gl_FragColor.rgb = color;

@@ -159,6 +159,7 @@ class MapCompatibilityShader
                 "./media/shaders/terrain/terrain_map_mesa.fsh" );
         }
 
+
         InVertex =     shader->get_attribute("InVertex");
         InTexCoord =   shader->get_attribute("InTexCoord");
         InRGB =        shader->get_attribute("InRGB");
