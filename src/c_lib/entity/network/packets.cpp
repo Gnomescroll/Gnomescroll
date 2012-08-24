@@ -467,12 +467,10 @@ inline void object_begin_waiting_StoC::handle()
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     if (machine == NULL) return;
 
-    if (machine->state == STATE_IN_TRANSIT)
-    {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        if (physics != NULL) physics->set_position(this->waiting_point);
-    }
+    // set position to waiting position. later, interpolate to this position
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL) physics->set_position(this->waiting_point);
 
     if (machine->router != NULL)
         machine->router(obj, STATE_WAITING);

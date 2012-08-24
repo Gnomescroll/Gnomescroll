@@ -711,6 +711,8 @@ inline void hitscan_object_CtoS::handle()
             {
                 if (agent_targeting->target_type == OBJECT_NONE)
                     agent_targeting->set_target(a->id);
+                else    // reset ticks locked
+                    agent_targeting->ticks_locked = 0;
 
                 using Components::StateMachineComponent;
                 StateMachineComponent* state_machine = (StateMachineComponent*)
