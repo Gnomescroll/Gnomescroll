@@ -712,25 +712,26 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         float zz      = q.z * q.z;
         float zw      = q.z * q.w;
 
-        mat[0]  = 1 - 2 * ( yy + zz );
-        mat[1]  =     2 * ( xy - zw );
-        mat[2]  =     2 * ( xz + yw );
-        mat[3]  = 0.0f;
+        Mat4 m;
+        m._f[0]  = 1 - 2 * ( yy + zz );
+        m._f[1]  =     2 * ( xy - zw );
+        m._f[2]  =     2 * ( xz + yw );
+        m._f[3]  = 0.0f;
 
-        mat[4]  =     2 * ( xy + zw );
-        mat[5]  = 1 - 2 * ( xx + zz );
-        mat[6]  =     2 * ( yz - xw );
-        mat[7]  = 0.0f;
+        m._f[4]  =     2 * ( xy + zw );
+        m._f[5]  = 1 - 2 * ( xx + zz );
+        m._f[6]  =     2 * ( yz - xw );
+        m._f[7]  = 0.0f;
 
-        mat[8]  =     2 * ( xz - yw );
-        mat[9]  =     2 * ( yz + xw );
-        mat[10] = 1 - 2 * ( xx + yy );
-        mat[11] = 0.0f;
+        m._f[8]  =     2 * ( xz - yw );
+        m._f[9]  =     2 * ( yz + xw );
+        m._f[10] = 1 - 2 * ( xx + yy );
+        m._f[11] = 0.0f;
 
-        mat[12] = pos.x;
-        mat[13] = pos.y;
-        mat[14] = pos.z;
-        mat[15] = 1;
+        m._f[12] = pos.x;
+        m._f[13] = pos.y;
+        m._f[14] = pos.z;
+        m._f[15] = 1;
     }
 
 /*
