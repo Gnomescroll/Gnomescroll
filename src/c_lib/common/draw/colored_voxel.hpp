@@ -1,14 +1,15 @@
 #pragma once
 
-#if DC_CLIENT
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
-#include <entity/constants.hpp>
-#include <entity/components/draw/voxel.hpp>
+#include <common/draw/voxel.hpp>
 
-namespace Components
+namespace Draw
 {
 
-class ColoredVoxelComponent: public VoxelComponent
+class ColoredVoxel: public Voxel
 {
     public:
         struct Color color;
@@ -22,12 +23,9 @@ class ColoredVoxelComponent: public VoxelComponent
             this->color.b = b;
         }
 
-    ColoredVoxelComponent()
-    : VoxelComponent(COMPONENT_COLORED_VOXEL)
+    ColoredVoxel() : Voxel()
     {}
 
 };
     
-} // Components
-
-#endif
+} // Draw

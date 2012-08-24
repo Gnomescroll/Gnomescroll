@@ -1,4 +1,4 @@
-#include "billboard_sprite.hpp"
+#include "textured_voxel.hpp"
 
 #if DC_SERVER
 dont_include_this_file_in_server
@@ -6,12 +6,11 @@ dont_include_this_file_in_server
 
 #include <camera/camera.hpp>
 #include <common/draw/draw.hpp>
-#include <entity/components/physics.hpp>
 
-namespace Components
+namespace Draw
 {
 
-void TexturedVoxelComponent::set_texture()
+void TexturedVoxel::set_texture()
 {
     const int pix = this->pixel_width;  // NxN random texture sample within cube identified by texture_index
     const int cube_w = 32;
@@ -51,23 +50,4 @@ void TexturedVoxelComponent::set_texture()
     this->ty = fty;
 }
 
-inline void TexturedVoxelComponent::draw(Vec3 position)
-{
-    GS_ASSERT_LIMIT(false, 1);
-    //position = quadrant_translate_position(current_camera_position, position);
-    //Vec3 center = vec3_add(normal, vec3_add(right, vec3_add(forward, position)));
-    //if (sphere_fulstrum_test(center.x, center.y, center.z, this->size) == false) return;
-
-    //drawTexturedMinivox(position,
-        //this->forward, this->right, this->normal,
-        //this->tx, this->ty, this->sprite_width);
-}
-
-void TexturedVoxelComponent::call()
-{
-    PhysicsComponent* state = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (state == NULL) return;
-    this->draw(state->get_position());
-}
-
-} // Components
+} // Draw

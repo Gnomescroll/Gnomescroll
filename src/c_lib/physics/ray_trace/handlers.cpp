@@ -14,8 +14,7 @@ namespace Hitscan
 
 Agent_state* lock_agent_target(
     Vec3 firing_position, Vec3* firing_direction,
-    const float range, const float failure_rate, const bool random
-)
+    const float range, const float failure_rate, const bool random)
 {
     // find agents in range
     using STATE::agent_list;
@@ -76,8 +75,8 @@ Agent_state* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, con
 
 HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, ObjectType type,
-    Agent_state* agent, const float range
-) { // hitscan vector against world
+    Agent_state* agent, const float range)
+{ // hitscan vector against world
     class Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];

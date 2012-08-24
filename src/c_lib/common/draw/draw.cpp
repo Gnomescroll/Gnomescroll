@@ -9,6 +9,9 @@ dont_include_this_file_on_server
 #include <common/common.hpp>
 #include <voxel/common_data.h>
 
+namespace Draw
+{
+
 void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_scale)
 {
     position = quadrant_translate_position(current_camera_position, position);
@@ -166,3 +169,4 @@ void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, f
     }
 }
 
+}   // Draw

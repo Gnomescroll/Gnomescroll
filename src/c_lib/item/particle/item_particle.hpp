@@ -2,6 +2,7 @@
 
 #if DC_CLIENT
 #include <common/gl_assert.hpp>
+#include <common/draw/textured_voxel.hpp>
 #endif
 
 #include <physics/verlet.hpp>
@@ -46,7 +47,7 @@ class ItemParticle
         #if DC_CLIENT
         // config
         bool is_voxel;
-        Components::TexturedVoxelComponent voxel;
+        Draw::TexturedVoxel voxel;
         int sprite_index;
         bool should_draw;
         void draw();

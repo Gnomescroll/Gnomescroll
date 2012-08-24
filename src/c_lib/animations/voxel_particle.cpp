@@ -113,6 +113,7 @@ static void prep_textured_voxel_particles()
 
         p.z += size;   // render offset
 
+        // Need to use palette info instead
         float tx_min = item->voxel.tx;
         float tx_max = item->voxel.tx + item->voxel.sprite_width;
         float ty_min = item->voxel.ty;

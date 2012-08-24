@@ -3,7 +3,6 @@
 #include <entity/constants.hpp>
 #include <entity/component/component.hpp>
 #include <entity/network/packets.hpp>
-#include <entity/components/draw/billboard_sprite.hpp>
 #include <entity/components/pickup.hpp>
 #include <entity/components/health/ttl.hpp>
 

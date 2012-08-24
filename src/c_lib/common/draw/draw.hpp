@@ -6,18 +6,23 @@ dont_include_this_file_on_server
 
 #include <physics/vec3.hpp>
 
+namespace Draw
+{
+    
 void drawAxialBillboardSprite(
-    Vec3 position,
+    struct Vec3 position,
     int texture_index, float texture_scale);
     
 void drawBillboardSprite(
-    Vec3 position,
+    struct Vec3 position,
     int texture_index, float texture_scale);
     
 void drawColoredMinivox(
-    Vec3 position, Vec3 forward, Vec3 right, Vec3 normal,
+    struct Vec3 position, struct Vec3 forward, struct Vec3 right, struct Vec3 normal,
     Color color);
 
 void drawTexturedMinivox(
-    Vec3 position, Vec3 forward, Vec3 right, Vec3 normal,
+    struct Vec3 position, struct Vec3 forward, struct Vec3 right, struct Vec3 normal,
     float tx, float ty, float sprite_width);
+
+}   // Draw

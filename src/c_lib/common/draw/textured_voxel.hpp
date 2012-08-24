@@ -4,13 +4,12 @@
 dont_include_this_file_in_server
 #endif
 
-#include <entity/constants.hpp>
-#include <entity/components/draw/voxel.hpp>
+#include <common/draw/voxel.hpp>
 
-namespace Components
+namespace Draw
 {
 
-class TexturedVoxelComponent: public VoxelComponent
+class TexturedVoxel: public Voxel
 {
     public:
         // Not configurable:
@@ -25,18 +24,14 @@ class TexturedVoxelComponent: public VoxelComponent
 
         void init()
         {
-            VoxelComponent::init();
+            Voxel::init();
             this->set_texture();
         }
 
-        void call();
-        inline void draw(Vec3 position) __attribute__((always_inline));
-
-    TexturedVoxelComponent()
-    : VoxelComponent(COMPONENT_TEXTURED_VOXEL),
+    TexturedVoxel() :
     texture_index(0), pixel_width(1)
     {}
 
 };
     
-} // Components
+} // Draw
