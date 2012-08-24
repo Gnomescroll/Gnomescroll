@@ -15,7 +15,7 @@ namespace Item
         char* pretty_name;
 
         //IG_PLACER
-        int placer_block_type_id;   //id of block type that it creates
+        int block_type_id;   //id of block type that it creates
 
         //IG_HITSCAN_WEAPON
         int hitscan_fire_cooldown;      // ms per bullet

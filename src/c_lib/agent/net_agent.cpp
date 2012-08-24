@@ -896,7 +896,7 @@ inline void agent_set_block_CtoS::handle()
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
-    int val = attr->placer_block_type_id;
+    int val = attr->block_type_id;
 
     if (t_map::isErrorBlock(val)) return;
     if (!t_map::isValidID(val)) return;

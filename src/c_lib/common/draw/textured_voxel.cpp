@@ -36,8 +36,8 @@ void TexturedVoxel::set_texture()
     int margin = cube_w - pix;
     GS_ASSERT(margin >= 0);
 
-    int mx = randrange(0, margin);// - (margin+1);
-    int my = randrange(0, margin);// - (margin+1);
+    int mx = randrange(0, margin);
+    int my = randrange(0, margin);
 
     // ...scaled to texture
     float fx = ((float)mx) * pixel_w;

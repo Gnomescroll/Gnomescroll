@@ -44,7 +44,7 @@ static const int q_set[4*6]= {
         3,2,1,0,
         2,3,7,6,
         0,1,5,4,
-        0,4,7,3,
+        3,0,4,7,
         1,2,6,5 };
 
 static const float v_normal_f[6*3]= 

@@ -422,7 +422,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return true;
-    int val = attr->placer_block_type_id;
+    int val = attr->block_type_id;
     if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
         ItemContainer::create_container_block_CtoS msg;
