@@ -331,13 +331,16 @@ void set_map_shader_0_compatibility(int level)
     if (DEBUG1) printf("set_map_shader_0_compatibility: level %i \n", level);
 
     bool mesa = false;
+    
+    #if !PRODUCTION
+    // use custom mesa driver when developing
     const char* gl_v = (const char*)glGetString(GL_VERSION);
     if (strstr(gl_v, "Mesa") != NULL)
     {
         printf("%s: using Mesa driver shader\n", __FUNCTION__);
         mesa = true;
     }
-
+    #endif
 
     if (level == 0)
     {
