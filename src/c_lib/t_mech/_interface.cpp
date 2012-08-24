@@ -4,9 +4,9 @@
 #include <t_mech/net/StoC.hpp>
 
 #if DC_CLIENT
-    #include <camera/camera.hpp>
-    #include <physics/ray_trace/hitscan.hpp>
-    #include <t_mech/mech_draw.hpp>
+#include <camera/camera.hpp>
+#include <physics/ray_trace/hitscan.hpp>
+#include <t_mech/mech_draw.hpp>
 #endif
 
 #include <t_mech/mech_state.hpp>
@@ -32,9 +32,9 @@ class MechListRenderer* mech_list_renderer = NULL;
 void init() 
 {
     mech_list = new MECH_LIST;
-#if DC_CLIENT
+    #if DC_CLIENT
     mech_list_renderer = new MechListRenderer;
-#endif
+    #endif
     init_properties();
 }
 
@@ -43,14 +43,13 @@ void teardown()
     tear_down_properties();
     delete mech_list;
     
-#if DC_CLIENT
+    #if DC_CLIENT
     delete mech_list_renderer;
-#endif
+    #endif
 
 }
 
 #if DC_CLIENT
-
 void prep()
 {
     mech_list_renderer->prep_vbo();
@@ -92,9 +91,9 @@ struct MECH_ATTRIBUTE
 */
 
 //pack mech data into packet
+#if DC_SERVER
 static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 {
-#if DC_SERVER
     p.id = m.id;
     p.mech_type = m.mech_type;
     p.subtype = m.subtype;
@@ -115,15 +114,14 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
     default:
         printf("pack_mech error: unhandled mech type\n");
     }
-
-#endif
 }
+#endif
 
 
 //handles unpacking
+#if DC_CLIENT
 static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 {
-    #if DC_CLIENT
     m.id = p.id;
     m.mech_type = p.mech_type;
     m.subtype = p.subtype;
@@ -156,8 +154,8 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         printf("pack_mech error: unhandled mech type\n");
         break;
     } 
-    #endif
 }
+#endif
 
 
 void create_crystal(int x, int y, int z, int mech_type)
