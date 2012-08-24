@@ -272,7 +272,7 @@ int run()
 
         // Non-transparent
 
-        //t_mob::draw();
+        t_mob::draw();
         t_mech::draw();
 
         //top_z_projection(0.0f,0.0f);
