@@ -9,6 +9,7 @@ namespace t_map
 {
 
 const int MAX_CUBES = 256;
+const int ERROR_CUBE = 0xff;
 
 const int TERRAIN_MAP_HEIGHT = 128;
 const int TERRAIN_CHUNK_WIDTH = 16;
