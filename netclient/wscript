@@ -127,11 +127,6 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     conf.env.append_value('CXXFLAGS', cxxflags)
     
-    #conf.env.append_value('RPATH_ST', "f")
-    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../lib/lin32/lib")
-    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % "../lib/lin32/lib")
-    #conf.env.append_value('LINKFLAGS', "-Wl,--rpath=%s" % os.path.abspath('../lib/lin32/lib') )
-
     '''
     incremental linking may reduce recompile time should not be used for release builds
     #conf.env.append_value("LINKFLAGS", "--incremental")
@@ -277,16 +272,17 @@ def configure(conf, add_flags=[], rm_flags=[]):
     '''
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../lib/lin32/awesomium/include/']
 
-    conf.env.RPATH = ['.', '..', '$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
+    conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
     if OS == 'Windows':
         conf.env.RPATH.append('$ORIGIN/./lib')
         conf.env.RPATH.append('./lib')
         
     if OS == 'Linux':
-        conf.env.RPATH += ['$ORIGIN/./lib/lin32']
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/awesomium/release'] #awesonium lib
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/assimp/lib'] #assimp lib
-
+        if '-DPRODUCTION=1' in bld.env.CXXFLAGS
+            conf.env.RPATH += ['$ORIGIN/./lib/lin32']
+        
 def build(bld):
     OS = platform.system()
 
