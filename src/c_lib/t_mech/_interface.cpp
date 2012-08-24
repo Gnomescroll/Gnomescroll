@@ -158,9 +158,9 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 #endif
 
 
+#if DC_SERVER
 void create_crystal(int x, int y, int z, int mech_type)
 {
-    #if DC_SERVER
     ASSERT_VALID_MECH_TYPE(mech_type);
     IF_INVALID_MECH_TYPE(mech_type) return;
     GS_ASSERT(get_mech_class(mech_type) == MECH_CRYSTAL);
@@ -180,12 +180,10 @@ void create_crystal(int x, int y, int z, int mech_type)
     //m.subtype = rand()%9;
 
     mech_list->server_add_mech(m);
-    #endif
 }
 
 void create_crystal(int x, int y, int z)
 {
-    #if DC_SERVER
     struct MECH m;
     m.mech_type = MECH_CRYSTAL;
     m.x = x;
@@ -194,8 +192,8 @@ void create_crystal(int x, int y, int z)
     m.subtype = rand()%9;
 
     mech_list->server_add_mech(m);
-    #endif
 }
+#endif
 
 bool can_place_crystal(int x, int y, int z, int side)
 {

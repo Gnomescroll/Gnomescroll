@@ -1,5 +1,8 @@
 #pragma once
 
+#include <t_mech/common/common.hpp>
+#include <t_mech/mech_state.hpp>
+
 namespace t_mech
 {
 
@@ -9,9 +12,6 @@ void init();
 void teardown();
 
 void init_packets();
-
-void create_crystal(int x, int y, int z, int mech_type);
-void create_crystal(int x, int y, int z, int subtype);
 
 bool can_place_crystal(int x, int y, int z, int side);
 
@@ -28,6 +28,9 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
 #endif
 
 #if DC_SERVER
+void create_crystal(int x, int y, int z, int mech_type);
+void create_crystal(int x, int y, int z, int subtype);
+
 void send_client_mech_list(int client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction
 #endif

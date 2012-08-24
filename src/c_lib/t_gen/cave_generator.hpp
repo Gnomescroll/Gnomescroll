@@ -1,11 +1,18 @@
 #pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <t_gen/noise_map2.hpp>
 
 
 #include <t_gen/twister.hpp>
 
 #include <t_map/t_map.hpp>
+
+#include <t_mech/_interface.hpp>
+#include <t_mech/properties.hpp>
 
 
 namespace t_gen 
@@ -72,22 +79,35 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             bool hits_bottom = false;
             //can speed up by 8
             for(int i=xmin; i<=xmax; i++)
-                for(int j=ymin; j<=ymax; j++)
-                    for(int k=zmin; k<=zmax; k++)
+            for(int j=ymin; j<=ymax; j++)
+            for(int k=zmin; k<=zmax; k++)
+            {
+                if(k < 0 || k > 127) 
+                {
+                    hits_bottom = true;
+                    continue;
+                }
+
+                float x = ((float)i) + 0.5f;
+                float y = ((float)j) + 0.5f;
+                float z = ((float)k) + 0.5f;
+
+                int ii = i%512;
+                int jj = j%512;
+
+                float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
+                if(d < size*size) t_map::set(ii, jj, k, 0);
+
+                if (k > 4 && k == zmin && randf() > 0.98f)
+                {   // place crystal
+                    int block = t_map::get(ii, jj, k-1);
+                    if (block && !t_mech::mech_list->is_occupied(ii,jj,k))
                     {
-                        if(k < 0 || k > 127) 
-                        {
-                            hits_bottom = true;
-                            continue;
-                        }
-
-                        float x = ((float)i) + 0.5f;
-                        float y = ((float)j) + 0.5f;
-                        float z = ((float)k) + 0.5f;
-
-                        float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
-                        if(d < size*size) t_map::set(i%512,j%512,k, 0);
+                        static int blue_crystal = t_mech::get_mech_type("blue_crystal");
+                        t_mech::create_crystal(ii, jj, k, blue_crystal);
                     }
+                } 
+            }
 
             if(hits_bottom == true) theta *= -1;
 

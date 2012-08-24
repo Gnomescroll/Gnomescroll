@@ -6,7 +6,6 @@
 
 #include <t_gen/twister.hpp>
 #include <t_gen/noise_map2.hpp>
-#include <t_gen/cave_generator.hpp>
 
 #include <common/time/physics_timer.hpp>
 
@@ -184,13 +183,13 @@ class PerlinOctave3D
         float tmp = 0.0f;
         for(int i=0; i<octaves; i++)
         {
-		#if 1
+        #if 1
             tmp += octave_array[i].base(x,y,z);
             p *= persistance;
         #else
             p *= persistance;
             tmp += p*octave_array[i].base(x,y,z);
-		#endif
+        #endif
         }
         return tmp;
     }

@@ -12,9 +12,13 @@
 #include <t_gen/noise_map3.hpp>
 
 #include <t_gen/ore_cluster.hpp>
-#include <t_gen/cave_generator.hpp>
 #include <t_gen/rock_layer.hpp>
 #include <t_gen/river.hpp>
+
+#if DC_SERVER
+// TODO -- make everything server only
+#include <t_gen/cave_generator.hpp>
+#endif
 
 //#include <t_gen/tile_generator.hpp>
 
