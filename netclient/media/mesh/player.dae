@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
     </contributor>
-    <created>2012-07-29T21:47:22</created>
-    <modified>2012-07-29T21:47:22</modified>
+    <created>2012-08-23T19:41:59</created>
+    <modified>2012-08-23T19:41:59</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -1607,9 +1607,9 @@
             </node>
           </node>
           <node id="upper_arm_R" name="upper.arm.R" sid="upper_arm_R" type="JOINT">
-            <matrix sid="transform">0.0542 -2.28668e-7 0.9985301 -1.125 0.08293524 -0.9965448 -0.004501935 1.24999 0.9950799 0.08305733 -0.05401271 0.00514138 0 0 0 1</matrix>
+            <matrix sid="transform">0.05420002 -2.0351e-7 0.9985301 -1.125 -0.004107256 -0.9999915 2.22737e-4 1.24999 0.9985216 -0.004113291 -0.05419957 0.00514138 0 0 0 1</matrix>
             <node id="lower_arm_R" name="lower.arm.R" sid="lower_arm_R" type="JOINT">
-              <matrix sid="transform">-0.05420034 4.65446e-8 0.9985301 -3.24622e-8 -8.05281e-8 0.9999999 -5.68709e-8 1.25 -0.9985301 -5.4368e-8 -0.05420035 -2.38143e-8 0 0 0 1</matrix>
+              <matrix sid="transform">-0.05420035 4.28496e-8 0.9985301 2.21423e-9 -7.6832e-8 0.9999999 -4.42372e-8 1.25 -0.9985301 -3.30842e-8 -0.05420035 -4.34152e-8 0 0 0 1</matrix>
             </node>
           </node>
           <node id="upper_leg_L" name="upper.leg.L" sid="upper_leg_L" type="JOINT">
@@ -1626,6 +1626,9 @@
           </node>
           <node id="neck" name="neck" sid="neck" type="JOINT">
             <matrix sid="transform">0.9999871 -7.77338e-10 0.005084888 -1.63455e-9 2.09189e-5 0.9999916 -0.004113685 1.749985 -0.005084845 0.004113738 0.9999786 0.007198308 0 0 0 1</matrix>
+            <node id="neck_001" name="neck.001" sid="neck_001" type="JOINT">
+              <matrix sid="transform">-0.9966418 -0.05162061 0.0635653 -9.89779e-12 -0.05878931 0.9914343 -0.116627 0.4999999 -0.05700045 -0.1199723 -0.9911395 6.37935e-10 0 0 0 1</matrix>
+            </node>
           </node>
         </node>
       </node>

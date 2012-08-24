@@ -757,6 +757,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                 
                 aiVectorKey pos =  anim->mPositionKeys[frame_time % tmax];
                 aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
+                GS_ASSERT( pos.mTime == rot.mTime );
 
                 //CONVERT TO MATRIX
                 return quantenion_to_rotation_matrix( rot.mValue, pos.mValue );
@@ -765,7 +766,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         }
 
         //if cannot find, then node does not have an animation and use this
-        return _ConvertMatrix(node->mTransformation);
+        return mat4_transpose(_ConvertMatrix(node->mTransformation));
 
     }
 
@@ -884,10 +885,12 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
-                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
+                Mat4 boneMatrix = mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix));  //node to vertex matrix?
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
                 aiNode* tempNode = node;
 
+
+                //mat4_print(boneMatrix);
                 //tempNode = NULL;
 
                 int _index = 0;
@@ -903,8 +906,8 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     }
                     //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
                     
-                    boneMatrix = mat4_mult(boneMatrix, get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode) );
-
+                    boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
+                    GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f);
                     //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
                     //armature is the last node that gets multiplied in
                     if( strcmp(tempNode->mName.data, "Armature") == 0 )
@@ -917,7 +920,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     }
                 }
 
-                boneMatrix = mat4_transpose(boneMatrix); //transpose it because its wrong
+                //boneMatrix = mat4_transpose(boneMatrix); //transpose it because its wrong
                 if(_print)
                 {
                     printf("final matrix: mesh: %02d %02d mesh name= %s \n", i,j, nl[i]->mName.data);
@@ -992,8 +995,8 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         for(int i=0; i<bvlm; i++)
         {
             tbvl[i].v.x += x;
-            tbvl[i].v.y += z;
-            tbvl[i].v.z += y;
+            tbvl[i].v.y += y;
+            tbvl[i].v.z += z;
         }
 
 	/*
@@ -1029,7 +1032,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
             //vec3_print(v.v);
             glTexCoord2f(v.ux, v.uy );
-			glVertex3f(v.v.x, v.v.z, v.v.y); //swap y and z
+			glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
         }
 
         glEnd();
