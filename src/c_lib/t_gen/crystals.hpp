@@ -13,11 +13,11 @@ typedef enum
     CRYSTAL_CLUSTER_GAUSSIAN,
 } CrystalClusterMode;
 
-const float CRYSTAL_CLUSTER_PROBABILITY = 0.0015f; // this might need to be dynamic to meet a target cluster count
+const float CRYSTAL_CLUSTER_PROBABILITY = 0.005f; // this might need to be dynamic to meet a target cluster count
 const int CRYSTAL_CLUSTER_RADIUS = 3;
-const float CRYSTAL_CLUSTER_FALLOFF = 0.85f;
+const float CRYSTAL_CLUSTER_FALLOFF = 0.8f;
 const CrystalClusterMode CRYSTAL_CLUSTER_MODE = CRYSTAL_CLUSTER_LINEAR;
-const int CRYSTAL_CLUSTER_Z_DIFF_MAX = 3;
+const int CRYSTAL_CLUSTER_Z_DIFF_MAX = 2;
 
 const int n_crystals = 3;
 int crystals[n_crystals] = {t_map::ERROR_CUBE };
@@ -25,6 +25,8 @@ int crystal_strata[n_crystals*2] = {0};
 
 int rock = t_map::ERROR_CUBE;
 int bedrock = t_map::ERROR_CUBE;
+
+float falloffs[CRYSTAL_CLUSTER_RADIUS*2] = {1.0f};
 
 // TODO: move
 int get_highest_block_of_type(int block_id)
@@ -65,14 +67,20 @@ void init_crystals()
         crystal_strata[2*i+0] = step * (3-i-0);
         crystal_strata[2*i+1] = step * (3-i-1);
     }
+
+    for (int i=0; i<CRYSTAL_CLUSTER_RADIUS*2; i++)
+        falloffs[i] = powf(CRYSTAL_CLUSTER_FALLOFF, i);
 }
-    
+
 void place_crystal_cluster(int x, int y, int z, int crystal_id)
 {
     for (int i=x-CRYSTAL_CLUSTER_RADIUS; i<x+CRYSTAL_CLUSTER_RADIUS; i++)
     for (int j=y-CRYSTAL_CLUSTER_RADIUS; j<y+CRYSTAL_CLUSTER_RADIUS; j++)
     {
-        float p = ((float)(abs(i-x) + abs(j-y))) * CRYSTAL_CLUSTER_FALLOFF;
+        int dist = abs(i-x) + abs(j-y); // manhattan
+        GS_ASSERT(dist >= 0 && dist < CRYSTAL_CLUSTER_RADIUS*2);
+        float p = falloffs[dist];
+        
         if (randf() > p) continue;
         int ii = translate_point(i);
         int jj = translate_point(j);
@@ -88,17 +96,17 @@ int get_crystal_type(int z)
 {
     int i=0;
     for (; i<n_crystals; i++)
-        if (z < crystal_strata[i] && z >= crystal_strata[i-1])
+        if (z < crystal_strata[2*i+0] && z >= crystal_strata[2*i+1])
             return crystals[i];
     GS_ASSERT(false);
-    return crystals[i];
+    printf("z error: %d\n", z);
+    return crystals[0];
 }
 
 void populate_crystals()
 {
     printf("Begin populate crystals\n");
     init_crystals();
-    printf("Crystal inited\n");
     
     /* Heuristic:
      *      If block == "rock" and block.z+1 == 0 and randf() < p
@@ -123,10 +131,9 @@ void populate_crystals()
         int crystal_id = get_crystal_type(k+1);
         place_crystal_cluster(i,j,k+1, crystal_id);
         ct++;
-        printf("placed crystal cluster %d\n", ct);
     }
 
-    printf("placed %d crystal clusters\n", ct);
+    printf("Placed %d crystal clusters\n", ct);
 }
 
 }   // t_gen
