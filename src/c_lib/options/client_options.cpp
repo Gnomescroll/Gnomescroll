@@ -45,6 +45,7 @@ OPT_STRING(sound_device, "")
 OPT_INT(animation_level, 3)
 OPT_INT(view_distance, 128)
 OPT_BOOL(placement_outline, false);
+OPT_BOOL(mesa_shader, false);
 
 /* Logging */
 OPT_BOOL(logger, false)
@@ -91,6 +92,7 @@ void register_options()
     OPT_INT_REGISTER(animation_level)
     OPT_INT_REGISTER(view_distance)
     OPT_BOOL_REGISTER(placement_outline)
+    OPT_BOOL_REGISTER(mesa_shader)
 
     /* Logging */
     OPT_BOOL_REGISTER(logger)

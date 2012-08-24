@@ -42,6 +42,7 @@ OPT_STRING_HEADER(sound_device)
 OPT_INT_HEADER(animation_level)
 OPT_INT_HEADER(view_distance)
 OPT_BOOL_HEADER(placement_outline);
+OPT_BOOL_HEADER(mesa_shader);
 
 /* Logging */
 OPT_BOOL_HEADER(logger)

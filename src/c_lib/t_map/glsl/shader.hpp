@@ -121,36 +121,42 @@ class MapCompatibilityShader
     {
         if (this->shader != NULL) delete this->shader;
         this->shader = new SHADER;
-        this->shader->set_debug(true);
+            this->shader->set_debug(true);
 
-        bool mesa = false;
-        const char* gl_v = (const char*)glGetString(GL_VERSION);
-        if (strstr(gl_v, "Mesa") != NULL)
+        static bool tried_mesa = false;
+        if (!tried_mesa && level == 0)
         {
-            printf("%s: using Mesa driver shader\n", __FUNCTION__);
-            mesa = true;
+            bool mesa = false;
+            if (Options::mesa_shader)
+            {
+                const char* gl_v = (const char*)glGetString(GL_VERSION);
+                if (strstr(gl_v, "Mesa") != NULL)
+                {
+                    printf("%s: using Mesa driver shader\n", __FUNCTION__);
+                    mesa = true;
+                }
+            }
+            if (mesa) level = 2;
+            tried_mesa = mesa;
         }
 
         if (level == 0)
         {
-            if (mesa)
-            {
-                shader->load_shader( "mesa map_compatibility_shader",
-                    "./media/shaders/terrain/terrain_map_mesa.vsh",
-                    "./media/shaders/terrain/terrain_map_mesa.fsh" );
-            }
-            else
-            {
-                shader->load_shader( "map_compatibility_shader level 0",
-                    "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh",
-                    "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh" );
-            }
+            shader->load_shader( "map_compatibility_shader level 0",
+                "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh",
+                "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh" );
         }
-        else if(level ==1)
+        else if (level ==1)
         {
             shader->load_shader( "map_compatibility_shader level 1",
                 "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh",
                 "./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh" );
+        }
+        else if (level == 2)
+        {
+            shader->load_shader( "mesa map_compatibility_shader",
+                "./media/shaders/terrain/terrain_map_mesa.vsh",
+                "./media/shaders/terrain/terrain_map_mesa.fsh" );
         }
 
         InVertex =     shader->get_attribute("InVertex");
