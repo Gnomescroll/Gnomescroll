@@ -280,7 +280,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Linux':
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/awesomium/release'] #awesonium lib
         conf.env.RPATH += ['$ORIGIN/./lib/lin32/assimp/lib'] #assimp lib
-        if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
+        if '-DPRODUCTION=1' in conf.env.CXXFLAGS:
             conf.env.RPATH += ['$ORIGIN/./lib/lin32']
         
 def build(bld):
