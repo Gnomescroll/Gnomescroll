@@ -98,15 +98,15 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
                 float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
                 if(d < size*size) t_map::set(ii, jj, k, 0);
 
-                if (k > 4 && k == zmin && randf() > 0.98f)
-                {   // place crystal
-                    int block = t_map::get(ii, jj, k-1);
-                    if (block && !t_mech::mech_list->is_occupied(ii,jj,k))
-                    {
-                        static int blue_crystal = t_mech::get_mech_type("blue_crystal");
-                        t_mech::create_crystal(ii, jj, k, blue_crystal);
-                    }
-                } 
+                //if (k > 4 && k == zmin && randf() > 0.98f)
+                //{   // place crystal
+                    //int block = t_map::get(ii, jj, k-1);
+                    //if (block && !t_mech::mech_list->is_occupied(ii,jj,k))
+                    //{
+                        //static int blue_crystal = t_mech::get_mech_type("blue_crystal");
+                        //t_mech::create_crystal(ii, jj, k, blue_crystal);
+                    //}
+                //} 
             }
 
             if(hits_bottom == true) theta *= -1;
