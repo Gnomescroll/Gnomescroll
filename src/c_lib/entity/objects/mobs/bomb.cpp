@@ -220,7 +220,6 @@ static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Obje
     Vec3 destination = dest->get_destination();
     ASSERT_BOXED_POSITION(destination);
     msg->destination = destination;
-    //msg->dir = dest->target_direction;
     int ticks = dest->get_ticks_to_destination(physics->get_position());
     msg->ticks_to_destination = ticks;
     
@@ -274,6 +273,10 @@ static bool pack_object_begin_wait(class object_begin_waiting_StoC* msg, class O
 {
     msg->type = object->type;
     msg->id = object->id;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    msg->waiting_point = physics->get_position();
     return true;
 }
 
@@ -410,12 +413,12 @@ static void in_transit(class Object* object)
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
 
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+
     #if DC_CLIENT
     if (!dest_target->at_destination)
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-
         dest_target->orient_to_target(physics->get_position());    
         Vec3 angles = physics->get_angles();
         angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
@@ -435,15 +438,9 @@ static void in_transit(class Object* object)
     else
     {   // check at destination
         if (dest_target->check_at_destination())
-        {
             in_transit_to_waiting(object);
-        }
         else
-        {
-            using Components::PhysicsComponent;
-            PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
             dest_target->orient_to_target(physics->get_position());
-        }
     }
     #endif
 }
@@ -518,10 +515,10 @@ void tick_mob_bomb(Object* object)
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
     explode->proximity_check();
 
-    //using Components::RateLimitComponent;
-    //RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
-    //if (limiter->allowed())
-        //object->broadcastState();
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed())
+        object->broadcastState();
     #endif
 
     using Components::StateMachineComponent;

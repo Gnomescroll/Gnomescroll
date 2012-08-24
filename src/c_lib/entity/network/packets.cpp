@@ -159,12 +159,33 @@ inline void object_state_momentum_angles_StoC::handle()
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x,y,z));
-        physics->set_momentum(vec3_init(mx,my,mz));
+    if (physics == NULL) return;
+
+    struct Vec3 pos = vec3_init(x,y,z);
+    physics->set_position(pos);
+    physics->set_momentum(vec3_init(mx,my,mz));
+
+    //bool do_set_angles = true;
+    //using Components::StateMachineComponent;
+    //StateMachineComponent* state = (StateMachineComponent*)obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    //if (state != NULL && state->state == STATE_IN_TRANSIT)
+    //{
+        //using Components::DestinationTargetingComponent;
+        //DestinationTargetingComponent* dest = (DestinationTargetingComponent*)obj->get_component(COMPONENT_DESTINATION_TARGETING);
+        //if (dest != NULL)
+        //{
+            //do_set_angles = false;
+            //if (!dest->check_at_destination())
+            //{   // recalculate speed
+                //dest->adjust_speed(pos);
+                //if (dest->speed == 0.0f)
+                    //do_set_angles = true;
+            //}
+        //}
+    //}
+
+    //if (do_set_angles)
         physics->set_angles(vec3_init(theta, phi, 0));
-    }
 }
 
 inline void object_state_health_StoC::handle()
@@ -445,6 +466,14 @@ inline void object_begin_waiting_StoC::handle()
     StateMachineComponent* machine = (StateMachineComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     if (machine == NULL) return;
+
+    if (machine->state == STATE_IN_TRANSIT)
+    {
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        if (physics != NULL) physics->set_position(this->waiting_point);
+    }
+
     if (machine->router != NULL)
         machine->router(obj, STATE_WAITING);
 }
@@ -472,7 +501,6 @@ inline void object_in_transit_StoC::handle()
 
     dest_target->set_destination(destination);
     dest_target->orient_to_target(pos);
-    //dest_target->target_direction = this->dir;
 
     ASSERT_BOXED_POSITION(destination);
     
@@ -483,6 +511,7 @@ inline void object_in_transit_StoC::handle()
         direction.z = 0.0f;        
         float len = vec3_length(direction);
         dest_target->speed = len / ((float)this->ticks_to_destination);
+        dest_target->speed = Objects::MONSTER_BOMB_WALK_SPEED;
     }
     else
     {   // 0 ticks is teleport

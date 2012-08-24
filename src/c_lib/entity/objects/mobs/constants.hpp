@@ -46,7 +46,7 @@ const float MONSTER_BOMB_ANIMATION_SIZE = 0.7f;
 const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 
 // state broadcast rate
-const int MONSTER_BOMB_BROADCAST_RATE = 30; // once every 30 ticks
+const int MONSTER_BOMB_BROADCAST_RATE = 30 * 4; // once every 30 ticks
 
 /* MONSTER_BOX */
 

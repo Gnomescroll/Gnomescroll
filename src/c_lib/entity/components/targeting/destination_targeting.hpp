@@ -37,13 +37,24 @@ class DestinationTargetingComponent: public TargetingComponent
         
         int get_ticks_to_destination(Vec3 position)
         {
-            if (this->speed == 0.0f) return 0;
             if (vec3_equal(this->destination, position)) return 0;
             float len = vec3_length(vec3_sub(this->destination, position));
             int ttd = (int)(ceil(len / this->speed));
             return ttd;
         }
 
+        void adjust_speed(struct Vec3 pos)
+        {
+            if (this->ticks_to_destination <= 0 || vec3_equal(this->destination, pos))
+            {
+                printf("Adjusted speed to 0\n");
+                this->speed = 0.0f;
+                return;
+            }
+            struct Vec3 direction = vec3_sub(this->destination, pos);
+            float len = vec3_length(direction);
+            this->speed = len / ((float)this->ticks_to_destination);
+        }
 
     virtual ~DestinationTargetingComponent() {}
     

@@ -98,11 +98,11 @@ bool DestinationTargetingComponent::move_on_surface()
         this->speed, this->max_z_diff,
         &new_position, &new_momentum
     );
-    //if (!moved) printf("%d didnt move\n", this->object->id);
-    //printf("moved from "); vec3_print(physics->get_position());
-    //printf("\tto "); vec3_print(new_position);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
+
+    if (moved && this->ticks_to_destination > 0)
+        this->ticks_to_destination--;
 
     return moved;
 }
