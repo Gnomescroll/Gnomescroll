@@ -7,7 +7,7 @@
 namespace t_mech 
 {
 
-const int MECH_HARD_MAX = 0xff;
+const int MECH_HARD_MAX = 0xffff-1;
 
 static void pack_mech(struct MECH &m, class mech_create_StoC &p);
 static void unpack_mech(struct MECH &m, class mech_create_StoC &p);
