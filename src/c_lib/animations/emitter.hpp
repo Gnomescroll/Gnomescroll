@@ -50,6 +50,12 @@ class MiningLaserEmitter
         int texture_row;
         int laser_type;
 
+        // state used to calculate length of beam.
+        // we want to use the agent camera's state for this, instead of the adjusted beam vector
+        // because it looks better
+        struct Vec3 length_position;
+        struct Vec3 length_direction;
+
     bool in_frustum()
     {
         // center point in middle of beam, use sphere test
@@ -100,19 +106,20 @@ class MiningLaserEmitter
 
         float ddv = (1.0f/(float)this->ttl_max) * this->length;
         ddv /= ((float)this->count) / ((float)this->ttl_max);
-        int last = -1;
+        int current_ttl = -1;
         int j = 0;
         for (int i=0; i<this->count; i++)
         {
             float dv = ((float)this->particles[i].ttl)/((float)this->ttl_max);
             float len = this->base_length * dv;
+
             this->particles[i].verlet.position = vec3_add(this->position, vec3_scalar_mult(this->direction, len));
             this->particles[i].verlet.position = vec3_add(this->particles[i].verlet.position, vec3_scalar_mult(this->direction, ddv*j));
             this->particles[i].verlet.position = translate_position(this->particles[i].verlet.position);
             this->particles[i].verlet.velocity = this->velocity;
-            if (last == this->particles[i].ttl) j++;
+            if (current_ttl == this->particles[i].ttl) j++;
             else j = 0;
-            last = this->particles[i].ttl;
+            current_ttl = this->particles[i].ttl;
         }
     }
 
@@ -145,8 +152,8 @@ class MiningLaserEmitter
     void update_length()
     {
         float interval = 1.0f;
-        struct Vec3 dest = vec3_add(this->position, vec3_scalar_mult(this->direction, this->base_length));
-        ray_cast_interval(this->position, dest, &interval);
+        struct Vec3 dest = vec3_add(this->length_position, vec3_scalar_mult(this->length_direction, this->base_length));
+        ray_cast_interval(this->length_position, dest, &interval);
         this->length = interval*this->base_length;
     }
 
@@ -174,7 +181,8 @@ class MiningLaserEmitter
     : on(false), position(vec3_init(0,0,0)), direction(vec3_init(1,0,0)),
     count(MINING_LASER_EMITTER_PARTICLE_COUNT), speed(MINING_LASER_PARTICLE_SPEED),
     base_length(4.0f), length(4.0f), ttl_max((base_length/speed)*30), start(0), h_mult(0.0f),
-    texture_row(0), laser_type(NULL_ITEM_TYPE)
+    texture_row(0), laser_type(NULL_ITEM_TYPE),
+    length_position(vec3_init(0,0,0)), length_direction(vec3_init(1,0,0))
     {
         this->set_count();
         this->set_base_length(4.0f);
