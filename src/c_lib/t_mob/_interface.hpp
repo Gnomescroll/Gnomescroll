@@ -698,10 +698,10 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 #endif
     }
 
-    struct Mat4 quantenion_to_rotation_matrix(aiQuatKey q, aVectorKey pos)
+    //mValue
+
+    struct Mat4 quantenion_to_rotation_matrix(aiQuaternion q, aiVector3D  pos)
     {
-
-
         float xx      = q.x * q.x;
         float xy      = q.x * q.y;
         float xz      = q.x * q.z;
@@ -731,8 +731,8 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         mat[13] = pos.y;
         mat[14] = pos.z;
         mat[15] = 1;
-
     }
+
 /*
 Another complication is how to use interpolation. It is possible to create a transformation matrix from the rotation, location and scaling, 
 but interpolating rotation using transformation matrices are not good. If you interpolate an object moved in an arch defined 
@@ -755,8 +755,8 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                 aiVectorKey* pos =  anim->mPositionKeys[frame_time % tmax]
                 aiQuatKey* rot = anim->mRotationKeys[frame_time % tmax];
 
-                //CONVERT TO MATRIq.x
-
+                //CONVERT TO MATRIX
+                return quantenion_to_rotation_matrix( rot.mValue, pos.mValue );
             }
 
         }
