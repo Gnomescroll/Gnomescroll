@@ -700,7 +700,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
     //mValue
 
-    struct Mat4 quantenion_to_rotation_matrix(aiQuaternion q, aiVector3D  pos)
+    struct Mat4 quantenion_to_rotation_matrix(aiQuaternion q, aiVector3D pos)
     {
         float xx      = q.x * q.x;
         float xy      = q.x * q.y;
@@ -731,7 +731,9 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         m._f[12] = pos.x;
         m._f[13] = pos.y;
         m._f[14] = pos.z;
-        m._f[15] = 1;
+        m._f[15] = 1.0f;
+
+        return m;
     }
 
 /*
@@ -750,11 +752,11 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
             if( strcmp(anim->mNodeName.data, node->mName.data) == 0 )
             {
-                GS_ASERT(anim->mNumPositionKeys == anime->mNumRotationKeys);
+                GS_ASSERT(anim->mNumPositionKeys == anim->mNumRotationKeys);
                 int tmax = anim->mNumPositionKeys;
                 
-                aiVectorKey* pos =  anim->mPositionKeys[frame_time % tmax]
-                aiQuatKey* rot = anim->mRotationKeys[frame_time % tmax];
+                aiVectorKey pos =  anim->mPositionKeys[frame_time % tmax];
+                aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
 
                 //CONVERT TO MATRIX
                 return quantenion_to_rotation_matrix( rot.mValue, pos.mValue );
@@ -771,15 +773,19 @@ but is not good. Therefore, you usually should do the interpolation on the quate
     void draw(float x, float y, float z)
     {
         //printf("nlm= %d vlm= %d \n", nlm, vlm);
-
+        static int _fcount = 0;
         static int frame_time = 0;
-        frame_time++;
+
+        _fcount++;
+        if(_fcount % 30 == 0)
+            frame_time++;
+
         //printf("scene has %d animations \n", pScene->mNumAnimations);
         aiAnimation* anim = pScene->mAnimations[0];
 
+        //printf("animation0: name= %s duration= %f ticks_per_second= %f number_of_node_channels= %d mesh_channels= %d \n",
+        //    anim->mName.data, anim->mDuration, anim->mTicksPerSecond, anim->mNumChannels, anim->mNumMeshChannels);
 
-        printf("animation0: name= %s duration= %f ticks_per_second= %f number_of_node_channels= %d mesh_channels= %d \n",
-            anim->mName.data, anim->mDuration, anim->mTicksPerSecond, anim->mNumChannels, anim->mNumMeshChannels);
     //C_STRUCT aiString mName;
     /** Duration of the animation in ticks.  */
     //double mDuration;
@@ -795,6 +801,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
 
         aiNodeAnim** node_channels = anim->mChannels;
+        int node_channels_max = anim->mNumChannels;
 
     /** The name of the node affected by this animation. The node  must exist and it must be unique.*/
     //C_STRUCT aiString mNodeName;
@@ -894,7 +901,10 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
                         //mat4_print( _ConvertMatrix(tempNode->mTransformation) ) ;
                     }
-                    boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
+                    //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
+                    
+                    boneMatrix = mat4_mult(boneMatrix, get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode) );
+
                     //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
                     //armature is the last node that gets multiplied in
                     if( strcmp(tempNode->mName.data, "Armature") == 0 )
@@ -1004,7 +1014,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         }
 
         glColor4ub(255,255,255,255);
-        glEnable(GL_TEq.xTURE_2D);
+        glEnable(GL_TEXTURE_2D);
         //GL_ASSERT(GL_TEXTURE_2D, true);
 
         glBindTexture(GL_TEXTURE_2D, texture1);
