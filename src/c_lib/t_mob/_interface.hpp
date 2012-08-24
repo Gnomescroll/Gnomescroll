@@ -698,9 +698,137 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 #endif
     }
 
+    struct Mat4 quantenion_to_rotation_matrix(aiQuatKey q, aVectorKey pos)
+    {
+
+
+        float xx      = q.x * q.x;
+        float xy      = q.x * q.y;
+        float xz      = q.x * q.z;
+        float xw      = q.x * q.w;
+        float yy      = q.y * q.y;
+        float yz      = q.y * q.z;
+        float yw      = q.y * q.w;
+        float zz      = q.z * q.z;
+        float zw      = q.z * q.w;
+
+        mat[0]  = 1 - 2 * ( yy + zz );
+        mat[1]  =     2 * ( xy - zw );
+        mat[2]  =     2 * ( xz + yw );
+        mat[3]  = 0.0f;
+
+        mat[4]  =     2 * ( xy + zw );
+        mat[5]  = 1 - 2 * ( xx + zz );
+        mat[6]  =     2 * ( yz - xw );
+        mat[7]  = 0.0f;
+
+        mat[8]  =     2 * ( xz - yw );
+        mat[9]  =     2 * ( yz + xw );
+        mat[10] = 1 - 2 * ( xx + yy );
+        mat[11] = 0.0f;
+
+        mat[12] = pos.x;
+        mat[13] = pos.y;
+        mat[14] = pos.z;
+        mat[15] = 1;
+
+    }
+/*
+Another complication is how to use interpolation. It is possible to create a transformation matrix from the rotation, location and scaling, 
+but interpolating rotation using transformation matrices are not good. If you interpolate an object moved in an arch defined 
+by two keys 90 degrees rotated to each other, the result will be a straight line (at best). It actually looks quite fun, 
+but is not good. Therefore, you usually should do the interpolation on the quaternions first, then create the transformation matrix.
+*/
+    //get matrix for a node, if not is not animated, just returns the scene matrix
+    struct Mat4 get_anim_matrix(int frame_time, aiNodeAnim** node_channels, int node_channel_max, aiNode* node)
+    {
+
+        for(int i=0; i<node_channel_max; i++)
+        {
+            aiNodeAnim* anim = node_channels[i];
+
+            if( strcmp(anim->mNodeName.data, node->mName.data) == 0 )
+            {
+                GS_ASERT(anim->mNumPositionKeys == anime->mNumRotationKeys);
+                int tmax = anim->mNumPositionKeys;
+                
+                aiVectorKey* pos =  anim->mPositionKeys[frame_time % tmax]
+                aiQuatKey* rot = anim->mRotationKeys[frame_time % tmax];
+
+                //CONVERT TO MATRIq.x
+
+            }
+
+        }
+
+        //if cannot find, then node does not have an animation and use this
+        return _ConvertMatrix(node->mTransformation);
+
+    }
+
+
     void draw(float x, float y, float z)
     {
         //printf("nlm= %d vlm= %d \n", nlm, vlm);
+
+        static int frame_time = 0;
+        frame_time++;
+        //printf("scene has %d animations \n", pScene->mNumAnimations);
+        aiAnimation* anim = pScene->mAnimations[0];
+
+
+        printf("animation0: name= %s duration= %f ticks_per_second= %f number_of_node_channels= %d mesh_channels= %d \n",
+            anim->mName.data, anim->mDuration, anim->mTicksPerSecond, anim->mNumChannels, anim->mNumMeshChannels);
+    //C_STRUCT aiString mName;
+    /** Duration of the animation in ticks.  */
+    //double mDuration;
+    /** Ticks per second. 0 if not specified in the imported file */
+    //double mTicksPerSecond;
+    /** The number of bone animation channels. Each channel affects a single node. */
+    //unsigned int mNumChannels;
+    //C_STRUCT aiNodeAnim** mChannels;
+
+        //nsigned int mNumAnimations; 
+        //_STRUCT aiAnimation** mAnimations;
+
+
+
+        aiNodeAnim** node_channels = anim->mChannels;
+
+    /** The name of the node affected by this animation. The node  must exist and it must be unique.*/
+    //C_STRUCT aiString mNodeName;
+
+    /** The number of position keys */
+    //unsigned int mNumPositionKeys;
+
+    /** The position keys of this animation channel. Positions are 
+     * specified as 3D vector. The array is mNumPositionKeys in size.
+     *
+     * If there are position keys, there will also be at least one
+     * scaling and one rotation key.*/
+    //C_STRUCT aiVectorKey* mPositionKeys;
+
+    /** The number of rotation keys */
+    //unsigned int mNumRotationKeys;
+
+    /** The rotation keys of this animation channel. Rotations are 
+     *  given as quaternions,  which are 4D vectors. The array is 
+     *  mNumRotationKeys in size.
+     *
+     * If there are rotation keys, there will also be at least one
+     * scaling and one position key. */
+    //C_STRUCT aiQuatKey* mRotationKeys;
+
+    /** The number of scaling keys */
+    //unsigned int mNumScalingKeys;
+
+    /** The scaling keys of this animation channel. Scalings are 
+     *  specified as 3D vector. The array is mNumScalingKeys in size.
+     *
+     * If there are scaling keys, there will also be at least one
+     * position and one rotation key.*/
+    //C_STRUCT aiVectorKey* mScalingKeys;
+
 
         bool _print  = false;
 
@@ -748,7 +876,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
-                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
                 aiNode* tempNode = node;
 
@@ -875,7 +1003,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         }
 
         glColor4ub(255,255,255,255);
-        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEq.xTURE_2D);
         //GL_ASSERT(GL_TEXTURE_2D, true);
 
         glBindTexture(GL_TEXTURE_2D, texture1);
