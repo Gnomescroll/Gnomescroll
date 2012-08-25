@@ -59,7 +59,7 @@ void load_item_dat()
 
     item_def(7, IG_MINING_LASER, "blue_mining_laser");
     sprite_def(i0, 3,5);
-    s.pretty_name = (char*) "Turquoise Mining Laser";
+    s.pretty_name = (char*) "Mining Laser";
     s.max_durability = 1200;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
@@ -73,7 +73,7 @@ void load_item_dat()
 
     item_def(8, IG_MINING_LASER, "red_mining_laser");
     sprite_def(i0, 3,7);
-    s.pretty_name = (char*) "Ruby Mining Laser";
+    s.pretty_name = (char*) "Mining Laser";
     s.max_durability = 1200;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
@@ -87,7 +87,7 @@ void load_item_dat()
 
     item_def(9, IG_MINING_LASER, "green_mining_laser");
     sprite_def(i0, 4,7);
-    s.pretty_name = (char*) "Malachite Mining Laser";
+    s.pretty_name = (char*) "Mining Laser";
     s.max_durability = 1200;
     s.max_stack_size = 1;
     s.firing_range = 4.0f;
@@ -430,13 +430,13 @@ void load_item_dat()
     s.pretty_name = (char*) "Iridium Helmet";
     s.max_stack_size = 1;
 
-    item_def(69, IG_RESOURCE, "red_crystal");
-    sprite_def(i0, 1,3);
+    item_def(69, IG_RESOURCE, "blue_crystal");
+    sprite_def(i1, 3,4);
     s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
-    item_def(70, IG_RESOURCE, "blue_crystal");
-    sprite_def(i1, 3,4);
+    item_def(70, IG_RESOURCE, "red_crystal");
+    sprite_def(i0, 1,3);
     s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
