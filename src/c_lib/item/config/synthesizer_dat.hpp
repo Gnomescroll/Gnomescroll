@@ -42,13 +42,13 @@ void load_synthesizer()
     synthesizer_item_def("energy_core", 25);
     synthesizer_item_set(4,2);
 
-    synthesizer_item_def("turquoise_mining_laser", 1);
+    synthesizer_item_def("blue_mining_laser", 1);
     synthesizer_item_set(0,1);
 
-    synthesizer_item_def("ruby_mining_laser", 1);
+    synthesizer_item_def("red_mining_laser", 1);
     synthesizer_item_set(1,1);
     
-    synthesizer_item_def("malachite_mining_laser", 1);
+    synthesizer_item_def("green_mining_laser", 1);
     synthesizer_item_set(2,1);
     #endif
 }

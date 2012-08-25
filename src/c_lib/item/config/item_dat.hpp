@@ -57,7 +57,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DIRT, 4);
     block_damage_def(CUBE_MATERIAL_STONE, 0);
 
-    item_def(7, IG_MINING_LASER, "turquoise_mining_laser");
+    item_def(7, IG_MINING_LASER, "blue_mining_laser");
     sprite_def(i0, 3,5);
     s.pretty_name = (char*) "Turquoise Mining Laser";
     s.max_durability = 1200;
@@ -71,7 +71,7 @@ void load_item_dat()
     s.object_damage_max = 20;
     s.animation_id = 0;
 
-    item_def(8, IG_MINING_LASER, "ruby_mining_laser");
+    item_def(8, IG_MINING_LASER, "red_mining_laser");
     sprite_def(i0, 3,7);
     s.pretty_name = (char*) "Ruby Mining Laser";
     s.max_durability = 1200;
@@ -85,7 +85,7 @@ void load_item_dat()
     s.object_damage_max = 25;
     s.animation_id = 1;
 
-    item_def(9, IG_MINING_LASER, "malachite_mining_laser");
+    item_def(9, IG_MINING_LASER, "green_mining_laser");
     sprite_def(i0, 4,7);
     s.pretty_name = (char*) "Malachite Mining Laser";
     s.max_durability = 1200;
@@ -430,19 +430,19 @@ void load_item_dat()
     s.pretty_name = (char*) "Iridium Helmet";
     s.max_stack_size = 1;
 
-    item_def(69, IG_RESOURCE, "ruby");
+    item_def(69, IG_RESOURCE, "red_crystal");
     sprite_def(i0, 1,3);
-    s.pretty_name = (char*) "Ruby";
+    s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
-    item_def(70, IG_RESOURCE, "turquoise");
+    item_def(70, IG_RESOURCE, "blue_crystal");
     sprite_def(i1, 3,4);
-    s.pretty_name = (char*) "Turquoise";
+    s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
-    item_def(71, IG_RESOURCE, "malachite");
+    item_def(71, IG_RESOURCE, "green_crystal");
     sprite_def(i0, 2,4);
-    s.pretty_name = (char*) "Malachite";
+    s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
     end_item_dat(); // finalize

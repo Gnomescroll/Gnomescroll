@@ -20,12 +20,10 @@ void default_map_gen()
     t_map::map_post_processing(); //regolith stuff
     t_gen::generate_rock_layer();
     t_gen::start_cave_generator();
-
-    map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));
-
     t_gen::populate_ore();
+    map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));
+    
     t_gen::populate_crystals();
-
 
     t_map::environment_process_startup();
 }

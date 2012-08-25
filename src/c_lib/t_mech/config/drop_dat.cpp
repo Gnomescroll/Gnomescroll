@@ -45,14 +45,16 @@ void load_drop_dat()
     ////////////////////
     // look at t_map/config/drop_dat.cpp for more configuration examples
 
+    // TODO -- ore drop style
+
     b->def_drop("red_crystal");
-        b->drop_always("ruby");
+        b->drop_always("red_crystal");
 
     b->def_drop("blue_crystal");
-        b->drop_always("turquoise");
+        b->drop_always("blue_crystal");
 
     b->def_drop("green_crystal");
-        b->drop_always("malachite");
+        b->drop_always("green_crystal");
 
     b->end();
 
