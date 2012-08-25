@@ -23,7 +23,7 @@ options.port = 0
 
 -- map --
 options.map = ''
-options.seed = 800752
+options.seed = 303
 
 -- logger --
 options.logger = true
