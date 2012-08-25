@@ -191,7 +191,7 @@ void load_block_dat()
     cube_def(25, SolidBlock, "rock", CUBE_MATERIAL_STONE);
     iso_texture(t1,9,11);
     push_texture();
-    hud_def(6,1, t1,9,9);
+    hud_def(6,1, t1,9,11);
     set_max_dmg(48);
 
     cube_def(26, SolidBlock, "coal", CUBE_MATERIAL_DIRT);
