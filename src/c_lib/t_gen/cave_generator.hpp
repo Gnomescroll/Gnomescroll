@@ -163,4 +163,4 @@ void start_cave_generator()
 }
 
 
-}
+}   // t_gen

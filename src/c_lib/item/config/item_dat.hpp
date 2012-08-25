@@ -65,8 +65,9 @@ void load_item_dat()
     s.firing_range = 4.0f;
     s.firing_rate = 6;
     block_damage_def(6);
-    block_damage_def(CUBE_MATERIAL_DIRT, 2);
+    block_damage_def(CUBE_MATERIAL_DIRT, 5);
     block_damage_def(CUBE_MATERIAL_STONE, 6);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 8);
     s.object_damage_min = 15;
     s.object_damage_max = 20;
     s.animation_id = 0;
@@ -79,8 +80,9 @@ void load_item_dat()
     s.firing_range = 4.0f;
     s.firing_rate = 6;
     block_damage_def(6);
-    block_damage_def(CUBE_MATERIAL_DIRT, 2);
+    block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 8);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 12);
     s.object_damage_min = 20;
     s.object_damage_max = 25;
     s.animation_id = 1;
@@ -93,8 +95,9 @@ void load_item_dat()
     s.firing_range = 4.0f;
     s.firing_rate = 6;
     block_damage_def(6);
-    block_damage_def(CUBE_MATERIAL_DIRT, 3);
+    block_damage_def(CUBE_MATERIAL_DIRT, 7);
     block_damage_def(CUBE_MATERIAL_STONE, 10);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 16);
     s.object_damage_min = 25;
     s.object_damage_max = 30;
     s.animation_id = 2;
@@ -174,6 +177,7 @@ void load_item_dat()
     block_damage_def(1);
     block_damage_def(CUBE_MATERIAL_DIRT, 4);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 4);
     s.object_damage_min = 15;
     s.object_damage_max = 25;
 
@@ -200,6 +204,7 @@ void load_item_dat()
     block_damage_def(2);
     block_damage_def(CUBE_MATERIAL_DIRT, 5);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 6);
     s.object_damage_min = 25;
     s.object_damage_max = 35;
 
@@ -226,6 +231,7 @@ void load_item_dat()
     block_damage_def(3);
     block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 8);
     s.object_damage_min = 20;
     s.object_damage_max = 30;
 
@@ -252,6 +258,7 @@ void load_item_dat()
     block_damage_def(3);
     block_damage_def(CUBE_MATERIAL_DIRT, 8);
     block_damage_def(CUBE_MATERIAL_STONE, 2);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 8);
     s.object_damage_min = 30;
     s.object_damage_max = 40;
 
@@ -262,6 +269,7 @@ void load_item_dat()
     s.firing_rate = 5;
     block_damage_def(1);
     block_damage_def(CUBE_MATERIAL_DIRT, 2);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 4);
     s.object_damage_min = 5;
     s.object_damage_max = 10;
 
