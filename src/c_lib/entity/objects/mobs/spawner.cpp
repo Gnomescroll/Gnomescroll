@@ -60,8 +60,8 @@ static void set_mob_spawner_properties(Object* object)
     using Components::MonsterSpawnerComponent;
     MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);
     spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
-    spawner->max_children = MONSTER_SPAWNER_MAX_CHILDREN;
-    spawner->spawn_type = OBJECT_NONE; // allows any
+    spawner->set_max_children(MONSTER_SPAWNER_MAX_CHILDREN);
+    spawner->spawn_type = OBJECT_MONSTER_BOX; // allows any
 
     #if DC_SERVER
     using Components::ItemDropComponent;
@@ -135,6 +135,11 @@ void die_mob_spawner(Object* object)
     item_drop->drop_item();
 
     object->broadcastDeath();
+
+    using Components::MonsterSpawnerComponent;
+    MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)object->get_component(COMPONENT_MONSTER_SPAWNER);
+    GS_ASSERT(spawner != NULL);
+    spawner->notify_children_of_death();
     #endif
 
     #if DC_CLIENT

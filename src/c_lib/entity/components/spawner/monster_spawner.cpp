@@ -34,35 +34,32 @@ struct Vec3 MonsterSpawnerComponent::get_spawn_point(float spawned_object_height
     return spawn_point;
 }
 
-Objects::Object* MonsterSpawnerComponent::spawn_child()
+class Objects::Object* MonsterSpawnerComponent::spawn_child()
 {
     GS_ASSERT(this->spawn_type != OBJECT_NONE);    // dont use this method when any component can be spawned
     if (this->spawn_type == OBJECT_NONE) return NULL;
-    return this->spawn_child(this->spawn_type);
-}
+    if (this->full()) return NULL;
+    GS_ASSERT(this->children != NULL);
+    if (this->children == NULL) return NULL;
+    Objects::Object* child = Objects::create(this->spawn_type);
+    GS_ASSERT(child != NULL);
+    if (child == NULL) return NULL;
 
-Objects::Object* MonsterSpawnerComponent::spawn_child(ObjectType type)
-{
-    GS_ASSERT(this->spawn_type == OBJECT_NONE || this->spawn_type == type);    // dont allow this method if type does not match
-    if (this->spawn_type != OBJECT_NONE && this->spawn_type != type) return NULL;
-    if (this->children >= this->max_children) return NULL;
-    Object* object = Objects::create(type);
-    GS_ASSERT(object != NULL);
-    if (object == NULL) return NULL;
+    this->children[this->children_ct++] = child->id;
 
     using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    PhysicsComponent* physics = (PhysicsComponent*)child->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         float height = 1.0f;
         using Components::DimensionComponent;
-        DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        DimensionComponent* dims = (DimensionComponent*)child->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
         if (dims != NULL) height = dims->get_height();
 
         float radius = 1.0f;
         using Components::VoxelModelComponent;
-        VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+        VoxelModelComponent* vox = (VoxelModelComponent*)child->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
         if (vox != NULL) radius = vox->get_radius();
         
         Vec3 position = this->get_spawn_point(height, radius);
@@ -70,21 +67,35 @@ Objects::Object* MonsterSpawnerComponent::spawn_child(ObjectType type)
     }
 
     using Components::SpawnChildComponent;
-    SpawnChildComponent* child = (SpawnChildComponent*)object->get_component(COMPONENT_SPAWN_CHILD);
-    GS_ASSERT(child != NULL);
-    if (child == NULL) return object;
-    child->assign_parent(this->object->type, this->object->id);
-    
-    this->children++;
+    SpawnChildComponent* spawn = (SpawnChildComponent*)child->get_component(COMPONENT_SPAWN_CHILD);
+    GS_ASSERT(spawn != NULL);
+    if (spawn != NULL)
+        spawn->assign_parent(this->object->type, this->object->id);
 
-    return object;
+    return child;
 }
 
 void MonsterSpawnerComponent::lose_child(ObjectType type, int id)
 {
-    this->children--;
-    GS_ASSERT(this->children >= 0);
-    if (this->children < 0) this->children = 0;
+    for (int i=0; i<this->children_ct; i++)
+        if (this->children[i] == id)
+            this->children[i] = this->children[--this->children_ct];  // swap
 }
 
-}; // Objects
+void MonsterSpawnerComponent::notify_children_of_death()
+{
+    for (int i=0; i<this->children_ct; i++)
+    {
+        class Objects::Object* child = Objects::get(this->spawn_type, this->children[i]);
+        GS_ASSERT(child != NULL);
+        if (child == NULL) continue;
+        SpawnChildComponent* spawn = (SpawnChildComponent*)child->get_component(COMPONENT_SPAWN_CHILD);
+        GS_ASSERT(spawn != NULL);
+        if (spawn == NULL) continue;
+        GS_ASSERT(spawn->parent_type == this->object->type);
+        GS_ASSERT(spawn->parent_id == this->object->id);
+        spawn->parent_died();
+    }
+}
+
+}; // Components

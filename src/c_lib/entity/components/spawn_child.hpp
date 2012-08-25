@@ -18,6 +18,7 @@ class SpawnChildComponent: public Component
             this->parent_id = id;
         }
         void notify_parent_of_death();
+        void parent_died();
     
     ~SpawnChildComponent() {}
 
@@ -27,4 +28,4 @@ class SpawnChildComponent: public Component
     {}
 };
 
-}; // Objects
+}; // Components

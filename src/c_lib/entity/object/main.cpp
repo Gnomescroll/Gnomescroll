@@ -219,7 +219,6 @@ void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 pos
 void spawn_mobs()
 {   // fill all monster spawner capacity
     const ObjectType type = OBJECT_MONSTER_SPAWNER;
-    const ObjectType spawn_type = OBJECT_MONSTER_BOX;
     if (object_list->empty(type)) return;
     Object** objects = object_list->get_objects(type);
     GS_ASSERT(objects != NULL);
@@ -237,7 +236,7 @@ void spawn_mobs()
         obj = objects[i];
         spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
         GS_ASSERT(spawner != NULL);
-        child = spawner->spawn_child(spawn_type);
+        child = spawner->spawn_child();
         if (child != NULL) Objects::ready(child);
     }
 }

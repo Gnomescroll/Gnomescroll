@@ -3,7 +3,7 @@
 int MAX_OBJECT_TYPES = 256;
 typedef enum
 {
-    OBJECT_NONE,    // null
+    OBJECT_NONE = 0,    // null
     OBJECT_DESTINATION,     // abstract object
 
     OBJECT_AGENT,   // agent
@@ -134,6 +134,7 @@ typedef enum
 #include <limits.h>
 #include <physics/vec3.hpp>
 
+const int NULL_ENTITY_ID = -1;      // cant use a positive number because it imposes constraint on all object list's max. dont send this over the network
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
 const int NULL_HEALTH = INT_MAX;
 const Vec3 NULL_POSITION = vec3_init(0,0,0);
