@@ -189,7 +189,8 @@ void load_block_dat()
     push_texture();
 
     cube_def(25, SolidBlock, "rock", CUBE_MATERIAL_STONE);
-    iso_texture(t1,9,9);
+    //iso_texture(t1,9,9);
+    iso_texture(t1,9,10);
     push_texture();
     hud_def(6,1, t1,9,9);
     set_max_dmg(48);
@@ -214,7 +215,8 @@ void load_block_dat()
     set_max_dmg(64);
 
     cube_def(29, SolidBlock, "gallium_ore", CUBE_MATERIAL_STONE);
-    iso_texture(t1,8,9);
+    //iso_texture(t1,8,9);
+    iso_texture(t1,8,10);
     push_texture();
     //hud_def(6,4, t1,2,4);
     set_max_dmg(64);
