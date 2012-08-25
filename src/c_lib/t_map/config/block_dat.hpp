@@ -197,7 +197,7 @@ void load_block_dat()
     cube_def(26, SolidBlock, "coal", CUBE_MATERIAL_DIRT);
     iso_texture(t1,10,6);
     push_texture();
-    set_max_dmg(16);
+    set_max_dmg(32);
 
     //hud_def(4,2, t1,10,6);
 
@@ -205,24 +205,24 @@ void load_block_dat()
     iso_texture(t1,8,3);
     push_texture();
     //hud_def(6,2, t1,8,3);
-    set_max_dmg(16);
+    set_max_dmg(64);
 
     cube_def(28, SolidBlock, "copper_ore", CUBE_MATERIAL_STONE);
     iso_texture(t1,1,9);
     push_texture();
     //hud_def(6,3, t1,1,9);
-    set_max_dmg(16);
+    set_max_dmg(64);
 
     cube_def(29, SolidBlock, "gallium_ore", CUBE_MATERIAL_STONE);
     iso_texture(t1,8,9);
     push_texture();
     //hud_def(6,4, t1,2,4);
-    set_max_dmg(16);
+    set_max_dmg(64);
 
     cube_def(30, SolidBlock, "iridium_ore", CUBE_MATERIAL_STONE);
     iso_texture(t1,1,11);
     push_texture();
-    set_max_dmg(16);
+    set_max_dmg(64);
 
     //hud_def(6,5, t1,1,11);
 
@@ -231,210 +231,206 @@ void load_block_dat()
     push_texture();
     set_max_dmg(255);
 
-
-    cube_def(32, SolidBlock, "control_node");
+    cube_def(32, SolidBlock, "control_node", CUBE_MATERIAL_DECORATION);
     iso_texture(t1, 9,4);
     push_texture();
-    set_max_dmg(5); //255
     hud_def(2,1, t1,9,4);
 
-    cube_def(33, SolidBlock, "space_tree_trunk");
+    cube_def(33, SolidBlock, "space_tree_trunk", CUBE_MATERIAL_DECORATION);
     iso_texture(t2, 1,1);
     push_texture();
-    set_max_dmg(64); //255
     hud_def(6,4, t2,1,1);
 
-    cube_def(34, SolidBlock, "space_tree_trunk2");
+    cube_def(34, SolidBlock, "space_tree_trunk2", CUBE_MATERIAL_DECORATION);
     iso_texture(t2, 2,1);
     push_texture();
-    set_max_dmg(32); //255
     hud_def(6,5, t2,2,1);
 
 
     // random textures from cell to fill the block placer
-    DEFAULT_MAX_DAMAGE = 32;
+    DEFAULT_MAX_DAMAGE = 16;
     
-    cube_def(255-1, SolidBlock, "cell1");
+    cube_def(255-1, SolidBlock, "cell1", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 1,1);
     push_texture();
     hud_def(1,5, t3,1,1);
 
-    cube_def(255-2, SolidBlock, "cell2");
+    cube_def(255-2, SolidBlock, "cell2", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 2,1);
     push_texture();
     hud_def(1,6, t3,2,1);
 
-    cube_def(255-3, SolidBlock, "cell3");
+    cube_def(255-3, SolidBlock, "cell3", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 3,1);
     push_texture();
     hud_def(1,7, t3,3,1);
 
-    cube_def(255-4, SolidBlock, "cell4");
+    cube_def(255-4, SolidBlock, "cell4", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 4,1);
     push_texture();
     hud_def(1,8, t3,4,1);
 
-    cube_def(255-5, SolidBlock, "cell5");
+    cube_def(255-5, SolidBlock, "cell5", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 5,1);
     push_texture();
     hud_def(2,4, t3,5,1);
 
-    cube_def(255-6, SolidBlock, "cell6");
+    cube_def(255-6, SolidBlock, "cell6", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 6,1);
     push_texture();
     hud_def(2,5, t3,6,1);
 
     // dupe
-    //cube_def(255-7, SolidBlock, "cell7");
+    //cube_def(255-7, SolidBlock, "cell7", CUBE_MATERIAL_DECORATION);
     //iso_texture(t3, 7,1);
     //push_texture();
     //hud_def(2,6, t3,7,1);
 
-    cube_def(255-8, SolidBlock, "cell8");
+    cube_def(255-8, SolidBlock, "cell8", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 8,1);
     push_texture();
     hud_def(2,7, t3,8,1);
 
-    cube_def(255-9, SolidBlock, "cell9");
+    cube_def(255-9, SolidBlock, "cell9", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 1,2);
     push_texture();
     hud_def(2,8, t3,1,2);
     
-    cube_def(255-10, SolidBlock, "cell10");
+    cube_def(255-10, SolidBlock, "cell10", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 2,2);
     push_texture();
     hud_def(3,1, t3,2,2);
 
-    cube_def(255-11, SolidBlock, "cell11");
+    cube_def(255-11, SolidBlock, "cell11", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 3,2);
     push_texture();
     hud_def(3,2, t3,3,2);
 
-    cube_def(255-12, SolidBlock, "cell12");
+    cube_def(255-12, SolidBlock, "cell12", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 4,2);
     push_texture();
     hud_def(3,3, t3,4,2);
 
-    cube_def(255-13, SolidBlock, "cell13");
+    cube_def(255-13, SolidBlock, "cell13", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 5,2);
     push_texture();
     hud_def(3,4, t3,5,2);
     
-    cube_def(255-14, SolidBlock, "cell14");
+    cube_def(255-14, SolidBlock, "cell14", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 6,2);
     push_texture();
     hud_def(3,5, t3,6,2);
     
-    cube_def(255-15, SolidBlock, "cell15");
+    cube_def(255-15, SolidBlock, "cell15", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 7,2);
     push_texture();
     hud_def(3,7, t3,7,2);
 
-    cube_def(255-16, SolidBlock, "cell16");
+    cube_def(255-16, SolidBlock, "cell16", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 8,2);
     push_texture();
     hud_def(3,8, t3,8,2);
     
-    cube_def(255-17, SolidBlock, "cell17");
+    cube_def(255-17, SolidBlock, "cell17", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 1,3);
     push_texture();
     hud_def(4,1, t3,1,3);
     
-    cube_def(255-18, SolidBlock, "cell18");
+    cube_def(255-18, SolidBlock, "cell18", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 2,3);
     push_texture();
     hud_def(4,2, t3,2,3);
     
-    cube_def(255-19, SolidBlock, "cell19");
+    cube_def(255-19, SolidBlock, "cell19", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 3,3);
     push_texture();
     hud_def(4,3, t3,3,3);
     
-    cube_def(255-20, SolidBlock, "cell20");
+    cube_def(255-20, SolidBlock, "cell20", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 4,3);
     push_texture();
     hud_def(4,4, t3,4,3);
     
-    cube_def(255-21, SolidBlock, "cell21");
+    cube_def(255-21, SolidBlock, "cell21", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 5,3);
     side_texture(T, t3, 5,2);
     side_texture(B, t3, 5,4);
     push_texture();
     hud_def(4,5, t3,5,3);
     
-    cube_def(255-22, SolidBlock, "cell22");
+    cube_def(255-22, SolidBlock, "cell22", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 6,3);
     push_texture();
     hud_def(4,6, t3,6,3);
 
-    cube_def(255-23, SolidBlock, "cell23");
+    cube_def(255-23, SolidBlock, "cell23", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 7,3);
     side_texture(T, t3, 7,2);
     side_texture(B, t3, 7,4);
     push_texture();
     hud_def(4,7, t3,7,3);
     
-    cube_def(255-24, SolidBlock, "cell24");
+    cube_def(255-24, SolidBlock, "cell24", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 8,3);
     push_texture();
     hud_def(4,8, t3,8,3);
     
-    cube_def(255-25, SolidBlock, "cell25");
+    cube_def(255-25, SolidBlock, "cell25", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 1,4);
     push_texture();
     hud_def(5,4, t3,1,4);
     
-    cube_def(255-26, SolidBlock, "cell26");
+    cube_def(255-26, SolidBlock, "cell26", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 2,4);
     push_texture();
     hud_def(5,5, t3,2,4);
     
-    cube_def(255-27, SolidBlock, "cell27");
+    cube_def(255-27, SolidBlock, "cell27", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 3,4);
     push_texture();
     hud_def(5,6, t3,3,4);
 
-    cube_def(255-28, SolidBlock, "cell28");
+    cube_def(255-28, SolidBlock, "cell28", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 4,4);
     push_texture();
     hud_def(5,7, t3,4,4);
 
-    cube_def(255-29, SolidBlock, "cell29");
+    cube_def(255-29, SolidBlock, "cell29", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 5,4);
     push_texture();
     hud_def(5,8, t3,5,4);
 
-    cube_def(255-30, SolidBlock, "cell30");
+    cube_def(255-30, SolidBlock, "cell30", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 6,4);
     push_texture();
     hud_def(6,3, t3,6,4);
 
-    cube_def(255-31, SolidBlock, "cell31");
+    cube_def(255-31, SolidBlock, "cell31", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 7,4);
     push_texture();
     hud_def(1,1, t3,7,4);
 
-    cube_def(255-32, SolidBlock, "cell32");
+    cube_def(255-32, SolidBlock, "cell32", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 8,4);
     push_texture();
     hud_def(6,2, t3,8,4);
 
-    cube_def(255-33, SolidBlock, "cell33");
+    cube_def(255-33, SolidBlock, "cell33", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 1,8);
     push_texture();
     hud_def(2,2, t3,1,8);
     
-    cube_def(255-34, SolidBlock, "cell34");
+    cube_def(255-34, SolidBlock, "cell34", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 4,7);
     push_texture();
     hud_def(2,3, t3,4,7);
     
-    cube_def(255-35, SolidBlock, "cell35");
+    cube_def(255-35, SolidBlock, "cell35", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 5,8);
     push_texture();
     hud_def(3,6, t3,5,8);
     
-    cube_def(255-36, SolidBlock, "cell36");
+    cube_def(255-36, SolidBlock, "cell36", CUBE_MATERIAL_DECORATION);
     iso_texture(t3, 8,7);
     push_texture();
     hud_def(2,6, t3,8,7);
@@ -442,5 +438,4 @@ void load_block_dat()
     end_block_dat();
 }
 
-
-}
+}   // t_map
