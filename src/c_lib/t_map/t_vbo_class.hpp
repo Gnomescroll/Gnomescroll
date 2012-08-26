@@ -43,6 +43,7 @@ class Map_vbo
     int vnum;
     int vnum_max;
     struct Vertex* v_list;
+    struct VertexBackup* v_list_backup; //backup list
 
     int _v_num[4];
     int _v_offset[4];

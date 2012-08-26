@@ -112,7 +112,51 @@ namespace t_map
         float lighting[2];      //sun and manmade
 
     };
-    
+
+
+    struct VertexBackup
+    {
+        union   //0
+        {
+            struct
+            {
+                unsigned char x,y,z;
+                unsigned char w; //unused
+            };
+            unsigned int pos;
+        };
+
+        union   //4
+        {
+            struct
+            {
+                unsigned char tx,ty,tz;
+                unsigned char tw; //unused
+
+            };
+            unsigned int tex;
+        };
+
+        union   //8
+        {
+            struct
+            {
+                unsigned char r,g,b,a;
+            };
+            unsigned int color;
+        };
+
+        union   //12
+        {
+            unsigned char ao[4]; 
+            unsigned int AO;
+        };
+
+        //16
+        float lighting[2];      //sun and manmade
+
+    };
+
 }
 
 /*
