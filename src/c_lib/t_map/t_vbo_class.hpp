@@ -165,7 +165,7 @@ class Vbo_map
                 {
                     delete vbo_array[index]; 
                     vbo_array[index] = NULL;
-                    m->needs_update = true;    //so it gets recreated if in range
+                    m->needs_update = false;    //so it gets recreated if in range
                     continue;
                 }
             }
