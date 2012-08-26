@@ -209,9 +209,6 @@ void PlayerAgent_action::update_mining_laser()
 
 void PlayerAgent_action::begin_mining_laser()
 {
-    static int ct = 0;
-    printf("Begin ct %d\n", ct++);
-
     int laser_type = Toolbelt::get_agent_selected_item_type(this->p->you->id);
     GS_ASSERT(laser_type != NULL_ITEM_TYPE);
     GS_ASSERT(Item::get_item_group_for_type(laser_type) == IG_MINING_LASER);
@@ -225,17 +222,12 @@ void PlayerAgent_action::begin_mining_laser()
     GS_ASSERT(this->mining_laser_sound_id < 0);
     if (this->mining_laser_sound_id >= 0) return;
     this->mining_laser_sound_id = Sound::mining_laser(true, -1);
-    GS_ASSERT(this->mining_laser_sound_id >= 0);
 }
 
 void PlayerAgent_action::end_mining_laser()
 {
-    static int ct = 0;
-    printf("End ct %d\n", ct++);
-
     this->p->you->event.mining_laser_emitter.turn_off();
 
-    GS_ASSERT(this->mining_laser_sound_id >= 0);
     if (this->mining_laser_sound_id < 0) return;
     Sound::mining_laser(false, this->mining_laser_sound_id);
     this->mining_laser_sound_id = -1;
