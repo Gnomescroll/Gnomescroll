@@ -86,6 +86,7 @@ namespace Item
             {
                 if (t_map::get_cube_material(i) == CUBE_MATERIAL_DIRT)
                     this->block_damage[i] = 2;
+                else
                 if (t_map::get_cube_material(i) == CUBE_MATERIAL_DECORATION)
                     this->block_damage[i] = 4;
                 else
