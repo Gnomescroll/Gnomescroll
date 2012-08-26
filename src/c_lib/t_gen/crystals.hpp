@@ -109,6 +109,9 @@ void place_crystal_cluster(int x, int y, int z, int crystal_id)
         if (abs(z-k) > CRYSTAL_CLUSTER_Z_DIFF_MAX) continue;
         int id = t_map::get(ii,jj,k-1);
         if (id != rock) continue;
+
+        if( t_mech::can_place_crystal(ii,jj,k, 0) == false) //check to see if placement is valid
+            continue;
         t_mech::create_crystal(ii,jj,k,crystal_id);
         cluster_size[cluster_id]++;
         crystal_type_count[get_crystal_index(crystal_id)]++;

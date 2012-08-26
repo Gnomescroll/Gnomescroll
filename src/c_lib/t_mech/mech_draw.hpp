@@ -328,6 +328,14 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     float wz = (float) m.z;
     //int face = m.face;
 
+    //fulstrum test
+    /*
+        Do radius render test?
+    */
+    if( sphere_fulstrum_test(wx, wy, wz, 0.6) == false)
+        return;
+
+
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
 
