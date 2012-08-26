@@ -21,11 +21,7 @@ void default_map_gen()
     t_gen::generate_rock_layer();
     t_gen::start_cave_generator();
     t_gen::populate_ore();
-    map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));
-    
-    t_gen::populate_crystals();
-
-    t_map::environment_process_startup();
+    map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));    
 }
 
 
@@ -57,6 +53,10 @@ void init(int argc, char* argv[])
     {   // use map file
         t_map::load_map(Options::map);
     }   
+
+    // do this after map gen / loading until crystals are serialized
+    t_gen::populate_crystals();
+    t_map::environment_process_startup();
 
     srand((unsigned int)time(NULL));
     

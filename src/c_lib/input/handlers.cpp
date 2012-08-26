@@ -954,7 +954,10 @@ void key_down_handler(SDL_Event* event)
         case SDLK_LALT:
         case SDLK_RALT:
             if (input_state.admin_controls)
+            {
                 input_state.mouse_bound = false;
+                printf("Unbound mouse with alt\n");
+            }
             break;
 
         case SDLK_BACKQUOTE:

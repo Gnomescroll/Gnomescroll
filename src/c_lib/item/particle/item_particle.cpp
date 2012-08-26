@@ -151,6 +151,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     #endif    
     #if DC_SERVER
     this->item_id = item_id;
+    this->pickup_prevention = ITEM_INITIAL_PICKUP_PREVENTION;
     #endif
     ASSERT_BOXED_POINTf(x);
     ASSERT_BOXED_POINTf(y);

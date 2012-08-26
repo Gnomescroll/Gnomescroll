@@ -63,7 +63,8 @@ namespace Item
 
         ItemAttribute()
         {
-            load_defaults(NULL_ITEM_TYPE, IG_NONE);
+            this->item_type = NULL_ITEM_TYPE;
+            this->group = IG_NONE;
         }
 
         void load_defaults(int item_type, ItemGroup group)
@@ -79,8 +80,18 @@ namespace Item
             particle_voxel = false;
             particle_voxel_texture = 0;
             firing_range = DEFAULT_FIRING_RANGE;
-            firing_rate = 8;
-            for (int i=0; i<t_map::MAX_CUBES; this->block_damage[i++] = 1);
+            firing_rate = 6;
+            // match defaults with fist
+            for (int i=0; i<t_map::MAX_CUBES; i++)
+            {
+                if (t_map::get_cube_material(i) == CUBE_MATERIAL_DIRT)
+                    this->block_damage[i] = 2;
+                if (t_map::get_cube_material(i) == CUBE_MATERIAL_DECORATION)
+                    this->block_damage[i] = 4;
+                else
+                    this->block_damage[i] = 1;
+            }
+            
             object_damage = 0;
             object_damage_min = 5;
             object_damage_max = 10;

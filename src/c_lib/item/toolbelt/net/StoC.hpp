@@ -59,5 +59,4 @@ class toolbelt_item_beta_action_StoC: public FixedSizeReliableNetPacketToClient<
         inline void handle();
 };
 
-
 } // Toolbelt

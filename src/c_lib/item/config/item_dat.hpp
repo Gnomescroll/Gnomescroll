@@ -266,7 +266,7 @@ void load_item_dat()
     sprite_def(i1, 6, 2);
     s.pretty_name = (char*) "Fist";
     s.firing_range = 4.0f;
-    s.firing_rate = 5;
+    s.firing_rate = 6;
     block_damage_def(1);
     block_damage_def(CUBE_MATERIAL_DIRT, 2);
     block_damage_def(CUBE_MATERIAL_DECORATION, 4);

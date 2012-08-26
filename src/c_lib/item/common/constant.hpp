@@ -54,6 +54,7 @@ const float ITEM_PARTICLE_VOXEL_RENDER_SCALE = 0.20f;
 
 // how long to wait before allowing item to be picked up after being thrown by agent
 const int ITEM_PICKUP_PREVENTION_DELAY = 30 * 3; // 4 seconds
+const int ITEM_INITIAL_PICKUP_PREVENTION = 20;
 
 // frequency of state update broadcasts for an item particle
 const int ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE = 30 * 10;    // 10 seconds

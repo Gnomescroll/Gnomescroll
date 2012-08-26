@@ -32,6 +32,14 @@ class GS_SoundBuffer
 
     bool add_source(int source_id)
     {
+        if (!this->can_add_source(source_id)) return false;
+        this->sources[this->current_sources] = source_id;
+        this->current_sources++;
+        return true;
+    }
+    
+    bool can_add_source(int source_id)
+    {
         GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
         if (source_id < 0 || source_id >= MAX_SOURCES) return false;
         for (int i=0; i<this->current_sources; i++)
@@ -39,8 +47,6 @@ class GS_SoundBuffer
         GS_ASSERT(this->current_sources >= 0);
         if (this->current_sources < 0) this->current_sources = 0;
         if (this->current_sources >= this->max_sources) return false;
-        this->sources[this->current_sources] = source_id;
-        this->current_sources++;
         return true;
     }
 
@@ -494,15 +500,25 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
     return false;
 }
 
-static int play_sound(GS_SoundBuffer* sound_buffer, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+static bool can_add_to_sources(int soundfile_id, int source_id, bool two_dimensional)
+{
+    GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
+    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
+    
+    // check if can add sound to active sources
+    for (int i=0; i<MAX_SOURCES; i++)
+        if (active_sources[i].source_id < 0)
+        {
+            active_sources[i].source_id = source_id;
+            active_sources[i].two_dimensional = two_dimensional;
+            return sound_buffers[soundfile_id]->can_add_source(source_id);
+        }
+    return false;
+}
+
+static int play_sound(int source_id, GS_SoundBuffer* sound_buffer, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
 {
     if (!enabled)
-        return -1;
-
-    // get free source
-    int source_id = get_free_source();
-    //printf("source_id = %d\n", source_id);
-    if (source_id < 0)
         return -1;
 
     if (source_id >= MAX_SOURCES || source_id < 0)
@@ -542,12 +558,22 @@ int play_2d_sound(class GS_SoundBuffer* sound_buffer)
     ALfloat o[6];
     get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
     // play at listener state
-    int source_id = play_sound(sound_buffer, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+
+    // get free source
+    int source_id = get_free_source();
+    if (source_id >= MAX_SOURCES || source_id < 0)
+        return -1;
+
+    // add sound to active sources
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id, true))
+        return -1;
+
+    source_id = play_sound(source_id, sound_buffer, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
     if (source_id < 0) return source_id;
     
     // add sound to active sources
-    if (!add_to_sources(sound_buffer->buffer_id, source_id, true))
-        return -1;
+    bool added = add_to_sources(sound_buffer->buffer_id, source_id, true);
+    GS_ASSERT(added);
 
     return source_id;
 }
@@ -589,7 +615,17 @@ int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3
     if (vec3_distance(Sound::listener_position, p) > sound_buffer->metadata->max_playable_distance) return -1;
 
     static const struct Vec3 o = vec3_init(0,0,-1);
-    int source_id = play_sound(sound_buffer, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
+
+    // get free source
+    int source_id = get_free_source();
+    if (source_id >= MAX_SOURCES || source_id < 0)
+        return -1;
+
+    // add sound to active sources
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id, true))
+        return -1;
+    
+    source_id = play_sound(source_id, sound_buffer, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
     if (source_id < 0) return source_id;
     // add sound to active sources
     if (!add_to_sources(sound_buffer->buffer_id, source_id, false)) return -1;
