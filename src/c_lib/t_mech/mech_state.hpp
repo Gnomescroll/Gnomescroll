@@ -12,7 +12,7 @@ const int MECH_HARD_MAX = 0xffff-1;
 static void pack_mech(struct MECH &m, class mech_create_StoC &p);
 static void unpack_mech(struct MECH &m, class mech_create_StoC &p);
 
-class MECH_LIST
+struct MECH_LIST
 {
     public:
 
@@ -22,7 +22,7 @@ class MECH_LIST
 
     //const static HARD_MAX = 0xffff-1;
 
-    class MECH* mla; //mech array;
+    struct MECH* mla; //mech array;
 
     bool needs_update; //for drawing
 
@@ -31,7 +31,7 @@ class MECH_LIST
         mli = 0;
         mlm = 8;
         mln = 0;
-        mla = (MECH*) malloc(8*sizeof(class MECH));
+        mla = (MECH*) malloc(8*sizeof(struct MECH));
         for(int i=0; i<mlm; i++) mla[i].id = -1;
 
         needs_update = true;
@@ -56,7 +56,7 @@ class MECH_LIST
         while(id >= mlm)
         {
             //printf("add_mech: expand array id= %i mlm= %i from %i \n", id, 2*mlm, mlm);
-            mla = (class MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
+            mla = (struct MECH*) realloc(mla, 2*mlm*sizeof(struct MECH));
             for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;
         }
@@ -76,14 +76,12 @@ class MECH_LIST
     //negative 1 on failure
     int add_mech(struct MECH &m)
     {
-        //needs_update = true;
-        if(mln == MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
+        GS_ASSERT(mln >= 0 && mln < MECH_HARD_MAX);
+        if(mln >= MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
 
-        GS_ASSERT( mln < MECH_HARD_MAX );
-
-        if(mln == mlm)
+        if(mln >= mlm)
         {
-            mla = (MECH*) realloc(mla, 2*mlm*sizeof(class MECH));
+            mla = (struct MECH*) realloc(mla, 2*mlm*sizeof(struct MECH));
             for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;
         }
@@ -131,8 +129,7 @@ class MECH_LIST
 
     void server_add_mech(struct MECH &m)
     {
-
-        if(mln == MECH_HARD_MAX)
+        if(mln >= MECH_HARD_MAX)
         {
             printf("MECH_LIST::server_add_mech error: t_mech limit reached \n");
             return;
@@ -164,10 +161,8 @@ class MECH_LIST
 bool MECH_LIST::is_occupied(int x, int y, int z)
 {
     for(int i=0; i<mlm; i++)
-    {
-        if (mla[i].id == -1) continue;
-        if (mla[i].x == x && mla[i].y == y && mla[i].z == z) return true;
-    }
+        if (mla[i].id >= 0 && mla[i].x == x && mla[i].y == y && mla[i].z == z)
+            return true;
     return false;
 }
 
