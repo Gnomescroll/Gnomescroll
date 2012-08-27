@@ -19,6 +19,8 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id);
 
 void generate_ore_pocket(int _x, int _y, int _z, float size, int tile_id);
 
+void populate_ore_pockets(int number, const char* block_name);
+
 void populate_ore_veins(int number, const char* block_name)
 {
     int tile_id = t_map::dat_get_cube_id(block_name);
@@ -42,6 +44,11 @@ void populate_ore_veins(int number, const char* block_name)
 
 void populate_ore()
 {
+
+
+
+    populate_ore_pockets(4096, "gallium_ore");
+
     populate_ore_veins(4*8192, "methane_ice");
     populate_ore_veins(4*8192, "iron_ore");
 
@@ -122,19 +129,40 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 }
 
 
+void populate_ore_pockets(int number, const char* block_name)
+{
+
+    int tile_id = t_map::dat_get_cube_id(block_name);
+    GS_ASSERT(tile_id >= 0);
+    if (tile_id < 0) return;
+
+    for(int i=0; i<number; i++)
+    {
+        int x = (int)genrand_int32() % map_dim.x;
+        int y = (int)genrand_int32() % map_dim.y;
+        int z = (int)genrand_int32() % map_dim.z;
+
+        //int ctile = t_map::get(x,y,z);
+        //if(ctile == 0) continue;
+
+        //int s = 4 + 4*(genrand_int32() % 4);
+        const float size = 4.0f;
+        //generate_ore_vein(x,y,z, s, tile_id);
+        generate_ore_pocket(x,y,z, size, tile_id);
+    }
+}
+
 void generate_ore_pocket(int _x, int _y, int _z, float size, int tile_id)
 {
     float asize = randf();
     float bsize = randf();
     float csize = randf();
 
-    float norm = size*1.0f/cbrt(asize*bsize*csize);
+    float norm = cbrt(size)/cbrt(asize*bsize*csize);
 
     asize *= norm;
     bsize *= norm;    
     csize *= norm;
-
-    printf("size= %f target= %f \n", asize*bsize*csize, size);
 
     Vec3 f = vec3_init(1.0, 0.0, 0.0);
     Vec3 r = vec3_init(0.0, 1.0, 0.0);
@@ -146,14 +174,18 @@ void generate_ore_pocket(int _x, int _y, int _z, float size, int tile_id)
     r = vec3_apply_rotation(r, rot);
     u = vec3_apply_rotation(u, rot);
 
+
+    int _set =0;
+    int _skipped = 0;
+
     int range = 1 + (int)size;
     for(int i= -range; i<=range; i++)
     for(int j= -range; j<=range; j++)
     for(int k= -range; k<=range; k++)
     {
-        float x = 0.5f (float)(_x + i);
-        float y = 0.5f (float)(_y + j);
-        float x = 0.5f (float)(_z + k);
+        float x = 0.5f + (float) (i);
+        float y = 0.5f + (float) (j);
+        float z = 0.5f + (float) (k);
 
         if(abs(x*f.x+y*f.y+z*f.z) < asize
         && abs(x*r.x+y*r.y+z*r.z) < bsize
@@ -165,9 +197,18 @@ void generate_ore_pocket(int _x, int _y, int _z, float size, int tile_id)
             int tz = (_z+k+127) % 127;
 
             t_map::set(tx,ty,tz,tile_id);
+            _set ++;
+
+        }
+        else
+        {
+            _skipped++;
         }
 
     }
+
+
+    printf("set= %d skipped= %d size= %f target= %f asize= %.02f bsize= %.02f csize= %.02f \n", _set,_skipped, asize*bsize*csize, size, asize,bsize,csize);
 }   
 
 
