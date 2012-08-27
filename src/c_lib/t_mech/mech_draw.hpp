@@ -329,18 +329,18 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     //int face = m.face;
 
     //fulstrum test
-    /*
-        Do radius render test?
-    */
-    if( sphere_fulstrum_test(wx, wy, wz, 0.6) == false)
-        return;
-
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
 
     wx = quadrant_translate_f(cx, wx);
     wy = quadrant_translate_f(cy, wy);
+
+    /*
+        Do radius render test?
+    */
+    if( sphere_fulstrum_test(wx, wy, wz, 0.6) == false)
+        return;
 
     int tex_id = mech_attribute[m.mech_type].sprite_index;
     

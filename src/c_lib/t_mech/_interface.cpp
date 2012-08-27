@@ -166,7 +166,10 @@ void create_crystal(int x, int y, int z, int mech_type)
     GS_ASSERT(get_mech_class(mech_type) == MECH_CRYSTAL);
     
     if( can_place_crystal(x,y,z, 0) == false)
+    {
         GS_ASSERT(false);
+        return;
+    }
 
     GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
     if (mech_attribute[mech_type].mech_type == -1)
