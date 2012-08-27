@@ -13,8 +13,6 @@ namespace Main
 
 void default_map_gen()
 {
-    srand(Options::seed);
-
     t_gen::noise_map_generate_map();
     
     t_map::map_post_processing(); //regolith stuff
@@ -29,6 +27,7 @@ void init(int argc, char* argv[])
 {
     init_c_lib(argc, argv);
 
+    srand(Options::seed);
     if (Options::map[0] == '\0')
     {   // use map gen
         #if PRODUCTION
