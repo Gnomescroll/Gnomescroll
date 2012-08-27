@@ -163,7 +163,7 @@ class MapCompatibilityShader
 
         InVertex =     shader->get_attribute("InVertex");
         InTexCoord =   shader->get_attribute("InTexCoord");
-        InTexCoord2 =   shader->get_attribute("InTexCoord2");
+        InTexCoord2 =  shader->get_attribute("InTexCoord2");
         InRGB =        shader->get_attribute("InRGB");
         InLightMatrix= shader->get_attribute("InLightMatrix");
         InLight=       shader->get_attribute("InLight");

@@ -34,6 +34,7 @@ void main()
     color = color*(texture2D(base_texture, texCoord).rgb);      
 
     color = pow(color, gamma_factor3);
+    //color = vec3(1.0, 0.0, 0.0);
     gl_FragColor.rgb = color;
 
 }

@@ -484,12 +484,12 @@ void Vbo_map::draw_map_compatibility()
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glVertexAttribPointer(map_compatibility_shader.InVertex, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
-        glVertexAttribPointer(map_compatibility_shader.InTexCoord, 2, GL_FLOAT, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
-        glVertexAttribPointer(map_compatibility_shader.InTexCoord2, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)20);
-        glVertexAttribPointer(map_compatibility_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
-        glVertexAttribPointer(map_compatibility_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
-        glVertexAttribPointer(map_compatibility_shader.InLight, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)32);
+        glVertexAttribPointer(map_compatibility_shader.InVertex, 3, GL_FLOAT, GL_FALSE, sizeof(struct VertexBackup), (GLvoid*)0);         
+        glVertexAttribPointer(map_compatibility_shader.InTexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct VertexBackup), (GLvoid*)12);
+        glVertexAttribPointer(map_compatibility_shader.InTexCoord2, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct VertexBackup), (GLvoid*)20);
+        glVertexAttribPointer(map_compatibility_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct VertexBackup), (GLvoid*)24);
+        glVertexAttribPointer(map_compatibility_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct VertexBackup), (GLvoid*)28);
+        glVertexAttribPointer(map_compatibility_shader.InLight, 2, GL_FLOAT, GL_FALSE, sizeof(struct VertexBackup), (GLvoid*)32);
 
         #if ADV_PRUNE
 
@@ -531,6 +531,7 @@ void Vbo_map::draw_map_compatibility()
     //glEnable(GL_TEXTURE_2D);
     //;
     glDisable(GL_CULL_FACE);
+    CHECK_GL_ERROR();
 
 }
 

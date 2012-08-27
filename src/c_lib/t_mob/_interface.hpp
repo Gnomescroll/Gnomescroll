@@ -1264,6 +1264,12 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
 
 void init()
 {
+    /*
+        !!!!!
+    */
+
+    return;
+    
     int bsize;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
     GS_ASSERT(buffer != NULL);

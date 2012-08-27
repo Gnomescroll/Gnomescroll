@@ -347,6 +347,17 @@ static const struct PositionElement _v_index[4*6] =
     {{{0,0,1,0}}} , {{{0,0,0,0}}} , {{{1,0,0,0}}} , {{{1,0,1,0}}}  //east
 };
 
+/*
+static const struct PositionElement _v_index2[3*6] = 
+{
+    {{{1,1,1,0}}} , {{{0,1,1,0}}} , {{{0,0,1,0}}} , {{{1,0,1,0}}} , //top
+    {{{0,1,0,0}}} , {{{1,1,0,0}}} , {{{1,0,0,0}}} , {{{0,0,0,0}}} , //bottom
+    {{{1,0,1,0}}} , {{{1,0,0,0}}} , {{{1,1,0,0}}} , {{{1,1,1,0}}} , //north
+    {{{0,1,1,0}}} , {{{0,1,0,0}}} , {{{0,0,0,0}}} , {{{0,0,1,0}}} , //south
+    {{{1,1,1,0}}} , {{{1,1,0,0}}} , {{{0,1,0,0}}} , {{{0,1,1,0}}} , //west
+    {{{0,0,1,0}}} , {{{0,0,0,0}}} , {{{1,0,0,0}}} , {{{1,0,1,0}}}  //east
+};
+*/
 
 /*
     Test this!
@@ -761,23 +772,23 @@ static void push_quad_compatibility(struct VertexBackup* v_list, int offset, int
     float tx_max = (tile_tex % 16)*0.0625f + 0.0625f;
     float ty_max = (tile_tex / 16)*0.0625f + 0.0625f;
 
-    v_list[offset+0].tx0 = tx_min;
+    v_list[offset+0].tx0 = tx_max;
     v_list[offset+0].ty0 = ty_min;
 
     v_list[offset+1].tx0 = tx_max;
-    v_list[offset+1].ty0 = ty_min;
+    v_list[offset+1].ty0 = ty_max;
 
-    v_list[offset+2].tx0 = tx_max;
+    v_list[offset+2].tx0 = tx_min;
     v_list[offset+2].ty0 = ty_max;
-
+    
     v_list[offset+3].tx0 = tx_min;
-    v_list[offset+3].ty0 = ty_max;
+    v_list[offset+3].ty0 = ty_min;
 
     for(int i=0; i<4; i++)
     {
-        v_list[offset+i].x = (float) _v_index[4*side+0].x;
-        v_list[offset+i].y = (float) _v_index[4*side+0].y;
-        v_list[offset+i].z = (float) _v_index[4*side+0].z;
+        v_list[offset+i].x =  _v_index[4*side+i].x;
+        v_list[offset+i].y =  _v_index[4*side+i].y;
+        v_list[offset+i].z =  _v_index[4*side+i].z;
     }
 
 #endif
