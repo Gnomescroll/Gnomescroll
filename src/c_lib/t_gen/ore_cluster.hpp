@@ -4,6 +4,8 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+#include <physics/vec3.hpp>
+#include <physics/mat4.hpp>
 /*
     Add Geods
     -- add a very hard outer shell
@@ -14,6 +16,8 @@ namespace t_gen
 {
 
 int generate_ore_vein(int x, int y, int z, int size, int tile_id);
+
+void generate_ore_pocket(int _x, int _y, int _z, float size, int tile_id);
 
 void populate_ore_veins(int number, const char* block_name)
 {
@@ -116,6 +120,55 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 
     return ct;
 }
+
+
+void generate_ore_pocket(int _x, int _y, int _z, float size, int tile_id)
+{
+    float asize = randf();
+    float bsize = randf();
+    float csize = randf();
+
+    float norm = size*1.0f/cbrt(asize*bsize*csize);
+
+    asize *= norm;
+    bsize *= norm;    
+    csize *= norm;
+
+    printf("size= %f target= %f \n", asize*bsize*csize, size);
+
+    Vec3 f = vec3_init(1.0, 0.0, 0.0);
+    Vec3 r = vec3_init(0.0, 1.0, 0.0);
+    Vec3 u = vec3_init(0.0, 0.0, 1.0);
+
+    Mat3 rot = mat3_euler_rotation(randf(), randf(), randf() );
+
+    f = vec3_apply_rotation(f, rot);
+    r = vec3_apply_rotation(r, rot);
+    u = vec3_apply_rotation(u, rot);
+
+    int range = 1 + (int)size;
+    for(int i= -range; i<=range; i++)
+    for(int j= -range; j<=range; j++)
+    for(int k= -range; k<=range; k++)
+    {
+        float x = 0.5f (float)(_x + i);
+        float y = 0.5f (float)(_y + j);
+        float x = 0.5f (float)(_z + k);
+
+        if(abs(x*f.x+y*f.y+z*f.z) < asize
+        && abs(x*r.x+y*r.y+z*r.z) < bsize
+        && abs(x*u.x+y*u.y+z*u.z) < csize
+            )
+        {   
+            int tx = (_x+i+512) % 512;
+            int ty = (_y+j+512) % 512;
+            int tz = (_z+k+127) % 127;
+
+            t_map::set(tx,ty,tz,tile_id);
+        }
+
+    }
+}   
 
 
 }
