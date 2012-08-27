@@ -43,6 +43,8 @@ float point_line_distance2(float vx, float vy, float vz, float wx, float wy, flo
 __attribute__((optimize("-O3")))
 void generate_node(float xs, float ys, float zs, float theta, float phi, float cave_size)
 {
+    const int baseline = 0;
+    
     while( genrand_real1() < 0.999f )
     {
             const static float length = 2.0f;
@@ -58,9 +60,10 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 
             float dx = (float)(sin(_phi)*cos(_theta));
             float dy = (float)(sin(_phi)*sin(_theta));
-            float dz = cosf(_phi);
+            float dz = cosf(0.75f*_phi);
+            dz *= dz;
 
-            float size = cave_size * (randf() + 0.5f);
+            float size = cave_size * ((float)genrand_real1()*1.25f + 0.5f);  // variable diameter
 
             float xm = abs(dx) + size;
             float ym = abs(dy) + size;
@@ -82,7 +85,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             for(int j=ymin; j<=ymax; j++)
             for(int k=zmin; k<=zmax; k++)
             {
-                if(k < 0 || k > 127) 
+                if(k < baseline || k >= 128) 
                 {
                     hits_bottom = true;
                     continue;
@@ -99,14 +102,14 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
                 if(d < size*size) t_map::set(ii, jj, k, 0);
             }
 
-            if(hits_bottom == true) theta *= -1;
+            if(hits_bottom == true) phi *= -1;
 
             xs += length*dx;
             ys += length*dy;
             zs += length*dz;
 
-            static const float theta_adj = 0.075f;
-            static const float phi_adj = 0.075f;
+            static const float theta_adj = 0.15;
+            static const float phi_adj = 0.10f;
 
             theta += theta_adj*((float)(2.0*genrand_real1() - 1.0));
             phi += phi_adj*((float)(2.0*genrand_real1() - 1.0));
@@ -114,10 +117,10 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             if(phi < 0) phi += 1;
             if(phi > 1) phi -= 1;
 
-            static const float phi_target = 0.0f;
-            static const float phi_damp = 0.03f;
+            //static const float phi_target = 0.0f;
+            //static const float phi_damp = 0.03f;
 
-            phi -= phi_damp*(phi - phi_target);
+            //phi -= phi_damp*(phi - phi_target);
         /*
             if(phi < 0) phi += 1;
             if(phi > 1) phi -= 1;
@@ -134,29 +137,30 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 
 void start_cave_generator()
 {
-    const int nodes = 75;
+    const int nodes = 300;
     const float cave_size = 2.0f;
 
+    const float baseline = 0.0f;
+    const float zmax = 128.0f;
+    const int try_limit = 10000;
+    
     init_genrand(rand());
 
-    for(int i=0; i<nodes; i++)
+    for (int i=0; i<nodes; i++)
     {
-        float x = (float)genrand_real1()*512.0f;
-        float y = (float)genrand_real1()*512.0f;
-        float z = (float)genrand_real1()*128.0f;
-
-        int tries= 0;
-        while( t_map::get(x,y,z) == 0 )
+        float x,y,z;
+        int tries = 0;
+        do
         {
             x = (float)genrand_real1()*512.0f;
             y = (float)genrand_real1()*512.0f;
-            z = (float)genrand_real1()*128.0f;
-            if(tries++ > 10000) return;
-        }
-    
+            z = (float)genrand_real1()*(zmax-baseline) + baseline;
+        } while (t_map::get(x,y,z) == 0 && tries++ < try_limit);
+
+        if (tries >= try_limit) return; 
+
         float phi = (float)genrand_real1()*2*3.14159f;
         float theta = (float)genrand_real1()*2*3.14159f;
-
         
         generate_node(x,y,z, theta, phi, cave_size);
     }
