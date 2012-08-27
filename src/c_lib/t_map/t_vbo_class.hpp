@@ -43,6 +43,7 @@ class Map_vbo
     int vnum;
     int vnum_max;
     struct Vertex* v_list;
+    struct VertexBackup* v_list_backup; //backup list
 
     int _v_num[4];
     int _v_offset[4];
@@ -66,8 +67,12 @@ class Map_vbo
         xoff = m->xpos;
         yoff = m->ypos;
 
-        v_list = new Vertex[MAP_VBO_STARTING_SIZE];
-        vnum_max = MAP_VBO_STARTING_SIZE;
+        //v_list = new Vertex[MAP_VBO_STARTING_SIZE];
+        //vnum_max = MAP_VBO_STARTING_SIZE;
+        
+        v_list = NULL;
+        vnum_max = 0;
+
         vnum = 0;
         vbo_id = 0;
     }
@@ -75,7 +80,7 @@ class Map_vbo
     ~Map_vbo()
     {
         if(vbo_id != 0) glDeleteBuffers(1, &vbo_id);
-        delete[] v_list;
+        if(v_list != NULL) delete[] v_list;
     }
 
 };
@@ -85,6 +90,7 @@ const int VBO_LIST_SIZE = 1024; //max number of VBOS that can have loaded VBOs
 
 class Vbo_map
 {
+    const static int CHUNK_START_DISTANCE2 = (128+16)*(128+16);
     const static int CHUNK_IGNORE_DISTANCE2 = (128+64)*(128+64);
     public:    
 
@@ -106,7 +112,7 @@ class Vbo_map
     }
 
     #define MAP_VBO_CULLING 1
-    #define MAP_VBO_CULLING_RECYCLE 1   //delete and free vbos out of range
+    //#define MAP_VBO_CULLING_RECYCLE 1   //delete and free vbos out of range
 
     #define MAP_VBO_CULLING_MAP_CHUNK_NULL 1 //delete vbo if map chunk is null
 
@@ -135,6 +141,7 @@ class Vbo_map
             m = map->chunk[index];
 
         #if MAP_VBO_CULLING_MAP_CHUNK_NULL
+
             if( m == NULL ) 
             {
                 if(vbo_array[index] != NULL )
@@ -153,30 +160,33 @@ class Vbo_map
             int distance2 = x*x+y*y;
 
         #if MAP_VBO_CULLING
-
             if(distance2 >= CHUNK_IGNORE_DISTANCE2)
             {
-
-            #if MAP_VBO_CULLING_RECYCLE
                 if( vbo_array[index] != NULL )
                 {
-                    //chunk vbo is out of radius and is loaded
-                    //delete
                     delete vbo_array[index]; 
                     vbo_array[index] = NULL;
-                    m->needs_update = true;    //so it gets recreated if in range
-
-                    //printf("deleting: %i \n", index);
+                    m->needs_update = false;    //so it gets recreated if in range
                     continue;
                 }
-            #endif
-                //chunk vbo is out of radius and is not loaded, do nothing
-                continue;
-
             }
+        #else
+            if(distance2 >= CHUNK_IGNORE_DISTANCE2)
+                continue;
         #endif
 
-            if( m->needs_update == false ) continue;
+            if(distance2 > CHUNK_START_DISTANCE2)
+                continue;
+            //if map is loaded but VBO is not loaded, set update to true
+            if(m != NULL && vbo_array[index] == NULL )
+            {
+                m->needs_update = true;
+                vbo_array[index] = new Map_vbo( m );
+                //printf("Warning: map chunk is loaded and VBO does not exist, but needs_update is false\n");
+            }
+
+            if( m->needs_update == false )
+                continue;
 
             if(distance2 < min_distance2)
             {
@@ -195,7 +205,9 @@ class Vbo_map
             m = map->chunk[index];
 
             m->needs_update = false; //reset flag
-            if( vbo_array[index] == NULL ) vbo_array[index] = new Map_vbo( m );
+            
+            GS_ASSERT( vbo_array[index] != NULL);
+            //if( vbo_array[index] == NULL ) vbo_array[index] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             
             if(T_MAP_BACKUP_SHADER == 0)

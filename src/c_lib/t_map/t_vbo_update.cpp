@@ -151,6 +151,7 @@ inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 #define AO_DEBUG 0
 
+INLINE
 void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -194,6 +195,32 @@ void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x,
     v_list[offset+2].AO = _ao.AO;
     v_list[offset+3].AO = _ao.AO;
 #endif
+
+}
+
+INLINE
+void _set_quad_local_ambient_occlusion_compatibility(struct VertexBackup* v_list, int offset, int x, int y, int z, int side)
+{
+    int i;
+    int index;
+    int CX[8];
+    for(i=0; i<8; i++) 
+    {
+        index = side*8*3+i*3;
+        CX[i] = isOccludes(x+CI[index+0],y+CI[index+1],z+CI[index+2]);
+    }
+
+    AOElement _ao;
+
+    _ao.ao[0] = calcAdj(CX[7], CX[1], CX[0]);
+    _ao.ao[1] = calcAdj(CX[5], CX[7], CX[6]);
+    _ao.ao[2] = calcAdj(CX[1], CX[3], CX[2]);
+    _ao.ao[3] = calcAdj(CX[3], CX[5], CX[4]);
+
+    v_list[offset+0].AO = _ao.AO;
+    v_list[offset+1].AO = _ao.AO;
+    v_list[offset+2].AO = _ao.AO;
+    v_list[offset+3].AO = _ao.AO;
 
 }
 
@@ -249,7 +276,8 @@ void init_pallete()
         _palletn[3*i+2] = (unsigned char) (b / avg);
     }
 }
-
+ 
+#if 0
 static inline void _set_quad_color_default(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
@@ -295,7 +323,7 @@ static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int
     }
 
 }
-
+#endif
 
 static const unsigned char _0 = 0;
 static const unsigned char _1 = 1;
@@ -319,6 +347,17 @@ static const struct PositionElement _v_index[4*6] =
     {{{0,0,1,0}}} , {{{0,0,0,0}}} , {{{1,0,0,0}}} , {{{1,0,1,0}}}  //east
 };
 
+/*
+static const struct PositionElement _v_index2[3*6] = 
+{
+    {{{1,1,1,0}}} , {{{0,1,1,0}}} , {{{0,0,1,0}}} , {{{1,0,1,0}}} , //top
+    {{{0,1,0,0}}} , {{{1,1,0,0}}} , {{{1,0,0,0}}} , {{{0,0,0,0}}} , //bottom
+    {{{1,0,1,0}}} , {{{1,0,0,0}}} , {{{1,1,0,0}}} , {{{1,1,1,0}}} , //north
+    {{{0,1,1,0}}} , {{{0,1,0,0}}} , {{{0,0,0,0}}} , {{{0,0,1,0}}} , //south
+    {{{1,1,1,0}}} , {{{1,1,0,0}}} , {{{0,1,0,0}}} , {{{0,1,1,0}}} , //west
+    {{{0,0,1,0}}} , {{{0,0,0,0}}} , {{{1,0,0,0}}} , {{{1,0,1,0}}}  //east
+};
+*/
 
 /*
     Test this!
@@ -420,7 +459,12 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
     //_set_quad_color(v_list, offset, x, y, z, side);
 
-    _set_quad_color_flat(v_list, offset, x, y, z, side);
+    for(int i=0 ;i <4; i++)
+    {
+        v_list[offset+i].color = 0xffffffff;
+    }
+
+    //_set_quad_color_flat(v_list, offset, x, y, z, side);
 /*
     switch( t_map::cube_list[tile_id].color_type )
     {
@@ -478,7 +522,6 @@ void generate_quad_ao_values(struct Vertex* vlist)
 
         offset += 4;
     }
-
 }
 
 
@@ -690,7 +733,8 @@ void Vbo_map::update_vbo(int i, int j)
     generate_vertex_list(vlist);
     generate_quad_ao_values(vlist);
 
-    delete[] vbo->v_list; //free old memory
+    if(vbo->v_list != NULL)
+        delete[] vbo->v_list; //free old memory
     vbo->v_list = vlist;
 
     if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
@@ -702,7 +746,7 @@ void Vbo_map::update_vbo(int i, int j)
  
 #define USE_QUAD_CACHE_COMPATIBABILITY 0
 
-static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
+static void push_quad_compatibility(struct VertexBackup* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
 
     int tile_id = element.block;
@@ -722,26 +766,30 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
     //int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
     int tile_tex = cube_texture_palette[ 6*( cube_texture_palette_lookup[tile_id] + element.palette ) + side ];
 
-    int iz = (tile_tex % TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
-    int iw = (tile_tex / TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
+    float tx_min = (tile_tex % 16)*0.0625f;
+    float ty_min = (tile_tex / 16)*0.0625f;
 
-    v_list[offset+0].tz = iz;
-    v_list[offset+0].tw = iw;
+    float tx_max = (tile_tex % 16)*0.0625f + 0.0625f;
+    float ty_max = (tile_tex / 16)*0.0625f + 0.0625f;
 
-    v_list[offset+1].tz = iz;
-    v_list[offset+1].tw = iw;
+    v_list[offset+0].tx0 = tx_max;
+    v_list[offset+0].ty0 = ty_min;
 
-    v_list[offset+2].tz = iz;
-    v_list[offset+2].tw = iw;
+    v_list[offset+1].tx0 = tx_max;
+    v_list[offset+1].ty0 = ty_max;
 
-    v_list[offset+3].tz = iz;
-    v_list[offset+3].tw = iw;
+    v_list[offset+2].tx0 = tx_min;
+    v_list[offset+2].ty0 = ty_max;
+    
+    v_list[offset+3].tx0 = tx_min;
+    v_list[offset+3].ty0 = ty_min;
 
-
-    v_list[offset+0].pos = _v_index[4*side+0].pos;
-    v_list[offset+1].pos = _v_index[4*side+1].pos;
-    v_list[offset+2].pos = _v_index[4*side+2].pos;
-    v_list[offset+3].pos = _v_index[4*side+3].pos;
+    for(int i=0; i<4; i++)
+    {
+        v_list[offset+i].x =  _v_index[4*side+i].x;
+        v_list[offset+i].y =  _v_index[4*side+i].y;
+        v_list[offset+i].z =  _v_index[4*side+i].z;
+    }
 
 #endif
 
@@ -763,29 +811,16 @@ static void push_quad_compatibility(struct Vertex* v_list, int offset, int x, in
             v_list[offset+i].z += z;
         }
     }
-    //_set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 
-    _set_quad_color_flat(v_list, offset, x, y, z, side);
-/*
-    switch( t_map::cube_list[tile_id].color_type )
+    for(int i=0 ;i <4; i++)
     {
-        case 0:
-            _set_quad_color_default(v_list, offset, x, y, z, side);
-            break;
-        case 1:
-            _set_quad_color_flat(v_list, offset, x, y, z, side);
-            break;
-        case 2:
-            _set_quad_color_perlin(v_list, offset, x, y, z, side);
-            break;
-        default:
-            break;
-    }   
-*/
+        v_list[offset+i].color = 0xffffffff;
+    }
+
 }
 
 
-void generate_vertex_list_compatibility(struct Vertex* vlist)
+void generate_vertex_list_compatibility(struct VertexBackup* vlist)
 {
     int offset = 0;
 
@@ -801,6 +836,26 @@ void generate_vertex_list_compatibility(struct Vertex* vlist)
         struct MAP_ELEMENT element = sb.element;
 
         push_quad_compatibility(vlist, offset, x,y,z, side, element);
+
+        offset += 4;
+    }
+
+}
+
+void generate_quad_ao_values_compatibility(struct VertexBackup* vlist)
+{
+    int offset = 0;
+
+    for(int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
+    for(int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
+    {
+        //struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
+
+        int x = SIDE_BUFFER_ARRAY[side][j].x;
+        int y = SIDE_BUFFER_ARRAY[side][j].y;
+        int z = SIDE_BUFFER_ARRAY[side][j].z;
+
+        _set_quad_local_ambient_occlusion_compatibility(vlist, offset, x, y, z, side);
 
         offset += 4;
     }
@@ -851,18 +906,19 @@ void Vbo_map::update_vbo_compatibility(int i, int j)
 
 
     //struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
-    struct Vertex* vlist = new Vertex[vnum];
+    struct VertexBackup* vlist = new VertexBackup[vnum];
 
     generate_vertex_list_compatibility(vlist);
-    generate_quad_ao_values(vlist);
+    generate_quad_ao_values_compatibility(vlist);
 
-    delete[] vbo->v_list; //free old memory
-    vbo->v_list = vlist;
+    if(vbo->v_list_backup != NULL)
+        delete[] vbo->v_list; //free old memory
+    vbo->v_list_backup = vlist;
 
     if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct VertexBackup), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct VertexBackup), vbo->v_list_backup, GL_STATIC_DRAW);
 }
 
 int update_chunks() {
