@@ -281,11 +281,95 @@ void update_skylight_in(int x, int y, int z)
     }
 }
 
+void update_skylight_boundary(int _ci, int _cj)
+{
+    class MAP_CHUNK* mc;
+    int ci, cj;
 
+    //north?
+    ci = (_ci + 1 +32 ) % 32;
+    cj = (_cj + 0 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int j = 0;
+        for(int i=0; i<16; i++)
+        for(int k=0; k<128; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
+                continue;
+
+            update_skylight_out(16*ci+i,16*cj+j,k);
+
+        }
+    }
+
+
+    //south?
+    ci = (_ci + -1 +32 ) % 32;
+    cj = (_cj + 0 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int j = 15;
+        for(int i=0; i<16; i++)
+        for(int k=0; k<128; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
+                continue;
+
+            update_skylight_out(16*ci+i,16*cj+j,k);
+
+        }
+    }
+
+    //west?
+    ci = (_ci + 0 +32 ) % 32;
+    cj = (_cj + -1 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int i = 0;
+        for(int j=0; j<16; j++)
+        for(int k=0; k<128; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
+                continue;
+
+            update_skylight_out(16*ci+i,16*cj+j,k);
+
+        }
+    }
+
+
+    //east?
+    ci = (_ci + 0 +32 ) % 32;
+    cj = (_cj + 1 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int i = 15;
+        for(int j=0; j<16; j++)
+        for(int k=0; k<128; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
+                continue;
+
+            update_skylight_out(16*ci+i,16*cj+j,k);
+
+        }
+    }
+
+}
 
 void update_skylight2(int ci, int cj)
 {
-
+    update_skylight_boundary(ci, cj);
+    
     class MAP_CHUNK* mc = main_map->chunk[32*cj + ci];
 
     mc->refresh_height_cache();

@@ -58,17 +58,11 @@ class Map_vbo
 
     Map_vbo( class MAP_CHUNK* m )
     {
-
-        //flags.flags = 0; //zero all flags
-
         xpos = m->xpos + 8.0f;
         ypos = m->ypos + 8.0f;
 
         xoff = m->xpos;
         yoff = m->ypos;
-
-        //v_list = new Vertex[MAP_VBO_STARTING_SIZE];
-        //vnum_max = MAP_VBO_STARTING_SIZE;
         
         v_list = NULL;
         v_list_backup = NULL;
@@ -114,8 +108,6 @@ class Vbo_map
     }
 
     #define MAP_VBO_CULLING 1
-    //#define MAP_VBO_CULLING_RECYCLE 1   //delete and free vbos out of range
-
     #define MAP_VBO_CULLING_MAP_CHUNK_NULL 1 //delete vbo if map chunk is null
 
     //update all VBOs that need updating
