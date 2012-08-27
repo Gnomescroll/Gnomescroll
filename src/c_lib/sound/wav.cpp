@@ -338,5 +338,4 @@ void teardown_wav_buffers()
     wav_buffers = NULL;
 }
 
-
-}
+}   // Sound

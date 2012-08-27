@@ -35,5 +35,4 @@ WavData* get_loaded_wav_data(int buffer_id);
 void init_wav_buffers();
 void teardown_wav_buffers();
 
-
-}
+}   // Sound

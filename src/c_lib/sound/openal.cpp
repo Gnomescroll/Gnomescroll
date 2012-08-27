@@ -33,19 +33,25 @@ class GS_SoundBuffer
     bool add_source(int source_id)
     {
         if (!this->can_add_source(source_id)) return false;
-        this->sources[this->current_sources] = source_id;
-        this->current_sources++;
+        this->sources[this->current_sources++] = source_id;
         return true;
     }
     
     bool can_add_source(int source_id)
     {
         GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
+        if (source_id < 0 || source_id >= MAX_SOURCES) printf("can't add %d because invalid id\n", source_id);
         if (source_id < 0 || source_id >= MAX_SOURCES) return false;
         for (int i=0; i<this->current_sources; i++)
-            if (this->sources[i] == source_id) return false;
+        {   // TODO -- this used to return false. not sure why but it was breaking things (after i rearranged the source_id acquisition to prevent sound leaks)
+            // the naming in this sound module is horrible (buffers and sources mean 2 things -- gnomescroll buffers (more like files+metadata) and gnomescroll sources (something keeping tracks of al source ids in use)
+            //if (this->sources[i] == source_id) printf("can't add %d because this source is already added\n", source_id);
+            //if (this->sources[i] == source_id) return false;
+            if (this->sources[i] == source_id) return true;
+        }
         GS_ASSERT(this->current_sources >= 0);
         if (this->current_sources < 0) this->current_sources = 0;
+        if (this->current_sources >= this->max_sources) printf("Can't add %d because max sources reached for this buffer\n", source_id);
         if (this->current_sources >= this->max_sources) return false;
         return true;
     }
@@ -62,21 +68,24 @@ class GS_SoundBuffer
             return;
         }
 
-        int max = (this->current_sources < this->max_sources-1) ? this->current_sources : this->max_sources - 2;
-        for (int i=index; i<max; i++)
-            this->sources[i] = this->sources[i+1];
-        this->current_sources--;
+        //GS_ASSERT(index < this->current_sources); // TODO -- re-enable this assert and FIX IT
+        if (index >= this->current_sources) return;
+
+        if (index == this->current_sources-1)
+            this->current_sources--;
+        else
+            this->sources[index] = this->sources[--this->current_sources];
     }
 
-    GS_SoundBuffer():
-        id(-1),
-        hash(0), fn(NULL), buffer_id(-1), loaded(false), metadata(NULL),
-        max_sources(MAX_SOURCES_PER_SAMPLE),
-        current_sources(0)
-        {
-            this->sources = (int*)malloc(sizeof(int) * this->max_sources);
-            for (int i=0; i<this->max_sources; this->sources[i++] = -1);
-        }
+    GS_SoundBuffer() :
+    id(-1),
+    hash(0), fn(NULL), buffer_id(-1), loaded(false), metadata(NULL),
+    max_sources(MAX_SOURCES_PER_SAMPLE),
+    current_sources(0)
+    {
+        this->sources = (int*)malloc(sizeof(int) * this->max_sources);
+        for (int i=0; i<this->max_sources; this->sources[i++] = -1);
+    }
 
     ~GS_SoundBuffer()
     {
@@ -488,6 +497,8 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
 {
     GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
     if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
+
+    GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
     
     // add sound to active sources
     for (int i=0; i<MAX_SOURCES; i++)
@@ -500,20 +511,25 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
     return false;
 }
 
-static bool can_add_to_sources(int soundfile_id, int source_id, bool two_dimensional)
+static bool can_add_to_sources(int soundfile_id, int source_id)
 {
     GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
+    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) printf("invlaid soundfile_id %d\n", soundfile_id);
     if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
     
-    // check if can add sound to active sources
-    for (int i=0; i<MAX_SOURCES; i++)
+    bool can = sound_buffers[soundfile_id]->can_add_source(source_id);
+    if (!can) printf("can't add to sound_buffer\n");
+    if (!can) return false;
+
+    // check if an active source is free
+    int i=0;
+    for (; i<MAX_SOURCES; i++)
         if (active_sources[i].source_id < 0)
-        {
-            active_sources[i].source_id = source_id;
-            active_sources[i].two_dimensional = two_dimensional;
-            return sound_buffers[soundfile_id]->can_add_source(source_id);
-        }
-    return false;
+            break;
+    if (i >= MAX_SOURCES) printf("no free sources\n");
+    if (i >= MAX_SOURCES) return false;
+    
+    return true;
 }
 
 static int play_sound(int source_id, GS_SoundBuffer* sound_buffer, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
@@ -545,8 +561,6 @@ static int play_sound(int source_id, GS_SoundBuffer* sound_buffer, float x, floa
     return source_id;
 }
 
-
-
 int play_2d_sound(class GS_SoundBuffer* sound_buffer)
 {
     if (!enabled)
@@ -565,10 +579,12 @@ int play_2d_sound(class GS_SoundBuffer* sound_buffer)
         return -1;
 
     // add sound to active sources
-    if (!can_add_to_sources(sound_buffer->buffer_id, source_id, true))
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id)) printf("Can't add %s\n", sound_buffer->fn);
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id))
         return -1;
 
-    source_id = play_sound(source_id, sound_buffer, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+    int ret_source_id = play_sound(source_id, sound_buffer, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+    GS_ASSERT(source_id == ret_source_id);
     if (source_id < 0) return source_id;
     
     // add sound to active sources
@@ -622,7 +638,8 @@ int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3
         return -1;
 
     // add sound to active sources
-    if (!can_add_to_sources(sound_buffer->buffer_id, source_id, true))
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id)) printf("Can't add %s\n", sound_buffer->fn);
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id))
         return -1;
     
     source_id = play_sound(source_id, sound_buffer, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
@@ -697,20 +714,28 @@ void update()
         }
     }
 
+    int rm_sources[MAX_SOURCES] = {-1};
+    int rm_sources_index = 0;
+
     // update sound_buffer metadata
     for (int i=0; i<MAX_SOUNDS; i++)
     {
         GS_SoundBuffer* b = sound_buffers[i];
         if (b == NULL) continue;
-        for (int j=0; j<b->current_sources; j++)
+        int cs = b->current_sources;
+        for (int j=0; j<cs; j++)
         {
             int gs_source_id = b->sources[j];
             GS_ASSERT(gs_source_id >= 0 && gs_source_id < MAX_SOURCES);
-            if (gs_source_id < 0 || gs_source_id >= MAX_SOURCES) printf("gs_source_id: %d\n", gs_source_id);
             if (gs_source_id < 0 || gs_source_id >= MAX_SOURCES) continue;
             if (active_sources[gs_source_id].source_id < 0)
-                b->remove_source(j);
+                rm_sources[rm_sources_index++] = j;
         }
+        
+        for (int i=0; i<rm_sources_index; i++)
+            b->remove_source(rm_sources[i]);
+
+        rm_sources_index = 0;
     }
 }
 
