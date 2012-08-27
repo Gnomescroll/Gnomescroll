@@ -755,26 +755,30 @@ static void push_quad_compatibility(struct VertexBackup* v_list, int offset, int
     //int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
     int tile_tex = cube_texture_palette[ 6*( cube_texture_palette_lookup[tile_id] + element.palette ) + side ];
 
-    int iz = (tile_tex % TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
-    int iw = (tile_tex / TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
+    float tx_min = (tile_tex % 16)*0.0625f;
+    float ty_min = (tile_tex / 16)*0.0625f;
 
-    v_list[offset+0].tz = iz;
-    v_list[offset+0].tw = iw;
+    float tx_max = (tile_tex % 16)*0.0625f + 0.0625f;
+    float ty_max = (tile_tex / 16)*0.0625f + 0.0625f;
 
-    v_list[offset+1].tz = iz;
-    v_list[offset+1].tw = iw;
+    v_list[offset+0].tx0 = tx_min;
+    v_list[offset+0].ty0 = ty_min;
 
-    v_list[offset+2].tz = iz;
-    v_list[offset+2].tw = iw;
+    v_list[offset+1].tx0 = tx_max;
+    v_list[offset+1].ty0 = ty_min;
 
-    v_list[offset+3].tz = iz;
-    v_list[offset+3].tw = iw;
+    v_list[offset+2].tx0 = tx_max;
+    v_list[offset+2].ty0 = ty_max;
 
+    v_list[offset+3].tx0 = tx_min;
+    v_list[offset+3].ty0 = ty_max;
 
-    v_list[offset+0].pos = _v_index[4*side+0].pos;
-    v_list[offset+1].pos = _v_index[4*side+1].pos;
-    v_list[offset+2].pos = _v_index[4*side+2].pos;
-    v_list[offset+3].pos = _v_index[4*side+3].pos;
+    for(int i=0; i<4; i++)
+    {
+        v_list[offset+i].x = (float) _v_index[4*side+0].x;
+        v_list[offset+i].y = (float) _v_index[4*side+0].y;
+        v_list[offset+i].z = (float) _v_index[4*side+0].z;
+    }
 
 #endif
 

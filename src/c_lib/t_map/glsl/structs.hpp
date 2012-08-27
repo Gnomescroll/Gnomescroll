@@ -116,28 +116,19 @@ namespace t_map
 
     struct VertexBackup
     {
-        union   //0
+        float x,y,z;        //0
+        float tx0,ty0;      //12
+
+        union               //20
         {
             struct
             {
-                unsigned char x,y,z;
-                unsigned char w; //unused
-            };
-            unsigned int pos;
-        };
-
-        union   //4
-        {
-            struct
-            {
-                unsigned char tx,ty,tz;
-                unsigned char tw; //unused
-
+                unsigned char tx,ty;
             };
             unsigned int tex;
         };
 
-        union   //8
+        union               //24
         {
             struct
             {
@@ -146,14 +137,13 @@ namespace t_map
             unsigned int color;
         };
 
-        union   //12
+        union               //28
         {
             unsigned char ao[4]; 
             unsigned int AO;
         };
 
-        //16
-        float lighting[2];      //sun and manmade
+        float lighting[2];  //32  //sun and manmade
 
     };
 
