@@ -327,7 +327,7 @@ void update_skylight_boundary(int _ci, int _cj)
 
     //west?
     ci = (_ci + 0 +32 ) % 32;
-    cj = (_cj + -1 +32 ) % 32;
+    cj = (_cj + 1 +32 ) % 32;
     mc = main_map->chunk[32*cj + ci];
 
     if(mc != NULL)
@@ -347,7 +347,7 @@ void update_skylight_boundary(int _ci, int _cj)
 
     //east?
     ci = (_ci + 0 +32 ) % 32;
-    cj = (_cj + 1 +32 ) % 32;
+    cj = (_cj + -1 +32 ) % 32;
     mc = main_map->chunk[32*cj + ci];
 
     if(mc != NULL)
@@ -369,7 +369,7 @@ void update_skylight_boundary(int _ci, int _cj)
 void update_skylight2(int ci, int cj)
 {
     update_skylight_boundary(ci, cj);
-    
+
     class MAP_CHUNK* mc = main_map->chunk[32*cj + ci];
 
     mc->refresh_height_cache();
