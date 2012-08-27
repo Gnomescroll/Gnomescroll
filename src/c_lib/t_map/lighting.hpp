@@ -368,7 +368,8 @@ void update_skylight_boundary(int _ci, int _cj)
 
 void update_skylight2(int ci, int cj)
 {
-
+    update_skylight_boundary(ci, cj);
+    
     class MAP_CHUNK* mc = main_map->chunk[32*cj + ci];
 
     mc->refresh_height_cache();
