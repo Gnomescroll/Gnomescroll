@@ -71,6 +71,7 @@ class Map_vbo
         //vnum_max = MAP_VBO_STARTING_SIZE;
         
         v_list = NULL;
+        v_list_backup = NULL;
         vnum_max = 0;
 
         vnum = 0;

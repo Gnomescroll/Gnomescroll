@@ -912,7 +912,7 @@ void Vbo_map::update_vbo_compatibility(int i, int j)
     generate_quad_ao_values_compatibility(vlist);
 
     if(vbo->v_list_backup != NULL)
-        delete[] vbo->v_list; //free old memory
+        delete[] vbo->v_list_backup; //free old memory
     vbo->v_list_backup = vlist;
 
     if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
