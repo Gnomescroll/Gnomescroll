@@ -14,10 +14,36 @@
 
 namespace t_gen
 {
+void populate_ore_veins(int number, const char* block_name);
+void populate_ore_pocket_cuboid(int number, const char* block_name);
+void populate_ore_pocket_elliptoid(int number, const char* block_name);
 
+void populate_ore()
+{
+
+
+
+
+
+    //populate_ore_veins(4*8192, "methane_ice");
+    populate_ore_veins(4*8192, "iron_ore");
+
+    populate_ore_veins(4*2048, "coal");
+
+    populate_ore_veins(4*4096, "copper_ore");
+    //populate_ore_veins(4*2048, "gallium_ore");
+    populate_ore_veins(4*2048, "iridium_ore");
+
+    populate_ore_pocket_cuboid(2*4096, "gallium_ore");
+    populate_ore_pocket_elliptoid(8192, "methane_ice");
+
+}
+
+/*
+    Add branching ore veins
+*/
 int generate_ore_vein(int x, int y, int z, int size, int tile_id);
 
-void populate_ore_pocket_cuboid(int number, const char* block_name);
 
 void populate_ore_veins(int number, const char* block_name)
 {
@@ -40,28 +66,6 @@ void populate_ore_veins(int number, const char* block_name)
     }
 }
 
-void populate_ore()
-{
-
-
-
-
-
-    populate_ore_veins(4*8192, "methane_ice");
-    populate_ore_veins(4*8192, "iron_ore");
-
-    populate_ore_veins(4*2048, "coal");
-
-    populate_ore_veins(4*4096, "copper_ore");
-    //populate_ore_veins(4*2048, "gallium_ore");
-    populate_ore_veins(4*2048, "iridium_ore");
-
-    populate_ore_pocket_cuboid(2*4096, "gallium_ore");
-}
-
-/*
-    Add branching ore veins
-*/
 
 int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 {
@@ -140,11 +144,18 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
     if (tile_id < 0) return;
 
     int ore_count = 0;
+    int clusters = 0;
+
     for(int i=0; i<number; i++)
     {
         int x = (int)genrand_int32() % map_dim.x;
         int y = (int)genrand_int32() % map_dim.y;
         int z = (int)genrand_int32() % map_dim.z;
+
+        int ctile = t_map::get(x,y,z);
+        if (ctile == 0)
+            continue;
+        
 
         //int ctile = t_map::get(x,y,z);
         //if(ctile == 0) continue;
@@ -158,7 +169,7 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
         {
             size = 0.50f;
         }
-        if( value <= 0.85f)
+        else if( value <= 0.85f)
         {
             size = 0.75;
         }
@@ -168,9 +179,11 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
         }
         //generate_ore_vein(x,y,z, s, tile_id);
         ore_count += generate_ore_pocket_cuboid(x,y,z, size, tile_id);
+
+        clusters++;
     }
 
-    printf("populate_ore_pocket_cuboid: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, number );
+    printf("populate_ore_pocket_cuboid: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters );
 }
 
 int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, int tile_id)
@@ -237,6 +250,7 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, int tile_id)
 }   
 
 
+int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, int tile_id);
 
 void populate_ore_pocket_elliptoid(int number, const char* block_name)
 {
@@ -246,11 +260,16 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
     if (tile_id < 0) return;
 
     int ore_count = 0;
+    int clusters = 0;
     for(int i=0; i<number; i++)
     {
         int x = (int)genrand_int32() % map_dim.x;
         int y = (int)genrand_int32() % map_dim.y;
         int z = (int)genrand_int32() % map_dim.z;
+
+        int ctile = t_map::get(x,y,z);
+        if (ctile == 0)
+            continue;
 
         //int ctile = t_map::get(x,y,z);
         //if(ctile == 0) continue;
@@ -260,29 +279,82 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
         float size = 0.0f;
         float value = randf();
 
-        if( value <= 0.50)
+        if( value <= 0.50f)
         {
-            size = 0.50f;
-        }
-        if( value <= 0.85f)
-        {
-            size = 0.75;
+            size = 1.00;
         }
         else if (value <= 1.0)
         {
-            size = 1.6f;
+            size = 1.5f;
         }
         //generate_ore_vein(x,y,z, s, tile_id);
         ore_count += generate_ore_pocket_elliptoid(x,y,z, size, tile_id);
+        clusters++;
     }
 
-    printf("populate_ore_elliptoid_pockets: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, number );
+    printf("populate_ore_elliptoid_pockets: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters );
 }
 
-int generate_ore_elliptoid(int _x, int _y, int _z, float size, int tile_id)
+int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, int tile_id)
 {
+    float asize = randf();
+    float bsize = randf();
+    float csize = randf();
 
-    return 0;
+    float norm = 1.0f/sqrt(asize*asize+bsize*bsize+csize*csize);
+
+    asize *= norm;
+    bsize *= norm;    
+    csize *= norm;
+
+    Vec3 f = vec3_init(1.0, 0.0, 0.0);
+    Vec3 r = vec3_init(0.0, 1.0, 0.0);
+    Vec3 u = vec3_init(0.0, 0.0, 1.0);
+
+    Mat3 rot = mat3_euler_rotation(randf(), randf(), randf() );
+
+    f = vec3_apply_rotation(f, rot);
+    r = vec3_apply_rotation(r, rot);
+    u = vec3_apply_rotation(u, rot);
+
+
+    int _set =0;
+    int _skipped = 0;
+
+    int range = 1 + (int)size;
+    for(int i= -range; i<=range; i++)
+    for(int j= -range; j<=range; j++)
+    for(int k= -range; k<=range; k++)
+    {
+        if(_z+k <= 0 || _z+k >= 127)
+            continue;
+
+        float x = 0.5f + (float) (i);
+        float y = 0.5f + (float) (j);
+        float z = 0.5f + (float) (k);
+
+        float dx = (x*f.x+y*f.y+z*f.z)*asize;
+        float dy = (x*r.x+y*r.y+z*r.z)*bsize;
+        float dz = (x*u.x+y*u.y+z*u.z)*csize;
+
+        if(dx*dx + dy*dy + dz*dz < size*size)
+        {   
+            int tx = (_x+i+512) % 512;
+            int ty = (_y+j+512) % 512;
+            int tz = (_z+k+128) % 128;
+
+            t_map::set(tx,ty,tz,tile_id);
+            _set ++;
+
+        }
+        else
+        {
+            _skipped++;
+        }
+
+    }
+
+    return _set;
 }
 
 
