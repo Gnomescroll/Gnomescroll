@@ -102,7 +102,7 @@ void place_crystal_cluster(int x, int y, int z, int crystal_id)
         int dist = abs(i-x) + abs(j-y); // manhattan
         float p = falloffs[dist];
         
-        if (randf() > p) continue;
+        if ((float)genrand_real1() > p) continue;
         int ii = translate_point(i);
         int jj = translate_point(j);
         int k = get_nearest_open_block(ii,jj,z);
@@ -139,7 +139,7 @@ void populate_crystals()
     init_crystals();
     
     /* Heuristic:
-     *      If block == "rock" and block.z+1 == 0 and randf() < p
+     *      If block == "rock" and block.z+1 == 0 and genrand_real1() < p
      *          place crystal cluster
      */
 
@@ -154,7 +154,7 @@ void populate_crystals()
     for (int i=0; i<512; i++)
     for (int j=0; j<512; j++)
     {
-        if (randf() > CRYSTAL_CLUSTER_PROBABILITY) continue;   // probability test
+        if ((float)genrand_real1() > CRYSTAL_CLUSTER_PROBABILITY) continue;   // probability test
         int id = t_map::get(i,j,k); // get cube
         if (id != rock) continue;
         if (t_map::get(i,j,k+1) != 0) continue; // check block above is open
