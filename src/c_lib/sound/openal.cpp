@@ -45,8 +45,8 @@ class GS_SoundBuffer
         for (int i=0; i<this->current_sources; i++)
         {   // TODO -- this used to return false. not sure why but it was breaking things (after i rearranged the source_id acquisition to prevent sound leaks)
             // the naming in this sound module is horrible (buffers and sources mean 2 things -- gnomescroll buffers (more like files+metadata) and gnomescroll sources (something keeping tracks of al source ids in use)
-            //if (this->sources[i] == source_id) printf("can't add %d because this source is already added\n", source_id);
-            //if (this->sources[i] == source_id) return false;
+            if (this->sources[i] == source_id) printf("can't add %d because this source is already added\n", source_id);
+            if (this->sources[i] == source_id) return false;
             if (this->sources[i] == source_id) return true;
         }
         GS_ASSERT(this->current_sources >= 0);
@@ -68,7 +68,7 @@ class GS_SoundBuffer
             return;
         }
 
-        //GS_ASSERT(index < this->current_sources); // TODO -- re-enable this assert and FIX IT
+        GS_ASSERT(index < this->current_sources); // TODO -- re-enable this assert and FIX IT
         if (index >= this->current_sources) return;
 
         if (index == this->current_sources-1)
@@ -109,12 +109,20 @@ static int buffer_index = 0;
 
 static ALuint* sources = NULL;
 
-struct GS_SoundSource
+class GS_SoundSource
 {
-    int source_id;
-    bool two_dimensional;
+    public:
+        bool active;
+        bool two_dimensional;
+        // add AL source properties here so we can vary per source easily
+
+    GS_SoundSource() :
+    active(false), two_dimensional(false)
+    {}
 };
-static GS_SoundSource* active_sources = NULL;
+
+static class GS_SoundSource* active_sources = NULL;
+static int sources_in_use = 0;
 
 bool checkError()
 {
@@ -269,12 +277,7 @@ void init()
     }
     
     // init active sources buffer
-    active_sources = (struct GS_SoundSource*)malloc(sizeof(struct GS_SoundSource) * MAX_SOURCES);
-    for (int i=0; i<MAX_SOURCES; i++)
-    {
-        active_sources[i].source_id = -1;
-        active_sources[i].two_dimensional = false;
-    }   
+    active_sources = new GS_SoundSource[MAX_SOURCES];
     
     enabled = true;
     inited = true;
@@ -329,7 +332,7 @@ void close()
     }
     if (active_sources != NULL)
     {
-        free(active_sources);
+        delete[] active_sources;
         active_sources = NULL;
     }
 
@@ -347,10 +350,11 @@ void load_sound(Soundfile* snd)
     // check if file has been loaded
     for (int i=0; i<MAX_SOUNDS; i++)
     {
-        if (sound_buffers[i] == NULL) continue;
         s = sound_buffers[i];
+        if (s == NULL) continue;
         if (s->metadata != NULL && strcmp(s->metadata->file, snd->file) == 0)
-        {   // already loaded this sound file
+        {   // already loaded this wav file into an openal buffer.
+            // create a new instance of GS_Soundbuffer and copy the OpenAL buffer id
             GS_SoundBuffer* new_s = new GS_SoundBuffer;
             new_s->id = soundfile_index;
             new_s->hash = snd->hash;
@@ -364,6 +368,8 @@ void load_sound(Soundfile* snd)
             return;
         }
     }
+
+    // we havent loaded this file into an OpenAL buffer yet. do it now, then create a new GS_SoundBuffer 
         
     if (buffer_index == MAX_BUFFERS)
     {
@@ -421,13 +427,9 @@ void load_sound(Soundfile* snd)
 
 int get_free_source()
 {
-    ALint source_state;
     for (int i=0; i<MAX_SOURCES; i++)
-    {
-        alGetSourcei(sources[i], AL_SOURCE_STATE, &source_state);
-        if (source_state != AL_PLAYING)
+        if (!active_sources[i].active)
             return i;
-    }
     return -1;
 }
 
@@ -499,36 +501,29 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
     if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
 
     GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
-    
+    if (source_id < 0 || source_id >= MAX_SOURCES) return false;
+
     // add sound to active sources
-    for (int i=0; i<MAX_SOURCES; i++)
-        if (active_sources[i].source_id < 0)
-        {
-            active_sources[i].source_id = source_id;
-            active_sources[i].two_dimensional = two_dimensional;
-            return sound_buffers[soundfile_id]->add_source(source_id);
-        }
-    return false;
+    GS_ASSERT(!active_sources[source_id].active);
+    if (!active_sources[source_id].active) sources_in_use++;
+    active_sources[source_id].active = true;
+    active_sources[source_id].two_dimensional = two_dimensional;
+    return true;
 }
 
 static bool can_add_to_sources(int soundfile_id, int source_id)
 {
     GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
-    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) printf("invlaid soundfile_id %d\n", soundfile_id);
+    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) printf("invalid soundfile_id %d\n", soundfile_id);
     if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
+
+    if (sources_in_use >= MAX_SOURCES) printf("no free sources\n");
+    if (sources_in_use >= MAX_SOURCES) return false;
     
     bool can = sound_buffers[soundfile_id]->can_add_source(source_id);
     if (!can) printf("can't add to sound_buffer\n");
     if (!can) return false;
 
-    // check if an active source is free
-    int i=0;
-    for (; i<MAX_SOURCES; i++)
-        if (active_sources[i].source_id < 0)
-            break;
-    if (i >= MAX_SOURCES) printf("no free sources\n");
-    if (i >= MAX_SOURCES) return false;
-    
     return true;
 }
 
@@ -701,17 +696,20 @@ void update()
     // expire any used sources
     for (int i=0; i<MAX_SOURCES; i++)
     {
-        GS_SoundSource* ss = &active_sources[i];
-        if (ss->source_id < 0) continue;
-        
-        alGetSourcei(sources[ss->source_id], AL_SOURCE_STATE, &source_state);
-        if (source_state != AL_PLAYING)
-            ss->source_id = -1;
-        else    // update 2d sound
+        alGetSourcei(sources[i], AL_SOURCE_STATE, &source_state);
+        if (source_state == AL_PLAYING)
         {
-            if (ss->two_dimensional)    // update 2d listeners
-                update_source_state(sources[ss->source_id], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+            GS_ASSERT(active_sources[i].active);    // should already be active
+            active_sources[i].active = true;
+            if (active_sources[i].two_dimensional)    // update 2d listeners
+                update_source_state(sources[i], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
         }
+        else
+        {
+            if (active_sources[i].active) sources_in_use--;
+            active_sources[i].active = false;
+        }
+        
     }
 
     int rm_sources[MAX_SOURCES] = {-1};
@@ -728,7 +726,7 @@ void update()
             int gs_source_id = b->sources[j];
             GS_ASSERT(gs_source_id >= 0 && gs_source_id < MAX_SOURCES);
             if (gs_source_id < 0 || gs_source_id >= MAX_SOURCES) continue;
-            if (active_sources[gs_source_id].source_id < 0)
+            if (!active_sources[gs_source_id].active)
                 rm_sources[rm_sources_index++] = j;
         }
         
