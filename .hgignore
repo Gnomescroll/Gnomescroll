@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+gnomescroll_linux32_*
+
 *.exe
 
 stdout.txt
