@@ -298,5 +298,4 @@ void parse_sound_triggers(const char *fn)
     free(function_name);
 }
 
-}
-
+}   // Sound
