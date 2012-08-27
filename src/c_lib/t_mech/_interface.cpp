@@ -164,10 +164,9 @@ void create_crystal(int x, int y, int z, int mech_type)
     ASSERT_VALID_MECH_TYPE(mech_type);
     IF_INVALID_MECH_TYPE(mech_type) return;
     GS_ASSERT(get_mech_class(mech_type) == MECH_CRYSTAL);
-    
-    if( can_place_crystal(x,y,z, 0) == false)
+
+    GS_ASSERT(can_place_crystal(x,y,z,0));
     {
-        GS_ASSERT(false);
         return;
     }
 
@@ -183,19 +182,6 @@ void create_crystal(int x, int y, int z, int mech_type)
     m.x = x;
     m.y = y;
     m.z = z;
-    //m.subtype = rand()%9;
-
-    mech_list->server_add_mech(m);
-}
-
-void create_crystal(int x, int y, int z)
-{
-    struct MECH m;
-    m.mech_type = MECH_CRYSTAL;
-    m.x = x;
-    m.y = y;
-    m.z = z;
-    m.subtype = rand()%9;
 
     mech_list->server_add_mech(m);
 }
@@ -203,18 +189,14 @@ void create_crystal(int x, int y, int z)
 
 bool can_place_crystal(int x, int y, int z, int side)
 {
-    if( isSolid(x,y,z) == true)
-        return false;
+    if (z <= 0 || z > 128) return false;
+    if (side != 0) return false;
+    
+    if (isSolid(x,y,z)) return false;
+    if (!isSolid(x,y,z-1)) return false;
 
-    if(side != 0)
-        return false;
+    if (mech_list->is_occupied(x,y,z)) return false;
 
-    if( isSolid(x,y,z-1) != true)
-        return false;
-
-
-    if( mech_list->is_occupied(x,y,z) == true) return false;
-    //check if there is another one on this square
     return true;
 }
 
