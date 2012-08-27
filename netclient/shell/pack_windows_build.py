@@ -45,7 +45,7 @@ def run(conf):
     ensure_dir(build_path)
     
     # copy exe
-    copyfile('./build/run.exe', os.path.join(build_path, 'gnomescroll.exe'))
+    copyfile('./run.exe', os.path.join(build_path, 'gnomescroll.exe'))
     
     # copy settings
     settings_path = os.path.join(build_path, 'settings\\')
