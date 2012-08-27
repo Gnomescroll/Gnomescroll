@@ -82,6 +82,8 @@ class Map_vbo
     {
         if(vbo_id != 0) glDeleteBuffers(1, &vbo_id);
         if(v_list != NULL) delete[] v_list;
+        if(v_list_backup != NULL) delete[] v_list_backup;
+
     }
 
 };
