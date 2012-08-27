@@ -76,7 +76,8 @@ def run(conf):
         'SDL_image.dll',
         'libpng12-0.dll',
         'libgcc_s_dw2-1.dll',
-        'libstdc++-6.dll'
+        'libstdc++-6.dll',
+        'MSVCR100.dll',
         ]
         
     for dll in dlls:
