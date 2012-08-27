@@ -35,7 +35,7 @@ void init(int argc, char* argv[])
         default_map_gen();
         #else
         // load map file by default in development mode; decreases startup time
-        const char default_map[] = "./world/map-" STR(DC_VERSION) ".map";
+        const char default_map[] = "./world/map-" STR(GS_VERSION) ".map";
         if (file_exists(default_map))
             t_map::load_map(default_map);
         else

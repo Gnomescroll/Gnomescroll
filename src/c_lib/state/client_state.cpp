@@ -160,7 +160,7 @@ namespace ClientState {
     void on_connect()
     {
         version_CtoS msg;
-        msg.version = DC_VERSION;
+        msg.version = GS_VERSION;
         msg.send();
         // connect message is printed after version match
     }

@@ -25,7 +25,7 @@ void send_player_agent_id_to_client(int client_id)
 void send_version_to_client(int client_id)
 {
     version_StoC msg;
-    msg.version = DC_VERSION;
+    msg.version = GS_VERSION;
     msg.sendToClient(client_id);
 }
 

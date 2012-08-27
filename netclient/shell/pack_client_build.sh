@@ -1,7 +1,7 @@
 ./waf clean
 ./waf production
 ./waf
-version=`cat ../src/c_lib/common/version.h | grep DC_VERSION | cut -d " " -f 3`
+version=`cat ../src/c_lib/common/version.h | grep GS_VERSION | cut -d " " -f 3`
 f="gnomescroll_linux32_"$version
 rm -rf $f
 mkdir $f

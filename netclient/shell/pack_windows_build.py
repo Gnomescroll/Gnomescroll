@@ -17,7 +17,7 @@ def copyfile(s,d):
 def get_version():
     with open('../src/c_lib/common/version.h') as f:
         r = f.readlines()
-        r = [line.strip() for line in r if 'DC_VERSION' in line]
+        r = [line.strip() for line in r if 'GS_VERSION' in line]
         assert len(r) == 1
         r = r[0]
         pieces = r.split(' ')
@@ -80,8 +80,8 @@ def run(conf):
         ]
         
     for dll in dlls:
-    	dll_src_path = os.path.join('../lib/win32/dll/', dll)
-    	assert os.path.exists(dll_src_path)
+        dll_src_path = os.path.join('../lib/win32/dll/', dll)
+        assert os.path.exists(dll_src_path)
         copyfile(dll_src_path, os.path.join(build_path, dll))
     
     # only zip and copy for production builds

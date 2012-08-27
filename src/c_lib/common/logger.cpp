@@ -178,7 +178,7 @@ int print(LogType type, LogLevel level, char* fmt, ...)
           + (sizeof(LOG_DIR)-1) \
           + (sizeof(time_str)-1) \
           + 30 - 1)); \
-        sprintf(fn, FILENAME_FMT, LOG_DIR, TYPENAME##_FN, DC_VERSION, time_str); \
+        sprintf(fn, FILENAME_FMT, LOG_DIR, TYPENAME##_FN, GS_VERSION, time_str); \
         log_filenames[i] = fn; \
         break;
 
