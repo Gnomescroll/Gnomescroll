@@ -64,7 +64,7 @@ void init_globals()
     if (population_log_file != NULL)
     {
         setvbuf(population_log_file, NULL, _IOLBF, 256);
-        fprintf(population_log_file, "%s Server started (build %d)\n", time_str, DC_VERSION);
+        fprintf(population_log_file, "%s Server started (build %d)\n", time_str, GS_VERSION);
     }
 }
 

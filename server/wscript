@@ -28,7 +28,7 @@ def _grab_output(*cmd):
 def get_version():
     with open('../src/c_lib/common/version.h') as f:
         r = f.readlines()
-        r = [line.strip() for line in r if 'DC_VERSION' in line]
+        r = [line.strip() for line in r if 'GS_VERSION' in line]
         assert len(r) == 1
         r = r[0]
         pieces = r.split(' ')
@@ -75,7 +75,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
-        #'-DDC_VERSION=%d' % (version,),
+        #'-DGS_VERSION=%d' % (version,),
     ]
 
     cxxflags += extra_options

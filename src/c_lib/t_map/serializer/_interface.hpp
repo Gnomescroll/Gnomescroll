@@ -161,7 +161,7 @@ class BlockSerializer
     public:
 
     static const int prefix_length = sizeof(uint32_t);
-    static const int version = DC_VERSION;
+    static const int version = GS_VERSION;
     static const int chunk_number = 32*32;
 
     char file_name[256];
@@ -427,7 +427,7 @@ void load_map(const char* filename)
     block_serializer->load(filename);
 }
 
-const char default_map_file[] = "./world/map-" STR(DC_VERSION) ".map";
+const char default_map_file[] = "./world/map-" STR(GS_VERSION) ".map";
 
 void save_map()
 {
