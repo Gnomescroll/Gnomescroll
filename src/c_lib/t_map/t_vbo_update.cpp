@@ -901,7 +901,6 @@ void Vbo_map::update_vbo_compatibility(int i, int j)
     else 
     {
         vbo->vnum = vnum; //total vertices, size of VBO
-        // if( vnum > vbo->vnum_max ) vbo->resize(vnum);
     }
 
 
