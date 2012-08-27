@@ -548,7 +548,8 @@ namespace t_map
             Update Lighting
         */
 
-        update_skylight(cx, cy);        
+        update_skylight(cx, cy);
+        update_skylight2(cx,cy);    //update skylight
     }
 
 /*
