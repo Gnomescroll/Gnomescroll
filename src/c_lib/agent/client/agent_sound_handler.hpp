@@ -32,17 +32,20 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
     float dz  = s1.z  - s0.z;
     if (dz < 0) // was falling & hit ground
     {
-        int snd_id = 0;
+        //int snd_id = 0;
         // TODO -- multiply dvz by base gain to get playable gain for fall range
         if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
-            snd_id = Sound::play_2d_sound("hard_fall");
+            //snd_id =
+                Sound::play_2d_sound("hard_fall");
         else
         if (dvz > MEDIUM_FALL_VELOCITY_THRESHOLD)
-            snd_id = Sound::play_2d_sound("medium_fall");
+            //snd_id =
+                Sound::play_2d_sound("medium_fall");
         else
         if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
-            snd_id = Sound::play_2d_sound("soft_fall");
-        GS_ASSERT(snd_id >= 0);
+            //snd_id =
+                Sound::play_2d_sound("soft_fall");
+        //GS_ASSERT(snd_id >= 0);
     }
 
     if (!camera_on_ground) return;
