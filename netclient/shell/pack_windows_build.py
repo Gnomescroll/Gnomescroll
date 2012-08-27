@@ -77,7 +77,8 @@ def run(conf):
         'libpng12-0.dll',
         'libgcc_s_dw2-1.dll',
         'libstdc++-6.dll',
-        'MSVCR100.dll',
+        'msvcr100.dll',
+        'Assimp32.dll',
         ]
         
     for dll in dlls:

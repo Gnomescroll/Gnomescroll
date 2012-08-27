@@ -251,18 +251,21 @@ def configure(conf, add_flags=[], rm_flags=[]):
         pass
 
     #assimp
-    if OS == 'Windows':
-        pass
-    elif OS == 'Linux':
-        assimp_lib_path = [os.path.abspath('../lib/lin32/assimp/lib') ]
-        assimp_include_path = [os.path.abspath('../lib/lin32/assimp/include') ]
-        conf.check(
-            lib=['assimp'], 
-            libpath= assimp_lib_path,
-            includes = assimp_include_path,
-            uselib_store='ASSIMP') 
-    elif OS == 'Darwin':
-        pass
+    if OS == 'Linux':
+        assimp_lib_path = os.path.abspath('../lib/lin32/assimp/lib/')
+        assimp_inc_path = os.path.abspath('../lib/lin32/assimp/include/')
+    elif OS == 'Windows':
+        assimp_lib_path = os.path.abspath('../lib/win32/lib/')
+        assimp_inc_path = os.path.abspath('../lib/win32/assimp/')
+    else:
+        assert False
+    
+    conf.check(
+        lib=['assimp'], 
+        libpath= [assimp_lib_path],
+        includes = [assimp_inc_path],
+        uselib_store='ASSIMP') 
+
 
     '''
     P1 = os.path.abspath('../src/c_lib')
@@ -274,6 +277,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
     if OS == 'Windows':
+    	conf.env.INCLUDES.append('../lib/win32/')
         conf.env.RPATH.append('$ORIGIN/./lib')
         conf.env.RPATH.append('./lib')
         
