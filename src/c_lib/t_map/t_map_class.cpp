@@ -8,6 +8,9 @@
 
 #include <t_mech/_interface.hpp>
 
+
+#include <t_map/lighting.hpp>
+
 namespace t_map
 {
 
