@@ -62,9 +62,9 @@ void load_block_drop_dat()
         b->set_drop(0.99f, 1);
 
         b->add_drop("synthesizer_coin", 3);
-        b->set_drop(0.15f, 1);
-        b->set_drop(0.05f, 2);
-        b->set_drop(0.03f, 3);
+        b->set_drop(0.20f, 1);
+        b->set_drop(0.07f, 2);
+        b->set_drop(0.04f, 3);
             
     b->def_drop("small_storage");
         b->drop_always("small_storage");
