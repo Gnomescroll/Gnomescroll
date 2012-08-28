@@ -277,7 +277,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
     if OS == 'Windows':
-    	conf.env.INCLUDES.append('../lib/win32/')
+        conf.env.INCLUDES.append('../lib/win32/')
         conf.env.RPATH.append('$ORIGIN/./lib')
         conf.env.RPATH.append('./lib')
         
