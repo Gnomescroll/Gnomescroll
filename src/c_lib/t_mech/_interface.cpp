@@ -15,7 +15,7 @@
 namespace t_mech
 {
 
-class MECH_LIST* mech_list;
+struct MECH_LIST* mech_list;
 
 void init_packets()
 {

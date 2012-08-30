@@ -1,7 +1,7 @@
 #pragma once
 
 //instance
-class MECH
+struct MECH
 {
     public:
     int id; //-1 if not in use

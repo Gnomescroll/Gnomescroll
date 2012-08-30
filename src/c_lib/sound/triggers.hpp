@@ -94,7 +94,7 @@ class Soundfile
     }
 };
 
-extern struct Soundfile* sound_file_functions;
+extern class Soundfile* sound_file_functions;
 extern int n_sounds;
 
 bool set_soundfile(int snd_id, const char* fn, const char* file);

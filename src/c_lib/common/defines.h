@@ -22,6 +22,15 @@ typedef unsigned int GLuint;
     #define  PRODUCTION_DEV 0
 #endif
 
+#ifdef __MSVC__
+	#include <float.h>
+	#define isfinite( x ) ( _finite( x ) && x==x )  
+#endif
+
+#ifdef __MSVC__
+float cbrt(float arg) { return pow(arg, 1.0f/3); }
+//double cbrt(double arg) { return pow(arg, 1.0f/3); }
+#endif
 ///*
   //Turn off GS_ASSERTs when production is enabled
 //*/

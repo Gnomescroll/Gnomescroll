@@ -75,7 +75,7 @@ void handle_drop(int x, int y, int z, int type)
     
     for (int i=0; i < drop_dat->meta_drop_table[type].num_drop; i++)
     {
-        class Item::ItemDropTable* cidt = &drop_dat->item_drop_table[i+drop_dat->meta_drop_table[type].index];
+        struct Item::ItemDropTable* cidt = &drop_dat->item_drop_table[i+drop_dat->meta_drop_table[type].index];
         float p = randf();
 
         if (p <= cidt->drop_cumulative_probabilities[0]) continue;

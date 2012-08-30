@@ -100,7 +100,7 @@ SOUND_LOOP_TRIGGER(mining_laser);
 
 /* function -> filename mapping */
 
-struct Soundfile* sound_file_functions = NULL;  // allocated by csv_parser
+class Soundfile* sound_file_functions = NULL;  // allocated by csv_parser
 int n_sounds = 0;
 
 static bool function_registered(const char *fn)
@@ -121,7 +121,7 @@ bool set_soundfile(int snd_id, const char* fn, const char* file)
     
     int fn_len = (int)strlen(fn);
     int file_len = (int)strlen(file);
-    struct Soundfile* snd = &sound_file_functions[snd_id];
+    class Soundfile* snd = &sound_file_functions[snd_id];
     snd->fn = (char*)malloc(sizeof(char) * (fn_len + 1));
     strcpy(snd->fn, fn);
     snd->hash = strhash(fn);

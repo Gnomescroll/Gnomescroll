@@ -108,7 +108,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             ys += length*dy;
             zs += length*dz;
 
-            static const float theta_adj = 0.15;
+            static const float theta_adj = 0.15f;
             static const float phi_adj = 0.10f;
 
             theta += theta_adj*((float)(2.0*genrand_real1() - 1.0));
