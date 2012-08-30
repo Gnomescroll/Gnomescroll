@@ -7,10 +7,12 @@
 
 #define DC_SERVER 1
 
+#define __attribute__(x)
+#define __attribute(x)
 #define __WIN32__
-//#define __MSVC__
+#define __MSVC__
 
-#define S_ITERATOR_DEBUGGING=0
+#define S_ITERATOR_DEBUGGING 0
 #define _SECURE_SCL 0	//secure iterators, slow
 
 #pragma warning(disable: 4244) // possible loss of data
