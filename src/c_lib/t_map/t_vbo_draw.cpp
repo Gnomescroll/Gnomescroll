@@ -665,7 +665,7 @@ void draw_vbo_debug(int x, int y)
         if(i==cx && j == cy) 
             glColor3ub(255, 255, 0);
 
-        glVertex3f(xoff_1+x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1);
+        glVertex3f(xoff_1+x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1f);
     }
     glEnd();
 

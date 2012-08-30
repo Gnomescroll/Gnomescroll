@@ -3,10 +3,6 @@
 namespace t_mech
 {
 
-/*
-    Control Points
-*/
-
 class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
 {
     public:
@@ -26,7 +22,8 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
         pack_u16(&z, buff, buff_n, pack);
     }
     
-    inline void handle() __attribute((always_inline));
+    //inline void handle() __attribute((always_inline));
+    void handle();
 };
 
 class mech_delete_StoC: public MapMessagePacketToClient<mech_delete_StoC>
