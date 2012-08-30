@@ -55,7 +55,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;lua51.lib;winmm.lib;glew32.lib;SDL.lib;SDLmain.lib;SDL_image.lib;opengl32.lib;glu32.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;lua51.lib;winmm.lib;glew32.lib;SDL.lib;SDLmain.lib;SDL_image.lib;opengl32.lib;glu32.lib;OpenAL32.lib;Assimp32.dll;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../lib/win32/lib;../../lib/win32/dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -75,7 +75,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;lua51.lib;winmm.lib;glew32.lib;SDL.lib;SDLmain.lib;SDL_image.lib;opengl32.lib;glu32.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;lua51.lib;winmm.lib;glew32.lib;SDL.lib;SDLmain.lib;SDL_image.lib;opengl32.lib;glu32.lib;OpenAL32.lib;Assimp32.dll;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../lib/win32/lib;../../lib/win32/dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
