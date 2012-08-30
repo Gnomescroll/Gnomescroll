@@ -339,7 +339,7 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
     /*
         Do radius render test?
     */
-    if( sphere_fulstrum_test(wx, wy, wz, 0.6) == false)
+    if( sphere_fulstrum_test(wx, wy, wz, 0.6f) == false)
         return;
 
     int tex_id = mech_attribute[m.mech_type].sprite_index;

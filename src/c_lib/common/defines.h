@@ -25,11 +25,9 @@ typedef unsigned int GLuint;
 #ifdef __MSVC__
 	#include <float.h>
 	#define isfinite( x ) ( _finite( x ) && x==x )  
-#endif
+	float cbrt(float arg) { return pow(arg, 1.0f/3); }
 
-#ifdef __MSVC__
-float cbrt(float arg) { return pow(arg, 1.0f/3); }
-//double cbrt(double arg) { return pow(arg, 1.0f/3); }
+	static int S_IRWXU = 0;
 #endif
 ///*
   //Turn off GS_ASSERTs when production is enabled

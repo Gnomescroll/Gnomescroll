@@ -137,7 +137,7 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         //do something
         m.render_type = ma->render_type;
 
-        m.size = 0.80;  //radius
+        m.size = 0.80f;  //radius
         m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
         m.offset = rand()%255;
         //m.subtype = rand()%6;
@@ -219,7 +219,7 @@ void tick(int x, int y, int z)
 
 #if DC_CLIENT
 
-bool ray_cast_mech_render_type_0(const class MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
+bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
 {
     const float size2 = m.size/2.0f;
     float wx = (float) (m.x) + 0.5f + m.offset_x;
