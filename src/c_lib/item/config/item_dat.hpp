@@ -155,10 +155,13 @@ void load_item_dat()
     s.cube_height = 1;
 
     // Copper
+
+
     item_def(32, IG_RESOURCE, "copper_ore");
     sprite_def(i1, 3,3);
     s.pretty_name = (char*) "Copper Ore";
     s.max_stack_size = 64;
+
 
     item_def(33, IG_RESOURCE, "copper_bar");
     sprite_def(i1, 3,2);
@@ -398,7 +401,7 @@ void load_item_dat()
 
 
     item_def(61, IG_RESOURCE, "iron_rod");
-    sprite_def(i1, 6,7);
+    sprite_def(i1, 1,7);
     s.pretty_name = (char*) "Iron Rod";
     s.max_stack_size = 1;
 
