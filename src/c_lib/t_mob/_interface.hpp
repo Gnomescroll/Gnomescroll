@@ -5,11 +5,15 @@
 #ifdef __MSVC__
 //#undef __cplusplus
 
+extern "C"
+{
+
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h> //defines for postprocessor
 #include <assimp/config.h>
 
+}
 //#define __cplusplus
 #else
 	#undef __cplusplus

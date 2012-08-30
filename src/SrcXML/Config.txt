@@ -1,0 +1,3 @@
+folderpath= C:/dc_mmo/src/
+folders= c_lib;net_lib
+projects= C:/dc_mmo/src/server/server.vcxproj;C:/dc_mmo/src/client/client.vcxproj
