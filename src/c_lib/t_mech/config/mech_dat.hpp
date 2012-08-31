@@ -55,6 +55,10 @@ void load_mech_dat()
     s.sprite_index = 16*1 + 1;
     s.render_type = MECH_RENDER_TYPE_0;
 
+    mech_def(5, MECH_CRYSTAL, "acadia_flower");
+    s.sprite_index = 16*5 + 0;
+    s.render_type = MECH_RENDER_TYPE_0;
+
     end_mech_dat(); // finalize
 }
 
