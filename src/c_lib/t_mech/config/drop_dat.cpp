@@ -26,7 +26,7 @@ void init_drop_dat()
     GS_ASSERT(drop_dat == NULL);
     drop_dat = new Item::ItemDropConfig;
     drop_dat->init("mech", MAX_MECHS);
-    drop_dat->get_id_from_name = &get_mech_type;
+    drop_dat->get_id_from_name = &get_mech_type_id;
     drop_dat->get_name_from_id = &get_mech_name;
     drop_dat->add_drop_callback = &add_drop_callback;
 }

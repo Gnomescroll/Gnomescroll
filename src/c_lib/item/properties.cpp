@@ -219,7 +219,18 @@ int get_block_type_id(int item_type)
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
+    GS_ASSERT(attr->block_type_id != -1)
     return attr->block_type_id;
+}
+
+int get_mech_type_id(int item_type)
+{
+    if (item_type == NULL_ITEM_TYPE) return 0;
+    ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return 0;
+    GS_ASSERT(attr->mech_type_id != -1)
+    return attr->mech_type_id;
 }
 
 int get_particle_voxel_texture(int item_type)
