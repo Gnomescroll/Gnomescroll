@@ -459,12 +459,6 @@ void load_item_dat()
     s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
-	item_def(58, IG_MECH_PLACER, "crystal_seed2");
-    sprite_def(i1, 5,2);
-    s.mech_type_id = t_mech::get_mech_type_id("blue_crystal");
-    s.pretty_name = (char*) "Crystal Seed";
-    s.max_stack_size = 8;
-
 	item_def(72, IG_MECH_PLACER, "acadia_seed");
     sprite_def(i2, 1,1);
     s.mech_type_id = t_mech::get_mech_type_id("acadia_flower");
@@ -473,6 +467,7 @@ void load_item_dat()
 
     item_def(73, IG_RESOURCE, "acadia_fruit");
     sprite_def(i2, 1,2);
+    s.max_stack_size = 16;
     s.pretty_name = (char*) "Acadia Fruit";
 
 	end_item_dat(); // finalize
