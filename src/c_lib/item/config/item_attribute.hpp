@@ -17,6 +17,9 @@ namespace Item
         //IG_PLACER
         int block_type_id;   //id of block type that it creates
 
+        //IG_MECH_PLACER_PLAYER
+        int mech_type_id;
+
         //IG_HITSCAN_WEAPON
         int hitscan_fire_cooldown;      // ms per bullet
         int hitscan_damage;             // damage

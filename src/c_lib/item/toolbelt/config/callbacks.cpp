@@ -273,10 +273,11 @@ void place_energy_core(int agent_id, ItemID item_id, int item_type)
     decrement_stack(agent_id, item_id, item_type);
 }
 
+//IG_MECH_PLACER
 
 void place_mech(int agent_id, ItemID item_id, int item_type)
 {
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH);
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
     
 
     //class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Objects::ENERGY_CORE_HEIGHT);

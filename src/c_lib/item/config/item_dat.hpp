@@ -373,12 +373,12 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.cube_height = 1;
 
-    item_def(57, IG_MECH, "crystal_seed");
+    item_def(57, IG_MECH_PLACER, "crystal_seed");
     sprite_def(i1, 5,1);
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
-    item_def(58, IG_MECH, "crystal_seed2");
+    item_def(58, IG_MECH_PLACER, "crystal_seed2");
     sprite_def(i1, 5,2);
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
