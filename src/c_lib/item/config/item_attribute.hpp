@@ -76,6 +76,9 @@ namespace Item
             this->group = group;
             this->item_type = item_type;
 
+            block_type_id = -1; // error value
+            mech_type_id = -1;  // error value
+
             pretty_name = NULL;
             max_energy = NULL_ENERGY;
             max_durability = NULL_DURABILITY;
