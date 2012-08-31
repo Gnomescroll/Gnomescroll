@@ -250,10 +250,10 @@ int init_c_lib(int argc, char* argv[])
     //lua_load_block_dat(); /* Load Block Dat */
     t_map::load_block_dat();
 
+    t_mech::load_mech_dat();
     Item::load_item_dat();
     Item::load_synthesizer();
 
-    t_mech::load_mech_dat();
     t_mech::init_drop_dat();
     t_mech::load_drop_dat();
 
