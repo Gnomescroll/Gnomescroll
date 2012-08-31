@@ -50,9 +50,9 @@ void init_crystals()
 
     // load crystal types
     int i=0;
-    crystals[i++] = t_mech::get_mech_type("blue_crystal");
-    crystals[i++] = t_mech::get_mech_type("red_crystal");
-    crystals[i++] = t_mech::get_mech_type("green_crystal");
+    crystals[i++] = t_mech::get_mech_type_id("blue_crystal");
+    crystals[i++] = t_mech::get_mech_type_id("red_crystal");
+    crystals[i++] = t_mech::get_mech_type_id("green_crystal");
     // TODO -- check that all crystals are not ERROR_MECH
 
     bedrock = t_map::get_cube_id("bedrock");

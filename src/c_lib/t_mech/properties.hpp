@@ -14,8 +14,8 @@ void tear_down_properties();
 void set_mech_name(int type, const char* name);
 const char* get_mech_name(int type);
 
-int get_mech_type(const char* name);
-int dat_get_mech_type(const char* name);
+int get_mech_type_id(const char* name);
+int dat_get_mech_type_id(const char* name);
 
 struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type);
 

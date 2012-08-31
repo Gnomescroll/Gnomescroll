@@ -307,9 +307,9 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
 
 /*
         static const int n_crystals = 3;
-        static int red_crystal_id = t_mech::get_mech_type("red_crystal");
-        static int blue_crystal_id = t_mech::get_mech_type("blue_crystal");
-        static int green_crystal_id = t_mech::get_mech_type("green_crystal");
+        static int red_crystal_id = t_mech::get_mech_type_id("red_crystal");
+        static int blue_crystal_id = t_mech::get_mech_type_id("blue_crystal");
+        static int green_crystal_id = t_mech::get_mech_type_id("green_crystal");
         int crystals[n_crystals] = { red_crystal_id, blue_crystal_id, green_crystal_id };
         for (int i=0; i<n_crystals; i++)
 */

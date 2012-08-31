@@ -72,7 +72,7 @@ const char* get_mech_name(int type)
     return (mech_names + mech_name_index[type]);
 }
 
-int get_mech_type(const char* name)
+int get_mech_type_id(const char* name)
 {
     for (int i=0; i<MAX_MECHS; i++)
     {

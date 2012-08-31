@@ -375,11 +375,13 @@ void load_item_dat()
 
     item_def(57, IG_MECH_PLACER, "crystal_seed");
     sprite_def(i1, 5,1);
+    s.mech_type_id = t_mech::get_mech_type_id("red_crystal");
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
     item_def(58, IG_MECH_PLACER, "crystal_seed2");
     sprite_def(i1, 5,2);
+    s.mech_type_id = t_mech::get_mech_type_id("blue_crystal");
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
