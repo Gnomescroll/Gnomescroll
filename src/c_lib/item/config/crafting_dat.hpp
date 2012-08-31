@@ -199,6 +199,10 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("green_crystal", 1);
 
+	// plants
+    def_crafting_recipe("acadia_seed");
+    set_crafting_reagent("acadia_fruit", 2);
+
     end_crafting_recipe(); // finalize
 }
 

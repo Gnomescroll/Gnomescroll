@@ -63,6 +63,12 @@ void load_drop_dat()
         b->set_drop(0.15f, 2);
         b->set_drop(0.075f, 3);
 
+    b->def_drop("acadia_flower");
+        b->add_drop("acadia_fruit", 3);
+        b->set_drop(0.70f, 1);
+        b->set_drop(0.15f, 2);
+        b->set_drop(0.075f, 3);
+
     b->end();
 
     b->save_to_file();
