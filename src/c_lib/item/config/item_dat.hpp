@@ -15,7 +15,7 @@ void load_item_dat()
     start_item_dat();
     int i0 = texture_alias("media/sprites/item/i00.png");
     int i1 = texture_alias("media/sprites/item/i01.png");
-    int i2 = texture_alias("media/sprites/item/i02.png");
+    //int i2 = texture_alias("media/sprites/item/i02.png");
 
     int p0 = texture_alias("media/sprites/item/p00.png");
 
