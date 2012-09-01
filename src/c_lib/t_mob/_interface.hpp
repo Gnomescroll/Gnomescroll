@@ -770,6 +770,9 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         }
 */
 
+        Mat4 m_GlobalInverseTransform = mat4_inverse( mat4_transpose(_ConvertMatrix(pScene->mRootNode->mTransformation )));
+        //m_GlobalInverseTransform.Inverse();
+
         //printf("scene has %d animations \n", pScene->mNumAnimations);
         aiAnimation* anim = pScene->mAnimations[0];
 
@@ -847,6 +850,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
                 }
 
+                boneMatrix = mat4_mult(m_GlobalInverseTransform, boneMatrix);
 
                 //node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 //boneMatrix = get_anim_matrix(frame_time, node_channels, node_channels_max, node);
