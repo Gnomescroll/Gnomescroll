@@ -133,9 +133,9 @@ class BoneTree
         if(pNode->mNumMeshes != 0)
         {
             GS_ASSERT(nli < nlm);
-            index = nli;
             nl[nli] = pNode;
 
+            GS_ASSERT(pNode->mNumMeshes < 2);
             int mesh_index = pNode->mMeshes[0]; //grab the first mesh
             ml[nli] = pScene->mMeshes[mesh_index];
             nli++;
