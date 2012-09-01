@@ -38,7 +38,8 @@ class BoneTree
     public:
 
     BoneTree() :
-    nl(NULL), ml(NULL),
+    nl(NULL), 
+    ml(NULL), mlm(0),
     pScene(NULL),
     tvl(NULL),
     vll(NULL), vln(NULL),
@@ -68,7 +69,9 @@ class BoneTree
     aiNode** nl;    //node list
     int nli;        //node list index
 
-    aiMesh** ml;    //mesh list, the mesh for node i
+    aiMesh** ml;    //mesh list
+    int mlm;
+
     aiScene* pScene;
 
     struct _Vertex
@@ -92,6 +95,7 @@ class BoneTree
         count_nodes(pScene->mRootNode); //count the nodes with meshes
         nlm = nli;
         nl = new aiNode*[nlm];
+        
         ml = new aiMesh*[nlm];
 
         for(int i=0; i<nlm; i++) nl[i] = NULL;
@@ -100,6 +104,7 @@ class BoneTree
         nli = 0;
         set_node_parents(pScene->mRootNode, 0);
 
+        //set_mesh_list();
         count_vertices();
         tvl = new _Vertex[vlm];
 
@@ -122,8 +127,10 @@ class BoneTree
             count_nodes(pNode->mChildren[i]);
     }
 
+    //only includes nodes that have meshes?
     void set_node_parents(aiNode* pNode, int parent_index)
     {
+        GS_ASSERT(parent_index != -1)
         int index = -1;
         if(pNode->mNumMeshes != 0)
         {
@@ -131,7 +138,7 @@ class BoneTree
             index = nli;
             nl[nli] = pNode;
 
-            int mesh_index = pNode->mMeshes[0];
+            int mesh_index = pNode->mMeshes[0]; //grab the first mesh
             ml[nli] = pScene->mMeshes[mesh_index];
             nli++;
         }
@@ -152,13 +159,12 @@ class BoneTree
             {
                 unsigned int index = pNode->mMeshes[i];
                 aiMesh* mesh = pScene->mMeshes[index];
-                ml[i] = mesh;
-                //vli += mesh->mNumVertices;
                 vli += 3*mesh->mNumFaces;
             }
         }
         vlm = vli;
     }
+
 
     void set_vertices()
     {
