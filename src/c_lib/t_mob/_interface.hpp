@@ -605,15 +605,13 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
                 GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
-                 // and now append all node transformations down the parent chain until we're back at mesh coordinates again
+                // and now append all node transformations down the parent chain until we're back at mesh coordinates again
                 aiNode* tempNode = node;
 
                 int _index = 0;
                 while( tempNode )
                 {
                     _index++;
-
-
                     //printf("\tnode: %02d %02d node name= %s \n", j, _index, tempNode->mName.data);
 
                     if(_print)
@@ -645,6 +643,8 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     vv.x = boneMatrix._f[4*3+0];
                     vv.y = boneMatrix._f[4*3+1];
                     vv.z = boneMatrix._f[4*3+2];
+
+                    printf("bone: %02d %02d node name= %s x,y,z= %.02f %.02f %.02f \n", j, _index, node->mName.data, vv.x,vv.y,vv.z );
 
                     Vec3 vf;
                     vf.x = size*boneMatrix._f[4*0+0];
