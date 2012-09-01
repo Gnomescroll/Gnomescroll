@@ -601,7 +601,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 */
 
                 //Mat4 tmp = mat4_mult(boneMatrix, mat4_inverse(boneMatrix));
-                mat4_print(boneMatrix);
+                //mat4_print(boneMatrix);
 
                 GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
@@ -614,7 +614,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     _index++;
 
 
-                    printf("\tnode: %02d %02d node name= %s \n", j, _index, tempNode->mName.data);
+                    //printf("\tnode: %02d %02d node name= %s \n", j, _index, tempNode->mName.data);
 
                     if(_print)
                     {
@@ -627,6 +627,10 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                     GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
                     tempNode = tempNode->mParent;
+                    
+                    if( strcmp(tempNode->mName.data, "Armature") == 0 )
+                        break;
+
                     if(tempNode == NULL)
                     {
                         //GS_ASSERT(tempNode != NULL);
@@ -828,8 +832,8 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
                     //armature is the last node that gets multiplied in
                     
-                    //if( strcmp(tempNode->mName.data, "Armature") == 0 )
-                    //    break;
+                    if( strcmp(tempNode->mName.data, "Armature") == 0 )
+                        break;
                     tempNode = tempNode->mParent;
                     if(tempNode == NULL)
                     {
@@ -1254,7 +1258,7 @@ void draw()
 
     bt->draw(p.x, p.y, p.z + 3.0f);
 
-    bt->draw_skeleton(p.x+0.0, p.y+3.0f, p.z + 3.0f);
+    bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 3.0f);
 
     return;  //DEBUG
 
