@@ -160,7 +160,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
-    peer = enet_host_connect (client_host, & address, 4, 0);    
+    peer = enet_host_connect (client_host, & address, 8, 0);    //channel count
     
     if (peer == NULL)
     {
