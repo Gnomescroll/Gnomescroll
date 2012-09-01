@@ -55,6 +55,11 @@
 
 
 
+	
+
+
+
+
 	<ItemGroup>
 		<Filter Include="c_lib\agent">
 		</Filter>
@@ -1844,6 +1849,9 @@
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\crystals.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\dungeon_generator.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\noise_map.hpp">
