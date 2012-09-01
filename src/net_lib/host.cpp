@@ -60,7 +60,7 @@ void init_net_client()
 {
     client_host = enet_host_create (NULL /* create a client host */,
                 1 /* only allow 1 outgoing connection */,
-                4 /* allow up 4 channels*/,
+                8 /* allow up 4 channels*/,
                 0 /* 56K modem with 56 Kbps downstream bandwidth */,
                 0 /* 56K modem with 14 Kbps upstream bandwidth */);
 
@@ -322,8 +322,8 @@ void init_server(int a, int b, int c, int d, int port)
     printf( "Starting server on %i.%i.%i.%i port %i \n", a, b, c, d, address.port);
 
     server_host = enet_host_create (& address /* the address to bind the server host to */, 
-                                256      /* allow up to 32 clients and/or outgoing connections */,
-                                4       /* allow up to 4 channels to be used*/,
+                                128      /* allow up to 32 clients and/or outgoing connections */,
+                                8       /* allow up to 4 channels to be used*/,
                                 0       /* assume any amount of incoming bandwidth */,
                                 0       /* assume any amount of outgoing bandwidth */);
     if (server_host == NULL)
@@ -350,7 +350,7 @@ void dispatch_network_events()
 
     while (1)
     {
-        int ret = enet_host_service(client_host, & event, timeout);
+        int ret = enet_host_service(server_host, & event, timeout);
 
         if( ret == 0)
             break;
