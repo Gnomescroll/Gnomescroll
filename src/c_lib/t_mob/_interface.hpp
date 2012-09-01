@@ -39,7 +39,7 @@ class BoneTree
 
     BoneTree() :
     nl(NULL), 
-    ml(NULL), mlm(0),
+    ml(NULL),
     pScene(NULL),
     tvl(NULL),
     vll(NULL), vln(NULL),
@@ -65,14 +65,14 @@ class BoneTree
         if (bvll != NULL) delete[] bvll;
     }
 
+
+    aiScene* pScene;    //the scene
+
     int nlm;        //node list max
     aiNode** nl;    //node list
-    int nli;        //node list index
+    int nli;        //node list index (just a counter variable)
 
     aiMesh** ml;    //mesh list
-    int mlm;
-
-    aiScene* pScene;
 
     struct _Vertex
     {
@@ -322,6 +322,10 @@ class BoneTree
         out.f[3][1] = in.d2;
         out.f[3][2] = in.d3;
         out.f[3][3] = in.d4;
+
+        out = mat4_transpose(out);
+
+        GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
 
         return out;
     }
@@ -589,7 +593,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
 
-                Mat4 boneMatrix = mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix));  //node to vertex matrix?
+                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
                 //Mat4 boneMatrix = mat4_identity();
                 /*
                     !!!
@@ -744,7 +748,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         }
 
         //if cannot find, then node does not have an animation and use this
-        return mat4_transpose(_ConvertMatrix(node->mTransformation));
+        return _ConvertMatrix(node->mTransformation);
 
     }
 
@@ -815,7 +819,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
-                Mat4 boneMatrix = mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix));  //node to vertex matrix?
+                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
                 GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again

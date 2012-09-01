@@ -17,6 +17,8 @@ void load_item_dat()
     int i1 = texture_alias("media/sprites/item/i01.png");
     int i2 = texture_alias("media/sprites/item/i02.png");
 
+    int p0 = texture_alias("media/sprites/item/p00.png");
+
     item_def(0, IG_ERROR, "error_item");
     s.pretty_name = (char*) "Error";
     sprite_def(i0, 4,1);
@@ -460,15 +462,21 @@ void load_item_dat()
     s.max_stack_size = 16;
 
 	item_def(72, IG_MECH_PLACER, "acadia_seed");
-    sprite_def(i2, 1,1);
+    sprite_def(p0, 1,2);
     s.mech_type_id = t_mech::get_mech_type_id("acadia_flower");
     s.pretty_name = (char*) "Acadia Seed";
     s.max_stack_size = 64;
 
     item_def(73, IG_RESOURCE, "acadia_fruit");
-    sprite_def(i2, 1,2);
+    sprite_def(p0, 1,9);
     s.max_stack_size = 16;
     s.pretty_name = (char*) "Acadia Fruit";
+
+    item_def(74, IG_MECH_PLACER, "blob_seed");
+    sprite_def(p0, 3,2);
+    s.mech_type_id = t_mech::get_mech_type_id("blob_flower");
+    s.pretty_name = (char*) "Blob Seed";
+    s.max_stack_size = 64;
 
 	end_item_dat(); // finalize
     
