@@ -581,8 +581,6 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
             GS_ASSERT(mesh->mNumBones != 0);
 
-
-
             printf("mesh: %02d mesh name= %s \n", i, nl[i]->mName.data);
 
             for(unsigned int j=0; j<mesh->mNumBones; j++)
@@ -592,8 +590,9 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
-                Mat4 boneMatrix = mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix));  //node to vertex matrix?
 
+                Mat4 boneMatrix = mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix));  //node to vertex matrix?
+                //Mat4 boneMatrix = mat4_identity();
                 /*
                     !!!
 
@@ -625,7 +624,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                     GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
                     tempNode = tempNode->mParent;
-                    
+
                     if( strcmp(tempNode->mName.data, "Armature") == 0 )
                         break;
 
@@ -636,6 +635,8 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     }
                 }
 
+                //boneMatrix = mat4_mult( mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix)) , boneMatrix);
+
                 const float size = 1.0f;
                 glBegin(GL_LINES);
                     
@@ -645,6 +646,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     vv.z = boneMatrix._f[4*3+2];
 
                     printf("bone: %02d %02d node name= %s x,y,z= %.02f %.02f %.02f \n", j, _index, node->mName.data, vv.x,vv.y,vv.z );
+                    mat4_print(boneMatrix);
 
                     Vec3 vf;
                     vf.x = size*boneMatrix._f[4*0+0];
@@ -763,6 +765,17 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         _fcount++;
         if(_fcount % 30 == 0)
             frame_time++;
+
+
+        Mat4 sceneMatrix;
+        {
+            //nodes have transforms!
+            aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, "Scene");
+            printf("!!! node: %s \n", node->mName.data);
+            //mat4_print( mat4_transpose(_ConvertMatrix(node->mTransformation)) ) ;
+            sceneMatrix = mat4_transpose(_ConvertMatrix(node->mTransformation));
+        }
+
 
         //printf("scene has %d animations \n", pScene->mNumAnimations);
         aiAnimation* anim = pScene->mAnimations[0];
@@ -1258,7 +1271,7 @@ void draw()
 
     bt->draw(p.x, p.y, p.z + 3.0f);
 
-    bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 3.0f);
+    bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 5.0f);
 
     return;  //DEBUG
 
