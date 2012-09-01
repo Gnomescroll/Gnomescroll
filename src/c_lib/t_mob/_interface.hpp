@@ -102,7 +102,7 @@ class BoneTree
         for(int i=0; i<nlm; i++) ml[i] = NULL;
 
         nli = 0;
-        set_node_parents(pScene->mRootNode, 0);
+        set_node_parents(pScene->mRootNode);
 
         //set_mesh_list();
         count_vertices();
@@ -128,10 +128,8 @@ class BoneTree
     }
 
     //only includes nodes that have meshes?
-    void set_node_parents(aiNode* pNode, int parent_index)
+    void set_node_parents(aiNode* pNode)
     {
-        GS_ASSERT(parent_index != -1)
-        int index = -1;
         if(pNode->mNumMeshes != 0)
         {
             GS_ASSERT(nli < nlm);
@@ -144,7 +142,7 @@ class BoneTree
         }
         for(unsigned int i=0; i < pNode->mNumChildren; i++)
         {
-            set_node_parents(pNode->mChildren[i], index);
+            set_node_parents(pNode->mChildren[i]);
         }
     }
 
@@ -623,16 +621,11 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                     GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
+
                     tempNode = tempNode->mParent;
 
-                    if( strcmp(tempNode->mName.data, "Armature") == 0 )
-                        break;
-
                     if(tempNode == NULL)
-                    {
-                        //GS_ASSERT(tempNode != NULL);
                         break;
-                    }
                 }
 
                 //boneMatrix = mat4_mult( mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix)) , boneMatrix);
@@ -755,7 +748,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
     }
 
-
+    //Scene*Armature*Bone1*Bone2*Offs
     void draw(float x, float y, float z)
     {
         //printf("nlm= %d vlm= %d \n", nlm, vlm);
@@ -766,7 +759,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         if(_fcount % 30 == 0)
             frame_time++;
 
-
+/*
         Mat4 sceneMatrix;
         {
             //nodes have transforms!
@@ -775,15 +768,13 @@ but is not good. Therefore, you usually should do the interpolation on the quate
             //mat4_print( mat4_transpose(_ConvertMatrix(node->mTransformation)) ) ;
             sceneMatrix = mat4_transpose(_ConvertMatrix(node->mTransformation));
         }
-
+*/
 
         //printf("scene has %d animations \n", pScene->mNumAnimations);
         aiAnimation* anim = pScene->mAnimations[0];
 
-
         aiNodeAnim** node_channels = anim->mChannels;
         int node_channels_max = anim->mNumChannels;
-
 
         bool _print  = false;
 
@@ -847,12 +838,13 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     
                     if( strcmp(tempNode->mName.data, "Armature") == 0 )
                         break;
-                    tempNode = tempNode->mParent;
                     if(tempNode == NULL)
                     {
                         //GS_ASSERT(tempNode != NULL);
                         break;
                     }
+                    tempNode = tempNode->mParent;
+
                 }
 
 
@@ -961,7 +953,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         //GL_ASSERT(GL_TEXTURE_2D, true);
 
         glBindTexture(GL_TEXTURE_2D, texture1);
-#if 1
+
         glBegin(GL_TRIANGLES);
         for(int i=0; i<vlm; i++)
         {
@@ -980,79 +972,6 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 		glBindTexture(GL_TEXTURE_2D, 0);
 		check_gl_error();
 
-#else
-
-
-        //check_gl_error();
-        glBegin(GL_TRIANGLES);
-
-        //printf("=== \n");
-
-        for(int i=0; i<nlm; i++)
-        {
-            aiMesh* mesh = ml[i];
-            //int index1 = bvlo[i];
-            for(unsigned int j=0; j<mesh->mNumFaces; j++)
-            {
-
-                for(int k=0; k<3; k++)
-                {
-                    GS_ASSERT( mesh->mFaces[j].mNumIndices == 3);
-                    GS_ASSERT( mesh->mNumUVComponents[0] == 2);
-
-                    int index1 = mesh->mFaces[j].mIndices[k];
-                    //int index2 = mesh->mFaces[j].mIndices[(k+1)%3];
-
-                    aiVector3D pos = mesh->mVertices[index1];
-                    aiVector3D tex = mesh->mTextureCoords[0][index1];
-
-                    struct _Vertex v; 
-                    v.v.x = pos.x ;
-                    v.v.y =  pos.y ;
-                    v.v.z = pos.z ;
-
-                    v.ux =  tex.x;
-                    v.uy =  1.0 -tex.y;
-
-                    //printf("pos= %f %f %f tex= %f %f \n", v.v.x,v.v.y,v.v.z, v.ux,v.uy);
-                    glTexCoord2f(v.ux, v.uy );
-                    glVertex3f(v.v.x +x, v.v.y+y, v.v.z+z);
-                }
-
-            }
-        }
-
-        glEnd();
-
-
-/*
-        glBegin(GL_QUADS);
-
-        float xmin = x + 0.0;
-        float xmax = x + 1.0;
-
-        float ymin = y + 0.0;
-        float ymax = y + 1.0;
-
-        //upper left, counter clockwise
-        glTexCoord2f(0,1 );
-        glVertex3f(xmax, ymax, z+2.0);
-
-        glTexCoord2f(0,0);
-        glVertex3f(xmax, ymin, z+2.0);
-
-        glTexCoord2f(1,0);
-        glVertex3f(xmin, ymin, z+2.0);
-
-        glTexCoord2f(1,1);
-        glVertex3f(xmin, ymax, z+2.0);
-
-        glEnd();
-*/
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-        check_gl_error();
-#endif
         //printf("count: %d vlm= %d \n", count, vlm);
         //mesh->mTextureCoords[0]
 

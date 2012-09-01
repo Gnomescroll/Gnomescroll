@@ -404,3 +404,75 @@ aiMesh
     unsigned int mNumBones;
     C_STRUCT aiBone** mBones;
 */
+
+#if 0
+        //check_gl_error();
+        glBegin(GL_TRIANGLES);
+
+        //printf("=== \n");
+
+        for(int i=0; i<nlm; i++)
+        {
+            aiMesh* mesh = ml[i];
+            //int index1 = bvlo[i];
+            for(unsigned int j=0; j<mesh->mNumFaces; j++)
+            {
+
+                for(int k=0; k<3; k++)
+                {
+                    GS_ASSERT( mesh->mFaces[j].mNumIndices == 3);
+                    GS_ASSERT( mesh->mNumUVComponents[0] == 2);
+
+                    int index1 = mesh->mFaces[j].mIndices[k];
+                    //int index2 = mesh->mFaces[j].mIndices[(k+1)%3];
+
+                    aiVector3D pos = mesh->mVertices[index1];
+                    aiVector3D tex = mesh->mTextureCoords[0][index1];
+
+                    struct _Vertex v; 
+                    v.v.x = pos.x ;
+                    v.v.y =  pos.y ;
+                    v.v.z = pos.z ;
+
+                    v.ux =  tex.x;
+                    v.uy =  1.0 -tex.y;
+
+                    //printf("pos= %f %f %f tex= %f %f \n", v.v.x,v.v.y,v.v.z, v.ux,v.uy);
+                    glTexCoord2f(v.ux, v.uy );
+                    glVertex3f(v.v.x +x, v.v.y+y, v.v.z+z);
+                }
+
+            }
+        }
+
+        glEnd();
+
+
+/*
+        glBegin(GL_QUADS);
+
+        float xmin = x + 0.0;
+        float xmax = x + 1.0;
+
+        float ymin = y + 0.0;
+        float ymax = y + 1.0;
+
+        //upper left, counter clockwise
+        glTexCoord2f(0,1 );
+        glVertex3f(xmax, ymax, z+2.0);
+
+        glTexCoord2f(0,0);
+        glVertex3f(xmax, ymin, z+2.0);
+
+        glTexCoord2f(1,0);
+        glVertex3f(xmin, ymin, z+2.0);
+
+        glTexCoord2f(1,1);
+        glVertex3f(xmin, ymax, z+2.0);
+
+        glEnd();
+*/
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        check_gl_error();
+#endif
