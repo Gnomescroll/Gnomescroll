@@ -183,8 +183,19 @@ void client_dispatch_network_events()
     unsigned int index = 0;
 
     int timeout = 1;
-    while (enet_host_service (client_host, & event, timeout) > 0)
+
+    while (1)
     {
+        int ret = enet_host_service(client_host, & event, timeout);
+
+        if( ret == 0)
+            break;
+        if( ret < 0)
+        {
+            printf("client_dispatch_network_events: ERROR code %d \n", ret);
+            break;
+        }
+
         switch (event.type)
         {
 
@@ -311,10 +322,10 @@ void init_server(int a, int b, int c, int d, int port)
     printf( "Starting server on %i.%i.%i.%i port %i \n", a, b, c, d, address.port);
 
     server_host = enet_host_create (& address /* the address to bind the server host to */, 
-                                 32      /* allow up to 32 clients and/or outgoing connections */,
-                                  4      /* allow up to 4 channels to be used*/,
-                                  0      /* assume any amount of incoming bandwidth */,
-                                  0      /* assume any amount of outgoing bandwidth */);
+                                256      /* allow up to 32 clients and/or outgoing connections */,
+                                4       /* allow up to 4 channels to be used*/,
+                                0       /* assume any amount of incoming bandwidth */,
+                                0       /* assume any amount of outgoing bandwidth */);
     if (server_host == NULL)
     {
         fprintf (stderr, "An error occurred while trying to create ENet server host: check that no other server is running on port %i \n", address.port);
@@ -335,9 +346,20 @@ void dispatch_network_events()
 
     unsigned int index = 0;
     int timeout = 1;
-    int ret = 0;
-    while (enet_host_service (server_host, &event, timeout) > 0)
+    int pret = 0;
+
+    while (1)
     {
+        int ret = enet_host_service(client_host, & event, timeout);
+
+        if( ret == 0)
+            break;
+        if( ret < 0)
+        {
+            printf("NetServer dispatch_network_events: ERROR code %d \n", ret);
+            break;
+        }
+
         switch (event.type)
         {
 
@@ -375,7 +397,7 @@ void dispatch_network_events()
                     GS_ASSERT(event.peer->data != NULL);
                     if (event.peer->data != NULL)
                     {
-                        ret = process_packet_messages(
+                        pret = process_packet_messages(
                             (char*) event.packet -> data, 
                             &index, 
                             event.packet->dataLength, 
@@ -414,7 +436,7 @@ void dispatch_network_events()
             break;
         }
 
-        if (ret != 0)
+        if (pret != 0)
         {   // invalid data in packets, disconnect client
             GS_ASSERT(event.peer != NULL);
             if (event.peer != NULL)
@@ -425,7 +447,7 @@ void dispatch_network_events()
             }
         }
 
-        ret = 0;
+        pret = 0;
     }
 
     for (int i=0; i<HARD_MAX_CONNECTIONS; i++)

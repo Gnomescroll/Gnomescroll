@@ -320,3 +320,87 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     OUTPUT_DEBUG_MSG("Finished loading animations with "<<Bones.size()<<" bones");
 */
 
+
+    /** The name of the node affected by this animation. The node  must exist and it must be unique.*/
+    //C_STRUCT aiString mNodeName;
+
+    /** The number of position keys */
+    //unsigned int mNumPositionKeys;
+
+    /** The position keys of this animation channel. Positions are 
+     * specified as 3D vector. The array is mNumPositionKeys in size.
+     *
+     * If there are position keys, there will also be at least one
+     * scaling and one rotation key.*/
+    //C_STRUCT aiVectorKey* mPositionKeys;
+
+    /** The number of rotation keys */
+    //unsigned int mNumRotationKeys;
+
+    /** The rotation keys of this animation channel. Rotations are 
+     *  given as quaternions,  which are 4D vectors. The array is 
+     *  mNumRotationKeys in size.
+     *
+     * If there are rotation keys, there will also be at least one
+     * scaling and one position key. */
+    //C_STRUCT aiQuatKey* mRotationKeys;
+
+    /** The number of scaling keys */
+    //unsigned int mNumScalingKeys;
+
+    /** The scaling keys of this animation channel. Scalings are 
+     *  specified as 3D vector. The array is mNumScalingKeys in size.
+     *
+     * If there are scaling keys, there will also be at least one
+     * position and one rotation key.*/
+    //C_STRUCT aiVectorKey* mScalingKeys;
+
+
+
+    //printf("animation0: name= %s duration= %f ticks_per_second= %f number_of_node_channels= %d mesh_channels= %d \n",
+    //    anim->mName.data, anim->mDuration, anim->mTicksPerSecond, anim->mNumChannels, anim->mNumMeshChannels);
+
+    //C_STRUCT aiString mName;
+    /** Duration of the animation in ticks.  */
+    //double mDuration;
+    /** Ticks per second. 0 if not specified in the imported file */
+    //double mTicksPerSecond;
+    /** The number of bone animation channels. Each channel affects a single node. */
+    //unsigned int mNumChannels;
+    //C_STRUCT aiNodeAnim** mChannels;
+
+    //unsigned int mNumAnimations; 
+    //_STRUCT aiAnimation** mAnimations;
+
+
+        //ml[i]->mMeshes[index]->mName.data,
+        //ml[i]->mMeshes[index]->mNumVertices,
+        //ml[i]->mMeshes[index]->mNumFaces);s
+
+    /*
+        unsigned int mNumVertices;
+        unsigned int mNumFaces;
+        C_STRUCT aiVector3D* mVertices; //the vertices
+        C_STRUCT aiVector3D* mNormals;
+        C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+        unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+        C_STRUCT aiFace* mFaces;
+    */
+
+/*
+aiMesh
+    unsigned int mPrimitiveTypes;
+    unsigned int mNumVertices;
+    unsigned int mNumFaces;
+
+    C_STRUCT aiVector3D* mVertices; //the vertices
+    C_STRUCT aiVector3D* mNormals;
+
+    C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+    unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+
+    C_STRUCT aiFace* mFaces;
+
+    unsigned int mNumBones;
+    C_STRUCT aiBone** mBones;
+*/

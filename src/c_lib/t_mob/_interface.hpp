@@ -33,22 +33,6 @@ extern "C"
 namespace t_mob
 {
 
-//mesh, vertices and bone weights
-class MeshList
-{
-
-
-};
-
-
-//bone positions, apply to MeshList to render
-class Pose
-{
-
-
-};
-
-
 class BoneTree
 {
     public:
@@ -92,19 +76,10 @@ class BoneTree
         struct Vec3 v;
         float ux,uy;
     };
-/*
-    struct _VertexWeight
-    {
-        int index;
-        float weight;
-    };
-*/
 
     int vli;                //vertex list index
     int vlm;                //vertex list max
-    //struct _Vertex* vl;       //vertex list
     struct _Vertex* tvl;    //temporary vertex list, for drawing
-    //struct _VertexWeight* vwl;    //vertex weight list
 
     int* vll;           //offset of vertices in list for each mesth
     int* vln;           //number of vertices in each mech
@@ -126,18 +101,13 @@ class BoneTree
         set_node_parents(pScene->mRootNode, 0);
 
         count_vertices();
-        //vl = new _Vertex[vlm];
         tvl = new _Vertex[vlm];
-        //vwl =  new _VertexWeight[vlm];
 
         vll = new int[nlm];
         vln = new int[nlm];
 
-
         init_base_vertex_list();
-
         set_vertices();
-
         init_texture();
         //draw();
 		init_bone_list();
@@ -157,15 +127,12 @@ class BoneTree
         int index = -1;
         if(pNode->mNumMeshes != 0)
         {
-            //GS_ASSERT(parent_index != -1);
             GS_ASSERT(nli < nlm);
             index = nli;
             nl[nli] = pNode;
 
             int mesh_index = pNode->mMeshes[0];
             ml[nli] = pScene->mMeshes[mesh_index];
-
-            //npl[nli] = parent_index; 
             nli++;
         }
         for(unsigned int i=0; i < pNode->mNumChildren; i++)
@@ -173,24 +140,6 @@ class BoneTree
             set_node_parents(pNode->mChildren[i], index);
         }
     }
-
-/*
-aiMesh
-    unsigned int mPrimitiveTypes;
-    unsigned int mNumVertices;
-    unsigned int mNumFaces;
-
-    C_STRUCT aiVector3D* mVertices; //the vertices
-    C_STRUCT aiVector3D* mNormals;
-
-    C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
-    unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
-
-    C_STRUCT aiFace* mFaces;
-
-    unsigned int mNumBones;
-    C_STRUCT aiBone** mBones;
-*/
 
     void count_vertices()
     {
@@ -214,8 +163,6 @@ aiMesh
     void set_vertices()
     {
         GS_ASSERT(nli == nlm);
-
-        //printf("nlm= %d nli= %d \n", nlm, nli);
 
         int count = 0;
         for(int i=0; i<nlm; i++)
@@ -249,19 +196,6 @@ aiMesh
             }
         }
 
-            //ml[i]->mMeshes[index]->mName.data,
-            //ml[i]->mMeshes[index]->mNumVertices,
-            //ml[i]->mMeshes[index]->mNumFaces);s
-
-        /*
-            unsigned int mNumVertices;
-            unsigned int mNumFaces;
-            C_STRUCT aiVector3D* mVertices; //the vertices
-            C_STRUCT aiVector3D* mNormals;
-            C_STRUCT aiVector3D* mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
-            unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
-            C_STRUCT aiFace* mFaces;
-        */
         if(count != vli || count != vlm)
         {
             printf("Set_vertices Warning: vertex count= %d vli= %d vlm= %d \n", count, vli, vlm);
@@ -354,37 +288,12 @@ aiMesh
         printf("vcount= %d bvlm= %d \n", vcount, bvlm);
     }
 
-
     //int vlm;          //vertex list max
     //struct _Vertex* vl;   //vertex list
     //struct _Vertex* tvl; //temporary vertex list, for drawing
     //int vli;          //vertex list index
     //int* vll;         //vertex list loop
     //int* vln;         //number of vertices in mesh
-
-    static void _ConvertMatrix(struct Mat4& out, const aiMatrix4x4& in)
-    {
-        out.f[0][0] = in.a1;
-        out.f[0][1] = in.a2;
-        out.f[0][2] = in.a3;
-        out.f[0][3] = in.a4;
-
-        out.f[1][0] = in.b1;
-        out.f[1][1] = in.b2;
-        out.f[1][2] = in.b3;
-        out.f[1][3] = in.b4;
-
-        out.f[2][0] = in.c1;
-        out.f[2][1] = in.c2;
-        out.f[2][2] = in.c3;
-        out.f[2][3] = in.c4;
-
-        out.f[3][0] = in.d1;
-        out.f[3][1] = in.d2;
-        out.f[3][2] = in.d3;
-        out.f[3][3] = in.d4;
-    }
-
 
     static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
     {
@@ -473,27 +382,11 @@ aiMesh
 
 		pNode = _pNode;
 
-
-        printf("root_bone: has %d children \n", pNode->mNumChildren);
-        //recursively count the children of the root node
+        printf("root_bone: has %d children \n", pNode->mNumChildren); //recursively count the children of the root node
 		int bone_count = 0;
 		count_bones(&bone_count, pNode);
 
 		printf("DAE LOADER: %d bones \n", bone_count);
-
-/*
-		bam = bone_count;
-
-        //ALLOCATE
-        ba = new AiBone*[bam];
-
-
-
-        for(unsigned int j=0; j<mesh->mNumBones; j++)
-        {
-            aiBone* bone = mesh->mBones[j];
-            aiMatrix4x4 offset_matrix = bone->mOffsetMatrix
-*/
 	}	
 
 
@@ -659,60 +552,122 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
     void draw_skeleton(float x, float y, float z)
     {
-#if 0
-        int count = 0;
+
+        static int _fcount = 0;
+        static int frame_time = 0;
+
+        _fcount++;
+        if(_fcount % 30 == 0)
+            frame_time++;
+
+        aiAnimation* anim = pScene->mAnimations[0];
+
+        aiNodeAnim** node_channels = anim->mChannels;
+        int node_channels_max = anim->mNumChannels;
+
+        glDisable(GL_TEXTURE_2D);
+
+        static const bool _print = false;
+
         for(int i=0; i<nli; i++)
         {
-            aiMesh* mesh = ml[i];
+            aiMesh* mesh = ml[i]; 
+
+            GS_ASSERT(mesh->mNumBones != 0);
+
+
+
+            printf("mesh: %02d mesh name= %s \n", i, nl[i]->mName.data);
 
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
-                aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
-
-                struct Mat4 mat;
-                _ConvertMatrix(mat, offset_matrix);
 
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
-                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                Mat4 boneMatrix = mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix));  //node to vertex matrix?
+
+                /*
+                    !!!
+
+                    What if the bone matrix node has an animation channel?
+                */
+
+                //Mat4 tmp = mat4_mult(boneMatrix, mat4_inverse(boneMatrix));
+                mat4_print(boneMatrix);
+
+                GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
+
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
                 aiNode* tempNode = node;
-                while( tempNode)
-                {
-                    //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
-                    
-                    boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
-                    //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
 
+                int _index = 0;
+                while( tempNode )
+                {
+                    _index++;
+
+
+                    printf("\tnode: %02d %02d node name= %s \n", j, _index, tempNode->mName.data);
+
+                    if(_print)
+                    {
+                        printf("\tbone: %02d %02d bone name= %s \n", j, _index, tempNode->mName.data);
+                        //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+                        //mat4_print( _ConvertMatrix(tempNode->mTransformation) ) ;
+                    }
+                        //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
+                    
+                    boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
+                    GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
                     tempNode = tempNode->mParent;
+                    if(tempNode == NULL)
+                    {
+                        //GS_ASSERT(tempNode != NULL);
+                        break;
+                    }
                 }
 
-                 Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
+                const float size = 1.0f;
+                glBegin(GL_LINES);
+                    
+                    Vec3 vv;
+                    vv.x = boneMatrix._f[4*3+0];
+                    vv.y = boneMatrix._f[4*3+1];
+                    vv.z = boneMatrix._f[4*3+2];
 
+                    Vec3 vf;
+                    vf.x = size*boneMatrix._f[4*0+0];
+                    vf.y = size*boneMatrix._f[4*0+1];
+                    vf.z = size*boneMatrix._f[4*0+2];
+
+                    glColor4ub(255,0,0,0);
+
+                    glVertex3f(x+vv.x, y+vv.y, z+vv.z);
+                    glColor4ub(0,255,0,0);
+
+                    //printf("vec: \n");
+                    //vec3_print(vv);
+                    //vec3_print(vf);
+
+                    glVertex3f(x+vv.x+vf.x, y+vv.y+vf.y, z+vv.z+vf.z);
+                glEnd();
             }
         }
 
+
+
         glColor4ub(255,255,255,255);
         glDisable(GL_TEXTURE_2D);
-
+/*
         glBegin(GL_POINTS);
         for(int i=0; i<vlm; i++)
         {
             //glVertex3f(v.v.x, v.v.y, v.v.z);
         }
         glEnd();
-
-        glBegin(GL_LINES);
-        for(int i=0; i<vlm; i++)
-        {
-            //glVertex3f(v.v.x, v.v.y, v.v.z);
-        }
-        glEnd();
-
+*/
         check_gl_error();
-#endif
     }
 
     //mValue
@@ -766,6 +721,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         for(int i=0; i<node_channel_max; i++)
         {
             aiNodeAnim* anim = node_channels[i];
+            //printf("node channel= %s \n", anim->mNodeName.data);
 
             if( strcmp(anim->mNodeName.data, node->mName.data) == 0 )
             {
@@ -801,59 +757,9 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         //printf("scene has %d animations \n", pScene->mNumAnimations);
         aiAnimation* anim = pScene->mAnimations[0];
 
-        //printf("animation0: name= %s duration= %f ticks_per_second= %f number_of_node_channels= %d mesh_channels= %d \n",
-        //    anim->mName.data, anim->mDuration, anim->mTicksPerSecond, anim->mNumChannels, anim->mNumMeshChannels);
-
-    //C_STRUCT aiString mName;
-    /** Duration of the animation in ticks.  */
-    //double mDuration;
-    /** Ticks per second. 0 if not specified in the imported file */
-    //double mTicksPerSecond;
-    /** The number of bone animation channels. Each channel affects a single node. */
-    //unsigned int mNumChannels;
-    //C_STRUCT aiNodeAnim** mChannels;
-
-        //nsigned int mNumAnimations; 
-        //_STRUCT aiAnimation** mAnimations;
-
-
 
         aiNodeAnim** node_channels = anim->mChannels;
         int node_channels_max = anim->mNumChannels;
-
-    /** The name of the node affected by this animation. The node  must exist and it must be unique.*/
-    //C_STRUCT aiString mNodeName;
-
-    /** The number of position keys */
-    //unsigned int mNumPositionKeys;
-
-    /** The position keys of this animation channel. Positions are 
-     * specified as 3D vector. The array is mNumPositionKeys in size.
-     *
-     * If there are position keys, there will also be at least one
-     * scaling and one rotation key.*/
-    //C_STRUCT aiVectorKey* mPositionKeys;
-
-    /** The number of rotation keys */
-    //unsigned int mNumRotationKeys;
-
-    /** The rotation keys of this animation channel. Rotations are 
-     *  given as quaternions,  which are 4D vectors. The array is 
-     *  mNumRotationKeys in size.
-     *
-     * If there are rotation keys, there will also be at least one
-     * scaling and one position key. */
-    //C_STRUCT aiQuatKey* mRotationKeys;
-
-    /** The number of scaling keys */
-    //unsigned int mNumScalingKeys;
-
-    /** The scaling keys of this animation channel. Scalings are 
-     *  specified as 3D vector. The array is mNumScalingKeys in size.
-     *
-     * If there are scaling keys, there will also be at least one
-     * position and one rotation key.*/
-    //C_STRUCT aiVectorKey* mScalingKeys;
 
 
         bool _print  = false;
@@ -887,28 +793,16 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
-
-
                 aiBone* bone = mesh->mBones[j];
                 
-                //aiMatrix4x4 offset_matrix = bone->mOffsetMatrix;
-                //struct Mat4 mat;
-                //_ConvertMatrix(mat, offset_matrix);
-				
-                //printf("%d === \n", i);
-                //mat4_print(mat);
-
-
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
                 // start with the mesh-to-bone matrix 
                 Mat4 boneMatrix = mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix));  //node to vertex matrix?
+                GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
+
                  // and now append all node transformations down the parent chain until we're back at mesh coordinates again
                 aiNode* tempNode = node;
-
-
-                //mat4_print(boneMatrix);
-                //tempNode = NULL;
 
                 int _index = 0;
                 while( tempNode )
@@ -924,18 +818,24 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
                     
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
-                    GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f);
+                    GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
                     //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
                     //armature is the last node that gets multiplied in
-                    if( strcmp(tempNode->mName.data, "Armature") == 0 )
-                        break;
+                    
+                    //if( strcmp(tempNode->mName.data, "Armature") == 0 )
+                    //    break;
                     tempNode = tempNode->mParent;
                     if(tempNode == NULL)
                     {
-                        GS_ASSERT(tempNode != NULL);
+                        //GS_ASSERT(tempNode != NULL);
                         break;
                     }
                 }
+
+
+                //node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                //boneMatrix = get_anim_matrix(frame_time, node_channels, node_channels_max, node);
+                //boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, node), boneMatrix );
 
                 //boneMatrix = mat4_transpose(boneMatrix); //transpose it because its wrong
                 if(_print)
@@ -1284,8 +1184,6 @@ void init()
     /*
         !!!!!
     */
-
-    return;
     
     int bsize;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
@@ -1349,6 +1247,8 @@ void draw()
     struct Vec3 p = ClientState::location_pointer;
 
     bt->draw(p.x, p.y, p.z + 3.0f);
+
+    bt->draw_skeleton(p.x+0.0, p.y+3.0f, p.z + 3.0f);
 
     return;  //DEBUG
 

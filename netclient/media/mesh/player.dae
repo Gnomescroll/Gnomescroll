@@ -5,44 +5,12 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
     </contributor>
-    <created>2012-08-25T13:32:36</created>
-    <modified>2012-08-25T13:32:36</modified>
+    <created>2012-09-01T00:16:18</created>
+    <modified>2012-09-01T00:16:18</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
   <library_effects>
-    <effect id="Material-effect">
-      <profile_COMMON>
-        <technique sid="common">
-          <phong>
-            <emission>
-              <color sid="emission">0 0 0 1</color>
-            </emission>
-            <ambient>
-              <color sid="ambient">0 0 0 1</color>
-            </ambient>
-            <diffuse>
-              <color sid="diffuse">0.64 0.64 0.64 1</color>
-            </diffuse>
-            <specular>
-              <color sid="specular">0.5 0.5 0.5 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
-            <index_of_refraction>
-              <float sid="index_of_refraction">1</float>
-            </index_of_refraction>
-          </phong>
-        </technique>
-        <extra>
-          <technique profile="GOOGLEEARTH">
-            <double_sided>1</double_sided>
-          </technique>
-        </extra>
-      </profile_COMMON>
-      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
-    </effect>
     <effect id="Material_005-effect">
       <profile_COMMON>
         <technique sid="common">
@@ -333,9 +301,6 @@
     </effect>
   </library_effects>
   <library_materials>
-    <material id="Material-material" name="Material">
-      <instance_effect url="#Material-effect"/>
-    </material>
     <material id="Material_005-material" name="Material.005">
       <instance_effect url="#Material_005-effect"/>
     </material>
@@ -365,50 +330,6 @@
     </material>
   </library_materials>
   <library_geometries>
-    <geometry id="Cube_009-mesh" name="Cube.009">
-      <mesh>
-        <source id="Cube_009-mesh-positions">
-          <float_array id="Cube_009-mesh-positions-array" count="24">-0.5209432 2.216018 -0.5197638 -0.5209432 3.273473 -0.5197638 0.53841 3.273473 -0.5197638 0.53841 2.216018 -0.5197638 -0.5209432 2.216018 0.5 -0.5209432 3.273473 0.5 0.53841 3.273473 0.5 0.53841 2.216018 0.5</float_array>
-          <technique_common>
-            <accessor source="#Cube_009-mesh-positions-array" count="8" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="Cube_009-mesh-normals">
-          <float_array id="Cube_009-mesh-normals-array" count="18">-1 0 0 0 1 0 1 0 0 0 -1 0 0 0 -1 0 0 1</float_array>
-          <technique_common>
-            <accessor source="#Cube_009-mesh-normals-array" count="6" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="Cube_009-mesh-map-0">
-          <float_array id="Cube_009-mesh-map-0-array" count="48">0.296875 0.90625 0.296875 0.84375 0.359375 0.84375 0.359375 0.90625 0.359375 0.90625 0.421875 0.90625 0.421875 0.96875 0.359375 0.96875 0.421875 0.90625 0.421875 0.84375 0.484375 0.84375 0.484375 0.90625 0.359375 0.78125 0.421875 0.78125 0.421875 0.84375 0.359375 0.84375 0.546875 0.84375 0.546875 0.90625 0.484375 0.90625 0.484375 0.84375 0.421875 0.84375 0.421875 0.90625 0.359375 0.90625 0.359375 0.84375</float_array>
-          <technique_common>
-            <accessor source="#Cube_009-mesh-map-0-array" count="24" stride="2">
-              <param name="S" type="float"/>
-              <param name="T" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <vertices id="Cube_009-mesh-vertices">
-          <input semantic="POSITION" source="#Cube_009-mesh-positions"/>
-        </vertices>
-        <polylist material="Material" count="6">
-          <input semantic="VERTEX" source="#Cube_009-mesh-vertices" offset="0"/>
-          <input semantic="NORMAL" source="#Cube_009-mesh-normals" offset="1"/>
-          <input semantic="TEXCOORD" source="#Cube_009-mesh-map-0" offset="2" set="0"/>
-          <vcount>4 4 4 4 4 4 </vcount>
-          <p>1 0 0 0 0 1 4 0 2 5 0 3 5 1 4 6 1 5 2 1 6 1 1 7 6 2 8 7 2 9 3 2 10 2 2 11 0 3 12 3 3 13 7 3 14 4 3 15 0 4 16 1 4 17 2 4 18 3 4 19 7 5 20 6 5 21 5 5 22 4 5 23</p>
-        </polylist>
-      </mesh>
-      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
-    </geometry>
     <geometry id="Plane_002-mesh" name="Plane.002">
       <mesh>
         <source id="Plane_002-mesh-positions">
@@ -1076,7 +997,7 @@
         </technique_common>
       </source>
       <source id="Armature_upper_leg_L_pose_matrix-output">
-        <float_array id="Armature_upper_leg_L_pose_matrix-output-array" count="128">0.9999932 -0.001975059 0.003091394 0.375 -0.001952528 -0.9999716 -0.007284104 -2 0.0031057 0.007278025 -0.9999687 4.66174e-5 0 0 0 1 0.6436537 0.6767224 0.3574305 0.375 0.6920329 -0.7140765 0.1057605 -2 0.3268033 0.1792805 -0.9279322 4.66174e-5 0 0 0 1 0.9999932 -0.001975059 0.003091394 0.375 -0.001952528 -0.9999716 -0.007284104 -2 0.0031057 0.007278025 -0.9999687 4.66174e-5 0 0 0 1 0.9999932 -0.001975059 0.003091394 0.375 -0.001952528 -0.9999716 -0.007284104 -2 0.0031057 0.007278025 -0.9999687 4.66174e-5 0 0 0 1 0.9999932 -0.001975059 0.003091394 0.375 -0.001952528 -0.9999716 -0.007284104 -2 0.0031057 0.007278025 -0.9999687 4.66174e-5 0 0 0 1 0.9999932 -0.001975059 0.003091394 0.375 -0.001952528 -0.9999716 -0.007284104 -2 0.0031057 0.007278025 -0.9999687 4.66174e-5 0 0 0 1 0.9999932 -0.001975059 0.003091394 0.375 -0.001952528 -0.9999716 -0.007284104 -2 0.0031057 0.007278025 -0.9999687 4.66174e-5 0 0 0 1 0.9999932 -0.001975059 0.003091394 0.375 -0.001952528 -0.9999716 -0.007284104 -2 0.0031057 0.007278025 -0.9999687 4.66174e-5 0 0 0 1</float_array>
+        <float_array id="Armature_upper_leg_L_pose_matrix-output-array" count="128">0.9999935 -0.001975059 0.003005385 0.375 -0.001953125 -0.9999716 -0.007283926 -2 0.00301969 0.007278025 -0.999969 4.66174e-5 0 0 0 1 0.6436823 0.6767374 0.3573508 0.375 0.6920324 -0.714077 0.1057605 -2 0.3267481 0.1792221 -0.9279629 4.66174e-5 0 0 0 1 0.9999935 -0.001975059 0.003005385 0.375 -0.001953125 -0.9999716 -0.007283926 -2 0.00301969 0.007278025 -0.999969 4.66174e-5 0 0 0 1 0.9999935 -0.001975059 0.003005385 0.375 -0.001953125 -0.9999716 -0.007283926 -2 0.00301969 0.007278025 -0.999969 4.66174e-5 0 0 0 1 0.9999935 -0.001975059 0.003005385 0.375 -0.001953125 -0.9999716 -0.007283926 -2 0.00301969 0.007278025 -0.999969 4.66174e-5 0 0 0 1 0.9999935 -0.001975059 0.003005385 0.375 -0.001953125 -0.9999716 -0.007283926 -2 0.00301969 0.007278025 -0.999969 4.66174e-5 0 0 0 1 0.9999935 -0.001975059 0.003005385 0.375 -0.001953125 -0.9999716 -0.007283926 -2 0.00301969 0.007278025 -0.999969 4.66174e-5 0 0 0 1 0.9999935 -0.001975059 0.003005385 0.375 -0.001953125 -0.9999716 -0.007283926 -2 0.00301969 0.007278025 -0.999969 4.66174e-5 0 0 0 1</float_array>
         <technique_common>
           <accessor source="#Armature_upper_leg_L_pose_matrix-output-array" count="8" stride="16">
             <param name="TRANSFORM" type="float4x4"/>
@@ -1108,7 +1029,7 @@
         </technique_common>
       </source>
       <source id="Armature_lower_leg_L_pose_matrix-output">
-        <float_array id="Armature_lower_leg_L_pose_matrix-output-array" count="128">-0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1 -0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1 -0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1 -0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1 -0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1 -0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1 -0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1 -0.9999934 0.001952528 0.003068506 0 0.001974821 0.9999716 0.007278084 1.257776 -0.003054201 0.007284104 -0.9999688 0 0 0 0 1</float_array>
+        <float_array id="Armature_lower_leg_L_pose_matrix-output-array" count="128">-0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1 -0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1 -0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1 -0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1 -0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1 -0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1 -0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1 -0.9999936 0.001953184 0.002982437 0 0.001974821 0.9999716 0.007278084 1.257776 -0.002968132 0.007283926 -0.999969 0 0 0 0 1</float_array>
         <technique_common>
           <accessor source="#Armature_lower_leg_L_pose_matrix-output-array" count="8" stride="16">
             <param name="TRANSFORM" type="float4x4"/>
@@ -1140,7 +1061,7 @@
         </technique_common>
       </source>
       <source id="Armature_upper_leg_R_pose_matrix-output">
-        <float_array id="Armature_upper_leg_R_pose_matrix-output-array" count="128">0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003149271 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003163576 0.007278263 -0.9999685 1.87489e-5 0 0 0 1</float_array>
+        <float_array id="Armature_upper_leg_R_pose_matrix-output-array" count="128">0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1 0.999993 -0.001975059 0.003148198 -0.375 -0.001952052 -0.9999716 -0.007284462 -2 0.003162503 0.007278263 -0.9999685 1.87489e-5 0 0 0 1</float_array>
         <technique_common>
           <accessor source="#Armature_upper_leg_R_pose_matrix-output-array" count="8" stride="16">
             <param name="TRANSFORM" type="float4x4"/>
@@ -1172,7 +1093,7 @@
         </technique_common>
       </source>
       <source id="Armature_lower_leg_R_pose_matrix-output">
-        <float_array id="Armature_lower_leg_R_pose_matrix-output-array" count="128">-0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.003126204 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003111898 0.007284462 -0.9999687 0 0 0 0 1</float_array>
+        <float_array id="Armature_lower_leg_R_pose_matrix-output-array" count="128">-0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1 -0.9999932 0.001952052 0.00312525 0 0.001974761 0.9999716 0.007278323 1.257777 -0.003110945 0.007284462 -0.9999687 0 0 0 0 1</float_array>
         <technique_common>
           <accessor source="#Armature_lower_leg_R_pose_matrix-output-array" count="8" stride="16">
             <param name="TRANSFORM" type="float4x4"/>
@@ -1228,45 +1149,6 @@
     </animation>
   </library_animations>
   <library_controllers>
-    <controller id="Armature_helmet-skin" name="Armature">
-      <skin source="#Cube_009-mesh">
-        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
-        <source id="Armature_helmet-skin-joints">
-          <Name_array id="Armature_helmet-skin-joints-array" count="1">neck</Name_array>
-          <technique_common>
-            <accessor source="#Armature_helmet-skin-joints-array" count="1" stride="1">
-              <param name="JOINT" type="name"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="Armature_helmet-skin-bind_poses">
-          <float_array id="Armature_helmet-skin-bind_poses-array" count="16">0.9999871 0 -0.00508511 1.62263e-7 0 1 0 -2.25 0.00508511 0 0.9999871 -3.26837e-5 0 0 0 1</float_array>
-          <technique_common>
-            <accessor source="#Armature_helmet-skin-bind_poses-array" count="1" stride="16">
-              <param name="TRANSFORM" type="float4x4"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="Armature_helmet-skin-weights">
-          <float_array id="Armature_helmet-skin-weights-array" count="8">1 1 1 1 1 1 1 1</float_array>
-          <technique_common>
-            <accessor source="#Armature_helmet-skin-weights-array" count="8" stride="1">
-              <param name="WEIGHT" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <joints>
-          <input semantic="JOINT" source="#Armature_helmet-skin-joints"/>
-          <input semantic="INV_BIND_MATRIX" source="#Armature_helmet-skin-bind_poses"/>
-        </joints>
-        <vertex_weights count="8">
-          <input semantic="JOINT" source="#Armature_helmet-skin-joints" offset="0"/>
-          <input semantic="WEIGHT" source="#Armature_helmet-skin-weights" offset="1"/>
-          <vcount>1 1 1 1 1 1 1 1 </vcount>
-          <v>0 0 0 1 0 2 0 3 0 4 0 5 0 6 0 7</v>
-        </vertex_weights>
-      </skin>
-    </controller>
     <controller id="Armature_face_overlay-skin" name="Armature">
       <skin source="#Plane_002-mesh">
         <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
@@ -1630,7 +1512,7 @@
           </technique_common>
         </source>
         <source id="Armature_leg_R-skin-bind_poses">
-          <float_array id="Armature_leg_R-skin-bind_poses-array" count="16">0.9999933 -0.001952052 0.003126382 0.3720692 -0.001974761 -0.9999716 0.007278323 -1.500698 0.003112137 -0.007284462 -0.9999687 -0.009726941 0 0 0 1</float_array>
+          <float_array id="Armature_leg_R-skin-bind_poses-array" count="16">0.9999933 -0.001952052 0.003125309 0.3720692 -0.001974761 -0.9999716 0.007278323 -1.500698 0.003111004 -0.007284462 -0.9999687 -0.009727358 0 0 0 1</float_array>
           <technique_common>
             <accessor source="#Armature_leg_R-skin-bind_poses-array" count="1" stride="16">
               <param name="TRANSFORM" type="float4x4"/>
@@ -1669,7 +1551,7 @@
           </technique_common>
         </source>
         <source id="Armature_leg_L-skin-bind_poses">
-          <float_array id="Armature_leg_L-skin-bind_poses-array" count="16">0.9999935 -0.001952528 0.003068506 -0.3779265 -0.001974821 -0.9999716 0.007278084 -1.499217 0.003054261 -0.007284104 -0.9999688 -0.01203882 0 0 0 1</float_array>
+          <float_array id="Armature_leg_L-skin-bind_poses-array" count="16">0.9999937 -0.001953184 0.002982556 -0.3779276 -0.001974821 -0.9999716 0.007278084 -1.499217 0.002968251 -0.007283926 -0.999969 -0.01200634 0 0 0 1</float_array>
           <technique_common>
             <accessor source="#Armature_leg_L-skin-bind_poses-array" count="1" stride="16">
               <param name="TRANSFORM" type="float4x4"/>
@@ -1720,38 +1602,21 @@
             </node>
           </node>
           <node id="upper_leg_L" name="upper.leg.L" sid="upper_leg_L" type="JOINT">
-            <matrix sid="transform">0.9999932 -0.001975116 0.003091421 0.375 -0.001952554 -0.9999716 -0.007284123 -2 0.003105733 0.007278038 -0.9999687 4.66174e-5 0 0 0 1</matrix>
+            <matrix sid="transform">0.9999934 -0.001975116 0.003005413 0.375 -0.001953181 -0.9999716 -0.007283955 -2 0.003019727 0.007278038 -0.9999689 4.66174e-5 0 0 0 1</matrix>
             <node id="lower_leg_L" name="lower.leg.L" sid="lower_leg_L" type="JOINT">
-              <matrix sid="transform">-0.9999934 0.001952568 0.003068546 -3.95301e-9 0.001974856 0.9999716 0.007278109 1.257776 -0.00305425 0.007284122 -0.9999688 4.28341e-10 0 0 0 1</matrix>
+              <matrix sid="transform">-0.9999936 0.001953224 0.002982479 5.97658e-8 0.001974856 0.9999716 0.00727811 1.257776 -0.00296818 0.007283953 -0.999969 2.02924e-10 0 0 0 1</matrix>
             </node>
           </node>
           <node id="upper_leg_R" name="upper.leg.R" sid="upper_leg_R" type="JOINT">
-            <matrix sid="transform">0.999993 -0.001975073 0.003149295 -0.375 -0.001952089 -0.9999716 -0.007284472 -2 0.003163606 0.007278274 -0.9999685 1.87489e-5 0 0 0 1</matrix>
+            <matrix sid="transform">0.999993 -0.001975073 0.003148201 -0.375 -0.001952097 -0.9999716 -0.00728447 -2 0.003162512 0.007278274 -0.9999685 1.87489e-5 0 0 0 1</matrix>
             <node id="lower_leg_R" name="lower.leg.R" sid="lower_leg_R" type="JOINT">
-              <matrix sid="transform">-0.9999931 0.001952078 0.003126241 -4.37475e-8 0.001974813 0.9999716 0.007278349 1.257777 -0.003111947 0.007284475 -0.9999687 2.29772e-9 0 0 0 1</matrix>
+              <matrix sid="transform">-0.9999932 0.001952092 0.003125287 -6.50054e-8 0.001974814 0.9999716 0.007278348 1.257777 -0.003110993 0.00728447 -0.9999686 2.07787e-9 0 0 0 1</matrix>
             </node>
           </node>
           <node id="neck" name="neck" sid="neck" type="JOINT">
             <matrix sid="transform">0.9999872 -2.18141e-9 0.005047975 -1.69778e-9 2.18139e-9 1 1.04903e-11 1.75 -0.005047975 5.33722e-13 0.9999872 3.26841e-5 0 0 0 1</matrix>
           </node>
         </node>
-      </node>
-      <node id="helmet" type="NODE">
-        <translate sid="location">0 0 0</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
-        <instance_controller url="#Armature_helmet-skin">
-          <skeleton>#root_bone</skeleton>
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="Material" target="#Material-material">
-                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-              </instance_material>
-            </technique_common>
-          </bind_material>
-        </instance_controller>
       </node>
       <node id="face_overlay" type="NODE">
         <translate sid="location">0 0 0</translate>
