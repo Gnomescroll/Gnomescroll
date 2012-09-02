@@ -74,7 +74,7 @@ void init(int argc, char* argv[])
     ServerState::init_base();
 
    ServerState:: main_inited = true;
-    printf("Game starting\n");
+    printf("Game started\n");
 }
 
 void tick()
