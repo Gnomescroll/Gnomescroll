@@ -420,9 +420,7 @@ int run()
             Hud::draw_hud();
             t_hud::draw_hud();
 
-            #ifdef AWESOMIUM
             Awesomium::_draw();
-            #endif
 
             if (input_state.vbo_debug)
                 t_map::draw_vbo_debug(400, 400);
@@ -468,9 +466,7 @@ int run()
         poll_mouse();
         frame_graph->frame_end(7); //stage 3
 
-        #ifdef AWESOMIUM
-            Awesomium::update();
-        #endif
+        Awesomium::update();
 
         // do fps calculation
         int fps_current_tick = _GET_MS_TIME();

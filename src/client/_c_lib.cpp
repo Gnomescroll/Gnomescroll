@@ -95,36 +95,6 @@ dont_include_this_file_in_server
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
-/* Awesonium */
-
-/*
-#ifndef __WIN32__
-    #ifndef __APPLE__
-        #ifdef __GNUC__
-            #define AWESOMIUM
-        #endif
-    #endif
-#endif
-
-#ifdef __APPLE__
-    //#define AWESOMIUM
-    #undef AWESOMIUM
-#endif
-
-#ifdef AWESOMIUM
-    #include <SDL/awesomium/_include.hpp>
-#endif
-*/
-    //#include <SDL/awesomium/_include.hpp>
-
-/* Mob */
-
-/*
-#ifndef __APPLE__
-#include <t_mob/_include.hpp>
-#endif
-*/
-
 #include <t_mob/_include.hpp>
 
 /* Draw utils */
@@ -221,6 +191,9 @@ dont_include_this_file_in_server
 
 #include <chat/interface.cpp>
 
+/* Awesomium */
+#include <SDL/awesomium/_include.hpp>
+
 /* client side map gen / utils */
 //#include <map_gen/hopcroft-karp.cpp>
 //#include <map_gen/dragon.cpp>
@@ -307,10 +280,7 @@ int init_c_lib(int argc, char* argv[])
     
     srand((unsigned int)time(NULL));   // seed the RNG
 
-
-    #ifdef AWESOMIUM
-        Awesomium::init();
-    #endif
+    Awesomium::init();
     
     ClientState::init_lists();
 
@@ -410,9 +380,9 @@ int init_c_lib(int argc, char* argv[])
 
 void close_c_lib()
 {
-    printf("Closing game...\n");
-
     #define TEARDOWN_DEBUG 0
+
+    printf("Closing game...\n");
 
     if (TEARDOWN_DEBUG) printf("t_map end t map\n");
     t_map::end_t_map();
@@ -494,15 +464,13 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("enet teardown\n");
     teardown_network();
 
-    #ifdef AWESOMIUM
-        Awesomium::teardown();
-    #endif
-
-    #undef TEARDOWN_DEBUG
+    Awesomium::teardown();
 
     Log::teardown();
     Options::teardown_option_tables();
     _GS_ASSERT_TEARDOWN();
 
     printf("Game closed\n");
+
+    #undef TEARDOWN_DEBUG
 }

@@ -237,18 +237,20 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     #awesomium
     if OS == 'Windows':
-        pass
+        awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/release/')
+        awesomium_include_path = os.path.abspath('../lib/win32/awesomium/include/')
     elif OS == 'Linux':
         awesomium_lib_path = os.path.abspath('../lib/lin32/awesomium/release/')
         awesomium_include_path = os.path.abspath('../lib/lin32/awesomium/include/')
-        conf.check(
-            lib='awesomium-1.6.5', 
-            use='awesomium-1.6.5', 
-            includes=awesomium_include_path,
-            libpath= awesomium_lib_path,
-            uselib_store='AWESOMIUM') 
-    elif OS == 'Darwin':
-        pass
+    else:
+        assert False
+
+    conf.check(
+        lib='awesomium-1.6.5', 
+        use='awesomium-1.6.5', 
+        includes = [awesomium_include_path],
+        libpath = [awesomium_lib_path],
+        uselib_store='AWESOMIUM') 
 
     #assimp
     if OS == 'Linux':
@@ -266,13 +268,6 @@ def configure(conf, add_flags=[], rm_flags=[]):
         includes = [assimp_inc_path],
         uselib_store='ASSIMP') 
 
-
-    '''
-    P1 = os.path.abspath('../src/c_lib')
-    P2 = os.path.abspath('../src')
-    P3 = os.path.abspath('../src/net_lib')
-    conf.env.INCLUDES += [P1, P2, P3,  '/usr/include']
-    '''
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../lib/lin32/awesomium/include/']
 
     conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
@@ -287,8 +282,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
             conf.env.RPATH += [lib_base_path]   # the libs in the root of dc_mmo/lib are copied from steve's computer. they should not be on the rpath in development 
         else:
             lib_base_path = '$ORIGIN/../lib/lin32/'
-        conf.env.RPATH += [lib_base_path + 'awesomium/release'] #awesonium lib
-        conf.env.RPATH += [lib_base_path + 'assimp/lib'] #assimp lib
+        conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesonium lib
+        conf.env.RPATH += [os.path.join(lib_base_path, 'assimp/lib')] #assimp lib
 
 
 def build(bld):
@@ -330,7 +325,7 @@ def build(bld):
     bld(
         features = 'cxx cxxprogram',
         source = ['../src/client/_client.cpp'],
-        use = common_libraries+time_lib+SDL_libraries+['LUA', 'ASSIMP'],
+        use = common_libraries+time_lib+SDL_libraries+['LUA', 'ASSIMP', 'AWESOMIUM'],
         lib = sound_libraries+png_libs,
         includes = includes,
         libpath = libs,
