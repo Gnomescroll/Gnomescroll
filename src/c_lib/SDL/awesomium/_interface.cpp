@@ -66,6 +66,7 @@ void init()
     printf("Awesomium::init\n");
     
     #ifndef linux
+    // TODO -- non default initializer
     awe_webcore_initialize_default();
     #endif
         
@@ -83,6 +84,9 @@ void init()
     awe_string* locale_path = get_awe_string(locale_path_str);
     awe_string* log_path = get_awe_string("./screenshot");
 
+    //user_agent_fmt = "Gnomescroll/%d";
+    //awe_string* user_agent = get_awe_string("Gnomescroll/%d
+
     //awe_webview_load_html(webView, html_str,awe_string_empty());
 
     awe_webcore_initialize( false, //plugins
@@ -99,7 +103,7 @@ void init()
     true,
     awe_string_empty(),
     awe_string_empty(),
-    awe_string_empty(),
+    awe_string_empty(), // user agent
     awe_string_empty(),
     awe_string_empty(),
     awe_string_empty(),
