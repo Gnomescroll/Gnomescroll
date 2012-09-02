@@ -15,6 +15,9 @@ void load_item_dat()
     start_item_dat();
     int i0 = texture_alias("media/sprites/item/i00.png");
     int i1 = texture_alias("media/sprites/item/i01.png");
+    //int i2 = texture_alias("media/sprites/item/i02.png");
+
+    int p0 = texture_alias("media/sprites/item/p00.png");
 
     item_def(0, IG_ERROR, "error_item");
     s.pretty_name = (char*) "Error";
@@ -155,10 +158,13 @@ void load_item_dat()
     s.cube_height = 1;
 
     // Copper
+
+
     item_def(32, IG_RESOURCE, "copper_ore");
     sprite_def(i1, 3,3);
     s.pretty_name = (char*) "Copper Ore";
     s.max_stack_size = 64;
+
 
     item_def(33, IG_RESOURCE, "copper_bar");
     sprite_def(i1, 3,2);
@@ -370,13 +376,15 @@ void load_item_dat()
     s.max_stack_size = 1;
     s.cube_height = 1;
 
-    item_def(57, IG_MECH, "crystal_seed");
+    item_def(57, IG_MECH_PLACER, "crystal_seed");
     sprite_def(i1, 5,1);
+    s.mech_type_id = t_mech::get_mech_type_id("red_crystal");
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
-    item_def(58, IG_MECH, "crystal_seed2");
+    item_def(58, IG_MECH_PLACER, "crystal_seed2");
     sprite_def(i1, 5,2);
+    s.mech_type_id = t_mech::get_mech_type_id("blue_crystal");
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
@@ -398,7 +406,7 @@ void load_item_dat()
 
 
     item_def(61, IG_RESOURCE, "iron_rod");
-    sprite_def(i1, 6,7);
+    sprite_def(i1, 1,7);
     s.pretty_name = (char*) "Iron Rod";
     s.max_stack_size = 1;
 
@@ -453,7 +461,24 @@ void load_item_dat()
     s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
-    end_item_dat(); // finalize
+	item_def(72, IG_MECH_PLACER, "acadia_seed");
+    sprite_def(p0, 1,2);
+    s.mech_type_id = t_mech::get_mech_type_id("acadia_flower");
+    s.pretty_name = (char*) "Acadia Seed";
+    s.max_stack_size = 64;
+
+    item_def(73, IG_RESOURCE, "acadia_fruit");
+    sprite_def(p0, 1,9);
+    s.max_stack_size = 16;
+    s.pretty_name = (char*) "Acadia Fruit";
+
+    item_def(74, IG_MECH_PLACER, "blob_seed");
+    sprite_def(p0, 3,2);
+    s.mech_type_id = t_mech::get_mech_type_id("blob_flower");
+    s.pretty_name = (char*) "Blob Seed";
+    s.max_stack_size = 64;
+
+	end_item_dat(); // finalize
     
     verify_item_dat();
 }

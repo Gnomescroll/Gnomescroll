@@ -15,7 +15,9 @@
 
     #ifdef __MSVC__
     //#define NO_SDL_GLEXT
-    
+    //#define GLEW_STATIC
+	//#pragma comment(linker, "/NODEFAULTLIB:libc.lib")
+
     #include <SDL.h>
     #include <GL/glew.h>
     //#include <SDL_opengl.h>

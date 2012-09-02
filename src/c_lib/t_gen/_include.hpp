@@ -17,6 +17,7 @@
 
 #if DC_SERVER
 // TODO -- make everything server only
+#include <t_gen/dungeon_generator.hpp>
 #include <t_gen/cave_generator.hpp>
 #include <t_gen/crystals.hpp>
 #endif

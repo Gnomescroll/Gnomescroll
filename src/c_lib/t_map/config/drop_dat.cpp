@@ -149,7 +149,7 @@ void handle_block_drop(int x, int y, int z, int block_type)
     
     for (int i=0; i < block_drop_dat->meta_drop_table[block_type].num_drop; i++)
     {
-        class Item::ItemDropTable* cidt = &block_drop_dat->item_drop_table[i+block_drop_dat->meta_drop_table[block_type].index];
+        struct Item::ItemDropTable* cidt = &block_drop_dat->item_drop_table[i+block_drop_dat->meta_drop_table[block_type].index];
         float p = randf();
 
         if (p <= cidt->drop_cumulative_probabilities[0]) continue;

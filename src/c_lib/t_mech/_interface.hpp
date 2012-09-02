@@ -6,7 +6,7 @@
 namespace t_mech
 {
 
-extern class MECH_LIST* mech_list;
+extern struct MECH_LIST* mech_list;
 
 void init();
 void teardown();

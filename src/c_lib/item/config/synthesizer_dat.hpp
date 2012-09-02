@@ -30,10 +30,17 @@ void load_synthesizer()
     synthesizer_item_set(3,0);
     
     #if !PRODUCTION
-    synthesizer_item_def("crystal_seed", 5);
+    
+    synthesizer_item_def("blob_seed", 5);
     synthesizer_item_set(3,1);
 
-    synthesizer_item_def("crystal_seed2", 5);
+    //synthesizer_item_def("crystal_seed", 5);
+    //synthesizer_item_set(3,1);
+
+    //synthesizer_item_def("crystal_seed2", 5);
+    //synthesizer_item_set(3,2);
+
+    synthesizer_item_def("acadia_seed", 5);
     synthesizer_item_set(3,2);
 
     synthesizer_item_def("agent_spawner", 25);

@@ -52,6 +52,8 @@ int get_max_energy(int item_type);
 int get_max_durability(int item_type);
 
 int get_block_type_id(int item_type);
+int get_mech_type_id(int item_type);
+
 int get_particle_voxel_texture(int item_type);
 
 int get_item_cube_height(int item_type);

@@ -163,7 +163,8 @@ bool chunk_distance_check( float x, float y)
     //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
     //static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
 
-    static const float dist2 = (CAMERA_VIEW_DISTANCE+(sqrt(2)*8))*(CAMERA_VIEW_DISTANCE+(sqrt(2)*8));
+	static const float sqrt_2f = sqrt(2.0f);
+    static const float dist2 = (CAMERA_VIEW_DISTANCE+(sqrt_2f*8))*(CAMERA_VIEW_DISTANCE+(sqrt_2f*8));
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
@@ -568,7 +569,7 @@ void draw_vbo_debug(int x, int y)
         if(i==cx && j == cy) 
             glColor3ub(255, 255, 0);
 
-        glVertex3f(x+(psize+sep)*i+off, y+(psize+sep)*j+off, -0.1);
+        glVertex3f( (float) x+(psize+sep)*i+off, (float) y+(psize+sep)*j+off, -0.1f);
 
     }
 
@@ -595,7 +596,7 @@ void draw_vbo_debug(int x, int y)
         if(i==cx && j == cy) 
             glColor3ub(255, 255, 0);
 
-        glVertex3f(x+(psize+sep)*i+off, y+(psize+sep)*j+off, -0.1);
+        glVertex3f( (float) x+(psize+sep)*i+off, (float) y+(psize+sep)*j+off, -0.1f);
 
     }
 
@@ -630,7 +631,7 @@ void draw_vbo_debug(int x, int y)
         if(i==cx && j == cy) 
             glColor3ub(255, 255, 0);
 
-        glVertex3f(x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1);
+        glVertex3f( (float) x+(psize+sep)*i+off, (float) yoff_1+y+(psize+sep)*j+off, -0.1f);
     }
     glEnd();
 
@@ -664,7 +665,7 @@ void draw_vbo_debug(int x, int y)
         if(i==cx && j == cy) 
             glColor3ub(255, 255, 0);
 
-        glVertex3f(xoff_1+x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1);
+        glVertex3f(xoff_1+x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1f);
     }
     glEnd();
 

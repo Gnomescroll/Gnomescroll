@@ -66,7 +66,7 @@ void parse_sound_triggers(const char *fn)
         return;
     }
     n_lines -= 1;   // first line of csv is metadata
-    sound_file_functions = (struct Soundfile*)malloc(sizeof(struct Soundfile) * n_lines);
+    sound_file_functions = (class Soundfile*)malloc(sizeof(class Soundfile) * n_lines);
 
     i = 0;
     int n = 0;
@@ -258,7 +258,7 @@ void parse_sound_triggers(const char *fn)
                 {
                     printf("OPENAL: double line allocation\n");
                     n_lines *= 2;
-                    struct Soundfile* new_sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_lines);
+                    class Soundfile* new_sound_file_functions = (class Soundfile*)realloc(sound_file_functions, sizeof(class Soundfile) * n_lines);
                     GS_ASSERT(new_sound_file_functions != NULL);
                     if (new_sound_file_functions != NULL)
                         sound_file_functions = new_sound_file_functions;

@@ -207,7 +207,7 @@ class MechListRenderer
         glEnable(GL_CULL_FACE);
 
         glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, 0.1);
+        glAlphaFunc(GL_GREATER, 0.1f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
@@ -290,7 +290,7 @@ class MechListRenderer
 
     void prep_vbo();
 
-    void push_crystal_vertex(const class MECH &m);
+    void push_crystal_vertex(const struct MECH &m);
 
 };
 
@@ -309,7 +309,7 @@ struct _MECH
 };
 */
 
-void MechListRenderer::push_crystal_vertex(const class MECH &m)
+void MechListRenderer::push_crystal_vertex(const struct MECH &m)
 {
 /*
     static const float vin[72] = 
@@ -339,7 +339,7 @@ void MechListRenderer::push_crystal_vertex(const class MECH &m)
     /*
         Do radius render test?
     */
-    if( sphere_fulstrum_test(wx, wy, wz, 0.6) == false)
+    if( sphere_fulstrum_test(wx, wy, wz, 0.6f) == false)
         return;
 
     int tex_id = mech_attribute[m.mech_type].sprite_index;

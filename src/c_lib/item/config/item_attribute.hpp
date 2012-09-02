@@ -17,6 +17,9 @@ namespace Item
         //IG_PLACER
         int block_type_id;   //id of block type that it creates
 
+        //IG_MECH_PLACER_PLAYER
+        int mech_type_id;
+
         //IG_HITSCAN_WEAPON
         int hitscan_fire_cooldown;      // ms per bullet
         int hitscan_damage;             // damage
@@ -72,6 +75,9 @@ namespace Item
             // PUT ALL DEFAULTS HERE
             this->group = group;
             this->item_type = item_type;
+
+            block_type_id = -1; // error value
+            mech_type_id = -1;  // error value
 
             pretty_name = NULL;
             max_energy = NULL_ENERGY;

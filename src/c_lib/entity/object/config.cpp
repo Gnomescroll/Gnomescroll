@@ -33,7 +33,7 @@ class ObjectConfig
     }
 };
 
-static struct ObjectConfig c;
+static class ObjectConfig c;
 static bool started = false;
 
 static void commit_object_config()

@@ -39,7 +39,7 @@ void _reset_mech()
 {
     s.mech_type = -1;
     s.mech_type_class = -1;
-    s.render_type != -1;
+    s.render_type = -1;
     s.sprite_index = 255;
     s.item_drop = false;
 }

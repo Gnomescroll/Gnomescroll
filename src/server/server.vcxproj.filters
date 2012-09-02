@@ -50,6 +50,16 @@
 
 
 
+	
+
+
+
+
+	
+
+
+
+
 	<ItemGroup>
 		<Filter Include="c_lib\agent">
 		</Filter>
@@ -88,8 +98,6 @@
 		<Filter Include="c_lib\entity\component\lists">
 		</Filter>
 		<Filter Include="c_lib\entity\components">
-		</Filter>
-		<Filter Include="c_lib\entity\components\draw">
 		</Filter>
 		<Filter Include="c_lib\entity\components\health">
 		</Filter>
@@ -169,6 +177,8 @@
 		</Filter>
 		<Filter Include="c_lib\t_map">
 		</Filter>
+		<Filter Include="c_lib\t_map\config">
+		</Filter>
 		<Filter Include="c_lib\t_map\glsl">
 		</Filter>
 		<Filter Include="c_lib\t_map\net">
@@ -178,6 +188,8 @@
 		<Filter Include="c_lib\t_map\server">
 		</Filter>
 		<Filter Include="c_lib\t_mech">
+		</Filter>
+		<Filter Include="c_lib\t_mech\config">
 		</Filter>
 		<Filter Include="c_lib\t_mech\net">
 		</Filter>
@@ -205,11 +217,7 @@
 		</Filter>
 		<Filter Include="c_lib\t_map\common">
 		</Filter>
-		<Filter Include="c_lib\t_map\config">
-		</Filter>
 		<Filter Include="c_lib\t_mech\common">
-		</Filter>
-		<Filter Include="c_lib\t_mech\config">
 		</Filter>
 	</ItemGroup>
 
@@ -250,7 +258,7 @@
 	<ClInclude Include="..\c_lib\animations\block_damage.cpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\confetti.cpp">
+	<ClInclude Include="..\c_lib\animations\colored_voxel_particle.cpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\emitter.cpp">
@@ -343,7 +351,16 @@
 	<ClInclude Include="..\c_lib\common\compression\tinfl.c">
 		<Filter>c_lib\common\compression</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\common\draw\colored_voxel.cpp">
+		<Filter>c_lib\common\draw</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\common\draw\draw.cpp">
+		<Filter>c_lib\common\draw</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\common\draw\textured_voxel.cpp">
+		<Filter>c_lib\common\draw</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\common\draw\voxel.cpp">
 		<Filter>c_lib\common\draw</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\lua\lua.cpp">
@@ -394,9 +411,6 @@
 	<ClInclude Include="..\c_lib\entity\components\dimension.cpp">
 		<Filter>c_lib\entity\components</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\components\explosion.cpp">
 		<Filter>c_lib\entity\components</Filter>
 	</ClInclude>
@@ -444,18 +458,6 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\components\waiting.cpp">
 		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\billboard_sprite.cpp">
-		<Filter>c_lib\entity\components\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\colored_voxel.cpp">
-		<Filter>c_lib\entity\components\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\textured_voxel.cpp">
-		<Filter>c_lib\entity\components\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\voxel.cpp">
-		<Filter>c_lib\entity\components\draw</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\components\health\hit_points.cpp">
 		<Filter>c_lib\entity\components\health</Filter>
@@ -553,9 +555,6 @@
 	<ClInclude Include="..\c_lib\entity\objects\mobs\spawner.cpp">
 		<Filter>c_lib\entity\objects\mobs</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\compass.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\cube_selector.cpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
@@ -605,6 +604,9 @@
 		<Filter>c_lib\item</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\config\item_drop.cpp">
+		<Filter>c_lib\item\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\item\config\item_drop_alt.cpp">
 		<Filter>c_lib\item\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\container\client.cpp">
@@ -850,9 +852,6 @@
 	<ClInclude Include="..\c_lib\sound\csv_parser.cpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\net_event.cpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\openal.cpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
@@ -955,6 +954,9 @@
 	<ClInclude Include="..\c_lib\t_map\_interface.cpp">
 		<Filter>c_lib\t_map</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\config\drop_dat.cpp">
+		<Filter>c_lib\t_map\config</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\glsl\cache.cpp">
 		<Filter>c_lib\t_map\glsl</Filter>
 	</ClInclude>
@@ -987,6 +989,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mech\_interface.cpp">
 		<Filter>c_lib\t_mech</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\config\drop_dat.cpp">
+		<Filter>c_lib\t_mech\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mech\net\CtoS.cpp">
 		<Filter>c_lib\t_mech\net</Filter>
@@ -1123,10 +1128,10 @@
 	<ClInclude Include="..\c_lib\animations\block_damage.hpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\common.hpp">
+	<ClInclude Include="..\c_lib\animations\colored_voxel_particle.hpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\confetti.hpp">
+	<ClInclude Include="..\c_lib\animations\common.hpp">
 		<Filter>c_lib\animations</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\emitter.hpp">
@@ -1225,7 +1230,16 @@
 	<ClInclude Include="..\c_lib\common\crash_report\stack_trace.hpp">
 		<Filter>c_lib\common\crash_report</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\common\draw\colored_voxel.hpp">
+		<Filter>c_lib\common\draw</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\common\draw\draw.hpp">
+		<Filter>c_lib\common\draw</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\common\draw\textured_voxel.hpp">
+		<Filter>c_lib\common\draw</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\common\draw\voxel.hpp">
 		<Filter>c_lib\common\draw</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\lua\lua.hpp">
@@ -1300,9 +1314,6 @@
 	<ClInclude Include="..\c_lib\entity\components\dimension.hpp">
 		<Filter>c_lib\entity\components</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\components\explosion.hpp">
 		<Filter>c_lib\entity\components</Filter>
 	</ClInclude>
@@ -1350,18 +1361,6 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\components\waiting.hpp">
 		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\billboard_sprite.hpp">
-		<Filter>c_lib\entity\components\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\colored_voxel.hpp">
-		<Filter>c_lib\entity\components\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\textured_voxel.hpp">
-		<Filter>c_lib\entity\components\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\draw\voxel.hpp">
-		<Filter>c_lib\entity\components\draw</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\components\health\hit_points.hpp">
 		<Filter>c_lib\entity\components\health</Filter>
@@ -1468,9 +1467,6 @@
 	<ClInclude Include="..\c_lib\entity\objects\mobs\spawner.hpp">
 		<Filter>c_lib\entity\objects\mobs</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\compass.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\cube_selector.hpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
@@ -1541,6 +1537,9 @@
 		<Filter>c_lib\item\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\config\item_drop.hpp">
+		<Filter>c_lib\item\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\item\config\item_drop_alt.hpp">
 		<Filter>c_lib\item\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\config\smelting_dat.hpp">
@@ -1819,9 +1818,6 @@
 	<ClInclude Include="..\c_lib\sound\csv_parser.hpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\net_event.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\openal.hpp">
 		<Filter>c_lib\sound</Filter>
 	</ClInclude>
@@ -1850,6 +1846,12 @@
 		<Filter>c_lib\state</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\cave_generator.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\crystals.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\dungeon_generator.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\noise_map.hpp">
@@ -1987,16 +1989,13 @@
 	<ClInclude Include="..\c_lib\t_map\common\map_element.hpp">
 		<Filter>c_lib\t_map\common</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\common\types.hpp">
+		<Filter>c_lib\t_map\common</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\config\block_dat.hpp">
 		<Filter>c_lib\t_map\config</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\config\config_util.hpp">
-		<Filter>c_lib\t_map\config</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\config\drop_dat.hpp">
-		<Filter>c_lib\t_map\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\config\drop_table.hpp">
 		<Filter>c_lib\t_map\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\config\_interface.hpp">
@@ -2071,6 +2070,9 @@
 	<ClInclude Include="..\c_lib\t_mech\common\common.hpp">
 		<Filter>c_lib\t_mech\common</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mech\config\drop_dat.hpp">
+		<Filter>c_lib\t_mech\config</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mech\config\mech_dat.hpp">
 		<Filter>c_lib\t_mech\config</Filter>
 	</ClInclude>
@@ -2084,6 +2086,9 @@
 		<Filter>c_lib\t_mech\net</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mob\cAnimationController.hpp">
+		<Filter>c_lib\t_mob</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mob\cleanup.hpp">
 		<Filter>c_lib\t_mob</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mob\mesh_loader.hpp">
@@ -2150,6 +2155,9 @@
 		<Filter>net_lib\common</Filter>
 	</ClInclude>
 	<ClInclude Include="..\net_lib\common\packet_id_counter.hpp">
+		<Filter>net_lib\common</Filter>
+	</ClInclude>
+	<ClInclude Include="..\net_lib\common\types.hpp">
 		<Filter>net_lib\common</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\agent\agent_include.h">

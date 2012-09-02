@@ -273,10 +273,11 @@ void place_energy_core(int agent_id, ItemID item_id, int item_type)
     decrement_stack(agent_id, item_id, item_type);
 }
 
+//IG_MECH_PLACER
 
 void place_mech(int agent_id, ItemID item_id, int item_type)
 {
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH);
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
     
 
     //class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Objects::ENERGY_CORE_HEIGHT);
@@ -285,10 +286,11 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
 
     //printf("fuck: %i %i \n", item_type, Item::dat_get_item_type("crystal_seed") );
 
-    static int crystal = Item::get_item_type("crystal_seed");
 
-    if(item_type == crystal)
-    {
+    //static int crystal = Item::get_item_type("crystal_seed");
+
+    //if(item_type == crystal)
+    //{
         Agent_state* a = ServerState::agent_list->get(agent_id);
         GS_ASSERT(a != NULL);
         if (a == NULL) return;
@@ -303,30 +305,33 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         if (b[2] <= 0) return;  // can't place on nothing
         if (!isSolid(b[0], b[1], b[2]-1)) return;
 
-
+/*
         static const int n_crystals = 3;
-        static int red_crystal_id = t_mech::get_mech_type("red_crystal");
-        static int blue_crystal_id = t_mech::get_mech_type("blue_crystal");
-        static int green_crystal_id = t_mech::get_mech_type("green_crystal");
+        static int red_crystal_id = t_mech::get_mech_type_id("red_crystal");
+        static int blue_crystal_id = t_mech::get_mech_type_id("blue_crystal");
+        static int green_crystal_id = t_mech::get_mech_type_id("green_crystal");
         int crystals[n_crystals] = { red_crystal_id, blue_crystal_id, green_crystal_id };
         for (int i=0; i<n_crystals; i++)
-            ASSERT_VALID_MECH_TYPE(crystals[i]);
+*/
+        int mech_type_id = Item::get_mech_type_id(item_type);
 
-        int crystal_id = crystals[randrange(0, n_crystals-1)];
+        GS_ASSERT(mech_type_id != -1);
+        ASSERT_VALID_MECH_TYPE(mech_type_id);
+
+        //int crystal_id = crystals[randrange(0, n_crystals-1)];
     
         if( t_mech::can_place_crystal(b[0],b[1],b[2], 0) == true)
         {
-            printf("place crystal %d: at %d %d %d \n", crystal_id, b[0],b[1],b[2] );
-            t_mech::create_crystal(b[0],b[1],b[2], crystal_id);
-        
+            printf("place crystal %d: at %d %d %d \n", mech_type_id, b[0],b[1],b[2] );
+            t_mech::create_crystal(b[0],b[1],b[2], mech_type_id);
         }
         else
         {
 
         }
         //decrement_stack(agent_id, item_id, item_type);
-    }
-
+    //}
+/*
     static int crystal2 = Item::get_item_type("crystal_seed2");
 
     if(item_type == crystal2)
@@ -363,6 +368,7 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
         //t_mech::create_crystal(b[0],b[1],b[2] );
         //decrement_stack(agent_id, item_id, item_type);
     }
+*/
 }
 
 #endif

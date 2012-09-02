@@ -26,7 +26,7 @@ void init_drop_dat()
     GS_ASSERT(drop_dat == NULL);
     drop_dat = new Item::ItemDropConfig;
     drop_dat->init("mech", MAX_MECHS);
-    drop_dat->get_id_from_name = &get_mech_type;
+    drop_dat->get_id_from_name = &get_mech_type_id;
     drop_dat->get_name_from_id = &get_mech_name;
     drop_dat->add_drop_callback = &add_drop_callback;
 }
@@ -63,6 +63,12 @@ void load_drop_dat()
         b->set_drop(0.15f, 2);
         b->set_drop(0.075f, 3);
 
+    b->def_drop("acadia_flower");
+        b->add_drop("acadia_fruit", 3);
+        b->set_drop(0.70f, 1);
+        b->set_drop(0.15f, 2);
+        b->set_drop(0.075f, 3);
+
     b->end();
 
     b->save_to_file();
@@ -75,7 +81,7 @@ void handle_drop(int x, int y, int z, int type)
     
     for (int i=0; i < drop_dat->meta_drop_table[type].num_drop; i++)
     {
-        class Item::ItemDropTable* cidt = &drop_dat->item_drop_table[i+drop_dat->meta_drop_table[type].index];
+        struct Item::ItemDropTable* cidt = &drop_dat->item_drop_table[i+drop_dat->meta_drop_table[type].index];
         float p = randf();
 
         if (p <= cidt->drop_cumulative_probabilities[0]) continue;

@@ -1379,7 +1379,7 @@ ContainerActionType crusher_crush_alpha_action_decision_tree(int agent_id, int c
     #if DC_CLIENT
     ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return CONTAINER_ACTION_NONE;
-    if (!container->type == CONTAINER_TYPE_CRUSHER) return CONTAINER_ACTION_NONE;
+    if (container->type != CONTAINER_TYPE_CRUSHER) return CONTAINER_ACTION_NONE;
     ItemContainerCrusherUI* crusher = (ItemContainerCrusherUI*)container;
     int item_type = crusher->get_input_slot_type();
     if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
@@ -1388,7 +1388,7 @@ ContainerActionType crusher_crush_alpha_action_decision_tree(int agent_id, int c
     #if DC_SERVER
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return CONTAINER_ACTION_NONE;
-    if (!container->type == CONTAINER_TYPE_CRUSHER) return CONTAINER_ACTION_NONE;
+    if (container->type != CONTAINER_TYPE_CRUSHER) return CONTAINER_ACTION_NONE;
     ItemContainerCrusher* crusher = (ItemContainerCrusher*)container;
     ItemID item_id = crusher->get_input_slot();
     if (item_id == NULL_ITEM) return CONTAINER_ACTION_NONE;
