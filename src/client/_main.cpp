@@ -420,6 +420,8 @@ int run()
             Hud::draw_hud();
             t_hud::draw_hud();
 
+            Hud::draw_harvest_bar(400,400);
+
             if (input_state.awesomium)
             {
                 glDisable(GL_DEPTH_TEST);

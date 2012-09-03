@@ -24,7 +24,8 @@ dont_include_this_file_in_server
 #include <item/properties.hpp>
 #include <item/config/item_attribute.hpp>
 
-#include <hud/hud.hpp>
+//#include <hud/hud.hpp>
+#include <hud/_interface.hpp>
 
 void PlayerAgent_action::hitscan_laser(int weapon_type)
 {

@@ -3,18 +3,13 @@
 #include <physics/mat4.hpp>
 
 #ifdef __MSVC__
-//#undef __cplusplus
-
 extern "C"
 {
-
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h> //defines for postprocessor
 #include <assimp/config.h>
-
 }
-//#define __cplusplus
 #else
     #undef __cplusplus
     extern "C"
@@ -64,7 +59,6 @@ class BoneTree
         if (bvln != NULL) delete[] bvln;
         if (bvll != NULL) delete[] bvll;
     }
-
 
     aiScene* pScene;    //the scene
 
@@ -709,9 +703,22 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         m._f[10] = 1 - 2 * ( xx + yy );
         m._f[11] = 0.0f;
 
+        m._f[12] = 0.0f;
+        m._f[13] = 0.0f;
+        m._f[14] = 0.0f;
+
+        m = mat4_transpose(m);
+
         m._f[12] = pos.x;
         m._f[13] = pos.y;
         m._f[14] = pos.z;
+
+/*
+        m._f[12] = 0.0f;
+        m._f[13] = 0.0f;
+        m._f[14] = 0.0f;
+*/
+
         m._f[15] = 1.0f;
 
         return m;
