@@ -30,13 +30,13 @@ extern "C"
 namespace t_mob
 {
 
-    struct ModelVertex
+    struct _Vertex
     {
         struct Vec3 v;
         float ux,uy;
     };
 
-    struct VertexWeight
+    struct _VertexWeight
     {
         int bone_index; //index into bone matrix
         int vertex;		//mesh vertex index
@@ -86,7 +86,7 @@ class ModelLoader
 
     int vli;                //vertex list index
     int vlm;                //vertex list max
-    struct ModelVertex* tvl;    //temporary vertex list, for drawing
+    struct _Vertex* tvl;    //temporary vertex list, for drawing
 
     int* vll;           //offset of vertices in list for each mesth
     int* vln;           //number of vertices in each mech
@@ -110,7 +110,7 @@ class ModelLoader
 
         //set_mesh_list();
         count_vertices();
-        tvl = new ModelVertex[vlm];
+        tvl = new _Vertex[vlm];
 
         vll = new int[nlm];
         vln = new int[nlm];
@@ -211,8 +211,8 @@ class ModelLoader
     }
 
     int bvlm;               //base vertex list max;
-    struct ModelVertex* bvl;    //base vertex list
-    struct ModelVertex* tbvl;   //base vertex list for matrix transforms/drawing
+    struct _Vertex* bvl;    //base vertex list
+    struct _Vertex* tbvl;   //base vertex list for matrix transforms/drawing
 
     int* bvlo;              //offset for vertices in base list
     int* bvln;              //number of vertices in base vertex list
@@ -240,8 +240,8 @@ class ModelLoader
         }
 
         bvlm = vcount;
-        bvl = new ModelVertex[bvlm];
-        tbvl = new ModelVertex[bvlm];
+        bvl = new _Vertex[bvlm];
+        tbvl = new _Vertex[bvlm];
 
         bvllm = 3*fcount;
         bvll = new int[bvllm];
@@ -261,7 +261,7 @@ class ModelLoader
                 aiVector3D pos = mesh->mVertices[j];
                 aiVector3D tex = mesh->mTextureCoords[0][j];
 
-                struct ModelVertex v; 
+                struct _Vertex v; 
                 v.v.x = pos.x;
                 v.v.y = pos.y;
                 v.v.z = pos.z;
@@ -297,8 +297,8 @@ class ModelLoader
     }
 
     //int vlm;          //vertex list max
-    //struct ModelVertex* vl;   //vertex list
-    //struct ModelVertex* tvl; //temporary vertex list, for drawing
+    //struct _Vertex* vl;   //vertex list
+    //struct _Vertex* tvl; //temporary vertex list, for drawing
     //int vli;          //vertex list index
     //int* vll;         //vertex list loop
     //int* vln;         //number of vertices in mesh
@@ -560,18 +560,50 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
 };
 
+/*
+    for(int i=0; i<nli; i++)
+        aiMesh* mesh = ml[i];
+*/
+
+/*
+    struct _Vertex
+    {
+        struct Vec3 v;
+        float ux,uy;
+    };
+
+    struct _VertexWeight
+    {
+        int bone_index; //index into bone matrix
+        int vertex;     //mesh vertex index
+        float weight;   //weight
+    };    
+*/
 
 class BodyPartMesh
 {
 
 	public:
 
+    char* mesh_name;
+
     int* vll;           //offset of vertices in list for each mesth
     int* vln;           //number of vertices in each mech
 
+    int bvlm;                   //base vertex list max
+    struct _Vertex* bvl;        //base vertex list
+
+    int vwlm;
+    struct _VertexWeight vwl;   //vertex weight list
+
+    int vlm;                    //vertex list max
+    struct _Vertex* vl;         //vertex list
+
 	BodyPartMesh()
 	{
-
+        vbl = NULL;
+        vwl = NULL;
+        vl  = NULL;
 	}
 
 	~BodyPartMesh()
@@ -579,43 +611,36 @@ class BodyPartMesh
 
 	}
 
-
-	void load(class ModelLoader* ml, int mesh_index)
+    //assumes only one mesh per node
+	void load(class ModelLoader* ml, int mesh_index, aiMesh* mesh, aiNode* node)
 	{
 
 		int vll = ml->vll[mesh_index];
 		int vln = ml->vln[mesh_index];
 
+        //copy name
+        mesh_name = new char[strlen[node->mName.data]+1];
+        mesh_name = strcpy(mesh_name, node->mName.data);
+
+        //copy base list
+        int bvl_offset = ml->bvlo[mesh_index];
+        int bvl_num = ml->bvln[mesh_index];
+
+        bvl = new _Vertex[bvl_num];
+        bvlm = bvl_num;
+
+        for(int i=0; i<bvlm; i++)
+            bvl[i] = ml->bvl[i+bvl_offset];
+
+        //allocate vertex list
+
+        int vl_num = ml->vl[mesh_index];
+
+        vl = new _Vertex[vl_num];
+        vlm = vl_num;
 
 
-
-    for(int i=0; i<bvlm; i++)
-    {
-        tbvl[i].ux = bvl[i].ux;
-        tbvl[i].uy = bvl[i].uy;
-
-        tbvl[i].v.x = 0.0;  // 0.0f + x
-        tbvl[i].v.y = 0.0;
-        tbvl[i].v.z = 0.0;
-    }
-    //printf("nli= %i \n", nli);
-
-    int count = 0;
-    for(int i=0; i<nli; i++)
-    {
-        aiMesh* mesh = ml[i];
-
-        //printf("%i: num bones= %i \n", i, mesh->mNumBones);
-
-        int offset = bvlo[i];
-        int num = bvln[i];
-
-        GS_ASSERT(mesh->mNumBones != 0);
-
-
-        if(_print)
-            printf("mesh: %02d mesh name= %s \n", i, nl[i]->mName.data);
-
+#if 0
         for(unsigned int j=0; j<mesh->mNumBones; j++)
         {
             aiBone* bone = mesh->mBones[j];
@@ -716,12 +741,16 @@ class BodyPartMesh
 
     glBegin(GL_TRIANGLES);
     for(int i=0; i<vlm; i++)
-        struct ModelVertex v = tvl[i];
+        struct _Vertex v = tvl[i];
         glTexCoord2f(v.ux, v.uy );
         glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
 
 
 	}
+
+#endif 
+
+    }
 };
 
 void ModelLoader::init_texture()
@@ -907,7 +936,7 @@ void ModelLoader::draw(float x, float y, float z)
     glBegin(GL_TRIANGLES);
     for(int i=0; i<vlm; i++)
     {
-        struct ModelVertex v = tvl[i];
+        struct _Vertex v = tvl[i];
 
         //vec3_print(v.v);
         glTexCoord2f(v.ux, v.uy );
