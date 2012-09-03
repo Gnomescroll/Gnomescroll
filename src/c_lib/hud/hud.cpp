@@ -420,31 +420,6 @@ void draw_hud_text()
     end_font_draw();
 }
 
-void draw_hud()
-{
-    // hud projected names should be underneath everything
-    
-    start_font_draw();
-    HudFont::reset_default();
-    HudFont::set_texture();
-    Particle::billboard_text_hud_list->draw();
-    CHECK_GL_ERROR();
-    ClientState::agent_list->draw_names();
-    CHECK_GL_ERROR();
-    end_font_draw();
-    CHECK_GL_ERROR();
-
-    draw_hud_textures();
-
-    CHECK_GL_ERROR();
-
-    draw_hud_text();
-
-    CHECK_GL_ERROR();
-
-    glColor4ub(255,255,255,255);
-}
-
 /* HUD */
 
 void HUD::init()

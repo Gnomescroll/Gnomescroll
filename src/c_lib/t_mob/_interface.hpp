@@ -65,7 +65,6 @@ class BoneTree
         if (bvll != NULL) delete[] bvll;
     }
 
-
     aiScene* pScene;    //the scene
 
     int nlm;        //node list max
