@@ -590,20 +590,21 @@ class BodyPartMesh
     int bvlm;                   //base vertex list max
     struct _Vertex* bvl;        //base vertex list
 
-    int vwlm;
-    struct _VertexWeight* vwl;  //vertex weight list
-
-    int vlm;                    //vertex list max
     struct _Vertex* vl;         //vertex list
-    
+    int vlm;                    //vertex list max
+
+    struct _VertexWeight* vwl;  //vertex weight list
+    int vwlm;                   //vertex weight list
+
     int* via;                   //vertex index array
     int viam;
 
 	BodyPartMesh()
 	{
         bvl = NULL;
-        vwl = NULL;
         vl  = NULL;
+        vwl = NULL;
+        via = NULL;
 	}
 
 	~BodyPartMesh()
@@ -614,9 +615,6 @@ class BodyPartMesh
     //assumes only one mesh per node
 	void load(class ModelLoader* ml, int mesh_index, aiMesh* mesh, aiNode* node)
 	{
-
-		//int vll = ml->vll[mesh_index];
-		//int vln = ml->vln[mesh_index];
 
         //copy name
         mesh_name = new char[strlen(node->mName.data)+1];
@@ -633,13 +631,11 @@ class BodyPartMesh
             bvl[i] = ml->bvl[i+bvl_offset];
 
         //allocate vertex list
-
         int vl_num = ml->vln[mesh_index];
         vl = new _Vertex[vl_num];
         vlm = vl_num;
 
         //load vertex index array
-
         viam = ml->viam;
         via = new int[viam];
         for(int i;i<viam;i++)
