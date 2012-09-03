@@ -1,4 +1,3 @@
-
 #include "_interface.hpp"
 
 #include <SDL/awesomium/viewport_class.hpp>
@@ -125,6 +124,32 @@ void teardown()
     if (cv != NULL) delete cv; 
     if (viewport_manager != NULL) delete viewport_manager; 
     awe_webcore_shutdown();
+}
+
+void SDL_keyboard_event(const SDL_Event* event)
+{
+    GS_ASSERT_LIMIT(cv != NULL, 1);
+    if (cv == NULL) return;
+    injectSDLKeyEvent(cv->webView, event);
+}
+
+void SDL_mouse_event(const SDL_Event* event)
+{
+    GS_ASSERT_LIMIT(cv != NULL, 1);
+    if (cv == NULL) return;
+    injectSDLMouseEvent(cv->webView, event);
+}
+
+void enable()
+{
+    if (cv == NULL) return;
+    cv->focus();
+}
+
+void disable()
+{
+    if (cv == NULL) return;
+    cv->unfocus();
 }
 
 }   // Awesomium

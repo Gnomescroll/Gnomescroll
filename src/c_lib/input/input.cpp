@@ -2,8 +2,7 @@
 
 #include <SDL/SDL_functions.h>
 #include <input/handlers.hpp>
-
-static SDL_Event Event;
+#include <SDL/awesomium/_interface.hpp>
 
 static int numkeys;
 static Uint8* keystate;
@@ -82,37 +81,39 @@ int process_events()
         input_state.ignore_next_right_click_event = true;
     }
 
-    while (SDL_PollEvent(&Event))
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
     { //returns 0 if no event
-        Event.user.code = SDL_EVENT_USER_NONE;
-        switch (Event.type)
+        event.user.code = SDL_EVENT_USER_NONE;
+
+        switch (event.type)
         {
             case SDL_QUIT:
-                quit_event_handler(&Event);
+                quit_event_handler(&event);
                 break;
 
             case SDL_ACTIVEEVENT:
-                active_event_handler(&Event);
+                active_event_handler(&event);
                 break;
 
             case SDL_KEYDOWN:
-                key_down_handler(&Event);
+                key_down_handler(&event);
                 break;
 
             case SDL_KEYUP:
-                key_up_handler(&Event);
+                key_up_handler(&event);
                 break;
 
             case SDL_MOUSEMOTION:
-                mouse_motion_handler(&Event);
+                mouse_motion_handler(&event);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                mouse_button_down_handler(&Event);
+                mouse_button_down_handler(&event);
                 break;
                 
             case SDL_MOUSEBUTTONUP:
-                mouse_button_up_handler(&Event);
+                mouse_button_up_handler(&event);
                 break;
 
             default: break;
@@ -366,7 +367,7 @@ void poll_mouse()
 {
     GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
     if (MOUSE_MOVEMENT_ARRAY == NULL) return;
-    if (input_state.agent_container || input_state.container_block) return;
+    if (mouse_unlocked_for_ui_element()) return;
 
     if (input_state.ignore_mouse_motion)
     {   // flush mouse buffer

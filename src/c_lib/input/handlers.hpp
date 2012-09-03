@@ -53,7 +53,11 @@ struct InputState
     bool mouse_focus;  // mouse
     bool input_focus;  // keyboard
     bool app_active;    // useless/does not trigger. supposedly minimizing/maximizing window
-    
+
+    // awesomium;
+    bool awesomium;
+
+    // freezes frustum (probably not used anymore)
     bool frustum;
 };
 
@@ -61,6 +65,8 @@ extern InputState input_state;
 
 void init_input_state();
 void update_input_state();
+
+bool mouse_unlocked_for_ui_element();
 
 // handlers
 void key_down_handler(SDL_Event* event);

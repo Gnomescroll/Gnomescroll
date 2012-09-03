@@ -420,9 +420,12 @@ int run()
             Hud::draw_hud();
             t_hud::draw_hud();
 
-            glDisable(GL_DEPTH_TEST);
-            Awesomium::draw();
-            glEnable(GL_DEPTH_TEST);
+            if (input_state.awesomium)
+            {
+                glDisable(GL_DEPTH_TEST);
+                Awesomium::draw();
+                glEnable(GL_DEPTH_TEST);
+            }
 
             if (input_state.vbo_debug)
                 t_map::draw_vbo_debug(400, 400);
@@ -468,6 +471,12 @@ int run()
         poll_mouse();
         frame_graph->frame_end(7); //stage 3
 
+        // maybe don't update if awesomium window not shown?
+        /*
+         * Updates the WebCore and allows it to conduct various operations such as
+         * updating the render buffer of each WebView, destroying any WebViews that
+         * are queued for destruction, and invoking any queued callback events.
+         */
         Awesomium::update();
 
         // do fps calculation

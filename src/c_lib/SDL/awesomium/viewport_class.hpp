@@ -35,181 +35,179 @@ class ChromeViewport
         awe_webview* webView;
         unsigned int tex;
 
-        ChromeViewport() :
-        inFocus(false), tex(0)
-        {
-            this->xoff = (int) (_xresf * 0.125f);
-            this->yoff = (int) (_yresf * 0.125f);    // from bottom
-            this->width = (int) (_xresf * 0.75f);
-            this->height = (int) (_yresf * 0.75f);
+    ChromeViewport() :
+    inFocus(false), tex(0)
+    {
+        this->xoff = (int) (_xresf * 0.125f);
+        this->yoff = (int) (_yresf * 0.125f);    // from bottom
+        this->width = (int) (_xresf * 0.75f);
+        this->height = (int) (_yresf * 0.75f);
 
-            this->init_webview();
-            this->init_render_surface();
-            this->load_first_url();
+        this->init_webview();
+        this->init_render_surface();
+        this->load_first_url();
+    }
+
+    void load_first_url()
+    {
+        awe_string* login_url = get_awe_string(GNOMESCROLL_URL "login");
+
+        awe_webview_load_url(
+            this->webView,
+            login_url,  // url
+            awe_string_empty(), // frame name
+            awe_string_empty(), // username
+            awe_string_empty()  // password
+        );
+
+        awe_string_destroy(login_url);
+    }
+
+    ~ChromeViewport()
+    {
+        if (this->webView != NULL) awe_webview_destroy(this->webView);
+    }
+
+    void init_webview()
+    {
+        this->webView = awe_webcore_create_webview(this->width, this->height, false);
+        //default loading
+
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+
+        awe_webview_set_transparent(this->webView, 1); ///preserve transpanency of window
+        //Sets whether or not pages should be rendered with transparency preserved.
+        //(ex, for pages with style="background-color:transparent")
+    }
+
+    void init_render_surface()
+    {
+        GS_ASSERT(this->tex == 0);
+        const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
+
+        GS_ASSERT(renderBuffer != NULL);
+        if (renderBuffer == NULL) return;
+       
+        glEnable(GL_TEXTURE_2D);
+        glGenTextures(1, &this->tex);
+
+        glBindTexture(GL_TEXTURE_2D, this->tex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        //awe_renderbuffer_get_buffer(renderBuffer),
+        //awe_renderbuffer_get_width(renderBuffer),
+        //awe_renderbuffer_get_height(renderBuffer),
+        //awe_renderbuffer_get_rowspan(renderBuffer)
+
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
+
+        glDisable(GL_TEXTURE_2D);
+
+        CHECK_GL_ERROR();
+    }
+
+    void update_webview()
+    {
+        if(!awe_webview_is_dirty(this->webView) || awe_webview_is_loading_page(this->webView)) return;
+        //awe_rect rect = awe_webview_get_dirty_bounds(webView);
+        GS_ASSERT_LIMIT(this->tex != 0, 1);
+        if (this->tex == 0) return;
+
+        const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
+
+        GS_ASSERT(renderBuffer != NULL);
+        if (renderBuffer == NULL) 
+        {
+            this->tex = 0;
+            return;
         }
 
-        void load_first_url()
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, tex );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    void draw_webview()
+    {
+        if (this->tex == 0) return;
+
+        GL_ASSERT(GL_DEPTH_TEST, false);
+
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, tex);
+
+        static const float z = -0.5f;
+
+        float x0 = xoff;
+        float y0 = yoff;
+        float x1 = xoff + width;
+        float y1 = yoff + height;
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(x0, y0, z);
+
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(x1, y0, z);
+
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(x1, y1, z);
+
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(x0, y1, z);
+
+        glEnd();
+        
+        glDisable(GL_TEXTURE_2D);
+
+        //draw point for debugging
+        glColor4ub(255,0,0,255);
+        glBegin(GL_POINTS);
+        glVertex3f(xoff, yoff, -0.6f);
+        glEnd();
+        glColor4ub(255,255,255,255);
+    }
+
+    void focus()
+    {
+        awe_webview_focus(webView);
+    }
+
+    void unfocus()
+    {
+        awe_webview_unfocus(webView);
+    }
+
+
+    void set_html(char* html)
+    {
+        awe_string* html_str = awe_string_create_from_ascii(html, strlen(html));
+        awe_webview_load_html(webView, html_str,awe_string_empty());
+        awe_string_destroy(html_str);
+    }
+
+    void set_url(char* url) 
+    {
+        awe_string* url_str = awe_string_create_from_ascii(url, strlen(url));
+        awe_webview_load_url(webView, url_str, awe_string_empty(), awe_string_empty(), awe_string_empty()); 
+        awe_string_destroy(url_str);
+    }
+
+
+    void processKeyEvent(SDL_Event keyEvent) 
+    {
+        if(inFocus == false)
         {
-            awe_string* login_url = get_awe_string(GNOMESCROLL_URL "login");
-
-            awe_webview_load_url(
-                this->webView,
-                login_url,  // url
-                awe_string_empty(), // frame name
-                awe_string_empty(), // username
-                awe_string_empty()  // password
-            );
-
-            awe_string_destroy(login_url);
+            printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
+            return;
         }
-
-        ~ChromeViewport()
-        {
-            if (this->webView != NULL) awe_webview_destroy(this->webView);
-        }
-
-        void init_webview()
-        {
-            this->webView = awe_webcore_create_webview(width, height, false);
-            //default loading
-
-            GS_ASSERT(this->webView != NULL);
-            if (this->webView == NULL) return;
-
-            awe_webview_set_transparent(webView, 1); ///preserve transpanency of window
-            //Sets whether or not pages should be rendered with transparency preserved.
-            //(ex, for pages with style="background-color:transparent")
-        }
-
-        void init_render_surface()
-        {
-            GS_ASSERT(this->tex == 0);
-            const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
-
-            GS_ASSERT(renderBuffer != NULL);
-            if (renderBuffer == NULL) return;
-           
-            glEnable(GL_TEXTURE_2D);
-            glGenTextures(1, &this->tex);
-
-            glBindTexture(GL_TEXTURE_2D, this->tex);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-            //awe_renderbuffer_get_buffer(renderBuffer),
-            //awe_renderbuffer_get_width(renderBuffer),
-            //awe_renderbuffer_get_height(renderBuffer),
-            //awe_renderbuffer_get_rowspan(renderBuffer)
-
-
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
-
-            glDisable(GL_TEXTURE_2D);
-
-            CHECK_GL_ERROR();
-        }
-
-        void update_webview()
-        {
-            if(!awe_webview_is_dirty(this->webView) || awe_webview_is_loading_page(this->webView)) return;
-            //awe_rect rect = awe_webview_get_dirty_bounds(webView);
-            GS_ASSERT_LIMIT(this->tex != 0, 1);
-            if (this->tex == 0) return;
-
-            const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
-
-            GS_ASSERT(renderBuffer != NULL);
-            if (renderBuffer == NULL) 
-            {
-                this->tex = 0;
-                return;
-            }
-
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture( GL_TEXTURE_2D, tex );
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
-            glDisable(GL_TEXTURE_2D);
-        }
-
-        void draw_webview()
-        {
-            if (this->tex == 0) return;
-
-            GL_ASSERT(GL_DEPTH_TEST, false);
-
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex);
-
-            static const float z = -0.5f;
-
-            float x0 = xoff;
-            float y0 = yoff;
-            float x1 = xoff + width;
-            float y1 = yoff + height;
-
-            glBegin(GL_QUADS);
-
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(x0, y0, z);
-
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(x1, y0, z);
-
-            glTexCoord2f(1.0f, 0.0f);
-            glVertex3f(x1, y1, z);
-
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex3f(x0, y1, z);
-
-            glEnd();
-            
-            glDisable(GL_TEXTURE_2D);
-
-            //draw point for debugging
-            glColor4ub(255,0,0,255);
-            glBegin(GL_POINTS);
-            glVertex3f(xoff, yoff, -0.6f);
-            glEnd();
-            glColor4ub(255,255,255,255);
-        }
-
-        void focus()
-        {
-            awe_webview_focus(webView);
-        }
-
-        void unfocus()
-        {
-            awe_webview_unfocus(webView);
-        }
-
-
-        void set_html(char* html)
-        {
-            awe_string* html_str = awe_string_create_from_ascii(html, strlen(html));
-            awe_webview_load_html(webView, html_str,awe_string_empty());
-            awe_string_destroy(html_str);
-        }
-
-        void set_url(char* url) 
-        {
-            awe_string* url_str = awe_string_create_from_ascii(url, strlen(url));
-            awe_webview_load_url(webView, url_str, awe_string_empty(), awe_string_empty(), awe_string_empty()); 
-            awe_string_destroy(url_str);
-        }
-
-
-        void processKeyEvent(SDL_Event keyEvent) 
-        {
-            if(inFocus == false)
-            {
-                printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
-                return;
-            }
-            injectSDLKeyEvent(webView, keyEvent);
-        }
-
-
+        injectSDLKeyEvent(webView, keyEvent);
+    }
 };
 
 /*
@@ -291,19 +289,20 @@ bool    is_system_keyURL
     return ke;
 }
 
-void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event)
+
+void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 {
-    if(!(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP))
+    if(!(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP))
         return;
 
     Awesomium::WebKeyboardEvent keyEvent;
 
-    keyEvent.type = event.type == SDL_KEYDOWN?
+    keyEvent.type = event->type == SDL_KEYDOWN?
         Awesomium::WebKeyboardEvent::TYPE_KEY_DOWN :
         Awesomium::WebKeyboardEvent::TYPE_KEY_UP;
 
     char* buf = new char[20];
-    keyEvent.virtualKeyCode = getWebKeyFromSDLKey(event.key.keysym.sym);
+    keyEvent.virtualKeyCode = getWebKeyFromSDLKey(event->key.keysym.sym);
     Awesomium::getKeyIdentifierFromVirtualKeyCode(keyEvent.virtualKeyCode,
                                                   &buf);
     strcpy(keyEvent.keyIdentifier, buf);
@@ -311,20 +310,20 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event)
 
     keyEvent.modifiers = 0;
 
-    if(event.key.keysym.mod & KMOD_LALT || event.key.keysym.mod & KMOD_RALT)
+    if(event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
         keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_ALT_KEY;
-    if(event.key.keysym.mod & KMOD_LCTRL || event.key.keysym.mod & KMOD_RCTRL)
+    if(event->key.keysym.mod & KMOD_LCTRL || event->key.keysym.mod & KMOD_RCTRL)
         keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_CONTROL_KEY;
-    if(event.key.keysym.mod & KMOD_LMETA || event.key.keysym.mod & KMOD_RMETA)
+    if(event->key.keysym.mod & KMOD_LMETA || event->key.keysym.mod & KMOD_RMETA)
         keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_META_KEY;
-    if(event.key.keysym.mod & KMOD_LSHIFT || event.key.keysym.mod & KMOD_RSHIFT)
+    if(event->key.keysym.mod & KMOD_LSHIFT || event->key.keysym.mod & KMOD_RSHIFT)
         keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_SHIFT_KEY;
-    if(event.key.keysym.mod & KMOD_NUM)
+    if(event->key.keysym.mod & KMOD_NUM)
         keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_IS_KEYPAD;
 
-    keyEvent.nativeKeyCode = event.key.keysym.scancode;
+    keyEvent.nativeKeyCode = event->key.keysym.scancode;
 
-    if(event.type == SDL_KEYUP)
+    if(event->type == SDL_KEYUP)
     {
         ///webView->injectKeyboardEvent(keyEvent);
         awe_webview_inject_keyboard_event(webView, convert_key_event(keyEvent));
@@ -332,10 +331,10 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event)
     else
     {
         unsigned int chr;
-        if((event.key.keysym.unicode & 0xFF80) == 0)
-            chr = event.key.keysym.unicode & 0x7F;
+        if((event->key.keysym.unicode & 0xFF80) == 0)
+            chr = event->key.keysym.unicode & 0x7F;
         else
-            chr = event.key.keysym.unicode;
+            chr = event->key.keysym.unicode;
 
         keyEvent.text[0] = chr;
         keyEvent.unmodifiedText[0] = chr;
@@ -352,8 +351,6 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event)
         }
     }
 }
-
-
 
 // A helper macro, used in 'getWebKeyFromSDLKey'
 #define mapKey(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
@@ -494,6 +491,74 @@ int getWebKeyFromSDLKey(SDLKey key)
     mapKey(PRINT, SNAPSHOT)
     mapKey(SYSREQ, EXECUTE)
     default: return Awesomium::KeyCodes::AK_UNKNOWN;
+    }
+}
+
+//_OSMExport void   awe_webview_inject_mouse_move (awe_webview *webview, int x, int y)
+//_OSMExport void   awe_webview_inject_mouse_down (awe_webview *webview, awe_mousebutton button)
+//_OSMExport void   awe_webview_inject_mouse_up (awe_webview *webview, awe_mousebutton button)
+//_OSMExport void   awe_webview_inject_mouse_wheel (awe_webview *webview, int scroll_amount_vert, int scroll_amount_horz)
+//_OSMExport void   awe_webview_inject_keyboard_event (awe_webview *webview, awe_webkeyboardevent key_event)
+
+//enum      _awe_mousebutton { AWE_MB_LEFT, AWE_MB_MIDDLE, AWE_MB_RIGHT }
+
+static awe_mousebutton get_awe_mouse_button_from_SDL(Uint8 button)
+{
+    switch (button)
+    {
+        case SDL_BUTTON_LEFT:
+            return AWE_MB_LEFT;
+
+        case SDL_BUTTON_RIGHT:
+            return AWE_MB_RIGHT;
+
+        case SDL_BUTTON_WHEELUP:
+        case SDL_BUTTON_WHEELDOWN:
+        case SDL_BUTTON_MIDDLE:
+            return AWE_MB_MIDDLE;
+            
+        default:
+            GS_ASSERT(false);
+            return AWE_MB_LEFT;
+    }
+    GS_ASSERT(false);
+    return AWE_MB_LEFT;
+}
+
+
+void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
+{
+    awe_mousebutton button = get_awe_mouse_button_from_SDL(event->button.button);
+
+    // TODO -- calculate this
+    int horiz_scroll_amt = 0;
+    int vert_scroll_amt = 0;
+
+    int mouse_dx = 0;
+    int mouse_dy = 0;
+
+    if (event->button.button == SDL_BUTTON_WHEELDOWN || event->button.button == SDL_BUTTON_WHEELUP)
+    {
+        awe_webview_inject_mouse_wheel(webView, vert_scroll_amt, horiz_scroll_amt);
+    }
+    else
+    {
+        switch (event->type)
+        {
+            case SDL_MOUSEBUTTONDOWN:
+                awe_webview_inject_mouse_down(webView, button);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                awe_webview_inject_mouse_up(webView, button);
+                break;
+                
+            case SDL_MOUSEMOTION:
+                awe_webview_inject_mouse_move(webView, mouse_dx, mouse_dy);
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
