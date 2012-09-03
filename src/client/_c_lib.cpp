@@ -198,13 +198,7 @@ dont_include_this_file_in_server
 
 /* HUD */
 
-#include <hud/reticle.cpp>
-#include <hud/cube_selector.cpp>
-#include <hud/font.cpp>
-
-#include <hud/text.cpp>
-#include <hud/map.cpp>
-#include <hud/hud.cpp>
+#include <hud/_include.hpp>
 
 /* input */
 #include <input/input.cpp>

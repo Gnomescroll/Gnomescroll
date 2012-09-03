@@ -709,9 +709,22 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         m._f[10] = 1 - 2 * ( xx + yy );
         m._f[11] = 0.0f;
 
+        m._f[12] = 0.0f;
+        m._f[13] = 0.0f;
+        m._f[14] = 0.0f;
+
+        m = mat4_transpose(m);
+        
         m._f[12] = pos.x;
         m._f[13] = pos.y;
         m._f[14] = pos.z;
+
+/*
+        m._f[12] = 0.0f;
+        m._f[13] = 0.0f;
+        m._f[14] = 0.0f;
+*/
+
         m._f[15] = 1.0f;
 
         return m;
