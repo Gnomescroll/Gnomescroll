@@ -2,9 +2,11 @@
 
 #include <math.h>
 #include <chat/client.hpp>
-#include <hud/hud.hpp>
 #include <input/skeleton_editor.hpp>
 #include <input/equipped_sprite_adjuster.hpp>
+
+//#include <hud/hud.hpp>
+#include <hud/_interface.hpp>
 
 //toggling graphics settings
 #include <t_map/glsl/shader.hpp>
