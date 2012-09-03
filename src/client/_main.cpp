@@ -420,7 +420,9 @@ int run()
             Hud::draw_hud();
             t_hud::draw_hud();
 
-            Awesomium::_draw();
+            glDisable(GL_DEPTH_TEST);
+            Awesomium::draw();
+            glEnable(GL_DEPTH_TEST);
 
             if (input_state.vbo_debug)
                 t_map::draw_vbo_debug(400, 400);

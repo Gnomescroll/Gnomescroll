@@ -39,18 +39,10 @@ void update()
     awe_webcore_update();
 }
 
-void _draw()
+void draw()
 {
-    static int init = 0;
-    if(init == 0)
-    {
-        //init
-        cv = new ChromeViewport;
-        viewport_manager = new ViewportManager;
-        viewport_manager->add_viewport(cv);
-        init = 1;
-    }
-    
+    GS_ASSERT_LIMIT(cv != NULL, 1);
+    if (cv == NULL) return;
     cv->update_webview();
     cv->draw_webview();
 }
@@ -119,70 +111,20 @@ void init()
     awe_string_destroy(log_path);
     #endif
 
-    /*
-    awe_webcore_initialize  (   bool    enable_plugins,
-    bool    enable_javascript,
-    bool    enable_databases,
-    const awe_string *  package_path,
-    const awe_string *  locale_path,
-    const awe_string *  user_data_path,
-    const awe_string *  plugin_path,
-    const awe_string *  log_path,
-    awe_loglevel    log_level,
-    bool    force_single_process,
-    const awe_string *  child_process_path,
-    bool    enable_auto_detect_encoding,
-    const awe_string *  accept_language_override,
-    const awe_string *  default_charset_override,
-    const awe_string *  user_agent_override,
-    const awe_string *  proxy_server,
-    const awe_string *  proxy_config_script,
-    const awe_string *  auth_server_whitelist,
-    bool    save_cache_and_cookies,
-    int     max_cache_size,
-    bool    disable_same_origin_policy,
-    bool    disable_win_message_pump,
-    const awe_string *  custom_css 
-    )       
-    */
 
-    /*
-     enable_plugins              = false
-     enable_javascript           = true
-     enable_databases            = false
-     package_path                = awe_string_empty()
-     locale_path                 = awe_string_empty()
-     user_data_path              = awe_string_empty()
-     plugin_path                 = awe_string_empty()
-     log_path                    = awe_string_empty()
-     log_level                   = AWE_LL_NORMAL
-     forceSingleProcess          = false
-     childProcessPath            = (empty)  // awe_string_empty()?
-     enable_auto_detect_encoding = true
-     accept_language_override    = awe_string_empty()
-     default_charset_override    = awe_string_empty()
-     user_agent_override         = awe_string_empty()
-     proxy_server                = awe_string_empty()
-     proxy_config_script         = awe_string_empty()
-    const awe_string *  auth_server_whitelist,
+    GS_ASSERT(cv == NULL);
+    GS_ASSERT(viewport_manager == NULL);
 
-     save_cache_and_cookies      = true
-     max_cache_size              = 0
-     disable_same_origin_policy  = false
-     disable_win_message_pump    = false
-     custom_css                  = awe_string_empty()
-    */
-    
-
+    cv = new ChromeViewport;
+    viewport_manager = new ViewportManager;
+    viewport_manager->add_viewport(cv);
 }
 
 void teardown()
 {
+    if (cv != NULL) delete cv; 
+    if (viewport_manager != NULL) delete viewport_manager; 
     awe_webcore_shutdown();
 }
 
-//#include <Awesomium/awesomium_capi.h>
-
-
-
-}
+}   // Awesomium

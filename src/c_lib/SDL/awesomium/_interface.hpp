@@ -1,18 +1,19 @@
 #pragma once
 
-
 namespace Awesomium
 {
 
-	void init();
-	void teardown();
-	void update();
+void init();
+void teardown();
+void update();
+void draw();
 
-    void _draw();
+void handle_mouse_event(int x, int y, int button, int event_type);
+void handle_keyboard_event(union SDL_Event* keyEvent);
 
+awe_string* get_awe_string(const char* _str);
 
-	void handle_mouse_event(int x, int y, int button, int event_type);
+extern class ChromeViewport* cv;
+extern class ViewportManager* viewport_manager;
 
-	void handle_keyboard_event(union SDL_Event* keyEvent);
-
-}
+}   // Awesomium

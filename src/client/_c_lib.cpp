@@ -279,8 +279,6 @@ int init_c_lib(int argc, char* argv[])
     update_camera_settings(Options::view_distance);
     
     srand((unsigned int)time(NULL));   // seed the RNG
-
-    Awesomium::init();
     
     ClientState::init_lists();
 
@@ -294,6 +292,8 @@ int init_c_lib(int argc, char* argv[])
     init_image_loader();
     TextureSheetLoader::init();
     //printf("Checkpoint 1 \n");
+
+    Awesomium::init();
 
     t_map::init_t_map();
     //printf("Checkpoint 2 \n");
