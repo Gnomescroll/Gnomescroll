@@ -55,7 +55,7 @@ class ModelLoader
     vll(NULL), vln(NULL),
     bvl(NULL), tbvl(NULL),
     bvlo(NULL), bvln(NULL),
-    bvll(NULL),
+    via(NULL),
     s(NULL)
     {}
     
@@ -72,7 +72,7 @@ class ModelLoader
         if (tbvl != NULL) delete[] tbvl;
         if (bvlo != NULL) delete[] bvlo;
         if (bvln != NULL) delete[] bvln;
-        if (bvll != NULL) delete[] bvll;
+        if (via != NULL) delete[] via;
     }
 
     aiScene* pScene;    //the scene
@@ -217,8 +217,8 @@ class ModelLoader
     int* bvlo;              //offset for vertices in base list
     int* bvln;              //number of vertices in base vertex list
 
-    int bvllm;              //max index for vertex lookup table
-    int* bvll;              //base vertex lookup
+    int viam;              //max index for vertex lookup table
+    int* via;              //base vertex lookup
     
     void init_base_vertex_list()
     {
@@ -243,10 +243,10 @@ class ModelLoader
         bvl = new _Vertex[bvlm];
         tbvl = new _Vertex[bvlm];
 
-        bvllm = 3*fcount;
-        bvll = new int[bvllm];
-        for(int i=0; i<bvllm; i++) bvll[i] = -1;
-        GS_ASSERT(bvllm = vlm);
+        viam = 3*fcount;
+        via = new int[viam];
+        for(int i=0; i<viam; i++) via[i] = -1;
+        GS_ASSERT(viam = vlm);
 
 
         //save array of base vertices
@@ -286,7 +286,7 @@ class ModelLoader
             {
                 for(int k=0; k<3; k++)
                 {
-                    bvll[vcount] = bvlo[i] + mesh->mFaces[j].mIndices[k];
+                    via[vcount] = bvlo[i] + mesh->mFaces[j].mIndices[k];
                     vcount++;
                 }
             }
@@ -591,10 +591,13 @@ class BodyPartMesh
     struct _Vertex* bvl;        //base vertex list
 
     int vwlm;
-    struct _VertexWeight* vwl;   //vertex weight list
+    struct _VertexWeight* vwl;  //vertex weight list
 
     int vlm;                    //vertex list max
     struct _Vertex* vl;         //vertex list
+    
+    int* via;                   //vertex index array
+    int viam;
 
 	BodyPartMesh()
 	{
@@ -635,7 +638,12 @@ class BodyPartMesh
         vl = new _Vertex[vl_num];
         vlm = vl_num;
 
+        //load vertex index array
 
+        viam = ml->viam;
+        via = new int[viam];
+        for(int i;i<viam;i++)
+            via[i] = ml->via[i];
 
     }
 };
@@ -737,7 +745,7 @@ class BodyPartMesh
 
     for(int i=0; i<vlm; i++)
     {
-        int index = bvll[i];
+        int index = via[i];
         tvl[i] = tbvl[index];
     }
 
@@ -923,7 +931,7 @@ void ModelLoader::draw(float x, float y, float z)
 
     for(int i=0; i<vlm; i++)
     {
-        int index = bvll[i];
+        int index = via[i];
         tvl[i] = tbvl[index];
     }
 
