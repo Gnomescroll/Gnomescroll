@@ -90,16 +90,7 @@ class HUD
     ~HUD();
 };
 
-extern HUD* hud;
+//void init();
 
-void init();
-
-void add_predicted_block_damage(int block_dmg);
-void set_predicted_block_damage(int block_dmg);
-
-void set_hud_fps_display(float fps_val);
-void init_hud_draw_settings();
-void update_hud_draw_settings();
-void draw_hud();
 
 }   // Hud

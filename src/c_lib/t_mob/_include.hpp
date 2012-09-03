@@ -2,4 +2,7 @@
 
 #include <t_mob/_interface.cpp>
 
+#include <t_mob/model_loader.hpp>
+#include <t_mob/model_class.hpp>
+
 //#include <t_mob/mesh_loader.hpp>
