@@ -13,6 +13,8 @@
 #include <item/toolbelt/_interface.hpp>
 #include <t_map/_interface.hpp>
 
+#include <hud/_interface.hpp>
+
 /* Configuration */
 namespace Hud
 {
@@ -630,15 +632,6 @@ HUD::~HUD()
     if (scoreboard != NULL) delete scoreboard;
     if (chat != NULL) delete chat;
 }
-
-HUD* hud;
-
-void init()
-{
-    hud = new HUD();
-    hud->init();
-}
-
 
 /* ChatRender */
 

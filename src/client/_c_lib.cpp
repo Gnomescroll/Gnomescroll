@@ -361,6 +361,7 @@ int init_c_lib(int argc, char* argv[])
     t_hud::init();
     t_hud::draw_init();
 
+    Hud::init();
     //t_mech::state_init();
 
     Particle::init_particles();
@@ -452,6 +453,7 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("hud text teardown\n");
     HudText::teardown();
     
+    Hud::teardown();
     // free surfaces
     if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::teardown_shader();

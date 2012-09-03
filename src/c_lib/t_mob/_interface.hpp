@@ -38,9 +38,9 @@ class BoneTree
     public:
 
     BoneTree() :
+    pScene(NULL),
     nl(NULL), 
     ml(NULL),
-    pScene(NULL),
     tvl(NULL),
     vll(NULL), vln(NULL),
     bvl(NULL), tbvl(NULL),
@@ -714,7 +714,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         m._f[14] = 0.0f;
 
         m = mat4_transpose(m);
-        
+
         m._f[12] = pos.x;
         m._f[13] = pos.y;
         m._f[14] = pos.z;
