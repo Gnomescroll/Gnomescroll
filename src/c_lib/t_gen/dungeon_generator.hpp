@@ -76,25 +76,25 @@ void start_dungeon_generator()
 				ruins[z][y][x].dep = span;
 				ruins[z][y][x].hei = span;
 
-				int ti = randrange(2, 5);
+				int ti = randrange(1, 3);
 				
 				// make west wall
 				ruins[z][y][x].wid = 1;
 				set_region(ruins[z][y][x], ti);
 				// make east wall
-				//set_region(abs_x + span - 1, abs_y, abs_z, 1, span, span, ti);
+				set_region(abs_x + span - 1, abs_y, abs_z, 1, span, span, ti);
 				// clear a hall in west wall
-				set_region(abs_x - 1, abs_y + 6, abs_z, 2, span/2, span/2, 0);
+				set_region(abs_x - 1, abs_y + 6, abs_z + 1, 2, span/2, randrange(2, span - 2), 0);
 
 				//
 				//// make negY wall
-				//set_region(abs_x, abs_y, abs_z, 
-				//	span, 1, span, ti);
-				//// make posY wall
-				//set_region(abs_x, abs_y + span - 1, abs_z, 
-				//	span, 1, span, ti);
-				//// clear negY hallway
-				//set_region(abs_x + 6, abs_y - 1, abs_z, span/2, 2, span/2, 0);
+				set_region(abs_x, abs_y, abs_z, 
+					span, 1, span, ti);
+				// make posY wall
+				set_region(abs_x, abs_y + span - 1, abs_z, 
+					span, 1, span, ti);
+				// clear negY hallway
+				set_region(abs_x + 6, abs_y - 1, abs_z + 1, span/2, 2, randrange(2, span - 2), 0);
 
 				
 				// make down wall (floor)
