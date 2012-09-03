@@ -612,8 +612,8 @@ class BodyPartMesh
 	void load(class ModelLoader* ml, int mesh_index, aiMesh* mesh, aiNode* node)
 	{
 
-		int vll = ml->vll[mesh_index];
-		int vln = ml->vln[mesh_index];
+		//int vll = ml->vll[mesh_index];
+		//int vln = ml->vln[mesh_index];
 
         //copy name
         mesh_name = new char[strlen(node->mName.data)+1];
@@ -752,7 +752,7 @@ class BodyPartMesh
 
 #endif 
 
-    
+
 void ModelLoader::init_texture()
 {
     GS_ASSERT(s == NULL);
