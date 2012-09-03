@@ -587,21 +587,18 @@ class BodyPartMesh
 
     char* mesh_name;
 
-    int* vll;           //offset of vertices in list for each mesth
-    int* vln;           //number of vertices in each mech
-
     int bvlm;                   //base vertex list max
     struct _Vertex* bvl;        //base vertex list
 
     int vwlm;
-    struct _VertexWeight vwl;   //vertex weight list
+    struct _VertexWeight* vwl;   //vertex weight list
 
     int vlm;                    //vertex list max
     struct _Vertex* vl;         //vertex list
 
 	BodyPartMesh()
 	{
-        vbl = NULL;
+        bvl = NULL;
         vwl = NULL;
         vl  = NULL;
 	}
@@ -619,7 +616,7 @@ class BodyPartMesh
 		int vln = ml->vln[mesh_index];
 
         //copy name
-        mesh_name = new char[strlen[node->mName.data]+1];
+        mesh_name = new char[strlen(node->mName.data)+1];
         mesh_name = strcpy(mesh_name, node->mName.data);
 
         //copy base list
@@ -634,10 +631,15 @@ class BodyPartMesh
 
         //allocate vertex list
 
-        int vl_num = ml->vl[mesh_index];
-
+        int vl_num = ml->vln[mesh_index];
         vl = new _Vertex[vl_num];
         vlm = vl_num;
+
+
+
+    }
+};
+
 
 
 #if 0
@@ -746,13 +748,11 @@ class BodyPartMesh
         glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
 
 
-	}
+    }
 
 #endif 
 
-    }
-};
-
+    
 void ModelLoader::init_texture()
 {
     GS_ASSERT(s == NULL);
