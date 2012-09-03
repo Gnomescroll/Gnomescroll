@@ -525,40 +525,41 @@ static awe_mousebutton get_awe_mouse_button_from_SDL(Uint8 button)
     return AWE_MB_LEFT;
 }
 
+bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy)
+{
+    GS_ASSERT_LIMIT(cv != NULL, 1);
+    if (cv == NULL) return false;
+
+    // subtract top left of webview window
+    int left = cv->xoff;
+    int top = _yres - (cv->yoff + cv->height);
+
+    *sx = x - left;
+    *sy = y - top;
+
+    return ((*sx) >= 0 && (*sx) < cv->width && (*sy) >= 0 && (*sy) < cv->height);
+}
 
 void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
-{
-    awe_mousebutton button = get_awe_mouse_button_from_SDL(event->button.button);
-
-    // TODO -- calculate this
-    int horiz_scroll_amt = 0;
-    int vert_scroll_amt = 0;
-
-    int mouse_dx = 0;
-    int mouse_dy = 0;
-
+{    
     if (event->button.button == SDL_BUTTON_WHEELDOWN || event->button.button == SDL_BUTTON_WHEELUP)
     {
+        // compute scroll amt
+        // TODO -- calculate this
+        int horiz_scroll_amt = 0;
+        int vert_scroll_amt = 0;
         awe_webview_inject_mouse_wheel(webView, vert_scroll_amt, horiz_scroll_amt);
     }
-    else
+    else if (event->type == SDL_MOUSEBUTTONDOWN)
+        awe_webview_inject_mouse_down(webView, get_awe_mouse_button_from_SDL(event->button.button));
+    else if (event->type == SDL_MOUSEBUTTONUP)
+        awe_webview_inject_mouse_up(webView, get_awe_mouse_button_from_SDL(event->button.button));
+    else if (event->type == SDL_MOUSEMOTION)
     {
-        switch (event->type)
-        {
-            case SDL_MOUSEBUTTONDOWN:
-                awe_webview_inject_mouse_down(webView, button);
-                break;
-            case SDL_MOUSEBUTTONUP:
-                awe_webview_inject_mouse_up(webView, button);
-                break;
-                
-            case SDL_MOUSEMOTION:
-                awe_webview_inject_mouse_move(webView, mouse_dx, mouse_dy);
-                break;
-
-            default:
-                break;
-        }
+        int x,y,sx,sy;
+        SDL_GetMouseState(&x, &y);
+        if (get_webview_coordinates(cv, x,y, &sx, &sy))
+            awe_webview_inject_mouse_move(webView, sx,sy);
     }
 }
 
