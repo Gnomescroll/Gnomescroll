@@ -195,6 +195,8 @@ dont_include_this_file_in_server
 #include <state/client_state.cpp>
 #include <state/packet_init.cpp>
 
+// authentication
+#include <auth/client.cpp>
 
 bool main_inited = false;
 bool signal_exit = false;
