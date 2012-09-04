@@ -152,8 +152,18 @@ void toggle_admin_controls()
 void toggle_awesomium()
 {
     input_state.awesomium = (!input_state.awesomium);
-    if (input_state.awesomium) Awesomium::enable();
-    else Awesomium::disable();
+    input_state.rebind_mouse = input_state.mouse_bound;
+    if (input_state.awesomium)
+    {
+        input_state.mouse_bound = false;
+        Awesomium::enable();
+    }
+    else
+    {
+        input_state.mouse_bound = true;
+        input_state.ignore_mouse_motion = true;
+        Awesomium::disable();
+    }
 }
 
 void toggle_graphs()
@@ -341,8 +351,12 @@ static void update_keys_held_down()
     }
 }
 
+
 void trigger_keys_held_down()
 {
+    void chat_key_down_handler(SDL_Event* event);   // forward decl
+    if (!input_state.chat) return;
+
     update_keys_held_down();
     static SDL_Event event;
     for (int i=0; i<KEYS_HELD_DOWN; i++)
@@ -352,7 +366,7 @@ void trigger_keys_held_down()
         {
             event.user.code = SDL_EVENT_USER_TRIGGER;
             event.key.keysym.sym = keys_held_down_map[i];
-            key_down_handler(&event);
+            chat_key_down_handler(&event);
         }
     }
 }
@@ -1026,7 +1040,6 @@ void key_down_handler(SDL_Event* event)
 // key up
 void key_up_handler(SDL_Event* event)
 {
-
     if (input_state.skeleton_editor)
     {
         SkeletonEditor::key_up_handler(event);

@@ -126,11 +126,36 @@ void teardown()
     awe_webcore_shutdown();
 }
 
+void open_url(const char* url)
+{
+    GS_ASSERT_LIMIT(cv != NULL, 1);
+    if (cv == NULL) return;
+    cv->load_url(url);
+}
+
 void SDL_keyboard_event(const SDL_Event* event)
 {
     GS_ASSERT_LIMIT(cv != NULL, 1);
     if (cv == NULL) return;
     injectSDLKeyEvent(cv->webView, event);
+
+    SDLKey key = event->key.keysym.sym;
+
+    // Separate handling for history navigation -- awesomium does not do this by default
+    if (event->type == SDL_KEYDOWN)
+    {
+        int history_offset = 0;
+        if(event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
+        {
+            if (key == SDLK_LEFT)
+                history_offset = -1;
+            if (key == SDLK_RIGHT)
+                history_offset = 1;
+        }
+
+        if (history_offset)
+            awe_webview_go_to_history_offset(cv->webView, history_offset);
+    }
 }
 
 void SDL_mouse_event(const SDL_Event* event)
