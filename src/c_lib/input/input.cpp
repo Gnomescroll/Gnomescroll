@@ -4,8 +4,8 @@
 #include <input/handlers.hpp>
 #include <SDL/awesomium/_interface.hpp>
 
-static int numkeys;
-static Uint8* keystate;
+static int numkeys = 0;
+static Uint8* keystate = NULL;
 
 struct MouseMotionAverage 
 {
@@ -22,7 +22,7 @@ int init_input()
     GS_ASSERT(inited == 0);
     if (inited++) return 1;
 
-    keystate = SDL_GetKeyState(&numkeys);    
+    keystate = SDL_GetKeyState(&numkeys);
     SDL_EnableUNICODE(SDL_ENABLE);
     init_mouse();
     init_input_state();

@@ -50,17 +50,22 @@ class ChromeViewport
 
     void load_first_url()
     {
-        awe_string* login_url = get_awe_string(GNOMESCROLL_URL "login");
+        this->load_url(GNOMESCROLL_URL "login");
+    }
+
+    void load_url(const char* url)
+    {
+        awe_string* a_url = get_awe_string(url);
 
         awe_webview_load_url(
             this->webView,
-            login_url,  // url
+            a_url,  // url
             awe_string_empty(), // frame name
             awe_string_empty(), // username
             awe_string_empty()  // password
         );
 
-        awe_string_destroy(login_url);
+        awe_string_destroy(a_url);
     }
 
     ~ChromeViewport()
@@ -544,10 +549,10 @@ void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
 {    
     if (event->button.button == SDL_BUTTON_WHEELDOWN || event->button.button == SDL_BUTTON_WHEELUP)
     {
-        // compute scroll amt
-        // TODO -- calculate this
         int horiz_scroll_amt = 0;
-        int vert_scroll_amt = 0;
+        int vert_scroll_amt = 28;
+        if (event->button.button == SDL_BUTTON_WHEELDOWN)
+            vert_scroll_amt *= -1;
         awe_webview_inject_mouse_wheel(webView, vert_scroll_amt, horiz_scroll_amt);
     }
     else if (event->type == SDL_MOUSEBUTTONDOWN)

@@ -20,6 +20,8 @@ void handle_keyboard_event(union SDL_Event* keyEvent);
 void SDL_keyboard_event(const SDL_Event* event);
 void SDL_mouse_event(const SDL_Event* event);
 
+void open_url(const char* url);
+
 awe_string* get_awe_string(const char* _str);
 
 extern class ChromeViewport* cv;
