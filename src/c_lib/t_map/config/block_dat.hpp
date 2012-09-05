@@ -43,6 +43,8 @@ void load_block_dat()
     int t1 = texture_alias("media/sprites/terrain/t01.png");
     int t2 = texture_alias("media/sprites/terrain/t02.png");
     int t3 = texture_alias("media/sprites/terrain/t03.png");
+    int t4 = texture_alias("media/sprites/terrain/t04.png");
+    int t5 = texture_alias("media/sprites/terrain/t05.png");
 
     const int T = 0;
     const int B = 1;
