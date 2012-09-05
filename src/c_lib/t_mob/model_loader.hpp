@@ -344,6 +344,7 @@ class ModelLoader
     struct Mat4* bbma;      //bone base matrix array
     struct Mat4* bma;       //bone matrix array
 
+/*
     void count_bones(int* count, aiNode* pNode)
     {
         GS_ASSERT(pNode->mNumMeshes == 0);  //RECOVER FROM THIS
@@ -400,6 +401,29 @@ class ModelLoader
 
         printf("DAE LOADER: %d bones \n", bone_count);
     }   
+*/
+
+    struct Node
+    {
+        char* name;
+        struct Mat4 mTransformation;
+        struct Node* p;     //parent
+        struct Node* c;     //children
+        int cn;             //children number
+    };
+
+    struct Node* _nl;
+    int _nlm;
+
+    struct BoneNode
+    {
+        char* name;
+        struct Mat4 mOffsetMatrix;
+        struct BoneNode* parent;
+    };
+
+    struct BoneNode* bnl;
+    int bnlm;
 
 
     void init_bone_list()
@@ -415,40 +439,56 @@ class ModelLoader
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
-
-
-                printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
-
+                //printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
                 bool new_bone = true;
-
                 for(int _i=0; _i<=i; _i++) 
                 {
                     for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
                     {
                         if(_i == i && _j == j) break;
-                        //if(bone == ml[_i]->mBones[_j])
-                        //printf("cmp: %d %d : %d %d \n", i,j, _i,_j);
                         if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
                         {
-                            //printf("bone %d,%d matches bone %d,%d \n", i,j, _i,_j);
                             new_bone = false;
                             break;
                         }
                     }
                 }
-
                 if(new_bone == true) bone_count++;
                 _bone_count++;
             }
         }
-
         //printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
-
-        printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
-
+        //printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
         //printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
+        //count_bones();
 
-        count_bones();
+        bnlm = bone_count;
+        bnl = new BoneNode[bnlm];
+
+        for(int i=0; i<bnlm; i++)
+        {
+            bnl[i].name = NULL;
+            bnl[i].p = NULL;
+        }
+
+        int bcount = 0
+        for(int i=0; i<nli; i++)
+        {
+            aiMesh* mesh = ml[i];
+            for(unsigned int j=0; j<mesh->mNumBones; j++)
+            {
+                aiBone* bone = mesh->mBones[j];
+                bool new_bone = false
+                
+                for(int i=0; i<bcount;i++)
+                {
+                    if( strcmp(bnl[i].name, bone->->mName.data) ==0 )
+                        
+                }
+            }
+
+        }
+
     }
 
     aiNode* FindNodeRecursivelyByName(aiNode* pNode, char* node_name)
@@ -558,7 +598,76 @@ but is not good. Therefore, you usually should do the interpolation on the quate
     void draw(float x, float y, float z);  //draws for testing
 
 
+    void rationalize_bone_matrices();
+
 };
+
+void ModelLoader::rationalize_bone_matrices()
+{
+    //count bones
+    //get a list of bones
+    //map bone names to indices
+    //bone to parent relationships
+#if 0
+
+    int bone_count = 0;
+    //count number of times bone appears
+    for(int i=0; i<nli; i++)
+    {
+        aiMesh* mesh = ml[i];
+        for(unsigned int j=0; j<mesh->mNumBones; j++)
+        {
+            aiBone* bone = mesh->mBones[j];
+            printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
+            bool new_bone = true;
+            for(int _i=0; _i<=i; _i++) 
+            {
+                for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
+                {
+                    if(_i == i && _j == j) break;
+                    if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
+                    {
+                        new_bone = false;
+                        break;
+                    }
+                }
+            }
+            if(new_bone == true) bone_count++;
+        }
+    }
+
+
+    for(int i=0; i<nli; i++)
+    {
+        aiMesh* mesh = ml[i]; 
+        GS_ASSERT(mesh->mNumBones != 0);
+        printf("mesh: %02d mesh name= %s \n", i, nl[i]->mName.data);
+
+        for(unsigned int j=0; j<mesh->mNumBones; j++)
+        {
+            aiBone* bone = mesh->mBones[j];
+            Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
+
+            aiNode* tempNode = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+            GS_ASSERT(tempNode != NULL)
+
+            int _index = 0;
+            while( tempNode )
+            {
+                _index++;
+                //boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
+                boneMatrix = _ConvertMatrix(tempNode->mTransformation);
+
+                if( strcmp(tempNode->mName.data, "Armature") == 0 )
+                    break;
+                if(tempNode == NULL)
+                    break;
+                tempNode = tempNode->mParent;
+            }
+
+    }
+#endif
+}
 
 /*
     for(int i=0; i<nli; i++)
@@ -640,11 +749,28 @@ class BodyPartMesh
         via = new int[viam];
         for(int i;i<viam;i++)
             via[i] = ml->via[i];
+        //vertex weight lists
 
     }
 };
 
+class BodyMesh
+{
+    class BodyPartMesh* ml; //body part mesh list
+    int mlm;                 //body part mesh list max
 
+
+    BodyMesh()
+    {
+
+    }
+
+    ~BodyMesh()
+    {
+
+    }
+
+};
 
 #if 0
         for(unsigned int j=0; j<mesh->mNumBones; j++)
@@ -797,7 +923,7 @@ void ModelLoader::draw(float x, float y, float z)
     if(_fcount % 30 == 0)
         frame_time++;
 
-    Mat4 m_GlobalInverseTransform = mat4_inverse( mat4_transpose(_ConvertMatrix(pScene->mRootNode->mTransformation )));
+    //Mat4 m_GlobalInverseTransform = mat4_inverse( mat4_transpose(_ConvertMatrix(pScene->mRootNode->mTransformation )));
 
     aiAnimation* anim = pScene->mAnimations[0];
 
@@ -875,7 +1001,7 @@ void ModelLoader::draw(float x, float y, float z)
 
             }
 
-            boneMatrix = mat4_mult(m_GlobalInverseTransform, boneMatrix);
+            //boneMatrix = mat4_mult(m_GlobalInverseTransform, boneMatrix);
 
             //node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
             //boneMatrix = get_anim_matrix(frame_time, node_channels, node_channels_max, node);
@@ -1021,10 +1147,14 @@ void ModelLoader::draw_skeleton(float x, float y, float z)
                 boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                 GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
-                tempNode = tempNode->mParent;
-
-                if(tempNode == NULL)
+                if( strcmp(tempNode->mName.data, "Armature") == 0 )
                     break;
+                if(tempNode == NULL)
+                {
+                    //GS_ASSERT(tempNode != NULL);
+                    break;
+                }
+                tempNode = tempNode->mParent;
             }
 
             //boneMatrix = mat4_mult( mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix)) , boneMatrix);

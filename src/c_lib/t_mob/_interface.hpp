@@ -620,10 +620,14 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                     GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
-                    tempNode = tempNode->mParent;
-
-                    if(tempNode == NULL)
+                    if( strcmp(tempNode->mName.data, "Armature") == 0 )
                         break;
+                    if(tempNode == NULL)
+                    {
+                        //GS_ASSERT(tempNode != NULL);
+                        break;
+                    }
+                    tempNode = tempNode->mParent;
                 }
 
                 //boneMatrix = mat4_mult( mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix)) , boneMatrix);
@@ -781,7 +785,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         }
 */
 
-        Mat4 m_GlobalInverseTransform = mat4_inverse( mat4_transpose(_ConvertMatrix(pScene->mRootNode->mTransformation )));
+        //Mat4 m_GlobalInverseTransform = mat4_inverse( mat4_transpose(_ConvertMatrix(pScene->mRootNode->mTransformation )));
         //m_GlobalInverseTransform.Inverse();
 
         //printf("scene has %d animations \n", pScene->mNumAnimations);
@@ -861,7 +865,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
                 }
 
-                boneMatrix = mat4_mult(m_GlobalInverseTransform, boneMatrix);
+                //boneMatrix = mat4_mult(m_GlobalInverseTransform, boneMatrix);
 
                 //node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 //boneMatrix = get_anim_matrix(frame_time, node_channels, node_channels_max, node);
