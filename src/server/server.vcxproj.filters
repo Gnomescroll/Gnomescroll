@@ -60,6 +60,11 @@
 
 
 
+	
+
+
+
+
 	<ItemGroup>
 		<Filter Include="c_lib\agent">
 		</Filter>
@@ -70,6 +75,8 @@
 		<Filter Include="c_lib\animations">
 		</Filter>
 		<Filter Include="c_lib\animations\config">
+		</Filter>
+		<Filter Include="c_lib\auth">
 		</Filter>
 		<Filter Include="c_lib\camera">
 		</Filter>
@@ -290,6 +297,12 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\animations\config\_state.cpp">
 		<Filter>c_lib\animations\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\client.cpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\server.cpp">
+		<Filter>c_lib\auth</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\camera\camera.cpp">
 		<Filter>c_lib\camera</Filter>
@@ -571,6 +584,9 @@
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\text.cpp">
+		<Filter>c_lib\hud</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\_interface.cpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.cpp">
@@ -1167,6 +1183,12 @@
 	<ClInclude Include="..\c_lib\animations\config\_state.hpp">
 		<Filter>c_lib\animations\config</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\client.hpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\server.hpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\camera\camera.hpp">
 		<Filter>c_lib\camera</Filter>
 	</ClInclude>
@@ -1473,6 +1495,9 @@
 	<ClInclude Include="..\c_lib\hud\font.hpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\harvest_bar.hpp">
+		<Filter>c_lib\hud</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\hud.hpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
@@ -1483,6 +1508,12 @@
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\text.hpp">
+		<Filter>c_lib\hud</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\_include.hpp">
+		<Filter>c_lib\hud</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\_interface.hpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.hpp">
@@ -2091,7 +2122,10 @@
 	<ClInclude Include="..\c_lib\t_mob\cleanup.hpp">
 		<Filter>c_lib\t_mob</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\mesh_loader.hpp">
+	<ClInclude Include="..\c_lib\t_mob\model_class.hpp">
+		<Filter>c_lib\t_mob</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_mob\model_loader.hpp">
 		<Filter>c_lib\t_mob</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_mob\_include.hpp">
@@ -2162,6 +2196,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\agent\agent_include.h">
 		<Filter>c_lib\agent</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\hmac-sha256.h">
+		<Filter>c_lib\auth</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\compat_al.h">
 		<Filter>c_lib\common</Filter>
