@@ -148,6 +148,9 @@ dont_include_this_file_in_client
 #include <sound/_include.hpp>
 #include <animations/_include.hpp>
 
+// authentication
+#include <auth/server.cpp>
+
 #ifdef linux
 #include <unistd.h>
 #include <signal.h>
@@ -225,6 +228,8 @@ int init_c_lib(int argc, char* argv[])
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
     srand((unsigned int)time(NULL));
+
+    Auth::init();
 
     Components::init();
     Objects::init_net_interfaces();

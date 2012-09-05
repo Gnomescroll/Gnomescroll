@@ -3,28 +3,23 @@
 #include <physics/mat4.hpp>
 
 #ifdef __MSVC__
-//#undef __cplusplus
-
 extern "C"
 {
-
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h> //defines for postprocessor
 #include <assimp/config.h>
-
 }
-//#define __cplusplus
 #else
-	#undef __cplusplus
-	extern "C"
-	{
-	#include <assimp/cimport.h>
-	#include <assimp/scene.h>
-	#include <assimp/postprocess.h> //defines for postprocessor
-	#include <assimp/config.h>
-	}
-	#define __cplusplus
+    #undef __cplusplus
+    extern "C"
+    {
+    #include <assimp/cimport.h>
+    #include <assimp/scene.h>
+    #include <assimp/postprocess.h> //defines for postprocessor
+    #include <assimp/config.h>
+    }
+    #define __cplusplus
 #endif
 
 
@@ -38,9 +33,9 @@ class BoneTree
     public:
 
     BoneTree() :
+    pScene(NULL),
     nl(NULL), 
     ml(NULL),
-    pScene(NULL),
     tvl(NULL),
     vll(NULL), vln(NULL),
     bvl(NULL), tbvl(NULL),
@@ -64,7 +59,6 @@ class BoneTree
         if (bvln != NULL) delete[] bvln;
         if (bvll != NULL) delete[] bvll;
     }
-
 
     aiScene* pScene;    //the scene
 
@@ -115,7 +109,7 @@ class BoneTree
         set_vertices();
         init_texture();
         //draw();
-		init_bone_list();
+        init_bone_list();
     }
 
     void count_nodes(aiNode* pNode)
@@ -263,7 +257,7 @@ class BoneTree
                 v.v.z = pos.z;
 
                 v.ux =  tex.x;
-				v.uy =  1.0-tex.y;
+                v.uy =  1.0-tex.y;
 
                 //printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
                 GS_ASSERT(bvlo[i] + (int)(j) == vcount);
@@ -330,122 +324,122 @@ class BoneTree
         return out;
     }
 
-	int bam;		//bone array max
-	aiBone** ba; 	//bone array
+    int bam;        //bone array max
+    aiBone** ba;    //bone array
 
-	int* bal;		//bone array lookup: maps mesh to starting offset in ball
-	int* ball;		// ball[bal[mesh_num] + bone_num] is matrix index
+    int* bal;       //bone array lookup: maps mesh to starting offset in ball
+    int* ball;      // ball[bal[mesh_num] + bone_num] is matrix index
     int  ballm;
 
-	struct Mat4* bbma;		//bone base matrix array
-	struct Mat4* bma;		//bone matrix array
+    struct Mat4* bbma;      //bone base matrix array
+    struct Mat4* bma;       //bone matrix array
 
-	void count_bones(int* count, aiNode* pNode)
-	{
-		GS_ASSERT(pNode->mNumMeshes == 0);	//RECOVER FROM THIS
-		for(unsigned int i=0; i < pNode->mNumChildren; i++)
-		{
-			*count++;
-			count_bones(count, pNode->mChildren[i]);
-		}
-	}
+    void count_bones(int* count, aiNode* pNode)
+    {
+        GS_ASSERT(pNode->mNumMeshes == 0);  //RECOVER FROM THIS
+        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        {
+            *count++;
+            count_bones(count, pNode->mChildren[i]);
+        }
+    }
 
-	void count_bones()
-	{
-		
-		//aiNode* pNode = pScene->mRootNode;
-		aiNode* pNode = NULL;
+    void count_bones()
+    {
+        
+        //aiNode* pNode = pScene->mRootNode;
+        aiNode* pNode = NULL;
 
-		for(unsigned int i=0; i < pScene->mRootNode->mNumChildren; i++)
-		{
-			if( strcmp("Armature", pScene->mRootNode->mChildren[i]->mName.data) == 0)
-			{
-				pNode = pScene->mRootNode->mChildren[i];
-				break;
-			}
-		}
+        for(unsigned int i=0; i < pScene->mRootNode->mNumChildren; i++)
+        {
+            if( strcmp("Armature", pScene->mRootNode->mChildren[i]->mName.data) == 0)
+            {
+                pNode = pScene->mRootNode->mChildren[i];
+                break;
+            }
+        }
 
-		if(pNode == NULL)
-		{
-			printf("DAE LOAD ERROR: There is no 'Armature' node under root node \n");
-			abort();
-		}
+        if(pNode == NULL)
+        {
+            printf("DAE LOAD ERROR: There is no 'Armature' node under root node \n");
+            abort();
+        }
 
-		aiNode* _pNode = NULL;
+        aiNode* _pNode = NULL;
 
         //get the root_bone as child of the Amature
-		for(unsigned int i=0; i < pNode->mNumChildren; i++)
-		{
-			if( strcmp("root_bone", pNode->mChildren[i]->mName.data) == 0)
-			{
-				_pNode = pNode->mChildren[i];
-				break;
-			}
-		}
-		if(_pNode == NULL)
-		{
-			printf("DAE LOAD ERROR: There is no 'root_bone' under 'Armature' node \n");
-			abort();
-		}
+        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        {
+            if( strcmp("root_bone", pNode->mChildren[i]->mName.data) == 0)
+            {
+                _pNode = pNode->mChildren[i];
+                break;
+            }
+        }
+        if(_pNode == NULL)
+        {
+            printf("DAE LOAD ERROR: There is no 'root_bone' under 'Armature' node \n");
+            abort();
+        }
 
-		pNode = _pNode;
+        pNode = _pNode;
 
         printf("root_bone: has %d children \n", pNode->mNumChildren); //recursively count the children of the root node
-		int bone_count = 0;
-		count_bones(&bone_count, pNode);
+        int bone_count = 0;
+        count_bones(&bone_count, pNode);
 
-		printf("DAE LOADER: %d bones \n", bone_count);
-	}	
+        printf("DAE LOADER: %d bones \n", bone_count);
+    }   
 
 
-	void init_bone_list()
-	{
-		//count bones
-		int bone_count = 0;
-		int _bone_count = 0;
+    void init_bone_list()
+    {
+        //count bones
+        int bone_count = 0;
+        int _bone_count = 0;
 
         //count number of times bone appears
-		for(int i=0; i<nli; i++)
-		{
-			aiMesh* mesh = ml[i];
-			for(unsigned int j=0; j<mesh->mNumBones; j++)
-			{
-				aiBone* bone = mesh->mBones[j];
+        for(int i=0; i<nli; i++)
+        {
+            aiMesh* mesh = ml[i];
+            for(unsigned int j=0; j<mesh->mNumBones; j++)
+            {
+                aiBone* bone = mesh->mBones[j];
 
 
-				printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
+                printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
 
-				bool new_bone = true;
+                bool new_bone = true;
 
-				for(int _i=0; _i<=i; _i++) 
-				{
-					for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
-					{
-						if(_i == i && _j == j) break;
-						//if(bone == ml[_i]->mBones[_j])
-						//printf("cmp: %d %d : %d %d \n", i,j, _i,_j);
-						if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
-						{
-							//printf("bone %d,%d matches bone %d,%d \n", i,j, _i,_j);
-							new_bone = false;
-							break;
-						}
-					}
-				}
+                for(int _i=0; _i<=i; _i++) 
+                {
+                    for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
+                    {
+                        if(_i == i && _j == j) break;
+                        //if(bone == ml[_i]->mBones[_j])
+                        //printf("cmp: %d %d : %d %d \n", i,j, _i,_j);
+                        if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
+                        {
+                            //printf("bone %d,%d matches bone %d,%d \n", i,j, _i,_j);
+                            new_bone = false;
+                            break;
+                        }
+                    }
+                }
 
-				if(new_bone == true) bone_count++;
-				_bone_count++;
-			}
-		}
+                if(new_bone == true) bone_count++;
+                _bone_count++;
+            }
+        }
 
-		//printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
+        //printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
 
-		printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
+        printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
 
-		//printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
+        //printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
 
-		count_bones();
-	}
+        count_bones();
+    }
 
 
     unsigned int texture1;
@@ -626,10 +620,14 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                     GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
-                    tempNode = tempNode->mParent;
-
-                    if(tempNode == NULL)
+                    if( strcmp(tempNode->mName.data, "Armature") == 0 )
                         break;
+                    if(tempNode == NULL)
+                    {
+                        //GS_ASSERT(tempNode != NULL);
+                        break;
+                    }
+                    tempNode = tempNode->mParent;
                 }
 
                 //boneMatrix = mat4_mult( mat4_transpose(_ConvertMatrix(bone->mOffsetMatrix)) , boneMatrix);
@@ -709,9 +707,22 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         m._f[10] = 1 - 2 * ( xx + yy );
         m._f[11] = 0.0f;
 
+        m._f[12] = 0.0f;
+        m._f[13] = 0.0f;
+        m._f[14] = 0.0f;
+
+        m = mat4_transpose(m);
+
         m._f[12] = pos.x;
         m._f[13] = pos.y;
         m._f[14] = pos.z;
+
+/*
+        m._f[12] = 0.0f;
+        m._f[13] = 0.0f;
+        m._f[14] = 0.0f;
+*/
+
         m._f[15] = 1.0f;
 
         return m;
@@ -774,7 +785,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         }
 */
 
-        Mat4 m_GlobalInverseTransform = mat4_inverse( mat4_transpose(_ConvertMatrix(pScene->mRootNode->mTransformation )));
+        //Mat4 m_GlobalInverseTransform = mat4_inverse( mat4_transpose(_ConvertMatrix(pScene->mRootNode->mTransformation )));
         //m_GlobalInverseTransform.Inverse();
 
         //printf("scene has %d animations \n", pScene->mNumAnimations);
@@ -806,7 +817,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
             int offset = bvlo[i];
             int num = bvln[i];
 
-			GS_ASSERT(mesh->mNumBones != 0);
+            GS_ASSERT(mesh->mNumBones != 0);
 
 
             if(_print)
@@ -854,7 +865,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
                 }
 
-                boneMatrix = mat4_mult(m_GlobalInverseTransform, boneMatrix);
+                //boneMatrix = mat4_mult(m_GlobalInverseTransform, boneMatrix);
 
                 //node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 //boneMatrix = get_anim_matrix(frame_time, node_channels, node_channels_max, node);
@@ -872,7 +883,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     int index = offset + bone->mWeights[k].mVertexId;
                     float weight = bone->mWeights[k].mWeight;
 
-					//printf("weight= %f \n", weight);
+                    //printf("weight= %f \n", weight);
 
                     GS_ASSERT(index >= offset);
                     GS_ASSERT(index < offset+num);
@@ -939,7 +950,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
             tbvl[i].v.z += z;
         }
 
-	/*
+    /*
         for(int i=0; i<vlm; i++)
         {
             int index = bvll[i];
@@ -949,11 +960,11 @@ but is not good. Therefore, you usually should do the interpolation on the quate
             }
             tvl[i] = tbvl[index];
         }
-	*/
+    */
         for(int i=0; i<vlm; i++)
         {
             int index = bvll[i];
-			tvl[i] = tbvl[index];
+            tvl[i] = tbvl[index];
         }
 
         glColor4ub(255,255,255,255);
@@ -972,13 +983,13 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
             //vec3_print(v.v);
             glTexCoord2f(v.ux, v.uy );
-			glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
+            glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
         }
 
         glEnd();
-		
-		glBindTexture(GL_TEXTURE_2D, 0);
-		check_gl_error();
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
+        check_gl_error();
 
         //printf("count: %d vlm= %d \n", count, vlm);
         //mesh->mTextureCoords[0]
@@ -1176,10 +1187,10 @@ void init()
     int _depth = 0;
     PrintNodeTree(pScene, pScene->mRootNode, _num, _depth, &_total);
 
-	return;
+    return;
     PrintBoneTree(pScene, 0, pScene->mRootNode);    //these are actually meshes
     //pScene->mRootNode
-	return; //debug
+    return; //debug
 
     printf("Succes\n");
 

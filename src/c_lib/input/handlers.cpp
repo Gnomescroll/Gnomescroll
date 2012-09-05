@@ -2,9 +2,11 @@
 
 #include <math.h>
 #include <chat/client.hpp>
-#include <hud/hud.hpp>
 #include <input/skeleton_editor.hpp>
 #include <input/equipped_sprite_adjuster.hpp>
+
+//#include <hud/hud.hpp>
+#include <hud/_interface.hpp>
 
 //toggling graphics settings
 #include <t_map/glsl/shader.hpp>
@@ -12,6 +14,11 @@
 #include <t_hud/_interface.hpp>
 
 InputState input_state;
+
+bool mouse_unlocked_for_ui_element()
+{   // if mouse was unlocked to allow control of a ui element
+    return (input_state.container_block || input_state.agent_container || input_state.awesomium);
+}
 
 // triggers
 void toggle_mouse_bind()
@@ -142,6 +149,23 @@ void toggle_admin_controls()
     input_state.admin_controls = (!input_state.admin_controls);
 }
 
+void toggle_awesomium()
+{
+    input_state.awesomium = (!input_state.awesomium);
+    input_state.rebind_mouse = input_state.mouse_bound;
+    if (input_state.awesomium)
+    {
+        input_state.mouse_bound = false;
+        Awesomium::enable();
+    }
+    else
+    {
+        input_state.mouse_bound = true;
+        input_state.ignore_mouse_motion = true;
+        Awesomium::disable();
+    }
+}
+
 void toggle_graphs()
 {
     input_state.graphs = (!input_state.graphs);
@@ -264,6 +288,9 @@ void init_input_state()
     // debug
     input_state.frustum = true;
 
+    // awesomium
+    input_state.awesomium = false;
+
     // SDL state
     Uint8 app_state = SDL_GetAppState();
     input_state.input_focus = (app_state & SDL_APPMOUSEFOCUS);
@@ -324,8 +351,12 @@ static void update_keys_held_down()
     }
 }
 
+
 void trigger_keys_held_down()
 {
+    void chat_key_down_handler(SDL_Event* event);   // forward decl
+    if (!input_state.chat) return;
+
     update_keys_held_down();
     static SDL_Event event;
     for (int i=0; i<KEYS_HELD_DOWN; i++)
@@ -335,7 +366,7 @@ void trigger_keys_held_down()
         {
             event.user.code = SDL_EVENT_USER_TRIGGER;
             event.key.keysym.sym = keys_held_down_map[i];
-            key_down_handler(&event);
+            chat_key_down_handler(&event);
         }
     }
 }
@@ -679,7 +710,7 @@ void agent_key_state_handler(Uint8 *keystate, int numkeys,
         *r = 1;
     if (keystate[SDLK_LSHIFT])  // LSHIFT
         *jet = 1;
-    if (keystate[SDLK_SPACE])
+    if (keystate[SDLK_SPACE] || keystate[SDLK_PAGEDOWN])  // 2nd "bind" for CorpusC's keyboard
         *jump = 1;
     if (keystate[SDLK_LCTRL])  // LCTRL
         *crouch = 1;
@@ -800,6 +831,19 @@ void key_down_handler(SDL_Event* event)
         chat_key_down_handler(event);
     else if (input_state.agent_container || input_state.container_block)
         container_key_down_handler(event);
+    else if (input_state.awesomium)
+    {
+        switch (event->key.keysym.sym)
+        {
+            case SDLK_ESCAPE:
+                toggle_awesomium();
+                break;
+
+            default:
+                Awesomium::SDL_keyboard_event(event);
+                break;
+        }
+    }
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -939,6 +983,10 @@ void key_down_handler(SDL_Event* event)
             if (input_state.admin_controls) t_map::toggle_3d_texture_settings();
             break;
 
+        case SDLK_F1:
+            toggle_awesomium();
+            break;
+
         case SDLK_F2:
             input_state.diagnostics = (!input_state.diagnostics);
             break;
@@ -992,7 +1040,6 @@ void key_down_handler(SDL_Event* event)
 // key up
 void key_up_handler(SDL_Event* event)
 {
-
     if (input_state.skeleton_editor)
     {
         SkeletonEditor::key_up_handler(event);
@@ -1009,6 +1056,8 @@ void key_up_handler(SDL_Event* event)
         chat_key_up_handler(event);
     else if (input_state.agent_container || input_state.container_block)
         container_key_up_handler(event);
+    else if (input_state.awesomium)
+        Awesomium::SDL_keyboard_event(event);
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -1059,6 +1108,8 @@ void mouse_button_down_handler(SDL_Event* event)
     // chat doesnt affect mouse
     if (input_state.agent_container || input_state.container_block)
         container_mouse_down_handler(event);
+    else if (input_state.awesomium)
+        Awesomium::SDL_mouse_event(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
     else
@@ -1086,6 +1137,8 @@ void mouse_button_up_handler(SDL_Event* event)
 
     if (input_state.agent_container || input_state.container_block)
         container_mouse_up_handler(event);
+    else if (input_state.awesomium)
+        Awesomium::SDL_mouse_event(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
     else
@@ -1112,6 +1165,11 @@ void mouse_motion_handler(SDL_Event* event)
     {
         SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         container_mouse_motion_handler(event);
+    }
+    else if (input_state.awesomium)
+    {
+        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
+        Awesomium::SDL_mouse_event(event);
     }
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);
@@ -1173,7 +1231,7 @@ void active_event_handler(SDL_Event* event)
     if (event->active.state & SDL_APPACTIVE)
         input_state.app_active = gained;
 
-    if (!input_state.container_block && !input_state.agent_container)
+    if (!mouse_unlocked_for_ui_element())
     {   // only do this if container/inventory not open 
         // handle alt tab
         if (event->active.state & SDL_APPINPUTFOCUS)
@@ -1194,5 +1252,4 @@ void active_event_handler(SDL_Event* event)
     //if (event->active.state & SDL_APPINPUTFOCUS || event->active.state & SDL_APPMOUSEFOCUS)
         //if (event->active.gain)
             //input_state.mouse_bound = input_state.rebind_mouse;
-
 }

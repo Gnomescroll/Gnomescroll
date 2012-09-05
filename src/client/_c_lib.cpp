@@ -95,36 +95,6 @@ dont_include_this_file_in_server
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
-/* Awesonium */
-
-/*
-#ifndef __WIN32__
-    #ifndef __APPLE__
-        #ifdef __GNUC__
-            #define AWESOMIUM
-        #endif
-    #endif
-#endif
-
-#ifdef __APPLE__
-    //#define AWESOMIUM
-    #undef AWESOMIUM
-#endif
-
-#ifdef AWESOMIUM
-    #include <SDL/awesomium/_include.hpp>
-#endif
-*/
-    //#include <SDL/awesomium/_include.hpp>
-
-/* Mob */
-
-/*
-#ifndef __APPLE__
-#include <t_mob/_include.hpp>
-#endif
-*/
-
 #include <t_mob/_include.hpp>
 
 /* Draw utils */
@@ -198,13 +168,7 @@ dont_include_this_file_in_server
 
 /* HUD */
 
-#include <hud/reticle.cpp>
-#include <hud/cube_selector.cpp>
-#include <hud/font.cpp>
-
-#include <hud/text.cpp>
-#include <hud/map.cpp>
-#include <hud/hud.cpp>
+#include <hud/_include.hpp>
 
 /* input */
 #include <input/input.cpp>
@@ -221,6 +185,9 @@ dont_include_this_file_in_server
 
 #include <chat/interface.cpp>
 
+/* Awesomium */
+#include <SDL/awesomium/_include.hpp>
+
 /* client side map gen / utils */
 //#include <map_gen/hopcroft-karp.cpp>
 //#include <map_gen/dragon.cpp>
@@ -228,6 +195,8 @@ dont_include_this_file_in_server
 #include <state/client_state.cpp>
 #include <state/packet_init.cpp>
 
+// authentication
+#include <auth/client.cpp>
 
 bool main_inited = false;
 bool signal_exit = false;
@@ -306,11 +275,6 @@ int init_c_lib(int argc, char* argv[])
     update_camera_settings(Options::view_distance);
     
     srand((unsigned int)time(NULL));   // seed the RNG
-
-
-    #ifdef AWESOMIUM
-        Awesomium::init();
-    #endif
     
     ClientState::init_lists();
 
@@ -324,6 +288,8 @@ int init_c_lib(int argc, char* argv[])
     init_image_loader();
     TextureSheetLoader::init();
     //printf("Checkpoint 1 \n");
+
+    Awesomium::init();
 
     t_map::init_t_map();
     //printf("Checkpoint 2 \n");
@@ -367,6 +333,7 @@ int init_c_lib(int argc, char* argv[])
     t_hud::init();
     t_hud::draw_init();
 
+    Hud::init();
     //t_mech::state_init();
 
     Particle::init_particles();
@@ -410,9 +377,9 @@ int init_c_lib(int argc, char* argv[])
 
 void close_c_lib()
 {
-    printf("Closing game...\n");
-
     #define TEARDOWN_DEBUG 0
+
+    printf("Closing game...\n");
 
     if (TEARDOWN_DEBUG) printf("t_map end t map\n");
     t_map::end_t_map();
@@ -458,6 +425,7 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("hud text teardown\n");
     HudText::teardown();
     
+    Hud::teardown();
     // free surfaces
     if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::teardown_shader();
@@ -494,15 +462,13 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("enet teardown\n");
     teardown_network();
 
-    #ifdef AWESOMIUM
-        Awesomium::teardown();
-    #endif
-
-    #undef TEARDOWN_DEBUG
+    Awesomium::teardown();
 
     Log::teardown();
     Options::teardown_option_tables();
     _GS_ASSERT_TEARDOWN();
 
     printf("Game closed\n");
+
+    #undef TEARDOWN_DEBUG
 }

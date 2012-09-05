@@ -425,70 +425,12 @@ bool ChatInput::route_command()
         msg.b = color.b;
         msg.send();
     }
-    //else
-    //if (!strcmp(cmd, (char*)"spawner") || cmd[0] == 's' || cmd[0] == 'S')
-    //{
-        //char spawner[4] = {'\0'};
-        //int j = 0;
-
-        //// check for s# syntax
-        //int k = 1;
-        //while ((c = buffer[k++]) != '\0' && isdigit(c))
-        //{
-            //spawner[j++] = c;
-            //if (j == 3) break;
-        //}
-
-        //if (!j)
-        //{   // check for s # syntax
-            //k = 2;
-            //while ((c = buffer[k++]) != '\0' && isdigit(c))
-            //{
-                //spawner[j++] = c;
-                //if (j == 3) break;
-            //}
-        //}
-
-        //if (!j) // /spawner # syntax
-            //while ((c = buffer[i++]) != '\0' && !isspace(c))
-            //{
-                //spawner[j++] = c;
-                //if (j == 3) break;
-            //}
-        //int spawner_team_index = atoi(spawner);
-        //if (spawner_team_index == 0)    // not an int
-        //{
-            //if (spawner[0] == 's' || spawner[0] == 'S') // allow S# syntax
-            //{
-                //int k = 1;
-                //while ((c = spawner[k]) != '\0')
-                //{
-                    //spawner[k-1] = spawner[k];
-                    //k++;
-                //}
-                //spawner[k-1] = '\0';
-                //spawner_team_index = atoi(spawner);
-            //}
-        //}
-        //if (spawner_team_index == 0)    // could be legitimate 0
-            //if (spawner[0] != '0')
-                //return false;
-        //printlog(Log::CHAT, Log::Always, "Chat select spawner %d\n", spawner_team_index);
-        //if (spawner_team_index == 0)
-            //spawner_team_index = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
-        //choose_spawn_location_CtoS msg;
-        //msg.id = spawner_team_index;
-        //msg.send();
-        //return true;
-    //}
-    //else
-    //if(!strcmp(cmd, (char*)"b") || !strcmp(cmd, (char*)"B") || !strcmp(cmd, (char*)"base"))
-    //{
-        //choose_spawn_location_CtoS msg;
-        //msg.id = BASE_SPAWN_ID;
-        //msg.send();
-        //return true;
-    //}
+    else
+    if (!strcmp(cmd, "url"))
+    {
+        Awesomium::open_url(&buffer[i]);
+        return true;
+    }
 
     return false;
 }
