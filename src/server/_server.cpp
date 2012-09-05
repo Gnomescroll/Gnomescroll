@@ -46,11 +46,15 @@
 #include <common/lua/lua.hpp>
 
 #ifdef __MSVC__
-int _tmain(int argc, _TCHAR* argv[])
+//int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 #else
 int main(int argc, char* argv[])
 #endif
 {
+	//for(int i=0; i<argc; i++) 
+	//	printf("ARG%d: %s \n", i, argv[i]);
+
     #if PRODUCTION
     printf("Production build\n");
     #else

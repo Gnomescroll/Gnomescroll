@@ -27,6 +27,10 @@ void default_map_gen()
 
 void init(int argc, char* argv[])
 {
+
+//	for(int i=0; i<argc; i++) 
+//		printf("ARG%d: %s \n", i, argv[i]);
+
     init_c_lib(argc, argv);
 
     srand(Options::seed);

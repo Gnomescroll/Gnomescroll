@@ -11,7 +11,8 @@
 
 //int main(int argc, char** argv)
 #ifdef __MSVC__
-int _tmain(int argc, _TCHAR* argv[])
+//int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 #else
 int main(int argc, char* argv[])
 #endif
