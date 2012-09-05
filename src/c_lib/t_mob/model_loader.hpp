@@ -428,6 +428,7 @@ class ModelLoader
 
     void init_bone_list()
     {
+#if 0
         //count bones
         int bone_count = 0;
         int _bone_count = 0;
@@ -483,12 +484,12 @@ class ModelLoader
                 for(int i=0; i<bcount;i++)
                 {
                     if( strcmp(bnl[i].name, bone->->mName.data) ==0 )
-                        
+
                 }
             }
 
         }
-
+#endif
     }
 
     aiNode* FindNodeRecursivelyByName(aiNode* pNode, char* node_name)
