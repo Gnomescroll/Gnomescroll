@@ -30,6 +30,13 @@ extern "C"
 namespace t_mob
 {
 
+    char* copy_string(char* xstr)
+    {
+        nstr = new char[strlen(xstr)+1];
+        strcpy(nstr, xstr);
+        return nstr;
+    }
+
     struct _Vertex
     {
         struct Vec3 v;
@@ -419,16 +426,45 @@ class ModelLoader
     {
         char* name;
         struct Mat4 mOffsetMatrix;
-        struct BoneNode* parent;
+        int parent;
+        struct aiNode* parent_node;
     };
 
     struct BoneNode* bnl;
     int bnlm;
 
 
+/*
+    void recursive_node(int* count, struct aiNode* node)
+    {
+        if( strcmp(node->mName.data, "Armature") == 0 )
+            break;
+        if(tempNode == NULL)
+            return;
+
+
+
+        for(int i=0; i<*count; i++)
+        {
+
+        }
+
+    }
+*/
+
+    bool node_in_list(struct aiNode* node, int node_count)
+    {
+        for(int j=0; j<node_count; j++ )
+        {
+            if(strcmp(node->mName.data, _nl[node_count].name) == 0)
+                return true;
+        }
+        return false;
+    }
+
     void init_bone_list()
     {
-#if 0
+#if 1
         //count bones
         int bone_count = 0;
         int _bone_count = 0;
@@ -463,6 +499,8 @@ class ModelLoader
         //printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
         //count_bones();
 
+
+        //set bone list
         bnlm = bone_count;
         bnl = new BoneNode[bnlm];
 
@@ -472,6 +510,7 @@ class ModelLoader
             bnl[i].p = NULL;
         }
 
+        //populate bone list
         int bcount = 0
         for(int i=0; i<nli; i++)
         {
@@ -481,14 +520,71 @@ class ModelLoader
                 aiBone* bone = mesh->mBones[j];
                 bool new_bone = false
                 
-                for(int i=0; i<bcount;i++)
+                for(int k=0; k<bcount;k++)
                 {
-                    if( strcmp(bnl[i].name, bone->->mName.data) ==0 )
+                    if( strcmp(bnl[k].name, bone->mName.data) ==0 )
+                    {
+                        bnl[bcount].name = copy_string(bone->mName.data);
+                        bnl[bcount].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                        bnl[bcount].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                        bnl[bcount].parent = -1;
 
+                        bcount++;
+                    }
                 }
             }
-
         }
+/*
+    struct Node
+    {
+        char* name;
+        struct Mat4 mTransformation;
+        struct Node* p;     //parent
+        struct Node* c;     //children
+        int cn;             //children number
+    };
+
+    struct Node* _nl;
+    int _nlm;
+*/
+
+        //populate node list
+
+        _nl = new struct Node[nlm];
+        _nlm = nlm;
+
+        int node_count = 0;
+
+        for(int i=0; i<bnlm; i++)
+        {
+            // start with the mesh-to-bone matrix 
+            aiNode* tempNode = bnl[i].parent;
+            GS_ASSERT(tempNode != NULL)
+
+            while( tempNode )
+            {
+                if(node_in_list(tempNode, node_count) == true)
+                    continue;
+
+                    //insert
+
+                _nl[node_count].name            = copy_string(tempNode->mName.data);
+                _nl[node_count].mTransformation = _ConvertMatrix(tempNode->mTransformation);
+                _nl[node_count].p               = tempNode->mParent;
+                _nl[node_count].c               = NULL;
+                _nl[node_count].cn              = 0;
+
+                if( strcmp(tempNode->mName.data, "Armature") == 0 )
+                {
+                    _nl[node_count].p = NULL;
+                    break;
+                }
+                if(tempNode == NULL)
+                    break;
+                tempNode = tempNode->mParent;
+            }
+        }
+
 #endif
     }
 
@@ -507,8 +603,6 @@ class ModelLoader
 
         return NULL;
     }
-
-
 
     //mValue
 
@@ -981,7 +1075,7 @@ void ModelLoader::draw(float x, float y, float z)
                 if(_print)
                 {
                     printf("\tbone: %02d %02d bone name= %s \n", j, _index, tempNode->mName.data);
-                //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+                    //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
                     //mat4_print( _ConvertMatrix(tempNode->mTransformation) ) ;
                 }
                 //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
