@@ -32,7 +32,7 @@ namespace t_mob
 
     char* copy_string(char* xstr)
     {
-        nstr = new char[strlen(xstr)+1];
+        char* nstr = new char[strlen(xstr)+1];
         strcpy(nstr, xstr);
         return nstr;
     }
@@ -372,12 +372,24 @@ class ModelLoader
     {
         char* name;
         struct Mat4 mOffsetMatrix;
-        int parent;
-        struct aiNode* parent_node;
+        struct aiNode* parent_node;   //parent node
+        int parent_index;
     };
 
     struct BoneNode* bnl;
     int bnlm;
+
+
+    bool bone_in_list(aiBone* bone, int bone_count)
+    {
+        for(int i=0; i<bone_count;i++)
+        {
+            if( strcmp(bnl[i].name, bone->mName.data) ==0 )
+                return true;
+        }
+        return false;
+    }
+
 
     void init_bone_list()
     {
@@ -392,7 +404,7 @@ class ModelLoader
             aiMesh* mesh = ml[i];
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
-                aiBone* bone = mesh->mBones[j];
+                //aiBone* bone = mesh->mBones[j];
                 //printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
                 bool new_bone = true;
                 for(int _i=0; _i<=i; _i++) 
@@ -422,30 +434,30 @@ class ModelLoader
         for(int i=0; i<bnlm; i++)
         {
             bnl[i].name = NULL;
-            bnl[i].p = NULL;
+            bnl[i].parent_node = NULL;
         }
 
         //populate bone list
-        int bcount = 0
+        int bcount = 0;
         for(int i=0; i<nli; i++)
         {
             aiMesh* mesh = ml[i];
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
-                bool new_bone = false
                 
                 for(int k=0; k<bcount;k++)
                 {
-                    if( strcmp(bnl[k].name, bone->mName.data) ==0 )
-                    {
-                        bnl[bcount].name = copy_string(bone->mName.data);
-                        bnl[bcount].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
-                        bnl[bcount].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
-                        bnl[bcount].parent = -1;
+                    if( bone_in_list(bone, bone_count) == true )
+                        continue;
+                    
+                    bnl[bcount].name = copy_string(bone->mName.data);
+                    bnl[bcount].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                    bnl[bcount].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                    bnl[bcount].parent_index = -1;
 
-                        bcount++;
-                    }
+                    bcount++;
+                    
                 }
             }
         }
@@ -489,7 +501,7 @@ class ModelLoader
         for(int i=0; i<bnlm; i++)
         {
             // start with the mesh-to-bone matrix 
-            aiNode* tempNode = bnl[i].parent;
+            aiNode* tempNode = bnl[i].parent_node;
             GS_ASSERT(tempNode != NULL)
 
             while( tempNode )
@@ -516,7 +528,7 @@ class ModelLoader
             }
         }
 
-        printf("init_node_list: node_count= %d nlm= %d %n", node_count, nlm);
+        printf("init_node_list: node_count= %d nlm= %d \n", node_count, nlm);
 
     }
 
