@@ -52,6 +52,15 @@ awe_string* get_awe_string(const char* _str)
     return awe_string_create_from_ascii(_str, length);
 }
 
+char* get_str_from_awe(const awe_string* str)
+{
+    size_t len = awe_string_get_length(str);
+    char* dest = (char*)malloc((len+1)*sizeof(char));
+    awe_string_to_utf8(str, dest, len);
+    dest[len] = '\0';
+    return dest;
+}
+
 void init()
 {
     printf("Awesomium::init\n");
@@ -74,11 +83,6 @@ void init()
     awe_string* package_path = get_awe_string(package_path_str);
     awe_string* locale_path = get_awe_string(locale_path_str);
     awe_string* log_path = get_awe_string("./screenshot");
-
-    //user_agent_fmt = "Gnomescroll/%d";
-    //awe_string* user_agent = get_awe_string("Gnomescroll/%d
-
-    //awe_webview_load_html(webView, html_str,awe_string_empty());
 
     awe_webcore_initialize( false, //plugins
     true, //javascript
@@ -144,17 +148,25 @@ void SDL_keyboard_event(const SDL_Event* event)
     // Separate handling for history navigation -- awesomium does not do this by default
     if (event->type == SDL_KEYDOWN)
     {
-        int history_offset = 0;
         if(event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
         {
             if (key == SDLK_LEFT)
-                history_offset = -1;
+                awe_webview_go_to_history_offset(cv->webView, -1);
             if (key == SDLK_RIGHT)
-                history_offset = 1;
+                awe_webview_go_to_history_offset(cv->webView, 1);
         }
 
-        if (history_offset)
-            awe_webview_go_to_history_offset(cv->webView, history_offset);
+        if (key == SDLK_MINUS)
+        {
+            char* token = get_auth_token();
+            if (token == NULL)
+                printf("No token found\n");
+            else
+            {
+                printf("Token: %s\n", token);
+                free(token);
+            }
+        }
     }
 }
 
@@ -175,6 +187,44 @@ void disable()
 {
     if (cv == NULL) return;
     cv->unfocus();
+}
+
+char* get_cookies()
+{
+    GS_ASSERT(cv != NULL);
+    if (cv == NULL) return NULL;
+
+    awe_string* url = get_awe_string(GNOMESCROLL_URL);
+    const awe_string* _cookies = awe_webcore_get_cookies(url, false);
+    awe_string_destroy(url);
+
+    char* cookies = get_str_from_awe(_cookies);
+    return cookies;
+}
+
+char* get_auth_token()
+{
+    char* cookies = get_cookies();
+    GS_ASSERT(cookies != NULL);
+    if (cookies == NULL) return NULL;
+
+    char* token = strstr(cookies, AUTH_TOKEN_COOKIE_NAME);
+    if (token == NULL) return NULL; 
+
+    int i=0;
+    char c;
+    while ((c = token[i++]) != '\0')
+        if (c == ';')
+        {
+            token[i-1] = '\0';
+            break;
+        }
+
+    size_t len = strlen(token);
+    char* auth_token = (char*)malloc((len+1) * sizeof(char));
+    auth_token = strcpy(auth_token, &token[strlen(AUTH_TOKEN_COOKIE_NAME) + 1]);    // copy cookie value to auth_token. offset is strlen(token_name) + strlen(=)
+    free(cookies);
+    return auth_token;
 }
 
 }   // Awesomium

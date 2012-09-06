@@ -5,6 +5,8 @@
 namespace Awesomium
 {
 
+const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";
+
 void init();
 void teardown();
 void update();
@@ -23,8 +25,12 @@ void SDL_mouse_event(const SDL_Event* event);
 void open_url(const char* url);
 
 awe_string* get_awe_string(const char* _str);
+char* get_str_from_awe(const awe_string* str);
 
 extern class ChromeViewport* cv;
 extern class ViewportManager* viewport_manager;
+
+char* get_cookies();
+char* get_auth_token();
 
 }   // Awesomium
