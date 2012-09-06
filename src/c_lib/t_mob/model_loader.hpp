@@ -363,6 +363,7 @@ class ModelLoader
         struct Node* p;     //parent
         struct Node* c;     //children
         int cn;             //children number
+        int index;          //index for list
     };
 
     struct Node* _nl;
@@ -484,6 +485,7 @@ class ModelLoader
         struct Node* p;     //parent
         struct Node* c;     //children
         int cn;             //children number
+        int index;          //index in list
     };
 
     struct Node* _nl;
@@ -513,9 +515,10 @@ class ModelLoader
 
                 _nl[node_count].name            = copy_string(tempNode->mName.data);
                 _nl[node_count].mTransformation = _ConvertMatrix(tempNode->mTransformation);
-                _nl[node_count].p               = tempNode->mParent;
+                _nl[node_count].p               = NULL;
                 _nl[node_count].c               = NULL;
                 _nl[node_count].cn              = 0;
+                _nl[node_count].index           = -1;
 
                 if( strcmp(tempNode->mName.data, "Armature") == 0 )
                 {
@@ -528,8 +531,12 @@ class ModelLoader
             }
         }
 
-        printf("init_node_list: node_count= %d nlm= %d \n", node_count, nlm);
+        _nlm = node_count;
+        printf("init_node_list: node_count= %d nlm= %d _nlm= %d \n", node_count, nlm, _nlm);
 
+        //set parent node
+
+        
     }
 
 
