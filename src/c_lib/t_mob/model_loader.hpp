@@ -414,8 +414,6 @@ class ModelLoader
         //printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
         //printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
         //printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
-        //count_bones();
-
 
         //set bone list
         bnlm = bone_count;
