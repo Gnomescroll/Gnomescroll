@@ -31,8 +31,7 @@ typedef enum
 const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";    // name of the cookie value set by the auth server
 const char AUTH_TOKEN_DELIMITER = '|';  // delimiter for components of the token
 
-//const time_t AUTH_TOKEN_LIFETIME = 60 * 60; // 1 hour, in seconds 
-const time_t AUTH_TOKEN_LIFETIME = 10;// test 
+const time_t AUTH_TOKEN_LIFETIME = 60 * 60; // 1 hour, in seconds 
 
 const unsigned int AUTH_TOKEN_ID_LENGTH = 9;
 const unsigned int AUTH_TOKEN_TIMESTAMP_LENGTH = 10;

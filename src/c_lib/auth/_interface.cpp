@@ -44,21 +44,44 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
 
     // replace delimiters with NUL
     int delims = 0;
+    unsigned int len = 0;
     for (unsigned int i=0; i<AUTH_TOKEN_LENGTH; i++)
+    {
         if (_token[i] == '|')
         {
+            len = 0;
             _token[i] = '\0';
             delims++;
         }
+        else
+        {
+            len++;
+            if ((delims == 0 && len > AUTH_TOKEN_ID_LENGTH) ||
+                (delims == 1 && len > AUTH_TOKEN_TIMESTAMP_LENGTH) ||
+                (delims == 2 && len > AUTH_TOKEN_HASH_LENGTH))
+            {
+                free(_token);
+                return false;
+            }
+        }
+    }
 
     // should be 2 delimiters
     GS_ASSERT(delims == 2);
-    if (delims != 2) return false;
+    if (delims != 2)
+    {
+        free(_token);
+        return false;
+    }
 
     // convert user id to integer
     *user_id = atoi(_token);
     GS_ASSERT(user_id > 0);
-    if (user_id <= 0) return false;
+    if (user_id <= 0)
+    {
+        free(_token);
+        return false;
+    }
 
     // convert expiration time to time_t
     *expiration_time = atott(&token[AUTH_TOKEN_ID_LENGTH + 1]);
@@ -79,11 +102,12 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
 
 bool auth_token_expired(const time_t timestamp, const time_t expiration_window)
 {   // check if token needs to be refreshed
+    if (timestamp < AUTH_TOKEN_LIFETIME) return true;   // bad data
+
     time_t now = utc_now();
-    time_t dt = (time_t)difftime(now, timestamp);
-    if (dt > expiration_window)
-        return false;
-    return true;
+    time_t created_at = timestamp - AUTH_TOKEN_LIFETIME;
+    double dt = difftime(now, created_at);
+    return (dt >= (double)expiration_window);
 }
 
 }   // Auth

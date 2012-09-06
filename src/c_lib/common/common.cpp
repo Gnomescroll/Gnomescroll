@@ -104,7 +104,5 @@ time_t utc_now()
 {
     time_t now;
     time(&now); // get current unix time
-    struct tm* now_tm = gmtime(&now);  // convert to UTC struct tm
-    now = mktime(now_tm);  // convert back to unix timestamp
     return now;
 }
