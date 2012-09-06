@@ -30,6 +30,8 @@ void init(int argc, char* argv[])
     init_c_lib(argc, argv);
 
     srand(Options::seed);
+
+    bool fast_map = false;
     if (Options::map[0] == '\0')
     {   // use map gen
         #if PRODUCTION
@@ -45,19 +47,27 @@ void init(int argc, char* argv[])
     }
     else if (!strcmp(Options::map, "fast"))
     {
-        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
-        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
-
-        map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+        fast_map = true;
     }
     else
     {   // use map file
         t_map::load_map(Options::map);
     }   
 
-    // do this after map gen / loading until crystals are serialized
-    t_gen::populate_crystals();
-    t_map::environment_process_startup();
+    if (fast_map)
+    {
+        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
+        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
+
+        map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+    }
+    else
+    {
+        // do this after map gen / loading until crystals are serialized
+        t_gen::populate_crystals();
+        t_map::environment_process_startup();
+    }
+
 
     srand((unsigned int)time(NULL));
     

@@ -3,6 +3,8 @@
 #include <SDL/awesomium/viewport_class.hpp>
 #include <SDL/awesomium/viewport_manager.hpp>
 
+#include <auth/constants.hpp>
+
 /*
 ChildProcessPath
 
@@ -121,6 +123,31 @@ void init()
     cv = new ChromeViewport;
     viewport_manager = new ViewportManager;
     viewport_manager->add_viewport(cv);
+
+    ////// TODO -- rm temp for testing
+    delete_auth_token_cookie();
+    //char* cookies = get_cookies();
+    //printf("Cookies: %s\n", cookies);
+    //free(cookies);
+}
+
+void delete_all_cookies()
+{
+    awe_webcore_clear_cookies();
+}
+
+void delete_cookie(const char* name)
+{
+    awe_string* _url = get_awe_string(GNOMESCROLL_URL);
+    awe_string* _name = get_awe_string(name);
+    awe_webcore_delete_cookie(_url, _name);
+    awe_string_destroy(_url);
+    awe_string_destroy(_name);
+}
+
+void delete_auth_token_cookie()
+{
+    delete_cookie(Auth::AUTH_TOKEN_COOKIE_NAME);
 }
 
 void teardown()
@@ -208,7 +235,7 @@ char* get_auth_token()
     GS_ASSERT(cookies != NULL);
     if (cookies == NULL) return NULL;
 
-    char* token = strstr(cookies, AUTH_TOKEN_COOKIE_NAME);
+    char* token = strstr(cookies, Auth::AUTH_TOKEN_COOKIE_NAME);
     if (token == NULL) return NULL; 
 
     int i=0;
@@ -222,9 +249,22 @@ char* get_auth_token()
 
     size_t len = strlen(token);
     char* auth_token = (char*)malloc((len+1) * sizeof(char));
-    auth_token = strcpy(auth_token, &token[strlen(AUTH_TOKEN_COOKIE_NAME) + 1]);    // copy cookie value to auth_token. offset is strlen(token_name) + strlen(=)
+    auth_token = strcpy(auth_token, &token[strlen(Auth::AUTH_TOKEN_COOKIE_NAME) + 1]);    // copy cookie value to auth_token. offset is strlen(token_name) + strlen(=)
     free(cookies);
     return auth_token;
+}
+
+void check_for_token_cookie(const awe_string* _url)
+{   // grab the cookie and send it to the auth system
+    char* url = get_str_from_awe(_url);
+    if (strstr(url, GNOMESCROLL_URL) != NULL)
+    {
+        char* token = get_auth_token();
+        if (token == NULL) return;
+        Auth::AuthError error = Auth::update_token(token);
+        GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
+    }
+    free(url);
 }
 
 }   // Awesomium

@@ -149,7 +149,7 @@ dont_include_this_file_in_client
 #include <animations/_include.hpp>
 
 // authentication
-#include <auth/server.cpp>
+#include <auth/_include.hpp>
 
 #ifdef linux
 #include <unistd.h>
@@ -229,8 +229,6 @@ int init_c_lib(int argc, char* argv[])
     printf("Server init\n");
     srand((unsigned int)time(NULL));
 
-    Auth::init();
-
     Components::init();
     Objects::init_net_interfaces();
     Objects::init();    // Entity system
@@ -240,6 +238,8 @@ int init_c_lib(int argc, char* argv[])
 
     NetServer::init_globals();
     init_network();
+
+    Auth::init();
 
     Sound::init();
     Animations::init();
@@ -321,6 +321,8 @@ void close_c_lib()
 
     Sound::close();
     Animations::teardown();
+
+    Auth::teardown();
     
     printf("Server closed\n"); 
     Log::teardown();

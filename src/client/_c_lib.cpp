@@ -196,7 +196,7 @@ dont_include_this_file_in_server
 #include <state/packet_init.cpp>
 
 // authentication
-#include <auth/client.cpp>
+#include <auth/_include.hpp>
 
 bool main_inited = false;
 bool signal_exit = false;
@@ -289,8 +289,6 @@ int init_c_lib(int argc, char* argv[])
     TextureSheetLoader::init();
     //printf("Checkpoint 1 \n");
 
-    Awesomium::init();
-
     t_map::init_t_map();
     //printf("Checkpoint 2 \n");
     HudCubeSelector::init();
@@ -363,9 +361,10 @@ int init_c_lib(int argc, char* argv[])
 
     Hud::init_hud_draw_settings();
 
-
-
     init_voxel_render_list_shader1();   //used to be called from ClientState::init
+
+    Awesomium::init();
+    Auth::init();
 
     //init shaders
     
@@ -462,6 +461,10 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("enet teardown\n");
     teardown_network();
 
+    if (TEARDOWN_DEBUG) printf("auth teardown\n");
+    Auth::teardown();
+
+    if (TEARDOWN_DEBUG) printf("awesomium teardown\n");
     Awesomium::teardown();
 
     Log::teardown();

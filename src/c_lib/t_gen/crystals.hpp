@@ -179,7 +179,11 @@ void populate_crystals()
     }
 
     GS_ASSERT(ct > 0);
-    if (ct <= 0) return;
+    if (ct <= 0)
+    {
+        free(loc);
+        return;
+    }
 
     cluster_size = (int*)calloc(ct, sizeof(int));
 

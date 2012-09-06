@@ -1,12 +1,11 @@
 #pragma once
 
 #include <SDL/awesomium/_interface.hpp>
+#include <auth/constants.hpp>
+#include <auth/client.hpp>
 
 namespace Awesomium
 {
-
-// Switch to gnomescroll.com when site is live
-#define GNOMESCROLL_URL "http://127.0.0.1:5002/"
 
 int getWebKeyFromSDLKey(SDLKey key);
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event);
@@ -21,6 +20,85 @@ struct chromeDisplay {
     void* webView;
 };
 */
+
+/*
+    Begin navigation callback triggered
+    URL on webView is: http://127.0.0.1:5002/server/token
+    Frame name is: 
+
+    Begin loading callback triggered
+    URL on webView is: http://127.0.0.1:5002/server/list
+    Frame name is: 
+    Status code is; 200
+    Mime type is: text/html
+
+    -------
+    Track between these two calls to detect the redirect for token page
+    (could not get redirect response measured in any callback)
+*/
+
+void begin_navigation_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name)
+{
+    // this callback triggers after a url is opened with open_url
+    // and after the header for the response has been received
+}
+
+void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name, int status_code, const awe_string* _mime_type)
+{
+    //printf("Begin loading callback triggered\n");
+    //char* url = get_str_from_awe(_url);
+    //char* mime_type = get_str_from_awe(_mime_type);
+    //printf("URL on webView is: %s\n", url);
+    //printf("Status code is; %d\n", status_code);
+    //printf("Mime type is: %s\n", mime_type);
+    //free(url);
+    //free(mime_type);
+
+    //if (strstr(url, "/server/list") != NULL)
+    //{
+        //char* cookies = get_cookies();
+        //printf("Cookies: %s\n", cookies);
+        //free(cookies);
+    //}
+
+    //printf("\n");
+
+    check_for_token_cookie(_url);
+}
+
+void finish_loading_cb(awe_webview* webView)
+{
+    printf("Finish loading callback triggered\n");
+    awe_string* _url = awe_webview_get_url(webView);
+    char* url = get_str_from_awe(_url);
+    printf("URL on webView is: %s\n", url);
+    free(url);
+    printf("\n");
+}
+
+awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request)
+{
+    printf("Resource request callback triggered\n");
+    awe_string* _url = awe_webview_get_url(webView);
+    char* url = get_str_from_awe(_url);
+    printf("URL on webView is: %s\n", url);
+    free(url);
+    printf("\n");
+    return NULL;
+}
+
+void resource_response_cb(awe_webview* webView, const awe_string* _url,
+    int status_code, bool was_cached,
+    int64 request_time_ms, int64 response_time_ms, int64 expected_content_size,
+    const awe_string *_mime_type)
+{
+    printf("Resource response callback triggered\n");
+    char* url = get_str_from_awe(_url);
+    printf("URL: %s\n", url);
+    printf("Status code: %d\n", status_code);
+    free(url);
+    printf("\n");
+}
 
 class ChromeViewport
 {
@@ -45,12 +123,24 @@ class ChromeViewport
 
         this->init_webview();
         this->init_render_surface();
+
+        this->set_callbacks();
+
         this->load_first_url();
+    }
+
+    void set_callbacks()
+    {
+        //awe_webview_set_callback_begin_navigation(this->webView, &begin_navigation_cb);
+        awe_webview_set_callback_begin_loading(this->webView, &begin_loading_cb);
+        //awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
+        //awe_webview_set_callback_resource_response(this->webView, &resource_response_cb);
+        //awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
     }
 
     void load_first_url()
     {
-        this->load_url(GNOMESCROLL_URL "login");
+        this->load_url(GNOMESCROLL_URL);
     }
 
     void load_url(const char* url)
@@ -105,7 +195,6 @@ class ChromeViewport
         //awe_renderbuffer_get_width(renderBuffer),
         //awe_renderbuffer_get_height(renderBuffer),
         //awe_renderbuffer_get_rowspan(renderBuffer)
-
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
 

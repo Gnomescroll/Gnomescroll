@@ -43,8 +43,8 @@ void _START_CLOCK() {
             start_nsec = tp.tv_nsec;
         #else
             //printf("_POSIX_TIMERS not defined! \n");
-			window_ms_start = GetTickCount();
-		#endif
+            window_ms_start = GetTickCount();
+        #endif
     #endif
 */
 }
@@ -87,25 +87,25 @@ int _GET_TICK() {
             //printf("_POSIX_TIMERS not defined! \n");
         #endif
     #endif
-	
-	#ifdef _POSIX_TIMERS
-		long cs_sec, cn_sec;
-		cs_sec = s_sec - s_sec_start;
-		cn_sec = n_sec - n_sec_start;
+    
+    #ifdef _POSIX_TIMERS
+        long cs_sec, cn_sec;
+        cs_sec = s_sec - s_sec_start;
+        cn_sec = n_sec - n_sec_start;
 
-		long t = (long)(cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS);
+        long t = (long)(cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS);
         _ti = cs_sec*1000 + cn_sec/(1000*1000);
-	#else
+    #else
         static const long GetTickCount_start = GetTickCount();
-		long cs_ms = GetTickCount() - GetTickCount_start;  
-		long t = cs_ms / TICK_MS;		
+        long cs_ms = GetTickCount() - GetTickCount_start;  
+        long t = cs_ms / TICK_MS;       
         _ti = cs_ms;
-	#endif
-	
+    #endif
+    
     if(c_tick < t) {
         if(c_tick+5 < t)
         {
-			#if DC_SERVER || !PRODUCTION
+            #if DC_SERVER || !PRODUCTION
             printf("Timer error: c_tick < t is %ld < %ld \n", c_tick,t);
             #endif
             c_tick = t;
@@ -153,16 +153,16 @@ int _GET_MS_TIME()
             //printf("_POSIX_TIMERS not defined! \n");
         #endif
     #endif
-	
-	#ifdef _POSIX_TIMERS
-		long cs_sec, cn_sec;
-		cs_sec = s_sec - s_sec_start;
-		cn_sec = n_sec - n_sec_start;
-		return (int) (cs_sec*1000+ (cn_sec/ 1000000) );
-	#else
+    
+    #ifdef _POSIX_TIMERS
+        long cs_sec, cn_sec;
+        cs_sec = s_sec - s_sec_start;
+        cn_sec = n_sec - n_sec_start;
+        return (int) (cs_sec*1000+ (cn_sec/ 1000000) );
+    #else
         static const long GetTickCount_start = GetTickCount();
-		return GetTickCount() - GetTickCount_start;  
-	#endif
+        return GetTickCount() - GetTickCount_start;  
+    #endif
 }
 
 long _GET_MICROSECOND_TIME() 
@@ -221,4 +221,3 @@ long _LAST_TICK()
 {
     return _last_tick;
 }
-//}

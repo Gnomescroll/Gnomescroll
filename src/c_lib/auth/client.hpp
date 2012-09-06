@@ -1,0 +1,23 @@
+#pragma once
+
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
+namespace Auth
+{
+
+extern char* auth_token;
+extern int auth_token_user_id;
+extern time_t auth_token_timestamp;
+extern char* auth_token_hash;
+
+bool send_auth_token(); // returns true if token was sent
+bool send_auth_token(const char* token); // returns true if token was sent
+
+AuthError update_token(char* token);
+
+void client_init();
+void client_teardown();
+
+}   // Auth

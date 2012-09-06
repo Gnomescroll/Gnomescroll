@@ -83,3 +83,28 @@ char* get_time_str()
     strftime(time_str, TIME_STR_LEN, time_fmt, time_info);
     return time_str;
 }
+
+time_t atott(const char* str)
+{
+    size_t s = sizeof(time_t);
+    if (s == sizeof(int))
+        return atoi(str);
+    else
+    if (s == sizeof(long))
+        return atol(str);
+    else
+    if (s == sizeof(long long))
+        return atoll(str);
+    
+    GS_ASSERT_LIMIT(false, 1);
+    return 0;
+}
+
+time_t utc_now()
+{
+    time_t now;
+    time(&now); // get current unix time
+    struct tm* now_tm = gmtime(&now);  // convert to UTC struct tm
+    now = mktime(now_tm);  // convert back to unix timestamp
+    return now;
+}

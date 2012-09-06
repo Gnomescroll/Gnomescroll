@@ -53,9 +53,10 @@ void init(int argc, char* argv[])
     address_from_string(Options::server, address);
     NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 
+    Auth::begin_auth(); // sends token if available, or requests one
+
     GS_ASSERT(quadrant_translate_f(500,30) == 542);
     GS_ASSERT(quadrant_translate_f(10,500) == -12);
-
 
 /*
     GET RID OF THIS
@@ -202,7 +203,6 @@ int run()
 /* END SETUP */
 
     // update mouse
-
     poll_mouse();
  
     while (!input_state.quit)

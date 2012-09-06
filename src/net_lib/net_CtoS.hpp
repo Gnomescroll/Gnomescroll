@@ -145,6 +145,8 @@ class FixedSizeReliableNetPacketToServer {
         void send() 
         {
             Net_message* nm = Net_message::acquire(Derived::size);
+            GS_ASSERT(nm != NULL);
+            if (nm == NULL) return;
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
