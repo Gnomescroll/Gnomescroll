@@ -557,38 +557,33 @@ class ModelLoader
         }
 
         //set children
-
         for(int i=0; i<_nlm; i++)
         {
             struct Node* node = &_nl[i];
 
             int child_count = 0;
 
-            for(int j=0; m<_nlm; j++)
+            for(int j=0; j<_nlm; j++)
             {
                 if( _nl[j].p == node)
                     child_count++;
             }
 
-            node->c = new Node**[child_count];
+            node->c = new Node*[child_count];
             node->cn = child_count;
 
             child_count = 0;
-            for(int j=0; m<_nlm; j++)
+            for(int j=0; j<_nlm; j++)
             {
                 if( _nl[j].p == node)
                 {
-                    node->c[child_count] = &_nl[j]
+                    node->c[child_count] = &_nl[j];
                     child_count++;
                 }
             }
-
-
-            aiNode* node = bnl[i].parent_node;
-            int index = node_index_from_list(node->mParent);
-            _nl[i].p = &_nli[index];
         }
-
+        
+        //
     }
 
 

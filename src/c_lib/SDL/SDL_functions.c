@@ -73,6 +73,33 @@ int DisplayBox()
     return 0;
 }
 
+int glVersionErrorPopup()
+{
+    #ifdef _WIN32
+
+#ifdef __MSVC__
+
+#else
+    int msgboxID = MessageBox(
+        NULL,
+        (LPCSTR)L"Error: your graphics card sucks!!",
+        (LPCSTR)L"You need at least a $5 graphics card that can support Opengl 2.0",
+        MB_ICONWARNING | MB_DEFBUTTON2
+    );
+
+    switch (msgboxID)
+    {
+    case IDCANCEL:
+        // TODO: add code
+        break;
+    }
+
+    return msgboxID;
+#endif
+    #endif
+    return 0;
+}
+
 int VersionMismatchBox(int local_version, int server_version)
 {
     #ifdef _WIN32
@@ -304,13 +331,6 @@ int init_video() {
 
     //printf("glew init\n");
     glewInit();
-    if (glewIsSupported("GL_VERSION_2_0"))
-    {
-        if(PRODUCTION) printf("OpenGL 2.0 Supported \n");
-    }
-    else {
-        printf("OpenGL 2.0 not supported \n");
-    }
 
 
     //const char* GLVersionString = (char *) glGetString(GL_VERSION);
@@ -319,6 +339,15 @@ int init_video() {
     printf("OpenGL: %s \n", (char*) glGetString(GL_VERSION));
     printf("GPU: %s \n", (char*) glGetString(GL_RENDERER));
     printf("Driver: %s \n", (char*) glGetString(GL_VENDOR));
+
+    if (glewIsSupported("GL_VERSION_2_0"))
+    {
+        if(PRODUCTION) printf("OpenGL 2.0 Supported \n");
+    }
+    else {
+        printf("OpenGL 2.0 not supported \n");
+        glVersionErrorPopup();
+    }
 
     //printf("Extentions= %s \n", (char*)glGetString(GL_EXTENSIONS));
 
