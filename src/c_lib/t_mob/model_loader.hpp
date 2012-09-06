@@ -359,6 +359,7 @@ class ModelLoader
     struct Node
     {
         char* name;
+        struct aiNode* node;
         struct Mat4 mTransformation;
         struct Node* p;     //parent
         struct Node* c;     //children
@@ -469,18 +470,30 @@ class ModelLoader
 
     bool node_in_list(struct aiNode* node, int node_count)
     {
-        for(int j=0; j<node_count; j++ )
+        for(int i=0; i<node_count; i++ )
         {
-            if(strcmp(node->mName.data, _nl[node_count].name) == 0)
+            if(strcmp(node->mName.data, _nl[i].name) == 0)
                 return true;
         }
         return false;
     }
 
+    int node_index_from_list(struct aiNode* node)
+    {
+        for(int i=0; i<_nlm; i++ )
+        {
+            if(strcmp(node->mName.data, _nl[i].name) == 0)
+                return i;
+        }
+
+        GS_ASSERT(false);
+        return 0;
+    }
 /*
     struct Node
     {
         char* name;
+        aiNode* node;
         struct Mat4 mTransformation;
         struct Node* p;     //parent
         struct Node* c;     //children
@@ -515,6 +528,7 @@ class ModelLoader
 
                 _nl[node_count].name            = copy_string(tempNode->mName.data);
                 _nl[node_count].mTransformation = _ConvertMatrix(tempNode->mTransformation);
+                _nl[node_count].node            = tempNode;
                 _nl[node_count].p               = NULL;
                 _nl[node_count].c               = NULL;
                 _nl[node_count].cn              = 0;
@@ -535,8 +549,15 @@ class ModelLoader
         printf("init_node_list: node_count= %d nlm= %d _nlm= %d \n", node_count, nlm, _nlm);
 
         //set parent node
+        for(int i=0; i<_nlm; i++)
+        {
+            aiNode* node = bnl[i].parent_node;
+            int index = node_index_from_list(node->mParent);
+            _nl[i].p = &_nli[index];
+        }
 
-        
+        //set children
+
     }
 
 
