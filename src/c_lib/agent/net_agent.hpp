@@ -481,32 +481,6 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
         inline void handle();
 };
 
-//class agent_name_StoC: public FixedSizeReliableNetPacketToClient<agent_name_StoC>
-//{
-    //public:
-        //uint8_t id;
-        //char name[PLAYER_NAME_MAX_LENGTH+1];
-
-        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
-        //}
-        //inline void handle() __attribute((always_inline));
-//};
-
-//class request_agent_name_CtoS: public FixedSizeReliableNetPacketToServer<request_agent_name_CtoS>
-//{
-    //public:
-        //uint8_t id;
-
-        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-        //}
-        //inline void handle() __attribute((always_inline));
-//};
-
 class agent_destroy_StoC: public FixedSizeReliableNetPacketToClient<agent_destroy_StoC>
 {
     public:
@@ -677,30 +651,6 @@ class set_spawner_StoC: public FixedSizeReliableNetPacketToClient<set_spawner_St
         }
     inline void handle();
 };
-
-/* Identification */
-
-//class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
-//{
-    //public:
-        //char name[PLAYER_NAME_MAX_LENGTH+1];
-        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        //{
-            //pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC>
-//{
-    //public:
-        //char name[PLAYER_NAME_MAX_LENGTH+1];
-        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        //{
-            //pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
-        //}
-        //inline void handle() __attribute((always_inline));
-//};
 
 class ping_StoC: public FixedSizeNetPacketToClient<ping_StoC>
 {

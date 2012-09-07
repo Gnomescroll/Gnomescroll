@@ -19,168 +19,146 @@ dont_include_this_file_in_server
 
 const int GAME_OBJECT_MAX = 4096 * 4;
 
-namespace ClientState {
+namespace ClientState
+{
 
-    int tick_id = 0;
-    int frame_id = 0;
+int tick_id = 0;
+int frame_id = 0;
 
-    Vec3 location_pointer = vec3_init(0,0,0);
-    bool location_pointer_set = false;
+Vec3 location_pointer = vec3_init(0,0,0);
+bool location_pointer_set = false;
 
-    Agent_list* agent_list = NULL;
+Agent_list* agent_list = NULL;
 
-    Voxel_render_list_manager* voxel_render_list;
-    Voxel_hitscan_list* voxel_hitscan_list = NULL;
+Voxel_render_list_manager* voxel_render_list;
+Voxel_hitscan_list* voxel_hitscan_list = NULL;
 
-    //char desired_name[PLAYER_NAME_MAX_LENGTH+1];
-    int last_ping_time;
-    int last_reliable_ping_time;
+int last_ping_time;
+int last_reliable_ping_time;
 
-    PlayerAgent_state playerAgent_state;
+PlayerAgent_state playerAgent_state;
 
-    int agent_control_state[16];
+int agent_control_state[16];
 
-    void init_lists()
-    {
-        voxel_render_list = new Voxel_render_list_manager;
-        voxel_render_list->init();
-        voxel_hitscan_list = new Voxel_hitscan_list;
+void init_lists()
+{
+    voxel_render_list = new Voxel_render_list_manager;
+    voxel_render_list->init();
+    voxel_hitscan_list = new Voxel_hitscan_list;
 
-        agent_list = new Agent_list;
-    }
-
-    void teardown_lists()
-    {
-        // voxel models
-        if (agent_list != NULL) delete agent_list;
-
-        // voxel lists
-        // must go after all voxels
-        if (voxel_render_list != NULL) delete voxel_render_list;
-        if (voxel_hitscan_list != NULL) delete voxel_hitscan_list;
-    }
-
-
-    //void update()
-    //{
-        // check if we've failed to receive any identify packets (lost in initialization)
-        // Shouldn't be needed? initialization packets are reliable
-        //ClientState::agent_list->check_missing_names();  // will ratelimit itself
-    //}
-
-    void set_PlayerAgent_id(int id)
-    {
-        playerAgent_state.set_PlayerAgent_id(id);
-    }
-
-    void tick()
-    {
-        ItemParticle::tick();
-
-        Particle::grenade_list->tick();
-        Particle::shrapnel_list->tick();
-        Particle::blood_list->tick();
-        Particle::colored_minivox_list->tick();
-        Particle::textured_minivox_list->tick();
-        Particle::billboard_text_list->tick();
-        Particle::billboard_text_hud_list->tick();
-    }
-
-    void update_for_draw()
-    {
-        agent_list->update_models();
-    }
-
-    //void send_identify_packet(char* name)
-    //{
-        //unsigned int len = (unsigned int)strlen(name);
-        //if (len >= PLAYER_NAME_MAX_LENGTH)
-            //name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
-
-        //len = sanitize_player_name(name);
-        //if (len == 0) return;
-        //// TODO -- disconnect the player here if they send 0 len name. something is fucked up
-        //identify_CtoS msg;
-        //strcpy(msg.name, name);
-        //msg.send();
-    //}
-    
-    void update_camera()
-    {
-        if (input_state.camera_mode == INPUT_STATE_AGENT)
-            use_agent_camera();
-        else
-            use_free_camera();
-
-        update_agent_camera();
-    }
-
-    void send_camera_state()
-    {
-        if (current_camera == NULL) return;
-        if (playerAgent_state.you == NULL) return;
-        if (!playerAgent_state.you->initial_teleport) return;
-        agent_camera_state_CtoS msg;
-        msg.id = playerAgent_state.you->client_id;
-        Vec3 p = current_camera->get_position();
-        msg.x = p.x;
-        msg.y = p.y;
-        msg.z = p.z;
-        msg.theta = current_camera->theta;
-        msg.phi = current_camera->phi;
-        msg.send();
-    }
-
-    void send_ping()
-    {
-        int n = _GET_MS_TIME();
-        
-        ping_CtoS msg;
-        msg.ticks = n;
-        msg.send();
-
-        ping_reliable_CtoS msg2;
-        msg2.ticks = n;
-        msg2.send();
-    }
-
-    //void set_desired_name(char* name)
-    //{
-        //if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
-            //name[PLAYER_NAME_MAX_LENGTH] = '\0';
-
-        //strcpy(desired_name, name);
-    //}
-
-    //void client_id_received(int client_id)
-    //{
-        ////send_identify_packet(desired_name);
-    //}
-
-    void on_connect()
-    {
-        version_CtoS msg;
-        msg.version = GS_VERSION;
-        msg.send();
-        // connect message is printed after version match
-    }
-    
-    void on_disconnect()
-    {
-        chat_client->send_system_message("Disconnected from server");
-    }
-
-    void set_location_pointer()
-    {
-        location_pointer_set = false;
-        Vec3 loc = playerAgent_state.action.get_aiming_point();
-        if (vec3_equal(loc, vec3_init(0,0,0))) return;
-        location_pointer = loc;
-        location_pointer_set = true;
-
-        printf("Locator: %2.2f %2.2f %2.2f \n", loc.x, loc.y, loc.z);
-
-        t_mech::tick(loc.x, loc.y, loc.z+0.2);
-    }
-
+    agent_list = new Agent_list;
 }
+
+void teardown_lists()
+{
+    // voxel models
+    if (agent_list != NULL) delete agent_list;
+
+    // voxel lists
+    // must go after all voxels
+    if (voxel_render_list != NULL) delete voxel_render_list;
+    if (voxel_hitscan_list != NULL) delete voxel_hitscan_list;
+}
+
+void set_PlayerAgent_id(int id)
+{
+    playerAgent_state.set_PlayerAgent_id(id);
+}
+
+void tick()
+{
+    ItemParticle::tick();
+
+    Particle::grenade_list->tick();
+    Particle::shrapnel_list->tick();
+    Particle::blood_list->tick();
+    Particle::colored_minivox_list->tick();
+    Particle::textured_minivox_list->tick();
+    Particle::billboard_text_list->tick();
+    Particle::billboard_text_hud_list->tick();
+}
+
+void update_for_draw()
+{
+    agent_list->update_models();
+}
+
+void update_camera()
+{
+    if (input_state.camera_mode == INPUT_STATE_AGENT)
+        use_agent_camera();
+    else
+        use_free_camera();
+
+    update_agent_camera();
+}
+
+void send_camera_state()
+{
+    if (current_camera == NULL) return;
+    if (playerAgent_state.you == NULL) return;
+    if (!playerAgent_state.you->initial_teleport) return;
+    agent_camera_state_CtoS msg;
+    msg.id = playerAgent_state.you->client_id;
+    Vec3 p = current_camera->get_position();
+    msg.x = p.x;
+    msg.y = p.y;
+    msg.z = p.z;
+    msg.theta = current_camera->theta;
+    msg.phi = current_camera->phi;
+    msg.send();
+}
+
+void send_ping()
+{
+    int n = _GET_MS_TIME();
+    
+    ping_CtoS msg;
+    msg.ticks = n;
+    msg.send();
+
+    ping_reliable_CtoS msg2;
+    msg2.ticks = n;
+    msg2.send();
+}
+
+//void set_desired_name(char* name)
+//{
+    //if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
+        //name[PLAYER_NAME_MAX_LENGTH] = '\0';
+
+    //strcpy(desired_name, name);
+//}
+
+//void client_id_received(int client_id)
+//{
+    ////send_identify_packet(desired_name);
+//}
+
+void on_connect()
+{
+    version_CtoS msg;
+    msg.version = GS_VERSION;
+    msg.send();
+    // connect message is printed after version match
+}
+
+void on_disconnect()
+{
+    chat_client->send_system_message("Disconnected from server");
+}
+
+void set_location_pointer()
+{
+    location_pointer_set = false;
+    Vec3 loc = playerAgent_state.action.get_aiming_point();
+    if (vec3_equal(loc, vec3_init(0,0,0))) return;
+    location_pointer = loc;
+    location_pointer_set = true;
+
+    printf("Locator: %2.2f %2.2f %2.2f \n", loc.x, loc.y, loc.z);
+
+    t_mech::tick(loc.x, loc.y, loc.z+0.2);
+}
+
+}   // ClientState

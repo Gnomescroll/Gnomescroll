@@ -22,16 +22,13 @@ dont_include_this_file_in_server
 
 #include <common/color.hpp>
 
-//void Agent_event::name_changed(char* old_name)
-//{
-    // TODO -- REMOVE
-    // These messages should be printed in the client_join handler (that doesnt exist yet)
-    
-    //GS_ASSERT(this->a->status.name != NULL);
-    //GS_ASSERT(old_name != NULL);
-    //if (this->a->status.name == NULL || old_name == NULL) return;
-    
-    //this->bb.set_text(this->a->status.name);
+void Agent_event::name_set()
+{
+    GS_ASSERT(this->a->status.name != NULL);
+    if (this->a->status.name == NULL) return;
+    this->bb.set_text(this->a->status.name);
+
+    // TODO -- print these when agent is received -- thats the only place for a name set
 
     //if (a->is_you())
     //{
@@ -63,9 +60,7 @@ dont_include_this_file_in_server
             //#endif
         //}
     //}
-
-    //this->a->status.identified = true;
-//}
+}
 
 void Agent_event::update_hud_name()
 {

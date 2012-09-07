@@ -128,19 +128,6 @@ void Agent_list::draw_equipped_items()
     }
 }
 
-//void Agent_list::check_missing_names()
-//{
-    //this->check_name_interval++;
-    //if ((this->check_name_interval %= CHECK_MISSING_NAME_INTERVAL) != 0)
-        //return;
-
-    //for (int i=0; i<this->n_max; i++)
-    //{
-        //if (this->a[i] == NULL) continue;
-        //this->a[i]->status.check_missing_name();
-    //}
-//}
-
 void Agent_list::update_mining_lasers()
 {
     for (int i=0; i<this->n_max; i++)
@@ -334,20 +321,7 @@ int Agent_list::get_ids()
     return j;            
 }
 
-//bool Agent_list::name_available(char* name)
-//{
-    //for (int i=0; i<AGENT_MAX; i++)
-    //{
-        //if (this->a[i] == NULL) continue;
-        //if (this->a[i]->status.name == NULL) continue;
-        //if (!this->a[i]->status.identified) continue;
-        //if (!strcmp(this->a[i]->status.name, name)) return false;
-    //}
-    //return true;
-//}
-
-Agent_list::Agent_list()
-:
+Agent_list::Agent_list() :
 check_name_interval(0)
 {
     this->filtered_objects = (Agent_state**)calloc(this->n_max, sizeof(Agent_state*));

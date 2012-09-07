@@ -52,8 +52,6 @@ void RegisterMessages()
     agent_dead_StoC::register_client_packet();
     agent_create_StoC::register_client_packet();
     agent_destroy_StoC::register_client_packet();
-    //agent_name_StoC::register_client_packet();
-    //request_agent_name_CtoS::register_server_packet();
     client_disconnected_StoC::register_client_packet();
     
     agent_set_block_CtoS::register_server_packet();
@@ -103,10 +101,6 @@ void RegisterMessages()
     AgentKills_StoC::register_client_packet();
     AgentDeaths_StoC::register_client_packet();
     AgentSuicides_StoC::register_client_packet();
-
-    //// identification
-    //identify_CtoS::register_server_packet();
-    //identified_StoC::register_client_packet();
 
     // chat
     ChatMessage_CtoS::register_server_packet();
