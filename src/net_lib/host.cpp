@@ -16,7 +16,12 @@
 #include <options/options.hpp>
 
 #if DC_CLIENT
+#include <net_lib/client.hpp>
 #include <state/client_state.hpp>
+#endif
+
+#if DC_SERVER
+#include <net_lib/server.hpp>
 #endif
 
 const int DEFAULT_PORT = 4096;

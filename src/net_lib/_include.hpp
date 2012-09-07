@@ -37,8 +37,10 @@
 
 #if DC_SERVER
 #include <net_lib/common/net_peer_manager.cpp>
+#include <net_lib/server.cpp>
 #endif
 
 #if DC_CLIENT
 //#include <net_lib/benchmark/pviz.c>
+#include <net_lib/client.cpp>
 #endif

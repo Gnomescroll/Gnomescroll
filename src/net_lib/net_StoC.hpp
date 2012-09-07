@@ -1,12 +1,14 @@
 #pragma once
 
 #include <net_lib/global.hpp>
-
-#include <net_lib/common/type_pack.h>   //REMOVE FROM INCLUDE
-#include <net_lib/common/packet_buffer.hpp> //REMOVE THIS FROM INCLUDE!!!
-
 #include <net_lib/common/packet_id_counter.hpp>
 #include <net_lib/common/message_handler.h>
+#include <net_lib/common/type_pack.h>
+
+#if DC_SERVER
+#include <net_lib/server.hpp>
+#endif
+
 
 //#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
 /*
