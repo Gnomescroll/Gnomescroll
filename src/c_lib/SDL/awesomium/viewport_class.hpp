@@ -232,6 +232,7 @@ class ChromeViewport
         if (this->tex == 0) return;
 
         GL_ASSERT(GL_DEPTH_TEST, false);
+        GL_ASSERT(GL_BLEND, true);
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex);

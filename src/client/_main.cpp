@@ -425,7 +425,9 @@ int run()
             if (input_state.awesomium)
             {
                 glDisable(GL_DEPTH_TEST);
+                glEnable(GL_BLEND);
                 Awesomium::draw();
+                glDisable(GL_BLEND);
                 glEnable(GL_DEPTH_TEST);
             }
 
