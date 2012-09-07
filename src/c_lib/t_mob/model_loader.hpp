@@ -595,16 +595,20 @@ class ModelLoader
         struct Node* root_node = NULL;
         for(int i=0; i<_nlm; i++)
         {
-            if(root_node != NULL)
-            {    
-                GS_ASSERT(_nl[i].p != NULL)
-            }
+            if(root_node != NULL) { GS_ASSERT(_nl[i].p != NULL) }
             if(_nl[i].p == NULL)
                 root_node = &_nl[i];
         }
         int index = 0;
         _set_node_index(&index, root_node);
 
+        //make sure parent stuff is setup
+        for(int i=0; i<_nlm; i++)
+        {
+            if(_nl[i].index == 0)
+                GS_ASSERT( _nl[i]-p == NULL
+            GS_ASSERT(_nl[i].index < _nl[i].p->index);
+        }
     }
 
 
