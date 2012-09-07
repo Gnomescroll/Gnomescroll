@@ -30,6 +30,13 @@ extern "C"
 namespace t_mob
 {
 
+    char* copy_string(char* xstr)
+    {
+        char* nstr = new char[strlen(xstr)+1];
+        strcpy(nstr, xstr);
+        return nstr;
+    }
+
     struct _Vertex
     {
         struct Vec3 v;
@@ -120,6 +127,7 @@ class ModelLoader
         init_texture();
         //draw();
         init_bone_list();
+        init_node_list();
     }
 
     void count_nodes(aiNode* pNode)
@@ -345,71 +353,18 @@ class ModelLoader
     struct Mat4* bma;       //bone matrix array
 
 /*
-    void count_bones(int* count, aiNode* pNode)
-    {
-        GS_ASSERT(pNode->mNumMeshes == 0);  //RECOVER FROM THIS
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
-        {
-            *count++;
-            count_bones(count, pNode->mChildren[i]);
-        }
-    }
-
-    void count_bones()
-    {
-        
-        //aiNode* pNode = pScene->mRootNode;
-        aiNode* pNode = NULL;
-
-        for(unsigned int i=0; i < pScene->mRootNode->mNumChildren; i++)
-        {
-            if( strcmp("Armature", pScene->mRootNode->mChildren[i]->mName.data) == 0)
-            {
-                pNode = pScene->mRootNode->mChildren[i];
-                break;
-            }
-        }
-
-        if(pNode == NULL)
-        {
-            printf("DAE LOAD ERROR: There is no 'Armature' node under root node \n");
-            abort();
-        }
-
-        aiNode* _pNode = NULL;
-
-        //get the root_bone as child of the Amature
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
-        {
-            if( strcmp("root_bone", pNode->mChildren[i]->mName.data) == 0)
-            {
-                _pNode = pNode->mChildren[i];
-                break;
-            }
-        }
-        if(_pNode == NULL)
-        {
-            printf("DAE LOAD ERROR: There is no 'root_bone' under 'Armature' node \n");
-            abort();
-        }
-
-        pNode = _pNode;
-
-        printf("root_bone: has %d children \n", pNode->mNumChildren); //recursively count the children of the root node
-        int bone_count = 0;
-        count_bones(&bone_count, pNode);
-
-        printf("DAE LOADER: %d bones \n", bone_count);
-    }   
+    Stuff
 */
 
     struct Node
     {
         char* name;
+        struct aiNode* node;
         struct Mat4 mTransformation;
         struct Node* p;     //parent
-        struct Node* c;     //children
+        struct Node** c;     //children
         int cn;             //children number
+        int index;          //index for list
     };
 
     struct Node* _nl;
@@ -419,16 +374,28 @@ class ModelLoader
     {
         char* name;
         struct Mat4 mOffsetMatrix;
-        struct BoneNode* parent;
+        struct aiNode* parent_node;   //parent node
+        int parent_index;
     };
 
     struct BoneNode* bnl;
     int bnlm;
 
 
+    bool bone_in_list(aiBone* bone, int bone_count)
+    {
+        for(int i=0; i<bone_count;i++)
+        {
+            if( strcmp(bnl[i].name, bone->mName.data) ==0 )
+                return true;
+        }
+        return false;
+    }
+
+
     void init_bone_list()
     {
-#if 0
+#if 1
         //count bones
         int bone_count = 0;
         int _bone_count = 0;
@@ -439,7 +406,7 @@ class ModelLoader
             aiMesh* mesh = ml[i];
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
-                aiBone* bone = mesh->mBones[j];
+                //aiBone* bone = mesh->mBones[j];
                 //printf("bone %d,%d name: %s \n", i,j, bone->mName.data);
                 bool new_bone = true;
                 for(int _i=0; _i<=i; _i++) 
@@ -461,36 +428,164 @@ class ModelLoader
         //printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
         //printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
         //printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
-        //count_bones();
 
+        //set bone list
         bnlm = bone_count;
         bnl = new BoneNode[bnlm];
 
         for(int i=0; i<bnlm; i++)
         {
             bnl[i].name = NULL;
-            bnl[i].p = NULL;
+            bnl[i].parent_node = NULL;
         }
 
-        int bcount = 0
+        //populate bone list
+        int bcount = 0;
         for(int i=0; i<nli; i++)
         {
             aiMesh* mesh = ml[i];
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
-                bool new_bone = false
                 
-                for(int i=0; i<bcount;i++)
+                for(int k=0; k<bcount;k++)
                 {
-                    if( strcmp(bnl[i].name, bone->->mName.data) ==0 )
+                    if( bone_in_list(bone, bone_count) == true )
+                        continue;
+                    
+                    bnl[bcount].name = copy_string(bone->mName.data);
+                    bnl[bcount].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                    bnl[bcount].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                    bnl[bcount].parent_index = -1;
 
+                    bcount++;
+                    
                 }
             }
-
         }
+
 #endif
     }
+
+
+    bool node_in_list(struct aiNode* node, int node_count)
+    {
+        for(int i=0; i<node_count; i++ )
+        {
+            if(strcmp(node->mName.data, _nl[i].name) == 0)
+                return true;
+        }
+        return false;
+    }
+
+    int node_index_from_list(struct aiNode* node)
+    {
+        for(int i=0; i<_nlm; i++ )
+        {
+            if(strcmp(node->mName.data, _nl[i].name) == 0)
+                return i;
+        }
+
+        GS_ASSERT(false);
+        return 0;
+    }
+/*
+    struct Node
+    {
+        char* name;
+        aiNode* node;
+        struct Mat4 mTransformation;
+        struct Node* p;     //parent
+        struct Node* c;     //children
+        int cn;             //children number
+        int index;          //index in list
+    };
+
+    struct Node* _nl;
+    int _nlm;
+*/
+
+    //populate node list
+    void init_node_list()
+    {
+        _nl = new struct Node[nlm];
+        _nlm = nlm;
+
+        int node_count = 0;
+
+        for(int i=0; i<bnlm; i++)
+        {
+            // start with the mesh-to-bone matrix 
+            aiNode* tempNode = bnl[i].parent_node;
+            GS_ASSERT(tempNode != NULL)
+
+            while( tempNode )
+            {
+                //assume that if a node is, then all its parents are in?
+                if(node_in_list(tempNode, node_count) == true)
+                    continue;
+                //insert
+
+                _nl[node_count].name            = copy_string(tempNode->mName.data);
+                _nl[node_count].mTransformation = _ConvertMatrix(tempNode->mTransformation);
+                _nl[node_count].node            = tempNode;
+                _nl[node_count].p               = NULL;
+                _nl[node_count].c               = NULL;
+                _nl[node_count].cn              = 0;
+                _nl[node_count].index           = -1;
+
+                if( strcmp(tempNode->mName.data, "Armature") == 0 )
+                {
+                    _nl[node_count].p = NULL;
+                    break;
+                }
+                if(tempNode == NULL)
+                    break;
+                tempNode = tempNode->mParent;
+            }
+        }
+
+        _nlm = node_count;
+        printf("init_node_list: node_count= %d nlm= %d _nlm= %d \n", node_count, nlm, _nlm);
+
+        //set parent node
+        for(int i=0; i<_nlm; i++)
+        {
+            aiNode* node = _nl[i].node;
+            int index = node_index_from_list(node->mParent);
+            _nl[i].p = &_nl[index];
+        }
+
+        //set children
+        for(int i=0; i<_nlm; i++)
+        {
+            struct Node* node = &_nl[i];
+
+            int child_count = 0;
+
+            for(int j=0; j<_nlm; j++)
+            {
+                if( _nl[j].p == node)
+                    child_count++;
+            }
+
+            node->c = new Node*[child_count];
+            node->cn = child_count;
+
+            child_count = 0;
+            for(int j=0; j<_nlm; j++)
+            {
+                if( _nl[j].p == node)
+                {
+                    node->c[child_count] = &_nl[j];
+                    child_count++;
+                }
+            }
+        }
+        
+        //
+    }
+
 
     aiNode* FindNodeRecursivelyByName(aiNode* pNode, char* node_name)
     {
@@ -507,8 +602,6 @@ class ModelLoader
 
         return NULL;
     }
-
-
 
     //mValue
 
@@ -981,7 +1074,7 @@ void ModelLoader::draw(float x, float y, float z)
                 if(_print)
                 {
                     printf("\tbone: %02d %02d bone name= %s \n", j, _index, tempNode->mName.data);
-                //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
+                    //boneMatrices[a] *= tempNode->mTransformation;   // check your matrix multiplication order here!!!
                     //mat4_print( _ConvertMatrix(tempNode->mTransformation) ) ;
                 }
                 //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
