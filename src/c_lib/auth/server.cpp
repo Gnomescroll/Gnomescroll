@@ -135,8 +135,20 @@ bool verify_token(const char* _token)
 void received_auth_token(int client_id, const char* token)
 {
     bool ok = verify_token(token);
-    if (ok) printf("Client %d valid token\n", client_id);
-    else printf("Client %d invalid token\n", client_id);
+    if (ok) send_auth_token_valid(client_id);
+    else    send_auth_token_invalid(client_id);
+}
+
+void send_auth_token_valid(int client_id)
+{
+    auth_token_valid_StoC msg;
+    msg.sendToClient(client_id);
+}
+
+void send_auth_token_invalid(int client_id)
+{
+    auth_token_invalid_StoC msg;
+    msg.sendToClient(client_id);
 }
 
 }   // Auth

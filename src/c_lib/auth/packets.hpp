@@ -21,4 +21,26 @@ class auth_token_CtoS: public FixedSizeReliableNetPacketToServer<auth_token_CtoS
     inline void handle();
 };
 
+class auth_token_valid_StoC: public FixedSizeReliableNetPacketToClient<auth_token_valid_StoC>
+{
+    public:
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+    }
+
+    inline void handle();
+};
+
+class auth_token_invalid_StoC: public FixedSizeReliableNetPacketToClient<auth_token_invalid_StoC>
+{
+    public:
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+    }
+
+    inline void handle();
+};
+
 }   // Auth

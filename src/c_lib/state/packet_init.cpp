@@ -14,6 +14,7 @@
 #include <item/particle/_interface.hpp>
 
 #include <particle/grenade.hpp> // move into net folder in particles
+#include <auth/_interface.hpp>
 
 namespace PacketInit
 {
@@ -178,12 +179,22 @@ void RegisterMessages()
     
     t_map::init_packets();
     t_mech::init_packets();
-	// suicide
-	killme_CtoS::register_server_packet();
-	
-	// coloring
-	colorme_CtoS::register_server_packet();
-	agent_color_StoC::register_client_packet();
+    // suicide
+    killme_CtoS::register_server_packet();
+    
+    // coloring
+    colorme_CtoS::register_server_packet();
+    agent_color_StoC::register_client_packet();
+
+    // sound
+    Sound::init_packets();
+
+    // animations
+    Animations::init_packets();
+
+    // auth
+    Auth::init_packets();
+
 }
 
 }

@@ -13,10 +13,15 @@
 namespace Auth
 {
 
-void init()
+void init_packets()
 {
     auth_token_CtoS::register_server_packet();
+    auth_token_valid_StoC::register_client_packet();
+    auth_token_invalid_StoC::register_client_packet();
+}
 
+void init()
+{
     #if DC_CLIENT
     client_init();
     #endif

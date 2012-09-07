@@ -28,6 +28,8 @@ typedef enum
 #define GNOMESCROLL_LOGIN_PATH "/login"
 #define GNOMESCROLL_TOKEN_PATH "/token"
 
+const int MAX_TOKEN_RETRIES = 10;
+
 const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";    // name of the cookie value set by the auth server
 const char AUTH_TOKEN_DELIMITER = '|';  // delimiter for components of the token
 

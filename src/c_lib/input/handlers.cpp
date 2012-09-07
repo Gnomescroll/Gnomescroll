@@ -836,9 +836,7 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.chat)
-        chat_key_down_handler(event);
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
     {
         switch (event->key.keysym.sym)
         {
@@ -851,6 +849,8 @@ void key_down_handler(SDL_Event* event)
                 break;
         }
     }
+    else if (input_state.chat)
+        chat_key_down_handler(event);
     else if (input_state.agent_container || input_state.container_block)
         container_key_down_handler(event);
     else
@@ -1061,10 +1061,10 @@ void key_up_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.chat)
-        chat_key_up_handler(event);
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
         Awesomium::SDL_keyboard_event(event);
+    else if (input_state.chat)
+        chat_key_up_handler(event);
     else if (input_state.agent_container || input_state.container_block)
         container_key_up_handler(event);
     else

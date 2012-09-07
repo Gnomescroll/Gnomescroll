@@ -12,10 +12,15 @@ extern int auth_token_user_id;
 extern time_t auth_token_timestamp;
 extern char* auth_token_hash;
 
+extern bool authorized;
+
 bool send_auth_token(); // returns true if token was sent
 bool send_auth_token(const char* token); // returns true if token was sent
 
 AuthError update_token(char* token);
+
+void token_was_accepted();
+void token_was_denied();
 
 void client_init();
 void client_teardown();

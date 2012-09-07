@@ -9,4 +9,4 @@
 //#include <Awesomium/WebCore.h>
 
 #include <SDL/awesomium/_interface.cpp>
-#include <SDL/awesomium/viewport_class.hpp>
+#include <SDL/awesomium/viewport_class.cpp>

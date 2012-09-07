@@ -127,6 +127,8 @@ void init()
     cv = new ChromeViewport;
     viewport_manager = new ViewportManager;
     viewport_manager->add_viewport(cv);
+
+    delete_auth_token_cookie();
 }
 
 void delete_all_cookies()

@@ -8,6 +8,8 @@ namespace Sound
 void init();
 void close();
 
+void init_packets();
+
 #if DC_CLIENT
 
 extern struct Vec3 listener_position;

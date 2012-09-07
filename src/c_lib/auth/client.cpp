@@ -13,6 +13,9 @@ char* auth_token = NULL;
 int auth_token_user_id = 0;
 time_t auth_token_timestamp = 0;
 char* auth_token_hash = NULL;
+static int token_retries = 0;
+
+bool authorized = false;
 
 bool send_auth_token()
 {
@@ -95,6 +98,25 @@ AuthError update_token(char* token)
         send_auth_token(token);
 
     return AUTH_ERROR_NONE;
+}
+
+void token_was_accepted()
+{
+    disable_awesomium(); // hide awesomium
+    token_retries = 0;   // reset retry counter
+    authorized = true;
+}
+
+void token_was_denied()
+{   // request new token from auth server
+    if (token_retries >= MAX_TOKEN_RETRIES)
+    {
+        disable_awesomium();
+        return;
+    }
+    Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+    authorized = false;
+    token_retries++;
 }
 
 void client_init()
