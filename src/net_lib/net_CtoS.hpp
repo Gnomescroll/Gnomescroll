@@ -27,9 +27,9 @@
     have a "start" and "fast send" function for server to client packets sent to multiple clients
 */
 
+#if DC_CLIENT
 void send_bullshit_data()
 {
-    
     unsigned int size = 0;
     do
     {
@@ -47,6 +47,7 @@ void send_bullshit_data()
         nm->buff[i] = rand()&0xff;
     NetClient::Server.push_unreliable_message(nm);
 }
+#endif
 
 template <class Derived>
 class FixedSizeNetPacketToServer {
@@ -76,10 +77,14 @@ class FixedSizeNetPacketToServer {
         
         void send() 
         {
+            #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_unreliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         //will overflow if more than 128 bytes
@@ -144,12 +149,16 @@ class FixedSizeReliableNetPacketToServer {
         
         void send() 
         {
+            #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
             GS_ASSERT(nm != NULL);
             if (nm == NULL) return;
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         //will overflow if more than 128 bytes

@@ -10,13 +10,11 @@ namespace Auth
 #if DC_CLIENT
 inline void auth_token_valid_StoC::handle()
 {
-    printf("Auth token accepted by server\n");
     token_was_accepted();
 }
 
 inline void auth_token_invalid_StoC::handle()
 {
-    printf("Auth token rejected by server\n");
     token_was_denied();
 }
 

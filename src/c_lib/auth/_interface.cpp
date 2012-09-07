@@ -40,7 +40,16 @@ void teardown()
     #endif
 }
 
-bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, char** hash)
+bool is_valid_username(const char* username, size_t len)
+{
+    for (unsigned int i=0; i<len; i++)
+        if (!is_strict_char(username[i])
+           || username[i] == AUTH_TOKEN_DELIMITER || username[i] == '/')
+            return false;
+    return true;
+}
+
+bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, char** hash, char** username)
 {
     // copy token into modifiable buffer
     char* _token = (char*)malloc((AUTH_TOKEN_LENGTH+1)*sizeof(char));
@@ -50,9 +59,9 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
     // replace delimiters with NUL
     int delims = 0;
     unsigned int len = 0;
-    for (unsigned int i=0; i<AUTH_TOKEN_LENGTH; i++)
+    for (unsigned int i=0; i<AUTH_TOKEN_LENGTH && _token[i] != '\0'; i++)
     {
-        if (_token[i] == '|')
+        if (_token[i] == AUTH_TOKEN_DELIMITER)
         {
             len = 0;
             _token[i] = '\0';
@@ -71,9 +80,18 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
         }
     }
 
-    // should be 2 delimiters
-    GS_ASSERT(delims == 2);
-    if (delims != 2)
+    // username is last token piece; check that it is within bounds
+    GS_ASSERT(len >= AUTH_TOKEN_USERNAME_MIN_LENGTH && len <= AUTH_TOKEN_USERNAME_MAX_LENGTH);
+    if (len < AUTH_TOKEN_USERNAME_MIN_LENGTH || len > AUTH_TOKEN_USERNAME_MAX_LENGTH)
+    {
+        free(_token);
+        return false;
+    }
+    int username_len = len;
+
+    // check that all pieces were there
+    GS_ASSERT(delims == AUTH_TOKEN_PIECES-1);
+    if (delims != AUTH_TOKEN_PIECES-1)
     {
         free(_token);
         return false;
@@ -91,15 +109,26 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
     // convert expiration time to time_t
     *expiration_time = atott(&token[AUTH_TOKEN_ID_LENGTH + 1]);
 
-    // copy hash
+    // verify hash and username
     const char* phash = &token[AUTH_TOKEN_ID_LENGTH + 1 + AUTH_TOKEN_TIMESTAMP_LENGTH + 1]; 
-    size_t hash_len = strlen(phash);
-    GS_ASSERT(hash_len == AUTH_TOKEN_HASH_LENGTH);
-    if (hash_len != AUTH_TOKEN_HASH_LENGTH) return false;
+    const char* pusername = &phash[AUTH_TOKEN_HASH_LENGTH + 1];
+    if (!is_valid_username(pusername, username_len))
+    {
+        free(_token);
+        return false;
+    }
+
+    // copy hash
     char* _hash = (char*)malloc((AUTH_TOKEN_HASH_LENGTH+1)*sizeof(char));
     strncpy(_hash, phash, AUTH_TOKEN_HASH_LENGTH);
     _hash[AUTH_TOKEN_HASH_LENGTH] = '\0';
     *hash = _hash;
+
+    // copy username
+    char* _username = (char*)malloc((username_len+1) * sizeof(char));
+    strncpy(_username, pusername, username_len);
+    _username[username_len] = '\0';
+    *username = _username;
 
     free(_token);
     return true;

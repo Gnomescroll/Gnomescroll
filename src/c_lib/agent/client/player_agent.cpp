@@ -16,21 +16,15 @@ dont_include_this_file_in_server
 #include <t_map/_interface.hpp>
 #include <agent/client/agent_sound_handler.hpp>
 
-void PlayerAgent_state::set_PlayerAgent_id(int id) {
+void PlayerAgent_state::set_PlayerAgent_id(int id)
+{
     this->you = ClientState::agent_list->get(id);
-    if (this->you == NULL)
-        printf("ERROR: set_PlayerAgent_id -- agent %d does not exist\n", id);
+    GS_ASSERT(this->you != NULL);
+    if (this->you == NULL) return;
     this->agent_id = id;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
     chat_client->subscribe_channels();
-}
-
-void PlayerAgent_state::was_identified()
-{
-    this->identified = true;
-    request_remaining_state_CtoS msg;
-    msg.send();    
 }
 
 /*
@@ -320,8 +314,7 @@ PlayerAgent_state::PlayerAgent_state()
 crouching(false),
 jetpack_ticks(0),
 jetpack_decay(0),
-action(this),
-identified(false)
+action(this)
 {
     //init
     static int inited=0;

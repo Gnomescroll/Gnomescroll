@@ -27,11 +27,11 @@ void RegisterMessages()
     version_CtoS::register_server_packet();
     version_StoC::register_client_packet();
 
-/*
+    /*
     add back in 
     benchmarkCtoS::register_server_packet();    //packet for benchmarking
     benchmarkReliableCtoS::register_server_packet();  
-*/  
+    */  
 
     //Agent_control_state_message::register_server_packet();
     Agent_state_message::register_client_packet();
@@ -52,8 +52,8 @@ void RegisterMessages()
     agent_dead_StoC::register_client_packet();
     agent_create_StoC::register_client_packet();
     agent_destroy_StoC::register_client_packet();
-    agent_name_StoC::register_client_packet();
-    request_agent_name_CtoS::register_server_packet();
+    //agent_name_StoC::register_client_packet();
+    //request_agent_name_CtoS::register_server_packet();
     client_disconnected_StoC::register_client_packet();
     
     agent_set_block_CtoS::register_server_packet();
@@ -105,8 +105,8 @@ void RegisterMessages()
     AgentSuicides_StoC::register_client_packet();
 
     //// identification
-    identify_CtoS::register_server_packet();
-    identified_StoC::register_client_packet();
+    //identify_CtoS::register_server_packet();
+    //identified_StoC::register_client_packet();
 
     // chat
     ChatMessage_CtoS::register_server_packet();
@@ -164,18 +164,14 @@ void RegisterMessages()
     object_in_transit_StoC::register_client_packet();
     object_chase_agent_StoC::register_client_packet();
 
-    /* init phase */
-
-    request_remaining_state_CtoS::register_server_packet();
+    // init phase
 
     Item::init_packets();
     Toolbelt::init_packets();
     ItemContainer::init_packets();
     ItemParticle::init_packets();
 
-    /*
-        Map Messages
-    */
+    // Map Messages
     
     t_map::init_packets();
     t_mech::init_packets();

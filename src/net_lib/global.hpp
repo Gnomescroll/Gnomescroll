@@ -1,11 +1,16 @@
 #pragma once
 
 #include <net_lib/common/net_peer.hpp>
-#include <net_lib/common/net_peer_manager.hpp>
 #include <common/defines.h>
 #include <common/analytics/sessions.hpp>
 
+#if DC_SERVER
+#include <net_lib/common/net_peer_manager.hpp>
+#endif
+
 extern NetMessageArray_pool net_message_array_pool;
+
+#if DC_CLIENT
 
 namespace NetClient
 {
@@ -13,6 +18,10 @@ namespace NetClient
 extern NetPeer Server;
 
 }   // NetClient
+
+#endif
+
+#if DC_SERVER
 
 class Agent_state;  // forward decl
 
@@ -40,4 +49,10 @@ void teardown_globals();
 class Session* begin_session(uint32_t ip_addr, int client_id);
 void end_session(class Session* session);
 
+void client_authorized(int client_id, int user_id, time_t expiration_time, const char* username);
+
+void kill_client(int client_id);
+
 }   // NetServer
+
+#endif

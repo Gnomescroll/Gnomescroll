@@ -32,7 +32,7 @@ namespace ClientState {
     Voxel_render_list_manager* voxel_render_list;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
 
-    char desired_name[PLAYER_NAME_MAX_LENGTH+1];
+    //char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
     int last_reliable_ping_time;
 
@@ -61,12 +61,12 @@ namespace ClientState {
     }
 
 
-    void update()
-    {
+    //void update()
+    //{
         // check if we've failed to receive any identify packets (lost in initialization)
         // Shouldn't be needed? initialization packets are reliable
-        ClientState::agent_list->check_missing_names();  // will ratelimit itself
-    }
+        //ClientState::agent_list->check_missing_names();  // will ratelimit itself
+    //}
 
     void set_PlayerAgent_id(int id)
     {
@@ -91,19 +91,19 @@ namespace ClientState {
         agent_list->update_models();
     }
 
-    void send_identify_packet(char* name)
-    {
-        unsigned int len = (unsigned int)strlen(name);
-        if (len >= PLAYER_NAME_MAX_LENGTH)
-            name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
+    //void send_identify_packet(char* name)
+    //{
+        //unsigned int len = (unsigned int)strlen(name);
+        //if (len >= PLAYER_NAME_MAX_LENGTH)
+            //name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 
-        len = sanitize_player_name(name);
-        if (len == 0) return;
-        // TODO -- disconnect the player here if they send 0 len name. something is fucked up
-        identify_CtoS msg;
-        strcpy(msg.name, name);
-        msg.send();
-    }
+        //len = sanitize_player_name(name);
+        //if (len == 0) return;
+        //// TODO -- disconnect the player here if they send 0 len name. something is fucked up
+        //identify_CtoS msg;
+        //strcpy(msg.name, name);
+        //msg.send();
+    //}
     
     void update_camera()
     {
@@ -144,18 +144,18 @@ namespace ClientState {
         msg2.send();
     }
 
-    void set_desired_name(char* name)
-    {
-        if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
-            name[PLAYER_NAME_MAX_LENGTH] = '\0';
+    //void set_desired_name(char* name)
+    //{
+        //if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
+            //name[PLAYER_NAME_MAX_LENGTH] = '\0';
 
-        strcpy(desired_name, name);
-    }
+        //strcpy(desired_name, name);
+    //}
 
-    void client_id_received(int client_id)
-    {
-        send_identify_packet(desired_name);
-    }
+    //void client_id_received(int client_id)
+    //{
+        ////send_identify_packet(desired_name);
+    //}
 
     void on_connect()
     {

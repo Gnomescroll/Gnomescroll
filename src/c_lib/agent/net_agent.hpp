@@ -469,41 +469,43 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
     public:
         uint8_t id;
         uint8_t client_id;
+        char username[PLAYER_NAME_MAX_LENGTH+1];
         
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&client_id, buff, buff_n, pack);
+            pack_string(username, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
         }
 
         inline void handle();
 };
 
-class agent_name_StoC: public FixedSizeReliableNetPacketToClient<agent_name_StoC>
-{
-    public:
-        uint8_t id;
-        char name[PLAYER_NAME_MAX_LENGTH+1];
+//class agent_name_StoC: public FixedSizeReliableNetPacketToClient<agent_name_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //char name[PLAYER_NAME_MAX_LENGTH+1];
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
-        }
-        inline void handle() __attribute((always_inline));
-};
+        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
+        //}
+        //inline void handle() __attribute((always_inline));
+//};
 
-class request_agent_name_CtoS: public FixedSizeReliableNetPacketToServer<request_agent_name_CtoS>
-{
-    public:
-        uint8_t id;
+//class request_agent_name_CtoS: public FixedSizeReliableNetPacketToServer<request_agent_name_CtoS>
+//{
+    //public:
+        //uint8_t id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-        }
-        inline void handle() __attribute((always_inline));
-};
+        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+        //}
+        //inline void handle() __attribute((always_inline));
+//};
 
 class agent_destroy_StoC: public FixedSizeReliableNetPacketToClient<agent_destroy_StoC>
 {
@@ -678,27 +680,27 @@ class set_spawner_StoC: public FixedSizeReliableNetPacketToClient<set_spawner_St
 
 /* Identification */
 
-class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
-{
-    public:
-        char name[PLAYER_NAME_MAX_LENGTH+1];
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+//class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
+//{
+    //public:
+        //char name[PLAYER_NAME_MAX_LENGTH+1];
+        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        //{
+            //pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
-class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC>
-{
-    public:
-        char name[PLAYER_NAME_MAX_LENGTH+1];
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
-        }
-        inline void handle() __attribute((always_inline));
-};
+//class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC>
+//{
+    //public:
+        //char name[PLAYER_NAME_MAX_LENGTH+1];
+        //inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        //{
+            //pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
+        //}
+        //inline void handle() __attribute((always_inline));
+//};
 
 class ping_StoC: public FixedSizeNetPacketToClient<ping_StoC>
 {
@@ -792,16 +794,6 @@ class client_disconnected_StoC: public FixedSizeReliableNetPacketToClient<client
             pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
         }
         inline void handle();
-};
-
-class request_remaining_state_CtoS: public FixedSizeReliableNetPacketToServer<request_remaining_state_CtoS>
-{
-    public:
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-    }
-    inline void handle();
 };
 
 class killme_CtoS: public FixedSizeReliableNetPacketToServer<killme_CtoS>

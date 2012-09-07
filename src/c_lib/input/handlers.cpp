@@ -161,6 +161,8 @@ void disable_awesomium()
 void enable_awesomium()
 {
     if (input_state.awesomium) return;
+    if (input_state.version_mismatch) return;
+    
     input_state.awesomium = true;
     input_state.rebind_mouse = input_state.mouse_bound;
     input_state.mouse_bound = false;
@@ -300,7 +302,10 @@ void init_input_state()
     // awesomium
     input_state.awesomium = false;
 
+    input_state.version_mismatch = false;
+
     // SDL state
+    // these starting conditions are variable, so dont rely on them for deterministic logic
     Uint8 app_state = SDL_GetAppState();
     input_state.input_focus = (app_state & SDL_APPMOUSEFOCUS);
     input_state.mouse_focus = (app_state & SDL_APPINPUTFOCUS);
@@ -320,6 +325,13 @@ void update_input_state()
     input_state.input_focus = (app_state & SDL_APPMOUSEFOCUS);
     input_state.mouse_focus = (app_state & SDL_APPINPUTFOCUS);
     input_state.app_active   = (app_state & SDL_APPACTIVE);
+
+    using NetClient::Server;
+    // if version has been set and mismatch, show version mismatch
+    // if force disconnected and version has not been set, show version mismatch
+    input_state.version_mismatch = (!Server.version_match() || (Server.force_disconnected() && !Server.version));
+    if (input_state.version_mismatch)
+        disable_awesomium();
 }
 
 // keys that can be held down

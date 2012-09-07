@@ -25,18 +25,18 @@ namespace ClientState {
     extern class Voxel_render_list_manager* voxel_render_list;
     extern class Voxel_hitscan_list* voxel_hitscan_list;
 
-    extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
+    //extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     extern int last_ping_time;
     extern int last_reliable_ping_time;
 
     extern Objects::Object* base;
     
-    void set_desired_name(char* name);
+    //void set_desired_name(char* name);
         
     void set_PlayerAgent_id(int id);
-    void client_id_received(int client_id);
+    //void client_id_received(int client_id);
 
-    void update();
+    //void update();
     void update_for_draw();
 
     void init_lists();
@@ -46,7 +46,7 @@ namespace ClientState {
     void on_connect();
     void on_disconnect();
 
-    void send_identify_packet(char* name);
+    //void send_identify_packet(char* name);
     void update_camera();
     void send_camera_state();
 

@@ -11,6 +11,7 @@ extern char* auth_token;
 extern int auth_token_user_id;
 extern time_t auth_token_timestamp;
 extern char* auth_token_hash;
+extern char* auth_token_username;
 
 extern bool authorized;
 
@@ -24,5 +25,7 @@ void token_was_denied();
 
 void client_init();
 void client_teardown();
+
+void check_expiring_token();
 
 }   // Auth

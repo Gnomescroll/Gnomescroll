@@ -4,12 +4,18 @@
 
 NetMessageArray_pool net_message_array_pool;
 
+#if DC_CLIENT
+
 namespace NetClient
 {
 
 NetPeer Server;
 
 }   // NetClient
+
+#endif
+
+#if DC_SERVER
 
 namespace NetServer
 {
@@ -134,4 +140,33 @@ void end_session(class Session* session)
     }
 }
 
+void client_authorized(int client_id, int user_id, time_t expiration_time, const char* username)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+
+    NetPeerManager* peer = clients[client_id];
+    GS_ASSERT(peer != NULL);
+    if (peer == NULL) return;
+    peer->authorized(user_id, expiration_time, username);
+}
+
+void kill_client(int client_id)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+    GS_ASSERT(staging_pool != NULL);
+    GS_ASSERT(pool != NULL);
+    if (staging_pool == NULL || pool == NULL) return;
+    
+    class NetPeer* peer = staging_pool[client_id];
+    if (peer == NULL) peer = pool[client_id];
+    GS_ASSERT(peer != NULL);
+    if (peer == NULL) return;
+
+    kill_client(peer);
+}
+
 }   // NetServer
+
+#endif

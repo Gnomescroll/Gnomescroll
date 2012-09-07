@@ -60,8 +60,7 @@ class FixedSizeNetPacketToClient {
         */
         void sendToClient(int client_id) 
         {
-            //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
-
+            #if DC_SERVER
             nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
@@ -75,10 +74,14 @@ class FixedSizeNetPacketToClient {
                 NetServer::staging_pool[client_id]->push_unreliable_message(nm);
             else
                 NetServer::pool[client_id]->push_unreliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         void sendToClients(int* client_ids, unsigned int n_clients)
         {
+            #if DC_SERVER
             GS_ASSERT(client_ids != NULL);
             if (client_ids == NULL) return;
             GS_ASSERT(n_clients > 0);
@@ -103,10 +106,14 @@ class FixedSizeNetPacketToClient {
                 if (np == NULL) continue;
                 np->push_unreliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         void broadcast() 
         {
+            #if DC_SERVER
             if (NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
@@ -123,10 +130,14 @@ class FixedSizeNetPacketToClient {
                 if (np == NULL) continue;
                 np->push_unreliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         void broadcast_exclude(int ignore_client_id) 
         {
+            #if DC_SERVER
             if (NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
@@ -144,6 +155,9 @@ class FixedSizeNetPacketToClient {
                 if (np == NULL) continue;
                 np->push_unreliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         //will overflow if more than 128 bytes
@@ -214,6 +228,7 @@ class FixedSizeReliableNetPacketToClient {
 
         void sendToClient(int client_id) 
         {
+            #if DC_SERVER
             //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
             nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
@@ -228,10 +243,14 @@ class FixedSizeReliableNetPacketToClient {
                 NetServer::staging_pool[client_id]->push_reliable_message(nm);
             else
                 NetServer::pool[client_id]->push_reliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         void sendToClients(int* client_ids, unsigned int n_clients)
         {
+            #if DC_SERVER
             GS_ASSERT(client_ids != NULL);
             if (client_ids == NULL) return;
             GS_ASSERT(n_clients > 0);
@@ -256,10 +275,14 @@ class FixedSizeReliableNetPacketToClient {
                 if (np == NULL) continue;
                 np->push_reliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         void broadcast() 
         {
+            #if DC_SERVER
             if (NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
@@ -274,10 +297,14 @@ class FixedSizeReliableNetPacketToClient {
                 if (np == NULL) continue;
                 np->push_reliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         void broadcast_exclude(int ignore_client_id) 
         {
+            #if DC_SERVER
             if (NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
@@ -293,6 +320,9 @@ class FixedSizeReliableNetPacketToClient {
                 if (np == NULL) continue;
                 np->push_reliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         //will overflow if more than 128 bytes

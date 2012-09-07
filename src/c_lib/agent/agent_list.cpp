@@ -39,12 +39,9 @@ void Agent_list::send_to_client(int client_id)
         agent_create_StoC msg;
         msg.id = a[i]->id;
         msg.client_id = a[i]->client_id;
+        strncpy(msg.username, a[i]->status.name, PLAYER_NAME_MAX_LENGTH+1);
+        msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
         msg.sendToClient(client_id);
-
-        agent_name_StoC name_msg;
-        name_msg.id = a[i]->id;
-        strcpy(name_msg.name, a[i]->status.name);
-        name_msg.sendToClient(client_id);
 
         if (a[i]->status.color_chosen)
             a[i]->status.send_color(client_id);
@@ -131,18 +128,18 @@ void Agent_list::draw_equipped_items()
     }
 }
 
-void Agent_list::check_missing_names()
-{
-    this->check_name_interval++;
-    if ((this->check_name_interval %= CHECK_MISSING_NAME_INTERVAL) != 0)
-        return;
+//void Agent_list::check_missing_names()
+//{
+    //this->check_name_interval++;
+    //if ((this->check_name_interval %= CHECK_MISSING_NAME_INTERVAL) != 0)
+        //return;
 
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->status.check_missing_name();
-    }
-}
+    //for (int i=0; i<this->n_max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //this->a[i]->status.check_missing_name();
+    //}
+//}
 
 void Agent_list::update_mining_lasers()
 {
@@ -324,9 +321,11 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
     this->n_filtered = ct;
 }
 
-int Agent_list::get_ids() {
-    int i,j=0;
-    for (i=0; i<AGENT_MAX;i++) {
+int Agent_list::get_ids()
+{
+    int j=0;
+    for (int i=0; i<AGENT_MAX;i++)
+    {
         if (a[i] == NULL) continue;
         if (a[i]->id == 0) continue;// skip 0th agent
         ids_in_use[j] = a[i]->id;
@@ -335,17 +334,17 @@ int Agent_list::get_ids() {
     return j;            
 }
 
-bool Agent_list::name_available(char* name)
-{
-    for (int i=0; i<AGENT_MAX; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->status.name == NULL) continue;
-        if (!this->a[i]->status.identified) continue;
-        if (!strcmp(this->a[i]->status.name, name)) return false;
-    }
-    return true;
-}
+//bool Agent_list::name_available(char* name)
+//{
+    //for (int i=0; i<AGENT_MAX; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //if (this->a[i]->status.name == NULL) continue;
+        //if (!this->a[i]->status.identified) continue;
+        //if (!strcmp(this->a[i]->status.name, name)) return false;
+    //}
+    //return true;
+//}
 
 Agent_list::Agent_list()
 :

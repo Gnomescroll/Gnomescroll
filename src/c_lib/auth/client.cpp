@@ -13,9 +13,11 @@ char* auth_token = NULL;
 int auth_token_user_id = 0;
 time_t auth_token_timestamp = 0;
 char* auth_token_hash = NULL;
+char* auth_token_username = NULL;
 static int token_retries = 0;
 
 bool authorized = false;
+bool refreshing_token = false;
 
 bool send_auth_token()
 {
@@ -44,11 +46,12 @@ bool load_auth_token(char* token)
         auth_token = NULL;
     }
     
-    bool ok = parse_auth_token(token, &auth_token_user_id, &auth_token_timestamp, &auth_token_hash);
+    bool ok = parse_auth_token(token, &auth_token_user_id, &auth_token_timestamp, &auth_token_hash, &auth_token_username);
     GS_ASSERT(ok); // should be valid if exists
     if (!ok) return false;
 
     auth_token = token;
+    refreshing_token = false;   // token is considered refreshed by this point
 
     return true;
 }
@@ -61,6 +64,16 @@ bool auth_token_expired(const time_t timestamp)
 bool auth_token_expiring(const time_t timestamp)
 {
     return auth_token_expired(timestamp, AUTH_TOKEN_LIFETIME/2);
+}
+
+void check_expiring_token()
+{
+    if (auth_token == NULL) return;
+    if (!refreshing_token && auth_token_expiring(auth_token_timestamp))
+    {
+        Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH);
+        refreshing_token = true;
+    }
 }
 
 void begin_auth()
@@ -105,6 +118,7 @@ void token_was_accepted()
     disable_awesomium(); // hide awesomium
     token_retries = 0;   // reset retry counter
     authorized = true;
+    printf("Token accepted\n");
 }
 
 void token_was_denied()
@@ -116,6 +130,7 @@ void token_was_denied()
     }
     Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
     authorized = false;
+    if (token_retries == 0) printf("Token denied\n");
     token_retries++;
 }
 

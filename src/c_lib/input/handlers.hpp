@@ -57,6 +57,9 @@ struct InputState
     // awesomium;
     bool awesomium;
 
+    // network
+    bool version_mismatch;
+
     // freezes frustum (probably not used anymore)
     bool frustum;
 };

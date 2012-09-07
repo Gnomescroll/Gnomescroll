@@ -40,6 +40,7 @@ void spawn_mobs();
 #if DC_SERVER
 // TODO -- generalize/remove
 void send_object_state_machines(const ObjectType type, const int client_id);
+void send_to_client(int client_id);
 #endif
 
 } // Objects

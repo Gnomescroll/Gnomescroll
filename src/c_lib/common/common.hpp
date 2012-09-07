@@ -78,3 +78,9 @@ static unsigned int strhash(const char* s)
     }
     return h;
 }
+
+inline bool is_strict_char(const char c) __attribute__((always_inline));
+inline bool is_strict_char(const char c)
+{
+    return (c >= 33 && c <= 126);
+}

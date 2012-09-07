@@ -43,7 +43,7 @@ class Agent_event
         void life_changing(bool dead);
         void reload_weapon(int type);
 
-        void name_changed(char* old_name);
+        //void name_changed(char* old_name);
 
         // new style weapon trigger events
         // only triggers agent specific animations/sounds

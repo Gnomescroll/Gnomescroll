@@ -1,5 +1,7 @@
 #pragma once
 
+#include <agent/constants.hpp>
+
 namespace Auth
 {
     
@@ -38,6 +40,12 @@ const time_t AUTH_TOKEN_LIFETIME = 60 * 60; // 1 hour, in seconds
 const unsigned int AUTH_TOKEN_ID_LENGTH = 9;
 const unsigned int AUTH_TOKEN_TIMESTAMP_LENGTH = 10;
 const unsigned int AUTH_TOKEN_HASH_LENGTH = 64;
-const unsigned int AUTH_TOKEN_LENGTH = 85;
+const unsigned int AUTH_TOKEN_USERNAME_MIN_LENGTH = PLAYER_NAME_MIN_LENGTH;
+const unsigned int AUTH_TOKEN_USERNAME_MAX_LENGTH = PLAYER_NAME_MAX_LENGTH;
+const unsigned int AUTH_TOKEN_PIECES = 4;
+const unsigned int AUTH_TOKEN_LENGTH =
+    AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH +
+    AUTH_TOKEN_HASH_LENGTH + AUTH_TOKEN_USERNAME_MAX_LENGTH +
+    AUTH_TOKEN_PIECES - 1;
 
 }   // Auth

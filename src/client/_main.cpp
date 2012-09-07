@@ -45,7 +45,7 @@ void init(int argc, char* argv[])
 
     //_set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib(argc, argv);
-    ClientState::set_desired_name(Options::name);
+    //ClientState::set_desired_name(Options::name);
     _START_CLOCK(); // must start before networking
 
     // parse ip address and connect
@@ -443,7 +443,7 @@ int run()
         poll_mouse();
 
         // update client_state
-        ClientState::update();
+        //ClientState::update();
 
         frame_graph->frame_stage(3); //map updates
 
@@ -510,6 +510,8 @@ int run()
 
         // update mouse
         poll_mouse();
+
+        Auth::check_expiring_token();
 
         ClientState::frame_id += 1;
     }

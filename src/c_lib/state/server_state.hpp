@@ -39,12 +39,7 @@ namespace ServerState
         bool suicidal=true
     );
 
-    void send_initial_game_state_to_client(int client_id);
-    void send_remainining_game_state_to_client(int client_id);
-
     void agent_disconnect(int client_id);
-
-    char* agent_name(int id);
 
     void spawn_monsters(ObjectType type, int n);
     

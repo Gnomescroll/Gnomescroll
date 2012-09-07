@@ -19,8 +19,8 @@
     Just a reliable message to server
 */
 template <class Derived>
-class MapMessagePacketToServer {
-
+class MapMessagePacketToServer
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
@@ -45,10 +45,14 @@ class MapMessagePacketToServer {
         
         void send() 
         {
+            #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         //will overflow if more than 128 bytes
@@ -117,6 +121,7 @@ class MapMessagePacketToClient {
         */
         void broadcast() 
         {
+            #if DC_SERVER
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
@@ -131,10 +136,14 @@ class MapMessagePacketToClient {
                 if(np == NULL) continue;
                 np->push_reliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         void sendToClient(int client_id) 
         {
+            #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
             if (np == NULL) np = NetServer::pool[client_id];
             if(np == NULL)  //remove in debug
@@ -147,6 +156,9 @@ class MapMessagePacketToClient {
                 np->resize_map_message_buffer(np->map_message_buffer_index + size);
 
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         //will overflow if more than 128 bytes
@@ -220,6 +232,7 @@ class MapMessageArrayPacketToClient {
 
         void sendToClient(int client_id, char* buff, int len) 
         {
+            #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
             if (np == NULL) np = NetServer::pool[client_id];
             if(np == NULL)
@@ -249,6 +262,9 @@ class MapMessageArrayPacketToClient {
             np->map_message_buffer_index += len;
 
             if(np->map_message_buffer_index >= 1024) np->flush_map_messages();
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         //will overflow if more than 128 bytes

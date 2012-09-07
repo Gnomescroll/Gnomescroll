@@ -102,41 +102,62 @@ void server_teardown()
     if (secret_key != NULL) free(secret_key);
 }
 
-bool verify_token(const char* _token)
+bool verify_token(const char* _token, int* user_id, time_t* expiration_time, char** username)
 {
     GS_ASSERT(secret_key != NULL);
     if (secret_key == NULL) return false;
     
-    int user_id = 0;
-    time_t expiration_time = 0;
     char* token = NULL;
-    bool ok = parse_auth_token(_token, &user_id, &expiration_time, &token);
+    bool ok = parse_auth_token(_token, user_id, expiration_time, &token, username);
     if (!ok) return false;
     
-    const unsigned int payload_len = AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH + 1;
-    char payload[payload_len];
-    snprintf(payload, payload_len, "%09d%lld", user_id, (long long)expiration_time);
+    const unsigned int payload_len = AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH + strlen(*username);
+    char* payload = (char*)malloc((payload_len+1)*sizeof(char));
+    snprintf(payload, payload_len+1, "%09d%lld%s", *user_id, (long long)*expiration_time, *username);
     payload[payload_len] = '\0';
 
-    uint8_t* _hash = compute_hash(secret_key, payload, payload_len-1);
+    uint8_t* _hash = compute_hash(secret_key, payload, payload_len);
     char* hash = (char*)malloc((AUTH_TOKEN_HASH_LENGTH+1)*sizeof(char));
     sprint_digest(hash, _hash);
     free(_hash);
-    
+    free(payload);
+
     bool match = (strcmp(token, hash) == 0);
-    bool expired = auth_token_expired(expiration_time, AUTH_TOKEN_LIFETIME);
+    bool expired = auth_token_expired(*expiration_time, AUTH_TOKEN_LIFETIME);
 
     free(token);
     free(hash);
     
-    return match && !expired;
+    ok = (match && !expired);
+    if (!ok) free(*username);
+
+    return ok;
+}
+
+bool verify_token(const char* _token)
+{
+    int user_id = 0;
+    time_t expiration_time = 0;
+    char* username = NULL;
+    bool ok = verify_token(_token, &user_id, &expiration_time, &username);
+    free(username);
+    return ok;
 }
 
 void received_auth_token(int client_id, const char* token)
 {
-    bool ok = verify_token(token);
-    if (ok) send_auth_token_valid(client_id);
-    else    send_auth_token_invalid(client_id);
+    int user_id = 0;
+    time_t expiration_time = 0;
+    char* username = NULL;
+    bool ok = verify_token(token, &user_id, &expiration_time, &username);
+    if (ok)
+    {
+        send_auth_token_valid(client_id);
+        NetServer::client_authorized(client_id, user_id, expiration_time, username);
+        free(username);
+    }
+    else
+        send_auth_token_invalid(client_id);
 }
 
 void send_auth_token_valid(int client_id)
