@@ -68,12 +68,14 @@ void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_st
 
 void finish_loading_cb(awe_webview* webView)
 {
-    printf("Finish loading callback triggered\n");
     awe_string* _url = awe_webview_get_url(webView);
     char* url = get_str_from_awe(_url);
     printf("URL on webView is: %s\n", url);
+    if (strstr(url, GNOMESCROLL_LOGIN_PATH) != NULL)
+    {   // login page loaded; force show awesomium window
+        enable_awesomium();
+    }
     free(url);
-    printf("\n");
 }
 
 awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request)
@@ -133,7 +135,7 @@ class ChromeViewport
     {
         //awe_webview_set_callback_begin_navigation(this->webView, &begin_navigation_cb);
         awe_webview_set_callback_begin_loading(this->webView, &begin_loading_cb);
-        //awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
+        awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
         //awe_webview_set_callback_resource_response(this->webView, &resource_response_cb);
         //awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
     }

@@ -149,21 +149,30 @@ void toggle_admin_controls()
     input_state.admin_controls = (!input_state.admin_controls);
 }
 
+void disable_awesomium()
+{
+    if (!input_state.awesomium) return;
+    input_state.awesomium = false;
+    input_state.mouse_bound = input_state.rebind_mouse;
+    input_state.ignore_mouse_motion = true;
+    Awesomium::disable();
+}
+
+void enable_awesomium()
+{
+    if (input_state.awesomium) return;
+    input_state.awesomium = true;
+    input_state.rebind_mouse = input_state.mouse_bound;
+    input_state.mouse_bound = false;
+    Awesomium::enable();    
+}
+
 void toggle_awesomium()
 {
-    input_state.awesomium = (!input_state.awesomium);
-    input_state.rebind_mouse = input_state.mouse_bound;
     if (input_state.awesomium)
-    {
-        input_state.mouse_bound = false;
-        Awesomium::enable();
-    }
+        disable_awesomium();
     else
-    {
-        input_state.mouse_bound = true;
-        input_state.ignore_mouse_motion = true;
-        Awesomium::disable();
-    }
+        enable_awesomium();
 }
 
 void toggle_graphs()
@@ -829,8 +838,6 @@ void key_down_handler(SDL_Event* event)
 
     if (input_state.chat)
         chat_key_down_handler(event);
-    else if (input_state.agent_container || input_state.container_block)
-        container_key_down_handler(event);
     else if (input_state.awesomium)
     {
         switch (event->key.keysym.sym)
@@ -844,6 +851,8 @@ void key_down_handler(SDL_Event* event)
                 break;
         }
     }
+    else if (input_state.agent_container || input_state.container_block)
+        container_key_down_handler(event);
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -1054,10 +1063,10 @@ void key_up_handler(SDL_Event* event)
 
     if (input_state.chat)
         chat_key_up_handler(event);
-    else if (input_state.agent_container || input_state.container_block)
-        container_key_up_handler(event);
     else if (input_state.awesomium)
         Awesomium::SDL_keyboard_event(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_key_up_handler(event);
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -1106,10 +1115,10 @@ void mouse_button_down_handler(SDL_Event* event)
     }
 
     // chat doesnt affect mouse
-    if (input_state.agent_container || input_state.container_block)
-        container_mouse_down_handler(event);
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_mouse_down_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
     else
@@ -1135,10 +1144,10 @@ void mouse_button_up_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
 
-    if (input_state.agent_container || input_state.container_block)
-        container_mouse_up_handler(event);
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_mouse_up_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
     else
@@ -1161,15 +1170,15 @@ void mouse_motion_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.agent_container || input_state.container_block)
-    {
-        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
-        container_mouse_motion_handler(event);
-    }
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
     {
         SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         Awesomium::SDL_mouse_event(event);
+    }
+    else if (input_state.agent_container || input_state.container_block)
+    {
+        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
+        container_mouse_motion_handler(event);
     }
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);

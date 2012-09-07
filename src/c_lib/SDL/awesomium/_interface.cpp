@@ -86,6 +86,8 @@ void init()
     awe_string* locale_path = get_awe_string(locale_path_str);
     awe_string* log_path = get_awe_string("./screenshot");
 
+    awe_string* user_agent = get_awe_string(USER_AGENT);
+
     awe_webcore_initialize( false, //plugins
     true, //javascript
     false,  //databases
@@ -100,7 +102,8 @@ void init()
     true,
     awe_string_empty(),
     awe_string_empty(),
-    awe_string_empty(), // user agent
+    //awe_string_empty(), // user agent
+    user_agent, // user agent
     awe_string_empty(),
     awe_string_empty(),
     awe_string_empty(),
@@ -114,6 +117,7 @@ void init()
     awe_string_destroy(package_path);
     awe_string_destroy(locale_path);
     awe_string_destroy(log_path);
+    awe_string_destroy(user_agent);
     #endif
 
 
@@ -123,12 +127,6 @@ void init()
     cv = new ChromeViewport;
     viewport_manager = new ViewportManager;
     viewport_manager->add_viewport(cv);
-
-    ////// TODO -- rm temp for testing
-    delete_auth_token_cookie();
-    //char* cookies = get_cookies();
-    //printf("Cookies: %s\n", cookies);
-    //free(cookies);
 }
 
 void delete_all_cookies()

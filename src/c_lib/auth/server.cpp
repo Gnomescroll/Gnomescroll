@@ -71,10 +71,8 @@ uint8_t* compute_hash(const unsigned char* secret_key, const char* msg, const si
 
 void print_digest(uint8_t* digest)
 {   // print the digest
-    printf("Digest: ");
     for (int i=0; i<32; i++)
         printf("%02lx", (unsigned long)digest[i]);
-    printf("\n");
 }
 
 void sprint_digest(char* dest, uint8_t* digest)
@@ -95,14 +93,6 @@ void server_init()
         GS_ASSERT(isxdigit(secret_key_str[i]));
 
     GS_ASSERT(strlen((char*)secret_key) == SECRET_KEY_SIZE);
-
-    const char test_msg[] = "Hello gnomescroll";
-    uint8_t* digest = compute_hash(secret_key, test_msg, sizeof(test_msg)-1);
-
-    printf("Secret key: %s\n", secret_key_str);
-    printf("Payload: %s\n", test_msg);
-    print_digest(digest);
-    free(digest);
 }
 
 // Teardown
@@ -114,8 +104,6 @@ void server_teardown()
 
 bool verify_token(const char* _token)
 {
-    printf("Verifying token: %s\n", _token);
-    
     GS_ASSERT(secret_key != NULL);
     if (secret_key == NULL) return false;
     
@@ -124,24 +112,19 @@ bool verify_token(const char* _token)
     char* token = NULL;
     bool ok = parse_auth_token(_token, &user_id, &expiration_time, &token);
     if (!ok) return false;
-    printf("   User token: %s\n", token);
     
     const unsigned int payload_len = AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH + 1;
     char payload[payload_len];
     snprintf(payload, payload_len, "%09d%lld", user_id, (long long)expiration_time);
     payload[payload_len] = '\0';
-    printf("Adjusted Payload: %s\n", payload);
+
     uint8_t* _hash = compute_hash(secret_key, payload, payload_len-1);
-    print_digest(_hash);
     char* hash = (char*)malloc((AUTH_TOKEN_HASH_LENGTH+1)*sizeof(char));
     sprint_digest(hash, _hash);
     free(_hash);
     
-    //printf("Computed hash: %s\n", hash);
-
     bool match = (strcmp(token, hash) == 0);
     bool expired = auth_token_expired(expiration_time, AUTH_TOKEN_LIFETIME);
-    if (expired) printf("Token expired\n");
 
     free(token);
     free(hash);
@@ -151,9 +134,9 @@ bool verify_token(const char* _token)
 
 void received_auth_token(int client_id, const char* token)
 {
-    printf("Received token %s from client %d\n", token, client_id);
     bool ok = verify_token(token);
-    if (ok) printf("Token is valid\n");
+    if (ok) printf("Client %d valid token\n", client_id);
+    else printf("Client %d invalid token\n", client_id);
 }
 
 }   // Auth

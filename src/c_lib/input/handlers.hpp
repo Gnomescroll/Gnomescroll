@@ -101,6 +101,9 @@ void disable_agent_container();
 void enable_container_block(int container_id);
 void disable_container_block();
 
+void disable_awesomium();
+void enable_awesomium();
+
 void close_all_containers();
 
 void trigger_keys_held_down();

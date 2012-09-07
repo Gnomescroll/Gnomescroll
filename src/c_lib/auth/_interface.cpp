@@ -107,7 +107,7 @@ bool auth_token_expired(const time_t timestamp, const time_t expiration_window)
     time_t now = utc_now();
     time_t created_at = timestamp - AUTH_TOKEN_LIFETIME;
     double dt = difftime(now, created_at);
-    return (dt >= (double)expiration_window);
+    return (dt < 0 || dt >= (double)expiration_window);
 }
 
 }   // Auth
