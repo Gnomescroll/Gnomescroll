@@ -510,7 +510,7 @@ class ModelLoader
         node->index = *index;
         *index++;
         for(int i=0; i<node->cn; i++)
-            _set_node_index(index, &(node->cn[i]);
+            _set_node_index(index, node->c[i] );
     }
 
     //populate node list
@@ -592,7 +592,7 @@ class ModelLoader
         }
 
         //set index
-        struct* Node root_node = NULL;
+        struct Node* root_node = NULL;
         for(int i=0; i<_nlm; i++)
         {
             if(root_node != NULL)
