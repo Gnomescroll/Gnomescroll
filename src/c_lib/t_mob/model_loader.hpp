@@ -505,6 +505,14 @@ class ModelLoader
     int _nlm;
 */
 
+    void _set_node_index(int* index, Node* node)
+    {
+        node->index = *index;
+        *index++;
+        for(int i=0; i<node->cn; i++)
+            _set_node_index(index, &(node->cn[i]);
+    }
+
     //populate node list
     void init_node_list()
     {
@@ -582,8 +590,21 @@ class ModelLoader
                 }
             }
         }
-        
-        //
+
+        //set index
+        struct* Node root_node = NULL;
+        for(int i=0; i<_nlm; i++)
+        {
+            if(root_node != NULL)
+            {    
+                GS_ASSERT(_nl[i].p != NULL)
+            }
+            if(_nl[i].p == NULL)
+                root_node = &_nl[i];
+        }
+        int index = 0;
+        _set_node_index(&index, root_node);
+
     }
 
 
