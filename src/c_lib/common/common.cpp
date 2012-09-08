@@ -34,15 +34,10 @@ void address_from_uint32(uint32_t ip, uint8_t address[4])
         address[i] = (uint8_t) (ip >> i*8) & 0xFF;
 }
 
-static bool is_valid_name_character(char c)
+bool is_valid_name_character(char c) __attribute__((always_inline));
+bool is_valid_name_character(char c)
 {
-    // range of solid ascii chars
-    if (c < '!' /* 33 */ || c > '~' /* 126 */)
-        return false;
-    // additional banned characters
-    if (c == '/' || c == '\\')
-        return false;
-    return true;
+    return (isalnum(c) || c == '_');
 }
 
 unsigned int sanitize_player_name(char* name)

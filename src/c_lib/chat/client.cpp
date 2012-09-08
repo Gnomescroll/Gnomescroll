@@ -41,8 +41,7 @@ void ChatMessage::set_color()
     }
 }
 
-ChatMessage::ChatMessage(int id)
-:
+ChatMessage::ChatMessage(int id) :
 id(id),
 timestamp(0),
 color(CHAT_UNKNOWN_COLOR)
@@ -131,8 +130,7 @@ ChatClientChannel::~ChatClientChannel()
 
 /* ChatInput */
 
-ChatInputHistoryObject::ChatInputHistoryObject(const char* m)
-:
+ChatInputHistoryObject::ChatInputHistoryObject(const char* m) :
 next(NULL),
 prev(NULL)
 {

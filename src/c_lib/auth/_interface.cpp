@@ -43,13 +43,39 @@ void teardown()
 
 bool is_valid_username(const char* username, size_t len)
 {
+    // length
+    if (len < AUTH_TOKEN_USERNAME_MIN_LENGTH || len > AUTH_TOKEN_USERNAME_MAX_LENGTH)
+        return false;
+
+    // starts with alpha
+    if (!isalpha(username[0]))
+        return false;
+
+    // valid characters
+    bool has_alphabet = false;
     for (unsigned int i=0; i<len; i++)
-        if (!is_strict_char(username[i])
-           || username[i] == AUTH_TOKEN_DELIMITER || username[i] == '/')
+    {
+        if (!is_valid_name_character(username[i]))
             return false;
+        if (isalpha(username[i]))
+            has_alphabet = true;
+    }
+
+    // contains at least one alpha character
+    if (!has_alphabet)
+        return false;
+        
+    // not equal to placeholder name
     if (strcmp(UNDEFINED_NAME, username) == 0)
         return false;
+        
     return true;
+}
+
+bool is_valid_username(const char* username)
+{
+    size_t len = strlen(username);
+    return is_valid_username(username, len);
 }
 
 bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, char** hash, char** username)
@@ -366,13 +392,13 @@ void run_tests()
     GS_ASSERT(!verify_token(valid_token));
     #endif
     
-    const char large_username[] = "000000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|123456789qwertya";
+    const char large_username[] = "000000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|a23456789qwertya";
     ok = parse_auth_token(large_username, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(ok);
     // username should be truncated. parses correctly, as the parser only read the token length
     if (ok)
     {
-        GS_ASSERT(strcmp(username, "123456789qwerty") == 0);
+        GS_ASSERT(strcmp(username, "a23456789qwerty") == 0);
         free(username);
         free(hash);
         #if DC_SERVER
@@ -394,6 +420,20 @@ void run_tests()
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
+
+    // Username
+    GS_ASSERT(!is_valid_username(""));
+    GS_ASSERT(!is_valid_username("g"));
+    GS_ASSERT(!is_valid_username("ge"));
+    GS_ASSERT(is_valid_username("get"));
+    GS_ASSERT(is_valid_username("get_"));
+    GS_ASSERT(is_valid_username("get_423"));
+    GS_ASSERT(!is_valid_username("4get"));
+    GS_ASSERT(is_valid_username("getgetgetgetget"));
+    GS_ASSERT(!is_valid_username("getgetgetgetgetg"));
+    GS_ASSERT(!is_valid_username("___"));
+    GS_ASSERT(!is_valid_username("_get_"));
+    GS_ASSERT(is_valid_username("get_"));
 }
 
 }   // Auth
