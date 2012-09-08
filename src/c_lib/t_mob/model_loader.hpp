@@ -48,7 +48,25 @@ namespace t_mob
         int bone_index; //index into bone matrix
         int vertex_index;		//mesh vertex index
         float weight; 	//weight
-    };    
+    };
+
+
+    struct _Mesh
+    {
+        struct aiMesh* mesh;
+
+        int bvln;       //base vertex list max
+        struct _Vertex bvl; //base vertex list
+
+        int vlm;    //number of vertices
+
+        int* via;   //vertex index array
+        int viam;   //vertex index array max
+
+        int vwlm;
+        struct _VertexWeight* vwl;
+    };
+
 
 class ModelLoader
 {
@@ -59,7 +77,7 @@ class ModelLoader
     nl(NULL), 
     ml(NULL),
     //tvl(NULL),
-    vll(NULL), vln(NULL),
+    //vll(NULL), vln(NULL),
     //bvl(NULL), tbvl(NULL),
     bvlo(NULL), bvln(NULL),
     //via(NULL),
@@ -91,7 +109,7 @@ class ModelLoader
     aiMesh** ml;    //mesh list
 
 
-    int* vll;           //offset of vertices in list for each mesth
+    //int* vll;           //offset of vertices in list for each mesth
     int* vln;           //number of vertices in each mech
 
     void init(aiScene* _pScene)
@@ -111,15 +129,16 @@ class ModelLoader
         nli = 0;
         set_node_parents(pScene->mRootNode);
 
-        vll = new int[nlm];
+        //vll = new int[nlm];
         vln = new int[nlm];
 
         init_base_vertex_list();
-        set_vertices();
         init_texture();
         //draw();
         init_bone_list();
         init_node_list();
+
+        initialize_meshes();
     }
 
     void count_nodes(aiNode* pNode)
@@ -139,9 +158,11 @@ class ModelLoader
             GS_ASSERT(nli < nlm);
             nl[nli] = pNode;
 
-            GS_ASSERT(pNode->mNumMeshes < 2);
+            GS_ASSERT(pNode->mNumMeshes == 0 || pNode->mNumMeshes == 1);    //each node should only have one mesh?
             int mesh_index = pNode->mMeshes[0]; //grab the first mesh
             ml[nli] = pScene->mMeshes[mesh_index];
+            if(pNode->mNumMeshes == 0)
+                ml[nli] == NULL;
             nli++;
         }
         for(unsigned int i=0; i < pNode->mNumChildren; i++)
@@ -150,40 +171,120 @@ class ModelLoader
         }
     }
 
-    void set_vertices()
+/*
+    struct _Mesh
     {
-        GS_ASSERT(nli == nlm);
+        aiMesh* mesh;
 
-        int count = 0;
+        int bvln;       //base vertex list max
+        struct _Vertex bvl; //base vertex list
+
+        int vln;    //number of vertices
+
+        int* via;   //vertex index array
+        int viam;   //vertex index array max
+
+        int vwlm;
+        struct _VertexWeight* vwl;
+    };
+*/
+
+    struct _Mesh* _ml;
+    int _mln;
+
+    void initialize_meshes()
+    {
+
+        int mesh_count = 0;
+        
         for(int i=0; i<nlm; i++)
         {
-            aiMesh* mesh = ml[i];
-            GS_ASSERT(mesh != NULL);
+            aiNode* node = nl[i];
+            GS_ASSERT(node->mNumMeshes == 0 || node->mNumMeshes == 1); 
+            if(node->mNumMeshes == 1)
+                mesh_count++;
+        }
 
-            if(mesh == NULL)
+        _mln = mesh_count;
+        _ml = new struct _Mesh[_mln];
+
+        for(int i=0; i<nlm; i++)
+        {
+            aiNode* node = nl[i];
+            int mesh_index = node->mMeshes[0]; //grab the first mesh
+            if(node->mNumMeshes == 1)
             {
-                printf("set_vertices error: mesh %d is null\n", i);
-                continue;
+                int mesh_index = node->mMeshes[0]; //grab the first mesh
+                _ml[mesh_count].mesh = pScene->mMeshes[mesh_index];
+                mesh_count++;
             }
+        }
 
-            vll[i] = count;
-            vln[i] = mesh->mNumVertices;
+        //set vertex base array
+        for(int i=0; i<_mln; i++)
+        {
+            aiMesh* mesh = _ml[i].mesh;
+
+            _ml[i].bvln = mesh->mNumVertices;
+            _ml[i].bvl = new _Vertex[_ml[i].bvln];
+
+            for(unsigned int j=0; j<mesh->mNumVertices; j++)
+            {
+                aiVector3D pos = mesh->mVertices[j];
+                aiVector3D tex = mesh->mTextureCoords[0][j];
+
+                struct _Vertex v; 
+                v.v.x = pos.x;
+                v.v.y = pos.y;
+                v.v.z = pos.z;
+
+                v.ux =  tex.x;
+                v.uy =  1.0-tex.y;
+
+                //printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
+                _ml[i].bvl[j] = v;
+
+            }
+        }
+
+
+
+            /*
+                Vertex count; vertex index array
+            */
+
 
             GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
             GS_ASSERT(mesh->mTextureCoords[0] != NULL);
 
-            //printf("%02d: mNumFaces= %d mNumVertices= %d \n", i, mesh->mNumFaces, mesh->mNumVertices);
+            _ml[mesh_count].vln = 3*mesh->mNumFaces;
+
+            _ml[mesh_count].viam = 3*mesh->mNumFaces;
+            _ml[mesh_count].via = new int[3*mesh->mNumFaces;];
+
+            for(unsigned int j=0; j<mesh->mNumFaces; j++)
+            {
+                for(int k=0; k<3; k++)
+                {
+                    _ml[mesh_count].via[3*j+k] = mesh->mFaces[j].mIndices[k];
+                }
+            }
+
             for(unsigned int j=0; j<mesh->mNumFaces; j++)
             {
                 GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
                 GS_ASSERT(mesh->mNumUVComponents[0] == 2);
-                //printf("max tex= %d \n", AI_MAX_NUMBER_OF_TEXTURECOORDS);
-
-                for(int k=0; k<3; k++)
-                {
-                    count++;
-                }
             }
+
+
+
+
+
+            for(int j=0; j<mesh->; j++)
+            _ml[mesh_count].bvl =
+
+
+            mesh_count++;
         }
 
     }
