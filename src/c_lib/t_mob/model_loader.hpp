@@ -934,28 +934,13 @@ class BodyMesh
         nm = ml->_nlm;
         nnl = new char*[nm];
         npl = new int[nm];
-        ntl = new struct Mat4[nm];
+        ntl = new struct Mat4[nm];  //mTransformation;
 
-        for(int i=0;i<nm;i++)
-            nnl[i] = NULL;
         for(int i=0;i<nm; i++)
         {
-            int index = ml->_nl[i].index;
-            GS_ASSERT(nnl[index] = NULL);
-
-            nnl[index] = ml->_nl[i].name;
-
-            if(ml->_nl[i].p == NULL)
-            {
-                GS_ASSERT(ml->_nl[i].index == 0);
-                npl[index] = 0;
-            }  
-            else
-            {
-                npl[index] = ml->_nl[i].p->index;
-            }
-
-            ntl[index] = ml->_nl[i].mTransformation;
+            nnl[i] = ml->_nl[i].name;
+            npl[i] = ml->_nl[i].p->index;
+            ntl[i] = ml->_nl[i].mTransformation;
         }
     }
 };
