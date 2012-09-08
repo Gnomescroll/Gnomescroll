@@ -782,7 +782,7 @@ class BodyPartMesh
     struct _Vertex* bvl;        //base vertex list
 
     struct _Vertex* vl;         //vertex list
-    int vlm;                    //vertex list max
+    int vln;                    //vertex list max
 
     int* via;                   //vertex index array
     int viam;
@@ -811,8 +811,33 @@ class BodyPartMesh
         //copy name
         mesh_name = copy_string(mesh->node->mName.data);
 
+        //base vertex list
+        bvlm = mesh->bvln;
+        bvl = new struct _Vertex[bvlm];
 
+        for(int i=0;i<bvlm;i++)
+            bvl[i] = mesh->bvl[i];
 
+        //vertex list
+
+        vln = mesh->vln;
+        vl = new struct _Vertex[vln];
+
+        //vertex list index array
+
+        viam = mesh->viam;
+        via = new int[viam];
+
+        for(int i=0;i<viam;i++)
+            via[i] = mesh->via[i];
+
+        //vertex weight list
+
+        vwlm = mesh->vwlm;
+        vwl = new struct _VertexWeight[vwlm];
+        
+        for(int i=0;i<vwlm;i++)
+            vwl[i] = mesh->vwl[i];
 
     }
 };
