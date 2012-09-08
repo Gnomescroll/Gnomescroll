@@ -43,9 +43,7 @@ void init(int argc, char* argv[])
 {
     GS_MKDIR("./screenshot", S_IRWXU);
 
-    //_set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib(argc, argv);
-    //ClientState::set_desired_name(Options::name);
     _START_CLOCK(); // must start before networking
 
     // parse ip address and connect

@@ -1,5 +1,9 @@
 #include "server_options.hpp"
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <options/argparse.hpp>
 #include <common/lua/lua.hpp>
 
