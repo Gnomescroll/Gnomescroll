@@ -74,7 +74,7 @@ class ModelLoader
 
     ModelLoader() :
     pScene(NULL),
-    nl(NULL), 
+    nl(NULL)
     {}
     
     ~ModelLoader()
@@ -102,15 +102,12 @@ class ModelLoader
         nl = new aiNode*[nlm];
 
         for(int i=0; i<nlm; i++) nl[i] = NULL;
-        for(int i=0; i<nlm; i++) ml[i] = NULL;
 
         nli = 0;
         set_node_parents(pScene->mRootNode);
-        initialize_meshes();
-        //vll = new int[nlm];
 
-        init_texture();
-        //draw();
+        initialize_meshes();
+
         init_bone_list();
         init_node_list();
 
@@ -358,9 +355,9 @@ class ModelLoader
         int _bone_count = 0;
 
         //count number of times bone appears
-        for(int i=0; i<mlm; i++)
+        for(int i=0; i<_mlm; i++)
         {
-            aiMesh* mesh = _ml[i];
+            aiMesh* mesh = _ml[i].mesh;
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 //aiBone* bone = mesh->mBones[j];
@@ -368,10 +365,10 @@ class ModelLoader
                 bool new_bone = true;
                 for(int _i=0; _i<=i; _i++) 
                 {
-                    for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
+                    for(unsigned int _j=0; _j<_ml[_i].mesh->mNumBones; _j++) 
                     {
                         if(_i == i && _j == j) break;
-                        if(strcmp(_ml[i]->mBones[j]->mName.data, _ml[_i]->mBones[_j]->mName.data) == 0)
+                        if(strcmp(_ml[i].mesh->mBones[j]->mName.data, _ml[_i].mesh->mBones[_j]->mName.data) == 0)
                         {
                             new_bone = false;
                             break;
@@ -395,9 +392,9 @@ class ModelLoader
 
         //populate bone list
         int bcount = 0;
-        for(int i=0; i<_mnm; i++)
+        for(int i=0; i<_mlm; i++)
         {
-            aiMesh* mesh = _ml[i];
+            aiMesh* mesh = _ml[i].mesh;
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
