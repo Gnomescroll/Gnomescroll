@@ -144,4 +144,9 @@ bool auth_token_expired(const time_t timestamp, const time_t expiration_window)
     return (dt < 0 || dt >= (double)expiration_window);
 }
 
+bool is_valid_user_id(const int user_id)
+{
+    return (user_id > 0);
+}
+
 }   // Auth

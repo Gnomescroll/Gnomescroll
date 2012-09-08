@@ -38,6 +38,7 @@ void teardown_globals();
 class Session* begin_session(uint32_t ip_addr, int client_id);
 void end_session(class Session* session);
 
+// authorization callback
 void client_authorized(int client_id, int user_id, time_t expiration_time, const char* username);
 
 void kill_client(int client_id, DisconnectType error_code);

@@ -134,10 +134,28 @@ void client_authorized(int client_id, int user_id, time_t expiration_time, const
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
 
-    NetPeerManager* peer = clients[client_id];
-    GS_ASSERT(peer != NULL);
-    if (peer == NULL) return;
-    peer->authorized(user_id, expiration_time, username);
+    NetPeerManager* pm = clients[client_id];
+    GS_ASSERT(pm != NULL);
+    if (pm == NULL) return;
+
+    // check if client is already authorized on another account
+    // if so, kill that client
+    // this prevents a user from being logged in multiple times
+    // we kill the old client, because there's a good chance the original client is about to timeout
+    // and we want to just let them back in, not wait for a timeout
+    for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+        if (clients[i] != NULL && clients[i] != pm && clients[i]->user_id == user_id)
+        {
+            ASSERT_VALID_CLIENT_ID(clients[i]->client_id);
+            IF_INVALID_CLIENT_ID(clients[i]->client_id) continue;
+            class NetPeer* peer = staging_pool[clients[i]->client_id];
+            if (peer == NULL) peer = pool[clients[i]->client_id];
+            GS_ASSERT(peer != NULL);
+            if (peer == NULL) continue;
+            kill_client(peer, DISCONNECT_LOGIN_ELSEWHERE);
+        }
+
+    pm->authorized(user_id, expiration_time, username);
 }
 
 void kill_client(int client_id, DisconnectType error_code)

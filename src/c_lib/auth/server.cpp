@@ -122,13 +122,14 @@ bool verify_token(const char* _token, int* user_id, time_t* expiration_time, cha
     free(_hash);
     free(payload);
 
+    bool valid_id = is_valid_user_id(*user_id);
     bool match = (strcmp(token, hash) == 0);
     bool expired = auth_token_expired(*expiration_time, AUTH_TOKEN_LIFETIME);
 
     free(token);
     free(hash);
     
-    ok = (match && !expired);
+    ok = (valid_id && match && !expired);
     if (!ok) free(*username);
 
     return ok;

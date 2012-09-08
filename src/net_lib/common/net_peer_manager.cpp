@@ -63,22 +63,26 @@ void NetPeerManager::init(int client_id)
 
 /*
  * Phase 2:
+ * Authorization
+ * On first load, send all data
+ * Subsequent authorizations will only refresh the expiration_time
  */
 void NetPeerManager::authorized(int user_id, time_t expiration_time, const char* username)
 {
+    
     // assume arguments are valid. should have been verified by the auth token parser
 
     GS_ASSERT(this->inited);
     if (!this->inited) return;
-    GS_ASSERT(!this->loaded);
+    GS_ASSERT(!this->loaded || this->user_id == user_id);
+
+    // update expiration time and waiting state
+    this->waiting_for_auth = false;
+    this->auth_expiration = expiration_time;
+
     if (this->loaded) return;
 
-    GS_ASSERT(this->waiting_for_auth);
-    
-    this->waiting_for_auth = false;
-
     this->user_id = user_id;
-    this->auth_expiration = expiration_time;
     
     // move peer from staging to active pool
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];

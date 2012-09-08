@@ -134,6 +134,9 @@ static void client_disconnect(ENetEvent* event)
     if (event->data == DISCONNECT_SERVER_ERROR)
         printf("Client was disconnected because of an error in the server\n");
     else
+    if (event->data == DISCONNECT_LOGIN_ELSEWHERE)
+        printf("Client was disconnected because it logged in as another client\n");
+    else
         printf("Client disconnected from server\n");
 
     event->peer->data = NULL;
@@ -490,11 +493,10 @@ static void client_connect(ENetEvent* event)
     nc->enet_peer = event->peer;
 
     if ((int)NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
-    {   //send a disconnect reason packet
+    {   // send a disconnect reason packet
         if (event->peer != NULL && event->peer->data != NULL)
             ((class NetPeer*)event->peer->data)->disconnect_code = DISCONNECT_FULL;
         enet_peer_disconnect(event->peer, DISCONNECT_FULL); //gracefull disconnect client
-        //enet_peer_reset(event->peer);   //force disconnect client, does not notify client
         return;
     }
 
@@ -583,6 +585,9 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
         else
         if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_SERVER_ERROR)
             printf("Client %d disconnected because of a server error\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_LOGIN_ELSEWHERE)
+            printf("Client %d disconnected because it logged in as another client\n", client_id);
         else
         {
             GS_ASSERT(false);
