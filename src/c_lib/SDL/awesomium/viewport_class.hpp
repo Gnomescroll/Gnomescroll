@@ -141,6 +141,8 @@ class ChromeViewport
     {
         if (this->tex == 0) return;
 
+        glColor4ub(255,255,255,255);
+
         GL_ASSERT(GL_DEPTH_TEST, false);
         GL_ASSERT(GL_BLEND, true);
 

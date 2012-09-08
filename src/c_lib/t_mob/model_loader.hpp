@@ -39,8 +39,8 @@ namespace t_mob
     struct _VertexWeight
     {
         int bone_index; //index into bone matrix
-        int vertex;		//mesh vertex index
-        float weight; 	//weight
+        int vertex;     //mesh vertex index
+        float weight;   //weight
     };    
 
 class ModelLoader
@@ -548,7 +548,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
 
     /*
-		Stuff for testing
+        Stuff for testing
     */
     unsigned int texture1;
     SDL_Surface* s;
@@ -583,7 +583,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 class BodyPartMesh
 {
 
-	public:
+    public:
 
     char* mesh_name;
 
@@ -599,22 +599,22 @@ class BodyPartMesh
     int* via;                   //vertex index array
     int viam;
 
-	BodyPartMesh()
-	{
+    BodyPartMesh()
+    {
         bvl = NULL;
         vl  = NULL;
         vwl = NULL;
         via = NULL;
-	}
+    }
 
-	~BodyPartMesh()
-	{
+    ~BodyPartMesh()
+    {
 
-	}
+    }
 
     //assumes only one mesh per node
-	void load(class ModelLoader* ml, int mesh_index, aiMesh* mesh, aiNode* node)
-	{
+    void load(class ModelLoader* ml, int mesh_index, aiMesh* mesh, aiNode* node)
+    {
 
         //copy name
         mesh_name = new char[strlen(node->mName.data)+1];
@@ -1045,10 +1045,10 @@ void ModelLoader::draw_skeleton(float x, float y, float z)
                 vf.y = size*boneMatrix._f[4*0+1];
                 vf.z = size*boneMatrix._f[4*0+2];
 
-                glColor4ub(255,0,0,0);
+                glColor4ub(255,0,0,255);
 
                 glVertex3f(x+vv.x, y+vv.y, z+vv.z);
-                glColor4ub(0,255,0,0);
+                glColor4ub(0,255,0,255);
 
                 glVertex3f(x+vv.x+vf.x, y+vv.y+vf.y, z+vv.z+vf.z);
             glEnd();

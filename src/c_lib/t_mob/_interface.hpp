@@ -644,10 +644,10 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                     vf.y = size*boneMatrix._f[4*0+1];
                     vf.z = size*boneMatrix._f[4*0+2];
 
-                    glColor4ub(255,0,0,0);
+                    glColor4ub(255,0,0,255);
 
                     glVertex3f(x+vv.x, y+vv.y, z+vv.z);
-                    glColor4ub(0,255,0,0);
+                    glColor4ub(0,255,0,255);
 
                     //printf("vec: \n");
                     //vec3_print(vv);
