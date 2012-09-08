@@ -431,8 +431,21 @@ turning a 60fps program into a 30fps program. It will also induce stalls, for th
 to wait 15.2ms every other v-blank interval for a buffer swap. Rendering calls made in that time will
  back up, eventually forcing a stall to wait for the actual swap.
 
+Note that the problem of OpenGL commands backing up due to a waiting v-blank happen because these commands are trying to affect the back buffer. 
+If they do not affect the back buffer, either by rendering to a framebuffer object, another form of off-screen buffer, or something else that isn't the 
+back or front buffers, then these rendering commands can be scheduled as normal. Assuming that there are no other issues that would prevent such 
+execution (trying to render to a buffer that is being read from, for example). Thus, one can ease the CPU burden on waiting for v-blanks by 
+rendering to a third buffer, then blitting that to the back buffer, and then doing a swap. This is commonly called "triple buffering".
+
 */
- 
+
+
+/*
+
+SGI_video_sync
+http://www.opengl.org/registry/specs/SGI/video_sync.txt
+
+*/
 int _swap_buffers()
 {
     int _time1;

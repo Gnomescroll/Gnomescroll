@@ -841,7 +841,7 @@ class BodyPartMesh
                 //int index = bone->mWeights[j].mVertexId;
                 //float weight = bone->mWeights[j].mWeight;
 
-                int bone_index = ml->get_bone_index();
+                int bone_index = ml->get_bone_index(bone);
                 vwl[index].bone_index =     bone_index;
                 vwl[index].vertex_index =   bone->mWeights[j].mVertexId;
                 vwl[index].weight =         bone->mWeights[j].mWeight;
