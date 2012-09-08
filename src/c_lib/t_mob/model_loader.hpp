@@ -936,7 +936,7 @@ class BodyPartMesh
         vl = new _Vertex[vl_num];
         vlm = vl_num;
 */
-        
+
         //load vertex index array
 /*
         viam = ml->viam;
@@ -966,8 +966,6 @@ class BodyPartMesh
 
         vwl = new _VertexWeight[num_weights];
         vwlm = num_weights;
-
-        int index = 0;
 
 
     }
