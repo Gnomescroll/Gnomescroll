@@ -924,12 +924,22 @@ class BodyMesh
 
     BodyMesh()
     {
-
+        nnl = NULL;
+        npl = NULL;
+        node_mTransformation = NULL;
+        bnl = NULL;
+        bone_mOffsetMatrix = NULL;
+        bpl = NULL;
     }
 
     ~BodyMesh()
     {
-
+        if(nnl != NULL) delete[] nnl;
+        if(npl != NULL) delete[] npl;
+        if(node_mTransformation != NULL) delete[] node_mTransformation;
+        if(bnl != NULL) delete[] bnl;
+        if(bone_mOffsetMatrix != NULL) delete[] bone_mOffsetMatrix[];
+        if(bpl != NULL) delete[] bpl;
     }
 
     void load(class ModelLoader* ml)
@@ -959,8 +969,8 @@ class BodyMesh
         for(int i=0;i<blm;i++)
         {
             bnl[i] = ml->bnl[i].name; 
-            bone_mOffsetMatrix = ml->bnl[i].mOffsetMatrix;
-            bpl = ml->bnl[i].parent_index;
+            bone_mOffsetMatrix[i] = ml->bnl[i].mOffsetMatrix;
+            bpl[i] = ml->bnl[i].parent_index;
         }
     }
 };
