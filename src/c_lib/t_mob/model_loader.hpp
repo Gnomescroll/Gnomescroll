@@ -46,7 +46,7 @@ namespace t_mob
     struct _VertexWeight
     {
         int bone_index; //index into bone matrix
-        int vertex;		//mesh vertex index
+        int vertex_index;		//mesh vertex index
         float weight; 	//weight
     };    
 
@@ -740,7 +740,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
     struct _VertexWeight
     {
         int bone_index; //index into bone matrix
-        int vertex;     //mesh vertex index
+        int vertex_index;     //mesh vertex index
         float weight;   //weight
     };    
 */
@@ -809,18 +809,31 @@ class BodyPartMesh
 
 
 
-        vwl = new _VertexWeight[]
 
 
+        int num_weights = 0;
+
+        for(unsigned int i=0; i<mesh->mNumBones; i++)
+            num_weights += mesh->mBones[i]->mNumWeights;
+
+
+        vwl = new _VertexWeight[num_weights];
+        vwlm = num_weights;
+
+        int index = 0;
         for(unsigned int i=0; i<mesh->mNumBones; i++)
         {
             aiBone* bone = mesh->mBones[i];
 
             for(unsigned int j=0; j<bone->mNumWeights; j++)
             {
-                int index = offset + bone->mWeights[k].mVertexId;
-                float weight = bone->mWeights[k].mWeight;
+                //int index = bone->mWeights[j].mVertexId;
+                //float weight = bone->mWeights[j].mWeight;
 
+                vwl[index].bone_index =     0;
+                vwl[index].vertex_index =   bone->mWeights[j].mVertexId;
+                vwl[index].weight =         bone->mWeights[j].mWeight;
+                index++;
             }
         }
     }
