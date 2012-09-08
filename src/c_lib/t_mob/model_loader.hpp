@@ -938,7 +938,7 @@ class BodyMesh
         if(npl != NULL) delete[] npl;
         if(node_mTransformation != NULL) delete[] node_mTransformation;
         if(bnl != NULL) delete[] bnl;
-        if(bone_mOffsetMatrix != NULL) delete[] bone_mOffsetMatrix[];
+        if(bone_mOffsetMatrix != NULL) delete[] bone_mOffsetMatrix;
         if(bpl != NULL) delete[] bpl;
     }
 
