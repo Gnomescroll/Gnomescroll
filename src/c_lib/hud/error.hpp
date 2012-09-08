@@ -2,16 +2,6 @@
 
 #include <hud/text.hpp>
 
-namespace Hud
-{
-
-static const char not_connected_msg[] = "Server not connected";
-static const char was_disconnected_msg[] = "Disconnected by server";
-static const char reauth_msg[] = "Reauthorizing...";
-static const char auth_failed_msg[] = "Authorization failed";
-static const char auth_na_msg[] = "Login server not available";
-static const char version_mismatch_msg[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
-
 typedef enum
 {
     // TODO -- error code, rank by priority
@@ -28,6 +18,16 @@ typedef enum
     GS_ERROR_VERSION_MISMATCH,  // highest priority
 } GSError;
 
+namespace Hud
+{
+
+static const char not_connected_msg[] = "Server not connected";
+static const char was_disconnected_msg[] = "Disconnected by server";
+static const char reauth_msg[] = "Reauthorizing...";
+static const char auth_failed_msg[] = "Authorization failed";
+static const char auth_na_msg[] = "Login server not available";
+static const char version_mismatch_msg[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
+
 const unsigned int N_GSERRORS = 7;
 
 bool errors[N_GSERRORS] = { false };
@@ -35,6 +35,7 @@ bool errors[N_GSERRORS] = { false };
 void init_errors()
 {
     errors[GS_ERROR_NONE] = true;
+    errors[GS_ERROR_NOT_CONNECTED] = true;
 }
 
 void set_error_status(GSError err)
@@ -65,13 +66,13 @@ bool has_error()
     return (get_primary_error() != GS_ERROR_NONE);
 }
 
-void update_error_text(class HudText::Text* t)
+bool update_error_text(class HudText::Text* t)
 {
     GS_ASSERT(t != NULL);
-    if (t == NULL) return;
+    if (t == NULL) return false;
     
     GSError err = get_primary_error();
-    if (err == GS_ERROR_NONE) return;
+    if (err == GS_ERROR_NONE) return false;
 
     if (err == GS_ERROR_NOT_CONNECTED)
         t->set_text(not_connected_msg);
@@ -89,6 +90,7 @@ void update_error_text(class HudText::Text* t)
     {
         GS_ASSERT(false);
     }
+    return true;
 }
 
 };

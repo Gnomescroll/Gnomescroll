@@ -261,7 +261,7 @@ int init_c_lib(int argc, char* argv[])
     create_path("./screenshot/");
     Log::init();
     printf("init c_lib\n");
-    
+
     AgentHudName::verify_configuration();
 
     Options::init_option_tables();

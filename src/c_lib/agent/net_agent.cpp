@@ -383,12 +383,10 @@ inline void version_StoC::handle()
     NetClient::Server.version = version;
     if (GS_VERSION != version)
     {
+        Hud::set_error_status(GS_ERROR_VERSION_MISMATCH);
         printf("WARNING: Version mismatch\n");
-
         #if DC_CLIENT
         VersionMismatchBox(GS_VERSION, version);
-        //input_state.quit = true;
-        //input_state.confirm_quit = true;
         #endif
     }
     else

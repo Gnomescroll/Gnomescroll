@@ -34,6 +34,7 @@ void toggle_help_menu()
 void enable_agent_container()
 {
     if (input_state.agent_container) return;
+
     input_state.agent_container = true;
     
     // force set the mouse position
@@ -77,7 +78,7 @@ void toggle_agent_container()
 void enable_container_block(int container_id)
 {
     if (input_state.container_block) return;
-
+    
     GS_ASSERT(container_id != NULL_CONTAINER);
     
     // release all toolbelt
@@ -129,9 +130,24 @@ void toggle_map()
     input_state.map = (!input_state.map);
 }
 
+void disable_chat()
+{
+    if (!input_state.chat) return;
+    input_state.chat = false;
+}
+
+void enable_chat()
+{
+    if (input_state.chat) return;
+    input_state.chat = true;
+}
+
 void toggle_chat()
 {
-    input_state.chat = (!input_state.chat);
+    if (input_state.chat)
+        disable_chat();
+    else
+        enable_chat();
 }
 
 void toggle_full_chat()
@@ -161,7 +177,6 @@ void disable_awesomium()
 void enable_awesomium()
 {
     if (input_state.awesomium) return;
-    if (input_state.version_mismatch) return;
     
     input_state.awesomium = true;
     input_state.rebind_mouse = input_state.mouse_bound;
@@ -196,12 +211,10 @@ void enable_quit()
 void toggle_confirm_quit()
 {
     #if PRODUCTION
-    if (!NetClient::Server.version_match())
-        enable_quit();
-    else
-        input_state.confirm_quit = (!input_state.confirm_quit);
+    input_state.confirm_quit = (!input_state.confirm_quit);
     #else
-    enable_quit();
+    input_state.confirm_quit = false;
+    enable_quit();  // quit automatically in debug
     #endif
 }
 
@@ -302,7 +315,7 @@ void init_input_state()
     // awesomium
     input_state.awesomium = false;
 
-    input_state.version_mismatch = false;
+    input_state.error_message = Hud::has_error();
 
     // SDL state
     // these starting conditions are variable, so dont rely on them for deterministic logic
@@ -326,12 +339,15 @@ void update_input_state()
     input_state.mouse_focus = (app_state & SDL_APPINPUTFOCUS);
     input_state.app_active   = (app_state & SDL_APPACTIVE);
 
-    using NetClient::Server;
-    // if version has been set and mismatch, show version mismatch
-    // if force disconnected and version has not been set, show version mismatch
-    input_state.version_mismatch = (!Server.version_match() || (Server.force_disconnected() && !Server.version));
-    if (input_state.version_mismatch)
+    bool had_error = input_state.error_message;
+    input_state.error_message = Hud::has_error();
+    if (!had_error && input_state.error_message)
+    {
+        disable_agent_container();
+        disable_container_block();
+        disable_chat();
         disable_awesomium();
+    }
 }
 
 // keys that can be held down
@@ -983,10 +999,10 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_ESCAPE:
-                if (NetClient::Server.connected)
-                    toggle_confirm_quit();
-                else
+                if (Hud::has_error())
                     enable_quit();
+                else
+                    toggle_confirm_quit();
                 break;
 
             default: break;

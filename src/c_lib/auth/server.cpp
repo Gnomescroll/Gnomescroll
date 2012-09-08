@@ -158,8 +158,8 @@ void received_auth_token(int client_id, const char* token)
     }
     else
     {
-        NetServer::client_authorization_failed(client_id);
         send_auth_token_invalid(client_id);
+        NetServer::client_authorization_failed(client_id);
     }
 }
 

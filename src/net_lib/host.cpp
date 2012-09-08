@@ -17,6 +17,7 @@
 #if DC_CLIENT
 #include <net_lib/client.hpp>
 #include <state/client_state.hpp>
+#include <hud/error.hpp>
 #endif
 
 #if DC_SERVER
@@ -104,6 +105,7 @@ static void client_connect(ENetEvent* event)
     printf("Client connected with server \n");
     #if DC_CLIENT
     ClientState::on_connect();
+    Hud::unset_error_status(GS_ERROR_NOT_CONNECTED);
     #endif
 }
 
@@ -151,6 +153,7 @@ static void client_disconnect(ENetEvent* event)
 
     #if DC_CLIENT
     ClientState::on_disconnect();
+    Hud::set_error_status(GS_ERROR_WAS_DISCONNECTED);
     #endif
 }
 
@@ -190,7 +193,6 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
        fprintf (stderr, "No available peers for initiating an ENet connection.\n");
        exit (EXIT_FAILURE);
     }
-
 }
 
 //enet_peer_reset (peer);

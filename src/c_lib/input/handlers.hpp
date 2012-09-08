@@ -57,8 +57,7 @@ struct InputState
     // awesomium;
     bool awesomium;
 
-    // network
-    bool version_mismatch;
+    bool error_message;
 
     // freezes frustum (probably not used anymore)
     bool frustum;
@@ -87,6 +86,8 @@ void toggle_help_menu();
 void toggle_scoreboard();
 void toggle_map();
 void toggle_chat();
+void disable_chat();
+void enable_chat();
 void toggle_skeleton_editor();
 void toggle_equipped_sprite_adjuster();
 

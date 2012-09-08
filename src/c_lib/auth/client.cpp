@@ -80,7 +80,13 @@ void check_expiring_token()
         {
             Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
             refreshing_token = true;
+            Hud::set_error_status(GS_ERROR_REAUTHORIZING);
             expiration_attempts++;
+        }
+        else
+        {   // set error message
+            if (expiration_attempts >= MAX_AUTH_TOKEN_RETRIES)
+                Hud::set_error_status(GS_ERROR_AUTH_FAILED);
         }
     }
     else
@@ -88,7 +94,9 @@ void check_expiring_token()
         expiration_attempts = 0;
         expiration_tick = 0;
     }
-    // TODO -- if attempts max out, set error flag
+
+    if (authorized && expiration_attempts < MAX_AUTH_TOKEN_RETRIES)
+        Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
 }
 
 void begin_auth()
@@ -133,6 +141,8 @@ void token_was_accepted()
     disable_awesomium(); // hide awesomium
     token_retries = 0;   // reset retry counter
     authorized = true;
+    Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
+    Hud::unset_error_status(GS_ERROR_REAUTHORIZING);
     printf("Token accepted\n");
 }
 
@@ -145,6 +155,7 @@ void token_was_denied()
     }
     Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
     authorized = false;
+    Hud::set_error_status(GS_ERROR_AUTH_FAILED);
     if (token_retries == 0) printf("Token denied\n");
     token_retries++;
 }
