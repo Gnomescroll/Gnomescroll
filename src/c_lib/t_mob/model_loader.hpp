@@ -909,45 +909,45 @@ class BodyMesh
         if(bpl != NULL) delete[] bpl;
     }
 
-    void load(class ModelLoader* ml)
+    void load(class ModelLoader* ML)
     {
         //load node list
 
-        nm = ml->_nlm;
+        nm = ML->_nlm;
         nnl = new char*[nm];
         npl = new int[nm];
         node_mTransformation = new struct Mat4[nm];  //mTransformation;
 
         for(int i=0;i<nm; i++)
         {  
-            GS_ASSERT(ml->_nl[i].index == i);
-            nnl[i] = ml->_nl[i].name;
-            npl[i] = (ml->_nl[i].p == NULL ? 0 : ml->_nl[i].p->index);
-            node_mTransformation[i] = ml->_nl[i].mTransformation;
+            GS_ASSERT(ML->_nl[i].index == i);
+            nnl[i] = ML->_nl[i].name;
+            npl[i] = (ML->_nl[i].p == NULL ? 0 : ML->_nl[i].p->index);
+            node_mTransformation[i] = ML->_nl[i].mTransformation;
         }
 
         //load bone list
 
-        blm = ml->bnlm;
+        blm = ML->bnlm;
         bnl = new char*[blm];
         bone_mOffsetMatrix = new struct Mat4[blm];
         bpl = new int[blm];
 
         for(int i=0;i<blm;i++)
         {
-            bnl[i] = ml->bnl[i].name; 
-            bone_mOffsetMatrix[i] = ml->bnl[i].mOffsetMatrix;
-            bpl[i] = ml->bnl[i].parent_index;
+            bnl[i] = ML->bnl[i].name; 
+            bone_mOffsetMatrix[i] = ML->bnl[i].mOffsetMatrix;
+            bpl[i] = ML->bnl[i].parent_index;
         }
 
-        GS_ASSERT(ml->_nl[0].p == 0);
+        GS_ASSERT(ML->_nl[0].p == 0);
         //load meshes
 
-        mlm = ml->_mlm;
-        ml = new BodyPartMesh[mlm];
+        mlm = ML->_mlm;
+        ml = new class BodyPartMesh[mlm];
 
-        for(int i=0; i<ml->_mln; i++)
-            ml[i].load[ml->_ml[i]];
+        for(int i=0; i< ML->_mlm; i++)
+            ml[i].load( &(ML->_ml[i]) );
     }
 };
 
