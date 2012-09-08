@@ -40,6 +40,7 @@ void end_session(class Session* session);
 
 // authorization callback
 void client_authorized(int client_id, int user_id, time_t expiration_time, const char* username);
+void client_authorization_failed(int client_id);
 
 void kill_client(int client_id, DisconnectType error_code);
 

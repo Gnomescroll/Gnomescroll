@@ -47,6 +47,8 @@ bool is_valid_username(const char* username, size_t len)
         if (!is_strict_char(username[i])
            || username[i] == AUTH_TOKEN_DELIMITER || username[i] == '/')
             return false;
+    if (strcmp(UNDEFINED_NAME, username) == 0)
+        return false;
     return true;
 }
 
@@ -117,11 +119,11 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
     }
     
     // check length of pieces
-    if (id_len != AUTH_TOKEN_ID_LENGTH ||
-        timestamp_len != AUTH_TOKEN_TIMESTAMP_LENGTH ||
-        hash_len != AUTH_TOKEN_HASH_LENGTH ||
-        username_len > AUTH_TOKEN_USERNAME_MAX_LENGTH ||
-        username_len < AUTH_TOKEN_USERNAME_MIN_LENGTH)
+    if (id_len        != AUTH_TOKEN_ID_LENGTH
+     || timestamp_len != AUTH_TOKEN_TIMESTAMP_LENGTH
+     || hash_len      != AUTH_TOKEN_HASH_LENGTH
+     || username_len   > AUTH_TOKEN_USERNAME_MAX_LENGTH
+     || username_len   < AUTH_TOKEN_USERNAME_MIN_LENGTH)
     {
         free(_token);
         return false;
@@ -208,6 +210,8 @@ void run_tests()
         GS_ASSERT(expiration_time == 1347071435);
         GS_ASSERT(strcmp(hash, "7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2") == 0);
         GS_ASSERT(strcmp(username, "getgetgetgetget") == 0);
+        free(username);
+        free(hash);
         #if DC_SERVER
         // verification will fail because this token has expired
         GS_ASSERT(!verify_token(valid_token));
@@ -369,6 +373,8 @@ void run_tests()
     if (ok)
     {
         GS_ASSERT(strcmp(username, "123456789qwerty") == 0);
+        free(username);
+        free(hash);
         #if DC_SERVER
         GS_ASSERT(!verify_token(large_username));
         #endif

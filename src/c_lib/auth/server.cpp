@@ -157,7 +157,10 @@ void received_auth_token(int client_id, const char* token)
         free(username);
     }
     else
+    {
+        NetServer::client_authorization_failed(client_id);
         send_auth_token_invalid(client_id);
+    }
 }
 
 void send_auth_token_valid(int client_id)

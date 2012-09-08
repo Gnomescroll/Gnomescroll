@@ -156,6 +156,12 @@ bool NetPeerManager::authorization_expired()
     return (this->loaded && difftime(utc_now(), this->auth_expiration) >= 0);
 }
 
+void NetPeerManager::failed_authorization_attempt()
+{
+    this->auth_attempts++;
+    if (this->auth_attempts >= Auth::AUTH_MAX_CLIENT_ATTEMPTS)
+        NetServer::kill_client(this->client_id, DISCONNECT_AUTH_LIMIT);
+}
 
 NetPeerManager::NetPeerManager() :
     client_id(-1),
@@ -166,7 +172,8 @@ NetPeerManager::NetPeerManager() :
     connection_time(utc_now()),
     auth_expiration(0),
     username(NULL),
-    user_id(0)
+    user_id(0),
+    auth_attempts(0)
 {}
 
 NetPeerManager::~NetPeerManager()

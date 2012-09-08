@@ -12,4 +12,5 @@ typedef enum
     DISCONNECT_AUTH_TIMEOUT,    // client failed to authorize within time limit after connecting
     DISCONNECT_SERVER_ERROR,    // some error occured in the server
     DISCONNECT_LOGIN_ELSEWHERE, // user logged in with a new connection
+    DISCONNECT_AUTH_LIMIT,      // client sent too many bad token 
 }   DisconnectType;

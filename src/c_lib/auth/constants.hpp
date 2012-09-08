@@ -30,10 +30,14 @@ typedef enum
 #define GNOMESCROLL_LOGIN_PATH "/login"
 #define GNOMESCROLL_TOKEN_PATH "/token"
 
-const int MAX_TOKEN_RETRIES = 10;
+const int MAX_AUTH_TOKEN_RETRIES = 10;
+const int AUTH_TOKEN_RETRY_WAIT = 5 * 30;   // wait 5 seconds between each attempt to get a new token
+const int AUTH_MAX_CLIENT_ATTEMPTS = 15;
 
 const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";    // name of the cookie value set by the auth server
 const char AUTH_TOKEN_DELIMITER = '|';  // delimiter for components of the token
+
+const char UNDEFINED_NAME[] = "undefined-name";
 
 const time_t AUTH_TOKEN_LIFETIME = 60 * 60; // 1 hour, in seconds 
 const time_t AUTHORIZATION_TIMEOUT = 120;   // 2 minutes to authorize before being disconnected

@@ -158,6 +158,18 @@ void client_authorized(int client_id, int user_id, time_t expiration_time, const
     pm->was_authorized(user_id, expiration_time, username);
 }
 
+void client_authorization_failed(int client_id)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+
+    NetPeerManager* pm = clients[client_id];
+    GS_ASSERT(pm != NULL);
+    if (pm == NULL) return;
+
+    pm->failed_authorization_attempt();
+}
+
 void kill_client(int client_id, DisconnectType error_code)
 {
     ASSERT_VALID_CLIENT_ID(client_id);

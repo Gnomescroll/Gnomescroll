@@ -20,11 +20,14 @@ class NetPeerManager
         char* username;
         int user_id;
 
+        int auth_attempts;
+
     void was_authorized(int user_id, time_t expiration_time, const char* username);
 
     bool failed_to_authorize();
     bool authorization_expired();
-
+    void failed_authorization_attempt();
+    
     void init(int client_id);
     void teardown();
 

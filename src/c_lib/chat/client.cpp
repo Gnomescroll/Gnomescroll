@@ -4,6 +4,7 @@
 #include <ctype.h>
 
 #include <common/logger.hpp>
+#include <auth/constants.hpp>
 
 /* ChatMessage */
 
@@ -14,8 +15,8 @@ void ChatMessage::set_name()
     else
     {
         Agent_state* a = ClientState::agent_list->get(sender);
-        if (a==NULL || !a->status.name[0] == '\0')
-            strcpy(name, (char*)"UNKNOWN");
+        if (a==NULL || a->status.name[0] == '\0')
+            strcpy(name, Auth::UNDEFINED_NAME);
         else
             strcpy(name, a->status.name);
     }

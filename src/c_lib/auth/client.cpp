@@ -68,12 +68,27 @@ bool auth_token_expiring(const time_t timestamp)
 
 void check_expiring_token()
 {
+    static int expiration_tick = 0;
+    static int expiration_attempts = 0;
     if (auth_token == NULL) return;
-    if (!refreshing_token && auth_token_expiring(auth_token_timestamp))
+    if (auth_token_expiring(auth_token_timestamp))
     {
-        Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
-        refreshing_token = true;
+        expiration_tick++;
+        if (expiration_tick % AUTH_TOKEN_RETRY_WAIT == 0
+         && expiration_attempts < MAX_AUTH_TOKEN_RETRIES
+         && !refreshing_token)
+        {
+            Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+            refreshing_token = true;
+            expiration_attempts++;
+        }
     }
+    else
+    {
+        expiration_attempts = 0;
+        expiration_tick = 0;
+    }
+    // TODO -- if attempts max out, set error flag
 }
 
 void begin_auth()
@@ -123,7 +138,7 @@ void token_was_accepted()
 
 void token_was_denied()
 {   // request new token from auth server
-    if (token_retries >= MAX_TOKEN_RETRIES)
+    if (token_retries >= MAX_AUTH_TOKEN_RETRIES)
     {
         disable_awesomium();
         return;

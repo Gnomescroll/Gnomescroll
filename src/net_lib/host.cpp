@@ -137,6 +137,9 @@ static void client_disconnect(ENetEvent* event)
     if (event->data == DISCONNECT_LOGIN_ELSEWHERE)
         printf("Client was disconnected because it logged in as another client\n");
     else
+    if (event->data == DISCONNECT_AUTH_LIMIT)
+        printf("Client was disconnected because it had too many failed authorizations\n");
+    else
         printf("Client disconnected from server\n");
 
     event->peer->data = NULL;
@@ -588,6 +591,9 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
         else
         if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_LOGIN_ELSEWHERE)
             printf("Client %d disconnected because it logged in as another client\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_AUTH_LIMIT)
+            printf("Client %d disconnected because it had too many failed authorizations\n", client_id);
         else
         {
             GS_ASSERT(false);
