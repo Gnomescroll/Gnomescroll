@@ -4,6 +4,8 @@
 dont_include_this_file_in_client
 #endif
 
+#include <time.h>
+
 #include <net_lib/global.hpp>
 #include <state/server_state.hpp>
 #include <t_map/server/manager.hpp>
@@ -11,8 +13,10 @@ dont_include_this_file_in_client
 #include <agent/net_agent.hpp>
 #include <item/_interface.hpp>
 #include <common/analytics/sessions.hpp>
-
 #include <t_mech/_interface.hpp>
+#include <common/common.hpp>
+#include <auth/constants.hpp>
+
 /*
     Utility Functions
 */
@@ -86,7 +90,7 @@ void NetPeerManager::authorized(int user_id, time_t expiration_time, const char*
     GS_ASSERT(a != NULL);
     if (a == NULL)
     {   // if this happens, we need to force disconnect the client
-        NetServer::kill_client(this->client_id);    // TODO -- error code for "general server failure"
+        NetServer::kill_client(this->client_id, DISCONNECT_SERVER_ERROR);
         return;
     }
 
@@ -100,7 +104,7 @@ void NetPeerManager::authorized(int user_id, time_t expiration_time, const char*
 
     // attach username to agent
     a->status.identify(username);
-    NetServer::users->add_name_to_client_id(client_id, a->status.name);
+    NetServer::users->set_name_for_client_id(client_id, a->status.name);
 
     NetServer::assign_agent_to_client(client_id, a);
     send_player_agent_id_to_client(client_id);
@@ -137,12 +141,24 @@ void NetPeerManager::teardown()
 }
 
 
+bool NetPeerManager::failed_to_authorize()
+{
+    return (this->waiting_for_auth &&
+        difftime(utc_now(), connection_time) >= Auth::AUTHORIZATION_TIMEOUT);
+}
+
+bool NetPeerManager::authorization_expired()
+{
+    return (this->loaded && difftime(utc_now(), this->auth_expiration) >= 0);
+}
+
+
 NetPeerManager::NetPeerManager() :
     client_id(-1),
     inited(false),
     loaded(false),
     waiting_for_auth(false),
-    connection_time(time(NULL)),
+    connection_time(utc_now()),
     auth_expiration(0),
     username(NULL),
     user_id(0)
@@ -156,6 +172,6 @@ NetPeerManager::~NetPeerManager()
         Log::Always,
         "Client %d was connected for %d seconds\n",
         this->client_id,
-        time(NULL) - this->connection_time
+        utc_now() - this->connection_time
     );
 }

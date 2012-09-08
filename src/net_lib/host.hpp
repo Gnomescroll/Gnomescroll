@@ -19,7 +19,7 @@ void init_server(int a, int b, int c, int d, int port);
 void dispatch_network_events() GNOMESCROLL_API;
 void flush_to_net() GNOMESCROLL_API;
 
-void kill_client(class NetPeer* peer);
+void kill_client(class NetPeer* peer, DisconnectType error_code);
 
 }
 #endif

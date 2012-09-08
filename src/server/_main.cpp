@@ -7,6 +7,8 @@
 #include <t_gen/_interface.hpp>
 #include <t_map/_interface.hpp>
 
+#include <net_lib/server.hpp>
+
 namespace Main
 {
 
@@ -167,6 +169,7 @@ int run()
             printf("Warning:: %i ticks this frame", tc);
         }
         NetServer::dispatch_network_events();
+        NetServer::check_client_authorizations();
 
         if (ServerState::should_save_map)
         {

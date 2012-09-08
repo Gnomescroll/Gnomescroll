@@ -11,7 +11,6 @@
 #include <state/packet_init.hpp>
 
 #include <common/common.hpp>
-#include <common/analytics/sessions.hpp>
 
 #include <options/options.hpp>
 
@@ -22,6 +21,7 @@
 
 #if DC_SERVER
 #include <net_lib/server.hpp>
+#include <common/analytics/sessions.hpp>
 #endif
 
 const int DEFAULT_PORT = 4096;
@@ -121,6 +121,18 @@ static void client_disconnect(ENetEvent* event)
     else
     if (event->data == DISCONNECT_FULL)
         printf("Could not connect to server: server full\n");
+    else
+    if (event->data == DISCONNECT_BAD_PACKET)
+        printf("Client was disconnected for sending malformed data\n");
+    else
+    if (event->data == DISCONNECT_AUTH_TIMEOUT)
+        printf("Client failed to authorize\n");
+    else
+    if (event->data == DISCONNECT_AUTH_EXPIRED)
+        printf("Client authorization expired\n");
+    else
+    if (event->data == DISCONNECT_SERVER_ERROR)
+        printf("Client was disconnected because of an error in the server\n");
     else
         printf("Client disconnected from server\n");
 
@@ -448,7 +460,7 @@ void dispatch_network_events()
             {
                 GS_ASSERT(event.peer->data != NULL);
                 if (event.peer->data != NULL)
-                    ((class NetPeer*)event.peer->data)->kill = true;
+                    ((class NetPeer*)event.peer->data)->disconnect_code = DISCONNECT_BAD_PACKET;
             }
         }
 
@@ -460,8 +472,8 @@ void dispatch_network_events()
         NetPeer* peer = NetServer::staging_pool[i];
         if (peer == NULL)
             peer = NetServer::pool[i];
-        if (peer != NULL && peer->kill)
-            kill_client(peer);
+        if (peer != NULL && peer->should_disconnect())
+            kill_client(peer, peer->disconnect_code);
     }
 }
 
@@ -560,6 +572,18 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
         if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_FULL)
             printf("Client %d disconnected because server is full\n", client_id);
         else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_BAD_PACKET)
+            printf("Client %d disconnected because it sent bad packets\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_AUTH_TIMEOUT)
+            printf("Client %d disconnected because failed to authorize in time\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_AUTH_EXPIRED)
+            printf("Client %d disconnected because authorization expired\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_SERVER_ERROR)
+            printf("Client %d disconnected because of a server error\n", client_id);
+        else
         {
             GS_ASSERT(false);
         }
@@ -606,14 +630,14 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
     if (npm != NULL) delete npm;
 }
 
-void kill_client(class NetPeer* peer)
+void kill_client(class NetPeer* peer, DisconnectType error_code)
 {
     GS_ASSERT(peer != NULL);
     if (peer == NULL) return;
-    peer->disconnect_code = DISCONNECT_FORCED;
+    peer->disconnect_code = error_code;
     GS_ASSERT(peer->enet_peer != NULL);
     if (peer->enet_peer != NULL)
-        enet_peer_disconnect(peer->enet_peer, DISCONNECT_FORCED);
+        enet_peer_disconnect(peer->enet_peer, error_code);
     
     // log it
     int client_id = peer->client_id;

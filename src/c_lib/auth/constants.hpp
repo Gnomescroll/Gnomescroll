@@ -36,6 +36,7 @@ const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";    // name of the cookie value 
 const char AUTH_TOKEN_DELIMITER = '|';  // delimiter for components of the token
 
 const time_t AUTH_TOKEN_LIFETIME = 60 * 60; // 1 hour, in seconds 
+const time_t AUTHORIZATION_TIMEOUT = 120;   // 2 minutes to authorize before being disconnected
 
 const unsigned int AUTH_TOKEN_ID_LENGTH = 9;
 const unsigned int AUTH_TOKEN_TIMESTAMP_LENGTH = 10;

@@ -9,7 +9,6 @@ NetPeer::NetPeer()
 client_id(-1),
 connected(0),
 version(0),
-kill(false),
 disconnect_code(DISCONNECT_TIMEOUT),
 enet_peer(NULL)
 {

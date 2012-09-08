@@ -140,7 +140,7 @@ void client_authorized(int client_id, int user_id, time_t expiration_time, const
     peer->authorized(user_id, expiration_time, username);
 }
 
-void kill_client(int client_id)
+void kill_client(int client_id, DisconnectType error_code)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
@@ -153,7 +153,33 @@ void kill_client(int client_id)
     GS_ASSERT(peer != NULL);
     if (peer == NULL) return;
 
-    kill_client(peer);
+    kill_client(peer, error_code);
+}
+
+void check_client_authorizations()
+{
+    GS_ASSERT(pool != NULL);
+    GS_ASSERT(staging_pool != NULL);
+    if (pool == NULL || staging_pool == NULL) return;
+    
+    for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+    {
+        NetPeerManager* pm = clients[i];
+        if (pm == NULL) continue;
+
+        NetPeer* peer = staging_pool[i];
+        if (peer == NULL) peer = pool[i];
+        GS_ASSERT(peer != NULL);    // peer should not be NULL if manager is not NULL
+        if (peer == NULL) continue;
+
+        // remove peers who have authorized and it has expired,
+        // or who have failed to authorize within a connection time limit
+        if (pm->authorization_expired())
+            kill_client(peer, DISCONNECT_AUTH_EXPIRED);
+        else
+        if (pm->failed_to_authorize())
+            kill_client(peer, DISCONNECT_AUTH_TIMEOUT);
+    }
 }
 
 }   // NetServer
