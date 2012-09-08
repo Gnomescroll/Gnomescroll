@@ -75,42 +75,22 @@ class ModelLoader
     ModelLoader() :
     pScene(NULL),
     nl(NULL), 
-    ml(NULL),
-    //tvl(NULL),
-    //vll(NULL), vln(NULL),
-    //bvl(NULL), tbvl(NULL),
-    //bvlo(NULL), bvln(NULL),
-    //via(NULL),
-    s(NULL)
     {}
     
     ~ModelLoader()
     {
-        if (s != NULL) SDL_FreeSurface(s);
+        //if (s != NULL) SDL_FreeSurface(s);
         if (pScene != NULL) aiReleaseImport(pScene);
         if (nl != NULL) delete[] nl;
-        if (ml != NULL) delete[] ml;
-        //if (tvl != NULL) delete[] tvl;
-        //if (vll != NULL) delete[] vll;
-        //if (vln != NULL) delete[] vln;
-        //if (bvl != NULL) delete[] bvl;
-        //if (tbvl != NULL) delete[] tbvl;
-        //if (bvlo != NULL) delete[] bvlo;
-        //if (bvln != NULL) delete[] bvln;
-        //if (via != NULL) delete[] via;
     }
 
     aiScene* pScene;    //the scene
 
-    int nlm;        //node list max
     aiNode** nl;    //node list
+    int nlm;        //node list max
+
     int nli;        //node list index (just a counter variable)
 
-    aiMesh** ml;    //mesh list
-
-
-    //int* vll;           //offset of vertices in list for each mesth
-    int* vln;           //number of vertices in each mech
 
     void init(aiScene* _pScene)
     {
@@ -120,24 +100,20 @@ class ModelLoader
         count_nodes(pScene->mRootNode); //count the nodes with meshes
         nlm = nli;
         nl = new aiNode*[nlm];
-        
-        ml = new aiMesh*[nlm];
 
         for(int i=0; i<nlm; i++) nl[i] = NULL;
         for(int i=0; i<nlm; i++) ml[i] = NULL;
 
         nli = 0;
         set_node_parents(pScene->mRootNode);
-
+        initialize_meshes();
         //vll = new int[nlm];
-        vln = new int[nlm];
 
         init_texture();
         //draw();
         init_bone_list();
         init_node_list();
 
-        initialize_meshes();
     }
 
     void count_nodes(aiNode* pNode)
@@ -156,12 +132,7 @@ class ModelLoader
         {
             GS_ASSERT(nli < nlm);
             nl[nli] = pNode;
-
-            GS_ASSERT(pNode->mNumMeshes == 0 || pNode->mNumMeshes == 1);    //each node should only have one mesh?
-            int mesh_index = pNode->mMeshes[0]; //grab the first mesh
-            ml[nli] = pScene->mMeshes[mesh_index];
-            if(pNode->mNumMeshes == 0)
-                ml[nli] == NULL;
+            GS_ASSERT(pNode->mNumMeshes == 0 || pNode->mNumMeshes == 1);
             nli++;
         }
         for(unsigned int i=0; i < pNode->mNumChildren; i++)
@@ -189,7 +160,7 @@ class ModelLoader
 */
 
     struct _Mesh* _ml;
-    int _mln;
+    int _mlm;
 
     void initialize_meshes()
     {
@@ -204,8 +175,8 @@ class ModelLoader
                 mesh_count++;
         }
 
-        _mln = mesh_count;
-        _ml = new struct _Mesh[_mln];
+        _mlm = mesh_count;
+        _ml = new struct _Mesh[_mlm];
 
         for(int i=0; i<nlm; i++)
         {
@@ -219,7 +190,7 @@ class ModelLoader
         }
 
         //set vertex base array
-        for(int i=0; i<_mln; i++)
+        for(int i=0; i<_mlm; i++)
         {
             aiMesh* mesh = _ml[i].mesh;
 
@@ -247,7 +218,7 @@ class ModelLoader
 
         // Vertex count
         
-        for(int i=0; i<_mln; i++)
+        for(int i=0; i<_mlm; i++)
         {
             aiMesh* mesh = _ml[i].mesh;
             _ml[i].vln = 3*mesh->mNumFaces;
@@ -255,7 +226,7 @@ class ModelLoader
 
         // vertex index array
 
-        for(int i=0; i<_mln; i++)
+        for(int i=0; i<_mlm; i++)
         {
             aiMesh* mesh = _ml[i].mesh;
 
@@ -282,7 +253,7 @@ class ModelLoader
 
         // vertex weights
 
-        for(int i=0; i<_mln; i++)
+        for(int i=0; i<_mlm; i++)
         {
             int index = 0;
             aiMesh* mesh = _ml[i].mesh;
@@ -295,7 +266,7 @@ class ModelLoader
             _ml[i].vwl = new _VertexWeight[index];
         }
 
-        for(int i=0; i<_mln; i++)
+        for(int i=0; i<_mlm; i++)
         {
             int index = 0;
             aiMesh* mesh = _ml[i].mesh;
@@ -314,119 +285,8 @@ class ModelLoader
 
         }
 
-
-
-
     }
 
-
-#if 0
-    int bvlm;               //base vertex list max;
-    struct _Vertex* bvl;    //base vertex list
-
-    int* bvlo;              //offset for vertices in base list
-    int* bvln;              //number of vertices in base vertex list
-
-    //int viam;              //max index for vertex lookup table
-    //int* via;              //base vertex lookup
-    
-    void init_base_vertex_list()
-    {
-        bvlo = new int[nlm];
-        bvln = new int[nlm];
-
-        //count number of faces and vertices total
-        int vcount = 0;
-        int fcount = 0;
-        for(int i=0; i<nlm; i++)
-        {
-            aiMesh* mesh = ml[i];
-
-            bvlo[i] = vcount;               //base vertex offset
-            bvln[i] = mesh->mNumVertices;   //number of base vertex for mesh
-
-            vcount += mesh->mNumVertices;
-            fcount += mesh->mNumFaces;
-        }
-
-        bvlm = vcount;
-        bvl = new _Vertex[bvlm];
-        //tbvl = new _Vertex[bvlm];
-
-        //viam = 3*fcount;
-        //via = new int[viam];
-        //for(int i=0; i<viam; i++) via[i] = -1;
-        //GS_ASSERT(viam = vlm);
-
-
-        //save array of base vertices
-        vcount = 0;
-        for(int i=0; i<nlm; i++)
-        {
-            aiMesh* mesh = ml[i];
-            //int index1 = bvlo[i];
-            GS_ASSERT(vcount == bvlo[i]);
-            for(unsigned int j=0; j<mesh->mNumVertices; j++)
-            {
-                aiVector3D pos = mesh->mVertices[j];
-                aiVector3D tex = mesh->mTextureCoords[0][j];
-
-                struct _Vertex v; 
-                v.v.x = pos.x;
-                v.v.y = pos.y;
-                v.v.z = pos.z;
-
-                v.ux =  tex.x;
-                v.uy =  1.0-tex.y;
-
-                //printf("x,y,z= %f %f %f tex: x,y= %f %f \n", pos.x, pos.y, pos.z, tex.x, tex.y);
-                GS_ASSERT(bvlo[i] + (int)(j) == vcount);
-                bvl[bvlo[i] + j] = v;
-                vcount++;
-            }
-        }
-        GS_ASSERT(vcount == bvlm);
-        //save mapping from vertex index to base vertex
-    }
-#endif 
-
-    //int vlm;          //vertex list max
-    //struct _Vertex* vl;   //vertex list
-    //struct _Vertex* tvl; //temporary vertex list, for drawing
-    //int vli;          //vertex list index
-    //int* vll;         //vertex list loop
-    //int* vln;         //number of vertices in mesh
-
-    static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
-    {
-        Mat4 out;
-
-        out.f[0][0] = in.a1;
-        out.f[0][1] = in.a2;
-        out.f[0][2] = in.a3;
-        out.f[0][3] = in.a4;
-
-        out.f[1][0] = in.b1;
-        out.f[1][1] = in.b2;
-        out.f[1][2] = in.b3;
-        out.f[1][3] = in.b4;
-
-        out.f[2][0] = in.c1;
-        out.f[2][1] = in.c2;
-        out.f[2][2] = in.c3;
-        out.f[2][3] = in.c4;
-
-        out.f[3][0] = in.d1;
-        out.f[3][1] = in.d2;
-        out.f[3][2] = in.d3;
-        out.f[3][3] = in.d4;
-
-        out = mat4_transpose(out);
-
-        GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
-
-        return out;
-    }
 
     //int bam;        //bone array max
     //aiBone** ba;    //bone array
@@ -498,9 +358,9 @@ class ModelLoader
         int _bone_count = 0;
 
         //count number of times bone appears
-        for(int i=0; i<nli; i++)
+        for(int i=0; i<mlm; i++)
         {
-            aiMesh* mesh = ml[i];
+            aiMesh* mesh = _ml[i];
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 //aiBone* bone = mesh->mBones[j];
@@ -511,7 +371,7 @@ class ModelLoader
                     for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
                     {
                         if(_i == i && _j == j) break;
-                        if(strcmp(ml[i]->mBones[j]->mName.data, ml[_i]->mBones[_j]->mName.data) == 0)
+                        if(strcmp(_ml[i]->mBones[j]->mName.data, _ml[_i]->mBones[_j]->mName.data) == 0)
                         {
                             new_bone = false;
                             break;
@@ -522,9 +382,6 @@ class ModelLoader
                 _bone_count++;
             }
         }
-        //printf("%d %d \n", ml[3]->mBones[0], ml[4]->mBones[0]);
-        //printf("bone_count= %d _bone_count= %d nlm= %d \n", bone_count, _bone_count, nlm);
-        //printf("stcmp: %d \n", strcmp(ml[1]->mBones[0]->mName.data, ml[2]->mBones[0]->mName.data) );
 
         //set bone list
         bnlm = bone_count;
@@ -538,9 +395,9 @@ class ModelLoader
 
         //populate bone list
         int bcount = 0;
-        for(int i=0; i<nli; i++)
+        for(int i=0; i<_mnm; i++)
         {
-            aiMesh* mesh = ml[i];
+            aiMesh* mesh = _ml[i];
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
@@ -757,6 +614,38 @@ class ModelLoader
         return NULL;
     }
 
+
+    static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
+    {
+        Mat4 out;
+
+        out.f[0][0] = in.a1;
+        out.f[0][1] = in.a2;
+        out.f[0][2] = in.a3;
+        out.f[0][3] = in.a4;
+
+        out.f[1][0] = in.b1;
+        out.f[1][1] = in.b2;
+        out.f[1][2] = in.b3;
+        out.f[1][3] = in.b4;
+
+        out.f[2][0] = in.c1;
+        out.f[2][1] = in.c2;
+        out.f[2][2] = in.c3;
+        out.f[2][3] = in.c4;
+
+        out.f[3][0] = in.d1;
+        out.f[3][1] = in.d2;
+        out.f[3][2] = in.d3;
+        out.f[3][3] = in.d4;
+
+        out = mat4_transpose(out);
+
+        GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
+
+        return out;
+    }
+
     struct Mat4 quantenion_to_rotation_matrix(aiQuaternion q, aiVector3D pos)
     {
         float xx      = q.x * q.x;
@@ -836,16 +725,14 @@ but is not good. Therefore, you usually should do the interpolation on the quate
     /*
 		Stuff for testing
     */
+/*
     unsigned int texture1;
     SDL_Surface* s;
 
     void init_texture();
     void draw_skeleton(float x, float y, float z);
     void draw(float x, float y, float z);  //draws for testing
-
-
-    void rationalize_bone_matrices();
-
+*/
 };
 
 
