@@ -74,6 +74,7 @@ class HUD
     Text* confirm_quit;
     Text* press_help;
     Text* error;
+    Text* error_subtitle;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects

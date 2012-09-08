@@ -62,6 +62,8 @@ static const char confirm_quit_text[] = "Really quit? Y/N";
 
 static const char press_help_text[] = "Press H for help";
 
+static const char error_subtitle_text[] = "Press ESC to exit";
+
 static struct HudDrawSettings
 {
     bool zoom;
@@ -222,6 +224,10 @@ void draw_hud_text()
     {
         update_error_text(hud->error);
         hud->error->draw_centered();
+        hud->error_subtitle->set_position(hud->error_subtitle->x, hud->error->y - hud->error->get_height()*2);
+        HudFont::reset_default();
+        set_texture();
+        hud->error_subtitle->draw_centered();
         end_font_draw();
         return;
     }
@@ -515,6 +521,13 @@ void HUD::init()
     error->set_color(255,10,10,255);
     error->set_position(_xresf/2, _yresf/2);
 
+    error_subtitle = text_list->create();
+    GS_ASSERT(error_subtitle != NULL);
+    if (error_subtitle == NULL) return;
+    error_subtitle->set_color(255,10,10,255);
+    error_subtitle->set_position(_xresf/2, error->y - error->get_height());
+    error_subtitle->set_text(error_subtitle_text);
+    
     scoreboard = new Scoreboard();
     scoreboard->init();
 
@@ -538,6 +551,7 @@ health(NULL),
 confirm_quit(NULL),
 press_help(NULL),
 error(NULL),
+error_subtitle(NULL),
 scoreboard(NULL),
 chat(NULL)
 {}
@@ -565,6 +579,8 @@ HUD::~HUD()
         text_list->destroy(press_help->id);
     if (error != NULL)
         text_list->destroy(error->id);
+    if (error_subtitle != NULL)
+        text_list->destroy(error_subtitle->id);
     if (health != NULL) delete health;
     if (scoreboard != NULL) delete scoreboard;
     if (chat != NULL) delete chat;
