@@ -912,13 +912,15 @@ class BodyMesh
 */
     //nodes
     char** nnl;         //node name list
-    int* npl;
-    struct Mat4* nlt;    //node transform list, mTransformation
+    int* npl;           //node parent list
+    struct Mat4* node_mTransformation;    //node transform list, mTransformation
     int nm;             //node max
 
     //bones
     char** bnl;     //bone name list
-
+    struct Mat4* bone_mOffsetMatrix;
+    int* bpl;        //bone parent list; index of parent node
+    int blm;        //bone list max
 
     BodyMesh()
     {
@@ -937,13 +939,28 @@ class BodyMesh
         nm = ml->_nlm;
         nnl = new char*[nm];
         npl = new int[nm];
-        nlt = new struct Mat4[nm];  //mTransformation;
+        node_mTransformation = new struct Mat4[nm];  //mTransformation;
 
         for(int i=0;i<nm; i++)
-        {
+        {  
+            GS_ASSERT(ml->_nl[i].index == i);
             nnl[i] = ml->_nl[i].name;
-            npl[i] = ml->_nl[i].p->index;
-            nlt[i] = ml->_nl[i].mTransformation;
+            npl[i] = (ml->_nl[i].p == NULL ? 0 : ml->_nl[i].p->index);
+            node_mTransformation[i] = ml->_nl[i].mTransformation;
+        }
+
+        //load bone list
+
+        blm = ml->bnlm;
+        bnl = new char*[blm];
+        bone_mOffsetMatrix = new struct Mat4[blm];
+        bpl = new int[blm];
+
+        for(int i=0;i<blm;i++)
+        {
+            bnl[i] = ml->bnl[i].name; 
+            bone_mOffsetMatrix = ml->bnl[i].mOffsetMatrix;
+            bpl = ml->bnl[i].parent_index;
         }
     }
 };
