@@ -247,26 +247,31 @@ class ModelLoader
             }
         }
 
+        // Vertex count
+        
+        for(int i=0; i<_mln; i++)
+        {
+            aiMesh* mesh = _ml[i].mesh;
+            _ml[i].vln = 3*mesh->mNumFaces;
+        }
 
+        // vertex index array
 
-            /*
-                Vertex count; vertex index array
-            */
-
+        for(int i=0; i<_mln; i++)
+        {
+            aiMesh* mesh = _ml[i].mesh;
 
             GS_ASSERT(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
             GS_ASSERT(mesh->mTextureCoords[0] != NULL);
 
-            _ml[mesh_count].vln = 3*mesh->mNumFaces;
-
-            _ml[mesh_count].viam = 3*mesh->mNumFaces;
-            _ml[mesh_count].via = new int[3*mesh->mNumFaces;];
+            _ml[i].viam = 3*mesh->mNumFaces;
+            _ml[i].via = new int[3*mesh->mNumFaces;];
 
             for(unsigned int j=0; j<mesh->mNumFaces; j++)
             {
                 for(int k=0; k<3; k++)
                 {
-                    _ml[mesh_count].via[3*j+k] = mesh->mFaces[j].mIndices[k];
+                    _ml[i].via[3*j+k] = mesh->mFaces[j].mIndices[k];
                 }
             }
 
@@ -275,20 +280,51 @@ class ModelLoader
                 GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
                 GS_ASSERT(mesh->mNumUVComponents[0] == 2);
             }
-
-
-
-
-
-            for(int j=0; j<mesh->; j++)
-            _ml[mesh_count].bvl =
-
-
-            mesh_count++;
         }
+
+        // vertex weight
+
+        int index = 0;
+
+        for(int i=0; i<_mln; i++)
+        {
+            int index = 0;
+            aiMesh* mesh = _ml[i].mesh;
+            for(int j=0; j<mesh->mNumBones; j++)
+            {
+                aiBone* bone = mesh->mBones[j];
+                index += bone->mNumWeights;
+            }
+            _ml[i].vwlm = index;
+            _ml[i].vwl = new _VertexWeight[index];
+        }
+
+        for(int i=0; i<_mln; i++)
+        {
+            int index = 0;
+            aiMesh* mesh = _ml[i].mesh;
+            for(int i=0; i<mesh->mNumBones; i++)
+            {
+
+        for(int i=0; i<mesh->mNumBones; i++)
+        {
+            aiBone* bone = mesh->mBones[i];
+
+            for(unsigned int j=0; j<bone->mNumWeights; j++)
+            {
+                int bone_index =            ml->get_bone_index(bone);       //index of bone matrix
+                vwl[index].bone_index =     bone_index;
+                vwl[index].vertex_index =   bone->mWeights[j].mVertexId;
+                vwl[index].weight =         bone->mWeights[j].mWeight;
+                index++;
+            }
+        }
+
 
     }
 
+
+#if 0
     int bvlm;               //base vertex list max;
     struct _Vertex* bvl;    //base vertex list
 
@@ -355,8 +391,8 @@ class ModelLoader
         }
         GS_ASSERT(vcount == bvlm);
         //save mapping from vertex index to base vertex
-
     }
+#endif 
 
     //int vlm;          //vertex list max
     //struct _Vertex* vl;   //vertex list
@@ -931,20 +967,8 @@ class BodyPartMesh
         vwlm = num_weights;
 
         int index = 0;
-        for(unsigned int i=0; i<mesh->mNumBones; i++)
-        {
-            aiBone* bone = mesh->mBones[i];
 
-            for(unsigned int j=0; j<bone->mNumWeights; j++)
-            {
-                int bone_index =            ml->get_bone_index(bone);       //index of bone matrix
-                vwl[index].bone_index =     bone_index;
-                vwl[index].vertex_index =   bone->mWeights[j].mVertexId;
-                vwl[index].weight =         bone->mWeights[j].mWeight;
-                index++;
-            }
-        }
-        GS_ASSERT(index == vwlm);
+
     }
 };
 
