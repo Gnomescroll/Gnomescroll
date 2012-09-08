@@ -58,11 +58,11 @@ class ModelLoader
     pScene(NULL),
     nl(NULL), 
     ml(NULL),
-    tvl(NULL),
+    //tvl(NULL),
     vll(NULL), vln(NULL),
-    bvl(NULL), tbvl(NULL),
+    //bvl(NULL), tbvl(NULL),
     bvlo(NULL), bvln(NULL),
-    via(NULL),
+    //via(NULL),
     s(NULL)
     {}
     
@@ -72,14 +72,14 @@ class ModelLoader
         if (pScene != NULL) aiReleaseImport(pScene);
         if (nl != NULL) delete[] nl;
         if (ml != NULL) delete[] ml;
-        if (tvl != NULL) delete[] tvl;
+        //if (tvl != NULL) delete[] tvl;
         if (vll != NULL) delete[] vll;
         if (vln != NULL) delete[] vln;
         if (bvl != NULL) delete[] bvl;
-        if (tbvl != NULL) delete[] tbvl;
+        //if (tbvl != NULL) delete[] tbvl;
         if (bvlo != NULL) delete[] bvlo;
         if (bvln != NULL) delete[] bvln;
-        if (via != NULL) delete[] via;
+        //if (via != NULL) delete[] via;
     }
 
     aiScene* pScene;    //the scene
@@ -90,10 +90,6 @@ class ModelLoader
 
     aiMesh** ml;    //mesh list
 
-
-    int vli;                //vertex list index
-    int vlm;                //vertex list max
-    struct _Vertex* tvl;    //temporary vertex list, for drawing
 
     int* vll;           //offset of vertices in list for each mesth
     int* vln;           //number of vertices in each mech
@@ -114,10 +110,6 @@ class ModelLoader
 
         nli = 0;
         set_node_parents(pScene->mRootNode);
-
-        //set_mesh_list();
-        count_vertices();
-        tvl = new _Vertex[vlm];
 
         vll = new int[nlm];
         vln = new int[nlm];
@@ -158,24 +150,6 @@ class ModelLoader
         }
     }
 
-    void count_vertices()
-    {
-        vli = 0;
-
-        for(int i=0; i<nli; i++)
-        {
-            struct aiNode* pNode = nl[i];
-            for(unsigned int i=0; i < pNode->mNumMeshes; i++)
-            {
-                unsigned int index = pNode->mMeshes[i];
-                aiMesh* mesh = pScene->mMeshes[index];
-                vli += 3*mesh->mNumFaces;
-            }
-        }
-        vlm = vli;
-    }
-
-
     void set_vertices()
     {
         GS_ASSERT(nli == nlm);
@@ -212,21 +186,16 @@ class ModelLoader
             }
         }
 
-        if(count != vli || count != vlm)
-        {
-            printf("Set_vertices Warning: vertex count= %d vli= %d vlm= %d \n", count, vli, vlm);
-        }
     }
 
     int bvlm;               //base vertex list max;
     struct _Vertex* bvl;    //base vertex list
-    struct _Vertex* tbvl;   //base vertex list for matrix transforms/drawing
 
     int* bvlo;              //offset for vertices in base list
     int* bvln;              //number of vertices in base vertex list
 
-    int viam;              //max index for vertex lookup table
-    int* via;              //base vertex lookup
+    //int viam;              //max index for vertex lookup table
+    //int* via;              //base vertex lookup
     
     void init_base_vertex_list()
     {
@@ -249,12 +218,12 @@ class ModelLoader
 
         bvlm = vcount;
         bvl = new _Vertex[bvlm];
-        tbvl = new _Vertex[bvlm];
+        //tbvl = new _Vertex[bvlm];
 
-        viam = 3*fcount;
-        via = new int[viam];
-        for(int i=0; i<viam; i++) via[i] = -1;
-        GS_ASSERT(viam = vlm);
+        //viam = 3*fcount;
+        //via = new int[viam];
+        //for(int i=0; i<viam; i++) via[i] = -1;
+        //GS_ASSERT(viam = vlm);
 
 
         //save array of base vertices
@@ -285,23 +254,7 @@ class ModelLoader
         }
         GS_ASSERT(vcount == bvlm);
         //save mapping from vertex index to base vertex
-        vcount = 0;
-        for(int i=0; i<nlm; i++)
-        {
-            aiMesh* mesh = ml[i];
-            //int index1 = bvlo[i];
-            for(unsigned int j=0; j<mesh->mNumFaces; j++)
-            {
-                for(int k=0; k<3; k++)
-                {
-                    via[vcount] = bvlo[i] + mesh->mFaces[j].mIndices[k];
-                    vcount++;
-                }
-            }
-        }
-        GS_ASSERT(vcount == vlm);
 
-        printf("vcount= %d bvlm= %d \n", vcount, bvlm);
     }
 
     //int vlm;          //vertex list max
@@ -825,13 +778,21 @@ class BodyPartMesh
 
         //copy base list
         int bvl_offset = ml->bvlo[mesh_index];
-        int bvl_num = ml->bvln[mesh_index];
-
-        bvl = new _Vertex[bvl_num];
-        bvlm = bvl_num;
-
+        bvlm = ml->bvln[mesh_index];
+        bvl = new _Vertex[bvlm];
         for(int i=0; i<bvlm; i++)
             bvl[i] = ml->bvl[i+bvl_offset];
+
+        /*
+        for(int i=0; i<nlm; i++)
+        {
+            aiMesh* mesh = ml[i];
+            for(unsigned int j=0; j<mesh->mNumVertices; j++)
+            {
+                GS_ASSERT(bvlo[i] + (int)(j) == vcount);
+                bvl[bvlo[i] + j] = v;
+        }
+        */
 
         //allocate vertex list
         int vl_num = ml->vln[mesh_index];
@@ -839,10 +800,24 @@ class BodyPartMesh
         vlm = vl_num;
 
         //load vertex index array
+/*
         viam = ml->viam;
         via = new int[viam];
         for(int i;i<viam;i++)
             via[i] = ml->via[i];
+*/
+
+/*
+        int vcount = 0;
+        for(unsigned int j=0; j<mesh->mNumFaces; j++)
+        {
+            for(int k=0; k<3; k++)
+            {
+                via[vcount] = bvlo[i] + mesh->mFaces[j].mIndices[k];
+                vcount++;
+            }
+        }
+*/
 
         //vertex weight lists
 
@@ -972,6 +947,9 @@ class BodyMesh
             bone_mOffsetMatrix[i] = ml->bnl[i].mOffsetMatrix;
             bpl[i] = ml->bnl[i].parent_index;
         }
+        //load meshes
+
+
     }
 };
 
@@ -1084,7 +1062,7 @@ class BodyMesh
 
 #endif 
 
-
+#if 0
 void ModelLoader::init_texture()
 {
     GS_ASSERT(s == NULL);
@@ -1394,6 +1372,6 @@ void ModelLoader::draw_skeleton(float x, float y, float z)
 
     check_gl_error();
 }
-
+#endif
 
 }
