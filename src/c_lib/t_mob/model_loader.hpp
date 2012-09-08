@@ -819,12 +819,10 @@ class BodyPartMesh
             bvl[i] = mesh->bvl[i];
 
         //vertex list
-
         vln = mesh->vln;
         vl = new struct _Vertex[vln];
 
         //vertex list index array
-
         viam = mesh->viam;
         via = new int[viam];
 
@@ -832,7 +830,6 @@ class BodyPartMesh
             via[i] = mesh->via[i];
 
         //vertex weight list
-
         vwlm = mesh->vwlm;
         vwl = new struct _VertexWeight[vwlm];
         
@@ -942,6 +939,8 @@ class BodyMesh
             bone_mOffsetMatrix[i] = ml->bnl[i].mOffsetMatrix;
             bpl[i] = ml->bnl[i].parent_index;
         }
+
+        GS_ASSERT(ml->_nl[0].p == 0);
         //load meshes
 
 
