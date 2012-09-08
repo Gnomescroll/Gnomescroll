@@ -54,6 +54,7 @@ namespace t_mob
     struct _Mesh
     {
         struct aiMesh* mesh;
+        struct aiNode* node;
 
         int bvln;       //base vertex list max
         struct _Vertex* bvl; //base vertex list
@@ -72,10 +73,13 @@ class ModelLoader
 {
     public:
 
-    ModelLoader() :
-    pScene(NULL),
-    nl(NULL)
-    {}
+    ModelLoader()
+    {
+        pScene = NULL;
+        nl = NULL;
+        _ml = NULL;
+        _nl = NULL;
+    }
     
     ~ModelLoader()
     {
@@ -182,6 +186,7 @@ class ModelLoader
             {
                 int mesh_index = node->mMeshes[0]; //grab the first mesh
                 _ml[mesh_count].mesh = pScene->mMeshes[mesh_index];
+                _ml[mesh_count].node = node;
                 mesh_count++;
             }
         }
@@ -349,7 +354,6 @@ class ModelLoader
 
     void init_bone_list()
     {
-#if 1
         //count bones
         int bone_count = 0;
         int _bone_count = 0;
@@ -409,13 +413,11 @@ class ModelLoader
                     bnl[bcount].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                     bnl[bcount].parent_index = -1;
 
-                    bcount++;
-                    
+                    bcount++;    
                 }
             }
         }
 
-#endif
     }
 
 
@@ -753,6 +755,22 @@ but is not good. Therefore, you usually should do the interpolation on the quate
     };    
 */
 
+
+/*
+    struct aiMesh* mesh;
+
+    int bvln;       //base vertex list max
+    struct _Vertex* bvl; //base vertex list
+
+    int vln;    //number of vertices
+
+    int* via;   //vertex index array
+    int viam;   //vertex index array max
+
+    int vwlm;
+    struct _VertexWeight* vwl;
+*/
+
 class BodyPartMesh
 {
 
@@ -766,11 +784,12 @@ class BodyPartMesh
     struct _Vertex* vl;         //vertex list
     int vlm;                    //vertex list max
 
+    int* via;                   //vertex index array
+    int viam;
+
     struct _VertexWeight* vwl;  //vertex weight list
     int vwlm;                   //vertex weight list
 
-    int* via;                   //vertex index array
-    int viam;
 
 	BodyPartMesh()
 	{
@@ -786,70 +805,13 @@ class BodyPartMesh
 	}
 
     //assumes only one mesh per node
-	void load(class ModelLoader* ml, int mesh_index, aiMesh* mesh, aiNode* node)
+	void load(class ModelLoader* ml, int mesh_index, struct _Mesh* mesh)
 	{
 
         //copy name
-        mesh_name = new char[strlen(node->mName.data)+1];
-        mesh_name = strcpy(mesh_name, node->mName.data);
+        mesh_name = copy_string(mesh->node->mName.data);
 
-        //copy base list
 
-/*
-        int bvl_offset = ml->bvlo[mesh_index];
-        bvlm = ml->bvln[mesh_index];
-        bvl = new _Vertex[bvlm];
-        for(int i=0; i<bvlm; i++)
-            bvl[i] = ml->bvl[i+bvl_offset];
-*/
-
-        /*
-        for(int i=0; i<nlm; i++)
-        {
-            aiMesh* mesh = ml[i];
-            for(unsigned int j=0; j<mesh->mNumVertices; j++)
-            {
-                GS_ASSERT(bvlo[i] + (int)(j) == vcount);
-                bvl[bvlo[i] + j] = v;
-        }
-        */
-
-/*
-        //allocate vertex list
-        int vl_num = ml->vln[mesh_index];
-        vl = new _Vertex[vl_num];
-        vlm = vl_num;
-*/
-
-        //load vertex index array
-/*
-        viam = ml->viam;
-        via = new int[viam];
-        for(int i;i<viam;i++)
-            via[i] = ml->via[i];
-*/
-
-/*
-        int vcount = 0;
-        for(unsigned int j=0; j<mesh->mNumFaces; j++)
-        {
-            for(int k=0; k<3; k++)
-            {
-                via[vcount] = bvlo[i] + mesh->mFaces[j].mIndices[k];
-                vcount++;
-            }
-        }
-*/
-
-        //vertex weight lists
-
-        int num_weights = 0;
-
-        for(unsigned int i=0; i<mesh->mNumBones; i++)
-            num_weights += mesh->mBones[i]->mNumWeights;
-
-        vwl = new _VertexWeight[num_weights];
-        vwlm = num_weights;
 
 
     }
