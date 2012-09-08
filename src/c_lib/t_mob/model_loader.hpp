@@ -889,6 +889,9 @@ class BodyMesh
     int* bpl;        //bone parent list; index of parent node
     int blm;        //bone list max
 
+    struct Mat4* tbone_matrix;
+    struct Mat4* tnode_matrix;
+
     BodyMesh()
     {
         nnl = NULL;
@@ -897,6 +900,9 @@ class BodyMesh
         bnl = NULL;
         bone_mOffsetMatrix = NULL;
         bpl = NULL;
+
+        tbone_matrix = NULL;
+        tnode_matrix = NULL;
     }
 
     ~BodyMesh()
@@ -904,9 +910,14 @@ class BodyMesh
         if(nnl != NULL) delete[] nnl;
         if(npl != NULL) delete[] npl;
         if(node_mTransformation != NULL) delete[] node_mTransformation;
+
         if(bnl != NULL) delete[] bnl;
         if(bone_mOffsetMatrix != NULL) delete[] bone_mOffsetMatrix;
         if(bpl != NULL) delete[] bpl;
+
+
+        if(tbone_matrix != NULL) delete[] tbone_matrix;
+        if(tnode_matrix != NULL) delete[] tnode_matrix;
     }
 
     void load(class ModelLoader* ML)
@@ -917,6 +928,7 @@ class BodyMesh
         nnl = new char*[nm];
         npl = new int[nm];
         node_mTransformation = new struct Mat4[nm];  //mTransformation;
+        tbone_matrix =  new struct Mat4[nm];
 
         for(int i=0;i<nm; i++)
         {  
@@ -952,11 +964,12 @@ class BodyMesh
 
         init_texture();
 
+
     }
 
     void draw_prep()
     {
-        
+
     }
 
     unsigned int texture1;
