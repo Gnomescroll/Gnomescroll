@@ -103,7 +103,8 @@ class ModelLoader
         nli = 0;
         count_nodes(pScene->mRootNode); //count the nodes with meshes
         nlm = nli;
-        nl = new aiNode*[nlm];
+        
+        //nl = new aiNode*[nlm];
 
         for(int i=0; i<nlm; i++) nl[i] = NULL;
 
@@ -835,7 +836,6 @@ class BodyPartMesh
         
         for(int i=0;i<vwlm;i++)
             vwl[i] = mesh->vwl[i];
-
     }
 };
 
@@ -948,7 +948,51 @@ class BodyMesh
 
         for(int i=0; i< ML->_mlm; i++)
             ml[i].load( &(ML->_ml[i]) );
+
+
+        init_texture();
+
     }
+
+    void draw_prep()
+    {
+        
+    }
+
+    unsigned int texture1;
+    SDL_Surface* s;
+
+    void init_texture()
+    {
+        GS_ASSERT(s == NULL);
+        s = create_surface_from_file("./media/mesh/body_template.png");
+        //s = create_surface_from_file("./media/mesh/test.png");
+
+        glEnable(GL_TEXTURE_2D);
+        glGenTextures(1, &texture1);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        GLenum texture_format;
+        if (s->format->Rmask == 0x000000ff)
+            texture_format = GL_RGBA;
+        else
+            texture_format = GL_BGRA;
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
+        
+        glDisable(GL_TEXTURE_2D);
+    }
+
+
 };
 
 #if 0
