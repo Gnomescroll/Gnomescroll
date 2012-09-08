@@ -717,12 +717,6 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         m._f[13] = pos.y;
         m._f[14] = pos.z;
 
-/*
-        m._f[12] = 0.0f;
-        m._f[13] = 0.0f;
-        m._f[14] = 0.0f;
-*/
-
         m._f[15] = 1.0f;
 
         return m;

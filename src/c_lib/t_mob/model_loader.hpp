@@ -629,18 +629,18 @@ class ModelLoader
         for(int i=0; i<_nlm; i++)
         {
 
-            if(_nm[i].index != i)
+            if(_nl[i].index != i)
             {
                 struct Node ntmp;
 
                 bool found = false;
                 for(int j=0; j<_nlm; j++)
                 {
-                    if(_nm[j].index == i)
+                    if(_nl[j].index == i)
                     {
-                        ntmp = _nm[i];
-                        _nm[i] = _nm[j];
-                        _nm[j] = ntmp;
+                        ntmp = _nl[i];
+                        _nl[i] = _nl[j];
+                        _nl[j] = ntmp;
                         found = true;
                         break;
                     }
@@ -650,7 +650,7 @@ class ModelLoader
         }
 
         for(int i=0; i<_nlm; i++)
-            GS_ASSERT(_nm[i].index == i);
+            GS_ASSERT(_nl[i].index == i);
 
     }
 
@@ -670,8 +670,6 @@ class ModelLoader
 
         return NULL;
     }
-
-    //mValue
 
     struct Mat4 quantenion_to_rotation_matrix(aiQuaternion q, aiVector3D pos)
     {
@@ -845,17 +843,13 @@ class BodyPartMesh
         via = new int[viam];
         for(int i;i<viam;i++)
             via[i] = ml->via[i];
+
         //vertex weight lists
-
-
-
-
 
         int num_weights = 0;
 
         for(unsigned int i=0; i<mesh->mNumBones; i++)
             num_weights += mesh->mBones[i]->mNumWeights;
-
 
         vwl = new _VertexWeight[num_weights];
         vwlm = num_weights;
@@ -919,7 +913,7 @@ class BodyMesh
     //nodes
     char** nnl;         //node name list
     int* npl;
-    struct Mat4 ntl;    //node transform list, mTransformation
+    struct Mat4* ntl;    //node transform list, mTransformation
     int nm;             //node max
 
     //transforms
