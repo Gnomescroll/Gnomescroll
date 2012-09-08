@@ -56,9 +56,9 @@ namespace t_mob
         struct aiMesh* mesh;
 
         int bvln;       //base vertex list max
-        struct _Vertex bvl; //base vertex list
+        struct _Vertex* bvl; //base vertex list
 
-        int vlm;    //number of vertices
+        int vln;    //number of vertices
 
         int* via;   //vertex index array
         int viam;   //vertex index array max
@@ -79,7 +79,7 @@ class ModelLoader
     //tvl(NULL),
     //vll(NULL), vln(NULL),
     //bvl(NULL), tbvl(NULL),
-    bvlo(NULL), bvln(NULL),
+    //bvlo(NULL), bvln(NULL),
     //via(NULL),
     s(NULL)
     {}
@@ -91,12 +91,12 @@ class ModelLoader
         if (nl != NULL) delete[] nl;
         if (ml != NULL) delete[] ml;
         //if (tvl != NULL) delete[] tvl;
-        if (vll != NULL) delete[] vll;
-        if (vln != NULL) delete[] vln;
-        if (bvl != NULL) delete[] bvl;
+        //if (vll != NULL) delete[] vll;
+        //if (vln != NULL) delete[] vln;
+        //if (bvl != NULL) delete[] bvl;
         //if (tbvl != NULL) delete[] tbvl;
-        if (bvlo != NULL) delete[] bvlo;
-        if (bvln != NULL) delete[] bvln;
+        //if (bvlo != NULL) delete[] bvlo;
+        //if (bvln != NULL) delete[] bvln;
         //if (via != NULL) delete[] via;
     }
 
@@ -132,7 +132,6 @@ class ModelLoader
         //vll = new int[nlm];
         vln = new int[nlm];
 
-        init_base_vertex_list();
         init_texture();
         //draw();
         init_bone_list();
@@ -177,7 +176,7 @@ class ModelLoader
         aiMesh* mesh;
 
         int bvln;       //base vertex list max
-        struct _Vertex bvl; //base vertex list
+        struct _Vertex* bvl; //base vertex list
 
         int vln;    //number of vertices
 
@@ -211,7 +210,6 @@ class ModelLoader
         for(int i=0; i<nlm; i++)
         {
             aiNode* node = nl[i];
-            int mesh_index = node->mMeshes[0]; //grab the first mesh
             if(node->mNumMeshes == 1)
             {
                 int mesh_index = node->mMeshes[0]; //grab the first mesh
@@ -226,7 +224,7 @@ class ModelLoader
             aiMesh* mesh = _ml[i].mesh;
 
             _ml[i].bvln = mesh->mNumVertices;
-            _ml[i].bvl = new _Vertex[_ml[i].bvln];
+            _ml[i].bvl = new struct _Vertex[mesh->mNumVertices];
 
             for(unsigned int j=0; j<mesh->mNumVertices; j++)
             {
@@ -265,7 +263,7 @@ class ModelLoader
             GS_ASSERT(mesh->mTextureCoords[0] != NULL);
 
             _ml[i].viam = 3*mesh->mNumFaces;
-            _ml[i].via = new int[3*mesh->mNumFaces;];
+            _ml[i].via = new int[3*mesh->mNumFaces];
 
             for(unsigned int j=0; j<mesh->mNumFaces; j++)
             {
@@ -288,7 +286,7 @@ class ModelLoader
         {
             int index = 0;
             aiMesh* mesh = _ml[i].mesh;
-            for(int j=0; j<mesh->mNumBones; j++)
+            for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
                 index += bone->mNumWeights;
@@ -301,13 +299,13 @@ class ModelLoader
         {
             int index = 0;
             aiMesh* mesh = _ml[i].mesh;
-            for(int j=0; j<mesh->mNumBones; j++)
+            for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
 
                 for(unsigned int k=0; k<bone->mNumWeights; k++)
                 {
-                    _ml[i].vwl[index].bone_index =     ml->get_bone_index(bone);       //index of bone matrix
+                    _ml[i].vwl[index].bone_index =     get_bone_index(bone);       //index of bone matrix
                     _ml[i].vwl[index].vertex_index =   bone->mWeights[k].mVertexId;
                     _ml[i].vwl[index].weight =         bone->mWeights[k].mWeight;
                     index++;
@@ -912,11 +910,14 @@ class BodyPartMesh
         mesh_name = strcpy(mesh_name, node->mName.data);
 
         //copy base list
+
+/*
         int bvl_offset = ml->bvlo[mesh_index];
         bvlm = ml->bvln[mesh_index];
         bvl = new _Vertex[bvlm];
         for(int i=0; i<bvlm; i++)
             bvl[i] = ml->bvl[i+bvl_offset];
+*/
 
         /*
         for(int i=0; i<nlm; i++)
@@ -929,11 +930,13 @@ class BodyPartMesh
         }
         */
 
+/*
         //allocate vertex list
         int vl_num = ml->vln[mesh_index];
         vl = new _Vertex[vl_num];
         vlm = vl_num;
-
+*/
+        
         //load vertex index array
 /*
         viam = ml->viam;
