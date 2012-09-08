@@ -392,6 +392,17 @@ class ModelLoader
         return false;
     }
 
+    int get_bone_index(aiBone* bone)
+    {
+        for(int i=0; i<bnlm;i++)
+        {
+            if( strcmp(bnl[i].name, bone->mName.data) ==0 )
+                return i;
+        }
+
+        GS_ASSERT(false);
+        return 0;
+    }
 
     void init_bone_list()
     {
@@ -830,7 +841,8 @@ class BodyPartMesh
                 //int index = bone->mWeights[j].mVertexId;
                 //float weight = bone->mWeights[j].mWeight;
 
-                vwl[index].bone_index =     0;
+                int bone_index = ml->get_bone_index();
+                vwl[index].bone_index =     bone_index;
                 vwl[index].vertex_index =   bone->mWeights[j].mVertexId;
                 vwl[index].weight =         bone->mWeights[j].mWeight;
                 index++;

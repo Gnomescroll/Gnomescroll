@@ -408,6 +408,31 @@ const int _SDL_SWAP_DEBUG = 0;
     Measure the time since last frame and if there is extra time before next flip, do map processing
 
 */
+
+/*
+    !!! Can assume fixed offsets for timing
+    OpenGL by default syncs to the monitor refresh. You need to use wglSwapIntervalEXT() to turn it off 
+
+    Swap Interval
+    http://www.opengl.org/wiki/Swap_Interval
+*/
+
+/*
+!!!
+
+A swap interval greater than 0 means that the GPU may force the CPU to wait due to previously issued buffer swaps. 
+For example, if the v-blank intervals come at 16.6ms intervals (60fps refresh), but the rendering of a frame only takes 4ms, 
+then buffer swaps can back up. Therefore, the CPU driver will stall the rendering thread in an OpenGL command 
+(it doesn't have to be in a buffer swapping command) if there are too many commands waiting for the v-blank.
+
+Alternatively, if the renderer takes slightly longer than the v-blank intervals to render, say 18ms, 
+then a different problem can result. It will effectively take two full v-blank intervals to display an image to the user, 
+turning a 60fps program into a 30fps program. It will also induce stalls, for the same reason as above: the GPU has 
+to wait 15.2ms every other v-blank interval for a buffer swap. Rendering calls made in that time will
+ back up, eventually forcing a stall to wait for the actual swap.
+
+*/
+ 
 int _swap_buffers()
 {
     int _time1;
