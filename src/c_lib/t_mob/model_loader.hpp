@@ -623,6 +623,35 @@ class ModelLoader
             }
             GS_ASSERT(_nl[i].index < _nl[i].p->index);
         }
+
+        //sort
+
+        for(int i=0; i<_nlm; i++)
+        {
+
+            if(_nm[i].index != i)
+            {
+                struct Node ntmp;
+
+                bool found = false;
+                for(int j=0; j<_nlm; j++)
+                {
+                    if(_nm[j].index == i)
+                    {
+                        ntmp = _nm[i];
+                        _nm[i] = _nm[j];
+                        _nm[j] = ntmp;
+                        found = true;
+                        break;
+                    }
+                }
+                GS_ASSERT(found == true);
+            }
+        }
+
+        for(int i=0; i<_nlm; i++)
+            GS_ASSERT(_nm[i].index == i);
+
     }
 
 
@@ -838,16 +867,14 @@ class BodyPartMesh
 
             for(unsigned int j=0; j<bone->mNumWeights; j++)
             {
-                //int index = bone->mWeights[j].mVertexId;
-                //float weight = bone->mWeights[j].mWeight;
-
-                int bone_index = ml->get_bone_index(bone);
+                int bone_index =            ml->get_bone_index(bone);       //index of bone matrix
                 vwl[index].bone_index =     bone_index;
                 vwl[index].vertex_index =   bone->mWeights[j].mVertexId;
                 vwl[index].weight =         bone->mWeights[j].mWeight;
                 index++;
             }
         }
+        GS_ASSERT(index == vwlm);
     }
 };
 
@@ -882,8 +909,20 @@ class BodyMesh
 {
     class BodyPartMesh* ml; //body part mesh list
     int mlm;                 //body part mesh list max
+/*
+    struct Node
+    {
+        char* name;
+        int parent_index;
+    };
+*/
+    //nodes
+    char** nnl;         //node name list
+    int* npl;
+    struct Mat4 ntl;    //node transform list, mTransformation
+    int nm;             //node max
 
-
+    //transforms
     BodyMesh()
     {
 
@@ -896,7 +935,34 @@ class BodyMesh
 
     void load(class ModelLoader* ml)
     {
+        //load node list
 
+        nm = ml->_nlm;
+        nnl = new char*[nm];
+        npl = new int[nm];
+        ntl = new struct Mat4[nm];
+
+        for(int i=0;i<nm;i++)
+            nnl[i] = NULL;
+        for(int i=0;i<nm; i++)
+        {
+            int index = ml->_nl[i].index;
+            GS_ASSERT(nnl[index] = NULL);
+
+            nnl[index] = ml->_nl[i].name;
+
+            if(ml->_nl[i].p == NULL)
+            {
+                GS_ASSERT(ml->_nl[i].index == 0);
+                npl[index] = 0;
+            }  
+            else
+            {
+                npl[index] = ml->_nl[i].p->index;
+            }
+
+            ntl[index] = ml->_nl[i].mTransformation;
+        }
     }
 };
 
