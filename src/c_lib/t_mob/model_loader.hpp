@@ -282,9 +282,7 @@ class ModelLoader
             }
         }
 
-        // vertex weight
-
-        int index = 0;
+        // vertex weights
 
         for(int i=0; i<_mln; i++)
         {
@@ -303,22 +301,22 @@ class ModelLoader
         {
             int index = 0;
             aiMesh* mesh = _ml[i].mesh;
-            for(int i=0; i<mesh->mNumBones; i++)
+            for(int j=0; j<mesh->mNumBones; j++)
             {
+                aiBone* bone = mesh->mBones[j];
 
-        for(int i=0; i<mesh->mNumBones; i++)
-        {
-            aiBone* bone = mesh->mBones[i];
-
-            for(unsigned int j=0; j<bone->mNumWeights; j++)
-            {
-                int bone_index =            ml->get_bone_index(bone);       //index of bone matrix
-                vwl[index].bone_index =     bone_index;
-                vwl[index].vertex_index =   bone->mWeights[j].mVertexId;
-                vwl[index].weight =         bone->mWeights[j].mWeight;
-                index++;
+                for(unsigned int k=0; k<bone->mNumWeights; k++)
+                {
+                    _ml[i].vwl[index].bone_index =     ml->get_bone_index(bone);       //index of bone matrix
+                    _ml[i].vwl[index].vertex_index =   bone->mWeights[k].mVertexId;
+                    _ml[i].vwl[index].weight =         bone->mWeights[k].mWeight;
+                    index++;
+                }
             }
+
         }
+
+
 
 
     }
