@@ -913,10 +913,13 @@ class BodyMesh
     //nodes
     char** nnl;         //node name list
     int* npl;
-    struct Mat4* ntl;    //node transform list, mTransformation
+    struct Mat4* nlt;    //node transform list, mTransformation
     int nm;             //node max
 
-    //transforms
+    //bones
+    char** bnl;     //bone name list
+
+
     BodyMesh()
     {
 
@@ -934,13 +937,13 @@ class BodyMesh
         nm = ml->_nlm;
         nnl = new char*[nm];
         npl = new int[nm];
-        ntl = new struct Mat4[nm];  //mTransformation;
+        nlt = new struct Mat4[nm];  //mTransformation;
 
         for(int i=0;i<nm; i++)
         {
             nnl[i] = ml->_nl[i].name;
             npl[i] = ml->_nl[i].p->index;
-            ntl[i] = ml->_nl[i].mTransformation;
+            nlt[i] = ml->_nl[i].mTransformation;
         }
     }
 };
