@@ -805,7 +805,7 @@ class BodyPartMesh
 	}
 
     //assumes only one mesh per node
-	void load(class ModelLoader* ml, int mesh_index, struct _Mesh* mesh)
+	void load(struct _Mesh* mesh)
 	{
 
         //copy name
@@ -943,7 +943,11 @@ class BodyMesh
         GS_ASSERT(ml->_nl[0].p == 0);
         //load meshes
 
+        mlm = ml->_mlm;
+        ml = new BodyPartMesh[mlm];
 
+        for(int i=0; i<ml->_mln; i++)
+            ml[i].load[ml->_ml[i]];
     }
 };
 
