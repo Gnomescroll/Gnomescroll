@@ -229,6 +229,14 @@ void draw_hud_text()
     HudFont::set_properties(large_text_size);
     set_texture();
 
+    if (has_error())
+    {
+        update_error_text(hud->error);
+        hud->error->draw_centered();
+        end_font_draw();
+        return;
+    }
+
     if (!hud_draw_settings.connected && !hud_draw_settings.version_mismatch && !hud_draw_settings.server_full)
     {
         hud->disconnected->draw_centered();
@@ -545,6 +553,12 @@ void HUD::init()
     press_help->set_color(255,255,255,255);
     press_help->set_position((_xresf - press_help->get_width()) / 2.0f, _yresf);
 
+    error = text_list->create();
+    GS_ASSERT(error != NULL);
+    if (error == NULL) return;
+    error->set_color(255,10,10,255);
+    error->set_position(_xresf/2, _yresf/2);
+
     scoreboard = new Scoreboard();
     scoreboard->init();
 
@@ -570,6 +584,7 @@ look(NULL),
 health(NULL),
 confirm_quit(NULL),
 press_help(NULL),
+error(NULL),
 scoreboard(NULL),
 chat(NULL)
 {}
@@ -601,6 +616,8 @@ HUD::~HUD()
         text_list->destroy(confirm_quit->id);
     if (press_help != NULL)
         text_list->destroy(press_help->id);
+    if (error != NULL)
+        text_list->destroy(error->id);
     if (health != NULL) delete health;
     if (scoreboard != NULL) delete scoreboard;
     if (chat != NULL) delete chat;

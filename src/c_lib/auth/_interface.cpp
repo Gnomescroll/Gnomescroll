@@ -435,6 +435,15 @@ void run_tests()
     GS_ASSERT(!is_valid_username("___"));
     GS_ASSERT(!is_valid_username("_get_"));
     GS_ASSERT(is_valid_username("get_"));
+
+    // timestamp
+    GS_ASSERT(auth_token_expired(0, AUTH_TOKEN_LIFETIME));
+    GS_ASSERT(auth_token_expired(utc_now() - 60, AUTH_TOKEN_LIFETIME));
+    GS_ASSERT(auth_token_expired(AUTH_TOKEN_LIFETIME, AUTH_TOKEN_LIFETIME));
+    GS_ASSERT(auth_token_expired(AUTH_TOKEN_LIFETIME + 1, AUTH_TOKEN_LIFETIME));
+    GS_ASSERT(auth_token_expired(utc_now() - 60, AUTH_TOKEN_LIFETIME));
+    GS_ASSERT(!auth_token_expired(utc_now() + 2, AUTH_TOKEN_LIFETIME));
+    GS_ASSERT(!auth_token_expired(utc_now() + AUTH_TOKEN_LIFETIME, AUTH_TOKEN_LIFETIME));
 }
 
 }   // Auth
