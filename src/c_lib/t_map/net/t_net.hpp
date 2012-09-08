@@ -27,7 +27,8 @@ class MapMessagePacketToServer
         static uint8_t message_id;
         static unsigned int size;
         int client_id; //id of the UDP client who sent message
-
+        static const bool auth_required = true; // override in Derived class to disable
+        
         MapMessagePacketToServer() {}
         virtual ~MapMessagePacketToServer() {}
         
@@ -68,14 +69,23 @@ class MapMessagePacketToServer
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) {
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id)
+        {
+            #if DC_SERVER
             Derived x;  //allocated on stack
+            if (NetServer::clients[_client_id] == NULL ||   // auth check
+                (x.auth_required && !NetServer::clients[_client_id]->authorized))
+                return;
             x.client_id = _client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
-        static void register_server_packet() {
+        static void register_server_packet()
+        {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
             Derived::size = x._size();
@@ -94,7 +104,8 @@ template <class Derived> unsigned int MapMessagePacketToServer<Derived>::size(0)
     Special server packet
 */
 template <class Derived>
-class MapMessagePacketToClient {
+class MapMessagePacketToClient
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:
@@ -203,7 +214,8 @@ template <class Derived> unsigned int MapMessagePacketToClient<Derived>::size(0)
     Could be safer to size of buffer being read here
 */
 template <class Derived>
-class MapMessageArrayPacketToClient {
+class MapMessageArrayPacketToClient
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:

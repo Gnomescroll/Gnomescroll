@@ -67,7 +67,7 @@ void NetPeerManager::init(int client_id)
  * On first load, send all data
  * Subsequent authorizations will only refresh the expiration_time
  */
-void NetPeerManager::authorized(int user_id, time_t expiration_time, const char* username)
+void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const char* username)
 {
     
     // assume arguments are valid. should have been verified by the auth token parser
@@ -127,12 +127,12 @@ void NetPeerManager::authorized(int user_id, time_t expiration_time, const char*
     ItemParticle::send_particle_items_to_client(client_id);
 
     this->loaded = true;
+    this->authorized = true;
 }
 
 void NetPeerManager::teardown()
 {
     class Agent_state* a = NetServer::agents[this->client_id];
-    GS_ASSERT(a != NULL);
     if (a != NULL)
     {
         Item::agent_quit(a->id);    // unsubscribes agent from all item
@@ -162,6 +162,7 @@ NetPeerManager::NetPeerManager() :
     inited(false),
     loaded(false),
     waiting_for_auth(false),
+    authorized(false),
     connection_time(utc_now()),
     auth_expiration(0),
     username(NULL),

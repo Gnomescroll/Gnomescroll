@@ -11,6 +11,8 @@ namespace Auth
 class auth_token_CtoS: public FixedSizeReliableNetPacketToServer<auth_token_CtoS>
 {
     public:
+        static const bool auth_required = false;
+
         char token[AUTH_TOKEN_LENGTH+1];
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)

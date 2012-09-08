@@ -11,6 +11,7 @@ class NetPeerManager
         bool inited;
         bool loaded;
         bool waiting_for_auth;
+        bool authorized;
         
         time_t connection_time;
 
@@ -19,7 +20,7 @@ class NetPeerManager
         char* username;
         int user_id;
 
-    void authorized(int user_id, time_t expiration_time, const char* username);
+    void was_authorized(int user_id, time_t expiration_time, const char* username);
 
     bool failed_to_authorize();
     bool authorization_expired();

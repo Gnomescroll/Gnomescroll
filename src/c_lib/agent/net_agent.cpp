@@ -431,7 +431,7 @@ inline void set_spawner_StoC::handle()
     }
 
     // color new spawner
-    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check
+    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
     {
         Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, spawner_id);
         GS_ASSERT(obj != NULL);
@@ -746,8 +746,6 @@ inline void hitscan_block_CtoS::handle()
     int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, block);
     if (weapon_block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
-
-    // TODO: Use weapon block dmg
 }
 
 inline void hitscan_none_CtoS::handle()
@@ -781,7 +779,7 @@ inline void melee_object_CtoS::handle()
         if (obj == NULL) return;
 
         // apply damage
-        const int obj_dmg = Item::get_item_object_damage(weapon_type);  // TODO -- weapon based
+        const int obj_dmg = Item::get_item_object_damage(weapon_type);
         using Components::HealthComponent;
         HealthComponent* health = (HealthComponent*)
             obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
@@ -1004,8 +1002,6 @@ inline void place_spawner_CtoS::handle()
     z = clamp_z(z);
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
-    // TODO -- handle spawners without teams
-    //Components::agent_spawner_component_list->assign_team_index(obj);
     Objects::ready(obj);
 }
 

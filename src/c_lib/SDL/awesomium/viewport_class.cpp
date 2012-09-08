@@ -63,7 +63,7 @@ void finish_loading_cb(awe_webview* webView)
 {
     awe_string* _url = awe_webview_get_url(webView);
     char* url = get_str_from_awe(_url);
-    printf("URL on webView is: %s\n", url);
+    printf("Finished loading %s\n", url);
     if (strstr(url, GNOMESCROLL_LOGIN_PATH) != NULL)
     {   // login page loaded; force show awesomium window
         enable_awesomium();

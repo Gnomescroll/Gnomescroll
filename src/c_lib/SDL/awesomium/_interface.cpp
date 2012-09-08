@@ -88,30 +88,31 @@ void init()
 
     awe_string* user_agent = get_awe_string(USER_AGENT);
 
-    awe_webcore_initialize( false, //plugins
-    true, //javascript
-    false,  //databases
-    package_path,   //package path
-    locale_path,    //local path
-    awe_string_empty(), //user data path
-    awe_string_empty(), //plugin path
-    log_path, // log path
-    AWE_LL_NORMAL, //log level
-    false, //force single process
-    awe_string_empty(), //child process Path,
-    true,
-    awe_string_empty(),
-    awe_string_empty(),
-    //awe_string_empty(), // user agent
-    user_agent, // user agent
-    awe_string_empty(),
-    awe_string_empty(),
-    awe_string_empty(),
-    true,
-    0,
-    false, 
-    false,
-    awe_string_empty()
+    awe_webcore_initialize(
+        false, //plugins
+        true, //javascript
+        false,  //databases
+        package_path,   //package path
+        locale_path,    //local path
+        awe_string_empty(), //user data path
+        awe_string_empty(), //plugin path
+        log_path, // log path
+        AWE_LL_NORMAL, //log level
+        false, //force single process
+        awe_string_empty(), //child process Path,
+        true,
+        awe_string_empty(),
+        awe_string_empty(),
+        //awe_string_empty(), // user agent
+        user_agent, // user agent
+        awe_string_empty(),
+        awe_string_empty(),
+        awe_string_empty(),
+        true,
+        0,
+        false, 
+        false,
+        awe_string_empty()
     );
 
     awe_string_destroy(package_path);
@@ -127,8 +128,6 @@ void init()
     cv = new ChromeViewport;
     viewport_manager = new ViewportManager;
     viewport_manager->add_viewport(cv);
-
-    delete_auth_token_cookie();
 }
 
 void delete_all_cookies()

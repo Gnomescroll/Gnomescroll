@@ -155,7 +155,7 @@ void client_authorized(int client_id, int user_id, time_t expiration_time, const
             kill_client(peer, DISCONNECT_LOGIN_ELSEWHERE);
         }
 
-    pm->authorized(user_id, expiration_time, username);
+    pm->was_authorized(user_id, expiration_time, username);
 }
 
 void kill_client(int client_id, DisconnectType error_code)
@@ -192,11 +192,18 @@ void check_client_authorizations()
 
         // remove peers who have authorized and it has expired,
         // or who have failed to authorize within a connection time limit
+        DisconnectType disconnect_code = DISCONNECT_NONE;
         if (pm->authorization_expired())
-            kill_client(peer, DISCONNECT_AUTH_EXPIRED);
+            disconnect_code = DISCONNECT_AUTH_EXPIRED;
         else
         if (pm->failed_to_authorize())
-            kill_client(peer, DISCONNECT_AUTH_TIMEOUT);
+            disconnect_code = DISCONNECT_AUTH_TIMEOUT;
+
+        if (disconnect_code != DISCONNECT_NONE)
+        {
+            pm->authorized = false;
+            kill_client(peer, disconnect_code);
+        }
     }
 }
 

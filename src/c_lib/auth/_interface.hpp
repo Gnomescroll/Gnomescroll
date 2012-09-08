@@ -15,4 +15,6 @@ bool auth_token_expired(const time_t timestamp, const time_t expiration_window);
 bool is_valid_username(const char* username);
 bool is_valid_user_id(const int user_id);
 
+void run_tests();
+
 }   // Auth

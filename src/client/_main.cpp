@@ -58,11 +58,6 @@ void init(int argc, char* argv[])
     GS_ASSERT(quadrant_translate_f(500,30) == 542);
     GS_ASSERT(quadrant_translate_f(10,500) == -12);
 
-/*
-    GET RID OF THIS
-*/
-    // set input options (set these in an options struct at load)   TODO
-
     main_inited = true;
 }
 
@@ -298,25 +293,11 @@ int run()
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
         GL_ASSERT(GL_TEXTURE_2D, false);
-        //glBegin(GL_QUADS);
-        //Particle::colored_minivox_list->draw();
-        //Components::colored_voxel_component_list->call();   // TODO -- remove this component
         Animations::draw_colored_voxel_particles();
-        //glEnd();
 
         CHECK_GL_ERROR();
 
         GL_ASSERT(GL_BLEND, false);
-
-        //glColor3ub(255,255,255);
-        //glEnable(GL_TEXTURE_2D);
-        //glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
-        //glBegin(GL_QUADS);
-
-        //Particle::textured_minivox_list->draw();
-        //Components::textured_voxel_component_list->call();    // TODO -- remove this component
-
-        //glEnd();
 
         CHECK_GL_ERROR();
 
@@ -374,7 +355,6 @@ int run()
         Particle::end_particle_draw();
 
         GL_ASSERT(GL_BLEND, true);
-
 
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);   //END

@@ -71,7 +71,7 @@ void check_expiring_token()
     if (auth_token == NULL) return;
     if (!refreshing_token && auth_token_expiring(auth_token_timestamp))
     {
-        Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH);
+        Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
         refreshing_token = true;
     }
 }

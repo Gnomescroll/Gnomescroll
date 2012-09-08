@@ -146,20 +146,6 @@ void Agent_status::set_name(const char* name)
     strcpy(this->name, name);
 }
 
-//#if DC_CLIENT
-//void Agent_status::check_missing_name()
-//{
-    //// TODO
-    //// remove this function
-    //if (this->name[0] == '\0')
-    //{
-        //request_agent_name_CtoS msg;
-        //msg.id = this->a->id;
-        //msg.send();
-    //}
-//}
-//#endif
-
 #if DC_SERVER
 void Agent_status::heal(unsigned int amt)
 {

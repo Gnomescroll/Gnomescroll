@@ -666,7 +666,10 @@ class ping_StoC: public FixedSizeNetPacketToClient<ping_StoC>
 class ping_CtoS: public FixedSizeNetPacketToServer<ping_CtoS>
 {
     public:
+        static const bool auth_required = false;
+
         uint32_t ticks;
+
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&ticks, buff, buff_n, pack);
@@ -688,7 +691,10 @@ class ping_reliable_StoC: public FixedSizeReliableNetPacketToClient<ping_reliabl
 class ping_reliable_CtoS: public FixedSizeReliableNetPacketToServer<ping_reliable_CtoS>
 {
     public:
+        static const bool auth_required = false;
+
         uint32_t ticks;
+
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&ticks, buff, buff_n, pack);
@@ -725,7 +731,10 @@ class version_StoC: public FixedSizeReliableNetPacketToClient<version_StoC>
 class version_CtoS: public FixedSizeReliableNetPacketToServer<version_CtoS>
 {
     public:
+        static const bool auth_required = false;
+
         uint32_t version;
+
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u32(&version, buff, buff_n, pack);

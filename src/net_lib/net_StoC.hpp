@@ -30,7 +30,8 @@
 */
 
 template <class Derived>
-class FixedSizeNetPacketToClient {
+class FixedSizeNetPacketToClient
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
         class Net_message* nm;

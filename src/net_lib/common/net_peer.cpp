@@ -51,7 +51,6 @@ void NetPeer::push_python_message(class Net_message* nm)
 
 void NetPeer::flush_map_messages()
 {
-    // TODO -- check if (this->kill)
     if (enet_peer == NULL) return;
     if (map_message_buffer_index == 0) return;
     //printf("Flushing %i map bytes \n", map_message_buffer_index);

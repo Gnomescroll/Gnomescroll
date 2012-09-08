@@ -18,6 +18,8 @@ void server_teardown();
 
 void received_auth_token(int client_id, const char* token);
 
+bool verify_token(const char* _token);
+
 void send_auth_token_valid(int client_id);
 void send_auth_token_invalid(int client_id);
 
