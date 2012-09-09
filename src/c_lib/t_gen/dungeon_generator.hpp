@@ -8,8 +8,11 @@ namespace t_gen
 {
 
 const int cubes_across_room = 16;
+const int cubes_going_up = cubes_across_room / 2;
 const int rooms_across_ruins = XMAX / cubes_across_room;
-const int min_lip = 2;
+const int fixed_hall_wid = cubes_across_room / 4;
+const int fixed_hall_offs = (cubes_across_room - fixed_hall_wid) / 2; // hall offset
+// const int min_lip = 2; // corpusc paradigm
 
 struct Room {
 	bool is_hallway;
@@ -43,115 +46,115 @@ void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile
 	}
 }
 
+bool not_in_hall(int i, int z) {
+	if (z > fixed_hall_wid ||
+		i < fixed_hall_offs || 
+		i >= fixed_hall_offs + fixed_hall_wid) return true;
+	return false;
+}
+
 void start_dungeon_generator()
 {
     printf("Carving out ruins\n");
 	Room rooms[rooms_across_ruins][rooms_across_ruins];
 
-    // setup rooms
-	//			todo: replace all numerous occurrences of "rooms[y][x]" with a one letter placeholder for neatness? 
-	for (int x = 0; x < rooms_across_ruins; x++) {
-    for (int y = 0; y < rooms_across_ruins; y++) {
-		rooms[y][x].block = randrange(31, 44);
-        rooms[y][x].wid = randrange(cubes_across_room / 2, cubes_across_room);
-        rooms[y][x].dep = randrange(cubes_across_room / 2, cubes_across_room);
-        rooms[y][x].hei = randrange(cubes_across_room / 2, cubes_across_room); // VVVVVVVVVVVVVVVVVVVVVVVVV needs to come before below
-        int malleable_x_span /* (room) */ = rooms[y][x].wid - 2 /* shell of 2 walls */ - min_lip * 2; // ^^^^^^ needs to come after above
-        int malleable_y_span /* (room) */ = rooms[y][x].dep - 2 /* shell of 2 walls */ - min_lip * 2;
-        rooms[y][x].x_offs = randrange(0, cubes_across_room - rooms[y][x].wid);
-        rooms[y][x].y_offs = cubes_across_room - rooms[y][x].dep;
-        //r.Color = getNextCol();
-        rooms[y][x].e_hall_wid = randrange(2 /* min width */, malleable_y_span);
-        rooms[y][x].e_hall_offs = rooms[y][x].y_offs + min_lip + 1 + randrange(0, malleable_y_span - rooms[y][x].e_hall_wid);
-        rooms[y][x].n_hall_wid = randrange(2 /* min width */, malleable_x_span);
-        rooms[y][x].n_hall_offs = rooms[y][x].x_offs + min_lip + 1 + randrange(0, malleable_x_span - rooms[y][x].n_hall_wid);
-    }
-    }
+    // corpusc paradigm
+	//// setup room settings
+	////			todo: replace all numerous occurrences of "rooms[y][x]" with a one letter placeholder for neatness? 
+	//for (int x = 0; x < rooms_across_ruins; x++) {
+ //   for (int y = 0; y < rooms_across_ruins; y++) {
+ //       rooms[y][x].wid = randrange(cubes_going_up, cubes_across_room);
+ //       rooms[y][x].dep = randrange(cubes_going_up, cubes_across_room);
+ //       rooms[y][x].hei = randrange(cubes_going_up, cubes_across_room);
+ //       int malleable_x_span /* (room) */ = rooms[y][x].wid - 2 /* shell of 2 walls */ - min_lip * 2;
+ //       int malleable_y_span /* (room) */ = rooms[y][x].dep - 2 /* shell of 2 walls */ - min_lip * 2;
+ //       rooms[y][x].x_offs = randrange(0, cubes_across_room - rooms[y][x].wid);
+ //       rooms[y][x].y_offs = cubes_across_room - rooms[y][x].dep;
+ //       rooms[y][x].e_hall_wid = randrange(2 /* min width */, malleable_y_span);
+ //       rooms[y][x].e_hall_offs = rooms[y][x].y_offs + min_lip + 1 + randrange(0, malleable_y_span - rooms[y][x].e_hall_wid);
+ //       rooms[y][x].n_hall_wid = randrange(2 /* min width */, malleable_x_span);
+ //       rooms[y][x].n_hall_offs = rooms[y][x].x_offs + min_lip + 1 + randrange(0, malleable_x_span - rooms[y][x].n_hall_wid);
+ //   }
+ //   }
 
-	// time to make the donuts!
+	// make rooms
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
-        for (int ry = 0; ry < 1; ry++) {
-			//floor
-			set_region(
-				rx * cubes_across_room,
-				ry * cubes_across_room,
-				3, //rz * cubes_across_room,
-				cubes_across_room, cubes_across_room, 1, rooms[ry, rx]->block);
-			// ceil
-			set_region(
-				rx * cubes_across_room,
-				ry * cubes_across_room,
-				3 + 8, //rz * cubes_across_room,
-				cubes_across_room, cubes_across_room, 1, rooms[ry, rx]->block);
-			// ceil stairwell hole
-			set_region(
-				6 + rx * cubes_across_room,
-				7 + ry * cubes_across_room,
-				3 + 8, //rz * cubes_across_room,
-				4, 2, 1, 0);
-			// stairs
-			set_region(
-				6 + rx * cubes_across_room,
-				7 + ry * cubes_across_room,
-				3 + 1, //rz * cubes_across_room,
-				1, 2, 2, rooms[ry, rx]->block);
-			set_region(
-				7 + rx * cubes_across_room,
-				7 + ry * cubes_across_room,
-				3 + 2, //rz * cubes_across_room,
-				1, 2, 3, rooms[ry, rx]->block);
-			set_region(
-				8 + rx * cubes_across_room,
-				7 + ry * cubes_across_room,
-				3 + 4, //rz * cubes_across_room,
-				1, 2, 3, rooms[ry, rx]->block);
-			set_region(
-				9 + rx * cubes_across_room,
-				7 + ry * cubes_across_room,
-				3 + 6, //rz * cubes_across_room,
-				1, 2, 3, rooms[ry, rx]->block);
+    for (int ry = 0; ry < rooms_across_ruins; ry++) {
+    for (int rz = 0; rz < ZMAX / 2; rz++) {
+		int wall_block = randrange(31, 44);
+		int floor_block = randrange(31, 44);
+		int ceil_block = randrange(31, 44);
 
-            for (int cx = 0; cx < cubes_across_room; cx++) {
-            for (int cy = 0; cy < cubes_across_room; cy++) {
-            for (int cz = 0; cz < cubes_across_room / 2; cz++) {
-				// add 4 to all z values, to get above bedrock
-                if (cx == 0) {
-                    if /* leftmost room, or not in hall */ (rx == 0 || cy < rooms[ry, rx - 1]->e_hall_offs || cy >= rooms[ry, rx - 1]->e_hall_offs + rooms[ry, rx - 1]->e_hall_wid)
-                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                }
-                if (cx == cubes_across_room - 1) {
-                    if /* rightmost room, or not in hall */ (rx == rooms_across_ruins - 1 || cy < rooms[ry, rx]->e_hall_offs || cy >= rooms[ry, rx]->e_hall_offs + rooms[ry, rx]->e_hall_wid)
-                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                }
-                if (cy == 0) {
-                    if /* ynegmost room, or not in hall */ (ry == 0 || cx < rooms[ry - 1, rx]->n_hall_offs || cx >= rooms[ry - 1, rx]->n_hall_offs + rooms[ry - 1, rx]->n_hall_wid)
-                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                }
-                if (cy == cubes_across_room - 1) {
-                    if /* yposimost room, or not in hall */ (ry == rooms_across_ruins - 1 || cx < rooms[ry, rx]->n_hall_offs || cx >= rooms[ry, rx]->n_hall_offs + rooms[ry, rx]->n_hall_wid)
-                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                }
-			}
-			}
+		//floor
+		set_region(
+			rx * cubes_across_room,
+			ry * cubes_across_room,
+			rz * cubes_going_up + 3,
+			cubes_across_room, cubes_across_room, 1, floor_block);
+		// ceil
+		set_region(
+			rx * cubes_across_room,
+			ry * cubes_across_room,
+			rz * cubes_going_up + 3 + cubes_going_up,
+			cubes_across_room, cubes_across_room, 1, ceil_block);
+		// ceil stairwell hole
+		set_region(
+			6 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3,
+			4, 2, 1, 0);
+		// stairs
+		set_region(
+			6 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 1,
+			1, 2, 2, floor_block);
+		set_region(
+			7 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 2,
+			1, 2, 3, floor_block);
+		set_region(
+			8 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 4,
+			1, 2, 3, floor_block);
+		set_region(
+			9 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 6,
+			1, 2, 3, floor_block);
+
+		for (int cx = 0; cx < cubes_across_room; cx++) {
+        for (int cy = 0; cy < cubes_across_room; cy++) {
+        for (int cz = 0; cz < cubes_going_up - 1; cz++) {
+			// add 4 to all z values, to get above bedrock
+            if /* left edge */ (cx == 0) {
+                if (rx == 0 || not_in_hall(cy, cz) ) 
+					// cy < rooms[ry, rx - 1]->e_hall_offs || cy >= rooms[ry, rx - 1]->e_hall_offs + rooms[ry, rx - 1]->e_hall_wid)
+                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
             }
+            if (cx == cubes_across_room - 1) {
+                if (rx == rooms_across_ruins - 1 || not_in_hall(cy, cz) ) 
+					// cy < rooms[ry, rx]->e_hall_offs || cy >= rooms[ry, rx]->e_hall_offs + rooms[ry, rx]->e_hall_wid)
+                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
+            }
+            if (cy == 0) {
+                if (ry == 0 || not_in_hall(cx, cz) ) 
+					// cx < rooms[ry - 1, rx]->n_hall_offs || cx >= rooms[ry - 1, rx]->n_hall_offs + rooms[ry - 1, rx]->n_hall_wid)
+                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
+            }
+            if (cy == cubes_across_room - 1) {
+                if (ry == rooms_across_ruins - 1 || not_in_hall(cx, cz) ) 
+					// cx < rooms[ry, rx]->n_hall_offs || cx >= rooms[ry, rx]->n_hall_offs + rooms[ry, rx]->n_hall_wid)
+                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
+            }
+		}
+		}
         }
     }
-
-	/*
-	get block id from block name
-	int tile_id = t_map::dat_get_cube_id("block_name");
-
-	clears block at x,y,z
-	t_map::set(x,y,z, 0); 
-
-	set block at x,y,z
-	t_map::set(x,y,z, tile_id); 
-
-	get block at x,y,z
-
-	int id = t_map::get(x,y,z)
-	*/
+    }
+	}
 }
-
 
 }   // t_gen
