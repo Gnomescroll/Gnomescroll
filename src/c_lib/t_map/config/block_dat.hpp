@@ -43,8 +43,8 @@ void load_block_dat()
     int t1 = texture_alias("media/sprites/terrain/t01.png");
     int t2 = texture_alias("media/sprites/terrain/t02.png");
     int t3 = texture_alias("media/sprites/terrain/t03.png");
-    int t4 = texture_alias("media/sprites/terrain/t04.png");
-    int t5 = texture_alias("media/sprites/terrain/t05.png");
+    //int t4 = texture_alias("media/sprites/terrain/t04.png");
+    //int t5 = texture_alias("media/sprites/terrain/t05.png");
 
     const int T = 0;
     const int B = 1;
@@ -80,14 +80,14 @@ void load_block_dat()
     push_texture();
 
     hud_def(1,2, t0,1,3);
-    set_max_dmg(5);
+    set_max_dmg(24);
 
     cube_def(2, SolidBlock, "terminal_green");
     iso_texture(t0,1,4);
     push_texture();
 
     hud_def(1,3, t0,1,4);
-    set_max_dmg(5);
+    set_max_dmg(24);
 
     cube_def(3, SolidBlock, "battery");
     iso_texture(t0,2,3);

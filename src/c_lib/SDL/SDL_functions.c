@@ -73,6 +73,33 @@ int DisplayBox()
     return 0;
 }
 
+int glVersionErrorPopup()
+{
+    #ifdef _WIN32
+
+#ifdef __MSVC__
+
+#else
+    int msgboxID = MessageBox(
+        NULL,
+        (LPCSTR)L"Error: your graphics card sucks!!",
+        (LPCSTR)L"You need at least a $5 graphics card that can support Opengl 2.0",
+        MB_ICONWARNING | MB_DEFBUTTON2
+    );
+
+    switch (msgboxID)
+    {
+    case IDCANCEL:
+        // TODO: add code
+        break;
+    }
+
+    return msgboxID;
+#endif
+    #endif
+    return 0;
+}
+
 int VersionMismatchBox(int local_version, int server_version)
 {
     #ifdef _WIN32
@@ -304,13 +331,6 @@ int init_video() {
 
     //printf("glew init\n");
     glewInit();
-    if (glewIsSupported("GL_VERSION_2_0"))
-    {
-        if(PRODUCTION) printf("OpenGL 2.0 Supported \n");
-    }
-    else {
-        printf("OpenGL 2.0 not supported \n");
-    }
 
 
     //const char* GLVersionString = (char *) glGetString(GL_VERSION);
@@ -319,6 +339,15 @@ int init_video() {
     printf("OpenGL: %s \n", (char*) glGetString(GL_VERSION));
     printf("GPU: %s \n", (char*) glGetString(GL_RENDERER));
     printf("Driver: %s \n", (char*) glGetString(GL_VENDOR));
+
+    if (glewIsSupported("GL_VERSION_2_0"))
+    {
+        if(PRODUCTION) printf("OpenGL 2.0 Supported \n");
+    }
+    else {
+        printf("OpenGL 2.0 not supported \n");
+        glVersionErrorPopup();
+    }
 
     //printf("Extentions= %s \n", (char*)glGetString(GL_EXTENSIONS));
 
@@ -377,6 +406,44 @@ const int _SDL_SWAP_DEBUG = 0;
 
 /*
     Measure the time since last frame and if there is extra time before next flip, do map processing
+
+*/
+
+/*
+    !!! Can assume fixed offsets for timing
+    OpenGL by default syncs to the monitor refresh. You need to use wglSwapIntervalEXT() to turn it off 
+
+    Swap Interval
+    http://www.opengl.org/wiki/Swap_Interval
+*/
+
+/*
+!!!
+
+A swap interval greater than 0 means that the GPU may force the CPU to wait due to previously issued buffer swaps. 
+For example, if the v-blank intervals come at 16.6ms intervals (60fps refresh), but the rendering of a frame only takes 4ms, 
+then buffer swaps can back up. Therefore, the CPU driver will stall the rendering thread in an OpenGL command 
+(it doesn't have to be in a buffer swapping command) if there are too many commands waiting for the v-blank.
+
+Alternatively, if the renderer takes slightly longer than the v-blank intervals to render, say 18ms, 
+then a different problem can result. It will effectively take two full v-blank intervals to display an image to the user, 
+turning a 60fps program into a 30fps program. It will also induce stalls, for the same reason as above: the GPU has 
+to wait 15.2ms every other v-blank interval for a buffer swap. Rendering calls made in that time will
+ back up, eventually forcing a stall to wait for the actual swap.
+
+Note that the problem of OpenGL commands backing up due to a waiting v-blank happen because these commands are trying to affect the back buffer. 
+If they do not affect the back buffer, either by rendering to a framebuffer object, another form of off-screen buffer, or something else that isn't the 
+back or front buffers, then these rendering commands can be scheduled as normal. Assuming that there are no other issues that would prevent such 
+execution (trying to render to a buffer that is being read from, for example). Thus, one can ease the CPU burden on waiting for v-blanks by 
+rendering to a third buffer, then blitting that to the back buffer, and then doing a swap. This is commonly called "triple buffering".
+
+*/
+
+
+/*
+
+SGI_video_sync
+http://www.opengl.org/registry/specs/SGI/video_sync.txt
 
 */
 int _swap_buffers()
