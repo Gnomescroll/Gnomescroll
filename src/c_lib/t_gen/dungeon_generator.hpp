@@ -15,7 +15,7 @@ struct Room {
 	bool is_hallway;
 	int block;
 
-	// for cc paradigm
+	// for corpusc's unfinished paradigm
     int x_offs; 
     int y_offs;
     int wid; // width
@@ -26,9 +26,6 @@ struct Room {
     int n_hall_wid;
     int n_hall_offs; // north hall offset
 };
-
-Room rooms[rooms_across_ruins]
-	[rooms_across_ruins];
 
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile_id); 
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile_id = 1) 
@@ -49,12 +46,13 @@ void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile
 void start_dungeon_generator()
 {
     printf("Carving out ruins\n");
+	Room rooms[rooms_across_ruins][rooms_across_ruins];
 
     // setup rooms
 	//			todo: replace all numerous occurrences of "rooms[y][x]" with a one letter placeholder for neatness? 
 	for (int x = 0; x < rooms_across_ruins; x++) {
     for (int y = 0; y < rooms_across_ruins; y++) {
-		rooms[y][x].block = randrange(31, 34);
+		rooms[y][x].block = randrange(31, 44);
         rooms[y][x].wid = randrange(cubes_across_room / 2, cubes_across_room);
         rooms[y][x].dep = randrange(cubes_across_room / 2, cubes_across_room);
         rooms[y][x].hei = randrange(cubes_across_room / 2, cubes_across_room); // VVVVVVVVVVVVVVVVVVVVVVVVV needs to come before below
@@ -72,7 +70,7 @@ void start_dungeon_generator()
 
 	// time to make the donuts!
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
-        for (int ry = 0; ry < rooms_across_ruins; ry++) {
+        for (int ry = 0; ry < 1; ry++) {
 			//floor
 			set_region(
 				rx * cubes_across_room,
@@ -88,53 +86,53 @@ void start_dungeon_generator()
 			// ceil stairwell hole
 			set_region(
 				6 + rx * cubes_across_room,
-				6 + ry * cubes_across_room,
+				7 + ry * cubes_across_room,
 				3 + 8, //rz * cubes_across_room,
-				4, 4, 1, 0);
+				4, 2, 1, 0);
 			// stairs
 			set_region(
 				6 + rx * cubes_across_room,
 				7 + ry * cubes_across_room,
 				3 + 1, //rz * cubes_across_room,
-				1, 2, 2, 1);
+				1, 2, 2, rooms[ry, rx]->block);
 			set_region(
 				7 + rx * cubes_across_room,
 				7 + ry * cubes_across_room,
 				3 + 2, //rz * cubes_across_room,
-				1, 2, 3, 1);
+				1, 2, 3, rooms[ry, rx]->block);
 			set_region(
 				8 + rx * cubes_across_room,
 				7 + ry * cubes_across_room,
 				3 + 4, //rz * cubes_across_room,
-				1, 2, 3, 1);
+				1, 2, 3, rooms[ry, rx]->block);
 			set_region(
 				9 + rx * cubes_across_room,
 				7 + ry * cubes_across_room,
 				3 + 6, //rz * cubes_across_room,
-				1, 2, 3, 1);
+				1, 2, 3, rooms[ry, rx]->block);
 
             for (int cx = 0; cx < cubes_across_room; cx++) {
-                for (int cy = 0; cy < cubes_across_room; cy++) {
-                for (int cz = 0; cz < cubes_across_room / 2; cz++) {
-					// add 4 to all z values, to get above bedrock
-                    if (cx == 0) {
-                        if /* leftmost room, or not in hall */ (rx == 0 || cy < rooms[ry, rx - 1]->e_hall_offs || cy >= rooms[ry, rx - 1]->e_hall_offs + rooms[ry, rx - 1]->e_hall_wid)
-                            t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                    }
-                    if (cx == cubes_across_room - 1) {
-                        if /* rightmost room, or not in hall */ (rx == rooms_across_ruins - 1 || cy < rooms[ry, rx]->e_hall_offs || cy >= rooms[ry, rx]->e_hall_offs + rooms[ry, rx]->e_hall_wid)
-                            t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                    }
-                    if (cy == 0) {
-                        if /* ynegmost room, or not in hall */ (ry == 0 || cx < rooms[ry - 1, rx]->n_hall_offs || cx >= rooms[ry - 1, rx]->n_hall_offs + rooms[ry - 1, rx]->n_hall_wid)
-                            t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                    }
-                    if (cy == cubes_across_room - 1) {
-                        if /* yposimost room, or not in hall */ (ry == rooms_across_ruins - 1 || cx < rooms[ry, rx]->n_hall_offs || cx >= rooms[ry, rx]->n_hall_offs + rooms[ry, rx]->n_hall_wid)
-                            t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
-                    }
-				}
-				}
+            for (int cy = 0; cy < cubes_across_room; cy++) {
+            for (int cz = 0; cz < cubes_across_room / 2; cz++) {
+				// add 4 to all z values, to get above bedrock
+                if (cx == 0) {
+                    if /* leftmost room, or not in hall */ (rx == 0 || cy < rooms[ry, rx - 1]->e_hall_offs || cy >= rooms[ry, rx - 1]->e_hall_offs + rooms[ry, rx - 1]->e_hall_wid)
+                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
+                }
+                if (cx == cubes_across_room - 1) {
+                    if /* rightmost room, or not in hall */ (rx == rooms_across_ruins - 1 || cy < rooms[ry, rx]->e_hall_offs || cy >= rooms[ry, rx]->e_hall_offs + rooms[ry, rx]->e_hall_wid)
+                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
+                }
+                if (cy == 0) {
+                    if /* ynegmost room, or not in hall */ (ry == 0 || cx < rooms[ry - 1, rx]->n_hall_offs || cx >= rooms[ry - 1, rx]->n_hall_offs + rooms[ry - 1, rx]->n_hall_wid)
+                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
+                }
+                if (cy == cubes_across_room - 1) {
+                    if /* yposimost room, or not in hall */ (ry == rooms_across_ruins - 1 || cx < rooms[ry, rx]->n_hall_offs || cx >= rooms[ry, rx]->n_hall_offs + rooms[ry, rx]->n_hall_wid)
+                        t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, cz + 4, rooms[ry, rx]->block);
+                }
+			}
+			}
             }
         }
     }
