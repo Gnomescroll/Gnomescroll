@@ -13,12 +13,12 @@ namespace Main
 
 void default_map_gen()
 {
-    t_gen::noise_map_generate_map();
+    //t_gen::noise_map_generate_map();
     
-    t_map::map_post_processing(); //regolith stuff
-    t_gen::generate_rock_layer();
-    t_gen::start_cave_generator();
-    t_gen::populate_ore();
+    //t_map::map_post_processing(); //regolith stuff
+    //t_gen::generate_rock_layer();
+    //t_gen::start_cave_generator();
+    //t_gen::populate_ore();
     t_gen::start_dungeon_generator();
 
     map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));    

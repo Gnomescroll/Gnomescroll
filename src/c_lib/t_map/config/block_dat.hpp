@@ -44,7 +44,7 @@ void load_block_dat()
     int t2 = texture_alias("media/sprites/terrain/t02.png");
     int t3 = texture_alias("media/sprites/terrain/t03.png");
     //int t4 = texture_alias("media/sprites/terrain/t04.png");
-    //int t5 = texture_alias("media/sprites/terrain/t05.png");
+    int t5 = texture_alias("media/sprites/terrain/t05.png");
 
     const int T = 0;
     const int B = 1;
@@ -247,6 +247,46 @@ void load_block_dat()
     iso_texture(t2, 2,1);
     push_texture();
     hud_def(6,5, t2,2,1);
+
+    cube_def(35, SolidBlock, "corpusc_testing_with_ruins_1");
+    iso_texture(t1,6,2);
+    push_texture();
+
+    cube_def(36, SolidBlock, "corpusc_testing_with_ruins_2");
+    iso_texture(t1,6,3);
+    push_texture();
+
+    cube_def(37, SolidBlock, "corpusc_testing_with_ruins_3");
+    iso_texture(t1,6,4);
+    push_texture();
+
+    cube_def(38, SolidBlock, "corpusc_testing_with_ruins_4");
+    iso_texture(t1,6,5);
+    push_texture();
+
+    cube_def(39, SolidBlock, "corpusc_testing_with_ruins_5");
+    iso_texture(t1,6,6);
+    push_texture();
+
+    cube_def(40, SolidBlock, "ruins_1");
+    iso_texture(t5,1,1);
+    push_texture();
+
+    cube_def(41, SolidBlock, "ruins_2");
+    iso_texture(t5,1,2);
+    push_texture();
+
+    cube_def(42, SolidBlock, "ruins_3");
+    iso_texture(t5,1,3);
+    push_texture();
+
+    cube_def(43, SolidBlock, "ruins_4");
+    iso_texture(t5,1,4);
+    push_texture();
+
+    cube_def(44, SolidBlock, "ruins_5"); 
+    iso_texture(t5,2,1);
+    push_texture();
 
 
     // random textures from cell to fill the block placer
