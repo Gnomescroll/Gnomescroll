@@ -29,6 +29,8 @@ void open_file(const char* file);
 void open_token_page();
 void open_login_page();
 
+bool url_is_whitelisted(const char* url);
+
 awe_string* get_awe_string(const char* _str);
 char* get_str_from_awe(const awe_string* str);
 

@@ -74,11 +74,19 @@ void finish_loading_cb(awe_webview* webView)
 awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request)
 {
     printf("Resource request callback triggered\n");
-    awe_string* _url = awe_webview_get_url(webView);
+    awe_string* _url = awe_resource_request_get_url(request);
     char* url = get_str_from_awe(_url);
-    printf("URL on webView is: %s\n", url);
+    awe_string_destroy(_url);
+
+    printf("URL: %s\n", url);
+    // stop responses here
+    if (!url_is_whitelisted(url))
+    {
+        awe_resource_request_cancel(request);
+        printf("Blocked request to %s\n", url);
+    }
     free(url);
-    printf("\n");
+
     return NULL;
 }
 
@@ -107,7 +115,7 @@ void ChromeViewport::set_callbacks()
     awe_webview_set_callback_begin_loading(this->webView, &begin_loading_cb);
     awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
     //awe_webview_set_callback_resource_response(this->webView, &resource_response_cb);
-    //awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
+    awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
     awe_webview_set_callback_web_view_crashed(this->webView, &web_view_crashed_cb);
 }
 

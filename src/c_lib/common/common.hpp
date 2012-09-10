@@ -84,3 +84,17 @@ inline bool is_strict_char(const char c)
 {
     return (c >= 33 && c <= 126);
 }
+
+bool str_starts_with(const char* str, const char* match)
+{
+    if (match[0] == '\0') return true;
+    int i=0;
+    char c = '\0';
+    char d = '\0';
+    while ((c = str[i]) != '\0' && (d = match[i]) != '\0')
+    {
+        if (c != d) return false;
+        i++;
+    }
+    return (match[i] == '\0');
+}

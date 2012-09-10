@@ -24,7 +24,6 @@ namespace Awesomium
 class ChromeViewport* cv = NULL;
 class ViewportManager* viewport_manager = NULL;
 
-
 void handle_mouse_event(int x, int y, int button, int event_type)
 {
     viewport_manager->handle_mouse_event(x,y,button,event_type);
@@ -63,10 +62,41 @@ char* get_str_from_awe(const awe_string* str)
     return dest;
 }
 
+bool url_is_whitelisted(const char* url)
+{
+    if (str_starts_with(url, "file://"))
+        return true;
+    if (str_starts_with(url, "http://127.0.0.1"))
+        return true;
+    if (str_starts_with(url, "https://127.0.0.1"))
+        return true;
+    if (str_starts_with(url, "http://gnomescroll.com"))
+        return true;
+    if (str_starts_with(url, "https://gnomescroll.com"))
+        return true;
+    if (str_starts_with(url, "http://www.gnomescroll.com"))
+        return true;
+    if (str_starts_with(url, "https://www.gnomescroll.com"))
+        return true;
+    if (str_starts_with(url, "http://wiki.gnomescroll.com"))
+        return true;
+    if (str_starts_with(url, "https://wiki.gnomescroll.com"))
+        return true;
+    if (str_starts_with(url, "http://blog.gnomescroll.com"))
+        return true;
+    if (str_starts_with(url, "https://blog.gnomescroll.com"))
+        return true;
+    if (strcmp(url, "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js") == 0)
+        return true;
+    if (strcmp(url, "http://www.google-analytics.com/ga.js") == 0)
+        return true;
+    return false;
+}
+
 void init()
 {
     printf("Awesomium::init\n");
-    
+
     #ifndef linux
     // TODO -- non default initializer
     awe_webcore_initialize_default();
@@ -110,7 +140,7 @@ void init()
         awe_string_empty(),
         true,
         0,
-        false, 
+        true,  // disable same origin policy. we need this disable to do ajax request from local to webserver
         false,
         awe_string_empty()
     );
@@ -134,6 +164,13 @@ void init()
     viewport_manager->add_viewport(cv);
 }
 
+void teardown()
+{
+    if (cv != NULL) delete cv; 
+    if (viewport_manager != NULL) delete viewport_manager; 
+    awe_webcore_shutdown();
+}
+
 void delete_all_cookies()
 {
     awe_webcore_clear_cookies();
@@ -151,13 +188,6 @@ void delete_cookie(const char* name)
 void delete_auth_token_cookie()
 {
     delete_cookie(Auth::AUTH_TOKEN_COOKIE_NAME);
-}
-
-void teardown()
-{
-    if (cv != NULL) delete cv; 
-    if (viewport_manager != NULL) delete viewport_manager; 
-    awe_webcore_shutdown();
 }
 
 void open_url(const char* url)
