@@ -868,6 +868,8 @@ class BodyPartMesh
 
 class BodyMesh
 {
+    public:
+
     class BodyPartMesh* ml; //body part mesh list
     int mlm;                 //body part mesh list max
 /*
@@ -1008,7 +1010,7 @@ class BodyMesh
 };
 
 
-class ModelLoader model_loader;
+class ModelLoader* model_loader;
 class BodyMesh* body_mesh;
 
 
@@ -1040,10 +1042,11 @@ void init()
     //bt = new BoneTree;
     //bt->init( (aiScene*) pScene);
     model_loader = new ModelLoader;
-    model_loader->init(pScene);
+    model_loader->init((aiScene*) pScene);
 
     body_mesh = new BodyMesh;
-    body_load(model_loader)
+    body_mesh->load(model_loader);
+    
 }
 
 
