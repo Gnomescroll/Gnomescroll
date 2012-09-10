@@ -28,6 +28,9 @@ extern "C"
 namespace t_mob
 {
 
+void init_body_mesh();
+void draw_body_mesh();
+
 class BoneTree
 {
     public:
@@ -1134,6 +1137,7 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
 
     class BoneTree* bt;
 
+#if 0
 void init()
 {
     /*
@@ -1215,5 +1219,7 @@ void teardown()
 {
     if (bt != NULL) delete bt;
 }
+
+#endif
 
 }

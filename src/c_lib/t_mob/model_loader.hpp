@@ -915,7 +915,6 @@ class BodyMesh
         if(bone_mOffsetMatrix != NULL) delete[] bone_mOffsetMatrix;
         if(bpl != NULL) delete[] bpl;
 
-
         if(tbone_matrix != NULL) delete[] tbone_matrix;
         if(tnode_matrix != NULL) delete[] tnode_matrix;
     }
@@ -1007,6 +1006,60 @@ class BodyMesh
 
 
 };
+
+
+class ModelLoader model_loader;
+class BodyMesh* body_mesh;
+
+
+void init()
+{
+
+    int bsize;
+    char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
+    GS_ASSERT(buffer != NULL);
+    if (buffer == NULL) return;
+    
+    int aFlag = aiProcess_Triangulate | 
+    //aiProcess_GenUVCoords | 
+    //aiProcess_TransformUVCoords |
+    aiProcess_ValidateDataStructure;// |
+    //aiProcess_RemoveComponent; //strip components on
+
+    char* aHint = NULL;
+    aiPropertyStore* property_store = aiCreatePropertyStore();
+    int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS;
+
+    aiSetImportPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
+    //const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+    const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
+    free(buffer);
+    aiReleasePropertyStore(property_store);
+
+
+    //bt = new BoneTree;
+    //bt->init( (aiScene*) pScene);
+    model_loader = new ModelLoader;
+    model_loader->init(pScene);
+
+    body_mesh = new BodyMesh;
+    body_load(model_loader)
+}
+
+
+void draw()
+{
+
+
+}
+
+void teardown()
+{
+if(model_loader != NULL) delete model_loader;
+if(body_mesh != NULL) delete body_mesh;
+
+}
+
 
 #if 0
         for(unsigned int j=0; j<mesh->mNumBones; j++)
