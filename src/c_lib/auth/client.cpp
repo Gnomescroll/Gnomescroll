@@ -78,7 +78,7 @@ void check_expiring_token()
          && expiration_attempts < MAX_AUTH_TOKEN_RETRIES
          && !refreshing_token)
         {
-            Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+            Awesomium::open_token_page();
             refreshing_token = true;
             Hud::set_error_status(GS_ERROR_REAUTHORIZING);
             expiration_attempts++;
@@ -114,7 +114,7 @@ void begin_auth()
     // navigate to token url
     // it will lead the user to login if need be; then redirect to token again
     // an awesomium callback will catch the cookie
-    Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+    Awesomium::open_token_page();
 }
 
 AuthError update_token(char* token)
@@ -153,7 +153,7 @@ void token_was_denied()
         disable_awesomium();
         return;
     }
-    Awesomium::open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+    Awesomium::open_token_page();
     authorized = false;
     Hud::set_error_status(GS_ERROR_AUTH_FAILED);
     if (token_retries == 0) printf("Token denied\n");

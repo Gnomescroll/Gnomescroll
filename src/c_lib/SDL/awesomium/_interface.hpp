@@ -25,6 +25,9 @@ void SDL_keyboard_event(const SDL_Event* event);
 void SDL_mouse_event(const SDL_Event* event);
 
 void open_url(const char* url);
+void open_file(const char* file);
+void open_token_page();
+void open_login_page();
 
 awe_string* get_awe_string(const char* _str);
 char* get_str_from_awe(const awe_string* str);

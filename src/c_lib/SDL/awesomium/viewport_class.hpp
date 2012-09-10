@@ -45,29 +45,44 @@ class ChromeViewport
 
         this->set_callbacks();
 
-        this->load_first_url();
+        this->load_first_page();
     }
 
     void set_callbacks();
 
-    void load_first_url()
+    void load_first_page()
     {
-        this->load_url(GNOMESCROLL_URL);
+        //this->load_url(GNOMESCROLL_URL);
+        this->load_file(GNOMESCROLL_LOGIN_HTML);
     }
 
-    void load_url(const char* url)
+    void load_url(const char* _url)
     {
-        awe_string* a_url = get_awe_string(url);
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
 
+        awe_string* url = get_awe_string(_url);
         awe_webview_load_url(
             this->webView,
-            a_url,  // url
+            url,  // url
             awe_string_empty(), // frame name
             awe_string_empty(), // username
             awe_string_empty()  // password
         );
+        awe_string_destroy(url);
+    }
 
-        awe_string_destroy(a_url);
+    void load_file(const char* _file)
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+        awe_string* file = get_awe_string(_file);
+        awe_webview_load_file(
+            this->webView,
+            file,               // filename
+            awe_string_empty()  // frame name
+        );
+        awe_string_destroy(file);
     }
 
     ~ChromeViewport()

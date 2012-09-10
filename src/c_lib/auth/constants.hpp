@@ -26,6 +26,7 @@ typedef enum
 
 // Switch to gnomescroll.com when site is live
 #define GNOMESCROLL_URL "http://127.0.0.1:5002"
+#define GNOMESCROLL_LOGIN_HTML "./media/web/html/login.html"
 
 #define GNOMESCROLL_LOGIN_PATH "/login"
 #define GNOMESCROLL_TOKEN_PATH "/token"

@@ -121,6 +121,10 @@ void init()
     awe_string_destroy(user_agent);
     #endif
 
+    const char _curdir[] = ".";
+    awe_string* curdir = get_awe_string(_curdir);
+    awe_webcore_set_base_directory(curdir);
+    awe_string_destroy(curdir);
 
     GS_ASSERT(cv == NULL);
     GS_ASSERT(viewport_manager == NULL);
@@ -161,6 +165,23 @@ void open_url(const char* url)
     GS_ASSERT_LIMIT(cv != NULL, 1);
     if (cv == NULL) return;
     cv->load_url(url);
+}
+
+void open_file(const char* file)
+{
+    GS_ASSERT_LIMIT(cv != NULL, 1);
+    if (cv == NULL) return;
+    cv->load_file(file);
+}
+
+void open_token_page()
+{
+    open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+}
+
+void open_login_page()
+{
+    open_file(GNOMESCROLL_LOGIN_HTML);
 }
 
 void SDL_keyboard_event(const SDL_Event* event)
