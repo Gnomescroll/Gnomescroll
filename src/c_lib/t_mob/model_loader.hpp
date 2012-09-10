@@ -422,13 +422,13 @@ class ModelLoader
                 
                 bnl[bone_count].name = copy_string(bone->mName.data);
                 bnl[bone_count].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
-                bnl[bone_count].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                bnl[bone_count].parent_node =  FindNodeByName(bone->mName.data);
                 bnl[bone_count].parent_index = -1;
 
                 bone_count++;    
             }
         }
-        GS_ASSERT(bcount == bnlm);
+        GS_ASSERT(bone_count == bnlm);
     }
 
 
@@ -517,13 +517,20 @@ class ModelLoader
                 _nl[node_count].cn              = 0;
                 _nl[node_count].index           = -1;
 
+
                 if( strcmp(tempNode->mName.data, "Armature") == 0 )
                 {
                     _nl[node_count].p = NULL;
+                    node_count++;
                     break;
                 }
+                node_count++;
                 if(tempNode == NULL)
+                {
+                    GS_ASSERT(false);
                     break;
+                }
+
                 tempNode = tempNode->mParent;
             }
         }
@@ -632,10 +639,15 @@ class ModelLoader
                 return tmp;
         }
 
-        GS_ASSERT(false);
         return NULL;
     }
 
+    aiNode* FindNodeByName(char* node_name)
+    {
+        aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, node_name);
+        GS_ASSERT(node != NULL);
+        return node;
+    }
 
     static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
     {
