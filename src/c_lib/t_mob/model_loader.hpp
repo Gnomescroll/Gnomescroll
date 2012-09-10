@@ -79,6 +79,8 @@ class ModelLoader
         nl = NULL;
         _ml = NULL;
         _nl = NULL;
+
+        bnl = NULL;
     }
     
     ~ModelLoader()
@@ -104,17 +106,18 @@ class ModelLoader
         count_nodes(pScene->mRootNode); //count the nodes with meshes
         nlm = nli;
         
-        //nl = new aiNode*[nlm];
-
+        nl = new aiNode*[nlm];
         for(int i=0; i<nlm; i++) nl[i] = NULL;
 
         nli = 0;
         set_node_parents(pScene->mRootNode);
 
-        initialize_meshes();
+        initialize_meshes1();
 
         init_bone_list();
         init_node_list();
+
+        initialize_meshes2();
 
     }
 
@@ -164,7 +167,7 @@ class ModelLoader
     struct _Mesh* _ml;
     int _mlm;
 
-    void initialize_meshes()
+    void initialize_meshes1()
     {
 
         int mesh_count = 0;
@@ -179,7 +182,11 @@ class ModelLoader
 
         _mlm = mesh_count;
         _ml = new struct _Mesh[_mlm];
+        
+        //for(int i=0; i<_mlm; i++)
+        //    _ml[i] = NULL;
 
+        mesh_count = 0;
         for(int i=0; i<nlm; i++)
         {
             aiNode* node = nl[i];
@@ -191,6 +198,7 @@ class ModelLoader
                 mesh_count++;
             }
         }
+        printf("init_mesh: mesh_count= %i node_count= %i \n", mesh_count, nlm);
 
         //set vertex base array
         for(int i=0; i<_mlm; i++)
@@ -269,6 +277,11 @@ class ModelLoader
             _ml[i].vwl = new _VertexWeight[index];
         }
 
+    }
+
+    //needs bone list done first
+    void initialize_meshes2()
+    {
         for(int i=0; i<_mlm; i++)
         {
             int index = 0;
@@ -285,7 +298,6 @@ class ModelLoader
                     index++;
                 }
             }
-
         }
 
     }
@@ -385,6 +397,7 @@ class ModelLoader
             }
         }
 
+        printf("init_bone_list: bone_count= %i _bone_count= %i \n", bone_count, _bone_count);
         //set bone list
         bnlm = bone_count;
         bnl = new BoneNode[bnlm];
@@ -611,6 +624,7 @@ class ModelLoader
                 return tmp;
         }
 
+        GS_ASSERT(false);
         return NULL;
     }
 
@@ -1046,7 +1060,7 @@ void init()
 
     body_mesh = new BodyMesh;
     body_mesh->load(model_loader);
-    
+
 }
 
 
