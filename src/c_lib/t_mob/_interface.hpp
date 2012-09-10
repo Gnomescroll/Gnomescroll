@@ -28,8 +28,9 @@ extern "C"
 namespace t_mob
 {
 
-void init_body_mesh();
-void draw_body_mesh();
+void init();
+void draw();
+void teardown();
 
 class BoneTree
 {
