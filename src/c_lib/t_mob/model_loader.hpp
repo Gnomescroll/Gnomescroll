@@ -409,29 +409,26 @@ class ModelLoader
         }
 
         //populate bone list
-        int bcount = 0;
+        bone_count = 0;
         for(int i=0; i<_mlm; i++)
         {
             aiMesh* mesh = _ml[i].mesh;
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
-                
-                for(int k=0; k<bcount;k++)
-                {
-                    if( bone_in_list(bone, bone_count) == true )
-                        continue;
-                    
-                    bnl[bcount].name = copy_string(bone->mName.data);
-                    bnl[bcount].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
-                    bnl[bcount].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
-                    bnl[bcount].parent_index = -1;
 
-                    bcount++;    
-                }
+                if( bone_in_list(bone, bone_count) == true )
+                    continue;
+                
+                bnl[bone_count].name = copy_string(bone->mName.data);
+                bnl[bone_count].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                bnl[bone_count].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
+                bnl[bone_count].parent_index = -1;
+
+                bone_count++;    
             }
         }
-
+        GS_ASSERT(bcount == bnlm);
     }
 
 
@@ -479,6 +476,17 @@ class ModelLoader
         for(int i=0; i<node->cn; i++)
             _set_node_index(index, node->c[i] );
     }
+
+/*
+    set_node_parents(pScene->mRootNode);
+
+    initialize_meshes1();
+
+    init_bone_list();
+    init_node_list();
+
+    initialize_meshes2();
+*/
 
     //populate node list
     void init_node_list()
