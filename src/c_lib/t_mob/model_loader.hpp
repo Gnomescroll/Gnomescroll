@@ -607,11 +607,11 @@ class ModelLoader
                 GS_ASSERT( _nl[i].p == NULL);
                 continue;
             }
-            GS_ASSERT(_nl[i].index < _nl[i].p->index && _nl[i].index != -1);
-
-            if(_nl[i].index >= _nl[i].p->index || _nl[i].index == -1)
+            else
             {
-                printf("ERROR: index= %d parent_index= %d node_name= %s \n", _nl[i].index, _nl[i].p->index, _nl[i].name );
+                GS_ASSERT( (_nl[i].index < _nl[i].p->index && _nl[i].index != -1) || _nl[i].p->index );
+                if( (_nl[i].index >= _nl[i].p->index || _nl[i].index == -1) )
+                    printf("ERROR: index= %d parent_index= %d node_name= %s \n", _nl[i].index, _nl[i].p->index, _nl[i].name );
             }
         }
 
