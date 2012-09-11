@@ -86,35 +86,35 @@ void start_dungeon_generator()
 	//// setup room settings
 	////			todo: replace all numerous occurrences of "rooms[y][x]" with a one letter placeholder for neatness? 
 	//for (int x = 0; x < rooms_across_ruins; x++) {
- //   for (int y = 0; y < rooms_across_ruins; y++) {
- //       rooms[y][x].wid = randrange(cubes_going_up, cubes_across_room);
- //       rooms[y][x].dep = randrange(cubes_going_up, cubes_across_room);
- //       rooms[y][x].hei = randrange(cubes_going_up, cubes_across_room);
- //       int malleable_x_span /* (room) */ = rooms[y][x].wid - 2 /* shell of 2 walls */ - min_lip * 2;
- //       int malleable_y_span /* (room) */ = rooms[y][x].dep - 2 /* shell of 2 walls */ - min_lip * 2;
- //       rooms[y][x].x_offs = randrange(0, cubes_across_room - rooms[y][x].wid);
- //       rooms[y][x].y_offs = cubes_across_room - rooms[y][x].dep;
- //       rooms[y][x].e_hall_wid = randrange(2 /* min width */, malleable_y_span);
- //       rooms[y][x].e_hall_offs = rooms[y][x].y_offs + min_lip + 1 + randrange(0, malleable_y_span - rooms[y][x].e_hall_wid);
- //       rooms[y][x].n_hall_wid = randrange(2 /* min width */, malleable_x_span);
- //       rooms[y][x].n_hall_offs = rooms[y][x].x_offs + min_lip + 1 + randrange(0, malleable_x_span - rooms[y][x].n_hall_wid);
- //   }
- //   }
+    //for (int y = 0; y < rooms_across_ruins; y++) {
+    //    rooms[y][x].wid = randrange(cubes_going_up, cubes_across_room);
+    //    rooms[y][x].dep = randrange(cubes_going_up, cubes_across_room);
+    //    rooms[y][x].hei = randrange(cubes_going_up, cubes_across_room);
+    //    int malleable_x_span /* (room) */ = rooms[y][x].wid - 2 /* shell of 2 walls */ - min_lip * 2;
+    //    int malleable_y_span /* (room) */ = rooms[y][x].dep - 2 /* shell of 2 walls */ - min_lip * 2;
+    //    rooms[y][x].x_offs = randrange(0, cubes_across_room - rooms[y][x].wid);
+    //    rooms[y][x].y_offs = cubes_across_room - rooms[y][x].dep;
+    //    rooms[y][x].e_hall_wid = randrange(2 /* min width */, malleable_y_span);
+    //    rooms[y][x].e_hall_offs = rooms[y][x].y_offs + min_lip + 1 + randrange(0, malleable_y_span - rooms[y][x].e_hall_wid);
+    //    rooms[y][x].n_hall_wid = randrange(2 /* min width */, malleable_x_span);
+    //    rooms[y][x].n_hall_offs = rooms[y][x].x_offs + min_lip + 1 + randrange(0, malleable_x_span - rooms[y][x].n_hall_wid);
+    //}
+    //}
 
 	// make rooms
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-		int wall_block = randrange(31, 44);
-		int floor_block = randrange(31, 44);
-		int ceil_block = randrange(31, 44);
+		int wall_block = randrange(32, 44);
+		int floor_block = randrange(32, 44);
+		int ceil_block = randrange(32, 44);
 
 		//floor
-		set_region(
-			rx * cubes_across_room,
-			ry * cubes_across_room,
-			rz * cubes_going_up + 3,
-			cubes_across_room, cubes_across_room, 1, floor_block);
+		//set_region(
+		//	rx * cubes_across_room,
+		//	ry * cubes_across_room,
+		//	rz * cubes_going_up + 3,
+		//	cubes_across_room, cubes_across_room, 1, floor_block);
 		// ceiling
 		set_region(
 			rx * cubes_across_room,
@@ -125,7 +125,7 @@ void start_dungeon_generator()
 		set_region(
 			6 + rx * cubes_across_room,
 			7 + ry * cubes_across_room,
-			rz * cubes_going_up + 3,
+			rz * cubes_going_up + 3 + cubes_going_up,
 			4, 2, 1, 0);
 
 		// make walls and clear out airspace

@@ -284,7 +284,7 @@ void load_block_dat()
     iso_texture(t5,1,4);
     push_texture();
 
-    cube_def(44, SolidBlock, "ruins_5"); 
+    cube_def(44, SolidBlock, "ruins_5"); // this is really just a placeholder template (you'd only wanna keep the edge/frame)
     iso_texture(t5,2,1);
     push_texture();
 
