@@ -19,7 +19,8 @@ void set_error_status(GSError err);
 void set_hud_fps_display(float fps_val);
 void init_hud_draw_settings();
 void update_hud_draw_settings();
-void draw_hud();
+void draw();
+void draw_error_status();
 
 //harvest_bar.hpp
 void start_harvest_bar();

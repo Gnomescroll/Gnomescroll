@@ -25,14 +25,24 @@ typedef enum
  */
 
 // Switch to gnomescroll.com when site is live
+#if PRODUCTION
+#define GNOMESCROLL_URL "http://gnomescroll.com"
+#else
 #define GNOMESCROLL_URL "http://127.0.0.1:5002"
+#endif
+
 #define GNOMESCROLL_LOGIN_HTML "./media/web/html/login.html"
 
-#define GNOMESCROLL_LOGIN_PATH "/login"
-#define GNOMESCROLL_TOKEN_PATH "/token"
+#define GNOMESCROLL_CREATE_PATH "/create"
+#define GNOMESCROLL_LOGIN_PATH  "/login"
+#define GNOMESCROLL_TOKEN_PATH  "/token"
+
+#define GNOMESCROLL_CREATE_URL GNOMESCROLL_URL GNOMESCROLL_CREATE_PATH
+#define GNOMESCROLL_LOGIN_URL  GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH
+#define GNOMESCROLL_TOKEN_URL  GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH
 
 const int MAX_AUTH_TOKEN_RETRIES = 10;
-const int AUTH_TOKEN_RETRY_WAIT = 5 * 30;   // wait 5 seconds between each attempt to get a new token
+const int AUTH_TOKEN_RETRY_WAIT = 10 * 30;   // wait 5 seconds between each attempt to get a new token
 const int AUTH_MAX_CLIENT_ATTEMPTS = 15;
 
 const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";    // name of the cookie value set by the auth server

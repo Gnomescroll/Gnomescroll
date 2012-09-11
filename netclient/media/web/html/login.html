@@ -26,17 +26,13 @@ Log In
     </div>
 </div>
 
-
-
-
-
   <div class="container">
     <div class="row">
       <div class="span6 offset3">
         <div class="page-header">
           <h1>Log In</h1>
         </div>
-        <form class="form-horizontal", method="POST">
+        <form class="form-horizontal" id="login" method="POST">
             <div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value="None"></div>
 
             <fieldset>
@@ -46,8 +42,7 @@ Log In
     <input type="text" class="input-xlarge" id="username_or_email" name="username_or_email" value="">
     <p class="help-block">Please enter your username or email.</p>
   </div>
-    <div class="errors"></div>
-    </ul>
+    <div id="username_or_email" class="errors"></div>
 </div>
             <div class="control-group">
   <label class="control-label" for="password">Password</label>
@@ -55,8 +50,7 @@ Log In
     <input type="password" class="input-xlarge" id="password" name="password">
     <p class="help-block">Please enter your password.</p>
   </div>
-    <div class="errors"></div>
-    </ul>
+    <div id="password" class="errors"></div>
 </div>
             <div class="control-group">
   <div class="controls">
@@ -65,8 +59,7 @@ Log In
     Remember me.
   </label>
   </div>
-    <div class="errors"></div>
-    </ul>
+    <div id="remember_me" class="errors"></div>
 </div>
 
             <div class="form-actions">
@@ -81,7 +74,7 @@ Log In
     <div class="container">
               <div class="span6 offset3">
         <p>
-        or <a href="/create">create an account</a>  
+        or <a id="create" href="">create an account</a>  
         </p>
     </div>
     </div>
@@ -90,9 +83,7 @@ Log In
 
 </body>
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="../js/jquery-1.7.1.min.js"><\/script>')</script>
-
+  <script src="../js/jquery-1.7.1.min.js"></script>
   <script src="../js/bootstrap.min.js"></script>
-
+  <script src="../js/login.js"</script>
 </html>

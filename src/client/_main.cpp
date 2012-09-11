@@ -139,6 +139,8 @@ int physics_tick()
 
         ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
 
+        Auth::check_expiring_token();   // put it in the physics tick because i want a fixed time counter
+
         _SET_LAST_TICK();
     }
 
@@ -395,8 +397,8 @@ int run()
             // draw hud
             Hud::set_hud_fps_display(fps_value);
             Hud::update_hud_draw_settings();
-            Hud::draw_hud();
-            t_hud::draw_hud();
+            Hud::draw();
+            t_hud::draw();
 
             //Hud::draw_harvest_bar(400,400);
 
@@ -411,6 +413,9 @@ int run()
 
             if (input_state.vbo_debug)
                 t_map::draw_vbo_debug(400, 400);
+
+            Hud::draw_error_status();
+            
             CHECK_GL_ERROR();  //check error after hud rendering
         }
 
@@ -488,8 +493,6 @@ int run()
 
         // update mouse
         poll_mouse();
-
-        Auth::check_expiring_token();
 
         ClientState::frame_id += 1;
     }

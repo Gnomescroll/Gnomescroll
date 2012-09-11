@@ -69,7 +69,6 @@ static struct HudDrawSettings
     bool zoom;
     bool cube_selector;
     bool help;
-    bool connected;
     bool dead;
     float fps_val;
     int ping_val;
@@ -115,8 +114,7 @@ void update_hud_draw_settings()
     if (hud_draw_settings.help) hud_draw_settings.press_help = false;   // clear this after opening help once
 
     hud_draw_settings.dead = (
-           hud_draw_settings.connected
-        && ClientState::playerAgent_state.you != NULL
+            ClientState::playerAgent_state.you != NULL
         && ClientState::playerAgent_state.you->status.dead
     );
 
@@ -181,8 +179,6 @@ void draw_hud_textures()
 {
     if (!hud_draw_settings.draw) return;
 
-    if (!hud_draw_settings.connected) return;
-
     if (hud_draw_settings.zoom)
     {
         HudReticle::scope_reticle.draw();
@@ -212,6 +208,7 @@ void draw_hud_text()
 {
     if (!hud->inited) return;
     if (!hud_draw_settings.draw) return;
+    if (has_error()) return;
 
     start_font_draw();
 
@@ -219,18 +216,6 @@ void draw_hud_text()
     const int large_text_size = 32;
     HudFont::set_properties(large_text_size);
     set_texture();
-
-    if (has_error())
-    {
-        update_error_text(hud->error);
-        hud->error->draw_centered();
-        hud->error_subtitle->set_position(hud->error_subtitle->x, hud->error->y - hud->error->get_height()*2);
-        HudFont::reset_default();
-        set_texture();
-        hud->error_subtitle->draw_centered();
-        end_font_draw();
-        return;
-    }
 
     if (hud_draw_settings.confirm_quit)
         hud->confirm_quit->draw_centered();

@@ -30,6 +30,16 @@ struct chromeDisplay {
     (could not get redirect response measured in any callback)
 */
 
+void js_console_message_callback(awe_webview *webView, const awe_string *_message, int line_number, const awe_string *_source)
+{
+    char* source = get_str_from_awe(_source);
+    char* message = get_str_from_awe(_message);
+    printf("console.log: %s:%d\n", source, line_number);
+    printf("%s\n", message); 
+    free(message);
+    free(source);
+}
+
 void begin_navigation_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name)
 {
     // this callback triggers after a url is opened with open_url
@@ -63,17 +73,17 @@ void finish_loading_cb(awe_webview* webView)
 {
     awe_string* _url = awe_webview_get_url(webView);
     char* url = get_str_from_awe(_url);
-    printf("Finished loading %s\n", url);
-    if (strstr(url, GNOMESCROLL_LOGIN_PATH) != NULL)
+    if (str_starts_with(url, GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH))
     {   // login page loaded; force show awesomium window
         enable_awesomium();
+        Auth::needs_login = true;
+        Hud::set_error_status(GS_ERROR_NEEDS_LOGIN);
     }
     free(url);
 }
 
 awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request)
 {
-    printf("Resource request callback triggered\n");
     awe_string* _url = awe_resource_request_get_url(request);
     char* url = get_str_from_awe(_url);
     awe_string_destroy(_url);
@@ -107,6 +117,56 @@ void web_view_crashed_cb(awe_webview* webView)
 {
     if (cv != NULL) cv->crashed = true;
     printf("Webview crashed\n");
+}
+
+void js_set_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    printf("set error\n");
+    const awe_jsvalue* verror = awe_jsarray_get_element(_args, 0);
+    GS_ASSERT(verror != NULL);
+    if (verror == NULL) return;
+    
+    awe_string* _error = awe_jsvalue_to_string(verror);
+    char* error = get_str_from_awe(_error);
+    printf("error: %s\n", error);
+    awe_string_destroy(_error);
+    free(error);
+}
+
+void js_unset_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    printf("unset error\n");
+}
+
+void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    printf("set token\n");
+    const awe_jsvalue* vtoken = awe_jsarray_get_element(_args, 0);
+    GS_ASSERT(vtoken != NULL);
+    if (vtoken == NULL) return;
+
+    awe_string* _token = awe_jsvalue_to_string(vtoken);
+    char* token = get_str_from_awe(_token);
+    Auth::AuthError error = Auth::update_token(token);
+    GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
+    awe_string_destroy(_token);
+    free(token);
+}
+
+void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    char* cb = get_str_from_awe(_cb_name);
+    if (strcmp(cb, JS_CB_SET_ERROR_NAME) == 0)
+        js_set_error_callback(webView, _obj_name, _cb_name, _args);
+    else
+    if (strcmp(cb, JS_CB_UNSET_ERROR_NAME) == 0)
+        js_unset_error_callback(webView, _obj_name, _cb_name, _args);
+    else
+    if (strcmp(cb, JS_CB_SET_TOKEN_NAME) == 0)
+        js_set_token_callback(webView, _obj_name, _cb_name, _args);
+    else
+        printf("Unhandled javascript callback triggered: %s\n", cb);
+    free(cb);
 }
 
 void ChromeViewport::set_callbacks()

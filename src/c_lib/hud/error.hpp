@@ -15,6 +15,8 @@ typedef enum
     GS_ERROR_AUTH_FAILED,
     GS_ERROR_AUTH_NOT_AVAILABLE,
 
+    GS_ERROR_NEEDS_LOGIN,
+
     GS_ERROR_VERSION_MISMATCH,  // highest priority
 } GSError;
 
@@ -26,6 +28,7 @@ static const char was_disconnected_msg[] = "Disconnected by server";
 static const char reauth_msg[] = "Reauthorizing...";
 static const char auth_failed_msg[] = "Authorization failed";
 static const char auth_na_msg[] = "Login server not available";
+static const char needs_login_msg[] = "Login required to continue";
 static const char version_mismatch_msg[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
 
 const unsigned int N_GSERRORS = 7;
@@ -84,6 +87,8 @@ bool update_error_text(class HudText::Text* t)
         t->set_text(auth_failed_msg);
     else if (err == GS_ERROR_AUTH_NOT_AVAILABLE)
         t->set_text(auth_na_msg);
+    else if (err == GS_ERROR_NEEDS_LOGIN)
+        t->set_text(needs_login_msg);
     else if (err == GS_ERROR_VERSION_MISMATCH)
         t->set_text(version_mismatch_msg);
     else

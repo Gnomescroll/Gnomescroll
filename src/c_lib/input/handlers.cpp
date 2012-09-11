@@ -168,6 +168,7 @@ void toggle_admin_controls()
 void disable_awesomium()
 {
     if (!input_state.awesomium) return;
+    printf("disable awesomium\n");
     input_state.awesomium = false;
     input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
@@ -177,7 +178,7 @@ void disable_awesomium()
 void enable_awesomium()
 {
     if (input_state.awesomium) return;
-    
+    printf("enable awesomium\n");
     input_state.awesomium = true;
     input_state.rebind_mouse = input_state.mouse_bound;
     input_state.mouse_bound = false;
@@ -346,7 +347,6 @@ void update_input_state()
         disable_agent_container();
         disable_container_block();
         disable_chat();
-        disable_awesomium();
     }
 }
 

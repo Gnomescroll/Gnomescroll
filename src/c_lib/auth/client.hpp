@@ -14,6 +14,8 @@ extern char* auth_token_hash;
 extern char* auth_token_username;
 
 extern bool authorized;
+extern bool needs_login;
+extern bool refreshing_token;
 
 bool send_auth_token(); // returns true if token was sent
 bool send_auth_token(const char* token); // returns true if token was sent

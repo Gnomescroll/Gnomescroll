@@ -17,6 +17,7 @@ char* auth_token_username = NULL;
 static int token_retries = 0;
 
 bool authorized = false;
+bool needs_login = false;
 bool refreshing_token = false;
 
 bool send_auth_token()
@@ -71,30 +72,34 @@ void check_expiring_token()
     static int expiration_tick = 0;
     static int expiration_attempts = 0;
     if (auth_token == NULL) return;
-    if (auth_token_expiring(auth_token_timestamp))
-    {
-        expiration_tick++;
-        if (expiration_tick % AUTH_TOKEN_RETRY_WAIT == 0
-         && expiration_attempts < MAX_AUTH_TOKEN_RETRIES
-         && !refreshing_token)
+    if (!needs_login)
+    {   // only attempt the token navigation if we dont think we need to login
+        // otherwise it will reload the login page while they should be using it
+        if (auth_token_expiring(auth_token_timestamp))
         {
-            Awesomium::open_token_page();
-            refreshing_token = true;
-            Hud::set_error_status(GS_ERROR_REAUTHORIZING);
-            expiration_attempts++;
+            expiration_tick++;
+            if (expiration_tick % AUTH_TOKEN_RETRY_WAIT == 0
+             && expiration_attempts < MAX_AUTH_TOKEN_RETRIES
+             && !refreshing_token)
+            {
+                Awesomium::open_token_page();
+                refreshing_token = true;
+                Hud::set_error_status(GS_ERROR_REAUTHORIZING);
+                expiration_attempts++;
+            }
+            else
+            {   // set error message
+                if (expiration_attempts >= MAX_AUTH_TOKEN_RETRIES)
+                    Hud::set_error_status(GS_ERROR_AUTH_FAILED);
+            }
         }
         else
-        {   // set error message
-            if (expiration_attempts >= MAX_AUTH_TOKEN_RETRIES)
-                Hud::set_error_status(GS_ERROR_AUTH_FAILED);
+        {
+            expiration_attempts = 0;
+            expiration_tick = 0;
         }
     }
-    else
-    {
-        expiration_attempts = 0;
-        expiration_tick = 0;
-    }
-
+    
     if (authorized && expiration_attempts < MAX_AUTH_TOKEN_RETRIES)
         Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
 }
@@ -138,9 +143,11 @@ AuthError update_token(char* token)
 
 void token_was_accepted()
 {
-    disable_awesomium(); // hide awesomium
+    //disable_awesomium(); // hide awesomium
     token_retries = 0;   // reset retry counter
     authorized = true;
+    needs_login = false;
+    Hud::unset_error_status(GS_ERROR_NEEDS_LOGIN);
     Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
     Hud::unset_error_status(GS_ERROR_REAUTHORIZING);
     printf("Token accepted\n");
@@ -150,7 +157,7 @@ void token_was_denied()
 {   // request new token from auth server
     if (token_retries >= MAX_AUTH_TOKEN_RETRIES)
     {
-        disable_awesomium();
+        //disable_awesomium();
         return;
     }
     Awesomium::open_token_page();

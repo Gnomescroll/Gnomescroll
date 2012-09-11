@@ -7,6 +7,18 @@
 namespace Awesomium
 {
 
+const char JS_OBJ_NAME[] = "Gnomescroll";
+const char JS_OBJ_CREATE_URL_NAME[] = "create_url";
+const char JS_OBJ_LOGIN_URL_NAME[] = "login_url";
+const char JS_OBJ_LOGIN_ERROR_NAME[] = "login_error";
+const char JS_OBJ_GAME_TOKEN_NAME[] = "gstoken";
+const char JS_OBJ_DEBUG_NAME[] = "DEBUG";
+const char JS_OBJ_TOKEN_NAME_NAME[] = "token_name";
+
+const char JS_CB_SET_ERROR_NAME[] = "set_error";
+const char JS_CB_UNSET_ERROR_NAME[] = "clear_error";
+const char JS_CB_SET_TOKEN_NAME[] = "set_token";
+
 int getWebKeyFromSDLKey(SDLKey key);
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event);
 
@@ -16,6 +28,15 @@ void finish_loading_cb(awe_webview* webView);
 awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request);
 void resource_response_cb(awe_webview* webView, const awe_string* _url, int status_code, bool was_cached, int64 request_time_ms, int64 response_time_ms, int64 expected_content_size, const awe_string *_mime_type);
 void web_view_crashed_cb(awe_webview* webView);
+void js_console_message_callback(awe_webview *webView, const awe_string *message, int line_number, const awe_string *source);
+
+// main handler that routes to other callbacks
+void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+
+// specific callbacks
+void js_set_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+void js_unset_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
 
 class ChromeViewport
 {
@@ -28,12 +49,14 @@ class ChromeViewport
         bool inFocus;
 
         awe_webview* webView;
+        awe_string* js_obj_name;
+        
         unsigned int tex;
 
         bool crashed;
 
     ChromeViewport() :
-    inFocus(false), tex(0), crashed(false)
+    inFocus(false), js_obj_name(NULL), tex(0), crashed(false)
     {
         this->xoff = (int) (_xresf * 0.125f);
         this->yoff = (int) (_yresf * 0.125f);    // from bottom
@@ -45,10 +68,129 @@ class ChromeViewport
 
         this->set_callbacks();
 
+        this->setup_javascript();
+
         this->load_first_page();
     }
 
+    ~ChromeViewport()
+    {
+        if (this->js_obj_name != NULL) awe_string_destroy(this->js_obj_name);
+        if (this->webView != NULL) awe_webview_destroy(this->webView);
+    }
+    
     void set_callbacks();
+
+    void setup_javascript()
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+        
+        this->js_obj_name = get_awe_string(JS_OBJ_NAME);
+        awe_webview_create_object(this->webView, this->js_obj_name);
+
+        #if PRODUCTION
+        this->set_js_value(JS_OBJ_DEBUG_NAME, true);
+        #else
+        this->set_js_value(JS_OBJ_DEBUG_NAME, false);
+        #endif
+
+        this->set_js_value(JS_OBJ_LOGIN_URL_NAME, GNOMESCROLL_LOGIN_URL);
+        this->set_js_value(JS_OBJ_CREATE_URL_NAME, GNOMESCROLL_CREATE_URL);
+        this->set_js_value(JS_OBJ_TOKEN_NAME_NAME, Auth::AUTH_TOKEN_COOKIE_NAME);
+        
+        // set some null values on the object
+        this->set_js_value(JS_OBJ_LOGIN_ERROR_NAME);
+        this->set_js_value(JS_OBJ_GAME_TOKEN_NAME);
+
+        // callback for console.log
+        awe_webview_set_callback_js_console_message(this->webView, &js_console_message_callback);
+
+        this->register_js_callback(JS_CB_SET_ERROR_NAME);
+        this->register_js_callback(JS_CB_UNSET_ERROR_NAME);
+        this->register_js_callback(JS_CB_SET_TOKEN_NAME);
+
+        // callbacks for error handling
+        awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);
+    }
+
+    void register_js_callback(const char* _name)
+    {   // registers a javascript callback name on the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+        
+        awe_string* name = get_awe_string(_name);
+        awe_webview_set_object_callback(this->webView, this->js_obj_name, name);
+        awe_string_destroy(name);
+    }
+
+    void set_js_value(const char* _name, bool _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_bool_value(_value);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name, double _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_double_value(_value);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name, int _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_integer_value(_value);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_null_value();
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name, const char* _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_string* val = get_awe_string(_value);
+        awe_jsvalue* value = awe_jsvalue_create_string_value(val);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_string_destroy(val);
+        awe_jsvalue_destroy(value);
+    }
 
     void load_first_page()
     {
@@ -83,11 +225,6 @@ class ChromeViewport
             awe_string_empty()  // frame name
         );
         awe_string_destroy(file);
-    }
-
-    ~ChromeViewport()
-    {
-        if (this->webView != NULL) awe_webview_destroy(this->webView);
     }
 
     void init_webview()

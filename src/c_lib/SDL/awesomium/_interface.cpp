@@ -86,9 +86,9 @@ bool url_is_whitelisted(const char* url)
         return true;
     if (str_starts_with(url, "https://blog.gnomescroll.com"))
         return true;
-    if (strcmp(url, "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js") == 0)
+    if (str_starts_with(url, "http://www.google-analytics.com"))
         return true;
-    if (strcmp(url, "http://www.google-analytics.com/ga.js") == 0)
+    if (strcmp(url, "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js") == 0)
         return true;
     return false;
 }
@@ -206,7 +206,8 @@ void open_file(const char* file)
 
 void open_token_page()
 {
-    open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+    open_login_page();
+    //open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
 }
 
 void open_login_page()
