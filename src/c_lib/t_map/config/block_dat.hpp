@@ -248,44 +248,28 @@ void load_block_dat()
     push_texture();
     hud_def(6,5, t2,2,1);
 
-    cube_def(35, SolidBlock, "corpusc_testing_with_ruins_1");
-    iso_texture(t1,6,2);
-    push_texture();
-
-    cube_def(36, SolidBlock, "corpusc_testing_with_ruins_2");
+    cube_def(35, SolidBlock, "corpusc_testing_with_ruins_2");
     iso_texture(t1,6,3);
     push_texture();
 
-    cube_def(37, SolidBlock, "corpusc_testing_with_ruins_3");
+    cube_def(36, SolidBlock, "corpusc_testing_with_ruins_3");
     iso_texture(t1,6,4);
     push_texture();
 
-    cube_def(38, SolidBlock, "corpusc_testing_with_ruins_4");
-    iso_texture(t1,6,5);
-    push_texture();
-
-    cube_def(39, SolidBlock, "corpusc_testing_with_ruins_5");
-    iso_texture(t1,6,6);
-    push_texture();
-
-    cube_def(40, SolidBlock, "ruins_1");
+    cube_def(37, SolidBlock, "ruins_1");
     iso_texture(t5,1,1);
     push_texture();
 
-    cube_def(41, SolidBlock, "ruins_2");
+    cube_def(38, SolidBlock, "ruins_2");
     iso_texture(t5,1,2);
     push_texture();
 
-    cube_def(42, SolidBlock, "ruins_3");
+    cube_def(39, SolidBlock, "ruins_3");
     iso_texture(t5,1,3);
     push_texture();
 
-    cube_def(43, SolidBlock, "ruins_4");
+    cube_def(40, SolidBlock, "ruins_4");
     iso_texture(t5,1,4);
-    push_texture();
-
-    cube_def(44, SolidBlock, "ruins_5"); // this is really just a placeholder template (you'd only wanna keep the edge/frame)
-    iso_texture(t5,2,1);
     push_texture();
 
 
