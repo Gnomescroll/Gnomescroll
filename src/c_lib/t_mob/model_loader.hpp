@@ -79,6 +79,8 @@ class ModelLoader
         nl = NULL;
         _ml = NULL;
         _nl = NULL;
+
+        bnl = NULL;
     }
     
     ~ModelLoader()
@@ -103,17 +105,19 @@ class ModelLoader
         nli = 0;
         count_nodes(pScene->mRootNode); //count the nodes with meshes
         nlm = nli;
+        
         nl = new aiNode*[nlm];
-
         for(int i=0; i<nlm; i++) nl[i] = NULL;
 
         nli = 0;
         set_node_parents(pScene->mRootNode);
 
-        initialize_meshes();
+        initialize_meshes1();
 
         init_bone_list();
         init_node_list();
+
+        initialize_meshes2();
 
     }
 
@@ -163,7 +167,7 @@ class ModelLoader
     struct _Mesh* _ml;
     int _mlm;
 
-    void initialize_meshes()
+    void initialize_meshes1()
     {
 
         int mesh_count = 0;
@@ -178,7 +182,11 @@ class ModelLoader
 
         _mlm = mesh_count;
         _ml = new struct _Mesh[_mlm];
+        
+        //for(int i=0; i<_mlm; i++)
+        //    _ml[i] = NULL;
 
+        mesh_count = 0;
         for(int i=0; i<nlm; i++)
         {
             aiNode* node = nl[i];
@@ -190,6 +198,7 @@ class ModelLoader
                 mesh_count++;
             }
         }
+        printf("init_mesh: mesh_count= %i node_count= %i \n", mesh_count, nlm);
 
         //set vertex base array
         for(int i=0; i<_mlm; i++)
@@ -268,6 +277,11 @@ class ModelLoader
             _ml[i].vwl = new _VertexWeight[index];
         }
 
+    }
+
+    //needs bone list done first
+    void initialize_meshes2()
+    {
         for(int i=0; i<_mlm; i++)
         {
             int index = 0;
@@ -284,7 +298,6 @@ class ModelLoader
                     index++;
                 }
             }
-
         }
 
     }
@@ -384,6 +397,7 @@ class ModelLoader
             }
         }
 
+        printf("init_bone_list: bone_count= %i _bone_count= %i \n", bone_count, _bone_count);
         //set bone list
         bnlm = bone_count;
         bnl = new BoneNode[bnlm];
@@ -395,29 +409,26 @@ class ModelLoader
         }
 
         //populate bone list
-        int bcount = 0;
+        bone_count = 0;
         for(int i=0; i<_mlm; i++)
         {
             aiMesh* mesh = _ml[i].mesh;
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
-                
-                for(int k=0; k<bcount;k++)
-                {
-                    if( bone_in_list(bone, bone_count) == true )
-                        continue;
-                    
-                    bnl[bcount].name = copy_string(bone->mName.data);
-                    bnl[bcount].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
-                    bnl[bcount].parent_node =  FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
-                    bnl[bcount].parent_index = -1;
 
-                    bcount++;    
-                }
+                if( bone_in_list(bone, bone_count) == true )
+                    continue;
+                
+                bnl[bone_count].name = copy_string(bone->mName.data);
+                bnl[bone_count].mOffsetMatrix = _ConvertMatrix(bone->mOffsetMatrix);
+                bnl[bone_count].parent_node =  FindNodeByName(bone->mName.data);
+                bnl[bone_count].parent_index = -1;
+
+                bone_count++;    
             }
         }
-
+        GS_ASSERT(bone_count == bnlm);
     }
 
 
@@ -425,6 +436,7 @@ class ModelLoader
     {
         for(int i=0; i<node_count; i++ )
         {
+            GS_ASSERT(_nl[i].name != NULL);
             if(strcmp(node->mName.data, _nl[i].name) == 0)
                 return true;
         }
@@ -433,6 +445,8 @@ class ModelLoader
 
     int node_index_from_list(struct aiNode* node)
     {
+        GS_ASSERT(node != NULL);
+
         for(int i=0; i<_nlm; i++ )
         {
             if(strcmp(node->mName.data, _nl[i].name) == 0)
@@ -440,6 +454,8 @@ class ModelLoader
         }
 
         GS_ASSERT(false);
+        printf("_nlm= %d node_name= %s \n", _nlm, node->mName.data);
+
         return 0;
     }
 /*
@@ -466,6 +482,17 @@ class ModelLoader
             _set_node_index(index, node->c[i] );
     }
 
+/*
+    set_node_parents(pScene->mRootNode);
+
+    initialize_meshes1();
+
+    init_bone_list();
+    init_node_list();
+
+    initialize_meshes2();
+*/
+
     //populate node list
     void init_node_list()
     {
@@ -484,7 +511,7 @@ class ModelLoader
             {
                 //assume that if a node is, then all its parents are in?
                 if(node_in_list(tempNode, node_count) == true)
-                    continue;
+                    break;
                 //insert
 
                 _nl[node_count].name            = copy_string(tempNode->mName.data);
@@ -495,13 +522,20 @@ class ModelLoader
                 _nl[node_count].cn              = 0;
                 _nl[node_count].index           = -1;
 
+                node_count++;
+
                 if( strcmp(tempNode->mName.data, "Armature") == 0 )
                 {
-                    _nl[node_count].p = NULL;
+                    //_nl[node_count-1].p = NULL;
                     break;
                 }
+
                 if(tempNode == NULL)
+                {
+                    GS_ASSERT(false);
                     break;
+                }
+
                 tempNode = tempNode->mParent;
             }
         }
@@ -513,6 +547,9 @@ class ModelLoader
         for(int i=0; i<_nlm; i++)
         {
             aiNode* node = _nl[i].node;
+            if(strcmp(node->mName.data, "Armature") == 0)   //parent should be null for armature which is top level
+                continue;
+
             int index = node_index_from_list(node->mParent);
             _nl[i].p = &_nl[index];
         }
@@ -564,6 +601,11 @@ class ModelLoader
                 continue;
             }
             GS_ASSERT(_nl[i].index < _nl[i].p->index);
+
+            if(_nl[i].index >= _nl[i].p->index)
+            {
+                printf("ERROR: index= %d parent_index= %d node_name= %s \n", _nl[i].index, _nl[i].p->index, _nl[i].name );
+            }
         }
 
         //sort
@@ -613,6 +655,12 @@ class ModelLoader
         return NULL;
     }
 
+    aiNode* FindNodeByName(char* node_name)
+    {
+        aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, node_name);
+        GS_ASSERT(node != NULL);
+        return node;
+    }
 
     static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
     {
@@ -835,7 +883,6 @@ class BodyPartMesh
         
         for(int i=0;i<vwlm;i++)
             vwl[i] = mesh->vwl[i];
-
     }
 };
 
@@ -868,6 +915,8 @@ class BodyPartMesh
 
 class BodyMesh
 {
+    public:
+
     class BodyPartMesh* ml; //body part mesh list
     int mlm;                 //body part mesh list max
 /*
@@ -889,6 +938,9 @@ class BodyMesh
     int* bpl;        //bone parent list; index of parent node
     int blm;        //bone list max
 
+    struct Mat4* tbone_matrix;
+    struct Mat4* tnode_matrix;
+
     BodyMesh()
     {
         nnl = NULL;
@@ -897,6 +949,9 @@ class BodyMesh
         bnl = NULL;
         bone_mOffsetMatrix = NULL;
         bpl = NULL;
+
+        tbone_matrix = NULL;
+        tnode_matrix = NULL;
     }
 
     ~BodyMesh()
@@ -904,9 +959,13 @@ class BodyMesh
         if(nnl != NULL) delete[] nnl;
         if(npl != NULL) delete[] npl;
         if(node_mTransformation != NULL) delete[] node_mTransformation;
+
         if(bnl != NULL) delete[] bnl;
         if(bone_mOffsetMatrix != NULL) delete[] bone_mOffsetMatrix;
         if(bpl != NULL) delete[] bpl;
+
+        if(tbone_matrix != NULL) delete[] tbone_matrix;
+        if(tnode_matrix != NULL) delete[] tnode_matrix;
     }
 
     void load(class ModelLoader* ML)
@@ -917,6 +976,7 @@ class BodyMesh
         nnl = new char*[nm];
         npl = new int[nm];
         node_mTransformation = new struct Mat4[nm];  //mTransformation;
+        tbone_matrix =  new struct Mat4[nm];
 
         for(int i=0;i<nm; i++)
         {  
@@ -948,8 +1008,108 @@ class BodyMesh
 
         for(int i=0; i< ML->_mlm; i++)
             ml[i].load( &(ML->_ml[i]) );
+
+
+        init_texture();
+
+
     }
+
+    void draw_prep()
+    {
+
+    }
+
+    unsigned int texture1;
+    SDL_Surface* s;
+
+    void init_texture()
+    {
+        GS_ASSERT(s == NULL);
+        s = create_surface_from_file("./media/mesh/body_template.png");
+        //s = create_surface_from_file("./media/mesh/test.png");
+
+        glEnable(GL_TEXTURE_2D);
+        glGenTextures(1, &texture1);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        GLenum texture_format;
+        if (s->format->Rmask == 0x000000ff)
+            texture_format = GL_RGBA;
+        else
+            texture_format = GL_BGRA;
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
+        
+        glDisable(GL_TEXTURE_2D);
+    }
+
+
 };
+
+
+class ModelLoader* model_loader;
+class BodyMesh* body_mesh;
+
+
+void init()
+{
+
+    int bsize;
+    char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
+    GS_ASSERT(buffer != NULL);
+    if (buffer == NULL) return;
+    
+    int aFlag = aiProcess_Triangulate | 
+    //aiProcess_GenUVCoords | 
+    //aiProcess_TransformUVCoords |
+    aiProcess_ValidateDataStructure;// |
+    //aiProcess_RemoveComponent; //strip components on
+
+    char* aHint = NULL;
+    aiPropertyStore* property_store = aiCreatePropertyStore();
+    int aFlagRemove = aiComponent_TANGENTS_AND_BITANGENTS | aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS | aiComponent_TEXTURES | aiComponent_MATERIALS;
+
+    aiSetImportPropertyInteger(property_store, AI_CONFIG_PP_RVC_FLAGS, aFlagRemove);
+    //const struct aiScene* pScene = aiImportFileFromMemory(buffer, bsize, aFlag , aHint);
+    const struct aiScene* pScene = aiImportFileFromMemoryWithProperties(buffer, bsize, aFlag , aHint, property_store);
+    free(buffer);
+    aiReleasePropertyStore(property_store);
+
+
+    //bt = new BoneTree;
+    //bt->init( (aiScene*) pScene);
+    model_loader = new ModelLoader;
+    model_loader->init((aiScene*) pScene);
+
+    body_mesh = new BodyMesh;
+    body_mesh->load(model_loader);
+
+}
+
+
+void draw()
+{
+
+
+}
+
+void teardown()
+{
+if(model_loader != NULL) delete model_loader;
+if(body_mesh != NULL) delete body_mesh;
+
+}
+
 
 #if 0
         for(unsigned int j=0; j<mesh->mNumBones; j++)
