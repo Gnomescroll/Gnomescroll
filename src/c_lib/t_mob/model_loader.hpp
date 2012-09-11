@@ -436,6 +436,7 @@ class ModelLoader
     {
         for(int i=0; i<node_count; i++ )
         {
+            GS_ASSERT(_nl[i].name != NULL);
             if(strcmp(node->mName.data, _nl[i].name) == 0)
                 return true;
         }
@@ -506,7 +507,7 @@ class ModelLoader
             {
                 //assume that if a node is, then all its parents are in?
                 if(node_in_list(tempNode, node_count) == true)
-                    continue;
+                    break;
                 //insert
 
                 _nl[node_count].name            = copy_string(tempNode->mName.data);
@@ -517,14 +518,14 @@ class ModelLoader
                 _nl[node_count].cn              = 0;
                 _nl[node_count].index           = -1;
 
+                node_count++;
 
                 if( strcmp(tempNode->mName.data, "Armature") == 0 )
                 {
-                    _nl[node_count].p = NULL;
-                    node_count++;
+                    _nl[node_count-1].p = NULL;
                     break;
                 }
-                node_count++;
+
                 if(tempNode == NULL)
                 {
                     GS_ASSERT(false);
