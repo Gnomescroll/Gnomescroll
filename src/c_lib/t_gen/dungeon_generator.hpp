@@ -10,6 +10,7 @@ namespace t_gen
 const int cubes_across_room = 16;
 const int cubes_going_up = cubes_across_room / 2;
 const int rooms_across_ruins = XMAX / cubes_across_room;
+const int rooms_going_up = 4; // 4 dungeon levels should keep most of the dungeon underground?
 const int fixed_hall_wid = cubes_across_room / 4;
 const int fixed_hall_offs = (cubes_across_room - fixed_hall_wid) / 2; // hall offset
 // const int min_lip = 2; // corpusc paradigm
@@ -80,7 +81,7 @@ void start_dungeon_generator()
 	// make rooms
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
-    for (int rz = 0; rz < ZMAX / 2; rz++) {
+    for (int rz = 0; rz < rooms_going_up; rz++) {
 		int wall_block = randrange(31, 44);
 		int floor_block = randrange(31, 44);
 		int ceil_block = randrange(31, 44);
