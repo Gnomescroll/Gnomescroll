@@ -601,6 +601,11 @@ class ModelLoader
                 continue;
             }
             GS_ASSERT(_nl[i].index < _nl[i].p->index);
+
+            if(_nl[i].index >= _nl[i].p->index)
+            {
+                printf("ERROR: index= %d parent_index= %d node_name= %s \n", _nl[i].index, _nl[i].p->index, _nl[i].name );
+            }
         }
 
         //sort
