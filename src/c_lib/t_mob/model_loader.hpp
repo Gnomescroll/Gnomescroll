@@ -445,6 +445,8 @@ class ModelLoader
 
     int node_index_from_list(struct aiNode* node)
     {
+        GS_ASSERT(node != NULL);
+
         for(int i=0; i<_nlm; i++ )
         {
             if(strcmp(node->mName.data, _nl[i].name) == 0)
@@ -452,6 +454,8 @@ class ModelLoader
         }
 
         GS_ASSERT(false);
+        printf("_nlm= %d node_name= %s \n", _nlm, node->mName.data);
+
         return 0;
     }
 /*
