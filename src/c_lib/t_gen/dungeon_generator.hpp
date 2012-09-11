@@ -54,6 +54,29 @@ bool not_in_hall(int i, int z) {
 	return false;
 }
 
+void make_stairs(int rx, int ry, int rz, int floor_block) {
+		set_region(
+			6 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 1,
+			1, 2, 2, floor_block);
+		set_region(
+			7 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 2,
+			1, 2, 3, floor_block);
+		set_region(
+			8 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 4,
+			1, 2, 3, floor_block);
+		set_region(
+			9 + rx * cubes_across_room,
+			7 + ry * cubes_across_room,
+			rz * cubes_going_up + 3 + 6,
+			1, 2, 3, floor_block);
+}
+
 void start_dungeon_generator()
 {
     printf("Carving out ruins\n");
@@ -92,67 +115,56 @@ void start_dungeon_generator()
 			ry * cubes_across_room,
 			rz * cubes_going_up + 3,
 			cubes_across_room, cubes_across_room, 1, floor_block);
-		// ceil
+		// ceiling
 		set_region(
 			rx * cubes_across_room,
 			ry * cubes_across_room,
 			rz * cubes_going_up + 3 + cubes_going_up,
 			cubes_across_room, cubes_across_room, 1, ceil_block);
-		// ceil stairwell hole
+		// clear out stairwell hole in ceiling
 		set_region(
 			6 + rx * cubes_across_room,
 			7 + ry * cubes_across_room,
 			rz * cubes_going_up + 3,
 			4, 2, 1, 0);
-		// stairs
-		set_region(
-			6 + rx * cubes_across_room,
-			7 + ry * cubes_across_room,
-			rz * cubes_going_up + 3 + 1,
-			1, 2, 2, floor_block);
-		set_region(
-			7 + rx * cubes_across_room,
-			7 + ry * cubes_across_room,
-			rz * cubes_going_up + 3 + 2,
-			1, 2, 3, floor_block);
-		set_region(
-			8 + rx * cubes_across_room,
-			7 + ry * cubes_across_room,
-			rz * cubes_going_up + 3 + 4,
-			1, 2, 3, floor_block);
-		set_region(
-			9 + rx * cubes_across_room,
-			7 + ry * cubes_across_room,
-			rz * cubes_going_up + 3 + 6,
-			1, 2, 3, floor_block);
 
+		// make walls and clear out airspace
 		for (int cx = 0; cx < cubes_across_room; cx++) {
         for (int cy = 0; cy < cubes_across_room; cy++) {
         for (int cz = 0; cz < cubes_going_up - 1; cz++) {
-			// add 4 to all z values, to get above bedrock
+			int need_airspace = true;
+			
             if /* left edge */ (cx == 0) {
                 if (rx == 0 || not_in_hall(cy, cz) ) 
 					// cy < rooms[ry, rx - 1]->e_hall_offs || cy >= rooms[ry, rx - 1]->e_hall_offs + rooms[ry, rx - 1]->e_hall_wid)
-                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
+                    need_airspace = false;
             }
             if (cx == cubes_across_room - 1) {
                 if (rx == rooms_across_ruins - 1 || not_in_hall(cy, cz) ) 
 					// cy < rooms[ry, rx]->e_hall_offs || cy >= rooms[ry, rx]->e_hall_offs + rooms[ry, rx]->e_hall_wid)
-                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
+                    need_airspace = false;
             }
             if (cy == 0) {
                 if (ry == 0 || not_in_hall(cx, cz) ) 
 					// cx < rooms[ry - 1, rx]->n_hall_offs || cx >= rooms[ry - 1, rx]->n_hall_offs + rooms[ry - 1, rx]->n_hall_wid)
-                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
+                    need_airspace = false;
             }
             if (cy == cubes_across_room - 1) {
                 if (ry == rooms_across_ruins - 1 || not_in_hall(cx, cz) ) 
 					// cx < rooms[ry, rx]->n_hall_offs || cx >= rooms[ry, rx]->n_hall_offs + rooms[ry, rx]->n_hall_wid)
-                    t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
+                    need_airspace = false;
             }
+
+			// add 4 to all z values, to get above bedrock
+			if (need_airspace) 
+                t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, 0);
+			else
+                t_map::set(rx * cubes_across_room + cx, ry * cubes_across_room + cy, rz * cubes_going_up + cz + 4, wall_block);
 		}
 		}
         }
+
+		make_stairs(rx, ry, rz, floor_block);
     }
     }
 	}
