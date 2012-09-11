@@ -50,6 +50,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
     for (int cy = 0; cy < cubes_across_room; cy++) {
     for (int cz = 0; cz < cubes_going_up - 1; cz++) {
 		int need_airspace = true;
+	printf("ZMAX= %d \n", ZMAX);
 			
         if /* left edge */ (cx == 0)
             if (rx == 0 || not_in_hall(cy, cz) ) 

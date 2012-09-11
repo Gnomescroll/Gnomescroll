@@ -540,6 +540,13 @@ class ModelLoader
             }
         }
 
+        _nlm = node_count;  //some overhang on array
+
+        for(int i=0; i<_nlm; i++)
+        {
+            printf("Node %02d name: %s \n", i, _nl[i].name);
+        }
+
         _nlm = node_count;
         printf("init_node_list: node_count= %d nlm= %d _nlm= %d \n", node_count, nlm, _nlm);
 
@@ -600,9 +607,9 @@ class ModelLoader
                 GS_ASSERT( _nl[i].p == NULL);
                 continue;
             }
-            GS_ASSERT(_nl[i].index < _nl[i].p->index);
+            GS_ASSERT(_nl[i].index < _nl[i].p->index && _nl[i].index != -1);
 
-            if(_nl[i].index >= _nl[i].p->index)
+            if(_nl[i].index >= _nl[i].p->index || _nl[i].index == -1)
             {
                 printf("ERROR: index= %d parent_index= %d node_name= %s \n", _nl[i].index, _nl[i].p->index, _nl[i].name );
             }

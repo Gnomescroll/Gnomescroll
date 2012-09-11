@@ -833,17 +833,15 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                
                 
                 pos =  anim->mPositionKeys[frame_time % tmax];
-				aiVectorKey tpos =  anim->mPositionKeys[(frame_time % tmax)+1];
+				//aiVectorKey tpos =  anim->mPositionKeys[(frame_time % tmax)+1];
 
                 aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
-				 aiQuatKey trot = anim->mRotationKeys[(frame_time % tmax)+1];
+				aiQuatKey trot = anim->mRotationKeys[(frame_time % tmax)+1];
 
 				
-				 result.mTime=rot.mTime;
+				result.mTime=rot.mTime;
 
-				 Interpolate(result.mValue,rot.mValue,trot.mValue,0.5);
-
-				
+				Interpolate(result.mValue,rot.mValue,trot.mValue,0.5);
 
                 GS_ASSERT( pos.mTime == result.mTime );
 				}
