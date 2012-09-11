@@ -526,7 +526,7 @@ class ModelLoader
 
                 if( strcmp(tempNode->mName.data, "Armature") == 0 )
                 {
-                    _nl[node_count-1].p = NULL;
+                    //_nl[node_count-1].p = NULL;
                     break;
                 }
 
@@ -547,6 +547,9 @@ class ModelLoader
         for(int i=0; i<_nlm; i++)
         {
             aiNode* node = _nl[i].node;
+            if(strcmp(node->mName.data, "Armature") == 0)   //parent should be null for armature which is top level
+                continue;
+
             int index = node_index_from_list(node->mParent);
             _nl[i].p = &_nl[index];
         }
