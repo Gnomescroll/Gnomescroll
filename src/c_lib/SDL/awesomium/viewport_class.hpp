@@ -38,6 +38,7 @@ void js_set_error_callback(awe_webview* webView, const awe_string* _obj_name, co
 void js_unset_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
 void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
 
+
 class ChromeViewport
 {
     public: 
@@ -67,7 +68,7 @@ class ChromeViewport
         this->init_render_surface();
 
         this->set_callbacks();
-
+        this->setup_whitelist();
         this->setup_javascript();
 
         this->load_first_page();
@@ -80,6 +81,38 @@ class ChromeViewport
     }
     
     void set_callbacks();
+
+    void add_site_to_whitelist(const char* _url)
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+
+        awe_string* url = get_awe_string(_url);
+        awe_webview_add_url_filter(this->webView, url);
+        awe_string_destroy(url);
+    }
+
+    void setup_whitelist()
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+
+        awe_webview_set_url_filtering_mode(this->webView, AWE_UFM_WHITELIST);
+        this->add_site_to_whitelist("local://*");
+        this->add_site_to_whitelist("file://*");
+        this->add_site_to_whitelist ("http://gnomescroll.com/*");
+        this->add_site_to_whitelist("https://gnomescroll.com/*");
+        this->add_site_to_whitelist ("http://*.gnomescroll.com/*");
+        this->add_site_to_whitelist("https://*.gnomescroll.com/*");
+        this->add_site_to_whitelist ("http://www.google-analytics.com/*");
+        this->add_site_to_whitelist("https://www.google-analytics.com/*");
+        this->add_site_to_whitelist ("http://ajax.googleapis.com/ajax/libs/jquery/*");
+        this->add_site_to_whitelist("https://ajax.googleapis.com/ajax/libs/jquery/*");
+        #if !PRODUCTION
+        this->add_site_to_whitelist ("http://127.0.0.1:5002/*");
+        this->add_site_to_whitelist("https://127.0.0.1:5002/*");
+        #endif
+    }
 
     void setup_javascript()
     {

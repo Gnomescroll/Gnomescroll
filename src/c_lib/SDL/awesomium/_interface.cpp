@@ -62,37 +62,6 @@ char* get_str_from_awe(const awe_string* str)
     return dest;
 }
 
-bool url_is_whitelisted(const char* url)
-{
-    if (str_starts_with(url, "file://"))
-        return true;
-    if (str_starts_with(url, "http://127.0.0.1"))
-        return true;
-    if (str_starts_with(url, "https://127.0.0.1"))
-        return true;
-    if (str_starts_with(url, "http://gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "https://gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "http://www.gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "https://www.gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "http://wiki.gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "https://wiki.gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "http://blog.gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "https://blog.gnomescroll.com"))
-        return true;
-    if (str_starts_with(url, "http://www.google-analytics.com"))
-        return true;
-    if (strcmp(url, "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js") == 0)
-        return true;
-    return false;
-}
-
 void init()
 {
     printf("Awesomium::init\n");
