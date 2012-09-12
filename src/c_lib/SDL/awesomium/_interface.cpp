@@ -175,7 +175,7 @@ void open_file(const char* file)
 
 void open_token_page()
 {
-    open_login_page();
+    open_login_page();  // TODO
     //open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
 }
 

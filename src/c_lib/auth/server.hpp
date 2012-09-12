@@ -10,7 +10,11 @@ namespace Auth
 {
 
 // Configuration
-const char SECRET_KEY_PATH[] = "./data/secret_key";
+#if PRODUCTION
+const char SECRET_KEY_PATH[] = "./data/secret_key.prod";
+#else
+const char SECRET_KEY_PATH[] = "./data/secret_key.debug";
+#endif
 const unsigned int SECRET_KEY_SIZE = 64;
 
 void server_init();

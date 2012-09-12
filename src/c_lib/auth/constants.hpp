@@ -29,6 +29,7 @@ typedef enum
 #define GNOMESCROLL_URL "http://gnomescroll.com"
 #else
 #define GNOMESCROLL_URL "http://127.0.0.1:5002"
+//#define GNOMESCROLL_URL "http://login.gnomescroll.com"
 #endif
 
 #define GNOMESCROLL_LOGIN_HTML "./media/web/html/login.html"
