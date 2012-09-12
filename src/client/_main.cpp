@@ -46,6 +46,30 @@ void init(int argc, char* argv[])
     init_c_lib(argc, argv);
     _START_CLOCK(); // must start before networking
 
+    // If token is available and does not need refreshing
+        // Connect and send it to the auth server
+    // else If token needs refreshing, open & display local login page
+        // if error is not form-related,
+        // Display "auth server failure" message. "Try again soon"
+        // after authentication and token is grabbed, connect
+
+    // when token needs to be autorefreshed,
+        // hit the website
+        // if fails for auth server reason, keep re-requesting periodically. make note that it failed. reset the note if succeeds
+        // if fails because it requires login,
+            // dont set that error note. set nothing, the following prompt indicates everything
+            // send system message "There was a server reset. You will need to login again soon to continue playing."
+            // Display "Press F1 to open login page" at top
+        // if totally fails, the remote server will eventually disconnect the client
+        // if the auth failed note is set, display an auth server failure. else display the server disconnect message
+
+    // if user navigates to create and failure
+        // display "Auth server failure" message. "Try again soon"
+
+    // While any page is loading and awesomium is enabled, display "Loading..." somewhere on the screen. or a graphical indicator
+
+    // Add html for csrf token failure
+
     // parse ip address and connect
     int address[4];
     address_from_string(Options::server, address);

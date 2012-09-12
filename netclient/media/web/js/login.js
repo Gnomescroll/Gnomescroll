@@ -22,9 +22,19 @@ function append_form_errors(errors)
     $.each(errors, function(name, msgs)
     {
         var el = $('div#'+name+'.errors');
-        var len = msgs.length;
-        for (var i=0; i<len; i++)
-            el.append(make_error_element(msgs[i]));
+        if (name == 'csrf_token')
+        {   // we have to set a custom error here, because wtforms
+            // does not let one configure the message "CSRF Failed" (which is confusing to most users)
+            // in reality this should never happen, as we request the token when the form is submitted
+            // If this actually occurs, its certain to be a bug and not an expired csrf token.
+            el.append($('<div class="alert alert-error">Login failed due to server error. Resubmit the form, and if this error persists, please notify the developers.</div>'));
+        }
+        else
+        {   // set error as normal
+            var len = msgs.length;
+            for (var i=0; i<len; i++)
+                el.append(make_error_element(msgs[i]));
+        }
     });
 }
 

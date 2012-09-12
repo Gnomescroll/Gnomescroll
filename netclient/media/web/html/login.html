@@ -34,7 +34,7 @@ Log In
         </div>
         <form class="form-horizontal" id="login" method="POST">
             <div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value="None"></div>
-
+            <div id="csrf_token" class="errors"></div>
             <fieldset>
             <div class="control-group">
   <label class="control-label" for="username_or_email">Username or Email</label>
@@ -52,18 +52,6 @@ Log In
   </div>
     <div id="password" class="errors"></div>
 </div>
-<!--
-            <div class="control-group">
-  <div class="controls">
-  <label class="checkbox">
-    <input type="checkbox" id="remember_me" name="remember_me">
-    Remember me.
-  </label>
-  </div>
-    <div id="remember_me" class="errors"></div>
-</div>
--->
-
             <div class="form-actions">
               <button type="submit" class="btn">Log In</button>
             </div>
