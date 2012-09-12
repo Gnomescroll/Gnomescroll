@@ -44,88 +44,84 @@ void init(int argc, char* argv[])
     GS_MKDIR("./screenshot", S_IRWXU);
 
     init_c_lib(argc, argv);
+    c_lib_inited = true;
+
     _START_CLOCK(); // must start before networking
 
-    // If token is available and does not need refreshing
-        // Connect and send it to the auth server
-    // else If token needs refreshing, open & display local login page
-        // if error is not form-related,
-        // Display "auth server failure" message. "Try again soon"
-        // after authentication and token is grabbed, connect
-
-    // when token needs to be autorefreshed,
-        // hit the website
-        // if fails for auth server reason, keep re-requesting periodically. make note that it failed. reset the note if succeeds
-        // if fails because it requires login,
-            // dont set that error note. set nothing, the following prompt indicates everything
-            // send system message "There was a server reset. You will need to login again soon to continue playing."
-            // Display "Press F1 to open login page" at top
-        // if totally fails, the remote server will eventually disconnect the client
-        // if the auth failed note is set, display an auth server failure. else display the server disconnect message
-
-    // if user navigates to create and failure
-        // display "Auth server failure" message. "Try again soon"
-
-    // While any page is loading and awesomium is enabled, display "Loading..." somewhere on the screen. or a graphical indicator
-
-    // Add html for csrf token failure
+    // start authorization. waits for a valid-looking game token to be received
+    Auth::begin_auth();
+    void wait_for_login();  // forward decl
+    wait_for_login();
 
     // parse ip address and connect
     int address[4];
     address_from_string(Options::server, address);
     NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
-
-    Auth::begin_auth(); // sends token if available, or requests one
-
-    GS_ASSERT(quadrant_translate_f(500,30) == 542);
-    GS_ASSERT(quadrant_translate_f(10,500) == -12);
-
-    main_inited = true;
 }
+
+void wait_for_login()
+{   // loop to use while waiting for user to login
+    Input::begin_login_mode();
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    while (!Auth::token_available && !input_state.quit && !signal_exit && !_quit)
+    {
+        poll_mouse();
+        process_events();
+        get_key_state();
+        apply_camera_physics();
+        
+        // poll input and update camera so the stars move while we move the mouse
+        // draw skybox, then awesomium window
+        ClientState::update_camera();
+        world_projection();
+
+        poll_mouse();
+
+        // skybox
+        glEnable(GL_DEPTH_TEST);
+        Skybox::prep_skybox();
+        Skybox::draw();
+        glDisable(GL_DEPTH_TEST);
+
+        poll_mouse();
+
+        // awesomium
+        hud_projection();
+        Awesomium::draw();
+
+        CHECK_GL_ERROR();
+
+        _swap_buffers();
+
+        Awesomium::update();
+
+        // sleep 15 milliseconds, polling mouse every 1ms
+        int i=0;
+        while (++i < 15)
+        {
+            poll_mouse();
+            gs_millisleep(1);
+        }
+    }
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+    Input::end_login_mode();
+}
+
+struct RunState
+{
+    int ping_ticks;
+    int fps_average_index;
+    int fps_average[30+1];
+    int fps_last_tick;
+    float fps_value;
+};
+
+struct RunState run_state;
 
 //GAFFER LOOP
 //http://gafferongames.com/game-physics/fix-your-timestep/
-/*
-    double t = 0.0;
-    const double dt = 0.01;
-
-    double currentTime = hires_time_in_seconds();
-    double accumulator = 0.0;
-
-    State previous;
-    State current;
-
-    while ( !quit )
-    {
-         double newTime = time();
-         double frameTime = newTime - currentTime;
-         if ( frameTime > 0.25 )
-              frameTime = 0.25;   // note: max frame time to avoid spiral of death
-         currentTime = newTime;
-
-         accumulator += frameTime;
-
-         while ( accumulator >= dt )
-         {
-              previousState = currentState;
-              integrate( currentState, t, dt );
-              t += dt;
-              accumulator -= dt;
-         }
-
-         const double alpha = accumulator / dt;
-
-         State state = currentState*alpha + previousState * ( 1.0 - alpha );
-
-         render( state );
-    }
-*/
-
-int physics_tick();
-void network_tick();
-void prep_draw();
-void render();
-
 int physics_tick()
 {
     poll_mouse();
@@ -168,7 +164,7 @@ int physics_tick()
         _SET_LAST_TICK();
     }
 
-    if( physics_ticks > 0)
+    if (physics_ticks > 0)
         _SET_LAST_TICK();
 
         //if (physics_ticks >= 2)
@@ -180,10 +176,7 @@ int physics_tick()
 
 
 void network_tick()
-{
-    /*
-        Networking
-    */
+{   // Networking
     poll_mouse();
 
     //send_bullshit_data();
@@ -196,10 +189,212 @@ void network_tick()
     poll_mouse();
 }
 
-void prep_draw()
+void draw_tick()
 {
+    using Profiling::frame_graph;
+    
+    apply_camera_physics();         //apply velocity
+    ClientState::update_camera();   //update camera state
+    world_projection();             //set fulstrum crap
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+    frame_graph->frame_stage(2); // call draw functions
+
+    Objects::harvest(); // remove dead objects
+    Objects::update(); // update render state
+    ClientState::update_for_draw();
+
     poll_mouse();
+
+    // Start World Projetion
+    
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+
+
     poll_mouse();
+
+    // Prep for draw
+
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+
+    Particle::prep_shrapnel();
+    Skybox::prep_skybox();
+    Animations::prep_voxel_particles();
+
+    t_mech::prep();
+
+    // Map
+
+    poll_mouse();
+    
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
+    if (t_map::T_MAP_BACKUP_SHADER)
+        t_map::draw_map_compatibility();
+    else
+        t_map::draw_map();
+
+    CHECK_GL_ERROR();
+
+    poll_mouse();
+
+    // Non-transparent
+
+    t_mob::draw();
+    t_mech::draw();
+
+    //top_z_projection(0.0f,0.0f);
+
+    //printf("top= %03.02f bottom= %03.02f \n", top_z_projection(0.0f,0.0f), bottom_z_projection(0.0f,0.0f) );
+
+    //float _zmin, _zmax;
+    //chunk_top_z_projection(0.0, 0.0, &_zmin, &_zmax);
+    //printf("%f %f \n", _zmin, _zmax);
+
+    CHECK_GL_ERROR();
+
+    glDisable(GL_TEXTURE_2D);
+    GL_ASSERT(GL_TEXTURE_2D, false);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, true);
+    ClientState::voxel_render_list->draw();
+
+    CHECK_GL_ERROR();
+
+    // quads
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+    GL_ASSERT(GL_TEXTURE_2D, false);
+    Animations::draw_colored_voxel_particles();
+
+    CHECK_GL_ERROR();
+
+    GL_ASSERT(GL_BLEND, false);
+
+    CHECK_GL_ERROR();
+
+    //obj_load::draw_model(0.0f,0.0f,0.0f); //draw test model
+    //glDisable(GL_TEXTURE_2D);
+
+    GL_ASSERT(GL_BLEND, false);
+
+    glColor3ub(255,255,255);
+    glEnable(GL_TEXTURE_2D);
+    /* 
+        Alpha tested non-transparent
+    */
+
+    Animations::render_block_damage(); //GL blend with depth test on
+    ItemParticle::draw();
+    Animations::draw_textured_voxel_particles(); //moved out of transparent
+    GL_ASSERT(GL_BLEND, false);
+
+    CHECK_GL_ERROR();
+
+    /*
+        Transparent
+    */
+
+    glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);  //START
+
+    Particle::billboard_text_list->draw();  //enables and disables GL_BLEND
+    glEnable(GL_BLEND);
+
+    //t_mech::draw_transparent();
+
+    // draw animations
+
+    t_map::control_node_render_update();    //move this somewhere later
+    t_map::control_node_render_draw();      //draw control node perimeter
+    GL_ASSERT(GL_BLEND, true);
+    Skybox::draw();
+    GL_ASSERT(GL_BLEND, true);
+    Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
+    GL_ASSERT(GL_BLEND, true);
+    Animations::draw_hitscan_effect();
+    GL_ASSERT(GL_BLEND, true);
+    ClientState::agent_list->update_mining_lasers();
+    ClientState::playerAgent_state.action.update_mining_laser();
+    Animations::draw_mining_laser_effect();
+    GL_ASSERT(GL_BLEND, true);
+
+    poll_mouse();
+
+    Particle::begin_particle_draw();
+    Particle::grenade_list->draw();
+    Particle::blood_list->draw();
+    Particle::end_particle_draw();
+
+    GL_ASSERT(GL_BLEND, true);
+
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);   //END
+
+    poll_mouse();
+
+    ClientState::agent_list->draw_equipped_items();
+
+    CHECK_GL_ERROR();
+
+    // update mouse
+    poll_mouse();
+
+    // with depth test disable
+    int equipped_item_type = Toolbelt::get_selected_item_type();
+
+    glDisable(GL_DEPTH_TEST);
+    Animations::draw_equipped_item(equipped_item_type);
+    glEnable(GL_DEPTH_TEST);
+
+    if (Options::placement_outline)
+    {
+        // draw outline of facing block
+        glDisable(GL_TEXTURE_2D);
+        Animations::draw_placement_outline(equipped_item_type);
+        glEnable(GL_TEXTURE_2D);
+    }
+
+    CHECK_GL_ERROR();   //check error before hud
+
+    /*
+        Draw Hud
+    */
+
+    if (input_state.draw_hud)
+    {
+        // switch to hud  projection
+        hud_projection();
+        
+        // draw hud
+        Hud::set_hud_fps_display(run_state.fps_value);
+        Hud::update_hud_draw_settings();
+        Hud::draw();
+        t_hud::draw();
+
+        //Hud::draw_harvest_bar(400,400);
+
+        if (input_state.awesomium)
+        {
+            glDisable(GL_DEPTH_TEST);
+            glEnable(GL_BLEND);
+            Awesomium::draw();
+            glDisable(GL_BLEND);
+            glEnable(GL_DEPTH_TEST);
+        }
+
+        if (input_state.vbo_debug)
+            t_map::draw_vbo_debug(400, 400);
+
+        Hud::draw_error_status();
+        
+        CHECK_GL_ERROR();  //check error after hud rendering
+    }
 }
 
 
@@ -212,14 +407,12 @@ int run()
     using Profiling::frame_graph;
     Profiling::init_frame_graph();
 
-/* BEGIN SETUP */
-    int ping_ticks = _GET_MS_TIME();
-    
-    int fps_average_index = 0;
-    int fps_average[30+1];
-    int fps_last_tick = _GET_MS_TIME();
-    float fps_value = 0.0f;
-/* END SETUP */
+    /* BEGIN SETUP */
+    run_state.ping_ticks = _GET_MS_TIME();
+    run_state.fps_average_index = 0;
+    run_state.fps_last_tick = _GET_MS_TIME();
+    run_state.fps_value = 0.0f;
+    /* END SETUP */
 
     // update mouse
     poll_mouse();
@@ -242,206 +435,7 @@ int run()
 
         network_tick();
 
-        apply_camera_physics();         //apply velocity
-        ClientState::update_camera();   //update camera state
-        world_projection();             //set fulstrum crap
-
-        frame_graph->frame_stage(2); // call draw functions
-
-        Objects::harvest(); // remove dead objects
-        Objects::update(); // update render state
-        ClientState::update_for_draw();
-
-        poll_mouse();
-
-        // Start World Projetion
-        
-        GL_ASSERT(GL_DEPTH_TEST, true);
-        GL_ASSERT(GL_BLEND, false);
-
-
-        poll_mouse();
-
-        // Prep for draw
-
-        GL_ASSERT(GL_DEPTH_TEST, true);
-        GL_ASSERT(GL_BLEND, false);
-
-        Particle::prep_shrapnel();
-        Skybox::prep_skybox();
-        Animations::prep_voxel_particles();
-
-        t_mech::prep();
-
-        // Map
-
-        poll_mouse();
-        
-        GL_ASSERT(GL_DEPTH_TEST, true);
-        GL_ASSERT(GL_BLEND, false);
-        GL_ASSERT(GL_DEPTH_WRITEMASK, true);
-        if (t_map::T_MAP_BACKUP_SHADER)
-            t_map::draw_map_compatibility();
-        else
-            t_map::draw_map();
-
-        CHECK_GL_ERROR();
-
-        poll_mouse();
-
-        // Non-transparent
-
-        t_mob::draw();
-        t_mech::draw();
-
-        //top_z_projection(0.0f,0.0f);
-
-        //printf("top= %03.02f bottom= %03.02f \n", top_z_projection(0.0f,0.0f), bottom_z_projection(0.0f,0.0f) );
-
-        //float _zmin, _zmax;
-        //chunk_top_z_projection(0.0, 0.0, &_zmin, &_zmax);
-        //printf("%f %f \n", _zmin, _zmax);
-
-        CHECK_GL_ERROR();
-
-        glDisable(GL_TEXTURE_2D);
-        GL_ASSERT(GL_TEXTURE_2D, false);
-        GL_ASSERT(GL_DEPTH_TEST, true);
-        GL_ASSERT(GL_BLEND, false);
-        GL_ASSERT(GL_DEPTH_WRITEMASK, true);
-        ClientState::voxel_render_list->draw();
-
-        CHECK_GL_ERROR();
-
-        // quads
-        GL_ASSERT(GL_DEPTH_TEST, true);
-        GL_ASSERT(GL_BLEND, false);
-        GL_ASSERT(GL_TEXTURE_2D, false);
-        Animations::draw_colored_voxel_particles();
-
-        CHECK_GL_ERROR();
-
-        GL_ASSERT(GL_BLEND, false);
-
-        CHECK_GL_ERROR();
-
-        //obj_load::draw_model(0.0f,0.0f,0.0f); //draw test model
-        //glDisable(GL_TEXTURE_2D);
-
-        GL_ASSERT(GL_BLEND, false);
-
-        glColor3ub(255,255,255);
-        glEnable(GL_TEXTURE_2D);
-        /* 
-            Alpha tested non-transparent
-        */
-
-        Animations::render_block_damage(); //GL blend with depth test on
-        ItemParticle::draw();
-        Animations::draw_textured_voxel_particles(); //moved out of transparent
-        GL_ASSERT(GL_BLEND, false);
-
-        CHECK_GL_ERROR();
-
-        /*
-            Transparent
-        */
-
-        glEnable(GL_BLEND);
-        glDepthMask(GL_FALSE);  //START
-
-        Particle::billboard_text_list->draw();  //enables and disables GL_BLEND
-        glEnable(GL_BLEND);
-
-        //t_mech::draw_transparent();
-
-        // draw animations
-
-        t_map::control_node_render_update();    //move this somewhere later
-        t_map::control_node_render_draw();      //draw control node perimeter
-        GL_ASSERT(GL_BLEND, true);
-        Skybox::draw();
-        GL_ASSERT(GL_BLEND, true);
-        Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
-        GL_ASSERT(GL_BLEND, true);
-        Animations::draw_hitscan_effect();
-        GL_ASSERT(GL_BLEND, true);
-        ClientState::agent_list->update_mining_lasers();
-        ClientState::playerAgent_state.action.update_mining_laser();
-        Animations::draw_mining_laser_effect();
-        GL_ASSERT(GL_BLEND, true);
-
-        poll_mouse();
-
-        Particle::begin_particle_draw();
-        Particle::grenade_list->draw();
-        Particle::blood_list->draw();
-        Particle::end_particle_draw();
-
-        GL_ASSERT(GL_BLEND, true);
-
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);   //END
-
-        poll_mouse();
-
-        ClientState::agent_list->draw_equipped_items();
-
-        CHECK_GL_ERROR();
-
-        // update mouse
-        poll_mouse();
-
-        // with depth test disable
-        int equipped_item_type = Toolbelt::get_selected_item_type();
-
-        glDisable(GL_DEPTH_TEST);
-        Animations::draw_equipped_item(equipped_item_type);
-        glEnable(GL_DEPTH_TEST);
-
-        if (Options::placement_outline)
-        {
-            // draw outline of facing block
-            glDisable(GL_TEXTURE_2D);
-            Animations::draw_placement_outline(equipped_item_type);
-            glEnable(GL_TEXTURE_2D);
-        }
-
-        CHECK_GL_ERROR();   //check error before hud
-
-        /*
-            Draw Hud
-        */
-
-        if (input_state.draw_hud)
-        {
-            // switch to hud  projection
-            hud_projection();
-            
-            // draw hud
-            Hud::set_hud_fps_display(fps_value);
-            Hud::update_hud_draw_settings();
-            Hud::draw();
-            t_hud::draw();
-
-            //Hud::draw_harvest_bar(400,400);
-
-            if (input_state.awesomium)
-            {
-                glDisable(GL_DEPTH_TEST);
-                glEnable(GL_BLEND);
-                Awesomium::draw();
-                glDisable(GL_BLEND);
-                glEnable(GL_DEPTH_TEST);
-            }
-
-            if (input_state.vbo_debug)
-                t_map::draw_vbo_debug(400, 400);
-
-            Hud::draw_error_status();
-            
-            CHECK_GL_ERROR();  //check error after hud rendering
-        }
+        draw_tick();
 
         poll_mouse();
         // update sound
@@ -492,25 +486,25 @@ int run()
 
         // do fps calculation
         int fps_current_tick = _GET_MS_TIME();
-        fps_average[fps_average_index++] = fps_current_tick - fps_last_tick;
-        fps_last_tick = fps_current_tick;
-        if (fps_average_index > 30)
+        run_state.fps_average[run_state.fps_average_index++] = fps_current_tick - run_state.fps_last_tick;
+        run_state.fps_last_tick = fps_current_tick;
+        if (run_state.fps_average_index > 30)
         {
             int sum = 0;
-            for (int i=0; i<fps_average_index; i++)
-                sum += fps_average[i];
+            for (int i=0; i<run_state.fps_average_index; i++)
+                sum += run_state.fps_average[i];
 
-            fps_value = ((float)sum) / ((float)fps_average_index);
-            fps_average_index = 0;
+            run_state.fps_value = ((float)sum) / ((float)run_state.fps_average_index);
+            run_state.fps_average_index = 0;
         }
 
         // check ping throttle
         if (input_state.diagnostics)
         {
             int ping_now = _GET_MS_TIME();
-            if (ping_now - ping_ticks > Options::ping_update_interval)
+            if (ping_now - run_state.ping_ticks > Options::ping_update_interval)
             {
-                ping_ticks = ping_now;
+                run_state.ping_ticks = ping_now;
                 ClientState::send_ping();
             }
         }

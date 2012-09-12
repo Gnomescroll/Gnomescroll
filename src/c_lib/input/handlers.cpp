@@ -279,6 +279,8 @@ void init_input_state()
     input_state.camera_mode = INPUT_STATE_CAMERA;
     #endif
 
+    input_state.login_mode = false;
+
     input_state.rebind_mouse = input_state.mouse_bound;
 
     input_state.draw_hud = true;
@@ -869,7 +871,10 @@ void key_down_handler(SDL_Event* event)
         switch (event->key.keysym.sym)
         {
             case SDLK_ESCAPE:
-                toggle_awesomium();
+                if (input_state.login_mode)
+                    enable_quit();  // quit automatically if we are in login mode
+                else
+                    toggle_awesomium();
                 break;
 
             default:
@@ -888,7 +893,6 @@ void key_down_handler(SDL_Event* event)
         else
             camera_key_down_handler(event);
 
-    
         // these should occur for both Agent and Camera
         switch (event->key.keysym.sym)
         {

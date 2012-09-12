@@ -221,3 +221,15 @@ long _LAST_TICK()
 {
     return _last_tick;
 }
+
+void gs_millisleep(int milliseconds)
+{
+    #ifdef _WIN32
+    Sleep(milliseconds);
+    #else
+    struct timespec req;
+    req.tv_sec = 0; // 0 seconds
+    req.tv_nsec = milliseconds*1000*1000;   // nanoseconds
+    nanosleep(&req, NULL);
+    #endif 
+}

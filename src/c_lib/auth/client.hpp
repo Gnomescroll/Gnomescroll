@@ -17,6 +17,8 @@ extern bool authorized;
 extern bool needs_login;
 extern bool refreshing_token;
 
+extern bool token_available;
+
 bool send_auth_token(); // returns true if token was sent
 bool send_auth_token(const char* token); // returns true if token was sent
 

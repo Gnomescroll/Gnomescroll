@@ -20,6 +20,8 @@ bool authorized = false;
 bool needs_login = false;
 bool refreshing_token = false;
 
+bool token_available = false;   // becomes true after first time token exists and appears valid
+
 bool send_auth_token()
 {
     return send_auth_token(auth_token);
@@ -111,15 +113,9 @@ void begin_auth()
     // check if auth token already exists
     char* token = Awesomium::get_auth_token();
     if (token != NULL && load_auth_token(token) && !auth_token_expiring(auth_token_timestamp))
-    {
-        send_auth_token(token);
-        return;
-    }
-    
-    // navigate to token url
-    // it will lead the user to login if need be; then redirect to token again
-    // an awesomium callback will catch the cookie
-    Awesomium::open_token_page();
+        token_available = true;
+    else // display awesomium (should already have the login page set)
+        enable_awesomium();
 }
 
 AuthError update_token(char* token)
@@ -137,6 +133,8 @@ AuthError update_token(char* token)
 
     if (!same_token)
         send_auth_token(token);
+
+    token_available = true;
 
     return AUTH_ERROR_NONE;
 }

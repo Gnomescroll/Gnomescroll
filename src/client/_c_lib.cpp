@@ -198,7 +198,7 @@ dont_include_this_file_in_server
 // authentication
 #include <auth/_include.hpp>
 
-bool main_inited = false;
+bool c_lib_inited = false;
 bool signal_exit = false;
 
 #ifdef linux
@@ -208,7 +208,7 @@ bool signal_exit = false;
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    if (!main_inited)
+    if (!c_lib_inited)
     {
         close_c_lib();
         exit(0);
@@ -262,7 +262,10 @@ int init_c_lib(int argc, char* argv[])
     Log::init();
     printf("init c_lib\n");
 
-    AgentHudName::verify_configuration();
+    AgentHudName::verify_configuration();   // test agent constant parameters 
+
+    GS_ASSERT(quadrant_translate_f(500,30) == 542);
+    GS_ASSERT(quadrant_translate_f(10,500) == -12);
 
     Options::init_option_tables();
     LUA::init_options();

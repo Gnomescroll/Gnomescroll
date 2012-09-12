@@ -61,6 +61,9 @@ struct InputState
 
     // freezes frustum (probably not used anymore)
     bool frustum;
+
+    // login mode is when we are waiting for login
+    bool login_mode;
 };
 
 extern InputState input_state;
@@ -111,3 +114,19 @@ void enable_awesomium();
 void close_all_containers();
 
 void trigger_keys_held_down();
+
+namespace Input
+{   // TODO -- namespace everything
+void begin_login_mode()
+{
+    input_state.login_mode = true;
+    enable_awesomium();
+}
+
+void end_login_mode()
+{
+    disable_awesomium();
+    input_state.login_mode = false;
+}
+
+}   // Input
