@@ -1043,7 +1043,7 @@ class BodyMesh
 
         for(int i=1; i<nm; i++)
         {
-            printf("node %02d: name= %s parent= %d \n", i, nnl[i], bpl[i] );
+            printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], bpl[i], nnl[bpl[i]] );
 
             GS_ASSERT(_set[i] == 0);
             GS_ASSERT(_set[bpl[i]] == 1);
@@ -1133,6 +1133,7 @@ void init()
     body_mesh = new BodyMesh;
     body_mesh->load(model_loader);
 
+    body_mesh->draw_prep();
 }
 
 
