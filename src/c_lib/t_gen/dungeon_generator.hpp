@@ -7,7 +7,7 @@
 namespace t_gen 
 {
 
-const int ruins_across_world = 8;//4
+const int ruins_across_world = 8;
 const int cubes_across_room = 16;
 const int cubes_going_up = cubes_across_room / 2;
 const int rooms_across_ruins = XMAX / ruins_across_world / cubes_across_room;
@@ -37,13 +37,13 @@ void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile
 }
 
 bool not_in_hall(int i, int z) {
-	if (z > fixed_hall_wid ||
+	if (z >= fixed_hall_wid ||
 		i < fixed_hall_offs || 
 		i >= fixed_hall_offs + fixed_hall_wid) return true;
 	return false;
 }
 
-void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room indexes, origin
+void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy, bool halls_wanted) { // room indexes, origin
 	int wall_block = randrange(33, 40);
 
 	for (int cx = 0; cx < cubes_across_room; cx++) {
@@ -51,18 +51,23 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
     for (int cz = 0; cz < cubes_going_up - 1; cz++) {
 		int need_airspace = true;
 			
-        if /* left edge */ (cx == 0)
-            if (rx == 0 || not_in_hall(cy, cz) ) 
-                need_airspace = false;
-        if /* right edge */ (cx == cubes_across_room - 1)
-            if (rx == rooms_across_ruins - 1 || not_in_hall(cy, cz) ) 
-                need_airspace = false;
-        if /* south edge */ (cy == 0)
-            if (ry == 0 || not_in_hall(cx, cz) ) 
-                need_airspace = false;
-        if /* north edge */ (cy == cubes_across_room - 1)
-            if (ry == rooms_across_ruins - 1 || not_in_hall(cx, cz) ) 
-                need_airspace = false;
+        if (halls_wanted) {
+			if (not_in_hall(cx, cz) && not_in_hall(cy, cz) )
+				need_airspace = false;
+		} else {
+			if /* left edge */ (cx == 0)
+				if (rx == 0 || not_in_hall(cy, cz) ) 
+					need_airspace = false;
+			if /* right edge */ (cx == cubes_across_room - 1)
+				if (rx == rooms_across_ruins - 1 || not_in_hall(cy, cz) ) 
+					need_airspace = false;
+			if /* south edge */ (cy == 0)
+				if (ry == 0 || not_in_hall(cx, cz) ) 
+					need_airspace = false;
+			if /* north edge */ (cy == cubes_across_room - 1)
+				if (ry == rooms_across_ruins - 1 || not_in_hall(cx, cz) ) 
+					need_airspace = false;
+		}
 
 		// add 4 to all z values, to get above bedrock
 		if (need_airspace) t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, 0);
@@ -123,8 +128,10 @@ void make_ruins(int x, int y) {
 			rz * cubes_going_up + 3 + cubes_going_up,
 			4, 2, 1, 0);
 
-		make_walls_or_airspace(rx, ry, rz, x, y);
-		make_stairs(rx, ry, rz, x, y, floor_block);
+		bool halls_wanted = randrange(1, 3) == 1;
+		make_walls_or_airspace(rx, ry, rz, x, y, halls_wanted);
+		if (!halls_wanted) 
+			make_stairs(rx, ry, rz, x, y, floor_block);
     }
     }
 	}
