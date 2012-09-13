@@ -81,8 +81,7 @@ void teardown_cameras()
 }
 
 #define CAMERA_ZOOM_FACTOR 2.0f
-Camera::Camera()
-:
+Camera::Camera() :
 zoomed(false),
 zoom_factor(CAMERA_ZOOM_FACTOR)
 {
@@ -91,7 +90,7 @@ zoom_factor(CAMERA_ZOOM_FACTOR)
     const float Z_FAR = 320.0f;
     set_aspect(FOV, Z_NEAR, Z_FAR);
     set_dimensions();
-    set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    set_projection(256.0f, 256.0f, 256.0f, 0.0f, 0.0f);
 }
 #undef CAMERA_ZOOM_FACTOR
 

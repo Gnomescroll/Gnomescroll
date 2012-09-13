@@ -44,4 +44,6 @@ void delete_all_cookies();
 
 void check_for_token_cookie(const awe_string* _url);
 
+void set_game_token_cookie(const char* _token);
+
 }   // Awesomium

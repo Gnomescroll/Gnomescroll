@@ -71,6 +71,7 @@ bool auth_token_expiring(const time_t timestamp)
 
 void check_expiring_token()
 {
+    // TODO -- rewrite the error handling portion of this
     static int expiration_tick = 0;
     static int expiration_attempts = 0;
     if (auth_token == NULL) return;
@@ -86,7 +87,7 @@ void check_expiring_token()
             {
                 Awesomium::open_token_page();
                 refreshing_token = true;
-                Hud::set_error_status(GS_ERROR_REAUTHORIZING);
+                //Hud::set_error_status(GS_ERROR_REAUTHORIZING);
                 expiration_attempts++;
             }
             else
@@ -101,7 +102,7 @@ void check_expiring_token()
             expiration_tick = 0;
         }
     }
-    
+
     if (authorized && expiration_attempts < MAX_AUTH_TOKEN_RETRIES)
         Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
 }
@@ -130,6 +131,8 @@ AuthError update_token(char* token)
 
     if (auth_token_expired(auth_token_timestamp))
         return AUTH_ERROR_TOKEN_EXPIRED;
+
+    Awesomium::set_game_token_cookie(token);
 
     if (!same_token)
         send_auth_token(token);

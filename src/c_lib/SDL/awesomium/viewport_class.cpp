@@ -1,5 +1,8 @@
 #include "viewport_class.hpp"
 
+#include <hud/hud.hpp>
+#include <chat/client.hpp>
+
 namespace Awesomium
 {
 
@@ -73,11 +76,18 @@ void finish_loading_cb(awe_webview* webView)
 {
     awe_string* _url = awe_webview_get_url(webView);
     char* url = get_str_from_awe(_url);
+    // TODO -- move this to the appropriate place
+    // Should really trigger ???? local js??? -X-Gnomescroll !!
     if (str_starts_with(url, GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH))
     {   // login page loaded; force show awesomium window
         enable_awesomium();
         Auth::needs_login = true;
-        Hud::set_error_status(GS_ERROR_NEEDS_LOGIN);
+        if (chat_client != NULL)
+        {
+            chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
+            chat_client->send_system_message(Hud::open_login_text);
+        }
+        Hud::set_prompt(Hud::open_login_text);
     }
     free(url);
 }
@@ -116,13 +126,14 @@ void js_set_error_callback(awe_webview* webView, const awe_string* _obj_name, co
     awe_string* _error = awe_jsvalue_to_string(verror);
     char* error = get_str_from_awe(_error);
     printf("error: %s\n", error);
+    // Here, set the web/auth message box, that resides above the screen TODO
     awe_string_destroy(_error);
     free(error);
 }
 
 void js_unset_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
-    printf("unset error\n");
+    // hear, clear the web/auth message box, if the message matches
 }
 
 void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)

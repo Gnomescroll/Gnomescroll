@@ -103,6 +103,8 @@ void wait_for_login()
             poll_mouse();
             gs_millisleep(1);
         }
+
+        ClientState::frame_id++;
     }
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);

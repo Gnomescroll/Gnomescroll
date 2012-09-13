@@ -12,6 +12,7 @@
 #include <t_map/glsl/shader.hpp>
 
 #include <t_hud/_interface.hpp>
+#include <hud/hud.hpp>
 
 InputState input_state;
 
@@ -29,6 +30,8 @@ void toggle_mouse_bind()
 void toggle_help_menu()
 {
     input_state.help_menu = (!input_state.help_menu);
+    if (input_state.help_menu)
+        Hud::clear_prompt(Hud::press_help_text);
 }
 
 void enable_agent_container()
@@ -182,7 +185,8 @@ void enable_awesomium()
     input_state.awesomium = true;
     input_state.rebind_mouse = input_state.mouse_bound;
     input_state.mouse_bound = false;
-    Awesomium::enable();    
+    Awesomium::enable();
+    Hud::clear_prompt(Hud::open_login_text);
 }
 
 void toggle_awesomium()
@@ -1025,7 +1029,8 @@ void key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_F1:
-            toggle_awesomium();
+            if (!input_state.login_mode)
+                toggle_awesomium();
             break;
 
         case SDLK_F2:

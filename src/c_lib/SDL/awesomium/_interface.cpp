@@ -175,8 +175,7 @@ void open_file(const char* file)
 
 void open_token_page()
 {
-    open_login_page();  // TODO
-    //open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+    open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
 }
 
 void open_login_page()
@@ -285,6 +284,16 @@ void check_for_token_cookie(const awe_string* _url)
         GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
     }
     free(url);
+}
+
+void set_game_token_cookie(const char* _token)
+{   // manually set the cookie for gnomescroll game tokens
+    //awe_webcore_set_cookie(url, token, is_http_only, force_session_cookie -- will be cleared on exit);
+    awe_string* url = get_awe_string(GNOMESCROLL_COOKIE_DOMAIN);
+    awe_string* token = get_awe_string(_token);
+    awe_webcore_set_cookie(url, token, true, false);
+    awe_string_destroy(token);
+    awe_string_destroy(url);
 }
 
 }   // Awesomium
