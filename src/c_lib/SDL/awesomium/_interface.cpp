@@ -286,14 +286,17 @@ void check_for_token_cookie(const awe_string* _url)
     free(url);
 }
 
-void set_game_token_cookie(const char* _token)
+void set_game_token_cookie(const char* _cookie)
 {   // manually set the cookie for gnomescroll game tokens
     //awe_webcore_set_cookie(url, token, is_http_only, force_session_cookie -- will be cleared on exit);
+    // TODO -- send in the full cookie, not just the token. server can send it in the json response
     awe_string* url = get_awe_string(GNOMESCROLL_COOKIE_DOMAIN);
-    awe_string* token = get_awe_string(_token);
-    awe_webcore_set_cookie(url, token, true, false);
-    awe_string_destroy(token);
+    //awe_string* url = get_awe_string(GNOMESCROLL_URL);
+    awe_string* cookie = get_awe_string(_cookie);
+    awe_webcore_set_cookie(url, cookie, true, false);
+    awe_string_destroy(cookie);
     awe_string_destroy(url);
+    printf("Set game token cookie: %s\n", cookie);
 }
 
 }   // Awesomium
