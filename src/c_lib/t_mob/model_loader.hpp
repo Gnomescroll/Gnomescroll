@@ -116,9 +116,9 @@ class ModelLoader
 
         init_bone_list();
         init_node_list();
+        init_bone_list2();
 
         initialize_meshes2();
-
     }
 
     void count_nodes(aiNode* pNode)
@@ -431,6 +431,14 @@ class ModelLoader
         GS_ASSERT(bone_count == bnlm);
     }
 
+    //set bone parents
+    void init_bone_list2()
+    {
+        for(int i=0; i<bnlm; i++)
+        {
+            bnl[i].parent_index = node_index_from_list(bnl[i].parent_node);
+        }
+    }
 
     bool node_in_list(struct aiNode* node, int node_count)
     {
@@ -998,6 +1006,8 @@ class BodyMesh
             GS_ASSERT(ML->_nl[i].index == i);
             nnl[i] = ML->_nl[i].name;
             npl[i] = (ML->_nl[i].p == NULL ? 0 : ML->_nl[i].p->index);
+            if(ML->_nl[i].p != NULL)
+                printf("node %d parent %d p2= %d \n", i, npl[i], ML->_nl[i].p->index);
             node_mTransformation[i] = ML->_nl[i].mTransformation;
         }
 
@@ -1016,6 +1026,11 @@ class BodyMesh
             bnl[i] = ML->bnl[i].name; 
             bone_mOffsetMatrix[i] = ML->bnl[i].mOffsetMatrix;
             bpl[i] = ML->bnl[i].parent_index;
+
+            if(bpl[i] == -1)
+            {
+                printf("ERROR: bone parent for bone %i is -1 \n", i);
+            }
         }
 
         GS_ASSERT(ML->_nl[0].p == 0);
@@ -1039,15 +1054,25 @@ class BodyMesh
         _set[0] = 1;
         tnode_matrix[0] = node_mTransformation[0];
 
+
+        printf("nm= %d \n", nm);
+
         printf("node %02d: name= %s \n", 0, nnl[0]);
 
         for(int i=1; i<nm; i++)
         {
-            printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], bpl[i], nnl[bpl[i]] );
+            if(bpl[i] == -1)
+            {
+                printf("ERROR: node %d parent is -1 \n", i);
+                continue;
+            }
+            //printf("node %02d: name= %s parent= %d \n" , i, nnl[i], bpl[i] );
+            printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], npl[i], nnl[npl[i]] );
 
             GS_ASSERT(_set[i] == 0);
-            GS_ASSERT(_set[bpl[i]] == 1);
-            tnode_matrix[i] = mat4_mult( tnode_matrix[bpl[i]], node_mTransformation[i] );
+            GS_ASSERT(_set[npl[i]] == 1);
+
+            tnode_matrix[i] = mat4_mult( tnode_matrix[npl[i]], node_mTransformation[i] );
             _set[i] = 1;
         }
 
