@@ -48,7 +48,8 @@ bool load_auth_token(char* token)
         free(auth_token);
         auth_token = NULL;
     }
-    
+
+    printf("Load auth token: %s\n", token);
     bool ok = parse_auth_token(token, &auth_token_user_id, &auth_token_timestamp, &auth_token_hash, &auth_token_username);
     GS_ASSERT(ok); // should be valid if exists
     if (!ok) return false;

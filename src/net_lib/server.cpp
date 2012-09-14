@@ -188,6 +188,10 @@ void kill_client(int client_id, DisconnectType error_code)
 
 void check_client_authorizations()
 {
+    #if !PRODUCTION
+    return;
+    #endif
+    
     GS_ASSERT(pool != NULL);
     GS_ASSERT(staging_pool != NULL);
     if (pool == NULL || staging_pool == NULL) return;

@@ -49,9 +49,11 @@ void init(int argc, char* argv[])
     _START_CLOCK(); // must start before networking
 
     // start authorization. waits for a valid-looking game token to be received
+    #if GS_AWESOMIUM
     Auth::begin_auth();
     void wait_for_login();  // forward decl
     wait_for_login();
+    #endif
 
     // parse ip address and connect
     int address[4];
@@ -62,8 +64,8 @@ void init(int argc, char* argv[])
 void wait_for_login()
 {   // loop to use while waiting for user to login
     Input::begin_login_mode();
-    glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);
     while (!Auth::token_available && !input_state.quit && !signal_exit && !_quit)
     {
         poll_mouse();
@@ -106,8 +108,9 @@ void wait_for_login()
 
         ClientState::frame_id++;
     }
-    glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+    CHECK_GL_ERROR();
     Input::end_login_mode();
 }
 

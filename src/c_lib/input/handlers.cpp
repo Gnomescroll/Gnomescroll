@@ -170,16 +170,19 @@ void toggle_admin_controls()
 
 void disable_awesomium()
 {
+    #if GS_AWESOMIUM
     if (!input_state.awesomium) return;
     printf("disable awesomium\n");
     input_state.awesomium = false;
     input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
     Awesomium::disable();
+    #endif
 }
 
 void enable_awesomium()
 {
+    #if GS_AWESOMIUM
     if (input_state.awesomium) return;
     printf("enable awesomium\n");
     input_state.awesomium = true;
@@ -187,14 +190,17 @@ void enable_awesomium()
     input_state.mouse_bound = false;
     Awesomium::enable();
     Hud::clear_prompt(Hud::open_login_text);
+    #endif
 }
 
 void toggle_awesomium()
 {
+    #if GS_AWESOMIUM
     if (input_state.awesomium)
         disable_awesomium();
     else
         enable_awesomium();
+    #endif
 }
 
 void toggle_graphs()

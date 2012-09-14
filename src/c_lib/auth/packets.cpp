@@ -3,6 +3,9 @@
 #if DC_SERVER
 #include <auth/server.hpp>
 #endif
+#if DC_CLIENT
+#include <auth/client.hpp>
+#endif
 
 namespace Auth
 {

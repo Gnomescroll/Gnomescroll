@@ -1,5 +1,7 @@
 #pragma once
 
+#if GS_AWESOMIUM
+
 #include <SDL/awesomium/_interface.hpp>
 #include <auth/constants.hpp>
 #include <auth/client.hpp>
@@ -227,6 +229,7 @@ class ChromeViewport
 
     void load_first_page()
     {
+        printf("Load first page\n");
         //this->load_url(GNOMESCROLL_URL);
         this->load_file(GNOMESCROLL_LOGIN_HTML);
     }
@@ -412,3 +415,5 @@ bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, in
 void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event);
 
 }   // Awesomium
+
+#endif

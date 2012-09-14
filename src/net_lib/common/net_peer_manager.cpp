@@ -59,6 +59,10 @@ void NetPeerManager::init(int client_id)
 
     // begin waiting for auth
     this->waiting_for_auth = true;
+
+    #if !PRODUCTION
+    this->was_authorized(0, 0, "debuguser");
+    #endif
 }
 
 /*

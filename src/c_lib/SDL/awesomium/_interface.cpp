@@ -1,5 +1,7 @@
 #include "_interface.hpp"
 
+#if GS_AWESOMIUM
+
 #include <SDL/awesomium/viewport_class.hpp>
 #include <SDL/awesomium/viewport_manager.hpp>
 
@@ -36,6 +38,8 @@ void handle_keyboard_event(union SDL_Event* keyEvent)
 
 void update()
 {
+    GS_ASSERT_LIMIT(cv != NULL, 1);
+    if (cv == NULL) return;
     awe_webcore_update();
 }
 
@@ -290,13 +294,15 @@ void set_game_token_cookie(const char* _cookie)
 {   // manually set the cookie for gnomescroll game tokens
     //awe_webcore_set_cookie(url, token, is_http_only, force_session_cookie -- will be cleared on exit);
     // TODO -- send in the full cookie, not just the token. server can send it in the json response
+    printf("Setting game token cookie: %s\n", _cookie);
     awe_string* url = get_awe_string(GNOMESCROLL_COOKIE_DOMAIN);
     //awe_string* url = get_awe_string(GNOMESCROLL_URL);
     awe_string* cookie = get_awe_string(_cookie);
     awe_webcore_set_cookie(url, cookie, true, false);
     awe_string_destroy(cookie);
     awe_string_destroy(url);
-    printf("Set game token cookie: %s\n", cookie);
 }
 
 }   // Awesomium
+
+#endif

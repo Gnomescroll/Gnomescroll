@@ -1,5 +1,7 @@
 #include "viewport_class.hpp"
 
+#if GS_AWESOMIUM
+
 #include <hud/hud.hpp>
 #include <chat/client.hpp>
 
@@ -463,3 +465,5 @@ void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
 }
 
 }   // Awesomium
+
+#endif

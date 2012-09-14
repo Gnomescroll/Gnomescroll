@@ -4,6 +4,10 @@
     #define DC_CLIENT 1
 #endif
 
+#ifndef GS_AWESOMIUM
+    #define GS_AWESOMIUM 0
+#endif
+
 #ifdef DC_SERVER
 dont_include_this_file_in_server
 #endif
