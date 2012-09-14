@@ -46,7 +46,7 @@ void delete_all_cookies();
 
 void check_for_token_cookie(const awe_string* _url);
 
-void set_game_token_cookie(const char* _token);
+void set_game_token_cookie(const char* _token, time_t expiration_time);
 
 }   // Awesomium
 
@@ -82,7 +82,7 @@ void delete_cookie(){}
 void delete_auth_token_cookie(){}
 void delete_all_cookies(){}
 
-void set_game_token_cookie(const char* _token){}
+void set_game_token_cookie(const char* _token, time_t expiration_time){}
 
 }
 #endif

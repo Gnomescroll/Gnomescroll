@@ -27,10 +27,10 @@ typedef enum
 // Switch to gnomescroll.com when site is live
 #if PRODUCTION
 #define GNOMESCROLL_URL "http://gnomescroll.com"
-#define GNOMESCROLL_COOKIE_DOMAIN ".gnomescroll.com"
+#define GNOMESCROLL_COOKIE_DOMAIN ".gnomescroll.com"    // WARNING -- might have to remove the beginning '.'
 #else
 #define GNOMESCROLL_URL "http://127.0.0.1:5002"
-#define GNOMESCROLL_COOKIE_DOMAIN ".127.0.0.1"
+#define GNOMESCROLL_COOKIE_DOMAIN "127.0.0.1"
 //#define GNOMESCROLL_URL "http://login.gnomescroll.com"
 //#define GNOMESCROLL_COOKIE_DOMAIN ".gnomescroll.com"
 #endif

@@ -137,7 +137,7 @@ AuthError update_token(const char* token)
     if (auth_token_expired(auth_token_timestamp))
         return AUTH_ERROR_TOKEN_EXPIRED;
 
-    Awesomium::set_game_token_cookie(token);
+    Awesomium::set_game_token_cookie(token, auth_token_timestamp);
 
     if (!same_token)
         send_auth_token(token);

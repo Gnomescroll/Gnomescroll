@@ -258,6 +258,9 @@ char* get_auth_token()
     GS_ASSERT(cookies != NULL);
     if (cookies == NULL) return NULL;
 
+    printf("COOKIES:\n");
+    printf("%s\n", cookies);
+
     char* token = strstr(cookies, Auth::AUTH_TOKEN_COOKIE_NAME);
     if (token == NULL) return NULL; 
 
@@ -293,17 +296,38 @@ void check_for_token_cookie(const awe_string* _url)
     free(url);
 }
 
-void set_game_token_cookie(const char* _cookie)
+char* make_cookie_expiration_string(const time_t expiration_time)
+{   // FREE THE RETURNED STRING     //DAY, DD-MMM-YYYY HH:MM:SS GMT
+    const static char timefmt[] = "%a %d-%b-%Y %H:%M:%S GMT;";
+    const static size_t size = sizeof(timefmt) - 2*7 + 3 + 2 + 3 + 4 + 2 + 2 + 2; 
+    struct tm* tmdata = gmtime(&expiration_time);
+    char* expiration_str = (char*)malloc(size * sizeof(char));
+    strftime(expiration_str, size-1, timefmt, tmdata);
+    return expiration_str;
+}
+
+void set_game_token_cookie(const char* token, time_t expiration_time)
 {   // manually set the cookie for gnomescroll game tokens
-    //awe_webcore_set_cookie(url, token, is_http_only, force_session_cookie -- will be cleared on exit);
-    // TODO -- send in the full cookie, not just the token. server can send it in the json response
-    printf("Setting game token cookie: %s\n", _cookie);
-    awe_string* url = get_awe_string(GNOMESCROLL_COOKIE_DOMAIN);
-    //awe_string* url = get_awe_string(GNOMESCROLL_URL);
+    static const size_t prefix_len = strlen(Auth::AUTH_TOKEN_COOKIE_NAME);
+    static const size_t domain_len = strlen(GNOMESCROLL_COOKIE_DOMAIN);
+    const size_t token_len = strlen(token);
+    char* expiration_str = make_cookie_expiration_string(expiration_time);
+    const size_t expiration_len = strlen(expiration_str);
+    const static char cookie_fmt[] = "%s=%s; expires=%s; domain=%s; path=/;";
+    char* _cookie = (char*)malloc((sizeof(cookie_fmt) - 2*4 + prefix_len + token_len + domain_len + expiration_len) * sizeof(char));
+    sprintf(_cookie, cookie_fmt, Auth::AUTH_TOKEN_COOKIE_NAME, token, expiration_str, GNOMESCROLL_COOKIE_DOMAIN);
+    free(expiration_str);
+     
+    awe_string* url = get_awe_string(GNOMESCROLL_URL);
     awe_string* cookie = get_awe_string(_cookie);
     awe_webcore_set_cookie(url, cookie, true, false);
     awe_string_destroy(cookie);
     awe_string_destroy(url);
+    char* cookies = get_cookies();
+    free(cookies);
+
+    // REFERENCE:
+    //awe_webcore_set_cookie(url, token, is_http_only, force_session_cookie -- will be cleared on exit);
 }
 
 }   // Awesomium
