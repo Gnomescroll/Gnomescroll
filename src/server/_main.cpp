@@ -169,8 +169,10 @@ int run()
             printf("Warning:: %i ticks this frame", tc);
         }
         NetServer::dispatch_network_events();
+        #if !PRODUCTION
         NetServer::check_client_authorizations();
-
+        #endif
+        
         if (ServerState::should_save_map)
         {
             t_map::save_map();

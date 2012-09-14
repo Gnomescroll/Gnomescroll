@@ -38,7 +38,7 @@ bool send_auth_token(const char* token)
     return true;
 }
 
-bool load_auth_token(char* token)
+bool load_auth_token(const char* token)
 {
     GS_ASSERT(token != NULL);
     if (token == NULL) return false;
@@ -54,7 +54,9 @@ bool load_auth_token(char* token)
     GS_ASSERT(ok); // should be valid if exists
     if (!ok) return false;
 
-    auth_token = token;
+    size_t len = strlen(token);
+    auth_token = (char*)malloc((len+1)*sizeof(char));
+    strcpy(auth_token, token);
     refreshing_token = false;   // token is considered refreshed by this point
 
     return true;
@@ -118,9 +120,11 @@ void begin_auth()
         token_available = true;
     else // display awesomium (should already have the login page set)
         enable_awesomium();
+    if (token != NULL)
+        free(token);
 }
 
-AuthError update_token(char* token)
+AuthError update_token(const char* token)
 {
     GS_ASSERT(token != NULL);
     if (token == NULL) return AUTH_ERROR_TOKEN_MISSING;

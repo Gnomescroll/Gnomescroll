@@ -41,9 +41,18 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[]):
+def configure(conf, add_flags=[], rm_flags=[], auth=False, production=False):
     OS = platform.system()
     conf.env.os = OS
+
+    if production:
+        auth = True
+
+    authflag = '-DAUTH='
+    if auth:
+        authflag += '0'
+    else:
+        authflag += '1'
 
     #conf.check_tool('gcc')
     conf.check_tool('g++')
@@ -75,6 +84,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
+        authflag,
         #'-DGS_VERSION=%d' % (version,),
     ]
 
@@ -307,20 +317,27 @@ class production_ctx(ConfigurationContext):
     fun = 'production'
 
 def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DNDEBUG', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
     
 class production_dbg_ctx(ConfigurationContext):
     cmd = 'production_dbg'
     fun = 'production_dbg'
 
 def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DNDEBUG', '-Winline', '-O3'], rm_flags=rm)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm, production=True)
     
 class prodtest_ctx(ConfigurationContext):
     cmd = 'prodtest'
     fun = 'prodtest'
 
 def prodtest(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-Winline'], rm_flags=rm)
+    configure(ctx, add_flags=add+['-Winline'], rm_flags=rm, production=True)
+    
+class auth_ctx(ConfigurationContext):
+    cmd = 'auth'
+    fun = 'auth'
+
+def auth(ctx):
+    configure(ctx, auth=True)
 
 

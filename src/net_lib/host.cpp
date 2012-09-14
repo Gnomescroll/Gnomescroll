@@ -524,8 +524,8 @@ static void client_connect(ENetEvent* event)
             event->peer->data = (NetPeer*) nc;
 
         npm = new NetPeerManager;
+        NetServer::clients[client_id] = npm; // must be added to array before init
         npm->init(client_id);
-        NetServer::clients[client_id] = npm;
         break;
     }
     
@@ -545,6 +545,16 @@ static void client_connect(ENetEvent* event)
         Session* session = begin_session(event->peer->address.host, client_id);
         users->assign_session_to_user(session);
     }
+
+    #if !PRODUCTION
+    // just connect the client
+    // DONT MOVE THIS -- must be called here
+    const char username_fmt[] = "debuguser%d";
+    char* username = (char*)malloc(sizeof(username_fmt) * sizeof(char));
+    sprintf(username, username_fmt, npm->client_id);
+    NetServer::client_authorized(npm->client_id, npm->client_id+1, utc_now()+3600, username);
+    free(username);
+    #endif
     
     if (nc != NULL)
         nc->flush_to_net();

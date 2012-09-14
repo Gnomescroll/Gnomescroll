@@ -283,9 +283,12 @@ void check_for_token_cookie(const awe_string* _url)
     if (strstr(url, GNOMESCROLL_URL) != NULL)
     {
         char* token = get_auth_token();
-        if (token == NULL) return;
-        Auth::AuthError error = Auth::update_token(token);
-        GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
+        if (token != NULL)
+        {
+            Auth::AuthError error = Auth::update_token(token);
+            GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
+            free(token);
+        }
     }
     free(url);
 }

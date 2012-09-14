@@ -22,7 +22,7 @@ extern bool token_available;
 bool send_auth_token(); // returns true if token was sent
 bool send_auth_token(const char* token); // returns true if token was sent
 
-AuthError update_token(char* token);
+AuthError update_token(const char* token);
 
 void token_was_accepted();
 void token_was_denied();

@@ -149,8 +149,9 @@ void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, co
     char* token = get_str_from_awe(_token);
     Auth::AuthError error = Auth::update_token(token);
     GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
-    awe_string_destroy(_token);
+    //return;
     free(token);
+    awe_string_destroy(_token);
 }
 
 void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)

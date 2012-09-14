@@ -305,6 +305,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
             conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesonium lib
 
     conf.env.awesomium = awesomium
+    conf.env.production = production
 
 def build(bld):
     OS = platform.system()
@@ -312,6 +313,10 @@ def build(bld):
     sound_framework = []
     sound_libraries = []
     common_libraries = []
+    debug_libs = []
+    #if bld.env.awesomium and not bld.env.production:
+        # we cant valgrind so try this
+        #debug_libs.append('efence')   
     
     #lua_libraries = ['lua5.1'] #['luajit51'] #['lua50']
     #lua_libraries = ['luajit51']
@@ -342,7 +347,7 @@ def build(bld):
         libs = [os.path.join(libpath, 'lib'), os.path.join(libpath, 'dll'),]
         
     #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    use = common_libraries+time_lib+SDL_libraries+['LUA', 'ASSIMP']
+    use = time_lib+SDL_libraries+['LUA', 'ASSIMP']
     if bld.env.awesomium:
         use.append('AWESOMIUM')
 
@@ -350,7 +355,7 @@ def build(bld):
         features = 'cxx cxxprogram',
         source = ['../src/client/_client.cpp'],
         use = use,
-        lib = sound_libraries+png_libs,
+        lib = sound_libraries+png_libs+debug_libs,
         includes = includes,
         libpath = libs,
         framework = sound_framework,
