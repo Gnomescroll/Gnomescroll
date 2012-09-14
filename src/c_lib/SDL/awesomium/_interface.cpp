@@ -258,9 +258,6 @@ char* get_auth_token()
     GS_ASSERT(cookies != NULL);
     if (cookies == NULL) return NULL;
 
-    printf("COOKIES:\n");
-    printf("%s\n", cookies);
-
     char* token = strstr(cookies, Auth::AUTH_TOKEN_COOKIE_NAME);
     if (token == NULL) return NULL; 
 
