@@ -8,7 +8,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>
-Log In
+Create Account
 </title>
   <meta name="description" content="">
 
@@ -32,18 +32,38 @@ Log In
     <div class="row">
       <div class="span6 offset3">
         <div class="page-header">
-          <h1>Log In</h1>
+          <h1>Create Account</h1>
         </div>
-        <form class="form-horizontal" id="login" method="POST">
+      <div class="alert">A confirmation email will be sent to your address. You will need to confirm within a week or your account will be deactivated.</div>
+        
+        <form id="create" class="form-horizontal" method="POST">
             <div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value=""></div>
-            <div id="csrf_token" class="errors"></div>
-            <fieldset>
+<div id="csrf_token" class="errors"></div>
+
+          <fieldset>
+
             <div class="control-group">
-  <label class="control-label" for="username_or_email">Username or Email</label>
+  <label class="control-label" for="username">Username</label>
   <div class="controls">
-    <input type="text" class="input-xlarge" id="username_or_email" name="username_or_email" value="">
+    <input type="text" class="input-xlarge" id="username" name="username" value="">
   </div>
-    <div id="username_or_email" class="errors"></div>
+    <div id="username" class="errors"></div>
+</div>
+            <div class="control-group">
+  <label class="control-label" for="email_address">Email</label>
+  <div class="controls">
+    <input type="text" class="input-xlarge" id="email_address" name="email_address" value="">
+  </div>
+    <div id="email_address" class="errors"></div>
+</div>
+            <div class="control-group">
+  <div class="controls">
+  <label class="checkbox">
+    <input type="checkbox" id="subscribe" name="subscribe">
+    Please send me updates and news about the game via email.
+  </label>
+  </div>
+    <div id="subscribe" class="errors"></div>
 </div>
             <div class="control-group">
   <label class="control-label" for="password">Password</label>
@@ -52,8 +72,16 @@ Log In
   </div>
     <div id="password" class="errors"></div>
 </div>
+            <div class="control-group">
+  <label class="control-label" for="confirm_password">Confirm Password</label>
+  <div class="controls">
+    <input type="password" class="input-xlarge" id="confirm_password" name="confirm_password">
+  </div>
+    <div id="confirm_password" class="errors"></div>
+</div>
+
             <div class="form-actions">
-              <button type="submit" class="btn">Log In</button>
+              <button type="submit" class="btn">Create Account</button>
             </div>
           </fieldset>
         </form>
@@ -64,14 +92,16 @@ Log In
     <div class="container">
               <div class="span6 offset3">
         <p>
-        or <a id="create" href="create.html">create an account</a>  
+        or <a href="login.html">login</a>  
         </p>
     </div>
     </div>
+
 
  
 
 </body>
   <script src="../js/bootstrap.min.js"></script>
-  <script src="../js/login.js"</script>
+  <script src="../js/create.js"</script>
 </html>
+

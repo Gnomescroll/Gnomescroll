@@ -12,6 +12,7 @@ namespace Awesomium
 const char JS_OBJ_NAME[] = "Gnomescroll";
 const char JS_OBJ_CREATE_URL_NAME[] = "create_url";
 const char JS_OBJ_LOGIN_URL_NAME[] = "login_url";
+const char JS_OBJ_TOKEN_URL_NAME[] = "token_url";
 const char JS_OBJ_LOGIN_ERROR_NAME[] = "login_error";
 const char JS_OBJ_GAME_TOKEN_NAME[] = "gstoken";
 const char JS_OBJ_DEBUG_NAME[] = "DEBUG";
@@ -20,6 +21,7 @@ const char JS_OBJ_TOKEN_NAME_NAME[] = "token_name";
 const char JS_CB_SET_ERROR_NAME[] = "set_error";
 const char JS_CB_UNSET_ERROR_NAME[] = "clear_error";
 const char JS_CB_SET_TOKEN_NAME[] = "set_token";
+const char JS_CB_OPEN_TOKEN_PAGE_NAME[] = "gs_get_token";
 
 int getWebKeyFromSDLKey(SDLKey key);
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event);
@@ -132,6 +134,7 @@ class ChromeViewport
 
         this->set_js_value(JS_OBJ_LOGIN_URL_NAME, GNOMESCROLL_LOGIN_URL);
         this->set_js_value(JS_OBJ_CREATE_URL_NAME, GNOMESCROLL_CREATE_URL);
+        this->set_js_value(JS_OBJ_TOKEN_URL_NAME, GNOMESCROLL_TOKEN_URL);
         this->set_js_value(JS_OBJ_TOKEN_NAME_NAME, Auth::AUTH_TOKEN_COOKIE_NAME);
         
         // set some null values on the object
@@ -144,7 +147,7 @@ class ChromeViewport
         this->register_js_callback(JS_CB_SET_ERROR_NAME);
         this->register_js_callback(JS_CB_UNSET_ERROR_NAME);
         this->register_js_callback(JS_CB_SET_TOKEN_NAME);
-
+        
         // callbacks for error handling
         awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);
     }

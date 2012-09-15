@@ -178,8 +178,17 @@ void open_file(const char* file)
 }
 
 void open_token_page()
-{
-    open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
+{   // call js function that makes request for token against server
+    printf("Open token page\n");
+    GS_ASSERT(cv != NULL && cv->webView != NULL);
+    if (cv == NULL || cv->webView == NULL) return;
+    awe_string* get_token_fn = get_awe_string(JS_CB_OPEN_TOKEN_PAGE_NAME);
+    awe_jsarray* js_args = awe_jsarray_create(NULL, 0);
+    awe_webview_call_javascript_function(cv->webView, awe_string_empty(), get_token_fn, js_args, awe_string_empty());
+    awe_string_destroy(get_token_fn);
+    awe_jsarray_destroy(js_args);
+    
+    //open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
 }
 
 void open_login_page()
