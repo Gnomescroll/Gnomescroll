@@ -568,7 +568,6 @@ class ModelLoader
         for(int i=0; i<_nlm; i++)
         {
             struct Node* node = &_nl[i];
-
             int child_count = 0;
 
             for(int j=0; j<_nlm; j++)
@@ -632,11 +631,9 @@ class ModelLoader
 
         for(int i=0; i<_nlm; i++)
         {
-
             if(_nl[i].index != i)
             {
                 struct Node ntmp;
-
                 bool found = false;
                 for(int j=0; j<_nlm; j++)
                 {
@@ -652,9 +649,18 @@ class ModelLoader
                 GS_ASSERT(found == true);
             }
         }
-
         for(int i=0; i<_nlm; i++)
             GS_ASSERT(_nl[i].index == i);
+
+        for(int i=0; i<_nlm; i++)
+        {
+            printf("node %02d: name= %s  \n", i, _nl[i].name);
+
+            if(_nl[i].p != NULL)
+                printf("parent index= %d  parent_name= %s \n", _nl[i].p->index, _nl[i].p->name);
+        }
+
+        printf("!!!\n");
 
     }
 
