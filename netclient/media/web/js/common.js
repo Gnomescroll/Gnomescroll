@@ -74,8 +74,6 @@ function gs_append_form_errors(errors, form_type)
     {
         if (name == 'count') return;
         var el = $('div#'+name+'.errors');
-        console.log('el ' + el);
-        console.log('el ' + el[0]);
         if (name == 'csrf_token')
         {   // we have to set a custom error here, because wtforms
             // does not let one configure the message "CSRF Failed" (which is confusing to most users)
@@ -87,10 +85,7 @@ function gs_append_form_errors(errors, form_type)
         {   // set error as normal
             var len = msgs.length;
             for (var i=0; i<len; i++)
-            {
-                console.log("Appending msg: " + msgs[i] + ' to: ' + el.attr('id') + ' aka ' + name);
                 el.append(gs_make_error_element(msgs[i]));
-            }
         }
     });
 }

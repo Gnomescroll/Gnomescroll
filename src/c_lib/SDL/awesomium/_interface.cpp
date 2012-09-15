@@ -53,7 +53,7 @@ void draw()
 
 awe_string* get_awe_string(const char* _str)
 {
-    int length = strlen(_str);
+    size_t length = strlen(_str);
     return awe_string_create_from_ascii(_str, length);
 }
 
@@ -149,13 +149,18 @@ void delete_all_cookies()
     awe_webcore_clear_cookies();
 }
 
-void delete_cookie(const char* name)
+void delete_cookie(const char* url, const char* name)
 {
-    awe_string* _url = get_awe_string(GNOMESCROLL_URL);
+    awe_string* _url = get_awe_string(url);
     awe_string* _name = get_awe_string(name);
     awe_webcore_delete_cookie(_url, _name);
     awe_string_destroy(_url);
     awe_string_destroy(_name);
+}
+
+void delete_cookie(const char* name)
+{
+    delete_cookie(GNOMESCROLL_URL, name);
 }
 
 void delete_auth_token_cookie()
@@ -179,7 +184,6 @@ void open_file(const char* file)
 
 void open_token_page()
 {   // call js function that makes request for token against server
-    printf("Open token page\n");
     GS_ASSERT(cv != NULL && cv->webView != NULL);
     if (cv == NULL || cv->webView == NULL) return;
     awe_string* get_token_fn = get_awe_string(JS_CB_OPEN_TOKEN_PAGE_NAME);
@@ -246,17 +250,19 @@ void disable()
     cv->unfocus();
 }
 
-char* get_cookies()
+char* get_cookies(const char* _url)
 {
-    GS_ASSERT(cv != NULL);
-    if (cv == NULL) return NULL;
-
-    awe_string* url = get_awe_string(GNOMESCROLL_URL);
+    awe_string* url = get_awe_string(_url);
     const awe_string* _cookies = awe_webcore_get_cookies(url, false);
     awe_string_destroy(url);
 
     char* cookies = get_str_from_awe(_cookies);
     return cookies;
+}
+
+char* get_cookies()
+{
+    return get_cookies(GNOMESCROLL_URL);
 }
 
 char* get_auth_token()
@@ -302,11 +308,12 @@ void check_for_token_cookie(const awe_string* _url)
 
 char* make_cookie_expiration_string(const time_t expiration_time)
 {   // FREE THE RETURNED STRING     //DAY, DD-MMM-YYYY HH:MM:SS GMT
-    const static char timefmt[] = "%a %d-%b-%Y %H:%M:%S GMT;";
+    const static char timefmt[] = "%a %d-%b-%Y %H:%M:%S GMT";
     const static size_t size = sizeof(timefmt) - 2*7 + 3 + 2 + 3 + 4 + 2 + 2 + 2; 
     struct tm* tmdata = gmtime(&expiration_time);
-    char* expiration_str = (char*)malloc(size * sizeof(char));
-    strftime(expiration_str, size-1, timefmt, tmdata);
+    char* expiration_str = (char*)malloc((size+1) * sizeof(char));
+    strftime(expiration_str, size, timefmt, tmdata);
+    expiration_str[size] = '\0';
     return expiration_str;
 }
 
@@ -324,14 +331,116 @@ void set_game_token_cookie(const char* token, time_t expiration_time)
      
     awe_string* url = get_awe_string(GNOMESCROLL_URL);
     awe_string* cookie = get_awe_string(_cookie);
+    free(_cookie);
     awe_webcore_set_cookie(url, cookie, true, false);
     awe_string_destroy(cookie);
     awe_string_destroy(url);
-    char* cookies = get_cookies();
-    free(cookies);
 
     // REFERENCE:
-    //awe_webcore_set_cookie(url, token, is_http_only, force_session_cookie -- will be cleared on exit);
+    //awe_webcore_set_cookie(url, cookie, is_http_only, force_session_cookie -- will be cleared on exit);
+}
+
+void save_username(const char* username)
+{   // set a these on a cookie for localhost
+    time_t expiration_time = utc_now() + (60 * 60 * 24 * 365);  // expires in a year
+    char* expiration_str = make_cookie_expiration_string(expiration_time);
+    size_t expiration_len = strlen(expiration_str);
+
+    size_t username_len = strlen(username);
+
+    const static char cookie_fmt[] = "username=%s; expires=%s; domain=127.0.0.1; path=/;";
+    size_t cookie_len = strlen(cookie_fmt) - 2*2 + username_len + expiration_len + 1;
+    char* _cookie = (char*)malloc((cookie_len+1) * sizeof(char));
+    snprintf(_cookie, cookie_len, cookie_fmt, username, expiration_str);
+    _cookie[cookie_len] = '\0';
+    free(expiration_str);
+
+    printf("saving username cookie: %s\n", _cookie);
+    awe_string* cookie = get_awe_string(_cookie);
+
+    awe_string* url = get_awe_string("http://127.0.0.1");
+    awe_webcore_set_cookie(url, cookie, true, false);
+    awe_string_destroy(cookie);
+    awe_string_destroy(url);
+    free(_cookie);    
+
+    // REFERENCE:
+    //awe_webcore_set_cookie(url, cookie, is_http_only, force_session_cookie -- will be cleared on exit);
+}
+
+void save_password(const char* password)
+{   // set a these on a cookie for localhost
+    time_t expiration_time = utc_now() + (60 * 60 * 24 * 365);  // expires in a year
+    char* expiration_str = make_cookie_expiration_string(expiration_time);
+    size_t expiration_len = strlen(expiration_str);
+
+    size_t password_len = strlen(password);
+    
+    const static char cookie_fmt[] = "password=%s; expires=%s; domain=127.0.0.1; path=/;";
+    size_t cookie_len = strlen(cookie_fmt) - 2*2 + password_len + expiration_len + 1;
+    char* _cookie = (char*)malloc((cookie_len+1) * sizeof(char));
+    snprintf(_cookie, cookie_len, cookie_fmt, password, expiration_str);
+    _cookie[cookie_len] = '\0';
+    free(expiration_str);
+
+    printf("saving password cookie: %s\n", _cookie);
+    awe_string* cookie = get_awe_string(_cookie);
+
+    awe_string* url = get_awe_string("http://127.0.0.1");
+    awe_webcore_set_cookie(url, cookie, true, false);
+    awe_string_destroy(cookie);
+    awe_string_destroy(url);
+    free(_cookie);
+
+    // REFERENCE:
+    //awe_webcore_set_cookie(url, cookie, is_http_only, force_session_cookie -- will be cleared on exit);
+}
+
+void clear_username()
+{
+    delete_cookie("http://127.0.0.1", "username");
+}
+
+void clear_password()
+{
+    delete_cookie("http://127.0.0.1", "password");
+}
+
+void get_credentials(char** _username, char** _password)
+{   // MUST FREE THE RESULTS
+    *_username = NULL;
+    *_password = NULL;
+    
+    char* cookies = get_cookies("http://127.0.0.1");
+
+    // get the positions of the tokens
+    char* username = strstr(cookies, "username=");
+    char* password = strstr(cookies, "password=");
+
+    // split the cookie up
+    int i=0;
+    char c;
+    while ((c = cookies[i++]) != '\0')
+        if (c == ';') cookies[i-1] = '\0';
+
+    // copy the data over
+    if (username != NULL)
+    {
+        username = &username[strlen("username=")];
+        size_t username_len = strlen(username);
+        *_username = (char*)malloc((username_len+1)*sizeof(char));
+        strcpy(*_username, username);
+    }
+    
+    if (password != NULL)
+    {
+        password = &password[strlen("password=")];
+        size_t password_len = strlen(password);
+        *_password = (char*)malloc((password_len+1)*sizeof(char));
+        strcpy(*_password, password);
+    }
+
+    free(cookies);
 }
 
 }   // Awesomium

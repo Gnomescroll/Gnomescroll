@@ -1,6 +1,13 @@
 $(document).ready(function()
 {
 
+console.log('Username: ' + Gnomescroll.gs_username);
+console.log('Pass: ' + Gnomescroll.gs_pass);
+
+// set saved credentials
+$('input#username_or_email').val(Gnomescroll.gs_username);
+$('input#password').val(Gnomescroll.gs_pass);
+
 function successful_login(data)
 {   // record parsed json object
     Gnomescroll.clear_message();
@@ -55,6 +62,13 @@ $('form#login').submit(function(e)
             'X-Requested-With': 'XMLHttpRequest',
         },  
     });
+
+    var username = $('input#username_or_email').val();
+    Gnomescroll.save_username(username);
+    var password = $('input#password').val();
+    if (!$('input#remember_password').prop('checked'))
+        password = '';  // will clear the password
+    Gnomescroll.save_password(password);
 
     return false;
 });

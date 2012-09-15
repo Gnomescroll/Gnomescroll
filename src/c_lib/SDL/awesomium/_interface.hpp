@@ -37,16 +37,22 @@ void open_login_page();
 awe_string* get_awe_string(const char* _str);
 char* get_str_from_awe(const awe_string* str);
 
-char* get_cookies();
+char* get_cookies();    // use GNOMESCROLL_URL
+char* get_cookies(const char* url);
 char* get_auth_token();
 
-void delete_cookie();
+void delete_cookie(const char* name);   // uses GNOMESCROLL_URL
+void delete_cookie(const char* url, const char* name);
 void delete_auth_token_cookie();
 void delete_all_cookies();
 
 void check_for_token_cookie(const awe_string* _url);
 
 void set_game_token_cookie(const char* _token, time_t expiration_time);
+
+void save_username(const char* username);
+void save_password(const char* password);
+void get_credentials(char** _username, char** _password);   // MUST FREE THE RESULTS
 
 }   // Awesomium
 
@@ -78,7 +84,7 @@ void open_login_page(){}
 char* get_cookies(){ return NULL; }
 char* get_auth_token(){ return NULL; }
 
-void delete_cookie(){}
+void delete_cookie(const char* name){}
 void delete_auth_token_cookie(){}
 void delete_all_cookies(){}
 

@@ -17,6 +17,8 @@ const char JS_OBJ_LOGIN_ERROR_NAME[] = "login_error";
 const char JS_OBJ_GAME_TOKEN_NAME[] = "gstoken";
 const char JS_OBJ_DEBUG_NAME[] = "DEBUG";
 const char JS_OBJ_TOKEN_NAME_NAME[] = "token_name";
+const char JS_OBJ_USERNAME_NAME[] = "gs_username";
+const char JS_OBJ_PASSWORD_NAME[] = "gs_pass";
 
 // js -> C callbacks (registered on the Gnomescroll object)
 const char JS_CB_SET_MESSAGE_NAME[] = "set_message";
@@ -24,6 +26,8 @@ const char JS_CB_UNSET_MESSAGE_NAME[] = "clear_message";
 const char JS_CB_SET_TOKEN_NAME[] = "set_token";
 const char JS_CB_TOKEN_FAILURE_NAME[] = "token_failure";
 const char JS_CB_LOGIN_REQUIRED_NAME[] = "login_required";
+const char JS_CB_SAVE_USERNAME_NAME[] = "save_username";
+const char JS_CB_SAVE_PASSWORD_NAME[] = "save_password";
 
 // C -> js callbacks (not registered, but defined in the js)
 const char JS_CB_OPEN_TOKEN_PAGE_NAME[] = "gs_get_token";
@@ -141,6 +145,25 @@ class ChromeViewport
         this->set_js_value(JS_OBJ_CREATE_URL_NAME, GNOMESCROLL_CREATE_URL);
         this->set_js_value(JS_OBJ_TOKEN_URL_NAME, GNOMESCROLL_TOKEN_URL);
         this->set_js_value(JS_OBJ_TOKEN_NAME_NAME, Auth::AUTH_TOKEN_COOKIE_NAME);
+
+        // credentials
+        char* username = NULL;
+        char* password = NULL;
+        get_credentials(&username, &password);
+        if (username != NULL)
+        {
+            this->set_js_value(JS_OBJ_USERNAME_NAME, username);
+            free(username);
+            if (password != NULL)
+            {
+                this->set_js_value(JS_OBJ_PASSWORD_NAME, password);
+                free(password);
+            }
+            else
+                this->set_js_value(JS_OBJ_PASSWORD_NAME, "");
+        }
+        else
+            this->set_js_value(JS_OBJ_USERNAME_NAME, "");
         
         // set some null values on the object
         this->set_js_value(JS_OBJ_LOGIN_ERROR_NAME);
@@ -154,6 +177,8 @@ class ChromeViewport
         this->register_js_callback(JS_CB_SET_TOKEN_NAME);
         this->register_js_callback(JS_CB_TOKEN_FAILURE_NAME);
         this->register_js_callback(JS_CB_LOGIN_REQUIRED_NAME);
+        this->register_js_callback(JS_CB_SAVE_USERNAME_NAME);
+        this->register_js_callback(JS_CB_SAVE_PASSWORD_NAME);
         
         // callbacks for error handling
         awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);

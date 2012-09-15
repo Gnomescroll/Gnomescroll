@@ -156,6 +156,38 @@ void js_login_required_callback(awe_webview* webView, const awe_string* _obj_nam
     Hud::set_prompt(Hud::open_login_text);
 }
 
+void js_save_username_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    const awe_jsvalue* vusername = awe_jsarray_get_element(_args, 0);
+    if (vusername == NULL) return;
+    if (awe_jsvalue_get_type(vusername) != JSVALUE_TYPE_STRING) return;
+
+    awe_string* _username = awe_jsvalue_to_string(vusername);
+    char* username = get_str_from_awe(_username);
+    if (username[0] == '\0')
+        clear_username();
+    else
+        save_username(username);
+    awe_string_destroy(_username);
+    free(username);
+}
+
+void js_save_password_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    const awe_jsvalue* vpassword = awe_jsarray_get_element(_args, 0);
+    if (vpassword == NULL) return;
+    if (awe_jsvalue_get_type(vpassword) != JSVALUE_TYPE_STRING) return;
+
+    awe_string* _password = awe_jsvalue_to_string(vpassword);
+    char* password = get_str_from_awe(_password);
+    if (password[0] == '\0')
+        clear_password();
+    else
+        save_password(password);
+    awe_string_destroy(_password);
+    free(password);
+}
+
 void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     char* cb = get_str_from_awe(_cb_name);
@@ -173,6 +205,12 @@ void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, cons
     else
     if (strcmp(cb, JS_CB_LOGIN_REQUIRED_NAME) == 0)
         js_login_required_callback(webView, _obj_name, _cb_name, _args);
+    else
+    if (strcmp(cb, JS_CB_SAVE_USERNAME_NAME) == 0)
+        js_save_username_callback(webView, _obj_name, _cb_name, _args);
+    else
+    if (strcmp(cb, JS_CB_SAVE_PASSWORD_NAME) == 0)
+        js_save_password_callback(webView, _obj_name, _cb_name, _args);
     else
         printf("Unhandled javascript callback triggered: %s\n", cb);
     free(cb);
