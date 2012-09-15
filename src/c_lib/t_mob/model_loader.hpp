@@ -1172,6 +1172,7 @@ class BodyMesh
 
     int bvlm;                   //base vertex list max
     struct _Vertex* bvl;        //base vertex list
+    struct _Vertex* tbvl;
 
     struct _Vertex* vl;         //vertex list
     int vln;                    //vertex list max
@@ -1182,8 +1183,19 @@ class BodyMesh
     struct _VertexWeight* vwl;  //vertex weight list
     int vwlm;                   //vertex weight list
 */
+
+/*
+    struct _VertexWeight
+    {
+        int bone_index; //index into bone matrix
+        int vertex_index;       //mesh vertex index
+        float weight;   //weight
+    };
+*/
+
     void draw()
     {
+        bool print = false;
 
         for(int i=0; i<mlm; i++)
         {
@@ -1192,24 +1204,47 @@ class BodyMesh
 
             for(int j=0; j<m->bvlm; j++)
             {
+                m->tbvl[i].ux = m->bvl[j].ux;
+                m->tbvl[i].uy = m->bvl[j].uy;
+
+                m->tbvl[i].v.x = 0.0f;
+                m->tbvl[i].v.y = 0.0f;
+                m->tbvl[i].v.z = 0.0f;
+            }
+
+            for(int j=0; j<m->vwlm; j++)
+            {
+                struct _VertexWeight = w->vwl[j];
+                int bone_index   = w.bone_index;
+                int vertex_index = w.vertex_index;
+                float weight     = w.weight;
+
+                if(_print)
+                    vec3_print(bvl[index].v);
+
+                Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[i] );
+            /*
+                if(_print)
+                {
+                    printf("Vertex %02d \n", index);
+                    vec3_print(bvl[index].v);
+
+                    vec3_print(v);
+                    mat4_print(boneMatrix);
+                }
+            */
+                tbvl[index].v.x += weight*v.x;
+                tbvl[index].v.y += weight*v.y;
+                tbvl[index].v.z += weight*v.z;
 
 
             }
 
+
+
         }
         //class BodyPartMesh* bpm
 
-        for(int i=0; i<bvlm; i++)
-        {
-            tbvl[i].ux = bvl[i].ux;
-            tbvl[i].uy = bvl[i].uy;
-
-            tbvl[i].v.x = 0.0;
-            tbvl[i].v.y = 0.0;
-            tbvl[i].v.z = 0.0;
-        }
-
-        int count = 0;
         for(int i=0; i<nli; i++)
         {
             aiMesh* mesh = ml[i];
