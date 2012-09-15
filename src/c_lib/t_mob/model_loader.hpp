@@ -695,7 +695,7 @@ class ModelLoader
             }
         }
 
-
+/*
         for(int i=0; i<_nlm; i++)
         {
             if(_nl[i].p != NULL)
@@ -707,9 +707,8 @@ class ModelLoader
                 printf("node %02d: name= %s  \n", i, _nl[i].name);
             }
         }
-
         printf("!!!\n");
-
+*/
 
     }
 
@@ -1021,6 +1020,7 @@ class BodyMesh
         nnl = NULL;
         npl = NULL;
         node_mTransformation = NULL;
+
         bnl = NULL;
         bone_mOffsetMatrix = NULL;
         bpl = NULL;
@@ -1109,6 +1109,12 @@ class BodyMesh
         _set[0] = 1;
         tnode_matrix[0] = node_mTransformation[0];
 
+/*
+    char** nnl;         //node name list
+    int* npl;           //node parent list
+    struct Mat4* node_mTransformation;    //node transform list, mTransformation
+    int nm;       
+*/
 
         printf("nm= %d \n", nm);
 
@@ -1116,7 +1122,7 @@ class BodyMesh
 
         for(int i=1; i<nm; i++)
         {
-            if(bpl[i] == -1)
+            if(npl[i] == -1)
             {
                 printf("ERROR: node %d parent is -1 \n", i);
                 continue;
@@ -1129,6 +1135,30 @@ class BodyMesh
 
             tnode_matrix[i] = mat4_mult( tnode_matrix[npl[i]], node_mTransformation[i] );
             _set[i] = 1;
+        }
+
+        //bone matrix preperation
+
+/*
+    char** bnl;     //bone name list
+    struct Mat4* bone_mOffsetMatrix;
+    int* bpl;        //bone parent list; index of parent node
+    int blm;        //bone list max
+*/
+
+        for(int i=0; i<blm; i++)
+        {
+            if(bpl[i] == -1)
+            {
+                printf("ERROR: bone %d parent is -1 \n", i);
+                continue;
+            }
+            //printf("node %02d: name= %s parent= %d \n" , i, nnl[i], bpl[i] );
+            printf("bone %02d: name= %s parent= %d parent_name= %s \n", i, bnl[i], bpl[i], nnl[bpl[i]] );
+
+            GS_ASSERT(_set[bpl[i]] == 1);
+
+            tbone_matrix[i] = mat4_mult( tnode_matrix[bpl[i]], bone_mOffsetMatrix[i] );
         }
 
     }
@@ -1227,7 +1257,6 @@ void teardown()
 {
 if(model_loader != NULL) delete model_loader;
 if(body_mesh != NULL) delete body_mesh;
-
 }
 
 
