@@ -1195,7 +1195,7 @@ class BodyMesh
 
     void draw()
     {
-        bool print = false;
+        bool _print = false;
 
         for(int i=0; i<mlm; i++)
         {
@@ -1220,7 +1220,7 @@ class BodyMesh
                 float weight     = w.weight;
 
                 if(_print)
-                    vec3_print(bvl[index].v);
+                    vec3_print(m->bvl[vertex_index].v);
 
                 GS_ASSERT(bone_index >= 0 && bone_index < blm);
                 Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
@@ -1234,9 +1234,9 @@ class BodyMesh
                     mat4_print(boneMatrix);
                 }
             */
-                m->tbvl[index].v.x += weight*v.x;
-                m->tbvl[index].v.y += weight*v.y;
-                m->tbvl[index].v.z += weight*v.z;
+                m->tbvl[vertex_index].v.x += weight*v.x;
+                m->tbvl[vertex_index].v.y += weight*v.y;
+                m->tbvl[vertex_index].v.z += weight*v.z;
 
 
             }
