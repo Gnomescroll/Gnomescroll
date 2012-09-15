@@ -1219,6 +1219,8 @@ class BodyMesh
                 int vertex_index = w.vertex_index;
                 float weight     = w.weight;
 
+                GS_ASSERT(vertex_index < m->bvlm);
+
                 if(_print)
                     vec3_print(m->bvl[vertex_index].v);
 
