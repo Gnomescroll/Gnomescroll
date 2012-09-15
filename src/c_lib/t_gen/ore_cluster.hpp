@@ -142,8 +142,9 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, int tile_id);
 
 void populate_ore_pocket_cuboid(int number, const char* block_name)
 {
-
+    const static int regolith_id = t_map::dat_get_cube_id("regolith");
     int tile_id = t_map::dat_get_cube_id(block_name);
+
     GS_ASSERT(tile_id >= 0);
     if (tile_id < 0) return;
 
@@ -157,7 +158,7 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
         int z = (int)genrand_int32() % map_dim.z;
 
         int ctile = t_map::get(x,y,z);
-        if (ctile == 0)
+        if (ctile == 0 || ctile == regolith_id)
             continue;
         
 
