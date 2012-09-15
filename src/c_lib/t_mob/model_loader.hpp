@@ -918,7 +918,7 @@ class BodyPartMesh
 	{
         bvl  = NULL;
         tbvl = NULL;
-        vl   = NULL;
+        tvl   = NULL;
         vwl  = NULL;
         via  = NULL;
 	}
@@ -1199,7 +1199,7 @@ class BodyMesh
 
         for(int i=0; i<mlm; i++)
         {
-            class BodyPartMesh* m = ml[i];
+            class BodyPartMesh* m = &ml[i];
             GS_ASSERT(m != NULL);
 
             for(int j=0; j<m->bvlm; j++)
@@ -1214,7 +1214,7 @@ class BodyMesh
 
             for(int j=0; j<m->vwlm; j++)
             {
-                struct _VertexWeight = w->vwl[j];
+                struct _VertexWeight w = m->vwl[j];
                 int bone_index   = w.bone_index;
                 int vertex_index = w.vertex_index;
                 float weight     = w.weight;
@@ -1234,9 +1234,9 @@ class BodyMesh
                     mat4_print(boneMatrix);
                 }
             */
-                tbvl[index].v.x += weight*v.x;
-                tbvl[index].v.y += weight*v.y;
-                tbvl[index].v.z += weight*v.z;
+                m->tbvl[index].v.x += weight*v.x;
+                m->tbvl[index].v.y += weight*v.y;
+                m->tbvl[index].v.z += weight*v.z;
 
 
             }
@@ -1245,58 +1245,7 @@ class BodyMesh
 
         }
         //class BodyPartMesh* bpm
-
-        for(int i=0; i<nli; i++)
-        {
-            aiMesh* mesh = ml[i];
-
-            //printf("%i: num bones= %i \n", i, mesh->mNumBones);
-
-            int offset = bvlo[i];
-            int num = bvln[i];
-
-            GS_ASSERT(mesh->mNumBones != 0);
-
-            if(_print)
-                printf("mesh: %02d mesh name= %s \n", i, nl[i]->mName.data);
-
-            for(unsigned int j=0; j<mesh->mNumBones; j++)
-            {
-                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
-                //GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
-
-
-                if(_print)
-                {
-                    printf("final matrix: mesh: %02d %02d mesh name= %s \n", i,j, nl[i]->mName.data);
-                    mat4_print(boneMatrix) ;
-                }
-
-                for(unsigned int k=0; k<bone->mNumWeights; k++)
-                {
-                    int index = offset + bone->mWeights[k].mVertexId;
-                    float weight = bone->mWeights[k].mWeight;
-
-                    if(_print)
-                        vec3_print(bvl[index].v);
-
-                    Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
-
-                    if(_print)
-                    {
-                        printf("Vertex %02d \n", index);
-                        vec3_print(bvl[index].v);
-
-                        vec3_print(v);
-                        mat4_print(boneMatrix);
-                    }
-
-                    tbvl[index].v.x += weight*v.x;
-                    tbvl[index].v.y += weight*v.y;
-                    tbvl[index].v.z += weight*v.z;
-                }
-            }
-        }
+/*
 
         for(int i=0; i<bvlm; i++)
         {
@@ -1330,7 +1279,7 @@ class BodyMesh
         
         glBindTexture(GL_TEXTURE_2D, 0);
         check_gl_error();
-
+*/
     }
 
     unsigned int texture1;
