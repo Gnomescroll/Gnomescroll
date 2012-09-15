@@ -558,8 +558,10 @@ class ModelLoader
         {
             aiNode* node = _nl[i].node;
             if(strcmp(node->mName.data, "Armature") == 0)   //parent should be null for armature which is top level
+            {
+                _nl[i].p = NULL;
                 continue;
-
+            }
             int index = node_index_from_list(node->mParent);
             _nl[i].p = &_nl[index];
         }
@@ -652,6 +654,48 @@ class ModelLoader
         for(int i=0; i<_nlm; i++)
             GS_ASSERT(_nl[i].index == i);
 
+
+
+        //reset parent node
+        for(int i=0; i<_nlm; i++)
+        {
+            aiNode* node = _nl[i].node;
+            if(strcmp(node->mName.data, "Armature") == 0)   //parent should be null for armature which is top level
+            {
+                _nl[i].p = NULL;
+                continue;
+            }
+            int index = node_index_from_list(node->mParent);
+            _nl[i].p = &_nl[index];
+        }
+
+        //reset children
+        for(int i=0; i<_nlm; i++)
+        {
+            struct Node* node = &_nl[i];
+            int child_count = 0;
+
+            for(int j=0; j<_nlm; j++)
+            {
+                if( _nl[j].p == node)
+                    child_count++;
+            }
+
+            node->c = new Node*[child_count];
+            node->cn = child_count;
+
+            child_count = 0;
+            for(int j=0; j<_nlm; j++)
+            {
+                if( _nl[j].p == node)
+                {
+                    node->c[child_count] = &_nl[j];
+                    child_count++;
+                }
+            }
+        }
+
+
         for(int i=0; i<_nlm; i++)
         {
             if(_nl[i].p != NULL)
@@ -665,6 +709,7 @@ class ModelLoader
         }
 
         printf("!!!\n");
+
 
     }
 
