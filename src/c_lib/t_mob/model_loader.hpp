@@ -902,9 +902,10 @@ class BodyPartMesh
 
     int bvlm;                   //base vertex list max
     struct _Vertex* bvl;        //base vertex list
+    struct _Vertex* tbvl;
 
-    struct _Vertex* vl;         //vertex list
-    int vln;                    //vertex list max
+    struct _Vertex* tvl;        //vertex list
+    int tvln;                   //vertex list max
 
     int* via;                   //vertex index array
     int viam;
@@ -915,10 +916,11 @@ class BodyPartMesh
 
 	BodyPartMesh()
 	{
-        bvl = NULL;
-        vl  = NULL;
-        vwl = NULL;
-        via = NULL;
+        bvl  = NULL;
+        tbvl = NULL;
+        vl   = NULL;
+        vwl  = NULL;
+        via  = NULL;
 	}
 
 	~BodyPartMesh()
@@ -936,13 +938,14 @@ class BodyPartMesh
         //base vertex list
         bvlm = mesh->bvln;
         bvl = new struct _Vertex[bvlm];
+        tbvl = new struct _Vertex[bvlm];
 
         for(int i=0;i<bvlm;i++)
             bvl[i] = mesh->bvl[i];
 
         //vertex list
-        vln = mesh->vln;
-        vl = new struct _Vertex[vln];
+        tvln = mesh->vln;
+        tvl = new struct _Vertex[tvln];
 
         //vertex list index array
         viam = mesh->viam;
@@ -1164,20 +1167,47 @@ class BodyMesh
     }
 
 
+/*
+    char* mesh_name;
+
+    int bvlm;                   //base vertex list max
+    struct _Vertex* bvl;        //base vertex list
+
+    struct _Vertex* vl;         //vertex list
+    int vln;                    //vertex list max
+
+    int* via;                   //vertex index array
+    int viam;
+
+    struct _VertexWeight* vwl;  //vertex weight list
+    int vwlm;                   //vertex weight list
+*/
     void draw()
     {
 
+        for(int i=0; i<mlm; i++)
+        {
+            class BodyPartMesh* m = ml[i];
+            GS_ASSERT(m != NULL);
+
+            for(int j=0; j<m->bvlm; j++)
+            {
+
+
+            }
+
+        }
+        //class BodyPartMesh* bpm
 
         for(int i=0; i<bvlm; i++)
         {
             tbvl[i].ux = bvl[i].ux;
             tbvl[i].uy = bvl[i].uy;
 
-            tbvl[i].v.x = 0.0;  // 0.0f + x
+            tbvl[i].v.x = 0.0;
             tbvl[i].v.y = 0.0;
             tbvl[i].v.z = 0.0;
         }
-        //printf("nli= %i \n", nli);
 
         int count = 0;
         for(int i=0; i<nli; i++)
