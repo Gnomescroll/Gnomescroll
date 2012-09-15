@@ -116,9 +116,9 @@ class ModelLoader
 
         init_bone_list();
         init_node_list();
+        init_bone_list2();
 
         initialize_meshes2();
-
     }
 
     void count_nodes(aiNode* pNode)
@@ -431,6 +431,14 @@ class ModelLoader
         GS_ASSERT(bone_count == bnlm);
     }
 
+    //set bone parents
+    void init_bone_list2()
+    {
+        for(int i=0; i<bnlm; i++)
+        {
+            bnl[i].parent_index = node_index_from_list(bnl[i].parent_node);
+        }
+    }
 
     bool node_in_list(struct aiNode* node, int node_count)
     {
@@ -476,8 +484,9 @@ class ModelLoader
 
     void _set_node_index(int* index, Node* node)
     {
+        printf("node_set_index: node_node= %s node_index= %d \n", node->name, *index);
         node->index = *index;
-        *index++;
+        (*index)++;
         for(int i=0; i<node->cn; i++)
             _set_node_index(index, node->c[i] );
     }
@@ -540,7 +549,8 @@ class ModelLoader
             }
         }
 
-        _nlm = node_count;
+        _nlm = node_count;  //some overhang on array
+
         printf("init_node_list: node_count= %d nlm= %d _nlm= %d \n", node_count, nlm, _nlm);
 
         //set parent node
@@ -548,8 +558,10 @@ class ModelLoader
         {
             aiNode* node = _nl[i].node;
             if(strcmp(node->mName.data, "Armature") == 0)   //parent should be null for armature which is top level
+            {
+                _nl[i].p = NULL;
                 continue;
-
+            }
             int index = node_index_from_list(node->mParent);
             _nl[i].p = &_nl[index];
         }
@@ -558,7 +570,6 @@ class ModelLoader
         for(int i=0; i<_nlm; i++)
         {
             struct Node* node = &_nl[i];
-
             int child_count = 0;
 
             for(int j=0; j<_nlm; j++)
@@ -581,6 +592,13 @@ class ModelLoader
             }
         }
 
+
+        for(int i=0; i<_nlm; i++)
+        {
+            printf("Node %02d name: %s children_number= %d \n", i, _nl[i].name, _nl[i].cn );
+        }
+
+
         //set index
         struct Node* root_node = NULL;
         for(int i=0; i<_nlm; i++)
@@ -600,11 +618,14 @@ class ModelLoader
                 GS_ASSERT( _nl[i].p == NULL);
                 continue;
             }
-            GS_ASSERT(_nl[i].index < _nl[i].p->index);
-
-            if(_nl[i].index >= _nl[i].p->index)
+            else
             {
-                printf("ERROR: index= %d parent_index= %d node_name= %s \n", _nl[i].index, _nl[i].p->index, _nl[i].name );
+                GS_ASSERT( _nl[i].index > _nl[i].p->index);
+                GS_ASSERT(_nl[i].index != -1);
+                GS_ASSERT(_nl[i].index < _nlm );
+                if( _nl[i].index <= _nl[i].p->index || _nl[i].index == -1 || _nl[i].index >= _nlm)
+                    printf("ERROR: i=%d index= %d node_name= %s parent_index= %d parent_node_name= %s \n", 
+                        i, _nl[i].index,_nl[i].name,  _nl[i].p->index,_nl[i].p->name );
             }
         }
 
@@ -612,11 +633,9 @@ class ModelLoader
 
         for(int i=0; i<_nlm; i++)
         {
-
             if(_nl[i].index != i)
             {
                 struct Node ntmp;
-
                 bool found = false;
                 for(int j=0; j<_nlm; j++)
                 {
@@ -632,9 +651,65 @@ class ModelLoader
                 GS_ASSERT(found == true);
             }
         }
-
         for(int i=0; i<_nlm; i++)
             GS_ASSERT(_nl[i].index == i);
+
+
+
+        //reset parent node
+        for(int i=0; i<_nlm; i++)
+        {
+            aiNode* node = _nl[i].node;
+            if(strcmp(node->mName.data, "Armature") == 0)   //parent should be null for armature which is top level
+            {
+                _nl[i].p = NULL;
+                continue;
+            }
+            int index = node_index_from_list(node->mParent);
+            _nl[i].p = &_nl[index];
+        }
+
+        //reset children
+        for(int i=0; i<_nlm; i++)
+        {
+            struct Node* node = &_nl[i];
+            int child_count = 0;
+
+            for(int j=0; j<_nlm; j++)
+            {
+                if( _nl[j].p == node)
+                    child_count++;
+            }
+
+            node->c = new Node*[child_count];
+            node->cn = child_count;
+
+            child_count = 0;
+            for(int j=0; j<_nlm; j++)
+            {
+                if( _nl[j].p == node)
+                {
+                    node->c[child_count] = &_nl[j];
+                    child_count++;
+                }
+            }
+        }
+
+
+        for(int i=0; i<_nlm; i++)
+        {
+            if(_nl[i].p != NULL)
+            {
+                printf("node %02d: name= %s parent index= %d  parent_name= %s \n", i, _nl[i].name, _nl[i].p->index, _nl[i].p->name);
+            }
+            else
+            {
+                printf("node %02d: name= %s  \n", i, _nl[i].name);
+            }
+        }
+
+        printf("!!!\n");
+
 
     }
 
@@ -952,6 +1027,8 @@ class BodyMesh
 
         tbone_matrix = NULL;
         tnode_matrix = NULL;
+
+        s = NULL;
     }
 
     ~BodyMesh()
@@ -975,14 +1052,17 @@ class BodyMesh
         nm = ML->_nlm;
         nnl = new char*[nm];
         npl = new int[nm];
+
         node_mTransformation = new struct Mat4[nm];  //mTransformation;
-        tbone_matrix =  new struct Mat4[nm];
+        tnode_matrix =  new struct Mat4[nm];
 
         for(int i=0;i<nm; i++)
         {  
             GS_ASSERT(ML->_nl[i].index == i);
             nnl[i] = ML->_nl[i].name;
             npl[i] = (ML->_nl[i].p == NULL ? 0 : ML->_nl[i].p->index);
+            if(ML->_nl[i].p != NULL)
+                printf("node %d parent %d p2= %d \n", i, npl[i], ML->_nl[i].p->index);
             node_mTransformation[i] = ML->_nl[i].mTransformation;
         }
 
@@ -990,7 +1070,10 @@ class BodyMesh
 
         blm = ML->bnlm;
         bnl = new char*[blm];
+        
         bone_mOffsetMatrix = new struct Mat4[blm];
+        tbone_matrix = new struct Mat4[blm];
+
         bpl = new int[blm];
 
         for(int i=0;i<blm;i++)
@@ -998,6 +1081,11 @@ class BodyMesh
             bnl[i] = ML->bnl[i].name; 
             bone_mOffsetMatrix[i] = ML->bnl[i].mOffsetMatrix;
             bpl[i] = ML->bnl[i].parent_index;
+
+            if(bpl[i] == -1)
+            {
+                printf("ERROR: bone parent for bone %i is -1 \n", i);
+            }
         }
 
         GS_ASSERT(ML->_nl[0].p == 0);
@@ -1009,13 +1097,44 @@ class BodyMesh
         for(int i=0; i< ML->_mlm; i++)
             ml[i].load( &(ML->_ml[i]) );
 
-
         init_texture();
-
-
     }
 
     void draw_prep()
+    {
+        static int* _set = NULL;
+        if( _set == NULL) _set = new int[nm];
+        for(int i=0; i<nm; i++) _set[i] = 0;
+
+        _set[0] = 1;
+        tnode_matrix[0] = node_mTransformation[0];
+
+
+        printf("nm= %d \n", nm);
+
+        printf("node %02d: name= %s \n", 0, nnl[0]);
+
+        for(int i=1; i<nm; i++)
+        {
+            if(bpl[i] == -1)
+            {
+                printf("ERROR: node %d parent is -1 \n", i);
+                continue;
+            }
+            //printf("node %02d: name= %s parent= %d \n" , i, nnl[i], bpl[i] );
+            printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], npl[i], nnl[npl[i]] );
+
+            GS_ASSERT(_set[i] == 0);
+            GS_ASSERT(_set[npl[i]] == 1);
+
+            tnode_matrix[i] = mat4_mult( tnode_matrix[npl[i]], node_mTransformation[i] );
+            _set[i] = 1;
+        }
+
+    }
+
+
+    void draw()
     {
 
     }
@@ -1094,6 +1213,7 @@ void init()
     body_mesh = new BodyMesh;
     body_mesh->load(model_loader);
 
+    body_mesh->draw_prep();
 }
 
 
