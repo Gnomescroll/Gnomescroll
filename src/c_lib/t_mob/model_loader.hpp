@@ -654,10 +654,14 @@ class ModelLoader
 
         for(int i=0; i<_nlm; i++)
         {
-            printf("node %02d: name= %s  \n", i, _nl[i].name);
-
             if(_nl[i].p != NULL)
-                printf("parent index= %d  parent_name= %s \n", _nl[i].p->index, _nl[i].p->name);
+            {
+                printf("node %02d: name= %s parent index= %d  parent_name= %s \n", i, _nl[i].name, _nl[i].p->index, _nl[i].p->name);
+            }
+            else
+            {
+                printf("node %02d: name= %s  \n", i, _nl[i].name);
+            }
         }
 
         printf("!!!\n");
