@@ -103,58 +103,54 @@ static void client_connect(ENetEvent* event)
     NetClient::Server.connected = 1;
 
     printf("Client connected with server \n");
-    #if DC_CLIENT
     ClientState::on_connect();
     Hud::unset_error_status(GS_ERROR_NOT_CONNECTED);
-    #endif
 }
 
 //client disconnect event
 static void client_disconnect(ENetEvent* event)
 {
+    Hud::set_error_status(GS_ERROR_WAS_DISCONNECTED);
+
     if (event->data == DISCONNECT_TIMEOUT)
-        printf("Client timeout from server\n");
+        Hud::set_server_disconnect_message("Client timeout from server");
     else
     if (event->data == DISCONNECT_GRACEFULLY)
-        printf("Client disconnected from server\n");
+        Hud::set_server_disconnect_message("Client disconnected from server");
     else
     if (event->data == DISCONNECT_FORCED)
-        printf("Client was force disconnected by server\n");
+        Hud::set_server_disconnect_message("Client was force disconnected by server");
     else
     if (event->data == DISCONNECT_FULL)
-        printf("Could not connect to server: server full\n");
+        Hud::set_server_disconnect_message("Could not connect to server: server full");
     else
     if (event->data == DISCONNECT_BAD_PACKET)
-        printf("Client was disconnected for sending malformed data\n");
+        Hud::set_server_disconnect_message("Client was disconnected for sending malformed data");
     else
     if (event->data == DISCONNECT_AUTH_TIMEOUT)
-        printf("Client failed to authorize\n");
+        Hud::set_server_disconnect_message("Client failed to authorize");
     else
     if (event->data == DISCONNECT_AUTH_EXPIRED)
-        printf("Client authorization expired\n");
+        Hud::set_server_disconnect_message("Client authorization expired");
     else
     if (event->data == DISCONNECT_SERVER_ERROR)
-        printf("Client was disconnected because of an error in the server\n");
+        Hud::set_server_disconnect_message("Client was disconnected because of an error in the server");
     else
     if (event->data == DISCONNECT_LOGIN_ELSEWHERE)
-        printf("Client was disconnected because it logged in as another client\n");
+        Hud::set_server_disconnect_message("Client was disconnected because it logged in as another client");
     else
     if (event->data == DISCONNECT_AUTH_LIMIT)
-        printf("Client was disconnected because it had too many failed authorizations\n");
+        Hud::set_server_disconnect_message("Client was disconnected because it had too many failed authorizations");
     else
-        printf("Client disconnected from server\n");
+        Hud::set_server_disconnect_message("Client disconnected from server");
 
     event->peer->data = NULL;
-    //enet_peer_reset(event->peer); //TEST
     
     NetClient::Server.disconnect_code = (DisconnectType)event->data;
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
 
-    #if DC_CLIENT
     ClientState::on_disconnect();
-    Hud::set_error_status(GS_ERROR_WAS_DISCONNECTED);
-    #endif
 }
 
 void client_connect_to(int a, int b, int c, int d, unsigned short port) 
@@ -546,15 +542,15 @@ static void client_connect(ENetEvent* event)
         users->assign_session_to_user(session);
     }
 
-    #if !PRODUCTION
-    // just connect the client
-    // DONT MOVE THIS -- must be called here
-    const char username_fmt[] = "debuguser%d";
-    char* username = (char*)malloc(sizeof(username_fmt) * sizeof(char));
-    sprintf(username, username_fmt, npm->client_id);
-    NetServer::client_authorized(npm->client_id, npm->client_id+1, utc_now()+3600, username);
-    free(username);
-    #endif
+    if (!Options::auth)
+    {   // just connect the client
+        // DONT MOVE THIS -- must be called here
+        const char username_fmt[] = "debuguser%d";
+        char* username = (char*)malloc(sizeof(username_fmt) * sizeof(char));
+        sprintf(username, username_fmt, npm->client_id);
+        NetServer::client_authorized(npm->client_id, npm->client_id+1, utc_now()+3600, username);
+        free(username);
+    }
     
     if (nc != NULL)
         nc->flush_to_net();

@@ -71,27 +71,11 @@ void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_st
 
     //printf("\n");
 
-    check_for_token_cookie(_url);
+    //check_for_token_cookie(_url);
 }
 
 void finish_loading_cb(awe_webview* webView)
 {
-    awe_string* _url = awe_webview_get_url(webView);
-    char* url = get_str_from_awe(_url);
-    // TODO -- move this to the appropriate place
-    // Should really trigger ???? local js??? -X-Gnomescroll !!
-    if (str_starts_with(url, GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH))
-    {   // login page loaded; force show awesomium window
-        enable_awesomium();
-        Auth::needs_login = true;
-        if (chat_client != NULL)
-        {
-            chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
-            chat_client->send_system_message(Hud::open_login_text);
-        }
-        Hud::set_prompt(Hud::open_login_text);
-    }
-    free(url);
 }
 
 awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request)
@@ -114,33 +98,34 @@ void resource_response_cb(awe_webview* webView, const awe_string* _url,
 
 void web_view_crashed_cb(awe_webview* webView)
 {
-    if (cv != NULL) cv->crashed = true;
+    if (cv != NULL)
+    {
+        cv->crashed = true;
+        cv->webView = NULL;
+    }
     printf("Webview crashed\n");
 }
 
-void js_set_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+void js_set_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
-    printf("set error\n");
-    const awe_jsvalue* verror = awe_jsarray_get_element(_args, 0);
-    GS_ASSERT(verror != NULL);
-    if (verror == NULL) return;
+    const awe_jsvalue* vmsg = awe_jsarray_get_element(_args, 0);
+    GS_ASSERT(vmsg != NULL);
+    if (vmsg == NULL) return;
     
-    awe_string* _error = awe_jsvalue_to_string(verror);
-    char* error = get_str_from_awe(_error);
-    printf("error: %s\n", error);
-    // Here, set the web/auth message box, that resides above the screen TODO
-    awe_string_destroy(_error);
-    free(error);
+    awe_string* _msg = awe_jsvalue_to_string(vmsg);
+    char* msg = get_str_from_awe(_msg);
+    Hud::set_awesomium_message(msg);
+    awe_string_destroy(_msg);
+    free(msg);
 }
 
-void js_unset_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+void js_unset_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
-    // hear, clear the web/auth message box, if the message matches
+    Hud::clear_awesomium_message();
 }
 
 void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
-    printf("set token\n");
     const awe_jsvalue* vtoken = awe_jsarray_get_element(_args, 0);
     GS_ASSERT(vtoken != NULL);
     if (vtoken == NULL) return;
@@ -149,22 +134,45 @@ void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, co
     char* token = get_str_from_awe(_token);
     Auth::AuthError error = Auth::update_token(token);
     GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
-    //return;
+    if (error != Auth::AUTH_ERROR_NONE)
+        Auth::token_failure = false;
     free(token);
     awe_string_destroy(_token);
+}
+
+void js_token_failure_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    Auth::token_failure = true;
+}
+
+void js_login_required_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    Auth::needs_login = true;
+    if (chat_client != NULL)
+    {
+        chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
+        chat_client->send_system_message(Hud::open_login_text);
+    }
+    Hud::set_prompt(Hud::open_login_text);
 }
 
 void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     char* cb = get_str_from_awe(_cb_name);
-    if (strcmp(cb, JS_CB_SET_ERROR_NAME) == 0)
-        js_set_error_callback(webView, _obj_name, _cb_name, _args);
+    if (strcmp(cb, JS_CB_SET_MESSAGE_NAME) == 0)
+        js_set_message_callback(webView, _obj_name, _cb_name, _args);
     else
-    if (strcmp(cb, JS_CB_UNSET_ERROR_NAME) == 0)
-        js_unset_error_callback(webView, _obj_name, _cb_name, _args);
+    if (strcmp(cb, JS_CB_UNSET_MESSAGE_NAME) == 0)
+        js_unset_message_callback(webView, _obj_name, _cb_name, _args);
     else
     if (strcmp(cb, JS_CB_SET_TOKEN_NAME) == 0)
         js_set_token_callback(webView, _obj_name, _cb_name, _args);
+    else
+    if (strcmp(cb, JS_CB_TOKEN_FAILURE_NAME) == 0)
+        js_token_failure_callback(webView, _obj_name, _cb_name, _args);
+    else
+    if (strcmp(cb, JS_CB_LOGIN_REQUIRED_NAME) == 0)
+        js_login_required_callback(webView, _obj_name, _cb_name, _args);
     else
         printf("Unhandled javascript callback triggered: %s\n", cb);
     free(cb);
@@ -173,8 +181,8 @@ void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, cons
 void ChromeViewport::set_callbacks()
 {
     //awe_webview_set_callback_begin_navigation(this->webView, &begin_navigation_cb);
-    awe_webview_set_callback_begin_loading(this->webView, &begin_loading_cb);
-    awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
+    //awe_webview_set_callback_begin_loading(this->webView, &begin_loading_cb);
+    //awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
     //awe_webview_set_callback_resource_response(this->webView, &resource_response_cb);
     //awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
     awe_webview_set_callback_web_view_crashed(this->webView, &web_view_crashed_cb);

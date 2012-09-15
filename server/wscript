@@ -41,18 +41,9 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], auth=False, production=False):
+def configure(conf, add_flags=[], rm_flags=[], production=False):
     OS = platform.system()
     conf.env.os = OS
-
-    if production:
-        auth = True
-
-    authflag = '-DAUTH='
-    if auth:
-        authflag += '0'
-    else:
-        authflag += '1'
 
     #conf.check_tool('gcc')
     conf.check_tool('g++')
@@ -84,7 +75,6 @@ def configure(conf, add_flags=[], rm_flags=[], auth=False, production=False):
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
-        authflag,
         #'-DGS_VERSION=%d' % (version,),
     ]
 
@@ -332,12 +322,3 @@ class prodtest_ctx(ConfigurationContext):
 
 def prodtest(ctx, add=[], rm=[]):
     configure(ctx, add_flags=add+['-Winline'], rm_flags=rm, production=True)
-    
-class auth_ctx(ConfigurationContext):
-    cmd = 'auth'
-    fun = 'auth'
-
-def auth(ctx):
-    configure(ctx, auth=True)
-
-

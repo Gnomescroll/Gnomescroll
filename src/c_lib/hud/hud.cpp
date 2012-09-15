@@ -161,6 +161,28 @@ void clear_prompt(const char* msg)
         hud->prompt->set_text("");
 }
 
+void set_awesomium_message(const char* msg)
+{
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    hud->awesomium_message->set_text(msg);
+}
+
+void clear_awesomium_message(const char* msg)
+{   // clears if msg matches current text
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    if (strcmp(msg, hud->awesomium_message->text) == 0)
+        clear_awesomium_message();
+}
+
+void clear_awesomium_message()
+{
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    hud->awesomium_message->set_text("");
+}
+
 /* Draw routines */
 
 void draw_reference_center()
@@ -222,6 +244,8 @@ void draw_hud_text()
     if (hud_draw_settings.dead)
         hud->dead->draw_centered();
 
+    hud->awesomium_message->draw_centered();
+    
     if (hud_draw_settings.map)
     {
         HudFont::set_properties(HudMap::text_icon_size);
@@ -515,6 +539,13 @@ void HUD::init()
     error_subtitle->set_position(_xresf/2, error->y - error->get_height());
     error_subtitle->set_text(error_subtitle_text);
     
+    awesomium_message = text_list->create();
+    GS_ASSERT(awesomium_message != NULL);
+    if (awesomium_message == NULL) return;
+    awesomium_message->set_color(255,10,10,255);
+    awesomium_message->set_position(_xresf/2, _yresf);
+    awesomium_message->set_text("");
+    
     scoreboard = new Scoreboard();
     scoreboard->init();
 
@@ -539,6 +570,7 @@ confirm_quit(NULL),
 prompt(NULL),
 error(NULL),
 error_subtitle(NULL),
+awesomium_message(NULL),
 scoreboard(NULL),
 chat(NULL)
 {}
@@ -568,6 +600,8 @@ HUD::~HUD()
         text_list->destroy(error->id);
     if (error_subtitle != NULL)
         text_list->destroy(error_subtitle->id);
+    if (awesomium_message != NULL)
+        text_list->destroy(awesomium_message->id);
     if (health != NULL) delete health;
     if (scoreboard != NULL) delete scoreboard;
     if (chat != NULL) delete chat;

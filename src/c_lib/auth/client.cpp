@@ -19,6 +19,7 @@ static int token_retries = 0;
 bool authorized = false;
 bool needs_login = false;
 bool refreshing_token = false;
+bool token_failure = false;
 
 bool token_available = false;   // becomes true after first time token exists and appears valid
 
@@ -84,19 +85,11 @@ void check_expiring_token()
         if (auth_token_expiring(auth_token_timestamp))
         {
             expiration_tick++;
-            if (expiration_tick % AUTH_TOKEN_RETRY_WAIT == 0
-             && expiration_attempts < MAX_AUTH_TOKEN_RETRIES
-             && !refreshing_token)
+            if (expiration_tick % AUTH_TOKEN_RETRY_WAIT == 0 && !refreshing_token)
             {
                 Awesomium::open_token_page();
                 refreshing_token = true;
-                //Hud::set_error_status(GS_ERROR_REAUTHORIZING);
                 expiration_attempts++;
-            }
-            else
-            {   // set error message
-                if (expiration_attempts >= MAX_AUTH_TOKEN_RETRIES)
-                    Hud::set_error_status(GS_ERROR_AUTH_FAILED);
             }
         }
         else
@@ -106,7 +99,7 @@ void check_expiring_token()
         }
     }
 
-    if (authorized && expiration_attempts < MAX_AUTH_TOKEN_RETRIES)
+    if (authorized)
         Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
 }
 
@@ -117,7 +110,10 @@ void begin_auth()
     // check if auth token already exists
     char* token = Awesomium::get_auth_token();
     if (token != NULL && load_auth_token(token) && !auth_token_expiring(auth_token_timestamp))
+    {
         token_available = true;
+        send_auth_token();  // we won't be connected yet, but the message will still queue
+    }
     else // display awesomium (should already have the login page set)
         enable_awesomium();
     if (token != NULL)
@@ -149,7 +145,6 @@ AuthError update_token(const char* token)
 
 void token_was_accepted()
 {
-    //disable_awesomium(); // hide awesomium
     token_retries = 0;   // reset retry counter
     authorized = true;
     needs_login = false;
@@ -161,16 +156,11 @@ void token_was_accepted()
 
 void token_was_denied()
 {   // request new token from auth server
-    if (token_retries >= MAX_AUTH_TOKEN_RETRIES)
-    {
-        //disable_awesomium();
-        return;
-    }
-    Awesomium::open_token_page();
     authorized = false;
     Hud::set_error_status(GS_ERROR_AUTH_FAILED);
     if (token_retries == 0) printf("Token denied\n");
     token_retries++;
+    Awesomium::open_token_page();   // try once more, fresh from the auth server
 }
 
 void client_init()

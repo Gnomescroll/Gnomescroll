@@ -4,6 +4,8 @@
 dont_include_this_file_in_server
 #endif
 
+#include <auth/constants.hpp>
+
 namespace Auth
 {
 
@@ -16,6 +18,7 @@ extern char* auth_token_username;
 extern bool authorized;
 extern bool needs_login;
 extern bool refreshing_token;
+extern bool token_failure;
 
 extern bool token_available;
 

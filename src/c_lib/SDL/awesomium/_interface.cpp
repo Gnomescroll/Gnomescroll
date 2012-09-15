@@ -187,8 +187,6 @@ void open_token_page()
     awe_webview_call_javascript_function(cv->webView, awe_string_empty(), get_token_fn, js_args, awe_string_empty());
     awe_string_destroy(get_token_fn);
     awe_jsarray_destroy(js_args);
-    
-    //open_url(GNOMESCROLL_URL GNOMESCROLL_TOKEN_PATH);
 }
 
 void open_login_page()

@@ -28,6 +28,9 @@ OPT_BOOL_HEADER(log_chat)
 OPT_BOOL_HEADER(pvp)
 OPT_UINT_HEADER(base_move_rate);
 
+/* Auth */
+OPT_BOOL_HEADER(auth);
+
 void register_options();
 
 }   // Options

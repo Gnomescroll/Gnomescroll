@@ -18,9 +18,14 @@ const char JS_OBJ_GAME_TOKEN_NAME[] = "gstoken";
 const char JS_OBJ_DEBUG_NAME[] = "DEBUG";
 const char JS_OBJ_TOKEN_NAME_NAME[] = "token_name";
 
-const char JS_CB_SET_ERROR_NAME[] = "set_error";
-const char JS_CB_UNSET_ERROR_NAME[] = "clear_error";
+// js -> C callbacks (registered on the Gnomescroll object)
+const char JS_CB_SET_MESSAGE_NAME[] = "set_message";
+const char JS_CB_UNSET_MESSAGE_NAME[] = "clear_message";
 const char JS_CB_SET_TOKEN_NAME[] = "set_token";
+const char JS_CB_TOKEN_FAILURE_NAME[] = "token_failure";
+const char JS_CB_LOGIN_REQUIRED_NAME[] = "login_required";
+
+// C -> js callbacks (not registered, but defined in the js)
 const char JS_CB_OPEN_TOKEN_PAGE_NAME[] = "gs_get_token";
 
 int getWebKeyFromSDLKey(SDLKey key);
@@ -38,8 +43,8 @@ void js_console_message_callback(awe_webview *webView, const awe_string *message
 void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
 
 // specific callbacks
-void js_set_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
-void js_unset_error_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+void js_set_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+void js_unset_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
 void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
 
 
@@ -64,9 +69,9 @@ class ChromeViewport
     inFocus(false), js_obj_name(NULL), tex(0), crashed(false)
     {
         this->xoff = (int) (_xresf * 0.125f);
-        this->yoff = (int) (_yresf * 0.125f);    // from bottom
+        this->yoff = (int) (_yresf * 0.0625);    // from bottom
         this->width = (int) (_xresf * 0.75f);
-        this->height = (int) (_yresf * 0.75f);
+        this->height = (int) (_yresf * 0.875f);
 
         this->init_webview();
         this->init_render_surface();
@@ -108,10 +113,10 @@ class ChromeViewport
         this->add_site_to_whitelist("https://gnomescroll.com/*");
         this->add_site_to_whitelist ("http://*.gnomescroll.com/*");
         this->add_site_to_whitelist("https://*.gnomescroll.com/*");
-        this->add_site_to_whitelist ("http://www.google-analytics.com/*");
-        this->add_site_to_whitelist("https://www.google-analytics.com/*");
-        this->add_site_to_whitelist ("http://ajax.googleapis.com/ajax/libs/jquery/*");
-        this->add_site_to_whitelist("https://ajax.googleapis.com/ajax/libs/jquery/*");
+        //this->add_site_to_whitelist ("http://www.google-analytics.com/*");
+        //this->add_site_to_whitelist("https://www.google-analytics.com/*");
+        //this->add_site_to_whitelist ("http://ajax.googleapis.com/ajax/libs/jquery/*");
+        //this->add_site_to_whitelist("https://ajax.googleapis.com/ajax/libs/jquery/*");
         #if !PRODUCTION
         this->add_site_to_whitelist ("http://127.0.0.1:5002/*");
         this->add_site_to_whitelist("https://127.0.0.1:5002/*");
@@ -144,9 +149,11 @@ class ChromeViewport
         // callback for console.log
         awe_webview_set_callback_js_console_message(this->webView, &js_console_message_callback);
 
-        this->register_js_callback(JS_CB_SET_ERROR_NAME);
-        this->register_js_callback(JS_CB_UNSET_ERROR_NAME);
+        this->register_js_callback(JS_CB_SET_MESSAGE_NAME);
+        this->register_js_callback(JS_CB_UNSET_MESSAGE_NAME);
         this->register_js_callback(JS_CB_SET_TOKEN_NAME);
+        this->register_js_callback(JS_CB_TOKEN_FAILURE_NAME);
+        this->register_js_callback(JS_CB_LOGIN_REQUIRED_NAME);
         
         // callbacks for error handling
         awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);

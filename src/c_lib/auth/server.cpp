@@ -153,8 +153,7 @@ void received_auth_token(int client_id, const char* token)
     if (ok)
     {
         printf("Auth valid\n");
-        //send_auth_token_valid(client_id);
-        send_auth_token_invalid(client_id);
+        send_auth_token_valid(client_id);
         NetServer::client_authorized(client_id, user_id, expiration_time, username);
         free(username);
     }

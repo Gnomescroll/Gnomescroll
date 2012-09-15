@@ -338,7 +338,6 @@ int init_c_lib(int argc, char* argv[])
     t_hud::init();
     t_hud::draw_init();
 
-    Hud::init();
     //t_mech::state_init();
 
     Particle::init_particles();
@@ -346,9 +345,6 @@ int init_c_lib(int argc, char* argv[])
 
     Skybox::init();
  
-    HudReticle::init();
-    Hud::init();
-
     VoxDats::init();
     init_voxel_volume();
     
@@ -366,7 +362,7 @@ int init_c_lib(int argc, char* argv[])
     Item::load_crafting_dat();
     Item::load_smelting_dat();
 
-    Hud::init_hud_draw_settings();
+    Hud::init();
 
     init_voxel_render_list_shader1();   //used to be called from ClientState::init
 
@@ -428,15 +424,12 @@ void close_c_lib()
     
     if (TEARDOWN_DEBUG) printf("voxel volume teardown\n");
     teardown_voxel_volume();
-    if (TEARDOWN_DEBUG) printf("hud text teardown\n");
-    HudText::teardown();
-    
+    if (TEARDOWN_DEBUG) printf("hud teardown\n");
     Hud::teardown();
+    
     // free surfaces
     if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::teardown_shader();
-    if (TEARDOWN_DEBUG) printf("hud map teardown\n");
-    HudMap::teardown();
 
     if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
     Particle::teardown_particles(); // teardown after ClientState::agent_list, because of billboard particle

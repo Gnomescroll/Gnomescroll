@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hud/font.hpp>
 #include <hud/text.hpp>
 
 namespace Hud
@@ -92,6 +93,7 @@ class HUD
     Text* prompt;
     Text* error;
     Text* error_subtitle;
+    Text* awesomium_message;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects
@@ -107,5 +109,9 @@ class HUD
 
 void set_prompt(const char* msg);
 void clear_prompt(const char* msg);
+
+void set_awesomium_message(const char* msg);
+void clear_awesomium_message(const char* msg);
+void clear_awesomium_message();
 
 }   // Hud

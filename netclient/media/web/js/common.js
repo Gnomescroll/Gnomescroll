@@ -3,17 +3,22 @@ function gs_get_token()
     function success(data)
     {   // pass token back to client
         // handle login required
-        token = data[Gnomescroll.token_name];
-        if (token)
-            Gnomescroll.set_token(token)
-        //else
-            // notifiy client of token request failure
+
+        if (data['login_required'])
+            Gnomescroll.login_required();
+        else
+        {
+            token = data[Gnomescroll.token_name];
+            if (token)
+                Gnomescroll.set_token(token)
+            else
+                 Gnomescroll.token_failure();
+        }
     }
 
     function error()
     {
-        console.log('token acquire error');
-        // notify client of token request failue
+        Gnomescroll.token_failure();
     }
 
     $.ajax({
@@ -53,7 +58,7 @@ function gs_clear_form_errors()
 
 function gs_auth_server_error()
 {
-    Gnomescroll.set_error("Authentication server failure.");
+    Gnomescroll.set_message("Authentication server failure. Try again soon.");
 };
 
 function gs_make_error_element(msg)
@@ -96,5 +101,5 @@ function gs_extract_and_set_token(resp)
     if (token)
         Gnomescroll.set_token(token);
     else // error if token evaluates to false
-        Gnomescroll.set_error("Authentication server failure.");
+        Gnomescroll.set_message("Authentication server failure.");
 }

@@ -3,7 +3,7 @@ $(document).ready(function()
 
 function successful_create(data)
 {   // record parsed json object
-    Gnomescroll.clear_error();
+    Gnomescroll.clear_message();
     if (data['errors'] !== undefined && data['errors']['count'] !== 0)
     {   // update html with errors
         gs_append_form_errors(data['errors'], 'Create');
@@ -11,7 +11,7 @@ function successful_create(data)
     else if (data['success'])
         gs_extract_and_set_token(data);
     else
-        Gnomescroll.set_error("Authentication failed.");
+        gs_auth_server_error();
 }
 
 $('form#create').submit(function(e)
@@ -19,7 +19,9 @@ $('form#create').submit(function(e)
     e.preventDefault();
 
     var form = $(this);
-    
+
+    Gnomescroll.set_message("Creating account...");
+
     // clear previous errors displayed on form
     gs_clear_form_errors();
 

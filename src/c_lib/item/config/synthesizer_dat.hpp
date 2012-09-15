@@ -30,7 +30,6 @@ void load_synthesizer()
     synthesizer_item_set(3,0);
     
     #if !PRODUCTION
-    
     synthesizer_item_def("blob_seed", 5);
     synthesizer_item_set(3,1);
 

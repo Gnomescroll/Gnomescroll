@@ -3,7 +3,7 @@ $(document).ready(function()
 
 function successful_login(data)
 {   // record parsed json object
-    Gnomescroll.clear_error();
+    Gnomescroll.clear_message();
     if (data['errors'] !== undefined && data['errors']['count'] !== 0)
     {   // update html with errors
         gs_append_form_errors(data['errors'], 'Login');
@@ -11,12 +11,14 @@ function successful_login(data)
     else if (data['success'])
         gs_extract_and_set_token(data);
     else
-        Gnomescroll.set_error("Authentication failed.");
+        gs_auth_server_error();
 }
 
 $('form#login').submit(function(e)
 {
     e.preventDefault();
+
+    Gnomescroll.set_message("Authorizing...");
 
     var form = $(this);
     

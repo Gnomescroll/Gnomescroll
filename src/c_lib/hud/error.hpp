@@ -1,10 +1,10 @@
 #pragma once
 
 #include <hud/text.hpp>
+#include <auth/client.hpp>
 
 typedef enum
 {
-    // TODO -- error code, rank by priority
     // UI will render a message based on most important error
     GS_ERROR_NONE = 0,
 
@@ -27,9 +27,11 @@ static const char not_connected_msg[] = "Server not connected";
 static const char was_disconnected_msg[] = "Disconnected by server";
 static const char reauth_msg[] = "Reauthorizing...";
 static const char auth_failed_msg[] = "Authorization failed";
+static const char auth_server_failed_msg[] = "Authentication server failure."; 
 static const char auth_na_msg[] = "Login server not available";
 static const char needs_login_msg[] = "Login required to continue";
 static const char version_mismatch_msg[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
+char* disconnect_msg = NULL;
 
 const unsigned int N_GSERRORS = 7;
 
@@ -57,6 +59,14 @@ void unset_error_status(GSError err)
     errors[err] = false;
 }
 
+void set_server_disconnect_message(const char* msg)
+{
+    printf("%s\n", msg);
+    if (disconnect_msg != NULL) free(disconnect_msg);
+    disconnect_msg = (char*)malloc((strlen(msg)+1)*sizeof(char));
+    strcpy(disconnect_msg, msg);
+}
+
 GSError get_primary_error()
 {
     for (unsigned int i=N_GSERRORS-1; i>0; i--)
@@ -80,7 +90,22 @@ bool update_error_text(class HudText::Text* t)
     if (err == GS_ERROR_NOT_CONNECTED)
         t->set_text(not_connected_msg);
     else if (err == GS_ERROR_WAS_DISCONNECTED)
-        t->set_text(was_disconnected_msg);
+    {
+        // if there was a known token failure that has not recovered,
+        // and we are disconnected for an auth reason, say that the auth server failed
+        if (Auth::token_failure &&
+            (NetClient::Server.disconnect_code == DISCONNECT_AUTH_EXPIRED
+        || NetClient::Server.disconnect_code == DISCONNECT_AUTH_LIMIT
+        || NetClient::Server.disconnect_code == DISCONNECT_AUTH_TIMEOUT))
+            t->set_text(auth_server_failed_msg);
+        else
+        {
+            if (disconnect_msg != NULL)
+                t->set_text(disconnect_msg);
+            else
+                t->set_text(was_disconnected_msg);
+        }
+    }
     else if (err == GS_ERROR_REAUTHORIZING)
         t->set_text(reauth_msg);
     else if (err == GS_ERROR_AUTH_FAILED)
@@ -96,6 +121,16 @@ bool update_error_text(class HudText::Text* t)
         GS_ASSERT(false);
     }
     return true;
+}
+
+
+void error_init()
+{
+}
+
+void error_teardown()
+{
+    if (disconnect_msg != NULL) free(disconnect_msg);
 }
 
 };

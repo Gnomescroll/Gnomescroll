@@ -1,26 +1,38 @@
 #include "_interface.hpp"
 
 #include <hud/harvest_bar.hpp>
+#include <hud/error.hpp>
+#include <hud/map.hpp>
+#include <hud/text.hpp>
 
 namespace Hud
 {
 
-class HarvestBar* harvest_bar;
-class       HUD* hud;
+class HarvestBar* harvest_bar = NULL;
+class HUD* hud = NULL;
 
 void init()
 {
-    hud = new HUD();
+    GS_ASSERT(hud == NULL);
+    hud = new HUD;
     hud->init();
 
+    GS_ASSERT(harvest_bar == NULL);
     harvest_bar = new HarvestBar;
+
+    error_init();
+    HudReticle::init();
+    init_hud_draw_settings();
 }
 
 void teardown()
 {
-    delete harvest_bar;
+    error_teardown();
+    if (harvest_bar != NULL) delete harvest_bar;
+    if (hud != NULL) delete hud;
+    HudMap::teardown();
+    HudText::teardown();    // MUST CALL AFTER DELETE HUD
 }
-
 
 /*
     HUD
