@@ -75,7 +75,6 @@ bool auth_token_expiring(const time_t timestamp)
 
 void check_expiring_token()
 {
-    // TODO -- rewrite the error handling portion of this
     static int expiration_tick = 0;
     static int expiration_attempts = 0;
     if (auth_token == NULL) return;
@@ -125,8 +124,6 @@ AuthError update_token(const char* token)
     GS_ASSERT(token != NULL);
     if (token == NULL) return AUTH_ERROR_TOKEN_MISSING;
 
-    bool same_token = (auth_token != NULL && strcmp(token, auth_token) == 0);
-
     if (!load_auth_token(token))
         return AUTH_ERROR_TOKEN_MALFORMED;
 
@@ -135,8 +132,7 @@ AuthError update_token(const char* token)
 
     Awesomium::set_game_token_cookie(token, auth_token_timestamp);
 
-    if (!same_token)
-        send_auth_token(token);
+    send_auth_token(token);
 
     token_available = true;
 
@@ -151,6 +147,7 @@ void token_was_accepted()
     Hud::unset_error_status(GS_ERROR_NEEDS_LOGIN);
     Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
     Hud::unset_error_status(GS_ERROR_REAUTHORIZING);
+    disable_awesomium();
     printf("Token accepted\n");
 }
 

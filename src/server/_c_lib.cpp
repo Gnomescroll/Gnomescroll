@@ -229,6 +229,12 @@ int init_c_lib(int argc, char* argv[])
     printf("Server init\n");
     srand((unsigned int)time(NULL));
 
+    printf("Auth ");
+    if (Options::auth)
+        printf("enabled\n");
+    else
+        printf("disabled\n");
+
     Components::init();
     Objects::init_net_interfaces();
     Objects::init();    // Entity system

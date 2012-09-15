@@ -225,6 +225,21 @@ void draw_hud_textures()
     }
 }
 
+void draw_awesomium_message()
+{
+    start_font_draw();
+    const int large_text_size = 32;
+    HudFont::set_properties(large_text_size);
+    set_texture();
+
+    GS_ASSERT(hud != NULL && hud->awesomium_message != NULL);
+    if (hud == NULL || hud->awesomium_message == NULL) return;
+    hud->awesomium_message->draw_centered();
+
+    end_font_draw();
+    HudFont::reset_default();
+}
+
 void draw_hud_text()
 {
     if (!hud->inited) return;
@@ -543,7 +558,7 @@ void HUD::init()
     GS_ASSERT(awesomium_message != NULL);
     if (awesomium_message == NULL) return;
     awesomium_message->set_color(255,10,10,255);
-    awesomium_message->set_position(_xresf/2, _yresf);
+    awesomium_message->set_position(_xresf/2, _yresf - 2);
     awesomium_message->set_text("");
     
     scoreboard = new Scoreboard();

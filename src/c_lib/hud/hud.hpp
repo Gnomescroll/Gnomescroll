@@ -114,4 +114,6 @@ void set_awesomium_message(const char* msg);
 void clear_awesomium_message(const char* msg);
 void clear_awesomium_message();
 
+void draw_awesomium_message();
+
 }   // Hud

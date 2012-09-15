@@ -31,16 +31,22 @@ $('form#login').submit(function(e)
         type: 'GET',
         url: Gnomescroll.login_url,
         success: function (data)
-        {   // 2 results can happen for a login GET request
+        {   // 3 results can happen for a login GET request
             // we can already be logged in, in which case we get the token
             // or we can get a csrf_token to use for logging in
-            var csrf_token = data['csrf_token'];
-            if (csrf_token === undefined)   // we must be logged in already
-                successful_login(data);
+            // or we can get NULL
+            if (!data)
+                gs_auth_server_error();
             else
-            {   // update local form with token and submit
-                $('input#csrf_token').val(csrf_token);
-                gs_submit_form(form, Gnomescroll.login_url, successful_login, gs_auth_server_error);
+            {
+                var csrf_token = data['csrf_token'];
+                if (csrf_token === undefined)   // we must be logged in already
+                    successful_login(data);
+                else
+                {   // update local form with token and submit
+                    $('input#csrf_token').val(csrf_token);
+                    gs_submit_form(form, Gnomescroll.login_url, successful_login, gs_auth_server_error);
+                }
             }
         },
         error: gs_auth_server_error,

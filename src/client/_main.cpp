@@ -91,7 +91,8 @@ void wait_for_login()
         // awesomium
         hud_projection();
         Awesomium::draw();
-
+        
+        Hud::draw_awesomium_message();
         CHECK_GL_ERROR();
 
         _swap_buffers();
@@ -380,7 +381,6 @@ void draw_tick()
         Hud::set_hud_fps_display(run_state.fps_value);
         Hud::update_hud_draw_settings();
         Hud::draw();
-        t_hud::draw();
 
         //Hud::draw_harvest_bar(400,400);
 
@@ -392,6 +392,8 @@ void draw_tick()
             glDisable(GL_BLEND);
             glEnable(GL_DEPTH_TEST);
         }
+        else
+            t_hud::draw();
 
         if (input_state.vbo_debug)
             t_map::draw_vbo_debug(400, 400);
