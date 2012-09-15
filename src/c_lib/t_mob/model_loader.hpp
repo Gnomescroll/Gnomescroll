@@ -1222,7 +1222,8 @@ class BodyMesh
                 if(_print)
                     vec3_print(bvl[index].v);
 
-                Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[i] );
+                GS_ASSERT(bone_index >= 0 && bone_index < blm);
+                Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
             /*
                 if(_print)
                 {
