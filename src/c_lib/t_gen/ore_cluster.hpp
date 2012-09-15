@@ -69,6 +69,8 @@ void populate_ore_veins(int number, const char* block_name)
 
 int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 {
+    const static int regolith_id = t_map::dat_get_cube_id("regolith");
+
     const static int_fast8_t s_array[18] = {
             0,0,1,  //top
             0,0,-1, //bottom
@@ -92,7 +94,7 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
         int ctile = t_map::get(cx,cy,cz);
 
         //dont change position
-        if (ctile == 0)
+        if (ctile == 0 || ctile == regolith_id )
         {
             tries++;
             continue;
