@@ -1167,6 +1167,104 @@ class BodyMesh
     void draw()
     {
 
+
+        for(int i=0; i<bvlm; i++)
+        {
+            tbvl[i].ux = bvl[i].ux;
+            tbvl[i].uy = bvl[i].uy;
+
+            tbvl[i].v.x = 0.0;  // 0.0f + x
+            tbvl[i].v.y = 0.0;
+            tbvl[i].v.z = 0.0;
+        }
+        //printf("nli= %i \n", nli);
+
+        int count = 0;
+        for(int i=0; i<nli; i++)
+        {
+            aiMesh* mesh = ml[i];
+
+            //printf("%i: num bones= %i \n", i, mesh->mNumBones);
+
+            int offset = bvlo[i];
+            int num = bvln[i];
+
+            GS_ASSERT(mesh->mNumBones != 0);
+
+            if(_print)
+                printf("mesh: %02d mesh name= %s \n", i, nl[i]->mName.data);
+
+            for(unsigned int j=0; j<mesh->mNumBones; j++)
+            {
+                Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
+                //GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
+
+
+                if(_print)
+                {
+                    printf("final matrix: mesh: %02d %02d mesh name= %s \n", i,j, nl[i]->mName.data);
+                    mat4_print(boneMatrix) ;
+                }
+
+                for(unsigned int k=0; k<bone->mNumWeights; k++)
+                {
+                    int index = offset + bone->mWeights[k].mVertexId;
+                    float weight = bone->mWeights[k].mWeight;
+
+                    if(_print)
+                        vec3_print(bvl[index].v);
+
+                    Vec3 v = vec3_mat3_apply(bvl[index].v, boneMatrix);
+
+                    if(_print)
+                    {
+                        printf("Vertex %02d \n", index);
+                        vec3_print(bvl[index].v);
+
+                        vec3_print(v);
+                        mat4_print(boneMatrix);
+                    }
+
+                    tbvl[index].v.x += weight*v.x;
+                    tbvl[index].v.y += weight*v.y;
+                    tbvl[index].v.z += weight*v.z;
+                }
+            }
+        }
+
+        for(int i=0; i<bvlm; i++)
+        {
+            tbvl[i].v.x += x;
+            tbvl[i].v.y += y;
+            tbvl[i].v.z += z;
+        }
+
+        for(int i=0; i<vlm; i++)
+        {
+            int index = bvll[i];
+            tvl[i] = tbvl[index];
+        }
+
+        glColor4ub(255,255,255,255);
+        glEnable(GL_TEXTURE_2D);
+
+
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
+        glBegin(GL_TRIANGLES);
+        for(int i=0; i<vlm; i++)
+        {
+            struct _Vertex v = tvl[i];
+
+            glTexCoord2f(v.ux, v.uy );
+            glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
+        }
+
+        glEnd();
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
+        check_gl_error();
+
     }
 
     unsigned int texture1;
