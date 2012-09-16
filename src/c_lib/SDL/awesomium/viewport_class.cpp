@@ -263,14 +263,14 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
         key_event.unmodified_text[0] = chr;
         key_event.unmodified_text[1] = '\0';
 
-        awe_webview_inject_keyboard_event(webView, key_event);	// why 2 injections?
+        awe_webview_inject_keyboard_event(webView, key_event);
         if (chr)
         {
             key_event.type = AWE_WKT_CHAR;
             key_event.virtual_key_code = chr;
             key_event.native_key_code = chr;
             awe_webview_inject_keyboard_event(webView, key_event);
-        	printf("Injected %c\n", (char)chr);
+            printf("Injected %c\n", (char)chr);
         }
     }
 }
