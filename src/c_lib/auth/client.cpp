@@ -167,6 +167,7 @@ void client_teardown()
 {
     if (auth_token != NULL) free(auth_token);
     if (auth_token_hash != NULL) free(auth_token_hash);
+    if (auth_token_username != NULL) free(auth_token_username);
 }
 
 }   // Auth
