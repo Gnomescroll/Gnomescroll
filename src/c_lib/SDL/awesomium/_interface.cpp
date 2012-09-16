@@ -218,12 +218,14 @@ void SDL_mouse_event(const SDL_Event* event)
 
 void enable()
 {
+    GS_ASSERT(cv != NULL);
     if (cv == NULL) return;
     cv->focus();
 }
 
 void disable()
 {
+    GS_ASSERT(cv != NULL);
     if (cv == NULL) return;
     cv->unfocus();
 }

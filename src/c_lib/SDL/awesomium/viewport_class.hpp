@@ -9,6 +9,12 @@
 namespace Awesomium
 {
 
+// Translates an SDLKey virtual key code to an Awesomium key code
+int getWebKeyFromSDLKey(SDLKey key);
+void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event);
+bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy);
+void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event);
+
 const char JS_OBJ_NAME[] = "Gnomescroll";
 const char JS_OBJ_CREATE_URL_NAME[] = "create_url";
 const char JS_OBJ_LOGIN_URL_NAME[] = "login_url";
@@ -31,9 +37,6 @@ const char JS_CB_SAVE_PASSWORD_NAME[] = "save_password";
 
 // C -> js callbacks (not registered, but defined in the js)
 const char JS_CB_OPEN_TOKEN_PAGE_NAME[] = "gs_get_token";
-
-int getWebKeyFromSDLKey(SDLKey key);
-void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event);
 
 void begin_navigation_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name);
 void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name, int status_code, const awe_string* _mime_type);
@@ -60,7 +63,7 @@ class ChromeViewport
         int width;
         int height;
 
-        bool inFocus;
+        bool in_focus;
 
         awe_webview* webView;
         awe_string* js_obj_name;
@@ -70,7 +73,7 @@ class ChromeViewport
         bool crashed;
 
     ChromeViewport() :
-    inFocus(false), js_obj_name(NULL), tex(0), crashed(false)
+    in_focus(false), js_obj_name(NULL), tex(0), crashed(false)
     {
         this->xoff = (int) (_xresf * 0.125f);
         this->yoff = (int) (_yresf * 0.0625);    // from bottom
@@ -398,12 +401,20 @@ class ChromeViewport
 
     void focus()
     {
-        awe_webview_focus(webView);
+        GS_ASSERT_LIMIT(this->webView != NULL, 1);
+        if (this->webView == NULL) return;
+        awe_webview_focus(this->webView);
+        this->in_focus = true;
+        printf("focus\n");
     }
 
     void unfocus()
     {
-        awe_webview_unfocus(webView);
+        GS_ASSERT_LIMIT(this->webView != NULL, 1);
+        if (this->webView == NULL) return;
+        awe_webview_unfocus(this->webView);
+        this->in_focus = false;
+        printf("unfocus\n");
     }
 
 
@@ -424,10 +435,10 @@ class ChromeViewport
 
     void processKeyEvent(const SDL_Event* event) 
     {
-	    GS_ASSERT_LIMIT(this->webView != NULL, 1);
-	    if (this->webView == NULL) return;
-	    
-        if(inFocus == false)
+        GS_ASSERT_LIMIT(this->webView != NULL, 1);
+        if (this->webView == NULL) return;
+        
+        if (!this->in_focus)
         {
             printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
             return;
@@ -435,41 +446,35 @@ class ChromeViewport
         
         injectSDLKeyEvent(this->webView, event);
 
-	    SDLKey key = event->key.keysym.sym;
-	
-	    // Separate handling for history navigation -- awesomium does not do this by default
-	    if (event->type == SDL_KEYDOWN)
-	    {
-	        if(event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
-	        {
-	            if (key == SDLK_LEFT)
-	                awe_webview_go_to_history_offset(cv->webView, -1);
-	            if (key == SDLK_RIGHT)
-	                awe_webview_go_to_history_offset(cv->webView, 1);
-	        }
-	
-	        #if !PRODUCTION
-	        if (key == SDLK_MINUS)
-	        {
-	            char* token = get_auth_token();
-	            if (token == NULL)
-	                printf("No token found\n");
-	            else
-	            {
-	                printf("Token: %s\n", token);
-	                free(token);
-	            }
-	        }
-	        #endif
-	    }
+        SDLKey key = event->key.keysym.sym;
+    
+        // Separate handling for history navigation -- awesomium does not do this by default
+        if (event->type == SDL_KEYDOWN)
+        {
+            if(event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
+            {
+                if (key == SDLK_LEFT)
+                    awe_webview_go_to_history_offset(cv->webView, -1);
+                if (key == SDLK_RIGHT)
+                    awe_webview_go_to_history_offset(cv->webView, 1);
+            }
+    
+            #if !PRODUCTION
+            if (key == SDLK_MINUS)
+            {
+                char* token = get_auth_token();
+                if (token == NULL)
+                    printf("No token found\n");
+                else
+                {
+                    printf("Token: %s\n", token);
+                    free(token);
+                }
+            }
+            #endif
+        }
     }
 };
-
-// Translates an SDLKey virtual key code to an Awesomium key code
-int getWebKeyFromSDLKey(SDLKey key);
-void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event);
-bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy);
-void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event);
 
 }   // Awesomium
 
