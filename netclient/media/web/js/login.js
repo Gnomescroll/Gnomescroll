@@ -21,7 +21,7 @@ function successful_login(data)
 $('form#login').submit(function(e)
 {
     e.preventDefault();
-
+    
     Gnomescroll.set_message("Authorizing...");
 
     var form = $(this);

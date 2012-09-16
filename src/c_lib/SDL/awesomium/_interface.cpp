@@ -85,8 +85,8 @@ void init()
         awe_string* package_path = get_awe_string(package_path_str);
         awe_string* locale_path = get_awe_string(locale_path_str);
     #else
-        awe_string* package_path = awe_string_empty();
-        awe_string* locale_path = awe_string_empty();
+        const awe_string* package_path = awe_string_empty();
+        const awe_string* locale_path = awe_string_empty();
     #endif
     
     awe_string* log_path = get_awe_string("./screenshot");
