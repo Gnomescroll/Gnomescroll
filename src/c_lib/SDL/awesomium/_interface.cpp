@@ -105,19 +105,18 @@ void init()
         AWE_LL_NORMAL, //log level
         false, //force single process
         awe_string_empty(), //child process Path,
-        true,
-        awe_string_empty(),
-        awe_string_empty(),
-        //awe_string_empty(), // user agent
+        true,   // autodetect encoding
+        awe_string_empty(), // accept language override
+        awe_string_empty(), // default charset override
         user_agent, // user agent
-        awe_string_empty(),
-        awe_string_empty(),
-        awe_string_empty(),
-        true,
-        0,
-        true,  // disable same origin policy. we need this disable to do ajax request from local to webserver
-        false,
-        awe_string_empty()
+        awe_string_empty(), // proxy server
+        awe_string_empty(), // proxy config script
+        awe_string_empty(), // auth server whitelist
+        true,   // save cache and cookies
+        0,      // max cache size
+        true,  // disable same origin policy. we need this disabled to do ajax request from local to webserver
+        true,  // disable win message pump
+        awe_string_empty()  // custom css
     );
 
     #ifdef linux
