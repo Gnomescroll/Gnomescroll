@@ -264,8 +264,6 @@ class ChromeViewport
 
     void load_first_page()
     {
-        printf("Load first page\n");
-        //this->load_url(GNOMESCROLL_URL);
         this->load_file(GNOMESCROLL_LOGIN_HTML);
     }
 

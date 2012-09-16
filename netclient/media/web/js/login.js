@@ -1,9 +1,6 @@
 $(document).ready(function()
 {
 
-console.log('Username: ' + Gnomescroll.gs_username);
-console.log('Pass: ' + Gnomescroll.gs_pass);
-
 // set saved credentials
 $('input#username_or_email').val(Gnomescroll.gs_username);
 $('input#password').val(Gnomescroll.gs_pass);

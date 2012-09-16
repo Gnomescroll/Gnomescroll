@@ -217,6 +217,7 @@ void SDL_keyboard_event(const SDL_Event* event)
                 awe_webview_go_to_history_offset(cv->webView, 1);
         }
 
+        #if !PRODUCTION
         if (key == SDLK_MINUS)
         {
             char* token = get_auth_token();
@@ -228,6 +229,7 @@ void SDL_keyboard_event(const SDL_Event* event)
                 free(token);
             }
         }
+        #endif
     }
 }
 
@@ -355,7 +357,6 @@ void save_username(const char* username)
     _cookie[cookie_len] = '\0';
     free(expiration_str);
 
-    printf("saving username cookie: %s\n", _cookie);
     awe_string* cookie = get_awe_string(_cookie);
 
     awe_string* url = get_awe_string("http://127.0.0.1");
@@ -383,7 +384,6 @@ void save_password(const char* password)
     _cookie[cookie_len] = '\0';
     free(expiration_str);
 
-    printf("saving password cookie: %s\n", _cookie);
     awe_string* cookie = get_awe_string(_cookie);
 
     awe_string* url = get_awe_string("http://127.0.0.1");
