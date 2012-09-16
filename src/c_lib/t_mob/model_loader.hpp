@@ -1225,6 +1225,11 @@ class BodyMesh
 
                 GS_ASSERT(vertex_index < m->bvlm);
 
+                if(vertex_index >= m->bvlm || vertex_index < 0)
+                {
+                    printf("ERROR: vertex_index= %i bvlm= %i \n", vertex_index, m->bvlm);
+                }
+
                 if(_print)
                     vec3_print(m->bvl[vertex_index].v);
 
@@ -1286,8 +1291,9 @@ class BodyMesh
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
+            printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
 
-            for(int j=0; j<m->viam; j++)
+            for(int j=0; j<m->tvln; j++)
             {
                 struct _Vertex v = m->tvl[j];
 
