@@ -102,7 +102,7 @@ void init()
         awe_string_empty(), //user data path
         awe_string_empty(), //plugin path
         log_path, // log path
-        AWE_LL_NORMAL, //log level
+        AWE_LL_VERBOSE, //log level
         false, //force single process
         awe_string_empty(), //child process Path,
         true,   // autodetect encoding
@@ -115,7 +115,7 @@ void init()
         true,   // save cache and cookies
         0,      // max cache size
         true,  // disable same origin policy. we need this disabled to do ajax request from local to webserver
-        true,  // disable win message pump
+        false,  // disable win message pump
         awe_string_empty()  // custom css
     );
 
