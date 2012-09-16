@@ -1193,7 +1193,7 @@ class BodyMesh
     };
 */
 
-    void draw()
+    void draw(float x, float y, float z)
     {
         bool _print = false;
 
@@ -1239,12 +1239,7 @@ class BodyMesh
                 m->tbvl[vertex_index].v.x += weight*v.x;
                 m->tbvl[vertex_index].v.y += weight*v.y;
                 m->tbvl[vertex_index].v.z += weight*v.z;
-
-
             }
-
-
-
         }
         //class BodyPartMesh* bpm
 /*
@@ -1364,7 +1359,17 @@ void init()
 
 void draw()
 {
+    if(ClientState::location_pointer_set == false)
+        return;
 
+    struct Vec3 p = ClientState::location_pointer;
+
+    body_mesh->draw_prep();
+    body_mesh->draw(p.x, p.y, p.z + 3.0f);
+
+    //bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 5.0f);
+
+    return;
 
 }
 
