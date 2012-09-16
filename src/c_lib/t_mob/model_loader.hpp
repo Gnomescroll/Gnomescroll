@@ -1270,13 +1270,15 @@ class BodyMesh
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
+            printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
 
             for(int j=0; j<m->viam; j++)
             {
+    
                 int index = m->via[j];
                 GS_ASSERT(index < m->viam && index >= 0);
-                if(index >= m->viam)
-                    printf("index= %i viam= %i \n", index, m->viam);
+                if(index >= m->viam || index < 0)
+                    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
                 m->tbvl[j] = m->tbvl[index];
             }
 
@@ -1291,7 +1293,6 @@ class BodyMesh
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-            printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
 
             for(int j=0; j<m->tvln; j++)
             {
