@@ -221,6 +221,10 @@ bool is_valid_user_id(const int user_id)
 
 void run_tests()
 {
+    #if DC_SERVER
+    if (!Options::auth) return;
+    #endif
+
     // test hand crafted tokens against the parser and validator
 
     // setup
