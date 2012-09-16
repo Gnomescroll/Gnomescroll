@@ -1207,9 +1207,9 @@ class BodyMesh
                 m->tbvl[i].ux = m->bvl[j].ux;
                 m->tbvl[i].uy = m->bvl[j].uy;
 
-                m->tbvl[i].v.x = 0.0f;
-                m->tbvl[i].v.y = 0.0f;
-                m->tbvl[i].v.z = 0.0f;
+                m->tbvl[i].v.x = 0.0f + x;
+                m->tbvl[i].v.y = 0.0f + y;
+                m->tbvl[i].v.z = 0.0f + z;
             }
 
             for(int j=0; j<m->vwlm; j++)
