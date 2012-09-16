@@ -1204,12 +1204,12 @@ class BodyMesh
 
             for(int j=0; j<m->bvlm; j++)
             {
-                m->tbvl[i].ux = m->bvl[j].ux;
-                m->tbvl[i].uy = m->bvl[j].uy;
+                m->tbvl[j].ux = m->bvl[j].ux;
+                m->tbvl[j].uy = m->bvl[j].uy;
 
-                m->tbvl[i].v.x = 0.0f + x;
-                m->tbvl[i].v.y = 0.0f + y;
-                m->tbvl[i].v.z = 0.0f + z;
+                m->tbvl[j].v.x = 0.0f;
+                m->tbvl[j].v.y = 0.0f;
+                m->tbvl[j].v.z = 0.0f;
             }
 
             for(int j=0; j<m->vwlm; j++)
@@ -1255,7 +1255,7 @@ class BodyMesh
             for(int j=0; j<m->viam; j++)
             {
                 int index = m->via[j];
-                m->tbvl[i] = m->tbvl[index];
+                m->tbvl[j] = m->tbvl[index];
             }
 
         }
@@ -1275,7 +1275,7 @@ class BodyMesh
                 struct _Vertex v = m->tvl[j];
 
                 glTexCoord2f(v.ux, v.uy );
-                glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
+                glVertex3f(v.v.x +x , v.v.y +y , v.v.z +z); //swap y and z
             }
 
         }
