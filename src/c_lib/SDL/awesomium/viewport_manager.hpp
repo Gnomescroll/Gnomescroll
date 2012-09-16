@@ -62,7 +62,7 @@ class ViewportManager
         }
     }
 
-    void handle_keyboard_event(union SDL_Event* keyEvent)
+    void handle_keyboard_event(union SDL_Event* key_event)
     {
         //if a window is in focus
     }

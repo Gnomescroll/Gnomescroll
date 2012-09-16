@@ -429,20 +429,19 @@ class ChromeViewport
     }
 
 
-    void processKeyEvent(SDL_Event keyEvent) 
+    void processKeyEvent(SDL_Event key_event) 
     {
         if(inFocus == false)
         {
             printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
             return;
         }
-        injectSDLKeyEvent(webView, keyEvent);
+        injectSDLKeyEvent(webView, key_event);
     }
 };
 
 // Translates an SDLKey virtual key code to an Awesomium key code
 int getWebKeyFromSDLKey(SDLKey key);
-awe_webkeyboardevent convert_key_event(awe_webkeyboardevent keyEvent); 
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event);
 bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy);
 void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event);

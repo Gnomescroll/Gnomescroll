@@ -83,6 +83,8 @@ void sprint_digest(char* dest, uint8_t* digest)
 
 void server_init()
 {
+    if (!Options::auth) return;
+    
     load_secret_key();
     GS_ASSERT(secret_key_str != NULL);
     GS_ASSERT(secret_key != NULL);
