@@ -253,9 +253,9 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
     #awesomium
     if awesomium:
         if OS == 'Windows':
-            awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/release/')
+            awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/lib/release/')
             awesomium_include_path = os.path.abspath('../lib/win32/awesomium/include/')
-            awesomium_name = 'awesomium-1.6.6'
+            awesomium_name = 'Awesomium'
         elif OS == 'Linux':
             awesomium_lib_path = os.path.abspath('../lib/lin32/awesomium/release/')
             awesomium_include_path = os.path.abspath('../lib/lin32/awesomium/include/')
@@ -288,14 +288,21 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
 
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
     if awesomium:
-        conf.env.INCLUDES += ['../lib/lin32/awesomium/include/']
+        if OS == 'Linux':
+            conf.env.INCLUDES += ['../lib/lin32/awesomium/include/']
+        elif OS == 'Windows':
+            conf.env.INCLUDES += ['../lib/win32/awesomium/include/']
+        else:
+            assert False
 
     conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
     if OS == 'Windows':
         conf.env.INCLUDES.append('../lib/win32/')
         conf.env.RPATH.append('$ORIGIN/./lib')
         conf.env.RPATH.append('./lib')
-        
+        if awesomium:
+            conf.env.RPATH += ['$ORIGIN/./lib/win32/awesomium/lib/release'] #awesomium lib
+
     if OS == 'Linux':
         if '-DPRODUCTION=1' in conf.env.CXXFLAGS:
             lib_base_path = '$ORIGIN/./lib/lin32/'
@@ -304,7 +311,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
             lib_base_path = '$ORIGIN/../lib/lin32/'
         conf.env.RPATH += [os.path.join(lib_base_path, 'assimp/lib')] #assimp lib
         if awesomium:
-            conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesonium lib
+            conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesomium lib
 
     conf.env.awesomium = awesomium
     conf.env.production = production
@@ -346,7 +353,9 @@ def build(bld):
     if OS == 'Windows':
         libpath = os.path.abspath('../lib/win32')
         includes = [os.path.join(libpath, path) for path in os.listdir(libpath)]
-        libs = [os.path.join(libpath, 'lib'), os.path.join(libpath, 'dll'),]
+        libs = [os.path.join(libpath, 'lib'), os.path.join(libpath, 'dll'),
+            os.path.join(libpath, 'awesomium/lib/release'),
+            os.path.join(libpath, 'awesomium/bin/release'),]
         
     #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     use = time_lib+SDL_libraries+['LUA', 'ASSIMP']

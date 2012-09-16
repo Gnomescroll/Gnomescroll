@@ -442,7 +442,7 @@ class ChromeViewport
 
 // Translates an SDLKey virtual key code to an Awesomium key code
 int getWebKeyFromSDLKey(SDLKey key);
-awe_webkeyboardevent convert_key_event(Awesomium::WebKeyboardEvent keyEvent); 
+awe_webkeyboardevent convert_key_event(awe_webkeyboardevent keyEvent); 
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event);
 bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy);
 void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event);
