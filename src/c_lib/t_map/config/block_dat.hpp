@@ -251,26 +251,32 @@ void load_block_dat()
     cube_def(35, SolidBlock, "corpusc_testing_with_ruins_2");
     iso_texture(t1,6,3);
     push_texture();
+    set_max_dmg(4);
 
     cube_def(36, SolidBlock, "corpusc_testing_with_ruins_3");
     iso_texture(t1,6,4);
     push_texture();
+    set_max_dmg(4);
 
     cube_def(37, SolidBlock, "ruins_1");
     iso_texture(t5,1,1);
     push_texture();
+    set_max_dmg(4);
 
     cube_def(38, SolidBlock, "ruins_2");
     iso_texture(t5,1,2);
     push_texture();
+    set_max_dmg(4);
 
     cube_def(39, SolidBlock, "ruins_3");
     iso_texture(t5,1,3);
     push_texture();
+    set_max_dmg(4);
 
     cube_def(40, SolidBlock, "ruins_4");
     iso_texture(t5,1,4);
     push_texture();
+    set_max_dmg(4);
 
 
     // random textures from cell to fill the block placer
