@@ -60,8 +60,10 @@ time_t atott(const char* str)
         return atol(str);
     else
     if (s == sizeof(long long))
-        return atoll(str);
-    
+	{
+		//return NULL;	
+		//return atoll(str);
+	}
     GS_ASSERT_LIMIT(false, 1);
     return 0;
 }

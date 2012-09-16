@@ -31,9 +31,9 @@ void handle_mouse_event(int x, int y, int button, int event_type)
     viewport_manager->handle_mouse_event(x,y,button,event_type);
 }
 
-void handle_keyboard_event(union SDL_Event* keyEvent)
+void handle_keyboard_event(union SDL_Event* key_event)
 {
-    viewport_manager->handle_keyboard_event(keyEvent);
+    viewport_manager->handle_keyboard_event(key_event);
 }
 
 void update()

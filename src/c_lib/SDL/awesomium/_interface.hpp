@@ -24,7 +24,7 @@ void enable();
 void disable();
 
 void handle_mouse_event(int x, int y, int button, int event_type);
-void handle_keyboard_event(union SDL_Event* keyEvent);
+void handle_keyboard_event(union SDL_Event* key_event);
 
 void SDL_keyboard_event(const SDL_Event* event);
 void SDL_mouse_event(const SDL_Event* event);
@@ -71,7 +71,7 @@ void enable(){}
 void disable(){}
 
 void handle_mouse_event(int x, int y, int button, int event_type){}
-void handle_keyboard_event(union SDL_Event* keyEvent){}
+void handle_keyboard_event(union SDL_Event* key_event){}
 
 void SDL_keyboard_event(const SDL_Event* event){}
 void SDL_mouse_event(const SDL_Event* event){}

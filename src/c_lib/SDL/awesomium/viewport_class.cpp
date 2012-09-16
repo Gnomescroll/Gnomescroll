@@ -226,82 +226,50 @@ void ChromeViewport::set_callbacks()
     awe_webview_set_callback_web_view_crashed(this->webView, &web_view_crashed_cb);
 }
 
-awe_webkeyboardevent convert_key_event(Awesomium::WebKeyboardEvent keyEvent) 
-{
-    awe_webkeyboardevent ke;
-
-    ke.type = (awe_webkey_type)keyEvent.type;
-    ke.modifiers = (awe_webkey_modifiers)keyEvent.modifiers;
-    ke.virtual_key_code = keyEvent.virtualKeyCode;
-    ke.native_key_code = keyEvent.nativeKeyCode;
-    for(int i=0; i<=3;i++)
-    {
-        ke.text[i] = keyEvent.text[i];
-        ke.unmodified_text[i] = keyEvent.unmodifiedText[i];
-    }
-    ke.is_system_key = keyEvent.isSystemKey;
-    return ke;
-}
-
-
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 {
-    if(!(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP))
+    if (!(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP))
         return;
 
-    Awesomium::WebKeyboardEvent keyEvent;
+    awe_webkeyboardevent key_event;
+    key_event.type = event->type == SDL_KEYDOWN ? AWE_WKT_KEYDOWN : AWE_WKT_KEYUP;
 
-    keyEvent.type = event->type == SDL_KEYDOWN?
-        Awesomium::WebKeyboardEvent::TYPE_KEY_DOWN :
-        Awesomium::WebKeyboardEvent::TYPE_KEY_UP;
-
-    char* buf = new char[20];
-    keyEvent.virtualKeyCode = getWebKeyFromSDLKey(event->key.keysym.sym);
-    Awesomium::getKeyIdentifierFromVirtualKeyCode(keyEvent.virtualKeyCode,
-                                                  &buf);
-    strcpy(keyEvent.keyIdentifier, buf);
-    delete[] buf;
-
-    keyEvent.modifiers = 0;
+    key_event.virtual_key_code = getWebKeyFromSDLKey(event->key.keysym.sym);
+    key_event.modifiers = 0;
 
     if(event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_ALT_KEY;
+        key_event.modifiers |= AWE_WKM_ALT_KEY;
     if(event->key.keysym.mod & KMOD_LCTRL || event->key.keysym.mod & KMOD_RCTRL)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_CONTROL_KEY;
+        key_event.modifiers |= AWE_WKM_CONTROL_KEY;
     if(event->key.keysym.mod & KMOD_LMETA || event->key.keysym.mod & KMOD_RMETA)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_META_KEY;
+        key_event.modifiers |= AWE_WKM_META_KEY;
     if(event->key.keysym.mod & KMOD_LSHIFT || event->key.keysym.mod & KMOD_RSHIFT)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_SHIFT_KEY;
+        key_event.modifiers |= AWE_WKM_SHIFT_KEY;
     if(event->key.keysym.mod & KMOD_NUM)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_IS_KEYPAD;
+        key_event.modifiers |= AWE_WKM_IS_KEYPAD;
 
-    keyEvent.nativeKeyCode = event->key.keysym.scancode;
+    key_event.native_key_code = event->key.keysym.scancode;
 
-    if(event->type == SDL_KEYUP)
-    {
-        ///webView->injectKeyboardEvent(keyEvent);
-        awe_webview_inject_keyboard_event(webView, convert_key_event(keyEvent));
-    }
+    if (event->type == SDL_KEYUP)
+        awe_webview_inject_keyboard_event(webView, key_event);
     else
     {
-        unsigned int chr;
-        if((event->key.keysym.unicode & 0xFF80) == 0)
+        unsigned int chr = event->key.keysym.unicode;
+        if ((event->key.keysym.unicode & 0xFF80) == 0)
             chr = event->key.keysym.unicode & 0x7F;
-        else
-            chr = event->key.keysym.unicode;
 
-        keyEvent.text[0] = chr;
-        keyEvent.unmodifiedText[0] = chr;
+        key_event.text[0] = chr;
+        key_event.text[1] = '\0';
+        key_event.unmodified_text[0] = chr;
+        key_event.unmodified_text[1] = '\0';
 
-        //webView->injectKeyboardEvent(keyEvent);
-        awe_webview_inject_keyboard_event(webView, convert_key_event(keyEvent));
-        if(chr)
+        awe_webview_inject_keyboard_event(webView, key_event);
+        if (chr)
         {
-            keyEvent.type = Awesomium::WebKeyboardEvent::TYPE_CHAR;
-            keyEvent.virtualKeyCode = chr;
-            keyEvent.nativeKeyCode = chr;
-            //webView->injectKeyboardEvent(keyEvent);
-            awe_webview_inject_keyboard_event(webView, convert_key_event(keyEvent));
+            key_event.type = AWE_WKT_CHAR;
+            key_event.virtual_key_code = chr;
+            key_event.native_key_code = chr;
+            awe_webview_inject_keyboard_event(webView, key_event);
         }
     }
 }
