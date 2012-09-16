@@ -56,7 +56,7 @@ function gs_clear_form_errors()
     });
 }
 
-function gs_auth_server_error()
+function gs_auth_server_error(jqXHR, textStatus, errorCode)
 {
     Gnomescroll.set_message("Authentication server failure. Try again soon.");
 };
