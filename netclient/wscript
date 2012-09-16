@@ -255,15 +255,17 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
         if OS == 'Windows':
             awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/release/')
             awesomium_include_path = os.path.abspath('../lib/win32/awesomium/include/')
+            awesomium_name = 'awesomium-1.6.6'
         elif OS == 'Linux':
             awesomium_lib_path = os.path.abspath('../lib/lin32/awesomium/release/')
             awesomium_include_path = os.path.abspath('../lib/lin32/awesomium/include/')
+            awesomium_name = 'awesomium-1.6.5'
         else:
             assert False
 
         conf.check(
-            lib='awesomium-1.6.5', 
-            use='awesomium-1.6.5', 
+            lib=awesomium_name, 
+            use=awesomium_name, 
             includes = [awesomium_include_path],
             libpath = [awesomium_lib_path],
             uselib_store='AWESOMIUM') 
