@@ -1241,7 +1241,41 @@ class BodyMesh
                 m->tbvl[vertex_index].v.z += weight*v.z;
             }
         }
-        //class BodyPartMesh* bpm
+
+
+        for(int i=0; i<mlm; i++)
+        {
+            class BodyPartMesh* m = &ml[i];
+
+            for(int i=0; i<vlm; i++)
+            {
+                m->tbvl[i] = m->tbvl[index];
+            }
+        }
+
+        glColor4ub(255,255,255,255);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
+        glBegin(GL_TRIANGLES);
+
+        for(int i=0; i<mlm; i++)
+        {
+            class BodyPartMesh* m = &ml[i];
+
+            for(int j=0; j<vlm; j++)
+            {
+                struct _Vertex v = m->tvl[j];
+
+                glTexCoord2f(v.ux, v.uy );
+                glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
+            }
+
+        }
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        check_gl_error();
+
 /*
 
         for(int i=0; i<bvlm; i++)
