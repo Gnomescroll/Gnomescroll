@@ -419,6 +419,9 @@ def install_bin(ctx):
                 src_dll = os.path.join(dll_path, dll)
                 dst_dll = os.path.join('./', dll)
                 shutil.copy2(src_dll, dst_dll)
+            awe_dll_path = '../lib/win32/awesomium/bin/release/'
+            for f in os.listdir(awe_dll_path):
+                shutil.copy2(os.path.join(awe_dll_path, f), os.path.join('./', f))
             print "Copied dlls to current directory"
     except Exception, e:
         print "Error copying dlls from %s to current directory. Reason: %s" % (dll_path, e,)
