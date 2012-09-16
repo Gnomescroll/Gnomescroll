@@ -13,7 +13,12 @@ stdout.txt
 stderr.txt
 
 netclient/*.dll
+netclient/AwesomiumProcess
+netclient/*.exe
+
 server/*.dll
+server/*.exe
+
 
 valgerr*
 valgrerr*
