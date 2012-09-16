@@ -77,16 +77,20 @@ void init()
         
     #ifdef linux
         #if PRODUCTION
-        const char package_path_str[] = "./lib/lin32/awesomium/release";
+    const char package_path_str[] = "./lib/lin32/awesomium/release";
         #else
-        const char package_path_str[] = "../lib/lin32/awesomium/release";
+    const char package_path_str[] = "../lib/lin32/awesomium/release";
         #endif
-        const char locale_path_str[] = "./locales"; // relative to the package path
-        awe_string* package_path = get_awe_string(package_path_str);
-        awe_string* locale_path = get_awe_string(locale_path_str);
+    awe_string* package_path = get_awe_string(package_path_str);
     #else
-        const awe_string* package_path = awe_string_empty();
-        const awe_string* locale_path = awe_string_empty();
+    const awe_string* package_path = awe_string_empty();
+    #endif
+
+    #ifdef __APPLE__
+    const awe_string* locale_path = awe_string_empty();
+    #else
+    const char locale_path_str[] = "./locales"; // relative to the package path
+    awe_string* locale_path = get_awe_string(locale_path_str);
     #endif
     
     awe_string* log_path = get_awe_string("./screenshot");
@@ -122,6 +126,9 @@ void init()
 
     #ifdef linux
     awe_string_destroy(package_path);
+    #endif
+
+    #ifndef __APPLE__
     awe_string_destroy(locale_path);
     #endif
     
