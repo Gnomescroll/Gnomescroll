@@ -354,7 +354,7 @@ class ChromeViewport
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture( GL_TEXTURE_2D, tex );
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer));
         glDisable(GL_TEXTURE_2D);
     }
 
@@ -368,7 +368,7 @@ class ChromeViewport
         GL_ASSERT(GL_BLEND, true);
 
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex);
+        glBindTexture(GL_TEXTURE_2D, this->tex);
 
         static const float z = -0.5f;
 
@@ -394,13 +394,6 @@ class ChromeViewport
         glEnd();
         
         glDisable(GL_TEXTURE_2D);
-
-        //draw point for debugging
-        glColor4ub(255,0,0,255);
-        glBegin(GL_POINTS);
-        glVertex3f(xoff, yoff, -0.6f);
-        glEnd();
-        glColor4ub(255,255,255,255);
     }
 
     void focus()
@@ -429,14 +422,46 @@ class ChromeViewport
     }
 
 
-    void processKeyEvent(SDL_Event key_event) 
+    void processKeyEvent(const SDL_Event* event) 
     {
+	    GS_ASSERT_LIMIT(this->webView != NULL, 1);
+	    if (this->webView == NULL) return;
+	    
         if(inFocus == false)
         {
             printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
             return;
         }
-        injectSDLKeyEvent(webView, key_event);
+        
+        injectSDLKeyEvent(this->webView, event);
+
+	    SDLKey key = event->key.keysym.sym;
+	
+	    // Separate handling for history navigation -- awesomium does not do this by default
+	    if (event->type == SDL_KEYDOWN)
+	    {
+	        if(event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
+	        {
+	            if (key == SDLK_LEFT)
+	                awe_webview_go_to_history_offset(cv->webView, -1);
+	            if (key == SDLK_RIGHT)
+	                awe_webview_go_to_history_offset(cv->webView, 1);
+	        }
+	
+	        #if !PRODUCTION
+	        if (key == SDLK_MINUS)
+	        {
+	            char* token = get_auth_token();
+	            if (token == NULL)
+	                printf("No token found\n");
+	            else
+	            {
+	                printf("Token: %s\n", token);
+	                free(token);
+	            }
+	        }
+	        #endif
+	    }
     }
 };
 

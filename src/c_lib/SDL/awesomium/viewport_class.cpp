@@ -228,9 +228,9 @@ void ChromeViewport::set_callbacks()
 
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 {
-    if (!(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP))
+    if (event->type != SDL_KEYDOWN && event->type != SDL_KEYUP)
         return;
-
+        
     awe_webkeyboardevent key_event;
     key_event.type = event->type == SDL_KEYDOWN ? AWE_WKT_KEYDOWN : AWE_WKT_KEYUP;
 
@@ -252,7 +252,7 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 
     if (event->type == SDL_KEYUP)
         awe_webview_inject_keyboard_event(webView, key_event);
-    else
+    else if (event->type == SDL_KEYDOWN)
     {
         unsigned int chr = event->key.keysym.unicode;
         if ((event->key.keysym.unicode & 0xFF80) == 0)
@@ -263,13 +263,14 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
         key_event.unmodified_text[0] = chr;
         key_event.unmodified_text[1] = '\0';
 
-        awe_webview_inject_keyboard_event(webView, key_event);
+        awe_webview_inject_keyboard_event(webView, key_event);	// why 2 injections?
         if (chr)
         {
             key_event.type = AWE_WKT_CHAR;
             key_event.virtual_key_code = chr;
             key_event.native_key_code = chr;
             awe_webview_inject_keyboard_event(webView, key_event);
+        	printf("Injected %c\n", (char)chr);
         }
     }
 }

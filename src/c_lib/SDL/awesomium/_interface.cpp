@@ -206,35 +206,7 @@ void SDL_keyboard_event(const SDL_Event* event)
 {
     GS_ASSERT_LIMIT(cv != NULL, 1);
     if (cv == NULL) return;
-    injectSDLKeyEvent(cv->webView, event);
-
-    SDLKey key = event->key.keysym.sym;
-
-    // Separate handling for history navigation -- awesomium does not do this by default
-    if (event->type == SDL_KEYDOWN)
-    {
-        if(event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
-        {
-            if (key == SDLK_LEFT)
-                awe_webview_go_to_history_offset(cv->webView, -1);
-            if (key == SDLK_RIGHT)
-                awe_webview_go_to_history_offset(cv->webView, 1);
-        }
-
-        #if !PRODUCTION
-        if (key == SDLK_MINUS)
-        {
-            char* token = get_auth_token();
-            if (token == NULL)
-                printf("No token found\n");
-            else
-            {
-                printf("Token: %s\n", token);
-                free(token);
-            }
-        }
-        #endif
-    }
+    cv->processKeyEvent(event);
 }
 
 void SDL_mouse_event(const SDL_Event* event)

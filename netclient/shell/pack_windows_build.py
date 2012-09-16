@@ -86,6 +86,12 @@ def run(conf):
         assert os.path.exists(dll_src_path)
         copyfile(dll_src_path, os.path.join(build_path, dll))
     
+    awesomium_dll_path = '../lib/win32/awesomium/bin/release'
+    for dll in os.listdir(awesomium_dll_path):
+        dll_src_path = os.path.join(awesomium_dll_path, dll)
+        assert os.path.exists(dll_src_path)
+        copyfile(dll_src_path, os.path.join(build_path, dll))
+        
     # only zip and copy for production builds
     if conf != 'production':
         return

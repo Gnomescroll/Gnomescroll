@@ -66,7 +66,7 @@ $('form#login').submit(function(e)
     if (!$('input#remember_password').prop('checked'))
         password = '';  // will clear the password
     Gnomescroll.save_password(password);
-
+    
     return false;
 });
 
