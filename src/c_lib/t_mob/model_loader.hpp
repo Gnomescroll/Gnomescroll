@@ -1327,7 +1327,6 @@ class BodyMesh* body_mesh;
 
 void init()
 {
-    return; //DEBUG
 
     int bsize;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
@@ -1371,8 +1370,6 @@ void draw()
 
 void teardown()
 {
-
-return; //DEBUG
 
 if(model_loader != NULL) delete model_loader;
 if(body_mesh != NULL) delete body_mesh;
