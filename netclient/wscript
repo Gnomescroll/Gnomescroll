@@ -253,7 +253,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
     #awesomium
     if awesomium:
         if OS == 'Windows':
-            awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/release/')
+            awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/bin/release/')
             awesomium_include_path = os.path.abspath('../lib/win32/awesomium/include/')
             awesomium_name = 'awesomium-1.6.6'
         elif OS == 'Linux':
@@ -288,7 +288,12 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
 
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
     if awesomium:
-        conf.env.INCLUDES += ['../lib/lin32/awesomium/include/']
+        if OS == 'Linux':
+            conf.env.INCLUDES += ['../lib/lin32/awesomium/include/']
+        elif OS == 'Windows':
+            conf.env.INCLUDES += ['../lib/win32/awesomium/include/']
+        else:
+            assert False
 
     conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
     if OS == 'Windows':
