@@ -1,5 +1,9 @@
 #include "server.hpp"
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <auth/hmac-sha256.h>
 
 namespace Auth
@@ -65,7 +69,19 @@ uint8_t* compute_hash(const unsigned char* secret_key, const char* msg, const si
     return digest;
 }
 
-void init()
+void print_digest(uint8_t* digest)
+{   // print the digest
+    for (int i=0; i<32; i++)
+        printf("%02lx", (unsigned long)digest[i]);
+}
+
+void sprint_digest(char* dest, uint8_t* digest)
+{   // sprint the digest
+    for (int i=0; i<32; i++)
+        sprintf(&dest[i*2], "%02lx", (unsigned long)digest[i]);
+}
+
+void server_init()
 {
     load_secret_key();
     GS_ASSERT(secret_key_str != NULL);
@@ -77,28 +93,86 @@ void init()
         GS_ASSERT(isxdigit(secret_key_str[i]));
 
     GS_ASSERT(strlen((char*)secret_key) == SECRET_KEY_SIZE);
-
-    const char test_msg[] = "Hello gnomescroll";
-    uint8_t* digest = compute_hash(secret_key, test_msg, sizeof(test_msg)-1);
-
-
-    printf("Secret key: %s\n", secret_key_str);
-    printf("Payload: %s\n", test_msg);
-    
-    // print the digest
-    printf("Digest: ");
-    for (int i=0; i<32; i++)
-        printf("%02lx", (unsigned long)digest[i]);
-    printf("\n");
-
-    free(digest);
 }
 
 // Teardown
-void teardown()
+void server_teardown()
 {
     if (secret_key_str != NULL) free(secret_key_str);
     if (secret_key != NULL) free(secret_key);
+}
+
+bool verify_token(const char* _token, int* user_id, time_t* expiration_time, char** username)
+{
+    GS_ASSERT(secret_key != NULL);
+    if (secret_key == NULL) return false;
+    
+    char* token = NULL;
+    bool ok = parse_auth_token(_token, user_id, expiration_time, &token, username);
+    if (!ok) return false;
+    
+    const unsigned int payload_len = AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH + strlen(*username);
+    char* payload = (char*)malloc((payload_len+1)*sizeof(char));
+    snprintf(payload, payload_len+1, "%09d%lld%s", *user_id, (long long)*expiration_time, *username);
+    payload[payload_len] = '\0';
+
+    uint8_t* _hash = compute_hash(secret_key, payload, payload_len);
+    char* hash = (char*)malloc((AUTH_TOKEN_HASH_LENGTH+1)*sizeof(char));
+    sprint_digest(hash, _hash);
+    free(_hash);
+    free(payload);
+
+    bool match = (strcmp(token, hash) == 0);
+    bool expired = auth_token_expired(*expiration_time, AUTH_TOKEN_LIFETIME);
+
+    free(token);
+    free(hash);
+    
+    ok = (match && !expired);
+    if (!ok) free(*username);
+
+    return ok;
+}
+
+bool verify_token(const char* _token)
+{
+    int user_id = 0;
+    time_t expiration_time = 0;
+    char* username = NULL;
+    bool ok = verify_token(_token, &user_id, &expiration_time, &username);
+    if (ok) free(username);
+    return ok;
+}
+
+void received_auth_token(int client_id, const char* token)
+{
+    int user_id = 0;
+    time_t expiration_time = 0;
+    char* username = NULL;
+    bool ok = verify_token(token, &user_id, &expiration_time, &username);
+    if (ok)
+    {
+        send_auth_token_valid(client_id);
+        NetServer::client_authorized(client_id, user_id, expiration_time, username);
+        free(username);
+    }
+    else
+    {
+        send_auth_token_invalid(client_id);
+        NetServer::client_authorization_failed(client_id);
+    }
+}
+
+void send_auth_token_valid(int client_id)
+{
+    auth_token_valid_StoC msg;
+    msg.sendToClient(client_id);
+}
+
+void send_auth_token_invalid(int client_id)
+{
+    auth_token_invalid_StoC msg;
+    msg.sendToClient(client_id);
 }
 
 }   // Auth

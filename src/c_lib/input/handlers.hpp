@@ -57,8 +57,13 @@ struct InputState
     // awesomium;
     bool awesomium;
 
+    bool error_message;
+
     // freezes frustum (probably not used anymore)
     bool frustum;
+
+    // login mode is when we are waiting for login
+    bool login_mode;
 };
 
 extern InputState input_state;
@@ -84,6 +89,8 @@ void toggle_help_menu();
 void toggle_scoreboard();
 void toggle_map();
 void toggle_chat();
+void disable_chat();
+void enable_chat();
 void toggle_skeleton_editor();
 void toggle_equipped_sprite_adjuster();
 
@@ -101,6 +108,25 @@ void disable_agent_container();
 void enable_container_block(int container_id);
 void disable_container_block();
 
+void disable_awesomium();
+void enable_awesomium();
+
 void close_all_containers();
 
 void trigger_keys_held_down();
+
+namespace Input
+{   // TODO -- namespace everything
+void begin_login_mode()
+{
+    input_state.login_mode = true;
+    enable_awesomium();
+}
+
+void end_login_mode()
+{
+    disable_awesomium();
+    input_state.login_mode = false;
+}
+
+}   // Input

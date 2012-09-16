@@ -451,9 +451,6 @@ void ControlNodeRenderer::draw_intermediate()
 
     glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
-
-    glColor4ub(127,0,0,127);
-
     glColor4ub(255,255,255,255);
 
     glBegin(GL_QUADS);

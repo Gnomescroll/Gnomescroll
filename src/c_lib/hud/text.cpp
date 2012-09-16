@@ -229,6 +229,7 @@ void Text::set_text(const char* text)
 {
     if (text == NULL) text = "";
     this->text = this->set_string(text, this->text, &this->text_len);
+    this->reset_alignment();
 }
 
 void Text::set_format(const char* format)
@@ -335,14 +336,10 @@ void Text::reset_alignment()
 }
 void Text::center()
 {
-    if (!this->alignment.center)
-    {
-        float w = this->get_width();
-        float h = this->get_height();
-        this->x = this->refx - w/2;    // -/+ is weird because of the character vertex draw order
-        this->y = this->refy + h/2;
-        this->alignment.center = true;
-    }
+    if (this->alignment.center) return;
+    float w = this->get_width();
+    this->x = this->refx - w/2;    // -/+ is weird because of the character vertex draw order
+    this->alignment.center = true;
 }
 void Text::left()
 {

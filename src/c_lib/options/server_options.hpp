@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <options/option_macros.hpp>
 
 namespace Options
@@ -23,6 +27,9 @@ OPT_BOOL_HEADER(log_chat)
 /* Game */
 OPT_BOOL_HEADER(pvp)
 OPT_UINT_HEADER(base_move_rate);
+
+/* Auth */
+OPT_BOOL_HEADER(auth);
 
 void register_options();
 

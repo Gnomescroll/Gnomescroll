@@ -28,8 +28,6 @@ class Camera
         float ratio;
         float z_near, z_far;
 
-        float xl, yl, zl;
-        float xu, yu, zu;
         float theta, phi;
 
         int type;

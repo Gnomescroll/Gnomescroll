@@ -4,6 +4,7 @@
 
 #include <hud/text.cpp>
 #include <hud/map.cpp>
+#include <hud/error.hpp>
 #include <hud/hud.cpp>
 
 #include <hud/harvest_bar.hpp>

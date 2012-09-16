@@ -36,9 +36,11 @@ class MotionTargetingComponent: public TargetingComponent
 
         bool move_on_surface();
 
+        #if DC_SERVER
         void broadcast_target_choice();
         void broadcast_destination();
         void broadcast_remove_target();
+        #endif
 
         void call();
     

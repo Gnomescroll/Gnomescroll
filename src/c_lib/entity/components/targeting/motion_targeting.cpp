@@ -35,7 +35,9 @@ void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
     this->target_id = target_id;
     this->locked_on_target = true;
 
+    #if DC_SERVER
     this->broadcast_target_choice();
+    #endif
 }
 
 void MotionTargetingComponent::check_target_alive()
@@ -46,7 +48,9 @@ void MotionTargetingComponent::check_target_alive()
     {
         this->target_id = NO_AGENT;
         this->target_type = OBJECT_NONE;
+        #if DC_SERVER
         this->broadcast_remove_target();
+        #endif
     }
 }
 
@@ -61,7 +65,9 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
+    #if DC_SERVER
     this->broadcast_target_choice();
+    #endif
 }
 
 void MotionTargetingComponent::choose_destination()
@@ -129,6 +135,7 @@ bool MotionTargetingComponent::move_on_surface()
     return moved;
 }
 
+#if DC_SERVER
 void MotionTargetingComponent::broadcast_target_choice()
 {
     GS_ASSERT(this->object != NULL);
@@ -163,6 +170,7 @@ void MotionTargetingComponent::broadcast_destination()
     msg.ticks_to_destination = this->ticks_to_destination;
     msg.broadcast();
 }
+#endif
 
 void MotionTargetingComponent::call()
 {
@@ -177,7 +185,9 @@ void MotionTargetingComponent::call()
         this->target_type = OBJECT_NONE;
         this->target_id = NO_AGENT;
         this->ticks_locked = 0;
+        #if DC_SERVER
         this->broadcast_remove_target();
+        #endif
     }
 }
 

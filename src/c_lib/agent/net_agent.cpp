@@ -39,8 +39,6 @@ inline void SendClientId_StoC::handle()
 
     if (ClientState::playerAgent_state.you != NULL)
         ClientState::playerAgent_state.you->client_id = client_id;
-
-    ClientState::client_id_received(client_id);
 }
 
 inline void Agent_state_message::handle()
@@ -217,26 +215,12 @@ inline void agent_health_StoC::handle()
 
 inline void agent_create_StoC::handle()
 {
-    Agent_state* a = ClientState::agent_list->get_or_create(id);
-    if (a == NULL)
-    {
-        printf("agent_create_StoC:: get_or_create agent %d failed\n", id);
-        return;
-    }
-    a->client_id = client_id;
-}
-
-inline void agent_name_StoC::handle()
-{
-    Agent_state* a = ClientState::agent_list->get(id);
+    Agent_state* a = ClientState::agent_list->create(id);
+    GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    
-    char* old_name = (char*)calloc(strlen(a->status.name) + 1, sizeof(char));
-    strcpy(old_name, a->status.name);
-    bool new_name = a->status.set_name(name);
-    if (new_name)
-        a->event.name_changed(old_name);
-    free(old_name);
+    a->client_id = this->client_id;
+    a->status.set_name(this->username);
+    a->event.name_set();
 }
 
 inline void agent_destroy_StoC::handle()
@@ -280,25 +264,6 @@ inline void AgentSuicides_StoC::handle()
         return;
     }
     a->status.suicides = suicides;
-}
-
-inline void identified_StoC::handle()
-{
-    Agent_state* a = ClientState::playerAgent_state.you;
-    if (a == NULL)
-    {
-        printf("identified_StoC -- identified as %s but player agent not assigned\n", name);
-        return;
-    }
-    ClientState::playerAgent_state.was_identified();
-    char* old_name = (char*)calloc(strlen(a->status.name) + 1, sizeof(char));
-    strcpy(old_name, a->status.name);
-    bool new_name = a->status.set_name(name);
-    if (new_name)
-        a->event.name_changed(old_name);
-    free(old_name);
-
-    
 }
 
 inline void ping_StoC::handle()
@@ -418,12 +383,10 @@ inline void version_StoC::handle()
     NetClient::Server.version = version;
     if (GS_VERSION != version)
     {
+        Hud::set_error_status(GS_ERROR_VERSION_MISMATCH);
         printf("WARNING: Version mismatch\n");
-
         #if DC_CLIENT
         VersionMismatchBox(GS_VERSION, version);
-        //input_state.quit = true;
-        //input_state.confirm_quit = true;
         #endif
     }
     else
@@ -466,7 +429,7 @@ inline void set_spawner_StoC::handle()
     }
 
     // color new spawner
-    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check
+    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
     {
         Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, spawner_id);
         GS_ASSERT(obj != NULL);
@@ -515,12 +478,9 @@ inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
-inline void identify_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
 inline void choose_spawner_CtoS::handle(){}
-inline void request_agent_name_CtoS::handle(){}
-inline void request_remaining_state_CtoS::handle() {}
 inline void agent_camera_state_CtoS::handle() {}
 inline void version_CtoS::handle(){}
 inline void killme_CtoS::handle() {}
@@ -551,8 +511,6 @@ inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
 inline void agent_destroy_StoC::handle() {}
 inline void PlayerAgent_id_StoC::handle() {}
-inline void agent_name_StoC::handle() {}
-inline void identified_StoC::handle(){}
 inline void ping_StoC::handle(){}
 inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}
@@ -786,8 +744,6 @@ inline void hitscan_block_CtoS::handle()
     int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, block);
     if (weapon_block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
-
-    // TODO: Use weapon block dmg
 }
 
 inline void hitscan_none_CtoS::handle()
@@ -821,7 +777,7 @@ inline void melee_object_CtoS::handle()
         if (obj == NULL) return;
 
         // apply damage
-        const int obj_dmg = Item::get_item_object_damage(weapon_type);  // TODO -- weapon based
+        const int obj_dmg = Item::get_item_object_damage(weapon_type);
         using Components::HealthComponent;
         HealthComponent* health = (HealthComponent*)
             obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
@@ -1044,8 +1000,6 @@ inline void place_spawner_CtoS::handle()
     z = clamp_z(z);
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
-    // TODO -- handle spawners without teams
-    //Components::agent_spawner_component_list->assign_team_index(obj);
     Objects::ready(obj);
 }
 
@@ -1094,54 +1048,6 @@ static char* adjust_player_name(char* name)
     return _new_name;
 }
 
-inline void identify_CtoS::handle()
-{
-    Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
-        return;
-    }
-    printf("Received name %s\n", name);
-
-    unsigned int len = sanitize_player_name(name);
-    
-    if (len == 0)
-        strcpy(name, DEFAULT_PLAYER_NAME);
-
-    if (len >= PLAYER_NAME_MAX_LENGTH)
-    {
-        len = PLAYER_NAME_MAX_LENGTH;
-        name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
-    }
-
-    int breakout = 0;   // safeguard against infinite loop
-    const int breakout_limit = 100;
-    char* new_name = name;
-    while (!ServerState::agent_list->name_available(new_name))
-    {
-        breakout++;
-        if (breakout % breakout_limit == 0)
-        {
-            printf("ERROR: identify_CtoS::handle() -- failed to find a valid agent name after %d attempts\n", breakout);
-            return; // bailout, something is wrong
-        }
-        new_name = adjust_player_name(name);
-        GS_ASSERT(new_name != NULL);
-        if (new_name == NULL) return;
-    }
-
-    a->status.set_name(new_name);
-    a->status.identified = true;
-
-    identified_StoC msg;
-    strcpy(msg.name, a->status.name);
-    msg.sendToClient(client_id);
-
-    NetServer::users->add_name_to_client_id(client_id, a->status.name);
-    NetServer::clients[client_id]->ready();
-}
-
 inline void ping_CtoS::handle()
 {
     ping_StoC msg;
@@ -1156,32 +1062,6 @@ inline void ping_reliable_CtoS::handle()
     msg.sendToClient(client_id);
 }
 
-inline void request_agent_name_CtoS::handle()
-{
-    Agent_state* a = ServerState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("request_agent_name_CtoS:: unknown agent %d\n", id);
-        return;
-    }
-    
-    agent_name_StoC msg;
-    strcpy(msg.name, a->status.name);
-    msg.id = id;
-    msg.sendToClient(client_id);
-}
-
-inline void request_remaining_state_CtoS::handle()
-{   // client reporting received agent; send metadata
-    NetPeerManager* client = NetServer::clients[client_id];
-    if (client == NULL)
-    {
-        printf("request_remaining_state_CtoS::handle() -- NetPeerManager not found for %d\n", client_id);
-        return;
-    }
-    client->send_remaining_state();
-}
-
 inline void agent_camera_state_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
@@ -1191,6 +1071,5 @@ inline void agent_camera_state_CtoS::handle()
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
 }
-
 
 #endif

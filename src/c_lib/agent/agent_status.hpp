@@ -31,7 +31,6 @@ class Agent_status {
         unsigned int health_max;
 
         char name[PLAYER_NAME_MAX_LENGTH + 1];
-        bool identified;
 
         bool vox_crouched;
 
@@ -40,16 +39,13 @@ class Agent_status {
         bool color_chosen;
         struct Color color;
 
-        #if DC_SERVER
-        bool net_peer_ready;
-        #endif
-        
         void tick();
 
-        bool set_name(char* n); // return true if the new name is different
-        #if DC_CLIENT
-        void check_missing_name();
-        #endif
+        void set_name(const char* name);
+
+        //#if DC_CLIENT
+        //void check_missing_name();
+        //#endif
 
         void set_spawner(int pt);
 
@@ -59,6 +55,9 @@ class Agent_status {
         void kill_slime();
 
         #if DC_SERVER
+
+        void identify(const char* name);    // returns false if malformed
+        
         void respawn();
         void set_fresh_state();
 

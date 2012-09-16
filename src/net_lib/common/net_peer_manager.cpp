@@ -1,5 +1,11 @@
 #include "net_peer_manager.hpp"
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
+#include <time.h>
+
 #include <net_lib/global.hpp>
 #include <state/server_state.hpp>
 #include <t_map/server/manager.hpp>
@@ -7,8 +13,10 @@
 #include <agent/net_agent.hpp>
 #include <item/_interface.hpp>
 #include <common/analytics/sessions.hpp>
-
 #include <t_mech/_interface.hpp>
+#include <common/common.hpp>
+#include <auth/constants.hpp>
+
 /*
     Utility Functions
 */
@@ -32,10 +40,10 @@ void send_version_to_client(int client_id)
 /*
  * Phase 1:
  * send version
+ * begin waiting for auth 
  */
 void NetPeerManager::init(int client_id)
 {
-    printf("NetPeerManager: init client %d\n", client_id);
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
     GS_ASSERT(!this->inited);
@@ -45,115 +53,86 @@ void NetPeerManager::init(int client_id)
 
     send_version_to_client(client_id);
 
-    // TODO -- have client confirm version
-    this->version_passed(client_id);
- }
-
-/*
- * Phase 2:
- * Send ClientID,
- * Create agent
- * Send AgentID
- * Add player to chat server
- * 
- * Sent after version confirmed matching
- */
-void NetPeerManager::version_passed(int client_id)
-{
-    ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return;
-
     SendClientId_StoC client_id_msg;
     client_id_msg.client_id = client_id;
     client_id_msg.sendToClient(client_id);
+
+    // begin waiting for auth
+    this->waiting_for_auth = true;
+}
+
+/*
+ * Phase 2:
+ * Authorization
+ * On first load, send all data
+ * Subsequent authorizations will only refresh the expiration_time
+ */
+void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const char* username)
+{
+    
+    // assume arguments are valid. should have been verified by the auth token parser
+
+    GS_ASSERT(this->inited);
+    if (!this->inited) return;
+    GS_ASSERT(!this->loaded || this->user_id == user_id);
+
+    // update expiration time and waiting state
+    this->waiting_for_auth = false;
+    this->auth_expiration = expiration_time;
+
+    if (this->loaded) return;
+
+    this->user_id = user_id;
+    
+    // move peer from staging to active pool
+    NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
+    NetServer::staging_pool[this->client_id] = NULL;
 
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
 
     class Agent_state* a = ServerState::agent_list->create(client_id);
     GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    if (a == NULL)
+    {   // if this happens, we need to force disconnect the client
+        NetServer::kill_client(this->client_id, DISCONNECT_SERVER_ERROR);
+        return;
+    }
+
+    // broadcast agent to other players
+    agent_create_StoC msg;
+    msg.id = a->id;
+    msg.client_id = a->client_id;
+    strncpy(msg.username, username, PLAYER_NAME_MAX_LENGTH+1);
+    msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
+    msg.broadcast();
+
+    // attach username to agent
+    a->status.identify(username);
+    NetServer::users->set_name_for_client_id(client_id, a->status.name);
+
     NetServer::assign_agent_to_client(client_id, a);
     send_player_agent_id_to_client(client_id);
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
     a->status.set_fresh_state();
 
     add_player_to_chat(client_id);
-}
-
-/*
- * Phase 3:
- * Create agent's containers
- * Send initial state (game mode data, agents, mobs)
- * 
- * Sent after client identifies with name
- */
-void NetPeerManager::ready()
-{
-    if (!this->inited)
-    {
-        printf("ERROR NetPeerManager::ready() -- not inited yet\n");
-        return;
-    }
-    if (this->loaded)
-        return;
-    
-    class Agent_state* a = NetServer::agents[this->client_id];
-    if (a==NULL)
-    {
-        printf("ERROR NetPeerManager::ready() -- Agent %d UNKNOWN!!\n", this->client_id);
-        return;
-    }
-    if (!a->status.identified) return;
-
-    this->loaded = true;
 
     ServerState::agent_list->send_to_client(client_id);
     t_mech::send_client_mech_list(this->client_id);  //send t_mech to client
 
-    ServerState::send_initial_game_state_to_client(this->client_id);
+    Objects::send_to_client(this->client_id);
 
     t_map::send_client_map_special(this->client_id); //send special blocks to client
 
-    ServerState::send_remainining_game_state_to_client(this->client_id);
     ItemParticle::send_particle_items_to_client(client_id);
 
-    // move peer from staging to active pool
-    NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
-    NetServer::staging_pool[this->client_id] = NULL;
-    a->status.net_peer_ready = true;
-}
-
-/*
- * Phase 4:
- * Send remaining state (containers, items)
- * 
- * Sent upon client request
- * Client sends request after being identified
- */
- // DEPRECATED
-void NetPeerManager::send_remaining_state()
-{
-    printf("NPM::send_remaining_state\n");
-    if (!this->inited)
-    {
-        printf("ERROR NetPeerManager::send_remaining_state() -- not inited yet\n");
-        return;
-    }
-    if (!this->loaded)
-    {
-        printf("ERROR NetPeerManager::send_remaining_state() -- not loaded yet\n");
-        return;
-    }
-    if (this->received_initial_state)
-        return;
- 
-    this->received_initial_state = true;
+    this->loaded = true;
+    this->authorized = true;
 }
 
 void NetPeerManager::teardown()
 {
     class Agent_state* a = NetServer::agents[this->client_id];
-    GS_ASSERT(a != NULL);
     if (a != NULL)
     {
         Item::agent_quit(a->id);    // unsubscribes agent from all item
@@ -166,15 +145,36 @@ void NetPeerManager::teardown()
 }
 
 
-NetPeerManager::NetPeerManager()
-:
-client_id(-1),
-inited(false),
-loaded(false),
-received_initial_state(false)
+bool NetPeerManager::failed_to_authorize()
 {
-    this->connection_time = time(NULL);
+    return (this->waiting_for_auth &&
+        difftime(utc_now(), connection_time) >= Auth::AUTHORIZATION_TIMEOUT);
 }
+
+bool NetPeerManager::authorization_expired()
+{
+    return (this->loaded && difftime(utc_now(), this->auth_expiration) >= 0);
+}
+
+void NetPeerManager::failed_authorization_attempt()
+{
+    this->auth_attempts++;
+    if (this->auth_attempts >= Auth::AUTH_MAX_CLIENT_ATTEMPTS)
+        NetServer::kill_client(this->client_id, DISCONNECT_AUTH_LIMIT);
+}
+
+NetPeerManager::NetPeerManager() :
+    client_id(-1),
+    inited(false),
+    loaded(false),
+    waiting_for_auth(false),
+    authorized(false),
+    connection_time(utc_now()),
+    auth_expiration(0),
+    username(NULL),
+    user_id(0),
+    auth_attempts(0)
+{}
 
 NetPeerManager::~NetPeerManager()
 {
@@ -184,6 +184,6 @@ NetPeerManager::~NetPeerManager()
         Log::Always,
         "Client %d was connected for %d seconds\n",
         this->client_id,
-        time(NULL) - this->connection_time
+        utc_now() - this->connection_time
     );
 }

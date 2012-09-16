@@ -1,12 +1,13 @@
 #pragma once
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <options/option_macros.hpp>
 
 namespace Options
 {
-
-/* User */
-OPT_STRING_HEADER(name) // player_name
 
 /* Network */
 OPT_STRING_HEADER(server)

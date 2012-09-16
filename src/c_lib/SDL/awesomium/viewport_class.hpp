@@ -1,26 +1,56 @@
 #pragma once
 
+#if GS_AWESOMIUM
+
 #include <SDL/awesomium/_interface.hpp>
+#include <auth/constants.hpp>
+#include <auth/client.hpp>
 
 namespace Awesomium
 {
 
-// Switch to gnomescroll.com when site is live
-#define GNOMESCROLL_URL "http://127.0.0.1:5002/"
+const char JS_OBJ_NAME[] = "Gnomescroll";
+const char JS_OBJ_CREATE_URL_NAME[] = "create_url";
+const char JS_OBJ_LOGIN_URL_NAME[] = "login_url";
+const char JS_OBJ_TOKEN_URL_NAME[] = "token_url";
+const char JS_OBJ_LOGIN_ERROR_NAME[] = "login_error";
+const char JS_OBJ_GAME_TOKEN_NAME[] = "gstoken";
+const char JS_OBJ_DEBUG_NAME[] = "DEBUG";
+const char JS_OBJ_TOKEN_NAME_NAME[] = "token_name";
+const char JS_OBJ_USERNAME_NAME[] = "gs_username";
+const char JS_OBJ_PASSWORD_NAME[] = "gs_pass";
+
+// js -> C callbacks (registered on the Gnomescroll object)
+const char JS_CB_SET_MESSAGE_NAME[] = "set_message";
+const char JS_CB_UNSET_MESSAGE_NAME[] = "clear_message";
+const char JS_CB_SET_TOKEN_NAME[] = "set_token";
+const char JS_CB_TOKEN_FAILURE_NAME[] = "token_failure";
+const char JS_CB_LOGIN_REQUIRED_NAME[] = "login_required";
+const char JS_CB_SAVE_USERNAME_NAME[] = "save_username";
+const char JS_CB_SAVE_PASSWORD_NAME[] = "save_password";
+
+// C -> js callbacks (not registered, but defined in the js)
+const char JS_CB_OPEN_TOKEN_PAGE_NAME[] = "gs_get_token";
 
 int getWebKeyFromSDLKey(SDLKey key);
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event& event);
 
-/*
-struct chromeDisplay {
-    int x;
-    int y;
-    int width;
-    int height;
-    int tex_id;
-    void* webView;
-};
-*/
+void begin_navigation_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name);
+void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name, int status_code, const awe_string* _mime_type);
+void finish_loading_cb(awe_webview* webView);
+awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request);
+void resource_response_cb(awe_webview* webView, const awe_string* _url, int status_code, bool was_cached, int64 request_time_ms, int64 response_time_ms, int64 expected_content_size, const awe_string *_mime_type);
+void web_view_crashed_cb(awe_webview* webView);
+void js_console_message_callback(awe_webview *webView, const awe_string *message, int line_number, const awe_string *source);
+
+// main handler that routes to other callbacks
+void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+
+// specific callbacks
+void js_set_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+void js_unset_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args);
+
 
 class ChromeViewport
 {
@@ -33,44 +63,237 @@ class ChromeViewport
         bool inFocus;
 
         awe_webview* webView;
+        awe_string* js_obj_name;
+        
         unsigned int tex;
 
+        bool crashed;
+
     ChromeViewport() :
-    inFocus(false), tex(0)
+    inFocus(false), js_obj_name(NULL), tex(0), crashed(false)
     {
         this->xoff = (int) (_xresf * 0.125f);
-        this->yoff = (int) (_yresf * 0.125f);    // from bottom
+        this->yoff = (int) (_yresf * 0.0625);    // from bottom
         this->width = (int) (_xresf * 0.75f);
-        this->height = (int) (_yresf * 0.75f);
+        this->height = (int) (_yresf * 0.875f);
 
         this->init_webview();
         this->init_render_surface();
-        this->load_first_url();
-    }
 
-    void load_first_url()
-    {
-        this->load_url(GNOMESCROLL_URL "login");
-    }
+        this->set_callbacks();
+        this->setup_whitelist();
+        this->setup_javascript();
 
-    void load_url(const char* url)
-    {
-        awe_string* a_url = get_awe_string(url);
-
-        awe_webview_load_url(
-            this->webView,
-            a_url,  // url
-            awe_string_empty(), // frame name
-            awe_string_empty(), // username
-            awe_string_empty()  // password
-        );
-
-        awe_string_destroy(a_url);
+        this->load_first_page();
     }
 
     ~ChromeViewport()
     {
+        if (this->js_obj_name != NULL) awe_string_destroy(this->js_obj_name);
         if (this->webView != NULL) awe_webview_destroy(this->webView);
+    }
+    
+    void set_callbacks();
+
+    void add_site_to_whitelist(const char* _url)
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+
+        awe_string* url = get_awe_string(_url);
+        awe_webview_add_url_filter(this->webView, url);
+        awe_string_destroy(url);
+    }
+
+    void setup_whitelist()
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+
+        awe_webview_set_url_filtering_mode(this->webView, AWE_UFM_WHITELIST);
+        this->add_site_to_whitelist("local://*");
+        this->add_site_to_whitelist("file://*");
+        this->add_site_to_whitelist ("http://gnomescroll.com/*");
+        this->add_site_to_whitelist("https://gnomescroll.com/*");
+        this->add_site_to_whitelist ("http://*.gnomescroll.com/*");
+        this->add_site_to_whitelist("https://*.gnomescroll.com/*");
+        //this->add_site_to_whitelist ("http://www.google-analytics.com/*");
+        //this->add_site_to_whitelist("https://www.google-analytics.com/*");
+        //this->add_site_to_whitelist ("http://ajax.googleapis.com/ajax/libs/jquery/*");
+        //this->add_site_to_whitelist("https://ajax.googleapis.com/ajax/libs/jquery/*");
+        #if !PRODUCTION
+        this->add_site_to_whitelist ("http://127.0.0.1:5002/*");
+        this->add_site_to_whitelist("https://127.0.0.1:5002/*");
+        #endif
+    }
+
+    void setup_javascript()
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+        
+        this->js_obj_name = get_awe_string(JS_OBJ_NAME);
+        awe_webview_create_object(this->webView, this->js_obj_name);
+
+        #if PRODUCTION
+        this->set_js_value(JS_OBJ_DEBUG_NAME, true);
+        #else
+        this->set_js_value(JS_OBJ_DEBUG_NAME, false);
+        #endif
+
+        this->set_js_value(JS_OBJ_LOGIN_URL_NAME, GNOMESCROLL_LOGIN_URL);
+        this->set_js_value(JS_OBJ_CREATE_URL_NAME, GNOMESCROLL_CREATE_URL);
+        this->set_js_value(JS_OBJ_TOKEN_URL_NAME, GNOMESCROLL_TOKEN_URL);
+        this->set_js_value(JS_OBJ_TOKEN_NAME_NAME, Auth::AUTH_TOKEN_COOKIE_NAME);
+
+        // credentials
+        char* username = NULL;
+        char* password = NULL;
+        get_credentials(&username, &password);
+        if (username != NULL)
+        {
+            this->set_js_value(JS_OBJ_USERNAME_NAME, username);
+            free(username);
+            if (password != NULL)
+            {
+                this->set_js_value(JS_OBJ_PASSWORD_NAME, password);
+                free(password);
+            }
+            else
+                this->set_js_value(JS_OBJ_PASSWORD_NAME, "");
+        }
+        else
+            this->set_js_value(JS_OBJ_USERNAME_NAME, "");
+        
+        // set some null values on the object
+        this->set_js_value(JS_OBJ_LOGIN_ERROR_NAME);
+        this->set_js_value(JS_OBJ_GAME_TOKEN_NAME);
+
+        // callback for console.log
+        awe_webview_set_callback_js_console_message(this->webView, &js_console_message_callback);
+
+        this->register_js_callback(JS_CB_SET_MESSAGE_NAME);
+        this->register_js_callback(JS_CB_UNSET_MESSAGE_NAME);
+        this->register_js_callback(JS_CB_SET_TOKEN_NAME);
+        this->register_js_callback(JS_CB_TOKEN_FAILURE_NAME);
+        this->register_js_callback(JS_CB_LOGIN_REQUIRED_NAME);
+        this->register_js_callback(JS_CB_SAVE_USERNAME_NAME);
+        this->register_js_callback(JS_CB_SAVE_PASSWORD_NAME);
+        
+        // callbacks for error handling
+        awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);
+    }
+
+    void register_js_callback(const char* _name)
+    {   // registers a javascript callback name on the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+        
+        awe_string* name = get_awe_string(_name);
+        awe_webview_set_object_callback(this->webView, this->js_obj_name, name);
+        awe_string_destroy(name);
+    }
+
+    void set_js_value(const char* _name, bool _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_bool_value(_value);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name, double _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_double_value(_value);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name, int _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_integer_value(_value);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_jsvalue* value = awe_jsvalue_create_null_value();
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_jsvalue_destroy(value);
+    }
+    
+    void set_js_value(const char* _name, const char* _value)
+    {   // sets value with name to the global js obj
+        GS_ASSERT(this->webView != NULL);
+        GS_ASSERT(this->js_obj_name != NULL);
+        if (this->webView == NULL || this->js_obj_name == NULL) return;
+
+        awe_string* name = get_awe_string(_name);
+        awe_string* val = get_awe_string(_value);
+        awe_jsvalue* value = awe_jsvalue_create_string_value(val);
+        awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
+        awe_string_destroy(name);
+        awe_string_destroy(val);
+        awe_jsvalue_destroy(value);
+    }
+
+    void load_first_page()
+    {
+        this->load_file(GNOMESCROLL_LOGIN_HTML);
+    }
+
+    void load_url(const char* _url)
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+
+        awe_string* url = get_awe_string(_url);
+        awe_webview_load_url(
+            this->webView,
+            url,  // url
+            awe_string_empty(), // frame name
+            awe_string_empty(), // username
+            awe_string_empty()  // password
+        );
+        awe_string_destroy(url);
+    }
+
+    void load_file(const char* _file)
+    {
+        GS_ASSERT(this->webView != NULL);
+        if (this->webView == NULL) return;
+        awe_string* file = get_awe_string(_file);
+        awe_webview_load_file(
+            this->webView,
+            file,               // filename
+            awe_string_empty()  // frame name
+        );
+        awe_string_destroy(file);
     }
 
     void init_webview()
@@ -106,7 +329,6 @@ class ChromeViewport
         //awe_renderbuffer_get_height(renderBuffer),
         //awe_renderbuffer_get_rowspan(renderBuffer)
 
-
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
 
         glDisable(GL_TEXTURE_2D);
@@ -140,7 +362,10 @@ class ChromeViewport
     {
         if (this->tex == 0) return;
 
+        glColor4ub(255,255,255,255);
+
         GL_ASSERT(GL_DEPTH_TEST, false);
+        GL_ASSERT(GL_BLEND, true);
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex);
@@ -215,357 +440,13 @@ class ChromeViewport
     }
 };
 
-/*
-_OSMExport bool awe_webview_is_dirty  (   awe_webview *   webview )
-_OSMExport const awe_renderbuffer* awe_webview_render (   awe_webview *   webview )
-_OSMExport awe_rect awe_webview_get_dirty_bounds  (   awe_webview *   webview )
-Returns the bounds of the area that has changed since the last call to awe_webview_render.
-*/
-
-/*
-_OSMExport int  awe_renderbuffer_get_width (const awe_renderbuffer *renderbuffer)
-_OSMExport int  awe_renderbuffer_get_height (const awe_renderbuffer *renderbuffer)
-_OSMExport int  awe_renderbuffer_get_rowspan (const awe_renderbuffer *renderbuffer)
-_OSMExport const unsigned char *    awe_renderbuffer_get_buffer (const awe_renderbuffer *renderbuffer)
-*/
-
-
-/*
-    // Destroy our WebView instance
-    awe_webview_destroy(webView);
-
-    // Destroy our WebCore instance
-    awe_webcore_shutdown();
-*/
-
-/*        awe_string* filename_str = awe_string_create_from_ascii("./result.jpg",
-                                                        strlen("./result.jpg"));
-
-        // Save our RenderBuffer directly to a JPEG image
-        awe_renderbuffer_save_to_jpeg(renderBuffer, filename_str, 90);
-
-        // Destroy our filename string
-        awe_string_destroy(filename_str);
-*/
-
-
-///input handling crap
-
-// Forward declaration, defined below
-//int getWebKeyFromSDLKey(SDLKey key);
-
-/**
-* This utility function generates a WebKeyboardEvent directly from an SDL
-* Key Event and injects it into a certain WebView.
-*
-* @param    webView The WebView that will receive the event.
-* @param    event   The SDL Event (of type SDL_KEYDOWN or SDL_KEYUP).
-*/
-
-//void injectSDLKeyEvent(Awesomium::WebView* webView, const SDL_Event& event)
-//_awe_webkeyboardevent convertSDLKeyEvent(const SDL_Event& event)
-
-//int getWebKeyFromSDLKey(SDLKey key);
-
-awe_webkeyboardevent convert_key_event(Awesomium::WebKeyboardEvent keyEvent) 
-{
-    awe_webkeyboardevent ke;
-
-/*
-    awe_webkey_type     type
-awe_webkey_modifiers    modifiers
-int     virtual_key_code
-int     native_key_code
-wchar16     text [4]
-wchar16     unmodified_text [4]
-bool    is_system_keyURL
-*/
-    ke.type = (awe_webkey_type)keyEvent.type;
-    ke.modifiers = (awe_webkey_modifiers)keyEvent.modifiers;
-    ke.virtual_key_code = keyEvent.virtualKeyCode;
-    ke.native_key_code = keyEvent.nativeKeyCode;
-    int i;
-    //for(i=0; i<=19;i++) {        ke.text[i] = keyEvent.keyIdentifier; }
-    for(i=0; i<=3;i++) {
-        ke.text[i] = keyEvent.text[i];
-        ke.unmodified_text[i] = keyEvent.unmodifiedText[i];
-    }
-    ke.is_system_key = keyEvent.isSystemKey;
-    return ke;
-}
-
-
-void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
-{
-    if(!(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP))
-        return;
-
-    Awesomium::WebKeyboardEvent keyEvent;
-
-    keyEvent.type = event->type == SDL_KEYDOWN?
-        Awesomium::WebKeyboardEvent::TYPE_KEY_DOWN :
-        Awesomium::WebKeyboardEvent::TYPE_KEY_UP;
-
-    char* buf = new char[20];
-    keyEvent.virtualKeyCode = getWebKeyFromSDLKey(event->key.keysym.sym);
-    Awesomium::getKeyIdentifierFromVirtualKeyCode(keyEvent.virtualKeyCode,
-                                                  &buf);
-    strcpy(keyEvent.keyIdentifier, buf);
-    delete[] buf;
-
-    keyEvent.modifiers = 0;
-
-    if(event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_ALT_KEY;
-    if(event->key.keysym.mod & KMOD_LCTRL || event->key.keysym.mod & KMOD_RCTRL)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_CONTROL_KEY;
-    if(event->key.keysym.mod & KMOD_LMETA || event->key.keysym.mod & KMOD_RMETA)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_META_KEY;
-    if(event->key.keysym.mod & KMOD_LSHIFT || event->key.keysym.mod & KMOD_RSHIFT)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_SHIFT_KEY;
-    if(event->key.keysym.mod & KMOD_NUM)
-        keyEvent.modifiers |= Awesomium::WebKeyboardEvent::MOD_IS_KEYPAD;
-
-    keyEvent.nativeKeyCode = event->key.keysym.scancode;
-
-    if(event->type == SDL_KEYUP)
-    {
-        ///webView->injectKeyboardEvent(keyEvent);
-        awe_webview_inject_keyboard_event(webView, convert_key_event(keyEvent));
-    }
-    else
-    {
-        unsigned int chr;
-        if((event->key.keysym.unicode & 0xFF80) == 0)
-            chr = event->key.keysym.unicode & 0x7F;
-        else
-            chr = event->key.keysym.unicode;
-
-        keyEvent.text[0] = chr;
-        keyEvent.unmodifiedText[0] = chr;
-
-        //webView->injectKeyboardEvent(keyEvent);
-        awe_webview_inject_keyboard_event(webView, convert_key_event(keyEvent));
-        if(chr)
-        {
-            keyEvent.type = Awesomium::WebKeyboardEvent::TYPE_CHAR;
-            keyEvent.virtualKeyCode = chr;
-            keyEvent.nativeKeyCode = chr;
-            //webView->injectKeyboardEvent(keyEvent);
-            awe_webview_inject_keyboard_event(webView, convert_key_event(keyEvent));
-        }
-    }
-}
-
-// A helper macro, used in 'getWebKeyFromSDLKey'
-#define mapKey(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
-
 // Translates an SDLKey virtual key code to an Awesomium key code
-int getWebKeyFromSDLKey(SDLKey key)
-{
-    switch(key)
-    {
-    mapKey(BACKSPACE, BACK)
-    mapKey(TAB, TAB)
-    mapKey(CLEAR, CLEAR)
-    mapKey(RETURN, RETURN)
-    mapKey(PAUSE, PAUSE)
-    mapKey(ESCAPE, ESCAPE)
-    mapKey(SPACE, SPACE)
-    mapKey(EXCLAIM, 1)
-    mapKey(QUOTEDBL, 2)
-    mapKey(HASH, 3)
-    mapKey(DOLLAR, 4)
-    mapKey(AMPERSAND, 7)
-    mapKey(QUOTE, OEM_7)
-    mapKey(LEFTPAREN, 9)
-    mapKey(RIGHTPAREN, 0)
-    mapKey(ASTERISK, 8)
-    mapKey(PLUS, OEM_PLUS)
-    mapKey(COMMA, OEM_COMMA)
-    mapKey(MINUS, OEM_MINUS)
-    mapKey(PERIOD, OEM_PERIOD)
-    mapKey(SLASH, OEM_2)
-    mapKey(0, 0)
-    mapKey(1, 1)
-    mapKey(2, 2)
-    mapKey(3, 3)
-    mapKey(4, 4)
-    mapKey(5, 5)
-    mapKey(6, 6)
-    mapKey(7, 7)
-    mapKey(8, 8)
-    mapKey(9, 9)
-    mapKey(COLON, OEM_1)
-    mapKey(SEMICOLON, OEM_1)
-    mapKey(LESS, OEM_COMMA)
-    mapKey(EQUALS, OEM_PLUS)
-    mapKey(GREATER, OEM_PERIOD)
-    mapKey(QUESTION, OEM_2)
-    mapKey(AT, 2)
-    mapKey(LEFTBRACKET, OEM_4)
-    mapKey(BACKSLASH, OEM_5)
-    mapKey(RIGHTBRACKET, OEM_6)
-    mapKey(CARET, 6)
-    mapKey(UNDERSCORE, OEM_MINUS)
-    mapKey(BACKQUOTE, OEM_3)
-    mapKey(a, A)
-    mapKey(b, B)
-    mapKey(c, C)
-    mapKey(d, D)
-    mapKey(e, E)
-    mapKey(f, F)
-    mapKey(g, G)
-    mapKey(h, H)
-    mapKey(i, I)
-    mapKey(j, J)
-    mapKey(k, K)
-    mapKey(l, L)
-    mapKey(m, M)
-    mapKey(n, N)
-    mapKey(o, O)
-    mapKey(p, P)
-    mapKey(q, Q)
-    mapKey(r, R)
-    mapKey(s, S)
-    mapKey(t, T)
-    mapKey(u, U)
-    mapKey(v, V)
-    mapKey(w, W)
-    mapKey(x, X)
-    mapKey(y, Y)
-    mapKey(z, Z)
-    mapKey(DELETE, DELETE)
-    mapKey(KP0, NUMPAD0)
-    mapKey(KP1, NUMPAD1)
-    mapKey(KP2, NUMPAD2)
-    mapKey(KP3, NUMPAD3)
-    mapKey(KP4, NUMPAD4)
-    mapKey(KP5, NUMPAD5)
-    mapKey(KP6, NUMPAD6)
-    mapKey(KP7, NUMPAD7)
-    mapKey(KP8, NUMPAD8)
-    mapKey(KP9, NUMPAD9)
-    mapKey(KP_PERIOD, DECIMAL)
-    mapKey(KP_DIVIDE, DIVIDE)
-    mapKey(KP_MULTIPLY, MULTIPLY)
-    mapKey(KP_MINUS, SUBTRACT)
-    mapKey(KP_PLUS, ADD)
-    mapKey(KP_ENTER, SEPARATOR)
-    mapKey(KP_EQUALS, UNKNOWN)
-    mapKey(UP, UP)
-    mapKey(DOWN, DOWN)
-    mapKey(RIGHT, RIGHT)
-    mapKey(LEFT, LEFT)
-    mapKey(INSERT, INSERT)
-    mapKey(HOME, HOME)
-    mapKey(END, END)
-    mapKey(PAGEUP, PRIOR)
-    mapKey(PAGEDOWN, NEXT)
-    mapKey(F1, F1)
-    mapKey(F2, F2)
-    mapKey(F3, F3)
-    mapKey(F4, F4)
-    mapKey(F5, F5)
-    mapKey(F6, F6)
-    mapKey(F7, F7)
-    mapKey(F8, F8)
-    mapKey(F9, F9)
-    mapKey(F10, F10)
-    mapKey(F11, F11)
-    mapKey(F12, F12)
-    mapKey(F13, F13)
-    mapKey(F14, F14)
-    mapKey(F15, F15)
-    mapKey(NUMLOCK, NUMLOCK)
-    mapKey(CAPSLOCK, CAPITAL)
-    mapKey(SCROLLOCK, SCROLL)
-    mapKey(RSHIFT, RSHIFT)
-    mapKey(LSHIFT, LSHIFT)
-    mapKey(RCTRL, RCONTROL)
-    mapKey(LCTRL, LCONTROL)
-    mapKey(RALT, RMENU)
-    mapKey(LALT, LMENU)
-    mapKey(RMETA, LWIN)
-    mapKey(LMETA, RWIN)
-    mapKey(LSUPER, LWIN)
-    mapKey(RSUPER, RWIN)
-    mapKey(MODE, MODECHANGE)
-    mapKey(COMPOSE, ACCEPT)
-    mapKey(HELP, HELP)
-    mapKey(PRINT, SNAPSHOT)
-    mapKey(SYSREQ, EXECUTE)
-    default: return Awesomium::KeyCodes::AK_UNKNOWN;
-    }
-}
-
-//_OSMExport void   awe_webview_inject_mouse_move (awe_webview *webview, int x, int y)
-//_OSMExport void   awe_webview_inject_mouse_down (awe_webview *webview, awe_mousebutton button)
-//_OSMExport void   awe_webview_inject_mouse_up (awe_webview *webview, awe_mousebutton button)
-//_OSMExport void   awe_webview_inject_mouse_wheel (awe_webview *webview, int scroll_amount_vert, int scroll_amount_horz)
-//_OSMExport void   awe_webview_inject_keyboard_event (awe_webview *webview, awe_webkeyboardevent key_event)
-
-//enum      _awe_mousebutton { AWE_MB_LEFT, AWE_MB_MIDDLE, AWE_MB_RIGHT }
-
-static awe_mousebutton get_awe_mouse_button_from_SDL(Uint8 button)
-{
-    switch (button)
-    {
-        case SDL_BUTTON_LEFT:
-            return AWE_MB_LEFT;
-
-        case SDL_BUTTON_RIGHT:
-            return AWE_MB_RIGHT;
-
-        case SDL_BUTTON_WHEELUP:
-        case SDL_BUTTON_WHEELDOWN:
-        case SDL_BUTTON_MIDDLE:
-            return AWE_MB_MIDDLE;
-            
-        default:
-            GS_ASSERT(false);
-            return AWE_MB_LEFT;
-    }
-    GS_ASSERT(false);
-    return AWE_MB_LEFT;
-}
-
-bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy)
-{
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return false;
-
-    // subtract top left of webview window
-    int left = cv->xoff;
-    int top = _yres - (cv->yoff + cv->height);
-
-    *sx = x - left;
-    *sy = y - top;
-
-    return ((*sx) >= 0 && (*sx) < cv->width && (*sy) >= 0 && (*sy) < cv->height);
-}
-
-void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
-{    
-    if (event->button.button == SDL_BUTTON_WHEELDOWN || event->button.button == SDL_BUTTON_WHEELUP)
-    {
-        int horiz_scroll_amt = 0;
-        int vert_scroll_amt = 28;
-        if (event->button.button == SDL_BUTTON_WHEELDOWN)
-            vert_scroll_amt *= -1;
-        awe_webview_inject_mouse_wheel(webView, vert_scroll_amt, horiz_scroll_amt);
-    }
-    else if (event->type == SDL_MOUSEBUTTONDOWN)
-        awe_webview_inject_mouse_down(webView, get_awe_mouse_button_from_SDL(event->button.button));
-    else if (event->type == SDL_MOUSEBUTTONUP)
-        awe_webview_inject_mouse_up(webView, get_awe_mouse_button_from_SDL(event->button.button));
-    else if (event->type == SDL_MOUSEMOTION)
-    {
-        int x,y,sx,sy;
-        SDL_GetMouseState(&x, &y);
-        if (get_webview_coordinates(cv, x,y, &sx, &sy))
-            awe_webview_inject_mouse_move(webView, sx,sy);
-    }
-}
+int getWebKeyFromSDLKey(SDLKey key);
+awe_webkeyboardevent convert_key_event(Awesomium::WebKeyboardEvent keyEvent); 
+void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event);
+bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy);
+void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event);
 
 }   // Awesomium
+
+#endif

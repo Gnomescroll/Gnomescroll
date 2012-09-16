@@ -2,11 +2,12 @@
 
 #include <net_lib/global.hpp>
 #include <net_lib/common/message_handler.h>
-
-//#include <net_lib/common/type_pack.h>   //REMOVE FROM INCLUDE
-//#include <net_lib/common/packet_buffer.hpp> //REMOVE THIS FROM INCLUDE!!!
-
 #include <net_lib/common/packet_id_counter.hpp>
+#include <net_lib/common/type_pack.h>
+
+#if DC_CLIENT
+#include <net_lib/client.hpp>
+#endif
 
 //#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
 /*
@@ -27,9 +28,9 @@
     have a "start" and "fast send" function for server to client packets sent to multiple clients
 */
 
+#if DC_CLIENT
 void send_bullshit_data()
 {
-    
     unsigned int size = 0;
     do
     {
@@ -47,15 +48,18 @@ void send_bullshit_data()
         nm->buff[i] = rand()&0xff;
     NetClient::Server.push_unreliable_message(nm);
 }
+#endif
 
 template <class Derived>
-class FixedSizeNetPacketToServer {
+class FixedSizeNetPacketToServer
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
         static uint8_t message_id;
         static unsigned int size;
         int client_id; //id of the UDP client who sent message
+        static const bool auth_required = true; // override in Derived class to disable
 
         FixedSizeNetPacketToServer() {}
         virtual ~FixedSizeNetPacketToServer() {}
@@ -76,10 +80,14 @@ class FixedSizeNetPacketToServer {
         
         void send() 
         {
+            #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_unreliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         //will overflow if more than 128 bytes
@@ -95,14 +103,23 @@ class FixedSizeNetPacketToServer {
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) {
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id)
+        {
+            #if DC_SERVER
             Derived x;  //allocated on stack
+            if (NetServer::clients[_client_id] == NULL ||   // auth check
+                (x.auth_required && !NetServer::clients[_client_id]->authorized))
+                return;
             x.client_id = _client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
-        static void register_server_packet() {
+        static void register_server_packet()
+        {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
             Derived::size = x._size();
@@ -117,14 +134,15 @@ template <class Derived> unsigned int FixedSizeNetPacketToServer<Derived>::size(
 
 
 template <class Derived>
-class FixedSizeReliableNetPacketToServer {
-
+class FixedSizeReliableNetPacketToServer
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
         static uint8_t message_id;
         static unsigned int size;
         int client_id; //id of the UDP client who sent message
+        static const bool auth_required = true; // override in Derived class to disable
 
         FixedSizeReliableNetPacketToServer() {}
         virtual ~FixedSizeReliableNetPacketToServer() {}
@@ -144,10 +162,16 @@ class FixedSizeReliableNetPacketToServer {
         
         void send() 
         {
+            #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
+            GS_ASSERT(nm != NULL);
+            if (nm == NULL) return;
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         //will overflow if more than 128 bytes
@@ -163,14 +187,23 @@ class FixedSizeReliableNetPacketToServer {
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) {
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id)
+        {
+            #if DC_SERVER
             Derived x;  //allocated on stack
+            if (NetServer::clients[_client_id] == NULL ||   // auth check
+                (x.auth_required && !NetServer::clients[_client_id]->authorized))
+                return;
             x.client_id = _client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
-        static void register_server_packet() {
+        static void register_server_packet()
+        {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
             //GS_ASSERT(Derived::message_id != 255);

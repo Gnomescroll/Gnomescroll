@@ -1,5 +1,9 @@
 #include "client_options.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <options/argparse.hpp>
 #include <common/lua/lua.hpp>
 
@@ -7,9 +11,6 @@
 
 namespace Options
 {
-
-/* User */
-OPT_STRING(name, "default-name")
 
 /* Network */
 OPT_STRING(server, "127.0.0.1")
@@ -55,9 +56,6 @@ OPT_BOOL(show_tips, true);
 
 void register_options()
 {
-    /* User */
-    OPT_STRING_REGISTER(name)
-
     /* Network */
     OPT_STRING_REGISTER(server)
     OPT_INT_REGISTER(port)

@@ -462,7 +462,7 @@ static void draw_tooltip()
     HudFont::end_font_draw();
 }
 
-void draw_hud()
+void draw()
 {
     agent_toolbelt->draw();
     energy_tanks->draw();

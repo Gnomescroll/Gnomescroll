@@ -30,8 +30,6 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
     
         int get_ids();
 
-        bool name_available(char* name);
-
         // filtering
         Agent_state** filtered_objects; // tmp array for filtering objects
         float* filtered_object_distances;
@@ -45,7 +43,6 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
 
         #if DC_CLIENT
-        void check_missing_names();
         void draw_names();
         void draw_equipped_items();
         void update_mining_lasers();

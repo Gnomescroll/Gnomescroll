@@ -21,8 +21,6 @@
 
 const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
 
-const char AGENT_UNDEFINED_NAME[] = "undefined-agent-name";
-
 Agent_status::Agent_status(Agent_state* a)
 :
 a(a),
@@ -37,16 +35,12 @@ deaths(0),
 suicides(0),
 slime_kills(0),
 health_max(AGENT_HEALTH),
-identified(false),
 vox_crouched(false),
 lifetime(0),
 color_chosen(false)
-#if DC_SERVER
-, net_peer_ready(false)
-#endif
 {
     color.r=color.g=color.b=48;
-    strcpy(this->name, AGENT_UNDEFINED_NAME);
+    this->name[0] = '\0';
 }
 
 Agent_status::~Agent_status()
@@ -93,6 +87,12 @@ void Agent_status::set_spawner(int pt)
 }
 
 #if DC_SERVER
+
+void Agent_status::identify(const char* name)
+{
+    this->set_name(name);
+}
+
 void Agent_status::broadcast_color()
 {
     agent_color_StoC msg;
@@ -141,42 +141,10 @@ void Agent_status::set_color(struct Color color)
     #endif
 }
 
-bool Agent_status::set_name(char* name)
+void Agent_status::set_name(const char* name)
 {
-    #if DC_SERVER
-    if (strcmp(AGENT_UNDEFINED_NAME, name) == 0)    // cant be the undefined holder
-        return false;
-    if (name[0] == '\0')                            // no empties
-        return false;
-    #endif
-    
-    if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
-        name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
-
-    bool new_name = (strcmp(this->name, name) == 0) ? false : true;
-
     strcpy(this->name, name);
-    #if DC_SERVER
-    agent_name_StoC msg;
-    msg.id = this->a->id;
-    strcpy(msg.name, this->name);
-    msg.broadcast();
-    #endif
-
-    return new_name;
 }
-
-#if DC_CLIENT
-void Agent_status::check_missing_name()
-{
-    if (strcmp(name, AGENT_UNDEFINED_NAME) == 0)
-    {
-        request_agent_name_CtoS msg;
-        msg.id = this->a->id;
-        msg.send();
-    }
-}
-#endif
 
 #if DC_SERVER
 void Agent_status::heal(unsigned int amt)
@@ -346,8 +314,6 @@ void Agent_status::set_fresh_state()
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();
-    if (!this->net_peer_ready)
-        dead_msg.sendToClient(this->a->client_id);
 
     ItemContainer::agent_born(this->a->id);
 }
