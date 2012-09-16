@@ -33,7 +33,7 @@ static const char needs_login_msg[] = "Login required to continue";
 static const char version_mismatch_msg[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
 char* disconnect_msg = NULL;
 
-const unsigned int N_GSERRORS = 7;
+const unsigned int N_GSERRORS = 8;
 
 bool errors[N_GSERRORS] = { false };
 
