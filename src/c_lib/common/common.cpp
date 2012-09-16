@@ -34,15 +34,10 @@ void address_from_uint32(uint32_t ip, uint8_t address[4])
         address[i] = (uint8_t) (ip >> i*8) & 0xFF;
 }
 
-static bool is_valid_name_character(char c)
+bool is_valid_name_character(char c) __attribute__((always_inline));
+bool is_valid_name_character(char c)
 {
-    // range of solid ascii chars
-    if (c < '!' /* 33 */ || c > '~' /* 126 */)
-        return false;
-    // additional banned characters
-    if (c == '/' || c == '\\')
-        return false;
-    return true;
+    return (isalnum(c) || c == '_');
 }
 
 unsigned int sanitize_player_name(char* name)
@@ -82,4 +77,27 @@ char* get_time_str()
     // setup time formatter
     strftime(time_str, TIME_STR_LEN, time_fmt, time_info);
     return time_str;
+}
+
+time_t atott(const char* str)
+{
+    size_t s = sizeof(time_t);
+    if (s == sizeof(int))
+        return atoi(str);
+    else
+    if (s == sizeof(long))
+        return atol(str);
+    else
+    if (s == sizeof(long long))
+        return atoll(str);
+    
+    GS_ASSERT_LIMIT(false, 1);
+    return 0;
+}
+
+time_t utc_now()
+{
+    time_t now;
+    time(&now); // get current unix time
+    return now;
 }

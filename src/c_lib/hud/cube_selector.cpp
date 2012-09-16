@@ -154,7 +154,7 @@ void CubeSelector::draw()
     y1 = y0 + _ssize - sborder;
     
     glLineWidth(1.0f);
-    glColor4ub(0,0,255,0);  // blue
+    glColor4ub(0,0,255,255);  // blue
     glBegin(GL_LINE_STRIP);
 
     glVertex3f(x0, y0, z_);  // Top left
@@ -168,7 +168,7 @@ void CubeSelector::draw()
 
     glEnd();
     glLineWidth(1.0f);
-    glColor3ub(255,255,255);
+    glColor4ub(255,255,255,255);
 }
 
 /* Controls */

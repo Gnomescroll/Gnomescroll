@@ -160,6 +160,10 @@ void init()
     #endif
 
     init_config();
+}
+
+void init_packets()
+{
     play_animation_StoC::register_client_packet();
 }
 

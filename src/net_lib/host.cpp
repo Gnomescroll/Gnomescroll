@@ -11,12 +11,18 @@
 #include <state/packet_init.hpp>
 
 #include <common/common.hpp>
-#include <common/analytics/sessions.hpp>
 
 #include <options/options.hpp>
 
 #if DC_CLIENT
+#include <net_lib/client.hpp>
 #include <state/client_state.hpp>
+#include <hud/error.hpp>
+#endif
+
+#if DC_SERVER
+#include <net_lib/server.hpp>
+#include <common/analytics/sessions.hpp>
 #endif
 
 const int DEFAULT_PORT = 4096;
@@ -97,38 +103,54 @@ static void client_connect(ENetEvent* event)
     NetClient::Server.connected = 1;
 
     printf("Client connected with server \n");
-    #if DC_CLIENT
     ClientState::on_connect();
-    #endif
+    Hud::unset_error_status(GS_ERROR_NOT_CONNECTED);
 }
 
 //client disconnect event
 static void client_disconnect(ENetEvent* event)
 {
+    Hud::set_error_status(GS_ERROR_WAS_DISCONNECTED);
+
     if (event->data == DISCONNECT_TIMEOUT)
-        printf("Client timeout from server\n");
+        Hud::set_server_disconnect_message("Client timeout from server");
     else
     if (event->data == DISCONNECT_GRACEFULLY)
-        printf("Client disconnected from server\n");
+        Hud::set_server_disconnect_message("Client disconnected from server");
     else
     if (event->data == DISCONNECT_FORCED)
-        printf("Client was force disconnected by server\n");
+        Hud::set_server_disconnect_message("Client was force disconnected by server");
     else
     if (event->data == DISCONNECT_FULL)
-        printf("Could not connect to server: server full\n");
+        Hud::set_server_disconnect_message("Could not connect to server: server full");
     else
-        printf("Client disconnected from server\n");
+    if (event->data == DISCONNECT_BAD_PACKET)
+        Hud::set_server_disconnect_message("Client was disconnected for sending malformed data");
+    else
+    if (event->data == DISCONNECT_AUTH_TIMEOUT)
+        Hud::set_server_disconnect_message("Client failed to authorize");
+    else
+    if (event->data == DISCONNECT_AUTH_EXPIRED)
+        Hud::set_server_disconnect_message("Client authorization expired");
+    else
+    if (event->data == DISCONNECT_SERVER_ERROR)
+        Hud::set_server_disconnect_message("Client was disconnected because of an error in the server");
+    else
+    if (event->data == DISCONNECT_LOGIN_ELSEWHERE)
+        Hud::set_server_disconnect_message("Client was disconnected because it logged in as another client");
+    else
+    if (event->data == DISCONNECT_AUTH_LIMIT)
+        Hud::set_server_disconnect_message("Client was disconnected because it had too many failed authorizations");
+    else
+        Hud::set_server_disconnect_message("Client disconnected from server");
 
     event->peer->data = NULL;
-    //enet_peer_reset(event->peer); //TEST
     
     NetClient::Server.disconnect_code = (DisconnectType)event->data;
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
 
-    #if DC_CLIENT
     ClientState::on_disconnect();
-    #endif
 }
 
 void client_connect_to(int a, int b, int c, int d, unsigned short port) 
@@ -167,7 +189,6 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
        fprintf (stderr, "No available peers for initiating an ENet connection.\n");
        exit (EXIT_FAILURE);
     }
-
 }
 
 //enet_peer_reset (peer);
@@ -443,7 +464,7 @@ void dispatch_network_events()
             {
                 GS_ASSERT(event.peer->data != NULL);
                 if (event.peer->data != NULL)
-                    ((class NetPeer*)event.peer->data)->kill = true;
+                    ((class NetPeer*)event.peer->data)->disconnect_code = DISCONNECT_BAD_PACKET;
             }
         }
 
@@ -455,8 +476,8 @@ void dispatch_network_events()
         NetPeer* peer = NetServer::staging_pool[i];
         if (peer == NULL)
             peer = NetServer::pool[i];
-        if (peer != NULL && peer->kill)
-            kill_client(peer);
+        if (peer != NULL && peer->should_disconnect())
+            kill_client(peer, peer->disconnect_code);
     }
 }
 
@@ -473,11 +494,10 @@ static void client_connect(ENetEvent* event)
     nc->enet_peer = event->peer;
 
     if ((int)NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
-    {   //send a disconnect reason packet
+    {   // send a disconnect reason packet
         if (event->peer != NULL && event->peer->data != NULL)
             ((class NetPeer*)event->peer->data)->disconnect_code = DISCONNECT_FULL;
         enet_peer_disconnect(event->peer, DISCONNECT_FULL); //gracefull disconnect client
-        //enet_peer_reset(event->peer);   //force disconnect client, does not notify client
         return;
     }
 
@@ -500,8 +520,8 @@ static void client_connect(ENetEvent* event)
             event->peer->data = (NetPeer*) nc;
 
         npm = new NetPeerManager;
+        NetServer::clients[client_id] = npm; // must be added to array before init
         npm->init(client_id);
-        NetServer::clients[client_id] = npm;
         break;
     }
     
@@ -520,6 +540,16 @@ static void client_connect(ENetEvent* event)
     
         Session* session = begin_session(event->peer->address.host, client_id);
         users->assign_session_to_user(session);
+    }
+
+    if (!Options::auth)
+    {   // just connect the client
+        // DONT MOVE THIS -- must be called here
+        const char username_fmt[] = "debuguser%d";
+        char* username = (char*)malloc(sizeof(username_fmt) * sizeof(char));
+        sprintf(username, username_fmt, npm->client_id);
+        NetServer::client_authorized(npm->client_id, npm->client_id+1, utc_now()+3600-30, username);
+        free(username);
     }
     
     if (nc != NULL)
@@ -554,6 +584,24 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
         else
         if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_FULL)
             printf("Client %d disconnected because server is full\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_BAD_PACKET)
+            printf("Client %d disconnected because it sent bad packets\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_AUTH_TIMEOUT)
+            printf("Client %d disconnected because failed to authorize in time\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_AUTH_EXPIRED)
+            printf("Client %d disconnected because authorization expired\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_SERVER_ERROR)
+            printf("Client %d disconnected because of a server error\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_LOGIN_ELSEWHERE)
+            printf("Client %d disconnected because it logged in as another client\n", client_id);
+        else
+        if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_AUTH_LIMIT)
+            printf("Client %d disconnected because it had too many failed authorizations\n", client_id);
         else
         {
             GS_ASSERT(false);
@@ -601,14 +649,14 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
     if (npm != NULL) delete npm;
 }
 
-void kill_client(class NetPeer* peer)
+void kill_client(class NetPeer* peer, DisconnectType error_code)
 {
     GS_ASSERT(peer != NULL);
     if (peer == NULL) return;
-    peer->disconnect_code = DISCONNECT_FORCED;
+    peer->disconnect_code = error_code;
     GS_ASSERT(peer->enet_peer != NULL);
     if (peer->enet_peer != NULL)
-        enet_peer_disconnect(peer->enet_peer, DISCONNECT_FORCED);
+        enet_peer_disconnect(peer->enet_peer, error_code);
     
     // log it
     int client_id = peer->client_id;

@@ -24,4 +24,6 @@ void destroy(ObjectType type, int id);
 
 void stress_test();
 
+void send_to_client(int client_id);
+
 } // Objects

@@ -41,36 +41,27 @@ void init_cameras()
 
     current_camera = free_camera;
 
-    Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
-    Vec3 r = vec3_init(0.0f, 1.0f, 0.0f);
-    Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
-/*
-    f = vec3_euler_rotation(f, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
-    r = vec3_euler_rotation(r, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
-    u = vec3_euler_rotation(u, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
-*/
-    current_camera->theta = 0;
-    current_camera->phi = 0;
+    const int n = 2;
+    class Camera* cameras[n] = { agent_camera, free_camera };
+    for (int i=0; i<n; i++)
+    {
+        class Camera* camera = cameras[i];
+        
+        camera->theta = 0;
+        camera->phi = 0;
 
-    f = vec3_euler_rotation(f, current_camera->theta, current_camera->phi, 0.0f );
-    r = vec3_euler_rotation(r, current_camera->theta, current_camera->phi, 0.0f );
-    u = vec3_euler_rotation(u, current_camera->theta, current_camera->phi, 0.0f );
+        Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
+        Vec3 r = vec3_init(0.0f, 1.0f, 0.0f);
+        Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
+        
+        f = vec3_euler_rotation(f, camera->theta, camera->phi, 0.0f);
+        r = vec3_euler_rotation(r, camera->theta, camera->phi, 0.0f);
+        u = vec3_euler_rotation(u, camera->theta, camera->phi, 0.0f);
 
-    //printf("start: \n");
-    //vec3_print(f);
-    //vec3_print(r);
-    //vec3_print(u);
-
-    Vec3 p = current_camera->get_position();
-    setup_fulstrum(
-        current_camera->fov, current_camera->ratio, current_camera->z_far,
-        p,f,r,u
-    );
-
-    setup_fulstrum2(
-        current_camera->fov, current_camera->ratio, current_camera->z_near,current_camera->z_far,
-        p,f,r,u
-    );
+        Vec3 p = camera->get_position();
+        setup_fulstrum(camera->fov, camera->ratio, camera->z_far, p,f,r,u);
+        setup_fulstrum2(camera->fov, camera->ratio, camera->z_near,camera->z_far, p,f,r,u);
+    }
 
     // custom fog shaders use EXP4
     glFogf(GL_FOG_DENSITY, 0.0625f);
@@ -90,8 +81,7 @@ void teardown_cameras()
 }
 
 #define CAMERA_ZOOM_FACTOR 2.0f
-Camera::Camera()
-:
+Camera::Camera() :
 zoomed(false),
 zoom_factor(CAMERA_ZOOM_FACTOR)
 {
@@ -100,7 +90,7 @@ zoom_factor(CAMERA_ZOOM_FACTOR)
     const float Z_FAR = 320.0f;
     set_aspect(FOV, Z_NEAR, Z_FAR);
     set_dimensions();
-    set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    set_projection(256.0f, 256.0f, 256.0f, 0.0f, 0.0f);
 }
 #undef CAMERA_ZOOM_FACTOR
 
@@ -243,8 +233,6 @@ void Camera::world_projection()
         fov, ratio, z_near,z_far,
         this->position, look, right, up);
 
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
     glColor3ub(255, 255, 255);
 }
 
@@ -265,11 +253,6 @@ void Camera::hud_projection()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-    //glEnable(GL_DEPTH_TEST);
-
-    //glDisable(GL_DEPTH_TEST);
-    //glEnable(GL_TEXTURE_2D);
 }
 
 Vec3 Camera::forward_vector()

@@ -44,35 +44,11 @@ static const char help_text[] =
 "       /color R G B        Choose body color\n"
 ;
 
-static const char disconnected_text[] = "Server not connected.";
-static const char server_full_text[] = "Server is full.";
-static const char version_mismatch_text[] = "Your game version is\nout of date.\nGet the new version from\nwww.gnomescroll.com";
-static const char dead_text[] = "You died.";
-static const char fps_format[] = "%3.2ffps";
-static const char ping_format[] = "%dms";
-static const char location_format[] = "x: %f\ny: %f\nz: %f";
-
-static const char no_agent_text[] = "No Agent Assigned";
-
-static const char health_format[] = "ENERGY %02d";
-static const char health_color_string[] = "ENERGY";
-static const struct Color HEALTH_GREEN = color_init(10,240,10);
-static const struct Color HEALTH_GREY = color_init(100,100,100);
-static const struct Color HEALTH_WHITE = color_init(255,255,255);
-static const struct Color HEALTH_RED = color_init(240,10,10);
-
-static const char confirm_quit_text[] = "Really quit? Y/N";
-
-static const char press_help_text[] = "Press H for help";
-
 static struct HudDrawSettings
 {
     bool zoom;
     bool cube_selector;
     bool help;
-    bool connected;
-    bool version_mismatch;
-    bool server_full;
     bool dead;
     float fps_val;
     int ping_val;
@@ -85,7 +61,7 @@ static struct HudDrawSettings
     bool map;
     bool draw;
     bool confirm_quit;
-    bool press_help;
+    bool prompt;
     bool diagnostics;
     bool vbo_debug;
 } hud_draw_settings;
@@ -101,7 +77,6 @@ void set_hud_fps_display(float fps_val)
 void init_hud_draw_settings()
 {
     update_hud_draw_settings();
-    hud_draw_settings.press_help = Options::show_tips;
 }
 
 // read game state to decide what to draw
@@ -109,25 +84,16 @@ void update_hud_draw_settings()
 {
     hud_draw_settings.draw = input_state.draw_hud;
 
-    using NetClient::Server;
-    hud_draw_settings.connected = Server.connected;
-    // if version has been set and mismatch, show version mismatch
-    // if force disconnected and version has not been set, show version mismatch
-    hud_draw_settings.version_mismatch = (!Server.version_match() || (Server.force_disconnected() && !Server.version));
-    
-    hud_draw_settings.server_full = Server.full();
-    
     hud_draw_settings.zoom = current_camera->zoomed;
     static int block_placer_type = Item::get_item_type("block_placer");
     GS_ASSERT(block_placer_type != NULL_ITEM_TYPE);
     hud_draw_settings.cube_selector = (Toolbelt::get_selected_item_type() == block_placer_type);
 
     hud_draw_settings.help = input_state.help_menu;
-    if (hud_draw_settings.help) hud_draw_settings.press_help = false;   // clear this after opening help once
+    if (hud_draw_settings.help) hud_draw_settings.prompt = false;   // clear this after opening help once
 
     hud_draw_settings.dead = (
-           hud_draw_settings.connected
-        && ClientState::playerAgent_state.you != NULL
+            ClientState::playerAgent_state.you != NULL
         && ClientState::playerAgent_state.you->status.dead
     );
 
@@ -173,6 +139,48 @@ void update_hud_draw_settings()
     }
 
     hud_draw_settings.confirm_quit = input_state.confirm_quit;
+    hud_draw_settings.prompt = true;
+
+    GS_ASSERT_LIMIT(hud != NULL, 1);
+    if (hud == NULL)
+        hud_draw_settings.prompt = (hud->prompt->text != NULL && hud->prompt->text[0] != '\0');
+}
+
+void set_prompt(const char* msg)
+{   // Set prompt text for flashy message
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    hud->prompt->set_text(msg);
+}
+
+void clear_prompt(const char* msg)
+{
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    if (strcmp(msg, hud->prompt->text) == 0)
+        hud->prompt->set_text("");
+}
+
+void set_awesomium_message(const char* msg)
+{
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    hud->awesomium_message->set_text(msg);
+}
+
+void clear_awesomium_message(const char* msg)
+{   // clears if msg matches current text
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    if (strcmp(msg, hud->awesomium_message->text) == 0)
+        clear_awesomium_message();
+}
+
+void clear_awesomium_message()
+{
+    GS_ASSERT(hud != NULL);
+    if (hud == NULL) return;
+    hud->awesomium_message->set_text("");
 }
 
 /* Draw routines */
@@ -191,8 +199,6 @@ void draw_reference_center()
 void draw_hud_textures()
 {
     if (!hud_draw_settings.draw) return;
-
-    if (!hud_draw_settings.connected) return;
 
     if (hud_draw_settings.zoom)
     {
@@ -219,10 +225,26 @@ void draw_hud_textures()
     }
 }
 
+void draw_awesomium_message()
+{
+    start_font_draw();
+    const int large_text_size = 32;
+    HudFont::set_properties(large_text_size);
+    set_texture();
+
+    GS_ASSERT(hud != NULL && hud->awesomium_message != NULL);
+    if (hud == NULL || hud->awesomium_message == NULL) return;
+    hud->awesomium_message->draw_centered();
+
+    end_font_draw();
+    HudFont::reset_default();
+}
+
 void draw_hud_text()
 {
     if (!hud->inited) return;
     if (!hud_draw_settings.draw) return;
+    if (has_error()) return;
 
     start_font_draw();
 
@@ -231,26 +253,14 @@ void draw_hud_text()
     HudFont::set_properties(large_text_size);
     set_texture();
 
-    if (!hud_draw_settings.connected && !hud_draw_settings.version_mismatch && !hud_draw_settings.server_full)
-    {
-        hud->disconnected->draw_centered();
-        end_font_draw();
-        return;
-    }
-
-    if (hud_draw_settings.confirm_quit && !hud_draw_settings.version_mismatch && !hud_draw_settings.server_full)
+    if (hud_draw_settings.confirm_quit)
         hud->confirm_quit->draw_centered();
     else
-    {
-        if (hud_draw_settings.dead)
-            hud->dead->draw_centered();
-        if (hud_draw_settings.version_mismatch)
-            hud->version_mismatch->draw_centered();
-        else
-        if (hud_draw_settings.server_full)
-            hud->server_full->draw_centered();
-    }
+    if (hud_draw_settings.dead)
+        hud->dead->draw_centered();
 
+    hud->awesomium_message->draw_centered();
+    
     if (hud_draw_settings.map)
     {
         HudFont::set_properties(HudMap::text_icon_size);
@@ -264,7 +274,7 @@ void draw_hud_text()
     if (hud_draw_settings.help)
         hud->help->draw();
 
-    if (hud_draw_settings.press_help)
+    if (hud_draw_settings.prompt)
     {   // blinks red/white
         static unsigned int press_help_tick = 0;
         const int press_help_anim_len = 60;
@@ -273,10 +283,10 @@ void draw_hud_text()
         float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
         t -= 1.0f;
         if (t < 0.0f)
-            hud->press_help->set_color(interpolate_color(red, white, 1.0f+t));
+            hud->prompt->set_color(interpolate_color(red, white, 1.0f+t));
         else
-            hud->press_help->set_color(interpolate_color(white, red, t));
-        hud->press_help->draw();
+            hud->prompt->set_color(interpolate_color(white, red, t));
+        hud->prompt->draw();
         press_help_tick++;
     }
 
@@ -426,6 +436,8 @@ void HUD::init()
 {
     if (this->inited) return;
 
+    init_errors();
+
     if (HudFont::font == NULL)
         printf("WARNING: initing HUD before HudFont\n");
 
@@ -442,27 +454,6 @@ void HUD::init()
     help->set_color(255,255,255,255);
     help->set_position(_xres - help_width - 5, _yresf - 5);
 
-    disconnected = text_list->create();
-    GS_ASSERT(disconnected != NULL);
-    if (disconnected == NULL) return;
-    disconnected->set_text(disconnected_text);
-    disconnected->set_color(255,10,10,255);
-    disconnected->set_position(_xresf/2, _yresf/2);
-
-    version_mismatch = text_list->create();
-    GS_ASSERT(version_mismatch != NULL);
-    if (version_mismatch == NULL) return;
-    version_mismatch->set_text(version_mismatch_text);
-    version_mismatch->set_color(255,10,10,255);
-    version_mismatch->set_position(_xresf/2, _yresf/2);
-
-    server_full = text_list->create();
-    GS_ASSERT(server_full != NULL);
-    if (server_full == NULL) return;
-    server_full->set_text(server_full_text);
-    server_full->set_color(255,10,10,255);
-    server_full->set_position(_xresf/2, _yresf/2);
-    
     dead = text_list->create();
     GS_ASSERT(dead != NULL);
     if (dead == NULL) return;
@@ -540,13 +531,36 @@ void HUD::init()
     confirm_quit->set_color(255,10,10,255);
     confirm_quit->set_position(_xresf/2, (3*_yresf)/4);
 
-    press_help = text_list->create();
-    GS_ASSERT(press_help != NULL);
-    if (press_help == NULL) return;
-    press_help->set_text(press_help_text);
-    press_help->set_color(255,255,255,255);
-    press_help->set_position((_xresf - press_help->get_width()) / 2.0f, _yresf);
+    prompt = text_list->create();
+    GS_ASSERT(prompt != NULL);
+    if (prompt == NULL) return;
+    if (Options::show_tips)
+        prompt->set_text(press_help_text);
+    else
+        prompt->set_text("");
+    prompt->set_color(255,255,255,255);
+    prompt->set_position((_xresf - prompt->get_width()) / 2.0f, _yresf);
 
+    error = text_list->create();
+    GS_ASSERT(error != NULL);
+    if (error == NULL) return;
+    error->set_color(255,10,10,255);
+    error->set_position(_xresf/2, _yresf/2);
+
+    error_subtitle = text_list->create();
+    GS_ASSERT(error_subtitle != NULL);
+    if (error_subtitle == NULL) return;
+    error_subtitle->set_color(255,10,10,255);
+    error_subtitle->set_position(_xresf/2, error->y - error->get_height());
+    error_subtitle->set_text(error_subtitle_text);
+    
+    awesomium_message = text_list->create();
+    GS_ASSERT(awesomium_message != NULL);
+    if (awesomium_message == NULL) return;
+    awesomium_message->set_color(255,10,10,255);
+    awesomium_message->set_position(_xresf/2, _yresf - 2);
+    awesomium_message->set_text("");
+    
     scoreboard = new Scoreboard();
     scoreboard->init();
 
@@ -560,9 +574,6 @@ HUD::HUD()
 :
 inited(false),
 help(NULL),
-disconnected(NULL),
-version_mismatch(NULL),
-server_full(NULL),
 dead(NULL),
 fps(NULL),
 ping(NULL),
@@ -571,7 +582,10 @@ location(NULL),
 look(NULL),
 health(NULL),
 confirm_quit(NULL),
-press_help(NULL),
+prompt(NULL),
+error(NULL),
+error_subtitle(NULL),
+awesomium_message(NULL),
 scoreboard(NULL),
 chat(NULL)
 {}
@@ -581,12 +595,6 @@ HUD::~HUD()
     using HudText::text_list;
     if (help != NULL)
         text_list->destroy(help->id);
-    if (disconnected != NULL)
-        text_list->destroy(disconnected->id);
-    if (version_mismatch != NULL)
-        text_list->destroy(version_mismatch->id);
-    if (server_full != NULL)
-        text_list->destroy(server_full->id);
     if (dead != NULL)
         text_list->destroy(dead->id);
     if (fps != NULL)
@@ -601,8 +609,14 @@ HUD::~HUD()
         text_list->destroy(look->id);
     if (confirm_quit != NULL)
         text_list->destroy(confirm_quit->id);
-    if (press_help != NULL)
-        text_list->destroy(press_help->id);
+    if (prompt != NULL)
+        text_list->destroy(prompt->id);
+    if (error != NULL)
+        text_list->destroy(error->id);
+    if (error_subtitle != NULL)
+        text_list->destroy(error_subtitle->id);
+    if (awesomium_message != NULL)
+        text_list->destroy(awesomium_message->id);
     if (health != NULL) delete health;
     if (scoreboard != NULL) delete scoreboard;
     if (chat != NULL) delete chat;

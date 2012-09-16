@@ -47,7 +47,7 @@ namespace t_mob
     {
         int bone_index; //index into bone matrix
         int vertex_index;		//mesh vertex index
-        float weight; 	//weight
+        float weight;   //weight
     };
 
 
@@ -844,7 +844,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
 
     /*
-		Stuff for testing
+        Stuff for testing
     */
 /*
     unsigned int texture1;
@@ -896,7 +896,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 class BodyPartMesh
 {
 
-	public:
+    public:
 
     char* mesh_name;
 
@@ -914,23 +914,23 @@ class BodyPartMesh
     int vwlm;                   //vertex weight list
 
 
-	BodyPartMesh()
-	{
+    BodyPartMesh()
+    {
         bvl  = NULL;
         tbvl = NULL;
         tvl   = NULL;
         vwl  = NULL;
         via  = NULL;
-	}
+    }
 
-	~BodyPartMesh()
-	{
+    ~BodyPartMesh()
+    {
 
-	}
+    }
 
     //assumes only one mesh per node
 	void load(struct _Mesh* mesh)
-	{
+    {
 
         //copy name
         mesh_name = copy_string(mesh->node->mName.data);
@@ -1777,10 +1777,10 @@ void ModelLoader::draw_skeleton(float x, float y, float z)
                 vf.y = size*boneMatrix._f[4*0+1];
                 vf.z = size*boneMatrix._f[4*0+2];
 
-                glColor4ub(255,0,0,0);
+                glColor4ub(255,0,0,255);
 
                 glVertex3f(x+vv.x, y+vv.y, z+vv.z);
-                glColor4ub(0,255,0,0);
+                glColor4ub(0,255,0,255);
 
                 glVertex3f(x+vv.x+vf.x, y+vv.y+vf.y, z+vv.z+vf.z);
             glEnd();

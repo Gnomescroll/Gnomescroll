@@ -1,45 +1,42 @@
 #pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <common/common.hpp>
 
 const int USER_RECORDER_INITIAL_MAX_IP_ADDR = 256;
 const int USER_INITIAL_MAX_SESSIONS = 2;
-const int SESSION_INITIAL_MAX_NAMES = 2;
 
 class Session
 {
-    private:
-        void grow_names()
-        {
-            GS_ASSERT(this->max_names > 0)
-            this->max_names *= 2;
-            this->names = (char**)realloc(this->names, this->max_names * sizeof(char*));
-            for (int i=this->n_names; i<this->max_names; this->names[i++] = NULL);
-        }
-        
     public:
         uint32_t ip_addr;
+
         int client_id;
-        char** names;
-        int n_names;
-        int max_names;
+        int user_id;
+        char* username;
+        
         time_t login_time;
         time_t logout_time;
-        int number; // per user basis
-        int id; // global basis
-        int version;
-        bool killed;
+
+        int number; // session count per user
+        int id; // global session count
+
+        int version;    // version sent by client
+        bool killed;    // was force killed
 
     void login()
     {
         GS_ASSERT(this->client_id >= 0);
-        this->login_time = time(NULL);        
+        this->login_time = utc_now();        
         printf("Session began at %ld\n", this->login_time);
     }
 
     void logout()
     {
-        this->logout_time = time(NULL);
+        this->logout_time = utc_now();
     }
 
     bool is_active()
@@ -71,54 +68,37 @@ class Session
         //client id
         fprintf(f, "Client id %d; ", this->client_id);
 
-        // names
-        fprintf(f, "Names: ");
-        for (int i=0; i<this->n_names; i++)
-        {
-            GS_ASSERT(this->names[i] != NULL);
-            if (this->names[i] == NULL) continue;
-            fprintf(f, "%s ", this->names[i]);
-        }
+        // username
+        if (this->username == NULL)
+            fprintf(f, "username was not set");
+        else
+            fprintf(f, "username: %s", this->username);
         
         // was killed
-		if (this->killed)
-			fprintf(f, "; NOTE: Was forcibly disconnected");
+        if (this->killed)
+            fprintf(f, "; NOTE: Was forcibly disconnected");
 
         fprintf(f, "\n");
     }
 
-    void add_name(char* name)
+    void set_name(const char* username)
     {
-        // check if the latest name is this name
-        if (this->n_names > 0 && strcmp(this->names[this->n_names-1], name) == 0)
-            return;
-        
-        if (this->n_names >= this->max_names)
-            this->grow_names();
-        GS_ASSERT(this->n_names < this->max_names);
-        
-        this->names[this->n_names] = (char*)malloc(sizeof(char) * (strlen(name) + 1));
-        strcpy(this->names[this->n_names], name);
-        this->n_names++;
+        GS_ASSERT(this->username == NULL);
+        if (this->username != NULL) free(this->username);
+        size_t len = strlen(username);
+        this->username = (char*)malloc((len+1)*sizeof(char));
+        strcpy(this->username, username);
     }
 
-    Session(uint32_t ip_addr)
-    : ip_addr(ip_addr), client_id(-1), n_names(0), max_names(SESSION_INITIAL_MAX_NAMES),
+    Session(uint32_t ip_addr) :
+    ip_addr(ip_addr), client_id(-1), user_id(0), username(NULL),
     login_time(0), logout_time(0), number(-1), id(-1), version(0), killed(false)
     {
-        GS_ASSERT(this->max_names > 0);
-        this->names = (char**)calloc(this->max_names, sizeof(char*));
     }
 
     ~Session()
     {
-        if (names != NULL)
-        {
-            for (int i=0; i<n_names; i++)
-                if (names[i] != NULL)
-                    free(names[i]);
-            free(names);
-        }
+        if (this->username != NULL) free(this->username);
     }
 };
 
@@ -264,25 +244,25 @@ class UserRecorder
         return NULL;
     }
 
-    void add_name_to_client_id(int client_id, char* name)
+    void set_name_for_client_id(int client_id, const char* username)
     {
         class Session* session = get_active_session_for_client(client_id);
         GS_ASSERT(session != NULL);
         if (session == NULL) return;
         GS_ASSERT(session->is_active());
         if (!session->is_active()) return;
-        session->add_name(name);
+        session->set_name(username);
     }
     
     void record_client_force_disconnect(int client_id)
     {
-		class Session* session = get_active_session_for_client(client_id);
-		GS_ASSERT(session != NULL);
-		if (session == NULL) return;
-		GS_ASSERT(session->is_active());
-		if (!session->is_active()) return;
-		session->killed = true;
-	}
+        class Session* session = get_active_session_for_client(client_id);
+        GS_ASSERT(session != NULL);
+        if (session == NULL) return;
+        GS_ASSERT(session->is_active());
+        if (!session->is_active()) return;
+        session->killed = true;
+    }
 
     void record_client_version(int client_id, int version)
     {

@@ -48,10 +48,9 @@ class NetPeer
     int client_id;
     int connected;
     int version;
-    bool kill;
     DisconnectType disconnect_code;
     
-    ENetPeer *  enet_peer;
+    ENetPeer* enet_peer;
 
     //uint32_t ip;
     //uint16_t port;
@@ -85,6 +84,11 @@ class NetPeer
     bool full()
     {
         return (this->disconnect_code == DISCONNECT_FULL);
+    }
+
+    bool should_disconnect()
+    {   // returns true if the disconnect code was set to a value that should indicate force disconnect
+        return (this->disconnect_code != DISCONNECT_NONE && this->disconnect_code != DISCONNECT_TIMEOUT);
     }
 
     void flush_map_messages();

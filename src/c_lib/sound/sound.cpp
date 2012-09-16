@@ -12,6 +12,12 @@
 namespace Sound
 {
 
+void init_packets()
+{
+    play_2d_sound_StoC::register_client_packet();
+    play_3d_sound_StoC::register_client_packet();
+}
+
 void init()
 {
     #if DC_CLIENT
@@ -20,9 +26,6 @@ void init()
     
     parse_sound_triggers("./media/sound/sounds.csv");
     validate_sound_config();
-
-    play_2d_sound_StoC::register_client_packet();
-    play_3d_sound_StoC::register_client_packet();
 }
 
 void close()

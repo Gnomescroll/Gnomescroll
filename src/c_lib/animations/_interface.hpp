@@ -32,4 +32,6 @@ void broadcast_play_animation(const char* name, struct Vec3 position);
 void init();
 void teardown();
 
+void init_packets();
+
 }   // Animations

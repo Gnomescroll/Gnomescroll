@@ -49,10 +49,23 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[]):
+def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False):
     global _OS
     global os_libpth
 
+    prodflag = '-DPRODUCTION='
+    if production:
+        awesomium = True
+        prodflag += '1'
+    else:
+        prodflag += '0'
+
+    aweflag = '-DGS_AWESOMIUM='
+    if awesomium:
+        aweflag += '1'
+    else:
+        aweflag += '0'
+        
     #conf.check_tool('gcc')
     conf.check_tool('g++')
 
@@ -113,6 +126,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
+        aweflag,
+        prodflag,
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
@@ -126,7 +141,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     cxxflags = [c for c in cxxflags if c not in rm_flags]
 
     conf.env.append_value('CXXFLAGS', cxxflags)
-    
+
     '''
     incremental linking may reduce recompile time should not be used for release builds
     #conf.env.append_value("LINKFLAGS", "--incremental")
@@ -236,21 +251,22 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
 
     #awesomium
-    if OS == 'Windows':
-        awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/release/')
-        awesomium_include_path = os.path.abspath('../lib/win32/awesomium/include/')
-    elif OS == 'Linux':
-        awesomium_lib_path = os.path.abspath('../lib/lin32/awesomium/release/')
-        awesomium_include_path = os.path.abspath('../lib/lin32/awesomium/include/')
-    else:
-        assert False
+    if awesomium:
+        if OS == 'Windows':
+            awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/release/')
+            awesomium_include_path = os.path.abspath('../lib/win32/awesomium/include/')
+        elif OS == 'Linux':
+            awesomium_lib_path = os.path.abspath('../lib/lin32/awesomium/release/')
+            awesomium_include_path = os.path.abspath('../lib/lin32/awesomium/include/')
+        else:
+            assert False
 
-    conf.check(
-        lib='awesomium-1.6.5', 
-        use='awesomium-1.6.5', 
-        includes = [awesomium_include_path],
-        libpath = [awesomium_lib_path],
-        uselib_store='AWESOMIUM') 
+        conf.check(
+            lib='awesomium-1.6.5', 
+            use='awesomium-1.6.5', 
+            includes = [awesomium_include_path],
+            libpath = [awesomium_lib_path],
+            uselib_store='AWESOMIUM') 
 
     #assimp
     if OS == 'Linux':
@@ -268,7 +284,9 @@ def configure(conf, add_flags=[], rm_flags=[]):
         includes = [assimp_inc_path],
         uselib_store='ASSIMP') 
 
-    conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include', '../lib/lin32/awesomium/include/']
+    conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
+    if awesomium:
+        conf.env.INCLUDES += ['../lib/lin32/awesomium/include/']
 
     conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
     if OS == 'Windows':
@@ -282,9 +300,12 @@ def configure(conf, add_flags=[], rm_flags=[]):
             conf.env.RPATH += [lib_base_path]   # the libs in the root of dc_mmo/lib are copied from steve's computer. they should not be on the rpath in development 
         else:
             lib_base_path = '$ORIGIN/../lib/lin32/'
-        conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesonium lib
         conf.env.RPATH += [os.path.join(lib_base_path, 'assimp/lib')] #assimp lib
+        if awesomium:
+            conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesonium lib
 
+    conf.env.awesomium = awesomium
+    conf.env.production = production
 
 def build(bld):
     OS = platform.system()
@@ -292,6 +313,10 @@ def build(bld):
     sound_framework = []
     sound_libraries = []
     common_libraries = []
+    debug_libs = []
+    #if bld.env.awesomium and not bld.env.production:
+        # we cant valgrind so try this
+        #debug_libs.append('efence')   
     
     #lua_libraries = ['lua5.1'] #['luajit51'] #['lua50']
     #lua_libraries = ['luajit51']
@@ -322,11 +347,15 @@ def build(bld):
         libs = [os.path.join(libpath, 'lib'), os.path.join(libpath, 'dll'),]
         
     #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    use = time_lib+SDL_libraries+['LUA', 'ASSIMP']
+    if bld.env.awesomium:
+        use.append('AWESOMIUM')
+
     bld(
         features = 'cxx cxxprogram',
         source = ['../src/client/_client.cpp'],
-        use = common_libraries+time_lib+SDL_libraries+['LUA', 'ASSIMP', 'AWESOMIUM'],
-        lib = sound_libraries+png_libs,
+        use = use,
+        lib = sound_libraries+png_libs+debug_libs,
         includes = includes,
         libpath = libs,
         framework = sound_framework,
@@ -450,11 +479,11 @@ def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
     
 def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DNDEBUG','-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
+    configure(ctx, add_flags=add+['-DNDEBUG','-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
 
 # developers' build of the production build
 def production_dev(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DPRODUCTION_DEV=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
+    configure(ctx, add_flags=add+['-DPRODUCTION_DEV=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
 
 def profile(ctx):
     configure(ctx)
@@ -536,11 +565,18 @@ class prodtest_ctx(ConfigurationContext):
     fun = 'prodtest'
 
 def prodtest(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-Winline', '-DNOSTRIPSYMBOLS'], rm_flags=rm)
+    configure(ctx, add_flags=add+['-Winline', '-DNOSTRIPSYMBOLS'], rm_flags=rm, production=True)
 
 class production_dbg_ctx(ConfigurationContext):
     cmd = 'production_dbg'
     fun = 'production_dbg'
 
 def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DNDEBUG', '-Winline', '-O3'], rm_flags=rm)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm, production=True)
+    
+class awesomium_ctx(ConfigurationContext):
+    cmd = 'awe'
+    fun = 'awesomium'
+
+def awesomium(ctx):
+    configure(ctx, add_flags=['-DGS_AWESOMIUM=1'], rm_flags=['-DGS_AWESOMIUM=0'], awesomium=True)

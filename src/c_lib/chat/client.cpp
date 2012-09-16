@@ -4,6 +4,7 @@
 #include <ctype.h>
 
 #include <common/logger.hpp>
+#include <auth/constants.hpp>
 
 /* ChatMessage */
 
@@ -14,8 +15,8 @@ void ChatMessage::set_name()
     else
     {
         Agent_state* a = ClientState::agent_list->get(sender);
-        if (a==NULL || !a->status.identified)
-            strcpy(name, (char*)"UNKNOWN");
+        if (a==NULL || a->status.name[0] == '\0')
+            strcpy(name, Auth::UNDEFINED_NAME);
         else
             strcpy(name, a->status.name);
     }
@@ -40,8 +41,7 @@ void ChatMessage::set_color()
     }
 }
 
-ChatMessage::ChatMessage(int id)
-:
+ChatMessage::ChatMessage(int id) :
 id(id),
 timestamp(0),
 color(CHAT_UNKNOWN_COLOR)
@@ -130,8 +130,7 @@ ChatClientChannel::~ChatClientChannel()
 
 /* ChatInput */
 
-ChatInputHistoryObject::ChatInputHistoryObject(const char* m)
-:
+ChatInputHistoryObject::ChatInputHistoryObject(const char* m) :
 next(NULL),
 prev(NULL)
 {
@@ -323,20 +322,20 @@ bool ChatInput::route_command()
     while((c = buffer[i++]) != '\0' && isspace(c)); // advance cursor to first non-space char
     i -= 1;
     
-    if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
-    {
-        if (buffer_len <= (int)(strlen((char*)"/name "))) return false;
-        char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
-        int j = 0;
-        while ((c = buffer[i++]) != '\0' && !isspace(c))
-        {
-            name[j++] = c;
-            if (j == (int)PLAYER_NAME_MAX_LENGTH) break;
-        }
-        if (j) ClientState::send_identify_packet(name);
-        return true;
-    }
-    else
+    //if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
+    //{
+        //if (buffer_len <= (int)(strlen((char*)"/name "))) return false;
+        //char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
+        //int j = 0;
+        //while ((c = buffer[i++]) != '\0' && !isspace(c))
+        //{
+            //name[j++] = c;
+            //if (j == (int)PLAYER_NAME_MAX_LENGTH) break;
+        //}
+        //if (j) ClientState::send_identify_packet(name);
+        //return true;
+    //}
+    //else
     if (!strcmp(cmd, (char*)"kill") || !strcmp(cmd, (char*)"die"))
     {
         killme_CtoS msg;

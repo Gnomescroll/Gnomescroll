@@ -871,7 +871,6 @@ void agent_born(int agent_id)
     }
 
     #if !PRODUCTION
-    
     // fill coins to max
     int synth_id = get_agent_synthesizer(agent_id);
     GS_ASSERT(synth_id != NULL_CONTAINER);
@@ -903,7 +902,6 @@ void agent_born(int agent_id)
             }
         }
     }
-
 
     ContainerActionType event = CONTAINER_ACTION_NONE;
 

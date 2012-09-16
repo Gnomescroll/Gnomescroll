@@ -355,10 +355,15 @@ void apply_camera_physics()
     }
     //*/
 
-    if (input_state.input_mode == INPUT_STATE_AGENT)
-        agent_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
+    if (input_state.login_mode)
+        current_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
     else
-        free_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
+    {
+        if (input_state.input_mode == INPUT_STATE_AGENT)
+            agent_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
+        else
+            free_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
+    }
 
     MOUSE_MOVEMENT_ARRAY_INDEX = 0;
 }
@@ -367,7 +372,7 @@ void poll_mouse()
 {
     GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
     if (MOUSE_MOVEMENT_ARRAY == NULL) return;
-    if (mouse_unlocked_for_ui_element()) return;
+    if (!input_state.login_mode && mouse_unlocked_for_ui_element()) return;
 
     if (input_state.ignore_mouse_motion)
     {   // flush mouse buffer

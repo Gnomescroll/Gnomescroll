@@ -58,6 +58,6 @@ void draw_init();
 void draw_teardown();
 
 // render
-void draw_hud();
+void draw();
 
 }

@@ -4,6 +4,10 @@
     #define DC_CLIENT 1
 #endif
 
+#ifndef GS_AWESOMIUM
+    #define GS_AWESOMIUM 0
+#endif
+
 #ifdef DC_SERVER
 dont_include_this_file_in_server
 #endif
@@ -196,9 +200,9 @@ dont_include_this_file_in_server
 #include <state/packet_init.cpp>
 
 // authentication
-#include <auth/client.cpp>
+#include <auth/_include.hpp>
 
-bool main_inited = false;
+bool c_lib_inited = false;
 bool signal_exit = false;
 
 #ifdef linux
@@ -208,7 +212,7 @@ bool signal_exit = false;
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    if (!main_inited)
+    if (!c_lib_inited)
     {
         close_c_lib();
         exit(0);
@@ -261,8 +265,11 @@ int init_c_lib(int argc, char* argv[])
     create_path("./screenshot/");
     Log::init();
     printf("init c_lib\n");
-    
-    AgentHudName::verify_configuration();
+
+    AgentHudName::verify_configuration();   // test agent constant parameters 
+
+    GS_ASSERT(quadrant_translate_f(500,30) == 542);
+    GS_ASSERT(quadrant_translate_f(10,500) == -12);
 
     Options::init_option_tables();
     LUA::init_options();
@@ -288,8 +295,6 @@ int init_c_lib(int argc, char* argv[])
     init_image_loader();
     TextureSheetLoader::init();
     //printf("Checkpoint 1 \n");
-
-    Awesomium::init();
 
     t_map::init_t_map();
     //printf("Checkpoint 2 \n");
@@ -333,7 +338,6 @@ int init_c_lib(int argc, char* argv[])
     t_hud::init();
     t_hud::draw_init();
 
-    Hud::init();
     //t_mech::state_init();
 
     Particle::init_particles();
@@ -341,9 +345,6 @@ int init_c_lib(int argc, char* argv[])
 
     Skybox::init();
  
-    HudReticle::init();
-    Hud::init();
-
     VoxDats::init();
     init_voxel_volume();
     
@@ -361,11 +362,12 @@ int init_c_lib(int argc, char* argv[])
     Item::load_crafting_dat();
     Item::load_smelting_dat();
 
-    Hud::init_hud_draw_settings();
-
-
+    Hud::init();
 
     init_voxel_render_list_shader1();   //used to be called from ClientState::init
+
+    Awesomium::init();
+    Auth::init();
 
     //init shaders
     
@@ -422,15 +424,12 @@ void close_c_lib()
     
     if (TEARDOWN_DEBUG) printf("voxel volume teardown\n");
     teardown_voxel_volume();
-    if (TEARDOWN_DEBUG) printf("hud text teardown\n");
-    HudText::teardown();
-    
+    if (TEARDOWN_DEBUG) printf("hud teardown\n");
     Hud::teardown();
+    
     // free surfaces
     if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::teardown_shader();
-    if (TEARDOWN_DEBUG) printf("hud map teardown\n");
-    HudMap::teardown();
 
     if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
     Particle::teardown_particles(); // teardown after ClientState::agent_list, because of billboard particle
@@ -462,6 +461,10 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("enet teardown\n");
     teardown_network();
 
+    if (TEARDOWN_DEBUG) printf("auth teardown\n");
+    Auth::teardown();
+
+    if (TEARDOWN_DEBUG) printf("awesomium teardown\n");
     Awesomium::teardown();
 
     Log::teardown();

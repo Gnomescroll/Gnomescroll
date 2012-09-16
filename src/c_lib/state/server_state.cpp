@@ -168,41 +168,6 @@ namespace ServerState
 
     }
         
-    void send_initial_game_state_to_client(int client_id)
-    {
-        // TODO -- make these one function call
-        Objects::send_to_client(OBJECT_BASE, client_id);
-        Objects::send_to_client(OBJECT_TURRET, client_id);
-        Objects::send_to_client(OBJECT_AGENT_SPAWNER, client_id);
-        Objects::send_to_client(OBJECT_ENERGY_CORE, client_id);
-        Objects::send_to_client(OBJECT_MONSTER_BOMB, client_id);
-        
-        // DOESNT WORK RIGHT:
-        Objects::send_object_state_machines(OBJECT_MONSTER_BOMB, client_id);
-        Objects::send_to_client(OBJECT_MONSTER_BOX, client_id);
-        Objects::send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
-    }
-
-    void send_remainining_game_state_to_client(int client_id)
-    {
-        // inventory is not in entity system, so these have no effect
-        Objects::send_to_client(OBJECT_AGENT_INVENTORY, client_id);
-        Objects::send_to_client(OBJECT_AGENT_TOOLBELT, client_id);
-        Objects::send_to_client(OBJECT_SYNTHESIZER_INVENTORY, client_id);
-        Objects::send_to_client(OBJECT_CRAFTING_BENCH, client_id);
-    }
-
-    //move somewhere
-    char* agent_name(int id)
-    {
-        Agent_state* a = ServerState::agent_list->get(id);
-        if (a==NULL)
-            return NULL;
-        if (!a->status.identified)
-            return NULL;
-        return a->status.name;
-    }
-
     //move somewhere
     void send_disconnect_notice(int client_id)
     {

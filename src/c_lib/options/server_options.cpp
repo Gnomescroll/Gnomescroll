@@ -1,5 +1,9 @@
 #include "server_options.hpp"
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <options/argparse.hpp>
 #include <common/lua/lua.hpp>
 
@@ -27,6 +31,9 @@ OPT_BOOL(log_chat, true)
 OPT_BOOL(pvp, false)
 OPT_UINT(base_move_rate, 30*60*60 /*1hr*/);
 
+/* Auth */
+OPT_BOOL(auth, true);
+
 void register_options()
 {
     /* General */
@@ -47,6 +54,9 @@ void register_options()
     /* Game */
     OPT_BOOL_REGISTER(pvp)
     OPT_UINT_REGISTER(base_move_rate);
+
+    /* Auth */
+    OPT_BOOL_REGISTER(auth);
 }
 
 }   // Options

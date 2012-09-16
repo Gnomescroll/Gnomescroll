@@ -1,5 +1,7 @@
 #pragma once
 
+#if GS_AWESOMIUM
+
 #include <SDL/awesomium/viewport_class.hpp>
 
 namespace Awesomium
@@ -92,3 +94,5 @@ void ViewportManager::draw_viewports()
 // myWebView->injectMouseWheel(100);
 
 }   // Awesomium
+
+#endif

@@ -1,10 +1,10 @@
 #pragma once
 
 #if DC_CLIENT
-dont include this file in client
+dont_include_this_file_in_client
 #endif
 
-#include <net_lib/global.hpp>
+#include <net_lib/server.hpp>
 
 class SubscriberList
 {    

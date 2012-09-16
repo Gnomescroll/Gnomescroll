@@ -12,6 +12,7 @@
 #include <t_map/glsl/shader.hpp>
 
 #include <t_hud/_interface.hpp>
+#include <hud/hud.hpp>
 
 InputState input_state;
 
@@ -29,11 +30,14 @@ void toggle_mouse_bind()
 void toggle_help_menu()
 {
     input_state.help_menu = (!input_state.help_menu);
+    if (input_state.help_menu)
+        Hud::clear_prompt(Hud::press_help_text);
 }
 
 void enable_agent_container()
 {
     if (input_state.agent_container) return;
+
     input_state.agent_container = true;
     
     // force set the mouse position
@@ -77,7 +81,7 @@ void toggle_agent_container()
 void enable_container_block(int container_id)
 {
     if (input_state.container_block) return;
-
+    
     GS_ASSERT(container_id != NULL_CONTAINER);
     
     // release all toolbelt
@@ -129,9 +133,24 @@ void toggle_map()
     input_state.map = (!input_state.map);
 }
 
+void disable_chat()
+{
+    if (!input_state.chat) return;
+    input_state.chat = false;
+}
+
+void enable_chat()
+{
+    if (input_state.chat) return;
+    input_state.chat = true;
+}
+
 void toggle_chat()
 {
-    input_state.chat = (!input_state.chat);
+    if (input_state.chat)
+        disable_chat();
+    else
+        enable_chat();
 }
 
 void toggle_full_chat()
@@ -149,21 +168,39 @@ void toggle_admin_controls()
     input_state.admin_controls = (!input_state.admin_controls);
 }
 
+void disable_awesomium()
+{
+    #if GS_AWESOMIUM
+    if (!input_state.awesomium) return;
+    printf("disable awesomium\n");
+    input_state.awesomium = false;
+    input_state.mouse_bound = input_state.rebind_mouse;
+    input_state.ignore_mouse_motion = true;
+    Awesomium::disable();
+    #endif
+}
+
+void enable_awesomium()
+{
+    #if GS_AWESOMIUM
+    if (input_state.awesomium) return;
+    printf("enable awesomium\n");
+    input_state.awesomium = true;
+    input_state.rebind_mouse = input_state.mouse_bound;
+    input_state.mouse_bound = false;
+    Awesomium::enable();
+    Hud::clear_prompt(Hud::open_login_text);
+    #endif
+}
+
 void toggle_awesomium()
 {
-    input_state.awesomium = (!input_state.awesomium);
-    input_state.rebind_mouse = input_state.mouse_bound;
+    #if GS_AWESOMIUM
     if (input_state.awesomium)
-    {
-        input_state.mouse_bound = false;
-        Awesomium::enable();
-    }
+        disable_awesomium();
     else
-    {
-        input_state.mouse_bound = true;
-        input_state.ignore_mouse_motion = true;
-        Awesomium::disable();
-    }
+        enable_awesomium();
+    #endif
 }
 
 void toggle_graphs()
@@ -185,12 +222,10 @@ void enable_quit()
 void toggle_confirm_quit()
 {
     #if PRODUCTION
-    if (!NetClient::Server.version_match())
-        enable_quit();
-    else
-        input_state.confirm_quit = (!input_state.confirm_quit);
+    input_state.confirm_quit = (!input_state.confirm_quit);
     #else
-    enable_quit();
+    input_state.confirm_quit = false;
+    enable_quit();  // quit automatically in debug
     #endif
 }
 
@@ -254,6 +289,8 @@ void init_input_state()
     input_state.camera_mode = INPUT_STATE_CAMERA;
     #endif
 
+    input_state.login_mode = false;
+
     input_state.rebind_mouse = input_state.mouse_bound;
 
     input_state.draw_hud = true;
@@ -291,7 +328,10 @@ void init_input_state()
     // awesomium
     input_state.awesomium = false;
 
+    input_state.error_message = Hud::has_error();
+
     // SDL state
+    // these starting conditions are variable, so dont rely on them for deterministic logic
     Uint8 app_state = SDL_GetAppState();
     input_state.input_focus = (app_state & SDL_APPMOUSEFOCUS);
     input_state.mouse_focus = (app_state & SDL_APPINPUTFOCUS);
@@ -311,6 +351,15 @@ void update_input_state()
     input_state.input_focus = (app_state & SDL_APPMOUSEFOCUS);
     input_state.mouse_focus = (app_state & SDL_APPINPUTFOCUS);
     input_state.app_active   = (app_state & SDL_APPACTIVE);
+
+    bool had_error = input_state.error_message;
+    input_state.error_message = Hud::has_error();
+    if (!had_error && input_state.error_message)
+    {
+        disable_agent_container();
+        disable_container_block();
+        disable_chat();
+    }
 }
 
 // keys that can be held down
@@ -827,16 +876,15 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.chat)
-        chat_key_down_handler(event);
-    else if (input_state.agent_container || input_state.container_block)
-        container_key_down_handler(event);
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
     {
         switch (event->key.keysym.sym)
         {
             case SDLK_ESCAPE:
-                toggle_awesomium();
+                if (input_state.login_mode)
+                    enable_quit();  // quit automatically if we are in login mode
+                else
+                    toggle_awesomium();
                 break;
 
             default:
@@ -844,6 +892,10 @@ void key_down_handler(SDL_Event* event)
                 break;
         }
     }
+    else if (input_state.chat)
+        chat_key_down_handler(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_key_down_handler(event);
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -851,7 +903,6 @@ void key_down_handler(SDL_Event* event)
         else
             camera_key_down_handler(event);
 
-    
         // these should occur for both Agent and Camera
         switch (event->key.keysym.sym)
         {
@@ -962,10 +1013,10 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_ESCAPE:
-                if (NetClient::Server.connected)
-                    toggle_confirm_quit();
-                else
+                if (Hud::has_error())
                     enable_quit();
+                else
+                    toggle_confirm_quit();
                 break;
 
             default: break;
@@ -984,7 +1035,8 @@ void key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_F1:
-            toggle_awesomium();
+            if (!input_state.login_mode)
+                toggle_awesomium();
             break;
 
         case SDLK_F2:
@@ -1052,12 +1104,12 @@ void key_up_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.chat)
+    if (input_state.awesomium)
+        Awesomium::SDL_keyboard_event(event);
+    else if (input_state.chat)
         chat_key_up_handler(event);
     else if (input_state.agent_container || input_state.container_block)
         container_key_up_handler(event);
-    else if (input_state.awesomium)
-        Awesomium::SDL_keyboard_event(event);
     else
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -1106,10 +1158,10 @@ void mouse_button_down_handler(SDL_Event* event)
     }
 
     // chat doesnt affect mouse
-    if (input_state.agent_container || input_state.container_block)
-        container_mouse_down_handler(event);
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_mouse_down_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
     else
@@ -1135,10 +1187,10 @@ void mouse_button_up_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
 
-    if (input_state.agent_container || input_state.container_block)
-        container_mouse_up_handler(event);
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
+    else if (input_state.agent_container || input_state.container_block)
+        container_mouse_up_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
     else
@@ -1161,15 +1213,15 @@ void mouse_motion_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.agent_container || input_state.container_block)
-    {
-        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
-        container_mouse_motion_handler(event);
-    }
-    else if (input_state.awesomium)
+    if (input_state.awesomium)
     {
         SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         Awesomium::SDL_mouse_event(event);
+    }
+    else if (input_state.agent_container || input_state.container_block)
+    {
+        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
+        container_mouse_motion_handler(event);
     }
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);

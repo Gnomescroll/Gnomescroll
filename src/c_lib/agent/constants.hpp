@@ -65,9 +65,13 @@ const int NO_AGENT = 255; // works as long as < AGENT_MAX
 /* Status */
 const int AGENT_HEALTH = 99;
 const int RESPAWN_TICKS = 30 * 4; // 4 seconds
-const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 const int AGENT_MAX_TURRETS = 10;    // (256/64)*2 == 8
 const int AGENT_MAX_SPAWNERS = 3;
+
+// DONT CHANGE THESE. WILL BREAK STUFF AND YOU WONT KNOW UNTIL ITS TOO LATE
+const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
+const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
+
 
 /* Player */
 #if DC_CLIENT

@@ -237,7 +237,7 @@ void spawn_mobs()
         spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
         GS_ASSERT(spawner != NULL);
         child = spawner->spawn_child();
-        if (child != NULL) Objects::ready(child);
+        if (child != NULL) ready(child);
     }
 }
 
@@ -259,6 +259,21 @@ void send_object_state_machines(const ObjectType type, const int client_id)
     for (int i=0; i<max; i++)
         if (used[i])
             send_mob_bomb_state_machine_to_client(client_id, objects[i]);
+}
+
+void send_to_client(int client_id)
+{
+    // TODO -- make these one function call
+    send_to_client(OBJECT_BASE, client_id);
+    send_to_client(OBJECT_TURRET, client_id);
+    send_to_client(OBJECT_AGENT_SPAWNER, client_id);
+    send_to_client(OBJECT_ENERGY_CORE, client_id);
+    send_to_client(OBJECT_MONSTER_BOMB, client_id);
+    
+    // DOESNT WORK RIGHT:
+    send_object_state_machines(OBJECT_MONSTER_BOMB, client_id);
+    send_to_client(OBJECT_MONSTER_BOX, client_id);
+    send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
 }
 #endif
 

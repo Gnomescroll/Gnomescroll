@@ -414,13 +414,20 @@ void set_texture()
     CHECK_GL_ERROR();
 }
 
+static GLboolean blend_restore = GL_FALSE;
+static GLboolean depth_test_restore = GL_FALSE;
+
 // call this once for all hud text
 void start_font_draw(GLenum blend_func)
 {
+    // cache current render state
+    glGetBooleanv(GL_BLEND, &blend_restore);
+    glGetBooleanv(GL_DEPTH_TEST, &depth_test_restore);
+    
     // all fonts must have alpha
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,blend_func);
+    glBlendFunc(GL_SRC_ALPHA, blend_func);
     glEnable(GL_TEXTURE_2D);
     CHECK_GL_ERROR();
 }
@@ -436,7 +443,10 @@ void end_font_draw()
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_BLEND, true);
     glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
+    if (blend_restore == GL_FALSE)
+        glDisable(GL_BLEND);
+    if (depth_test_restore == GL_TRUE)
+        glEnable(GL_DEPTH_TEST);
     bound_gl_font = NULL;
     CHECK_GL_ERROR();
 }

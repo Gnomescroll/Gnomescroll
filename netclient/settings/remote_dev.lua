@@ -6,9 +6,6 @@ require("lua_library");
 
 options = {}
 
--- player name --
-options.name = "flarb"
-
 -- server --
 
 options.server = "174.37.26.118"

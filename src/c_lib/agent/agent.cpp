@@ -87,8 +87,6 @@ void Agent_state::teleport(float x,float y,float z)
     msg.theta = s.theta;
     msg.phi = s.phi;
     msg.broadcast();
-    if (!this->status.net_peer_ready)
-        msg.sendToClient(this->client_id);
 
     t_map::t_map_manager_update_client_position(this->id, x,y);
     #endif
@@ -114,8 +112,6 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     msg.theta = s.theta;
     msg.phi = s.phi;
     msg.broadcast();
-    if (!this->status.net_peer_ready)
-        msg.sendToClient(this->client_id);
 
     t_map::t_map_manager_update_client_position(this->id, x,y);
     #endif
@@ -576,15 +572,6 @@ id (id), type(OBJECT_AGENT), status(this)
     set_position(0,0,-256);
 
     this->init_vox();
-
-    #if DC_SERVER    
-    agent_create_StoC msg;
-    msg.id = id;
-    msg.client_id = this->client_id;
-    msg.broadcast();
-    if (!this->status.net_peer_ready)
-        msg.sendToClient(this->client_id);
-    #endif
 }
 
 Agent_state::~Agent_state()

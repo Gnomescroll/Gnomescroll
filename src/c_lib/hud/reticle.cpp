@@ -33,12 +33,10 @@ void Reticle::align_center(int window_width, int window_height)
 
 void Reticle::draw()
 {
-
-
-
+    GS_ASSERT(this->inited);
+    GS_ASSERT(this->tex_data.tex != 0);
     if (!this->inited) return;
-    //glColor3ub(127,127,127);
-    //_blit_sprite(this->tex_data.tex, x0, y0, x1, y1, -0.1f);
+    if (this->tex_data.tex == 0) return;
 
     const float z = -0.1f;
 

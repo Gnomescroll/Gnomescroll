@@ -19,15 +19,16 @@
     Just a reliable message to server
 */
 template <class Derived>
-class MapMessagePacketToServer {
-
+class MapMessagePacketToServer
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
         static uint8_t message_id;
         static unsigned int size;
         int client_id; //id of the UDP client who sent message
-
+        static const bool auth_required = true; // override in Derived class to disable
+        
         MapMessagePacketToServer() {}
         virtual ~MapMessagePacketToServer() {}
         
@@ -45,10 +46,14 @@ class MapMessagePacketToServer {
         
         void send() 
         {
+            #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
         
         //will overflow if more than 128 bytes
@@ -64,14 +69,23 @@ class MapMessagePacketToServer {
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) {
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id)
+        {
+            #if DC_SERVER
             Derived x;  //allocated on stack
+            if (NetServer::clients[_client_id] == NULL ||   // auth check
+                (x.auth_required && !NetServer::clients[_client_id]->authorized))
+                return;
             x.client_id = _client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
-        static void register_server_packet() {
+        static void register_server_packet()
+        {
             Derived x = Derived();
             Derived::message_id = next_server_packet_id(); //set size
             Derived::size = x._size();
@@ -90,7 +104,8 @@ template <class Derived> unsigned int MapMessagePacketToServer<Derived>::size(0)
     Special server packet
 */
 template <class Derived>
-class MapMessagePacketToClient {
+class MapMessagePacketToClient
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:
@@ -117,6 +132,7 @@ class MapMessagePacketToClient {
         */
         void broadcast() 
         {
+            #if DC_SERVER
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
@@ -131,10 +147,14 @@ class MapMessagePacketToClient {
                 if(np == NULL) continue;
                 np->push_reliable_message(nm);
             }
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         void sendToClient(int client_id) 
         {
+            #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
             if (np == NULL) np = NetServer::pool[client_id];
             if(np == NULL)  //remove in debug
@@ -147,6 +167,9 @@ class MapMessagePacketToClient {
                 np->resize_map_message_buffer(np->map_message_buffer_index + size);
 
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         //will overflow if more than 128 bytes
@@ -191,7 +214,8 @@ template <class Derived> unsigned int MapMessagePacketToClient<Derived>::size(0)
     Could be safer to size of buffer being read here
 */
 template <class Derived>
-class MapMessageArrayPacketToClient {
+class MapMessageArrayPacketToClient
+{
     private:
         virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:
@@ -220,6 +244,7 @@ class MapMessageArrayPacketToClient {
 
         void sendToClient(int client_id, char* buff, int len) 
         {
+            #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
             if (np == NULL) np = NetServer::pool[client_id];
             if(np == NULL)
@@ -249,6 +274,9 @@ class MapMessageArrayPacketToClient {
             np->map_message_buffer_index += len;
 
             if(np->map_message_buffer_index >= 1024) np->flush_map_messages();
+            #else
+            GS_ASSERT(false);
+            #endif
         }
 
         //will overflow if more than 128 bytes
