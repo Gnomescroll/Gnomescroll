@@ -1119,19 +1119,19 @@ class BodyMesh
     int nm;       
 */
 
-        printf("nm= %d \n", nm);
+        //printf("nm= %d \n", nm);
 
-        printf("node %02d: name= %s \n", 0, nnl[0]);
+        //printf("node %02d: name= %s \n", 0, nnl[0]);
 
         for(int i=1; i<nm; i++)
         {
             if(npl[i] == -1)
             {
-                printf("ERROR: node %d parent is -1 \n", i);
+                //printf("ERROR: node %d parent is -1 \n", i);
                 continue;
             }
             //printf("node %02d: name= %s parent= %d \n" , i, nnl[i], bpl[i] );
-            printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], npl[i], nnl[npl[i]] );
+            //printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], npl[i], nnl[npl[i]] );
 
             GS_ASSERT(_set[i] == 0);
             GS_ASSERT(_set[npl[i]] == 1);
@@ -1153,11 +1153,11 @@ class BodyMesh
         {
             if(bpl[i] == -1)
             {
-                printf("ERROR: bone %d parent is -1 \n", i);
+                //printf("ERROR: bone %d parent is -1 \n", i);
                 continue;
             }
             //printf("node %02d: name= %s parent= %d \n" , i, nnl[i], bpl[i] );
-            printf("bone %02d: name= %s parent= %d parent_name= %s \n", i, bnl[i], bpl[i], nnl[bpl[i]] );
+            //printf("bone %02d: name= %s parent= %d parent_name= %s \n", i, bnl[i], bpl[i], nnl[bpl[i]] );
 
             GS_ASSERT(_set[bpl[i]] == 1);
 
@@ -1174,8 +1174,8 @@ class BodyMesh
     struct _Vertex* bvl;        //base vertex list
     struct _Vertex* tbvl;
 
-    struct _Vertex* vl;         //vertex list
-    int vln;                    //vertex list max
+    struct _Vertex* tvl;        //vertex list
+    int tvln;                   //vertex list max
 
     int* via;                   //vertex index array
     int viam;
@@ -1226,6 +1226,11 @@ class BodyMesh
 
                 GS_ASSERT(bone_index >= 0 && bone_index < blm);
                 Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
+
+
+                struct Mat4 out = tbone_matrix[bone_index];
+                GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
+
             /*
                 if(_print)
                 {
@@ -1247,10 +1252,12 @@ class BodyMesh
         {
             class BodyPartMesh* m = &ml[i];
 
-            for(int i=0; i<vlm; i++)
+            for(int j=0; j<m->viam; j++)
             {
+                int index = m->via[j];
                 m->tbvl[i] = m->tbvl[index];
             }
+
         }
 
         glColor4ub(255,255,255,255);
@@ -1263,7 +1270,7 @@ class BodyMesh
         {
             class BodyPartMesh* m = &ml[i];
 
-            for(int j=0; j<vlm; j++)
+            for(int j=0; j<m->viam; j++)
             {
                 struct _Vertex v = m->tvl[j];
 
@@ -1272,6 +1279,7 @@ class BodyMesh
             }
 
         }
+        glEnd();
 
         glBindTexture(GL_TEXTURE_2D, 0);
         check_gl_error();
