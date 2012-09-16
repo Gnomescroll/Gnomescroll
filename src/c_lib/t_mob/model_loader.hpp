@@ -255,6 +255,10 @@ class ModelLoader
                 }
             }
 
+            for(unsigned int j=0; j<3*mesh->mNumFaces; j++)
+                GS_ASSERT(_ml[i].via[j] < _ml[i].viam );
+
+
             for(unsigned int j=0; j<mesh->mNumFaces; j++)
             {
                 GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
@@ -1225,8 +1229,18 @@ class BodyMesh
                     vec3_print(m->bvl[vertex_index].v);
 
                 GS_ASSERT(bone_index >= 0 && bone_index < blm);
-                Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
 
+                GS_ASSERT(vertex_index < m->bvlm && vertex_index >= 0);
+
+                if(vertex_index < m->bvlm)
+                    continue;
+
+                Vec3 _v = m->bvl[vertex_index].v;
+                struct Mat4 _m = tbone_matrix[bone_index];
+                Vec3 v = vec3_mat3_apply(_v, _m);
+                
+
+                //Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
 
                 struct Mat4 out = tbone_matrix[bone_index];
                 GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
@@ -1255,6 +1269,9 @@ class BodyMesh
             for(int j=0; j<m->viam; j++)
             {
                 int index = m->via[j];
+                GS_ASSERT(index < m->viam && index >= 0);
+                if(index >= m->viam)
+                    printf("index= %i viam= %i \n", index, m->viam);
                 m->tbvl[j] = m->tbvl[index];
             }
 
