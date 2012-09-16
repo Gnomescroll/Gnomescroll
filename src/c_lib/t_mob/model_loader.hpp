@@ -255,6 +255,10 @@ class ModelLoader
                 }
             }
 
+            for(unsigned int j=0; j<3*mesh->mNumFaces; j++)
+                GS_ASSERT(_ml[i].via[j] < _ml[i].viam );
+
+
             for(unsigned int j=0; j<mesh->mNumFaces; j++)
             {
                 GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
@@ -1119,19 +1123,19 @@ class BodyMesh
     int nm;       
 */
 
-        printf("nm= %d \n", nm);
+        //printf("nm= %d \n", nm);
 
-        printf("node %02d: name= %s \n", 0, nnl[0]);
+        //printf("node %02d: name= %s \n", 0, nnl[0]);
 
         for(int i=1; i<nm; i++)
         {
             if(npl[i] == -1)
             {
-                printf("ERROR: node %d parent is -1 \n", i);
+                //printf("ERROR: node %d parent is -1 \n", i);
                 continue;
             }
             //printf("node %02d: name= %s parent= %d \n" , i, nnl[i], bpl[i] );
-            printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], npl[i], nnl[npl[i]] );
+            //printf("node %02d: name= %s parent= %d parent_name= %s \n", i, nnl[i], npl[i], nnl[npl[i]] );
 
             GS_ASSERT(_set[i] == 0);
             GS_ASSERT(_set[npl[i]] == 1);
@@ -1153,11 +1157,11 @@ class BodyMesh
         {
             if(bpl[i] == -1)
             {
-                printf("ERROR: bone %d parent is -1 \n", i);
+                //printf("ERROR: bone %d parent is -1 \n", i);
                 continue;
             }
             //printf("node %02d: name= %s parent= %d \n" , i, nnl[i], bpl[i] );
-            printf("bone %02d: name= %s parent= %d parent_name= %s \n", i, bnl[i], bpl[i], nnl[bpl[i]] );
+            //printf("bone %02d: name= %s parent= %d parent_name= %s \n", i, bnl[i], bpl[i], nnl[bpl[i]] );
 
             GS_ASSERT(_set[bpl[i]] == 1);
 
@@ -1174,8 +1178,8 @@ class BodyMesh
     struct _Vertex* bvl;        //base vertex list
     struct _Vertex* tbvl;
 
-    struct _Vertex* vl;         //vertex list
-    int vln;                    //vertex list max
+    struct _Vertex* tvl;        //vertex list
+    int tvln;                   //vertex list max
 
     int* via;                   //vertex index array
     int viam;
@@ -1193,7 +1197,7 @@ class BodyMesh
     };
 */
 
-    void draw()
+    void draw(float x, float y, float z)
     {
         bool _print = false;
 
@@ -1204,12 +1208,12 @@ class BodyMesh
 
             for(int j=0; j<m->bvlm; j++)
             {
-                m->tbvl[i].ux = m->bvl[j].ux;
-                m->tbvl[i].uy = m->bvl[j].uy;
+                m->tbvl[j].ux = m->bvl[j].ux;
+                m->tbvl[j].uy = m->bvl[j].uy;
 
-                m->tbvl[i].v.x = 0.0f;
-                m->tbvl[i].v.y = 0.0f;
-                m->tbvl[i].v.z = 0.0f;
+                m->tbvl[j].v.x = 0.0f;
+                m->tbvl[j].v.y = 0.0f;
+                m->tbvl[j].v.z = 0.0f;
             }
 
             for(int j=0; j<m->vwlm; j++)
@@ -1221,11 +1225,31 @@ class BodyMesh
 
                 GS_ASSERT(vertex_index < m->bvlm);
 
+                if(vertex_index >= m->bvlm || vertex_index < 0)
+                {
+                    printf("ERROR: vertex_index= %i bvlm= %i \n", vertex_index, m->bvlm);
+                }
+
                 if(_print)
                     vec3_print(m->bvl[vertex_index].v);
 
                 GS_ASSERT(bone_index >= 0 && bone_index < blm);
-                Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
+
+                GS_ASSERT(vertex_index < m->bvlm && vertex_index >= 0);
+
+                if(vertex_index < m->bvlm)
+                    continue;
+
+                Vec3 _v = m->bvl[vertex_index].v;
+                struct Mat4 _m = tbone_matrix[bone_index];
+                Vec3 v = vec3_mat3_apply(_v, _m);
+                
+
+                //Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
+
+                struct Mat4 out = tbone_matrix[bone_index];
+                GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
+
             /*
                 if(_print)
                 {
@@ -1239,14 +1263,51 @@ class BodyMesh
                 m->tbvl[vertex_index].v.x += weight*v.x;
                 m->tbvl[vertex_index].v.y += weight*v.y;
                 m->tbvl[vertex_index].v.z += weight*v.z;
+            }
+        }
 
 
+        for(int i=0; i<mlm; i++)
+        {
+            class BodyPartMesh* m = &ml[i];
+            printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
+
+            for(int j=0; j<m->viam; j++)
+            {
+    
+                int index = m->via[j];
+                GS_ASSERT(index < m->viam && index >= 0);
+                if(index >= m->viam || index < 0)
+                    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
+                m->tbvl[j] = m->tbvl[index];
             }
 
+        }
 
+        glColor4ub(255,255,255,255);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
+        glBegin(GL_TRIANGLES);
+
+        for(int i=0; i<mlm; i++)
+        {
+            class BodyPartMesh* m = &ml[i];
+
+            for(int j=0; j<m->tvln; j++)
+            {
+                struct _Vertex v = m->tvl[j];
+
+                glTexCoord2f(v.ux, v.uy );
+                glVertex3f(v.v.x +x , v.v.y +y , v.v.z +z); //swap y and z
+            }
 
         }
-        //class BodyPartMesh* bpm
+        glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        check_gl_error();
+
 /*
 
         for(int i=0; i<bvlm; i++)
@@ -1327,7 +1388,6 @@ class BodyMesh* body_mesh;
 
 void init()
 {
-    return; //DEBUG
 
     int bsize;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
@@ -1365,14 +1425,22 @@ void init()
 
 void draw()
 {
+    if(ClientState::location_pointer_set == false)
+        return;
 
+    struct Vec3 p = ClientState::location_pointer;
+
+    body_mesh->draw_prep();
+    body_mesh->draw(p.x, p.y, p.z + 3.0f);
+
+    //bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 5.0f);
+
+    return;
 
 }
 
 void teardown()
 {
-
-return; //DEBUG
 
 if(model_loader != NULL) delete model_loader;
 if(body_mesh != NULL) delete body_mesh;
