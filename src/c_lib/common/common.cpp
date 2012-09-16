@@ -34,35 +34,6 @@ void address_from_uint32(uint32_t ip, uint8_t address[4])
         address[i] = (uint8_t) (ip >> i*8) & 0xFF;
 }
 
-bool is_valid_name_character(char c) __attribute__((always_inline));
-bool is_valid_name_character(char c)
-{
-    return (isalnum(c) || c == '_');
-}
-
-unsigned int sanitize_player_name(char* name)
-{
-    // remove whitespace at beginning and end
-    // remove non-approved chars
-    // can't be all whitespace
-
-    int len = (int)strlen(name);
-    if (len == 0) return 0;
-    char* new_name = (char*)calloc(len+1, sizeof(char));
-
-    char c;
-    unsigned int i = 0, j = 0;
-    //  filter valid characters
-    while ((c = name[i++]) != '\0')
-        if (is_valid_name_character(c))
-            new_name[j++] = c;
-
-    new_name[j] = '\0';   // ignore trailing whitespace
-    strcpy(name, new_name);
-    free(new_name);
-    return j;
-}
-
 static const char time_fmt[] = "%Y-%m-%d_%H:%M:%S";
 
 static const int TIME_STR_LEN = 4 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 2 + 1;    // Y,m,d,H,M,S,-,_,:,\0

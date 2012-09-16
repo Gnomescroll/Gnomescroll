@@ -41,6 +41,12 @@ void teardown()
     #endif
 }
 
+bool is_valid_name_character(char c) __attribute__((always_inline));
+bool is_valid_name_character(char c)
+{
+    return (isalnum(c) || c == '_');
+}
+
 bool is_valid_username(const char* username, size_t len)
 {
     // length
@@ -48,7 +54,7 @@ bool is_valid_username(const char* username, size_t len)
         return false;
 
     // starts with alpha
-    if (!isalpha(username[0]))
+    if (!isalnum(username[0]))
         return false;
 
     // valid characters
@@ -429,7 +435,8 @@ void run_tests()
     GS_ASSERT(is_valid_username("get"));
     GS_ASSERT(is_valid_username("get_"));
     GS_ASSERT(is_valid_username("get_423"));
-    GS_ASSERT(!is_valid_username("4get"));
+    GS_ASSERT(is_valid_username("4get"));
+    GS_ASSERT(!is_valid_username("4444"));
     GS_ASSERT(is_valid_username("getgetgetgetget"));
     GS_ASSERT(!is_valid_username("getgetgetgetgetg"));
     GS_ASSERT(!is_valid_username("___"));

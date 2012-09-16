@@ -34,7 +34,10 @@ Create Account
         <div class="page-header">
           <h1>Create Account</h1>
         </div>
+<!--
       <div class="alert">A confirmation email will be sent to your address. You will need to confirm within a week or your account will be deactivated.</div>
+-->
+      <div class="alert">Make sure your email address is correct. You will need to confirm it later.</div>
         
         <form id="create" class="form-horizontal" method="POST">
             <div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value=""></div>
@@ -59,7 +62,7 @@ Create Account
             <div class="control-group">
   <div class="controls">
   <label class="checkbox">
-    <input type="checkbox" id="subscribe" name="subscribe">
+    <input type="checkbox" id="subscribe" name="subscribe" checked="true">
     Please send me updates and news about the game via email.
   </label>
   </div>

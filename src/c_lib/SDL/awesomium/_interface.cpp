@@ -70,23 +70,25 @@ void init()
 {
     printf("Awesomium::init\n");
 
-    #ifndef linux
-    // TODO -- non default initializer
-    awe_webcore_initialize_default();
-    #endif
+    //#ifndef linux
+    //// TODO -- non default initializer
+    //awe_webcore_initialize_default();
+    //#endif
         
     #ifdef linux
-
-    #if PRODUCTION
-    const char package_path_str[] = "./lib/lin32/awesomium/release";
-    const char locale_path_str[] = "./lib/lin32/awesomium/release/locales";
+        #if PRODUCTION
+        const char package_path_str[] = "./lib/lin32/awesomium/release";
+        #else
+        const char package_path_str[] = "../lib/lin32/awesomium/release";
+        #endif
+        const char locale_path_str[] = "./locales"; // relative to the package path
+        awe_string* package_path = get_awe_string(package_path_str);
+        awe_string* locale_path = get_awe_string(locale_path_str);
     #else
-    const char package_path_str[] = "../lib/lin32/awesomium/release";
-    const char locale_path_str[] = "../lib/lin32/awesomium/release/locales";
+        const awe_string* package_path = awe_string_empty();
+        const awe_string* locale_path = awe_string_empty();
     #endif
     
-    awe_string* package_path = get_awe_string(package_path_str);
-    awe_string* locale_path = get_awe_string(locale_path_str);
     awe_string* log_path = get_awe_string("./screenshot");
 
     awe_string* user_agent = get_awe_string(USER_AGENT);
@@ -118,11 +120,13 @@ void init()
         awe_string_empty()
     );
 
+    #ifdef linux
     awe_string_destroy(package_path);
     awe_string_destroy(locale_path);
+    #endif
+    
     awe_string_destroy(log_path);
     awe_string_destroy(user_agent);
-    #endif
 
     const char _curdir[] = ".";
     awe_string* curdir = get_awe_string(_curdir);
