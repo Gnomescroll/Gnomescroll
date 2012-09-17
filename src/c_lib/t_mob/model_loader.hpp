@@ -1270,20 +1270,23 @@ class BodyMesh
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-            printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
+            //printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
 
             for(int j=0; j<m->viam; j++)
             {
     
                 int index = m->via[j];
                 GS_ASSERT(index < m->viam && index >= 0);
-                if(index >= m->viam || index < 0)
-                    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
-                m->tbvl[j] = m->tbvl[index];
+                //if(index >= m->viam || index < 0)
+                //    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
+                GS_ASSERT(j < m->tvln );
+
+                m->tvl[j] = m->tbvl[index];
             }
 
         }
 
+#if 0
         glColor4ub(255,255,255,255);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -1307,6 +1310,7 @@ class BodyMesh
 
         glBindTexture(GL_TEXTURE_2D, 0);
         check_gl_error();
+#endif
 
 /*
 
@@ -1425,10 +1429,14 @@ void init()
 
 void draw()
 {
-    if(ClientState::location_pointer_set == false)
-        return;
-
     struct Vec3 p = ClientState::location_pointer;
+
+    if(ClientState::location_pointer_set == false)
+    {
+        p.x = 128.0f;
+        p.y = 128.0f;
+        p.z = 128.0f;
+    }
 
     body_mesh->draw_prep();
     body_mesh->draw(p.x, p.y, p.z + 3.0f);
