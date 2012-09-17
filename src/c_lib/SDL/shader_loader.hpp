@@ -160,7 +160,7 @@ class SHADER
         int attribute = glGetAttribLocation(shader, attribute_name);
         if(attribute == -1)
         {
-            //printf("SHADER: get_attribute failed. shader= %s attribute= %s \n", name, attribute_name);
+            printf("SHADER: get_attribute failed. shader= %s attribute= %s \n", name, attribute_name);
             return -1;
         }
         CHECK_GL_ERROR();
@@ -179,7 +179,7 @@ class SHADER
 
         if(uniform == -1)
         {
-            //printf("SHADER: get_uniform failed. shader= %s uniform= %s \n", name, uniform_name);
+            printf("SHADER: get_uniform failed. shader= %s uniform= %s \n", name, uniform_name);
             return -1;
         }
         CHECK_GL_ERROR();
