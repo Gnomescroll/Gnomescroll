@@ -109,33 +109,11 @@ class SHADER
         printf("Set source for shader ARB\n");
 
         glCompileShaderARB(vert_shader);
-
+        if(DEBUG1) printShaderInfoLog(vert_shader);
         printf("Compiled vert shader\n");
 
-        if(glIsShader(vert_shader) == false) //debug
-        {
-            printf("%s vertex shader failed\n", this->name);
-            printShaderInfoLog(vert_shader);
-            this->shader_valid = false;
-            return;
-        }
-        else
-        {
-            if(DEBUG1) printShaderInfoLog(vert_shader);
-        }
-
         glCompileShaderARB(frag_shader);
-        if(glIsShader(frag_shader) == false) //debug
-        {
-            printf("%s fragment shader failed\n", this->name);
-            printShaderInfoLog(frag_shader);
-            this->shader_valid = false;
-            return;
-        }
-        else
-        {
-            if(DEBUG1) printShaderInfoLog(frag_shader);
-        }
+        if(DEBUG1) printShaderInfoLog(frag_shader);
 
         printf("Compiled frag shader\n");
 
@@ -145,21 +123,9 @@ class SHADER
         printf("Attached ARBs\n");
 
         glLinkProgramARB(shader);
+        if(DEBUG1) printShaderInfoLog(shader);
 
         printf("Linked shader\n");
-
-        if(glIsShader(shader) == false) //debug
-        {
-            printf("%s linking failed\n", this->name);
-            printShaderInfoLog(shader);
-            this->shader_valid = false;
-            return;
-        }
-        else
-        {
-            if(DEBUG1) printShaderInfoLog(shader);
-        }
-        if(DEBUG1) printProgramInfoLog(shader);
 
         if (shader_error_occured(shader)) shader_valid = false;
         else shader_valid = true;
