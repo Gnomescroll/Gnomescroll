@@ -49,10 +49,14 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False):
+def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False, awesomium_debug=False):
     global _OS
     global os_libpth
 
+    awe_stem = 'release'
+    if awesomium_debug:
+        awe_stem = 'debug'
+    
     prodflag = '-DPRODUCTION='
     if production:
         awesomium = True
@@ -253,9 +257,11 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
     #awesomium
     if awesomium:
         if OS == 'Windows':
-            awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/lib/release/')
+            awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/lib/%s/' % (awe_stem,))
             awesomium_include_path = os.path.abspath('../lib/win32/awesomium/include/')
             awesomium_name = 'Awesomium'
+            if awesomium_debug:
+                awesomium_name += '_d'
         elif OS == 'Linux':
             awesomium_lib_path = os.path.abspath('../lib/lin32/awesomium/release/')
             awesomium_include_path = os.path.abspath('../lib/lin32/awesomium/include/')
@@ -301,7 +307,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
         conf.env.RPATH.append('$ORIGIN/./lib')
         conf.env.RPATH.append('./lib')
         if awesomium:
-            conf.env.RPATH += ['$ORIGIN/./lib/win32/awesomium/lib/release'] #awesomium lib
+            conf.env.RPATH += ['$ORIGIN/./lib/win32/awesomium/lib/%s' % (awe_stem,)] #awesomium lib
 
     if OS == 'Linux':
         if '-DPRODUCTION=1' in conf.env.CXXFLAGS:
@@ -314,6 +320,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
             conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesomium lib
 
     conf.env.awesomium = awesomium
+    conf.env.awe_stem = awe_stem
     conf.env.production = production
 
 def build(bld):
@@ -354,8 +361,8 @@ def build(bld):
         libpath = os.path.abspath('../lib/win32')
         includes = [os.path.join(libpath, path) for path in os.listdir(libpath)]
         libs = [os.path.join(libpath, 'lib'), os.path.join(libpath, 'dll'),
-            os.path.join(libpath, 'awesomium/lib/release'),
-            os.path.join(libpath, 'awesomium/bin/release'),]
+            os.path.join(libpath, 'awesomium/lib/%s' % (bld.env.awe_stem,)),
+            os.path.join(libpath, 'awesomium/bin/%s' % (bld.env.awe_stem,)),]
         
     #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     use = time_lib+SDL_libraries+['LUA', 'ASSIMP']
@@ -419,9 +426,14 @@ def install_bin(ctx):
                 src_dll = os.path.join(dll_path, dll)
                 dst_dll = os.path.join('./', dll)
                 shutil.copy2(src_dll, dst_dll)
-            awe_dll_path = '../lib/win32/awesomium/bin/release/'
+            awe_dll_path = '../lib/win32/awesomium/bin/%s/' % (ctx.env.awe_stem,)
             for f in os.listdir(awe_dll_path):
-                shutil.copy2(os.path.join(awe_dll_path, f), os.path.join('./', f))
+            	if f == 'locales':
+            	    _path = os.path.join(awe_dll_path, f)
+                    for loc in os.listdir(_path):
+                        shutil.copy2(os.path.join(_path, loc), os.path.join('./%s' % (f,), loc))
+            	else:
+            	    shutil.copy2(os.path.join(awe_dll_path, f), os.path.join('./', f))
             print "Copied dlls to current directory"
     except Exception, e:
         print "Error copying dlls from %s to current directory. Reason: %s" % (dll_path, e,)
@@ -594,3 +606,11 @@ class awesomium_ctx(ConfigurationContext):
 
 def awesomium(ctx):
     configure(ctx, add_flags=['-DGS_AWESOMIUM=1'], rm_flags=['-DGS_AWESOMIUM=0'], awesomium=True)
+
+class awesomium_dbg_ctx(ConfigurationContext):
+    cmd = 'awedbg'
+    fun = 'awesomiumdbg'
+
+def awesomiumdbg(ctx):
+    configure(ctx, add_flags=['-DGS_AWESOMIUM=1'], rm_flags=['-DGS_AWESOMIUM=0'], awesomium=True, awesomium_debug=True)
+
