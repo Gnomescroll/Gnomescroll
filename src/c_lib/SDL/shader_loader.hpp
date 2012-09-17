@@ -113,9 +113,10 @@ class SHADER
         printf("Create shader shader and ARBs\n");
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
+        printf("Set vert source for shader ARB\n");
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
+        printf("Set frag source for shader ARB\n");
 
-        printf("Set source for shader ARB\n");
 
         glCompileShaderARB(vert_shader);
         if(DEBUG1) printShaderInfoLog(vert_shader);
