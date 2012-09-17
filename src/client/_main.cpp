@@ -39,6 +39,7 @@ void time_since(int n)
 
 }
 
+void wait_for_login();  // forward decl
 void init(int argc, char* argv[])
 {
     GS_MKDIR("./screenshot", S_IRWXU);
@@ -51,7 +52,6 @@ void init(int argc, char* argv[])
     // start authorization. waits for a valid-looking game token to be received
     #if GS_AWESOMIUM
     Auth::begin_auth();
-    void wait_for_login();  // forward decl
     wait_for_login();
     #endif
 
