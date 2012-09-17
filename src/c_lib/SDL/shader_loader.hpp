@@ -80,7 +80,7 @@ class SHADER
 
         printf("Loading shader: %s\n", this->name);
 
-        printf("PAUSE\n");
+        printf("Shader name printed\n");
 
         vs = textFileRead(vertex_shader_file);
         fs = textFileRead(fragment_shader_file);
@@ -95,60 +95,80 @@ class SHADER
             return;
         }
 
+        printf("Read shader files to buffers\n");
+
         shader = glCreateProgramObjectARB();
         vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
         frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
+        printf("Create shader program and ARBs\n");
+
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
 
+        printf("Set source for shader ARB\n");
+
         glCompileShaderARB(vert_shader);
-        if(glIsShader(vert_shader) == false && false) //debug
-        {
-            printf("vertex shader failed with error: %s \n", name);
-            printShaderInfoLog(vert_shader);
-            shader_valid = false;
-            return;
-        }
-        else
-        {
-            if(DEBUG1) printShaderInfoLog(vert_shader);
-        }
+
+        printf("Compiled vert shader\n");
+
+        //if(glIsShader(vert_shader) == false && false) //debug
+        //{
+            //printf("vertex shader failed with error: %s \n", name);
+            //printShaderInfoLog(vert_shader);
+            //shader_valid = false;
+            //return;
+        //}
+        //else
+        //{
+            //if(DEBUG1) printShaderInfoLog(vert_shader);
+        //}
 
         glCompileShaderARB(frag_shader);
-        if(glIsShader(frag_shader) == false && false) //debug
-        {
-            printf("fragment shader failed with error: %s \n", name);
-            printShaderInfoLog(frag_shader);
-            shader_valid = false;
-            return;
-        }
-        else
-        {
-            if(DEBUG1) printShaderInfoLog(frag_shader);
-        }
+        //if(glIsShader(frag_shader) == false && false) //debug
+        //{
+            //printf("fragment shader failed with error: %s \n", name);
+            //printShaderInfoLog(frag_shader);
+            //shader_valid = false;
+            //return;
+        //}
+        //else
+        //{
+            //if(DEBUG1) printShaderInfoLog(frag_shader);
+        //}
+
+        printf("Compiled frag shader\n");
 
         glAttachObjectARB(shader, vert_shader);
         glAttachObjectARB(shader, frag_shader);
 
+        printf("Attached ARBs\n");
+
         glLinkProgramARB(shader);
 
-        if(glIsShader(shader) == false && false) //debug
-        {
-            printf("shader failed with error: %s \n", name);
-            printShaderInfoLog(shader);
-            shader_valid = false;
-            return;
-        }
-        else
-        {
-            if(DEBUG1) printShaderInfoLog(shader);
-        }
+        printf("Linked shader\n");
+
+        //if(glIsShader(shader) == false && false) //debug
+        //{
+            //printf("shader failed with error: %s \n", name);
+            //printShaderInfoLog(shader);
+            //shader_valid = false;
+            //return;
+        //}
+        //else
+        //{
+            //if(DEBUG1) printShaderInfoLog(shader);
+        //}
         //if(DEBUG1) printProgramInfoLog(shader);
 
         if (shader_error_occured(shader)) shader_valid = false;
         else shader_valid = true;
+
+        printf("Shader error checked: error? %d\n", this->shader_valid);
+
         CHECK_GL_ERROR();
+
+        printf("Checked for GL ERROR\n");
     }
 
     int get_attribute(const char* attribute_name)
