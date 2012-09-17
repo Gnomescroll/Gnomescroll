@@ -112,30 +112,30 @@ class SHADER
 
         printf("Compiled vert shader\n");
 
-        //if(glIsShader(vert_shader) == false && false) //debug
-        //{
-            //printf("vertex shader failed with error: %s \n", name);
-            //printShaderInfoLog(vert_shader);
-            //shader_valid = false;
-            //return;
-        //}
-        //else
-        //{
-            //if(DEBUG1) printShaderInfoLog(vert_shader);
-        //}
+        if(glIsShader(vert_shader) == false) //debug
+        {
+            printf("vertex shader failed with error: %s \n", name);
+            printShaderInfoLog(vert_shader);
+            shader_valid = false;
+            return;
+        }
+        else
+        {
+            if(DEBUG1) printShaderInfoLog(vert_shader);
+        }
 
         glCompileShaderARB(frag_shader);
-        //if(glIsShader(frag_shader) == false && false) //debug
-        //{
-            //printf("fragment shader failed with error: %s \n", name);
-            //printShaderInfoLog(frag_shader);
-            //shader_valid = false;
-            //return;
-        //}
-        //else
-        //{
-            //if(DEBUG1) printShaderInfoLog(frag_shader);
-        //}
+        if(glIsShader(frag_shader) == false) //debug
+        {
+            printf("fragment shader failed with error: %s \n", name);
+            printShaderInfoLog(frag_shader);
+            shader_valid = false;
+            return;
+        }
+        else
+        {
+            if(DEBUG1) printShaderInfoLog(frag_shader);
+        }
 
         printf("Compiled frag shader\n");
 
@@ -148,18 +148,18 @@ class SHADER
 
         printf("Linked shader\n");
 
-        //if(glIsShader(shader) == false && false) //debug
-        //{
-            //printf("shader failed with error: %s \n", name);
-            //printShaderInfoLog(shader);
-            //shader_valid = false;
-            //return;
-        //}
-        //else
-        //{
-            //if(DEBUG1) printShaderInfoLog(shader);
-        //}
-        //if(DEBUG1) printProgramInfoLog(shader);
+        if(glIsShader(shader) == false) //debug
+        {
+            printf("shader failed with error: %s \n", name);
+            printShaderInfoLog(shader);
+            shader_valid = false;
+            return;
+        }
+        else
+        {
+            if(DEBUG1) printShaderInfoLog(shader);
+        }
+        if(DEBUG1) printProgramInfoLog(shader);
 
         if (shader_error_occured(shader)) shader_valid = false;
         else shader_valid = true;
