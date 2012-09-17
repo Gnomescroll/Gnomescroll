@@ -70,10 +70,10 @@ void init()
 {
     printf("Awesomium::init\n");
 
-    //#ifndef linux
-    //// TODO -- non default initializer
-    //awe_webcore_initialize_default();
-    //#endif
+    #ifndef linux
+    // TODO -- non default initializer
+    awe_webcore_initialize_default();
+    #else
         
     #ifdef linux
         #if PRODUCTION
@@ -126,6 +126,8 @@ void init()
 
     awe_string_destroy(log_path);
     awe_string_destroy(user_agent);
+
+    #endif
 
     const char _curdir[] = ".";
     awe_string* curdir = get_awe_string(_curdir);
