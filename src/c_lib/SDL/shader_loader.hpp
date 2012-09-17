@@ -42,7 +42,7 @@ class SHADER
         vert_shader = 0;
         
         DEBUG1 = true;
-        name = NULL;
+        this->name = NULL;
 
         attribute_index = 0;
         uniform_index = 0;
@@ -57,7 +57,7 @@ class SHADER
     {
         if(vs != NULL) free(vs);
         if(fs != NULL) free(fs);
-        if (name != NULL) delete[] name;
+        if (this->name != NULL) free(this->name);
     }
 
     void set_debug(bool value)
@@ -68,18 +68,20 @@ class SHADER
     void load_shader(const char* _name, const char* vertex_shader_file, const char* fragment_shader_file)
     {
         //set shader name
-        if(name != NULL)
+        if (this->name != NULL)
         {
-            delete[] name;
+            free(this->name);
             name = NULL;
         }
-        name = new char[strlen(_name)+1];
-        name = strcpy(name, _name);
+        size_t name_len = strlen(_name);
+        this->name = (char*)malloc((name_len+1)*sizeof(char));
+        strncpy(this->name, _name, name_len);
+        this->name[name_len] = '\0';
 
-        printf("Loading shader: %s\n", name);
+        printf("Loading shader: %s\n", this->name);
 
-        vs = textFileRead(vertex_shader_file );
-        fs = textFileRead(fragment_shader_file );
+        vs = textFileRead(vertex_shader_file);
+        fs = textFileRead(fragment_shader_file);
         GS_ASSERT(vs != NULL);
         GS_ASSERT(fs != NULL);
         if (vs == NULL || fs == NULL)
