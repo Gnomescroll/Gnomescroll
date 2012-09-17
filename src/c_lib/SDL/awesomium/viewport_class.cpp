@@ -218,14 +218,14 @@ void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, cons
 
 void change_keyboard_focus_cb(awe_webview* webView, bool is_focused)
 {
-    printf("Change keyboard focus callback: ");
-    if (is_focused) printf("is focused\n");
-    else printf("not focused\n");
+    //printf("Change keyboard focus callback: ");
+    //if (is_focused) printf("is focused\n");
+    //else printf("not focused\n");
 }
 
 void change_cursor_cb(awe_webview* webView, awe_cursor_type cursor)
 {
-    printf("Change cursor callback");
+    //printf("Change cursor callback");
 }
 
 void ChromeViewport::set_callbacks()
@@ -236,8 +236,8 @@ void ChromeViewport::set_callbacks()
     //awe_webview_set_callback_resource_response(this->webView, &resource_response_cb);
     //awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
     awe_webview_set_callback_web_view_crashed(this->webView, &web_view_crashed_cb);
-    awe_webview_set_callback_change_keyboard_focus(this->webView, &change_keyboard_focus_cb);
-    awe_webview_set_callback_change_cursor(this->webView, &change_cursor_cb);
+    //awe_webview_set_callback_change_keyboard_focus(this->webView, &change_keyboard_focus_cb);
+    //awe_webview_set_callback_change_cursor(this->webView, &change_cursor_cb);
 }
 
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
