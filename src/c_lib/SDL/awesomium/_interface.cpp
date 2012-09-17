@@ -70,64 +70,64 @@ void init()
 {
     printf("Awesomium::init\n");
 
-    awe_webcore_initialize_default();
-    
-    //#ifdef linux
-        //#if PRODUCTION
-    //const char package_path_str[] = "./lib/lin32/awesomium/release";
-        //#else
-    //const char package_path_str[] = "../lib/lin32/awesomium/release";
-        //#endif
-    //awe_string* package_path = get_awe_string(package_path_str);
-    //const char locale_path_str[] = "./locales"; // relative to the package path
-    //awe_string* locale_path = get_awe_string(locale_path_str);
-    //#else
-    //const awe_string* package_path = awe_string_empty();
-    //const awe_string* locale_path = awe_string_empty();
-    //#endif
+    //awe_webcore_initialize_default();
+        
+    #ifdef linux
+        #if PRODUCTION
+    const char package_path_str[] = "./lib/lin32/awesomium/release";
+        #else
+    const char package_path_str[] = "../lib/lin32/awesomium/release";
+        #endif
+    awe_string* package_path = get_awe_string(package_path_str);
+    const char locale_path_str[] = "./locales"; // relative to the package path
+    awe_string* locale_path = get_awe_string(locale_path_str);
+    #else
+    const awe_string* package_path = awe_string_empty();
+    const awe_string* locale_path = awe_string_empty();
+    #endif
 
-    //awe_string* log_path = get_awe_string("./screenshot");
+    awe_string* log_path = get_awe_string("./screenshot");
 
-    //awe_string* user_agent = get_awe_string(USER_AGENT);
+    awe_string* user_agent = get_awe_string(USER_AGENT);
 
-    //awe_webcore_initialize(
-        //false, //plugins
-        //true, //javascript
-        //false,  //databases
-        //package_path,   //package path
-        //locale_path,    //local path
-        //awe_string_empty(), //user data path
-        //awe_string_empty(), //plugin path
-        //log_path, // log path
-        //AWE_LL_VERBOSE, //log level
-        //false, //force single process
-        //awe_string_empty(), //child process Path,
-        //true,   // autodetect encoding
-        //awe_string_empty(), // accept language override
-        //awe_string_empty(), // default charset override
-        //user_agent, // user agent
-        //awe_string_empty(), // proxy server
-        //awe_string_empty(), // proxy config script
-        //awe_string_empty(), // auth server whitelist
-        //true,   // save cache and cookies
-        //0,      // max cache size
-        //true,  // disable same origin policy. we need this disabled to do ajax request from local to webserver
-        //false,  // disable win message pump
-        //awe_string_empty()  // custom css
-    //);
+    awe_webcore_initialize(
+        false, //plugins
+        true, //javascript
+        false,  //databases
+        package_path,   //package path
+        locale_path,    //local path
+        awe_string_empty(), //user data path
+        awe_string_empty(), //plugin path
+        log_path, // log path
+        AWE_LL_VERBOSE, //log level
+        false, //force single process
+        awe_string_empty(), //child process Path,
+        true,   // autodetect encoding
+        awe_string_empty(), // accept language override
+        awe_string_empty(), // default charset override
+        user_agent, // user agent
+        awe_string_empty(), // proxy server
+        awe_string_empty(), // proxy config script
+        awe_string_empty(), // auth server whitelist
+        true,   // save cache and cookies
+        0,      // max cache size
+        true,  // disable same origin policy. we need this disabled to do ajax request from local to webserver
+        false,  // disable win message pump
+        awe_string_empty()  // custom css
+    );
 
-    //#ifdef linux
-    //awe_string_destroy(package_path);
-    //awe_string_destroy(locale_path);
-    //#endif
+    #ifdef linux
+    awe_string_destroy(package_path);
+    awe_string_destroy(locale_path);
+    #endif
 
-    //awe_string_destroy(log_path);
-    //awe_string_destroy(user_agent);
+    awe_string_destroy(log_path);
+    awe_string_destroy(user_agent);
 
-    //const char _curdir[] = ".";
-    //awe_string* curdir = get_awe_string(_curdir);
-    //awe_webcore_set_base_directory(curdir);
-    //awe_string_destroy(curdir);
+    const char _curdir[] = ".";
+    awe_string* curdir = get_awe_string(_curdir);
+    awe_webcore_set_base_directory(curdir);
+    awe_string_destroy(curdir);
 
     GS_ASSERT(cv == NULL);
     GS_ASSERT(viewport_manager == NULL);
