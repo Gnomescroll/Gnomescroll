@@ -1286,7 +1286,7 @@ class BodyMesh
 
         }
 
-#if 0
+#if 1
         glColor4ub(255,255,255,255);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -1392,6 +1392,7 @@ class BodyMesh* body_mesh;
 
 void init()
 {
+ return;
 
     int bsize;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
@@ -1429,6 +1430,8 @@ void init()
 
 void draw()
 {
+    return;
+    
     struct Vec3 p = ClientState::location_pointer;
 
     if(ClientState::location_pointer_set == false)
