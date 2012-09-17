@@ -103,6 +103,14 @@ class SHADER
         frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
         printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
+        printf("Create shader shader and ARBs\n");
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
