@@ -79,10 +79,6 @@ class SHADER
         strncpy(this->name, _name, name_len);
         this->name[name_len] = '\0';
 
-        printf("Loading shader: %s\n", this->name);
-
-        printf("Shader name printed\n");
-
         vs = textFileRead(vertex_shader_file);
         fs = textFileRead(fragment_shader_file);
         GS_ASSERT(vs != NULL);
@@ -96,28 +92,19 @@ class SHADER
             return;
         }
 
-        printf("Read shader files to buffers\n");
-
         shader = glCreateProgramObjectARB();
-        printf("Create shader program ARB\n");
         vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-        printf("Create vert shader ARB\n");
         frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-        printf("Create frag shader ARB\n");
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
-        printf("Set vert source for shader ARB\n");
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
-        printf("Set frag source for shader ARB\n");
 
         glCompileShaderARB(vert_shader);
-        printf("Compiled vert shader\n");
         if(DEBUG1) printShaderInfoLog(vert_shader);
         if (shader_compiler_error(vert_shader)) this->shader_valid = false;
         else this->shader_valid = true;
 
         glCompileShaderARB(frag_shader);
-        printf("Compiled frag shader\n");
         if(DEBUG1) printShaderInfoLog(frag_shader);
         if (shader_compiler_error(frag_shader)) this->shader_valid = false;
         else this->shader_valid = true;
@@ -125,21 +112,13 @@ class SHADER
         glAttachObjectARB(shader, vert_shader);
         glAttachObjectARB(shader, frag_shader);
 
-        printf("Attached ARBs\n");
-
         glLinkProgramARB(shader);
         if(DEBUG1) printShaderInfoLog(shader);
-
-        printf("Linked shader\n");
 
         if (shader_linking_error(shader)) this->shader_valid = false;
         else this->shader_valid = true;
 
-        printf("Shader error checked: error? %d\n", !this->shader_valid);
-
         CHECK_GL_ERROR();
-
-        printf("Checked for GL ERROR\n");
     }
 
     int get_attribute(const char* attribute_name)

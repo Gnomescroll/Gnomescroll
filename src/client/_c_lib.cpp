@@ -368,7 +368,7 @@ int init_c_lib(int argc, char* argv[])
     //t_map::init_shaders();
     t_mob::init();
     //CHECK_GL_ERROR();
-    
+
     return 0;
 }
 
