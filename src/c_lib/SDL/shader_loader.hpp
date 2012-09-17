@@ -111,16 +111,16 @@ class SHADER
 
         glCompileShaderARB(vert_shader);
         if(DEBUG1) printShaderInfoLog(vert_shader);
-        if (shader_compiler_error(vert_shader)) shader_valid = false;
-        else shader_valid = true;
+        if (shader_compiler_error(vert_shader)) this->shader_valid = false;
+        else this->shader_valid = true;
 
         printf("Compiled vert shader\n");
 
         glCompileShaderARB(frag_shader);
         if(DEBUG1) printShaderInfoLog(frag_shader);
 
-        if (shader_compiler_error(frag_shader)) shader_valid = false;
-        else shader_valid = true;
+        if (shader_compiler_error(frag_shader)) this->shader_valid = false;
+        else this->shader_valid = true;
 
         printf("Compiled frag shader\n");
 
@@ -134,10 +134,10 @@ class SHADER
 
         printf("Linked shader\n");
 
-        if (shader_linking_error(shader)) shader_valid = false;
-        else shader_valid = true;
+        if (shader_linking_error(shader)) this->shader_valid = false;
+        else this->shader_valid = true;
 
-        printf("Shader error checked: error? %d\n", this->shader_valid);
+        printf("Shader error checked: error? %d\n", !this->shader_valid);
 
         CHECK_GL_ERROR();
 
