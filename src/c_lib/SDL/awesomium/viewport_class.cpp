@@ -275,7 +275,8 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 }
 
 // A helper macro, used in 'getWebKeyFromSDLKey'
-#define MAP_KEY(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
+//#define MAP_KEY(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
+#define MAP_KEY(a, b) case SDLK_##a: return AK_##b;
 
 // Translates an SDLKey virtual key code to an Awesomium key code
 int getWebKeyFromSDLKey(SDLKey key)
@@ -412,7 +413,8 @@ int getWebKeyFromSDLKey(SDLKey key)
     MAP_KEY(HELP, HELP)
     MAP_KEY(PRINT, SNAPSHOT)
     MAP_KEY(SYSREQ, EXECUTE)
-    default: return Awesomium::KeyCodes::AK_UNKNOWN;
+    //default: return Awesomium::KeyCodes::AK_UNKNOWN;
+    default: return AK_UNKNOWN;
     }
 }
 
