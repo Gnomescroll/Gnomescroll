@@ -11,7 +11,8 @@ void printProgramInfoLog(GLuint obj);
 void load_shaders(const char *vert, const char* frag, GLuint* prog);
 
 //returns true on error
-bool shader_error_occured(int shader);
+bool shader_linking_error(int shader);
+bool shader_compiler_error(int shader);
 
 class SHADER
 {
@@ -101,7 +102,7 @@ class SHADER
         vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
         frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
-        printf("Create shader program and ARBs\n");
+        printf("Create shader shader and ARBs\n");
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
@@ -110,10 +111,16 @@ class SHADER
 
         glCompileShaderARB(vert_shader);
         if(DEBUG1) printShaderInfoLog(vert_shader);
+        if (shader_compiler_error(vert_shader)) shader_valid = false;
+        else shader_valid = true;
+
         printf("Compiled vert shader\n");
 
         glCompileShaderARB(frag_shader);
         if(DEBUG1) printShaderInfoLog(frag_shader);
+
+        if (shader_compiler_error(frag_shader)) shader_valid = false;
+        else shader_valid = true;
 
         printf("Compiled frag shader\n");
 
@@ -127,7 +134,7 @@ class SHADER
 
         printf("Linked shader\n");
 
-        if (shader_error_occured(shader)) shader_valid = false;
+        if (shader_linking_error(shader)) shader_valid = false;
         else shader_valid = true;
 
         printf("Shader error checked: error? %d\n", this->shader_valid);
