@@ -250,6 +250,7 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 
     key_event.virtual_key_code = getWebKeyFromSDLKey(event->key.keysym.sym);
     key_event.modifiers = 0;
+    key_event.is_system_key = false;
 
     if(event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
         key_event.modifiers |= AWE_WKM_ALT_KEY;
@@ -272,8 +273,8 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
         if ((event->key.keysym.unicode & 0xFF80) == 0)
             chr = event->key.keysym.unicode & 0x7F;
 
-        memset(key_event.text, '\0', 4);
-        memset(key_event.unmodified_text, '\0', 4);
+        memset(key_event.text, '\0', sizeof(key_event.text));
+        memset(key_event.unmodified_text, '\0', sizeof(key_event.unmodified_text));
         key_event.text[0] = chr;
         key_event.unmodified_text[0] = chr;
 
