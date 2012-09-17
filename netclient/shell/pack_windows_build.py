@@ -14,6 +14,9 @@ def ensure_dir(f):
 def copyfile(s,d):
     shutil.copy2(s,d)
     
+def copyfolder(s,d):
+	shutil.copytree(s,d)
+    
 def get_version():
     with open('../src/c_lib/common/version.h') as f:
         r = f.readlines()
@@ -90,7 +93,10 @@ def run(conf):
     for dll in os.listdir(awesomium_dll_path):
         dll_src_path = os.path.join(awesomium_dll_path, dll)
         assert os.path.exists(dll_src_path)
-        copyfile(dll_src_path, os.path.join(build_path, dll))
+        if os.path.isdir(dll_src_path):
+        	copyfolder(dll_src_path, os.path.join(build_path, dll))
+        else:
+        	copyfile(dll_src_path, os.path.join(build_path, dll))
         
     # only zip and copy for production builds
     if conf != 'production':
