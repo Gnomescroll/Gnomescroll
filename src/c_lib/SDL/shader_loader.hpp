@@ -111,19 +111,16 @@ class SHADER
         printf("Set frag source for shader ARB\n");
 
         glCompileShaderARB(vert_shader);
+        printf("Compiled vert shader\n");
         if(DEBUG1) printShaderInfoLog(vert_shader);
         if (shader_compiler_error(vert_shader)) this->shader_valid = false;
         else this->shader_valid = true;
 
-        printf("Compiled vert shader\n");
-
         glCompileShaderARB(frag_shader);
+        printf("Compiled frag shader\n");
         if(DEBUG1) printShaderInfoLog(frag_shader);
-
         if (shader_compiler_error(frag_shader)) this->shader_valid = false;
         else this->shader_valid = true;
-
-        printf("Compiled frag shader\n");
 
         glAttachObjectARB(shader, vert_shader);
         glAttachObjectARB(shader, frag_shader);
