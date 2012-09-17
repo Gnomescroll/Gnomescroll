@@ -1270,7 +1270,7 @@ class BodyMesh
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-            printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
+            //printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
 
             for(int j=0; j<m->viam; j++)
             {
