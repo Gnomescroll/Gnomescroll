@@ -249,8 +249,6 @@ class ControlNodeShader
 
     void init_shader()
     {
-        return;
-        
         shader = new SHADER;
         shader->set_debug(true);
 
