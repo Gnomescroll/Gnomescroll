@@ -114,9 +114,9 @@ class SHADER
 
         if(glIsShader(vert_shader) == false) //debug
         {
-            printf("vertex shader failed with error: %s \n", name);
+            printf("%s vertex shader failed\n", this->name);
             printShaderInfoLog(vert_shader);
-            shader_valid = false;
+            this->shader_valid = false;
             return;
         }
         else
@@ -127,9 +127,9 @@ class SHADER
         glCompileShaderARB(frag_shader);
         if(glIsShader(frag_shader) == false) //debug
         {
-            printf("fragment shader failed with error: %s \n", name);
+            printf("%s fragment shader failed\n", this->name);
             printShaderInfoLog(frag_shader);
-            shader_valid = false;
+            this->shader_valid = false;
             return;
         }
         else
@@ -150,9 +150,9 @@ class SHADER
 
         if(glIsShader(shader) == false) //debug
         {
-            printf("shader failed with error: %s \n", name);
+            printf("%s linking failed\n", this->name);
             printShaderInfoLog(shader);
-            shader_valid = false;
+            this->shader_valid = false;
             return;
         }
         else
@@ -173,7 +173,7 @@ class SHADER
 
     int get_attribute(const char* attribute_name)
     {
-        if(shader_valid == false) return -1;
+        if(!this->shader_valid) return -1;
         GS_ASSERT(attribute_index < 16);
         if(attribute_index >= 16) return -1;
 
@@ -192,7 +192,7 @@ class SHADER
 
     int get_uniform(const char* uniform_name)
     {
-        if(shader_valid == false) return -1;
+        if(!this->shader_valid) return -1;
         GS_ASSERT(uniform_index < 16);
         if(uniform_index >= 16) return -1;
         int uniform = glGetUniformLocation(shader, uniform_name);
