@@ -83,9 +83,9 @@ class ChromeViewport
         this->init_webview();
         this->init_render_surface();
 
-        //this->set_callbacks();
-        //this->setup_whitelist();
-        //this->setup_javascript();
+        this->set_callbacks();
+        this->setup_whitelist();
+        this->setup_javascript();
 
         this->load_first_page();
     }
