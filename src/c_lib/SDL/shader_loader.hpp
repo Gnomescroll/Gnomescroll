@@ -99,24 +99,16 @@ class SHADER
         printf("Read shader files to buffers\n");
 
         shader = glCreateProgramObjectARB();
+        printf("Create shader program ARB\n");
         vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+        printf("Create vert shader ARB\n");
         frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
-        printf("Create shader shader and ARBs\n");
+        printf("Create frag shader ARB\n");
 
         glShaderSourceARB(vert_shader, 1, (const GLcharARB**)&vs, NULL);
         printf("Set vert source for shader ARB\n");
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
         printf("Set frag source for shader ARB\n");
-
 
         glCompileShaderARB(vert_shader);
         if(DEBUG1) printShaderInfoLog(vert_shader);
