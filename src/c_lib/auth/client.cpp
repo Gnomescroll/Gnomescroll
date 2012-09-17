@@ -85,6 +85,7 @@ void check_expiring_token()
             expiration_tick++;
             if (expiration_tick % AUTH_TOKEN_RETRY_WAIT == 0 && !refreshing_token)
             {
+                printf("Refreshing token\n");
                 Awesomium::open_token_page();
                 refreshing_token = true;
                 expiration_attempts++;
