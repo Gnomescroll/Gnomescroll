@@ -1277,9 +1277,11 @@ class BodyMesh
     
                 int index = m->via[j];
                 GS_ASSERT(index < m->viam && index >= 0);
-                if(index >= m->viam || index < 0)
-                    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
-                m->tbvl[j] = m->tbvl[index];
+                //if(index >= m->viam || index < 0)
+                //    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
+                GS_ASSERT(j < m->tvln );
+
+                m->tvl[j] = m->tbvl[index];
             }
 
         }
