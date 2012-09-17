@@ -59,11 +59,13 @@ time_t atott(const char* str)
     if (s == sizeof(long))
         return atol(str);
     else
+    #ifndef _WIN32
     if (s == sizeof(long long))
-	{
-		//return NULL;	
-		//return atoll(str);
-	}
+        return atoll(str);
+    #else
+    if (s == sizeof(__int64))
+        return _strtoui64(str, NULL, 10);
+    #endif
     GS_ASSERT_LIMIT(false, 1);
     return 0;
 }
