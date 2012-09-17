@@ -15,6 +15,8 @@ stderr.txt
 netclient/*.dll
 netclient/AwesomiumProcess
 netclient/*.exe
+netclient/locales
+netclient/locales/*
 
 server/*.dll
 server/*.exe
