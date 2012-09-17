@@ -150,7 +150,8 @@ class SHADER
     int get_attribute(const char* attribute_name)
     {
         if(shader_valid == false) return -1;
-        if(attribute_index == 16) GS_ABORT();
+        GS_ASSERT(attribute_index < 16);
+        if(attribute_index >= 16) return -1;
 
         int attribute = glGetAttribLocation(shader, attribute_name);
         if(attribute == -1)
@@ -168,7 +169,8 @@ class SHADER
     int get_uniform(const char* uniform_name)
     {
         if(shader_valid == false) return -1;
-        if(uniform_index == 16) GS_ABORT();
+        GS_ASSERT(uniform_index < 16);
+        if(uniform_index >= 16) return -1;
         int uniform = glGetUniformLocation(shader, uniform_name);
 
         if(uniform == -1)
