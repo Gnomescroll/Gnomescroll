@@ -258,10 +258,10 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
         if ((event->key.keysym.unicode & 0xFF80) == 0)
             chr = event->key.keysym.unicode & 0x7F;
 
+        memset(key_event.text, '\0', 4);
+        memset(key_event.unmodified_text, '\0', 4);
         key_event.text[0] = chr;
-        key_event.text[1] = '\0';
         key_event.unmodified_text[0] = chr;
-        key_event.unmodified_text[1] = '\0';
 
         awe_webview_inject_keyboard_event(webView, key_event);
         if (chr)
