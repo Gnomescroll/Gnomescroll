@@ -1204,7 +1204,8 @@ class BodyMesh
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-            GS_ASSERT(m != NULL);
+
+            //printf("M %02d: %s \n", i, m->mesh_name);
 
             for(int j=0; j<m->bvlm; j++)
             {
@@ -1233,18 +1234,16 @@ class BodyMesh
                 if(_print)
                     vec3_print(m->bvl[vertex_index].v);
 
-                GS_ASSERT(bone_index >= 0 && bone_index < blm);
+                GS_ASSERT(bone_index < blm);
+                GS_ASSERT(vertex_index < m->bvlm);
 
-                GS_ASSERT(vertex_index < m->bvlm && vertex_index >= 0);
-
-                if(vertex_index < m->bvlm)
-                    continue;
-
-                Vec3 _v = m->bvl[vertex_index].v;
-                struct Mat4 _m = tbone_matrix[bone_index];
-                Vec3 v = vec3_mat3_apply(_v, _m);
+                //Vec3 _v = m->bvl[vertex_index].v;
+                //struct Mat4 _m = tbone_matrix[bone_index];
+                //Vec3 v = vec3_mat3_apply(_v, _m);
                 
+                Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
 
+                //printf("\t%02d: %.02f %.02f %.02f \n", j, v.x , v.y , v.z);
                 //Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
 
                 struct Mat4 out = tbone_matrix[bone_index];
@@ -1271,6 +1270,8 @@ class BodyMesh
         {
             class BodyPartMesh* m = &ml[i];
             //printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
+            
+            //printf("M %02d: %s \n", i, m->mesh_name);
 
             for(int j=0; j<m->viam; j++)
             {
@@ -1282,6 +1283,10 @@ class BodyMesh
                 GS_ASSERT(j < m->tvln );
 
                 m->tvl[j] = m->tbvl[index];
+
+                //struct _Vertex v = m->tbvl[index];
+                //printf("\t%02d: %.02f %.02f %.02f \n", j, v.v.x , v.v.y , v.v.z);
+
             }
 
         }
@@ -1295,7 +1300,9 @@ class BodyMesh
 
         for(int i=0; i<mlm; i++)
         {
+
             class BodyPartMesh* m = &ml[i];
+            //printf("M %02d: %s \n", i, m->mesh_name);
 
             for(int j=0; j<m->tvln; j++)
             {
@@ -1303,6 +1310,8 @@ class BodyMesh
 
                 glTexCoord2f(v.ux, v.uy );
                 glVertex3f(v.v.x +x , v.v.y +y , v.v.z +z); //swap y and z
+
+                //printf("\t%02d: %.02f %.02f %.02f \n", j, v.v.x , v.v.y , v.v.z);
             }
 
         }
@@ -1392,7 +1401,6 @@ class BodyMesh* body_mesh;
 
 void init()
 {
- return;
 
     int bsize;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
@@ -1430,8 +1438,7 @@ void init()
 
 void draw()
 {
-    return;
-    
+
     struct Vec3 p = ClientState::location_pointer;
 
     if(ClientState::location_pointer_set == false)
@@ -1452,7 +1459,6 @@ void draw()
 
 void teardown()
 {
-
 if(model_loader != NULL) delete model_loader;
 if(body_mesh != NULL) delete body_mesh;
 }
