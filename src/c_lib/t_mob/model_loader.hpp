@@ -922,14 +922,18 @@ class BodyPartMesh
     {
         bvl  = NULL;
         tbvl = NULL;
-        tvl   = NULL;
+        tvl  = NULL;
         vwl  = NULL;
         via  = NULL;
     }
 
     ~BodyPartMesh()
     {
-
+        delete[] bvl;
+        delete[] tbvl;
+        delete[] tvl;
+        delete[] vwl;
+        delete[] via;
     }
 
     //assumes only one mesh per node
@@ -966,6 +970,32 @@ class BodyPartMesh
             vwl[i] = mesh->vwl[i];
     }
 };
+
+
+class BodyAnimation
+{
+    public:
+    char* animation_name;
+    float length;   //length of animation
+    
+    struct _quanterion
+    {
+        float x,y,z,w;
+    };
+
+
+    //copy these pointers over
+    char** nnl;                           //node name list
+    struct Mat4* node_mTransformation;    //node transform list, mTransformation
+    int nm;                               //node max
+
+    //bind pos 
+
+    //need to know keyframes and need to m
+    // -affected mpdes
+    // -timees
+};
+
 
 /*
     struct Node
@@ -1199,13 +1229,13 @@ class BodyMesh
 
     void draw(float x, float y, float z)
     {
-        bool _print = false;
 
+        /*
+            Move this stuff onto the mesh
+        */
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-
-            //printf("M %02d: %s \n", i, m->mesh_name);
 
             for(int j=0; j<m->bvlm; j++)
             {
@@ -1225,73 +1255,33 @@ class BodyMesh
                 float weight     = w.weight;
 
                 GS_ASSERT(vertex_index < m->bvlm);
-
-                if(vertex_index >= m->bvlm || vertex_index < 0)
-                {
-                    printf("ERROR: vertex_index= %i bvlm= %i \n", vertex_index, m->bvlm);
-                }
-
-                if(_print)
-                    vec3_print(m->bvl[vertex_index].v);
-
                 GS_ASSERT(bone_index < blm);
                 GS_ASSERT(vertex_index < m->bvlm);
-
-                //Vec3 _v = m->bvl[vertex_index].v;
-                //struct Mat4 _m = tbone_matrix[bone_index];
-                //Vec3 v = vec3_mat3_apply(_v, _m);
                 
                 Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
-
-                //printf("\t%02d: %.02f %.02f %.02f \n", j, v.x , v.y , v.z);
-                //Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
 
                 struct Mat4 out = tbone_matrix[bone_index];
                 GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
 
-            /*
-                if(_print)
-                {
-                    printf("Vertex %02d \n", index);
-                    vec3_print(bvl[index].v);
-
-                    vec3_print(v);
-                    mat4_print(boneMatrix);
-                }
-            */
                 m->tbvl[vertex_index].v.x += weight*v.x;
                 m->tbvl[vertex_index].v.y += weight*v.y;
                 m->tbvl[vertex_index].v.z += weight*v.z;
             }
         }
 
-
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-            //printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
-            
-            //printf("M %02d: %s \n", i, m->mesh_name);
-
+            GS_ASSERT(m->viam == m->tvln);
             for(int j=0; j<m->viam; j++)
             {
-    
                 int index = m->via[j];
                 GS_ASSERT(index < m->viam && index >= 0);
-                //if(index >= m->viam || index < 0)
-                //    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
-                GS_ASSERT(j < m->tvln );
-
                 m->tvl[j] = m->tbvl[index];
-
-                //struct _Vertex v = m->tbvl[index];
-                //printf("\t%02d: %.02f %.02f %.02f \n", j, v.v.x , v.v.y , v.v.z);
-
             }
 
         }
 
-#if 1
         glColor4ub(255,255,255,255);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -1300,9 +1290,7 @@ class BodyMesh
 
         for(int i=0; i<mlm; i++)
         {
-
             class BodyPartMesh* m = &ml[i];
-            //printf("M %02d: %s \n", i, m->mesh_name);
 
             for(int j=0; j<m->tvln; j++)
             {
@@ -1310,52 +1298,14 @@ class BodyMesh
 
                 glTexCoord2f(v.ux, v.uy );
                 glVertex3f(v.v.x +x , v.v.y +y , v.v.z +z); //swap y and z
-
-                //printf("\t%02d: %.02f %.02f %.02f \n", j, v.v.x , v.v.y , v.v.z);
             }
-
         }
+
         glEnd();
 
         glBindTexture(GL_TEXTURE_2D, 0);
         check_gl_error();
-#endif
 
-/*
-
-        for(int i=0; i<bvlm; i++)
-        {
-            tbvl[i].v.x += x;
-            tbvl[i].v.y += y;
-            tbvl[i].v.z += z;
-        }
-
-        for(int i=0; i<vlm; i++)
-        {
-            int index = bvll[i];
-            tvl[i] = tbvl[index];
-        }
-
-        glColor4ub(255,255,255,255);
-        glEnable(GL_TEXTURE_2D);
-
-
-        glBindTexture(GL_TEXTURE_2D, texture1);
-
-        glBegin(GL_TRIANGLES);
-        for(int i=0; i<vlm; i++)
-        {
-            struct _Vertex v = tvl[i];
-
-            glTexCoord2f(v.ux, v.uy );
-            glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
-        }
-
-        glEnd();
-        
-        glBindTexture(GL_TEXTURE_2D, 0);
-        check_gl_error();
-*/
     }
 
     unsigned int texture1;
@@ -1375,7 +1325,7 @@ class BodyMesh
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
