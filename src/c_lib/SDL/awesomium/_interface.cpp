@@ -70,8 +70,6 @@ void init()
 {
     printf("Awesomium::init\n");
 
-    //awe_webcore_initialize_default();
-        
     #ifdef linux
         #if PRODUCTION
     const char package_path_str[] = "./lib/lin32/awesomium/release";
@@ -169,7 +167,7 @@ void delete_cookie(const char* name)
 
 void delete_auth_token_cookie()
 {
-    delete_cookie(Auth::AUTH_TOKEN_COOKIE_NAME);
+    delete_cookie(Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
 }
 
 void open_url(const char* url)
@@ -251,7 +249,7 @@ char* get_auth_token()
     GS_ASSERT(cookies != NULL);
     if (cookies == NULL) return NULL;
 
-    char* token = strstr(cookies, Auth::AUTH_TOKEN_COOKIE_NAME);
+    char* token = strstr(cookies, Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
     if (token == NULL) return NULL; 
 
     int i=0;
@@ -265,7 +263,7 @@ char* get_auth_token()
 
     size_t len = strlen(token);
     char* auth_token = (char*)malloc((len+1) * sizeof(char));
-    auth_token = strcpy(auth_token, &token[strlen(Auth::AUTH_TOKEN_COOKIE_NAME) + 1]);    // copy cookie value to auth_token. offset is strlen(token_name) + strlen(=)
+    auth_token = strcpy(auth_token, &token[strlen(Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME) + 1]);    // copy cookie value to auth_token. offset is strlen(token_name) + strlen(=)
     free(cookies);
     return auth_token;
 }
@@ -299,14 +297,14 @@ char* make_cookie_expiration_string(const time_t expiration_time)
 
 void set_game_token_cookie(const char* token, time_t expiration_time)
 {   // manually set the cookie for gnomescroll game tokens
-    static const size_t prefix_len = strlen(Auth::AUTH_TOKEN_COOKIE_NAME);
+    static const size_t prefix_len = strlen(Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
     static const size_t domain_len = strlen(GNOMESCROLL_COOKIE_DOMAIN);
     const size_t token_len = strlen(token);
     char* expiration_str = make_cookie_expiration_string(expiration_time);
     const size_t expiration_len = strlen(expiration_str);
     const static char cookie_fmt[] = "%s=%s; expires=%s; domain=%s; path=/;";
     char* _cookie = (char*)malloc((sizeof(cookie_fmt) - 2*4 + prefix_len + token_len + domain_len + expiration_len) * sizeof(char));
-    sprintf(_cookie, cookie_fmt, Auth::AUTH_TOKEN_COOKIE_NAME, token, expiration_str, GNOMESCROLL_COOKIE_DOMAIN);
+    sprintf(_cookie, cookie_fmt, Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME, token, expiration_str, GNOMESCROLL_COOKIE_DOMAIN);
     free(expiration_str);
      
     awe_string* url = get_awe_string(GNOMESCROLL_URL);
