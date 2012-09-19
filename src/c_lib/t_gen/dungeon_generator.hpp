@@ -123,7 +123,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
 
 	for (int cx = 0; cx < cubes_across_room; cx++) {
     for (int cy = 0; cy < cubes_across_room; cy++) {
-    for (int cz = 0; cz < cubes_going_up - 1; cz++) {
+    for (int cz = 1; cz < cubes_going_up - 2; cz++) {
 		int need_airspace = true;
 			
 		//if (halls_wanted) {
@@ -329,22 +329,21 @@ void make_ruins(int x, int y) {
 		int floor_block = randrange(33, 40);
 		int ceil_block = randrange(33, 40);
 
-		if (rz == 0) 
-			// make floor 
-			set_region(
-				rx * cubes_across_room + x,
-				ry * cubes_across_room + y,
-				rz * cubes_going_up + 3,
-				cubes_across_room, cubes_across_room, 1, floor_block);
-		else if (rz == cubes_going_up - 1)
-			// make ceiling
-			set_region(
-				rx * cubes_across_room + x,
-				ry * cubes_across_room + y,
-				rz * cubes_going_up + 3 + cubes_going_up - 1,
-				cubes_across_room, cubes_across_room, 1, ceil_block);
-		else 
-			make_walls_or_airspace(rx, ry, rz, x, y);
+		// make floor 
+		set_region(
+			rx * cubes_across_room + x,
+			ry * cubes_across_room + y,
+			rz * cubes_going_up + 3,
+			cubes_across_room, cubes_across_room, 1, floor_block);
+		
+		// make ceiling
+		set_region(
+			rx * cubes_across_room + x,
+			ry * cubes_across_room + y,
+			rz * cubes_going_up + 3 + cubes_going_up - 1,
+			cubes_across_room, cubes_across_room, 1, ceil_block);
+		
+		make_walls_or_airspace(rx, ry, rz, x, y);
 		
 		if (opens_to(rooms[rz][ry][rx].dirs[UP], rx, ry, rz) ) 
 			make_stairs(rx, ry, rz, x, y, floor_block);
