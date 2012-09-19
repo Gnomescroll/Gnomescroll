@@ -11,7 +11,7 @@ const int ruins_across_world = 8;
 const int cubes_across_room = 16;
 const int cubes_going_up = cubes_across_room / 2;
 const int rooms_across_ruins = XMAX / ruins_across_world / cubes_across_room;
-const int rooms_going_up = 5; // levels/floors
+const int rooms_going_up = 4; // levels/floors
 const int fixed_hall_wid = cubes_across_room / 4;
 const int fixed_hall_offs = (cubes_across_room - fixed_hall_wid) / 2; // hall offset
 const int min_lip = 2; // minimum lip
@@ -44,8 +44,11 @@ struct Room {
     int y_offs;
     int wid; // width
     int dep; // depth
+    int hei; // height
+    int e_hall_hei;
     int e_hall_wid;
     int e_hall_offs; // east hall offset
+    int n_hall_hei;
     int n_hall_wid;
     int n_hall_offs; // north hall offset
 };
@@ -211,8 +214,6 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
             }
         }
 
-		//delete r;
-
 		// add 4 to all z values, to get above bedrock
 		if (need_airspace) t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, 0);
 		else               t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, wall_block);
@@ -265,12 +266,16 @@ void setup_rooms() {
 			// but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
 			int malleable_x_span = cubes_across_room - 2 /* shell of 2 walls */;
 			int malleable_y_span = cubes_across_room - 2 /* shell of 2 walls */;
+			int malleable_z_span = cubes_going_up - 2 /* shell of 2 walls */;
 			r.wid = randrange(malleable_x_span / 2, malleable_x_span);
 			r.dep = randrange(malleable_y_span / 2, malleable_y_span);
 			malleable_x_span -= r.wid;
 			malleable_y_span -= r.dep;
 			r.x_offs = 1 /* shell */ + randrange(0, malleable_x_span);
 			r.y_offs = 1 /* shell */ + randrange(0, malleable_y_span);
+
+			r.e_hall_hei = randrange(2, malleable_z_span);
+			r.n_hall_hei = randrange(2, malleable_z_span);
 
 			// now that i chose my offset, it could have eaten into MALLEABLE span, and i don't think i'm considering that here!
 			//.... shouldn't even be using that var?  i'm working within the WID/DEP space space when doing the hallways right?!
@@ -324,21 +329,23 @@ void make_ruins(int x, int y) {
 		int floor_block = randrange(33, 40);
 		int ceil_block = randrange(33, 40);
 
-		// make floor    (currently there is only a ceiling (1 cube thickness) between ruins floors....should be easy to fix, but more important stuff to do for now)
-		//set_region(
-		//	rx * cubes_across_room + x,
-		//	ry * cubes_across_room + y,
-		//	rz * cubes_going_up + 3,
-		//	cubes_across_room, cubes_across_room, 1, floor_block);
+		if (rz == 0) 
+			// make floor 
+			set_region(
+				rx * cubes_across_room + x,
+				ry * cubes_across_room + y,
+				rz * cubes_going_up + 3,
+				cubes_across_room, cubes_across_room, 1, floor_block);
+		else if (rz == cubes_going_up - 1)
+			// make ceiling
+			set_region(
+				rx * cubes_across_room + x,
+				ry * cubes_across_room + y,
+				rz * cubes_going_up + 3 + cubes_going_up - 1,
+				cubes_across_room, cubes_across_room, 1, ceil_block);
+		else 
+			make_walls_or_airspace(rx, ry, rz, x, y);
 		
-		// make ceiling
-		set_region(
-			rx * cubes_across_room + x,
-			ry * cubes_across_room + y,
-			rz * cubes_going_up + 3 + cubes_going_up,
-			cubes_across_room, cubes_across_room, 1, ceil_block);
-		
-		make_walls_or_airspace(rx, ry, rz, x, y);
 		if (opens_to(rooms[rz][ry][rx].dirs[UP], rx, ry, rz) ) 
 			make_stairs(rx, ry, rz, x, y, floor_block);
     }
