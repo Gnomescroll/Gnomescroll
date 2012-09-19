@@ -188,6 +188,15 @@ void js_save_password_callback(awe_webview* webView, const awe_string* _obj_name
     free(password);
 }
 
+void js_save_remember_password_settings_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    const awe_jsvalue* vremember = awe_jsarray_get_element(_args, 0);
+    if (vremember == NULL) return;
+
+    bool remember = awe_jsvalue_to_boolean(vremember);
+    save_remember_password_setting(remember);
+}
+
 void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     char* cb = get_str_from_awe(_cb_name);
@@ -211,6 +220,9 @@ void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, cons
     else
     if (strcmp(cb, JS_CB_SAVE_PASSWORD_NAME) == 0)
         js_save_password_callback(webView, _obj_name, _cb_name, _args);
+    else
+    if (strcmp(cb, JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME) == 0)
+        js_save_remember_password_settings_callback(webView, _obj_name, _cb_name, _args);
     else
         printf("Unhandled javascript callback triggered: %s\n", cb);
     free(cb);

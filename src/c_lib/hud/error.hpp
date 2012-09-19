@@ -126,6 +126,7 @@ bool update_error_text(class HudText::Text* t)
 
 void error_init()
 {
+    GS_ASSERT(GS_ERROR_VERSION_MISMATCH < N_GSERRORS);
 }
 
 void error_teardown()

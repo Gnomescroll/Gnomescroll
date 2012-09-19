@@ -52,7 +52,9 @@ void set_game_token_cookie(const char* _token, time_t expiration_time);
 
 void save_username(const char* username);
 void save_password(const char* password);
+void save_remember_password_setting(bool remember);
 void get_credentials(char** _username, char** _password);   // MUST FREE THE RESULTS
+bool get_remember_password_setting();
 
 }   // Awesomium
 
