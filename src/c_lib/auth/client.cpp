@@ -169,7 +169,7 @@ void token_was_denied()
 
 void check_should_load_token()
 {
-    if (should_request_token && Awesomium::login_page_loaded)
+    if (should_request_token && Awesomium::login_page_loaded())
     {
         Awesomium::open_token_page();
         should_request_token = false;

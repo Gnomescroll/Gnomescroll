@@ -81,7 +81,7 @@ void finish_loading_cb(awe_webview* webView)
     awe_string_destroy(_url);
 
     if (str_ends_with(url, GNOMESCROLL_LOGIN_HTML))
-        login_page_loaded = true;
+        _login_page_loaded = true;
     
     free(url);
 }

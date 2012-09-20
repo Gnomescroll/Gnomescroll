@@ -28,11 +28,6 @@ void add_player_to_chat(int client_id)
 
 void remove_player_from_chat(int client_id)
 {
-    Agent_state* a = ServerState::agent_list->get(client_id);
-    if (a==NULL) {
-        printf("WARNING ServerState::remove_player_from_chat -- id %d does not have an agent\n", client_id);
-        return;
-    }
     chat_server->player_quit(client_id);
 }
 

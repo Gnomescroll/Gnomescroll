@@ -168,24 +168,6 @@ namespace ServerState
 
     }
         
-    //move somewhere
-    void send_disconnect_notice(int client_id)
-    {
-        Agent_state* a = NetServer::agents[client_id];
-        char* name;
-        if (a == NULL)
-        {
-            printf("agent was already destroyed\n");
-            name = (char*)"";
-        }
-        else
-            name = a->status.name;
-        client_disconnected_StoC msg;
-        msg.id = client_id;
-        strcpy(msg.name, name);
-        msg.broadcast();
-    }
-
     // TODO -- move this test/convenince method
     void spawn_items(int n)
     {
@@ -222,13 +204,5 @@ namespace ServerState
             physics->set_position(position);
             Objects::ready(obj);
         }
-    }
-
-    void agent_disconnect(int agent_id)
-    {
-        remove_player_from_chat(agent_id);
-        send_disconnect_notice(agent_id);
-        agent_list->destroy(agent_id);
-        Components::owner_component_list->revoke(agent_id);
     }
 }   // ServerState

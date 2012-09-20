@@ -69,7 +69,6 @@ void NetPeerManager::init(int client_id)
  */
 void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const char* username)
 {
-    
     // assume arguments are valid. should have been verified by the auth token parser
 
     GS_ASSERT(this->inited);
@@ -83,6 +82,7 @@ void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const c
     if (this->loaded) return;
 
     this->user_id = user_id;
+    strcpy(this->username, username);
     
     // move peer from staging to active pool
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
@@ -138,12 +138,24 @@ void NetPeerManager::teardown()
         Item::agent_quit(a->id);    // unsubscribes agent from all item
         a->status.die();
         ItemContainer::agent_quit(a->id);
+        Components::owner_component_list->revoke(a->id);
+        ServerState::agent_list->destroy(a->id);
     }
-    
-    ServerState::agent_disconnect(this->client_id);
+    if (this->loaded)
+    {
+        remove_player_from_chat(this->client_id);
+        this->broadcast_disconnect();
+    }
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
 }
 
+void NetPeerManager::broadcast_disconnect()
+{
+    client_disconnected_StoC msg;
+    msg.id = this->client_id;
+    strcpy(msg.name, this->username);
+    msg.broadcast();
+}
 
 bool NetPeerManager::failed_to_authorize()
 {
@@ -171,10 +183,11 @@ NetPeerManager::NetPeerManager() :
     authorized(false),
     connection_time(utc_now()),
     auth_expiration(0),
-    username(NULL),
     user_id(0),
     auth_attempts(0)
-{}
+{
+    memset(this->username, 0, sizeof(this->username));
+}
 
 NetPeerManager::~NetPeerManager()
 {

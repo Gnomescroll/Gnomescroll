@@ -26,7 +26,11 @@ namespace Awesomium
 class ChromeViewport* cv = NULL;
 class ViewportManager* viewport_manager = NULL;
 
-bool login_page_loaded = false;
+static bool _login_page_loaded = false;
+bool login_page_loaded()
+{
+    return _login_page_loaded;
+}
 
 void handle_mouse_event(int x, int y, int button, int event_type)
 {

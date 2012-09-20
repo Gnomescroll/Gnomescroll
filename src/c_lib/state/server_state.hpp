@@ -39,8 +39,5 @@ namespace ServerState
         bool suicidal=true
     );
 
-    void agent_disconnect(int client_id);
-
     void spawn_monsters(ObjectType type, int n);
-    
 }   // ServerState
