@@ -49,6 +49,9 @@ void init(int argc, char* argv[])
 
     _START_CLOCK(); // must start before networking
 
+    // queue version packet, so it is sent first
+    ClientState::send_version();
+    
     // start authorization. waits for a valid-looking game token to be received
     #if GS_AWESOMIUM
     Auth::begin_auth();

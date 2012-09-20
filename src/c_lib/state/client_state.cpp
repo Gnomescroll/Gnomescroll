@@ -122,24 +122,15 @@ void send_ping()
     msg2.send();
 }
 
-//void set_desired_name(char* name)
-//{
-    //if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
-        //name[PLAYER_NAME_MAX_LENGTH] = '\0';
-
-    //strcpy(desired_name, name);
-//}
-
-//void client_id_received(int client_id)
-//{
-    ////send_identify_packet(desired_name);
-//}
-
-void on_connect()
+void send_version()
 {
     version_CtoS msg;
     msg.version = GS_VERSION;
     msg.send();
+}
+
+void on_connect()
+{
     // connect message is printed after version match
 }
 
