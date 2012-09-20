@@ -476,6 +476,11 @@ class ChromeViewport
                     free(token);
                 }
             }
+            else
+            if (key == SDLK_EQUALS)
+            {
+                open_token_page();
+            }
             #endif
         }
     }

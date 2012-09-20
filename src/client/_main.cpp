@@ -165,7 +165,7 @@ int physics_tick()
 
         ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
 
-        Auth::check_expiring_token();   // put it in the physics tick because i want a fixed time counter
+        Auth::update();   // put it in the physics tick because i want a fixed time counter
 
         _SET_LAST_TICK();
     }
@@ -393,12 +393,14 @@ void draw_tick()
             glEnable(GL_DEPTH_TEST);
         }
         else
+        {
             t_hud::draw();
+            Hud::draw_error_status();
+        }
 
         if (input_state.vbo_debug)
             t_map::draw_vbo_debug(400, 400);
 
-        Hud::draw_error_status();
         
         CHECK_GL_ERROR();  //check error after hud rendering
     }

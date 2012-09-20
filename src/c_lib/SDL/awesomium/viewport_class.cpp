@@ -76,6 +76,14 @@ void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_st
 
 void finish_loading_cb(awe_webview* webView)
 {
+    awe_string* _url = awe_webview_get_url(webView);
+    char* url = get_str_from_awe(_url);
+    awe_string_destroy(_url);
+
+    if (str_ends_with(url, GNOMESCROLL_LOGIN_HTML))
+        login_page_loaded = true;
+    
+    free(url);
 }
 
 awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request)
@@ -153,7 +161,10 @@ void js_login_required_callback(awe_webview* webView, const awe_string* _obj_nam
         chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
         chat_client->send_system_message(Hud::open_login_text);
     }
-    Hud::set_prompt(Hud::open_login_text);
+    if (!Auth::has_authorized_once)
+        enable_awesomium();
+    else
+        Hud::set_prompt(Hud::open_login_text);
 }
 
 void js_save_username_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
@@ -244,7 +255,7 @@ void ChromeViewport::set_callbacks()
 {
     //awe_webview_set_callback_begin_navigation(this->webView, &begin_navigation_cb);
     //awe_webview_set_callback_begin_loading(this->webView, &begin_loading_cb);
-    //awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
+    awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
     //awe_webview_set_callback_resource_response(this->webView, &resource_response_cb);
     //awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
     awe_webview_set_callback_web_view_crashed(this->webView, &web_view_crashed_cb);

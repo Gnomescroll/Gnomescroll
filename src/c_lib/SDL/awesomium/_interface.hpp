@@ -14,6 +14,8 @@ const char USER_AGENT[] = _BASE_USER_AGENT " Gnomescroll/" STR(GS_VERSION);
 extern class ChromeViewport* cv;
 extern class ViewportManager* viewport_manager;
 
+extern bool login_page_loaded;
+
 void init();
 void teardown();
 void update();

@@ -26,6 +26,8 @@ namespace Awesomium
 class ChromeViewport* cv = NULL;
 class ViewportManager* viewport_manager = NULL;
 
+bool login_page_loaded = false;
+
 void handle_mouse_event(int x, int y, int button, int event_type)
 {
     viewport_manager->handle_mouse_event(x,y,button,event_type);
@@ -133,10 +135,6 @@ void init()
     cv = new ChromeViewport;
     viewport_manager = new ViewportManager;
     viewport_manager->add_viewport(cv);
-
-    char* cookies = get_cookies();
-    printf("COOKIES: %s\n", cookies);
-    free(cookies);
 }
 
 void teardown()

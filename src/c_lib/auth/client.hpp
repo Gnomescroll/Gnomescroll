@@ -16,6 +16,7 @@ extern char* auth_token_hash;
 extern char* auth_token_username;
 
 extern bool authorized;
+extern bool has_authorized_once;
 extern bool needs_login;
 extern bool refreshing_token;
 extern bool token_failure;
