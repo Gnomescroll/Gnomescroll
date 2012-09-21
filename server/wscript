@@ -45,6 +45,12 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
     OS = platform.system()
     conf.env.os = OS
 
+    prodflag = '-DPRODUCTION='
+    if production:
+        prodflag += '1'
+    else:
+        prodflag += '0'
+
     #conf.check_tool('gcc')
     conf.check_tool('g++')
 
@@ -75,6 +81,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
         '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
+        prodflag,
         #'-DGS_VERSION=%d' % (version,),
     ]
 
@@ -307,7 +314,8 @@ class production_ctx(ConfigurationContext):
     fun = 'production'
 
 def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
+    #configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm, production=True)
     
 class production_dbg_ctx(ConfigurationContext):
     cmd = 'production_dbg'

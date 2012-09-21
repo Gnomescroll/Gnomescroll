@@ -13,11 +13,10 @@ void verify_item_dat();
 void load_item_dat()
 {
     start_item_dat();
-    int i0 = texture_alias("media/sprites/item/i00.png");
-    int i1 = texture_alias("media/sprites/item/i01.png");
-    //int i2 = texture_alias("media/sprites/item/i02.png");
-
-    int p0 = texture_alias("media/sprites/item/p00.png");
+    int i0 = texture_alias("./media/sprites/item/i00.png");
+    int i1 = texture_alias("./media/sprites/item/i01.png");
+    int p0 = texture_alias("./media/sprites/item/p00.png");
+    //int i2 = texture_alias("./media/sprites/item/i02.png");
 
     item_def(0, IG_ERROR, "error_item");
     s.pretty_name = (char*) "Error";
@@ -461,7 +460,7 @@ void load_item_dat()
     s.pretty_name = (char*) "Crystal";
     s.max_stack_size = 16;
 
-	item_def(72, IG_MECH_PLACER, "acadia_seed");
+    item_def(72, IG_MECH_PLACER, "acadia_seed");
     sprite_def(p0, 1,2);
     s.mech_type_id = t_mech::get_mech_type_id("acadia_flower");
     s.pretty_name = (char*) "Acadia Seed";
@@ -478,7 +477,7 @@ void load_item_dat()
     s.pretty_name = (char*) "Blob Seed";
     s.max_stack_size = 64;
 
-	end_item_dat(); // finalize
+    end_item_dat(); // finalize
     
     verify_item_dat();
 }

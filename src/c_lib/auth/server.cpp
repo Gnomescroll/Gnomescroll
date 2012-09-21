@@ -27,6 +27,7 @@ void load_secret_key()
         return;
     }
     secret_key_str = strip_whitespace(buf);
+    GS_ASSERT(strlen(secret_key_str) == 128);
     secret_key = hexstr_to_char(secret_key_str);
     free(buf);
 }

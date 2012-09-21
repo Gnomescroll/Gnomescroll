@@ -1248,11 +1248,11 @@ void key_state_handler(Uint8 *keystate, int numkeys)
         SkeletonEditor::key_state_handler(keystate, numkeys);
         return;
     }
-    
+
     char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
     f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
     
-    if (!input_state.chat)
+    if (!input_state.chat && !input_state.awesomium)
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
             agent_key_state_handler(keystate, numkeys, &f, &b, &l, &r, &jet, &jump, &crouch, &boost, &m1, &m2, &m3);

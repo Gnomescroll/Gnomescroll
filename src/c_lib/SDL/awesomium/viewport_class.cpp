@@ -76,6 +76,14 @@ void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_st
 
 void finish_loading_cb(awe_webview* webView)
 {
+    awe_string* _url = awe_webview_get_url(webView);
+    char* url = get_str_from_awe(_url);
+    awe_string_destroy(_url);
+
+    if (str_ends_with(url, GNOMESCROLL_LOGIN_HTML))
+        _login_page_loaded = true;
+    
+    free(url);
 }
 
 awe_resource_response* resource_request_cb(awe_webview* webView, awe_resource_request* request)
@@ -153,7 +161,10 @@ void js_login_required_callback(awe_webview* webView, const awe_string* _obj_nam
         chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
         chat_client->send_system_message(Hud::open_login_text);
     }
-    Hud::set_prompt(Hud::open_login_text);
+    if (!Auth::has_authorized_once)
+        enable_awesomium();
+    else
+        Hud::set_prompt(Hud::open_login_text);
 }
 
 void js_save_username_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
@@ -188,6 +199,15 @@ void js_save_password_callback(awe_webview* webView, const awe_string* _obj_name
     free(password);
 }
 
+void js_save_remember_password_settings_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    const awe_jsvalue* vremember = awe_jsarray_get_element(_args, 0);
+    if (vremember == NULL) return;
+
+    bool remember = awe_jsvalue_to_boolean(vremember);
+    save_remember_password_setting(remember);
+}
+
 void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     char* cb = get_str_from_awe(_cb_name);
@@ -212,18 +232,35 @@ void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, cons
     if (strcmp(cb, JS_CB_SAVE_PASSWORD_NAME) == 0)
         js_save_password_callback(webView, _obj_name, _cb_name, _args);
     else
+    if (strcmp(cb, JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME) == 0)
+        js_save_remember_password_settings_callback(webView, _obj_name, _cb_name, _args);
+    else
         printf("Unhandled javascript callback triggered: %s\n", cb);
     free(cb);
+}
+
+void change_keyboard_focus_cb(awe_webview* webView, bool is_focused)
+{
+    //printf("Change keyboard focus callback: ");
+    //if (is_focused) printf("is focused\n");
+    //else printf("not focused\n");
+}
+
+void change_cursor_cb(awe_webview* webView, awe_cursor_type cursor)
+{
+    //printf("Change cursor callback");
 }
 
 void ChromeViewport::set_callbacks()
 {
     //awe_webview_set_callback_begin_navigation(this->webView, &begin_navigation_cb);
     //awe_webview_set_callback_begin_loading(this->webView, &begin_loading_cb);
-    //awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
+    awe_webview_set_callback_finish_loading(this->webView, &finish_loading_cb);
     //awe_webview_set_callback_resource_response(this->webView, &resource_response_cb);
     //awe_webview_set_callback_resource_request(this->webView, &resource_request_cb);
     awe_webview_set_callback_web_view_crashed(this->webView, &web_view_crashed_cb);
+    //awe_webview_set_callback_change_keyboard_focus(this->webView, &change_keyboard_focus_cb);
+    //awe_webview_set_callback_change_cursor(this->webView, &change_cursor_cb);
 }
 
 void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
@@ -236,6 +273,7 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 
     key_event.virtual_key_code = getWebKeyFromSDLKey(event->key.keysym.sym);
     key_event.modifiers = 0;
+    key_event.is_system_key = false;
 
     if(event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
         key_event.modifiers |= AWE_WKM_ALT_KEY;
@@ -258,10 +296,10 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
         if ((event->key.keysym.unicode & 0xFF80) == 0)
             chr = event->key.keysym.unicode & 0x7F;
 
+        memset(key_event.text, '\0', sizeof(key_event.text));
+        memset(key_event.unmodified_text, '\0', sizeof(key_event.unmodified_text));
         key_event.text[0] = chr;
-        key_event.text[1] = '\0';
         key_event.unmodified_text[0] = chr;
-        key_event.unmodified_text[1] = '\0';
 
         awe_webview_inject_keyboard_event(webView, key_event);
         if (chr)
@@ -275,7 +313,8 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 }
 
 // A helper macro, used in 'getWebKeyFromSDLKey'
-#define MAP_KEY(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
+//#define MAP_KEY(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
+#define MAP_KEY(a, b) case SDLK_##a: return AK_##b;
 
 // Translates an SDLKey virtual key code to an Awesomium key code
 int getWebKeyFromSDLKey(SDLKey key)
@@ -412,7 +451,8 @@ int getWebKeyFromSDLKey(SDLKey key)
     MAP_KEY(HELP, HELP)
     MAP_KEY(PRINT, SNAPSHOT)
     MAP_KEY(SYSREQ, EXECUTE)
-    default: return Awesomium::KeyCodes::AK_UNKNOWN;
+    //default: return Awesomium::KeyCodes::AK_UNKNOWN;
+    default: return AK_UNKNOWN;
     }
 }
 

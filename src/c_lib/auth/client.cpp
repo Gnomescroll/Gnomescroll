@@ -17,11 +17,14 @@ char* auth_token_username = NULL;
 static int token_retries = 0;
 
 bool authorized = false;
+bool has_authorized_once = false;
 bool needs_login = false;
 bool refreshing_token = false;
 bool token_failure = false;
 
 bool token_available = false;   // becomes true after first time token exists and appears valid
+
+static bool should_request_token = false;
 
 bool send_auth_token()
 {
@@ -85,6 +88,7 @@ void check_expiring_token()
             expiration_tick++;
             if (expiration_tick % AUTH_TOKEN_RETRY_WAIT == 0 && !refreshing_token)
             {
+                printf("Refreshing token\n");
                 Awesomium::open_token_page();
                 refreshing_token = true;
                 expiration_attempts++;
@@ -142,6 +146,7 @@ void token_was_accepted()
 {
     token_retries = 0;   // reset retry counter
     authorized = true;
+    has_authorized_once = true;
     needs_login = false;
     Hud::unset_error_status(GS_ERROR_NEEDS_LOGIN);
     Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
@@ -154,9 +159,27 @@ void token_was_denied()
 {   // request new token from auth server
     authorized = false;
     Hud::set_error_status(GS_ERROR_AUTH_FAILED);
-    if (token_retries == 0) printf("Token denied\n");
+    if (token_retries == 0)
+    {
+        printf("Token denied\n");
+        should_request_token = true;        
+    }
     token_retries++;
-    Awesomium::open_token_page();   // try once more, fresh from the auth server
+}
+
+void check_should_load_token()
+{
+    if (should_request_token && Awesomium::login_page_loaded())
+    {
+        Awesomium::open_token_page();
+        should_request_token = false;
+    }
+}
+
+void update()
+{
+    check_should_load_token();
+    check_expiring_token();
 }
 
 void client_init()

@@ -33,7 +33,7 @@ typedef enum
 #define GNOMESCROLL_COOKIE_DOMAIN "127.0.0.1"
 #endif
 
-#define GNOMESCROLL_LOGIN_HTML "./media/web/html/login.html"
+#define GNOMESCROLL_LOGIN_HTML "media/web/html/login.html"
 
 #define GNOMESCROLL_CREATE_PATH "/create"
 #define GNOMESCROLL_LOGIN_PATH  "/login"
@@ -46,6 +46,11 @@ typedef enum
 const int AUTH_TOKEN_RETRY_WAIT = 15 * 30;   // wait 15 seconds between each attempt to get a new token
 const int AUTH_MAX_CLIENT_ATTEMPTS = 100;
 
+#if PRODUCTION
+const char AUTH_TOKEN_LOCAL_COOKIE_NAME[] = "gstoken";    // name of the cookie value saved locally
+#else
+const char AUTH_TOKEN_LOCAL_COOKIE_NAME[] = "dbggstoken";    // name of the cookie value saved locally
+#endif
 const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";    // name of the cookie value set by the auth server
 const char AUTH_TOKEN_DELIMITER = '|';  // delimiter for components of the token
 

@@ -99,7 +99,7 @@ dont_include_this_file_in_server
 #include <SDL/texture_sheet_loader.cpp>
 #include <SDL/draw_functions.cpp>
 #include <SDL/particle_functions.c>
-#include <SDL/SDL_functions.c>
+#include <SDL/SDL_functions.cpp>
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
@@ -266,6 +266,8 @@ int init_c_lib(int argc, char* argv[])
     GS_ASSERT(ret == 0);
     #endif
 
+    _test_common();
+
     create_path("./screenshot/");
     Log::init();
     printf("init c_lib\n");
@@ -298,31 +300,21 @@ int init_c_lib(int argc, char* argv[])
 
     init_image_loader();
     TextureSheetLoader::init();
-    //printf("Checkpoint 1 \n");
-
-    t_map::init_t_map();
-    //printf("Checkpoint 2 \n");
-    HudCubeSelector::init();
-    //printf("Checkpoint 3 \n");
-    //lua_load_block_dat();  /* Load Block Dat */
-    t_map::load_block_dat();
-
-    //printf("Checkpoint 4 \n");
-    t_map::init_for_draw();
-
-    t_map::blit_block_item_sheet();
-    //printf("Checkpoint 5 \n");
 
     HudText::init();
-    HudFont::init();
     HudMap::init();
-    //exit(0);
-
+    HudFont::init();
+    HudCubeSelector::init();
+    
+    t_map::init_t_map();
+    t_map::load_block_dat();
+    t_map::init_for_draw();
+    t_map::blit_block_item_sheet();
+    
     Item::init();
     ItemContainer::init();
     Item::init_properties();
     
-    //t_map::load_map_dat();
     t_mech::init();
     t_mech::load_mech_dat();
 
@@ -378,6 +370,7 @@ int init_c_lib(int argc, char* argv[])
     //t_map::init_shaders();
     t_mob::init();
     //CHECK_GL_ERROR();
+
     return 0;
 }
 

@@ -4,6 +4,8 @@ $(document).ready(function()
 // set saved credentials
 $('input#username_or_email').val(Gnomescroll.gs_username);
 $('input#password').val(Gnomescroll.gs_pass);
+if (Gnomescroll.remember_password)
+    $('input#remember_password').attr('checked', 'checked');
 
 function successful_login(data)
 {   // record parsed json object
@@ -66,6 +68,7 @@ $('form#login').submit(function(e)
     if (!$('input#remember_password').prop('checked'))
         password = '';  // will clear the password
     Gnomescroll.save_password(password);
+    Gnomescroll.save_remember_password_setting(!!$('input#remember_password').prop('checked'));
     
     return false;
 });

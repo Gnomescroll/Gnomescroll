@@ -42,6 +42,8 @@ void teardown_lists();
 void on_connect();
 void on_disconnect();
 
+void send_version();
+
 void update_camera();
 void send_camera_state();
 

@@ -28,8 +28,8 @@ options.system_message_b = 50
 
 -- sound settings --
 options.sound = true
-options.sfx = 100
-options.music = 100
+options.sfx = 50
+options.music = 50
 
 -- graphics --
 options.view_distance = 128;    -- capped at 128

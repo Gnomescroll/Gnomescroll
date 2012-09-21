@@ -25,6 +25,7 @@ const char JS_OBJ_DEBUG_NAME[] = "DEBUG";
 const char JS_OBJ_TOKEN_NAME_NAME[] = "token_name";
 const char JS_OBJ_USERNAME_NAME[] = "gs_username";
 const char JS_OBJ_PASSWORD_NAME[] = "gs_pass";
+const char JS_OBJ_REMEMBER_PASSWORD_NAME[] = "remember_password";
 
 // js -> C callbacks (registered on the Gnomescroll object)
 const char JS_CB_SET_MESSAGE_NAME[] = "set_message";
@@ -34,6 +35,7 @@ const char JS_CB_TOKEN_FAILURE_NAME[] = "token_failure";
 const char JS_CB_LOGIN_REQUIRED_NAME[] = "login_required";
 const char JS_CB_SAVE_USERNAME_NAME[] = "save_username";
 const char JS_CB_SAVE_PASSWORD_NAME[] = "save_password";
+const char JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME[] = "save_remember_password_setting";
 
 // C -> js callbacks (not registered, but defined in the js)
 const char JS_CB_OPEN_TOKEN_PAGE_NAME[] = "gs_get_token";
@@ -167,6 +169,8 @@ class ChromeViewport
         }
         else
             this->set_js_value(JS_OBJ_USERNAME_NAME, "");
+
+        this->set_js_value(JS_OBJ_REMEMBER_PASSWORD_NAME, get_remember_password_setting());
         
         // set some null values on the object
         this->set_js_value(JS_OBJ_LOGIN_ERROR_NAME);
@@ -182,6 +186,7 @@ class ChromeViewport
         this->register_js_callback(JS_CB_LOGIN_REQUIRED_NAME);
         this->register_js_callback(JS_CB_SAVE_USERNAME_NAME);
         this->register_js_callback(JS_CB_SAVE_PASSWORD_NAME);
+        this->register_js_callback(JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME);
         
         // callbacks for error handling
         awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);
@@ -470,6 +475,11 @@ class ChromeViewport
                     printf("Token: %s\n", token);
                     free(token);
                 }
+            }
+            else
+            if (key == SDLK_EQUALS)
+            {
+                open_token_page();
             }
             #endif
         }

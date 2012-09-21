@@ -62,35 +62,26 @@ class CONTROL_NODE_LIST
     void remove_control_node(int x, int y, int z)
     {
         //needs_update = true;
-
-        for(int i=0; i<cpi; i++)
-        {
-            if(x==cpa[i].x && y==cpa[i].y && z==cpa[i].z)
+        for (int i=0; i<cpi; i++)
+            if (x==cpa[i].x && y==cpa[i].y && z==cpa[i].z)
             {
                 cpa[i] = cpa[cpi-1];
                 cpi--;
                 GS_ASSERT(cpi >= 0);
             }
-        }
-
-        printf("Error: tried to remove control point that does not exist!\n");
-        GS_ABORT(); //should never reach this point
+        GS_ASSERT(false);
     }
 
 
     bool control_node_in_range_check(int x, int y, int z)
     {
-        for(int i=0; i<cpi; i++)
-        {
-            if( abs(x-cpa[i].x) <= 6 && abs(y-cpa[i].y) <= 6 && abs(z-cpa[i].z) <= 6 )  
+        for (int i=0; i<cpi; i++)
+            if (abs(x-cpa[i].x) <= 6 && abs(y-cpa[i].y) <= 6 && abs(z-cpa[i].z) <= 6)  
                 return true;
-        }
-
         return false;
     }
 
-#if DC_SERVER
-
+    #if DC_SERVER
     void send_control_nodes_to_client(int client_id)
     {
         for(int i=0; i<cpi; i++)
@@ -125,8 +116,7 @@ class CONTROL_NODE_LIST
         p.z = z;
         p.broadcast();
     }
-
-#endif
+    #endif
 
 };
 
@@ -245,7 +235,7 @@ class ControlNodeShader
     unsigned int Brightness;
 
     ControlNodeShader()
-    : s(NULL), shader(NULL)
+    : s(NULL), texture1(0), shader(NULL)
     {
         init_texture();
         init_shader();
@@ -266,17 +256,27 @@ class ControlNodeShader
             "./media/shaders/effect/control_node.vsh",
             "./media/shaders/effect/control_node.fsh" );
 
+        printf("Shader loaded\n");
+
         CameraPosition =    shader->get_uniform("CameraPosition");
 
+        printf("Got cam position\n");
 
         TexCoord    =       shader->get_attribute("InTexCoord");
+
+        printf("Got tex coord\n");
+
         Brightness  =       shader->get_attribute("InBrightness");
+
+        printf("Got brightness\n");
     }
 
     void init_texture()
     {
         s = create_surface_from_file("./media/sprites/mech/territory_00.png");
-
+        GS_ASSERT(s != NULL);
+        if (s == NULL) return;
+        
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &texture1);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -740,6 +740,5 @@ void ControlNodeRenderer::control_node_render_update()
 
 #endif
 
-
-}
+}   // t_map
 

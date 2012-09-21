@@ -2,7 +2,7 @@
 
 #include <libnoise/noise.h>
 #include <SDL/draw_functions.h>
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 #include <SDL/pngfuncs.h>
 
 namespace vn {

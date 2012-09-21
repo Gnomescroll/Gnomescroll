@@ -330,9 +330,8 @@ def build(bld):
     sound_libraries = []
     common_libraries = []
     debug_libs = []
-    #if bld.env.awesomium and not bld.env.production:
-        # we cant valgrind so try this
-        #debug_libs.append('efence')   
+
+    #debug_libs.append('efence')   
     
     #lua_libraries = ['lua5.1'] #['luajit51'] #['lua50']
     #lua_libraries = ['luajit51']
@@ -428,12 +427,12 @@ def install_bin(ctx):
                 shutil.copy2(src_dll, dst_dll)
             awe_dll_path = '../lib/win32/awesomium/bin/%s/' % (ctx.env.awe_stem,)
             for f in os.listdir(awe_dll_path):
-            	if f == 'locales':
-            	    _path = os.path.join(awe_dll_path, f)
+                if f == 'locales':
+                    _path = os.path.join(awe_dll_path, f)
                     for loc in os.listdir(_path):
                         shutil.copy2(os.path.join(_path, loc), os.path.join('./%s' % (f,), loc))
-            	else:
-            	    shutil.copy2(os.path.join(awe_dll_path, f), os.path.join('./', f))
+                else:
+                    shutil.copy2(os.path.join(awe_dll_path, f), os.path.join('./', f))
             print "Copied dlls to current directory"
     except Exception, e:
         print "Error copying dlls from %s to current directory. Reason: %s" % (dll_path, e,)

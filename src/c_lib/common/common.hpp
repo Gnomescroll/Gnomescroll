@@ -86,6 +86,7 @@ inline bool is_strict_char(const char c)
 bool str_starts_with(const char* str, const char* match)
 {
     if (match[0] == '\0') return true;
+    if (str[0] == '\0') return false;
     int i=0;
     char c = '\0';
     char d = '\0';
@@ -95,4 +96,36 @@ bool str_starts_with(const char* str, const char* match)
         i++;
     }
     return (match[i] == '\0');
+}
+
+bool str_ends_with(const char* str, const char* match)
+{
+    if (match[0] == '\0') return true;
+    if (str[0] == '\0') return false;
+    int i = (int)strlen(str);
+    int j = (int)strlen(match);
+    if (j > i) return false;
+    for (i=i-1, j=j-1; i >= 0 && j >= 0; i--, j--)
+        if (str[i] != match[j]) return false;
+    return true;
+}
+
+
+void _test_common()
+{
+    GS_ASSERT(str_ends_with("foobar", "bar"));
+    GS_ASSERT(str_ends_with("foobar", "foobar"));
+    GS_ASSERT(str_ends_with("foobar", ""));
+    GS_ASSERT(!str_ends_with("foobar", "ba"));
+    GS_ASSERT(!str_ends_with("foobar", "foo"));
+    GS_ASSERT(!str_ends_with("foobar", "afoobar"));
+    GS_ASSERT(!str_ends_with("", "afoobar"));
+
+    GS_ASSERT(str_starts_with("foobar", "foo"));
+    GS_ASSERT(str_starts_with("foobar", ""));
+    GS_ASSERT(str_starts_with("foobar", "foobar"));
+    GS_ASSERT(!str_starts_with("foobar", "oo"));
+    GS_ASSERT(!str_starts_with("foobar", "bar"));
+    GS_ASSERT(!str_starts_with("foobar", "foobarr"));
+    GS_ASSERT(!str_starts_with("", "foobarr"));
 }

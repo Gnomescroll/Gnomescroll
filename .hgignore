@@ -47,6 +47,7 @@ tools/autoupdate/autoupdate
 gmon.out
 
 run
+run2
 
 .pch
 

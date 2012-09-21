@@ -1,4 +1,4 @@
-#include "SDL_functions.h"
+#include "SDL_functions.hpp"
 
 #include <common/compat_gl.h>
 
@@ -49,10 +49,7 @@ void setupwindow(SDL_WindowID *window, SDL_GLContext *context)
 int DisplayBox()
 {
     #ifdef _WIN32
-
-#ifdef __MSVC__
-
-#else
+    //#ifndef __MSVC__
     int msgboxID = MessageBox(
         NULL,
         (LPCSTR)L"Error: check console log",
@@ -68,7 +65,7 @@ int DisplayBox()
     }
 
     return msgboxID;
-#endif
+    //#endif
     #endif
     return 0;
 }
@@ -76,35 +73,33 @@ int DisplayBox()
 int glVersionErrorPopup()
 {
     #ifdef _WIN32
-
-#ifdef __MSVC__
-
-#else
+    #ifndef __MSVC__
+    const char title[] = "Error";
+    const char msg[] = "Your graphics card does not support OpenGL 2.0.\nPress OK to exit.";
     int msgboxID = MessageBox(
         NULL,
-        (LPCSTR)L"Error: your graphics card sucks!!",
-        (LPCSTR)L"You need at least a $5 graphics card that can support Opengl 2.0",
-        MB_ICONWARNING | MB_DEFBUTTON2
+        (LPCTSTR)title,
+        (LPCTSTR)msg,
+        MB_OK | MB_ICONWARNING
     );
 
     switch (msgboxID)
     {
-    case IDCANCEL:
-        // TODO: add code
-        break;
+        case IDOK:
+            input_state.quit = true;
+            break;
     }
 
     return msgboxID;
-#endif
     #endif
+    //#endif
     return 0;
 }
 
 int VersionMismatchBox(int local_version, int server_version)
 {
     #ifdef _WIN32
-    #ifdef __MSVC__
-
+    #ifndef __MSVC__
     #else
     char message_fmt[] = "Version out of date!\nYour version: %d\nServer version: %d\nInstall new version from \nhttp://gnomescroll.com";
     char* message = (char*)malloc((sizeof(message_fmt) + 1 + 20 - 4) * sizeof(char));
@@ -112,8 +107,6 @@ int VersionMismatchBox(int local_version, int server_version)
     char title[] = "Version out of date!";
     int msgboxID = MessageBox(
         NULL,
-        //(LPCSTR)L"Version out of date!\nInstall latest version from website\nhttp://gnomescroll.com",
-        //(LPCSTR)L"Version out of date!",
         (LPCTSTR)message,
         (LPCTSTR)title,
         MB_OK | MB_ICONWARNING
@@ -121,15 +114,15 @@ int VersionMismatchBox(int local_version, int server_version)
 
     switch (msgboxID)
     {
-        case IDCANCEL:
-            // TODO: add code
+        case IDOK:
+            input_state.quit = true;
             break;
     }
 
     free(message);
 
     return msgboxID;
-    #endif
+    //#endif
     #endif
     return 0;
 }
@@ -303,14 +296,14 @@ int init_video() {
         return 1;
     }
 
-#ifdef __GNUC__
+    #ifdef __GNUC__
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
     if(value) {
         //printf("Harware Acceleration Enabled \n");
     } else {
         printf("Warning: Hardware Acceleration Not Enabled!\n");
     }
-#endif
+    #endif
 
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
     if(value) {

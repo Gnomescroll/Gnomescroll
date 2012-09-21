@@ -3,7 +3,7 @@
 #include <common/defines.h>
   
 #include <state/client_state.hpp>
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 #include <sound/sound.hpp>
 #include <state/client_state.hpp>
 #include <camera/camera.hpp>
@@ -39,6 +39,7 @@ void time_since(int n)
 
 }
 
+void wait_for_login();  // forward decl
 void init(int argc, char* argv[])
 {
     GS_MKDIR("./screenshot", S_IRWXU);
@@ -48,10 +49,12 @@ void init(int argc, char* argv[])
 
     _START_CLOCK(); // must start before networking
 
+    // queue version packet, so it is sent first
+    ClientState::send_version();
+    
     // start authorization. waits for a valid-looking game token to be received
     #if GS_AWESOMIUM
     Auth::begin_auth();
-    void wait_for_login();  // forward decl
     wait_for_login();
     #endif
 
@@ -165,7 +168,7 @@ int physics_tick()
 
         ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
 
-        Auth::check_expiring_token();   // put it in the physics tick because i want a fixed time counter
+        Auth::update();   // put it in the physics tick because i want a fixed time counter
 
         _SET_LAST_TICK();
     }
@@ -393,12 +396,14 @@ void draw_tick()
             glEnable(GL_DEPTH_TEST);
         }
         else
+        {
             t_hud::draw();
+            Hud::draw_error_status();
+        }
 
         if (input_state.vbo_debug)
             t_map::draw_vbo_debug(400, 400);
 
-        Hud::draw_error_status();
         
         CHECK_GL_ERROR();  //check error after hud rendering
     }

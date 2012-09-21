@@ -26,6 +26,12 @@ namespace Awesomium
 class ChromeViewport* cv = NULL;
 class ViewportManager* viewport_manager = NULL;
 
+static bool _login_page_loaded = false;
+bool login_page_loaded()
+{
+    return _login_page_loaded;
+}
+
 void handle_mouse_event(int x, int y, int button, int event_type)
 {
     viewport_manager->handle_mouse_event(x,y,button,event_type);
@@ -70,11 +76,6 @@ void init()
 {
     printf("Awesomium::init\n");
 
-    //#ifndef linux
-    //// TODO -- non default initializer
-    //awe_webcore_initialize_default();
-    //#endif
-        
     #ifdef linux
         #if PRODUCTION
     const char package_path_str[] = "./lib/lin32/awesomium/release";
@@ -168,7 +169,7 @@ void delete_cookie(const char* name)
 
 void delete_auth_token_cookie()
 {
-    delete_cookie(Auth::AUTH_TOKEN_COOKIE_NAME);
+    delete_cookie(Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
 }
 
 void open_url(const char* url)
@@ -250,7 +251,7 @@ char* get_auth_token()
     GS_ASSERT(cookies != NULL);
     if (cookies == NULL) return NULL;
 
-    char* token = strstr(cookies, Auth::AUTH_TOKEN_COOKIE_NAME);
+    char* token = strstr(cookies, Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
     if (token == NULL) return NULL; 
 
     int i=0;
@@ -264,7 +265,7 @@ char* get_auth_token()
 
     size_t len = strlen(token);
     char* auth_token = (char*)malloc((len+1) * sizeof(char));
-    auth_token = strcpy(auth_token, &token[strlen(Auth::AUTH_TOKEN_COOKIE_NAME) + 1]);    // copy cookie value to auth_token. offset is strlen(token_name) + strlen(=)
+    auth_token = strcpy(auth_token, &token[strlen(Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME) + 1]);    // copy cookie value to auth_token. offset is strlen(token_name) + strlen(=)
     free(cookies);
     return auth_token;
 }
@@ -298,14 +299,14 @@ char* make_cookie_expiration_string(const time_t expiration_time)
 
 void set_game_token_cookie(const char* token, time_t expiration_time)
 {   // manually set the cookie for gnomescroll game tokens
-    static const size_t prefix_len = strlen(Auth::AUTH_TOKEN_COOKIE_NAME);
+    static const size_t prefix_len = strlen(Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
     static const size_t domain_len = strlen(GNOMESCROLL_COOKIE_DOMAIN);
     const size_t token_len = strlen(token);
     char* expiration_str = make_cookie_expiration_string(expiration_time);
     const size_t expiration_len = strlen(expiration_str);
     const static char cookie_fmt[] = "%s=%s; expires=%s; domain=%s; path=/;";
     char* _cookie = (char*)malloc((sizeof(cookie_fmt) - 2*4 + prefix_len + token_len + domain_len + expiration_len) * sizeof(char));
-    sprintf(_cookie, cookie_fmt, Auth::AUTH_TOKEN_COOKIE_NAME, token, expiration_str, GNOMESCROLL_COOKIE_DOMAIN);
+    sprintf(_cookie, cookie_fmt, Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME, token, expiration_str, GNOMESCROLL_COOKIE_DOMAIN);
     free(expiration_str);
      
     awe_string* url = get_awe_string(GNOMESCROLL_URL);
@@ -327,7 +328,11 @@ void save_username(const char* username)
 
     size_t username_len = strlen(username);
 
+    #if PRODUCTION
     const static char cookie_fmt[] = "username=%s; expires=%s; domain=127.0.0.1; path=/;";
+    #else
+    const static char cookie_fmt[] = "dbgusername=%s; expires=%s; domain=127.0.0.1; path=/;";
+    #endif
     size_t cookie_len = strlen(cookie_fmt) - 2*2 + username_len + expiration_len + 1;
     char* _cookie = (char*)malloc((cookie_len+1) * sizeof(char));
     snprintf(_cookie, cookie_len, cookie_fmt, username, expiration_str);
@@ -353,11 +358,46 @@ void save_password(const char* password)
     size_t expiration_len = strlen(expiration_str);
 
     size_t password_len = strlen(password);
-    
+
+    #if PRODUCTION
     const static char cookie_fmt[] = "password=%s; expires=%s; domain=127.0.0.1; path=/;";
+    #else
+    const static char cookie_fmt[] = "dbgpassword=%s; expires=%s; domain=127.0.0.1; path=/;";
+    #endif
     size_t cookie_len = strlen(cookie_fmt) - 2*2 + password_len + expiration_len + 1;
     char* _cookie = (char*)malloc((cookie_len+1) * sizeof(char));
     snprintf(_cookie, cookie_len, cookie_fmt, password, expiration_str);
+    _cookie[cookie_len] = '\0';
+    free(expiration_str);
+
+    awe_string* cookie = get_awe_string(_cookie);
+
+    awe_string* url = get_awe_string("http://127.0.0.1");
+    awe_webcore_set_cookie(url, cookie, true, false);
+    awe_string_destroy(cookie);
+    awe_string_destroy(url);
+    free(_cookie);
+
+    // REFERENCE:
+    //awe_webcore_set_cookie(url, cookie, is_http_only, force_session_cookie -- will be cleared on exit);
+}
+
+void save_remember_password_setting(bool _remember)
+{   // set a these on a cookie for localhost
+    time_t expiration_time = utc_now() + (60 * 60 * 24 * 365);  // expires in a few years
+    char* expiration_str = make_cookie_expiration_string(expiration_time);
+    size_t expiration_len = strlen(expiration_str);
+
+    int remember = (_remember) ? 1 : 0;
+
+    #if PRODUCTION
+    const static char cookie_fmt[] = "remember_password=%d; expires=%s; domain=127.0.0.1; path=/;";
+    #else
+    const static char cookie_fmt[] = "dbgremember_password=%d; expires=%s; domain=127.0.0.1; path=/;";
+    #endif
+    size_t cookie_len = strlen(cookie_fmt) - 2*2 + count_digits(remember) + expiration_len + 1;
+    char* _cookie = (char*)malloc((cookie_len+1) * sizeof(char));
+    snprintf(_cookie, cookie_len, cookie_fmt, remember, expiration_str);
     _cookie[cookie_len] = '\0';
     free(expiration_str);
 
@@ -390,9 +430,17 @@ void get_credentials(char** _username, char** _password)
     
     char* cookies = get_cookies("http://127.0.0.1");
 
+    #if PRODUCTION
+    const char username_key[] ="username=";
+    const char password_key[] ="password=";
+    #else
+    const char username_key[] ="dbgusername=";
+    const char password_key[] ="dbgpassword=";
+    #endif
+
     // get the positions of the tokens
-    char* username = strstr(cookies, "username=");
-    char* password = strstr(cookies, "password=");
+    char* username = strstr(cookies, username_key);
+    char* password = strstr(cookies, password_key);
 
     // split the cookie up
     int i=0;
@@ -403,7 +451,7 @@ void get_credentials(char** _username, char** _password)
     // copy the data over
     if (username != NULL)
     {
-        username = &username[strlen("username=")];
+        username = &username[strlen(username_key)];
         size_t username_len = strlen(username);
         *_username = (char*)malloc((username_len+1)*sizeof(char));
         strcpy(*_username, username);
@@ -411,13 +459,38 @@ void get_credentials(char** _username, char** _password)
     
     if (password != NULL)
     {
-        password = &password[strlen("password=")];
+        password = &password[strlen(password_key)];
         size_t password_len = strlen(password);
         *_password = (char*)malloc((password_len+1)*sizeof(char));
         strcpy(*_password, password);
     }
 
     free(cookies);
+}
+
+bool get_remember_password_setting()
+{
+    char* cookies = get_cookies("http://127.0.0.1");
+
+    #if PRODUCTION
+    const char remember_pass_key[] = "remember_password=";
+    #else
+    const char remember_pass_key[] = "dbgremember_password=";
+    #endif
+
+    // get position inside cookie
+    char* _remember = strstr(cookies, remember_pass_key);
+    // split the cookie up
+    int i=0;
+    char c;
+    while ((c = cookies[i++]) != '\0')
+        if (c == ';') cookies[i-1] = '\0';
+
+    bool remember = false;
+    if (_remember != NULL)
+        remember = (bool)atoi(&_remember[strlen(remember_pass_key)]);
+    free(cookies);
+    return remember;
 }
 
 }   // Awesomium

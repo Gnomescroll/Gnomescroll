@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import procname
 import subprocess
 import os
 import platform
@@ -7,6 +8,8 @@ import sys
 import time
 import signal
 import shlex
+
+procname.setprocname('gnomescroll_server_py')
 
 current_process = None
 current_process_id = None
