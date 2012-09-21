@@ -14,3 +14,4 @@ sleep 15
 ./shell/killscreens.sh gnomescroll_server
 # create a detached screen with the forever script running inside 
 sudo -u gnomescroll screen -d -m -S gnomescroll_server ./shell/run_server_forever.py
+
