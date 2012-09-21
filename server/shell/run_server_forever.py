@@ -85,12 +85,12 @@ def run():
         if ct >= MAX_DUMPS:
             print "Reached max core dumps."
             break
-        if os.path.exists('./core'):
+        if os.path.exists("./core"):
             print "Core dumped; saving"
-            os.rename("./core", "%s/coredumps/%s" % (os.path.expanduser('~'), corename,))
-        if os.path.exists('./%s' % (logname,)):
+            os.rename("./core", "/usr/freespace/coredumps/%s" % (corename,))
+        if os.path.exists("./%s" % (logname,)):
             print "Saving %s" % (logname,)
-            os.rename('./%s' % (logname,), '%s/coredumps/%s' % (os.path.expanduser('~'), logname,))
+            os.rename("./%s" % (logname,), "/usr/freespace/coredumps/%s" % (logname,))
 
     subprocess.Popen('ulimit -c 0', shell=True)
 
