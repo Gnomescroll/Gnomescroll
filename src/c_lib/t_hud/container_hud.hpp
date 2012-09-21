@@ -2,7 +2,7 @@
 
 #include <t_hud/_interface.hpp>
 #include <t_hud/texture.hpp>
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 
 namespace t_hud
 {
@@ -59,7 +59,7 @@ class AgentContainerUI : public UIElement
             t->set_depth(-0.1f);
         }
 
- 		this->name.set_text((char*)"Inventory");
+        this->name.set_text((char*)"Inventory");
     }
 
     AgentContainerUI() : xdim(0), ydim(0), stack_numbers(NULL)
@@ -97,14 +97,14 @@ int AgentContainerUI::get_slot_at(int px, int py)
 
 void AgentContainerUI::draw()
 {
-	//this->draw_name();
-	// TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
-	HudFont::start_font_draw();
-	HudFont::reset_default();
-	HudFont::set_texture();
-	this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() + 1);
-	this->name.draw();
-	HudFont::end_font_draw();
+    //this->draw_name();
+    // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
+    HudFont::start_font_draw();
+    HudFont::reset_default();
+    HudFont::set_texture();
+    this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() + 1);
+    this->name.draw();
+    HudFont::end_font_draw();
 
     const float w = slot_size;
 

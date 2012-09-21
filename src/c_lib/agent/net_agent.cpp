@@ -9,7 +9,7 @@
 #include <chat/client.hpp>
 #include <chat/interface.hpp>
 #include <entity/objects/fabs/constants.hpp>
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 #endif
 
 #if DC_SERVER

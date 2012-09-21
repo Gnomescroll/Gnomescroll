@@ -1,6 +1,6 @@
 #include "input.hpp"
 
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 #include <input/handlers.hpp>
 #include <SDL/awesomium/_interface.hpp>
 

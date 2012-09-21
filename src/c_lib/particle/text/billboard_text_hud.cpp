@@ -8,7 +8,7 @@ dont_include_this_file_in_server
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 #include <hud/text.hpp>
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 #include <camera/camera.hpp>
 #include <hud/font.hpp>
 

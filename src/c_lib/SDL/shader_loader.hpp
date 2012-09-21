@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 
 char *textFileRead(const char *fn);
 

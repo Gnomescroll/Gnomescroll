@@ -3,7 +3,7 @@
 #include <common/defines.h>
   
 #include <state/client_state.hpp>
-#include <SDL/SDL_functions.h>
+#include <SDL/SDL_functions.hpp>
 #include <sound/sound.hpp>
 #include <state/client_state.hpp>
 #include <camera/camera.hpp>

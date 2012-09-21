@@ -1,9 +1,9 @@
 #include "draw_functions.hpp"
 
-#include <common/compat_gl.h>
 #include <stdio.h>
 
-#include "SDL_functions.h"
+#include <common/compat_gl.h>
+#include <SDL/SDL_functions.hpp>
 
 int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1) {
 

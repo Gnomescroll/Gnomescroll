@@ -99,7 +99,7 @@ dont_include_this_file_in_server
 #include <SDL/texture_sheet_loader.cpp>
 #include <SDL/draw_functions.cpp>
 #include <SDL/particle_functions.c>
-#include <SDL/SDL_functions.c>
+#include <SDL/SDL_functions.cpp>
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
