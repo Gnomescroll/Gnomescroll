@@ -254,7 +254,6 @@ void setup_rooms() {
 		for (int x = 0; x < rooms_across_ruins; x++) {
 		for (int y = 0; y < rooms_across_ruins; y++) {
 			Room r;
-			// THE ORDER THESE CALCS ARE DONE MATTERS!
 			// spans refer to the AIRSPACE, and don't include outer shell of blocks
 			// but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
 			int malleable_x_span = cubes_across_room - 2 /* shell of 2 walls */;
@@ -272,7 +271,6 @@ void setup_rooms() {
 
 			// now that i chose my offset, it could have eaten into MALLEABLE span, and i don't think i'm considering that here!
 			//.... shouldn't even be using that var?  i'm working within the WID/DEP space space when doing the hallways right?!
-			//  DON'T CARE ABOUT LIP WHEN CHOOSING ROOM SIZE, ONLY FOR THE OPENINGS
 
 			// reset malleables, for working INSIDE AIRSPACE
 			malleable_x_span = r.wid - min_lip * 2;
