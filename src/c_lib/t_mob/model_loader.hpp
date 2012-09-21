@@ -974,6 +974,9 @@ class BodyPartMesh
 
 class BodyAnimation
 {
+    /*
+        Assume all keyframes contain the same nodes
+    */
     public:
     char* animation_name;
     float length;   //length of animation
@@ -986,7 +989,7 @@ class BodyAnimation
 
     //copy these pointers over
     char** nnl;                           //node name list
-    struct Mat4* node_mTransformation;    //node transform list, mTransformation
+    struct Mat4* node_mTransformation;    //node bind transform list
     int nm;                               //node max
 
     //bind pos 
@@ -994,6 +997,53 @@ class BodyAnimation
     //need to know keyframes and need to m
     // -affected mpdes
     // -timees
+
+    struct Mat4 get_anim_matrix_old(int frame_time, aiNodeAnim** node_channels, int node_channel_max, aiNode* node)
+    {
+
+        for(int i=0; i<node_channel_max; i++)
+        {
+            aiNodeAnim* anim = node_channels[i];
+            //printf("node channel= %s \n", anim->mNodeName.data);
+
+            if( strcmp(anim->mNodeName.data, node->mName.data) == 0 )
+            {
+                GS_ASSERT(anim->mNumPositionKeys == anim->mNumRotationKeys);
+                int tmax = anim->mNumPositionKeys;
+                
+                aiVectorKey pos =  anim->mPositionKeys[frame_time % tmax];
+                aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
+                GS_ASSERT( pos.mTime == rot.mTime );
+
+                //CONVERT TO MATRIX
+                return quantenion_to_rotation_matrix( rot.mValue, pos.mValue );
+            }
+
+        }
+
+        //if cannot find, then node does not have an animation and use this
+        return _ConvertMatrix(node->mTransformation);
+
+    }
+    
+    void apply_animation()
+    {
+        static int _fcount = 0;
+        static int frame_time = 0;
+
+        _fcount++;
+        if(_fcount % 30 == 0)
+            frame_time++;
+
+        aiAnimation* anim = pScene->mAnimations[0];
+
+        aiNodeAnim** node_channels = anim->mChannels;
+        int node_channels_max = anim->mNumChannels;
+
+
+        boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
+    }
+
 };
 
 
