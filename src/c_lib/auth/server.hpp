@@ -11,14 +11,16 @@ namespace Auth
 
 // Configuration
 #if PRODUCTION
-const char SECRET_KEY_PATH[] = "./data/secret_key.prod";
+#define SECRET_KEY_PATH "./data/secret_key.prod"
 #else
-const char SECRET_KEY_PATH[] = "./data/secret_key.debug";
+#define SECRET_KEY_PATH "./data/secret_key.debug"
 #endif
 const unsigned int SECRET_KEY_SIZE = 64;
+const unsigned int SECRET_KEY_REFRESH_RATE = 60;    // once per second
 
 void server_init();
 void server_teardown();
+void server_update();
 
 void received_auth_token(int client_id, const char* token);
 

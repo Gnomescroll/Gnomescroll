@@ -15,7 +15,7 @@ unsigned char* secret_key = NULL;   // hex str converted to bytes
 
 // Init loaders
 void load_secret_key()
-{
+{    
     int size = 0;
     char* buf = read_file_to_buffer(SECRET_KEY_PATH, &size);
     GS_ASSERT(buf != NULL);
@@ -26,10 +26,28 @@ void load_secret_key()
         free(buf);
         return;
     }
-    secret_key_str = strip_whitespace(buf);
-    GS_ASSERT(strlen(secret_key_str) == 128);
-    secret_key = hexstr_to_char(secret_key_str);
+    char* _secret_key_str = strip_whitespace(buf);
+    GS_ASSERT(strlen(_secret_key_str) == 128);
+    unsigned char* _secret_key = hexstr_to_char(_secret_key_str);
     free(buf);
+
+    GS_ASSERT(_secret_key_str != NULL);
+    GS_ASSERT(_secret_key != NULL);
+
+    if (_secret_key_str != NULL && _secret_key != NULL)
+    {
+        if (secret_key_str != NULL) free(secret_key_str);
+        if (secret_key != NULL) free(secret_key);
+        secret_key_str = _secret_key_str;
+        secret_key = _secret_key;
+        
+        int len = (int)strlen(secret_key_str);
+        GS_ASSERT(len == SECRET_KEY_SIZE*2);
+        for (int i=0; i<len; i++)
+            GS_ASSERT(isxdigit(secret_key_str[i]));
+            
+        GS_ASSERT(strlen((char*)secret_key) == SECRET_KEY_SIZE);
+    }
 }
 
 uint8_t* compute_hash(const unsigned char* secret_key, const char* msg, const size_t msg_len)
@@ -85,17 +103,21 @@ void sprint_digest(char* dest, uint8_t* digest)
 void server_init()
 {
     if (!Options::auth) return;
-    
     load_secret_key();
-    GS_ASSERT(secret_key_str != NULL);
-    GS_ASSERT(secret_key != NULL);
+}
 
-    int len = (int)strlen(secret_key_str);
-    GS_ASSERT(len == SECRET_KEY_SIZE*2);
-    for (int i=0; i<len; i++)
-        GS_ASSERT(isxdigit(secret_key_str[i]));
-
-    GS_ASSERT(strlen((char*)secret_key) == SECRET_KEY_SIZE);
+void server_update()
+{   // check for a new secret key on disk
+    if (!Options::auth) return;
+    static int _tick = 0;
+    if ((_tick++) % SECRET_KEY_REFRESH_RATE != 0) return;
+    const char new_key_fn[] = SECRET_KEY_PATH ".new";
+    // check if file exists
+    if (!file_exists(new_key_fn)) return;
+    // rename the new key to the main key file name
+    rename(new_key_fn, SECRET_KEY_PATH);
+    // load the new key
+    load_secret_key();
 }
 
 // Teardown

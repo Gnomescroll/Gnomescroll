@@ -17,4 +17,6 @@ bool is_valid_user_id(const int user_id);
 
 void run_tests();
 
+void update();
+
 }   // Auth

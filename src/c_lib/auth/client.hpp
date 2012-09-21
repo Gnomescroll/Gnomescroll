@@ -36,4 +36,6 @@ void client_teardown();
 
 void check_expiring_token();
 
+void client_update();
+
 }   // Auth

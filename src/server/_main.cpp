@@ -30,8 +30,8 @@ void default_map_gen()
 void init(int argc, char* argv[])
 {
 
-//	for(int i=0; i<argc; i++) 
-//		printf("ARG%d: %s \n", i, argv[i]);
+//  for(int i=0; i<argc; i++) 
+//      printf("ARG%d: %s \n", i, argv[i]);
 
     init_c_lib(argc, argv);
 
@@ -142,6 +142,8 @@ void tick()
     Item::tick();
 
     t_map::environment_process_tick(); //refresh regolith etc...
+
+    Auth::update(); // do it here because i need constant timer
 }
  
 int run()
