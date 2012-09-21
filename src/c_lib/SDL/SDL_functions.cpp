@@ -66,7 +66,7 @@ int DisplayBox()
     }
 
     return msgboxID;
-    #endif
+    //#endif
     #endif
     return 0;
 }
@@ -93,7 +93,7 @@ int glVersionErrorPopup()
 
     return msgboxID;
     #endif
-    #endif
+    //#endif
     return 0;
 }
 
@@ -122,7 +122,7 @@ int VersionMismatchBox(int local_version, int server_version)
     free(message);
 
     return msgboxID;
-    #endif
+    //#endif
     #endif
     return 0;
 }
