@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#update repo
-hg pull; hg update
 # make sure gnomescroll user owns the folder
 chown -R gnomescroll:gnomescroll .
 # compile & copy
