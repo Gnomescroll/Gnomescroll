@@ -4,7 +4,11 @@
 chown -R gnomescroll:gnomescroll .
 
 # stop the run script
-kill `pidof gnomescroll_server_py`
+pid=`pidof gnomescroll_server_py gnomescroll_server`
+if [ "$pid" ]
+then
+  kill $pid
+fi
 
 # wait until it all shuts down...
 while [ `pidof gnomescroll_server gnomescroll_server_py` ]
