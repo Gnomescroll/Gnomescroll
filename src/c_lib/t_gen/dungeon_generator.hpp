@@ -344,16 +344,15 @@ void make_ruins(int x, int y) {
 
 void start_dungeon_generator()
 {
-    printf("Carving out ruins\n");
+    printf("Making ruins\n");
 
-    for (int x = 0; x < ruins_across_world; x++) {
-    for (int y = 0; y < ruins_across_world; y++) {
+    for (int x = 0; x < ruins_across_world; x++)
+    for (int y = 0; y < ruins_across_world; y++)
 		if (x % 2 == 0  &&  y % 2 == 0)
-			make_ruins(
-				x * cubes_across_room * rooms_across_ruins, 
-				y * cubes_across_room * rooms_across_ruins);
-    }
-	}
+			if (randrange(0, 1) == 0)
+				make_ruins(
+					x * cubes_across_room * rooms_across_ruins, 
+					y * cubes_across_room * rooms_across_ruins);
 }
 
 //bool not_in_hall(int i, int z) {
