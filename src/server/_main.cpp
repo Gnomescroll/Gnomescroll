@@ -66,6 +66,8 @@ void init(int argc, char* argv[])
         map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
 
         map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+	
+		t_gen::start_dungeon_generator();
     }
     else
     {

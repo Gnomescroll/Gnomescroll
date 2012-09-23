@@ -24,7 +24,8 @@ enum DirIs {
     OPEN_AIR,
     HALL,
     DOOR,
-    // if editing this, keep in mind code makes random opening assuming 0-2 are valid openings
+	STAIRS,
+    // if editing this, keep in mind code makes random openings assuming 0-2 are valid openings
     BLOCKED_BY_ROOM, // ..... and this is used as the excluded max for openings
     BLOCKED_BY_OUTSIDE,
     BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
@@ -33,11 +34,10 @@ enum DirIs {
 enum Direction {
     DIR_NORTH, DIR_SOUTH,
     DIR_EAST, DIR_WEST,
-    DIR_UP, DIR_DOWN // unused, and may remain that way, unless pathing should be changed to snake up & down as much as it does laterally
+    DIR_UP, DIR_DOWN
 };
         
 struct Room {
-    //public List<Point> group;
     int dirs[6];
 
     int x_offs;
@@ -216,13 +216,6 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
 }
 
 void make_stairs(int rx, int ry, int rz, int ox, int oy, int floor_block) { // room indexes, origin
-		// clear out stairwell hole in ceiling
-		set_region(
-			6 + rx * cubes_across_room + ox,
-			7 + ry * cubes_across_room + oy,
-			rz * cubes_going_up + 3 + cubes_going_up - 1,
-			4, 2, 1, 0);
-
 		set_region(
 			6 + rx * cubes_across_room + ox,
 			7 + ry * cubes_across_room + oy,
@@ -270,7 +263,7 @@ void setup_rooms() {
 			r.n_hall_hei = randrange(2, malleable_z_span);
 
 			// now that i chose my offset, it could have eaten into MALLEABLE span, and i don't think i'm considering that here!
-			//.... shouldn't even be using that var?  i'm working within the WID/DEP space space when doing the hallways right?!
+			//.... shouldn't even be using that var?  i'm working within the WID/DEP space when doing the hallways right?!
 
 			// reset malleables, for working INSIDE AIRSPACE
 			malleable_x_span = r.wid - min_lip * 2;
@@ -287,7 +280,9 @@ void setup_rooms() {
 				if /* lateral dir */ (i < 4) 
 					r.dirs[i] = randrange(1, 2); // randomly choose door or hall
 				else if /* stairway up should be here */ (i == 4 && x == stairway_up_x && y == stairway_up_y)
-					r.dirs[i] = HALL; // not exactly a hall, but....
+					r.dirs[i] = STAIRS;
+				else if /* stairs going upwards in room below */ (i == 5 && z > 0 && rooms[z - 1][y][x].dirs[DIR_UP] == STAIRS)
+					r.dirs[i] = STAIRS;
 				else
 					r.dirs[i] = BLOCKED_FOREVER;
 			}
@@ -301,11 +296,7 @@ void setup_rooms() {
 			if (x == rooms_across_ruins - 1)
 				r.dirs[DIR_EAST] = BLOCKED_BY_OUTSIDE;
                 
-			//r.group = new List<Point>() { new Point(x, y) };
-			//groups.Add(r.group);
-        
 			rooms[z][y][x] = r;
-			// delete
 		}
 		}
 	}
@@ -338,6 +329,14 @@ void make_ruins(int x, int y) {
 		
 		if (opens_to(rooms[rz][ry][rx].dirs[DIR_UP], rx, ry, rz) ) 
 			make_stairs(rx, ry, rz, x, y, floor_block);
+
+		if (opens_to(rooms[rz][ry][rx].dirs[DIR_DOWN], rx, ry, rz) ) 
+			// clear well in floor of this room, and ceiling of room underneath
+			set_region(
+				rx * cubes_across_room + x + 6,
+				ry * cubes_across_room + y + 7,
+				rz * cubes_going_up + 3 - 1,
+				4, 2, 2, 0);
     }
     }
 	}
