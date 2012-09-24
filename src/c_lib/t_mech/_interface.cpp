@@ -11,6 +11,7 @@
 
 #include <t_mech/mech_state.hpp>
 
+#include <physics/geometry.hpp>
 
 namespace t_mech
 {
@@ -292,7 +293,8 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     //y -= wy;
     //z -= wz;
 
-
+    const float size = m.size/2.0f;
+    const float size2 = m.size;
 
 /*
     float a = vx*wx + vy*wy + vz*wz;
@@ -303,8 +305,37 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     float distance = px*px + py*py + pz*pz;
 */
 
+/*
+bool line_box_test(
+    float lx, float ly, float lz,
+    float lvx, float lvy, float lvz,
+    float bx, float by, float bz,       //center
+    float bdx, float bdy, float bdz,    //size
+    struct Vec3 f,
+    struct Vec3 r,
+    struct Vec3 u,
 
-    return true;
+    float* a
+    )
+*/
+    float a = 0.0f;
+    struct Vec3 f = vec3_init( sin(m.rotation * PI), cos(m.rotation * PI), 0.0f );
+    struct Vec3 r = vec3_init( sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f );
+    struct Vec3 u = vec3_init( 0.0f, 0.0f, 1.0f );
+
+    bool ret = line_box_test(
+        x,y,z,
+        vx,vy,vz,
+        wx,wy,wz,
+        size2,size2,size2,
+        struct Vec3 f,
+        struct Vec3 r,
+        struct Vec3 u,
+        &a
+    )
+
+    if(ret == true)
+        return true;
 /*
     float _x 
     m.size

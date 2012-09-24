@@ -1,5 +1,6 @@
 #pragma once
 
+#include <physics/vec3.hpp>
 
 bool line_plane_intersection1(
 	float lx, float ly, float lz,		//line starting point
@@ -89,27 +90,30 @@ bool line_plane_intersection2(
 	return false;
 }
 
-void line_box_test(
+bool line_box_test(
 	float lx, float ly, float lz,
 	float lvx, float lvy, float lvz,
 	float bx, float by, float bz,		//center
 	float bdx, float bdy, float bdz,	//size
 	struct Vec3 f,
 	struct Vec3 r,
-	struct Vec3 u
+	struct Vec3 u,
+
+	float* a
 	)
 {
 	//there are 6 planes, do intersection on each of them
 	bool ret;
-	float a;
+	//float a;
 
 	//top
-	ret = line_plane_intersection2(lx,ly,lz, lvx,lvy,lvz, bx,by,bz, f,r,u, bdx,bdy,bdz, &a);
+	ret = line_plane_intersection2(lx,ly,lz, lvx,lvy,lvz, bx,by,bz, f,r,u, bdx,bdy,bdz, a);
 	if( ret)
 	{
-
+		return true;
 	}
 
+	return false;
 	//bottom
 
 
