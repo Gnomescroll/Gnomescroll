@@ -464,7 +464,7 @@ class ChromeViewport
                     awe_webview_go_to_history_offset(cv->webView, 1);
             }
     
-            #if !PRODUCTION
+            //#if !PRODUCTION
             if (key == SDLK_MINUS)
             {
                 char* token = get_auth_token();
@@ -481,7 +481,7 @@ class ChromeViewport
             {
                 open_token_page();
             }
-            #endif
+            //#endif
         }
     }
 };
