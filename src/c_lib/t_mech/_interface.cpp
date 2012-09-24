@@ -159,8 +159,8 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
 //ray cast and draw outlines
 void client_ray_cast()
 {
-    struct Vec3 pos  = agent_camera->get_position();
-    struct Vec3 look = agent_camera->forward_vector();
+    //struct Vec3 pos  = agent_camera->get_position();
+    //struct Vec3 look = agent_camera->forward_vector();
 
 
 }
@@ -234,7 +234,7 @@ void tick(int x, int y, int z)
 
 void draw(const struct MECH &m)
 {
-    
+#if 0
     float vn[3*8];
 
     float dx1 = sin(m.rotation * PI);
@@ -257,14 +257,13 @@ void draw(const struct MECH &m)
     _y[1] = cos(m.rotation * 0.50f*PI);
     _y[2] = cos(m.rotation * 1.00f*PI);
     _y[3] = cos(m.rotation * 1.50f*PI);
-
+#endif
 }
 
 
 #endif 
-bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
+bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
 {
-    static const float limit = 2.0f;
 
     static const int q_set[4*6]= 
     {
@@ -276,8 +275,8 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
         1,2,6,5 
     };
 
+    const float size2 = m.size;
 
-    const float size2 = m.size/2.0f;
     float wx = (float) (m.x) + 0.5f + m.offset_x;
     float wy = (float) (m.y) + 0.5f + m.offset_y;
     float wz = (float) m.z + size2;
@@ -289,18 +288,20 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     //float dy = cos(m.rotation * PI);
 
     //translate into origin of plane
-    x -= wx;
-    y -= wy;
-    z -= wz;
+    //x -= wx;
+    //y -= wy;
+    //z -= wz;
 
 
+
+/*
     float a = vx*wx + vy*wy + vz*wz;
     float px = x - a*vx;
     float py = y - a*vy;
     float pz = z - a*vz;
 
     float distance = px*px + py*py + pz*pz;
-
+*/
 
 
     return true;
@@ -312,9 +313,10 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     m.offset_y
 */
 
-    const float size = m.size/2.0f;
-    const float size2 = m.size;
+    //const float size = m.size/2.0f;
+    //const float size2 = m.size;
 
+/*
     float dx,dy;
 
     dx = sin(m.rotation * PI);
@@ -331,6 +333,8 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     vn[3*0+0] = wx - size*dx;
     vn[3*0+1] = wy - size*dy;
     vn[3*0+2] = wz + size2;
+*/
+
 
 /*
 
@@ -371,7 +375,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
     int yi = y;
     int zi = z;
 
-    const int cuttoff2 = 8*8;
+    const int cutoff2 = 8*8;
 
     const int mlm = mech_list->mlm;
     const struct MECH* mla = mech_list->mla;
@@ -383,9 +387,9 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
         float d;
         bool ret;
 
-        int xd = xi - m.x;
-        int yd = yi - m.y;
-        int zd = zi - m.z;
+        int xd = xi - mla[i].x;
+        int yd = yi - mla[i].y;
+        int zd = zi - mla[i].z;
 
         if(xd*xd + yd*yd + zd*zd > cutoff2)
             continue;
@@ -397,7 +401,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
             ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
             if(ret == true)
             {
-                printf("mech raycast hit: %i distance= %i \n", i, d);
+                printf("mech raycast hit: %i distance= %f \n", i, d);
                 //return true;
             }
 
@@ -414,6 +418,12 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
         }
     }
 
+    if(mech_id != -1)
+    {
+        *_mech_id = mech_id;
+        *_distance = distance;
+        return true;
+    }
     return false;
 }
 #endif
