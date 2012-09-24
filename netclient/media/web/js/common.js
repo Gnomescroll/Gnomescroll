@@ -1,23 +1,36 @@
 function gs_get_token()
 {   // make ajax request for token
+
+    console.log("get gs token");
     function success(data)
     {   // pass token back to client
         // handle login required
 
+        console.log("Token success response");
         if (data['login_required'])
+        {
+            console.log("Login required");
             Gnomescroll.login_required();
+        }
         else
         {
             token = data[Gnomescroll.token_name];
             if (token)
-                Gnomescroll.set_token(token)
+            {
+                console.log("Token: " + token);
+                Gnomescroll.set_token(token);
+            }
             else
-                 Gnomescroll.token_failure();
+            {
+                console.log("Token failure");
+                Gnomescroll.token_failure();
+            }
         }
     }
 
     function error()
     {
+        console.log("Token error response");
         Gnomescroll.token_failure();
     }
 
@@ -29,6 +42,9 @@ function gs_get_token()
         dataType: 'json',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
+        },
+        xhrFields: {
+            withCredentials: true
         },
     });
 }
@@ -42,10 +58,13 @@ function gs_submit_form(form, url, success, error)
         data: data,
         success: success,
         error: error,
+        dataType: 'json',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
         },
-        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        },
     });
 }
 
@@ -58,6 +77,7 @@ function gs_clear_form_errors()
 
 function gs_auth_server_error(jqXHR, textStatus, errorCode)
 {
+    console.log("Auth server failure.");
     Gnomescroll.set_message("Authentication server failure. Try again soon.");
 };
 
@@ -93,6 +113,7 @@ function gs_append_form_errors(errors, form_type)
 function gs_extract_and_set_token(resp)
 {   // extract token from json response, and notify the game client
     var token = resp[Gnomescroll.token_name];
+    console.log("Ajax resposne game token: " + token);
     if (token)
         Gnomescroll.set_token(token);
     else // error if token evaluates to false

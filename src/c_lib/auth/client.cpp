@@ -109,17 +109,20 @@ void begin_auth()
 {
     GS_ASSERT(auth_token == NULL);
 
-    // check if auth token already exists
-    char* token = Awesomium::get_auth_token();
-    if (token != NULL && load_auth_token(token) && !auth_token_expiring(auth_token_timestamp))
-    {
-        token_available = true;
-        send_auth_token();  // we won't be connected yet, but the message will still queue
-    }
-    else // display awesomium (should already have the login page set)
-        enable_awesomium();
-    if (token != NULL)
-        free(token);
+    //// check if auth token already exists
+    //char* token = Awesomium::get_auth_token();
+    //if (token != NULL && load_auth_token(token) && !auth_token_expiring(auth_token_timestamp))
+    //{
+        //token_available = true;
+        //send_auth_token();  // we won't be connected yet, but the message will still queue
+    //}
+    //else // display awesomium (should already have the login page set)
+
+    // Require login, as the session cookies will have been cleared.
+
+    enable_awesomium();
+    //if (token != NULL)
+        //free(token);
 }
 
 AuthError update_token(const char* token)

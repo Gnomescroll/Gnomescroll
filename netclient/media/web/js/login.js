@@ -9,19 +9,27 @@ if (Gnomescroll.remember_password)
 
 function successful_login(data)
 {   // record parsed json object
+    console.log("login form POST response success");
+    
     Gnomescroll.clear_message();
     if (data['errors'] !== undefined && data['errors']['count'] !== 0)
     {   // update html with errors
+        console.log("login form had errors");
         gs_append_form_errors(data['errors'], 'Login');
     }
     else if (data['success'])
+    {
+        console.log("login form was successful");
         gs_extract_and_set_token(data);
+    }
     else
         gs_auth_server_error();
 }
 
 $('form#login').submit(function(e)
 {
+    console.log("Submitting login");
+    
     e.preventDefault();
     
     Gnomescroll.set_message("Authorizing...");
@@ -41,6 +49,8 @@ $('form#login').submit(function(e)
             // we can already be logged in, in which case we get the token
             // or we can get a csrf_token to use for logging in
             // or we can get NULL
+            console.log("login form GET response success");
+            
             if (!data)
                 gs_auth_server_error();
             else
@@ -50,6 +60,7 @@ $('form#login').submit(function(e)
                     successful_login(data);
                 else
                 {   // update local form with token and submit
+                    console.log("got csrf token, submitting for real");
                     $('input#csrf_token').val(csrf_token);
                     gs_submit_form(form, Gnomescroll.login_url, successful_login, gs_auth_server_error);
                 }
@@ -60,6 +71,9 @@ $('form#login').submit(function(e)
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
         },  
+        xhrFields: {
+            withCredentials: true
+        },
     });
 
     var username = $('input#username_or_email').val();
