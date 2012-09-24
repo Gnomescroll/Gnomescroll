@@ -371,6 +371,9 @@ int init_c_lib(int argc, char* argv[])
     t_mob::init();
     //CHECK_GL_ERROR();
 
+    time_t t = utc_now();
+    printf("UTC NOW: %lld\n", (long long)t);
+
     return 0;
 }
 
