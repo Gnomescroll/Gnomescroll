@@ -280,6 +280,8 @@ void check_for_token_cookie(const awe_string* _url)
         {
             Auth::AuthError error = Auth::update_token(token);
             GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
+            if (error != Auth::AUTH_ERROR_NONE)
+                printf("Auth error code: %d\n", error);
             free(token);
         }
     }

@@ -141,6 +141,8 @@ void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, co
     awe_string* _token = awe_jsvalue_to_string(vtoken);
     char* token = get_str_from_awe(_token);
     Auth::AuthError error = Auth::update_token(token);
+    if (error != Auth::AUTH_ERROR_NONE)
+        printf("Auth error code: %d\n", error);
     GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
     if (error != Auth::AUTH_ERROR_NONE)
         Auth::token_failure = false;
