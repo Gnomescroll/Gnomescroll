@@ -176,7 +176,7 @@ void check_should_load_token()
     }
 }
 
-void update()
+void client_update()
 {
     check_should_load_token();
     check_expiring_token();

@@ -1,6 +1,7 @@
 #include "SDL_functions.hpp"
 
 #include <common/compat_gl.h>
+#include <input/handlers.hpp>
 
 //#ifdef _WIN32
 //    #include "windows.h"
@@ -49,23 +50,22 @@ void setupwindow(SDL_WindowID *window, SDL_GLContext *context)
 int DisplayBox()
 {
     #ifdef _WIN32
-    //#ifndef __MSVC__
+    const char title[] = "Error: check console log";
+    const char msg[] = "Possible Error";
     int msgboxID = MessageBox(
         NULL,
-        (LPCSTR)L"Error: check console log",
-        (LPCSTR)L"Possible Error",
-        MB_ICONWARNING | MB_DEFBUTTON2
+        (LPCTSTR)title,
+        (LPCTSTR)msg,
+        MB_OK | MB_ICONWARNING
     );
 
     switch (msgboxID)
     {
-    case IDCANCEL:
-        // TODO: add code
-        break;
+        case IDOK:
+            break;
     }
 
     return msgboxID;
-    //#endif
     #endif
     return 0;
 }
@@ -73,7 +73,6 @@ int DisplayBox()
 int glVersionErrorPopup()
 {
     #ifdef _WIN32
-    #ifndef __MSVC__
     const char title[] = "Error";
     const char msg[] = "Your graphics card does not support OpenGL 2.0.\nPress OK to exit.";
     int msgboxID = MessageBox(
@@ -86,21 +85,18 @@ int glVersionErrorPopup()
     switch (msgboxID)
     {
         case IDOK:
-            input_state.quit = true;
+            enable_quit();
             break;
     }
 
     return msgboxID;
     #endif
-    //#endif
     return 0;
 }
 
 int VersionMismatchBox(int local_version, int server_version)
 {
     #ifdef _WIN32
-    #ifndef __MSVC__
-    #else
     char message_fmt[] = "Version out of date!\nYour version: %d\nServer version: %d\nInstall new version from \nhttp://gnomescroll.com";
     char* message = (char*)malloc((sizeof(message_fmt) + 1 + 20 - 4) * sizeof(char));
     sprintf(message, message_fmt, local_version, server_version);
@@ -115,14 +111,13 @@ int VersionMismatchBox(int local_version, int server_version)
     switch (msgboxID)
     {
         case IDOK:
-            input_state.quit = true;
+            enable_quit();
             break;
     }
 
     free(message);
 
     return msgboxID;
-    //#endif
     #endif
     return 0;
 }

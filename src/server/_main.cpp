@@ -30,8 +30,8 @@ void default_map_gen()
 void init(int argc, char* argv[])
 {
 
-//	for(int i=0; i<argc; i++) 
-//		printf("ARG%d: %s \n", i, argv[i]);
+//  for(int i=0; i<argc; i++) 
+//      printf("ARG%d: %s \n", i, argv[i]);
 
     init_c_lib(argc, argv);
 
@@ -66,6 +66,8 @@ void init(int argc, char* argv[])
         map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
 
         map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+	
+		t_gen::start_dungeon_generator();
     }
     else
     {
@@ -142,6 +144,8 @@ void tick()
     Item::tick();
 
     t_map::environment_process_tick(); //refresh regolith etc...
+
+    Auth::update(); // do it here because i need constant timer
 }
  
 int run()

@@ -20,25 +20,26 @@ void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile
 
 
 
-enum DirIs {
-    OPEN_AIR,
-    HALL,
-    DOOR,
-    // if editing this, keep in mind code makes random opening assuming 0-2 are valid openings
-    BLOCKED_BY_ROOM, // ..... and this is used as the excluded max for openings
-    BLOCKED_BY_OUTSIDE,
-    BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
-};
-
-enum Direction {
+enum direction_t {
     DIR_NORTH, DIR_SOUTH,
     DIR_EAST, DIR_WEST,
-    DIR_UP, DIR_DOWN // unused, and may remain that way, unless pathing should be changed to snake up & down as much as it does laterally
+    DIR_UP, DIR_DOWN,
+	DIR_COUNT // use only as a max value when iterating thru all directions
 };
         
+enum direction_type_t {
+    DIRTYPE_OPENAIR,
+    DIRTYPE_HALL,
+    DIRTYPE_DOOR,
+	DIRTYPE_STAIRS,
+    // if editing this, keep in mind code makes random openings assuming 0-2 are valid openings
+    DIRTYPE_BLOCKED_BY_ROOM, // ..... and this is used as the excluded max for openings
+    DIRTYPE_BLOCKED_BY_OUTSIDE,
+    DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
+};
+
 struct Room {
-    //public List<Point> group;
-    int dirs[6];
+    direction_type_t dir_types[DIR_COUNT];
 
     int x_offs;
     int y_offs;
@@ -116,8 +117,8 @@ bool not_in_e_hall(int rx, int ry, int rz, int cy) {
         n_of_e_opening(rx, ry, rz, cy);
 }
 
-bool opens_to(int dir, int rx, int ry, int rz) {
-    return rooms[rz][ry][rx].dirs[dir] < BLOCKED_BY_ROOM;
+bool opens_to(direction_t dir, int rx, int ry, int rz) {
+    return rooms[rz][ry][rx].dir_types[dir] < DIRTYPE_BLOCKED_BY_ROOM;
 }
 
 //bool in_air_region(Room r, int x, int y) {
@@ -142,10 +143,10 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         if (opens_to(DIR_SOUTH, rx, ry, rz))
             mid = rooms[rz][ry - 1][rx].n_hall_offs + rooms[rz][ry - 1][rx].n_hall_wid;
         if (cx >= mid && cy < fixed_hall_offs) {
-            switch (r.dirs[DIR_EAST]) {
-                case HALL:
+            switch (r.dir_types[DIR_EAST]) {
+                case DIRTYPE_HALL:
                     if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false; break;
-                case DOOR:
+                case DIRTYPE_DOOR:
                     if (far_east_cube(cx) || far_south_cube(cy))
                         if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false; break;
                 default: // all blockers PLUS currently open air space connection
@@ -159,10 +160,10 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         if (opens_to(DIR_NORTH, rx, ry, rz))
             mid = r.n_hall_offs;
         if (cx < mid && cy >= fixed_hall_offs + fixed_hall_wid) {
-            switch (r.dirs[DIR_WEST]) {
-                case HALL:
+            switch (r.dir_types[DIR_WEST]) {
+                case DIRTYPE_HALL:
                     if (n_of_e_opening(rx - 1, ry, rz, cy)) need_airspace = false; break;
-                case DOOR:
+                case DIRTYPE_DOOR:
                     if (far_west_cube(cx) || far_north_cube(cy))
                         if (n_of_e_opening(rx - 1, ry, rz, cy)) need_airspace = false; break;
                 default: // all blockers PLUS currently open air space connection
@@ -176,10 +177,10 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         if (opens_to(DIR_EAST, rx, ry, rz))
             mid = r.e_hall_offs + r.e_hall_wid;
         if (cy >= mid && cy >= fixed_hall_offs + fixed_hall_wid) {
-            switch (r.dirs[DIR_NORTH]) {
-                case HALL:
+            switch (r.dir_types[DIR_NORTH]) {
+                case DIRTYPE_HALL:
                     if (e_of_n_opening(rx, ry, rz, cx)) need_airspace = false; break;
-                case DOOR:
+                case DIRTYPE_DOOR:
                     if (far_north_cube(cy) || far_east_cube(cx))
                         if (e_of_n_opening(rx, ry, rz, cx)) need_airspace = false; break;
                 default: // all blockers PLUS currently open air space connection
@@ -193,10 +194,10 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         if (opens_to(DIR_WEST, rx, ry, rz))
             mid = rooms[rz][ry][rx - 1].e_hall_offs;
         if (cy < mid && cy < fixed_hall_offs) {
-            switch (r.dirs[DIR_SOUTH]) {
-                case HALL:
+            switch (r.dir_types[DIR_SOUTH]) {
+                case DIRTYPE_HALL:
                     if (w_of_n_opening(rx, ry - 1, rz, cx)) need_airspace = false; break;
-                case DOOR:
+                case DIRTYPE_DOOR:
                     if (far_south_cube(cy) || far_west_cube(cx))
                         if (w_of_n_opening(rx, ry - 1, rz, cx)) need_airspace = false; break;
                 default: // all blockers PLUS currently open air space connection
@@ -216,13 +217,6 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
 }
 
 void make_stairs(int rx, int ry, int rz, int ox, int oy, int floor_block) { // room indexes, origin
-		// clear out stairwell hole in ceiling
-		set_region(
-			6 + rx * cubes_across_room + ox,
-			7 + ry * cubes_across_room + oy,
-			rz * cubes_going_up + 3 + cubes_going_up - 1,
-			4, 2, 1, 0);
-
 		set_region(
 			6 + rx * cubes_across_room + ox,
 			7 + ry * cubes_across_room + oy,
@@ -270,7 +264,7 @@ void setup_rooms() {
 			r.n_hall_hei = randrange(2, malleable_z_span);
 
 			// now that i chose my offset, it could have eaten into MALLEABLE span, and i don't think i'm considering that here!
-			//.... shouldn't even be using that var?  i'm working within the WID/DEP space space when doing the hallways right?!
+			//.... shouldn't even be using that var?  i'm working within the WID/DEP space when doing the hallways right?!
 
 			// reset malleables, for working INSIDE AIRSPACE
 			malleable_x_span = r.wid - min_lip * 2;
@@ -283,29 +277,28 @@ void setup_rooms() {
 			r.n_hall_offs = /*fixed_hall_offs; */ r.x_offs + min_lip + randrange(0, malleable_x_span);
 
 			// connections in directions
-			for (int i = 0; i < 6; i++) {
-				if /* lateral dir */ (i < 4) 
-					r.dirs[i] = randrange(1, 2); // randomly choose door or hall
-				else if /* stairway up should be here */ (i == 4 && x == stairway_up_x && y == stairway_up_y)
-					r.dirs[i] = HALL; // not exactly a hall, but....
+			for (int i = 0; i < DIR_COUNT; i++) {
+				if /* lateral dir */ (i < DIR_UP) 
+					r.dir_types[i] = (direction_type_t)randrange(1, 2); // randomly choose door or hall
+				else if /* stairway up should be here */ (i == DIR_UP && z < rooms_going_up - 1 && x == stairway_up_x && y == stairway_up_y)
+					r.dir_types[i] = DIRTYPE_STAIRS;
 				else
-					r.dirs[i] = BLOCKED_FOREVER;
+					r.dir_types[i] = DIRTYPE_BLOCKED_FOREVER;
 			}
 
+			if /* stairs going upwards in room below */ (z > 0 && rooms[z - 1][y][x].dir_types[DIR_UP] == DIRTYPE_STAIRS)
+				r.dir_types[DIR_DOWN] = DIRTYPE_STAIRS;
+
 			if (y == 0)
-				r.dirs[DIR_SOUTH] = BLOCKED_BY_OUTSIDE;
+				r.dir_types[DIR_SOUTH] = DIRTYPE_BLOCKED_BY_OUTSIDE;
 			if (y == rooms_across_ruins - 1)
-				r.dirs[DIR_NORTH] = BLOCKED_BY_OUTSIDE;
+				r.dir_types[DIR_NORTH] = DIRTYPE_BLOCKED_BY_OUTSIDE;
 			if (x == 0)
-				r.dirs[DIR_WEST] = BLOCKED_BY_OUTSIDE;
+				r.dir_types[DIR_WEST] = DIRTYPE_BLOCKED_BY_OUTSIDE;
 			if (x == rooms_across_ruins - 1)
-				r.dirs[DIR_EAST] = BLOCKED_BY_OUTSIDE;
+				r.dir_types[DIR_EAST] = DIRTYPE_BLOCKED_BY_OUTSIDE;
                 
-			//r.group = new List<Point>() { new Point(x, y) };
-			//groups.Add(r.group);
-        
 			rooms[z][y][x] = r;
-			// delete
 		}
 		}
 	}
@@ -336,8 +329,16 @@ void make_ruins(int x, int y) {
 		
 		make_walls_or_airspace(rx, ry, rz, x, y);
 		
-		if (opens_to(rooms[rz][ry][rx].dirs[DIR_UP], rx, ry, rz) ) 
+		if (opens_to(DIR_UP, rx, ry, rz) ) 
 			make_stairs(rx, ry, rz, x, y, floor_block);
+
+		if (opens_to(DIR_DOWN, rx, ry, rz) ) 
+			// clear well in floor of this room, and ceiling of room underneath
+			set_region(
+				rx * cubes_across_room + x + 6,
+				ry * cubes_across_room + y + 7,
+				rz * cubes_going_up + 3 - 1,
+				4, 2, 2, 0);
     }
     }
 	}
@@ -345,16 +346,15 @@ void make_ruins(int x, int y) {
 
 void start_dungeon_generator()
 {
-    printf("Carving out ruins\n");
+    printf("Making ruins\n");
 
-    for (int x = 0; x < ruins_across_world; x++) {
-    for (int y = 0; y < ruins_across_world; y++) {
+    for (int x = 0; x < ruins_across_world; x++)
+    for (int y = 0; y < ruins_across_world; y++)
 		if (x % 2 == 0  &&  y % 2 == 0)
-			make_ruins(
-				x * cubes_across_room * rooms_across_ruins, 
-				y * cubes_across_room * rooms_across_ruins);
-    }
-	}
+			if (randrange(0, 1) == 0)
+				make_ruins(
+					x * cubes_across_room * rooms_across_ruins, 
+					y * cubes_across_room * rooms_across_ruins);
 }
 
 //bool not_in_hall(int i, int z) {

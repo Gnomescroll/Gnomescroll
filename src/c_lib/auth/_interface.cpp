@@ -457,4 +457,14 @@ void run_tests()
     GS_ASSERT(!auth_token_expired(utc_now() + AUTH_TOKEN_LIFETIME, AUTH_TOKEN_LIFETIME));
 }
 
+void update()
+{
+    #if DC_SERVER
+    server_update();
+    #endif
+    #if DC_CLIENT
+    client_update();
+    #endif
+}
+
 }   // Auth
