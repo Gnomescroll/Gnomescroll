@@ -264,7 +264,7 @@ void draw(const struct MECH &m)
 #endif 
 bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
 {
-
+/*
     static const int q_set[4*6]= 
     {
         4,5,6,7,
@@ -274,7 +274,7 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
         3,0,4,7,
         1,2,6,5 
     };
-
+*/
     const float size2 = m.size;
 
     float wx = (float) (m.x) + 0.5f + m.offset_x;
@@ -405,7 +405,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
                 //return true;
             }
 
-            if(d < distance)
+            if(ret == true && d < distance)
             {
                 distance = d;
                 mech_id = i;
