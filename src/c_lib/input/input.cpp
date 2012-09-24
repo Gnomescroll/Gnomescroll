@@ -60,8 +60,6 @@ void unbind_mouse()
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-//#include <common/lua/lua.hpp>
-
 int process_events()
 {
     if (input_state.mouse_bound)

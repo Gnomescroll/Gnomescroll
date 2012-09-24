@@ -80,6 +80,7 @@ void check_expiring_token()
     static int expiration_tick = 0;
     static int expiration_attempts = 0;
     if (auth_token == NULL) return;
+    if (!NetClient::Server.connected) return;
     if (!needs_login)
     {   // only attempt the token navigation if we dont think we need to login
         // otherwise it will reload the login page while they should be using it

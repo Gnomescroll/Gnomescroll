@@ -67,13 +67,14 @@ void disable_agent_container()
     t_hud::disable_agent_container_hud();
     ItemContainer::close_inventory();
     //if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
-    if (SDL_GetAppState() & SDL_APPINPUTFOCUS)    // dont change mouse state if we're not in focus. it grabs the window
+    if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
         input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
 }
 
 void toggle_agent_container()
 {
+    printf("toggle agent container\n");
     if (input_state.agent_container) disable_agent_container();
     else enable_agent_container();
 }
@@ -174,7 +175,8 @@ void disable_awesomium()
     if (!input_state.awesomium) return;
     printf("disable awesomium\n");
     input_state.awesomium = false;
-    input_state.mouse_bound = input_state.rebind_mouse;
+    if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
+        input_state.mouse_bound = input_state.rebind_mouse;
     input_state.ignore_mouse_motion = true;
     Awesomium::disable();
     #endif
