@@ -210,17 +210,18 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
 
 bool auth_token_expired(const time_t timestamp, const time_t expiration_window)
 {   // check if token needs to be refreshed
-    printf("Auth token expired? Timestamp: %lld Expiration window: %lld\n", (long long)timestamp, (long long)expiration_window);
+    //printf("Auth token expired? Timestamp: %lld Expiration window: %lld\n", (long long)timestamp, (long long)expiration_window);
+    //printf("AUTH TOKEN LIFETIME: %lld\n", (long long)AUTH_TOKEN_LIFETIME);
     if (timestamp < AUTH_TOKEN_LIFETIME) return true;   // bad data
 
     time_t now = utc_now();
-    printf("NOW: %lld\n", (long long)now);
+    //printf("NOW: %lld\n", (long long)now);
     time_t created_at = difftime(timestamp, AUTH_TOKEN_LIFETIME);
-    printf("CREATED AT: %lld\n", (long long)created_at);
+    //printf("CREATED AT: %lld\n", (long long)created_at);
     double dt = difftime(now, created_at);
-    printf("DT: %f\n", dt);
+    //printf("DT: %f\n", dt);
     bool expired = (dt < 0 || (time_t)dt >= expiration_window);
-    printf("EXPIRED: %d\n", expired);
+    //printf("EXPIRED: %d\n", expired);
     return expired;
 }
 

@@ -415,6 +415,7 @@ bool open_container(int container_id)
     }
 
     opened_container = container_id;
+    printf("OPENED_CONTAINER: %d\n", container_id);
 
     // send open packet
     opened_container_event_id = record_container_event(container_id);
@@ -469,6 +470,7 @@ bool close_container(int container_id)
     t_hud::close_container(container_id);
     
     opened_container = NULL_CONTAINER;
+    printf("CONTAINER ID SET TO NULL\n");
     did_close_container_block = true;
 
     return true;
@@ -484,9 +486,11 @@ bool container_block_was_opened(int* container_id)
         GS_ASSERT(opened_container != NULL_CONTAINER);
         did_open_container_block = false;
         *container_id = opened_container;
+        printf("CONTAINER ID SET TO %d\n", opened_container);
         return true;
     }
     *container_id = NULL_CONTAINER;
+    printf("CONTAINER ID SET TO NULL\n");
     return false;
 }
 

@@ -613,6 +613,7 @@ void send_smelter_fuel(int container_id)
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+    GS_ASSERT(container_id == smelter->id);
 
     smelter_fuel_StoC msg;
     msg.container_id = smelter->id;
@@ -632,6 +633,7 @@ void send_smelter_progress(int container_id)
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+    GS_ASSERT(container_id == smelter->id);
 
     smelter_progress_StoC msg;
     msg.progress = smelter->progress;

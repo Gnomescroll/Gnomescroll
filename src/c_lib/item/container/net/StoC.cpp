@@ -214,6 +214,7 @@ inline void unlock_container_StoC::handle()
 
 inline void smelter_fuel_StoC::handle()
 {
+    GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
@@ -237,6 +238,7 @@ inline void smelter_fuel_StoC::handle()
 
 inline void smelter_progress_StoC::handle()
 {
+    GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
