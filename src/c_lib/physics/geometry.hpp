@@ -1,26 +1,21 @@
 #pragma once
 
 
-bool line_plane_intersection2(
+bool line_plane_intersection1(
 	float lx, float ly, float lz,		//line starting point
-	float lvx, float lvy, float lyz,	//line direction
+	float lvx, float lvy, float lvz,	//line direction
 	float px, float py, float pz,		//point on plane
 	float nx, float ny, float nz,		//normal
 	float* a 							//coefficient
 	)
 {
 	float num = (px-lx)*nx + (py-ly)*ny + (pz-lz)*nz;
-
-
 	float denum = lvx*nx + lvy*ny + lvz*nz; 
 
+	static const float epsilon = 0.001f;
 
-
-	static const float epsilon 0.001f;
-
-	_num = absf(num);
-	_denum = abs(denum);
-
+	float _num = fabs(num);
+	float _denum = fabs(denum);
 
 	if(_num > epsilon && _denum > epsilon )
 	{
@@ -55,12 +50,12 @@ bool line_plane_intersection2(
 
 bool line_plane_intersection2(
 	float lx, float ly, float lz,		//line starting point
-	float lvx, float lvy, float lyz,	//line direction
+	float lvx, float lvy, float lvz,	//line direction
 	float bx, float by, float bz,		//center
 
 	struct Vec3 n, 		//normal
-	struct Vec3 v1 		//direction 1 on surface
-	struct Vec3 v2		//direction 2 on surface
+	struct Vec3 v1, 		//direction 1 on surface
+	struct Vec3 v2,		//direction 2 on surface
 
 	float sn, float sv1, float sv2, 	//size for directions
 	float* a 							//coefficient
@@ -80,10 +75,10 @@ bool line_plane_intersection2(
 		float z = lz + a*lvz - pz;
 
 		float t1 = x*v1.x + y*v1.y + z*v1.z;
-		if( t1 < bdx && t1 > -bdx )
+		if( t1 < sv1 && t1 > -sv1 )
 		{
 			float t2 = x*v2.x + y*v2.y + z*v2.z;
-			if( t2 < bdy && t2 > -bdy )
+			if( t2 < sv2 && t2 > -sv2 )
 			{
 				return true;	//a is set already
 			}
@@ -96,7 +91,7 @@ bool line_plane_intersection2(
 
 void line_box_test(
 	float lx, float ly, float lz,
-	float lvx, float lvy, float lyz,
+	float lvx, float lvy, float lvz,
 	float bx, float by, float bz,		//center
 	float bdx, float bdy, float bdz,	//size
 	struct Vec3 f,
