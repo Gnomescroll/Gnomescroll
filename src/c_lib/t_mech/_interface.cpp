@@ -155,6 +155,17 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         break;
     } 
 }
+
+//ray cast and draw outlines
+void client_ray_cast()
+{
+    struct Vec3 pos  = agent_camera->get_position();
+    struct Vec3 look = agent_camera->forward_vector();
+
+
+}
+
+
 #endif
 
 
@@ -219,8 +230,53 @@ void tick(int x, int y, int z)
 
 #if DC_CLIENT
 
+#if DC_CLIENT
+
+void draw(const struct MECH &m)
+{
+    
+    float vn[3*8];
+
+    float dx1 = sin(m.rotation * PI);
+    float dy1 = cos(m.rotation * PI);
+
+    float dx2 = sin( (m.rotation+0.5) * PI );
+    float dy2 = cos( (m.rotation+0.5) * PI );
+
+    //dx = sin( (m.rotation+0.5) * PI );
+    //dy = cos( (m.rotation+0.5) * PI );
+
+    float _x[4];
+    _x[0] = sin(m.rotation * 0.00f*PI);
+    _x[1] = sin(m.rotation * 0.50f*PI);
+    _x[2] = sin(m.rotation * 1.00f*PI);
+    _x[3] = sin(m.rotation * 1.50f*PI);
+
+    float _y[4];
+    _y[0] = cos(m.rotation * 0.00f*PI);
+    _y[1] = cos(m.rotation * 0.50f*PI);
+    _y[2] = cos(m.rotation * 1.00f*PI);
+    _y[3] = cos(m.rotation * 1.50f*PI);
+
+}
+
+
+#endif 
 bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* distance)
 {
+    static const float limit = 2.0f;
+
+    static const int q_set[4*6]= 
+    {
+        4,5,6,7,
+        3,2,1,0,
+        2,3,7,6,
+        0,1,5,4,
+        3,0,4,7,
+        1,2,6,5 
+    };
+
+
     const float size2 = m.size/2.0f;
     float wx = (float) (m.x) + 0.5f + m.offset_x;
     float wy = (float) (m.y) + 0.5f + m.offset_y;
@@ -237,6 +293,16 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     y -= wy;
     z -= wz;
 
+
+    float a = vx*wx + vy*wy + vz*wz;
+    float px = x - a*vx;
+    float py = y - a*vy;
+    float pz = z - a*vz;
+
+    float distance = px*px + py*py + pz*pz;
+
+
+
     return true;
 /*
     float _x 
@@ -245,12 +311,67 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     m.offset_x
     m.offset_y
 */
+
+    const float size = m.size/2.0f;
+    const float size2 = m.size;
+
+    float dx,dy;
+
+    dx = sin(m.rotation * PI);
+    dy = cos(m.rotation * PI);
+
+    vn[3*0+0] = wx - size*dx;
+    vn[3*0+1] = wy - size*dy;
+    vn[3*0+2] = wz + size2;
+
+
+    dx = sin( (m.rotation+0.5) * PI );
+    dy = cos( (m.rotation+0.5) * PI );
+
+    vn[3*0+0] = wx - size*dx;
+    vn[3*0+1] = wy - size*dy;
+    vn[3*0+2] = wz + size2;
+
+/*
+
+*/
+/*
+
+    vn[3*0+0] = wx - size*dx;
+    vn[3*0+1] = wy - size*dy;
+    vn[3*0+2] = wz + size2;
+
+    vn[3*1+0] = wx - size*dx;
+    vn[3*1+1] = wy - size*dy;
+    vn[3*1+2] = wz;
+
+    vn[3*2+0] = wx + size*dx;
+    vn[3*2+1] = wy + size*dy;
+    vn[3*2+2] = wz;
+
+    vn[3*3+0] = wx + size*dx;
+    vn[3*3+1] = wy + size*dy;
+    vn[3*3+2] = wz + size2;
+
+*/
 }
 
-bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* _distance)
+bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int* _mech_id, float* _distance)
 {
     //int nearest_mech = -1;
     //float distance = 1000.0;
+
+    *_mech_id = -1;
+    *_distance = 0.0f;
+
+    float distance = 1000.0f;
+    int mech_id = -1;
+
+    int xi = x;
+    int yi = y;
+    int zi = z;
+
+    const int cuttoff2 = 8*8;
 
     const int mlm = mech_list->mlm;
     const struct MECH* mla = mech_list->mla;
@@ -262,6 +383,13 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
         float d;
         bool ret;
 
+        int xd = xi - m.x;
+        int yd = yi - m.y;
+        int zd = zi - m.z;
+
+        if(xd*xd + yd*yd + zd*zd > cutoff2)
+            continue;
+
         switch ( mla[i].render_type )
         {
         case MECH_RENDER_TYPE_0: //MECH_CRYSTAL:
@@ -269,9 +397,17 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, floa
             ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
             if(ret == true)
             {
-                printf("mech raycast hit: %i \n", i);
-                return true;
+                printf("mech raycast hit: %i distance= %i \n", i, d);
+                //return true;
             }
+
+            if(d < distance)
+            {
+                distance = d;
+                mech_id = i;
+                GS_ASSERT( i == mla[i].id );
+            }
+
             break;
         default:
             printf("pack_mech error: unhandled mech type\n");
