@@ -609,4 +609,4 @@ void draw_teardown()
 
 #endif
 
-}
+}   // t_hud

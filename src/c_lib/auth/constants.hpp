@@ -7,7 +7,7 @@ namespace Auth
     
 typedef enum
 {
-    AUTH_ERROR_NONE,            // no error
+    AUTH_ERROR_NONE = 0,            // no error
     AUTH_ERROR_TOKEN_MISSING,   // token was NULL, did not exist 
     AUTH_ERROR_TOKEN_MALFORMED, // token failed to parse
     AUTH_ERROR_TOKEN_EXPIRED,   // token had expired

@@ -481,6 +481,7 @@ bool container_block_was_opened(int* container_id)
 
     if (did_open_container_block)
     {
+        GS_ASSERT(opened_container != NULL_CONTAINER);
         did_open_container_block = false;
         *container_id = opened_container;
         return true;

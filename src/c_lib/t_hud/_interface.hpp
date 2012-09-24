@@ -60,4 +60,4 @@ void draw_teardown();
 // render
 void draw();
 
-}
+}   // t_hud

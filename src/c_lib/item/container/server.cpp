@@ -663,9 +663,9 @@ bool agent_open_container(int agent_id, int container_id)
     if (a == NULL) return false;
 
     // release currently opened container
+    GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
-        GS_ASSERT(false);
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
         GS_ASSERT(opened != NULL);
         if (opened != NULL)
