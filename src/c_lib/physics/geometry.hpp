@@ -70,9 +70,9 @@ bool line_plane_intersection2(
 	ret = line_plane_intersection1(lx,ly,lz, lvx,lvy,lvz, px,py,pz, n.x,n.y,n.z, a);
 	if( ret)
 	{
-		float x = lx + a*lvx - px;
-		float y = ly + a*lvy - py;
-		float z = lz + a*lvz - pz;
+		float x = lx + (*a)*lvx - px;
+		float y = ly + (*a)*lvy - py;
+		float z = lz + (*a)*lvz - pz;
 
 		float t1 = x*v1.x + y*v1.y + z*v1.z;
 		if( t1 < sv1 && t1 > -sv1 )
@@ -104,7 +104,7 @@ void line_box_test(
 	float a;
 
 	//top
-	ret = line_plane_intersection2((lx,ly,lz, lvx,lvy,lvz, bx,by,bz, f,r,u, bdx,bdy,bdz, &a);
+	ret = line_plane_intersection2(lx,ly,lz, lvx,lvy,lvz, bx,by,bz, f,r,u, bdx,bdy,bdz, &a);
 	if( ret)
 	{
 
