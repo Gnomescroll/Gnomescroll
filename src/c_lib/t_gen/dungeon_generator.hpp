@@ -12,9 +12,14 @@ const int cubes_across_room = 16;
 const int cubes_going_up = cubes_across_room / 2;
 const int rooms_across_ruins = XMAX / ruins_across_world / cubes_across_room;
 const int rooms_going_up = 5; // levels/floors
+const int min_lip = 2; // minimum lip
+
 const int fixed_hall_wid = cubes_across_room / 4;
 const int fixed_hall_offs = (cubes_across_room - fixed_hall_wid) / 2; // hall offset
-const int min_lip = 2; // minimum lip
+const int fixed_stair_x = 6;
+const int fixed_stair_y = 7;
+const int fixed_stair_w = 4;
+const int fixed_stair_d = 2;
 
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile_id); 
 
@@ -52,10 +57,10 @@ struct Room {
     int n_hall_hei;
     int n_hall_wid;
     int n_hall_offs; // north hall offset
-	//int air_x; // pos of a region that guarantees airspace, atm only used for stairways
-	//int air_y;
-	//int air_w; // width of air region
-	//int air_d; // depth
+	int air_x; // pos of a region that guarantees airspace, atm only used for stairways
+	int air_y;
+	int air_w; // width of air region
+	int air_d; // depth
 };
 
 Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
@@ -121,11 +126,13 @@ bool opens_to(direction_t dir, int rx, int ry, int rz) {
     return rooms[rz][ry][rx].dir_types[dir] < DIRTYPE_BLOCKED_BY_ROOM;
 }
 
-//bool in_air_region(Room r, int x, int y) {
-//	if (x < r.air_x || x >= r.air_x + r.air_w) return false;
-//	if (y < r.air_y || y >= r.air_y + r.air_y) return false;
-//    return true;
-//}
+bool in_air_region(Room r, int x, int y) {
+	//if (x < r.air_x || x >= r.air_x + r.air_w) return false;
+	//if (y < r.air_y || y >= r.air_y + r.air_d) return false;
+	if (x >= r.air_x && x < r.air_x + r.air_w &&
+		y >= r.air_y && y < r.air_y + r.air_d) return true;
+    return false;
+}
 
 
 
@@ -142,7 +149,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         int mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
         if (opens_to(DIR_SOUTH, rx, ry, rz))
             mid = rooms[rz][ry - 1][rx].n_hall_offs + rooms[rz][ry - 1][rx].n_hall_wid;
-        if (cx >= mid && cy < fixed_hall_offs) {
+        if (cx >= mid /*&& cy < fixed_hall_offs*/) {
             switch (r.dir_types[DIR_EAST]) {
                 case DIRTYPE_HALL:
                     if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false; break;
@@ -159,7 +166,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         mid = fixed_hall_offs; // cubes_across_room / 2;
         if (opens_to(DIR_NORTH, rx, ry, rz))
             mid = r.n_hall_offs;
-        if (cx < mid && cy >= fixed_hall_offs + fixed_hall_wid) {
+        if (cx < mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
             switch (r.dir_types[DIR_WEST]) {
                 case DIRTYPE_HALL:
                     if (n_of_e_opening(rx - 1, ry, rz, cy)) need_airspace = false; break;
@@ -176,7 +183,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
         if (opens_to(DIR_EAST, rx, ry, rz))
             mid = r.e_hall_offs + r.e_hall_wid;
-        if (cy >= mid && cy >= fixed_hall_offs + fixed_hall_wid) {
+        if (cy >= mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
             switch (r.dir_types[DIR_NORTH]) {
                 case DIRTYPE_HALL:
                     if (e_of_n_opening(rx, ry, rz, cx)) need_airspace = false; break;
@@ -193,7 +200,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
         if (opens_to(DIR_WEST, rx, ry, rz))
             mid = rooms[rz][ry][rx - 1].e_hall_offs;
-        if (cy < mid && cy < fixed_hall_offs) {
+        if (cy < mid /*&& cy < fixed_hall_offs*/) {
             switch (r.dir_types[DIR_SOUTH]) {
                 case DIRTYPE_HALL:
                     if (w_of_n_opening(rx, ry - 1, rz, cx)) need_airspace = false; break;
@@ -206,7 +213,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
             }
         }
 
-		//if (in_air_region(r, cx, cy)) need_airspace = true; 
+		if (in_air_region(rooms[rz][ry][rx], cx, cy)) need_airspace = true; 
 
 		// add 4 to all z values, to get above bedrock
 		if (need_airspace) t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, 0);
@@ -237,6 +244,15 @@ void make_stairs(int rx, int ry, int rz, int ox, int oy, int floor_block) { // r
 			7 + ry * cubes_across_room + oy,
 			rz * cubes_going_up + 3 + 6,
 			1, 2, 3, floor_block);
+}
+
+Room setup_stairs_for(direction_t d, Room r) {
+	r.dir_types[d] = DIRTYPE_STAIRS;
+	r.air_x = fixed_stair_x;
+	r.air_y = fixed_stair_y;
+	r.air_w = fixed_stair_w;
+	r.air_d = fixed_stair_d;
+	return r;
 }
 
 void setup_rooms() {
@@ -280,14 +296,18 @@ void setup_rooms() {
 			for (int i = 0; i < DIR_COUNT; i++) {
 				if /* lateral dir */ (i < DIR_UP) 
 					r.dir_types[i] = (direction_type_t)randrange(1, 2); // randomly choose door or hall
-				else if /* stairway up should be here */ (i == DIR_UP && z < rooms_going_up - 1 && x == stairway_up_x && y == stairway_up_y)
-					r.dir_types[i] = DIRTYPE_STAIRS;
-				else
+				else if /* stairway up should be here */ (i == DIR_UP && z < rooms_going_up - 1 && x == stairway_up_x && y == stairway_up_y) {
+					r = setup_stairs_for(DIR_UP, r);
+				} else
 					r.dir_types[i] = DIRTYPE_BLOCKED_FOREVER;
 			}
 
-			if /* stairs going upwards in room below */ (z > 0 && rooms[z - 1][y][x].dir_types[DIR_UP] == DIRTYPE_STAIRS)
-				r.dir_types[DIR_DOWN] = DIRTYPE_STAIRS;
+			if /* stairs going upwards in room below */ (z > 0 && rooms[z - 1][y][x].dir_types[DIR_UP] == DIRTYPE_STAIRS) {
+				r = setup_stairs_for(DIR_DOWN, r);
+			} else { // must set some default values since we keep reusing the rooms array
+				r.air_x = r.air_y = 0;
+				r.air_w = r.air_d = 0;
+			}
 
 			if (y == 0)
 				r.dir_types[DIR_SOUTH] = DIRTYPE_BLOCKED_BY_OUTSIDE;
@@ -335,10 +355,10 @@ void make_ruins(int x, int y) {
 		if (opens_to(DIR_DOWN, rx, ry, rz) ) 
 			// clear well in floor of this room, and ceiling of room underneath
 			set_region(
-				rx * cubes_across_room + x + 6,
-				ry * cubes_across_room + y + 7,
+				rx * cubes_across_room + x + fixed_stair_x,
+				ry * cubes_across_room + y + fixed_stair_y,
 				rz * cubes_going_up + 3 - 1,
-				4, 2, 2, 0);
+				fixed_stair_w, fixed_stair_d, 2, 0);
     }
     }
 	}
