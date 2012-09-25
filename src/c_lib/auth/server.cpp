@@ -171,6 +171,11 @@ bool verify_token(const char* _token)
 
 void received_auth_token(int client_id, const char* token)
 {
+    if (!Options::auth)
+    {
+        send_auth_token_valid(client_id);
+        return;
+    }
     int user_id = 0;
     time_t expiration_time = 0;
     char* username = NULL;

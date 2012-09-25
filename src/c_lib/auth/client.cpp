@@ -80,6 +80,7 @@ void check_expiring_token()
     static int expiration_tick = 0;
     static int expiration_attempts = 0;
     if (auth_token == NULL) return;
+    if (!NetClient::Server.connected) return;
     if (!needs_login)
     {   // only attempt the token navigation if we dont think we need to login
         // otherwise it will reload the login page while they should be using it
@@ -108,21 +109,7 @@ void check_expiring_token()
 void begin_auth()
 {
     GS_ASSERT(auth_token == NULL);
-
-    //// check if auth token already exists
-    //char* token = Awesomium::get_auth_token();
-    //if (token != NULL && load_auth_token(token) && !auth_token_expiring(auth_token_timestamp))
-    //{
-        //token_available = true;
-        //send_auth_token();  // we won't be connected yet, but the message will still queue
-    //}
-    //else // display awesomium (should already have the login page set)
-
-    // Require login, as the session cookies will have been cleared.
-
     enable_awesomium();
-    //if (token != NULL)
-        //free(token);
 }
 
 AuthError update_token(const char* token)
@@ -132,10 +119,7 @@ AuthError update_token(const char* token)
 
     if (!load_auth_token(token))
         return AUTH_ERROR_TOKEN_MALFORMED;
-
-    if (auth_token_expired(auth_token_timestamp))
-        return AUTH_ERROR_TOKEN_EXPIRED;
-
+    // dont check timestamp expiration, because client's clock may be wrong
     Awesomium::set_game_token_cookie(token, auth_token_timestamp);
 
     send_auth_token(token);

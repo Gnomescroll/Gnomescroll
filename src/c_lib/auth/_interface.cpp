@@ -169,15 +169,15 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
     }
 
     // convert user id to integer
-    *user_id = atoi(_token);
-    if (!is_valid_user_id(*user_id))
+    int _user_id = atoi(_token);
+    if (!is_valid_user_id(_user_id))
     {
         free(_token);
         return false;
     }
 
     // convert expiration time to time_t
-    *expiration_time = atott(&token[AUTH_TOKEN_ID_LENGTH + 1]);
+    time_t _expiration_time = atott(&token[AUTH_TOKEN_ID_LENGTH + 1]);
 
     // verify hash and username
     const char* phash = &token[AUTH_TOKEN_ID_LENGTH + 1 + AUTH_TOKEN_TIMESTAMP_LENGTH + 1]; 
@@ -200,21 +200,32 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
     _username[username_len] = '\0';
     *username = _username;
 
+    // set remaining pointers
+    *user_id = _user_id;
+    *expiration_time = _expiration_time;
+
     free(_token);
     return true;
 }
 
 bool auth_token_expired(const time_t timestamp, const time_t expiration_window)
 {   // check if token needs to be refreshed
+    //printf("Auth token expired? Timestamp: %lld Expiration window: %lld\n", (long long)timestamp, (long long)expiration_window);
+    //printf("AUTH TOKEN LIFETIME: %lld\n", (long long)AUTH_TOKEN_LIFETIME);
     if (timestamp < AUTH_TOKEN_LIFETIME) return true;   // bad data
 
     time_t now = utc_now();
-    time_t created_at = timestamp - AUTH_TOKEN_LIFETIME;
+    //printf("NOW: %lld\n", (long long)now);
+    time_t created_at = difftime(timestamp, AUTH_TOKEN_LIFETIME);
+    //printf("CREATED AT: %lld\n", (long long)created_at);
     double dt = difftime(now, created_at);
-    return (dt < 0 || dt >= (double)expiration_window);
+    //printf("DT: %f\n", dt);
+    bool expired = (dt < 0 || (time_t)dt >= expiration_window);
+    //printf("EXPIRED: %d\n", expired);
+    return expired;
 }
 
-bool is_valid_user_id(const int user_id)
+inline bool is_valid_user_id(const int user_id)
 {
     return (user_id > 0);
 }

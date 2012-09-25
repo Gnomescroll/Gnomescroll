@@ -613,6 +613,7 @@ void send_smelter_fuel(int container_id)
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+    GS_ASSERT(container_id == smelter->id);
 
     smelter_fuel_StoC msg;
     msg.container_id = smelter->id;
@@ -632,6 +633,7 @@ void send_smelter_progress(int container_id)
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+    GS_ASSERT(container_id == smelter->id);
 
     smelter_progress_StoC msg;
     msg.progress = smelter->progress;
@@ -663,9 +665,9 @@ bool agent_open_container(int agent_id, int container_id)
     if (a == NULL) return false;
 
     // release currently opened container
+    GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
     if (opened_containers[agent_id] != NULL_CONTAINER)
     {
-        GS_ASSERT(false);
         ItemContainerInterface* opened = get_container(opened_containers[agent_id]);
         GS_ASSERT(opened != NULL);
         if (opened != NULL)

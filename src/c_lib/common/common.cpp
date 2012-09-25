@@ -64,7 +64,7 @@ time_t atott(const char* str)
         return atoll(str);
     #else
     if (s == sizeof(__int64))
-        return _strtoui64(str, NULL, 10);
+        return _atoi64(str);
     #endif
     GS_ASSERT_LIMIT(false, 1);
     return 0;
