@@ -48,6 +48,15 @@ bool line_plane_intersection1(
 	return false;
 }
 
+float _plx, _ply, _plz;
+float _pvx, _pvy, _pvz;
+
+float _ppx, _ppy, _ppz;
+
+float _x0, _y0, _z0;
+float _x1, _y1, _z1;
+
+float _ix, _iy, _iz;
 
 bool line_plane_intersection2(
 	float lx, float ly, float lz,		//line starting point
@@ -68,7 +77,14 @@ bool line_plane_intersection2(
 	px = bx+sn*n.x;
 	py = by+sn*n.y;
 	pz = bz+sn*n.z;
-	ret = line_plane_intersection1(lx,ly,lz, lvx,lvy,lvz, px,py,pz, n.x,n.y,n.z, a);
+
+
+	ret = line_plane_intersection1(lx,ly,lz, 
+		lvx,lvy,lvz, 
+		px,py,pz, 
+		n.x,n.y,n.z, 
+		a);
+
 	if( ret)
 	{
 		float x = lx + (*a)*lvx - px;
@@ -81,6 +97,33 @@ bool line_plane_intersection2(
 			float t2 = x*v2.x + y*v2.y + z*v2.z;
 			if( t2 < sv2 && t2 > -sv2 )
 			{
+
+					_ppx = px;
+					_ppy = py;
+					_ppz = pz;
+
+					_plx = lx;
+					_ply = ly;
+					_plz = lz;
+
+					_pvx = lvx;
+					_pvy = lvy;
+					_pvz = lvz;
+
+					_x0 = sv1*v1.x;
+					_y0 = sv1*v1.y;
+					_z0 = sv1*v1.z;
+
+					_x1 = sv2*v2.x;
+					_y1 = sv2*v2.y;
+					_z1 = sv2*v2.z;
+
+					_ix = x + px;
+					_iy = y + py;
+					_iz = z + pz;
+
+				printf("x,y,z= %0.2f %0.2f %0.2f  px,py,pz= %0.2f %0.2f %0.2f \n", x,y,z, px,py,pz);
+				printf("t1: %0.2f t2: %0.2f sv1,sv2= %0.2f %0.2f \n", t1,t2, sv1,sv2);
 				return true;	//a is set already
 			}
 		}
@@ -89,6 +132,71 @@ bool line_plane_intersection2(
 
 	return false;
 }
+
+void visualize_line()
+{
+/*
+float _plx, _ply, _plz;
+float _pvx, _pvy, _pvz;
+
+float _ppx, _ppy, _ppz;
+
+float _x0, _y0, _z0;
+float _x1, _y1, _z1;
+
+float _ix, _iy, _iz;
+*/
+    glDisable(GL_TEXTURE_2D);
+	glColor4ub(255,0,0,255);
+	glLineWidth(1.0f);
+
+	const float len = 4.0f;
+
+	glBegin(GL_LINES);
+
+	glVertex3f(_plx, _ply, _plz);
+	glVertex3f(_plx+len*_pvx, _ply+len*_pvy, _plz+len*_pvz);
+
+	glEnd();
+	glLineWidth(1.0f);
+
+
+	glColor4ub(0,255,0,255);
+	glPointSize(4.0f);
+	glBegin(GL_POINTS);
+
+	//glVertex3f(_plx, _ply, _plz);
+	//glVertex3f(_plx+len*_pvx, _ply+len*_pvy, _plz+len*_pvz);
+	glVertex3f(_ppx, _ppy, _ppz);
+
+	glEnd();
+
+
+	glColor4ub(0,0,255,255);
+	glPointSize(6.0f);
+	glBegin(GL_POINTS);
+
+	//glVertex3f(_plx, _ply, _plz);
+	//glVertex3f(_plx+len*_pvx, _ply+len*_pvy, _plz+len*_pvz);
+	glVertex3f(_ppx+_x0, _ppy+_y0, _ppz+_z0);
+	glVertex3f(_ppx-_x0, _ppy-_y0, _ppz-_z0);
+	glVertex3f(_ppx+_x1, _ppy+_y1, _ppz+_z1);
+	glVertex3f(_ppx-_x1, _ppy-_y1, _ppz-_z1);
+
+	glEnd();
+
+	glColor4ub(0,255,255,255);
+	glPointSize(8.0f);
+	glBegin(GL_POINTS);
+
+	glVertex3f(_ix, _iy, _iz);
+
+	glEnd();
+
+	glColor4ub(255,255,255,255);
+	glPointSize(1.0f);
+}
+
 
 bool line_box_test(
 	float lx, float ly, float lz,
@@ -107,7 +215,7 @@ bool line_box_test(
 	//float a;
 
 	//top
-	ret = line_plane_intersection2(lx,ly,lz, lvx,lvy,lvz, bx,by,bz, f,r,u, bdx,bdy,bdz, a);
+	ret = line_plane_intersection2(lx,ly,lz, lvx,lvy,lvz, bx,by,bz, u,f,r, bdz,bdx,bdy, a);
 	if( ret)
 	{
 		return true;

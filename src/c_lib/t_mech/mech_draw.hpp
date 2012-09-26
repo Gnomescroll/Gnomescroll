@@ -176,8 +176,95 @@ class MechListShader
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
         
         glDisable(GL_TEXTURE_2D);
+
+        init_sprite_meta();
     }
 
+    void init_sprite_meta()
+    {
+        //int mech_sprite_width[256];  //centered
+        //int mech_sprite_height[256]; //from bottom
+
+        for(int i=0; i<256; i++)
+        {
+            mech_sprite_width[i]  = -1;
+            mech_sprite_height[i] = 32;
+        }
+
+        SDL_LockSurface(s);
+
+        unsigned char *pixels = (unsigned char *)s->pixels;
+        GS_ASSERT(s->w == 32*16 && s->h == 32*16);
+
+        for(int i=0; i<256; i++)
+        {
+            int w = i % 16;
+            int h = i / 16;
+
+            //left to right
+
+            int j;
+            for(j=0; j<16; j++) //row
+            {
+                int offset = 512*32*h + 32*w;
+                offset += j;
+
+                bool empty_column = true;
+                for(int k=0; k<16; k++) //column
+                {
+                    int index = offset + k*512;
+
+                    if(pixels[4*index + 3] > 128)
+                    {
+                        empty_column = false;
+                        printf("detected: sprite: %i %i column= %i row= %i rgba= %i %i %i %i \n", w,h, k,j,
+                            pixels[4*index+0],pixels[4*index+1],pixels[4*index+2],pixels[4*index+3]);
+
+                        break;
+                    }
+                }
+
+                if(empty_column == false)
+                {
+                    //printf("sprite: %i %i first_pixel= %i \n", w,h, j);
+
+                    break;
+                }
+
+            }
+
+            for(j=0; j<16; j++) //row
+            {
+                int offset = 512*32*h + 32*w;
+                offset += j;
+
+                bool empty_column = true;
+                for(int k=0; k<16; k++) //column
+                {
+                    int index = offset + k*512;
+
+                    if(pixels[4*index + 3] > 128)
+                    {
+                        empty_column = false;
+                        printf("detected: sprite: %i %i column= %i row= %i rgba= %i %i %i %i \n", w,h, k,j,
+                            pixels[4*index+0],pixels[4*index+1],pixels[4*index+2],pixels[4*index+3]);
+
+                        break;
+                    }
+                }
+
+                if(empty_column == false)
+                {
+                    break;
+                }
+
+            }
+
+        }
+
+
+        SDL_UnlockSurface(s);
+    }
 };
 
 

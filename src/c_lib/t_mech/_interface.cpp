@@ -11,7 +11,9 @@
 
 #include <t_mech/mech_state.hpp>
 
+#if DC_CLIENT
 #include <physics/geometry.hpp>
+#endif
 
 namespace t_mech
 {
@@ -138,13 +140,19 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         //do something
         m.render_type = ma->render_type;
 
-        m.size = 0.80f;  //radius
+        m.size = 0.80f;  //diameter
         m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
+
+        m.rotation = 0.0f;
         m.offset = rand()%255;
         //m.subtype = rand()%6;
 
         m.offset_x = (randf()-0.5f)* (1.0f-m.size);
         m.offset_y = (randf()-0.5f)* (1.0f-m.size);
+
+        m.offset_x = 0.0f;
+        m.offset_y = 0.0f;
+        m.size = 1.00;
         break;
     case MECH_CROP:
         break;
@@ -276,11 +284,12 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
         1,2,6,5 
     };
 */
-    const float size2 = m.size;
+    const float size = m.size/2.0f;
+    //const float size2 = m.size;
 
     float wx = (float) (m.x) + 0.5f + m.offset_x;
     float wy = (float) (m.y) + 0.5f + m.offset_y;
-    float wz = (float) m.z + size2;
+    float wz = (float) m.z + size;
 
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
@@ -293,8 +302,8 @@ bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z
     //y -= wy;
     //z -= wz;
 
-    const float size = m.size/2.0f;
-    const float size2 = m.size;
+    //const float size = m.size/2.0f;
+    //const float size2 = m.size;
 
 /*
     float a = vx*wx + vy*wy + vz*wz;
@@ -327,15 +336,23 @@ bool line_box_test(
         x,y,z,
         vx,vy,vz,
         wx,wy,wz,
-        size2,size2,size2,
-        struct Vec3 f,
-        struct Vec3 r,
-        struct Vec3 u,
+        size,size,size,
+        f,
+        r,
+        u,
         &a
-    )
+    );
+
 
     if(ret == true)
+    {
+        printf("intercept: %0.2f %0.2f %0.2f top: %0.2f %0.2f %0.2f \n", x+a*vx, y+a*vy, z+a*vz,  wx+size*u.x, wy+size*u.y, wz+size*u.z );
+
+        //printf("Raycast hit: %f \n", a);
+        *_distance = a;
         return true;
+    }
+    return false;
 /*
     float _x 
     m.size
