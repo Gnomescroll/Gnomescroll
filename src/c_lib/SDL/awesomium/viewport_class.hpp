@@ -410,7 +410,6 @@ class ChromeViewport
         if (this->webView == NULL) return;
         awe_webview_focus(this->webView);
         this->in_focus = true;
-        printf("focus\n");
     }
 
     void unfocus()
@@ -419,7 +418,6 @@ class ChromeViewport
         if (this->webView == NULL) return;
         awe_webview_unfocus(this->webView);
         this->in_focus = false;
-        printf("unfocus\n");
     }
 
 

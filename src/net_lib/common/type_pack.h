@@ -15,8 +15,11 @@ static inline void pack_float(float* x, char* buff, unsigned int* buff_n, bool p
 
 static inline void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 
+static inline void pack_64(int64_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
+static inline void pack_u64(uint64_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
+
 static inline void pack_32(int32_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
-static inline void pack_u32_t(uint32_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
+static inline void pack_u32(uint32_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 
 static inline void pack_16(int16_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 static inline void pack_u16(uint16_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
@@ -58,6 +61,20 @@ static inline void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, b
     pack_float(&(x->z), buff, buff_n, pack);
 }
 
+static inline void pack_64(int64_t* x, char* buff, unsigned int* buff_n, bool pack)
+{
+    if (pack == true)    *((int64_t*)(buff+*buff_n)) = *x;
+    if (pack == false)   *x = *((int64_t*)(buff+*buff_n));
+    *buff_n += (unsigned int)sizeof(int64_t);
+}
+
+static inline void pack_u64(uint64_t* x, char* buff, unsigned int* buff_n, bool pack)
+{
+    if (pack == true)    *((uint64_t*)(buff+*buff_n)) = *x;
+    if (pack == false)   *x = *((uint64_t*)(buff+*buff_n));
+    *buff_n += (unsigned int)sizeof(uint64_t);
+}
+
 static inline void pack_32(int32_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((int32_t*)(buff+*buff_n)) = *x;
@@ -66,13 +83,6 @@ static inline void pack_32(int32_t* x, char* buff, unsigned int* buff_n, bool pa
 }
 
 static inline void pack_u32(uint32_t* x, char* buff, unsigned int* buff_n, bool pack)
-{
-    if (pack == true)    *((uint32_t*)(buff+*buff_n)) = *x;
-    if (pack == false)   *x = *((uint32_t*)(buff+*buff_n));
-    *buff_n += (unsigned int)sizeof(uint32_t);
-}
-
-static inline void pack_u32_t(uint32_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack == true)    *((uint32_t*)(buff+*buff_n)) = *x;
     if (pack == false)   *x = *((uint32_t*)(buff+*buff_n));

@@ -16,6 +16,7 @@ dont_include_this_file_in_client
 #include <t_mech/_interface.hpp>
 #include <common/common.hpp>
 #include <auth/constants.hpp>
+#include <auth/server.hpp>
 
 /*
     Utility Functions
@@ -56,6 +57,8 @@ void NetPeerManager::init(int client_id)
     SendClientId_StoC client_id_msg;
     client_id_msg.client_id = client_id;
     client_id_msg.sendToClient(client_id);
+
+    Auth::send_clock_time(client_id);
 
     // begin waiting for auth
     this->waiting_for_auth = true;

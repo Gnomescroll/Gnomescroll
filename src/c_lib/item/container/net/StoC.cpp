@@ -93,6 +93,11 @@ inline void insert_item_in_container_StoC::handle()
     ItemContainerInterface* container = get_container(container_id);
     ASSERT_NOT_NULL(container);
     if (container == NULL) return;
+    
+    // we received an message for a container we are not accessing;
+    //this is a normal race condition when opening and closing containers fast
+    if (!container->attached_to_agent && container->id != opened_container) return;
+
     container->insert_item(slot, (ItemID)item_id);
     ItemContainerUIInterface* ui = get_container_ui(container_id);
     if (ui == NULL) return;
@@ -107,6 +112,11 @@ inline void remove_item_from_container_StoC::handle()
     ItemContainerInterface* container = get_container(container_id);
     ASSERT_NOT_NULL(container);
     if (container == NULL) return;
+
+    // we received an message for a container we are not accessing;
+    //this is a normal race condition when opening and closing containers fast
+    if (!container->attached_to_agent && container->id != opened_container) return;
+    
     container->remove_item(slot);
     ItemContainerUIInterface* ui = get_container_ui(container_id);
     if (ui == NULL) return;
@@ -215,19 +225,27 @@ inline void unlock_container_StoC::handle()
 inline void smelter_fuel_StoC::handle()
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
-    ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
+    ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+
+    // we received an message for a container we are not accessing;
+    //this is a normal race condition when opening and closing containers fast
+    if (!container->attached_to_agent && container->id != opened_container) return;
+    
+    GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
-    container->fuel = fuel;
-    container->fuel_type = fuel_type;
+
+    ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
+
+    smelter->fuel = fuel;
+    smelter->fuel_type = fuel_type;
 
     // update UI
     ItemContainerSmelterUI* container_ui = (ItemContainerSmelterUI*)get_container_ui(container_id);
     GS_ASSERT(container_ui != NULL);
     if (container_ui == NULL) return;
-    GS_ASSERT(container_ui->id == container->id);
+    GS_ASSERT(container_ui->id == smelter->id);
     GS_ASSERT(fuel >= 0.0f && fuel <= 1.0f);
     if (fuel < 0.0f) fuel = 0.0f;
     if (fuel > 1.0f) fuel = 1.0f;
@@ -239,30 +257,26 @@ inline void smelter_fuel_StoC::handle()
 inline void smelter_progress_StoC::handle()
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
-    ItemContainerSmelter* container = (ItemContainerSmelter*)get_container(container_id);
+    ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    GS_ASSERT(Item::is_smelter(container->type));   // TODO -- multiple smelter types
+
+    // we received an message for a container we are not accessing;
+    //this is a normal race condition when opening and closing containers fast
+    if (!container->attached_to_agent && container->id != opened_container) return;
+
+    GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
 
-    //if (progress > 0 && container->progress <= 0)
-    //{
-        //int b[3];
-        //bool found = t_map::get_container_location(container->id, b);
-        //GS_ASSERT(found);
-        //if (!found) return;
-        //struct Vec3 p = vec3_init(b[0], b[1], b[2]);
-        //p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
-        //Sound::smelter_on(p);
-    //}
+    ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
     
-    container->progress = progress;
+    smelter->progress = progress;
 
     // update UI
     ItemContainerSmelterUI* container_ui = (ItemContainerSmelterUI*)get_container_ui(container_id);
     GS_ASSERT(container_ui != NULL);
     if (container_ui == NULL) return;
-    GS_ASSERT(container_ui->id == container->id);
+    GS_ASSERT(container_ui->id == smelter->id);
     GS_ASSERT(progress >= 0.0f && progress <= 1.0f);
     if (progress < 0.0f) progress = 0.0f;
     if (progress > 1.0f) progress = 1.0f;

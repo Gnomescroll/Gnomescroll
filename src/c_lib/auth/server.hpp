@@ -29,4 +29,6 @@ bool verify_token(const char* _token);
 void send_auth_token_valid(int client_id);
 void send_auth_token_invalid(int client_id);
 
+void send_clock_time(int client_id);
+
 }   // Auth

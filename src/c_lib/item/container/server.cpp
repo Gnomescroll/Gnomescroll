@@ -673,9 +673,10 @@ bool agent_open_container(int agent_id, int container_id)
         if (opened != NULL)
         {
             opened_containers[agent_id] = NULL_CONTAINER;
-            bool did_unlock = opened->unlock(a->id);
+            bool did_unlock = opened->unlock(agent_id);
             GS_ASSERT(did_unlock);
-            broadcast_container_unlock(container_id, agent_id);
+            //broadcast_container_unlock(opened->id, agent_id);
+            //unsubscribe_agent_from_container_contents(agent_id, opened->id);
         }
     }
 
@@ -699,7 +700,7 @@ bool agent_open_container(int agent_id, int container_id)
     return true;
 }
 
-void agent_close_container(int agent_id, int container_id)
+static void agent_close_container(int agent_id, int container_id, bool send_close)
 {
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers == NULL) return;
@@ -720,8 +721,9 @@ void agent_close_container(int agent_id, int container_id)
     ItemID hand_item = get_agent_hand(agent_id);
     if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);
-    
-    send_container_close(agent_id, container_id);
+
+    if (send_close)
+        send_container_close(agent_id, container_id);
     opened_containers[agent_id] = NULL_CONTAINER;
 
     bool did_unlock = container->unlock(agent_id);
@@ -730,6 +732,21 @@ void agent_close_container(int agent_id, int container_id)
     broadcast_container_unlock(container->id, agent_id);
 
     unsubscribe_agent_from_container_contents(agent_id, container_id);
+}
+
+void agent_close_container(int agent_id, int container_id)
+{
+    agent_close_container(agent_id, container_id, true);    // send close as normal
+}
+
+void agent_close_container_silent(int agent_id, int container_id)
+{   // dont send container_close packet
+    // this should be used if the client initiated the closing
+    // there is a race condition that occurs otherwise
+    // normally the client should handle this, but the handling in client is there
+    // with did_close_container_block, but the race condition is still present and
+    // i dont have an alternative solution
+    agent_close_container(agent_id, container_id, false); 
 }
 
 void unsubscribe_agent_from_container_contents(int agent_id, int container_id)
