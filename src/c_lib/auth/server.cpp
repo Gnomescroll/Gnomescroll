@@ -205,4 +205,11 @@ void send_auth_token_invalid(int client_id)
     msg.sendToClient(client_id);
 }
 
+void send_clock_time(int client_id)
+{
+    clock_time_StoC msg;
+    msg.server_time = (uint64_t)utc_now();
+    msg.sendToClient(client_id);
+}
+
 }   // Auth

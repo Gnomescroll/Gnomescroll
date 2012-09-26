@@ -106,6 +106,7 @@ void send_smelter_progress(int container_id);
 // transactions on free containers (not private containers)
 bool agent_open_container(int agent_id, int container_id);
 void agent_close_container(int agent_id, int container_id);
+void agent_close_container_silent(int agent_id, int container_id);  // doesnt send_container_close
 
 void unsubscribe_agent_from_container_contents(int agent_id, int container_id);
 

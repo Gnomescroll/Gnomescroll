@@ -45,4 +45,16 @@ class auth_token_invalid_StoC: public FixedSizeReliableNetPacketToClient<auth_to
     inline void handle();
 };
 
+class clock_time_StoC: public FixedSizeReliableNetPacketToClient<clock_time_StoC>
+{
+    public:
+        uint64_t server_time;
+    
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u64(&server_time, buff, buff_n, pack);
+    }
+    inline void handle();
+};  
+
 }   // Auth

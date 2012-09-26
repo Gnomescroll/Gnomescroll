@@ -24,6 +24,8 @@ class NetPeerManager
         
         int auth_attempts;
 
+        int clock_time_tick;
+
     void was_authorized(int user_id, time_t expiration_time, const char* username);
 
     bool failed_to_authorize();
