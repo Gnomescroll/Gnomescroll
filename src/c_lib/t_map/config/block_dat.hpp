@@ -39,9 +39,9 @@ e east
 int ruins_dmg()
 {
 #if PRODUCTION
-	return 32;
+    return 32;
 #else
-	return 4;
+    return 4;
 #endif
 }
 
@@ -54,6 +54,7 @@ void load_block_dat()
     int t3 = texture_alias("media/sprites/terrain/t03.png");
     //int t4 = texture_alias("media/sprites/terrain/t04.png");
     int t5 = texture_alias("media/sprites/terrain/t05.png");
+    int t6 = texture_alias("media/sprites/terrain/t06.png");
 
     const int T = 0;
     const int B = 1;
@@ -258,7 +259,7 @@ void load_block_dat()
     hud_def(6,5, t2,2,1);
 
     // ruins
-	cube_def(35, SolidBlock, "corpusc_testing_with_ruins_2");
+    cube_def(35, SolidBlock, "corpusc_testing_with_ruins_2");
     iso_texture(t1,6,3);
     push_texture();
     set_max_dmg(ruins_dmg());
@@ -476,7 +477,61 @@ void load_block_dat()
     iso_texture(t3, 8,7);
     push_texture();
     hud_def(2,6, t3,8,7);
+
+    // IceFlame's stuff
     
+    cube_def(255-37, SolidBlock, "iceflame01", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,1);
+    push_texture();
+    hud_def(6,6, t6,1,1);
+    
+    cube_def(255-38, SolidBlock, "iceflame02", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,2);
+    push_texture();
+    hud_def(6,7, t6,1,2);
+    
+    cube_def(255-39, SolidBlock, "iceflame03", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,3);
+    push_texture();
+    hud_def(6,8, t6,1,3);
+    
+    cube_def(255-40, SolidBlock, "iceflame04", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,4);
+    push_texture();
+    hud_def(7,1, t6,1,4);
+    
+    cube_def(255-41, SolidBlock, "iceflame05", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,5);
+    push_texture();
+    hud_def(7,2, t6,1,5);
+    
+    cube_def(255-42, SolidBlock, "iceflame06", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,6);
+    push_texture();
+    hud_def(7,3, t6,1,6);
+    
+    cube_def(255-43, SolidBlock, "iceflame07", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,7);
+    push_texture();
+    hud_def(7,4, t6,1,7);
+    
+    cube_def(255-44, SolidBlock, "iceflame08", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 1,8);
+    push_texture();
+    hud_def(7,5, t6,1,8);
+
+    // skip the rest of the lava sprites...
+    
+    cube_def(255-45, SolidBlock, "iceflame09", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 2,6);
+    push_texture();
+    hud_def(7,6, t6,2,6);
+    
+    cube_def(255-46, SolidBlock, "iceflame10", CUBE_MATERIAL_DECORATION);
+    iso_texture(t6, 2,7);
+    push_texture();
+    hud_def(7,7, t6,2,7);
+
     end_block_dat();
 }
 
