@@ -286,13 +286,8 @@ void setup_rooms() {
 			r.x_offs = 1 /* shell */ + randrange(0, malleable_x_span);
 			r.y_offs = 1 /* shell */ + randrange(0, malleable_y_span);
 
-			//if (malleable_z_span > 2) {
-				//r.e_hall_hei = randrange(2, malleable_z_span);
-				//r.n_hall_hei = randrange(2, malleable_z_span);
-			//} else {
-			//	r.e_hall_hei = 2;
-			//	r.n_hall_hei = 2;
-			//}
+			//r.e_hall_hei = randrange(2, malleable_z_span);
+			//r.n_hall_hei = randrange(2, malleable_z_span);
 			r.e_hall_hei = randrange(3, 4);
 			r.n_hall_hei = randrange(3, 4);
 
