@@ -24,7 +24,7 @@ bool mouse_unlocked_for_ui_element()
 // triggers
 void toggle_mouse_bind()
 {
-    input_state.mouse_bound = (!input_state.mouse_bound);
+    set_mouse_bind(!input_state.mouse_bound);
 }
 
 void toggle_help_menu()
@@ -43,8 +43,8 @@ void enable_agent_container()
     
     t_hud::enable_agent_container_hud();
     ItemContainer::open_inventory();
-    input_state.rebind_mouse = input_state.mouse_bound;
-    input_state.mouse_bound = false;
+    set_mouse_rebind(input_state.mouse_bound);
+    set_mouse_bind(false);
 }
 
 void disable_agent_container()
@@ -62,7 +62,7 @@ void disable_agent_container()
     ItemContainer::close_inventory();
     //if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
-        input_state.mouse_bound = input_state.rebind_mouse;
+        set_mouse_bind(input_state.rebind_mouse);
     input_state.ignore_mouse_motion = true;
 }
 
@@ -85,8 +85,8 @@ void enable_container_block(int container_id)
     input_state.container_block = true;
     input_state.container_block_id = container_id;
     t_hud::enable_container_block_hud(container_id);
-    input_state.rebind_mouse = input_state.mouse_bound;
-    input_state.mouse_bound = false;
+    set_mouse_rebind(input_state.mouse_bound);
+    set_mouse_bind(false);
 }
 
 void disable_container_block()
@@ -95,7 +95,7 @@ void disable_container_block()
     input_state.container_block = false;
     t_hud::disable_container_block_hud();
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
-        input_state.mouse_bound = input_state.rebind_mouse;
+        set_mouse_bind(input_state.rebind_mouse);
     input_state.ignore_mouse_motion = true;
 
     int container_id = ItemContainer::opened_container;
@@ -165,8 +165,8 @@ void enable_awesomium()
 
     if (!mouse_unlocked_for_ui_element())
     {   // dont manipulate the mouse state if we opened on top of containers
-        input_state.rebind_mouse = input_state.mouse_bound;
-        input_state.mouse_bound = false;
+        set_mouse_rebind(input_state.mouse_bound);
+        set_mouse_bind(false);
     }
 
     input_state.awesomium = true;
@@ -187,7 +187,7 @@ void disable_awesomium()
     if (!mouse_unlocked_for_ui_element())
     {   // dont manipulate the mouse state if we opened on top of containers
         if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
-            input_state.mouse_bound = input_state.rebind_mouse;
+            set_mouse_bind(input_state.rebind_mouse);
         input_state.ignore_mouse_motion = true;
     }
     #endif
@@ -1055,7 +1055,7 @@ void key_down_handler(SDL_Event* event)
         case SDLK_RALT:
             if (input_state.admin_controls)
             {
-                input_state.mouse_bound = false;
+                set_mouse_bind(false);
                 printf("Unbound mouse with alt\n");
             }
             break;
@@ -1284,13 +1284,13 @@ void active_event_handler(SDL_Event* event)
         {
             if (event->active.gain)
             {
-                input_state.mouse_bound = input_state.rebind_mouse;
-                input_state.rebind_mouse = false;
+                set_mouse_bind(input_state.rebind_mouse);
+                set_mouse_rebind(false);
             }
             else
             {
-                input_state.rebind_mouse = input_state.mouse_bound;
-                input_state.mouse_bound = false;
+                set_mouse_rebind(input_state.mouse_bound);
+                set_mouse_bind(false);
             }
         }
     }
