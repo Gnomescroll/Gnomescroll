@@ -85,6 +85,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\c_lib\t_gen\terrain_features.hpp" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -656,7 +657,7 @@
     <ClInclude Include="..\c_lib\state\server_state.hpp" />
     <ClInclude Include="..\c_lib\t_gen\cave_generator.hpp" />
     <ClInclude Include="..\c_lib\t_gen\crystals.hpp" />
-    <ClInclude Include="..\c_lib\t_gen\dungeon_generator.hpp" />
+    <ClInclude Include="..\c_lib\t_gen\ruins_generator.hpp" />
     <ClInclude Include="..\c_lib\t_gen\noise_map.hpp" />
     <ClInclude Include="..\c_lib\t_gen\noise_map2.hpp" />
     <ClInclude Include="..\c_lib\t_gen\noise_map3.hpp" />

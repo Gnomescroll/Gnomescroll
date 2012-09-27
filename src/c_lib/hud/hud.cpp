@@ -42,6 +42,9 @@ static const char help_text[] =
 "       /name <name>        Choose name\n"
 "       /kill               Suicide\n"
 "       /color R G B        Choose body color\n"
+"  \n"
+"  \n"
+"  wiki.gnomescroll.com   for info & recipes"
 ;
 
 static struct HudDrawSettings
@@ -458,6 +461,7 @@ void HUD::init()
     GS_ASSERT(help != NULL);
     if (help == NULL) return;
     help->set_text(help_text);
+	help->shadowed = true;
     int help_width = help->get_width();
     help->set_color(255,255,255,255);
     help->set_position(_xres - help_width - 5, _yresf - 5);
@@ -548,6 +552,7 @@ void HUD::init()
         prompt->set_text("");
     prompt->set_color(255,255,255,255);
     prompt->set_position((_xresf - prompt->get_width()) / 2.0f, _yresf);
+	prompt->shadowed = true;
 
     error = text_list->create();
     GS_ASSERT(error != NULL);

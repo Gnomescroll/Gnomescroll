@@ -17,9 +17,10 @@
 
 #if DC_SERVER
 // TODO -- make everything server only
-#include <t_gen/dungeon_generator.hpp>
 #include <t_gen/cave_generator.hpp>
 #include <t_gen/crystals.hpp>
+#include <t_gen/ruins_generator.hpp>
+#include <t_gen/terrain_features.hpp>
 #endif
 
 //#include <t_gen/tile_generator.hpp>
