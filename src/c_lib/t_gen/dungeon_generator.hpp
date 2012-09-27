@@ -45,6 +45,8 @@ enum direction_type_t {
 
 struct Room {
     direction_type_t dir_types[DIR_COUNT];
+	int wall_block;
+	int floor_block;
 
     int x_offs;
     int y_offs;
@@ -101,10 +103,16 @@ bool e_of_n_opening(int rx, int ry, int rz, int cx) {
         cx >= rooms[rz][ry][rx].n_hall_offs
         /**/ + rooms[rz][ry][rx].n_hall_wid;
 }
+
 bool s_of_e_opening(int rx, int ry, int rz, int cy) {
     return
         cy < rooms[rz][ry][rx].e_hall_offs;
 }
+bool s_edge_of_e_opening(Room r, int cx, int cy, int cz) {
+    return
+		cy == r.e_hall_offs - 1 && cz <= r.e_hall_hei && far_east_cube(cx);
+}
+
 bool n_of_e_opening(int rx, int ry, int rz, int cy) {
     return
         cy >= rooms[rz][ry][rx].e_hall_offs
@@ -137,12 +145,11 @@ bool in_air_region(Room r, int x, int y) {
 
 
 void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room indexes, origin
-	int wall_block = randrange(33, 40);
-
 	for (int cx = 0; cx < cubes_across_room; cx++) {
     for (int cy = 0; cy < cubes_across_room; cy++) {
     for (int cz = 0; cz < cubes_going_up - 2; cz++) {
 		Room r = rooms[rz][ry][rx];
+		int block = r.wall_block;
 		int need_airspace = true;
 
         // do east
@@ -152,12 +159,29 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
         if (cx >= mid /*&& cy < fixed_hall_offs*/) {
             switch (r.dir_types[DIR_EAST]) {
                 case DIRTYPE_HALL:
-					if (far_east_cube(cx) && cz >= r.e_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false; break;
+					if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
+						need_airspace = false;
+						if (cz == r.e_hall_hei && 
+							!s_of_e_opening(rx, ry, rz, cy) &&
+							!n_of_e_opening(rx, ry, rz, cy) )
+							block = r.floor_block;
+					}
+
+                    if (s_of_e_opening(rx, ry, rz, cy + min_lip) || 
+						s_of_e_opening(rx, ry, rz, cy) && far_east_cube(cx)) need_airspace = false; /////////////////
+					if (s_edge_of_e_opening(r, cx, cy, cz)) block = r.floor_block; break;
                 case DIRTYPE_DOOR:
-					if (far_east_cube(cx) && cz >= r.e_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (far_east_cube(cx) || far_south_cube(cy))
-                        if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false; break;
+					if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
+						need_airspace = false;
+						if (cz == r.e_hall_hei && 
+							!s_of_e_opening(rx, ry, rz, cy) &&
+							!n_of_e_opening(rx, ry, rz, cy) )
+							block = r.floor_block;
+					}
+
+                    if (far_east_cube(cx) || far_south_cube(cy)) {
+                        if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false;
+						if (s_edge_of_e_opening(r, cx, cy, cz)) block = r.floor_block; } break;
                 default: // all blockers PLUS currently open air space connection
                     if (cx >= r.x_offs + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
                         need_airspace = false; break;
@@ -225,7 +249,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
 
 		// add 4 to all z values, to get above bedrock
 		if (need_airspace) t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, 0);
-		else               t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, wall_block);
+		else               t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, block);
 	}
 	}
     }
@@ -272,6 +296,11 @@ void setup_rooms() {
 		for (int x = 0; x < rooms_across_ruins; x++) {
 		for (int y = 0; y < rooms_across_ruins; y++) {
 			Room r;
+			r.floor_block = randrange(33, 40);
+			do {
+				r.wall_block = randrange(33, 40);
+			} while (r.floor_block == r.wall_block);
+
 			// spans refer to the AIRSPACE, and don't include outer shell of blocks
 			// but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
 			int malleable_x_span = cubes_across_room - 2 /* shell of 2 walls */;
@@ -342,7 +371,6 @@ void make_ruins(int x, int y) {
 	for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-		int floor_block = randrange(33, 40);
 		int ceil_block = randrange(33, 40);
 
 		// make floor 
@@ -350,7 +378,7 @@ void make_ruins(int x, int y) {
 			rx * cubes_across_room + x,
 			ry * cubes_across_room + y,
 			rz * cubes_going_up + 3,
-			cubes_across_room, cubes_across_room, 1, floor_block);
+			cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].floor_block);
 		
 		// make ceiling
 		set_region(
@@ -362,7 +390,7 @@ void make_ruins(int x, int y) {
 		make_walls_or_airspace(rx, ry, rz, x, y);
 		
 		if (opens_to(DIR_UP, rx, ry, rz) ) 
-			make_stairs(rx, ry, rz, x, y, floor_block);
+			make_stairs(rx, ry, rz, x, y, rooms[rz][ry][rx].floor_block);
 
 		if (opens_to(DIR_DOWN, rx, ry, rz) ) 
 			// clear well in floor of this room, and ceiling of room underneath
