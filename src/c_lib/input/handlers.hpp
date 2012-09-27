@@ -110,6 +110,7 @@ void disable_container_block();
 
 void disable_awesomium();
 void enable_awesomium();
+void enable_first_awesomium();
 
 void close_all_containers();
 
