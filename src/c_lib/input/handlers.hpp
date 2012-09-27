@@ -110,7 +110,6 @@ void disable_container_block();
 
 void disable_awesomium();
 void enable_awesomium();
-void enable_first_awesomium();
 
 void close_all_containers();
 
@@ -121,7 +120,7 @@ namespace Input
 void begin_login_mode()
 {
     input_state.login_mode = true;
-    enable_first_awesomium();
+    enable_awesomium();
 }
 
 void end_login_mode()

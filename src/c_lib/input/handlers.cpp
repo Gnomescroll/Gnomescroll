@@ -158,15 +158,14 @@ void toggle_admin_controls()
     input_state.admin_controls = (!input_state.admin_controls);
 }
 
-static void enable_awesomium(bool cache_mouse_bind)
+void enable_awesomium()
 {
     #if GS_AWESOMIUM
     if (input_state.awesomium) return;
 
     if (!mouse_unlocked_for_ui_element())
     {   // dont manipulate the mouse state if we opened on top of containers
-        if (cache_mouse_bind)
-            input_state.rebind_mouse = input_state.mouse_bound;
+        input_state.rebind_mouse = input_state.mouse_bound;
         input_state.mouse_bound = false;
     }
 
@@ -176,16 +175,6 @@ static void enable_awesomium(bool cache_mouse_bind)
     Hud::clear_prompt(Hud::open_login_text);
 
     #endif
-}
-
-void enable_awesomium()
-{
-    enable_awesomium(true);
-}
-
-void enable_first_awesomium()
-{   // use this for the initial opening for auth page. it wont cache mouse bind state
-    enable_awesomium(false);
 }
 
 void disable_awesomium()
