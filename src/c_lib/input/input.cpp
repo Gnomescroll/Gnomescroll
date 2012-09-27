@@ -49,14 +49,12 @@ int get_key_state()
 
 void bind_mouse()
 {
-    printf("Bind mouse\n");
     SDL_ShowCursor(SDL_DISABLE);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 }
 
 void unbind_mouse()
 {
-    printf("Unbind mouse\n");
     SDL_ShowCursor(SDL_ENABLE);
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }

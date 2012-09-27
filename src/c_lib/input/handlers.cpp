@@ -158,7 +158,7 @@ void toggle_admin_controls()
     input_state.admin_controls = (!input_state.admin_controls);
 }
 
-void enable_awesomium()
+static void enable_awesomium(bool cache_mouse_bind)
 {
     #if GS_AWESOMIUM
     if (input_state.awesomium) return;
@@ -175,6 +175,16 @@ void enable_awesomium()
     Hud::clear_prompt(Hud::open_login_text);
 
     #endif
+}
+
+void enable_awesomium()
+{
+    enable_awesomium(true);
+}
+
+void enable_first_awesomium()
+{   // use this for the initial opening for auth page. it wont cache mouse bind state
+    enable_awesomium(false);
 }
 
 void disable_awesomium()
