@@ -224,6 +224,7 @@ int init_c_lib(int argc, char* argv[])
     LUA::load_options(); //load game options
 
     Options::parse_args(argc, argv);
+    Options::validate();
     
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");

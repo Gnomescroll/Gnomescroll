@@ -33,4 +33,6 @@ OPT_BOOL_HEADER(auth);
 
 void register_options();
 
+void validate();
+
 }   // Options
