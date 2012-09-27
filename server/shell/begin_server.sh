@@ -20,6 +20,9 @@ done
 # destroy the old screen
 sudo -u gnomescroll ./shell/killscreens.sh gnomescroll_server
 
+# copy run to gnomescroll_server (have to do it here because its busy otherwise)
+sudo -u gnomescroll cp run gnomescroll_server
+
 # create a detached screen with the forever script running inside
 sudo -u gnomescroll /usr/bin/screen -d -m -S gnomescroll_server ./shell/run_server_forever.py  
 
