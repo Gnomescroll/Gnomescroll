@@ -129,12 +129,12 @@ void end_login_mode()
     disable_awesomium();
     input_state.login_mode = false;
 
-    //// stupid hack
-    //#if PRODUCTION
-    //input_state.mouse_bound = true;
-    //#else
-    //input_state.mouse_bound = false;
-    //#endif
+    // stupid hack
+    #if PRODUCTION
+    input_state.mouse_bound = true;
+    #else
+    input_state.mouse_bound = false;
+    #endif
 }
 
 }   // Input
