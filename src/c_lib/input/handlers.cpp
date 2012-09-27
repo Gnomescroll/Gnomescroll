@@ -165,7 +165,8 @@ static void enable_awesomium(bool cache_mouse_bind)
 
     if (!mouse_unlocked_for_ui_element())
     {   // dont manipulate the mouse state if we opened on top of containers
-        input_state.rebind_mouse = input_state.mouse_bound;
+        if (cache_mouse_bind)
+            input_state.rebind_mouse = input_state.mouse_bound;
         input_state.mouse_bound = false;
     }
 

@@ -110,7 +110,6 @@ void disable_container_block();
 
 void disable_awesomium();
 void enable_awesomium();
-void enable_first_awesomium();
 
 void close_all_containers();
 
@@ -128,6 +127,13 @@ void end_login_mode()
 {
     disable_awesomium();
     input_state.login_mode = false;
+
+    //// stupid hack
+    //#if PRODUCTION
+    //input_state.mouse_bound = true;
+    //#else
+    //input_state.mouse_bound = false;
+    //#endif
 }
 
 }   // Input
