@@ -4,6 +4,8 @@
 #include <t_mech/mech_state.hpp>
 #include <t_mech/_interface.hpp>
 
+#include <t_mech/config/_interface.hpp>
+
 namespace t_mech 
 {
 
@@ -203,67 +205,96 @@ class MechListShader
 
             //left to right
 
+
+            bool empty_column = false;
             int j;
-            for(j=0; j<16; j++) //row
+
+            for(j=0; j<16; j++) //column
             {
                 int offset = 512*32*h + 32*w;
                 offset += j;
 
-                bool empty_column = true;
-                for(int k=0; k<16; k++) //column
+                for(int k=0; k<32; k++) //iterate over column
                 {
                     int index = offset + k*512;
 
                     if(pixels[4*index + 3] > 128)
                     {
-                        empty_column = false;
-                        printf("detected: sprite: %i %i column= %i row= %i rgba= %i %i %i %i \n", w,h, k,j,
-                            pixels[4*index+0],pixels[4*index+1],pixels[4*index+2],pixels[4*index+3]);
+                        empty_column = true;
 
+                        int width = 2*(16-j);
+                        if(width > mech_sprite_width[i])
+                        {
+                            mech_sprite_width[i] = width;
+
+                            printf("sprite1: %i %i width: %i k: %i \n", h,w, mech_sprite_width[i], k);
+                        }
                         break;
                     }
                 }
 
-                if(empty_column == false)
+                if(empty_column == true)
                 {
-                    //printf("sprite: %i %i first_pixel= %i \n", w,h, j);
+                    for(int _k=0; _k<32; _k++)
+                    {
+                        int index2 = offset + _k*512;
+                        pixels[4*index2 + 3] = 255;
+                        pixels[4*index2 + 0] = 255;
+                    }
 
                     break;
                 }
-
             }
 
-            for(j=0; j<16; j++) //row
+            empty_column = false;
+
+            for(j=0; j<16; j++) //column
             {
                 int offset = 512*32*h + 32*w;
-                offset += j;
+                offset += 31-j;
 
-                bool empty_column = true;
-                for(int k=0; k<16; k++) //column
+                for(int k=0; k<32; k++) //iterate over column
                 {
                     int index = offset + k*512;
 
                     if(pixels[4*index + 3] > 128)
                     {
-                        empty_column = false;
-                        printf("detected: sprite: %i %i column= %i row= %i rgba= %i %i %i %i \n", w,h, k,j,
-                            pixels[4*index+0],pixels[4*index+1],pixels[4*index+2],pixels[4*index+3]);
+                        empty_column = true;
 
+                        int width = 2*(16-j);
+                        if(width > mech_sprite_width[i])
+                        {
+                            mech_sprite_width[i] = width;
+
+                            printf("sprite2: %i %i width: %i k: %i \n", h,w, mech_sprite_width[i], k);
+                        }
                         break;
                     }
                 }
 
-                if(empty_column == false)
+                if(empty_column == true)
                 {
+                    for(int _k=0; _k<32; _k++)
+                    {
+                        int index2 = offset + (31-_k)*512;
+                        pixels[4*index2 + 3] = 255;
+                        pixels[4*index2 + 0] = 255;
+                    }
+
                     break;
                 }
-
             }
+
+            //if(mech_sprite_width[i] != -1)
+            //    printf("sprite: %i %i width: %i \n", w,h, mech_sprite_width[i]);
 
         }
 
 
         SDL_UnlockSurface(s);
+
+        save_surface_to_png(s, "./screenshot/test.png");
+
     }
 };
 
