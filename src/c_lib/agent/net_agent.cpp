@@ -221,6 +221,16 @@ inline void agent_create_StoC::handle()
     a->client_id = this->client_id;
     a->status.set_name(this->username);
     a->event.name_set();
+
+    GS_ASSERT(chat_client != NULL);
+    if (chat_client != NULL)
+    {
+        const char fmt[] = "%s has joined the game";
+        char* msg = (char*)calloc(strlen(fmt) + strlen(this->username) - 2 + 1, sizeof(char));
+        sprintf(msg, fmt, this->username);
+        chat_client->send_system_message(msg);
+        free(msg);
+    }
 }
 
 inline void agent_destroy_StoC::handle()
