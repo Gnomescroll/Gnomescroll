@@ -21,8 +21,6 @@ const int fixed_stair_y = 7;
 const int fixed_stair_w = 4;
 const int fixed_stair_d = 2;
 
-void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile_id); 
-
 
 
 enum direction_t {
@@ -110,7 +108,7 @@ bool s_of_e_opening(int rx, int ry, int rz, int cy) {
 }
 bool s_edge_of_e_opening(Room r, int cx, int cy, int cz) {
     return
-		cy == r.e_hall_offs - 1 && cz <= r.e_hall_hei && far_east_cube(cx);
+		cy == r.e_hall_offs - 1 && cz <= r.e_hall_hei; // && far_east_cube(cx); shouldn't be needed now that halls use min_lip
 }
 
 bool n_of_e_opening(int rx, int ry, int rz, int cy) {
@@ -168,8 +166,10 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
 					}
 
                     if (s_of_e_opening(rx, ry, rz, cy + min_lip) || 
-						s_of_e_opening(rx, ry, rz, cy) && far_east_cube(cx)) need_airspace = false; /////////////////
-					if (s_edge_of_e_opening(r, cx, cy, cz)) block = r.floor_block; break;
+						(s_of_e_opening(rx, ry, rz, cy) && far_east_cube(cx))) need_airspace = false; /////////////////
+					if (s_edge_of_e_opening(r, cx, cy, cz) || 
+						(cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)
+						) block = r.floor_block; break;
                 case DIRTYPE_DOOR:
 					if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
 						need_airspace = false;
@@ -181,7 +181,7 @@ void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room in
 
                     if (far_east_cube(cx) || far_south_cube(cy)) {
                         if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false;
-						if (s_edge_of_e_opening(r, cx, cy, cz)) block = r.floor_block; } break;
+						if (s_edge_of_e_opening(r, cx, cy, cz) || cx == mid) block = r.floor_block; } break;
                 default: // all blockers PLUS currently open air space connection
                     if (cx >= r.x_offs + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
                         need_airspace = false; break;
@@ -404,7 +404,7 @@ void make_ruins(int x, int y) {
 	}
 }
 
-void start_dungeon_generator()
+void generate_ruins()
 {
     printf("Making ruins\n");
 
