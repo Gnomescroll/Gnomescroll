@@ -49,14 +49,13 @@ int get_key_state()
 
 void bind_mouse()
 {
-    //if (!input_state.agent_container && !input_state.container_block)
-    SDL_ShowCursor(0);
+    SDL_ShowCursor(SDL_DISABLE);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 }
 
 void unbind_mouse()
 {
-    SDL_ShowCursor(1);
+    SDL_ShowCursor(SDL_ENABLE);
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 

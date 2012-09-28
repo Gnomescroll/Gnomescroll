@@ -69,17 +69,17 @@ static int set_option_from_str(char* name, char* val)
 
 static void set_option_float(int key, float opt)
 {
-    *((float*)(option_values[key])) = opt; 
+    *((float*)(option_values[key])) = opt;
 }
 
 static void set_option_uint(int key, unsigned int opt)
 {
-    *((unsigned int*)(option_values[key])) = opt; 
+    *((unsigned int*)(option_values[key])) = opt;
 }
 
 static void set_option_int(int key, int opt)
 {
-    *((int*)(option_values[key])) = opt; 
+    *((int*)(option_values[key])) = opt;
 }
 
 static void set_option_str(int key, char* opt)
@@ -90,7 +90,7 @@ static void set_option_str(int key, char* opt)
 
 static void set_option_bool(int key, bool opt)
 {
-    *((bool*)(option_values[key])) = opt; 
+    *((bool*)(option_values[key])) = opt;
 }
 
 /* Coercions */
@@ -212,7 +212,6 @@ int parse_args(int argc, char* argv[])
     int start = 1;
     if (argv[1][0] != '-') start = 2;
 
-    // start at 2 -- 0 is program path, 1 is path to settings file
     int n=0;
     for (int i=start; i<argc; i++)
     {
@@ -232,11 +231,11 @@ int parse_args(int argc, char* argv[])
         while ((c = str[j++]) != '\0' && c != '=' && k < ARG_NAME_MAX)
             argname[k++] = c;
 
-		if (k == 0)
-		{
-			printf("Missing argument name. %s\n", argname);
-			continue;
-		}
+        if (k == 0)
+        {
+            printf("Missing argument name. %s\n", argname);
+            continue;
+        }
 
         if (k == ARG_NAME_MAX && (c != '=' || c != '\0'))
         {
@@ -258,12 +257,12 @@ int parse_args(int argc, char* argv[])
         while ((c = str[j++]) != '\0' && m < ARG_STRING_MAX)
             argstr[m++] = c;
 
-		if (m == 0)
-		{
-			printf("Missing argument value. %s\n", str);
-			continue;
-		}
-		
+        if (m == 0)
+        {
+            printf("Missing argument value. %s\n", str);
+            continue;
+        }
+        
         if (m == ARG_STRING_MAX && c != '\0')
         {
             printf("Argument value is too long. Error arg: %s\n", str);

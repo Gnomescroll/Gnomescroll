@@ -99,4 +99,9 @@ void register_options()
     OPT_BOOL_REGISTER(show_tips);
 }
 
+void validate()
+{
+    OPT_INT_RANGE_VALID(animation_level, 0, 3);
+}
+
 }   // Options

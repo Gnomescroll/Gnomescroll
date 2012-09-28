@@ -27,39 +27,6 @@ void Agent_event::name_set()
     GS_ASSERT(this->a->status.name != NULL);
     if (this->a->status.name == NULL) return;
     this->bb.set_text(this->a->status.name);
-
-    // TODO -- print these when agent is received -- thats the only place for a name set
-
-    //if (a->is_you())
-    //{
-        //const char fmt[] = "You are identified as %s";
-        //char* msg = (char*)calloc(strlen(fmt) + strlen(this->a->status.name) - 2 + 1, sizeof(char));
-        //sprintf(msg, fmt, this->a->status.name);
-        //chat_client->send_system_message(msg);
-        //free(msg);
-    //}
-    //else
-    //{
-        //if (strcmp(AGENT_UNDEFINED_NAME, old_name))
-        //{
-            //const char fmt[] = "%s is now known as %s";
-            //char* msg = (char*)calloc(strlen(fmt) + strlen(old_name) + strlen(this->a->status.name) - 4 + 1, sizeof(char));
-            //sprintf(msg, fmt, old_name, this->a->status.name);
-            //chat_client->send_system_message(msg);
-            //free(msg);
-        //}
-        //else
-        //{
-            //const char fmt[] = "%s has joined the game";
-            //char* msg = (char*)calloc(strlen(fmt) + strlen(this->a->status.name) - 2 + 1, sizeof(char));
-            //sprintf(msg, fmt, this->a->status.name);
-            //chat_client->send_system_message(msg);
-            //free(msg);
-            //#if DC_CLIENT && PRODUCTION_DEV
-            //Sound::player_joined_server();  // move this to a better place, along with the other dis/connect events
-            //#endif
-        //}
-    //}
 }
 
 void Agent_event::update_hud_name()

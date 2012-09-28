@@ -24,6 +24,8 @@ bool token_failure = false;
 
 bool token_available = false;   // becomes true after first time token exists and appears valid
 
+double offset_time = 0;
+
 static bool should_request_token = false;
 
 bool send_auth_token()
@@ -178,6 +180,13 @@ void client_teardown()
     if (auth_token != NULL) free(auth_token);
     if (auth_token_hash != NULL) free(auth_token_hash);
     if (auth_token_username != NULL) free(auth_token_username);
+}
+
+void set_time_offset(time_t server_time)
+{
+    time_t now = utc_now();
+    offset_time = difftime(server_time, now);
+    printf("Server-client time discrepancy: %lld\n", (long long)offset_time);
 }
 
 }   // Auth

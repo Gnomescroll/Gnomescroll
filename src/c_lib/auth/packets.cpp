@@ -21,12 +21,18 @@ inline void auth_token_invalid_StoC::handle()
     token_was_denied();
 }
 
+inline void clock_time_StoC::handle()
+{
+    set_time_offset((time_t)this->server_time);
+}
+
 inline void auth_token_CtoS::handle() {}
 #endif
 
 #if DC_SERVER
 inline void auth_token_valid_StoC::handle() {}
 inline void auth_token_invalid_StoC::handle() {}
+inline void clock_time_StoC::handle() {}
 
 inline void auth_token_CtoS::handle()
 {

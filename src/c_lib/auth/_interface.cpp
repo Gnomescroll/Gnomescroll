@@ -18,6 +18,7 @@ void init_packets()
     auth_token_CtoS::register_server_packet();
     auth_token_valid_StoC::register_client_packet();
     auth_token_invalid_StoC::register_client_packet();
+    clock_time_StoC::register_client_packet();
 }
 
 void init()
@@ -215,6 +216,11 @@ bool auth_token_expired(const time_t timestamp, const time_t expiration_window)
     if (timestamp < AUTH_TOKEN_LIFETIME) return true;   // bad data
 
     time_t now = utc_now();
+    #if DC_CLIENT
+    GS_ASSERT(offset_time >= 0 || (offset_time*-1) < now);
+    if (offset_time >= 0 || (offset_time*-1) < now) // prevent time_t overflow
+        now += offset_time; // apply time correction from server
+    #endif
     //printf("NOW: %lld\n", (long long)now);
     time_t created_at = difftime(timestamp, AUTH_TOKEN_LIFETIME);
     //printf("CREATED AT: %lld\n", (long long)created_at);

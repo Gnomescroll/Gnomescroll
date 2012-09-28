@@ -580,7 +580,7 @@ inline void close_container_CtoS::handle()
 
     if (!agent_can_access_container(a->id, container_id)) return;
 
-    agent_close_container(a->id, container_id);
+    agent_close_container_silent(a->id, container_id);
 }
 
 void create_container_block_CtoS::handle()

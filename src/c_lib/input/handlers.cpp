@@ -24,7 +24,7 @@ bool mouse_unlocked_for_ui_element()
 // triggers
 void toggle_mouse_bind()
 {
-    input_state.mouse_bound = (!input_state.mouse_bound);
+    set_mouse_bind(!input_state.mouse_bound);
 }
 
 void toggle_help_menu()
@@ -36,21 +36,15 @@ void toggle_help_menu()
 
 void enable_agent_container()
 {
-    if (input_state.agent_container) return;
-
+    // we check "did_open_container_block" here, in case agent container is opened with container block in same frame
+    if (input_state.agent_container || ItemContainer::did_open_container_block) return;
+    
     input_state.agent_container = true;
     
-    // force set the mouse position
-    // because we wont have a motion event coming in initially sometimes
-    SDL_ShowCursor(0);
-    int x,y;
-    SDL_GetMouseState(&x, &y);
-    t_hud::set_mouse_position(x,y);
-
     t_hud::enable_agent_container_hud();
     ItemContainer::open_inventory();
-    input_state.rebind_mouse = input_state.mouse_bound;
-    input_state.mouse_bound = false;
+    set_mouse_rebind(input_state.mouse_bound);
+    set_mouse_bind(false);
 }
 
 void disable_agent_container()
@@ -68,20 +62,19 @@ void disable_agent_container()
     ItemContainer::close_inventory();
     //if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
-        input_state.mouse_bound = input_state.rebind_mouse;
+        set_mouse_bind(input_state.rebind_mouse);
     input_state.ignore_mouse_motion = true;
 }
 
 void toggle_agent_container()
 {
-    printf("toggle agent container\n");
     if (input_state.agent_container) disable_agent_container();
     else enable_agent_container();
 }
 
 void enable_container_block(int container_id)
 {
-    if (input_state.container_block) return;
+    if (input_state.container_block || input_state.agent_container) return;
     
     GS_ASSERT(container_id != NULL_CONTAINER);
     
@@ -89,39 +82,35 @@ void enable_container_block(int container_id)
     Toolbelt::left_trigger_up_event();
     Toolbelt::right_trigger_up_event();
     
-    // force set the mouse position
-    // because we wont have a motion event coming in initially sometimes
-    SDL_ShowCursor(0);
-    int x,y;
-    SDL_GetMouseState(&x, &y);
-    t_hud::set_mouse_position(x,y);
-    
     input_state.container_block = true;
     input_state.container_block_id = container_id;
     t_hud::enable_container_block_hud(container_id);
-    input_state.rebind_mouse = input_state.mouse_bound;
-    input_state.mouse_bound = false;
+    set_mouse_rebind(input_state.mouse_bound);
+    set_mouse_bind(false);
 }
 
 void disable_container_block()
 {
-    if (!input_state.container_block) return;
+    if (!input_state.container_block || input_state.agent_container) return;
     input_state.container_block = false;
     t_hud::disable_container_block_hud();
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
-        input_state.mouse_bound = input_state.rebind_mouse;
+        set_mouse_bind(input_state.rebind_mouse);
     input_state.ignore_mouse_motion = true;
+
+    int container_id = ItemContainer::opened_container;
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_id != NULL_CONTAINER)
+    {
+        ItemContainer::close_container(container_id);
+        ItemContainer::send_container_close(container_id);
+    }
 }
 
 void close_all_containers()
 {
     disable_container_block();
     disable_agent_container();
-    // close any public containers we had open
-    if (ItemContainer::opened_container == NULL_CONTAINER) return;
-    int container_id = ItemContainer::opened_container;
-    ItemContainer::close_container(container_id);
-    ItemContainer::send_container_close(container_id);
 }
 
 void toggle_scoreboard()
@@ -169,29 +158,38 @@ void toggle_admin_controls()
     input_state.admin_controls = (!input_state.admin_controls);
 }
 
-void disable_awesomium()
-{
-    #if GS_AWESOMIUM
-    if (!input_state.awesomium) return;
-    printf("disable awesomium\n");
-    input_state.awesomium = false;
-    if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
-        input_state.mouse_bound = input_state.rebind_mouse;
-    input_state.ignore_mouse_motion = true;
-    Awesomium::disable();
-    #endif
-}
-
 void enable_awesomium()
 {
     #if GS_AWESOMIUM
     if (input_state.awesomium) return;
-    printf("enable awesomium\n");
+
+    if (!mouse_unlocked_for_ui_element())
+    {   // dont manipulate the mouse state if we opened on top of containers
+        set_mouse_rebind(input_state.mouse_bound);
+        set_mouse_bind(false);
+    }
+
     input_state.awesomium = true;
-    input_state.rebind_mouse = input_state.mouse_bound;
-    input_state.mouse_bound = false;
+
     Awesomium::enable();
     Hud::clear_prompt(Hud::open_login_text);
+
+    #endif
+}
+
+void disable_awesomium()
+{
+    #if GS_AWESOMIUM
+    if (!input_state.awesomium) return;
+    input_state.awesomium = false;
+    Awesomium::disable();
+
+    if (!mouse_unlocked_for_ui_element())
+    {   // dont manipulate the mouse state if we opened on top of containers
+        if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
+            set_mouse_bind(input_state.rebind_mouse);
+        input_state.ignore_mouse_motion = true;
+    }
     #endif
 }
 
@@ -1057,7 +1055,7 @@ void key_down_handler(SDL_Event* event)
         case SDLK_RALT:
             if (input_state.admin_controls)
             {
-                input_state.mouse_bound = false;
+                set_mouse_bind(false);
                 printf("Unbound mouse with alt\n");
             }
             break;
@@ -1216,15 +1214,9 @@ void mouse_motion_handler(SDL_Event* event)
     }
 
     if (input_state.awesomium)
-    {
-        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         Awesomium::SDL_mouse_event(event);
-    }
     else if (input_state.agent_container || input_state.container_block)
-    {
-        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         container_mouse_motion_handler(event);
-    }
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);
     else
@@ -1292,13 +1284,13 @@ void active_event_handler(SDL_Event* event)
         {
             if (event->active.gain)
             {
-                input_state.mouse_bound = input_state.rebind_mouse;
-                input_state.rebind_mouse = false;
+                set_mouse_bind(input_state.rebind_mouse);
+                set_mouse_rebind(false);
             }
             else
             {
-                input_state.rebind_mouse = input_state.mouse_bound;
-                input_state.mouse_bound = false;
+                set_mouse_rebind(input_state.mouse_bound);
+                set_mouse_bind(false);
             }
         }
     }

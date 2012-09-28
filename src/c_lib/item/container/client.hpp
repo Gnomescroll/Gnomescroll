@@ -31,6 +31,7 @@ void send_crusher_alpha_action(ContainerActionType action, int container_id, int
 void send_crusher_beta_action(ContainerActionType action, int container_id, int slot);
 void send_crusher_crush_action(ContainerActionType action, int container_id, int slot);
 
+void send_container_open(int container_id, int event_id);
 void send_container_close(int container_id);
 
 }   // ItemContainer

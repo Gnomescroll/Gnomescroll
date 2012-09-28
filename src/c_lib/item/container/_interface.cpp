@@ -291,6 +291,8 @@ void close_inventory()
 
 bool open_container(int container_id)
 {
+    GS_ASSERT(!input_state.agent_container);    // check that agent container is not opened here
+    
     GS_ASSERT(container_id != NULL_CONTAINER);
 
     ItemContainerInterface* container = get_container(container_id);
@@ -322,7 +324,7 @@ bool open_container(int container_id)
             player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
             player_craft_bench_ui->load_data(player_craft_bench->slot);
             t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
-            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            did_open_container_block = true;
             break;
 
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
@@ -343,7 +345,7 @@ bool open_container(int container_id)
             storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
             storage_block_ui->load_data(storage_block->slot);
             t_hud::set_container_id(storage_block->type, storage_block->id);
-            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            did_open_container_block = true;
             break;
 
         case CONTAINER_TYPE_CRYOFREEZER_SMALL:
@@ -364,7 +366,7 @@ bool open_container(int container_id)
             cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
             cryofreezer_ui->load_data(cryofreezer->slot);
             t_hud::set_container_id(cryofreezer->type, cryofreezer->id);
-            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            did_open_container_block = true;
             break;
             
         case CONTAINER_TYPE_SMELTER_ONE:
@@ -385,7 +387,7 @@ bool open_container(int container_id)
             smelter_ui->init(smelter->type, smelter->xdim, smelter->ydim);
             smelter_ui->load_data(smelter->slot);
             t_hud::set_container_id(smelter->type, smelter->id);
-            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            did_open_container_block = true;
             break;
 
         case CONTAINER_TYPE_CRUSHER:
@@ -405,7 +407,7 @@ bool open_container(int container_id)
             crusher_ui->init(crusher->type, crusher->xdim, crusher->ydim);
             crusher_ui->load_data(crusher->slot);
             t_hud::set_container_id(crusher->type, crusher->id);
-            if (opened_container == NULL_CONTAINER) did_open_container_block = true;
+            did_open_container_block = true;
             break;
 
 
@@ -414,18 +416,15 @@ bool open_container(int container_id)
             return false;
     }
 
+    if (did_open_container_block)
+        did_close_container_block = false;
+
     opened_container = container_id;
-    printf("OPENED_CONTAINER: %d\n", container_id);
 
     // send open packet
     opened_container_event_id = record_container_event(container_id);
     if (opened_container_event_id >= 0)
-    {
-        open_container_CtoS msg;
-        msg.container_id = container_id;
-        msg.event_id = opened_container_event_id;
-        msg.send();
-    }
+        send_container_open(container_id, opened_container_event_id);
     return true;
 }
 
@@ -468,9 +467,10 @@ bool close_container(int container_id)
 
     // unset hud container id
     t_hud::close_container(container_id);
-    
+
+    //print_trace();
     opened_container = NULL_CONTAINER;
-    printf("CONTAINER ID SET TO NULL\n");
+    did_open_container_block = false;
     did_close_container_block = true;
 
     return true;
@@ -486,11 +486,9 @@ bool container_block_was_opened(int* container_id)
         GS_ASSERT(opened_container != NULL_CONTAINER);
         did_open_container_block = false;
         *container_id = opened_container;
-        printf("CONTAINER ID SET TO %d\n", opened_container);
         return true;
     }
     *container_id = NULL_CONTAINER;
-    printf("CONTAINER ID SET TO NULL\n");
     return false;
 }
 
@@ -522,9 +520,8 @@ ItemContainerUIInterface* get_container_ui(int container_id)
     if (player_synthesizer_ui  != NULL && player_synthesizer_ui->id  == container_id) return player_synthesizer_ui;
     if (storage_block_ui       != NULL && storage_block_ui->id       == container_id) return storage_block_ui;
     if (cryofreezer_ui         != NULL && cryofreezer_ui->id         == container_id) return cryofreezer_ui;
-    if (crusher_ui            != NULL && crusher_ui->id            == container_id) return crusher_ui;
+    if (crusher_ui             != NULL && crusher_ui->id             == container_id) return crusher_ui;
     if (smelter_ui             != NULL && smelter_ui->id             == container_id) return smelter_ui;
-    GS_ASSERT(false);
     return NULL;
 }
 

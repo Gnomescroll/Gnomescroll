@@ -145,7 +145,10 @@ void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, co
         printf("Auth error code: %d\n", error);
     GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
     if (error != Auth::AUTH_ERROR_NONE)
+    {
+        Hud::set_awesomium_message("Authentication server failure. Try again soon.");
         Auth::token_failure = true;
+    }
     free(token);
     awe_string_destroy(_token);
 }

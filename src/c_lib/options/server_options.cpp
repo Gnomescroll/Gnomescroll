@@ -59,4 +59,8 @@ void register_options()
     OPT_BOOL_REGISTER(auth);
 }
 
+void validate()
+{
+}
+
 }   // Options

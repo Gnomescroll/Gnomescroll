@@ -23,6 +23,8 @@ extern bool token_failure;
 
 extern bool token_available;
 
+extern double offset_time;  // time discrepancy between server and client (its a double because thats what difftime returns)
+
 bool send_auth_token(); // returns true if token was sent
 bool send_auth_token(const char* token); // returns true if token was sent
 
@@ -37,5 +39,7 @@ void client_teardown();
 void check_expiring_token();
 
 void client_update();
+
+void set_time_offset(time_t server_time);
 
 }   // Auth

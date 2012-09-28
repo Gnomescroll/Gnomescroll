@@ -541,6 +541,17 @@ void mouse_right_click_handler(int container_id, int slot, bool alt_action)
     }
 }
 
+void send_container_open(int container_id, int event_id)
+{
+    GS_ASSERT(event_id >= 0);
+    GS_ASSERT(container_id != NULL_CONTAINER);
+    if (event_id < 0 || container_id == NULL_CONTAINER) return;
+    open_container_CtoS msg;
+    msg.container_id = container_id;
+    msg.event_id = event_id;
+    msg.send();
+}
+
 void send_container_close(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);

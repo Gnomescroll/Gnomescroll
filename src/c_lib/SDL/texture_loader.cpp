@@ -26,7 +26,7 @@ SDL_Surface* _load_image(const char* file)
     GS_ASSERT(image->format->BytesPerPixel == 4);
     if (image->format->BytesPerPixel != 4)
     {
-        printf("IMG_Load: image is missing alpha channel\n");
+        printf("IMG_Load: image %s is missing alpha channel. has %d bytes per pixel\n", file, image->format->BytesPerPixel);
         return NULL;
     }
 
@@ -110,19 +110,19 @@ int create_texture_from_file(const char* filename, GLuint* tex, GLuint min_filte
 {
     SDL_Surface* s = create_texture_and_surface_from_file(filename, tex, min_filter, mag_filter);
     if (s == NULL) return 1;
-	SDL_FreeSurface(s);
-	return 0;
+    SDL_FreeSurface(s);
+    return 0;
 }
 
 SDL_Surface* create_texture_and_surface_from_file(const char* filename, GLuint* tex)
 {
-	return create_texture_and_surface_from_file(filename, tex, GL_LINEAR, GL_LINEAR);
+    return create_texture_and_surface_from_file(filename, tex, GL_LINEAR, GL_LINEAR);
 }
 
 SDL_Surface* create_texture_and_surface_from_file(const char* filename, GLuint* tex, GLuint min_filter, GLuint mag_filter)
 {
-	GS_ASSERT(tex != NULL);
-	if (tex == NULL) return NULL;
+    GS_ASSERT(tex != NULL);
+    if (tex == NULL) return NULL;
     *tex = 0;
     
     SDL_Surface* surface = IMG_Load(filename);
@@ -136,9 +136,9 @@ SDL_Surface* create_texture_and_surface_from_file(const char* filename, GLuint* 
     int ret = create_texture_from_surface(surface, tex, min_filter, mag_filter);
     if (ret != 0)
     {
-		SDL_FreeSurface(surface);
-		return NULL;
-	}
+        SDL_FreeSurface(surface);
+        return NULL;
+    }
     return surface;
 }
 
@@ -228,9 +228,9 @@ void save_surface_to_png(SDL_Surface* surface, const char* filename)
         (const char*)surface->pixels, surface->w, surface->h, 4, &png_size);
         SDL_UnlockSurface(surface);
     }
-	
-	GS_ASSERT(png_data != NULL);
-	if (png_data == NULL) return;
+    
+    GS_ASSERT(png_data != NULL);
+    if (png_data == NULL) return;
 
     FILE* pFile = fopen(filename, "wb");
     fwrite(png_data, 1, png_size, pFile);
