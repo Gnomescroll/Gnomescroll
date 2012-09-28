@@ -288,6 +288,20 @@ void load_block_dat()
     push_texture();
     set_max_dmg(ruins_dmg());
 
+	// were these meant to be tree leaves?  using them as such for now
+    cube_def(41, SolidBlock, "leaves", CUBE_MATERIAL_DECORATION);
+    iso_texture(t2, 1,3);
+    push_texture();
+
+    cube_def(42, SolidBlock, "leaves2", CUBE_MATERIAL_DECORATION);
+    iso_texture(t2, 2,3);
+    push_texture();
+
+    cube_def(43, SolidBlock, "leaves_red", CUBE_MATERIAL_DECORATION);
+    iso_texture(t2, 1,2);
+    push_texture();
+
+
 
     // random textures from cell to fill the block placer
     DEFAULT_MAX_DAMAGE = 16;

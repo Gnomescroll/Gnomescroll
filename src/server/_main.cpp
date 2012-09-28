@@ -66,7 +66,7 @@ void init(int argc, char* argv[])
         map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
         map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
 
-        map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+        //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
 	
 		t_gen::generate_ruins();
 		t_gen::add_terrain_features();
