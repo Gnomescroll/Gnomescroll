@@ -111,7 +111,7 @@ void server_update()
     if (!Options::auth) return;
     static int _tick = 0;
     if ((_tick++) % SECRET_KEY_REFRESH_RATE != 0) return;
-    const char new_key_fn[] = SECRET_KEY_PATH ".new";
+    const char new_key_fn[] = SECRET_KEY_PATH SECRET_KEY_PATH_TMP_EXT;
     // check if file exists
     if (!file_exists(new_key_fn)) return;
     // rename the new key to the main key file name

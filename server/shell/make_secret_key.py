@@ -2,10 +2,10 @@
 
 from binascii import hexlify
 from os import urandom
-from sys import argv, exit
+from sys import argv, exit, stdout
 
 USAGE = """
-    %s [key_length=64] [output_file=stdout]
+    %s [key_length=64]
 """ % (__name__,)
 
 KEY_LENGTH = 64
@@ -27,12 +27,5 @@ if __name__ == '__main__':
         except ValueError:
             print USAGE
             exit()
-        if argc > 2:
-            OUTFILE = argv[2]
 
-    if OUTFILE is None:
-        print key
-    else:
-        with open(OUTFILE, 'w') as f:
-            f.write(key)
-        print "Wrote key to %s" % (OUTFILE,)
+    stdout.write(key)

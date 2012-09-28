@@ -15,6 +15,9 @@ namespace Auth
 #else
 #define SECRET_KEY_PATH "./data/secret_key.debug"
 #endif
+
+#define SECRET_KEY_PATH_TMP_EXT ".new"
+
 const unsigned int SECRET_KEY_SIZE = 64;
 const unsigned int SECRET_KEY_REFRESH_RATE = 60;    // once per second
 
