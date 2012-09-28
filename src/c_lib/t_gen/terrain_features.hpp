@@ -38,9 +38,7 @@ namespace t_gen {
 				y = randrange(0, YMAX);
 				z = ZMAX;
 
-				while (t_map::get(x, y, z) == 0) {
-					z--;
-				}
+				while (t_map::get(x, y, z) == 0) z--;
 			} while (t_map::get(x, y, z) != t_map::get_cube_id("regolith") );
 
 			// set bark/leaf textures
@@ -58,6 +56,7 @@ namespace t_gen {
 				int height = randrange(6, 12);
 				if (seg == 0) 
 					height = randrange(12, 21); // ensure trunk goes up aways
+				if (height+z+2 >= ZMAX) break;
 
 				for (int j = 0; j < height; j++) {
 					t_map::set(x, y, z + j, trunk);
