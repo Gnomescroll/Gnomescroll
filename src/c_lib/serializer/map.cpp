@@ -34,7 +34,6 @@ struct THREADED_WRITE_STRUCT
     int buffer_size;
 };
 
-static bool _THREADED_WRITE_ACTIVE = false;
 static int _threaded_write_running = 0;
 static struct THREADED_WRITE_STRUCT threaded_write_struct_param;
 static pthread_t _threaded_write_thread;
