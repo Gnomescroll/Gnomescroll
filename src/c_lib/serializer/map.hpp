@@ -1,9 +1,8 @@
 #pragma once
 
-
 #include <common/files.hpp>
 
-namespace t_map
+namespace serializer
 {
 
 bool map_save_completed = false;
@@ -439,7 +438,7 @@ void load_map()
     load_map(default_map_file);
 }
 
-void check_save_state()
+void check_map_save_state()
 {
     if (map_save_completed)
     {
@@ -472,4 +471,4 @@ void check_save_state()
 void init_map_serializer();
 void teardown_map_serializer();
 
-}   // t_map
+}   // serializer

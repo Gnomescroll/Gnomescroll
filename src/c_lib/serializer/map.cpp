@@ -1,6 +1,6 @@
-#include "_interface.hpp"
+#include "map.hpp"
 
-namespace t_map
+namespace serializer
 {
 
 BlockSerializer* block_serializer = NULL;
@@ -16,4 +16,5 @@ void teardown_map_serializer()
     if (block_serializer != NULL) delete block_serializer;
 }
     
-}   // t_map
+}   // namespace serializer
+

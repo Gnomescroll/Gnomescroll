@@ -151,6 +151,9 @@ dont_include_this_file_in_client
 // authentication
 #include <auth/_include.hpp>
 
+// serialization
+#include <serializer/_include.hpp>
+
 #ifdef linux
 #include <unistd.h>
 #include <signal.h>
@@ -282,7 +285,7 @@ int init_c_lib(int argc, char* argv[])
     Item::load_smelting_dat();
     ItemContainer::load_crusher_dat();
 
-    t_map::init_map_serializer();
+    serializer::init();
     
     return 0;
 } 
@@ -291,14 +294,14 @@ void close_c_lib()
 {
     #if PTHREADS_ENABLED
     printf("Waiting for threads to finish...\n");
-    wait_for_threads();
+    serializer::wait_for_threads();
     #endif
     
-    t_map::check_save_state();
+    serializer::check_save_state();
 
     printf("Server closing...\n");
 
-    t_map::teardown_map_serializer();
+    serializer::teardown();
 
     t_map::end_t_map();
     t_map::teardown_block_drop_dat();

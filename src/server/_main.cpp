@@ -22,7 +22,7 @@ void default_map_gen()
     t_gen::start_cave_generator();
     t_gen::populate_ore();
     t_gen::generate_ruins();
-	t_gen::add_terrain_features();
+    t_gen::add_terrain_features();
 
     map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));    
 }
@@ -47,7 +47,7 @@ void init(int argc, char* argv[])
         // load map file by default in development mode; decreases startup time
         const char default_map[] = "./world/map/map-" STR(GS_VERSION) ".map";
         if (file_exists(default_map))
-            t_map::load_map(default_map);
+            serializer::load_map(default_map);
         else
             default_map_gen();
         #endif
@@ -58,7 +58,7 @@ void init(int argc, char* argv[])
     }
     else
     {   // use map file
-        t_map::load_map(Options::map);
+        serializer::load_map(Options::map);
     }   
 
     if (fast_map)
@@ -68,8 +68,8 @@ void init(int argc, char* argv[])
 
         //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
     
-		t_gen::generate_ruins();
-		t_gen::add_terrain_features();
+        t_gen::generate_ruins();
+        t_gen::add_terrain_features();
     }
     else
     {
@@ -184,11 +184,11 @@ int run()
         
         if (ServerState::should_save_map)
         {
-            t_map::save_map();
+            serializer::save_map();
             ServerState::should_save_map = false;
         }
 
-        t_map::check_save_state();
+        serializer::check_save_state();
 
         #ifdef __GNUC__
         usleep(1000);
@@ -201,7 +201,7 @@ int run()
 
     if (ServerState::should_save_map)
     {
-        t_map::save_map();
+        serializer::save_map();
         ServerState::should_save_map = false;
     }
     

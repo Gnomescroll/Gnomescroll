@@ -37,9 +37,6 @@
 #include <t_map/server/subscription_list.hpp>
 #include <t_map/server/env_process.cpp>
 
-//map serialization
-#include <t_map/serializer/_interface.cpp>
-
 #include <t_map/config/drop_dat.cpp>
 #endif
 
