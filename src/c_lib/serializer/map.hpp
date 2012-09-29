@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/files.hpp>
+#include <serializer/constants.hpp>
 
 namespace serializer
 {
@@ -11,8 +11,6 @@ struct SerializedChunk
     uint32_t ychunk;
     struct MAP_ELEMENT data[sizeof(struct MAP_ELEMENT)*16*16*128];
 };
-
-const char default_map_file[] = "./world/map/map-" STR(GS_VERSION) ".map";
 
 extern bool should_save_map;
 extern bool map_save_completed;

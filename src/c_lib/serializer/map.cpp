@@ -407,4 +407,3 @@ void check_map_save_state()
 }
 
 }   // serializer
-
