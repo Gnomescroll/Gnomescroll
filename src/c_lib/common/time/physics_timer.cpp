@@ -233,3 +233,15 @@ void gs_millisleep(int milliseconds)
     nanosleep(&req, NULL);
     #endif 
 }
+
+void gs_microsleep(int microseconds)
+{
+    #ifdef _WIN32
+    Sleep((float)microseconds/1000.0f);
+    #else
+    struct timespec req;
+    req.tv_sec = 0; // 0 seconds
+    req.tv_nsec = microseconds*1000;   // nanoseconds
+    nanosleep(&req, NULL);
+    #endif 
+}

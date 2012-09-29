@@ -11,3 +11,4 @@ void _SET_LAST_TICK();
 long _LAST_TICK();
 
 void gs_millisleep(int milliseconds);
+void gs_microsleep(int microseconds);

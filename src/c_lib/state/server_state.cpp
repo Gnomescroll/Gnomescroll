@@ -16,7 +16,6 @@ namespace ServerState
 
     bool main_inited = false;
     bool signal_exit = false;
-    bool should_save_map = false;
     
     Agent_list* agent_list = NULL;
 

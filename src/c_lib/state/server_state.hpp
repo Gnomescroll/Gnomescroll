@@ -14,7 +14,6 @@ namespace ServerState
 
     extern bool main_inited;
     extern bool signal_exit;
-    extern bool should_save_map;
 
     extern Agent_list* agent_list;
         

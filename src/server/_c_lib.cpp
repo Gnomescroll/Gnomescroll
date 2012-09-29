@@ -168,13 +168,13 @@ void signal_terminate_handler(int sig)
     }
     ServerState::signal_exit = true;
     #if PRODUCTION
-    ServerState::should_save_map = true;
+    serializer::should_save_map = true;
     #endif
 }
 
 void sigusr1_handler(int sig)
 {
-    ServerState::should_save_map = true;
+    serializer::should_save_map = true;
 }
 #endif
 

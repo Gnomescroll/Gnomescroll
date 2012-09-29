@@ -182,10 +182,10 @@ int run()
         if (Options::auth)
             NetServer::check_client_authorizations();
         
-        if (ServerState::should_save_map)
+        if (serializer::should_save_map)
         {
             serializer::save_map();
-            ServerState::should_save_map = false;
+            serializer::should_save_map = false;
         }
 
         serializer::check_save_state();
@@ -199,10 +199,10 @@ int run()
         #endif
     }
 
-    if (ServerState::should_save_map)
+    if (serializer::should_save_map)
     {
         serializer::save_map();
-        ServerState::should_save_map = false;
+        serializer::should_save_map = false;
     }
     
     close_c_lib();
