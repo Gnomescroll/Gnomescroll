@@ -1,6 +1,6 @@
 #pragma once
 
-namespace t_hud
+namespace HudContainer
 {
 
 // UI State
@@ -60,4 +60,4 @@ void draw_teardown();
 // render
 void draw();
 
-}   // t_hud
+}   // HudContainer

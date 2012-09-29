@@ -2,7 +2,7 @@
 
 #include <item/properties.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 //221x147
@@ -80,10 +80,10 @@ class AgentSynthesizerUI : public UIElement
             t->set_depth(-0.1f);
         }
 
-		coin_stack.set_format((char*) "%d");
-		coin_stack.set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
-		coin_stack.set_color(255,255,255,255);
-		coin_stack.set_depth(-0.1f);
+        coin_stack.set_format((char*) "%d");
+        coin_stack.set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+        coin_stack.set_color(255,255,255,255);
+        coin_stack.set_depth(-0.1f);
     }
 
     void set_container_type(ItemContainerType container_type)
@@ -95,8 +95,8 @@ class AgentSynthesizerUI : public UIElement
         shopping_xdim(0), shopping_ydim(0),
         render_width(0.0f), render_height(0.0f), prices(NULL)
     {
-		this->name.set_text((char*)"Synthesizer");	
-	}
+        this->name.set_text((char*)"Synthesizer");  
+    }
 
     ~AgentSynthesizerUI()
     {
@@ -171,12 +171,12 @@ int AgentSynthesizerUI::get_slot_at(int px, int py)
 //221x147
 void AgentSynthesizerUI::draw()
 {
-	// draw name
-	this->draw_name();
-	
-	//GS_ASSERT(SynthesizerTexture != 0);
-	if (SynthesizerTexture == 0) return;
-	
+    // draw name
+    this->draw_name();
+    
+    //GS_ASSERT(SynthesizerTexture != 0);
+    if (SynthesizerTexture == 0) return;
+    
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
@@ -228,9 +228,9 @@ void AgentSynthesizerUI::draw()
         int w = slot_size;
         int xslot,yslot;
 
-		int hover_slot = this->get_grid_at(mouse_x, mouse_y);
-		xslot = hover_slot % this->xdim;
-		yslot = hover_slot / this->xdim;
+        int hover_slot = this->get_grid_at(mouse_x, mouse_y);
+        xslot = hover_slot % this->xdim;
+        yslot = hover_slot / this->xdim;
         float x = xoff + cell_size*xslot + cell_offset_x;
         float y = yoff - (cell_size*yslot + cell_offset_y);
 
@@ -251,7 +251,7 @@ void AgentSynthesizerUI::draw()
 
     int coins = 0;
     if (container->get_coin_type() != NULL_ITEM_TYPE)
-		coins = container->get_coin_stack();
+        coins = container->get_coin_stack();
 
     // greyscale items
 
@@ -400,10 +400,10 @@ void AgentSynthesizerUI::draw()
         const int slot = yslot*shopping_xdim + xslot;
         GS_ASSERT(slot < shopping_xdim*shopping_ydim);
         HudText::Text* text = &this->prices[slot];
-		if (cost <= 0)
-			text->set_text((char*)"???");
+        if (cost <= 0)
+            text->set_text((char*)"???");
         else
-			text->update_formatted_string(1, cost);
+            text->update_formatted_string(1, cost);
 
         const float x = xoff + (xslot+1)*cell_size - cell_offset_x_right - text->get_width();
         const float y = yoff - ((yslot+1)*cell_size - cell_offset_y_bottom - text->get_height());

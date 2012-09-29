@@ -518,9 +518,9 @@ void HUD::init()
     health->set_format(health_format);
     health->set_format_extra_length(count_digits(AGENT_HEALTH) - 4);
     health->update_formatted_string(1, AGENT_HEALTH);
-    GS_ASSERT(t_hud::energy_tanks != NULL);
-    float health_x = t_hud::energy_tanks->xoff + t_hud::energy_tanks->width() + 1;
-    health->set_position(health_x, _yresf - t_hud::energy_tanks->yoff - health->get_height());
+    GS_ASSERT(HudContainer::energy_tanks != NULL);
+    float health_x = HudContainer::energy_tanks->xoff + HudContainer::energy_tanks->width() + 1;
+    health->set_position(health_x, _yresf - HudContainer::energy_tanks->yoff - health->get_height());
     health->set_color(255,255,255,255);
 
     // add color for health text animations

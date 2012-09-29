@@ -11,7 +11,7 @@
 //toggling graphics settings
 #include <t_map/glsl/shader.hpp>
 
-#include <t_hud/_interface.hpp>
+#include <hud/container/_interface.hpp>
 #include <hud/hud.hpp>
 
 InputState input_state;
@@ -41,7 +41,7 @@ void enable_agent_container()
     
     input_state.agent_container = true;
     
-    t_hud::enable_agent_container_hud();
+    HudContainer::enable_agent_container_hud();
     ItemContainer::open_inventory();
     set_mouse_rebind(input_state.mouse_bound);
     set_mouse_bind(false);
@@ -58,7 +58,7 @@ void disable_agent_container()
     if (!(btns & SDL_BUTTON_LEFT)) Toolbelt::left_trigger_up_event();
     if (!(btns & SDL_BUTTON_RIGHT)) Toolbelt::right_trigger_up_event();
     
-    t_hud::disable_agent_container_hud();
+    HudContainer::disable_agent_container_hud();
     ItemContainer::close_inventory();
     //if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
@@ -84,7 +84,7 @@ void enable_container_block(int container_id)
     
     input_state.container_block = true;
     input_state.container_block_id = container_id;
-    t_hud::enable_container_block_hud(container_id);
+    HudContainer::enable_container_block_hud(container_id);
     set_mouse_rebind(input_state.mouse_bound);
     set_mouse_bind(false);
 }
@@ -93,7 +93,7 @@ void disable_container_block()
 {
     if (!input_state.container_block || input_state.agent_container) return;
     input_state.container_block = false;
-    t_hud::disable_container_block_hud();
+    HudContainer::disable_container_block_hud();
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
         set_mouse_bind(input_state.rebind_mouse);
     input_state.ignore_mouse_motion = true;
@@ -516,11 +516,11 @@ void container_mouse_down_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            t_hud::left_mouse_down(x,y);
+            HudContainer::left_mouse_down(x,y);
             break;
 
         case SDL_BUTTON_RIGHT:
-            t_hud::right_mouse_down(x,y);
+            HudContainer::right_mouse_down(x,y);
             break;
 
         default:
@@ -558,12 +558,12 @@ void container_mouse_up_handler(SDL_Event* event)
     SDL_GetMouseState(&x, &y);
     //printf("GetMouseState x,y: %d,%d\n", x,y);
 
-    t_hud::ContainerInputEvent container_event;
+    HudContainer::ContainerInputEvent container_event;
 
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            container_event = t_hud::left_mouse_up(x,y);
+            container_event = HudContainer::left_mouse_up(x,y);
             //printf("container event: ");
             //printf("id %d ", container_event.container_id);
             //printf("slot %d ", container_event.slot);
@@ -574,7 +574,7 @@ void container_mouse_up_handler(SDL_Event* event)
             break;
 
         case SDL_BUTTON_RIGHT:
-            container_event = t_hud::right_mouse_up(x,y);
+            container_event = HudContainer::right_mouse_up(x,y);
             ItemContainer::mouse_right_click_handler(container_event.container_id, container_event.slot, container_event.alt_action);
             break;
 
@@ -597,7 +597,7 @@ void container_mouse_motion_handler(SDL_Event* event)
     //printf("X,Y %d,%d\n", x, y);
 
     /* Coordinates start at TOP LEFT */
-    t_hud::mouse_motion(x,y);
+    HudContainer::mouse_motion(x,y);
 }
 
 
@@ -608,7 +608,7 @@ void container_mouse_motion_handler(SDL_Event* event)
 
 void agent_key_down_handler(SDL_Event* event)
 {
-    t_hud::ContainerInputEvent container_event;
+    HudContainer::ContainerInputEvent container_event;
     switch (event->key.keysym.sym)
     {
         //case SDLK_9:
@@ -633,39 +633,39 @@ void agent_key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_1:
-            container_event = t_hud::select_slot(1);
+            container_event = HudContainer::select_slot(1);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_2:
-            container_event = t_hud::select_slot(2);
+            container_event = HudContainer::select_slot(2);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_3:
-            container_event = t_hud::select_slot(3);
+            container_event = HudContainer::select_slot(3);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_4:
-            container_event = t_hud::select_slot(4);
+            container_event = HudContainer::select_slot(4);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_5:
-            container_event = t_hud::select_slot(5);
+            container_event = HudContainer::select_slot(5);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_6:
-            container_event = t_hud::select_slot(6);
+            container_event = HudContainer::select_slot(6);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_7:
-            container_event = t_hud::select_slot(7);
+            container_event = HudContainer::select_slot(7);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_8:
-            container_event = t_hud::select_slot(8);
+            container_event = HudContainer::select_slot(8);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
         case SDLK_9:
-            container_event = t_hud::select_slot(9);
+            container_event = HudContainer::select_slot(9);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
             
@@ -690,7 +690,7 @@ void agent_mouse_down_handler(SDL_Event* event)
 {
     if (ClientState::playerAgent_state.you == NULL) return;
 
-    t_hud::ContainerInputEvent container_event;
+    HudContainer::ContainerInputEvent container_event;
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
@@ -706,12 +706,12 @@ void agent_mouse_down_handler(SDL_Event* event)
             break;
 
         case 4: // scroll up
-            container_event = t_hud::scroll_up();
+            container_event = HudContainer::scroll_up();
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
 
         case 5: // scroll down
-            container_event = t_hud::scroll_down();
+            container_event = HudContainer::scroll_down();
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
 

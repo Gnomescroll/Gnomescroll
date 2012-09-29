@@ -427,7 +427,7 @@ void load_map(const char* filename)
     block_serializer->load(filename);
 }
 
-const char default_map_file[] = "./world/map-" STR(GS_VERSION) ".map";
+const char default_map_file[] = "./world/map/map-" STR(GS_VERSION) ".map";
 
 void save_map()
 {

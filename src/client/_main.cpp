@@ -397,7 +397,7 @@ void draw_tick()
         }
         else
         {
-            t_hud::draw();
+            HudContainer::draw();
             Hud::draw_error_status();
         }
 

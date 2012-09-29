@@ -1,6 +1,6 @@
 #pragma once
 
-namespace t_hud
+namespace HudContainer
 {
 
 const int STACK_COUNT_MAX_LENGTH = 4;   // 9999
@@ -18,4 +18,4 @@ typedef enum
     UI_ELEMENT_CRUSHER,
 } UIElementType;
 
-} // t_hud
+} // HudContainer

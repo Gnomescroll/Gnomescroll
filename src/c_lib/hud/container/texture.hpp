@@ -1,6 +1,6 @@
 #pragma once
 
-namespace t_hud
+namespace HudContainer
 {
 
 extern GLuint SynthesizerTexture;
@@ -12,4 +12,4 @@ extern GLuint CrusherTexture;
 void init_texture();
 void teardown_texture();
 
-}   // t_hud
+}   // HudContainer

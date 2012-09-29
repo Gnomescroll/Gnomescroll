@@ -1,10 +1,10 @@
 #pragma once
 
-#include <t_hud/_interface.hpp>
-#include <t_hud/texture.hpp>
+#include <hud/container/_interface.hpp>
+#include <hud/container/texture.hpp>
 #include <SDL/SDL_functions.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 class AgentContainerUI : public UIElement

@@ -2,7 +2,7 @@
 
 #include <item/properties.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 class CrusherUI : public UIElement
@@ -367,4 +367,4 @@ void CrusherUI::draw()
 
 }
 
-}   // t_hud
+}   // HudContainer

@@ -4,7 +4,7 @@
 
 #include <item/container/_state.hpp>
 #include <item/container/_interface.hpp>
-#include <t_hud/_interface.hpp>
+#include <hud/container/_interface.hpp>
 #include <item/toolbelt/_interface.hpp>
 
 namespace ItemContainer
@@ -80,7 +80,7 @@ inline void assign_item_container_StoC::handle()
             GS_ASSERT(false);
             return;
     }
-    t_hud::set_container_id(type, container_id);
+    HudContainer::set_container_id(type, container_id);
 }
 
 // Container item

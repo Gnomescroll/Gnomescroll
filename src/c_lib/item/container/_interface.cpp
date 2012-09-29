@@ -323,7 +323,7 @@ bool open_container(int container_id)
             player_craft_bench_ui->set_alt_parameters(player_craft_bench->alt_xdim, player_craft_bench->alt_ydim);
             player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
             player_craft_bench_ui->load_data(player_craft_bench->slot);
-            t_hud::set_container_id(player_craft_bench->type, player_craft_bench->id);
+            HudContainer::set_container_id(player_craft_bench->type, player_craft_bench->id);
             did_open_container_block = true;
             break;
 
@@ -344,7 +344,7 @@ bool open_container(int container_id)
             storage_block_ui->set_alt_parameters(storage_block->alt_xdim, storage_block->alt_ydim);
             storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
             storage_block_ui->load_data(storage_block->slot);
-            t_hud::set_container_id(storage_block->type, storage_block->id);
+            HudContainer::set_container_id(storage_block->type, storage_block->id);
             did_open_container_block = true;
             break;
 
@@ -365,7 +365,7 @@ bool open_container(int container_id)
             cryofreezer_ui->set_alt_parameters(cryofreezer->alt_xdim, cryofreezer->alt_ydim);
             cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
             cryofreezer_ui->load_data(cryofreezer->slot);
-            t_hud::set_container_id(cryofreezer->type, cryofreezer->id);
+            HudContainer::set_container_id(cryofreezer->type, cryofreezer->id);
             did_open_container_block = true;
             break;
             
@@ -386,7 +386,7 @@ bool open_container(int container_id)
             smelter_ui->set_alt_parameters(smelter->alt_xdim, smelter->alt_ydim);
             smelter_ui->init(smelter->type, smelter->xdim, smelter->ydim);
             smelter_ui->load_data(smelter->slot);
-            t_hud::set_container_id(smelter->type, smelter->id);
+            HudContainer::set_container_id(smelter->type, smelter->id);
             did_open_container_block = true;
             break;
 
@@ -406,7 +406,7 @@ bool open_container(int container_id)
             crusher_ui->set_alt_parameters(crusher->alt_xdim, crusher->alt_ydim);
             crusher_ui->init(crusher->type, crusher->xdim, crusher->ydim);
             crusher_ui->load_data(crusher->slot);
-            t_hud::set_container_id(crusher->type, crusher->id);
+            HudContainer::set_container_id(crusher->type, crusher->id);
             did_open_container_block = true;
             break;
 
@@ -466,7 +466,7 @@ bool close_container(int container_id)
     crusher_ui = NULL;
 
     // unset hud container id
-    t_hud::close_container(container_id);
+    HudContainer::close_container(container_id);
 
     //print_trace();
     opened_container = NULL_CONTAINER;

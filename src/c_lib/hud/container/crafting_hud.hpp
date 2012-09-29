@@ -2,7 +2,7 @@
 
 #include <item/properties.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 class CraftingUI : public UIElement
@@ -99,7 +99,7 @@ class CraftingUI : public UIElement
             t->set_depth(-0.1f);
         }
 
- 		this->name.set_text((char*)"Crafting Bench");
+        this->name.set_text((char*)"Crafting Bench");
     }
 
     void set_container_type(ItemContainerType container_type)
@@ -214,11 +214,11 @@ bool CraftingUI::in_craft_output_region(int px, int py)
 
 void CraftingUI::draw()
 {
-	this->draw_name();
-	
-	GS_ASSERT(CraftingTexture != 0);
-	if (CraftingTexture == 0) return;
-	
+    this->draw_name();
+    
+    GS_ASSERT(CraftingTexture != 0);
+    if (CraftingTexture == 0) return;
+    
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -491,4 +491,4 @@ void CraftingUI::draw()
 
 }
 
-}   // t_hud
+}   // HudContainer
