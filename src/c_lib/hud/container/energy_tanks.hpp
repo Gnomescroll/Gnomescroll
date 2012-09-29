@@ -1,9 +1,9 @@
 #pragma once
 
 #include <item/common/constant.hpp>
-#include <t_hud/ui_element.hpp>
+#include <hud/container/ui_element.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 class EnergyTanksUI : public UIElement
@@ -32,7 +32,7 @@ class EnergyTanksUI : public UIElement
     }
 
     void draw();
-	void draw_name(); // TODO: fix rendering so we dont need to override UIElement's draw_name
+    void draw_name(); // TODO: fix rendering so we dont need to override UIElement's draw_name
 
     int get_slot_at(int px, int py);
 
@@ -75,13 +75,13 @@ int EnergyTanksUI::get_slot_at(int px, int py)
 
 void EnergyTanksUI::draw_name()
 {
-	// TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
-	HudFont::start_font_draw();
-	HudFont::reset_default();
-	HudFont::set_texture();
-	this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
-	this->name.draw();
-	HudFont::end_font_draw();	
+    // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
+    HudFont::start_font_draw();
+    HudFont::reset_default();
+    HudFont::set_texture();
+    this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
+    this->name.draw();
+    HudFont::end_font_draw();   
 }
 
 void EnergyTanksUI::draw()
@@ -113,9 +113,9 @@ void EnergyTanksUI::draw()
 
     if (this->container_id == NULL_CONTAINER) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-	GS_ASSERT(slot_types != NULL);
-	if (slot_types == NULL) return;
-	
+    GS_ASSERT(slot_types != NULL);
+    if (slot_types == NULL) return;
+    
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
@@ -147,7 +147,7 @@ void EnergyTanksUI::draw()
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
 
-	// draw unloaded energy tanks as greyscale
+    // draw unloaded energy tanks as greyscale
     glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
@@ -177,17 +177,17 @@ void EnergyTanksUI::draw()
         glTexCoord2f(tx_min, ty_max);
         glVertex2f(x, y);
     }
-	glEnd();
-	
+    glEnd();
+    
     GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
     if (TextureSheetLoader::ItemSheetTexture == 0)
     {
-		glDisable(GL_TEXTURE_2D);
-		return;
-	}
+        glDisable(GL_TEXTURE_2D);
+        return;
+    }
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
-	// draw loaded energy tanks
+    // draw loaded energy tanks
     glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
@@ -228,4 +228,4 @@ void EnergyTanksUI::draw()
     glDisable(GL_BLEND);
 }
 
-}	// t_hud
+}   // HudContainer

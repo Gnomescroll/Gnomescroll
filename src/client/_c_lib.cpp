@@ -164,7 +164,7 @@ dont_include_this_file_in_server
 #include <item/particle/_include.hpp>
 
 /* hud */
-#include <t_hud/_include.hpp>
+#include <hud/container/_include.hpp>
 
 /* camera */
 #include <camera/camera.cpp>
@@ -334,8 +334,8 @@ int init_c_lib(int argc, char* argv[])
     TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
     TextureSheetLoader::init_item_texture();
 
-    t_hud::init();
-    t_hud::draw_init();
+    HudContainer::init();
+    HudContainer::draw_init();
 
     //t_mech::state_init();
 
@@ -386,10 +386,10 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("t_map end t map\n");
     t_map::end_t_map();
 
-    if (TEARDOWN_DEBUG) printf("t_hud draw teardown\n");
-    t_hud::draw_teardown();
-    if (TEARDOWN_DEBUG) printf("t_hud teardown\n");
-    t_hud::teardown();
+    if (TEARDOWN_DEBUG) printf("HudContainer draw teardown\n");
+    HudContainer::draw_teardown();
+    if (TEARDOWN_DEBUG) printf("HudContainer teardown\n");
+    HudContainer::teardown();
     if (TEARDOWN_DEBUG) printf("t_mech teardown\n");
     t_mech::teardown();
     //t_mech::state_teardown();

@@ -1,14 +1,14 @@
 #include "_interface.hpp"
 
 #include <entity/constants.hpp>
-#include <t_hud/constants.hpp>
-#include <t_hud/container_hud.hpp>
-#include <t_hud/toolbelt_hud.hpp>
-#include <t_hud/synthesizer_hud.hpp>
-#include <t_hud/storage_block.hpp>
-#include <t_hud/crusher.hpp>
+#include <hud/container/constants.hpp>
+#include <hud/container/container_hud.hpp>
+#include <hud/container/toolbelt_hud.hpp>
+#include <hud/container/synthesizer_hud.hpp>
+#include <hud/container/storage_block.hpp>
+#include <hud/container/crusher.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 static bool agent_container_enabled = false;
@@ -609,4 +609,4 @@ void draw_teardown()
 
 #endif
 
-}   // t_hud
+}   // HudContainer

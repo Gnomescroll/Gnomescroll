@@ -1,8 +1,8 @@
 #pragma once
 
-#include <t_hud/texture.hpp>
+#include <hud/container/texture.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 class AgentToolbeltUI : public UIElement

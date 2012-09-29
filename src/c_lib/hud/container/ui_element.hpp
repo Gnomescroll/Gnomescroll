@@ -1,10 +1,10 @@
 #pragma once
 
-#include <t_hud/constants.hpp>
+#include <hud/container/constants.hpp>
 #include <hud/text.hpp>
 #include <hud/font.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 class UIElement
@@ -60,4 +60,4 @@ class UIElement
         virtual ~UIElement() {} //abc virtual deconstructor
 };
 
-} // t_hud
+} // HudContainer

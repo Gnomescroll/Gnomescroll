@@ -2,7 +2,7 @@
 
 #include <SDL/texture_loader.hpp>
 
-namespace t_hud
+namespace HudContainer
 {
 
 GLuint SynthesizerTexture = 0;
@@ -69,4 +69,4 @@ void teardown_texture()
 {
 }
 
-}   // t_hud
+}   // HudContainer
