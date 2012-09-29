@@ -8,11 +8,11 @@ namespace serializer
 void init()
 {
     // make sure paths exist
-    create_path("./world")
-    create_path("./world/map")
-    create_path("./world/players")
-    create_path("./world/items")
-    create_path("./world/containers")
+    create_path("./world");
+    create_path("./world/map");
+    create_path("./world/players");
+    create_path("./world/items");
+    create_path("./world/containers");
     
     init_map_serializer();
 }
