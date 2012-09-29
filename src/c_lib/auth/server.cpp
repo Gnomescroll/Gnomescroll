@@ -147,7 +147,12 @@ bool verify_token(const char* _token, int* user_id, time_t* expiration_time, cha
     free(_hash);
     free(payload);
 
-    bool match = (strcmp(token, hash) == 0);
+    // do a constant-time token comparison here, to eliminate that side-channel attack
+    bool match = true;
+    for (int i=0; i<AUTH_TOKEN_HASH_LENGTH; i++)
+        if (token[i] != hash[i])
+            match = false;
+
     bool expired = auth_token_expired(*expiration_time, AUTH_TOKEN_LIFETIME);
 
     free(token);
