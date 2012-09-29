@@ -30,6 +30,9 @@ valgrerr*
 zi*
 
 *.map
+*.player
+*.item
+*.container
 
 .DS_STORE
 *.so
