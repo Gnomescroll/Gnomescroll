@@ -118,7 +118,7 @@ void set_item_name(int id, const char* name)
     set_item_name(id, name, length);
 }
 
-char* get_item_name(int type)
+const char* get_item_name(int type)
 {
     GS_ASSERT(type >= 0 || type < MAX_ITEMS);
     if (type < 0 || type >= MAX_ITEMS) return NULL;
@@ -134,7 +134,7 @@ int get_item_type(const char* name)
 {
     for (int i=0; i<MAX_ITEMS; i++)
     {
-        char* cmp_name = get_item_name(i);
+        const char* cmp_name = get_item_name(i);
         if (cmp_name != NULL && strcmp(name, cmp_name) == 0)
             return i;
     }
@@ -143,7 +143,7 @@ int get_item_type(const char* name)
     return NULL_ITEM_TYPE;
 }
 
-char* get_item_pretty_name(int item_type)
+const char* get_item_pretty_name(int item_type)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     if (item_type == NULL_ITEM_TYPE) return NULL;
@@ -151,7 +151,7 @@ char* get_item_pretty_name(int item_type)
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return NULL;
     GS_ASSERT(attr->pretty_name != NULL);
-    char* name = NULL;
+    const char* name = NULL;
     if (attr->pretty_name == NULL) name = get_item_name(item_type); // use item name is no pretty name defined
     else name = attr->pretty_name;
     GS_ASSERT(name != NULL);

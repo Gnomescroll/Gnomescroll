@@ -281,8 +281,8 @@ void draw_equipped_item(int item_type)
     GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
     if (equipped_item_animating && rendered_item != item_type)
     {
-        char* old_name = Item::get_item_name(rendered_item);
-        char* new_name = Item::get_item_name(item_type);
+        const char* old_name = Item::get_item_name(rendered_item);
+        const char* new_name = Item::get_item_name(item_type);
         GS_ASSERT(old_name != NULL);
         GS_ASSERT(new_name != NULL);
         GS_ASSERT(strcmp(old_name, new_name) != 0);

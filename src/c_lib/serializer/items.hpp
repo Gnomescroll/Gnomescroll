@@ -16,4 +16,7 @@ SerializerError write_item_global_id();
 
 uint32_t get_new_item_global_id();
 
+void init_item_serializer();
+void teardown_item_serializer();
+
 }   // serializer

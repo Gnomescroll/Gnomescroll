@@ -130,7 +130,7 @@ static void load_map_restore_containers()
         for(int j=0; j<16; j++)
         {
             int block = mp->e[16*16*k + 16*j + i].block;
-            if(isItemContainer(block) == true)
+            if(isItemContainer(block))
                 t_map::load_item_container_block(ci*16+i, cj*16+j, k, block);
         }
     }
@@ -164,7 +164,7 @@ BlockSerializer::~BlockSerializer()
 
 void BlockSerializer::save(const char* filename)
 {
-    if(map_save_memcpy_in_progress == true)
+    if (map_save_memcpy_in_progress)
     {
         printf("BlockSerializer::save call failed, map memcpy already in progress \n");
         return; 

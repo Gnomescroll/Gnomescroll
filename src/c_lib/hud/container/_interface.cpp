@@ -441,7 +441,7 @@ static void draw_tooltip()
     if (item_type == NULL_ITEM_TYPE) return;
     
     // get name
-    char* name = Item::get_item_pretty_name(item_type);
+    const char* name = Item::get_item_pretty_name(item_type);
     GS_ASSERT(name != NULL);
     if (name == NULL) return;
     GS_ASSERT(name[0] != '\0');
