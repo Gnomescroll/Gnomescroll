@@ -15,7 +15,6 @@ namespace serializer
 // TODO -- move invalid parsed files to "invalid" subfolder
 // TODO -- apply rename mappings
 
-
 uint32_t item_global_id = 0;
 
 typedef enum
@@ -149,8 +148,8 @@ SerializerError save_item(ItemID item_id)
     if (name == NULL) return SE_SAVE_ITEM_ITEM_NAME_NOT_FOUND;
 
     // TODO -- assert valid values on item before writing
+    if (!item->valid) return SE_SAVE_ITEM_INVALID_ITEM_STATE;
     if (item->global_id <= 0) return SE_SAVE_ITEM_INVALID_GLOBAL_ID;
-    if (!item->location_valid) return SE_SAVE_ITEM_INVALID_LOCATION_DATA;
     if (item->durability < 0) return SE_SAVE_ITEM_INVALID_DURABILITY;
     if (item->stack_size < 0) return SE_SAVE_ITEM_INVALID_STACK_SIZE;
     if (!Item::is_valid_item_name(name)) return SE_SAVE_ITEM_INVALID_ITEM_NAME;
