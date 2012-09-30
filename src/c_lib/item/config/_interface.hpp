@@ -26,6 +26,20 @@ void _set_attribute();
 void iso_block_sprite_def(const char* block_name);
 void container_block_def(const char* block_name, ItemContainerType container_type);
 
+static bool is_valid_item_name_char(char c)
+{
+    return (!isspace(c) && ! iscntrl(c));
+}
+
+bool is_valid_item_name(const char* name)
+{   // check name for valid characters NO SPACES
+    int i = 0;
+    char c;
+    while ((c = name[i++]) != '\0')
+        if (!is_valid_item_name_char(c))
+            return false;
+    return true;
+}
 
 class ItemAttribute s;
 
@@ -37,6 +51,8 @@ void item_def(int type, ItemGroup group, const char* name)
     GS_ASSERT(type >= 0 && type < MAX_ITEMS);
     GS_ASSERT(group != IG_NONE);
     GS_ASSERT(name[0] != '\0');
+
+    GS_ASSERT(is_valid_item_name(name));
     
     _set_attribute();
 

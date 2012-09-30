@@ -11,17 +11,12 @@ namespace serializer
 
 // TODO -- record all errors to a file. email? save the data too?
 // TODO -- memcpy all data to a thread
-// TODO -- assert N_TOKENS matches highest enum value
-// TODO -- item names should NEVER have whitespace chars
+// TODO -- write to .bak file first, then copy over
 // TODO -- move invalid parsed files to "invalid" subfolder
-// TODO -- check valid values on item before saving
 // TODO -- check values of loaded data
 // TODO -- apply rename mappings
 
 uint32_t item_global_id = 0;
-
-const int TOKEN_LENGTH = 3;
-const int N_TOKENS = 5;
 
 typedef enum
 {
@@ -31,6 +26,9 @@ typedef enum
     ITEM_PARSE_TOKEN_DURABILITY,
     ITEM_PARSE_TOKEN_STACK_SIZE,
 }   ItemParseToken;
+
+const int TOKEN_LENGTH = 3;
+const int N_TOKENS = ITEM_PARSE_TOKEN_STACK_SIZE;
 
 const char ITEM_PARSE_TOKENS[N_TOKENS][TOKEN_LENGTH+1] =
 {
@@ -135,6 +133,11 @@ SerializerError save_item(ItemID item_id)
     if (name == NULL) return SE_SAVE_ITEM_ITEM_NAME_NOT_FOUND;
 
     // TODO -- assert valid values on item before writing
+    if (item->global_id <= 0) return SE_SAVE_ITEM_INVALID_GLOBAL_ID;
+    if (!item->location_valid) return SE_SAVE_ITEM_INVALID_LOCATION_DATA;
+    if (item->durability < 0) return SE_SAVE_ITEM_INVALID_DURABILITY;
+    if (item->stack_size < 0) return SE_SAVE_ITEM_INVALID_STACK_SIZE;
+    if (!Item::is_valid_item_name(name)) return SE_SAVE_ITEM_INVALID_ITEM_NAME;
     
     // get filename
     const char* fn = get_item_filename(item->global_id);

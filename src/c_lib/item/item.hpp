@@ -29,6 +29,7 @@ class Item
 
         #if DC_SERVER
         SubscriberList subscribers;
+        bool location_valid;
         #endif
 
     void init(int item_type);
@@ -65,6 +66,7 @@ class Item
         gas_decay(NULL_GAS_LIFETIME)
         #if DC_SERVER
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
+        , valid(true)
         #endif
     {}
 
