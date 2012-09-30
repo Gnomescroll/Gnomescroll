@@ -14,6 +14,8 @@ namespace serializer
 // TODO -- write to .bak file first, then copy over
 // TODO -- move invalid parsed files to "invalid" subfolder
 // TODO -- apply rename mappings
+// TODO -- if the global id file is missing or the id is not >= the highest folder number, problem
+            // this is initialization, so its ok
 
 uint32_t item_global_id = 0;
 
