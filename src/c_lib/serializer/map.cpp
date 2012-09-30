@@ -191,7 +191,6 @@ void BlockSerializer::save(const char* filename)
         return;
     }
 
-
     int ti1 = _GET_MS_TIME();
 
     //serialize
@@ -204,15 +203,15 @@ void BlockSerializer::save(const char* filename)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
-        s[i].xchunk = chunk_number % 16;
-        s[i].ychunk = chunk_number / 16;
-        memcpy((void*) &s[i].data, &mp->e, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
+        this->chunks[i].xchunk = chunk_number % 16;
+        this->chunks[i].ychunk = chunk_number / 16;
+        memcpy((void*) &this->chunks[i].data, &mp->e, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
     }
     //prepare buffer for saving
 
     for(int i=0; i<chunk_number; i++)
     {
-        memcpy(&this->write_buffer[index], (char*) &s[i], sizeof(struct SerializedChunk));
+        memcpy(&this->write_buffer[index], (char*) &this->chunks[i], sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
     }
     GS_ASSERT(file_size == (size_t)index);
