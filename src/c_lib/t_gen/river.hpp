@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
@@ -80,8 +84,8 @@ static void gen_river(int x, int y, int z, int tile_id)
 
 void gen_river(int tile_id)
 {
-	GS_ASSERT(tile_id >= 0);
-	if (tile_id < 0) return;
+    GS_ASSERT(tile_id >= 0);
+    if (tile_id < 0) return;
     
     // pick random surface block
     // set to pos
@@ -102,18 +106,18 @@ void gen_river(int tile_id)
 
 void gen_river(const char* tile_name)
 {
-	int tile_id = t_map::dat_get_cube_id(tile_name);
-	GS_ASSERT(tile_id >= 0);
-	if (tile_id < 0) return;
+    int tile_id = t_map::dat_get_cube_id(tile_name);
+    GS_ASSERT(tile_id >= 0);
+    if (tile_id < 0) return;
     
     gen_river(tile_id);
 }
 
 void gen_rivers(unsigned int n, const char* tile_name)
 {
-	int tile_id = t_map::dat_get_cube_id(tile_name);
-	GS_ASSERT(tile_id >= 0);
-	if (tile_id < 0) return;
+    int tile_id = t_map::dat_get_cube_id(tile_name);
+    GS_ASSERT(tile_id >= 0);
+    if (tile_id < 0) return;
     
     GS_ASSERT(n > 0);
     

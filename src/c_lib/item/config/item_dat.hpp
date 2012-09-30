@@ -496,17 +496,11 @@ void verify_item_dat()
             GS_ASSERT(item_attribute_array[i].pretty_name[0] != '\0');
 
         // make sure all data types are within bounds
-        GS_ASSERT(item_attribute_array[i].max_energy > 0
-                && item_attribute_array[i].max_energy <= 0xffff);
-                
         GS_ASSERT(item_attribute_array[i].max_durability > 0
                 && item_attribute_array[i].max_durability <= 0xffff);
                 
         GS_ASSERT(item_attribute_array[i].max_stack_size > 0
                 && item_attribute_array[i].max_stack_size <= 0xffff);
-
-        // Energy should not be in use yet.
-        GS_ASSERT(item_attribute_array[i].max_energy == NULL_ENERGY);
 
         // particle voxel texture shouldn't be set if its not a particle voxel -- likely mistake
         GS_ASSERT(item_attribute_array[i].particle_voxel || (!item_attribute_array[i].particle_voxel && item_attribute_array[i].particle_voxel_texture == 0));

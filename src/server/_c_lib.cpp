@@ -14,6 +14,10 @@ dont_include_this_file_in_client
 #include <string.h>
 #include <math.h>
 
+#ifndef UINT32_MAX
+# define UINT32_MAX (0xffffffff)
+#endif
+
 #ifdef __GNUC__
     #include <unistd.h>
 #endif

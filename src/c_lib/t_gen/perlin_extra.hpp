@@ -1,4 +1,8 @@
+#pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
 
 #include <t_gen/twister.hpp>
 
@@ -403,4 +407,4 @@ float MIX(float a, float x, float y)
 
 }
 
-}
+}   // t_gen

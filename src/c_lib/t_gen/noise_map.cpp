@@ -1,5 +1,9 @@
 #include "noise_map.hpp"
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <t_gen/twister.hpp>
 
 #include <t_map/t_map.hpp>

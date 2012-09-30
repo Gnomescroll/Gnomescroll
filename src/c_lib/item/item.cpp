@@ -14,7 +14,6 @@ void Item::init(int item_type)
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return;
-    this->energy = attr->max_energy;
     this->durability = attr->max_durability;
     this->gas_decay = attr->gas_lifetime;
 }

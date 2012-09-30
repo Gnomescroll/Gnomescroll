@@ -40,7 +40,6 @@ namespace Item
     
     
         // All items
-        int max_energy;
         int max_durability;
         int max_stack_size;
 
@@ -80,7 +79,6 @@ namespace Item
             mech_type_id = -1;  // error value
 
             pretty_name = NULL;
-            max_energy = NULL_ENERGY;
             max_durability = NULL_DURABILITY;
             max_stack_size = 1;
             particle_voxel = false;

@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 //#pragma GCC optimize ("O3")
 
 #include <t_gen/twister.hpp>
@@ -221,7 +225,7 @@ class PerlinOctave2D
     
         for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
 
-		for(int i=0; i<octaves; i++)
+        for(int i=0; i<octaves; i++)
             octave_array[i].init(primes[i+1], 16);
 
     }
@@ -542,7 +546,7 @@ void test_octave_2d_map_gen(int tile)
     free(values);
 }
 
-}
+}   // t_gen
 
 #ifdef __MSVC__
     #pragma optimize( "", off )

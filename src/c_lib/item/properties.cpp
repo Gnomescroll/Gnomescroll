@@ -195,15 +195,6 @@ int get_max_stack_size(int item_type)
     return attr->max_stack_size;
 }
 
-int get_max_energy(int item_type)
-{
-    if (item_type == NULL_ITEM_TYPE) return NULL_ENERGY;
-    ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL_ENERGY;
-    return attr->max_energy;
-}
-
 int get_max_durability(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return NULL_DURABILITY;

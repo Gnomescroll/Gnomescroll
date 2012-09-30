@@ -10,13 +10,13 @@ const int NULL_ITEM_TYPE = 0xff;
 const int NULL_SLOT = 0xff;           // invalid slot value
 const ItemGroup NULL_ITEM_GROUP = IG_NONE;
 const int NULL_DURABILITY = 0xffff;
-const int NULL_ENERGY = 0xffff;
 const int NULL_CONTAINER = 0xffff;
 const int NULL_COST = 0;
 const int NULL_CRAFTING_RECIPE = 0xffff;
 const int NULL_SMELTING_RECIPE = 0xffff;
 const int NULL_STACK_SIZE = 0;
 const int NULL_GAS_LIFETIME = 1;
+const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful for error checking
 
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown

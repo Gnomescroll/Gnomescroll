@@ -124,14 +124,14 @@ static void load_map_restore_containers()
     for(int ci=0; ci < 32; ci++)
     for(int cj=0; cj < 32; cj++)
     {
-        class MAP_CHUNK* mp = main_map->chunk[32*cj+ci];
+        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[32*cj+ci];
         for(int k=0; k<128; k++)
         for(int i=0; i<16; i++)
         for(int j=0; j<16; j++)
         {
             int block = mp->e[16*16*k + 16*j + i].block;
             if(isItemContainer(block) == true)
-                load_item_container_block(ci*16+i, cj*16+j, k, block);
+                t_map::load_item_container_block(ci*16+i, cj*16+j, k, block);
         }
     }
 }
@@ -202,11 +202,11 @@ void BlockSerializer::save(const char* filename)
     #else
     for(int i=0; i < chunk_number; i++)
     {
-        class MAP_CHUNK* mp = main_map->chunk[i];
+        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
         s[i].xchunk = chunk_number % 16;
         s[i].ychunk = chunk_number / 16;
-        memcpy((void*) &s[i].data, &mp->e, 128*16*16*sizeof(struct MAP_ELEMENT));
+        memcpy((void*) &s[i].data, &mp->e, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
     }
     //prepare buffer for saving
 
@@ -245,16 +245,16 @@ void BlockSerializer::save_iter(int max_ms)
     for(int j=0; j < chunk_number; j++)
     {
         index = (index+1)%chunk_number;
-        class MAP_CHUNK* mp = main_map->chunk[index];
+        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[index];
         if(mp->version == version_array[index]) continue;
         GS_ASSERT(mp != NULL);
         chunk->xchunk = chunk_number % 16;
         chunk->ychunk = chunk_number / 16;
-        memcpy((void*) &chunk->data, &mp->e, 128*16*16*sizeof(struct MAP_ELEMENT));
+        memcpy((void*) &chunk->data, &mp->e, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
         version_array[index] = mp->version;
 
         int write_index = prefix_length+index*sizeof(struct SerializedChunk);
-        memcpy(write_buffer+write_index, (void*) chunk, 128*16*16*sizeof(struct MAP_ELEMENT));
+        memcpy(write_buffer+write_index, (void*) chunk, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
         _memcpy_count++;
 
         int _ctime = _GET_MS_TIME();
@@ -284,7 +284,7 @@ void BlockSerializer::load(const char* filename)
     GS_ASSERT(filename != NULL);
     if (filename == NULL) return;
     
-    if(main_map == NULL)
+    if(t_map::main_map == NULL)
     {
         printf("ERROR: Attempting to load map before t_map init \n");
         GS_ABORT();
@@ -316,14 +316,14 @@ void BlockSerializer::load(const char* filename)
 
     for(int i=0; i<chunk_number; i++)
     {
-        class MAP_CHUNK* mp = main_map->chunk[i];
+        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
         if(mp == NULL) continue;
 
         memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk) );
         index += sizeof(struct SerializedChunk);
         GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
-        memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct MAP_ELEMENT));
+        memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
     }
 
     int ti3 = _GET_MS_TIME();

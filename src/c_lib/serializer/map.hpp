@@ -9,7 +9,7 @@ struct SerializedChunk
 {
     uint32_t xchunk;
     uint32_t ychunk;
-    struct MAP_ELEMENT data[sizeof(struct MAP_ELEMENT)*16*16*128];
+    struct t_map::MAP_ELEMENT data[sizeof(struct t_map::MAP_ELEMENT)*16*16*128];
 };
 
 extern bool should_save_map;

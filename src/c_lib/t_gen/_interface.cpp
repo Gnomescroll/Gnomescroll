@@ -1,9 +1,7 @@
 #include "_interface.hpp"
 
-
-
 #if DC_CLIENT
-#include <SDL/texture_loader.hpp>
+dont_include_this_file_in_client
 #endif
 
 #include <t_gen/noise_map2.hpp>
@@ -40,9 +38,34 @@ void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float p
     //p2d.save_octaves2(8, "regolith_depth_map");
 }
 
+// NOTE: caller must free() the return value if not NULL
+float* create_2d_noise_array(const unsigned long seed, const float persistence, const int octaves, const unsigned int x, const unsigned int y)
+{
+    int size = x*y;
+    GS_ASSERT(size > 0);
+    if (size <= 0) return NULL;
+
+    float* noise = (float*)malloc(size * sizeof(float));
+    GS_ASSERT(noise != NULL);
+    if (noise == NULL) return NULL;
+
+    init_genrand(seed);
+
+    const float xscale = 1.0f/(float)x;
+    const float yscale = 1.0f/(float)y;
+    
+    class PerlinOctave2D pgen(octaves);
+
+    for (unsigned int i=0; i<x; i++)
+    for (unsigned int j=0; j<y; j++)
+        noise[i + x*j] = pgen.sample((float)i * xscale, (float)j * yscale, persistence);
+
+    return noise;
+}
+
+
 void save_png(const char* filename, float* in, int xres, int yres)
 {
-#if DC_CLIENT
     char FileName[128];
     sprintf(FileName,"./screenshot/%s.png", (char*) filename);
     char* PBUFFER = (char*) malloc(4*xres*yres);
@@ -120,7 +143,6 @@ void save_png(const char* filename, float* in, int xres, int yres)
 
     free(PBUFFER);
     free(PNG_IMAGE);
-#endif
 }
 
 __attribute((always_inline, optimize("-O3")))
@@ -219,7 +241,6 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
 
     free(PBUFFER);
     free(PNG_IMAGE);
-//#endif
 }
 
-}
+}   // t_gen

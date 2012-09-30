@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <t_gen/twister.hpp>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
@@ -362,6 +366,4 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, int tile_i
     return _set;
 }
 
-
-
-}
+}   // t_gen

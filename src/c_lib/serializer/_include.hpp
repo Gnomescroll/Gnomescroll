@@ -5,5 +5,6 @@ dont_include_this_file_in_client
 #endif
 
 #include <serializer/constants.hpp>
+#include <serializer/items.cpp>
 #include <serializer/map.cpp>
 #include <serializer/_interface.cpp>

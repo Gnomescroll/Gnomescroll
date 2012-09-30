@@ -16,8 +16,8 @@ class Item
 
         ItemID id;
         int type;  // stone_block, dirt_block, mining_laser_beta,
+        uint32_t global_id;
 
-        int energy;
         int durability;
         int stack_size;
 
@@ -39,7 +39,6 @@ class Item
         printf("ID %d\n", id);
         printf("Group %d\n", get_item_group_for_type(this->type));
         printf("Type %d\n", type);
-        printf("Energy %d\n", energy);
         printf("Durability %d\n", durability);
         printf("Stack size %d\n", stack_size);
         printf("Location %d\n", location);
@@ -57,11 +56,11 @@ class Item
     explicit Item(int id)   // is not ItemID id because of the container list template
     :   id((ItemID)id),
         type(NULL_ITEM_TYPE),
-        energy(NULL_ENERGY),
+        global_id(0),
         durability(NULL_DURABILITY),
         stack_size(1),
         location(IL_NOWHERE),
-        location_id(-1),
+        location_id(NULL_LOCATION),
         container_slot(NULL_SLOT),
         gas_decay(NULL_GAS_LIFETIME)
         #if DC_SERVER

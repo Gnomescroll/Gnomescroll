@@ -1,3 +1,10 @@
+#pragma once
+
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
+
 static int grad3[][3] = {
 {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
 {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
