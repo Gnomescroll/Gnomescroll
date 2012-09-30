@@ -25,6 +25,17 @@ const int fixed_stair_y = 7;
 const int fixed_stair_w = 4;
 const int fixed_stair_d = 2;
 
+const int NUM_PICS = 8;
+const int pics[] = { 
+	t_map::get_cube_id("raised_tile_gray"), 
+    t_map::get_cube_id("raised_tile_blue"), 
+    t_map::get_cube_id("raised_tile_green"), 
+    t_map::get_cube_id("raised_tile_red"), 
+    t_map::get_cube_id("ruins_1"), 
+    t_map::get_cube_id("ruins_2"), 
+    t_map::get_cube_id("ruins_3"), 
+    t_map::get_cube_id("ruins_4") };
+
 
 
 enum direction_t {
@@ -300,9 +311,9 @@ void setup_rooms() {
         for (int x = 0; x < rooms_across_ruins; x++) {
         for (int y = 0; y < rooms_across_ruins; y++) {
             Room r;
-            r.floor_block = randrange(33, 40);
+            r.floor_block = pics[randrange(0, NUM_PICS - 1)];
             do {
-                r.wall_block = randrange(33, 40);
+                r.wall_block = pics[randrange(0, NUM_PICS - 1)];
             } while (r.floor_block == r.wall_block);
 
             // spans refer to the AIRSPACE, and don't include outer shell of blocks
@@ -375,7 +386,7 @@ void make_ruins(int x, int y) {
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-        int ceil_block = randrange(33, 40);
+		int ceil_block = pics[randrange(0, NUM_PICS - 1)];
 
         // make floor 
         set_region(
@@ -410,7 +421,15 @@ void make_ruins(int x, int y) {
 
 void generate_ruins()
 {
-    printf("Making ruins\n");
+    for (int i = 0; i < NUM_PICS; i++) {
+		GS_ASSERT(pics[i] >= 0);
+		if (pics[i] < 0) {
+			printf("!!!!!!!!!!!!!!!!invalid cube id in generate_ruins()!!!!!!!!!!!");
+			return;   
+		}
+	}
+
+	printf("Making ruins\n");
 
     for (int x = 0; x < ruins_across_world; x++)
     for (int y = 0; y < ruins_across_world; y++)
