@@ -7,6 +7,11 @@
 namespace Item
 {
 
+#if DC_SERVER
+void verify_items();
+bool is_valid_location_data(ItemLocationType location, int location_id, int container_slot, const int assert_limit);
+#endif
+
 const int ITEM_SUBSCRIBER_LIST_INITIAL_SIZE = 1;
 const int ITEM_SUBSCRIBER_LIST_HARD_MAX = 1;
 
@@ -66,7 +71,7 @@ class Item
         gas_decay(NULL_GAS_LIFETIME)
         #if DC_SERVER
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
-        , valid(true)
+        , location_valid(true)
         #endif
     {}
 

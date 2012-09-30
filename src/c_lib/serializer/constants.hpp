@@ -50,12 +50,21 @@ typedef enum
     SE_LOAD_ITEM_DATA_NOT_FOUND,
     SE_LOAD_ITEM_CREATE_ITEM_FAILED,
     SE_LOAD_ITEM_NAME_UNRECOGNIZED,
+    // these are different from SE_PARSE_ITEM_* of the same name, in that they are
+    // checked based on realistic values for items, and not just ascii parseability
+    SE_LOAD_ITEM_INVALID_GLOBAL_ID,
+    SE_LOAD_ITEM_INVALID_LOCATION,
+    SE_LOAD_ITEM_INVALID_DURABILITY,
+    SE_LOAD_ITEM_INVALID_STACK_SIZE,
+    SE_LOAD_ITEM_INVALID_NAME,
 
-    // parsing item file (related to item loading)
+    // parsing item file
     SE_PARSE_ITEM_INVALID_TOKEN_LENGTH,
     SE_PARSE_ITEM_UNRECOGNIZED_TOKEN,
     SE_PARSE_ITEM_BAD_PIECES_COUNT,
     SE_PARSE_ITEM_IMPOSSIBLE_TOKEN_MATCH,
+    // these are invalid if they are out of basic integer ranges or the data was
+    // invalid from an ascii perspective
     SE_PARSE_ITEM_INVALID_GLOBAL_ID,
     SE_PARSE_ITEM_INVALID_LOCATION,
     SE_PARSE_ITEM_INVALID_LOCATION_ID,

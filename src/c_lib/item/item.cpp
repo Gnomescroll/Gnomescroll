@@ -117,57 +117,73 @@ void ItemList::decay_gas()
     }
 }
 
+bool is_valid_location_data(ItemLocationType location, int location_id, int container_slot, const int assert_limit)
+{
+    bool valid = true;
+    #define VERIFY_ITEM_LOCATION(COND) \
+        GS_ASSERT_LIMIT((COND), assert_limit); \
+        if (!(COND)) valid = false;
+
+    VERIFY_ITEM_LOCATION(location != IL_NOWHERE);
+
+    if (location == IL_PARTICLE)
+    {
+        VERIFY_ITEM_LOCATION(location != IL_PARTICLE || location_id != NULL_PARTICLE);
+    }
+    else
+    if (location == IL_HAND)
+    {
+        VERIFY_ITEM_LOCATION(location_id >= 0 && location_id < AGENT_MAX);
+    }
+    else
+    if (location == IL_CONTAINER)
+    {
+        VERIFY_ITEM_LOCATION(location_id != NULL_CONTAINER);
+        VERIFY_ITEM_LOCATION(container_slot != NULL_SLOT);
+        VERIFY_ITEM_LOCATION(ItemContainer::get_container_type(location_id) != CONTAINER_TYPE_NONE);    
+    }
+
+    #undef VERIFY_ITEM_LOCATION
+
+    return valid;
+}
+
 void ItemList::verify_items()
 {
-    #define VERIFY_ITEM_LOCATION(cond, lim, item)
-        GS_ASSERT_LIMIT(cond, lim);\
-        if (!(cond)) (item)->location_valid = false;
-
     const int LIMIT = 1;
     for (int k=0; k<this->n_max; k++)
     {
         if (this->a[k] == NULL) continue;
         Item* i = this->a[k];
+        i->location_valid = is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT);
 
-        VERIFY_ITEM_LOCATION(i->location != IL_NOWHERE, LIMIT, i);
-        VERIFY_ITEM_LOCATION(i->stack_size > 0, LIMIT, i);
-        VERIFY_ITEM_LOCATION(i->subscribers.n >= 0, LIMIT, i);
+        GS_ASSERT_LIMIT(i->subscribers.n >= 0, LIMIT);
+        GS_ASSERT_LIMIT(i->stack_size > 0, LIMIT);
+        GS_ASSERT_LIMIT(i->durability > 0, LIMIT);
 
-        if (i->location == IL_PARTICLE)
-        {
-            VERIFY_ITEM_LOCATION(i->location != IL_PARTICLE || i->location_id != NULL_PARTICLE, LIMIT, i);
-        }
-        else
         if (i->location == IL_HAND)
         {
-            VERIFY_ITEM_LOCATION(i->location_id >= 0 && i->location_id < AGENT_MAX, LIMIT, i);
-            VERIFY_ITEM_LOCATION(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::agent_hand_list[i->location_id] == i->id, LIMIT, i);
-            VERIFY_ITEM_LOCATION(i->subscribers.n == 1, LIMIT, i);
-            VERIFY_ITEM_LOCATION(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT, i); // WARNING -- assumes client_id==agent_id
+            GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+            GS_ASSERT_LIMIT(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
+            GS_ASSERT_LIMIT(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::agent_hand_list[i->location_id] == i->id, LIMIT);
         }
         else
         if (i->location == IL_CONTAINER)
         {
-            VERIFY_ITEM_LOCATION(i->location_id != NULL_CONTAINER, LIMIT, i);
-            VERIFY_ITEM_LOCATION(i->container_slot != NULL_SLOT, LIMIT, i);
-            VERIFY_ITEM_LOCATION(ItemContainer::get_container_type(i->location_id) != CONTAINER_TYPE_NONE, LIMIT, i);
-    
             ItemContainerType type = ItemContainer::get_container_type(i->location_id);
             int owner = ItemContainer::get_container_owner(i->location_id);
             if (ItemContainer::container_type_is_attached_to_agent(type))
             {
-                VERIFY_ITEM_LOCATION(i->subscribers.n == 1, LIMIT, i);
-                VERIFY_ITEM_LOCATION(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
             else if (owner != NO_AGENT)
             {
-                VERIFY_ITEM_LOCATION(i->subscribers.n == 1, LIMIT, i);
-                VERIFY_ITEM_LOCATION(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
         }
     }
-
-    #undef VERIFY_ITEM_LOCATION
 }
 #endif
 

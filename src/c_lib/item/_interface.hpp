@@ -62,8 +62,6 @@ void test_item_list_capacity();
 
 void tick();
 
-bool is_in_valid_location(Item* item);
-
 }   // Item
 #endif
 

@@ -13,8 +13,8 @@ namespace serializer
 // TODO -- memcpy all data to a thread
 // TODO -- write to .bak file first, then copy over
 // TODO -- move invalid parsed files to "invalid" subfolder
-// TODO -- check values of loaded data
 // TODO -- apply rename mappings
+
 
 uint32_t item_global_id = 0;
 
@@ -28,7 +28,7 @@ typedef enum
 }   ItemParseToken;
 
 const int TOKEN_LENGTH = 3;
-const int N_TOKENS = ITEM_PARSE_TOKEN_STACK_SIZE;
+const int N_TOKENS = ITEM_PARSE_TOKEN_STACK_SIZE + 1;
 
 const char ITEM_PARSE_TOKENS[N_TOKENS][TOKEN_LENGTH+1] =
 {
@@ -77,6 +77,22 @@ class ParseItemData
         int container_slot;
         int durability;
         int stack_size;
+
+    SerializerError check_values()
+    {
+        if (this->global_id <= 0)
+            return SE_LOAD_ITEM_INVALID_GLOBAL_ID;
+        if (this->durability <= 0 || this->durability > NULL_DURABILITY)
+            return SE_LOAD_ITEM_INVALID_DURABILITY;
+        if (this->stack_size <= 0 || this->stack_size > NULL_STACK_SIZE)
+            return SE_LOAD_ITEM_INVALID_STACK_SIZE;
+        if (!Item::is_valid_location_data(this->location, this->location_id, this->container_slot, 0))
+            return SE_LOAD_ITEM_INVALID_LOCATION;
+        if (!Item::is_valid_item_name(this->name))
+            return SE_LOAD_ITEM_INVALID_NAME;
+
+        return SE_NONE;
+    }
 
     ParseItemData() :
     global_id(0),
@@ -325,6 +341,9 @@ SerializerError load_item(uint32_t global_id)
     }
 
     // TODO -- check data values
+    parse_error = data.check_values();
+    if (parse_error != SE_NONE)
+        goto cleanup;
 
     // TODO -- apply rename mappings
 

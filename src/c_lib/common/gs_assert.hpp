@@ -33,9 +33,8 @@ void _gs_push_char(char* tstr, int* index, char c)
 const int GS_ASSERT_DEFAULT_PRINT_LIMIT = 20;
 const int GS_ASSERT_MAX = 4096;
 
-char* _GS_ASSERT_ARRAY[GS_ASSERT_MAX];
-int   _GS_ASSERT_COUNT[GS_ASSERT_MAX];
-int   _GS_ASSERT_LIMIT[GS_ASSERT_MAX];
+char* _GS_ASSERT_ARRAY[GS_ASSERT_MAX] = {NULL};
+int   _GS_ASSERT_COUNT[GS_ASSERT_MAX] = {0};
 
 void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE, int LIMIT)
 {
