@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef DC_SERVER
-    #define DC_SERVER 1
+# define DC_SERVER 1
 #endif
 
 #ifdef DC_CLIENT
@@ -19,27 +19,35 @@ dont_include_this_file_in_client
 #endif
 
 #ifdef __GNUC__
-    #include <unistd.h>
+# include <unistd.h>
 #endif
 
 #ifdef __MINGW32__
-    #include <malloc.h> //alloca function
+# include <malloc.h> //alloca function
 #endif
 
 #ifdef _WIN32
-    #include "windows.h"
-    #undef interface
-    #undef rad2
+# include "windows.h"
+# undef interface
+# undef rad2
 #endif
+
+// serialization
+#ifdef linux
+# define GS_SERIALIZER 1
+#else
+# define GS_SERIALIZER 0
+#endif
+    
 
 // threads
 #ifdef linux
-    #ifdef __GNUC__
-        #include <pthread.h>
-        #define PTHREADS_ENABLED 1
-    #endif
+# ifdef __GNUC__
+#  include <pthread.h>
+#  define PTHREADS_ENABLED 1
+# endif
 #else
-    #define PTHREADS_ENABLED 0
+# define PTHREADS_ENABLED 0
 #endif
 
 #include <common/version.h>
@@ -52,7 +60,7 @@ dont_include_this_file_in_client
 
 // osx tools
 #ifdef __APPLE__
-#include <common/osx.hpp>
+# include <common/osx.hpp>
 #endif
 
 // options
@@ -159,8 +167,8 @@ dont_include_this_file_in_client
 #include <serializer/_include.hpp>
 
 #ifdef linux
-#include <unistd.h>
-#include <signal.h>
+# include <unistd.h>
+# include <signal.h>
 
 void close_c_lib();
 void signal_terminate_handler(int sig)
