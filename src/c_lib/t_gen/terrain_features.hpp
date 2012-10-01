@@ -28,8 +28,8 @@ const int seed = Options::seed * 2;
 const float persistence = 0.5f; // tweak
 const int octaves = 6;  // tweak
 
-const float tree_perlin_threshold = 0.5f;  // tweak this. move it to a config file maybe
-const float tree_threshold = 0.99f;  // this is inside a tree zone
+const float tree_zone_threshold = 0.3f;  // move to a config file maybe
+const float tree_threshold = 0.997f;
 
 
 
@@ -42,7 +42,7 @@ void make_circle(int x, int y, int z, float dist, int block) {
         fx = sinf(angle) * dist;
         fy = cosf(angle) * dist;
         t_map::set(x + (int)fx, y + (int)fy, z, block);
-        angle += EIGHTH_PI / 8;
+        angle += PI / 16;
     }
 }
 
@@ -121,47 +121,16 @@ namespace t_gen {
 		GS_ASSERT(noise != NULL);
 		if (noise == NULL) return;
 
-
-
-
-
-
+		// make groves
 		for (int x=0; x<XMAX; x++)
 		for (int y=0; y<YMAX; y++)
-			if (noise[x + y*XMAX] > tree_perlin_threshold
+			if (noise[x + y*XMAX] > tree_zone_threshold
 			 && genrand_real1() > tree_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
 			{   // we're in tree land
 				int z = t_map::get_highest_solid_block(x,y);
 				if (z >= 1 && t_map::get(x,y,z) == t_map::get_cube_id("regolith") )
 					make_tree(x,y,z);
 			}
-
-
-
-
-
-
-
-		// make trees
-		//for (int trees = 0; trees < 200; trees++) {
-  //          int x, y, z;
-  //          
-  //          // find appropriate ground for trunk
-  //          do {
-  //              x = randrange(0, XMAX);
-  //              y = randrange(0, YMAX);
-  //              z = ZMAX;
-
-  //              while (t_map::get(x, y, z) == 0) z--;
-  //          } while (t_map::get(x, y, z) != t_map::get_cube_id("regolith") );
-
-//make_tree(x,y,z);
-  //      }
-
-
-
-
-
 
 	    free(noise);
     }
