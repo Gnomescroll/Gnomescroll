@@ -10,6 +10,7 @@ void teardown();
 
 void check_save_state();
 
+// defined in map.cpp
 void load_map(const char* filename);
 void save_map();
 void wait_for_threads();

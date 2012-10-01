@@ -250,6 +250,12 @@ int init_c_lib(int argc, char* argv[])
         printf("enabled\n");
     else
         printf("disabled\n");
+        
+    printf("Serializer ");
+    if (Options::serialize)
+        printf("enabled\n");
+    else
+        printf("disabled\n");
 
     Components::init();
     Objects::init_net_interfaces();

@@ -22,6 +22,9 @@ void init()
     create_path(ITEM_DATA_PATH      INVALID_DATA_SUBPATH);
     
     init_map_serializer();
+
+    if (!Options::serialize) return;
+    
     init_item_serializer();
 }
 

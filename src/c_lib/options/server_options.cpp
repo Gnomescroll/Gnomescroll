@@ -34,6 +34,9 @@ OPT_UINT(base_move_rate, 30*60*60 /*1hr*/);
 /* Auth */
 OPT_BOOL(auth, true);
 
+/* Serializer */
+OPT_BOOL(serialize, true);
+
 void register_options()
 {
     /* General */
@@ -57,6 +60,9 @@ void register_options()
 
     /* Auth */
     OPT_BOOL_REGISTER(auth);
+
+    /* Serialize */
+    OPT_BOOL_REGISTER(serialize);
 }
 
 void validate()
