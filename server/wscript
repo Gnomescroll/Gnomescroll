@@ -126,8 +126,9 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
         
         redis_lib_path = '../lib/lin32/hiredis/lib/'
         redis_inc_path = '../lib/lin32/hiredis/include/'
-        assert os.path.exists(redis_lib_path)
-        assert os.path.exists(redis_inc_path)
+
+        libev_lib_path = ['/usr/lib', redis_lib_path]
+        libev_inc_path = ['/usr/include', redis_inc_path]
 
     if OS == 'Windows':
         conf.check(header_name='lua.hpp',
@@ -152,9 +153,18 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
             lib='hiredis',
             use='hiredis',
             uselib_store='REDIS',
-            fragment='#include <hiredis.h>' + MAIN_TEST_CODE,
+            fragment='#include <hiredis/hiredis.h>' + MAIN_TEST_CODE,
             libpath=os.path.abspath(redis_lib_path),
             includes=os.path.abspath(redis_inc_path),
+            mandatory=True)
+
+        conf.check(header_name='ev.h',
+            lib=['ev', 'hiredis'],
+            use='ev',
+            uselib_store='EV',
+            fragment='#include <hiredis/adapters/libev.h>' + MAIN_TEST_CODE,
+            libpath=map(os.path.abspath, libev_lib_path),
+            includes=map(os.path.abspath, libev_inc_path),
             mandatory=True)
 
     #conf.check(header_name="noise/noise.h",
@@ -179,7 +189,7 @@ def build(bld):
 
     use = time_lib+['LUA']
     if OS == 'Linux':
-        use.append('REDIS')
+        use += ['REDIS', 'EV']
 
     ##attemping C++ build
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
