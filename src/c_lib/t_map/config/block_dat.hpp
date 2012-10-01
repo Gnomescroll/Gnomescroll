@@ -258,49 +258,62 @@ void load_block_dat()
     push_texture();
     hud_def(6,5, t2,2,1);
 
-    // ruins
-    cube_def(35, SolidBlock, "corpusc_testing_with_ruins_2");
+	int t_id = 35; // corpusc added things using this variable, but didn't want to mess with existing hardwired numbers
+
+	// were these meant to be tree leaves?  using them as such for now
+    cube_def(t_id++, SolidBlock, "leaves", CUBE_MATERIAL_DECORATION);
+    iso_texture(t2, 1,3);
+    push_texture();
+
+    cube_def(t_id++, SolidBlock, "leaves2", CUBE_MATERIAL_DECORATION);
+    iso_texture(t2, 2,3);
+    push_texture();
+
+    cube_def(t_id++, SolidBlock, "leaves_red", CUBE_MATERIAL_DECORATION);
+    iso_texture(t2, 1,2);
+    push_texture();
+
+	// ruins
+    cube_def(t_id++, SolidBlock, "raised_tile_gray");
     iso_texture(t1,6,3);
     push_texture();
     set_max_dmg(ruins_dmg());
 
-    cube_def(36, SolidBlock, "corpusc_testing_with_ruins_3");
+    cube_def(t_id++, SolidBlock, "raised_tile_blue");
     iso_texture(t1,6,4);
     push_texture();
     set_max_dmg(ruins_dmg());
 
-    cube_def(37, SolidBlock, "ruins_1");
+    cube_def(t_id++, SolidBlock, "raised_tile_green");
+    iso_texture(t1,6,5);
+    push_texture();
+    set_max_dmg(ruins_dmg());
+
+    cube_def(t_id++, SolidBlock, "raised_tile_red");
+    iso_texture(t1,6,6);
+    push_texture();
+    set_max_dmg(ruins_dmg());
+
+    cube_def(t_id++, SolidBlock, "ruins_1");
     iso_texture(t5,1,1);
     push_texture();
     set_max_dmg(ruins_dmg());
 
-    cube_def(38, SolidBlock, "ruins_2");
+    cube_def(t_id++, SolidBlock, "ruins_2");
     iso_texture(t5,1,2);
     push_texture();
     set_max_dmg(ruins_dmg());
 
-    cube_def(39, SolidBlock, "ruins_3");
+    cube_def(t_id++, SolidBlock, "ruins_3");
     iso_texture(t5,1,3);
     push_texture();
     set_max_dmg(ruins_dmg());
 
-    cube_def(40, SolidBlock, "ruins_4");
+    cube_def(t_id++, SolidBlock, "ruins_4");
     iso_texture(t5,1,4);
     push_texture();
     set_max_dmg(ruins_dmg());
 
-	// were these meant to be tree leaves?  using them as such for now
-    cube_def(41, SolidBlock, "leaves", CUBE_MATERIAL_DECORATION);
-    iso_texture(t2, 1,3);
-    push_texture();
-
-    cube_def(42, SolidBlock, "leaves2", CUBE_MATERIAL_DECORATION);
-    iso_texture(t2, 2,3);
-    push_texture();
-
-    cube_def(43, SolidBlock, "leaves_red", CUBE_MATERIAL_DECORATION);
-    iso_texture(t2, 1,2);
-    push_texture();
 
 
 

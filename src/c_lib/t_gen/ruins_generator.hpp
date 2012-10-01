@@ -8,8 +8,9 @@ dont_include_this_file_in_client
 #include <t_map/t_map.hpp>
 
 
-namespace t_gen 
-{
+
+const int NUM_PICS = 8; // pics == textures.   abbreviating "textures" always looks wrong to me.... suggesting its "text"
+int pics[NUM_PICS];
 
 const int ruins_across_world = 8;
 const int cubes_across_room = 16;
@@ -31,7 +32,7 @@ enum direction_t {
     DIR_NORTH, DIR_SOUTH,
     DIR_EAST, DIR_WEST,
     DIR_UP, DIR_DOWN,
-    DIR_COUNT // use only as a max value when iterating thru all directions
+    DIR_MAX // use only as a max value when iterating thru all directions
 };
         
 enum direction_type_t {
@@ -46,7 +47,7 @@ enum direction_type_t {
 };
 
 struct Room {
-    direction_type_t dir_types[DIR_COUNT];
+    direction_type_t dir_types[DIR_MAX];
     int wall_block;
     int floor_block;
 
@@ -72,14 +73,16 @@ Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
 
 
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile_id = 1) {
-    for (int z = i_z; z < i_z + i_h; z++) {
-        for (int y = i_y; y < i_y + i_dep; y++) {
-            for (int x = i_x; x < i_x + i_w; x++) {
-                t_map::set(x, y, z, tile_id);
-            }
-        }
-    }
+	for (int z = i_z; z < i_z + i_h; z++) {
+		for (int y = i_y; y < i_y + i_dep; y++) {
+			for (int x = i_x; x < i_x + i_w; x++) {
+				t_map::set(x, y, z, tile_id);
+			}
+		}
+	}
 }
+
+
 
 bool far_north_cube(int y) {
     return y == cubes_across_room - 1;
@@ -137,8 +140,6 @@ bool opens_to(direction_t dir, int rx, int ry, int rz) {
 }
 
 bool in_air_region(Room r, int x, int y) {
-    //if (x < r.air_x || x >= r.air_x + r.air_w) return false;
-    //if (y < r.air_y || y >= r.air_y + r.air_d) return false;
     if (x >= r.air_x && x < r.air_x + r.air_w &&
         y >= r.air_y && y < r.air_y + r.air_d) return true;
     return false;
@@ -300,9 +301,9 @@ void setup_rooms() {
         for (int x = 0; x < rooms_across_ruins; x++) {
         for (int y = 0; y < rooms_across_ruins; y++) {
             Room r;
-            r.floor_block = randrange(33, 40);
+            r.floor_block = pics[randrange(0, NUM_PICS - 1)];
             do {
-                r.wall_block = randrange(33, 40);
+                r.wall_block = pics[randrange(0, NUM_PICS - 1)];
             } while (r.floor_block == r.wall_block);
 
             // spans refer to the AIRSPACE, and don't include outer shell of blocks
@@ -341,7 +342,7 @@ void setup_rooms() {
             // connections in directions
             r.air_x = r.air_y = r.air_w = r.air_d = 0; // must set some default values since we keep reusing the rooms array
 
-            for (int i = 0; i < DIR_COUNT; i++) {
+            for (int i = 0; i < DIR_MAX; i++) {
                 if /* lateral dir */ (i < DIR_UP) 
                     r.dir_types[i] = (direction_type_t)randrange(1, 2); // randomly choose door or hall
                 else if /* stairway up should be here */ (i == DIR_UP && z < rooms_going_up - 1 && x == stairway_up_x && y == stairway_up_y)
@@ -375,7 +376,7 @@ void make_ruins(int x, int y) {
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-        int ceil_block = randrange(33, 40);
+		int ceil_block = pics[randrange(0, NUM_PICS - 1)];
 
         // make floor 
         set_region(
@@ -408,24 +409,37 @@ void make_ruins(int x, int y) {
     }
 }
 
-void generate_ruins()
-{
-    printf("Making ruins\n");
 
-    for (int x = 0; x < ruins_across_world; x++)
-    for (int y = 0; y < ruins_across_world; y++)
-        if (x % 2 == 0  &&  y % 2 == 0)
-            if (randrange(0, 1) == 0)
-                make_ruins(
-                    x * cubes_across_room * rooms_across_ruins, 
-                    y * cubes_across_room * rooms_across_ruins);
-}
 
-//bool not_in_hall(int i, int z) {
-//  if (z >= fixed_hall_wid ||
-//      i < fixed_hall_offs || 
-//      i >= fixed_hall_offs + fixed_hall_wid) return true;
-//  return false;
-//}
 
+
+
+namespace t_gen {
+	void generate_ruins() {
+		printf("Making ruins\n");
+
+		pics[0] = t_map::get_cube_id("raised_tile_gray");
+		pics[1] = t_map::get_cube_id("raised_tile_blue"); 
+		pics[2] = t_map::get_cube_id("raised_tile_green");
+		pics[3] = t_map::get_cube_id("raised_tile_red"); 
+		pics[4] = t_map::get_cube_id("ruins_1"); 
+		pics[5] = t_map::get_cube_id("ruins_2"); 
+		pics[6] = t_map::get_cube_id("ruins_3"); 
+		pics[7] = t_map::get_cube_id("ruins_4"); 
+
+		// check textures
+		for (int i = 0; i < NUM_PICS; i++) { 
+			GS_ASSERT(pics[i] >= 0); 
+			if (pics[i] < 0) { printf("*** cube id LESS THAN ZERO ***"); return; }
+		}
+
+		// generate ruins
+		for (int x = 0; x < ruins_across_world; x++)
+		for (int y = 0; y < ruins_across_world; y++)
+			if (x % 2 == 0  &&  y % 2 == 0)
+				if (randrange(0, 1) == 0)
+					make_ruins(
+						x * cubes_across_room * rooms_across_ruins, 
+						y * cubes_across_room * rooms_across_ruins);
+	}
 }   // t_gen
