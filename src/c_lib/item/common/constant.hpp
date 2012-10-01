@@ -3,6 +3,9 @@
 #include <agent/constants.hpp>
 #include <item/common/enum.hpp>
 
+const int ITEM_LIST_HARD_MAX = NULL_ITEM;  // (highest ID will be NULL_ITEM-1)
+const int ITEM_LIST_MAX = ITEM_LIST_HARD_MAX;   // initial (just start maxed out)
+
 const int MAX_ITEMS = 0xff-1;
 const int MAX_CONTAINER_TYPES = 16;
 
@@ -21,7 +24,6 @@ const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful fo
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
 
-// TODO -- add meta slot to container class?
 const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 3;
 
 const int MAX_CRAFTING_RECIPE = 256;
@@ -43,8 +45,8 @@ const float OBJECT_DEPTH_MAX = -128.0f;
 
 const int AGENT_HAND = NULL_CONTAINER - 1;
 
-const int ITEM_PARTICLE_MAX = 1024;
-const int ITEM_PARTICLE_HARD_MAX = NULL_PARTICLE - 1;
+const int ITEM_PARTICLE_HARD_MAX = NULL_PARTICLE;   // (highest ID will be NULL_PARTICLE - 1
+const int ITEM_PARTICLE_MAX = ITEM_PARTICLE_HARD_MAX; // initial (just start maxed out)
 
 const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
 const float ITEM_PARTICLE_DAMPENING = 0.50f;

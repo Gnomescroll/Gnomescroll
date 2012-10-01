@@ -84,9 +84,6 @@ class Item
 namespace Item
 {
 
-const int ITEM_LIST_MAX = 1024;
-const int ITEM_LIST_HARD_MAX = 0xffff;  // 65535 maximum (highest ID will be 65534)
-
 class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>
 {
     private:

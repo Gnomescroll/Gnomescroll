@@ -12,8 +12,15 @@ mkdir $f/settings
 cp ./settings/production.lua $f/settings/settings.lua
 cp ./settings/lua_library.lua $f/settings/lua_library.lua
 mkdir $f/screenshot
+
 mkdir $f/lib
-cp -R ../lib/lin32 $f/lib/
+cp ../lib/lin32/*.so $f/lib
+cp ../lib/lin32/*.so.* $f/lib
+mkdir $f/lib/awesomium/lib/
+cp ../lib/lin32/awesomium/lib/* $f/lib/awesomium/lib/
+mkdir $f/lib/assimp/lib/
+cp ../lib/lin32/assimp/lib/* $f/lib/assimp/lib/
+
 #cp ../notes/README_linux_client $f/README
 rm $f.tar.gz
 tar cvzf $f.tar.gz $f
