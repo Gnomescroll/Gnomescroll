@@ -115,22 +115,26 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
 
     if OS == 'Windows':
         libpath = os.path.abspath('../lib/win32')
-        
-    lua_lib_path = []
-    lua_inc_path = '/usr/include/luajit-2.0'
-    if OS == 'Darwin':
-        lua_inc_path = '/usr/local/include/luajit-2.0'
-    elif OS == 'Windows':
+
+    
+    if OS == 'Windows':
         lua_inc_path = os.path.join(libpath, 'LuaJIT-2.0.0-beta10')
-        lua_lib_path.append(os.path.join(libpath, 'lib'))
+        lua_lib_path = [os.path.join(libpath, 'lib')]
+    else:
+        lua_lib_path = []
+        lua_inc_path = '/usr/include/luajit-2.0'
         
+        redis_lib_path = '../lib/lin32/hiredis/lib/'
+        redis_inc_path = '../lib/lin32/hiredis/include/'
+        assert os.path.exists(redis_lib_path)
+        assert os.path.exists(redis_inc_path)
 
     if OS == 'Windows':
         conf.check(header_name='lua.hpp',
                    lib='lua51', #'lua5.1',
                    use='lua51', #'lua5.1',
-                   libpath=[os.path.join(libpath, 'lib'),],
-                   includes=[os.path.join(libpath, 'LuaJIT-2.0.0-beta10'),],
+                   libpath=lua_lib_path,
+                   includes=lua_inc_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
@@ -140,9 +144,18 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
                use='luajit-5.1', #'lua5.1',
                uselib_store='LUA',
                fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-               includes=lua_inc_path,
                libpath=lua_lib_path,
+               includes=lua_inc_path,
                mandatory=True)
+               
+        conf.check(header_name='hiredis.h',
+            lib='hiredis',
+            use='hiredis',
+            uselib_store='REDIS',
+            fragment='#include <hiredis.h>' + MAIN_TEST_CODE,
+            libpath=os.path.abspath(redis_lib_path),
+            includes=os.path.abspath(redis_inc_path),
+            mandatory=True)
 
     #conf.check(header_name="noise/noise.h",
                 #lib="noise",
@@ -151,6 +164,9 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
 
     conf.env.INCLUDES = ['../src/c_lib', '../src/net_lib', '../src','/usr/local/include', '/usr/include']
     conf.env.RPATH = ['.','..', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
+    if OS == 'Linux':
+        conf.env.INCLUDES.append('../lib/lin32/redis/include')
+        conf.env.RPATH.append('../lib/lin32/redis/lib')
 
 def build(bld):
     OS = platform.system()
@@ -161,14 +177,16 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-    common_libraries = []
+    use = time_lib+['LUA']
+    if OS == 'Linux':
+        use.append('REDIS')
 
     ##attemping C++ build
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(
         features = 'cxx cxxprogram',
         source = ['../src/server/_server.cpp',],
-        use = common_libraries+time_lib+['LUA'],
+        use = use,
         lib = time_lib,
         target = 'run'
     )
