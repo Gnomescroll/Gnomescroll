@@ -37,7 +37,8 @@ options.base_move_rate = 30*60*60 --1hr
 options.auth = true
 
 -- serializer --
-options.serialize = true
+options.serializer = true
+options.redis_database = 0
 
 ffi = require("ffi")
 ffi.cdef[[

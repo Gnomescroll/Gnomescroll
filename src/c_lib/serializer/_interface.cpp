@@ -1,7 +1,10 @@
 #include "_interface.hpp"
 
+#include <options/server_options.hpp>
+
 #include <serializer/map.hpp>
 #include <serializer/items.hpp>
+#include <serializer/redis.hpp>
 
 namespace serializer
 {
@@ -23,20 +26,33 @@ void init()
     
     init_map_serializer();
 
-    if (!Options::serialize) return;
+    if (!Options::serializer) return;
     
     init_item_serializer();
+    init_redis();
 }
 
 void teardown()
 {
+    #if PTHREADS_ENABLED
+    printf("Waiting for threads to finish...\n");
+    serializer::wait_for_threads();
+    #endif
+        
+    serializer::check_map_save_state();
+    
     teardown_map_serializer();
-    teardown_item_serializer();
+    teardown_item_serializer();    
+    teardown_redis();
 }
 
-void check_save_state()
+void update()
 {
     check_map_save_state();
+
+    if (!Options::serializer) return;
+
+    update_redis();
 }
 
 }   // serializer

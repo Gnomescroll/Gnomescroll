@@ -35,7 +35,8 @@ OPT_UINT(base_move_rate, 30*60*60 /*1hr*/);
 OPT_BOOL(auth, true);
 
 /* Serializer */
-OPT_BOOL(serialize, true);
+OPT_BOOL(serializer, true);
+OPT_UINT(redis_database, 2);
 
 void register_options()
 {
@@ -62,11 +63,14 @@ void register_options()
     OPT_BOOL_REGISTER(auth);
 
     /* Serialize */
-    OPT_BOOL_REGISTER(serialize);
+    OPT_BOOL_REGISTER(serializer);
+    OPT_UINT_REGISTER(redis_database);
 }
 
 void validate()
 {
+    GS_ASSERT(redis_database < 16);
+    if (redis_database >= 16) GS_ABORT();
 }
 
 }   // Options

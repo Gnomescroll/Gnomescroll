@@ -32,7 +32,8 @@ OPT_UINT_HEADER(base_move_rate);
 OPT_BOOL_HEADER(auth);
 
 /* Serializer */
-OPT_BOOL_HEADER(serialize);
+OPT_BOOL_HEADER(serializer);
+OPT_UINT_HEADER(redis_database);
 
 void register_options();
 

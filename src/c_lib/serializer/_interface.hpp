@@ -7,8 +7,7 @@ namespace serializer
 
 void init();
 void teardown();
-
-void check_save_state();
+void update();
 
 // defined in map.cpp
 void load_map(const char* filename);
