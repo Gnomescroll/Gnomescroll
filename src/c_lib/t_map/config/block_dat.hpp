@@ -285,12 +285,12 @@ void load_block_dat()
     set_max_dmg(ruins_dmg());
 
     cube_def(t_id++, SolidBlock, "raised_tile_green");
-    iso_texture(t1,6,3);
+    iso_texture(t1,6,5);
     push_texture();
     set_max_dmg(ruins_dmg());
 
     cube_def(t_id++, SolidBlock, "raised_tile_red");
-    iso_texture(t1,6,4);
+    iso_texture(t1,6,6);
     push_texture();
     set_max_dmg(ruins_dmg());
 

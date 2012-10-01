@@ -4,6 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
+#include <t_gen/_interface.hpp>
 #include <t_gen/twister.hpp>
 #include <t_map/t_map.hpp>
 
@@ -98,20 +99,6 @@ namespace t_gen {
 
 
 
-//
-//
-//
-//
-//
-//#include <t_gen/_interface.hpp>
-//
-//void create_tree(int x, int y, int z)
-//{
-//    
-//}
-//
-//void XXtree_generatorXX()
-//{
 //    static int regolith = t_map::get_cube_id("regolith");
 //    GS_ASSERT(regolith >= 0);
 //    if (regolith < 0) return;   // invalid cube id
@@ -145,4 +132,3 @@ namespace t_gen {
 //        }
 //
 //    free(noise);
-//}
