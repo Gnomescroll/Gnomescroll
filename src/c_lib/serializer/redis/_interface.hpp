@@ -6,11 +6,14 @@
 
 namespace serializer
 {
+namespace redis
+{
 
-extern bool redis_connected; 
+extern bool connected; 
 
-void init_redis();
-void teardown_redis();
-void update_redis();
+void init();
+void teardown();
+void update();
 
+}   // redis
 }   // serializer

@@ -35,6 +35,7 @@ dont_include_this_file_in_client
 // serialization
 #ifdef linux
 # define GS_SERIALIZER 1
+# define EV_MULTIPLICITY 0
 #else
 # define GS_SERIALIZER 0
 #endif

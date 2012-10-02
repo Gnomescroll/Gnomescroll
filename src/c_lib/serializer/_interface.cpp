@@ -4,7 +4,7 @@
 
 #include <serializer/map.hpp>
 #include <serializer/items.hpp>
-#include <serializer/redis.hpp>
+#include <serializer/redis/_interface.hpp>
 
 namespace serializer
 {
@@ -29,7 +29,7 @@ void init()
     if (!Options::serializer) return;
     
     init_item_serializer();
-    init_redis();
+    redis::update();
 }
 
 void teardown()
@@ -39,11 +39,12 @@ void teardown()
     serializer::wait_for_threads();
     #endif
         
-    serializer::check_map_save_state();
+    check_map_save_state();
     
     teardown_map_serializer();
     teardown_item_serializer();    
-    teardown_redis();
+
+    redis::teardown();
 }
 
 void update()
@@ -52,7 +53,7 @@ void update()
 
     if (!Options::serializer) return;
 
-    update_redis();
+    redis::update();
 }
 
 }   // serializer

@@ -1,16 +1,23 @@
-#include "redis.hpp"
+#include "_interface.hpp"
 
+#include <ev.h>
 #include <hiredis/adapters/libev.h>
 
 namespace serializer
 {
+namespace redis
+{
 
-static redisAsyncContext* redis_ctx = NULL;
+// TODO -- enum label in the *note field to indicate request type, handle more specifically from that
+// TODO -- wrap higher level transactions
+// TODO -- pipelining commands? MULTI/EXEC? scripting?
+
+static redisAsyncContext* ctx = NULL;
 static bool waiting_to_connect = false; 
 static bool waiting_to_disconnect = false; 
-bool redis_connected = false;
+bool connected = false;
 
-static void handle_redis_reply(redisReply* reply)
+static void handle_reply(redisReply* reply)
 {
     switch (reply->type)
     {
@@ -37,7 +44,7 @@ static void handle_redis_reply(redisReply* reply)
         case REDIS_REPLY_ARRAY:
             printf("Reply (multi-bulk): %d elements", reply->elements);
             for (unsigned int i=0; i<reply->elements; i++)
-                handle_redis_reply(reply->element[i]);
+                handle_reply(reply->element[i]);
             break;
 
         default:
@@ -50,7 +57,7 @@ void getCallback(redisAsyncContext* ctx, void* _reply, void* note)
 {   // note is data send in the initial redisAsyncCommand
     redisReply* reply = (redisReply*) _reply;
     if (reply == NULL) return;
-    handle_redis_reply(reply);
+    handle_reply(reply);
     if (note != NULL) printf("Note: %s\n", (char*)note);
 }
 
@@ -60,12 +67,12 @@ void connectCallback(const redisAsyncContext *ctx, int status)
     if (status == REDIS_OK)
     {
         printf("Redis connected...\n");
-        redis_connected = true;
+        connected = true;
     }
     else
     {
         printf("Redis connect error: %s\n", ctx->errstr);
-        redis_connected = false;
+        connected = false;
     }
 }
 
@@ -75,94 +82,102 @@ void disconnectCallback(const redisAsyncContext *ctx, int status)
     if (status != REDIS_OK)
         printf("Redis disconnect error: %s\n", ctx->errstr);
 
-    GS_ASSERT(redis_connected);
-    redis_connected = false;
+    GS_ASSERT(connected);
+    connected = false;
 
-    GS_ASSERT(redis_ctx != NULL);
+    GS_ASSERT(ctx != NULL);
 
     // the context will be freed by redis, we can clear ours
-    redis_ctx = NULL;
+    ctx = NULL;
 
     waiting_to_disconnect = false;
 }
 
-void connect_redis()
+void connect()
 {
-    GS_ASSERT(!redis_connected);
-    if (redis_connected) return;
+    GS_ASSERT(!connected);
+    if (connected) return;
     
     // CONNECT NEW
     waiting_to_connect = true;
-    redis_ctx = redisAsyncConnect("127.0.0.1", 6379);
-    GS_ASSERT(redis_ctx != NULL);
-    if (redis_ctx == NULL)
+    ctx = redisAsyncConnect("127.0.0.1", 6379);
+    GS_ASSERT(ctx != NULL);
+    if (ctx == NULL)
     {
         waiting_to_connect = false;
         return;
     }
-    GS_ASSERT(!redis_ctx->err);
-    if (redis_ctx->err)
+    GS_ASSERT(!ctx->err);
+    if (ctx->err)
     {
         waiting_to_connect = false;
-        redisAsyncFree(redis_ctx);
-        printf("Redis connect error: %s\n", redis_ctx->errstr);
+        redisAsyncFree(ctx);
+        printf("Redis connect error: %s\n", ctx->errstr);
+        return;
     }
 
     int ret = REDIS_OK;
 
     // BIND TO LIBEV
-    ret = redisLibevAttach(EV_DEFAULT_ redis_ctx);
+    ret = redisLibevAttach(EV_DEFAULT_ ctx);
     GS_ASSERT(ret == REDIS_OK);
 
     // SET UP CALLBACKS
-    ret = redisAsyncSetConnectCallback(redis_ctx, &connectCallback);
+    ret = redisAsyncSetConnectCallback(ctx, &connectCallback);
     GS_ASSERT(ret == REDIS_OK);
-    ret = redisAsyncSetDisconnectCallback(redis_ctx, &disconnectCallback);
+    ret = redisAsyncSetDisconnectCallback(ctx, &disconnectCallback);
     GS_ASSERT(ret == REDIS_OK);
 
     // SELECT DATABASE
-    ret = redisAsyncCommand(redis_ctx, NULL, NULL, "SELECT %d", Options::redis_database);
+    ret = redisAsyncCommand(ctx, NULL, NULL, "SELECT %d", Options::redis_database);
     GS_ASSERT(ret == REDIS_OK);
 
     // TEST COMMANDS
-    //ret = redisAsyncCommand(redis_ctx, NULL, NULL, "SET key %b", "crack", strlen("crack"));
+    //ret = redisAsyncCommand(ctx, NULL, NULL, "SET key %b", "crack", strlen("crack"));
     //GS_ASSERT(ret == REDIS_OK);
-    //ret = redisAsyncCommand(redis_ctx, &getCallback, NULL, "GET key");
+    //ret = redisAsyncCommand(ctx, &getCallback, NULL, "GET key");
     //GS_ASSERT(ret == REDIS_OK);
 }
 
-void disconnect_redis()
+void disconnect()
 {
-    if (redis_ctx == NULL) return;
-    GS_ASSERT(redis_connected);
-    redisAsyncDisconnect(redis_ctx);
+    if (ctx == NULL) return;
+    GS_ASSERT(connected);
+    redisAsyncDisconnect(ctx);
 }
 
-void init_redis()
+void init()
 {
-    GS_ASSERT(redis_ctx == NULL);
-    if (redis_ctx != NULL) return;
+    GS_ASSERT(ctx == NULL);
+    if (ctx != NULL) return;
     
     signal(SIGPIPE, SIG_IGN);
 
+    #if EV_MULTIPLICITY
     struct ev_loop* evl = ev_default_loop(EVFLAG_AUTO);
     GS_ASSERT(evl != NULL);
-
-    connect_redis();
+    #else
+    int ret = ev_default_loop(EVFLAG_AUTO);
+    GS_ASSERT(ret);
+    #endif
+    
+    connect();
 }
 
-void teardown_redis()
+void teardown()
 {
-    if (!redis_connected)
+    if (!connected)
     {
-        if (redis_ctx != NULL)
-            redisAsyncFree(redis_ctx);
+        if (ctx != NULL)
+            redisAsyncFree(ctx);
         return;
     }
+
     GS_ASSERT(!waiting_to_disconnect);
     waiting_to_disconnect = true;
-    disconnect_redis();
+    disconnect();
 
+    // wait for disconnect response before shutting down
     while (waiting_to_disconnect)
     {
         gs_millisleep(10);
@@ -170,11 +185,12 @@ void teardown_redis()
     }
 }
 
-void update_redis()
+void update()
 {
     ev_loop(EV_DEFAULT_ EVLOOP_NONBLOCK);
-    if (!redis_connected && !waiting_to_connect)
-        connect_redis();
+    if (!connected && !waiting_to_connect)
+        connect();
 }
 
+}   // redis
 }   // serializer
