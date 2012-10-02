@@ -30,6 +30,8 @@ const int octaves = 6;  // tweak
 
 const float tree_zone_threshold = 0.3f;  // move to a config file maybe
 const float tree_threshold = 0.997f;
+const float shroom_zone_threshold = 0.5f;  // move to a config file maybe
+const float shroom_threshold = 0.997f;
 
 
 
@@ -59,6 +61,25 @@ bool blocks_are_invalid(int arr[], int len) {
 	}
 
 	return false;
+}
+
+
+
+void make_shroom(int x, int y, int z) {
+    // set bark/leaf textures
+    int trunk = trunks[randrange(0, NUM_TRUNKS - 1)];
+
+        // height of current trunk segment
+        int height = randrange(3, 12);
+        //if (height+z+cap_height >= ZMAX) break;
+
+        for (int j = 0; j < height; j++) {
+                float wid = randrange(2, 5);
+                while (wid > 0) {
+                    make_circle(x, y, z+j, wid, trunk);
+                    wid -= 1;
+                }
+        }
 }
 
 
@@ -98,6 +119,17 @@ void make_tree(int x, int y, int z) {
 
 
 
+bool strip_of_solid_blocks_underneath(int x, int y, int z, int num) {
+	if /* could be bedrock */ (z-num < 3) return false; 
+
+	for (int i = 1; i <= num; i++) {
+		if (t_map::get(x, y, z-i) == 0) return false;
+	}
+
+	return true;
+}
+
+
 
 
 
@@ -123,14 +155,31 @@ namespace t_gen {
 
 		// make groves
 		for (int x=0; x<XMAX; x++)
-		for (int y=0; y<YMAX; y++)
+		for (int y=0; y<YMAX; y++) {
 			if (noise[x + y*XMAX] > tree_zone_threshold
 			 && genrand_real1() > tree_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
 			{   // we're in tree land
 				int z = t_map::get_highest_solid_block(x,y);
+
 				if (z >= 1 && t_map::get(x,y,z) == t_map::get_cube_id("regolith") )
-					make_tree(x,y,z);
+					if (strip_of_solid_blocks_underneath(x,y,z, 7) ) {
+						make_tree(x,y,z);
+						goto done_with_this_coordinate;
+					}
 			}
+
+			if (noise[x + y*XMAX] > shroom_zone_threshold
+			 && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
+			{   // we're in tree land
+				int z = t_map::get_highest_solid_block(x,y);
+
+				if (z >= 1 && t_map::get(x,y,z) == t_map::get_cube_id("regolith") )
+					if (strip_of_solid_blocks_underneath(x,y,z, 7) )
+						make_shroom(x,y,z);
+			}
+
+			done_with_this_coordinate:
+		}
 
 	    free(noise);
     }
