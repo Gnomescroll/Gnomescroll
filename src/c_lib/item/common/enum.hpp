@@ -93,4 +93,12 @@ typedef enum
     IL_HAND,
 } ItemLocationType;
 
+typedef enum
+{
+    ISS_NONE,
+    ISS_WAITING_FOR_GID,
+    ISS_WAITING_FOR_SAVE,
+    ISS_SAVED,
+} ItemSaveState;
+
 /* No typedef for ItemType, use string names */

@@ -1,13 +1,13 @@
 #pragma once
 
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 
 namespace Item
 {
 
-extern int sprite_array[MAX_ITEMS];
-extern int type_array[MAX_ITEMS];
-extern ItemGroup group_array[MAX_ITEMS];
+extern int sprite_array[MAX_ITEM_TYPES];
+extern int type_array[MAX_ITEM_TYPES];
+extern ItemGroup group_array[MAX_ITEM_TYPES];
 extern class ItemAttribute* item_attribute_array;
 
 extern class SynthesizerItem* synthesizer_item_array;

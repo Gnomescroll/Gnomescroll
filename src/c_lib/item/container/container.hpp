@@ -3,7 +3,7 @@
 #include <agent/constants.hpp>
 
 #include <item/common/enum.hpp>
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 #include <item/properties.hpp>
 
 namespace ItemContainer

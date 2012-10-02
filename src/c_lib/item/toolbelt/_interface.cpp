@@ -84,6 +84,16 @@ int get_agent_selected_item_type(int agent_id)
 // Most of these do not need declarations exported in the header
 
 #if DC_SERVER
+
+void agent_quit(int agent_id)
+{   // It might be the same as agent_died, but they should not be mixed
+    // Death has penalties; leaving the server should not
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+
+    turn_fire_off(agent_id);
+}
+
 void tick_item(int agent_id, ItemID item_id, int item_type)
 {
     if (!item_is_click_and_hold(item_type))

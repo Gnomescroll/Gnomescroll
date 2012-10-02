@@ -10,6 +10,7 @@
 
 #if DC_SERVER
 #include <item/container/net/StoC.hpp>
+#include <serializer/_interface.hpp>
 #endif
 
 #if DC_CLIENT
@@ -952,8 +953,44 @@ void agent_died(int agent_id)
         send_container_close(agent_id, opened_containers[agent_id]);
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
-    if (agent_hand_list != NULL && agent_hand_list[agent_id] != NULL_ITEM)
+    ItemID hand_item = get_agent_hand(agent_id);
+    if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
+    GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
+}
+
+static void save_agent_containers(int client_id, int agent_id, bool remove_items_after)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+    
+    serializer::save_player_container(client_id, agent_container_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_synthesizer_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_toolbelt_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id], remove_items_after);
+}
+
+void dump_agent_containers(int client_id, int agent_id)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+    
+    if (agent_container_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_container_list[agent_id]);
+
+    if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_synthesizer_list[agent_id]);
+
+    if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_toolbelt_list[agent_id]);
+
+    GS_ASSERT(agent_energy_tanks_list != NULL);
+    if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_energy_tanks_list[agent_id]);
 }
 
 void agent_quit(int agent_id)
@@ -965,11 +1002,12 @@ void agent_quit(int agent_id)
     if (a == NULL) return;
 
     // close opened free container (this will throw any items sitting in hand)
-    if (opened_containers[agent_id] != NULL_CONTAINER)
+    GS_ASSERT(opened_containers != NULL);
+    if (opened_containers != NULL && opened_containers[agent_id] != NULL_CONTAINER)
         agent_close_container(agent_id, opened_containers[agent_id]);
 
-    GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
-    opened_containers[agent_id] = NULL_CONTAINER;
+    GS_ASSERT(opened_containers != NULL && opened_containers[agent_id] == NULL_CONTAINER);
+    if (opened_containers != NULL) opened_containers[agent_id] = NULL_CONTAINER;
 
     // still have to throw any items in hand, in case we have our private inventory opened
     ItemID hand_item = get_agent_hand(agent_id);
@@ -977,22 +1015,13 @@ void agent_quit(int agent_id)
         transfer_hand_to_particle(agent_id);    // throw
     GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
 
-    // throw all items away (inventory, toolbelt and synthesizer)
-    GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
+    if (Options::serializer)
+        save_agent_containers(a->client_id, a->id, true);    // remove items after
+    else
+        dump_agent_containers(a->client_id, a->id);
 
-    GS_ASSERT(agent_synthesizer_list != NULL);
-    if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_synthesizer_list[agent_id]);
+    // TODO -- dont destroy the container contents in this case
 
-    GS_ASSERT(agent_toolbelt_list != NULL);
-    if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_toolbelt_list[agent_id]);
-
-    GS_ASSERT(agent_energy_tanks_list != NULL);
-    if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_energy_tanks_list[agent_id]);
 
     // destroy containers
     if (agent_container_list[agent_id] != NULL_CONTAINER)

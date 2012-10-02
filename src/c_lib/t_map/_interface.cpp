@@ -8,7 +8,7 @@
 
 #include <t_map/common/constants.hpp>
 
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 #include <item/common/enum.hpp>
 
 namespace t_map

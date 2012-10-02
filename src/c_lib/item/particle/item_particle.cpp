@@ -3,7 +3,7 @@
 #include <item/particle/net/StoC.hpp>
 #include <item/_interface.hpp>
 
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 
 namespace ItemParticle
 {

@@ -3,6 +3,9 @@
 #define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT(agent_id >= 0 && agent_id < AGENT_MAX)
 #define IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) 
 
+#define ASSERT_VALID_ITEM_ID(item_id) GS_ASSERT(item_id >= 0 && item_id < MAX_ITEMS)
+#define IF_INVALID_ITEM_ID(item_id) if (item_id < 0 || item_id >= MAX_ITEMS)
+
 #define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS)
 #define IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) 
 

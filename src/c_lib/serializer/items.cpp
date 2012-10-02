@@ -20,7 +20,7 @@ namespace serializer
 // ACtually we can't do 1 file per item because of inodes
 // They'll need to be packed in an inventory
 
-uint32_t item_global_id = 0;
+int64_t item_global_id = 0;
 
 typedef enum
 {
@@ -74,7 +74,7 @@ class ParseItemData
 {
     public:
     
-        uint32_t global_id;
+        int64_t global_id;
         char name[Item::ITEM_NAME_MAX_LENGTH+1];
         ItemLocationType location;
         int location_id;
@@ -131,7 +131,7 @@ void teardown_item_serializer()
     if (item_load_buffer != NULL) free(item_load_buffer);
 }
 
-static const char* get_item_filename(uint32_t global_id)
+static const char* get_item_filename(int64_t global_id)
 {   // make filename
     static const int fnlen = sizeof(item_filename_fmt) + 10 - 4;
     static char fnbuf[fnlen+1];
@@ -183,7 +183,7 @@ SerializerError save_item(ItemID item_id)
     // write data
     int ret = -1;
     SerializerError save_error = SE_NONE;
-    ret = fprintf(fp, ITEM_ID_TOKEN " %010d\n", item->global_id);
+    ret = fprintf(fp, ITEM_ID_TOKEN " %019lld\n", item->global_id);
     HANDLE_ITEM_SAVE_WRITE_FAIL(ret)
     
     ret = fprintf(fp, ITEM_TYPE_TOKEN " %s\n", name);
@@ -270,7 +270,7 @@ static SerializerError parse_item_line(char* line, size_t size, class ParseItemD
             uconvert = strtoul(piece, &endptr, 10);
             if (uconvert > UINT32_MAX || piece[0] == '\0' || endptr[0] != '\0')
                 parse_error = SE_PARSE_ITEM_INVALID_GLOBAL_ID;
-            data->global_id = (uint32_t)convert;
+            data->global_id = (int64_t)convert;
             break;
             
         case ITEM_PARSE_TOKEN_TYPE:
@@ -321,7 +321,7 @@ static SerializerError parse_item_line(char* line, size_t size, class ParseItemD
     return parse_error;
 }
 
-SerializerError load_item(uint32_t global_id)
+SerializerError load_item(int64_t global_id)
 {
     // get filemae
     const char* fn = get_item_filename(global_id);
@@ -432,14 +432,14 @@ SerializerError write_item_global_id()
     GS_ASSERT(fp != NULL);
     if (fp == NULL) return SE_WRITE_ITEM_GLOBAL_ID_FILE_ERROR;
 
-    fprintf(fp, "%d", item_global_id);
+    fprintf(fp, "%019lld", item_global_id);
 
     fclose(fp);
     
     return SE_NONE;
 }
 
-uint32_t get_new_item_global_id()
+int64_t get_new_item_global_id()
 {
     GS_ASSERT(item_global_id != UINT32_MAX);
     // TODO -- report error

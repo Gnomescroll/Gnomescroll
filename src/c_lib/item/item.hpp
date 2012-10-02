@@ -21,7 +21,7 @@ class Item
 
         ItemID id;
         int type;  // stone_block, dirt_block, mining_laser_beta,
-        uint32_t global_id;
+        int64_t global_id;
 
         int durability;
         int stack_size;
@@ -35,6 +35,7 @@ class Item
         #if DC_SERVER
         SubscriberList subscribers;
         bool valid;
+        ItemSaveState save_state;
         #endif
 
     void init(int item_type);
@@ -72,6 +73,7 @@ class Item
         #if DC_SERVER
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
         , valid(true)
+        , save_state(ISS_NONE)
         #endif
     {}
 
@@ -84,7 +86,7 @@ class Item
 namespace Item
 {
 
-class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>
+class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
 {
     private:
         const char* name() { return "Item"; }
@@ -103,7 +105,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX
         #if DC_CLIENT
         Item* create_type(int item_type, ItemID item_id)
         {
-            Item* item = DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>::create(item_id);
+            Item* item = DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;

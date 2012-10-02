@@ -355,7 +355,7 @@ void agent_quit(int agent_id)
 void test_item_list_capacity()
 {
     printf("Testing item list capacity\n");
-    for (int i=0; i<ITEM_LIST_MAX*2; i++)
+    for (int i=0; i<ITEM_LIST_HARD_MAX+1024; i++)
         item_list->create_type(0);
 }
 

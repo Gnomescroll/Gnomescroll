@@ -484,7 +484,7 @@ void load_item_dat()
 
 void verify_item_dat()
 {
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
         if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
 

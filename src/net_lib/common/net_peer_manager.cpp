@@ -139,8 +139,8 @@ void NetPeerManager::teardown()
     if (a != NULL)
     {
         Item::agent_quit(a->id);    // unsubscribes agent from all item
-        a->status.die();
         ItemContainer::agent_quit(a->id);
+        Toolbelt::agent_quit(a->id);
         Components::owner_component_list->revoke(a->id);
         ServerState::agent_list->destroy(a->id);
     }

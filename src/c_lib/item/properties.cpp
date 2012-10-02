@@ -1,7 +1,7 @@
 #include "properties.hpp"
 
 #include <item/_interface.hpp>
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 #include <item/common/struct.hpp>
 
 #include <item/config/item_attribute.hpp>
@@ -14,8 +14,8 @@
 namespace Item
 {
 
-int sprite_array[MAX_ITEMS]; //maps item id to sprite
-ItemGroup group_array[MAX_ITEMS];
+int sprite_array[MAX_ITEM_TYPES]; //maps item id to sprite
+ItemGroup group_array[MAX_ITEM_TYPES];
 class ItemAttribute* item_attribute_array = NULL;
 class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
@@ -31,18 +31,18 @@ class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
 int craft_recipes_possible_count = 0;
 
 const int ITEM_NAME_MAX_LENGTH = 64;
-char item_names[MAX_ITEMS*ITEM_NAME_MAX_LENGTH] = {'\0'};
-int item_name_index[MAX_ITEMS] = {-1};
+char item_names[MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH] = {'\0'};
+int item_name_index[MAX_ITEM_TYPES] = {-1};
 
 void init_properties()
 {
-    for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
-    for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_NONE);
+    for (int i=0; i<MAX_ITEM_TYPES; sprite_array[i++] = ERROR_SPRITE);
+    for (int i=0; i<MAX_ITEM_TYPES; group_array[i++] = IG_NONE);
     
     for (int i=0; i<t_map::MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
 
     GS_ASSERT(item_attribute_array == NULL);
-    item_attribute_array = new ItemAttribute[MAX_ITEMS];
+    item_attribute_array = new ItemAttribute[MAX_ITEM_TYPES];
     GS_ASSERT(synthesizer_item_array == NULL);
     synthesizer_item_array = new SynthesizerItem[ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER)];
 
@@ -60,8 +60,8 @@ void tear_down_properties()
 
 class ItemAttribute* get_item_attributes(int item_type)
 {
-    GS_ASSERT(item_type == NULL_ITEM_TYPE || (item_type >= 0 && item_type < MAX_ITEMS));
-    if (item_type < 0 || item_type >= MAX_ITEMS) return NULL;
+    GS_ASSERT(item_type == NULL_ITEM_TYPE || (item_type >= 0 && item_type < MAX_ITEM_TYPES));
+    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return NULL;
     return &item_attribute_array[item_type];
 }
 
@@ -75,7 +75,7 @@ int get_item_fire_rate(int item_type)
 
 int get_sprite_index_for_id(ItemID id)
 {
-    GS_ASSERT(id < MAX_ITEMS && id >= 0);
+    GS_ASSERT(id < MAX_ITEM_TYPES && id >= 0);
     int type = get_item_type(id);
     return get_sprite_index_for_type(type);
 }
@@ -83,8 +83,8 @@ int get_sprite_index_for_id(ItemID id)
 int get_sprite_index_for_type(int type)
 {
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
-    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
-    if (type < 0 || type >= MAX_ITEMS) return ERROR_SPRITE;
+    GS_ASSERT(type >= 0 && type < MAX_ITEM_TYPES);
+    if (type < 0 || type >= MAX_ITEM_TYPES) return ERROR_SPRITE;
     return sprite_array[type];
 }
 
@@ -94,14 +94,14 @@ void set_item_name(int id, const char* name, int length)
 {
     GS_ASSERT(length > 0);
     GS_ASSERT(length < ITEM_NAME_MAX_LENGTH);
-    GS_ASSERT(id >= 0 || id < MAX_ITEMS);    
+    GS_ASSERT(id >= 0 || id < MAX_ITEM_TYPES);    
     
     if (length <= 0 || length >= ITEM_NAME_MAX_LENGTH) return;
-    if (id < 0 || id >= MAX_ITEMS) return;
+    if (id < 0 || id >= MAX_ITEM_TYPES) return;
 
     static int str_index = 0;
 
-    for (int i=0; i<MAX_ITEMS; i++)    // no duplicate names
+    for (int i=0; i<MAX_ITEM_TYPES; i++)    // no duplicate names
         if (item_name_index[i] >= 0)
             GS_ASSERT(strcmp(item_names+item_name_index[i], name));
 
@@ -120,19 +120,19 @@ void set_item_name(int id, const char* name)
 
 const char* get_item_name(int type)
 {
-    GS_ASSERT(type >= 0 || type < MAX_ITEMS);
-    if (type < 0 || type >= MAX_ITEMS) return NULL;
+    GS_ASSERT(type >= 0 || type < MAX_ITEM_TYPES);
+    if (type < 0 || type >= MAX_ITEM_TYPES) return NULL;
     GS_ASSERT(item_name_index[type] >= 0);
     if (item_name_index[type] < 0) return NULL;
-    GS_ASSERT(item_name_index[type] < MAX_ITEMS*ITEM_NAME_MAX_LENGTH);
-    if (item_name_index[type] >= MAX_ITEMS*ITEM_NAME_MAX_LENGTH) return NULL;
+    GS_ASSERT(item_name_index[type] < MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH);
+    if (item_name_index[type] >= MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH) return NULL;
     
     return (item_names + item_name_index[type]);
 }
 
 int get_item_type(const char* name)
 {
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
         const char* cmp_name = get_item_name(i);
         if (cmp_name != NULL && strcmp(name, cmp_name) == 0)
@@ -161,8 +161,8 @@ const char* get_item_pretty_name(int item_type)
 ItemGroup get_item_group_for_type(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return IG_NONE;
-    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
-    if (item_type < 0 || item_type >= MAX_ITEMS) return IG_ERROR;
+    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
+    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return IG_ERROR;
     return group_array[item_type];
 }
 

@@ -17,7 +17,7 @@
 #include <common/random.h>
 
 #include <item/toolbelt/_interface.hpp>
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 
 #include <physics/quadrant.hpp>
 

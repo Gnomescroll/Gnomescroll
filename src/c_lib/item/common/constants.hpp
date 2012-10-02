@@ -3,10 +3,10 @@
 #include <agent/constants.hpp>
 #include <item/common/enum.hpp>
 
-const int ITEM_LIST_HARD_MAX = NULL_ITEM;  // (highest ID will be NULL_ITEM-1)
-const int ITEM_LIST_MAX = ITEM_LIST_HARD_MAX;   // initial (just start maxed out)
+const int MAX_ITEMS = NULL_ITEM;
+const int ITEM_LIST_HARD_MAX = MAX_ITEMS;
 
-const int MAX_ITEMS = 0xff-1;
+const int MAX_ITEM_TYPES = 0xff-1;
 const int MAX_CONTAINER_TYPES = 16;
 
 const int NULL_ITEM_TYPE = 0xff;

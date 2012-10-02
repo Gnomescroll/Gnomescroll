@@ -160,6 +160,10 @@ void ItemList::verify_items()
     {
         if (this->a[k] == NULL) continue;
         Item* i = this->a[k];
+
+        // items in a save-waiting state don't apply, they can sit in limbo
+        if (i->save_state != ISS_NONE && i->save_state != ISS_SAVED) continue;
+        
         bool valid_location = is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT);
         if (!valid_location) i->valid = false;
     
