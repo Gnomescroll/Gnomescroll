@@ -31,19 +31,19 @@ void init()
     item_container_list = new ItemContainerList;
 
     #if DC_SERVER
-    agent_container_list    = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_toolbelt_list     = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_synthesizer_list  = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_energy_tanks_list = (int*)    malloc(AGENT_MAX * sizeof(int));
-    opened_containers       = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list         = (ItemID*) malloc(AGENT_MAX * sizeof(ItemID));
+    agent_container_list    = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_toolbelt_list     = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_synthesizer_list  = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_energy_tanks_list = (int*) malloc(AGENT_MAX * sizeof(int));
+    opened_containers       = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_hand_list         = (int*) malloc(AGENT_MAX * sizeof(int));
     
     for (int i=0; i<AGENT_MAX; i++) agent_container_list   [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list    [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_energy_tanks_list[i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) opened_containers      [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_hand_list        [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_hand_list        [i] = NULL_CONTAINER;
     #endif
     
     #if DC_CLIENT
@@ -250,27 +250,15 @@ ItemContainerInterface* create_container(ItemContainerType type, int id)
 void update_container_ui_from_state()
 {
     if (player_container_ui    != NULL) player_container_ui    ->load_data (player_container    ->slot);
+    if (player_hand_ui         != NULL) player_hand_ui         ->load_data (player_hand         ->slot);
     if (player_toolbelt_ui     != NULL) player_toolbelt_ui     ->load_data (player_toolbelt     ->slot);
     if (player_synthesizer_ui  != NULL) player_synthesizer_ui  ->load_data (player_synthesizer  ->slot);
     if (player_energy_tanks_ui != NULL) player_energy_tanks_ui ->load_data (player_energy_tanks ->slot);
     if (player_craft_bench_ui  != NULL) player_craft_bench_ui  ->load_data (player_craft_bench  ->slot);
     if (storage_block_ui       != NULL) storage_block_ui       ->load_data (storage_block       ->slot);
     if (cryofreezer_ui         != NULL) cryofreezer_ui         ->load_data (cryofreezer         ->slot);
-    if (crusher_ui            != NULL) crusher_ui            ->load_data (crusher            ->slot);
+    if (crusher_ui             != NULL) crusher_ui             ->load_data (crusher             ->slot);
     if (smelter_ui             != NULL) smelter_ui             ->load_data (smelter             ->slot);
-    
-    if (player_hand == NULL_ITEM)
-    {
-        player_hand_type_ui = NULL_ITEM_TYPE;
-        player_hand_stack_ui = 1;
-        player_hand_durability_ui = NULL_DURABILITY;
-    }
-    else
-    {
-        player_hand_type_ui = Item::get_item_type(player_hand);
-        player_hand_stack_ui = Item::get_stack_size(player_hand);
-        player_hand_durability_ui = Item::get_item_durability(player_hand);
-    }
 }
 
 void update_smelter_ui()
@@ -620,13 +608,24 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot)
     return toolbelt->get_item(slot);
 }
 
-ItemID get_agent_hand(int agent_id)
+int get_agent_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
+    IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
     GS_ASSERT(agent_hand_list != NULL);
-    if (agent_hand_list == NULL) return NULL_ITEM;
+    if (agent_hand_list == NULL) return NULL_CONTAINER;
     return agent_hand_list[agent_id];
+}
+
+ItemID get_agent_hand_item(int agent_id)
+{
+    int hand_id = get_agent_hand(agent_id);
+    GS_ASSERT(hand_id != NULL_CONTAINER);
+    if (hand_id == NULL_CONTAINER) return NULL_ITEM;
+    ItemContainerHand* hand = (ItemContainerHand*)get_container(hand_id);
+    GS_ASSERT(hand != NULL);
+    if (hand == NULL) return NULL_ITEM;
+    return hand->get_item();
 }
     
 int get_agent_container(int agent_id)
@@ -953,10 +952,10 @@ void agent_died(int agent_id)
         send_container_close(agent_id, opened_containers[agent_id]);
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
-    GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
+    GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
 }
 
 static void save_agent_containers(int client_id, int agent_id, bool remove_items_after)
@@ -1010,10 +1009,10 @@ void agent_quit(int agent_id)
     if (opened_containers != NULL) opened_containers[agent_id] = NULL_CONTAINER;
 
     // still have to throw any items in hand, in case we have our private inventory opened
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
-    GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
+    GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
 
     if (Options::serializer)
         save_agent_containers(a->client_id, a->id, true);    // remove items after
@@ -1065,7 +1064,7 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     if (item_type == NULL_ITEM_TYPE) return;
     
     // compare to hand
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     int hand_item_type = Item::get_item_type(hand_item);
     if (hand_item != NULL_ITEM)
     {   
@@ -1141,7 +1140,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     if (recipe == NULL) return;
 
     // hand is not empty and cannot stack the output
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
     bool hand_can_stack_recipe = (Item::get_item_type(hand_item) == recipe->output && Item::get_stack_space(hand_item) >= 1);
     if (!hand_empty && !hand_can_stack_recipe) return;

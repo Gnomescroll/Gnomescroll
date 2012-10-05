@@ -62,7 +62,7 @@ namespace ItemContainer
 
 bool agent_can_access_container(int agent_id, int container_id);
 
-ItemID get_agent_hand(int agent_id);
+ItemID get_agent_hand_item(int agent_id);
 int get_agent_container(int agent_id);
 int get_agent_toolbelt(int agent_id);
 int get_agent_synthesizer(int agent_id);

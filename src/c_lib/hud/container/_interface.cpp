@@ -331,8 +331,13 @@ static HudText::Text* tooltip_text = NULL;
 
 static void draw_grabbed_icon()
 {
-    if (ItemContainer::player_hand_type_ui == NULL_ITEM_TYPE) return;
-
+    using ItemContainer::player_hand_ui;
+    if (player_hand_ui == NULL) return;
+    int hand_item_type = player_hand_ui->get_item_type();
+    if (hand_item_type == NULL_ITEM_TYPE) return;
+    int hand_item_stack = player_hand_ui->get_item_stack();
+    int hand_item_durability = player_hand_ui->get_item_durability();
+    
     const float w = 32;
 
     // center icon on mouse position
@@ -348,11 +353,10 @@ static void draw_grabbed_icon()
     glBegin(GL_QUADS);
 
     // render durability
-    int durability = ItemContainer::player_hand_durability_ui;
-    if (durability != NULL_DURABILITY)
+    if (hand_item_durability != NULL_DURABILITY)
     {
-        int max_durability = Item::get_max_durability(ItemContainer::player_hand_type_ui);
-        float ratio = ((float)durability)/((float)max_durability);
+        int max_durability = Item::get_max_durability(hand_item_type);
+        float ratio = ((float)hand_item_durability)/((float)max_durability);
         const float alpha = 128;
         if (ratio >= 0.75)
             glColor4ub(7, 247, 0, alpha);    // green
@@ -379,7 +383,7 @@ static void draw_grabbed_icon()
 
     glBegin(GL_QUADS);
         
-    int tex_id = Item::get_sprite_index_for_type(ItemContainer::player_hand_type_ui);
+    int tex_id = Item::get_sprite_index_for_type(hand_item_type);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width
@@ -408,9 +412,9 @@ static void draw_grabbed_icon()
 
     // Draw stack numbers
     if (grabbed_icon_stack_text == NULL) return;
-    if (ItemContainer::player_hand_stack_ui <= 1) return;
-    GS_ASSERT(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);
-    if (count_digits(ItemContainer::player_hand_stack_ui) >= STACK_COUNT_MAX_LENGTH) return;
+    if (hand_item_stack <= 1) return;
+    GS_ASSERT(count_digits(hand_item_stack) < STACK_COUNT_MAX_LENGTH);
+    if (count_digits(hand_item_stack) >= STACK_COUNT_MAX_LENGTH) return;
 
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
@@ -420,7 +424,7 @@ static void draw_grabbed_icon()
     // calc posuition
     x = x + (w/2) + font_size;
     y = y + (w/2) - font_size;
-    grabbed_icon_stack_text->update_formatted_string(1, ItemContainer::player_hand_stack_ui);
+    grabbed_icon_stack_text->update_formatted_string(1, hand_item_stack);
     grabbed_icon_stack_text->set_position(x,y);
     grabbed_icon_stack_text->draw();
 
@@ -433,8 +437,9 @@ static void draw_grabbed_icon()
 
 static void draw_tooltip()
 {
+    using ItemContainer::player_hand_ui;
     // dont draw tooltips if we're holding something
-    if (ItemContainer::player_hand_type_ui != NULL_ITEM_TYPE) return;
+    if (player_hand_ui == NULL || player_hand_ui->get_item_type() != NULL_ITEM_TYPE) return;
 
     // get item type hovered
     int item_type = get_item_type_at(mouse_x, mouse_y);

@@ -4,13 +4,15 @@
 
 #include <serializer/map.hpp>
 #include <serializer/items.hpp>
-#include <serializer/redis/_interface.hpp>
+#include <serializer/_interface.hpp>
 
 namespace serializer
 {
 
 void init()
 {
+    verify_config();
+
     // make sure paths exist
     create_path(DATA_PATH);
     
@@ -29,8 +31,8 @@ void init()
 
     if (!Options::serializer) return;
     
-    //init_item_serializer();
-    redis::init();
+    init_items();
+    init_redis();    
 }
 
 void teardown()
@@ -43,9 +45,9 @@ void teardown()
     check_map_save_state();
     
     teardown_map_serializer();
-    //teardown_item_serializer();    
 
-    redis::teardown();
+    teardown_redis();   // MUST COME FIRST -- all callbacks/data need to return results
+    teardown_items();
 }
 
 void update()
@@ -54,13 +56,7 @@ void update()
 
     if (!Options::serializer) return;
 
-    redis::update();
-}
-
-// TODO -- move the redis shit back up to the serializer namespace
-void save_player_container(int client_id, int container_id, bool remove_items_after)
-{
-    redis::save_player_container(client_id, container_id, remove_items_after);
+    update_redis();
 }
 
 }   // serializer

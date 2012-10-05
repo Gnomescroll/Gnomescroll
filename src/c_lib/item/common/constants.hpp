@@ -43,8 +43,6 @@ const float DEFAULT_FIRING_RANGE = 4.0f;
 
 const float OBJECT_DEPTH_MAX = -128.0f;
 
-const int AGENT_HAND = NULL_CONTAINER - 1;
-
 const int ITEM_PARTICLE_HARD_MAX = NULL_PARTICLE;   // (highest ID will be NULL_PARTICLE - 1
 const int ITEM_PARTICLE_MAX = ITEM_PARTICLE_HARD_MAX; // initial (just start maxed out)
 

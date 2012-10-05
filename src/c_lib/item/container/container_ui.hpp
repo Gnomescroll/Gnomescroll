@@ -180,6 +180,40 @@ class ItemContainerUI: public ItemContainerUIInterface
         {}
 };
 
+class ItemContainerHandUI: public ItemContainerUIInterface
+{
+    public:
+
+        int get_item_durability()
+        {
+            return ItemContainerUIInterface::get_slot_durability(0);
+        }
+
+        int get_item_stack()
+        {
+            return ItemContainerUIInterface::get_slot_stack(0);
+        }
+
+        int get_item_type()
+        {
+            return ItemContainerUIInterface::get_slot_type(0);
+        }
+
+        void insert_item(int item_type, int stack_size, int durability)
+        {
+            ItemContainerUIInterface::insert_item(0, item_type, stack_size, durability);
+        }
+
+        void remove_item()
+        {
+            ItemContainerUIInterface::remove_item(0);
+        }
+
+        explicit ItemContainerHandUI(int id)
+        : ItemContainerUIInterface(id)
+        {}
+};
+
 class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
 {
     public:

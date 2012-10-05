@@ -169,8 +169,31 @@ class ItemContainerInterface
 class ItemContainer: public ItemContainerInterface
 {
     public:
-
         ItemContainer(ItemContainerType type, int id)
+        : ItemContainerInterface(type, id)
+        {}
+};
+
+class ItemContainerHand: public ItemContainerInterface
+{
+    public:
+
+        ItemID get_item()
+        {
+            return ItemContainerInterface::get_item(0);
+        }
+
+        void remove_item()
+        {
+            ItemContainerInterface::remove_item(0);
+        }
+
+        void insert_item(ItemID item_id)
+        {
+            ItemContainerInterface::insert_item(0, item_id);
+        }
+        
+        ItemContainerHand(ItemContainerType type, int id)
         : ItemContainerInterface(type, id)
         {}
 };

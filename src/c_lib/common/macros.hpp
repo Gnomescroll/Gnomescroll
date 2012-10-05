@@ -15,18 +15,20 @@
 #define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT(mech_type >= 0 && mech_type < t_mech::MAX_MECHS)
 #define IF_INVALID_MECH_TYPE(mech_type) if (mech_type < 0 || mech_type >= t_mech::MAX_MECHS) 
 
-#define GS_ABORT() do {\
-printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__);\
-print_trace();\
-exit(1);\
-}while(0)
+#define GS_ABORT() \
+    do \
+    { \
+        printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__); \
+        print_trace(); \
+        exit(1); \
+    } while(0);
 
 #define ASSERT_NOT_NULL(p) \
-if(p == NULL) \
-{ \
-fprintf (stderr, "ASSERT_NOT_NULL: %s error: %s, line %d \n", __func__, __FILE__, __LINE__); \
-return; \
-}
+    if ((p) == NULL) \
+    { \
+        fprintf(stderr, "ASSERT_NOT_NULL: %s error: %s, line %d \n", __func__, __FILE__, __LINE__); \
+        return; \
+    }
 
 // macro stringification
 #define STR2(x) #x

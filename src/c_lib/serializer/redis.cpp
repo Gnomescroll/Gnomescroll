@@ -5,8 +5,6 @@
 
 namespace serializer
 {
-namespace redis
-{
 
 // TODO -- enum label in the *note field to indicate request type, handle more specifically from that
 // TODO -- wrap higher level transactions
@@ -15,7 +13,7 @@ namespace redis
 redisAsyncContext* ctx = NULL;
 static bool waiting_to_connect = false; 
 static bool waiting_to_disconnect = false; 
-bool connected = false;
+bool redis_connected = false;
 
 static void handle_reply(redisReply* reply)
 {
@@ -66,13 +64,13 @@ void connectCallback(const redisAsyncContext *ctx, int status)
     waiting_to_connect = false;
     if (status == REDIS_OK)
     {
-        printf("Redis connected...\n");
-        connected = true;
+        printf("Redis redis_connected...\n");
+        redis_connected = true;
     }
     else
     {
         printf("Redis connect error: %s\n", ctx->errstr);
-        connected = false;
+        redis_connected = false;
     }
 }
 
@@ -82,8 +80,8 @@ void disconnectCallback(const redisAsyncContext *ctx, int status)
     if (status != REDIS_OK)
         printf("Redis disconnect error: %s\n", ctx->errstr);
 
-    GS_ASSERT(connected);
-    connected = false;
+    GS_ASSERT(redis_connected);
+    redis_connected = false;
 
     GS_ASSERT(ctx != NULL);
 
@@ -95,8 +93,8 @@ void disconnectCallback(const redisAsyncContext *ctx, int status)
 
 void connect()
 {
-    GS_ASSERT(!connected);
-    if (connected) return;
+    GS_ASSERT(!redis_connected);
+    if (redis_connected) return;
     
     // CONNECT NEW
     waiting_to_connect = true;
@@ -147,7 +145,7 @@ void connect()
 void disconnect()
 {
     if (ctx == NULL) return;
-    GS_ASSERT(connected);
+    GS_ASSERT(redis_connected);
     redisAsyncDisconnect(ctx);
 }
 
@@ -166,7 +164,7 @@ void init_redis()
 
 void teardown_redis()
 {
-    if (!connected)
+    if (!redis_connected)
     {
         if (ctx != NULL)
             redisAsyncFree(ctx);
@@ -188,9 +186,8 @@ void teardown_redis()
 void update_redis()
 {
     ev_loop(EV_DEFAULT_ EVLOOP_NONBLOCK);
-    if (!connected && !waiting_to_connect)
+    if (!redis_connected && !waiting_to_connect)
         connect();
 }
 
-}   // redis
 }   // serializer

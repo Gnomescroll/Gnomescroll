@@ -175,7 +175,7 @@ void ItemList::verify_items()
         {
             VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
             VERIFY_ITEM(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT, i); // WARNING -- assumes client_id==agent_id
-            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::agent_hand_list[i->location_id] == i->id, LIMIT, i);
+            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::get_agent_hand_item(i->location_id) == i->id, LIMIT, i);
         }
         else
         if (i->location == IL_CONTAINER)

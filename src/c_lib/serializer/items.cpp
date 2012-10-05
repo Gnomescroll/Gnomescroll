@@ -1,450 +1,322 @@
 #include "items.hpp"
 
-#include <stdio.h>
-#include <stdint.h>
+#include <common/template/elastic_simple_object_list.hpp>
+#include <item/common/enum.hpp>
+#include <serializer/constants.hpp>
+#include <serializer/redis.hpp>
 
-#include <common/files.hpp>
-#include <item/_interface.hpp>
+// PER UNIT MODULE:
+// PIPELINING   -- is default, with async
+// MULTI/EXEC   -- is only needed when we have multiple redis clients accessing the same db.
+    // at this point, we would batch everything in MULTIs with WATCH
+    // ACTUALLY -- multi/exec is deprecated for the lua scripting. we will use transactional lua scripts at that point.
+// ERROR HANDLING -- WRITING TO DISK
+// LOADING DATA
+// SAVE STATE INFO ON THE ITEM ITSELF (NEEDS_SAVING etc)
+
+#include <item/common/constants.hpp>
 
 namespace serializer
 {
 
-// TODO -- record all errors to a file. email? save the data too?
-// TODO -- memcpy all data to a thread
-// TODO -- write to .bak file first, then copy over
-// TODO -- move invalid parsed files to "invalid" subfolder
-// TODO -- apply rename mappings
-// TODO -- if the global id file is missing or the id is not >= the highest folder number, problem
-            // this is initialization, so its ok to check
+// Saving a player:
+// Save all player metadata
+// Save all container items from player
+// After all items in player's container have their gids (check periodically)
+// Then add the gids to a set for player
+    // Unfortunately, cannot attach a set to a player hash key
+    // So need a separate key
+    // player:items:<user_id>   -- 
+    // player:<user_id> -- hash. we need to add a hashkey to the player's items set key, if we want to rename things
 
-// ACtually we can't do 1 file per item because of inodes
-// They'll need to be packed in an inventory
+// We're going to need separate lists for items, containers and clients/agents, while they are being saved?
+    // Yes. Additionally, if they are to be removed after saving, we can simply remove them from the pool when copied to the save buffer
+    // There are some issues with the periodic saving; we have to make sure to only remove the reference of item in main pool, if its current in the save pool,
+        // and the save pool needs to know so that it will delete it
 
-int64_t item_global_id = 0;
+// Container saving:
+    // First, the container needs a gid
+    // Then, we need to save its contents as normal, collecting all gids (use the save data struct to help keep track)
+    // Once all ids are acquired, then we can save the ids to the set for the container
 
-typedef enum
-{
-    ITEM_PARSE_TOKEN_ID = 0,
-    ITEM_PARSE_TOKEN_TYPE,
-    ITEM_PARSE_TOKEN_LOCATION,
-    ITEM_PARSE_TOKEN_DURABILITY,
-    ITEM_PARSE_TOKEN_STACK_SIZE,
-}   ItemParseToken;
+// Loading Player
+    // HMGET his data
+    // get his set of inventory ids
+        // PROBLEM: we cannot hash to a set, but we need a way to encode each container he has
+            // SOLUTIONS:
 
-const int TOKEN_LENGTH = 3;
-const int N_TOKENS = ITEM_PARSE_TOKEN_STACK_SIZE + 1;
+                // One key per container type per player, mapping to the set
+                    // --REQ: N extra keys per player
+                    
+                // When saving an item, and location is IL_CONTAINER, and container is attached_to_agent,
+                    // save location_id as the type of container it is, for the agent
+                    // --REQ: extra processing iin the server save/load
 
-const char ITEM_PARSE_TOKENS[N_TOKENS][TOKEN_LENGTH+1] =
-{
-    #define ITEM_ID_TOKEN         "GID"
-             ITEM_ID_TOKEN,
-             
-    #define ITEM_TYPE_TOKEN       "TYP"
-             ITEM_TYPE_TOKEN,
-             
-    #define ITEM_LOC_TOKEN        "LOC"
-             ITEM_LOC_TOKEN,
-             
-    #define ITEM_DURABILITY_TOKEN "DUR"
-             ITEM_DURABILITY_TOKEN,
-             
-    #define ITEM_STACK_SIZE_TOKEN "STK"
-             ITEM_STACK_SIZE_TOKEN
-};
+                // go with the 2nd one, as it is more compact.
 
-const int ITEM_PARSE_TOKEN_PARTS[] =
-{ 
-    #define ITEM_ID_TOKEN_PARTS         1
-             ITEM_ID_TOKEN_PARTS,
+                    // on save, translate IL_CONTAINER to IL_PLAYER
+                    // translate location_id to the type of container it is
+                    
+                    // on load, check that it is IL_PLAYER (we will be expecting it, as we should only load it for the player)
+                    // change location to IL_CONTAINER
+                    // change location_id to the id of that container type attached to the agent
 
-    #define ITEM_TYPE_TOKEN_PARTS       1
-             ITEM_TYPE_TOKEN_PARTS,
+// DATA THAT CANNOT BE CHANGED -- must use strings, and a renaming scheme for names that change
+        // Container types
+        // Item types
+        // Item.location type
 
-    #define ITEM_LOC_TOKEN_PARTS        3
-             ITEM_LOC_TOKEN_PARTS,
-             
-    #define ITEM_DURABILITY_TOKEN_PARTS 1
-             ITEM_DURABILITY_TOKEN_PARTS,
-             
-    #define ITEM_STACK_SIZE_TOKEN_PARTS 1
-             ITEM_STACK_SIZE_TOKEN_PARTS
-};
-
-class ParseItemData
+class PlayerItemSaveData
 {
     public:
-    
-        int64_t global_id;
-        char name[Item::ITEM_NAME_MAX_LENGTH+1];
-        ItemLocationType location;
-        int location_id;
-        int container_slot;
-        int durability;
-        int stack_size;
-
-    SerializerError check_values()
+        int id;
+        int user_id;
+        ItemID item_id;
+        bool remove_item_after;
+        LocationNameID location_name_id;
+        
+    void reset()
     {
-        if (this->global_id <= 0)
-            return SE_LOAD_ITEM_INVALID_GLOBAL_ID;
-        if (this->durability <= 0 || this->durability > NULL_DURABILITY)
-            return SE_LOAD_ITEM_INVALID_DURABILITY;
-        if (this->stack_size <= 0 || this->stack_size > NULL_STACK_SIZE)
-            return SE_LOAD_ITEM_INVALID_STACK_SIZE;
-        if (!Item::is_valid_location_data(this->location, this->location_id, this->container_slot, 0))
-            return SE_LOAD_ITEM_INVALID_LOCATION;
-        if (!Item::is_valid_item_name(this->name))
-            return SE_LOAD_ITEM_INVALID_NAME;
-
-        return SE_NONE;
+        this->user_id = 0;
+        this->item_id = NULL_ITEM;
+        this->remove_item_after = false;
+        this->location_name_id = LN_NONE;
     }
 
-    ParseItemData() :
-    global_id(0),
-    location(IL_NOWHERE),
-    location_id(NULL_LOCATION),
-    container_slot(NULL_SLOT),
-    durability(NULL_DURABILITY),
-    stack_size(NULL_STACK_SIZE)
+    void print()
     {
-        memset(name, Item::ITEM_NAME_MAX_LENGTH+1, sizeof(char));
+        printf("id: %d - user_id: %d - item_id: %d - remove: %d - location_name - %s\n",
+            this->id, this->user_id, this->item_id, this->remove_item_after, get_location_name(this->location_name_id)); 
+    }
+
+    PlayerItemSaveData()
+    : id(-1)
+    {
+        this->reset();
     }
 };
 
-static char* item_load_buffer = NULL;
-static size_t item_load_buffer_size = 0;
+// Double the max connections should be more than enough to avoid filling up this list
+// The server would have to be full, everyone disconnect, reconnect, and disconnect, before redis replies at all
+// Of course, redis could be down, or whatever so we still should handle errors
 
-void init_item_serializer()
+// TODO -- elastic
+class PlayerItemSaveDataList: public ElasticObjectList<PlayerItemSaveData, 1024>
 {
-    // starting sizes for the readline buffer
-    item_load_buffer_size = 32; 
-    item_load_buffer = (char*)malloc(item_load_buffer_size * sizeof(char));
+    public:
+        const char* name() { return "PlayerItemSaveDataList"; }
 
-    SerializerError err = load_item_global_id();
-    GS_ASSERT(err == SE_NONE);
+    PlayerItemSaveDataList() { this->print(); }
+};
+
+// cache for player data passed around in the redis callbacks
+static class PlayerItemSaveDataList* player_item_save_data_list = NULL;
+
+// continuous, sequential array of all possible (local) ItemIDs (0 to MAX_ITEMS-1)
+// used for the void *data data passed around in the redis callbacks 
+static ItemID* item_id_cache = NULL;
+
+
+void init_items()
+{
+    GS_ASSERT(item_id_cache == NULL);
+    if (item_id_cache == NULL)
+    {
+        item_id_cache = (ItemID*)malloc(MAX_ITEMS * sizeof(ItemID));
+        for (int i=0; i<MAX_ITEMS; i++)
+            item_id_cache[i] = (ItemID)i;
+    }
+
+    GS_ASSERT(player_item_save_data_list == NULL);
+    if (player_item_save_data_list == NULL)
+        player_item_save_data_list = new PlayerItemSaveDataList;
 }
 
-void teardown_item_serializer()
+void teardown_items()
 {
-    SerializerError err = write_item_global_id();
-    GS_ASSERT(err == SE_NONE);
-
-    if (item_load_buffer != NULL) free(item_load_buffer);
+    if (item_id_cache != NULL) delete item_id_cache;
+    if (player_item_save_data_list != NULL) delete player_item_save_data_list;
 }
 
-static const char* get_item_filename(int64_t global_id)
-{   // make filename
-    static const int fnlen = sizeof(item_filename_fmt) + 10 - 4;
-    static char fnbuf[fnlen+1];
-    int ret = snprintf(fnbuf, fnlen+1, item_filename_fmt, global_id);
-    GS_ASSERT(ret < fnlen+1);   // did we fit the filename into the buffer
-    if (ret >= fnlen + 1) return NULL;
-    return fnbuf;
-}
-
-SerializerError save_item(ItemID item_id)
+static void item_gid_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
-    // get item
-    Item::Item* item = Item::get_item(item_id);
+    redisReply* reply = (redisReply*)_reply;
+    
+    PlayerItemSaveData* data = (PlayerItemSaveData*)_data;
+
+    class Item::Item* item = Item::get_item(data->item_id);
     GS_ASSERT(item != NULL);
-    if (item == NULL) return SE_SAVE_ITEM_ITEM_NOT_FOUND;
-    GS_ASSERT(item_id == item->id);
-    if (item_id != item->id) return SE_SAVE_ITEM_ITEM_ID_MISMATCH;
-    const char* name = Item::get_item_name(item->type);
-    if (name == NULL) return SE_SAVE_ITEM_ITEM_NAME_NOT_FOUND;
+    if (item == NULL) return;   // TODO -- log error
+    GS_ASSERT(item->global_id == 0)
+    if (item->global_id != 0) return;
 
-    // TODO -- assert valid values on item before writing
-    if (!item->valid) return SE_SAVE_ITEM_INVALID_ITEM_STATE;
-    if (item->global_id <= 0) return SE_SAVE_ITEM_INVALID_GLOBAL_ID;
-    if (item->durability < 0) return SE_SAVE_ITEM_INVALID_DURABILITY;
-    if (item->stack_size < 0) return SE_SAVE_ITEM_INVALID_STACK_SIZE;
-    if (!Item::is_valid_item_name(name)) return SE_SAVE_ITEM_INVALID_ITEM_NAME;
-    
-    // get filename
-    const char* fn = get_item_filename(item->global_id);
-    GS_ASSERT(fn != NULL);
-    if (fn == NULL) return SE_SAVE_ITEM_FILENAME_LONG;
-
-    // create file
-    FILE* fp = fopen(fn, "w");
-    GS_ASSERT(fp != NULL);
-    if (fp == NULL) return SE_SAVE_ITEM_NULL_FILE;
-
-    #define HANDLE_ITEM_SAVE_WRITE_FAIL(ret) \
-        if (ret < 0) \
-        { \
-            save_error = SE_SAVE_ITEM_WRITE_DATA_FAILED; \
-            fclose(fp); \
-            fopen(fn, "w"); \
-            fclose(fp); \
-            fp = NULL; \
-            goto cleanup; \
-        }
-
-    // write data
-    int ret = -1;
-    SerializerError save_error = SE_NONE;
-    ret = fprintf(fp, ITEM_ID_TOKEN " %019lld\n", item->global_id);
-    HANDLE_ITEM_SAVE_WRITE_FAIL(ret)
-    
-    ret = fprintf(fp, ITEM_TYPE_TOKEN " %s\n", name);
-    HANDLE_ITEM_SAVE_WRITE_FAIL(ret)
-
-    ret = fprintf(fp, ITEM_LOC_TOKEN " %d %d %d\n", item->location, item->location_id, item->container_slot);
-    HANDLE_ITEM_SAVE_WRITE_FAIL(ret)
-
-    ret = fprintf(fp, ITEM_DURABILITY_TOKEN " %d\n", item->durability);
-    HANDLE_ITEM_SAVE_WRITE_FAIL(ret)
-
-    ret = fprintf(fp, ITEM_STACK_SIZE_TOKEN " %d\n", item->stack_size);
-    HANDLE_ITEM_SAVE_WRITE_FAIL(ret)
-
-    #undef HANDLE_ITEM_SAVE_WRITE_FAIL
-
-    // cleanup
-    cleanup:
-        if (fp != NULL) fclose(fp);
-
-    return save_error;
+    if (reply->type == REDIS_REPLY_INTEGER)
+    {
+        item->global_id = (int64_t)reply->integer;
+        // schedule actual save now
+        save_item(item, data->location_name_id, data);   // TODO -- handle error reply from this
+    }
+    else
+    if (reply->type == REDIS_REPLY_ERROR)
+    {
+        GS_ASSERT(false);
+        printf("Item gid acquisition failed with error: %s\n", reply->str);
+    }
+    else
+    {
+        GS_ASSERT(false);
+        printf("Warning: unhandled redis reply type %d received for item_gid_cb\n", reply->type);
+    }
 }
 
-static SerializerError parse_item_line(char* line, size_t size, class ParseItemData* data)
+static void item_save_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
-    // replace spaces with NUL, checking for valid initial token
-    char c;
-    int i = 0;
-    bool space_found = false;
-    bool mark_piece = false;
-    int token_len = 0;
-    int pieces = 0;
-    while ((c = line[i++]) != '\0')
-    {
-        if (!space_found) token_len++; 
-        if (mark_piece)
-        {   // increment the piece now (a space was found)
-            pieces++;
-            mark_piece = false;
-        }
-        if (isspace(c))
-        {
-            // dont check isspace(c) for the following, because '\n' will get caught by it,
-            // and '\n' is not guaranteed to end the last line 
-            if (c == ' ') mark_piece = true;    // mark the piece counter on the next cycle
-            
-            line[i-1] = '\0';
-            if (!space_found)
-                space_found = true;
-        }
-    }
+    redisReply* reply = (redisReply*)_reply;
 
-    if (token_len != TOKEN_LENGTH)
-        return SE_PARSE_ITEM_INVALID_TOKEN_LENGTH;
-
-    // match token against known tokens
-    char* token = line;
-    int token_id = 0;
-    for (token_id=0; token_id<N_TOKENS; token_id++)
-        if (strcmp(ITEM_PARSE_TOKENS[token_id], token) == 0)
-            break;
-
-    // token wasnt found
-    // we could probably recover, but assume the file is fucked up and report it
-    if (token_id >= N_TOKENS)
-        return SE_PARSE_ITEM_UNRECOGNIZED_TOKEN;
-
-    // the token piece count does not match
-    if (ITEM_PARSE_TOKEN_PARTS[token_id] != pieces)
-        return SE_PARSE_ITEM_BAD_PIECES_COUNT;
-
-    int index = TOKEN_LENGTH + 1;
-    char* piece = &token[index];    // skip to the first piece. its safe, if the line splitter checks ahead of time
-    char* endptr = NULL;
-    unsigned long uconvert = 0;
-    long convert = 0;
-
-    SerializerError parse_error = SE_NONE;
-    
-    // now pull data from pieces
-    switch ((ItemParseToken) token_id)
-    {
-        case ITEM_PARSE_TOKEN_ID:
-            uconvert = strtoul(piece, &endptr, 10);
-            if (uconvert > UINT32_MAX || piece[0] == '\0' || endptr[0] != '\0')
-                parse_error = SE_PARSE_ITEM_INVALID_GLOBAL_ID;
-            data->global_id = (int64_t)convert;
-            break;
-            
-        case ITEM_PARSE_TOKEN_TYPE:
-            strncpy(data->name, piece, Item::ITEM_NAME_MAX_LENGTH+1);
-            break;
-
-        case ITEM_PARSE_TOKEN_LOCATION:
-            convert = strtol(piece, &endptr, 10);
-            if (convert > INT_MAX || convert > INT_MAX || piece[0] == '\0' || endptr[0] != '\0')
-                parse_error = SE_PARSE_ITEM_INVALID_LOCATION;
-            data->location = (ItemLocationType)convert;
-                
-            while (piece[index++] != '\0'); // jump to next token
-            piece = &piece[index];
-            convert = strtol(piece, &endptr, 10);
-            if (convert > INT_MAX || piece[0] == '\0' || endptr[0] != '\0')
-                parse_error = SE_PARSE_ITEM_INVALID_LOCATION_ID;
-            data->location_id = convert;
-                
-            while (piece[index++] != '\0'); // jump to next token
-            piece = &piece[index];
-            convert = strtol(piece, &endptr, 10);
-            if (convert > INT_MAX || piece[0] == '\0' || endptr[0] != '\0')
-                parse_error = SE_PARSE_ITEM_INVALID_CONTAINER_SLOT;
-            data->container_slot = convert;
-            break;
-
-        case ITEM_PARSE_TOKEN_DURABILITY:
-            convert = strtol(piece, &endptr, 10);
-            if (convert > INT_MAX || piece[0] == '\0' || endptr[0] != '\0')
-                parse_error = SE_PARSE_ITEM_INVALID_DURABILITY;
-            data->durability = convert;
-            break;
-
-        case ITEM_PARSE_TOKEN_STACK_SIZE:
-            convert = strtol(piece, &endptr, 10);
-            if (convert > INT_MAX || piece[0] == '\0' || endptr[0] != '\0')
-                parse_error = SE_PARSE_ITEM_INVALID_STACK_SIZE;
-            data->stack_size = convert;
-            break;
-
-        default:
-            // this should never ever occur
-            parse_error = SE_PARSE_ITEM_IMPOSSIBLE_TOKEN_MATCH;
-            break;
-    }
-
-    return parse_error;
-}
-
-SerializerError load_item(int64_t global_id)
-{
-    // get filemae
-    const char* fn = get_item_filename(global_id);
-    if (fn == NULL) return SE_LOAD_ITEM_FILENAME_LONG;
-
-    // open file
-    FILE* fp = fopen(fn, "r");
-    if (fp == NULL) return SE_LOAD_ITEM_FILE_NULL;
-
-    Item::Item* item = NULL;
-    int item_type = NULL_ITEM_TYPE;
-    SerializerError parse_error = SE_NONE;
-    class ParseItemData data;
-
-    // parse file line by line
-    while (getline(&item_load_buffer, &item_load_buffer_size, fp) >= 0)
-    {
-        parse_error = parse_item_line(item_load_buffer, item_load_buffer_size, &data);
-        if (parse_error != SE_NONE)
-            goto cleanup;
-    }
-
-    // TODO -- check data values
-    parse_error = data.check_values();
-    if (parse_error != SE_NONE)
-        goto cleanup;
-
-    // TODO -- apply rename mappings
-
-    // get type for name, checking that its valid
-    item_type = Item::get_item_type(data.name);
-    if (item_type == NULL_ITEM_TYPE)
-    {
-        parse_error = SE_LOAD_ITEM_NAME_UNRECOGNIZED;
-        goto cleanup;
-    }
-    
-    // create the item
-    item = Item::create_item(item_type);
+    PlayerItemSaveData* data = (PlayerItemSaveData*)_data;
+    class Item::Item* item = Item::get_item(data->item_id);
+    GS_ASSERT(item != NULL);
     if (item == NULL)
     {
-        parse_error = SE_LOAD_ITEM_CREATE_ITEM_FAILED;
-        goto cleanup;
+        printf("Item not found for player item save: ");
+        data->print();
     }
 
-    // set the properties
-    item->global_id = data.global_id;
-    item->location = data.location;
-    item->location_id = data.location_id;
-    item->container_slot = data.container_slot;
-    item->durability = data.durability;
-    item->stack_size = data.stack_size;
-
-    // cleanup
-    cleanup:
-        if (fp != NULL) fclose(fp);
-
-    return parse_error;
-}
-
-void save_items()
-{
-    using Item::item_list;
-    GS_ASSERT(item_list != NULL);
-    if (item_list == NULL) return;
-
-    // bulk memcpy for threaded write first
-    
-    for (int i=0; i<item_list->n_max; i++)
-        if (item_list->a[i] != NULL)
-            save_item((ItemID)i);
-}
-
-SerializerError load_item_global_id()
-{
-    GS_ASSERT(item_global_id == 0);
-
-    if (!file_exists(item_global_id_filename)) return SE_NONE;
-    
-    int n = -1;
-    char* buf = read_file_to_buffer(item_global_id_filename, &n);
-    GS_ASSERT(buf != NULL);
-    GS_ASSERT(n > 0);
-
-    // TODO -- this is an error if the global id is not found but there are items floating around in the folder
-    // item id rollover is not a problem -- we'll have a separate item server by then that will handle it
-    
-    if (buf == NULL || n <= 0)
+    if (reply->type == REDIS_REPLY_STATUS)
     {
-        item_global_id = 0;
-        return SE_LOAD_ITEM_GLOBAL_ID_FILE_ERROR;
+        if (item != NULL)
+        {
+            item->save_state = ISS_SAVED;
+            if (data->remove_item_after)
+                Item::destroy_item(item->id);
+        }
+    }
+    else
+    if (reply->type == REDIS_REPLY_ERROR)
+    {
+        GS_ASSERT(false);
+        printf("Item saving failed with error: %s\n", reply->str);
+    }
+    else
+    {
+        GS_ASSERT(false);
+        printf("Unhandled reply received from redis for item saving\n");
     }
 
-    item_global_id = (int32_t)atoi(buf);
-    free(buf);
-
-    GS_ASSERT(item_global_id > 0);
-    if (item_global_id <= 0) return SE_LOAD_ITEM_GLOBAL_ID_INVALID;
-
-    return SE_NONE;
+    player_item_save_data_list->destroy(data->id);
 }
 
-SerializerError write_item_global_id()
+static bool make_item_gid(class Item::Item* item, void* data)
 {
-    if (item_global_id == 0) return SE_NONE;
+    GS_ASSERT(ctx != NULL);
+    if (ctx == NULL) return false;
 
-    FILE* fp = fopen(item_global_id_filename, "w");
-    GS_ASSERT(fp != NULL);
-    if (fp == NULL) return SE_WRITE_ITEM_GLOBAL_ID_FILE_ERROR;
+    item->save_state = ISS_WAITING_FOR_GID;
 
-    fprintf(fp, "%019lld", item_global_id);
+    int ret = redisAsyncCommand(ctx, &item_gid_cb, data, "INCR item:gid");
+    GS_ASSERT(ret == REDIS_OK);
+    return (ret == REDIS_OK);
+}
 
-    fclose(fp);
+int save_item(class Item::Item* item, LocationNameID location_name_id, void* data)
+{   // return -1 for error, 0 for success, 1 for wait
+    GS_ASSERT(ctx != NULL);
+    if (ctx == NULL) return -1;
+
+    if (item->global_id == 0)
+    {
+        bool ret = make_item_gid(item, data);
+        if (ret) return 1;
+        return -1;
+    }
+
+    const char* item_name = Item::get_item_name(item->type);
+    GS_ASSERT(item_name != NULL);
+    if (item_name == NULL) return -1;
+
+    const char* location_name = get_location_name(location_name_id);
+    GS_ASSERT(location_name != NULL);
+    if (location_name == NULL) return -1;
+
+    // TODO -- location_id must be translated to a global id for that type
+    // This means we need to get a gid for containers when they are created
+        // or when they are first serialized
+    // We sort of need to save hands in case of crash? -- ignore for now.
+        // later we can have a magical "lost items" container appear for handling items
+        // that cant be fit in the container but need to be given back to the player
+
+    int ret = redisAsyncCommand(ctx, &item_save_cb, data,
+        "HMSET item:%lld " // key
+        "%s %lld "  // global id
+        "%s %s "    // item name
+        "%s %d "    // durability
+        "%s %d "    // stack size
+        "%s %s "    // location name   ("player:[hand,inventory,energy_tanks,etc} [container attached to agent]","container", "particle")
+        "%s %d "    // location id     (meaning is depedent on location_name. for player it is player id. for container it is container id. for particle it is nothing (server id maybe later -- might be separate field))
+        "%s %d",    // container slot (only relevant if container)
+            item->global_id,
+            "global_id",      item->global_id,
+            "name",           item_name,
+            "durability",     item->durability,
+            "stack_size",     item->stack_size,
+            "location",       location_name,
+            "location_id",    item->location_id,
+            "container_slot", item->container_slot);
+
+    GS_ASSERT(ret == REDIS_OK);
+    if (ret == REDIS_OK) return 0;
+    return -1;
+}
+
+
+// do similar for hand etc
+// TODO -- just make hand a fucking container?
+
+void save_player_container(int client_id, int container_id, bool remove_items_after)
+{
+    GS_ASSERT(player_item_save_data_list != NULL);
+    if (player_item_save_data_list == NULL) return; // TODO -- log error
     
-    return SE_NONE;
-}
+    GS_ASSERT(ctx != NULL);
+    if (ctx == NULL) return;    // TODO -- log error
 
-int64_t get_new_item_global_id()
-{
-    GS_ASSERT(item_global_id != UINT32_MAX);
-    // TODO -- report error
-    if (item_global_id == UINT32_MAX) return 0;
-    return ++item_global_id;
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return; // TODO -- log error
+    NetPeerManager* npm = NetServer::clients[client_id];
+    GS_ASSERT(npm != NULL);
+    if (npm == NULL) return;    // TODO -- log error
+
+    ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;  // TODO -- log error
+    GS_ASSERT(container->attached_to_agent);
+    if (!container->attached_to_agent) return;  // TODO -- log error
+
+    LocationNameID location_name_id = get_player_location_name_id(container->type);
+    
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+
+        class Item::Item* item = Item::get_item(container->slot[i]);
+        GS_ASSERT(item != NULL);
+        if (item == NULL) continue;
+
+        class PlayerItemSaveData* data = player_item_save_data_list->create();
+        GS_ASSERT(data != NULL);
+        if (data == NULL) return;   // TODO -- log error
+        data->user_id = npm->user_id;
+        data->item_id = item->id;
+        data->remove_item_after = remove_items_after;
+        data->location_name_id = LN_CONTAINER;
+        GS_ASSERT(data->item_id != NULL_ITEM);
+        
+        item->save_state = ISS_WAITING_FOR_SAVE;
+        
+        int ret = save_item(item, location_name_id, data);
+        GS_ASSERT(ret >= 0);
+        if (ret < 0) printf("Error saving item: %lld:%d\n", item->global_id, item->id);
+    }
 }
 
 }   // serializer

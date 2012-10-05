@@ -1,82 +1,157 @@
 #pragma once
 
-// paths
+#include <item/container/config/_state.hpp>
 
+// Map and mechs (flat file data)
 #define DATA_PATH "./world/"
-
 #define INVALID_DATA_SUBPATH "invalid/"
-
-#define MAP_DATA_PATH       DATA_PATH "map/"
-#define MECH_DATA_PATH      DATA_PATH "mechs/"
-#define PLAYER_DATA_PATH    DATA_PATH "players/"
-#define CONTAINER_DATA_PATH DATA_PATH "containers/"
-#define ITEM_DATA_PATH      DATA_PATH "items/"
-
-#define MAP_DATA_EXT       ".map"
-#define MECH_DATA_EXT      ".mch"
-#define PLAYER_DATA_EXT    ".ply"
-#define CONTAINER_DATA_EXT ".ctr"
-#define ITEM_DATA_EXT      ".itm"
-
+#define MAP_DATA_PATH  DATA_PATH "map/"
+#define MECH_DATA_PATH DATA_PATH "mechs/"
+#define MAP_DATA_EXT  ".map"
+#define MECH_DATA_EXT ".mch"
 const char default_map_file[] = MAP_DATA_PATH "map-" STR(GS_VERSION) MAP_DATA_EXT;
 const char mech_filename[] = MECH_DATA_PATH "mech-" STR(GS_VERSION) MECH_DATA_EXT;
 
-const char item_filename_fmt[] = ITEM_DATA_PATH "item-%010d" ITEM_DATA_EXT;
-const char container_filename_fmt[] = CONTAINER_DATA_PATH "container-%010d" CONTAINER_DATA_EXT;
-const char player_filename_fmt[] = PLAYER_DATA_PATH "%s" PLAYER_DATA_EXT;
 
-const char item_global_id_filename[] = ITEM_DATA_PATH "global.id";
+/*
+ * REDIS DATA
+ */
+
+// DONT CHANGE THESE
+#define CONTAINER_LOCATION_NAME "container"
+#define PARTICLE_LOCATION_NAME "particle"
+#define PLAYER_INVENTORY_LOCATION_NAME "player:inventory"
+#define PLAYER_ENERGY_TANKS_LOCATION_NAME "player:energy_tanks"
+#define PLAYER_SYNTHESIZER_LOCATION_NAME "player:synthesizer"
+#define PLAYER_TOOLBELT_LOCATION_NAME "player:toolbelt"
+#define PLAYER_HAND_LOCATION_NAME "player:hand"
+
+// The following are not safe to store -- they are only valid per compilation. Only strings are safe
 
 typedef enum
 {
-    SE_NONE = 0,
+    LN_NONE,
+    LN_CONTAINER,
+    LN_PARTICLE,    
+    LN_PLAYER_HAND,
+    LN_PLAYER_INVENTORY,
+    LN_PLAYER_ENERGY_TANKS,
+    LN_PLAYER_TOOLBELT,
+    LN_PLAYER_SYNTHESIZER,
+} LocationNameID;
 
-    // item saving
-    SE_SAVE_ITEM_ITEM_NOT_FOUND,
-    SE_SAVE_ITEM_ITEM_ID_MISMATCH,
-    SE_SAVE_ITEM_ITEM_NAME_NOT_FOUND,
-    SE_SAVE_ITEM_FILENAME_LONG,
-    SE_SAVE_ITEM_NULL_FILE,
-    SE_SAVE_ITEM_WRITE_DATA_FAILED,
-    SE_SAVE_ITEM_INVALID_GLOBAL_ID,
-    SE_SAVE_ITEM_INVALID_ITEM_NAME,
-    SE_SAVE_ITEM_INVALID_DURABILITY,
-    SE_SAVE_ITEM_INVALID_STACK_SIZE,
-    SE_SAVE_ITEM_INVALID_ITEM_STATE,
+const char* get_location_name(LocationNameID loc_id)
+{
+    switch (loc_id)
+    {        
+        case LN_CONTAINER:
+            return CONTAINER_LOCATION_NAME;
+        case LN_PARTICLE:
+            return PARTICLE_LOCATION_NAME;
+        case LN_PLAYER_HAND:
+            return PLAYER_HAND_LOCATION_NAME;
+        case LN_PLAYER_ENERGY_TANKS:
+            return PLAYER_ENERGY_TANKS_LOCATION_NAME;
+        case LN_PLAYER_INVENTORY:
+            return PLAYER_INVENTORY_LOCATION_NAME;
+        case LN_PLAYER_SYNTHESIZER:
+            return PLAYER_SYNTHESIZER_LOCATION_NAME;
+        case LN_PLAYER_TOOLBELT:
+            return PLAYER_TOOLBELT_LOCATION_NAME;
+        case LN_NONE:
+        default:
+            GS_ASSERT(false);
+            return NULL;
+    }
+    GS_ASSERT(false);
+    return NULL;
+}
 
-    // item loading
-    SE_LOAD_ITEM_FILENAME_LONG,
-    SE_LOAD_ITEM_FILE_NULL,
-    SE_LOAD_ITEM_DATA_NOT_FOUND,
-    SE_LOAD_ITEM_CREATE_ITEM_FAILED,
-    SE_LOAD_ITEM_NAME_UNRECOGNIZED,
-    // these are different from SE_PARSE_ITEM_* of the same name, in that they are
-    // checked based on realistic values for items, and not just ascii parseability
-    SE_LOAD_ITEM_INVALID_GLOBAL_ID,
-    SE_LOAD_ITEM_INVALID_LOCATION,
-    SE_LOAD_ITEM_INVALID_DURABILITY,
-    SE_LOAD_ITEM_INVALID_STACK_SIZE,
-    SE_LOAD_ITEM_INVALID_NAME,
+LocationNameID get_player_location_name_id(ItemContainerType container_type)
+{
+    switch (container_type)
+    {
+
+        case AGENT_CONTAINER:
+            return LN_PLAYER_INVENTORY;
+        case AGENT_TOOLBELT:
+            return LN_PLAYER_TOOLBELT;
+        case AGENT_SYNTHESIZER:
+            return LN_PLAYER_SYNTHESIZER;
+        case AGENT_ENERGY_TANKS:
+            return LN_PLAYER_ENERGY_TANKS;
+        case AGENT_HAND:
+            return LN_PLAYER_HAND;
+
+        default:
+            GS_ASSERT(false);
+            return LN_NONE;
+    }
+    GS_ASSERT(false);
+    return LN_NONE;
+}
+
+void verify_config()
+{
+    GS_ASSERT_ABORT(strcmp(CONTAINER_LOCATION_NAME, "container") == 0);
+    GS_ASSERT_ABORT(strcmp(PARTICLE_LOCATION_NAME, "particle") == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_INVENTORY_LOCATION_NAME, "player:inventory") == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_ENERGY_TANKS_LOCATION_NAME, "player:energy_tanks") == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_SYNTHESIZER_LOCATION_NAME, "player:synthesizer") == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_TOOLBELT_LOCATION_NAME, "player:toolbelt") == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_HAND_LOCATION_NAME, "player:hand") == 0);
+
+    GS_ASSERT_ABORT(strcmp(get_location_name(LN_CONTAINER), "container") == 0);
+    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PARTICLE), "particle") == 0);
+    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_INVENTORY), "player:inventory") == 0);
+    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_ENERGY_TANKS), "player:energy_tanks") == 0);
+    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_SYNTHESIZER), "player:synthesizer") == 0);
+    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_TOOLBELT), "player:toolbelt") == 0);
+    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_HAND), "player:hand") == 0);
+
+    // check that all the expected containers are loaded
+    // this *could* be in item/container/config, but since the only reason this matters
+    // is because of the seriousness of the serializer, i'll leave it here
+    GS_ASSERT_ABORT(ItemContainer::container_attributes != NULL);
+
+    bool agent_container_found = false;
+    bool agent_toolbelt_found = false;
+    bool agent_synthesizer_found = false;
+    bool agent_energy_tanks_found = false;
+    bool agent_hand_found = false;
+
+    // make sure all container types are loaded
     
-    // parsing item file
-    SE_PARSE_ITEM_INVALID_TOKEN_LENGTH,
-    SE_PARSE_ITEM_UNRECOGNIZED_TOKEN,
-    SE_PARSE_ITEM_BAD_PIECES_COUNT,
-    SE_PARSE_ITEM_IMPOSSIBLE_TOKEN_MATCH,
-    // these are invalid if they are out of basic integer ranges or the data was
-    // invalid from an ascii perspective
-    SE_PARSE_ITEM_INVALID_GLOBAL_ID,
-    SE_PARSE_ITEM_INVALID_LOCATION,
-    SE_PARSE_ITEM_INVALID_LOCATION_ID,
-    SE_PARSE_ITEM_INVALID_CONTAINER_SLOT,
-    SE_PARSE_ITEM_INVALID_DURABILITY,
-    SE_PARSE_ITEM_INVALID_STACK_SIZE,
-    
-    // load item global id
-    SE_LOAD_ITEM_GLOBAL_ID_FILE_ERROR,
-    SE_LOAD_ITEM_GLOBAL_ID_INVALID,
-    
-    // write item global id
-    SE_WRITE_ITEM_GLOBAL_ID_FILE_ERROR,
-    
-} SerializerError;
+    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    {
+        ContainerAttributes* attr = &ItemContainer::container_attributes[i];
+        if (!attr->loaded || !attr->attached_to_agent) continue;
+        switch (attr->type)
+        {
+            case AGENT_CONTAINER:
+                agent_container_found = true;
+                break;
+            case AGENT_TOOLBELT:
+                agent_toolbelt_found = true;
+                break;
+            case AGENT_SYNTHESIZER:
+                agent_synthesizer_found = true;
+                break;
+            case AGENT_ENERGY_TANKS:
+                agent_energy_tanks_found = true;
+                break;
+            case AGENT_HAND:
+                agent_hand_found = true;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    GS_ASSERT_ABORT(agent_container_found);
+    GS_ASSERT_ABORT(agent_toolbelt_found);
+    GS_ASSERT_ABORT(agent_synthesizer_found);
+    GS_ASSERT_ABORT(agent_energy_tanks_found);
+    GS_ASSERT_ABORT(agent_hand_found);
+}

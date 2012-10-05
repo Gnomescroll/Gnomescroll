@@ -14,6 +14,7 @@ void load_map(const char* filename);
 void save_map();
 void wait_for_threads();
 
+// defined in items.hpp
 void save_player_container(int client_id, int container_id, bool remove_items_after);
 
 }   // serializer

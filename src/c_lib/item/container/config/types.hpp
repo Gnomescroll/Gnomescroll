@@ -19,6 +19,7 @@ class ContainerAttributes
     bool loaded;
 
     ItemContainerType type;
+    char* name;
 
     int xdim, ydim;
     int alt_xdim, alt_ydim;
@@ -35,6 +36,13 @@ class ContainerAttributes
     send_decision alpha_packet_alt;
     send_decision beta_packet_alt;
 
+    void set_name(const char* name)
+    {
+        size_t len = strlen(name);
+        this->name = (char*)malloc((len+1)*sizeof(char));
+        strcpy(this->name, name);
+    }
+
     int max_dim()
     {
         return this->xdim * this->ydim;
@@ -49,11 +57,17 @@ class ContainerAttributes
     {
         this->init();
     }
+
+    ~ContainerAttributes()
+    {
+        if (this->name != NULL) free(this->name);
+    }
     
     void init()
     {
         this->loaded = false;
         this->type = CONTAINER_TYPE_NONE;
+        this->name = NULL;
         this->xdim = 0;
         this->ydim = 0;
         this->alt_xdim = 0;

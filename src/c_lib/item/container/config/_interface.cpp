@@ -49,15 +49,16 @@ void add_container(class ContainerAttributes c)
     c.init();
 }
 
-void container_def(ItemContainerType type)
+void container_def(ItemContainerType type, const char* name)
 {
     if (_started++) add_container(c);
     c.type = type;
+    c.set_name(name);
 }
         
 static void register_settings()
 {
-    container_def(CONTAINER_TYPE_NONE);
+    container_def(CONTAINER_TYPE_NONE, "none");
     c.xdim = 0;
     c.ydim = 0;
     c.attached_to_agent = false;
@@ -66,7 +67,13 @@ static void register_settings()
     c.alpha_packet = &send_no_container_alpha_action;
     c.beta_packet = &send_no_container_beta_action;
 
-    container_def(AGENT_CONTAINER);
+    container_def(AGENT_HAND, "hand");
+    c.xdim = 1;
+    c.ydim = 1;
+    c.attached_to_agent = true;
+    // there are no alpha/beta actions for hand; it has a special role in the manipulation of inventory
+
+    container_def(AGENT_CONTAINER, "inventory");
     c.xdim = 6;
     c.ydim = 3;
     c.attached_to_agent = true;
@@ -75,7 +82,7 @@ static void register_settings()
     c.alpha_packet = &send_container_alpha_action;
     c.beta_packet = &send_container_beta_action;
 
-    container_def(AGENT_TOOLBELT);
+    container_def(AGENT_TOOLBELT, "toolbelt");
     c.xdim = 9;
     c.ydim = 1;
     c.attached_to_agent = true;
@@ -84,7 +91,7 @@ static void register_settings()
     c.alpha_packet = &send_container_alpha_action;
     c.beta_packet = &send_container_beta_action;
 
-    container_def(AGENT_SYNTHESIZER);
+    container_def(AGENT_SYNTHESIZER, "synthesizer");
     c.xdim = 1;
     c.ydim = 1;
     c.alt_xdim = 5;
@@ -99,7 +106,7 @@ static void register_settings()
     c.alpha_packet_alt = &send_purchase_item_action;
     c.beta_packet_alt = &send_purchase_item_action;
 
-    container_def(AGENT_ENERGY_TANKS);
+    container_def(AGENT_ENERGY_TANKS, "energy_tanks");
     c.xdim = 4;
     c.ydim = 1;
     c.attached_to_agent = true;
@@ -108,7 +115,7 @@ static void register_settings()
     c.alpha_packet = &send_container_alpha_action;
     c.beta_packet = &send_container_beta_action;
     
-    container_def(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    container_def(CONTAINER_TYPE_STORAGE_BLOCK_SMALL, "storage_block_small");
     c.xdim = 3;
     c.ydim = 3;
     c.attached_to_agent = false;
@@ -117,7 +124,7 @@ static void register_settings()
     c.alpha_packet = &send_container_alpha_action;
     c.beta_packet = &send_container_beta_action;
 
-    container_def(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
+    container_def(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY, "crafting_bench_basic");
     c.xdim = 4;
     c.ydim = 1;
     c.alt_xdim = 1;
@@ -132,7 +139,7 @@ static void register_settings()
     c.alpha_packet_alt = &send_craft_item_action;
     c.beta_packet_alt = &send_craft_item_action;
 
-    container_def(CONTAINER_TYPE_CRYOFREEZER_SMALL);
+    container_def(CONTAINER_TYPE_CRYOFREEZER_SMALL, "cryofreezer_small");
     c.xdim = 2;
     c.ydim = 2;
     c.attached_to_agent = false;
@@ -141,7 +148,7 @@ static void register_settings()
     c.alpha_packet = &send_container_alpha_action;
     c.beta_packet = &send_container_beta_action;
 
-    container_def(CONTAINER_TYPE_SMELTER_ONE);
+    container_def(CONTAINER_TYPE_SMELTER_ONE, "smelter_basic");
     c.xdim = 1;
     c.ydim = 1;
     c.alt_xdim = 1;
@@ -152,7 +159,7 @@ static void register_settings()
     c.alpha_packet = &send_smelter_alpha_action;
     c.beta_packet = &send_smelter_beta_action;
 
-    container_def(CONTAINER_TYPE_CRUSHER);
+    container_def(CONTAINER_TYPE_CRUSHER, "crusher");
     c.xdim = 1;
     c.ydim = 1;
     c.alt_xdim = 0;
@@ -180,6 +187,7 @@ static void validate_settings()
             n_none++;
             continue;
         }
+        GS_ASSERT(c->name != NULL && strlen(c->name));
         GS_ASSERT(c->xdim > 0);
         GS_ASSERT(c->ydim > 0);
         GS_ASSERT(c->alpha_action != NULL);

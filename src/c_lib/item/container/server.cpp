@@ -17,13 +17,17 @@ void remove_item_from_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    GS_ASSERT(agent_hand_list[agent_id] != NULL_ITEM);
-    if (agent_hand_list[agent_id] == NULL_ITEM) return;
-    Item::Item* item = Item::get_item(agent_hand_list[agent_id]);
+    int hand_id = get_agent_hand(agent_id);
+    GS_ASSERT(hand_id != NULL_CONTAINER);
+    if (hand_id == NULL_CONTAINER) return;
+    ItemContainerHand* hand = (ItemContainerHand*)get_container(hand_id);
+    GS_ASSERT(hand != NULL);
+    if (hand == NULL) return;
+    Item::Item* item = Item::get_item(hand->get_item());
     GS_ASSERT(item != NULL);
     if (item != NULL)
         item->location = IL_NOWHERE;
-    agent_hand_list[agent_id] = NULL_ITEM;
+    hand->remove_item();
 }
 
 static void insert_item_in_hand(int agent_id, ItemID item_id)
@@ -31,8 +35,14 @@ static void insert_item_in_hand(int agent_id, ItemID item_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(item_id != NULL_ITEM);
-    GS_ASSERT(agent_hand_list[agent_id] == NULL_ITEM);
-    if (agent_hand_list[agent_id] != NULL_ITEM) return;
+    if (item_id == NULL_ITEM) return;
+
+    int hand_id = get_agent_hand(agent_id);
+    if (hand_id == NULL_CONTAINER) return;
+    ItemContainerHand* hand = (ItemContainerHand*)get_container(hand_id);
+    GS_ASSERT(hand != NULL);
+    if (hand == NULL) return;
+
     Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item != NULL)
@@ -41,7 +51,7 @@ static void insert_item_in_hand(int agent_id, ItemID item_id)
         item->location = IL_HAND;
         item->location_id = agent_id;
     }
-    agent_hand_list[agent_id] = item_id;
+    hand->insert_item(item_id);
 }
 
 // 2nd order transactions
@@ -107,7 +117,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
 
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item == NULL_ITEM);
 
     ItemContainerInterface* container = get_container(container_id);
@@ -155,7 +165,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
 
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item == item_id);
     if (hand_item != item_id) return;
 
@@ -227,7 +237,7 @@ bool swap_item_between_hand_and_container(int agent_id, int container_id, int sl
     GS_ASSERT(container_item != NULL);
     if (container_item == NULL) return false;
 
-    ItemID hand_item_id = get_agent_hand(agent_id);
+    ItemID hand_item_id = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item_id != NULL_ITEM);
     if (hand_item_id == NULL_ITEM) return false;
     Item::Item* hand_item = Item::get_item(hand_item_id);
@@ -320,7 +330,7 @@ void transfer_free_item_to_hand(ItemID item_id, int agent_id)
 
     if (item_id == NULL_ITEM) return;
 
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item == NULL_ITEM);
 
     Item::subscribe_agent_to_item(agent_id, item_id);
@@ -391,7 +401,7 @@ void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, int a
     if (item_id == NULL_ITEM) return;
     if (particle_id == NULL_PARTICLE) return;
 
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item == NULL_ITEM);
 
     // destroy particle
@@ -419,7 +429,7 @@ void transfer_hand_to_particle(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
 
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
     if (hand_item == NULL_ITEM) return;
 
@@ -718,7 +728,7 @@ static void agent_close_container(int agent_id, int container_id, bool send_clos
     if (container->attached_to_agent) return;
 
     // throw anything in hand
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);
 

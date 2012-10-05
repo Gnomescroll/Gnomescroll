@@ -132,54 +132,66 @@ inline void insert_item_in_hand_StoC::handle()
     if (item == NULL) return;
     item->location = IL_HAND;
     item->location_id = ClientState::playerAgent_state.agent_id;
-    player_hand = (ItemID)item_id;
-    int item_type = Item::get_item_type((ItemID)item_id);
-    int item_stack = Item::get_stack_size((ItemID)item_id);
-    int item_durability = Item::get_item_durability((ItemID)item_id);
-    player_hand_type_ui = item_type;
-    player_hand_stack_ui = item_stack;
-    player_hand_durability_ui = item_durability;
+
+    GS_ASSERT(player_hand != NULL);
+    if (player_hand != NULL)
+        player_hand->insert_item((ItemID)item_id);
+
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui != NULL)
+    {    
+        int item_type = Item::get_item_type((ItemID)item_id);
+        int item_stack = Item::get_stack_size((ItemID)item_id);
+        int item_durability = Item::get_item_durability((ItemID)item_id);
+        player_hand_ui->insert_item(item_type, item_stack, item_durability);
+    }
 }
 
 inline void remove_item_from_hand_StoC::handle()
 {
-    GS_ASSERT(player_hand != NULL_ITEM);
-    if (player_hand != NULL_ITEM)
+    GS_ASSERT(player_hand != NULL && player_hand->get_item() != NULL_ITEM);
+    if (player_hand != NULL && player_hand->get_item() != NULL_ITEM)
     {
-        Item::Item* item = Item::get_item(player_hand);
+        Item::Item* item = Item::get_item(player_hand->get_item());
         GS_ASSERT(item != NULL);
         if (item == NULL) return;
         item->location = IL_NOWHERE;
     }
 
-    player_hand = NULL_ITEM;
-    player_hand_type_ui = NULL_ITEM_TYPE;
-    player_hand_stack_ui = 1;
-    player_hand_durability_ui = NULL_DURABILITY;
+    GS_ASSERT(player_hand != NULL);
+    GS_ASSERT(player_hand_ui != NULL);
+    
+    if (player_hand != NULL)
+        player_hand->remove_item();
+    if (player_hand_ui != NULL)
+        player_hand_ui->remove_item();
 }
 
 // Action
 
 inline void container_action_failed_StoC::handle()
 {
-    // copy hand data
-    if (player_hand == NULL_ITEM)
+    // refresh hand with known data
+    GS_ASSERT(player_hand != NULL && player_hand_ui != NULL);
+    if (player_hand != NULL && player_hand_ui != NULL)
     {
-        player_hand_type_ui = NULL_ITEM_TYPE;
-        player_hand_stack_ui = 1;
-        player_hand_durability_ui = 1;
-    }
-    else
-    {
-        player_hand_type_ui = Item::get_item_type(player_hand);
-        player_hand_stack_ui = Item::get_stack_size(player_hand);
-        player_hand_durability_ui = Item::get_item_durability(player_hand);
+        ItemID hand_item = player_hand->get_item();
+        if (hand_item == NULL_ITEM)
+            player_hand_ui->remove_item();
+        else
+        {
+            int item_type = Item::get_item_type(hand_item);
+            int item_stack = Item::get_stack_size(hand_item);
+            int item_durability = Item::get_item_durability(hand_item);
+            player_hand_ui->insert_item(item_type, item_stack, item_durability);
+        }
     }
 
     // copy network state to render state
     int container_id = get_event_container_id(event_id);
     if (container_id == NULL_CONTAINER) return;
     ItemContainerUIInterface* container = get_container_ui(container_id);
+    // dont assert against null here -- its ok
     if (container == NULL) return;
     container->load_data(get_container_contents(container_id));
 }

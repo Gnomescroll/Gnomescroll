@@ -1,22 +1,15 @@
 #pragma once
 
-#include <item/common/enum.hpp>
+#include <item/item.hpp>
 
 namespace serializer
 {
 
-extern int64_t item_global_id;
+void init_items();
+void teardown_items();
 
-void save_items();
-SerializerError save_item(ItemID id);
-SerializerError load_item(ItemID id);
+int save_item(class Item::Item* item, LocationNameID location_name_id, void* data);
 
-SerializerError load_item_global_id();
-SerializerError write_item_global_id();
-
-int64_t get_new_item_global_id();
-
-void init_item_serializer();
-void teardown_item_serializer();
+void save_player_container(int client_id, int container_id, bool remove_items_after);
 
 }   // serializer
