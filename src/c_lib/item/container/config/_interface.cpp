@@ -37,140 +37,141 @@ namespace ItemContainer
 
 /* Configuration Loader */ 
     
-static int _started = 0;
-static class ContainerAttributes c;
+static class ContainerAttributes* c = NULL;
 
-void add_container(class ContainerAttributes c)
+void add_container(class ContainerAttributes* c)
 {
     GS_ASSERT(container_attributes != NULL);
     if (container_attributes == NULL) return;
-    c.loaded = true;
-    container_attributes[c.type] = c;
-    c.init();
+    c->loaded = true;
+    container_attributes[c->type] = c;
 }
 
 void container_def(ItemContainerType type, const char* name)
 {
-    if (_started++) add_container(c);
-    c.type = type;
-    c.set_name(name);
+    if (c != NULL) add_container(c);
+    c = new ContainerAttributes;
+    c->type = type;
+    c->set_name(name);
 }
         
 static void register_settings()
 {
+    GS_ASSERT(c == NULL);
+    
     container_def(CONTAINER_TYPE_NONE, "none");
-    c.xdim = 0;
-    c.ydim = 0;
-    c.attached_to_agent = false;
-    c.alpha_action = &no_container_alpha_action_decision_tree;
-    c.beta_action = &no_container_beta_action_decision_tree;
-    c.alpha_packet = &send_no_container_alpha_action;
-    c.beta_packet = &send_no_container_beta_action;
+    c->xdim = 0;
+    c->ydim = 0;
+    c->attached_to_agent = false;
+    c->alpha_action = &no_container_alpha_action_decision_tree;
+    c->beta_action = &no_container_beta_action_decision_tree;
+    c->alpha_packet = &send_no_container_alpha_action;
+    c->beta_packet = &send_no_container_beta_action;
 
     container_def(AGENT_HAND, "hand");
-    c.xdim = 1;
-    c.ydim = 1;
-    c.attached_to_agent = true;
+    c->xdim = 1;
+    c->ydim = 1;
+    c->attached_to_agent = true;
     // there are no alpha/beta actions for hand; it has a special role in the manipulation of inventory
 
     container_def(AGENT_CONTAINER, "inventory");
-    c.xdim = 6;
-    c.ydim = 3;
-    c.attached_to_agent = true;
-    c.alpha_action = &alpha_action_decision_tree;
-    c.beta_action = &beta_action_decision_tree;
-    c.alpha_packet = &send_container_alpha_action;
-    c.beta_packet = &send_container_beta_action;
+    c->xdim = 6;
+    c->ydim = 3;
+    c->attached_to_agent = true;
+    c->alpha_action = &alpha_action_decision_tree;
+    c->beta_action = &beta_action_decision_tree;
+    c->alpha_packet = &send_container_alpha_action;
+    c->beta_packet = &send_container_beta_action;
 
     container_def(AGENT_TOOLBELT, "toolbelt");
-    c.xdim = 9;
-    c.ydim = 1;
-    c.attached_to_agent = true;
-    c.alpha_action = &alpha_action_decision_tree;
-    c.beta_action = &beta_action_decision_tree;
-    c.alpha_packet = &send_container_alpha_action;
-    c.beta_packet = &send_container_beta_action;
+    c->xdim = 9;
+    c->ydim = 1;
+    c->attached_to_agent = true;
+    c->alpha_action = &alpha_action_decision_tree;
+    c->beta_action = &beta_action_decision_tree;
+    c->alpha_packet = &send_container_alpha_action;
+    c->beta_packet = &send_container_beta_action;
 
     container_def(AGENT_SYNTHESIZER, "synthesizer");
-    c.xdim = 1;
-    c.ydim = 1;
-    c.alt_xdim = 5;
-    c.alt_ydim = 3;
-    c.attached_to_agent = true;
-    c.alpha_action = &synthesizer_alpha_action_decision_tree;
-    c.beta_action = &synthesizer_beta_action_decision_tree;
-    c.alpha_packet = &send_synthesizer_alpha_action;
-    c.beta_packet = &send_synthesizer_beta_action;
-    c.alpha_action_alt = &synthesizer_shopping_alpha_action_decision_tree;
-    c.beta_action_alt = &synthesizer_shopping_beta_action_decision_tree;
-    c.alpha_packet_alt = &send_purchase_item_action;
-    c.beta_packet_alt = &send_purchase_item_action;
+    c->xdim = 1;
+    c->ydim = 1;
+    c->alt_xdim = 5;
+    c->alt_ydim = 3;
+    c->attached_to_agent = true;
+    c->alpha_action = &synthesizer_alpha_action_decision_tree;
+    c->beta_action = &synthesizer_beta_action_decision_tree;
+    c->alpha_packet = &send_synthesizer_alpha_action;
+    c->beta_packet = &send_synthesizer_beta_action;
+    c->alpha_action_alt = &synthesizer_shopping_alpha_action_decision_tree;
+    c->beta_action_alt = &synthesizer_shopping_beta_action_decision_tree;
+    c->alpha_packet_alt = &send_purchase_item_action;
+    c->beta_packet_alt = &send_purchase_item_action;
 
     container_def(AGENT_ENERGY_TANKS, "energy_tanks");
-    c.xdim = 4;
-    c.ydim = 1;
-    c.attached_to_agent = true;
-    c.alpha_action = &alpha_action_decision_tree;
-    c.beta_action = &beta_action_decision_tree;
-    c.alpha_packet = &send_container_alpha_action;
-    c.beta_packet = &send_container_beta_action;
+    c->xdim = 4;
+    c->ydim = 1;
+    c->attached_to_agent = true;
+    c->alpha_action = &alpha_action_decision_tree;
+    c->beta_action = &beta_action_decision_tree;
+    c->alpha_packet = &send_container_alpha_action;
+    c->beta_packet = &send_container_beta_action;
     
     container_def(CONTAINER_TYPE_STORAGE_BLOCK_SMALL, "storage_block_small");
-    c.xdim = 3;
-    c.ydim = 3;
-    c.attached_to_agent = false;
-    c.alpha_action = &alpha_action_decision_tree;
-    c.beta_action = &beta_action_decision_tree;
-    c.alpha_packet = &send_container_alpha_action;
-    c.beta_packet = &send_container_beta_action;
+    c->xdim = 3;
+    c->ydim = 3;
+    c->attached_to_agent = false;
+    c->alpha_action = &alpha_action_decision_tree;
+    c->beta_action = &beta_action_decision_tree;
+    c->alpha_packet = &send_container_alpha_action;
+    c->beta_packet = &send_container_beta_action;
 
     container_def(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY, "crafting_bench_basic");
-    c.xdim = 4;
-    c.ydim = 1;
-    c.alt_xdim = 1;
-    c.alt_ydim = 3;
-    c.attached_to_agent = false;
-    c.alpha_action = &craft_input_alpha_action_decision_tree;
-    c.beta_action = &craft_input_beta_action_decision_tree;
-    c.alpha_packet = &send_craft_alpha_action;
-    c.beta_packet = &send_craft_beta_action;
-    c.alpha_action_alt = &craft_output_alpha_action_decision_tree;
-    c.beta_action_alt = &craft_output_beta_action_decision_tree;
-    c.alpha_packet_alt = &send_craft_item_action;
-    c.beta_packet_alt = &send_craft_item_action;
+    c->xdim = 4;
+    c->ydim = 1;
+    c->alt_xdim = 1;
+    c->alt_ydim = 3;
+    c->attached_to_agent = false;
+    c->alpha_action = &craft_input_alpha_action_decision_tree;
+    c->beta_action = &craft_input_beta_action_decision_tree;
+    c->alpha_packet = &send_craft_alpha_action;
+    c->beta_packet = &send_craft_beta_action;
+    c->alpha_action_alt = &craft_output_alpha_action_decision_tree;
+    c->beta_action_alt = &craft_output_beta_action_decision_tree;
+    c->alpha_packet_alt = &send_craft_item_action;
+    c->beta_packet_alt = &send_craft_item_action;
 
     container_def(CONTAINER_TYPE_CRYOFREEZER_SMALL, "cryofreezer_small");
-    c.xdim = 2;
-    c.ydim = 2;
-    c.attached_to_agent = false;
-    c.alpha_action = &alpha_action_decision_tree;
-    c.beta_action = &beta_action_decision_tree;
-    c.alpha_packet = &send_container_alpha_action;
-    c.beta_packet = &send_container_beta_action;
+    c->xdim = 2;
+    c->ydim = 2;
+    c->attached_to_agent = false;
+    c->alpha_action = &alpha_action_decision_tree;
+    c->beta_action = &beta_action_decision_tree;
+    c->alpha_packet = &send_container_alpha_action;
+    c->beta_packet = &send_container_beta_action;
 
     container_def(CONTAINER_TYPE_SMELTER_ONE, "smelter_basic");
-    c.xdim = 1;
-    c.ydim = 1;
-    c.alt_xdim = 1;
-    c.alt_ydim = 1;
-    c.attached_to_agent = false;
-    c.alpha_action = &smelter_alpha_action_decision_tree;
-    c.beta_action = &smelter_beta_action_decision_tree;
-    c.alpha_packet = &send_smelter_alpha_action;
-    c.beta_packet = &send_smelter_beta_action;
+    c->xdim = 1;
+    c->ydim = 1;
+    c->alt_xdim = 1;
+    c->alt_ydim = 1;
+    c->attached_to_agent = false;
+    c->alpha_action = &smelter_alpha_action_decision_tree;
+    c->beta_action = &smelter_beta_action_decision_tree;
+    c->alpha_packet = &send_smelter_alpha_action;
+    c->beta_packet = &send_smelter_beta_action;
 
     container_def(CONTAINER_TYPE_CRUSHER, "crusher");
-    c.xdim = 1;
-    c.ydim = 1;
-    c.alt_xdim = 0;
-    c.alt_ydim = 0;
-    c.attached_to_agent = false;
-    c.alpha_action = &crusher_alpha_action_decision_tree;
-    c.beta_action = &crusher_beta_action_decision_tree;
-    c.alpha_packet = &send_crusher_alpha_action;
-    c.beta_packet = &send_crusher_beta_action;
-    c.alpha_action_alt = &crusher_crush_alpha_action_decision_tree;
-    c.alpha_packet_alt = &send_crusher_crush_action;
+    c->xdim = 1;
+    c->ydim = 1;
+    c->alt_xdim = 0;
+    c->alt_ydim = 0;
+    c->attached_to_agent = false;
+    c->alpha_action = &crusher_alpha_action_decision_tree;
+    c->beta_action = &crusher_beta_action_decision_tree;
+    c->alpha_packet = &send_crusher_alpha_action;
+    c->beta_packet = &send_crusher_beta_action;
+    c->alpha_action_alt = &crusher_crush_alpha_action_decision_tree;
+    c->alpha_packet_alt = &send_crusher_crush_action;
   
     add_container(c);   // finalize
 }
@@ -180,8 +181,8 @@ static void validate_settings()
     int n_none = 0;
     for (int i=0; i<MAX_CONTAINER_TYPES; i++)
     {
-        class ContainerAttributes* c = &container_attributes[i];
-        if (!c->loaded) continue;
+        class ContainerAttributes* c = container_attributes[i];
+        if (c == NULL || !c->loaded) continue;
         if (c->type == CONTAINER_TYPE_NONE)
         {
             n_none++;
@@ -190,12 +191,15 @@ static void validate_settings()
         GS_ASSERT(c->name != NULL && strlen(c->name));
         GS_ASSERT(c->xdim > 0);
         GS_ASSERT(c->ydim > 0);
-        GS_ASSERT(c->alpha_action != NULL);
-        GS_ASSERT(c->beta_action != NULL);
-        #if DC_CLIENT
-        GS_ASSERT(c->alpha_packet != NULL);
-        GS_ASSERT(c->beta_packet != NULL);
-        #endif
+        if (c->type != AGENT_HAND)
+        {
+            GS_ASSERT(c->alpha_action != NULL);
+            GS_ASSERT(c->beta_action != NULL);
+            #if DC_CLIENT
+            GS_ASSERT(c->alpha_packet != NULL);
+            GS_ASSERT(c->beta_packet != NULL);
+            #endif
+        }
     }
     GS_ASSERT(n_none <= 1);
 }
@@ -203,7 +207,7 @@ static void validate_settings()
 void init_config()
 {
     GS_ASSERT(container_attributes == NULL);
-    container_attributes = new ContainerAttributes[MAX_CONTAINER_TYPES];
+    container_attributes = (ContainerAttributes**)calloc(MAX_CONTAINER_TYPES, sizeof(ContainerAttributes*));
     register_settings();
     validate_settings();
 
@@ -214,7 +218,13 @@ void init_config()
 
 void teardown_config()
 {
-    if (container_attributes != NULL) delete[] container_attributes;
+    if (container_attributes != NULL)
+    {
+        for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+            if (container_attributes[i] != NULL)
+                delete container_attributes[i];
+        free(container_attributes);
+    }
 
     #if DC_SERVER
     teardown_crusher_dat();
@@ -225,9 +235,9 @@ void teardown_config()
 
 class ContainerAttributes* get_attr(ItemContainerType type)
 {
-    GS_ASSERT(type >= 0 && type < MAX_CONTAINER_TYPES);
-    if (type < 0 || type >= MAX_CONTAINER_TYPES) return NULL;
-    return &container_attributes[type];
+    ASSERT_VALID_CONTAINER_TYPE(type);
+    IF_INVALID_CONTAINER_TYPE(type) return NULL;
+    return container_attributes[type];
 }
 
 int get_container_max_slots(ItemContainerType type)

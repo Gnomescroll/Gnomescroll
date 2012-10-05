@@ -3,6 +3,6 @@
 namespace ItemContainer
 {
     
-extern class ContainerAttributes* container_attributes;
+extern class ContainerAttributes** container_attributes;
 
 }   // ItemContainer

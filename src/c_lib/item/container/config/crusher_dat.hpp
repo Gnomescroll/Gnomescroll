@@ -12,7 +12,6 @@ void teardown_crusher_dat();
 
 void load_crusher_dat();
 
-
 float crusher_item_jump_out_velocity();
 class Item::ItemDrop* get_crusher_drop(int item_type);
 

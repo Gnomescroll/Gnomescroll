@@ -112,7 +112,6 @@ void validate_crusher_settings()
 
 void load_crusher_dat()
 {
-    _started = 0;
     register_crusher_settings();
     validate_crusher_settings();
 }

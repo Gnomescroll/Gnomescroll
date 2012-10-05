@@ -134,7 +134,7 @@ void init_items()
 
 void teardown_items()
 {
-    if (item_id_cache != NULL) delete item_id_cache;
+    if (item_id_cache != NULL) free(item_id_cache);
     if (player_item_save_data_list != NULL) delete player_item_save_data_list;
 }
 

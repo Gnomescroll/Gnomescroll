@@ -13,7 +13,10 @@
 #define IF_INVALID_BLOCK(block_type) if (block_type < 0 || block_type >= t_map::MAX_CUBES) 
 
 #define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT(mech_type >= 0 && mech_type < t_mech::MAX_MECHS)
-#define IF_INVALID_MECH_TYPE(mech_type) if (mech_type < 0 || mech_type >= t_mech::MAX_MECHS) 
+#define IF_INVALID_MECH_TYPE(mech_type) if (mech_type < 0 || mech_type >= t_mech::MAX_MECHS)
+
+#define ASSERT_VALID_CONTAINER_TYPE(container_type) GS_ASSERT(container_type >= 0 && container_type < MAX_CONTAINER_TYPES)
+#define IF_INVALID_CONTAINER_TYPE(container_type) if (container_type < 0 || container_type >= MAX_CONTAINER_TYPES) 
 
 #define GS_ABORT() \
     do \

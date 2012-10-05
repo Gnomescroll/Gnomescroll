@@ -59,6 +59,7 @@ void teardown()
 
     #if DC_CLIENT
     if (player_container_ui    != NULL) delete player_container_ui;
+    if (player_hand_ui         != NULL) delete player_hand_ui;
     if (player_toolbelt_ui     != NULL) delete player_toolbelt_ui;
     if (player_synthesizer_ui  != NULL) delete player_synthesizer_ui;
     if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
@@ -503,6 +504,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (player_craft_bench_ui  != NULL && player_craft_bench_ui->id  == container_id) return player_craft_bench_ui;
+    if (player_hand_ui         != NULL && player_hand_ui->id         == container_id) return player_hand_ui;
     if (player_container_ui    != NULL && player_container_ui->id    == container_id) return player_container_ui;
     if (player_energy_tanks_ui != NULL && player_energy_tanks_ui->id == container_id) return player_energy_tanks_ui;
     if (player_toolbelt_ui     != NULL && player_toolbelt_ui->id     == container_id) return player_toolbelt_ui;
@@ -688,6 +690,10 @@ void assign_containers_to_agent(int agent_id, int client_id)
     ItemContainer* agent_container = (ItemContainer*)item_container_list->create(AGENT_CONTAINER);
     GS_ASSERT(agent_container != NULL);
     assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
+
+    ItemContainerHand* agent_hand = (ItemContainerHand*)item_container_list->create(AGENT_HAND);
+    GS_ASSERT(agent_hand != NULL);
+    assign_container_to_agent(agent_hand, agent_hand_list, agent_id, client_id);
 
     ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)item_container_list->create(AGENT_ENERGY_TANKS);
     GS_ASSERT(agent_energy_tanks != NULL);

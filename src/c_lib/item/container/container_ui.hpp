@@ -209,6 +209,12 @@ class ItemContainerHandUI: public ItemContainerUIInterface
             ItemContainerUIInterface::remove_item(0);
         }
 
+        void init(ItemContainerType type, int xdim, int ydim)
+        {
+            GS_ASSERT(type == AGENT_HAND);
+            ItemContainerUIInterface::init(type, xdim, ydim);
+        }
+
         explicit ItemContainerHandUI(int id)
         : ItemContainerUIInterface(id)
         {}

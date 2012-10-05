@@ -559,6 +559,9 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             return new ItemContainer(type, id);
 
+        case AGENT_HAND:
+            return new ItemContainerHand(type, id);
+
         case AGENT_ENERGY_TANKS:
             return new ItemContainerEnergyTanks(type, id);
 

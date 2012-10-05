@@ -8,10 +8,11 @@ extern class ItemContainerList* item_container_list;
 
 // Client
 #if DC_CLIENT
-extern int player_container_id;
-extern int player_toolbelt_id;
-extern int player_synthesizer_id;
-extern int player_energy_tanks_id;
+//extern int player_container_id;
+//extern int player_hand_id;
+//extern int player_toolbelt_id;
+//extern int player_synthesizer_id;
+//extern int player_energy_tanks_id;
 extern bool did_open_container_block;
 extern bool did_close_container_block;
 extern int opened_container;

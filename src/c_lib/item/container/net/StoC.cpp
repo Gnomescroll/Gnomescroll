@@ -36,7 +36,7 @@ inline void assign_item_container_StoC::handle()
     switch (type)
     {
         case AGENT_CONTAINER:
-            player_container_id = container_id;
+            //player_container_id = container_id;
             player_container = (ItemContainer*)container;
             if (player_container_ui != NULL) delete player_container_ui;
             player_container_ui = new ItemContainerUI(container->id);
@@ -44,9 +44,19 @@ inline void assign_item_container_StoC::handle()
             player_container_ui->init(container->type, container->xdim, container->ydim);
             player_container_ui->load_data(container->slot);
             break;
-            
+
+        case AGENT_HAND:
+            //player_hand_id = container_id;
+            player_hand = (ItemContainerHand*)container;
+            if (player_hand_ui != NULL) delete player_hand_ui;
+            player_hand_ui = new ItemContainerHandUI(container->id);
+            player_hand_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
+            player_hand_ui->init(container->type, container->xdim, container->ydim);
+            player_hand_ui->load_data(container->slot);
+            break;
+
         case AGENT_TOOLBELT:
-            player_toolbelt_id = container_id;
+            //player_toolbelt_id = container_id;
             player_toolbelt = (ItemContainer*)container;
             if (player_toolbelt_ui != NULL) delete player_toolbelt_ui;
             player_toolbelt_ui = new ItemContainerUI(container->id);
@@ -57,7 +67,7 @@ inline void assign_item_container_StoC::handle()
             break;
         
         case AGENT_SYNTHESIZER:
-            player_synthesizer_id = container_id;
+            //player_synthesizer_id = container_id;
             player_synthesizer = (ItemContainerSynthesizer*)container;
             if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
             player_synthesizer_ui = new ItemContainerSynthesizerUI(container->id);
@@ -67,7 +77,7 @@ inline void assign_item_container_StoC::handle()
             break;
         
         case AGENT_ENERGY_TANKS:
-            player_energy_tanks_id = container_id;
+            //player_energy_tanks_id = container_id;
             player_energy_tanks = (ItemContainerEnergyTanks*)container;
             if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
             player_energy_tanks_ui = new ItemContainerEnergyTanksUI(container->id);

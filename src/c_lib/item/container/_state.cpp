@@ -8,10 +8,11 @@ ItemContainerList* item_container_list = NULL;
 
 //Client
 #if DC_CLIENT
-int player_container_id = NULL_CONTAINER;   //store id of player container
-int player_toolbelt_id = NULL_CONTAINER;   //store id of player container
-int player_synthesizer_id = NULL_CONTAINER;   //store id of player container
-int player_energy_tanks_id = NULL_CONTAINER;
+//int player_container_id = NULL_CONTAINER;   //store id of player container
+//int player_hand_id = NULL_CONTAINER;
+//int player_toolbelt_id = NULL_CONTAINER;   //store id of player container
+//int player_synthesizer_id = NULL_CONTAINER;   //store id of player container
+//int player_energy_tanks_id = NULL_CONTAINER;
 bool did_open_container_block = false;
 bool did_close_container_block = false;
 int opened_container = NULL_CONTAINER;

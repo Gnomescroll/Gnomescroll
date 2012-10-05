@@ -1,5 +1,15 @@
 #pragma once
 
+/*
+ * RULES:
+ * DONT CHANGE STRING NAMES UNLESS YOU KNOW WHAT THE FUCK YOU ARE DOING AND HAVE A GOOD REASON
+ * EVERY TIME YOU CHANGE A STRING NAME, YOU RISK BREAKING THINGS
+ * YOU WILL BREAK THINGS IF YOU DON'T UPDATE THE RENAME SCHEME
+ * IF THERE IS NO RENAME SCHEME, DON'T CHANGE A NAME
+ * 
+ * DONT USE ENUMS FOR DATA THAT LIVES OUTSIDE OF THE GAME SERVER INSTANCE
+ */
+
 #include <item/container/config/_state.hpp>
 
 // Map and mechs (flat file data)
@@ -124,8 +134,8 @@ void verify_config()
     
     for (int i=0; i<MAX_CONTAINER_TYPES; i++)
     {
-        ContainerAttributes* attr = &ItemContainer::container_attributes[i];
-        if (!attr->loaded || !attr->attached_to_agent) continue;
+        ContainerAttributes* attr = ItemContainer::container_attributes[i];
+        if (attr == NULL || !attr->loaded || !attr->attached_to_agent) continue;
         switch (attr->type)
         {
             case AGENT_CONTAINER:

@@ -35,7 +35,7 @@ class CrusherUI* crusher = NULL;
 void set_container_id(ItemContainerType container_type, int container_id)
 {
     switch (container_type)
-    {
+    {            
         case AGENT_CONTAINER:
             agent_container->container_id = container_id;
             break;
@@ -49,6 +49,10 @@ void set_container_id(ItemContainerType container_type, int container_id)
             energy_tanks->container_id = container_id;
             break;
             
+        case AGENT_HAND:
+            // we render the hand separately; there is no object
+            break;
+
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             crafting_container->container_id = container_id;
             break;

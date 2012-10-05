@@ -518,7 +518,10 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     }
 
     #if DC_CLIENT
-    player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
+    if (hand_item_type == NULL_ITEM_TYPE)
+        player_hand_ui->remove_item();
+    else
+        player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
     #endif
 
     return action;
@@ -548,7 +551,6 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
     #if DC_SERVER
     ItemID hand_item = get_agent_hand_item(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    //int hand_item_type = Item::get_item_type(hand_item);
     int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
@@ -679,7 +681,10 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
     }
 
     #if DC_CLIENT
-    player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
+    if (hand_item_type == NULL_ITEM_TYPE)
+        player_hand_ui->remove_item();
+    else
+        player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
     #endif
 
     return action;
@@ -859,7 +864,10 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     }
 
     #if DC_CLIENT
-    player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
+    if (hand_item_type == NULL_ITEM_TYPE)
+        player_hand_ui->remove_item();
+    else
+        player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
     #endif
 
     return action;
@@ -1054,7 +1062,10 @@ ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int clie
     }
 
     #if DC_CLIENT
-    player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
+    if (hand_item_type == NULL_ITEM_TYPE)
+        player_hand_ui->remove_item();
+    else
+        player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
     #endif
 
     return action;
@@ -1249,7 +1260,10 @@ ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int cl
     }
 
     #if DC_CLIENT
-    player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
+    if (hand_item_type == NULL_ITEM_TYPE)
+        player_hand_ui->remove_item();
+    else
+        player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
     #endif
 
     return action;
@@ -1304,7 +1318,10 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
     }
 
     #if DC_CLIENT
-    player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
+    if (hand_item_type == NULL_ITEM_TYPE)
+        player_hand_ui->remove_item();
+    else
+        player_hand_ui->insert_item(hand_item_type, hand_item_stack, hand_item_durability);
     #endif
 
     return action;
