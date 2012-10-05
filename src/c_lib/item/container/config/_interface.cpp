@@ -201,7 +201,7 @@ static void validate_settings()
             #endif
         }
     }
-    GS_ASSERT(n_none <= 1);
+    GS_ASSERT(n_none == 1);
 }
 
 void init_config()
