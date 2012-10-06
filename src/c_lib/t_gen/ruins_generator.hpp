@@ -46,6 +46,22 @@ enum direction_type_t {
     DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
 };
 
+struct IntVec3 {
+    int x;
+    int y;
+    int z;
+};
+
+struct Rect {
+    int x, y, wid, dep;
+	Rect() { x = y = wid = dep = 0;	}
+};
+
+struct Rect3D {
+    int x, y, z, wid, dep, hei;
+	Rect3D() { x = y = z = wid = dep = hei = 0;	}
+};
+
 struct Room {
     direction_type_t dir_types[DIR_MAX];
     int wall_block;
@@ -88,6 +104,7 @@ bool far_north_cube(int y) {
     return y == cubes_across_room - 1;
 }
 bool far_south_cube(int y) {
+
     return y == 0;
 }
 bool far_east_cube(int x) {
@@ -135,8 +152,8 @@ bool not_in_e_hall(int rx, int ry, int rz, int cy) {
         n_of_e_opening(rx, ry, rz, cy);
 }
 
-bool opens_to(direction_t dir, int rx, int ry, int rz) {
-    return rooms[rz][ry][rx].dir_types[dir] < DIRTYPE_BLOCKED_BY_ROOM;
+bool opens_to(direction_t dir, IntVec3 ri) { // room index
+    return rooms[ri.z][ri.y][ri.x].dir_types[dir] < DIRTYPE_BLOCKED_BY_ROOM;
 }
 
 bool in_air_region(Room r, int x, int y) {
@@ -145,116 +162,215 @@ bool in_air_region(Room r, int x, int y) {
     return false;
 }
 
+bool rect_contains(Rect r, int x, int y) {
+    if (x >= r.x && x < r.x + r.wid &&
+        y >= r.y && y < r.y + r.dep) return true;
+    return false;
+}
+bool rect_contains(Rect3D r, int x, int y, int z) {
+    if (x >= r.x && x < r.x + r.wid &&
+        y >= r.y && y < r.y + r.dep &&
+        z >= r.z && z < r.z + r.hei) return true;
+    return false;
+}
 
 
-void make_walls_or_airspace(int rx, int ry, int rz, int ox, int oy) { // room indexes, origin
+
+// params:  room indexes,  origin x/y
+void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
     for (int cx = 0; cx < cubes_across_room; cx++) {
     for (int cy = 0; cy < cubes_across_room; cy++) {
-    for (int cz = 0; cz < cubes_going_up - 2; cz++) {
-        Room r = rooms[rz][ry][rx];
+    for (int cz = 1; cz < cubes_going_up - 1; cz++) { // excluding floor/ceiling layers
+        Room r = rooms[ri.z][ri.y][ri.x];
         int block = r.wall_block;
-        int need_airspace = true;
+        bool need_block = false;
 
-        // do east
-        int mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
-        if (opens_to(DIR_SOUTH, rx, ry, rz))
-            mid = rooms[rz][ry - 1][rx].n_hall_offs + rooms[rz][ry - 1][rx].n_hall_wid;
-        if (cx >= mid /*&& cy < fixed_hall_offs*/) {
-            switch (r.dir_types[DIR_EAST]) {
-                case DIRTYPE_HALL:
-                    if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
-                        need_airspace = false;
-                        if (cz == r.e_hall_hei && 
-                            !s_of_e_opening(rx, ry, rz, cy) &&
-                            !n_of_e_opening(rx, ry, rz, cy) )
-                            block = r.floor_block;
-                    }
+       // // do east
+       // int mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
+       // if (opens_to(DIR_SOUTH, rx, ry, rz))
+       //     mid = rooms[rz][ry - 1][rx].n_hall_offs + rooms[rz][ry - 1][rx].n_hall_wid;
+       // if (cx >= mid /*&& cy < fixed_hall_offs*/) {
+       //     switch (r.dir_types[DIR_EAST]) {
+       //         case DIRTYPE_HALL:
+       //             if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
+       //                 need_block = true;
+       //                 if (cz == r.e_hall_hei && 
+       //                     !s_of_e_opening(rx, ry, rz, cy) &&
+       //                     !n_of_e_opening(rx, ry, rz, cy) )
+       //                     block = r.floor_block;
+       //             }
 
-                    if (s_of_e_opening(rx, ry, rz, cy + min_lip) || 
-                        (s_of_e_opening(rx, ry, rz, cy) && far_east_cube(cx))) need_airspace = false; /////////////////
-                    if (s_edge_of_e_opening(r, cx, cy, cz) || 
-                        (cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)
-                        ) block = r.floor_block; break;
-                case DIRTYPE_DOOR:
-                    if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
-                        need_airspace = false;
-                        if (cz == r.e_hall_hei && 
-                            !s_of_e_opening(rx, ry, rz, cy) &&
-                            !n_of_e_opening(rx, ry, rz, cy) )
-                            block = r.floor_block;
-                    }
+       //             if (s_of_e_opening(rx, ry, rz, cy + min_lip) || 
+       //                 (s_of_e_opening(rx, ry, rz, cy) && far_east_cube(cx))) need_block = true; /////////////////
+       //             if (s_edge_of_e_opening(r, cx, cy, cz) || 
+       //                 (cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)
+       //                 ) block = r.floor_block; break;
+       //         case DIRTYPE_DOOR:
+       //             if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
+       //                 need_block = true;
+       //                 if (cz == r.e_hall_hei && 
+       //                     !s_of_e_opening(rx, ry, rz, cy) &&
+       //                     !n_of_e_opening(rx, ry, rz, cy) )
+       //                     block = r.floor_block;
+       //             }
 
-                    if (far_east_cube(cx) || far_south_cube(cy)) {
-                        if (s_of_e_opening(rx, ry, rz, cy)) need_airspace = false;
-                        if (s_edge_of_e_opening(r, cx, cy, cz) || cx == mid) block = r.floor_block; } break;
-                default: // all blockers PLUS currently open air space connection
-                    if (cx >= r.x_offs + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
-                        need_airspace = false; break;
-            }
-        }
+       //             if (far_east_cube(cx) || far_south_cube(cy)) {
+       //                 if (s_of_e_opening(rx, ry, rz, cy)) need_block = true;
+       //                 if (s_edge_of_e_opening(r, cx, cy, cz) || 
+							//(cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)) 
+							//block = r.floor_block; } break;
+       //         default: // all blockers PLUS currently open air space connection
+       //             if (cx >= r.x_offs + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
+       //                 need_block = true; break;
+       //     }
+       // }
 
-        // do west
-        mid = fixed_hall_offs; // cubes_across_room / 2;
-        if (opens_to(DIR_NORTH, rx, ry, rz))
-            mid = r.n_hall_offs;
-        if (cx < mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
-            switch (r.dir_types[DIR_WEST]) {
-                case DIRTYPE_HALL:
-                    if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].e_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (n_of_e_opening(rx - 1, ry, rz, cy)) need_airspace = false; break;
-                case DIRTYPE_DOOR:
-                    if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].e_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (far_west_cube(cx) || far_north_cube(cy))
-                        if (n_of_e_opening(rx - 1, ry, rz, cy)) need_airspace = false; break;
-                default: // all blockers PLUS currently open air space connection
-                    if (cx < r.x_offs /*far_west_cube(cx)*/ || far_north_cube(cy))
-                        need_airspace = false; break;
-            }
-        }
+       // // do west
+       // mid = fixed_hall_offs; // cubes_across_room / 2;
+       // if (opens_to(DIR_NORTH, rx, ry, rz))
+       //     mid = r.n_hall_offs;
+       // if (cx < mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
+       //     switch (r.dir_types[DIR_WEST]) {
+       //         case DIRTYPE_HALL:
+       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].e_hall_hei)  need_block = true; // make blocks above opening
+       //             if (n_of_e_opening(rx - 1, ry, rz, cy)) need_block = true; break;
+       //         case DIRTYPE_DOOR:
+       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].e_hall_hei)  need_block = true; // make blocks above opening
+       //             if (far_west_cube(cx) || far_north_cube(cy))
+       //                 if (n_of_e_opening(rx - 1, ry, rz, cy)) need_block = true; break;
+       //         default: // all blockers PLUS currently open air space connection
+       //             if (cx < r.x_offs /*far_west_cube(cx)*/ || far_north_cube(cy))
+       //                 need_block = true; break;
+       //     }
+       // }
 
-        // do north
-        mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
-        if (opens_to(DIR_EAST, rx, ry, rz))
-            mid = r.e_hall_offs + r.e_hall_wid;
-        if (cy >= mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
-            switch (r.dir_types[DIR_NORTH]) {
-                case DIRTYPE_HALL:
-                    if (far_north_cube(cy) && cz >= r.n_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (e_of_n_opening(rx, ry, rz, cx)) need_airspace = false; break;
-                case DIRTYPE_DOOR:
-                    if (far_north_cube(cy) && cz >= r.n_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (far_north_cube(cy) || far_east_cube(cx))
-                        if (e_of_n_opening(rx, ry, rz, cx)) need_airspace = false; break;
-                default: // all blockers PLUS currently open air space connection
-                    if (cy >= r.y_offs + r.dep /*far_north_cube(cy)*/ || far_east_cube(cx))
-                        need_airspace = false; break;
-            }
-        }
+       // // do north
+       // mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
+       // if (opens_to(DIR_EAST, rx, ry, rz))
+       //     mid = r.e_hall_offs + r.e_hall_wid;
+       // if (cy >= mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
+       //     switch (r.dir_types[DIR_NORTH]) {
+       //         case DIRTYPE_HALL:
+       //             if (far_north_cube(cy) && cz >= r.n_hall_hei)  need_block = true; // make blocks above opening
+       //             if (e_of_n_opening(rx, ry, rz, cx)) need_block = true; break;
+       //         case DIRTYPE_DOOR:
+       //             if (far_north_cube(cy) && cz >= r.n_hall_hei)  need_block = true; // make blocks above opening
+       //             if (far_north_cube(cy) || far_east_cube(cx))
+       //                 if (e_of_n_opening(rx, ry, rz, cx)) need_block = true; break;
+       //         default: // all blockers PLUS currently open air space connection
+       //             if (cy >= r.y_offs + r.dep /*far_north_cube(cy)*/ || far_east_cube(cx))
+       //                 need_block = true; break;
+       //     }
+       // }
 
         // do south
-        mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
-        if (opens_to(DIR_WEST, rx, ry, rz))
-            mid = rooms[rz][ry][rx - 1].e_hall_offs;
-        if (cy < mid /*&& cy < fixed_hall_offs*/) {
-            switch (r.dir_types[DIR_SOUTH]) {
-                case DIRTYPE_HALL:
-                    if (far_south_cube(cy) && cz >= rooms[rz][ry-1][rx].n_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (w_of_n_opening(rx, ry-1, rz, cx)) need_airspace = false; break;
-                case DIRTYPE_DOOR:
-                    if (far_south_cube(cy) && cz >= rooms[rz][ry-1][rx].n_hall_hei)  need_airspace = false; // make blocks above opening
-                    if (far_south_cube(cy) || far_west_cube(cx))
-                        if (w_of_n_opening(rx, ry - 1, rz, cx)) need_airspace = false; break;
-                default: // all blockers PLUS currently open air space connection
-                    if (cy < r.y_offs /*far_south_cube(cy)*/ || far_west_cube(cx))
-                        need_airspace = false; break;
-            }
-        }
+        Rect ne, se, sw, nw; // corner of room to fill w/ blocks
+		Rect3D nh, sh, eh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
 
-        if (in_air_region(rooms[rz][ry][rx], cx, cy)) need_airspace = true; 
+        if (opens_to(DIR_WEST, ri) ) {
+			// corner
+            sw.dep = rooms[ri.z][ri.y][ri.x - 1].e_hall_offs;
+			// other hall
+            sh.dep = sw.dep;//////////// lintel depth determined by whichver is further out   
 
-        // add 4 to all z values, to get above bedrock
-        if (need_airspace) t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, 0);
-        else               t_map::set(rx * cubes_across_room + cx + ox, ry * cubes_across_room + cy + oy, rz * cubes_going_up + cz + 4, block);
+			// this hall
+			wh.x   = 0;
+            wh.y   = sw.dep - 1;
+            wh.z   = 1;
+            wh.dep = rooms[ri.z][ri.y][ri.x - 1].e_hall_wid + 2;
+            wh.hei = rooms[ri.z][ri.y][ri.x - 1].e_hall_hei + 1;
+
+            if (far_west_cube(cx) && cz >= wh.hei)  need_block = true; // make lintel
+		} else { // dir is blocked
+            sh.dep = sw.dep = cubes_across_room / 2;
+			if (cx < r.x_offs)  need_block = true;
+		}
+
+        if (opens_to(DIR_SOUTH, ri)) {
+			// corner
+            sw.wid = rooms[ri.z][ri.y - 1][ri.x].n_hall_offs;
+			se.x   = rooms[ri.z][ri.y - 1][ri.x].n_hall_wid   + sw.wid;
+			se.wid = cubes_across_room - se.x;
+			// this hall
+            sh.x   = sw.wid - 1;
+			sh.y   = 0;
+			sh.z   = 1;
+			sh.wid = rooms[ri.z][ri.y - 1][ri.x].n_hall_wid + 2;
+			sh.hei = rooms[ri.z][ri.y - 1][ri.x].n_hall_hei + 1;
+			// other hall
+			wh.wid = sw.wid; ///////////// lintel depth determined by whichver is further out   
+			eh.wid = se.wid;
+			eh.x   = sw.wid + sh.wid;
+
+            if (far_south_cube(cy) && cz >= sh.hei)  need_block = true; // make lintel
+        } else { // dir is blocked
+			sw.wid = cubes_across_room / 2;
+			se.wid = cubes_across_room / 2; //???????????????
+			wh.wid = cubes_across_room / 2;
+			eh.wid = cubes_across_room / 2;
+			eh.x   = cubes_across_room - eh.wid;
+			if (cy < r.y_offs)  need_block = true;
+		}
+
+        if (opens_to(DIR_EAST, ri) ) {
+			// corner
+			//se.y =   0;
+            se.dep = r.e_hall_offs;
+			// other hall
+            sh.dep = se.dep;//////////// LINKED TO AAN ELSE SITCH
+			// this hall
+            eh.y   = se.dep - 1;
+            eh.z   = 1;
+            eh.dep = r.e_hall_wid + 2;
+            eh.hei = r.e_hall_hei + 1;
+
+            if (far_east_cube(cx) && cz >= eh.hei)  need_block = true; // make lintel
+		} else { // dir is blocked
+            sh.dep = se.dep = cubes_across_room / 2;
+			if (cx >= r.x_offs + r.wid)  need_block = true;
+		}
+
+        
+		
+		
+
+        // figure what blocks are needed for each corner
+		if (rect_contains(ne, cx, cy) )  need_block = true;
+        if (rect_contains(se, cx, cy) ) {
+			if (r.dir_types[DIR_EAST] == DIRTYPE_DOOR) {
+				if (far_south_cube(cy) || far_east_cube(cx) ) 
+					need_block = true;
+
+				printf("bullshit");
+
+
+
+			} else need_block = true; 
+		}
+        if (rect_contains(sw, cx, cy) ) {
+			if (r.dir_types[DIR_SOUTH] == DIRTYPE_DOOR) 
+				if (far_south_cube(cy) || far_west_cube(cx) ) 
+					need_block = true;
+			else need_block = true; 
+		}
+        if (rect_contains(nw, cx, cy) )  need_block = true;
+
+
+        // clear space for stairs
+		if (in_air_region(r, cx, cy))    need_block = false; 
+
+        if (need_block) {
+			// change rim/frame blocks
+			if (rect_contains(nh, cx, cy, cz) || 
+				rect_contains(sh, cx, cy, cz) || 
+				rect_contains(eh, cx, cy, cz) || 
+				rect_contains(wh, cx, cy, cz) 
+			) block = r.floor_block;
+	        
+			// add 3 to all z values to get above bedrock
+			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + 3, block); 
+		} else
+			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + 3, 0);
     }
     }
     }
@@ -392,12 +508,13 @@ void make_ruins(int x, int y) {
             rz * cubes_going_up + 3 + cubes_going_up - 1,
             cubes_across_room, cubes_across_room, 1, ceil_block);
         
-        make_walls_or_airspace(rx, ry, rz, x, y);
+        IntVec3 ri; ri.x = rx; ri.y = ry; ri.z = rz;
+		make_walls_or_airspace(ri, x, y);
         
-        if (opens_to(DIR_UP, rx, ry, rz) ) 
+        if (opens_to(DIR_UP, ri) ) 
             make_stairs(rx, ry, rz, x, y, rooms[rz][ry][rx].floor_block);
 
-        if (opens_to(DIR_DOWN, rx, ry, rz) ) 
+        if (opens_to(DIR_DOWN, ri) ) 
             // clear well in floor of this room, and ceiling of room underneath
             set_region(
                 rx * cubes_across_room + x + fixed_stair_x,
