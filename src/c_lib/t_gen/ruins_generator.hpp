@@ -341,7 +341,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 				if (far_south_cube(cy) || far_east_cube(cx) ) 
 					need_block = true;
 
-				printf("bullshit");
+				//printf("bullshit");
 
 
 
