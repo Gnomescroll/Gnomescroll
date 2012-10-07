@@ -1,6 +1,8 @@
 #pragma once 
 
 #include <new>
+
+// WARNING: Any item tracked by this must have objects safe copy constructor
  
 template <class ObjectState, unsigned int minimum_capacity>
 class ElasticObjectList
@@ -9,42 +11,34 @@ class ElasticObjectList
         virtual const char* name() = 0;
         
     public:
-        ObjectState* a;
 
+        ObjectState*  objects;        // the actual object array
+
+        unsigned int hard_max;
         unsigned int n_max;
-        unsigned int num;
+        unsigned int ct;
         unsigned int start;
 
-        ElasticObjectList(); //default constructor
-        virtual ~ElasticObjectList(); //default deconstructor
+        explicit ElasticObjectList(unsigned int hard_max);
+        virtual ~ElasticObjectList();
 
-        inline ObjectState* create();         //object auto id
+        inline ObjectState* create();
         
         inline void destroy(int _id);
 
         inline void grow()
         {
-            this->n_max *= 2;
-            ObjectState* _a = (ObjectState*)realloc(this->a, this->n_max);
-            GS_ASSERT(_a != NULL);
-            if (_a != NULL) this->a = _a;
-        }
-
-        inline void shrink()
-        {
-            if (this->n_max / 2 <= minimum_capacity) return;  // we would shrink 
-            static const float shrink_ratio = 0.8f; // when at 80% capacity of lower bound, shrink
-            unsigned int limit = (unsigned int)((float)(this->n_max / 2) * shrink_ratio);
-            if (this->num >= limit) return;
-
-            int shrunk_size = this->n_max / 2;
-            ObjectState* _a = (ObjectState*)realloc(this->a, shrunk_size);
-            GS_ASSERT(_a != NULL);
-            if (_a != NULL)
+            if (this->n_max >= this->hard_max) return;
+            unsigned int new_max = this->n_max * 2;
+            if (new_max > this->hard_max) new_max = this->hard_max;
+            ObjectState* _objects = (ObjectState*)realloc(this->objects, new_max*sizeof(ObjectState));
+            GS_ASSERT(_objects != NULL);
+            if (_objects != NULL)
             {
-                this->a = _a;
-                new (&this->a[this->num]) ObjectState[shrunk_size - this->num];
-                this->n_max = shrunk_size;
+                this->objects = _objects;
+                new (&this->objects[this->ct]) ObjectState[new_max - this->n_max];
+                for (unsigned int i=this->n_max; i<new_max; i++) this->objects[i].id = -1;
+                this->n_max = new_max;
             }
         }
 
@@ -52,20 +46,25 @@ class ElasticObjectList
 };
 
 template <class ObjectState, unsigned int minimum_capacity> 
-ElasticObjectList<ObjectState, minimum_capacity>::ElasticObjectList() :
-    n_max(minimum_capacity), num(0), start(0)
+ElasticObjectList<ObjectState, minimum_capacity>::ElasticObjectList(unsigned int hard_max)
+    : hard_max(hard_max), n_max(minimum_capacity), ct(0), start(0)
 {
-    this->a = (ObjectState*)malloc(this->n_max * sizeof(ObjectState));
-    new (this->a) ObjectState[this->n_max];
-    for (unsigned int i=0; i<this->n_max; i++) this->a[i].id = -1;
+    GS_ASSERT(hard_max >= minimum_capacity);
+    if (hard_max < minimum_capacity) this->hard_max = minimum_capacity;
+    this->objects = (ObjectState*)malloc(this->n_max * sizeof(ObjectState));
+    new (this->objects) ObjectState[this->n_max];
+    for (unsigned int i=0; i<this->n_max; i++) this->objects[i].id = -1;
 }
 
 template <class ObjectState, unsigned int minimum_capacity> 
 ElasticObjectList<ObjectState, minimum_capacity>::~ElasticObjectList()
 {
-    for (unsigned int i=0; i<this->num; i++)
-        this->a[i].ObjectState::~ObjectState();
-    free(this->a);
+    if (this->objects != NULL)
+    {
+        for (unsigned int i=0; i<this->ct; i++)
+            this->objects[i].ObjectState::~ObjectState();
+        free(this->objects);
+    }
 }
 
 template <class ObjectState, unsigned int minimum_capacity> 
@@ -77,33 +76,30 @@ inline void ElasticObjectList<ObjectState, minimum_capacity>::print()
 template <class ObjectState, unsigned int minimum_capacity>
 inline ObjectState* ElasticObjectList<ObjectState, minimum_capacity>::create() 
 {
-    if (this->num >= this->n_max)
-        this->grow();
+    if (this->ct >= this->n_max) this->grow(); // expand
+    if (this->ct >= this->n_max) return NULL;  // could not expand
 
     for (unsigned int i=0; i<this->n_max; i++)
     {
-        int index = (i+this->start) % this->n_max;
-        if (this->a[index].id == -1)
+        int index = (i+this->start)%this->n_max;
+        if (this->objects[index].id == -1)
         {
-            this->num++;
-            this->a[index].id = index;
-            this->start = (index + 1) % this->n_max;
-            return &this->a[index];
+            this->ct++;
+            this->start = index;
+            this->objects[index].id = index;
+            return &this->objects[index];
         }
     }
-
     return NULL;
 }
-
 
 template <class ObjectState, unsigned int minimum_capacity>
 inline void ElasticObjectList<ObjectState, minimum_capacity>::destroy(int index)
 {
+    GS_ASSERT(this->ct >= 0);
     GS_ASSERT(index >= 0 && (unsigned int)index < this->n_max);
     if (index < 0 || (unsigned int)index >= this->n_max) return;
-    GS_ASSERT(this->a[index].id != -1);
-    this->a[num].reset();   // reset dead object    
-    this->a[index].id = -1;
-
-    this->shrink();
+    GS_ASSERT(this->objects[index].id != -1);
+    this->objects[index].id = -1;
+    this->ct--;
 }

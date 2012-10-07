@@ -6,10 +6,6 @@
 namespace serializer
 {
 
-// TODO -- enum label in the *note field to indicate request type, handle more specifically from that
-// TODO -- wrap higher level transactions
-// TODO -- pipelining commands? MULTI/EXEC? scripting?
-
 redisAsyncContext* ctx = NULL;
 static bool waiting_to_connect = false; 
 static bool waiting_to_disconnect = false; 
@@ -56,7 +52,6 @@ void getCallback(redisAsyncContext* ctx, void* _reply, void* note)
     redisReply* reply = (redisReply*) _reply;
     if (reply == NULL) return;
     handle_reply(reply);
-    if (note != NULL) printf("Note: %s\n", (char*)note);
 }
 
 void connectCallback(const redisAsyncContext *ctx, int status)
@@ -134,12 +129,6 @@ void connect()
     // FLUSH DATABASE
     ret = redisAsyncCommand(ctx, NULL, NULL, "FLUSHALL");
     GS_ASSERT(ret == REDIS_OK);
-
-    // TEST COMMANDS
-    //ret = redisAsyncCommand(ctx, NULL, NULL, "SET key %b", "crack", strlen("crack"));
-    //GS_ASSERT(ret == REDIS_OK);
-    //ret = redisAsyncCommand(ctx, &getCallback, NULL, "GET key");
-    //GS_ASSERT(ret == REDIS_OK);
 }
 
 void disconnect()
@@ -147,6 +136,12 @@ void disconnect()
     if (ctx == NULL) return;
     GS_ASSERT(redis_connected);
     redisAsyncDisconnect(ctx);
+}
+
+static void ping_redis_server()
+{
+    int ret = redisAsyncCommand(ctx, NULL, NULL, "PING");
+    GS_ASSERT(ret == REDIS_OK);
 }
 
 void init_redis()
@@ -185,9 +180,12 @@ void teardown_redis()
 
 void update_redis()
 {
+    static int _ping_tick = 0;
     ev_loop(EV_DEFAULT_ EVLOOP_NONBLOCK);
     if (!redis_connected && !waiting_to_connect)
         connect();
+    else if (_ping_tick++ % keep_alive_rate == 0)
+        ping_redis_server();
 }
 
 }   // serializer

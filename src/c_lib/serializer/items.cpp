@@ -14,6 +14,12 @@
 // LOADING DATA
 // SAVE STATE INFO ON THE ITEM ITSELF (NEEDS_SAVING etc)
 
+/*
+ *  Container/player item contents Serialization technique options:
+ *      Save on every container transaction -- start with this
+ *      Save in bulk, periodically (if changed at all)
+ */ 
+
 #include <item/common/constants.hpp>
 
 namespace serializer
@@ -89,6 +95,14 @@ class PlayerItemSaveData
             this->id, this->user_id, this->item_id, this->remove_item_after, get_location_name(this->location_name_id)); 
     }
 
+    PlayerItemSaveData(const PlayerItemSaveData& other)
+    {
+        this->user_id = other.user_id;
+        this->item_id = other.item_id;
+        this->remove_item_after = other.remove_item_after;
+        this->location_name_id = other.location_name_id;
+    }
+
     PlayerItemSaveData()
     : id(-1)
     {
@@ -100,13 +114,14 @@ class PlayerItemSaveData
 // The server would have to be full, everyone disconnect, reconnect, and disconnect, before redis replies at all
 // Of course, redis could be down, or whatever so we still should handle errors
 
-// TODO -- elastic
 class PlayerItemSaveDataList: public ElasticObjectList<PlayerItemSaveData, 1024>
 {
     public:
         const char* name() { return "PlayerItemSaveDataList"; }
 
-    PlayerItemSaveDataList() { this->print(); }
+    PlayerItemSaveDataList() :
+     ElasticObjectList<PlayerItemSaveData, 1024>(PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX)
+     { this->print(); }
 };
 
 // cache for player data passed around in the redis callbacks
@@ -154,7 +169,7 @@ static void item_gid_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     {
         item->global_id = (int64_t)reply->integer;
         // schedule actual save now
-        save_item(item, data->location_name_id, data);   // TODO -- handle error reply from this
+        save_player_item(item, data->location_name_id, data);   // TODO -- handle error reply from this
     }
     else
     if (reply->type == REDIS_REPLY_ERROR)
@@ -206,6 +221,11 @@ static void item_save_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     player_item_save_data_list->destroy(data->id);
 }
 
+static void player_item_add_cb(redisAsyncContext* ctx, void* _reply, void* _data)
+{
+    //getCallback(ctx, _reply, _data);
+}
+
 static bool make_item_gid(class Item::Item* item, void* data)
 {
     GS_ASSERT(ctx != NULL);
@@ -218,10 +238,13 @@ static bool make_item_gid(class Item::Item* item, void* data)
     return (ret == REDIS_OK);
 }
 
-int save_item(class Item::Item* item, LocationNameID location_name_id, void* data)
+int save_player_item(class Item::Item* item, LocationNameID location_name_id, class PlayerItemSaveData* data)
 {   // return -1 for error, 0 for success, 1 for wait
     GS_ASSERT(ctx != NULL);
     if (ctx == NULL) return -1;
+
+    // TODO -- handle case where we attempt to save while waiting for a save
+    GS_ASSERT(item->save_state != ISS_WAITING_FOR_SAVE);
 
     if (item->global_id == 0)
     {
@@ -229,6 +252,8 @@ int save_item(class Item::Item* item, LocationNameID location_name_id, void* dat
         if (ret) return 1;
         return -1;
     }
+
+    item->save_state = ISS_WAITING_FOR_SAVE;
 
     const char* item_name = Item::get_item_name(item->type);
     GS_ASSERT(item_name != NULL);
@@ -238,14 +263,30 @@ int save_item(class Item::Item* item, LocationNameID location_name_id, void* dat
     GS_ASSERT(location_name != NULL);
     if (location_name == NULL) return -1;
 
-    // TODO -- location_id must be translated to a global id for that type
-    // This means we need to get a gid for containers when they are created
-        // or when they are first serialized
-    // We sort of need to save hands in case of crash? -- ignore for now.
-        // later we can have a magical "lost items" container appear for handling items
-        // that cant be fit in the container but need to be given back to the player
+    #define CHECK_REDIS_OK(ret)\
+    do \
+    { \
+        GS_ASSERT(ret == REDIS_OK); \
+        if (ret != REDIS_OK) \
+        { \
+            redisAsyncCommand(ctx, NULL, NULL, "DISCARD"); \
+            return -1; \
+        } \
+    } while(0);
 
-    int ret = redisAsyncCommand(ctx, &item_save_cb, data,
+    /*
+     * MULTI
+     * HMSET item:<guid> etc
+     * SADD player:<container_name>:<user_id> <item_guid>
+     * EXEC
+     */
+
+    int ret = REDIS_OK;
+
+    ret = redisAsyncCommand(ctx, NULL, NULL, "MULTI");
+    CHECK_REDIS_OK(ret);
+
+    ret = redisAsyncCommand(ctx, &item_save_cb, data,
         "HMSET item:%lld " // key
         "%s %lld "  // global id
         "%s %s "    // item name
@@ -260,17 +301,22 @@ int save_item(class Item::Item* item, LocationNameID location_name_id, void* dat
             "durability",     item->durability,
             "stack_size",     item->stack_size,
             "location",       location_name,
-            "location_id",    item->location_id,
+            "location_id",    data->user_id,
             "container_slot", item->container_slot);
+    CHECK_REDIS_OK(ret);
 
-    GS_ASSERT(ret == REDIS_OK);
-    if (ret == REDIS_OK) return 0;
-    return -1;
+    ret = redisAsyncCommand(ctx, &player_item_add_cb, data,
+        "SADD %s:%d %lld", location_name, data->user_id, item->global_id);
+    CHECK_REDIS_OK(ret);
+
+    ret = redisAsyncCommand(ctx, NULL, NULL, "EXEC");
+    CHECK_REDIS_OK(ret);
+
+    #undef CHECK_REDIS_OK
+
+    return 0;
 }
 
-
-// do similar for hand etc
-// TODO -- just make hand a fucking container?
 
 void save_player_container(int client_id, int container_id, bool remove_items_after)
 {
@@ -308,12 +354,10 @@ void save_player_container(int client_id, int container_id, bool remove_items_af
         data->user_id = npm->user_id;
         data->item_id = item->id;
         data->remove_item_after = remove_items_after;
-        data->location_name_id = LN_CONTAINER;
+        data->location_name_id = get_player_location_name_id(container->type);
         GS_ASSERT(data->item_id != NULL_ITEM);
         
-        item->save_state = ISS_WAITING_FOR_SAVE;
-        
-        int ret = save_item(item, location_name_id, data);
+        int ret = save_player_item(item, location_name_id, data);
         GS_ASSERT(ret >= 0);
         if (ret < 0) printf("Error saving item: %lld:%d\n", item->global_id, item->id);
     }

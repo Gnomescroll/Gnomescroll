@@ -27,6 +27,13 @@ const char mech_filename[] = MECH_DATA_PATH "mech-" STR(GS_VERSION) MECH_DATA_EX
  * REDIS DATA
  */
 
+const int redis_timeout = 300;  // seconds
+const int keep_alive_rate = (300*30)/2; // send keep-alive halfway
+
+// Cached data queues
+const unsigned int PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX = 8192;
+
+
 // DONT CHANGE THESE
 #define CONTAINER_LOCATION_NAME "container"
 #define PARTICLE_LOCATION_NAME "particle"

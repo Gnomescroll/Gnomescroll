@@ -51,9 +51,7 @@ inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create()
         return NULL;
     }
 
-    ObjectState* obj = &this->a[this->num];
-    this->num++;
-    return obj;
+    return &this->a[this->num++];
 }
 
 
@@ -63,10 +61,12 @@ inline void Simple_object_list<ObjectState, hard_cap>::destroy(int index)
     GS_ASSERT(this->num > 0);
     unsigned int uindex = index;
     GS_ASSERT(index >= 0 && uindex < this->n_max);
-    if (index < 0 || uindex >= this->n_max) return;
+    GS_ASSERT(uindex < this->num);
+    if (index < 0 || uindex >= this->n_max || uindex >= this->num) return;
     this->num--;
     if (uindex != this->num)
         this->a[uindex] = this->a[this->num]; // swap last good object with dead object
+    this->a[this->num].reset();   // reset dead object
+    this->a[this->num].id = this->num;
     this->a[uindex].id = index; // update id of swapped object
-    this->a[num].reset();   // reset dead object
 }

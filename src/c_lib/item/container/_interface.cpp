@@ -958,6 +958,7 @@ void agent_died(int agent_id)
         send_container_close(agent_id, opened_containers[agent_id]);
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
+    // DO NOT throw_items_from_container(agent_hand), we need to use the transactional method for hand throwing
     ItemID hand_item = get_agent_hand_item(agent_id);
     if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
@@ -975,6 +976,7 @@ static void save_agent_containers(int client_id, int agent_id, bool remove_items
     serializer::save_player_container(client_id, agent_synthesizer_list[agent_id], remove_items_after);
     serializer::save_player_container(client_id, agent_toolbelt_list[agent_id], remove_items_after);
     serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_hand_list[agent_id], remove_items_after);
 }
 
 void dump_agent_containers(int client_id, int agent_id)
@@ -993,9 +995,13 @@ void dump_agent_containers(int client_id, int agent_id)
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(client_id, agent_id, agent_toolbelt_list[agent_id]);
 
-    GS_ASSERT(agent_energy_tanks_list != NULL);
     if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(client_id, agent_id, agent_energy_tanks_list[agent_id]);
+
+    // DO NOT throw_items_from_container(agent_hand), we need to use the transactional method for hand throwing
+    ItemID hand_item = get_agent_hand_item(agent_id);
+    if (hand_item != NULL_ITEM)
+        transfer_hand_to_particle(agent_id);    // throw
 }
 
 void agent_quit(int agent_id)
@@ -1041,10 +1047,14 @@ void agent_quit(int agent_id)
     if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_energy_tanks_list[agent_id]);
 
+    if (agent_hand_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_hand_list[agent_id]);
+
     agent_container_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;
     agent_synthesizer_list[agent_id] = NULL_CONTAINER;
     agent_energy_tanks_list[agent_id] = NULL_CONTAINER;
+    agent_hand_list[agent_id] = NULL_CONTAINER;
 }
 
 void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
