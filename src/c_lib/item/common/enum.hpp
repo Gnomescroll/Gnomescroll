@@ -65,7 +65,7 @@ typedef enum
 
 typedef enum
 {
-    IG_NONE,    // null value
+    IG_NONE = 0,    // null value
     IG_ERROR,
     IG_FIST,
     IG_RESOURCE,    //does nothing, resources, stackable
@@ -88,7 +88,7 @@ typedef enum
 
 typedef enum
 {
-    IL_NOWHERE,
+    IL_NOWHERE = 0,
     IL_PARTICLE,
     IL_CONTAINER,
     IL_HAND,

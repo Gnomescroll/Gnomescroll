@@ -291,6 +291,10 @@ static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void*
 
 static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
+    // TODO -- when destroy the tmp item due to failure,
+    // we either need to clear its location data to avoid triggering the autocleanup
+    // or have a separate destruction method (better)
+    
     redisReply* reply = (redisReply*)_reply;
     class ItemLoadData* data = (class ItemLoadData*)_data;
 
@@ -307,6 +311,7 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
         GS_ASSERT(item != NULL);
         if (item != NULL)
         {
+            printf("%d elements\n", reply->elements);
             for (unsigned int i=0; i<reply->elements; i+=2)
             {
                 GS_ASSERT(reply->element[i]->type == REDIS_REPLY_STRING);
@@ -320,13 +325,19 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
                 char* key = reply->element[i]->str;
                 char* value = reply->element[i+1]->str;
 
+                printf("Key: %s\n", key);
+                printf("Value: %s\n", value);
+
                 // create an item from the data
 
                 if (strcmp(key, ITEM_GUID_KEYNAME) == 0)
                     item->global_id = (int64_t)parse_int(value, err);
                 else
                 if (strcmp(key, ITEM_NAME_KEYNAME) == 0)
+                {
                     item->type = Item::get_versioned_item_type(value);
+                    if (item->type == NULL_ITEM_TYPE) err = true;
+                }
                 else
                 if (strcmp(key, ITEM_DURABILITY_KEYNAME) == 0)
                     item->durability = (int)parse_int(value, err);
@@ -345,8 +356,13 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
                 else
                     err = true;
 
+                GS_ASSERT(!err);
+
                 if (err) break;
             }
+
+            GS_ASSERT(location_name != NULL);
+            GS_ASSERT(location_id != NULL_LOCATION);
 
             // TODO --
             if (err || location_name == NULL || location_id == NULL_LOCATION)
@@ -370,7 +386,12 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
                 // interpret location_id as the uuid of the player
                 NetPeerManager* client = NetServer::get_client_from_user_id((UserID)location_id);
                 GS_ASSERT(client != NULL);  // This can happen under normal conditions, e.g. player joins and quits immediately 
-                if (client == NULL) return;
+                if (client == NULL)
+                {
+                    Item::destroy_item(item->id);
+                    // log error
+                    goto unload;
+                }
                 
                 char* subloc = &location_name[sizeof(PLAYER_CONTAINER_LOCATION_PREFIX)-1];
                 if (strcmp(subloc, PLAYER_HAND_LOCATION_SUBNAME) == 0)
@@ -401,7 +422,9 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
             if (strcmp(PARTICLE_LOCATION_NAME, location_name) == 0)
                 item->location = IL_PARTICLE;    // TODO -- look up particle
 
-            if (!item->valid_deserialization())
+            err = !(item->valid_deserialization());
+            GS_ASSERT(!err);
+            if (err)
             {
                 Item::destroy_item(item->id);
                 //log_error();    // TODO
@@ -409,8 +432,9 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
             }
 
             // need to place the item into the container it should be in
-            err = ItemContainer::load_item_into_container(item->id);
+            err = !(ItemContainer::load_item_into_container(item->id));
 
+            GS_ASSERT(!err)
             if (err)
             {
                 Item::destroy_item(item->id);
@@ -418,8 +442,9 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
                 goto unload;
             }
 
-            err = item->init_for_loading();
+            err = !(item->init_for_loading());
 
+            GS_ASSERT(!err);
             if (err)
             {
                 Item::destroy_item(item->id);

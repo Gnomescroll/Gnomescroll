@@ -38,26 +38,29 @@ class Item
         ItemSaveState save_state;
         #endif
 
+    #if DC_SERVER
     bool valid_deserialization()
     {
-        // look for anything left at defaults that shouldnt be
         if (this->global_id == 0) return false;
         if (this->location == IL_NOWHERE) return false;
         if (this->location != IL_PARTICLE && this->container_slot == NULL_SLOT) return false;
         if (this->type == NULL_ITEM_TYPE) return false;
-        if (this->stack_size <= 0 || this->stack_size > NULL_STACK_SIZE) return false;
-        if (this->durability <= 0 || this->durability > NULL_DURABILITY) return false;
+        if (this->stack_size <= 0 || this->stack_size > get_max_stack_size(this->type)) return false;
+        if (this->durability <= 0 || this->durability > get_max_durability(this->type)) return false;
         return true;
     }
 
+    bool init_for_loading();   // only to be used by serializer
+    #endif
+    
     void init(int item_type);
     
-    bool init_for_loading();   // only to be used by serializer
 
     void print()
     {
         printf("Item:\n");
         printf("ID %d\n", id);
+        printf("Global ID: %lld\n", this->global_id);
         printf("Group %d\n", get_item_group_for_type(this->type));
         printf("Type %d\n", type);
         printf("Durability %d\n", durability);

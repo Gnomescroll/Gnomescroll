@@ -128,8 +128,8 @@ void connect()
 
     // TODO -- REMOVE
     // FLUSH DATABASE
-    ret = redisAsyncCommand(ctx, NULL, NULL, "FLUSHALL");
-    GS_ASSERT(ret == REDIS_OK);
+    //ret = redisAsyncCommand(ctx, NULL, NULL, "FLUSHALL");
+    //GS_ASSERT(ret == REDIS_OK);
 }
 
 void disconnect()
