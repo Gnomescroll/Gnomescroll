@@ -30,7 +30,8 @@ extern class Agent_state** agents;
 
 extern class UserRecorder* users;
 
-void assign_agent_to_client(int client_id, class Agent_state* a);
+class NetPeerManager* get_client(int client_id);
+class NetPeerManager* get_client_from_user_id(UserID user_id);
 
 void init_globals();
 void teardown_globals();
@@ -39,7 +40,7 @@ class Session* begin_session(uint32_t ip_addr, int client_id);
 void end_session(class Session* session);
 
 // authorization callback
-void client_authorized(int client_id, int user_id, time_t expiration_time, const char* username);
+void client_authorized(int client_id, UserID user_id, time_t expiration_time, const char* username);
 void client_authorization_failed(int client_id);
 
 void kill_client(int client_id, DisconnectType error_code);

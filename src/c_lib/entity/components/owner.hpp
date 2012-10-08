@@ -20,7 +20,7 @@ class OwnerComponent: public Component
 
     OwnerComponent()
     : Component(COMPONENT_OWNER, COMPONENT_INTERFACE_OWNER),
-    owner(NO_AGENT)
+    owner(NULL_AGENT)
     {}
 };
 

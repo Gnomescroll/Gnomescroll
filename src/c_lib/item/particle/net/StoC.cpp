@@ -29,7 +29,7 @@ inline void item_particle_destroy_StoC::handle()
     ItemParticle* particle = get((ItemParticleID)id);
     GS_ASSERT(particle != NULL);
     if (particle == NULL) return;
-    if (particle->target_agent != NO_AGENT
+    if (particle->target_agent != NULL_AGENT
      && particle->target_agent == ClientState::playerAgent_state.agent_id)
     {
         static int pickup_sound_frame = 0;

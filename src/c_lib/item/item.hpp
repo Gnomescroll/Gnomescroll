@@ -38,7 +38,21 @@ class Item
         ItemSaveState save_state;
         #endif
 
+    bool valid_deserialization()
+    {
+        // look for anything left at defaults that shouldnt be
+        if (this->global_id == 0) return false;
+        if (this->location == IL_NOWHERE) return false;
+        if (this->location != IL_PARTICLE && this->container_slot == NULL_SLOT) return false;
+        if (this->type == NULL_ITEM_TYPE) return false;
+        if (this->stack_size <= 0 || this->stack_size > NULL_STACK_SIZE) return false;
+        if (this->durability <= 0 || this->durability > NULL_DURABILITY) return false;
+        return true;
+    }
+
     void init(int item_type);
+    
+    bool init_for_loading();   // only to be used by serializer
 
     void print()
     {
@@ -113,6 +127,11 @@ class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
         #endif
 
         #if DC_SERVER
+        Item* create_for_loading()
+        {   // only used by serializer
+            return this->create();
+        }
+        
         Item* create_type(int item_type)
         {
             Item* item = this->create();

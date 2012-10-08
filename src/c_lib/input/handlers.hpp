@@ -39,7 +39,7 @@ struct InputState
     bool invert_mouse;
     float sensitivity;
 
-    bool agent_container;
+    bool agent_inventory;
     bool container_block;
     int container_block_id;
 
@@ -101,9 +101,9 @@ void toggle_input_mode();
 void toggle_camera_mode();
 
 // container toggles
-void toggle_agent_container();
-void enable_agent_container();
-void disable_agent_container();
+void toggle_agent_inventory();
+void enable_agent_inventory();
+void disable_agent_inventory();
 
 void enable_container_block(int container_id);
 void disable_container_block();

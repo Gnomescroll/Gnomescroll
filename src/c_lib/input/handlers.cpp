@@ -18,7 +18,7 @@ InputState input_state;
 
 bool mouse_unlocked_for_ui_element()
 {   // if mouse was unlocked to allow control of a ui element
-    return (input_state.container_block || input_state.agent_container || input_state.awesomium);
+    return (input_state.container_block || input_state.agent_inventory || input_state.awesomium);
 }
 
 // triggers
@@ -34,23 +34,23 @@ void toggle_help_menu()
         Hud::clear_prompt(Hud::press_help_text);
 }
 
-void enable_agent_container()
+void enable_agent_inventory()
 {
     // we check "did_open_container_block" here, in case agent container is opened with container block in same frame
-    if (input_state.agent_container || ItemContainer::did_open_container_block) return;
+    if (input_state.agent_inventory || ItemContainer::did_open_container_block) return;
     
-    input_state.agent_container = true;
+    input_state.agent_inventory = true;
     
-    HudContainer::enable_agent_container_hud();
+    HudContainer::enable_agent_inventory_hud();
     ItemContainer::open_inventory();
     set_mouse_rebind(input_state.mouse_bound);
     set_mouse_bind(false);
 }
 
-void disable_agent_container()
+void disable_agent_inventory()
 {
-    if (!input_state.agent_container) return;
-    input_state.agent_container = false;
+    if (!input_state.agent_inventory) return;
+    input_state.agent_inventory = false;
     // poll mouse button state
     // if left or right is unpressed, trigger an up event
     int x,y;
@@ -58,7 +58,7 @@ void disable_agent_container()
     if (!(btns & SDL_BUTTON_LEFT)) Toolbelt::left_trigger_up_event();
     if (!(btns & SDL_BUTTON_RIGHT)) Toolbelt::right_trigger_up_event();
     
-    HudContainer::disable_agent_container_hud();
+    HudContainer::disable_agent_inventory_hud();
     ItemContainer::close_inventory();
     //if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
@@ -66,15 +66,15 @@ void disable_agent_container()
     input_state.ignore_mouse_motion = true;
 }
 
-void toggle_agent_container()
+void toggle_agent_inventory()
 {
-    if (input_state.agent_container) disable_agent_container();
-    else enable_agent_container();
+    if (input_state.agent_inventory) disable_agent_inventory();
+    else enable_agent_inventory();
 }
 
 void enable_container_block(int container_id)
 {
-    if (input_state.container_block || input_state.agent_container) return;
+    if (input_state.container_block || input_state.agent_inventory) return;
     
     GS_ASSERT(container_id != NULL_CONTAINER);
     
@@ -91,7 +91,7 @@ void enable_container_block(int container_id)
 
 void disable_container_block()
 {
-    if (!input_state.container_block || input_state.agent_container) return;
+    if (!input_state.container_block || input_state.agent_inventory) return;
     input_state.container_block = false;
     HudContainer::disable_container_block_hud();
     if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
@@ -110,7 +110,7 @@ void disable_container_block()
 void close_all_containers()
 {
     disable_container_block();
-    disable_agent_container();
+    disable_agent_inventory();
 }
 
 void toggle_scoreboard()
@@ -314,7 +314,7 @@ void init_input_state()
     input_state.last_mouse_button_up_event_frame = -1;
 
     // containers
-    input_state.agent_container = false;
+    input_state.agent_inventory = false;
     input_state.container_block = false;
     input_state.container_block_id = NULL_CONTAINER;
 
@@ -356,7 +356,7 @@ void update_input_state()
     input_state.error_message = Hud::has_error();
     if (!had_error && input_state.error_message)
     {
-        disable_agent_container();
+        disable_agent_inventory();
         disable_container_block();
         disable_chat();
     }
@@ -894,7 +894,7 @@ void key_down_handler(SDL_Event* event)
     }
     else if (input_state.chat)
         chat_key_down_handler(event);
-    else if (input_state.agent_container || input_state.container_block)
+    else if (input_state.agent_inventory || input_state.container_block)
         container_key_down_handler(event);
     else
     {
@@ -1009,7 +1009,7 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_e:
-                toggle_agent_container();
+                toggle_agent_inventory();
                 break;
 
             case SDLK_ESCAPE:
@@ -1108,7 +1108,7 @@ void key_up_handler(SDL_Event* event)
         Awesomium::SDL_keyboard_event(event);
     else if (input_state.chat)
         chat_key_up_handler(event);
-    else if (input_state.agent_container || input_state.container_block)
+    else if (input_state.agent_inventory || input_state.container_block)
         container_key_up_handler(event);
     else
     {
@@ -1160,7 +1160,7 @@ void mouse_button_down_handler(SDL_Event* event)
     // chat doesnt affect mouse
     if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
-    else if (input_state.agent_container || input_state.container_block)
+    else if (input_state.agent_inventory || input_state.container_block)
         container_mouse_down_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
@@ -1189,7 +1189,7 @@ void mouse_button_up_handler(SDL_Event* event)
 
     if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
-    else if (input_state.agent_container || input_state.container_block)
+    else if (input_state.agent_inventory || input_state.container_block)
         container_mouse_up_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
@@ -1215,7 +1215,7 @@ void mouse_motion_handler(SDL_Event* event)
 
     if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
-    else if (input_state.agent_container || input_state.container_block)
+    else if (input_state.agent_inventory || input_state.container_block)
         container_mouse_motion_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);

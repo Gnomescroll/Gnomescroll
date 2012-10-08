@@ -143,6 +143,12 @@ int get_item_type(const char* name)
     return NULL_ITEM_TYPE;
 }
 
+int get_versioned_item_type(const char* name)
+{
+    // TODO -- implement item renaming/versioning
+    return get_item_type(name);
+}
+
 const char* get_item_pretty_name(int item_type)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);

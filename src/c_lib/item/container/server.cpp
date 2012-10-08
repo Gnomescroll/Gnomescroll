@@ -76,14 +76,14 @@ void transfer_item_between_containers(ItemID item_id, int container_id_a, int sl
     if (container_a->get_item(slot_a) != item_id) return;
 
     Agent_state* owner_a = NULL;
-    if (container_a->owner != NO_AGENT)
+    if (container_a->owner != NULL_AGENT)
     {
         owner_a = ServerState::agent_list->get(container_a->owner);
         GS_ASSERT(owner_a != NULL);
     }
     
     Agent_state* owner_b = NULL;
-    if (container_b->owner != NO_AGENT)
+    if (container_b->owner != NULL_AGENT)
     {
         owner_b = ServerState::agent_list->get(container_b->owner);
         GS_ASSERT(owner_b != NULL);
@@ -128,7 +128,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
     if (container->get_item(slot) != item_id) return;
 
     Agent_state* owner = NULL;
-    if (container->owner != NO_AGENT)
+    if (container->owner != NULL_AGENT)
     {
         owner = ServerState::agent_list->get(container->owner);
         GS_ASSERT(owner != NULL);
@@ -186,7 +186,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
         send_hand_remove(hand_owner->client_id);
 
     Agent_state* owner = NULL;
-    if (container->owner != NO_AGENT)
+    if (container->owner != NULL_AGENT)
     {
         owner = ServerState::agent_list->get(container->owner);
         GS_ASSERT(owner != NULL);
@@ -221,7 +221,7 @@ bool swap_item_between_hand_and_container(int agent_id, int container_id, int sl
     if (container == NULL) return false;
 
     Agent_state* container_owner = NULL;
-    if (container->owner != NO_AGENT)
+    if (container->owner != NULL_AGENT)
     {
         container_owner = ServerState::agent_list->get(container->owner);
         GS_ASSERT(container_owner != NULL);
@@ -302,7 +302,7 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
     GS_ASSERT(container->is_valid_slot(slot));
     GS_ASSERT(container->get_item(slot) == NULL_ITEM);
 
-    if (container->owner != NO_AGENT)
+    if (container->owner != NULL_AGENT)
         Item::subscribe_agent_to_item(container->owner, item->id);
 
     // insert item in container
@@ -310,7 +310,7 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
 
     // send container insert
     Agent_state* owner = NULL;
-    if (container->owner != NO_AGENT)
+    if (container->owner != NULL_AGENT)
     {
         owner = ServerState::agent_list->get(container->owner);
         GS_ASSERT(owner != NULL);
@@ -372,7 +372,7 @@ bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, 
     if (particle != NULL) GS_ASSERT(particle->item_id == item_id);
     ItemParticle::destroy(particle_id);
 
-    if (container->owner != NO_AGENT)
+    if (container->owner != NULL_AGENT)
         Item::subscribe_agent_to_item(container->owner, item->id);
 
     // insert item in container
@@ -380,7 +380,7 @@ bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, 
 
     // send container insert
     Agent_state* owner = NULL;
-    if (container->owner != NO_AGENT)
+    if (container->owner != NULL_AGENT)
     {
         owner = ServerState::agent_list->get(container->owner);
         GS_ASSERT(owner != NULL);
@@ -520,7 +520,7 @@ static bool pack_container_lock(int container_id, lock_container_StoC* msg)
     if (container == NULL) return false;
     ASSERT_VALID_AGENT_ID(container->owner);
     IF_INVALID_AGENT_ID(container->owner) return false;
-    if (container->owner == NO_AGENT) return false;
+    if (container->owner == NULL_AGENT) return false;
     
     msg->container_id = container->id;
     msg->agent_id = container->owner;
@@ -547,8 +547,8 @@ void broadcast_container_unlock(int container_id, int unlocking_agent_id)
     if (container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
-    GS_ASSERT(container->owner == NO_AGENT);
-    if (container->owner != NO_AGENT) return;
+    GS_ASSERT(container->owner == NULL_AGENT);
+    if (container->owner != NULL_AGENT) return;
 
     unlock_container_StoC msg;
     msg.container_id = container->id;
@@ -563,7 +563,7 @@ void send_container_state(int client_id, int container_id)
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
-    if (container->owner != NO_AGENT) send_container_lock(client_id, container_id);
+    if (container->owner != NULL_AGENT) send_container_lock(client_id, container_id);
 }
 
 void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot)
@@ -619,7 +619,7 @@ void send_smelter_fuel(int container_id)
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    if (container->owner == NO_AGENT) return;
+    if (container->owner == NULL_AGENT) return;
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
@@ -639,7 +639,7 @@ void send_smelter_progress(int container_id)
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    if (container->owner == NO_AGENT) return;
+    if (container->owner == NULL_AGENT) return;
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;

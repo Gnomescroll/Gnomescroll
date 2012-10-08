@@ -42,7 +42,7 @@ void CreatePacketOwner::message(Object* object, object_create_owner_StoC* msg)
     GS_ASSERT(owner != NULL);
     if (owner != NULL)
         msg->owner = owner->get_owner();
-    else msg->owner = NO_AGENT;
+    else msg->owner = NULL_AGENT;
 
     ASSERT_BOXED_POSITION(position);
 }

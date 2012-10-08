@@ -74,7 +74,7 @@ static void register_settings()
     c->attached_to_agent = true;
     // there are no alpha/beta actions for hand; it has a special role in the manipulation of inventory
 
-    container_def(AGENT_CONTAINER, "inventory");
+    container_def(AGENT_INVENTORY, "inventory");
     c->xdim = 6;
     c->ydim = 3;
     c->attached_to_agent = true;

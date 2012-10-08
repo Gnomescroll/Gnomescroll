@@ -18,7 +18,6 @@ void container_block_destroyed(int container_id, int x, int y, int z);
 
 bool container_block_in_range_of(Vec3 pos, int block[3]);
 
-
 }   // ItemContainer
 
 //CLIENT
@@ -63,15 +62,16 @@ namespace ItemContainer
 bool agent_can_access_container(int agent_id, int container_id);
 
 ItemID get_agent_hand_item(int agent_id);
-int get_agent_container(int agent_id);
+int get_agent_hand(int agent_id);
+int get_agent_inventory(int agent_id);
 int get_agent_toolbelt(int agent_id);
 int get_agent_synthesizer(int agent_id);
 int get_agent_energy_tanks(int agent_id);
+
 ItemID get_agent_toolbelt_item(int agent_id, int slot);
 
 ItemContainerInterface* create_container(ItemContainerType type);
 
-void assign_container_to_agent(class ItemContainerInterface* container, int* container_list, int agent_id, int client_id);
 void assign_containers_to_agent(int agent_id, int client_id);
 
 void agent_born(int agent_id);
@@ -95,6 +95,10 @@ ContainerActionType auto_add_free_item_to_container(int client_id, int container
 void send_container_remove(int client_id, int container_id, int slot);
 
 void update_smelters();
+
+// used by serializer; places an item into a container based on the item's location information
+// returns false on error
+bool load_item_into_container(ItemID item_id);
 
 // tests
 void test_container_list_capacity();

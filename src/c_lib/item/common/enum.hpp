@@ -4,7 +4,7 @@ typedef enum
 {
     CONTAINER_TYPE_NONE = 0,
     AGENT_HAND,
-    AGENT_CONTAINER,
+    AGENT_INVENTORY,
     AGENT_TOOLBELT,
     AGENT_SYNTHESIZER,
     AGENT_ENERGY_TANKS,
@@ -100,6 +100,8 @@ typedef enum
     ISS_WAITING_FOR_GID,
     ISS_WAITING_FOR_SAVE,
     ISS_SAVED,
+    ISS_LOADING,
+    ISS_LOADED,
 } ItemSaveState;
 
 /* No typedef for ItemType, use string names */

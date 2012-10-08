@@ -31,14 +31,14 @@ void init()
     item_container_list = new ItemContainerList;
 
     #if DC_SERVER
-    agent_container_list    = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_inventory_list    = (int*) malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list     = (int*) malloc(AGENT_MAX * sizeof(int));
     agent_synthesizer_list  = (int*) malloc(AGENT_MAX * sizeof(int));
     agent_energy_tanks_list = (int*) malloc(AGENT_MAX * sizeof(int));
     opened_containers       = (int*) malloc(AGENT_MAX * sizeof(int));
     agent_hand_list         = (int*) malloc(AGENT_MAX * sizeof(int));
     
-    for (int i=0; i<AGENT_MAX; i++) agent_container_list   [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_inventory_list   [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list    [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_energy_tanks_list[i] = NULL_CONTAINER;
@@ -70,7 +70,7 @@ void teardown()
     #endif
 
     #if DC_SERVER
-    if (agent_container_list    != NULL) free(agent_container_list);
+    if (agent_inventory_list    != NULL) free(agent_inventory_list);
     if (agent_toolbelt_list     != NULL) free(agent_toolbelt_list);
     if (agent_synthesizer_list  != NULL) free(agent_synthesizer_list);
     if (agent_energy_tanks_list != NULL) free(agent_energy_tanks_list);
@@ -183,7 +183,7 @@ ItemContainerType get_container_type(int container_id)
 int get_container_owner(int container_id)
 {
     ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return NO_AGENT;
+    if (container == NULL) return NULL_AGENT;
     return container->owner;
 }
 
@@ -281,7 +281,7 @@ void close_inventory()
 
 bool open_container(int container_id)
 {
-    GS_ASSERT(!input_state.agent_container);    // check that agent container is not opened here
+    GS_ASSERT(!input_state.agent_inventory);    // check that agent container is not opened here
     
     GS_ASSERT(container_id != NULL_CONTAINER);
 
@@ -630,13 +630,13 @@ ItemID get_agent_hand_item(int agent_id)
     return hand->get_item();
 }
     
-int get_agent_container(int agent_id)
+int get_agent_inventory(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
-    GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list == NULL) return NULL_CONTAINER;
-    return agent_container_list[agent_id];
+    GS_ASSERT(agent_inventory_list != NULL);
+    if (agent_inventory_list == NULL) return NULL_CONTAINER;
+    return agent_inventory_list[agent_id];
 }
 
 int get_agent_toolbelt(int agent_id)
@@ -671,7 +671,7 @@ ItemContainerInterface* create_container(ItemContainerType type)
     return item_container_list->create(type);
 }
 
-void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
+static void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(container_list[agent_id] == NULL_ITEM);
@@ -681,15 +681,21 @@ void assign_container_to_agent(ItemContainerInterface* container, int* container
     container->assign_owner(agent_id);
     send_container_create(client_id, container->id);
     send_container_assign(client_id, container->id);
+
+    if (Options::serializer)
+        serializer::load_player_container(client_id, container->id);
 }
 
 void assign_containers_to_agent(int agent_id, int client_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
     
-    ItemContainer* agent_container = (ItemContainer*)item_container_list->create(AGENT_CONTAINER);
-    GS_ASSERT(agent_container != NULL);
-    assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
+    ItemContainer* agent_inventory = (ItemContainer*)item_container_list->create(AGENT_INVENTORY);
+    GS_ASSERT(agent_inventory != NULL);
+    assign_container_to_agent(agent_inventory, agent_inventory_list, agent_id, client_id);
 
     ItemContainerHand* agent_hand = (ItemContainerHand*)item_container_list->create(AGENT_HAND);
     GS_ASSERT(agent_hand != NULL);
@@ -948,9 +954,9 @@ void agent_died(int agent_id)
     GS_ASSERT(a->status.dead);
 
     // throw agent inventory items
-    GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list != NULL && agent_container_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
+    GS_ASSERT(agent_inventory_list != NULL);
+    if (agent_inventory_list != NULL && agent_inventory_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_inventory_list[agent_id]);
 
     // close container
     GS_ASSERT(opened_containers != NULL);
@@ -972,7 +978,7 @@ static void save_agent_containers(int client_id, int agent_id, bool remove_items
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
     
-    serializer::save_player_container(client_id, agent_container_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_inventory_list[agent_id], remove_items_after);
     serializer::save_player_container(client_id, agent_synthesizer_list[agent_id], remove_items_after);
     serializer::save_player_container(client_id, agent_toolbelt_list[agent_id], remove_items_after);
     serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id], remove_items_after);
@@ -986,8 +992,8 @@ void dump_agent_containers(int client_id, int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
     
-    if (agent_container_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(client_id, agent_id, agent_container_list[agent_id]);
+    if (agent_inventory_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_inventory_list[agent_id]);
 
     if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(client_id, agent_id, agent_synthesizer_list[agent_id]);
@@ -1035,8 +1041,8 @@ void agent_quit(int agent_id)
 
 
     // destroy containers
-    if (agent_container_list[agent_id] != NULL_CONTAINER)
-        destroy_container(agent_container_list[agent_id]);
+    if (agent_inventory_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_inventory_list[agent_id]);
 
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_toolbelt_list[agent_id]);
@@ -1050,7 +1056,7 @@ void agent_quit(int agent_id)
     if (agent_hand_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_hand_list[agent_id]);
 
-    agent_container_list[agent_id] = NULL_CONTAINER;
+    agent_inventory_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;
     agent_synthesizer_list[agent_id] = NULL_CONTAINER;
     agent_energy_tanks_list[agent_id] = NULL_CONTAINER;
@@ -1649,11 +1655,35 @@ void update_smelters()
     }
 }
 
+// used by serializer; places an item into a container based on the item's location information
+// returns false on error
+bool load_item_into_container(ItemID item_id)
+{
+    ASSERT_VALID_ITEM_ID(item_id);
+    IF_INVALID_ITEM_ID(item_id) return false;
+    Item::Item* item = Item::get_item(item_id);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return false;
+
+    GS_ASSERT(item->location == IL_HAND || item->location == IL_CONTAINER);
+    if (item->location != IL_HAND && item->location != IL_CONTAINER) return false;
+    
+    ItemContainerInterface* container = get_container(item->location_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return false;
+
+    int slot = container->insert_item(item->container_slot, item->id);
+    GS_ASSERT(slot != NULL_SLOT);
+    if (slot == NULL_SLOT) return false;
+    
+    return true;
+}
+
 //tests
 void test_container_list_capacity()
 {
     for (int i=0; i<ITEM_CONTAINER_MAX*2; i++)
-        item_container_list->create(AGENT_CONTAINER);
+        item_container_list->create(AGENT_INVENTORY);
 }
 
 }   // ItemContainer

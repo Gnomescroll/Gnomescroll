@@ -38,6 +38,7 @@ void set_item_name(int type, const char* name);
 
 const char* get_item_name(int item_type);
 int get_item_type(const char* name);
+int get_versioned_item_type(const char* name);  // will apply name remapping to get the type
 
 const char* get_item_pretty_name(int type);
 

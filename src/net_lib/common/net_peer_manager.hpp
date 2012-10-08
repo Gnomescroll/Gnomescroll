@@ -10,6 +10,7 @@ class NetPeerManager
 {
     public:
         int client_id;
+        int agent_id;
         bool inited;
         bool loaded;
         bool waiting_for_auth;
@@ -20,13 +21,13 @@ class NetPeerManager
         // auth stuff
         time_t auth_expiration;
         char username[PLAYER_NAME_MAX_LENGTH+1];
-        int user_id;
+        UserID user_id;
         
         int auth_attempts;
 
         int clock_time_tick;
 
-    void was_authorized(int user_id, time_t expiration_time, const char* username);
+    void was_authorized(UserID user_id, time_t expiration_time, const char* username);
 
     bool failed_to_authorize();
     bool authorization_expired();

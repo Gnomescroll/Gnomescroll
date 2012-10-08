@@ -7,7 +7,7 @@
 namespace HudContainer
 {
 
-class AgentContainerUI : public UIElement
+class AgentInventoryUI : public UIElement
 {
     public:
 
@@ -43,8 +43,8 @@ class AgentContainerUI : public UIElement
     {
         GS_ASSERT(this->stack_numbers == NULL);
         
-        this->xdim = ItemContainer::get_container_xdim(AGENT_CONTAINER);
-        this->ydim = ItemContainer::get_container_ydim(AGENT_CONTAINER);
+        this->xdim = ItemContainer::get_container_xdim(AGENT_INVENTORY);
+        this->ydim = ItemContainer::get_container_ydim(AGENT_INVENTORY);
         
         // create HudText objects needed for stack rendering
         int max = this->xdim * this->ydim;
@@ -62,21 +62,21 @@ class AgentContainerUI : public UIElement
         this->name.set_text((char*)"Inventory");
     }
 
-    AgentContainerUI() : xdim(0), ydim(0), stack_numbers(NULL)
+    AgentInventoryUI() : xdim(0), ydim(0), stack_numbers(NULL)
     {}
     
-    ~AgentContainerUI()
+    ~AgentInventoryUI()
     {
         if (this->stack_numbers != NULL) delete[] this->stack_numbers;
     }
 };
 
-    const float AgentContainerUI::border = 0;       // border around entire panel
-    const float AgentContainerUI::inc1 = 5; // spacing between slot icons
-    const float AgentContainerUI::inc2 = 2;  // border around a slot icon
-    const float AgentContainerUI::slot_size = 32;    // pixel dimension
+    const float AgentInventoryUI::border = 0;       // border around entire panel
+    const float AgentInventoryUI::inc1 = 5; // spacing between slot icons
+    const float AgentInventoryUI::inc2 = 2;  // border around a slot icon
+    const float AgentInventoryUI::slot_size = 32;    // pixel dimension
 
-int AgentContainerUI::get_slot_at(int px, int py)
+int AgentInventoryUI::get_slot_at(int px, int py)
 {
     px -= xoff - border - inc1/2;
     py -= yoff + border + inc1/2;
@@ -95,7 +95,7 @@ int AgentContainerUI::get_slot_at(int px, int py)
     return slot;
 }
 
-void AgentContainerUI::draw()
+void AgentInventoryUI::draw()
 {
     //this->draw_name();
     // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement

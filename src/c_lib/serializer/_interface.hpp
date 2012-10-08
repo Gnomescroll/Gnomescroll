@@ -16,6 +16,7 @@ void wait_for_threads();
 
 // defined in items.hpp
 void save_player_container(int client_id, int container_id, bool remove_items_after);
+void load_player_container(int client_id, int container_id);
 
 }   // serializer
 
@@ -37,6 +38,7 @@ void save_map(){}
 void wait_for_threads(){}
 
 void save_player_container(int client_id, int container_id, bool remove_items_after) {}
+void load_player_container(int client_id, int container_id) {}
 
 }   // serializer
 

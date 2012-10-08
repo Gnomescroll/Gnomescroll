@@ -38,7 +38,7 @@ extern class ItemContainerCrusherUI* crusher_ui;
 
 // Server
 #if DC_SERVER
-extern int* agent_container_list;
+extern int* agent_inventory_list;
 extern int* agent_toolbelt_list;
 extern int* agent_synthesizer_list;
 extern int* agent_energy_tanks_list;

@@ -35,7 +35,7 @@ inline void assign_item_container_StoC::handle()
     ItemContainerType type = (ItemContainerType)container_type;
     switch (type)
     {
-        case AGENT_CONTAINER:
+        case AGENT_INVENTORY:
             //player_container_id = container_id;
             player_container = (ItemContainer*)container;
             if (player_container_ui != NULL) delete player_container_ui;

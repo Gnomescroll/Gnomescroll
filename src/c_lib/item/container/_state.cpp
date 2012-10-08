@@ -39,7 +39,7 @@ class ItemContainerCrusherUI* crusher_ui = NULL;
 
 //Server
 #if DC_SERVER
-int* agent_container_list = NULL;
+int* agent_inventory_list = NULL;
 int* agent_toolbelt_list = NULL;
 int* agent_synthesizer_list = NULL;
 int* agent_energy_tanks_list = NULL;

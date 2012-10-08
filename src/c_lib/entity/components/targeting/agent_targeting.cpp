@@ -39,7 +39,7 @@ void AgentTargetingComponent::check_target_alive()
     Agent_state* target = STATE::agent_list->get(this->target_id);
     if (target == NULL || target->status.dead)
     {
-        this->target_id = NO_AGENT;
+        this->target_id = NULL_AGENT;
         this->target_type = OBJECT_NONE;
     }
 }
@@ -135,7 +135,7 @@ void AgentTargetingComponent::call()
     if (this->max_lock_ticks && this->ticks_locked > this->max_lock_ticks)
     {   // reset
         this->target_type = OBJECT_NONE;
-        this->target_id = NO_AGENT;
+        this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
 
         using Components::StateMachineComponent;

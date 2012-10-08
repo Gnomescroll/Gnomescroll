@@ -12,6 +12,9 @@
 
 #include <item/container/config/_state.hpp>
 
+namespace serializer
+{
+
 // Map and mechs (flat file data)
 #define DATA_PATH "./world/"
 #define INVALID_DATA_SUBPATH "invalid/"
@@ -32,16 +35,36 @@ const int keep_alive_rate = (300*30)/2; // send keep-alive halfway
 
 // Cached data queues
 const unsigned int PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX = 8192;
+const unsigned int PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX = 128;
+const unsigned int ITEM_LOAD_DATA_LIST_HARD_MAX = 8192;
 
+const unsigned int EXPECTED_ITEM_HASH_FIELDS = 7;
 
 // DONT CHANGE THESE
 #define CONTAINER_LOCATION_NAME "container"
 #define PARTICLE_LOCATION_NAME "particle"
-#define PLAYER_INVENTORY_LOCATION_NAME "player:inventory"
-#define PLAYER_ENERGY_TANKS_LOCATION_NAME "player:energy_tanks"
-#define PLAYER_SYNTHESIZER_LOCATION_NAME "player:synthesizer"
-#define PLAYER_TOOLBELT_LOCATION_NAME "player:toolbelt"
-#define PLAYER_HAND_LOCATION_NAME "player:hand"
+
+#define PLAYER_CONTAINER_LOCATION_PREFIX "player:"
+
+#define PLAYER_INVENTORY_LOCATION_SUBNAME "inventory"
+#define PLAYER_ENERGY_TANKS_LOCATION_SUBNAME "energy_tanks"
+#define PLAYER_SYNTHESIZER_LOCATION_SUBNAME "synthesizer"
+#define PLAYER_TOOLBELT_LOCATION_SUBNAME "toolbelt"
+#define PLAYER_HAND_LOCATION_SUBNAME "hand"
+
+#define PLAYER_INVENTORY_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_INVENTORY_LOCATION_SUBNAME
+#define PLAYER_ENERGY_TANKS_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_ENERGY_TANKS_LOCATION_SUBNAME
+#define PLAYER_SYNTHESIZER_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_SYNTHESIZER_LOCATION_SUBNAME
+#define PLAYER_TOOLBELT_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_TOOLBELT_LOCATION_SUBNAME
+#define PLAYER_HAND_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_HAND_LOCATION_SUBNAME
+
+const char ITEM_GUID_KEYNAME[] = "global_id";
+const char ITEM_NAME_KEYNAME[] = "name";
+const char ITEM_DURABILITY_KEYNAME[] = "durability";
+const char ITEM_STACK_SIZE_KEYNAME[] = "stack_size";
+const char ITEM_LOCATION_KEYNAME[] = "location";
+const char ITEM_LOCATION_ID_KEYNAME[] = "location_id";
+const char ITEM_CONTAINER_SLOT_KEYNAME[] = "container_slot";
 
 // The following are not safe to store -- they are only valid per compilation. Only strings are safe
 
@@ -89,7 +112,7 @@ LocationNameID get_player_location_name_id(ItemContainerType container_type)
     switch (container_type)
     {
 
-        case AGENT_CONTAINER:
+        case AGENT_INVENTORY:
             return LN_PLAYER_INVENTORY;
         case AGENT_TOOLBELT:
             return LN_PLAYER_TOOLBELT;
@@ -131,7 +154,7 @@ void verify_config()
     // is because of the seriousness of the serializer, i'll leave it here
     GS_ASSERT_ABORT(ItemContainer::container_attributes != NULL);
 
-    bool agent_container_found = false;
+    bool agent_inventory_found = false;
     bool agent_toolbelt_found = false;
     bool agent_synthesizer_found = false;
     bool agent_energy_tanks_found = false;
@@ -145,8 +168,8 @@ void verify_config()
         if (attr == NULL || !attr->loaded || !attr->attached_to_agent) continue;
         switch (attr->type)
         {
-            case AGENT_CONTAINER:
-                agent_container_found = true;
+            case AGENT_INVENTORY:
+                agent_inventory_found = true;
                 break;
             case AGENT_TOOLBELT:
                 agent_toolbelt_found = true;
@@ -166,9 +189,11 @@ void verify_config()
         }
     }
 
-    GS_ASSERT_ABORT(agent_container_found);
+    GS_ASSERT_ABORT(agent_inventory_found);
     GS_ASSERT_ABORT(agent_toolbelt_found);
     GS_ASSERT_ABORT(agent_synthesizer_found);
     GS_ASSERT_ABORT(agent_energy_tanks_found);
     GS_ASSERT_ABORT(agent_hand_found);
 }
+
+}   // serializer

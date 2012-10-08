@@ -127,7 +127,7 @@ void server_teardown()
     if (secret_key != NULL) free(secret_key);
 }
 
-bool verify_token(const char* _token, int* user_id, time_t* expiration_time, char** username)
+static bool verify_token(const char* _token, UserID* user_id, time_t* expiration_time, char** username)
 {
     GS_ASSERT(secret_key != NULL);
     if (secret_key == NULL) return false;
@@ -166,7 +166,7 @@ bool verify_token(const char* _token, int* user_id, time_t* expiration_time, cha
 
 bool verify_token(const char* _token)
 {
-    int user_id = 0;
+    UserID user_id = NULL_USER_ID;
     time_t expiration_time = 0;
     char* username = NULL;
     bool ok = verify_token(_token, &user_id, &expiration_time, &username);
@@ -181,7 +181,7 @@ void received_auth_token(int client_id, const char* token)
         send_auth_token_valid(client_id);
         return;
     }
-    int user_id = 0;
+    UserID user_id = NULL_USER_ID;
     time_t expiration_time = 0;
     char* username = NULL;
     bool ok = verify_token(token, &user_id, &expiration_time, &username);

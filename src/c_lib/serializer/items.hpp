@@ -11,5 +11,6 @@ void teardown_items();
 int save_player_item(class Item::Item* item, LocationNameID location_name_id, class PlayerItemSaveData* data);
 
 void save_player_container(int client_id, int container_id, bool remove_items_after);
+void load_player_container(int client_id, int container_id);
 
 }   // serializer

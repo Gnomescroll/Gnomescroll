@@ -548,7 +548,7 @@ static void client_connect(ENetEvent* event)
         const char username_fmt[] = "debuguser%d";
         char* username = (char*)malloc(sizeof(username_fmt) * sizeof(char));
         sprintf(username, username_fmt, npm->client_id);
-        NetServer::client_authorized(npm->client_id, npm->client_id+1, utc_now()+3600-30, username);
+        NetServer::client_authorized(npm->client_id, (UserID)(npm->client_id+1), utc_now()+3600-30, username);
         free(username);
     }
     

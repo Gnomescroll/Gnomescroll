@@ -10,7 +10,7 @@ namespace Auth
 {
 
 char* auth_token = NULL;
-int auth_token_user_id = 0;
+UserID auth_token_user_id = NULL_USER_ID;
 time_t auth_token_timestamp = 0;
 char* auth_token_hash = NULL;
 char* auth_token_username = NULL;

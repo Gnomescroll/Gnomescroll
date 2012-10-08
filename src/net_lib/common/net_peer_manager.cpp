@@ -70,7 +70,7 @@ void NetPeerManager::init(int client_id)
  * On first load, send all data
  * Subsequent authorizations will only refresh the expiration_time
  */
-void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const char* username)
+void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, const char* username)
 {
     // assume arguments are valid. should have been verified by the auth token parser
 
@@ -100,6 +100,9 @@ void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const c
         NetServer::kill_client(this->client_id, DISCONNECT_SERVER_ERROR);
         return;
     }
+    GS_ASSERT(this->client_id == a->id);
+
+    this->agent_id = a->id;
 
     // broadcast agent to other players
     agent_create_StoC msg;
@@ -113,7 +116,7 @@ void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const c
     a->status.identify(username);
     NetServer::users->set_name_for_client_id(client_id, a->status.name);
 
-    NetServer::assign_agent_to_client(client_id, a);
+    NetServer::agents[this->client_id] = a;
     send_player_agent_id_to_client(client_id);
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
     a->status.set_fresh_state();
@@ -135,7 +138,7 @@ void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const c
 
 void NetPeerManager::teardown()
 {
-    class Agent_state* a = NetServer::agents[this->client_id];
+    class Agent_state* a = NetServer::agents[this->agent_id];
     if (a != NULL)
     {
         Item::agent_quit(a->id);    // unsubscribes agent from all item
@@ -180,13 +183,14 @@ void NetPeerManager::failed_authorization_attempt()
 
 NetPeerManager::NetPeerManager() :
     client_id(-1),
+    agent_id(NULL_AGENT),
     inited(false),
     loaded(false),
     waiting_for_auth(false),
     authorized(false),
     connection_time(utc_now()),
     auth_expiration(0),
-    user_id(0),
+    user_id(NULL_USER_ID),
     auth_attempts(0)
 {
     memset(this->username, 0, sizeof(this->username));

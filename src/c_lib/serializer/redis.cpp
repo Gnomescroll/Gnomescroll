@@ -36,7 +36,7 @@ static void handle_reply(redisReply* reply)
             break;
 
         case REDIS_REPLY_ARRAY:
-            printf("Reply (multi-bulk): %d elements", reply->elements);
+            printf("Reply (multi-bulk): %d elements\n", reply->elements);
             for (unsigned int i=0; i<reply->elements; i++)
                 handle_reply(reply->element[i]);
             break;
@@ -50,6 +50,7 @@ static void handle_reply(redisReply* reply)
 void getCallback(redisAsyncContext* ctx, void* _reply, void* note)
 {   // note is data send in the initial redisAsyncCommand
     redisReply* reply = (redisReply*) _reply;
+    GS_ASSERT(reply != NULL);
     if (reply == NULL) return;
     handle_reply(reply);
 }

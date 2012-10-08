@@ -181,7 +181,7 @@ void destroy_item(ItemID id)
         if (container != NULL && slot != NULL_SLOT)
         {
             container->remove_item(slot);
-            if (container->owner != NO_AGENT)
+            if (container->owner != NULL_AGENT)
             {
                 if (container->id == ItemContainer::get_agent_toolbelt(container->owner)
                  && item->id == Toolbelt::get_agent_selected_item(container->owner))
@@ -250,20 +250,26 @@ ItemID split_item_stack_in_half(ItemID src)
     return new_item->id;
 }
 
-Item* create_item(int item_type)
+class Item* create_item(int item_type)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     if (item_type == NULL_ITEM_TYPE) return NULL;
     return item_list->create_type(item_type);
 }
 
-Item* create_item(const char* item_name)
+class Item* create_item(const char* item_name)
 {
     int item_type = get_item_type(item_name);
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     if (item_type == NULL_ITEM_TYPE) return NULL;
     return create_item(item_type);
 }
+
+class Item* create_item_for_loading()
+{   // only used by serializer
+    return item_list->create_for_loading();
+}
+
 
 int consume_stack_item(ItemID item_id, int amount, bool auto_destroy)
 {

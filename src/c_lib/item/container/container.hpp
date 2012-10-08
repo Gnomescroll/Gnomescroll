@@ -90,7 +90,7 @@ class ItemContainerInterface
         }
         #endif
 
-        virtual void insert_item(int slot, ItemID item_id);
+        virtual int insert_item(int slot, ItemID item_id);  // returns slot it was inserted in, or NULL_SLOT on error
         virtual void remove_item(int slot);
 
         virtual bool can_insert_item(int slot, ItemID item_id)
@@ -111,9 +111,9 @@ class ItemContainerInterface
 
         virtual bool can_be_opened_by(int agent_id)
         {
-            GS_ASSERT(!this->attached_to_agent || this->owner != NO_AGENT);  // agent should be assigned
+            GS_ASSERT(!this->attached_to_agent || this->owner != NULL_AGENT);  // agent should be assigned
             if (this->attached_to_agent && this->owner != agent_id) return false;
-            return (this->owner == agent_id || this->owner == NO_AGENT);
+            return (this->owner == agent_id || this->owner == NULL_AGENT);
         }
         
         virtual bool lock(int agent_id)
@@ -130,12 +130,12 @@ class ItemContainerInterface
         virtual bool unlock(int agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
-            GS_ASSERT(this->owner != NO_AGENT);
+            GS_ASSERT(this->owner != NULL_AGENT);
             GS_ASSERT(this->owner == agent_id);
             GS_ASSERT(!this->attached_to_agent);
             if (this->attached_to_agent) return false;
             if (this->owner != agent_id) return false;
-            this->owner = NO_AGENT;
+            this->owner = NULL_AGENT;
             return true;
         }
 
@@ -161,7 +161,7 @@ class ItemContainerInterface
         xdim(0), ydim(0),
         alt_xdim(0), alt_ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
-        owner(NO_AGENT), chunk(0xffff),
+        owner(NULL_AGENT), chunk(0xffff),
         attached_to_agent(false)
         {}
 };
@@ -188,9 +188,9 @@ class ItemContainerHand: public ItemContainerInterface
             ItemContainerInterface::remove_item(0);
         }
 
-        void insert_item(ItemID item_id)
+        int insert_item(ItemID item_id)
         {
-            ItemContainerInterface::insert_item(0, item_id);
+            return ItemContainerInterface::insert_item(0, item_id);
         }
         
         ItemContainerHand(ItemContainerType type, int id)
@@ -204,7 +204,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
 
         int energy_tank_type;
 
-        void insert_item(int slot, ItemID item_id);
+        int insert_item(int slot, ItemID item_id);
 
         bool can_insert_item(int slot, ItemID item_id)
         {
@@ -246,7 +246,7 @@ class ItemContainerCryofreezer: public ItemContainer
 {
     public:
 
-        void insert_item(int slot, ItemID item_id);
+        int insert_item(int slot, ItemID item_id);
         
         ItemContainerCryofreezer(ItemContainerType type, int id)
         : ItemContainer(type,id)
@@ -265,10 +265,10 @@ class ItemContainerSynthesizer: public ItemContainerInterface
             return this->get_item(this->coins_slot);
         }
         
-        void insert_coins(ItemID item_id)
+        int insert_coins(ItemID item_id)
         {
             GS_ASSERT(Item::get_item_type(item_id) == this->coins_type);
-            this->insert_item(this->coins_slot, item_id);
+            return this->insert_item(this->coins_slot, item_id);
         }
 
         bool can_insert_item(int slot, ItemID item_id)
@@ -554,7 +554,7 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
     ItemContainerType type = (ItemContainerType)ttype;
     switch (type)
     {
-        case AGENT_CONTAINER:
+        case AGENT_INVENTORY:
         case AGENT_TOOLBELT:
         case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
             return new ItemContainer(type, id);

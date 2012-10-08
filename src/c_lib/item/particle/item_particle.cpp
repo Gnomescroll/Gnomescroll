@@ -64,7 +64,7 @@ void ItemParticle::die()
     if (item != NULL) item->location = IL_NOWHERE;
     
     // destroy source item if we weren't picked up
-    if (this->target_agent == NO_AGENT)
+    if (this->target_agent == NULL_AGENT)
         Item::destroy_item(this->item_id);
     #endif
 }
@@ -72,16 +72,16 @@ void ItemParticle::die()
 void ItemParticle::tick()
 {
     #if DC_SERVER
-    GS_ASSERT(!this->get_picked_up || this->target_agent != NO_AGENT);
+    GS_ASSERT(!this->get_picked_up || this->target_agent != NULL_AGENT);
     
     this->ttl--;
-    if (this->ttl <= 0 && this->target_agent != NO_AGENT)
+    if (this->ttl <= 0 && this->target_agent != NULL_AGENT)
         // particle failed to reach target agent in time, reset
         this->pickup_cancelled();
     #endif
     
     // orient to target agent
-    if (this->target_agent != NO_AGENT)
+    if (this->target_agent != NULL_AGENT)
     {
         Agent_state* a = STATE::agent_list->get(this->target_agent);
         if (a != NULL)
@@ -166,7 +166,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
 
 void ItemParticle::picked_up(int agent_id)
 {
-    GS_ASSERT(this->target_agent == NO_AGENT);
+    GS_ASSERT(this->target_agent == NULL_AGENT);
     this->target_agent = agent_id;
     #if DC_SERVER
     this->ttl = ITEM_PARTICLE_PICKED_UP_TTL;
@@ -176,8 +176,8 @@ void ItemParticle::picked_up(int agent_id)
 
 void ItemParticle::pickup_cancelled()
 {
-    GS_ASSERT(this->target_agent != NO_AGENT);
-    this->target_agent = NO_AGENT;
+    GS_ASSERT(this->target_agent != NULL_AGENT);
+    this->target_agent = NULL_AGENT;
     this->verlet.velocity = vec3_init(0.0f,0.0f,0.0f);
     #if DC_SERVER
     this->ttl = ITEM_PARTICLE_TTL;
@@ -189,7 +189,7 @@ void ItemParticle::pickup_cancelled()
 ItemParticle::ItemParticle(int id) :
     id((ItemParticleID)id),
     item_type(NULL_ITEM_TYPE),
-    target_agent(NO_AGENT),
+    target_agent(NULL_AGENT),
     #if DC_SERVER
     ttl(ITEM_PARTICLE_TTL),
     item_id(NULL_ITEM),
@@ -222,8 +222,8 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     GS_ASSERT(particle != NULL);
     if (particle == NULL) return false;
     
-    GS_ASSERT(particle->target_agent != NO_AGENT);
-    if (particle->target_agent == NO_AGENT) return false;
+    GS_ASSERT(particle->target_agent != NULL_AGENT);
+    if (particle->target_agent == NULL_AGENT) return false;
     
     Item::Item* item = Item::get_item(particle->item_id);
     GS_ASSERT(item != NULL);
@@ -272,7 +272,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     if (container_id != NULL_CONTAINER)
         containers[container_index++] = ItemContainer::get_container(container_id);
 
-    container_id = ItemContainer::get_agent_container(agent->id);
+    container_id = ItemContainer::get_agent_inventory(agent->id);
         GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id != NULL_CONTAINER)
         containers[container_index++] = ItemContainer::get_container(container_id);

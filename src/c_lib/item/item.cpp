@@ -18,6 +18,15 @@ void Item::init(int item_type)
     this->gas_decay = attr->gas_lifetime;
 }
 
+bool Item::init_for_loading()
+{   // use only by serializer
+    // we will set defaults for state properties that are not important enough to serialize
+    ItemAttribute* attr = get_item_attributes(this->type);
+    if (attr == NULL) return false;
+    this->gas_decay = attr->gas_lifetime;
+    return true;
+}
+
 #if DC_SERVER
 void ItemList::decay_gas()
 {
@@ -162,7 +171,7 @@ void ItemList::verify_items()
         Item* i = this->a[k];
 
         // items in a save-waiting state don't apply, they can sit in limbo
-        if (i->save_state != ISS_NONE && i->save_state != ISS_SAVED) continue;
+        if (i->save_state == ISS_WAITING_FOR_GID || i->save_state == ISS_WAITING_FOR_SAVE) continue;
         
         bool valid_location = is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT);
         if (!valid_location) i->valid = false;
@@ -187,7 +196,7 @@ void ItemList::verify_items()
                 VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
                 VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
             }
-            else if (owner != NO_AGENT)
+            else if (owner != NULL_AGENT)
             {
                 VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
                 VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);

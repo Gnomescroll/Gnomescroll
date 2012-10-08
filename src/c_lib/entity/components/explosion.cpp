@@ -88,7 +88,7 @@ void ExplosionComponent::explode()
 
     using Components::OwnerComponent;
     OwnerComponent* owner = (OwnerComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    int owner_id = NO_AGENT;
+    int owner_id = NULL_AGENT;
     if (owner != NULL) owner_id = owner->get_owner();
     
     ServerState::damage_objects_within_sphere(
