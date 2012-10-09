@@ -210,6 +210,12 @@ void destroy_item(ItemID id)
     item_list->destroy(id);
 }
 
+void destroy_item_for_loading(ItemID id)
+{   // only used by serializer; skips all the maintenance stuff
+    // the item never reached the system, it was deemed invalid
+    item_list->destroy(id);
+}
+
 ItemID split_item_stack(ItemID src, int amount)
 {
     GS_ASSERT(src != NULL_ITEM);

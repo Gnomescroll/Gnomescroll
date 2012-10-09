@@ -733,6 +733,11 @@ static void throw_items_from_container(int client_id, int agent_id, int containe
 
 void agent_born(int agent_id)
 {
+    // TODO -- restore agent_born
+        // must wait for full deserialization, then we can proceed with this stuff
+    
+    return;
+    
     // refill toolbelt if needed
 
     // toolbelt should have at least 1 maxed out laser rifle
@@ -743,6 +748,7 @@ void agent_born(int agent_id)
     // if we have neither and there is only one slot, add the laser rifle (because fist can replace mining_laser)
 
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
@@ -1651,32 +1657,19 @@ void update_smelters()
             }
             smelter->reset_smelting();
         }
-        
     }
 }
 
 // used by serializer; places an item into a container based on the item's location information
 // returns false on error
-bool load_item_into_container(ItemID item_id)
+bool load_item_into_container(ItemID item_id, int container_id, int container_slot)
 {
-    ASSERT_VALID_ITEM_ID(item_id);
-    IF_INVALID_ITEM_ID(item_id) return false;
-    Item::Item* item = Item::get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return false;
+    return transfer_free_item_to_container(item_id, container_id, container_slot);
+}
 
-    GS_ASSERT(item->location == IL_HAND || item->location == IL_CONTAINER);
-    if (item->location != IL_HAND && item->location != IL_CONTAINER) return false;
-    
-    ItemContainerInterface* container = get_container(item->location_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return false;
-
-    int slot = container->insert_item(item->container_slot, item->id);
-    GS_ASSERT(slot != NULL_SLOT);
-    if (slot == NULL_SLOT) return false;
-    
-    return true;
+bool load_item_into_hand(ItemID item_id, int agent_id)
+{
+    return transfer_free_item_to_hand(item_id, agent_id);
 }
 
 //tests

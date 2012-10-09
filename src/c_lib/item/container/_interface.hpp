@@ -98,7 +98,8 @@ void update_smelters();
 
 // used by serializer; places an item into a container based on the item's location information
 // returns false on error
-bool load_item_into_container(ItemID item_id);
+bool load_item_into_container(ItemID item_id, int container_id, int container_slot);
+bool load_item_into_hand(ItemID item_id, int agent_id);
 
 // tests
 void test_container_list_capacity();

@@ -21,13 +21,13 @@ void Item::init(int item_type)
 
 #if DC_SERVER
 
-bool Item::init_for_loading()
+void Item::init_for_loading()
 {   // use only by serializer
     // we will set defaults for state properties that are not important enough to serialize
     ItemAttribute* attr = get_item_attributes(this->type);
-    if (attr == NULL) return false;
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return;
     this->gas_decay = attr->gas_lifetime;
-    return true;
 }
 
 

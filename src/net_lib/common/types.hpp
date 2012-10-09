@@ -19,3 +19,8 @@ typedef enum
 {
     NULL_USER_ID = 0
 } UserID;
+
+typedef enum
+{
+    NULL_CLIENT = 0xff,
+} ClientID;

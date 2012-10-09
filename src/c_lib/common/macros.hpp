@@ -6,8 +6,8 @@
 #define ASSERT_VALID_ITEM_ID(item_id) GS_ASSERT(item_id >= 0 && item_id < MAX_ITEMS)
 #define IF_INVALID_ITEM_ID(item_id) if (item_id < 0 || item_id >= MAX_ITEMS)
 
-#define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS)
-#define IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) 
+#define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT(client_id >= 0 && client_id != NULL_CLIENT && client_id < NetServer::HARD_MAX_CONNECTIONS)
+#define IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id == NULL_CLIENT || client_id >= NetServer::HARD_MAX_CONNECTIONS) 
 
 #define ASSERT_VALID_BLOCK(block_type) GS_ASSERT(block_type >= 0 && block_type < t_map::MAX_CUBES)
 #define IF_INVALID_BLOCK(block_type) if (block_type < 0 || block_type >= t_map::MAX_CUBES) 

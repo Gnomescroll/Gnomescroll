@@ -87,26 +87,42 @@ class PlayerItemSaveData
     {}
 };
 
-class PlayerItemLoadData
+class PlayerContainerLoadData
 {
     public:
         int id;
         UserID user_id;
+        int client_id;
         int container_id;
+        unsigned int item_count;
 
-    PlayerItemLoadData() :
-        id(-1), user_id(NULL_USER_ID), container_id(NULL_CONTAINER)
+        void items_loaded()
+        {
+            NetPeerManager* client = NetServer::get_client(this->client_id);
+            GS_ASSERT(client != NULL);
+            if (client == NULL) return;     // TODO -- log error
+            client->container_was_loaded(this->container_id);
+        }
+
+    PlayerContainerLoadData() :
+        id(-1), user_id(NULL_USER_ID), client_id(NULL_CLIENT),
+        container_id(NULL_CONTAINER), item_count(0)
     {}
 };
 
-class ItemLoadData
+class PlayerItemLoadData
 {
     public:
         int id;
         int64_t item_guid;
+        UserID user_id;
+        int client_id;
+        int container_id;
+        class PlayerContainerLoadData* container_data;
 
     ItemLoadData() :
-        id(-1), item_guid(0)
+        id(-1), item_guid(0), user_id(NULL_USER_ID),
+        container_id(NULL_CONTAINER), container_data(NULL)
     {}
 };
 
@@ -120,36 +136,36 @@ class PlayerItemSaveDataList: public ElasticObjectList<PlayerItemSaveData, 1024>
         const char* name() { return "PlayerItemSaveDataList"; }
 
     PlayerItemSaveDataList() :
-     ElasticObjectList<PlayerItemSaveData, 1024>(PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX)
-     { this->print(); }
+        ElasticObjectList<PlayerItemSaveData, 1024>(PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX)
+    { this->print(); }
 };
 
-class PlayerItemLoadDataList: public ElasticObjectList<PlayerItemLoadData, NetServer::HARD_MAX_CONNECTIONS>
+class PlayerItemLoadDataList: public ElasticObjectList<PlayerItemLoadData, 1024>
 {
     public:
         const char* name() { return "PlayerItemLoadDataList"; }
 
     PlayerItemLoadDataList() :
-     ElasticObjectList<PlayerItemLoadData, NetServer::HARD_MAX_CONNECTIONS>(PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX)
-     { this->print(); }
+        ElasticObjectList<PlayerItemLoadData, 1024>(PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX)
+    { this->print(); }
 };
 
-class ItemLoadDataList: public ElasticObjectList<ItemLoadData, 1024>
+class PlayerContainerLoadDataList: public ElasticObjectList<PlayerContainerLoadData, NetServer::HARD_MAX_CONNECTIONS>
 {
     public:
-        const char* name() { return "ItemLoadDataList"; }
+        const char* name() { return "PlayerContainerLoadDataList"; }
 
-    ItemLoadDataList() :
-     ElasticObjectList<ItemLoadData, 1024>(ITEM_LOAD_DATA_LIST_HARD_MAX)
-     { this->print(); }
+    PlayerContainerLoadDataList() :
+        ElasticObjectList<PlayerContainerLoadData, NetServer::HARD_MAX_CONNECTIONS>(PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX)
+    { this->print(); }
 };
 
 // cache for player data passed around in the redis callbacks
 static class PlayerItemSaveDataList* player_item_save_data_list = NULL;
 static class PlayerItemLoadDataList* player_item_load_data_list = NULL;
-static class ItemLoadDataList* item_load_data_list = NULL;
+static class PlayerContainerLoadDataList* player_container_load_data_list = NULL;
 
-void load_item(int64_t item_guid);    // forward decl
+void load_player_item(int64_t item_guid, class PlayerContainerLoadData* container_data);    // forward decl
 
 void init_items()
 {
@@ -158,9 +174,9 @@ void init_items()
     
     GS_ASSERT(player_item_load_data_list == NULL);
     player_item_load_data_list = new class PlayerItemLoadDataList;
-    
-    GS_ASSERT(item_load_data_list == NULL);
-    item_load_data_list = new class ItemLoadDataList;
+
+    GS_ASSERT(player_container_load_data_list == NULL);
+    player_container_load_data_list = new class PlayerContainerLoadDataList;
 }
 
 void teardown_items()
@@ -175,10 +191,10 @@ void teardown_items()
         GS_ASSERT(player_item_load_data_list->ct == 0);
         delete player_item_load_data_list;
     }
-    if (item_load_data_list != NULL)
+    if (player_container_load_data_list != NULL)
     {
-        GS_ASSERT(item_load_data_list->ct == 0);
-        delete item_load_data_list;
+        GS_ASSERT(player_container_load_data_list->ct == 0);
+        delete player_container_load_data_list;
     }
 }
 
@@ -255,23 +271,30 @@ static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void*
     // TODO -- need to mark the container that its done loading items
     
     redisReply* reply = (redisReply*)_reply;
-    class PlayerItemLoadData* data = (class PlayerItemLoadData*)_data;
+    class PlayerContainerLoadData* data = (class PlayerContainerLoadData*)_data;
 
     if (reply->type == REDIS_REPLY_ARRAY)
     {
         // we could MULTI/EXEC here but its not necessary
         char* endptr = NULL;
+        data->item_count = reply->elements;
         for (unsigned int i=0; i<reply->elements; i++)
         {
             redisReply* subreply = reply->element[i];
             GS_ASSERT(subreply->type == REDIS_REPLY_STRING);
-            if (subreply->type != REDIS_REPLY_STRING) continue;
+            if (subreply->type != REDIS_REPLY_STRING)
+            {
+                data->item_count--;
+                continue; // ERROR
+            }
             int64_t item_guid = (int64_t)strtoll(subreply->str, &endptr, 10);
             GS_ASSERT(subreply->str[0] != '\0' && endptr[0] == '\0');
-            if (subreply->str[0] != '\0' && endptr[0] == '\0')
-                load_item(item_guid);
-            //else
-                // log error, parsing failed
+            if (subreply->str[0] == '\0' || endptr[0] != '\0')
+            {
+                data->item_count--;
+                continue;    // ERROR
+            }
+            load_player_item(item_guid, data);
         }
     }
     else
@@ -286,173 +309,166 @@ static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void*
         printf("Unhandled reply received from redis for player container loading\n");
     }
 
-    player_item_load_data_list->destroy(data->id);
+    //player_container_load_data_list->destroy(data->id);
 }
 
-static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
+// returns false on error
+static bool handle_item_hash_reply(redisReply* reply, class Item::Item* item)
+{
+    GS_ASSERT(reply->elements == EXPECTED_ITEM_HASH_FIELDS*2);
+    bool err = false;
+    char* location_name = NULL;
+    int location_id = NULL_LOCATION;
+
+    // TODO -- item list should have enough reserved space to load everyone's inventories
+    item->save_state = ISS_LOADING;
+
+    for (unsigned int i=0; i<reply->elements; i+=2)
+    {
+        GS_ASSERT(reply->element[i+0]->type == REDIS_REPLY_STRING);
+        GS_ASSERT(reply->element[i+1]->type == REDIS_REPLY_STRING);
+        err = (reply->element[i+0]->type != REDIS_REPLY_STRING
+            || reply->element[i+1]->type != REDIS_REPLY_STRING);
+        if (err) break;
+            
+        char* key = reply->element[i]->str;
+        char* value = reply->element[i+1]->str;
+
+        // create an item from the data
+
+        if (strcmp(key, ITEM_GUID_KEYNAME) == 0)
+            item->global_id = (int64_t)parse_int(value, err);
+        else
+        if (strcmp(key, ITEM_NAME_KEYNAME) == 0)
+        {
+            item->type = Item::get_versioned_item_type(value);
+            GS_ASSERT(item->type != NULL_ITEM_TYPE);
+            if (item->type == NULL_ITEM_TYPE) err = true;
+        }
+        else
+        if (strcmp(key, ITEM_DURABILITY_KEYNAME) == 0)
+            item->durability = (int)parse_int(value, err);
+        else
+        if (strcmp(key, ITEM_STACK_SIZE_KEYNAME) == 0)
+            item->stack_size = (int)parse_int(value, err);
+        else
+        if (strcmp(key, ITEM_LOCATION_KEYNAME) == 0)
+            location_name = value;
+        else
+        if (strcmp(key, ITEM_LOCATION_ID_KEYNAME) == 0)
+            location_id = (int)parse_int(value, err);
+        else
+        if (strcmp(key, ITEM_CONTAINER_SLOT_KEYNAME) == 0)
+            item->container_slot = (int)parse_int(value, err);
+        else
+            err = true;
+
+        GS_ASSERT(!err);
+
+        if (err) break;
+    }
+
+    GS_ASSERT(location_name != NULL);
+    GS_ASSERT(location_id != NULL_LOCATION);
+
+    // TODO --
+    if (err || location_name == NULL || location_id == NULL_LOCATION)
+        return false;
+
+    // if location name starts with "player"
+        // if location is hand, IL_HAND and get hand id for player (location_id)
+        // else, IL_CONTAINER and get id for container matching the string
+    // else if location name is container
+        // location_id is that container's guid (we need to have the global containers loaded by this point)
+            // since containers are only grabbed on load, it is ok to repeatedly iterate the container list to find guid
+    // else if location name is particle    [[ NOT YET SUPPORTED -- isnt needed unless we want it later.]
+        // location id is guid for the particle. same idea as for the container loading
+
+    if (str_starts_with(location_name, PLAYER_CONTAINER_LOCATION_PREFIX))
+    {
+        // interpret location_id as the uuid of the player
+        NetPeerManager* client = NetServer::get_client_from_user_id((UserID)location_id);
+        GS_ASSERT(client != NULL);  // This can happen under normal conditions, e.g. player joins and quits immediately 
+        if (client == NULL) return false;
+        
+        char* subloc = &location_name[sizeof(PLAYER_CONTAINER_LOCATION_PREFIX)-1];
+        if (strcmp(subloc, PLAYER_HAND_LOCATION_SUBNAME) == 0)
+        {
+            item->location_id = client->agent_id;
+            item->location = IL_HAND;
+        }
+        else
+        {
+            item->location = IL_CONTAINER;
+            if (strcmp(subloc, PLAYER_INVENTORY_LOCATION_SUBNAME) == 0)
+                item->location_id = ItemContainer::get_agent_inventory(client->agent_id);
+            else
+            if (strcmp(subloc, PLAYER_ENERGY_TANKS_LOCATION_SUBNAME) == 0)
+                item->location_id = ItemContainer::get_agent_energy_tanks(client->agent_id);
+            else
+            if (strcmp(subloc, PLAYER_SYNTHESIZER_LOCATION_SUBNAME) == 0)
+                item->location_id = ItemContainer::get_agent_synthesizer(client->agent_id);
+            else
+            if (strcmp(subloc, PLAYER_TOOLBELT_LOCATION_SUBNAME) == 0)
+                item->location_id = ItemContainer::get_agent_toolbelt(client->agent_id);
+        }
+    }
+    else
+    if (strcmp(CONTAINER_LOCATION_NAME, location_name) == 0)
+        item->location = IL_CONTAINER;   // TODO -- lookup container id from location_id (which should be container guid)
+    else
+    if (strcmp(PARTICLE_LOCATION_NAME, location_name) == 0)
+        item->location = IL_PARTICLE;    // TODO -- look up particle
+
+    err = !(item->valid_deserialization());
+    GS_ASSERT(!err);
+    if (err) return false;
+
+    // need to place the item into the container it should be in
+    if (item->location == IL_HAND)
+        err = !(ItemContainer::load_item_into_hand(item->id, item->location_id));
+    else
+    if (item->location == IL_CONTAINER)
+        err = !(ItemContainer::load_item_into_container(item->id, item->location_id, item->container_slot));
+    else
+    {   // TODO -- implement particle creation
+        GS_ASSERT(false);
+        err = true;
+    }
+
+    GS_ASSERT(!err)
+    if (err) return false;
+
+    item->init_for_loading();
+    item->save_state = ISS_LOADED;
+
+    return true;
+}
+
+static void load_player_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
     // TODO -- when destroy the tmp item due to failure,
     // we either need to clear its location data to avoid triggering the autocleanup
     // or have a separate destruction method (better)
     
     redisReply* reply = (redisReply*)_reply;
-    class ItemLoadData* data = (class ItemLoadData*)_data;
+    class PlayerItemLoadData* data = (class PlayerItemLoadData*)_data;
+    GS_ASSERT(data->container_data_id != -1);
+    if (data->container_data_id == -1) return;  // TODO -- log error
+    class PlayerContainerLoadData* container_data = player_container_load_data_list->get(data->container_data_id);
+    GS_ASSERT(container_data != NULL);
+    if (container_data == NULL) return; // TODO -- log error
+    GS_ASSERT(container_data->item_count > 0);
+    if (container_data->item_count <= 0) return;    // TODO -- log error
 
     if (reply->type == REDIS_REPLY_ARRAY)
     {
-        GS_ASSERT(reply->elements == EXPECTED_ITEM_HASH_FIELDS*2);
-        bool err = false;
-        char* location_name = NULL;
-        int location_id = NULL_LOCATION;
-
-        // TODO -- item list should have enough reserved space to load everyone's inventories
-        Item::Item* item = Item::create_item_for_loading();
-        item->save_state = ISS_LOADING;
+        class Item::Item* item = Item::create_item_for_loading();
         GS_ASSERT(item != NULL);
         if (item != NULL)
         {
-            printf("%d elements\n", reply->elements);
-            for (unsigned int i=0; i<reply->elements; i+=2)
-            {
-                GS_ASSERT(reply->element[i]->type == REDIS_REPLY_STRING);
-                GS_ASSERT(reply->element[i+1]->type == REDIS_REPLY_STRING);
-                if (reply->element[i]->type != REDIS_REPLY_STRING
-                 || reply->element[i+1]->type != REDIS_REPLY_STRING)
-                {
-                    err = true;
-                    break;
-                }
-                char* key = reply->element[i]->str;
-                char* value = reply->element[i+1]->str;
-
-                printf("Key: %s\n", key);
-                printf("Value: %s\n", value);
-
-                // create an item from the data
-
-                if (strcmp(key, ITEM_GUID_KEYNAME) == 0)
-                    item->global_id = (int64_t)parse_int(value, err);
-                else
-                if (strcmp(key, ITEM_NAME_KEYNAME) == 0)
-                {
-                    item->type = Item::get_versioned_item_type(value);
-                    if (item->type == NULL_ITEM_TYPE) err = true;
-                }
-                else
-                if (strcmp(key, ITEM_DURABILITY_KEYNAME) == 0)
-                    item->durability = (int)parse_int(value, err);
-                else
-                if (strcmp(key, ITEM_STACK_SIZE_KEYNAME) == 0)
-                    item->stack_size = (int)parse_int(value, err);
-                else
-                if (strcmp(key, ITEM_LOCATION_KEYNAME) == 0)
-                    location_name = value;
-                else
-                if (strcmp(key, ITEM_LOCATION_ID_KEYNAME) == 0)
-                    location_id = (int)parse_int(value, err);
-                else
-                if (strcmp(key, ITEM_CONTAINER_SLOT_KEYNAME) == 0)
-                    item->container_slot = (int)parse_int(value, err);
-                else
-                    err = true;
-
-                GS_ASSERT(!err);
-
-                if (err) break;
-            }
-
-            GS_ASSERT(location_name != NULL);
-            GS_ASSERT(location_id != NULL_LOCATION);
-
-            // TODO --
-            if (err || location_name == NULL || location_id == NULL_LOCATION)
-            {
-                Item::destroy_item(item->id);
-                //log_error();  // TODO
-                goto unload;
-            }
-
-            // if location name starts with "player"
-                // if location is hand, IL_HAND and get hand id for player (location_id)
-                // else, IL_CONTAINER and get id for container matching the string
-            // else if location name is container
-                // location_id is that container's guid (we need to have the global containers loaded by this point)
-                    // since containers are only grabbed on load, it is ok to repeatedly iterate the container list to find guid
-            // else if location name is particle    [[ NOT YET SUPPORTED -- isnt needed unless we want it later.]
-                // location id is guid for the particle. same idea as for the container loading
-
-            if (str_starts_with(location_name, PLAYER_CONTAINER_LOCATION_PREFIX))
-            {
-                // interpret location_id as the uuid of the player
-                NetPeerManager* client = NetServer::get_client_from_user_id((UserID)location_id);
-                GS_ASSERT(client != NULL);  // This can happen under normal conditions, e.g. player joins and quits immediately 
-                if (client == NULL)
-                {
-                    Item::destroy_item(item->id);
-                    // log error
-                    goto unload;
-                }
-                
-                char* subloc = &location_name[sizeof(PLAYER_CONTAINER_LOCATION_PREFIX)-1];
-                if (strcmp(subloc, PLAYER_HAND_LOCATION_SUBNAME) == 0)
-                {
-                    item->location_id = ItemContainer::get_agent_hand(client->agent_id);
-                    item->location = IL_HAND;
-                }
-                else
-                {
-                    item->location = IL_CONTAINER;
-                    if (strcmp(subloc, PLAYER_INVENTORY_LOCATION_SUBNAME) == 0)
-                        item->location_id = ItemContainer::get_agent_inventory(client->agent_id);
-                    else
-                    if (strcmp(subloc, PLAYER_ENERGY_TANKS_LOCATION_SUBNAME) == 0)
-                        item->location_id = ItemContainer::get_agent_energy_tanks(client->agent_id);
-                    else
-                    if (strcmp(subloc, PLAYER_SYNTHESIZER_LOCATION_SUBNAME) == 0)
-                        item->location_id = ItemContainer::get_agent_synthesizer(client->agent_id);
-                    else
-                    if (strcmp(subloc, PLAYER_TOOLBELT_LOCATION_SUBNAME) == 0)
-                        item->location_id = ItemContainer::get_agent_toolbelt(client->agent_id);
-                }
-            }
-            else
-            if (strcmp(CONTAINER_LOCATION_NAME, location_name) == 0)
-                item->location = IL_CONTAINER;   // TODO -- lookup container id from location_id (which should be container guid)
-            else
-            if (strcmp(PARTICLE_LOCATION_NAME, location_name) == 0)
-                item->location = IL_PARTICLE;    // TODO -- look up particle
-
-            err = !(item->valid_deserialization());
-            GS_ASSERT(!err);
-            if (err)
-            {
-                Item::destroy_item(item->id);
-                //log_error();    // TODO
-                goto unload;
-            }
-
-            // need to place the item into the container it should be in
-            err = !(ItemContainer::load_item_into_container(item->id));
-
-            GS_ASSERT(!err)
-            if (err)
-            {
-                Item::destroy_item(item->id);
-                // TODO -- log error
-                goto unload;
-            }
-
-            err = !(item->init_for_loading());
-
-            GS_ASSERT(!err);
-            if (err)
-            {
-                Item::destroy_item(item->id);
-                // TODO -- log error
-                goto unload;
-            }
-            
-            item->save_state = ISS_LOADED;
+            bool err = handle_item_hash_reply(reply, item);
+            if (err) Item::destroy_item_for_loading(item);
         }
     }
     else
@@ -473,8 +489,13 @@ static void load_item_cb(redisAsyncContext* ctx, void* _reply, void* _data)
         printf("Unhandled reply received from redis for item %lld loading", data->item_guid);
     }
 
-    unload:
-        item_load_data_list->destroy(data->id);
+    container_data->item_count--;
+    if (container_data->item_count <= 0)
+    {   // this container is loaded, we are ready
+        container_data->items_loaded();
+        player_container_load_data_list->destroy(container_data->id);
+    }
+    item_load_data_list->destroy(data->id);
 }
 
 
@@ -629,10 +650,11 @@ void load_player_container(int client_id, int container_id)
     GS_ASSERT(location_name != NULL);
     if (location_name == NULL) return;
     
-    class PlayerItemLoadData* data = player_item_load_data_list->create();
+    class PlayerContainerLoadData* data = player_container_load_data_list->create();
     GS_ASSERT(data != NULL);
     if (data == NULL) return;
     data->user_id = client->user_id;
+    data->client_id = client->client_id;
     data->container_id = container_id;
 
     int ret = redisAsyncCommand(ctx, &load_player_container_cb, data,
@@ -640,20 +662,19 @@ void load_player_container(int client_id, int container_id)
     GS_ASSERT(ret == REDIS_OK);
 }
 
-void load_item(int64_t item_guid)
+void load_player_item(int64_t item_guid, class PlayerContainerLoadData* container_data)
 {
-    // no data packet needed; all information should be in the hash
-    // TODO -- dont "agent_born" the containers until they are fully loaded!
-    // this means waiting for all data responses about the items found in the container
-
-    class ItemLoadData* data = item_load_data_list->create();
+    class PlayerItemLoadData* data = player_item_load_data_list->create();
     GS_ASSERT(data != NULL);
-    if (data == NULL) return;   // TODO -- log error
+    if (data == NULL) return;
+
     data->item_guid = item_guid;
-    
-    int ret = redisAsyncCommand(ctx, &load_item_cb, data,
+    data->container_data = container_data;
+    load_item(data);
+
+    int ret = redisAsyncCommand(ctx, &load_player_item_cb, data,
         "HGETALL item:%lld", item_guid);
     GS_ASSERT(ret == REDIS_OK);
-}
+} 
 
 }   // serializer

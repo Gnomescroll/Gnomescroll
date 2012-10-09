@@ -119,7 +119,6 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     NetServer::agents[this->client_id] = a;
     send_player_agent_id_to_client(client_id);
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
-    a->status.set_fresh_state();
 
     add_player_to_chat(client_id);
 
@@ -134,6 +133,68 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
     this->loaded = true;
     this->authorized = true;
+}
+
+void NetPeerManager::was_deserialized()
+{
+    // TODO -- we're going to have to delay all the agent stuff until the agent's physical state is loaded
+    // this means we need an inactive agent pool, or the redis load agent callback should create the agent
+    // well, it should tell NPM the data it got, and NPM will use that to create the agent
+    // the agent redis loading must be called first so that we create the agent before
+    // we try to stick stuff in its containers
+    
+    GS_ASSERT(!this->deserialized);
+    if (this->deserialized) return;
+    this->deserialized = true;
+    // This has to be delayed until player's state and items are deserialized
+    a->status.set_fresh_state();    
+}
+
+int get_container_loaded_index_for_type(ItemContainerType type)
+{
+    switch (type)
+    {
+        case AGENT_HAND:
+            return 0;
+        case AGENT_INVENTORY:
+            return 1;
+        case AGENT_TOOLBELT:
+            return 2;
+        case AGENT_SYNTHESIZER:
+            return 3;
+        case AGENT_ENERGY_TANKS:
+            return 4; 
+        default:
+            GS_ASSERT(false);
+            return -1;
+    }
+    GS_ASSERT(false);
+    return -1;
+}
+
+void container_was_loaded(int container_id)
+{
+    ItemContainerInterface* container = ItemContainer::get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return;  // TODO -- force disconnect client with error message
+    int index = this->get_container_loaded_index_for_type(container->type);
+    GS_ASSERT(index >= 0 && index < Item::N_PLAYER_CONTAINERS);
+    if (index < 0 || index >= Item::N_PLAYER_CONTAINERS) return;  // TODO -- force disconnect client with error message
+    GS_ASSERT(!this->containers_loaded[index]);
+    this->containers_loaded[index] = true;
+    if (!this->player_data_loaded) return;
+    for (int i=0; i<Item::N_PLAYER_CONTAINERS; i++)
+        if (!this->containers_loaded[i]) return;
+    this->was_deserialized();
+}
+
+void player_data_loaded()
+{
+    GS_ASSERT(!this->player_data_loaded);
+    this->player_data_loaded = true;
+    for (int i=0; i<Item::N_PLAYER_CONTAINERS; i++)
+        if (!this->containers_loaded[i]) return;
+    this->was_deserialized();
 }
 
 void NetPeerManager::teardown()
@@ -182,17 +243,20 @@ void NetPeerManager::failed_authorization_attempt()
 }
 
 NetPeerManager::NetPeerManager() :
-    client_id(-1),
+    client_id(NULL_CLIENT),
     agent_id(NULL_AGENT),
     inited(false),
     loaded(false),
     waiting_for_auth(false),
     authorized(false),
+    deserialized(false),
+    player_data_loaded(false),
     connection_time(utc_now()),
     auth_expiration(0),
     user_id(NULL_USER_ID),
     auth_attempts(0)
 {
+    memset(this->containers_loaded, 0, sizeof(this->containers_loaded));
     memset(this->username, 0, sizeof(this->username));
 }
 

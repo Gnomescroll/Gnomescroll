@@ -148,7 +148,7 @@ static void client_disconnect(ENetEvent* event)
     
     NetClient::Server.disconnect_code = (DisconnectType)event->data;
     NetClient::Server.connected = 0;
-    NetClient::Server.client_id = -1;
+    NetClient::Server.client_id = NULL_CLIENT;
 
     ClientState::on_disconnect();
 }
@@ -310,8 +310,6 @@ namespace NetServer
 
 static void client_connect(ENetEvent* event);
 static void client_disconnect(ENetPeer* peer, enet_uint32 data);
-
-static int client_id_offset = -1;
 
 void init_server(int a, int b, int c, int d, int port)
 {
@@ -502,16 +500,14 @@ static void client_connect(ENetEvent* event)
     }
 
     NetServer::number_of_clients++;
-
     NetPeerManager* npm = NULL;
 
-    int client_id = client_id_offset;
-    client_id_offset++;
-
+    static int _client_id_offset = 0;
     for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
     {   // find free peer slot
-        client_id = (client_id+1) % NetServer::HARD_MAX_CONNECTIONS;
+        int client_id = (_client_id_offset+i) % NetServer::HARD_MAX_CONNECTIONS;
         if (NetServer::staging_pool[client_id] != NULL || NetServer::pool[client_id] != NULL) continue;
+        _client_id_offset = (client_id + 1) % NetServer::HARD_MAX_CONNECTIONS;
         nc->client_id = client_id;
         nc->connected = 1;
         NetServer::staging_pool[client_id] = nc;

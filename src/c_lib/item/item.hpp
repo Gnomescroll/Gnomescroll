@@ -50,7 +50,7 @@ class Item
         return true;
     }
 
-    bool init_for_loading();   // only to be used by serializer
+    void init_for_loading();   // only to be used by serializer
     #endif
     
     void init(int item_type);

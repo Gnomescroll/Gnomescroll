@@ -322,16 +322,15 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
 }
 
 // new unassigned item to hand
-void transfer_free_item_to_hand(ItemID item_id, int agent_id)
+bool transfer_free_item_to_hand(ItemID item_id, int agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_INVALID_AGENT_ID(agent_id) return false;
 
-    if (item_id == NULL_ITEM) return;
+    if (item_id == NULL_ITEM) return false;
 
-    ItemID hand_item = get_agent_hand_item(agent_id);
-    GS_ASSERT(hand_item == NULL_ITEM);
+    GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
 
     Item::subscribe_agent_to_item(agent_id, item_id);
 
@@ -341,6 +340,8 @@ void transfer_free_item_to_hand(ItemID item_id, int agent_id)
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
+
+    return true;
 }
 
 bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, int container_id, int slot)
