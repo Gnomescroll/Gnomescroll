@@ -35,7 +35,7 @@ const float shroom_threshold = 0.997f;
 
 
 
-void make_circle(int x, int y, int z, float dist, int block) {
+void make_circle(int x, int y, int z, float dist, int block) { // instead of from the center of given block
     float fx = 0;
     float fy = 0;
     float angle = 0;
@@ -45,6 +45,31 @@ void make_circle(int x, int y, int z, float dist, int block) {
         fy = cosf(angle) * dist;
         t_map::set(x + (int)fx, y + (int)fy, z, block);
         angle += PI / 32;
+    }
+}
+
+void make_circle_from_corner_of_block(int x, int y, int z, float dist, int block, bool extend_down = false) { // instead of from the center of given block
+    float fx = 0;
+    float fy = 0;
+    float angle = 0;
+
+    while (angle < DOUBLE_PI) {
+        fx = sinf(angle) * dist;
+        fy = cosf(angle) * dist;
+		int fi_x = x + (int)(fx+.5); // final x
+		int fi_y = y + (int)(fy+.5);
+        angle += PI / 64;
+
+		t_map::set(fi_x, fi_y, z, block);
+
+		if (extend_down) {
+			// make sure it extends all the way to the ground
+			int z_extender = z - 1;
+			while (t_map::get(fi_x, fi_y, z_extender) == 0) {
+				t_map::set(fi_x, fi_y, z_extender, block);
+				z_extender--;
+			}
+		}
     }
 }
 
@@ -68,13 +93,29 @@ bool blocks_are_invalid(int arr[], int len) {
 void make_shroom(int x, int y, int z) {
     int trunk = trunks[randrange(0, NUM_TRUNKS - 1)];
 
-    int height = randrange(3, 12);
-    float wid = randrange(2, 5);
-    //if (height+z+cap_height >= ZMAX) break;
+    int cap_height = randrange(4, 15);
+	int hei = 0;
+    float t_rad = randrange(1, 4); // trunk/stem radius
+	float cap_rad = t_rad * 4;
+	int cap_rad_changer = 0;
 
-    for (int j = 0; j < height; j++) {
-        make_circle(x, y, z+j, wid, trunk);
-    }
+	while (cap_rad > 0) {
+		if (cap_rad > t_rad) 
+			make_circle_from_corner_of_block(x, y, z+hei, t_rad, trunk, hei == 0);
+
+		if (hei >= cap_height) {
+			make_circle_from_corner_of_block(x, y, z+hei, cap_rad, trunk);
+			
+			//
+			int targ_cap_rad = cap_rad + cap_rad_changer;
+			while (targ_cap_rad > cap_rad) { cap_rad++; make_circle_from_corner_of_block(x, y, z+hei, cap_rad, trunk); }
+			while (targ_cap_rad < cap_rad) { cap_rad--; make_circle_from_corner_of_block(x, y, z+hei, cap_rad, trunk); }
+
+			cap_rad_changer--;
+		}
+
+		hei++;
+	}
 }
 
 
@@ -159,15 +200,15 @@ namespace t_gen {
 					}
 			}
 
-			//if (noise[x + y*XMAX] > shroom_zone_threshold
-			// && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-			//{   // we're in tree land
-			//	int z = t_map::get_highest_solid_block(x,y);
+			if (noise[x + y*XMAX] > .1//shroom_zone_threshold
+			 && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
+			{   // we're in tree land
+				int z = t_map::get_highest_solid_block(x,y);
 
-			//	if (z >= 1 && t_map::get(x,y,z) == t_map::get_cube_id("regolith") )
-			//		if (strip_of_solid_blocks_underneath(x,y,z, 6) )
-			//			make_shroom(x,y,z);
-			//}
+				if (z >= 1 && t_map::get(x,y,z) == t_map::get_cube_id("regolith") )
+					if (strip_of_solid_blocks_underneath(x,y,z, 6) )
+						make_shroom(x,y,z);
+			}
 		}
 
 	    free(noise);

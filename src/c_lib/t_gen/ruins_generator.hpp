@@ -174,7 +174,16 @@ bool rect_contains(Rect3D r, int x, int y, int z) {
     return false;
 }
 
-
+bool corner_needs_this(Rect r, direction_t d, Room room, int cx, int cy) {
+    if (rect_contains(r, cx, cy) ) {
+		if (room.dir_types[d] == DIRTYPE_DOOR) {
+			if (far_north_cube(cy) || far_south_cube(cy) || far_east_cube(cx) || far_west_cube(cx) ) 
+				return true; 
+		} else return true; 
+	}
+	
+	return false;
+}
 
 // params:  room indexes,  origin x/y
 void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
@@ -326,7 +335,8 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
             if (far_east_cube(cx) && cz >= eh.hei)  need_block = true; // make lintel
 		} else { // dir is blocked
-            sh.dep = se.dep = cubes_across_room / 2;
+            sh.dep = cubes_across_room / 2;
+			se.dep = cubes_across_room / 2;
 			if (cx >= r.x_offs + r.wid)  need_block = true;
 		}
 
@@ -334,26 +344,10 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 		
 		
 
-        // figure what blocks are needed for each corner
-		if (rect_contains(ne, cx, cy) )  need_block = true;
-        if (rect_contains(se, cx, cy) ) {
-			if (r.dir_types[DIR_EAST] == DIRTYPE_DOOR) {
-				if (far_south_cube(cy) || far_east_cube(cx) ) 
-					need_block = true;
-
-				//printf("bullshit");
-
-
-
-			} else need_block = true; 
-		}
-        if (rect_contains(sw, cx, cy) ) {
-			if (r.dir_types[DIR_SOUTH] == DIRTYPE_DOOR) 
-				if (far_south_cube(cy) || far_west_cube(cx) ) 
-					need_block = true;
-			else need_block = true; 
-		}
-        if (rect_contains(nw, cx, cy) )  need_block = true;
+        if (corner_needs_this(ne, DIR_NORTH, r, cx, cy) )  need_block = true;
+        if (corner_needs_this(se, DIR_EAST,  r, cx, cy) )  need_block = true;
+        if (corner_needs_this(sw, DIR_SOUTH, r, cx, cy) )  need_block = true;
+        if (corner_needs_this(nw, DIR_WEST,  r, cx, cy) )  need_block = true;
 
 
         // clear space for stairs
