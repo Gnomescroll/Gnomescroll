@@ -200,7 +200,7 @@ namespace t_gen {
 					}
 			}
 
-			if (noise[x + y*XMAX] > .1//shroom_zone_threshold
+			if (noise[x + y*XMAX] > shroom_zone_threshold
 			 && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
 			{   // we're in tree land
 				int z = t_map::get_highest_solid_block(x,y);
