@@ -227,6 +227,7 @@ void init_items()
 
 void teardown_items()
 {
+    // TODO -- log all unfinished cached objects, indicates failure
     if (player_load_data_list != NULL)
     {
         GS_ASSERT(player_load_data_list->ct == 0);
@@ -320,7 +321,6 @@ static void player_item_add_cb(redisAsyncContext* ctx, void* _reply, void* _data
 static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
     // TODO -- need to mark the container that its done loading items
-    
     redisReply* reply = (redisReply*)_reply;
     class PlayerContainerLoadData* data = (class PlayerContainerLoadData*)_data;
 
@@ -340,12 +340,16 @@ static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void*
             }
             int64_t item_guid = (int64_t)strtoll(subreply->str, &endptr, 10);
             GS_ASSERT(subreply->str[0] != '\0' && endptr[0] == '\0');
-            if (subreply->str[0] == '\0' || endptr[0] != '\0')
-            {
-                data->item_count--;
-                continue;    // ERROR
-            }
-            load_player_item(item_guid, data);
+            if (subreply->str[0] != '\0' && endptr[0] == '\0')
+                load_player_item(item_guid, data);
+            else
+                data->item_count--; // TODO -- log error
+        }
+        GS_ASSERT(data->item_count >= 0);
+        if (data->item_count <= 0)
+        {
+            data->items_loaded();
+            player_container_load_data_list->destroy(data->id);
         }
     }
     else
@@ -365,6 +369,8 @@ static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void*
         GS_ASSERT(false);
         printf("Unhandled reply type %d received from redis for player container loading\n", reply->type);
     }
+    // dont destroy the container data -- the item callback loader will
+    // destroy the container data upon the last item being loaded
 }
 
 // returns false on error
@@ -502,8 +508,8 @@ static void load_player_item_cb(redisAsyncContext* ctx, void* _reply, void* _dat
     
     redisReply* reply = (redisReply*)_reply;
     class PlayerItemLoadData* data = (class PlayerItemLoadData*)_data;
-    GS_ASSERT(data->container_data_id != -1);
-    if (data->container_data_id == -1) return;  // TODO -- log error
+    GS_ASSERT(data->container_data_id >= 0);
+    if (data->container_data_id < 0) return;  // TODO -- log error
     class PlayerContainerLoadData* container_data = player_container_load_data_list->get(data->container_data_id);
     GS_ASSERT(container_data != NULL);
     if (container_data == NULL) return; // TODO -- log error
@@ -514,11 +520,8 @@ static void load_player_item_cb(redisAsyncContext* ctx, void* _reply, void* _dat
     {
         class Item::Item* item = Item::create_item_for_loading();
         GS_ASSERT(item != NULL);
-        if (item != NULL)
-        {
-            if (!handle_item_hash_reply(reply, item))
-                Item::destroy_item_for_loading(item->id);
-        }
+        if (item != NULL && !handle_item_hash_reply(reply, item))
+            Item::destroy_item_for_loading(item->id);
     }
     else
     if (reply->type == REDIS_REPLY_ERROR)

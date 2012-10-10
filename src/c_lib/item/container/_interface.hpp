@@ -77,6 +77,7 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot);
 ItemContainerInterface* create_container(ItemContainerType type);
 
 void assign_containers_to_agent(int agent_id, int client_id);
+void send_container_assignments_to_agent(int agent_id, int client_id);
 
 void agent_born(int agent_id);
 void agent_died(int agent_id);

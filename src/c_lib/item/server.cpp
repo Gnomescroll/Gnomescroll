@@ -18,7 +18,7 @@ void subscribe_agent_to_item(int agent_id, ItemID item_id)
     if (item_id == NULL_ITEM) return;
     ASSERT_VALID_AGENT_ID(agent_id);
     
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent_state* a = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -41,7 +41,7 @@ void unsubscribe_agent_from_item(int agent_id, ItemID item_id)
     if (item_id == NULL_ITEM) return;
     ASSERT_VALID_AGENT_ID(agent_id);
     
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent_state* a = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 

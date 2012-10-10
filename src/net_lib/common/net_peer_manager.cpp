@@ -91,9 +91,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
     NetServer::staging_pool[this->client_id] = NULL;
 
-    t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
-
-    class Agent_state* a = ServerState::agent_list->create(client_id);
+    class Agent_state* a = ServerState::agent_list->create_temp(client_id);
     GS_ASSERT(a != NULL);
     if (a == NULL)
     {   // if this happens, we need to force disconnect the client
@@ -104,20 +102,12 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
     this->agent_id = a->id;
 
-    // broadcast agent to other players
-    agent_create_StoC msg;
-    msg.id = a->id;
-    msg.client_id = a->client_id;
-    strncpy(msg.username, username, PLAYER_NAME_MAX_LENGTH+1);
-    msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
-    msg.broadcast();
-
     // attach username to agent
     a->status.identify(username);
     NetServer::users->set_name_for_client_id(client_id, a->status.name);
 
     NetServer::agents[this->client_id] = a;
-    send_player_agent_id_to_client(client_id);
+    
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
 
     if (Options::serializer)
@@ -127,6 +117,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
         if (serializer_id < 0) return;  // TODO -- force disconnect agent with error
         int n_player_containers = 0;
         int* player_containers = ItemContainer::get_player_containers(this->agent_id, &n_player_containers);
+        GS_ASSERT(n_player_containers == N_PLAYER_CONTAINERS);
         for (int i=0; i<n_player_containers; i++)
             if (!serializer::load_player_container(serializer_id, player_containers[i]))
             {
@@ -157,19 +148,31 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
 void NetPeerManager::was_deserialized()
 {
-    // TODO -- we're going to have to delay all the agent stuff until the agent's physical state is loaded
-    // this means we need an inactive agent pool, or the redis load agent callback should create the agent
-    // well, it should tell NPM the data it got, and NPM will use that to create the agent
-    // the agent redis loading must be called first so that we create the agent before
-    // we try to stick stuff in its containers
-    
     GS_ASSERT(!this->deserialized);
     if (this->deserialized) return;
     this->deserialized = true;
-    // This has to be delayed until player's state and items are deserialized
-    class Agent_state* agent = ServerState::agent_list->get(this->agent_id);
+
+    printf("Deserialized\n");
+
+    class Agent_state* agent = ServerState::agent_list->load_temp(this->agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;  // TODO -- force disconnect client with error
+
+    // we add player to manager setup now, because it didnt have state before
+    // NOTE: must call this before agent->status.set_fresh_state();
+    t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
+
+    // broadcast agent to all players
+    agent_create_StoC msg;
+    msg.id = agent->id;
+    msg.client_id = agent->client_id;
+    strncpy(msg.username, username, PLAYER_NAME_MAX_LENGTH+1);
+    msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
+    msg.broadcast();
+
+    send_player_agent_id_to_client(agent->id);
+    ItemContainer::send_container_assignments_to_agent(agent->id, this->client_id);
+
     agent->status.set_fresh_state();
 }
 
@@ -182,7 +185,7 @@ void NetPeerManager::teardown()
         ItemContainer::agent_quit(a->id);
         Toolbelt::agent_quit(a->id);
         Components::owner_component_list->revoke(a->id);
-        ServerState::agent_list->destroy(a->id);
+        ServerState::agent_list->destroy_any(a->id);
     }
     if (this->loaded)
     {

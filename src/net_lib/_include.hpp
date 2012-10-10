@@ -32,8 +32,8 @@
 #include <net_lib/common/net_time.c>
 
 #include <net_lib/common/packet_id_counter.cpp>
-#include <net_lib/net_StoC.cpp>
-#include <net_lib/net_CtoS.cpp>
+#include <net_lib/net_StoC.hpp>
+#include <net_lib/net_CtoS.hpp>
 
 #if DC_SERVER
 #include <net_lib/common/net_peer_manager.cpp>

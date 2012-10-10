@@ -700,7 +700,6 @@ static void assign_container_to_agent(ItemContainerInterface* container, int* co
     init_container(container);
     container->assign_owner(agent_id);
     send_container_create(client_id, container->id);
-    send_container_assign(client_id, container->id);
 }
 
 void assign_containers_to_agent(int agent_id, int client_id)
@@ -732,6 +731,14 @@ void assign_containers_to_agent(int agent_id, int client_id)
     // toolbelt contents are added by agent_born
 }
 
+void send_container_assignments_to_agent(int agent_id, int client_id)
+{
+    int n_containers = 0;
+    int* containers = get_player_containers(agent_id, &n_containers);
+    for (int i=0; i<n_containers; i++)
+        send_container_assign(client_id, containers[i]);
+}
+
 static void throw_items_from_container(int client_id, int agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -750,11 +757,6 @@ static void throw_items_from_container(int client_id, int agent_id, int containe
 
 void agent_born(int agent_id)
 {
-    // TODO -- restore agent_born
-        // must wait for full deserialization, then we can proceed with this stuff
-    
-    return;
-    
     // refill toolbelt if needed
 
     // toolbelt should have at least 1 maxed out laser rifle
@@ -1037,7 +1039,7 @@ void agent_quit(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent_state* a = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 

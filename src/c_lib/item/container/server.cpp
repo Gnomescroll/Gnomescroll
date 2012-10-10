@@ -78,14 +78,14 @@ void transfer_item_between_containers(ItemID item_id, int container_id_a, int sl
     Agent_state* owner_a = NULL;
     if (container_a->owner != NULL_AGENT)
     {
-        owner_a = ServerState::agent_list->get(container_a->owner);
+        owner_a = ServerState::agent_list->get_any(container_a->owner);
         GS_ASSERT(owner_a != NULL);
     }
     
     Agent_state* owner_b = NULL;
     if (container_b->owner != NULL_AGENT)
     {
-        owner_b = ServerState::agent_list->get(container_b->owner);
+        owner_b = ServerState::agent_list->get_any(container_b->owner);
         GS_ASSERT(owner_b != NULL);
     }
     
@@ -130,7 +130,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
     Agent_state* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get(container->owner);
+        owner = ServerState::agent_list->get_any(container->owner);
         GS_ASSERT(owner != NULL);
     }
     
@@ -144,7 +144,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
     insert_item_in_hand(agent_id, item_id);
 
     // send hand insert
-    Agent_state* hand_owner = ServerState::agent_list->get(agent_id);
+    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
@@ -176,7 +176,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
     GS_ASSERT(container->get_item(slot) == NULL_ITEM);
     if (container->get_item(slot) != NULL_ITEM) return;
 
-    Agent_state* hand_owner = ServerState::agent_list->get(agent_id);
+    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(hand_owner != NULL);
 
     // remove item from hand
@@ -188,7 +188,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
     Agent_state* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get(container->owner);
+        owner = ServerState::agent_list->get_any(container->owner);
         GS_ASSERT(owner != NULL);
     }
 
@@ -223,11 +223,11 @@ bool swap_item_between_hand_and_container(int agent_id, int container_id, int sl
     Agent_state* container_owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        container_owner = ServerState::agent_list->get(container->owner);
+        container_owner = ServerState::agent_list->get_any(container->owner);
         GS_ASSERT(container_owner != NULL);
     }
 
-    Agent_state* hand_owner = ServerState::agent_list->get(agent_id);
+    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(hand_owner != NULL);
 
     ItemID container_item_id = container->get_item(slot);
@@ -312,7 +312,7 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
     Agent_state* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get(container->owner);
+        owner = ServerState::agent_list->get_any(container->owner);
         GS_ASSERT(owner != NULL);
     }
     if (owner != NULL)
@@ -336,7 +336,7 @@ bool transfer_free_item_to_hand(ItemID item_id, int agent_id)
 
     // put in hand
     insert_item_in_hand(agent_id, item_id);
-    Agent_state* hand_owner = ServerState::agent_list->get(agent_id);
+    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
@@ -383,7 +383,7 @@ bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, 
     Agent_state* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get(container->owner);
+        owner = ServerState::agent_list->get_any(container->owner);
         GS_ASSERT(owner != NULL);
     }
     if (owner != NULL)
@@ -415,7 +415,7 @@ void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, int a
 
     // put in hand
     insert_item_in_hand(agent_id, item_id);
-    Agent_state* hand_owner = ServerState::agent_list->get(agent_id);
+    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
@@ -436,7 +436,7 @@ void transfer_hand_to_particle(int agent_id)
 
     remove_item_from_hand(agent_id);
 
-    Agent_state* agent = ServerState::agent_list->get(agent_id);
+    Agent_state* agent = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent != NULL) send_hand_remove(agent->client_id);
     
