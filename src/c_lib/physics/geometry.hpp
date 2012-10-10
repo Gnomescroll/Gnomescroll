@@ -53,8 +53,8 @@ float _pvx, _pvy, _pvz;
 
 float _ppx, _ppy, _ppz;
 
-float _x0, _y0, _z0;
-float _x1, _y1, _z1;
+float p_x0, p_y0, p_z0;
+float p_x1, p_y1, p_z1;
 
 float _ix, _iy, _iz;
 
@@ -110,13 +110,13 @@ bool line_plane_intersection2(
 					_pvy = lvy;
 					_pvz = lvz;
 
-					_x0 = sv1*v1.x;
-					_y0 = sv1*v1.y;
-					_z0 = sv1*v1.z;
+					p_x0 = sv1*v1.x;
+					p_y0 = sv1*v1.y;
+					p_z0 = sv1*v1.z;
 
-					_x1 = sv2*v2.x;
-					_y1 = sv2*v2.y;
-					_z1 = sv2*v2.z;
+					p_x1 = sv2*v2.x;
+					p_y1 = sv2*v2.y;
+					p_z1 = sv2*v2.z;
 
 					_ix = x + px;
 					_iy = y + py;
@@ -178,10 +178,10 @@ float _ix, _iy, _iz;
 
 	//glVertex3f(_plx, _ply, _plz);
 	//glVertex3f(_plx+len*_pvx, _ply+len*_pvy, _plz+len*_pvz);
-	glVertex3f(_ppx+_x0, _ppy+_y0, _ppz+_z0);
-	glVertex3f(_ppx-_x0, _ppy-_y0, _ppz-_z0);
-	glVertex3f(_ppx+_x1, _ppy+_y1, _ppz+_z1);
-	glVertex3f(_ppx-_x1, _ppy-_y1, _ppz-_z1);
+	glVertex3f(_ppx+p_x0, _ppy+p_y0, _ppz+p_z0);
+	glVertex3f(_ppx-p_x0, _ppy-p_y0, _ppz-p_z0);
+	glVertex3f(_ppx+p_x1, _ppy+p_y1, _ppz+p_z1);
+	glVertex3f(_ppx-p_x1, _ppy-p_y1, _ppz-p_z1);
 
 	glEnd();
 
