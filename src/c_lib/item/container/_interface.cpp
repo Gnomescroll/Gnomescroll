@@ -701,9 +701,6 @@ static void assign_container_to_agent(ItemContainerInterface* container, int* co
     container->assign_owner(agent_id);
     send_container_create(client_id, container->id);
     send_container_assign(client_id, container->id);
-
-    if (Options::serializer)
-        serializer::load_player_container(client_id, container->id);
 }
 
 void assign_containers_to_agent(int agent_id, int client_id)
@@ -1062,9 +1059,6 @@ void agent_quit(int agent_id)
         save_agent_containers(a->client_id, a->id, true);    // remove items after
     else
         dump_agent_containers(a->client_id, a->id);
-
-    // TODO -- dont destroy the container contents in this case
-
 
     // destroy containers
     if (agent_inventory_list[agent_id] != NULL_CONTAINER)

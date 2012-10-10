@@ -349,6 +349,12 @@ static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void*
         }
     }
     else
+    if (reply->type == REDIS_REPLY_NIL)
+    {
+        data->items_loaded();
+        player_container_load_data_list->destroy(data->id);
+    }
+    else
     if (reply->type == REDIS_REPLY_ERROR)
     {
         GS_ASSERT(false);
@@ -357,10 +363,8 @@ static void load_player_container_cb(redisAsyncContext* ctx, void* _reply, void*
     else
     {
         GS_ASSERT(false);
-        printf("Unhandled reply received from redis for player container loading\n");
+        printf("Unhandled reply type %d received from redis for player container loading\n", reply->type);
     }
-
-    //player_container_load_data_list->destroy(data->id);
 }
 
 // returns false on error
@@ -512,8 +516,8 @@ static void load_player_item_cb(redisAsyncContext* ctx, void* _reply, void* _dat
         GS_ASSERT(item != NULL);
         if (item != NULL)
         {
-            bool err = handle_item_hash_reply(reply, item);
-            if (err) Item::destroy_item_for_loading(item->id);
+            if (!handle_item_hash_reply(reply, item))
+                Item::destroy_item_for_loading(item->id);
         }
     }
     else

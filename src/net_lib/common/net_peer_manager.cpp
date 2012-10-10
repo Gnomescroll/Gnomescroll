@@ -120,12 +120,25 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     send_player_agent_id_to_client(client_id);
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
 
-    int serializer_id = serializer::begin_player_load(this->user_id, this->client_id);
-    int n_player_containers = 0;
-    int* player_containers = ItemContainer::get_player_containers(this->agent_id, &n_player_containers);
-    for (int i=0; i<n_player_containers; i++)
-        serializer::load_player_container(serializer_id, player_containers[i]);
-    serializer::end_player_load(serializer_id);
+    if (Options::serializer)
+    {
+        int serializer_id = serializer::begin_player_load(this->user_id, this->client_id);
+        GS_ASSERT(serializer_id >= 0);
+        if (serializer_id < 0) return;  // TODO -- force disconnect agent with error
+        int n_player_containers = 0;
+        int* player_containers = ItemContainer::get_player_containers(this->agent_id, &n_player_containers);
+        for (int i=0; i<n_player_containers; i++)
+            if (!serializer::load_player_container(serializer_id, player_containers[i]))
+            {
+                // force disconnect player with error
+            }
+        if (!serializer::end_player_load(serializer_id))
+        {
+            // force disconnect player with error
+        }
+    }
+    else
+        this->was_deserialized();
 
     add_player_to_chat(client_id);
 
