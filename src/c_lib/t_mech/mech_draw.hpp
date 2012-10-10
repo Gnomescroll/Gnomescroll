@@ -196,7 +196,7 @@ class MechListShader
         SDL_LockSurface(s);
 
         unsigned char *pixels = (unsigned char *)s->pixels;
-        GS_ASSERT(s->w == 32*16 && s->h == 32*16);
+        GS_ASSERT(s->w == 16*16 && s->h == 16*16);
 
         for(int i=0; i<256; i++)
         {
@@ -211,18 +211,18 @@ class MechListShader
 
             for(j=0; j<16; j++) //column
             {
-                int offset = 512*32*h + 32*w;
+                int offset = 256*16*h + 16*w;
                 offset += j;
 
-                for(int k=0; k<32; k++) //iterate over column
+                for(int k=0; k<16; k++) //iterate over column
                 {
-                    int index = offset + k*512;
+                    int index = offset + k*256;
 
                     if(pixels[4*index + 3] > 128)
                     {
                         //empty_column = true;
 
-                        int width = 2*(16-j);
+                        int width = 2*(8-j);
                         if(width > mech_sprite_width[i])
                         {
                             mech_sprite_width[i] = width;
@@ -251,18 +251,18 @@ class MechListShader
 
             for(j=0; j<16; j++) //column
             {
-                int offset = 512*32*h + 32*w;
+                int offset = 256*16*h + 16*w;
                 offset += 31-j;
 
-                for(int k=0; k<32; k++) //iterate over column
+                for(int k=0; k<16; k++) //iterate over column
                 {
-                    int index = offset + k*512;
+                    int index = offset + k*256;
 
                     if(pixels[4*index + 3] > 128)
                     {
                         //empty_column = true;
 
-                        int width = 2*(16-j);
+                        int width = 2*(8-j);
                         if(width > mech_sprite_width[i])
                         {
                             mech_sprite_width[i] = width;
@@ -292,19 +292,19 @@ class MechListShader
 
             //bool empty_row = false;
 
-            for(j=0; j<32; j++) //row
+            for(j=0; j<16; j++) //row
             {
-                int offset = 512*32*h + 32*w;
-                offset += 512*j;
+                int offset = 256*16*h + 16*w;
+                offset += 256*j;
 
-                for(int k=0; k<32; k++) //iterate over row
+                for(int k=0; k<16; k++) //iterate over row
                 {
                     int index = offset + k;
 
                     if(pixels[4*index + 3] > 128)
                     {
                         //empty_row = true;
-                        int height = 32-j;
+                        int height = 16-j;
 
                         mech_sprite_height[i] = height;
                         printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
