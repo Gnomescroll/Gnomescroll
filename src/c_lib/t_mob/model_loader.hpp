@@ -30,6 +30,80 @@ extern "C"
 namespace t_mob
 {
 
+static struct Mat4 quantenion_to_rotation_matrix(aiQuaternion q, aiVector3D pos)
+{
+    float xx      = q.x * q.x;
+    float xy      = q.x * q.y;
+    float xz      = q.x * q.z;
+    float xw      = q.x * q.w;
+    float yy      = q.y * q.y;
+    float yz      = q.y * q.z;
+    float yw      = q.y * q.w;
+    float zz      = q.z * q.z;
+    float zw      = q.z * q.w;
+
+    Mat4 m;
+    m._f[0]  = 1 - 2 * ( yy + zz );
+    m._f[1]  =     2 * ( xy - zw );
+    m._f[2]  =     2 * ( xz + yw );
+    m._f[3]  = 0.0f;
+
+    m._f[4]  =     2 * ( xy + zw );
+    m._f[5]  = 1 - 2 * ( xx + zz );
+    m._f[6]  =     2 * ( yz - xw );
+    m._f[7]  = 0.0f;
+
+    m._f[8]  =     2 * ( xz - yw );
+    m._f[9]  =     2 * ( yz + xw );
+    m._f[10] = 1 - 2 * ( xx + yy );
+    m._f[11] = 0.0f;
+
+    m._f[12] = 0.0f;
+    m._f[13] = 0.0f;
+    m._f[14] = 0.0f;
+
+    m = mat4_transpose(m);
+
+    m._f[12] = pos.x;
+    m._f[13] = pos.y;
+    m._f[14] = pos.z;
+
+    m._f[15] = 1.0f;
+
+    return m;
+}
+
+static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
+{
+    Mat4 out;
+
+    out.f[0][0] = in.a1;
+    out.f[0][1] = in.a2;
+    out.f[0][2] = in.a3;
+    out.f[0][3] = in.a4;
+
+    out.f[1][0] = in.b1;
+    out.f[1][1] = in.b2;
+    out.f[1][2] = in.b3;
+    out.f[1][3] = in.b4;
+
+    out.f[2][0] = in.c1;
+    out.f[2][1] = in.c2;
+    out.f[2][2] = in.c3;
+    out.f[2][3] = in.c4;
+
+    out.f[3][0] = in.d1;
+    out.f[3][1] = in.d2;
+    out.f[3][2] = in.d3;
+    out.f[3][3] = in.d4;
+
+    out = mat4_transpose(out);
+
+    GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
+
+    return out;
+}
+
     char* copy_string(char* xstr)
     {
         char* nstr = new char[strlen(xstr)+1];
@@ -740,79 +814,7 @@ class ModelLoader
         return node;
     }
 
-    static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
-    {
-        Mat4 out;
 
-        out.f[0][0] = in.a1;
-        out.f[0][1] = in.a2;
-        out.f[0][2] = in.a3;
-        out.f[0][3] = in.a4;
-
-        out.f[1][0] = in.b1;
-        out.f[1][1] = in.b2;
-        out.f[1][2] = in.b3;
-        out.f[1][3] = in.b4;
-
-        out.f[2][0] = in.c1;
-        out.f[2][1] = in.c2;
-        out.f[2][2] = in.c3;
-        out.f[2][3] = in.c4;
-
-        out.f[3][0] = in.d1;
-        out.f[3][1] = in.d2;
-        out.f[3][2] = in.d3;
-        out.f[3][3] = in.d4;
-
-        out = mat4_transpose(out);
-
-        GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
-
-        return out;
-    }
-
-    struct Mat4 quantenion_to_rotation_matrix(aiQuaternion q, aiVector3D pos)
-    {
-        float xx      = q.x * q.x;
-        float xy      = q.x * q.y;
-        float xz      = q.x * q.z;
-        float xw      = q.x * q.w;
-        float yy      = q.y * q.y;
-        float yz      = q.y * q.z;
-        float yw      = q.y * q.w;
-        float zz      = q.z * q.z;
-        float zw      = q.z * q.w;
-
-        Mat4 m;
-        m._f[0]  = 1 - 2 * ( yy + zz );
-        m._f[1]  =     2 * ( xy - zw );
-        m._f[2]  =     2 * ( xz + yw );
-        m._f[3]  = 0.0f;
-
-        m._f[4]  =     2 * ( xy + zw );
-        m._f[5]  = 1 - 2 * ( xx + zz );
-        m._f[6]  =     2 * ( yz - xw );
-        m._f[7]  = 0.0f;
-
-        m._f[8]  =     2 * ( xz - yw );
-        m._f[9]  =     2 * ( yz + xw );
-        m._f[10] = 1 - 2 * ( xx + yy );
-        m._f[11] = 0.0f;
-
-        m._f[12] = 0.0f;
-        m._f[13] = 0.0f;
-        m._f[14] = 0.0f;
-
-        m = mat4_transpose(m);
-
-        m._f[12] = pos.x;
-        m._f[13] = pos.y;
-        m._f[14] = pos.z;
-
-        m._f[15] = 1.0f;
-
-        return m;
-    }
 
 /*
 Another complication is how to use interpolation. It is possible to create a transformation matrix from the rotation, location and scaling, 
@@ -859,6 +861,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
     void draw(float x, float y, float z);  //draws for testing
 */
 };
+
 
 
 /*
@@ -922,14 +925,18 @@ class BodyPartMesh
     {
         bvl  = NULL;
         tbvl = NULL;
-        tvl   = NULL;
+        tvl  = NULL;
         vwl  = NULL;
         via  = NULL;
     }
 
     ~BodyPartMesh()
     {
-
+        delete[] bvl;
+        delete[] tbvl;
+        delete[] tvl;
+        delete[] vwl;
+        delete[] via;
     }
 
     //assumes only one mesh per node
@@ -966,6 +973,84 @@ class BodyPartMesh
             vwl[i] = mesh->vwl[i];
     }
 };
+
+
+class BodyAnimation
+{
+    /*
+        Assume all keyframes contain the same nodes
+    */
+    public:
+    char* animation_name;
+    float length;   //length of animation
+    
+    struct _quanterion
+    {
+        float x,y,z,w;
+    };
+
+
+    //copy these pointers over
+    char** nnl;                           //node name list
+    struct Mat4* node_mTransformation;    //node bind transform list
+    int nm;                               //node max
+
+    //bind pos 
+
+    //need to know keyframes and need to m
+    // -affected mpdes
+    // -timees
+
+    struct Mat4 get_anim_matrix_old(int frame_time, aiNodeAnim** node_channels, int node_channel_max, aiNode* node)
+    {
+
+        for(int i=0; i<node_channel_max; i++)
+        {
+            aiNodeAnim* anim = node_channels[i];
+            //printf("node channel= %s \n", anim->mNodeName.data);
+
+            if( strcmp(anim->mNodeName.data, node->mName.data) == 0 )
+            {
+                GS_ASSERT(anim->mNumPositionKeys == anim->mNumRotationKeys);
+                int tmax = anim->mNumPositionKeys;
+                
+                aiVectorKey pos =  anim->mPositionKeys[frame_time % tmax];
+                aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
+                GS_ASSERT( pos.mTime == rot.mTime );
+
+                //CONVERT TO MATRIX
+                return quantenion_to_rotation_matrix( rot.mValue, pos.mValue );
+            }
+
+        }
+
+        //if cannot find, then node does not have an animation and use this
+        return _ConvertMatrix(node->mTransformation);
+
+    }
+
+/*
+    void apply_animation()
+    {
+        static int _fcount = 0;
+        static int frame_time = 0;
+
+        _fcount++;
+        if(_fcount % 30 == 0)
+            frame_time++;
+
+        aiAnimation* anim = pScene->mAnimations[0];
+
+        aiNodeAnim** node_channels = anim->mChannels;
+        int node_channels_max = anim->mNumChannels;
+
+
+        boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
+    }
+*/
+    
+};
+
 
 /*
     struct Node
@@ -1199,12 +1284,13 @@ class BodyMesh
 
     void draw(float x, float y, float z)
     {
-        bool _print = false;
 
+        /*
+            Move this stuff onto the mesh
+        */
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-            GS_ASSERT(m != NULL);
 
             for(int j=0; j<m->bvlm; j++)
             {
@@ -1224,69 +1310,33 @@ class BodyMesh
                 float weight     = w.weight;
 
                 GS_ASSERT(vertex_index < m->bvlm);
-
-                if(vertex_index >= m->bvlm || vertex_index < 0)
-                {
-                    printf("ERROR: vertex_index= %i bvlm= %i \n", vertex_index, m->bvlm);
-                }
-
-                if(_print)
-                    vec3_print(m->bvl[vertex_index].v);
-
-                GS_ASSERT(bone_index >= 0 && bone_index < blm);
-
-                GS_ASSERT(vertex_index < m->bvlm && vertex_index >= 0);
-
-                if(vertex_index < m->bvlm)
-                    continue;
-
-                Vec3 _v = m->bvl[vertex_index].v;
-                struct Mat4 _m = tbone_matrix[bone_index];
-                Vec3 v = vec3_mat3_apply(_v, _m);
+                GS_ASSERT(bone_index < blm);
+                GS_ASSERT(vertex_index < m->bvlm);
                 
-
-                //Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
+                Vec3 v = vec3_mat3_apply(m->bvl[vertex_index].v, tbone_matrix[bone_index] );
 
                 struct Mat4 out = tbone_matrix[bone_index];
                 GS_ASSERT(out._f[0*4+3] == 0.0f && out._f[1*4+3] == 0.0f && out._f[2*4+3] == 0.0f && out._f[3*4+3] == 1.0f)
 
-            /*
-                if(_print)
-                {
-                    printf("Vertex %02d \n", index);
-                    vec3_print(bvl[index].v);
-
-                    vec3_print(v);
-                    mat4_print(boneMatrix);
-                }
-            */
                 m->tbvl[vertex_index].v.x += weight*v.x;
                 m->tbvl[vertex_index].v.y += weight*v.y;
                 m->tbvl[vertex_index].v.z += weight*v.z;
             }
         }
 
-
         for(int i=0; i<mlm; i++)
         {
             class BodyPartMesh* m = &ml[i];
-            //printf("m %d: viam= %i tvln= %i \n", i, m->viam, m->tvln);
-
+            GS_ASSERT(m->viam == m->tvln);
             for(int j=0; j<m->viam; j++)
             {
-    
                 int index = m->via[j];
                 GS_ASSERT(index < m->viam && index >= 0);
-                //if(index >= m->viam || index < 0)
-                //    printf("m= %i j= %i index= %i viam= %i \n", i,j, index, m->viam);
-                GS_ASSERT(j < m->tvln );
-
                 m->tvl[j] = m->tbvl[index];
             }
 
         }
 
-#if 1
         glColor4ub(255,255,255,255);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -1304,49 +1354,13 @@ class BodyMesh
                 glTexCoord2f(v.ux, v.uy );
                 glVertex3f(v.v.x +x , v.v.y +y , v.v.z +z); //swap y and z
             }
-
         }
+
         glEnd();
 
         glBindTexture(GL_TEXTURE_2D, 0);
         check_gl_error();
-#endif
 
-/*
-
-        for(int i=0; i<bvlm; i++)
-        {
-            tbvl[i].v.x += x;
-            tbvl[i].v.y += y;
-            tbvl[i].v.z += z;
-        }
-
-        for(int i=0; i<vlm; i++)
-        {
-            int index = bvll[i];
-            tvl[i] = tbvl[index];
-        }
-
-        glColor4ub(255,255,255,255);
-        glEnable(GL_TEXTURE_2D);
-
-
-        glBindTexture(GL_TEXTURE_2D, texture1);
-
-        glBegin(GL_TRIANGLES);
-        for(int i=0; i<vlm; i++)
-        {
-            struct _Vertex v = tvl[i];
-
-            glTexCoord2f(v.ux, v.uy );
-            glVertex3f(v.v.x, v.v.y, v.v.z); //swap y and z
-        }
-
-        glEnd();
-        
-        glBindTexture(GL_TEXTURE_2D, 0);
-        check_gl_error();
-*/
     }
 
     unsigned int texture1;
@@ -1366,7 +1380,7 @@ class BodyMesh
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1392,7 +1406,7 @@ class BodyMesh* body_mesh;
 
 void init()
 {
- return;
+    return; //DEBUG
 
     int bsize;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
@@ -1430,7 +1444,7 @@ void init()
 
 void draw()
 {
-    return;
+    return; //DEBUG
     
     struct Vec3 p = ClientState::location_pointer;
 
@@ -1452,9 +1466,10 @@ void draw()
 
 void teardown()
 {
-
-if(model_loader != NULL) delete model_loader;
-if(body_mesh != NULL) delete body_mesh;
+    return; //DEBUG
+    
+    if(model_loader != NULL) delete model_loader;
+    if(body_mesh != NULL) delete body_mesh;
 }
 
 

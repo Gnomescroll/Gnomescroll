@@ -4,6 +4,8 @@
 #include <t_mech/mech_state.hpp>
 #include <t_mech/_interface.hpp>
 
+#include <t_mech/config/_interface.hpp>
+
 namespace t_mech 
 {
 
@@ -176,8 +178,163 @@ class MechListShader
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
         
         glDisable(GL_TEXTURE_2D);
+
+        init_sprite_meta();
     }
 
+    void init_sprite_meta()
+    {
+        //int mech_sprite_width[256];  //centered
+        //int mech_sprite_height[256]; //from bottom
+
+        for(int i=0; i<256; i++)
+        {
+            mech_sprite_width[i]  = -1;
+            mech_sprite_height[i] = -1;
+        }
+
+        SDL_LockSurface(s);
+
+        unsigned char *pixels = (unsigned char *)s->pixels;
+        GS_ASSERT(s->w == 32*16 && s->h == 32*16);
+
+        for(int i=0; i<256; i++)
+        {
+            int w = i % 16;
+            int h = i / 16;
+
+            //left to right
+
+
+            //bool empty_column = false;
+            int j;
+
+            for(j=0; j<16; j++) //column
+            {
+                int offset = 512*32*h + 32*w;
+                offset += j;
+
+                for(int k=0; k<32; k++) //iterate over column
+                {
+                    int index = offset + k*512;
+
+                    if(pixels[4*index + 3] > 128)
+                    {
+                        //empty_column = true;
+
+                        int width = 2*(16-j);
+                        if(width > mech_sprite_width[i])
+                        {
+                            mech_sprite_width[i] = width;
+
+                            //printf("sprite1: %i %i width: %i k: %i \n", h,w, mech_sprite_width[i], k);
+                        }
+                        break;
+                    }
+                }
+            /*
+                if(empty_column == true)
+                {
+                    for(int _k=0; _k<32; _k++)
+                    {
+                        int index2 = offset + _k*512;
+                        pixels[4*index2 + 3] = 255;
+                        pixels[4*index2 + 0] = 255;
+                    }
+
+                    break;
+                }
+            */
+            }
+
+            //empty_column = false;
+
+            for(j=0; j<16; j++) //column
+            {
+                int offset = 512*32*h + 32*w;
+                offset += 31-j;
+
+                for(int k=0; k<32; k++) //iterate over column
+                {
+                    int index = offset + k*512;
+
+                    if(pixels[4*index + 3] > 128)
+                    {
+                        //empty_column = true;
+
+                        int width = 2*(16-j);
+                        if(width > mech_sprite_width[i])
+                        {
+                            mech_sprite_width[i] = width;
+
+                            //printf("sprite2: %i %i width: %i k: %i \n", h,w, mech_sprite_width[i], k);
+                        }
+                        break;
+                    }
+                }
+            /*
+                if(empty_column == true)
+                {
+                    for(int _k=0; _k<32; _k++)
+                    {
+                        int index2 = offset + (31-_k)*512;
+                        pixels[4*index2 + 3] = 255;
+                        pixels[4*index2 + 0] = 255;
+                    }
+
+                    break;
+                }
+            */
+            }
+
+            if(mech_sprite_width[i] == -1)
+                continue;
+
+            //bool empty_row = false;
+
+            for(j=0; j<32; j++) //row
+            {
+                int offset = 512*32*h + 32*w;
+                offset += 512*j;
+
+                for(int k=0; k<32; k++) //iterate over row
+                {
+                    int index = offset + k;
+
+                    if(pixels[4*index + 3] > 128)
+                    {
+                        //empty_row = true;
+                        int height = 32-j;
+
+                        mech_sprite_height[i] = height;
+                        printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
+
+                        break;
+                    }
+                }
+            /*
+                if(empty_row == true)
+                {
+                    for(int _k=0; _k<32; _k++)
+                    {
+                        int index2 = offset + _k;
+                        pixels[4*index2 + 3] = 255;
+                        pixels[4*index2 + 2] = 255;
+                    }
+
+                    break;
+                }
+            */
+            }
+
+        }
+
+
+        SDL_UnlockSurface(s);
+
+        //save_surface_to_png(s, "./screenshot/test.png");
+
+    }
 };
 
 

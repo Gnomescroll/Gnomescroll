@@ -301,6 +301,10 @@ void draw_tick()
     Animations::render_block_damage(); //GL blend with depth test on
     ItemParticle::draw();
     Animations::draw_textured_voxel_particles(); //moved out of transparent
+
+
+    visualize_line(); //debug
+
     GL_ASSERT(GL_BLEND, false);
 
     CHECK_GL_ERROR();

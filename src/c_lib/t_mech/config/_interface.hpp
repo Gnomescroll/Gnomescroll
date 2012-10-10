@@ -31,6 +31,13 @@ enum MECH_RENDER_TYPE
 
 namespace t_mech
 {
+    //this is whitespace/alpha dimensions for ray casting box
+    int mech_sprite_width[256];  //centered
+    int mech_sprite_height[256]; //from bottom
+}
+
+namespace t_mech
+{
 
 int _current_mech_index = -1;
 struct MECH_ATTRIBUTE s;

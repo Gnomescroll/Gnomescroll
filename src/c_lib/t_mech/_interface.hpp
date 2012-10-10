@@ -24,7 +24,10 @@ void prep();
 void draw();
 void draw_transparent();
 
-bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, float* _distance);
+bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int* _mech_id, float* _distance);
+
+void client_ray_cast();
+
 #endif
 
 #if DC_SERVER

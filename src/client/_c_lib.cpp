@@ -86,6 +86,8 @@ dont_include_this_file_in_server
 #include <physics/mat4.hpp>
 #include <physics/affine.hpp>
 
+#include <physics/geometry.hpp>
+
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
 #include <physics/ray_trace/handlers.cpp>
