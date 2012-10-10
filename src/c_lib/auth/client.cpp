@@ -186,7 +186,12 @@ void set_time_offset(time_t server_time)
 {
     time_t now = utc_now();
     offset_time = difftime(server_time, now);
+    
+    #ifdef _WIN32
+    printf("Server-client time discrepancy: %I64d\n", (long long)offset_time);
+    #else
     printf("Server-client time discrepancy: %lld\n", (long long)offset_time);
+    #endif
 }
 
 }   // Auth

@@ -4,6 +4,9 @@
 dont_include_this_file_in_client
 #endif
 
+#define  __STDC_FORMAT_MACROS
+#include <inttypes.h>
+
 #include <auth/hmac-sha256.h>
 
 namespace Auth
@@ -138,7 +141,14 @@ static bool verify_token(const char* _token, UserID* user_id, time_t* expiration
     
     const unsigned int payload_len = AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH + strlen(*username);
     char* payload = (char*)malloc((payload_len+1)*sizeof(char));
-    snprintf(payload, payload_len+1, "%09d%lld%s", *user_id, (long long)*expiration_time, *username);
+
+    #ifdef _WIN32
+    // mingw doesn't support %lld (neither does MSVC2003)
+    static const char fmt[] = "%09d%I64d%s";
+    #else
+    static const char fmt[] = "%09d%lld%s";
+    #endif
+    snprintf(payload, payload_len+1, fmt, *user_id, (long long)*expiration_time, *username);
     payload[payload_len] = '\0';
 
     uint8_t* _hash = compute_hash(secret_key, payload, payload_len);

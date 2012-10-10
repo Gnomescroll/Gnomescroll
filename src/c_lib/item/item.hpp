@@ -142,11 +142,53 @@ class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
             item->init(item_type);
             return item;
         }
+
+        Item** tmp_a;
+        
+        void retire_for_saving(int id)
+        {
+            GS_ASSERT(id >= 0 && id < this->n_max);
+            if (id < 0 || id >= this->n_max) return;
+
+            GS_ASSERT(this->tmp_a[id] == NULL);
+        }
+
+        void destroy(int id)
+        {
+            GS_ASSERT(id >= 0 && id < this->n_max);
+            if (id < 0 || id >= this->n_max) return;
+            
+            if (this->tmp_a[id] != NULL)
+            {
+                this->a[id] = this->tmp_a[id];
+                this->tmp_a[id] = NULL;
+            }
+            DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>::destroy(id);
+        }
         #endif
+
+    ~ItemList()
+    {
+        #if DC_SERVER
+        if (this->tmp_a != NULL)
+        {
+            for (int i=0; i<this->n_max; i++)
+            {
+                GS_ASSERT(this->tmp_a[i] == NULL);
+                if (this->tmp_a[i] != NULL)
+                {
+                    GS_ASSERT(this->a[i] != NULL);
+                    if (this->a[i] != NULL)
+                        delete this->tmp_a[i];
+                }
+            }
+            free(this->tmp_a);
+        }
+        #endif
+    }
 
     private:
         unsigned int gas_tick;
-        //static const int GAS_TICK_INTERVAL = 30;
         static const int GAS_TICK_INTERVAL = 10;
     public:
         #if DC_SERVER
