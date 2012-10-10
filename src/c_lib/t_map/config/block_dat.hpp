@@ -48,13 +48,13 @@ int ruins_dmg()
 void load_block_dat()
 {
 
-    int t0 = texture_alias("media/sprites/terrain/t00.png");
-    int t1 = texture_alias("media/sprites/terrain/t01.png");
-    int t2 = texture_alias("media/sprites/terrain/t02.png");
-    int t3 = texture_alias("media/sprites/terrain/t03.png");
+    int t0 = texture_alias("media/sprites/terrain/t00_16.png");
+    int t1 = texture_alias("media/sprites/terrain/t01_16.png");
+    int t2 = texture_alias("media/sprites/terrain/t02_16.png");
+    int t3 = texture_alias("media/sprites/terrain/t03_16.png");
     //int t4 = texture_alias("media/sprites/terrain/t04.png");
-    int t5 = texture_alias("media/sprites/terrain/t05.png");
-    int t6 = texture_alias("media/sprites/terrain/t06.png");
+    int t5 = texture_alias("media/sprites/terrain/t05_16.png");
+    int t6 = texture_alias("media/sprites/terrain/t06_16.png");
 
     const int T = 0;
     const int B = 1;
