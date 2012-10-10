@@ -43,7 +43,7 @@ void send_version_to_client(int client_id)
  * send version
  * begin waiting for auth 
  */
-void NetPeerManager::init(int client_id)
+void NetPeerManager::init(ClientID client_id)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
@@ -100,7 +100,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
         NetServer::kill_client(this->client_id, DISCONNECT_SERVER_ERROR);
         return;
     }
-    GS_ASSERT(this->client_id == a->id);
+    GS_ASSERT((int)this->client_id == (int)a->id);
 
     this->agent_id = a->id;
 
@@ -119,6 +119,13 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     NetServer::agents[this->client_id] = a;
     send_player_agent_id_to_client(client_id);
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
+
+    int serializer_id = serializer::begin_player_load(this->user_id, this->client_id);
+    int n_player_containers = 0;
+    int* player_containers = ItemContainer::get_player_containers(this->agent_id, &n_player_containers);
+    for (int i=0; i<n_player_containers; i++)
+        serializer::load_player_container(serializer_id, player_containers[i]);
+    serializer::end_player_load(serializer_id);
 
     add_player_to_chat(client_id);
 
@@ -147,54 +154,10 @@ void NetPeerManager::was_deserialized()
     if (this->deserialized) return;
     this->deserialized = true;
     // This has to be delayed until player's state and items are deserialized
-    a->status.set_fresh_state();    
-}
-
-int get_container_loaded_index_for_type(ItemContainerType type)
-{
-    switch (type)
-    {
-        case AGENT_HAND:
-            return 0;
-        case AGENT_INVENTORY:
-            return 1;
-        case AGENT_TOOLBELT:
-            return 2;
-        case AGENT_SYNTHESIZER:
-            return 3;
-        case AGENT_ENERGY_TANKS:
-            return 4; 
-        default:
-            GS_ASSERT(false);
-            return -1;
-    }
-    GS_ASSERT(false);
-    return -1;
-}
-
-void container_was_loaded(int container_id)
-{
-    ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;  // TODO -- force disconnect client with error message
-    int index = this->get_container_loaded_index_for_type(container->type);
-    GS_ASSERT(index >= 0 && index < Item::N_PLAYER_CONTAINERS);
-    if (index < 0 || index >= Item::N_PLAYER_CONTAINERS) return;  // TODO -- force disconnect client with error message
-    GS_ASSERT(!this->containers_loaded[index]);
-    this->containers_loaded[index] = true;
-    if (!this->player_data_loaded) return;
-    for (int i=0; i<Item::N_PLAYER_CONTAINERS; i++)
-        if (!this->containers_loaded[i]) return;
-    this->was_deserialized();
-}
-
-void player_data_loaded()
-{
-    GS_ASSERT(!this->player_data_loaded);
-    this->player_data_loaded = true;
-    for (int i=0; i<Item::N_PLAYER_CONTAINERS; i++)
-        if (!this->containers_loaded[i]) return;
-    this->was_deserialized();
+    class Agent_state* agent = ServerState::agent_list->get(this->agent_id);
+    GS_ASSERT(agent != NULL);
+    if (agent == NULL) return;  // TODO -- force disconnect client with error
+    agent->status.set_fresh_state();
 }
 
 void NetPeerManager::teardown()
@@ -250,13 +213,11 @@ NetPeerManager::NetPeerManager() :
     waiting_for_auth(false),
     authorized(false),
     deserialized(false),
-    player_data_loaded(false),
     connection_time(utc_now()),
     auth_expiration(0),
     user_id(NULL_USER_ID),
     auth_attempts(0)
 {
-    memset(this->containers_loaded, 0, sizeof(this->containers_loaded));
     memset(this->username, 0, sizeof(this->username));
 }
 

@@ -666,6 +666,26 @@ int get_agent_energy_tanks(int agent_id)
     return agent_energy_tanks_list[agent_id];
 }
 
+int* get_player_containers(int agent_id, int* n_containers)
+{
+    static int containers[N_PLAYER_CONTAINERS] = {NULL_CONTAINER};
+    int n = 0;
+    containers[n] = get_agent_hand(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_inventory(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_toolbelt(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_synthesizer(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_energy_tanks(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+
+    *n_containers = n;
+    return containers;
+}
+
+
 ItemContainerInterface* create_container(ItemContainerType type)
 {
     return item_container_list->create(type);

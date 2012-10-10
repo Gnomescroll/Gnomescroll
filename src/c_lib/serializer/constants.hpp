@@ -34,9 +34,10 @@ const int redis_timeout = 300;  // seconds
 const int keep_alive_rate = (300*30)/2; // send keep-alive halfway
 
 // Cached data queues
+const unsigned int PLAYER_LOAD_DATA_LIST_HARD_MAX = 128;
+const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = 128;
+const unsigned int PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX = 8192;
 const unsigned int PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX = 8192;
-const unsigned int PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX = 128;
-const unsigned int ITEM_LOAD_DATA_LIST_HARD_MAX = 8192;
 
 const unsigned int EXPECTED_ITEM_HASH_FIELDS = 7;
 
@@ -131,6 +132,28 @@ LocationNameID get_player_location_name_id(ItemContainerType container_type)
     return LN_NONE;
 }
 
+int get_container_loaded_index_for_type(ItemContainerType type)
+{
+    switch (type)
+    {
+        case AGENT_HAND:
+            return 0;
+        case AGENT_INVENTORY:
+            return 1;
+        case AGENT_TOOLBELT:
+            return 2;
+        case AGENT_SYNTHESIZER:
+            return 3;
+        case AGENT_ENERGY_TANKS:
+            return 4; 
+        default:
+            GS_ASSERT(false);
+            return -1;
+    }
+    GS_ASSERT(false);
+    return -1;
+}
+
 void verify_config()
 {
     GS_ASSERT_ABORT(strcmp(CONTAINER_LOCATION_NAME, "container") == 0);
@@ -194,6 +217,25 @@ void verify_config()
     GS_ASSERT_ABORT(agent_synthesizer_found);
     GS_ASSERT_ABORT(agent_energy_tanks_found);
     GS_ASSERT_ABORT(agent_hand_found);
+
+
+    // check that item containers for players are recognized, unique, within bounds
+    int _cindex[N_PLAYER_CONTAINERS] = {-1};
+    ItemContainerType _cindex_t[N_PLAYER_CONTAINERS] = {
+        AGENT_HAND, AGENT_INVENTORY, AGENT_SYNTHESIZER,
+        AGENT_ENERGY_TANKS, AGENT_TOOLBELT };
+
+    // valid index
+    for (int i=0; i<N_PLAYER_CONTAINERS; i++)
+    {
+        _cindex[i] = get_container_loaded_index_for_type(_cindex_t[i]);
+        GS_ASSERT_ABORT(_cindex[i] >= 0 && _cindex[i] < N_PLAYER_CONTAINERS); 
+    }
+
+    // uniqueness
+    for (int i=0; i<N_PLAYER_CONTAINERS-1; i++)
+    for (int j=i+1; j<N_PLAYER_CONTAINERS; j++)
+        GS_ASSERT_ABORT(_cindex[i] != _cindex[j]);
 }
 
 }   // serializer

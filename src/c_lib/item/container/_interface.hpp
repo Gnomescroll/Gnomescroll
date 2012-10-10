@@ -68,6 +68,10 @@ int get_agent_toolbelt(int agent_id);
 int get_agent_synthesizer(int agent_id);
 int get_agent_energy_tanks(int agent_id);
 
+// returns array of assigned container ids for agent
+// the array does not need to be freed and is valid until the next call to this method 
+int* get_player_containers(int agent_id, int* n_containers);
+
 ItemID get_agent_toolbelt_item(int agent_id, int slot);
 
 ItemContainerInterface* create_container(ItemContainerType type);

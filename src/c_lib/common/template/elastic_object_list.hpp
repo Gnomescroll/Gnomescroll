@@ -27,8 +27,8 @@ class ElasticObjectList
 
         ObjectState* get(int id)
         {
-            GS_ASSERT(id >= 0 && id < this->n_max);
-            if (id < 0 || id >= this->n_max) return NULL;
+            GS_ASSERT(id >= 0 && (unsigned int)id < this->n_max);
+            if (id < 0 || (unsigned int)id >= this->n_max) return NULL;
             ObjectState* obj = &this->objects[id];
             if (obj->id == -1) return NULL;
             return obj;

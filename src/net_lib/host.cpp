@@ -517,7 +517,7 @@ static void client_connect(ENetEvent* event)
 
         npm = new NetPeerManager;
         NetServer::clients[client_id] = npm; // must be added to array before init
-        npm->init(client_id);
+        npm->init((ClientID)client_id);
         break;
     }
     
@@ -528,13 +528,13 @@ static void client_connect(ENetEvent* event)
 
         printf(
             "client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
-            client_id,
+            npm->client_id,
             address[0], address[1], address[2], address[3],
             event->peer->address.port, 
             NetServer::number_of_clients
         );
     
-        Session* session = begin_session(event->peer->address.host, client_id);
+        Session* session = begin_session(event->peer->address.host, npm->client_id);
         users->assign_session_to_user(session);
     }
 

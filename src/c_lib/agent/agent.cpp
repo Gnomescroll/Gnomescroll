@@ -537,16 +537,16 @@ void Agent_state::init_vox()
     this->vox->register_hitscan();
 }
 
-Agent_state::Agent_state(int id)
-:
-id (id), type(OBJECT_AGENT), status(this)
-#if DC_CLIENT
-, event(this)
-, initial_teleport(false)
-#endif
-#if DC_SERVER
-, camera_ready(false)
-#endif
+Agent_state::Agent_state(int id) :
+    id((AgentID)id), client_id((ClientID)id),
+    type(OBJECT_AGENT), status(this)
+    #if DC_CLIENT
+    , event(this)
+    , initial_teleport(false)
+    #endif
+    #if DC_SERVER
+    , camera_ready(false)
+    #endif
 {
     box.b_height = AGENT_HEIGHT;
     box.c_height = AGENT_HEIGHT_CROUCHED;
@@ -565,8 +565,6 @@ id (id), type(OBJECT_AGENT), status(this)
         cs[i].theta = 0;
         cs[i].phi = 0;
     }
-
-    client_id = id;
 
     set_angles(0.5f, 0.0f);
     set_position(0,0,-256);

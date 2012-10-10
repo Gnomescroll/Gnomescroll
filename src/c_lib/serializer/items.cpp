@@ -1,8 +1,7 @@
 #include "items.hpp"
 
-#include <common/template/elastic_simple_object_list.hpp>
-#include <item/common/enum.hpp>
-#include <serializer/constants.hpp>
+#include <item/item.hpp>
+#include <item/common/constants.hpp>
 #include <serializer/redis.hpp>
 
 // PER UNIT MODULE:
@@ -19,8 +18,6 @@
  *      Save on every container transaction -- start with this
  *      Save in bulk, periodically (if changed at all)
  */ 
-
-#include <item/common/constants.hpp>
 
 namespace serializer
 {
@@ -72,6 +69,19 @@ namespace serializer
         // Item types
         // Item.location type
 
+
+// Double the max connections should be more than enough to avoid filling up this list
+// The server would have to be full, everyone disconnect, reconnect, and disconnect, before redis replies at all
+// Of course, redis could be down, or whatever so we still should handle errors
+
+// cache for player data passed around in the redis callbacks
+static class PlayerLoadDataList* player_load_data_list = NULL; 
+static class PlayerItemLoadDataList* player_item_load_data_list = NULL;
+static class PlayerContainerLoadDataList* player_container_load_data_list = NULL;
+static class PlayerItemSaveDataList* player_item_save_data_list = NULL;
+
+void load_player_item(int64_t item_guid, class PlayerContainerLoadData* container_data);    // forward decl
+
 class PlayerItemSaveData
 {
     public:
@@ -87,26 +97,103 @@ class PlayerItemSaveData
     {}
 };
 
-class PlayerContainerLoadData
+class PlayerLoadData
 {
+    private:
+    bool signal_if_loaded()
+    {
+        GS_ASSERT(!this->waiting_for_setup);
+        if (this->waiting_for_setup) return false;
+        if (!this->player_data_loaded) return false;
+        for (int i=0; i<N_PLAYER_CONTAINERS; i++)
+            if (!this->containers_loaded[i]) return false;
+
+        NetPeerManager* client = NetServer::get_client(this->client_id);
+        GS_ASSERT(client != NULL);
+        if (client == NULL) return false; // TODO -- log error
+        client->was_deserialized();
+        // TODO -- destroy ourself here
+        return true;
+    }
+        
     public:
         int id;
         UserID user_id;
         int client_id;
+
+        bool waiting_for_setup; // this object is setup in multiple steps, we need to indicate when we're done
+
+        // loaded state
+        bool player_data_loaded;
+
+        int n_containers_expected;
+        int containers_expected[N_PLAYER_CONTAINERS];
+        bool containers_loaded[N_PLAYER_CONTAINERS];
+
+    void setup_complete()
+    {
+        GS_ASSERT(this->waiting_for_setup);
+        this->waiting_for_setup = false;
+    }
+
+    void expect_container(int container_id)
+    {
+        GS_ASSERT(this->n_containers_expected < N_PLAYER_CONTAINERS);
+        if (this->n_containers_expected >= N_PLAYER_CONTAINERS) return;
+        this->containers_expected[this->n_containers_expected++] = container_id;
+    }
+
+    bool container_was_loaded(int container_id)
+    {
+        for (int i=0; i<this->n_containers_expected; i++)
+            if (this->containers_expected[i] == container_id)
+            {
+                GS_ASSERT(!this->containers_loaded[i]);
+                this->containers_loaded[i] = true;
+                return this->signal_if_loaded();
+            }
+        return false;
+    }
+
+    bool player_data_was_loaded()
+    {
+        GS_ASSERT(!this->player_data_loaded);
+        this->player_data_loaded = true;
+        return this->signal_if_loaded();
+    }
+
+    PlayerLoadData() :
+        id(-1), user_id(NULL_USER_ID), client_id(NULL_CLIENT),
+        waiting_for_setup(true),
+        player_data_loaded(false), n_containers_expected(0)
+    {
+        for (int i=0; i<N_PLAYER_CONTAINERS; i++)
+        {
+            this->containers_expected[i] = NULL_CONTAINER;
+            this->containers_loaded[i] = false;
+        }
+    }
+};
+
+class PlayerContainerLoadData
+{
+    public:
+        int id;
         int container_id;
         unsigned int item_count;
+        int player_data_id;
 
         void items_loaded()
         {
-            NetPeerManager* client = NetServer::get_client(this->client_id);
-            GS_ASSERT(client != NULL);
-            if (client == NULL) return;     // TODO -- log error
-            client->container_was_loaded(this->container_id);
+            class PlayerLoadData* player_data = player_load_data_list->get(this->player_data_id);
+            GS_ASSERT(player_data != NULL);
+            if (player_data == NULL) return;    // TODO -- log error
+            if (player_data->container_was_loaded(this->container_id))
+                player_load_data_list->destroy(this->player_data_id);
         }
 
     PlayerContainerLoadData() :
-        id(-1), user_id(NULL_USER_ID), client_id(NULL_CLIENT),
-        container_id(NULL_CONTAINER), item_count(0)
+        id(-1), container_id(NULL_CONTAINER), item_count(0), player_data_id(-1)
     {}
 };
 
@@ -115,60 +202,19 @@ class PlayerItemLoadData
     public:
         int id;
         int64_t item_guid;
-        UserID user_id;
-        int client_id;
-        int container_id;
-        class PlayerContainerLoadData* container_data;
+        int container_data_id;
 
-    ItemLoadData() :
-        id(-1), item_guid(0), user_id(NULL_USER_ID),
-        container_id(NULL_CONTAINER), container_data(NULL)
+    PlayerItemLoadData() :
+        id(-1), item_guid(0), container_data_id(-1)
     {}
 };
 
-// Double the max connections should be more than enough to avoid filling up this list
-// The server would have to be full, everyone disconnect, reconnect, and disconnect, before redis replies at all
-// Of course, redis could be down, or whatever so we still should handle errors
-
-class PlayerItemSaveDataList: public ElasticObjectList<PlayerItemSaveData, 1024>
-{
-    public:
-        const char* name() { return "PlayerItemSaveDataList"; }
-
-    PlayerItemSaveDataList() :
-        ElasticObjectList<PlayerItemSaveData, 1024>(PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX)
-    { this->print(); }
-};
-
-class PlayerItemLoadDataList: public ElasticObjectList<PlayerItemLoadData, 1024>
-{
-    public:
-        const char* name() { return "PlayerItemLoadDataList"; }
-
-    PlayerItemLoadDataList() :
-        ElasticObjectList<PlayerItemLoadData, 1024>(PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX)
-    { this->print(); }
-};
-
-class PlayerContainerLoadDataList: public ElasticObjectList<PlayerContainerLoadData, NetServer::HARD_MAX_CONNECTIONS>
-{
-    public:
-        const char* name() { return "PlayerContainerLoadDataList"; }
-
-    PlayerContainerLoadDataList() :
-        ElasticObjectList<PlayerContainerLoadData, NetServer::HARD_MAX_CONNECTIONS>(PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX)
-    { this->print(); }
-};
-
-// cache for player data passed around in the redis callbacks
-static class PlayerItemSaveDataList* player_item_save_data_list = NULL;
-static class PlayerItemLoadDataList* player_item_load_data_list = NULL;
-static class PlayerContainerLoadDataList* player_container_load_data_list = NULL;
-
-void load_player_item(int64_t item_guid, class PlayerContainerLoadData* container_data);    // forward decl
 
 void init_items()
 {
+    GS_ASSERT(player_load_data_list == NULL);
+    player_load_data_list = new class PlayerLoadDataList;
+    
     GS_ASSERT(player_item_save_data_list == NULL);
     player_item_save_data_list = new class PlayerItemSaveDataList;
     
@@ -181,6 +227,11 @@ void init_items()
 
 void teardown_items()
 {
+    if (player_load_data_list != NULL)
+    {
+        GS_ASSERT(player_load_data_list->ct == 0);
+        delete player_load_data_list;
+    }
     if (player_item_save_data_list != NULL)
     {
         GS_ASSERT(player_item_save_data_list->ct == 0);
@@ -325,12 +376,6 @@ static bool handle_item_hash_reply(redisReply* reply, class Item::Item* item)
 
     for (unsigned int i=0; i<reply->elements; i+=2)
     {
-        GS_ASSERT(reply->element[i+0]->type == REDIS_REPLY_STRING);
-        GS_ASSERT(reply->element[i+1]->type == REDIS_REPLY_STRING);
-        err = (reply->element[i+0]->type != REDIS_REPLY_STRING
-            || reply->element[i+1]->type != REDIS_REPLY_STRING);
-        if (err) break;
-            
         char* key = reply->element[i]->str;
         char* value = reply->element[i+1]->str;
 
@@ -468,7 +513,7 @@ static void load_player_item_cb(redisAsyncContext* ctx, void* _reply, void* _dat
         if (item != NULL)
         {
             bool err = handle_item_hash_reply(reply, item);
-            if (err) Item::destroy_item_for_loading(item);
+            if (err) Item::destroy_item_for_loading(item->id);
         }
     }
     else
@@ -495,7 +540,38 @@ static void load_player_item_cb(redisAsyncContext* ctx, void* _reply, void* _dat
         container_data->items_loaded();
         player_container_load_data_list->destroy(container_data->id);
     }
-    item_load_data_list->destroy(data->id);
+    player_item_load_data_list->destroy(data->id);
+}
+
+static void load_player_data_cb(redisAsyncContext* ctx, void* _reply, void* _data)
+{
+    redisReply* reply = (redisReply*)_reply;
+    class PlayerLoadData* data = (class PlayerLoadData*)_data;
+
+    if (reply->type == REDIS_REPLY_ARRAY)
+    {
+        // TODO -- process player data here
+        // suggested data to do soon: spawn points
+        if (data->player_data_was_loaded())
+            player_load_data_list->destroy(data->id);
+    }
+    else
+    if (reply->type == REDIS_REPLY_NIL)
+    {
+        if (data->player_data_was_loaded())
+            player_load_data_list->destroy(data->id);
+    }
+    else
+    if (reply->type == REDIS_REPLY_ERROR)
+    {
+        GS_ASSERT(false);
+        printf("Loading player %d data failed with error: %s\n", data->user_id, reply->str);
+    }
+    else
+    {
+        GS_ASSERT(false);
+        printf("Unhandled reply received from redis for player %d loading\n", data->user_id);
+    }
 }
 
 
@@ -636,32 +712,6 @@ void save_player_container(int client_id, int container_id, bool remove_items_af
     }
 }
 
-void load_player_container(int client_id, int container_id)
-{
-    NetPeerManager* client = NetServer::get_client(client_id);
-    GS_ASSERT(client != NULL);
-    if (client == NULL) return;
-    GS_ASSERT(client->user_id != NULL_USER_ID);
-    if (client->user_id == NULL_USER_ID) return;
-
-    ItemContainerType container_type = ItemContainer::get_container_type(container_id);
-    LocationNameID loc_id = get_player_location_name_id(container_type);
-    const char* location_name = get_location_name(loc_id);
-    GS_ASSERT(location_name != NULL);
-    if (location_name == NULL) return;
-    
-    class PlayerContainerLoadData* data = player_container_load_data_list->create();
-    GS_ASSERT(data != NULL);
-    if (data == NULL) return;
-    data->user_id = client->user_id;
-    data->client_id = client->client_id;
-    data->container_id = container_id;
-
-    int ret = redisAsyncCommand(ctx, &load_player_container_cb, data,
-        "SMEMBERS %s:%d", location_name, client->user_id);
-    GS_ASSERT(ret == REDIS_OK);
-}
-
 void load_player_item(int64_t item_guid, class PlayerContainerLoadData* container_data)
 {
     class PlayerItemLoadData* data = player_item_load_data_list->create();
@@ -669,12 +719,69 @@ void load_player_item(int64_t item_guid, class PlayerContainerLoadData* containe
     if (data == NULL) return;
 
     data->item_guid = item_guid;
-    data->container_data = container_data;
-    load_item(data);
+    data->container_data_id = container_data->id;
 
     int ret = redisAsyncCommand(ctx, &load_player_item_cb, data,
         "HGETALL item:%lld", item_guid);
     GS_ASSERT(ret == REDIS_OK);
 } 
+
+int begin_player_load(UserID user_id, int client_id)
+{
+    class PlayerLoadData* data = player_load_data_list->create();
+    GS_ASSERT(data != NULL);
+    if (data == NULL) return -1;
+    data->user_id = user_id;
+    data->client_id = client_id;
+
+    int ret = redisAsyncCommand(ctx, &load_player_data_cb, data,
+        "HGETALL player:%d", user_id);
+    GS_ASSERT(ret == REDIS_OK);
+    
+    return data->id;
+}
+
+bool load_player_container(int player_load_id, int container_id)
+{
+    class PlayerLoadData* player_data = player_load_data_list->get(player_load_id);
+    GS_ASSERT(player_data != NULL);
+    if (player_data == NULL) return false;
+
+    player_data->expect_container(container_id);
+
+    NetPeerManager* client = NetServer::get_client(player_data->client_id);
+    GS_ASSERT(client != NULL);
+    if (client == NULL) return false;
+    GS_ASSERT(client->user_id != NULL_USER_ID);
+    if (client->user_id == NULL_USER_ID) return false;
+
+    ItemContainerType container_type = ItemContainer::get_container_type(container_id);
+    LocationNameID loc_id = get_player_location_name_id(container_type);
+    const char* location_name = get_location_name(loc_id);
+    GS_ASSERT(location_name != NULL);
+    if (location_name == NULL) return false;
+    
+    class PlayerContainerLoadData* data = player_container_load_data_list->create();
+    GS_ASSERT(data != NULL);
+    if (data == NULL) return false;
+    data->container_id = container_id;
+    data->player_data_id = player_data->id;
+
+    int ret = redisAsyncCommand(ctx, &load_player_container_cb, data,
+        "SMEMBERS %s:%d", location_name, client->user_id);
+    GS_ASSERT(ret == REDIS_OK);    
+
+    return (ret == REDIS_OK);
+}
+
+bool end_player_load(int player_load_id)
+{
+    class PlayerLoadData* player_data = player_load_data_list->get(player_load_id);
+    GS_ASSERT(player_data != NULL);
+    if (player_data == NULL) return false;
+
+    player_data->setup_complete();
+    return true;
+}
 
 }   // serializer

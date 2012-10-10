@@ -9,10 +9,6 @@ dont_include_this_file_in_client
 
 class NetPeerManager
 {
-    private:
-        int get_container_loaded_index_for_type(ItemContainerType type);
-        void was_deserialized();    // this will be called internally once everything expected has been loaded
-
     public:
         ClientID client_id;
         AgentID agent_id;
@@ -20,11 +16,7 @@ class NetPeerManager
         bool loaded;
         bool waiting_for_auth;
         bool authorized;
-
-        // serialization init state
         bool deserialized;
-        bool player_data_loaded;
-        bool containers_loaded[Item::N_PLAYER_CONTAINERS];
         
         time_t connection_time;
 
@@ -39,8 +31,7 @@ class NetPeerManager
 
     void was_authorized(UserID user_id, time_t expiration_time, const char* username);
 
-    void player_data_was_loaded();
-    void container_was_loaded(int container_id);
+    void was_deserialized();    // this will be called internally once everything expected has been loaded
         
     bool failed_to_authorize();
     bool authorization_expired();
@@ -48,7 +39,7 @@ class NetPeerManager
     
     void broadcast_disconnect();
 
-    void init(int client_id);
+    void init(ClientID client_id);
     void teardown();
 
     ~NetPeerManager();
