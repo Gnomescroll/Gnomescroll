@@ -35,6 +35,11 @@ const float shroom_threshold = 0.997f;
 
 
 
+void set_me_maybe(int x, int y, int z, int block) {
+	if (t_map::get(x, y, z) == 0)
+		t_map::set(x, y, z, block);
+}
+
 void make_circle(int x, int y, int z, float dist, int block) { // instead of from the center of given block
     float fx = 0;
     float fy = 0;
@@ -43,7 +48,7 @@ void make_circle(int x, int y, int z, float dist, int block) { // instead of fro
     while (angle < DOUBLE_PI) {
         fx = sinf(angle) * dist;
         fy = cosf(angle) * dist;
-        t_map::set(x + (int)fx, y + (int)fy, z, block);
+        set_me_maybe(x + (int)fx, y + (int)fy, z, block);
         angle += PI / 32;
     }
 }
@@ -60,7 +65,7 @@ void make_circle_from_corner_of_block(int x, int y, int z, float dist, int block
 		int fi_y = y + (int)(fy+.5);
         angle += PI / 64;
 
-		t_map::set(fi_x, fi_y, z, block);
+		set_me_maybe(fi_x, fi_y, z, block);
 
 		if (extend_down) {
 			// make sure it extends all the way to the ground
@@ -138,8 +143,8 @@ void make_tree(int x, int y, int z) {
 
             if (j == height - 1) {
                 float dist = randrange(2, 11);
-                for (int i = -dist; i < dist; i++)  t_map::set(x+i, y, z+j, trunk); // limbs
-                for (int i = -dist; i < dist; i++)  t_map::set(x, y+i, z+j, trunk); // limbs
+                for (int i = -dist; i < dist; i++)  set_me_maybe(x+i, y, z+j, trunk); // limbs
+                for (int i = -dist; i < dist; i++)  set_me_maybe(x, y+i, z+j, trunk); // limbs
                 while (dist > 0) {
                     make_circle(x, y, z+j, dist, leaf);
                     make_circle(x, y, z+j+1, dist+1, leaf);
