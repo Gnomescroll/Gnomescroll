@@ -119,8 +119,8 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
                 for (int i=0; i<this->n_max; i++)
                     if (this->tmp_a[i] != NULL)
                     {
-                        GS_ASSERT(this->a[i] != NULL);
-                        if (this->a[i] != NULL)
+                        GS_ASSERT(this->a[i] == NULL);
+                        if (this->a[i] == NULL)
                             delete this->tmp_a[i];
                     }
                 free(this->tmp_a);
