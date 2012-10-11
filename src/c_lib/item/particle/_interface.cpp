@@ -183,7 +183,7 @@ void send_particle_items_to_client(int client_id)
         ItemParticle* p = item_particle_list->a[i];
         if (p == NULL) continue;
         send_particle_item_create_to_client(p->id, client_id);
-        if (p->target_agent != NO_AGENT)
+        if (p->target_agent != NULL_AGENT)
             send_particle_item_picked_up(client_id, p->target_agent, p->id);
     }
 }
@@ -517,7 +517,7 @@ void check_item_pickups()
 
         // get the agent inventory
         container = NULL;
-        container_id = ItemContainer::get_agent_container(agent->id);
+        container_id = ItemContainer::get_agent_inventory(agent->id);
         if (container_id != NULL_CONTAINER)
             container = ItemContainer::get_container(container_id);
 

@@ -1,16 +1,5 @@
 #pragma once 
 
-/*
- * Objects managed by DynamicObjectList must support the minimum interface:
- *
- * void draw();
- * void client_tick();
- * void server_tick();
- */
- 
-//#include <common/common.hpp>
-//#include <physics/common.hpp>
-
 #include <common/macros.hpp>
 
 #define OBJECT_LIST_DEBUG 0
@@ -91,29 +80,18 @@ void DynamicObjectList<Object_state, max_n, HARD_MAX>::where()
 template <class Object_state, int max_n, int HARD_MAX>
 Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::get(int id)
 {
-    //where();
-    if((id < 0) || (id >= n_max)) {
-        //printf("%s id error: id=%i\n", name() ,id);
-        //if (id != NO_AGENT) // TODO 
-        //    print_trace();
-        return NULL;
-    } 
-    if(a[id] == NULL) {
-        //printf("%s get error: object is null, id=%i\n",name(), id);
-        //this->print_members();
-        return NULL;
-    }
+    if (id < 0 || id >= n_max) return NULL;
+    if (a[id] == NULL) return NULL;
     return a[id];
 }
 
 template <class Object_state, int max_n, int HARD_MAX>
-void DynamicObjectList<Object_state, max_n, HARD_MAX>::print_members() {
-    int i;
+void DynamicObjectList<Object_state, max_n, HARD_MAX>::print_members()
+{
     printf("%s members:\n", name());
-    for (i=0; i<n_max; i++) {
-        if (a[i] == NULL) continue;
-        printf("%d\n", i);
-    }
+    for (int i=0; i<n_max; i++)
+        if (a[i] != NULL)
+            printf("%d\n", i);
 }
 
 template <class Object_state, int max_n, int HARD_MAX>
@@ -137,9 +115,7 @@ int DynamicObjectList<Object_state, max_n, HARD_MAX>::get_free_id()
 template <class Object_state, int max_n, int HARD_MAX>
 void DynamicObjectList<Object_state, max_n, HARD_MAX>::resize(int new_size)
 {
-    //GS_ASSERT(HARD_MAX == 0 || new_size < HARD_MAX);
-    if (HARD_MAX && new_size >= HARD_MAX) new_size = HARD_MAX-1;
-    //GS_ASSERT(this->n_max < new_size);
+    if (HARD_MAX && new_size >= HARD_MAX) new_size = HARD_MAX;
     if (this->n_max == new_size) return;
     printf("Resizing %s list from %d to %d\n", this->name(), this->n_max, new_size);
     int old_size = this->n_max;
@@ -159,12 +135,12 @@ Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create()
     if (n_max <= 0) return NULL;
     int i;
     int id=0;
-    for(i=0; i<n_max;i++)
+    for (i=0; i<n_max;i++)
     {
         id = (i+id_c)%n_max;
-        if(a[id] == NULL) break;
+        if (a[id] == NULL) break;
     }
-    if (i==n_max)
+    if (i == n_max)
     {
         id = n_max; // save next id
         int new_size = this->n_max + n_max_base;
@@ -172,14 +148,13 @@ Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create()
     }
     a[id] = new Object_state(id);
     num++;
-    id_c = id+1;
+    id_c = id + 1;
     return a[id];
 }
 
 template <class Object_state, int max_n, int HARD_MAX>
 Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create(int id)
 {
-    //where();
     if (id >= this->n_max)
     {   // need to resize
         int new_size = ((id/this->n_max_base) + 1) * this->n_max_base;
@@ -199,40 +174,32 @@ Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::create(int id)
 template <class Object_state, int max_n, int HARD_MAX>
 Object_state* DynamicObjectList<Object_state, max_n, HARD_MAX>::get_or_create(int id)
 {
-    //where();
     Object_state* obj = NULL;
     if (id < this->n_max) obj = a[id];
-    if (obj == NULL) {
-        obj = create(id);
-    }
+    if (obj == NULL) obj = create(id);
     return obj;
 }
 
 template <class Object_state, int max_n, int HARD_MAX>
-bool DynamicObjectList<Object_state, max_n, HARD_MAX>::contains(int id) {
-    //where();
+bool DynamicObjectList<Object_state, max_n, HARD_MAX>::contains(int id)
+{
     Object_state* obj = NULL;
     if (id < this->n_max) obj = a[id];
-    if (obj == NULL) {
-        return false;
-    }
+    if (obj == NULL) return false;
     return true;
 }
 
 template <class Object_state, int max_n, int HARD_MAX>
 void DynamicObjectList<Object_state, max_n, HARD_MAX>::destroy(int id)
 {
-    //where();
-    if(id >= this->n_max || a[id] == NULL)
-    {
-        GS_ASSERT(id < this->n_max);
-        GS_ASSERT(a[id] != NULL);
-        return;
-    }
+    GS_ASSERT(id < this->n_max);
+    GS_ASSERT(this->a[id] != NULL);
+    if (id >= this->n_max) return;
+    if (this->a[id] == NULL) return;
+    
     delete a[id];
-    a[id] = NULL;
-    num--;
-    //printf("%s_list: Deleted object %i\n",name(), id);
+    this->a[id] = NULL;
+    this->num--;
 }
  
 template <class Object_state, int max_n, int HARD_MAX>

@@ -46,7 +46,7 @@ class HitscanEffect
     }
 };
 
-class HitscanEffect_list: public Simple_object_list<HitscanEffect>
+class HitscanEffect_list: public Simple_object_list<HitscanEffect, 1024>
 {
     private:
         const char* name() { return "HitscanEffect"; }

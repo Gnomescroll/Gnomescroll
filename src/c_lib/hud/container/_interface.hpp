@@ -4,7 +4,7 @@ namespace HudContainer
 {
 
 // UI State
-extern class AgentContainerUI* agent_container;
+extern class AgentInventoryUI* agent_inventory;
 extern class AgentToolbeltUI* agent_toolbelt;
 extern class AgentSynthesizerUI* synthesizer_container;
 extern class CraftingUI* crafting_container;
@@ -26,8 +26,8 @@ typedef struct
     bool alt_action;
 } ContainerInputEvent;
 
-void enable_agent_container_hud();
-void disable_agent_container_hud();
+void enable_agent_inventory_hud();
+void disable_agent_inventory_hud();
 
 // parameterize these:
 void enable_container_block_hud(int container_id);

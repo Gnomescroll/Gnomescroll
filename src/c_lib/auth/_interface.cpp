@@ -85,7 +85,7 @@ bool is_valid_username(const char* username)
     return is_valid_username(username, len);
 }
 
-bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, char** hash, char** username)
+bool parse_auth_token(const char* token, UserID* user_id, time_t* expiration_time, char** hash, char** username)
 {
     // copy token into modifiable buffer
     char* _token = (char*)malloc((AUTH_TOKEN_LENGTH+1)*sizeof(char));
@@ -170,7 +170,7 @@ bool parse_auth_token(const char* token, int* user_id, time_t* expiration_time, 
     }
 
     // convert user id to integer
-    int _user_id = atoi(_token);
+    UserID _user_id = (UserID)atoi(_token);
     if (!is_valid_user_id(_user_id))
     {
         free(_token);
@@ -231,9 +231,9 @@ bool auth_token_expired(const time_t timestamp, const time_t expiration_window)
     return expired;
 }
 
-inline bool is_valid_user_id(const int user_id)
+inline bool is_valid_user_id(const UserID user_id)
 {
-    return (user_id > 0);
+    return (user_id > 0 && user_id != NULL_USER_ID);
 }
 
 void run_tests()
@@ -246,7 +246,7 @@ void run_tests()
 
     // setup
     bool ok = false;
-    int user_id = 0;
+    UserID user_id = NULL_USER_ID;
     time_t expiration_time = 0;
     char* hash = NULL;
     char* username = NULL;

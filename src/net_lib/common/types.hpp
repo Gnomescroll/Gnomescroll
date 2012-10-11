@@ -14,3 +14,13 @@ typedef enum
     DISCONNECT_LOGIN_ELSEWHERE, // user logged in with a new connection
     DISCONNECT_AUTH_LIMIT,      // client sent too many bad token 
 }   DisconnectType;
+
+typedef enum
+{
+    NULL_USER_ID = 0
+} UserID;
+
+typedef enum
+{
+    NULL_CLIENT = 0xff,
+} ClientID;

@@ -11,7 +11,7 @@
 namespace HudContainer
 {
 
-static bool agent_container_enabled = false;
+static bool agent_inventory_enabled = false;
 static bool container_block_enabled = false;
 static int container_block_enabled_id = NULL_CONTAINER;
 float mouse_x = -1;
@@ -21,7 +21,7 @@ bool lm_down = false;
 const int n_inventories = 8;
 
 // private containers
-class AgentContainerUI* agent_container = NULL;
+class AgentInventoryUI* agent_inventory = NULL;
 class AgentToolbeltUI* agent_toolbelt = NULL;
 class AgentSynthesizerUI* synthesizer_container = NULL;
 class EnergyTanksUI* energy_tanks = NULL;
@@ -35,9 +35,9 @@ class CrusherUI* crusher = NULL;
 void set_container_id(ItemContainerType container_type, int container_id)
 {
     switch (container_type)
-    {
-        case AGENT_CONTAINER:
-            agent_container->container_id = container_id;
+    {            
+        case AGENT_INVENTORY:
+            agent_inventory->container_id = container_id;
             break;
         case AGENT_TOOLBELT:
             agent_toolbelt->container_id = container_id;
@@ -49,6 +49,10 @@ void set_container_id(ItemContainerType container_type, int container_id)
             energy_tanks->container_id = container_id;
             break;
             
+        case AGENT_HAND:
+            // we render the hand separately; there is no object
+            break;
+
         case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
             crafting_container->container_id = container_id;
             break;
@@ -109,23 +113,23 @@ void close_container(int container_id)
     Input Handling
 */
 
-void enable_agent_container_hud()
+void enable_agent_inventory_hud()
 {
     GS_ASSERT(!container_block_enabled);
-    agent_container_enabled = true;
+    agent_inventory_enabled = true;
 }
 
-void disable_agent_container_hud()
+void disable_agent_inventory_hud()
 {
     // reset mouse state
     mouse_x = -1;
     mouse_y = -1;
-    agent_container_enabled = false;
+    agent_inventory_enabled = false;
 }
 
 void enable_container_block_hud(int container_id)
 {
-    GS_ASSERT(!agent_container_enabled);
+    GS_ASSERT(!agent_inventory_enabled);
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(container_block_enabled_id == NULL_CONTAINER);
     container_block_enabled = true;
@@ -148,7 +152,7 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
 
     // set up container array
     UIElement* inventories[n_inventories] = {
-        agent_container,
+        agent_inventory,
         agent_toolbelt,
         synthesizer_container,
         crafting_container,
@@ -331,8 +335,13 @@ static HudText::Text* tooltip_text = NULL;
 
 static void draw_grabbed_icon()
 {
-    if (ItemContainer::player_hand_type_ui == NULL_ITEM_TYPE) return;
-
+    using ItemContainer::player_hand_ui;
+    if (player_hand_ui == NULL) return;
+    int hand_item_type = player_hand_ui->get_item_type();
+    if (hand_item_type == NULL_ITEM_TYPE) return;
+    int hand_item_stack = player_hand_ui->get_item_stack();
+    int hand_item_durability = player_hand_ui->get_item_durability();
+    
     const float w = 32;
 
     // center icon on mouse position
@@ -348,11 +357,10 @@ static void draw_grabbed_icon()
     glBegin(GL_QUADS);
 
     // render durability
-    int durability = ItemContainer::player_hand_durability_ui;
-    if (durability != NULL_DURABILITY)
+    if (hand_item_durability != NULL_DURABILITY)
     {
-        int max_durability = Item::get_max_durability(ItemContainer::player_hand_type_ui);
-        float ratio = ((float)durability)/((float)max_durability);
+        int max_durability = Item::get_max_durability(hand_item_type);
+        float ratio = ((float)hand_item_durability)/((float)max_durability);
         const float alpha = 128;
         if (ratio >= 0.75)
             glColor4ub(7, 247, 0, alpha);    // green
@@ -379,7 +387,7 @@ static void draw_grabbed_icon()
 
     glBegin(GL_QUADS);
         
-    int tex_id = Item::get_sprite_index_for_type(ItemContainer::player_hand_type_ui);
+    int tex_id = Item::get_sprite_index_for_type(hand_item_type);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width
@@ -408,9 +416,9 @@ static void draw_grabbed_icon()
 
     // Draw stack numbers
     if (grabbed_icon_stack_text == NULL) return;
-    if (ItemContainer::player_hand_stack_ui <= 1) return;
-    GS_ASSERT(count_digits(ItemContainer::player_hand_stack_ui) < STACK_COUNT_MAX_LENGTH);
-    if (count_digits(ItemContainer::player_hand_stack_ui) >= STACK_COUNT_MAX_LENGTH) return;
+    if (hand_item_stack <= 1) return;
+    GS_ASSERT(count_digits(hand_item_stack) < STACK_COUNT_MAX_LENGTH);
+    if (count_digits(hand_item_stack) >= STACK_COUNT_MAX_LENGTH) return;
 
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
@@ -420,7 +428,7 @@ static void draw_grabbed_icon()
     // calc posuition
     x = x + (w/2) + font_size;
     y = y + (w/2) - font_size;
-    grabbed_icon_stack_text->update_formatted_string(1, ItemContainer::player_hand_stack_ui);
+    grabbed_icon_stack_text->update_formatted_string(1, hand_item_stack);
     grabbed_icon_stack_text->set_position(x,y);
     grabbed_icon_stack_text->draw();
 
@@ -433,8 +441,9 @@ static void draw_grabbed_icon()
 
 static void draw_tooltip()
 {
+    using ItemContainer::player_hand_ui;
     // dont draw tooltips if we're holding something
-    if (ItemContainer::player_hand_type_ui != NULL_ITEM_TYPE) return;
+    if (player_hand_ui == NULL || player_hand_ui->get_item_type() != NULL_ITEM_TYPE) return;
 
     // get item type hovered
     int item_type = get_item_type_at(mouse_x, mouse_y);
@@ -467,11 +476,11 @@ void draw()
     agent_toolbelt->draw();
     energy_tanks->draw();
 
-    if (!agent_container_enabled && !container_block_enabled) return;
+    if (!agent_inventory_enabled && !container_block_enabled) return;
 
     energy_tanks->draw_name();
     agent_toolbelt->draw_name();
-    agent_container->draw();
+    agent_inventory->draw();
     synthesizer_container->draw();    
     
     if (container_block_enabled)
@@ -519,11 +528,11 @@ void draw()
 
 void init()
 {
-    agent_container = new AgentContainerUI;
-    agent_container->type = UI_ELEMENT_AGENT_CONTAINER;
-    agent_container->init();
-    agent_container->xoff = (_xresf - agent_container->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
-    agent_container->yoff = _yresf/2 - (agent_container->height())/2;
+    agent_inventory = new AgentInventoryUI;
+    agent_inventory->type = UI_ELEMENT_AGENT_INVENTORY;
+    agent_inventory->init();
+    agent_inventory->xoff = (_xresf - agent_inventory->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
+    agent_inventory->yoff = _yresf/2 - (agent_inventory->height())/2;
 
     agent_toolbelt = new AgentToolbeltUI;
     agent_toolbelt->type = UI_ELEMENT_AGENT_TOOLBELT;
@@ -583,7 +592,7 @@ void init()
 
 void teardown()
 {
-    if (agent_container != NULL) delete agent_container;
+    if (agent_inventory != NULL) delete agent_inventory;
     if (agent_toolbelt != NULL) delete agent_toolbelt;
     if (synthesizer_container != NULL) delete synthesizer_container;
     if (crafting_container != NULL) delete crafting_container;

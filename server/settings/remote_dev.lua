@@ -36,6 +36,10 @@ options.base_move_rate = 30*60*60 --1hr
 -- auth --
 options.auth = false
 
+-- serializer --
+options.serializer = false
+options.redis_database = 1
+
 ffi = require("ffi")
 ffi.cdef[[
     void LUA_set_int_option(int option_id, int value);

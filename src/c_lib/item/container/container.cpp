@@ -38,11 +38,11 @@ void init_container(ItemContainerInterface* container)
 
 /* Interface */
 
-void ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
+int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
+    if (!this->is_valid_slot(slot)) return NULL_SLOT;
 
     GS_ASSERT(this->slot[slot] == NULL_ITEM);
     if (this->slot[slot] != NULL_ITEM)
@@ -53,10 +53,12 @@ void ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
 
     Item::Item* item = Item::get_item_object(item_id);
     GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    if (item == NULL) return slot;
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
+
+    return slot;
 }
 
 void ItemContainerInterface::remove_item(int slot)  // virtual
@@ -83,16 +85,16 @@ void ItemContainerInterface::remove_item(int slot)  // virtual
 
 /* Energy Tanks */
 
-void ItemContainerEnergyTanks::insert_item(int slot, ItemID item_id)
+int ItemContainerEnergyTanks::insert_item(int slot, ItemID item_id)
 {
     int item_type = Item::get_item_type(item_id);
     GS_ASSERT(item_type == this->energy_tank_type);
-    ItemContainerInterface::insert_item(slot, item_id);
+    return ItemContainerInterface::insert_item(slot, item_id);
 }
 
 /* Cryofreezer */
 
-void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
+int ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     #if DC_SERVER
@@ -101,7 +103,7 @@ void ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item != NULL) item->gas_decay = Item::get_gas_lifetime(item->type);
     #endif
-    ItemContainer::insert_item(slot, item_id);
+    return ItemContainer::insert_item(slot, item_id);
 }
 
 /* Smelter */

@@ -3,7 +3,8 @@
 typedef enum
 {
     CONTAINER_TYPE_NONE = 0,
-    AGENT_CONTAINER,
+    AGENT_HAND,
+    AGENT_INVENTORY,
     AGENT_TOOLBELT,
     AGENT_SYNTHESIZER,
     AGENT_ENERGY_TANKS,
@@ -64,7 +65,7 @@ typedef enum
 
 typedef enum
 {
-    IG_NONE,    // null value
+    IG_NONE = 0,    // null value
     IG_ERROR,
     IG_FIST,
     IG_RESOURCE,    //does nothing, resources, stackable
@@ -87,10 +88,20 @@ typedef enum
 
 typedef enum
 {
-    IL_NOWHERE,
+    IL_NOWHERE = 0,
     IL_PARTICLE,
     IL_CONTAINER,
     IL_HAND,
 } ItemLocationType;
+
+typedef enum
+{
+    ISS_NONE,
+    ISS_WAITING_FOR_GID,
+    ISS_WAITING_FOR_SAVE,
+    ISS_SAVED,
+    ISS_LOADING,
+    ISS_LOADED,
+} ItemSaveState;
 
 /* No typedef for ItemType, use string names */

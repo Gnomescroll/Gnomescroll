@@ -22,6 +22,8 @@ int record_container_event(int container_id)
 
 void send_container_alpha_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
     if (action == CONTAINER_ACTION_NONE) return;
@@ -35,8 +37,8 @@ void send_container_alpha_action(ContainerActionType action, int container_id, i
     msg.container_id = container_id;
     msg.slot = slot;
 
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -58,6 +60,8 @@ void send_container_alpha_action(ContainerActionType action, int container_id, i
 
 void send_container_beta_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -72,8 +76,8 @@ void send_container_beta_action(ContainerActionType action, int container_id, in
     msg.container_id = container_id;
     msg.slot = slot;
     
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -95,6 +99,8 @@ void send_container_beta_action(ContainerActionType action, int container_id, in
 
 void send_synthesizer_alpha_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (action == CONTAINER_ACTION_NONE) return;
 
@@ -107,8 +113,8 @@ void send_synthesizer_alpha_action(ContainerActionType action, int container_id,
     msg.container_id = container_id;
     msg.slot = slot;
 
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD || action == PURCHASE_ITEM_FROM_SYNTHESIZER)
     {
@@ -130,6 +136,8 @@ void send_synthesizer_alpha_action(ContainerActionType action, int container_id,
 
 void send_synthesizer_beta_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -144,8 +152,8 @@ void send_synthesizer_beta_action(ContainerActionType action, int container_id, 
     msg.container_id = container_id;
     msg.slot = slot;
     
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -167,6 +175,8 @@ void send_synthesizer_beta_action(ContainerActionType action, int container_id, 
 
 void send_craft_alpha_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (action == CONTAINER_ACTION_NONE) return;
     
@@ -179,8 +189,8 @@ void send_craft_alpha_action(ContainerActionType action, int container_id, int s
     msg.container_id = container_id;
     msg.slot = slot;
 
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -202,6 +212,8 @@ void send_craft_alpha_action(ContainerActionType action, int container_id, int s
 
 void send_purchase_item_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(action == PURCHASE_ITEM_FROM_SYNTHESIZER);
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -219,6 +231,8 @@ void send_purchase_item_action(ContainerActionType action, int container_id, int
 
 void send_craft_beta_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -233,8 +247,8 @@ void send_craft_beta_action(ContainerActionType action, int container_id, int sl
     msg.container_id = container_id;
     msg.slot = slot;
     
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -256,6 +270,8 @@ void send_craft_beta_action(ContainerActionType action, int container_id, int sl
 
 void send_craft_item_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(action == CRAFT_ITEM_FROM_BENCH);
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -273,13 +289,16 @@ void send_craft_item_action(ContainerActionType action, int container_id, int sl
 
 void send_no_container_alpha_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
+
     record_container_event(NULL_CONTAINER);
 
     no_container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
     msg.send();
 }
 
@@ -290,13 +309,15 @@ void send_no_container_beta_action(ContainerActionType action, int container_id,
     no_container_action_beta_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
     msg.send();
 }
 
 void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
     if (action == CONTAINER_ACTION_NONE) return;
@@ -310,8 +331,8 @@ void send_smelter_alpha_action(ContainerActionType action, int container_id, int
     msg.container_id = container_id;
     msg.slot = slot;
 
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -333,6 +354,8 @@ void send_smelter_alpha_action(ContainerActionType action, int container_id, int
 
 void send_smelter_beta_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -347,8 +370,8 @@ void send_smelter_beta_action(ContainerActionType action, int container_id, int 
     msg.container_id = container_id;
     msg.slot = slot;
     
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -383,8 +406,8 @@ void send_crusher_alpha_action(ContainerActionType action, int container_id, int
     msg.container_id = container_id;
     msg.slot = slot;
 
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {
@@ -406,6 +429,8 @@ void send_crusher_alpha_action(ContainerActionType action, int container_id, int
 
 void send_crusher_beta_action(ContainerActionType action, int container_id, int slot)
 {
+    GS_ASSERT(player_hand_ui != NULL);
+    if (player_hand_ui == NULL) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -419,9 +444,9 @@ void send_crusher_beta_action(ContainerActionType action, int container_id, int 
 
     msg.container_id = container_id;
     msg.slot = slot;
-    
-    msg.hand_type = player_hand_type_ui;
-    msg.hand_stack = player_hand_stack_ui;
+
+    msg.hand_type = player_hand_ui->get_item_type();
+    msg.hand_stack = player_hand_ui->get_item_stack();
 
     if (action == FULL_HAND_TO_WORLD)
     {

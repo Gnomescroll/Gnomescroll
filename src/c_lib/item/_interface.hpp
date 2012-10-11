@@ -37,13 +37,15 @@ class Item* create_item(int item_type, ItemID item_id);
 namespace Item
 {
 
+class Item* create_item(int item_type);
+class Item* create_item(const char* item_name);
+class Item* create_item_for_loading();  // only used by serializer
+
 void destroy_item(ItemID id);
+void destroy_item_for_loading(ItemID id);   // only used by serializer
     
 ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);
-
-class Item* create_item(int item_type);
-class Item* create_item(const char* item_name);
 
 // returns remaining stack size
 int consume_stack_item(ItemID item_id); // automatically destroys consumed item

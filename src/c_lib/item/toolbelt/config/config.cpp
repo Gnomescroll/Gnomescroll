@@ -1,7 +1,7 @@
 #include "config.hpp"
 
 #include <item/common/enum.hpp>
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 #include <item/toolbelt/_state.hpp>
 #include <item/toolbelt/config/callbacks.hpp>
 
@@ -67,8 +67,8 @@ static void set_callback_config_defaults(struct CallbackConfig* c)
 
 static void apply_type_settings(int type)
 {   // assign callbacks to registry
-    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
-    if (type < 0 || type >= MAX_ITEMS) return;
+    GS_ASSERT(type >= 0 && type < MAX_ITEM_TYPES);
+    if (type < 0 || type >= MAX_ITEM_TYPES) return;
     
     ticks[type] = c.tick;
     triggers[type] = c.trigger;
@@ -89,14 +89,14 @@ static void apply_type_settings(int type)
 static void apply_group_settings(ItemGroup group)
 {
     GS_ASSERT(group != IG_ERROR);
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
         if (Item::get_item_group_for_type(i) == group)
             apply_type_settings(i);
 }
 
 static void apply_click_and_hold_settings_for(bool cnh)
 {   // begin applying settings to all items with click_and_hold == cnh
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
         if (item_is_click_and_hold(i) == cnh)
             apply_type_settings(i);
 }
@@ -136,15 +136,15 @@ static void set_type(const char* name)
 static void click_and_hold_group(ItemGroup group, bool cnh)
 {
     GS_ASSERT(group != IG_ERROR);
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
         if (Item::get_item_group_for_type(i) == group)
             click_and_hold[i] = cnh;
 }
 
 static void click_and_hold_type(int type, bool cnh)
 {
-    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
-    if (type < 0 || type >= MAX_ITEMS) return;
+    GS_ASSERT(type >= 0 && type < MAX_ITEM_TYPES);
+    if (type < 0 || type >= MAX_ITEM_TYPES) return;
     click_and_hold[type] = cnh;
 }
 
@@ -292,7 +292,7 @@ void validate_callbacks()
     if (local_end_triggers   == NULL) return;
     #endif
     
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
         GS_ASSERT(click_and_hold[i] || !ticks[i]);
         #if DC_CLIENT

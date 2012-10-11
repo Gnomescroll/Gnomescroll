@@ -53,6 +53,8 @@ bool set_agent_toolbelt_slot(int agent_id, int slot);
 void use_block_placer(int agent_id, ItemID placer_id);
 
 void force_remove_selected_item(int agent_id);
+
+void agent_quit(int agent_id);
 #endif
 
 } // Toolbelt

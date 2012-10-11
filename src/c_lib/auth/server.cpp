@@ -4,6 +4,9 @@
 dont_include_this_file_in_client
 #endif
 
+#define  __STDC_FORMAT_MACROS
+#include <inttypes.h>
+
 #include <auth/hmac-sha256.h>
 
 namespace Auth
@@ -127,7 +130,7 @@ void server_teardown()
     if (secret_key != NULL) free(secret_key);
 }
 
-bool verify_token(const char* _token, int* user_id, time_t* expiration_time, char** username)
+static bool verify_token(const char* _token, UserID* user_id, time_t* expiration_time, char** username)
 {
     GS_ASSERT(secret_key != NULL);
     if (secret_key == NULL) return false;
@@ -138,7 +141,14 @@ bool verify_token(const char* _token, int* user_id, time_t* expiration_time, cha
     
     const unsigned int payload_len = AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH + strlen(*username);
     char* payload = (char*)malloc((payload_len+1)*sizeof(char));
-    snprintf(payload, payload_len+1, "%09d%lld%s", *user_id, (long long)*expiration_time, *username);
+
+    #ifdef _WIN32
+    // mingw doesn't support %lld (neither does MSVC2003)
+    static const char fmt[] = "%09d%I64d%s";
+    #else
+    static const char fmt[] = "%09d%lld%s";
+    #endif
+    snprintf(payload, payload_len+1, fmt, *user_id, (long long)*expiration_time, *username);
     payload[payload_len] = '\0';
 
     uint8_t* _hash = compute_hash(secret_key, payload, payload_len);
@@ -166,7 +176,7 @@ bool verify_token(const char* _token, int* user_id, time_t* expiration_time, cha
 
 bool verify_token(const char* _token)
 {
-    int user_id = 0;
+    UserID user_id = NULL_USER_ID;
     time_t expiration_time = 0;
     char* username = NULL;
     bool ok = verify_token(_token, &user_id, &expiration_time, &username);
@@ -181,7 +191,7 @@ void received_auth_token(int client_id, const char* token)
         send_auth_token_valid(client_id);
         return;
     }
-    int user_id = 0;
+    UserID user_id = NULL_USER_ID;
     time_t expiration_time = 0;
     char* username = NULL;
     bool ok = verify_token(token, &user_id, &expiration_time, &username);

@@ -188,7 +188,7 @@ int run()
             serializer::should_save_map = false;
         }
 
-        serializer::check_save_state();
+        serializer::update();
 
         #ifdef __GNUC__
         usleep(1000);

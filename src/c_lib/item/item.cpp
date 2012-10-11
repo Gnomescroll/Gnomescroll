@@ -18,7 +18,19 @@ void Item::init(int item_type)
     this->gas_decay = attr->gas_lifetime;
 }
 
+
 #if DC_SERVER
+
+void Item::init_for_loading()
+{   // use only by serializer
+    // we will set defaults for state properties that are not important enough to serialize
+    ItemAttribute* attr = get_item_attributes(this->type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return;
+    this->gas_decay = attr->gas_lifetime;
+}
+
+
 void ItemList::decay_gas()
 {
     gas_tick++;
@@ -160,6 +172,10 @@ void ItemList::verify_items()
     {
         if (this->a[k] == NULL) continue;
         Item* i = this->a[k];
+
+        // items in a save-waiting state don't apply, they can sit in limbo
+        if (i->save_state == ISS_WAITING_FOR_GID || i->save_state == ISS_WAITING_FOR_SAVE) continue;
+        
         bool valid_location = is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT);
         if (!valid_location) i->valid = false;
     
@@ -171,7 +187,7 @@ void ItemList::verify_items()
         {
             VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
             VERIFY_ITEM(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT, i); // WARNING -- assumes client_id==agent_id
-            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::agent_hand_list[i->location_id] == i->id, LIMIT, i);
+            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::get_agent_hand_item(i->location_id) == i->id, LIMIT, i);
         }
         else
         if (i->location == IL_CONTAINER)
@@ -183,7 +199,7 @@ void ItemList::verify_items()
                 VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
                 VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
             }
-            else if (owner != NO_AGENT)
+            else if (owner != NULL_AGENT)
             {
                 VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
                 VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);

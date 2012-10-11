@@ -3,27 +3,35 @@
 #define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT(agent_id >= 0 && agent_id < AGENT_MAX)
 #define IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) 
 
-#define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS)
-#define IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) 
+#define ASSERT_VALID_ITEM_ID(item_id) GS_ASSERT(item_id >= 0 && item_id < MAX_ITEMS)
+#define IF_INVALID_ITEM_ID(item_id) if (item_id < 0 || item_id >= MAX_ITEMS)
+
+#define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT(client_id >= 0 && client_id != NULL_CLIENT && client_id < NetServer::HARD_MAX_CONNECTIONS)
+#define IF_INVALID_CLIENT_ID(client_id) if (client_id < 0 || client_id == NULL_CLIENT || client_id >= NetServer::HARD_MAX_CONNECTIONS) 
 
 #define ASSERT_VALID_BLOCK(block_type) GS_ASSERT(block_type >= 0 && block_type < t_map::MAX_CUBES)
 #define IF_INVALID_BLOCK(block_type) if (block_type < 0 || block_type >= t_map::MAX_CUBES) 
 
 #define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT(mech_type >= 0 && mech_type < t_mech::MAX_MECHS)
-#define IF_INVALID_MECH_TYPE(mech_type) if (mech_type < 0 || mech_type >= t_mech::MAX_MECHS) 
+#define IF_INVALID_MECH_TYPE(mech_type) if (mech_type < 0 || mech_type >= t_mech::MAX_MECHS)
 
-#define GS_ABORT() do {\
-printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__);\
-print_trace();\
-exit(1);\
-}while(0)
+#define ASSERT_VALID_CONTAINER_TYPE(container_type) GS_ASSERT(container_type >= 0 && container_type < MAX_CONTAINER_TYPES)
+#define IF_INVALID_CONTAINER_TYPE(container_type) if (container_type < 0 || container_type >= MAX_CONTAINER_TYPES) 
+
+#define GS_ABORT() \
+    do \
+    { \
+        printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__); \
+        print_trace(); \
+        exit(1); \
+    } while(0);
 
 #define ASSERT_NOT_NULL(p) \
-if(p == NULL) \
-{ \
-fprintf (stderr, "ASSERT_NOT_NULL: %s error: %s, line %d \n", __func__, __FILE__, __LINE__); \
-return; \
-}
+    if ((p) == NULL) \
+    { \
+        fprintf(stderr, "ASSERT_NOT_NULL: %s error: %s, line %d \n", __func__, __FILE__, __LINE__); \
+        return; \
+    }
 
 // macro stringification
 #define STR2(x) #x

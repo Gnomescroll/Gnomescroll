@@ -1,6 +1,6 @@
 #pragma once
 
-#include <item/toolbelt/common/constant.hpp>
+#include <item/toolbelt/common/constants.hpp>
 #include <item/toolbelt/common/types.hpp>
 
 #include <item/toolbelt/config/_state.cpp>

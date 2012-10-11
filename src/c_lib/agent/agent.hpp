@@ -81,8 +81,8 @@ class Agent_state
 
     public:    
 
-        int id;
-        int client_id;
+        AgentID id;
+        ClientID client_id;
 
         ObjectType type;
         

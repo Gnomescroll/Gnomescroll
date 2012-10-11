@@ -13,8 +13,8 @@ namespace Components
 #if DC_SERVER
 void OwnerComponent::revoke()
 {
-    if (this->owner == NO_AGENT) return;
-    this->owner = NO_AGENT;
+    if (this->owner == NULL_AGENT) return;
+    this->owner = NULL_AGENT;
 }
 #endif
 

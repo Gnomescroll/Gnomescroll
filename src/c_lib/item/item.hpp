@@ -21,7 +21,7 @@ class Item
 
         ItemID id;
         int type;  // stone_block, dirt_block, mining_laser_beta,
-        uint32_t global_id;
+        int64_t global_id;
 
         int durability;
         int stack_size;
@@ -35,14 +35,32 @@ class Item
         #if DC_SERVER
         SubscriberList subscribers;
         bool valid;
+        ItemSaveState save_state;
         #endif
 
+    #if DC_SERVER
+    bool valid_deserialization()
+    {
+        if (this->global_id == 0) return false;
+        if (this->location == IL_NOWHERE) return false;
+        if (this->location != IL_PARTICLE && this->container_slot == NULL_SLOT) return false;
+        if (this->type == NULL_ITEM_TYPE) return false;
+        if (this->stack_size <= 0 || this->stack_size > get_max_stack_size(this->type)) return false;
+        if (this->durability <= 0 || this->durability > get_max_durability(this->type)) return false;
+        return true;
+    }
+
+    void init_for_loading();   // only to be used by serializer
+    #endif
+    
     void init(int item_type);
+    
 
     void print()
     {
         printf("Item:\n");
         printf("ID %d\n", id);
+        printf("Global ID: %lld\n", this->global_id);
         printf("Group %d\n", get_item_group_for_type(this->type));
         printf("Type %d\n", type);
         printf("Durability %d\n", durability);
@@ -72,6 +90,7 @@ class Item
         #if DC_SERVER
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
         , valid(true)
+        , save_state(ISS_NONE)
         #endif
     {}
 
@@ -84,15 +103,16 @@ class Item
 namespace Item
 {
 
-const int ITEM_LIST_MAX = 1024;
-const int ITEM_LIST_HARD_MAX = 0xffff;  // 65535 maximum (highest ID will be 65534)
-
-class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>
+class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
 {
     private:
         const char* name() { return "Item"; }
+        
     public:
-        ItemList() : gas_tick(0) { print_list((char*)this->name(), this); }
+        ItemList() : gas_tick(0)
+        {
+            print_list((char*)this->name(), this);
+        }
 
         #if DC_CLIENT && !PRODUCTION
         Item* create()
@@ -106,7 +126,7 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX
         #if DC_CLIENT
         Item* create_type(int item_type, ItemID item_id)
         {
-            Item* item = DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX>::create(item_id);
+            Item* item = DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;
@@ -114,6 +134,13 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX
         #endif
 
         #if DC_SERVER
+        Item* create_for_loading()
+        {   // only used by serializer
+            // make sure to either destroy or init the items before the stack unwinds
+            // otherwise lost items will be trapped in the array and asserts will go nuts
+            return this->create();
+        }
+        
         Item* create_type(int item_type)
         {
             Item* item = this->create();
@@ -125,7 +152,6 @@ class ItemList: public DynamicObjectList<Item, ITEM_LIST_MAX, ITEM_LIST_HARD_MAX
 
     private:
         unsigned int gas_tick;
-        //static const int GAS_TICK_INTERVAL = 30;
         static const int GAS_TICK_INTERVAL = 10;
     public:
         #if DC_SERVER

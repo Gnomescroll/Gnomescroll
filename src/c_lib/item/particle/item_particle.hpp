@@ -64,7 +64,7 @@ class ItemParticle
         bool can_be_picked_up()
         {
             return (this->pickup_prevention <= 0
-                 && this->target_agent == NO_AGENT);
+                 && this->target_agent == NULL_AGENT);
         }
         void lock_pickup()
         {

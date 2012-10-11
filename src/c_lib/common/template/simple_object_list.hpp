@@ -1,54 +1,49 @@
 #pragma once 
  
-#define SIMPLE_OBJECT_LIST_DEBUG 0
-
-template <class Object_state, unsigned int max_n=1024>
+template <class ObjectState, unsigned int hard_cap>
 class Simple_object_list
 {
     private:
         virtual const char* name() = 0;
         
     public:
-        Object_state a[max_n];
+        ObjectState a[hard_cap];
 
-        static const int n_max = max_n;
+        static const unsigned int n_max = hard_cap;
         unsigned int num;
-        unsigned int id_c;
 
         Simple_object_list(); //default constructor
         virtual ~Simple_object_list(); //default deconstructor
 
-        inline Object_state* create();         //object auto id
+        inline ObjectState* create();         //object auto id
         
         inline void destroy(int _id);
 
         inline void print();
 };
 
-template <class Object_state, unsigned int max_n> 
-Simple_object_list<Object_state, max_n>::Simple_object_list()
-:
-num(0),
-id_c(0)
+template <class ObjectState, unsigned int hard_cap> 
+Simple_object_list<ObjectState, hard_cap>::Simple_object_list()
+: num(0)
 {
-    for (unsigned int i=0; i<max_n; i++) this->a[i].id = i;
+    for (unsigned int i=0; i<hard_cap; i++) this->a[i].id = i;
 }
 
-template <class Object_state, unsigned int max_n> 
-Simple_object_list<Object_state, max_n>::~Simple_object_list()
+template <class ObjectState, unsigned int hard_cap> 
+Simple_object_list<ObjectState, hard_cap>::~Simple_object_list()
 {
 }
 
-template <class Object_state, unsigned int max_n> 
-inline void Simple_object_list<Object_state, max_n>::print()
+template <class ObjectState, unsigned int hard_cap> 
+inline void Simple_object_list<ObjectState, hard_cap>::print()
 {
     printf("%s list instantiated at %p\n", this->name(), this);
 }
 
-template <class Object_state, unsigned int max_n>
-inline Object_state* Simple_object_list<Object_state, max_n>::create() 
+template <class ObjectState, unsigned int hard_cap>
+inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create() 
 {
-    if(num >= max_n)
+    if (this->num >= hard_cap)
     {
         #if !PRODUCTION
         printf("%s list: max reached\n", this->name());
@@ -56,21 +51,22 @@ inline Object_state* Simple_object_list<Object_state, max_n>::create()
         return NULL;
     }
 
-    Object_state* obj = &a[num];
-    num++;
-    return obj;
+    return &this->a[this->num++];
 }
 
 
-template <class Object_state, unsigned int max_n>
-inline void Simple_object_list<Object_state, max_n>::destroy(int index)
+template <class ObjectState, unsigned int hard_cap>
+inline void Simple_object_list<ObjectState, hard_cap>::destroy(int index)
 {
-    GS_ASSERT(num > 0);
+    GS_ASSERT(this->num > 0);
     unsigned int uindex = index;
-    GS_ASSERT(index >= 0 && uindex < max_n);
-    num--;
-    if (uindex != num)
-        this->a[uindex] = this->a[num]; // swap last good object with dead object
+    GS_ASSERT(index >= 0 && uindex < this->n_max);
+    GS_ASSERT(uindex < this->num);
+    if (index < 0 || uindex >= this->n_max || uindex >= this->num) return;
+    this->num--;
+    if (uindex != this->num)
+        this->a[uindex] = this->a[this->num]; // swap last good object with dead object
+    this->a[this->num].reset();   // reset dead object
+    this->a[this->num].id = this->num;
     this->a[uindex].id = index; // update id of swapped object
-    this->a[num].reset();   // reset dead object
 }
