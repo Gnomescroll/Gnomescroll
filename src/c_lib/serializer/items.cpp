@@ -205,10 +205,13 @@ static void item_gid_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     PlayerItemSaveData* data = (PlayerItemSaveData*)_data;
 
     class Item::Item* item = Item::get_item(data->item_id);
-    GS_ASSERT(data->was_removed || item != NULL);
-    if (!data->was_removed && item == NULL) return;   // TODO -- log error
-    GS_ASSERT(item->global_id == 0)
-    if (item->global_id != 0) return;
+    if (!data->was_removed)
+    {
+        GS_ASSERT(item != NULL);
+        if (item == NULL) return;   // TODO -- log error
+        GS_ASSERT(item->global_id == 0)
+        if (item->global_id != 0) return;
+    }
     
     if (reply->type == REDIS_REPLY_INTEGER)
     {
@@ -598,7 +601,7 @@ int save_player_item(class PlayerItemSaveData* data)
     CHECK_REDIS_OK(ret);
 
     ret = redisAsyncCommand(ctx, &item_save_cb, data,
-        "HMSET data:%lld " // key
+        "HMSET item:%lld " // key
         "%s %lld "  // global id
         "%s %s "    // data name
         "%s %d "    // durability
