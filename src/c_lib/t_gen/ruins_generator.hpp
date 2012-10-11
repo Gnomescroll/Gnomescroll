@@ -17,6 +17,7 @@ const int cubes_across_room = 16;
 const int cubes_going_up = cubes_across_room / 2;
 const int rooms_across_ruins = XMAX / ruins_across_world / cubes_across_room;
 const int rooms_going_up = 5; // levels/floors
+const int bedrock_offset = 3;
 const int min_lip = 2; // minimum lip
 
 const int fixed_hall_wid = cubes_across_room / 4;
@@ -46,10 +47,15 @@ enum direction_type_t {
     DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
 };
 
+int random_pic() {
+	return pics[randrange(0, NUM_PICS - 1)];
+}
+
 struct IntVec3 {
     int x;
     int y;
     int z;
+    IntVec3() { x = y = z = 0; }
 };
 
 struct Rect {
@@ -361,10 +367,9 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 				rect_contains(wh, cx, cy, cz) 
 			) block = r.floor_block;
 	        
-			// add 3 to all z values to get above bedrock
-			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + 3, block); 
+			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
 		} else
-			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + 3, 0);
+			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, 0);
     }
     }
     }
@@ -393,7 +398,7 @@ void make_stairs(int rx, int ry, int rz, int ox, int oy, int floor_block) { // r
         1, fixed_stair_d, 3, floor_block);
 }
 
-Room setup_stairs_for(direction_t d, Room r) {
+Room setup_stairspace_for(direction_t d, Room r) {
     r.dir_types[d] = DIRTYPE_STAIRS;
     r.air_x = fixed_stair_x - 2;
     r.air_y = fixed_stair_y - 2;
@@ -411,9 +416,9 @@ void setup_rooms() {
         for (int x = 0; x < rooms_across_ruins; x++) {
         for (int y = 0; y < rooms_across_ruins; y++) {
             Room r;
-            r.floor_block = pics[randrange(0, NUM_PICS - 1)];
+            r.floor_block = random_pic();
             do {
-                r.wall_block = pics[randrange(0, NUM_PICS - 1)];
+                r.wall_block = random_pic();
             } while (r.floor_block == r.wall_block);
 
             // spans refer to the AIRSPACE, and don't include outer shell of blocks
@@ -456,23 +461,19 @@ void setup_rooms() {
                 if /* lateral dir */ (i < DIR_UP) 
                     r.dir_types[i] = (direction_type_t)randrange(1, 2); // randomly choose door or hall
                 else if /* stairway up should be here */ (i == DIR_UP && z < rooms_going_up - 1 && x == stairway_up_x && y == stairway_up_y)
-                    r = setup_stairs_for(DIR_UP, r);
+                    r = setup_stairspace_for(DIR_UP, r);
                 else {
                     r.dir_types[i] = DIRTYPE_BLOCKED_FOREVER;
                 }
             }
 
             if /* stairs going upwards in room below */ (z > 0 && rooms[z - 1][y][x].dir_types[DIR_UP] == DIRTYPE_STAIRS)
-                r = setup_stairs_for(DIR_DOWN, r);
+                r = setup_stairspace_for(DIR_DOWN, r);
 
-            if (y == 0)
-                r.dir_types[DIR_SOUTH] = DIRTYPE_BLOCKED_BY_OUTSIDE;
-            if (y == rooms_across_ruins - 1)
-                r.dir_types[DIR_NORTH] = DIRTYPE_BLOCKED_BY_OUTSIDE;
-            if (x == 0)
-                r.dir_types[DIR_WEST] = DIRTYPE_BLOCKED_BY_OUTSIDE;
-            if (x == rooms_across_ruins - 1)
-                r.dir_types[DIR_EAST] = DIRTYPE_BLOCKED_BY_OUTSIDE;
+            if (y == 0)                       r.dir_types[DIR_SOUTH] = DIRTYPE_BLOCKED_BY_OUTSIDE;
+            if (y == rooms_across_ruins - 1)  r.dir_types[DIR_NORTH] = DIRTYPE_BLOCKED_BY_OUTSIDE;
+            if (x == 0)                       r.dir_types[DIR_WEST] = DIRTYPE_BLOCKED_BY_OUTSIDE;
+            if (x == rooms_across_ruins - 1)  r.dir_types[DIR_EAST] = DIRTYPE_BLOCKED_BY_OUTSIDE;
                 
             rooms[z][y][x] = r;
         }
@@ -480,29 +481,65 @@ void setup_rooms() {
     }
 }
     
+void make_outer_shell(int x, int y) {
+    int ruin_z_span   = cubes_going_up    * rooms_going_up; // z       extent
+    int ruin_lat_span = cubes_across_room * rooms_across_ruins; // lateral span of ruin shell
+	int rib = random_pic();
+	int shell = random_pic();
+	while (rib == shell) rib = random_pic();
+
+    // make planes for shell ribbing
+    int neg_edge = x + 1; // negative
+	int pos_edge = x + ruin_lat_span - 2; // positive
+    while (neg_edge < pos_edge) {
+        set_region(neg_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
+        set_region(pos_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
+		neg_edge+=5;
+		pos_edge-=5;
+    }
+    neg_edge = y + 1; // negative
+	pos_edge = y + ruin_lat_span - 2; // positive
+    while (neg_edge < pos_edge) {
+        set_region(x-2, neg_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
+        set_region(x-2, pos_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
+		neg_edge+=5;
+		pos_edge-=5;
+    }
+
+    // fill in all the ruinspace, + extra outer shell layer
+    set_region(
+        x-1,
+        y-1,
+        bedrock_offset-1,
+        ruin_lat_span + 2, ruin_lat_span + 2, ruin_z_span + 2, shell);
+}
+
+
+
 void make_ruins(int x, int y) {
+	make_outer_shell(x, y);
     setup_rooms();
 
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-		int ceil_block = pics[randrange(0, NUM_PICS - 1)];
+		int ceil_block = random_pic();
 
         // make floor 
         set_region(
             rx * cubes_across_room + x,
             ry * cubes_across_room + y,
-            rz * cubes_going_up + 3,
+            rz * cubes_going_up + bedrock_offset,
             cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].floor_block);
         
         // make ceiling
         set_region(
             rx * cubes_across_room + x,
             ry * cubes_across_room + y,
-            rz * cubes_going_up + 3 + cubes_going_up - 1,
+            rz * cubes_going_up + bedrock_offset + cubes_going_up - 1,
             cubes_across_room, cubes_across_room, 1, ceil_block);
         
-        IntVec3 ri; ri.x = rx; ri.y = ry; ri.z = rz;
+        IntVec3 ri; /* room index */ ri.x = rx; ri.y = ry; ri.z = rz;
 		make_walls_or_airspace(ri, x, y);
         
         if (opens_to(DIR_UP, ri) ) 
@@ -513,7 +550,7 @@ void make_ruins(int x, int y) {
             set_region(
                 rx * cubes_across_room + x + fixed_stair_x,
                 ry * cubes_across_room + y + fixed_stair_y,
-                rz * cubes_going_up + 3 - 1,
+                rz * cubes_going_up + bedrock_offset - 1,
                 fixed_stair_w, fixed_stair_d, 2, 0);
     }
     }
