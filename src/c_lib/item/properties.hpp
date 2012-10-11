@@ -1,13 +1,13 @@
 #pragma once
 
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 
 namespace Item
 {
 
-extern int sprite_array[MAX_ITEMS];
-extern int type_array[MAX_ITEMS];
-extern ItemGroup group_array[MAX_ITEMS];
+extern int sprite_array[MAX_ITEM_TYPES];
+extern int type_array[MAX_ITEM_TYPES];
+extern ItemGroup group_array[MAX_ITEM_TYPES];
 extern class ItemAttribute* item_attribute_array;
 
 extern class SynthesizerItem* synthesizer_item_array;
@@ -38,6 +38,7 @@ void set_item_name(int type, const char* name);
 
 const char* get_item_name(int item_type);
 int get_item_type(const char* name);
+int get_versioned_item_type(const char* name);  // will apply name remapping to get the type
 
 const char* get_item_pretty_name(int type);
 

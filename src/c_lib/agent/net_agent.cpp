@@ -38,7 +38,7 @@ inline void SendClientId_StoC::handle()
     NetClient::Server.client_id = client_id;
 
     if (ClientState::playerAgent_state.you != NULL)
-        ClientState::playerAgent_state.you->client_id = client_id;
+        ClientState::playerAgent_state.you->client_id = (ClientID)client_id;
 }
 
 inline void Agent_state_message::handle()
@@ -218,7 +218,7 @@ inline void agent_create_StoC::handle()
     Agent_state* a = ClientState::agent_list->create(id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    a->client_id = this->client_id;
+    a->client_id = (ClientID)this->client_id;
     a->status.set_name(this->username);
     a->event.name_set();
 

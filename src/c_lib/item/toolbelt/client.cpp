@@ -218,7 +218,7 @@ bool toolbelt_item_beta_action()
     if (item_id == NULL_ITEM) item_type = fist_item_type;
     else item_type = Item::get_item_type(item_id);
     GS_ASSERT(item_type != NULL_ITEM_TYPE)
-    if (item_type < 0 || item_type >= MAX_ITEMS) return false;
+    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return false;
     
     bool triggered = trigger_local_item_beta(item_id, item_type);
     if (triggered) return true;

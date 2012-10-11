@@ -18,10 +18,68 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int check_name_interval;
         
     public:
+
     
         #if DC_SERVER
         void update_map_manager_positions();
         void send_to_client(int client_id);
+
+        // temporary object pool, for init phase
+        Agent_state** tmp_a;    // tmp pool
+
+        Agent_state* create_temp(int id)
+        {
+            if (id < 0 || id >= this->n_max) return NULL;
+            GS_ASSERT(this->tmp_a[id] == NULL);
+            if (this->tmp_a[id] != NULL) return NULL;
+            Agent_state* agent = this->create(id);
+            if (agent == NULL) return NULL;
+            this->tmp_a[id] = agent;
+            this->a[id] = NULL;
+            return agent;
+        }
+
+        void destroy_temp(int id)
+        {
+            if (id < 0 || id >= this->n_max) return;
+            GS_ASSERT(this->tmp_a[id] != NULL);
+            if (this->tmp_a[id] != NULL)
+            {
+                this->a[id] = this->tmp_a[id];
+                this->tmp_a[id] = NULL;
+            }
+            this->destroy(id);
+        }
+
+        Agent_state* load_temp(int id)
+        {
+            if (id < 0 || id >= this->n_max) return NULL;
+            GS_ASSERT(this->tmp_a[id] != NULL);
+            if (this->tmp_a[id] == NULL) return NULL;
+            this->a[id] = this->tmp_a[id];
+            this->tmp_a[id] = NULL;
+            return this->a[id];
+        }
+
+        // will return tmp or main
+        Agent_state* get_any(int id)
+        {
+            if (id < 0 || id >= this->n_max) return NULL;
+            Agent_state* agent = this->get(id);
+            if (agent == NULL)
+                agent = this->tmp_a[id];
+            return agent;
+        }
+
+        // will destroy tmp or main
+        void destroy_any(int id)
+        {
+            if (id < 0 || id >= this->n_max) return;
+            if (this->tmp_a[id] != NULL)
+                this->destroy_temp(id);
+            else
+                this->destroy(id);
+        }
         #endif
 
         void update_models();
@@ -55,6 +113,19 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
                 free(this->filtered_objects);
             if (this->filtered_object_distances != NULL)
                 free(this->filtered_object_distances);
+            #if DC_SERVER
+            if (this->tmp_a != NULL)
+            {
+                for (int i=0; i<this->n_max; i++)
+                    if (this->tmp_a[i] != NULL)
+                    {
+                        GS_ASSERT(this->a[i] == NULL);
+                        if (this->a[i] == NULL)
+                            delete this->tmp_a[i];
+                    }
+                free(this->tmp_a);
+            }
+            #endif
         }
 };
 

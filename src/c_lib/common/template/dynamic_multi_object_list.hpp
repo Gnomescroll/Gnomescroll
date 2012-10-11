@@ -96,16 +96,10 @@ void DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::where()
 template <class Object_interface, int max_n, int HARD_MAX>
 Object_interface* DynamicMultiObjectList<Object_interface, max_n, HARD_MAX>::get(int id)
 {
-    //where();
     if((id < 0) || (id >= n_max)) {
-        //printf("%s id error: id=%i\n", name() ,id);
-        //if (id != NO_AGENT) // TODO 
-        //    print_trace();
         return NULL;
     } 
     if(a[id] == NULL) {
-        //printf("%s get error: object is null, id=%i\n",name(), id);
-        //this->print_members();
         return NULL;
     }
     return a[id];

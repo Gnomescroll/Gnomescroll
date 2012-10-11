@@ -322,8 +322,11 @@ int Agent_list::get_ids()
 }
 
 Agent_list::Agent_list() :
-check_name_interval(0)
+    check_name_interval(0)
 {
+    #if DC_SERVER
+    this->tmp_a = (Agent_state**)calloc(this->n_max, sizeof(Agent_state*));
+    #endif
     this->filtered_objects = (Agent_state**)calloc(this->n_max, sizeof(Agent_state*));
     this->filtered_object_distances = (float*)calloc(this->n_max, sizeof(float));
     print_list((char*)this->name(), this);
@@ -345,7 +348,7 @@ Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radi
     if (n <= 0) return NULL;
     agent_list->sort_filtered_objects_by_distance();
     Agent_state* agent = NULL;
-    int i=0;
+    int i = 0;
     while (i < n)
     {   // skip all dead agents
         agent = agent_list->filtered_objects[i];

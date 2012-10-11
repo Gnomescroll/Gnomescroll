@@ -2,7 +2,7 @@
 
 #include <animations/mining_laser.hpp>
 #include <camera/fulstrum_test.hpp>
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 
 namespace Animations
 {

@@ -148,7 +148,7 @@ static void client_disconnect(ENetEvent* event)
     
     NetClient::Server.disconnect_code = (DisconnectType)event->data;
     NetClient::Server.connected = 0;
-    NetClient::Server.client_id = -1;
+    NetClient::Server.client_id = NULL_CLIENT;
 
     ClientState::on_disconnect();
 }
@@ -310,8 +310,6 @@ namespace NetServer
 
 static void client_connect(ENetEvent* event);
 static void client_disconnect(ENetPeer* peer, enet_uint32 data);
-
-static int client_id_offset = -1;
 
 void init_server(int a, int b, int c, int d, int port)
 {
@@ -502,16 +500,14 @@ static void client_connect(ENetEvent* event)
     }
 
     NetServer::number_of_clients++;
-
     NetPeerManager* npm = NULL;
 
-    int client_id = client_id_offset;
-    client_id_offset++;
-
+    static int _client_id_offset = 0;
     for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
     {   // find free peer slot
-        client_id = (client_id+1) % NetServer::HARD_MAX_CONNECTIONS;
+        int client_id = (_client_id_offset+i) % NetServer::HARD_MAX_CONNECTIONS;
         if (NetServer::staging_pool[client_id] != NULL || NetServer::pool[client_id] != NULL) continue;
+        _client_id_offset = (client_id + 1) % NetServer::HARD_MAX_CONNECTIONS;
         nc->client_id = client_id;
         nc->connected = 1;
         NetServer::staging_pool[client_id] = nc;
@@ -521,7 +517,7 @@ static void client_connect(ENetEvent* event)
 
         npm = new NetPeerManager;
         NetServer::clients[client_id] = npm; // must be added to array before init
-        npm->init(client_id);
+        npm->init((ClientID)client_id);
         break;
     }
     
@@ -532,13 +528,13 @@ static void client_connect(ENetEvent* event)
 
         printf(
             "client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
-            client_id,
+            npm->client_id,
             address[0], address[1], address[2], address[3],
             event->peer->address.port, 
             NetServer::number_of_clients
         );
     
-        Session* session = begin_session(event->peer->address.host, client_id);
+        Session* session = begin_session(event->peer->address.host, npm->client_id);
         users->assign_session_to_user(session);
     }
 
@@ -548,7 +544,7 @@ static void client_connect(ENetEvent* event)
         const char username_fmt[] = "debuguser%d";
         char* username = (char*)malloc(sizeof(username_fmt) * sizeof(char));
         sprintf(username, username_fmt, npm->client_id);
-        NetServer::client_authorized(npm->client_id, npm->client_id+1, utc_now()+3600-30, username);
+        NetServer::client_authorized(npm->client_id, (UserID)(npm->client_id+1), utc_now()+3600-30, username);
         free(username);
     }
     

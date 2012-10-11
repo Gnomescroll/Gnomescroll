@@ -89,16 +89,10 @@ void Object_list<Object_state, max_n>::where()
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::get(int id)
 {
-    //where();
     if((id < 0) || (id >= n_max)) {
-        //printf("%s id error: id=%i\n", name() ,id);
-        //if (id != NO_AGENT) // TODO 
-        //    print_trace();
         return NULL;
     } 
     if(a[id] == NULL) {
-        //printf("%s get error: object is null, id=%i\n",name(), id);
-        //this->print_members();
         return NULL;
     }
     return a[id];

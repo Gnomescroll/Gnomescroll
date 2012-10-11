@@ -48,7 +48,7 @@ int _current_item_id = 0;
 void item_def(int type, ItemGroup group, const char* name)
 {
     GS_ASSERT(type != NULL_ITEM_TYPE);
-    GS_ASSERT(type >= 0 && type < MAX_ITEMS);
+    GS_ASSERT(type >= 0 && type < MAX_ITEM_TYPES);
     GS_ASSERT(group != IG_NONE);
     GS_ASSERT(name[0] != '\0');
 
@@ -57,7 +57,7 @@ void item_def(int type, ItemGroup group, const char* name)
     _set_attribute();
 
     // check that this type has not been set yet
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
         GS_ASSERT(item_attribute_array[i].item_type != type);
 
     _current_item_id = type;
@@ -120,7 +120,7 @@ void sprite_def(int spritesheet, int ypos, int xpos)
     
     // check if we are already using this sprite
     if (index != ERROR_SPRITE)
-        for (int i=0; i<MAX_ITEMS; i++) GS_ASSERT(sprite_array[i] != index);
+        for (int i=0; i<MAX_ITEM_TYPES; i++) GS_ASSERT(sprite_array[i] != index);
 
     sprite_array[_current_item_id] = index; //check
 }

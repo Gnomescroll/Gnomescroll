@@ -64,7 +64,7 @@ inline void container_action_alpha_CtoS::handle()
         return;
     }
 
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
@@ -94,7 +94,7 @@ inline void container_action_beta_CtoS::handle()
         return;
     }
     
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
 
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
@@ -125,7 +125,7 @@ inline void synthesizer_container_action_alpha_CtoS::handle()
         return;
     }
 
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
@@ -155,7 +155,7 @@ inline void synthesizer_container_action_beta_CtoS::handle()
         return;
     }
     
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
 
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
@@ -196,7 +196,7 @@ inline void craft_container_action_alpha_CtoS::handle()
         return;
     }
 
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
@@ -226,7 +226,7 @@ inline void craft_container_action_beta_CtoS::handle()
         return;
     }
     
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
 
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
@@ -263,7 +263,7 @@ inline void no_container_action_alpha_CtoS::handle()
         return;
     }
 
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
@@ -285,7 +285,7 @@ inline void no_container_action_beta_CtoS::handle()
         return;
     }
 
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
@@ -311,7 +311,7 @@ inline void smelter_container_action_alpha_CtoS::handle()
         return;
     }
 
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
@@ -341,7 +341,7 @@ inline void smelter_container_action_beta_CtoS::handle()
         return;
     }
     
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
 
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
@@ -372,7 +372,7 @@ inline void crusher_container_action_alpha_CtoS::handle()
         return;
     }
 
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
@@ -402,7 +402,7 @@ inline void crusher_container_action_beta_CtoS::handle()
         return;
     }
     
-    ItemID hand_item = get_agent_hand(a->id);
+    ItemID hand_item = get_agent_hand_item(a->id);
 
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {

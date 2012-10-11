@@ -10,7 +10,7 @@ namespace Auth
 {
 
 extern char* auth_token;
-extern int auth_token_user_id;
+extern UserID auth_token_user_id;
 extern time_t auth_token_timestamp;
 extern char* auth_token_hash;
 extern char* auth_token_username;

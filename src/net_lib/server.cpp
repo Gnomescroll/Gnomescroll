@@ -23,10 +23,19 @@ class UserRecorder* users = NULL;
 FILE* session_log_file = NULL;
 FILE* population_log_file = NULL;
 
-void assign_agent_to_client(int client_id, class Agent_state* a)
+class NetPeerManager* get_client(int client_id)
 {
-    GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
-    agents[client_id] = a;
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return NULL;
+    return clients[client_id];
+}
+
+class NetPeerManager* get_client_from_user_id(UserID user_id)
+{
+    for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+        if (clients[i] != NULL && clients[i]->user_id == user_id)
+            return clients[i];
+    return NULL;
 }
 
 void init_globals()
@@ -129,7 +138,7 @@ void end_session(class Session* session)
     }
 }
 
-void client_authorized(int client_id, int user_id, time_t expiration_time, const char* username)
+void client_authorized(int client_id, UserID user_id, time_t expiration_time, const char* username)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;

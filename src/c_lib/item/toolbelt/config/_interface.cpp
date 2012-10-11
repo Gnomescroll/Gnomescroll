@@ -12,16 +12,16 @@ void init_config()
 {
     GS_ASSERT(click_and_hold == NULL);
     const bool CLICK_AND_HOLD_DEFAULT = true;
-    click_and_hold = (bool*)malloc(MAX_ITEMS * sizeof(bool));
-    for (int i=0; i<MAX_ITEMS; click_and_hold[i++] = CLICK_AND_HOLD_DEFAULT);
+    click_and_hold = (bool*)malloc(MAX_ITEM_TYPES * sizeof(bool));
+    for (int i=0; i<MAX_ITEM_TYPES; click_and_hold[i++] = CLICK_AND_HOLD_DEFAULT);
     
     GS_ASSERT(ticks         == NULL);
     GS_ASSERT(triggers      == NULL);
     GS_ASSERT(beta_triggers == NULL);
     
-    ticks         = (tickItem*)    calloc(MAX_ITEMS, sizeof(tickItem));
-    triggers      = (triggerItem*) calloc(MAX_ITEMS, sizeof(triggerItem));
-    beta_triggers = (triggerItem*) calloc(MAX_ITEMS, sizeof(triggerItem));
+    ticks         = (tickItem*)    calloc(MAX_ITEM_TYPES, sizeof(tickItem));
+    triggers      = (triggerItem*) calloc(MAX_ITEM_TYPES, sizeof(triggerItem));
+    beta_triggers = (triggerItem*) calloc(MAX_ITEM_TYPES, sizeof(triggerItem));
     
     #if DC_CLIENT
     GS_ASSERT(begin_triggers       == NULL);
@@ -32,13 +32,13 @@ void init_config()
     GS_ASSERT(local_begin_triggers == NULL);
     GS_ASSERT(local_end_triggers   == NULL);
 
-    begin_triggers       = (beginItem*)         calloc(MAX_ITEMS, sizeof(beginItem));
-    end_triggers         = (endItem*)           calloc(MAX_ITEMS, sizeof(endItem));
-    local_ticks          = (tickLocalItem*)    calloc(MAX_ITEMS, sizeof(tickLocalItem));
-    local_triggers       = (triggerLocalItem*) calloc(MAX_ITEMS, sizeof(triggerLocalItem));
-    local_beta_triggers  = (triggerLocalItem*) calloc(MAX_ITEMS, sizeof(triggerLocalItem));
-    local_begin_triggers = (beginLocalItem*)   calloc(MAX_ITEMS, sizeof(beginLocalItem));
-    local_end_triggers   = (endLocalItem*)     calloc(MAX_ITEMS, sizeof(endLocalItem));
+    begin_triggers       = (beginItem*)         calloc(MAX_ITEM_TYPES, sizeof(beginItem));
+    end_triggers         = (endItem*)           calloc(MAX_ITEM_TYPES, sizeof(endItem));
+    local_ticks          = (tickLocalItem*)    calloc(MAX_ITEM_TYPES, sizeof(tickLocalItem));
+    local_triggers       = (triggerLocalItem*) calloc(MAX_ITEM_TYPES, sizeof(triggerLocalItem));
+    local_beta_triggers  = (triggerLocalItem*) calloc(MAX_ITEM_TYPES, sizeof(triggerLocalItem));
+    local_begin_triggers = (beginLocalItem*)   calloc(MAX_ITEM_TYPES, sizeof(beginLocalItem));
+    local_end_triggers   = (endLocalItem*)     calloc(MAX_ITEM_TYPES, sizeof(endLocalItem));
     #endif
 
     register_callbacks();
@@ -78,8 +78,8 @@ static bool validate_item_type(int item_type)
 {    // returns true if item type is valid
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     if (item_type == NULL_ITEM_TYPE) return false;
-    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
-    if (item_type < 0 || item_type >= MAX_ITEMS) return false;
+    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
+    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return false;
     return true;
 }
 

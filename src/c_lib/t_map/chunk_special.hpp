@@ -6,7 +6,7 @@
 #include <t_map/net/t_StoC.hpp>
 #endif
 
-#include <item/common/constant.hpp>
+#include <item/common/constants.hpp>
 #include <item/common/enum.hpp>
 
 namespace t_map

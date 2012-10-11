@@ -110,6 +110,13 @@ bool str_ends_with(const char* str, const char* match)
     return true;
 }
 
+static long long int parse_int(const char* str, bool& err)
+{
+    char* endptr = NULL;
+    long long int val = strtoll(str, &endptr, 10);
+    err = (*str == '\0' || *endptr != '\0');
+    return val;
+} 
 
 void _test_common()
 {

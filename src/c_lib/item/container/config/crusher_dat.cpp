@@ -27,8 +27,8 @@ static void set_crusher_drop(int item_type)
     if (drops == NULL) return;
 
     GS_ASSERT(item_type != NULL_ITEM);
-    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
-    if (item_type < 0 || item_type >= MAX_ITEMS) return;
+    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
+    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return;
 
     GS_ASSERT(drops[item_type] == NULL);
     if (drops[item_type] != NULL) return;
@@ -106,13 +106,12 @@ static void register_crusher_settings()
 
 void validate_crusher_settings()
 {
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
         GS_ASSERT(drops[i] == NULL || drops[i]->is_loaded() != 0);
 }
 
 void load_crusher_dat()
 {
-    _started = 0;
     register_crusher_settings();
     validate_crusher_settings();
 }
@@ -123,14 +122,14 @@ void load_crusher_dat()
 void init_crusher_dat()
 {
     GS_ASSERT(drops == NULL);
-    drops = (class Item::ItemDrop**)calloc(MAX_ITEMS, sizeof(class Item::ItemDrop*));
+    drops = (class Item::ItemDrop**)calloc(MAX_ITEM_TYPES, sizeof(class Item::ItemDrop*));
 }
 
 void teardown_crusher_dat()
 {
     if (drops != NULL)
     {
-        for (int i=0; i<MAX_ITEMS; i++)
+        for (int i=0; i<MAX_ITEM_TYPES; i++)
             if (drops[i] != NULL) delete drops[i];
         free(drops);
     }
@@ -139,8 +138,8 @@ void teardown_crusher_dat()
 class Item::ItemDrop* get_crusher_drop(int item_type)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEMS);
-    if (item_type < 0 || item_type >= MAX_ITEMS) return NULL;
+    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
+    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return NULL;
     return drops[item_type];
 }
 

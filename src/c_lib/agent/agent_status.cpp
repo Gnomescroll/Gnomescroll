@@ -344,6 +344,7 @@ void Agent_status::at_base()
 
 bool Agent_status::die()
 {
+    GS_ASSERT(false);
     if (this->dead) return false;
     this->should_die = false;
     this->dead = true;

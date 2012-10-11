@@ -250,6 +250,12 @@ int init_c_lib(int argc, char* argv[])
         printf("enabled\n");
     else
         printf("disabled\n");
+        
+    printf("Serializer ");
+    if (Options::serializer)
+        printf("enabled\n");
+    else
+        printf("disabled\n");
 
     Components::init();
     Objects::init_net_interfaces();
@@ -304,13 +310,6 @@ int init_c_lib(int argc, char* argv[])
 
 void close_c_lib()
 {
-    #if PTHREADS_ENABLED
-    printf("Waiting for threads to finish...\n");
-    serializer::wait_for_threads();
-    #endif
-    
-    serializer::check_save_state();
-
     printf("Server closing...\n");
 
     serializer::teardown();

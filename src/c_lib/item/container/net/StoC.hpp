@@ -47,7 +47,6 @@ class assign_item_container_StoC: public FixedSizeReliableNetPacketToClient<assi
             pack_u8(&agent_id, buff, buff_n, pack);
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&container_type, buff, buff_n, pack);
-
         }
         inline void handle();
 };

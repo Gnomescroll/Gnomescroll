@@ -58,7 +58,7 @@ class PickupComponent: public Component
 
         void broadcast()
         {
-            if (!this->picked_up || this->picked_up_by == NO_AGENT) return;
+            if (!this->picked_up || this->picked_up_by == NULL_AGENT) return;
             object_picked_up_StoC msg;
             msg.id = this->object->id;
             msg.type = this->object->type;
@@ -69,7 +69,7 @@ class PickupComponent: public Component
     PickupComponent()
     : Component(COMPONENT_PICKUP, COMPONENT_INTERFACE_PICKUP),
         pickup_delay(30), pickup_radius(1.0f),
-        picked_up_by(NO_AGENT), picked_up(false)
+        picked_up_by(NULL_AGENT), picked_up(false)
     {}
 };
 

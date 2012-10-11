@@ -362,7 +362,7 @@ inline void object_remove_motion_target_StoC::handle()
     GS_ASSERT(motion != NULL);
     if (motion == NULL) return;
     motion->target_type = OBJECT_NONE;
-    motion->target_id = NO_AGENT;
+    motion->target_id = NULL_AGENT;
 }
 
 inline void object_choose_destination_StoC::handle()

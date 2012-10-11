@@ -16,24 +16,32 @@ class ContainerAttributes
 {
     public:
     
-    bool loaded;
+        bool loaded;
 
-    ItemContainerType type;
+        ItemContainerType type;
+        char* name;
 
-    int xdim, ydim;
-    int alt_xdim, alt_ydim;
-    bool attached_to_agent;
+        int xdim, ydim;
+        int alt_xdim, alt_ydim;
+        bool attached_to_agent;
 
-    decision_tree alpha_action;
-    decision_tree beta_action;
-    send_decision alpha_packet;
-    send_decision beta_packet;
-    
-    // alt actions (synth purchase, craft output etc)
-    decision_tree alpha_action_alt;
-    decision_tree beta_action_alt;
-    send_decision alpha_packet_alt;
-    send_decision beta_packet_alt;
+        decision_tree alpha_action;
+        decision_tree beta_action;
+        send_decision alpha_packet;
+        send_decision beta_packet;
+        
+        // alt actions (synth purchase, craft output etc)
+        decision_tree alpha_action_alt;
+        decision_tree beta_action_alt;
+        send_decision alpha_packet_alt;
+        send_decision beta_packet_alt;
+
+    void set_name(const char* name)
+    {
+        size_t len = strlen(name);
+        this->name = (char*)malloc((len+1)*sizeof(char));
+        strcpy(this->name, name);
+    }
 
     int max_dim()
     {
@@ -45,6 +53,11 @@ class ContainerAttributes
         return this->alt_xdim * this->alt_ydim;
     }
     
+    ~ContainerAttributes()
+    {
+        if (this->name != NULL) free(this->name);
+    }
+
     ContainerAttributes()
     {
         this->init();
@@ -54,6 +67,7 @@ class ContainerAttributes
     {
         this->loaded = false;
         this->type = CONTAINER_TYPE_NONE;
+        this->name = NULL;
         this->xdim = 0;
         this->ydim = 0;
         this->alt_xdim = 0;

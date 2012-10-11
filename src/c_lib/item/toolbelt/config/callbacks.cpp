@@ -190,7 +190,7 @@ void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type)
     int teammate_id = Hitscan::against_agents(
         a->get_camera_position(), a->forward_vector(),
         APPLY_REPAIR_KIT_MAX_DISTANCE, a->id);
-    if (teammate_id == NO_AGENT) return;
+    if (teammate_id == NULL_AGENT) return;
     consume_item(teammate_id, item_id, item_type);
 }
 

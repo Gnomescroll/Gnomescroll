@@ -43,7 +43,7 @@ void send_version_to_client(int client_id)
  * send version
  * begin waiting for auth 
  */
-void NetPeerManager::init(int client_id)
+void NetPeerManager::init(ClientID client_id)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
@@ -70,7 +70,7 @@ void NetPeerManager::init(int client_id)
  * On first load, send all data
  * Subsequent authorizations will only refresh the expiration_time
  */
-void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const char* username)
+void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, const char* username)
 {
     // assume arguments are valid. should have been verified by the auth token parser
 
@@ -91,32 +91,45 @@ void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const c
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
     NetServer::staging_pool[this->client_id] = NULL;
 
-    t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
-
-    class Agent_state* a = ServerState::agent_list->create(client_id);
+    class Agent_state* a = ServerState::agent_list->create_temp(client_id);
     GS_ASSERT(a != NULL);
     if (a == NULL)
     {   // if this happens, we need to force disconnect the client
         NetServer::kill_client(this->client_id, DISCONNECT_SERVER_ERROR);
         return;
     }
+    GS_ASSERT((int)this->client_id == (int)a->id);
 
-    // broadcast agent to other players
-    agent_create_StoC msg;
-    msg.id = a->id;
-    msg.client_id = a->client_id;
-    strncpy(msg.username, username, PLAYER_NAME_MAX_LENGTH+1);
-    msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
-    msg.broadcast();
+    this->agent_id = a->id;
 
     // attach username to agent
     a->status.identify(username);
     NetServer::users->set_name_for_client_id(client_id, a->status.name);
 
-    NetServer::assign_agent_to_client(client_id, a);
-    send_player_agent_id_to_client(client_id);
+    NetServer::agents[this->client_id] = a;
+    
     ItemContainer::assign_containers_to_agent(a->id, this->client_id);
-    a->status.set_fresh_state();
+
+    if (Options::serializer)
+    {
+        int serializer_id = serializer::begin_player_load(this->user_id, this->client_id);
+        GS_ASSERT(serializer_id >= 0);
+        if (serializer_id < 0) return;  // TODO -- force disconnect agent with error
+        int n_player_containers = 0;
+        int* player_containers = ItemContainer::get_player_containers(this->agent_id, &n_player_containers);
+        GS_ASSERT(n_player_containers == N_PLAYER_CONTAINERS);
+        for (int i=0; i<n_player_containers; i++)
+            if (!serializer::load_player_container(serializer_id, player_containers[i]))
+            {
+                // force disconnect player with error
+            }
+        if (!serializer::end_player_load(serializer_id))
+        {
+            // force disconnect player with error
+        }
+    }
+    else
+        this->was_deserialized();
 
     add_player_to_chat(client_id);
 
@@ -133,16 +146,46 @@ void NetPeerManager::was_authorized(int user_id, time_t expiration_time, const c
     this->authorized = true;
 }
 
+void NetPeerManager::was_deserialized()
+{
+    GS_ASSERT(!this->deserialized);
+    if (this->deserialized) return;
+    this->deserialized = true;
+
+    printf("Deserialized\n");
+
+    class Agent_state* agent = ServerState::agent_list->load_temp(this->agent_id);
+    GS_ASSERT(agent != NULL);
+    if (agent == NULL) return;  // TODO -- force disconnect client with error
+
+    // we add player to manager setup now, because it didnt have state before
+    // NOTE: must call this before agent->status.set_fresh_state();
+    t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
+
+    // broadcast agent to all players
+    agent_create_StoC msg;
+    msg.id = agent->id;
+    msg.client_id = agent->client_id;
+    strncpy(msg.username, username, PLAYER_NAME_MAX_LENGTH+1);
+    msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
+    msg.broadcast();
+
+    send_player_agent_id_to_client(agent->id);
+    ItemContainer::send_container_assignments_to_agent(agent->id, this->client_id);
+
+    agent->status.set_fresh_state();
+}
+
 void NetPeerManager::teardown()
 {
-    class Agent_state* a = NetServer::agents[this->client_id];
+    class Agent_state* a = NetServer::agents[this->agent_id];
     if (a != NULL)
     {
         Item::agent_quit(a->id);    // unsubscribes agent from all item
-        a->status.die();
         ItemContainer::agent_quit(a->id);
+        Toolbelt::agent_quit(a->id);
         Components::owner_component_list->revoke(a->id);
-        ServerState::agent_list->destroy(a->id);
+        ServerState::agent_list->destroy_any(a->id);
     }
     if (this->loaded)
     {
@@ -179,14 +222,16 @@ void NetPeerManager::failed_authorization_attempt()
 }
 
 NetPeerManager::NetPeerManager() :
-    client_id(-1),
+    client_id(NULL_CLIENT),
+    agent_id(NULL_AGENT),
     inited(false),
     loaded(false),
     waiting_for_auth(false),
     authorized(false),
+    deserialized(false),
     connection_time(utc_now()),
     auth_expiration(0),
-    user_id(0),
+    user_id(NULL_USER_ID),
     auth_attempts(0)
 {
     memset(this->username, 0, sizeof(this->username));

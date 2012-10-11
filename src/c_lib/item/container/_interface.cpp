@@ -10,6 +10,7 @@
 
 #if DC_SERVER
 #include <item/container/net/StoC.hpp>
+#include <serializer/_interface.hpp>
 #endif
 
 #if DC_CLIENT
@@ -30,19 +31,19 @@ void init()
     item_container_list = new ItemContainerList;
 
     #if DC_SERVER
-    agent_container_list    = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_toolbelt_list     = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_synthesizer_list  = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_energy_tanks_list = (int*)    malloc(AGENT_MAX * sizeof(int));
-    opened_containers       = (int*)    malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list         = (ItemID*) malloc(AGENT_MAX * sizeof(ItemID));
+    agent_inventory_list    = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_toolbelt_list     = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_synthesizer_list  = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_energy_tanks_list = (int*) malloc(AGENT_MAX * sizeof(int));
+    opened_containers       = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_hand_list         = (int*) malloc(AGENT_MAX * sizeof(int));
     
-    for (int i=0; i<AGENT_MAX; i++) agent_container_list   [i] = NULL_CONTAINER;
+    for (int i=0; i<AGENT_MAX; i++) agent_inventory_list   [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list    [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list [i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) agent_energy_tanks_list[i] = NULL_CONTAINER;
     for (int i=0; i<AGENT_MAX; i++) opened_containers      [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_hand_list        [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_hand_list        [i] = NULL_CONTAINER;
     #endif
     
     #if DC_CLIENT
@@ -58,6 +59,7 @@ void teardown()
 
     #if DC_CLIENT
     if (player_container_ui    != NULL) delete player_container_ui;
+    if (player_hand_ui         != NULL) delete player_hand_ui;
     if (player_toolbelt_ui     != NULL) delete player_toolbelt_ui;
     if (player_synthesizer_ui  != NULL) delete player_synthesizer_ui;
     if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
@@ -68,7 +70,7 @@ void teardown()
     #endif
 
     #if DC_SERVER
-    if (agent_container_list    != NULL) free(agent_container_list);
+    if (agent_inventory_list    != NULL) free(agent_inventory_list);
     if (agent_toolbelt_list     != NULL) free(agent_toolbelt_list);
     if (agent_synthesizer_list  != NULL) free(agent_synthesizer_list);
     if (agent_energy_tanks_list != NULL) free(agent_energy_tanks_list);
@@ -181,7 +183,7 @@ ItemContainerType get_container_type(int container_id)
 int get_container_owner(int container_id)
 {
     ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return NO_AGENT;
+    if (container == NULL) return NULL_AGENT;
     return container->owner;
 }
 
@@ -249,27 +251,15 @@ ItemContainerInterface* create_container(ItemContainerType type, int id)
 void update_container_ui_from_state()
 {
     if (player_container_ui    != NULL) player_container_ui    ->load_data (player_container    ->slot);
+    if (player_hand_ui         != NULL) player_hand_ui         ->load_data (player_hand         ->slot);
     if (player_toolbelt_ui     != NULL) player_toolbelt_ui     ->load_data (player_toolbelt     ->slot);
     if (player_synthesizer_ui  != NULL) player_synthesizer_ui  ->load_data (player_synthesizer  ->slot);
     if (player_energy_tanks_ui != NULL) player_energy_tanks_ui ->load_data (player_energy_tanks ->slot);
     if (player_craft_bench_ui  != NULL) player_craft_bench_ui  ->load_data (player_craft_bench  ->slot);
     if (storage_block_ui       != NULL) storage_block_ui       ->load_data (storage_block       ->slot);
     if (cryofreezer_ui         != NULL) cryofreezer_ui         ->load_data (cryofreezer         ->slot);
-    if (crusher_ui            != NULL) crusher_ui            ->load_data (crusher            ->slot);
+    if (crusher_ui             != NULL) crusher_ui             ->load_data (crusher             ->slot);
     if (smelter_ui             != NULL) smelter_ui             ->load_data (smelter             ->slot);
-    
-    if (player_hand == NULL_ITEM)
-    {
-        player_hand_type_ui = NULL_ITEM_TYPE;
-        player_hand_stack_ui = 1;
-        player_hand_durability_ui = NULL_DURABILITY;
-    }
-    else
-    {
-        player_hand_type_ui = Item::get_item_type(player_hand);
-        player_hand_stack_ui = Item::get_stack_size(player_hand);
-        player_hand_durability_ui = Item::get_item_durability(player_hand);
-    }
 }
 
 void update_smelter_ui()
@@ -291,7 +281,7 @@ void close_inventory()
 
 bool open_container(int container_id)
 {
-    GS_ASSERT(!input_state.agent_container);    // check that agent container is not opened here
+    GS_ASSERT(!input_state.agent_inventory);    // check that agent container is not opened here
     
     GS_ASSERT(container_id != NULL_CONTAINER);
 
@@ -514,6 +504,7 @@ ItemContainerUIInterface* get_container_ui(int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (player_craft_bench_ui  != NULL && player_craft_bench_ui->id  == container_id) return player_craft_bench_ui;
+    if (player_hand_ui         != NULL && player_hand_ui->id         == container_id) return player_hand_ui;
     if (player_container_ui    != NULL && player_container_ui->id    == container_id) return player_container_ui;
     if (player_energy_tanks_ui != NULL && player_energy_tanks_ui->id == container_id) return player_energy_tanks_ui;
     if (player_toolbelt_ui     != NULL && player_toolbelt_ui->id     == container_id) return player_toolbelt_ui;
@@ -619,22 +610,33 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot)
     return toolbelt->get_item(slot);
 }
 
-ItemID get_agent_hand(int agent_id)
-{
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
-    GS_ASSERT(agent_hand_list != NULL);
-    if (agent_hand_list == NULL) return NULL_ITEM;
-    return agent_hand_list[agent_id];
-}
-    
-int get_agent_container(int agent_id)
+int get_agent_hand(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
-    GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list == NULL) return NULL_CONTAINER;
-    return agent_container_list[agent_id];
+    GS_ASSERT(agent_hand_list != NULL);
+    if (agent_hand_list == NULL) return NULL_CONTAINER;
+    return agent_hand_list[agent_id];
+}
+
+ItemID get_agent_hand_item(int agent_id)
+{
+    int hand_id = get_agent_hand(agent_id);
+    GS_ASSERT(hand_id != NULL_CONTAINER);
+    if (hand_id == NULL_CONTAINER) return NULL_ITEM;
+    ItemContainerHand* hand = (ItemContainerHand*)get_container(hand_id);
+    GS_ASSERT(hand != NULL);
+    if (hand == NULL) return NULL_ITEM;
+    return hand->get_item();
+}
+    
+int get_agent_inventory(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
+    GS_ASSERT(agent_inventory_list != NULL);
+    if (agent_inventory_list == NULL) return NULL_CONTAINER;
+    return agent_inventory_list[agent_id];
 }
 
 int get_agent_toolbelt(int agent_id)
@@ -664,12 +666,32 @@ int get_agent_energy_tanks(int agent_id)
     return agent_energy_tanks_list[agent_id];
 }
 
+int* get_player_containers(int agent_id, int* n_containers)
+{
+    static int containers[N_PLAYER_CONTAINERS] = {NULL_CONTAINER};
+    int n = 0;
+    containers[n] = get_agent_hand(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_inventory(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_toolbelt(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_synthesizer(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_energy_tanks(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+
+    *n_containers = n;
+    return containers;
+}
+
+
 ItemContainerInterface* create_container(ItemContainerType type)
 {
     return item_container_list->create(type);
 }
 
-void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
+static void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(container_list[agent_id] == NULL_ITEM);
@@ -678,16 +700,22 @@ void assign_container_to_agent(ItemContainerInterface* container, int* container
     init_container(container);
     container->assign_owner(agent_id);
     send_container_create(client_id, container->id);
-    send_container_assign(client_id, container->id);
 }
 
 void assign_containers_to_agent(int agent_id, int client_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
     
-    ItemContainer* agent_container = (ItemContainer*)item_container_list->create(AGENT_CONTAINER);
-    GS_ASSERT(agent_container != NULL);
-    assign_container_to_agent(agent_container, agent_container_list, agent_id, client_id);
+    ItemContainer* agent_inventory = (ItemContainer*)item_container_list->create(AGENT_INVENTORY);
+    GS_ASSERT(agent_inventory != NULL);
+    assign_container_to_agent(agent_inventory, agent_inventory_list, agent_id, client_id);
+
+    ItemContainerHand* agent_hand = (ItemContainerHand*)item_container_list->create(AGENT_HAND);
+    GS_ASSERT(agent_hand != NULL);
+    assign_container_to_agent(agent_hand, agent_hand_list, agent_id, client_id);
 
     ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)item_container_list->create(AGENT_ENERGY_TANKS);
     GS_ASSERT(agent_energy_tanks != NULL);
@@ -701,6 +729,14 @@ void assign_containers_to_agent(int agent_id, int client_id)
     GS_ASSERT(agent_toolbelt != NULL);
     assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
     // toolbelt contents are added by agent_born
+}
+
+void send_container_assignments_to_agent(int agent_id, int client_id)
+{
+    int n_containers = 0;
+    int* containers = get_player_containers(agent_id, &n_containers);
+    for (int i=0; i<n_containers; i++)
+        send_container_assign(client_id, containers[i]);
 }
 
 static void throw_items_from_container(int client_id, int agent_id, int container_id)
@@ -731,6 +767,7 @@ void agent_born(int agent_id)
     // if we have neither and there is only one slot, add the laser rifle (because fist can replace mining_laser)
 
     ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
 
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
@@ -942,9 +979,9 @@ void agent_died(int agent_id)
     GS_ASSERT(a->status.dead);
 
     // throw agent inventory items
-    GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list != NULL && agent_container_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
+    GS_ASSERT(agent_inventory_list != NULL);
+    if (agent_inventory_list != NULL && agent_inventory_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(a->client_id, a->id, agent_inventory_list[agent_id]);
 
     // close container
     GS_ASSERT(opened_containers != NULL);
@@ -952,7 +989,49 @@ void agent_died(int agent_id)
         send_container_close(agent_id, opened_containers[agent_id]);
 
     // throw any items in hand. the agent_close_container will have thrown anything, if a free container was open
-    if (agent_hand_list != NULL && agent_hand_list[agent_id] != NULL_ITEM)
+    // DO NOT throw_items_from_container(agent_hand), we need to use the transactional method for hand throwing
+    ItemID hand_item = get_agent_hand_item(agent_id);
+    if (hand_item != NULL_ITEM)
+        transfer_hand_to_particle(agent_id);    // throw
+    GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
+}
+
+static void save_agent_containers(int client_id, int agent_id, bool remove_items_after)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+    
+    serializer::save_player_container(client_id, agent_inventory_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_synthesizer_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_toolbelt_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_hand_list[agent_id], remove_items_after);
+}
+
+void dump_agent_containers(int client_id, int agent_id)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return;
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return;
+    
+    if (agent_inventory_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_inventory_list[agent_id]);
+
+    if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_synthesizer_list[agent_id]);
+
+    if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_toolbelt_list[agent_id]);
+
+    if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_energy_tanks_list[agent_id]);
+
+    // DO NOT throw_items_from_container(agent_hand), we need to use the transactional method for hand throwing
+    ItemID hand_item = get_agent_hand_item(agent_id);
+    if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
 }
 
@@ -960,43 +1039,32 @@ void agent_quit(int agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent_state* a = ServerState::agent_list->get_any(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
     // close opened free container (this will throw any items sitting in hand)
-    if (opened_containers[agent_id] != NULL_CONTAINER)
+    GS_ASSERT(opened_containers != NULL);
+    if (opened_containers != NULL && opened_containers[agent_id] != NULL_CONTAINER)
         agent_close_container(agent_id, opened_containers[agent_id]);
 
-    GS_ASSERT(opened_containers[agent_id] == NULL_CONTAINER);
-    opened_containers[agent_id] = NULL_CONTAINER;
+    GS_ASSERT(opened_containers != NULL && opened_containers[agent_id] == NULL_CONTAINER);
+    if (opened_containers != NULL) opened_containers[agent_id] = NULL_CONTAINER;
 
     // still have to throw any items in hand, in case we have our private inventory opened
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     if (hand_item != NULL_ITEM)
         transfer_hand_to_particle(agent_id);    // throw
-    GS_ASSERT(get_agent_hand(agent_id) == NULL_ITEM);
+    GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
 
-    // throw all items away (inventory, toolbelt and synthesizer)
-    GS_ASSERT(agent_container_list != NULL);
-    if (agent_container_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_container_list[agent_id]);
-
-    GS_ASSERT(agent_synthesizer_list != NULL);
-    if (agent_synthesizer_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_synthesizer_list[agent_id]);
-
-    GS_ASSERT(agent_toolbelt_list != NULL);
-    if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_toolbelt_list[agent_id]);
-
-    GS_ASSERT(agent_energy_tanks_list != NULL);
-    if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
-        throw_items_from_container(a->client_id, a->id, agent_energy_tanks_list[agent_id]);
+    if (Options::serializer)
+        save_agent_containers(a->client_id, a->id, true);    // remove items after
+    else
+        dump_agent_containers(a->client_id, a->id);
 
     // destroy containers
-    if (agent_container_list[agent_id] != NULL_CONTAINER)
-        destroy_container(agent_container_list[agent_id]);
+    if (agent_inventory_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_inventory_list[agent_id]);
 
     if (agent_toolbelt_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_toolbelt_list[agent_id]);
@@ -1007,10 +1075,14 @@ void agent_quit(int agent_id)
     if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_energy_tanks_list[agent_id]);
 
-    agent_container_list[agent_id] = NULL_CONTAINER;
+    if (agent_hand_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_hand_list[agent_id]);
+
+    agent_inventory_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;
     agent_synthesizer_list[agent_id] = NULL_CONTAINER;
     agent_energy_tanks_list[agent_id] = NULL_CONTAINER;
+    agent_hand_list[agent_id] = NULL_CONTAINER;
 }
 
 void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
@@ -1036,7 +1108,7 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     if (item_type == NULL_ITEM_TYPE) return;
     
     // compare to hand
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     int hand_item_type = Item::get_item_type(hand_item);
     if (hand_item != NULL_ITEM)
     {   
@@ -1112,7 +1184,7 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     if (recipe == NULL) return;
 
     // hand is not empty and cannot stack the output
-    ItemID hand_item = get_agent_hand(agent_id);
+    ItemID hand_item = get_agent_hand_item(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
     bool hand_can_stack_recipe = (Item::get_item_type(hand_item) == recipe->output && Item::get_stack_space(hand_item) >= 1);
     if (!hand_empty && !hand_can_stack_recipe) return;
@@ -1601,15 +1673,26 @@ void update_smelters()
             }
             smelter->reset_smelting();
         }
-        
     }
+}
+
+// used by serializer; places an item into a container based on the item's location information
+// returns false on error
+bool load_item_into_container(ItemID item_id, int container_id, int container_slot)
+{
+    return transfer_free_item_to_container(item_id, container_id, container_slot);
+}
+
+bool load_item_into_hand(ItemID item_id, int agent_id)
+{
+    return transfer_free_item_to_hand(item_id, agent_id);
 }
 
 //tests
 void test_container_list_capacity()
 {
     for (int i=0; i<ITEM_CONTAINER_MAX*2; i++)
-        item_container_list->create(AGENT_CONTAINER);
+        item_container_list->create(AGENT_INVENTORY);
 }
 
 }   // ItemContainer

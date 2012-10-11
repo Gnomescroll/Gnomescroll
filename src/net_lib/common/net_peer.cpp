@@ -6,7 +6,7 @@
 
 NetPeer::NetPeer()
 :
-client_id(-1),
+client_id(NULL_CLIENT),
 connected(0),
 version(0),
 disconnect_code(DISCONNECT_TIMEOUT),

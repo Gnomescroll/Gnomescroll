@@ -60,7 +60,10 @@ const float AGENT_JUMP_POWER = 0.25f;
 
 const float AGENT_BOX_RADIUS = 0.38f;
 
-const int NO_AGENT = 255; // works as long as < AGENT_MAX 
+typedef enum
+{
+    NULL_AGENT = 0xff,
+} AgentID;
 
 /* Status */
 const int AGENT_HEALTH = 99;

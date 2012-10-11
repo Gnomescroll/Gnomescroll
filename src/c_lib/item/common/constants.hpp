@@ -3,7 +3,10 @@
 #include <agent/constants.hpp>
 #include <item/common/enum.hpp>
 
-const int MAX_ITEMS = 0xff-1;
+const int MAX_ITEMS = NULL_ITEM;
+const int ITEM_LIST_HARD_MAX = MAX_ITEMS;
+
+const int MAX_ITEM_TYPES = 0xff-1;
 const int MAX_CONTAINER_TYPES = 16;
 
 const int NULL_ITEM_TYPE = 0xff;
@@ -18,10 +21,14 @@ const int NULL_STACK_SIZE = 0;
 const int NULL_GAS_LIFETIME = 1;
 const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful for error checking
 
+// These are hard maximums for configuration, the actual maximum is defined per-item
+// and you should use the appropriate functions defined in properties.hpp
+const int MAX_STACK_SIZE = 0xffff;
+const int MAX_DURABILITY = 0xffff;
+
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
 
-// TODO -- add meta slot to container class?
 const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 3;
 
 const int MAX_CRAFTING_RECIPE = 256;
@@ -41,16 +48,16 @@ const float DEFAULT_FIRING_RANGE = 4.0f;
 
 const float OBJECT_DEPTH_MAX = -128.0f;
 
-const int AGENT_HAND = NULL_CONTAINER - 1;
-
-const int ITEM_PARTICLE_MAX = 1024;
-const int ITEM_PARTICLE_HARD_MAX = NULL_PARTICLE - 1;
+const int ITEM_PARTICLE_HARD_MAX = NULL_PARTICLE;   // (highest ID will be NULL_PARTICLE - 1
+const int ITEM_PARTICLE_MAX = ITEM_PARTICLE_HARD_MAX; // initial (just start maxed out)
 
 const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
 const float ITEM_PARTICLE_DAMPENING = 0.50f;
 const float ITEM_PARTICLE_RADIUS = 0.35f;
 const float ITEM_PARTICLE_SPRITE_RENDER_SCALE = 0.25f;
 const float ITEM_PARTICLE_VOXEL_RENDER_SCALE = 0.20f;
+
+const int N_PLAYER_CONTAINERS = 5;  // hand, inventory, synthesizer, energy_tanks, toolbelt
 
 // how long to wait before allowing item to be picked up after being thrown by agent
 const int ITEM_PICKUP_PREVENTION_DELAY = 30 * 3; // 4 seconds

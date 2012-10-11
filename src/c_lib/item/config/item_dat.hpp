@@ -484,7 +484,7 @@ void load_item_dat()
 
 void verify_item_dat()
 {
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
         if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
 
@@ -497,10 +497,10 @@ void verify_item_dat()
 
         // make sure all data types are within bounds
         GS_ASSERT(item_attribute_array[i].max_durability > 0
-                && item_attribute_array[i].max_durability <= 0xffff);
+                && item_attribute_array[i].max_durability <= MAX_DURABILITY);
                 
         GS_ASSERT(item_attribute_array[i].max_stack_size > 0
-                && item_attribute_array[i].max_stack_size <= 0xffff);
+                && item_attribute_array[i].max_stack_size <= MAX_STACK_SIZE);
 
         // particle voxel texture shouldn't be set if its not a particle voxel -- likely mistake
         GS_ASSERT(item_attribute_array[i].particle_voxel || (!item_attribute_array[i].particle_voxel && item_attribute_array[i].particle_voxel_texture == 0));
