@@ -173,6 +173,8 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num) {
 namespace t_gen {
 	void add_terrain_features() {
         printf("Adding terrain features\n");
+        printf("    trees\n");
+        printf("    shrooms\n");
 
 		// setup blocks
 		leaves[0] = t_map::get_cube_id("leaves");
