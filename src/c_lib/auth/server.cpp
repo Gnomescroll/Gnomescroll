@@ -5,7 +5,12 @@ dont_include_this_file_in_client
 #endif
 
 #define  __STDC_FORMAT_MACROS
-#include <inttypes.h>
+
+#if __GCC__
+	#include <inttypes.h>
+#else
+	typedef unsigned char uint8_t;
+#endif
 
 #include <auth/hmac-sha256.h>
 
