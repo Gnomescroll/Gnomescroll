@@ -44,6 +44,7 @@ extern "C"
     #include <lauxlib.h> //wtf!?
 }
 
+#define strtoll _strtoi64
 
 //_getcwd()/_wgetcwd() Gets the current working directory
 //_chdir()/_wchdir() Sets the current working directory
