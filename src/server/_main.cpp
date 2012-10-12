@@ -182,6 +182,7 @@ int run()
         if (Options::auth)
             NetServer::check_client_authorizations();
         
+	#if GS_SERIALIZER
         if (serializer::should_save_map)
         {
             serializer::save_map();
@@ -189,6 +190,7 @@ int run()
         }
 
         serializer::update();
+	#endif
 
         #ifdef __GNUC__
         usleep(1000);

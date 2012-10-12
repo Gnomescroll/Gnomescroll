@@ -33,6 +33,7 @@ bool should_save_map = false;
 
 void init(){}
 void teardown(){}
+void update();
 
 void check_save_state(){}
 

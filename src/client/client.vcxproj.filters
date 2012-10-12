@@ -63,6 +63,11 @@
 
 
 
+	
+
+
+
+
 	<ItemGroup>
 		<Filter Include="c_lib\agent">
 		</Filter>
@@ -124,6 +129,8 @@
 		</Filter>
 		<Filter Include="c_lib\hud">
 		</Filter>
+		<Filter Include="c_lib\hud\container">
+		</Filter>
 		<Filter Include="c_lib\input">
 		</Filter>
 		<Filter Include="c_lib\item">
@@ -170,6 +177,8 @@
 		</Filter>
 		<Filter Include="c_lib\SDL\unused">
 		</Filter>
+		<Filter Include="c_lib\serializer">
+		</Filter>
 		<Filter Include="c_lib\sound">
 		</Filter>
 		<Filter Include="c_lib\state">
@@ -178,8 +187,6 @@
 		</Filter>
 		<Filter Include="c_lib\t_gen\lib">
 		</Filter>
-		<Filter Include="c_lib\t_hud">
-		</Filter>
 		<Filter Include="c_lib\t_map">
 		</Filter>
 		<Filter Include="c_lib\t_map\config">
@@ -187,8 +194,6 @@
 		<Filter Include="c_lib\t_map\glsl">
 		</Filter>
 		<Filter Include="c_lib\t_map\net">
-		</Filter>
-		<Filter Include="c_lib\t_map\serializer">
 		</Filter>
 		<Filter Include="c_lib\t_map\server">
 		</Filter>
@@ -299,7 +304,13 @@
 	<ClInclude Include="..\c_lib\auth\client.cpp">
 		<Filter>c_lib\auth</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\packets.cpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\auth\server.cpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\_interface.cpp">
 		<Filter>c_lib\auth</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\camera\camera.cpp">
@@ -587,6 +598,39 @@
 	<ClInclude Include="..\c_lib\hud\_interface.cpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\container_hud.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\crafting_hud.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\crusher.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\energy_tanks.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\smelter.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\storage_block.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\synthesizer_hud.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\texture.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\toolbelt_hud.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\ui_element.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\_interface.cpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.cpp">
 		<Filter>c_lib\input</Filter>
 	</ClInclude>
@@ -833,7 +877,7 @@
 	<ClInclude Include="..\c_lib\SDL\particle_functions.c">
 		<Filter>c_lib\SDL</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\SDL_functions.c">
+	<ClInclude Include="..\c_lib\SDL\SDL_functions.cpp">
 		<Filter>c_lib\SDL</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\shader_loader.cpp">
@@ -847,6 +891,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\voronoi.cpp">
 		<Filter>c_lib\SDL</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\SDL\awesomium\viewport_class.cpp">
+		<Filter>c_lib\SDL\awesomium</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\awesomium\_interface.cpp">
 		<Filter>c_lib\SDL\awesomium</Filter>
@@ -862,6 +909,18 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\unused\v.cpp">
 		<Filter>c_lib\SDL\unused</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\items.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\map.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\redis.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\_interface.cpp">
+		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\csv_parser.cpp">
 		<Filter>c_lib\sound</Filter>
@@ -904,39 +963,6 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\lib\voronoi2.cpp">
 		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\container_hud.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\crafting_hud.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\crusher.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\energy_tanks.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\smelter.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\storage_block.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\synthesizer_hud.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\texture.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\toolbelt_hud.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\ui_element.cpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\_interface.cpp">
-		<Filter>c_lib\t_hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\chunk_special.cpp">
 		<Filter>c_lib\t_map</Filter>
@@ -989,9 +1015,6 @@
 	<ClInclude Include="..\c_lib\t_map\net\t_StoC.cpp">
 		<Filter>c_lib\t_map\net</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\serializer\_interface.cpp">
-		<Filter>c_lib\t_map\serializer</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\server\env_process.cpp">
 		<Filter>c_lib\t_map\server</Filter>
 	</ClInclude>
@@ -1040,16 +1063,16 @@
 	<ClInclude Include="..\c_lib\voxel\vox_dat_init.cpp">
 		<Filter>c_lib\voxel</Filter>
 	</ClInclude>
+	<ClInclude Include="..\net_lib\client.cpp">
+		<Filter>net_lib</Filter>
+	</ClInclude>
 	<ClInclude Include="..\net_lib\global.cpp">
 		<Filter>net_lib</Filter>
 	</ClInclude>
 	<ClInclude Include="..\net_lib\host.cpp">
 		<Filter>net_lib</Filter>
 	</ClInclude>
-	<ClInclude Include="..\net_lib\net_CtoS.cpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\net_StoC.cpp">
+	<ClInclude Include="..\net_lib\server.cpp">
 		<Filter>net_lib</Filter>
 	</ClInclude>
 	<ClInclude Include="..\net_lib\benchmark\pviz.c">
@@ -1184,7 +1207,19 @@
 	<ClInclude Include="..\c_lib\auth\client.hpp">
 		<Filter>c_lib\auth</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\constants.hpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\packets.hpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\auth\server.hpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\_include.hpp">
+		<Filter>c_lib\auth</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\auth\_interface.hpp">
 		<Filter>c_lib\auth</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\camera\camera.hpp">
@@ -1281,6 +1316,9 @@
 		<Filter>c_lib\common\template</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\template\dynamic_object_list.hpp">
+		<Filter>c_lib\common\template</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\common\template\elastic_object_list.hpp">
 		<Filter>c_lib\common\template</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\template\multi_object_list.hpp">
@@ -1490,6 +1528,9 @@
 	<ClInclude Include="..\c_lib\hud\cube_selector.hpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\error.hpp">
+		<Filter>c_lib\hud</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\font.hpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
@@ -1513,6 +1554,48 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\_interface.hpp">
 		<Filter>c_lib\hud</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\common.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\constants.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\container_hud.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\crafting_hud.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\crusher.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\energy_tanks.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\smelter.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\storage_block.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\synthesizer_hud.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\texture.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\toolbelt_hud.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\ui_element.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\_include.hpp">
+		<Filter>c_lib\hud\container</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\container\_interface.hpp">
+		<Filter>c_lib\hud\container</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.hpp">
 		<Filter>c_lib\input</Filter>
@@ -1547,7 +1630,7 @@
 	<ClInclude Include="..\c_lib\item\_state.hpp">
 		<Filter>c_lib\item</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\item\common\constant.hpp">
+	<ClInclude Include="..\c_lib\item\common\constants.hpp">
 		<Filter>c_lib\item\common</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\common\enum.hpp">
@@ -1658,7 +1741,7 @@
 	<ClInclude Include="..\c_lib\item\toolbelt\_state.hpp">
 		<Filter>c_lib\item\toolbelt</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\common\constant.hpp">
+	<ClInclude Include="..\c_lib\item\toolbelt\common\constants.hpp">
 		<Filter>c_lib\item\toolbelt\common</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\item\toolbelt\common\types.hpp">
@@ -1778,6 +1861,9 @@
 	<ClInclude Include="..\c_lib\physics\constants.hpp">
 		<Filter>c_lib\physics</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\physics\geometry.hpp">
+		<Filter>c_lib\physics</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\physics\mat3.hpp">
 		<Filter>c_lib\physics</Filter>
 	</ClInclude>
@@ -1817,6 +1903,9 @@
 	<ClInclude Include="..\c_lib\SDL\draw_functions.hpp">
 		<Filter>c_lib\SDL</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\SDL\SDL_functions.hpp">
+		<Filter>c_lib\SDL</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\shader_loader.hpp">
 		<Filter>c_lib\SDL</Filter>
 	</ClInclude>
@@ -1843,6 +1932,24 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\unused\v.hpp">
 		<Filter>c_lib\SDL\unused</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\constants.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\items.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\map.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\redis.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\_include.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\_interface.hpp">
+		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\csv_parser.hpp">
 		<Filter>c_lib\sound</Filter>
@@ -1880,9 +1987,6 @@
 	<ClInclude Include="..\c_lib\t_gen\crystals.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\dungeon_generator.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\noise_map.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
@@ -1905,6 +2009,12 @@
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\rock_layer.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\ruins_generator.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\terrain_features.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\tile_generator.hpp">
@@ -1933,48 +2043,6 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\lib\voronoi2.hpp">
 		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\common.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\constants.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\container_hud.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\crafting_hud.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\crusher.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\energy_tanks.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\smelter.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\storage_block.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\synthesizer_hud.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\texture.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\toolbelt_hud.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\ui_element.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\_include.hpp">
-		<Filter>c_lib\t_hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_hud\_interface.hpp">
-		<Filter>c_lib\t_hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\chunk_special.hpp">
 		<Filter>c_lib\t_map</Filter>
@@ -2062,12 +2130,6 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\net\t_StoC.hpp">
 		<Filter>c_lib\t_map\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\serializer\blocks.hpp">
-		<Filter>c_lib\t_map\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\serializer\_interface.hpp">
-		<Filter>c_lib\t_map\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\server\env_process.hpp">
 		<Filter>c_lib\t_map\server</Filter>
@@ -2159,6 +2221,9 @@
 	<ClInclude Include="..\c_lib\voxel\vox_dat_init.hpp">
 		<Filter>c_lib\voxel</Filter>
 	</ClInclude>
+	<ClInclude Include="..\net_lib\client.hpp">
+		<Filter>net_lib</Filter>
+	</ClInclude>
 	<ClInclude Include="..\net_lib\global.hpp">
 		<Filter>net_lib</Filter>
 	</ClInclude>
@@ -2169,6 +2234,9 @@
 		<Filter>net_lib</Filter>
 	</ClInclude>
 	<ClInclude Include="..\net_lib\net_StoC.hpp">
+		<Filter>net_lib</Filter>
+	</ClInclude>
+	<ClInclude Include="..\net_lib\server.hpp">
 		<Filter>net_lib</Filter>
 	</ClInclude>
 	<ClInclude Include="..\net_lib\_include.hpp">
@@ -2235,9 +2303,6 @@
 		<Filter>c_lib\map_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\particle_functions.h">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\SDL_functions.h">
 		<Filter>c_lib\SDL</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\voronoi.h">
