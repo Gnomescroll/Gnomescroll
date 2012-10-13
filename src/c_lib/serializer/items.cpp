@@ -133,7 +133,6 @@ static class PlayerContainerLoadDataList* player_container_load_data_list = NULL
 static const int SRL_BUF_SIZE = 0xffff-1;
 static char* _srl_buf = NULL;
 
-
 void init_items()
 {
     GS_ASSERT(player_load_data_list == NULL);
@@ -216,8 +215,6 @@ class ParsedPlayerContainerData
 // WARNING -- modifies char* str
 void parse_item_string(char* str, const size_t length, class ParsedItemData* data)
 {
-    printf("Length: %d\n", length);
-    printf("Item: %s\n", str);
     data->valid = false;
 
     int i = (int)length;
@@ -245,9 +242,6 @@ void parse_item_string(char* str, const size_t length, class ParsedItemData* dat
             key = &str[i];
             
         char* val = &key[TAG_LENGTH+TAG_DELIMITER_LENGTH];
-
-        printf("Key: %s\n", key);
-        printf("Val: %s\n", val);
 
         bool err = false;
         if (strncmp(GLOBAL_ID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
@@ -362,7 +356,6 @@ void parse_player_container_header(char* str, const size_t length, class ParsedP
         else
         {   // unrecognized field
             GS_ASSERT(false);
-            printf("Unrecognized: %s\n", key);
             data->valid = false;
             return;
         }
@@ -378,7 +371,6 @@ void process_player_container_blob(const char* str, AgentID agent_id, int contai
 {    
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE  = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
-    printf("LONGEST LINE: %d\n", LONGEST_LINE);
     static char buf[LONGEST_LINE+1];
     if (strnlen(str, LONGEST_LINE) < LONGEST_LINE) return;    // TODO -- error handling 
     buf[LONGEST_LINE] = '\0';
@@ -593,10 +585,8 @@ void player_container_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     
     if (reply->type == REDIS_REPLY_STRING)
     {
-        printf("%s\n", reply->str);
-        // TODO -- parse string
         process_player_container_blob(reply->str, player_data->agent_id, data->container_id, data->container_type);
-        // TODO -- catch errors and abort?
+        // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
         player_data->container_was_loaded(data->container_id);
     }
     else
