@@ -22,7 +22,7 @@ class PlayerLoadData
         GS_ASSERT(client != NULL);
         if (client == NULL) return false; // TODO -- log error
         client->was_deserialized();
-        // TODO -- destroy ourself here
+        this->loaded = true;
         return true;
     }
         
@@ -40,6 +40,8 @@ class PlayerLoadData
         int n_containers_expected;
         int containers_expected[N_PLAYER_CONTAINERS];
         bool containers_loaded[N_PLAYER_CONTAINERS];
+
+        bool loaded;    // completely
 
     void setup_begin()
     {
@@ -83,7 +85,8 @@ class PlayerLoadData
     PlayerLoadData() :
         id(-1), user_id(NULL_USER_ID), agent_id(NULL_AGENT), client_id(NULL_CLIENT),
         waiting_for_setup(true),
-        player_data_loaded(false), n_containers_expected(0)
+        player_data_loaded(false), n_containers_expected(0),
+        loaded(false)
     {
         for (int i=0; i<N_PLAYER_CONTAINERS; i++)
         {
@@ -367,7 +370,7 @@ void parse_player_container_header(char* str, const size_t length, class ParsedP
     data->valid = true;
 }
 
-void process_player_container_blob(const char* str, AgentID agent_id, int container_id, ItemContainerType container_type)
+void process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
 {    
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE  = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
@@ -377,15 +380,15 @@ void process_player_container_blob(const char* str, AgentID agent_id, int contai
 
     ItemLocationType location = IL_NOWHERE;
     int location_id = NULL_LOCATION;
-    if (container_type == AGENT_HAND)
+    if (container_load_data->container_type == AGENT_HAND)
     {
         location = IL_HAND;
-        location_id = agent_id;
+        location_id = player_load_data->agent_id;
     }
     else
     {
         location = IL_CONTAINER;
-        location_id = container_id;
+        location_id = container_load_data->container_id;
     }
 
     // copy container header line
@@ -401,19 +404,20 @@ void process_player_container_blob(const char* str, AgentID agent_id, int contai
     GS_ASSERT(container_data.valid);
     if (!container_data.valid) return;  // TODO -- log error
 
-    // TODO -- check properties on the container data
+    // Check properties on the container data
     // The parser only makes sure the values it found were in range
     // It doesn't handle missing values (so that the format can remain flexible)
+    
+    GS_ASSERT(container_data.user_id == player_load_data->user_id);
+    if (container_data.user_id != player_load_data->user_id) return;  // TODO -- log error
 
-    // TODO -- use regular container name
     // make sure location name matches container type
-    const char* expected_container_name = ItemContainer::get_container_name(container_type);
+    const char* expected_container_name = ItemContainer::get_container_name(container_load_data->container_type);
     GS_ASSERT(expected_container_name != NULL && strcmp(expected_container_name, container_data.name) == 0);
     if (expected_container_name == NULL || strcmp(expected_container_name, container_data.name) != 0) return;   // TODO -- log error
 
     // make sure container count is less than the container's size
-    // TODO
-    unsigned int max_slots = ItemContainer::get_container_max_slots(container_type);
+    unsigned int max_slots = ItemContainer::get_container_max_slots(container_load_data->container_type);
     GS_ASSERT(container_data.container_count <= max_slots);
     if (container_data.container_count > max_slots) return; // TODO -- log error
 
@@ -459,10 +463,10 @@ void process_player_container_blob(const char* str, AgentID agent_id, int contai
 
         // TODO -- catch duplicate inserts into container as error
         if (location == IL_HAND)
-            ItemContainer::load_item_into_hand(item->id, agent_id);
+            ItemContainer::load_item_into_hand(item->id, player_load_data->agent_id);
         else
         if (location == IL_CONTAINER)
-            ItemContainer::load_item_into_container(item->id, container_id, item->container_slot);            
+            ItemContainer::load_item_into_container(item->id, container_load_data->container_id, item->container_slot);            
     }
 }
 
@@ -534,7 +538,6 @@ bool save_player_container(int client_id, int container_id)
     GS_ASSERT(client->user_id != NULL_USER_ID);
     if (client->user_id == NULL_USER_ID) return false;
 
-    // TODO -- user normal container name
     ItemContainerType container_type = ItemContainer::get_container_type(container_id);
     LocationNameID loc_id = get_container_location_name_id(container_type);
     const char* location_name = get_location_name(loc_id);
@@ -585,7 +588,7 @@ void player_container_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     
     if (reply->type == REDIS_REPLY_STRING)
     {
-        process_player_container_blob(reply->str, player_data->agent_id, data->container_id, data->container_type);
+        process_player_container_blob(reply->str, player_data, data);
         // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
         player_data->container_was_loaded(data->container_id);
     }
@@ -634,6 +637,8 @@ bool load_player_container(int player_load_id, int container_id)
     if (data == NULL) return false;
 
     ItemContainerType container_type = ItemContainer::get_container_type(container_id);
+    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+    if (container_type == CONTAINER_TYPE_NONE) return false;
     const char* container_name = get_location_name(get_container_location_name_id(container_type));
     GS_ASSERT(container_name != NULL);
     if (container_name == NULL) return false;
