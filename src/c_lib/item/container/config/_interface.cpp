@@ -205,6 +205,17 @@ static void validate_settings()
         }
     }
     GS_ASSERT(n_none == 1);
+
+    // make sure no names collide
+    for (int i=0; i<MAX_CONTAINER_TYPES-1; i++)
+    for (int j=i+1; j<MAX_CONTAINER_TYPES; j++)
+    {
+        class ContainerAttributes* c = container_attributes[i];
+        class ContainerAttributes* d = container_attributes[j];
+        if (c == NULL || d == NULL) continue;
+        if (!c->loaded || !d->loaded) continue;
+        GS_ASSERT(strcmp(c->name, d->name) != 0);
+    }
 }
 
 void init_config()
