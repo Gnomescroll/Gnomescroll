@@ -36,6 +36,8 @@ namespace ItemContainer
 {
 
 /* Configuration Loader */ 
+
+// TODO -- container configuration validation
     
 static class ContainerAttributes* c = NULL;
 
@@ -188,9 +190,10 @@ static void validate_settings()
             n_none++;
             continue;
         }
-        GS_ASSERT(c->name != NULL && strlen(c->name));
+        GS_ASSERT(is_valid_container_name(c->name));
         GS_ASSERT(c->xdim > 0);
         GS_ASSERT(c->ydim > 0);
+        GS_ASSERT(c->max_dim() <= MAX_CONTAINER_SIZE);
         if (c->type != AGENT_HAND)
         {
             GS_ASSERT(c->alpha_action != NULL);
@@ -240,7 +243,7 @@ class ContainerAttributes* get_attr(ItemContainerType type)
     return container_attributes[type];
 }
 
-int get_container_max_slots(ItemContainerType type)
+unsigned int get_container_max_slots(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
     if (attr == NULL) return 0;
@@ -294,6 +297,31 @@ bool container_type_is_block(ItemContainerType type)
     class ContainerAttributes* attr = get_attr(type);
     if (attr == NULL) return false;
     return !attr->attached_to_agent;
+}
+
+const char* get_container_name(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return NULL;
+    return attr->name;
+}
+
+inline bool is_valid_container_name_char(char c)
+{
+    return (isalnum(c) || c == '_' || c == '-');
+}
+
+bool is_valid_container_name(const char* name)
+{
+    int i = 0;
+    char c;
+    while (i < CONTAINER_NAME_MAX_LENGTH && (c = name[i]) != '\0')
+    {
+        if (!is_valid_container_name_char(c))
+            return false;
+        i++;
+    }
+    return (i < CONTAINER_NAME_MAX_LENGTH || name[i] == '\0');
 }
     
 }   // ItemContainer

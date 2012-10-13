@@ -21,7 +21,7 @@ class Item
 
         ItemID id;
         int type;  // stone_block, dirt_block, mining_laser_beta,
-        int64_t global_id;
+        int32_t global_id;
 
         int durability;
         int stack_size;
@@ -60,7 +60,7 @@ class Item
     {
         printf("Item:\n");
         printf("ID %d\n", id);
-        printf("Global ID: %lld\n", this->global_id);
+        printf("Global ID: %d\n", this->global_id);
         printf("Group %d\n", get_item_group_for_type(this->type));
         printf("Type %d\n", type);
         printf("Durability %d\n", durability);

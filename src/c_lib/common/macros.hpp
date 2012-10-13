@@ -1,5 +1,8 @@
 #pragma once
 
+#define GS_MAX(a,b) ((a) > (b)) ? (a) : (b);
+#define GS_MIN(a,b) ((a) < (b)) ? (a) : (b);
+
 #define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT(agent_id >= 0 && agent_id < AGENT_MAX)
 #define IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) 
 
@@ -34,9 +37,8 @@
     }
 
 // macro stringification
-#define STR2(x) #x
-#define STR(x) STR2(x)
-
+#define GS_STR2(x) #x
+#define GS_STR(x) GS_STR2(x)
 
 // __GNUG__
 // The GNU C++ compiler defines this. Testing it is equivalent to testing (__GNUC__ && __cplusplus). 

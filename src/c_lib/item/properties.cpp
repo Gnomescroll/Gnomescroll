@@ -30,8 +30,7 @@ int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
 class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
 int craft_recipes_possible_count = 0;
 
-const int ITEM_NAME_MAX_LENGTH = 64;
-char item_names[MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH] = {'\0'};
+char item_names[MAX_ITEM_TYPES*(ITEM_NAME_MAX_LENGTH+1)] = {'\0'};
 int item_name_index[MAX_ITEM_TYPES] = {-1};
 
 void init_properties()
@@ -93,10 +92,10 @@ int get_sprite_index_for_type(int type)
 void set_item_name(int id, const char* name, int length)
 {
     GS_ASSERT(length > 0);
-    GS_ASSERT(length < ITEM_NAME_MAX_LENGTH);
+    GS_ASSERT(length <= ITEM_NAME_MAX_LENGTH);
     GS_ASSERT(id >= 0 || id < MAX_ITEM_TYPES);    
     
-    if (length <= 0 || length >= ITEM_NAME_MAX_LENGTH) return;
+    if (length <= 0 || length > ITEM_NAME_MAX_LENGTH) return;
     if (id < 0 || id >= MAX_ITEM_TYPES) return;
 
     static int str_index = 0;
@@ -122,10 +121,9 @@ const char* get_item_name(int type)
 {
     GS_ASSERT(type >= 0 || type < MAX_ITEM_TYPES);
     if (type < 0 || type >= MAX_ITEM_TYPES) return NULL;
-    GS_ASSERT(item_name_index[type] >= 0);
     if (item_name_index[type] < 0) return NULL;
-    GS_ASSERT(item_name_index[type] < MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH);
-    if (item_name_index[type] >= MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH) return NULL;
+    GS_ASSERT(item_name_index[type] <+ MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH);
+    if (item_name_index[type] > MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH) return NULL;
     
     return (item_names + item_name_index[type]);
 }

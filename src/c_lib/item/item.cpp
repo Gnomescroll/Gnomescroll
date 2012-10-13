@@ -30,7 +30,6 @@ void Item::init_for_loading()
     this->gas_decay = attr->gas_lifetime;
 }
 
-
 void ItemList::decay_gas()
 {
     gas_tick++;

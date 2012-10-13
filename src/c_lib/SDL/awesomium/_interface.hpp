@@ -9,7 +9,7 @@ namespace Awesomium
 
 #define _BASE_USER_AGENT "Mozilla/5.0 AppleWebKit/533.3 (KHTML, like Gecko) Chrome/12.0.702.0 Safari/533.3 Awesomium/1.6.5"
 const char BASE_USER_AGENT[] = _BASE_USER_AGENT;
-const char USER_AGENT[] = _BASE_USER_AGENT " Gnomescroll/" STR(GS_VERSION);
+const char USER_AGENT[] = _BASE_USER_AGENT " Gnomescroll/" GS_STR(GS_VERSION);
 
 extern class ChromeViewport* cv;
 extern class ViewportManager* viewport_manager;

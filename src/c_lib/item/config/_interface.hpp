@@ -28,51 +28,70 @@ void container_block_def(const char* block_name, ItemContainerType container_typ
 
 static bool is_valid_item_name_char(char c)
 {
-    return (!isspace(c) && ! iscntrl(c));
+    return (isalnum(c) || c == '_' || c == '-');
 }
 
 bool is_valid_item_name(const char* name)
-{   // check name for valid characters NO SPACES
+{
     int i = 0;
     char c;
-    while ((c = name[i++]) != '\0')
+    while (i < ITEM_NAME_MAX_LENGTH && (c = name[i]) != '\0')
+    {
         if (!is_valid_item_name_char(c))
             return false;
-    return true;
+        i++;
+    }
+    return (i < ITEM_NAME_MAX_LENGTH || name[i] == '\0');
 }
 
 class ItemAttribute s;
 
-int _current_item_id = 0;
+int _current_item_id = -1;
 
 void item_def(int type, ItemGroup group, const char* name)
 {
+    if (_current_item_id >= 0)
+        _set_attribute();   // locks in old attribute
+
     GS_ASSERT(type != NULL_ITEM_TYPE);
     GS_ASSERT(type >= 0 && type < MAX_ITEM_TYPES);
     GS_ASSERT(group != IG_NONE);
-    GS_ASSERT(name[0] != '\0');
-
-    GS_ASSERT(is_valid_item_name(name));
+    if (type == NULL_ITEM_TYPE || type < 0 || type >= MAX_ITEM_TYPES || group == IG_NONE) return;
     
-    _set_attribute();
+    size_t name_len = strlen(name);
+    GS_ASSERT(name_len > 0 && name_len <= ITEM_NAME_MAX_LENGTH);
+    if (name_len <= 0 || name_len > ITEM_NAME_MAX_LENGTH) return;
+    GS_ASSERT(is_valid_item_name(name));
+    if (!is_valid_item_name(name)) return;
 
-    // check that this type has not been set yet
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
-        GS_ASSERT(item_attribute_array[i].item_type != type);
-
+    GS_ASSERT(!item_attribute_array[type].loaded);
+    if (item_attribute_array[type].loaded) printf("ALREADY LOADED: %d\n", type);
+    if (item_attribute_array[type].loaded) return;
+    
     _current_item_id = type;
+
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    {
+        // check that this type has not been set yet
+        GS_ASSERT(item_attribute_array[i].item_type != type);
+        // check that this name has not been used yet
+        GS_ASSERT(get_item_name(i) == NULL || strcmp(get_item_name(i), name) != 0); 
+    }
 
     s.load_defaults(type, group);
     
     GS_ASSERT(group_array[type] == IG_NONE)
     group_array[type] = group;
-    
+
     set_item_name(type, name);
 }
 
 void _set_attribute()
 {
+    GS_ASSERT(_current_item_id >= 0 && _current_item_id < MAX_ITEM_TYPES);
+    if (_current_item_id < 0 || _current_item_id >= MAX_ITEM_TYPES) return;
     item_attribute_array[_current_item_id] = s;
+    item_attribute_array[_current_item_id].loaded = true;
 }
 
 ItemContainerType _current_container_type = CONTAINER_TYPE_NONE;
