@@ -15,7 +15,8 @@ void save_map();
 void wait_for_threads();
 
 // defined in items.hpp
-bool save_player_container(int client_id, int container_id);
+bool save_player(UserID user_id, AgentID agent_id);
+bool save_player_container(ClientID client_id, int container_id);
 
 int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id);
 bool load_player_container(int player_load_id, int container_id); 

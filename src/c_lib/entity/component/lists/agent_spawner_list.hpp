@@ -9,7 +9,7 @@ dont_include_this_file_in_client
 namespace Components
 {
 
-const int MAX_AGENT_SPAWNER_COMPONENTS = 1024;
+const int MAX_AGENT_SPAWNER_COMPONENTS = MAX_SPAWNERS + 1;  // +1 for the base
 class AgentSpawnerComponentList: public ComponentList<AgentSpawnerComponent, COMPONENT_AGENT_SPAWNER, MAX_AGENT_SPAWNER_COMPONENTS>
 {
     public:

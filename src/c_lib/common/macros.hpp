@@ -3,6 +3,9 @@
 #define GS_MAX(a,b) ((a) > (b)) ? (a) : (b);
 #define GS_MIN(a,b) ((a) < (b)) ? (a) : (b);
 
+#define ASSERT_VALID_USER_ID(user_id) GS_ASSERT(user_id > 0 && user_id != NULL_USER_ID)
+#define IF_INVALID_USER_ID(user_id) if (user_id <= 0 || user_id == NULL_USER_ID) 
+
 #define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT(agent_id >= 0 && agent_id < AGENT_MAX)
 #define IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) 
 
@@ -20,6 +23,9 @@
 
 #define ASSERT_VALID_CONTAINER_TYPE(container_type) GS_ASSERT(container_type >= 0 && container_type < MAX_CONTAINER_TYPES)
 #define IF_INVALID_CONTAINER_TYPE(container_type) if (container_type < 0 || container_type >= MAX_CONTAINER_TYPES) 
+
+#define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT(spawner_id == BASE_SPAWN_ID || (spawner_id >= 0 && spawner_id < MAX_SPAWNERS));
+#define IF_INVALID_SPAWNER_ID(spawner_id) if (spawner_id != BASE_SPAWN_ID && (spawner_id < 0 || spawner_id >= MAX_SPAWNERS)) return;
 
 #define GS_ABORT() \
     do \

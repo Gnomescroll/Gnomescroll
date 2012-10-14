@@ -1003,7 +1003,7 @@ void agent_died(int agent_id)
     GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
 }
 
-static void save_agent_containers(int client_id, int agent_id)
+static void save_agent_containers(ClientID client_id, AgentID agent_id)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;

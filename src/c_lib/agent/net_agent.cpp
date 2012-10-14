@@ -416,14 +416,12 @@ inline void client_disconnected_StoC::handle()
 
 inline void set_spawner_StoC::handle()
 {
-    // TODO -- remove, once base is replaced with actual spawner
-    int spawner_id = this->spawner_id;
-    if (this->spawner_id == (uint16_t)-1)
-        spawner_id = BASE_SPAWN_ID;
-    
     using ClientState::playerAgent_state;
     if (playerAgent_state.you == NULL) return;
 
+    ASSERT_VALID_SPAWNER_ID(this->spawner_id);
+    IF_INVALID_SPAWNER_ID(this->spawner_id) return;
+    
     // de-color old spawner
     if (playerAgent_state.you->status.spawner != BASE_SPAWN_ID)
     {
@@ -439,9 +437,9 @@ inline void set_spawner_StoC::handle()
     }
 
     // color new spawner
-    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
+    if (this->spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
     {
-        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, spawner_id);
+        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, this->spawner_id);
         GS_ASSERT(obj != NULL);
         if (obj != NULL)
         {
@@ -453,7 +451,7 @@ inline void set_spawner_StoC::handle()
         }
     }
 
-    playerAgent_state.you->event.set_spawner(spawner_id);
+    playerAgent_state.you->event.set_spawner(this->spawner_id);
 }
 
 inline void agent_color_StoC::handle()

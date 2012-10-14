@@ -470,6 +470,56 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
     }
 }
 
+void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
+{
+    class PlayerLoadData* data = (class PlayerLoadData*)_data;
+    redisReply* reply = (redisReply*)_reply;
+
+    if (reply->type == REDIS_REPLY_STRING)
+    {
+        // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
+        data->player_data_was_loaded();
+    }
+    else
+    if (reply->type == REDIS_REPLY_NIL)
+        data->player_data_was_loaded();
+    else
+    if (reply->type == REDIS_REPLY_ERROR)
+    {
+        GS_ASSERT(reply->type != REDIS_REPLY_ERROR);
+        printf("Loading player %d failed with redis error: %s\n", data->user_id, reply->str); 
+    }
+    
+    player_load_data_list->destroy(data->id);
+}
+
+void player_container_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
+{
+    redisReply* reply = (redisReply*)_reply;
+    class PlayerContainerLoadData* data = (class PlayerContainerLoadData*)_data;
+    class PlayerLoadData* player_data = player_load_data_list->get(data->player_data_id);
+    GS_ASSERT(player_data != NULL);
+    if (player_data == NULL) return;    // TODO -- better handling
+    
+    if (reply->type == REDIS_REPLY_STRING)
+    {
+        process_player_container_blob(reply->str, player_data, data);
+        // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
+        player_data->container_was_loaded(data->container_id);
+    }
+    else
+    if (reply->type == REDIS_REPLY_NIL)
+        player_data->container_was_loaded(data->container_id);
+    else
+    if (reply->type == REDIS_REPLY_ERROR)
+    {
+        GS_ASSERT(reply->type != REDIS_REPLY_ERROR);
+        printf("Loading player %d container %d failed with redis error: %s\n", player_data->user_id, data->container_id, reply->str); 
+    }
+
+    player_container_load_data_list->destroy(data->id);
+}
+
 size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
 {
     // TODO -- check/acquire global id
@@ -533,7 +583,8 @@ const char* write_player_container_string(int container_id, UserID user_id)
     size_t ibuf = 0;
     
     // write header
-    int could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_CONTAINER_HEADER_FMT, container_name, user_id, container->slot_count);
+    int could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_CONTAINER_HEADER_FMT,
+        container_name, user_id, container->slot_count);
     GS_ASSERT(could_write > 0 && (size_t)could_write < SRL_BUF_SIZE - ibuf);
     if (could_write <= 0 || (size_t)could_write >= SRL_BUF_SIZE - ibuf) return NULL;
     ibuf += (size_t)could_write;
@@ -553,8 +604,30 @@ const char* write_player_container_string(int container_id, UserID user_id)
     return _srl_buf;
 }
 
-bool save_player_container(int client_id, int container_id)
+const char* write_player_string(AgentID agent_id)
 {
+    class Agent_state* agent = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(agent != NULL);
+    if (agent == NULL) return NULL;
+
+    size_t ibuf = 0;
+
+    int could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_DATA_FMT,
+        agent->status.color.r, agent->status.color.g, agent->status.color.b,
+        agent->status.spawner);
+    GS_ASSERT(could_write > 0 && (size_t)could_write < SRL_BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= SRL_BUF_SIZE - ibuf) return NULL;
+    ibuf += could_write;
+
+    return _srl_buf;
+    
+}
+
+bool save_player_container(ClientID client_id, int container_id)
+{
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return false;
+    
     NetPeerManager* client = NetServer::get_client(client_id);
     GS_ASSERT(client != NULL);
     if (client == NULL) return false;
@@ -572,69 +645,38 @@ bool save_player_container(int client_id, int container_id)
     if (container_string == NULL) return false;
 
     int ret = redisAsyncCommand(ctx, NULL, NULL,
-        "SET %s:%d %s", location_name, client->user_id,
-        container_string);
+        "SET %s:%d %s", location_name, client->user_id, container_string);
 
+    GS_ASSERT(ret == REDIS_OK);
     return (ret == REDIS_OK);
 }
 
-void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
+bool save_player(UserID user_id, AgentID agent_id)
 {
-    class PlayerLoadData* data = (class PlayerLoadData*)_data;
-    redisReply* reply = (redisReply*)_reply;
-
-    if (reply->type == REDIS_REPLY_STRING)
-    {
-        // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
-        data->player_data_was_loaded();
-    }
-    else
-    if (reply->type == REDIS_REPLY_NIL)
-        data->player_data_was_loaded();
-    else
-    if (reply->type == REDIS_REPLY_ERROR)
-    {
-        GS_ASSERT(reply->type != REDIS_REPLY_ERROR);
-        printf("Loading player %d failed with redis error: %s\n", data->user_id, reply->str); 
-    }
+    ASSERT_VALID_USER_ID(user_id);
+    IF_INVALID_USER_ID(user_id) return false;
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return false;
     
-    player_load_data_list->destroy(data->id);
-}
-
-void player_container_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
-{
-    redisReply* reply = (redisReply*)_reply;
-    class PlayerContainerLoadData* data = (class PlayerContainerLoadData*)_data;
-    class PlayerLoadData* player_data = player_load_data_list->get(data->player_data_id);
-    GS_ASSERT(player_data != NULL);
-    if (player_data == NULL) return;    // TODO -- better handling
+    const char* player_string = write_player_string(agent_id);
+    GS_ASSERT(player_string != NULL);
+    if (player_string == NULL) return false;
     
-    if (reply->type == REDIS_REPLY_STRING)
-    {
-        process_player_container_blob(reply->str, player_data, data);
-        // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
-        player_data->container_was_loaded(data->container_id);
-    }
-    else
-    if (reply->type == REDIS_REPLY_NIL)
-        player_data->container_was_loaded(data->container_id);
-    else
-    if (reply->type == REDIS_REPLY_ERROR)
-    {
-        GS_ASSERT(reply->type != REDIS_REPLY_ERROR);
-        printf("Loading player %d container %d failed with redis error: %s\n", player_data->user_id, data->container_id, reply->str); 
-    }
+    int ret = redisAsyncCommand(ctx, NULL, NULL,
+        "SET " PLAYER_REDIS_KEY_PREFIX "%d %s", user_id, player_string);
 
-    player_container_load_data_list->destroy(data->id);
+    GS_ASSERT(ret == REDIS_OK);
+    return (ret == REDIS_OK);
 }
 
 int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id)
 {
-    GS_ASSERT(user_id != NULL_USER_ID);
-    GS_ASSERT(client_id != NULL_CLIENT);
-    GS_ASSERT(agent_id != NULL_AGENT);
-    if (user_id == NULL_USER_ID || client_id == NULL_CLIENT || agent_id == NULL_AGENT)
-        return -1;
+    ASSERT_VALID_USER_ID(user_id);
+    IF_INVALID_USER_ID(user_id) return -1;
+    ASSERT_VALID_AGENT_ID(agent_id);
+    IF_INVALID_AGENT_ID(agent_id) return -1;
+    ASSERT_VALID_CLIENT_ID(client_id);
+    IF_INVALID_CLIENT_ID(client_id) return -1;
 
     class PlayerLoadData* data = player_load_data_list->create();
     GS_ASSERT(data != NULL);
