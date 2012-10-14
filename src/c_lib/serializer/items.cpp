@@ -491,8 +491,13 @@ size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
         item->durability,
         item->stack_size,
         item->container_slot);
-        
-    if (could_write <= 0 || (size_t)could_write >= buffer_size) return 0;
+
+    if (could_write < 0) return could_write;
+    if ((size_t)could_write >= buffer_size)
+    {
+        buf[0] = '\0';
+        return 0;
+    }
     
     buf[could_write++] = '\n';
 
@@ -500,19 +505,19 @@ size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
 }
 
 // returns 0 on failure. can also return 0 if there are no container contents, so check the container first
-size_t write_container_contents_string(char* buf, size_t buffer_size, const class ItemContainer::ItemContainerInterface* container)
+int write_container_contents_string(char* buf, size_t buffer_size, const class ItemContainer::ItemContainerInterface* container)
 {
     size_t ibuf = 0;
     for (int i=0; i<container->slot_max; i++)
         if (container->slot[i] != NULL_ITEM)
         {
             int could_write = write_item_string(&buf[ibuf], buffer_size - ibuf, container->slot[i]);
-            GS_ASSERT(could_write > 0 && (size_t)could_write < buffer_size - ibuf);
-            if (could_write <= 0 || (size_t)could_write >= buffer_size - ibuf) return 0;    // error
+            if (could_write < 0) return could_write;                    // c lib printf returned error
+            if ((size_t)could_write >= buffer_size - ibuf) return 0;    // ran out of buffer space
             ibuf += (size_t)could_write;
         }
     buf[ibuf] = '\0';
-    return ibuf;
+    return (int)ibuf;
 }
 
 const char* write_player_container_string(int container_id, UserID user_id)
@@ -538,9 +543,9 @@ const char* write_player_container_string(int container_id, UserID user_id)
 
     if (container->slot_count > 0)
     {   // we must check the slot count, because write_container_contents_string returns 0 on error or if the container is empty
-        could_write = write_container_contents_string(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, container);
-        if (could_write == 0) return NULL;  // error
-        ibuf += could_write;
+        size_t wrote = write_container_contents_string(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, container);
+        if (wrote <= 0) return NULL;  // error
+        ibuf += wrote;
     }
     
     _srl_buf[ibuf] = '\0';
