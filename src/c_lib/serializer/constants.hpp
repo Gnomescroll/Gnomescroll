@@ -10,6 +10,8 @@
  * DONT USE ENUMS FOR DATA THAT LIVES OUTSIDE OF THE GAME SERVER INSTANCE
  */
 
+// 9223372036854775807 -- signed 64bit int max (redis global id max)
+
 #include <item/container/config/_state.hpp>
 
 namespace serializer
@@ -22,50 +24,115 @@ namespace serializer
 #define MECH_DATA_PATH DATA_PATH "mechs/"
 #define MAP_DATA_EXT  ".map"
 #define MECH_DATA_EXT ".mch"
-const char default_map_file[] = MAP_DATA_PATH "map-" STR(GS_VERSION) MAP_DATA_EXT;
-const char mech_filename[] = MECH_DATA_PATH "mech-" STR(GS_VERSION) MECH_DATA_EXT;
+const char default_map_file[] = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT;
+const char mech_filename[] = MECH_DATA_PATH "mech-" GS_STR(GS_VERSION) MECH_DATA_EXT;
 
 
 /*
  * REDIS DATA
  */
 
-const int redis_timeout = 300;  // seconds
-const int keep_alive_rate = (300*30)/2; // send keep-alive halfway
+const int REDIS_TIMEOUT = 300;  // seconds
+const int KEEP_ALIVE_RATE = (300*30)/2; // send keep-alive halfway
 
 // Cached data queues
+const unsigned int PLAYER_LOAD_DATA_LIST_INITIAL_SIZE = NetServer::HARD_MAX_CONNECTIONS;
 const unsigned int PLAYER_LOAD_DATA_LIST_HARD_MAX = 128;
-const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = 128;
-const unsigned int PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX = 8192;
-const unsigned int PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX = 8192;
+const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_INITIAL_SIZE = PLAYER_LOAD_DATA_LIST_INITIAL_SIZE * N_PLAYER_CONTAINERS;
+const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = PLAYER_LOAD_DATA_LIST_HARD_MAX * N_PLAYER_CONTAINERS;
 
-const unsigned int EXPECTED_ITEM_HASH_FIELDS = 7;
+// DONT CHANGE THESE:
 
-// DONT CHANGE THESE
+#define LOCATION_NAME_MAX_LENGTH 24
+
+const unsigned int TAG_LENGTH = 3;
+const unsigned int TAG_DELIMITER_LENGTH = 1;
+const unsigned int PROPERTY_DELIMITER_LENGTH = 1;
+
+#define USER_ID_TAG         "UID"
+#define GLOBAL_ID_TAG       "GID"
+#define NAME_TAG            "NAM"
+#define DURABILITY_TAG      "DUR"
+#define STACK_SIZE_TAG      "STA"
+#define CONTAINER_SLOT_TAG  "CSL"
+#define CONTAINER_COUNT_TAG "CNT"
+
+#define PROPERTY_DELIMITER ";"
+#define TAG_DELIMITER "="
+
+#define PLAYER_CONTAINER_USER_ID_LENGTH 10
+#define PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH 3
+
+#define ITEM_GLOBAL_ID_LENGTH 10
+#define ITEM_DURABILITY_LENGTH 5
+#define ITEM_STACK_SIZE_LENGTH 5
+#define ITEM_CONTAINER_SLOT_LENGTH 3
+
+const unsigned int PLAYER_CONTAINER_FIELD_COUNT = 3;
+const unsigned int ITEM_FIELD_COUNT = 5;
+
+// These values are just for reference and should not be relied upon
+// A line's property count is subject to change, invalidating these lengths for anything saved before the change
+const size_t PLAYER_CONTAINER_LINE_LENGTH =
+       PLAYER_CONTAINER_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (PLAYER_CONTAINER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + CONTAINER_NAME_MAX_LENGTH
+    + PLAYER_CONTAINER_USER_ID_LENGTH
+    + PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH;
+
+const size_t ITEM_LINE_LENGTH =
+       ITEM_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (ITEM_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + ITEM_GLOBAL_ID_LENGTH
+    + ITEM_NAME_MAX_LENGTH
+    + ITEM_DURABILITY_LENGTH
+    + ITEM_STACK_SIZE_LENGTH
+    + ITEM_CONTAINER_SLOT_LENGTH;
+
+const char PLAYER_CONTAINER_HEADER_FMT[] =
+    NAME_TAG            TAG_DELIMITER
+        "%-" GS_STR(CONTAINER_NAME_MAX_LENGTH)               "s"
+        PROPERTY_DELIMITER
+    USER_ID_TAG         TAG_DELIMITER
+        "%0" GS_STR(PLAYER_CONTAINER_USER_ID_LENGTH)         "d"
+        PROPERTY_DELIMITER
+    CONTAINER_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH) "d";
+    
+const char ITEM_FMT[] =
+    GLOBAL_ID_TAG      TAG_DELIMITER
+        "%0" GS_STR(ITEM_GLOBAL_ID_LENGTH)      "d"
+        PROPERTY_DELIMITER
+    NAME_TAG           TAG_DELIMITER
+        "%-" GS_STR(ITEM_NAME_MAX_LENGTH)       "s"
+        PROPERTY_DELIMITER
+    DURABILITY_TAG     TAG_DELIMITER
+        "%0" GS_STR(ITEM_DURABILITY_LENGTH)     "d"
+        PROPERTY_DELIMITER
+    STACK_SIZE_TAG     TAG_DELIMITER
+        "%0" GS_STR(ITEM_STACK_SIZE_LENGTH)     "d"
+        PROPERTY_DELIMITER
+    CONTAINER_SLOT_TAG TAG_DELIMITER
+        "%0" GS_STR(ITEM_CONTAINER_SLOT_LENGTH) "d";
+
+#define PLAYER_REDIS_KEY_PREFIX "player:"
+
 #define CONTAINER_LOCATION_NAME "container"
-#define PARTICLE_LOCATION_NAME "particle"
+#define PARTICLE_LOCATION_NAME  "particle"
 
-#define PLAYER_CONTAINER_LOCATION_PREFIX "player:"
+#define PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_REDIS_KEY_PREFIX
 
-#define PLAYER_INVENTORY_LOCATION_SUBNAME "inventory"
+#define PLAYER_HAND_LOCATION_SUBNAME         "hand"
+#define PLAYER_TOOLBELT_LOCATION_SUBNAME     "toolbelt"
+#define PLAYER_INVENTORY_LOCATION_SUBNAME    "inventory"
+#define PLAYER_SYNTHESIZER_LOCATION_SUBNAME  "synthesizer"
 #define PLAYER_ENERGY_TANKS_LOCATION_SUBNAME "energy_tanks"
-#define PLAYER_SYNTHESIZER_LOCATION_SUBNAME "synthesizer"
-#define PLAYER_TOOLBELT_LOCATION_SUBNAME "toolbelt"
-#define PLAYER_HAND_LOCATION_SUBNAME "hand"
 
-#define PLAYER_INVENTORY_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_INVENTORY_LOCATION_SUBNAME
+#define PLAYER_HAND_LOCATION_NAME         PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_HAND_LOCATION_SUBNAME
+#define PLAYER_TOOLBELT_LOCATION_NAME     PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_TOOLBELT_LOCATION_SUBNAME
+#define PLAYER_INVENTORY_LOCATION_NAME    PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_INVENTORY_LOCATION_SUBNAME
+#define PLAYER_SYNTHESIZER_LOCATION_NAME  PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_SYNTHESIZER_LOCATION_SUBNAME
 #define PLAYER_ENERGY_TANKS_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_ENERGY_TANKS_LOCATION_SUBNAME
-#define PLAYER_SYNTHESIZER_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_SYNTHESIZER_LOCATION_SUBNAME
-#define PLAYER_TOOLBELT_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_TOOLBELT_LOCATION_SUBNAME
-#define PLAYER_HAND_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_HAND_LOCATION_SUBNAME
-
-const char ITEM_GUID_KEYNAME[] = "global_id";
-const char ITEM_NAME_KEYNAME[] = "name";
-const char ITEM_DURABILITY_KEYNAME[] = "durability";
-const char ITEM_STACK_SIZE_KEYNAME[] = "stack_size";
-const char ITEM_LOCATION_KEYNAME[] = "location";
-const char ITEM_LOCATION_ID_KEYNAME[] = "location_id";
-const char ITEM_CONTAINER_SLOT_KEYNAME[] = "container_slot";
 
 // The following are not safe to store -- they are only valid per compilation. Only strings are safe
 
@@ -108,11 +175,10 @@ const char* get_location_name(LocationNameID loc_id)
     return NULL;
 }
 
-LocationNameID get_player_location_name_id(ItemContainerType container_type)
+LocationNameID get_container_location_name_id(ItemContainerType container_type)
 {
     switch (container_type)
     {
-
         case AGENT_INVENTORY:
             return LN_PLAYER_INVENTORY;
         case AGENT_TOOLBELT:
@@ -124,6 +190,14 @@ LocationNameID get_player_location_name_id(ItemContainerType container_type)
         case AGENT_HAND:
             return LN_PLAYER_HAND;
 
+        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
+        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
+        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
+        case CONTAINER_TYPE_SMELTER_ONE:
+        case CONTAINER_TYPE_CRUSHER:
+            return LN_CONTAINER;
+        
+        case CONTAINER_TYPE_NONE:
         default:
             GS_ASSERT(false);
             return LN_NONE;
@@ -131,6 +205,25 @@ LocationNameID get_player_location_name_id(ItemContainerType container_type)
     GS_ASSERT(false);
     return LN_NONE;
 }
+
+inline bool is_valid_location_name_char(char c)
+{
+    return (isalnum(c) || c == ':' || c == '_' || c == '-');
+}
+
+bool is_valid_location_name(const char* name)
+{
+    int i = 0;
+    char c;
+    while (i < LOCATION_NAME_MAX_LENGTH && (c = name[i]) != '\0')
+    {
+        if (!is_valid_location_name_char(c))
+            return false;
+        i++;
+    }
+    return (i < LOCATION_NAME_MAX_LENGTH || name[i] == '\0');
+}
+
 
 void verify_config()
 {
@@ -195,6 +288,48 @@ void verify_config()
     GS_ASSERT_ABORT(agent_synthesizer_found);
     GS_ASSERT_ABORT(agent_energy_tanks_found);
     GS_ASSERT_ABORT(agent_hand_found);
+
+    // length of location names
+    GS_ASSERT_ABORT(strlen(CONTAINER_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PARTICLE_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_INVENTORY_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_ENERGY_TANKS_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_SYNTHESIZER_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_TOOLBELT_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_HAND_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+
+    GS_ASSERT_ABORT(is_valid_location_name(CONTAINER_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PARTICLE_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_INVENTORY_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_ENERGY_TANKS_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_SYNTHESIZER_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_TOOLBELT_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_HAND_LOCATION_NAME));
+
+    GS_ASSERT_ABORT(PROPERTY_DELIMITER_LENGTH == 1);
+    GS_ASSERT_ABORT(TAG_DELIMITER_LENGTH == 1);
+
+    // semicolon is reserved for redis key format, which may need to link back to the redis key
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, ":") == NULL);
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strlen(TAG_DELIMITER) == TAG_DELIMITER_LENGTH);
+
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, ":") == NULL);
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strlen(PROPERTY_DELIMITER) == PROPERTY_DELIMITER_LENGTH);
+
+    GS_ASSERT_ABORT(strcmp(TAG_DELIMITER, PROPERTY_DELIMITER) != 0);
+
+    GS_ASSERT_ABORT(strlen(GLOBAL_ID_TAG) == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(NAME_TAG) == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(DURABILITY_TAG) == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(STACK_SIZE_TAG) == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(CONTAINER_SLOT_TAG) == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(CONTAINER_COUNT_TAG) == TAG_LENGTH);
+
+    // THIS NUMBER CAN NEVER GO LOWER
+    GS_ASSERT_ABORT(ITEM_LINE_LENGTH >= 71);
+    GS_ASSERT_ABORT(PLAYER_CONTAINER_LINE_LENGTH >= 51);
 }
 
 }   // serializer

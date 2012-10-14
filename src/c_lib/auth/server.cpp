@@ -24,7 +24,7 @@ unsigned char* secret_key = NULL;   // hex str converted to bytes
 // Init loaders
 void load_secret_key()
 {    
-    int size = 0;
+    size_t size = 0;
     char* buf = read_file_to_buffer(SECRET_KEY_PATH, &size);
     GS_ASSERT(buf != NULL);
     if (buf == NULL) return;

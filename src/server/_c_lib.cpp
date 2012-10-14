@@ -18,6 +18,10 @@ dont_include_this_file_in_client
 # define UINT32_MAX (0xffffffff)
 #endif
 
+#ifndef INT32_MAX
+# define INT32_MAX (0x7FFFFFFF)
+#endif
+
 #ifdef __GNUC__
 # include <unistd.h>
 #endif

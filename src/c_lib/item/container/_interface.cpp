@@ -168,6 +168,13 @@ void destroy_container(int id)
     for (int i=0; i<AGENT_MAX; i++)
         if (opened_containers[i] == id)
             agent_close_container(i, opened_containers[i]);
+
+    // destroy the container's contents
+    // NOTE: if you want to do something with the contents, like throw them on the
+    // ground, do it before this function
+    for (int i=0; i<container->slot_max; i++)
+        if (container->slot[i] != NULL_ITEM)
+            Item::destroy_item(container->slot[i]);
     #endif
 
     item_container_list->destroy(id);
@@ -996,18 +1003,18 @@ void agent_died(int agent_id)
     GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
 }
 
-static void save_agent_containers(int client_id, int agent_id, bool remove_items_after)
+static void save_agent_containers(int client_id, int agent_id)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
     
-    serializer::save_player_container(client_id, agent_inventory_list[agent_id], remove_items_after);
-    serializer::save_player_container(client_id, agent_synthesizer_list[agent_id], remove_items_after);
-    serializer::save_player_container(client_id, agent_toolbelt_list[agent_id], remove_items_after);
-    serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id], remove_items_after);
-    serializer::save_player_container(client_id, agent_hand_list[agent_id], remove_items_after);
+    serializer::save_player_container(client_id, agent_inventory_list[agent_id]);
+    serializer::save_player_container(client_id, agent_synthesizer_list[agent_id]);
+    serializer::save_player_container(client_id, agent_toolbelt_list[agent_id]);
+    serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id]);
+    serializer::save_player_container(client_id, agent_hand_list[agent_id]);
 }
 
 void dump_agent_containers(int client_id, int agent_id)
@@ -1058,7 +1065,7 @@ void agent_quit(int agent_id)
     GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
 
     if (Options::serializer)
-        save_agent_containers(a->client_id, a->id, true);    // remove items after
+        save_agent_containers(a->client_id, a->id);
     else
         dump_agent_containers(a->client_id, a->id);
 
@@ -1683,7 +1690,7 @@ bool load_item_into_container(ItemID item_id, int container_id, int container_sl
     return transfer_free_item_to_container(item_id, container_id, container_slot);
 }
 
-bool load_item_into_hand(ItemID item_id, int agent_id)
+bool load_item_into_hand(ItemID item_id, AgentID agent_id)
 {
     return transfer_free_item_to_hand(item_id, agent_id);
 }

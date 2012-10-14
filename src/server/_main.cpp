@@ -45,7 +45,7 @@ void init(int argc, char* argv[])
         default_map_gen();
         #else
         // load map file by default in development mode; decreases startup time
-        const char default_map[] = "./world/map/map-" STR(GS_VERSION) ".map";
+        const char default_map[] = "./world/map/map-" GS_STR(GS_VERSION) ".map";
         if (file_exists(default_map))
             serializer::load_map(default_map);
         else
@@ -68,8 +68,8 @@ void init(int argc, char* argv[])
 
         //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
     
-        t_gen::generate_ruins();
-        t_gen::add_terrain_features();
+        //t_gen::generate_ruins();
+        //t_gen::add_terrain_features();
     }
     else
     {

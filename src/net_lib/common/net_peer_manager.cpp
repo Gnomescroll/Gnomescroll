@@ -112,7 +112,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
     if (Options::serializer)
     {
-        int serializer_id = serializer::begin_player_load(this->user_id, this->client_id);
+        int serializer_id = serializer::begin_player_load(this->user_id, this->client_id, this->agent_id);
         GS_ASSERT(serializer_id >= 0);
         if (serializer_id < 0) return;  // TODO -- force disconnect agent with error
         int n_player_containers = 0;

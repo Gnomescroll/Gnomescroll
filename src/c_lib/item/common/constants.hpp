@@ -3,6 +3,10 @@
 #include <agent/constants.hpp>
 #include <item/common/enum.hpp>
 
+// DON'T CHANGE THIS -- the serializer uses it. that's also why its a macro
+#define ITEM_NAME_MAX_LENGTH 24
+#define CONTAINER_NAME_MAX_LENGTH 24
+
 const int MAX_ITEMS = NULL_ITEM;
 const int ITEM_LIST_HARD_MAX = MAX_ITEMS;
 
@@ -25,6 +29,8 @@ const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful fo
 // and you should use the appropriate functions defined in properties.hpp
 const int MAX_STACK_SIZE = 0xffff;
 const int MAX_DURABILITY = 0xffff;
+
+const unsigned int MAX_CONTAINER_SIZE = 0xff - 1;
 
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
