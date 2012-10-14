@@ -68,26 +68,13 @@ struct Rect3D {
 	Rect3D() { x = y = z = wid = dep = hei = 0;	}
 };
 
-struct Room {
+struct Room : Rect3D{
     direction_type_t dir_types[DIR_MAX];
     int wall_block;
     int floor_block;
-
-    int x_offs;
-    int y_offs;
-    int wid; // width
-    int dep; // depth
-    int hei; // height
-    int e_hall_hei;
-    int e_hall_wid;
-    int e_hall_offs; // east hall offset
-    int n_hall_hei;
-    int n_hall_wid;
-    int n_hall_offs; // north hall offset
-    int air_x; // pos of a region that guarantees airspace, atm only used for stairways
-    int air_y;
-    int air_w; // width of air region
-    int air_d; // depth
+    Rect3D eh; // east hall
+    Rect3D nh; // north hall
+    Rect air; // a region that guarantees airspace, only used for stairways
 };
 
 Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
@@ -124,27 +111,27 @@ bool far_west_cube(int x) {
 
 bool w_of_n_opening(int rx, int ry, int rz, int cx) {
     return
-        cx < rooms[rz][ry][rx].n_hall_offs;
+        cx < rooms[rz][ry][rx].nh.x;
 }
 bool e_of_n_opening(int rx, int ry, int rz, int cx) {
     return
-        cx >= rooms[rz][ry][rx].n_hall_offs
-        /**/ + rooms[rz][ry][rx].n_hall_wid;
+        cx >= rooms[rz][ry][rx].nh.x
+        /**/ + rooms[rz][ry][rx].nh.wid;
 }
 
 bool s_of_e_opening(int rx, int ry, int rz, int cy) {
     return
-        cy < rooms[rz][ry][rx].e_hall_offs;
+        cy < rooms[rz][ry][rx].eh.y;
 }
 bool s_edge_of_e_opening(Room r, int cx, int cy, int cz) {
     return
-        cy == r.e_hall_offs - 1 && cz <= r.e_hall_hei; // && far_east_cube(cx); shouldn't be needed now that halls use min_lip
+        cy == r.eh.y - 1 && cz <= r.eh.hei; // && far_east_cube(cx); shouldn't be needed now that halls use min_lip
 }
 
 bool n_of_e_opening(int rx, int ry, int rz, int cy) {
     return
-        cy >= rooms[rz][ry][rx].e_hall_offs
-        /**/ + rooms[rz][ry][rx].e_hall_wid;
+        cy >= rooms[rz][ry][rx].eh.y
+        /**/ + rooms[rz][ry][rx].eh.dep;
 }
 
 bool not_in_n_hall(int rx, int ry, int rz, int cx) {
@@ -163,8 +150,8 @@ bool opens_to(direction_t dir, IntVec3 ri) { // room index
 }
 
 bool in_air_region(Room r, int x, int y) {
-    if (x >= r.air_x && x < r.air_x + r.air_w &&
-        y >= r.air_y && y < r.air_y + r.air_d) return true;
+    if (x >= r.air.x && x < r.air.x + r.air.wid &&
+        y >= r.air.y && y < r.air.y + r.air.dep) return true;
     return false;
 }
 
@@ -203,13 +190,13 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
        // // do east
        // int mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
        // if (opens_to(DIR_SOUTH, rx, ry, rz))
-       //     mid = rooms[rz][ry - 1][rx].n_hall_offs + rooms[rz][ry - 1][rx].n_hall_wid;
+       //     mid = rooms[rz][ry - 1][rx].nh.x + rooms[rz][ry - 1][rx].nh.wid;
        // if (cx >= mid /*&& cy < fixed_hall_offs*/) {
        //     switch (r.dir_types[DIR_EAST]) {
        //         case DIRTYPE_HALL:
-       //             if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
+       //             if (far_east_cube(cx) && cz >= r.eh.hei) { // make blocks above opening
        //                 need_block = true;
-       //                 if (cz == r.e_hall_hei && 
+       //                 if (cz == r.eh.hei && 
        //                     !s_of_e_opening(rx, ry, rz, cy) &&
        //                     !n_of_e_opening(rx, ry, rz, cy) )
        //                     block = r.floor_block;
@@ -221,9 +208,9 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
        //                 (cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)
        //                 ) block = r.floor_block; break;
        //         case DIRTYPE_DOOR:
-       //             if (far_east_cube(cx) && cz >= r.e_hall_hei) { // make blocks above opening
+       //             if (far_east_cube(cx) && cz >= r.eh.hei) { // make blocks above opening
        //                 need_block = true;
-       //                 if (cz == r.e_hall_hei && 
+       //                 if (cz == r.eh.hei && 
        //                     !s_of_e_opening(rx, ry, rz, cy) &&
        //                     !n_of_e_opening(rx, ry, rz, cy) )
        //                     block = r.floor_block;
@@ -235,7 +222,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 							//(cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)) 
 							//block = r.floor_block; } break;
        //         default: // all blockers PLUS currently open air space connection
-       //             if (cx >= r.x_offs + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
+       //             if (cx >= r.x + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
        //                 need_block = true; break;
        //     }
        // }
@@ -243,18 +230,18 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
        // // do west
        // mid = fixed_hall_offs; // cubes_across_room / 2;
        // if (opens_to(DIR_NORTH, rx, ry, rz))
-       //     mid = r.n_hall_offs;
+       //     mid = r.nh.x;
        // if (cx < mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
        //     switch (r.dir_types[DIR_WEST]) {
        //         case DIRTYPE_HALL:
-       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].e_hall_hei)  need_block = true; // make blocks above opening
+       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].eh.hei)  need_block = true; // make blocks above opening
        //             if (n_of_e_opening(rx - 1, ry, rz, cy)) need_block = true; break;
        //         case DIRTYPE_DOOR:
-       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].e_hall_hei)  need_block = true; // make blocks above opening
+       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].eh.hei)  need_block = true; // make blocks above opening
        //             if (far_west_cube(cx) || far_north_cube(cy))
        //                 if (n_of_e_opening(rx - 1, ry, rz, cy)) need_block = true; break;
        //         default: // all blockers PLUS currently open air space connection
-       //             if (cx < r.x_offs /*far_west_cube(cx)*/ || far_north_cube(cy))
+       //             if (cx < r.x /*far_west_cube(cx)*/ || far_north_cube(cy))
        //                 need_block = true; break;
        //     }
        // }
@@ -262,7 +249,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
        // // do north
        // mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
        // if (opens_to(DIR_EAST, rx, ry, rz))
-       //     mid = r.e_hall_offs + r.e_hall_wid;
+       //     mid = r.eh.y + r.eh.dep;
        // if (cy >= mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
        //     switch (r.dir_types[DIR_NORTH]) {
        //         case DIRTYPE_HALL:
@@ -273,18 +260,23 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
        //             if (far_north_cube(cy) || far_east_cube(cx))
        //                 if (e_of_n_opening(rx, ry, rz, cx)) need_block = true; break;
        //         default: // all blockers PLUS currently open air space connection
-       //             if (cy >= r.y_offs + r.dep /*far_north_cube(cy)*/ || far_east_cube(cx))
+       //             if (cy >= r.y + r.dep /*far_north_cube(cy)*/ || far_east_cube(cx))
        //                 need_block = true; break;
        //     }
        // }
 
         // do south
+
+
+
+
         Rect ne, se, sw, nw; // corner of room to fill w/ blocks
-		Rect3D nh, sh, eh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
+		Rect3D sh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
+        int half = cubes_across_room / 2;
 
         if (opens_to(DIR_WEST, ri) ) {
 			// corner
-            sw.dep = rooms[ri.z][ri.y][ri.x - 1].e_hall_offs;
+            sw.dep = rooms[ri.z][ri.y][ri.x - 1].eh.y;
 			// other hall
             sh.dep = sw.dep;//////////// lintel depth determined by whichver is further out   
 
@@ -292,59 +284,82 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 			wh.x   = 0;
             wh.y   = sw.dep - 1;
             wh.z   = 1;
-            wh.dep = rooms[ri.z][ri.y][ri.x - 1].e_hall_wid + 2;
-            wh.hei = rooms[ri.z][ri.y][ri.x - 1].e_hall_hei + 1;
+            wh.dep = rooms[ri.z][ri.y][ri.x - 1].eh.wid + 2;
+            wh.hei = rooms[ri.z][ri.y][ri.x - 1].eh.hei + 1;
 
             if (far_west_cube(cx) && cz >= wh.hei)  need_block = true; // make lintel
 		} else { // dir is blocked
-            sh.dep = sw.dep = cubes_across_room / 2;
-			if (cx < r.x_offs)  need_block = true;
+            nw.dep = sw.dep = half;
+            sw.dep = sw.dep = half;
+            r.nh.dep = sw.dep = half;
+            sh.dep = sw.dep = half;
+			if (cx < r.x)  need_block = true;
 		}
 
         if (opens_to(DIR_SOUTH, ri)) {
 			// corner
-            sw.wid = rooms[ri.z][ri.y - 1][ri.x].n_hall_offs;
-			se.x   = rooms[ri.z][ri.y - 1][ri.x].n_hall_wid   + sw.wid;
+            sw.wid = rooms[ri.z][ri.y - 1][ri.x].nh.x;
+			se.x   = rooms[ri.z][ri.y - 1][ri.x].nh.wid   + sw.wid;
 			se.wid = cubes_across_room - se.x;
 			// this hall
             sh.x   = sw.wid - 1;
 			sh.y   = 0;
 			sh.z   = 1;
-			sh.wid = rooms[ri.z][ri.y - 1][ri.x].n_hall_wid + 2;
-			sh.hei = rooms[ri.z][ri.y - 1][ri.x].n_hall_hei + 1;
+			sh.wid = rooms[ri.z][ri.y - 1][ri.x].nh.wid + 2;
+			sh.hei = rooms[ri.z][ri.y - 1][ri.x].nh.hei + 1;
 			// other hall
 			wh.wid = sw.wid; ///////////// lintel depth determined by whichver is further out   
-			eh.wid = se.wid;
-			eh.x   = sw.wid + sh.wid;
+			r.eh.wid = se.wid;
+			r.eh.x   = sw.wid + sh.wid;
 
             if (far_south_cube(cy) && cz >= sh.hei)  need_block = true; // make lintel
         } else { // dir is blocked
-			sw.wid = cubes_across_room / 2;
-			se.wid = cubes_across_room / 2; //???????????????
-			wh.wid = cubes_across_room / 2;
-			eh.wid = cubes_across_room / 2;
-			eh.x   = cubes_across_room - eh.wid;
-			if (cy < r.y_offs)  need_block = true;
+			sw.wid = half;
+			se.wid = half;
+			wh.wid = half;
+			r.eh.wid = half;
+			r.eh.x   = cubes_across_room - half;
+			if (cy < r.y)  need_block = true;
 		}
 
         if (opens_to(DIR_EAST, ri) ) {
-			// corner
-			//se.y =   0;
-            se.dep = r.e_hall_offs;
-			// other hall
+            // corner
+            //se.y =   0;
+            se.dep = r.eh.y;
+            // other hall
             sh.dep = se.dep;//////////// LINKED TO AAN ELSE SITCH
-			// this hall
-            eh.y   = se.dep - 1;
-            eh.z   = 1;
-            eh.dep = r.e_hall_wid + 2;
-            eh.hei = r.e_hall_hei + 1;
+            // this hall
+            r.eh.y   = se.dep - 1;
+            r.eh.z   = 1;
+            r.eh.dep = r.eh.dep + 2;
+            r.eh.hei = r.eh.hei + 1;
 
-            if (far_east_cube(cx) && cz >= eh.hei)  need_block = true; // make lintel
-		} else { // dir is blocked
-            sh.dep = cubes_across_room / 2;
-			se.dep = cubes_across_room / 2;
-			if (cx >= r.x_offs + r.wid)  need_block = true;
-		}
+            if (far_east_cube(cx) && cz >= r.eh.hei)  need_block = true; // make lintel
+        } else { // dir is blocked
+            ne.dep = half;
+            se.dep = half;
+            r.nh.dep = half;
+            sh.dep = half;
+            if (cx >= r.x + r.wid)  need_block = true;
+        }
+
+        if (opens_to(DIR_NORTH, ri) ) {
+            // this hall
+            // corner
+            ////////////////////ne.x = ;
+            ////////////////////ne.y = ;
+            ////////////////////ne.wid = ;
+            ////////////////////ne.dep = ;
+            // other hall
+
+            if (far_east_cube(cx) && cz >= r.eh.hei)  need_block = true; // make lintel
+        } else { // dir is blocked
+            ne.wid = half;
+            nw.wid = half;
+            r.eh.wid = half;
+            wh.wid = half;
+            if (cx >= r.x + r.wid)  need_block = true;
+        }
 
         
 		
@@ -361,10 +376,10 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
         if (need_block) {
 			// change rim/frame blocks
-			if (rect_contains(nh, cx, cy, cz) || 
-				rect_contains(sh, cx, cy, cz) || 
-				rect_contains(eh, cx, cy, cz) || 
-				rect_contains(wh, cx, cy, cz) 
+			if (rect_contains(r.nh, cx, cy, cz) || 
+				rect_contains(sh,   cx, cy, cz) || 
+				rect_contains(r.eh, cx, cy, cz) || 
+				rect_contains(wh,   cx, cy, cz) 
 			) block = r.floor_block;
 	        
 			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
@@ -400,10 +415,10 @@ void make_stairs(int rx, int ry, int rz, int ox, int oy, int floor_block) { // r
 
 Room setup_stairspace_for(direction_t d, Room r) {
     r.dir_types[d] = DIRTYPE_STAIRS;
-    r.air_x = fixed_stair_x - 2;
-    r.air_y = fixed_stair_y - 2;
-    r.air_w = fixed_stair_w + 4;
-    r.air_d = fixed_stair_d + 4;
+    r.air.x = fixed_stair_x - 2;
+    r.air.y = fixed_stair_y - 2;
+    r.air.wid = fixed_stair_w + 4;
+    r.air.dep = fixed_stair_d + 4;
     return r;
 }
 
@@ -432,13 +447,13 @@ void setup_rooms() {
             malleable_x_span -= r.wid;
             malleable_y_span -= r.dep;
             malleable_z_span -= r.hei;
-            r.x_offs = 1 /* shell */ + randrange(0, malleable_x_span);
-            r.y_offs = 1 /* shell */ + randrange(0, malleable_y_span);
+            r.x = 1 /* shell */ + randrange(0, malleable_x_span);
+            r.y = 1 /* shell */ + randrange(0, malleable_y_span);
 
-            //r.e_hall_hei = randrange(2, malleable_z_span);
-            //r.n_hall_hei = randrange(2, malleable_z_span);
-            r.e_hall_hei = randrange(3, 4);
-            r.n_hall_hei = randrange(3, 4);
+            //r.eh.hei = randrange(2, malleable_z_span);
+            //r.nh.hei = randrange(2, malleable_z_span);
+            r.eh.hei = randrange(3, 4);     r.eh.z = 1;
+            r.nh.hei = randrange(3, 4);     r.nh.z = 1;
 
 
             // now that i chose my offset, it could have eaten into MALLEABLE span, and i don't think i'm considering that here!
@@ -447,15 +462,15 @@ void setup_rooms() {
             // reset malleables, for working INSIDE AIRSPACE
             malleable_x_span = r.wid - min_lip * 2;
             malleable_y_span = r.dep - min_lip * 2;
-            r.e_hall_wid = /*fixed_hall_wid; */ randrange(2 /* min opening */, malleable_y_span);
-            r.n_hall_wid = /*fixed_hall_wid; */ randrange(2 /* min opening */, malleable_x_span);
-            malleable_x_span -= r.n_hall_wid;
-            malleable_y_span -= r.e_hall_wid;
-            r.e_hall_offs = /*fixed_hall_offs; */ r.y_offs + min_lip + randrange(0, malleable_y_span);
-            r.n_hall_offs = /*fixed_hall_offs; */ r.x_offs + min_lip + randrange(0, malleable_x_span);
+            r.eh.wid = 1;     r.eh.dep = /*fixed_hall_wid; */ randrange(2 /* min opening */, malleable_y_span);
+            r.nh.dep = 1;     r.nh.wid = /*fixed_hall_wid; */ randrange(2 /* min opening */, malleable_x_span);
+            malleable_x_span -= r.nh.wid;
+            malleable_y_span -= r.eh.dep;
+            r.eh.x = cubes_across_room - 1;     r.eh.y = /*fixed_hall_offs; */ r.y + min_lip + randrange(0, malleable_y_span);
+            r.nh.y = cubes_across_room - 1;     r.nh.x = /*fixed_hall_offs; */ r.x + min_lip + randrange(0, malleable_x_span);
 
             // connections in directions
-            r.air_x = r.air_y = r.air_w = r.air_d = 0; // must set some default values since we keep reusing the rooms array
+            r.air.x = r.air.y = r.air.wid = r.air.dep = 0; // must set some default values since we keep reusing the rooms array
 
             for (int i = 0; i < DIR_MAX; i++) {
                 if /* lateral dir */ (i < DIR_UP) 
@@ -481,6 +496,8 @@ void setup_rooms() {
     }
 }
     
+
+
 void make_outer_shell(int x, int y) {
     int ruin_z_span   = cubes_going_up    * rooms_going_up; // z       extent
     int ruin_lat_span = cubes_across_room * rooms_across_ruins; // lateral span of ruin shell
