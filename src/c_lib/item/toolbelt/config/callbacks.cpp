@@ -256,6 +256,9 @@ void place_spawner(int agent_id, ItemID item_id, int item_type)
     Objects::ready(obj);
     
     decrement_stack(agent_id, item_id, item_type);
+
+    printf("Place spawner: %d\n", obj->id);
+    printf("Agent spawner: %d\n", a->status.spawner);
     
     // select spawner automatically if spawn pt is base
     if (a->status.spawner == BASE_SPAWN_ID)

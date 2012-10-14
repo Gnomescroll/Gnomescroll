@@ -25,7 +25,7 @@
 #define IF_INVALID_CONTAINER_TYPE(container_type) if (container_type < 0 || container_type >= MAX_CONTAINER_TYPES) 
 
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT(spawner_id == BASE_SPAWN_ID || (spawner_id >= 0 && spawner_id < MAX_SPAWNERS));
-#define IF_INVALID_SPAWNER_ID(spawner_id) if (spawner_id != BASE_SPAWN_ID && (spawner_id < 0 || spawner_id >= MAX_SPAWNERS)) return;
+#define IF_INVALID_SPAWNER_ID(spawner_id) if (spawner_id != BASE_SPAWN_ID && (spawner_id < 0 || spawner_id >= MAX_SPAWNERS))
 
 #define GS_ABORT() \
     do \
