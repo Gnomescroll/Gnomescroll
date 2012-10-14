@@ -292,6 +292,7 @@ Voxel_volume::Voxel_volume() :
 {
     memset(&this->local_matrix, 0, sizeof(struct Affine));
     memset(&this->world_matrix, 0, sizeof(struct Affine));
+    this->vhe.vv = this;
 }
 
 Voxel_volume::Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale) :
@@ -316,6 +317,7 @@ Voxel_volume::Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zd
     memset(&this->world_matrix, 0, sizeof(struct Affine));
     memset(&this->local_matrix, 0, sizeof(struct Affine));
     this->init(xdim, ydim, zdim, scale);
+    this->vhe.vv = this;
 }
 
 Voxel_volume::~Voxel_volume()

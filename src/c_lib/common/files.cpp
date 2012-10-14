@@ -1,6 +1,7 @@
 #include "files.hpp"
 
 #include <sys/stat.h>
+#include <limits.h>
 
 #include <common/macros.hpp>
 
@@ -38,49 +39,61 @@ char* read_file_to_buffer(const char* file_name, size_t* size)
     off_t expected_size = fsize(file_name);
     char *source = NULL;
     FILE *fp = fopen(file_name, "r");
-    if (fp != NULL)
-    {
-        /* Go to the end of the file. */
-        if (fseek(fp, 0L, SEEK_END) == 0) 
-        {
-            /* Get the size of the file. */
-            long bufsize = ftell(fp);
-            if(bufsize != (long)expected_size) printf("Warning: size of %s differs from expected\n", file_name);
-            if (bufsize < 0)
-            {
-                printf("%s:%d - error stat'ing file %s\n", __FUNCTION__, __LINE__, file_name);
-                fclose(fp);
-                return NULL;
-            }
-            /* Allocate our buffer to that size. */
-            source = (char*) calloc(bufsize+2, sizeof(char));
-            /* Go back to the start of the file. */
-            if (fseek(fp, 0L, SEEK_SET) != 0)
-            {
-                free(source);
-                fclose(fp);
-                printf("read_file_to_buffer: error seeking file %s\n", file_name);
-                return NULL;
-            } 
-            /* Read the entire file into memory. */
-            size_t newLen = fread(source, sizeof(char), bufsize, fp);
-            if (newLen == 0) 
-            {
-                free(source);
-                fclose(fp);
-                printf("read_file_to_buffer: error reading file %s\n", file_name);
-                return NULL;
-            } 
-            source[++newLen] = '\0'; /* Just to be safe. */
-            *size = (size_t)bufsize;
-        }
-        fclose(fp);
-    }
-    else
+    if (fp == NULL)
     {
         printf("read_file_to_buffer: error, could not open %s\n", file_name);
         return NULL;
     }
+
+    /* Go to the end of the file. */
+    if (fseek(fp, 0L, SEEK_END) == 0) 
+    {
+        /* Get the size of the file. */
+        long bufsize = ftell(fp);
+        if (bufsize != (long)expected_size)
+        {
+            printf("%s:%d - expected file size does not match reported size file %s\n", __FUNCTION__, __LINE__, file_name);
+            fclose(fp);
+            return NULL;
+        }
+        if (bufsize < 0)
+        {
+            printf("%s:%d - error stat'ing file %s\n", __FUNCTION__, __LINE__, file_name);
+            fclose(fp);
+            return NULL;
+        }
+        if (bufsize > LONG_MAX-2)
+        {
+            printf("%s:%d - file too large %s\n", __FUNCTION__, __LINE__, file_name);
+            fclose(fp);
+            return NULL;
+        }
+        
+        /* Allocate our buffer to that size. */
+        source = (char*) calloc(bufsize+2, sizeof(char));
+        /* Go back to the start of the file. */
+        if (fseek(fp, 0L, SEEK_SET) != 0)
+        {
+            free(source);
+            fclose(fp);
+            printf("read_file_to_buffer: error seeking file %s\n", file_name);
+            return NULL;
+        }
+        
+        /* Read the entire file into memory. */
+        size_t newLen = fread(source, sizeof(char), bufsize, fp);
+        if (newLen == 0) 
+        {
+            free(source);
+            fclose(fp);
+            printf("read_file_to_buffer: error reading file %s\n", file_name);
+            return NULL;
+        } 
+        *size = newLen;
+        source[++newLen] = '\0'; /* Just to be safe. */
+    }
+    fclose(fp);
+
     return source;
 }
 

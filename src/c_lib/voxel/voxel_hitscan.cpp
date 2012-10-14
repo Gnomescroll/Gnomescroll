@@ -90,46 +90,26 @@ bool Voxel_hitscan_list::point_collision(Vec3 position, Voxel_hitscan_target* ta
     return false;
 }
 
-void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
-{
-    this->entity_id = vhe->entity_id;
-    this->entity_type = vhe->entity_type;
-    this->part_id = vhe->part_id;
-    this->vv = vhe->vv;
-}
-
-void Voxel_hitscan_target::copy_voxel(int voxel[3])
-{
-    for (int i=0; i<3; i++)
-        this->voxel[i] = voxel[i];
-}
-
 void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
 {
-    if(num_elements >= VOXEL_HITSCAN_LIST_SIZE)
-    {
-        printf("Voxel_hitscan_list Error: number of voxel models exceeds VOXEL_HITSCAN_LIST_SIZE \n");
-        return;
-    }
-    int i=0;
-    for(; i < VOXEL_HITSCAN_LIST_SIZE; i++)
-    {
-        if(hitscan_list[i] == NULL)
+    GS_ASSERT(this->num_elements < VOXEL_HITSCAN_LIST_SIZE);
+    if (this->num_elements >= VOXEL_HITSCAN_LIST_SIZE) return;
+    
+    for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
+        if (hitscan_list[i] == NULL)
         {
-            hitscan_list[i] = &(vv->vhe);
-            num_elements++;
-                      
+            this->hitscan_list[i] = &(vv->vhe);
+            this->num_elements++;
             vv->voxel_hitscan_list = this;
-            break;
+            return;
         }
-    }
-    if (i == VOXEL_HITSCAN_LIST_SIZE) printf("WARNING: register_voxel_hitscan - no space available\n");
+    GS_ASSERT(false);
 }
 
 void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
 {
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
-        if (this->hitscan_list[i] != NULL && this->hitscan_list[i]->vv == vv)
+        if (this->hitscan_list[i] != NULL && this->hitscan_list[i] == &(vv->vhe))
         {
             this->num_elements--;
             this->hitscan_list[i] = NULL;
@@ -137,6 +117,7 @@ void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
             vv->voxel_hitscan_list = NULL;
             return;
         }
+    GS_ASSERT(false);
     vv->voxel_hitscan_list = NULL;
 }
 
@@ -148,4 +129,23 @@ Voxel_hitscan_list::Voxel_hitscan_list() : num_elements(0)
 Voxel_hitscan_list::~Voxel_hitscan_list()
 {
     if (this->hitscan_list != NULL) free(this->hitscan_list);
+    this->hitscan_list = NULL;
 }
+
+void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
+{
+    GS_ASSERT(vhe->entity_id >= 0);
+    GS_ASSERT(vhe->entity_type >= 0);
+    GS_ASSERT(vhe->part_id >= 0);
+    GS_ASSERT(vhe->vv != NULL);
+    this->entity_id = vhe->entity_id;
+    this->entity_type = vhe->entity_type;
+    this->part_id = vhe->part_id;
+    this->vv = vhe->vv;
+}
+
+void Voxel_hitscan_target::copy_voxel(int voxel[3])
+{
+    memcpy(this->voxel, voxel, sizeof(voxel));
+}
+

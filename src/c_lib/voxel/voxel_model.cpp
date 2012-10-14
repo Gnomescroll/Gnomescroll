@@ -272,33 +272,28 @@ void Voxel_model::reset_skeleton()
 void Voxel_model::init_parts(int id, ObjectType type)
 {
     // create each vox part from vox_dat conf
-    if (!skeleton_inited) return;
-    if (this->vox_inited)
-    { 
-        printf("Voxel_model::init_parts error!! inited twice \n");
-        return;
-    }
-    this->vox_inited = true;
-    int x,y,z;
-    VoxPart *vp;
-    Voxel_volume* vv;
-    for (int i=0; i<this->n_parts; i++) {
-        vp = vox_dat->vox_part[i];
-        x = vp->dimension.x;
-        y = vp->dimension.y;
-        z = vp->dimension.z;
+    GS_ASSERT(!this->vox_inited);
+    if (this->vox_inited) return;
 
-        vv = &(this->vv[i]);
+    for (int i=0; i<this->n_parts; i++)
+    {
+        VoxPart* vp = vox_dat->vox_part[i];
+        int x = vp->dimension.x;
+        int y = vp->dimension.y;
+        int z = vp->dimension.z;
+
+        Voxel_volume* vv = &(this->vv[i]);
 
         vv->init(x,y,z, vp->vox_size);
         vv->set_hitscan_properties(id, type, i);
 
-        //#if DC_CLIENT
         this->set_part_color(i);
+
         #if DC_CLIENT
         ClientState::voxel_render_list->register_voxel_volume(vv);
         #endif
     }
+    this->vox_inited = true;
 }
 
 void Voxel_model::set_part_color(int part_num)
@@ -384,8 +379,8 @@ void Voxel_model::register_hitscan()
         printf("ERROR Voxel_model::register_hitscan -- voxel volume array is NULL\n");
         return;
     }
-    for (int i=0; i<this->n_parts;
-        STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i++]));
+    for (int i=0; i<this->n_parts; i++)
+        STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i]);
 }
 
 void Voxel_model::unregister_hitscan()
