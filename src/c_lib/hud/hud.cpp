@@ -461,7 +461,7 @@ void HUD::init()
     GS_ASSERT(help != NULL);
     if (help == NULL) return;
     help->set_text(help_text);
-	help->shadowed = true;
+    help->shadowed = true;
     int help_width = help->get_width();
     help->set_color(255,255,255,255);
     help->set_position(_xres - help_width - 5, _yresf - 5);
@@ -552,7 +552,7 @@ void HUD::init()
         prompt->set_text("");
     prompt->set_color(255,255,255,255);
     prompt->set_position((_xresf - prompt->get_width()) / 2.0f, _yresf);
-	prompt->shadowed = true;
+    prompt->shadowed = true;
 
     error = text_list->create();
     GS_ASSERT(error != NULL);
@@ -666,7 +666,7 @@ void ChatRender::init()
     GS_ASSERT(input != NULL);
     if (input == NULL) return;
     input->set_text("");
-    input->set_color(255,10,10,255);
+    input->set_color(AGENT_DEFAULT_COLOR);
     input->set_position(x_offset, line_height*lines_offset);
     input->shadowed = true;
     
@@ -700,10 +700,9 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 
 void ChatRender::draw_cursor()
 {
-    struct Color color = color_init(100, 150, 100);
+    struct Color color = AGENT_DEFAULT_COLOR;
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->status.color_chosen)
-        color = playerAgent_state.you->status.color;
+    if (playerAgent_state.you != NULL) color = playerAgent_state.you->status.color;
     _draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
 }
 
@@ -717,7 +716,7 @@ void ChatRender::draw_input()
 {
     if (!this->inited) return;
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->status.color_chosen)
+    if (playerAgent_state.you != NULL)
         this->input->set_color(playerAgent_state.you->status.color);
     this->input->draw();
 }

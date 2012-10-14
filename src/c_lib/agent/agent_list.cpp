@@ -41,10 +41,8 @@ void Agent_list::send_to_client(int client_id)
         msg.client_id = a[i]->client_id;
         strncpy(msg.username, a[i]->status.name, PLAYER_NAME_MAX_LENGTH+1);
         msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
+        msg.color = a[i]->status.color;
         msg.sendToClient(client_id);
-
-        if (a[i]->status.color_chosen)
-            a[i]->status.send_color(client_id);
 
         agent_dead_StoC dead_msg;
         dead_msg.dead = a[i]->status.dead;

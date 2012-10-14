@@ -36,7 +36,6 @@ Agent_status::Agent_status(Agent_state* a) :
     health_max(AGENT_HEALTH),
     vox_crouched(false),
     lifetime(0),
-    color_chosen(false),
     color(AGENT_DEFAULT_COLOR)
 {
     color.r=color.g=color.b=48;
@@ -124,12 +123,11 @@ bool Agent_status::set_color(struct Color color)
 // does not broadcast the change (useful for the deserializer) 
 bool Agent_status::set_color_silent(struct Color color)
 {
-    if (this->color_chosen && colors_equal(color, this->color)) return false;
+    if (colors_equal(color, this->color)) return false;
 
     if (!color.r && !color.g && !color.b) color = color_init(1,1,1); // dont allow 0,0,0 (interpreted as empty voxel)
         
     this->color = color;
-    this->color_chosen = true;
     
     #if DC_CLIENT
     this->a->event.color_changed = true;

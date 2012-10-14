@@ -36,7 +36,6 @@ class Agent_status {
 
         int lifetime;
         
-        bool color_chosen;
         struct Color color;
 
         void tick();
