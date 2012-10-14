@@ -79,7 +79,8 @@ class Agent_status {
         void send_scores(int client_id);
         void send_scores();
 
-        void set_color(struct Color color);
+        bool set_color(struct Color color);
+        bool set_color_silent(struct Color color);
 
         float get_spawn_angle();
 

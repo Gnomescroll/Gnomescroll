@@ -417,11 +417,20 @@ bool ChatInput::route_command()
             chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
             return false;
         }
+
+        if (ClientState::playerAgent_state.you != NULL
+         && colors_equal(ClientState::playerAgent_state.you->status.color, color))
+        {
+            static const char msgfmt[] = "Your color is already %d %d %d";
+            static const size_t msg_len = sizeof(msgfmt) + 3*3 - 3*2;
+            static char msg[msg_len+1] = {'\0'};
+
+            snprintf(msg, msg_len+1, msgfmt, color.r, color.g, color.b);
+            chat_client->send_system_message(msg);
+        }
         
         colorme_CtoS msg;
-        msg.r = color.r;
-        msg.g = color.g;
-        msg.b = color.b;
+        msg.color = color;
         msg.send();
     }
     else

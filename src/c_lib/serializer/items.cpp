@@ -163,6 +163,24 @@ void teardown_items()
     if (_srl_buf != NULL) free(_srl_buf);
 }
 
+class ParsedPlayerData
+{
+    public:
+        struct Color color;
+        bool valid;
+
+    void reset()
+    {
+        this->color = AGENT_DEFAULT_COLOR;
+        this->valid = false;
+    }
+
+    ParsedPlayerData()
+    {
+        this->reset();
+    }
+};
+
 class ParsedItemData
 {
     public:
@@ -370,6 +388,93 @@ void parse_player_container_header(char* str, const size_t length, class ParsedP
     data->valid = true;
 }
 
+// WARNING: modifies char* str
+void parse_player_data(char* str, size_t length, class ParsedPlayerData* data)
+{
+    data->valid = false;
+
+    int i = (int)length;
+    size_t token_length = 0;
+    while (i >= 0)
+    {
+        char c = str[i];
+        if (c == ' ') str[i] = '\0';    // convert all spaces to NUL so that padded strings get shortened
+        if (i && c != PROPERTY_DELIMITER[0])
+        {
+            i--;
+            token_length++;
+            continue;
+        }
+        GS_ASSERT(token_length >= TAG_LENGTH + TAG_DELIMITER_LENGTH);
+        if (token_length < TAG_LENGTH + TAG_DELIMITER_LENGTH) return;
+
+        char* key = NULL;
+        if (i)
+        {
+            str[i] = '\0';
+            key = &str[i+1];
+        }
+        else
+            key = &str[i];
+            
+        char* val = &key[TAG_LENGTH+TAG_DELIMITER_LENGTH];
+
+        bool err = false;
+        if (strncmp(COLOR_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+        {
+            int pts = 1;
+            char d;
+            int j = 0;
+            int cmp_len = 0;
+            while ((d = val[j]) != '\0')
+            {
+                if (d == COLOR_COMPONENT_DELIMITER[0])
+                {
+                    GS_ASSERT(cmp_len == COLOR_COMPONENT_MAX_LENGTH);
+                    if (cmp_len != COLOR_COMPONENT_MAX_LENGTH) return;
+                    cmp_len = 0;
+                    pts++;
+                    val[j] = '\0';
+                }
+                else
+                    cmp_len++;
+                j++;
+            }
+            GS_ASSERT(cmp_len == COLOR_COMPONENT_MAX_LENGTH);
+            if (cmp_len != COLOR_COMPONENT_MAX_LENGTH) return;
+            GS_ASSERT(pts == 3);
+            if (pts != 3) return;
+
+            int base_offset = COLOR_COMPONENT_MAX_LENGTH + COLOR_COMPONENT_DELIMITER_LENGTH;
+            long long r = parse_int(&val[0 * base_offset], err);
+            GS_ASSERT(!err && r >= 0 && r <= 255);
+            if (err || r < 0 || r > 255) return;
+            long long g = parse_int(&val[1 * base_offset], err);
+            GS_ASSERT(!err && g >= 0 && g <= 255);
+            if (err || g < 0 || g > 255) return;
+            long long b = parse_int(&val[2 * base_offset], err);
+            GS_ASSERT(!err && b >= 0 && b <= 255);
+            if (err || b < 0 || b > 255) return;
+
+            data->color.r = (unsigned char)r;
+            data->color.g = (unsigned char)g;
+            data->color.b = (unsigned char)b;
+        }
+        else
+        {   // unrecognized field
+            GS_ASSERT(false);
+            data->valid = false;
+            return;
+        }
+        
+        i--;
+        token_length = 0;   // reset
+    }
+
+    data->valid = true;
+}
+
+
 void process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
 {    
     // allocate scratch buffer long enough to hold the largest line
@@ -470,6 +575,33 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
     }
 }
 
+void process_player_blob(const char* str, class PlayerLoadData* player_load_data)
+{
+    static const size_t LONGEST_LINE = PLAYER_LINE_LENGTH;
+    static char buf[LONGEST_LINE+1];
+    if (strnlen(str, LONGEST_LINE) < LONGEST_LINE) return;  // TODO -- error handling
+    buf[LONGEST_LINE] = '\0';
+
+    // copy main data line
+    size_t i = 0;
+    char c = '\0';
+    while ((c = str[i]) != '\0' && c != '\n' && i < LONGEST_LINE)
+        buf[i++] = c;
+    buf[i++] = '\0';
+
+    class ParsedPlayerData player_data;
+    parse_player_data(buf, i, &player_data);
+    GS_ASSERT(player_data.valid);
+    if (!player_data.valid) return; // TODO -- log error
+
+    class Agent_state* agent = ServerState::agent_list->get_any(player_load_data->agent_id);
+    GS_ASSERT(agent != NULL);
+    if (agent == NULL) return;  // TODO -- log error
+
+    //agent->status.set_spawner(player_data.spawner_id);
+    agent->status.set_color_silent(player_data.color);
+}
+
 void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
     class PlayerLoadData* data = (class PlayerLoadData*)_data;
@@ -477,6 +609,7 @@ void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 
     if (reply->type == REDIS_REPLY_STRING)
     {
+        process_player_blob(reply->str, data);
         // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
         data->player_data_was_loaded();
     }
@@ -613,14 +746,13 @@ const char* write_player_string(AgentID agent_id)
     size_t ibuf = 0;
 
     int could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_DATA_FMT,
-        agent->status.color.r, agent->status.color.g, agent->status.color.b,
-        agent->status.spawner);
+        agent->status.color.r, agent->status.color.g, agent->status.color.b);
+        
     GS_ASSERT(could_write > 0 && (size_t)could_write < SRL_BUF_SIZE - ibuf);
     if (could_write <= 0 || (size_t)could_write >= SRL_BUF_SIZE - ibuf) return NULL;
     ibuf += could_write;
 
     return _srl_buf;
-    
 }
 
 bool save_player_container(ClientID client_id, int container_id)

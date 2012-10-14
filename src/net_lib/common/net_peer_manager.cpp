@@ -168,6 +168,7 @@ void NetPeerManager::was_deserialized()
     msg.client_id = agent->client_id;
     strncpy(msg.username, username, PLAYER_NAME_MAX_LENGTH+1);
     msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
+    msg.color = agent->status.color;
     msg.broadcast();
 
     send_player_agent_id_to_client(agent->id);
@@ -181,6 +182,8 @@ void NetPeerManager::teardown()
     class Agent_state* a = NetServer::agents[this->agent_id];
     if (a != NULL)
     {
+        bool saved = serializer::save_player(this->user_id, this->agent_id);
+        GS_ASSERT(saved);   // TODO -- log error
         Item::agent_quit(a->id);    // unsubscribes agent from all item
         ItemContainer::agent_quit(a->id);
         Toolbelt::agent_quit(a->id);

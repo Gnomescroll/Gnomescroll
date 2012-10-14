@@ -75,6 +75,7 @@ const int AGENT_MAX_SPAWNERS = 3;
 const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
 const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
 
+const struct Color AGENT_DEFAULT_COLOR = color_init(64,192,64);
 
 /* Player */
 #if DC_CLIENT

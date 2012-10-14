@@ -220,6 +220,7 @@ inline void agent_create_StoC::handle()
     if (a == NULL) return;
     a->client_id = (ClientID)this->client_id;
     a->status.set_name(this->username);
+    a->status.set_color(this->color);
     a->event.name_set();
 
     GS_ASSERT(chat_client != NULL);
@@ -460,15 +461,14 @@ inline void agent_color_StoC::handle()
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
-    struct Color color = color_init(r,g,b);
-    a->status.set_color(color);
+    a->status.set_color(this->color);
     
     if (this->agent_id == ClientState::playerAgent_state.agent_id)
     {
         const char fmt[] = "Your color is now %d %d %d\n";
         size_t len = sizeof(fmt) + 3*3 - 2*3 + 1;
         char* msg = (char*)malloc(len * sizeof(char));
-        snprintf(msg, len, fmt, r,g,b);
+        snprintf(msg, len, fmt, color.r, color.g, color.b);
         chat_client->send_system_message(msg);
         free(msg);
     }
@@ -541,9 +541,7 @@ inline void colorme_CtoS::handle()
     Agent_state* a = NetServer::agents[this->client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    if (!r && !g && !b) { r=g=b=1; }    // dont allow 0,0,0 (interpreted as empty voxel)
-    struct Color color = color_init(r,g,b);
-    a->status.set_color(color);
+    a->status.set_color(this->color);
 }
 
 inline void killme_CtoS::handle()
@@ -921,11 +919,8 @@ inline void admin_set_block_CtoS::handle()
     //if (z < 0 || z >= map_dim.z) return;
 
     Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
 
     if (t_map::isErrorBlock(val)) return;
     if (!t_map::isValidID(val)) return;
@@ -968,14 +963,14 @@ inline void admin_set_block_CtoS::handle()
 }
 //#endif
 
-#define ITEM_PLACEMENT_Z_DIFF_LIMIT 3
-
 static Objects::Object* place_object_handler(ObjectType type, int x, int y, int z, int owner_id)
 {
     if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, z)) return NULL;
     if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, z)) return NULL;
 
     // zip down
+    static const int ITEM_PLACEMENT_Z_DIFF_LIMIT = 3;
+
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return NULL;
     if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, new_z)) return NULL;
@@ -992,7 +987,7 @@ static Objects::Object* place_object_handler(ObjectType type, int x, int y, int 
     using Components::OwnerComponent;
     OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
     if (owner != NULL) owner->set_owner(owner_id);
-
+    
     return object;
 }
 
@@ -1000,11 +995,8 @@ inline void place_spawner_CtoS::handle()
 {
     ObjectType type = OBJECT_AGENT_SPAWNER;
     Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     z = clamp_z(z);
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
@@ -1015,45 +1007,20 @@ inline void place_turret_CtoS::handle()
 {
     ObjectType type = OBJECT_TURRET;
     Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     z = clamp_z(z);
     Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     Objects::ready(obj);
 }
 
-#undef ITEM_PLACEMENT_Z_DIFF_LIMIT
-
 inline void choose_spawner_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    Agent_state* a = NetServer::agents[this->client_id];
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->status.set_spawner(spawner_id);
-}
-
-const char DEFAULT_PLAYER_NAME[] = "Clunker";
-
-static char _new_name[PLAYER_NAME_MAX_LENGTH+1];
-static char* adjust_player_name(char* name)
-{
-    memset(_new_name, 0, (PLAYER_NAME_MAX_LENGTH+1) * sizeof(char));
-    unsigned int len = strlen(name);
-    if (len >= (int)(PLAYER_NAME_MAX_LENGTH - 4))
-        name[PLAYER_NAME_MAX_LENGTH-4-1] = '\0';
-
-    if (len >= (int)PLAYER_NAME_MAX_LENGTH)
-        len = PLAYER_NAME_MAX_LENGTH;
-
-    snprintf(_new_name, PLAYER_NAME_MAX_LENGTH+1, "%s%04d", name, randrange(0,9999));
-    return _new_name;
 }
 
 inline void ping_CtoS::handle()

@@ -36,7 +36,8 @@ Agent_status::Agent_status(Agent_state* a) :
     health_max(AGENT_HEALTH),
     vox_crouched(false),
     lifetime(0),
-    color_chosen(false)
+    color_chosen(false),
+    color(AGENT_DEFAULT_COLOR)
 {
     color.r=color.g=color.b=48;
     this->name[0] = '\0';
@@ -55,18 +56,17 @@ void Agent_status::set_spawner(int pt)
     this->spawner = pt;
 
     #if DC_SERVER
+    class Objects::Object* spawner = Objects::get(OBJECT_AGENT_SPAWNER, pt);
+    // don't assert, the deserializer will trigger it regularly
+    if (spawner == NULL) return;
+
     set_spawner_StoC msg;
     msg.spawner_id = pt;
     msg.sendToClient(this->a->id);
 
-    // play sound
-    
     if (pt == BASE_SPAWN_ID) return;    // dont play sound for base
 
-    class Objects::Object* spawner = Objects::get(OBJECT_AGENT_SPAWNER, pt);
-    GS_ASSERT(spawner != NULL);
-    if (spawner == NULL) return;
-
+    // play sound
     // only send the sound if its not the base spawner set
     struct Vec3 pos;
     using Components::VoxelModelComponent;
@@ -98,27 +98,35 @@ void Agent_status::identify(const char* name)
 void Agent_status::broadcast_color()
 {
     agent_color_StoC msg;
-    msg.r = this->color.r;
-    msg.g = this->color.g;
-    msg.b = this->color.b;
     msg.agent_id = this->a->id;
+    msg.color = this->color;
     msg.broadcast();
 }
 
 void Agent_status::send_color(int client_id)
 {
     agent_color_StoC msg;
-    msg.r = this->color.r;
-    msg.g = this->color.g;
-    msg.b = this->color.b;
     msg.agent_id = this->a->id;
+    msg.color = this->color;
     msg.sendToClient(client_id);
 }
 #endif
 
-void Agent_status::set_color(struct Color color)
+bool Agent_status::set_color(struct Color color)
 {
-    if (this->color_chosen && colors_equal(color, this->color)) return;
+    if (!this->set_color_silent(color)) return false;
+    #if DC_SERVER
+    this->broadcast_color();
+    #endif
+    return true;
+}
+
+// does not broadcast the change (useful for the deserializer) 
+bool Agent_status::set_color_silent(struct Color color)
+{
+    if (this->color_chosen && colors_equal(color, this->color)) return false;
+
+    if (!color.r && !color.g && !color.b) color = color_init(1,1,1); // dont allow 0,0,0 (interpreted as empty voxel)
         
     this->color = color;
     this->color_chosen = true;
@@ -127,20 +135,19 @@ void Agent_status::set_color(struct Color color)
     this->a->event.color_changed = true;
     #endif
 
-    #if DC_SERVER
-    this->broadcast_color();
-    #endif
-
-    // TODO -- REMOVE THIS HACK
+    // TODO -- REMOVE THIS HACK. have to fix something in the voxel color render pipeline
+    // previous attempt failed -- not worth fixing for now
     // somewhere, somehow, 255 is rolling over
     // to 0 by the time it is rendered
-    if (color.r == 255) color.r = 254;
-    if (color.g == 255) color.g = 254;
-    if (color.b == 255) color.b = 254;
+    if (color.r == 255) this->color.r = 254;
+    if (color.g == 255) this->color.g = 254;
+    if (color.b == 255) this->color.b = 254;
     
     #if DC_SERVER
     this->a->vox->fill_color(this->color);
     #endif
+
+    return true;
 }
 
 void Agent_status::set_name(const char* name)
