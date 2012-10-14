@@ -485,18 +485,18 @@ size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
     GS_ASSERT(item_name != NULL);
     if (item_name == NULL) return 0;
 
-    size_t could_write = snprintf(buf, buffer_size, ITEM_FMT,
+    int could_write = snprintf(buf, buffer_size, ITEM_FMT,
         item->global_id,
         item_name,
         item->durability,
         item->stack_size,
         item->container_slot);
         
-    if (could_write >= buffer_size) return 0;
+    if (could_write <= 0 || (size_t)could_write >= buffer_size) return 0;
     
     buf[could_write++] = '\n';
 
-    return could_write;
+    return (size_t)could_write;
 }
 
 // returns 0 on failure. can also return 0 if there are no container contents, so check the container first
@@ -506,9 +506,10 @@ size_t write_container_contents_string(char* buf, size_t buffer_size, const clas
     for (int i=0; i<container->slot_max; i++)
         if (container->slot[i] != NULL_ITEM)
         {
-            size_t could_write = write_item_string(&buf[ibuf], buffer_size - ibuf, container->slot[i]);
-            if (could_write == 0 || could_write >= buffer_size - ibuf) return 0;    // error
-            ibuf += could_write;
+            int could_write = write_item_string(&buf[ibuf], buffer_size - ibuf, container->slot[i]);
+            GS_ASSERT(could_write > 0 && (size_t)could_write < buffer_size - ibuf);
+            if (could_write <= 0 || (size_t)could_write >= buffer_size - ibuf) return 0;    // error
+            ibuf += (size_t)could_write;
         }
     buf[ibuf] = '\0';
     return ibuf;
@@ -527,10 +528,11 @@ const char* write_player_container_string(int container_id, UserID user_id)
     size_t ibuf = 0;
     
     // write header
-    size_t could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_CONTAINER_HEADER_FMT, container_name, user_id, container->slot_count);
-    GS_ASSERT(could_write < SRL_BUF_SIZE - ibuf);
-    if (could_write >= SRL_BUF_SIZE - ibuf) return NULL;
-
+    int could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_CONTAINER_HEADER_FMT, container_name, user_id, container->slot_count);
+    GS_ASSERT(could_write > 0 && (size_t)could_write < SRL_BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= SRL_BUF_SIZE - ibuf) return NULL;
+    ibuf += (size_t)could_write;
+    
     _srl_buf[ibuf++] = '\n';
     if (ibuf >= SRL_BUF_SIZE) return NULL;
 
