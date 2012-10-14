@@ -87,11 +87,10 @@ void init_voxel_render_list_shader1()
 // Voxel_render_list
 
 
-Voxel_render_list::Voxel_render_list()
-:
-needs_update(false),
-id(-1),
-num_elements(0)
+Voxel_render_list::Voxel_render_list() :
+    needs_update(false),
+    id(-1),
+    num_elements(0)
 {
     const int starting_size = 1024;
 
@@ -134,7 +133,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
         {
             num_elements++;
             this->render_list[i] = vv;
-            vv->id = i;
+            vv->render_id = i;
             vv->voxel_render_list = this;
             vv->voxel_render_list_id = this->id;
             this->needs_update = true;
@@ -146,13 +145,13 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 {
     if (vv == NULL) return;
-    if (vv->id < 0) return;
-    if (this->render_list[vv->id] == NULL) return;
+    if (vv->render_id < 0) return;
+    if (this->render_list[vv->render_id] == NULL) return;
 
     this->num_elements--;
-    this->render_list[vv->id] = NULL;
+    this->render_list[vv->render_id] = NULL;
 
-    vv->id = -1;
+    vv->render_id = -1;
     vv->voxel_render_list = NULL;
 
     this->needs_update = true;

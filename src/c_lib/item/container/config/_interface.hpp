@@ -7,6 +7,8 @@ namespace ItemContainer
 
 /* Public Attribute Accessors */
 
+ItemContainerType get_type(const char* name);
+class ContainerAttributes* get_attr(const char* name);
 class ContainerAttributes* get_attr(ItemContainerType type);
 unsigned int get_container_max_slots(ItemContainerType type);
 int get_container_xdim(ItemContainerType type);

@@ -307,7 +307,7 @@ class MechListShader
                         int height = 16-j;
 
                         mech_sprite_height[i] = height;
-                        printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
+                        //printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
 
                         break;
                     }

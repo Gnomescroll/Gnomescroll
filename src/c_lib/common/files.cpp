@@ -32,9 +32,10 @@ off_t fsize(const char *filename)
 }
 
 // free the returned char* buffer after use
-char* read_file_to_buffer(const char* file_name, int* size)
+char* read_file_to_buffer(const char* file_name, size_t* size)
 {
-    int expected_size = (int)fsize(file_name);
+    *size = 0;
+    off_t expected_size = fsize(file_name);
     char *source = NULL;
     FILE *fp = fopen(file_name, "r");
     if (fp != NULL)
@@ -44,36 +45,42 @@ char* read_file_to_buffer(const char* file_name, int* size)
         {
             /* Get the size of the file. */
             long bufsize = ftell(fp);
-            *size = (int)bufsize;
-            if(*size != expected_size) printf("Warning: size of %s differs from expected\n", file_name);
-            if (bufsize == -1) { /* Error */ }
+            if(bufsize != (long)expected_size) printf("Warning: size of %s differs from expected\n", file_name);
+            if (bufsize < 0)
+            {
+                printf("%s:%d - error stat'ing file %s\n", __FUNCTION__, __LINE__, file_name);
+                fclose(fp);
+                return NULL;
+            }
             /* Allocate our buffer to that size. */
             source = (char*) calloc(bufsize+2, sizeof(char));
             /* Go back to the start of the file. */
-            if (fseek(fp, 0L, SEEK_SET) == 0) { /* Error */ }
+            if (fseek(fp, 0L, SEEK_SET) != 0)
+            {
+                free(source);
+                fclose(fp);
+                printf("read_file_to_buffer: error seeking file %s\n", file_name);
+                return NULL;
+            } 
             /* Read the entire file into memory. */
             size_t newLen = fread(source, sizeof(char), bufsize, fp);
             if (newLen == 0) 
             {
                 free(source);
-                printf("read_file_to_buffer: error reading file %s", file_name);
+                fclose(fp);
+                printf("read_file_to_buffer: error reading file %s\n", file_name);
                 return NULL;
             } 
-            else 
-            {
-                source[++newLen] = '\0'; /* Just to be safe. */
-            }
+            source[++newLen] = '\0'; /* Just to be safe. */
+            *size = (size_t)bufsize;
         }
-        if(fp == NULL) printf("WTF\n");
         fclose(fp);
     }
     else
     {
-        printf("read_file_to_buffer: error, could not open %s \n", file_name);
-        GS_ABORT();
+        printf("read_file_to_buffer: error, could not open %s\n", file_name);
+        return NULL;
     }
-    //free(source); /* Don't forget to call free() later! */
-
     return source;
 }
 

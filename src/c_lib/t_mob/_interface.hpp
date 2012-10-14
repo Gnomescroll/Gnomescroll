@@ -729,43 +729,43 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
 
 
-	void Interpolate( aiQuaternion& pOut, const aiQuaternion& pStart, const aiQuaternion& pEnd, float pFactor)
+    void Interpolate( aiQuaternion& pOut, const aiQuaternion& pStart, const aiQuaternion& pEnd, float pFactor)
 {
-	// calc cosine theta
-	float cosom = pStart.x * pEnd.x + pStart.y * pEnd.y + pStart.z * pEnd.z + pStart.w * pEnd.w;
+    // calc cosine theta
+    float cosom = pStart.x * pEnd.x + pStart.y * pEnd.y + pStart.z * pEnd.z + pStart.w * pEnd.w;
 
-	// adjust signs (if necessary)
-	aiQuaternion end = pEnd;
-	if( cosom < static_cast<float>(0.0))
-	{
-		cosom = -cosom;
-		end.x = -end.x;   // Reverse all signs
-		end.y = -end.y;
-		end.z = -end.z;
-		end.w = -end.w;
-	} 
+    // adjust signs (if necessary)
+    aiQuaternion end = pEnd;
+    if( cosom < static_cast<float>(0.0))
+    {
+        cosom = -cosom;
+        end.x = -end.x;   // Reverse all signs
+        end.y = -end.y;
+        end.z = -end.z;
+        end.w = -end.w;
+    } 
 
-	// Calculate coefficients
-	float sclp, sclq;
-	if( (static_cast<float>(1.0) - cosom) > static_cast<float>(0.0001)) // 0.0001 -> some epsillon
-	{
-		// Standard case (slerp)
-		float omega, sinom;
-		omega = acos( cosom); // extract theta from dot product's cos theta
-		sinom = sin( omega);
-		sclp  = sin( (static_cast<float>(1.0) - pFactor) * omega) / sinom;
-		sclq  = sin( pFactor * omega) / sinom;
-	} else
-	{
-		// Very close, do linear interp (because it's faster)
-		sclp = static_cast<float>(1.0) - pFactor;
-		sclq = pFactor;
-	}
+    // Calculate coefficients
+    float sclp, sclq;
+    if( (static_cast<float>(1.0) - cosom) > static_cast<float>(0.0001)) // 0.0001 -> some epsillon
+    {
+        // Standard case (slerp)
+        float omega, sinom;
+        omega = acos( cosom); // extract theta from dot product's cos theta
+        sinom = sin( omega);
+        sclp  = sin( (static_cast<float>(1.0) - pFactor) * omega) / sinom;
+        sclq  = sin( pFactor * omega) / sinom;
+    } else
+    {
+        // Very close, do linear interp (because it's faster)
+        sclp = static_cast<float>(1.0) - pFactor;
+        sclq = pFactor;
+    }
 
-	pOut.x = sclp * pStart.x + sclq * end.x;
-	pOut.y = sclp * pStart.y + sclq * end.y;
-	pOut.z = sclp * pStart.z + sclq * end.z;
-	pOut.w = sclp * pStart.w + sclq * end.w;
+    pOut.x = sclp * pStart.x + sclq * end.x;
+    pOut.y = sclp * pStart.y + sclq * end.y;
+    pOut.z = sclp * pStart.z + sclq * end.z;
+    pOut.w = sclp * pStart.w + sclq * end.w;
 }
 
 /*
@@ -805,46 +805,46 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
 
 
-	struct Mat4 get_anim_matrix(int frame_time, aiNodeAnim** node_channels, int node_channel_max, aiNode* node)
+    struct Mat4 get_anim_matrix(int frame_time, aiNodeAnim** node_channels, int node_channel_max, aiNode* node)
     {
 
         for(int i=0; i<node_channel_max; i++)
         {
 
 
-			
+            
             aiNodeAnim* anim = node_channels[i];
             //printf("node channel= %s \n", anim->mNodeName.data);
-			 int tmax = anim->mNumPositionKeys;
-			  aiQuatKey result;
-			  aiVectorKey pos;
+             int tmax = anim->mNumPositionKeys;
+              aiQuatKey result;
+              aiVectorKey pos;
 
 
             if( strcmp(anim->mNodeName.data, node->mName.data) == 0 )
             {
 
-				if((frame_time % tmax)==0){
+                if((frame_time % tmax)==0){
                // GS_ASSERT(anim->mNumPositionKeys == anim->mNumRotationKeys);
-				pos =  anim->mPositionKeys[frame_time % tmax];
-				result = anim->mRotationKeys[frame_time % tmax];
-				//GS_ASSERT( pos.mTime == result.mTime );
-				}else{
+                pos =  anim->mPositionKeys[frame_time % tmax];
+                result = anim->mRotationKeys[frame_time % tmax];
+                //GS_ASSERT( pos.mTime == result.mTime );
+                }else{
                 GS_ASSERT(anim->mNumPositionKeys == anim->mNumRotationKeys);
                
                 
                 pos =  anim->mPositionKeys[frame_time % tmax];
-				//aiVectorKey tpos =  anim->mPositionKeys[(frame_time % tmax)+1];
+                //aiVectorKey tpos =  anim->mPositionKeys[(frame_time % tmax)+1];
 
                 aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
-				aiQuatKey trot = anim->mRotationKeys[(frame_time % tmax)+1];
+                aiQuatKey trot = anim->mRotationKeys[(frame_time % tmax)+1];
 
-				
-				result.mTime=rot.mTime;
+                
+                result.mTime=rot.mTime;
 
-				Interpolate(result.mValue,rot.mValue,trot.mValue,0.5);
+                Interpolate(result.mValue,rot.mValue,trot.mValue,0.5);
 
                 GS_ASSERT( pos.mTime == result.mTime );
-				}
+                }
                 //CONVERT TO MATRIX
                 return quantenion_to_rotation_matrix( result.mValue, pos.mValue );
             }
@@ -853,8 +853,8 @@ but is not good. Therefore, you usually should do the interpolation on the quate
 
         //if cannot find, then node does not have an animation and use this
         //return mat4_transpose(_ConvertMatrix(node->mTransformation));
-		return _ConvertMatrix(node->mTransformation);
-		//return quantenion_to_rotation_matrix( , pos.mValue );
+        return _ConvertMatrix(node->mTransformation);
+        //return quantenion_to_rotation_matrix( , pos.mValue );
     }
 
 
@@ -1243,7 +1243,7 @@ void init()
         !!!!!
     */
     
-    int bsize;
+    size_t bsize = 0;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
     GS_ASSERT(buffer != NULL);
     if (buffer == NULL) return;

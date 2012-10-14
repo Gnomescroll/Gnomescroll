@@ -44,7 +44,7 @@ void parse_equipment_sprite_alignment_config()
     char* CONFIG_FILENAME = (char*)
         "./media/config/equipped_sprite_alignment.cfg";
     
-    int size = 0;
+    size_t size = 0;
     char* buffer = read_file_to_buffer(CONFIG_FILENAME, &size);
     GS_ASSERT(buffer != NULL);
     if (buffer == NULL) return;
@@ -55,7 +55,7 @@ void parse_equipment_sprite_alignment_config()
         return;
     }
     
-    int index = 0;
+    size_t index = 0;
     int read = 0;
     
     // scanf for alignment config    

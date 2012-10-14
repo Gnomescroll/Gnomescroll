@@ -180,6 +180,18 @@ static void register_settings()
     
 static void validate_settings()
 {
+    GS_ASSERT_ABORT(get_attr("none") != NULL && get_attr("none")->max_dim() == 0);
+    GS_ASSERT_ABORT(get_attr("hand") != NULL && get_attr("hand")->max_dim() == 1);
+    GS_ASSERT_ABORT(get_attr("inventory") != NULL && get_attr("inventory")->max_dim() == 18);
+    GS_ASSERT_ABORT(get_attr("toolbelt") != NULL && get_attr("toolbelt")->max_dim() == 9);
+    GS_ASSERT_ABORT(get_attr("synthesizer") != NULL && get_attr("synthesizer")->max_dim() == 1);
+    GS_ASSERT_ABORT(get_attr("energy_tanks") != NULL && get_attr("energy_tanks")->max_dim() == 4);
+    GS_ASSERT_ABORT(get_attr("storage_block_small") != NULL && get_attr("storage_block_small")->max_dim() == 9);
+    GS_ASSERT_ABORT(get_attr("crafting_bench_basic") != NULL && get_attr("crafting_bench_basic")->max_dim() == 4);
+    GS_ASSERT_ABORT(get_attr("cryofreezer_small") != NULL && get_attr("cryofreezer_small")->max_dim() == 4);
+    GS_ASSERT_ABORT(get_attr("smelter_basic") != NULL && get_attr("smelter_basic")->max_dim() == 1);
+    GS_ASSERT_ABORT(get_attr("crusher") != NULL && get_attr("crusher")->max_dim() == 1);
+    
     int n_none = 0;
     for (int i=0; i<MAX_CONTAINER_TYPES; i++)
     {
@@ -246,6 +258,23 @@ void teardown_config()
 }
 
 /* Public Attribute Accessors */
+
+ItemContainerType get_type(const char* name)
+{
+    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    {
+        if (container_attributes[i] != NULL && container_attributes[i]->loaded
+         && strcmp(container_attributes[i]->name, name) == 0)
+            return container_attributes[i]->type;
+    }
+    return CONTAINER_TYPE_NONE;
+}
+
+class ContainerAttributes* get_attr(const char* name)
+{
+    ItemContainerType type = get_type(name);
+    return get_attr(type);
+}
 
 class ContainerAttributes* get_attr(ItemContainerType type)
 {
