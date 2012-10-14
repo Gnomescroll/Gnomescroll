@@ -252,11 +252,12 @@ class MechListShader
             for(j=0; j<16; j++) //column
             {
                 int offset = 256*16*h + 16*w;
-                offset += 31-j;
+                offset += 15-j;
 
                 for(int k=0; k<16; k++) //iterate over column
                 {
                     int index = offset + k*256;
+                    GS_ASSERT(index < 256*256);
 
                     if(pixels[4*index + 3] > 128)
                     {
@@ -300,6 +301,7 @@ class MechListShader
                 for(int k=0; k<16; k++) //iterate over row
                 {
                     int index = offset + k;
+                    GS_ASSERT(index < 256*256);
 
                     if(pixels[4*index + 3] > 128)
                     {
@@ -307,7 +309,7 @@ class MechListShader
                         int height = 16-j;
 
                         mech_sprite_height[i] = height;
-                        printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
+                        //printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
 
                         break;
                     }
