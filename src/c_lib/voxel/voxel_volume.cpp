@@ -15,7 +15,7 @@
 #include <voxel/voxel_render.hpp>
 #endif
 
-const int VOXEL_VERTEX_SCRATCH_SIZE = 65536;
+const int VOXEL_VERTEX_SCRATCH_SIZE = 0xffff;
 static Voxel_vertex* voxel_vertex_scratch_buffer = NULL;
 
 void init_voxel_volume()
@@ -31,8 +31,8 @@ void teardown_voxel_volume()
 
 int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
-    const static int _ssize = 256;
-    const static int _bsize = 65536;
+    const static int _ssize = 0xff;
+    const static int _bsize = 0xffff;
     // normalize direction
     float len2 = sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;

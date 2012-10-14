@@ -333,6 +333,7 @@ void Voxel_model::set_colors()
 void Voxel_model::fill_part_color(int part_num, struct Color color)
 {
     GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
+    GS_ASSERT(color.r != 255 && color.g != 255 && color.b != 255);  // 255 wraps to 0 for whatever reason
     GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
     if (part_num < 0 || part_num >= this->n_parts) return;
     

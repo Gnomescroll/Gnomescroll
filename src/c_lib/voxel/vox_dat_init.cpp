@@ -25,10 +25,10 @@ VoxDat turret;
 void init()
 {
     // agent
-    read_skeleton((char*)"./media/voxel/saves/crouch.skeleton", &agent);
-    read_skeleton((char*)"./media/voxel/saves/crouch.skeleton", &agent_crouched);
+    read_skeleton((char*)"./media/voxel/crouch.skeleton", &agent);
+    read_skeleton((char*)"./media/voxel/crouch.skeleton", &agent_crouched);
     
-    read_skeleton((char*)"./media/voxel/saves/dead.skeleton", &agent_dead);
+    read_skeleton((char*)"./media/voxel/dead.skeleton", &agent_dead);
 
     // monsters
     read_skeleton((char*)"./media/voxel/bomb.skeleton", &robot_bomb);

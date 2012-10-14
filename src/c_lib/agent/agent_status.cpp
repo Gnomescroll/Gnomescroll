@@ -38,7 +38,6 @@ Agent_status::Agent_status(Agent_state* a) :
     lifetime(0),
     color(AGENT_DEFAULT_COLOR)
 {
-    color.r=color.g=color.b=48;
     this->name[0] = '\0';
 }
 
