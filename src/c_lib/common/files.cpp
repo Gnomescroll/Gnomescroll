@@ -33,15 +33,18 @@ off_t fsize(const char *filename)
 }
 
 // free the returned char* buffer after use
-char* read_file_to_buffer(const char* file_name, size_t* size)
+static char* read_file_to_buffer(const char* filename, size_t* size, const char* mode)
 {
+    GS_ASSERT(strstr(mode, "r") != NULL);
+    if (strstr(mode, "r") == NULL) return NULL;
+
     *size = 0;
-    off_t expected_size = fsize(file_name);
+    off_t expected_size = fsize(filename);
     char *source = NULL;
-    FILE *fp = fopen(file_name, "r");
+    FILE *fp = fopen(filename, mode);
     if (fp == NULL)
     {
-        printf("read_file_to_buffer: error, could not open %s\n", file_name);
+        printf("read_file_to_buffer: error, could not open %s\n", filename);
         return NULL;
     }
 
@@ -52,19 +55,19 @@ char* read_file_to_buffer(const char* file_name, size_t* size)
         long bufsize = ftell(fp);
         if (bufsize != (long)expected_size)
         {
-            printf("%s:%d - expected file size does not match reported size file %s\n", __FUNCTION__, __LINE__, file_name);
+            printf("%s:%d - expected file size does not match reported size file %s\n", __FUNCTION__, __LINE__, filename);
             fclose(fp);
             return NULL;
         }
         if (bufsize < 0)
         {
-            printf("%s:%d - error stat'ing file %s\n", __FUNCTION__, __LINE__, file_name);
+            printf("%s:%d - error stat'ing file %s\n", __FUNCTION__, __LINE__, filename);
             fclose(fp);
             return NULL;
         }
         if (bufsize > LONG_MAX-2)
         {
-            printf("%s:%d - file too large %s\n", __FUNCTION__, __LINE__, file_name);
+            printf("%s:%d - file too large %s\n", __FUNCTION__, __LINE__, filename);
             fclose(fp);
             return NULL;
         }
@@ -76,7 +79,7 @@ char* read_file_to_buffer(const char* file_name, size_t* size)
         {
             free(source);
             fclose(fp);
-            printf("read_file_to_buffer: error seeking file %s\n", file_name);
+            printf("read_file_to_buffer: error seeking file %s\n", filename);
             return NULL;
         }
         
@@ -86,7 +89,7 @@ char* read_file_to_buffer(const char* file_name, size_t* size)
         {
             free(source);
             fclose(fp);
-            printf("read_file_to_buffer: error reading file %s\n", file_name);
+            printf("read_file_to_buffer: error reading file %s\n", filename);
             return NULL;
         } 
         *size = newLen;
@@ -97,39 +100,16 @@ char* read_file_to_buffer(const char* file_name, size_t* size)
     return source;
 }
 
-//possible unsafe, free buffer after use
-char* fast_read_file_to_buffer(const char* file_name, int* size)
+// free the returned char* buffer after use
+char* read_file_to_buffer(const char* filename, size_t* size)
 {
-    long bufsize = (int)fsize(file_name);
-    char *source = NULL;
-    FILE *fp = fopen(file_name, "r");
-    if (fp != NULL)
-    {
-        *size = (int)bufsize;
-        /* Allocate our buffer to that size. */
-        source = (char*) calloc(bufsize+2, sizeof(char));
-        /* Read the entire file into memory. */
-        size_t newLen = fread(source, sizeof(char), bufsize, fp);
-        if (newLen == 0) 
-        {
-            free(source);
-            printf("read_file_to_buffer: error reading file %s", file_name);
-            return NULL;
-        } 
-        else 
-        {
-            source[++newLen] = '\0'; /* Just to be safe. */
-        }
+    return read_file_to_buffer(filename, size, "r");
+}
 
-        if(fp == NULL) printf("WTF\n");
-        fclose(fp);
-    }
-    else
-    {
-        printf("read_file_to_buffer: error, could not open %s \n", file_name);
-        GS_ABORT();
-    }
-    return source;
+// free the returned char* buffer after use
+char* read_binary_file_to_buffer(const char* filename, size_t* size)
+{
+    return read_file_to_buffer(filename, size, "rb");
 }
 
 int count_lines(char* buffer)

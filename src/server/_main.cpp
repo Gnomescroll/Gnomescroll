@@ -30,9 +30,8 @@ void default_map_gen()
 
 void init(int argc, char* argv[])
 {
-
-//  for(int i=0; i<argc; i++) 
-//      printf("ARG%d: %s \n", i, argv[i]);
+    //for (int i=0; i<argc; i++) 
+        //printf("argument %d: %s\n", i, argv[i]);
 
     init_c_lib(argc, argv);
 
@@ -103,7 +102,7 @@ void tick()
 
     t_map::t_map_send_map_chunks();  //every tick
 
-    if(counter % 15 == 0) 
+    if (counter % 15 == 0) 
     {
         ServerState::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
@@ -158,10 +157,10 @@ int run()
     while (!ServerState::signal_exit)
     {
         tc = 0;
-        while(1)
+        while (1)
         {
             int ti = _GET_TICK();
-            if(ti == 0 || tc > 1) break;
+            if (ti == 0 || tc > 1) break;
 
             tick();
 
@@ -169,12 +168,12 @@ int run()
             break;
         }
 
-        if(tc > 0)
+        if (tc > 0)
         {
             NetServer::flush_to_net();
         }
 
-        if(tc > 1)
+        if (tc > 1)
         {
             printf("Warning:: %i ticks this frame", tc);
         }

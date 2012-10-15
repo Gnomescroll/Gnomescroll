@@ -44,13 +44,13 @@ void init_packets()
 
 int get_block_item_container(int x, int y, int z)
 {
-    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+    if ( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
         | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
     ) GS_ABORT();
 
     class MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
-    if(c == NULL) return NULL_CONTAINER;
+    if (c == NULL) return NULL_CONTAINER;
     return c->chunk_item_container.get(x,y,z); 
 }
 
