@@ -62,9 +62,12 @@ class Item
         printf("Gas decay %d\n", gas_decay);
         #if DC_SERVER
         # if GS_SERIALIZER
-        static char uuid_str[(serializer::UUID_STRING_LENGTH)+1];
-        uuid_unparse(this->uuid, uuid_str);
-        printf("UUID: %s", uuid_str);
+        if (Options::serializer)
+        {
+            static char uuid_str[(serializer::UUID_STRING_LENGTH)+1];
+            uuid_unparse(this->uuid, uuid_str);
+            printf("UUID: %s", uuid_str);
+        }
         # endif
         printf("Subscribers %d\n", subscribers.n);
         printf("\t");
@@ -89,7 +92,8 @@ class Item
         #endif
     {
         #if DC_SERVER && GS_SERIALIZER
-        uuid_clear(this->uuid);
+        if (Options::serializer)
+            uuid_clear(this->uuid);
         #endif
     }
 

@@ -73,7 +73,7 @@ const unsigned int COLOR_COMPONENT_DELIMITER_LENGTH = 1;
 #define PLAYER_CONTAINER_USER_ID_LENGTH 10
 #define PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH 3
 
-#define ITEM_UUID_LENGTH UUID_STRING_LENGTH
+#define ITEM_UUID_LENGTH 36
 #define ITEM_DURABILITY_LENGTH 5
 #define ITEM_STACK_SIZE_LENGTH 5
 #define ITEM_CONTAINER_SLOT_LENGTH 3
@@ -339,7 +339,7 @@ void verify_config()
     // space is reserved for string padding
     // dash - is reserved for uuid
     // Actually, never ever change the delimiters
-    GS_ASSERT_ABORT(strcmp(TAG_DELIMITER, "=") != 0);
+    GS_ASSERT_ABORT(strcmp(TAG_DELIMITER, "=") == 0);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, " ") == NULL);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, "-") == NULL);
@@ -347,7 +347,7 @@ void verify_config()
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strlen(TAG_DELIMITER) == TAG_DELIMITER_LENGTH);
 
-    GS_ASSERT_ABORT(strcmp(PROPERTY_DELIMITER, ";") != 0);
+    GS_ASSERT_ABORT(strcmp(PROPERTY_DELIMITER, ";") == 0);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, " ") == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, "-") == NULL);
@@ -355,7 +355,7 @@ void verify_config()
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strlen(PROPERTY_DELIMITER) == PROPERTY_DELIMITER_LENGTH);
     
-    GS_ASSERT_ABORT(strcmp(COLOR_COMPONENT_DELIMITER, ",") != 0);
+    GS_ASSERT_ABORT(strcmp(COLOR_COMPONENT_DELIMITER, ",") == 0);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, " ") == NULL);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, "-") == NULL);
@@ -383,6 +383,10 @@ void verify_config()
     GS_ASSERT_ABORT(PLAYER_FIELD_COUNT > 0);
     GS_ASSERT_ABORT(PLAYER_CONTAINER_FIELD_COUNT > 0);
     GS_ASSERT_ABORT(ITEM_FIELD_COUNT > 0);
+
+    // we need to #define ITEM_UUID_LENGTH as a plain integer, so we can use it in the format string
+    // but we really want it to be UUID_STRING_LENGTH
+    GS_ASSERT_ABORT(ITEM_UUID_LENGTH == UUID_STRING_LENGTH);
 }
 
 }   // serializer

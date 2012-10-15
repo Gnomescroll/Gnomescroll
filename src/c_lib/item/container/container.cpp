@@ -13,6 +13,10 @@
 #if DC_SERVER
 #include <item/container/server.hpp>
 #include <item/container/net/StoC.hpp>
+
+# if GS_SERIALIZER
+# include <serializer/uuid.hpp>
+# endif
 #endif
 
 namespace ItemContainer
@@ -57,6 +61,14 @@ int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
+
+    #if DC_SERVER && GS_SERIALIZER
+    if (Options::serializer)
+    {   // create a uuid now
+        if (uuid_is_null(item->uuid))
+            uuid_generate(item->uuid);
+    }
+    #endif
 
     return slot;
 }
