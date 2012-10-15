@@ -12,6 +12,10 @@
     #define GS_AWESOMIUM 1
 #endif
 
+#ifdef GS_SERIALIZER
+dont_define_gs_serializer_in_client
+#endif
+
 #ifdef DC_SERVER
 dont_include_this_file_in_server
 #endif

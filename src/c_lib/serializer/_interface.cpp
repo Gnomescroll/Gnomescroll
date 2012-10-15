@@ -30,10 +30,11 @@ void init()
     init_map_serializer();
 
     if (!Options::serializer) return;
-    
+
+    // ORDER DEPENDENT
+    init_redis();
     init_state();  
     init_players();
-    init_redis();
 }
 
 void teardown()
@@ -49,7 +50,8 @@ void teardown()
 
     // TODO -- save all item data, wait for responses
 
-    teardown_redis();   // MUST COME FIRST -- all callbacks/data need to return results
+    // ORDER DEPENDENT
+    teardown_redis();
     teardown_players();
     teardown_state();
 }

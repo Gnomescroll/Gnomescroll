@@ -8,6 +8,7 @@ dont_include_this_file_in_client
 
 #if GS_SERIALIZER
 # include <serializer/_state.cpp>
+# include <serializer/uuid.cpp>
 # include <serializer/redis.cpp>
 # include <serializer/items.cpp>
 # include <serializer/players.cpp>
@@ -15,5 +16,5 @@ dont_include_this_file_in_client
 # include <serializer/map.cpp>
 # include <serializer/_interface.cpp>
 #else
-#include <serializer/_interface.hpp> 
+# include <serializer/_interface.hpp> 
 #endif

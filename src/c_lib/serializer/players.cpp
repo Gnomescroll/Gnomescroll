@@ -309,7 +309,7 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
         GS_ASSERT(item != NULL);
         if (item == NULL) continue; // TODO -- log error. RESERVE ITEM SPACE FOR LOADING
 
-        item->global_id = item_data.global_id;
+        uuid_copy(item->uuid, item_data.uuid);
         item->type = item_type;
         item->durability = item_data.durability;
         item->stack_size = item_data.stack_size;

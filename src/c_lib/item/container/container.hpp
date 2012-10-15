@@ -588,10 +588,7 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
     return NULL;
 }
 
-const int ITEM_CONTAINER_MAX = 1024;
-const int ITEM_CONTAINER_HARD_MAX = 0xffff;
-
-class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX, ITEM_CONTAINER_HARD_MAX>
+class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, MAX_CONTAINERS, MAX_CONTAINERS_HARD>
 {
     private:
         const char* name() { return "ItemContainer"; }
@@ -607,12 +604,12 @@ class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, I
 
         ItemContainerInterface* create(int type, int id)
         {
-            return DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX, ITEM_CONTAINER_HARD_MAX>::create(type, id);
+            return DynamicMultiObjectList<ItemContainerInterface, MAX_CONTAINERS, MAX_CONTAINERS_HARD>::create(type, id);
         }
         #endif
 
         ItemContainerList()
-        : DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX, ITEM_CONTAINER_HARD_MAX>(create_item_container_interface)
+        : DynamicMultiObjectList<ItemContainerInterface, MAX_CONTAINERS, MAX_CONTAINERS_HARD>(create_item_container_interface)
         {
             print_list((char*)this->name(), this);
         }

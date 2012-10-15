@@ -144,14 +144,18 @@ bool is_valid_location_data(ItemLocationType location, int location_id, int cont
     else
     if (location == IL_HAND)
     {
-        VERIFY_ITEM_LOCATION(location_id >= 0 && location_id < AGENT_MAX);
+        VERIFY_ITEM_LOCATION(IS_VALID_AGENT_ID(location_id));
+        VERIFY_ITEM_LOCATION(container_slot == 0);
     }
     else
     if (location == IL_CONTAINER)
     {
+        VERIFY_ITEM_LOCATION(IS_VALID_CONTAINER_ID(location_id));
         VERIFY_ITEM_LOCATION(location_id != NULL_CONTAINER);
         VERIFY_ITEM_LOCATION(container_slot != NULL_SLOT);
-        VERIFY_ITEM_LOCATION(ItemContainer::get_container_type(location_id) != CONTAINER_TYPE_NONE);    
+        ItemContainerType container_type = ItemContainer::get_container_type(location_id);
+        VERIFY_ITEM_LOCATION(container_type != CONTAINER_TYPE_NONE);
+        VERIFY_ITEM_LOCATION(container_slot >= 0 && (unsigned int)container_slot < ItemContainer::get_container_max_slots(container_type));
     }
 
     #undef VERIFY_ITEM_LOCATION
@@ -161,7 +165,8 @@ bool is_valid_location_data(ItemLocationType location, int location_id, int cont
 
 void ItemList::verify_items()
 {
-
+    // use this macro for conditions which should mark the item as invalid item state
+    // dont use it if the item's state does not align with meta info, like subscribers
     #define VERIFY_ITEM(COND, LIMIT, ITEM) \
         GS_ASSERT_LIMIT((COND), (LIMIT)); \
         if (!(COND)) (ITEM)->valid = false;
@@ -172,21 +177,20 @@ void ItemList::verify_items()
         if (this->a[k] == NULL) continue;
         Item* i = this->a[k];
 
-        // items in a save-waiting state don't apply, they can sit in limbo
-        if (i->save_state == ISS_WAITING_FOR_GID || i->save_state == ISS_WAITING_FOR_SAVE) continue;
-        
-        bool valid_location = is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT);
-        if (!valid_location) i->valid = false;
+        VERIFY_ITEM(is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT), LIMIT, i);
+
+        VERIFY_ITEM(i->type != NULL_ITEM_TYPE, LIMIT, i);
     
-        VERIFY_ITEM(i->subscribers.n >= 0, LIMIT, i);
-        VERIFY_ITEM(i->stack_size > 0, LIMIT, i);
-        VERIFY_ITEM(i->durability > 0, LIMIT, i);
+        GS_ASSERT_LIMIT(i->subscribers.n >= 0, LIMIT);  // this should warn, but not mark the item as invalid
+        VERIFY_ITEM((i->stack_size > 0 && i->stack_size <= MAX_STACK_SIZE) || i->stack_size == NULL_STACK_SIZE, LIMIT, i);
+        VERIFY_ITEM((i->durability > 0 && i->durability <= MAX_DURABILITY) || i->durability == NULL_DURABILITY, LIMIT, i);
 
         if (i->location == IL_HAND)
         {
-            VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
-            VERIFY_ITEM(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT, i); // WARNING -- assumes client_id==agent_id
-            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::get_agent_hand_item(i->location_id) == i->id, LIMIT, i);
+            GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+            GS_ASSERT_LIMIT(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
+            GS_ASSERT_LIMIT(ItemContainer::get_agent_hand_item(i->location_id) == i->id, LIMIT);
+            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX, LIMIT, i);
         }
         else
         if (i->location == IL_CONTAINER)
@@ -195,13 +199,13 @@ void ItemList::verify_items()
             int owner = ItemContainer::get_container_owner(i->location_id);
             if (ItemContainer::container_type_is_attached_to_agent(type))
             {
-                VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
-                VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
             else if (owner != NULL_AGENT)
             {
-                VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
-                VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
         }
     }

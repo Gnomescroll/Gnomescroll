@@ -130,6 +130,9 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
         libev_lib_path = ['/usr/lib', redis_lib_path]
         libev_inc_path = ['/usr/include', redis_inc_path]
 
+        libuuid_lib_path = ['/usr/lib']
+        libuuid_inc_path = ['/usr/include']        
+
     if OS == 'Windows':
         conf.check(header_name='lua.hpp',
                    lib='lua51', #'lua5.1',
@@ -149,6 +152,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
                includes=lua_inc_path,
                mandatory=True)
                
+        # is already included in the lib/lin32/ folder
         conf.check(header_name='hiredis.h',
             lib='hiredis',
             use='hiredis',
@@ -158,6 +162,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
             includes=os.path.abspath(redis_inc_path),
             mandatory=True)
 
+        # sudo apt-get install libev-dev
         conf.check(header_name='ev.h',
             lib=['ev', 'hiredis'],
             use='ev',
@@ -166,6 +171,17 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
             libpath=map(os.path.abspath, libev_lib_path),
             includes=map(os.path.abspath, libev_inc_path),
             mandatory=True)
+
+        # sudo apt-get install uuid-dev
+        conf.check(header_name='uuid.h',
+            lib=['uuid'],
+            use='uuid',
+            uselib_store='UUID',
+            fragment='#include <uuid/uuid.h>' + MAIN_TEST_CODE,
+            libpath=map(os.path.abspath, libuuid_lib_path),
+            includes=map(os.path.abspath, libuuid_inc_path),
+            mandatory=True)
+            
 
     #conf.check(header_name="noise/noise.h",
                 #lib="noise",
@@ -189,7 +205,7 @@ def build(bld):
 
     use = time_lib+['LUA']
     if OS == 'Linux':
-        use += ['REDIS', 'EV']
+        use += ['REDIS', 'EV', 'UUID']
 
     ##attemping C++ build
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib

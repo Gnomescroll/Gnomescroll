@@ -4,6 +4,7 @@
 #include <item/common/constants.hpp>
 #include <serializer/redis.hpp>
 #include <serializer/_state.hpp>
+#include <serializer/uuid.hpp>
 
 namespace serializer
 {
@@ -11,7 +12,7 @@ namespace serializer
 class ParsedItemData
 {
     public:
-        int32_t global_id;
+        uuid_t uuid;
         char name[ITEM_NAME_MAX_LENGTH+1];
         unsigned int durability;
         unsigned int stack_size;
@@ -23,7 +24,7 @@ class ParsedItemData
     void reset()
     {
         this->valid = false;
-        this->global_id = 0;
+        uuid_clear(this->uuid);
         memset(this->name, 0, sizeof(this->name));
         this->durability = NULL_DURABILITY;
         this->stack_size = NULL_STACK_SIZE;
@@ -70,13 +71,14 @@ void parse_item_string(char* str, const size_t length, class ParsedItemData* dat
         char* val = &key[TAG_LENGTH+TAG_DELIMITER_LENGTH];
 
         bool err = false;
-        if (strncmp(GLOBAL_ID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+        if (strncmp(UUID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
         {
-            long long global_id = parse_int(val, err);
-            GS_ASSERT(!err);
-            if (err) return;
-            //if (global_id <= 0 || global_id > INT32_MAX) return;  // TODO -- re-enable once global id acquisition in place
-            data->global_id = (int32_t)global_id;
+            int ret = uuid_parse(val, data->uuid);
+            GS_ASSERT(!ret);
+            if (ret) return;
+            ret = uuid_is_null(data->uuid);
+            GS_ASSERT(!ret);
+            if (ret) return;
         }
         else
         if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
@@ -124,6 +126,16 @@ void parse_item_string(char* str, const size_t length, class ParsedItemData* dat
     data->valid = true;
 }
 
+static inline bool item_valid(class Item::Item* item)
+{
+    // the item valid check occurs every frame and covers most item state
+    // it doesnt check uuids, as they are serializer specific and expensive to check, and won't change
+    if (!item->valid) return false;
+    if (item->location == IL_PARTICLE) return false;    // We don't support item particle saving yet
+    if (uuid_is_null(item->uuid)) return false;
+    return true;
+}
+
 size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
 {
     // TODO -- check/acquire global id
@@ -135,12 +147,20 @@ size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return 0;
 
+    bool valid = item_valid(item);
+    GS_ASSERT(valid);
+    if (!valid) return 0;
+
     const char* item_name = Item::get_item_name(item->type);
     GS_ASSERT(item_name != NULL);
     if (item_name == NULL) return 0;
 
+    static char uuid_buf[UUID_STRING_LENGTH+1];
+    size_t wrote = write_uuid(uuid_buf, UUID_STRING_LENGTH+1, item->uuid);
+    if (wrote != UUID_STRING_LENGTH) return 0;
+
     int could_write = snprintf(buf, buffer_size, ITEM_FMT,
-        item->global_id,
+        uuid_buf,
         item_name,
         item->durability,
         item->stack_size,

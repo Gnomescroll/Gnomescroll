@@ -1698,7 +1698,7 @@ bool load_item_into_hand(ItemID item_id, AgentID agent_id)
 //tests
 void test_container_list_capacity()
 {
-    for (int i=0; i<ITEM_CONTAINER_MAX*2; i++)
+    for (int i=0; i<MAX_CONTAINERS*2; i++)
         item_container_list->create(AGENT_INVENTORY);
 }
 

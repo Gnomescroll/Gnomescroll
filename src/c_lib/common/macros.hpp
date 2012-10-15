@@ -7,7 +7,8 @@
 #define IF_INVALID_USER_ID(user_id) if (user_id <= 0 || user_id == NULL_USER_ID) 
 
 #define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT(agent_id >= 0 && agent_id < AGENT_MAX)
-#define IF_INVALID_AGENT_ID(agent_id) if (agent_id < 0 || agent_id >= AGENT_MAX) 
+#define IS_VALID_AGENT_ID(agent_id) (agent_id >= 0 && agent_id < AGENT_MAX)
+#define IF_INVALID_AGENT_ID(agent_id) if (!IS_VALID_AGENT_ID(agent_id))
 
 #define ASSERT_VALID_ITEM_ID(item_id) GS_ASSERT(item_id >= 0 && item_id < MAX_ITEMS)
 #define IF_INVALID_ITEM_ID(item_id) if (item_id < 0 || item_id >= MAX_ITEMS)
@@ -22,7 +23,11 @@
 #define IF_INVALID_MECH_TYPE(mech_type) if (mech_type < 0 || mech_type >= t_mech::MAX_MECHS)
 
 #define ASSERT_VALID_CONTAINER_TYPE(container_type) GS_ASSERT(container_type >= 0 && container_type < MAX_CONTAINER_TYPES)
-#define IF_INVALID_CONTAINER_TYPE(container_type) if (container_type < 0 || container_type >= MAX_CONTAINER_TYPES) 
+#define IF_INVALID_CONTAINER_TYPE(container_type) if (container_type < 0 || container_type >= MAX_CONTAINER_TYPES)
+
+#define ASSERT_VALID_CONTAINER_ID(container_id) GS_ASSERT(container_id >= 0 && container_id < MAX_CONTAINERS)
+#define IS_VALID_CONTAINER_ID(container_id) (container_id >= 0 && container_id < MAX_CONTAINERS) 
+#define IF_INVALID_CONTAINER_ID(container_id) if (!IS_VALID_CONTAINER_ID(container_id)) 
 
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT(spawner_id == BASE_SPAWN_ID || (spawner_id >= 0 && spawner_id < MAX_SPAWNERS));
 #define IF_INVALID_SPAWNER_ID(spawner_id) if (spawner_id != BASE_SPAWN_ID && (spawner_id < 0 || spawner_id >= MAX_SPAWNERS))

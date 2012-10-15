@@ -10,9 +10,8 @@
  * DONT USE ENUMS FOR DATA THAT LIVES OUTSIDE OF THE GAME SERVER INSTANCE
  */
 
-// 9223372036854775807 -- signed 64bit int max (redis global id max)
-
 #include <item/container/config/_state.hpp>
+#include <serializer/uuid.hpp>
 
 namespace serializer
 {
@@ -43,8 +42,6 @@ const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = PLAYER_LOAD_DATA_L
 
 // DONT CHANGE THESE:
 
-#define ITEM_GLOBAL_ID_KEY "item:guid"
-
 #define LOCATION_NAME_MAX_LENGTH 24
 
 const unsigned int TAG_LENGTH = 3;
@@ -53,7 +50,7 @@ const unsigned int PROPERTY_DELIMITER_LENGTH = 1;
 const unsigned int COLOR_COMPONENT_DELIMITER_LENGTH = 1;
 
 #define USER_ID_TAG         "UID"
-#define GLOBAL_ID_TAG       "GID"
+#define UUID_TAG            "GID"
 #define NAME_TAG            "NAM"
 #define DURABILITY_TAG      "DUR"
 #define STACK_SIZE_TAG      "STA"
@@ -76,7 +73,7 @@ const unsigned int COLOR_COMPONENT_DELIMITER_LENGTH = 1;
 #define PLAYER_CONTAINER_USER_ID_LENGTH 10
 #define PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH 3
 
-#define ITEM_GLOBAL_ID_LENGTH 10
+#define ITEM_UUID_LENGTH UUID_STRING_LENGTH
 #define ITEM_DURABILITY_LENGTH 5
 #define ITEM_STACK_SIZE_LENGTH 5
 #define ITEM_CONTAINER_SLOT_LENGTH 3
@@ -103,7 +100,7 @@ const size_t PLAYER_CONTAINER_LINE_LENGTH =
 const size_t ITEM_LINE_LENGTH =
        ITEM_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
     + (ITEM_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
-    + ITEM_GLOBAL_ID_LENGTH
+    + ITEM_UUID_LENGTH
     + ITEM_NAME_MAX_LENGTH
     + ITEM_DURABILITY_LENGTH
     + ITEM_STACK_SIZE_LENGTH
@@ -128,8 +125,8 @@ const char PLAYER_CONTAINER_HEADER_FMT[] =
         "%0" GS_STR(PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH) "d";
     
 const char ITEM_FMT[] =
-    GLOBAL_ID_TAG      TAG_DELIMITER
-        "%0" GS_STR(ITEM_GLOBAL_ID_LENGTH)      "d"
+    UUID_TAG           TAG_DELIMITER
+        "%-" GS_STR(ITEM_UUID_LENGTH)           "s"
         PROPERTY_DELIMITER
     NAME_TAG           TAG_DELIMITER
         "%-" GS_STR(ITEM_NAME_MAX_LENGTH)       "s"
@@ -338,27 +335,36 @@ void verify_config()
     GS_ASSERT_ABORT(TAG_DELIMITER_LENGTH == 1);
     GS_ASSERT_ABORT(COLOR_COMPONENT_DELIMITER_LENGTH == 1);
 
-    // semicolon is reserved for redis key format, which may need to link back to the redis key
+    // semicolon ; is reserved for redis key format, which may need to link back to the redis key
+    // space is reserved for string padding
+    // dash - is reserved for uuid
+    // Actually, never ever change the delimiters
+    GS_ASSERT_ABORT(strcmp(TAG_DELIMITER, "=") != 0);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, "-") == NULL);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, PROPERTY_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strlen(TAG_DELIMITER) == TAG_DELIMITER_LENGTH);
 
+    GS_ASSERT_ABORT(strcmp(PROPERTY_DELIMITER, ";") != 0);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, "-") == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, TAG_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strlen(PROPERTY_DELIMITER) == PROPERTY_DELIMITER_LENGTH);
     
+    GS_ASSERT_ABORT(strcmp(COLOR_COMPONENT_DELIMITER, ",") != 0);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, "-") == NULL);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, TAG_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, PROPERTY_DELIMITER) == NULL);
     GS_ASSERT_ABORT(strlen(COLOR_COMPONENT_DELIMITER) == COLOR_COMPONENT_DELIMITER_LENGTH);
 
     GS_ASSERT_ABORT(strlen(USER_ID_TAG) == TAG_LENGTH);
-    GS_ASSERT_ABORT(strlen(GLOBAL_ID_TAG) == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(UUID_TAG) == TAG_LENGTH);
     GS_ASSERT_ABORT(strlen(NAME_TAG) == TAG_LENGTH);
     GS_ASSERT_ABORT(strlen(DURABILITY_TAG) == TAG_LENGTH);
     GS_ASSERT_ABORT(strlen(STACK_SIZE_TAG) == TAG_LENGTH);

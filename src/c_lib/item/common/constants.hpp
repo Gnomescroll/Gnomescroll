@@ -32,6 +32,9 @@ const int MAX_DURABILITY = 0xffff;
 
 const unsigned int MAX_CONTAINER_SIZE = 0xff - 1;
 
+const int MAX_CONTAINERS = 0xffff;
+const int MAX_CONTAINERS_HARD = MAX_CONTAINERS;
+
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
 

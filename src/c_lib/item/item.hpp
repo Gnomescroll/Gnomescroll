@@ -2,6 +2,9 @@
 
 #if DC_SERVER
 #include <common/subscriber_list.hpp>
+# if GS_SERIALIZER
+# include <serializer/uuid.hpp>
+# endif
 #endif
 
 namespace Item
@@ -35,27 +38,15 @@ class Item
         #if DC_SERVER
         SubscriberList subscribers;
         bool valid;
-        ItemSaveState save_state;
         #endif
 
-    #if DC_SERVER
-    bool valid_deserialization()
-    {
-        if (this->global_id == 0) return false;
-        if (this->location == IL_NOWHERE) return false;
-        if (this->location != IL_PARTICLE && this->container_slot == NULL_SLOT) return false;
-        if (this->type == NULL_ITEM_TYPE) return false;
-        if (this->stack_size <= 0 || this->stack_size > get_max_stack_size(this->type)) return false;
-        if (this->durability <= 0 || this->durability > get_max_durability(this->type)) return false;
-        return true;
-    }
-
+    #if DC_SERVER && GS_SERIALIZER
+    uuid_t uuid;
     void init_for_loading();   // only to be used by serializer
     #endif
     
     void init(int item_type);
     
-
     void print()
     {
         printf("Item:\n");
@@ -70,6 +61,11 @@ class Item
         printf("Container slot %d\n", container_slot);
         printf("Gas decay %d\n", gas_decay);
         #if DC_SERVER
+        # if GS_SERIALIZER
+        static char uuid_str[(serializer::UUID_STRING_LENGTH)+1];
+        uuid_unparse(this->uuid, uuid_str);
+        printf("UUID: %s", uuid_str);
+        # endif
         printf("Subscribers %d\n", subscribers.n);
         printf("\t");
         for (unsigned int i=0; i<subscribers.n; i++) printf("%d ", subscribers.subscribers[i]);
@@ -90,9 +86,12 @@ class Item
         #if DC_SERVER
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
         , valid(true)
-        , save_state(ISS_NONE)
         #endif
-    {}
+    {
+        #if DC_SERVER && GS_SERIALIZER
+        uuid_clear(this->uuid);
+        #endif
+    }
 
 };
 
