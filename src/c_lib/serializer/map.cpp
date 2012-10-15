@@ -367,12 +367,12 @@ void load_map(const char* filename)
 
 void save_map()
 {
-    save_map(default_map_file);
+    save_map(map_filename);
 }
 
 void load_map()
 {
-    load_map(default_map_file);
+    load_map(map_filename);
 }
 
 void check_map_save_state()

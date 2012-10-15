@@ -470,8 +470,7 @@ bool save_player_container(ClientID client_id, int container_id)
     if (client->user_id == NULL_USER_ID) return false;
 
     ItemContainerType container_type = ItemContainer::get_container_type(container_id);
-    LocationNameID loc_id = get_container_location_name_id(container_type);
-    const char* location_name = get_location_name(loc_id);
+    const char* location_name = get_player_container_location_name(container_type);
     GS_ASSERT(location_name != NULL);
     if (location_name == NULL) return false;
 
@@ -537,9 +536,7 @@ bool load_player_container(int player_load_id, int container_id)
     if (data == NULL) return false;
 
     ItemContainerType container_type = ItemContainer::get_container_type(container_id);
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return false;
-    const char* container_name = get_location_name(get_container_location_name_id(container_type));
+    const char* container_name = get_player_container_location_name(container_type);
     GS_ASSERT(container_name != NULL);
     if (container_name == NULL) return false;
 
