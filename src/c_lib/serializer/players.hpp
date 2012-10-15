@@ -136,7 +136,4 @@ class PlayerContainerLoadDataList: public ElasticObjectList<class PlayerContaine
     { this->print(); }
 };
 
-extern class PlayerLoadDataList* player_load_data_list;
-extern class PlayerContainerLoadDataList* player_container_load_data_list;
-
 }   // serializer

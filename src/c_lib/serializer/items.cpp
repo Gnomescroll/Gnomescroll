@@ -3,25 +3,10 @@
 #include <item/item.hpp>
 #include <item/common/constants.hpp>
 #include <serializer/redis.hpp>
+#include <serializer/_state.hpp>
 
 namespace serializer
 {
-
-
-static const size_t SRL_BUF_SIZE = 0xffff-1;
-static char* _srl_buf = NULL;
-
-void init_items()
-{
-    GS_ASSERT(_srl_buf == NULL);
-    _srl_buf = (char*)calloc(SRL_BUF_SIZE+1, sizeof(char));
-}
-
-void teardown_items()
-{
-    if (_srl_buf != NULL) free(_srl_buf);
-}
-
 
 class ParsedItemData
 {

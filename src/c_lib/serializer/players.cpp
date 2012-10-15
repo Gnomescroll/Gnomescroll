@@ -1,9 +1,13 @@
-#include "player.hpp"
+#include "players.hpp"
 
 #include <serializer/items.hpp>
+#include <serializer/_state.hpp>
 
 namespace serializer
 {
+
+static class PlayerLoadDataList* player_load_data_list = NULL;
+static class PlayerContainerLoadDataList* player_container_load_data_list = NULL;
 
 void init_players()
 {
@@ -27,9 +31,6 @@ void teardown_players()
         delete player_container_load_data_list;
     }
 }
-
-static class PlayerLoadDataList* player_load_data_list = NULL;
-static class PlayerContainerLoadDataList* player_container_load_data_list = NULL;
 
 class ParsedPlayerData
 {
@@ -418,25 +419,25 @@ const char* write_player_container_string(int container_id, UserID user_id)
     size_t ibuf = 0;
     
     // write header
-    int could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_CONTAINER_HEADER_FMT,
+    int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, PLAYER_CONTAINER_HEADER_FMT,
         container_name, user_id, container->slot_count);
-    GS_ASSERT(could_write > 0 && (size_t)could_write < SRL_BUF_SIZE - ibuf);
-    if (could_write <= 0 || (size_t)could_write >= SRL_BUF_SIZE - ibuf) return NULL;
+    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
     ibuf += (size_t)could_write;
     
-    _srl_buf[ibuf++] = '\n';
-    if (ibuf >= SRL_BUF_SIZE) return NULL;
+    _buffer[ibuf++] = '\n';
+    if (ibuf >= BUF_SIZE) return NULL;
 
     if (container->slot_count > 0)
     {   // we must check the slot count, because write_container_contents_string returns 0 on error or if the container is empty
-        size_t wrote = write_container_contents_string(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, container);
+        size_t wrote = write_container_contents_string(&_buffer[ibuf], BUF_SIZE - ibuf, container);
         if (wrote <= 0) return NULL;  // error
         ibuf += wrote;
     }
     
-    _srl_buf[ibuf] = '\0';
+    _buffer[ibuf] = '\0';
 
-    return _srl_buf;
+    return _buffer;
 }
 
 const char* write_player_string(AgentID agent_id)
@@ -447,14 +448,14 @@ const char* write_player_string(AgentID agent_id)
 
     size_t ibuf = 0;
 
-    int could_write = snprintf(&_srl_buf[ibuf], SRL_BUF_SIZE - ibuf, PLAYER_DATA_FMT,
+    int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, PLAYER_DATA_FMT,
         agent->status.color.r, agent->status.color.g, agent->status.color.b);
         
-    GS_ASSERT(could_write > 0 && (size_t)could_write < SRL_BUF_SIZE - ibuf);
-    if (could_write <= 0 || (size_t)could_write >= SRL_BUF_SIZE - ibuf) return NULL;
+    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
     ibuf += could_write;
 
-    return _srl_buf;
+    return _buffer;
 }
 
 bool save_player_container(ClientID client_id, int container_id)

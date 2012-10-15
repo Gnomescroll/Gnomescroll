@@ -7,10 +7,11 @@ dont_include_this_file_in_client
 #include <serializer/constants.hpp>
 
 #if GS_SERIALIZER
+# include <serializer/_state.cpp>
 # include <serializer/redis.cpp>
 # include <serializer/items.cpp>
-# include <serializer/player.cpp>
-# include <serializer/container.cpp>
+# include <serializer/players.cpp>
+# include <serializer/containers.cpp>
 # include <serializer/map.cpp>
 # include <serializer/_interface.cpp>
 #else

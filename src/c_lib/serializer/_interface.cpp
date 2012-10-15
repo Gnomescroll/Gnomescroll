@@ -31,8 +31,9 @@ void init()
 
     if (!Options::serializer) return;
     
-    init_items();
-    init_redis();    
+    init_state();  
+    init_players();
+    init_redis();
 }
 
 void teardown()
@@ -46,8 +47,11 @@ void teardown()
     
     teardown_map_serializer();
 
+    // TODO -- save all item data, wait for responses
+
     teardown_redis();   // MUST COME FIRST -- all callbacks/data need to return results
-    teardown_items();
+    teardown_players();
+    teardown_state();
 }
 
 void update()

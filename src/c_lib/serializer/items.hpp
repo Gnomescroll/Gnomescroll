@@ -7,9 +7,9 @@
 namespace serializer
 {
 
-void init_items();
-void teardown_items();
-
 int write_container_contents_string(char* buf, size_t buffer_size, const class ItemContainer::ItemContainerInterface* container);
+
+// WARNING: modifies char* str
+void parse_item_string(char* str, const size_t length, class ParsedItemData* data);
 
 }   // serializer
