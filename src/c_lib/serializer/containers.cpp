@@ -82,7 +82,7 @@ void save_containers()
     if (f == NULL) return;  // TODO -- log error
 
     for (int i=0; i<item_container_list->n_max; i++)
-        if (item_container_list->a[i] != NULL)
+        if (item_container_list->a[i] != NULL && !item_container_list->a[i]->attached_to_agent)
         {
             bool success = save_container(f, item_container_list->a[i]);
             GS_ASSERT(success); // TODO -- log error
