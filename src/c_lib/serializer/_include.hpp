@@ -9,6 +9,8 @@ dont_include_this_file_in_client
 #if GS_SERIALIZER
 # include <serializer/redis.cpp>
 # include <serializer/items.cpp>
+# include <serializer/player.cpp>
+# include <serializer/container.cpp>
 # include <serializer/map.cpp>
 # include <serializer/_interface.cpp>
 #else

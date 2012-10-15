@@ -10,11 +10,6 @@ namespace serializer
 void init_items();
 void teardown_items();
 
-bool save_player(UserID user_id, AgentID agent_id);
-bool save_player_container(ClientID client_id, int container_id);
-
-int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id);
-bool load_player_container(int player_load_id, int container_id); 
-bool end_player_load(int player_load_id);
+int write_container_contents_string(char* buf, size_t buffer_size, const class ItemContainer::ItemContainerInterface* container);
 
 }   // serializer

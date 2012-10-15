@@ -43,6 +43,8 @@ const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = PLAYER_LOAD_DATA_L
 
 // DONT CHANGE THESE:
 
+#define ITEM_GLOBAL_ID_KEY "item:guid"
+
 #define LOCATION_NAME_MAX_LENGTH 24
 
 const unsigned int TAG_LENGTH = 3;

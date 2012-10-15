@@ -109,5 +109,5 @@ void verify_configuration()
         GS_ASSERT(health_color_points[i] < health_color_points[i-1]); // must be descending order
 }
 
-}   // AgentHealthColor
+}   // AgentHudName
 #endif
