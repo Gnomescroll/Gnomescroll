@@ -14,18 +14,11 @@ void init()
     verify_config();
 
     // make sure paths exist
-    create_path(DATA_PATH);
-    
+    create_path(DATA_PATH);    
     create_path(MAP_DATA_PATH);
     create_path(MECH_DATA_PATH);
-    
-    //create_path(PLAYER_DATA_PATH);
-    //create_path(CONTAINER_DATA_PATH);
-    //create_path(ITEM_DATA_PATH);
-    
-    //create_path(PLAYER_DATA_PATH    INVALID_DATA_SUBPATH);
-    //create_path(CONTAINER_DATA_PATH INVALID_DATA_SUBPATH);
-    //create_path(ITEM_DATA_PATH      INVALID_DATA_SUBPATH);
+    create_path(PLAYER_DATA_PATH);
+    create_path(CONTAINER_DATA_PATH);
     
     init_map_serializer();
 

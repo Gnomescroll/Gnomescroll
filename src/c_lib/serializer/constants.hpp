@@ -16,8 +16,24 @@
 namespace serializer
 {
 
-// Server-specific flat-file data
+const int REDIS_TIMEOUT   = 300;  // seconds
+const int KEEP_ALIVE_RATE = (REDIS_TIMEOUT*30)/2; // send keep-alive halfway
+
+// Cached data queues
+const unsigned int PLAYER_LOAD_DATA_LIST_INITIAL_SIZE = NetServer::HARD_MAX_CONNECTIONS;
+const unsigned int PLAYER_LOAD_DATA_LIST_HARD_MAX = 128;
+const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_INITIAL_SIZE = PLAYER_LOAD_DATA_LIST_INITIAL_SIZE * N_PLAYER_CONTAINERS;
+const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = PLAYER_LOAD_DATA_LIST_HARD_MAX * N_PLAYER_CONTAINERS;
+
+// DONT CHANGE ANYTHING BELOW THIS LINE
+
+// Paths for server-specific flat-file data
+
 #define DATA_PATH "./world/"
+
+#define DATA_TMP_EXT    ".tmp"
+#define DATA_ERROR_EXT  ".err"
+#define DATA_BACKUP_EXT ".bak"
 
 #define MAP_DATA_PATH  DATA_PATH      "map/"
 #define MECH_DATA_PATH DATA_PATH      "mechs/"
@@ -33,36 +49,29 @@ namespace serializer
 const char map_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT;
 const char mech_filename[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT;
 const char player_filename[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT;
-const char container_data_ext[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT;
+const char container_filename[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT;
+
+// backup copy
+const char map_filename_backup[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_BACKUP_EXT;
+const char mech_filename_backup[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_BACKUP_EXT;
+const char player_filename_backup[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_BACKUP_EXT;
+const char container_filename_backup[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT;
+
+// tmp copy
+const char map_filename_tmp[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_TMP_EXT;
+const char mech_filename_tmp[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_TMP_EXT;
+const char player_filename_tmp[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_TMP_EXT;
+const char container_filename_tmp[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT;
 
 // error files
-#define DATA_ERROR_EXT ".err"
 const char map_error_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_ERROR_EXT;
 const char mech_error_filename[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_ERROR_EXT;
 const char player_error_filename[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_ERROR_EXT;
-const char container_error_data_ext[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_ERROR_EXT;
+const char container_error_filename[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_ERROR_EXT;
 
-/*
- * REDIS DATA
- */
-
-const int REDIS_TIMEOUT   = 300;  // seconds
-const int KEEP_ALIVE_RATE = (REDIS_TIMEOUT*30)/2; // send keep-alive halfway
-
-// Cached data queues
-const unsigned int PLAYER_LOAD_DATA_LIST_INITIAL_SIZE = NetServer::HARD_MAX_CONNECTIONS;
-const unsigned int PLAYER_LOAD_DATA_LIST_HARD_MAX = 128;
-const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_INITIAL_SIZE = PLAYER_LOAD_DATA_LIST_INITIAL_SIZE * N_PLAYER_CONTAINERS;
-const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = PLAYER_LOAD_DATA_LIST_HARD_MAX * N_PLAYER_CONTAINERS;
-
-// DONT CHANGE THESE:
+// Format data for items, containers, redis keys
 
 #define LOCATION_NAME_MAX_LENGTH 24
-
-const unsigned int TAG_LENGTH                       = 3;
-const unsigned int TAG_DELIMITER_LENGTH             = 1;
-const unsigned int PROPERTY_DELIMITER_LENGTH        = 1;
-const unsigned int COLOR_COMPONENT_DELIMITER_LENGTH = 1;
 
 #define UUID_TAG            "GID"
 #define NAME_TAG            "NAM"
@@ -70,32 +79,39 @@ const unsigned int COLOR_COMPONENT_DELIMITER_LENGTH = 1;
 #define USER_ID_TAG         "UID"
 #define DURABILITY_TAG      "DUR"
 #define STACK_SIZE_TAG      "STA"
+#define MAP_POSITION_TAG    "MAP"
 #define CONTAINER_SLOT_TAG  "CSL"
 #define CONTAINER_COUNT_TAG "CNT"
 
-#define TAG_DELIMITER             "="
-#define PROPERTY_DELIMITER        ";"
-#define COLOR_COMPONENT_DELIMITER ","
+#define TAG_DELIMITER                      "="
+#define PROPERTY_DELIMITER                 ";"
+#define COLOR_COMPONENT_DELIMITER          ","
+#define MAP_POSITION_COMPONENT_DELIMITER   ","
 
-#define COLOR_COMPONENT_MAX_LENGTH 3  // color component (0-255)
-#define COLOR_MAX_LENGTH ((COLOR_COMPONENT_MAX_LENGTH*3) + ((COLOR_COMPONENT_MAX_LENGTH-1)*COLOR_COMPONENT_DELIMITER_LENGTH))
+const size_t TAG_LENGTH                                = 3;
+const size_t TAG_DELIMITER_LENGTH                      = sizeof(TAG_DELIMITER)             - 1;
+const size_t PROPERTY_DELIMITER_LENGTH                 = sizeof(PROPERTY_DELIMITER)        - 1;
+const size_t COLOR_COMPONENT_DELIMITER_LENGTH          = sizeof(COLOR_COMPONENT_DELIMITER) - 1;
+const size_t MAP_POSITION_COMPONENT_DELIMITER_LENGTH   = sizeof(MAP_POSITION_COMPONENT_DELIMITER)   - 1;
 
-// we have our own guaranteed-to-never-be-used token for the serializer
-// -1 is a pain to use as a null id in the code otherwise, but we need something forward compatible here
-// ids will never be negative, so we know -1 will always exist
-//const int SERIALIZER_BASE_SPAWN_ID = -1;
+#define COLOR_COMPONENT_LENGTH 3  // color component (0-255)
+#define COLOR_LENGTH ((COLOR_COMPONENT_LENGTH*3) + ((COLOR_COMPONENT_LENGTH-1)*COLOR_COMPONENT_DELIMITER_LENGTH))
 
-#define PLAYER_CONTAINER_USER_ID_LENGTH         10
-#define PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH 3
+#define MAP_POSITION_COMPONENT_LENGTH 4
+#define MAP_POSITION_LENGTH ((MAP_POSITION_COMPONENT_LENGTH*3) + ((MAP_POSITION_COMPONENT_LENGTH-1)*MAP_POSITION_COMPONENT_DELIMITER_LENGTH))
+
+#define USER_ID_LENGTH         10
+#define CONTAINER_COUNT_LENGTH 3
 
 #define ITEM_UUID_LENGTH           36
 #define ITEM_DURABILITY_LENGTH     5
 #define ITEM_STACK_SIZE_LENGTH     5
 #define ITEM_CONTAINER_SLOT_LENGTH 3
 
-const unsigned int ITEM_FIELD_COUNT             = 5;
-const unsigned int PLAYER_FIELD_COUNT           = 1;
-const unsigned int PLAYER_CONTAINER_FIELD_COUNT = 3;
+const size_t ITEM_FIELD_COUNT             = 5;
+const size_t PLAYER_FIELD_COUNT           = 1;
+const size_t CONTAINER_FIELD_COUNT        = 3;
+const size_t PLAYER_CONTAINER_FIELD_COUNT = 3;
 
 // These values are just for reference and should not be relied upon
 // A line's property count is subject to change, invalidating these lengths for anything saved before the change
@@ -103,14 +119,21 @@ const unsigned int PLAYER_CONTAINER_FIELD_COUNT = 3;
 const size_t PLAYER_LINE_LENGTH =
        PLAYER_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
     + (PLAYER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
-    + COLOR_MAX_LENGTH;
+    + COLOR_LENGTH;
     
 const size_t PLAYER_CONTAINER_LINE_LENGTH =
        PLAYER_CONTAINER_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
     + (PLAYER_CONTAINER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
     + CONTAINER_NAME_MAX_LENGTH
-    + PLAYER_CONTAINER_USER_ID_LENGTH
-    + PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH;
+    + USER_ID_LENGTH
+    + CONTAINER_COUNT_LENGTH;
+
+const size_t CONTAINER_LINE_LENGTH =
+       CONTAINER_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (CONTAINER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + CONTAINER_NAME_MAX_LENGTH
+    + CONTAINER_COUNT_LENGTH
+    + MAP_POSITION_LENGTH;
 
 const size_t ITEM_LINE_LENGTH =
        ITEM_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
@@ -123,21 +146,35 @@ const size_t ITEM_LINE_LENGTH =
 
 const char PLAYER_DATA_FMT[] =
     COLOR_TAG       TAG_DELIMITER
-        "%0" GS_STR(COLOR_COMPONENT_MAX_LENGTH) "d"
+        "%0" GS_STR(COLOR_COMPONENT_LENGTH) "d"
             COLOR_COMPONENT_DELIMITER
-        "%0" GS_STR(COLOR_COMPONENT_MAX_LENGTH) "d"
+        "%0" GS_STR(COLOR_COMPONENT_LENGTH) "d"
             COLOR_COMPONENT_DELIMITER
-        "%0" GS_STR(COLOR_COMPONENT_MAX_LENGTH) "d";
+        "%0" GS_STR(COLOR_COMPONENT_LENGTH) "d";
 
 const char PLAYER_CONTAINER_HEADER_FMT[] =
     NAME_TAG            TAG_DELIMITER
-        "%-" GS_STR(CONTAINER_NAME_MAX_LENGTH)               "s"
+        "%-" GS_STR(CONTAINER_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
     USER_ID_TAG         TAG_DELIMITER
-        "%0" GS_STR(PLAYER_CONTAINER_USER_ID_LENGTH)         "d"
+        "%0" GS_STR(USER_ID_LENGTH)            "d"
         PROPERTY_DELIMITER
     CONTAINER_COUNT_TAG TAG_DELIMITER
-        "%0" GS_STR(PLAYER_CONTAINER_CONTAINER_COUNT_LENGTH) "d";
+        "%0" GS_STR(CONTAINER_COUNT_LENGTH)    "d";
+
+const char CONTAINER_HEADER_FMT[] =
+    NAME_TAG            TAG_DELIMITER
+        "%-" GS_STR(CONTAINER_NAME_MAX_LENGTH) "s"
+        PROPERTY_DELIMITER
+    CONTAINER_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(CONTAINER_COUNT_LENGTH)    "d"
+        PROPERTY_DELIMITER
+    MAP_POSITION_TAG    TAG_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d";
     
 const char ITEM_FMT[] =
     UUID_TAG           TAG_DELIMITER
@@ -232,6 +269,8 @@ void verify_config()
     // this *could* be in item/container/config, but since the only reason this matters
     // is because of the seriousness of the serializer, i'll leave it here
     GS_ASSERT_ABORT(ItemContainer::container_attributes != NULL);
+    
+    GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 5);
 
     bool agent_hand_found         = false;
     bool agent_toolbelt_found     = false;
@@ -287,10 +326,6 @@ void verify_config()
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_TOOLBELT_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_HAND_LOCATION_NAME));
 
-    GS_ASSERT_ABORT(TAG_DELIMITER_LENGTH             == 1);
-    GS_ASSERT_ABORT(PROPERTY_DELIMITER_LENGTH        == 1);
-    GS_ASSERT_ABORT(COLOR_COMPONENT_DELIMITER_LENGTH == 1);
-
     // semicolon ; is reserved for redis key format, which may need to link back to the redis key
     // space is reserved for string padding
     // dash - is reserved for uuid
@@ -302,6 +337,7 @@ void verify_config()
     GS_ASSERT_ABORT(strlen(TAG_DELIMITER) == TAG_DELIMITER_LENGTH);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, PROPERTY_DELIMITER)        == NULL);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(TAG_DELIMITER_LENGTH == 1);
 
     GS_ASSERT_ABORT(strcmp(PROPERTY_DELIMITER, ";") == 0);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, ":") == NULL);
@@ -310,6 +346,7 @@ void verify_config()
     GS_ASSERT_ABORT(strlen(PROPERTY_DELIMITER) == PROPERTY_DELIMITER_LENGTH);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, TAG_DELIMITER)             == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(PROPERTY_DELIMITER_LENGTH == 1);
     
     GS_ASSERT_ABORT(strcmp(COLOR_COMPONENT_DELIMITER, ",") == 0);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, ":") == NULL);
@@ -318,6 +355,18 @@ void verify_config()
     GS_ASSERT_ABORT(strlen(COLOR_COMPONENT_DELIMITER) == COLOR_COMPONENT_DELIMITER_LENGTH);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, TAG_DELIMITER)      == NULL);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, PROPERTY_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(COLOR_COMPONENT_DELIMITER_LENGTH == 1);
+
+    GS_ASSERT_ABORT(strcmp(MAP_POSITION_COMPONENT_DELIMITER, ",") == 0);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, ":") == NULL);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, "-") == NULL);
+    GS_ASSERT_ABORT(strlen(MAP_POSITION_COMPONENT_DELIMITER) == MAP_POSITION_COMPONENT_DELIMITER_LENGTH);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, TAG_DELIMITER)      == NULL);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, PROPERTY_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(MAP_POSITION_COMPONENT_DELIMITER_LENGTH == 1);
+
+    GS_ASSERT_ABORT(TAG_LENGTH == 3);
 
     GS_ASSERT_ABORT(strlen(UUID_TAG)            == TAG_LENGTH);
     GS_ASSERT_ABORT(strlen(NAME_TAG)            == TAG_LENGTH);
@@ -332,9 +381,6 @@ void verify_config()
     GS_ASSERT_ABORT(ITEM_LINE_LENGTH             >= 71);
     GS_ASSERT_ABORT(PLAYER_CONTAINER_LINE_LENGTH >= 51);
     GS_ASSERT_ABORT(PLAYER_LINE_LENGTH           >= 15);
-
-    //GS_ASSERT_ABORT(count_digits(MAX_SPAWNERS) <= SPAWNER_ID_MAX_LENGTH);
-    //GS_ASSERT_ABORT(SERIALIZER_BASE_SPAWN_ID < 0);
 
     GS_ASSERT_ABORT(ITEM_FIELD_COUNT             > 0);
     GS_ASSERT_ABORT(PLAYER_FIELD_COUNT           > 0);

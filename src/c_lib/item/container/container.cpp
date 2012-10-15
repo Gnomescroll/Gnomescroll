@@ -44,20 +44,19 @@ void init_container(ItemContainerInterface* container)
 
 int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
 {
-    GS_ASSERT(item_id != NULL_ITEM);
+    ASSERT_VALID_ITEM_ID(item_id);
+    IF_INVALID_ITEM_ID(item_id) return NULL_SLOT;
+    
     GS_ASSERT(this->is_valid_slot(slot));
     if (!this->is_valid_slot(slot)) return NULL_SLOT;
 
     GS_ASSERT(this->slot[slot] == NULL_ITEM);
-    if (this->slot[slot] != NULL_ITEM)
-        printf("Slot %d occupied by item %d but inserting %d in it\n", slot, this->slot[slot], item_id);
+    if (this->slot[slot] != NULL_ITEM) return NULL_SLOT;
     
-    this->slot[slot] = item_id;
-    this->slot_count++;
-
     Item::Item* item = Item::get_item_object(item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return slot;
+
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
@@ -69,6 +68,9 @@ int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
             uuid_generate(item->uuid);
     }
     #endif
+
+    this->slot[slot] = item_id;
+    this->slot_count++;
 
     return slot;
 }

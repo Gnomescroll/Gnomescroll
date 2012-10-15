@@ -132,7 +132,7 @@ static inline bool item_valid(class Item::Item* item)
     // it doesnt check uuids, as they are serializer specific and expensive to check, and won't change
     if (!item->valid) return false;
     if (item->location == IL_PARTICLE) return false;    // We don't support item particle saving yet
-    // recover from UUID missing error. this is a programming error, but is not fatal.
+    // recover from missing UUID error. this is a programming error, but is not fatal.
     bool uuid_valid = (!uuid_is_null(item->uuid));
     GS_ASSERT(uuid_valid);
     if (!uuid_valid) uuid_generate(item->uuid);

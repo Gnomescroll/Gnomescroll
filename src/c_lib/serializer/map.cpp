@@ -27,7 +27,7 @@ void teardown_map_serializer()
 #if PTHREADS_ENABLED
 //threaded IO
 
-struct THREADED_WRITE_STRUCT
+struct ThreadedWriteData
 {
     char filename[256];
     char* buffer;
@@ -35,7 +35,7 @@ struct THREADED_WRITE_STRUCT
 };
 
 static int _threaded_write_running = 0;
-static struct THREADED_WRITE_STRUCT threaded_write_struct_param;
+static struct ThreadedWriteData threaded_write_data;
 static pthread_t _threaded_write_thread;
 
 void* _threaded_write(void* vptr)
@@ -43,9 +43,9 @@ void* _threaded_write(void* vptr)
     int ti1 = _GET_MS_TIME();
 
     char filename[256]; 
-    strcpy(filename, threaded_write_struct_param.filename);
-    char* buffer = threaded_write_struct_param.buffer;
-    int buffer_size = threaded_write_struct_param.buffer_size;
+    strcpy(filename, threaded_write_data.filename);
+    char* buffer = threaded_write_data.buffer;
+    int buffer_size = threaded_write_data.buffer_size;
 
 
     if(buffer == NULL)
@@ -80,9 +80,9 @@ void* _threaded_write(void* vptr)
     map_save_completed = true;
     _threaded_write_running = 0;
 
-    threaded_write_struct_param.filename[0] = '\0';
-    threaded_write_struct_param.buffer = NULL;
-    threaded_write_struct_param.buffer_size = 0;
+    threaded_write_data.filename[0] = '\0';
+    threaded_write_data.buffer = NULL;
+    threaded_write_data.buffer_size = 0;
 
     return NULL;
 }
@@ -95,9 +95,9 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
         return;
     }
 
-    strcpy(threaded_write_struct_param.filename, filename);
-    threaded_write_struct_param.buffer = buffer;
-    threaded_write_struct_param.buffer_size = buffer_len;
+    strcpy(threaded_write_data.filename, filename);
+    threaded_write_data.buffer = buffer;
+    threaded_write_data.buffer_size = buffer_len;
 
     //pthread_join( _threaded_write_thread, NULL);
     /* Create independent threads each of which will execute function */
@@ -347,9 +347,9 @@ void save_map(const char* filename)
     
     if (file_exists(filename))
     {
-        const char ext[] = ".tmp";
-        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(ext))*sizeof(char));
-        sprintf(tmp_filename, "%s%s", filename, ext);
+        const char fmt[] = "%s" DATA_TMP_EXT;
+        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(fmt) - 2)*sizeof(char));
+        sprintf(tmp_filename, fmt, filename);
         map_tmp_name = tmp_filename;
         block_serializer->save(tmp_filename);        
     }
@@ -386,9 +386,9 @@ void check_map_save_state()
             {
                 if (file_exists(map_final_name))
                 {
-                    const char ext[] = ".bak";
-                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(ext))*sizeof(char));
-                    sprintf(map_final_name_bak, "%s%s", map_final_name, ext);
+                    const char fmt[] = "%s" DATA_BACKUP_EXT;
+                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(fmt) - 2)*sizeof(char));
+                    sprintf(map_final_name_bak, fmt, map_final_name);
                     rename(map_final_name, map_final_name_bak);
                     free(map_final_name_bak);
                 }

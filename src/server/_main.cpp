@@ -182,15 +182,17 @@ int run()
         if (Options::auth)
             NetServer::check_client_authorizations();
         
-	#if GS_SERIALIZER
+    #if GS_SERIALIZER
         if (serializer::should_save_map)
         {
             serializer::save_map();
             serializer::should_save_map = false;
+            // TODO -- move, testing only
+            serializer::save_containers();
         }
 
         serializer::update();
-	#endif
+    #endif
 
         #ifdef __GNUC__
         usleep(1000);

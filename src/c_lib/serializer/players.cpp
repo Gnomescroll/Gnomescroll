@@ -183,8 +183,8 @@ void parse_player_data(char* str, size_t length, class ParsedPlayerData* data)
             {
                 if (d == COLOR_COMPONENT_DELIMITER[0])
                 {
-                    GS_ASSERT(cmp_len == COLOR_COMPONENT_MAX_LENGTH);
-                    if (cmp_len != COLOR_COMPONENT_MAX_LENGTH) return;
+                    GS_ASSERT(cmp_len == COLOR_COMPONENT_LENGTH);
+                    if (cmp_len != COLOR_COMPONENT_LENGTH) return;
                     cmp_len = 0;
                     pts++;
                     val[j] = '\0';
@@ -193,12 +193,12 @@ void parse_player_data(char* str, size_t length, class ParsedPlayerData* data)
                     cmp_len++;
                 j++;
             }
-            GS_ASSERT(cmp_len == COLOR_COMPONENT_MAX_LENGTH);
-            if (cmp_len != COLOR_COMPONENT_MAX_LENGTH) return;
+            GS_ASSERT(cmp_len == COLOR_COMPONENT_LENGTH);
+            if (cmp_len != COLOR_COMPONENT_LENGTH) return;
             GS_ASSERT(pts == 3);
             if (pts != 3) return;
 
-            int base_offset = COLOR_COMPONENT_MAX_LENGTH + COLOR_COMPONENT_DELIMITER_LENGTH;
+            int base_offset = COLOR_COMPONENT_LENGTH + COLOR_COMPONENT_DELIMITER_LENGTH;
             long long r = parse_int(&val[0 * base_offset], err);
             GS_ASSERT(!err && r >= 0 && r <= 255);
             if (err || r < 0 || r > 255) return;
