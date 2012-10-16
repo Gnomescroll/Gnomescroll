@@ -169,9 +169,20 @@ class ParsedContainerData
 static bool parse_container_file_header_token(const char* key, const char* val, class ParsedContainerFileData* data)
 {
     bool err = false;
-    if (err)
+    if (strcmp(VERSION_TAG TAG_DELIMITER, key) == 0)
     {
-        
+        long long version = parse_int(val, err);
+        GS_ASSERT(!err && version > 0 && version <= GS_VERSION);
+        if (err || version <= 0 || version > GS_VERSION) return false;
+        data->version = version;
+    }
+    else
+    if (strcmp(CONTAINER_COUNT_TAG TAG_DELIMITER, key) == 0)
+    {
+        long long container_count = parse_int(val, err);
+        GS_ASSERT(!err && container_count >= 0 && container_count < MAX_CONTAINERS);
+        if (err || container_count < 0 || container_count >= MAX_CONTAINERS) return false;
+        data->container_count = container_count;
     }
     else
     {   // unrecognized field
@@ -184,9 +195,73 @@ static bool parse_container_file_header_token(const char* key, const char* val, 
 static bool parse_container_token(const char* key, const char* val, class ParsedContainerData* data)
 {
     bool err = false;
-    if (err)
+    if (strcmp(CONTAINER_ID_TAG TAG_DELIMITER, key) == 0)
     {
+        long long container_id = parse_int(val, err);
+        GS_ASSERT(!err && container_id >= 0 && container_id < MAX_CONTAINERS);
+        if (err || container_id < 0 || container_id >= MAX_CONTAINERS) return false;
+        data->container_id = container_id;
+    }
+    else
+    if (strcmp(NAME_TAG TAG_DELIMITER, key) == 0)
+    {
+        bool valid_name = ItemContainer::is_valid_container_name(val);
+        GS_ASSERT(valid_name);
+        if (!valid_name) return false;
+        strncpy(data->name, val, CONTAINER_NAME_MAX_LENGTH);
+        data->name[CONTAINER_NAME_MAX_LENGTH] = '\0';
+    }
+    else
+    if (strcmp(CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER, key) == 0)
+    {
+        long long item_count = parse_int(val, err);
+        GS_ASSERT(!err && item_count >= 0 && item_count <= MAX_CONTAINER_SIZE);
+        if (err || item_count < 0 || item_count > MAX_CONTAINER_SIZE) return false;
+        data->item_count = item_count;
+    }
+    else
+    if (strcmp(MAP_POSITION_TAG TAG_DELIMITER, key) == 0)
+    {
+        static char buf[MAP_POSITION_LENGTH+1] = {'\0'};
+        strncpy(buf, val, MAP_POSITION_LENGTH);
+        buf[MAP_POSITION_LENGTH] = '\0';
+        int pts = 1;
+        char d;
+        int j = 0;
+        int cmp_len = 0;
+        while ((d = buf[j]) != '\0')
+        {
+            if (d == MAP_POSITION_COMPONENT_DELIMITER[0])
+            {
+                GS_ASSERT(cmp_len == MAP_POSITION_COMPONENT_LENGTH);
+                if (cmp_len != MAP_POSITION_COMPONENT_LENGTH) return false;
+                cmp_len = 0;
+                pts++;
+                buf[j] = '\0';
+            }
+            else
+                cmp_len++;
+            j++;
+        }
+        GS_ASSERT(cmp_len == MAP_POSITION_COMPONENT_LENGTH);
+        if (cmp_len != MAP_POSITION_COMPONENT_LENGTH) return false;
+        GS_ASSERT(pts == 3);
+        if (pts != 3) return false;
         
+        int base_offset = MAP_POSITION_COMPONENT_LENGTH + MAP_POSITION_COMPONENT_DELIMITER_LENGTH;
+        long long x = parse_int(&buf[0 * base_offset], err);
+        GS_ASSERT(!err && x >= 0 && x < XMAX);
+        if (err || x < 0 || x >= XMAX) return false;
+        long long y = parse_int(&buf[1 * base_offset], err);
+        GS_ASSERT(!err && y >= 0 && y < YMAX);
+        if (err || y < 0 || y >= YMAX) return false;
+        long long z = parse_int(&buf[1 * base_offset], err);
+        GS_ASSERT(!err && z >= 0 && z < ZMAX);
+        if (err || z < 0 || z >= ZMAX) return false;
+
+        data->position.x = x;
+        data->position.y = y;
+        data->position.z = z;
     }
     else
     {   // unrecognized field

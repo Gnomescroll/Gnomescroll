@@ -27,8 +27,9 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
     else
     if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
     {
-        GS_ASSERT(Item::is_valid_item_name(val));
-        if (!Item::is_valid_item_name(val)) return false;
+        bool valid_name = Item::is_valid_item_name(val);
+        GS_ASSERT(valid_name);
+        if (!valid_name) return false;
         strncpy(data->name, val, ITEM_NAME_MAX_LENGTH);
         data->location_name[ITEM_NAME_MAX_LENGTH] = '\0';
     }

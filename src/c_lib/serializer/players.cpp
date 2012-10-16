@@ -112,10 +112,9 @@ static bool parse_player_token(const char* key, const char* val, class ParsedPla
     bool err = false;
     if (strncmp(COLOR_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
     {
-        const size_t buflen = COLOR_LENGTH;
         static char buf[COLOR_LENGTH+1] = {'\0'};
-        strncpy(buf, val, buflen);
-        buf[buflen] = '\0';
+        strncpy(buf, val, COLOR_LENGTH);
+        buf[COLOR_LENGTH] = '\0';
         
         int pts = 1;
         char d;
