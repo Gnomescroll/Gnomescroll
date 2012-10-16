@@ -1,6 +1,7 @@
 #include "players.hpp"
 
 #include <serializer/items.hpp>
+#include <serializer/parse.hpp>
 #include <serializer/_state.hpp>
 
 namespace serializer
@@ -72,165 +73,95 @@ class ParsedPlayerContainerData
     }
 };
 
-// WARNING: modifies char* str
-void parse_player_container_header(char* str, const size_t length, class ParsedPlayerContainerData* data)
+static bool parse_player_container_token(const char* key, const char* val, class ParsedPlayerContainerData* data)
 {
-    data->valid = false;
-    GS_ASSERT(length);
-    if (!length) return;
-
-    int i = (int)length-1;
-    size_t token_length = 0;
-    while (i >= 0)
+    bool err = false;
+    if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
     {
-        char c = str[i];
-        if (c == ' ') str[i] = '\0';    // convert all spaces to NUL so that padded strings get shortened
-        if (i && c != PROPERTY_DELIMITER[0])
-        {
-            i--;
-            token_length++;
-            continue;
-        }
-        GS_ASSERT(token_length >= TAG_LENGTH + TAG_DELIMITER_LENGTH);
-        if (token_length < TAG_LENGTH + TAG_DELIMITER_LENGTH) return;
-
-        char* key = NULL;
-        if (i)
-        {
-            str[i] = '\0';
-            key = &str[i+1];
-        }
-        else
-            key = &str[i];
-            
-        char* val = &key[TAG_LENGTH+TAG_DELIMITER_LENGTH];
-
-        bool err = false;
-        if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            GS_ASSERT(ItemContainer::is_valid_container_name(val));
-            if (!ItemContainer::is_valid_container_name(val)) return;
-            strncpy(data->name, val, CONTAINER_NAME_MAX_LENGTH);
-            data->name[CONTAINER_NAME_MAX_LENGTH] = '\0';
-        }
-        else
-        if (strncmp(USER_ID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            long long user_id = parse_int(val, err);
-            GS_ASSERT(!err && user_id > 0 && user_id < INT32_MAX);
-            if (err || user_id <= 0 || user_id > INT32_MAX) return;
-            data->user_id = (UserID)user_id;
-        }
-        else
-        if (strncmp(CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            long long container_count = parse_int(val, err);
-            GS_ASSERT(!err && container_count >= 0 && container_count < MAX_CONTAINER_SIZE);
-            if (err || container_count < 0 || container_count > MAX_CONTAINER_SIZE) return;
-            data->container_count = (int)container_count;
-        }
-        else
-        {   // unrecognized field
-            GS_ASSERT(false);
-            data->valid = false;
-            return;
-        }
-        
-        i--;
-        token_length = 0;   // reset
+        GS_ASSERT(ItemContainer::is_valid_container_name(val));
+        if (!ItemContainer::is_valid_container_name(val)) return false;
+        strncpy(data->name, val, CONTAINER_NAME_MAX_LENGTH);
+        data->name[CONTAINER_NAME_MAX_LENGTH] = '\0';
     }
-
-    data->valid = true;
+    else
+    if (strncmp(USER_ID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    {
+        long long user_id = parse_int(val, err);
+        GS_ASSERT(!err && user_id > 0 && user_id < INT32_MAX);
+        if (err || user_id <= 0 || user_id > INT32_MAX) return false;
+        data->user_id = (UserID)user_id;
+    }
+    else
+    if (strncmp(CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    {
+        long long container_count = parse_int(val, err);
+        GS_ASSERT(!err && container_count >= 0 && container_count < MAX_CONTAINER_SIZE);
+        if (err || container_count < 0 || container_count > MAX_CONTAINER_SIZE) return false;
+        data->container_count = (int)container_count;
+    }
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        return false;
+    }
+    return true;
 }
 
-// WARNING: modifies char* str
-void parse_player_data(char* str, size_t length, class ParsedPlayerData* data)
+static bool parse_player_token(const char* key, const char* val, class ParsedPlayerData* data)
 {
-    data->valid = false;
-    GS_ASSERT(length);
-    if (!length) return;
-
-    int i = (int)(length - 1);
-    size_t token_length = 0;
-    while (i >= 0)
+    bool err = false;
+    if (strncmp(COLOR_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
     {
-        char c = str[i];
-        if (c == ' ') str[i] = '\0';    // convert all spaces to NUL so that padded strings get shortened
-        if (i && c != PROPERTY_DELIMITER[0])
+        const size_t buflen = COLOR_LENGTH;
+        static char buf[COLOR_LENGTH+1] = {'\0'};
+        strncpy(buf, val, buflen);
+        buf[buflen] = '\0';
+        
+        int pts = 1;
+        char d;
+        int j = 0;
+        int cmp_len = 0;
+        while ((d = buf[j]) != '\0')
         {
-            i--;
-            token_length++;
-            continue;
-        }
-        GS_ASSERT(token_length >= TAG_LENGTH + TAG_DELIMITER_LENGTH);
-        if (token_length < TAG_LENGTH + TAG_DELIMITER_LENGTH) return;
-
-        char* key = NULL;
-        if (i)
-        {
-            str[i] = '\0';
-            key = &str[i+1];
-        }
-        else
-            key = &str[i];
-            
-        char* val = &key[TAG_LENGTH+TAG_DELIMITER_LENGTH];
-
-        bool err = false;
-        if (strncmp(COLOR_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            int pts = 1;
-            char d;
-            int j = 0;
-            int cmp_len = 0;
-            while ((d = val[j]) != '\0')
+            if (d == COLOR_COMPONENT_DELIMITER[0])
             {
-                if (d == COLOR_COMPONENT_DELIMITER[0])
-                {
-                    GS_ASSERT(cmp_len == COLOR_COMPONENT_LENGTH);
-                    if (cmp_len != COLOR_COMPONENT_LENGTH) return;
-                    cmp_len = 0;
-                    pts++;
-                    val[j] = '\0';
-                }
-                else
-                    cmp_len++;
-                j++;
+                GS_ASSERT(cmp_len == COLOR_COMPONENT_LENGTH);
+                if (cmp_len != COLOR_COMPONENT_LENGTH) return false;
+                cmp_len = 0;
+                pts++;
+                buf[j] = '\0';
             }
-            GS_ASSERT(cmp_len == COLOR_COMPONENT_LENGTH);
-            if (cmp_len != COLOR_COMPONENT_LENGTH) return;
-            GS_ASSERT(pts == 3);
-            if (pts != 3) return;
-
-            int base_offset = COLOR_COMPONENT_LENGTH + COLOR_COMPONENT_DELIMITER_LENGTH;
-            long long r = parse_int(&val[0 * base_offset], err);
-            GS_ASSERT(!err && r >= 0 && r <= 255);
-            if (err || r < 0 || r > 255) return;
-            long long g = parse_int(&val[1 * base_offset], err);
-            GS_ASSERT(!err && g >= 0 && g <= 255);
-            if (err || g < 0 || g > 255) return;
-            long long b = parse_int(&val[2 * base_offset], err);
-            GS_ASSERT(!err && b >= 0 && b <= 255);
-            if (err || b < 0 || b > 255) return;
-
-            data->color.r = (unsigned char)r;
-            data->color.g = (unsigned char)g;
-            data->color.b = (unsigned char)b;
+            else
+                cmp_len++;
+            j++;
         }
-        else
-        {   // unrecognized field
-            GS_ASSERT(false);
-            data->valid = false;
-            return;
-        }
-        
-        i--;
-        token_length = 0;   // reset
+        GS_ASSERT(cmp_len == COLOR_COMPONENT_LENGTH);
+        if (cmp_len != COLOR_COMPONENT_LENGTH) return false;
+        GS_ASSERT(pts == 3);
+        if (pts != 3) return false;
+
+        int base_offset = COLOR_COMPONENT_LENGTH + COLOR_COMPONENT_DELIMITER_LENGTH;
+        long long r = parse_int(&buf[0 * base_offset], err);
+        GS_ASSERT(!err && r >= 0 && r <= 255);
+        if (err || r < 0 || r > 255) return false;
+        long long g = parse_int(&buf[1 * base_offset], err);
+        GS_ASSERT(!err && g >= 0 && g <= 255);
+        if (err || g < 0 || g > 255) return false;
+        long long b = parse_int(&buf[2 * base_offset], err);
+        GS_ASSERT(!err && b >= 0 && b <= 255);
+        if (err || b < 0 || b > 255) return false;
+
+        data->color.r = (unsigned char)r;
+        data->color.g = (unsigned char)g;
+        data->color.b = (unsigned char)b;
     }
-
-    data->valid = true;
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        return false;
+    }
+    return true;
 }
-
 
 void process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
 {    
@@ -264,7 +195,7 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
     
     // read header
     class ParsedPlayerContainerData container_data;
-    parse_player_container_header(buf, i, &container_data);
+    parse_line<class ParsedPlayerContainerData>(&parse_player_container_token, buf, i, &container_data);
     GS_ASSERT(container_data.valid);
     if (!container_data.valid) return;  // TODO -- log error
     i++;
@@ -301,7 +232,7 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
         if (c != '\n') break;    // TODO -- log error
 
         item_data.reset();
-        parse_item_string(buf, k, &item_data);
+        parse_line<class ParsedItemData>(&parse_item_token, buf, k, &item_data);
         GS_ASSERT(item_data.valid);
         if (!item_data.valid) continue; // TODO -- log error
 
@@ -337,7 +268,7 @@ void process_player_blob(const char* str, class PlayerLoadData* player_load_data
     if (c != '\n') return;  // TODO -- log error
 
     class ParsedPlayerData player_data;
-    parse_player_data(buf, i, &player_data);
+    parse_line<class ParsedPlayerData>(&parse_player_token, buf, i, &player_data);
     GS_ASSERT(player_data.valid);
     if (!player_data.valid) return; // TODO -- log error
 

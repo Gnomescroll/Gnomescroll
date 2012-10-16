@@ -7,6 +7,7 @@
 #include <item/container/_state.hpp>
 #include <serializer/items.hpp>
 #include <serializer/_state.hpp>
+#include <serializer/parse.hpp>
 
 namespace serializer
 {
@@ -165,21 +166,34 @@ class ParsedContainerData
     }
 };
 
-
-// WARNING: modifies char* str
-static void parse_container_file_header(char* str, size_t length, class ParsedContainerFileData* data)
+static bool parse_container_file_header_token(const char* key, const char* val, class ParsedContainerFileData* data)
 {
-    data->valid = false;
-    // TODO
-    data->valid = true;
+    bool err = false;
+    if (err)
+    {
+        
+    }
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        return false;
+    }
+    return true;
 }
 
-// WARNING: modifies char* str
-static void parse_container_header(char* str, size_t length, class ParsedContainerData* data)
+static bool parse_container_token(const char* key, const char* val, class ParsedContainerData* data)
 {
-    data->valid = false;
-    // TODO
-    data->valid = true;
+    bool err = false;
+    if (err)
+    {
+        
+    }
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        return false;
+    }
+    return true;
 }
 
 static bool process_container_blob(const char* str, size_t filesize)
@@ -203,7 +217,7 @@ static bool process_container_blob(const char* str, size_t filesize)
     
     // read file header
     class ParsedContainerFileData container_file_data;
-    parse_container_file_header(buf, i, &container_file_data);
+    parse_line<class ParsedContainerFileData>(&parse_container_file_header_token, buf, i, &container_file_data);
     GS_ASSERT(container_file_data.valid);
     if (!container_file_data.valid) return false;
     i++;
@@ -225,7 +239,7 @@ static bool process_container_blob(const char* str, size_t filesize)
 
         // parse ctr header
         container_data.reset();
-        parse_container_header(buf, k, &container_data);
+        parse_line<class ParsedContainerData>(&parse_container_token, buf, k, &container_data);
         GS_ASSERT(container_data.valid);
         if (!container_data.valid) return false;
         GS_ASSERT(container_data.container_id == m+1);  // not fatal, but indicates a problem with the code
@@ -258,7 +272,7 @@ static bool process_container_blob(const char* str, size_t filesize)
             if (c != '\n') return false;
             
             item_data.reset();
-            parse_item_string(buf, k, &item_data);
+            parse_line<class ParsedItemData>(&parse_item_token, buf, k, &item_data);
             GS_ASSERT(item_data.valid);
             if (!item_data.valid) return false;
             if (!create_item_from_data(&item_data, IL_CONTAINER, container->id)) return false;

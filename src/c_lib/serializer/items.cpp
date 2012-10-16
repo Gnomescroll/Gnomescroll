@@ -12,90 +12,57 @@ namespace serializer
 {
 
 // WARNING -- modifies char* str
-void parse_item_string(char* str, const size_t length, class ParsedItemData* data)
+bool parse_item_token(const char* key, const char* val, class ParsedItemData* data)
 {
-    data->valid = false;
-
-    int i = (int)length;
-    size_t token_length = 0;
-    while (i >= 0)
+    bool err = false;
+    if (strncmp(UUID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
     {
-        char c = str[i];
-        if (c == ' ') str[i] = '\0';    // convert all spaces to NUL so that padded strings get shortened
-        if (i && c != PROPERTY_DELIMITER[0])
-        {
-            i--;
-            token_length++;
-            continue;
-        }
-        GS_ASSERT(token_length >= TAG_LENGTH + TAG_DELIMITER_LENGTH);
-        if (token_length < TAG_LENGTH + TAG_DELIMITER_LENGTH) return;
-        
-        char* key = NULL;
-        if (i)
-        {
-            str[i] = '\0';
-            key = &str[i+1];
-        }
-        else
-            key = &str[i];
-            
-        char* val = &key[TAG_LENGTH+TAG_DELIMITER_LENGTH];
-
-        bool err = false;
-        if (strncmp(UUID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            int ret = uuid_parse(val, data->uuid);
-            GS_ASSERT(!ret);
-            if (ret) return;
-            ret = uuid_is_null(data->uuid);
-            GS_ASSERT(!ret);
-            if (ret) return;
-        }
-        else
-        if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            GS_ASSERT(Item::is_valid_item_name(val));
-            if (!Item::is_valid_item_name(val)) return;
-            strncpy(data->name, val, ITEM_NAME_MAX_LENGTH);
-            data->location_name[ITEM_NAME_MAX_LENGTH] = '\0';
-        }
-        else
-        if (strncmp(DURABILITY_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            long long durability = parse_int(val, err);
-            GS_ASSERT(!err && durability > 0 && durability <= MAX_DURABILITY);
-            if (err || durability <= 0 || durability > MAX_DURABILITY) return;
-            data->durability = (int)durability;
-        }
-        else
-        if (strncmp(STACK_SIZE_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            long long stack_size = parse_int(val, err);
-            GS_ASSERT(!err && stack_size > 0 && stack_size <= MAX_STACK_SIZE);
-            if (err || stack_size <= 0 || stack_size > MAX_STACK_SIZE) return;
-            data->stack_size = (int)stack_size;
-        }
-        else
-        if (strncmp(CONTAINER_SLOT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
-        {
-            long long container_slot = parse_int(val, err);
-            GS_ASSERT(!err && ((container_slot >= 0 && container_slot <= MAX_CONTAINER_SIZE) || container_slot == NULL_SLOT));
-            if (err || ((container_slot < 0 || container_slot > MAX_CONTAINER_SIZE) && container_slot != NULL_SLOT)) return;
-            data->container_slot = container_slot;
-        }
-        else
-        {   // unrecognized field
-            GS_ASSERT(false);
-            data->valid = false;
-            return;
-        }
-
-        i--;
-        token_length = 0;   // reset
+        int ret = uuid_parse(val, data->uuid);
+        GS_ASSERT(!ret);
+        if (ret) return false;
+        ret = uuid_is_null(data->uuid);
+        GS_ASSERT(!ret);
+        if (ret) return false;
     }
-
-    data->valid = true;
+    else
+    if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    {
+        GS_ASSERT(Item::is_valid_item_name(val));
+        if (!Item::is_valid_item_name(val)) return false;
+        strncpy(data->name, val, ITEM_NAME_MAX_LENGTH);
+        data->location_name[ITEM_NAME_MAX_LENGTH] = '\0';
+    }
+    else
+    if (strncmp(DURABILITY_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    {
+        long long durability = parse_int(val, err);
+        GS_ASSERT(!err && durability > 0 && durability <= MAX_DURABILITY);
+        if (err || durability <= 0 || durability > MAX_DURABILITY) return false;
+        data->durability = (int)durability;
+    }
+    else
+    if (strncmp(STACK_SIZE_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    {
+        long long stack_size = parse_int(val, err);
+        GS_ASSERT(!err && stack_size > 0 && stack_size <= MAX_STACK_SIZE);
+        if (err || stack_size <= 0 || stack_size > MAX_STACK_SIZE) return false;
+        data->stack_size = (int)stack_size;
+    }
+    else
+    if (strncmp(CONTAINER_SLOT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    {
+        long long container_slot = parse_int(val, err);
+        GS_ASSERT(!err && ((container_slot >= 0 && container_slot <= MAX_CONTAINER_SIZE) || container_slot == NULL_SLOT));
+        if (err || ((container_slot < 0 || container_slot > MAX_CONTAINER_SIZE) && container_slot != NULL_SLOT)) return false;
+        data->container_slot = container_slot;
+    }
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        data->valid = false;
+        return false;
+    }
+    return true;
 }
 
 static inline bool item_valid(class Item::Item* item)

@@ -41,8 +41,7 @@ class ParsedItemData
 
 int write_container_contents_string(char* buf, size_t buffer_size, const class ItemContainer::ItemContainerInterface* container);
 
-// WARNING: modifies char* str
-void parse_item_string(char* str, const size_t length, class ParsedItemData* data);
+bool parse_item_token(const char* key, const char* val, class ParsedItemData* data);
 
 class Item::Item* create_item_from_data(class ParsedItemData* data, ItemLocationType location, int location_id);
 
