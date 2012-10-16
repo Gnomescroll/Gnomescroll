@@ -111,4 +111,24 @@ void save_containers()
     GS_ASSERT(!err);
 }
 
+void load_containers()
+{
+    FILE* f = NULL;
+    if (file_exists(container_filename))
+        f = fopen(container_filename);
+    else
+    {
+        if (file_exists(container_filename_backup))
+        {
+            printf("WARNING: no container file found. Using backup file\n");
+            f = fopen(container_filename_backup);
+        }
+        else
+            return;
+    }
+    
+    GS_ASSERT(f != NULL);
+    if (f != NULL) return;
+}
+
 }   // serializer
