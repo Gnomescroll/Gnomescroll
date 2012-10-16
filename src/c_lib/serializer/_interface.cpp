@@ -52,6 +52,9 @@ void teardown()
 bool load_data()
 {
     if (!load_default_map()) return false;
+
+    if (!Options::serializer) return true;
+    
     bool successful_load = load_containers();
     GS_ASSERT_ABORT(successful_load);
 

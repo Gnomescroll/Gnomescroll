@@ -177,15 +177,7 @@ dont_include_this_file_in_client
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    if (!ServerState::main_inited)
-    {
-        close_c_lib();
-        exit(0);
-    }
-    ServerState::signal_exit = true;
-    #if PRODUCTION
-    serializer::should_save_map = true;
-    #endif
+    exit(0);
 }
 
 void sigusr1_handler(int sig)
@@ -194,6 +186,15 @@ void sigusr1_handler(int sig)
 }
 #endif
 
+void atexit_handler()
+{
+    if (!ServerState::main_inited)
+        close_c_lib();
+    ServerState::signal_exit = true;
+    #if PRODUCTION
+    serializer::should_save_map = true;
+    #endif
+}
 
 int init_c_lib(int argc, char* argv[])
 {
@@ -203,6 +204,9 @@ int init_c_lib(int argc, char* argv[])
         printf("WARNING: Attempt to call init_c_lib more than once\n");
         return 1;
     }
+
+    int ret = atexit(&atexit_handler);
+    GS_ASSERT_ABORT(ret == 0);
 
     #ifdef linux
     const int DIR_SIZE = 100;
@@ -218,7 +222,7 @@ int init_c_lib(int argc, char* argv[])
     sa_term.sa_handler = &signal_terminate_handler;
     sa_term.sa_flags = 0;
     sigemptyset(&sa_term.sa_mask);
-    int ret = sigaction(SIGTERM, &sa_term, NULL);
+    ret = sigaction(SIGTERM, &sa_term, NULL);
     GS_ASSERT(ret == 0);
     
     // SIGINT ctrl-C
