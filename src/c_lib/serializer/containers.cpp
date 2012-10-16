@@ -49,6 +49,12 @@ const char* write_container_string(class ItemContainer::ItemContainerInterface* 
         ibuf += wrote;
     }
 
+    // write delimiter between container entries
+    could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_ENTRY_DELIMITER "\n");
+    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
+    ibuf += (size_t)could_write;
+
     _buffer[ibuf] = '\0';
 
     *wrote = ibuf;
@@ -65,7 +71,7 @@ static bool save_container(FILE* f, class ItemContainer::ItemContainerInterface*
     GS_ASSERT(container_string_length > 0);
     if (container_string_length <= 0) return false;
     
-    size_t wrote = fwrite(container_string, container_string_length, sizeof(char), f);
+    size_t wrote = fwrite(container_string, sizeof(char), container_string_length, f);
     
     GS_ASSERT(wrote == container_string_length);
     return (wrote == container_string_length);
@@ -88,18 +94,21 @@ void save_containers()
             GS_ASSERT(success); // TODO -- log error
         }
 
-    int ret = fclose(f);
-    if (!ret) return;   // TODO -- log error
-    GS_ASSERT(ret);
+    int err = fclose(f);
+    GS_ASSERT(!err);
+    if (err) return;   // TODO -- log error
 
     // move current file to .bak
-    ret = rename(container_filename, container_filename_backup);
-    GS_ASSERT(ret);
-    if (!ret) return;   // TODO -- log error
+    if (file_exists(container_filename))
+    {
+        err = rename(container_filename, container_filename_backup);
+        GS_ASSERT(!err);
+        if (err) return;   // TODO -- log error
+    }
     
     // move tmp file to current
-    ret = rename(container_filename_tmp, container_filename);
-    GS_ASSERT(ret);
+    err = rename(container_filename_tmp, container_filename);
+    GS_ASSERT(!err);
 }
 
 }   // serializer
