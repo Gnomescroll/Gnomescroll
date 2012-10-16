@@ -259,6 +259,8 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
     while ((c = str[i]) != '\0' && c != '\n' && i < LONGEST_LINE)
         buf[i++] = c;
     buf[i] = '\0';
+    GS_ASSERT(c == '\0');
+    if (c != '\0') return;  // TODO -- log error
     
     // read header
     class ParsedPlayerContainerData container_data;
@@ -295,36 +297,21 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
         while ((c = str[i++]) != '\0' && c != '\n' && k < LONGEST_LINE)
             buf[k++] = c;
         buf[k] = '\0';
+        GS_ASSERT(c == '\n');
+        if (c != '\n') break;    // TODO -- log error
 
         item_data.reset();
         parse_item_string(buf, k, &item_data);
         GS_ASSERT(item_data.valid);
         if (!item_data.valid) continue; // TODO -- log error
 
-        // TODO - Apply renaming scheme to get item type
-        int item_type = Item::get_item_type(item_data.name);
-        GS_ASSERT(item_type != NULL_ITEM_TYPE);
-        if (item_type == NULL_ITEM_TYPE) continue;  // TODO -- log error
-
         GS_ASSERT(item_data.container_slot < max_slots);
         if (item_data.container_slot >= max_slots) continue;    // TODO -- log error
 
-        // create item
-        class Item::Item* item = Item::create_item_for_loading();
+        class Item::Item* item = create_item_from_data(&item_data, location, location_id);
         GS_ASSERT(item != NULL);
-        if (item == NULL) continue; // TODO -- log error. RESERVE ITEM SPACE FOR LOADING
+        if (item == NULL) continue; // TODO -- log error
 
-        uuid_copy(item->uuid, item_data.uuid);
-        item->type = item_type;
-        item->durability = item_data.durability;
-        item->stack_size = item_data.stack_size;
-        item->container_slot = item_data.container_slot;
-        item->location = location;
-        item->location_id = location_id;
-
-        item->init_for_loading();        
-
-        // TODO -- catch duplicate inserts into container as error
         if (location == IL_HAND)
             ItemContainer::load_item_into_hand(item->id, player_load_data->agent_id);
         else
@@ -346,6 +333,8 @@ void process_player_blob(const char* str, class PlayerLoadData* player_load_data
     while ((c = str[i]) != '\0' && c != '\n' && i < LONGEST_LINE)
         buf[i++] = c;
     buf[i++] = '\0';
+    GS_ASSERT(c == '\n');
+    if (c != '\n') return;  // TODO -- log error
 
     class ParsedPlayerData player_data;
     parse_player_data(buf, i, &player_data);

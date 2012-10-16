@@ -55,7 +55,7 @@ class Session
         fprintf(f, "Version %04d; ", this->version);
         
         // time
-        fprintf(f, "%04ld seconds; ", this->logout_time - this->login_time);
+        fprintf(f, "%05d seconds; ", (int)difftime(this->logout_time, this->login_time));
 
         // addr
         uint8_t address[4];

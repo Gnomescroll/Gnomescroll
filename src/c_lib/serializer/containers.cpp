@@ -11,7 +11,7 @@
 namespace serializer
 {
 
-const char* write_container_string(class ItemContainer::ItemContainerInterface* container, size_t* wrote)
+const char* write_container_string(const class ItemContainer::ItemContainerInterface* container, int container_entry, size_t* wrote)
 {
     *wrote = 0;
     size_t ibuf = 0;
@@ -31,18 +31,9 @@ const char* write_container_string(class ItemContainer::ItemContainerInterface* 
     GS_ASSERT(fits);
     if (!fits) return NULL;
 
-    // write delimiter between container entries
-    int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_SEPARATOR_FMT, container->id);
-    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
-    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
-    ibuf += (size_t)could_write;
-
-    _buffer[ibuf++] = '\n';
-    if (ibuf >= BUF_SIZE) return NULL;
-
     // write header
-    could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_HEADER_FMT,
-        container_name, container->slot_count, b[0], b[1], b[2]);
+    int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_HEADER_FMT,
+        container_entry, container_name, container->slot_count, b[0], b[1], b[2]);
     GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
     if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
     ibuf += (size_t)could_write;
@@ -58,6 +49,12 @@ const char* write_container_string(class ItemContainer::ItemContainerInterface* 
         ibuf += wrote;
     }
 
+    // write separator between container entries
+    could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_SEPARATOR "\n");
+    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
+    ibuf += (size_t)could_write;
+
     _buffer[ibuf++] = '\n';
     if (ibuf >= BUF_SIZE) return NULL;
 
@@ -67,10 +64,10 @@ const char* write_container_string(class ItemContainer::ItemContainerInterface* 
     return _buffer;
 }
 
-static bool save_container(FILE* f, class ItemContainer::ItemContainerInterface* container)
+static bool save_container(FILE* f, const class ItemContainer::ItemContainerInterface* container, int container_entry)
 {
     size_t container_string_length = 0;
-    const char* container_string = write_container_string(container, &container_string_length);
+    const char* container_string = write_container_string(container, container_entry, &container_string_length);
     
     GS_ASSERT(container_string != NULL);
     if (container_string == NULL) return false;
@@ -96,7 +93,7 @@ void save_containers()
     for (int i=0; i<item_container_list->n_max; i++)
         if (item_container_list->a[i] != NULL && !item_container_list->a[i]->attached_to_agent)
         {
-            bool success = save_container(f, item_container_list->a[i]);
+            bool success = save_container(f, item_container_list->a[i], i+1);
             GS_ASSERT(success); // TODO -- log error
         }
 
@@ -138,29 +135,11 @@ class ParsedContainerFileData
     }
 };
 
-class ParsedContainerSeparatorData
-{
-    public:
-
-        int container_id;
-        bool valid;
-
-    void reset()
-    {
-        this->valid = false;
-        this->container_id = -1;
-    }
-
-    ParsedContainerSeparatorData()
-    {
-        this->reset();
-    }
-};
-
 class ParsedContainerData
 {
     public:
 
+        int container_id;
         char name[CONTAINER_NAME_MAX_LENGTH+1];
         int item_count;
         struct
@@ -172,6 +151,7 @@ class ParsedContainerData
     void reset()
     {
         this->valid = false;
+        this->container_id = -1;
         this->name[0] = '\0';
         this->item_count = 0;
         this->position.x = -1;
@@ -190,15 +170,23 @@ class ParsedContainerData
 static void parse_container_file_header(char* str, size_t length, class ParsedContainerFileData* data)
 {
     data->valid = false;
+    // TODO
+    data->valid = true;
+}
 
+// WARNING: modifies char* str
+static void parse_container_header(char* str, size_t length, class ParsedContainerData* data)
+{
+    data->valid = false;
+    // TODO
     data->valid = true;
 }
 
 static bool process_container_blob(const char* str, size_t filesize)
 {
     // allocate scratch buffer
-    static const size_t LONGEST_LINE_A = GS_MAX(CONTAINER_SEPARATOR_LINE_LENGTH,ITEM_LINE_LENGTH);
-    static const size_t LONGEST_LINE_B = GS_MAX(CONTAINER_LINE_LENGTH, CONTAINER_FILE_LINE_LENGTH);
+    static const size_t LONGEST_LINE_A = GS_MAX(CONTAINER_LINE_LENGTH, CONTAINER_FILE_LINE_LENGTH);
+    static const size_t LONGEST_LINE_B = GS_MAX(ITEM_LINE_LENGTH, CONTAINER_SEPARATOR_LENGTH);
     static const size_t LONGEST_LINE = GS_MAX(LONGEST_LINE_A, LONGEST_LINE_B);
     static char buf[LONGEST_LINE+1];
     if (strnlen(str, LONGEST_LINE) < LONGEST_LINE) return false;  // TODO -- error handling
@@ -210,27 +198,88 @@ static bool process_container_blob(const char* str, size_t filesize)
     while ((c = str[i]) != '\0' && c != '\n' && i < LONGEST_LINE)
         buf[i++] = c;
     buf[i] = '\0';
+    GS_ASSERT(c == '\n');
+    if (c != '\n') return false;
     
-    // read header
+    // read file header
     class ParsedContainerFileData container_file_data;
     parse_container_file_header(buf, i, &container_file_data);
     GS_ASSERT(container_file_data.valid);
     if (!container_file_data.valid) return false;
     i++;
 
-    // TODO -- parsing will find if the reported container count is too large,
-    // but we should also check that it is not too small. this means making sure there are no
-    // more delimiters after we find the last one
-
-    class ParsedContainerSeparatorData container_delimiter_data;
     class ParsedContainerData container_data;
     class ParsedItemData item_data;
-    for (int i=0; i<container_file_data.container_count; i++)
+    for (int m=0; m<container_file_data.container_count; m++)
     {
-        // parse delimiter
+        GS_ASSERT(c != '\0');
+        if (c == '\0') return false;
+        
+        // copy ctr header line to buffer
+        size_t k = 0;
+        while ((c = str[i++]) != '\0' && c != '\n' && k < LONGEST_LINE)
+            buf[k++] = c;
+        buf[k] = '\0';
+        GS_ASSERT(c == '\n');
+        if (c != '\n') return false;
+
         // parse ctr header
+        container_data.reset();
+        parse_container_header(buf, k, &container_data);
+        GS_ASSERT(container_data.valid);
+        if (!container_data.valid) return false;
+        GS_ASSERT(container_data.container_id == m+1);  // not fatal, but indicates a problem with the code
+
+        // get container type
+        // TODO -- apply renaming scheme
+        ItemContainerType container_type = ItemContainer::get_type(container_data.name);
+        GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+        if (container_type == CONTAINER_TYPE_NONE) return false;
+
+        // create container
+        class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
+        GS_ASSERT(container != NULL);
+        if (container == NULL) return false;
+        ItemContainer::init_container(container);
+
+        // check items will fit
+        GS_ASSERT(container_data.item_count <= container->slot_max);
+        if (container_data.item_count > container->slot_max) return false;
+
         // parse contents
+        for (int n=0; n<container_data.item_count; n++)
+        {
+            // copy item line to buffer
+            k = 0;
+            while ((c = str[i++]) != '\0' && c != '\n' && k < LONGEST_LINE)
+                buf[k++] = c;
+            buf[k] = '\0';
+            GS_ASSERT(c == '\n');
+            if (c != '\n') return false;
+            
+            item_data.reset();
+            parse_item_string(buf, k, &item_data);
+            GS_ASSERT(item_data.valid);
+            if (!item_data.valid) return false;
+            if (!create_item_from_data(&item_data, IL_CONTAINER, container->id)) return false;
+        }
+
+        // check separator
+        k = 0;
+        while ((c = str[i++]) != '\0' && c != '\n' && k < LONGEST_LINE)
+            buf[k++] = '\0';
+        buf[k] = '\0';
+        GS_ASSERT(c == '\n');
+        if (c != '\n') return false;
+
+        int sepmatch = strcmp(buf, CONTAINER_SEPARATOR);
+        GS_ASSERT(sepmatch == 0);
+        if (sepmatch != 0) return false;
     }
+
+    // make sure that we reached the end of the file. otherwise the reported container count is too low
+    GS_ASSERT(str[i] == '\0');
+    if (str[i] != '\0') return false;
 
     return true;
 }

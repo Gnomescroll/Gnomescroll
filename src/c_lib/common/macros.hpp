@@ -1,12 +1,12 @@
 #pragma once
 
 // branch prediction
-#ifdef __GNUC__
-# define likely(x)   __builtin_expect(!!(x), 1)
-# define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#ifdef __MSVC__
 # define likely(x)   !!(x)
 # define unlikely(x) !!(x)
+#else
+# define likely(x)   __builtin_expect(!!(x), 1)
+# define unlikely(x) __builtin_expect(!!(x), 0)
 #endif
 
 #define GS_MAX(a,b) ((a) > (b)) ? (a) : (b);

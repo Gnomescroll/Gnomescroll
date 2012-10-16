@@ -1,6 +1,8 @@
 #include "items.hpp"
 
 #include <item/item.hpp>
+#include <item/_interface.hpp>
+#include <item/container/_interface.hpp>
 #include <item/common/constants.hpp>
 #include <serializer/redis.hpp>
 #include <serializer/_state.hpp>
@@ -8,36 +10,6 @@
 
 namespace serializer
 {
-
-class ParsedItemData
-{
-    public:
-        uuid_t uuid;
-        char name[ITEM_NAME_MAX_LENGTH+1];
-        unsigned int durability;
-        unsigned int stack_size;
-        char location_name[LOCATION_NAME_MAX_LENGTH+1];
-        unsigned int location_id;
-        unsigned int container_slot;
-        bool valid;
-
-    void reset()
-    {
-        this->valid = false;
-        uuid_clear(this->uuid);
-        memset(this->name, 0, sizeof(this->name));
-        this->durability = NULL_DURABILITY;
-        this->stack_size = NULL_STACK_SIZE;
-        memset(this->location_name, 0, sizeof(this->location_name));
-        this->location_id = NULL_LOCATION;
-        this->container_slot = NULL_SLOT;
-    }
-
-    ParsedItemData()
-    {
-        this->reset();
-    }
-};
 
 // WARNING -- modifies char* str
 void parse_item_string(char* str, const size_t length, class ParsedItemData* data)
@@ -195,6 +167,33 @@ int write_container_contents_string(char* buf, size_t buffer_size, const class I
         }
     buf[ibuf] = '\0';
     return (int)ibuf;
+}
+
+class Item::Item* create_item_from_data(class ParsedItemData* data, ItemLocationType location, int location_id)
+{
+    // TODO -- make sure item can be placed in location (is not occupied etc)
+    
+    // TODO - Apply renaming scheme to get item type
+    int item_type = Item::get_item_type(data->name);
+    GS_ASSERT(item_type != NULL_ITEM_TYPE);
+    if (item_type == NULL_ITEM_TYPE) return NULL;  // TODO -- log error
+
+    // create item
+    class Item::Item* item = Item::create_item_for_loading();
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return NULL; // TODO -- log error. RESERVE ITEM SPACE FOR LOADING
+
+    uuid_copy(item->uuid, data->uuid);
+    item->type = item_type;
+    item->durability = data->durability;
+    item->stack_size = data->stack_size;
+    item->container_slot = data->container_slot;
+    item->location = location;
+    item->location_id = location_id;
+
+    item->init_for_loading();        
+
+    return item;
 }
 
 }   // serializer
