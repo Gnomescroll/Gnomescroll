@@ -35,12 +35,16 @@ const float shroom_threshold = 0.997f;
 
 
 
-void set_me_maybe(int x, int y, int z, int block) {
-	if (t_map::get(x, y, z) == 0)
-		t_map::set(x, y, z, block);
+void set_me_maybe(int x, int y, int z, int block, int an_overwriteable = 0) {
+		if (
+			t_map::get(x, y, z) == 0
+			||
+			(an_overwriteable && t_map::get(x, y, z) == an_overwriteable)
+		)
+			t_map::set(x, y, z, block);
 }
 
-void make_circle(int x, int y, int z, float dist, int block) { // instead of from the center of given block
+void make_circle(int x, int y, int z, float dist, int block, int an_overwriteable = 0) { // instead of from the center of given block
     float fx = 0;
     float fy = 0;
     float angle = 0;
@@ -48,7 +52,7 @@ void make_circle(int x, int y, int z, float dist, int block) { // instead of fro
     while (angle < DOUBLE_PI) {
         fx = sinf(angle) * dist;
         fy = cosf(angle) * dist;
-        set_me_maybe(x + (int)fx, y + (int)fy, z, block);
+        set_me_maybe(x + (int)fx, y + (int)fy, z, block, an_overwriteable);
         angle += PI / 32;
     }
 }
@@ -146,9 +150,9 @@ void make_tree(int x, int y, int z) {
                 for (int i = -dist; i < dist; i++)  set_me_maybe(x+i, y, z+j, trunk); // limbs
                 for (int i = -dist; i < dist; i++)  set_me_maybe(x, y+i, z+j, trunk); // limbs
                 while (dist > 0) {
-                    make_circle(x, y, z+j, dist, leaf);
-                    make_circle(x, y, z+j+1, dist+1, leaf);
-                    make_circle(x, y, z+j+2, dist+.5, leaf);
+                    make_circle(x, y, z+j, dist, leaf, trunk);
+                    make_circle(x, y, z+j+1, dist+1, leaf, trunk);
+                    make_circle(x, y, z+j+2, dist+.5, leaf, trunk);
                     dist -= 2.5;
                 }
             }
@@ -173,6 +177,8 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num) {
 namespace t_gen {
 	void add_terrain_features() {
         printf("Adding terrain features\n");
+        printf("    trees\n");
+        printf("    shrooms\n");
 
 		// setup blocks
 		leaves[0] = t_map::get_cube_id("leaves");
