@@ -30,7 +30,7 @@ inline void assign_item_container_StoC::handle()
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainerInterface* container = get_container(container_id);
-    ASSERT_NOT_NULL(container);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
     ItemContainerType type = (ItemContainerType)container_type;
     switch (type)
@@ -101,7 +101,7 @@ inline void insert_item_in_container_StoC::handle()
     if (item_id == NULL_ITEM) return;
 
     ItemContainerInterface* container = get_container(container_id);
-    ASSERT_NOT_NULL(container);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
     
     // we received an message for a container we are not accessing;
@@ -120,7 +120,7 @@ inline void insert_item_in_container_StoC::handle()
 inline void remove_item_from_container_StoC::handle()
 {
     ItemContainerInterface* container = get_container(container_id);
-    ASSERT_NOT_NULL(container);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
 
     // we received an message for a container we are not accessing;

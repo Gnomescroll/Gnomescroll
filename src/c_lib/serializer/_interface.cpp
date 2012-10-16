@@ -49,6 +49,18 @@ void teardown()
     teardown_state();
 }
 
+bool load_data()
+{
+    if (!load_default_map()) return false;
+    bool successful_load = load_containers();
+    GS_ASSERT_ABORT(successful_load);
+
+    //load_mechs();
+    //load_players();
+    
+    return true;
+}
+
 void update()
 {
     check_map_save_state();

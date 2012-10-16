@@ -9,6 +9,8 @@ void init();
 void teardown();
 void update();
 
+bool load_data();
+
 // defined in map.cpp
 void load_map(const char* filename);
 void save_map();
@@ -34,12 +36,13 @@ bool should_save_map = false;
 
 void init(){}
 void teardown(){}
-void update();
+void update() {}
 
 void check_save_state(){}
 
 void load_map(const char* filename){}
 void save_map(){}
+bool load_default_map() {}
 void wait_for_threads(){}
 
 bool save_player_container(int client_id, int container_id) {}

@@ -37,47 +37,51 @@ void init(int argc, char* argv[])
 
     srand(Options::seed);
 
-    bool fast_map = false;
-    if (Options::map[0] == '\0')
-    {   // use map gen
-        #if PRODUCTION
-        default_map_gen();
-        #else
-        // load map file by default in development mode; decreases startup time
-        const char default_map[] = "./world/map/map-" GS_STR(GS_VERSION) ".map";
-        if (file_exists(default_map))
-            serializer::load_map(default_map);
-        else
+    #if GS_SERIALIZER
+    if (!serializer::load_data())
+    {
+    #else
+        bool fast_map = false;
+        if (Options::map[0] == '\0')
+        {   // use map gen
+            #if PRODUCTION
             default_map_gen();
-        #endif
-    }
-    else if (!strcmp(Options::map, "fast"))
-    {
-        fast_map = true;
-    }
-    else
-    {   // use map file
-        serializer::load_map(Options::map);
-    }   
+            #else
+            // load map file by default in development mode; decreases startup time
+            if (!serializer::load_default_map())
+                default_map_gen();
+            #endif
+        }
+        else if (!strcmp(Options::map, "fast"))
+        {
+            fast_map = true;
+        }
+        else
+        {   // use map file
+            serializer::load_map(Options::map);
+        }   
 
-    if (fast_map)
-    {
-        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
-        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
+        if (fast_map)
+        {
+            map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
+            map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
 
-        //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+            //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+        
+            //t_gen::generate_ruins();
+            //t_gen::add_terrain_features();
+        }
+        else
+        {
+            // do this after map gen / loading until crystals are serialized
+            t_gen::populate_crystals();
+            t_map::environment_process_startup();
+        }
+    #endif
+    #if GS_SERIALIZER
+    }
+    #endif
     
-        //t_gen::generate_ruins();
-        //t_gen::add_terrain_features();
-    }
-    else
-    {
-        // do this after map gen / loading until crystals are serialized
-        t_gen::populate_crystals();
-        t_map::environment_process_startup();
-    }
-
-
     srand((unsigned int)time(NULL));
     
     int address[4];

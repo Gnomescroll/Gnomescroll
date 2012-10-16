@@ -3,7 +3,7 @@
 namespace serializer
 {
 
-void load_containers();
+bool load_containers();
 
 void save_containers();
 

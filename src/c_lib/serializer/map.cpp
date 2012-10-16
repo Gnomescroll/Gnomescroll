@@ -288,7 +288,7 @@ void BlockSerializer::load(const char* filename)
     size_t filesize = 0;
     char* buffer = read_binary_file_to_buffer(filename, &filesize);
     GS_ASSERT_ABORT(buffer != NULL);
-    GS_ASSERT_ABORT(filesize > 0);
+    if (buffer == NULL) return;
 
     int ti2 = _GET_MS_TIME();
 
@@ -366,6 +366,18 @@ void save_map()
 void load_map()
 {
     load_map(map_filename);
+}
+
+bool load_default_map()
+{
+    if (file_exists(map_filename) && fsize(map_filename) > 0)
+        load_map(map_filename);
+    else
+    if (file_exists(map_filename_backup) && fsize(map_filename_backup) > 0)
+        load_map(map_filename_backup);
+    else
+        return false;
+    return true;
 }
 
 void check_map_save_state()

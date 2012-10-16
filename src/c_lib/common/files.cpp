@@ -95,7 +95,9 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
         *size = newLen;
         source[++newLen] = '\0'; /* Just to be safe. */
     }
-    fclose(fp);
+    int err = fclose(fp);
+    GS_ASSERT(!err);
+    if (err) printf("Error closing file %s\n", filename);
 
     return source;
 }

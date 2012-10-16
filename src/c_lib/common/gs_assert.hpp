@@ -1,5 +1,6 @@
 #pragma once
 
+#include <common/macros.hpp>
 
 char* _gs_internal_itoa(int val, int base)
 {   
@@ -97,11 +98,11 @@ void _GS_ASSERT_TEARDOWN()
 }
    
 
-#define GS_ASSERT(CONDITION) if(!(CONDITION)) { _GS_ASSERT_INTERNAL(__FILE__, __FUNCTION__, __LINE__); }
+#define GS_ASSERT(CONDITION) if(unlikely(!(CONDITION))) { _GS_ASSERT_INTERNAL(__FILE__, __FUNCTION__, __LINE__); }
 
-#define GS_ASSERT_LIMIT(CONDITION, LIMIT) if(!(CONDITION)) { _GS_ASSERT_INTERNAL(__FILE__, __FUNCTION__, __LINE__, (LIMIT)); }
+#define GS_ASSERT_LIMIT(CONDITION, LIMIT) if(unlikely(!(CONDITION))) { _GS_ASSERT_INTERNAL(__FILE__, __FUNCTION__, __LINE__, (LIMIT)); }
 
-#define GS_ASSERT_ABORT(CONDITION) if (!(CONDITION)) { _GS_ASSERT_INTERNAL(__FILE__, __FUNCTION__, __LINE__); GS_ABORT(); }
+#define GS_ASSERT_ABORT(CONDITION) if (unlikely(!(CONDITION))) { _GS_ASSERT_INTERNAL(__FILE__, __FUNCTION__, __LINE__); GS_ABORT(); }
 
 //printf( __FILE__  );
 

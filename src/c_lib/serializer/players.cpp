@@ -76,8 +76,10 @@ class ParsedPlayerContainerData
 void parse_player_container_header(char* str, const size_t length, class ParsedPlayerContainerData* data)
 {
     data->valid = false;
+    GS_ASSERT(length);
+    if (!length) return;
 
-    int i = (int)length;
+    int i = (int)length-1;
     size_t token_length = 0;
     while (i >= 0)
     {
@@ -120,7 +122,7 @@ void parse_player_container_header(char* str, const size_t length, class ParsedP
             data->user_id = (UserID)user_id;
         }
         else
-        if (strncmp(CONTAINER_COUNT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+        if (strncmp(CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
         {
             long long container_count = parse_int(val, err);
             GS_ASSERT(!err && container_count >= 0 && container_count < MAX_CONTAINER_SIZE);
@@ -145,8 +147,10 @@ void parse_player_container_header(char* str, const size_t length, class ParsedP
 void parse_player_data(char* str, size_t length, class ParsedPlayerData* data)
 {
     data->valid = false;
+    GS_ASSERT(length);
+    if (!length) return;
 
-    int i = (int)length;
+    int i = (int)(length - 1);
     size_t token_length = 0;
     while (i >= 0)
     {
@@ -254,13 +258,14 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
     char c = '\0';
     while ((c = str[i]) != '\0' && c != '\n' && i < LONGEST_LINE)
         buf[i++] = c;
-    buf[i++] = '\0';
+    buf[i] = '\0';
     
     // read header
     class ParsedPlayerContainerData container_data;
     parse_player_container_header(buf, i, &container_data);
     GS_ASSERT(container_data.valid);
     if (!container_data.valid) return;  // TODO -- log error
+    i++;
 
     // Check properties on the container data
     // The parser only makes sure the values it found were in range
@@ -324,7 +329,7 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
             ItemContainer::load_item_into_hand(item->id, player_load_data->agent_id);
         else
         if (location == IL_CONTAINER)
-            ItemContainer::load_item_into_container(item->id, container_load_data->container_id, item->container_slot);            
+            ItemContainer::load_item_into_container(item->id, container_load_data->container_id, item->container_slot);
     }
 }
 
