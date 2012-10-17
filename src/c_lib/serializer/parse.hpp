@@ -11,32 +11,42 @@ void parse_line(bool (*process_token) (const char*, const char*, Data*), char* s
     GS_ASSERT(length);
     if (!length) return;
 
-    int i = (int)(length - 1);
+    // walk the string backwards
     size_t token_length = 0;
-    while (i >= 0)
+    for (int i=(int)length-1; i>=0; i--)
     {
         char c = str[i];
         if (c == ' ') str[i] = '\0';    // convert all spaces to NUL so that padded strings get shortened
         if (i && c != PROPERTY_DELIMITER[0])
         {
-            i--;
             token_length++;
             continue;
         }
+
+        // make sure at least the key + delimiter fits
         GS_ASSERT(token_length >= TAG_LENGTH + TAG_DELIMITER_LENGTH);
         if (token_length < TAG_LENGTH + TAG_DELIMITER_LENGTH) return;
 
         char* key = NULL;
         if (i)
-        {
+        {   // we are pointing at a token delimiter, the key starts on the next line
             str[i] = '\0';
-            key = &str[i];
+            key = &str[i+1];
         }
+        else  // we are at position 0, we can't go back any further
+            key = &str[i];
 
+        // check that the tag delimiter is correct
+        GS_ASSERT(key[TAG_LENGTH] == TAG_DELIMITER[0]);
+        if (key[TAG_LENGTH] != TAG_DELIMITER[0]) return;
+        
+        // replace the tag delimiter with NUL
+        key[TAG_LENGTH] = '\0';
+
+        // index to the value
         char* val = &key[TAG_LENGTH + TAG_DELIMITER_LENGTH];
         if (!process_token(key, val, data)) return;
 
-        i--;
         token_length = 0;
     }
     

@@ -165,8 +165,6 @@ static void register_settings()
     container_def(CONTAINER_TYPE_CRUSHER, "crusher");
     c->xdim = 1;
     c->ydim = 1;
-    c->alt_xdim = 0;
-    c->alt_ydim = 0;
     c->attached_to_agent = false;
     c->alpha_action = &crusher_alpha_action_decision_tree;
     c->beta_action = &crusher_beta_action_decision_tree;

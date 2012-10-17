@@ -12,108 +12,7 @@
 namespace serializer
 {
 
-const char* write_container_string(const class ItemContainer::ItemContainerInterface* container, int container_entry, size_t* wrote)
-{
-    *wrote = 0;
-    size_t ibuf = 0;
-
-    // get container data
-    const char* container_name = ItemContainer::get_container_name(container->type);
-    GS_ASSERT(container_name != NULL);
-    if (container_name == NULL) return NULL;
-
-    int b[3];
-    bool found = t_map::get_container_location(container->id, b);
-    GS_ASSERT(found);
-    if (!found) return NULL;
-    bool fits = (b[0] >= 0 && b[0] < XMAX
-               && b[1] >= 0 && b[1] < YMAX
-               && b[2] >= 0 && b[2] < ZMAX);
-    GS_ASSERT(fits);
-    if (!fits) return NULL;
-
-    // write header
-    int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_HEADER_FMT,
-        container_entry, container_name, container->slot_count, b[0], b[1], b[2]);
-    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
-    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
-    ibuf += (size_t)could_write;
-
-    _buffer[ibuf++] = '\n';
-    if (ibuf >= BUF_SIZE) return NULL;
-
-    // write contents
-    if (container->slot_count > 0)
-    {   // we must check the slot count, because write_container_contents_string returns 0 on error or if the container is empty
-        size_t wrote = write_container_contents_string(&_buffer[ibuf], BUF_SIZE - ibuf, container);
-        if (wrote <= 0) return NULL;  // error
-        ibuf += wrote;
-    }
-
-    // write separator between container entries
-    could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_SEPARATOR "\n");
-    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
-    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
-    ibuf += (size_t)could_write;
-
-    _buffer[ibuf++] = '\n';
-    if (ibuf >= BUF_SIZE) return NULL;
-
-    _buffer[ibuf] = '\0';
-
-    *wrote = ibuf;
-    return _buffer;
-}
-
-static bool save_container(FILE* f, const class ItemContainer::ItemContainerInterface* container, int container_entry)
-{
-    size_t container_string_length = 0;
-    const char* container_string = write_container_string(container, container_entry, &container_string_length);
-    
-    GS_ASSERT(container_string != NULL);
-    if (container_string == NULL) return false;
-    GS_ASSERT(container_string_length > 0);
-    if (container_string_length <= 0) return false;
-    
-    size_t wrote = fwrite(container_string, sizeof(char), container_string_length, f);
-    
-    GS_ASSERT(wrote == container_string_length);
-    return (wrote == container_string_length);
-}
-
-void save_containers()
-{
-    using ItemContainer::item_container_list;
-    GS_ASSERT(item_container_list != NULL);
-    if (item_container_list == NULL) return;    // TODO -- log error
-
-    FILE* f = fopen(container_filename_tmp, "w");
-    GS_ASSERT(f != NULL);
-    if (f == NULL) return;  // TODO -- log error
-
-    for (int i=0; i<item_container_list->n_max; i++)
-        if (item_container_list->a[i] != NULL && !item_container_list->a[i]->attached_to_agent)
-        {
-            bool success = save_container(f, item_container_list->a[i], i+1);
-            GS_ASSERT(success); // TODO -- log error
-        }
-
-    int err = fclose(f);
-    GS_ASSERT(!err);
-    if (err) return;   // TODO -- log error
-
-    // move current file to .bak
-    if (file_exists(container_filename))
-    {
-        err = rename(container_filename, container_filename_backup);
-        GS_ASSERT(!err);
-        if (err) return;   // TODO -- log error
-    }
-    
-    // move tmp file to current
-    err = rename(container_filename_tmp, container_filename);
-    GS_ASSERT(!err);
-}
+/* Parse data structs */
 
 class ParsedContainerFileData
 {
@@ -166,10 +65,12 @@ class ParsedContainerData
     }
 };
 
+/* Loading */
+
 static bool parse_container_file_header_token(const char* key, const char* val, class ParsedContainerFileData* data)
 {
     bool err = false;
-    if (strcmp(VERSION_TAG TAG_DELIMITER, key) == 0)
+    if (strcmp(VERSION_TAG, key) == 0)
     {
         long long version = parse_int(val, err);
         GS_ASSERT(!err && version > 0 && version <= GS_VERSION);
@@ -177,11 +78,11 @@ static bool parse_container_file_header_token(const char* key, const char* val, 
         data->version = version;
     }
     else
-    if (strcmp(CONTAINER_COUNT_TAG TAG_DELIMITER, key) == 0)
+    if (strcmp(CONTAINER_COUNT_TAG, key) == 0)
     {
         long long container_count = parse_int(val, err);
-        GS_ASSERT(!err && container_count >= 0 && container_count < MAX_CONTAINERS);
-        if (err || container_count < 0 || container_count >= MAX_CONTAINERS) return false;
+        GS_ASSERT(!err && container_count >= 0 && container_count <= MAX_CONTAINERS);
+        if (err || container_count < 0 || container_count > MAX_CONTAINERS) return false;
         data->container_count = container_count;
     }
     else
@@ -195,7 +96,7 @@ static bool parse_container_file_header_token(const char* key, const char* val, 
 static bool parse_container_token(const char* key, const char* val, class ParsedContainerData* data)
 {
     bool err = false;
-    if (strcmp(CONTAINER_ID_TAG TAG_DELIMITER, key) == 0)
+    if (strcmp(CONTAINER_ID_TAG, key) == 0)
     {
         long long container_id = parse_int(val, err);
         GS_ASSERT(!err && container_id >= 0 && container_id < MAX_CONTAINERS);
@@ -203,7 +104,7 @@ static bool parse_container_token(const char* key, const char* val, class Parsed
         data->container_id = container_id;
     }
     else
-    if (strcmp(NAME_TAG TAG_DELIMITER, key) == 0)
+    if (strcmp(NAME_TAG, key) == 0)
     {
         bool valid_name = ItemContainer::is_valid_container_name(val);
         GS_ASSERT(valid_name);
@@ -212,7 +113,7 @@ static bool parse_container_token(const char* key, const char* val, class Parsed
         data->name[CONTAINER_NAME_MAX_LENGTH] = '\0';
     }
     else
-    if (strcmp(CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER, key) == 0)
+    if (strcmp(CONTAINER_ITEM_COUNT_TAG, key) == 0)
     {
         long long item_count = parse_int(val, err);
         GS_ASSERT(!err && item_count >= 0 && item_count <= MAX_CONTAINER_SIZE);
@@ -220,7 +121,7 @@ static bool parse_container_token(const char* key, const char* val, class Parsed
         data->item_count = item_count;
     }
     else
-    if (strcmp(MAP_POSITION_TAG TAG_DELIMITER, key) == 0)
+    if (strcmp(MAP_POSITION_TAG, key) == 0)
     {
         static char buf[MAP_POSITION_LENGTH+1] = {'\0'};
         strncpy(buf, val, MAP_POSITION_LENGTH);
@@ -255,7 +156,7 @@ static bool parse_container_token(const char* key, const char* val, class Parsed
         long long y = parse_int(&buf[1 * base_offset], err);
         GS_ASSERT(!err && y >= 0 && y < YMAX);
         if (err || y < 0 || y >= YMAX) return false;
-        long long z = parse_int(&buf[1 * base_offset], err);
+        long long z = parse_int(&buf[2 * base_offset], err);
         GS_ASSERT(!err && z >= 0 && z < ZMAX);
         if (err || z < 0 || z >= ZMAX) return false;
 
@@ -278,6 +179,8 @@ static bool process_container_blob(const char* str, size_t filesize)
     static const size_t LONGEST_LINE_B = GS_MAX(ITEM_LINE_LENGTH, CONTAINER_SEPARATOR_LENGTH);
     static const size_t LONGEST_LINE = GS_MAX(LONGEST_LINE_A, LONGEST_LINE_B);
     static char buf[LONGEST_LINE+1];
+
+    GS_ASSERT(strnlen(str, LONGEST_LINE) == LONGEST_LINE); 
     if (strnlen(str, LONGEST_LINE) < LONGEST_LINE) return false;  // TODO -- error handling
     buf[LONGEST_LINE] = '\0';
 
@@ -350,13 +253,17 @@ static bool process_container_blob(const char* str, size_t filesize)
             parse_line<class ParsedItemData>(&parse_item_token, buf, k, &item_data);
             GS_ASSERT(item_data.valid);
             if (!item_data.valid) return false;
-            if (!create_item_from_data(&item_data, IL_CONTAINER, container->id)) return false;
+            class Item::Item* item = create_item_from_data(&item_data, IL_CONTAINER, container->id);
+            GS_ASSERT(item != NULL);
+            if (item == NULL) return false;
+            // TODO -- check that we dont clobber an existing slot
+            ItemContainer::load_item_into_container(item->id, container->id, item->container_slot);
         }
 
         // check separator
         k = 0;
         while ((c = str[i++]) != '\0' && c != '\n' && k < LONGEST_LINE)
-            buf[k++] = '\0';
+            buf[k++] = c;
         buf[k] = '\0';
         GS_ASSERT(c == '\n');
         if (c != '\n') return false;
@@ -383,6 +290,133 @@ static bool load_container_file(const char* filename)
     if (buffer == NULL) return false;
 
     return process_container_blob(buffer, filesize);
+}
+
+/* Saving */
+
+const char* write_container_string(const class ItemContainer::ItemContainerInterface* container, int container_entry, size_t* wrote)
+{
+    *wrote = 0;
+    size_t ibuf = 0;
+
+    // get container data
+    const char* container_name = ItemContainer::get_container_name(container->type);
+    GS_ASSERT(container_name != NULL);
+    if (container_name == NULL) return NULL;
+
+    int b[3];
+    bool found = t_map::get_container_location(container->id, b);
+    GS_ASSERT(found);
+    if (!found) return NULL;
+    bool fits = (b[0] >= 0 && b[0] < XMAX
+               && b[1] >= 0 && b[1] < YMAX
+               && b[2] >= 0 && b[2] < ZMAX);
+    GS_ASSERT(fits);
+    if (!fits) return NULL;
+
+    // write header
+    int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_HEADER_FMT,
+        container_entry, container_name, container->slot_count, b[0], b[1], b[2]);
+    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
+    ibuf += (size_t)could_write;
+
+    _buffer[ibuf++] = '\n';
+    if (ibuf >= BUF_SIZE) return NULL;
+
+    // write contents
+    if (container->slot_count > 0)
+    {   // we must check the slot count, because write_container_contents_string returns 0 on error or if the container is empty
+        size_t wrote = write_container_contents_string(&_buffer[ibuf], BUF_SIZE - ibuf, container);
+        if (wrote <= 0) return NULL;  // error
+        ibuf += wrote;
+    }
+
+    // write separator between container entries
+    could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_SEPARATOR "\n");
+    GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
+    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
+    ibuf += (size_t)could_write;
+
+    _buffer[ibuf] = '\0';
+
+    *wrote = ibuf;
+    return _buffer;
+}
+
+static bool save_container(FILE* f, const class ItemContainer::ItemContainerInterface* container, int container_entry)
+{
+    size_t container_string_length = 0;
+    const char* container_string = write_container_string(container, container_entry, &container_string_length);
+    
+    GS_ASSERT(container_string != NULL);
+    if (container_string == NULL) return false;
+    GS_ASSERT(container_string_length > 0);
+    if (container_string_length <= 0) return false;
+    
+    size_t wrote = fwrite(container_string, sizeof(char), container_string_length, f);
+    
+    GS_ASSERT(wrote == container_string_length);
+    return (wrote == container_string_length);
+}
+
+
+/* Public Interface */
+
+void save_containers()
+{
+    using ItemContainer::item_container_list;
+    GS_ASSERT(item_container_list != NULL);
+    if (item_container_list == NULL) return;    // TODO -- log error
+
+    FILE* f = fopen(container_filename_tmp, "w");
+    GS_ASSERT(f != NULL);
+    if (f == NULL) return;  // TODO -- log error
+
+    // write a temporary file header. the container count is wrong, so we have to rewrite it later 
+    int ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, item_container_list->n_max);
+    GS_ASSERT(ret > 0);
+    if (ret <= 0) return;   // TODO -- log error
+    ret = fprintf(f, "\n");
+    GS_ASSERT(ret > 0);
+    if (ret <= 0) return;   // TODO -- log error
+
+    // write the container contents
+    int ct = 0;
+    for (int i=0; i<item_container_list->n_max; i++)
+        if (item_container_list->a[i] != NULL && !item_container_list->a[i]->attached_to_agent)
+        {
+            bool success = save_container(f, item_container_list->a[i], ct+1);
+            GS_ASSERT(success); // TODO -- log error
+            if (success) ct++;
+        }
+
+    // rewind to beginning of file
+    rewind(f);
+
+    // write the actual file header
+    ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, ct);
+    GS_ASSERT(ret > 0);
+    if (ret <= 0) return;   // TODO -- log error
+    ret = fprintf(f, "\n");
+    GS_ASSERT(ret > 0);
+    if (ret <= 0) return;   // TODO -- log error
+
+    int err = fclose(f);
+    GS_ASSERT(!err);
+    if (err) return;   // TODO -- log error
+
+    // move current file to .bak
+    if (file_exists(container_filename))
+    {
+        err = rename(container_filename, container_filename_backup);
+        GS_ASSERT(!err);
+        if (err) return;   // TODO -- log error
+    }
+    
+    // move tmp file to current
+    err = rename(container_filename_tmp, container_filename);
+    GS_ASSERT(!err);
 }
 
 bool load_containers()

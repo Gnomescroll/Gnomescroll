@@ -15,7 +15,7 @@ namespace serializer
 bool parse_item_token(const char* key, const char* val, class ParsedItemData* data)
 {
     bool err = false;
-    if (strncmp(UUID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(UUID_TAG, key) == 0)
     {
         int ret = uuid_parse(val, data->uuid);
         GS_ASSERT(!ret);
@@ -25,7 +25,7 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
         if (ret) return false;
     }
     else
-    if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(NAME_TAG, key) == 0)
     {
         bool valid_name = Item::is_valid_item_name(val);
         GS_ASSERT(valid_name);
@@ -34,7 +34,7 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
         data->location_name[ITEM_NAME_MAX_LENGTH] = '\0';
     }
     else
-    if (strncmp(DURABILITY_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(DURABILITY_TAG, key) == 0)
     {
         long long durability = parse_int(val, err);
         GS_ASSERT(!err && durability > 0 && durability <= MAX_DURABILITY);
@@ -42,7 +42,7 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
         data->durability = (int)durability;
     }
     else
-    if (strncmp(STACK_SIZE_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(STACK_SIZE_TAG, key) == 0)
     {
         long long stack_size = parse_int(val, err);
         GS_ASSERT(!err && stack_size > 0 && stack_size <= MAX_STACK_SIZE);
@@ -50,7 +50,7 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
         data->stack_size = (int)stack_size;
     }
     else
-    if (strncmp(CONTAINER_SLOT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(CONTAINER_SLOT_TAG, key) == 0)
     {
         long long container_slot = parse_int(val, err);
         GS_ASSERT(!err && ((container_slot >= 0 && container_slot <= MAX_CONTAINER_SIZE) || container_slot == NULL_SLOT));

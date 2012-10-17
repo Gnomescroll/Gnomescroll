@@ -443,6 +443,7 @@ class ItemContainerSmelter: public ItemContainerInterface
         {
             GS_ASSERT(this->is_valid_slot(slot));
             if (!this->is_valid_slot(slot)) return false;
+            GS_ASSERT(item_id != NULL_ITEM);
             if (item_id == NULL_ITEM) return false;
 
             // check fuel slot

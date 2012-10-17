@@ -76,7 +76,7 @@ class ParsedPlayerContainerData
 static bool parse_player_container_token(const char* key, const char* val, class ParsedPlayerContainerData* data)
 {
     bool err = false;
-    if (strncmp(NAME_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(NAME_TAG, key) == 0)
     {
         GS_ASSERT(ItemContainer::is_valid_container_name(val));
         if (!ItemContainer::is_valid_container_name(val)) return false;
@@ -84,7 +84,7 @@ static bool parse_player_container_token(const char* key, const char* val, class
         data->name[CONTAINER_NAME_MAX_LENGTH] = '\0';
     }
     else
-    if (strncmp(USER_ID_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(USER_ID_TAG, key) == 0)
     {
         long long user_id = parse_int(val, err);
         GS_ASSERT(!err && user_id > 0 && user_id < INT32_MAX);
@@ -92,7 +92,7 @@ static bool parse_player_container_token(const char* key, const char* val, class
         data->user_id = (UserID)user_id;
     }
     else
-    if (strncmp(CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(CONTAINER_ITEM_COUNT_TAG, key) == 0)
     {
         long long container_count = parse_int(val, err);
         GS_ASSERT(!err && container_count >= 0 && container_count < MAX_CONTAINER_SIZE);
@@ -110,7 +110,7 @@ static bool parse_player_container_token(const char* key, const char* val, class
 static bool parse_player_token(const char* key, const char* val, class ParsedPlayerData* data)
 {
     bool err = false;
-    if (strncmp(COLOR_TAG TAG_DELIMITER, key, TAG_LENGTH + TAG_DELIMITER_LENGTH) == 0)
+    if (strcmp(COLOR_TAG, key) == 0)
     {
         static char buf[COLOR_LENGTH+1] = {'\0'};
         strncpy(buf, val, COLOR_LENGTH);
@@ -189,8 +189,8 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
     while ((c = str[i]) != '\0' && c != '\n' && i < LONGEST_LINE)
         buf[i++] = c;
     buf[i] = '\0';
-    GS_ASSERT(c == '\0');
-    if (c != '\0') return;  // TODO -- log error
+    GS_ASSERT(c == '\n' || c == '\0');
+    if (c != '\0' && c != '\n') return;  // TODO -- log error
     
     // read header
     class ParsedPlayerContainerData container_data;
@@ -234,7 +234,7 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
         parse_line<class ParsedItemData>(&parse_item_token, buf, k, &item_data);
         GS_ASSERT(item_data.valid);
         if (!item_data.valid) continue; // TODO -- log error
-
+        
         GS_ASSERT(item_data.container_slot < max_slots);
         if (item_data.container_slot >= max_slots) continue;    // TODO -- log error
 
@@ -262,14 +262,15 @@ void process_player_blob(const char* str, class PlayerLoadData* player_load_data
     char c = '\0';
     while ((c = str[i]) != '\0' && c != '\n' && i < LONGEST_LINE)
         buf[i++] = c;
-    buf[i++] = '\0';
-    GS_ASSERT(c == '\n');
-    if (c != '\n') return;  // TODO -- log error
+    buf[i] = '\0';
+    GS_ASSERT(c == '\0');
+    if (c != '\0') return;  // TODO -- log error
 
     class ParsedPlayerData player_data;
     parse_line<class ParsedPlayerData>(&parse_player_token, buf, i, &player_data);
     GS_ASSERT(player_data.valid);
     if (!player_data.valid) return; // TODO -- log error
+    i++;
 
     class Agent_state* agent = ServerState::agent_list->get_any(player_load_data->agent_id);
     GS_ASSERT(agent != NULL);

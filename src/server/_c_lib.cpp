@@ -188,8 +188,7 @@ void sigusr1_handler(int sig)
 
 void atexit_handler()
 {
-    if (!ServerState::main_inited)
-        close_c_lib();
+    close_c_lib();
     ServerState::signal_exit = true;
     #if PRODUCTION
     serializer::should_save_map = true;

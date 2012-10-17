@@ -178,7 +178,7 @@ void BlockSerializer::save(const char* filename)
     strcpy(file_name, filename);
 
     this->file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
-    this->write_buffer = (char*) malloc(file_size);
+    this->write_buffer = (char*)calloc(file_size, sizeof(char));
 
     //push header
     int index = 0;
