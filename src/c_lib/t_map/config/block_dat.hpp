@@ -55,6 +55,7 @@ void load_block_dat()
     //int t4 = texture_alias("media/sprites/terrain/t04.png");
     int t5 = texture_alias("media/sprites/terrain/t05.png");
     int t6 = texture_alias("media/sprites/terrain/t06.png");
+    int t7 = texture_alias("media/sprites/terrain/t07.png");
 
     const int T = 0;
     const int B = 1;
@@ -192,6 +193,16 @@ void load_block_dat()
 
     cube_def(24, SolidBlock, "regolith", CUBE_MATERIAL_DIRT);
     // palette 0
+    iso_texture(t7,4,4);
+    push_texture();
+    //palette 1
+    iso_texture(t7,3,4);
+    side_texture(T, t7,2,4);
+    side_texture(B, t7,4,4);
+    push_texture();
+
+/*
+    // palette 0
     iso_texture(t1,10,5);
     push_texture();
     //palette 1
@@ -199,7 +210,7 @@ void load_block_dat()
     side_texture(T, t1,10,3);
     side_texture(B, t1,10,5);
     push_texture();
-
+*/
     cube_def(25, SolidBlock, "rock", CUBE_MATERIAL_STONE);
     iso_texture(t1,9,9);
     push_texture();
