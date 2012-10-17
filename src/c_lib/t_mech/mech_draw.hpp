@@ -280,7 +280,7 @@ class MechListShader
                     {
                         int index2 = offset + (31-_k)*512;
                         pixels[4*index2 + 3] = 255;
-                        pixels[4*index2 + 0] = 255;
+                        pixels[4*index2 + 0] = 255; 
                     }
 
                     break;
