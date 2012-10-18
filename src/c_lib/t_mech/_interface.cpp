@@ -179,37 +179,44 @@ void client_ray_cast()
 
 
 #if DC_SERVER
-void create_crystal(int x, int y, int z, int mech_type)
+bool create_mech(int x, int y, int z, int mech_type, int subtype)
 {
     ASSERT_VALID_MECH_TYPE(mech_type);
-    IF_INVALID_MECH_TYPE(mech_type) return;
-    GS_ASSERT(get_mech_class(mech_type) == MECH_CRYSTAL);
+    IF_INVALID_MECH_TYPE(mech_type) return false;
 
+    if (!can_place_mech(x,y,z, 0)) return false;
 
-    if(can_place_crystal(x,y,z,0) == false)
-    {
-        GS_ASSERT(false);
-        return;
-    }
-
+    // TODO -- check valid mech type properly
     GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
-    if (mech_attribute[mech_type].mech_type == -1)
-    {
-        printf("t_mech::create_crystal fail: mech_type %i does not exist \n",  mech_type);
-        return;
-    }
+    if (mech_attribute[mech_type].mech_type == -1) return false;
 
     struct MECH m;
     m.mech_type = mech_type;
+    m.subtype = subtype;
     m.x = x;
     m.y = y;
     m.z = z;
-
+    
     mech_list->server_add_mech(m);
+
+    return true;
+}
+
+bool create_mech(int x, int y, int z, int mech_type)
+{
+    return create_mech(x,y,z,mech_type,0);
+}
+
+bool create_crystal(int x, int y, int z, int mech_type)
+{
+    MechClass mech_class = get_mech_class(mech_type);
+    GS_ASSERT(mech_class == MECH_CRYSTAL);
+    if (mech_class != MECH_CRYSTAL) return false;
+    return create_mech(x,y,z, mech_type);
 }
 #endif
 
-bool can_place_crystal(int x, int y, int z, int side)
+bool can_place_mech(int x, int y, int z, int side)
 {
     if (z <= 0 || z > 128) return false;
     if (side != 0) return false;

@@ -103,11 +103,11 @@ size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
     if (wrote != UUID_STRING_LENGTH) return 0;
 
     int could_write = snprintf(buf, buffer_size, ITEM_FMT,
-        uuid_buf,
         item_name,
         item->durability,
         item->stack_size,
-        item->container_slot);
+        item->container_slot,
+        uuid_buf);
 
     if (could_write < 0) return could_write;
     if ((size_t)could_write >= buffer_size)

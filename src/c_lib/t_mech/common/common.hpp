@@ -1,5 +1,23 @@
 #pragma once
 
+typedef enum
+{
+    MECH_NONE = 0,
+    MECH_CRYSTAL,
+    MECH_CROP,
+    MECH_MYCELIUM,
+    MECH_WIRE,
+    MECH_SWITCH
+} MechClass;
+
+typedef enum
+{
+    MECH_RENDER_TYPE_NONE = 0,
+    MECH_RENDER_TYPE_0, //X shaped/crystal/
+    MECH_RENDER_TYPE_1, //crop/wheat type
+    MECH_RENDER_TYPE_2, //mycelium/ladder type
+} MechRenderType;
+
 //instance
 struct MECH
 {
@@ -10,9 +28,9 @@ struct MECH
     int y;
     int z;
 
-    int mech_type;           //mech type
-    int render_type;    //lookup from array
+    int mech_type;       //mech type
     int subtype;        //sprite
+    MechRenderType render_type;
     
     float size;
     int offset;
@@ -25,25 +43,8 @@ struct MECH
 struct MECH_ATTRIBUTE
 {
     int mech_type;
-    int mech_type_class;
-    int render_type;
+    MechClass mech_type_class;
+    MechRenderType render_type;
     int sprite_index;
     bool item_drop; // indicates whether has an item drop set
-};
-
-enum MECH_CLASS
-{
-    MECH_NONE,
-    MECH_CRYSTAL,
-    MECH_CROP,
-    MECH_MYCELIUM,
-    MECH_WIRE,
-    MECH_SWITCH
-};
-
-enum MECH_RENDER_TYPE
-{
-    MECH_RENDER_TYPE_0, //X shaped/crystal/
-    MECH_RENDER_TYPE_1, //crop/wheat type
-    MECH_RENDER_TYPE_2, //mycelium/ladder type
 };

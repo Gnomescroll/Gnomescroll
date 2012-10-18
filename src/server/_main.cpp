@@ -44,7 +44,11 @@ void init(int argc, char* argv[])
         if (strcmp(Options::map, "fast") == 0)
             fast_map = true;
         else
+        {
             default_map_gen();
+            t_gen::populate_crystals();
+            t_map::environment_process_startup();
+        }
     }
     #else
     if (Options::map[0] == '\0')
@@ -73,13 +77,8 @@ void init(int argc, char* argv[])
         //t_gen::generate_ruins();
         //t_gen::add_terrain_features();
     }
-    else
-    {
-        // do this after map gen / loading until crystals are serialized
-        t_gen::populate_crystals();
-        t_map::environment_process_startup();
-    }
-    
+                //t_gen::populate_crystals();
+
     srand((unsigned int)time(NULL));
     
     int address[4];
@@ -190,6 +189,7 @@ int run()
             serializer::should_save_map = false;
             // TODO -- move, testing only
             serializer::save_containers();
+            serializer::save_mechs();
         }
 
         serializer::update();

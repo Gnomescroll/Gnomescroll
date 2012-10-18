@@ -13,7 +13,7 @@ void teardown();
 
 void init_packets();
 
-bool can_place_crystal(int x, int y, int z, int side);
+bool can_place_mech(int x, int y, int z, int side);
 
 void place_vine(int x, int y, int z, int side);
 
@@ -31,7 +31,9 @@ void client_ray_cast();
 #endif
 
 #if DC_SERVER
-void create_crystal(int x, int y, int z, int mech_type);
+bool create_crystal(int x, int y, int z, int mech_type);
+bool create_mech(int x, int y, int z, int mech_type);
+bool create_mech(int x, int y, int z, int mech_type, int subtype);
 
 void send_client_mech_list(int client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction

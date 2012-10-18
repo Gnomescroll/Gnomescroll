@@ -3,6 +3,21 @@
 namespace serializer
 {
 
+template<typename F>
+F read_bytes(const char* buf, size_t& index)
+{
+    F val = *((F*)(&buf[index]));
+    index += sizeof(F);
+    return val;
+}
+
+template<typename F>
+void write_bytes(char* buf, size_t& index, F val)
+{
+    *((F*)(&buf[index])) = val;
+    index += sizeof(F);
+}
+
 // WARNING: modifies char* str
 template<class Data>
 void parse_line(bool (*process_token) (const char*, const char*, Data*), char* str, size_t length, Data* data)

@@ -5,6 +5,14 @@
 #include <ctype.h>
 #include <time.h>
 
+#ifndef UINT8_MAX
+# define UINT8_MAX  (255U)
+#endif
+
+#ifndef UINT16_MAX
+# define UINT16_MAX (65535U)
+#endif
+
 bool in_array_int(int* arr, int arr_max, int val)
 {
     for (int i=0; i<arr_max; i++)

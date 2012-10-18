@@ -63,12 +63,10 @@ void* _threaded_write(void* vptr)
         return NULL;
     }
 
-    int ret = fwrite(buffer, buffer_size, 1, file);
-    if (ret != 1)
-    {
-        printf("THREAD WRITE ERROR: fwrite return value != 1\n");
-    }
-    fclose(file); /*done!*/ 
+    int ret = fwrite(buffer, sizeof(char), buffer_size, file);
+    GS_ASSERT(ret == buffer_size);
+    ret = fclose(file); /*done!*/
+    GS_ASSERT(ret == 0);
 
     free(buffer);
 

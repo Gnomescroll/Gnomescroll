@@ -45,8 +45,8 @@ struct MECH_ATTRIBUTE s;
 void _reset_mech()
 {
     s.mech_type = -1;
-    s.mech_type_class = -1;
-    s.render_type = -1;
+    s.mech_type_class = MECH_NONE;
+    s.render_type = MECH_RENDER_TYPE_NONE;
     s.sprite_index = 255;
     s.item_drop = false;
 }
@@ -68,7 +68,7 @@ void _push_mech()
     _reset_mech();
 }
 
-void mech_def(int mech_type, int mech_type_class, const char* name)
+void mech_def(int mech_type, MechClass mech_type_class, const char* name)
 {
     ASSERT_VALID_MECH_TYPE(mech_type);
     IF_INVALID_MECH_TYPE(mech_type) return;

@@ -336,7 +336,7 @@ const char* write_container_string(const class ItemContainer::ItemContainerInter
 
     // write header
     int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_HEADER_FMT,
-        container_entry, container_name, container->slot_count, b[0], b[1], b[2]);
+        container_name, container->slot_count, b[0], b[1], b[2], container_entry);
     GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
     if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
     ibuf += (size_t)could_write;

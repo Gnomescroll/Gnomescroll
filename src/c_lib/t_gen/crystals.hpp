@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 
 #if DC_CLIENT
 dont_include_this_file_in_client
@@ -110,7 +110,7 @@ void place_crystal_cluster(int x, int y, int z, int crystal_id)
         int id = t_map::get(ii,jj,k-1);
         if (id != rock) continue;
 
-        if( t_mech::can_place_crystal(ii,jj,k, 0) == false) //check to see if placement is valid
+        if( t_mech::can_place_mech(ii,jj,k, 0) == false) //check to see if placement is valid
             continue;
         t_mech::create_crystal(ii,jj,k,crystal_id);
         cluster_size[cluster_id]++;

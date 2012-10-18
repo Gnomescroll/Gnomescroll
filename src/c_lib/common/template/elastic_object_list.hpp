@@ -2,8 +2,6 @@
 
 #include <new>
 
-// WARNING: Any item tracked by this must 
- 
 template <class ObjectState, unsigned int minimum_capacity>
 class ElasticObjectList
 {

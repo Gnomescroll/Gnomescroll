@@ -21,12 +21,12 @@ void init()
     create_path(CONTAINER_DATA_PATH);
     
     init_map_serializer();
+    init_state();
 
     if (!Options::serializer) return;
 
     // ORDER DEPENDENT
     init_redis();
-    init_state();  
     init_players();
 }
 
@@ -58,7 +58,9 @@ bool load_data()
     bool successful_load = load_containers();
     GS_ASSERT_ABORT(successful_load);
 
-    //load_mechs();
+    successful_load = load_mechs();
+    GS_ASSERT_ABORT(successful_load);
+
     //load_players();
     
     return true;

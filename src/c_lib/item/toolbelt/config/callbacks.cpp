@@ -284,96 +284,29 @@ void place_mech(int agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
     
-
-    //class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Objects::ENERGY_CORE_HEIGHT);
-    //if (obj == NULL) return;
-    //Objects::ready(obj);
-
-    //printf("fuck: %i %i \n", item_type, Item::dat_get_item_type("crystal_seed") );
-
-
-    //static int crystal = Item::get_item_type("crystal_seed");
-
-    //if(item_type == crystal)
-    //{
-        Agent_state* a = ServerState::agent_list->get(agent_id);
-        GS_ASSERT(a != NULL);
-        if (a == NULL) return;
-        
-        const int max_dist = 4.0f;
-        const int z_low = 4;
-        const int z_high = 3;
-        int* b = a->nearest_open_block(max_dist, z_low, z_high);
-        if (b == NULL) return;
-        
-        // must be placed on solid block
-        if (b[2] <= 0) return;  // can't place on nothing
-        if (!isSolid(b[0], b[1], b[2]-1)) return;
-
-/*
-        static const int n_crystals = 3;
-        static int red_crystal_id = t_mech::get_mech_type_id("red_crystal");
-        static int blue_crystal_id = t_mech::get_mech_type_id("blue_crystal");
-        static int green_crystal_id = t_mech::get_mech_type_id("green_crystal");
-        int crystals[n_crystals] = { red_crystal_id, blue_crystal_id, green_crystal_id };
-        for (int i=0; i<n_crystals; i++)
-*/
-        int mech_type_id = Item::get_mech_type_id(item_type);
-
-        GS_ASSERT(mech_type_id != -1);
-        ASSERT_VALID_MECH_TYPE(mech_type_id);
-
-        //int crystal_id = crystals[randrange(0, n_crystals-1)];
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     
-        if( t_mech::can_place_crystal(b[0],b[1],b[2], 0) == true)
-        {
-            printf("place crystal %d: at %d %d %d \n", mech_type_id, b[0],b[1],b[2] );
-            t_mech::create_crystal(b[0],b[1],b[2], mech_type_id);
-        }
-        else
-        {
+    const int max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* b = a->nearest_open_block(max_dist, z_low, z_high);
+    if (b == NULL) return;
+    
+    // must be placed on solid block
+    if (b[2] <= 0) return;  // can't place on nothing
+    if (!isSolid(b[0], b[1], b[2]-1)) return;
 
-        }
-        //decrement_stack(agent_id, item_id, item_type);
-    //}
-/*
-    static int crystal2 = Item::get_item_type("crystal_seed2");
+    int mech_type_id = Item::get_mech_type_id(item_type);
 
-    if(item_type == crystal2)
-    {
-        Agent_state* a = ServerState::agent_list->get(agent_id);
-        GS_ASSERT(a != NULL);
-        if (a == NULL) return;
-    #if 1
-        const int max_dist = 4.0f;
-        const int z_low = 4;
-        const int z_high = 3;
-        
-        int solid_pos[3];
-        int open_pos[3];
-        int side = a->get_facing_side(solid_pos, open_pos, max_dist, z_low, z_high);
-        
-        printf("block: %i %i %i open: %i %i %i side: %i\n", 
-            solid_pos[0],solid_pos[1],solid_pos[2], 
-            open_pos[0],open_pos[1],open_pos[2],
-            side);
+    ASSERT_VALID_MECH_TYPE(mech_type_id);
+    IF_INVALID_MECH_TYPE(mech_type_id) return;
+    
+    if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
 
-        if (side < 0) return;
-    #else
-
-        Vec3 pos = a->camera_position();
-        Vec3 dir = a->forward_vector();
-
-        float d;
-
-        t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &d)
-
-
-    #endif
-        //t_mech::create_crystal(b[0],b[1],b[2] );
-        //decrement_stack(agent_id, item_id, item_type);
-    }
-*/
+    printf("place crystal %d: at %d %d %d\n", mech_type_id, b[0],b[1],b[2]);
+    t_mech::create_crystal(b[0],b[1],b[2], mech_type_id);
 }
 
 #endif
