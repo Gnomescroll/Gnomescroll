@@ -255,8 +255,11 @@ void visualize_bounding_box(
 
 	for(int i=0; i<12; i++)
 	{
-		glVertex3f(_plx, _ply, _plz);
-		glVertex3f(_plx+len*_pvx, _ply+len*_pvy, _plz+len*_pvz);
+		int i1 = vi[2*i+0];
+		int i2 = vi[2*i+1];
+
+		glVertex3f(vex[i1].x, vex[i1].y, vex[i1].z);
+		glVertex3f(vex[i2].x, vex[i2].y, vex[i2].z);
 
 	}
 
