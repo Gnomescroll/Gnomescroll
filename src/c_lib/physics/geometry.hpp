@@ -242,9 +242,16 @@ void visualize_bounding_box(
 	struct Vec3 vex[8];
 	for(int i=0; i<8; i++)
 	{
-		vex[0].x = _f.x*vs[3*i+0] + _f.y*vs[3*i+1] + _f.z*vs[3*i+2];
+		vex[i].x = bx + _f.x*vs[3*i+0] + _r.x*vs[3*i+1] + _u.x*vs[3*i+2];
+		vex[i].x = by + _f.y*vs[3*i+0] + _r.y*vs[3*i+1] + _u.y*vs[3*i+2];
+		vex[i].x = bz + _f.z*vs[3*i+0] + _r.z*vs[3*i+1] + _u.z*vs[3*i+2];
+	}
+
+	for(int i=0; i<12; i++)
+	{
 
 
+		
 	}
 }
 
