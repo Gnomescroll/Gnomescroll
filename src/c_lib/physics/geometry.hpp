@@ -243,16 +243,28 @@ void visualize_bounding_box(
 	for(int i=0; i<8; i++)
 	{
 		vex[i].x = bx + _f.x*vs[3*i+0] + _r.x*vs[3*i+1] + _u.x*vs[3*i+2];
-		vex[i].x = by + _f.y*vs[3*i+0] + _r.y*vs[3*i+1] + _u.y*vs[3*i+2];
-		vex[i].x = bz + _f.z*vs[3*i+0] + _r.z*vs[3*i+1] + _u.z*vs[3*i+2];
+		vex[i].y = by + _f.y*vs[3*i+0] + _r.y*vs[3*i+1] + _u.y*vs[3*i+2];
+		vex[i].z = bz + _f.z*vs[3*i+0] + _r.z*vs[3*i+1] + _u.z*vs[3*i+2];
 	}
+
+    glDisable(GL_TEXTURE_2D);
+	glColor4ub(255,0,0,255);
+	glLineWidth(1.0f);
+
+	glBegin(GL_LINES);
 
 	for(int i=0; i<12; i++)
 	{
+		glVertex3f(_plx, _ply, _plz);
+		glVertex3f(_plx+len*_pvx, _ply+len*_pvy, _plz+len*_pvz);
 
-
-		
 	}
+
+	glEnd();
+
+	glColor4ub(255,255,255,255);
+	glLineWidth(1.0f);
+
 }
 
 bool line_box_test(
