@@ -197,6 +197,56 @@ float _ix, _iy, _iz;
 	glPointSize(1.0f);
 }
 
+void visualize_bounding_box(
+	float bx, float by, float bz,		//center
+	float bdx, float bdy, float bdz,	//size
+	struct Vec3 f,
+	struct Vec3 r,
+	struct Vec3 u
+	)
+{
+	static const int vi[2*12] = 
+	{
+        0,1,
+        1,2,
+        2,3,
+        3,0,
+
+        4,5,
+        5,6,
+        6,7,
+        7,4,
+
+        0,4,
+        1,5,
+        2,6,
+        3,7,
+	};
+
+	static const int vs[3*8] = 
+	{
+        -1,-1,-1,
+        1,-1,-1,
+        1,1,-1,
+        -1,1,-1,
+        -1,-1,1,
+        1,-1,1,
+        1,1,1,
+        -1,1,1,
+	};
+
+	struct Vec3 _f = vec3_scalar_mult(f, bdx/2.0);
+	struct Vec3 _r = vec3_scalar_mult(r, bdy/2.0);
+	struct Vec3 _u = vec3_scalar_mult(u, bdz/2.0);
+
+	struct Vec3 vex[8];
+	for(int i=0; i<8; i++)
+	{
+		vex[0].x = _f.x*vs[3*i+0] + _f.y*vs[3*i+1] + _f.z*vs[3*i+2];
+
+
+	}
+}
 
 bool line_box_test(
 	float lx, float ly, float lz,
