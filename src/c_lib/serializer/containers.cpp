@@ -178,11 +178,8 @@ static bool process_container_blob(const char* str, size_t filesize)
     static const size_t LONGEST_LINE_A = GS_MAX(CONTAINER_LINE_LENGTH, CONTAINER_FILE_LINE_LENGTH);
     static const size_t LONGEST_LINE_B = GS_MAX(ITEM_LINE_LENGTH, CONTAINER_SEPARATOR_LENGTH);
     static const size_t LONGEST_LINE = GS_MAX(LONGEST_LINE_A, LONGEST_LINE_B);
-    static char buf[LONGEST_LINE+1];
 
-    GS_ASSERT(strnlen(str, LONGEST_LINE) == LONGEST_LINE); 
-    if (strnlen(str, LONGEST_LINE) < LONGEST_LINE) return false;  // TODO -- error handling
-    buf[LONGEST_LINE] = '\0';
+    char buf[LONGEST_LINE+1] = {'\0'};
 
     // copy file header line
     size_t i = 0;
@@ -220,19 +217,25 @@ static bool process_container_blob(const char* str, size_t filesize)
         parse_line<class ParsedContainerData>(&parse_container_token, buf, k, &container_data);
         GS_ASSERT(container_data.valid);
         if (!container_data.valid) return false;
-        GS_ASSERT(container_data.container_id == m+1);  // not fatal, but indicates a problem with the code
+        GS_ASSERT(container_data.container_id == m+1);  // not fatal, but indicates a problem with container serializer
 
-        // get container type
+        // get container by map position
+        int container_id = t_map::get_block_item_container(container_data.position.x,
+            container_data.position.y, container_data.position.z);
+        GS_ASSERT(container_id != NULL_CONTAINER);
+        if (container_id == NULL_CONTAINER) return false;
+
+        ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
+        GS_ASSERT(container != NULL);
+        if (container == NULL) return false;
+
+        // check container type
         // TODO -- apply renaming scheme
         ItemContainerType container_type = ItemContainer::get_type(container_data.name);
         GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
         if (container_type == CONTAINER_TYPE_NONE) return false;
-
-        // create container
-        class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return false;
-        ItemContainer::init_container(container);
+        GS_ASSERT(container_type == container->type);
+        if (container_type != container->type) return false;
 
         // check items will fit
         GS_ASSERT(container_data.item_count <= container->slot_max);
@@ -259,6 +262,9 @@ static bool process_container_blob(const char* str, size_t filesize)
             // TODO -- check that we dont clobber an existing slot
             ItemContainer::load_item_into_container(item->id, container->id, item->container_slot);
         }
+
+        // mark container with next phase of loaded status 
+        loaded_containers[container->id] = CONTAINER_LOAD_ITEMS;
 
         // check separator
         k = 0;
@@ -289,7 +295,21 @@ static bool load_container_file(const char* filename)
     GS_ASSERT(buffer != NULL);
     if (buffer == NULL) return false;
 
-    return process_container_blob(buffer, filesize);
+    bool success = process_container_blob(buffer, filesize);
+    if (!success) return false;
+
+    // check that all containers loaded from map were also found in the flat file
+    for (int i=0; i<MAX_CONTAINERS; i++)
+    {
+        ContainerLoadState state = loaded_containers[i];
+        GS_ASSERT(state == CONTAINER_LOAD_UNUSED || state == CONTAINER_LOAD_ITEMS);
+        // TODO -- collect all unloaded containers and log their positions/block type
+        if (state != CONTAINER_LOAD_UNUSED && state != CONTAINER_LOAD_ITEMS) return false;
+    }
+
+    clear_loaded_containers();
+
+    return true;
 }
 
 /* Saving */

@@ -218,19 +218,6 @@ void destroy_item_container_block(int x, int y, int z)
     c->chunk_item_container.remove(x,y,z);
 }
 
-void load_item_container_block(int x, int y, int z, int block_type)
-{
-    ItemContainerType container_type = Item::get_container_type_for_block(block_type);
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return;
-    ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
-    init_container(container);
-
-    create_item_container_block(x,y,z, container->type, container->id);
-}
-
 void smelter_on(int container_id)
 {
     int p[3] = {0};

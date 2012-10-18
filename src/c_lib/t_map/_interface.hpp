@@ -40,9 +40,6 @@ extern int requested_block_type;
 void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id);
 void destroy_item_container_block(int x, int y, int z);
 
-// creates container
-void load_item_container_block(int x, int y, int z, int block_type);
-
 void smelter_on(int container_id);
 void smelter_off(int container_id);
 

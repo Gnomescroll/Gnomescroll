@@ -118,6 +118,7 @@ void wait_for_threads()
 }
 #endif
 
+
 static void load_map_restore_containers()
 {
     for (int ci=0; ci < 32; ci++)
@@ -129,8 +130,17 @@ static void load_map_restore_containers()
         for (int j=0; j<16; j++)
         {
             int block = mp->e[16*16*k + 16*j + i].block;
-            if (isItemContainer(block))
-                t_map::load_item_container_block(ci*16+i, cj*16+j, k, block);
+            if (!isItemContainer(block)) continue;
+            
+            ItemContainerType container_type = Item::get_container_type_for_block(block);
+            GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+            if (container_type == CONTAINER_TYPE_NONE) continue;    // TODO -- log error
+            class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
+            GS_ASSERT(container != NULL);
+            if (container == NULL) continue;    // TODO -- log error
+            init_container(container);            
+            t_map::create_item_container_block(ci*16+i, cj*16+j, k, container->type, container->id);
+            loaded_containers[container->id] = CONTAINER_LOAD_MAP;
         }
     }
 }

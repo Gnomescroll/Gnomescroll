@@ -165,10 +165,8 @@ static bool parse_player_token(const char* key, const char* val, class ParsedPla
 void process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
 {    
     // allocate scratch buffer long enough to hold the largest line
-    static const size_t LONGEST_LINE  = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
-    static char buf[LONGEST_LINE+1];
-    if (strnlen(str, LONGEST_LINE) < LONGEST_LINE) return;    // TODO -- error handling 
-    buf[LONGEST_LINE] = '\0';
+    static const size_t LONGEST_LINE = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
+    char buf[LONGEST_LINE+1] = {'\0'};
 
     ItemLocationType location = IL_NOWHERE;
     int location_id = NULL_LOCATION;
@@ -253,9 +251,7 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
 void process_player_blob(const char* str, class PlayerLoadData* player_load_data)
 {
     static const size_t LONGEST_LINE = PLAYER_LINE_LENGTH;
-    static char buf[LONGEST_LINE+1];
-    if (strnlen(str, LONGEST_LINE) < LONGEST_LINE) return;  // TODO -- error handling
-    buf[LONGEST_LINE] = '\0';
+    char buf[LONGEST_LINE+1] = {'\0'};
 
     // copy main data line
     size_t i = 0;
@@ -276,7 +272,6 @@ void process_player_blob(const char* str, class PlayerLoadData* player_load_data
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;  // TODO -- log error
 
-    //agent->status.set_spawner(player_data.spawner_id);
     agent->status.set_color_silent(player_data.color);
 }
 
