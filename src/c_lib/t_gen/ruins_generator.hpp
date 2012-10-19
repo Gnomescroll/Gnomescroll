@@ -166,6 +166,12 @@ bool rect_contains(Rect3D r, int x, int y, int z) {
         z >= r.z && z < r.z + r.hei) return true;
     return false;
 }
+bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z) {
+    if (x >= r.x-mar && x < r.x+mar + r.wid &&
+        y >= r.y-mar && y < r.y+mar + r.dep &&
+        z >= r.z-mar && z < r.z+mar + r.hei) return true;
+    return false;
+}
 
 bool corner_needs_this(Rect r, direction_t d, Room room, int cx, int cy) {
     if (rect_contains(r, cx, cy) ) {
@@ -274,92 +280,148 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 		Rect3D sh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
         int half = cubes_across_room / 2;
 
-        if (opens_to(DIR_WEST, ri) ) {
-			// corner
-            sw.dep = rooms[ri.z][ri.y][ri.x - 1].eh.y;
-			// other hall
-            sh.dep = sw.dep;//////////// lintel depth determined by whichver is further out   
+        
 
-			// this hall
-			wh.x   = 0;
-            wh.y   = sw.dep - 1;
-            wh.z   = 1;
-            wh.dep = rooms[ri.z][ri.y][ri.x - 1].eh.wid + 2;
-            wh.hei = rooms[ri.z][ri.y][ri.x - 1].eh.hei + 1;
 
-            if (far_west_cube(cx) && cz >= wh.hei)  need_block = true; // make lintel
-		} else { // dir is blocked
-            nw.dep = sw.dep = half;
-            sw.dep = sw.dep = half;
-            r.nh.dep = sw.dep = half;
-            sh.dep = sw.dep = half;
-			if (cx < r.x)  need_block = true;
+
+        // setup temp halls that match adjacent neighbors (relies on corners being setup first)
+		if (opens_to(DIR_NORTH, ri) ) {
+			if (opens_to(DIR_EAST, ri) ) {
+				r.nh.dep = cubes_across_room - r.eh.y + r.eh.dep;
+			} else
+				r.nh.dep = 1;
 		}
-
-        if (opens_to(DIR_SOUTH, ri)) {
-			// corner
-            sw.wid = rooms[ri.z][ri.y - 1][ri.x].nh.x;
-			se.x   = rooms[ri.z][ri.y - 1][ri.x].nh.wid   + sw.wid;
-			se.wid = cubes_across_room - se.x;
-			// this hall
-            sh.x   = sw.wid - 1;
+		if (opens_to(DIR_SOUTH, ri) ) {
+            sh.x   = rooms[ri.z][ri.y - 1][ri.x].nh.x;
 			sh.y   = 0;
 			sh.z   = 1;
-			sh.wid = rooms[ri.z][ri.y - 1][ri.x].nh.wid + 2;
-			sh.hei = rooms[ri.z][ri.y - 1][ri.x].nh.hei + 1;
-			// other hall
-			wh.wid = sw.wid; ///////////// lintel depth determined by whichver is further out   
-			r.eh.wid = se.wid;
-			r.eh.x   = sw.wid + sh.wid;
+			sh.hei = rooms[ri.z][ri.y - 1][ri.x].nh.hei;
+			sh.wid = rooms[ri.z][ri.y - 1][ri.x].nh.wid;
+			
+			if (opens_to(DIR_WEST, ri) )  
+				sh.dep = rooms[ri.z][ri.y][ri.x - 1].eh.y;
+			else sh.dep = 1;
+		}
+		if (opens_to(DIR_EAST, ri) ) {
+			if (opens_to(DIR_SOUTH, ri) ) 
+				r.eh.wid = cubes_across_room - 
+					rooms[ri.z][ri.y - 1][ri.x].nh.x +
+					rooms[ri.z][ri.y - 1][ri.x].nh.wid;
+			else
+				r.eh.wid = 1;
+		}
+		if (opens_to(DIR_WEST, ri) ) {
+			wh.x   = 0;
+            wh.y   = rooms[ri.z][ri.y][ri.x - 1].eh.y;
+            wh.z   = 1;
+            wh.wid = nw.wid;
+			
+			if (opens_to(DIR_NORTH, ri) )  
+				wh.wid = r.nh.x;
+			else wh.wid = 1;
 
-            if (far_south_cube(cy) && cz >= sh.hei)  need_block = true; // make lintel
+            wh.dep = rooms[ri.z][ri.y][ri.x - 1].eh.dep;
+            wh.hei = rooms[ri.z][ri.y][ri.x - 1].eh.hei;
+		}
+		// FIXME need to open up dep/wid to be more than one across??
+
+
+
+
+
+
+
+		// setup the 4 corners of the room.  DIRTYPE_ is applied to the next corner that is clockwise from its dir
+		if (opens_to(DIR_NORTH, ri) ) {
+			//ccw consideration
+			nw.y = wh.y + wh.dep;
+            nw.dep = cubes_across_room - nw.y;
+
+			ne.x = r.nh.x + r.nh.wid;
+            ne.wid = cubes_across_room - ne.x;
+		} else { // blocked
+			//ccw consideration
+			nw.y = half;
+            nw.dep = half;
+
+            ne.x   = half;
+			ne.wid = half;
+		}
+        if (opens_to(DIR_EAST, ri) ) {
+			//ccw consideration
+			ne.y = r.eh.y + r.eh.dep;
+            ne.dep = cubes_across_room - ne.y;
+
+			se.x   = 
+				rooms[ri.z][ri.y - 1][ri.x].nh.x  + 
+				rooms[ri.z][ri.y - 1][ri.x].nh.wid;
+			se.wid = cubes_across_room - se.x;
         } else { // dir is blocked
-			sw.wid = half;
+			//ccw consideration
+			ne.y = half;
+			ne.dep = half;
+
+			se.x =   half;
 			se.wid = half;
-			wh.wid = half;
-			r.eh.wid = half;
-			r.eh.x   = cubes_across_room - half;
-			if (cy < r.y)  need_block = true;
 		}
 
-        if (opens_to(DIR_EAST, ri) ) {
-            // corner
-            //se.y =   0;
-            se.dep = r.eh.y;
-            // other hall
-            sh.dep = se.dep;//////////// LINKED TO AAN ELSE SITCH
-            // this hall
-            r.eh.y   = se.dep - 1;
-            r.eh.z   = 1;
-            r.eh.dep = r.eh.dep + 2;
-            r.eh.hei = r.eh.hei + 1;
-
-            if (far_east_cube(cx) && cz >= r.eh.hei)  need_block = true; // make lintel
+        if (opens_to(DIR_SOUTH, ri) ) {
+			//ccw consideration
+			se.y = 0;  
+			se.dep = r.eh.y;
+				     
+			sw.x = 0;
+            sw.wid = rooms[ri.z][ri.y - 1][ri.x].nh.x;
         } else { // dir is blocked
-            ne.dep = half;
-            se.dep = half;
-            r.nh.dep = half;
-            sh.dep = half;
-            if (cx >= r.x + r.wid)  need_block = true;
-        }
+			//ccw consideration
+			se.y   = 0;
+			se.dep = half;
+
+			sw.x   = 0;
+			sw.wid = half;
+		}
+
+        if (opens_to(DIR_WEST, ri) ) {
+			//ccw consideration
+			sw.y = 0;
+            sw.dep = rooms[ri.z][ri.y][ri.x - 1].eh.y;
+
+			nw.x = 0;
+			nw.wid = r.nh.x;
+		}else{
+			//ccw consideration
+			sw.y = 0;
+			sw.dep = half;
+
+			nw.x = 0;
+			nw.wid = half;
+		}
+
+
+
+
+
+
+
+		
+
+
+		// make lintels
+		if (opens_to(DIR_WEST, ri) ) {
+            if (far_west_cube(cx) && cz > wh.hei)  need_block = true;
+		} else if (cx < r.x)  need_block = true;
+
+        if (opens_to(DIR_SOUTH, ri)) {
+            if (far_south_cube(cy) && cz > sh.hei)  need_block = true;
+        } else if (cy < r.y)  need_block = true;
+
+        if (opens_to(DIR_EAST, ri) ) {
+            if (far_east_cube(cx) && cz > r.eh.hei)  need_block = true;
+        } else if (cx >= r.x + r.wid)  need_block = true;
 
         if (opens_to(DIR_NORTH, ri) ) {
-            // this hall
-            // corner
-            ////////////////////ne.x = ;
-            ////////////////////ne.y = ;
-            ////////////////////ne.wid = ;
-            ////////////////////ne.dep = ;
-            // other hall
-
-            if (far_east_cube(cx) && cz >= r.eh.hei)  need_block = true; // make lintel
-        } else { // dir is blocked
-            ne.wid = half;
-            nw.wid = half;
-            r.eh.wid = half;
-            wh.wid = half;
-            if (cx >= r.x + r.wid)  need_block = true;
-        }
+            if (far_north_cube(cy) && cz > r.nh.hei)  need_block = true;
+        } else if (cy >= r.y + r.dep)  need_block = true;
 
         
 		
@@ -376,10 +438,10 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
         if (need_block) {
 			// change rim/frame blocks
-			if (rect_contains(r.nh, cx, cy, cz) || 
-				rect_contains(sh,   cx, cy, cz) || 
-				rect_contains(r.eh, cx, cy, cz) || 
-				rect_contains(wh,   cx, cy, cz) 
+			if (rect_plus_margin_contains(r.nh, 1, cx, cy, cz) || 
+				rect_plus_margin_contains(sh,   1, cx, cy, cz) || 
+				rect_plus_margin_contains(r.eh, 1, cx, cy, cz) || 
+				rect_plus_margin_contains(wh,   1, cx, cy, cz) 
 			) block = r.floor_block;
 	        
 			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
