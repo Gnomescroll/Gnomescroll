@@ -57,7 +57,9 @@ void make_circle(int x, int y, int z, float dist, int block, int an_overwriteabl
     }
 }
 
-void make_circle_from_corner_of_block(int x, int y, int z, float dist, int block, bool extend_down = false) { // instead of from the center of given block
+
+
+bool corner_origin_heart(int x, int y, int z, float dist, int new_block = 0, bool extend_down = false) {
     float fx = 0;
     float fy = 0;
     float angle = 0;
@@ -69,17 +71,36 @@ void make_circle_from_corner_of_block(int x, int y, int z, float dist, int block
 		int fi_y = y + (int)(fy+.5);
         angle += PI / 64;
 
-		set_me_maybe(fi_x, fi_y, z, block);
+		if (new_block == 0) { // we're just asking this fuction a question
+			if (t_map::get(fi_x, fi_y, z) != 0)
+				return false;
+		} else
+			set_me_maybe(fi_x, fi_y, z, new_block);
 
 		if (extend_down) {
 			// make sure it extends all the way to the ground
 			int z_extender = z - 1;
 			while (t_map::get(fi_x, fi_y, z_extender) == 0) {
-				t_map::set(fi_x, fi_y, z_extender, block);
+				t_map::set(fi_x, fi_y, z_extender, new_block);
 				z_extender--;
 			}
 		}
     }
+
+	return true;
+}
+
+
+
+bool corner_origin_circle_untouched(int x, int y, int z, float dist) {
+	if (corner_origin_heart(x, y, z, dist) ) return false;
+	return true;
+}
+
+
+
+void corner_origin_make_circle(int x, int y, int z, float dist, int block, bool extend_down = false) { // instead of from the center of given block
+	corner_origin_heart(x, y, z, dist, block, extend_down);  
 }
 
 
@@ -110,15 +131,16 @@ void make_shroom(int x, int y, int z) {
 
 	while (cap_rad > 0) {
 		if (cap_rad > t_rad) 
-			make_circle_from_corner_of_block(x, y, z+hei, t_rad, trunk, hei == 0);
+			corner_origin_make_circle(x, y, z+hei, t_rad, trunk, hei == 0);
 
 		if (hei >= cap_height) {
-			make_circle_from_corner_of_block(x, y, z+hei, cap_rad, trunk);
+			if (corner_origin_circle_untouched(x, y, z+hei, cap_rad) ) 
+				corner_origin_make_circle(     x, y, z+hei, cap_rad, trunk);
 			
 			//
 			int targ_cap_rad = cap_rad + cap_rad_changer;
-			while (targ_cap_rad > cap_rad) { cap_rad++; make_circle_from_corner_of_block(x, y, z+hei, cap_rad, trunk); }
-			while (targ_cap_rad < cap_rad) { cap_rad--; make_circle_from_corner_of_block(x, y, z+hei, cap_rad, trunk); }
+			while (targ_cap_rad > cap_rad) { cap_rad++; corner_origin_make_circle(x, y, z+hei, cap_rad, trunk); }
+			while (targ_cap_rad < cap_rad) { cap_rad--; corner_origin_make_circle(x, y, z+hei, cap_rad, trunk); }
 
 			cap_rad_changer--;
 		}
