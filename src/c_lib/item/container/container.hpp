@@ -589,10 +589,11 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
     return NULL;
 }
 
-class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, MAX_CONTAINERS, MAX_CONTAINERS_HARD>
+class ItemContainerList: public MultiObject_list<ItemContainerInterface>
 {
     private:
         const char* name() { return "ItemContainer"; }
+        
     public:
 
         #if DC_CLIENT
@@ -605,12 +606,12 @@ class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, M
 
         ItemContainerInterface* create(int type, int id)
         {
-            return DynamicMultiObjectList<ItemContainerInterface, MAX_CONTAINERS, MAX_CONTAINERS_HARD>::create(type, id);
+            return MultiObject_list<ItemContainerInterface>::create(type, id);
         }
         #endif
 
-        ItemContainerList()
-        : DynamicMultiObjectList<ItemContainerInterface, MAX_CONTAINERS, MAX_CONTAINERS_HARD>(create_item_container_interface)
+        ItemContainerList(unsigned int capacity)
+        : MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
         {
             this->print();
         }

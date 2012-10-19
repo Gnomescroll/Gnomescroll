@@ -30,7 +30,7 @@ void init()
 {
     init_config();
 
-    item_container_list = new ItemContainerList;
+    item_container_list = new ItemContainerList(MAX_CONTAINERS);
 
     #if DC_SERVER
     agent_inventory_list    = (int*) malloc(MAX_AGENTS * sizeof(int));
@@ -1480,7 +1480,7 @@ ContainerActionType auto_add_free_item_to_container(ClientID client_id, int cont
 
 void update_smelters()
 {
-    for (int i=0; i<item_container_list->n_max; i++)
+    for (unsigned int i=0; i<item_container_list->n_max; i++)
     {
         if (item_container_list->a[i] == NULL) continue;
         ItemContainerInterface* container = item_container_list->a[i];

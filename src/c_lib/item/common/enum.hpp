@@ -28,6 +28,11 @@ typedef enum
 
 typedef enum
 {
+    NULL_CONTAINER = 0xffff
+} ItemContainerID;
+
+typedef enum
+{
     CONTAINER_ACTION_NONE = 0,      // null
     
     FULL_HAND_TO_WORLD,             // remove

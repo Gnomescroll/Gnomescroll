@@ -76,8 +76,8 @@ class Item
         #endif
     }
 
-    explicit Item(int id)   // is not ItemID id because of the container list template
-    :   id((ItemID)id),
+    explicit Item(ItemID id)
+    :   id(id),
         type(NULL_ITEM_TYPE),
         global_id(0),
         durability(NULL_DURABILITY),
@@ -101,18 +101,19 @@ class Item
 
 }
 
-#include <common/template/dynamic_object_list.hpp>
+#include <common/template/object_list.hpp>
 
 namespace Item
 {
 
-class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
+class ItemList: public ObjectList<Item, ItemID>
 {
     private:
         const char* name() { return "Item"; }
         
     public:
-        ItemList() : gas_tick(0)
+        ItemList(unsigned int capacity) : ObjectList<Item, ItemID>(capacity, NULL_ITEM),
+            gas_tick(0)
         {
             this->print();
         }
@@ -129,7 +130,7 @@ class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
         #if DC_CLIENT
         Item* create_type(int item_type, ItemID item_id)
         {
-            Item* item = DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>::create(item_id);
+            Item* item = ObjectList<Item, ItemID>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;

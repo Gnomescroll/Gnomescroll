@@ -23,13 +23,13 @@ class ObjectList
 
         for (unsigned int i=0; i<this->max; i++)
         {
-            int index = (i+this->start+1)%this->max;
+            unsigned int index = (i+this->start+1)%this->max;
             if (this->objects[index].id == this->null_id)
             {
                 this->ct++;
                 this->start = index;
                 new (&this->objects[index]) ObjectState((IDType)index);
-                this->objects[index].id = index;
+                this->objects[index].id = (IDType)index;
                 return &this->objects[index];
             }
         }

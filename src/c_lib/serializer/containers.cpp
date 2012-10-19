@@ -403,7 +403,7 @@ void save_containers()
 
     // write the container contents
     int ct = 0;
-    for (int i=0; i<item_container_list->n_max; i++)
+    for (unsigned i=0; i<item_container_list->n_max; i++)
         if (item_container_list->a[i] != NULL && !item_container_list->a[i]->attached_to_agent)
         {
             bool success = save_container(f, item_container_list->a[i], ct+1);

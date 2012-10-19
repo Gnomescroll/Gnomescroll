@@ -186,8 +186,8 @@ void ItemParticle::pickup_cancelled()
     #endif
 }
 
-ItemParticle::ItemParticle(int id) :
-    id((ItemParticleID)id),
+ItemParticle::ItemParticle(ItemParticleID id) :
+    id(id),
     item_type(NULL_ITEM_TYPE),
     target_agent(NULL_AGENT),
     #if DC_SERVER
@@ -321,10 +321,10 @@ static bool pickup_item_particle(ItemParticleID particle_id)
 void ItemParticle_list::tick()
 {
     ItemParticle* ip;
-    for (int i=0; i<this->n_max; i++)
+    for (unsigned int i=0; i<this->max; i++)
     {
-        if (this->a[i] == NULL) continue;
-        ip = this->a[i];
+        if (this->objects[i].id == this->null_id) continue;
+        ip = &this->objects[i];
 
         ip->tick();
         

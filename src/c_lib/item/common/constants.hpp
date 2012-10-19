@@ -8,7 +8,6 @@
 #define CONTAINER_NAME_MAX_LENGTH 24
 
 const int MAX_ITEMS = NULL_ITEM;
-const int ITEM_LIST_HARD_MAX = MAX_ITEMS;
 
 const int MAX_ITEM_TYPES = 0xff-1;
 const int MAX_CONTAINER_TYPES = 16;
@@ -17,7 +16,6 @@ const int NULL_ITEM_TYPE = 0xff;
 const int NULL_SLOT = 0xff;           // invalid slot value
 const ItemGroup NULL_ITEM_GROUP = IG_NONE;
 const int NULL_DURABILITY = 0xffff;
-const int NULL_CONTAINER = 0xffff;
 const int NULL_COST = 0;
 const int NULL_CRAFTING_RECIPE = 0xffff;
 const int NULL_SMELTING_RECIPE = 0xffff;
@@ -32,8 +30,7 @@ const int MAX_DURABILITY = 0xffff;
 
 const unsigned int MAX_CONTAINER_SIZE = 0xff - 1;
 
-const int MAX_CONTAINERS = 0xffff;
-const int MAX_CONTAINERS_HARD = MAX_CONTAINERS;
+const int MAX_CONTAINERS = NULL_CONTAINER;
 
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
@@ -57,8 +54,7 @@ const float DEFAULT_FIRING_RANGE = 4.0f;
 
 const float OBJECT_DEPTH_MAX = -128.0f;
 
-const int ITEM_PARTICLE_HARD_MAX = NULL_PARTICLE;   // (highest ID will be NULL_PARTICLE - 1
-const int ITEM_PARTICLE_MAX = ITEM_PARTICLE_HARD_MAX; // initial (just start maxed out)
+const int MAX_ITEM_PARTICLES = NULL_PARTICLE; // initial (just start maxed out)
 
 const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
 const float ITEM_PARTICLE_DAMPENING = 0.50f;

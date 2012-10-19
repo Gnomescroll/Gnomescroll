@@ -15,7 +15,7 @@
 
 #define OBJECT_LIST_DEBUG 0
 
-template <class Object_interface, int max_n=1024>
+template <class Object_interface>
 class MultiObject_list
 {
     private:
@@ -29,7 +29,7 @@ class MultiObject_list
         int id_c;
         
     public:
-        static const int n_max = max_n;
+        unsigned int n_max;
         int num;
 
         // pointer to function that accepts type,id and creates obj
@@ -59,27 +59,24 @@ class MultiObject_list
         }
 
         // initialize with pointer to creator
-        MultiObject_list(Object_interface* (*create_interface)(int, int)); //default constructor
+        MultiObject_list(unsigned int capacity, Object_interface* (*create_interface)(int, int)); //default constructor
         virtual ~MultiObject_list(); //default deconstructor
 };
 
-template <class Object_interface, int max_n> 
-MultiObject_list<Object_interface, max_n>::MultiObject_list(Object_interface* (*create_interface_fn)(int, int))
-:
-id_c(0),
-num(0),
-create_interface(create_interface_fn)
+template <class Object_interface> 
+MultiObject_list<Object_interface>::MultiObject_list(unsigned int capacity, Object_interface* (*create_interface_fn)(int, int)) :
+    id_c(0), n_max(capacity), num(0), create_interface(create_interface_fn)
 {
-    this->a = (Object_interface**)calloc(max_n, sizeof(Object_interface*));
+    this->a = (Object_interface**)calloc(this->n_max, sizeof(Object_interface*));
     //where();
 }
 
-template <class Object_interface, int max_n> 
-MultiObject_list<Object_interface, max_n>::~MultiObject_list()
+template <class Object_interface> 
+MultiObject_list<Object_interface>::~MultiObject_list()
 {
     if (a != NULL)
     {
-        for (int i=0; i<this->n_max; i++)
+        for (unsigned int i=0; i<this->n_max; i++)
         {
             if (this->a[i] != NULL)
                 delete this->a[i];
@@ -88,26 +85,22 @@ MultiObject_list<Object_interface, max_n>::~MultiObject_list()
     }
 }
 
-template <class Object_interface, int max_n>
-void MultiObject_list<Object_interface, max_n>::where()
+template <class Object_interface>
+void MultiObject_list<Object_interface>::where()
 {
     printf("%s_list pointer is %p\n", name(), this);
 }
 
-template <class Object_interface, int max_n>
-Object_interface* MultiObject_list<Object_interface, max_n>::get(int id)
+template <class Object_interface>
+Object_interface* MultiObject_list<Object_interface>::get(int id)
 {
-    if((id < 0) || (id >= n_max)) {
-        return NULL;
-    } 
-    if(a[id] == NULL) {
-        return NULL;
-    }
+    if (id < 0 || (unsigned int)id >= n_max) return NULL;
+    if (a[id] == NULL) return NULL;
     return a[id];
 }
 
-template <class Object_interface, int max_n>
-void MultiObject_list<Object_interface, max_n>::print_members()
+template <class Object_interface>
+void MultiObject_list<Object_interface>::print_members()
 {
     printf("%s members:\n", name());
     for (int i=0; i<n_max; i++)
@@ -117,8 +110,8 @@ void MultiObject_list<Object_interface, max_n>::print_members()
     }
 }
 
-template <class Object_interface, int max_n>
-int MultiObject_list<Object_interface, max_n>::get_free_id()
+template <class Object_interface>
+int MultiObject_list<Object_interface>::get_free_id()
 {
     int i;
     int id;
@@ -135,15 +128,15 @@ int MultiObject_list<Object_interface, max_n>::get_free_id()
     return id;
 }
 
-template <class Object_interface, int max_n>
-Object_interface* MultiObject_list<Object_interface, max_n>::create(int type)
+template <class Object_interface>
+Object_interface* MultiObject_list<Object_interface>::create(int type)
 {
     GS_ASSERT(create_interface != NULL);
     if (create_interface == NULL) return NULL;
     //where();
-    int i;
+    unsigned int i;
     int id;
-    for(i=0; i<n_max;i++)
+    for (i=0; i<n_max;i++)
     {
         id = (i+id_c)%n_max;
         if(a[id] == NULL) break;
@@ -159,8 +152,8 @@ Object_interface* MultiObject_list<Object_interface, max_n>::create(int type)
     return a[id];
 }
 
-template <class Object_interface, int max_n>
-Object_interface* MultiObject_list<Object_interface, max_n>::create(int type, int id)
+template <class Object_interface>
+Object_interface* MultiObject_list<Object_interface>::create(int type, int id)
 {
     GS_ASSERT(create_interface != NULL);
     if (create_interface == NULL) return NULL;
@@ -179,8 +172,8 @@ Object_interface* MultiObject_list<Object_interface, max_n>::create(int type, in
     }
 }
 
-template <class Object_interface, int max_n>
-Object_interface* MultiObject_list<Object_interface, max_n>::get_or_create(int type, int id)
+template <class Object_interface>
+Object_interface* MultiObject_list<Object_interface>::get_or_create(int type, int id)
 {
     //where();
     Object_interface* obj = a[id];
@@ -190,8 +183,8 @@ Object_interface* MultiObject_list<Object_interface, max_n>::get_or_create(int t
     return obj;
 }
 
-template <class Object_interface, int max_n>
-bool MultiObject_list<Object_interface, max_n>::contains(int id)
+template <class Object_interface>
+bool MultiObject_list<Object_interface>::contains(int id)
 {
     //where();
     Object_interface* obj = a[id];
@@ -201,8 +194,8 @@ bool MultiObject_list<Object_interface, max_n>::contains(int id)
     return true;
 }
 
-template <class Object_interface, int max_n>
-void MultiObject_list<Object_interface, max_n>::destroy(int id)
+template <class Object_interface>
+void MultiObject_list<Object_interface>::destroy(int id)
 {
     //where();
     if(a[id]==NULL) {
@@ -215,9 +208,9 @@ void MultiObject_list<Object_interface, max_n>::destroy(int id)
     //printf("%s_list: Deleted object %i\n",name(), id);
 }
  
-template <class Object_interface, int max_n>
-bool MultiObject_list<Object_interface, max_n>::full()
+template <class Object_interface>
+bool MultiObject_list<Object_interface>::full()
 {
-    GS_ASSERT(this->num <= max_n);
-    return (this->num >= max_n);
+    GS_ASSERT(this->num <= this->n_max);
+    return (this->num >= this->n_max);
 }

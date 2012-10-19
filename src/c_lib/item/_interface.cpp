@@ -23,7 +23,7 @@ namespace Item
 
 void init()
 {
-    item_list = new ItemList;
+    item_list = new ItemList(MAX_ITEMS);
 }
 
 void teardown()
@@ -358,9 +358,9 @@ void agent_quit(AgentID agent_id)
     // TODO -- reverse lookup from agent
 
     ClientID client_id = agent->client_id;
-    for (int i=0; i<item_list->n_max; i++)
-        if (item_list->a[i] != NULL)
-            item_list->a[i]->subscribers.remove(client_id);
+    for (unsigned int i=0; i<item_list->max; i++)
+        if (item_list->objects[i].id != item_list->null_id)
+            item_list->objects[i].subscribers.remove(client_id);
 }
 
 
@@ -368,7 +368,7 @@ void agent_quit(AgentID agent_id)
 void test_item_list_capacity()
 {
     printf("Testing item list capacity\n");
-    for (int i=0; i<ITEM_LIST_HARD_MAX+1024; i++)
+    for (int i=0; i<MAX_ITEMS+1024; i++)
         item_list->create_type(0);
 }
 

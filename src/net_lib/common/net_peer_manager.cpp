@@ -157,7 +157,7 @@ void NetPeerManager::was_deserialized()
     if (agent == NULL) return;  // TODO -- force disconnect client with error
     NetServer::agents[this->client_id] = agent;
 
-    // we add player to manager setup now, because it didnt have state before
+    // we add player to manager setup now, because it didnt have valid agent state before
     // NOTE: must call this before agent->status.set_fresh_state();
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
 

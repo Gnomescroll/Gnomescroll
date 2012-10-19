@@ -13,7 +13,7 @@ class ItemParticle_list* item_particle_list = NULL;
 
 void init()
 {
-    item_particle_list = new ItemParticle_list;
+    item_particle_list = new ItemParticle_list(MAX_ITEM_PARTICLES);
 }
 
 void teardown()
@@ -39,11 +39,11 @@ void tick()
 
     #if DC_SERVER
     static int tick = 0;
-    for (int i=0; i<item_particle_list->n_max; i++)
+    for (unsigned int i=0; i<item_particle_list->max; i++)
     {
-        if (item_particle_list->a[i] == NULL) continue;
-        if ((tick + item_particle_list->a[i]->broadcast_tick) % ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE == 0)
-            broadcast_particle_item_state(item_particle_list->a[i]->id);
+        if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
+        if ((tick + item_particle_list->objects[i].broadcast_tick) % ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE == 0)
+            broadcast_particle_item_state(item_particle_list->objects[i].id);
     }
     tick++;
     #endif
@@ -178,10 +178,10 @@ static void send_particle_item_create_to_client(ItemParticleID particle_id, Clie
 
 void send_particle_items_to_client(ClientID client_id)
 {
-    for (int i=0; i<item_particle_list->n_max; i++)
+    for (unsigned int i=0; i<item_particle_list->max; i++)
     {
-        ItemParticle* p = item_particle_list->a[i];
-        if (p == NULL) continue;
+        if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
+        ItemParticle* p = &item_particle_list->objects[i];
         send_particle_item_create_to_client(p->id, client_id);
         if (p->target_agent != NULL_AGENT)
             send_particle_item_picked_up(client_id, p->target_agent, p->id);
@@ -295,10 +295,10 @@ void check_item_pickups()
     static int energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
     
-    for (int i=0; i<item_particle_list->n_max; i++)
+    for (unsigned int i=0; i<item_particle_list->max; i++)
     {
-        if (item_particle_list->a[i] == NULL) continue;
-        ItemParticle* item_particle = item_particle_list->a[i];
+        if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
+        ItemParticle* item_particle = &item_particle_list->objects[i];
         if (!item_particle->can_be_picked_up()) continue;
         GS_ASSERT(item_particle->item_id != NULL_ITEM);
         Item::Item* item = Item::get_item(item_particle->item_id);

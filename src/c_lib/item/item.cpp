@@ -44,11 +44,11 @@ void ItemList::decay_gas()
     Item* item;
     ItemAttribute* attr;
     ItemContainer::ItemContainerInterface* container;
-    for (int i=0; i<this->n_max; i++)
+    for (unsigned int i=0; i<this->max; i++)
     {
         // get item
-        if (this->a[i] == NULL) continue;
-        item = this->a[i];
+        if (this->objects[i].id == this->null_id) continue;
+        item = &this->objects[i];
         attr = get_item_attributes(item->type);
         GS_ASSERT(attr != NULL);
         if (attr == NULL) continue;
@@ -177,10 +177,10 @@ void ItemList::verify_items()
         if (!(COND)) (ITEM)->valid = false;
     
     const int LIMIT = 1;
-    for (int k=0; k<this->n_max; k++)
+    for (unsigned int k=0; k<this->max; k++)
     {
-        if (this->a[k] == NULL) continue;
-        Item* i = this->a[k];
+        if (this->objects[k].id == this->null_id) continue;
+        Item* i = &this->objects[k];
 
         VERIFY_ITEM(is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT), LIMIT, i);
 
