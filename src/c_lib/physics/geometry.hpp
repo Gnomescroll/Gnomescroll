@@ -203,6 +203,27 @@ void visualize_bounding_box(
 	struct Vec3 f,
 	struct Vec3 r,
 	struct Vec3 u
+	);
+
+void visualize_bounding_box()
+{
+	struct Vec3 f = vec3_init(1.0, 0.0, 0.0);
+	struct Vec3 r = vec3_init(0.0, 1.0, 0.0);
+	struct Vec3 u = vec3_init(0.0, 0.0, 1.0);
+
+	visualize_bounding_box(
+	_ix, _iy, _iz,		//center
+	1.0,1.0,1.0,	//size
+	f,r,u
+	);
+}
+
+void visualize_bounding_box(
+	float bx, float by, float bz,		//center
+	float bdx, float bdy, float bdz,	//size
+	struct Vec3 f,
+	struct Vec3 r,
+	struct Vec3 u
 	)
 {
 	static const int vi[2*12] = 
@@ -235,9 +256,9 @@ void visualize_bounding_box(
         -1,1,1,
 	};
 
-	struct Vec3 _f = vec3_scalar_mult(f, bdx/2.0);
-	struct Vec3 _r = vec3_scalar_mult(r, bdy/2.0);
-	struct Vec3 _u = vec3_scalar_mult(u, bdz/2.0);
+	struct Vec3 _f = vec3_scalar_mult(f, bdx);
+	struct Vec3 _r = vec3_scalar_mult(r, bdy);
+	struct Vec3 _u = vec3_scalar_mult(u, bdz);
 
 	struct Vec3 vex[8];
 	for(int i=0; i<8; i++)
@@ -248,8 +269,8 @@ void visualize_bounding_box(
 	}
 
     glDisable(GL_TEXTURE_2D);
-	glColor4ub(255,0,0,255);
-	glLineWidth(1.0f);
+	glColor4ub(0,0,0,255);
+	glLineWidth(2.0f);
 
 	glBegin(GL_LINES);
 

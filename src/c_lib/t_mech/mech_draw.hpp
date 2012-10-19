@@ -306,7 +306,7 @@ class MechListShader
                     if(pixels[4*index + 3] > 128)
                     {
                         //empty_row = true;
-                        int height = 16-j;
+                        int height = 8-j;
 
                         mech_sprite_height[i] = height;
                         //printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
@@ -335,6 +335,24 @@ class MechListShader
         SDL_UnlockSurface(s);
 
         //save_surface_to_png(s, "./screenshot/test.png");
+
+        //floating point modifier
+        for(int i=0; i<256; i++)
+        {
+            mech_sprite_width_f[i]  = 1.0;
+            mech_sprite_height_f[i] = 1.0;
+        }
+
+        for(int i=0; i<256; i++)
+        {
+            if(mech_sprite_width[i] != -1)
+                mech_sprite_width_f[i] = ((float) mech_sprite_width[i] ) / 16.0f;
+            if(mech_sprite_height[i] != -1)
+                mech_sprite_height_f[i] = ((float) mech_sprite_height[i] ) / 16.0f;
+
+            if(mech_sprite_height[i] != -1)
+               printf("mech %i: %i \n", i, mech_sprite_height[i] );
+        }
 
     }
 };

@@ -24,6 +24,7 @@ void prep();
 void draw();
 void draw_transparent();
 
+void draw_selected_mech_bounding_box();
 bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int* _mech_id, float* _distance);
 
 void client_ray_cast();

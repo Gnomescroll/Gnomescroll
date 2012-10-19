@@ -34,6 +34,8 @@ namespace t_mech
     //this is whitespace/alpha dimensions for ray casting box
     int mech_sprite_width[256];  //centered
     int mech_sprite_height[256]; //from bottom
+    float mech_sprite_width_f[256];  //centered
+    float mech_sprite_height_f[256]; //from bottom
 }
 
 namespace t_mech

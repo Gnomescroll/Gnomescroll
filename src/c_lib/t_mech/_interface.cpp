@@ -269,6 +269,51 @@ void draw(const struct MECH &m)
 #endif
 }
 
+struct MECH* _selected_mech = NULL;
+
+
+void draw_selected_mech_bounding_box()
+{
+    if(_selected_mech == NULL)
+        return;
+
+    struct MECH m = *_selected_mech;
+
+    const float size = m.size/2.0f;
+    //const float size2 = m.size;
+
+    float wx = (float) (m.x) + 0.5f + m.offset_x;
+    float wy = (float) (m.y) + 0.5f + m.offset_y;
+    float wz = (float) m.z + size;
+
+    wx = quadrant_translate_f(current_camera_position.x, wx);
+    wy = quadrant_translate_f(current_camera_position.y, wy);
+
+    struct Vec3 f = vec3_init( sin(m.rotation * PI), cos(m.rotation * PI), 0.0f );
+    struct Vec3 r = vec3_init( sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f );
+    struct Vec3 u = vec3_init( 0.0f, 0.0f, 1.0f );
+
+    int tex_id = mech_attribute[m.mech_type].sprite_index;
+
+    GS_ASSERT(mech_sprite_width[mech_attribute[m.mech_type].sprite_index] != -1)
+    GS_ASSERT(mech_sprite_height[mech_attribute[m.mech_type].sprite_index] != -1)
+
+    float size_w = size*mech_sprite_width_f[tex_id];
+    float size_h = size*mech_sprite_height_f[tex_id];
+
+            //mech_sprite_width_f[i]  = 1.0;
+            //mech_sprite_height_f[i] = 1.0;
+
+    visualize_bounding_box(
+    wx,wy,wz,
+    size_w,size_w, size_h,
+    f,r,u
+    );
+
+}
+
+
+
 
 #endif 
 bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
@@ -343,7 +388,6 @@ bool line_box_test(
         &a
     );
 
-
     if(ret == true)
     {
         printf("intercept: %0.2f %0.2f %0.2f top: %0.2f %0.2f %0.2f \n", x+a*vx, y+a*vy, z+a*vz,  wx+size*u.x, wy+size*u.y, wz+size*u.z );
@@ -413,6 +457,8 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
     //int nearest_mech = -1;
     //float distance = 1000.0;
 
+    _selected_mech = NULL;
+
     *_mech_id = -1;
     *_distance = 0.0f;
 
@@ -426,7 +472,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
     const int cutoff2 = 8*8;
 
     const int mlm = mech_list->mlm;
-    const struct MECH* mla = mech_list->mla;
+    struct MECH* mla = mech_list->mla;
 
     for(int i=0; i<mlm; i++)
     {
@@ -470,6 +516,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
     {
         *_mech_id = mech_id;
         *_distance = distance;
+        _selected_mech = &mla[mech_id];
         return true;
     }
     return false;
