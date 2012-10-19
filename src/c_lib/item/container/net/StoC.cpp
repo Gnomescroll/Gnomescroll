@@ -229,14 +229,14 @@ inline void lock_container_StoC::handle()
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
-    container->lock(agent_id);
+    container->lock((AgentID)this->agent_id);
 }
 
 inline void unlock_container_StoC::handle()
 {
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
-    container->unlock(agent_id);
+    container->unlock((AgentID)this->agent_id);
 }
 
 inline void smelter_fuel_StoC::handle()

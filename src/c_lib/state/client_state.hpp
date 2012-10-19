@@ -20,8 +20,6 @@ extern bool location_pointer_set;
 
 extern PlayerAgent_state playerAgent_state;
 
-extern class Agent_list* agent_list;
-
 // property lists
 extern class Voxel_render_list_manager* voxel_render_list;
 extern class Voxel_hitscan_list* voxel_hitscan_list;
@@ -31,12 +29,10 @@ extern int last_reliable_ping_time;
 
 extern Objects::Object* base;
 
-void set_PlayerAgent_id(int id);
-
-void update_for_draw();
+void set_PlayerAgent_id(AgentID id);
 
 void init_lists();
-void teardown_lists();
+void teardown_voxel_lists();
 
 // connect callback
 void on_connect();

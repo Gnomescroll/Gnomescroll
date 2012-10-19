@@ -114,7 +114,7 @@ class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
     public:
         ItemList() : gas_tick(0)
         {
-            print_list((char*)this->name(), this);
+            this->print();
         }
 
         #if DC_CLIENT && !PRODUCTION

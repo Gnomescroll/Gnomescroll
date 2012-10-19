@@ -20,7 +20,7 @@ class AgentTargetingComponent: public TargetingComponent
         void check_target_alive();
 
         // explicitly set the target
-        void set_target(int agent_id);
+        void set_target(AgentID agent_id);
 
         // lock to agent
         void lock_target(Vec3 camera_position);
@@ -38,7 +38,9 @@ class AgentTargetingComponent: public TargetingComponent
     speed(1.0f), max_z_diff(128),
     destination(vec3_init(0,0,0)), at_destination(false),
     max_lock_ticks(0), ticks_locked(0)
-    {}
+    {
+        this->target_id = NULL_AGENT;
+    }
 };
 
 } // Components

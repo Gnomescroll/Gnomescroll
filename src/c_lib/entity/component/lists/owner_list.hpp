@@ -11,10 +11,10 @@ const int MAX_OWNER_COMPONENTS = 4096;
 class OwnerComponentList: public ComponentList<OwnerComponent, COMPONENT_OWNER, MAX_OWNER_COMPONENTS>
 {
     public:
-        void transfer(int owner_id, int new_owner_id);
+        void transfer(AgentID owner_id, AgentID new_owner_id);
 
         #if DC_SERVER
-        void revoke(int owner_id);
+        void revoke(AgentID owner_id);
         #endif
 
     ~OwnerComponentList(){}

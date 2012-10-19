@@ -60,7 +60,7 @@ inline void item_particle_picked_up_StoC::handle()
     GS_ASSERT(particle != NULL);
     if (particle == NULL) return;
     
-    particle->picked_up(agent_id);
+    particle->picked_up((AgentID)this->agent_id);
 }
 
 inline void item_particle_pickup_cancelled_StoC::handle()

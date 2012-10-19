@@ -41,7 +41,7 @@ class ItemParticle
         ItemParticleID id;
         int item_type;
         
-        int target_agent; // when being picked up
+        AgentID target_agent; // when being picked up
         
         // render stuff
         #if DC_CLIENT
@@ -72,7 +72,7 @@ class ItemParticle
         }
         #endif
 
-        void picked_up(int agent_id);
+        void picked_up(AgentID agent_id);
         void pickup_cancelled();
         
         void tick();
@@ -115,7 +115,7 @@ class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MA
     private:
         const char* name() { return "ItemParticle"; }
     public:
-        ItemParticle_list() { print_list((char*)this->name(), this); }
+        ItemParticle_list() { this->print(); }
 
         void draw();
         void tick();

@@ -31,17 +31,17 @@ void init_state()
     GS_ASSERT(agent_fire_tick     == NULL);
     GS_ASSERT(agent_fire_on       == NULL);
 
-    agent_selected_type = (int*)malloc(AGENT_MAX * sizeof(int));
-    for (int i=0; i<AGENT_MAX; agent_selected_type[i++] = NULL_ITEM_TYPE);
-    agent_fire_tick = (int*)calloc(AGENT_MAX, sizeof(int));
-    agent_fire_on   = (bool*)calloc(AGENT_MAX, sizeof(bool));
+    agent_selected_type = (int*)malloc(MAX_AGENTS * sizeof(int));
+    for (int i=0; i<MAX_AGENTS; agent_selected_type[i++] = NULL_ITEM_TYPE);
+    agent_fire_tick = (int*)calloc(MAX_AGENTS, sizeof(int));
+    agent_fire_on   = (bool*)calloc(MAX_AGENTS, sizeof(bool));
     
     #if DC_SERVER
     GS_ASSERT(agent_selected_slot == NULL);
     GS_ASSERT(agent_selected_item == NULL);
-    agent_selected_slot = (int*)calloc(AGENT_MAX, sizeof(int));
-    agent_selected_item = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
-    for (int i=0; i<AGENT_MAX; agent_selected_item[i++] = NULL_ITEM);
+    agent_selected_slot = (int*)calloc(MAX_AGENTS, sizeof(int));
+    agent_selected_item = (ItemID*)malloc(MAX_AGENTS * sizeof(ItemID));
+    for (int i=0; i<MAX_AGENTS; agent_selected_item[i++] = NULL_ITEM);
     #endif
 }
 

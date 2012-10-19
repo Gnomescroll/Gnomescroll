@@ -55,7 +55,7 @@ class BillboardTextHud_list: public Simple_object_list<BillboardTextHud, BILLBOA
         void draw();
         void tick();
 
-        BillboardTextHud_list() { print_list((char*)this->name(), this); }
+        BillboardTextHud_list() { this->print(); }
 };
 
 }

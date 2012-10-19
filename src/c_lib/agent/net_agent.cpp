@@ -1,5 +1,7 @@
 #include "net_agent.hpp"
 
+#include <agent/_state.hpp>
+
 #include <agent/agent.hpp>
 #include <common/defines.h>
 
@@ -35,15 +37,15 @@ inline void PlayerAgent_Snapshot::handle()
 
 inline void SendClientId_StoC::handle()
 {
-    NetClient::Server.client_id = client_id;
-
+    NetClient::Server.client_id = (ClientID)this->client_id;
     if (ClientState::playerAgent_state.you != NULL)
         ClientState::playerAgent_state.you->client_id = (ClientID)client_id;
 }
 
 inline void Agent_state_message::handle()
 {
-    Agent_state* a = STATE::agent_list->get(id);
+    Agent* a = Agents::get_agent((AgentID)id);
+    GS_ASSERT(a != NULL);
     if (a == NULL) return;
     #if DC_SERVER
     z = clamp_z(z);
@@ -53,7 +55,8 @@ inline void Agent_state_message::handle()
 
 inline void Agent_teleport_message::handle()
 {
-    Agent_state* a = STATE::agent_list->get(id);
+    Agent* a = Agents::get_agent((AgentID)id);
+    GS_ASSERT(a != NULL);
     if (a == NULL) return;
     // reset camera angle
     if (a->is_you())
@@ -72,7 +75,7 @@ inline void Agent_teleport_message::handle()
 //Agent control state, server to client
 inline void Agent_cs_StoC::handle()
 {
-    Agent_state* a = STATE::agent_list->get(id);
+    Agent* a = Agents::get_agent((AgentID)id);
     if(a == NULL)
     {
         //printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
@@ -86,126 +89,95 @@ inline void Agent_cs_StoC::handle()
 // damage indicator packet
 inline void agent_damage_StoC::handle()
 {
-    Agent_state* a = STATE::agent_list->get(id);
-    if(a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->event.took_damage(dmg);
 }
 
 inline void agent_shot_object_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("WARNING: agent_shot_object_StoC -- Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
-    a->event.fired_weapon_at_object(target_id, target_type, target_part);
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    a->event.fired_weapon_at_object(target_id, (ObjectType)target_type, target_part);
 }
 
 inline void agent_shot_block_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->event.fired_weapon_at_block(x,y,z, cube, side);
 }
 
 inline void agent_shot_nothing_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->event.fired_weapon_at_nothing();
 }
 
 inline void agent_melee_object_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
-    a->event.melee_attack_object(target_id, target_type, target_part);
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    a->event.melee_attack_object(target_id, (ObjectType)target_type, target_part);
 }
 
 inline void agent_melee_nothing_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->event.melee_attack_nothing();
 }
 
 inline void agent_hit_block_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->event.hit_block();
 }
 
 inline void agent_threw_grenade_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->event.threw_grenade();
 }
 
 inline void agent_placed_block_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->event.placed_block();
 }
 
 inline void agent_dead_StoC::handle()
 {
-    bool _dead = (bool)dead;
-    Agent_state* a = ClientState::agent_list->get(id);
-    if(a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
-    a->event.life_changing(_dead);
+    Agent* a = Agents::get_agent((AgentID)this->id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+    a->event.life_changing((bool)this->dead);
 }
 
 inline void agent_health_StoC::handle()
 {
-    Agent_state* a = ClientState::agent_list->get(id);
+    Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     if (health > a->status.health)
@@ -215,7 +187,7 @@ inline void agent_health_StoC::handle()
 
 inline void agent_create_StoC::handle()
 {
-    Agent_state* a = ClientState::agent_list->create(id);
+    Agent* a = Agents::create_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->client_id = (ClientID)this->client_id;
@@ -236,17 +208,17 @@ inline void agent_create_StoC::handle()
 
 inline void agent_destroy_StoC::handle()
 {
-    ClientState::agent_list->destroy(id);
+    Agents::destroy_agent((AgentID)id);
 }
 
 inline void PlayerAgent_id_StoC::handle()
 {
-    ClientState::set_PlayerAgent_id(id);
+    ClientState::set_PlayerAgent_id((AgentID)this->id);
 }
 
 inline void AgentKills_StoC::handle()
 {
-    Agent_state* a = ClientState::agent_list->get(id);
+    Agent* a = Agents::get_agent((AgentID)this->id);
     if(a == NULL)
     {
         printf("Agent %d not found. message_id=%d\n", id, message_id);
@@ -257,7 +229,7 @@ inline void AgentKills_StoC::handle()
 
 inline void AgentDeaths_StoC::handle()
 {
-    Agent_state* a = ClientState::agent_list->get(id);
+    Agent* a = Agents::get_agent((AgentID)this->id);
     if (a == NULL)
     {
         printf("Agent %d not found. message_id=%d\n", id, message_id);
@@ -268,7 +240,7 @@ inline void AgentDeaths_StoC::handle()
 
 inline void AgentSuicides_StoC::handle()
 {
-    Agent_state* a = ClientState::agent_list->get(id);
+    Agent* a = Agents::get_agent((AgentID)this->id);
     if (a == NULL)
     {
         printf("Agent %d not found. message_id=%d\n", id, message_id);
@@ -291,8 +263,8 @@ inline void agent_conflict_notification_StoC::handle()
 {
     bool suicide = (victim == attacker) ? true : false;
 
-    Agent_state* a = ClientState::agent_list->get(attacker);
-    Agent_state* b = ClientState::agent_list->get(victim);
+    Agent* a = Agents::get_agent((AgentID)this->attacker);
+    Agent* b = Agents::get_agent((AgentID)this->victim);
     
     char unknown_name[] = "Someone";
     char *a_name = (a == NULL) ? unknown_name : a->status.name;
@@ -457,7 +429,7 @@ inline void set_spawner_StoC::handle()
 
 inline void agent_color_StoC::handle()
 {
-    Agent_state* a = ClientState::agent_list->get(this->agent_id);
+    Agent* a = Agents::get_agent((AgentID)this->agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
@@ -538,7 +510,7 @@ inline void version_CtoS::handle()
 
 inline void colorme_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[this->client_id];
+    Agent* a = NetServer::agents[this->client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->status.set_color(this->color);
@@ -546,7 +518,7 @@ inline void colorme_CtoS::handle()
 
 inline void killme_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[this->client_id];
+    Agent* a = NetServer::agents[this->client_id];
     if (a == NULL) return;
 
     a->status.die(a->id, a->type, DEATH_KILLME);
@@ -566,7 +538,7 @@ inline void Agent_cs_CtoS::handle()
     }
     */
 
-    Agent_state* A = NetServer::agents[client_id];
+    Agent* A = NetServer::agents[client_id];
     if(A == NULL) return;
 
     //determine if message is new, if so send out
@@ -599,7 +571,7 @@ inline void hit_block_CtoS::handle()
     //if (z < 0 || z >= map_dim.z) return;
     //if (z == 0) return;
     
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
@@ -630,7 +602,7 @@ inline void hit_block_CtoS::handle()
 
 inline void hitscan_object_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
@@ -639,7 +611,7 @@ inline void hitscan_object_CtoS::handle()
 
     if (type == OBJECT_AGENT)
     {
-        Agent_state* agent = ServerState::agent_list->get(id);
+        Agent* agent = Agents::get_agent((AgentID)this->id);
         if (agent == NULL || agent->vox == NULL) return;
         force_update_agent_vox(a);
         // apply damage
@@ -701,7 +673,7 @@ inline void hitscan_object_CtoS::handle()
 // hitscan target:block
 inline void hitscan_block_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
@@ -754,7 +726,7 @@ inline void hitscan_block_CtoS::handle()
 
 inline void hitscan_none_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
@@ -767,13 +739,13 @@ inline void hitscan_none_CtoS::handle()
 
 inline void melee_object_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
     if (type == OBJECT_AGENT)
     {
-        class Agent_state* agent = ServerState::agent_list->get(id);
+        class Agent* agent = Agents::get_agent((AgentID)this->id);
         if (agent==NULL) return;
         agent->status.apply_mining_laser_damage_to_part(part, a->id, a->type);
     }
@@ -804,7 +776,7 @@ inline void melee_object_CtoS::handle()
 
 inline void melee_none_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
@@ -817,7 +789,7 @@ inline void melee_none_CtoS::handle()
 
 inline void ThrowGrenade_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
@@ -847,7 +819,7 @@ inline void agent_set_block_CtoS::handle()
     //if (z < 0 || z >= map_dim.z) return;
     //if (z == 0) return;     // dont set bottom layer
 
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
@@ -881,10 +853,10 @@ inline void agent_set_block_CtoS::handle()
         collides = true;
     else
     {
-        for (int i=0; i<ServerState::agent_list->n_max; i++)
+        for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
-            Agent_state* agent = ServerState::agent_list->a[i];
-            if (agent == NULL || agent == a) continue;
+            Agent* agent = &Agents::agent_list->objects[i];
+            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
             if (agent_collides_terrain(agent))
             {
                 collides = true;
@@ -918,7 +890,7 @@ inline void admin_set_block_CtoS::handle()
     // comparisons not needed due to value range of data type
     //if (z < 0 || z >= map_dim.z) return;
 
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -939,10 +911,10 @@ inline void admin_set_block_CtoS::handle()
     bool collides = agent_collides_terrain(a);
     if (!collides)
     {   // check the rest of the players
-        for (int i=0; i<ServerState::agent_list->n_max; i++)
+        for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
-            Agent_state* agent = ServerState::agent_list->a[i];
-            if (agent == NULL || agent == a) continue;
+            Agent* agent = &Agents::agent_list->objects[i];
+            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
             if (agent_collides_terrain(agent))
             {
                 collides = true;
@@ -963,7 +935,7 @@ inline void admin_set_block_CtoS::handle()
 }
 //#endif
 
-static Objects::Object* place_object_handler(ObjectType type, int x, int y, int z, int owner_id)
+static Objects::Object* place_object_handler(ObjectType type, int x, int y, int z, AgentID owner_id)
 {
     if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, z)) return NULL;
     if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, z)) return NULL;
@@ -994,7 +966,7 @@ static Objects::Object* place_object_handler(ObjectType type, int x, int y, int 
 inline void place_spawner_CtoS::handle()
 {
     ObjectType type = OBJECT_AGENT_SPAWNER;
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     z = clamp_z(z);
@@ -1006,7 +978,7 @@ inline void place_spawner_CtoS::handle()
 inline void place_turret_CtoS::handle()
 {
     ObjectType type = OBJECT_TURRET;
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     z = clamp_z(z);
@@ -1017,7 +989,7 @@ inline void place_turret_CtoS::handle()
 
 inline void choose_spawner_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[this->client_id];
+    Agent* a = NetServer::agents[this->client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->status.set_spawner(spawner_id);
@@ -1039,7 +1011,7 @@ inline void ping_reliable_CtoS::handle()
 
 inline void agent_camera_state_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->id != id) return;
     z = clamp_z(z);

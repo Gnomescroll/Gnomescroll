@@ -3,6 +3,7 @@
 #if DC_SERVER
 #include <item/server.hpp>
 #include <item/container/_state.hpp>
+#include <agent/_interface.hpp>
 #endif
 
 namespace Item
@@ -96,8 +97,8 @@ void ItemList::decay_gas()
                     item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
-                        int agent_id = container->owner;
-                        Agent_state* agent = ServerState::agent_list->get(agent_id);
+                        AgentID agent_id = container->owner;
+                        Agent* agent = Agents::get_agent(agent_id);
                         if (agent != NULL)
                             send_item_state(item->id);
                     }
@@ -116,8 +117,7 @@ void ItemList::decay_gas()
                     item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
-                        int agent_id = item->location_id;
-                        Agent_state* agent = ServerState::agent_list->get(agent_id);
+                        Agent* agent = Agents::get_agent((AgentID)item->location_id);
                         if (agent != NULL)
                             send_item_state(item->id);
                     }
@@ -194,8 +194,8 @@ void ItemList::verify_items()
         {
             GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
             GS_ASSERT_LIMIT(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
-            GS_ASSERT_LIMIT(ItemContainer::get_agent_hand_item(i->location_id) == i->id, LIMIT);
-            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX, LIMIT, i);
+            GS_ASSERT_LIMIT(ItemContainer::get_agent_hand_item((AgentID)i->location_id) == i->id, LIMIT);
+            VERIFY_ITEM(i->location_id >= 0 && i->location_id < MAX_AGENTS, LIMIT, i);
         }
         else
         if (i->location == IL_CONTAINER)

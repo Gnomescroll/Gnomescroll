@@ -6,6 +6,8 @@
 namespace HudText
 {
 
+const unsigned int TEXT_MAX = 1024;
+
 void draw_string(const char* text, const float x, const float y, const float depth, const float scale);
 void draw_string(const char* text, const unsigned int start, const unsigned int len, const float x, const float y, const float depth, const float scale);
 
@@ -336,17 +338,19 @@ class AnimatedText: public Text
     }
 };
 
-const int TEXT_MAX = 1024;
-class Text_list: public Object_list<Text,TEXT_MAX>
+class TextList: public ObjectList<Text>
 {
     private:
         const char* name() { return "Text"; }
 
     public:
-        Text_list() { print_list((char*)this->name(), this); }
+        explicit TextList(unsigned int capacity) : ObjectList<Text>(capacity)
+        {
+            this->print();
+        }
 };
 
-extern Text_list* text_list;
+extern TextList* text_list;
 void init();
 void teardown();
 

@@ -21,7 +21,7 @@
 
 const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
 
-Agent_status::Agent_status(Agent_state* a) :
+Agent_status::Agent_status(Agent* a) :
     a(a),
     voxel_model_restore_throttle(0),
     health(AGENT_HEALTH),
@@ -60,7 +60,7 @@ void Agent_status::set_spawner(int pt)
 
     set_spawner_StoC msg;
     msg.spawner_id = pt;
-    msg.sendToClient(this->a->id);
+    msg.sendToClient(this->a->client_id);
 
     if (pt == BASE_SPAWN_ID) return;    // dont play sound for base
 
@@ -101,7 +101,7 @@ void Agent_status::broadcast_color()
     msg.broadcast();
 }
 
-void Agent_status::send_color(int client_id)
+void Agent_status::send_color(ClientID client_id)
 {
     agent_color_StoC msg;
     msg.agent_id = this->a->id;
@@ -212,7 +212,7 @@ void Agent_status::send_health_msg()
     health_msg.broadcast();
 }
 
-void Agent_status::send_health_msg(int client_id)
+void Agent_status::send_health_msg(ClientID client_id)
 {
     agent_health_StoC health_msg;
     health_msg.id = a->id;
@@ -220,7 +220,7 @@ void Agent_status::send_health_msg(int client_id)
     health_msg.sendToClient(client_id);
 }
 
-int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
+int Agent_status::apply_damage(int dmg, AgentID inflictor_id, ObjectType inflictor_type, int part_id)
 {
     if (!Options::pvp)
     {   // dont allow player kills
@@ -243,7 +243,7 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_t
     return health;
 }
 
-int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type)
+int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type)
 {
     int dmg = 0;
 
@@ -274,7 +274,7 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
-int Agent_status::apply_mining_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type)
+int Agent_status::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type)
 {
     int dmg = 0;
 
@@ -374,18 +374,18 @@ bool Agent_status::die()
     return true;
 }
 
-bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
+bool Agent_status::die(AgentID inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
 {
     bool killed = this->die();
     if (!killed) return false;
     
-    Agent_state* attacker;
+    Agent* attacker;
     //Turret* turret;
     switch (inflictor_type)
     {
         case OBJECT_GRENADE:
         case OBJECT_AGENT:
-            attacker = STATE::agent_list->get(inflictor_id);
+            attacker = Agents::get_agent(inflictor_id);
             if (attacker != NULL)
                 attacker->status.kill(this->a->id);
             break;
@@ -396,12 +396,12 @@ bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMe
         //case OBJECT_TURRET:
             //turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
             //if (turret == NULL) break;
-            //attacker = STATE::agent_list->get(turret->get_owner());
+            //attacker = Agents::get_agent(turret->get_owner());
             //if (attacker != NULL)
                 //attacker->status.kill(this->a->id);
             //break;
         default:
-            //printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
+            //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
             break;
     }
 
@@ -462,7 +462,7 @@ void Agent_status::kill_slime()
     this->slime_kills++;
 }
 
-void Agent_status::send_scores(int client_id)
+void Agent_status::send_scores(ClientID client_id)
 {
     AgentKills_StoC ak;
     ak.id = a->id;

@@ -27,7 +27,7 @@ class ItemContainerInterface
         int slot_count;
         ItemID* slot;
         
-        int owner;
+        AgentID owner;
         int chunk;  // TODO -- move to subclass
 
         bool attached_to_agent; // true for containers permanently attached to agents (inventory, synthesizer)
@@ -51,7 +51,7 @@ class ItemContainerInterface
             return this->slot[slot];
         }
 
-        void assign_owner(int owner)
+        void assign_owner(AgentID owner)
         {
             GS_ASSERT(this->attached_to_agent); // should only use this for attached containers
             this->owner = owner;
@@ -109,14 +109,14 @@ class ItemContainerInterface
             return NULL_SLOT;
         }
 
-        virtual bool can_be_opened_by(int agent_id)
+        virtual bool can_be_opened_by(AgentID agent_id)
         {
             GS_ASSERT(!this->attached_to_agent || this->owner != NULL_AGENT);  // agent should be assigned
             if (this->attached_to_agent && this->owner != agent_id) return false;
             return (this->owner == agent_id || this->owner == NULL_AGENT);
         }
         
-        virtual bool lock(int agent_id)
+        virtual bool lock(AgentID agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->can_be_opened_by(agent_id));
@@ -127,7 +127,7 @@ class ItemContainerInterface
             return true;
         }
 
-        virtual bool unlock(int agent_id)
+        virtual bool unlock(AgentID agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->owner != NULL_AGENT);
@@ -612,7 +612,7 @@ class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, M
         ItemContainerList()
         : DynamicMultiObjectList<ItemContainerInterface, MAX_CONTAINERS, MAX_CONTAINERS_HARD>(create_item_container_interface)
         {
-            print_list((char*)this->name(), this);
+            this->print();
         }
 };
 

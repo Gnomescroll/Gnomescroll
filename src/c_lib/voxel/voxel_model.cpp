@@ -567,7 +567,7 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
 
     for (int i=0; i<this->n_parts; i++)
         part_numbers[i] = i;
-    shuffle_int_array(part_numbers, this->n_parts);
+    shuffle<int>(part_numbers, this->n_parts);
     
     Vec3 c;
     for (int i=0; i<this->n_parts; i++)

@@ -45,9 +45,9 @@ void save_map(){}
 bool load_default_map() {}
 void wait_for_threads(){}
 
-bool save_player_container(int client_id, int container_id) {}
+bool save_player_container(ClientID client_id, int container_id) {}
 
-int begin_player_load(UserID user_id, int client_id) { return 0; }
+int begin_player_load(UserID user_id, ClientID client_id) { return 0; }
 bool load_player_container(int player_load_id, int container_id) { return true; } 
 bool end_player_load(int player_load_id) { return true; }
 

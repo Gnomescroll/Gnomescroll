@@ -8,6 +8,7 @@
 #include <entity/components/physics/position_changed.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
+#include <agent/_interface.hpp>
 
 namespace Objects
 {
@@ -126,11 +127,11 @@ void die_agent_spawner(Object* object)
     item_drop->drop_item();
 
     // remove self from any agents using us
-    using ServerState::agent_list;
-    for (int i=0; i<agent_list->n_max; i++)
-        if (agent_list->a[i] != NULL)
-            if (agent_list->a[i]->status.spawner == object->id)
-                agent_list->a[i]->status.set_spawner(BASE_SPAWN_ID);
+    using Agents::agent_list;
+    for (unsigned int i=0; i<agent_list->max; i++)
+        if (agent_list->objects[i].id != agent_list->null_id)
+            if (agent_list->objects[i].status.spawner == object->id)
+                agent_list->objects[i].status.set_spawner(BASE_SPAWN_ID);
                 
     object->broadcastDeath();
     #endif

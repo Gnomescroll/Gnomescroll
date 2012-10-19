@@ -15,15 +15,15 @@
 #define ASSERT_VALID_USER_ID(user_id) GS_ASSERT((user_id) > 0 && (user_id) != NULL_USER_ID)
 #define IF_INVALID_USER_ID(user_id) if (unlikely((user_id) <= 0 || (user_id) == NULL_USER_ID)) 
 
-#define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT((agent_id) >= 0 && (agent_id) < AGENT_MAX)
-#define IS_VALID_AGENT_ID(agent_id) ((agent_id) >= 0 && (agent_id) < AGENT_MAX)
+#define ASSERT_VALID_AGENT_ID(agent_id) GS_ASSERT((agent_id) >= 0 && (agent_id) < MAX_AGENTS)
+#define IS_VALID_AGENT_ID(agent_id) ((agent_id) >= 0 && (agent_id) < MAX_AGENTS)
 #define IF_INVALID_AGENT_ID(agent_id) if (unlikely(!IS_VALID_AGENT_ID((agent_id))))
 
 #define ASSERT_VALID_ITEM_ID(item_id) GS_ASSERT((item_id) >= 0 && (item_id) < MAX_ITEMS)
 #define IF_INVALID_ITEM_ID(item_id) if (unlikely((item_id) < 0 || (item_id) >= MAX_ITEMS))
 
-#define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT((client_id) >= 0 && (client_id) != NULL_CLIENT && (client_id) < NetServer::HARD_MAX_CONNECTIONS)
-#define IF_INVALID_CLIENT_ID(client_id) if (unlikely((client_id) < 0 || (client_id) == NULL_CLIENT || (client_id) >= NetServer::HARD_MAX_CONNECTIONS))
+#define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT((client_id) >= 0 && (client_id) != NULL_CLIENT && (client_id) < HARD_MAX_CONNECTIONS)
+#define IF_INVALID_CLIENT_ID(client_id) if (unlikely((client_id) < 0 || (client_id) == NULL_CLIENT || (client_id) >= HARD_MAX_CONNECTIONS))
 
 #define ASSERT_VALID_BLOCK(block_type) GS_ASSERT((block_type) >= 0 && (block_type) < t_map::MAX_CUBES)
 #define IF_INVALID_BLOCK(block_type) if (unlikely((block_type) < 0 || (block_type) >= t_map::MAX_CUBES))

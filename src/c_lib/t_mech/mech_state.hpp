@@ -120,7 +120,7 @@ struct MECH_LIST
 
 
     #if DC_SERVER
-    void send_mech_list_to_client(int client_id)
+    void send_mech_list_to_client(ClientID client_id)
     {
         for (int i=0; i<mlm; i++)
         {

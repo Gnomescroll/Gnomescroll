@@ -7,7 +7,7 @@ namespace Particle
 void init_particles();
 void teardown_particles();
 
-extern class Grenade_list* grenade_list;
+extern class GrenadeList* grenade_list;
 
 #if DC_CLIENT
 extern class  Shrapnel_list* shrapnel_list;

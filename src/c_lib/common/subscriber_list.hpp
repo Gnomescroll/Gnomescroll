@@ -4,6 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
+#include <net_lib/global.hpp>
 #include <net_lib/server.hpp>
 
 class SubscriberList
@@ -15,7 +16,7 @@ class SubscriberList
             if (this->max >= hard_max) return false;
             this->max *= 2;
             if (this->max > hard_max) this->max = hard_max;
-            this->subscribers = (int*)realloc(this->subscribers, this->max * sizeof(int));
+            this->subscribers = (ClientID*)realloc(this->subscribers, this->max * sizeof(ClientID));
             return true;
         }
 
@@ -28,21 +29,23 @@ class SubscriberList
             if (new_max > hard_max) return false;
             
             this->max = new_max;
-            this->subscribers = (int*)realloc(this->subscribers, this->max * sizeof(int));
+            this->subscribers = (ClientID*)realloc(this->subscribers, this->max * sizeof(ClientID));
             return true;
         }
         
     public:
-        int* subscribers;
+        ClientID* subscribers;
         unsigned int n;
         unsigned int max;
         unsigned int hard_max;
         
     // returns true is subscriber is added to the list
     // if subscriber was already in the list, or if the list is maxed out, returns false
-    bool add(int client_id)
+    bool add(ClientID client_id)
     {
         ASSERT_VALID_CLIENT_ID(client_id);
+        IF_INVALID_CLIENT_ID(client_id) return false;
+        
         // no duplicates
         for (unsigned int i=0; i<this->n; i++)
             if (this->subscribers[i] == client_id)
@@ -55,21 +58,11 @@ class SubscriberList
         return true;
     }
 
-    // fills the subscriber list with all possible values
-    void add_all()
-    {
-        if (this->max < hard_max) this->grow(hard_max);
-
-        this->n = this->max;
-        // no duplicates
-        for (unsigned int i=0; i<this->n; i++)
-            this->subscribers[i] = (int)i;
-    }
-
     // returns true if subscriber was found in list
-    bool remove(int client_id)
+    bool remove(ClientID client_id)
     {
         ASSERT_VALID_CLIENT_ID(client_id);
+        IF_INVALID_CLIENT_ID(client_id) return false;
 
         for (unsigned int i=0; i<this->n; i++)
             if (this->subscribers[i] == client_id)
@@ -91,8 +84,8 @@ class SubscriberList
     : n(0), max(initial_size)
     {
         GS_ASSERT(initial_size > 0);
-        this->subscribers = (int*)malloc(initial_size * sizeof(int));
-        this->hard_max = NetServer::HARD_MAX_CONNECTIONS;
+        this->subscribers = (ClientID*)malloc(initial_size * sizeof(ClientID));
+        this->hard_max = HARD_MAX_CONNECTIONS;
         GS_ASSERT(initial_size < this->hard_max);
     }
 
@@ -102,7 +95,7 @@ class SubscriberList
         GS_ASSERT(initial_size > 0);
         GS_ASSERT(hard_max > 0);
         GS_ASSERT(hard_max >= initial_size);
-        this->subscribers = (int*)malloc(initial_size * sizeof(int));
+        this->subscribers = (ClientID*)malloc(initial_size * sizeof(ClientID));
         this->hard_max = hard_max;
     }
 

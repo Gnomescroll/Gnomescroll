@@ -231,7 +231,7 @@ void ObjectList::harvest()
     }
 }
 
-void ObjectList::send_to_client(ObjectType type, int client_id)
+void ObjectList::send_to_client(ObjectType type, ClientID client_id)
 {
     GS_ASSERT(type < MAX_OBJECT_TYPES);
     GS_ASSERT(type >= 0);

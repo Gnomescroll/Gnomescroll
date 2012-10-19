@@ -1,5 +1,6 @@
 #include "callbacks.hpp"
 
+#include <agent/_interface.hpp>
 #include <item/toolbelt/common/types.hpp>
 #include <entity/object/main.hpp>
 #include <entity/objects/fabs/constants.hpp>
@@ -57,19 +58,19 @@ void end_local_mining_laser(int item_type)
     ClientState::playerAgent_state.action.end_mining_laser();
 }
 
-void begin_mining_laser(int agent_id, int item_type)
+void begin_mining_laser(AgentID agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent_state* a = ClientState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.begin_mining_laser();
 }
 
-void end_mining_laser(int agent_id, int item_type)
+void end_mining_laser(AgentID agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent_state* a = ClientState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     a->event.end_mining_laser();
 }
@@ -143,7 +144,7 @@ void select_facing_block(ItemID item_id, int item_type)
 
 #if DC_SERVER
 
-void decrement_durability(int agent_id, ItemID item_id, int item_type)
+void decrement_durability(AgentID agent_id, ItemID item_id, int item_type)
 {
     int durability = Item::get_item_durability(item_id);
     if (durability == NULL_DURABILITY) return;
@@ -158,7 +159,7 @@ void decrement_durability(int agent_id, ItemID item_id, int item_type)
         Item::send_item_state(item_id);
 }
 
-void decrement_stack(int agent_id, ItemID item_id, int item_type)
+void decrement_stack(AgentID agent_id, ItemID item_id, int item_type)
 {
     int stack_size = Item::get_stack_size(item_id);
     GS_ASSERT(stack_size > 0);
@@ -174,20 +175,20 @@ void decrement_stack(int agent_id, ItemID item_id, int item_type)
 
 // IG_CONSUMABLE
 
-void consume_item(int agent_id, ItemID item_id, int item_type)
+void consume_item(AgentID agent_id, ItemID item_id, int item_type)
 {
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     bool consumed = a->status.consume_item(item_id);
     if (!consumed) return;
     decrement_stack(agent_id, item_id, item_type);
 }
 
-void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type)
+void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_type)
 {
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
-    int teammate_id = Hitscan::against_agents(
+    AgentID teammate_id = Hitscan::against_agents(
         a->get_camera_position(), a->forward_vector(),
         APPLY_REPAIR_KIT_MAX_DISTANCE, a->id);
     if (teammate_id == NULL_AGENT) return;
@@ -195,9 +196,9 @@ void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type)
 }
 
 // simple creator for objects
-static class Objects::Object* place_object(int agent_id, ItemID item_id, int item_type, const ObjectType object_type, const float object_height)
+static class Objects::Object* place_object(AgentID agent_id, ItemID item_id, int item_type, const ObjectType object_type, const float object_height)
 {
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return NULL;
     
@@ -243,11 +244,11 @@ static class Objects::Object* place_object(int agent_id, ItemID item_id, int ite
 
 // IG_AGENT_SPAWNER
 
-void place_spawner(int agent_id, ItemID item_id, int item_type)
+void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -267,7 +268,7 @@ void place_spawner(int agent_id, ItemID item_id, int item_type)
 
 // IG_ENERGY_CORE
 
-void place_energy_core(int agent_id, ItemID item_id, int item_type)
+void place_energy_core(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
     
@@ -280,11 +281,11 @@ void place_energy_core(int agent_id, ItemID item_id, int item_type)
 
 //IG_MECH_PLACER
 
-void place_mech(int agent_id, ItemID item_id, int item_type)
+void place_mech(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
     
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     

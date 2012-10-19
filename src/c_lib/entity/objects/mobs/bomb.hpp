@@ -15,7 +15,7 @@ void update_mob_bomb(Object* object);
 
 #if DC_SERVER
 // TODO -- move
-inline void send_mob_bomb_state_machine_to_client(int client_id, class Object* object);
+inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Object* object);
 #endif
 
 } // Objects

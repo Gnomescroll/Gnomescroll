@@ -47,7 +47,7 @@ void smelter_off(int container_id);
 void map_post_processing();
 
 //on connect
-void send_client_map_special(int client_id);
+void send_client_map_special(ClientID client_id);
 void add_control_node(int x, int y, int z);
 
 void save_map();

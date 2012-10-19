@@ -15,17 +15,13 @@ namespace ServerState
     extern bool main_inited;
     extern bool signal_exit;
 
-    extern Agent_list* agent_list;
-        
+    extern class Objects::Object* base;
+
     // property lists
     extern Voxel_hitscan_list* voxel_hitscan_list;
 
-    void init();
     void init_lists();
-    void teardown();
-    void teardown_lists();
-
-    extern class Objects::Object* base;
+    void teardown_voxel_lists();
 
     struct Vec3 get_base_spawn_position();
     void init_base();
@@ -33,7 +29,7 @@ namespace ServerState
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int damage, int owner,
+        int damage, AgentID owner,
         ObjectType inflictor_type, int inflictor_id,
         bool suicidal=true
     );

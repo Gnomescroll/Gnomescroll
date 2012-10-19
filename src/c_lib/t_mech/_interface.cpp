@@ -485,7 +485,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
 
 #if DC_SERVER
 
-void send_client_mech_list(int client_id)
+void send_client_mech_list(ClientID client_id)
 {
     mech_list->send_mech_list_to_client(client_id);
 }

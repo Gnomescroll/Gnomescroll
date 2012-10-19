@@ -74,7 +74,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     hitscan_none_CtoS none_msg;
     hitscan_object_CtoS obj_msg;
 
-    Agent_state* agent;
+    Agent* agent;
     
     int x,y,z;
     int block_type;
@@ -107,7 +107,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
                     collision_point[0], collision_point[1], collision_point[2],
                     0,0,0
                 );
-                agent = ClientState::agent_list->get(target.entity_id);
+                agent = Agents::get_agent((AgentID)target.entity_id);
                 if (agent==NULL) break;
             }
             break;
@@ -269,7 +269,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     hit_block_CtoS block_msg;
     melee_object_CtoS obj_msg;
 
-    Agent_state* agent;
+    Agent* agent;
     //int voxel_blast_radius = 1;
 
     switch (target_type)
@@ -292,7 +292,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 
             if (target.entity_type == OBJECT_AGENT)
             {
-                agent = ClientState::agent_list->get(target.entity_id);
+                agent = Agents::get_agent((AgentID)target.entity_id);
                 if (agent==NULL)
                 {
                     target_type = Hitscan::HITSCAN_TARGET_NONE;

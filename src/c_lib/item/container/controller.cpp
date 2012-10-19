@@ -189,7 +189,7 @@ ContainerActionType full_hand_swap_with_slot(
 
 #if DC_SERVER
 
-ContainerActionType full_hand_to_world(int agent_id)
+ContainerActionType full_hand_to_world(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
@@ -199,7 +199,7 @@ ContainerActionType full_hand_to_world(int agent_id)
     return FULL_HAND_TO_WORLD;
 }
 
-ContainerActionType partial_hand_to_world(int agent_id, int transfer_stack_size)
+ContainerActionType partial_hand_to_world(AgentID agent_id, int transfer_stack_size)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     ItemID hand_item = get_agent_hand_item(agent_id);
@@ -218,7 +218,7 @@ ContainerActionType partial_hand_to_world(int agent_id, int transfer_stack_size)
     return PARTIAL_HAND_TO_WORLD;
 }
 
-ContainerActionType full_hand_to_empty_slot(int agent_id, ItemContainerInterface* container, int slot)
+ContainerActionType full_hand_to_empty_slot(AgentID agent_id, ItemContainerInterface* container, int slot)
 {   // put hand item in slot
     GS_ASSERT(container != NULL);
     if (container == NULL) return CONTAINER_ACTION_NONE;
@@ -232,7 +232,7 @@ ContainerActionType full_hand_to_empty_slot(int agent_id, ItemContainerInterface
     return FULL_HAND_TO_EMPTY_SLOT;
 }
 
-ContainerActionType full_hand_to_occupied_slot(int agent_id, int slot, ItemID slot_item)
+ContainerActionType full_hand_to_occupied_slot(AgentID agent_id, int slot, ItemID slot_item)
 { // add stacks
     GS_ASSERT(slot_item != NULL_ITEM);
 
@@ -286,7 +286,7 @@ ContainerActionType partial_hand_to_occupied_slot(int slot, ItemID hand_item, It
     return PARTIAL_HAND_TO_OCCUPIED_SLOT;
 }
 
-ContainerActionType partial_slot_to_empty_hand(int agent_id, int slot, ItemID slot_item)
+ContainerActionType partial_slot_to_empty_hand(AgentID agent_id, int slot, ItemID slot_item)
 {   // split stack, rounded down
     GS_ASSERT(slot_item != NULL_ITEM);
 
@@ -301,7 +301,7 @@ ContainerActionType partial_slot_to_empty_hand(int agent_id, int slot, ItemID sl
     return PARTIAL_SLOT_TO_EMPTY_HAND;
 }
 
-ContainerActionType full_slot_to_empty_hand(int agent_id, ItemContainerInterface* container, int slot, ItemID slot_item)
+ContainerActionType full_slot_to_empty_hand(AgentID agent_id, ItemContainerInterface* container, int slot, ItemID slot_item)
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(slot_item != NULL_ITEM);
@@ -315,7 +315,7 @@ ContainerActionType full_slot_to_empty_hand(int agent_id, ItemContainerInterface
     return FULL_SLOT_TO_EMPTY_HAND;
 }
 
-ContainerActionType full_hand_swap_with_slot(int client_id, int agent_id, ItemContainerInterface* container, int slot, ItemID slot_item)
+ContainerActionType full_hand_swap_with_slot(ClientID client_id, AgentID agent_id, ItemContainerInterface* container, int slot, ItemID slot_item)
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(slot_item != NULL_ITEM);
@@ -334,7 +334,7 @@ ContainerActionType full_hand_swap_with_slot(int client_id, int agent_id, ItemCo
 ContainerActionType alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -531,7 +531,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
 ContainerActionType synthesizer_alpha_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType synthesizer_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -694,7 +694,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(int agent_id, int cli
 ContainerActionType beta_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType beta_action_decision_tree(AgentID agent_id, ClientID client_id, int id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -877,7 +877,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
 ContainerActionType synthesizer_beta_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType synthesizer_beta_action_decision_tree(AgentID agent_id, ClientID client_id, int id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -1075,7 +1075,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(int agent_id, int clie
 ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType synthesizer_shopping_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -1136,7 +1136,7 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(int agent_id
 ContainerActionType synthesizer_shopping_beta_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType synthesizer_shopping_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType synthesizer_shopping_beta_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     return CONTAINER_ACTION_NONE;
@@ -1146,7 +1146,7 @@ ContainerActionType synthesizer_shopping_beta_action_decision_tree(int agent_id,
 ContainerActionType craft_input_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType craft_input_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType craft_input_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     // treat input slots exactly like normal container
@@ -1162,7 +1162,7 @@ ContainerActionType craft_input_alpha_action_decision_tree(int agent_id, int cli
 ContainerActionType craft_input_beta_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType craft_input_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType craft_input_beta_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     // treat input slots exactly like normal container
@@ -1178,7 +1178,7 @@ ContainerActionType craft_input_beta_action_decision_tree(int agent_id, int clie
 ContainerActionType craft_output_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType craft_output_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -1218,7 +1218,7 @@ ContainerActionType craft_output_alpha_action_decision_tree(int agent_id, int cl
 ContainerActionType craft_output_beta_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType craft_output_beta_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     return CONTAINER_ACTION_NONE;
@@ -1228,7 +1228,7 @@ ContainerActionType craft_output_beta_action_decision_tree(int agent_id, int cli
 ContainerActionType no_container_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType no_container_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -1273,7 +1273,7 @@ ContainerActionType no_container_alpha_action_decision_tree(int agent_id, int cl
 ContainerActionType no_container_beta_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType no_container_beta_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType no_container_beta_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     ContainerActionType action = CONTAINER_ACTION_NONE;
@@ -1331,7 +1331,7 @@ ContainerActionType no_container_beta_action_decision_tree(int agent_id, int cli
 ContainerActionType smelter_alpha_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType smelter_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType smelter_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int id, int slot)
 #endif
 {
     #if DC_CLIENT
@@ -1346,7 +1346,7 @@ ContainerActionType smelter_alpha_action_decision_tree(int agent_id, int client_
 ContainerActionType smelter_beta_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType smelter_beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType smelter_beta_action_decision_tree(AgentID agent_id, ClientID client_id, int id, int slot)
 #endif
 {
     #if DC_CLIENT
@@ -1361,7 +1361,7 @@ ContainerActionType smelter_beta_action_decision_tree(int agent_id, int client_i
 ContainerActionType crusher_alpha_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType crusher_alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType crusher_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int id, int slot)
 #endif
 {
     #if DC_CLIENT
@@ -1376,7 +1376,7 @@ ContainerActionType crusher_alpha_action_decision_tree(int agent_id, int client_
 ContainerActionType crusher_beta_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType crusher_beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
+ContainerActionType crusher_beta_action_decision_tree(AgentID agent_id, ClientID client_id, int id, int slot)
 #endif
 {
     #if DC_CLIENT
@@ -1391,7 +1391,7 @@ ContainerActionType crusher_beta_action_decision_tree(int agent_id, int client_i
 ContainerActionType crusher_crush_alpha_action_decision_tree(int container_id, int slot)
 #endif
 #if DC_SERVER
-ContainerActionType crusher_crush_alpha_action_decision_tree(int agent_id, int client_id, int container_id, int slot)
+ContainerActionType crusher_crush_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, int container_id, int slot)
 #endif
 {
     if (container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;

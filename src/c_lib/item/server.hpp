@@ -8,8 +8,8 @@ namespace Item
 {
 
 // subscriptions
-void subscribe_agent_to_item(int agent_id, ItemID item_id);
-void unsubscribe_agent_from_item(int agent_id, ItemID item_id);
+void subscribe_agent_to_item(AgentID agent_id, ItemID item_id);
+void unsubscribe_agent_from_item(AgentID agent_id, ItemID item_id);
 void unsubscribe_all_from_item(ItemID item_id);
 
 // packets

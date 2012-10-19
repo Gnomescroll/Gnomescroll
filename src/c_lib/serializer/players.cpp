@@ -13,10 +13,10 @@ static class PlayerContainerLoadDataList* player_container_load_data_list = NULL
 void init_players()
 {
     GS_ASSERT(player_load_data_list == NULL);
-    player_load_data_list = new class PlayerLoadDataList;
+    player_load_data_list = new class PlayerLoadDataList(PLAYER_LOAD_DATA_LIST_MAX);
 
     GS_ASSERT(player_container_load_data_list == NULL);
-    player_container_load_data_list = new class PlayerContainerLoadDataList;
+    player_container_load_data_list = new class PlayerContainerLoadDataList(PLAYER_CONTAINER_LOAD_DATA_LIST_MAX);
 }
 
 void teardown_players()
@@ -268,7 +268,7 @@ void process_player_blob(const char* str, class PlayerLoadData* player_load_data
     if (!player_data.valid) return; // TODO -- log error
     i++;
 
-    class Agent_state* agent = ServerState::agent_list->get_any(player_load_data->agent_id);
+    class Agent* agent = Agents::get_any_agent(player_load_data->agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;  // TODO -- log error
 
@@ -362,7 +362,7 @@ const char* write_player_container_string(int container_id, UserID user_id)
 
 const char* write_player_string(AgentID agent_id)
 {
-    class Agent_state* agent = ServerState::agent_list->get(agent_id);
+    class Agent* agent = Agents::get_agent(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return NULL;
 
@@ -380,6 +380,8 @@ const char* write_player_string(AgentID agent_id)
 
 bool save_player_container(ClientID client_id, int container_id)
 {
+    if (!Options::serializer) return true;
+
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return false;
     
@@ -407,6 +409,8 @@ bool save_player_container(ClientID client_id, int container_id)
 
 bool save_player(UserID user_id, AgentID agent_id)
 {
+    if (!Options::serializer) return true;
+    
     ASSERT_VALID_USER_ID(user_id);
     IF_INVALID_USER_ID(user_id) return false;
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -425,6 +429,8 @@ bool save_player(UserID user_id, AgentID agent_id)
 
 int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id)
 {
+    if (!Options::serializer) return true;
+
     ASSERT_VALID_USER_ID(user_id);
     IF_INVALID_USER_ID(user_id) return -1;
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -446,6 +452,8 @@ int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id)
 
 bool load_player_container(int player_load_id, int container_id)
 {
+    if (!Options::serializer) return true;
+
     class PlayerLoadData* player_data = player_load_data_list->get(player_load_id);
     GS_ASSERT(player_data != NULL);
     if (player_data == NULL) return false;
@@ -473,6 +481,8 @@ bool load_player_container(int player_load_id, int container_id)
 
 bool end_player_load(int player_load_id)
 {
+    if (!Options::serializer) return true;
+
     class PlayerLoadData* data = player_load_data_list->get(player_load_id);
     GS_ASSERT(data != NULL);
     if (data == NULL) return false;

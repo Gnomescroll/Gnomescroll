@@ -13,7 +13,7 @@ class Object;
 class CreatePacketDelegate
 {
     public:
-        virtual void sendToClient(Object* object, int client_id) = 0;
+        virtual void sendToClient(Object* object, ClientID client_id) = 0;
         virtual void broadcast(Object* object) = 0;
         virtual ~CreatePacketDelegate(){}
 };
@@ -21,7 +21,7 @@ class CreatePacketDelegate
 class StatePacketDelegate
 {
     public:
-        virtual void sendToClient(Object* object, int client_id) = 0;
+        virtual void sendToClient(Object* object, ClientID client_id) = 0;
         virtual void broadcast(Object* object) = 0;
         virtual ~StatePacketDelegate(){}
 };
@@ -33,14 +33,14 @@ class StatePacketDelegate
 class CreatePacketNone: public CreatePacketDelegate
 {
     public:
-        void sendToClient(Object* object, int client_id) {}
+        void sendToClient(Object* object, ClientID client_id) {}
         void broadcast(Object* object) {}
 };
 
 class StatePacketNone: public StatePacketDelegate
 {
     public:
-        void sendToClient(Object* object, int client_id) {}
+        void sendToClient(Object* object, ClientID client_id) {}
         void broadcast(Object* object) {}
 };
 
@@ -52,7 +52,7 @@ class CreatePacket: public CreatePacketDelegate
         void message(Object* object, object_create_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_create_StoC msg;
             this->message(object, &msg);
@@ -73,7 +73,7 @@ class CreatePacketOwner: public CreatePacketDelegate
         void message(Object* object, object_create_owner_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_create_owner_StoC msg;
             this->message(object, &msg);
@@ -94,7 +94,7 @@ class CreatePacketMomentum: public CreatePacketDelegate
         void message(Object* object, object_create_momentum_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_create_momentum_StoC msg;
             this->message(object, &msg);
@@ -115,7 +115,7 @@ class CreatePacketMomentumAngles: public CreatePacketDelegate
         void message(Object* object, object_create_momentum_angles_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_create_momentum_angles_StoC msg;
             this->message(object, &msg);
@@ -137,7 +137,7 @@ class CreatePacketMomentumAnglesHealth: public CreatePacketDelegate
         void health_message(Object* object, object_state_health_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_create_momentum_angles_health_StoC msg;
             this->message(object, &msg);
@@ -169,7 +169,7 @@ class StatePacket: public StatePacketDelegate
         void message(Object* object, object_state_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_state_StoC msg;
             this->message(object, &msg);
@@ -190,7 +190,7 @@ class StatePacketMomentum: public StatePacketDelegate
         void message(Object* object, object_state_momentum_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_state_momentum_StoC msg;
             this->message(object, &msg);
@@ -211,7 +211,7 @@ class StatePacketMomentumAngles: public StatePacketDelegate
         void message(Object* object, object_state_momentum_angles_StoC* msg);
     
     public:
-        void sendToClient(Object* object, int client_id)
+        void sendToClient(Object* object, ClientID client_id)
         {
             object_state_momentum_angles_StoC msg;
             this->message(object, &msg);

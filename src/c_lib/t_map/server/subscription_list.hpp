@@ -41,7 +41,7 @@ class MAP_CHUNK_SUBSCRIPTION
                 
     }
 
-    void add_subscriber(int client_id, int chunk_alias, int client_map_version)
+    void add_subscriber(ClientID client_id, int chunk_alias, int client_map_version)
     {
         //check that they are not already subscribed
         for(int i=0; i < subscriber_num; i++) GS_ASSERT(subscribers[i] != client_id)
@@ -51,7 +51,7 @@ class MAP_CHUNK_SUBSCRIPTION
         subscriber_num++;
     }
 
-    void remove_subscriber(int client_id)
+    void remove_subscriber(ClientID client_id)
     {
         int i = 0;
         while(i < subscriber_num && subscribers[i] != client_id) i++;
@@ -76,7 +76,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
@@ -93,7 +93,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
@@ -111,7 +111,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
@@ -129,7 +129,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
@@ -141,7 +141,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 };

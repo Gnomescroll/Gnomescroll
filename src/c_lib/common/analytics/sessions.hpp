@@ -14,7 +14,7 @@ class Session
     public:
         uint32_t ip_addr;
 
-        int client_id;
+        ClientID client_id;
         int user_id;
         char* username;
         
@@ -91,7 +91,7 @@ class Session
     }
 
     Session(uint32_t ip_addr) :
-    ip_addr(ip_addr), client_id(-1), user_id(0), username(NULL),
+    ip_addr(ip_addr), client_id(NULL_CLIENT), user_id(0), username(NULL),
     login_time(0), logout_time(0), number(-1), id(-1), version(0), killed(false)
     {
     }
@@ -131,7 +131,7 @@ class User
         this->n_sessions++;
     }
 
-    class Session* get_latest_session(int client_id)
+    class Session* get_latest_session(ClientID client_id)
     {
         if (this->n_sessions <= 0) return NULL;
         for (int i=this->n_sessions-1; i>=0; i--)
@@ -228,7 +228,7 @@ class UserRecorder
         user->add_session(session);
     }
 
-    class Session* get_active_session_for_client(int client_id)
+    class Session* get_active_session_for_client(ClientID client_id)
     {
         for (int i=0; i<this->n_users; i++)
         {
@@ -244,7 +244,7 @@ class UserRecorder
         return NULL;
     }
 
-    void set_name_for_client_id(int client_id, const char* username)
+    void set_name_for_client_id(ClientID client_id, const char* username)
     {
         class Session* session = get_active_session_for_client(client_id);
         GS_ASSERT(session != NULL);
@@ -254,7 +254,7 @@ class UserRecorder
         session->set_name(username);
     }
     
-    void record_client_force_disconnect(int client_id)
+    void record_client_force_disconnect(ClientID client_id)
     {
         class Session* session = get_active_session_for_client(client_id);
         GS_ASSERT(session != NULL);
@@ -264,7 +264,7 @@ class UserRecorder
         session->killed = true;
     }
 
-    void record_client_version(int client_id, int version)
+    void record_client_version(ClientID client_id, int version)
     {
         class Session* session = get_active_session_for_client(client_id);
         GS_ASSERT(session != NULL);

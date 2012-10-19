@@ -6,6 +6,8 @@
 #include <agent/net_agent.cpp>
 #include <agent/agent_status.cpp>
 #include <agent/agent_physics.cpp>
+#include <agent/_state.cpp>
+#include <agent/_interface.cpp>
 
 #if DC_CLIENT
 #include <agent/client/player_agent.cpp>

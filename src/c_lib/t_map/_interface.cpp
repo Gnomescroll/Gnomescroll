@@ -249,7 +249,7 @@ void smelter_off(int container_id)
 /*
     Do on client connect
 */
-void send_client_map_special(int client_id)
+void send_client_map_special(ClientID client_id)
 {
     main_map->control_node_list.send_control_nodes_to_client(client_id);
 }

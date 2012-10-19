@@ -45,7 +45,7 @@ enum AGENT_BODY_PARTS
 };
 
 /* Main */
-const int AGENT_MAX = PLAYERS_MAX;
+const int MAX_AGENTS = PLAYERS_MAX;
 //const float AGENT_HEIGHT = 2.8f;
 //const float CAMERA_HEIGHT = 2.5f;
 const float AGENT_HEIGHT = 1.8f;

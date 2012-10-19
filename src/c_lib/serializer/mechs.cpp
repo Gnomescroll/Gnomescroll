@@ -129,8 +129,6 @@ bool load_mech_file(const char* fn)
 
 void save_mechs()
 {
-    // iterate mech list, writing struct
-
     FILE* f = fopen(mech_filename_tmp, "wb");
     GS_ASSERT(f != NULL);
     if (f == NULL) return;

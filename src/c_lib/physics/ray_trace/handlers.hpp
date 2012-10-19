@@ -4,7 +4,7 @@
 #include <t_map/t_map.hpp>
 
 //forward decl
-class Agent_state;
+class Agent;
 
 namespace Hitscan
 {
@@ -37,17 +37,17 @@ struct AttackerProperties
     int agent_protection_duration;
     t_map::TerrainModificationAction terrain_modification_action;
 };
-Agent_state* lock_agent_target(
+Agent* lock_agent_target(
     Vec3 firing_position, Vec3 firing_direction,
     const float range, const float failure_rate, const bool random=false
 );
 
-Agent_state* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,const float range);
+Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,const float range);
 
 
 HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, ObjectType type,
-    Agent_state* agent, const float range
+    Agent* agent, const float range
 );
 void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p);
 void broadcast_object_fired(int id, ObjectType type, HitscanTarget t);

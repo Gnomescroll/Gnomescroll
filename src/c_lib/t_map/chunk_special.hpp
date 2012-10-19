@@ -98,8 +98,8 @@ class CHUNK_ITEM_CONTAINER
     }
 
     #if DC_SERVER
-    void send_chunk_item_containers(int client_id);
-    void send_reset_chunk_item_containers(int client_id);
+    void send_chunk_item_containers(ClientID client_id);
+    void send_reset_chunk_item_containers(ClientID client_id);
     #endif
 };
 

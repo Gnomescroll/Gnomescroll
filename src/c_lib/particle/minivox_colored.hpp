@@ -49,7 +49,7 @@ class ColoredMinivox_list: public Simple_object_list<ColoredMinivox, MINIVOX_MAX
     public:
         void tick();
 
-        ColoredMinivox_list() { print_list((char*)this->name(), this); }
+        ColoredMinivox_list() { this->print(); }
 };
     
 }   // Particle

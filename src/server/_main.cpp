@@ -105,7 +105,7 @@ void tick()
 
     if (counter % 15 == 0) 
     {
-        ServerState::agent_list->update_map_manager_positions();
+        Agents::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
         //t_map::t_map_sort_map_chunk_ques();
     }
@@ -113,7 +113,7 @@ void tick()
     Toolbelt::update_toolbelt_items();
     Toolbelt::tick();
 
-    ServerState::agent_list->update_models(); // sets skeleton
+    Agents::agent_list->update_models(); // sets skeleton
     
     Particle::grenade_list->tick();
     ItemParticle::tick();

@@ -82,7 +82,7 @@ class CONTROL_NODE_LIST
     }
 
     #if DC_SERVER
-    void send_control_nodes_to_client(int client_id)
+    void send_control_nodes_to_client(ClientID client_id)
     {
         for(int i=0; i<cpi; i++)
         {

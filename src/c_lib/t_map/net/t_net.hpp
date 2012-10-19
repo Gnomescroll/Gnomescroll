@@ -26,7 +26,7 @@ class MapMessagePacketToServer
     public:
         static uint8_t message_id;
         static unsigned int size;
-        int client_id; //id of the UDP client who sent message
+        ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
         
         MapMessagePacketToServer() {}
@@ -69,14 +69,14 @@ class MapMessagePacketToServer
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id)
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, ClientID client_id)
         {
             #if DC_SERVER
             Derived x;  //allocated on stack
-            if (NetServer::clients[_client_id] == NULL ||   // auth check
-                (x.auth_required && !NetServer::clients[_client_id]->authorized))
+            if (NetServer::clients[client_id] == NULL ||   // auth check
+                (x.auth_required && !NetServer::clients[client_id]->authorized))
                 return;
-            x.client_id = _client_id;   //client id of client who sent the packet
+            x.client_id = client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
             #else
@@ -141,7 +141,7 @@ class MapMessagePacketToClient
 
             class NetPeer* np;
 
-            for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            for(int i=0; i<HARD_MAX_CONNECTIONS; i++) 
             {
                 np = NetServer::pool[i]; //use better iterator
                 if(np == NULL) continue;
@@ -152,7 +152,7 @@ class MapMessagePacketToClient
             #endif
         }
 
-        void sendToClient(int client_id) 
+        void sendToClient(ClientID client_id) 
         {
             #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
@@ -185,7 +185,7 @@ class MapMessagePacketToClient
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
@@ -242,7 +242,7 @@ class MapMessageArrayPacketToClient
             *size = *buff_n - _buff_n;
         }
 
-        void sendToClient(int client_id, char* buff, int len) 
+        void sendToClient(ClientID client_id, char* buff, int len) 
         {
             #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
@@ -292,18 +292,18 @@ class MapMessageArrayPacketToClient
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int max_n) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
         {
             Derived x;
 
             //printf("1 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
-            x._handle(buff, buff_n, bytes_read, max_n);
+            x._handle(buff, buff_n, bytes_read);
             //printf("2 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
         }
 
         virtual void handle(char* buff, int byte_num) __attribute((always_inline)) = 0;
 
-        void _handle(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int max_n) __attribute((always_inline))
+        void _handle(char* buff, unsigned int buff_n, unsigned int* bytes_read) __attribute((always_inline))
         {
             unserialize(buff, &buff_n, bytes_read);
             handle(buff+buff_n, byte_size);

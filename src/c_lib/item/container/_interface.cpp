@@ -2,6 +2,8 @@
 
 #include <common/crash_report/stack_trace.hpp>
 
+#include <agent/_interface.hpp>
+
 #include <item/item.hpp>
 #include <item/container/_state.hpp>
 #include <item/particle/_interface.hpp>
@@ -31,19 +33,19 @@ void init()
     item_container_list = new ItemContainerList;
 
     #if DC_SERVER
-    agent_inventory_list    = (int*) malloc(AGENT_MAX * sizeof(int));
-    agent_toolbelt_list     = (int*) malloc(AGENT_MAX * sizeof(int));
-    agent_synthesizer_list  = (int*) malloc(AGENT_MAX * sizeof(int));
-    agent_energy_tanks_list = (int*) malloc(AGENT_MAX * sizeof(int));
-    opened_containers       = (int*) malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list         = (int*) malloc(AGENT_MAX * sizeof(int));
+    agent_inventory_list    = (int*) malloc(MAX_AGENTS * sizeof(int));
+    agent_toolbelt_list     = (int*) malloc(MAX_AGENTS * sizeof(int));
+    agent_synthesizer_list  = (int*) malloc(MAX_AGENTS * sizeof(int));
+    agent_energy_tanks_list = (int*) malloc(MAX_AGENTS * sizeof(int));
+    opened_containers       = (int*) malloc(MAX_AGENTS * sizeof(int));
+    agent_hand_list         = (int*) malloc(MAX_AGENTS * sizeof(int));
     
-    for (int i=0; i<AGENT_MAX; i++) agent_inventory_list   [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list    [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_synthesizer_list [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_energy_tanks_list[i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) opened_containers      [i] = NULL_CONTAINER;
-    for (int i=0; i<AGENT_MAX; i++) agent_hand_list        [i] = NULL_CONTAINER;
+    for (int i=0; i<MAX_AGENTS; i++) agent_inventory_list   [i] = NULL_CONTAINER;
+    for (int i=0; i<MAX_AGENTS; i++) agent_toolbelt_list    [i] = NULL_CONTAINER;
+    for (int i=0; i<MAX_AGENTS; i++) agent_synthesizer_list [i] = NULL_CONTAINER;
+    for (int i=0; i<MAX_AGENTS; i++) agent_energy_tanks_list[i] = NULL_CONTAINER;
+    for (int i=0; i<MAX_AGENTS; i++) opened_containers      [i] = NULL_CONTAINER;
+    for (int i=0; i<MAX_AGENTS; i++) agent_hand_list        [i] = NULL_CONTAINER;
     #endif
     
     #if DC_CLIENT
@@ -165,9 +167,9 @@ void destroy_container(int id)
 
     #if DC_SERVER
     // close container if anyone is accessing it
-    for (int i=0; i<AGENT_MAX; i++)
+    for (int i=0; i<MAX_AGENTS; i++)
         if (opened_containers[i] == id)
-            agent_close_container(i, opened_containers[i]);
+            agent_close_container((AgentID)i, opened_containers[i]);
 
     // destroy the container's contents
     // NOTE: if you want to do something with the contents, like throw them on the
@@ -205,7 +207,7 @@ void container_block_destroyed(int container_id, int x, int y, int z)
     #if DC_SERVER
     // close all opened containers
     GS_ASSERT(opened_containers != NULL);
-    for (int i=0; i<AGENT_MAX; i++)
+    for (int i=0; i<MAX_AGENTS; i++)
         if (opened_containers[i] == container_id)
             opened_containers[i] = NULL_CONTAINER;
 
@@ -595,7 +597,7 @@ void set_ui_slot_stack_size(int container_id, int slot, int stack_size)
 namespace ItemContainer
 {
 
-bool agent_can_access_container(int agent_id, int container_id)
+bool agent_can_access_container(AgentID agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
@@ -606,7 +608,7 @@ bool agent_can_access_container(int agent_id, int container_id)
     return container->can_be_opened_by(agent_id);
 }
 
-ItemID get_agent_toolbelt_item(int agent_id, int slot)
+ItemID get_agent_toolbelt_item(AgentID agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
@@ -617,7 +619,7 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot)
     return toolbelt->get_item(slot);
 }
 
-int get_agent_hand(int agent_id)
+int get_agent_hand(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
@@ -626,7 +628,7 @@ int get_agent_hand(int agent_id)
     return agent_hand_list[agent_id];
 }
 
-ItemID get_agent_hand_item(int agent_id)
+ItemID get_agent_hand_item(AgentID agent_id)
 {
     int hand_id = get_agent_hand(agent_id);
     GS_ASSERT(hand_id != NULL_CONTAINER);
@@ -637,7 +639,7 @@ ItemID get_agent_hand_item(int agent_id)
     return hand->get_item();
 }
     
-int get_agent_inventory(int agent_id)
+int get_agent_inventory(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
@@ -646,7 +648,7 @@ int get_agent_inventory(int agent_id)
     return agent_inventory_list[agent_id];
 }
 
-int get_agent_toolbelt(int agent_id)
+int get_agent_toolbelt(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
@@ -655,7 +657,7 @@ int get_agent_toolbelt(int agent_id)
     return agent_toolbelt_list[agent_id];
 }
 
-int get_agent_synthesizer(int agent_id)
+int get_agent_synthesizer(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
@@ -664,7 +666,7 @@ int get_agent_synthesizer(int agent_id)
     return agent_synthesizer_list[agent_id];
 }
 
-int get_agent_energy_tanks(int agent_id)
+int get_agent_energy_tanks(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_CONTAINER;
@@ -673,7 +675,7 @@ int get_agent_energy_tanks(int agent_id)
     return agent_energy_tanks_list[agent_id];
 }
 
-int* get_player_containers(int agent_id, int* n_containers)
+int* get_player_containers(AgentID agent_id, int* n_containers)
 {
     static int containers[N_PLAYER_CONTAINERS] = {NULL_CONTAINER};
     int n = 0;
@@ -698,7 +700,7 @@ ItemContainerInterface* create_container(ItemContainerType type)
     return item_container_list->create(type);
 }
 
-static void assign_container_to_agent(ItemContainerInterface* container, int* container_list, int agent_id, int client_id)
+static void assign_container_to_agent(ItemContainerInterface* container, int* container_list, AgentID agent_id, ClientID client_id)
 {
     GS_ASSERT(container != NULL);
     GS_ASSERT(container_list[agent_id] == NULL_ITEM);
@@ -709,7 +711,7 @@ static void assign_container_to_agent(ItemContainerInterface* container, int* co
     send_container_create(client_id, container->id);
 }
 
-void assign_containers_to_agent(int agent_id, int client_id)
+void assign_containers_to_agent(AgentID agent_id, ClientID client_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -738,7 +740,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     // toolbelt contents are added by agent_born
 }
 
-void send_container_assignments_to_agent(int agent_id, int client_id)
+void send_container_assignments_to_agent(AgentID agent_id, ClientID client_id)
 {
     int n_containers = 0;
     int* containers = get_player_containers(agent_id, &n_containers);
@@ -746,7 +748,7 @@ void send_container_assignments_to_agent(int agent_id, int client_id)
         send_container_assign(client_id, containers[i]);
 }
 
-static void throw_items_from_container(int client_id, int agent_id, int container_id)
+static void throw_items_from_container(ClientID client_id, AgentID agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -762,7 +764,7 @@ static void throw_items_from_container(int client_id, int agent_id, int containe
     }
 }
 
-void agent_born(int agent_id)
+void agent_born(AgentID agent_id)
 {
     // refill toolbelt if needed
 
@@ -776,9 +778,9 @@ void agent_born(int agent_id)
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
-    int client_id = a->client_id;
+    ClientID client_id = a->client_id;
     
     GS_ASSERT(agent_toolbelt_list != NULL);
     if (agent_toolbelt_list == NULL) return;
@@ -977,11 +979,11 @@ void agent_born(int agent_id)
 
 }
 
-void agent_died(int agent_id)
+void agent_died(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     GS_ASSERT(a->status.dead);
 
@@ -1017,7 +1019,7 @@ static void save_agent_containers(ClientID client_id, AgentID agent_id)
     serializer::save_player_container(client_id, agent_hand_list[agent_id]);
 }
 
-void dump_agent_containers(int client_id, int agent_id)
+void dump_agent_containers(ClientID client_id, AgentID agent_id)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
@@ -1042,11 +1044,11 @@ void dump_agent_containers(int client_id, int agent_id)
         transfer_hand_to_particle(agent_id);    // throw
 }
 
-void agent_quit(int agent_id)
+void agent_quit(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    Agent_state* a = ServerState::agent_list->get_any(agent_id);
+    Agent* a = Agents::get_any_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -1092,7 +1094,7 @@ void agent_quit(int agent_id)
     agent_hand_list[agent_id] = NULL_CONTAINER;
 }
 
-void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
+void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -1177,11 +1179,11 @@ void purchase_item_from_synthesizer(int agent_id, int shopping_slot)
     }
 }
 
-void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
+void craft_item_from_bench(AgentID agent_id, int container_id, int craft_slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
 
-    Agent_state* agent = ServerState::agent_list->get(agent_id);
+    Agent* agent = Agents::get_agent(agent_id);
     if (agent == NULL) return;
 
     // agent does not own container, abort
@@ -1221,14 +1223,14 @@ void craft_item_from_bench(int agent_id, int container_id, int craft_slot)
     }
 }
 
-bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
+bool consume_crafting_reagents(AgentID agent_id, int container_id, int recipe_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(recipe_id != NULL_CRAFTING_RECIPE);
 
     ASSERT_VALID_AGENT_ID(agent_id);
 
-    Agent_state* agent = ServerState::agent_list->get(agent_id);
+    Agent* agent = Agents::get_agent(agent_id);
     if (agent == NULL) return false;
 
     // agent does not own container, abort
@@ -1340,7 +1342,7 @@ bool consume_crafting_reagents(int agent_id, int container_id, int recipe_id)
     return true;
 }
 
-void send_container_contents(int agent_id, int client_id, int container_id)
+void send_container_contents(AgentID agent_id, ClientID client_id, int container_id)
 {
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
@@ -1355,12 +1357,12 @@ void send_container_contents(int agent_id, int client_id, int container_id)
     }
 }
 
-bool agent_in_container_range(int agent_id, int container_id)
+bool agent_in_container_range(AgentID agent_id, int container_id)
 {
     // get agent position
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return false;
 
@@ -1382,11 +1384,11 @@ bool agent_in_container_range(int agent_id, int container_id)
 // check that agents are still in range of containers they are accessing
 void check_agents_in_container_range()
 {
-    using ServerState::agent_list;
-    for (int i=0; i<agent_list->n_max; i++)
+    using Agents::agent_list;
+    for (unsigned int i=0; i<agent_list->max; i++)
     {
-        if (agent_list->a[i] == NULL) continue;
-        Agent_state* a = agent_list->a[i];
+        if (agent_list->objects[i].id == agent_list->null_id) continue;
+        Agent* a = &agent_list->objects[i];
         if (opened_containers[a->id] == NULL_CONTAINER) continue;
         if (agent_in_container_range(a->id, opened_containers[a->id])) continue;
         agent_close_container(a->id, opened_containers[a->id]);
@@ -1394,7 +1396,7 @@ void check_agents_in_container_range()
 }
 
 // for brand new items going to a container
-ContainerActionType auto_add_free_item_to_container(int client_id, int container_id, ItemID item_id)
+ContainerActionType auto_add_free_item_to_container(ClientID client_id, int container_id, ItemID item_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
 

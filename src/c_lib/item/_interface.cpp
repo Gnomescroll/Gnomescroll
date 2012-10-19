@@ -1,6 +1,7 @@
 #include "_interface.hpp"
 
 #include <common/crash_report/stack_trace.hpp>
+#include <agent/_interface.hpp>
 
 #include <item/item.hpp>
 #include <item/_state.hpp>
@@ -189,15 +190,15 @@ void destroy_item(ItemID id)
                     GS_ASSERT(slot == Toolbelt::get_agent_selected_slot(container->owner));
                     Toolbelt::force_remove_selected_item(container->owner);
                 }
-                Agent_state* a = ServerState::agent_list->get_any(container->owner);
+                Agent* a = Agents::get_any_agent(container->owner);
                 if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
             }
         }
     }
     else if (item->location == IL_HAND)
     {
-        ItemContainer::remove_item_from_hand(item->location_id);    // we're destroying the item, so subscriptions dont matter
-        Agent_state* a = ServerState::agent_list->get_any(item->location_id);
+        ItemContainer::remove_item_from_hand((AgentID)item->location_id);    // we're destroying the item, so subscriptions dont matter
+        Agent* a = Agents::get_any_agent((AgentID)item->location_id);
         if (a != NULL) ItemContainer::send_hand_remove(a->client_id);
     }
     else if (item->location == IL_PARTICLE)
@@ -347,16 +348,16 @@ int consume_durability(ItemID item_id, int amount)
     return consume_durability(item_id, amount, true);
 }
 
-void agent_quit(int agent_id)
+void agent_quit(AgentID agent_id)
 {
-    Agent_state* agent = ServerState::agent_list->get_any(agent_id);
+    Agent* agent = Agents::get_any_agent(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;
 
     // remove client from item subscription lists
     // TODO -- reverse lookup from agent
 
-    int client_id = agent->client_id;
+    ClientID client_id = agent->client_id;
     for (int i=0; i<item_list->n_max; i++)
         if (item_list->a[i] != NULL)
             item_list->a[i]->subscribers.remove(client_id);

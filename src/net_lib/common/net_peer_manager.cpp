@@ -21,17 +21,17 @@ dont_include_this_file_in_client
 /*
     Utility Functions
 */
-void send_player_agent_id_to_client(int client_id);
-void send_version_to_client(int client_id);
+void send_player_agent_id_to_client(ClientID client_id);
+void send_version_to_client(ClientID client_id);
 
-void send_player_agent_id_to_client(int client_id)
+void send_player_agent_id_to_client(ClientID client_id)
 {
     PlayerAgent_id_StoC msg;
     msg.id = client_id;
     msg.sendToClient(client_id);
 }
 
-void send_version_to_client(int client_id)
+void send_version_to_client(ClientID client_id)
 {
     version_StoC msg;
     msg.version = GS_VERSION;
@@ -91,7 +91,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
     NetServer::staging_pool[this->client_id] = NULL;
 
-    class Agent_state* a = ServerState::agent_list->create_temp(client_id);
+    class Agent* a = Agents::create_temp_agent((AgentID)client_id);
     GS_ASSERT(a != NULL);
     if (a == NULL)
     {   // if this happens, we need to force disconnect the client
@@ -133,7 +133,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
     add_player_to_chat(client_id);
 
-    ServerState::agent_list->send_to_client(client_id);
+    Agents::agent_list->send_to_client(client_id);
     t_mech::send_client_mech_list(this->client_id);  //send t_mech to client
 
     Objects::send_to_client(this->client_id);
@@ -152,11 +152,10 @@ void NetPeerManager::was_deserialized()
     if (this->deserialized) return;
     this->deserialized = true;
 
-    printf("Deserialized\n");
-
-    class Agent_state* agent = ServerState::agent_list->load_temp(this->agent_id);
+    class Agent* agent = Agents::load_temp_agent(this->agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;  // TODO -- force disconnect client with error
+    NetServer::agents[this->client_id] = agent;
 
     // we add player to manager setup now, because it didnt have state before
     // NOTE: must call this before agent->status.set_fresh_state();
@@ -171,7 +170,7 @@ void NetPeerManager::was_deserialized()
     msg.color = agent->status.color;
     msg.broadcast();
 
-    send_player_agent_id_to_client(agent->id);
+    send_player_agent_id_to_client(this->client_id);
     ItemContainer::send_container_assignments_to_agent(agent->id, this->client_id);
 
     agent->status.set_fresh_state();
@@ -179,7 +178,7 @@ void NetPeerManager::was_deserialized()
 
 void NetPeerManager::teardown()
 {
-    class Agent_state* a = NetServer::agents[this->agent_id];
+    class Agent* a = NetServer::agents[this->agent_id];
     if (a != NULL)
     {
         bool saved = serializer::save_player(this->user_id, this->agent_id);
@@ -188,7 +187,7 @@ void NetPeerManager::teardown()
         ItemContainer::agent_quit(a->id);
         Toolbelt::agent_quit(a->id);
         Components::owner_component_list->revoke(a->id);
-        ServerState::agent_list->destroy_any(a->id);
+        Agents::destroy_any_agent(a->id);
     }
     if (this->loaded)
     {

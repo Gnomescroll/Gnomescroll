@@ -46,7 +46,7 @@ class HitscanEffect
     }
 };
 
-class HitscanEffect_list: public Simple_object_list<HitscanEffect, 1024>
+class HitscanEffectList: public Simple_object_list<HitscanEffect, 1024>
 {
     private:
         const char* name() { return "HitscanEffect"; }
@@ -54,7 +54,7 @@ class HitscanEffect_list: public Simple_object_list<HitscanEffect, 1024>
         void draw();
         void tick();
 
-        HitscanEffect_list() { print_list((char*)this->name(), this); }
+        HitscanEffectList() { this->print(); }
 };
 
 }   // Animations

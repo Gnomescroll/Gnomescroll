@@ -8,7 +8,7 @@ typedef void (*send_decision) (ContainerActionType, int, int);
 typedef ContainerActionType (*decision_tree) (int, int);
 #endif                                 // container, slot
 #if DC_SERVER
-typedef ContainerActionType (*decision_tree) (int, int, int, int);
+typedef ContainerActionType (*decision_tree) (AgentID, ClientID, int, int);
 #endif                              // agent, client, container, slot
 
 

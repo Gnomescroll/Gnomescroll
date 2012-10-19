@@ -88,7 +88,7 @@ class PlayerLoadData
         return this->signal_if_loaded();
     }
 
-    PlayerLoadData() :
+    PlayerLoadData(int id) :
         id(-1), user_id(NULL_USER_ID), agent_id(NULL_AGENT), client_id(NULL_CLIENT),
         waiting_for_setup(true),
         player_data_loaded(false), n_containers_expected(0),
@@ -110,29 +110,29 @@ class PlayerContainerLoadData
         ItemContainerType container_type;
         int player_data_id;
 
-    PlayerContainerLoadData() :
+    PlayerContainerLoadData(int id) :
         id(-1), container_id(NULL_CONTAINER), container_type(CONTAINER_TYPE_NONE),
         player_data_id(-1)
     {}
 };
 
-class PlayerLoadDataList: public ElasticObjectList<class PlayerLoadData, PLAYER_LOAD_DATA_LIST_INITIAL_SIZE>
+class PlayerLoadDataList: public ObjectList<class PlayerLoadData>
 {
     public:
         const char* name() { return "PlayerLoadData"; }
 
-    PlayerLoadDataList() :
-        ElasticObjectList<class PlayerLoadData, PLAYER_LOAD_DATA_LIST_INITIAL_SIZE>(PLAYER_LOAD_DATA_LIST_HARD_MAX)
+    PlayerLoadDataList(unsigned int capacity) :
+        ObjectList<class PlayerLoadData>(capacity)
     { this->print(); }
 };
 
-class PlayerContainerLoadDataList: public ElasticObjectList<class PlayerContainerLoadData, PLAYER_CONTAINER_LOAD_DATA_LIST_INITIAL_SIZE>
+class PlayerContainerLoadDataList: public ObjectList<class PlayerContainerLoadData>
 {
     public:
         const char* name() { return "PlayerContainerLoadData"; }
 
-    PlayerContainerLoadDataList() :
-        ElasticObjectList<class PlayerContainerLoadData, PLAYER_CONTAINER_LOAD_DATA_LIST_INITIAL_SIZE>(PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX)
+    PlayerContainerLoadDataList(unsigned int capacity) :
+        ObjectList<class PlayerContainerLoadData>(capacity)
     { this->print(); }
 };
 

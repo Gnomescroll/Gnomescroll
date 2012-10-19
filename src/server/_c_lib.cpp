@@ -139,7 +139,7 @@ dont_include_this_file_in_client
 #include <item/container/_include.hpp>
 
 /* Agents */
-#include <agent/agent_include.h>
+#include <agent/_include.hpp>
 
 /* chat */
 #include <chat/globals.hpp>
@@ -302,7 +302,8 @@ int init_c_lib(int argc, char* argv[])
 
     Toolbelt::init();
 
-    ServerState::init();
+    Agents::init();
+    ServerState::init_lists();
     Particle::init_particles();
     ItemParticle::init();
 
@@ -333,7 +334,8 @@ void close_c_lib()
     Objects::teardown_net_interfaces();
     Components::teardown();
 
-    ServerState::teardown();
+    Agents::teardown();
+    ServerState::teardown_voxel_lists();
     Toolbelt::teardown();
     Item::teardown();
     ItemContainer::teardown();

@@ -35,6 +35,7 @@ inline void admin_create_container_block_CtoS::handle() {}
 
 #if DC_SERVER
 
+#include <agent/_interface.hpp>
 #include <state/server_state.hpp>
 #include <item/container/_interface.hpp>
 #include <item/container/server.hpp>
@@ -48,7 +49,7 @@ namespace ItemContainer
 
 inline void container_action_alpha_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -78,7 +79,7 @@ inline void container_action_alpha_CtoS::handle()
 
 inline void container_action_beta_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -109,7 +110,7 @@ inline void container_action_beta_CtoS::handle()
 
 inline void synthesizer_container_action_alpha_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -139,7 +140,7 @@ inline void synthesizer_container_action_alpha_CtoS::handle()
 
 inline void synthesizer_container_action_beta_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -170,7 +171,7 @@ inline void synthesizer_container_action_beta_CtoS::handle()
 
 inline void purchase_item_from_synthesizer_action_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -180,7 +181,7 @@ inline void purchase_item_from_synthesizer_action_CtoS::handle()
 
 inline void craft_container_action_alpha_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
@@ -210,7 +211,7 @@ inline void craft_container_action_alpha_CtoS::handle()
 
 inline void craft_container_action_beta_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -241,7 +242,7 @@ inline void craft_container_action_beta_CtoS::handle()
 
 inline void craft_item_from_bench_action_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -251,7 +252,7 @@ inline void craft_item_from_bench_action_CtoS::handle()
 
 inline void no_container_action_alpha_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
@@ -273,7 +274,7 @@ inline void no_container_action_alpha_CtoS::handle()
 
 inline void no_container_action_beta_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
@@ -295,7 +296,7 @@ inline void no_container_action_beta_CtoS::handle()
 
 inline void smelter_container_action_alpha_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -325,7 +326,7 @@ inline void smelter_container_action_alpha_CtoS::handle()
 
 inline void smelter_container_action_beta_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -356,7 +357,7 @@ inline void smelter_container_action_beta_CtoS::handle()
 
 inline void crusher_container_action_alpha_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -386,7 +387,7 @@ inline void crusher_container_action_alpha_CtoS::handle()
 
 inline void crusher_container_action_beta_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -427,7 +428,7 @@ static const int sq_normals[6][3] =
 
 inline void crusher_crush_item_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
     if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
@@ -547,7 +548,7 @@ inline void open_container_CtoS::handle()
 {
     if (container_id == NULL_CONTAINER) return;
     
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
@@ -572,7 +573,7 @@ inline void close_container_CtoS::handle()
 {
     if (container_id == NULL_CONTAINER) return;
 
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
@@ -588,7 +589,7 @@ void create_container_block_CtoS::handle()
     //if (z < 0 || z >= map_dim.z) return;  // this comparison is not needed, because of value range for the data type
     if (z == 0) return; // no floor
 
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
@@ -617,10 +618,10 @@ void create_container_block_CtoS::handle()
         collides = true;  // test against our agent, most likely to collide
     else
     {
-        for (int i=0; i<ServerState::agent_list->n_max; i++)
+        for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
-            Agent_state* agent = ServerState::agent_list->a[i];
-            if (agent == NULL || agent == a) continue;
+            Agent* agent = &Agents::agent_list->objects[i];
+            if (a->id == Agents::agent_list->null_id || agent == a) continue;
             if (agent_collides_terrain(agent))
             {
                 collides = true;
@@ -655,7 +656,7 @@ void admin_create_container_block_CtoS::handle()
     // comparison not needed due to value range of data type
     //if (z < 0 || z >= map_dim.z) return;
  
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
@@ -678,10 +679,10 @@ void admin_create_container_block_CtoS::handle()
     if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
-        for (int i=0; i<ServerState::agent_list->n_max; i++)
+        for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
-            Agent_state* agent = ServerState::agent_list->a[i];
-            if (agent == NULL || agent == a) continue;
+            Agent* agent = &Agents::agent_list->objects[i];
+            if (a->id == Agents::agent_list->null_id || agent == a) continue;
             if (agent_collides_terrain(agent))
             {
                 collides = true;

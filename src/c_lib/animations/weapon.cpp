@@ -365,12 +365,12 @@ void draw_equipped_item(int item_type)
     }
 }
 
-static bool get_other_agent_render_params(int agent_id, Vec3* pOrigin, Vec3* pForward, Vec3* pRight, Vec3* pUp)
+static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3* pForward, Vec3* pRight, Vec3* pUp)
 {    // draw item in other players' hands
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
 
-    Agent_state* a = ClientState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return false;
 
@@ -400,7 +400,7 @@ static bool get_other_agent_render_params(int agent_id, Vec3* pOrigin, Vec3* pFo
     return true;
 }
 
-void draw_equipped_voxel_item_other_agent(int agent_id, int item_type)
+void draw_equipped_voxel_item_other_agent(AgentID agent_id, int item_type)
 {
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
@@ -410,7 +410,7 @@ void draw_equipped_voxel_item_other_agent(int agent_id, int item_type)
     draw_voxel(item_type, origin, forward, right, up);
 }
 
-void draw_equipped_sprite_item_other_agent(int agent_id, int item_type)
+void draw_equipped_sprite_item_other_agent(AgentID agent_id, int item_type)
 {
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist

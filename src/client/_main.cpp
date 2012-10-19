@@ -212,7 +212,7 @@ void draw_tick()
 
     Objects::harvest(); // remove dead objects
     Objects::update(); // update render state
-    ClientState::update_for_draw();
+    Agents::agent_list->update_models();
 
     poll_mouse();
 
@@ -332,7 +332,7 @@ void draw_tick()
     GL_ASSERT(GL_BLEND, true);
     Animations::draw_hitscan_effect();
     GL_ASSERT(GL_BLEND, true);
-    ClientState::agent_list->update_mining_lasers();
+    Agents::agent_list->update_mining_lasers();
     ClientState::playerAgent_state.action.update_mining_laser();
     Animations::draw_mining_laser_effect();
     GL_ASSERT(GL_BLEND, true);
@@ -351,7 +351,7 @@ void draw_tick()
 
     poll_mouse();
 
-    ClientState::agent_list->draw_equipped_items();
+    Agents::agent_list->draw_equipped_items();
 
     CHECK_GL_ERROR();
 

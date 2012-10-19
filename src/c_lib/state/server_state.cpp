@@ -5,6 +5,7 @@ dont_include_this_file_in_client
 #endif
 
 #include <agent/agent.hpp>
+#include <agent/_interface.hpp>
 
 #include <chat/interface.hpp>
 
@@ -13,33 +14,23 @@ dont_include_this_file_in_client
 
 namespace ServerState
 {
-
     bool main_inited = false;
     bool signal_exit = false;
     
-    Agent_list* agent_list = NULL;
-
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
 
-/*
-    Map update function called from here
+    class Objects::Object* base;
 
-    4 times per second per client.  Maybe too fast?
-*/
-    
     void init_lists()
     {
+        GS_ASSERT(voxel_hitscan_list == NULL);
         voxel_hitscan_list = new Voxel_hitscan_list;
-        agent_list = new Agent_list;
     }
 
-    void teardown_lists()
+    void teardown_voxel_lists()
     {
-        delete agent_list;
-        delete voxel_hitscan_list; // must go last
+        if (voxel_hitscan_list != NULL) delete voxel_hitscan_list; // must go last
     }
-
-    class Objects::Object* base;
 
     struct Vec3 get_base_spawn_position()
     {
@@ -95,6 +86,8 @@ namespace ServerState
 
     void check_agents_at_base()
     {
+        using Agents::agent_list;
+        
         Objects::Object* base = Objects::get(OBJECT_BASE, 0);
         GS_ASSERT(base != NULL);
         if (base == NULL) return;
@@ -112,49 +105,34 @@ namespace ServerState
         if (vox != NULL) r = vox->get_radius();
         
         agent_list->objects_within_sphere(p.x, p.y, p.z, r);
-        for (int i=0; i<agent_list->n_filtered; i++)
+        for (unsigned int i=0; i<agent_list->n_filtered; i++)
         {
-            Agent_state* a = agent_list->filtered_objects[i];
-            GS_ASSERT(a != NULL);
-            if (a == NULL) continue;
+            Agent* a = agent_list->filtered_objects[i];
+            GS_ASSERT(a->id != agent_list->null_id);
+            if (a->id == agent_list->null_id) continue;
             a->status.at_base();
         }
     }
 
-    void init()
-    {
-        static int inited = 0;
-        if (inited++)
-        {
-            printf("WARNING: ServerState::init -- attempt to call more than once\n");
-            return;
-        }
-        init_lists();
-    }
-
-    void teardown()
-    {
-        teardown_lists();
-    }
-
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int damage, int owner,
+        int damage, AgentID owner,
         ObjectType inflictor_type, int inflictor_id,
         bool suicidal)   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     {   // agents
+        using Agents::agent_list;
         agent_list->objects_within_sphere(x,y,z,radius);
-        Agent_state* a;
+        Agent* a;
         const float blast_mean = 0;
         const float blast_stddev = 1.0f;
-        for (int i=0; i<agent_list->n_filtered; i++)
+        for (unsigned int i=0; i<agent_list->n_filtered; i++)
         {
             a = agent_list->filtered_objects[i];
-            if (a == NULL) continue;
+            if (a->id == agent_list->null_id) continue;
             if (!suicidal && a->id == owner) continue;
             if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
             int dmg = ((float)damage)*gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
-            a->status.apply_damage((int)dmg, owner, inflictor_type);
+            a->status.apply_damage(dmg, owner, inflictor_type);
         }
 
         Vec3 position = vec3_init(x,y,z);

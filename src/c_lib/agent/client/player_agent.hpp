@@ -74,9 +74,9 @@ class PlayerAgent_state
 
         //state variables
 
-        int agent_id;   //agent_id for player agent
-        Agent_state* you;
-        void set_PlayerAgent_id(int id);
+        AgentID agent_id;   //agent_id for player agent
+        Agent* you;
+        void set_PlayerAgent_id(AgentID id);
 
         //set also sends
         void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi);

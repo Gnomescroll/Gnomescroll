@@ -239,7 +239,7 @@ void Agent_event::end_mining_laser()
     this->mining_laser_emitter.turn_off();
 }
 
-void Agent_event::fired_weapon_at_object(int id, int type, int part)
+void Agent_event::fired_weapon_at_object(int id, ObjectType type, int part)
 {
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
@@ -250,7 +250,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
 
     if (type == OBJECT_AGENT)
     {
-        Agent_state* agent = ClientState::agent_list->get(id);
+        Agent* agent = Agents::get_agent((AgentID)id);
         if (agent != NULL && agent->vox != NULL)
         {
             Voxel_volume* vv = agent->vox->get_part(part);
@@ -363,7 +363,7 @@ void Agent_event::hit_block()
     //Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
 }
 
-void Agent_event::melee_attack_object(int id, int type, int part)
+void Agent_event::melee_attack_object(int id, ObjectType type, int part)
 {
     // play pick swing animation
     // play blood animation
@@ -392,7 +392,7 @@ Agent_event::~Agent_event()
 {
 }
 
-Agent_event::Agent_event(Agent_state* owner)
+Agent_event::Agent_event(Agent* owner)
 :
 a(owner),
 vox_status(AGENT_VOX_IS_STANDING),

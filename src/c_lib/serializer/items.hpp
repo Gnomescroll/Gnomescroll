@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include <common/template/elastic_object_list.hpp>
+#include <common/template/object_list.hpp>
 #include <serializer/constants.hpp>
 #include <net_lib/server.hpp>
 

@@ -1,205 +1,97 @@
 #pragma once 
 
-/*
- * Objects managed by Object_list must support the minimum interface:
- *
- * void draw();
- * void client_tick();
- * void server_tick();
- */
- 
-//#include <common/common.hpp>
-//#include <physics/common.hpp>
+#include <new>
 
-#define OBJECT_LIST_DEBUG 0
-
-void print_list(char* name, void* ptr)
+template <class ObjectState, typename IDType=int>
+class ObjectList
 {
-    printf("%s list instantiated at %p\n", name, ptr);
-}
-
-template <class Object_state, int max_n=1024>
-class Object_list {
     private:
-        //#if PRODUCTION
-        //const char* name() { return "Object"; }
-        //#else
         virtual const char* name() = 0;
-        //#endif
 
-    protected:
-        int id_c;
+        unsigned int start;         // indexing offset for quicker lookups
         
     public:
-        static const int n_max = max_n;
-        int num;
+        IDType null_id;    
+        ObjectState* objects;        // the actual object array
 
-        Object_state** a;
+        unsigned int max;           // maximum list size
+        unsigned int ct;            // capacity
 
-        Object_state* get(int id);
-        Object_state* create();         //object auto id
-        Object_state* create(int id);   //create object with id
-        
-        Object_state* get_or_create(int id);
-
-        bool contains(int id);
-        bool full();
-
-        int get_free_id();
-        
-        void destroy(int _id);
-
-        void where();
-        void print_members();
-
-        Object_list(); //default constructor
-        virtual ~Object_list(); //default deconstructor
-};
-
-template <class Object_state, int max_n> 
-Object_list<Object_state, max_n>::Object_list()
-:
-id_c(0),
-num(0)
-{
-    this->a = (Object_state**)calloc(max_n, sizeof(Object_state*));
-    //where();
-}
-
-template <class Object_state, int max_n> 
-Object_list<Object_state, max_n>::~Object_list()
-{
-    if (a != NULL)
+    ObjectState* create()
     {
-        for (int i=0; i<this->n_max; i++)
+        if (this->ct >= this->max) return NULL;
+
+        for (unsigned int i=0; i<this->max; i++)
         {
-            if (this->a[i] != NULL)
-                delete this->a[i];
+            int index = (i+this->start+1)%this->max;
+            if (this->objects[index].id == this->null_id)
+            {
+                this->ct++;
+                this->start = index;
+                new (&this->objects[index]) ObjectState((IDType)index);
+                this->objects[index].id = index;
+                return &this->objects[index];
+            }
         }
-        free(this->a);
-    }
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::where()
-{
-    printf("%s_list pointer is %p\n", name(), this);
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::get(int id)
-{
-    if((id < 0) || (id >= n_max)) {
-        return NULL;
-    } 
-    if(a[id] == NULL) {
         return NULL;
     }
-    return a[id];
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::print_members() {
-    int i;
-    printf("%s members:\n", name());
-    for (i=0; i<n_max; i++) {
-        if (a[i] == NULL) continue;
-        printf("%d\n", i);
-    }
-}
-
-template <class Object_state, int max_n>
-int Object_list<Object_state, max_n>::get_free_id()
-{
-    int i;
-    int id;
-    for (i=0; i<n_max; i++)
+    
+    ObjectState* create(IDType id)
     {
-        id = (i + id_c) % n_max;
-        if (a[id] == NULL) break;
+        if (id < 0 || (unsigned int)id >= this->max) return NULL;
+        if (this->objects[id].id != this->null_id) return NULL;
+        this->ct++;
+        this->start = id;
+        new (&this->objects[id]) ObjectState(id);
+        this->objects[id].id = id;
+        return &this->objects[id];
     }
-    if (i == n_max)
+    
+    bool destroy(IDType id)
     {
-        printf("%s_list Error: no free ids found\n", name());
-        return -1;
+        GS_ASSERT(id >= 0 && (unsigned int)id < this->max);
+        if (id < 0 || (unsigned int)id >= this->max) return false;
+        if (this->objects[id].id == this->null_id) return false;
+        this->objects[id].ObjectState::~ObjectState();
+        this->objects[id].id = this->null_id;
+        this->ct--;
+        return true;
     }
-    return id;
-}
 
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create()
-{
-    //where();
-    int i;
-    int id;
-    for(i=0; i<n_max;i++) {
-        id = (i+id_c)%n_max;
-        if(a[id] == NULL) break;
-    }
-    if(i==n_max)
+    ObjectState* get(IDType id)
     {
-        printf("%s_list Error: cannot create object, object limit %d exceeded\n", name(), this->n_max);
-        return NULL;
+        GS_ASSERT(id >= 0 && (unsigned int)id < this->max);
+        if (id < 0 || (unsigned int)id >= this->max) return NULL;
+        ObjectState* obj = &this->objects[id];
+        if (obj->id == this->null_id) return NULL;
+        return obj;
     }
-    a[id] = new Object_state(id);
-    num++;
-    id_c = id+1;
-    return a[id];
-}
 
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(int id) {
-    //where();
-    GS_ASSERT(a[id] == NULL);
-    if(a[id] == NULL)
+    void print()
     {
-        a[id] = new Object_state(id);
-        num++;
-        return a[id];
-    } else
+        printf("%s list instantiated at %p\n", this->name(), this);
+    }
+
+    virtual ~ObjectList()
     {
-        printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
-        return NULL;
+        if (this->objects != NULL)
+        {
+            for (unsigned int i=0; i<this->ct; i++)
+                if (this->objects[i].id != this->null_id)
+                    this->objects[i].ObjectState::~ObjectState();
+            free(this->objects);
+        }
     }
-}
 
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
-    //where();
-    Object_state* obj = a[id];
-    if (obj == NULL) {
-        obj = create(id);
-    }
-    return obj;
-}
-
-template <class Object_state, int max_n>
-bool Object_list<Object_state, max_n>::contains(int id) {
-    //where();
-    Object_state* obj = a[id];
-    if (obj == NULL) {
-        return false;
-    }
-    return true;
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::destroy(int id)
-{
-    //where();
-    if(a[id]==NULL)
+    explicit ObjectList(unsigned int capacity, IDType null_id=-1) :
+        start(0), null_id(null_id), max(capacity), ct(0) 
     {
-        printf("%s_list: Cannot delete object %d: object is null\n", name(), id);
-        return;
+        GS_ASSERT(this->max > 0);
+        if (this->max <= 0) return;
+
+        GS_ASSERT(this->null_id < 0 || (unsigned int)this->null_id >= this->max);
+        
+        this->objects = (ObjectState*)calloc(this->max, sizeof(ObjectState));
+        for (unsigned int i=0; i<this->max; i++) this->objects[i].id = this->null_id;
     }
-    delete a[id];
-    a[id] = NULL;
-    num--;
-}
- 
-template <class Object_state, int max_n>
-bool Object_list<Object_state, max_n>::full()
-{
-    GS_ASSERT(this->num <= max_n);
-    return (this->num >= max_n);
-}
+};

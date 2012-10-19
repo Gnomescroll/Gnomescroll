@@ -83,7 +83,7 @@ void ItemParticle::tick()
     // orient to target agent
     if (this->target_agent != NULL_AGENT)
     {
-        Agent_state* a = STATE::agent_list->get(this->target_agent);
+        Agent* a = Agents::get_agent(this->target_agent);
         if (a != NULL)
         {
             Vec3 p = a->get_center();
@@ -164,7 +164,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     verlet.dampening = ITEM_PARTICLE_DAMPENING;
 }
 
-void ItemParticle::picked_up(int agent_id)
+void ItemParticle::picked_up(AgentID agent_id)
 {
     GS_ASSERT(this->target_agent == NULL_AGENT);
     this->target_agent = agent_id;
@@ -229,7 +229,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return false;
 
-    Agent_state* agent = ServerState::agent_list->get(particle->target_agent);
+    Agent* agent = Agents::get_agent(particle->target_agent);
     if (agent == NULL) return false;    
     
     // attempt to transfer item particle to intended destination

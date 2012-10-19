@@ -15,7 +15,7 @@ class ChatMessage
     int id; // only used by object list
 
     char* payload;
-    int sender;
+    ClientID sender;
     int channel;
 
     int timestamp;
@@ -123,7 +123,7 @@ class ChatClient
     void teardown();
     void subscribe_system_channel();
     void subscribe_channels();
-    void received_message(int channel, int sender, const char* payload);
+    void received_message(int channel, ClientID sender, const char* payload);
     void send_system_message(const char* msg);
     void submit();
 
@@ -136,7 +136,7 @@ class ChatClient
 
 };
 
-class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HISTORY_MAX+1)*CHAT_CLIENT_CHANNELS_MAX>
+class ChatMessageList: public ObjectList<ChatMessage>
 {
     private:
         void quicksort_timestamp_asc(int beg, int end);
@@ -149,15 +149,16 @@ class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HIST
         ChatMessage** filtered_objects; // tmp array for filtering objects
         float* filtered_object_distances;
 
-        int n_filtered;
+        unsigned int n_filtered;
         void sort_by_most_recent();
         void filter_none(); // copies pointers/null into filtered list, unchanged
 
-        ChatMessageList()
+        explicit ChatMessageList(unsigned int capacity) :
+            ObjectList<ChatMessage>(capacity)
         {
-            this->filtered_objects = (ChatMessage**)calloc(this->n_max, sizeof(ChatMessage*));
-            this->filtered_object_distances = (float*)calloc(this->n_max, sizeof(float));
-            print_list((char*)this->name(), this);
+            this->filtered_objects = (ChatMessage**)calloc(this->max, sizeof(ChatMessage*));
+            this->filtered_object_distances = (float*)calloc(this->max, sizeof(float));
+            this->print();
         }
 
         ~ChatMessageList()

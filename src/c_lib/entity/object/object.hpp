@@ -27,7 +27,7 @@ class Object
         StatePacketDelegate* state;
 
         // network
-        void sendToClientCreate(int client_id)
+        void sendToClientCreate(ClientID client_id)
         {
             if (this->create != NULL) this->create->sendToClient(this, client_id);
         }
@@ -35,7 +35,7 @@ class Object
         {
             if (this->create != NULL) this->create->broadcast(this);
         }
-        void sendToClientState(int client_id)
+        void sendToClientState(ClientID client_id)
         {
             if (this->state != NULL) this->state->sendToClient(this, client_id);
         }

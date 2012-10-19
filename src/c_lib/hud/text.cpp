@@ -9,12 +9,12 @@ namespace HudText
 static const int SHADOW_MARGIN_X = 1;
 static const int SHADOW_MARGIN_Y = 1;
 
-Text_list* text_list = NULL;
+TextList* text_list = NULL;
 
 void init()
 {
     GS_ASSERT(text_list == NULL);
-    text_list = new Text_list;
+    text_list = new TextList(TEXT_MAX);
 }
 void teardown()
 {

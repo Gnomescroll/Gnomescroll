@@ -19,7 +19,7 @@ class PickupComponent: public Component
         int picked_up_by;
         bool picked_up;
 
-        void was_picked_up(const int agent_id)
+        void was_picked_up(const AgentID agent_id)
         {
             //this->broadcast_death = true;
             this->picked_up = true;
@@ -46,7 +46,7 @@ class PickupComponent: public Component
             //StackableComponent* stack = (StackableComponent*)object->get_component_interface(COMPONENT_INTERFACE_STACKABLE);
             //if (stack != NULL) stack_size = stack->count;
             
-            //Agent_state* agent = nearest_agent_in_range(position, this->pickup_radius);
+            //Agent* agent = nearest_agent_in_range(position, this->pickup_radius);
             //if (agent != NULL && agent->status.gain_stack_item(this->object->type, this->object->id, stack_size))
             //{   // was picked up, die
                 //this->was_picked_up(agent->id);

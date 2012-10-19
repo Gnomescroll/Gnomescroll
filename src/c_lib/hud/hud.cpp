@@ -351,7 +351,7 @@ void draw_hud_text()
     {
         if (hud_draw_settings.agent_status)
         {
-            Agent_state* a = ClientState::playerAgent_state.you;
+            Agent* a = ClientState::playerAgent_state.you;
             if (a != NULL)
             {
                 int health = a->status.health;
@@ -727,7 +727,7 @@ void ChatRender::update(bool timeout)
 
     int now = _GET_MS_TIME();
     chat_message_list->sort_by_most_recent();
-    int i=paging_offset;
+    unsigned int i = paging_offset;
     int j=CHAT_MESSAGE_RENDER_MAX-1;
     int n_draw = 0;
     for (; i<chat_message_list->n_filtered; i++)
@@ -764,7 +764,7 @@ void ChatRender::update(bool timeout)
         t->set_color(m->color);
     }
 
-    for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text(""));
+    for (int i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text(""));
 }
 
 //void ChatRender::page_up()
@@ -855,13 +855,13 @@ void Scoreboard::update()
     //const float col_width = (_xresf * 0.75f) / N_STATS;
     const float col_width = (_xresf * 0.75f) / 5;
     
-    int i,j=0;
+    unsigned int i,j=0;
     const unsigned char r=255,g=10,b=10,a=255;
-    ClientState::agent_list->filter_none();
-    for (i=0; i<ClientState::agent_list->n_max; i++)
+    Agents::agent_list->filter_none();
+    for (i=0; i<Agents::agent_list->max; i++)
     {
-        Agent_state* agent = ClientState::agent_list->filtered_objects[i];
-        if (i >= ClientState::agent_list->n_filtered || agent==NULL)
+        Agent* agent = Agents::agent_list->filtered_objects[i];
+        if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)
         {
             ids[i]->set_text("");
             names[i]->set_text("");

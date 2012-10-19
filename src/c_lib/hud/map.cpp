@@ -56,7 +56,7 @@ using HudText::Text;
 static Text* you_star = NULL;
 static Text* you_A = NULL;
 static Text* base = NULL;
-static Text* ally[AGENT_MAX] = {NULL};
+static Text* ally[MAX_AGENTS] = {NULL};
 static Text* camera = NULL;
 
 static bool text_icons_inited = false;
@@ -81,7 +81,7 @@ void init_text_icons()
     if (base == NULL) return;
     base->set_text(base_symbol);
 
-    for (int i=0; i<(int)AGENT_MAX; i++)
+    for (int i=0; i<(int)MAX_AGENTS; i++)
     {
         ally[i] = HudText::text_list->create();
         GS_ASSERT(ally[i] != NULL);
@@ -108,7 +108,7 @@ void set_icon_colors()
     you_star->set_color(highlight.r, highlight.g, highlight.b, a);
     you_A->set_color(highlight.r, highlight.g, highlight.b, a);
     base->set_color(highlight.r, highlight.g, highlight.b,a);
-    for (int i=0; i<(int)AGENT_MAX; i++)
+    for (int i=0; i<(int)MAX_AGENTS; i++)
         if (ally[i] != NULL) ally[i]->set_color(highlight.r, highlight.g, highlight.b,a);
     camera->set_color(highlight.r, highlight.g, highlight.b, a);
 }
@@ -266,14 +266,14 @@ void draw_text_icons(float z)
 {
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
-    using ClientState::agent_list;
+    using Agents::agent_list;
     if (playerAgent_state.you == NULL) return;
             
     float x,y;
-    for (int i=0; i<agent_list->n_max; i++)
+    for (unsigned int i=0; i<agent_list->max; i++)
     {
-        Agent_state* a = agent_list->a[i];
-        if (a == NULL) continue;
+        Agent* a = &agent_list->objects[i];
+        if (a->id == agent_list->null_id) continue;
         if (a == playerAgent_state.you) continue;
         Vec3 p = a->get_position();
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);
