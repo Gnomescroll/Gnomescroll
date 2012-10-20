@@ -11,7 +11,6 @@ void teardown();
 void init_packets();
 
 class Item* get_item(ItemID id);
-class Item* get_item_object(ItemID id); // alias for get_item
 
 int get_item_type(ItemID id);
 ItemGroup get_item_group(ItemID id);

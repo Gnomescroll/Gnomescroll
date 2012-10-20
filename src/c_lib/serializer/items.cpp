@@ -164,4 +164,9 @@ class Item::Item* create_item_from_data(class ParsedItemData* data, ItemLocation
     return item;
 }
 
+void load_created_items()
+{
+    // transfer tmp items to main list
+}
+
 }   // serializer

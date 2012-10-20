@@ -1114,6 +1114,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     int cost;
     int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
     GS_ASSERT(cost >= 0);
+    if (cost < 0) return;
     if (item_type == NULL_ITEM_TYPE) return;
     
     // compare to hand
@@ -1137,7 +1138,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     // can we afford it
     if (coin_stack < cost) return;
     
-    Item::Item* coin_item = Item::get_item_object(coins);
+    Item::Item* coin_item = Item::get_item(coins);
     GS_ASSERT(coin_item != NULL);
     if (coin_item == NULL) return;
 

@@ -188,9 +188,24 @@ class ItemContainerHand: public ItemContainerInterface
             ItemContainerInterface::remove_item(0);
         }
 
-        int insert_item(ItemID item_id)
+        int insert_item(ItemID item_id);
+
+        // dont use this interface
+        void remove_item(int slot)
         {
-            return ItemContainerInterface::insert_item(0, item_id);
+            GS_ASSERT(false);
+        }
+
+        ItemID get_item(int slot)
+        {
+            GS_ASSERT(false);
+            return NULL_ITEM;
+        }
+        
+        int insert_item(int slot, ItemID item_id)
+        {
+            GS_ASSERT(false);
+            return NULL_SLOT;
         }
         
         ItemContainerHand(ItemContainerType type, int id)

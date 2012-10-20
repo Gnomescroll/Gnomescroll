@@ -53,7 +53,7 @@ int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
     GS_ASSERT(this->slot[slot] == NULL_ITEM);
     if (this->slot[slot] != NULL_ITEM) return NULL_SLOT;
     
-    Item::Item* item = Item::get_item_object(item_id);
+    Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return slot;
 
@@ -84,7 +84,7 @@ void ItemContainerInterface::remove_item(int slot)  // virtual
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id != NULL_ITEM)
     {
-        Item::Item* item = Item::get_item_object(this->slot[slot]);
+        Item::Item* item = Item::get_item(this->slot[slot]);
         GS_ASSERT(item != NULL);
         if (item != NULL)
         {
@@ -96,6 +96,21 @@ void ItemContainerInterface::remove_item(int slot)  // virtual
     this->slot[slot] = NULL_ITEM;
     this->slot_count--;
 }
+
+/* Hand */
+
+int ItemContainerHand::insert_item(ItemID item_id)
+{
+    int slot = ItemContainerInterface::insert_item(0, item_id);
+    if (slot == NULL_SLOT) return NULL_SLOT;
+    class Item::Item* item = Item::get_item(item_id);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return NULL_SLOT;
+    item->location = IL_HAND;
+    item->location_id = this->owner;
+    return slot;
+}
+
 
 /* Energy Tanks */
 

@@ -41,17 +41,13 @@ void init_packets()
 
 Item* get_item(ItemID id)
 {
+    if (id == NULL_ITEM) return NULL;
     return item_list->get(id);
-}
-
-// alias for get_item
-class Item* get_item_object(ItemID id)
-{
-    return get_item(id);
 }
 
 int get_item_type(ItemID id)
 {
+    if (id == NULL_ITEM) return NULL_ITEM_TYPE;
     Item* item = get_item(id);
     if (item == NULL) return NULL_ITEM_TYPE;
     return item->type;
