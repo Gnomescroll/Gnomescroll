@@ -284,7 +284,7 @@ void draw_selected_mech_bounding_box()
 
     float wx = (float) (m.x) + 0.5f + m.offset_x;
     float wy = (float) (m.y) + 0.5f + m.offset_y;
-    float wz = (float) m.z + size;
+    float wz = (float) m.z; // + size;
 
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
@@ -299,13 +299,13 @@ void draw_selected_mech_bounding_box()
     GS_ASSERT(mech_sprite_height[mech_attribute[m.mech_type].sprite_index] != -1)
 
     float size_w = size*mech_sprite_width_f[tex_id];
-    float size_h = size*mech_sprite_height_f[tex_id];
+    float size_h = 2.0f*size*mech_sprite_height_f[tex_id];
 
             //mech_sprite_width_f[i]  = 1.0;
             //mech_sprite_height_f[i] = 1.0;
 
     visualize_bounding_box(
-    wx,wy,wz,
+    wx,wy,wz + 0.01f,
     size_w,size_w, size_h,
     f,r,u
     );
